@@ -3,6 +3,18 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Theme colors matching landing page */
+    --color-primary: 79 70 229; /* indigo-600 */
+    --color-primary-hover: 67 56 202; /* indigo-700 */
+    --color-foreground: 15 23 42; /* slate-900 */
+    --color-muted-foreground: 148 163 184; /* slate-400 */
+    --color-border: 203 213 225; /* slate-300 */
+    --color-error: 239 68 68; /* red-500 */
+    --color-background: 248 250 252; /* slate-50 - subtle light background */
+    --color-card: 255 255 255; /* white - for cards and modals */
+  }
+
   body {
     font-family: 'Inter', sans-serif;
   }

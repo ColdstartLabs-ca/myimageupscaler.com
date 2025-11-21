@@ -14,8 +14,8 @@ interface IRegisterFormProps {
 
 export const RegisterForm: React.FC<IRegisterFormProps> = ({ onSubmit, register, errors }) => {
   return (
-    <form onSubmit={onSubmit} className="flex flex-col space-y-6 p-6">
-      <p className="text-center text-gray-500">Create an account to continue</p>
+    <form onSubmit={onSubmit} className="flex flex-col space-y-4">
+      <p className="text-center text-muted-foreground mb-2">Create an account to continue</p>
       <InputField
         {...register('email')}
         type="email"
@@ -39,7 +39,7 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({ onSubmit, register,
       />
       <button
         type="submit"
-        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+        className="w-full px-4 py-3 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md"
       >
         Create Account
       </button>

@@ -72,7 +72,6 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png' },
     ],
   },
-  manifest: '/manifest.webmanifest',
 };
 
 export default function RootLayout({
@@ -103,7 +102,7 @@ export default function RootLayout({
         <JsonLd data={websiteJsonLd} />
         <JsonLd data={organizationJsonLd} />
       </head>
-      <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700`}>
+      <body className={`${inter.className} bg-slate-50 text-foreground antialiased selection:bg-indigo-100 selection:text-indigo-700`}>
         <ClientProviders>
           <Layout>
             {children}

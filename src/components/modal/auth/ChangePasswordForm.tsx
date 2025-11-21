@@ -29,7 +29,7 @@ export const ChangePasswordForm: React.FC<{ onSubmit: (data: IChangePasswordForm
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitHandler)} className="flex flex-col space-y-6 p-6">
+    <form onSubmit={handleSubmit(onSubmitHandler)} className="flex flex-col space-y-4">
       <InputField
         {...register('currentPassword', {
           required: 'Current password is required',
@@ -64,7 +64,7 @@ export const ChangePasswordForm: React.FC<{ onSubmit: (data: IChangePasswordForm
       />
       <button
         type="submit"
-        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+        className="w-full px-4 py-3 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md"
       >
         Change Password
       </button>

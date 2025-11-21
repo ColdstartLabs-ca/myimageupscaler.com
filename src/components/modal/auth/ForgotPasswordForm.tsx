@@ -1,5 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { InputField } from '../../form/InputField';
 
 interface IForgotPasswordForm {
   email: string;
@@ -17,23 +18,22 @@ export const ForgotPasswordForm: React.FC<IProps> = ({ onSubmit }) => {
   } = useForm<IForgotPasswordForm>();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-6 p-6">
-      <div>
-        <input
-          {...register('email', {
-            required: 'Email is required',
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'Invalid email address',
-            },
-          })}
-          type="email"
-          placeholder="Email Address"
-          className="input input-bordered w-full"
-        />
-        {errors.email && <span className="text-error text-sm mt-1">{errors.email.message}</span>}
-      </div>
-      <button type="submit" className="btn btn-primary w-full">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
+      <p className="text-center text-muted-foreground mb-2">Enter your email to receive a password reset link</p>
+      <InputField
+        {...register('email', {
+          required: 'Email is required',
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: 'Invalid email address',
+          },
+        })}
+        type="email"
+        placeholder="Email Address"
+        className="w-full"
+        error={errors.email?.message}
+      />
+      <button type="submit" className="w-full px-4 py-3 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md">
         Send Reset Link
       </button>
     </form>
