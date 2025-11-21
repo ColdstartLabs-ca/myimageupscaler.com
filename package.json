@@ -15,6 +15,7 @@
     "lint": "eslint src/**/*.{js,jsx,ts,tsx} --fix",
     "tsc": "tsc --noEmit",
     "prepare": "husky",
+    "verify": "npm run tsc && npm run lint && npm run test:all",
     "test:e2e": "playwright test --project=chromium",
     "test:api": "playwright test --project=api",
     "test:api:dev": "playwright test --project=api --ui",
