@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef } from 'react';
-import { Input } from 'react-daisyui';
 
 export interface IInputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type: string;
@@ -13,13 +11,14 @@ export const InputField = forwardRef<HTMLInputElement, IInputFieldProps>(
   ({ type, placeholder, className, error, ...props }, ref) => {
     return (
       <div className="mb-6">
-        <Input
+        <input
           ref={ref}
           type={type}
           placeholder={placeholder}
-          className={`${className} ${error ? 'border-red-500' : ''}`}
-          bordered
-          {...(props as any)} // Spread the remaining props
+          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            error ? 'border-red-500' : 'border-gray-300'
+          } ${className || ''}`}
+          {...props}
         />
         {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
       </div>

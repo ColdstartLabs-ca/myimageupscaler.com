@@ -1,4 +1,4 @@
-import { Banknote, Coins, Home, Landmark, LayoutDashboard, LineChart } from 'lucide-react';
+import { Banknote, Coins, Home, Landmark, LayoutDashboard, LineChart, Sparkles, Wand2 } from 'lucide-react';
 import { JSX } from 'react';
 import { IconType } from '../../types/icons';
 
@@ -9,6 +9,8 @@ const icons = {
   Landmark,
   Banknote,
   LayoutDashboard,
+  Wand2,
+  Sparkles,
 } as const;
 
 interface ITabProps {
@@ -25,9 +27,9 @@ export const Tab = ({ label, icon, isActive, onClick }: ITabProps): JSX.Element 
   return (
     <button
       className={`
-        tab flex-1 gap-1.5 px-3 py-2 min-h-0 h-auto text-sm transition-colors duration-200
-        hover:bg-primary/10 
-        ${isActive ? 'tab-active text-primary font-medium' : 'text-base-content/70'}
+        tab flex-1 gap-1.5 px-3 py-2 min-h-0 h-auto text-sm transition-colors duration-200 rounded-lg
+        hover:bg-indigo-50
+        ${isActive ? 'bg-indigo-100 text-indigo-700 font-medium' : 'text-slate-600'}
       `}
       onClick={onClick}
     >

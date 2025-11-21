@@ -67,3 +67,6 @@ wrangler.toml.bak
 
 # Local development
 *.local
+
+
+template

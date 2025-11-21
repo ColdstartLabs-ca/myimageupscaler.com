@@ -1,27 +1,17 @@
 /* eslint-disable import/no-default-export */
-/* eslint-disable @typescript-eslint/no-require-imports */
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
-    'node_modules/react-daisyui/dist/**/*.js',
-    'node_modules/react-daisyui/dist/**/*.jsx',
+    './app/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
-  },
-  plugins: [require('daisyui')],
-  daisyui: {
-    themes: [
-      {
-        sunset: {
-          ...require('daisyui/src/theming/themes')['sunset'],
-          primary: '#4ade80', // mint green
-          'primary-focus': '#22c55e',
-        },
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
       },
-    ],
-    darkTheme: 'sunset',
+    },
   },
+  plugins: [],
 };

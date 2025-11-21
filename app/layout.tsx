@@ -1,22 +1,28 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import { ClientProviders } from '../src/components/ClientProviders';
 import { Layout } from '../src/components/layout/Layout';
-import { TabNavigationClient } from '../src/components/navigation/TabNavigationClient';
 import { JsonLd } from '../src/components/seo/JsonLd';
-import { getCategories } from '../src/lib/data';
 import '../src/index.css';
-import type { Metadata } from 'next';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
   title: {
-    default: 'PixelPerfect - Portfolio Management',
-    template: '%s | PixelPerfect',
+    default: 'PixelPerfect AI - Image Upscaling & Enhancement',
+    template: '%s | PixelPerfect AI',
   },
-  description: 'Manage your investment portfolio with detailed asset tracking and analytics',
-  keywords: ['portfolio management', 'investment tracking', 'asset allocation', 'financial analytics'],
-  authors: [{ name: 'PixelPerfect' }],
-  creator: 'PixelPerfect',
-  publisher: 'PixelPerfect',
+  description: 'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
+  keywords: ['image upscaling', 'AI image enhancement', 'photo restoration', 'image quality', 'AI upscaler'],
+  authors: [{ name: 'PixelPerfect AI' }],
+  creator: 'PixelPerfect AI',
+  publisher: 'PixelPerfect AI',
   formatDetection: {
     email: false,
     address: false,
@@ -26,24 +32,24 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    siteName: 'PixelPerfect',
-    title: 'PixelPerfect - Portfolio Management',
-    description: 'Manage your investment portfolio with detailed asset tracking and analytics',
+    siteName: 'PixelPerfect AI',
+    title: 'PixelPerfect AI - Image Upscaling & Enhancement',
+    description: 'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'PixelPerfect Portfolio Management',
+        alt: 'PixelPerfect AI Image Enhancement',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PixelPerfect - Portfolio Management',
-    description: 'Manage your investment portfolio with detailed asset tracking and analytics',
+    title: 'PixelPerfect AI - Image Upscaling & Enhancement',
+    description: 'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
     images: ['/og-image.png'],
-    creator: '@pixelperfect',
+    creator: '@pixelperfectai',
   },
   robots: {
     index: true,
@@ -74,43 +80,32 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const categories = getCategories();
-
   const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'PixelPerfect',
+    name: 'PixelPerfect AI',
     url: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
-    description: 'Manage your investment portfolio with detailed asset tracking and analytics',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/search?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
+    description: 'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
   };
 
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'PixelPerfect',
+    name: 'PixelPerfect AI',
     url: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
     logo: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/og-image.png`,
-    description: 'Portfolio management platform for detailed asset tracking and analytics',
+    description: 'AI-powered image upscaling and enhancement platform',
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
         <JsonLd data={websiteJsonLd} />
         <JsonLd data={organizationJsonLd} />
       </head>
-      <body>
+      <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-700`}>
         <ClientProviders>
           <Layout>
-            <TabNavigationClient categories={categories} />
             {children}
           </Layout>
         </ClientProviders>

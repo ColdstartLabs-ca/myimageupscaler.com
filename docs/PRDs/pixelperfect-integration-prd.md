@@ -1,6 +1,6 @@
 ---
-description: Integration plan for PixelPerfect AI template into the existing boilerplate
-globs: src/**/*, template/**/*, package.json, vite.config.ts
+description: Integration plan for PixelPerfect AI template into the Next.js boilerplate
+globs: src/**/*, template/**/*, package.json, app/**/*
 alwaysApply: false
 ---
 
@@ -8,9 +8,13 @@ alwaysApply: false
 
 ## User Review Required
 
-> [!IMPORTANT] > **React Version Conflict:** The `template` uses React v19, while the boilerplate (`src`) uses React v18. We will proceed with React v18 to maintain stability of the existing boilerplate. Some `template` features might need adjustment if they rely on v19 specifics (unlikely for standard UI components).
+> [!IMPORTANT] > **Architecture Shift:** We are migrating the client-side React template to the Next.js App Router. The AI logic will be moved from the client (`aiService.ts`) to a server-side API route (`app/api/upscale`) to secure API keys and leverage Cloudflare Workers (via Next.js).
 
-> [!WARNING] > **Styling Conflicts:** The boilerplate uses DaisyUI, while the template uses raw Tailwind. We will namespace or carefully integrate the template components to avoid visual regressions.
+> [!NOTE] > **Styling:** The template uses Tailwind CSS. The boilerplate also uses Tailwind (via DaisyUI). We will integrate the components into `src/components/pixelperfect` and ensure they render correctly within the existing layout.
+
+> [!CAUTION] > **Cleanup:** The `template` directory will be **permanently deleted** after migration. All necessary code must be moved to `src`.
+
+> [!CRITICAL] > **Auth Preservation:** The existing authentication system (Supabase Auth) **MUST NOT be touched or overridden**. The new "Upscaler" feature will simply inherit the existing session protection provided by `ClientProviders` and `Layout`. We are "absorbing" the new feature into the existing secure environment.
 
 ## Proposed Changes
 
@@ -19,37 +23,42 @@ alwaysApply: false
 #### 1.1 Files Analyzed
 
 - `template/App.tsx`
-- `template/package.json`
-- `src/App.tsx`
-- `src/main.tsx`
-- `src/package.json` (Root)
-- `vite.config.ts`
-- `index.html`
+- `template/services/aiService.ts`
+- `template/hooks/useBatchQueue.ts`
+- `template/utils/download.ts`
+- `app/page.tsx`
+- `app/layout.tsx`
+- `src/components/navigation/TabNavigationClient.tsx`
+- `package.json`
+- `next.config.js`
 
 #### 1.2 Component & Dependency Overview
 
 ```mermaid
 graph TD
-    subgraph "Boilerplate (src)"
-        A[App.tsx] --> B[TabNavigation]
-        A --> C[Layout]
-        A --> D[Existing Views]
+    subgraph "Next.js App (Boilerplate)"
+        A[RootLayout] --> B[TabNavigationClient]
+        B --> C[Existing Routes]
+        B --> D[New /upscaler Route]
+        A -.-> Auth[Existing Auth Provider]
     end
-    subgraph "Template"
-        E[Workspace] --> F[Image Upload]
-        E --> G[Processing Logic]
+    subgraph "PixelPerfect Integration"
+        D --> E[Upscaler Page]
+        E --> F[Workspace Component]
+        F --> G[API Route /api/upscale]
+        G --> H[Google GenAI SDK]
     end
-    A -->|New Tab| E
+    Auth -.-> D
 ```
 
 #### 1.3 Current Behavior Summary
 
-- **Boilerplate (`src`):** A Vite+React app with DaisyUI, Supabase Auth, and tab-based navigation (`Summary`, `CategoryView`).
-- **Template:** A standalone Vite+React app for Image Upscaling (`PixelPerfect AI`), containing a landing page and a main `Workspace` component.
+- **Boilerplate:** Next.js App Router project with Cloudflare Pages configuration. Uses `src/components` for UI and `app` for routing. Authentication is handled by `ClientProviders` wrapping the app.
+- **Template:** Client-side Vite app with direct API calls.
 
 #### 1.4 Problem Statement
 
-Integrate the `PixelPerfect AI` functionality (specifically the `Workspace`) into the boilerplate without disrupting existing authentication, routing, or styling.
+Integrate the image upscaling tool into the portfolio app as a new feature tab, ensuring secure API handling and consistent styling, then remove the template source. **Crucially, existing Auth must remain intact.**
 
 ---
 
@@ -57,52 +66,46 @@ Integrate the `PixelPerfect AI` functionality (specifically the `Workspace`) int
 
 #### 2.1 Architecture Summary
 
-- **Component Migration:** Move `template/components` to `src/components/pixelperfect`.
-- **Dependency Merge:** Add `@google/genai`, `jszip` to root `package.json`. Ensure `lucide-react` compatibility.
-- **Routing Integration:** Add a new "Upscaler" (or similar) tab to `src/App.tsx` and `src/mocks/data.ts`.
-- **Auth Protection:** The new tab will inherit the existing `Layout` and `AuthErrorHandler` protection.
+- **Frontend:** New route `app/upscaler/page.tsx` rendering the `Workspace` component.
+- **Backend:** New API route `app/api/upscale/route.ts` handling Google GenAI interactions.
+- **Components:** Migrate template components to `src/components/pixelperfect`.
+- **Utils/Hooks:** Migrate to `src/lib/pixelperfect` and `src/hooks/pixelperfect`.
+- **Navigation:** Add "Upscaler" link to `TabNavigationClient`.
+- **Auth Strategy:** The new route will be automatically protected by the existing `app/layout.tsx` and `ClientProviders`. No new auth logic will be implemented.
 
 #### 2.2 Architecture Diagram
 
 ```mermaid
-flowchart LR
-    User --> App
-    App --> Layout
-    Layout --> TabNavigation
-    TabNavigation -->|Select| ViewSwitcher
-    ViewSwitcher -->|Summary| SummaryView
-    ViewSwitcher -->|Upscaler| Workspace[PixelPerfect Workspace]
-    Workspace --> GenAI[Google GenAI SDK]
+sequenceDiagram
+    participant User
+    participant Auth as Auth Provider
+    participant Client as Upscaler Page
+    participant API as /api/upscale
+    participant AI as Google Gemini
+
+    User->>Client: Navigates to /upscaler
+    Client->>Auth: Check Session (Existing)
+    Auth-->>Client: Session Valid
+    User->>Client: Uploads Image
+    Client->>API: POST image data
+    API->>AI: Generate Content
+    AI-->>API: Enhanced Image
+    API-->>Client: JSON Response
+    Client-->>User: Displays Result
 ```
 
 #### 2.3 Key Technical Decisions
 
-- **React 18:** Stick to React 18 (Boilerplate standard).
-- **Path Aliases:** Update template imports to use relative paths or new aliases if needed.
-- **Styling:** Keep template's Tailwind classes but verify against DaisyUI defaults.
+- **API Route:** Use Next.js API Routes (Edge or Node runtime) to proxy requests to Google Gemini, keeping API keys server-side.
+- **Component Location:** `src/components/pixelperfect` to keep the source tree organized.
+- **Routing:** Top-level `/upscaler` route instead of nesting under `/portfolio`.
+- **Cleanup:** Complete removal of `template` directory post-verification.
+- **Auth:** Zero changes to `src/components/auth` or `src/lib/supabase`.
 
 #### 2.4 Data Model Changes
 
-- Update `src/mocks/data.ts` to include the new category/tab.
-
----
-
-### 2.5 Runtime Execution Flow
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant App
-    participant TabNav
-    participant Workspace
-
-    User->>App: Opens App
-    App->>TabNav: Renders Tabs
-    User->>TabNav: Clicks "Upscaler"
-    TabNav->>App: onTabChange('upscaler')
-    App->>Workspace: Renders Workspace Component
-    Workspace->>User: Shows Upload Interface
-```
+- No database changes.
+- New API response types for the upscaler.
 
 ---
 
@@ -110,85 +113,99 @@ sequenceDiagram
 
 #### A. `package.json` (Root)
 
-- **Changes Needed:** Add dependencies from `template/package.json`.
+- **Changes Needed:** Add dependencies.
 - **New Dependencies:**
   - `@google/genai`
   - `jszip`
-  - Check `lucide-react` version (align with boilerplate if possible, or upgrade boilerplate).
 
 #### B. `src/components/pixelperfect/`
 
 - **Action:** Copy `template/components/*` to this directory.
-- **Refactor:** Update imports in these files to point to correct locations.
-- **File Mapping:**
-  - `template/components/Workspace/*` -> `src/components/pixelperfect/Workspace/*`
-  - `template/components/ui/*` -> `src/components/pixelperfect/ui/*` (if any)
+- **Refactor:**
+  - Update imports to use relative paths or `@/components`.
+  - Remove `Header` and `Pricing` components (not needed for the tool view).
+  - Ensure `Workspace` accepts necessary props or handles its own state.
 
-#### C. `src/mocks/data.ts`
+#### C. `src/hooks/pixelperfect/` & `src/lib/pixelperfect/`
 
-- **Changes Needed:** Add "Upscaler" to `categories`.
+- **Action:** Move `template/hooks/*` and `template/utils/*`.
+- **Files:**
+  - `template/hooks/useBatchQueue.ts` -> `src/hooks/pixelperfect/useBatchQueue.ts`
+  - `template/utils/download.ts` -> `src/lib/pixelperfect/download.ts`
 
-#### D. `src/App.tsx`
+#### D. `app/api/upscale/route.ts`
 
-- **Changes Needed:**
-  - Import `Workspace` from `@components/pixelperfect/Workspace/Workspace`.
-  - Add conditional rendering for the new tab.
+- **Purpose:** Server-side handler for AI generation.
+- **Logic:**
+  - Receive `POST` request with image and config.
+  - Initialize `GoogleGenAI` with server-side `process.env.API_KEY`.
+  - Call Gemini model.
+  - Return base64 image.
+
+#### E. `app/upscaler/page.tsx`
+
+- **Purpose:** The main page for the tool.
+- **Content:**
+  - Import `Workspace` from `src/components/pixelperfect/Workspace/Workspace`.
+  - Render within the main layout.
+  - **Note:** This page sits inside `app/layout.tsx`, so it inherits the `ClientProviders` (Auth) automatically.
+
+#### F. `src/components/navigation/TabNavigationClient.tsx`
+
+- **Changes Needed:** Add a hardcoded `Link` to `/upscaler`.
 - **Pseudo-code:**
 
-```typescript
-// ... imports
-import Workspace from './components/pixelperfect/Workspace/Workspace';
-
-export const App = (): JSX.Element => {
-  // ... state
-  return (
-    // ... theme & layout
-        <main className="flex-1">
-          {activeTab === 'summary' ? (
-            <SummaryView assets={assets} />
-          ) : activeTab === 'upscaler' ? (
-             <Workspace />
-          ) : (
-            <CategoryView ... />
-          )}
-        </main>
-    // ...
-  );
-};
+```tsx
+// ... existing tabs
+<Link href="/upscaler">
+  <Tab
+    id="upscaler"
+    label="Upscaler"
+    icon="Wand2" // Import from lucide-react
+    isActive={pathname === '/upscaler'}
+    onClick={() => {}}
+  />
+</Link>
 ```
 
-#### E. `src/types.ts` (Optional)
+#### G. `src/lib/api.ts` (New/Update)
 
-- If `Workspace` needs specific types, migrate them from `template/types.ts`.
+- **Purpose:** Client-side helper to call `/api/upscale`.
+- **Refactor:** Adapt `template/services/aiService.ts` to call the internal API instead of Google directly.
 
 ---
 
 ### 4. Step-by-Step Execution Plan
 
-#### Phase 1: Preparation & Dependencies
+#### Phase 1: Backend & Dependencies
 
-- [ ] Backup `package.json`.
 - [ ] Install `@google/genai` and `jszip`.
-- [ ] Verify `lucide-react` compatibility.
+- [ ] Create `app/api/upscale/route.ts`.
+- [ ] Verify API route works with a simple test.
 
-#### Phase 2: Component Migration
+#### Phase 2: Code Migration
 
-- [ ] Create `src/components/pixelperfect`.
-- [ ] Copy `template/components/Workspace` to `src/components/pixelperfect/Workspace`.
-- [ ] Copy shared components/hooks/utils from template if needed.
-- [ ] Fix imports in migrated files.
+- [ ] Create `src/components/pixelperfect`, `src/hooks/pixelperfect`, `src/lib/pixelperfect`.
+- [ ] Copy and refactor components, hooks, and utils from `template`.
+- [ ] Refactor `aiService.ts` into a client-side API caller (calling `/api/upscale`).
 
-#### Phase 3: Integration
+#### Phase 3: Frontend Integration
 
-- [ ] Update `src/mocks/data.ts` to add the new tab category.
-- [ ] Update `src/App.tsx` to render `Workspace`.
+- [ ] Create `app/upscaler/page.tsx`.
+- [ ] Update `TabNavigationClient.tsx`.
+- [ ] Add "Upscaler" icon to `TabNavigationClient`.
 
 #### Phase 4: Verification
 
-- [ ] Run `npm run dev` (or `vite`).
-- [ ] Verify "Upscaler" tab appears.
-- [ ] Verify `Workspace` functionality (upload, processing).
-- [ ] Check for styling conflicts.
+- [ ] Run `npm run dev`.
+- [ ] Test the full flow: Navigation -> Upload -> Process -> Result.
+- [ ] Verify no imports reference `template/`.
+- [ ] **Verify Auth:** Ensure user session persists when navigating to/from Upscaler.
+
+#### Phase 5: Cleanup
+
+- [ ] Delete `template` directory.
+- [ ] Remove `template` from `tsconfig.json` or other config files if referenced.
 
 ---
 
@@ -196,32 +213,35 @@ export const App = (): JSX.Element => {
 
 #### Unit Tests
 
-- Verify `Workspace` component renders without crashing.
+- Test API route error handling (missing key, bad request).
 
 #### Integration Tests
 
-- Test the flow: Open App -> Click Upscaler Tab -> Upload Image.
+- Manual verification of the upscaling flow.
+- **Auth Regression Test:** Log out, try to access `/upscaler` (should redirect or show auth modal depending on existing logic), log in, access `/upscaler`.
 
 #### Edge Cases
 
 | Scenario | Expected Behavior |
 | paper | ----------------- |
-| Missing API Key | Graceful error in Workspace |
-| React 19 feature usage | Identify and polyfill/refactor |
+| Large Image Upload | API route handles limit or returns 413 |
+| API Timeout | Client shows error message |
+| Unauthenticated Access | Handled by existing `ClientProviders` |
 
 ---
 
 ### 6. Acceptance Criteria
 
-- [ ] App builds successfully.
-- [ ] "Upscaler" tab is visible and accessible.
-- [ ] `Workspace` component loads within the boilerplate layout.
-- [ ] No console errors related to missing dependencies.
-- [ ] Existing auth and navigation remain functional.
+- [ ] `/upscaler` route exists and loads.
+- [ ] "Upscaler" tab is present in navigation.
+- [ ] Image processing works end-to-end via the API route.
+- [ ] `template` directory is deleted.
+- [ ] App builds and runs without `template`.
+- [ ] **Existing Auth is 100% preserved and functional.**
 
 ---
 
 ### 7. Verification & Rollback
 
-- **Success Criteria:** The app runs locally, and the new feature is usable.
-- **Rollback Plan:** Revert changes to `src` and `package.json`.
+- **Success Criteria:** Working upscaler in the Next.js app, clean source tree, auth intact.
+- **Rollback Plan:** Revert git changes.

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useToastStore } from '../../../store/toastStore';
 import { InputField } from '../../form/InputField';
@@ -63,9 +62,12 @@ export const ChangePasswordForm: React.FC<{ onSubmit: (data: IChangePasswordForm
         className="w-full"
         error={errors.confirmPassword?.message}
       />
-      <Button type="submit" className="btn-primary w-full p-2">
+      <button
+        type="submit"
+        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+      >
         Change Password
-      </Button>
+      </button>
     </form>
   );
 };

@@ -1,5 +1,4 @@
 import React, { FormEventHandler } from 'react';
-import { Button } from 'react-daisyui';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { loginSchema } from 'src/validation/authValidationSchema';
 import { z } from 'zod';
@@ -31,9 +30,12 @@ export const LoginForm: React.FC<ILoginFormProps> = ({ onSubmit, register, error
         className="w-full"
         error={errors.password?.message}
       />
-      <Button type="submit" className="btn-primary w-full p-2">
+      <button
+        type="submit"
+        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+      >
         Sign In
-      </Button>
+      </button>
     </form>
   );
 };

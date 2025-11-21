@@ -1,5 +1,4 @@
 import React, { FormEventHandler } from 'react';
-import { Button } from 'react-daisyui';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { z } from 'zod';
 import { registerSchema } from '../../../validation/authValidationSchema';
@@ -38,9 +37,12 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({ onSubmit, register,
         className="w-full"
         error={errors.passwordConfirmation?.message}
       />
-      <Button type="submit" className="btn-primary w-full p-2">
+      <button
+        type="submit"
+        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+      >
         Create Account
-      </Button>
+      </button>
     </form>
   );
 };

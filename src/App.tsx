@@ -1,5 +1,4 @@
 import { JSX, useState } from 'react';
-import { Theme } from 'react-daisyui';
 import { AuthErrorHandler } from './components/auth/AuthErrorHandler';
 import { Toast } from './components/common/Toast';
 import { Layout } from './components/layout/Layout';
@@ -15,7 +14,7 @@ export const App = (): JSX.Element => {
   const [assets] = useState<IAsset[]>(initialAssets);
 
   return (
-    <Theme dataTheme="sunset">
+    <>
       <Layout>
         <AuthErrorHandler />
         <AuthenticationModal />
@@ -32,6 +31,6 @@ export const App = (): JSX.Element => {
           )}
         </main>
       </Layout>
-    </Theme>
+    </>
   );
 };
