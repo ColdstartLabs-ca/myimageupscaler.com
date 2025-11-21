@@ -75,7 +75,7 @@ export async function middleware(req: NextRequest) {
   // 3. Handle public routes with IP-based rate limiting
   if (isPublic) {
     // For public routes, rate limit by IP address
-    const ip = req.ip ?? req.headers.get('x-forwarded-for') ?? 'unknown';
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('x-real-ip') ?? 'unknown';
     const { success, remaining, reset } = await publicRateLimit.limit(ip);
 
     if (!success) {
