@@ -30,7 +30,7 @@ const clientEnvSchema = z.object({
 export type IClientEnv = z.infer<typeof clientEnvSchema>;
 
 function loadClientEnv(): IClientEnv {
-  // eslint-disable-next-line no-restricted-syntax -- This is the only place where process.env should be accessed
+  /* eslint-disable no-restricted-syntax -- This is the only place where process.env should be accessed */
   const env = {
     APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || 'PixelPerfect',
     BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
@@ -41,6 +41,7 @@ function loadClientEnv(): IClientEnv {
     AZURE_CLIENT_ID: process.env.NEXT_PUBLIC_AZURE_CLIENT_ID || '',
     BASELIME_KEY: process.env.NEXT_PUBLIC_BASELIME_KEY || '',
   };
+  /* eslint-enable no-restricted-syntax */
   return clientEnvSchema.parse(env);
 }
 
@@ -68,9 +69,6 @@ const serverEnvSchema = z.object({
   BASELIME_API_KEY: z.string().default(''),
   // CORS
   ALLOWED_ORIGIN: z.string().default('*'),
-  // Upstash Redis (rate limiting)
-  UPSTASH_REDIS_REST_URL: z.string().default(''),
-  UPSTASH_REDIS_REST_TOKEN: z.string().default(''),
   // Cloudflare
   CF_PAGES_URL: z.string().optional(),
   // Testing
@@ -80,7 +78,7 @@ const serverEnvSchema = z.object({
 export type IServerEnv = z.infer<typeof serverEnvSchema>;
 
 function loadServerEnv(): IServerEnv {
-  // eslint-disable-next-line no-restricted-syntax -- This is the only place where process.env should be accessed
+  /* eslint-disable no-restricted-syntax -- This is the only place where process.env should be accessed */
   const env = {
     NODE_ENV: process.env.NODE_ENV || 'development',
     // Supabase
@@ -94,14 +92,12 @@ function loadServerEnv(): IServerEnv {
     BASELIME_API_KEY: process.env.BASELIME_API_KEY || '',
     // CORS
     ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN || '*',
-    // Upstash Redis
-    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL || '',
-    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN || '',
     // Cloudflare
     CF_PAGES_URL: process.env.CF_PAGES_URL,
     // Testing
     TEST_AUTH_TOKEN: process.env.TEST_AUTH_TOKEN,
   };
+  /* eslint-enable no-restricted-syntax */
   return serverEnvSchema.parse(env);
 }
 
