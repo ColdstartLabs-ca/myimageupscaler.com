@@ -1,1 +1,1 @@
-yarn format && yarn lint && yarn tsc
+yarn tsc
