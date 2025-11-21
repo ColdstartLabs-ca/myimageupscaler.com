@@ -1,4 +1,13 @@
-import { Banknote, Coins, Home, Landmark, LayoutDashboard, LineChart, Sparkles, Wand2 } from 'lucide-react';
+import {
+  Banknote,
+  Coins,
+  Home,
+  Landmark,
+  LayoutDashboard,
+  LineChart,
+  Sparkles,
+  Wand2,
+} from 'lucide-react';
 import { JSX } from 'react';
 import { IconType } from '../../types/icons';
 

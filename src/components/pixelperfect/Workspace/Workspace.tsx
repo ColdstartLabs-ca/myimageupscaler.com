@@ -10,18 +10,18 @@ import { downloadSingle } from '@/lib/pixelperfect/download';
 
 const Workspace: React.FC = () => {
   // Hook managing all queue state
-  const { 
-    queue, 
-    activeId, 
-    activeItem, 
-    isProcessingBatch, 
+  const {
+    queue,
+    activeId,
+    activeItem,
+    isProcessingBatch,
     completedCount,
-    setActiveId, 
-    addFiles, 
-    removeItem, 
-    clearQueue, 
+    setActiveId,
+    addFiles,
+    removeItem,
+    clearQueue,
     processBatch,
-    processSingleItem
+    processSingleItem,
   } = useBatchQueue();
 
   // Config State
@@ -30,7 +30,7 @@ const Workspace: React.FC = () => {
     scale: 2,
     enhanceFace: false,
     preserveText: true,
-    denoise: true
+    denoise: true,
   });
 
   // Handlers
@@ -45,10 +45,18 @@ const Workspace: React.FC = () => {
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center">
           <Dropzone onFilesSelected={addFiles} />
           <div className="mt-8 flex justify-center gap-8 text-slate-400 flex-wrap">
-              <div className="flex items-center gap-2"><CheckCircle2 size={16} /> No signup required</div>
-              <div className="flex items-center gap-2"><CheckCircle2 size={16} /> Free 5MB limit</div>
-              <div className="flex items-center gap-2"><CheckCircle2 size={16} /> No Watermark</div>
-              <div className="flex items-center gap-2 text-indigo-500"><Layers size={16} /> Batch Supported</div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 size={16} /> No signup required
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 size={16} /> Free 5MB limit
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 size={16} /> No Watermark
+            </div>
+            <div className="flex items-center gap-2 text-indigo-500">
+              <Layers size={16} /> Batch Supported
+            </div>
           </div>
         </div>
       </div>
@@ -59,9 +67,8 @@ const Workspace: React.FC = () => {
   return (
     <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col min-h-[600px]">
       <div className="flex flex-col md:flex-row flex-grow h-full">
-        
         {/* Left Sidebar */}
-        <BatchSidebar 
+        <BatchSidebar
           config={config}
           setConfig={setConfig}
           queue={queue}
@@ -73,18 +80,17 @@ const Workspace: React.FC = () => {
 
         {/* Right Area: Main View + Queue Strip */}
         <div className="flex-grow flex flex-col bg-slate-50 overflow-hidden relative">
-          
           {/* Main Preview Area */}
           <div className="flex-grow p-6 flex items-center justify-center overflow-hidden relative">
-            <PreviewArea 
+            <PreviewArea
               activeItem={activeItem}
               onDownload={handleDownloadSingle}
-              onRetry={(item) => processSingleItem(item, config)}
+              onRetry={item => processSingleItem(item, config)}
             />
           </div>
 
           {/* Bottom Queue Strip */}
-          <QueueStrip 
+          <QueueStrip
             queue={queue}
             activeId={activeId}
             isProcessing={isProcessingBatch}

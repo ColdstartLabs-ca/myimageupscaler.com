@@ -155,10 +155,7 @@ export const AuthenticationModal: React.FC = () => {
   return (
     <div className="font-sans">
       <Modal title={getModalTitle()} onClose={close} isOpen={isOpen} showCloseButton={false}>
-        <div
-          key={getContentKey()}
-          className="animate-in fade-in duration-200"
-        >
+        <div key={getContentKey()} className="animate-in fade-in duration-200">
           {isChangingPassword && isPasswordUser ? (
             <ChangePasswordForm onSubmit={handleChangePassword} />
           ) : isSettingNewPassword ? (

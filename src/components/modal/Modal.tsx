@@ -44,26 +44,31 @@ export const Modal = forwardRef<HTMLDivElement, IModalProps>(
         <div
           ref={ref}
           className={`relative w-11/12 max-w-md bg-card rounded-2xl shadow-2xl z-[101] max-h-[90vh] overflow-hidden border border-border/50 transition-all duration-200 ${
-            isAnimating
-              ? 'opacity-100 scale-100 translate-y-0'
-              : 'opacity-0 scale-95 translate-y-4'
+            isAnimating ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'
           }`}
           role="dialog"
           aria-labelledby="modal-title"
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border/50 px-6 py-5 z-10" id="modal-title">
-            <h3 className="text-2xl font-bold text-center text-foreground pr-8">
-              {title}
-            </h3>
+          <div
+            className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border/50 px-6 py-5 z-10"
+            id="modal-title"
+          >
+            <h3 className="text-2xl font-bold text-center text-foreground pr-8">{title}</h3>
             {showCloseButton && (
               <button
                 className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-lg p-1.5 hover:bg-muted/50 active:scale-95"
                 onClick={onClose}
                 aria-label="Close modal"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>

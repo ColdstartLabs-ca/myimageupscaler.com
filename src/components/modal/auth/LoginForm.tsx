@@ -15,7 +15,9 @@ interface ILoginFormProps {
 export const LoginForm: React.FC<ILoginFormProps> = ({ onSubmit, register, errors }) => {
   return (
     <form onSubmit={onSubmit} className="flex flex-col space-y-5">
-      <p className="text-center text-muted-foreground text-sm mb-1">Sign in to your account to continue</p>
+      <p className="text-center text-muted-foreground text-sm mb-1">
+        Sign in to your account to continue
+      </p>
       <InputField
         {...register('email')}
         type="email"

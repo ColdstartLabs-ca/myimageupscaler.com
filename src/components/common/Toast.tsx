@@ -12,7 +12,11 @@ const Toast: React.FC<IToastProps> = ({ vertical = 'bottom', horizontal = 'end' 
   const positionClasses = {
     vertical: vertical === 'top' ? 'top-4' : 'bottom-4',
     horizontal:
-      horizontal === 'start' ? 'left-4' : horizontal === 'center' ? 'left-1/2 -translate-x-1/2' : 'right-4',
+      horizontal === 'start'
+        ? 'left-4'
+        : horizontal === 'center'
+          ? 'left-1/2 -translate-x-1/2'
+          : 'right-4',
   };
 
   const getToastColors = (type: string) => {

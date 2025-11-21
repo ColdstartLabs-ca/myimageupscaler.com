@@ -15,7 +15,9 @@ interface IRegisterFormProps {
 export const RegisterForm: React.FC<IRegisterFormProps> = ({ onSubmit, register, errors }) => {
   return (
     <form onSubmit={onSubmit} className="flex flex-col space-y-5">
-      <p className="text-center text-muted-foreground text-sm mb-1">Create an account to continue</p>
+      <p className="text-center text-muted-foreground text-sm mb-1">
+        Create an account to continue
+      </p>
       <InputField
         {...register('email')}
         type="email"

@@ -50,7 +50,7 @@ export const TabNavigationClient = ({ categories }: ITabNavigationClientProps): 
                 label="Home"
                 icon="Wand2"
                 isActive={activeTab === 'home'}
-                onClick={() => { }}
+                onClick={() => {}}
               />
             </Link>
             <Link href="/upscaler">
@@ -59,7 +59,7 @@ export const TabNavigationClient = ({ categories }: ITabNavigationClientProps): 
                 label="Upscaler"
                 icon="Sparkles"
                 isActive={activeTab === 'upscaler'}
-                onClick={() => { }}
+                onClick={() => {}}
               />
             </Link>
             {categories.map(category => (
@@ -69,7 +69,7 @@ export const TabNavigationClient = ({ categories }: ITabNavigationClientProps): 
                   label={category.name}
                   icon={category.icon}
                   isActive={activeTab === category.id}
-                  onClick={() => { }}
+                  onClick={() => {}}
                 />
               </Link>
             ))}
@@ -84,7 +84,7 @@ export const TabNavigationClient = ({ categories }: ITabNavigationClientProps): 
                   label="Home"
                   icon="Wand2"
                   isActive={activeTab === 'home'}
-                  onClick={() => { }}
+                  onClick={() => {}}
                 />
               </Link>
               <Link href="/upscaler">
@@ -93,7 +93,7 @@ export const TabNavigationClient = ({ categories }: ITabNavigationClientProps): 
                   label="Upscaler"
                   icon="Sparkles"
                   isActive={activeTab === 'upscaler'}
-                  onClick={() => { }}
+                  onClick={() => {}}
                 />
               </Link>
               {visibleCategories.map(category => (
@@ -103,7 +103,7 @@ export const TabNavigationClient = ({ categories }: ITabNavigationClientProps): 
                     label={category.name}
                     icon={category.icon}
                     isActive={activeTab === category.id}
-                    onClick={() => { }}
+                    onClick={() => {}}
                   />
                 </Link>
               ))}

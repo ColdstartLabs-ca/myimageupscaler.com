@@ -13,10 +13,10 @@ const tiers = [
       '2x & 4x Upscaling',
       'Basic Enhancement',
       'No watermark',
-      '5MB file limit'
+      '5MB file limit',
     ],
     cta: 'Start for Free',
-    variant: 'outline' as const
+    variant: 'outline' as const,
   },
   {
     name: 'Starter',
@@ -28,10 +28,10 @@ const tiers = [
       'All Upscaling Options',
       'Full Enhancement Suite',
       'Priority Queue',
-      '64MP file support'
+      '64MP file support',
     ],
     cta: 'Start Free Trial',
-    variant: 'secondary' as const
+    variant: 'secondary' as const,
   },
   {
     name: 'Pro',
@@ -43,12 +43,12 @@ const tiers = [
       'Batch processing (up to 50)',
       'Text Preservation Mode',
       'Credit rollover',
-      'API Access (Beta)'
+      'API Access (Beta)',
     ],
     recommended: true,
     cta: 'Get Started',
-    variant: 'primary' as const
-  }
+    variant: 'primary' as const,
+  },
 ];
 
 const Pricing: React.FC = () => {
@@ -56,14 +56,18 @@ const Pricing: React.FC = () => {
     <section id="pricing" className="py-20 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">Simple, transparent pricing</h2>
-          <p className="mt-4 text-lg text-slate-600">Professional quality enhancement at prosumer prices.</p>
+          <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+            Simple, transparent pricing
+          </h2>
+          <p className="mt-4 text-lg text-slate-600">
+            Professional quality enhancement at prosumer prices.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {tiers.map((tier) => (
-            <div 
-              key={tier.name} 
+          {tiers.map(tier => (
+            <div
+              key={tier.name}
               className={`
                 relative flex flex-col p-8 bg-white rounded-2xl shadow-sm border 
                 ${tier.recommended ? 'border-indigo-600 ring-2 ring-indigo-600 ring-opacity-50 scale-105 z-10' : 'border-slate-200'}
@@ -74,7 +78,7 @@ const Pricing: React.FC = () => {
                   Target Tier
                 </div>
               )}
-              
+
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-slate-900">{tier.name}</h3>
                 <p className="text-slate-500 text-sm mt-2">{tier.description}</p>
@@ -86,7 +90,7 @@ const Pricing: React.FC = () => {
               </div>
 
               <ul className="space-y-4 mb-8 flex-1">
-                {tier.features.map((feature) => (
+                {tier.features.map(feature => (
                   <li key={feature} className="flex items-start text-slate-600">
                     <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
                     <span className="text-sm">{feature}</span>

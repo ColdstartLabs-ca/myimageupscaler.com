@@ -32,44 +32,48 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   const activeItem = queue.find(item => item.id === activeId) || null;
   const completedCount = queue.filter(i => i.status === ProcessingStatus.COMPLETED).length;
 
-  const addFiles = useCallback((files: File[]) => {
-    const newItems: IBatchItem[] = files.map(file => ({
-      id: Math.random().toString(36).substring(2, 15),
-      file,
-      previewUrl: URL.createObjectURL(file),
-      processedUrl: null,
-      status: ProcessingStatus.IDLE,
-      progress: 0
-    }));
+  const addFiles = useCallback(
+    (files: File[]) => {
+      const newItems: IBatchItem[] = files.map(file => ({
+        id: Math.random().toString(36).substring(2, 15),
+        file,
+        previewUrl: URL.createObjectURL(file),
+        processedUrl: null,
+        status: ProcessingStatus.IDLE,
+        progress: 0,
+      }));
 
-    setQueue(prev => {
-      const updated = [...prev, ...newItems];
-      if (!activeId && updated.length > 0) {
-        setActiveId(updated[0].id);
-      }
-      return updated;
-    });
-  }, [activeId]);
+      setQueue(prev => {
+        const updated = [...prev, ...newItems];
+        if (!activeId && updated.length > 0) {
+          setActiveId(updated[0].id);
+        }
+        return updated;
+      });
+    },
+    [activeId]
+  );
 
-  const removeItem = useCallback((id: string) => {
-    const itemToRemove = queue.find(i => i.id === id);
-    if (itemToRemove) {
-      URL.revokeObjectURL(itemToRemove.previewUrl);
-    }
-    
-    setQueue(prev => {
-      const updated = prev.filter(item => item.id !== id);
-      if (activeId === id) {
-        setActiveId(updated.length > 0 ? updated[0].id : null);
+  const removeItem = useCallback(
+    (id: string) => {
+      const itemToRemove = queue.find(i => i.id === id);
+      if (itemToRemove) {
+        URL.revokeObjectURL(itemToRemove.previewUrl);
       }
-      return updated;
-    });
-  }, [queue, activeId]);
+
+      setQueue(prev => {
+        const updated = prev.filter(item => item.id !== id);
+        if (activeId === id) {
+          setActiveId(updated.length > 0 ? updated[0].id : null);
+        }
+        return updated;
+      });
+    },
+    [queue, activeId]
+  );
 
   const updateItemStatus = useCallback((id: string, updates: Partial<IBatchItem>) => {
-    setQueue(prev => prev.map(item => 
-      item.id === id ? { ...item, ...updates } : item
-    ));
+    setQueue(prev => prev.map(item => (item.id === id ? { ...item, ...updates } : item)));
   }, []);
 
   const clearQueue = useCallback(() => {
@@ -80,28 +84,32 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   }, [queue]);
 
   const processSingleItem = async (item: IBatchItem, config: IUpscaleConfig) => {
-    updateItemStatus(item.id, { status: ProcessingStatus.PROCESSING, progress: 0, error: undefined });
-    
+    updateItemStatus(item.id, {
+      status: ProcessingStatus.PROCESSING,
+      progress: 0,
+      error: undefined,
+    });
+
     try {
-      const resultUrl = await processImage(item.file, config, (p) => {
+      const resultUrl = await processImage(item.file, config, p => {
         updateItemStatus(item.id, { progress: p });
       });
-      updateItemStatus(item.id, { 
-        status: ProcessingStatus.COMPLETED, 
-        processedUrl: resultUrl, 
-        progress: 100 
+      updateItemStatus(item.id, {
+        status: ProcessingStatus.COMPLETED,
+        processedUrl: resultUrl,
+        progress: 100,
       });
     } catch (error: unknown) {
       updateItemStatus(item.id, {
         status: ProcessingStatus.ERROR,
-        error: error instanceof Error ? error.message : "Processing failed"
+        error: error instanceof Error ? error.message : 'Processing failed',
       });
     }
   };
 
   const processBatch = async (config: IUpscaleConfig) => {
     setIsProcessingBatch(true);
-    
+
     const itemsToProcess = queue.filter(
       item => item.status === ProcessingStatus.IDLE || item.status === ProcessingStatus.ERROR
     );
@@ -127,6 +135,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     removeItem,
     clearQueue,
     processBatch,
-    processSingleItem
+    processSingleItem,
   };
 };

@@ -12,9 +12,7 @@ export const downloadSingle = (url: string | null, filename: string, mode: strin
 };
 
 export const downloadBatch = async (queue: IBatchItem[], mode: string): Promise<void> => {
-  const completedItems = queue.filter(
-    item => item.status === 'COMPLETED' && item.processedUrl
-  );
+  const completedItems = queue.filter(item => item.status === 'COMPLETED' && item.processedUrl);
 
   if (completedItems.length === 0) return;
 
@@ -26,10 +24,10 @@ export const downloadBatch = async (queue: IBatchItem[], mode: string): Promise<
   }
 
   const zip = new JSZip();
-  const folder = zip.folder("pixelperfect_batch");
+  const folder = zip.folder('pixelperfect_batch');
 
   // Add files to zip
-  const promises = completedItems.map(async (item) => {
+  const promises = completedItems.map(async item => {
     if (item.processedUrl && folder) {
       // Fetch the data URL to get a blob
       const response = await fetch(item.processedUrl);
@@ -42,9 +40,9 @@ export const downloadBatch = async (queue: IBatchItem[], mode: string): Promise<
   await Promise.all(promises);
 
   // Generate and download zip
-  const content = await zip.generateAsync({ type: "blob" });
+  const content = await zip.generateAsync({ type: 'blob' });
   const url = URL.createObjectURL(content);
-  
+
   const link = document.createElement('a');
   link.href = url;
   link.download = `pixelperfect_batch_${new Date().getTime()}.zip`;

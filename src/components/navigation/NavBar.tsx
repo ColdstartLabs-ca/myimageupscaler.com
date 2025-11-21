@@ -26,7 +26,10 @@ export const NavBar = (): JSX.Element => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+        <a
+          href="/"
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
             <Zap size={20} fill="currentColor" />
           </div>
@@ -34,9 +37,18 @@ export const NavBar = (): JSX.Element => {
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#features" className="text-sm font-medium text-slate-600 hover:text-slate-900">Features</a>
-          <a href="#how-it-works" className="text-sm font-medium text-slate-600 hover:text-slate-900">How it Works</a>
-          <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-slate-900">Pricing</a>
+          <a href="#features" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+            Features
+          </a>
+          <a
+            href="#how-it-works"
+            className="text-sm font-medium text-slate-600 hover:text-slate-900"
+          >
+            How it Works
+          </a>
+          <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+            Pricing
+          </a>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -92,7 +104,10 @@ export const NavBar = (): JSX.Element => {
                   </li>
                   {isPasswordUser && (
                     <li>
-                      <button onClick={handleChangePassword} className="text-sm text-slate-600 hover:bg-slate-50">
+                      <button
+                        onClick={handleChangePassword}
+                        className="text-sm text-slate-600 hover:bg-slate-50"
+                      >
                         Change Password
                       </button>
                     </li>
