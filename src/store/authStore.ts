@@ -177,7 +177,7 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
 useAuthStore.getState().initializeAuth();
 
 // Listen for auth changes
-supabase.auth.onAuthStateChange((_event, session) => {
+supabase.auth.onAuthStateChange((event, session) => {
   if (session?.user) {
     // I had to do this because the azure provider was returning an array with the 'email' field, confusing the type inference
     const cleanedUpProvidersArray = session.user.app_metadata?.providers.filter(
@@ -186,6 +186,8 @@ supabase.auth.onAuthStateChange((_event, session) => {
 
     console.log('session', session);
     const provider = cleanedUpProvidersArray[0] as AuthProvider;
+    const wasAuthenticated = useAuthStore.getState().isAuthenticated;
+
     useAuthStore.setState({
       user: {
         email: session.user.email || '',
@@ -195,6 +197,16 @@ supabase.auth.onAuthStateChange((_event, session) => {
       isAuthenticated: true,
       isLoading: false,
     });
+
+    // Redirect to dashboard only on fresh sign in (not token refresh or if already on dashboard)
+    if (
+      event === 'SIGNED_IN' &&
+      !wasAuthenticated &&
+      typeof window !== 'undefined' &&
+      !window.location.pathname.startsWith('/dashboard')
+    ) {
+      window.location.href = '/dashboard';
+    }
   } else {
     useAuthStore.setState({
       user: null,

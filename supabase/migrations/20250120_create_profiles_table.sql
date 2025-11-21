@@ -39,8 +39,8 @@ CREATE POLICY "Service role has full access"
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id)
-  VALUES (NEW.id);
+  INSERT INTO public.profiles (id, credits_balance)
+  VALUES (NEW.id, 10);  -- Give new users 10 free credits
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

@@ -37,6 +37,11 @@ export const NavBar = (): JSX.Element => {
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
+          {isAuthenticated && (
+            <a href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+              Dashboard
+            </a>
+          )}
           <a href="#features" className="text-sm font-medium text-slate-600 hover:text-slate-900">
             Features
           </a>
@@ -67,12 +72,15 @@ export const NavBar = (): JSX.Element => {
             </>
           ) : (
             <>
-              <div className="hidden md:flex items-center mr-4">
+              <div className="hidden md:flex items-center">
                 <CreditsDisplay />
               </div>
               <div className="dropdown dropdown-end">
-                <label tabIndex={0} className="btn btn-ghost gap-2">
-                  <span className="text-sm text-slate-700">{user?.email}</span>
+                <label
+                  tabIndex={0}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <span className="max-w-[180px] truncate">{user?.email}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -96,6 +104,11 @@ export const NavBar = (): JSX.Element => {
                     <div className="pointer-events-none">
                       <CreditsDisplay />
                     </div>
+                  </li>
+                  <li>
+                    <a href="/dashboard" className="text-sm text-slate-600 hover:bg-slate-50">
+                      Dashboard
+                    </a>
                   </li>
                   <li>
                     <a href="/pricing" className="text-sm text-slate-600 hover:bg-slate-50">

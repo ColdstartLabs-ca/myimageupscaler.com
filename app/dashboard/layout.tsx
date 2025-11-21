@@ -1,0 +1,37 @@
+'use client';
+
+import { DashboardLayout } from '@/components/dashboard';
+import { useAuthStore } from '@/store/authStore';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+export default function DashboardRootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { isAuthenticated, isLoading } = useAuthStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  // Show nothing while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+      </div>
+    );
+  }
+
+  // Redirect handled by useEffect, but don't render children while not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return <DashboardLayout>{children}</DashboardLayout>;
+}
