@@ -7,7 +7,7 @@ import { AssetTable } from '../../../src/components/tables/AssetTable';
 import { getAssetsByCategory, getCategories, getCategoryById } from '../../../src/lib/data';
 
 type Props = {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 };
 
 export async function generateStaticParams() {
@@ -19,7 +19,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const category = getCategoryById(params.category);
+  const { category: categoryId } = await params;
+  const category = getCategoryById(categoryId);
 
   if (!category) {
     return {
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const pageUrl = `${baseUrl}/portfolio/${params.category}`;
+  const pageUrl = `${baseUrl}/portfolio/${categoryId}`;
 
   return {
     title: `${category.name} Portfolio`,
@@ -60,14 +61,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function CategoryPage({ params }: Props) {
-  const category = getCategoryById(params.category);
+export default async function CategoryPage({ params }: Props) {
+  const { category: categoryId } = await params;
+  const category = getCategoryById(categoryId);
 
   if (!category) {
     notFound();
   }
 
-  const assets = getAssetsByCategory(params.category);
+  const assets = getAssetsByCategory(categoryId);
   const totalValue = assets.reduce((sum, asset) => sum + asset.valueCAD, 0);
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -76,7 +78,7 @@ export default function CategoryPage({ params }: Props) {
     '@type': 'CollectionPage',
     name: `${category.name} Portfolio`,
     description: `Detailed view of ${category.name} assets and allocation in your portfolio`,
-    url: `${baseUrl}/portfolio/${params.category}`,
+    url: `${baseUrl}/portfolio/${categoryId}`,
     breadcrumb: {
       '@type': 'BreadcrumbList',
       itemListElement: [
@@ -96,7 +98,7 @@ export default function CategoryPage({ params }: Props) {
           '@type': 'ListItem',
           position: 3,
           name: category.name,
-          item: `${baseUrl}/portfolio/${params.category}`,
+          item: `${baseUrl}/portfolio/${categoryId}`,
         },
       ],
     },
