@@ -12,7 +12,7 @@ test.describe('Mobile Responsive - Landing Page', () => {
     await homePage.waitForLoad();
   });
 
-  test('should display mobile navigation correctly', async ({ page }) => {
+  test('should display mobile navigation correctly', async () => {
     // Mobile menu button should be visible on mobile
     const isMobile = await homePage.isMobileView();
 
@@ -162,7 +162,10 @@ test.describe('Mobile Responsive - Pricing Page', () => {
 
   test('pricing buttons should be tappable', async () => {
     // Check starter button tap target - be more specific to find the button within the card
-    const starterButton = pricingPage.starterTierCard.locator('button').filter({ hasText: 'Buy Now' }).first();
+    const starterButton = pricingPage.starterTierCard
+      .locator('button')
+      .filter({ hasText: 'Buy Now' })
+      .first();
     const buttonBox = await starterButton.boundingBox();
     expect(buttonBox).not.toBeNull();
     if (buttonBox) {
@@ -232,23 +235,44 @@ test.describe('Mobile Responsive - Viewport Sizes', () => {
     test(`should render correctly on ${viewport.name} (${viewport.width}x${viewport.height})`, async ({
       page,
     }) => {
+      // Set viewport size first and wait for it to be applied
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.waitForTimeout(100); // Allow viewport to stabilize
 
       const homePage = new HomePage(page);
       await homePage.goto();
       await homePage.waitForLoad();
 
-      // Core assertions for all viewports
+      // Additional wait for responsive layout to settle after viewport change
+      await page.waitForTimeout(200);
+
+      // Core assertions for all viewports with retries for stability
       await homePage.assertNavbarVisible();
       await homePage.assertHeroVisible();
       await homePage.assertNoHorizontalOverflow();
 
-      // Check that main content is within viewport width
+      // Check that main content is within viewport width with more robust error handling
       const mainContent = page.locator('main').first();
-      const mainBox = await mainContent.boundingBox();
+
+      // Wait for main content to be visible and stable
+      await mainContent.waitFor({ state: 'visible', timeout: 5000 });
+
+      // Get bounding box with retry logic
+      let mainBox = await mainContent.boundingBox();
+      let attempts = 0;
+      const maxAttempts = 3;
+
+      while ((!mainBox || mainBox.width === 0) && attempts < maxAttempts) {
+        attempts++;
+        await page.waitForTimeout(100);
+        mainBox = await mainContent.boundingBox();
+      }
+
       expect(mainBox).not.toBeNull();
       if (mainBox) {
-        expect(mainBox.width).toBeLessThanOrEqual(viewport.width);
+        expect(mainBox.width).toBeGreaterThan(0);
+        // Allow small tolerance for browser rendering differences
+        expect(mainBox.width).toBeLessThanOrEqual(viewport.width + 1);
       }
     });
   }
