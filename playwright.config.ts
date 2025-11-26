@@ -78,10 +78,10 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'next dev',
+    command: 'next dev --port 3000',
     url: 'http://localhost:3000/api/health',
-    reuseExistingServer: !isCI,
-    timeout: 120000,
+    reuseExistingServer: true,
+    timeout: 60000,
     stdout: 'pipe',
     stderr: 'pipe',
   },

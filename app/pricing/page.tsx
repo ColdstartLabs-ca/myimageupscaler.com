@@ -1,12 +1,12 @@
 'use client';
 
-import { PricingCard } from '@/components/stripe';
+import { PricingCard } from '@client/components/stripe';
 import {
   STRIPE_PRICES,
   CREDIT_PACKS,
   SUBSCRIPTION_PLANS,
   isStripePricesConfigured,
-} from '@/config/stripe';
+} from '@shared/config/stripe';
 
 export default function PricingPage() {
   const pricesConfigured = isStripePricesConfigured();

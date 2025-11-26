@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createLogger } from '@/lib/monitoring/logger';
-import { trackServerEvent } from '@/lib/analytics';
-import { serverEnv } from '@/config/env';
-import { supabaseAdmin } from '@/lib/supabase/supabaseAdmin';
+import { createLogger } from '@server/monitoring/logger';
+import { trackServerEvent } from '@server/analytics';
+import { serverEnv } from '@shared/config/env';
+import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
 export const runtime = 'edge';
 

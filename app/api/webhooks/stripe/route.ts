@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe, STRIPE_WEBHOOK_SECRET } from '@/lib/stripe/config';
-import { supabaseAdmin } from '@/lib/supabase/supabaseAdmin';
-import { serverEnv } from '@/config/env';
+import { stripe, STRIPE_WEBHOOK_SECRET } from '@server/stripe';
+import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { serverEnv } from '@shared/config/env';
 import Stripe from 'stripe';
 
 export const runtime = 'edge'; // Cloudflare Worker compatible

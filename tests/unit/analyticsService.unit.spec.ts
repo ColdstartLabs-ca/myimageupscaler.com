@@ -8,7 +8,7 @@ describe('Analytics Service', () => {
   describe('trackServerEvent', () => {
     test('should return false when API key is empty', async () => {
       // Import dynamically to avoid module caching issues
-      const { trackServerEvent } = await import('../../src/lib/analytics/analyticsService');
+      const { trackServerEvent } = await import('../../server/analytics/analyticsService');
 
       const result = await trackServerEvent(
         'login',
@@ -20,7 +20,7 @@ describe('Analytics Service', () => {
     });
 
     test('should return false when API key is missing', async () => {
-      const { trackServerEvent } = await import('../../src/lib/analytics/analyticsService');
+      const { trackServerEvent } = await import('../../server/analytics/analyticsService');
 
       const result = await trackServerEvent(
         'signup_completed',
@@ -34,7 +34,7 @@ describe('Analytics Service', () => {
 
   describe('hashEmail utility', () => {
     test('should consistently hash the same email', async () => {
-      const { analytics } = await import('../../src/lib/analytics/analyticsService');
+      const { analytics } = await import('../../server/analytics/analyticsService');
 
       const hash1 = await analytics.hashEmail('test@example.com');
       const hash2 = await analytics.hashEmail('test@example.com');
@@ -43,7 +43,7 @@ describe('Analytics Service', () => {
     });
 
     test('should produce different hashes for different emails', async () => {
-      const { analytics } = await import('../../src/lib/analytics/analyticsService');
+      const { analytics } = await import('../../server/analytics/analyticsService');
 
       const hash1 = await analytics.hashEmail('user1@example.com');
       const hash2 = await analytics.hashEmail('user2@example.com');
@@ -52,7 +52,7 @@ describe('Analytics Service', () => {
     });
 
     test('should produce non-empty hash', async () => {
-      const { analytics } = await import('../../src/lib/analytics/analyticsService');
+      const { analytics } = await import('../../server/analytics/analyticsService');
 
       const hash = await analytics.hashEmail('test@example.com');
 
@@ -64,7 +64,7 @@ describe('Analytics Service', () => {
 
 describe('Analytics Types', () => {
   test('should export all required types', async () => {
-    const types = await import('../../src/lib/analytics/types');
+    const types = await import('../../server/analytics/types');
 
     // Verify types exist (TypeScript compile-time check)
     expect(types).toBeDefined();

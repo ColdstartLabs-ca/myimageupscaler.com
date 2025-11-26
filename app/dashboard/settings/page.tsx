@@ -1,8 +1,8 @@
 'use client';
 
 import { Bell, Lock, User } from 'lucide-react';
-import { useAuthStore } from '@/store/authStore';
-import { useModalStore } from '@/store/modalStore';
+import { useAuthStore } from '@client/store/authStore';
+import { useModalStore } from '@client/store/modalStore';
 
 export default function SettingsPage() {
   const { user } = useAuthStore();

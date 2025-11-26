@@ -16,7 +16,7 @@ export default [
   },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
-    ignores: ['src/app/**/*'], // Next.js App Router requires default exports
+    ignores: ['app/**/*'], // Next.js App Router requires default exports
     plugins: {
       react: reactPlugin,
       'react-hooks': reactHooks,
@@ -67,13 +67,13 @@ export default [
         {
           selector: 'MemberExpression[object.object.name="process"][object.property.name="env"]',
           message:
-            'Direct process.env access is forbidden. Import from "@/config/env" instead: `import { clientEnv, serverEnv } from "@/config/env"`',
+            'Direct process.env access is forbidden. Import from "@shared/config/env" instead: `import { clientEnv, serverEnv } from "@shared/config/env"`',
         },
       ],
     },
   },
   {
-    files: ['src/app/**/*'],
+    files: ['app/**/*'],
     plugins: {
       react: reactPlugin,
       'react-hooks': reactHooks,
@@ -115,7 +115,7 @@ export default [
         {
           selector: 'MemberExpression[object.object.name="process"][object.property.name="env"]',
           message:
-            'Direct process.env access is forbidden. Import from "@/config/env" instead: `import { clientEnv, serverEnv } from "@/config/env"`',
+            'Direct process.env access is forbidden. Import from "@shared/config/env" instead: `import { clientEnv, serverEnv } from "@shared/config/env"`',
         },
       ],
     },
@@ -124,7 +124,7 @@ export default [
   // Allow process.env in specific files where it's necessary
   {
     files: [
-      'src/config/env.ts', // Centralized env config
+      'shared/config/env.ts', // Centralized env config
       'next.config.js', // Next.js config (runs at build time)
       'playwright.config.ts', // Test config
     ],

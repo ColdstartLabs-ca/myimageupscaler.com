@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Inter } from 'next/font/google';
-import { ClientProviders } from '../src/components/ClientProviders';
-import { GoogleAnalytics } from '../src/components/analytics/GoogleAnalytics';
-import { Layout } from '../src/components/layout/Layout';
-import { JsonLd } from '../src/components/seo/JsonLd';
-import '../src/index.css';
-import { clientEnv } from '@/config/env';
+import { ClientProviders } from '@client/components/ClientProviders';
+import { GoogleAnalytics } from '@client/components/analytics/GoogleAnalytics';
+import { Layout } from '@client/components/layout/Layout';
+import { JsonLd } from '@client/components/seo/JsonLd';
+import '@client/styles/index.css';
+import { clientEnv } from '@shared/config/env';
 
 const inter = Inter({
   subsets: ['latin'],

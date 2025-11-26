@@ -1,6 +1,6 @@
 'use client';
 
-import Workspace from '@/components/pixelperfect/Workspace/Workspace';
+import Workspace from '@client/components/pixelperfect/Workspace/Workspace';
 
 export default function DashboardPage() {
   return (

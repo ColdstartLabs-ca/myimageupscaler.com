@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { rateLimit, publicRateLimit } from '@/lib/rateLimit';
-import { clientEnv, serverEnv } from '@/config/env';
-import { updateSession } from '@/utils/supabase/middleware';
+import { rateLimit, publicRateLimit } from '@server/rateLimit';
+import { clientEnv, serverEnv } from '@shared/config/env';
+import { updateSession } from '@shared/utils/supabase/middleware';
 
 /**
  * Public API routes that don't require authentication

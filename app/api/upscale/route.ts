@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { upscaleSchema } from '@/validation/upscale.schema';
+import { upscaleSchema } from '@shared/validation/upscale.schema';
 import {
   ImageGenerationService,
   InsufficientCreditsError,
   AIGenerationError,
-} from '@/lib/services/image-generation.service';
+} from '@server/services/image-generation.service';
 import { ZodError } from 'zod';
-import { createLogger } from '@/lib/monitoring/logger';
-import { trackServerEvent } from '@/lib/analytics';
-import { serverEnv } from '@/config/env';
+import { createLogger } from '@server/monitoring/logger';
+import { trackServerEvent } from '@server/analytics';
+import { serverEnv } from '@shared/config/env';
 
 export const runtime = 'edge';
 

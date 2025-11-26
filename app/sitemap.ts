@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
-import { getAllPosts } from '../src/lib/blog';
-import { clientEnv } from '@/config/env';
+import { getAllPosts } from '@server/blog';
+import { clientEnv } from '@shared/config/env';
 
 // eslint-disable-next-line import/no-default-export
 export default function sitemap(): MetadataRoute.Sitemap {

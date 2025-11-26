@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { serverEnv } from '@/config/env';
+import { serverEnv } from '@shared/config/env';
 
 export const runtime = 'edge'; // Force edge runtime
 

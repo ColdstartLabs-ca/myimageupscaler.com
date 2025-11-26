@@ -2,19 +2,23 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import { getPostBySlug, getAllSlugs, getAllPosts } from '@/lib/blog';
-import { mdxComponents } from '@/components/blog/MDXComponents';
+import { getPostBySlug, getAllSlugs, getAllPosts } from '@server/blog';
+import { mdxComponents } from '@client/components/blog/MDXComponents';
 import { Calendar, Clock, ArrowLeft, Tag, User } from 'lucide-react';
-import { clientEnv } from '@/config/env';
+import { clientEnv } from '@shared/config/env';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const slugs = getAllSlugs();
-  return slugs.map(slug => ({ slug }));
-}
+// Temporarily disabled static generation due to React version conflict
+// TODO: Re-enable after fixing MDX React version issue
+// export async function generateStaticParams() {
+//   const slugs = getAllSlugs();
+//   return slugs.map(slug => ({ slug }));
+// }
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;

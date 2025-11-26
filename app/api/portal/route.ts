@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe/config';
-import { supabaseAdmin } from '@/lib/supabase/supabaseAdmin';
-import { clientEnv } from '@/config/env';
+import { stripe } from '@server/stripe';
+import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { clientEnv } from '@shared/config/env';
 
 export const runtime = 'edge';
 

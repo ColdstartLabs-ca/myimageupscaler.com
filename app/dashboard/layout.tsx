@@ -1,7 +1,9 @@
 'use client';
 
-import { DashboardLayout } from '@/components/dashboard';
-import { useAuthStore } from '@/store/authStore';
+export const dynamic = 'force-dynamic';
+
+import { DashboardLayout } from '@client/components/dashboard';
+import { useAuthStore } from '@client/store/authStore';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 

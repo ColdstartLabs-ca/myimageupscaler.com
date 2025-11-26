@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { HomePageClient } from '@/components/pages/HomePageClient';
+import { HomePageClient } from '@client/components/pages/HomePageClient';
 
 export const metadata: Metadata = {
   title: 'PixelPerfect AI | Image Upscaling & Enhancement',

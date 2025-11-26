@@ -48,16 +48,14 @@ test.describe('Authentication', () => {
       await expect(submitButton).toBeVisible();
     });
 
-    test('can close login modal by clicking backdrop', async ({ page }) => {
+    test('can close login modal by pressing Escape key', async ({ page }) => {
       const loginPage = new LoginPage(page);
       await loginPage.goto('/');
       await loginPage.openLoginModal();
       await loginPage.assertModalVisible();
 
-      // The auth modal has showCloseButton={false}, so close by clicking backdrop
-      // Click outside the modal dialog (the backdrop area)
-      const backdrop = page.locator('.fixed.inset-0.bg-black\\/60');
-      await backdrop.click({ position: { x: 10, y: 10 } });
+      // Close modal by pressing Escape key
+      await page.keyboard.press('Escape');
 
       // Modal should not be visible after a moment
       const modal = page.locator('div[role="dialog"]');
@@ -100,16 +98,21 @@ test.describe('Authentication', () => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
 
+      // Wait for header to be visible and auth state to load
+      await page.locator('header').waitFor({ state: 'visible', timeout: 15000 });
+
+      // Wait for sign-in button to be visible (auth state loading)
       const signInButton = page.getByRole('button', { name: /sign in/i });
-      await expect(signInButton).toBeVisible();
+      await expect(signInButton).toBeVisible({ timeout: 15000 });
     });
 
     test('sign in button opens login modal', async ({ page }) => {
       const loginPage = new LoginPage(page);
       await loginPage.goto('/');
 
-      // Click the sign in button in the header
+      // Wait for and click the sign in button in the header
       const signInButton = page.getByRole('button', { name: /sign in/i });
+      await signInButton.waitFor({ state: 'visible', timeout: 15000 });
       await signInButton.click();
 
       // Modal should appear

@@ -5,11 +5,11 @@ import { BasePage } from './BasePage';
 export class LoginPage extends BasePage {
   async openLoginModal(): Promise<void> {
     // Wait for the header/navbar to be loaded (using header element)
-    await this.page.locator('header').waitFor({ state: 'visible' });
+    await this.page.locator('header').waitFor({ state: 'visible', timeout: 15000 });
 
-    // Click login button
+    // Wait for auth state to load and login button to be visible
     const loginButton = this.page.getByRole('button', { name: /sign in/i });
-    await loginButton.waitFor({ state: 'visible' });
+    await loginButton.waitFor({ state: 'visible', timeout: 15000 });
     await loginButton.click();
 
     // Wait for modal to appear
