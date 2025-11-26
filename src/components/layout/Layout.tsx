@@ -4,6 +4,7 @@ import React, { JSX } from 'react';
 import { usePathname } from 'next/navigation';
 import { LoadingBackdrop } from '../common/LoadingBackdrop';
 import { NavBar } from '../navigation/NavBar';
+import { Footer } from './Footer';
 
 interface ILayoutProps {
   children: React.ReactNode;
@@ -24,12 +25,13 @@ export const Layout = ({ children }: ILayoutProps): JSX.Element => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       <LoadingBackdrop />
-      <div className="max-w-[1600px] mx-auto">
+      <div className="max-w-[1600px] mx-auto w-full flex-1 flex flex-col">
         <NavBar />
-        <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+        <main className="flex-1">{children}</main>
       </div>
+      <Footer />
     </div>
   );
 };
