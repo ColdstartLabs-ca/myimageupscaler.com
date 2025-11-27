@@ -274,8 +274,8 @@ mindmap
       Validation
     Billing
       Free Tier 10 credits
-      Starter $9/100
-      Pro $29/500
+      Credit Packs $9.99-$99.99
+      Subscriptions $19-$149/mo
       Stripe Portal
     Communication
       Resend Integration
@@ -348,14 +348,15 @@ flowchart TD
 
 | Test Case                                  | Expected Result              | Validated |
 | ------------------------------------------ | ---------------------------- | --------- |
-| Click upgrade to Starter ($9)              | Stripe checkout opens        | [ ]       |
+| Buy Starter Pack ($9.99)                   | Stripe checkout opens        | [ ]       |
 | Complete payment (test card 4242...)       | Success page shown           | [ ]       |
 | Webhook `checkout.session.completed` fires | Logged in system             | [ ]       |
-| Credits added after payment                | Balance shows 100 credits    | [ ]       |
+| Credits added after credit pack purchase   | Balance shows +100 credits   | [ ]       |
+| Subscribe to Hobby plan ($19/mo)           | Subscription created         | [ ]       |
 | Subscription status updated                | Profile shows "active"       | [ ]       |
 | Access customer portal                     | Stripe portal opens          | [ ]       |
 | Cancel subscription in portal              | Status changes to "canceled" | [ ]       |
-| Upgrade from Starter to Pro                | Credits updated to 500       | [ ]       |
+| Upgrade from Hobby to Professional         | Monthly credits updated      | [ ]       |
 | Payment failure (test card 4000...)        | Error handled gracefully     | [ ]       |
 | Webhook signature validation               | Invalid signatures rejected  | [ ]       |
 | Invoice payment succeeded                  | Credits renewed monthly      | [ ]       |
@@ -651,7 +652,7 @@ flowchart LR
 
 ### Milestone 2.3: Business Features (Month 5-6)
 
-- [ ] **Business tier ($99/2,500 credits)** (P2)
+- [ ] **Enterprise tier ($149/5,000 credits/mo)** (P2)
 - [ ] **API access for Business tier** (P2)
 - [ ] **API documentation** (P2)
 - [ ] **Advanced Rate limiting by tier (Upstash)** (P2)
@@ -891,3 +892,4 @@ All development work is complete. The following require production dashboard acc
 | 2025-11-22 | 2.2     | Performance & SEO: Added canonical URLs, Product structured data for pricing, accessibility improvements             |
 | 2025-11-26 | 2.3     | Legal & Compliance: Added Privacy Policy, Terms of Service, Help/FAQ pages, Footer with navigation links             |
 | 2025-11-26 | 2.4     | Launch Documentation: Comprehensive guides for deployment, email config, and mobile testing. All dev work complete.  |
+| 2025-11-26 | 2.5     | Billing Documentation Sync: Updated pricing tiers to match implementation (Credit Packs + Subscriptions model)       |

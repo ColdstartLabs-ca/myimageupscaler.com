@@ -36,17 +36,40 @@ graph TD
 
 ## Pricing Tiers
 
-| Tier         | Price  | Credits/Month | Features                       |
-| ------------ | ------ | ------------- | ------------------------------ |
-| **Free**     | $0     | 10 (one-time) | Basic processing, 5MB limit    |
-| **Starter**  | $9/mo  | 100           | 25MB limit, batch processing   |
-| **Pro**      | $29/mo | 500           | All features, priority support |
-| **Business** | $99/mo | 2,500         | API access, dedicated support  |
+### Free Tier
 
-### Credit Rollover
+| Feature        | Value            |
+| -------------- | ---------------- |
+| **Price**      | $0               |
+| **Credits**    | 10 (one-time)    |
+| **File Limit** | 5MB              |
+| **Features**   | Basic processing |
 
-- Unused credits roll over for up to 6x monthly allowance
-- Example: Pro user can accumulate up to 3,000 credits
+### Credit Packs (One-Time Purchase)
+
+| Pack           | Price  | Credits | Value        |
+| -------------- | ------ | ------- | ------------ |
+| **Starter**    | $9.99  | 100     | $0.10/credit |
+| **Pro**        | $29.99 | 500     | $0.06/credit |
+| **Enterprise** | $99.99 | 2,000   | $0.05/credit |
+
+- Valid for 12 months from purchase
+- No subscription required
+- Best for occasional users
+
+### Monthly Subscriptions
+
+| Plan             | Price   | Credits/Month | Features                        |
+| ---------------- | ------- | ------------- | ------------------------------- |
+| **Hobby**        | $19/mo  | 200           | All features, email support     |
+| **Professional** | $49/mo  | 1,000         | Priority support, early access  |
+| **Business**     | $149/mo | 5,000         | 24/7 support, dedicated manager |
+
+### Credit Rollover (Subscriptions Only)
+
+- Unused credits roll over month-to-month
+- Maximum rollover: 6x monthly allowance
+- Example: Professional user can accumulate up to 6,000 credits
 - Credits expire when subscription is canceled
 
 ## Checkout Flow
