@@ -224,24 +224,30 @@ test.describe('Upscaler E2E Tests', () => {
       const imageComparisonVisible = await page.locator('.bg-white.rounded-xl.shadow-lg').isVisible().catch(() => false);
       console.log('ImageComparison visible:', imageComparisonVisible);
 
-      // Debug: Check for any images with src containing data or blob URLs
-      const allImages = await page.locator('img').all();
-      console.log('Total images found:', allImages.length);
-      for (let i = 0; i < allImages.length; i++) {
-        const src = await allImages[i].getAttribute('src').catch(() => '');
-        console.log(`Image ${i} src:`, src?.substring(0, 50) + '...');
-      }
-
-      // Debug: Check for any buttons containing "Download"
-      const allButtons = await page.locator('button').all();
-      console.log('Total buttons found:', allButtons.length);
-      for (let i = 0; i < allButtons.length; i++) {
-        const text = await allButtons[i].textContent().catch(() => '');
-        if (text?.toLowerCase().includes('download')) {
-          console.log(`Button ${i} text:`, text);
-          const isVisible = await allButtons[i].isVisible().catch(() => false);
-          console.log(`Button ${i} visible:`, isVisible);
+      // Debug: Only run detailed checks if we expect to find results
+      // This prevents hanging when the page is about to be closed due to test failure
+      try {
+        const allImages = await page.locator('img').all();
+        console.log('Total images found:', allImages.length);
+        for (let i = 0; i < allImages.length; i++) {
+          const src = await allImages[i].getAttribute('src').catch(() => '');
+          if (src?.includes('data:image')) {
+            console.log(`Found result image ${i}:`, src?.substring(0, 50) + '...');
+          }
         }
+
+        const allButtons = await page.locator('button').all();
+        console.log('Total buttons found:', allButtons.length);
+        for (let i = 0; i < allButtons.length; i++) {
+          const text = await allButtons[i].textContent().catch(() => '');
+          if (text?.toLowerCase().includes('download')) {
+            console.log(`Download button ${i}:`, text);
+            const isVisible = await allButtons[i].isVisible().catch(() => false);
+            console.log(`Download button ${i} visible:`, isVisible);
+          }
+        }
+      } catch (error) {
+        console.log('Debug enumeration failed (page may be closing):', error instanceof Error ? error.message : 'Unknown');
       }
 
       // Result should be visible - check specific elements individually
