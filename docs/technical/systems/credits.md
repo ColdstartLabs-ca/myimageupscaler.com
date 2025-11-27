@@ -33,17 +33,13 @@ graph TD
 
 ## Credit Costs
 
-| Action            | Mode     | Scale | Cost           |
-| ----------------- | -------- | ----- | -------------- |
-| Image Enhancement | standard | 2x    | 1 credit       |
-| Image Enhancement | standard | 4x    | 1 credit       |
-| Image Enhancement | standard | 8x    | 2 credits      |
-| Image Enhancement | enhanced | 2x    | 2 credits      |
-| Image Enhancement | enhanced | 4x    | 2 credits      |
-| Image Enhancement | enhanced | 8x    | 3 credits      |
-| Portrait Mode     | any      | any   | 1 credit       |
-| Product Mode      | any      | any   | 1 credit       |
-| Batch Processing  | -        | -     | 1 credit/image |
+| Action            | Mode    | Cost           |
+| ----------------- | ------- | -------------- |
+| Image Upscaling   | upscale | 1 credit       |
+| Image Enhancement | enhance | 2 credits      |
+| Upscale + Enhance | both    | 2 credits      |
+| Custom Processing | custom  | 2 credits      |
+| Batch Processing  | any     | per-image cost |
 
 ## Credit Allocation by Tier
 

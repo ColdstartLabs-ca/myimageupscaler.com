@@ -74,17 +74,14 @@ graph TD
     PRO -.->|Premium Tier| ENH
 ```
 
-### Fallback: OpenRouter
+### Error Handling
 
 ```mermaid
 flowchart TD
     REQ[Processing Request] --> GEMINI{Gemini API}
 
     GEMINI -->|Success| RESULT[Return Result]
-    GEMINI -->|Error/Timeout| FALLBACK{OpenRouter}
-
-    FALLBACK -->|Success| RESULT
-    FALLBACK -->|Error| REFUND[Refund Credit]
+    GEMINI -->|Error/Timeout| REFUND[Refund Credit]
 
     REFUND --> ERROR[Return Error]
 ```
@@ -95,19 +92,23 @@ flowchart TD
 
 ```typescript
 interface UpscaleRequest {
-  image: File; // Image file (JPG, PNG, WEBP, HEIC)
-  mode?: ProcessingMode; // Processing mode
-  scale?: 2 | 4 | 8; // Upscale factor
-  preserveText?: boolean; // Text/logo preservation
-  prompt?: string; // Custom instructions
+  imageData: string; // Base64 encoded image data
+  mimeType?: string; // Image MIME type (defaults to 'image/jpeg')
+  config: {
+    mode: ProcessingMode; // Processing mode
+    scale: 2 | 4; // Upscale factor
+    denoise?: boolean; // Apply denoising
+    enhanceFace?: boolean; // Enhance facial features
+    preserveText?: boolean; // Text/logo preservation
+    customPrompt?: string; // Custom instructions (for custom mode)
+  };
 }
 
 type ProcessingMode =
-  | 'standard' // General enhancement
-  | 'enhanced' // Higher quality (more credits)
-  | 'gentle' // Minimal changes
-  | 'portrait' // Face optimization
-  | 'product'; // E-commerce focus
+  | 'upscale' // Basic upscaling (1 credit)
+  | 'enhance' // Quality enhancement (2 credits)
+  | 'both' // Upscale + enhance combined (2 credits)
+  | 'custom'; // Custom prompt (2 credits)
 ```
 
 ### Response
@@ -151,13 +152,12 @@ const buildPrompt = (options: ProcessingOptions): string => {
 
 ### Mode-Specific Prompts
 
-| Mode         | Prompt Focus                                    |
-| ------------ | ----------------------------------------------- |
-| **standard** | General enhancement, balanced                   |
-| **enhanced** | Maximum quality, detail preservation            |
-| **gentle**   | Minimal changes, noise reduction only           |
-| **portrait** | Face detail, skin smoothing, eye clarity        |
-| **product**  | Sharp edges, accurate colors, text preservation |
+| Mode        | Prompt Focus                                        |
+| ----------- | --------------------------------------------------- |
+| **upscale** | Resolution increase, edge sharpening                |
+| **enhance** | Quality refinement, artifact removal, color balance |
+| **both**    | Combined upscaling and enhancement                  |
+| **custom**  | User-defined prompt for specialized processing      |
 
 ## Validation
 
@@ -210,16 +210,12 @@ flowchart TD
 
 ### Credit Costs
 
-| Mode     | Scale | Credits |
-| -------- | ----- | ------- |
-| standard | 2x    | 1       |
-| standard | 4x    | 1       |
-| standard | 8x    | 2       |
-| enhanced | 2x    | 2       |
-| enhanced | 4x    | 2       |
-| enhanced | 8x    | 3       |
-| portrait | any   | 1       |
-| product  | any   | 1       |
+| Mode    | Credits |
+| ------- | ------- |
+| upscale | 1       |
+| enhance | 2       |
+| both    | 2       |
+| custom  | 2       |
 
 ## Error Handling
 
