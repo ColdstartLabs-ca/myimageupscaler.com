@@ -198,45 +198,65 @@ analytics.track('upgrade_completed', {
 
 ```typescript
 // Stripe webhook events
-await trackServerEvent('payment_completed', {
-  amount: 2900, // cents
-  currency: 'usd',
-  subscriptionTier: 'pro',
-  paymentMethod: 'card',
-}, { apiKey: AMPLITUDE_API_KEY, userId: 'user_123' });
+await trackServerEvent(
+  'payment_completed',
+  {
+    amount: 2900, // cents
+    currency: 'usd',
+    subscriptionTier: 'pro',
+    paymentMethod: 'card',
+  },
+  { apiKey: AMPLITUDE_API_KEY, userId: 'user_123' }
+);
 
-await trackServerEvent('subscription_created', {
-  plan: 'pro_monthly',
-  amount: 2900,
-  trialPeriodDays: 0,
-  customerId: 'cus_123',
-}, { apiKey: AMPLITUDE_API_KEY, userId: 'user_123' });
+await trackServerEvent(
+  'subscription_created',
+  {
+    plan: 'pro_monthly',
+    amount: 2900,
+    trialPeriodDays: 0,
+    customerId: 'cus_123',
+  },
+  { apiKey: AMPLITUDE_API_KEY, userId: 'user_123' }
+);
 
-await trackServerEvent('subscription_cancelled', {
-  plan: 'pro_monthly',
-  reason: 'customer_request',
-  canceledAt: Date.now(),
-  refundAmount: 0,
-}, { apiKey: AMPLITUDE_API_KEY, userId: 'user_123' });
+await trackServerEvent(
+  'subscription_cancelled',
+  {
+    plan: 'pro_monthly',
+    reason: 'customer_request',
+    canceledAt: Date.now(),
+    refundAmount: 0,
+  },
+  { apiKey: AMPLITUDE_API_KEY, userId: 'user_123' }
+);
 ```
 
 #### System Events
 
 ```typescript
 // System health and performance
-await trackServerEvent('ai_provider_switched', {
-  fromProvider: 'gemini',
-  toProvider: 'openrouter',
-  reason: 'timeout',
-  model: 'gemini-2.5-flash-image',
-}, { apiKey: AMPLITUDE_API_KEY });
+await trackServerEvent(
+  'ai_provider_switched',
+  {
+    fromProvider: 'gemini',
+    toProvider: 'openrouter',
+    reason: 'timeout',
+    model: 'gemini-2.5-flash-image',
+  },
+  { apiKey: AMPLITUDE_API_KEY }
+);
 
-await trackServerEvent('rate_limit_exceeded', {
-  endpoint: '/api/upscale',
-  userId: 'user_123',
-  limit: 50,
-  window: 10000, // 10 seconds
-}, { apiKey: AMPLITUDE_API_KEY, userId: 'user_123' });
+await trackServerEvent(
+  'rate_limit_exceeded',
+  {
+    endpoint: '/api/upscale',
+    userId: 'user_123',
+    limit: 50,
+    window: 10000, // 10 seconds
+  },
+  { apiKey: AMPLITUDE_API_KEY, userId: 'user_123' }
+);
 ```
 
 ## User Identification
@@ -372,7 +392,7 @@ graph LR
     end
 
     subgraph "Analytics Layer"
-        HOOKS[useAnalytics]
+        ANALYTICS[Analytics Service]
         PROVIDER[AnalyticsProvider]
         EVENTS[Event Factory]
     end
@@ -382,12 +402,12 @@ graph LR
         HTTP_API[HTTP API]
     end
 
-    UPLOAD --> HOOKS
-    PROCESSING --> HOOKS
-    RESULTS --> HOOKS
-    BILLING --> HOOKS
+    UPLOAD --> ANALYTICS
+    PROCESSING --> ANALYTICS
+    RESULTS --> ANALYTICS
+    BILLING --> ANALYTICS
 
-    HOOKS --> PROVIDER
+    ANALYTICS --> PROVIDER
     PROVIDER --> EVENTS
     EVENTS --> BROWSER
     EVENTS --> HTTP_API
@@ -396,51 +416,37 @@ graph LR
 ### Custom Hook Implementation
 
 ```typescript
-// useAnalytics hook
-export function useAnalytics() {
-  return {
-    trackUpgrade: (fromTier: string, toTier: string, entryPoint: string) => {
-      analytics.track('upgrade_started', {
-        fromTier,
-        toTier,
-        entryPoint,
-        timestamp: Date.now(),
-      });
-    },
+// client/analytics/index.ts
+import { analytics } from '@client/analytics';
 
-    trackProcessingComplete: (metadata: ProcessingMetadata) => {
-      analytics.track('image_processing_completed', {
-        duration: metadata.duration,
-        creditsUsed: metadata.creditsUsed,
-        mode: metadata.mode,
-        scale: metadata.scale,
-        success: metadata.success,
-      });
-    },
+// Usage in components
+analytics.track('upgrade_started', {
+  fromTier,
+  toTier,
+  entryPoint,
+  timestamp: Date.now(),
+});
 
-    trackError: (error: Error, context?: object) => {
-      analytics.track('error_occurred', {
-        errorType: error.name,
-        errorMessage: error.message,
-        context,
-        timestamp: Date.now(),
-      });
-    },
-  };
-}
+analytics.track('image_processing_completed', {
+  duration: metadata.duration,
+  creditsUsed: metadata.creditsUsed,
+  mode: metadata.mode,
+  scale: metadata.scale,
+  success: metadata.success,
+});
 ```
 
 ## Privacy & Compliance
 
 ### Data Collection Policy
 
-| Data Type           | Collection | Purpose                          | Retention |
-| ------------------- | ---------- | -------------------------------- | --------- |
-| **User Actions**    | Opt-in     | Product improvement              | 24 months |
-| **Performance Data**| Automatic  | Service optimization             | 12 months |
-| **Email Hash**      | Opt-in     | User identification              | 24 months |
-| **IP Address**      | None       | Not collected                    | N/A       |
-| **Location Data**   | Opt-in     | Regional analytics (country only)| 24 months |
+| Data Type            | Collection | Purpose                           | Retention |
+| -------------------- | ---------- | --------------------------------- | --------- |
+| **User Actions**     | Opt-in     | Product improvement               | 24 months |
+| **Performance Data** | Automatic  | Service optimization              | 12 months |
+| **Email Hash**       | Opt-in     | User identification               | 24 months |
+| **IP Address**       | None       | Not collected                     | N/A       |
+| **Location Data**    | Opt-in     | Regional analytics (country only) | 24 months |
 
 ### Anonymization Strategies
 
@@ -497,10 +503,10 @@ class EventBatcher {
 // Sample high-frequency events
 const shouldSample = (eventType: string): boolean => {
   const sampleRates: Record<string, number> = {
-    'page_view': 1.0,        // 100% of page views
-    'mouse_movement': 0.01,  // 1% of mouse movements
-    'scroll_event': 0.1,     // 10% of scroll events
-    'click_event': 0.5,      // 50% of click events
+    page_view: 1.0, // 100% of page views
+    mouse_movement: 0.01, // 1% of mouse movements
+    scroll_event: 0.1, // 10% of scroll events
+    click_event: 0.5, // 50% of click events
   };
 
   const rate = sampleRates[eventType] || 1.0;

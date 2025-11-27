@@ -2,7 +2,7 @@
 
 import { usePathname, useSearchParams } from 'next/navigation';
 import { type ReactNode, useEffect, Suspense } from 'react';
-import { analytics } from '@server/analytics';
+import { analytics } from '@client/analytics';
 import { clientEnv, isDevelopment } from '@shared/config/env';
 
 interface IAnalyticsProviderProps {

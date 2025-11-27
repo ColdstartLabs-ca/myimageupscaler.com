@@ -7,16 +7,40 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
 export const runtime = 'edge';
 
-// Allowed event names for security
+// Allowed event names for security - matches IAnalyticsEventName type
 const ALLOWED_EVENTS = [
+  // Page and session events
+  'page_view',
+
+  // Authentication events
   'signup_started',
   'signup_completed',
   'login',
   'logout',
+
+  // Subscription events
+  'subscription_created',
+  'subscription_canceled',
+  'subscription_renewed',
+  'upgrade_started',
+
+  // Credit events
+  'credit_pack_purchased',
+  'credits_deducted',
+  'credits_refunded',
+
+  // Image processing events
+  'image_upscaled',
+  'image_download',
+
+  // Checkout events
   'checkout_started',
   'checkout_completed',
   'checkout_abandoned',
-  'image_download',
+
+  // Error/limit events (server-side only)
+  'rate_limit_exceeded',
+  'processing_failed',
 ] as const;
 
 const eventSchema = z.object({

@@ -53,20 +53,32 @@ export interface IImageUpscaledProperties {
 // =============================================================================
 
 export type IAnalyticsEventName =
+  // Page and session events
   | 'page_view'
+  // Authentication events
   | 'signup_started'
   | 'signup_completed'
   | 'login'
   | 'logout'
+  // Subscription events
   | 'subscription_created'
   | 'subscription_canceled'
   | 'subscription_renewed'
+  | 'upgrade_started'
+  // Credit events
   | 'credit_pack_purchased'
+  | 'credits_deducted'
+  | 'credits_refunded'
+  // Image processing events
   | 'image_upscaled'
   | 'image_download'
+  // Checkout events
   | 'checkout_started'
   | 'checkout_completed'
-  | 'checkout_abandoned';
+  | 'checkout_abandoned'
+  // Error/limit events (server-side only)
+  | 'rate_limit_exceeded'
+  | 'processing_failed';
 
 export interface IAnalyticsEvent {
   name: IAnalyticsEventName;

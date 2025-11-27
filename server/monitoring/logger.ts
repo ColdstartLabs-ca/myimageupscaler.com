@@ -53,8 +53,24 @@ export function createLogger(
 }
 
 /**
+ * Custom error class that preserves status code through the logging wrapper
+ */
+export class HttpError extends Error {
+  constructor(
+    message: string,
+    public readonly statusCode: number,
+    public readonly code: string = 'INTERNAL_ERROR',
+    public readonly details?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = 'HttpError';
+  }
+}
+
+/**
  * Wraps an API handler with automatic logging and error capture.
  * Handles logger.flush() automatically.
+ * Preserves error status codes when HttpError is thrown.
  *
  * @example
  * ```ts
@@ -79,13 +95,29 @@ export function withLogging(
       });
       return response;
     } catch (error) {
+      const isHttpError = error instanceof HttpError;
+      const statusCode = isHttpError ? error.statusCode : 500;
+      const errorCode = isHttpError ? error.code : 'INTERNAL_ERROR';
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      const errorDetails = isHttpError ? error.details : undefined;
+
       logger.error('Unhandled error', {
-        error: error instanceof Error ? error.message : String(error),
+        error: errorMessage,
         stack: error instanceof Error ? error.stack : undefined,
+        statusCode,
+        code: errorCode,
       });
+
       return Response.json(
-        { error: 'Internal server error' },
-        { status: 500 }
+        {
+          success: false,
+          error: {
+            code: errorCode,
+            message: errorMessage,
+            ...(errorDetails && { details: errorDetails }),
+          },
+        },
+        { status: statusCode }
       );
     } finally {
       await logger.flush();

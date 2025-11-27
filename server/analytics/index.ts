@@ -1,11 +1,12 @@
 /**
- * Analytics Module
+ * Server Analytics Module
  *
- * Centralized analytics for PixelPerfect using Amplitude (product events)
- * and Google Analytics 4 (marketing/acquisition).
+ * Server-side analytics using Amplitude HTTP API.
+ * For client-side analytics, use @client/analytics instead.
  */
 
-export { analytics, trackServerEvent } from '@server/analytics/analyticsService';
+export { trackServerEvent } from '@server/analytics/analyticsService';
+export type { IServerTrackOptions } from '@server/analytics/analyticsService';
 export type {
   IAnalyticsEvent,
   IAnalyticsEventName,

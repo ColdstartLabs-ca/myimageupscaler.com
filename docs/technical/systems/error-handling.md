@@ -52,7 +52,7 @@ interface ErrorResponse {
 
 ### Example Responses
 
-**Validation Error (400)**
+### Validation Error (400)
 
 ```json
 {
@@ -68,7 +68,7 @@ interface ErrorResponse {
 }
 ```
 
-**Insufficient Credits (402)**
+### Insufficient Credits (402)
 
 ```json
 {
@@ -84,7 +84,7 @@ interface ErrorResponse {
 }
 ```
 
-**Rate Limited (429)**
+### Rate Limited (429)
 
 ```json
 {
@@ -144,7 +144,7 @@ graph TD
 ### API Route Error Handler
 
 ```typescript
-// lib/errors.ts
+// shared/utils/errors.ts
 export class AppError extends Error {
   constructor(
     public code: string,

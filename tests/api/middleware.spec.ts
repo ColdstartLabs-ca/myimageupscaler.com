@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { test as authenticatedTest } from '../helpers/auth';
 
 /**
  * Middleware Integration Tests
@@ -41,21 +42,12 @@ test.describe('Middleware - Authentication', () => {
     expect(body).toHaveProperty('error');
   });
 
-  test('should allow requests with valid authentication token', async ({
-    request,
+  authenticatedTest('should allow requests with valid authentication token', async ({
+    request, testUser,
   }) => {
-    // TODO: Replace with actual valid token from test setup
-    // For now, this test documents the expected behavior
-    const validToken = process.env.TEST_AUTH_TOKEN;
-
-    if (!validToken) {
-      test.skip();
-      return;
-    }
-
     const response = await request.get(`${BASE_URL}/api/protected/example`, {
       headers: {
-        Authorization: `Bearer ${validToken}`,
+        Authorization: `Bearer ${testUser.token}`,
       },
     });
 
@@ -64,6 +56,8 @@ test.describe('Middleware - Authentication', () => {
     const body = await response.json();
     expect(body).toHaveProperty('user');
     expect(body).toHaveProperty('message');
+    expect(body.user.id).toBe(testUser.id);
+    expect(body.user.email).toBe(testUser.email);
   });
 });
 
@@ -215,19 +209,12 @@ test.describe('Middleware - Protected Routes', () => {
     expect(response.status()).toBe(401);
   });
 
-  test('should set user context headers for authenticated requests', async ({
-    request,
+  authenticatedTest('should set user context headers for authenticated requests', async ({
+    request, testUser,
   }) => {
-    const validToken = process.env.TEST_AUTH_TOKEN;
-
-    if (!validToken) {
-      test.skip();
-      return;
-    }
-
     const response = await request.get(`${BASE_URL}/api/protected/example`, {
       headers: {
-        Authorization: `Bearer ${validToken}`,
+        Authorization: `Bearer ${testUser.token}`,
       },
     });
 
@@ -235,7 +222,8 @@ test.describe('Middleware - Protected Routes', () => {
 
     const body = await response.json();
     expect(body.user).toBeTruthy();
-    expect(body.user.id).toBeTruthy();
+    expect(body.user.id).toBe(testUser.id);
+    expect(body.user.email).toBe(testUser.email);
     expect(body.rateLimit).toBeTruthy();
   });
 });

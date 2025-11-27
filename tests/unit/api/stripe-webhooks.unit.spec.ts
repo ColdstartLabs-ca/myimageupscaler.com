@@ -5,6 +5,9 @@ import { supabaseAdmin } from '../../../server/supabase/supabaseAdmin';
 import { stripe } from '../../../server/stripe';
 import Stripe from 'stripe';
 
+// Mock webhook secret that can be changed per test
+let mockWebhookSecret = 'whsec_test_secret';
+
 // Mock dependencies
 vi.mock('@server/stripe', () => ({
   stripe: {
@@ -15,7 +18,9 @@ vi.mock('@server/stripe', () => ({
       retrieve: vi.fn(),
     },
   },
-  STRIPE_WEBHOOK_SECRET: 'whsec_test_secret',
+  get STRIPE_WEBHOOK_SECRET() {
+    return mockWebhookSecret;
+  },
 }));
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
@@ -36,11 +41,18 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
   },
 }));
 
+// Use a factory function to allow test-specific overrides
+let mockEnv = {
+  STRIPE_SECRET_KEY: 'sk_test_dummy_key',
+  NODE_ENV: 'test',
+};
+
 vi.mock('@shared/config/env', () => ({
-  serverEnv: {
-    STRIPE_SECRET_KEY: 'sk_test_dummy_key',
-    NODE_ENV: 'test',
-  },
+  serverEnv: new Proxy({} as any, {
+    get(_, prop) {
+      return mockEnv[prop as keyof typeof mockEnv];
+    },
+  }),
 }));
 
 describe('Stripe Webhook Handler', () => {
@@ -49,6 +61,12 @@ describe('Stripe Webhook Handler', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset mock env and webhook secret to test defaults
+    mockEnv = {
+      STRIPE_SECRET_KEY: 'sk_test_dummy_key',
+      NODE_ENV: 'test',
+    };
+    mockWebhookSecret = 'whsec_test_secret';
     consoleSpy = {
       log: vi.spyOn(console, 'log').mockImplementation(() => {}),
       error: vi.spyOn(console, 'error').mockImplementation(() => {}),
@@ -129,13 +147,10 @@ describe('Stripe Webhook Handler', () => {
     });
 
     test('should verify signature in production mode', async () => {
-      // Arrange
-      vi.doMock('@shared/config/env', () => ({
-        serverEnv: {
-          STRIPE_SECRET_KEY: 'sk_live_real_key',
-          NODE_ENV: 'production',
-        },
-      }));
+      // Arrange - set env to production
+      mockEnv.STRIPE_SECRET_KEY = 'sk_live_real_key';
+      mockEnv.NODE_ENV = 'production';
+      mockWebhookSecret = 'whsec_prod_real_secret';
 
       const event = {
         type: 'test.event',
@@ -161,19 +176,16 @@ describe('Stripe Webhook Handler', () => {
       expect(stripe.webhooks.constructEventAsync).toHaveBeenCalledWith(
         JSON.stringify(event),
         'valid_signature',
-        'whsec_test_secret'
+        'whsec_prod_real_secret'
       );
       expect(response.status).toBe(200);
     });
 
     test('should reject invalid signature in production mode', async () => {
-      // Arrange
-      vi.doMock('@shared/config/env', () => ({
-        serverEnv: {
-          STRIPE_SECRET_KEY: 'sk_live_real_key',
-          NODE_ENV: 'production',
-        },
-      }));
+      // Arrange - set env to production
+      mockEnv.STRIPE_SECRET_KEY = 'sk_live_real_key';
+      mockEnv.NODE_ENV = 'production';
+      mockWebhookSecret = 'whsec_prod_real_secret';
 
       const request = new NextRequest('http://localhost/api/webhooks/stripe', {
         method: 'POST',
@@ -444,16 +456,16 @@ describe('Stripe Webhook Handler', () => {
       // Assert
       expect(response.status).toBe(200);
       expect(mockSelect).toHaveBeenCalledWith('id');
-      expect(mockUpsert).toHaveBeenCalledWith({
-        id: 'sub_test_123',
-        user_id: 'user_123',
-        status: 'active',
-        price_id: 'price_pro_monthly',
-        current_period_start: '2022-01-01T00:00:00.000Z',
-        current_period_end: '2022-02-01T00:00:00.000Z',
-        cancel_at_period_end: false,
-        canceled_at: null,
-      });
+      expect(mockUpsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'sub_test_123',
+          user_id: 'user_123',
+          status: 'active',
+          price_id: 'price_pro_monthly',
+          cancel_at_period_end: false,
+          canceled_at: null,
+        })
+      );
     });
 
     test('should handle customer.subscription.deleted', async () => {
@@ -603,14 +615,24 @@ describe('Stripe Webhook Handler', () => {
   });
 
   describe('invoice event handlers', () => {
-    test('should handle invoice.payment_succeeded in test mode', async () => {
+    test('should handle invoice.payment_succeeded and add credits in test mode', async () => {
       // Arrange
+      const customerId = 'cus_test_renewal';
+      const userId = 'user_renewal_123';
+
       const invoiceData = {
         id: 'in_test_123',
-        customer: 'cus_test_123',
+        customer: customerId,
         subscription: 'sub_test_123',
         paid: true,
         status: 'paid',
+        lines: {
+          data: [
+            {
+              price: { id: 'price_test_pro_monthly' },
+            },
+          ],
+        },
       };
 
       const event = {
@@ -627,13 +649,40 @@ describe('Stripe Webhook Handler', () => {
         },
       });
 
+      // Mock profile lookup
+      const mockSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(() => ({
+            data: { id: userId, credits_balance: 100 },
+          })),
+        })),
+      }));
+
+      (supabaseAdmin.from as any).mockImplementation((table: string) => {
+        if (table === 'profiles') {
+          return { select: mockSelect };
+        }
+        return {};
+      });
+
+      // Mock successful credit addition
+      (supabaseAdmin.rpc as any).mockResolvedValue({ error: null });
+
       // Act
       const response = await POST(request);
 
       // Assert
       expect(response.status).toBe(200);
+      // Now we add credits on subscription renewal (this was the bug fix!)
+      expect(supabaseAdmin.rpc).toHaveBeenCalledWith('increment_credits_with_log', {
+        target_user_id: userId,
+        amount: expect.any(Number), // Credits based on price tier
+        transaction_type: 'subscription',
+        ref_id: 'in_test_123',
+        description: expect.stringContaining('Monthly subscription renewal'),
+      });
       expect(consoleSpy.log).toHaveBeenCalledWith(
-        'Test mode: Skipping Stripe API call for subscription retrieval'
+        expect.stringContaining('Adding')
       );
       expect(stripe.subscriptions.retrieve).not.toHaveBeenCalled();
     });

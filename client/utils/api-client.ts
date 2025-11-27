@@ -1,4 +1,5 @@
 import { IUpscaleConfig } from '@shared/types/pixelperfect';
+import { createClient } from '@shared/utils/supabase/client';
 
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -14,6 +15,17 @@ const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
+/**
+ * Get the current user's access token for API requests
+ */
+async function getAccessToken(): Promise<string | null> {
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session?.access_token ?? null;
+}
+
 export const processImage = async (
   file: File,
   config: IUpscaleConfig,
@@ -24,12 +36,19 @@ export const processImage = async (
     const base64Data = await fileToBase64(file);
     onProgress(30);
 
+    // Get auth token for the API request
+    const accessToken = await getAccessToken();
+    if (!accessToken) {
+      throw new Error('You must be logged in to process images');
+    }
+
     onProgress(50);
 
     const response = await fetch('/api/upscale', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
         imageData: base64Data,

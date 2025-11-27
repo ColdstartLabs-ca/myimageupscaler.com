@@ -58,9 +58,9 @@ export class UpscalerPage extends BasePage {
 
     // Action buttons - "Process All" is the main action button
     this.processButton = page.getByRole('button', { name: /process all/i });
-    this.clearButton = page.getByRole('button', { name: /clear|reset/i });
-    this.downloadButton = page.getByRole('button', { name: /download result/i }).first();
-    this.retryButton = page.getByRole('button', { name: /retry/i });
+    this.clearButton = page.getByRole('button', { name: /clear queue/i });
+    this.downloadButton = page.getByRole('button', { name: 'Download Result' });
+    this.retryButton = page.getByRole('button', { name: /try again/i });
 
     // Status indicators - be specific to avoid matching Next.js internal elements
     this.progressIndicator = page
@@ -225,6 +225,7 @@ export class UpscalerPage extends BasePage {
       this.downloadButton
         .or(this.page.locator('img[src*="data:image"]'))
         .or(this.page.locator('.preview-result'))
+        .or(this.page.getByText('Enhanced Successfully'))
     ).toBeVisible({ timeout: 10000 });
   }
 
@@ -282,6 +283,9 @@ export class UpscalerPage extends BasePage {
    */
   async assertQueueEmpty(): Promise<void> {
     await expect(this.dropzoneTitle).toBeVisible({ timeout: 5000 });
+    // Also verify no queue items exist
+    const queueCount = await this.getQueueCount();
+    expect(queueCount).toBe(0);
   }
 
   /**

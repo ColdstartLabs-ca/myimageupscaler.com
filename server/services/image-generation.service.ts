@@ -36,6 +36,34 @@ export interface IGenerationResult {
 }
 
 /**
+ * Calculate the credit cost for an image processing operation.
+ *
+ * Credit costs based on mode:
+ * - upscale (basic upscaling): 1 credit
+ * - enhance (quality enhancement): 2 credits
+ * - both (upscale + enhance): 2 credits
+ * - custom (custom prompt): 2 credits
+ *
+ * @param config - The upscale configuration
+ * @returns The number of credits required
+ */
+export function calculateCreditCost(config: IUpscaleConfig): number {
+  switch (config.mode) {
+    case 'upscale':
+      // Basic upscaling is the cheapest operation
+      return 1;
+    case 'enhance':
+    case 'both':
+    case 'custom':
+      // Enhanced processing modes cost more
+      return 2;
+    default:
+      // Default to 1 credit for unknown modes
+      return 1;
+  }
+}
+
+/**
  * Service responsible for handling image generation with proper credit management.
  *
  * This service encapsulates the transaction lifecycle:
@@ -65,16 +93,17 @@ export class ImageGenerationService {
    */
   async processImage(userId: string, input: IUpscaleInput): Promise<IGenerationResult> {
     const jobId = `gen_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    const creditCost = calculateCreditCost(input.config);
 
-    // Step 1: Deduct credit atomically
+    // Step 1: Deduct credits atomically based on mode
     const { data: newBalance, error: creditError } = await supabaseAdmin.rpc(
       'decrement_credits_with_log',
       {
         target_user_id: userId,
-        amount: 1,
+        amount: creditCost,
         transaction_type: 'usage',
         ref_id: jobId,
-        description: `Image ${input.config.mode}`,
+        description: `Image ${input.config.mode} (${creditCost} credits)`,
       }
     );
 
@@ -96,18 +125,22 @@ export class ImageGenerationService {
       };
     } catch (error) {
       // Step 3: Refund on failure
-      await this.refundCredits(userId, jobId);
+      await this.refundCredits(userId, jobId, creditCost);
       throw error;
     }
   }
 
   /**
    * Refund credits for a failed generation
+   *
+   * @param userId - The user to refund credits to
+   * @param jobId - The job ID for tracking
+   * @param amount - The number of credits to refund
    */
-  private async refundCredits(userId: string, jobId: string): Promise<void> {
+  private async refundCredits(userId: string, jobId: string, amount: number): Promise<void> {
     const { error } = await supabaseAdmin.rpc('refund_credits', {
       target_user_id: userId,
-      amount: 1,
+      amount,
       job_id: jobId,
     });
 

@@ -174,7 +174,7 @@ sequenceDiagram
 ### Client-Side (Browser)
 
 ```typescript
-// lib/supabase/client.ts
+// shared/utils/supabase/client.ts
 import { createBrowserClient } from '@supabase/ssr';
 
 export function createClient() {
@@ -188,7 +188,7 @@ export function createClient() {
 ### Server-Side (API Routes)
 
 ```typescript
-// lib/supabase/server.ts
+// shared/utils/supabase/server.ts
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 

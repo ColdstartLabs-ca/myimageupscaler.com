@@ -101,3 +101,11 @@ export const rateLimit = {
 export const publicRateLimit = {
   limit: createRateLimiter(10, 10 * 1000),
 };
+
+/**
+ * Rate limiter for image processing (upscale) routes
+ * 5 requests per 60 seconds (stricter to prevent abuse)
+ */
+export const upscaleRateLimit = {
+  limit: createRateLimiter(5, 60 * 1000),
+};

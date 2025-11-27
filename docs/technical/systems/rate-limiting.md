@@ -54,25 +54,25 @@ sequenceDiagram
 
 ```typescript
 interface IRateLimitConfig {
-  limit: number;        // Max requests allowed
-  windowMs: number;     // Time window in milliseconds
+  limit: number; // Max requests allowed
+  windowMs: number; // Time window in milliseconds
 }
 
 // Rate limiters used in the application
 export const rateLimit = {
-  limit: createRateLimiter(50, 10 * 1000),    // 50 req/10s for authenticated users
+  limit: createRateLimiter(50, 10 * 1000), // 50 req/10s for authenticated users
   publicRateLimit: createRateLimiter(10, 10 * 1000), // 10 req/10s for public routes
 };
 ```
 
 ### Rate Limit Rules
 
-| User Type          | Limit | Window    | Use Case                          |
-| ------------------ | ----- | --------- | --------------------------------- |
-| Authenticated      | 50    | 10 seconds | General API usage                 |
-| Public/Anonymous   | 10    | 10 seconds | Unauthenticated endpoints         |
-| Image Processing   | 5     | 1 minute   | Heavy operations                  |
-| Stripe Webhooks    | 100   | 1 minute   | Payment event processing          |
+| User Type        | Limit | Window     | Use Case                  |
+| ---------------- | ----- | ---------- | ------------------------- |
+| Authenticated    | 50    | 10 seconds | General API usage         |
+| Public/Anonymous | 10    | 10 seconds | Unauthenticated endpoints |
+| Image Processing | 5     | 1 minute   | Heavy operations          |
+| Stripe Webhooks  | 100   | 1 minute   | Payment event processing  |
 
 ### Memory Management
 
@@ -175,10 +175,10 @@ export async function POST(request: Request) {
 
 ```typescript
 interface RateLimitHeaders {
-  'X-RateLimit-Limit': string;      // Maximum requests allowed
-  'X-RateLimit-Remaining': string;  // Requests remaining in window
-  'X-RateLimit-Reset': string;      // Unix timestamp when window resets
-  'Retry-After': string;            // Seconds until client can retry
+  'X-RateLimit-Limit': string; // Maximum requests allowed
+  'X-RateLimit-Remaining': string; // Requests remaining in window
+  'X-RateLimit-Reset': string; // Unix timestamp when window resets
+  'Retry-After': string; // Seconds until client can retry
 }
 ```
 
@@ -246,11 +246,11 @@ graph TD
 
 ### Multi-Instance Solutions
 
-| Solution         | Complexity | Cost    | Accuracy |
-| ---------------- | ---------- | ------- | -------- |
-| **Cloudflare KV**| Low        | $$      | High     |
-| **Durable Objects**| Medium   | $$$     | Very High|
-| **Redis**        | High       | $$      | Very High|
+| Solution            | Complexity | Cost | Accuracy  |
+| ------------------- | ---------- | ---- | --------- |
+| **Cloudflare KV**   | Low        | $$   | High      |
+| **Durable Objects** | Medium     | $$$  | Very High |
+| **Redis**           | High       | $$   | Very High |
 
 ### Migration Path for Scale
 
@@ -280,10 +280,10 @@ timeline
 
 ```typescript
 interface RateLimitMetrics {
-  totalRequests: number;      // Total requests processed
-  blockedRequests: number;    // Requests blocked
+  totalRequests: number; // Total requests processed
+  blockedRequests: number; // Requests blocked
   averageUtilization: number; // Average % of limit used
-  topViolators: string[];     // IPs/users most blocked
+  topViolators: string[]; // IPs/users most blocked
 }
 ```
 
@@ -303,12 +303,12 @@ analytics.track('rate_limit_violation', {
 
 ### Rate Limit Evasion
 
-| Attack Vector        | Mitigation Strategy                     |
-| -------------------- | --------------------------------------- |
-| IP Rotation          | Account-based limiting for auth users   |
-| Distributed Requests | Account-based limiting                  |
-| Header Spoofing      | Use Cloudflare's real IP detection      |
-| Cookie Bypass        | IP + User ID combined identification    |
+| Attack Vector        | Mitigation Strategy                   |
+| -------------------- | ------------------------------------- |
+| IP Rotation          | Account-based limiting for auth users |
+| Distributed Requests | Account-based limiting                |
+| Header Spoofing      | Use Cloudflare's real IP detection    |
+| Cookie Bypass        | IP + User ID combined identification  |
 
 ### Best Practices
 

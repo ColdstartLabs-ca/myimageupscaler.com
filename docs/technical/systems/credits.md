@@ -166,31 +166,22 @@ $$ LANGUAGE plpgsql;
 ### Add Credits
 
 ```typescript
+// Note: This is typically handled via Stripe webhooks using the increment_credits_with_log RPC
 async function addCredits(
   userId: string,
   amount: number,
   type: 'subscription' | 'purchase' | 'refund' | 'bonus',
   referenceId?: string
 ): Promise<void> {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('credits_balance, subscription_tier')
-    .eq('id', userId)
-    .single();
-
-  // Calculate max rollover based on tier
-  const maxRollover = getMaxRollover(profile.subscription_tier);
-  const newBalance = Math.min(profile.credits_balance + amount, maxRollover);
-
-  await supabase.from('profiles').update({ credits_balance: newBalance }).eq('id', userId);
-
-  await supabase.from('credit_transactions').insert({
-    user_id: userId,
+  const { error } = await supabase.rpc('increment_credits_with_log', {
+    target_user_id: userId,
     amount: amount,
-    type: type,
-    reference_id: referenceId,
+    transaction_type: type,
+    ref_id: referenceId,
     description: `${type} - ${amount} credits`,
   });
+
+  if (error) throw error;
 }
 ```
 

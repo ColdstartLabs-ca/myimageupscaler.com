@@ -7,7 +7,7 @@ type AuthFixtures = {
 };
 
 export const test = base.extend<AuthFixtures>({
-  testUser: async (_, use) => {
+  testUser: async ({ }, use) => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -66,8 +66,8 @@ export const test = base.extend<AuthFixtures>({
   },
 
   authenticatedRequest: async ({ testUser }, use) => {
-    // This fixture will be used with test.use() to add auth headers
-    await use({ testUser } as never);
+    // This fixture provides authenticated request context
+    await use({ testUser });
   },
 });
 

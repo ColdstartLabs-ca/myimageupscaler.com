@@ -6,6 +6,44 @@ import { clientEnv, serverEnv } from '@shared/config/env';
 import { updateSession } from '@shared/utils/supabase/middleware';
 
 /**
+ * Get the client IP address from the request, prioritizing Cloudflare headers
+ */
+function getClientIp(req: NextRequest): string {
+  // Cloudflare-specific header (most reliable on Cloudflare)
+  const cfConnectingIp = req.headers.get('cf-connecting-ip');
+  if (cfConnectingIp) return cfConnectingIp;
+
+  // Standard forwarded header
+  const xForwardedFor = req.headers.get('x-forwarded-for');
+  if (xForwardedFor) {
+    const firstIp = xForwardedFor.split(',')[0]?.trim();
+    if (firstIp) return firstIp;
+  }
+
+  // Alternative header
+  const xRealIp = req.headers.get('x-real-ip');
+  if (xRealIp) return xRealIp;
+
+  return 'unknown';
+}
+
+/**
+ * Create rate limit response headers
+ */
+function createRateLimitHeaders(
+  limit: number,
+  remaining: number,
+  reset: number
+): Record<string, string> {
+  return {
+    'X-RateLimit-Limit': limit.toString(),
+    'X-RateLimit-Remaining': remaining.toString(),
+    'X-RateLimit-Reset': new Date(reset).toISOString(),
+    'Retry-After': Math.ceil((reset - Date.now()) / 1000).toString(),
+  };
+}
+
+/**
  * Public API routes that don't require authentication
  * Supports wildcard patterns with * suffix
  */
@@ -61,42 +99,49 @@ function applySecurityHeaders(res: NextResponse): void {
  * Handle API route authentication and rate limiting
  */
 async function handleApiRoute(req: NextRequest, pathname: string): Promise<NextResponse> {
-  const res = NextResponse.next();
-  applySecurityHeaders(res);
-
   // Check if route is public
   const isPublic = isPublicApiRoute(pathname);
 
   // Handle public routes - they don't require authentication
   if (isPublic) {
+    const res = NextResponse.next();
+    applySecurityHeaders(res);
+
     // Skip rate limiting in test environment to avoid test failures
     const isTestEnv =
       serverEnv.NODE_ENV === 'test' ||
       serverEnv.AMPLITUDE_API_KEY?.startsWith('test_amplitude_api_key');
 
     if (!isTestEnv) {
-      const ip =
-        req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-        req.headers.get('x-real-ip') ??
-        'unknown';
+      const ip = getClientIp(req);
       const { success, remaining, reset } = await publicRateLimit.limit(ip);
+      const rateLimitHeaders = createRateLimitHeaders(10, remaining, reset);
 
       if (!success) {
         return NextResponse.json(
-          { error: 'Too many requests. Please try again later.' },
+          {
+            success: false,
+            error: {
+              code: 'RATE_LIMITED',
+              message: 'Too many requests. Please try again later.',
+              details: {
+                retryAfter: Math.ceil((reset - Date.now()) / 1000),
+              },
+            },
+          },
           {
             status: 429,
-            headers: {
-              'X-RateLimit-Limit': '10',
-              'X-RateLimit-Remaining': remaining.toString(),
-              'X-RateLimit-Reset': new Date(reset).toISOString(),
-              'Retry-After': Math.ceil((reset - Date.now()) / 1000).toString(),
-            },
+            headers: rateLimitHeaders,
           }
         );
       }
 
-      res.headers.set('X-RateLimit-Remaining', remaining.toString());
+      // Add rate limit headers to successful responses
+      Object.entries(rateLimitHeaders).forEach(([key, value]) => {
+        if (key !== 'Retry-After') {
+          res.headers.set(key, value);
+        }
+      });
     }
 
     return res;
@@ -105,7 +150,16 @@ async function handleApiRoute(req: NextRequest, pathname: string): Promise<NextR
   // Verify JWT for protected API routes
   if (!clientEnv.SUPABASE_URL || !clientEnv.SUPABASE_ANON_KEY) {
     console.error('Missing Supabase environment variables');
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Server configuration error',
+        },
+      },
+      { status: 500 }
+    );
   }
 
   // Create Supabase client for API auth (uses Authorization header)
@@ -125,8 +179,11 @@ async function handleApiRoute(req: NextRequest, pathname: string): Promise<NextR
   if (error || !user) {
     return NextResponse.json(
       {
-        error: 'Unauthorized',
-        message: 'Valid authentication token required',
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Valid authentication token required',
+        },
       },
       { status: 401 }
     );
@@ -134,29 +191,47 @@ async function handleApiRoute(req: NextRequest, pathname: string): Promise<NextR
 
   // Apply user-based rate limiting
   const { success, remaining, reset } = await rateLimit.limit(user.id);
+  const rateLimitHeaders = createRateLimitHeaders(50, remaining, reset);
 
   if (!success) {
     return NextResponse.json(
       {
-        error: 'Too many requests',
-        message: 'Rate limit exceeded. Please try again later.',
+        success: false,
+        error: {
+          code: 'RATE_LIMITED',
+          message: 'Rate limit exceeded. Please try again later.',
+          details: {
+            retryAfter: Math.ceil((reset - Date.now()) / 1000),
+          },
+        },
       },
       {
         status: 429,
-        headers: {
-          'X-RateLimit-Limit': '50',
-          'X-RateLimit-Remaining': remaining.toString(),
-          'X-RateLimit-Reset': new Date(reset).toISOString(),
-          'Retry-After': Math.ceil((reset - Date.now()) / 1000).toString(),
-        },
+        headers: rateLimitHeaders,
       }
     );
   }
 
-  // Set user context headers for downstream route handlers
-  res.headers.set('X-User-Id', user.id);
-  res.headers.set('X-User-Email', user.email ?? '');
-  res.headers.set('X-RateLimit-Remaining', remaining.toString());
+  // Clone the request headers and add user context for downstream route handlers
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set('X-User-Id', user.id);
+  requestHeaders.set('X-User-Email', user.email ?? '');
+
+  // Create response with modified request headers that will be passed to route handlers
+  const res = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  applySecurityHeaders(res);
+
+  // Add rate limit headers to response
+  Object.entries(rateLimitHeaders).forEach(([key, value]) => {
+    if (key !== 'Retry-After') {
+      res.headers.set(key, value);
+    }
+  });
 
   return res;
 }
@@ -197,9 +272,6 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
  */
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const pathname = req.nextUrl.pathname;
-
-  // Debug: Log pathname for debugging
-  console.log('[Middleware] pathname:', pathname, 'isPublicApiRoute:', isPublicApiRoute(pathname));
 
   // API routes use existing JWT-based auth
   if (pathname.startsWith('/api')) {
