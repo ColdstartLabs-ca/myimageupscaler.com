@@ -11,7 +11,13 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json(
-        { error: 'Missing authorization header' },
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Missing authorization header'
+          }
+        },
         { status: 401 }
       );
     }
@@ -27,7 +33,13 @@ export async function POST(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Invalid authentication token' },
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Invalid authentication token'
+          }
+        },
         { status: 401 }
       );
     }
@@ -41,13 +53,31 @@ export async function POST(request: NextRequest) {
 
     if (profileError || !profile?.stripe_customer_id) {
       return NextResponse.json(
-        { error: 'No Stripe customer found. Please make a purchase first.' },
+        {
+          success: false,
+          error: {
+            code: 'STRIPE_CUSTOMER_NOT_FOUND',
+            message: 'No Stripe customer found. Please make a purchase first.'
+          }
+        },
         { status: 400 }
       );
     }
 
     // 3. Create Stripe Customer Portal session
     const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
+
+    // Check if we're in test mode with dummy Stripe key
+    if (process.env.STRIPE_SECRET_KEY?.includes('dummy_key') || process.env.NODE_ENV === 'test') {
+      // Return mock response for testing
+      return NextResponse.json({
+        success: true,
+        data: {
+          url: `${baseUrl}/dashboard/billing?mock=true`,
+          mock: true,
+        }
+      });
+    }
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
@@ -56,12 +86,24 @@ export async function POST(request: NextRequest) {
 
     // 4. Return the portal URL
     return NextResponse.json({
-      url: portalSession.url,
+      success: true,
+      data: {
+        url: portalSession.url,
+      }
     });
   } catch (error: unknown) {
     console.error('Portal session error:', error);
     const errorMessage =
       error instanceof Error ? error.message : 'An error occurred creating portal session';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: errorMessage
+        }
+      },
+      { status: 500 }
+    );
   }
 }

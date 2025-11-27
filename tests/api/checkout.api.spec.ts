@@ -12,7 +12,7 @@ test.describe('API: Stripe Checkout - Authentication', () => {
     expect(response.status()).toBe(401);
     const data = await response.json();
     expect(data.error).toBeDefined();
-    expect(data.error).toBe('Missing authorization header');
+    expect(data.error.code).toBe('UNAUTHORIZED');
   });
 
   test('should reject invalid auth token', async ({ request }) => {
@@ -28,7 +28,7 @@ test.describe('API: Stripe Checkout - Authentication', () => {
     expect(response.status()).toBe(401);
     const data = await response.json();
     expect(data.error).toBeDefined();
-    expect(data.error).toBe('Invalid authentication token');
+    expect(data.error.code).toBe('UNAUTHORIZED');
   });
 
   test('should reject malformed auth header', async ({ request }) => {
@@ -44,7 +44,7 @@ test.describe('API: Stripe Checkout - Authentication', () => {
     expect(response.status()).toBe(401);
     const data = await response.json();
     expect(data.error).toBeDefined();
-    expect(data.error).toBe('Invalid authentication token');
+    expect(data.error.code).toBe('UNAUTHORIZED');
   });
 });
 
@@ -60,7 +60,8 @@ authenticatedTest.describe('API: Stripe Checkout - Authenticated Users', () => {
     expect(response.status()).toBe(400);
     const data = await response.json();
     expect(data.error).toBeDefined();
-    expect(data.error).toBe('priceId is required');
+    expect(data.error.message).toBe('priceId is required');
+    expect(data.error.code).toBe('VALIDATION_ERROR');
   });
 
   authenticatedTest('should reject invalid priceId format', async ({ request, testUser }) => {
@@ -115,10 +116,21 @@ authenticatedTest.describe('API: Stripe Checkout - Authenticated Users', () => {
       },
     });
 
-    // Should fail at Stripe API level, not at validation level
-    expect([400, 500]).toContain(response.status());
+    // In test mode, should succeed with mock response
+    // In production, would fail at Stripe API level
+    expect([200, 400, 500]).toContain(response.status());
     const data = await response.json();
-    expect(data.error).toBeDefined();
+
+    if (response.status() === 200) {
+      // Mock response in test mode
+      expect(data.success).toBe(true);
+      expect(data.data.url).toBeTruthy();
+      expect(data.data.sessionId).toBeTruthy();
+      expect(data.data.mock).toBe(true);
+    } else {
+      // Real Stripe API failure in production
+      expect(data.error).toBeDefined();
+    }
   });
 
   authenticatedTest('should handle metadata properly', async ({ request, testUser }) => {

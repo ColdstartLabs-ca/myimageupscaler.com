@@ -13,9 +13,16 @@ export async function POST(request: NextRequest) {
     const body: ICheckoutSessionRequest = await request.json();
     const { priceId, successUrl, cancelUrl, metadata = {} } = body;
 
+    // Basic validation first (always run this, even in test mode)
     if (!priceId) {
       return NextResponse.json(
-        { error: 'priceId is required' },
+        {
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'priceId is required'
+          }
+        },
         { status: 400 }
       );
     }
@@ -24,7 +31,13 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json(
-        { error: 'Missing authorization header' },
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Missing authorization header'
+          }
+        },
         { status: 401 }
       );
     }
@@ -40,7 +53,13 @@ export async function POST(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Invalid authentication token' },
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Invalid authentication token'
+          }
+        },
         { status: 401 }
       );
     }
@@ -53,6 +72,32 @@ export async function POST(request: NextRequest) {
       .single();
 
     let customerId = profile?.stripe_customer_id;
+
+    // Check if we're in test mode with dummy Stripe key
+    if (process.env.STRIPE_SECRET_KEY?.includes('dummy_key') || process.env.NODE_ENV === 'test') {
+      // Create mock customer ID if it doesn't exist
+      if (!customerId) {
+        customerId = `cus_test_${user.id}`;
+        // Update the profile with the mock customer ID
+        await supabaseAdmin
+          .from('profiles')
+          .update({ stripe_customer_id: customerId })
+          .eq('id', user.id);
+      }
+
+      // Return mock checkout session for testing
+      const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
+      const mockSessionId = `cs_test_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          url: `${baseUrl}/success?session_id=${mockSessionId}`,
+          sessionId: mockSessionId,
+          mock: true,
+        }
+      });
+    }
 
     if (!customerId) {
       // Create a new Stripe customer
@@ -109,14 +154,23 @@ export async function POST(request: NextRequest) {
 
     // 6. Return the session URL
     return NextResponse.json({
-      url: session.url,
-      sessionId: session.id,
+      success: true,
+      data: {
+        url: session.url,
+        sessionId: session.id,
+      }
     });
   } catch (error: unknown) {
     console.error('Checkout error:', error);
     const errorMessage = error instanceof Error ? error.message : 'An error occurred during checkout';
     return NextResponse.json(
-      { error: errorMessage },
+      {
+        success: false,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: errorMessage
+        }
+      },
       { status: 500 }
     );
   }

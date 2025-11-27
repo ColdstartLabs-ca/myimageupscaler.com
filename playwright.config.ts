@@ -9,16 +9,16 @@ const isCI = !!process.env.CI;
 
 export default defineConfig({
   testDir: './tests',
-  fullyParallel: true,
+  fullyParallel: false, // Disable full parallelization for memory optimization
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
   workers: 1, // Force single worker globally to prevent Supabase rate limiting
   reporter: [['html'], ['list']],
   use: {
     baseURL: 'http://localhost:3000',
-    trace: 'on',
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    trace: 'retain-on-failure', // Only keep traces on failure to save memory
+    actionTimeout: 30000, // Increased action timeout for stability
+    navigationTimeout: 45000, // Increased navigation timeout
   },
 
   projects: [
@@ -78,12 +78,5 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: 'next dev --port 3000',
-    url: 'http://localhost:3000/api/health',
-    reuseExistingServer: true,
-    timeout: 60000,
-    stdout: 'pipe',
-    stderr: 'pipe',
-  },
+  // webServer disabled - using external server
 });

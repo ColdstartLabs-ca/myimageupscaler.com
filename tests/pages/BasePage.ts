@@ -4,7 +4,8 @@ export class BasePage {
   constructor(protected readonly page: Page) {}
 
   async goto(path: string): Promise<void> {
-    await this.page.goto(path);
+    const url = path.startsWith('http') ? path : `http://localhost:3000${path}`;
+    await this.page.goto(url);
     await this.page.waitForLoadState('networkidle');
   }
 

@@ -20,17 +20,19 @@ export class LoginPage extends BasePage {
   async login(email: string, password: string): Promise<void> {
     await this.openLoginModal();
 
-    await this.page.getByLabel(/email/i).fill(email);
-    await this.page.getByLabel(/password/i).fill(password);
-    await this.page.getByRole('button', { name: /sign in/i }).click();
+    // Use placeholder selectors since the LoginForm uses placeholders
+    const modal = this.page.locator('div[role="dialog"]');
+    await modal.getByPlaceholder(/email/i).fill(email);
+    await modal.getByPlaceholder(/password/i).fill(password);
+    await modal.getByRole('button', { name: /sign in/i }).click();
   }
 
   async assertModalVisible(): Promise<void> {
     const modal = this.page.locator('div[role="dialog"]');
     await expect(modal).toBeVisible({ timeout: 10000 });
 
-    // Verify the modal title
-    const modalTitle = modal.locator('#modal-title', { hasText: 'Sign In' });
+    // Verify the modal title - the title is in an h3 element within #modal-title
+    const modalTitle = modal.locator('#modal-title h3', { hasText: 'Sign In' });
     await expect(modalTitle).toBeVisible();
   }
 

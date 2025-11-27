@@ -40,6 +40,38 @@ export const test = base.extend<AuthFixtures>({
       throw new Error('Failed to create test user');
     }
 
+    // Ensure profile exists (wait for trigger or create manually)
+    let retries = 0;
+    let profile = null;
+    while (retries < 5 && !profile) {
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', adminData.user.id)
+        .single();
+
+      profile = profileData;
+      if (!profile) {
+        // Wait for the trigger to create the profile
+        await new Promise(resolve => setTimeout(resolve, 100));
+        retries++;
+      }
+    }
+
+    // If profile still doesn't exist, create it manually
+    if (!profile) {
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert({
+          id: adminData.user.id,
+          credits_balance: 10,
+        });
+
+      if (insertError) {
+        console.warn('Failed to create profile manually:', insertError);
+      }
+    }
+
     // Now sign in to get a session token
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email: testEmail,

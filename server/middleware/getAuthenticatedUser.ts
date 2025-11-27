@@ -38,8 +38,35 @@ export async function getAuthenticatedUser(req: NextRequest): Promise<IUserProfi
     .single();
 
   if (error) {
-    console.error('Error fetching user profile:', error);
-    return null;
+    if (error.code === 'PGRST116') {
+      // No rows returned, profile doesn't exist - create it
+      console.log(`Profile not found for user ${userId}, creating one...`);
+      const { error: insertError } = await supabaseAdmin
+        .from('profiles')
+        .insert({
+          id: userId,
+          credits_balance: 10, // Default credits
+        })
+        .select('*')
+        .single();
+
+      if (insertError) {
+        console.error('Error creating user profile:', insertError);
+        return null;
+      }
+
+      // Return the newly created profile
+      const { data: newProfile } = await supabaseAdmin
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      return newProfile;
+    } else {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
   }
 
   return profile;

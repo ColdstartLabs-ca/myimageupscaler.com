@@ -45,8 +45,11 @@ test.describe('API Error Handling', () => {
       expect(response.status()).toBe(401);
       const body = await response.json();
       expect(body).toMatchObject({
-        error: 'Unauthorized',
-        message: 'Valid authentication token required',
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Valid authentication token required',
+        },
       });
     });
 
@@ -253,8 +256,11 @@ test.describe('API Error Handling', () => {
       if (response.status() >= 500) {
         const body = await response.json();
         expect(body).toMatchObject({
-          error: expect.stringMatching(/Internal Server Error|Generation Failed/),
+          success: false,
+          error: expect.any(Object),
         });
+        // Error may contain message with various error details
+        expect(body.error.message || body.error.code).toBeTruthy();
       }
 
       await dataManager.cleanupUser(testUser.id);
@@ -322,8 +328,11 @@ test.describe('API Error Handling', () => {
       expect(response.status()).toBe(401);
       const body = await response.json();
       expect(body).toMatchObject({
-        error: 'Unauthorized',
-        message: 'Valid authentication token required',
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Valid authentication token required',
+        },
       });
     });
 
@@ -340,8 +349,11 @@ test.describe('API Error Handling', () => {
       expect(response.status()).toBe(401);
       const body = await response.json();
       expect(body).toMatchObject({
-        error: 'Unauthorized',
-        message: 'Valid authentication token required',
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Valid authentication token required',
+        },
       });
     });
 

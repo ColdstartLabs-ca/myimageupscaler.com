@@ -43,8 +43,13 @@ test.describe('API: Image Upscale Integration', () => {
 
       expect(response.status()).toBe(401);
       const data = await response.json();
-      expect(data.error).toBe('Unauthorized');
-      expect(data.message).toBe('Valid authentication token required');
+      expect(data).toMatchObject({
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Valid authentication token required',
+        },
+      });
     });
 
     test('should reject requests with invalid user ID header', async ({ request }) => {
@@ -79,7 +84,7 @@ test.describe('API: Image Upscale Integration', () => {
       expect([401, 402, 422, 500]).toContain(response.status());
       if (response.status() === 401) {
         const data = await response.json();
-        expect(data.error).toBe('Unauthorized');
+        expect(data.error.code).toBe('UNAUTHORIZED');
       }
     });
   });

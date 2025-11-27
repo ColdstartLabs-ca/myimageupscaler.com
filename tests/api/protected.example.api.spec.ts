@@ -355,7 +355,7 @@ authenticatedTest.describe('API: Protected Example - Rate Limiting', () => {
     if (rateLimitedCount > 0) {
       const rateLimitedResponse = responses.find(r => r.status() === 429);
       const data = await rateLimitedResponse.json();
-      expect(data.error).toContain('Too many requests');
+      expect(data.error.message).toContain('Rate limit exceeded');
     }
   });
 
