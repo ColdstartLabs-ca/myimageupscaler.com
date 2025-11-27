@@ -1,5 +1,15 @@
 import { IUpscaleConfig } from '@shared/types/pixelperfect';
 import { createClient } from '@shared/utils/supabase/client';
+import { serverEnv } from '@shared/config/env';
+
+// Extend Window interface for test environment markers
+declare global {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  interface Window {
+    playwrightTest?: boolean;
+    __TEST_ENV__?: boolean;
+  }
+}
 
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -41,11 +51,11 @@ export const processImage = async (
 
     // Check if we're in a test environment and bypass auth for mocked tests
     const isTestEnvironment = typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' && process.env.NODE_ENV === 'test') ||
+      (window.location.hostname === 'localhost' && serverEnv.NODE_ENV === 'test') ||
       // Check for Playwright test marker
-      (window as any).playwrightTest === true ||
+      window.playwrightTest === true ||
       // Check for test environment variable (injected by Playwright)
-      (window as any).__TEST_ENV__ === true;
+      window.__TEST_ENV__ === true;
 
     if (!accessToken && !isTestEnvironment) {
       throw new Error('You must be logged in to process images');
