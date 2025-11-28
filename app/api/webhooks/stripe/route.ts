@@ -81,8 +81,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       serverEnv.NODE_ENV === 'test' ||
       STRIPE_WEBHOOK_SECRET === 'whsec_test_secret' ||
       // Additional check: test for malformed JSON which indicates this is likely a test
-      body.includes('invalid json') ||
-      (signature === 'invalid_signature');
+      body.includes('invalid json');
 
     
     if (isTestMode) {

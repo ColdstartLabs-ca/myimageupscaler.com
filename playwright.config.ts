@@ -12,7 +12,7 @@ export default defineConfig({
   fullyParallel: false, // Disable full parallelization for memory optimization
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
-  workers: 1, // Force single worker globally to prevent Supabase rate limiting
+  workers: process.env.CI ? 2 : 4, // Use more workers locally, fewer in CI to prevent rate limiting
   reporter: [['html'], ['list']],
   use: {
     baseURL: 'http://localhost:3000',
@@ -65,7 +65,7 @@ export default defineConfig({
         baseURL: 'http://localhost:3000',
       },
       testMatch: /.*\.api\.spec\.ts/,
-      workers: 1, // Use single worker to avoid Supabase rate limits completely
+      workers: 1, // Keep single worker for API tests to avoid Supabase rate limits
     },
 
     // Workers Preview Tests (validate Cloudflare behavior)
