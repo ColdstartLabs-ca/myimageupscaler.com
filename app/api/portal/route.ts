@@ -44,7 +44,92 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Get Stripe Customer ID from profile
+    // 2. Parse and validate request body
+    let body: { returnUrl?: string } = {};
+    try {
+      const text = await request.text();
+      if (text) {
+        body = JSON.parse(text);
+      }
+    } catch (parseError) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_JSON',
+            message: 'Invalid JSON in request body'
+          }
+        },
+        { status: 400 }
+      );
+    }
+
+    // 3. Validate return URL if provided
+    let returnUrl: string;
+    if (body.returnUrl) {
+      // Basic URL validation and XSS prevention
+      try {
+        const url = new URL(body.returnUrl);
+
+        // Only allow http and https protocols
+        if (!['http:', 'https:'].includes(url.protocol)) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: 'INVALID_RETURN_URL',
+                message: 'Invalid return URL protocol'
+              }
+            },
+            { status: 400 }
+          );
+        }
+
+        // Additional XSS prevention - check for dangerous patterns
+        const dangerousPatterns = [
+          /javascript:/i,
+          /data:/i,
+          /vbscript:/i,
+          /<script/i,
+          /onload=/i,
+          /onerror=/i
+        ];
+
+        for (const pattern of dangerousPatterns) {
+          if (pattern.test(body.returnUrl)) {
+            return NextResponse.json(
+              {
+                success: false,
+                error: {
+                  code: 'INVALID_RETURN_URL',
+                  message: 'Invalid return URL format'
+                }
+              },
+              { status: 400 }
+            );
+          }
+        }
+
+        returnUrl = body.returnUrl;
+      } catch (urlError) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'INVALID_RETURN_URL',
+              message: 'Invalid return URL format'
+            }
+          },
+          { status: 400 }
+        );
+      }
+    } else {
+      // Default return URL if not provided
+      const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
+      returnUrl = `${baseUrl}/dashboard/billing`;
+    }
+
+    // 4. Get Stripe Customer ID from profile
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('stripe_customer_id')
@@ -64,7 +149,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Create Stripe Customer Portal session
+    // 5. Create Stripe Customer Portal session
     const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
 
     // Check if we're in test mode with dummy Stripe key
@@ -73,7 +158,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: {
-          url: `${baseUrl}/dashboard/billing?mock=true`,
+          url: `${returnUrl}?mock=true`,
           mock: true,
         }
       });
@@ -81,10 +166,10 @@ export async function POST(request: NextRequest) {
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
-      return_url: `${baseUrl}/dashboard/billing`,
+      return_url: returnUrl,
     });
 
-    // 4. Return the portal URL
+    // 6. Return the portal URL
     return NextResponse.json({
       success: true,
       data: {

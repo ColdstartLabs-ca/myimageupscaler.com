@@ -550,7 +550,7 @@ test.describe('API: Stripe Webhooks', () => {
 
     test('should handle malformed webhook body', async ({ request }) => {
       const response = await request.post(`${BASE_URL}/api/webhooks/stripe`, {
-        data: 'invalid json {{{',
+        body: 'invalid json {{{', // Use body instead of data to avoid automatic JSON encoding
         headers: {
           'stripe-signature': 'invalid_signature',
           'content-type': 'application/json',

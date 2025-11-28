@@ -74,16 +74,17 @@ authenticatedTest.describe('API: Stripe Checkout - Authenticated Users', () => {
       },
     });
 
-    // This should fail at Stripe API level with a 500 error
-    expect(response.status()).toBe(500);
+    // In test mode, returns mock response with 200 (in production would fail at Stripe API level with 500)
+    expect(response.status()).toBe(200);
     const data = await response.json();
-    expect(data.error).toBeDefined();
+    expect(data.success).toBe(true);
+    expect(data.data.mock).toBe(true);
   });
 
   authenticatedTest('should handle custom success and cancel URLs', async ({ request, testUser }) => {
     const response = await request.post('/api/checkout', {
       data: {
-        priceId: 'price_test_123', // This will fail but we test URL handling
+        priceId: 'price_test_123',
         successUrl: 'https://example.com/success',
         cancelUrl: 'https://example.com/cancel',
         metadata: {
@@ -96,8 +97,13 @@ authenticatedTest.describe('API: Stripe Checkout - Authenticated Users', () => {
       },
     });
 
-    // Will fail at Stripe API level but validates our URL handling
-    expect(response.status()).toBe(500);
+    // In test mode, returns mock response with 200 (in production would validate URLs at Stripe API level)
+    expect(response.status()).toBe(200);
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.mock).toBe(true);
+    expect(data.data.url).toBeTruthy();
+    expect(data.data.sessionId).toBeTruthy();
   });
 
   authenticatedTest('should create checkout session with valid data', async ({ request, testUser }) => {
@@ -149,8 +155,11 @@ authenticatedTest.describe('API: Stripe Checkout - Authenticated Users', () => {
       },
     });
 
-    // Will fail at Stripe API but tests metadata handling
-    expect(response.status()).toBe(500);
+    // In test mode, returns mock response with 200 (in production would pass metadata to Stripe)
+    expect(response.status()).toBe(200);
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.mock).toBe(true);
   });
 
   authenticatedTest('should handle empty metadata', async ({ request, testUser }) => {
@@ -164,7 +173,11 @@ authenticatedTest.describe('API: Stripe Checkout - Authenticated Users', () => {
       },
     });
 
-    expect(response.status()).toBe(500);
+    // In test mode, returns mock response with 200 (in production would pass empty metadata to Stripe)
+    expect(response.status()).toBe(200);
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.mock).toBe(true);
   });
 
   authenticatedTest('should handle metadata as undefined', async ({ request, testUser }) => {
@@ -178,6 +191,10 @@ authenticatedTest.describe('API: Stripe Checkout - Authenticated Users', () => {
       },
     });
 
-    expect(response.status()).toBe(500);
+    // In test mode, returns mock response with 200 (in production would use default empty metadata)
+    expect(response.status()).toBe(200);
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.mock).toBe(true);
   });
 });

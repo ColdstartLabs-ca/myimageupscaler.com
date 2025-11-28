@@ -80,7 +80,7 @@ export default defineConfig({
 
   // Automatically start dev server for tests
   webServer: {
-    command: 'yarn dev:no-webhooks',
+    command: 'yarn dev:test',
     url: 'http://localhost:3000',
     reuseExistingServer: !isCI,
     timeout: 120000, // 2 minutes to start server
