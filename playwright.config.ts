@@ -78,5 +78,13 @@ export default defineConfig({
     },
   ],
 
-  // webServer disabled - using external server
+  // Automatically start dev server for tests
+  webServer: {
+    command: 'yarn dev:no-webhooks',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !isCI,
+    timeout: 120000, // 2 minutes to start server
+    stdout: 'ignore',
+    stderr: 'ignore',
+  },
 });
