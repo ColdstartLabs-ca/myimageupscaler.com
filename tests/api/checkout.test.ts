@@ -1,29 +1,20 @@
 import { test, expect } from '@playwright/test';
+import { resetTestUser } from '../helpers/test-user-reset';
 import { TestDataManager } from '../helpers/test-data-manager';
-import { StripeWebhookMockFactory } from '../helpers/stripe-webhook-mocks';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 test.describe('API: Checkout Flow', () => {
-  let dataManager: TestDataManager | undefined;
-
-  test.beforeAll(async () => {
-    dataManager = new TestDataManager();
-  });
-
-  test.afterAll(async () => {
-    if (dataManager) {
-      await dataManager.cleanupAllUsers();
-    }
-  });
+  // Note: We now use a fixed test user that gets reset before each test
+  // No need for cleanup since we're reusing the same user
 
   test.describe('Request Validation', () => {
     test('should reject requests without priceId', async ({ request }) => {
       const response = await request.post('/api/checkout', {
         data: {},
         headers: {
-          'authorization': 'Bearer test_token',
+          authorization: 'Bearer test_token',
           'content-type': 'application/json',
         },
       });
@@ -50,7 +41,7 @@ test.describe('API: Checkout Flow', () => {
       const response = await request.post('/api/checkout', {
         data: { priceId: 'price_test_123' },
         headers: {
-          'authorization': 'Bearer invalid_token',
+          authorization: 'Bearer invalid_token',
           'content-type': 'application/json',
         },
       });
@@ -64,7 +55,7 @@ test.describe('API: Checkout Flow', () => {
       const response = await request.post('/api/checkout', {
         data: 'invalid json',
         headers: {
-          'authorization': 'Bearer test_token',
+          authorization: 'Bearer test_token',
           'content-type': 'application/json',
         },
       });
@@ -75,31 +66,13 @@ test.describe('API: Checkout Flow', () => {
 
   test.describe('Customer Management', () => {
     test('should create new Stripe customer for first-time user', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
-
-      const testUser = await dataManager.createTestUser();
-
-      // Mock Stripe customer creation
-      const mockCustomer = {
-        id: 'cus_new_customer_123',
-        email: testUser.email,
-        metadata: {
-          supabase_user_id: testUser.id,
-        },
-      };
+      const testUser = await resetTestUser();
 
       // Mock price retrieval
       const mockPrice = {
         id: 'price_test_123',
         type: 'one_time',
         active: true,
-      };
-
-      // Mock checkout session creation
-      const mockSession = {
-        id: 'cs_test_session_123',
-        url: 'https://checkout.stripe.com/pay/cs_test_session_123',
-        customer: mockCustomer.id,
       };
 
       // Mock Stripe API calls - using request interceptors would be ideal,
@@ -111,9 +84,9 @@ test.describe('API: Checkout Flow', () => {
           cancelUrl: 'https://example.com/cancel',
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
@@ -133,13 +106,13 @@ test.describe('API: Checkout Flow', () => {
       expect(profile).toBeTruthy();
       expect(profile?.id).toBe(testUser.id);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
 
     test('should use existing Stripe customer for returning user', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
       const existingCustomerId = 'cus_existing_123';
 
       // Set up existing customer ID in the profile
@@ -157,9 +130,9 @@ test.describe('API: Checkout Flow', () => {
           cancelUrl: 'https://example.com/cancel',
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
@@ -176,13 +149,13 @@ test.describe('API: Checkout Flow', () => {
 
       expect(profile?.stripe_customer_id).toBe(existingCustomerId);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
 
     test('should include supabase_user_id in Stripe customer metadata', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       const response = await request.post('/api/checkout', {
         data: {
@@ -191,24 +164,24 @@ test.describe('API: Checkout Flow', () => {
           cancelUrl: 'https://example.com/cancel',
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
       // The request should be properly formatted with user metadata
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
   });
 
   test.describe('Price Detection and Session Mode', () => {
     test('should detect one-time payment mode for non-recurring prices', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Set up existing customer to skip customer creation
       const { createClient } = await import('@supabase/supabase-js');
@@ -224,21 +197,21 @@ test.describe('API: Checkout Flow', () => {
           metadata: { credits_amount: '100' }, // Indicates one-time credit purchase
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
 
     test('should detect subscription mode for recurring prices', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Set up existing customer
       const { createClient } = await import('@supabase/supabase-js');
@@ -253,23 +226,23 @@ test.describe('API: Checkout Flow', () => {
           priceId: 'price_subscription_123', // This would be a recurring price in Stripe
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
   });
 
   test.describe('URL Handling', () => {
     test('should use custom success and cancel URLs when provided', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Set up existing customer
       const { createClient } = await import('@supabase/supabase-js');
@@ -289,21 +262,21 @@ test.describe('API: Checkout Flow', () => {
           cancelUrl: customCancelUrl,
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
 
     test('should use default URLs when custom ones are not provided', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Set up existing customer
       const { createClient } = await import('@supabase/supabase-js');
@@ -319,21 +292,21 @@ test.describe('API: Checkout Flow', () => {
           // No successUrl or cancelUrl provided
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
 
     test('should extract base URL from origin header', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Set up existing customer
       const { createClient } = await import('@supabase/supabase-js');
@@ -348,23 +321,23 @@ test.describe('API: Checkout Flow', () => {
           priceId: 'price_test_origin',
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://mycustomapp.com',
+          origin: 'https://mycustomapp.com',
         },
       });
 
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
   });
 
   test.describe('Metadata Handling', () => {
     test('should include user_id in session metadata', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Set up existing customer
       const { createClient } = await import('@supabase/supabase-js');
@@ -386,21 +359,23 @@ test.describe('API: Checkout Flow', () => {
           metadata: customMetadata,
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
 
-    test('should include user_id in subscription metadata for recurring prices', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+    test('should include user_id in subscription metadata for recurring prices', async ({
+      request,
+    }) => {
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Set up existing customer
       const { createClient } = await import('@supabase/supabase-js');
@@ -415,21 +390,21 @@ test.describe('API: Checkout Flow', () => {
           priceId: 'price_subscription_metadata',
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
 
     test('should merge custom metadata with required metadata', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Set up existing customer
       const { createClient } = await import('@supabase/supabase-js');
@@ -449,23 +424,23 @@ test.describe('API: Checkout Flow', () => {
           },
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
   });
 
   test.describe('Error Handling', () => {
     test('should handle Stripe API errors gracefully', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Use invalid price ID to trigger Stripe error
       const response = await request.post('/api/checkout', {
@@ -473,9 +448,9 @@ test.describe('API: Checkout Flow', () => {
           priceId: 'price_invalid_12345',
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
@@ -484,7 +459,7 @@ test.describe('API: Checkout Flow', () => {
       const data = await response.json();
       expect(data.error).toBeTruthy();
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
 
     test('should handle database connection errors', async ({ request }) => {
@@ -494,9 +469,9 @@ test.describe('API: Checkout Flow', () => {
           priceId: 'price_test_db_error',
         },
         headers: {
-          'authorization': 'Bearer potentially_valid_but_db_unavailable_token',
+          authorization: 'Bearer potentially_valid_but_db_unavailable_token',
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
@@ -508,7 +483,7 @@ test.describe('API: Checkout Flow', () => {
       const response = await request.post('/api/checkout', {
         data: '{"priceId": "test", "invalid": }', // Malformed JSON
         headers: {
-          'authorization': 'Bearer test_token',
+          authorization: 'Bearer test_token',
           'content-type': 'application/json',
         },
       });
@@ -517,9 +492,9 @@ test.describe('API: Checkout Flow', () => {
     });
 
     test('should validate price ID format', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       const invalidPriceIds = [
         '', // Empty string
@@ -531,9 +506,9 @@ test.describe('API: Checkout Flow', () => {
         const response = await request.post('/api/checkout', {
           data: { priceId },
           headers: {
-            'authorization': `Bearer ${testUser.access_token}`,
+            authorization: `Bearer ${testUser.access_token}`,
             'content-type': 'application/json',
-            'origin': 'https://example.com',
+            origin: 'https://example.com',
           },
         });
 
@@ -541,7 +516,7 @@ test.describe('API: Checkout Flow', () => {
         expect(response.status()).toBeGreaterThanOrEqual(400);
       }
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
   });
 
@@ -552,9 +527,9 @@ test.describe('API: Checkout Flow', () => {
           priceId: 'price_test_123',
         },
         headers: {
-          'authorization': 'Bearer fake_jwt_token',
+          authorization: 'Bearer fake_jwt_token',
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
@@ -563,8 +538,10 @@ test.describe('API: Checkout Flow', () => {
       expect(data.error).toBe('Invalid authentication token');
     });
 
-    test('should prevent access to other users\' customer data', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+    test("should prevent access to other users' customer data", async ({ request }) => {
+      // NOTE: This test requires two separate users to test security isolation
+      // It's one of the few tests that legitimately needs TestDataManager
+      const dataManager = new TestDataManager();
 
       const testUser1 = await dataManager.createTestUser();
       const testUser2 = await dataManager.createTestUser();
@@ -583,9 +560,9 @@ test.describe('API: Checkout Flow', () => {
           priceId: 'price_test_security',
         },
         headers: {
-          'authorization': `Bearer ${testUser1.access_token}`, // User 1's token
+          authorization: `Bearer ${testUser1.access_token}`, // User 1's token
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
@@ -608,7 +585,7 @@ test.describe('API: Checkout Flow', () => {
         const response = await request.post('/api/checkout', {
           data: { priceId: 'price_test_auth' },
           headers: {
-            'authorization': authHeader,
+            authorization: authHeader,
             'content-type': 'application/json',
           },
         });
@@ -620,9 +597,9 @@ test.describe('API: Checkout Flow', () => {
 
   test.describe('Integration with Webhook Flow', () => {
     test('should create sessions compatible with webhook processing', async ({ request }) => {
-      if (!dataManager) throw new Error('Data manager not initialized');
+      // Reset test user for this test
 
-      const testUser = await dataManager.createTestUser();
+      const testUser = await resetTestUser();
 
       // Create checkout session for credit purchase
       const response = await request.post('/api/checkout', {
@@ -633,16 +610,16 @@ test.describe('API: Checkout Flow', () => {
           },
         },
         headers: {
-          'authorization': `Bearer ${testUser.access_token}`,
+          authorization: `Bearer ${testUser.access_token}`,
           'content-type': 'application/json',
-          'origin': 'https://example.com',
+          origin: 'https://example.com',
         },
       });
 
       // The session should be created with metadata that webhooks can process
       expect(response.status()).toBeGreaterThanOrEqual(400);
 
-      await dataManager.cleanupUser(testUser.id);
+      // No cleanup needed - using fixed test user
     });
   });
 });

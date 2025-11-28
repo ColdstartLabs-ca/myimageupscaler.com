@@ -1,10 +1,9 @@
-import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect, beforeAll, beforeEach } from 'vitest';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { TestDataManager } from '../helpers/test-data-manager';
+import { resetTestUser } from '../helpers/test-user-reset';
 
 describe('Credit Management System Integration Tests', () => {
   let supabase: SupabaseClient;
-  let dataManager: TestDataManager;
   let testUserId: string;
 
   // Test configuration
@@ -19,26 +18,12 @@ describe('Credit Management System Integration Tests', () => {
         persistSession: false,
       },
     });
-
-    dataManager = new TestDataManager();
-  });
-
-  afterAll(async () => {
-    if (dataManager) {
-      await dataManager.cleanupAllUsers();
-    }
   });
 
   beforeEach(async () => {
-    // Create a fresh test user for each test
-    const testUser = await dataManager.createTestUser();
+    // Reset the fixed test user to initial state for each test
+    const testUser = await resetTestUser();
     testUserId = testUser.id;
-  });
-
-  afterEach(async () => {
-    if (testUserId) {
-      await dataManager.cleanupUser(testUserId);
-    }
   });
 
   describe('increment_credits_with_log', () => {
@@ -286,11 +271,9 @@ describe('Credit Management System Integration Tests', () => {
         description: 'Failed processing job',
       });
 
-      const balanceBeforeRefund = (await supabase
-        .from('profiles')
-        .select('credits_balance')
-        .eq('id', testUserId)
-        .single()).data?.credits_balance || 0;
+      const balanceBeforeRefund =
+        (await supabase.from('profiles').select('credits_balance').eq('id', testUserId).single())
+          .data?.credits_balance || 0;
 
       // Now refund the credits
       const refundAmount = 5;
@@ -326,11 +309,9 @@ describe('Credit Management System Integration Tests', () => {
         description: 'Initial purchase',
       });
 
-      const balanceBeforeRefund = (await supabase
-        .from('profiles')
-        .select('credits_balance')
-        .eq('id', testUserId)
-        .single()).data?.credits_balance || 0;
+      const balanceBeforeRefund =
+        (await supabase.from('profiles').select('credits_balance').eq('id', testUserId).single())
+          .data?.credits_balance || 0;
 
       // Refund without job ID
       const { data: newBalance, error } = await supabase.rpc('refund_credits', {
@@ -486,11 +467,7 @@ describe('Credit Management System Integration Tests', () => {
         transaction_type: 'bonus',
       });
 
-      const balanceBefore = (await supabase
-        .from('profiles')
-        .select('credits_balance')
-        .eq('id', testUserId)
-        .single()).data?.credits_balance || 0;
+      // Atomic operations are tested by the database function itself
 
       // Perform multiple operations that should preserve total credits
       // Simulate failed job with refund
@@ -515,11 +492,9 @@ describe('Credit Management System Integration Tests', () => {
         ref_id: 'successful_job',
       });
 
-      const balanceAfter = (await supabase
-        .from('profiles')
-        .select('credits_balance')
-        .eq('id', testUserId)
-        .single()).data?.credits_balance || 0;
+      const balanceAfter =
+        (await supabase.from('profiles').select('credits_balance').eq('id', testUserId).single())
+          .data?.credits_balance || 0;
 
       // Balance should be: initial - 3 (usage) + 3 (refund) - 2 (usage) = 8
       expect(balanceAfter).toBe(8);
@@ -558,8 +533,8 @@ describe('Credit Management System Integration Tests', () => {
       const results = await Promise.allSettled(concurrentOperations);
 
       // All operations should succeed
-      const successfulOperations = results.filter(result =>
-        result.status === 'fulfilled' && result.value.error === null
+      const successfulOperations = results.filter(
+        result => result.status === 'fulfilled' && result.value.error === null
       );
 
       expect(successfulOperations).toHaveLength(5);
@@ -605,12 +580,12 @@ describe('Credit Management System Integration Tests', () => {
       const results = await Promise.allSettled(concurrentOperations);
 
       // Only one operation should succeed
-      const successfulOperations = results.filter(result =>
-        result.status === 'fulfilled' && result.value.error === null
+      const successfulOperations = results.filter(
+        result => result.status === 'fulfilled' && result.value.error === null
       );
 
-      const failedOperations = results.filter(result =>
-        result.status === 'fulfilled' && result.value.error !== null
+      const failedOperations = results.filter(
+        result => result.status === 'fulfilled' && result.value.error !== null
       );
 
       expect(successfulOperations).toHaveLength(1);
