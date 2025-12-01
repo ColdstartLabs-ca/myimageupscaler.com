@@ -1,7 +1,8 @@
 import { InputField } from '@client/components/form/InputField';
+import { PasswordStrengthIndicator } from '@client/components/form/PasswordStrengthIndicator';
 import { registerSchema } from '@shared/validation/authValidationSchema';
 import React, { FormEventHandler } from 'react';
-import { FieldErrors, UseFormRegister } from 'react-hook-form';
+import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
 import { z } from 'zod';
 
 export type IRegisterForm = z.infer<typeof registerSchema>;
@@ -10,9 +11,17 @@ interface IRegisterFormProps {
   onSubmit: FormEventHandler<HTMLFormElement>;
   register: UseFormRegister<IRegisterForm>;
   errors: FieldErrors<IRegisterForm>;
+  watch: UseFormWatch<IRegisterForm>;
 }
 
-export const RegisterForm: React.FC<IRegisterFormProps> = ({ onSubmit, register, errors }) => {
+export const RegisterForm: React.FC<IRegisterFormProps> = ({
+  onSubmit,
+  register,
+  errors,
+  watch,
+}) => {
+  const password = watch('password') || '';
+
   return (
     <form onSubmit={onSubmit} className="flex flex-col space-y-5">
       <p className="text-center text-muted-foreground text-sm mb-1">
@@ -25,13 +34,16 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({ onSubmit, register,
         className="w-full"
         error={errors.email?.message}
       />
-      <InputField
-        {...register('password')}
-        type="password"
-        placeholder="Password"
-        className="w-full"
-        error={errors.password?.message}
-      />
+      <div>
+        <InputField
+          {...register('password')}
+          type="password"
+          placeholder="Password"
+          className="w-full"
+          error={errors.password?.message}
+        />
+        <PasswordStrengthIndicator password={password} />
+      </div>
       <InputField
         {...register('passwordConfirmation')}
         type="password"

@@ -33,6 +33,7 @@ export const AuthenticationModal: React.FC = () => {
     register: registerRegister,
     handleSubmit: handleRegisterSubmit,
     formState: { errors: registerErrors },
+    watch: registerWatch,
   } = useForm<IRegisterForm>({
     resolver: zodResolver(registerSchema),
   });
@@ -151,6 +152,7 @@ export const AuthenticationModal: React.FC = () => {
               onSubmit={handleRegisterSubmit(onRegisterSubmit)}
               register={registerRegister}
               errors={registerErrors}
+              watch={registerWatch}
             />
             <SocialLoginButton />
             <div className="flex flex-col gap-2 mt-6 border-t border-border/50 pt-5">
