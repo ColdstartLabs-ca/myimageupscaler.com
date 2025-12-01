@@ -22,8 +22,7 @@ const features = [
   {
     icon: Zap,
     name: 'Lightning Fast',
-    description:
-      'Optimized inference engine processes 4K images in under 5 seconds using latest GPU clusters.',
+    description: 'Optimized processing engine enhances images quickly with advanced AI technology.',
     color: 'text-amber-600',
     bg: 'bg-amber-50',
   },
@@ -105,7 +104,7 @@ const Features: React.FC = () => {
               <div className="p-2 bg-slate-100 rounded-full text-slate-600">
                 <Cpu size={16} />
               </div>
-              <span className="font-semibold text-slate-900">GPU Accelerated</span>
+              <span className="font-semibold text-slate-900">Fast Processing</span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <div className="p-2 bg-slate-100 rounded-full text-slate-600">
