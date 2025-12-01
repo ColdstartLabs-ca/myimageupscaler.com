@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { JSX } from 'react';
+import { clientEnv } from '@shared/config/env';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
@@ -100,8 +101,11 @@ export default function TermsOfServicePage(): JSX.Element {
             </ul>
             <p className="text-base-content/80">
               For refund requests, contact{' '}
-              <a href="mailto:support@pixelperfect.app" className="text-primary hover:underline">
-                support@pixelperfect.app
+              <a
+                href={`mailto:${clientEnv.SUPPORT_EMAIL}`}
+                className="text-primary hover:underline"
+              >
+                {clientEnv.SUPPORT_EMAIL}
               </a>
               .
             </p>
@@ -254,8 +258,11 @@ export default function TermsOfServicePage(): JSX.Element {
             <ul className="list-none mb-4 text-base-content/80">
               <li>
                 Email:{' '}
-                <a href="mailto:legal@pixelperfect.app" className="text-primary hover:underline">
-                  legal@pixelperfect.app
+                <a
+                  href={`mailto:${clientEnv.LEGAL_EMAIL}`}
+                  className="text-primary hover:underline"
+                >
+                  {clientEnv.LEGAL_EMAIL}
                 </a>
               </li>
             </ul>

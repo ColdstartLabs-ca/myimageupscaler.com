@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { JSX } from 'react';
+import { clientEnv } from '@shared/config/env';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -186,8 +187,11 @@ export default function PrivacyPolicyPage(): JSX.Element {
             </ul>
             <p className="text-base-content/80">
               To exercise these rights, please contact us at{' '}
-              <a href="mailto:privacy@pixelperfect.app" className="text-primary hover:underline">
-                privacy@pixelperfect.app
+              <a
+                href={`mailto:${clientEnv.PRIVACY_EMAIL}`}
+                className="text-primary hover:underline"
+              >
+                {clientEnv.PRIVACY_EMAIL}
               </a>
               .
             </p>
@@ -246,8 +250,11 @@ export default function PrivacyPolicyPage(): JSX.Element {
             <ul className="list-none mb-4 text-base-content/80">
               <li>
                 Email:{' '}
-                <a href="mailto:privacy@pixelperfect.app" className="text-primary hover:underline">
-                  privacy@pixelperfect.app
+                <a
+                  href={`mailto:${clientEnv.PRIVACY_EMAIL}`}
+                  className="text-primary hover:underline"
+                >
+                  {clientEnv.PRIVACY_EMAIL}
                 </a>
               </li>
             </ul>

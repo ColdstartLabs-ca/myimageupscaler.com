@@ -33,6 +33,9 @@ const clientEnvSchema = z.object({
   ENABLE_AZURE_OAUTH: z.string().default('false'),
   // Contact
   ADMIN_EMAIL: z.string().email().default('admin@pixelperfect.com'),
+  SUPPORT_EMAIL: z.string().email().default('support@pixelperfect.app'),
+  LEGAL_EMAIL: z.string().email().default('legal@pixelperfect.app'),
+  PRIVACY_EMAIL: z.string().email().default('privacy@pixelperfect.app'),
 });
 
 export type IClientEnv = z.infer<typeof clientEnvSchema>;
@@ -55,6 +58,9 @@ function loadClientEnv(): IClientEnv {
     ENABLE_AZURE_OAUTH: process.env.NEXT_PUBLIC_ENABLE_AZURE_OAUTH || 'false',
     // Contact
     ADMIN_EMAIL: process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@pixelperfect.com',
+    SUPPORT_EMAIL: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@pixelperfect.app',
+    LEGAL_EMAIL: process.env.NEXT_PUBLIC_LEGAL_EMAIL || 'legal@pixelperfect.app',
+    PRIVACY_EMAIL: process.env.NEXT_PUBLIC_PRIVACY_EMAIL || 'privacy@pixelperfect.app',
   };
 
   return clientEnvSchema.parse(env);

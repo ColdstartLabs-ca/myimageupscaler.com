@@ -59,7 +59,7 @@ const tiers: ITier[] = [
       'Batch processing (up to 50)',
       'Text Preservation Mode',
       'Credit rollover',
-      'API Access (Beta)',
+      'Priority support',
     ],
     recommended: true,
     cta: 'Get Started',

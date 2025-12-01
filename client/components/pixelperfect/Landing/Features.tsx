@@ -99,19 +99,19 @@ const Features: React.FC = () => {
               <div className="p-2 bg-slate-100 rounded-full text-slate-600">
                 <Lock size={16} />
               </div>
-              <span className="font-semibold text-slate-900">SOC-2 Compliant</span>
+              <span className="font-semibold text-slate-900">Secure Processing</span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <div className="p-2 bg-slate-100 rounded-full text-slate-600">
                 <Cpu size={16} />
               </div>
-              <span className="font-semibold text-slate-900">API Access</span>
+              <span className="font-semibold text-slate-900">GPU Accelerated</span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <div className="p-2 bg-slate-100 rounded-full text-slate-600">
                 <CheckCircle2 size={16} />
               </div>
-              <span className="font-semibold text-slate-900">99.9% Uptime</span>
+              <span className="font-semibold text-slate-900">High Availability</span>
             </div>
           </div>
         </div>

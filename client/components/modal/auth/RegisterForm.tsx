@@ -61,7 +61,7 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
           <input
             {...register('agreeToTerms')}
             type="checkbox"
-            className="mt-0.5 h-4 w-4 rounded border-border bg-background text-primary focus:ring-2 focus:ring-primary focus:ring-offset-0 cursor-pointer"
+            className="mt-0.5 h-4 w-4 rounded border-gray-300 bg-white text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
           />
           <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
             I agree to the{' '}
