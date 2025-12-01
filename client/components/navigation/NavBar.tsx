@@ -7,18 +7,18 @@ import { AuthProvider } from '@shared/types/authProviders';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
 
 export const NavBar = (): JSX.Element => {
-  const { open } = useModalStore();
+  const { openAuthModal } = useModalStore();
   const { isAuthenticated, isLoading, user, signOut } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleAuthClick = () => {
     if (!isAuthenticated) {
-      open('authenticationModal');
+      openAuthModal('login');
     }
   };
 
   const handleChangePassword = () => {
-    open('authenticationModal');
+    openAuthModal('changePassword');
   };
 
   // Check if user is authenticated through email/password

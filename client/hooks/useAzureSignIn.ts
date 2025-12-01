@@ -5,7 +5,7 @@ import { useToastStore } from '@client/store/toastStore';
 
 export const useAzureSignIn = (): { signIn: () => Promise<void>; loading: boolean } => {
   const { showToast } = useToastStore();
-  const { open } = useModalStore();
+  const { openAuthModal } = useModalStore();
   const [loading, setLoading] = useState(false);
 
   const signIn = async (): Promise<void> => {
@@ -27,7 +27,7 @@ export const useAzureSignIn = (): { signIn: () => Promise<void>; loading: boolea
       if (error) {
         console.error('Azure sign-in error:', error);
         showToast({ message: error.message || 'An error occurred during sign in.', type: 'error' });
-        open('authenticationModal');
+        openAuthModal('login');
       }
     } catch (error) {
       console.error('Unexpected error during Azure sign-in:', error);

@@ -2,10 +2,10 @@ import { SocialLoginButton } from '@client/components/form/SocialLoginButton';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createClient } from '@shared/utils/supabase/client';
 import { useAuthStore } from '@client/store/authStore';
-import { useModalStore } from '@client/store/modalStore';
+import { useModalStore, AuthModalView } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { loginSchema, registerSchema } from '@shared/validation/authValidationSchema';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Modal } from '@client/components/modal/Modal';
 import { ChangePasswordForm } from '@client/components/modal/auth/ChangePasswordForm';
@@ -17,14 +17,9 @@ import { IRegisterForm, RegisterForm } from '@client/components/modal/auth/Regis
 const MODAL_ID = 'authenticationModal';
 
 export const AuthenticationModal: React.FC = () => {
-  const { close: closeModal, isModalOpen, open } = useModalStore();
-  const { signInWithEmail, signUpWithEmail, changePassword, resetPassword, isAuthenticated, user } =
-    useAuthStore();
+  const { close, isModalOpen, authModalView, setAuthModalView, openAuthModal } = useModalStore();
+  const { signInWithEmail, signUpWithEmail, changePassword, resetPassword } = useAuthStore();
   const { showToast } = useToastStore();
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const [isSettingNewPassword, setIsSettingNewPassword] = useState(false);
 
   const {
     register: loginRegister,
@@ -43,47 +38,22 @@ export const AuthenticationModal: React.FC = () => {
   });
 
   const isOpen = isModalOpen(MODAL_ID);
-  const isPasswordUser = user?.provider === 'email';
 
+  // Listen for PASSWORD_RECOVERY event to open set new password modal
   useEffect(() => {
     const supabase = createClient();
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(event => {
       if (event === 'PASSWORD_RECOVERY') {
-        setIsSettingNewPassword(true);
-        open(MODAL_ID);
-      } else if (event === 'SIGNED_OUT') {
-        setIsSettingNewPassword(false);
+        openAuthModal('setNewPassword');
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [open]);
-
-  useEffect(() => {
-    // Only update state when modal opens, not when it closes
-    // This prevents the flash of login form during close animation
-    if (isOpen && isAuthenticated && !isSettingNewPassword) {
-      setIsChangingPassword(isPasswordUser);
-    }
-    // Reset states only after modal has fully closed (with delay for animation)
-    if (!isOpen) {
-      const timer = setTimeout(() => {
-        setIsChangingPassword(false);
-        setIsForgotPassword(false);
-        setIsRegistering(false);
-      }, 250); // Match modal close animation duration
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, isAuthenticated, isSettingNewPassword, isPasswordUser]);
-
-  const close = () => {
-    setIsSettingNewPassword(false);
-    closeModal();
-  };
+  }, [openAuthModal]);
 
   const onLoginSubmit = async (data: ILoginForm) => {
     try {
@@ -141,84 +111,96 @@ export const AuthenticationModal: React.FC = () => {
     }
   };
 
-  const handleBackToLogin = () => {
-    setIsForgotPassword(false);
-    setIsRegistering(false);
+  const getModalTitle = (): string => {
+    const titles: Record<AuthModalView, string> = {
+      login: 'Sign In',
+      register: 'Create Account',
+      changePassword: 'Change Password',
+      forgotPassword: 'Forgot Password',
+      setNewPassword: 'Set New Password',
+    };
+    return titles[authModalView];
   };
 
-  const getModalTitle = () => {
-    if (isRegistering) return 'Create Account';
-    if (isChangingPassword) return 'Change Password';
-    if (isForgotPassword) return 'Forgot Password';
-    if (isSettingNewPassword) return 'Set New Password';
-    return 'Sign In';
-  };
+  const renderContent = () => {
+    switch (authModalView) {
+      case 'changePassword':
+        return <ChangePasswordForm onSubmit={handleChangePassword} />;
 
-  const getContentKey = () => {
-    if (isChangingPassword && isPasswordUser) return 'change-password';
-    if (isSettingNewPassword) return 'set-new-password';
-    if (isForgotPassword) return 'forgot-password';
-    if (isRegistering) return 'register';
-    return 'login';
+      case 'setNewPassword':
+        return <ForgotPasswordSetNewPasswordForm onClose={close} />;
+
+      case 'forgotPassword':
+        return (
+          <>
+            <ForgotPasswordForm onSubmit={handleForgotPassword} />
+            <button
+              type="button"
+              onClick={() => setAuthModalView('login')}
+              className="text-primary text-center hover:text-primary-hover font-medium w-full mt-6 text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
+            >
+              Back to Login
+            </button>
+          </>
+        );
+
+      case 'register':
+        return (
+          <>
+            <RegisterForm
+              onSubmit={handleRegisterSubmit(onRegisterSubmit)}
+              register={registerRegister}
+              errors={registerErrors}
+            />
+            <SocialLoginButton />
+            <div className="flex flex-col gap-2 mt-6 border-t border-border/50 pt-5">
+              <button
+                type="button"
+                onClick={() => setAuthModalView('login')}
+                className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
+              >
+                Already have an account? Sign in
+              </button>
+            </div>
+          </>
+        );
+
+      case 'login':
+      default:
+        return (
+          <>
+            <LoginForm
+              onSubmit={handleLoginSubmit(onLoginSubmit)}
+              register={loginRegister}
+              errors={loginErrors}
+            />
+            <SocialLoginButton />
+            <div className="flex flex-col gap-2 mt-6 border-t border-border/50 pt-5">
+              <button
+                type="button"
+                onClick={() => setAuthModalView('register')}
+                className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
+              >
+                Don&apos;t have an account? Create one
+              </button>
+              <button
+                type="button"
+                onClick={() => setAuthModalView('forgotPassword')}
+                className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
+              >
+                Forgot Password?
+              </button>
+            </div>
+          </>
+        );
+    }
   };
 
   return (
     <div className="font-sans">
       <Modal title={getModalTitle()} onClose={close} isOpen={isOpen} showCloseButton={false}>
-        <div key={getContentKey()} className="animate-in fade-in duration-200">
-          {isChangingPassword && isPasswordUser ? (
-            <ChangePasswordForm onSubmit={handleChangePassword} />
-          ) : isSettingNewPassword ? (
-            <ForgotPasswordSetNewPasswordForm onClose={close} />
-          ) : isForgotPassword ? (
-            <>
-              <ForgotPasswordForm onSubmit={handleForgotPassword} />
-              <button
-                type="button"
-                onClick={handleBackToLogin}
-                className="text-primary text-center hover:text-primary-hover font-medium w-full mt-6 text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
-              >
-                Back to Login
-              </button>
-            </>
-          ) : (
-            <>
-              {isRegistering ? (
-                <RegisterForm
-                  onSubmit={handleRegisterSubmit(onRegisterSubmit)}
-                  register={registerRegister}
-                  errors={registerErrors}
-                />
-              ) : (
-                <LoginForm
-                  onSubmit={handleLoginSubmit(onLoginSubmit)}
-                  register={loginRegister}
-                  errors={loginErrors}
-                />
-              )}
-              <SocialLoginButton />
-              <div className="flex flex-col gap-2 mt-6 border-t border-border/50 pt-5">
-                <button
-                  type="button"
-                  onClick={() => setIsRegistering(!isRegistering)}
-                  className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
-                >
-                  {isRegistering
-                    ? 'Already have an account? Sign in'
-                    : "Don't have an account? Create one"}
-                </button>
-                {!isRegistering && (
-                  <button
-                    type="button"
-                    onClick={() => setIsForgotPassword(true)}
-                    className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
-                  >
-                    Forgot Password?
-                  </button>
-                )}
-              </div>
-            </>
-          )}
+        <div key={authModalView} className="animate-in fade-in duration-200">
+          {renderContent()}
         </div>
       </Modal>
     </div>

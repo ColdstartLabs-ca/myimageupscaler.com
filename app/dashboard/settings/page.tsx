@@ -6,7 +6,7 @@ import { useModalStore } from '@client/store/modalStore';
 
 export default function SettingsPage() {
   const { user } = useAuthStore();
-  const { open } = useModalStore();
+  const { openAuthModal } = useModalStore();
 
   // Check if user is authenticated through email/password (not OAuth)
   const isPasswordUser = user?.provider === 'email';
@@ -73,7 +73,7 @@ export default function SettingsPage() {
               <p className="text-sm text-slate-500">Change your account password</p>
             </div>
             <button
-              onClick={() => open('authenticationModal')}
+              onClick={() => openAuthModal('changePassword')}
               className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors"
             >
               Change Password

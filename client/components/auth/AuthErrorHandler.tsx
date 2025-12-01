@@ -4,7 +4,7 @@ import { useToastStore } from '@client/store/toastStore';
 
 export const AuthErrorHandler = (): JSX.Element => {
   const { showToast } = useToastStore();
-  const { open } = useModalStore();
+  const { openAuthModal } = useModalStore();
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -14,7 +14,7 @@ export const AuthErrorHandler = (): JSX.Element => {
         const error = params.get('error_description');
         if (error) {
           showToast({ message: decodeURIComponent(error), type: 'error' });
-          open('authenticationModal');
+          openAuthModal('login');
           // Clear the hash to prevent showing the error again on refresh
           window.history.replaceState(null, '', window.location.pathname);
         }
@@ -25,7 +25,7 @@ export const AuthErrorHandler = (): JSX.Element => {
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [showToast, open]);
+  }, [showToast, openAuthModal]);
 
   return <></>;
 };

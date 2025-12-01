@@ -5,7 +5,7 @@ import { useToastStore } from '@client/store/toastStore';
 
 export const useFacebookSignIn = (): { signIn: () => Promise<void>; loading: boolean } => {
   const { showToast } = useToastStore();
-  const { open } = useModalStore();
+  const { openAuthModal } = useModalStore();
   const [loading, setLoading] = useState(false);
 
   const signIn = async (): Promise<void> => {
@@ -22,7 +22,7 @@ export const useFacebookSignIn = (): { signIn: () => Promise<void>; loading: boo
       if (error) {
         console.error('Facebook sign-in error:', error);
         showToast({ message: error.message || 'An error occurred during sign in.', type: 'error' });
-        open('authenticationModal');
+        openAuthModal('login');
       }
     } catch (error) {
       console.error('Unexpected error during Facebook sign-in:', error);
