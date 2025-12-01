@@ -78,9 +78,15 @@ export const NavBar = (): JSX.Element => {
               </div>
               <button
                 onClick={handleAuthClick}
-                className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-indigo-600 text-white hover:bg-indigo-700 h-9 px-4 py-2"
+                className="hidden md:inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-9 px-4 py-2"
               >
                 Sign In
+              </button>
+              <button
+                onClick={() => openAuthModal('register')}
+                className="inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-700 hover:via-violet-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 h-9 px-5 py-2"
+              >
+                Get Started Free
               </button>
             </>
           ) : (
