@@ -21,6 +21,9 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
   watch,
 }) => {
   const password = watch('password') || '';
+  const passwordConfirmation = watch('passwordConfirmation') || '';
+  const passwordsMatch =
+    password.length > 0 && passwordConfirmation.length > 0 && password === passwordConfirmation;
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col space-y-5">
@@ -41,6 +44,7 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
           placeholder="Password"
           className="w-full"
           error={errors.password?.message}
+          success={passwordsMatch && !errors.password}
         />
         <PasswordStrengthIndicator password={password} />
       </div>
@@ -50,6 +54,7 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
         placeholder="Confirm Password"
         className="w-full"
         error={errors.passwordConfirmation?.message}
+        success={passwordsMatch && !errors.passwordConfirmation}
       />
       <div className="flex flex-col space-y-2">
         <label className="flex items-start gap-2 cursor-pointer group">
@@ -80,7 +85,7 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
           </span>
         </label>
         {errors.agreeToTerms && (
-          <span className="text-sm text-destructive">{errors.agreeToTerms.message}</span>
+          <span className="text-sm text-red-600 font-medium">{errors.agreeToTerms.message}</span>
         )}
       </div>
       <button
