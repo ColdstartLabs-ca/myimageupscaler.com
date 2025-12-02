@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import type { ICheckoutSessionRequest } from '@server/stripe/types';
+import type { ICheckoutSessionRequest } from '@shared/types/stripe';
 import { clientEnv, serverEnv } from '@shared/config/env';
 import { getPlanForPriceId } from '@shared/config/stripe';
 import { BILLING_COPY } from '@shared/constants/billing';

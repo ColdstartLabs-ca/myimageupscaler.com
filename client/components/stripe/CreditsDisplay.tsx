@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { StripeService } from '@server/stripe';
-import type { IUserProfile } from '@server/stripe/types';
+import { StripeService } from '@client/services/stripeService';
+import type { IUserProfile } from '@shared/types/stripe';
 
 /**
  * Component to display user's current credits balance

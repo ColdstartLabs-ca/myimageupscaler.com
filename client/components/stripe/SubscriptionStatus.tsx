@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { StripeService } from '@server/stripe';
-import type { ISubscription, IUserProfile } from '@server/stripe/types';
+import { StripeService } from '@client/services/stripeService';
+import type { ISubscription, IUserProfile } from '@shared/types/stripe';
 import { getPlanDisplayName } from '@shared/config/stripe';
 
 /**

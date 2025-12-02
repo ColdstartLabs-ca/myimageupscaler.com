@@ -1,5 +1,4 @@
-// Export all Stripe-related functionality
-export { StripeService } from '@server/stripe/stripeService';
+// Export all Stripe-related functionality (server-only)
 export { stripe, STRIPE_WEBHOOK_SECRET } from '@server/stripe/config';
 export type {
   SubscriptionStatus,
@@ -10,4 +9,4 @@ export type {
   ICheckoutSessionRequest,
   ICheckoutSessionResponse,
   ICreditsPackage,
-} from '@server/stripe/types';
+} from '@shared/types/stripe';

@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useToastStore } from '@client/store/toastStore';
-import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
+import { useRouter } from 'next/navigation';
 
 interface IPricingCardProps {
   name: string;
@@ -41,24 +39,12 @@ export function PricingCard({
   priceId,
   recommended = false,
 }: IPricingCardProps): JSX.Element {
-  const [showCheckout, setShowCheckout] = useState(false);
-  const { showToast } = useToastStore();
+  const router = useRouter();
 
   const handleSubscribe = () => {
-    // Check if user is authenticated by trying to get session
-    // The CheckoutModal will handle the actual auth check
-    setShowCheckout(true);
-  };
-
-  const handleCheckoutClose = () => {
-    setShowCheckout(false);
-  };
-
-  const handleCheckoutSuccess = () => {
-    showToast({
-      message: 'Subscription activated successfully!',
-      type: 'success',
-    });
+    // Redirect to checkout page with plan details
+    const checkoutUrl = `/checkout?priceId=${encodeURIComponent(priceId)}&plan=${encodeURIComponent(name)}`;
+    router.push(checkoutUrl);
   };
 
   return (
@@ -111,19 +97,10 @@ export function PricingCard({
             onClick={handleSubscribe}
             className="w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg"
           >
-            Subscribe Now
+            Get Started
           </button>
         </div>
       </div>
-
-      {/* Embedded Checkout Modal */}
-      {showCheckout && (
-        <CheckoutModal
-          priceId={priceId}
-          onClose={handleCheckoutClose}
-          onSuccess={handleCheckoutSuccess}
-        />
-      )}
     </div>
   );
 }

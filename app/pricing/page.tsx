@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { PricingCard } from '@client/components/stripe';
-import { StripeService } from '@server/stripe';
-import type { IUserProfile, ISubscription } from '@server/stripe/types';
+import { StripeService } from '@client/services/stripeService';
+import type { IUserProfile, ISubscription } from '@shared/types/stripe';
 import {
   STRIPE_PRICES,
   SUBSCRIPTION_PLANS,

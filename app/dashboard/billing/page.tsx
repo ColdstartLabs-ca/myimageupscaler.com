@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CreditCard, Package, Receipt, ExternalLink, Loader2, RefreshCw } from 'lucide-react';
-import { StripeService } from '@server/stripe';
+import { StripeService } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
 import { getPlanDisplayName } from '@shared/config/stripe';
-import type { IUserProfile, ISubscription } from '@server/stripe/types';
+import type { IUserProfile, ISubscription } from '@shared/types/stripe';
 
 export default function BillingPage() {
   const router = useRouter();

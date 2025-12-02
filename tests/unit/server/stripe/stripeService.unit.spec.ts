@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { StripeService } from '@server/stripe/stripeService';
+import { StripeService } from '@client/services/stripeService';
 import { supabase } from '@server/supabase/supabaseClient';
 
 // Mock Supabase

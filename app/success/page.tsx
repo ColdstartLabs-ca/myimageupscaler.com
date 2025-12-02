@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
-import { StripeService } from '@server/stripe';
+import { StripeService } from '@client/services/stripeService';
 
 const MAX_POLL_ATTEMPTS = 10;
 const POLL_INTERVAL_MS = 1000;

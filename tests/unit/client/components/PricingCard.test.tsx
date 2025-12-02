@@ -4,7 +4,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { PricingCard } from '@client/components/stripe/PricingCard';
 
 // Mock the dependencies
-vi.mock('@server/stripe', () => ({
+vi.mock('@client/services/stripeService', () => ({
   StripeService: {
     redirectToCheckout: vi.fn(),
   },
@@ -41,7 +41,7 @@ Object.defineProperty(window, 'history', {
   writable: true,
 });
 
-import { StripeService } from '@server/stripe';
+import { StripeService } from '@client/services/stripeService';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 

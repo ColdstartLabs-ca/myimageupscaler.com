@@ -83,7 +83,7 @@ const ImageComparison: React.FC<IImageComparisonProps> = ({ beforeUrl, afterUrl,
 
       <div
         ref={containerRef}
-        className="relative w-full h-[500px] bg-[url('https://bg.site/checkerboard.png')] bg-repeat overflow-hidden cursor-col-resize select-none group"
+        className="relative w-full h-[500px] bg-[url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjNmNGY2Ii8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNmM2Y0ZjYiLz48L3N2Zz4=)] bg-repeat overflow-hidden cursor-col-resize select-none group"
         onMouseDown={handleMouseDown}
         onTouchStart={handleMouseDown}
       >

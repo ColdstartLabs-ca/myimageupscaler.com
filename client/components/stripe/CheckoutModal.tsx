@@ -1,7 +1,7 @@
 'use client';
 
 import { useToastStore } from '@client/store/toastStore';
-import { StripeService } from '@server/stripe';
+import { StripeService } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';

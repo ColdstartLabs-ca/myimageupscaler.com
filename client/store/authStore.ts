@@ -21,7 +21,7 @@ const handleCheckoutRedirect = async () => {
 
     // Redirect to Stripe checkout (subscription-only)
     try {
-      const { StripeService } = await import('@server/stripe/stripeService');
+      const { StripeService } = await import('@client/services/stripeService');
       await StripeService.redirectToCheckout(checkoutPriceId, {
         successUrl: `${window.location.origin}/success`,
         cancelUrl: window.location.href,
@@ -283,11 +283,28 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       }
 
       // Check for URL-based checkout redirect
-      if (!window.location.pathname.startsWith('/dashboard')) {
-        const isRedirecting = await handleCheckoutRedirect();
-        if (!isRedirecting) {
-          window.location.href = '/dashboard';
-        }
+      const isRedirecting = await handleCheckoutRedirect();
+      if (isRedirecting) {
+        return;
+      }
+
+      // Check for stored redirect URL (e.g., from checkout page)
+      const storedRedirect = localStorage.getItem('post_auth_redirect');
+      if (storedRedirect && !window.location.pathname.startsWith('/dashboard')) {
+        localStorage.removeItem('post_auth_redirect');
+        window.location.href = storedRedirect;
+        return;
+      }
+
+      // Only redirect to dashboard for regular authentication (not checkout flows)
+      const currentPath = window.location.pathname;
+      const isCheckoutRelated = currentPath === '/checkout' ||
+                               currentPath === '/pricing' ||
+                               currentPath === '/success' ||
+                               currentPath.startsWith('/checkout');
+
+      if (!isCheckoutRelated && !currentPath.startsWith('/dashboard')) {
+        window.location.href = '/dashboard';
       }
     }
   } else {
