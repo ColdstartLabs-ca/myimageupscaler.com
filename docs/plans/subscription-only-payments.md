@@ -201,3 +201,14 @@ await supabaseAdmin.from('profiles').update({ subscription_status: status, subsc
 - [ ] Adjust or remove credit-pack tests/docs; add/align subscription-only tests where feasible.
 - [ ] Manual sanity: create checkout session with subscription price, verify webhook path handles events, and portal CTA works.
 - [ ] Run lint/tsc or targeted tests if time permits.
+
+## 5. DRY/SRP/YAGNI Refactors (UI + Backend cohesion)
+- **Central plan map:** Add `SUBSCRIPTION_PRICE_MAP` in `shared/config/stripe.ts` (priceId → {key,name,creditsPerMonth,maxRollover,features,recommended}) plus helpers `getPlanForPriceId`, `getPlanByKey`, and `SUBSCRIPTION_PRICE_IDS`. Reuse everywhere for validation, display names, credits, rollover.
+- **Display name resolver:** Use a single helper to render plan names from `subscription_tier/price_id` and consume it in Billing, SubscriptionStatus, Success, and Pricing CTAs so no raw price IDs appear in UI.
+- **Single checkout helper:** Keep checkout initiation in `StripeService` with a subscription-only signature (plan key/priceId + URLs + metadata). All CTAs (homepage pricing, pricing page cards, billing upgrade) should call this helper to avoid divergent metadata/URLs.
+- **Remove YAGNI credit flows:** Delete `CREDIT_PACKS`, `BuyCreditsButton`, credit-pack grids on pricing page, and one-time payment branches in checkout/webhooks. This reduces dead code and surface area.
+- **Webhook SRP:** Split webhook logic into small functions (`validateEvent`, `upsertSubscription(plan, subscription)`, `applyRenewalCredits(plan, invoice)`) and guard early on `getPlanForPriceId` to bail on unknown price IDs.
+- **CTA/link consistency:** Centralize the “manage subscription” path (e.g., `/dashboard/billing`) and reuse across SubscriptionStatus, Billing, Success to avoid hard-coded divergences.
+- **Success page polling helper:** Extract shared polling/profile fetch logic so Success and any future banners reuse the same path instead of bespoke credit-only polling.
+- **Portal visibility rule:** Gate “Manage Subscription” buttons on `stripe_customer_id` presence via a single helper/boolean from `StripeService.getUserProfile`.
+- **Error/copy constants:** Centralize billing-facing strings (e.g., “Activate a subscription to manage billing”, “Choose a plan to continue”) to prevent drift across Pricing/Billing/Success.
