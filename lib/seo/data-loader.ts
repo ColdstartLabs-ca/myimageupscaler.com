@@ -6,6 +6,7 @@
 
 import { cache } from 'react';
 import { keywordPageMappings } from './keyword-mappings';
+import toolsDataFile from '@/app/seo/data/tools.json';
 import type {
   IToolPage,
   IFormatPage,
@@ -16,11 +17,15 @@ import type {
   IGuidePage,
   IFreePage,
   PSEOPage,
+  IPSEODataFile,
 } from './pseo-types';
 
+// Type-safe data imports
+const toolsData = toolsDataFile as IPSEODataFile<IToolPage>;
+
 /**
- * Generate page data from keyword mappings
- * This is a temporary implementation until JSON data files are created
+ * Generate fallback page data from keyword mappings
+ * Used when JSON data file doesn't exist yet
  */
 function generatePageFromMapping(mapping: (typeof keywordPageMappings)[number]): Partial<PSEOPage> {
   const category = mapping.canonicalUrl.split('/')[1] as PSEOPage['category'];
@@ -51,36 +56,16 @@ function generatePageFromMapping(mapping: (typeof keywordPageMappings)[number]):
 
 // Tool Pages
 export const getAllToolSlugs = cache(async (): Promise<string[]> => {
-  const tools = keywordPageMappings.filter(m => m.canonicalUrl.startsWith('/tools/'));
-  return tools.map(t => t.canonicalUrl.split('/')[2]);
+  return toolsData.pages.map(page => page.slug);
 });
 
 export const getToolData = cache(async (slug: string): Promise<IToolPage | null> => {
-  const mapping = keywordPageMappings.find(m => m.canonicalUrl === `/tools/${slug}`);
-  if (!mapping) return null;
-
-  const base = generatePageFromMapping(mapping);
-  return {
-    ...base,
-    category: 'tools',
-    toolName: base.title!,
-    description: base.intro!,
-    features: [],
-    useCases: [],
-    benefits: [],
-    howItWorks: [],
-    faq: [],
-    relatedTools: [],
-    relatedGuides: [],
-    ctaText: 'Try Now Free',
-    ctaUrl: '/upscaler',
-  } as IToolPage;
+  const tool = toolsData.pages.find(page => page.slug === slug);
+  return tool || null;
 });
 
 export const getAllTools = cache(async (): Promise<IToolPage[]> => {
-  const slugs = await getAllToolSlugs();
-  const tools = await Promise.all(slugs.map(slug => getToolData(slug)));
-  return tools.filter((t): t is IToolPage => t !== null);
+  return toolsData.pages;
 });
 
 // Format Pages

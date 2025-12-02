@@ -1,0 +1,154 @@
+{
+  "category": "tools",
+  "pages": [
+    {
+      "slug": "ai-image-upscaler",
+      "title": "AI Image Upscaler",
+      "metaTitle": "AI Image Upscaler - Enhance Photos to 4K Free | PixelPerfect",
+      "metaDescription": "Upscale images to 4K resolution with AI. Free online tool that preserves text and logos. No watermarks, fast processing. Try PixelPerfect now.",
+      "h1": "AI Image Upscaler - Enhance Photos to 4K Resolution Free",
+      "intro": "Transform low-resolution images into stunning high-quality visuals with PixelPerfect's AI Image Upscaler.",
+      "primaryKeyword": "ai image upscaler",
+      "secondaryKeywords": [
+        "image upscaler",
+        "ai upscale image",
+        "enhance image ai",
+        "upscale image online",
+        "4k image upscaler"
+      ],
+      "lastUpdated": "2025-12-01T00:00:00Z",
+      "category": "tools",
+      "toolName": "AI Image Upscaler",
+      "description": "Transform low-resolution images into stunning high-quality visuals with PixelPerfect's AI Image Upscaler. Our advanced neural network technology intelligently enhances your photos while preserving text, logos, and fine details that other upscalers blur or distort.",
+      "features": [
+        {
+          "title": "Text & Logo Preservation",
+          "description": "Our AI is specifically trained to keep text sharp and readable, perfect for product images and documents."
+        },
+        {
+          "title": "Lightning Fast Processing",
+          "description": "Get results in 30-60 seconds with our optimized cloud infrastructure."
+        },
+        {
+          "title": "Up to 8x Upscaling",
+          "description": "Increase image resolution up to 8x while maintaining exceptional quality."
+        },
+        {
+          "title": "Multiple Format Support",
+          "description": "Upload and download in JPEG, PNG, or WebP format as needed."
+        },
+        {
+          "title": "Batch Processing",
+          "description": "Process multiple images at once to save time on large projects."
+        },
+        {
+          "title": "No Watermarks",
+          "description": "All outputs are clean and watermark-free, even on free tier."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "E-commerce Product Photos",
+          "description": "Enhance product images to meet marketplace requirements and increase conversion rates."
+        },
+        {
+          "title": "Real Estate Listings",
+          "description": "Make property photos look professional and appealing to potential buyers."
+        },
+        {
+          "title": "Social Media Content",
+          "description": "Create high-resolution images that look great on any platform or device."
+        },
+        {
+          "title": "Print Materials",
+          "description": "Upscale images to meet print resolution requirements without quality loss."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Professional Quality Results",
+          "description": "Achieve studio-quality image enhancement without expensive software or technical expertise."
+        },
+        {
+          "title": "Save Hours of Manual Work",
+          "description": "What would take hours in Photoshop takes seconds with AI upscaling."
+        },
+        {
+          "title": "Consistent Results Every Time",
+          "description": "AI delivers reliable, repeatable quality across all your images."
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Drag and drop your image or click to browse. We support JPEG, PNG, and WebP formats up to 25MB."
+        },
+        {
+          "step": 2,
+          "title": "Select Upscale Level",
+          "description": "Choose your desired resolution increase: 2x, 4x, or 8x. Higher multipliers create larger images with more detail."
+        },
+        {
+          "step": 3,
+          "title": "AI Enhancement",
+          "description": "Our neural network analyzes your image and intelligently adds detail while preserving important elements like text and logos."
+        },
+        {
+          "step": 4,
+          "title": "Download Result",
+          "description": "Preview your enhanced image and download in your preferred format. No watermarks on any output."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is PixelPerfect's AI image upscaler free?",
+          "answer": "Yes! PixelPerfect offers 10 free credits to get started. Each image upscale uses 1 credit. For more credits, check our affordable pricing plans starting at $19/month."
+        },
+        {
+          "question": "What image formats does the AI upscaler support?",
+          "answer": "PixelPerfect supports JPEG, PNG, and WebP formats. You can upload images up to 25MB and download in your preferred format."
+        },
+        {
+          "question": "How long does AI upscaling take?",
+          "answer": "Most images are processed in 30-60 seconds. Larger images or higher upscale factors may take slightly longer."
+        },
+        {
+          "question": "Will my images be stored on your servers?",
+          "answer": "We take privacy seriously. Images are automatically deleted from our servers within 1 hour of processing. We never use your images for training or share them with third parties."
+        }
+      ],
+      "relatedTools": ["ai-photo-enhancer", "image-quality-enhancer"],
+      "relatedGuides": ["how-to-upsize-images", "how-to-upscale-images"],
+      "ctaText": "Upscale Image Free",
+      "ctaUrl": "/upscaler"
+    },
+    {
+      "slug": "ai-photo-enhancer",
+      "title": "AI Photo Enhancer",
+      "metaTitle": "AI Photo Enhancer - Improve Photo Quality Free | PixelPerfect",
+      "metaDescription": "Enhance photo quality with AI. Fix blurry images, improve colors, and restore old photos. Free online tool with professional results.",
+      "h1": "AI Photo Enhancer - Improve Photo Quality Instantly",
+      "intro": "Enhance and restore your photos with professional AI-powered technology.",
+      "primaryKeyword": "ai photo enhancer",
+      "secondaryKeywords": ["photo enhancer ai", "ai enhance photo", "photo enhancer online"],
+      "lastUpdated": "2025-12-01T00:00:00Z",
+      "category": "tools",
+      "toolName": "AI Photo Enhancer",
+      "description": "Enhance and restore your photos with professional AI-powered technology. Fix blurry images, improve colors, and bring old photos back to life.",
+      "features": [],
+      "useCases": [],
+      "benefits": [],
+      "howItWorks": [],
+      "faq": [],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": [],
+      "ctaText": "Enhance Photo Free",
+      "ctaUrl": "/upscaler"
+    }
+  ],
+  "meta": {
+    "totalPages": 2,
+    "lastUpdated": "2025-12-01T00:00:00Z"
+  }
+}
