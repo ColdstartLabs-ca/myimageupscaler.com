@@ -35,6 +35,16 @@ export const Footer = (): JSX.Element => {
                   Blog
                 </Link>
               </li>
+              <li>
+                <a
+                  href="https://github.com/joaoferro42/pixelperfect/blob/main/docs/technical/api-reference.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  API Docs
+                </a>
+              </li>
             </ul>
           </div>
 

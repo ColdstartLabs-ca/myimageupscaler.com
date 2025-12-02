@@ -3,31 +3,41 @@
  * Based on PRD-PSEO-05 Section 3.2: Features Section
  */
 
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/MotionWrappers';
 import type { IFeature } from '@/lib/seo/pseo-types';
-import { FeatureCard } from '../ui/FeatureCard';
 import { ReactElement } from 'react';
+import { FeatureCard } from '../ui/FeatureCard';
 
 interface IFeaturesSectionProps {
   features: IFeature[];
   title?: string;
+  subtitle?: string;
 }
 
 export function FeaturesSection({
   features,
-  title = 'Key Features',
+  title = 'Powerful Features',
+  subtitle = 'Everything you need to transform your images with professional-quality results',
 }: IFeaturesSectionProps): ReactElement {
   if (!features || features.length === 0) {
     return <></>;
   }
 
   return (
-    <section className="my-16">
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{title}</h2>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section className="py-20">
+      <FadeIn>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">{title}</h2>
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto">{subtitle}</p>
+        </div>
+      </FadeIn>
+      <StaggerContainer staggerDelay={0.1} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {features.map((feature, index) => (
-          <FeatureCard key={index} feature={feature} />
+          <StaggerItem key={index}>
+            <FeatureCard feature={feature} />
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerContainer>
     </section>
   );
 }

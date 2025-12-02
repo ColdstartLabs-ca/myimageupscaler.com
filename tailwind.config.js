@@ -8,6 +8,7 @@ export default {
     './src/**/*.{js,ts,jsx,tsx}',
     './app/**/*.{js,ts,jsx,tsx}',
     './client/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
     './server/**/*.{js,ts,jsx,tsx}',
     './shared/**/*.{js,ts,jsx,tsx}',
   ],

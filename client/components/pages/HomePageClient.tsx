@@ -5,7 +5,7 @@ import HowItWorks from '@client/components/pixelperfect/Landing/HowItWorks';
 import Pricing from '@client/components/pixelperfect/Pricing';
 import Workspace from '@client/components/pixelperfect/Workspace/Workspace';
 import { useModalStore } from '@client/store/modalStore';
-import { ArrowRight, Sparkles, Zap } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 
 export function HomePageClient(): JSX.Element {
@@ -159,77 +159,6 @@ export function HomePageClient(): JSX.Element {
           </p>
         </div>
       </section>
-
-      <footer className="bg-slate-950 py-16 text-slate-400 text-sm border-t border-slate-800">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center gap-2 text-white mb-6">
-                <div
-                  className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center"
-                  aria-hidden="true"
-                >
-                  <Zap size={18} fill="currentColor" className="text-white" />
-                </div>
-                <span className="text-xl font-bold tracking-tight">PixelPerfect AI</span>
-              </div>
-              <p className="max-w-sm text-slate-400 leading-relaxed">
-                Professional image enhancement for businesses. We use advanced generative models to
-                reconstruct lost details while keeping brand assets intact.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-6">Product</h3>
-              <ul className="space-y-4">
-                <li>
-                  <a href="#features" className="hover:text-indigo-400 transition-colors">
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href="#how-it-works" className="hover:text-indigo-400 transition-colors">
-                    How it Works
-                  </a>
-                </li>
-                <li>
-                  <a href="#pricing" className="hover:text-indigo-400 transition-colors">
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-indigo-400 transition-colors">
-                    API Docs
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-6">Legal</h3>
-              <ul className="space-y-4">
-                <li>
-                  <a href="#" className="hover:text-indigo-400 transition-colors">
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-indigo-400 transition-colors">
-                    Terms of Service
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-indigo-400 transition-colors">
-                    Cookie Policy
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-16 border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p>&copy; 2025 PixelPerfect AI. All rights reserved.</p>
-            <div className="flex gap-6">{/* Social icons placeholder */}</div>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }

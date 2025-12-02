@@ -22,27 +22,32 @@ export function FAQAccordion({
   onToggle,
 }: IFAQAccordionProps): ReactElement {
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-slate-300 transition-colors">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-4 bg-white hover:bg-gray-50 transition-colors duration-200 text-left"
+        className="w-full flex items-center justify-between p-6 text-left group"
         aria-expanded={isOpen}
       >
-        <span className="font-semibold text-lg pr-4">{question}</span>
-        <svg
-          className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${
+        <h3 className="text-lg font-semibold text-slate-900 pr-8 flex-1">{question}</h3>
+        <div
+          className={`flex-shrink-0 w-6 h-6 flex items-center justify-center transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+          <svg
+            className="w-6 h-6 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </button>
       {isOpen && (
-        <div className="p-4 bg-gray-50 border-t border-gray-200">
-          <p className="text-gray-700 leading-relaxed">{answer}</p>
+        <div className="px-6 pb-6 pt-0">
+          <p className="text-slate-600 leading-relaxed">{answer}</p>
         </div>
       )}
     </div>

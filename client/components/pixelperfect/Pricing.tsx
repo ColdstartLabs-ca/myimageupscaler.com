@@ -2,6 +2,7 @@ import React from 'react';
 import { Check } from 'lucide-react';
 import Button from '@client/components/pixelperfect/Button';
 import { JsonLd } from '@client/components/seo/JsonLd';
+import { useModalStore } from '@client/store/modalStore';
 
 interface ITier {
   name: string;
@@ -89,6 +90,17 @@ const generateProductJsonLd = (tier: ITier) => ({
 });
 
 const Pricing: React.FC = () => {
+  const { openAuthModal } = useModalStore();
+
+  const handlePricingClick = (tierName: string) => {
+    if (tierName === 'Free Tier') {
+      openAuthModal('register');
+    } else {
+      // For paid tiers, redirect to pricing page with plan selection
+      window.location.href = '/pricing';
+    }
+  };
+
   return (
     <section id="pricing" className="py-20 bg-slate-50">
       {/* Product structured data for SEO */}
@@ -142,7 +154,11 @@ const Pricing: React.FC = () => {
                 ))}
               </ul>
 
-              <Button variant={tier.variant} className="w-full">
+              <Button
+                variant={tier.variant}
+                className="w-full"
+                onClick={() => handlePricingClick(tier.name)}
+              >
                 {tier.cta}
               </Button>
             </div>

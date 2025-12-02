@@ -1,8 +1,6 @@
-'use client';
-
-import React, { ReactNode } from 'react';
-import Image from 'next/image';
+import { ReactNode } from 'react';
 import Link from 'next/link';
+import type { MDXComponents } from 'mdx/types';
 
 interface IHeadingProps {
   children?: ReactNode;
@@ -35,29 +33,29 @@ interface IChildrenProps {
   children?: ReactNode;
 }
 
-const H1 = ({ children }: IHeadingProps): React.ReactElement => (
+const H1 = ({ children }: IHeadingProps): JSX.Element => (
   <h1 className="text-3xl font-bold text-slate-900 mt-8 mb-4">{children}</h1>
 );
 
-const H2 = ({ children }: IHeadingProps): React.ReactElement => (
+const H2 = ({ children }: IHeadingProps): JSX.Element => (
   <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4 pb-2 border-b border-slate-200">
     {children}
   </h2>
 );
 
-const H3 = ({ children }: IHeadingProps): React.ReactElement => (
+const H3 = ({ children }: IHeadingProps): JSX.Element => (
   <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">{children}</h3>
 );
 
-const H4 = ({ children }: IHeadingProps): React.ReactElement => (
+const H4 = ({ children }: IHeadingProps): JSX.Element => (
   <h4 className="text-lg font-medium text-slate-700 mt-4 mb-2">{children}</h4>
 );
 
-const Paragraph = ({ children }: IChildrenProps): React.ReactElement => (
+const Paragraph = ({ children }: IChildrenProps): JSX.Element => (
   <p className="text-slate-600 leading-relaxed mb-4">{children}</p>
 );
 
-const Anchor = ({ href, children }: ILinkProps): React.ReactElement => {
+const Anchor = ({ href, children }: ILinkProps): JSX.Element => {
   const isInternal = href?.startsWith('/') || href?.startsWith('#');
 
   if (isInternal && href) {
@@ -83,30 +81,20 @@ const Anchor = ({ href, children }: ILinkProps): React.ReactElement => {
   );
 };
 
-const MDXImage = ({ src, alt }: IMdxImageProps): React.ReactElement | null => {
+const MDXImage = ({ src, alt }: IMdxImageProps): JSX.Element | null => {
   if (!src) return null;
 
   return (
     <figure className="my-8">
       <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-slate-100">
-        <Image
-          src={src}
-          alt={alt || ''}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
-        />
+        <img src={src} alt={alt || ''} className="w-full h-full object-cover" />
       </div>
-      {alt && (
-        <figcaption className="text-center text-sm text-slate-500 mt-2">
-          {alt}
-        </figcaption>
-      )}
+      {alt && <figcaption className="text-center text-sm text-slate-500 mt-2">{alt}</figcaption>}
     </figure>
   );
 };
 
-const CodeBlock = ({ children, className }: ICodeProps): React.ReactElement => {
+const CodeBlock = ({ children, className }: ICodeProps): JSX.Element => {
   const isInline = !className;
 
   if (isInline) {
@@ -124,31 +112,27 @@ const CodeBlock = ({ children, className }: ICodeProps): React.ReactElement => {
   );
 };
 
-const Blockquote = ({ children }: IBlockquoteProps): React.ReactElement => (
+const Blockquote = ({ children }: IBlockquoteProps): JSX.Element => (
   <blockquote className="border-l-4 border-indigo-500 pl-4 my-6 italic text-slate-600 bg-indigo-50 py-3 pr-4 rounded-r-lg">
     {children}
   </blockquote>
 );
 
-const UnorderedList = ({ children }: IListProps): React.ReactElement => (
-  <ul className="list-disc list-inside space-y-2 text-slate-600 mb-4 ml-4">
-    {children}
-  </ul>
+const UnorderedList = ({ children }: IListProps): JSX.Element => (
+  <ul className="list-disc list-inside space-y-2 text-slate-600 mb-4 ml-4">{children}</ul>
 );
 
-const OrderedList = ({ children }: IListProps): React.ReactElement => (
-  <ol className="list-decimal list-inside space-y-2 text-slate-600 mb-4 ml-4">
-    {children}
-  </ol>
+const OrderedList = ({ children }: IListProps): JSX.Element => (
+  <ol className="list-decimal list-inside space-y-2 text-slate-600 mb-4 ml-4">{children}</ol>
 );
 
-const ListItem = ({ children }: IChildrenProps): React.ReactElement => (
+const ListItem = ({ children }: IChildrenProps): JSX.Element => (
   <li className="leading-relaxed">{children}</li>
 );
 
-const HorizontalRule = (): React.ReactElement => <hr className="my-8 border-slate-200" />;
+const HorizontalRule = (): JSX.Element => <hr className="my-8 border-slate-200" />;
 
-const Table = ({ children }: IChildrenProps): React.ReactElement => (
+const Table = ({ children }: IChildrenProps): JSX.Element => (
   <div className="overflow-x-auto my-6">
     <table className="min-w-full border-collapse border border-slate-200 rounded-lg">
       {children}
@@ -156,28 +140,26 @@ const Table = ({ children }: IChildrenProps): React.ReactElement => (
   </div>
 );
 
-const TableHead = ({ children }: IChildrenProps): React.ReactElement => (
+const TableHead = ({ children }: IChildrenProps): JSX.Element => (
   <thead className="bg-slate-100">{children}</thead>
 );
 
-const TableBody = ({ children }: IChildrenProps): React.ReactElement => (
+const TableBody = ({ children }: IChildrenProps): JSX.Element => (
   <tbody className="divide-y divide-slate-200">{children}</tbody>
 );
 
-const TableRow = ({ children }: IChildrenProps): React.ReactElement => (
+const TableRow = ({ children }: IChildrenProps): JSX.Element => (
   <tr className="hover:bg-slate-50">{children}</tr>
 );
 
-const TableHeader = ({ children }: IChildrenProps): React.ReactElement => (
+const TableHeader = ({ children }: IChildrenProps): JSX.Element => (
   <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">
     {children}
   </th>
 );
 
-const TableCell = ({ children }: IChildrenProps): React.ReactElement => (
-  <td className="px-4 py-3 text-sm text-slate-600 border border-slate-200">
-    {children}
-  </td>
+const TableCell = ({ children }: IChildrenProps): JSX.Element => (
+  <td className="px-4 py-3 text-sm text-slate-600 border border-slate-200">{children}</td>
 );
 
 // Callout component for tips, warnings, etc.
@@ -186,7 +168,7 @@ interface ICalloutProps {
   children?: ReactNode;
 }
 
-const Callout = ({ type = 'info', children }: ICalloutProps): React.ReactElement => {
+const Callout = ({ type = 'info', children }: ICalloutProps): JSX.Element => {
   const styles = {
     info: 'bg-blue-50 border-blue-500 text-blue-800',
     warning: 'bg-amber-50 border-amber-500 text-amber-800',
@@ -211,9 +193,9 @@ const Callout = ({ type = 'info', children }: ICalloutProps): React.ReactElement
   );
 };
 
-const Pre = ({ children }: IChildrenProps): React.ReactElement => <>{children}</>;
+const Pre = ({ children }: IChildrenProps): JSX.Element => <>{children}</>;
 
-export const mdxComponents = {
+export const mdxComponents: MDXComponents = {
   h1: H1,
   h2: H2,
   h3: H3,

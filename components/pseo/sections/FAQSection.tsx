@@ -6,10 +6,10 @@
 
 'use client';
 
-import { useState, ReactElement } from 'react';
 import type { IFAQ } from '@/lib/seo/pseo-types';
-import { FAQAccordion } from '../ui/FAQAccordion';
 import { analytics } from '@client/analytics/analyticsClient';
+import { ReactElement, useState } from 'react';
+import { FAQAccordion } from '../ui/FAQAccordion';
 
 interface IFAQSectionProps {
   faqs: IFAQ[];
@@ -25,6 +25,10 @@ interface IFAQSectionProps {
     | 'free';
   slug?: string;
 }
+
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/MotionWrappers';
+
+// ...
 
 export function FAQSection({
   faqs,
@@ -55,19 +59,27 @@ export function FAQSection({
   }
 
   return (
-    <section className="my-16">
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{title}</h2>
-      <div className="max-w-3xl mx-auto space-y-4">
+    <section className="py-20">
+      <FadeIn>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">{title}</h2>
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+            Find answers to common questions about our tool and how it works.
+          </p>
+        </div>
+      </FadeIn>
+      <StaggerContainer staggerDelay={0.05} className="max-w-3xl mx-auto space-y-6">
         {faqs.map((faq, index) => (
-          <FAQAccordion
-            key={index}
-            question={faq.question}
-            answer={faq.answer}
-            isOpen={openIndex === index}
-            onToggle={() => handleFAQToggle(index, faq.question)}
-          />
+          <StaggerItem key={index}>
+            <FAQAccordion
+              question={faq.question}
+              answer={faq.answer}
+              isOpen={openIndex === index}
+              onToggle={() => handleFAQToggle(index, faq.question)}
+            />
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerContainer>
     </section>
   );
 }
