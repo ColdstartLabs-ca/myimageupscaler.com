@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Check } from 'lucide-react';
 import Button from '@client/components/pixelperfect/Button';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
-import { StripeService } from '@server/stripe/stripeService';
+import { useCheckoutStore } from '@client/store/checkoutStore';
+import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
 import { HOMEPAGE_TIERS, isStripePricesConfigured } from '@shared/config/stripe';
+import { useAuthStore } from '@client/store/authStore';
 
 // Generate Product structured data for SEO
 const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number]) => ({
@@ -33,9 +35,10 @@ const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number]) => ({
 export const Pricing: React.FC = () => {
   const { openAuthModal } = useModalStore();
   const { showToast } = useToastStore();
-  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+  const { user } = useAuthStore();
+  const { isCheckoutModalOpen, activePriceId, setPendingCheckout, openCheckoutModal, closeCheckoutModal } = useCheckoutStore();
 
-  const handlePricingClick = async (tier: (typeof HOMEPAGE_TIERS)[number]) => {
+  const handlePricingClick = (tier: (typeof HOMEPAGE_TIERS)[number]) => {
     // Free tier - just open registration
     if (tier.priceId === null) {
       openAuthModal('register');
@@ -51,31 +54,27 @@ export const Pricing: React.FC = () => {
       return;
     }
 
-    // Set loading state
-    setLoadingTier(tier.name);
-
-    try {
-      await StripeService.redirectToCheckout(tier.priceId, {
-        successUrl: `${window.location.origin}/success`,
-        cancelUrl: window.location.href,
-      });
-    } catch (error) {
-      // User not authenticated - add price to URL and open auth modal
-      if (error instanceof Error && error.message.includes('not authenticated')) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('checkout_price', tier.priceId);
-        window.history.replaceState({}, '', url.toString());
-        openAuthModal('login');
-      } else {
-        // Actual error - show toast
-        showToast({
-          message: error instanceof Error ? error.message : 'Failed to start checkout',
-          type: 'error',
-        });
-      }
-    } finally {
-      setLoadingTier(null);
+    // Check if user is authenticated
+    if (!user) {
+      // Save the price ID and prompt user to sign in
+      setPendingCheckout(tier.priceId);
+      openAuthModal('login');
+      return;
     }
+
+    // User is authenticated, open checkout modal
+    openCheckoutModal(tier.priceId);
+  };
+
+  const handleCheckoutClose = () => {
+    closeCheckoutModal();
+  };
+
+  const handleCheckoutSuccess = () => {
+    showToast({
+      message: 'Subscription activated successfully!',
+      type: 'success',
+    });
   };
 
   return (
@@ -133,14 +132,22 @@ export const Pricing: React.FC = () => {
                 variant={tier.variant}
                 className="w-full"
                 onClick={() => handlePricingClick(tier)}
-                disabled={loadingTier !== null}
               >
-                {loadingTier === tier.name ? 'Processing...' : tier.cta}
+                {tier.cta}
               </Button>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Embedded Checkout Modal */}
+      {isCheckoutModalOpen && activePriceId && (
+        <CheckoutModal
+          priceId={activePriceId}
+          onClose={handleCheckoutClose}
+          onSuccess={handleCheckoutSuccess}
+        />
+      )}
     </section>
   );
 };

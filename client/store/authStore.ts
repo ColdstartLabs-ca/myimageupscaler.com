@@ -11,22 +11,18 @@ const handleCheckoutRedirect = async () => {
   const checkoutPriceId = urlParams.get('checkout_price');
 
   if (checkoutPriceId) {
-    // Handle pending checkout - redirect to Stripe
-    const creditsAmount = urlParams.get('checkout_credits');
-
+    // Handle pending subscription checkout - redirect to Stripe
     // Clean up URL params
     urlParams.delete('checkout_price');
-    urlParams.delete('checkout_credits');
     const cleanUrl = urlParams.toString()
       ? `${window.location.pathname}?${urlParams.toString()}`
       : window.location.pathname;
     window.history.replaceState({}, '', cleanUrl);
 
-    // Redirect to Stripe checkout
+    // Redirect to Stripe checkout (subscription-only)
     try {
       const { StripeService } = await import('@server/stripe/stripeService');
       await StripeService.redirectToCheckout(checkoutPriceId, {
-        metadata: creditsAmount ? { credits_amount: creditsAmount } : {},
         successUrl: `${window.location.origin}/success`,
         cancelUrl: window.location.href,
       });
@@ -142,7 +138,14 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
 
       const sessionPromise = supabase.auth.getSession();
 
-      const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as { data: { session: { user: { id: string; email: string; user_metadata: Record<string, unknown>; app_metadata: Record<string, unknown> } } | null } };
+      const { data: { session }, error: sessionError } = await Promise.race([sessionPromise, timeoutPromise]) as { data: { session: { user: { id: string; email: string; user_metadata: Record<string, unknown>; app_metadata: Record<string, unknown> } } | null }; error: Error | null };
+
+      // Handle refresh token errors by clearing the session
+      if (sessionError && sessionError.message?.includes('refresh_token_not_found')) {
+        await supabase.auth.signOut();
+        set({ user: null, isAuthenticated: false, isLoading: false });
+        return;
+      }
 
       if (session?.user) {
         // Determine the auth provider consistently
@@ -170,7 +173,7 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
       set({ isLoading: false });
     } catch (error) {
       console.error('Error initializing auth:', error);
-      set({ isLoading: false });
+      set({ isLoading: false, user: null, isAuthenticated: false });
     } finally {
       loadingStore.getState().setLoading(false);
     }
@@ -228,6 +231,16 @@ useAuthStore.getState().initializeAuth();
 
 // Listen for auth changes
 supabase.auth.onAuthStateChange(async (event, session) => {
+  // Handle sign out or token expired events
+  if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' && !session) {
+    useAuthStore.setState({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+    });
+    return;
+  }
+
   if (session?.user) {
     // Determine the auth provider
     // For email/password users, app_metadata.provider is 'email'
@@ -258,17 +271,23 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       isLoading: false,
     });
 
-    // Redirect after fresh sign in (not token refresh or if already on dashboard)
-    if (
-      event === 'SIGNED_IN' &&
-      !wasAuthenticated &&
-      typeof window !== 'undefined' &&
-      !window.location.pathname.startsWith('/dashboard')
-    ) {
-      // Check for pending checkout first
-      const isRedirecting = await handleCheckoutRedirect();
-      if (!isRedirecting) {
-        window.location.href = '/dashboard';
+    // Handle post-authentication actions
+    if (event === 'SIGNED_IN' && !wasAuthenticated && typeof window !== 'undefined') {
+      // Check for pending checkout from the checkout store
+      const { useCheckoutStore } = await import('./checkoutStore');
+      const hasPendingCheckout = useCheckoutStore.getState().processPendingCheckout();
+
+      // If there's a pending checkout, don't redirect - let the checkout modal handle it
+      if (hasPendingCheckout) {
+        return;
+      }
+
+      // Check for URL-based checkout redirect
+      if (!window.location.pathname.startsWith('/dashboard')) {
+        const isRedirecting = await handleCheckoutRedirect();
+        if (!isRedirecting) {
+          window.location.href = '/dashboard';
+        }
       }
     }
   } else {
