@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, CreditCard, Settings, HelpCircle, LogOut } from 'lucide-react';
 import { useAuthStore } from '@client/store/authStore';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
@@ -25,6 +25,7 @@ const bottomMenuItems: ISidebarItem[] = [
 
 export const DashboardSidebar: React.FC = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { signOut, user } = useAuthStore();
 
   const isActive = (href: string) => {
@@ -37,8 +38,9 @@ export const DashboardSidebar: React.FC = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      window.location.href = '/';
+      router.push('/');
     } catch (error) {
+      // TODO: Replace with proper logging once logger is implemented
       console.error('Error signing out:', error);
     }
   };

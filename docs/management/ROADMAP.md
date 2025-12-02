@@ -875,22 +875,23 @@ All development work is complete. The following require production dashboard acc
 
 ## Changelog
 
-| Date       | Version | Changes                                                                                                              |
-| ---------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
-| 2024-01    | 1.0     | Initial roadmap creation                                                                                             |
-| 2024-01    | 1.1     | Added validation checklists, SEO roadmap, deployment roadmap                                                         |
-| 2025-11-21 | 1.2     | Updated completion status based on codebase audit                                                                    |
-| 2025-11-21 | 1.3     | Added credit_transactions, processing_jobs tables, enhanced RPC functions with logging                               |
-| 2025-11-21 | 1.4     | Added blog infrastructure, 4 foundation posts, Lighthouse optimizations                                              |
-| 2025-11-21 | 1.5     | Stripe integration complete: success/canceled pages, portal API, dynamic billing page                                |
-| 2025-11-21 | 1.6     | E2E testing strategy implemented: Upscaler, Auth, Billing tests with API mocking                                     |
-| 2025-11-21 | 1.7     | Comprehensive E2E test suite: UpscalerPage POM, auth tests, fixture system                                           |
-| 2025-11-21 | 1.8     | Codebase cleanup: Removed portfolio app leftovers, updated to image upscaler branding                                |
-| 2025-11-21 | 1.9     | Developer experience: Modular setup scripts, yarn bootstrap/verify commands                                          |
-| 2025-11-21 | 2.0     | Security audit: Locked down credit RPCs, added credits_balance protection trigger, refactored API with service layer |
-| 2025-11-21 | 2.1     | Analytics & Monitoring: Added Amplitude + GA4 analytics, enhanced Baselime logging on critical routes                |
-| 2025-11-22 | 2.2     | Performance & SEO: Added canonical URLs, Product structured data for pricing, accessibility improvements             |
-| 2025-11-26 | 2.3     | Legal & Compliance: Added Privacy Policy, Terms of Service, Help/FAQ pages, Footer with navigation links             |
-| 2025-11-26 | 2.4     | Launch Documentation: Comprehensive guides for deployment, email config, and mobile testing. All dev work complete.  |
-| 2025-11-26 | 2.5     | Billing Documentation Sync: Updated pricing tiers to match implementation (Credit Packs + Subscriptions model)       |
+| Date       | Version | Changes                                                                                                                |
+| ---------- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 2024-01    | 1.0     | Initial roadmap creation                                                                                               |
+| 2024-01    | 1.1     | Added validation checklists, SEO roadmap, deployment roadmap                                                           |
+| 2025-11-21 | 1.2     | Updated completion status based on codebase audit                                                                      |
+| 2025-11-21 | 1.3     | Added credit_transactions, processing_jobs tables, enhanced RPC functions with logging                                 |
+| 2025-11-21 | 1.4     | Added blog infrastructure, 4 foundation posts, Lighthouse optimizations                                                |
+| 2025-11-21 | 1.5     | Stripe integration complete: success/canceled pages, portal API, dynamic billing page                                  |
+| 2025-11-21 | 1.6     | E2E testing strategy implemented: Upscaler, Auth, Billing tests with API mocking                                       |
+| 2025-11-21 | 1.7     | Comprehensive E2E test suite: UpscalerPage POM, auth tests, fixture system                                             |
+| 2025-11-21 | 1.8     | Codebase cleanup: Removed portfolio app leftovers, updated to image upscaler branding                                  |
+| 2025-11-21 | 1.9     | Developer experience: Modular setup scripts, yarn bootstrap/verify commands                                            |
+| 2025-11-21 | 2.0     | Security audit: Locked down credit RPCs, added credits_balance protection trigger, refactored API with service layer   |
+| 2025-11-21 | 2.1     | Analytics & Monitoring: Added Amplitude + GA4 analytics, enhanced Baselime logging on critical routes                  |
+| 2025-11-22 | 2.2     | Performance & SEO: Added canonical URLs, Product structured data for pricing, accessibility improvements               |
+| 2025-11-26 | 2.3     | Legal & Compliance: Added Privacy Policy, Terms of Service, Help/FAQ pages, Footer with navigation links               |
+| 2025-11-26 | 2.4     | Launch Documentation: Comprehensive guides for deployment, email config, and mobile testing. All dev work complete.    |
+| 2025-11-26 | 2.5     | Billing Documentation Sync: Updated pricing tiers to match implementation (Credit Packs + Subscriptions model)         |
 | 2025-11-26 | 2.6     | API Handler Composition PRD: Added `withHandler` utility design for DRY route handlers, request ID tracing, validation |
+| 2025-12-01 | 2.7     | Payment UI Flow PRD: Comprehensive review identifying pricing mismatches, auth flow issues, and UX improvements needed |

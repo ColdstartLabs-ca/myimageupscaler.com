@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CreditCard, Package, Receipt, ExternalLink, Loader2, RefreshCw } from 'lucide-react';
 import { StripeService } from '@server/stripe';
+import { useToastStore } from '@client/store/toastStore';
 import type { IUserProfile, ISubscription } from '@server/stripe/types';
 
 export default function BillingPage() {
   const router = useRouter();
+  const { showToast } = useToastStore();
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [subscription, setSubscription] = useState<ISubscription | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,7 +45,10 @@ export default function BillingPage() {
     } catch (err) {
       console.error('Error opening portal:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to open billing portal';
-      alert(errorMessage);
+      showToast({
+        message: errorMessage,
+        type: 'error',
+      });
     } finally {
       setPortalLoading(false);
     }
@@ -69,7 +74,9 @@ export default function BillingPage() {
       canceled: 'bg-red-100 text-red-700',
     };
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-100 text-slate-700'}`}>
+      <span
+        className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-100 text-slate-700'}`}
+      >
         {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
       </span>
     );
@@ -102,9 +109,7 @@ export default function BillingPage() {
     );
   }
 
-  const planName = subscription
-    ? profile?.subscription_tier || 'Active Plan'
-    : 'Free Plan';
+  const planName = subscription ? profile?.subscription_tier || 'Active Plan' : 'Free Plan';
 
   return (
     <div className="space-y-6">
@@ -112,9 +117,7 @@ export default function BillingPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Billing</h1>
-          <p className="text-slate-500 mt-1">
-            Manage your subscription and payment methods
-          </p>
+          <p className="text-slate-500 mt-1">Manage your subscription and payment methods</p>
         </div>
         <button
           onClick={loadBillingData}
@@ -145,9 +148,7 @@ export default function BillingPage() {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-slate-600">Credits balance</p>
-              <p className="text-2xl font-bold text-slate-900">
-                {profile?.credits_balance ?? 0}
-              </p>
+              <p className="text-2xl font-bold text-slate-900">{profile?.credits_balance ?? 0}</p>
             </div>
             <button
               onClick={handleUpgrade}
@@ -194,8 +195,8 @@ export default function BillingPage() {
           <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
             <div>
               <p className="text-sm text-slate-700">
-                Manage your payment methods, view invoices, and update your subscription
-                through the Stripe Customer Portal.
+                Manage your payment methods, view invoices, and update your subscription through the
+                Stripe Customer Portal.
               </p>
             </div>
             <button
@@ -214,9 +215,7 @@ export default function BillingPage() {
         ) : (
           <div className="text-center py-8 text-slate-500">
             <p>No payment methods added yet</p>
-            <p className="text-sm mt-2">
-              Make your first purchase to set up a payment method.
-            </p>
+            <p className="text-sm mt-2">Make your first purchase to set up a payment method.</p>
             <button
               onClick={handleUpgrade}
               className="mt-4 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors"

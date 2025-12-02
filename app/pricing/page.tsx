@@ -1,6 +1,9 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { PricingCard } from '@client/components/stripe';
+import { StripeService } from '@server/stripe';
+import type { IUserProfile, ISubscription } from '@server/stripe/types';
 import {
   STRIPE_PRICES,
   CREDIT_PACKS,
@@ -10,48 +13,91 @@ import {
 
 export default function PricingPage() {
   const pricesConfigured = isStripePricesConfigured();
+  const [profile, setProfile] = useState<IUserProfile | null>(null);
+  const [subscription, setSubscription] = useState<ISubscription | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const [profileData, subData] = await Promise.all([
+          StripeService.getUserProfile(),
+          StripeService.getActiveSubscription(),
+        ]);
+        setProfile(profileData);
+        setSubscription(subData);
+      } catch (error) {
+        // User not authenticated - that's fine
+        console.log('User not authenticated:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUserData();
+  }, []);
 
   return (
-    <main className="flex-1">
+    <main className="flex-1 bg-slate-50">
       <div className="container mx-auto py-16 px-6">
+        {/* Current credits banner for logged-in users */}
+        {!loading && profile && (
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-indigo-600 font-medium">Your current balance</p>
+                <p className="text-2xl font-bold text-indigo-700">
+                  {profile.credits_balance} credits
+                </p>
+              </div>
+              {subscription && (
+                <div className="text-right">
+                  <p className="text-sm text-indigo-600">Active subscription</p>
+                  <p className="font-medium text-indigo-700">{profile.subscription_tier}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Configuration Warning (dev only) */}
         {!pricesConfigured && (
-          <div className="alert alert-warning mb-8 max-w-3xl mx-auto">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="stroke-current shrink-0 h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-            <span>
-              Stripe Price IDs are not configured. Add them to your .env file to enable
-              purchases.
-            </span>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
+            <div className="flex items-center gap-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-amber-600 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span className="text-amber-800">
+                Stripe Price IDs are not configured. Add them to your .env file to enable purchases.
+              </span>
+            </div>
           </div>
         )}
 
         {/* Page Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
             Simple, Transparent Pricing
           </h1>
-          <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
-            Choose the plan that fits your needs. Purchase credits for one-time use
-            or subscribe for ongoing access.
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Choose the plan that fits your needs. Purchase credits for one-time use or subscribe for
+            ongoing access.
           </p>
         </div>
 
         {/* Credits Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">Credit Packs</h2>
-          <p className="text-center text-base-content/70 mb-8">
+          <h2 className="text-3xl font-bold text-center text-slate-900 mb-8">Credit Packs</h2>
+          <p className="text-center text-slate-600 mb-8">
             Buy credits once, use them anytime. Perfect for occasional users.
           </p>
 
@@ -88,10 +134,10 @@ export default function PricingPage() {
 
         {/* Subscriptions Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">
+          <h2 className="text-3xl font-bold text-center text-slate-900 mb-8">
             Monthly Subscriptions
           </h2>
-          <p className="text-center text-base-content/70 mb-8">
+          <p className="text-center text-slate-600 mb-8">
             Get credits every month with our subscription plans. Cancel anytime.
           </p>
 
@@ -128,98 +174,66 @@ export default function PricingPage() {
 
         {/* FAQ Section */}
         <div className="max-w-3xl mx-auto mt-16">
-          <h2 className="text-3xl font-bold text-center mb-8">
+          <h2 className="text-3xl font-bold text-center text-slate-900 mb-8">
             Frequently Asked Questions
           </h2>
 
-          <div className="space-y-4">
-            <div className="collapse collapse-arrow bg-base-200">
-              <input type="radio" name="faq-accordion" defaultChecked />
-              <div className="collapse-title text-lg font-medium">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="bg-white p-6 rounded-lg border border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">
                 What are credits used for?
-              </div>
-              <div className="collapse-content">
-                <p className="text-base-content/70">
-                  Credits are used for processing actions in the application. Each
-                  action (like image processing, data analysis, etc.) consumes a
-                  certain number of credits based on complexity.
-                </p>
-              </div>
+              </h3>
+              <p className="text-slate-600">
+                Credits are used for image processing actions. Each image processed consumes a
+                certain number of credits based on the upscaling factor and features used.
+              </p>
             </div>
 
-            <div className="collapse collapse-arrow bg-base-200">
-              <input type="radio" name="faq-accordion" />
-              <div className="collapse-title text-lg font-medium">
-                Do credits expire?
-              </div>
-              <div className="collapse-content">
-                <p className="text-base-content/70">
-                  One-time credit packs are valid for 12 months from purchase.
-                  Subscription credits roll over month-to-month as long as your
-                  subscription is active.
-                </p>
-              </div>
+            <div className="bg-white p-6 rounded-lg border border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">Do credits expire?</h3>
+              <p className="text-slate-600">
+                One-time credit packs are valid for 12 months from purchase. Subscription credits
+                roll over month-to-month as long as your subscription is active.
+              </p>
             </div>
 
-            <div className="collapse collapse-arrow bg-base-200">
-              <input type="radio" name="faq-accordion" />
-              <div className="collapse-title text-lg font-medium">
+            <div className="bg-white p-6 rounded-lg border border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">
                 Can I cancel my subscription anytime?
-              </div>
-              <div className="collapse-content">
-                <p className="text-base-content/70">
-                  Yes! You can cancel your subscription at any time. You'll
-                  continue to have access until the end of your billing period,
-                  and any remaining credits will stay in your account.
-                </p>
-              </div>
+              </h3>
+              <p className="text-slate-600">
+                Yes! You can cancel your subscription at any time. You'll continue to have access
+                until the end of your billing period, and any remaining credits will stay in your
+                account.
+              </p>
             </div>
 
-            <div className="collapse collapse-arrow bg-base-200">
-              <input type="radio" name="faq-accordion" />
-              <div className="collapse-title text-lg font-medium">
+            <div className="bg-white p-6 rounded-lg border border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">
                 What payment methods do you accept?
-              </div>
-              <div className="collapse-content">
-                <p className="text-base-content/70">
-                  We accept all major credit cards (Visa, Mastercard, American
-                  Express) and various other payment methods through Stripe.
-                </p>
-              </div>
-            </div>
-
-            <div className="collapse collapse-arrow bg-base-200">
-              <input type="radio" name="faq-accordion" />
-              <div className="collapse-title text-lg font-medium">
-                Can I upgrade or downgrade my plan?
-              </div>
-              <div className="collapse-content">
-                <p className="text-base-content/70">
-                  Yes! You can change your subscription plan at any time. Changes
-                  take effect at the start of the next billing cycle, and we'll
-                  prorate any differences.
-                </p>
-              </div>
+              </h3>
+              <p className="text-slate-600">
+                We accept all major credit cards (Visa, Mastercard, American Express) and various
+                other payment methods through Stripe.
+              </p>
             </div>
           </div>
         </div>
 
         {/* CTA Section */}
         <div className="text-center mt-16">
-          <div className="card bg-gradient-to-br from-primary/20 to-secondary/20 backdrop-blur-sm border border-primary/30 max-w-2xl mx-auto">
-            <div className="card-body">
-              <h3 className="text-2xl font-bold mb-4">
-                Need a custom plan?
-              </h3>
-              <p className="text-base-content/70 mb-6">
-                Contact us for enterprise pricing, bulk discounts, or custom
-                integration requirements.
-              </p>
-              <div className="card-actions justify-center">
-                <a href="mailto:sales@pixelperfect.com" className="btn btn-primary">
-                  Contact Sales
-                </a>
-              </div>
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 max-w-2xl mx-auto border border-indigo-100">
+            <h3 className="text-2xl font-bold text-slate-900 mb-4">Need a custom plan?</h3>
+            <p className="text-slate-600 mb-6">
+              Contact us for enterprise pricing, bulk discounts, or custom integration requirements.
+            </p>
+            <div className="flex justify-center">
+              <a
+                href="mailto:sales@pixelperfect.com"
+                className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+              >
+                Contact Sales
+              </a>
             </div>
           </div>
         </div>

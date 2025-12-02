@@ -2,7 +2,7 @@
 
 import Features from '@client/components/pixelperfect/Landing/Features';
 import HowItWorks from '@client/components/pixelperfect/Landing/HowItWorks';
-import Pricing from '@client/components/pixelperfect/Pricing';
+import { Pricing } from '@client/components/pixelperfect/Pricing';
 import Workspace from '@client/components/pixelperfect/Workspace/Workspace';
 import { useModalStore } from '@client/store/modalStore';
 import { ArrowRight, Sparkles } from 'lucide-react';

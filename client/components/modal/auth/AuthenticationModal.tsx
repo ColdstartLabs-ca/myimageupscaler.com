@@ -1,3 +1,5 @@
+'use client';
+
 import { SocialLoginButton } from '@client/components/form/SocialLoginButton';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createClient } from '@shared/utils/supabase/client';
@@ -40,14 +42,33 @@ export const AuthenticationModal: React.FC = () => {
 
   const isOpen = isModalOpen(MODAL_ID);
 
-  // Listen for PASSWORD_RECOVERY event to open set new password modal
+  // Listen for auth state changes and handle intended purchases
   useEffect(() => {
     const supabase = createClient();
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(event => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
         openAuthModal('setNewPassword');
+      } else if (event === 'SIGNED_IN' && session) {
+        // Check if there's an intended purchase
+        const intendedPurchase = sessionStorage.getItem('intendedPurchase');
+        if (intendedPurchase) {
+          try {
+            const { priceId, successUrl, cancelUrl } = JSON.parse(intendedPurchase);
+            sessionStorage.removeItem('intendedPurchase'); // Clean up
+
+            // Redirect to Stripe checkout after successful auth
+            const { StripeService } = await import('@server/stripe/stripeService');
+            await StripeService.redirectToCheckout(priceId, {
+              successUrl,
+              cancelUrl,
+            });
+          } catch (error) {
+            console.error('Error processing intended purchase:', error);
+            sessionStorage.removeItem('intendedPurchase'); // Clean up on error
+          }
+        }
       }
     });
 

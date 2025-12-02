@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { StripeService } from '@server/stripe';
+import { useToastStore } from '@client/store/toastStore';
+import { useModalStore } from '@client/store/modalStore';
 
 interface IBuyCreditsButtonProps {
   priceId: string;
@@ -36,6 +38,8 @@ export function BuyCreditsButton({
   onError,
 }: IBuyCreditsButtonProps): JSX.Element {
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToastStore();
+  const { openAuthModal } = useModalStore();
 
   const handlePurchase = async () => {
     try {
@@ -52,7 +56,18 @@ export function BuyCreditsButton({
       console.error('Purchase error:', error);
       const err = error instanceof Error ? error : new Error('Failed to initiate purchase');
       onError?.(err);
-      alert(err.message);
+
+      // Handle authentication errors
+      if (err.message.includes('not authenticated')) {
+        openAuthModal('register');
+        return;
+      }
+
+      // Show user-friendly error toast
+      showToast({
+        message: err.message,
+        type: 'error',
+      });
     } finally {
       setLoading(false);
     }

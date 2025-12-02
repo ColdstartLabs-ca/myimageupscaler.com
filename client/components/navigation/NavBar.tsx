@@ -124,12 +124,18 @@ export const NavBar = (): JSX.Element => {
                       </div>
                     </li>
                     <li>
-                      <a href="/dashboard" className="text-sm text-slate-600 hover:bg-slate-50">
+                      <a
+                        href="/dashboard"
+                        className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
+                      >
                         Dashboard
                       </a>
                     </li>
                     <li>
-                      <a href="/pricing" className="text-sm text-slate-600 hover:bg-slate-50">
+                      <a
+                        href="/pricing"
+                        className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
+                      >
                         Buy Credits
                       </a>
                     </li>
@@ -137,14 +143,17 @@ export const NavBar = (): JSX.Element => {
                       <li>
                         <button
                           onClick={handleChangePassword}
-                          className="text-sm text-slate-600 hover:bg-slate-50"
+                          className="block w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
                         >
                           Change Password
                         </button>
                       </li>
                     )}
                     <li>
-                      <button onClick={signOut} className="text-sm text-red-600 hover:bg-red-50">
+                      <button
+                        onClick={signOut}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                      >
                         Sign Out
                       </button>
                     </li>

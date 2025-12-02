@@ -47,12 +47,7 @@ export const CREDIT_PACKS = {
     description: 'Perfect for trying out',
     price: 9.99,
     credits: 100,
-    features: [
-      '100 processing credits',
-      'Valid for 12 months',
-      'Email support',
-      'Basic features',
-    ],
+    features: ['100 processing credits', 'Valid for 12 months', 'Email support', 'Basic features'],
   },
   PRO_CREDITS: {
     name: 'Pro Pack',
@@ -136,7 +131,7 @@ export const SUBSCRIPTION_PLANS = {
  * Check if Stripe prices are configured
  */
 export function isStripePricesConfigured(): boolean {
-  return Object.values(STRIPE_PRICES).some((price) => price !== '');
+  return Object.values(STRIPE_PRICES).some(price => price !== '');
 }
 
 /**
@@ -149,3 +144,52 @@ export function getPriceId(key: StripePriceKey): string {
   }
   return priceId;
 }
+
+/**
+ * Homepage pricing tiers - derived from subscription plans
+ * Used by Pricing.tsx on homepage
+ */
+export const HOMEPAGE_TIERS = [
+  {
+    name: 'Free Tier',
+    price: '$0',
+    priceValue: 0,
+    period: '/mo',
+    description: 'For testing and personal use.',
+    features: [
+      '10 images per month',
+      '2x & 4x Upscaling',
+      'Basic Enhancement',
+      'No watermark',
+      '5MB file limit',
+    ],
+    cta: 'Start for Free',
+    variant: 'outline' as const,
+    priceId: null, // No Stripe price for free tier
+    recommended: false,
+  },
+  {
+    name: SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name,
+    price: `$${SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}`,
+    priceValue: SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price,
+    period: '/mo',
+    description: SUBSCRIPTION_PLANS.HOBBY_MONTHLY.description,
+    features: SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features,
+    cta: 'Get Started',
+    variant: 'secondary' as const,
+    priceId: STRIPE_PRICES.HOBBY_MONTHLY,
+    recommended: false,
+  },
+  {
+    name: SUBSCRIPTION_PLANS.PRO_MONTHLY.name,
+    price: `$${SUBSCRIPTION_PLANS.PRO_MONTHLY.price}`,
+    priceValue: SUBSCRIPTION_PLANS.PRO_MONTHLY.price,
+    period: '/mo',
+    description: SUBSCRIPTION_PLANS.PRO_MONTHLY.description,
+    features: SUBSCRIPTION_PLANS.PRO_MONTHLY.features,
+    cta: 'Get Started',
+    variant: 'primary' as const,
+    priceId: STRIPE_PRICES.PRO_MONTHLY,
+    recommended: true,
+  },
+] as const;

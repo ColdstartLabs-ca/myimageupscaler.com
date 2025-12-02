@@ -1,75 +1,16 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { Check } from 'lucide-react';
 import Button from '@client/components/pixelperfect/Button';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { useModalStore } from '@client/store/modalStore';
-
-interface ITier {
-  name: string;
-  price: string;
-  priceValue: number;
-  period: string;
-  description: string;
-  features: string[];
-  cta: string;
-  variant: 'outline' | 'secondary' | 'primary';
-  recommended?: boolean;
-}
-
-const tiers: ITier[] = [
-  {
-    name: 'Free Tier',
-    price: '$0',
-    priceValue: 0,
-    period: '/mo',
-    description: 'For testing and personal use.',
-    features: [
-      '10 images per month',
-      '2x & 4x Upscaling',
-      'Basic Enhancement',
-      'No watermark',
-      '5MB file limit',
-    ],
-    cta: 'Start for Free',
-    variant: 'outline',
-  },
-  {
-    name: 'Starter',
-    price: '$9',
-    priceValue: 9,
-    period: '/mo',
-    description: 'For hobbyists and occasional sellers.',
-    features: [
-      '100 images per month',
-      'All Upscaling Options',
-      'Full Enhancement Suite',
-      'Priority Queue',
-      '64MP file support',
-    ],
-    cta: 'Start Free Trial',
-    variant: 'secondary',
-  },
-  {
-    name: 'Pro',
-    price: '$29',
-    priceValue: 29,
-    period: '/mo',
-    description: 'For power sellers and creators.',
-    features: [
-      '500 images per month',
-      'Batch processing (up to 50)',
-      'Text Preservation Mode',
-      'Credit rollover',
-      'Priority support',
-    ],
-    recommended: true,
-    cta: 'Get Started',
-    variant: 'primary',
-  },
-];
+import { useToastStore } from '@client/store/toastStore';
+import { StripeService } from '@server/stripe/stripeService';
+import { HOMEPAGE_TIERS, isStripePricesConfigured } from '@shared/config/stripe';
 
 // Generate Product structured data for SEO
-const generateProductJsonLd = (tier: ITier) => ({
+const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number]) => ({
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: `PixelPerfect AI ${tier.name}`,
@@ -89,26 +30,68 @@ const generateProductJsonLd = (tier: ITier) => ({
   },
 });
 
-const Pricing: React.FC = () => {
+export const Pricing: React.FC = () => {
   const { openAuthModal } = useModalStore();
+  const { showToast } = useToastStore();
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
-  const handlePricingClick = (tierName: string) => {
-    if (tierName === 'Free Tier') {
+  const handlePricingClick = async (tier: (typeof HOMEPAGE_TIERS)[number]) => {
+    // Free tier - just open registration
+    if (tier.priceId === null) {
       openAuthModal('register');
-    } else {
-      // For paid tiers, redirect to pricing page with plan selection
-      window.location.href = '/pricing';
+      return;
+    }
+
+    // Check if Stripe is configured
+    if (!isStripePricesConfigured()) {
+      showToast({
+        message: 'Payment system is not configured. Please try again later.',
+        type: 'error',
+      });
+      return;
+    }
+
+    // Set loading state
+    setLoadingTier(tier.name);
+
+    // Store intended purchase for after auth
+    sessionStorage.setItem(
+      'intendedPurchase',
+      JSON.stringify({
+        priceId: tier.priceId,
+        planName: tier.name,
+        successUrl: `${window.location.origin}/success`,
+        cancelUrl: window.location.href,
+      })
+    );
+
+    try {
+      await StripeService.redirectToCheckout(tier.priceId, {
+        successUrl: `${window.location.origin}/success`,
+        cancelUrl: window.location.href,
+      });
+    } catch (error) {
+      // User not authenticated - open auth modal
+      if (error instanceof Error && error.message.includes('not authenticated')) {
+        openAuthModal('register');
+      } else {
+        // Actual error - show toast
+        showToast({
+          message: error instanceof Error ? error.message : 'Failed to start checkout',
+          type: 'error',
+        });
+      }
+    } finally {
+      setLoadingTier(null);
     }
   };
 
   return (
     <section id="pricing" className="py-20 bg-slate-50">
       {/* Product structured data for SEO */}
-      {tiers
-        .filter(tier => tier.priceValue > 0)
-        .map(tier => (
-          <JsonLd key={`jsonld-${tier.name}`} data={generateProductJsonLd(tier)} />
-        ))}
+      {HOMEPAGE_TIERS.filter(tier => tier.priceValue > 0).map(tier => (
+        <JsonLd key={`jsonld-${tier.name}`} data={generateProductJsonLd(tier)} />
+      ))}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
@@ -121,11 +104,11 @@ const Pricing: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {tiers.map(tier => (
+          {HOMEPAGE_TIERS.map(tier => (
             <div
               key={tier.name}
               className={`
-                relative flex flex-col p-8 bg-white rounded-2xl shadow-sm border 
+                relative flex flex-col p-8 bg-white rounded-2xl shadow-sm border
                 ${tier.recommended ? 'border-indigo-600 ring-2 ring-indigo-600 ring-opacity-50 scale-105 z-10' : 'border-slate-200'}
               `}
             >
@@ -157,9 +140,10 @@ const Pricing: React.FC = () => {
               <Button
                 variant={tier.variant}
                 className="w-full"
-                onClick={() => handlePricingClick(tier.name)}
+                onClick={() => handlePricingClick(tier)}
+                disabled={loadingTier !== null}
               >
-                {tier.cta}
+                {loadingTier === tier.name ? 'Processing...' : tier.cta}
               </Button>
             </div>
           ))}
@@ -168,6 +152,3 @@ const Pricing: React.FC = () => {
     </section>
   );
 };
-
-// eslint-disable-next-line import/no-default-export
-export default Pricing;

@@ -15,6 +15,23 @@
     --color-card: 255 255 255; /* white - for cards and modals */
   }
 
+  /* Force light mode and prevent dark mode overrides */
+  html[data-theme='light'],
+  html {
+    color-scheme: light;
+  }
+
+  html[data-theme='dark'],
+  .dark,
+  [data-theme='dark'] {
+    display: none !important;
+  }
+
+  /* Override any potential dark mode styles */
+  body {
+    color-scheme: light only;
+  }
+
   body {
     font-family: 'Inter', sans-serif;
   }
