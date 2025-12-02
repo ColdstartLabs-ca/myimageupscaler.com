@@ -91,15 +91,14 @@ export default function PricingPage() {
             Simple, Transparent Pricing
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover.
+            Choose the subscription plan that fits your needs. Get monthly credits with automatic
+            rollover.
           </p>
         </div>
 
         {/* Subscription Plans Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-slate-900 mb-8">
-            Choose Your Plan
-          </h2>
+          <h2 className="text-3xl font-bold text-center text-slate-900 mb-8">Choose Your Plan</h2>
           <p className="text-center text-slate-600 mb-8">
             Get credits every month with our subscription plans. Cancel anytime.
           </p>
@@ -112,6 +111,7 @@ export default function PricingPage() {
               interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
               features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
               priceId={STRIPE_PRICES.HOBBY_MONTHLY}
+              disabled={subscription?.price_id === STRIPE_PRICES.HOBBY_MONTHLY}
             />
 
             <PricingCard
@@ -122,6 +122,7 @@ export default function PricingPage() {
               features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
               priceId={STRIPE_PRICES.PRO_MONTHLY}
               recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
+              disabled={subscription?.price_id === STRIPE_PRICES.PRO_MONTHLY}
             />
 
             <PricingCard
@@ -131,6 +132,7 @@ export default function PricingPage() {
               interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
               features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
               priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
+              disabled={subscription?.price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
             />
           </div>
         </div>
@@ -155,7 +157,8 @@ export default function PricingPage() {
             <div className="bg-white p-6 rounded-lg border border-slate-200">
               <h3 className="text-lg font-semibold text-slate-900 mb-2">Do credits expire?</h3>
               <p className="text-slate-600">
-                Subscription credits roll over month-to-month up to your plan's maximum limit as long as your subscription is active.
+                Subscription credits roll over month-to-month up to your plan's maximum limit as
+                long as your subscription is active.
               </p>
             </div>
 

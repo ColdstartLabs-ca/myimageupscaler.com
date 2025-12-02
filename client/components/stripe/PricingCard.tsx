@@ -11,6 +11,8 @@ interface IPricingCardProps {
   features: readonly string[];
   priceId: string;
   recommended?: boolean;
+  disabled?: boolean;
+  disabledReason?: string;
 }
 
 /**
@@ -38,10 +40,13 @@ export function PricingCard({
   features,
   priceId,
   recommended = false,
+  disabled = false,
+  disabledReason = 'Current Plan',
 }: IPricingCardProps): JSX.Element {
   const router = useRouter();
 
   const handleSubscribe = () => {
+    if (disabled) return;
     // Redirect to checkout page with plan details
     const checkoutUrl = `/checkout?priceId=${encodeURIComponent(priceId)}&plan=${encodeURIComponent(name)}`;
     router.push(checkoutUrl);
@@ -49,9 +54,20 @@ export function PricingCard({
 
   return (
     <div
-      className={`relative bg-white rounded-2xl shadow-lg border-2 ${recommended ? 'border-indigo-500 ring-2 ring-indigo-500 ring-opacity-20' : 'border-slate-200'}`}
+      className={`relative bg-white rounded-2xl shadow-lg border-2 ${
+        disabled
+          ? 'border-green-500 ring-2 ring-green-500 ring-opacity-20 opacity-90'
+          : recommended
+            ? 'border-indigo-500 ring-2 ring-indigo-500 ring-opacity-20'
+            : 'border-slate-200'
+      }`}
     >
-      {recommended && (
+      {disabled && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+          {disabledReason}
+        </div>
+      )}
+      {!disabled && recommended && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white px-4 py-1 rounded-full text-sm font-medium">
           Recommended
         </div>
@@ -95,9 +111,14 @@ export function PricingCard({
         <div className="mt-auto">
           <button
             onClick={handleSubscribe}
-            className="w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg"
+            disabled={disabled}
+            className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 shadow-md ${
+              disabled
+                ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                : 'bg-indigo-600 hover:bg-indigo-700 text-white hover:shadow-lg'
+            }`}
           >
-            Get Started
+            {disabled ? 'Current Plan' : 'Get Started'}
           </button>
         </div>
       </div>
