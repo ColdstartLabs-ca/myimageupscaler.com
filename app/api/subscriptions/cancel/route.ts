@@ -43,6 +43,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Parse request body for optional cancellation reason
+    let cancellationReason: string | undefined;
+    try {
+      const body = await request.json();
+      cancellationReason = body.reason;
+    } catch {
+      // No body or invalid JSON - that's okay, reason is optional
+    }
+
     // 2. Get the user's active subscription
     const { data: subscription, error: subError } = await supabaseAdmin
       .from('subscriptions')
@@ -72,12 +81,23 @@ export async function POST(request: NextRequest) {
     });
 
     // 4. Update the subscription in our database
+    const updateData: {
+      cancel_at_period_end: boolean;
+      updated_at: string;
+      cancellation_reason?: string;
+    } = {
+      cancel_at_period_end: true,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Add cancellation reason if provided
+    if (cancellationReason) {
+      updateData.cancellation_reason = cancellationReason;
+    }
+
     const { error: updateError } = await supabaseAdmin
       .from('subscriptions')
-      .update({
-        cancel_at_period_end: true,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', subscription.id);
 
     if (updateError) {

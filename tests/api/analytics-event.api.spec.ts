@@ -37,10 +37,10 @@ test.describe('API: Analytics Event Integration', () => {
           properties: {
             scaleFactor: 2,
             mode: 'standard',
-            processingTime: 1500
+            processingTime: 1500,
           },
-          sessionId: 'session_test_123'
-        }
+          sessionId: 'session_test_123',
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -53,8 +53,8 @@ test.describe('API: Analytics Event Integration', () => {
         data: {
           eventName: 'invalid_event_name',
           properties: {},
-          sessionId: 'session_test_123'
-        }
+          sessionId: 'session_test_123',
+        },
       });
 
       expect(response.status()).toBe(400);
@@ -67,9 +67,9 @@ test.describe('API: Analytics Event Integration', () => {
     test('should accept events without optional fields', async ({ request }) => {
       const response = await request.post('/api/analytics/event', {
         data: {
-          eventName: 'login'
+          eventName: 'login',
           // No properties or sessionId
-        }
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -82,8 +82,8 @@ test.describe('API: Analytics Event Integration', () => {
         data: {
           eventName: 'logout',
           properties: {},
-          sessionId: 'session_test_456'
-        }
+          sessionId: 'session_test_456',
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -106,18 +106,18 @@ test.describe('API: Analytics Event Integration', () => {
               utm_source: 'google',
               utm_medium: 'cpc',
               deviceType: 'desktop',
-              browser: 'chrome'
+              browser: 'chrome',
             },
             items: [
               {
                 name: 'Pro Plan Monthly',
                 quantity: 1,
-                price: 2900
-              }
-            ]
+                price: 2900,
+              },
+            ],
           },
-          sessionId: 'session_checkout_789'
-        }
+          sessionId: 'session_checkout_789',
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -128,9 +128,9 @@ test.describe('API: Analytics Event Integration', () => {
     test('should reject malformed JSON', async ({ request }) => {
       const response = await request.post('/api/analytics/event', {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        data: 'invalid json {'
+        data: 'invalid json {',
       });
 
       expect(response.status()).toBeGreaterThanOrEqual(400);
@@ -139,7 +139,7 @@ test.describe('API: Analytics Event Integration', () => {
     test('should reject empty request body', async ({ request }) => {
       const response = await request.post('/api/analytics/event', {
         data: '',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
 
       // Analytics API is lenient and accepts empty bodies as valid events
@@ -150,8 +150,8 @@ test.describe('API: Analytics Event Integration', () => {
       const response = await request.post('/api/analytics/event', {
         data: {
           eventName: 'login',
-          sessionId: 123 // Should be string, not number
-        }
+          sessionId: 123, // Should be string, not number
+        },
       });
 
       expect(response.status()).toBe(400);
@@ -169,16 +169,21 @@ test.describe('API: Analytics Event Integration', () => {
       'checkout_started',
       'checkout_completed',
       'checkout_abandoned',
-      'image_download'
+      'image_download',
     ];
 
     test('should accept all allowed event types', async ({ request }) => {
-      for (const eventName of allowedEvents) {
+      for (const [index, eventName] of allowedEvents.entries()) {
+        // Add small delay between requests to avoid rate limiting
+        if (index > 0) {
+          await new Promise(resolve => setTimeout(resolve, 200));
+        }
+
         const response = await request.post('/api/analytics/event', {
           data: {
             eventName,
-            sessionId: `test_session_${eventName}`
-          }
+            sessionId: `test_session_${eventName}`,
+          },
         });
 
         expect(response.status()).toBe(200);
@@ -196,15 +201,20 @@ test.describe('API: Analytics Event Integration', () => {
         '{{constructor.constructor("return process")().env}}',
         '__proto__',
         'constructor',
-        'prototype'
+        'prototype',
       ];
 
-      for (const eventName of maliciousEventNames) {
+      for (const [index, eventName] of maliciousEventNames.entries()) {
+        // Add small delay between requests to avoid rate limiting
+        if (index > 0) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
         const response = await request.post('/api/analytics/event', {
           data: {
             eventName,
-            sessionId: 'malicious_test'
-          }
+            sessionId: 'malicious_test',
+          },
         });
 
         expect(response.status()).toBe(400);
@@ -213,18 +223,23 @@ test.describe('API: Analytics Event Integration', () => {
 
     test('should reject event names with SQL injection patterns', async ({ request }) => {
       const sqlInjectionAttempts = [
-        'login\' OR \'1\'=\'1',
+        "login' OR '1'='1",
         'image_download; DROP TABLE users; --',
-        'checkout_completed\' UNION SELECT * FROM profiles --',
-        'signup_started\x00admin'
+        "checkout_completed' UNION SELECT * FROM profiles --",
+        'signup_started\x00admin',
       ];
 
-      for (const eventName of sqlInjectionAttempts) {
+      for (const [index, eventName] of sqlInjectionAttempts.entries()) {
+        // Add small delay between requests to avoid rate limiting
+        if (index > 0) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
         const response = await request.post('/api/analytics/event', {
           data: {
             eventName,
-            sessionId: 'sql_injection_test'
-          }
+            sessionId: 'sql_injection_test',
+          },
         });
 
         expect(response.status()).toBe(400);
@@ -236,15 +251,15 @@ test.describe('API: Analytics Event Integration', () => {
     test('should handle events with valid authentication', async ({ request }) => {
       const response = await request.post('/api/analytics/event', {
         headers: {
-          'Authorization': `Bearer ${testUser.token}`
+          Authorization: `Bearer ${testUser.token}`,
         },
         data: {
           eventName: 'image_download',
           properties: {
-            authenticated: true
+            authenticated: true,
           },
-          sessionId: 'authenticated_session'
-        }
+          sessionId: 'authenticated_session',
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -257,10 +272,10 @@ test.describe('API: Analytics Event Integration', () => {
         data: {
           eventName: 'signup_started',
           properties: {
-            authenticated: false
+            authenticated: false,
           },
-          sessionId: 'anonymous_session'
-        }
+          sessionId: 'anonymous_session',
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -271,12 +286,12 @@ test.describe('API: Analytics Event Integration', () => {
     test('should handle events with invalid authentication token', async ({ request }) => {
       const response = await request.post('/api/analytics/event', {
         headers: {
-          'Authorization': 'Bearer invalid_token_12345'
+          Authorization: 'Bearer invalid_token_12345',
         },
         data: {
           eventName: 'login',
-          sessionId: 'invalid_auth_session'
-        }
+          sessionId: 'invalid_auth_session',
+        },
       });
 
       // Should still succeed because analytics shouldn't fail user actions
@@ -291,16 +306,16 @@ test.describe('API: Analytics Event Integration', () => {
         'Bearer',
         'Bearer not.a.valid.jwt',
         'Basic dGVzdDoxMjM=', // Basic auth instead of Bearer
-        ''
+        '',
       ];
 
       for (const authHeader of malformedHeaders) {
         const response = await request.post('/api/analytics/event', {
-          headers: authHeader ? { 'Authorization': authHeader } : {},
+          headers: authHeader ? { Authorization: authHeader } : {},
           data: {
             eventName: 'login',
-            sessionId: 'malformed_auth_test'
-          }
+            sessionId: 'malformed_auth_test',
+          },
         });
 
         // Should still succeed - analytics errors shouldn't block user actions
@@ -315,28 +330,28 @@ test.describe('API: Analytics Event Integration', () => {
         {
           eventName: 'signup_started',
           properties: { source: 'homepage' },
-          expectedBehavior: 'track funnel start'
+          expectedBehavior: 'track funnel start',
         },
         {
           eventName: 'signup_completed',
           properties: { method: 'email' },
-          expectedBehavior: 'track conversion'
+          expectedBehavior: 'track conversion',
         },
         {
           eventName: 'login',
           properties: { method: 'email' },
-          expectedBehavior: 'track authentication'
+          expectedBehavior: 'track authentication',
         },
         {
           eventName: 'checkout_started',
           properties: { plan: 'pro', amount: 2900 },
-          expectedBehavior: 'track purchase intent'
+          expectedBehavior: 'track purchase intent',
         },
         {
           eventName: 'image_download',
           properties: { format: 'png', scale: 2 },
-          expectedBehavior: 'track feature usage'
-        }
+          expectedBehavior: 'track feature usage',
+        },
       ];
 
       for (const eventType of eventTypes) {
@@ -344,8 +359,8 @@ test.describe('API: Analytics Event Integration', () => {
           data: {
             eventName: eventType.eventName,
             properties: eventType.properties,
-            sessionId: `test_${eventType.eventName}`
-          }
+            sessionId: `test_${eventType.eventName}`,
+          },
         });
 
         expect(response.status()).toBe(200);
@@ -359,7 +374,7 @@ test.describe('API: Analytics Event Integration', () => {
       const largeProperties = {
         metadata: {},
         arrayData: [],
-        longString: 'x'.repeat(1000)
+        longString: 'x'.repeat(1000),
       };
 
       // Add many nested properties
@@ -368,7 +383,7 @@ test.describe('API: Analytics Event Integration', () => {
         largeProperties.arrayData.push({
           id: i,
           name: `item_${i}`,
-          description: `This is item number ${i} with some additional text to make it longer`
+          description: `This is item number ${i} with some additional text to make it longer`,
         });
       }
 
@@ -376,8 +391,8 @@ test.describe('API: Analytics Event Integration', () => {
         data: {
           eventName: 'checkout_completed',
           properties: largeProperties,
-          sessionId: 'large_properties_test'
-        }
+          sessionId: 'large_properties_test',
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -394,15 +409,15 @@ test.describe('API: Analytics Event Integration', () => {
         quotes: 'Single "double" quotes test',
         newlines: 'Line 1\nLine 2\r\nLine 3',
         tabs: 'Column1\tColumn2\tColumn3',
-        emojis: '😀😃😄😁😆😅😂🤣😊😇'
+        emojis: '😀😃😄😁😆😅😂🤣😊😇',
       };
 
       const response = await request.post('/api/analytics/event', {
         data: {
           eventName: 'image_download',
           properties: specialProperties,
-          sessionId: 'special_chars_test'
-        }
+          sessionId: 'special_chars_test',
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -415,12 +430,12 @@ test.describe('API: Analytics Event Integration', () => {
     test('should handle malformed authorization without failing', async ({ request }) => {
       const response = await request.post('/api/analytics/event', {
         headers: {
-          'Authorization': 'Bearer malformed.jwt.token'
+          Authorization: 'Bearer malformed.jwt.token',
         },
         data: {
           eventName: 'login',
-          sessionId: 'malformed_token_test'
-        }
+          sessionId: 'malformed_token_test',
+        },
       });
 
       // Should return success even with invalid auth
@@ -435,16 +450,16 @@ test.describe('API: Analytics Event Integration', () => {
         'Bearer',
         'Bearer not.a.valid.jwt',
         'Basic dGVzdDoxMjM=', // Basic auth instead of Bearer
-        ''
+        '',
       ];
 
       for (const authHeader of malformedHeaders) {
         const response = await request.post('/api/analytics/event', {
-          headers: authHeader ? { 'Authorization': authHeader } : {},
+          headers: authHeader ? { Authorization: authHeader } : {},
           data: {
             eventName: 'login',
-            sessionId: 'malformed_auth_test'
-          }
+            sessionId: 'malformed_auth_test',
+          },
         });
 
         // Should still succeed - analytics errors shouldn't block user actions
@@ -453,17 +468,17 @@ test.describe('API: Analytics Event Integration', () => {
     });
 
     test('should handle concurrent events', async ({ request }) => {
-      const concurrentEvents = Array(10).fill(null).map((_, index) => ({
-        eventName: 'image_download',
-        properties: { batchIndex: index },
-        sessionId: `concurrent_test_${index}`
-      }));
+      const concurrentEvents = Array(10)
+        .fill(null)
+        .map((_, index) => ({
+          eventName: 'image_download',
+          properties: { batchIndex: index },
+          sessionId: `concurrent_test_${index}`,
+        }));
 
       // Send all events concurrently
       const responses = await Promise.all(
-        concurrentEvents.map(event =>
-          request.post('/api/analytics/event', { data: event })
-        )
+        concurrentEvents.map(event => request.post('/api/analytics/event', { data: event }))
       );
 
       // All should succeed
@@ -483,7 +498,7 @@ test.describe('API: Analytics Event Integration', () => {
         ssn: '123-45-6789',
         apiKey: 'sk_live_123456789',
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
-        privateInfo: 'This should not be logged'
+        privateInfo: 'This should not be logged',
       };
 
       // The API should accept it but handle it securely
@@ -491,8 +506,8 @@ test.describe('API: Analytics Event Integration', () => {
         data: {
           eventName: 'login',
           properties: sensitiveData,
-          sessionId: 'sensitive_data_test'
-        }
+          sessionId: 'sensitive_data_test',
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -506,8 +521,8 @@ test.describe('API: Analytics Event Integration', () => {
       const response = await request.post('/api/analytics/event', {
         data: {
           eventName: 'image_download',
-          sessionId: longSessionId
-        }
+          sessionId: longSessionId,
+        },
       });
 
       // Should handle gracefully - either accept or reject with proper error
@@ -519,15 +534,15 @@ test.describe('API: Analytics Event Integration', () => {
         xss: '<script>alert("xss")</script>',
         sqlInjection: "'; DROP TABLE users; --",
         templateInjection: '{{7*7}}',
-        prototypePollution: '__proto__.isAdmin'
+        prototypePollution: '__proto__.isAdmin',
       };
 
       const response = await request.post('/api/analytics/event', {
         data: {
           eventName: 'image_download',
           properties: injectionAttempts,
-          sessionId: 'injection_test'
-        }
+          sessionId: 'injection_test',
+        },
       });
 
       expect(response.status()).toBe(200);
@@ -544,8 +559,8 @@ test.describe('API: Analytics Event Integration', () => {
         data: {
           eventName: 'image_download',
           properties: { performance: 'test' },
-          sessionId: 'performance_test'
-        }
+          sessionId: 'performance_test',
+        },
       });
 
       const duration = Date.now() - startTime;
@@ -560,15 +575,17 @@ test.describe('API: Analytics Event Integration', () => {
 
       // Create a burst of requests
       const responses = await Promise.all(
-        Array(burstSize).fill(null).map((_, index) =>
-          request.post('/api/analytics/event', {
-            data: {
-              eventName: 'image_download',
-              properties: { burstIndex: index },
-              sessionId: `burst_test_${index}`
-            }
-          })
-        )
+        Array(burstSize)
+          .fill(null)
+          .map((_, index) =>
+            request.post('/api/analytics/event', {
+              data: {
+                eventName: 'image_download',
+                properties: { burstIndex: index },
+                sessionId: `burst_test_${index}`,
+              },
+            })
+          )
       );
 
       const duration = Date.now() - startTime;

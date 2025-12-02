@@ -2,7 +2,6 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST } from '../../../app/api/webhooks/stripe/route';
 import { supabaseAdmin } from '../../../server/supabase/supabaseAdmin';
-import { stripe } from '../../../server/stripe';
 import { getPlanForPriceId } from '@shared/config/stripe';
 
 // Mock dependencies
@@ -18,21 +17,39 @@ vi.mock('@server/stripe', () => ({
   STRIPE_WEBHOOK_SECRET: 'whsec_test_secret',
 }));
 
+// Helper to create a webhook_events mock that allows events through (for idempotency)
+const getWebhookEventsMock = () => ({
+  select: vi.fn(() => ({
+    eq: vi.fn(() => ({
+      single: vi.fn(() => Promise.resolve({ data: null })), // Event doesn't exist, allow through
+    })),
+  })),
+  insert: vi.fn(() => Promise.resolve({ error: null })), // Claim succeeds
+  update: vi.fn(() => ({
+    eq: vi.fn(() => Promise.resolve({ error: null })), // Update succeeds
+  })),
+});
+
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     rpc: vi.fn(),
-    from: vi.fn(() => ({
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          single: vi.fn(),
+    from: vi.fn((table: string) => {
+      if (table === 'webhook_events') {
+        return getWebhookEventsMock();
+      }
+      return {
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(),
+          })),
         })),
-      })),
-      upsert: vi.fn(),
-      update: vi.fn(() => ({
-        eq: vi.fn(),
-      })),
-      insert: vi.fn(),
-    })),
+        upsert: vi.fn(),
+        update: vi.fn(() => ({
+          eq: vi.fn(),
+        })),
+        insert: vi.fn(),
+      };
+    }),
   },
 }));
 
@@ -67,7 +84,7 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     // Mock plan lookup for different price IDs
-    (getPlanForPriceId as any).mockImplementation((priceId: string) => {
+    vi.mocked(getPlanForPriceId).mockImplementation((priceId: string) => {
       if (priceId === 'price_hobby_monthly') {
         return { key: 'hobby', name: 'Hobby', creditsPerMonth: 200, maxRollover: 1200 };
       }
@@ -130,7 +147,9 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
     }));
 
     (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
-      if (table === 'profiles') {
+      if (table === 'webhook_events') {
+        return getWebhookEventsMock();
+      } else if (table === 'profiles') {
         return { select: mockSelect };
       }
       return {};
@@ -201,7 +220,9 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
     }));
 
     (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
-      if (table === 'profiles') {
+      if (table === 'webhook_events') {
+        return getWebhookEventsMock();
+      } else if (table === 'profiles') {
         return { select: mockSelect };
       }
       return {};
@@ -268,7 +289,9 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
     }));
 
     (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
-      if (table === 'profiles') {
+      if (table === 'webhook_events') {
+        return getWebhookEventsMock();
+      } else if (table === 'profiles') {
         return { select: mockSelect };
       }
       return {};
@@ -363,7 +386,9 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
     }));
 
     (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
-      if (table === 'profiles') {
+      if (table === 'webhook_events') {
+        return getWebhookEventsMock();
+      } else if (table === 'profiles') {
         return { select: mockSelect };
       }
       return {};

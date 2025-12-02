@@ -4,7 +4,6 @@ import { POST } from '../../../app/api/webhooks/stripe/route';
 import { supabaseAdmin } from '../../../server/supabase/supabaseAdmin';
 import { stripe } from '../../../server/stripe';
 import { getPlanForPriceId } from '@shared/config/stripe';
-import Stripe from 'stripe';
 
 // Mock webhook secret that can be changed per test
 let mockWebhookSecret = 'whsec_test_secret';
@@ -28,21 +27,41 @@ vi.mock('@shared/config/stripe', () => ({
   getPlanForPriceId: vi.fn(),
 }));
 
+// Helper to create a webhook_events mock that allows events through (for idempotency)
+const getWebhookEventsMock = () => ({
+  select: vi.fn(() => ({
+    eq: vi.fn(() => ({
+      single: vi.fn(() => Promise.resolve({ data: null })), // Event doesn't exist, allow through
+    })),
+  })),
+  insert: vi.fn(() => Promise.resolve({ error: null })), // Claim succeeds
+  update: vi.fn(() => ({
+    eq: vi.fn(() => Promise.resolve({ error: null })), // Update succeeds
+  })),
+});
+
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     rpc: vi.fn(),
-    from: vi.fn(() => ({
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          single: vi.fn(),
+    from: vi.fn((table: string) => {
+      // Handle webhook_events for idempotency check
+      if (table === 'webhook_events') {
+        return getWebhookEventsMock();
+      }
+      // Default mock for other tables
+      return {
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(),
+          })),
         })),
-      })),
-      upsert: vi.fn(),
-      update: vi.fn(() => ({
-        eq: vi.fn(),
-      })),
-      insert: vi.fn(),
-    })),
+        upsert: vi.fn(),
+        update: vi.fn(() => ({
+          eq: vi.fn(),
+        })),
+        insert: vi.fn(),
+      };
+    }),
   },
 }));
 
@@ -53,7 +72,7 @@ let mockEnv = {
 };
 
 vi.mock('@shared/config/env', () => ({
-  serverEnv: new Proxy({} as any, {
+  serverEnv: new Proxy({} as Record<string, string>, {
     get(_, prop) {
       return mockEnv[prop as keyof typeof mockEnv];
     },
@@ -61,8 +80,7 @@ vi.mock('@shared/config/env', () => ({
 }));
 
 describe('Stripe Webhook Handler', () => {
-  let mockRequest: any;
-  let consoleSpy: any;
+  let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -120,7 +138,7 @@ describe('Stripe Webhook Handler', () => {
       });
 
       // Mock the RPC call for credit addition
-      (supabaseAdmin.rpc as any).mockResolvedValue({ error: null });
+      vi.mocked(supabaseAdmin.rpc).mockResolvedValue({ error: null } as never);
 
       // Act
       const response = await POST(request);
@@ -172,7 +190,7 @@ describe('Stripe Webhook Handler', () => {
       });
 
       // Mock successful signature verification
-      (stripe.webhooks.constructEventAsync as any).mockResolvedValue(event);
+      vi.mocked(stripe.webhooks.constructEventAsync).mockResolvedValue(event as never);
 
       // Act
       const response = await POST(request);
@@ -202,7 +220,7 @@ describe('Stripe Webhook Handler', () => {
       });
 
       // Mock failed signature verification
-      (stripe.webhooks.constructEventAsync as any).mockRejectedValue(
+      vi.mocked(stripe.webhooks.constructEventAsync).mockRejectedValue(
         new Error('Invalid signature')
       );
 
@@ -274,18 +292,20 @@ describe('Stripe Webhook Handler', () => {
       };
 
       // Mock successful plan lookup
-      (getPlanForPriceId as any).mockReturnValue(mockPlan);
+      vi.mocked(getPlanForPriceId).mockReturnValue(mockPlan);
 
       // Mock Stripe subscription retrieval
-      (stripe.subscriptions.retrieve as any).mockResolvedValue({
+      vi.mocked(stripe.subscriptions.retrieve).mockResolvedValue({
         items: {
-          data: [{
-            price: {
-              id: 'price_test_hobby',
+          data: [
+            {
+              price: {
+                id: 'price_test_hobby',
+              },
             },
-          }],
+          ],
         },
-      });
+      } as never);
 
       const event = {
         type: 'checkout.session.completed',
@@ -302,19 +322,18 @@ describe('Stripe Webhook Handler', () => {
       });
 
       // Mock failed credit addition
-      (supabaseAdmin.rpc as any).mockResolvedValue({
+      vi.mocked(supabaseAdmin.rpc).mockResolvedValue({
         error: { message: 'Database error' },
-      });
+      } as never);
 
       // Act
       const response = await POST(request);
 
       // Assert
       expect(response.status).toBe(200); // Still returns 200 as webhook was processed
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        'Error adding test subscription credits:',
-        { message: 'Database error' }
-      );
+      expect(consoleSpy.error).toHaveBeenCalledWith('Error adding test subscription credits:', {
+        message: 'Database error',
+      });
     });
 
     test('should skip zero credit amounts', async () => {
@@ -359,7 +378,7 @@ describe('Stripe Webhook Handler', () => {
       };
 
       // Mock successful plan lookup for the default PRO_MONTHLY price ID
-      (getPlanForPriceId as any).mockReturnValue(mockPlan);
+      vi.mocked(getPlanForPriceId).mockReturnValue(mockPlan);
 
       const event = {
         type: 'checkout.session.completed',
@@ -376,7 +395,7 @@ describe('Stripe Webhook Handler', () => {
       });
 
       // Mock successful credit addition
-      (supabaseAdmin.rpc as any).mockResolvedValue({ error: null });
+      vi.mocked(supabaseAdmin.rpc).mockResolvedValue({ error: null } as never);
 
       // Act
       const response = await POST(request);
@@ -422,9 +441,7 @@ describe('Stripe Webhook Handler', () => {
       // Assert
       expect(response.status).toBe(200);
       expect(supabaseAdmin.rpc).not.toHaveBeenCalled();
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        'No user_id in session metadata'
-      );
+      expect(consoleSpy.error).toHaveBeenCalledWith('No user_id in session metadata');
     });
   });
 
@@ -456,7 +473,7 @@ describe('Stripe Webhook Handler', () => {
       };
 
       // Mock successful plan lookup
-      (getPlanForPriceId as any).mockReturnValue(mockPlan);
+      vi.mocked(getPlanForPriceId).mockReturnValue(mockPlan);
 
       const event = {
         type: 'customer.subscription.created',
@@ -486,8 +503,10 @@ describe('Stripe Webhook Handler', () => {
         eq: vi.fn(() => ({ error: null })),
       }));
 
-      (supabaseAdmin.from as any).mockImplementation((table: string) => {
-        if (table === 'profiles') {
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') {
+          return getWebhookEventsMock();
+        } else if (table === 'profiles') {
           return { select: mockSelect, update: mockUpdate };
         } else if (table === 'subscriptions') {
           return { upsert: mockUpsert };
@@ -546,8 +565,10 @@ describe('Stripe Webhook Handler', () => {
         eq: vi.fn(() => ({ error: null })),
       }));
 
-      (supabaseAdmin.from as any).mockImplementation((table: string) => {
-        if (table === 'profiles') {
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') {
+          return getWebhookEventsMock();
+        } else if (table === 'profiles') {
           return { select: mockSelect, update: mockProfileUpdate };
         } else if (table === 'subscriptions') {
           return { update: mockSubUpdate };
@@ -594,8 +615,11 @@ describe('Stripe Webhook Handler', () => {
         })),
       }));
 
-      (supabaseAdmin.from as any).mockReturnValue({
-        select: mockSelect,
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') {
+          return getWebhookEventsMock();
+        }
+        return { select: mockSelect };
       });
 
       // Act
@@ -603,9 +627,7 @@ describe('Stripe Webhook Handler', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        'No profile found for customer cus_test_123'
-      );
+      expect(consoleSpy.error).toHaveBeenCalledWith('No profile found for customer cus_test_123');
     });
 
     test('should handle subscription update errors gracefully', async () => {
@@ -638,8 +660,10 @@ describe('Stripe Webhook Handler', () => {
         eq: vi.fn(() => ({ error: null })),
       }));
 
-      (supabaseAdmin.from as any).mockImplementation((table: string) => {
-        if (table === 'profiles') {
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') {
+          return getWebhookEventsMock();
+        } else if (table === 'profiles') {
           return { select: mockSelect, update: mockUpdate };
         } else if (table === 'subscriptions') {
           return { upsert: mockUpsert };
@@ -652,10 +676,9 @@ describe('Stripe Webhook Handler', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        'Error upserting subscription:',
-        { message: 'Database error' }
-      );
+      expect(consoleSpy.error).toHaveBeenCalledWith('Error upserting subscription:', {
+        message: 'Database error',
+      });
     });
   });
 
@@ -670,7 +693,7 @@ describe('Stripe Webhook Handler', () => {
       };
 
       // Mock successful plan lookup
-      (getPlanForPriceId as any).mockReturnValue(mockPlan);
+      vi.mocked(getPlanForPriceId).mockReturnValue(mockPlan);
 
       const customerId = 'cus_test_renewal';
       const userId = 'user_renewal_123';
@@ -713,15 +736,17 @@ describe('Stripe Webhook Handler', () => {
         })),
       }));
 
-      (supabaseAdmin.from as any).mockImplementation((table: string) => {
-        if (table === 'profiles') {
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') {
+          return getWebhookEventsMock();
+        } else if (table === 'profiles') {
           return { select: mockSelect };
         }
         return {};
       });
 
       // Mock successful credit addition
-      (supabaseAdmin.rpc as any).mockResolvedValue({ error: null });
+      vi.mocked(supabaseAdmin.rpc).mockResolvedValue({ error: null } as never);
 
       // Act
       const response = await POST(request);
@@ -736,9 +761,7 @@ describe('Stripe Webhook Handler', () => {
         ref_id: 'in_test_123',
         description: expect.stringContaining('Monthly subscription renewal'),
       });
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('Added')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('Added'));
       expect(stripe.subscriptions.retrieve).not.toHaveBeenCalled();
     });
 
@@ -778,9 +801,11 @@ describe('Stripe Webhook Handler', () => {
         eq: vi.fn(() => ({ error: null })),
       }));
 
-      (supabaseAdmin.from as any).mockReturnValue({
-        select: mockSelect,
-        update: mockUpdate,
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') {
+          return getWebhookEventsMock();
+        }
+        return { select: mockSelect, update: mockUpdate };
       });
 
       // Act
@@ -791,9 +816,7 @@ describe('Stripe Webhook Handler', () => {
       expect(mockUpdate).toHaveBeenCalledWith({
         subscription_status: 'past_due',
       });
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        'Marked user user_123 subscription as past_due'
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith('Marked user user_123 subscription as past_due');
     });
 
     test('should handle invoice.payment_failed with missing customer', async () => {
@@ -828,8 +851,11 @@ describe('Stripe Webhook Handler', () => {
         })),
       }));
 
-      (supabaseAdmin.from as any).mockReturnValue({
-        select: mockSelect,
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') {
+          return getWebhookEventsMock();
+        }
+        return { select: mockSelect };
       });
 
       // Act

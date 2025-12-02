@@ -113,6 +113,7 @@ vi.mock('lucide-react', async () => {
 
   return {
     AlertCircle: createMockIcon('AlertCircle'),
+    AlertTriangle: createMockIcon('AlertTriangle'),
     ArrowLeft: createMockIcon('ArrowLeft'),
     ArrowRight: createMockIcon('ArrowRight'),
     Check: createMockIcon('Check'),

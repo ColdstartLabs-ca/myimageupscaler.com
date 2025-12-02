@@ -139,7 +139,22 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
 
       const sessionPromise = supabase.auth.getSession();
 
-      const { data: { session }, error: sessionError } = await Promise.race([sessionPromise, timeoutPromise]) as { data: { session: { user: { id: string; email: string; user_metadata: Record<string, unknown>; app_metadata: Record<string, unknown> } } | null }; error: Error | null };
+      const {
+        data: { session },
+        error: sessionError,
+      } = (await Promise.race([sessionPromise, timeoutPromise])) as {
+        data: {
+          session: {
+            user: {
+              id: string;
+              email: string;
+              user_metadata: Record<string, unknown>;
+              app_metadata: Record<string, unknown>;
+            };
+          } | null;
+        };
+        error: Error | null;
+      };
 
       // Handle refresh token errors by clearing the session
       if (sessionError && sessionError.message?.includes('refresh_token_not_found')) {
@@ -241,7 +256,7 @@ useAuthStore.getState().initializeAuth();
 // Listen for auth changes
 supabase.auth.onAuthStateChange(async (event, session) => {
   // Handle sign out or token expired events
-  if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' && !session) {
+  if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {
     useAuthStore.setState({
       user: null,
       isAuthenticated: false,
@@ -315,10 +330,11 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
       // Only redirect to dashboard for regular authentication (not checkout flows)
       const currentPath = window.location.pathname;
-      const isCheckoutRelated = currentPath === '/checkout' ||
-                               currentPath === '/pricing' ||
-                               currentPath === '/success' ||
-                               currentPath.startsWith('/checkout');
+      const isCheckoutRelated =
+        currentPath === '/checkout' ||
+        currentPath === '/pricing' ||
+        currentPath === '/success' ||
+        currentPath.startsWith('/checkout');
 
       if (!isCheckoutRelated && !currentPath.startsWith('/dashboard')) {
         window.location.href = '/dashboard';
@@ -334,4 +350,4 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 });
 
 // Selector hook for checking admin role
-export const useIsAdmin = () => useAuthStore((state) => state.user?.role === 'admin');
+export const useIsAdmin = (): boolean => useAuthStore(state => state.user?.role === 'admin');

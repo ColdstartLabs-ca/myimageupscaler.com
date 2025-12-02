@@ -1,21 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { PricingCard } from '@client/components/stripe';
+import { PlanChangeModal, PricingCard } from '@client/components/stripe';
 import { StripeService } from '@client/services/stripeService';
-import type { IUserProfile, ISubscription } from '@shared/types/stripe';
 import {
   STRIPE_PRICES,
   SUBSCRIPTION_PLANS,
-  isStripePricesConfigured,
   getPlanForPriceId,
+  isStripePricesConfigured,
 } from '@shared/config/stripe';
+import type { ISubscription, IUserProfile } from '@shared/types/stripe';
+import { useEffect, useState } from 'react';
 
 export default function PricingPage() {
   const pricesConfigured = isStripePricesConfigured();
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [subscription, setSubscription] = useState<ISubscription | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePlanSelect = (priceId: string) => {
+    setSelectedPlanId(priceId);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedPlanId(null);
+  };
+
+  const handleModalComplete = () => {
+    handleModalClose();
+    // Refresh page to show updated subscription status
+    window.location.reload();
+  };
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -112,6 +130,9 @@ export default function PricingPage() {
               features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
               priceId={STRIPE_PRICES.HOBBY_MONTHLY}
               disabled={subscription?.price_id === STRIPE_PRICES.HOBBY_MONTHLY}
+              onSelect={
+                subscription ? () => handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY) : undefined
+              }
             />
 
             <PricingCard
@@ -123,6 +144,9 @@ export default function PricingPage() {
               priceId={STRIPE_PRICES.PRO_MONTHLY}
               recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
               disabled={subscription?.price_id === STRIPE_PRICES.PRO_MONTHLY}
+              onSelect={
+                subscription ? () => handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY) : undefined
+              }
             />
 
             <PricingCard
@@ -133,6 +157,9 @@ export default function PricingPage() {
               features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
               priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
               disabled={subscription?.price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
+              onSelect={
+                subscription ? () => handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY) : undefined
+              }
             />
           </div>
         </div>
@@ -203,6 +230,17 @@ export default function PricingPage() {
           </div>
         </div>
       </div>
+
+      {/* Plan Change Modal */}
+      {selectedPlanId && (
+        <PlanChangeModal
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          targetPriceId={selectedPlanId}
+          currentPriceId={subscription?.price_id}
+          onComplete={handleModalComplete}
+        />
+      )}
     </main>
   );
 }

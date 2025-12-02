@@ -6,6 +6,7 @@ import { CreditCard, Package, Receipt, ExternalLink, Loader2, RefreshCw } from '
 import { StripeService } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
 import { getPlanDisplayName } from '@shared/config/stripe';
+import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
 import type { IUserProfile, ISubscription } from '@shared/types/stripe';
 
 export default function BillingPage() {
@@ -16,6 +17,7 @@ export default function BillingPage() {
   const [loading, setLoading] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   useEffect(() => {
     loadBillingData();
@@ -57,6 +59,26 @@ export default function BillingPage() {
 
   const handleUpgrade = () => {
     router.push('/pricing');
+  };
+
+  const handleCancelSubscription = async (reason?: string) => {
+    try {
+      await StripeService.cancelSubscription(reason);
+      showToast({
+        message: 'Subscription canceled successfully. Access continues until period end.',
+        type: 'success',
+      });
+      // Reload billing data to show updated status
+      await loadBillingData();
+    } catch (err) {
+      console.error('Error canceling subscription:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to cancel subscription';
+      showToast({
+        message: errorMessage,
+        type: 'error',
+      });
+      throw err; // Re-throw so modal can handle loading state
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -150,7 +172,7 @@ export default function BillingPage() {
           </div>
         </div>
 
-        <div className="bg-slate-50 rounded-lg p-4">
+        <div className="bg-slate-50 rounded-lg p-4 space-y-4">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-slate-600">Credits balance</p>
@@ -163,6 +185,18 @@ export default function BillingPage() {
               {subscription ? 'Change Plan' : 'Choose Plan'}
             </button>
           </div>
+
+          {/* Cancel Subscription Button */}
+          {subscription && !subscription.cancel_at_period_end && (
+            <div className="pt-4 border-t border-slate-200">
+              <button
+                onClick={() => setShowCancelModal(true)}
+                className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
+              >
+                Cancel Subscription
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Subscription Details */}
@@ -264,6 +298,17 @@ export default function BillingPage() {
           </div>
         )}
       </div>
+
+      {/* Cancel Subscription Modal */}
+      {subscription && (
+        <CancelSubscriptionModal
+          isOpen={showCancelModal}
+          onClose={() => setShowCancelModal(false)}
+          onConfirm={handleCancelSubscription}
+          planName={planName}
+          periodEnd={subscription.current_period_end}
+        />
+      )}
     </div>
   );
 }
