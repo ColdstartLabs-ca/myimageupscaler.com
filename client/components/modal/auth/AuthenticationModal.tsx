@@ -18,6 +18,29 @@ import { IRegisterForm, RegisterForm } from '@client/components/modal/auth/Regis
 
 const MODAL_ID = 'authenticationModal';
 
+/**
+ * Unified error handling for auth actions
+ */
+const handleAuthAction = async (
+  action: () => Promise<void>,
+  successMessage: string,
+  showToast: (toast: { message: string; type: 'success' | 'error' }) => void,
+  close: () => void,
+  errorMessage = 'Authentication failed'
+) => {
+  try {
+    await action();
+    showToast({ message: successMessage, type: 'success' });
+    close();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    showToast({
+      message: error instanceof Error ? error.message : errorMessage,
+      type: 'error',
+    });
+  }
+};
+
 export const AuthenticationModal: React.FC = () => {
   const { close, isModalOpen, authModalView, setAuthModalView, openAuthModal } = useModalStore();
   const { signInWithEmail, signUpWithEmail, changePassword, resetPassword } = useAuthStore();
@@ -59,59 +82,41 @@ export const AuthenticationModal: React.FC = () => {
   }, [openAuthModal]);
 
   const onLoginSubmit = async (data: ILoginForm) => {
-    try {
-      await signInWithEmail(data.email, data.password);
-      showToast({ message: 'Signed in successfully!', type: 'success' });
-      close();
-    } catch (error) {
-      console.error('Authentication error:', error);
-      showToast({
-        message: error instanceof Error ? error.message : 'Authentication failed',
-        type: 'error',
-      });
-    }
+    await handleAuthAction(
+      () => signInWithEmail(data.email, data.password),
+      'Signed in successfully!',
+      showToast,
+      close
+    );
   };
 
   const onRegisterSubmit = async (data: IRegisterForm) => {
-    try {
-      await signUpWithEmail(data.email, data.password);
-      showToast({ message: 'Account created successfully!', type: 'success' });
-      close();
-    } catch (error) {
-      console.error('Authentication error:', error);
-      showToast({
-        message: error instanceof Error ? error.message : 'Authentication failed',
-        type: 'error',
-      });
-    }
+    await handleAuthAction(
+      () => signUpWithEmail(data.email, data.password),
+      'Account created successfully!',
+      showToast,
+      close
+    );
   };
 
   const handleChangePassword = async (data: { currentPassword: string; newPassword: string }) => {
-    try {
-      await changePassword(data.currentPassword, data.newPassword);
-      showToast({ message: 'Password changed successfully!', type: 'success' });
-      close();
-    } catch (error) {
-      console.error('Change password error:', error);
-      showToast({
-        message: error instanceof Error ? error.message : 'Failed to change password',
-        type: 'error',
-      });
-    }
+    await handleAuthAction(
+      () => changePassword(data.currentPassword, data.newPassword),
+      'Password changed successfully!',
+      showToast,
+      close,
+      'Failed to change password'
+    );
   };
 
   const handleForgotPassword = async (data: { email: string }) => {
-    try {
-      await resetPassword(data.email);
-      showToast({ message: 'Password reset link sent! Check your email.', type: 'success' });
-      close();
-    } catch (error) {
-      console.error('Reset password error:', error);
-      showToast({
-        message: error instanceof Error ? error.message : 'Failed to send reset link',
-        type: 'error',
-      });
-    }
+    await handleAuthAction(
+      () => resetPassword(data.email),
+      'Password reset link sent! Check your email.',
+      showToast,
+      close,
+      'Failed to send reset link'
+    );
   };
 
   const getModalTitle = (): string => {

@@ -11,9 +11,6 @@ import Image from 'next/image';
 export function HomePageClient(): JSX.Element {
   const { openAuthModal } = useModalStore();
 
-  // Auth redirects are now handled server-side in middleware
-  // Authenticated users will never reach this component - they're redirected to /dashboard
-
   return (
     <main className="flex-grow bg-slate-50 font-sans selection:bg-indigo-100 selection:text-indigo-700">
       {/* Hero Section */}
