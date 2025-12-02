@@ -16,13 +16,8 @@ echo -e "${BLUE}🚀 COMPLETE STRIPE SETUP & TROUBLESHOOTING${NC}"
 echo "=========================================="
 
 # Load environment variables
-if [ ! -f ".env" ]; then
-    echo -e "${RED}❌ .env file not found!${NC}"
-    exit 1
-fi
-
-echo -e "${GREEN}✅ Loading environment from .env${NC}"
-source "$(dirname "$0")/load-env.sh" ".env"
+echo -e "${GREEN}✅ Loading environment variables${NC}"
+source "$(dirname "$0")/load-env.sh"
 
 # Check environment variables
 echo -e "\n${BLUE}🔍 Checking Environment Variables...${NC}"

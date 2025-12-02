@@ -68,7 +68,7 @@ test.describe('Middleware Security Integration', () => {
 
     test('should apply rate limiting to public routes', async ({ request }) => {
       // Skip this test in test environment as rate limiting is disabled
-      const isTestEnv = process.env.NODE_ENV === 'test';
+      const isTestEnv = process.env.ENV === 'test' || process.env.NODE_ENV === 'test';
       if (isTestEnv) {
         test.skip();
         return;
@@ -274,7 +274,8 @@ test.describe('Middleware Security Integration', () => {
 
     test('should apply rate limiting to protected routes', async ({ request }) => {
       // Skip this test in test environment as rate limiting is disabled
-      const isTestEnv = process.env.NODE_ENV === 'test';
+      const isTestEnv = process.env.
+      'test' || process.env.NODE_ENV === 'test';
       if (isTestEnv) {
         test.skip();
         return;

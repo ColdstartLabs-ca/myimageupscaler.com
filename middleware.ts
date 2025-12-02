@@ -110,7 +110,7 @@ async function handleApiRoute(req: NextRequest, pathname: string): Promise<NextR
 
     // Skip rate limiting in test environment to avoid test failures
     const isTestEnv =
-      serverEnv.NODE_ENV === 'test' ||
+      serverEnv.ENV === 'test' ||
       serverEnv.AMPLITUDE_API_KEY?.startsWith('test_amplitude_api_key');
 
     if (!isTestEnv) {

@@ -61,17 +61,17 @@ command_exists() {
 load_env() {
     local project_root="$1"
 
-    if [[ -f "$project_root/.env" ]]; then
+    if [[ -f "$project_root/.env.client" ]]; then
         set -a
         # shellcheck source=/dev/null
-        source "$project_root/.env"
+        source "$project_root/.env.client"
         set +a
     fi
 
-    if [[ -f "$project_root/.env.prod" ]]; then
+    if [[ -f "$project_root/.env.api" ]]; then
         set -a
         # shellcheck source=/dev/null
-        source "$project_root/.env.prod"
+        source "$project_root/.env.api"
         set +a
     fi
 }

@@ -43,7 +43,7 @@ test.describe('API: Stripe Webhooks', () => {
 
     // Skip this test in test mode since signature verification is bypassed
     test.skip(
-      () => process.env.NODE_ENV === 'test' || WEBHOOK_SECRET === 'whsec_test_secret',
+      () => process.env.ENV === 'test' || process.env.NODE_ENV === 'test' || WEBHOOK_SECRET === 'whsec_test_secret',
       'Skipping invalid signature test - signature verification bypassed in test mode'
     );
     test('should reject requests with invalid signature', async ({ request }) => {

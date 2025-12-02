@@ -17,7 +17,7 @@ vi.mock('@shared/config/env', () => ({
     SUPABASE_ANON_KEY: 'test-anon-key',
   },
   serverEnv: {
-    NODE_ENV: 'test',
+    ENV: 'test',
     AMPLITUDE_API_KEY: 'test_amplitude_api_key',
   },
 }));

@@ -82,7 +82,7 @@ export const clientEnv = loadClientEnv();
 // =============================================================================
 
 const serverEnvSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  ENV: z.enum(['development', 'production', 'test']).default('development'),
   // Supabase
   SUPABASE_SERVICE_ROLE_KEY: z.string().default(''),
   // Stripe
@@ -106,7 +106,7 @@ export type IServerEnv = z.infer<typeof serverEnvSchema>;
 
 function loadServerEnv(): IServerEnv {
   const env = {
-    NODE_ENV: process.env.NODE_ENV || 'development',
+    ENV: process.env.ENV || process.env.NODE_ENV || 'development',
     // Supabase
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
     // Stripe
@@ -144,21 +144,21 @@ export const serverEnv = loadServerEnv();
  * Check if running in production environment
  */
 export function isProduction(): boolean {
-  return serverEnv.NODE_ENV === 'production';
+  return serverEnv.ENV === 'production';
 }
 
 /**
  * Check if running in development environment
  */
 export function isDevelopment(): boolean {
-  return serverEnv.NODE_ENV === 'development';
+  return serverEnv.ENV === 'development';
 }
 
 /**
  * Check if running in test environment
  */
 export function isTest(): boolean {
-  return serverEnv.NODE_ENV === 'test';
+  return serverEnv.ENV === 'test';
 }
 
 // =============================================================================

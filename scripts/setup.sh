@@ -8,7 +8,7 @@
 #
 # Usage:
 #   yarn setup              # Full interactive setup
-#   yarn setup --skip-env   # Skip environment prompts (use existing .env)
+#   yarn setup --skip-env   # Skip environment prompts (use existing .env.client/.env.api)
 #   yarn setup --help       # Show help
 #
 # Individual modules can also be run directly:
@@ -47,7 +47,7 @@ ${BOLD}PixelPerfect Setup Orchestrator${NC}
 Usage: ./scripts/setup.sh [options]
 
 Options:
-  --skip-env          Skip environment file setup (use existing .env files)
+  --skip-env          Skip environment file setup (use existing .env.client/.env.api)
   --skip-supabase     Skip Supabase auth configuration
   --skip-migrations   Skip database migrations
   --skip-types        Skip TypeScript type generation
@@ -55,12 +55,12 @@ Options:
 
 Examples:
   ./scripts/setup.sh                    # Full interactive setup
-  ./scripts/setup.sh --skip-env         # Use existing .env, configure rest
+  ./scripts/setup.sh --skip-env         # Use existing .env.client/.env.api
   yarn setup                            # Via package.json script
 
 What this script does:
   1. Checks dependencies (Node.js, Yarn, optional CLIs)
-  2. Creates/configures .env and .env.prod files
+  2. Creates/configures .env.client and .env.api files
   3. Validates Supabase connectivity
   4. Guides Supabase Auth configuration
   5. Applies database migrations
@@ -123,8 +123,8 @@ check_dependencies || exit 1
 source "$SETUP_DIR/02-environment.sh"
 
 if [[ "$SKIP_ENV" == "true" ]]; then
-    if [[ ! -f "$PROJECT_ROOT/.env" || ! -f "$PROJECT_ROOT/.env.prod" ]]; then
-        log_error "Cannot skip env setup - .env or .env.prod missing"
+    if [[ ! -f "$PROJECT_ROOT/.env.client" || ! -f "$PROJECT_ROOT/.env.api" ]]; then
+        log_error "Cannot skip env setup - .env.client or .env.api missing"
         exit 1
     fi
     log_info "Using existing environment files"

@@ -49,7 +49,7 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 // Use a factory function to allow test-specific overrides
 let mockEnv = {
   STRIPE_SECRET_KEY: 'sk_test_dummy_key',
-  NODE_ENV: 'test',
+  ENV: 'test',
 };
 
 vi.mock('@shared/config/env', () => ({
@@ -69,7 +69,7 @@ describe('Stripe Webhook Handler', () => {
     // Reset mock env and webhook secret to test defaults
     mockEnv = {
       STRIPE_SECRET_KEY: 'sk_test_dummy_key',
-      NODE_ENV: 'test',
+      ENV: 'test',
     };
     mockWebhookSecret = 'whsec_test_secret';
     consoleSpy = {
@@ -154,7 +154,7 @@ describe('Stripe Webhook Handler', () => {
     test('should verify signature in production mode', async () => {
       // Arrange - set env to production
       mockEnv.STRIPE_SECRET_KEY = 'sk_live_real_key';
-      mockEnv.NODE_ENV = 'production';
+      mockEnv.ENV = 'production';
       mockWebhookSecret = 'whsec_prod_real_secret';
 
       const event = {
@@ -189,7 +189,7 @@ describe('Stripe Webhook Handler', () => {
     test('should reject invalid signature in production mode', async () => {
       // Arrange - set env to production
       mockEnv.STRIPE_SECRET_KEY = 'sk_live_real_key';
-      mockEnv.NODE_ENV = 'production';
+      mockEnv.ENV = 'production';
       mockWebhookSecret = 'whsec_prod_real_secret';
 
       const request = new NextRequest('http://localhost/api/webhooks/stripe', {

@@ -5,6 +5,7 @@
 
 import { NextResponse } from 'next/server';
 import { getAllToolSlugs, getToolData } from '@/lib/seo/data-loader';
+import { serverEnv } from '@shared/config/env';
 
 export const dynamic = 'force-dynamic';
 
@@ -119,7 +120,7 @@ export async function GET(): Promise<NextResponse<IHealthCheckResult>> {
     checks,
     metadata: {
       totalToolPages,
-      environment: process.env.NODE_ENV || 'unknown',
+      environment: serverEnv.ENV,
     },
   };
 

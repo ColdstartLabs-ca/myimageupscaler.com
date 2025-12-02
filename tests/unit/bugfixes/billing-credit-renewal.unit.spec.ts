@@ -39,7 +39,7 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 vi.mock('@shared/config/env', () => ({
   serverEnv: {
     STRIPE_SECRET_KEY: 'sk_test_dummy_key',
-    NODE_ENV: 'test',
+    ENV: 'test',
   },
 }));
 

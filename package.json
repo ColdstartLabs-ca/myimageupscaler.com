@@ -10,7 +10,7 @@
     "setup:db": "./scripts/setup/05-migrations.sh",
     "setup:db:manual": "./scripts/setup/05-migrations.sh manual",
     "setup:types": "./scripts/setup/06-types.sh",
-    "dev": "./scripts/load-env.sh && concurrently -n next,wrangler,stripe -c cyan,magenta,yellow \"next dev\" \"wrangler pages dev --proxy 3000\" \"stripe listen --api-key $STRIPE_SECRET_KEY --forward-to localhost:3000/api/webhooks/stripe\"",
+    "dev": "bash -c 'source ./scripts/load-env.sh && concurrently -n next,wrangler,stripe -c cyan,magenta,yellow \"next dev\" \"wrangler pages dev --proxy 3000\" \"stripe listen --api-key $STRIPE_SECRET_KEY --forward-to localhost:3000/api/webhooks/stripe\"'",
     "dev:no-webhooks": "concurrently -n next,wrangler -c cyan,magenta \"next dev\" \"wrangler pages dev --proxy 3000\"",
     "dev:test": "./scripts/dev-test.sh",
     "build": "next build",
@@ -37,7 +37,7 @@
     "test:unit": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "stripe:listen": "./scripts/load-env.sh && stripe listen --api-key $STRIPE_SECRET_KEY --forward-to localhost:3000/api/webhooks/stripe",
+    "stripe:listen": "bash -c 'source ./scripts/load-env.sh && stripe listen --api-key $STRIPE_SECRET_KEY --forward-to localhost:3000/api/webhooks/stripe'",
     "stripe:setup": "./scripts/stripe-product-sync.sh",
     "stripe:check": "./scripts/load-env.sh --print"
   },

@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import type { ICheckoutSessionRequest } from '@server/stripe/types';
-import { clientEnv } from '@shared/config/env';
+import { clientEnv, serverEnv } from '@shared/config/env';
 import { getPlanForPriceId } from '@shared/config/stripe';
 import { BILLING_COPY } from '@shared/constants/billing';
 
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if we're in test mode (before plan validation)
-    const isTestMode = process.env.STRIPE_SECRET_KEY?.includes('dummy_key') && process.env.NODE_ENV === 'test';
+    const isTestMode = serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') && serverEnv.ENV === 'test';
 
     // Validate that the price ID is a valid subscription price (skip in test mode)
     let plan = null;

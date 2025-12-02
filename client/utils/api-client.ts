@@ -51,7 +51,7 @@ export const processImage = async (
 
     // Check if we're in a test environment and bypass auth for mocked tests
     const isTestEnvironment = typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' && serverEnv.NODE_ENV === 'test') ||
+      (window.location.hostname === 'localhost' && serverEnv.ENV === 'test') ||
       // Check for Playwright test marker
       window.playwrightTest === true ||
       // Check for test environment variable (injected by Playwright)

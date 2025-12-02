@@ -24,7 +24,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Skip signature verification in test environment with dummy keys
     const isTestMode =
       serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') ||
-      serverEnv.NODE_ENV === 'test' ||
+      serverEnv.ENV === 'test' ||
       STRIPE_WEBHOOK_SECRET === 'whsec_test_secret' ||
       // Additional check: test for malformed JSON which indicates this is likely a test
       body.includes('invalid json');
@@ -331,7 +331,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<v
 
   // In test environment, use simplified logic
   const isTestMode =
-    serverEnv.NODE_ENV === 'test' ||
+    serverEnv.ENV === 'test' ||
     serverEnv.STRIPE_SECRET_KEY?.includes('test') ||
     !STRIPE_WEBHOOK_SECRET ||
     STRIPE_WEBHOOK_SECRET === 'whsec_test_YOUR_STRIPE_WEBHOOK_SECRET_HERE' ||

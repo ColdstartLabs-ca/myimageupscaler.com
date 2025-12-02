@@ -19,14 +19,14 @@ validate_supabase() {
 
     # Check URL is configured
     if [[ -z "${NEXT_PUBLIC_SUPABASE_URL:-}" || "$NEXT_PUBLIC_SUPABASE_URL" == "https://your-project.supabase.co" ]]; then
-        log_error "Supabase URL not configured in .env"
+        log_error "Supabase URL not configured in .env.client"
         log_info "Run: yarn setup (without --skip-env)"
         return 1
     fi
 
     # Check service key is configured
     if [[ -z "${SUPABASE_SERVICE_ROLE_KEY:-}" || "$SUPABASE_SERVICE_ROLE_KEY" == "XXX" ]]; then
-        log_error "Supabase Service Role Key not configured in .env.prod"
+        log_error "Supabase Service Role Key not configured in .env.api"
         return 1
     fi
 

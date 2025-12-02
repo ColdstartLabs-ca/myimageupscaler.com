@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { clientEnv } from '@shared/config/env';
+import { clientEnv, serverEnv } from '@shared/config/env';
 
 export const runtime = 'edge';
 
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
     const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
 
     // Check if we're in test mode with dummy Stripe key
-    if (process.env.STRIPE_SECRET_KEY?.includes('dummy_key') || process.env.NODE_ENV === 'test') {
+    if (serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') || serverEnv.ENV === 'test') {
       // Return mock response for testing
       return NextResponse.json({
         success: true,

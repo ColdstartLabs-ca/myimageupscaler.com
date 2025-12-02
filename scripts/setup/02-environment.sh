@@ -18,38 +18,38 @@ setup_environment() {
 
     cd "$PROJECT_ROOT"
 
-    # Handle .env file
-    if [[ -f ".env" ]]; then
+    # Handle .env.client file
+    if [[ -f ".env.client" ]]; then
         if [[ "$interactive" == "true" ]]; then
-            read -p "  .env already exists. Overwrite? [y/N] " -n 1 -r
+            read -p "  .env.client already exists. Overwrite? [y/N] " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                cp .env.example .env
-                log_success "Created .env from example"
+                cp .env.client.example .env.client
+                log_success "Created .env.client from example"
             else
-                log_info "Keeping existing .env"
+                log_info "Keeping existing .env.client"
             fi
         fi
     else
-        cp .env.example .env
-        log_success "Created .env from example"
+        cp .env.client.example .env.client
+        log_success "Created .env.client from example"
     fi
 
-    # Handle .env.prod file
-    if [[ -f ".env.prod" ]]; then
+    # Handle .env.api file
+    if [[ -f ".env.api" ]]; then
         if [[ "$interactive" == "true" ]]; then
-            read -p "  .env.prod already exists. Overwrite? [y/N] " -n 1 -r
+            read -p "  .env.api already exists. Overwrite? [y/N] " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                cp .env.prod.example .env.prod
-                log_success "Created .env.prod from example"
+                cp .env.api.example .env.api
+                log_success "Created .env.api from example"
             else
-                log_info "Keeping existing .env.prod"
+                log_info "Keeping existing .env.api"
             fi
         fi
     else
-        cp .env.prod.example .env.prod
-        log_success "Created .env.prod from example"
+        cp .env.api.example .env.api
+        log_success "Created .env.api from example"
     fi
 
     return 0
@@ -66,25 +66,25 @@ configure_supabase_credentials() {
     echo ""
 
     # Read current values as defaults
-    local current_url=$(grep "^NEXT_PUBLIC_SUPABASE_URL=" .env 2>/dev/null | cut -d'=' -f2 || echo "")
-    local current_anon=$(grep "^NEXT_PUBLIC_SUPABASE_ANON_KEY=" .env 2>/dev/null | cut -d'=' -f2 || echo "")
-    local current_service=$(grep "^SUPABASE_SERVICE_ROLE_KEY=" .env.prod 2>/dev/null | cut -d'=' -f2 || echo "")
+    local current_url=$(grep "^NEXT_PUBLIC_SUPABASE_URL=" .env.client 2>/dev/null | cut -d'=' -f2 || echo "")
+    local current_anon=$(grep "^NEXT_PUBLIC_SUPABASE_ANON_KEY=" .env.client 2>/dev/null | cut -d'=' -f2 || echo "")
+    local current_service=$(grep "^SUPABASE_SERVICE_ROLE_KEY=" .env.api 2>/dev/null | cut -d'=' -f2 || echo "")
 
     prompt_value "  Project URL (e.g., https://xxx.supabase.co)" "$current_url" SUPABASE_URL
     prompt_value "  Anon Key (public)" "$current_anon" SUPABASE_ANON_KEY
     prompt_value "  Service Role Key (secret)" "$current_service" SUPABASE_SERVICE_KEY true
 
-    # Update .env
+    # Update .env.client
     if [[ -n "$SUPABASE_URL" ]]; then
-        sed -i "s|^NEXT_PUBLIC_SUPABASE_URL=.*|NEXT_PUBLIC_SUPABASE_URL=$SUPABASE_URL|" .env
+        sed -i "s|^NEXT_PUBLIC_SUPABASE_URL=.*|NEXT_PUBLIC_SUPABASE_URL=$SUPABASE_URL|" .env.client
     fi
     if [[ -n "$SUPABASE_ANON_KEY" ]]; then
-        sed -i "s|^NEXT_PUBLIC_SUPABASE_ANON_KEY=.*|NEXT_PUBLIC_SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY|" .env
+        sed -i "s|^NEXT_PUBLIC_SUPABASE_ANON_KEY=.*|NEXT_PUBLIC_SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY|" .env.client
     fi
 
-    # Update .env.prod
+    # Update .env.api
     if [[ -n "$SUPABASE_SERVICE_KEY" ]]; then
-        sed -i "s|^SUPABASE_SERVICE_ROLE_KEY=.*|SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_KEY|" .env.prod
+        sed -i "s|^SUPABASE_SERVICE_ROLE_KEY=.*|SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_KEY|" .env.api
     fi
 
     log_success "Supabase credentials configured"
@@ -100,17 +100,17 @@ configure_stripe_credentials() {
     echo "Get these from: https://dashboard.stripe.com/test/apikeys"
     echo ""
 
-    local current_secret=$(grep "^STRIPE_SECRET_KEY=" .env.prod 2>/dev/null | cut -d'=' -f2 || echo "")
-    local current_webhook=$(grep "^STRIPE_WEBHOOK_SECRET=" .env.prod 2>/dev/null | cut -d'=' -f2 || echo "")
+    local current_secret=$(grep "^STRIPE_SECRET_KEY=" .env.api 2>/dev/null | cut -d'=' -f2 || echo "")
+    local current_webhook=$(grep "^STRIPE_WEBHOOK_SECRET=" .env.api 2>/dev/null | cut -d'=' -f2 || echo "")
 
     prompt_value "  Stripe Secret Key (sk_test_...)" "$current_secret" STRIPE_SECRET true
     prompt_value "  Stripe Webhook Secret (whsec_...)" "$current_webhook" STRIPE_WEBHOOK true
 
     if [[ -n "$STRIPE_SECRET" ]]; then
-        sed -i "s|^STRIPE_SECRET_KEY=.*|STRIPE_SECRET_KEY=$STRIPE_SECRET|" .env.prod
+        sed -i "s|^STRIPE_SECRET_KEY=.*|STRIPE_SECRET_KEY=$STRIPE_SECRET|" .env.api
     fi
     if [[ -n "$STRIPE_WEBHOOK" ]]; then
-        sed -i "s|^STRIPE_WEBHOOK_SECRET=.*|STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK|" .env.prod
+        sed -i "s|^STRIPE_WEBHOOK_SECRET=.*|STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK|" .env.api
     fi
 
     log_success "Stripe credentials configured"

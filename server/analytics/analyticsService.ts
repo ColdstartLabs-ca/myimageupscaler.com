@@ -58,7 +58,7 @@ export async function trackServerEvent(
 
   // Skip actual API calls in test environment to avoid rate limiting
   if (
-    serverEnv.NODE_ENV === 'test' ||
+    serverEnv.ENV === 'test' ||
     serverEnv.AMPLITUDE_API_KEY?.includes('test') ||
     serverEnv.AMPLITUDE_API_KEY?.startsWith('test_amplitude_api_key')
   ) {

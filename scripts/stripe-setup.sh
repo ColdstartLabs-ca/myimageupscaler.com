@@ -16,15 +16,9 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}🚀 STRIPE SETUP SCRIPT${NC}"
 echo "========================"
 
-# Load environment variables from .env
-ENV_FILE=".env"
-if [ ! -f "$ENV_FILE" ]; then
-    echo -e "${RED}❌ .env file not found!${NC}"
-    exit 1
-fi
-
-echo -e "${GREEN}✅ Loading environment from $ENV_FILE${NC}"
-source "$(dirname "$0")/load-env.sh" "$ENV_FILE"
+# Load environment variables from .env.client and .env.api
+echo -e "${GREEN}✅ Loading environment variables${NC}"
+source "$(dirname "$0")/load-env.sh"
 
 # Validate required variables
 if [ -z "${STRIPE_SECRET_KEY:-}" ]; then

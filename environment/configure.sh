@@ -18,38 +18,38 @@ echo "PixelPerfect Environment Configuration"
 echo "======================================"
 echo ""
 
-# Copy .env.example to .env if it doesn't exist
-if [ ! -f .env ]; then
-    if [ -f .env.example ]; then
-        echo "Creating .env from .env.example..."
-        cp .env.example .env
-        echo "✓ Created .env"
+# Copy .env.client.example to .env.client if it doesn't exist
+if [ ! -f .env.client ]; then
+    if [ -f .env.client.example ]; then
+        echo "Creating .env.client from .env.client.example..."
+        cp .env.client.example .env.client
+        echo "✓ Created .env.client"
     else
-        echo "⚠ .env.example not found"
+        echo "⚠ .env.client.example not found"
     fi
 else
-    echo "✓ .env already exists"
+    echo "✓ .env.client already exists"
 fi
 
-# Copy .env.prod.example to .env.prod if it doesn't exist
-if [ ! -f .env.prod ]; then
-    if [ -f .env.prod.example ]; then
-        echo "Creating .env.prod from .env.prod.example..."
-        cp .env.prod.example .env.prod
-        echo "✓ Created .env.prod"
+# Copy .env.api.example to .env.api if it doesn't exist
+if [ ! -f .env.api ]; then
+    if [ -f .env.api.example ]; then
+        echo "Creating .env.api from .env.api.example..."
+        cp .env.api.example .env.api
+        echo "✓ Created .env.api"
     else
-        echo "⚠ .env.prod.example not found"
+        echo "⚠ .env.api.example not found"
     fi
 else
-    echo "✓ .env.prod already exists"
+    echo "✓ .env.api already exists"
 fi
 
 echo ""
 echo "Environment files ready!"
 echo ""
 echo "Next steps:"
-echo "  1. Edit .env with your Supabase public credentials"
-echo "  2. Edit .env.prod with your secret keys"
+echo "  1. Edit .env.client with your Supabase public credentials"
+echo "  2. Edit .env.api with your secret keys"
 echo "  3. Run 'yarn setup' for full interactive setup"
 echo ""
 echo "Or run 'yarn setup' now for guided configuration."
