@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import { LoginPage } from '../pages/LoginPage';
 
@@ -71,7 +71,11 @@ test.describe('Authentication', () => {
       // The app may: show dashboard with sign in option, redirect, or show login modal
       // Just verify the page loads without crashing
       const url = page.url();
-      const hasSignIn = await page.locator('header').getByRole('button', { name: 'Sign In' }).first().isVisible();
+      const hasSignIn = await page
+        .locator('header')
+        .getByRole('button', { name: 'Sign In' })
+        .first()
+        .isVisible();
       const hasModal = await page.locator('div[role="dialog"]').isVisible();
 
       // Page should be functional - either shows sign in button, modal, or redirected
@@ -83,10 +87,14 @@ test.describe('Authentication', () => {
       await page.waitForLoadState('networkidle');
 
       // Should show login requirement or redirect or stay on page with sign in option
-      const hasLoginOption = await page.locator('header').getByRole('button', { name: 'Sign In' }).first().isVisible();
+      const hasLoginOption = await page
+        .locator('header')
+        .getByRole('button', { name: 'Sign In' })
+        .first()
+        .isVisible();
       const redirectedToLogin = page.url().includes('/login');
       const isOnBillingPage = page.url().includes('/billing');
-      const isOnHomePage = page.url() === 'http://localhost:3003/';
+      const isOnHomePage = page.url() === 'http://localhost:3000/';
 
       // One of these conditions should be true for protected routes
       expect(hasLoginOption || redirectedToLogin || isOnBillingPage || isOnHomePage).toBe(true);
