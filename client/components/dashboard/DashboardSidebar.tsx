@@ -3,8 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, CreditCard, Settings, HelpCircle, LogOut } from 'lucide-react';
-import { useAuthStore } from '@client/store/authStore';
+import { LayoutDashboard, CreditCard, Settings, HelpCircle, LogOut, Shield } from 'lucide-react';
+import { useAuthStore, useIsAdmin } from '@client/store/authStore';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
 
 interface ISidebarItem {
@@ -13,20 +13,27 @@ interface ISidebarItem {
   icon: React.ElementType;
 }
 
-const menuItems: ISidebarItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
-  { label: 'Settings', href: '/dashboard/settings', icon: Settings },
-];
-
-const bottomMenuItems: ISidebarItem[] = [
-  { label: 'Help & Support', href: '/dashboard/support', icon: HelpCircle },
-];
-
 export const DashboardSidebar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { signOut, user } = useAuthStore();
+  const isAdmin = useIsAdmin();
+
+  // Build menu items dynamically based on user role
+  const menuItems: ISidebarItem[] = [
+    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
+    { label: 'Settings', href: '/dashboard/settings', icon: Settings },
+  ];
+
+  // Add Admin menu item if user is admin
+  if (isAdmin) {
+    menuItems.push({ label: 'Admin', href: '/dashboard/admin', icon: Shield });
+  }
+
+  const bottomMenuItems: ISidebarItem[] = [
+    { label: 'Help & Support', href: '/dashboard/support', icon: HelpCircle },
+  ];
 
   const isActive = (href: string) => {
     if (href === '/dashboard') {

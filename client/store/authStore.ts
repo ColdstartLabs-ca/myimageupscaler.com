@@ -46,6 +46,7 @@ interface IAuthState {
     email: string;
     name?: string;
     provider?: AuthProvider;
+    role?: 'user' | 'admin';
   };
   setAuthenticated: (value: boolean) => void;
   setLoading: (value: boolean) => void;
@@ -160,11 +161,19 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
           provider = (oauthProvider as AuthProvider) || AuthProvider.EMAIL;
         }
 
+        // Fetch user role from profiles table
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
         set({
           user: {
             email: session.user.email || '',
             name: session.user.user_metadata?.name as string | undefined,
             provider: provider,
+            role: profile?.role || 'user',
           },
           isAuthenticated: true,
           isLoading: false,
@@ -261,11 +270,19 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
     const wasAuthenticated = useAuthStore.getState().isAuthenticated;
 
+    // Fetch user role from profiles table
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single();
+
     useAuthStore.setState({
       user: {
         email: session.user.email || '',
         name: session.user.user_metadata?.name,
         provider: provider,
+        role: profile?.role || 'user',
       },
       isAuthenticated: true,
       isLoading: false,
@@ -315,3 +332,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     });
   }
 });
+
+// Selector hook for checking admin role
+export const useIsAdmin = () => useAuthStore((state) => state.user?.role === 'admin');
