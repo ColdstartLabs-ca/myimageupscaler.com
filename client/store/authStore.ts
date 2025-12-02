@@ -129,10 +129,11 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
     }
   },
   initializeAuth: async () => {
+    // This function now only handles error cases and refresh token issues.
+    // The actual auth state is managed by onAuthStateChange listener.
     try {
       loadingStore.getState().setLoading(true);
 
-      // Add a timeout to prevent infinite loading in test environments
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Auth initialization timeout')), 5000);
       });
@@ -143,16 +144,7 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
         data: { session },
         error: sessionError,
       } = (await Promise.race([sessionPromise, timeoutPromise])) as {
-        data: {
-          session: {
-            user: {
-              id: string;
-              email: string;
-              user_metadata: Record<string, unknown>;
-              app_metadata: Record<string, unknown>;
-            };
-          } | null;
-        };
+        data: { session: { user: { id: string } } | null };
         error: Error | null;
       };
 
@@ -163,38 +155,11 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
         return;
       }
 
-      if (session?.user) {
-        // Determine the auth provider consistently
-        const providers = session.user.app_metadata?.providers as string[] | undefined;
-        const primaryProvider = session.user.app_metadata?.provider as string | undefined;
-
-        let provider: AuthProvider;
-        if (primaryProvider === 'email' || (providers?.length === 1 && providers[0] === 'email')) {
-          provider = AuthProvider.EMAIL;
-        } else {
-          const oauthProvider = primaryProvider || providers?.find((p: string) => p !== 'email');
-          provider = (oauthProvider as AuthProvider) || AuthProvider.EMAIL;
-        }
-
-        // Fetch user role from profiles table
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-
-        set({
-          user: {
-            email: session.user.email || '',
-            name: session.user.user_metadata?.name as string | undefined,
-            provider: provider,
-            role: profile?.role || 'user',
-          },
-          isAuthenticated: true,
-          isLoading: false,
-        });
+      // If no session, set loading to false (onAuthStateChange won't fire with user data)
+      if (!session?.user) {
+        set({ isLoading: false });
       }
-      set({ isLoading: false });
+      // If session exists, onAuthStateChange will handle setting the user state
     } catch (error) {
       console.error('Error initializing auth:', error);
       set({ isLoading: false, user: null, isAuthenticated: false });
@@ -266,6 +231,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
 
   if (session?.user) {
+    const currentState = useAuthStore.getState();
+
     // Determine the auth provider
     // For email/password users, app_metadata.provider is 'email'
     // For OAuth users (google, azure, facebook), it's the OAuth provider name
@@ -283,14 +250,27 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       provider = (oauthProvider as AuthProvider) || AuthProvider.EMAIL;
     }
 
-    const wasAuthenticated = useAuthStore.getState().isAuthenticated;
+    const wasAuthenticated = currentState.isAuthenticated;
 
-    // Fetch user role from profiles table
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single();
+    // Fetch user role from profiles table with timeout to prevent hanging
+    let profile: { role: 'user' | 'admin' } | null = null;
+    try {
+      const profilePromise = supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      const profileTimeout = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 3000);
+      });
+
+      const { data } = await Promise.race([profilePromise, profileTimeout]);
+      profile = data;
+    } catch (profileError) {
+      console.warn('Failed to fetch user profile role:', profileError);
+      // Continue with default 'user' role
+    }
 
     useAuthStore.setState({
       user: {

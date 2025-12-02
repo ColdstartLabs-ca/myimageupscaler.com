@@ -49,7 +49,7 @@ export class TestDataManager {
     });
 
     // Create a pool of test users
-    const poolSize = 5;
+    const poolSize = 3; // Reduce pool size to avoid rate limiting
     for (let i = 0; i < poolSize; i++) {
       try {
         const testEmail = `pool-user-${i}@test.pool.local`;
@@ -63,31 +63,62 @@ export class TestDataManager {
         if (user) {
           authUser = user;
         } else {
-          // Create new user with delay to avoid rate limits
-          await new Promise(resolve => setTimeout(resolve, 200));
+          // Create new user with longer delay to avoid rate limits
+          await new Promise(resolve => setTimeout(resolve, 1000));
           const { data: adminData, error: adminError } = await supabase.auth.admin.createUser({
             email: testEmail,
             password: testPassword,
             email_confirm: true,
           });
 
-          if (adminError) continue;
+          if (adminError) {
+            console.warn(`Failed to create pool user ${i}:`, adminError.message);
+            continue;
+          }
           authUser = adminData.user;
         }
 
-        // Sign in to get token
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email: testEmail,
-          password: testPassword,
-        });
+        // Add delay before sign in
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        if (signInError || !signInData.session) continue;
+        // Sign in to get token with retry logic
+        let signInAttempts = 0;
+        const maxAttempts = 3;
+        let signInData, signInError;
+
+        while (signInAttempts < maxAttempts) {
+          const { data: data, error: error } = await supabase.auth.signInWithPassword({
+            email: testEmail,
+            password: testPassword,
+          });
+
+          signInData = data;
+          signInError = error;
+
+          if (!signInError || signInError.message !== 'Request rate limit reached') {
+            break;
+          }
+
+          signInAttempts++;
+          const backoffDelay = Math.min(1000 * Math.pow(2, signInAttempts), 8000);
+          await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        }
+
+        if (signInError || !signInData.session) {
+          console.warn(`Failed to sign in pool user ${i}:`, signInError?.message);
+          continue;
+        }
 
         this.userPool.push({
           id: authUser.id,
           email: authUser.email!,
           token: signInData.session.access_token,
         });
+
+        // Add delay between users
+        if (i < poolSize - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
       } catch (error) {
         console.warn(`Failed to create pool user ${i}:`, error);
       }
@@ -131,8 +162,8 @@ export class TestDataManager {
       `test-${Date.now()}-${Math.random().toString(36).substring(7)}@test.local`;
     const testPassword = overrides?.password || 'test-password-123';
 
-    // Add delay to avoid rate limiting
-    await new Promise(resolve => setTimeout(resolve, 300));
+    // Add longer delay to avoid rate limiting
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Use admin API to create user (bypasses email validation and confirmation)
     const { data: adminData, error: adminError } = await this.supabase.auth.admin.createUser({
@@ -150,16 +181,35 @@ export class TestDataManager {
     }
 
     // Add another delay before sign in
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Sign in to get a session token
-    const { data: signInData, error: signInError } = await this.supabase.auth.signInWithPassword({
-      email: testEmail,
-      password: testPassword,
-    });
+    // Retry sign in with exponential backoff if rate limited
+    let signInAttempts = 0;
+    const maxSignInAttempts = 3;
+    let signInData, signInError;
+
+    while (signInAttempts < maxSignInAttempts) {
+      const { data: data, error: error } = await this.supabase.auth.signInWithPassword({
+        email: testEmail,
+        password: testPassword,
+      });
+
+      signInData = data;
+      signInError = error;
+
+      if (!signInError || signInError.message !== 'Request rate limit reached') {
+        break;
+      }
+
+      signInAttempts++;
+      const backoffDelay = Math.min(1000 * Math.pow(2, signInAttempts), 10000);
+      await new Promise(resolve => setTimeout(resolve, backoffDelay));
+    }
 
     if (signInError) {
-      throw new Error(`Failed to sign in test user: ${signInError.message}`);
+      throw new Error(
+        `Failed to sign in test user after ${maxSignInAttempts} attempts: ${signInError.message}`
+      );
     }
 
     if (!signInData.session) {
