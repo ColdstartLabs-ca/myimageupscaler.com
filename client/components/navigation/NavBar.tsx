@@ -1,10 +1,10 @@
-import { loadEnv } from '@shared/config/env';
-import { Menu, Zap } from 'lucide-react';
-import { useState } from 'react';
+import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
 import { useAuthStore } from '@client/store/authStore';
 import { useModalStore } from '@client/store/modalStore';
+import { loadEnv } from '@shared/config/env';
 import { AuthProvider } from '@shared/types/authProviders';
-import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
+import { Menu, Zap } from 'lucide-react';
+import { useState } from 'react';
 
 export const NavBar = (): JSX.Element => {
   const { openAuthModal } = useModalStore();
@@ -30,12 +30,14 @@ export const NavBar = (): JSX.Element => {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a
           href="/"
-          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
             <Zap size={20} fill="currentColor" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-slate-900">{APP_NAME}</span>
+          <span className="hidden xs:inline text-xl font-bold tracking-tight text-slate-900">
+            {APP_NAME}
+          </span>
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -72,21 +74,22 @@ export const NavBar = (): JSX.Element => {
             </div>
           ) : !isAuthenticated ? (
             <>
-              <div className="hidden md:flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-full">
+              <div className="hidden sm:flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-full">
                 <span className="h-2 w-2 rounded-full bg-green-500"></span>
                 <span className="text-xs font-medium text-slate-700">10 Free Credits</span>
               </div>
               <button
                 onClick={handleAuthClick}
-                className="hidden md:inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-9 px-4 py-2"
+                className="hidden sm:inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 h-9 px-4 py-2"
               >
                 Sign In
               </button>
               <button
                 onClick={() => openAuthModal('register')}
-                className="inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-700 hover:via-violet-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 h-9 px-5 py-2"
+                className="inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-700 hover:via-violet-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 h-9 px-3 sm:px-5 py-2"
               >
-                Get Started Free
+                <span className="hidden sm:inline">Get Started Free</span>
+                <span className="sm:hidden">Get Started</span>
               </button>
             </>
           ) : (
