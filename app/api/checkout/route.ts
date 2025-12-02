@@ -73,8 +73,9 @@ export async function POST(request: NextRequest) {
 
     let customerId = profile?.stripe_customer_id;
 
-    // Check if we're in test mode with dummy Stripe key
-    if (process.env.STRIPE_SECRET_KEY?.includes('dummy_key') || process.env.NODE_ENV === 'test') {
+    // Only use mock mode if we have an explicitly dummy key or are in NODE_ENV=test
+    // Real test keys (sk_test_*) should go through normal Stripe flow
+    if (process.env.STRIPE_SECRET_KEY?.includes('dummy_key') && process.env.NODE_ENV === 'test') {
       // Create mock customer ID if it doesn't exist
       if (!customerId) {
         customerId = `cus_test_${user.id}`;

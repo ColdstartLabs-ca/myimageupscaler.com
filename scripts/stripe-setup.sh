@@ -1,8 +1,159 @@
+#!/bin/bash
+
+# Consolidated Stripe Setup Script
+# Creates all Stripe products and prices, updates config file
+# Replaces: create-stripe-products.sh, stripe-product-sync.sh, stripe-env.sh
+
+set -euo pipefail
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}🚀 STRIPE SETUP SCRIPT${NC}"
+echo "========================"
+
+# Load environment variables from .env
+ENV_FILE=".env"
+if [ ! -f "$ENV_FILE" ]; then
+    echo -e "${RED}❌ .env file not found!${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Loading environment from $ENV_FILE${NC}"
+source "$(dirname "$0")/load-env.sh" "$ENV_FILE"
+
+# Validate required variables
+if [ -z "${STRIPE_SECRET_KEY:-}" ]; then
+    echo -e "${RED}❌ STRIPE_SECRET_KEY not found in environment!${NC}"
+    exit 1
+fi
+
+if [ -z "${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}" ]; then
+    echo -e "${RED}❌ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY not found!${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Stripe keys validated${NC}"
+
+# Helper function to make Stripe API calls
+stripe_request() {
+    local method="$1"
+    local endpoint="$2"
+    local data="$3"
+
+    curl -s -X "$method" \
+        -u "$STRIPE_SECRET_KEY:" \
+        -H "Content-Type: application/x-www-form-urlencoded" \
+        -d "$data" \
+        "https://api.stripe.com/v1$endpoint"
+}
+
+# Helper function to create product
+create_product() {
+    local name="$1"
+    local description="$2"
+
+    # URL encode the parameters
+    local encoded_name=$(echo "$name" | jq -sRr @uri)
+    local encoded_desc=$(echo "$description" | jq -sRr @uri)
+
+    local response=$(stripe_request "POST" "/products" "name=$encoded_name&description=$encoded_desc")
+
+    # Extract ID more safely using python
+    local id=$(echo "$response" | python3 -c "import sys, json; print(json.load(sys.stdin)['id'])" 2>/dev/null || echo "$response" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+    if [ -z "$id" ]; then
+        echo -e "${RED}❌ Failed to create product: $name${NC}"
+        echo "Response: $response" >&2
+        exit 1
+    fi
+
+    echo "$id"
+}
+
+# Helper function to create price
+create_price() {
+    local product_id="$1"
+    local amount="$2"
+    local recurring="${3:-}"
+    local metadata="${4:-}"
+
+    local data="product=$product_id&currency=usd&unit_amount=$amount"
+
+    if [ -n "$recurring" ]; then
+        data="$data&recurring[interval]=$recurring"
+    fi
+
+    if [ -n "$metadata" ]; then
+        data="$data&$metadata"
+    fi
+
+    local response=$(stripe_request "POST" "/prices" "$data")
+
+    # Extract ID more safely using python
+    local id=$(echo "$response" | python3 -c "import sys, json; print(json.load(sys.stdin)['id'])" 2>/dev/null || echo "$response" | grep -o '"id":"price_[^"]*"' | head -1 | cut -d'"' -f4)
+
+    if [ -z "$id" ]; then
+        echo -e "${RED}❌ Failed to create price for product: $product_id${NC}"
+        echo "Response: $response" >&2
+        exit 1
+    fi
+
+    echo "$id"
+}
+
+echo -e "\n${BLUE}📦 Creating Credit Pack Products...${NC}"
+
+# Create credit packs
+echo "Creating Starter Credits..."
+STARTER_PRODUCT_ID=$(create_product "Starter Credits Pack" "100 processing credits perfect for trying out")
+STARTER_PRICE_ID=$(create_price "$STARTER_PRODUCT_ID" "999" "" "metadata[credits]=100")
+echo -e "${GREEN}✅ Starter Credits: $STARTER_PRICE_ID${NC}"
+
+echo "Creating Pro Credits..."
+PRO_PRODUCT_ID=$(create_product "Pro Credits Pack" "500 processing credits - best value for regular users")
+PRO_PRICE_ID=$(create_price "$PRO_PRODUCT_ID" "2999" "" "metadata[credits]=500")
+echo -e "${GREEN}✅ Pro Credits: $PRO_PRICE_ID${NC}"
+
+echo "Creating Enterprise Credits..."
+ENTERPRISE_PRODUCT_ID=$(create_product "Enterprise Credits Pack" "2000 processing credits for power users")
+ENTERPRISE_PRICE_ID=$(create_price "$ENTERPRISE_PRODUCT_ID" "9999" "" "metadata[credits]=2000")
+echo -e "${GREEN}✅ Enterprise Credits: $ENTERPRISE_PRICE_ID${NC}"
+
+echo -e "\n${BLUE}🔄 Creating Subscription Products...${NC}"
+
+# Create subscriptions
+echo "Creating Hobby Monthly..."
+HOBBY_PRODUCT_ID=$(create_product "Hobby Plan" "For personal projects - 200 credits per month")
+HOBBY_PRICE_ID=$(create_price "$HOBBY_PRODUCT_ID" "1900" "month" "metadata[credits_per_month]=200")
+echo -e "${GREEN}✅ Hobby Monthly: $HOBBY_PRICE_ID${NC}"
+
+echo "Creating Pro Monthly..."
+PRO_MONTHLY_PRODUCT_ID=$(create_product "Professional Plan" "For professionals - 1000 credits per month")
+PRO_MONTHLY_PRICE_ID=$(create_price "$PRO_MONTHLY_PRODUCT_ID" "4900" "month" "metadata[credits_per_month]=1000")
+echo -e "${GREEN}✅ Pro Monthly: $PRO_MONTHLY_PRICE_ID${NC}"
+
+echo "Creating Business Monthly..."
+BUSINESS_PRODUCT_ID=$(create_product "Business Plan" "For teams and agencies - 5000 credits per month")
+BUSINESS_PRICE_ID=$(create_price "$BUSINESS_PRODUCT_ID" "14900" "month" "metadata[credits_per_month]=5000")
+echo -e "${GREEN}✅ Business Monthly: $BUSINESS_PRICE_ID${NC}"
+
+echo -e "\n${BLUE}🔧 Updating shared/config/stripe.ts with real Price IDs...${NC}"
+
+# Backup the original file
+cp shared/config/stripe.ts shared/config/stripe.ts.backup
+
+# Update the stripe.ts file with real price IDs
+cat > shared/config/stripe.ts << EOF
 /**
  * Centralized Stripe Payment Configuration
  *
  * This file contains all Stripe pricing and product configuration.
- * Auto-generated by stripe-setup.sh on Mon Dec  1 21:52:43 PST 2025
+ * Auto-generated by stripe-setup.sh on $(date)
  */
 
 import { clientEnv, serverEnv } from './env';
@@ -10,14 +161,14 @@ import { clientEnv, serverEnv } from './env';
 // Static Stripe Price IDs - Real Stripe Price IDs
 export const STRIPE_PRICES = {
   // Credit Packs (One-time payments)
-  STARTER_CREDITS: 'price_1SZmVxALMLhQocpfYPN36mgk', // $9.99 for 100 credits
-  PRO_CREDITS: 'price_1SZmVxALMLhQocpfVYhFMSO5',        // $29.99 for 500 credits
-  ENTERPRISE_CREDITS: 'price_1SZmVyALMLhQocpfZwmDQ5kt', // $99.99 for 2000 credits
+  STARTER_CREDITS: '$STARTER_PRICE_ID', // \$9.99 for 100 credits
+  PRO_CREDITS: '$PRO_PRICE_ID',        // \$29.99 for 500 credits
+  ENTERPRISE_CREDITS: '$ENTERPRISE_PRICE_ID', // \$99.99 for 2000 credits
 
   // Subscriptions (Recurring payments)
-  HOBBY_MONTHLY: 'price_1SZmVyALMLhQocpf0H7n5ls8',     // $19/month for 200 credits
-  PRO_MONTHLY: 'price_1SZmVzALMLhQocpfPyRX2W8D', // $49/month for 1000 credits
-  BUSINESS_MONTHLY: 'price_1SZmVzALMLhQocpfqPk9spg4', // $149/month for 5000 credits
+  HOBBY_MONTHLY: '$HOBBY_PRICE_ID',     // \$19/month for 200 credits
+  PRO_MONTHLY: '$PRO_MONTHLY_PRICE_ID', // \$49/month for 1000 credits
+  BUSINESS_MONTHLY: '$BUSINESS_PRICE_ID', // \$149/month for 5000 credits
 } as const;
 
 export type StripePriceKey = keyof typeof STRIPE_PRICES;
@@ -124,7 +275,7 @@ export function isStripePricesConfigured(): boolean {
 export function getPriceId(key: StripePriceKey): string {
   const priceId = STRIPE_PRICES[key];
   if (!priceId || priceId.includes('000000000000000000000')) {
-    console.warn(`Stripe Price ID for ${key} is not properly configured.`);
+    console.warn(\`Stripe Price ID for \${key} is not properly configured.\`);
   }
   return priceId;
 }
@@ -136,7 +287,7 @@ export function getPriceId(key: StripePriceKey): string {
 export const HOMEPAGE_TIERS = [
   {
     name: 'Free Tier',
-    price: '$0',
+    price: '\$0',
     priceValue: 0,
     period: '/mo',
     description: 'For testing and personal use.',
@@ -154,7 +305,7 @@ export const HOMEPAGE_TIERS = [
   },
   {
     name: SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name,
-    price: `$${SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}`,
+    price: \`$\${SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}\`,
     priceValue: SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price,
     period: '/mo',
     description: SUBSCRIPTION_PLANS.HOBBY_MONTHLY.description,
@@ -166,7 +317,7 @@ export const HOMEPAGE_TIERS = [
   },
   {
     name: SUBSCRIPTION_PLANS.PRO_MONTHLY.name,
-    price: `$${SUBSCRIPTION_PLANS.PRO_MONTHLY.price}`,
+    price: \`$\${SUBSCRIPTION_PLANS.PRO_MONTHLY.price}\`,
     priceValue: SUBSCRIPTION_PLANS.PRO_MONTHLY.price,
     period: '/mo',
     description: SUBSCRIPTION_PLANS.PRO_MONTHLY.description,
@@ -273,7 +424,7 @@ export function validateStripeConfig(): {
     .map(([key]) => key);
 
   if (missingPrices.length > 0) {
-    errors.push(`Missing or invalid Stripe Price IDs: ${missingPrices.join(', ')}`);
+    errors.push(\`Missing or invalid Stripe Price IDs: \${missingPrices.join(', ')}\`);
   }
 
   return {
@@ -291,3 +442,30 @@ export function isStripeConfigured(): boolean {
   const validation = validateStripeConfig();
   return validation.isValid && serverEnv.STRIPE_SECRET_KEY.length > 0;
 }
+EOF
+
+echo -e "\n${GREEN}✅ SUCCESS!${NC}"
+echo "=================="
+echo ""
+echo -e "${YELLOW}📋 Created Price IDs:${NC}"
+echo "   Starter Credits:  $STARTER_PRICE_ID"
+echo "   Pro Credits:      $PRO_PRICE_ID"
+echo "   Enterprise Credits: $ENTERPRISE_PRICE_ID"
+echo "   Hobby Monthly:    $HOBBY_PRICE_ID"
+echo "   Pro Monthly:      $PRO_MONTHLY_PRICE_ID"
+echo "   Business Monthly: $BUSINESS_PRICE_ID"
+echo ""
+echo -e "${YELLOW}💾 Files updated:${NC}"
+echo "   - shared/config/stripe.ts (with real Price IDs)"
+echo "   - shared/config/stripe.ts.backup (original file)"
+echo ""
+echo -e "${GREEN}🚀 Ready to test payments!${NC}"
+echo ""
+echo -e "${BLUE}💡 Next steps:${NC}"
+echo "   1. Restart your dev server"
+echo "   2. Test the payment flow on the landing page"
+echo ""
+echo -e "${BLUE}🗑️  To clean up old scripts (optional):${NC}"
+echo "   rm scripts/create-stripe-products.sh"
+echo "   rm scripts/stripe-product-sync.sh"
+echo "   rm scripts/stripe-env.sh"

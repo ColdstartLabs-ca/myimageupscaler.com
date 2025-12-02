@@ -4,6 +4,7 @@
 - Prefix interfaces with `I`: eg. `IBlogPost`, `IBlogPostMeta`
 - Update `docs/management/ROADMAP.md` when adding new features or changes to the system.
 - Refer to specific system docs when adding new features or changes to the system: `docs/technical/systems/`
+- When debugging, inspect yarn dev logs (we use concurrently)
 
 ## Environment Variables
 
@@ -59,11 +60,7 @@ c
 
 ## System Documentation
 
-- [API Reference](docs/technical/api-reference.md)
-- [Database Schema](docs/technical/database-schema.md)
-- [System Architecture](docs/technical/system-architecture.md)
-- [Tech Stack](docs/technical/tech-stack.md)
-- [User Flow](docs/technical/user-flow.md)
+- Check `docs/technical/systems/` for system documentation.
 
 ## Tool Usage
 
