@@ -9,14 +9,15 @@ import globals from 'globals';
 
 export default [
   {
-    files: ['eslint.config.js'],
+    files: ['eslint.config.js', 'next.config.js'],
     rules: {
       'import/no-default-export': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
     },
   },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
-    ignores: ['app/**/*'], // Next.js App Router requires default exports
+    ignores: ['app/**/*', 'next.config.js'], // Next.js App Router requires default exports
     plugins: {
       react: reactPlugin,
       'react-hooks': reactHooks,

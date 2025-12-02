@@ -26,6 +26,47 @@ const nextConfig = {
     // Optimize package imports for smaller bundles
     optimizePackageImports: ['lucide-react', '@tremor/react', 'recharts'],
   },
+  async redirects() {
+    return [
+      // Legacy URL redirects
+      {
+        source: '/upscale',
+        destination: '/tools/ai-image-upscaler',
+        permanent: true,
+      },
+      {
+        source: '/enhance',
+        destination: '/tools/ai-photo-enhancer',
+        permanent: true,
+      },
+      // Category redirects (singular to plural)
+      {
+        source: '/tool/:slug',
+        destination: '/tools/:slug',
+        permanent: true,
+      },
+      {
+        source: '/format/:slug',
+        destination: '/formats/:slug',
+        permanent: true,
+      },
+      {
+        source: '/guide/:slug',
+        destination: '/guides/:slug',
+        permanent: true,
+      },
+      {
+        source: '/use-case/:slug',
+        destination: '/use-cases/:slug',
+        permanent: true,
+      },
+      {
+        source: '/alternative/:slug',
+        destination: '/alternatives/:slug',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -48,8 +89,7 @@ const nextConfig = {
           },
           {
             key: 'Access-Control-Allow-Headers',
-            value:
-              'X-CSRF-Token, X-Requested-With, Accept, Authorization, Content-Type, X-User-Id',
+            value: 'X-CSRF-Token, X-Requested-With, Accept, Authorization, Content-Type, X-User-Id',
           },
         ],
       },
@@ -65,6 +105,6 @@ const nextConfig = {
       },
     ];
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;
