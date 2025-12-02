@@ -6,7 +6,7 @@ import type {
   ISubscription,
   IPrice,
   IProduct,
-} from '@server/stripe/types';
+} from '@shared/types/stripe';
 
 /**
  * Frontend service for Stripe operations

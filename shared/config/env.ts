@@ -98,8 +98,6 @@ const serverEnvSchema = z.object({
   ALLOWED_ORIGIN: z.string().default('*'),
   // Cloudflare
   CF_PAGES_URL: z.string().optional(),
-  // Testing
-  TEST_AUTH_TOKEN: z.string().optional(),
 });
 
 export type IServerEnv = z.infer<typeof serverEnvSchema>;
@@ -122,8 +120,6 @@ function loadServerEnv(): IServerEnv {
     ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN || '*',
     // Cloudflare
     CF_PAGES_URL: process.env.CF_PAGES_URL,
-    // Testing
-    TEST_AUTH_TOKEN: process.env.TEST_AUTH_TOKEN,
   };
 
   return serverEnvSchema.parse(env);
