@@ -3,6 +3,10 @@ import { stripe, STRIPE_WEBHOOK_SECRET } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { getPlanForPriceId } from '@shared/config/stripe';
+import {
+  getPlanByPriceId,
+  calculateBalanceWithExpiration,
+} from '@shared/config/subscription.utils';
 import type { IIdempotencyResult, WebhookEventStatus } from '@shared/types/stripe';
 import Stripe from 'stripe';
 import dayjs from 'dayjs';
@@ -528,34 +532,80 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<v
     }
   }
 
-  // Add monthly subscription credits with rollover cap enforcement
+  // Get detailed plan config to check expiration settings
+  const planConfig = getPlanByPriceId(priceId);
   const creditsToAdd = plan.creditsPerMonth;
   const currentBalance = profile.credits_balance ?? 0;
   const maxRollover = plan.maxRollover;
 
-  // Calculate capped amount to prevent exceeding rollover limit
-  const newBalanceIfAdded = currentBalance + creditsToAdd;
-  const actualCreditsToAdd =
-    newBalanceIfAdded > maxRollover ? Math.max(0, maxRollover - currentBalance) : creditsToAdd;
+  // Calculate new balance considering expiration mode
+  const expirationMode = planConfig?.creditsExpiration?.mode ?? 'never';
+  const { newBalance, expiredAmount } = calculateBalanceWithExpiration({
+    currentBalance,
+    newCredits: creditsToAdd,
+    expirationMode,
+    maxRollover,
+  });
+
+  // If credits are expiring, call the expiration RPC first
+  if (expiredAmount > 0) {
+    console.log(`Expiring ${expiredAmount} credits for user ${userId} (mode: ${expirationMode})`);
+
+    try {
+      const { data: expiredCount, error: expireError } = await supabaseAdmin.rpc(
+        'expire_credits_at_cycle_end',
+        {
+          target_user_id: userId,
+          expiration_reason: expirationMode === 'rolling_window' ? 'rolling_window' : 'cycle_end',
+          subscription_stripe_id: subscriptionId,
+          cycle_end_date: invoice.period_end
+            ? new Date(invoice.period_end * 1000).toISOString()
+            : null,
+        }
+      );
+
+      if (expireError) {
+        console.error('Error expiring credits:', expireError);
+        // Continue with credit allocation even if expiration fails
+      } else {
+        console.log(`Successfully expired ${expiredCount ?? 0} credits for user ${userId}`);
+      }
+    } catch (error) {
+      console.error('Exception expiring credits:', error);
+      // Continue with credit allocation
+    }
+  }
+
+  // Now add the new subscription credits
+  const actualCreditsToAdd = newBalance - (expiredAmount > 0 ? 0 : currentBalance);
 
   if (actualCreditsToAdd > 0) {
+    // Build description based on expiration
+    let description = `Monthly subscription renewal - ${plan.name} plan`;
+
+    if (expiredAmount > 0) {
+      description += ` (${expiredAmount} credits expired, ${actualCreditsToAdd} new credits added)`;
+    } else if (actualCreditsToAdd < creditsToAdd) {
+      description += ` (capped from ${creditsToAdd} due to rollover limit of ${maxRollover})`;
+    }
+
     // MEDIUM-5: Use consistent invoice reference format for refund correlation
     const { error } = await supabaseAdmin.rpc('increment_credits_with_log', {
       target_user_id: userId,
       amount: actualCreditsToAdd,
       transaction_type: 'subscription',
       ref_id: `invoice_${invoice.id}`,
-      description: `Monthly subscription renewal - ${plan.name} plan - ${actualCreditsToAdd} credits${actualCreditsToAdd < creditsToAdd ? ` (capped from ${creditsToAdd} due to rollover limit of ${maxRollover})` : ''}`,
+      description,
     });
 
     if (error) {
       console.error('Error adding subscription credits:', error);
     } else {
       console.log(
-        `Added ${actualCreditsToAdd} subscription credits to user ${userId} from ${plan.name} plan (balance: ${currentBalance} → ${currentBalance + actualCreditsToAdd}, max: ${maxRollover})`
+        `Added ${actualCreditsToAdd} subscription credits to user ${userId} from ${plan.name} plan (balance: ${currentBalance} → ${newBalance}, mode: ${expirationMode})`
       );
     }
-  } else {
+  } else if (expiredAmount === 0) {
     console.log(
       `Skipped adding credits for user ${userId}: already at max rollover (${currentBalance}/${maxRollover})`
     );

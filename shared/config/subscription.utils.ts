@@ -4,7 +4,7 @@
  */
 
 import { getSubscriptionConfig } from './subscription.config';
-import type { IPlanConfig, ProcessingMode } from './subscription.types';
+import type { IPlanConfig, ProcessingMode, ICreditsExpirationConfig } from './subscription.types';
 
 // ============================================
 // Plan Lookup Functions
@@ -118,6 +118,85 @@ export function getLowCreditWarningConfig(): {
     showToast: warnings.showToastOnDashboard,
     checkIntervalMs: warnings.checkIntervalMs,
   };
+}
+
+// ============================================
+// Credits Expiration Functions
+// ============================================
+
+/**
+ * Get expiration configuration for a plan
+ */
+export function getExpirationConfig(priceId: string): ICreditsExpirationConfig | null {
+  const plan = getPlanByPriceId(priceId);
+  return plan ? plan.creditsExpiration : null;
+}
+
+/**
+ * Check if credits expire for a given plan
+ */
+export function creditsExpireForPlan(priceId: string): boolean {
+  const config = getExpirationConfig(priceId);
+  return config ? config.mode !== 'never' : false;
+}
+
+/**
+ * Calculate new balance after applying expiration logic
+ * Returns the new balance and amount expired
+ */
+export function calculateBalanceWithExpiration(params: {
+  currentBalance: number;
+  newCredits: number;
+  expirationMode: 'never' | 'end_of_cycle' | 'rolling_window';
+  maxRollover?: number | null;
+}): {
+  newBalance: number;
+  expiredAmount: number;
+} {
+  const { currentBalance, newCredits, expirationMode, maxRollover } = params;
+
+  switch (expirationMode) {
+    case 'end_of_cycle':
+    case 'rolling_window':
+      // Credits expire - reset to 0 and add new allocation
+      return {
+        newBalance: newCredits,
+        expiredAmount: currentBalance,
+      };
+
+    case 'never':
+    default: {
+      // Rollover with cap
+      const uncappedBalance = currentBalance + newCredits;
+      const cappedBalance =
+        maxRollover !== null && maxRollover !== undefined
+          ? Math.min(uncappedBalance, maxRollover)
+          : uncappedBalance;
+
+      return {
+        newBalance: cappedBalance,
+        expiredAmount: 0,
+      };
+    }
+  }
+}
+
+/**
+ * Check if expiration warning should be sent
+ */
+export function shouldSendExpirationWarning(params: {
+  priceId: string;
+  daysUntilExpiration: number;
+}): boolean {
+  const config = getExpirationConfig(params.priceId);
+  if (!config) return false;
+
+  return (
+    config.sendExpirationWarning &&
+    config.mode !== 'never' &&
+    params.daysUntilExpiration <= config.warningDaysBefore &&
+    params.daysUntilExpiration >= 0
+  );
 }
 
 // ============================================

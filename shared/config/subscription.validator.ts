@@ -126,5 +126,34 @@ export function validateSubscriptionConfig(config: unknown): void {
     throw new Error('minimumCost cannot be greater than maximumCost');
   }
 
+  // Validate expiration configuration logic
+  for (const plan of validConfig.plans) {
+    const exp = plan.creditsExpiration;
+
+    // rolling_window mode requires windowDays
+    if (exp.mode === 'rolling_window' && !exp.windowDays) {
+      throw new Error(`Plan ${plan.key}: rolling_window mode requires windowDays to be set`);
+    }
+
+    // windowDays only valid for rolling_window mode
+    if (exp.mode !== 'rolling_window' && exp.windowDays) {
+      console.warn(
+        `Plan ${plan.key}: windowDays is set but mode is not rolling_window (will be ignored)`
+      );
+    }
+
+    // Validate warning settings
+    if (exp.sendExpirationWarning && exp.warningDaysBefore === 0) {
+      console.warn(`Plan ${plan.key}: sendExpirationWarning is true but warningDaysBefore is 0`);
+    }
+
+    // Validate maxRollover makes sense with expiration mode
+    if (exp.mode !== 'never' && plan.maxRollover !== null) {
+      console.warn(
+        `Plan ${plan.key}: maxRollover is set but credits will expire (mode=${exp.mode}). Consider setting maxRollover to null.`
+      );
+    }
+  }
+
   console.log('✓ Subscription configuration validated successfully');
 }
