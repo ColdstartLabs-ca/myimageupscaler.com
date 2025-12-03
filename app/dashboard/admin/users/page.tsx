@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
-import dayjs from 'dayjs';
-import { IAdminUserProfile } from '@/shared/types/admin';
-import { adminFetch } from '@/client/utils/admin-api-client';
 import { UserActionsDropdown } from '@/client/components/admin/UserActionsDropdown';
+import { adminFetch } from '@/client/utils/admin-api-client';
+import { IAdminUserProfile } from '@/shared/types/admin';
+import dayjs from 'dayjs';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<IAdminUserProfile[]>([]);
@@ -73,11 +73,11 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-lg border border-slate-200">
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider rounded-tl-lg">
                 Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
@@ -92,7 +92,7 @@ export default function AdminUsersPage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Joined
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider rounded-tr-lg">
                 Actions
               </th>
             </tr>
