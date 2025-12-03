@@ -64,21 +64,23 @@ PixelPerfect uses a **subscription-only payment model** where users pay monthly 
 |---------|--------|-------|
 | New subscription purchase | Implemented | Embedded & hosted checkout |
 | Monthly credit allocation | Implemented | With rollover cap |
-| Subscription cancellation | Implemented | Via Stripe Portal |
+| Subscription cancellation | Implemented | Via API + Stripe Portal |
 | Billing page | Implemented | Shows plan & credits |
 | Pricing page | Implemented | 3 subscription tiers |
 | Success/cancel pages | Implemented | Post-checkout flow |
 | Webhook signature verification | Implemented | Production-ready |
 | Credit transaction logging | Implemented | Full audit trail |
-| **Upgrade/downgrade flow** | **NOT IMPLEMENTED** | Redirects to Stripe Portal |
+| Upgrade/downgrade flow | Implemented | `/api/subscription/change` with proration |
+| Webhook idempotency | Implemented | `webhook_events` table with atomic claims |
+| **Scheduled Stripe sync** | **NOT IMPLEMENTED** | See PRD: `docs/PRDs/stripe-db-sync-prd.md` |
 | **Credit usage history UI** | **NOT IMPLEMENTED** | Data exists, no UI |
 | **Low credit warning** | **NOT IMPLEMENTED** | No notifications |
 | **Trial period support** | **NOT IMPLEMENTED** | Schema ready, no UI |
 | **Annual billing** | **NOT IMPLEMENTED** | Monthly only |
 | **Proration preview** | **NOT IMPLEMENTED** | No in-app preview |
-| **Refund webhook handling** | **NOT IMPLEMENTED** | No credit clawback |
+| **Refund webhook handling** | **PARTIAL** | Logged, no credit clawback |
 | **Subscription pause** | **NOT IMPLEMENTED** | Not supported |
-| **Webhook idempotency** | **PARTIAL** | ref_id logged, not enforced |
+| **Expiration detection** | **NOT IMPLEMENTED** | No cron to check `current_period_end` |
 
 ### 2.2 API Coverage
 
@@ -88,19 +90,26 @@ graph LR
         A[POST /api/checkout]
         B[POST /api/portal]
         C[POST /api/webhooks/stripe]
+        D[POST /api/subscription/change]
+        E[POST /api/subscriptions/cancel]
+        F[POST /api/admin/subscription]
     end
 
     subgraph "NOT IMPLEMENTED"
-        D[GET /api/credits/history]
-        E[POST /api/subscription/preview-change]
-        F[POST /api/subscription/change]
-        G[GET /api/health/stripe]
+        G[GET /api/credits/history]
+        H[POST /api/subscription/preview-change]
+        I[GET /api/health/stripe]
+        J[POST /api/cron/check-expirations]
+        K[POST /api/cron/recover-webhooks]
+        L[POST /api/cron/reconcile]
     end
 
-    style D fill:#ff9999
-    style E fill:#ff9999
-    style F fill:#ff9999
     style G fill:#ff9999
+    style H fill:#ff9999
+    style I fill:#ff9999
+    style J fill:#ff9999
+    style K fill:#ff9999
+    style L fill:#ff9999
 ```
 
 ### 2.3 Webhook Coverage
@@ -109,14 +118,24 @@ graph LR
 |---------------|--------|---------|
 | `checkout.session.completed` | Implemented | Adds initial credits |
 | `customer.subscription.created` | Implemented | Creates subscription record |
-| `customer.subscription.updated` | Implemented | Updates status |
+| `customer.subscription.updated` | Implemented | Updates status, period, tier |
 | `customer.subscription.deleted` | Implemented | Marks canceled |
-| `invoice.payment_succeeded` | Implemented | Adds monthly credits |
-| `invoice.payment_failed` | Implemented | Sets past_due status |
-| `charge.refunded` | **NOT IMPLEMENTED** | No credit clawback |
-| `charge.dispute.created` | **NOT IMPLEMENTED** | No handling |
+| `invoice.payment_succeeded` | Implemented | Adds monthly credits with rollover cap |
+| `invoice.payment_failed` | Implemented | Sets `past_due` status |
+| `charge.refunded` | **PARTIAL** | Logged, no credit clawback (TODO) |
+| `charge.dispute.created` | **PARTIAL** | Logged, no action (TODO) |
+| `invoice.payment_refunded` | **PARTIAL** | Logged, no action (TODO) |
 | `customer.subscription.paused` | **NOT IMPLEMENTED** | No handling |
 | `customer.subscription.resumed` | **NOT IMPLEMENTED** | No handling |
+
+### 2.4 Known Gaps & Risks
+
+| Gap | Risk Level | Mitigation |
+|-----|------------|------------|
+| No scheduled sync | **HIGH** | If webhooks fail, DB drifts from Stripe. See PRD. |
+| No expiration detection | **MEDIUM** | Users may keep active status after period ends |
+| No refund credit clawback | **LOW** | Manual admin intervention required |
+| No dispute handling | **LOW** | Rare, handle via support ticket |
 
 ---
 
@@ -872,38 +891,50 @@ gantt
     title Subscription System Roadmap
     dateFormat  YYYY-MM-DD
     section High Priority
-    Upgrade/Downgrade Flow       :a1, 2025-01-01, 14d
-    Webhook Idempotency          :a2, after a1, 7d
-    Refund Webhook Handling      :a3, after a2, 7d
+    Stripe DB Sync (Cron Jobs)   :a1, 2025-01-01, 14d
+    Expiration Detection         :a2, after a1, 7d
+    Refund Credit Clawback       :a3, after a2, 7d
     section Medium Priority
     Credit History UI            :b1, after a3, 10d
     Low Credit Warnings          :b2, after b1, 7d
-    Plan Comparison View         :b3, after b2, 5d
+    Proration Preview            :b3, after b2, 5d
     section Low Priority
     Annual Billing               :c1, after b3, 14d
     Trial Period UI              :c2, after c1, 7d
-    Stripe Product Sync          :c3, after c2, 5d
+    Subscription Pause/Resume    :c3, after c2, 5d
 ```
 
 ### 14.2 Feature Details
 
-| Feature | Description | Complexity |
-|---------|-------------|------------|
-| Upgrade/Downgrade Flow | In-app plan change with proration preview | High |
-| Webhook Idempotency | Prevent duplicate credit additions | Medium |
-| Refund Handling | Claw back credits on refunds | Medium |
-| Credit History UI | Display transaction log to users | Low |
-| Low Credit Warnings | Email/in-app notifications | Medium |
-| Annual Billing | Yearly plans with discount | Medium |
+| Feature | Description | Complexity | PRD |
+|---------|-------------|------------|-----|
+| Stripe DB Sync | Scheduled sync to catch missed webhooks | High | `docs/PRDs/stripe-db-sync-prd.md` |
+| Expiration Detection | Hourly cron to check `current_period_end` | Medium | Part of sync PRD |
+| Refund Credit Clawback | Deduct credits when charges are refunded | Medium | - |
+| Credit History UI | Display `credit_transactions` to users | Low | - |
+| Low Credit Warnings | Email/in-app notifications when credits low | Medium | - |
+| Proration Preview | Show cost before plan change | Low | - |
+| Annual Billing | Yearly plans with discount | Medium | - |
+
+### 14.3 Completed Features (Recently)
+
+| Feature | Completed | Notes |
+|---------|-----------|-------|
+| Upgrade/Downgrade Flow | Dec 2025 | `/api/subscription/change` with proration |
+| Webhook Idempotency | Dec 2025 | `webhook_events` table with atomic claims |
+| Admin Subscription Management | Dec 2025 | `/api/admin/subscription` endpoint |
 
 ---
 
 ## Appendix: File Index
 
 ### API Routes
-- `app/api/checkout/route.ts`
-- `app/api/portal/route.ts`
-- `app/api/webhooks/stripe/route.ts`
+- `app/api/checkout/route.ts` - Creates Stripe Checkout Session
+- `app/api/portal/route.ts` - Creates Stripe Customer Portal session
+- `app/api/webhooks/stripe/route.ts` - Main webhook handler (612 lines)
+- `app/api/subscription/change/route.ts` - Plan upgrade/downgrade with proration
+- `app/api/subscriptions/cancel/route.ts` - Cancel subscription at period end
+- `app/api/admin/subscription/route.ts` - Admin subscription management
 
 ### Pages
 - `app/pricing/page.tsx`

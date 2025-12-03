@@ -154,12 +154,9 @@ interface IModalProps {
 }
 
 function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
-  const [amount, setAmount] = useState('');
-  const [reason, setReason] = useState('');
+  const [newBalance, setNewBalance] = useState(user.credits_balance.toString());
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-
-  const previewBalance = amount ? user.credits_balance + parseInt(amount) : user.credits_balance;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,26 +168,20 @@ function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
         method: 'POST',
         body: JSON.stringify({
           userId: user.id,
-          amount: parseInt(amount),
-          reason,
+          newBalance: parseInt(newBalance),
         }),
       });
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to adjust credits');
+      setError(err instanceof Error ? err.message : 'Failed to set credits');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const quickAdjust = (value: number) => {
-    setAmount(value.toString());
-    setReason(value > 0 ? 'Admin credit bonus' : 'Admin credit adjustment');
-  };
-
   return (
-    <Modal title="Adjust Credits" onClose={onClose}>
+    <Modal title="Set Credits" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-slate-700">User</label>
@@ -198,61 +189,27 @@ function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Quick Adjust</label>
-          <div className="flex flex-wrap gap-2">
-            {[-100, -50, -10, 10, 50, 100, 500].map(val => (
-              <button
-                key={val}
-                type="button"
-                onClick={() => quickAdjust(val)}
-                className={`px-3 py-1 text-sm rounded-lg border transition-colors ${
-                  val < 0
-                    ? 'border-red-200 text-red-700 hover:bg-red-50'
-                    : 'border-green-200 text-green-700 hover:bg-green-50'
-                }`}
-              >
-                {val > 0 ? '+' : ''}
-                {val}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
           <label className="block text-sm font-medium text-slate-700">
-            Custom Amount
+            Credits Balance
           </label>
           <input
             type="number"
-            value={amount}
-            onChange={e => setAmount(e.target.value)}
+            min="0"
+            value={newBalance}
+            onChange={e => setNewBalance(e.target.value)}
             className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            placeholder="e.g., 50 or -20"
             required
           />
           <p className="mt-1 text-sm text-slate-500">
-            Current: <span className="font-medium">{user.credits_balance}</span> →
-            New: <span className={`font-medium ${previewBalance < 0 ? 'text-red-600' : ''}`}>{previewBalance}</span>
+            Current: {user.credits_balance}
           </p>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-slate-700">Reason</label>
-          <input
-            type="text"
-            value={reason}
-            onChange={e => setReason(e.target.value)}
-            className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            placeholder="e.g., Customer support compensation"
-            required
-          />
         </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
         <ModalActions
           onClose={onClose}
-          submitLabel="Adjust Credits"
+          submitLabel="Save"
           submitting={submitting}
         />
       </form>
@@ -260,25 +217,78 @@ function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
   );
 }
 
+const PLANS = [
+  { id: '', name: 'Free', price: '$0/mo' },
+  { id: 'price_1SZmVyALMLhQocpf0H7n5ls8', name: 'Hobby', price: '$19/mo' },
+  { id: 'price_1SZmVzALMLhQocpfPyRX2W8D', name: 'Professional', price: '$49/mo' },
+  { id: 'price_1SZmVzALMLhQocpfqPk9spg4', name: 'Business', price: '$149/mo' },
+];
+
+interface IStripeSubData {
+  subscription: { id: string; status: string; price_id: string } | null;
+  stripeSubscription: {
+    status: string;
+    cancel_at_period_end: boolean;
+    current_period_end: number | null;
+  } | null;
+}
+
 function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
-  const [tier, setTier] = useState(user.subscription_tier || '');
-  const [status, setStatus] = useState(user.subscription_status || '');
+  const [loading, setLoading] = useState(true);
+  const [stripeData, setStripeData] = useState<IStripeSubData | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Fetch actual subscription state from Stripe
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await adminFetch<{ success: boolean; data: IStripeSubData }>(
+          `/api/admin/subscription?userId=${user.id}`
+        );
+        setStripeData(data.data);
+        // Set initial selection based on current tier
+        const current = PLANS.find(p =>
+          p.name.toLowerCase() === user.subscription_tier?.toLowerCase()
+        );
+        setSelectedPlan(current?.id || '');
+      } catch {
+        setError('Failed to load subscription data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [user.id, user.subscription_tier]);
+
+  const hasActiveStripeSubscription = stripeData?.stripeSubscription &&
+    stripeData.stripeSubscription.status === 'active';
+
+  const currentPlanId = PLANS.find(p =>
+    p.name.toLowerCase() === user.subscription_tier?.toLowerCase()
+  )?.id || '';
+
+  const handleSubmit = async () => {
     setSubmitting(true);
     setError('');
 
     try {
-      await adminFetch(`/api/admin/users/${user.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          subscription_tier: tier || null,
-          subscription_status: status || null,
-        }),
-      });
+      if (selectedPlan === '') {
+        await adminFetch('/api/admin/subscription', {
+          method: 'POST',
+          body: JSON.stringify({ userId: user.id, action: 'cancel' }),
+        });
+      } else {
+        await adminFetch('/api/admin/subscription', {
+          method: 'POST',
+          body: JSON.stringify({
+            userId: user.id,
+            action: 'change',
+            targetPriceId: selectedPlan,
+          }),
+        });
+      }
       onSuccess();
       onClose();
     } catch (err) {
@@ -288,59 +298,128 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
     }
   };
 
+  const hasChanged = selectedPlan !== currentPlanId;
+  const selectedPlanName = PLANS.find(p => p.id === selectedPlan)?.name || 'Free';
+
+  // Determine what action will happen
+  const getActionDescription = () => {
+    if (!hasChanged) return null;
+
+    if (selectedPlan === '') {
+      if (hasActiveStripeSubscription) {
+        return { type: 'warning', text: 'This will cancel the Stripe subscription immediately. User will lose access.' };
+      }
+      return { type: 'info', text: 'This will remove subscription access from the user profile.' };
+    }
+
+    if (hasActiveStripeSubscription) {
+      return { type: 'info', text: `This will change the Stripe subscription to ${selectedPlanName}. Billing will be prorated.` };
+    }
+
+    return { type: 'warning', text: `This will grant ${selectedPlanName} access WITHOUT creating a Stripe subscription. Use for comps or testing only.` };
+  };
+
+  const actionDesc = getActionDescription();
+
+  if (loading) {
+    return (
+      <Modal title="Manage Subscription" onClose={onClose}>
+        <p className="text-sm text-slate-500">Loading...</p>
+      </Modal>
+    );
+  }
+
   return (
-    <Modal title="Change Subscription" onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal title="Manage Subscription" onClose={onClose}>
+      <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-slate-700">User</label>
           <p className="mt-1 text-sm text-slate-900">{user.email}</p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-slate-700">Subscription Tier</label>
-          <select
-            value={tier}
-            onChange={e => setTier(e.target.value)}
-            className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-          >
-            <option value="">No Subscription (Free)</option>
-            <option value="starter">Starter</option>
-            <option value="pro">Pro</option>
-            <option value="enterprise">Enterprise</option>
-          </select>
+        {/* Current State */}
+        <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-600">Profile Tier:</span>
+            <span className="font-medium">{user.subscription_tier || 'Free'}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-600">Stripe Status:</span>
+            <span className={`font-medium ${hasActiveStripeSubscription ? 'text-green-600' : 'text-slate-500'}`}>
+              {stripeData?.stripeSubscription?.status || 'No subscription'}
+            </span>
+          </div>
+          {stripeData?.stripeSubscription?.current_period_end && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-600">Renews:</span>
+              <span className="font-medium">
+                {new Date(stripeData.stripeSubscription.current_period_end * 1000).toLocaleDateString()}
+              </span>
+            </div>
+          )}
         </div>
 
+        {/* Plan Selection */}
         <div>
-          <label className="block text-sm font-medium text-slate-700">Status</label>
-          <select
-            value={status}
-            onChange={e => setStatus(e.target.value)}
-            className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-          >
-            <option value="">None</option>
-            <option value="active">Active</option>
-            <option value="trialing">Trialing</option>
-            <option value="past_due">Past Due</option>
-            <option value="canceled">Canceled</option>
-            <option value="unpaid">Unpaid</option>
-          </select>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Change To</label>
+          <div className="space-y-2">
+            {PLANS.map((plan) => (
+              <label
+                key={plan.id}
+                className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
+                  selectedPlan === plan.id
+                    ? 'border-indigo-500 bg-indigo-50'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    name="plan"
+                    value={plan.id}
+                    checked={selectedPlan === plan.id}
+                    onChange={() => setSelectedPlan(plan.id)}
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span className="ml-3 font-medium text-slate-900">{plan.name}</span>
+                </div>
+                <span className="text-slate-600">{plan.price}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
-        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-          <p className="text-sm text-amber-800">
-            <strong>Note:</strong> This only updates the database record. It does not create or
-            modify actual Stripe subscriptions. Use this for manual overrides or corrections.
-          </p>
-        </div>
+        {/* Action Description */}
+        {actionDesc && (
+          <div className={`p-3 rounded-lg text-sm ${
+            actionDesc.type === 'warning'
+              ? 'bg-amber-50 border border-amber-200 text-amber-800'
+              : 'bg-blue-50 border border-blue-200 text-blue-800'
+          }`}>
+            {actionDesc.text}
+          </div>
+        )}
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <ModalActions
-          onClose={onClose}
-          submitLabel="Update Subscription"
-          submitting={submitting}
-        />
-      </form>
+        <div className="flex justify-end space-x-3 pt-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={submitting || !hasChanged}
+            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50"
+          >
+            {submitting ? 'Saving...' : 'Save'}
+          </button>
+        </div>
+      </div>
     </Modal>
   );
 }
