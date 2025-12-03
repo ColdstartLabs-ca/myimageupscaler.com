@@ -152,8 +152,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get current plan metadata for credit calculations
+    const currentPlan = currentSubscription.price_id
+      ? getPlanForPriceId(currentSubscription.price_id)
+      : null;
+
     // Existing subscription - modify it
     try {
+      // Calculate credit adjustment
+      // When upgrading: add the difference in credits immediately
+      // When downgrading: we don't remove credits, but the new lower limit applies at next renewal
+      const currentCredits = currentPlan?.creditsPerMonth || 0;
+      const targetCredits = targetPlan.creditsPerMonth;
+      const creditDifference = targetCredits - currentCredits;
+
       // Check if we're in test mode
       if (serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') || serverEnv.ENV === 'test') {
         // Mock subscription change for testing
@@ -168,6 +180,31 @@ export async function POST(request: NextRequest) {
           })
           .eq('id', currentSubscription.id);
 
+        // Update profile subscription tier
+        await supabaseAdmin
+          .from('profiles')
+          .update({
+            subscription_tier: targetPlan.name,
+          })
+          .eq('id', user.id);
+
+        // Add credits if upgrading (positive difference)
+        if (creditDifference > 0) {
+          const { error: creditError } = await supabaseAdmin.rpc('increment_credits_with_log', {
+            target_user_id: user.id,
+            amount: creditDifference,
+            transaction_type: 'plan_upgrade',
+            ref_id: currentSubscription.id,
+            description: `Plan upgrade from ${currentPlan?.name || 'Unknown'} to ${targetPlan.name} - ${creditDifference} additional credits`,
+          });
+
+          if (creditError) {
+            console.error('Error adding upgrade credits:', creditError);
+          } else {
+            console.log(`Added ${creditDifference} upgrade credits to user ${user.id}`);
+          }
+        }
+
         return NextResponse.json({
           success: true,
           data: {
@@ -175,6 +212,7 @@ export async function POST(request: NextRequest) {
             status: 'active',
             new_price_id: body.targetPriceId,
             effective_immediately: true,
+            credits_added: creditDifference > 0 ? creditDifference : 0,
             mock: true,
           }
         });
@@ -192,16 +230,57 @@ export async function POST(request: NextRequest) {
         proration_behavior: 'create_prorations',
       });
 
+      // Access period timestamps - Stripe returns Unix timestamps
+      const periodStart = (updatedSubscription as any).current_period_start as number | undefined;
+      const periodEnd = (updatedSubscription as any).current_period_end as number | undefined;
+
       // Update local database with new price ID
+      const updateData: {
+        price_id: string;
+        updated_at: string;
+        current_period_start?: string;
+        current_period_end?: string;
+      } = {
+        price_id: body.targetPriceId,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (periodStart) {
+        updateData.current_period_start = new Date(periodStart * 1000).toISOString();
+      }
+      if (periodEnd) {
+        updateData.current_period_end = new Date(periodEnd * 1000).toISOString();
+      }
+
       await supabaseAdmin
         .from('subscriptions')
-        .update({
-          price_id: body.targetPriceId,
-          current_period_start: new Date((updatedSubscription as any).current_period_start! * 1000).toISOString(),
-          current_period_end: new Date((updatedSubscription as any).current_period_end! * 1000).toISOString(),
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', currentSubscription.id);
+
+      // Update profile subscription tier
+      await supabaseAdmin
+        .from('profiles')
+        .update({
+          subscription_tier: targetPlan.name,
+        })
+        .eq('id', user.id);
+
+      // Add credits if upgrading (positive difference)
+      if (creditDifference > 0) {
+        const { error: creditError } = await supabaseAdmin.rpc('increment_credits_with_log', {
+          target_user_id: user.id,
+          amount: creditDifference,
+          transaction_type: 'plan_upgrade',
+          ref_id: currentSubscription.id,
+          description: `Plan upgrade from ${currentPlan?.name || 'Unknown'} to ${targetPlan.name} - ${creditDifference} additional credits`,
+        });
+
+        if (creditError) {
+          console.error('Error adding upgrade credits:', creditError);
+        } else {
+          console.log(`Added ${creditDifference} upgrade credits to user ${user.id}`);
+        }
+      }
 
       return NextResponse.json({
         success: true,
@@ -210,8 +289,13 @@ export async function POST(request: NextRequest) {
           status: updatedSubscription.status,
           new_price_id: body.targetPriceId,
           effective_immediately: true,
-          current_period_start: new Date((updatedSubscription as any).current_period_start! * 1000).toISOString(),
-          current_period_end: new Date((updatedSubscription as any).current_period_end! * 1000).toISOString(),
+          credits_added: creditDifference > 0 ? creditDifference : 0,
+          ...(periodStart && {
+            current_period_start: new Date(periodStart * 1000).toISOString(),
+          }),
+          ...(periodEnd && {
+            current_period_end: new Date(periodEnd * 1000).toISOString(),
+          }),
         }
       });
 

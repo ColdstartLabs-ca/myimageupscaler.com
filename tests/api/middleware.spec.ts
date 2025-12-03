@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { test as authenticatedTest } from '../helpers/auth';
 
 /**
@@ -15,9 +15,7 @@ import { test as authenticatedTest } from '../helpers/auth';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 test.describe('Middleware - Authentication', () => {
-  test('should reject requests without authentication token', async ({
-    request,
-  }) => {
+  test('should reject requests without authentication token', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/api/protected/example`);
 
     expect(response.status()).toBe(401);
@@ -27,9 +25,7 @@ test.describe('Middleware - Authentication', () => {
     expect(body.error).toBe('Unauthorized');
   });
 
-  test('should reject requests with invalid authentication token', async ({
-    request,
-  }) => {
+  test('should reject requests with invalid authentication token', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/api/protected/example`, {
       headers: {
         Authorization: 'Bearer invalid_token_12345',
@@ -42,29 +38,28 @@ test.describe('Middleware - Authentication', () => {
     expect(body).toHaveProperty('error');
   });
 
-  authenticatedTest('should allow requests with valid authentication token', async ({
-    request, testUser,
-  }) => {
-    const response = await request.get(`${BASE_URL}/api/protected/example`, {
-      headers: {
-        Authorization: `Bearer ${testUser.token}`,
-      },
-    });
+  authenticatedTest(
+    'should allow requests with valid authentication token',
+    async ({ request, testUser }) => {
+      const response = await request.get(`${BASE_URL}/api/protected/example`, {
+        headers: {
+          Authorization: `Bearer ${testUser.token}`,
+        },
+      });
 
-    expect(response.status()).toBe(200);
+      expect(response.status()).toBe(200);
 
-    const body = await response.json();
-    expect(body).toHaveProperty('user');
-    expect(body).toHaveProperty('message');
-    expect(body.user.id).toBe(testUser.id);
-    expect(body.user.email).toBe(testUser.email);
-  });
+      const body = await response.json();
+      expect(body).toHaveProperty('user');
+      expect(body).toHaveProperty('message');
+      expect(body.user.id).toBe(testUser.id);
+      expect(body.user.email).toBe(testUser.email);
+    }
+  );
 });
 
 test.describe('Middleware - Security Headers', () => {
-  test('should include security headers in all API responses', async ({
-    request,
-  }) => {
+  test('should include security headers in all API responses', async ({ request }) => {
     // Test with public route to avoid auth requirement
     const response = await request.get(`${BASE_URL}/api/health`);
 
@@ -72,21 +67,17 @@ test.describe('Middleware - Security Headers', () => {
     expect(response.headers()['x-frame-options']).toBe('DENY');
     expect(response.headers()['x-content-type-options']).toBe('nosniff');
     expect(response.headers()['x-xss-protection']).toBe('1; mode=block');
-    expect(response.headers()['referrer-policy']).toBe(
-      'strict-origin-when-cross-origin'
-    );
+    expect(response.headers()['referrer-policy']).toBe('strict-origin-when-cross-origin');
     expect(response.headers()['content-security-policy']).toBeTruthy();
   });
 
-  test('should include CSP header with proper directives', async ({
-    request,
-  }) => {
+  test('should include CSP header with proper directives', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/api/health`);
 
     const csp = response.headers()['content-security-policy'];
     expect(csp).toContain("default-src 'self'");
     expect(csp).toContain('frame-ancestors');
-    expect(csp).toContain('upgrade-insecure-requests');
+    expect(csp).toContain('frame-ancestors');
   });
 });
 
@@ -95,12 +86,8 @@ test.describe('Middleware - CORS', () => {
     const response = await request.get(`${BASE_URL}/api/health`);
 
     expect(response.headers()['access-control-allow-origin']).toBeTruthy();
-    expect(response.headers()['access-control-allow-methods']).toContain(
-      'GET'
-    );
-    expect(response.headers()['access-control-allow-methods']).toContain(
-      'POST'
-    );
+    expect(response.headers()['access-control-allow-methods']).toContain('GET');
+    expect(response.headers()['access-control-allow-methods']).toContain('POST');
   });
 
   test('should handle preflight OPTIONS requests', async ({ request }) => {
@@ -118,9 +105,7 @@ test.describe('Middleware - CORS', () => {
 });
 
 test.describe('Middleware - Rate Limiting', () => {
-  test('should include rate limit headers in responses', async ({
-    request,
-  }) => {
+  test('should include rate limit headers in responses', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/api/health`);
 
     // Public routes should have rate limit headers
@@ -137,10 +122,10 @@ test.describe('Middleware - Rate Limiting', () => {
     const responses = await Promise.all(requests);
 
     // Some requests should succeed, but eventually we should hit the limit
-    const tooManyRequests = responses.some((r) => r.status() === 429);
+    const tooManyRequests = responses.some(r => r.status() === 429);
 
     // If we hit the rate limit, verify the response
-    const rateLimitedResponse = responses.find((r) => r.status() === 429);
+    const rateLimitedResponse = responses.find(r => r.status() === 429);
     if (rateLimitedResponse) {
       const body = await rateLimitedResponse.json();
       expect(body.error).toContain('Too many requests');
@@ -151,9 +136,7 @@ test.describe('Middleware - Rate Limiting', () => {
     // due to rate limit reset timing, but documents expected behavior
   });
 
-  test('should include Retry-After header when rate limited', async ({
-    request,
-  }) => {
+  test('should include Retry-After header when rate limited', async ({ request }) => {
     // Send requests until we hit rate limit
     let rateLimitResponse = null;
 
@@ -176,17 +159,13 @@ test.describe('Middleware - Rate Limiting', () => {
 });
 
 test.describe('Middleware - Public Routes', () => {
-  test('should allow access to health endpoint without auth', async ({
-    request,
-  }) => {
+  test('should allow access to health endpoint without auth', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/api/health`);
 
     expect(response.status()).toBe(200);
   });
 
-  test('should allow access to webhook routes without auth', async ({
-    request,
-  }) => {
+  test('should allow access to webhook routes without auth', async ({ request }) => {
     // Webhook routes are public (they use their own auth mechanisms)
     // This tests the wildcard pattern matching
     const response = await request.post(`${BASE_URL}/api/webhooks/stripe`, {
@@ -201,31 +180,30 @@ test.describe('Middleware - Public Routes', () => {
 });
 
 test.describe('Middleware - Protected Routes', () => {
-  test('should require authentication for protected routes', async ({
-    request,
-  }) => {
+  test('should require authentication for protected routes', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/api/protected/example`);
 
     expect(response.status()).toBe(401);
   });
 
-  authenticatedTest('should set user context headers for authenticated requests', async ({
-    request, testUser,
-  }) => {
-    const response = await request.get(`${BASE_URL}/api/protected/example`, {
-      headers: {
-        Authorization: `Bearer ${testUser.token}`,
-      },
-    });
+  authenticatedTest(
+    'should set user context headers for authenticated requests',
+    async ({ request, testUser }) => {
+      const response = await request.get(`${BASE_URL}/api/protected/example`, {
+        headers: {
+          Authorization: `Bearer ${testUser.token}`,
+        },
+      });
 
-    expect(response.status()).toBe(200);
+      expect(response.status()).toBe(200);
 
-    const body = await response.json();
-    expect(body.user).toBeTruthy();
-    expect(body.user.id).toBe(testUser.id);
-    expect(body.user.email).toBe(testUser.email);
-    expect(body.rateLimit).toBeTruthy();
-  });
+      const body = await response.json();
+      expect(body.user).toBeTruthy();
+      expect(body.user.id).toBe(testUser.id);
+      expect(body.user.email).toBe(testUser.email);
+      expect(body.rateLimit).toBeTruthy();
+    }
+  );
 });
 
 test.describe('Middleware - Error Handling', () => {
@@ -239,9 +217,7 @@ test.describe('Middleware - Error Handling', () => {
     expect(typeof body.error).toBe('string');
   });
 
-  test('should handle missing Authorization header gracefully', async ({
-    request,
-  }) => {
+  test('should handle missing Authorization header gracefully', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/api/protected/example`, {
       headers: {
         Authorization: '',

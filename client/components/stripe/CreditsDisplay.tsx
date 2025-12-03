@@ -18,12 +18,14 @@ export function CreditsDisplay(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('[CreditsDisplay] useEffect - calling loadProfile');
     loadProfile();
   }, []);
 
   const loadProfile = async () => {
     try {
       setLoading(true);
+      console.log('[CreditsDisplay] Calling StripeService.getUserProfile');
       const data = await StripeService.getUserProfile();
       setProfile(data);
       setError(null);

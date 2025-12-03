@@ -194,15 +194,17 @@ export async function POST(request: NextRequest) {
           const subscription = await stripe.subscriptions.retrieve(currentSubscription.id);
 
           // Create a preview invoice to see the proration
-          const invoice = await (stripe.invoices as any).retrieveUpcoming({
+          const invoice = await stripe.invoices.createPreview({
             customer: profile.stripe_customer_id,
             subscription: currentSubscription.id,
-            subscription_items: [
-              {
-                id: subscription.items.data[0]?.id,
-                price: body.targetPriceId,
-              },
-            ],
+            subscription_details: {
+              items: [
+                {
+                  id: subscription.items.data[0]?.id,
+                  price: body.targetPriceId,
+                },
+              ],
+            },
           });
 
           // Get the proration amount from the invoice

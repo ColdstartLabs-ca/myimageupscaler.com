@@ -73,7 +73,14 @@ export const DashboardSidebar: React.FC = () => {
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-900 truncate">{user?.name || 'User'}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-slate-900 truncate">{user?.name || 'User'}</p>
+              {isAdmin && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700">
+                  Admin
+                </span>
+              )}
+            </div>
             <p className="text-xs text-slate-500 truncate">{user?.email}</p>
           </div>
         </div>

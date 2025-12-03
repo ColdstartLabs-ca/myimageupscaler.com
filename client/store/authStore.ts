@@ -131,9 +131,9 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
   initializeAuth: async () => {
     // This function now only handles error cases and refresh token issues.
     // The actual auth state is managed by onAuthStateChange listener.
+    // Note: We don't use loadingStore here because the dashboard layout already
+    // shows its own loading spinner based on authStore.isLoading
     try {
-      loadingStore.getState().setLoading(true);
-
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Auth initialization timeout')), 5000);
       });
@@ -163,8 +163,6 @@ export const useAuthStore = create<IAuthState>((set, get) => ({
     } catch (error) {
       console.error('Error initializing auth:', error);
       set({ isLoading: false, user: null, isAuthenticated: false });
-    } finally {
-      loadingStore.getState().setLoading(false);
     }
   },
   changePassword: async (currentPassword, newPassword) => {
