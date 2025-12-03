@@ -46,6 +46,23 @@ export default [
       },
     },
     rules: {
+      // Prevent inline require/import - must be at module top level
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'CallExpression[callee.name="require"]',
+          message: 'Inline require() is forbidden. Use static imports at the top of the file.',
+        },
+        {
+          selector: 'ImportExpression',
+          message: 'Dynamic import() is forbidden. Use static imports at the top of the file.',
+        },
+        {
+          selector: 'MemberExpression[object.object.name="process"][object.property.name="env"]',
+          message:
+            'Direct process.env access is forbidden. Import from "@shared/config/env" instead: `import { clientEnv, serverEnv } from "@shared/config/env"`',
+        },
+      ],
       ...js.configs.recommended.rules,
       ...typescriptEslint.configs.recommended.rules,
       ...reactPlugin.configs.recommended.rules,
@@ -62,15 +79,6 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'error',
       'react/react-in-jsx-scope': 'off', // Not needed with React 17+
       'react/jsx-uses-react': 'off', // Not needed with React 17+
-      // Prevent direct process.env usage - use @/config/env instead
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector: 'MemberExpression[object.object.name="process"][object.property.name="env"]',
-          message:
-            'Direct process.env access is forbidden. Import from "@shared/config/env" instead: `import { clientEnv, serverEnv } from "@shared/config/env"`',
-        },
-      ],
     },
   },
   {
@@ -102,6 +110,23 @@ export default [
       },
     },
     rules: {
+      // Prevent inline require/import - must be at module top level
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'CallExpression[callee.name="require"]',
+          message: 'Inline require() is forbidden. Use static imports at the top of the file.',
+        },
+        {
+          selector: 'ImportExpression',
+          message: 'Dynamic import() is forbidden. Use static imports at the top of the file.',
+        },
+        {
+          selector: 'MemberExpression[object.object.name="process"][object.property.name="env"]',
+          message:
+            'Direct process.env access is forbidden. Import from "@shared/config/env" instead: `import { clientEnv, serverEnv } from "@shared/config/env"`',
+        },
+      ],
       ...js.configs.recommended.rules,
       ...typescriptEslint.configs.recommended.rules,
       ...reactPlugin.configs.recommended.rules,
@@ -110,15 +135,6 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
-      // Prevent direct process.env usage - use @/config/env instead
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector: 'MemberExpression[object.object.name="process"][object.property.name="env"]',
-          message:
-            'Direct process.env access is forbidden. Import from "@shared/config/env" instead: `import { clientEnv, serverEnv } from "@shared/config/env"`',
-        },
-      ],
     },
   },
   // OVERRIDES - These MUST come after main config to take precedence
@@ -131,6 +147,25 @@ export default [
     ],
     rules: {
       'no-restricted-syntax': 'off',
+    },
+  },
+  // Client files - allow dynamic imports for code splitting
+  {
+    files: ['client/**/*.ts', 'client/**/*.tsx'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'CallExpression[callee.name="require"]',
+          message: 'Inline require() is forbidden. Use static imports at the top of the file.',
+        },
+        {
+          selector: 'MemberExpression[object.object.name="process"][object.property.name="env"]',
+          message:
+            'Direct process.env access is forbidden. Import from "@shared/config/env" instead: `import { clientEnv, serverEnv } from "@shared/config/env"`',
+        },
+        // Note: Dynamic import() is allowed in client code for code splitting
+      ],
     },
   },
   // Test files - relax process.env restriction since tests can't use @/config/env

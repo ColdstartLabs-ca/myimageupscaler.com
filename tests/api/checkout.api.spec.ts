@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { TestContext, ApiClient } from '../helpers';
+import { STRIPE_PRICES } from '@shared/config/stripe';
+import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
 /**
  * Integration Tests for Stripe Checkout API
@@ -12,9 +14,7 @@ import { TestContext, ApiClient } from '../helpers';
  * - Test mode handling
  */
 
-// Shared test setup for all checkout tests
 let ctx: TestContext;
-let api: ApiClient;
 
 test.beforeAll(async () => {
   ctx = new TestContext();
@@ -25,64 +25,33 @@ test.afterAll(async () => {
 });
 
 test.describe('API: Stripe Checkout - Authentication', () => {
-
   test('should reject unauthenticated requests', async ({ request }) => {
-    api = new ApiClient(request);
+    const api = new ApiClient(request);
     const response = await api.post('/api/checkout', { priceId: 'price_test_123' });
 
     response.expectStatus(401);
     await response.expectErrorCode('UNAUTHORIZED');
   });
 
-  test('should reject invalid auth token', async ({ request }) => {
-    api = new ApiClient(request);
-    const response = await api.post('/api/checkout', {
-      priceId: 'price_test_123'
-    }, {
-      headers: { Authorization: 'Bearer invalid_token_12345' }
-    });
-
-    response.expectStatus(401);
-    await response.expectErrorCode('UNAUTHORIZED');
-  });
-
-  test('should reject malformed auth header', async ({ request }) => {
-    api = new ApiClient(request);
-    const response = await api.post('/api/checkout', {
-      priceId: 'price_test_123'
-    }, {
-      headers: { Authorization: 'InvalidFormat token123' }
-    });
-
-    response.expectStatus(401);
-    await response.expectErrorCode('UNAUTHORIZED');
-  });
-
-  test('should reject requests without authorization header', async ({ request }) => {
-    api = new ApiClient(request);
-    const response = await api.post('/api/checkout', { priceId: 'price_test_123' });
-
-    response.expectStatus(401);
-    await response.expectErrorCode('UNAUTHORIZED');
-  });
-
-  test('should handle malformed authorization headers', async ({ request }) => {
-    api = new ApiClient(request);
-    const malformedAuthHeaders = [
-      '', // Empty
-      'Bearer', // Missing token
-      'InvalidFormat token', // Wrong format
-      'bearer token', // Lowercase (should be Bearer)
+  test('should reject invalid auth tokens', async ({ request }) => {
+    const api = new ApiClient(request);
+    const invalidAuthTokens = [
+      'Bearer invalid_token_12345',
+      'InvalidFormat token123',
+      'Bearer',
+      'Bearer not.a.valid.jwt',
+      ''
     ];
 
-    for (const authHeader of malformedAuthHeaders) {
+    for (const authToken of invalidAuthTokens) {
       const response = await api.post('/api/checkout', {
         priceId: 'price_test_auth'
       }, {
-        headers: { authorization: authHeader }
+        headers: { Authorization: authToken }
       });
 
       response.expectStatus(401);
+      await response.expectErrorCode('UNAUTHORIZED');
     }
   });
 });
@@ -90,7 +59,7 @@ test.describe('API: Stripe Checkout - Authentication', () => {
 test.describe('API: Stripe Checkout - Request Validation', () => {
   test('should reject requests without priceId', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/checkout', {});
 
     response.expectStatus(400);
@@ -98,7 +67,7 @@ test.describe('API: Stripe Checkout - Request Validation', () => {
   });
 
   test('should reject malformed JSON requests', async ({ request }) => {
-    api = new ApiClient(request);
+    const api = new ApiClient(request);
     const response = await api.post('/api/checkout', 'invalid json', {
       headers: {
         Authorization: 'Bearer test_token',
@@ -109,18 +78,9 @@ test.describe('API: Stripe Checkout - Request Validation', () => {
     response.expectStatus(400);
   });
 
-  test('should validate required fields', async ({ request }) => {
-    const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
-    const response = await api.post('/api/checkout', {});
-
-    response.expectStatus(400);
-    await response.expectErrorCode('VALIDATION_ERROR');
-  });
-
   test('should reject invalid priceId format', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/checkout', {
       priceId: 'invalid_price_format',
     });
@@ -135,8 +95,7 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
     'should handle custom success and cancel URLs',
     async ({ request }) => {
       const user = await ctx.createUser();
-      api = new ApiClient(request).withAuth(user.token);
-      const { STRIPE_PRICES } = await import('@shared/config/stripe');
+      const api = new ApiClient(request).withAuth(user.token);
       const response = await api.post('/api/checkout', {
         priceId: STRIPE_PRICES.PRO_MONTHLY,
         successUrl: 'https://example.com/success',
@@ -177,8 +136,7 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
 
   test('should handle metadata properly', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
+    const api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.HOBBY_MONTHLY,
       metadata: {
@@ -206,8 +164,7 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
 
   test('should handle empty metadata', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
+    const api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.BUSINESS_MONTHLY,
       metadata: {},
@@ -225,8 +182,7 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
 
   test('should handle metadata as undefined', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
+    const api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.PRO_MONTHLY,
       // metadata not provided - should default to {}
@@ -244,8 +200,7 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
 
   test('should reject checkout if user already has active subscription', async ({ request }) => {
     const user = await ctx.createUser({ subscription: 'active', tier: 'pro' });
-    api = new ApiClient(request).withAuth(user.token);
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
+    const api = new ApiClient(request).withAuth(user.token);
 
     const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.PRO_MONTHLY, // Trying to subscribe to a different plan
@@ -257,9 +212,8 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
 
   test('should reject checkout if user has trialing subscription', async ({ request }) => {
     const user = await ctx.createUser({ subscription: 'trialing', tier: 'pro' });
-    api = new ApiClient(request).withAuth(user.token);
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
-
+    const api = new ApiClient(request).withAuth(user.token);
+    
     const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.BUSINESS_MONTHLY,
     });
@@ -270,9 +224,8 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
 
   test('should allow checkout if user has canceled subscription', async ({ request }) => {
     const user = await ctx.createUser({ subscription: 'canceled' });
-    api = new ApiClient(request).withAuth(user.token);
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
-
+    const api = new ApiClient(request).withAuth(user.token);
+    
     const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.PRO_MONTHLY,
     });
@@ -295,10 +248,9 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
 test.describe('API: Stripe Checkout - Customer Management', () => {
   test('should create new Stripe customer for first-time user', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
-    const response = await api.post('/api/checkout', {
+        const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.PRO_MONTHLY,
       successUrl: 'https://example.com/success',
       cancelUrl: 'https://example.com/cancel',
@@ -312,13 +264,12 @@ test.describe('API: Stripe Checkout - Customer Management', () => {
     const user = await ctx.createUser();
 
     // Set up existing customer ID in the profile
-    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
-    await supabaseAdmin.supabaseAdmin
+    await supabaseAdmin
       .from('profiles')
       .update({ stripe_customer_id: 'cus_existing_123' })
       .eq('id', user.id);
 
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/checkout', {
       priceId: 'price_test_existing',
       successUrl: 'https://example.com/success',
@@ -332,7 +283,7 @@ test.describe('API: Stripe Checkout - Customer Management', () => {
 test.describe('API: Stripe Checkout - Subscription-Only Validation', () => {
   test('should reject non-subscription price IDs', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
     // Test invalid/unknown price IDs
     const invalidPriceIds = [
@@ -351,10 +302,9 @@ test.describe('API: Stripe Checkout - Subscription-Only Validation', () => {
 
   test('should accept valid subscription price IDs', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
-    const subscriptionPriceIds = Object.values(STRIPE_PRICES);
+        const subscriptionPriceIds = Object.values(STRIPE_PRICES);
 
     for (const priceId of subscriptionPriceIds) {
       const response = await api.post('/api/checkout', { priceId });
@@ -374,7 +324,7 @@ test.describe('API: Stripe Checkout - Subscription-Only Validation', () => {
 test.describe('API: Stripe Checkout - Error Handling', () => {
   test('should handle Stripe API errors gracefully', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
     // Use invalid price ID to trigger Stripe error
     const response = await api.post('/api/checkout', {
@@ -403,7 +353,7 @@ test.describe('API: Stripe Checkout - Error Handling', () => {
 
   test('should validate price ID format', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
     const invalidPriceIds = [
       '', // Empty string
@@ -425,14 +375,13 @@ test.describe('API: Stripe Checkout - Security and Authorization', () => {
     const user2 = await ctx.createUser();
 
     // Set up customer ID for user 2
-    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
-    await supabaseAdmin.supabaseAdmin
+    await supabaseAdmin
       .from('profiles')
       .update({ stripe_customer_id: 'cus_user2_only' })
       .eq('id', user2.id);
 
     // User 1 should not be able to access user 2's customer data
-    api = new ApiClient(request).withAuth(user1.token);
+    const api = new ApiClient(request).withAuth(user1.token);
     const response = await api.post('/api/checkout', {
       priceId: 'price_test_security',
     });
@@ -443,7 +392,7 @@ test.describe('API: Stripe Checkout - Security and Authorization', () => {
 
   test('should include supabase_user_id in Stripe customer metadata', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
     const response = await api.post('/api/checkout', {
       priceId: 'price_test_metadata',
@@ -459,7 +408,7 @@ test.describe('API: Stripe Checkout - Security and Authorization', () => {
 test.describe('API: Stripe Checkout - URL Handling', () => {
   test('should extract base URL from origin header', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
     const response = await api.post('/api/checkout', {
       priceId: 'price_test_origin',
@@ -472,7 +421,7 @@ test.describe('API: Stripe Checkout - URL Handling', () => {
 
   test('should use default URLs when custom ones are not provided', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
     const response = await api.post('/api/checkout', {
       priceId: 'price_test_default_urls',
@@ -486,10 +435,9 @@ test.describe('API: Stripe Checkout - URL Handling', () => {
 test.describe('API: Stripe Checkout - Subscription Metadata Handling', () => {
   test('should include plan_key in session and subscription metadata', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
-    const response = await api.post('/api/checkout', {
+        const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.HOBBY_MONTHLY,
       metadata: {
         source: 'web',
@@ -502,10 +450,9 @@ test.describe('API: Stripe Checkout - Subscription Metadata Handling', () => {
 
   test('should include user_id in both session and subscription metadata', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
-    const response = await api.post('/api/checkout', {
+        const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.PRO_MONTHLY,
     });
 
@@ -514,10 +461,9 @@ test.describe('API: Stripe Checkout - Subscription Metadata Handling', () => {
 
   test('should merge custom metadata with subscription metadata', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
-    const response = await api.post('/api/checkout', {
+        const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.BUSINESS_MONTHLY,
       metadata: {
         promotion: 'new_user',
@@ -533,10 +479,9 @@ test.describe('API: Stripe Checkout - Subscription Metadata Handling', () => {
 test.describe('API: Stripe Checkout - Integration with Subscription Webhook Flow', () => {
   test('should create sessions compatible with subscription webhook processing', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
-    const response = await api.post('/api/checkout', {
+        const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.HOBBY_MONTHLY,
       metadata: {
         source: 'pricing_page',
@@ -550,12 +495,11 @@ test.describe('API: Stripe Checkout - Integration with Subscription Webhook Flow
 
   test('should always create subscription mode sessions', async ({ request }) => {
     const user = await ctx.createUser();
-    api = new ApiClient(request).withAuth(user.token);
+    const api = new ApiClient(request).withAuth(user.token);
 
-    const { STRIPE_PRICES } = await import('@shared/config/stripe');
-
+    
     // Test all subscription prices create subscription mode
-    for (const [planKey, priceId] of Object.entries(STRIPE_PRICES)) {
+    for (const [, priceId] of Object.entries(STRIPE_PRICES)) {
       const response = await api.post('/api/checkout', { priceId });
 
       // Should pass validation and fail at Stripe API
