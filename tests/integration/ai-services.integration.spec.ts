@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager } from '../helpers/test-data-manager';
+import { TestContext, ApiClient } from '../helpers';
 
 /**
  * AI Services Integration Tests
@@ -13,25 +13,26 @@ import { TestDataManager } from '../helpers/test-data-manager';
  * - Rate limiting for AI services
  */
 test.describe('AI Services Integration', () => {
-  let testDataManager: TestDataManager;
-  let testUser: { id: string; email: string; token: string };
+  let ctx: TestContext;
+  let api: ApiClient;
+  let testUser: { id: string; token: string };
 
   test.beforeAll(async () => {
-    testDataManager = new TestDataManager();
-    testUser = await testDataManager.createTestUserWithSubscription('active', 'pro', 100);
+    ctx = new TestContext();
   });
 
   test.afterAll(async () => {
-    await testDataManager.cleanupUser(testUser.id);
+    await ctx.cleanup();
+  });
+
+  test.beforeEach(async ({ request }) => {
+    testUser = await ctx.createUser({ subscription: 'active', tier: 'pro', credits: 100 });
+    api = new ApiClient(request).withAuth(testUser.token);
   });
 
   test.describe('Service Connectivity', () => {
-    test('should handle Gemini API health check', async ({ request }) => {
-      const response = await request.get('/api/health/ai', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-        },
-      });
+    test('should handle Gemini API health check', async () => {
+      const response = await api.get('/api/health/ai');
 
       // Health check endpoint may not exist, but if it does, should return status
       expect([200, 404].includes(response.status())).toBeTruthy();
@@ -43,16 +44,10 @@ test.describe('AI Services Integration', () => {
       }
     });
 
-    test('should validate API keys are configured', async ({ request }) => {
+    test('should validate API keys are configured', async () => {
       // Try processing to verify API keys are present (may fail due to mocking)
-      const response = await request.post('/api/upscale/test-connection', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          test: true,
-        },
+      const response = await api.post('/api/upscale/test-connection', {
+        test: true,
       });
 
       // Should not fail due to missing API keys
@@ -67,7 +62,7 @@ test.describe('AI Services Integration', () => {
   });
 
   test.describe('Image Processing Integration', () => {
-    test('should validate input image before processing', async ({ request }) => {
+    test('should validate input image before processing', async () => {
       const testCases = [
         { name: 'Empty image', image: '' },
         { name: 'Invalid base64', image: 'not-base64-data' },
@@ -76,16 +71,10 @@ test.describe('AI Services Integration', () => {
       ];
 
       for (const testCase of testCases) {
-        const response = await request.post('/api/upscale', {
-          headers: {
-            Authorization: `Bearer ${testUser.token}`,
-            'Content-Type': 'application/json',
-          },
-          data: {
-            image: testCase.image,
-            mode: 'standard',
-            scale: 2,
-          },
+        const response = await api.post('/api/upscale', {
+          image: testCase.image,
+          mode: 'standard',
+          scale: 2,
         });
 
         expect(response.status()).toBe(400);
@@ -94,7 +83,7 @@ test.describe('AI Services Integration', () => {
       }
     });
 
-    test('should validate processing parameters', async ({ request }) => {
+    test('should validate processing parameters', async () => {
       const validImage = 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=';
 
       const invalidParams = [
@@ -106,17 +95,11 @@ test.describe('AI Services Integration', () => {
       ];
 
       for (const params of invalidParams) {
-        const response = await request.post('/api/upscale', {
-          headers: {
-            Authorization: `Bearer ${testUser.token}`,
-            'Content-Type': 'application/json',
-          },
-          data: {
-            image: validImage,
-            mode: 'standard',
-            scale: 2,
-            ...params,
-          },
+        const response = await api.post('/api/upscale', {
+          image: validImage,
+          mode: 'standard',
+          scale: 2,
+          ...params,
         });
 
         expect(response.status()).toBe(400);
@@ -127,19 +110,13 @@ test.describe('AI Services Integration', () => {
   });
 
   test.describe('Fallback Provider Logic', () => {
-    test('should handle primary provider failure gracefully', async ({ request }) => {
+    test('should handle primary provider failure gracefully', async () => {
       // Mock a scenario where primary provider fails
-      const response = await request.post('/api/upscale', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
-          mode: 'standard',
-          scale: 2,
-          forcePrimaryFailure: true, // Custom parameter for testing
-        },
+      const response = await api.post('/api/upscale', {
+        image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
+        mode: 'standard',
+        scale: 2,
+        forcePrimaryFailure: true, // Custom parameter for testing
       });
 
       // Should attempt fallback or return appropriate error
@@ -151,19 +128,13 @@ test.describe('AI Services Integration', () => {
       }
     });
 
-    test('should track provider switches', async ({ request }) => {
+    test('should track provider switches', async () => {
       // This would require logging provider switches
       // For now, we verify the request structure is handled
-      const response = await request.post('/api/upscale', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
-          mode: 'standard',
-          scale: 2,
-        },
+      const response = await api.post('/api/upscale', {
+        image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
+        mode: 'standard',
+        scale: 2,
       });
 
       // Request should be structured properly for provider handling
@@ -172,22 +143,16 @@ test.describe('AI Services Integration', () => {
   });
 
   test.describe('Prompt Engineering', () => {
-    test('should build appropriate prompts for different modes', async ({ request }) => {
+    test('should build appropriate prompts for different modes', async () => {
       const modes = ['standard', 'enhanced', 'portrait', 'product'];
       const validImage = 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=';
 
       for (const mode of modes) {
-        const response = await request.post('/api/upscale/prompt-test', {
-          headers: {
-            Authorization: `Bearer ${testUser.token}`,
-            'Content-Type': 'application/json',
-          },
-          data: {
-            image: validImage,
-            mode,
-            scale: 2,
-            testPrompt: true,
-          },
+        const response = await api.post('/api/upscale/prompt-test', {
+          image: validImage,
+          mode,
+          scale: 2,
+          testPrompt: true,
         });
 
         // Prompt test endpoint may not exist, but request should be valid
@@ -200,19 +165,13 @@ test.describe('AI Services Integration', () => {
       }
     });
 
-    test('should handle text preservation instructions', async ({ request }) => {
-      const response = await request.post('/api/upscale', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
-          mode: 'standard',
-          scale: 2,
-          preserveText: true,
-          customPrompt: 'Preserve all text and logos perfectly',
-        },
+    test('should handle text preservation instructions', async () => {
+      const response = await api.post('/api/upscale', {
+        image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
+        mode: 'standard',
+        scale: 2,
+        preserveText: true,
+        customPrompt: 'Preserve all text and logos perfectly',
       });
 
       // Should accept custom prompt parameters
@@ -221,37 +180,25 @@ test.describe('AI Services Integration', () => {
   });
 
   test.describe('Error Handling and Recovery', () => {
-    test('should handle timeout scenarios', async ({ request }) => {
-      const response = await request.post('/api/upscale', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
-          mode: 'standard',
-          scale: 2,
-          timeout: 1000, // Very short timeout for testing
-        },
+    test('should handle timeout scenarios', async () => {
+      const response = await api.post('/api/upscale', {
+        image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
+        mode: 'standard',
+        scale: 2,
+        timeout: 1000, // Very short timeout for testing
       });
 
       // Should handle timeout without hanging
       expect([408, 500, 503, 400].includes(response.status())).toBeTruthy();
     });
 
-    test('should retry on transient failures', async ({ request }) => {
+    test('should retry on transient failures', async () => {
       // Simulate a transient failure scenario
-      const response = await request.post('/api/upscale', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
-          mode: 'standard',
-          scale: 2,
-          simulateTransientError: true,
-        },
+      const response = await api.post('/api/upscale', {
+        image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
+        mode: 'standard',
+        scale: 2,
+        simulateTransientError: true,
       });
 
       // Should either succeed after retry or fail gracefully
@@ -264,29 +211,23 @@ test.describe('AI Services Integration', () => {
       }
     });
 
-    test('should refund credits on processing failure', async ({ request }) => {
-      const initialBalance = (await testDataManager.getUserProfile(testUser.id)).credits_balance;
+    test('should refund credits on processing failure', async () => {
+      const initialBalance = (await ctx.data.getUserProfile(testUser.id)).credits_balance;
 
-      const response = await request.post('/api/upscale', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
-          mode: 'standard',
-          scale: 2,
-          forceError: true,
-        },
+      const response = await api.post('/api/upscale', {
+        image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
+        mode: 'standard',
+        scale: 2,
+        forceError: true,
       });
 
       if (response.status() >= 500) {
         // Check if credits were refunded
-        const finalBalance = (await testDataManager.getUserProfile(testUser.id)).credits_balance;
+        const finalBalance = (await ctx.data.getUserProfile(testUser.id)).credits_balance;
         expect(finalBalance).toBe(initialBalance);
 
         // Check for refund transaction
-        const transactions = await testDataManager.getCreditTransactions(testUser.id);
+        const transactions = await ctx.data.getCreditTransactions(testUser.id);
         const refundTransaction = transactions.find(t =>
           t.type === 'refund' && t.description?.includes('Processing failure')
         );
@@ -296,18 +237,12 @@ test.describe('AI Services Integration', () => {
   });
 
   test.describe('Rate Limiting for AI Services', () => {
-    test('should limit concurrent AI requests', async ({ request }) => {
+    test('should limit concurrent AI requests', async () => {
       const requests = Array(10).fill(null).map(() =>
-        request.post('/api/upscale', {
-          headers: {
-            Authorization: `Bearer ${testUser.token}`,
-            'Content-Type': 'application/json',
-          },
-          data: {
-            image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
-            mode: 'standard',
-            scale: 2,
-          },
+        api.post('/api/upscale', {
+          image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
+          mode: 'standard',
+          scale: 2,
         })
       );
 
@@ -328,19 +263,13 @@ test.describe('AI Services Integration', () => {
   });
 
   test.describe('Performance Monitoring', () => {
-    test('should track processing time', async ({ request }) => {
+    test('should track processing time', async () => {
       const startTime = Date.now();
 
-      const response = await request.post('/api/upscale', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
-          mode: 'standard',
-          scale: 2,
-        },
+      const response = await api.post('/api/upscale', {
+        image: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQXBykwNt7qKQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAT0lEQVQYV2NkYGD4z4AHMOrAaKDAE14hPFfgZLwMFAZVWQJwJiYGBgYOHCo6B8ZGBgYJh6B/zDAQwMf8DEAIhUAZUDAZUGQGQGBgYG5pAhlA0AAD/lrR9YgAAAAASUVORK5CYII=',
+        mode: 'standard',
+        scale: 2,
       });
 
       const responseTime = Date.now() - startTime;
@@ -355,12 +284,8 @@ test.describe('AI Services Integration', () => {
       }
     });
 
-    test('should monitor AI provider performance', async ({ request }) => {
-      const response = await request.get('/api/monitoring/ai-performance', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-        },
-      });
+    test('should monitor AI provider performance', async () => {
+      const response = await api.get('/api/monitoring/ai-performance');
 
       // Monitoring endpoint may not exist, but if it does should return metrics
       expect([200, 404].includes(response.status())).toBeTruthy();

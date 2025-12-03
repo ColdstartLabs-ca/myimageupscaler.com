@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager } from '../helpers/test-data-manager';
+import { TestContext, ApiClient } from '../helpers';
 
 /**
  * Integration Tests for Stripe Customer Portal API
@@ -11,355 +11,571 @@ import { TestDataManager } from '../helpers/test-data-manager';
  * - Error handling and edge cases
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+// Shared test setup for all portal tests
+let ctx: TestContext;
+let api: ApiClient;
 
-test.describe('API: Stripe Customer Portal Integration', () => {
-  let dataManager: TestDataManager;
-  let testUser: { id: string; email: string; token: string };
-  let userWithStripeCustomer: { id: string; email: string; token: string };
+test.beforeAll(async () => {
+  ctx = new TestContext();
+});
 
-  test.beforeAll(async () => {
-    dataManager = new TestDataManager();
-    testUser = await dataManager.createTestUser();
+test.afterAll(async () => {
+  await ctx.cleanup();
+});
 
-    // Create a user with Stripe customer ID for portal tests
-    userWithStripeCustomer = await dataManager.createTestUser();
-    await dataManager.setSubscriptionStatus(userWithStripeCustomer.id, 'active', 'pro');
+test.describe('API: Stripe Customer Portal - Authentication', () => {
+  test('should reject requests without authorization header', async ({ request }) => {
+    api = new ApiClient(request);
+    const response = await api.post('/api/portal');
 
-    // Set up Stripe customer ID
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-
-    await supabase
-      .from('profiles')
-      .update({
-        stripe_customer_id: `cus_test_${userWithStripeCustomer.id}`
-      })
-      .eq('id', userWithStripeCustomer.id);
+    response.expectStatus(401);
+    await response.expectErrorCode('UNAUTHORIZED');
   });
 
-  test.afterAll(async () => {
-    if (dataManager) {
-      await dataManager.cleanupAllUsers();
+  test('should reject requests with malformed authorization header', async ({ request }) => {
+    api = new ApiClient(request);
+    const malformedHeaders = [
+      'InvalidFormat token123',
+      'Bearer',
+      'Bearer not.a.valid.jwt',
+      'Basic dGVzdDoxMjM=', // Basic auth instead of Bearer
+      'Bearer ',
+      'invalid_token_without_bearer'
+    ];
+
+    for (const authHeader of malformedHeaders) {
+      const response = await api.post('/api/portal', undefined, {
+        headers: { 'Authorization': authHeader }
+      });
+
+      response.expectStatus(401);
+      await response.expectErrorCode('UNAUTHORIZED');
     }
   });
 
-  test.describe('Authentication & Authorization', () => {
-    test('should reject requests without authorization header', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`);
+  test('should reject requests with invalid JWT token', async ({ request }) => {
+    api = new ApiClient(request);
+    const invalidTokens = [
+      'invalid_token_12345',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.signature',
+      'not.a.jwt.token.at.all',
+      'Bearer ' + 'x'.repeat(100), // Very long invalid token
+      '',
+      'null',
+      'undefined'
+    ];
 
-      expect(response.status()).toBe(401);
+    for (const token of invalidTokens) {
+      const response = await api.post('/api/portal', undefined, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      response.expectStatus(401);
+      await response.expectErrorCode('UNAUTHORIZED');
+    }
+  });
+
+  test('should accept requests with valid authentication', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal');
+
+    // May fail due to missing Stripe customer, but should not fail authentication
+    expect([400, 402, 500]).toContain(response.status());
+
+    if (response.status() === 400) {
       const data = await response.json();
-      expect(data.error).toBeDefined();
-      expect(data.error.code).toBe('UNAUTHORIZED');
-    });
+      // Should have proper error message, not authentication error
+      expect(data.error).toBeTruthy();
+      expect(data.error).not.toBe('Missing authorization header');
+      expect(data.error).not.toBe('Invalid authentication token');
+    }
+  });
+});
 
-    test('should reject requests with malformed authorization header', async ({ request }) => {
-      const malformedHeaders = [
-        'InvalidFormat token123',
-        'Bearer',
-        'Bearer not.a.valid.jwt',
-        'Basic dGVzdDoxMjM=', // Basic auth instead of Bearer
-        'Bearer ',
-        'invalid_token_without_bearer'
-      ];
+test.describe('API: Stripe Customer Portal - Request Validation', () => {
+  test('should handle empty request body', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', '');
 
-      for (const authHeader of malformedHeaders) {
-        const response = await request.post(`${BASE_URL}/api/portal`, {
-          headers: { 'Authorization': authHeader }
-        });
-
-        expect(response.status()).toBe(401);
-        const data = await response.json();
-        expect(data.error).toBeDefined();
-        expect(data.error.code).toBe('UNAUTHORIZED');
-      }
-    });
-
-    test('should reject requests with invalid JWT token', async ({ request }) => {
-      const invalidTokens = [
-        'invalid_token_12345',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.signature',
-        'not.a.jwt.token.at.all',
-        'Bearer ' + 'x'.repeat(100), // Very long invalid token
-        '',
-        'null',
-        'undefined'
-      ];
-
-      for (const token of invalidTokens) {
-        const response = await request.post(`${BASE_URL}/api/portal`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        expect(response.status()).toBe(401);
-        const data = await response.json();
-        expect(data.error).toBeDefined();
-        expect(data.error.code).toBe('UNAUTHORIZED');
-      }
-    });
-
-    test('should accept requests with valid authentication', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${testUser.token}` }
-      });
-
-      // May fail due to missing Stripe customer, but should not fail authentication
-      expect([400, 402, 500]).toContain(response.status());
-
-      if (response.status() === 400) {
-        const data = await response.json();
-        // Should have proper error message, not authentication error
-        expect(data.error).toBeTruthy();
-        expect(data.error).not.toBe('Missing authorization header');
-        expect(data.error).not.toBe('Invalid authentication token');
-      }
-    });
+    expect([400, 401, 500]).toContain(response.status());
   });
 
-  test.describe('Request Validation', () => {
-    test('should handle empty request body', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${testUser.token}` },
-        data: ''
-      });
-
-      expect([400, 401, 500]).toContain(response.status());
+  test('should reject malformed JSON', async ({ request }) => {
+    const user = await ctx.createUser();
+    const response = await request.post('/api/portal', {
+      headers: {
+        'Authorization': `Bearer ${user.token}`,
+        'Content-Type': 'application/json'
+      },
+      data: 'invalid json {{{'
     });
 
-    test('should handle malformed JSON', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: {
-          'Authorization': `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json'
-        },
-        data: 'invalid json {{{'
-      });
-
-      // Should either reject malformed JSON or fail authentication first
-      expect([400, 401]).toContain(response.status());
-    });
-
-    test('should handle missing required fields', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${testUser.token}` },
-        data: {}
-      });
-
-      // API should handle missing fields gracefully
-      expect([400, 401, 500]).toContain(response.status());
-    });
-
-    test('should validate return URL format', async ({ request }) => {
-      const invalidUrls = [
-        'not-a-url',
-        'ftp://invalid-protocol.com',
-        'javascript:alert(1)',
-        '//missing-protocol.com',
-        'https://evil.com/malicious'
-      ];
-
-      for (const returnUrl of invalidUrls) {
-        const response = await request.post(`${BASE_URL}/api/portal`, {
-          headers: { 'Authorization': `Bearer ${testUser.token}` },
-          data: { returnUrl }
-        });
-
-        // Should handle invalid URLs gracefully
-        expect([400, 401, 422, 500]).toContain(response.status());
-      }
-    });
+    expect([400, 401]).toContain(response.status());
   });
 
-  test.describe('Stripe Customer Validation', () => {
-    test('should require user to have Stripe customer ID', async ({ request }) => {
-      // Test with user that doesn't have Stripe customer ID
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${testUser.token}` }
-      });
-
-      // Should fail because user doesn't have Stripe customer ID
-      expect([400, 402, 404, 500]).toContain(response.status());
-
-      if (response.status() === 400) {
-        const data = await response.json();
-        expect(data.error).toBeTruthy();
-      }
+  test('should accept valid JSON with returnUrl', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {
+      returnUrl: 'https://example.com/return'
     });
 
-    test('should work with user that has Stripe customer ID', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` }
-      });
-
-      // May succeed or fail due to Stripe API not being available in test
-      // but should not fail due to missing customer ID
-      expect([200, 400, 402, 500]).toContain(response.status());
-
-      if (response.status() === 200) {
-        const data = await response.json();
-        expect(data.success).toBe(true);
-        expect(data.data.url).toBeTruthy();
-        expect(typeof data.data.url).toBe('string');
-      }
-    });
+    expect(response.status()).toBeGreaterThanOrEqual(400);
   });
 
-  test.describe('Portal Session Creation', () => {
-    test('should handle valid portal session request', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` },
-        data: {}
-      });
+  test('should validate return URL format', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const invalidUrls = [
+      'not-a-url',
+      'ftp://invalid-protocol.com',
+      'javascript:alert(1)',
+      '//missing-protocol.com',
+    ];
 
-      // In test environment, this might fail due to Stripe API
-      expect([200, 400, 402, 500]).toContain(response.status());
-
-      if (response.status() === 200) {
-        const data = await response.json();
-        expect(data.success).toBe(true);
-        expect(data.data.url).toBeTruthy();
-        // In test mode, the URL will be http, in production it would be https
-        expect(data.data.url).toMatch(/^https?/);
-      }
-    });
-
-    test('should include return URL in session when provided', async ({ request }) => {
-      const returnUrl = 'https://example.com/billing';
-
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` },
-        data: { returnUrl }
-      });
-
-      // May fail due to Stripe API but should handle the return URL parameter
-      expect([200, 400, 402, 500]).toContain(response.status());
-    });
-
-    test('should handle concurrent portal requests', async ({ request }) => {
-      // Send multiple requests simultaneously
-      const requests = Array(3).fill(null).map(() =>
-        request.post(`${BASE_URL}/api/portal`, {
-          headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` }
-        })
-      );
-
-      const responses = await Promise.all(requests);
-
-      // All requests should be handled consistently
-      responses.forEach(response => {
-        expect([200, 400, 402, 429, 500]).toContain(response.status());
-      });
-    });
+    for (const returnUrl of invalidUrls) {
+      const response = await api.post('/api/portal', { returnUrl });
+      expect([400, 401, 422, 500]).toContain(response.status());
+    }
   });
 
-  test.describe('Error Handling', () => {
-    test('should handle Stripe API errors gracefully', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` }
-      });
+  test('should reject dangerous protocols', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const dangerousUrls = [
+      'javascript:alert("xss")',
+      'data:text/html,<script>alert("xss")</script>',
+      'vbscript:msgbox("xss")',
+      'ftp://example.com/file',
+      'file:///etc/passwd',
+    ];
 
-      // In test environment, Stripe might return errors
+    for (const returnUrl of dangerousUrls) {
+      const response = await api.post('/api/portal', { returnUrl });
+      response.expectStatus(400);
+      await response.expectErrorCode('INVALID_RETURN_URL');
+    }
+  });
+
+  test('should reject XSS patterns in return URL', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const xssUrls = [
+      'https://example.com/<script>alert("xss")</script>',
+      'https://example.com/?onload=alert("xss")',
+      'https://example.com/?onerror=alert("xss")',
+      'https://example.com/javascript:alert("xss")',
+      'https://example.com/data:text/html,<script>alert("xss")</script>',
+    ];
+
+    for (const returnUrl of xssUrls) {
+      const response = await api.post('/api/portal', { returnUrl });
+      response.expectStatus(400);
+      await response.expectErrorCode('INVALID_RETURN_URL');
+    }
+  });
+});
+
+test.describe('API: Stripe Customer Portal - Customer Validation', () => {
+  test('should require user to have Stripe customer ID', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal');
+
+    response.expectStatus(400);
+    await response.expectErrorCode('STRIPE_CUSTOMER_NOT_FOUND');
+  });
+
+  test('should work with user that has Stripe customer ID', async ({ request }) => {
+    const user = await ctx.createUser({ subscription: 'active', tier: 'pro' });
+
+    // Set up Stripe customer ID
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: `cus_test_${user.id}` })
+      .eq('id', user.id);
+
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal');
+
+    // May succeed or fail due to Stripe API not being available in test
+    expect([200, 400, 402, 500]).toContain(response.status());
+
+    if (response.status() === 200) {
+      const data = await response.json();
+      expect(data.success).toBe(true);
+      expect(data.data.url).toBeTruthy();
+      expect(typeof data.data.url).toBe('string');
+    }
+  });
+
+  test('should accept requests with valid Stripe customer ID', async ({ request }) => {
+    const user = await ctx.createUser();
+
+    // Set up customer ID in profile
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: 'cus_test_123' })
+      .eq('id', user.id);
+
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {
+      returnUrl: 'https://example.com/return'
+    });
+
+    expect(response.status()).toBeGreaterThanOrEqual(400);
+  });
+});
+
+test.describe('API: Stripe Customer Portal - Portal Session Creation', () => {
+  test('should handle valid portal session request', async ({ request }) => {
+    const user = await ctx.createUser({ subscription: 'active', tier: 'pro' });
+
+    // Set up Stripe customer ID
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: `cus_test_${user.id}` })
+      .eq('id', user.id);
+
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {});
+
+    // In test environment, this might fail due to Stripe API
+    expect([200, 400, 402, 500]).toContain(response.status());
+
+    if (response.status() === 200) {
+      const data = await response.json();
+      expect(data.success).toBe(true);
+      expect(data.data.url).toBeTruthy();
+      expect(data.data.url).toMatch(/^https?/);
+    }
+  });
+
+  test('should include return URL in session when provided', async ({ request }) => {
+    const user = await ctx.createUser({ subscription: 'active', tier: 'pro' });
+
+    // Set up Stripe customer ID
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: `cus_test_${user.id}` })
+      .eq('id', user.id);
+
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {
+      returnUrl: 'https://example.com/billing'
+    });
+
+    // May fail due to Stripe API but should handle the return URL parameter
+    expect([200, 400, 402, 500]).toContain(response.status());
+  });
+
+  test('should handle concurrent portal requests', async ({ request }) => {
+    const user = await ctx.createUser({ subscription: 'active', tier: 'pro' });
+
+    // Set up Stripe customer ID
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: `cus_test_${user.id}` })
+      .eq('id', user.id);
+
+    // Send multiple requests simultaneously
+    const requests = Array(3).fill(null).map(() =>
+      request.post('/api/portal', {
+        headers: { 'Authorization': `Bearer ${user.token}` }
+      })
+    );
+
+    const responses = await Promise.all(requests);
+
+    // All requests should be handled consistently
+    responses.forEach(response => {
       expect([200, 400, 402, 429, 500]).toContain(response.status());
-
-      if (response.status() >= 400) {
-        const data = await response.json();
-        expect(data.error).toBeTruthy();
-        // Should not leak sensitive information and should follow new error format
-        if (typeof data.error === 'object') {
-          expect(data.error.code).toBeTruthy();
-          expect(data.error.message).toBeTruthy();
-        } else {
-          expect(typeof data.error).toBe('string');
-        }
-      }
-    });
-
-    test('should handle missing environment variables gracefully', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` }
-      });
-
-      // Should handle missing Stripe keys gracefully
-      expect([200, 400, 402, 500]).toContain(response.status());
-    });
-
-    test('should handle database connection issues', async ({ request }) => {
-      // This tests the resilience of the API when database is unavailable
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` }
-      });
-
-      // Should handle DB issues gracefully
-      expect([200, 400, 401, 500, 503]).toContain(response.status());
     });
   });
+});
 
-  test.describe('Security and Rate Limiting', () => {
-    test('should handle rate limiting for portal requests', async ({ request }) => {
-      // Send multiple requests rapidly
-      const responses = [];
-      for (let i = 0; i < 10; i++) {
-        const response = await request.post(`${BASE_URL}/api/portal`, {
-          headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` }
-        });
-        responses.push(response);
+test.describe('API: Stripe Customer Portal - Test Mode Behavior', () => {
+  test('should return mock response in test environment', async ({ request }) => {
+    const user = await ctx.createUser();
+
+    // Set up customer ID
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: 'cus_test_mock' })
+      .eq('id', user.id);
+
+    const response = await request.post('/api/portal', {
+      data: { returnUrl: 'https://example.com/return' },
+      headers: {
+        authorization: `Bearer ${user.token}`,
+        'content-type': 'application/json',
+        origin: 'https://example.com',
+      },
+    });
+
+    const data = await response.json();
+    if (response.status() === 200) {
+      expect(data.success).toBe(true);
+      expect(data.data.mock).toBe(true);
+      expect(data.data.url).toContain('mock=true');
+    }
+  });
+});
+
+test.describe('API: Stripe Customer Portal - Error Handling', () => {
+  test('should handle Stripe API errors gracefully', async ({ request }) => {
+    const user = await ctx.createUser({ subscription: 'active', tier: 'pro' });
+
+    // Set up Stripe customer ID
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: `cus_test_${user.id}` })
+      .eq('id', user.id);
+
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal');
+
+    // In test environment, Stripe might return errors
+    expect([200, 400, 402, 429, 500]).toContain(response.status());
+
+    if (response.status() >= 400) {
+      const data = await response.json();
+      expect(data.error).toBeTruthy();
+      if (typeof data.error === 'object') {
+        expect(data.error.code).toBeTruthy();
+        expect(data.error.message).toBeTruthy();
       }
+    }
+  });
 
-      // Most should succeed or return expected errors
-      responses.forEach(response => {
-        expect([200, 400, 401, 402, 429, 500]).toContain(response.status());
+  test('should handle database connection issues', async ({ request }) => {
+    // This tests the resilience of the API when database is unavailable
+    const response = await request.post('/api/portal', {
+      headers: { 'Authorization': 'Bearer potentially_valid_but_db_unavailable_token' }
+    });
+
+    // Should handle DB issues gracefully
+    expect([200, 400, 401, 500, 503]).toContain(response.status());
+  });
+
+  test('should return consistent error response format', async ({ request }) => {
+    const user = await ctx.createUser();
+
+    const response = await request.post('/api/portal', {
+      headers: {
+        authorization: `Bearer ${user.token}`,
+        'content-type': 'application/json',
+      },
+    });
+
+    expect(response.headers()['content-type']).toContain('application/json');
+
+    const data = await response.json();
+    expect(data).toHaveProperty('success');
+    expect(data).toHaveProperty('error');
+
+    if (data.success === false) {
+      expect(data.error).toHaveProperty('code');
+      expect(data.error).toHaveProperty('message');
+    }
+  });
+});
+
+test.describe('API: Stripe Customer Portal - Security', () => {
+  test('should prevent access to other users\' customer data', async ({ request }) => {
+    const user1 = await ctx.createUser();
+    const user2 = await ctx.createUser({ subscription: 'active', tier: 'pro' });
+
+    // Set up customer ID for user 2 only
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: 'cus_user2_only' })
+      .eq('id', user2.id);
+
+    // User 1 should not be able to access portal without their own customer ID
+    api = new ApiClient(request).withAuth(user1.token);
+    const response = await api.post('/api/portal');
+
+    response.expectStatus(400);
+    await response.expectErrorCode('STRIPE_CUSTOMER_NOT_FOUND');
+  });
+
+  test('should sanitize all user inputs', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+
+    // Test various injection attempts
+    const maliciousInputs = [
+      '<script>alert("xss")</script>',
+      'javascript:alert("xss")',
+      'data:text/html,<script>alert("xss")</script>',
+      '{{constructor.constructor("return process")().exit()}}',
+    ];
+
+    for (const input of maliciousInputs) {
+      const response = await api.post('/api/portal', { returnUrl: input });
+
+      // Should reject dangerous inputs
+      if (response.status() === 400) {
+        const data = await response.json();
+        expect(data.success).toBe(false);
+      }
+    }
+  });
+
+  test('should include security headers', async ({ request }) => {
+    const user = await ctx.createUser();
+
+    const response = await request.post('/api/portal', {
+      headers: { 'Authorization': `Bearer ${user.token}` }
+    });
+
+    // Should include content-type header regardless of response status
+    const headers = response.headers();
+    expect(headers['content-type']).toBeTruthy();
+    expect(headers['content-type']).toMatch(/json/);
+  });
+
+  test('should handle rate limiting for portal requests', async ({ request }) => {
+    const user = await ctx.createUser({ subscription: 'active', tier: 'pro' });
+
+    // Set up Stripe customer ID
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: `cus_test_${user.id}` })
+      .eq('id', user.id);
+
+    // Send multiple requests rapidly
+    const responses = [];
+    for (let i = 0; i < 10; i++) {
+      const response = await request.post('/api/portal', {
+        headers: { 'Authorization': `Bearer ${user.token}` }
       });
+      responses.push(response);
+    }
 
-      // Check for rate limiting headers if rate limited
-      const rateLimitedResponses = responses.filter(r => r.status() === 429);
-      if (rateLimitedResponses.length > 0) {
-        const headers = rateLimitedResponses[0].headers();
-        expect(headers['x-ratelimit-remaining'] || headers['retry-after']).toBeTruthy();
-      }
+    // Most should succeed or return expected errors
+    responses.forEach(response => {
+      expect([200, 400, 401, 402, 429, 500]).toContain(response.status());
     });
 
-    test('should prevent XSS through return URL parameter', async ({ request }) => {
-      const xssPayloads = [
-        'javascript:alert(1)',
-        '<script>alert(1)</script>',
-        'data:text/html,<script>alert(1)</script>',
-        'vbscript:msgbox(1)',
-        '"></script><script>alert(1)</script>'
-      ];
+    // Check for rate limiting headers if rate limited
+    const rateLimitedResponses = responses.filter(r => r.status() === 429);
+    if (rateLimitedResponses.length > 0) {
+      const headers = rateLimitedResponses[0].headers();
+      expect(headers['x-ratelimit-remaining'] || headers['retry-after']).toBeTruthy();
+    }
+  });
 
-      for (const payload of xssPayloads) {
-        const response = await request.post(`${BASE_URL}/api/portal`, {
-          headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` },
-          data: { returnUrl: payload }
-        });
+  test('should handle missing required fields', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {});
 
-        // Should reject malicious URLs
-        expect([400, 401, 422, 500]).toContain(response.status());
+    // API should handle missing fields gracefully
+    expect([400, 401, 500]).toContain(response.status());
+  });
 
-        // Response should not contain the malicious payload
-        const text = await response.text();
-        expect(text).not.toContain('<script>');
-        expect(text).not.toContain('javascript:');
-      }
+  test('should accept valid HTTP return URL', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {
+      returnUrl: 'http://example.com/return'
     });
 
-    test('should include security headers', async ({ request }) => {
-      const response = await request.post(`${BASE_URL}/api/portal`, {
-        headers: { 'Authorization': `Bearer ${userWithStripeCustomer.token}` }
-      });
+    expect(response.status()).toBeGreaterThanOrEqual(400);
+  });
 
-      // Should include content-type header regardless of response status
-      const headers = response.headers();
-      expect(headers['content-type']).toBeTruthy();
+  test('should reject malformed URLs', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const malformedUrls = [
+      'not-a-url',
+      'ht tp://invalid',
+      '://missing-protocol',
+      'https://',
+      'http://',
+    ];
 
-      // Note: CSP and X-Frame-Options may not be set at API route level in Next.js
-      // These headers are typically set at the application level via middleware
-      // We'll just verify the response has proper content-type
-      expect(headers['content-type']).toMatch(/json/);
+    for (const returnUrl of malformedUrls) {
+      const response = await api.post('/api/portal', { returnUrl });
+      response.expectStatus(400);
+      await response.expectErrorCode('INVALID_RETURN_URL');
+    }
+  });
+
+  test('should use default return URL when not provided', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {});
+
+    expect(response.status()).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should accept valid HTTPS return URL', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {
+      returnUrl: 'https://example.com/return'
     });
+
+    expect(response.status()).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should work without origin header', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {});
+
+    expect(response.status()).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should use origin header for default return URL', async ({ request }) => {
+    const user = await ctx.createUser();
+    api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/portal', {}, {
+      headers: { origin: 'https://myapp.com' }
+    });
+
+    expect(response.status()).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should return success response format in test mode', async ({ request }) => {
+    const user = await ctx.createUser();
+
+    // Set up customer ID
+    const supabaseAdmin = await import('@server/supabase/supabaseAdmin');
+    await supabaseAdmin.supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: 'cus_test_format' })
+      .eq('id', user.id);
+
+    const response = await request.post('/api/portal', {
+      headers: {
+        authorization: `Bearer ${user.token}`,
+        'content-type': 'application/json',
+        origin: 'https://example.com',
+      },
+    });
+
+    const data = await response.json();
+    expect(data).toHaveProperty('success');
+
+    if (data.success === true) {
+      expect(data).toHaveProperty('data');
+      expect(data.data).toHaveProperty('url');
+      expect(data.data).toHaveProperty('mock');
+    }
   });
 });

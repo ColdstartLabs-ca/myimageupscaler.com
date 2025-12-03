@@ -74,16 +74,18 @@ export class PricingPage extends BasePage {
   }
 
   /**
-   * Navigate to the pricing page
+   * Navigate to the pricing page and wait for load
    */
   async goto(): Promise<void> {
     await super.goto('/pricing');
+    await this.waitForLoad();
   }
 
   /**
    * Wait for the page to load completely
    */
   async waitForLoad(): Promise<void> {
+    await this.waitForPageLoad();
     await expect(this.pageTitle).toBeVisible();
     await expect(this.creditPacksSection).toBeVisible();
     await expect(this.subscriptionsSection).toBeVisible();
@@ -135,18 +137,45 @@ export class PricingPage extends BasePage {
 
   /**
    * Subscribe to a specific plan
+   *
+   * @param planName - Name of subscription plan
    */
   async subscribeToPlan(planName: string): Promise<void> {
     const card = this.getSubscriptionCard(planName);
     await card.subscribe();
+
+    // Wait for potential redirect to checkout
+    await this.waitForNetworkIdle();
   }
 
   /**
    * Buy a specific credit pack
+   *
+   * @param packName - Name of credit pack
    */
   async buyCreditPack(packName: string): Promise<void> {
     const card = this.getCreditPackCard(packName);
     await card.buyNow();
+
+    // Wait for potential redirect to checkout
+    await this.waitForNetworkIdle();
+  }
+
+  /**
+   * Click contact sales button for custom plans
+   */
+  async contactSales(): Promise<void> {
+    await this.contactSalesButton.click();
+    await this.waitForNetworkIdle();
+  }
+
+  /**
+   * Check if pricing page is currently visible
+   *
+   * @returns True if pricing page is loaded
+   */
+  async isLoaded(): Promise<boolean> {
+    return await this.pageTitle.isVisible();
   }
 
   /**
@@ -212,9 +241,10 @@ export class PricingCard {
   }
 
   /**
-   * Click subscribe/buy button
+   * Click subscribe/buy button with loading wait
    */
   async subscribe(): Promise<void> {
+    await this.waitForButtonToBeReady();
     await this.subscribeButton.click();
   }
 

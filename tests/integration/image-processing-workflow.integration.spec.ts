@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager } from '../helpers/test-data-manager';
+import { TestContext } from '../helpers';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
@@ -14,15 +14,15 @@ import path from 'path';
  * - Processing performance
  */
 test.describe('Image Processing Workflow Integration', () => {
-  let testDataManager: TestDataManager;
-  let testUser: { id: string; email: string; token: string };
+  let ctx: TestContext;
+  let testUser: any;
   let testImageBuffer: Buffer;
 
   test.beforeAll(async () => {
-    testDataManager = new TestDataManager();
+    ctx = new TestContext();
 
     // Create test user with sufficient credits
-    testUser = await testDataManager.createTestUserWithSubscription('active', 'pro', 50);
+    testUser = await ctx.createUser({ subscription: 'active', tier: 'pro', credits: 50 });
 
     // Load test image
     const imagePath = path.join(__dirname, '../fixtures/sample.jpg');
@@ -30,13 +30,13 @@ test.describe('Image Processing Workflow Integration', () => {
   });
 
   test.afterAll(async () => {
-    await testDataManager.cleanupUser(testUser.id);
+    await ctx.cleanup();
   });
 
   test.describe('Credit System Integration', () => {
     test('should validate credits before processing', async ({ request }) => {
       // Create user with zero credits
-      const zeroCreditUser = await testDataManager.createTestUserWithSubscription('free', undefined, 0);
+      const zeroCreditUser = await ctx.createUser({ subscription: 'free', credits: 0 });
 
       const response = await request.post('/api/upscale', {
         headers: {
@@ -55,7 +55,7 @@ test.describe('Image Processing Workflow Integration', () => {
       expect(error.error.code).toBe('INSUFFICIENT_CREDITS');
       expect(error.error.details.currentBalance).toBe(0);
 
-      await testDataManager.cleanupUser(zeroCreditUser.id);
+      // Note: TestContext handles cleanup automatically
     });
 
     test('should deduct credits after successful processing', async ({ request }) => {
@@ -325,7 +325,7 @@ test.describe('Image Processing Workflow Integration', () => {
   test.describe('Batch Processing Integration', () => {
     test('should validate batch processing limits', async ({ request }) => {
       // Create user with batch processing capability
-      const proUser = await testDataManager.createTestUserWithSubscription('active', 'pro', 100);
+      const proUser = await ctx.createUser({ subscription: 'active', tier: 'pro', credits: 100 });
 
       const response = await request.post('/api/upscale/batch', {
         headers: {
@@ -346,7 +346,7 @@ test.describe('Image Processing Workflow Integration', () => {
       // Should either succeed (if batch endpoint exists) or return 404
       expect([200, 404, 400].includes(response.status())).toBeTruthy();
 
-      await testDataManager.cleanupUser(proUser.id);
+      // Note: TestContext handles cleanup automatically
     });
   });
 });

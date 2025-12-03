@@ -31,6 +31,15 @@ export class TestDataManager {
   }
 
   /**
+   * Gets direct access to the Supabase client
+   *
+   * @returns Supabase client instance
+   */
+  getSupabaseClient() {
+    return this.supabase;
+  }
+
+  /**
    * Initialize user pool with shared test users to reduce API calls
    */
   private static async initializeUserPool(): Promise<void> {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager } from '../helpers/test-data-manager';
+import { TestContext } from '../helpers';
 
 /**
  * Integration Tests for Credit Management System
@@ -13,22 +13,20 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 test.describe('Credit Management Integration Tests', () => {
-  let dataManager: TestDataManager;
+  let ctx: TestContext;
 
   test.beforeAll(async () => {
-    dataManager = new TestDataManager();
+    ctx = new TestContext();
   });
 
   test.afterAll(async () => {
-    if (dataManager) {
-      await dataManager.cleanupAllUsers();
-    }
+    await ctx.cleanup();
   });
 
   test.describe('increment_credits_with_log', () => {
     test('should increment credits and log transaction', async () => {
-      const testUser = await dataManager.createTestUser();
-      const initialProfile = await dataManager.getUserProfile(testUser.id);
+      const testUser = await ctx.data.createTestUser();
+      const initialProfile = await ctx.data.getUserProfile(testUser.id);
       const initialBalance = initialProfile.credits_balance as number;
 
       // Call increment_credits_with_log directly via service role
@@ -63,12 +61,12 @@ test.describe('Credit Management Integration Tests', () => {
         description: 'Test credit purchase'
       });
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
 
     test('should handle multiple increments correctly', async () => {
-      const testUser = await dataManager.createTestUser();
-      const initialProfile = await dataManager.getUserProfile(testUser.id);
+      const testUser = await ctx.data.createTestUser();
+      const initialProfile = await ctx.data.getUserProfile(testUser.id);
       const initialBalance = initialProfile.credits_balance as number;
 
       const { createClient } = await import('@supabase/supabase-js');
@@ -93,7 +91,7 @@ test.describe('Credit Management Integration Tests', () => {
       expect(balance1).toBe(initialBalance + 10);
       expect(balance2).toBe(initialBalance + 25);
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
 
     test('should throw error for non-existent user', async () => {
@@ -113,11 +111,11 @@ test.describe('Credit Management Integration Tests', () => {
 
   test.describe('decrement_credits_with_log', () => {
     test('should decrement credits and log transaction', async () => {
-      const testUser = await dataManager.createTestUser();
+      const testUser = await ctx.data.createTestUser();
 
       // Add credits first
-      await dataManager.addCredits(testUser.id, 50);
-      const profile = await dataManager.getUserProfile(testUser.id);
+      await ctx.data.addCredits(testUser.id, 50);
+      const profile = await ctx.data.getUserProfile(testUser.id);
       const initialBalance = profile.credits_balance as number;
 
       const { createClient } = await import('@supabase/supabase-js');
@@ -151,11 +149,11 @@ test.describe('Credit Management Integration Tests', () => {
         description: 'Image processing'
       });
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
 
     test('should throw error for insufficient credits', async () => {
-      const testUser = await dataManager.createTestUser();
+      const testUser = await ctx.data.createTestUser();
 
       // Don't add credits, user should only have initial 10
       const { createClient } = await import('@supabase/supabase-js');
@@ -171,14 +169,14 @@ test.describe('Credit Management Integration Tests', () => {
       expect(error?.message).toContain('Insufficient credits');
       expect(error?.message).toContain('Required: 20');
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
 
     test('should handle edge case of exact balance', async () => {
-      const testUser = await dataManager.createTestUser();
+      const testUser = await ctx.data.createTestUser();
 
       // Add exact amount for testing
-      await dataManager.addCredits(testUser.id, 5); // User now has 15 total
+      await ctx.data.addCredits(testUser.id, 5); // User now has 15 total
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -192,12 +190,12 @@ test.describe('Credit Management Integration Tests', () => {
       expect(error).toBeNull();
       expect(newBalance).toBe(0);
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
 
     test('should be atomic and prevent race conditions', async () => {
-      const testUser = await dataManager.createTestUser();
-      await dataManager.addCredits(testUser.id, 10); // User has 20 total
+      const testUser = await ctx.data.createTestUser();
+      await ctx.data.addCredits(testUser.id, 10); // User has 20 total
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -222,17 +220,17 @@ test.describe('Credit Management Integration Tests', () => {
       expect(failed).toHaveLength(3);
 
       // Verify final balance is 0
-      const finalProfile = await dataManager.getUserProfile(testUser.id);
+      const finalProfile = await ctx.data.getUserProfile(testUser.id);
       expect(finalProfile.credits_balance).toBe(0);
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
   });
 
   test.describe('refund_credits', () => {
     test('should refund credits via increment with refund type', async () => {
-      const testUser = await dataManager.createTestUser();
-      await dataManager.addCredits(testUser.id, 20);
+      const testUser = await ctx.data.createTestUser();
+      await ctx.data.addCredits(testUser.id, 20);
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -246,7 +244,7 @@ test.describe('Credit Management Integration Tests', () => {
         description: 'Original processing'
       });
 
-      const profileAfterDeduction = await dataManager.getUserProfile(testUser.id);
+      const profileAfterDeduction = await ctx.data.getUserProfile(testUser.id);
       const balanceAfterDeduction = profileAfterDeduction.credits_balance as number;
 
       // Now refund
@@ -276,11 +274,11 @@ test.describe('Credit Management Integration Tests', () => {
         description: 'Processing refund'
       });
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
 
     test('should work without job_id', async () => {
-      const testUser = await dataManager.createTestUser();
+      const testUser = await ctx.data.createTestUser();
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -294,14 +292,14 @@ test.describe('Credit Management Integration Tests', () => {
       expect(error).toBeNull();
       expect(refundBalance).toBeGreaterThan(10); // Should be initial 10 + refund 10
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
   });
 
   test.describe('Security and Constraints', () => {
     test('should prevent direct credits_balance updates via trigger', async () => {
-      const testUser = await dataManager.createTestUser();
-      const initialProfile = await dataManager.getUserProfile(testUser.id);
+      const testUser = await ctx.data.createTestUser();
+      const initialProfile = await ctx.data.getUserProfile(testUser.id);
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -315,15 +313,15 @@ test.describe('Credit Management Integration Tests', () => {
       expect(error?.message).toContain('Cannot update credits_balance directly');
 
       // Verify balance unchanged
-      const unchangedProfile = await dataManager.getUserProfile(testUser.id);
+      const unchangedProfile = await ctx.data.getUserProfile(testUser.id);
       expect(unchangedProfile.credits_balance).toBe(initialProfile.credits_balance);
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
 
     test('should allow RPC functions to bypass trigger', async () => {
-      const testUser = await dataManager.createTestUser();
-      const initialProfile = await dataManager.getUserProfile(testUser.id);
+      const testUser = await ctx.data.createTestUser();
+      const initialProfile = await ctx.data.getUserProfile(testUser.id);
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -338,11 +336,11 @@ test.describe('Credit Management Integration Tests', () => {
       expect(error).toBeNull();
       expect(newBalance).toBe((initialProfile.credits_balance as number) + 5);
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
 
     test('should validate transaction_type constraints', async () => {
-      const testUser = await dataManager.createTestUser();
+      const testUser = await ctx.data.createTestUser();
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -359,13 +357,13 @@ test.describe('Credit Management Integration Tests', () => {
         expect(error).toBeNull();
       }
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
   });
 
   test.describe('Transaction Audit Trail', () => {
     test('should maintain complete audit trail', async () => {
-      const testUser = await dataManager.createTestUser();
+      const testUser = await ctx.data.createTestUser();
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -433,11 +431,11 @@ test.describe('Credit Management Integration Tests', () => {
         description: 'Processing refund'
       });
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
 
     test('should handle null reference_id correctly', async () => {
-      const testUser = await dataManager.createTestUser();
+      const testUser = await ctx.data.createTestUser();
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -460,14 +458,14 @@ test.describe('Credit Management Integration Tests', () => {
       expect(transactions![0].reference_id).toBeNull();
       expect(transactions![0].description).toBeNull();
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
   });
 
   test.describe('Data Integrity', () => {
     test('should maintain balance consistency across operations', async () => {
-      const testUser = await dataManager.createTestUser();
-      const initialProfile = await dataManager.getUserProfile(testUser.id);
+      const testUser = await ctx.data.createTestUser();
+      const initialProfile = await ctx.data.getUserProfile(testUser.id);
 
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
@@ -512,7 +510,7 @@ test.describe('Credit Management Integration Tests', () => {
       }
 
       // Verify final balance matches calculations
-      const finalProfile = await dataManager.getUserProfile(testUser.id);
+      const finalProfile = await ctx.data.getUserProfile(testUser.id);
       expect(finalProfile.credits_balance).toBe(expectedBalance);
 
       // Verify transaction sum matches balance change
@@ -525,7 +523,7 @@ test.describe('Credit Management Integration Tests', () => {
       const expectedChange = expectedBalance - (initialProfile.credits_balance as number);
       expect(transactionSum).toBe(expectedChange);
 
-      await dataManager.cleanupUser(testUser.id);
+      await ctx.data.cleanupUser(testUser.id);
     });
   });
 });

@@ -1,51 +1,51 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager } from '../helpers/test-data-manager';
+import { TestContext } from '../helpers';
 import { StripeWebhookMockFactory } from '../helpers/stripe-webhook-mocks';
 
 /**
  * Billing Integration Validation Tests
  *
- * These tests validate the TestDataManager helper and Stripe webhook mocks.
+ * These tests validate the TestContext helper and Stripe webhook mocks.
  * Note: Some operations (credit_transactions, subscriptions table) are blocked
  * by RLS policies, so tests focus on profile-level operations which work.
  */
 test.describe('Billing Integration Validation', () => {
-  let dataManager: TestDataManager;
+  let ctx: TestContext;
 
   test.beforeAll(async () => {
-    dataManager = new TestDataManager();
+    ctx = new TestContext();
   });
 
   test.afterAll(async () => {
-    await dataManager.cleanupAllUsers();
+    await ctx.cleanup();
   });
 
   test('should create and manage test users correctly', async () => {
     // Test user creation
-    const testUser = await dataManager.createTestUser();
+    const testUser = await ctx.createUser();
     expect(testUser.id).toBeTruthy();
     expect(testUser.email).toContain('test-');
     expect(testUser.token).toBeTruthy();
 
     // Test setting subscription status (profile-level, works with RLS)
-    await dataManager.setSubscriptionStatus(testUser.id, 'active', 'pro', 'sub_test_123');
+    await ctx.data.setSubscriptionStatus(testUser.id, 'active', 'pro', 'sub_test_123');
 
-    const profile = await dataManager.getUserProfile(testUser.id);
+    const profile = await ctx.data.getUserProfile(testUser.id);
     expect(profile.subscription_status).toBe('active');
     expect(profile.subscription_tier).toBe('pro');
 
     // Test adding credits (balance update works, transaction logging may fail due to RLS)
     const initialBalance = profile.credits_balance;
-    await dataManager.addCredits(testUser.id, 25, 'purchase');
+    await ctx.data.addCredits(testUser.id, 25, 'purchase');
 
-    const updatedProfile = await dataManager.getUserProfile(testUser.id);
+    const updatedProfile = await ctx.data.getUserProfile(testUser.id);
     expect(updatedProfile.credits_balance).toBe(initialBalance + 25);
 
-    await dataManager.cleanupUser(testUser.id);
+    // Note: TestContext handles cleanup automatically
   });
 
   test('should generate valid Stripe webhook mocks', async () => {
-    const testUser = await dataManager.createTestUser();
+    const testUser = await ctx.createUser();
 
     // Test credit purchase webhook
     const creditPurchaseEvent = StripeWebhookMockFactory.createCheckoutSessionCompletedForCredits({
@@ -80,7 +80,7 @@ test.describe('Billing Integration Validation', () => {
     expect(invoiceEvent.data.object.subscription).toBe('sub_test_456');
     expect(invoiceEvent.data.object.paid).toBe(true);
 
-    await dataManager.cleanupUser(testUser.id);
+    // Note: TestContext handles cleanup automatically
   });
 
   test('should handle different subscription scenarios via profile', async () => {
@@ -88,73 +88,73 @@ test.describe('Billing Integration Validation', () => {
     // Note: subscription_status defaults to null for new profiles,
     // we update it via setSubscriptionStatus
 
-    const testUser = await dataManager.createTestUser();
+    const testUser = await ctx.createUser();
 
     // Initial state should have credits
-    const initialProfile = await dataManager.getUserProfile(testUser.id);
+    const initialProfile = await ctx.data.getUserProfile(testUser.id);
     expect(initialProfile.credits_balance).toBeGreaterThanOrEqual(0);
 
     // Set to active subscription
-    await dataManager.setSubscriptionStatus(testUser.id, 'active', 'pro');
-    const activeProfile = await dataManager.getUserProfile(testUser.id);
+    await ctx.data.setSubscriptionStatus(testUser.id, 'active', 'pro');
+    const activeProfile = await ctx.data.getUserProfile(testUser.id);
     expect(activeProfile.subscription_status).toBe('active');
     expect(activeProfile.subscription_tier).toBe('pro');
 
     // Set to canceled
-    await dataManager.setSubscriptionStatus(testUser.id, 'canceled');
-    const canceledProfile = await dataManager.getUserProfile(testUser.id);
+    await ctx.data.setSubscriptionStatus(testUser.id, 'canceled');
+    const canceledProfile = await ctx.data.getUserProfile(testUser.id);
     expect(canceledProfile.subscription_status).toBe('canceled');
 
     // Set to past_due
-    await dataManager.setSubscriptionStatus(testUser.id, 'past_due');
-    const pastDueProfile = await dataManager.getUserProfile(testUser.id);
+    await ctx.data.setSubscriptionStatus(testUser.id, 'past_due');
+    const pastDueProfile = await ctx.data.getUserProfile(testUser.id);
     expect(pastDueProfile.subscription_status).toBe('past_due');
 
-    await dataManager.cleanupUser(testUser.id);
+    // Note: TestContext handles cleanup automatically
   });
 
   test('should update credits balance correctly', async () => {
-    const testUser = await dataManager.createTestUser();
+    const testUser = await ctx.createUser();
 
-    const initialProfile = await dataManager.getUserProfile(testUser.id);
+    const initialProfile = await ctx.data.getUserProfile(testUser.id);
     const initialBalance = initialProfile.credits_balance;
 
     // Add credits via different methods
-    await dataManager.addCredits(testUser.id, 20, 'purchase');
+    await ctx.data.addCredits(testUser.id, 20, 'purchase');
 
-    const afterFirstAdd = await dataManager.getUserProfile(testUser.id);
+    const afterFirstAdd = await ctx.data.getUserProfile(testUser.id);
     expect(afterFirstAdd.credits_balance).toBe(initialBalance + 20);
 
-    await dataManager.addCredits(testUser.id, 10, 'bonus');
+    await ctx.data.addCredits(testUser.id, 10, 'bonus');
 
-    const finalProfile = await dataManager.getUserProfile(testUser.id);
+    const finalProfile = await ctx.data.getUserProfile(testUser.id);
     expect(finalProfile.credits_balance).toBe(initialBalance + 30);
 
-    await dataManager.cleanupUser(testUser.id);
+    // Note: TestContext handles cleanup automatically
   });
 
   test('should verify profile state consistency across updates', async () => {
-    const testUser = await dataManager.createTestUser();
+    const testUser = await ctx.createUser();
 
     // Set initial state
-    await dataManager.setSubscriptionStatus(testUser.id, 'active', 'pro');
-    await dataManager.addCredits(testUser.id, 50, 'purchase');
+    await ctx.data.setSubscriptionStatus(testUser.id, 'active', 'pro');
+    await ctx.data.addCredits(testUser.id, 50, 'purchase');
 
     // Verify profile
-    const profile = await dataManager.getUserProfile(testUser.id);
+    const profile = await ctx.data.getUserProfile(testUser.id);
     expect(profile.subscription_status).toBe('active');
     expect(profile.subscription_tier).toBe('pro');
 
     const initialBalance = profile.credits_balance;
 
     // Update subscription status
-    await dataManager.setSubscriptionStatus(testUser.id, 'canceled');
+    await ctx.data.setSubscriptionStatus(testUser.id, 'canceled');
 
-    const updatedProfile = await dataManager.getUserProfile(testUser.id);
+    const updatedProfile = await ctx.data.getUserProfile(testUser.id);
     expect(updatedProfile.subscription_status).toBe('canceled');
     // Credits should remain unchanged when updating subscription
     expect(updatedProfile.credits_balance).toBe(initialBalance);
 
-    await dataManager.cleanupUser(testUser.id);
+    // Note: TestContext handles cleanup automatically
   });
 });

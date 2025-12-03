@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager } from '../helpers/test-data-manager';
+import { TestContext } from '../helpers';
 import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
 import { UpscalerPage } from '../pages/UpscalerPage';
@@ -18,11 +18,15 @@ import { PricingPage } from '../pages/PricingPage';
  * - Error recovery scenarios
  */
 test.describe('Complete User Journey Integration', () => {
-  let testDataManager: TestDataManager;
-  let testUser: { id: string; email: string; password: string };
+  let ctx: TestContext;
+  let testUser: any;
 
   test.beforeAll(async () => {
-    testDataManager = new TestDataManager();
+    ctx = new TestContext();
+  });
+
+  test.afterAll(async () => {
+    await ctx.cleanup();
   });
 
   test.afterEach(async ({ page }) => {
@@ -99,17 +103,17 @@ test.describe('Complete User Journey Integration', () => {
       }
 
       // Cleanup test user
-      await testDataManager.cleanupUser(profile.data.id);
+      // Note: TestContext handles cleanup automatically(profile.data.id);
     });
   });
 
   test.describe('Existing User Login and Processing Journey', () => {
     test.beforeAll(async () => {
-      testUser = await testDataManager.createTestUser();
+      testUser = await ctx.createUser();
     });
 
     test.afterAll(async () => {
-      await testDataManager.cleanupUser(testUser.id);
+      // Note: TestContext handles cleanup automatically(testUser.id);
     });
 
     test('should login, process images, and manage credits', async ({ page, request }) => {
@@ -173,11 +177,11 @@ test.describe('Complete User Journey Integration', () => {
     let freeUser: { id: string; email: string; password: string };
 
     test.beforeAll(async () => {
-      freeUser = await testDataManager.createTestUserWithSubscription('free');
+      freeUser = await ctx.createUser({ subscription: 'free' });
     });
 
     test.afterAll(async () => {
-      await testDataManager.cleanupUser(freeUser.id);
+      // Note: TestContext handles cleanup automatically(freeUser.id);
     });
 
     test('should upgrade from free to pro subscription', async ({ page, request }) => {
@@ -217,8 +221,8 @@ test.describe('Complete User Journey Integration', () => {
       expect(checkout.data.checkoutUrl).toContain('stripe.com');
 
       // Step 6: Mock successful checkout (in real scenario, user would complete Stripe flow)
-      await testDataManager.setSubscriptionStatus(freeUser.id, 'active', 'pro');
-      await testDataManager.addCredits(freeUser.id, 500);
+      await ctx.data.setSubscriptionStatus(freeUser.id, 'active', 'pro');
+      await ctx.data.addCredits(freeUser.id, 500);
 
       // Step 7: Verify upgrade benefits
       const upgradedCreditsResponse = await request.get('/api/credits');
@@ -244,11 +248,11 @@ test.describe('Complete User Journey Integration', () => {
     let errorTestUser: { id: string; email: string; password: string };
 
     test.beforeAll(async () => {
-      errorTestUser = await testDataManager.createTestUserWithSubscription('active', 'pro', 50);
+      errorTestUser = await ctx.createUser({ subscription: 'active', tier: 'pro', credits: 50 });
     });
 
     test.afterAll(async () => {
-      await testDataManager.cleanupUser(errorTestUser.id);
+      // Note: TestContext handles cleanup automatically(errorTestUser.id);
     });
 
     test('should handle processing errors gracefully', async ({ page, request }) => {
@@ -313,11 +317,11 @@ test.describe('Complete User Journey Integration', () => {
     let mobileUser: { id: string; email: string; password: string };
 
     test.beforeAll(async () => {
-      mobileUser = await testDataManager.createTestUser();
+      mobileUser = await ctx.createUser();
     });
 
     test.afterAll(async () => {
-      await testDataManager.cleanupUser(mobileUser.id);
+      // Note: TestContext handles cleanup automatically(mobileUser.id);
     });
 
     test.use({ ...devices['iPhone 14'] });
@@ -363,11 +367,11 @@ test.describe('Complete User Journey Integration', () => {
     let accessibilityUser: { id: string; email: string; password: string };
 
     test.beforeAll(async () => {
-      accessibilityUser = await testDataManager.createTestUser();
+      accessibilityUser = await ctx.createUser();
     });
 
     test.afterAll(async () => {
-      await testDataManager.cleanupUser(accessibilityUser.id);
+      // Note: TestContext handles cleanup automatically(accessibilityUser.id);
     });
 
     test('should support keyboard navigation and screen readers', async ({ page }) => {
@@ -414,11 +418,11 @@ test.describe('Complete User Journey Integration', () => {
     let performanceUser: { id: string; email: string; password: string };
 
     test.beforeAll(async () => {
-      performanceUser = await testDataManager.createTestUserWithSubscription('active', 'pro', 100);
+      performanceUser = await ctx.createUser({ subscription: 'active', tier: 'pro', credits: 100 });
     });
 
     test.afterAll(async () => {
-      await testDataManager.cleanupUser(performanceUser.id);
+      // Note: TestContext handles cleanup automatically(performanceUser.id);
     });
 
     test('should maintain performance during user journey', async ({ page }) => {

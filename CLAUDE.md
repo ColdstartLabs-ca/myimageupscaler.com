@@ -8,6 +8,13 @@
 - **Debug**: Check `yarn dev` logs (uses concurrently)
 - **Dayjs**: For date handling.
 
+## Agents
+
+- `e2e-test-writer` for end-to-end test creation
+- `bug-hunter` for debugging issues
+- `code-refactorer` for improving existing code
+- `codebase-explorer` for understanding project structure
+
 ## Environment Variables
 
 Split structure: `.env.client` (public `NEXT_PUBLIC_*`) and `.env.api` (server secrets).

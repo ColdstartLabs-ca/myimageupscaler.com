@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager } from '../helpers/test-data-manager';
+import { TestContext, ApiClient, WebhookClient } from '../helpers';
 import { stripeWebhookMocks } from '../helpers/stripe-webhook-mocks';
 
 /**
@@ -13,44 +13,36 @@ import { stripeWebhookMocks } from '../helpers/stripe-webhook-mocks';
  * - Billing state transitions
  */
 test.describe('Billing System Integration', () => {
-  let testDataManager: TestDataManager;
+  let ctx: TestContext;
   let freeUser: { id: string; email: string; token: string };
   let proUser: { id: string; email: string; token: string };
 
   test.beforeAll(async () => {
-    testDataManager = new TestDataManager();
+    ctx = new TestContext();
 
     // Create test users with different subscription states
-    freeUser = await testDataManager.createTestUserWithSubscription('free');
-    proUser = await testDataManager.createTestUserWithSubscription('active', 'pro', 500);
+    freeUser = await ctx.createUser({ subscription: 'free' });
+    proUser = await ctx.createUser({ subscription: 'active', tier: 'pro', credits: 500 });
   });
 
   test.afterAll(async () => {
-    await testDataManager.cleanupUser(freeUser.id);
-    await testDataManager.cleanupUser(proUser.id);
+    await ctx.cleanup();
   });
 
   test.describe('Subscription Status Validation', () => {
     test('should reflect correct subscription status', async ({ request }) => {
-      const freeResponse = await request.get('/api/profile', {
-        headers: {
-          Authorization: `Bearer ${freeUser.token}`,
-        },
-      });
+      const freeApi = new ApiClient(request).withAuth(freeUser.token);
+      const proApi = new ApiClient(request).withAuth(proUser.token);
 
-      expect(freeResponse.ok()).toBeTruthy();
+      const freeResponse = await freeApi.get('/api/profile');
+      freeResponse.expectStatus(200);
       const freeProfile = await freeResponse.json();
       expect(freeProfile.data.subscription_status).toBeNull();
       expect(freeProfile.data.subscription_tier).toBeNull();
       expect(freeProfile.data.credits_balance).toBe(10);
 
-      const proResponse = await request.get('/api/profile', {
-        headers: {
-          Authorization: `Bearer ${proUser.token}`,
-        },
-      });
-
-      expect(proResponse.ok()).toBeTruthy();
+      const proResponse = await proApi.get('/api/profile');
+      proResponse.expectStatus(200);
       const proProfile = await proResponse.json();
       expect(proProfile.data.subscription_status).toBe('active');
       expect(proProfile.data.subscription_tier).toBe('pro');
@@ -235,7 +227,7 @@ test.describe('Billing System Integration', () => {
   test.describe('Customer Portal Integration', () => {
     test('should create portal session for active subscribers', async ({ request }) => {
       // First ensure user has a Stripe customer ID (mock this scenario)
-      await testDataManager.setSubscriptionStatus(proUser.id, 'active', 'pro', 'cus_test_portal');
+      await ctx.data.setSubscriptionStatus(proUser.id, 'active', 'pro', 'cus_test_portal');
 
       const response = await request.post('/api/billing/portal', {
         headers: {
@@ -265,7 +257,7 @@ test.describe('Billing System Integration', () => {
   test.describe('Credit Rollover Logic', () => {
     test('should calculate correct rollover for different tiers', async ({ request }) => {
       // Create user with existing credits for rollover testing
-      const rolloverUser = await testDataManager.createTestUserWithSubscription('active', 'starter', 200); // Above normal starter amount
+      const rolloverUser = await ctx.data.createTestUserWithSubscription('active', 'starter', 200); // Above normal starter amount
 
       const response = await request.get('/api/credits', {
         headers: {
@@ -278,7 +270,7 @@ test.describe('Billing System Integration', () => {
       expect(credits.data.balance).toBe(200);
       expect(credits.data.maxRollover).toBe(600); // 6x monthly for starter
 
-      await testDataManager.cleanupUser(rolloverUser.id);
+      await ctx.data.cleanupUser(rolloverUser.id);
     });
   });
 
@@ -286,23 +278,23 @@ test.describe('Billing System Integration', () => {
     let transitioningUser: { id: string; email: string; token: string };
 
     test.beforeAll(async () => {
-      transitioningUser = await testDataManager.createTestUser();
+      transitioningUser = await ctx.data.createTestUser();
     });
 
     test.afterAll(async () => {
       if (transitioningUser) {
-        await testDataManager.cleanupUser(transitioningUser.id);
+        await ctx.data.cleanupUser(transitioningUser.id);
       }
     });
 
     test('should handle free to active transition', async () => {
       // Set to active subscription
-      await testDataManager.setSubscriptionStatus(transitioningUser.id, 'active', 'pro');
+      await ctx.data.setSubscriptionStatus(transitioningUser.id, 'active', 'pro');
 
       // Add credits for subscription
-      await testDataManager.addCredits(transitioningUser.id, 500);
+      await ctx.data.addCredits(transitioningUser.id, 500);
 
-      const profile = await testDataManager.getUserProfile(transitioningUser.id);
+      const profile = await ctx.data.getUserProfile(transitioningUser.id);
       expect(profile.subscription_status).toBe('active');
       expect(profile.subscription_tier).toBe('pro');
       expect(profile.credits_balance).toBeGreaterThan(500);
@@ -310,9 +302,9 @@ test.describe('Billing System Integration', () => {
 
     test('should handle active to canceled transition', async () => {
       // Cancel subscription
-      await testDataManager.setSubscriptionStatus(transitioningUser.id, 'canceled', 'pro');
+      await ctx.data.setSubscriptionStatus(transitioningUser.id, 'canceled', 'pro');
 
-      const profile = await testDataManager.getUserProfile(transitioningUser.id);
+      const profile = await ctx.data.getUserProfile(transitioningUser.id);
       expect(profile.subscription_status).toBe('canceled');
       // Credits should remain but no new ones will be added
       expect(profile.credits_balance).toBeGreaterThan(0);
@@ -320,9 +312,9 @@ test.describe('Billing System Integration', () => {
 
     test('should handle past due state', async () => {
       // Set to past due
-      await testDataManager.setSubscriptionStatus(transitioningUser.id, 'past_due', 'pro');
+      await ctx.data.setSubscriptionStatus(transitioningUser.id, 'past_due', 'pro');
 
-      const profile = await testDataManager.getUserProfile(transitioningUser.id);
+      const profile = await ctx.data.getUserProfile(transitioningUser.id);
       expect(profile.subscription_status).toBe('past_due');
     });
   });
@@ -330,9 +322,9 @@ test.describe('Billing System Integration', () => {
   test.describe('Transaction History', () => {
     test('should track credit transactions', async () => {
       // Add some credits to generate transactions
-      await testDataManager.addCredits(proUser.id, 50, 'purchase');
+      await ctx.data.addCredits(proUser.id, 50, 'purchase');
 
-      const transactions = await testDataManager.getCreditTransactions(proUser.id);
+      const transactions = await ctx.data.getCreditTransactions(proUser.id);
       expect(transactions.length).toBeGreaterThan(0);
 
       // Find our test transaction
@@ -346,13 +338,13 @@ test.describe('Billing System Integration', () => {
 
     test('should track usage transactions', async ({ request }) => {
       // Simulate credit deduction (would normally happen during processing)
-      const initialBalance = (await testDataManager.getUserProfile(proUser.id)).credits_balance;
+      const initialBalance = (await ctx.data.getUserProfile(proUser.id)).credits_balance;
 
       // This would be done by the actual processing logic
       // For testing, we can manually create a usage transaction
-      await testDataManager.addCredits(proUser.id, -1, 'usage');
+      await ctx.data.addCredits(proUser.id, -1, 'usage');
 
-      const transactions = await testDataManager.getCreditTransactions(proUser.id);
+      const transactions = await ctx.data.getCreditTransactions(proUser.id);
       const usageTransaction = transactions.find(t => t.type === 'usage' && t.amount === -1);
       expect(usageTransaction).toBeDefined();
     });

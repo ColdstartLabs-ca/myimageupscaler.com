@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager } from '../helpers/test-data-manager';
+import { TestContext, ApiClient } from '../helpers';
 import { createClient } from '@supabase/supabase-js';
 
 /**
@@ -13,14 +13,14 @@ import { createClient } from '@supabase/supabase-js';
  * - Concurrent access handling
  */
 test.describe('Database Operations Integration', () => {
-  let testDataManager: TestDataManager;
+  let ctx: TestContext;
   let testUser: { id: string; email: string; token: string };
   let adminClient: ReturnType<typeof createClient>;
   let userClient: ReturnType<typeof createClient>;
 
   test.beforeAll(async () => {
-    testDataManager = new TestDataManager();
-    testUser = await testDataManager.createTestUser();
+    ctx = new TestContext();
+    testUser = await ctx.createUser();
 
     // Admin client for direct database operations
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -51,25 +51,23 @@ test.describe('Database Operations Integration', () => {
   });
 
   test.afterAll(async () => {
-    await testDataManager.cleanupUser(testUser.id);
+    await ctx.cleanup();
   });
 
   test.describe('Profile Management', () => {
     test('should create profile automatically on user creation', async () => {
-      const newUser = await testDataManager.createTestUser();
+      const newUser = await ctx.createUser();
 
-      const profile = await testDataManager.getUserProfile(newUser.id);
+      const profile = await ctx.data.getUserProfile(newUser.id);
       expect(profile).toBeDefined();
       expect(profile.id).toBe(newUser.id);
       expect(profile.credits_balance).toBe(10);
       expect(profile.subscription_status).toBeNull();
-
-      await testDataManager.cleanupUser(newUser.id);
     });
 
     test('should enforce profile constraints', async () => {
       // Test that required fields are properly constrained
-      const profile = await testDataManager.getUserProfile(testUser.id);
+      const profile = await ctx.data.getUserProfile(testUser.id);
 
       expect(profile.id).toBeDefined();
       expect(typeof profile.credits_balance).toBe('number');
@@ -79,9 +77,9 @@ test.describe('Database Operations Integration', () => {
 
     test('should update profile with proper validation', async () => {
       // Update subscription status
-      await testDataManager.setSubscriptionStatus(testUser.id, 'active', 'pro');
+      await ctx.data.setSubscriptionStatus(testUser.id, 'active', 'pro');
 
-      const updatedProfile = await testDataManager.getUserProfile(testUser.id);
+      const updatedProfile = await ctx.data.getUserProfile(testUser.id);
       expect(updatedProfile.subscription_status).toBe('active');
       expect(updatedProfile.subscription_tier).toBe('pro');
       expect(updatedProfile.updated_at > updatedProfile.created_at).toBeTruthy();
@@ -90,17 +88,17 @@ test.describe('Database Operations Integration', () => {
 
   test.describe('Credit Transactions', () => {
     test('should maintain transaction integrity', async () => {
-      const initialBalance = (await testDataManager.getUserProfile(testUser.id)).credits_balance;
+      const initialBalance = (await ctx.data.getUserProfile(testUser.id)).credits_balance;
       const transactionAmount = 25;
 
       // Add credits using the RPC function
-      await testDataManager.addCredits(testUser.id, transactionAmount);
+      await ctx.data.addCredits(testUser.id, transactionAmount);
 
-      const newBalance = (await testDataManager.getUserProfile(testUser.id)).credits_balance;
+      const newBalance = (await ctx.data.getUserProfile(testUser.id)).credits_balance;
       expect(newBalance).toBe(initialBalance + transactionAmount);
 
       // Verify transaction was logged
-      const transactions = await testDataManager.getCreditTransactions(testUser.id);
+      const transactions = await ctx.data.getCreditTransactions(testUser.id);
       const latestTransaction = transactions.find(t =>
         t.description?.includes('Test purchase credits') &&
         t.amount === transactionAmount
@@ -113,38 +111,38 @@ test.describe('Database Operations Integration', () => {
 
     test('should enforce credit balance constraints', async () => {
       // Try to create a user with negative credits (should not be allowed by constraints)
-      const newUser = await testDataManager.createTestUser();
+      const newUser = await ctx.data.createTestUser();
 
-      const profile = await testDataManager.getUserProfile(newUser.id);
+      const profile = await ctx.data.getUserProfile(newUser.id);
       expect(profile.credits_balance).toBeGreaterThanOrEqual(0);
 
-      await testDataManager.cleanupUser(newUser.id);
+      await ctx.data.cleanupUser(newUser.id);
     });
 
     test('should handle concurrent credit operations safely', async () => {
-      const concurrentUser = await testDataManager.createTestUser();
-      const initialBalance = (await testDataManager.getUserProfile(concurrentUser.id)).credits_balance;
+      const concurrentUser = await ctx.data.createTestUser();
+      const initialBalance = (await ctx.data.getUserProfile(concurrentUser.id)).credits_balance;
 
       // Make multiple concurrent credit operations
       const operations = Array(5).fill(null).map((_, index) =>
-        testDataManager.addCredits(concurrentUser.id, 10 + index)
+        ctx.data.addCredits(concurrentUser.id, 10 + index)
       );
 
       await Promise.all(operations);
 
-      const finalBalance = (await testDataManager.getUserProfile(concurrentUser.id)).credits_balance;
+      const finalBalance = (await ctx.data.getUserProfile(concurrentUser.id)).credits_balance;
       expect(finalBalance).toBe(initialBalance + 60); // 10+11+12+13+14 = 60
 
-      await testDataManager.cleanupUser(concurrentUser.id);
+      await ctx.data.cleanupUser(concurrentUser.id);
     });
   });
 
   test.describe('Subscription Management', () => {
     test('should maintain subscription data integrity', async () => {
       const subscriptionId = `sub_test_${testUser.id}`;
-      await testDataManager.setSubscriptionStatus(testUser.id, 'active', 'pro', subscriptionId);
+      await ctx.data.setSubscriptionStatus(testUser.id, 'active', 'pro', subscriptionId);
 
-      const subscriptions = await testDataManager.getUserSubscriptions(testUser.id);
+      const subscriptions = await ctx.data.getUserSubscriptions(testUser.id);
       if (subscriptions.length > 0) {
         const subscription = subscriptions[0];
         expect(subscription.user_id).toBe(testUser.id);
@@ -153,33 +151,33 @@ test.describe('Database Operations Integration', () => {
     });
 
     test('should handle subscription lifecycle correctly', async () => {
-      const lifecycleUser = await testDataManager.createTestUser();
+      const lifecycleUser = await ctx.data.createTestUser();
 
       // Test: free -> active -> canceled -> free
-      await testDataManager.setSubscriptionStatus(lifecycleUser.id, 'active', 'pro', 'sub_lifecycle');
-      let profile = await testDataManager.getUserProfile(lifecycleUser.id);
+      await ctx.data.setSubscriptionStatus(lifecycleUser.id, 'active', 'pro', 'sub_lifecycle');
+      let profile = await ctx.data.getUserProfile(lifecycleUser.id);
       expect(profile.subscription_status).toBe('active');
 
-      await testDataManager.setSubscriptionStatus(lifecycleUser.id, 'canceled', 'pro', 'sub_lifecycle');
-      profile = await testDataManager.getUserProfile(lifecycleUser.id);
+      await ctx.data.setSubscriptionStatus(lifecycleUser.id, 'canceled', 'pro', 'sub_lifecycle');
+      profile = await ctx.data.getUserProfile(lifecycleUser.id);
       expect(profile.subscription_status).toBe('canceled');
 
-      await testDataManager.setSubscriptionStatus(lifecycleUser.id, 'free');
-      profile = await testDataManager.getUserProfile(lifecycleUser.id);
+      await ctx.data.setSubscriptionStatus(lifecycleUser.id, 'free');
+      profile = await ctx.data.getUserProfile(lifecycleUser.id);
       expect(profile.subscription_status).toBeNull();
 
-      await testDataManager.cleanupUser(lifecycleUser.id);
+      await ctx.data.cleanupUser(lifecycleUser.id);
     });
   });
 
   test.describe('Row Level Security (RLS)', () => {
     test('should enforce user isolation', async () => {
-      const user1 = await testDataManager.createTestUser();
-      const user2 = await testDataManager.createTestUser();
+      const user1 = await ctx.data.createTestUser();
+      const user2 = await ctx.data.createTestUser();
 
       // Each user should only see their own data
-      const user1Transactions = await testDataManager.getCreditTransactions(user1.id);
-      const user2Transactions = await testDataManager.getCreditTransactions(user2.id);
+      const user1Transactions = await ctx.data.getCreditTransactions(user1.id);
+      const user2Transactions = await ctx.data.getCreditTransactions(user2.id);
 
       user1Transactions.forEach(transaction => {
         expect(transaction.user_id).toBe(user1.id);
@@ -189,18 +187,18 @@ test.describe('Database Operations Integration', () => {
         expect(transaction.user_id).toBe(user2.id);
       });
 
-      await testDataManager.cleanupUser(user1.id);
-      await testDataManager.cleanupUser(user2.id);
+      await ctx.data.cleanupUser(user1.id);
+      await ctx.data.cleanupUser(user2.id);
     });
 
     test('should prevent unauthorized data access', async () => {
       // This test would require setting up user clients with proper JWT tokens
       // For now, we test through the test data manager which uses admin access
 
-      const privateUser = await testDataManager.createTestUser();
-      await testDataManager.addCredits(privateUser.id, 100);
+      const privateUser = await ctx.data.createTestUser();
+      await ctx.data.addCredits(privateUser.id, 100);
 
-      const transactions = await testDataManager.getCreditTransactions(privateUser.id);
+      const transactions = await ctx.data.getCreditTransactions(privateUser.id);
       expect(transactions.length).toBeGreaterThan(0);
 
       // Each transaction should belong to the user
@@ -208,14 +206,14 @@ test.describe('Database Operations Integration', () => {
         expect(transaction.user_id).toBe(privateUser.id);
       });
 
-      await testDataManager.cleanupUser(privateUser.id);
+      await ctx.data.cleanupUser(privateUser.id);
     });
   });
 
   test.describe('Database Constraints', () => {
     test('should enforce foreign key constraints', async () => {
       // Test that credit transactions must reference valid users
-      const transactions = await testDataManager.getCreditTransactions(testUser.id);
+      const transactions = await ctx.data.getCreditTransactions(testUser.id);
 
       transactions.forEach(transaction => {
         // Verify user exists (implicitly tested by successful query)
@@ -225,7 +223,7 @@ test.describe('Database Operations Integration', () => {
 
     test('should enforce check constraints', async () => {
       // Test credit transaction type constraints
-      const transactions = await testDataManager.getCreditTransactions(testUser.id);
+      const transactions = await ctx.data.getCreditTransactions(testUser.id);
 
       const validTypes = ['usage', 'subscription', 'purchase', 'refund', 'bonus'];
       transactions.forEach(transaction => {
@@ -234,7 +232,7 @@ test.describe('Database Operations Integration', () => {
     });
 
     test('should handle not null constraints', async () => {
-      const profile = await testDataManager.getUserProfile(testUser.id);
+      const profile = await ctx.data.getUserProfile(testUser.id);
 
       // Verify required fields are not null
       expect(profile.id).not.toBeNull();
@@ -246,12 +244,12 @@ test.describe('Database Operations Integration', () => {
 
   test.describe('Database Performance', () => {
     test('should handle bulk operations efficiently', async () => {
-      const performanceUser = await testDataManager.createTestUser();
+      const performanceUser = await ctx.data.createTestUser();
       const startTime = Date.now();
 
       // Create multiple transactions
       const bulkOperations = Array(20).fill(null).map((_, index) =>
-        testDataManager.addCredits(performanceUser.id, index + 1)
+        ctx.data.addCredits(performanceUser.id, index + 1)
       );
 
       await Promise.all(bulkOperations);
@@ -262,19 +260,19 @@ test.describe('Database Operations Integration', () => {
       // Should complete within reasonable time (adjust threshold as needed)
       expect(duration).toBeLessThan(10000); // 10 seconds
 
-      await testDataManager.cleanupUser(performanceUser.id);
+      await ctx.data.cleanupUser(performanceUser.id);
     });
 
     test('should maintain performance with concurrent users', async () => {
       const concurrentUsers = await Promise.all(
-        Array(5).fill(null).map(() => testDataManager.createTestUser())
+        Array(5).fill(null).map(() => ctx.data.createTestUser())
       );
 
       const startTime = Date.now();
 
       // Perform operations on all users concurrently
       const operations = concurrentUsers.map(user =>
-        testDataManager.addCredits(user.id, 50)
+        ctx.data.addCredits(user.id, 50)
       );
 
       await Promise.all(operations);
@@ -287,62 +285,62 @@ test.describe('Database Operations Integration', () => {
 
       // Cleanup all users
       await Promise.all(
-        concurrentUsers.map(user => testDataManager.cleanupUser(user.id))
+        concurrentUsers.map(user => ctx.data.cleanupUser(user.id))
       );
     });
   });
 
   test.describe('Data Consistency', () => {
     test('should maintain ACID properties', async () => {
-      const consistencyUser = await testDataManager.createTestUser();
-      const initialBalance = (await testDataManager.getUserProfile(consistencyUser.id)).credits_balance;
+      const consistencyUser = await ctx.data.createTestUser();
+      const initialBalance = (await ctx.data.getUserProfile(consistencyUser.id)).credits_balance;
 
       // Perform a series of related operations
-      await testDataManager.addCredits(consistencyUser.id, 100);
-      await testDataManager.setSubscriptionStatus(consistencyUser.id, 'active', 'pro');
+      await ctx.data.addCredits(consistencyUser.id, 100);
+      await ctx.data.setSubscriptionStatus(consistencyUser.id, 'active', 'pro');
 
       // Verify all changes are consistent
-      const finalProfile = await testDataManager.getUserProfile(consistencyUser.id);
-      const transactions = await testDataManager.getCreditTransactions(consistencyUser.id);
+      const finalProfile = await ctx.data.getUserProfile(consistencyUser.id);
+      const transactions = await ctx.data.getCreditTransactions(consistencyUser.id);
 
       expect(finalProfile.credits_balance).toBe(initialBalance + 100);
       expect(finalProfile.subscription_status).toBe('active');
       expect(transactions.some(t => t.amount === 100)).toBeTruthy();
 
-      await testDataManager.cleanupUser(consistencyUser.id);
+      await ctx.data.cleanupUser(consistencyUser.id);
     });
 
     test('should handle rollbacks on errors', async () => {
       // This would require testing with a purposeful error scenario
       // For now, we verify that valid operations complete successfully
 
-      const rollbackUser = await testDataManager.createTestUser();
-      const initialBalance = (await testDataManager.getUserProfile(rollbackUser.id)).credits_balance;
+      const rollbackUser = await ctx.data.createTestUser();
+      const initialBalance = (await ctx.data.getUserProfile(rollbackUser.id)).credits_balance;
 
       // Perform a valid operation
-      await testDataManager.addCredits(rollbackUser.id, 25);
+      await ctx.data.addCredits(rollbackUser.id, 25);
 
-      const finalBalance = (await testDataManager.getUserProfile(rollbackUser.id)).credits_balance;
+      const finalBalance = (await ctx.data.getUserProfile(rollbackUser.id)).credits_balance;
       expect(finalBalance).toBe(initialBalance + 25);
 
-      await testDataManager.cleanupUser(rollbackUser.id);
+      await ctx.data.cleanupUser(rollbackUser.id);
     });
   });
 
   test.describe('Database Cleanup', () => {
     test('should cascade deletions properly', async () => {
-      const cleanupUser = await testDataManager.createTestUser();
+      const cleanupUser = await ctx.data.createTestUser();
 
       // Create related data
-      await testDataManager.addCredits(cleanupUser.id, 50);
-      await testDataManager.setSubscriptionStatus(cleanupUser.id, 'active', 'pro', 'sub_cleanup');
+      await ctx.data.addCredits(cleanupUser.id, 50);
+      await ctx.data.setSubscriptionStatus(cleanupUser.id, 'active', 'pro', 'sub_cleanup');
 
       // Verify data exists
-      const transactions = await testDataManager.getCreditTransactions(cleanupUser.id);
+      const transactions = await ctx.data.getCreditTransactions(cleanupUser.id);
       expect(transactions.length).toBeGreaterThan(0);
 
       // Cleanup user (should cascade to related data)
-      await testDataManager.cleanupUser(cleanupUser.id);
+      await ctx.data.cleanupUser(cleanupUser.id);
 
       // Note: We can't easily verify the cascade worked without admin access
       // But the cleanup completing without error is a good sign

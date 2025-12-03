@@ -96,16 +96,18 @@ export class BillingPage extends BasePage {
   }
 
   /**
-   * Navigate to the billing page
+   * Navigate to the billing page and wait for load
    */
   async goto(): Promise<void> {
     await super.goto('/dashboard/billing');
+    await this.waitForLoad();
   }
 
   /**
    * Wait for the page to load completely
    */
   async waitForLoad(): Promise<void> {
+    await this.waitForPageLoad();
     await expect(this.pageTitle).toBeVisible();
     await expect(this.currentPlanSection).toBeVisible();
     await expect(this.paymentMethodsSection).toBeVisible();
@@ -170,7 +172,7 @@ export class BillingPage extends BasePage {
    */
   async refresh(): Promise<void> {
     await this.refreshButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.waitForNetworkIdle();
   }
 
   /**
@@ -215,10 +217,44 @@ export class BillingPage extends BasePage {
 
   /**
    * Wait for success message (typically after redirect from checkout)
+   *
+   * @param expectedMessage - Optional expected success message
    */
-  async waitForSuccessMessage(): Promise<void> {
-    // This would look for a success toast or notification
-    // Implementation depends on how success messages are displayed
-    await this.page.waitForTimeout(1000); // Allow time for any animations
+  async waitForSuccessMessage(expectedMessage?: string): Promise<void> {
+    if (expectedMessage) {
+      const toast = await this.waitForToast(expectedMessage);
+      await expect(toast).toBeVisible();
+    } else {
+      // Wait for any success toast
+      const toast = await this.waitForToast();
+      await expect(toast).toBeVisible();
+    }
+
+    // Allow time for any animations
+    await this.wait(1000);
+  }
+
+  /**
+   * Check for error toast message
+   *
+   * @param expectedError - Optional expected error message
+   * @returns True if error toast is visible
+   */
+  async hasErrorToast(expectedError?: string): Promise<boolean> {
+    return await this.isToastVisible(expectedError || 'error');
+  }
+
+  /**
+   * Wait for billing page to be updated after operations
+   */
+  async waitForBillingUpdate(): Promise<void> {
+    // Wait for network requests to complete
+    await this.waitForNetworkIdle();
+
+    // Wait a bit for UI updates
+    await this.wait(500);
+
+    // Verify page is still in valid state
+    await expect(this.pageTitle).toBeVisible();
   }
 }

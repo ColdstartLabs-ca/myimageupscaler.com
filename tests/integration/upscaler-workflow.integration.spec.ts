@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager, ITestUser } from '../helpers/test-data-manager';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { TestContext } from '../helpers';
 
 /**
  * Upscaler Workflow Integration Tests
@@ -13,27 +12,20 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
  */
 
 test.describe('Upscaler Workflow Integration', () => {
-  let dataManager: TestDataManager;
-  let supabase: SupabaseClient;
-  let testUser: ITestUser;
+  let ctx: TestContext;
+  let testUser: any;
 
   test.beforeAll(async () => {
-    dataManager = new TestDataManager();
-    supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    ctx = new TestContext();
   });
 
   test.afterAll(async () => {
-    if (testUser) {
-      await dataManager.cleanupUser(testUser.id);
-    }
+    await ctx.cleanup();
   });
 
   test.beforeEach(async () => {
     // Create fresh user for each test with sufficient credits
-    testUser = await dataManager.createTestUserWithSubscription('active', 'pro', 50);
+    testUser = await ctx.createUser({ subscription: 'active', tier: 'pro', credits: 50 });
   });
 
   test.describe('Complete Workflow', () => {
@@ -72,7 +64,7 @@ test.describe('Upscaler Workflow Integration', () => {
       expect(new Date(createdAt)).toBeInstanceOf(Date);
 
       // Step 3: Verify credits were reserved
-      const profileAfterSubmit = await dataManager.getUserProfile(testUser.id);
+      const profileAfterSubmit = await ctx.data.getUserProfile(testUser.id);
       expect(profileAfterSubmit.credits_balance).toBe(49); // 50 - 1 reserved
 
       // Step 4: Wait for processing completion (in real test, this would poll)
@@ -94,11 +86,11 @@ test.describe('Upscaler Workflow Integration', () => {
           expect(new Date(processedAt)).toBeInstanceOf(Date);
 
           // Step 6: Verify credits were properly deducted
-          const finalProfile = await dataManager.getUserProfile(testUser.id);
+          const finalProfile = await ctx.data.getUserProfile(testUser.id);
           expect(finalProfile.credits_balance).toBe(49); // Still 49 (credits deducted)
 
           // Step 7: Verify transaction was logged
-          const transactions = await dataManager.getCreditTransactions(testUser.id);
+          const transactions = await ctx.data.getCreditTransactions(testUser.id);
           const usageTransaction = transactions.find(t => t.reference_id === jobId);
           expect(usageTransaction).toMatchObject({
             amount: -1,
@@ -108,11 +100,11 @@ test.describe('Upscaler Workflow Integration', () => {
         }
       } else {
         // If processing failed, verify credits were refunded
-        const finalProfile = await dataManager.getUserProfile(testUser.id);
+        const finalProfile = await ctx.data.getUserProfile(testUser.id);
         expect(finalProfile.credits_balance).toBe(50); // Credits refunded
 
         // Check for refund transaction
-        const transactions = await dataManager.getCreditTransactions(testUser.id);
+        const transactions = await ctx.data.getCreditTransactions(testUser.id);
         const refundTransaction = transactions.find(t =>
           t.type === 'refund' && t.reference_id === jobId
         );
@@ -150,7 +142,7 @@ test.describe('Upscaler Workflow Integration', () => {
 
     test('should reject requests with insufficient credits', async ({ request }) => {
       // Create user with low credits
-      const lowCreditUser = await dataManager.createTestUserWithSubscription('free', undefined, 1);
+      const lowCreditUser = await ctx.createUser({ subscription: 'free', credits: 1 });
 
       const response = await request.post('/api/upscale', {
         headers: {
@@ -167,7 +159,7 @@ test.describe('Upscaler Workflow Integration', () => {
       const { error } = await response.json();
       expect(error).toContain('Insufficient credits');
 
-      await dataManager.cleanupUser(lowCreditUser.id);
+      // Note: TestContext handles cleanup automatically
     });
   });
 
@@ -251,7 +243,7 @@ test.describe('Upscaler Workflow Integration', () => {
       expect(new Set(jobIds)).toHaveLength(concurrentJobs); // All unique
 
       // Check credits reserved for all jobs
-      const profileAfterJobs = await dataManager.getUserProfile(testUser.id);
+      const profileAfterJobs = await ctx.data.getUserProfile(testUser.id);
       expect(profileAfterJobs.credits_balance).toBe(47); // 50 - 3 jobs
 
       // Get status for all jobs
@@ -288,7 +280,7 @@ test.describe('Upscaler Workflow Integration', () => {
       expect(error).toContain('Invalid image URL');
 
       // Verify credits were not deducted
-      const profile = await dataManager.getUserProfile(testUser.id);
+      const profile = await ctx.data.getUserProfile(testUser.id);
       expect(profile.credits_balance).toBe(50);
     });
 
@@ -388,7 +380,7 @@ test.describe('Upscaler Workflow Integration', () => {
       const { jobId } = await response.json();
 
       // Check job record in database
-      const { data: jobRecord, error } = await supabase
+      const { data: jobRecord, error } = await ctx.supabaseAdmin
         .from('upscaler_jobs')
         .select('*')
         .eq('id', jobId)
