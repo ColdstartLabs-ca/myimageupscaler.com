@@ -6,14 +6,14 @@ import { DashboardLayout } from '@client/components/dashboard';
 import { useAuthStore } from '@client/store/authStore';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useLowCreditWarning } from '@client/hooks/useLowCreditWarning';
 
-export default function DashboardRootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardRootLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
+
+  // Initialize low credit warning for authenticated users
+  useLowCreditWarning();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {

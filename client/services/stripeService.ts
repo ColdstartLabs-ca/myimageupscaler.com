@@ -305,7 +305,8 @@ export class StripeService {
       throw new Error(error.error || 'Failed to create portal session');
     }
 
-    return response.json();
+    const result = await response.json();
+    return result.data; // Extract { url } from { success, data: { url } }
   }
 
   /**
