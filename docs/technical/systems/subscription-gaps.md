@@ -20,25 +20,25 @@ This document organizes gaps using an **Effort x Impact Matrix** to prioritize w
 
 _Target these first for maximum value_
 
-1. **Homepage Free Tier Mismatch** - Config text change
-2. **Low Credit Warning** - Simple UI indicator
-3. **Test Mode Detection Fix** - Remove unsafe string check
-4. **Credit Transaction History UI** - Query existing table
+1. ~~**Homepage Free Tier Mismatch**~~ - ✅ **FIXED** - Config text change
+2. ~~**Low Credit Warning**~~ - ✅ **FIXED** - Simple UI indicator
+3. ~~**Test Mode Detection Fix**~~ - ✅ **FIXED** - Remove unsafe string check
+4. ~~**Credit Transaction History UI**~~ - ✅ **FIXED** - Query existing table
 
 ### 🚀 Major Projects (High Effort, High Impact)
 
 _Schedule these strategically_
 
-5. **Upgrade/Downgrade Flow** - Full UI + API implementation
-6. **Webhook Idempotency** - Backend validation system
+5. ~~**Upgrade/Downgrade Flow**~~ - ✅ **FIXED** - Full UI + API implementation
+6. ~~**Webhook Idempotency**~~ - ✅ **FIXED** - Backend validation system
 7. **Refund Handling** - Multiple webhook handlers
 
 ### 💡 Fill Ins (Low Effort, Low Impact)
 
 _Do when time permits_
 
-8. **Portal Session Response Type** - Type signature fix
-9. **Health Check Endpoint** - Simple validation endpoint
+8. ~~**Portal Session Response Type**~~ - ✅ **FIXED** - Type signature fix
+9. ~~**Health Check Endpoint**~~ - ✅ **FIXED** - Simple validation endpoint
 10. ~~**Multiple Subscriptions Edge Case**~~ - ✅ **RESOLVED** (2025-12-02)
 
 ### 🤔 Thankless Tasks (High Effort, Low Impact)
@@ -53,163 +53,170 @@ _Defer or skip unless critical need_
 
 ## 🎯 Quick Wins (Low Effort, High Impact)
 
-### QW-1: Homepage Free Tier Mismatch
+### ✅ QW-1: Homepage Free Tier Mismatch [RESOLVED]
 
 **Effort:** 15 minutes | **Impact:** High (User confusion) | **Priority:** #1
 
 **Location:** `shared/config/stripe.ts:215-233`
 
-**Issue:** `HOMEPAGE_TIERS` shows "10 images per month" but free users only get 10 credits once on signup (no monthly renewal).
+**Status:** ✅ **FIXED** - Updated "10 images per month" to "10 free images to start"
 
-**Current:** Free users get 10 credits once.
-**Displayed:** "10 images per month" implies monthly refresh.
+**Issue:** `HOMEPAGE_TIERS` showed "10 images per month" but free users only get 10 credits once on signup (no monthly renewal).
 
-**Fix:**
+**Fix Applied:**
 
 ```typescript
-// Change from: "10 images per month"
-// Change to: "10 free images to start"
+// Changed from: "10 images per month"
+// Changed to: "10 free images to start"
 ```
 
 **Files:**
 
-- `shared/config/stripe.ts` - `HOMEPAGE_TIERS[0]`
-- `client/components/pixelperfect/Pricing.tsx`
+- ✅ `shared/config/stripe.ts` - `HOMEPAGE_TIERS[0]` - FIXED
+- ✅ `client/components/pixelperfect/Pricing.tsx` - UPDATED
 
 ---
 
-### QW-2: Low Credit Warning
+### ✅ QW-2: Low Credit Warning [RESOLVED]
 
 **Effort:** 2-4 hours | **Impact:** High (Prevents user frustration) | **Priority:** #2
 
-**Location:** `client/components/stripe/CreditsDisplay.tsx`
+**Status:** ✅ **FIXED** - Complete low credit warning system implemented
 
-**Issue:** Users discover insufficient credits only when attempting an action.
+**Issue:** Users discovered insufficient credits only when attempting an action.
 
-**Fix:**
+**Fix Applied:**
 
-- Add threshold check (e.g., < 5 credits)
-- Show warning indicator in CreditsDisplay component
-- Optional: Toast notification on dashboard load
+- ✅ Added threshold check (< 5 credits triggers warning)
+- ✅ Added visual warning indicator in CreditsDisplay component with:
+  - Color-coded background (amber for low, red for empty)
+  - Animated warning dot indicator
+  - Hover tooltip with credit status
+- ✅ Added toast notification system on dashboard load with:
+  - Smart session-based notification (prevents spam)
+  - Clear messaging with upgrade suggestions
+  - Periodic credit checking (every 5 minutes)
 
 **Files:**
 
-- `client/components/stripe/CreditsDisplay.tsx` - Add warning state
-- `app/dashboard/layout.tsx` - Optional toast notification
+- ✅ `client/components/stripe/CreditsDisplay.tsx` - Visual warning indicators ADDED
+- ✅ `client/hooks/useLowCreditWarning.ts` - Toast notification hook CREATED
+- ✅ `app/dashboard/layout.tsx` - Hook integration ADDED
 
 ---
 
-### QW-3: Test Mode Detection Security Fix
+### ✅ QW-3: Test Mode Detection Security Fix [RESOLVED]
 
 **Effort:** 10 minutes | **Impact:** High (Security vulnerability) | **Priority:** #3
 
-**Location:** `app/api/webhooks/stripe/route.ts:25-30`
+**Location:** `app/api/webhooks/stripe/route.ts:113-116`
 
-**Issue:** Unsafe test mode detection checks for "invalid json" string in body, which could be exploited.
+**Status:** ✅ **FIXED** - Unsafe string check removed
 
-```typescript
-// REMOVE THIS:
-body.includes('invalid json');
-```
+**Issue:** Unsafe test mode detection checked for "invalid json" string in body, which could be exploited.
 
-**Fix:** Use only environment-based detection:
+**Fix Applied:** Removed the unsafe `body.includes('invalid json')` check. Now uses only secure environment-based detection:
 
 ```typescript
 const isTestMode =
-  !process.env.STRIPE_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET.startsWith('whsec_test_');
+  serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') ||
+  serverEnv.ENV === 'test' ||
+  STRIPE_WEBHOOK_SECRET === 'whsec_test_secret';
 ```
 
 **Files:**
 
-- `app/api/webhooks/stripe/route.ts`
+- ✅ `app/api/webhooks/stripe/route.ts` - SECURITY VULNERABILITY FIXED
 
 ---
 
-### QW-4: Credit Transaction History UI
+### ✅ QW-4: Credit Transaction History UI [RESOLVED]
 
 **Effort:** 4-6 hours | **Impact:** High (User transparency) | **Priority:** #4
 
 **Location:** `app/dashboard/billing/page.tsx`
 
-**Issue:** `credit_transactions` table exists but not exposed in UI. Users can't see:
+**Status:** ✅ **FIXED** - Credit transaction history fully implemented
+
+**Issue:** `credit_transactions` table existed but wasn't exposed in UI. Users couldn't see:
 
 - How credits were used
 - When credits were added
 - Credit consumption patterns
 
-**Fix:**
+**Fix Applied:**
 
-1. Create `GET /api/credits/history` endpoint
-2. Add service method `StripeService.getCreditHistory()`
-3. Add "Transaction History" section to billing page
-4. Display: Date, Type (earned/used), Amount, Description, Balance
+1. ✅ Created `GET /api/credits/history` endpoint
+2. ✅ Added service method `StripeService.getCreditHistory()`
+3. ✅ Added "Transaction History" section to billing page
+4. ✅ Display: Date, Type (earned/used), Amount, Description, Balance
 
 **Files:**
 
-- `app/api/credits/history/route.ts` - New endpoint
-- `server/stripe/stripeService.ts` - Add `getCreditHistory()` method
-- `app/dashboard/billing/page.tsx` - Add transaction history section
-- `client/components/stripe/CreditHistory.tsx` - New component
+- ✅ `app/api/credits/history/route.ts` - IMPLEMENTED
+- ✅ `server/stripe/stripeService.ts` - `getCreditHistory()` method ADDED
+- ✅ `app/dashboard/billing/page.tsx` - Transaction history section ADDED
+- ✅ `client/components/stripe/CreditHistory.tsx` - New component CREATED
 
 ---
 
 ## 🚀 Major Projects (High Effort, High Impact)
 
-### MP-1: Upgrade/Downgrade Flow
+### ✅ MP-1: Upgrade/Downgrade Flow [RESOLVED]
 
 **Effort:** 2-3 days | **Impact:** Very High (Core feature) | **Priority:** #5
 
-**Location:** N/A (Missing)
+**Status:** ✅ **FIXED** - Full upgrade/downgrade flow implemented
 
 **Issue:** No in-app upgrade/downgrade flow. Users redirected to Stripe Portal for all plan changes.
 
-**Requirements:**
+**Requirements Met:**
 
-1. API to preview proration costs
-2. API to execute plan change
-3. UI to compare current plan vs target plan
-4. Confirmation modal with proration details
-5. Success/error handling
+1. ✅ API to preview proration costs
+2. ✅ API to execute plan change
+3. ✅ UI to compare current plan vs target plan
+4. ✅ Confirmation modal with proration details
+5. ✅ Success/error handling
 
-**Implementation Plan:**
+**Implementation Completed:**
 
-1. Backend:
+1. ✅ Backend:
 
    - `POST /api/subscription/preview-change` - Calculate proration
    - `POST /api/subscription/change` - Execute change
-   - Add `StripeService.previewPlanChange()`
-   - Add `StripeService.changePlan()`
+   - Added `StripeService.previewPlanChange()`
+   - Added `StripeService.changePlan()`
 
-2. Frontend:
-   - Update `PricingCard` to show "Upgrade" vs "Subscribe"
-   - Add "Current Plan" badge
-   - Create `PlanChangeModal` component
+2. ✅ Frontend:
+   - Updated `PricingCard` to show "Upgrade" vs "Subscribe"
+   - Added "Current Plan" badge
+   - Created `PlanChangeModal` component
    - Show proration preview before confirmation
 
 **Files:**
 
-- `app/api/subscription/preview-change/route.ts` - New
-- `app/api/subscription/change/route.ts` - New
-- `server/stripe/stripeService.ts` - Add methods
-- `app/pricing/page.tsx` - Pass current plan
-- `client/components/stripe/PricingCard.tsx` - Update logic
-- `client/components/stripe/PlanChangeModal.tsx` - New
+- ✅ `app/api/subscription/preview-change/route.ts` - IMPLEMENTED
+- ✅ `app/api/subscription/change/route.ts` - IMPLEMENTED
+- ✅ `server/stripe/stripeService.ts` - Methods ADDED
+- ✅ `app/pricing/page.tsx` - Current plan logic ADDED
+- ✅ `client/components/stripe/PricingCard.tsx` - Updated logic
+- ✅ `client/components/stripe/PlanChangeModal.tsx` - New component CREATED
 
 ---
 
-### MP-2: Webhook Idempotency
+### ✅ MP-2: Webhook Idempotency [RESOLVED]
 
 **Effort:** 1-2 days | **Impact:** High (Prevent double-crediting) | **Priority:** #6
 
-**Location:** `app/api/webhooks/stripe/route.ts`
+**Status:** ✅ **FIXED** - Full webhook idempotency system implemented
 
 **Issue:** No idempotency checks. If Stripe retries webhook, credits could be added twice.
 
 **Current Mitigation:** `ref_id` in `credit_transactions` provides some protection at DB level, but not enforced in webhook handler.
 
-**Fix:**
+**Fix Applied:**
 
-1. Create `webhook_events` table:
+1. ✅ Created `webhook_events` table:
 
    ```sql
    CREATE TABLE webhook_events (
@@ -217,18 +224,20 @@ const isTestMode =
      event_id text UNIQUE NOT NULL,
      event_type text NOT NULL,
      processed_at timestamptz DEFAULT now(),
-     status text NOT NULL
+     status text NOT NULL,
+     payload jsonb,
+     completed_at timestamptz
    );
    ```
 
-2. Check `webhook_events` before processing
-3. Insert event ID before processing (with status='processing')
-4. Update status to 'completed' or 'failed' after
+2. ✅ Check `webhook_events` before processing via `checkAndClaimEvent()`
+3. ✅ Insert event ID before processing (with status='processing')
+4. ✅ Update status to 'completed' or 'failed' after via `markEventCompleted()`
 
 **Files:**
 
-- `supabase/migrations/[timestamp]_create_webhook_events.sql` - New
-- `app/api/webhooks/stripe/route.ts` - Add idempotency checks
+- ✅ `supabase/migrations/20250120_add_webhook_events.sql` - IMPLEMENTED
+- ✅ `app/api/webhooks/stripe/route.ts` - Idempotency checks ADDED
 
 ---
 
@@ -263,40 +272,55 @@ const isTestMode =
 
 ## 💡 Fill Ins (Low Effort, Low Impact)
 
-### FI-1: Portal Session Response Type
+### ✅ FI-1: Portal Session Response Type [RESOLVED]
 
 **Effort:** 5 minutes | **Impact:** Low (Type consistency) | **Priority:** #8
 
-**Location:** `server/stripe/stripeService.ts:250-273`
+**Location:** `client/services/stripeService.ts:308-309`
+
+**Status:** ✅ **FIXED** - Type consistency resolved
 
 **Issue:** Minor inconsistency between service return type and API response wrapper.
 
-**Fix:** Document the interface clearly or unwrap in service layer.
+**Fix Applied:** Updated service layer to properly extract data from wrapped API response:
+
+```typescript
+// Before: return response.json(); // Returns { success, data: { url } }
+// After:
+const result = await response.json();
+return result.data; // Extract { url } from { success, data: { url } }
+```
+
+**Files:**
+
+- ✅ `client/services/stripeService.ts` - Response handling FIXED
 
 ---
 
-### FI-2: Stripe Health Check Endpoint
+### ✅ FI-2: Stripe Health Check Endpoint [RESOLVED]
 
 **Effort:** 1-2 hours | **Impact:** Low (Ops convenience) | **Priority:** #9
 
-**Location:** N/A (Missing)
+**Status:** ✅ **FIXED** - Health check endpoint implemented
 
 **Issue:** No way to verify Stripe configuration is valid.
 
-**Fix:**
+**Fix Applied:**
 
 ```typescript
 // GET /api/health/stripe
 {
   stripe_configured: boolean,
   webhook_secret_valid: boolean,
-  api_key_valid: boolean
+  api_key_valid: boolean,
+  test_mode: boolean,
+  error: string | null
 }
 ```
 
 **Files:**
 
-- `app/api/health/stripe/route.ts` - New
+- ✅ `app/api/health/stripe/route.ts` - IMPLEMENTED
 
 ---
 
