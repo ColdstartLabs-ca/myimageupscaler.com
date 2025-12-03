@@ -1,7 +1,5 @@
-import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { User } from '@supabase/supabase-js';
-import { clientEnv } from '@shared/config/env';
 
 interface IUpdateSessionResult {
   user: User | null;

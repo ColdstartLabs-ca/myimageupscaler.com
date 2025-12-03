@@ -22,7 +22,7 @@ Produce a `.md` **implementation plan so clear and explicit that a Junior Engine
 
 ## Protocol: Pre-Planning Requirements
 Before producing the plan, you MUST:
-1. **Explore:** Read all relevant files. Never guess.
+1. **Explore:** Read all relevant files. Never guess. REUSE EXISTING CODE AS MUCH AS POSSIBLE. DRY!
 2. **Verify:** Identify existing utilities, schemas, helpers to prevent duplication.
 3. **Constraint Check:** Ensure your plan aligns with existing patterns.
 4. **Impact Awareness:** Identify files touched, features affected, and risk areas.

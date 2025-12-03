@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/server/supabase/supabaseAdmin';
+import { verifyApiAuth } from '@/lib/middleware/auth';
 
 export interface IAdminCheckResult {
   isAdmin: boolean;
@@ -13,7 +14,21 @@ export interface IAdminCheckResult {
  * @returns Admin check result with error response if not authorized
  */
 export async function requireAdmin(req: NextRequest): Promise<IAdminCheckResult> {
-  const userId = req.headers.get('X-User-Id');
+  // Try to get user ID from middleware header first (if middleware is enabled)
+  let userId = req.headers.get('X-User-Id');
+
+  // If no header, extract user from JWT token directly
+  if (!userId) {
+    const authResult = await verifyApiAuth(req);
+    if ('error' in authResult) {
+      return {
+        isAdmin: false,
+        userId: null,
+        error: authResult.error,
+      };
+    }
+    userId = authResult.user.id;
+  }
 
   if (!userId) {
     return {

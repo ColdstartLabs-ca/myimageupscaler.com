@@ -1,12 +1,14 @@
 import type { AuthChangeEvent, Session, SupabaseClient } from '@supabase/supabase-js';
 import { createUserFromSession } from './authUtils';
 import { handlePostAuthRedirect } from './postAuthRedirect';
+import { saveAuthCache } from './authCache';
 import type { IAuthState } from './types';
 
-const PROFILE_FETCH_TIMEOUT = 3000;
+const PROFILE_FETCH_TIMEOUT = 1500; // Reduced from 3000ms
 
 /**
  * Fetches the user role from the profiles table.
+ * This runs in the background and doesn't block UI rendering.
  */
 async function fetchUserRole(
   supabase: SupabaseClient,
@@ -32,6 +34,21 @@ async function fetchUserRole(
 }
 
 /**
+ * Updates user state with fetched role and saves to cache.
+ * This is non-blocking - called after initial user state is set.
+ */
+async function updateUserRole(
+  supabase: SupabaseClient,
+  session: Session,
+  setState: (state: Partial<IAuthState>) => void
+): Promise<void> {
+  const role = await fetchUserRole(supabase, session.user.id);
+  const updatedUser = createUserFromSession(session, role);
+  setState({ user: updatedUser });
+  saveAuthCache(updatedUser);
+}
+
+/**
  * Handles sign out or token expiry events.
  */
 function handleSignOut(
@@ -42,10 +59,13 @@ function handleSignOut(
     isAuthenticated: false,
     isLoading: false,
   });
+  saveAuthCache(null);
 }
 
 /**
  * Handles user session events (sign in, token refresh with valid session).
+ * NOW NON-BLOCKING: Sets user state immediately with default role,
+ * then fetches actual role in background.
  */
 async function handleUserSession(
   supabase: SupabaseClient,
@@ -55,13 +75,17 @@ async function handleUserSession(
   setState: (state: Partial<IAuthState>) => void
 ): Promise<void> {
   const wasAuthenticated = getState().isAuthenticated;
-  const role = await fetchUserRole(supabase, session.user.id);
 
+  // IMMEDIATE: Set user with default 'user' role to unblock UI rendering
+  const userWithDefaultRole = createUserFromSession(session, 'user');
   setState({
-    user: createUserFromSession(session, role),
+    user: userWithDefaultRole,
     isAuthenticated: true,
     isLoading: false,
   });
+
+  // BACKGROUND: Fetch actual role and update (non-blocking)
+  updateUserRole(supabase, session, setState);
 
   // Handle post-auth actions for new sign-ins
   if (event === 'SIGNED_IN' && !wasAuthenticated && typeof window !== 'undefined') {

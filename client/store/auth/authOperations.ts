@@ -1,9 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { AuthProvider } from '@shared/types/authProviders';
 import { loadingStore } from '@client/store/loadingStore';
+import { loadAuthCache, saveAuthCache, clearAuthCache } from './authCache';
 import type { IAuthState, IAuthUser } from './types';
 
-const AUTH_INIT_TIMEOUT = 5000;
+const AUTH_INIT_TIMEOUT = 2000; // Reduced from 5000ms
 
 /**
  * Wrapper that handles loading state for async operations.
@@ -36,6 +37,7 @@ export function createSignInWithEmail(
           provider: AuthProvider.EMAIL,
         };
         setState({ user, isAuthenticated: true, isLoading: false });
+        saveAuthCache(user);
       }
     });
   };
@@ -85,8 +87,10 @@ export function createSignOut(
       }
 
       setState({ user: null, isAuthenticated: false, isLoading: false });
+      clearAuthCache();
     } catch (error) {
       setState({ user: null, isAuthenticated: false, isLoading: false });
+      clearAuthCache();
       throw error;
     } finally {
       loadingStore.getState().setLoading(false);
@@ -97,7 +101,8 @@ export function createSignOut(
 /**
  * Creates the initializeAuth action.
  * Handles error cases and refresh token issues.
- * Actual auth state is managed by onAuthStateChange listener.
+ * NOW WITH CACHING: Immediately loads cached state for instant UI,
+ * then validates with server in background.
  */
 export function createInitializeAuth(
   supabase: SupabaseClient,
@@ -105,6 +110,17 @@ export function createInitializeAuth(
 ): () => Promise<void> {
   return async () => {
     try {
+      // INSTANT: Load from cache first (< 1ms)
+      const cachedUser = loadAuthCache();
+      if (cachedUser) {
+        setState({
+          user: cachedUser,
+          isAuthenticated: true,
+          isLoading: false, // UI can render immediately!
+        });
+      }
+
+      // BACKGROUND: Validate session with server (still needed for security)
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Auth initialization timeout')), AUTH_INIT_TIMEOUT);
       });
@@ -123,17 +139,20 @@ export function createInitializeAuth(
       if (sessionError?.message?.includes('refresh_token_not_found')) {
         await supabase.auth.signOut();
         setState({ user: null, isAuthenticated: false, isLoading: false });
+        clearAuthCache();
         return;
       }
 
-      // No session - set loading to false
+      // No session - clear cache and state
       if (!session?.user) {
-        setState({ isLoading: false });
+        setState({ isLoading: false, user: null, isAuthenticated: false });
+        clearAuthCache();
       }
       // If session exists, onAuthStateChange handles setting user state
     } catch (error) {
       console.error('Error initializing auth:', error);
       setState({ isLoading: false, user: null, isAuthenticated: false });
+      clearAuthCache();
     }
   };
 }
