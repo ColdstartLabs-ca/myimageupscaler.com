@@ -7,6 +7,7 @@ import {
   getPlanByPriceId,
   calculateBalanceWithExpiration,
 } from '@shared/config/subscription.utils';
+import { getTrialConfig, getPlanConfig } from '@shared/config/subscription.config';
 import type { IIdempotencyResult, WebhookEventStatus } from '@shared/types/stripe';
 import Stripe from 'stripe';
 import dayjs from 'dayjs';
@@ -190,6 +191,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
           break;
 
+        case 'customer.subscription.trial_will_end':
+          await handleTrialWillEnd(event.data.object as Stripe.Subscription);
+          break;
+
         case 'invoice.payment_succeeded':
           await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
           break;
@@ -338,7 +343,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   // Get the user ID from the customer
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('id')
+    .select('id, subscription_status, credits_balance')
     .eq('stripe_customer_id', customerId)
     .single();
 
@@ -348,19 +353,24 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   }
 
   const userId = profile.id;
+  const previousStatus = profile.subscription_status;
 
   // Get price ID and plan metadata
   const priceId = subscription.items.data[0]?.price.id || '';
-  const plan = getPlanForPriceId(priceId);
+  const planConfig = getPlanConfig(priceId);
 
-  if (!plan) {
+  if (!planConfig) {
     console.error(`Unknown price ID in subscription update: ${priceId}`);
     return;
   }
 
+  // Get trial configuration
+  const trialConfig = getTrialConfig(priceId);
+
   // Access period timestamps - these are standard Stripe subscription fields (Unix timestamps in seconds)
   const currentPeriodStart = (subscription as any).current_period_start as number | undefined;
   const currentPeriodEnd = (subscription as any).current_period_end as number | undefined;
+  const trialEnd = (subscription as any).trial_end as number | null | undefined;
   const canceledAt = (subscription as any).canceled_at as number | null | undefined;
 
   // Validate required timestamp fields
@@ -386,9 +396,10 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   // Convert Unix timestamps to ISO strings using dayjs
   const currentPeriodStartISO = dayjs.unix(currentPeriodStart).toISOString();
   const currentPeriodEndISO = dayjs.unix(currentPeriodEnd).toISOString();
+  const trialEndISO = trialEnd ? dayjs.unix(trialEnd).toISOString() : null;
   const canceledAtISO = canceledAt ? dayjs.unix(canceledAt).toISOString() : null;
 
-  // Upsert subscription data
+  // Store trial end date in subscriptions table
   const { error: subError } = await supabaseAdmin.from('subscriptions').upsert({
     id: subscription.id,
     user_id: userId,
@@ -396,6 +407,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     price_id: priceId,
     current_period_start: currentPeriodStartISO,
     current_period_end: currentPeriodEndISO,
+    trial_end: trialEndISO,
     cancel_at_period_end: subscription.cancel_at_period_end,
     canceled_at: canceledAtISO,
   });
@@ -405,19 +417,73 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     return;
   }
 
+  // Handle trial start - allocate trial-specific credits
+  if (subscription.status === 'trialing' && previousStatus !== 'trialing') {
+    console.log(`Trial started for user ${userId}`);
+
+    if (trialConfig && trialConfig.enabled) {
+      // Determine how many credits to allocate for trial
+      const trialCredits = trialConfig.trialCredits ?? planConfig.creditsPerCycle;
+
+      const { error } = await supabaseAdmin.rpc('increment_credits_with_log', {
+        target_user_id: userId,
+        amount: trialCredits,
+        transaction_type: 'trial',
+        ref_id: subscription.id,
+        description: `Trial credits - ${planConfig.name} plan - ${trialCredits} credits`,
+      });
+
+      if (error) {
+        console.error('Error adding trial credits:', error);
+      } else {
+        console.log(`Added ${trialCredits} trial credits to user ${userId} for ${planConfig.name} plan`);
+      }
+    }
+  }
+
+  // Handle trial conversion to active subscription
+  if (subscription.status === 'active' && previousStatus === 'trialing') {
+    console.log(`Trial converted to paid for user ${userId}`);
+
+    if (trialConfig && trialConfig.enabled && trialConfig.trialCredits !== null) {
+      // Trial had different credits, adjust balance
+      const fullCredits = planConfig.creditsPerCycle;
+      const currentBalance = profile.credits_balance ?? 0;
+
+      // Calculate credits to add (full cycle minus what's already available from trial)
+      const creditsToAdd = Math.max(0, fullCredits - currentBalance);
+
+      if (creditsToAdd > 0) {
+        const { error } = await supabaseAdmin.rpc('increment_credits_with_log', {
+          target_user_id: userId,
+          amount: creditsToAdd,
+          transaction_type: 'subscription',
+          ref_id: subscription.id,
+          description: `Trial conversion - ${planConfig.name} plan - ${creditsToAdd} additional credits`,
+        });
+
+        if (error) {
+          console.error('Error adjusting credits after trial:', error);
+        } else {
+          console.log(`Added ${creditsToAdd} credits to user ${userId} after trial conversion`);
+        }
+      }
+    }
+  }
+
   // Update profile subscription status with human-readable plan name
   const { error: profileError } = await supabaseAdmin
     .from('profiles')
     .update({
       subscription_status: subscription.status,
-      subscription_tier: plan.name, // Use friendly name instead of price ID
+      subscription_tier: planConfig.name, // Use friendly name instead of price ID
     })
     .eq('id', userId);
 
   if (profileError) {
     console.error('Error updating profile subscription status:', profileError);
   } else {
-    console.log(`Updated subscription for user ${userId}: ${plan.name} (${subscription.status})`);
+    console.log(`Updated subscription for user ${userId}: ${planConfig.name} (${subscription.status})`);
   }
 }
 
@@ -725,4 +791,38 @@ async function handleInvoicePaymentRefunded(invoice: any) {
   console.log(`Invoice ${invoice.id} payment refunded`);
 
   // TODO: Implement invoice refund handling logic
+}
+
+// Handle trial will end warning
+async function handleTrialWillEnd(subscription: Stripe.Subscription) {
+  const customerId = subscription.customer as string;
+
+  // Get the user ID from the customer
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('id, email')
+    .eq('stripe_customer_id', customerId)
+    .single();
+
+  if (!profile) {
+    console.error(`No profile found for customer ${customerId}`);
+    return;
+  }
+
+  const userId = profile.id;
+  const trialEnd = (subscription as any).trial_end as number | null;
+
+  if (!trialEnd) {
+    console.error(`No trial end date for subscription ${subscription.id}`);
+    return;
+  }
+
+  const trialEndDate = dayjs.unix(trialEnd);
+  const daysUntilEnd = trialEndDate.diff(dayjs(), 'day');
+
+  console.log(`Trial ending in ${daysUntilEnd} days for user ${userId}`);
+
+  // TODO: Send trial ending soon email notification
+  // This would integrate with your email service provider
+  console.log(`TODO: Send trial ending soon email to ${profile.email} (${daysUntilEnd} days remaining)`);
 }

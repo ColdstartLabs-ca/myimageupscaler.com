@@ -6,6 +6,7 @@ import type { ICheckoutSessionRequest } from '@shared/types/stripe';
 import { clientEnv, serverEnv } from '@shared/config/env';
 import { getPlanForPriceId } from '@shared/config/stripe';
 import { BILLING_COPY } from '@shared/constants/billing';
+import { getTrialConfig, getPlanConfig } from '@shared/config/subscription.config';
 
 export const runtime = 'edge'; // Cloudflare Worker compatible
 
@@ -208,6 +209,21 @@ export async function POST(request: NextRequest) {
         },
       },
     };
+
+    // Add trial period if configured and enabled
+    const trialConfig = getTrialConfig(priceId);
+    if (trialConfig && trialConfig.enabled) {
+      // Add trial period to subscription
+      sessionParams.subscription_data = {
+        ...sessionParams.subscription_data,
+        trial_period_days: trialConfig.durationDays,
+      };
+
+      // If payment method is not required upfront, set payment collection
+      if (!trialConfig.requirePaymentMethod) {
+        sessionParams.payment_method_collection = 'if_required';
+      }
+    }
 
     // Add return URLs only for hosted mode
     if (uiMode === 'hosted') {

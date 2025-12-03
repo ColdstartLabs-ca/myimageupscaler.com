@@ -306,4 +306,164 @@ describe('PricingCard', () => {
       }
     );
   });
+
+  // Trial-specific tests
+  describe('Trial functionality', () => {
+    it('displays trial badge when trial is enabled', () => {
+      const propsWithTrial = {
+        ...defaultProps,
+        trial: {
+          enabled: true,
+          durationDays: 14,
+        },
+      };
+
+      render(<PricingCard {...propsWithTrial} />);
+
+      expect(screen.getByText('14-day free trial')).toBeInTheDocument();
+    });
+
+    it('shows trial button text when trial is enabled', () => {
+      const propsWithTrial = {
+        ...defaultProps,
+        trial: {
+          enabled: true,
+          durationDays: 7,
+        },
+      };
+
+      render(<PricingCard {...propsWithTrial} />);
+
+      expect(screen.getByText('Start 7-Day Trial')).toBeInTheDocument();
+    });
+
+    it('hides recommended badge when trial is enabled', () => {
+      const propsWithTrial = {
+        ...defaultProps,
+        recommended: true,
+        trial: {
+          enabled: true,
+          durationDays: 14,
+        },
+      };
+
+      render(<PricingCard {...propsWithTrial} />);
+
+      expect(screen.queryByText('Recommended')).not.toBeInTheDocument();
+      expect(screen.getByText('14-day free trial')).toBeInTheDocument();
+    });
+
+    it('shows recommended badge when trial is disabled and recommended is true', () => {
+      const propsWithDisabledTrial = {
+        ...defaultProps,
+        recommended: true,
+        trial: {
+          enabled: false,
+          durationDays: 14,
+        },
+      };
+
+      render(<PricingCard {...propsWithDisabledTrial} />);
+
+      expect(screen.getByText('Recommended')).toBeInTheDocument();
+      expect(screen.queryByText('14-day free trial')).not.toBeInTheDocument();
+    });
+
+    it('shows normal button when trial is disabled', () => {
+      const propsWithDisabledTrial = {
+        ...defaultProps,
+        trial: {
+          enabled: false,
+          durationDays: 14,
+        },
+      };
+
+      render(<PricingCard {...propsWithDisabledTrial} />);
+
+      expect(screen.getByText('Get Started')).toBeInTheDocument();
+      expect(screen.queryByText('Start 14-Day Trial')).not.toBeInTheDocument();
+    });
+
+    it('shows current plan text when disabled and trial is enabled', () => {
+      const propsWithDisabledTrial = {
+        ...defaultProps,
+        disabled: true,
+        trial: {
+          enabled: true,
+          durationDays: 14,
+        },
+      };
+
+      render(<PricingCard {...propsWithDisabledTrial} />);
+
+      expect(screen.getByText('Current Plan')).toBeInTheDocument();
+    });
+
+    it('handles different trial durations', () => {
+      const propsWith30DayTrial = {
+        ...defaultProps,
+        trial: {
+          enabled: true,
+          durationDays: 30,
+        },
+      };
+
+      render(<PricingCard {...propsWith30DayTrial} />);
+
+      expect(screen.getByText('30-day free trial')).toBeInTheDocument();
+      expect(screen.getByText('Start 30-Day Trial')).toBeInTheDocument();
+    });
+
+    it('handles trial button click correctly', async () => {
+      const user = userEvent.setup();
+      const propsWithTrial = {
+        ...defaultProps,
+        trial: {
+          enabled: true,
+          durationDays: 14,
+        },
+      };
+
+      render(<PricingCard {...propsWithTrial} />);
+
+      const trialButton = screen.getByText('Start 14-Day Trial');
+      await user.click(trialButton);
+
+      expect(mockStripeService.redirectToCheckout).toHaveBeenCalledWith(
+        'price_pro_monthly_123',
+        {
+          successUrl: 'http://localhost:3000/success',
+          cancelUrl: 'http://localhost:3000/pricing',
+        }
+      );
+    });
+
+    it('handles trial with custom onSelect callback', async () => {
+      const user = userEvent.setup();
+      const mockOnSelect = vi.fn();
+      const propsWithTrial = {
+        ...defaultProps,
+        trial: {
+          enabled: true,
+          durationDays: 7,
+        },
+        onSelect: mockOnSelect,
+      };
+
+      render(<PricingCard {...propsWithTrial} />);
+
+      const trialButton = screen.getByText('Start 7-Day Trial');
+      await user.click(trialButton);
+
+      expect(mockOnSelect).toHaveBeenCalled();
+      expect(mockStripeService.redirectToCheckout).not.toHaveBeenCalled();
+    });
+
+    it('displays no trial badge when trial prop is not provided', () => {
+      render(<PricingCard {...defaultProps} />);
+
+      expect(screen.queryByText(/-day free trial/)).not.toBeInTheDocument();
+      expect(screen.getByText('Get Started')).toBeInTheDocument();
+    });
+  });
 });

@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { CreditCard, Package, Receipt, ExternalLink, Loader2, RefreshCw } from 'lucide-react';
 import { StripeService } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
 import { getPlanDisplayName } from '@shared/config/stripe';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
 import type { IUserProfile, ISubscription } from '@shared/types/stripe';
+
+// Extend dayjs with relativeTime plugin
+dayjs.extend(relativeTime);
 
 export default function BillingPage() {
   const router = useRouter();
@@ -203,11 +208,28 @@ export default function BillingPage() {
         {subscription && (
           <div className="mt-4 pt-4 border-t border-slate-200 space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Current Period Ends</span>
+              <span className="text-slate-600">
+                {subscription.status === 'trialing' ? 'Trial Ends' : 'Current Period Ends'}
+              </span>
               <span className="text-slate-900 font-medium">
-                {formatDate(subscription.current_period_end)}
+                {formatDate(
+                  subscription.status === 'trialing' && subscription.trial_end
+                    ? subscription.trial_end
+                    : subscription.current_period_end
+                )}
               </span>
             </div>
+
+            {/* Trial Information */}
+            {subscription.status === 'trialing' && subscription.trial_end && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
+                <p className="text-sm text-blue-800">
+                  <strong>Trial Active:</strong> Your trial ends {dayjs(subscription.trial_end).fromNow()}.
+                  Your card will be charged the regular subscription price after the trial ends.
+                </p>
+              </div>
+            )}
+
             {subscription.cancel_at_period_end && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
                 <p className="text-sm text-yellow-800">

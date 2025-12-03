@@ -24,7 +24,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       currency: 'usd',
       interval: 'month',
       creditsPerCycle: 200,
-      maxRollover: 1200, // 6× monthly credits
+      maxRollover: null, // No rollover - credits reset each cycle
       rolloverMultiplier: 6,
       // TODO: Trial periods not yet implemented - see docs/PRDs/subscription-config/trial-periods.md
       trial: {
@@ -35,16 +35,15 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
         allowMultipleTrials: false,
         autoConvertToPaid: true,
       },
-      // TODO: Credits expiration not yet implemented - see docs/PRDs/subscription-config/credits-expiration.md
       creditsExpiration: {
-        mode: 'never', // Current behavior: credits rollover indefinitely (capped by maxRollover)
+        mode: 'end_of_cycle', // Credits reset at billing cycle end
         gracePeriodDays: 0,
-        sendExpirationWarning: false,
-        warningDaysBefore: 0,
+        sendExpirationWarning: true,
+        warningDaysBefore: 7,
       },
       features: [
         '200 credits per month',
-        'Rollover unused credits',
+        'Credits reset monthly',
         'Email support',
         'All features included',
       ],
@@ -61,7 +60,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       currency: 'usd',
       interval: 'month',
       creditsPerCycle: 1000,
-      maxRollover: 6000, // 6× monthly credits
+      maxRollover: null, // No rollover - credits reset each cycle
       rolloverMultiplier: 6,
       // TODO: Trial periods not yet implemented - see docs/PRDs/subscription-config/trial-periods.md
       trial: {
@@ -72,16 +71,15 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
         allowMultipleTrials: false,
         autoConvertToPaid: true,
       },
-      // TODO: Credits expiration not yet implemented - see docs/PRDs/subscription-config/credits-expiration.md
       creditsExpiration: {
-        mode: 'never', // Current behavior: credits rollover indefinitely (capped by maxRollover)
+        mode: 'end_of_cycle', // Credits reset at billing cycle end
         gracePeriodDays: 0,
-        sendExpirationWarning: false,
-        warningDaysBefore: 0,
+        sendExpirationWarning: true,
+        warningDaysBefore: 7,
       },
       features: [
         '1000 credits per month',
-        'Rollover unused credits',
+        'Credits reset monthly',
         'Priority support',
         'All features included',
         'Early access to new features',
@@ -99,7 +97,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       currency: 'usd',
       interval: 'month',
       creditsPerCycle: 5000,
-      maxRollover: 30000, // 6× monthly credits
+      maxRollover: null, // No rollover - credits reset each cycle
       rolloverMultiplier: 6,
       // TODO: Trial periods not yet implemented - see docs/PRDs/subscription-config/trial-periods.md
       trial: {
@@ -110,16 +108,15 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
         allowMultipleTrials: false,
         autoConvertToPaid: true,
       },
-      // TODO: Credits expiration not yet implemented - see docs/PRDs/subscription-config/credits-expiration.md
       creditsExpiration: {
-        mode: 'never', // Current behavior: credits rollover indefinitely (capped by maxRollover)
+        mode: 'end_of_cycle', // Credits reset at billing cycle end
         gracePeriodDays: 0,
-        sendExpirationWarning: false,
-        warningDaysBefore: 0,
+        sendExpirationWarning: true,
+        warningDaysBefore: 7,
       },
       features: [
         '5000 credits per month',
-        'Rollover unused credits',
+        'Credits reset monthly',
         '24/7 priority support',
         'All features included',
         'Dedicated account manager',
@@ -185,4 +182,28 @@ export function getSubscriptionConfig(): ISubscriptionConfig {
   //   return JSON.parse(process.env.SUBSCRIPTION_CONFIG_OVERRIDE);
   // }
   return SUBSCRIPTION_CONFIG;
+}
+
+/**
+ * Get trial configuration for a specific price ID
+ * Returns null if trial is not enabled for the plan
+ */
+export function getTrialConfig(priceId: string): ISubscriptionConfig['plans'][0]['trial'] | null {
+  const plan = getSubscriptionConfig().plans.find(p => p.stripePriceId === priceId);
+  return plan?.trial?.enabled ? plan.trial : null;
+}
+
+/**
+ * Get plan configuration by price ID
+ */
+export function getPlanConfig(priceId: string): ISubscriptionConfig['plans'][0] | null {
+  return getSubscriptionConfig().plans.find(p => p.stripePriceId === priceId) || null;
+}
+
+/**
+ * Check if a plan has trial enabled
+ */
+export function isTrialEnabled(priceId: string): boolean {
+  const config = getTrialConfig(priceId);
+  return config ? config.enabled : false;
 }

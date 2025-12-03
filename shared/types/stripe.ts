@@ -29,6 +29,7 @@ export interface ISubscription {
   price_id: string;
   current_period_start: string;
   current_period_end: string;
+  trial_end: string | null; // Trial end date (ISO string)
   cancel_at_period_end: boolean;
   canceled_at: string | null;
   created_at: string;

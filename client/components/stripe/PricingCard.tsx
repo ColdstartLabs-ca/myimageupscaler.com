@@ -14,6 +14,10 @@ interface IPricingCardProps {
   disabled?: boolean;
   disabledReason?: string;
   onSelect?: () => void;
+  trial?: {
+    enabled: boolean;
+    durationDays: number;
+  };
 }
 
 /**
@@ -44,6 +48,7 @@ export function PricingCard({
   disabled = false,
   disabledReason = 'Current Plan',
   onSelect,
+  trial,
 }: IPricingCardProps): JSX.Element {
   const router = useRouter();
 
@@ -75,9 +80,14 @@ export function PricingCard({
           {disabledReason}
         </div>
       )}
-      {!disabled && recommended && (
+      {!disabled && recommended && !trial?.enabled && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white px-4 py-1 rounded-full text-sm font-medium">
           Recommended
+        </div>
+      )}
+      {!disabled && trial?.enabled && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+          {trial.durationDays}-day free trial
         </div>
       )}
       <div className="p-8">
@@ -126,7 +136,11 @@ export function PricingCard({
                 : 'bg-indigo-600 hover:bg-indigo-700 text-white hover:shadow-lg'
             }`}
           >
-            {disabled ? 'Current Plan' : 'Get Started'}
+            {disabled
+              ? 'Current Plan'
+              : trial?.enabled
+                ? `Start ${trial.durationDays}-Day Trial`
+                : 'Get Started'}
           </button>
         </div>
       </div>

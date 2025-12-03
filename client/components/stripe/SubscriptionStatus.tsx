@@ -1,9 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { StripeService } from '@client/services/stripeService';
 import type { ISubscription, IUserProfile } from '@shared/types/stripe';
 import { getPlanDisplayName } from '@shared/config/stripe';
+
+// Extend dayjs with relativeTime plugin
+dayjs.extend(relativeTime);
 
 /**
  * Component to display user's current subscription status
@@ -132,9 +137,39 @@ export function SubscriptionStatus(): JSX.Element {
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-slate-600">Current Period Ends:</span>
-          <span className="font-semibold">{formatDate(subscription.current_period_end)}</span>
+          <span className="text-slate-600">
+            {subscription.status === 'trialing' ? 'Trial Ends:' : 'Current Period Ends:'}
+          </span>
+          <span className="font-semibold">
+            {formatDate(subscription.status === 'trialing' && subscription.trial_end ? subscription.trial_end : subscription.current_period_end)}
+          </span>
         </div>
+
+        {/* Trial specific information */}
+        {subscription.status === 'trialing' && subscription.trial_end && (
+          <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="shrink-0 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div className="text-sm">
+              <p>
+                Your trial ends {dayjs(subscription.trial_end).fromNow()}.
+                After the trial, you will be charged the regular subscription price.
+              </p>
+            </div>
+          </div>
+        )}
 
         {subscription.cancel_at_period_end && (
           <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">

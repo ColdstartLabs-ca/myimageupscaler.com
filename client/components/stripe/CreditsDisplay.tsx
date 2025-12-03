@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { StripeService } from '@client/services/stripeService';
-import type { IUserProfile } from '@shared/types/stripe';
+import { getPlanByPriceId } from '@shared/config/subscription.utils';
+import type { IUserProfile, ISubscription } from '@shared/types/stripe';
+import { formatDistanceToNow } from 'date-fns';
 
 // Low credit threshold - show warning when credits fall below this amount
 const LOW_CREDIT_THRESHOLD = 5;
@@ -17,6 +19,7 @@ const LOW_CREDIT_THRESHOLD = 5;
  */
 export function CreditsDisplay(): JSX.Element {
   const [profile, setProfile] = useState<IUserProfile | null>(null);
+  const [subscription, setSubscription] = useState<ISubscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,8 +32,12 @@ export function CreditsDisplay(): JSX.Element {
     try {
       setLoading(true);
       console.log('[CreditsDisplay] Calling StripeService.getUserProfile');
-      const data = await StripeService.getUserProfile();
-      setProfile(data);
+      const [profileData, subscriptionData] = await Promise.all([
+        StripeService.getUserProfile(),
+        StripeService.getActiveSubscription(),
+      ]);
+      setProfile(profileData);
+      setSubscription(subscriptionData);
       setError(null);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load profile';
@@ -43,6 +50,23 @@ export function CreditsDisplay(): JSX.Element {
   const creditBalance = profile?.credits_balance || 0;
   const isLowCredits = creditBalance > 0 && creditBalance <= LOW_CREDIT_THRESHOLD;
   const isNoCredits = creditBalance === 0;
+
+  // Check if credits will expire
+  const priceId = subscription?.price_id;
+  const planConfig = priceId ? getPlanByPriceId(priceId) : null;
+  const expiresAt = subscription?.current_period_end;
+  const creditsExpire = planConfig?.creditsExpiration?.mode !== 'never';
+  const showExpiration = creditsExpire && expiresAt && creditBalance > 0;
+
+  // Calculate time until expiration
+  let expirationText = '';
+  if (showExpiration && expiresAt) {
+    try {
+      expirationText = formatDistanceToNow(new Date(expiresAt), { addSuffix: true });
+    } catch {
+      expirationText = '';
+    }
+  }
 
   if (loading) {
     return (
@@ -155,11 +179,20 @@ export function CreditsDisplay(): JSX.Element {
         </button>
       </div>
 
-      {/* Tooltip for low credit warning */}
-      {(isLowCredits || isNoCredits) && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-slate-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+      {/* Tooltip for low credit warning and expiration info */}
+      {((isLowCredits || isNoCredits) || showExpiration) && (
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900"></div>
-          {isNoCredits ? 'No credits remaining' : `Low credits: ${creditBalance} remaining`}
+          <div className="space-y-1">
+            {(isLowCredits || isNoCredits) && (
+              <div>{isNoCredits ? 'No credits remaining' : `Low credits: ${creditBalance} remaining`}</div>
+            )}
+            {showExpiration && expirationText && (
+              <div className="text-amber-300">
+                Credits expire {expirationText}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
