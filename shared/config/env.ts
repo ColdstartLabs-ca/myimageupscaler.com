@@ -98,6 +98,8 @@ const serverEnvSchema = z.object({
   ALLOWED_ORIGIN: z.string().default('*'),
   // Cloudflare
   CF_PAGES_URL: z.string().optional(),
+  // Cron Job Authentication
+  CRON_SECRET: z.string().default(''),
 });
 
 export type IServerEnv = z.infer<typeof serverEnvSchema>;
@@ -120,6 +122,8 @@ function loadServerEnv(): IServerEnv {
     ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN || '*',
     // Cloudflare
     CF_PAGES_URL: process.env.CF_PAGES_URL,
+    // Cron Job Authentication
+    CRON_SECRET: process.env.CRON_SECRET || '',
   };
 
   return serverEnvSchema.parse(env);
