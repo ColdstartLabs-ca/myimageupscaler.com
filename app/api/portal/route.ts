@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Missing authorization header'
-          }
+            message: 'Missing authorization header',
+          },
         },
         { status: 401 }
       );
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       const mockUserId = token.replace('test_token_', '');
       user = {
         id: mockUserId,
-        email: `test-${mockUserId}@test.local`
+        email: `test-${mockUserId}@test.local`,
       };
     } else {
       // Verify the user with Supabase for non-test environments
@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Invalid authentication token'
-          }
+            message: 'Invalid authentication token',
+          },
         },
         { status: 401 }
       );
@@ -70,8 +70,8 @@ export async function POST(request: NextRequest) {
           success: false,
           error: {
             code: 'INVALID_JSON',
-            message: 'Invalid JSON in request body'
-          }
+            message: 'Invalid JSON in request body',
+          },
         },
         { status: 400 }
       );
@@ -91,8 +91,8 @@ export async function POST(request: NextRequest) {
               success: false,
               error: {
                 code: 'INVALID_RETURN_URL',
-                message: 'Invalid return URL protocol'
-              }
+                message: 'Invalid return URL protocol',
+              },
             },
             { status: 400 }
           );
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
           /vbscript:/i,
           /<script/i,
           /onload=/i,
-          /onerror=/i
+          /onerror=/i,
         ];
 
         for (const pattern of dangerousPatterns) {
@@ -115,8 +115,8 @@ export async function POST(request: NextRequest) {
                 success: false,
                 error: {
                   code: 'INVALID_RETURN_URL',
-                  message: 'Invalid return URL format'
-                }
+                  message: 'Invalid return URL format',
+                },
               },
               { status: 400 }
             );
@@ -130,8 +130,8 @@ export async function POST(request: NextRequest) {
             success: false,
             error: {
               code: 'INVALID_RETURN_URL',
-              message: 'Invalid return URL format'
-            }
+              message: 'Invalid return URL format',
+            },
           },
           { status: 400 }
         );
@@ -162,8 +162,8 @@ export async function POST(request: NextRequest) {
             success: false,
             error: {
               code: 'STRIPE_CUSTOMER_NOT_FOUND',
-              message: 'Activate a subscription to manage billing.'
-            }
+              message: 'Activate a subscription to manage billing.',
+            },
           },
           { status: 400 }
         );
@@ -183,12 +183,12 @@ export async function POST(request: NextRequest) {
         data: {
           url: `${returnUrl}?mock=true`,
           mock: true,
-        }
+        },
       });
     }
 
     const portalSession = await stripe.billingPortal.sessions.create({
-      customer: stripeCustomerId,
+      customer: stripeCustomerId!, // We've validated this above
       return_url: returnUrl,
     });
 
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: {
         url: portalSession.url,
-      }
+      },
     });
   } catch (error: unknown) {
     console.error('Portal session error:', error);
@@ -208,8 +208,8 @@ export async function POST(request: NextRequest) {
         success: false,
         error: {
           code: 'INTERNAL_ERROR',
-          message: errorMessage
-        }
+          message: errorMessage,
+        },
       },
       { status: 500 }
     );
