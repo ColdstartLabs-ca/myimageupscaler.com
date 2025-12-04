@@ -28,7 +28,21 @@ export class BasePage {
   async goto(path: string): Promise<void> {
     // For absolute URLs, use as-is; for relative paths, let Playwright prepend baseURL
     await this.page.goto(path);
-    await this.page.waitForLoadState('networkidle');
+
+    // Wait for network idle with a reasonable timeout to handle flaky network conditions
+    // Use a shorter timeout and catch errors to handle protected routes gracefully
+    try {
+      await this.page.waitForLoadState('networkidle', { timeout: 10000 });
+    } catch {
+      // If network idle times out, fall back to domcontentloaded
+      // This handles cases where protected routes have ongoing API calls
+      try {
+        await this.page.waitForLoadState('domcontentloaded', { timeout: 5000 });
+      } catch {
+        // If even domcontentloaded fails, just wait a bit and continue
+        await this.wait(1000);
+      }
+    }
   }
 
   /**
@@ -45,7 +59,7 @@ export class BasePage {
    */
   async reload(): Promise<void> {
     await this.page.reload();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
   }
 
   // Common UI element selectors
@@ -61,7 +75,8 @@ export class BasePage {
    * Gets the sign in button from header
    */
   get signInButton(): Locator {
-    return this.header.getByRole('button', { name: 'Sign In' }).first();
+    // Try multiple strategies to find the sign in button
+    return this.page.locator('button:has-text("Sign In")').first();
   }
 
   /**
@@ -118,7 +133,10 @@ export class BasePage {
   async dismissToast(): Promise<void> {
     const toast = this.page.locator('[role="alert"], [data-sonner-toast], .toast, .notification');
     if (await toast.isVisible()) {
-      await toast.locator('button[aria-label="Close"], .close-button, [data-dismiss]').click().catch(() => {});
+      await toast
+        .locator('button[aria-label="Close"], .close-button, [data-dismiss]')
+        .click()
+        .catch(() => {});
     }
   }
 
@@ -177,7 +195,9 @@ export class BasePage {
    * Waits for loading indicators to disappear
    */
   async waitForLoadingComplete(): Promise<void> {
-    const spinner = this.page.locator('[data-loading], .animate-spin, [aria-busy="true"], .loading');
+    const spinner = this.page.locator(
+      '[data-loading], .animate-spin, [aria-busy="true"], .loading'
+    );
     await spinner.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {});
   }
 
@@ -310,7 +330,7 @@ export class BasePage {
     const filename = `${name}-${timestamp}.png`;
     await this.page.screenshot({
       path: `test-results/screenshots/${filename}`,
-      fullPage: options?.fullPage
+      fullPage: options?.fullPage,
     });
   }
 

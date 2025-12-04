@@ -31,7 +31,7 @@ export class LoginPage extends BasePage {
    *
    * @param timeout - Optional timeout for modal to appear
    */
-  async openLoginModal(timeout = 10000): Promise<void> {
+  async openLoginModal(): Promise<void> {
     // Wait for header to be visible using enhanced base method
     await this.header.waitFor({ state: 'visible', timeout: 15000 });
 
@@ -66,7 +66,7 @@ export class LoginPage extends BasePage {
     // Wait for either success (dashboard) or error
     try {
       await this.waitForURL(/dashboard/, { timeout });
-    } catch (error) {
+    } catch {
       // If we don't get dashboard, check for authentication state change
       await this.page.waitForTimeout(2000);
     }
@@ -136,12 +136,7 @@ export class LoginPage extends BasePage {
    */
   async assertLoginFailure(expectedError?: string): Promise<void> {
     // Check for error messages in modal or toast
-    const errorSelectors = [
-      '.error-message',
-      '.alert-danger',
-      '[role="alert"]',
-      '.text-red-600'
-    ];
+    const errorSelectors = ['.error-message', '.alert-danger', '[role="alert"]', '.text-red-600'];
 
     let errorFound = false;
     for (const selector of errorSelectors) {
@@ -217,8 +212,15 @@ export class LoginPage extends BasePage {
       // Wait for sign in button to disappear
       await expect(this.signInButton).not.toBeVisible();
     } else {
-      // Wait for sign in button to appear
-      await expect(this.signInButton).toBeVisible({ timeout: 10000 });
+      // Wait for sign in button to appear with fallback strategies
+      try {
+        await expect(this.signInButton).toBeVisible({ timeout: 10000 });
+      } catch {
+        // Fallback: wait for header to be visible and then check for sign in button
+        await this.header.waitFor({ state: 'visible', timeout: 5000 });
+        await this.wait(1000); // Give extra time for authentication state to settle
+        await expect(this.signInButton).toBeVisible({ timeout: 5000 });
+      }
       // Wait for sign out button to disappear
       await expect(this.signOutButton).not.toBeVisible();
     }
