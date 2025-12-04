@@ -11,8 +11,6 @@ import { TestContext, ApiClient } from '../helpers';
  * - Route protection and redirects
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
 // Shared test setup for all middleware security tests
 let ctx: TestContext;
 let api: ApiClient;
@@ -50,11 +48,12 @@ test.afterAll(async () => {
     });
 
     test('should allow access to webhooks endpoint without authentication', async ({ request }) => {
-      api = new ApiClient(request);
-      const response = await api.post('/api/webhooks/stripe', {
-        type: 'test',
-        data: { object: {} }
-      }, {
+      // This test needs to use direct request since we're testing webhook endpoint without proper signature
+      const response = await request.post('/api/webhooks/stripe', {
+        data: {
+          type: 'test',
+          data: { object: {} }
+        },
         headers: {
           'content-type': 'application/json',
           'stripe-signature': 'test_signature'
@@ -256,12 +255,12 @@ test.afterAll(async () => {
       expect(headers['x-content-type-options']).toBe('nosniff');
     });
 
-    test('should include CORS headers for allowed origins', async ({ request }) => {
+    test('should include CORS headers for allowed origins', async ({ request, baseURL }) => {
       // Use HEAD request instead of OPTIONS since Playwright API context doesn't support OPTIONS
-      const response = await request.fetch(`${BASE_URL}/api/health`, {
+      const response = await request.fetch(`${baseURL}/api/health`, {
         method: 'OPTIONS',
         headers: {
-          'Origin': 'http://localhost:3000',
+          'Origin': baseURL || 'http://localhost:3000',
           'Access-Control-Request-Method': 'GET'
         }
       });
@@ -351,7 +350,7 @@ test.afterAll(async () => {
 
       for (const path of maliciousPaths) {
         // Note: Path traversal would be part of the endpoint, so we need to use raw request
-        const response = await request.post(`${BASE_URL}/api/upscale${path}`, {
+        const response = await request.post(`/api/upscale${path}`, {
           headers: { 'Authorization': `Bearer ${testUser.token}` },
           data: {
             imageData: 'data:image/png;base64,test',

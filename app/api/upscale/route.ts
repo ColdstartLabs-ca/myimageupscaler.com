@@ -62,7 +62,39 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const body = await req.json();
     const validatedInput = upscaleSchema.parse(body);
 
-    // 4. Get user's subscription status to determine size limit
+    // 4. Additional validation: Check if image data is valid base64
+    try {
+      const imageData = validatedInput.imageData;
+      const base64Data = imageData.startsWith('data:') ? imageData.split(',')[1] : imageData;
+      if (!base64Data) {
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          'Invalid image data format - missing base64 data',
+          400
+        );
+        return NextResponse.json(errorBody, { status });
+      }
+
+      // Simple base64 validation using web-compatible approach
+      const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+      if (!base64Regex.test(base64Data)) {
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          'Invalid image data format - not valid base64',
+          400
+        );
+        return NextResponse.json(errorBody, { status });
+      }
+    } catch (error) {
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        'Invalid image data format',
+        400
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
+    // 5. Get user's subscription status to determine size limit
     const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('subscription_status')
@@ -71,7 +103,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const isPaidUser = profile?.subscription_status === 'active';
 
-    // 5. Validate image size based on user tier (BEFORE charging credits)
+    // 6. Validate image size based on user tier (BEFORE charging credits)
     const sizeValidation = validateImageSizeForTier(validatedInput.imageData, isPaidUser);
     if (!sizeValidation.valid) {
       logger.warn('Image size validation failed', {
@@ -90,7 +122,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Calculate credit cost based on the configuration
     creditCost = calculateCreditCost(validatedInput.config);
 
-    // 6. Process image with credit management
+    // 7. Process image with credit management
     const service = new ImageGenerationService();
     const result = await service.processImage(userId, validatedInput);
 
@@ -111,7 +143,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     logger.info('Upscale completed', { userId, durationMs, creditsUsed: creditCost });
 
-    // 4. Return successful response
+    // 8. Return successful response
     return NextResponse.json({
       imageData: result.imageData,
       creditsRemaining: result.creditsRemaining,

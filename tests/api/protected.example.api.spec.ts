@@ -12,8 +12,7 @@ import { test as authenticatedTest } from '../helpers/auth';
  * - Error handling for authenticated but missing users
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-const ENDPOINT = `${BASE_URL}/api/protected/example`;
+const ENDPOINT = '/api/protected/example';
 
 test.describe('API: Protected Example - Authentication', () => {
   test('should reject unauthenticated GET requests', async ({ request }) => {

@@ -136,7 +136,8 @@ test.describe('API: Analytics Event Integration', () => {
 
     for (const response of responses) {
       response.expectStatus(200);
-      await response.expectData({ success: true });
+      const data = await response.json();
+      expect(data.success).toBe(true);
     }
   });
 });

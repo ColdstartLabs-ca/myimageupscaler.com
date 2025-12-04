@@ -62,8 +62,8 @@ test.describe('API: Image Upscale Integration', () => {
 
       // Note: This test may fail due to AI service not being available in test environment
       // but we check that it doesn't fail due to authentication
-      expect([401, 402, 422, 500]).toContain(response.status());
-      if (response.status() === 401) {
+      expect([401, 402, 422, 500]).toContain(response.status);
+      if (response.status === 401) {
         await response.expectErrorCode('UNAUTHORIZED');
       }
     });
@@ -124,7 +124,7 @@ test.describe('API: Image Upscale Integration', () => {
       });
 
       // Malformed JSON should be rejected (either 400 for bad JSON or 401 if auth fails first)
-      expect([400, 401]).toContain(response.status());
+      expect([400, 401]).toContain(response.status);
     });
   });
 
@@ -141,7 +141,7 @@ test.describe('API: Image Upscale Integration', () => {
       });
 
       // Should either process (if credits sufficient) or return 402 if not
-      expect([200, 401, 402, 422, 500]).toContain(response.status());
+      expect([200, 401, 402, 422, 500]).toContain(response.status);
     });
 
     test('should track credit usage for valid requests', async ({ request }) => {
@@ -159,14 +159,14 @@ test.describe('API: Image Upscale Integration', () => {
         });
 
         // If the request succeeds, check that credits were properly used
-        if (response.status() === 200) {
+        if (response.status === 200) {
           const data = await response.json();
           if (data.success && data.result?.creditsUsed) {
             expect(data.result.creditsUsed).toBeGreaterThan(0);
           }
         } else {
           // If it fails, that's also valid behavior in test environment
-          expect([401, 402, 422, 500]).toContain(response.status());
+          expect([401, 402, 422, 500]).toContain(response.status);
         }
       } catch (error) {
         // If we can't get user profile due to database issues, skip the credit tracking
@@ -186,9 +186,9 @@ test.describe('API: Image Upscale Integration', () => {
       });
 
       // Should handle AI service errors gracefully
-      expect([200, 401, 402, 422, 500]).toContain(response.status());
+      expect([200, 401, 402, 422, 500]).toContain(response.status);
 
-      if (response.status() >= 500) {
+      if (response.status >= 500) {
         const data = await response.json();
         expect(data.error).toBeTruthy();
       }
@@ -210,7 +210,7 @@ test.describe('API: Image Upscale Integration', () => {
       });
 
       // Should handle gracefully without crashing
-      expect([200, 400, 401, 402, 413, 422, 500]).toContain(response.status());
+      expect([200, 400, 401, 402, 413, 422, 500]).toContain(response.status);
     });
 
     test('should handle different image formats', async ({ request }) => {
@@ -231,7 +231,7 @@ test.describe('API: Image Upscale Integration', () => {
         });
 
         // Should handle the format (may fail due to AI service, but not validation)
-        expect([200, 401, 402, 422, 500]).toContain(response.status());
+        expect([200, 401, 402, 422, 500]).toContain(response.status);
       }
     });
 
@@ -247,7 +247,7 @@ test.describe('API: Image Upscale Integration', () => {
           mimeType: 'image/png',
           config: { scale: 2, mode: 'upscale' }
         });
-        responses.push(response.status());
+        responses.push(response.status);
       }
 
       // At least some responses should be successful or return expected error codes
@@ -276,7 +276,7 @@ test.describe('API: Image Upscale Integration', () => {
       expect(duration).toBeLessThan(10000); // 10 seconds max
 
       // Status should be one of the expected responses
-      expect([200, 401, 402, 422, 500]).toContain(response.status());
+      expect([200, 401, 402, 422, 500]).toContain(response.status);
     });
 
     test('should include appropriate response headers', async ({ request }) => {
@@ -293,7 +293,7 @@ test.describe('API: Image Upscale Integration', () => {
       expect(response.status >= 200).toBeTruthy();
 
       // Status should be one of the expected responses
-      expect([200, 401, 402, 422, 500]).toContain(response.status());
+      expect([200, 401, 402, 422, 500]).toContain(response.status);
     });
   });
 });

@@ -184,10 +184,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     if (authHeader) {
       const token = authHeader.replace('Bearer ', '');
-      const {
-        data: { user },
-      } = await supabaseAdmin.auth.getUser(token);
-      userId = user?.id;
+
+      // Handle mock authentication in test environment
+      // Token format: test_token_{userId} where userId is 'mock_user_{uniquePart}'
+      if (serverEnv.ENV === 'test' && token.startsWith('test_token_')) {
+        const mockUserId = token.replace('test_token_', '');
+        userId = mockUserId;
+        logger.info('Using mock authentication for analytics in test environment');
+      } else {
+        const {
+          data: { user },
+        } = await supabaseAdmin.auth.getUser(token);
+        userId = user?.id;
+      }
     }
 
     // 6. Track the event

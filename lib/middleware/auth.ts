@@ -109,6 +109,18 @@ export async function verifyApiAuth(
     };
   }
 
+  // Handle mock authentication tokens in test environment
+  // Token format: test_token_{userId} where userId is 'mock_user_{uniquePart}'
+  if (process.env.ENV === 'test' && token.startsWith('test_token_')) {
+    const mockUserId = token.replace('test_token_', '');
+    return {
+      user: {
+        id: mockUserId,
+        email: `test-${mockUserId}@test.local`,
+      },
+    };
+  }
+
   // Validate JWT format for real tokens
   if (!isValidJwtFormat(token)) {
     return {

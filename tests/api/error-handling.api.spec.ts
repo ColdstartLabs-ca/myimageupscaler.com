@@ -8,8 +8,6 @@ import { TestContext, ApiClient } from '../helpers';
  * and return appropriate HTTP status codes and error messages.
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
 // Shared test setup for all error handling tests
 let ctx: TestContext;
 let api: ApiClient;
@@ -240,7 +238,7 @@ test.afterAll(async () => {
 
     test('should handle malformed JSON', async ({ request }) => {
       // Note: ApiClient automatically handles JSON serialization, so we need to use raw request
-      const response = await request.post(`${BASE_URL}/api/upscale`, {
+      const response = await request.post('/api/upscale', {
         data: 'invalid json {{{',
         headers: {
           'Content-Type': 'application/json',
@@ -342,7 +340,7 @@ test.afterAll(async () => {
 
     test('should handle malformed JSON', async ({ request }) => {
       // Note: ApiClient automatically handles JSON serialization, so we need to use raw request
-      const response = await request.post(`${BASE_URL}/api/checkout`, {
+      const response = await request.post('/api/checkout', {
         data: 'invalid json {{{',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -396,7 +394,7 @@ test.afterAll(async () => {
 
     test('should return 400 for malformed JSON', async ({ request }) => {
       // Note: ApiClient automatically handles JSON serialization, so we need to use raw request
-      const response = await request.post(`${BASE_URL}/api/analytics/event`, {
+      const response = await request.post('/api/analytics/event', {
         data: 'invalid json {{{',
         headers: {
           'Content-Type': 'application/json',
@@ -447,7 +445,7 @@ test.afterAll(async () => {
 
     test('should reject PATCH requests to POST-only endpoints', async ({ request }) => {
       // Note: PATCH not directly supported, we need to use raw request for this test
-      const response = await request.patch(`${BASE_URL}/api/upscale`, {
+      const response = await request.patch('/api/upscale', {
         data: {},
       });
 
@@ -458,7 +456,7 @@ test.afterAll(async () => {
   test.describe('Content-Type Validation', () => {
     test('should reject requests with invalid content-type', async ({ request }) => {
       // Note: ApiClient automatically handles JSON content-type, so we need to use raw request
-      const response = await request.post(`${BASE_URL}/api/upscale`, {
+      const response = await request.post('/api/upscale', {
         data: '{"test": "data"}',
         headers: {
           'Content-Type': 'text/plain',
@@ -560,11 +558,11 @@ test.afterAll(async () => {
   });
 
   test.describe('CORS Error Handling', () => {
-    test('should handle preflight requests properly', async ({ request }) => {
-      const response = await request.fetch(`${BASE_URL}/api/upscale`, {
+    test('should handle preflight requests properly', async ({ request, baseURL }) => {
+      const response = await request.fetch(`${baseURL}/api/upscale`, {
         method: 'OPTIONS',
         headers: {
-          'Origin': 'http://localhost:3000',
+          'Origin': baseURL || 'http://localhost:3000',
           'Access-Control-Request-Method': 'POST',
           'Access-Control-Request-Headers': 'Content-Type',
         },

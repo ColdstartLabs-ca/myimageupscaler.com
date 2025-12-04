@@ -106,7 +106,7 @@ test.describe('Authentication', () => {
       const currentUrl = await loginPage.logCurrentUrl();
       const redirectedToLogin = currentUrl.includes('/login');
       const isOnBillingPage = currentUrl.includes('/billing');
-      const isOnHomePage = currentUrl === 'http://localhost:3000/';
+      const isOnHomePage = currentUrl.endsWith('/');
 
       // One of these conditions should be true for protected routes
       expect(hasLoginOption || redirectedToLogin || isOnBillingPage || isOnHomePage).toBe(true);

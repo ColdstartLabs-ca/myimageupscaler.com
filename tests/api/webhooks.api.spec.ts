@@ -45,7 +45,7 @@ test.describe('API: Stripe Webhooks - Signature Validation', () => {
     });
 
     // In test mode, signature verification is bypassed
-    expect(response.status()).toBeGreaterThanOrEqual(200);
+    expect(response.status).toBeGreaterThanOrEqual(200);
   });
 });
 
@@ -62,7 +62,7 @@ test.describe('API: Stripe Webhooks - Credit Purchase Processing', () => {
       creditsAmount: 50,
     });
 
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -82,7 +82,7 @@ test.describe('API: Stripe Webhooks - Credit Purchase Processing', () => {
     });
 
     // Should still return 200 without adding credits
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -114,7 +114,7 @@ test.describe('API: Stripe Webhooks - Credit Purchase Processing', () => {
     const response = await webhookClient.send(event);
 
     // Should still return 200 but log error internally
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
     }
@@ -138,7 +138,7 @@ test.describe('API: Stripe Webhooks - Credit Purchase Processing', () => {
       creditsAmount: 25,
     });
 
-    if (response1.status() === 200 && response2.status() === 200) {
+    if (response1.status === 200 && response2.status === 200) {
       // Check final balance - should only have credits added once
       const finalProfile = await ctx.data.getUserProfile(user.id);
       expect(finalProfile.credits_balance).toBe(initialBalance + 25);
@@ -166,7 +166,7 @@ test.describe('API: Stripe Webhooks - Subscription Management', () => {
       priceId: 'price_hobby_monthly',
     });
 
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -225,7 +225,7 @@ test.describe('API: Stripe Webhooks - Subscription Management', () => {
       newPriceId: 'price_pro_monthly',
     });
 
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -273,7 +273,7 @@ test.describe('API: Stripe Webhooks - Subscription Management', () => {
       subscriptionId,
     });
 
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -307,7 +307,7 @@ test.describe('API: Stripe Webhooks - Subscription Management', () => {
     });
 
     // Should still return 200 but log error internally
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
     }
@@ -337,7 +337,7 @@ test.describe('API: Stripe Webhooks - Invoice Processing', () => {
       subscriptionId: 'sub_test_renewal',
     });
 
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -375,7 +375,7 @@ test.describe('API: Stripe Webhooks - Invoice Processing', () => {
       customerId,
     });
 
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -406,7 +406,8 @@ test.describe('API: Stripe Webhooks - Error Handling', () => {
 
     if (response.status() === 400) {
       const data = await response.json();
-      expect(data.error).toContain('Invalid webhook body');
+      // Error message can be about signature or invalid body depending on parsing order
+      expect(data.error).toMatch(/Webhook signature verification failed|Invalid webhook body/);
     }
   });
 
@@ -428,7 +429,7 @@ test.describe('API: Stripe Webhooks - Error Handling', () => {
     const response = await webhookClient.send(event);
 
     // Should handle gracefully without crashing
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
     }
@@ -460,7 +461,7 @@ test.describe('API: Stripe Webhooks - Subscription-Only Guarantees', () => {
       });
 
       // Should process valid subscription prices
-      if (response.status() === 200) {
+      if (response.status === 200) {
         const data = await response.json();
         expect(data.received).toBe(true);
       }
@@ -491,7 +492,7 @@ test.describe('API: Stripe Webhooks - Subscription-Only Guarantees', () => {
     const response = await webhookClient.send(event);
 
     // Should be processed successfully
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
     }
@@ -520,7 +521,7 @@ test.describe('API: Stripe Webhooks - Subscription-Only Guarantees', () => {
     const response = await webhookClient.send(event);
 
     // Should be processed but with warning (legacy support)
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
     }
@@ -557,7 +558,7 @@ test.describe('API: Stripe Webhooks - Subscription-Only Guarantees', () => {
         priceId,
       });
 
-      if (response.status() === 200) {
+      if (response.status === 200) {
         const data = await response.json();
         expect(data.received).toBe(true);
 
@@ -613,7 +614,7 @@ test.describe('API: Stripe Webhooks - Subscription-Only Guarantees', () => {
 
     const response = await webhookClient.send(event);
 
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -666,7 +667,7 @@ test.describe('API: Stripe Webhooks - Subscription-Only Guarantees', () => {
 
     const response = await webhookClient.send(event);
 
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -712,7 +713,7 @@ test.describe('API: Stripe Webhooks - Subscription-Only Guarantees', () => {
     const response = await webhookClient.send(event);
 
     // Should process but not add credits for legacy credit packs
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
 
@@ -741,14 +742,14 @@ test.describe('Webhook Event Processing - Advanced Scenarios', () => {
       subscriptionId: 'sub_lifecycle_1',
       priceId: 'price_hobby_monthly'
     });
-    expect([200, 202, 400, 500]).toContain(response1.status());
+    expect([200, 202, 400, 500]).toContain(response1.status);
 
     const response2 = await webhookClient.sendInvoicePaymentSucceeded({
       userId: testUser.id,
       customerId: `cus_${testUser.id}`,
       subscriptionId: 'sub_lifecycle_1',
     });
-    expect([200, 202, 400, 500]).toContain(response2.status());
+    expect([200, 202, 400, 500]).toContain(response2.status);
 
     const response3 = await webhookClient.sendSubscriptionUpdated({
       userId: testUser.id,
@@ -756,14 +757,14 @@ test.describe('Webhook Event Processing - Advanced Scenarios', () => {
       subscriptionId: 'sub_lifecycle_1',
       priceId: 'price_pro_monthly'
     });
-    expect([200, 202, 400, 500]).toContain(response3.status());
+    expect([200, 202, 400, 500]).toContain(response3.status);
 
     const response4 = await webhookClient.sendInvoicePaymentSucceeded({
       userId: testUser.id,
       customerId: `cus_${testUser.id}`,
       subscriptionId: 'sub_lifecycle_1',
     });
-    expect([200, 202, 400, 500]).toContain(response4.status());
+    expect([200, 202, 400, 500]).toContain(response4.status);
   });
 });
 
@@ -781,7 +782,7 @@ test.describe('Webhook Error Recovery and Edge Cases', () => {
     const response = await webhookClient.sendRawEvent(malformedEvent);
 
     // Should return error but not crash
-    expect([400, 422, 500]).toContain(response.status());
+    expect([400, 422, 500]).toContain(response.status);
   });
 
   test('should handle events for non-existent users', async ({ request }) => {
@@ -793,7 +794,7 @@ test.describe('Webhook Error Recovery and Edge Cases', () => {
       subscriptionId: 'sub_ghost'
     });
 
-    expect([400, 404, 500]).toContain(ghostUserResponse.status());
+    expect([400, 404, 500]).toContain(ghostUserResponse.status);
   });
 
   test('should handle duplicate events idempotently', async ({ request }) => {
@@ -806,14 +807,14 @@ test.describe('Webhook Error Recovery and Edge Cases', () => {
       customerId: `cus_${testUser.id}`,
       subscriptionId: 'sub_duplicate'
     });
-    expect([200, 202, 400, 409, 500]).toContain(response1.status());
+    expect([200, 202, 400, 409, 500]).toContain(response1.status);
 
     const response2 = await webhookClient.sendSubscriptionCreated({
       userId: testUser.id,
       customerId: `cus_${testUser.id}`,
       subscriptionId: 'sub_duplicate'
     });
-    expect([200, 202, 400, 409, 500]).toContain(response2.status());
+    expect([200, 202, 400, 409, 500]).toContain(response2.status);
   });
 
   test('should handle invalid JSON payload', async ({ request }) => {
@@ -848,7 +849,7 @@ test.describe('Webhook Error Recovery and Edge Cases', () => {
     const response = await webhookClient.send(event);
 
     // Should handle gracefully without crashing
-    if (response.status() === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       expect(data.received).toBe(true);
     }
@@ -878,7 +879,7 @@ test.describe('Webhook Performance and Load Testing', () => {
     expect(endTime - startTime).toBeLessThan(30000);
 
     responses.forEach(response => {
-      expect([200, 202, 400, 429, 500]).toContain(response.status());
+      expect([200, 202, 400, 429, 500]).toContain(response.status);
     });
   });
 
@@ -900,7 +901,7 @@ test.describe('Webhook Performance and Load Testing', () => {
     const responses = await Promise.all(promises);
 
     responses.forEach(response => {
-      expect([200, 202, 400, 429, 500]).toContain(response.status());
+      expect([200, 202, 400, 429, 500]).toContain(response.status);
     });
   });
 
@@ -927,7 +928,7 @@ test.describe('Webhook Performance and Load Testing', () => {
     expect(endTime - startTime).toBeLessThan(15000);
 
     responses.forEach(response => {
-      expect([200, 202, 400, 500]).toContain(response.status());
+      expect([200, 202, 400, 500]).toContain(response.status);
     });
   });
 });

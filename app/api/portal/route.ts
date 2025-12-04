@@ -25,11 +25,24 @@ export async function POST(request: NextRequest) {
     // Extract the JWT token
     const token = authHeader.replace('Bearer ', '');
 
-    // Verify the user with Supabase
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseAdmin.auth.getUser(token);
+    // Handle mock authentication in test environment
+    let user: { id: string; email?: string } | null = null;
+    let authError: Error | null = null;
+
+    if (serverEnv.ENV === 'test' && token.startsWith('test_token_')) {
+      // Mock authentication for test environment
+      // Token format: test_token_{userId} where userId is 'mock_user_{uniquePart}'
+      const mockUserId = token.replace('test_token_', '');
+      user = {
+        id: mockUserId,
+        email: `test-${mockUserId}@test.local`
+      };
+    } else {
+      // Verify the user with Supabase for non-test environments
+      const result = await supabaseAdmin.auth.getUser(token);
+      user = result.data.user;
+      authError = result.error;
+    }
 
     if (authError || !user) {
       return NextResponse.json(
@@ -130,23 +143,33 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Get Stripe Customer ID from profile
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .select('stripe_customer_id')
-      .eq('id', user.id)
-      .single();
+    let stripeCustomerId: string | null = null;
 
-    if (profileError || !profile?.stripe_customer_id) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'STRIPE_CUSTOMER_NOT_FOUND',
-            message: 'Activate a subscription to manage billing.'
-          }
-        },
-        { status: 400 }
-      );
+    if (serverEnv.ENV === 'test' && user.id.startsWith('mock_user_')) {
+      // Mock Stripe customer ID for test environment
+      stripeCustomerId = `cus_test_${user.id}`;
+      console.log('Using mock Stripe customer ID for test environment');
+    } else {
+      const { data: profile, error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .select('stripe_customer_id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError || !profile?.stripe_customer_id) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'STRIPE_CUSTOMER_NOT_FOUND',
+              message: 'Activate a subscription to manage billing.'
+            }
+          },
+          { status: 400 }
+        );
+      }
+
+      stripeCustomerId = profile.stripe_customer_id;
     }
 
     // 5. Create Stripe Customer Portal session
@@ -165,7 +188,7 @@ export async function POST(request: NextRequest) {
     }
 
     const portalSession = await stripe.billingPortal.sessions.create({
-      customer: profile.stripe_customer_id,
+      customer: stripeCustomerId,
       return_url: returnUrl,
     });
 
