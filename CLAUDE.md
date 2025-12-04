@@ -8,6 +8,7 @@
 - **Debug**: Check `yarn dev` logs (uses concurrently)
 - **Dayjs**: For date handling.
 - **Testing**: Make sure to only test relevant behavior.
+- **Docs**: Use mermaid if diagrams/flows are needed.
 
 ## Agents
 

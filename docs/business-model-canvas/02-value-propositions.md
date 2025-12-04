@@ -1,646 +1,304 @@
 # Value Propositions - AI Image Enhancer & Upscaler
 
-## Core Positioning Statement
+## Core Positioning
 
 **"Professional image enhancement and upscaling for businesses—in seconds, not hours, with text and logos that stay sharp."**
 
-## The Dual Value Proposition
+### Dual Market Strategy
 
-### 1. Image Enhancement (Primary Market: 40.5k searches/month)
-**What it means:** AI-powered quality improvement without changing resolution
-- Sharpen blurry details
-- Remove noise and artifacts
-- Enhance colors and brightness
-- Improve contrast and clarity
-- Fix under/overexposed photos
-
-### 2. Image Upscaling (Secondary Market: 27k searches/month)
-**What it means:** Increase resolution without quality loss
-- 2x, 4x, 8x resolution multiplier
-- Maintain sharpness when enlarging
-- Generate missing detail intelligently
-- Prepare for print or high-res displays
-- Meet marketplace resolution requirements
-
-### 3. Combined Power (Our Differentiation)
-**What competitors don't do:**
-- Most tools do EITHER enhancement OR upscaling
-- We do BOTH in one workflow
-- Users don't need multiple tools
-- Consistent results across both operations
+| Market | Monthly Searches | Focus |
+|--------|------------------|-------|
+| Image Enhancement | 40.5k | Quality improvement (sharpen, denoise, color) |
+| AI Image Upscaler | 27k | Resolution increase (2x/4x/8x) |
+| **Combined** | **67.5k** | Both in one workflow (our differentiation) |
 
 ---
 
-## Value Proposition Canvas by Segment
+## The Problem We Solve
 
-## 1. E-COMMERCE SELLERS (Primary Beachhead)
+### Market Gaps (Validated)
 
-### Customer Jobs
-**Functional Jobs:**
-- Get product images that meet marketplace requirements (Amazon: 1000px minimum)
-- Make supplier images look professional
+| Gap | Severity | Our Solution |
+|-----|----------|--------------|
+| **Text/Logo Preservation** | Critical | OCR-aware enhancement mode |
+| **Speed vs Quality** | High | <30 seconds (vs Topaz 90+ min) |
+| **$15-25/mo Prosumer Gap** | High | $9-29/mo sweet spot pricing |
+| **Predictable Quality** | Medium | Consistent Real-ESRGAN results |
+
+**Key Insight:** No competitor solves text/logo preservation. This is our blue ocean.
+
+---
+
+## Value Proposition by Segment
+
+### 1. E-Commerce Sellers (Primary Beachhead)
+
+**Why them first:** Highest willingness to pay ($30-50/mo), clear ROI, recurring need.
+
+#### Jobs to Be Done
+- Meet marketplace requirements (Amazon: 1000px min)
+- Make supplier images professional
 - Process entire catalog quickly
-- Maintain product label legibility
-- Create consistent brand appearance
+- Keep product labels legible
 
-**Social Jobs:**
-- Look as professional as bigger competitors
-- Build trust with high-quality visuals
-- Stand out in search results
+#### Pain Points → Our Solutions
 
-**Emotional Jobs:**
-- Feel confident about product presentation
-- Reduce anxiety about returns/complaints
-- Pride in professional-looking store
+| Pain | Impact | Our Solution |
+|------|--------|--------------|
+| Text/logos blur after enhancement | Returns, confusion | **Text Preservation Mode** |
+| Marketplace rejects low-res images | Delayed listings | Platform-ready presets |
+| 100+ images take 10-20 hours manually | Lost productivity | Batch processing (<5 min/100) |
+| Inconsistent image quality | Unprofessional look | Consistent AI enhancement |
 
-### Customer Pains
-**Pain Severity:** 🔥🔥🔥 (Critical)
-- **Text/logo blur:** Product labels become unreadable after enhancement → customer confusion → returns
-- **Marketplace rejections:** Low-resolution images rejected by Amazon/eBay → delayed listings
-- **Time drain:** Manually editing 100+ images takes 10-20 hours
-- **Inconsistency:** Images look different across catalog → unprofessional
-- **Low conversions:** Poor images = 9-30% lower conversion rates
-- **Supplier quality:** Receive low-res, dark, blurry product photos from manufacturers
+#### ROI Calculation
 
-### Customer Gains
-**Gain Importance:** ⭐⭐⭐ (Essential)
-- **9-30% conversion boost** from professional product images (industry validated)
-- **Zero rejections:** Always meet marketplace resolution requirements
-- **Save 10-20 hours/week:** Bulk process instead of manual editing
-- **Professional appearance:** Compete visually with major brands
-- **Reduce returns:** Accurate representation = fewer disappointed customers
-- **Faster listings:** Get products to market same-day
-
-### Our Pain Relievers
-✅ **Text & Logo Preservation Mode** (UNIQUE DIFFERENTIATOR)
-- OCR-aware enhancement that identifies and protects text regions
-- Keeps product labels, tags, nutrition facts legible
-- Maintains brand logo sharpness and clarity
-- NO OTHER TOOL SOLVES THIS ADEQUATELY
-
-✅ **Bulk Processing with E-commerce Presets**
-- Upload 100+ images at once
-- One-click "Product Photo" preset
-- Consistent quality across entire batch
-- Queue management and progress tracking
-
-✅ **Platform-Specific Output**
-- Amazon preset (2000x2000px white background)
-- eBay preset (1600x1600px optimized)
-- Shopify preset (2048x2048px)
-- Custom dimensions for any marketplace
-
-✅ **API Integration**
-- Shopify app: Auto-enhance on upload
-- WooCommerce plugin: Batch process catalog
-- Amazon Seller Central integration
-- Zapier triggers for automated workflows
-
-✅ **Fast Batch Processing**
-- 100 images in <5 minutes
-- Background processing with notifications
-- Resume interrupted batches
-- Download as ZIP for easy upload
-
-### Our Gain Creators
-🚀 **Automated Workflow ROI**
-- **Before:** 20 hours/week manual editing = $400/week (at $20/hr)
-- **After:** 1 hour/week supervision = $20/week
-- **Savings:** $380/week = $19,760/year
-- **Our cost:** $29/month = $348/year
-- **ROI:** 5,580%
-
-🚀 **Conversion Rate Improvement**
 ```
-Typical e-commerce store:
-- Traffic: 10,000 visitors/month
-- Current conversion: 2%  = 200 sales
-- With better images: 2.5% = 250 sales
-- Avg order value: $50
-- Revenue increase: $2,500/month = $30,000/year
+Time Savings:
+- Before: 20 hours/week manual editing @ $20/hr = $400/week
+- After: 1 hour/week supervision = $20/week
+- Savings: $380/week = $19,760/year
+- Our cost: $29/month = $348/year
+- ROI: 5,580%
+
+Conversion Boost:
+- 10,000 visitors/month × 2% conversion = 200 sales
+- With better images: 2.5% conversion = 250 sales
+- At $50 AOV: $2,500/month increase
 ```
 
-🚀 **Competitive Advantage**
-- Small sellers look like major brands
-- Stand out in marketplace search results
-- Build trust with professional imagery
-- Reduce price sensitivity with quality perception
-
-### Value Proposition Statement
-> "Transform supplier photos into marketplace-ready product images in minutes—with labels that stay legible and resolution that meets any platform requirement. Process your entire catalog while you sleep."
+**Value Statement:** "Transform supplier photos into marketplace-ready product images in minutes—with labels that stay legible."
 
 ---
 
-## 2. CONTENT CREATORS & SOCIAL MEDIA MANAGERS
+### 2. Content Creators & Social Media Managers
 
-### Customer Jobs
-**Functional Jobs:**
-- Create scroll-stopping social content daily
-- Repurpose old content for new posts
-- Resize images for multiple platforms
-- Make smartphone photos look professional
-- Prepare week's content in batch
+#### Jobs to Be Done
+- Create scroll-stopping content daily
+- Resize for multiple platforms
+- Revive old/archived content
+- Make smartphone photos professional
 
-**Social Jobs:**
-- Build professional creator brand
-- Compete with influencers who have teams
-- Maintain aesthetic consistency
+#### Pain Points → Our Solutions
 
-**Emotional Jobs:**
-- Feel proud of content quality
-- Confidence posting without expensive gear
-- Creative freedom without technical limits
+| Pain | Impact | Our Solution |
+|------|--------|--------------|
+| Platform size requirements | Rejected posts | One-click platform presets |
+| Old content too low-res | Wasted archive | Upscale for reposting |
+| Smartphone quality limits | Unprofessional look | AI enhancement |
+| Multiple tool subscriptions | Cost/complexity | All-in-one solution |
 
-### Customer Pains
-**Pain Severity:** 🔥🔥 (Important)
-- **Quality inconsistency:** Some photos look great, others pixelated
-- **Platform requirements:** Instagram 1080x1080, YouTube 1920x1080, TikTok 1080x1920
-- **Old content unusable:** Archive photos too low-res for reposting
-- **Smartphone limitations:** Photos lack professional polish
-- **Time constraints:** Need to edit 20-50 images/week
-- **Tool complexity:** Photoshop too complicated/expensive
-
-### Customer Gains
-**Gain Importance:** ⭐⭐⭐ (Essential)
-- **Higher engagement:** Professional images get 2-3x more likes/shares
-- **Content library revival:** Reuse old photos with enhanced quality
-- **Multi-platform ready:** One click outputs for all platforms
-- **Faster workflow:** Spend time creating, not editing
-- **Mobile convenience:** Edit on-the-go
-- **Professional look:** Compete with full-time creators
-
-### Our Pain Relievers
-✅ **One-Click Platform Presets**
+#### Platform Presets
 - Instagram Post (1080x1080)
 - Instagram Story (1080x1920)
 - YouTube Thumbnail (1280x720)
 - TikTok (1080x1920)
-- Twitter/X Header (1500x500)
-- LinkedIn Post (1200x627)
+- LinkedIn (1200x627)
 
-✅ **Mobile-First Experience**
-- iOS/Android apps
-- Camera roll integration
-- Edit immediately after shooting
-- Share directly to platforms
-- Background processing with notifications
-
-✅ **Content Archive Revival**
-- Upscale old low-res photos
-- Enhance and repost successful content
-- Breathe life into photo library
-- Consistent quality across old and new
-
-✅ **Batch Social Content Prep**
-- Upload week's content at once
-- Apply same enhancement to all
-- Export in multiple formats simultaneously
-- Schedule-ready outputs
-
-### Our Gain Creators
-🚀 **Time Savings**
-- **Before:** 2-3 hours/week editing in Lightroom/Snapseed
-- **After:** 15 minutes/week batch processing
-- **Saved:** 2.5 hours = create 5 more pieces of content
-
-🚀 **Engagement Boost**
-```
-Typical creator:
-- 10 posts/week = 40/month
-- Current avg engagement: 500 interactions/post
-- With better images: 750 interactions/post (+50%)
-- Total increase: 10,000 interactions/month
-- Algorithm boost → more reach → more followers
-```
-
-🚀 **Professional Equipment ROI**
-- Don't need $3,000 camera
-- Don't need Lightroom subscription ($120/year)
-- Don't need to hire editor ($50-100/image)
-- Our tool: $9/month = $108/year
-
-### Value Proposition Statement
-> "Turn smartphone photos into scroll-stopping content in seconds. One tap enhances and resizes for every platform—so you spend time creating, not editing."
+**Value Statement:** "Turn smartphone photos into scroll-stopping content in seconds. One tap for every platform."
 
 ---
 
-## 3. REAL ESTATE PROFESSIONALS
+### 3. Real Estate Professionals
 
-### Customer Jobs
-**Functional Jobs:**
-- Make properties look their best in listings
+#### Jobs to Be Done
+- Make properties look their best
 - Meet MLS resolution requirements
-- Edit photos on-site before leaving property
-- Prepare listings same-day
-- Enhance dark interior shots
+- Edit on-site before leaving
+- List same-day
 
-**Social Jobs:**
-- Compete with luxury agents on visual quality
-- Build reputation for professional listings
-- Attract quality buyers with premium presentation
+#### Pain Points → Our Solutions
 
-**Emotional Jobs:**
-- Pride in listing quality
-- Confidence in property representation
-- Reduce anxiety about photo quality
+| Pain | Impact | Our Solution |
+|------|--------|--------------|
+| $200-500/property photography | $2,400-6,000/year | DIY enhancement |
+| 3-5 day photographer wait | Delayed listings | Same-day processing |
+| Dark interior shots | Unprofessional | HDR enhancement mode |
+| MLS rejections | Lost time | MLS-ready output (4K) |
 
-### Customer Pains
-**Pain Severity:** 🔥🔥🔥 (Critical)
-- **Photography costs:** $200-500 per property = $2,400-6,000/year for 1 listing/month
-- **Slow turnaround:** Photographer availability delays listings 2-7 days
-- **MLS rejections:** Images below minimum resolution get rejected
-- **Dark interiors:** Smartphone photos look unprofessional
-- **Inconsistency:** Some photos great, others terrible
-- **Budget constraints:** Can't afford professional photographer for every listing
+#### Cost Savings
 
-### Customer Gains
-**Gain Importance:** ⭐⭐⭐ (Essential)
-- **37% more inquiries** with professional photos (real estate industry stat)
-- **Faster sales:** Professionally photographed homes sell 32% faster
-- **Higher offers:** Better photos correlate with higher offer prices
-- **More listings:** Better reputation attracts sellers
-- **Cost savings:** Eliminate $200-500 per property expense
-- **Same-day listings:** Shoot and list immediately
-
-### Our Pain Relievers
-✅ **Real Estate HDR Mode**
-- Automatically brighten dark interiors
-- Enhance natural lighting
-- Balance exposure across room
-- Make spaces look bigger and brighter
-- Professional-quality without HDR camera
-
-✅ **MLS-Ready Output**
-- Automatic 4K resolution (3840x2160)
-- Meets all MLS minimum requirements
-- Optimized file size (<5MB)
-- EXIF data preserved
-- Zero rejections guaranteed
-
-✅ **Mobile On-Site Workflow**
-- Edit immediately after shooting
-- Upload to MLS before leaving property
-- No computer needed
-- Background processing while showing property
-- Email/SMS when ready
-
-✅ **Batch Property Processing**
-- Upload all 30-50 property photos at once
-- Consistent enhancement across all rooms
-- One-click download for MLS upload
-- Save as property sets for future reference
-
-### Our Gain Creators
-🚀 **Cost Savings**
 ```
-Real estate agent: 12 listings/year
-Professional photography: $300/property × 12 = $3,600/year
+Professional photography: $300/property × 12/year = $3,600
 Our tool: $29/month × 12 = $348/year
 Savings: $3,252/year
 ```
 
-🚀 **Time to Market**
-- **Before:** Shoot → Wait 3-5 days for photographer → Edit → Upload → List (7 days)
-- **After:** Shoot → Enhance on-site → Upload → List (same day)
-- **Advantage:** List 7 days earlier = more showings = faster sale
-
-🚀 **Volume Scaling**
-- Handle 2-3x more listings with same time investment
-- Every extra listing = $10,000+ commission
-- Tool pays for itself with one extra listing/year
-
-### Value Proposition Statement
-> "Transform smartphone property photos into MLS-ready professional listings—on-site, in minutes. Save $200-500 per property and list the same day you shoot."
+**Value Statement:** "MLS-ready property photos—on-site, in minutes. Save $200-500 per property."
 
 ---
 
-## 4. PHOTOGRAPHY STUDIOS (Small/Freelance)
+### 4. Photography Studios (Small/Freelance)
 
-### Customer Jobs
-**Functional Jobs:**
-- Deliver print-ready high-resolution files
-- Final touchup after editing workflow
+#### Jobs to Be Done
+- Deliver print-ready files
 - Handle large batches efficiently
 - Meet client revision requests quickly
-- Prepare files for different print sizes
+- Prepare for different print sizes
 
-**Social Jobs:**
-- Maintain professional reputation
-- Compete with studios using expensive software
-- Deliver consistent quality
+#### Pain Points → Our Solutions
 
-**Emotional Jobs:**
-- Pride in final deliverables
-- Confidence in print quality
-- Relief from tedious manual work
+| Pain | Impact | Our Solution |
+|------|--------|--------------|
+| Manual touchups take hours | Lost revenue | Batch processing |
+| Topaz freezes computer | Frustration | Cloud processing |
+| Inconsistent batch quality | Rework | Consistent AI output |
+| Software costs ($199+) | Overhead | Subscription model |
 
-### Customer Pains
-**Pain Severity:** 🔥🔥 (Important)
-- **Time drain:** Manual final touchups take hours
-- **System crashes:** Topaz freezes computer with large batches
-- **Print rejections:** Files below print quality requirements
-- **Inconsistency:** Quality varies across large batches
-- **Client revisions:** Last-minute touchup requests delay delivery
-- **Software costs:** Topaz $199 + annual updates $99
+#### Time ROI
 
-### Customer Gains
-**Gain Importance:** ⭐⭐ (Important)
-- **Faster delivery:** Complete shoots 50% faster
-- **Print quality:** Never worry about resolution
-- **Batch consistency:** Every photo gets same treatment
-- **More clients:** Handle 2x volume with same time
-- **System performance:** Cloud processing doesn't freeze computer
-- **Predictable costs:** Subscription vs unpredictable software costs
-
-### Our Pain Relievers
-✅ **Print-Ready Output Presets**
-- 4x6" @300 DPI (1800x1200px)
-- 8x10" @300 DPI (3000x2400px)
-- 11x14" @300 DPI (4200x3300px)
-- 16x20" @300 DPI (6000x4800px)
-- Custom dimensions with DPI calculator
-
-✅ **Batch Studio Workflow**
-- Process 500+ images overnight
-- Apply consistent settings to entire shoot
-- Smart categorization (portraits vs landscape)
-- Resume interrupted batches
-- Automatic file naming/organization
-
-✅ **Cloud Processing Advantage**
-- Never freezes your computer
-- Works on laptop or desktop
-- Process while shooting next session
-- Email notification when complete
-- Access from anywhere
-
-✅ **Client Revision Quick Turnaround**
-- Re-enhance specific images instantly
-- Try different enhancement levels
-- A/B compare for client approval
-- Fast download and delivery
-
-### Our Gain Creators
-🚀 **Time ROI**
 ```
-Wedding photographer: 800 photos to deliver
-Manual touchup: 2 minutes/photo = 26 hours
-Our batch process: 1 hour setup + 2 hours review = 3 hours
-Time saved: 23 hours = 2-3 additional shoots/month
-Additional revenue: $1,000-2,000/month
+Wedding shoot: 800 photos
+- Manual: 2 min/photo = 26 hours
+- Our batch: 3 hours total
+- Saved: 23 hours = 2-3 extra shoots/month
 ```
 
-🚀 **Client Capacity Increase**
-- Handle 50-100% more clients
-- Same quality, faster delivery
-- Better work-life balance
-- More revenue without more hours
-
-🚀 **Software Cost Comparison**
-- Topaz Gigapixel: $199 upfront + $99/year = $298 year 1
-- Our tool: $29/month = $348/year
-- **But:** We're faster, don't crash, cloud-based, always updated
-
-### Value Proposition Statement
-> "Batch enhance and upscale 500+ photos overnight—without freezing your computer. Deliver print-ready files faster and take on more clients."
+**Value Statement:** "Batch enhance 500+ photos without freezing your computer. Deliver faster, take more clients."
 
 ---
 
-## Unique Value Differentiators (What Makes Us Different)
+## Unique Differentiators
 
-### 1. TEXT & LOGO PRESERVATION (Blue Ocean)
-**The Problem Nobody Else Solved:**
+### 1. Text & Logo Preservation (Blue Ocean)
+
+**The problem nobody else solved:**
 - E-commerce: Product labels become illegible
 - Real estate: Property addresses blur
 - Marketing: Brand logos lose sharpness
-- Documents: Text becomes unreadable
 
-**Our Solution:**
-- OCR-aware enhancement
-- Text region detection and protection
-- Sharp edges on logos and typography
-- Specialized mode for text-heavy images
+**Competitor Status:** ALL fail (Topaz, Let's Enhance, Magnific, VanceAI, Upscale.media)
 
-**Competitive Advantage:**
-- Topaz, Let's Enhance, Magnific ALL fail at this
-- Validated pain in 500+ user reviews
-- Immediate differentiation in e-commerce vertical
-- Premium pricing justification
+**Our Advantage:** OCR-aware enhancement that protects text regions.
 
-### 2. DUAL POSITIONING: Enhancement + Upscaling
-**Market Reality:**
-- Users need BOTH but competitors force choice
-- Enhancement tools don't upscale well
-- Upscaling tools don't enhance well
-- Users end up with 2-3 tools
+### 2. Speed as Feature
 
-**Our Solution:**
-- Single workflow for both operations
-- Combined processing in one pass
-- Consistent results across operations
-- One subscription, all capabilities
+| Competitor | Processing Time |
+|------------|-----------------|
+| Topaz Labs | 90+ minutes |
+| Magnific AI | 30-60 seconds |
+| Let's Enhance | 10-30 seconds |
+| **PixelPerfect** | **<10 seconds** |
 
-**Competitive Advantage:**
-- 67.5k combined monthly searches
-- Broader value proposition
-- Higher perceived value
-- Reduced churn (consolidated tool stack)
+Real-ESRGAN on A100: ~0.7 seconds per image.
 
-### 3. BUSINESS-FOCUSED VS CONSUMER/ARTIST
-**Market Gap:**
-- Topaz → Photographers (complex, expensive)
-- Magnific → AI artists (creative, expensive)
-- Remini → Consumers (face restoration, scammy)
-- Let's Enhance → General (no specialization)
+### 3. Business Focus (Not Consumer/Artist)
 
-**Our Position:**
-- Business users (e-commerce, real estate, content)
-- Practical, not creative
-- ROI-focused, not artistic
-- Professional, not consumer
+| Competitor | Target | Gap We Fill |
+|------------|--------|-------------|
+| Topaz | Pro photographers | Speed + web access |
+| Magnific | AI artists | Business users + pricing |
+| Remini | Consumers | Trust + no face invention |
+| Let's Enhance | General | E-commerce focus |
 
-**Competitive Advantage:**
-- Different customer segment entirely
-- Higher willingness to pay
-- Longer LTV (business need is ongoing)
-- Clear ROI calculation
+**Our Position:** Practical business tools, not creative/artistic features.
 
-### 4. SPEED AS FEATURE
-**Competitor Weakness:**
-- Topaz: 1.5+ hours for single image
-- Desktop apps: Freeze computers
-- Quality comes at speed cost
+### 4. Transparent & Ethical
 
-**Our Promise:**
-- <30 seconds standard
-- <60 seconds maximum
-- Productivity over perfection
-- "Good enough fast" beats "perfect slow"
-
-**Competitive Advantage:**
-- Productivity-focused users choose us
-- Business users can't wait hours
-- Process during work hours, not overnight
-- Speed enables batch workflows
-
-### 5. TRANSPARENT & ETHICAL
-**Competitor Issues:**
-- Remini: Invents faces (funeral photo scandal)
-- Hidden costs: Topaz cloud rendering fees
-- Subscription traps: Difficult cancellation
-- Watermarks removed: Scammy upsell tactics
-
-**Our Principles:**
-- Never invent faces/details
-- Clear pricing, no hidden fees
-- Easy cancellation anytime
-- Free tier has generous limits
-- No watermarks even on free
-
-**Competitive Advantage:**
-- Trust-based differentiation
-- Emotional segment (family photos) values this
-- Professional users need reliability
-- Positive word-of-mouth
+| Issue | Competitors | Us |
+|-------|-------------|-----|
+| Face invention | Remini invents faces | Never invent details |
+| Hidden costs | Topaz cloud fees | Clear pricing |
+| Watermarks on free | Let's Enhance, Pixelcut | No watermarks |
+| Subscription traps | Many | Easy cancellation |
 
 ---
 
-## Value Proposition Testing Framework
+## Competitive Comparison (Dec 2025)
 
-### Pre-Launch Validation
-**Landing Page A/B Test:**
-- Version A: "AI Image Upscaler for E-commerce"
-- Version B: "AI Image Enhancer & Upscaler for Business"
-- Version C: "Keep Text Sharp When Enhancing Product Images"
-- **Measure:** Email signups, time on page, bounce rate
-
-**Customer Interview Questions:**
-1. "What job are you hiring this tool to do?"
-2. "What tools do you use today for this?"
-3. "What's most frustrating about current tools?"
-4. "How much time/money would this save you?"
-5. "How much would you pay for this solution?"
-
-### Post-Launch Metrics
-**Value Perception:**
-- Feature usage by segment
-- Which pain relievers get used most
-- Upgrade triggers (free → paid conversion points)
-- Churn reasons (exit interviews)
-
-**Messaging Effectiveness:**
-- Which value props appear in testimonials
-- Support ticket themes
-- Social media feedback
-- Review site comments (G2, Trustpilot)
-
-**Pricing Validation:**
-- Plan distribution (which tiers sell)
-- Price sensitivity (upgrade/downgrade patterns)
-- WTP comparison across segments
-- ROI testimonial collection
-
----
-
-## Value Proposition Evolution Roadmap
-
-### Phase 1: MVP Value (Months 1-3)
-**Core promise:** "Fast, reliable enhancement + upscaling"
-- Basic upscaling (2x/4x)
-- Standard enhancement presets
-- Simple batch processing
-- Clear pricing
-
-### Phase 2: Differentiated Value (Months 4-8)
-**Added promise:** "+ Text preservation + platform integrations"
-- Text/logo protection mode
-- Shopify/WooCommerce integrations
-- Platform-specific presets
-- API access
-
-### Phase 3: Premium Value (Months 9-12)
-**Full promise:** "+ Custom models + white-label + enterprise"
-- Train on brand-specific images
-- White-label for agencies
-- Advanced batch automation
-- SLA guarantees
-
----
-
-## Competitor Value Proposition Comparison
-
-| Dimension | Us | Topaz | Let's Enhance | Magnific | Upscale.media |
-|-----------|-----|-------|---------------|----------|---------------|
+| Dimension | PixelPerfect | Topaz Labs | Let's Enhance | Magnific AI | Upscale.media |
+|-----------|-------------|------------|---------------|-------------|---------------|
 | **Primary Value** | Business productivity | Quality perfection | Cloud convenience | Creative control | Free access |
 | **Target User** | E-comm/Business | Pro photographers | General/Business | AI artists | Casual users |
-| **Speed Promise** | <30 seconds | 1.5+ hours | 1-2 minutes | 2-5 minutes | 30-60 seconds |
-| **Text Preservation** | ✅ Specialized | ❌ Poor | ❌ Poor | ❌ Poor | ❌ Poor |
-| **Enhancement + Upscale** | ✅ Both | Upscale only | ✅ Both | ✅ Both | Upscale only |
-| **Batch Processing** | ✅ Fast | ✅ Slow | ✅ Limited | ❌ Single | ✅ Limited |
-| **Platform Integration** | ✅ Shopify/WC | ✅ Photoshop | ❌ No | ❌ No | ❌ No |
-| **Pricing Model** | $9-99/month | $199 one-time | $9-32/month | $39-199/month | Free/Limited |
-| **Key Differentiator** | Text + Speed + Business | Quality | Balance | Creativity | Free |
+| **Speed** | <10 seconds | 90+ minutes | 10-30 seconds | 30-60 seconds | 5-15 seconds |
+| **Text Preservation** | **Yes** | No | No | No | No |
+| **Entry Price** | $9/mo | $12/mo | $12/mo | $39/mo | $45/year |
+| **Max Upscale** | 4x | 6x | 16x | 10x | 8x |
+| **Batch Processing** | Yes | Yes (slow) | Yes | Yes | Yes |
+| **API** | Yes | Yes | Yes | No | Yes |
 
 ---
 
-## Final Value Proposition Hierarchy
+## Technology Foundation
 
-### Universal Value (All Segments)
-✅ Fast processing (<30 seconds)
-✅ Reliable, predictable results
-✅ No watermarks
-✅ Transparent pricing
-✅ Ethical AI
+### Processing Stack (Real-ESRGAN via Replicate)
 
-### Segment-Specific Value
+| Model | Cost/Run | Speed | Use Case |
+|-------|----------|-------|----------|
+| Real-ESRGAN (T4) | $0.0017 | ~1.8s | Standard processing |
+| Real-ESRGAN (A100) | $0.0026 | ~0.7s | Priority/fast queue |
+| Real-ESRGAN + GFPGAN | $0.0025 | ~2s | Portrait enhancement |
 
-**E-commerce:**
-🎯 Text/logo preservation (UNIQUE)
-🎯 Marketplace-ready output
-🎯 Bulk catalog processing
-🎯 Platform integrations
+### Unit Economics
 
-**Content Creators:**
-🎯 Multi-platform presets
-🎯 Mobile-first workflow
-🎯 Archive revival
-🎯 Fast turnaround
+```
+At $0.0017/image (T4):
+- $9 plan (100 images): Cost $0.17, Margin 98%
+- $29 plan (500 images): Cost $0.85, Margin 97%
+- $99 plan (2,500 images): Cost $4.25, Margin 96%
+```
 
-**Real Estate:**
-🎯 HDR enhancement
-🎯 MLS-ready output
-🎯 On-site mobile editing
-🎯 Cost savings vs photography
-
-**Photography Studios:**
-🎯 Print-ready output
-🎯 Batch consistency
-🎯 Cloud processing
-🎯 Quick client revisions
+### Why Real-ESRGAN?
+1. **Cost:** 36-117x cheaper than Topaz API
+2. **Speed:** Sub-2-second processing
+3. **Quality:** Production-proven, consistent results
+4. **Flexibility:** Multiple GPU options for price/speed tradeoff
 
 ---
 
-## Communicating Value: Messaging Framework
+## Pricing Tiers
+
+| Plan | Price | Credits | $/Credit | Target |
+|------|-------|---------|----------|--------|
+| **Free** | $0 | 10 | - | Trial users |
+| **Starter** | $9/mo | 100 | $0.09 | Small sellers |
+| **Pro** | $29/mo | 500 | $0.058 | Growing businesses |
+| **Business** | $99/mo | 2,500 | $0.04 | Agencies |
+
+### Key Pricing Decisions
+- **No watermarks on free** (viral growth driver)
+- **Credit rollover** (reduces churn)
+- **Monthly billing** (vs annual-only competitors)
+- **Transparent $/credit** (builds trust)
+
+---
+
+## Messaging Framework
 
 ### Homepage Hero
-**Headline:** "Professional Image Enhancement & Upscaling for Business—In Seconds"
-**Subheadline:** "Keep text sharp, meet platform requirements, and process entire catalogs while you work."
+**Headline:** "Professional Image Enhancement & Upscaling—In Seconds"
+**Subheadline:** "Keep text sharp, meet platform requirements, process your entire catalog."
 **CTA:** "Enhance 10 Images Free" (no credit card)
 
-### E-commerce Landing Page
-**Headline:** "Product Images That Convert—With Labels You Can Actually Read"
-**Subheadline:** "The only AI enhancer that keeps product text legible while upscaling to marketplace requirements."
-**Social Proof:** "9-30% conversion boost" + "$19,760/year saved"
-**CTA:** "Start Free Trial"
+### E-commerce Landing
+**Headline:** "Product Images That Convert—With Labels You Can Read"
+**Subheadline:** "The only AI enhancer that keeps product text legible."
+**Proof:** "9-30% conversion boost" + "$19,760/year saved"
 
-### Content Creator Landing Page
+### Content Creator Landing
 **Headline:** "Turn Smartphone Photos Into Scroll-Stopping Content"
-**Subheadline:** "One tap enhances and resizes for every platform. Edit in seconds, post in minutes."
-**Social Proof:** "Used by 10,000+ creators"
-**CTA:** "Download Free App"
+**Subheadline:** "One tap enhances and resizes for every platform."
 
-### Real Estate Landing Page
+### Real Estate Landing
 **Headline:** "MLS-Ready Property Photos—On-Site, In Minutes"
-**Subheadline:** "Save $200-500 per property. No photographer needed. List the same day you shoot."
-**Social Proof:** "37% more inquiries with better photos"
-**CTA:** "Try 30 Days Free"
+**Subheadline:** "Save $200-500 per property. List the same day you shoot."
+
+---
+
+## Success Metrics
+
+### Value Validation
+- Feature usage by segment
+- Which pain relievers get used most
+- Free → paid conversion triggers
+- Churn reasons (exit surveys)
+
+### Targets
+- Text preservation mode: 40%+ usage in e-commerce segment
+- Processing speed: <10s average
+- NPS: 50+ in first 6 months
+- Conversion: 2-5% free → paid
+
+---
+
+*Last Updated: December 2025*
+*See also: [Competitor Analysis](./competitor/competitor-analysis-summary.md), [Feature Matrix](./competitor/competitor-feature-matrix.md), [Pricing Proposal](./economics/pricing-proposal-v2.md)*
