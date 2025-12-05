@@ -191,6 +191,7 @@ export async function POST(request: NextRequest) {
           .eq('id', user.id);
 
         // Add credits if upgrading (positive difference)
+        let creditsAdded = 0;
         if (creditDifference > 0) {
           const { error: creditError } = await supabaseAdmin.rpc('increment_credits_with_log', {
             target_user_id: user.id,
@@ -202,9 +203,19 @@ export async function POST(request: NextRequest) {
 
           if (creditError) {
             console.error('Error adding upgrade credits:', creditError);
-          } else {
-            console.log(`Added ${creditDifference} upgrade credits to user ${user.id}`);
+            return NextResponse.json(
+              {
+                success: false,
+                error: {
+                  code: 'CREDIT_UPDATE_FAILED',
+                  message: `Subscription upgraded to ${targetPlan.name} but credits failed to add. Please refresh the page or contact support.`,
+                },
+              },
+              { status: 500 }
+            );
           }
+          creditsAdded = creditDifference;
+          console.log(`Added ${creditDifference} upgrade credits to user ${user.id}`);
         }
 
         return NextResponse.json({
@@ -214,7 +225,7 @@ export async function POST(request: NextRequest) {
             status: 'active',
             new_price_id: body.targetPriceId,
             effective_immediately: true,
-            credits_added: creditDifference > 0 ? creditDifference : 0,
+            credits_added: creditsAdded,
             mock: true,
           },
         });
@@ -287,6 +298,7 @@ export async function POST(request: NextRequest) {
         .eq('id', user.id);
 
       // Add credits if upgrading (positive difference)
+      let creditsAdded = 0;
       if (creditDifference > 0) {
         const { error: creditError } = await supabaseAdmin.rpc('increment_credits_with_log', {
           target_user_id: user.id,
@@ -298,9 +310,25 @@ export async function POST(request: NextRequest) {
 
         if (creditError) {
           console.error('Error adding upgrade credits:', creditError);
-        } else {
-          console.log(`Added ${creditDifference} upgrade credits to user ${user.id}`);
+          // Return error - subscription was changed but credits failed to add
+          // User should contact support or retry
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: 'CREDIT_UPDATE_FAILED',
+                message: `Subscription upgraded to ${targetPlan.name} but credits failed to add. Please refresh the page or contact support if credits are not updated.`,
+                details: {
+                  subscription_id: updatedSubscription.id,
+                  expected_credits: creditDifference,
+                },
+              },
+            },
+            { status: 500 }
+          );
         }
+        creditsAdded = creditDifference;
+        console.log(`Added ${creditDifference} upgrade credits to user ${user.id}`);
       }
 
       return NextResponse.json({
@@ -310,7 +338,7 @@ export async function POST(request: NextRequest) {
           status: updatedSubscription.status,
           new_price_id: body.targetPriceId,
           effective_immediately: true,
-          credits_added: creditDifference > 0 ? creditDifference : 0,
+          credits_added: creditsAdded,
           ...(periodStart && {
             current_period_start: new Date(periodStart * 1000).toISOString(),
           }),

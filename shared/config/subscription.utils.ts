@@ -4,7 +4,7 @@
  */
 
 import { getSubscriptionConfig } from './subscription.config';
-import type { IPlanConfig, ProcessingMode, ICreditsExpirationConfig } from './subscription.types';
+import type { IPlanConfig, ProcessingMode, ICreditsExpirationConfig, ICreditPack } from './subscription.types';
 
 // ============================================
 // Plan Lookup Functions
@@ -40,6 +40,41 @@ export function getEnabledPlans(): IPlanConfig[] {
 export function getRecommendedPlan(): IPlanConfig | null {
   const config = getSubscriptionConfig();
   return config.plans.find(p => p.recommended && p.enabled) ?? null;
+}
+
+// ============================================
+// Credit Pack Functions
+// ============================================
+
+/**
+ * Get credit pack by Stripe price ID
+ */
+export function getCreditPackByPriceId(priceId: string): ICreditPack | null {
+  const config = getSubscriptionConfig();
+  return config.creditPacks.find(pack => pack.stripePriceId === priceId && pack.enabled) ?? null;
+}
+
+/**
+ * Get credit pack by key
+ */
+export function getCreditPackByKey(key: string): ICreditPack | null {
+  const config = getSubscriptionConfig();
+  return config.creditPacks.find(pack => pack.key === key && pack.enabled) ?? null;
+}
+
+/**
+ * Get all enabled credit packs
+ */
+export function getEnabledCreditPacks(): ICreditPack[] {
+  const config = getSubscriptionConfig();
+  return config.creditPacks.filter(pack => pack.enabled);
+}
+
+/**
+ * Check if a price ID is a credit pack (one-time) or subscription
+ */
+export function isPriceIdCreditPack(priceId: string): boolean {
+  return getCreditPackByPriceId(priceId) !== null;
 }
 
 // ============================================

@@ -181,11 +181,20 @@ export function CreditsDisplay(): JSX.Element {
 
       {/* Tooltip for low credit warning and expiration info */}
       {((isLowCredits || isNoCredits) || showExpiration) && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto whitespace-nowrap z-20">
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900"></div>
-          <div className="space-y-1">
+          <div className="space-y-2">
             {(isLowCredits || isNoCredits) && (
-              <div>{isNoCredits ? 'No credits remaining' : `Low credits: ${creditBalance} remaining`}</div>
+              <>
+                <div>{isNoCredits ? 'No credits remaining' : `Low credits: ${creditBalance} remaining`}</div>
+                <a
+                  href="/dashboard/billing"
+                  className="block text-indigo-400 hover:text-indigo-300 underline text-center"
+                  onClick={e => e.stopPropagation()}
+                >
+                  Buy more credits →
+                </a>
+              </>
             )}
             {showExpiration && expirationText && (
               <div className="text-amber-300">

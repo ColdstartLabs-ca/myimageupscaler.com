@@ -7,6 +7,7 @@ import { clientEnv, serverEnv } from '@shared/config/env';
 import { getPlanForPriceId } from '@shared/config/stripe';
 import { BILLING_COPY } from '@shared/constants/billing';
 import { getTrialConfig, getPlanConfig } from '@shared/config/subscription.config';
+import { getCreditPackByPriceId } from '@shared/config/subscription.utils';
 
 export const runtime = 'edge'; // Cloudflare Worker compatible
 
@@ -97,17 +98,21 @@ export async function POST(request: NextRequest) {
       (serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') && serverEnv.ENV === 'test') ||
       (serverEnv.ENV === 'test' && token.startsWith('test_token_'));
 
-    // Validate that the price ID is a known subscription price (skip in test mode, but validate basic format)
+    // Validate that the price ID is either a subscription plan or credit pack (skip in test mode)
     let plan = null;
+    let creditPack = null;
+
     if (!isTestMode) {
       plan = getPlanForPriceId(priceId);
-      if (!plan) {
+      creditPack = getCreditPackByPriceId(priceId);
+
+      if (!plan && !creditPack) {
         return NextResponse.json(
           {
             success: false,
             error: {
               code: 'INVALID_PRICE',
-              message: 'Invalid price ID. Only subscription plans are supported.',
+              message: 'Invalid price ID. Must be a subscription plan or credit pack.',
             },
           },
           { status: 400 }
@@ -156,46 +161,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. Check if user already has an active subscription (skip for mock users in test)
+    // 4. Check if user already has an active subscription (only for subscription purchases)
     let existingSubscription = null;
 
-    if (serverEnv.ENV === 'test' && token.startsWith('test_token_')) {
-      // For mock users, check if subscription status is encoded in the token metadata
-      // Mock users can include subscription info in their token metadata
+    if (plan) {
+      // Only check for existing subscription if purchasing a subscription plan
+      if (serverEnv.ENV === 'test' && token.startsWith('test_token_')) {
+        // For mock users, check if subscription status is encoded in the token metadata
+        // Mock users can include subscription info in their token metadata
 
-      // Check if token includes subscription metadata (format: test_token_mock_user_id_sub_status_tier)
-      const tokenParts = token.split('_');
-      if (tokenParts.length > 5) {
-        const subscriptionStatus = tokenParts[tokenParts.length - 2];
-        if (['active', 'trialing'].includes(subscriptionStatus)) {
-          existingSubscription = { status: subscriptionStatus };
+        // Check if token includes subscription metadata (format: test_token_mock_user_id_sub_status_tier)
+        const tokenParts = token.split('_');
+        if (tokenParts.length > 5) {
+          const subscriptionStatus = tokenParts[tokenParts.length - 2];
+          if (['active', 'trialing'].includes(subscriptionStatus)) {
+            existingSubscription = { status: subscriptionStatus };
+          }
         }
+      } else {
+        const { data: subscriptionData } = await supabaseAdmin
+          .from('subscriptions')
+          .select('id, status, price_id')
+          .eq('user_id', user.id)
+          .in('status', ['active', 'trialing'])
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        existingSubscription = subscriptionData;
       }
-    } else {
-      const { data: subscriptionData } = await supabaseAdmin
-        .from('subscriptions')
-        .select('id, status, price_id')
-        .eq('user_id', user.id)
-        .in('status', ['active', 'trialing'])
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
 
-      existingSubscription = subscriptionData;
-    }
-
-    if (existingSubscription) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'ALREADY_SUBSCRIBED',
-            message:
-              'You already have an active subscription. Please manage your subscription through the billing portal to upgrade or downgrade.',
+      if (existingSubscription) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'ALREADY_SUBSCRIBED',
+              message:
+                'You already have an active subscription. Please manage your subscription through the billing portal to upgrade or downgrade.',
+            },
           },
-        },
-        { status: 400 }
-      );
+          { status: 400 }
+        );
+      }
     }
 
     // 5. Get or create Stripe customer
@@ -260,16 +268,28 @@ export async function POST(request: NextRequest) {
         .eq('id', user.id);
     }
 
-    // 6. Verify price is a recurring subscription (double-check with Stripe in production)
+    // 6. Verify price type matches expected (double-check with Stripe in production)
     if (!isTestMode) {
       const price = await stripe.prices.retrieve(priceId);
-      if (price.type !== 'recurring') {
+      if (plan && price.type !== 'recurring') {
         return NextResponse.json(
           {
             success: false,
             error: {
               code: 'INVALID_PRICE',
-              message: 'Only subscription plans are supported. One-time payments are not allowed.',
+              message: 'Invalid price type. Subscription plans must be recurring.',
+            },
+          },
+          { status: 400 }
+        );
+      }
+      if (creditPack && price.type !== 'one_time') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'INVALID_PRICE',
+              message: 'Invalid price type. Credit packs must be one-time payments.',
             },
           },
           { status: 400 }
@@ -277,8 +297,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 7. Create Stripe Checkout Session (subscription mode only)
+    // 7. Create Stripe Checkout Session (supports both subscription and payment modes)
     const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
+    const checkoutMode = creditPack ? 'payment' : 'subscription';
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
@@ -288,33 +309,41 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      mode: 'subscription',
+      mode: checkoutMode,
       ui_mode: uiMode,
       metadata: {
         user_id: user.id,
-        ...(plan ? { plan_key: plan.key } : {}),
+        ...(plan ? { plan_key: plan.key, type: 'subscription' } : {}),
+        ...(creditPack
+          ? {
+              credits: creditPack.credits.toString(),
+              pack_key: creditPack.key,
+              type: 'credit_purchase',
+            }
+          : {}),
         ...metadata,
-      },
-      subscription_data: {
-        metadata: {
-          user_id: user.id,
-          ...(plan ? { plan_key: plan.key } : {}),
-        },
       },
     };
 
-    // Add trial period if configured and enabled
-    const trialConfig = getTrialConfig(priceId);
-    if (trialConfig && trialConfig.enabled) {
-      // Add trial period to subscription
+    // Only add subscription_data for subscriptions
+    if (plan && checkoutMode === 'subscription') {
       sessionParams.subscription_data = {
-        ...sessionParams.subscription_data,
-        trial_period_days: trialConfig.durationDays,
+        metadata: {
+          user_id: user.id,
+          plan_key: plan.key,
+        },
       };
 
-      // If payment method is not required upfront, set payment collection
-      if (!trialConfig.requirePaymentMethod) {
-        sessionParams.payment_method_collection = 'if_required';
+      // Add trial period if configured and enabled
+      const trialConfig = getTrialConfig(priceId);
+      if (trialConfig && trialConfig.enabled) {
+        // Add trial period to subscription
+        sessionParams.subscription_data.trial_period_days = trialConfig.durationDays;
+
+        // If payment method is not required upfront, set payment collection
+        if (!trialConfig.requirePaymentMethod) {
+          sessionParams.payment_method_collection = 'if_required';
+        }
       }
     }
 

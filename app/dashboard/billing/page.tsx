@@ -9,7 +9,9 @@ import { StripeService } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
 import { getPlanDisplayName } from '@shared/config/stripe';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
+import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
 import type { IUserProfile, ISubscription } from '@shared/types/stripe';
+import { Plus } from 'lucide-react';
 
 // Extend dayjs with relativeTime plugin
 dayjs.extend(relativeTime);
@@ -239,6 +241,39 @@ export default function BillingPage() {
             )}
           </div>
         )}
+      </div>
+
+      {/* Credit Top-Up Section */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+            <Plus size={20} className="text-purple-600" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-slate-900">Buy Credits</h2>
+            <p className="text-sm text-slate-500">One-time credit packs that never expire</p>
+          </div>
+        </div>
+
+        <CreditPackSelector
+          onPurchaseStart={() => {}}
+          onPurchaseComplete={() => loadBillingData()}
+          onError={error =>
+            showToast({
+              message: error.message,
+              type: 'error',
+            })
+          }
+        />
+
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800">
+            💡 <strong>Tip:</strong>{' '}
+            {subscription
+              ? 'Subscriptions offer better value (up to 58% cheaper per credit)'
+              : 'Subscribe for better value - get up to 58% cheaper credits'}
+          </p>
+        </div>
       </div>
 
       {/* Payment Methods / Manage Subscription */}

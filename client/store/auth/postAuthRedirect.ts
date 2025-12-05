@@ -3,7 +3,7 @@
  * This module separates redirect logic from the auth store.
  */
 
-const CHECKOUT_PATHS = ['/checkout', '/pricing', '/success'];
+const CHECKOUT_PATHS = ['/checkout', '/success'];
 
 /**
  * Checks if the current path is checkout-related.

@@ -1,6 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@client/store/authStore';
+import { useModalStore } from '@client/store/modalStore';
+import { useToastStore } from '@client/store/toastStore';
 
 interface IPricingCardProps {
   name: string;
@@ -51,6 +54,9 @@ export function PricingCard({
   trial,
 }: IPricingCardProps): JSX.Element {
   const router = useRouter();
+  const { isAuthenticated } = useAuthStore();
+  const { openAuthModal } = useModalStore();
+  const { showToast } = useToastStore();
 
   const handleSubscribe = () => {
     if (disabled) return;
@@ -60,8 +66,20 @@ export function PricingCard({
       return;
     }
 
-    // Redirect to checkout page with plan details
     const checkoutUrl = `/checkout?priceId=${encodeURIComponent(priceId)}&plan=${encodeURIComponent(name)}`;
+
+    // If not authenticated, show auth modal and store redirect URL
+    if (!isAuthenticated) {
+      localStorage.setItem('post_auth_redirect', checkoutUrl);
+      openAuthModal('login');
+      showToast({
+        message: 'Please sign in to complete your purchase',
+        type: 'info',
+      });
+      return;
+    }
+
+    // User is authenticated, redirect to checkout
     router.push(checkoutUrl);
   };
 

@@ -2,14 +2,17 @@
 
 import Features from '@client/components/pixelperfect/Landing/Features';
 import HowItWorks from '@client/components/pixelperfect/Landing/HowItWorks';
-import { Pricing } from '@client/components/pixelperfect/Pricing';
-import Workspace from '@client/components/pixelperfect/Workspace/Workspace';
 import { useModalStore } from '@client/store/modalStore';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Image from 'next/image';
+import { getSubscriptionConfig } from '@shared/config/subscription.config';
 
 export function HomePageClient(): JSX.Element {
   const { openAuthModal } = useModalStore();
+
+  // Check if any plan has trial enabled
+  const config = getSubscriptionConfig();
+  const hasTrialEnabled = config.plans.some(plan => plan.trial.enabled);
 
   return (
     <main className="flex-grow bg-slate-50 font-sans selection:bg-indigo-100 selection:text-indigo-700">
@@ -79,7 +82,7 @@ export function HomePageClient(): JSX.Element {
               className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-700 hover:via-violet-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-xl shadow-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98]"
             >
               <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-              Start Free Trial
+              {hasTrialEnabled ? 'Start Free Trial' : 'Sign Up Free'}
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
             <button
@@ -95,31 +98,40 @@ export function HomePageClient(): JSX.Element {
         </div>
       </section>
 
-      {/* Main Application Workspace */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-24 relative z-10 animate-fade-in-up animation-delay-600">
-        {/* Visual cue pointing to workspace - enhanced */}
-        <div
-          className="absolute -top-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-          aria-hidden="true"
-        >
-          <span className="text-xs font-semibold text-indigo-600 tracking-wide uppercase animate-pulse">
-            Try it now
-          </span>
-          <ArrowRight className="rotate-90 text-indigo-400 animate-bounce" size={20} />
-        </div>
-
-        {/* Workspace with glassmorphism container */}
-        <div className="relative p-1 rounded-3xl bg-gradient-to-br from-indigo-500/20 via-violet-500/20 to-purple-500/20">
-          <div className="rounded-[22px] bg-white/95 backdrop-blur-xl shadow-2xl shadow-indigo-500/10 border border-white/50 overflow-hidden">
-            <Workspace />
-          </div>
-        </div>
-      </section>
-
       {/* Landing Page Sections */}
       <Features />
       <HowItWorks />
-      <Pricing />
+
+      {/* Pricing CTA Section */}
+      <section className="py-16 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+            Ready to get started?
+          </h2>
+          <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
+            Choose from flexible subscription plans or one-time credit packs. Get monthly credits
+            with automatic rollover, or pay as you go.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href="/pricing"
+              className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-700 hover:via-violet-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-xl shadow-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              View Pricing Plans
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+            <button
+              onClick={() => openAuthModal('register')}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-xl transition-all duration-300 border border-slate-200 hover:border-slate-300 shadow-lg hover:shadow-xl"
+            >
+              {hasTrialEnabled ? 'Start Free Trial' : 'Sign Up Free'}
+            </button>
+          </div>
+          <p className="mt-4 text-sm text-slate-500">
+            10 free credits to get started &bull; No credit card required
+          </p>
+        </div>
+      </section>
 
       {/* Final CTA Section */}
       <section className="relative py-24 overflow-hidden">
@@ -141,11 +153,11 @@ export function HomePageClient(): JSX.Element {
               className="group inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-slate-50 text-indigo-600 font-semibold rounded-xl transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98]"
             >
               <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-              Create Free Account
+              {hasTrialEnabled ? 'Start Free Trial' : 'Sign Up Free'}
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
             <a
-              href="#pricing"
+              href="/pricing"
               className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30 backdrop-blur-sm"
             >
               View Pricing

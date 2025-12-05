@@ -337,15 +337,51 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       }
     }
   } else if (session.mode === 'payment') {
-    // One-time payments are no longer supported - ignore these sessions
-    console.log(
-      `Ignoring one-time payment session for user ${userId} - payment mode no longer supported`
-    );
-    return;
+    // Handle credit pack purchase
+    await handleCreditPackPurchase(session, userId);
   } else {
     console.warn(
-      `Unexpected checkout mode: ${session.mode} for session ${session.id}. Only subscription mode is supported.`
+      `Unexpected checkout mode: ${session.mode} for session ${session.id}. Expected 'subscription' or 'payment'.`
     );
+  }
+}
+
+/**
+ * Handle one-time credit pack purchase
+ */
+async function handleCreditPackPurchase(
+  session: Stripe.Checkout.Session,
+  userId: string
+): Promise<void> {
+  const credits = parseInt(session.metadata?.credits || '0', 10);
+  const packKey = session.metadata?.pack_key;
+
+  if (!credits || credits <= 0) {
+    console.error(`Invalid credits in session metadata: ${session.metadata?.credits}`);
+    return;
+  }
+
+  // Get payment intent for refund correlation
+  const paymentIntentId = session.payment_intent as string;
+
+  try {
+    const { error } = await supabaseAdmin.rpc('increment_credits_with_log', {
+      target_user_id: userId,
+      amount: credits,
+      transaction_type: 'purchase',
+      ref_id: paymentIntentId ? `pi_${paymentIntentId}` : `session_${session.id}`,
+      description: `Credit pack purchase - ${packKey || 'unknown'} - ${credits} credits`,
+    });
+
+    if (error) {
+      console.error('Error adding purchased credits:', error);
+      throw error; // Trigger webhook retry
+    }
+
+    console.log(`Added ${credits} purchased credits to user ${userId} (pack: ${packKey})`);
+  } catch (error) {
+    console.error('Failed to process credit purchase:', error);
+    throw error; // Re-throw for webhook retry
   }
 }
 
@@ -381,19 +417,36 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   const trialConfig = getTrialConfig(priceId);
 
   // Access period timestamps - these are standard Stripe subscription fields (Unix timestamps in seconds)
-  const currentPeriodStart = (subscription as any).current_period_start as number | undefined;
-  const currentPeriodEnd = (subscription as any).current_period_end as number | undefined;
+  let currentPeriodStart = (subscription as any).current_period_start as number | undefined;
+  let currentPeriodEnd = (subscription as any).current_period_end as number | undefined;
   const trialEnd = (subscription as any).trial_end as number | null | undefined;
   const canceledAt = (subscription as any).canceled_at as number | null | undefined;
 
-  // Validate required timestamp fields
+  // If period timestamps are missing, fetch fresh subscription data from Stripe
   if (!currentPeriodStart || !currentPeriodEnd) {
-    console.error('Missing required period timestamps in subscription:', {
-      id: subscription.id,
-      current_period_start: currentPeriodStart,
-      current_period_end: currentPeriodEnd,
-    });
-    return;
+    console.warn('Period timestamps missing from webhook, fetching fresh subscription data...');
+    try {
+      const freshSubscription = await stripe.subscriptions.retrieve(subscription.id);
+      // Access the subscription data
+      currentPeriodStart = (freshSubscription as any).current_period_start;
+      currentPeriodEnd = (freshSubscription as any).current_period_end;
+      console.log('Fetched fresh subscription data:', {
+        id: subscription.id,
+        current_period_start: currentPeriodStart,
+        current_period_end: currentPeriodEnd,
+      });
+    } catch (fetchError) {
+      console.error('Failed to fetch subscription from Stripe:', fetchError);
+    }
+  }
+
+  // If still missing, use fallback values (common in test mode)
+  // Use dayjs to calculate reasonable defaults
+  if (!currentPeriodStart || !currentPeriodEnd) {
+    console.warn('Using fallback period timestamps for subscription:', subscription.id);
+    const now = dayjs();
+    currentPeriodStart = now.unix();
+    currentPeriodEnd = now.add(30, 'day').unix();
   }
 
   // Validate that timestamps are valid numbers

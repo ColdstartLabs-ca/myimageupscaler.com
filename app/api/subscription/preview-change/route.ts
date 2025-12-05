@@ -192,6 +192,8 @@ export async function POST(request: NextRequest) {
         // Real Stripe proration calculation
         try {
           const subscription = await stripe.subscriptions.retrieve(currentSubscription.id);
+          const subscriptionItemId = subscription.items.data[0]?.id;
+          const prorationDate = Math.floor(Date.now() / 1000);
 
           // Create a preview invoice to see the proration
           const invoice = await stripe.invoices.createPreview({
@@ -200,29 +202,66 @@ export async function POST(request: NextRequest) {
             subscription_details: {
               items: [
                 {
-                  id: subscription.items.data[0]?.id,
+                  id: subscriptionItemId,
                   price: body.targetPriceId,
                 },
               ],
+              proration_date: prorationDate,
+              proration_behavior: 'create_prorations',
             },
           });
 
-          // Get the proration amount from the invoice
-          const prorationAmount = invoice.lines.data
-            .filter((line: any) => line.type === 'invoiceitem' && line.proration)
-            .reduce((total: number, line: any) => total + (line.amount || 0), 0);
+          // Find proration line items for THIS specific change only
+          // Filter by description containing current or target plan name
+          const currentPlanName = currentPlan?.name || '';
+          const targetPlanName = targetPlan.name;
+
+          // Only include items related to the current change (current plan -> target plan)
+          const relevantItems = invoice.lines.data.filter((line: any) => {
+            const desc = line.description || '';
+            // Include: unused current plan (credit) OR remaining target plan (charge)
+            return (
+              (desc.includes('Unused time on') && desc.includes(currentPlanName)) ||
+              (desc.includes('Remaining time on') && desc.includes(targetPlanName))
+            );
+          });
+
+          // Take only the first occurrence of each type to avoid duplicates
+          const seenTypes = new Set<string>();
+          const uniqueItems = relevantItems.filter((line: any) => {
+            const desc = line.description || '';
+            const type = desc.includes('Unused') ? `unused_${currentPlanName}` : `remaining_${targetPlanName}`;
+            if (seenTypes.has(type)) return false;
+            seenTypes.add(type);
+            return true;
+          });
+
+          const prorationTotal = uniqueItems.reduce(
+            (sum: number, line: any) => sum + (line.amount || 0),
+            0
+          );
+
+          // Log for debugging
+          console.log('Invoice preview details:', {
+            total: invoice.total,
+            currentPlan: currentPlanName,
+            targetPlan: targetPlanName,
+            prorationTotal,
+            relevantItems: uniqueItems.map((line: any) => ({
+              description: line.description,
+              amount: line.amount,
+            })),
+            allItemsCount: invoice.lines.data.length,
+          });
+
+          const effectiveAmount = prorationTotal;
 
           prorationResult = {
-            amount_due: Math.abs(prorationAmount),
+            amount_due: effectiveAmount, // Positive = user pays, negative = credit
             currency: invoice.currency,
             period_start: new Date(invoice.period_start * 1000).toISOString(),
             period_end: new Date(invoice.period_end * 1000).toISOString(),
           };
-
-          // Make amount_due negative for credits, positive for charges
-          if (prorationAmount < 0) {
-            prorationResult.amount_due = -prorationResult.amount_due;
-          }
         } catch (stripeError: unknown) {
           console.error('Stripe proration calculation error:', stripeError);
           const errorMessage = stripeError instanceof Error ? stripeError.message : 'Unknown error';

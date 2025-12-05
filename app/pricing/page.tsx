@@ -1,6 +1,6 @@
 'use client';
 
-import { PlanChangeModal, PricingCard } from '@client/components/stripe';
+import { PlanChangeModal, PricingCard, CreditPackSelector } from '@client/components/stripe';
 import { StripeService } from '@client/services/stripeService';
 import {
   STRIPE_PRICES,
@@ -161,6 +161,39 @@ export default function PricingPage() {
                 subscription ? () => handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY) : undefined
               }
             />
+          </div>
+        </div>
+
+        {/* Credit Packs Section */}
+        <div className="mt-16 border-t border-slate-200 pt-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
+              Need Credits Without a Subscription?
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              One-time credit packs that never expire. Perfect for occasional projects.
+            </p>
+          </div>
+
+          <div className="max-w-5xl mx-auto">
+            <CreditPackSelector
+              onPurchaseStart={() => {}}
+              onPurchaseComplete={() => window.location.reload()}
+              onError={error => console.error(error)}
+            />
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-sm text-slate-500 mb-2">
+              💡 <strong>Value Comparison:</strong> Subscriptions offer 11-58% cheaper credits for
+              regular users
+            </p>
+            <a
+              href="#subscriptions"
+              className="text-sm text-indigo-600 hover:text-indigo-700 underline"
+            >
+              Compare subscription plans
+            </a>
           </div>
         </div>
 

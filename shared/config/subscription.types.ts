@@ -149,6 +149,30 @@ export interface IDefaultsConfig {
 }
 
 /**
+ * Credit pack configuration for one-time purchases
+ */
+export interface ICreditPack {
+  /** Unique identifier for the pack (e.g., 'small', 'medium', 'large') */
+  key: string;
+  /** Display name for UI */
+  name: string;
+  /** Number of credits in the pack */
+  credits: number;
+  /** Price in cents (e.g., 499 = $4.99) */
+  priceInCents: number;
+  /** Currency code */
+  currency: Currency;
+  /** Stripe Price ID for one-time payment */
+  stripePriceId: string;
+  /** Description for UI */
+  description: string;
+  /** Whether this pack is highlighted as "popular" or "best value" */
+  popular?: boolean;
+  /** Whether this pack is currently available for purchase */
+  enabled: boolean;
+}
+
+/**
  * Complete subscription configuration
  * Single source of truth for all subscription settings
  */
@@ -157,6 +181,8 @@ export interface ISubscriptionConfig {
   version: string;
   /** Subscription plans configuration */
   plans: IPlanConfig[];
+  /** One-time credit packs configuration */
+  creditPacks: ICreditPack[];
   /** Credit cost per action */
   creditCosts: ICreditCostConfig;
   /** Free user configuration */

@@ -7,6 +7,7 @@
  */
 
 import type { ISubscriptionConfig } from './subscription.types';
+import { clientEnv } from './env';
 
 /**
  * Default subscription configuration
@@ -125,6 +126,42 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       recommended: false,
       description: 'For teams and agencies',
       displayOrder: 3,
+      enabled: true,
+    },
+  ],
+
+  creditPacks: [
+    {
+      key: 'small',
+      name: 'Small Pack',
+      credits: 50,
+      priceInCents: 499, // $4.99
+      currency: 'usd',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL || 'price_credits_small',
+      description: '50 credits',
+      popular: false,
+      enabled: true,
+    },
+    {
+      key: 'medium',
+      name: 'Medium Pack',
+      credits: 200,
+      priceInCents: 1499, // $14.99
+      currency: 'usd',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM || 'price_credits_medium',
+      description: '200 credits - Best value',
+      popular: true,
+      enabled: true,
+    },
+    {
+      key: 'large',
+      name: 'Large Pack',
+      credits: 600,
+      priceInCents: 3999, // $39.99
+      currency: 'usd',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE || 'price_credits_large',
+      description: '600 credits',
+      popular: false,
       enabled: true,
     },
   ],

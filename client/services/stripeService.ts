@@ -90,8 +90,15 @@ export class StripeService {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to create checkout session');
+      const errorResponse = await response.json();
+      const errorMessage =
+        typeof errorResponse.error === 'string'
+          ? errorResponse.error
+          : errorResponse.error?.message || 'Failed to create checkout session';
+      const error = new Error(errorMessage);
+      // Attach error code for specific handling
+      (error as Error & { code?: string }).code = errorResponse.error?.code;
+      throw error;
     }
 
     const responseJson = await response.json();
@@ -119,6 +126,41 @@ export class StripeService {
   ): Promise<void> {
     const { url } = await this.createCheckoutSession(priceId, options);
     window.location.href = url;
+  }
+
+  /**
+   * Purchase credits with a credit pack
+   * @param packKey - The key of the credit pack (e.g., 'small', 'medium', 'large')
+   * @param options - Additional options for the checkout session
+   * @returns The checkout session data (URL and sessionId)
+   */
+  static async purchaseCredits(
+    packKey: string,
+    options?: {
+      uiMode?: 'hosted' | 'embedded';
+      successUrl?: string;
+      cancelUrl?: string;
+    }
+  ): Promise<{ url: string; sessionId: string; clientSecret?: string }> {
+    // Dynamic import to avoid importing server-only config on client
+    const { getCreditPackByKey } = await import('@shared/config/subscription.utils');
+
+    const pack = getCreditPackByKey(packKey);
+    if (!pack) {
+      throw new Error(`Invalid credit pack: ${packKey}`);
+    }
+
+    const response = await this.createCheckoutSession(pack.stripePriceId, {
+      uiMode: options?.uiMode || 'hosted',
+      successUrl: options?.successUrl,
+      cancelUrl: options?.cancelUrl,
+    });
+
+    return {
+      url: response.url,
+      sessionId: response.sessionId,
+      clientSecret: response.clientSecret,
+    };
   }
 
   /**
@@ -390,8 +432,12 @@ export class StripeService {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to preview subscription change');
+      const errorResponse = await response.json();
+      const errorMessage =
+        typeof errorResponse.error === 'string'
+          ? errorResponse.error
+          : errorResponse.error?.message || 'Failed to preview subscription change';
+      throw new Error(errorMessage);
     }
 
     const result = await response.json();
@@ -428,8 +474,12 @@ export class StripeService {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to change subscription');
+      const errorResponse = await response.json();
+      const errorMessage =
+        typeof errorResponse.error === 'string'
+          ? errorResponse.error
+          : errorResponse.error?.message || 'Failed to change subscription';
+      throw new Error(errorMessage);
     }
 
     const result = await response.json();

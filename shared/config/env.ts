@@ -38,6 +38,10 @@ const clientEnvSchema = z.object({
   PRIVACY_EMAIL: z.string().email().default('privacy@pixelperfect.app'),
   // Stripe
   STRIPE_PUBLISHABLE_KEY: z.string().default(''),
+  // Stripe Credit Pack Price IDs
+  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL: z.string().default('price_credits_small'),
+  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM: z.string().default('price_credits_medium'),
+  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE: z.string().default('price_credits_large'),
 });
 
 export type IClientEnv = z.infer<typeof clientEnvSchema>;
@@ -65,6 +69,10 @@ function loadClientEnv(): IClientEnv {
     PRIVACY_EMAIL: process.env.NEXT_PUBLIC_PRIVACY_EMAIL || 'privacy@pixelperfect.app',
     // Stripe
     STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
+    // Stripe Credit Pack Price IDs
+    NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL: process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL || 'price_credits_small',
+    NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM: process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM || 'price_credits_medium',
+    NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE: process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE || 'price_credits_large',
   };
 
   return clientEnvSchema.parse(env);
