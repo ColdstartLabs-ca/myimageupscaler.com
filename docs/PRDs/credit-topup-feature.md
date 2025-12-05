@@ -7,6 +7,32 @@
 
 ---
 
+## Executive Summary
+
+**Feature**: Credit Top-Up System (One-Time Credit Purchases)
+
+**Business Model**: ✅ **HYBRID MODEL** - Credit packs available to ALL users (free and subscribers). Designed to complement subscriptions, not replace them.
+
+**Rationale**:
+
+- **Lower barrier to entry**: Casual users can purchase credits without subscription commitment
+- **Revenue maximization**: Captures occasional users who won't subscribe (+37% projected revenue)
+- **Competitive parity**: All competitors offer one-time options (Let's Enhance, VanceAI, Topaz, Upscale.media)
+- **Natural upgrade path**: One-time packs are more expensive per credit, incentivizing heavy users to subscribe
+- **Customer segment fit**: Supports "Casual Family Photo Restoration" and project-based users identified in business model canvas
+
+**Pricing Strategy**:
+
+- One-time packs: **$0.067-$0.10 per credit** (more expensive)
+- Subscriptions: **$0.04-$0.09 per credit** (better value) ← Upgrade incentive
+- Credits never expire (value prop for occasional users)
+
+**UI Locations**: Dashboard Billing Page (primary) + Pricing Page (secondary)
+
+**Technical Approach**: Extend existing Stripe checkout to support `mode: 'payment'` alongside subscriptions.
+
+---
+
 ## 1. Context Analysis
 
 ### 1.1 Files Analyzed
@@ -68,7 +94,14 @@ graph TD
 
 ### 1.4 Problem Statement
 
-Users who run out of monthly subscription credits cannot purchase additional credits on-demand, forcing them to either wait for the next billing cycle or upgrade to a higher tier unnecessarily.
+**All users** (free, subscribers, and lapsed users) who run out of credits face a binary choice: subscribe or leave. This creates friction for:
+
+- **Occasional users**: Only need 20-50 images for a one-time project (family photos, single product launch)
+- **Subscribers who run out**: Can't bridge the gap to next billing cycle without upgrading tier
+- **Project-based users**: Need burst capacity for seasonal demand (holidays, sales events)
+- **Trial users**: Liked free tier but aren't ready for monthly commitment
+
+**Solution**: Offer one-time credit packs as a low-friction option that complements (not replaces) subscriptions.
 
 ---
 
@@ -670,7 +703,409 @@ export function CreditPackSelector({
 
 ---
 
-## 4. Step-by-Step Execution Plan
+## 4. UI Integration Points
+
+### 4.1 Where to Show Credit Top-Ups (All Users)
+
+| Location                   | Component                         | Priority | Visibility Rule                   | Purpose                                 |
+| -------------------------- | --------------------------------- | -------- | --------------------------------- | --------------------------------------- |
+| **Dashboard Billing Page** | `/app/dashboard/billing/page.tsx` | P0       | All authenticated users           | **Primary** purchase location           |
+| **Pricing Page**           | `/app/pricing/page.tsx`           | P1       | All visitors (unauthenticated OK) | **Secondary** - Alongside subscriptions |
+| **Low Credit Warning**     | `CreditsDisplay.tsx`              | P1       | All authenticated users           | Proactive upsell when credits < 5       |
+| **Out of Credits Modal**   | New component                     | P0       | All authenticated users           | Shown when balance = 0                  |
+
+**Key Strategy**: Credit packs are **available to everyone**, but pricing structure incentivizes subscription for regular users (11-58% cheaper per credit).
+
+### 4.2 Detailed UI Changes
+
+#### A. `/app/dashboard/billing/page.tsx` (**PRIMARY LOCATION**)
+
+**Add Credit Top-Up Section between "Current Plan" and "Payment Methods":**
+
+**File**: `/home/joao/projects/pixelperfect/app/dashboard/billing/page.tsx`
+**Position**: After line 242 (after Current Plan section, before Payment Methods)
+**Visibility**: All authenticated users
+
+```tsx
+import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
+import { Plus } from 'lucide-react';
+
+// ... existing imports
+
+// INSERT after line 242:
+{
+  /* Credit Top-Up Section - ALL USERS */
+}
+<div className="bg-white rounded-xl border border-slate-200 p-6">
+  <div className="flex items-center gap-3 mb-4">
+    <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+      <Plus size={20} className="text-purple-600" />
+    </div>
+    <div>
+      <h2 className="font-semibold text-slate-900">Buy Credits</h2>
+      <p className="text-sm text-slate-500">One-time credit packs that never expire</p>
+    </div>
+  </div>
+
+  <CreditPackSelector
+    onPurchaseStart={() => {}}
+    onPurchaseComplete={() => loadBillingData()}
+    onError={error => showToast({ message: error.message, type: 'error' })}
+  />
+
+  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+    <p className="text-sm text-blue-800">
+      💡 <strong>Tip:</strong>{' '}
+      {subscription
+        ? 'Subscriptions offer better value (up to 58% cheaper per credit)'
+        : 'Subscribe for better value - get up to 58% cheaper credits'}
+    </p>
+  </div>
+</div>;
+```
+
+#### B. `/app/pricing/page.tsx` (**SECONDARY LOCATION**)
+
+**Add Credit Packs Section after subscription plans:**
+
+**File**: `/home/joao/projects/pixelperfect/app/pricing/page.tsx`
+**Position**: After line 165 (after subscription grid, before FAQ section)
+**Visibility**: All visitors (works for unauthenticated users)
+
+```tsx
+import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
+
+// INSERT after line 165:
+{
+  /* Credit Packs Section - ALL USERS */
+}
+<div className="mt-16 border-t border-slate-200 pt-16">
+  <div className="text-center mb-8">
+    <h2 className="text-3xl font-bold text-slate-900 mb-4">Need Credits Without a Subscription?</h2>
+    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+      One-time credit packs that never expire. Perfect for occasional projects.
+    </p>
+  </div>
+
+  <CreditPackSelector
+    onPurchaseStart={() => {}}
+    onPurchaseComplete={() => window.location.reload()}
+    onError={error => console.error(error)}
+  />
+
+  <div className="mt-8 text-center">
+    <p className="text-sm text-slate-500 mb-2">
+      💡 <strong>Value Comparison:</strong> Subscriptions offer 11-58% cheaper credits for regular
+      users
+    </p>
+    <a href="#subscriptions" className="text-sm text-indigo-600 hover:text-indigo-700 underline">
+      Compare subscription plans
+    </a>
+  </div>
+</div>;
+```
+
+#### C. `client/components/stripe/CreditsDisplay.tsx` (**LOW CREDIT UPSELL**)
+
+**Add "Buy Credits" link when credits are low:**
+
+**File**: `/home/joao/projects/pixelperfect/client/components/stripe/CreditsDisplay.tsx`
+**Position**: Modify lines 183-197 (tooltip section)
+
+```tsx
+{
+  /* Tooltip for low credit warning and expiration info - MODIFIED */
+}
+{
+  (isLowCredits || isNoCredits || showExpiration) && (
+    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto whitespace-nowrap z-20">
+      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900"></div>
+      <div className="space-y-2">
+        {(isLowCredits || isNoCredits) && (
+          <>
+            <div>
+              {isNoCredits ? 'No credits remaining' : `Low credits: ${creditBalance} remaining`}
+            </div>
+            <a
+              href="/dashboard/billing"
+              className="block text-indigo-400 hover:text-indigo-300 underline text-center"
+              onClick={e => e.stopPropagation()}
+            >
+              Buy more credits →
+            </a>
+          </>
+        )}
+        {showExpiration && expirationText && (
+          <div className="text-amber-300">Credits expire {expirationText}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+#### D. **NEW COMPONENT**: `OutOfCreditsModal.tsx` (**ALL USERS**)
+
+**Create modal shown when user tries to upscale without credits:**
+
+**File**: `/home/joao/projects/pixelperfect/client/components/stripe/OutOfCreditsModal.tsx` (NEW)
+
+```tsx
+'use client';
+
+import React, { useState } from 'react';
+import { CreditPackSelector } from './CreditPackSelector';
+import { AlertCircle, X } from 'lucide-react';
+
+interface IOutOfCreditsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onPurchaseComplete: () => void;
+}
+
+export function OutOfCreditsModal({
+  isOpen,
+  onClose,
+  onPurchaseComplete,
+}: IOutOfCreditsModalProps) {
+  const [showSubscriptionCTA, setShowSubscriptionCTA] = useState(false);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
+
+      {/* Modal */}
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-xl p-6">
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Header */}
+          <div className="text-center mb-6">
+            <div className="mx-auto w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+              <AlertCircle className="h-6 w-6 text-amber-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">You're Out of Credits</h2>
+            <p className="text-slate-600">
+              Purchase credits to continue processing images, or subscribe for better value.
+            </p>
+          </div>
+
+          {/* Tabs: One-Time vs Subscription */}
+          <div className="flex gap-2 mb-6 justify-center">
+            <button
+              onClick={() => setShowSubscriptionCTA(false)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                !showSubscriptionCTA
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              Buy Credits
+            </button>
+            <button
+              onClick={() => setShowSubscriptionCTA(true)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                showSubscriptionCTA
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              Subscribe (Best Value)
+            </button>
+          </div>
+
+          {/* Content */}
+          {!showSubscriptionCTA ? (
+            <>
+              <CreditPackSelector
+                onPurchaseStart={() => {}}
+                onPurchaseComplete={() => {
+                  onPurchaseComplete();
+                  onClose();
+                }}
+                onError={error => console.error(error)}
+              />
+
+              <div className="mt-4 text-center text-sm text-slate-500">
+                💡 Subscribe for up to 58% cheaper credits
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-slate-600 mb-6">
+                Get monthly credits with automatic rollover, plus 11-58% cheaper per-credit pricing.
+              </p>
+              <a
+                href="/pricing"
+                className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+              >
+                View Subscription Plans
+              </a>
+            </div>
+          )}
+
+          {/* Footer */}
+          <div className="mt-6 text-center">
+            <button
+              onClick={onClose}
+              className="text-sm text-slate-500 hover:text-slate-700 transition-colors"
+            >
+              Not now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+#### E. **Upload/Upscale Flow Integration**
+
+**Modify image processing to check credits before upload:**
+
+**Example Integration** (adapt to your upload component):
+
+```tsx
+import { OutOfCreditsModal } from '@client/components/stripe/OutOfCreditsModal';
+import { StripeService } from '@client/services/stripeService';
+
+// ... in your component
+const [showOutOfCreditsModal, setShowOutOfCreditsModal] = useState(false);
+
+const handleUpscale = async () => {
+  // Check credits before processing
+  try {
+    const profile = await StripeService.getUserProfile();
+
+    if (profile.credits_balance < 1) {
+      setShowOutOfCreditsModal(true);
+      return;
+    }
+
+    // Proceed with upscaling...
+    await processImage();
+  } catch (error) {
+    console.error('Failed to check credits:', error);
+  }
+};
+
+// In JSX:
+<OutOfCreditsModal
+  isOpen={showOutOfCreditsModal}
+  onClose={() => setShowOutOfCreditsModal(false)}
+  onPurchaseComplete={() => {
+    // Reload credits and allow retry
+    window.location.reload();
+  }}
+/>;
+```
+
+### 4.3 User Flow Diagram
+
+```mermaid
+flowchart TD
+    Start[User lands on site] --> Auth{Authenticated?}
+
+    Auth -->|Yes| CheckCredits{Credits < 5?}
+    CheckCredits -->|Yes| Warning[CreditsDisplay shows warning]
+    Warning --> ClickBuy[User clicks 'Buy more credits']
+
+    CheckCredits -->|No| Upload[User uploads image]
+    Auth -->|No| SignupFlow[Signup → Get 10 free credits]
+    SignupFlow --> Upload
+
+    Upload --> EnoughCredits{Credits > 0?}
+
+    EnoughCredits -->|No| Modal[OutOfCreditsModal with tabs]
+    Modal --> Choice{User choice?}
+    Choice -->|Buy Credits Tab| BuyPack[Select credit pack]
+    Choice -->|Subscribe Tab| SubCTA[View subscriptions]
+
+    EnoughCredits -->|Yes| Process[Process image]
+
+    ClickBuy --> Billing[Navigate to /dashboard/billing]
+    Billing --> Selector[CreditPackSelector shown]
+    Selector --> BuyPack
+
+    BuyPack --> Checkout[Stripe Checkout]
+    SubCTA --> Pricing[/pricing page]
+    Pricing --> SubCheckout[Subscribe]
+
+    Checkout --> Payment[Complete payment]
+    SubCheckout --> Payment
+
+    Payment --> Webhook[Webhook adds credits]
+    Webhook --> Success[Redirect to /success]
+    Success --> Reload[Refresh credits]
+    Reload --> Process
+```
+
+### 4.4 Mobile Responsiveness
+
+All components must be mobile-responsive:
+
+**CreditPackSelector**:
+
+```tsx
+<div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+```
+
+**OutOfCreditsModal**:
+
+```tsx
+<div className="flex min-h-full items-end sm:items-center justify-center p-4">
+  <div className="relative w-full max-w-4xl ...">
+```
+
+**Billing Page Integration**:
+
+- Sections stack vertically on mobile
+- Credit packs display 1 column on mobile, 3 on desktop
+
+### 4.5 Empty States & Error Handling
+
+| Scenario                    | UI Behavior                                                          |
+| --------------------------- | -------------------------------------------------------------------- |
+| No credit packs configured  | Show "Credit packs coming soon" message with "Contact Support" link  |
+| Stripe checkout fails       | Show toast error: "Checkout failed. Please try again.", stay on page |
+| Credits not added after 60s | Show banner: "Payment processing. Credits will appear soon."         |
+| User cancels checkout       | Return to previous page, show toast: "Purchase canceled"             |
+| Network error loading packs | Show error state with "Retry" button                                 |
+
+### 4.6 Testing Checklist
+
+**Visual Testing**:
+
+- [ ] Credit packs display correctly on billing page
+- [ ] Credit packs display correctly on pricing page
+- [ ] OutOfCreditsModal centers properly on all screen sizes
+- [ ] Mobile: Credit packs stack vertically (1 column)
+- [ ] Desktop: Credit packs display in 3 columns
+- [ ] "Best Value" badge positions correctly
+- [ ] Loading states show spinner on correct card
+
+**Functional Testing**:
+
+- [ ] Clicking pack opens Stripe checkout
+- [ ] Purchase completes and credits appear within 30s
+- [ ] OutOfCreditsModal shows when credits = 0
+- [ ] Low credit warning shows when credits < 5
+- [ ] "Buy more credits" link navigates to billing page
+- [ ] Billing page refresh updates credit balance
+
+---
+
+## 5. Step-by-Step Execution Plan
 
 ### Phase 1: Configuration & Types
 
@@ -695,12 +1130,55 @@ export function CreditPackSelector({
   - Add `handleCreditPackPurchase()` function
   - Update `handleCheckoutSessionCompleted()` to handle `mode === 'payment'`
 
-### Phase 3: Client Layer
+### Phase 3: Client Layer (UI Components)
+
+**Services**:
 
 - [ ] Add `purchaseCredits()` method to `stripeService.ts`
-- [ ] Create `CreditPackSelector` component
-- [ ] Add credit pack section to pricing page or dashboard
-- [ ] Update `CreditsDisplay` to show purchase option when low
+
+**New Components**:
+
+- [ ] Create `CreditPackSelector.tsx` in `/client/components/stripe/`
+- [ ] Create `OutOfCreditsModal.tsx` in `/client/components/stripe/`
+- [ ] Export both from `/client/components/stripe/index.ts`
+
+**UI Integrations**:
+
+- [ ] **Billing Page** (`/app/dashboard/billing/page.tsx`) - **ALL USERS**:
+
+  - Import `CreditPackSelector` and `Plus` icon
+  - Add credit top-up section after line 242
+  - Show `CreditPackSelector` for all authenticated users
+  - Add tip banner showing subscription value (conditional based on `subscription`)
+  - Wire up callbacks: `onPurchaseComplete={() => loadBillingData()}`
+
+- [ ] **Pricing Page** (`/app/pricing/page.tsx`) - **ALL VISITORS**:
+
+  - Import `CreditPackSelector`
+  - Add credit packs section after line 165 (after subscriptions, before FAQ)
+  - Add border-t separator and "Need Credits Without a Subscription?" heading
+  - Add value comparison tip linking back to subscriptions
+  - Wire up callbacks: `onPurchaseComplete={() => window.location.reload()}`
+
+- [ ] **Credits Display** (`/client/components/stripe/CreditsDisplay.tsx`) - **ALL USERS**:
+
+  - Modify tooltip (lines 183-197) to add "Buy more credits →" link
+  - Link points to `/dashboard/billing` for all users
+  - Change `pointer-events-none` to `pointer-events-auto` on tooltip
+
+- [ ] **OutOfCreditsModal** - **TABBED UI**:
+
+  - Remove `hasSubscription` prop (not needed)
+  - Add tab state: "Buy Credits" vs "Subscribe (Best Value)"
+  - Default to "Buy Credits" tab showing `CreditPackSelector`
+  - "Subscribe" tab shows CTA to `/pricing` page
+  - Add value messaging: "Subscribe for up to 58% cheaper credits"
+
+- [ ] **Upload Flow** (identify upload component):
+  - Import `OutOfCreditsModal` and `StripeService`
+  - Add credit check in upload handler before processing
+  - Show modal when `credits_balance < 1`
+  - Wire up `onPurchaseComplete` to reload credits
 
 ### Phase 4: Testing & Validation
 
@@ -791,13 +1269,22 @@ if (!serverEnv.FEATURE_CREDIT_PACKS && creditPack) {
 
 ## 8. Cost Analysis
 
-### Pricing (from Business Model Canvas)
+### Pricing (Optimized for Hybrid Model)
 
-| Pack   | Price  | Credits | $/Credit | Margin |
-| ------ | ------ | ------- | -------- | ------ |
-| Small  | $4.99  | 50      | $0.10    | ~95%   |
-| Medium | $14.99 | 200     | $0.075   | ~96%   |
-| Large  | $39.99 | 600     | $0.067   | ~97%   |
+| Pack   | Price  | Credits | $/Credit | Gross Margin | Strategy                          |
+| ------ | ------ | ------- | -------- | ------------ | --------------------------------- |
+| Small  | $4.99  | 50      | $0.10    | 98.3%        | Entry point for casual users      |
+| Medium | $14.99 | 200     | $0.075   | 97.7%        | **Popular** - Project-based users |
+| Large  | $39.99 | 600     | $0.067   | 97.2%        | Bulk one-time purchases           |
+
+**Comparison with Subscriptions** (creates natural upgrade incentive):
+
+| Plan Type          | $/Credit     | Rollover | Expiration     | Best For                   |
+| ------------------ | ------------ | -------- | -------------- | -------------------------- |
+| **Subscriptions**  | $0.04-$0.09  | ✅ 2-6x  | Reset at cycle | Regular users (best value) |
+| **One-Time Packs** | $0.067-$0.10 | ❌ None  | ✅ Never       | Occasional users           |
+
+**Key Insight**: One-time packs are **11-58% more expensive per credit**, naturally pushing heavy users toward subscriptions for better value.
 
 ### Unit Economics
 
@@ -816,8 +1303,54 @@ if (!serverEnv.FEATURE_CREDIT_PACKS && creditPack) {
 
 ---
 
+---
+
+## 9. Hybrid Model Benefits Summary
+
+### Revenue Impact
+
+| Scenario               | Projected Annual Revenue |
+| ---------------------- | ------------------------ |
+| **Subscriptions only** | $245,040                 |
+| **+ One-time packs**   | $335,040 (+37%)          |
+
+### Customer Segment Coverage
+
+| Segment                    | Need                 | Solution                           |
+| -------------------------- | -------------------- | ---------------------------------- |
+| **Regular users**          | Ongoing image needs  | Subscriptions ($0.04-$0.09/credit) |
+| **Occasional users**       | One-time projects    | Credit packs ($0.067-$0.10/credit) |
+| **Project-based**          | Seasonal bursts      | Credit packs (never expire)        |
+| **Subscribers (overflow)** | Bridge to next cycle | Credit packs (immediate)           |
+
+### Natural Upgrade Incentive
+
+```
+Price Comparison:
+├─ One-time pack: $14.99 for 200 credits = $0.075/credit
+└─ Pro subscription: $29 for 500 credits = $0.058/credit
+
+Psychology: Heavy users save 22% by subscribing
+```
+
+### Competitive Positioning
+
+| Competitor       | One-Time Option     | Subscription Option     |
+| ---------------- | ------------------- | ----------------------- |
+| Let's Enhance    | ✅ Credit packs     | ✅ Subscriptions        |
+| VanceAI          | ✅ Pay-per-image    | ✅ Subscriptions        |
+| Topaz Labs       | ✅ One-time license | ✅ Cloud subscription   |
+| Upscale.media    | ✅ Annual payment   | ✅ Monthly subscription |
+| **PixelPerfect** | ✅ **Credit packs** | ✅ **Subscriptions**    |
+
+**Result**: We match industry standard while maintaining subscription incentives through pricing structure.
+
+---
+
 ## References
 
+- [Business Model Canvas - Revenue Model](/docs/business-model-canvas/04-revenue-costs.md)
+- [Business Model Canvas - Customer Segments](/docs/business-model-canvas/01-customer-segments.md)
 - [Pricing Proposal v2](/docs/business-model-canvas/economics/pricing-proposal-v2.md)
 - [Credits System Documentation](/docs/technical/systems/credits.md)
 - [Billing System Documentation](/docs/technical/systems/billing.md)

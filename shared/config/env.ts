@@ -90,6 +90,13 @@ const serverEnvSchema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().default(''),
   // Gemini AI
   GEMINI_API_KEY: z.string().default(''),
+  // Replicate AI (Image Upscaling)
+  REPLICATE_API_TOKEN: z.string().default(''),
+  REPLICATE_MODEL_VERSION: z
+    .string()
+    .default(
+      'nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa'
+    ),
   // Baselime monitoring (server-side)
   BASELIME_API_KEY: z.string().default(''),
   // Analytics (server-side HTTP API)
@@ -114,6 +121,11 @@ function loadServerEnv(): IServerEnv {
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
     // Gemini AI
     GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+    // Replicate AI
+    REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN || '',
+    REPLICATE_MODEL_VERSION:
+      process.env.REPLICATE_MODEL_VERSION ||
+      'nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa',
     // Baselime monitoring
     BASELIME_API_KEY: process.env.BASELIME_API_KEY || '',
     // Analytics (server-side HTTP API)

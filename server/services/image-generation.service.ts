@@ -3,6 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 import { serverEnv } from '@shared/config/env';
 import type { IUpscaleInput, IUpscaleConfig } from '@shared/validation/upscale.schema';
 import { calculateCreditCost as configCalculateCreditCost } from '@shared/config/subscription.utils';
+import type { IImageProcessor, IImageProcessorResult } from './image-processor.interface';
 
 /**
  * Custom error class for insufficient credits
@@ -29,12 +30,9 @@ export class AIGenerationError extends Error {
 
 /**
  * Result from a successful image generation
+ * @deprecated Use IImageProcessorResult from image-processor.interface instead
  */
-export interface IGenerationResult {
-  imageData: string;
-  mimeType: string;
-  creditsRemaining: number;
-}
+export type IGenerationResult = IImageProcessorResult;
 
 /**
  * Calculate the credit cost for an image processing operation.
@@ -57,8 +55,11 @@ export function calculateCreditCost(config: IUpscaleConfig): number {
  * 1. Deduct credits before processing
  * 2. Generate image using AI
  * 3. Refund credits on failure
+ *
+ * Implements IImageProcessor interface for provider abstraction.
  */
-export class ImageGenerationService {
+export class ImageGenerationService implements IImageProcessor {
+  public readonly providerName = 'Gemini';
   private genAI: GoogleGenAI;
 
   constructor() {
@@ -70,6 +71,17 @@ export class ImageGenerationService {
   }
 
   /**
+   * Check if Gemini supports the given processing mode
+   *
+   * Gemini excels at creative enhancement and custom prompts.
+   * It can handle all modes but is most cost-effective for enhance/custom.
+   */
+  supportsMode(mode: string): boolean {
+    // Gemini supports all modes as fallback, but prefers enhance/custom
+    return ['upscale', 'enhance', 'both', 'custom'].includes(mode);
+  }
+
+  /**
    * Process an image upscale request with proper credit management
    *
    * @param userId - The authenticated user's ID
@@ -78,7 +90,7 @@ export class ImageGenerationService {
    * @throws InsufficientCreditsError if user has no credits
    * @throws AIGenerationError if AI generation fails
    */
-  async processImage(userId: string, input: IUpscaleInput): Promise<IGenerationResult> {
+  async processImage(userId: string, input: IUpscaleInput): Promise<IImageProcessorResult> {
     const jobId = `gen_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     const creditCost = calculateCreditCost(input.config);
 

@@ -4,6 +4,7 @@ import { createLogger } from '@server/monitoring/logger';
 import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { serializeError } from '@shared/utils/errors';
 
 export const runtime = 'edge';
 
@@ -49,7 +50,7 @@ const validateEventNameSecurity = (eventName: string): { valid: boolean; reason?
   if (eventName.includes('\x00')) {
     return {
       valid: false,
-      reason: 'Null byte detected'
+      reason: 'Null byte detected',
     };
   }
 
@@ -57,15 +58,19 @@ const validateEventNameSecurity = (eventName: string): { valid: boolean; reason?
   if (eventName.includes('../') || eventName.includes('..\\')) {
     return {
       valid: false,
-      reason: 'Directory traversal detected'
+      reason: 'Directory traversal detected',
     };
   }
 
   // Check for script tags
-  if (eventName.includes('<script>') || eventName.includes('</script>') || eventName.toLowerCase().includes('<script')) {
+  if (
+    eventName.includes('<script>') ||
+    eventName.includes('</script>') ||
+    eventName.toLowerCase().includes('<script')
+  ) {
     return {
       valid: false,
-      reason: 'Script tag detected'
+      reason: 'Script tag detected',
     };
   }
 
@@ -76,7 +81,7 @@ const validateEventNameSecurity = (eventName: string): { valid: boolean; reason?
     if (upperEventName.includes(keyword)) {
       return {
         valid: false,
-        reason: `SQL keyword detected: ${keyword}`
+        reason: `SQL keyword detected: ${keyword}`,
       };
     }
   }
@@ -85,23 +90,30 @@ const validateEventNameSecurity = (eventName: string): { valid: boolean; reason?
   if (eventName.includes('${') || eventName.includes('}}')) {
     return {
       valid: false,
-      reason: 'Template injection detected'
+      reason: 'Template injection detected',
     };
   }
 
   // Check for prototype pollution
-  if (eventName.includes('__proto__') || eventName.includes('constructor') || eventName.includes('prototype')) {
+  if (
+    eventName.includes('__proto__') ||
+    eventName.includes('constructor') ||
+    eventName.includes('prototype')
+  ) {
     return {
       valid: false,
-      reason: 'Prototype pollution detected'
+      reason: 'Prototype pollution detected',
     };
   }
 
   // Check for quotes (malicious usage)
-  if ((eventName.includes("'") || eventName.includes('"')) && !ALLOWED_EVENTS.includes(eventName as any)) {
+  if (
+    (eventName.includes("'") || eventName.includes('"')) &&
+    !ALLOWED_EVENTS.includes(eventName as any)
+  ) {
     return {
       valid: false,
-      reason: 'Suspicious quote characters detected'
+      reason: 'Suspicious quote characters detected',
     };
   }
 
@@ -140,7 +152,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       body = await req.json();
     } catch (parseError) {
       logger.warn('Invalid JSON in request body', {
-        error: parseError instanceof Error ? parseError.message : String(parseError)
+        error: parseError instanceof Error ? parseError.message : String(parseError),
       });
       return NextResponse.json(
         { error: 'Invalid event payload', details: ['Invalid JSON format'] },
@@ -156,7 +168,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           eventName: body.eventName,
           reason: securityCheck.reason,
           userAgent: req.headers.get('user-agent'),
-          ip: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip')
+          ip: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip'),
         });
         return NextResponse.json(
           { error: 'Invalid event payload', details: ['Invalid event name'] },
@@ -224,7 +236,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ success: true });
   } catch (error) {
     logger.error('Analytics event error', {
-      error: error instanceof Error ? error.message : String(error),
+      error: serializeError(error),
     });
     // Return success even on error - don't block user actions
     return NextResponse.json({ success: true });

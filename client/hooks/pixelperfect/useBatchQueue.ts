@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { IBatchItem, ProcessingStatus, IUpscaleConfig } from '@shared/types/pixelperfect';
 import { processImage } from '@client/utils/api-client';
+import { serializeError } from '@shared/utils/errors';
+import { useToastStore } from '@client/store/toastStore';
 
 interface IUseBatchQueueReturn {
   queue: IBatchItem[];
@@ -20,6 +22,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   const [queue, setQueue] = useState<IBatchItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isProcessingBatch, setIsProcessingBatch] = useState(false);
+  const showToast = useToastStore(state => state.showToast);
 
   // Cleanup object URLs on unmount
   useEffect(() => {
@@ -100,9 +103,17 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         progress: 100,
       });
     } catch (error: unknown) {
+      const errorMessage = serializeError(error);
       updateItemStatus(item.id, {
         status: ProcessingStatus.ERROR,
-        error: error instanceof Error ? error.message : 'Processing failed',
+        error: errorMessage,
+      });
+
+      // Show toast notification for the error
+      showToast({
+        message: `Failed to process ${item.file.name}: ${errorMessage}`,
+        type: 'error',
+        duration: 5000,
       });
     }
   };

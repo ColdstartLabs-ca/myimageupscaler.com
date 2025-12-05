@@ -109,10 +109,7 @@ export function createSuccessResponse<T>(data: T): ISuccessResponse<T> {
 /**
  * Map common errors to proper status codes and codes
  */
-export const ErrorStatusMap: Record<
-  ErrorCode,
-  { status: number; defaultMessage: string }
-> = {
+export const ErrorStatusMap: Record<ErrorCode, { status: number; defaultMessage: string }> = {
   [ErrorCodes.INVALID_REQUEST]: {
     status: 400,
     defaultMessage: 'The request is invalid or malformed.',
@@ -170,3 +167,60 @@ export const ErrorStatusMap: Record<
     defaultMessage: 'Image processing failed.',
   },
 };
+
+/**
+ * Safely serialize any error to a user-friendly string message
+ * Handles Error objects, plain objects, and other types
+ */
+export function serializeError(error: unknown): string {
+  // Handle Error instances
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  // Handle AppError with more context
+  if (error && typeof error === 'object' && 'code' in error && 'message' in error) {
+    const appError = error as { code: string; message: string; details?: Record<string, unknown> };
+    return appError.details
+      ? `${appError.message} (${JSON.stringify(appError.details)})`
+      : appError.message;
+  }
+
+  // Handle plain objects with message property
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String((error as { message: unknown }).message);
+  }
+
+  // Handle API error responses
+  if (error && typeof error === 'object' && 'error' in error) {
+    const errorObj = (error as { error: unknown }).error;
+    if (errorObj && typeof errorObj === 'object' && 'message' in errorObj) {
+      return String((errorObj as { message: unknown }).message);
+    }
+  }
+
+  // Handle string errors
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  // Handle null/undefined
+  if (error == null) {
+    return 'An unknown error occurred';
+  }
+
+  // Last resort: try JSON.stringify for objects, or convert to string
+  try {
+    if (typeof error === 'object') {
+      const jsonStr = JSON.stringify(error);
+      // If it's just an empty object, provide a better message
+      if (jsonStr === '{}' || jsonStr === '[]') {
+        return 'An unknown error occurred';
+      }
+      return jsonStr;
+    }
+    return String(error);
+  } catch {
+    return 'An unknown error occurred';
+  }
+}

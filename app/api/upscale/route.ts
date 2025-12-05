@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { upscaleSchema, validateImageSizeForTier } from '@shared/validation/upscale.schema';
 import {
-  ImageGenerationService,
   InsufficientCreditsError,
   AIGenerationError,
   calculateCreditCost,
 } from '@server/services/image-generation.service';
+import { ReplicateError } from '@server/services/replicate.service';
+import { ImageProcessorFactory } from '@server/services/image-processor.factory';
 import { ZodError } from 'zod';
 import { createLogger } from '@server/monitoring/logger';
 import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
-import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
+import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
 import { upscaleRateLimit } from '@server/rateLimit';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
@@ -122,9 +123,35 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Calculate credit cost based on the configuration
     creditCost = calculateCreditCost(validatedInput.config);
 
-    // 7. Process image with credit management
-    const service = new ImageGenerationService();
-    const result = await service.processImage(userId, validatedInput);
+    // 7. Process image with credit management using Factory pattern
+    const { primary, fallback } = ImageProcessorFactory.createProcessorWithFallback(
+      validatedInput.config.mode
+    );
+
+    logger.info('Using image processor', {
+      provider: primary.providerName,
+      mode: validatedInput.config.mode,
+      hasFallback: Boolean(fallback),
+    });
+
+    let result;
+
+    try {
+      // Try primary provider (Replicate by default for upscale/both)
+      result = await primary.processImage(userId, validatedInput);
+    } catch (error) {
+      // Try fallback if available and error is not due to insufficient credits
+      if (fallback && !(error instanceof InsufficientCreditsError)) {
+        logger.warn('Primary provider failed, using fallback', {
+          primaryProvider: primary.providerName,
+          fallbackProvider: fallback.providerName,
+          error: serializeError(error),
+        });
+        result = await fallback.processImage(userId, validatedInput);
+      } else {
+        throw error;
+      }
+    }
 
     const durationMs = Date.now() - startTime;
 
@@ -173,13 +200,30 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(body, { status });
     }
 
+    // Handle Replicate errors
+    if (error instanceof ReplicateError) {
+      const statusCode = error.code === 'RATE_LIMITED' ? 429 : error.code === 'SAFETY' ? 422 : 503;
+      const errorCode =
+        error.code === 'RATE_LIMITED'
+          ? ErrorCodes.RATE_LIMITED
+          : error.code === 'SAFETY'
+            ? ErrorCodes.INVALID_REQUEST
+            : ErrorCodes.AI_UNAVAILABLE;
+      logger.error('Replicate error', {
+        message: error.message,
+        code: error.code,
+      });
+      const { body, status } = createErrorResponse(errorCode, error.message, statusCode, {
+        replicateCode: error.code,
+      });
+      return NextResponse.json(body, { status });
+    }
+
     // Handle AI generation errors
     if (error instanceof AIGenerationError) {
       const statusCode = error.finishReason === 'SAFETY' ? 422 : 500;
       const errorCode =
-        error.finishReason === 'SAFETY'
-          ? ErrorCodes.INVALID_REQUEST
-          : ErrorCodes.PROCESSING_FAILED;
+        error.finishReason === 'SAFETY' ? ErrorCodes.INVALID_REQUEST : ErrorCodes.PROCESSING_FAILED;
       logger.error('AI generation error', {
         message: error.message,
         finishReason: error.finishReason,
@@ -191,15 +235,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // Handle unexpected errors
+    const errorMessage = serializeError(error);
     logger.error('Unexpected error', {
-      error: error instanceof Error ? error.message : String(error),
+      error: errorMessage,
       stack: error instanceof Error ? error.stack : undefined,
     });
-    const { body, status } = createErrorResponse(
-      ErrorCodes.INTERNAL_ERROR,
-      error instanceof Error ? error.message : 'An unexpected error occurred',
-      500
-    );
+    const { body, status } = createErrorResponse(ErrorCodes.INTERNAL_ERROR, errorMessage, 500);
     return NextResponse.json(body, { status });
   } finally {
     await logger.flush();

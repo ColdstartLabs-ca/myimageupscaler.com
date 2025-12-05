@@ -83,13 +83,6 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
   // Apply security headers
   applySecurityHeaders(response);
 
-  // Authenticated user on landing page -> redirect to dashboard
-  if (user && pathname === '/') {
-    const url = req.nextUrl.clone();
-    url.pathname = '/dashboard';
-    return NextResponse.redirect(url);
-  }
-
   // Unauthenticated user on protected dashboard routes -> redirect to landing
   if (!user && pathname.startsWith('/dashboard')) {
     const url = req.nextUrl.clone();
@@ -128,7 +121,5 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
  * - API routes that don't need auth (handled in middleware logic)
  */
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)'],
 };

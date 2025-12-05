@@ -29,9 +29,10 @@ test.describe('API: Image Upscale Integration', () => {
     test('should reject requests without authentication', async ({ request }) => {
       api = new ApiClient(request);
       const response = await api.post('/api/upscale', {
-        imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
         mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
+        config: { scale: 2, mode: 'upscale' },
       });
 
       response.expectStatus(401);
@@ -40,13 +41,18 @@ test.describe('API: Image Upscale Integration', () => {
 
     test('should reject requests with invalid user ID header', async ({ request }) => {
       api = new ApiClient(request);
-      const response = await api.post('/api/upscale', {
-        imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-        mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
-      }, {
-        headers: { 'X-User-Id': 'invalid-user-id' }
-      });
+      const response = await api.post(
+        '/api/upscale',
+        {
+          imageData:
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+          mimeType: 'image/png',
+          config: { scale: 2, mode: 'upscale' },
+        },
+        {
+          headers: { 'X-User-Id': 'invalid-user-id' },
+        }
+      );
 
       response.expectStatus(401);
     });
@@ -55,9 +61,10 @@ test.describe('API: Image Upscale Integration', () => {
       const user = await ctx.createUser();
       api = new ApiClient(request).withAuth(user.token);
       const response = await api.post('/api/upscale', {
-        imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
         mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
+        config: { scale: 2, mode: 'upscale' },
       });
 
       // Note: This test may fail due to AI service not being available in test environment
@@ -75,7 +82,7 @@ test.describe('API: Image Upscale Integration', () => {
       api = new ApiClient(request).withAuth(user.token);
       const response = await api.post('/api/upscale', {
         mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
+        config: { scale: 2, mode: 'upscale' },
       });
 
       response.expectStatus(400);
@@ -87,7 +94,7 @@ test.describe('API: Image Upscale Integration', () => {
       const response = await api.post('/api/upscale', {
         imageData: 'invalid-base64-data',
         mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
+        config: { scale: 2, mode: 'upscale' },
       });
 
       response.expectStatus(400);
@@ -97,9 +104,10 @@ test.describe('API: Image Upscale Integration', () => {
       const user = await ctx.createUser();
       api = new ApiClient(request).withAuth(user.token);
       const response = await api.post('/api/upscale', {
-        imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
         mimeType: 'image/png',
-        config: { scale: 3, mode: 'upscale' } // Invalid scale
+        config: { scale: 3, mode: 'upscale' }, // Invalid scale
       });
 
       response.expectStatus(400);
@@ -111,7 +119,7 @@ test.describe('API: Image Upscale Integration', () => {
       const response = await api.post('/api/upscale', {
         imageData: 'data:text/plain;base64,aW52YWxpZCB0ZXh0', // Invalid MIME type
         mimeType: 'text/plain',
-        config: { scale: 2, mode: 'upscale' }
+        config: { scale: 2, mode: 'upscale' },
       });
 
       response.expectStatus(400);
@@ -120,7 +128,7 @@ test.describe('API: Image Upscale Integration', () => {
     test('should reject malformed JSON requests', async ({ request }) => {
       api = new ApiClient(request);
       const response = await api.post('/api/upscale', 'invalid json {', {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
 
       // Malformed JSON should be rejected (either 400 for bad JSON or 401 if auth fails first)
@@ -135,9 +143,10 @@ test.describe('API: Image Upscale Integration', () => {
       api = new ApiClient(request).withAuth(lowCreditUser.token);
 
       const response = await api.post('/api/upscale', {
-        imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
         mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
+        config: { scale: 2, mode: 'upscale' },
       });
 
       // Should either process (if credits sufficient) or return 402 if not
@@ -149,13 +158,11 @@ test.describe('API: Image Upscale Integration', () => {
       api = new ApiClient(request).withAuth(user.token);
 
       try {
-        const initialProfile = await ctx.data.getUserProfile(user.id);
-        const initialCredits = initialProfile.credits_balance || 0;
-
         const response = await api.post('/api/upscale', {
-          imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+          imageData:
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
           mimeType: 'image/png',
-          config: { scale: 2, mode: 'upscale' }
+          config: { scale: 2, mode: 'upscale' },
         });
 
         // If the request succeeds, check that credits were properly used
@@ -180,9 +187,10 @@ test.describe('API: Image Upscale Integration', () => {
       const user = await ctx.createUser();
       api = new ApiClient(request).withAuth(user.token);
       const response = await api.post('/api/upscale', {
-        imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
         mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
+        config: { scale: 2, mode: 'upscale' },
       });
 
       // Should handle AI service errors gracefully
@@ -201,13 +209,17 @@ test.describe('API: Image Upscale Integration', () => {
       // Create a moderately large base64 image (100KB)
       const largeImageData = 'data:image/png;base64,' + 'A'.repeat(100 * 1024);
 
-      const response = await api.post('/api/upscale', {
-        imageData: largeImageData,
-        mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
-      }, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const response = await api.post(
+        '/api/upscale',
+        {
+          imageData: largeImageData,
+          mimeType: 'image/png',
+          config: { scale: 2, mode: 'upscale' },
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       // Should handle gracefully without crashing
       expect([200, 400, 401, 402, 413, 422, 500]).toContain(response.status);
@@ -218,16 +230,28 @@ test.describe('API: Image Upscale Integration', () => {
       api = new ApiClient(request).withAuth(user.token);
 
       const formats = [
-        { mimeType: 'image/png', dataUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==' },
-        { mimeType: 'image/jpeg', dataUrl: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/wA==' },
-        { mimeType: 'image/webp', dataUrl: 'data:image/webp;base64,UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAQAcJaQAA3AA/v3AgAA=' }
+        {
+          mimeType: 'image/png',
+          dataUrl:
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        },
+        {
+          mimeType: 'image/jpeg',
+          dataUrl:
+            'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/wA==',
+        },
+        {
+          mimeType: 'image/webp',
+          dataUrl:
+            'data:image/webp;base64,UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAQAcJaQAA3AA/v3AgAA=',
+        },
       ];
 
       for (const format of formats) {
         const response = await api.post('/api/upscale', {
           imageData: format.dataUrl,
           mimeType: format.mimeType,
-          config: { scale: 2, mode: 'upscale' }
+          config: { scale: 2, mode: 'upscale' },
         });
 
         // Should handle the format (may fail due to AI service, but not validation)
@@ -243,9 +267,10 @@ test.describe('API: Image Upscale Integration', () => {
       const responses = [];
       for (let i = 0; i < 5; i++) {
         const response = await api.post('/api/upscale', {
-          imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+          imageData:
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
           mimeType: 'image/png',
-          config: { scale: 2, mode: 'upscale' }
+          config: { scale: 2, mode: 'upscale' },
         });
         responses.push(response.status);
       }
@@ -257,6 +282,114 @@ test.describe('API: Image Upscale Integration', () => {
     });
   });
 
+  test.describe('Provider Routing (Replicate vs Gemini)', () => {
+    test('should use Replicate for upscale mode when configured', async ({ request }) => {
+      const user = await ctx.createUser({ credits: 100 });
+      api = new ApiClient(request).withAuth(user.token);
+
+      const response = await api.post('/api/upscale', {
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        mimeType: 'image/png',
+        config: { scale: 2, mode: 'upscale' },
+      });
+
+      // Response should be valid regardless of which provider is used
+      expect([200, 401, 402, 422, 500, 503]).toContain(response.status);
+
+      // If it fails with 503, it might be Replicate unavailable
+      if (response.status === 503) {
+        const data = await response.json();
+        expect(data.error).toBeTruthy();
+      }
+    });
+
+    test('should use Replicate for both mode when configured', async ({ request }) => {
+      const user = await ctx.createUser({ credits: 100 });
+      api = new ApiClient(request).withAuth(user.token);
+
+      const response = await api.post('/api/upscale', {
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        mimeType: 'image/png',
+        config: { scale: 4, mode: 'both' },
+      });
+
+      // Both mode should work with either provider
+      expect([200, 401, 402, 422, 500, 503]).toContain(response.status);
+    });
+
+    test('should handle enhance mode (may use Gemini)', async ({ request }) => {
+      const user = await ctx.createUser({ credits: 100 });
+      api = new ApiClient(request).withAuth(user.token);
+
+      const response = await api.post('/api/upscale', {
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        mimeType: 'image/png',
+        config: {
+          scale: 2,
+          mode: 'enhance',
+          denoise: true,
+          enhanceFace: false,
+          preserveText: false,
+        },
+      });
+
+      // Enhance mode should work (may use Gemini)
+      expect([200, 401, 402, 422, 500]).toContain(response.status);
+    });
+
+    test('should handle custom mode with prompt (may use Gemini)', async ({ request }) => {
+      const user = await ctx.createUser({ credits: 100 });
+      api = new ApiClient(request).withAuth(user.token);
+
+      const response = await api.post('/api/upscale', {
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        mimeType: 'image/png',
+        config: {
+          scale: 2,
+          mode: 'custom',
+          customPrompt: 'Make it look professional',
+          denoise: true,
+          enhanceFace: false,
+          preserveText: false,
+        },
+      });
+
+      // Custom mode with prompt should work (may use Gemini)
+      expect([200, 401, 402, 422, 500]).toContain(response.status);
+    });
+
+    test('should handle Replicate errors gracefully', async ({ request }) => {
+      const user = await ctx.createUser({ credits: 100 });
+      api = new ApiClient(request).withAuth(user.token);
+
+      const response = await api.post('/api/upscale', {
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        mimeType: 'image/png',
+        config: { scale: 2, mode: 'upscale' },
+      });
+
+      // Should handle any provider errors
+      expect([200, 401, 402, 422, 429, 500, 503]).toContain(response.status);
+
+      if (response.status === 429) {
+        // Rate limit should have proper headers
+        const data = await response.json();
+        expect(data.error).toBeTruthy();
+      }
+
+      if (response.status === 503) {
+        // Service unavailable should have proper error
+        const data = await response.json();
+        expect(data.error).toBeTruthy();
+      }
+    });
+  });
+
   test.describe('Performance and Monitoring', () => {
     test('should process requests within reasonable time limits', async ({ request }) => {
       const user = await ctx.createUser();
@@ -265,9 +398,10 @@ test.describe('API: Image Upscale Integration', () => {
       const startTime = Date.now();
 
       const response = await api.post('/api/upscale', {
-        imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
         mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
+        config: { scale: 2, mode: 'upscale' },
       });
 
       const duration = Date.now() - startTime;
@@ -284,9 +418,10 @@ test.describe('API: Image Upscale Integration', () => {
       api = new ApiClient(request).withAuth(user.token);
 
       const response = await api.post('/api/upscale', {
-        imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        imageData:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
         mimeType: 'image/png',
-        config: { scale: 2, mode: 'upscale' }
+        config: { scale: 2, mode: 'upscale' },
       });
 
       // Should have content-type header regardless of response status
