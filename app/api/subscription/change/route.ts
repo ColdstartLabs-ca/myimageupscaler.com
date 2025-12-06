@@ -279,7 +279,8 @@ export async function POST(request: NextRequest) {
         const now = Math.floor(Date.now() / 1000);
         // Calculate how many billing cycles have passed
         const interval = latestSubscription.items.data[0]?.price?.recurring?.interval;
-        const intervalCount = latestSubscription.items.data[0]?.price?.recurring?.interval_count || 1;
+        const intervalCount =
+          latestSubscription.items.data[0]?.price?.recurring?.interval_count || 1;
 
         let secondsPerInterval = 30 * 24 * 60 * 60; // Default to ~monthly
         if (interval === 'year') secondsPerInterval = 365 * 24 * 60 * 60;
@@ -409,8 +410,12 @@ export async function POST(request: NextRequest) {
       });
 
       // Access updated period timestamps
-      const updatedPeriodStart = (updatedSubscription as any).current_period_start as number | undefined;
-      const updatedPeriodEnd = (updatedSubscription as any).current_period_end as number | undefined;
+      const updatedPeriodStart = (updatedSubscription as any).current_period_start as
+        | number
+        | undefined;
+      const updatedPeriodEnd = (updatedSubscription as any).current_period_end as
+        | number
+        | undefined;
 
       // Update local database with new price ID
       const updateData: {
@@ -463,11 +468,12 @@ export async function POST(request: NextRequest) {
       // Calculate and add upgrade credits
       const { data: profile } = await supabaseAdmin
         .from('profiles')
-        .select('credits_balance')
+        .select('subscription_credits_balance, purchased_credits_balance')
         .eq('id', user.id)
         .single();
 
-      const currentBalance = profile?.credits_balance ?? 0;
+      const currentBalance =
+        (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);
 
       const calculation = SubscriptionCreditsService.calculateUpgradeCredits({
         currentBalance,

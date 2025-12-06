@@ -193,7 +193,10 @@ export default function BillingPage() {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-slate-600">Credits balance</p>
-              <p className="text-2xl font-bold text-slate-900">{profile?.credits_balance ?? 0}</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {(profile?.subscription_credits_balance ?? 0) +
+                  (profile?.purchased_credits_balance ?? 0)}
+              </p>
             </div>
             <button
               onClick={handleUpgrade}
@@ -236,8 +239,9 @@ export default function BillingPage() {
             {subscription.status === 'trialing' && subscription.trial_end && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
                 <p className="text-sm text-blue-800">
-                  <strong>Trial Active:</strong> Your trial ends {dayjs(subscription.trial_end).fromNow()}.
-                  Your card will be charged the regular subscription price after the trial ends.
+                  <strong>Trial Active:</strong> Your trial ends{' '}
+                  {dayjs(subscription.trial_end).fromNow()}. Your card will be charged the regular
+                  subscription price after the trial ends.
                 </p>
               </div>
             )}

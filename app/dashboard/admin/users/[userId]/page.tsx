@@ -172,7 +172,8 @@ export default function AdminUserDetailPage() {
             </button>
           </div>
           <div className="text-3xl font-bold text-slate-900 mb-4">
-            {user.profile.credits_balance}
+            {(user.profile.subscription_credits_balance ?? 0) +
+              (user.profile.purchased_credits_balance ?? 0)}
           </div>
           <div>
             <h4 className="text-sm font-medium text-slate-700 mb-2">Recent Transactions</h4>
@@ -247,19 +248,14 @@ export default function AdminUserDetailPage() {
       {showCreditModal && (
         <CreditAdjustmentModal
           userId={userId}
-          currentBalance={user.profile.credits_balance}
+          currentBalance={
+            (user.profile.subscription_credits_balance ?? 0) +
+            (user.profile.purchased_credits_balance ?? 0)
+          }
           onClose={() => setShowCreditModal(false)}
-          onSuccess={newBalance => {
-            setUser(prev =>
-              prev
-                ? {
-                    ...prev,
-                    profile: { ...prev.profile, credits_balance: newBalance },
-                  }
-                : null
-            );
+          onSuccess={() => {
             setShowCreditModal(false);
-            // Refresh to get updated transactions
+            // Refresh to get updated balances and transactions
             window.location.reload();
           }}
         />

@@ -34,7 +34,8 @@ export const useLowCreditWarning = (): void => {
       const profile = await StripeService.getUserProfile();
       if (!profile) return;
 
-      const creditBalance = profile.credits_balance || 0;
+      const creditBalance =
+        (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
 
       // Only show warning if credits are low (>0 but <= threshold)
       if (creditBalance > 0 && creditBalance <= LOW_CREDIT_THRESHOLD) {

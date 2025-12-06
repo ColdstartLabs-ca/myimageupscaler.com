@@ -28,18 +28,17 @@ export async function POST(req: NextRequest) {
     // Get current balance to calculate adjustment
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
-      .select('credits_balance')
+      .select('subscription_credits_balance, purchased_credits_balance')
       .eq('id', userId)
       .single();
 
     if (profileError || !profile) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const adjustmentAmount = newBalance - profile.credits_balance;
+    const currentTotal =
+      (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
+    const adjustmentAmount = newBalance - currentTotal;
 
     // Use RPC function for atomic operation with logging
     const { data, error: rpcError } = await supabaseAdmin.rpc('admin_adjust_credits', {
@@ -62,9 +61,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error('Admin credit adjustment error:', err);
-    return NextResponse.json(
-      { error: 'Failed to set credits' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to set credits' }, { status: 500 });
   }
 }

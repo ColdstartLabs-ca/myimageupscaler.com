@@ -131,7 +131,10 @@ export default function AdminUsersPage() {
                       {user.role}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-900">{user.credits_balance}</td>
+                  <td className="px-6 py-4 text-sm text-slate-900">
+                    {(user.subscription_credits_balance ?? 0) +
+                      (user.purchased_credits_balance ?? 0)}
+                  </td>
                   <td className="px-6 py-4">
                     {user.subscription_tier ? (
                       <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">

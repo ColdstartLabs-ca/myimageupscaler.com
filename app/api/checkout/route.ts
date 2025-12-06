@@ -68,7 +68,8 @@ export async function POST(request: NextRequest) {
           success: false,
           error: {
             code: 'INVALID_PRICE',
-            message: 'Invalid price ID format. Price IDs must start with "price_" and be valid Stripe price identifiers.',
+            message:
+              'Invalid price ID format. Price IDs must start with "price_" and be valid Stripe price identifiers.',
           },
         },
         { status: 400 }
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
 
       user = {
         id: mockUserId,
-        email: `test-${mockUserId}@example.com`
+        email: `test-${mockUserId}@example.com`,
       };
     } else {
       // Verify the user with Supabase
@@ -348,14 +349,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Add return URLs only for hosted mode
+    // Include purchase type in success URL for proper messaging
+    const purchaseType = creditPack ? 'credits' : 'subscription';
+    const creditsParam = creditPack ? `&credits=${creditPack.credits}` : '';
+
     if (uiMode === 'hosted') {
       sessionParams.success_url =
-        successUrl || `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`;
+        successUrl ||
+        `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}&type=${purchaseType}${creditsParam}`;
       sessionParams.cancel_url = cancelUrl || `${baseUrl}/canceled`;
     } else {
       // For embedded mode, use return_url
       sessionParams.return_url =
-        successUrl || `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`;
+        successUrl ||
+        `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}&type=${purchaseType}${creditsParam}`;
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);

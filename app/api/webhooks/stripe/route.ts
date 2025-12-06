@@ -16,7 +16,9 @@ export const runtime = 'edge'; // Cloudflare Worker compatible
 
 type PreviousAttributes = Record<string, unknown> | null | undefined;
 
-function extractPreviousPriceId(previousAttributes: PreviousAttributes | null | undefined): string | null {
+function extractPreviousPriceId(
+  previousAttributes: PreviousAttributes | null | undefined
+): string | null {
   if (!previousAttributes || typeof previousAttributes !== 'object') {
     return null;
   }
@@ -33,10 +35,7 @@ function extractPreviousPriceId(previousAttributes: PreviousAttributes | null | 
   for (const list of candidates) {
     const firstItem = list?.[0];
     const priceId =
-      firstItem?.price?.id ??
-      firstItem?.plan?.id ??
-      firstItem?.price ??
-      firstItem?.plan;
+      firstItem?.price?.id ?? firstItem?.plan?.id ?? firstItem?.price ?? firstItem?.plan;
 
     if (typeof priceId === 'string') {
       return priceId;
@@ -52,7 +51,9 @@ function extractPreviousPriceId(previousAttributes: PreviousAttributes | null | 
   return typeof directPrice === 'string' ? directPrice : null;
 }
 
-function isSchemaMissingError(error: { code?: string; message?: string } | null | undefined): boolean {
+function isSchemaMissingError(
+  error: { code?: string; message?: string } | null | undefined
+): boolean {
   if (!error) return false;
 
   return (
@@ -324,7 +325,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               })
               .eq('event_id', event.id);
           } else {
-            console.warn('Skipping webhook_events logging because idempotency is disabled for this event.');
+            console.warn(
+              'Skipping webhook_events logging because idempotency is disabled for this event.'
+            );
           }
 
           // Return success to prevent Stripe retries, but event is marked for investigation
@@ -504,7 +507,9 @@ async function handleCustomerCreated(customer: Stripe.Customer): Promise<void> {
       console.error(`Exception updating profile for customer ${customer.id}:`, error);
     }
   } else {
-    console.log(`Customer ${customer.id} created without user_id metadata - this is expected for Stripe Checkout customers`);
+    console.log(
+      `Customer ${customer.id} created without user_id metadata - this is expected for Stripe Checkout customers`
+    );
   }
 }
 
@@ -528,7 +533,7 @@ async function handleSubscriptionUpdate(
   // Get the user ID from the customer and current subscription details
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('id, subscription_status, credits_balance')
+    .select('id, subscription_status, subscription_credits_balance, purchased_credits_balance')
     .eq('stripe_customer_id', customerId)
     .maybeSingle();
 
@@ -689,7 +694,8 @@ async function handleSubscriptionUpdate(
     if (trialConfig && trialConfig.enabled && trialConfig.trialCredits !== null) {
       // Trial had different credits, adjust balance
       const fullCredits = planConfig.creditsPerCycle;
-      const currentBalance = profile.credits_balance ?? 0;
+      const currentBalance =
+        (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
 
       // Calculate credits to add (full cycle minus what's already available from trial)
       const creditsToAdd = Math.max(0, fullCredits - currentBalance);
@@ -725,10 +731,15 @@ async function handleSubscriptionUpdate(
     existingSubscriptionPriceId: existingSubscription?.price_id,
     subscriptionStatus: subscription.status,
     isPlanChange: effectivePreviousPriceId && effectivePreviousPriceId !== priceId,
-    currentCreditsBalance: profile.credits_balance,
+    currentCreditsBalance:
+      (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0),
   });
 
-  if (effectivePreviousPriceId && effectivePreviousPriceId !== priceId && subscription.status === 'active') {
+  if (
+    effectivePreviousPriceId &&
+    effectivePreviousPriceId !== priceId &&
+    subscription.status === 'active'
+  ) {
     const previousPlanConfig = getPlanConfig(effectivePreviousPriceId);
 
     if (previousPlanConfig) {
@@ -745,13 +756,15 @@ async function handleSubscriptionUpdate(
         newCredits,
         creditDifference,
         changeType: creditDifference > 0 ? 'upgrade' : creditDifference < 0 ? 'downgrade' : 'same',
-        currentBalance: profile.credits_balance,
+        currentBalance:
+          (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0),
       });
 
       // Only add credits for upgrades (positive difference)
       // For downgrades, user keeps existing credits until next renewal
       if (creditDifference > 0) {
-        const currentBalance = profile.credits_balance ?? 0;
+        const currentBalance =
+          (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
 
         // ANTI-FARMING PROTECTION: Only add tier difference if user has "reasonable" credits
         // Reasonable = within 50% of the previous tier's amount (allows for some rollover/purchases)
@@ -810,7 +823,8 @@ async function handleSubscriptionUpdate(
         console.log('[WEBHOOK_CREDITS_DOWNGRADE]', {
           userId,
           message: 'User keeps existing credits. Next renewal will provide new tier credits.',
-          currentBalance: profile.credits_balance,
+          currentBalance:
+            (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0),
           nextRenewalCredits: newCredits,
         });
       } else {
@@ -938,7 +952,9 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<v
   // so upgrades map to the new plan instead of the previous one.
   // Cast to any[] because Stripe's InvoiceLineItem type doesn't expose all runtime properties
   const lines = (invoiceWithSub.lines?.data ?? []) as any[];
-  const subscriptionLine = lines.find(line => line.type === 'subscription' && (line.price?.id || line.plan?.id));
+  const subscriptionLine = lines.find(
+    line => line.type === 'subscription' && (line.price?.id || line.plan?.id)
+  );
   const positiveProrationLine = lines.find(
     line => line.proration && (line.amount ?? 0) > 0 && (line.price?.id || line.plan?.id)
   );
@@ -982,7 +998,8 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<v
   const planConfig = getPlanByPriceId(priceId);
   const creditsToAdd = plan.creditsPerMonth;
   // Calculate total balance from both pools
-  const currentBalance = (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
+  const currentBalance =
+    (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
   const maxRollover = plan.maxRollover;
 
   // Calculate new balance considering expiration mode
@@ -1218,7 +1235,9 @@ async function handleSubscriptionScheduleCompleted(schedule: any) {
     return;
   }
 
-  console.log(`[SCHEDULE_COMPLETED] Schedule ${schedule.id} completed for subscription ${subscriptionId}`);
+  console.log(
+    `[SCHEDULE_COMPLETED] Schedule ${schedule.id} completed for subscription ${subscriptionId}`
+  );
 
   // Get the subscription from our database
   const { data: subscription, error: subError } = await supabaseAdmin
@@ -1246,7 +1265,10 @@ async function handleSubscriptionScheduleCompleted(schedule: any) {
     .eq('id', subscriptionId);
 
   if (updateError) {
-    console.error(`Error clearing scheduled downgrade for subscription ${subscriptionId}:`, updateError);
+    console.error(
+      `Error clearing scheduled downgrade for subscription ${subscriptionId}:`,
+      updateError
+    );
     return;
   }
 
@@ -1275,7 +1297,9 @@ async function handleSubscriptionScheduleCompleted(schedule: any) {
       if (creditError) {
         console.error(`Error resetting credits for user ${subscription.user_id}:`, creditError);
       } else {
-        console.log(`[SCHEDULE_DOWNGRADE_CREDITS_RESET] User ${subscription.user_id} subscription credits reset to ${newPlan.creditsPerMonth} for ${newPlan.name} plan`);
+        console.log(
+          `[SCHEDULE_DOWNGRADE_CREDITS_RESET] User ${subscription.user_id} subscription credits reset to ${newPlan.creditsPerMonth} for ${newPlan.name} plan`
+        );
       }
 
       // Log the credit transaction (using add_subscription_credits with 0 amount just for logging)
@@ -1288,5 +1312,7 @@ async function handleSubscriptionScheduleCompleted(schedule: any) {
     }
   }
 
-  console.log(`[SCHEDULE_COMPLETED_DONE] Cleared scheduled downgrade for subscription ${subscriptionId}`);
+  console.log(
+    `[SCHEDULE_COMPLETED_DONE] Cleared scheduled downgrade for subscription ${subscriptionId}`
+  );
 }

@@ -111,7 +111,9 @@ export default function PricingPage() {
               <div>
                 <p className="text-sm text-indigo-600 font-medium">Your current balance</p>
                 <p className="text-2xl font-bold text-indigo-700">
-                  {profile.credits_balance} credits
+                  {(profile.subscription_credits_balance ?? 0) +
+                    (profile.purchased_credits_balance ?? 0)}{' '}
+                  credits
                 </p>
               </div>
               {subscription && (

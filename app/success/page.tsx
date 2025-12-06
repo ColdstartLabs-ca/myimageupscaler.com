@@ -12,6 +12,9 @@ const POLL_INTERVAL_MS = 1000;
 function SuccessContent(): JSX.Element {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  const purchaseType = searchParams.get('type') || 'subscription';
+  const purchasedCredits = searchParams.get('credits');
+  const isCredits = purchaseType === 'credits';
   const [loading, setLoading] = useState(true);
   const [credits, setCredits] = useState<number | null>(null);
   const [pollTimedOut, setPollTimedOut] = useState(false);
@@ -21,16 +24,20 @@ function SuccessContent(): JSX.Element {
     let initialCredits: number | null = null;
 
     try {
-      // Get initial credits
+      // Get initial credits (sum of both pools)
       const initialProfile = await StripeService.getUserProfile();
-      initialCredits = initialProfile?.credits_balance ?? 0;
+      initialCredits =
+        (initialProfile?.subscription_credits_balance ?? 0) +
+        (initialProfile?.purchased_credits_balance ?? 0);
 
       const poll = async (): Promise<void> => {
         attempts++;
 
         try {
           const profile = await StripeService.getUserProfile();
-          const currentCredits = profile?.credits_balance ?? 0;
+          const currentCredits =
+            (profile?.subscription_credits_balance ?? 0) +
+            (profile?.purchased_credits_balance ?? 0);
 
           // Credits have been updated
           if (currentCredits > initialCredits!) {
@@ -53,7 +60,9 @@ function SuccessContent(): JSX.Element {
           console.error('Error polling credits:', error);
           // On error, stop polling and show current state
           const profile = await StripeService.getUserProfile();
-          setCredits(profile?.credits_balance ?? 0);
+          setCredits(
+            (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0)
+          );
           setPollTimedOut(true);
           setLoading(false);
         }
@@ -75,7 +84,9 @@ function SuccessContent(): JSX.Element {
       <main className="flex-1 flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-indigo-600 mx-auto mb-4" />
-          <p className="text-lg text-slate-600">Activating your subscription...</p>
+          <p className="text-lg text-slate-600">
+            {isCredits ? 'Processing your purchase...' : 'Activating your subscription...'}
+          </p>
           <p className="text-sm text-slate-400 mt-2">Your credits will be available in a moment</p>
         </div>
       </main>
@@ -94,8 +105,14 @@ function SuccessContent(): JSX.Element {
           </div>
 
           {/* Success Message */}
-          <h1 className="text-3xl font-bold mb-4">Subscription Activated!</h1>
-          <p className="text-lg text-slate-600 mb-4">Thank you for subscribing. Your monthly credits will be added shortly.</p>
+          <h1 className="text-3xl font-bold mb-4">
+            {isCredits ? 'Credits Purchased!' : 'Subscription Activated!'}
+          </h1>
+          <p className="text-lg text-slate-600 mb-4">
+            {isCredits
+              ? `Thank you for your purchase${purchasedCredits ? `. ${purchasedCredits} credits have been added to your account.` : '.'}`
+              : 'Thank you for subscribing. Your monthly credits will be added shortly.'}
+          </p>
 
           {/* Credits Balance */}
           {credits !== null && (
@@ -110,7 +127,9 @@ function SuccessContent(): JSX.Element {
             <div className="flex items-center justify-center gap-2 text-amber-600 mb-6">
               <AlertCircle className="h-4 w-4" />
               <p className="text-sm">
-                Your subscription is active. If your credits haven&apos;t updated yet, please refresh the page or check your billing dashboard.
+                {isCredits
+                  ? "Your purchase is complete. If your credits haven't updated yet, please refresh the page or check your billing dashboard."
+                  : "Your subscription is active. If your credits haven't updated yet, please refresh the page or check your billing dashboard."}
               </p>
             </div>
           )}

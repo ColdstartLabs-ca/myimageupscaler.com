@@ -2,15 +2,7 @@
 
 import React, { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  MoreVertical,
-  Eye,
-  Coins,
-  CreditCard,
-  Trash2,
-  Shield,
-  ShieldOff,
-} from 'lucide-react';
+import { MoreVertical, Eye, Coins, CreditCard, Trash2, Shield, ShieldOff } from 'lucide-react';
 import { IAdminUserProfile } from '@/shared/types/admin';
 import { useClickOutside } from '@/client/hooks/useClickOutside';
 import { adminFetch } from '@/client/utils/admin-api-client';
@@ -20,7 +12,10 @@ interface IUserActionsDropdownProps {
   onUpdate: () => void;
 }
 
-export function UserActionsDropdown({ user, onUpdate }: IUserActionsDropdownProps): React.ReactElement {
+export function UserActionsDropdown({
+  user,
+  onUpdate,
+}: IUserActionsDropdownProps): React.ReactElement {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<
@@ -53,11 +48,7 @@ export function UserActionsDropdown({ user, onUpdate }: IUserActionsDropdownProp
 
         {isOpen && (
           <div className="absolute right-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-20">
-            <DropdownItem
-              icon={Eye}
-              label="View Details"
-              onClick={() => handleAction('view')}
-            />
+            <DropdownItem icon={Eye} label="View Details" onClick={() => handleAction('view')} />
             <DropdownDivider />
             <DropdownItem
               icon={user.role === 'admin' ? ShieldOff : Shield}
@@ -94,25 +85,13 @@ export function UserActionsDropdown({ user, onUpdate }: IUserActionsDropdownProp
         />
       )}
       {activeModal === 'subscription' && (
-        <SubscriptionModal
-          user={user}
-          onClose={() => setActiveModal(null)}
-          onSuccess={onUpdate}
-        />
+        <SubscriptionModal user={user} onClose={() => setActiveModal(null)} onSuccess={onUpdate} />
       )}
       {activeModal === 'delete' && (
-        <DeleteUserModal
-          user={user}
-          onClose={() => setActiveModal(null)}
-          onSuccess={onUpdate}
-        />
+        <DeleteUserModal user={user} onClose={() => setActiveModal(null)} onSuccess={onUpdate} />
       )}
       {activeModal === 'role' && (
-        <RoleChangeModal
-          user={user}
-          onClose={() => setActiveModal(null)}
-          onSuccess={onUpdate}
-        />
+        <RoleChangeModal user={user} onClose={() => setActiveModal(null)} onSuccess={onUpdate} />
       )}
     </>
   );
@@ -131,9 +110,7 @@ function DropdownItem({ icon: Icon, label, onClick, variant = 'default' }: IDrop
     <button
       onClick={onClick}
       className={`w-full flex items-center px-3 py-2 text-sm transition-colors ${
-        variant === 'danger'
-          ? 'text-red-600 hover:bg-red-50'
-          : 'text-slate-700 hover:bg-slate-50'
+        variant === 'danger' ? 'text-red-600 hover:bg-red-50' : 'text-slate-700 hover:bg-slate-50'
       }`}
     >
       <Icon className="h-4 w-4 mr-2.5" />
@@ -154,7 +131,9 @@ interface IModalProps {
 }
 
 function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
-  const [newBalance, setNewBalance] = useState(user.credits_balance.toString());
+  const totalBalance =
+    (user.subscription_credits_balance ?? 0) + (user.purchased_credits_balance ?? 0);
+  const [newBalance, setNewBalance] = useState(totalBalance.toString());
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -189,9 +168,7 @@ function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700">
-            Credits Balance
-          </label>
+          <label className="block text-sm font-medium text-slate-700">Credits Balance</label>
           <input
             type="number"
             min="0"
@@ -201,17 +178,14 @@ function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
             required
           />
           <p className="mt-1 text-sm text-slate-500">
-            Current: {user.credits_balance}
+            Current:{' '}
+            {(user.subscription_credits_balance ?? 0) + (user.purchased_credits_balance ?? 0)}
           </p>
         </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <ModalActions
-          onClose={onClose}
-          submitLabel="Save"
-          submitting={submitting}
-        />
+        <ModalActions onClose={onClose} submitLabel="Save" submitting={submitting} />
       </form>
     </Modal>
   );
@@ -249,8 +223,8 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
         );
         setStripeData(data.data);
         // Set initial selection based on current tier
-        const current = PLANS.find(p =>
-          p.name.toLowerCase() === user.subscription_tier?.toLowerCase()
+        const current = PLANS.find(
+          p => p.name.toLowerCase() === user.subscription_tier?.toLowerCase()
         );
         setSelectedPlan(current?.id || '');
       } catch {
@@ -262,12 +236,11 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
     fetchData();
   }, [user.id, user.subscription_tier]);
 
-  const hasActiveStripeSubscription = stripeData?.stripeSubscription &&
-    stripeData.stripeSubscription.status === 'active';
+  const hasActiveStripeSubscription =
+    stripeData?.stripeSubscription && stripeData.stripeSubscription.status === 'active';
 
-  const currentPlanId = PLANS.find(p =>
-    p.name.toLowerCase() === user.subscription_tier?.toLowerCase()
-  )?.id || '';
+  const currentPlanId =
+    PLANS.find(p => p.name.toLowerCase() === user.subscription_tier?.toLowerCase())?.id || '';
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -307,16 +280,25 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
 
     if (selectedPlan === '') {
       if (hasActiveStripeSubscription) {
-        return { type: 'warning', text: 'This will cancel the Stripe subscription immediately. User will lose access.' };
+        return {
+          type: 'warning',
+          text: 'This will cancel the Stripe subscription immediately. User will lose access.',
+        };
       }
       return { type: 'info', text: 'This will remove subscription access from the user profile.' };
     }
 
     if (hasActiveStripeSubscription) {
-      return { type: 'info', text: `This will change the Stripe subscription to ${selectedPlanName}. Billing will be prorated.` };
+      return {
+        type: 'info',
+        text: `This will change the Stripe subscription to ${selectedPlanName}. Billing will be prorated.`,
+      };
     }
 
-    return { type: 'warning', text: `This will grant ${selectedPlanName} access WITHOUT creating a Stripe subscription. Use for comps or testing only.` };
+    return {
+      type: 'warning',
+      text: `This will grant ${selectedPlanName} access WITHOUT creating a Stripe subscription. Use for comps or testing only.`,
+    };
   };
 
   const actionDesc = getActionDescription();
@@ -345,7 +327,9 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-slate-600">Stripe Status:</span>
-            <span className={`font-medium ${hasActiveStripeSubscription ? 'text-green-600' : 'text-slate-500'}`}>
+            <span
+              className={`font-medium ${hasActiveStripeSubscription ? 'text-green-600' : 'text-slate-500'}`}
+            >
               {stripeData?.stripeSubscription?.status || 'No subscription'}
             </span>
           </div>
@@ -353,7 +337,9 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
             <div className="flex justify-between text-sm">
               <span className="text-slate-600">Renews:</span>
               <span className="font-medium">
-                {new Date(stripeData.stripeSubscription.current_period_end * 1000).toLocaleDateString()}
+                {new Date(
+                  stripeData.stripeSubscription.current_period_end * 1000
+                ).toLocaleDateString()}
               </span>
             </div>
           )}
@@ -363,7 +349,7 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">Change To</label>
           <div className="space-y-2">
-            {PLANS.map((plan) => (
+            {PLANS.map(plan => (
               <label
                 key={plan.id}
                 className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
@@ -391,11 +377,13 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
 
         {/* Action Description */}
         {actionDesc && (
-          <div className={`p-3 rounded-lg text-sm ${
-            actionDesc.type === 'warning'
-              ? 'bg-amber-50 border border-amber-200 text-amber-800'
-              : 'bg-blue-50 border border-blue-200 text-blue-800'
-          }`}>
+          <div
+            className={`p-3 rounded-lg text-sm ${
+              actionDesc.type === 'warning'
+                ? 'bg-amber-50 border border-amber-200 text-amber-800'
+                : 'bg-blue-50 border border-blue-200 text-blue-800'
+            }`}
+          >
             {actionDesc.text}
           </div>
         )}
@@ -462,8 +450,8 @@ function RoleChangeModal({ user, onClose, onSuccess }: IModalProps) {
           <p className="text-sm text-slate-700">
             {newRole === 'admin' ? (
               <>
-                This will grant <strong>{user.email}</strong> full admin access to the admin
-                panel, including the ability to manage users, credits, and subscriptions.
+                This will grant <strong>{user.email}</strong> full admin access to the admin panel,
+                including the ability to manage users, credits, and subscriptions.
               </>
             ) : (
               <>
@@ -518,8 +506,8 @@ function DeleteUserModal({ user, onClose, onSuccess }: IModalProps) {
       <div className="space-y-4">
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-800">
-            <strong>Warning:</strong> This action is irreversible. All user data including
-            credits, subscriptions, and transaction history will be permanently deleted.
+            <strong>Warning:</strong> This action is irreversible. All user data including credits,
+            subscriptions, and transaction history will be permanently deleted.
           </p>
         </div>
 
@@ -562,7 +550,7 @@ function Modal({ title, onClose, children }: IModalWrapperProps) {
   return (
     <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-      onClick={(e) => {
+      onClick={e => {
         // Close on backdrop click
         if (e.target === e.currentTarget) {
           onClose();

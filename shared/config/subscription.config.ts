@@ -7,7 +7,6 @@
  */
 
 import type { ISubscriptionConfig } from './subscription.types';
-import { clientEnv } from './env';
 
 /**
  * Default subscription configuration
@@ -137,7 +136,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       credits: 50,
       priceInCents: 499, // $4.99
       currency: 'usd',
-      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL || 'price_credits_small',
+      stripePriceId: 'price_1SbAASALMLhQocpfGUg3wLXM',
       description: '50 credits',
       popular: false,
       enabled: true,
@@ -148,7 +147,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       credits: 200,
       priceInCents: 1499, // $14.99
       currency: 'usd',
-      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM || 'price_credits_medium',
+      stripePriceId: 'price_1SbAASALMLhQocpf7nw3wRj7',
       description: '200 credits - Best value',
       popular: true,
       enabled: true,
@@ -159,7 +158,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       credits: 600,
       priceInCents: 3999, // $39.99
       currency: 'usd',
-      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE || 'price_credits_large',
+      stripePriceId: 'price_1SbAASALMLhQocpfCrD7P7TW',
       description: '600 credits',
       popular: false,
       enabled: true,
