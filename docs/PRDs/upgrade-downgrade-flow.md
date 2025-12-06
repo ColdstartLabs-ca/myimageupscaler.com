@@ -137,7 +137,8 @@ flowchart LR
 | Decision | Choice | Justification |
 |----------|--------|---------------|
 | **Proration behavior** | `create_prorations` | Standard Stripe behavior, immediate billing adjustment |
-| **Credit adjustment** | None on plan change | Credits already in account; monthly renewal handles new allocation |
+| **Credit adjustment on upgrade** | Add credit difference immediately | Users upgrading to higher tier receive additional credits right away for better UX |
+| **Credit adjustment on downgrade** | Keep existing credits | Users retain credits on downgrade; next renewal provides new tier's allocation |
 | **Billing anchor** | Keep existing | Preserve user's billing date, avoid confusion |
 | **Payment collection** | `default_incomplete` | Allow payment failure handling |
 | **Subscription item update** | Replace single item | System uses one price per subscription |

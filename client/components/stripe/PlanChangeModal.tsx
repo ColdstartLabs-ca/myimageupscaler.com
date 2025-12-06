@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { TrendingUp, TrendingDown, Calendar, Info } from 'lucide-react';
 import { StripeService } from '@client/services/stripeService';
 import { getPlanForPriceId } from '@shared/config/stripe';
@@ -59,6 +60,7 @@ export function PlanChangeModal({
   currentPriceId,
   onComplete,
 }: IPlanChangeModalProps): JSX.Element {
+  const router = useRouter();
   const [preview, setPreview] = useState<IPreviewData | null>(null);
   const [loading, setLoading] = useState(false);
   const [changing, setChanging] = useState(false);
@@ -96,9 +98,25 @@ export function PlanChangeModal({
 
       await StripeService.changeSubscription(targetPriceId);
 
-      // Close modal and notify completion
+      // Build confirmation URL with details
+      const params = new URLSearchParams({
+        type: preview?.is_downgrade ? 'downgrade' : 'upgrade',
+        new_price_id: targetPriceId,
+        old_price_id: currentPriceId || '',
+      });
+
+      if (preview?.effective_date) {
+        params.set('effective_date', preview.effective_date);
+      }
+
+      if (preview?.proration?.amount_due) {
+        params.set('proration_amount', String(preview.proration.amount_due));
+      }
+
+      // Close modal and redirect to confirmation page
       onClose();
       onComplete?.();
+      router.push(`/subscription/confirmed?${params.toString()}`);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to change subscription';
       setError(errorMessage);

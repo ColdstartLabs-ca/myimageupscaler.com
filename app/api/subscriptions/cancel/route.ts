@@ -4,6 +4,16 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
 export const runtime = 'edge';
 
+function isSchemaMissingError(error: { code?: string; message?: string } | null | undefined): boolean {
+  if (!error) return false;
+
+  return (
+    error.code === 'PGRST204' ||
+    (typeof error.message === 'string' &&
+      (error.message.includes('schema cache') || error.message.toLowerCase().includes('column')))
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     // 1. Get the authenticated user from the Authorization header
@@ -102,6 +112,21 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       console.error('Error updating subscription in database:', updateError);
+      if (cancellationReason && isSchemaMissingError(updateError)) {
+        const { error: fallbackError } = await supabaseAdmin
+          .from('subscriptions')
+          .update({
+            cancel_at_period_end: true,
+            updated_at: updateData.updated_at,
+          })
+          .eq('id', subscription.id);
+
+        if (fallbackError) {
+          console.error('Fallback subscription update without cancellation_reason failed:', fallbackError);
+        } else {
+          console.log('Retried subscription update without cancellation_reason column.');
+        }
+      }
       // Continue anyway - Stripe is the source of truth
     }
 

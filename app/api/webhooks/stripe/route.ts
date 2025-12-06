@@ -14,6 +14,54 @@ import dayjs from 'dayjs';
 
 export const runtime = 'edge'; // Cloudflare Worker compatible
 
+type PreviousAttributes = Record<string, unknown> | null | undefined;
+
+function extractPreviousPriceId(previousAttributes: PreviousAttributes | null | undefined): string | null {
+  if (!previousAttributes || typeof previousAttributes !== 'object') {
+    return null;
+  }
+
+  const items = (previousAttributes as any).items;
+  const candidates: any[] = [];
+
+  if (Array.isArray(items)) {
+    candidates.push(items);
+  } else if (items && Array.isArray((items as any).data)) {
+    candidates.push((items as any).data);
+  }
+
+  for (const list of candidates) {
+    const firstItem = list?.[0];
+    const priceId =
+      firstItem?.price?.id ??
+      firstItem?.plan?.id ??
+      firstItem?.price ??
+      firstItem?.plan;
+
+    if (typeof priceId === 'string') {
+      return priceId;
+    }
+  }
+
+  const directPrice =
+    (previousAttributes as any).price?.id ??
+    (previousAttributes as any).plan?.id ??
+    (previousAttributes as any).price ??
+    (previousAttributes as any).plan;
+
+  return typeof directPrice === 'string' ? directPrice : null;
+}
+
+function isSchemaMissingError(error: { code?: string; message?: string } | null | undefined): boolean {
+  if (!error) return false;
+
+  return (
+    error.code === 'PGRST204' ||
+    (typeof error.message === 'string' &&
+      (error.message.includes('schema cache') || error.message.toLowerCase().includes('column')))
+  );
+}
+
 // ============================================================================
 // Idempotency Helpers
 // ============================================================================
@@ -32,7 +80,7 @@ async function checkAndClaimEvent(
     .from('webhook_events')
     .select('status')
     .eq('event_id', eventId)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     console.log(`Webhook event ${eventId} already exists with status: ${existing.status}`);
@@ -105,10 +153,17 @@ async function markEventFailed(eventId: string, errorMessage: string): Promise<v
 // ============================================================================
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  console.log('[WEBHOOK_POST_HANDLER_CALLED]', { timestamp: new Date().toISOString() });
+
   try {
     // 1. Get the raw body and signature
     const body = await request.text();
     const signature = request.headers.get('stripe-signature');
+
+    console.log('[WEBHOOK_SIGNATURE_CHECK]', {
+      hasSignature: !!signature,
+      bodyLength: body.length,
+    });
 
     if (!signature) {
       return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 });
@@ -169,10 +224,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // 3. Idempotency check - prevent duplicate processing
-    const idempotencyResult = await checkAndClaimEvent(event.id, event.type, event);
+    let idempotencyResult: IIdempotencyResult | null = null;
+    let idempotencyEnabled = true;
 
-    if (!idempotencyResult.isNew) {
-      console.log(`Skipping duplicate webhook: ${event.id} (${event.type})`);
+    try {
+      idempotencyResult = await checkAndClaimEvent(event.id, event.type, event);
+    } catch (idempotencyError) {
+      idempotencyEnabled = false;
+      console.error(
+        'Webhook idempotency table unavailable - processing without DB tracking:',
+        idempotencyError
+      );
+    }
+
+    if (idempotencyEnabled && idempotencyResult && !idempotencyResult.isNew) {
+      console.log('[WEBHOOK_DUPLICATE_SKIPPED]', {
+        eventId: event.id,
+        eventType: event.type,
+        existingStatus: idempotencyResult.existingStatus,
+      });
       return NextResponse.json({
         received: true,
         skipped: true,
@@ -181,7 +251,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // 4. Handle the event
-    console.log(`Processing webhook event: ${event.type}`);
+    console.log('[WEBHOOK_EVENT_RECEIVED]', {
+      eventId: event.id,
+      eventType: event.type,
+      timestamp: new Date().toISOString(),
+      previousAttributes: event.data.previous_attributes,
+      extractedPreviousPriceId: extractPreviousPriceId(event.data.previous_attributes),
+    });
 
     try {
       switch (event.type as any) {
@@ -189,9 +265,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
           break;
 
+        case 'customer.created':
+          await handleCustomerCreated(event.data.object as Stripe.Customer);
+          break;
+
         case 'customer.subscription.created':
         case 'customer.subscription.updated':
-          await handleSubscriptionUpdate(event.data.object as Stripe.Subscription);
+          await handleSubscriptionUpdate(event.data.object as Stripe.Subscription, {
+            previousPriceId: extractPreviousPriceId(event.data.previous_attributes),
+          });
           break;
 
         case 'customer.subscription.deleted':
@@ -203,10 +285,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           break;
 
         case 'invoice.payment_succeeded':
+        case 'invoice.paid': // Stripe sometimes sends this alias
+        case 'invoice_payment.paid': // Observed in logs; treat same as payment_succeeded
           await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
           break;
 
         case 'invoice.payment_failed':
+        case 'invoice_payment.failed': // Alias guard
           await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
           break;
 
@@ -222,17 +307,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           await handleInvoicePaymentRefunded(event.data.object as any);
           break;
 
+        case 'subscription_schedule.completed':
+          await handleSubscriptionScheduleCompleted(event.data.object as any);
+          break;
+
         default:
           // MEDIUM-2 FIX: Mark unhandled events as unrecoverable instead of completed
           console.warn(`UNHANDLED WEBHOOK TYPE: ${event.type} - this may require code update`);
-          await supabaseAdmin
-            .from('webhook_events')
-            .update({
-              status: 'unrecoverable',
-              error_message: `Unhandled event type: ${event.type}`,
-              completed_at: new Date().toISOString(),
-            })
-            .eq('event_id', event.id);
+          if (idempotencyEnabled) {
+            await supabaseAdmin
+              .from('webhook_events')
+              .update({
+                status: 'unrecoverable',
+                error_message: `Unhandled event type: ${event.type}`,
+                completed_at: new Date().toISOString(),
+              })
+              .eq('event_id', event.id);
+          } else {
+            console.warn('Skipping webhook_events logging because idempotency is disabled for this event.');
+          }
 
           // Return success to prevent Stripe retries, but event is marked for investigation
           return NextResponse.json({
@@ -242,14 +335,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
 
       // Mark event as completed after successful processing
-      await markEventCompleted(event.id);
+      if (idempotencyEnabled) {
+        await markEventCompleted(event.id);
+      }
 
       return NextResponse.json({ received: true });
     } catch (processingError) {
       // Mark event as failed and re-throw
       const errorMessage =
         processingError instanceof Error ? processingError.message : 'Unknown error';
-      await markEventFailed(event.id, errorMessage);
+      if (idempotencyEnabled) {
+        await markEventFailed(event.id, errorMessage);
+      }
       throw processingError;
     }
   } catch (error: unknown) {
@@ -385,16 +482,58 @@ async function handleCreditPackPurchase(
   }
 }
 
+// Handle customer creation
+async function handleCustomerCreated(customer: Stripe.Customer): Promise<void> {
+  console.log(`Customer created: ${customer.id}`);
+
+  // If customer has metadata with user_id, update the profile with stripe_customer_id
+  const userId = customer.metadata?.user_id;
+
+  if (userId) {
+    try {
+      const { error } = await supabaseAdmin
+        .from('profiles')
+        .update({
+          stripe_customer_id: customer.id,
+        })
+        .eq('id', userId);
+
+      if (error) {
+        console.error(`Error updating profile ${userId} with customer ID ${customer.id}:`, error);
+      } else {
+        console.log(`Updated profile ${userId} with Stripe customer ID ${customer.id}`);
+      }
+    } catch (error) {
+      console.error(`Exception updating profile for customer ${customer.id}:`, error);
+    }
+  } else {
+    console.log(`Customer ${customer.id} created without user_id metadata - this is expected for Stripe Checkout customers`);
+  }
+}
+
 // Handle subscription creation/update
-async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
+async function handleSubscriptionUpdate(
+  subscription: Stripe.Subscription,
+  options?: {
+    previousPriceId?: string | null;
+  }
+) {
   const customerId = subscription.customer as string;
 
-  // Get the user ID from the customer
+  console.log('[WEBHOOK_SUBSCRIPTION_UPDATE_START]', {
+    subscriptionId: subscription.id,
+    customerId,
+    status: subscription.status,
+    optionsPreviousPriceId: options?.previousPriceId,
+    timestamp: new Date().toISOString(),
+  });
+
+  // Get the user ID from the customer and current subscription details
   const { data: profile } = await supabaseAdmin
     .from('profiles')
     .select('id, subscription_status, credits_balance')
     .eq('stripe_customer_id', customerId)
-    .single();
+    .maybeSingle();
 
   if (!profile) {
     console.error(`No profile found for customer ${customerId}`);
@@ -403,6 +542,19 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
 
   const userId = profile.id;
   const previousStatus = profile.subscription_status;
+
+  // Get the user's previous subscription to detect plan changes
+  // IMPORTANT: Prefer options.previousPriceId from Stripe's previous_attributes over DB value
+  // because the /api/subscription/change route updates the DB BEFORE the webhook fires,
+  // making the DB value stale (it already has the NEW price_id)
+  const { data: existingSubscription } = await supabaseAdmin
+    .from('subscriptions')
+    .select('price_id')
+    .eq('id', subscription.id)
+    .maybeSingle();
+
+  // Prefer Stripe's previous_attributes (accurate) over DB (may be stale after plan change)
+  const previousPriceId = options?.previousPriceId || existingSubscription?.price_id || null;
 
   // Get price ID and plan metadata
   const priceId = subscription.items.data[0]?.price.id || '';
@@ -466,7 +618,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   const canceledAtISO = canceledAt ? dayjs.unix(canceledAt).toISOString() : null;
 
   // Store trial end date in subscriptions table
-  const { error: subError } = await supabaseAdmin.from('subscriptions').upsert({
+  const subscriptionUpsertPayload = {
     id: subscription.id,
     user_id: userId,
     status: subscription.status,
@@ -476,11 +628,36 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     trial_end: trialEndISO,
     cancel_at_period_end: subscription.cancel_at_period_end,
     canceled_at: canceledAtISO,
-  });
+  };
+
+  const { error: subError } = await supabaseAdmin
+    .from('subscriptions')
+    .upsert(subscriptionUpsertPayload);
 
   if (subError) {
     console.error('Error upserting subscription:', subError);
-    return;
+
+    if (isSchemaMissingError(subError)) {
+      const minimalPayload = {
+        id: subscription.id,
+        user_id: userId,
+        status: subscription.status,
+        price_id: priceId,
+        current_period_start: currentPeriodStartISO,
+        current_period_end: currentPeriodEndISO,
+        cancel_at_period_end: subscription.cancel_at_period_end,
+      };
+
+      const { error: fallbackError } = await supabaseAdmin
+        .from('subscriptions')
+        .upsert(minimalPayload);
+
+      if (fallbackError) {
+        console.error('Fallback subscription upsert failed:', fallbackError);
+      } else {
+        console.log('Fallback subscription upsert succeeded without optional columns.');
+      }
+    }
   }
 
   // Handle trial start - allocate trial-specific credits
@@ -539,6 +716,119 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     }
   }
 
+  // Handle plan changes (upgrade/downgrade)
+  // Only process if this is an existing subscription being updated (not a new creation)
+  const effectivePreviousPriceId = previousPriceId;
+
+  // Debug logging for plan change detection
+  console.log('[WEBHOOK_PLAN_CHANGE_DETECTION]', {
+    subscriptionId: subscription.id,
+    userId,
+    currentPriceId: priceId,
+    previousPriceId: effectivePreviousPriceId,
+    optionsPreviousPriceId: options?.previousPriceId,
+    existingSubscriptionPriceId: existingSubscription?.price_id,
+    subscriptionStatus: subscription.status,
+    isPlanChange: effectivePreviousPriceId && effectivePreviousPriceId !== priceId,
+    currentCreditsBalance: profile.credits_balance,
+  });
+
+  if (effectivePreviousPriceId && effectivePreviousPriceId !== priceId && subscription.status === 'active') {
+    const previousPlanConfig = getPlanConfig(effectivePreviousPriceId);
+
+    if (previousPlanConfig) {
+      const previousCredits = previousPlanConfig.creditsPerCycle;
+      const newCredits = planConfig.creditsPerCycle;
+      const creditDifference = newCredits - previousCredits;
+
+      console.log('[WEBHOOK_PLAN_CHANGE_CONFIRMED]', {
+        userId,
+        subscriptionId: subscription.id,
+        previousPlan: previousPlanConfig.name,
+        previousCredits,
+        newPlan: planConfig.name,
+        newCredits,
+        creditDifference,
+        changeType: creditDifference > 0 ? 'upgrade' : creditDifference < 0 ? 'downgrade' : 'same',
+        currentBalance: profile.credits_balance,
+      });
+
+      // Only add credits for upgrades (positive difference)
+      // For downgrades, user keeps existing credits until next renewal
+      if (creditDifference > 0) {
+        const currentBalance = profile.credits_balance ?? 0;
+
+        // ANTI-FARMING PROTECTION: Only add tier difference if user has "reasonable" credits
+        // Reasonable = within 50% of the previous tier's amount (allows for some rollover/purchases)
+        // This prevents: Hobby→Pro (+800), Pro→Hobby (keep), Hobby→Pro (+800 AGAIN)
+        const maxReasonableBalance = Math.floor(previousCredits * 1.5);
+        const isLegitimateUpgrade = currentBalance <= maxReasonableBalance;
+
+        // For legitimate upgrades: add the TIER DIFFERENCE (not just top-up to target)
+        // This preserves rollover credits from the previous plan
+        const creditsToAdd = isLegitimateUpgrade ? creditDifference : 0;
+
+        console.log('[WEBHOOK_CREDITS_UPGRADE_START]', {
+          userId,
+          currentBalance,
+          previousTierCredits: previousCredits,
+          newTierCredits: newCredits,
+          tierDifference: creditDifference,
+          maxReasonableBalance,
+          isLegitimateUpgrade,
+          creditsToAdd,
+          expectedNewBalance: currentBalance + creditsToAdd,
+        });
+
+        if (creditsToAdd > 0) {
+          const { error } = await supabaseAdmin.rpc('increment_credits_with_log', {
+            target_user_id: userId,
+            amount: creditsToAdd,
+            transaction_type: 'subscription',
+            ref_id: subscription.id,
+            description: `Plan upgrade - ${previousPlanConfig.name} → ${planConfig.name} - ${creditsToAdd} credits (tier difference)`,
+          });
+
+          if (error) {
+            console.error('[WEBHOOK_CREDITS_UPGRADE_ERROR]', {
+              userId,
+              error,
+              creditsToAdd,
+            });
+          } else {
+            console.log('[WEBHOOK_CREDITS_UPGRADE_SUCCESS]', {
+              userId,
+              creditsAdded: creditsToAdd,
+              previousBalance: currentBalance,
+              newBalance: currentBalance + creditsToAdd,
+            });
+          }
+        } else {
+          console.log('[WEBHOOK_CREDITS_UPGRADE_BLOCKED]', {
+            userId,
+            currentBalance,
+            maxReasonableBalance,
+            reason: 'User has excessive credits - possible farming attempt detected',
+            note: 'Credits will reset to tier amount on next monthly renewal',
+          });
+        }
+      } else if (creditDifference < 0) {
+        console.log('[WEBHOOK_CREDITS_DOWNGRADE]', {
+          userId,
+          message: 'User keeps existing credits. Next renewal will provide new tier credits.',
+          currentBalance: profile.credits_balance,
+          nextRenewalCredits: newCredits,
+        });
+      } else {
+        console.log('[WEBHOOK_CREDITS_NO_CHANGE]', {
+          userId,
+          message: 'Same credit amount - no adjustment needed',
+          credits: newCredits,
+        });
+      }
+    }
+  }
+
   // Update profile subscription status with human-readable plan name
   const { error: profileError } = await supabaseAdmin
     .from('profiles')
@@ -549,11 +839,18 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     .eq('id', userId);
 
   if (profileError) {
-    console.error('Error updating profile subscription status:', profileError);
+    console.error('[WEBHOOK_PROFILE_UPDATE_ERROR]', {
+      userId,
+      error: profileError,
+    });
   } else {
-    console.log(
-      `Updated subscription for user ${userId}: ${planConfig.name} (${subscription.status})`
-    );
+    console.log('[WEBHOOK_SUBSCRIPTION_UPDATE_COMPLETE]', {
+      userId,
+      subscriptionId: subscription.id,
+      plan: planConfig.name,
+      status: subscription.status,
+      timestamp: new Date().toISOString(),
+    });
   }
 }
 
@@ -566,7 +863,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .from('profiles')
     .select('id')
     .eq('stripe_customer_id', customerId)
-    .single();
+    .maybeSingle();
 
   if (!profile) {
     console.error(`No profile found for customer ${customerId}`);
@@ -611,6 +908,9 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<v
       data: Array<{
         price?: { id: string };
         plan?: { id: string };
+        type?: string;
+        proration?: boolean;
+        amount?: number;
       }>;
     };
   };
@@ -630,7 +930,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<v
     .from('profiles')
     .select('id, credits_balance')
     .eq('stripe_customer_id', customerId)
-    .single();
+    .maybeSingle();
 
   if (!profile) {
     console.error(`No profile found for customer ${customerId}`);
@@ -639,9 +939,25 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<v
 
   const userId = profile.id;
 
-  // Get the price ID from invoice lines to determine credit amount
+  // Get the price ID from invoice lines to determine credit amount.
+  // Prefer the subscription line item; if missing (proration invoice), choose the positive proration line
+  // so upgrades map to the new plan instead of the previous one.
+  // Cast to any[] because Stripe's InvoiceLineItem type doesn't expose all runtime properties
+  const lines = (invoiceWithSub.lines?.data ?? []) as any[];
+  const subscriptionLine = lines.find(line => line.type === 'subscription' && (line.price?.id || line.plan?.id));
+  const positiveProrationLine = lines.find(
+    line => line.proration && (line.amount ?? 0) > 0 && (line.price?.id || line.plan?.id)
+  );
+  const anyPricedLine = lines.find(line => line.price?.id || line.plan?.id);
+
   const priceId =
-    invoiceWithSub.lines?.data?.[0]?.price?.id || invoiceWithSub.lines?.data?.[0]?.plan?.id || '';
+    subscriptionLine?.price?.id ||
+    subscriptionLine?.plan?.id ||
+    positiveProrationLine?.price?.id ||
+    positiveProrationLine?.plan?.id ||
+    anyPricedLine?.price?.id ||
+    anyPricedLine?.plan?.id ||
+    '';
 
   const plan = getPlanForPriceId(priceId);
 
@@ -757,7 +1073,7 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     .from('profiles')
     .select('id')
     .eq('stripe_customer_id', customerId)
-    .single();
+    .maybeSingle();
 
   if (!profile) {
     console.error(`No profile found for customer ${customerId}`);
@@ -796,7 +1112,7 @@ async function handleChargeRefunded(charge: any) {
     .from('profiles')
     .select('id')
     .eq('stripe_customer_id', customerId)
-    .single();
+    .maybeSingle();
 
   if (!profile) {
     console.error(`No profile found for customer ${customerId} for charge refund`);
@@ -872,7 +1188,7 @@ async function handleTrialWillEnd(subscription: Stripe.Subscription) {
     .from('profiles')
     .select('id, email')
     .eq('stripe_customer_id', customerId)
-    .single();
+    .maybeSingle();
 
   if (!profile) {
     console.error(`No profile found for customer ${customerId}`);
@@ -897,4 +1213,87 @@ async function handleTrialWillEnd(subscription: Stripe.Subscription) {
   console.log(
     `TODO: Send trial ending soon email to ${profile.email} (${daysUntilEnd} days remaining)`
   );
+}
+
+// Handle subscription schedule completion (scheduled downgrade taking effect)
+async function handleSubscriptionScheduleCompleted(schedule: any) {
+  const subscriptionId = schedule.subscription;
+
+  if (!subscriptionId) {
+    console.log(`Schedule ${schedule.id} has no subscription, skipping`);
+    return;
+  }
+
+  console.log(`[SCHEDULE_COMPLETED] Schedule ${schedule.id} completed for subscription ${subscriptionId}`);
+
+  // Get the subscription from our database
+  const { data: subscription, error: subError } = await supabaseAdmin
+    .from('subscriptions')
+    .select('id, user_id, scheduled_price_id, price_id')
+    .eq('id', subscriptionId)
+    .maybeSingle();
+
+  if (subError || !subscription) {
+    console.error(`No subscription found for schedule completion: ${subscriptionId}`, subError);
+    return;
+  }
+
+  const scheduledPriceId = subscription.scheduled_price_id;
+
+  // Clear the scheduled fields since the schedule has completed
+  const { error: updateError } = await supabaseAdmin
+    .from('subscriptions')
+    .update({
+      scheduled_price_id: null,
+      scheduled_change_date: null,
+      price_id: scheduledPriceId || subscription.price_id, // Update to new price
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', subscriptionId);
+
+  if (updateError) {
+    console.error(`Error clearing scheduled downgrade for subscription ${subscriptionId}:`, updateError);
+    return;
+  }
+
+  // If this was a scheduled downgrade, reset credits to the new tier
+  if (scheduledPriceId) {
+    const newPlan = getPlanForPriceId(scheduledPriceId);
+
+    if (newPlan) {
+      // Update profile tier
+      await supabaseAdmin
+        .from('profiles')
+        .update({
+          subscription_tier: newPlan.name,
+        })
+        .eq('id', subscription.user_id);
+
+      // Reset credits to the new tier amount
+      // This is the key difference from immediate downgrades - at renewal, credits reset
+      const { error: creditError } = await supabaseAdmin
+        .from('profiles')
+        .update({
+          credits_balance: newPlan.creditsPerMonth,
+        })
+        .eq('id', subscription.user_id);
+
+      if (creditError) {
+        console.error(`Error resetting credits for user ${subscription.user_id}:`, creditError);
+      } else {
+        console.log(`[SCHEDULE_DOWNGRADE_CREDITS_RESET] User ${subscription.user_id} credits reset to ${newPlan.creditsPerMonth} for ${newPlan.name} plan`);
+      }
+
+      // Log the credit transaction
+      await supabaseAdmin.rpc('increment_credits_with_log', {
+        target_user_id: subscription.user_id,
+        amount: 0, // Amount doesn't matter - we're just logging
+        transaction_type: 'subscription',
+        ref_id: `schedule_${schedule.id}`,
+        description: `Scheduled downgrade completed - credits reset to ${newPlan.creditsPerMonth} for ${newPlan.name} plan`,
+      });
+    }
+  }
+
+  console.log(`[SCHEDULE_COMPLETED_DONE] Cleared scheduled downgrade for subscription ${subscriptionId}`);
 }

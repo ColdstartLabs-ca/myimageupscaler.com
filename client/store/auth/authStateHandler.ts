@@ -19,7 +19,7 @@ async function fetchUserRole(
       .from('profiles')
       .select('role')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     const profileTimeout = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error('Profile fetch timeout')), PROFILE_FETCH_TIMEOUT);

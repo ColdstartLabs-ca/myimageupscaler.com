@@ -4,10 +4,20 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { CreditCard, Package, Receipt, ExternalLink, Loader2, RefreshCw } from 'lucide-react';
+import {
+  CreditCard,
+  Package,
+  Receipt,
+  ExternalLink,
+  Loader2,
+  RefreshCw,
+  Calendar,
+  ArrowRight,
+  X,
+} from 'lucide-react';
 import { StripeService } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
-import { getPlanDisplayName } from '@shared/config/stripe';
+import { getPlanDisplayName, getPlanForPriceId } from '@shared/config/stripe';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
 import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
 import type { IUserProfile, ISubscription } from '@shared/types/stripe';
@@ -237,6 +247,36 @@ export default function BillingPage() {
                 <p className="text-sm text-yellow-800">
                   Your subscription will be canceled at the end of the current period.
                 </p>
+              </div>
+            )}
+
+            {/* Scheduled Downgrade Alert */}
+            {subscription.scheduled_price_id && subscription.scheduled_change_date && (
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mt-3">
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-slate-900 mb-1">Scheduled Plan Change</h4>
+                    <div className="flex items-center gap-2 text-sm text-slate-700 mb-2">
+                      <span className="font-medium">{planName}</span>
+                      <ArrowRight className="w-4 h-4 text-slate-400" />
+                      <span className="font-medium text-orange-600">
+                        {getPlanForPriceId(subscription.scheduled_price_id)?.name || 'New Plan'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-600">
+                      Your plan will change on{' '}
+                      <strong>{formatDate(subscription.scheduled_change_date)}</strong>. You&apos;ll
+                      keep all {planName} benefits until then.
+                    </p>
+                    <button
+                      onClick={() => router.push('/pricing')}
+                      className="mt-2 text-sm text-orange-600 hover:text-orange-700 font-medium"
+                    >
+                      Change or cancel this
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

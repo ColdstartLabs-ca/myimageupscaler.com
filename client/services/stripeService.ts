@@ -33,6 +33,8 @@ interface ISubscriptionPreviewResponse {
     period_start: string;
     period_end: string;
   };
+  is_downgrade: boolean;
+  effective_date?: string;
 }
 
 interface ISubscriptionChangeResponse {
@@ -176,7 +178,7 @@ export class StripeService {
       return null;
     }
 
-    const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
 
     if (error) {
       console.error('Error fetching profile:', error);
@@ -206,10 +208,10 @@ export class StripeService {
       .in('status', ['active', 'trialing'])
       .order('created_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      // No active subscription
+      console.error('Error fetching subscription:', error);
       return null;
     }
 
@@ -443,11 +445,8 @@ export class StripeService {
     const result = await response.json();
     const apiData = result.success ? result.data : result;
 
-    // Transform API response to match expected format
-    return {
-      ...apiData,
-      effective_immediately: true,
-    };
+    // Return API response directly (server already provides all fields)
+    return apiData;
   }
 
   /**
@@ -480,6 +479,36 @@ export class StripeService {
           ? errorResponse.error
           : errorResponse.error?.message || 'Failed to change subscription';
       throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+    return result.success ? result.data : result;
+  }
+
+  /**
+   * Cancel a scheduled subscription change (downgrade)
+   * @returns Success message
+   */
+  static async cancelScheduledChange(): Promise<{ message: string }> {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await fetch('/api/subscription/cancel-scheduled', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Failed to cancel scheduled change');
     }
 
     const result = await response.json();

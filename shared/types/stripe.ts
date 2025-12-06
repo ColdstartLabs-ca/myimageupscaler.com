@@ -34,6 +34,9 @@ export interface ISubscription {
   canceled_at: string | null;
   created_at: string;
   updated_at: string;
+  // Scheduled downgrade fields
+  scheduled_price_id?: string | null; // New price ID for scheduled downgrade
+  scheduled_change_date?: string | null; // When the downgrade will take effect
 }
 
 export interface IProduct {

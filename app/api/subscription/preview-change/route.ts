@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
-import { getPlanForPriceId, SUBSCRIPTION_PRICE_MAP } from '@shared/config/stripe';
+import { getPlanForPriceId } from '@shared/config/stripe';
 import type { ISubscriptionPlanMetadata } from '@shared/config/stripe';
+import { getPlanByPriceId } from '@shared/config/subscription.utils';
+import dayjs from 'dayjs';
 
 export const runtime = 'edge';
 
@@ -29,6 +31,19 @@ interface IPreviewChangeResponse {
     credits_per_month: number;
   };
   effective_immediately: boolean;
+  effective_date?: string; // For scheduled downgrades
+  is_downgrade: boolean;
+}
+
+/**
+ * Check if this is a downgrade (fewer credits in new plan)
+ */
+function isDowngrade(currentPriceId: string | null, targetPriceId: string): boolean {
+  if (!currentPriceId) return false;
+  const currentPlan = getPlanForPriceId(currentPriceId);
+  const targetPlan = getPlanForPriceId(targetPriceId);
+  if (!currentPlan || !targetPlan) return false;
+  return targetPlan.creditsPerMonth < currentPlan.creditsPerMonth;
 }
 
 export async function POST(request: NextRequest) {
@@ -123,15 +138,22 @@ export async function POST(request: NextRequest) {
       .limit(1)
       .single();
 
-    let currentPlan: ISubscriptionPlanMetadata | null = null;
-    let currentPriceId: string | null = null;
-
-    if (!subError && currentSubscription) {
-      currentPriceId = currentSubscription.price_id;
-      if (currentPriceId) {
-        currentPlan = getPlanForPriceId(currentPriceId);
-      }
+    // Return 400 if no active subscription (same as change endpoint)
+    if (subError || !currentSubscription) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'NO_ACTIVE_SUBSCRIPTION',
+            message: 'No active subscription found. Use checkout endpoint instead.',
+          },
+        },
+        { status: 400 }
+      );
     }
+
+    const currentPriceId = currentSubscription.price_id;
+    const currentPlan = currentPriceId ? getPlanForPriceId(currentPriceId) : null;
 
     // 5. Check if this is actually a change
     if (currentPriceId === body.targetPriceId) {
@@ -167,35 +189,84 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 7. Calculate proration
+    // 7. Check if this is a downgrade
+    const isDowngradeChange = isDowngrade(currentPriceId, body.targetPriceId);
+    let effectiveDate: string | undefined;
+
+    // 8. Calculate proration (only for upgrades)
     let prorationResult: IPreviewChangeResponse['proration'] = {
       amount_due: 0,
       currency: 'usd',
-      period_start: new Date().toISOString(),
-      period_end: new Date().toISOString(),
+      period_start: dayjs().toISOString(),
+      period_end: dayjs().toISOString(),
     };
 
-    // If user has no current subscription, this is a new subscription (no proration)
-    if (currentSubscription && currentPlan) {
-      // Check if we're in test mode
-      if (serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') || serverEnv.ENV === 'test') {
-        // Mock proration calculation for testing
-        const currentPlanPrice = 1900; // $19 for hobby in cents
-        const targetPlanPrice = targetPlan.key === 'pro' ? 4900 : targetPlan.key === 'business' ? 14900 : 1900;
+    // Check if we're in test mode
+    if (serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') || serverEnv.ENV === 'test') {
+      // Mock proration calculation for testing
+      // Use actual plan prices from config instead of hardcoding
+      const currentPlanConfig = currentPriceId ? getPlanByPriceId(currentPriceId) : null;
+      const targetPlanConfig = getPlanByPriceId(body.targetPriceId);
 
-        // Simple mock calculation: difference in monthly price * remaining days in month / 30
+      const currentPlanPrice = currentPlanConfig?.priceInCents || 0;
+      const targetPlanPrice = targetPlanConfig?.priceInCents || 0;
+
+      // For downgrades: no proration, just show when it takes effect
+      if (isDowngradeChange) {
+        // Mock effective date as end of current month
+        effectiveDate = dayjs().add(1, 'month').startOf('month').toISOString();
+        prorationResult.amount_due = 0;
+      } else {
+        // Simple mock calculation for upgrades: difference in monthly price * remaining days in month / 30
         const daysInMonth = 30;
-        const remainingDays = Math.max(1, daysInMonth - new Date().getDate());
+        const remainingDays = Math.max(1, daysInMonth - dayjs().date());
         const priceDifference = targetPlanPrice - currentPlanPrice;
         prorationResult.amount_due = Math.round((priceDifference * remainingDays) / daysInMonth);
-      } else {
-        // Real Stripe proration calculation
-        try {
-          const subscription = await stripe.subscriptions.retrieve(currentSubscription.id);
-          const subscriptionItemId = subscription.items.data[0]?.id;
-          const prorationDate = Math.floor(Date.now() / 1000);
+      }
+    } else {
+      // Real Stripe calculation
+      try {
+        const subscription = await stripe.subscriptions.retrieve(currentSubscription.id);
+        const subscriptionItemId = subscription.items.data[0]?.id;
 
-          // Create a preview invoice to see the proration
+        if (!subscriptionItemId) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: 'INVALID_SUBSCRIPTION_STATE',
+                message: 'Subscription has no items',
+              },
+            },
+            { status: 500 }
+          );
+        }
+
+        // For downgrades: no proration, just get the period end date
+        if (isDowngradeChange) {
+          const periodStart = (subscription as any).current_period_start as number | undefined;
+          const periodEnd = (subscription as any).current_period_end as number | undefined;
+
+          const periodStartISO = periodStart ? dayjs.unix(periodStart).toISOString() : dayjs().toISOString();
+          effectiveDate = periodEnd ? dayjs.unix(periodEnd).toISOString() : undefined;
+
+          prorationResult = {
+            amount_due: 0, // No charge/refund for downgrades
+            currency: 'usd',
+            period_start: periodStartISO,
+            period_end: effectiveDate || dayjs().toISOString(),
+          };
+
+          console.log('Downgrade preview details:', {
+            currentPlan: currentPlan?.name,
+            targetPlan: targetPlan.name,
+            effectiveDate,
+            periodStart,
+            periodEnd,
+            isDowngrade: true,
+          });
+        } else {
+          // Use createPreview for proration calculation (Stripe SDK v20+ method)
           const invoice = await stripe.invoices.createPreview({
             customer: profile.stripe_customer_id,
             subscription: currentSubscription.id,
@@ -206,7 +277,6 @@ export async function POST(request: NextRequest) {
                   price: body.targetPriceId,
                 },
               ],
-              proration_date: prorationDate,
               proration_behavior: 'create_prorations',
             },
           });
@@ -242,7 +312,7 @@ export async function POST(request: NextRequest) {
           );
 
           // Log for debugging
-          console.log('Invoice preview details:', {
+          console.log('Upgrade preview details:', {
             total: invoice.total,
             currentPlan: currentPlanName,
             targetPlan: targetPlanName,
@@ -259,28 +329,28 @@ export async function POST(request: NextRequest) {
           prorationResult = {
             amount_due: effectiveAmount, // Positive = user pays, negative = credit
             currency: invoice.currency,
-            period_start: new Date(invoice.period_start * 1000).toISOString(),
-            period_end: new Date(invoice.period_end * 1000).toISOString(),
+            period_start: dayjs.unix(invoice.period_start).toISOString(),
+            period_end: dayjs.unix(invoice.period_end).toISOString(),
           };
-        } catch (stripeError: unknown) {
-          console.error('Stripe proration calculation error:', stripeError);
-          const errorMessage = stripeError instanceof Error ? stripeError.message : 'Unknown error';
-
-          return NextResponse.json(
-            {
-              success: false,
-              error: {
-                code: 'STRIPE_ERROR',
-                message: `Failed to calculate proration: ${errorMessage}`
-              }
-            },
-            { status: 500 }
-          );
         }
+      } catch (stripeError: unknown) {
+        console.error('Stripe proration calculation error:', stripeError);
+        const errorMessage = stripeError instanceof Error ? stripeError.message : 'Unknown error';
+
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'STRIPE_ERROR',
+              message: `Failed to calculate proration: ${errorMessage}`,
+            },
+          },
+          { status: 500 }
+        );
       }
     }
 
-    // 8. Build response
+    // 9. Build response
     const response: IPreviewChangeResponse = {
       proration: prorationResult,
       current_plan: currentPlan ? {
@@ -293,7 +363,9 @@ export async function POST(request: NextRequest) {
         price_id: body.targetPriceId,
         credits_per_month: targetPlan.creditsPerMonth,
       },
-      effective_immediately: !!currentSubscription,
+      effective_immediately: !isDowngradeChange, // Downgrades are scheduled, upgrades are immediate
+      effective_date: effectiveDate, // Only set for downgrades
+      is_downgrade: isDowngradeChange,
     };
 
     return NextResponse.json({

@@ -15,6 +15,7 @@ import {
 } from '@shared/config/stripe';
 import type { ISubscription, IUserProfile } from '@shared/types/stripe';
 import { useEffect, useState, useMemo } from 'react';
+import { Calendar, ArrowRight, X, Loader2 } from 'lucide-react';
 
 export default function PricingPage() {
   const pricesConfigured = isStripePricesConfigured();
@@ -23,10 +24,34 @@ export default function PricingPage() {
   const [loading, setLoading] = useState(true);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cancelingSchedule, setCancelingSchedule] = useState(false);
 
   const handlePlanSelect = (priceId: string) => {
+    // Block if trying to select the already scheduled plan
+    if (subscription?.scheduled_price_id === priceId) {
+      return;
+    }
     setSelectedPlanId(priceId);
     setIsModalOpen(true);
+  };
+
+  const handleCancelScheduledChange = async () => {
+    try {
+      setCancelingSchedule(true);
+      await StripeService.cancelScheduledChange();
+      // Refresh data
+      const [profileData, subData] = await Promise.all([
+        StripeService.getUserProfile(),
+        StripeService.getActiveSubscription(),
+      ]);
+      setProfile(profileData);
+      setSubscription(subData);
+    } catch (error) {
+      console.error('Failed to cancel scheduled change:', error);
+      alert(error instanceof Error ? error.message : 'Failed to cancel scheduled change');
+    } finally {
+      setCancelingSchedule(false);
+    }
   };
 
   const handleModalClose = () => {
@@ -101,6 +126,49 @@ export default function PricingPage() {
           </div>
         )}
 
+        {/* Scheduled Downgrade Banner */}
+        {!loading && subscription?.scheduled_price_id && subscription?.scheduled_change_date && (
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
+            <div className="flex items-start gap-3">
+              <Calendar className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-slate-900">Scheduled Plan Change</h3>
+                  <button
+                    onClick={handleCancelScheduledChange}
+                    disabled={cancelingSchedule}
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-orange-600 hover:text-orange-700 hover:bg-orange-100 rounded transition-colors disabled:opacity-50"
+                  >
+                    {cancelingSchedule ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <X className="w-4 h-4" />
+                    )}
+                    Cancel
+                  </button>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-slate-700 mt-1">
+                  <span className="font-medium">
+                    {getPlanForPriceId(subscription.price_id)?.name}
+                  </span>
+                  <ArrowRight className="w-4 h-4 text-slate-400" />
+                  <span className="font-medium text-orange-600">
+                    {getPlanForPriceId(subscription.scheduled_price_id)?.name}
+                  </span>
+                  <span className="text-slate-500">
+                    on{' '}
+                    {new Date(subscription.scheduled_change_date).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Configuration Warning (dev only) */}
         {!pricesConfigured && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
@@ -160,7 +228,17 @@ export default function PricingPage() {
                   interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
                   features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
                   priceId={STRIPE_PRICES.HOBBY_MONTHLY}
-                  disabled={subscription?.price_id === STRIPE_PRICES.HOBBY_MONTHLY}
+                  disabled={
+                    subscription?.price_id === STRIPE_PRICES.HOBBY_MONTHLY ||
+                    subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY
+                  }
+                  scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY}
+                  onCancelScheduled={
+                    subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY
+                      ? handleCancelScheduledChange
+                      : undefined
+                  }
+                  cancelingScheduled={cancelingSchedule}
                   onSelect={
                     subscription ? () => handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY) : undefined
                   }
@@ -175,7 +253,17 @@ export default function PricingPage() {
                   features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
                   priceId={STRIPE_PRICES.PRO_MONTHLY}
                   recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
-                  disabled={subscription?.price_id === STRIPE_PRICES.PRO_MONTHLY}
+                  disabled={
+                    subscription?.price_id === STRIPE_PRICES.PRO_MONTHLY ||
+                    subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY
+                  }
+                  scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY}
+                  onCancelScheduled={
+                    subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY
+                      ? handleCancelScheduledChange
+                      : undefined
+                  }
+                  cancelingScheduled={cancelingSchedule}
                   onSelect={
                     subscription ? () => handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY) : undefined
                   }
@@ -189,7 +277,17 @@ export default function PricingPage() {
                   interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
                   features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
                   priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
-                  disabled={subscription?.price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
+                  disabled={
+                    subscription?.price_id === STRIPE_PRICES.BUSINESS_MONTHLY ||
+                    subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY
+                  }
+                  scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
+                  onCancelScheduled={
+                    subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY
+                      ? handleCancelScheduledChange
+                      : undefined
+                  }
+                  cancelingScheduled={cancelingSchedule}
                   onSelect={
                     subscription
                       ? () => handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY)
