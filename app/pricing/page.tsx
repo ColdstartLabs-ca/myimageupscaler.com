@@ -1,6 +1,11 @@
 'use client';
 
-import { PlanChangeModal, PricingCard, CreditPackSelector } from '@client/components/stripe';
+import {
+  PlanChangeModal,
+  PricingCard,
+  CreditPackSelector,
+  PricingCardSkeleton,
+} from '@client/components/stripe';
 import { StripeService } from '@client/services/stripeService';
 import {
   STRIPE_PRICES,
@@ -139,48 +144,61 @@ export default function PricingPage() {
           </p>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <PricingCard
-              name={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name}
-              description={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.description}
-              price={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}
-              interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
-              features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
-              priceId={STRIPE_PRICES.HOBBY_MONTHLY}
-              disabled={subscription?.price_id === STRIPE_PRICES.HOBBY_MONTHLY}
-              onSelect={
-                subscription ? () => handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY) : undefined
-              }
-              currentSubscriptionPrice={currentSubscriptionPrice}
-            />
+            {loading ? (
+              // Show skeleton loading cards while fetching subscription data
+              <>
+                <PricingCardSkeleton />
+                <PricingCardSkeleton recommended={true} />
+                <PricingCardSkeleton />
+              </>
+            ) : (
+              <>
+                <PricingCard
+                  name={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name}
+                  description={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.description}
+                  price={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}
+                  interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
+                  features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
+                  priceId={STRIPE_PRICES.HOBBY_MONTHLY}
+                  disabled={subscription?.price_id === STRIPE_PRICES.HOBBY_MONTHLY}
+                  onSelect={
+                    subscription ? () => handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY) : undefined
+                  }
+                  currentSubscriptionPrice={currentSubscriptionPrice}
+                />
 
-            <PricingCard
-              name={SUBSCRIPTION_PLANS.PRO_MONTHLY.name}
-              description={SUBSCRIPTION_PLANS.PRO_MONTHLY.description}
-              price={SUBSCRIPTION_PLANS.PRO_MONTHLY.price}
-              interval={SUBSCRIPTION_PLANS.PRO_MONTHLY.interval}
-              features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
-              priceId={STRIPE_PRICES.PRO_MONTHLY}
-              recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
-              disabled={subscription?.price_id === STRIPE_PRICES.PRO_MONTHLY}
-              onSelect={
-                subscription ? () => handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY) : undefined
-              }
-              currentSubscriptionPrice={currentSubscriptionPrice}
-            />
+                <PricingCard
+                  name={SUBSCRIPTION_PLANS.PRO_MONTHLY.name}
+                  description={SUBSCRIPTION_PLANS.PRO_MONTHLY.description}
+                  price={SUBSCRIPTION_PLANS.PRO_MONTHLY.price}
+                  interval={SUBSCRIPTION_PLANS.PRO_MONTHLY.interval}
+                  features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
+                  priceId={STRIPE_PRICES.PRO_MONTHLY}
+                  recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
+                  disabled={subscription?.price_id === STRIPE_PRICES.PRO_MONTHLY}
+                  onSelect={
+                    subscription ? () => handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY) : undefined
+                  }
+                  currentSubscriptionPrice={currentSubscriptionPrice}
+                />
 
-            <PricingCard
-              name={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name}
-              description={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.description}
-              price={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.price}
-              interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
-              features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
-              priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
-              disabled={subscription?.price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
-              onSelect={
-                subscription ? () => handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY) : undefined
-              }
-              currentSubscriptionPrice={currentSubscriptionPrice}
-            />
+                <PricingCard
+                  name={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name}
+                  description={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.description}
+                  price={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.price}
+                  interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
+                  features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
+                  priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
+                  disabled={subscription?.price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
+                  onSelect={
+                    subscription
+                      ? () => handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY)
+                      : undefined
+                  }
+                  currentSubscriptionPrice={currentSubscriptionPrice}
+                />
+              </>
+            )}
           </div>
         </div>
 
