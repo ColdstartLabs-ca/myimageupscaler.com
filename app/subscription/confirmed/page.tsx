@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, Calendar, CreditCard, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { getPlanByPriceId } from '@shared/config/subscription.utils';
+import { getPlanByPriceId, assertKnownPriceId } from '@shared/config/subscription.utils';
+import { resolvePlanOrPack } from '@shared/config/stripe';
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -33,8 +34,23 @@ export default function SubscriptionConfirmedPage() {
   const effectiveDate = searchParams.get('effective_date');
   const prorationAmount = searchParams.get('proration_amount');
 
+  // Use unified resolver first for consistent plan lookup
+  const resolvedNewPlan = newPriceId ? resolvePlanOrPack(newPriceId) : null;
+  const resolvedOldPlan = oldPriceId ? resolvePlanOrPack(oldPriceId) : null;
+
+  // Fallback to legacy format for display compatibility
   const newPlan = newPriceId ? getPlanByPriceId(newPriceId) : null;
   const oldPlan = oldPriceId ? getPlanByPriceId(oldPriceId) : null;
+
+  // Enhanced error handling for invalid price IDs
+  useEffect(() => {
+    if (newPriceId && !resolvedNewPlan) {
+      console.error('[SUBSCRIPTION_CONFIRMED] Invalid new price ID:', newPriceId);
+    }
+    if (oldPriceId && !resolvedOldPlan) {
+      console.error('[SUBSCRIPTION_CONFIRMED] Invalid old price ID:', oldPriceId);
+    }
+  }, [newPriceId, oldPriceId, resolvedNewPlan, resolvedOldPlan]);
 
   const isDowngrade = type === 'downgrade';
 
@@ -82,9 +98,13 @@ export default function SubscriptionConfirmedPage() {
                 <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">
                   {isDowngrade ? 'Current Plan' : 'Previous Plan'}
                 </p>
-                <p className="font-semibold text-slate-700">{oldPlan?.name || 'N/A'}</p>
-                {oldPlan && (
-                  <p className="text-sm text-slate-500">{oldPlan.creditsPerCycle} credits/mo</p>
+                <p className="font-semibold text-slate-700">
+                  {resolvedOldPlan?.name || oldPlan?.name || 'N/A'}
+                </p>
+                {(resolvedOldPlan || oldPlan) && (
+                  <p className="text-sm text-slate-500">
+                    {resolvedOldPlan?.creditsPerCycle || oldPlan?.creditsPerCycle} credits/mo
+                  </p>
                 )}
               </div>
 
@@ -97,9 +117,11 @@ export default function SubscriptionConfirmedPage() {
                 <p
                   className={`font-semibold ${isDowngrade ? 'text-orange-600' : 'text-green-600'}`}
                 >
-                  {newPlan.name}
+                  {resolvedNewPlan?.name || newPlan?.name}
                 </p>
-                <p className="text-sm text-slate-500">{newPlan.creditsPerCycle} credits/mo</p>
+                <p className="text-sm text-slate-500">
+                  {resolvedNewPlan?.creditsPerCycle || newPlan?.creditsPerCycle} credits/mo
+                </p>
               </div>
             </div>
           </div>
@@ -112,7 +134,9 @@ export default function SubscriptionConfirmedPage() {
                 <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-lg">
                   <Calendar className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-slate-900">Keep using {oldPlan?.name} until</p>
+                    <p className="font-medium text-slate-900">
+                    Keep using {resolvedOldPlan?.name || oldPlan?.name || 'Current Plan'} until
+                  </p>
                     <p className="text-lg font-semibold text-orange-600">
                       {effectiveDate ? formatDate(effectiveDate) : 'End of billing period'}
                     </p>
@@ -124,8 +148,8 @@ export default function SubscriptionConfirmedPage() {
                   <div>
                     <p className="font-medium text-slate-900">No charges today</p>
                     <p className="text-sm text-slate-600">
-                      Your next bill will be {formatCurrency(newPlan.priceInCents)}/month for the{' '}
-                      {newPlan.name} plan.
+                      Your next bill will be {formatCurrency((resolvedNewPlan || newPlan)?.priceInCents || 0)}/month for the{' '}
+                      {resolvedNewPlan?.name || newPlan?.name} plan.
                     </p>
                   </div>
                 </div>
@@ -133,8 +157,8 @@ export default function SubscriptionConfirmedPage() {
                 <div className="text-sm text-slate-600 bg-blue-50 p-4 rounded-lg">
                   <p className="font-medium text-slate-900 mb-1">What happens next?</p>
                   <ul className="space-y-1 list-disc list-inside">
-                    <li>Continue using all {oldPlan?.name} features until the change date</li>
-                    <li>Your credits will reset to {newPlan.creditsPerCycle} on the change date</li>
+                    <li>Continue using all {resolvedOldPlan?.name || oldPlan?.name || 'Current'} features until the change date</li>
+                    <li>Your credits will reset to {resolvedNewPlan?.creditsPerCycle || newPlan?.creditsPerCycle || 0} on the change date</li>
                     <li>You can cancel this change anytime before it takes effect</li>
                   </ul>
                 </div>
@@ -147,7 +171,7 @@ export default function SubscriptionConfirmedPage() {
                   <div>
                     <p className="font-medium text-slate-900">Your new plan is active now!</p>
                     <p className="text-sm text-slate-600">
-                      You now have access to {newPlan.creditsPerCycle} credits per month.
+                      You now have access to {resolvedNewPlan?.creditsPerCycle || newPlan?.creditsPerCycle || 0} credits per month.
                     </p>
                   </div>
                 </div>
@@ -169,7 +193,7 @@ export default function SubscriptionConfirmedPage() {
                 <div className="text-sm text-slate-600 bg-blue-50 p-4 rounded-lg">
                   <p className="font-medium text-slate-900 mb-1">What&apos;s included?</p>
                   <ul className="space-y-1 list-disc list-inside">
-                    <li>{newPlan.creditsPerCycle} credits per month</li>
+                    <li>{resolvedNewPlan?.creditsPerCycle || newPlan?.creditsPerCycle || 0} credits per month</li>
                     <li>Credits refresh at the start of each billing cycle</li>
                     <li>Unused credits don&apos;t roll over</li>
                   </ul>

@@ -2,12 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe, STRIPE_WEBHOOK_SECRET } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
-import { getPlanForPriceId } from '@shared/config/stripe';
+import {
+  getPlanForPriceId,
+  resolvePlanOrPack,
+  assertKnownPriceId,
+} from '@shared/config/stripe';
 import {
   getPlanByPriceId,
   calculateBalanceWithExpiration,
 } from '@shared/config/subscription.utils';
-import { getTrialConfig, getPlanConfig } from '@shared/config/subscription.config';
+import { getTrialConfig } from '@shared/config/subscription.config';
+import { SubscriptionCreditsService } from '@server/services/SubscriptionCredits';
 import type { IIdempotencyResult, WebhookEventStatus } from '@shared/types/stripe';
 import Stripe from 'stripe';
 import dayjs from 'dayjs';
@@ -382,7 +387,17 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
           // For test subscriptions, add credits based on session metadata or a default
           const testPriceId = 'price_1SZmVzALMLhQocpfPyRX2W8D'; // Default to PRO_MONTHLY for testing
-          const plan = getPlanForPriceId(testPriceId);
+          let plan;
+          try {
+            const resolved = assertKnownPriceId(testPriceId);
+            if (resolved.type !== 'plan') {
+              throw new Error(`Test price ID ${testPriceId} is not a subscription plan`);
+            }
+            plan = getPlanForPriceId(testPriceId); // Still use this for the legacy format
+          } catch (error) {
+            console.error('Test subscription plan resolution failed:', error);
+            // Continue with mock plan data
+          }
 
           if (plan) {
             const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
@@ -409,7 +424,23 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
           const invoiceId = session.invoice as string | null;
 
           if (priceId) {
-            const plan = getPlanForPriceId(priceId);
+            let plan;
+            try {
+              const resolved = assertKnownPriceId(priceId);
+              if (resolved.type !== 'plan') {
+                throw new Error(`Price ID ${priceId} in checkout session is not a subscription plan`);
+              }
+              plan = getPlanForPriceId(priceId); // Still use this for the legacy format
+            } catch (error) {
+              console.error(`[WEBHOOK_ERROR] Checkout session plan resolution failed: ${priceId}`, {
+                error: error instanceof Error ? error.message : error,
+                subscriptionId,
+                sessionId: session.id,
+                userId,
+              });
+              // For checkout sessions, we'll continue without failing since the subscription.created event will handle it
+              return;
+            }
             if (plan) {
               // Add initial credits for the first month
               // Use invoice ID as ref_id for refund correlation
@@ -558,17 +589,42 @@ async function handleSubscriptionUpdate(
   // Prefer Stripe's previous_attributes (accurate) over DB (may be stale after plan change)
   const previousPriceId = options?.previousPriceId || existingSubscription?.price_id || null;
 
-  // Get price ID and plan metadata
+  // Get price ID and resolve using unified resolver
   const priceId = subscription.items.data[0]?.price.id || '';
-  const planConfig = getPlanConfig(priceId);
 
-  if (!planConfig) {
-    console.error(`Unknown price ID in subscription update: ${priceId}`);
-    return;
+  // Use unified resolver - this will throw if price ID is unknown, causing webhook to fail loudly
+  // This ensures Stripe will retry instead of silently dropping the event
+  let resolvedPlan;
+  try {
+    resolvedPlan = assertKnownPriceId(priceId);
+    if (resolvedPlan.type !== 'plan') {
+      throw new Error(`Price ID ${priceId} resolved to a credit pack, not a subscription plan`);
+    }
+  } catch (error) {
+    console.error(`[WEBHOOK_ERROR] Unknown price ID in subscription update: ${priceId}`, {
+      error: error instanceof Error ? error.message : error,
+      subscriptionId: subscription.id,
+      customerId,
+      timestamp: new Date().toISOString(),
+    });
+    // Throw the error so webhook fails and Stripe retries
+    throw error;
   }
 
-  // Get trial configuration
+  // Get trial configuration and unified plan data
   const trialConfig = getTrialConfig(priceId);
+  const planMetadata = resolvePlanOrPack(priceId);
+
+  if (!planMetadata || planMetadata.type !== 'plan') {
+    const error = new Error(`Price ID ${priceId} did not resolve to a valid plan`);
+    console.error(`[WEBHOOK_ERROR] Invalid plan resolution: ${priceId}`, {
+      error: error.message,
+      subscriptionId: subscription.id,
+      customerId,
+      timestamp: new Date().toISOString(),
+    });
+    throw error;
+  }
 
   // Access period timestamps - these are standard Stripe subscription fields (Unix timestamps in seconds)
   let currentPeriodStart = (subscription as any).current_period_start as number | undefined;
@@ -668,20 +724,20 @@ async function handleSubscriptionUpdate(
 
     if (trialConfig && trialConfig.enabled) {
       // Determine how many credits to allocate for trial
-      const trialCredits = trialConfig.trialCredits ?? planConfig.creditsPerCycle;
+      const trialCredits = trialConfig.trialCredits ?? planMetadata.creditsPerCycle!;
 
       const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
         target_user_id: userId,
         amount: trialCredits,
         ref_id: subscription.id,
-        description: `Trial credits - ${planConfig.name} plan - ${trialCredits} credits`,
+        description: `Trial credits - ${planMetadata.name} plan - ${trialCredits} credits`,
       });
 
       if (error) {
         console.error('Error adding trial credits:', error);
       } else {
         console.log(
-          `Added ${trialCredits} trial credits to user ${userId} for ${planConfig.name} plan`
+          `Added ${trialCredits} trial credits to user ${userId} for ${planMetadata.name} plan`
         );
       }
     }
@@ -693,7 +749,7 @@ async function handleSubscriptionUpdate(
 
     if (trialConfig && trialConfig.enabled && trialConfig.trialCredits !== null) {
       // Trial had different credits, adjust balance
-      const fullCredits = planConfig.creditsPerCycle;
+      const fullCredits = planMetadata.creditsPerCycle!;
       const currentBalance =
         (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
 
@@ -705,7 +761,7 @@ async function handleSubscriptionUpdate(
           target_user_id: userId,
           amount: creditsToAdd,
           ref_id: subscription.id,
-          description: `Trial conversion - ${planConfig.name} plan - ${creditsToAdd} additional credits`,
+          description: `Trial conversion - ${planMetadata.name} plan - ${creditsToAdd} additional credits`,
         });
 
         if (error) {
@@ -740,19 +796,36 @@ async function handleSubscriptionUpdate(
     effectivePreviousPriceId !== priceId &&
     subscription.status === 'active'
   ) {
-    const previousPlanConfig = getPlanConfig(effectivePreviousPriceId);
+    // Resolve previous plan using unified resolver
+    let previousPlanMetadata = null;
+    try {
+      if (effectivePreviousPriceId) {
+        const resolved = assertKnownPriceId(effectivePreviousPriceId);
+        if (resolved.type !== 'plan') {
+          throw new Error(`Previous price ID ${effectivePreviousPriceId} is not a subscription plan`);
+        }
+        previousPlanMetadata = resolvePlanOrPack(effectivePreviousPriceId);
+      }
+    } catch (error) {
+      console.error(`[WEBHOOK_ERROR] Failed to resolve previous price ID: ${effectivePreviousPriceId}`, {
+        error: error instanceof Error ? error.message : error,
+        subscriptionId: subscription.id,
+        customerId,
+      });
+      // Continue without previous plan data - better than failing the whole webhook
+    }
 
-    if (previousPlanConfig) {
-      const previousCredits = previousPlanConfig.creditsPerCycle;
-      const newCredits = planConfig.creditsPerCycle;
+    if (previousPlanMetadata && previousPlanMetadata.type === 'plan') {
+      const previousCredits = previousPlanMetadata.creditsPerCycle!;
+      const newCredits = planMetadata.creditsPerCycle!;
       const creditDifference = newCredits - previousCredits;
 
       console.log('[WEBHOOK_PLAN_CHANGE_CONFIRMED]', {
         userId,
         subscriptionId: subscription.id,
-        previousPlan: previousPlanConfig.name,
+        previousPlan: previousPlanMetadata.name,
         previousCredits,
-        newPlan: planConfig.name,
+        newPlan: planMetadata.name,
         newCredits,
         creditDifference,
         changeType: creditDifference > 0 ? 'upgrade' : creditDifference < 0 ? 'downgrade' : 'same',
@@ -766,15 +839,18 @@ async function handleSubscriptionUpdate(
         const currentBalance =
           (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
 
-        // ANTI-FARMING PROTECTION: Only add tier difference if user has "reasonable" credits
-        // Reasonable = within 50% of the previous tier's amount (allows for some rollover/purchases)
-        // This prevents: Hobby→Pro (+800), Pro→Hobby (keep), Hobby→Pro (+800 AGAIN)
-        const maxReasonableBalance = Math.floor(previousCredits * 1.5);
-        const isLegitimateUpgrade = currentBalance <= maxReasonableBalance;
+        // Use SubscriptionCreditsService for consistent credit calculation
+        const calculation = SubscriptionCreditsService.calculateUpgradeCredits({
+          currentBalance,
+          previousTierCredits: previousCredits,
+          newTierCredits: newCredits,
+        });
 
-        // For legitimate upgrades: add the TIER DIFFERENCE (not just top-up to target)
-        // This preserves rollover credits from the previous plan
-        const creditsToAdd = isLegitimateUpgrade ? creditDifference : 0;
+        const explanation = SubscriptionCreditsService.getExplanation(calculation, {
+          currentBalance,
+          previousTierCredits: previousCredits,
+          newTierCredits: newCredits,
+        });
 
         console.log('[WEBHOOK_CREDITS_UPGRADE_START]', {
           userId,
@@ -782,41 +858,40 @@ async function handleSubscriptionUpdate(
           previousTierCredits: previousCredits,
           newTierCredits: newCredits,
           tierDifference: creditDifference,
-          maxReasonableBalance,
-          isLegitimateUpgrade,
-          creditsToAdd,
-          expectedNewBalance: currentBalance + creditsToAdd,
+          creditsToAdd: calculation.creditsToAdd,
+          reason: calculation.reason,
+          isLegitimate: calculation.isLegitimate,
+          explanation,
         });
 
-        if (creditsToAdd > 0) {
+        if (calculation.creditsToAdd > 0) {
           const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
             target_user_id: userId,
-            amount: creditsToAdd,
+            amount: calculation.creditsToAdd,
             ref_id: subscription.id,
-            description: `Plan upgrade - ${previousPlanConfig.name} → ${planConfig.name} - ${creditsToAdd} credits (tier difference)`,
+            description: `Plan upgrade - ${previousPlanMetadata.name} → ${planMetadata.name} - ${calculation.creditsToAdd} credits (tier difference)`,
           });
 
           if (error) {
             console.error('[WEBHOOK_CREDITS_UPGRADE_ERROR]', {
               userId,
               error,
-              creditsToAdd,
+              creditsToAdd: calculation.creditsToAdd,
             });
           } else {
             console.log('[WEBHOOK_CREDITS_UPGRADE_SUCCESS]', {
               userId,
-              creditsAdded: creditsToAdd,
+              creditsAdded: calculation.creditsToAdd,
               previousBalance: currentBalance,
-              newBalance: currentBalance + creditsToAdd,
+              newBalance: currentBalance + calculation.creditsToAdd,
             });
           }
         } else {
           console.log('[WEBHOOK_CREDITS_UPGRADE_BLOCKED]', {
             userId,
             currentBalance,
-            maxReasonableBalance,
-            reason: 'User has excessive credits - possible farming attempt detected',
-            note: 'Credits will reset to tier amount on next monthly renewal',
+            reason: calculation.reason,
+            explanation,
           });
         }
       } else if (creditDifference < 0) {
@@ -842,7 +917,7 @@ async function handleSubscriptionUpdate(
     .from('profiles')
     .update({
       subscription_status: subscription.status,
-      subscription_tier: planConfig.name, // Use friendly name instead of price ID
+      subscription_tier: planMetadata.name, // Use friendly name from unified resolver
     })
     .eq('id', userId);
 
@@ -855,7 +930,7 @@ async function handleSubscriptionUpdate(
     console.log('[WEBHOOK_SUBSCRIPTION_UPDATE_COMPLETE]', {
       userId,
       subscriptionId: subscription.id,
-      plan: planConfig.name,
+      plan: planMetadata.name,
       status: subscription.status,
       timestamp: new Date().toISOString(),
     });
@@ -969,11 +1044,21 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<v
     anyPricedLine?.plan?.id ||
     '';
 
-  const plan = getPlanForPriceId(priceId);
-
-  if (!plan) {
-    console.error(`Unknown price ID in invoice payment: ${priceId}`);
-    return;
+  // Use unified resolver to get plan details
+  let planMetadata;
+  try {
+    planMetadata = assertKnownPriceId(priceId);
+    if (planMetadata.type !== 'plan') {
+      throw new Error(`Price ID ${priceId} resolved to a credit pack, not a subscription plan`);
+    }
+  } catch (error) {
+    console.error(`[WEBHOOK_ERROR] Unknown price ID in invoice payment: ${priceId}`, {
+      error: error instanceof Error ? error.message : error,
+      subscriptionId,
+      timestamp: new Date().toISOString(),
+    });
+    // Throw the error so webhook fails and Stripe retries
+    throw error;
   }
 
   // In test environment, use simplified logic
@@ -994,16 +1079,26 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<v
     }
   }
 
-  // Get detailed plan config to check expiration settings
-  const planConfig = getPlanByPriceId(priceId);
-  const creditsToAdd = plan.creditsPerMonth;
+  // Get plan details from unified resolver
+  const planDetails = resolvePlanOrPack(priceId);
+  if (!planDetails || planDetails.type !== 'plan') {
+    const error = new Error(`Price ID ${priceId} did not resolve to a valid plan for invoice payment`);
+    console.error(`[WEBHOOK_ERROR] Invalid plan resolution for invoice: ${priceId}`, {
+      error: error.message,
+      subscriptionId,
+      timestamp: new Date().toISOString(),
+    });
+    throw error;
+  }
+
+  const creditsToAdd = planDetails.creditsPerCycle!;
   // Calculate total balance from both pools
   const currentBalance =
     (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
-  const maxRollover = plan.maxRollover;
+  const maxRollover = planDetails.maxRollover ?? creditsToAdd * 6; // Default 6x rollover
 
   // Calculate new balance considering expiration mode
-  const expirationMode = planConfig?.creditsExpiration?.mode ?? 'never';
+  const expirationMode = 'end_of_cycle'; // Default expiration mode from config
   const { newBalance, expiredAmount } = calculateBalanceWithExpiration({
     currentBalance,
     newCredits: creditsToAdd,

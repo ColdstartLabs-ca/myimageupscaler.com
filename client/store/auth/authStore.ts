@@ -20,6 +20,15 @@ export const useAuthStore = create<IAuthState>((set, get) => {
   const setState = (state: Partial<IAuthState>) => set(state);
   const getState = () => get();
 
+  // Add a fallback timeout to prevent infinite loading
+  setTimeout(() => {
+    const currentState = useAuthStore.getState();
+    if (currentState.isLoading) {
+      console.warn('Auth initialization taking too long, setting isLoading to false');
+      setState({ isLoading: false });
+    }
+  }, 6000); // 6 seconds fallback
+
   return {
     // Initial state
     isAuthenticated: false,

@@ -12,6 +12,7 @@ import {
   SUBSCRIPTION_PLANS,
   getPlanForPriceId,
   isStripePricesConfigured,
+  resolvePlanOrPack,
 } from '@shared/config/stripe';
 import type { ISubscription, IUserProfile } from '@shared/types/stripe';
 import { useEffect, useState, useMemo } from 'react';

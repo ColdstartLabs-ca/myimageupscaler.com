@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
-import { getPlanForPriceId } from '@shared/config/stripe';
+import { getPlanForPriceId, assertKnownPriceId, resolvePriceId } from '@shared/config/stripe';
 import type { ISubscriptionPlanMetadata } from '@shared/config/stripe';
 import { getPlanByPriceId } from '@shared/config/subscription.utils';
 import dayjs from 'dayjs';
@@ -37,13 +37,41 @@ interface IPreviewChangeResponse {
 
 /**
  * Check if this is a downgrade (fewer credits in new plan)
+ * Uses unified resolver for consistent credit calculations
  */
 function isDowngrade(currentPriceId: string | null, targetPriceId: string): boolean {
   if (!currentPriceId) return false;
-  const currentPlan = getPlanForPriceId(currentPriceId);
-  const targetPlan = getPlanForPriceId(targetPriceId);
-  if (!currentPlan || !targetPlan) return false;
-  return targetPlan.creditsPerMonth < currentPlan.creditsPerMonth;
+
+  try {
+    // Use unified resolver for consistent credit calculations
+    const currentResolved = assertKnownPriceId(currentPriceId);
+    const targetResolved = assertKnownPriceId(targetPriceId);
+
+    // Both should be plans for subscription changes
+    if (currentResolved.type !== 'plan' || targetResolved.type !== 'plan') {
+      console.warn('[PREVIEW_CHANGE] Non-plan price IDs in subscription preview:', {
+        currentPriceId,
+        currentType: currentResolved.type,
+        targetPriceId,
+        targetType: targetResolved.type,
+      });
+      return false;
+    }
+
+    // Compare credits directly from unified resolver
+    return targetResolved.credits < currentResolved.credits;
+  } catch (error) {
+    console.error('[PREVIEW_CHANGE] Error resolving price IDs for downgrade check:', {
+      error: error instanceof Error ? error.message : error,
+      currentPriceId,
+      targetPriceId,
+    });
+    // Fallback to legacy method if unified resolver fails
+    const currentPlan = getPlanForPriceId(currentPriceId);
+    const targetPlan = getPlanForPriceId(targetPriceId);
+    if (!currentPlan || !targetPlan) return false;
+    return targetPlan.creditsPerMonth < currentPlan.creditsPerMonth;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -113,15 +141,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Validate target price ID
-    const targetPlan = getPlanForPriceId(body.targetPriceId);
-    if (!targetPlan) {
+    // 3. Validate target price ID using unified resolver
+    let targetPlan = null;
+    let resolvedTarget = null;
+
+    try {
+      resolvedTarget = assertKnownPriceId(body.targetPriceId);
+      if (resolvedTarget.type !== 'plan') {
+        throw new Error(`Price ID ${body.targetPriceId} is not a subscription plan`);
+      }
+      // Still get legacy plan format for compatibility with existing code
+      targetPlan = getPlanForPriceId(body.targetPriceId);
+    } catch (error) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'INVALID_PRICE_ID',
-            message: 'Invalid or unsupported price ID'
+            message: error instanceof Error ? error.message : 'Invalid or unsupported price ID'
           }
         },
         { status: 400 }
@@ -153,7 +190,27 @@ export async function POST(request: NextRequest) {
     }
 
     const currentPriceId = currentSubscription.price_id;
-    const currentPlan = currentPriceId ? getPlanForPriceId(currentPriceId) : null;
+
+    // Get current plan metadata using unified resolver
+    let currentPlan = null;
+    let resolvedCurrent = null;
+
+    if (currentPriceId) {
+      try {
+        resolvedCurrent = assertKnownPriceId(currentPriceId);
+        if (resolvedCurrent.type !== 'plan') {
+          console.warn('[PREVIEW_CHANGE] Current subscription price ID is not a plan:', currentPriceId);
+        } else {
+          // Still get legacy plan format for compatibility
+          currentPlan = getPlanForPriceId(currentPriceId);
+        }
+      } catch (error) {
+        console.error('[PREVIEW_CHANGE] Error resolving current plan:', {
+          error: error instanceof Error ? error.message : error,
+          priceId: currentPriceId,
+        });
+      }
+    }
 
     // 5. Check if this is actually a change
     if (currentPriceId === body.targetPriceId) {

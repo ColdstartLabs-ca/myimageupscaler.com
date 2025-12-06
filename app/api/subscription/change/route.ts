@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
-import { getPlanForPriceId } from '@shared/config/stripe';
-import { SubscriptionCreditsService } from '@server/services/SubscriptionCredits';
+import { getPlanForPriceId, assertKnownPriceId, resolvePriceId } from '@shared/config/stripe';
 
 export const runtime = 'edge';
 
@@ -13,13 +12,41 @@ interface ISubscriptionChangeRequest {
 
 /**
  * Check if this is a downgrade (fewer credits in new plan)
+ * Uses unified resolver to ensure consistent credit calculations
  */
 function isDowngrade(currentPriceId: string | null, targetPriceId: string): boolean {
   if (!currentPriceId) return false;
-  const currentPlan = getPlanForPriceId(currentPriceId);
-  const targetPlan = getPlanForPriceId(targetPriceId);
-  if (!currentPlan || !targetPlan) return false;
-  return targetPlan.creditsPerMonth < currentPlan.creditsPerMonth;
+
+  try {
+    // Use unified resolver for consistent credit calculations
+    const currentResolved = assertKnownPriceId(currentPriceId);
+    const targetResolved = assertKnownPriceId(targetPriceId);
+
+    // Both should be plans for subscription changes
+    if (currentResolved.type !== 'plan' || targetResolved.type !== 'plan') {
+      console.warn('[PLAN_CHANGE] Non-plan price IDs in subscription change:', {
+        currentPriceId,
+        targetType: currentResolved.type,
+        targetPriceId,
+        targetType: targetResolved.type,
+      });
+      return false;
+    }
+
+    // Compare credits directly from unified resolver
+    return targetResolved.credits < currentResolved.credits;
+  } catch (error) {
+    console.error('[PLAN_CHANGE] Error resolving price IDs for downgrade check:', {
+      error: error instanceof Error ? error.message : error,
+      currentPriceId,
+      targetPriceId,
+    });
+    // Fallback to legacy method if unified resolver fails
+    const currentPlan = getPlanForPriceId(currentPriceId);
+    const targetPlan = getPlanForPriceId(targetPriceId);
+    if (!currentPlan || !targetPlan) return false;
+    return targetPlan.creditsPerMonth < currentPlan.creditsPerMonth;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -89,15 +116,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Validate target price ID
-    const targetPlan = getPlanForPriceId(body.targetPriceId);
-    if (!targetPlan) {
+    // 3. Validate target price ID using unified resolver
+    let targetPlan = null;
+    let resolvedTarget = null;
+
+    try {
+      resolvedTarget = assertKnownPriceId(body.targetPriceId);
+      if (resolvedTarget.type !== 'plan') {
+        throw new Error(`Price ID ${body.targetPriceId} is not a subscription plan`);
+      }
+      // Still get legacy plan format for compatibility with existing code
+      targetPlan = getPlanForPriceId(body.targetPriceId);
+    } catch (error) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'INVALID_PRICE_ID',
-            message: 'Invalid or unsupported price ID',
+            message: error instanceof Error ? error.message : 'Invalid or unsupported price ID',
           },
         },
         { status: 400 }
@@ -164,10 +200,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get current plan metadata for logging
-    const currentPlan = currentSubscription.price_id
-      ? getPlanForPriceId(currentSubscription.price_id)
-      : null;
+    // Get current plan metadata for logging using unified resolver
+    let currentPlan = null;
+    let resolvedCurrent = null;
+
+    if (currentSubscription.price_id) {
+      try {
+        resolvedCurrent = assertKnownPriceId(currentSubscription.price_id);
+        if (resolvedCurrent.type !== 'plan') {
+          console.warn('[PLAN_CHANGE] Current subscription price ID is not a plan:', currentSubscription.price_id);
+        } else {
+          // Still get legacy plan format for compatibility
+          currentPlan = getPlanForPriceId(currentSubscription.price_id);
+        }
+      } catch (error) {
+        console.error('[PLAN_CHANGE] Error resolving current plan:', {
+          error: error instanceof Error ? error.message : error,
+          priceId: currentSubscription.price_id,
+        });
+      }
+    }
 
     console.log('[PLAN_CHANGE_START]', {
       userId: user.id,
@@ -449,83 +501,9 @@ export async function POST(request: NextRequest) {
         })
         .eq('id', user.id);
 
-      // ADJUST CREDITS FOR UPGRADE
-      const previousCredits = currentPlan?.creditsPerMonth || 0;
-      const newCredits = targetPlan.creditsPerMonth;
-
-      console.log('[PLAN_CHANGE_UPGRADE_DB_UPDATED]', {
-        userId: user.id,
-        subscriptionId: currentSubscription.id,
-        oldPlan: currentPlan?.name || 'Unknown',
-        newPlan: targetPlan.name,
-        oldPriceId: currentSubscription.price_id,
-        newPriceId: body.targetPriceId,
-        previousCredits,
-        newCredits,
-        timestamp: new Date().toISOString(),
-      });
-
-      // Calculate and add upgrade credits
-      const { data: profile } = await supabaseAdmin
-        .from('profiles')
-        .select('subscription_credits_balance, purchased_credits_balance')
-        .eq('id', user.id)
-        .single();
-
-      const currentBalance =
-        (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);
-
-      const calculation = SubscriptionCreditsService.calculateUpgradeCredits({
-        currentBalance,
-        previousTierCredits: previousCredits,
-        newTierCredits: newCredits,
-      });
-
-      const explanation = SubscriptionCreditsService.getExplanation(calculation, {
-        currentBalance,
-        previousTierCredits: previousCredits,
-        newTierCredits: newCredits,
-      });
-
-      console.log('[PLAN_CHANGE_CREDITS_CHECK]', {
-        userId: user.id,
-        currentBalance,
-        previousTierCredits: previousCredits,
-        newTierCredits: newCredits,
-        maxReasonableBalance: calculation.maxReasonableBalance,
-        creditsToAdd: calculation.creditsToAdd,
-        reason: calculation.reason,
-        isLegitimate: calculation.isLegitimate,
-        explanation,
-      });
-
-      if (calculation.creditsToAdd > 0) {
-        const { error: creditError } = await supabaseAdmin.rpc('increment_credits_with_log', {
-          target_user_id: user.id,
-          amount: calculation.creditsToAdd,
-          transaction_type: 'subscription',
-          ref_id: currentSubscription.id,
-          description: `Plan upgrade - ${currentPlan?.name || 'Unknown'} → ${targetPlan.name} - ${calculation.creditsToAdd} credits`,
-        });
-
-        if (creditError) {
-          console.error('[PLAN_CHANGE_CREDITS_ERROR]', { userId: user.id, error: creditError });
-        } else {
-          console.log('[PLAN_CHANGE_CREDITS_ADDED]', {
-            userId: user.id,
-            creditsAdded: calculation.creditsToAdd,
-            previousBalance: currentBalance,
-            newBalance: currentBalance + calculation.creditsToAdd,
-          });
-        }
-      } else {
-        console.log('[PLAN_CHANGE_CREDITS_BLOCKED]', {
-          userId: user.id,
-          currentBalance,
-          maxReasonableBalance: calculation.maxReasonableBalance,
-          reason: 'Farming detected - user has excessive credits from downgrade',
-        });
-      }
+      // Note: Credit adjustment for plan changes now happens in the webhook handler
+      // when customer.subscription.updated event is received from Stripe.
+      // This prevents race conditions and ensures a single source of truth.
 
       return NextResponse.json({
         success: true,

@@ -4,7 +4,7 @@ import { loadingStore } from '@client/store/loadingStore';
 import { loadAuthCache, saveAuthCache, clearAuthCache } from './authCache';
 import type { IAuthState, IAuthUser, ISignUpResult } from './types';
 
-const AUTH_INIT_TIMEOUT = 2000; // Reduced from 5000ms
+const AUTH_INIT_TIMEOUT = 5000; // Increased to prevent premature timeouts
 
 /**
  * Wrapper that handles loading state for async operations.
@@ -131,28 +131,45 @@ export function createInitializeAuth(
 
       const sessionPromise = supabase.auth.getSession();
 
-      const {
-        data: { session },
-        error: sessionError,
-      } = (await Promise.race([sessionPromise, timeoutPromise])) as {
-        data: { session: { user: { id: string } } | null };
-        error: Error | null;
-      };
+      try {
+        const {
+          data: { session },
+          error: sessionError,
+        } = (await Promise.race([sessionPromise, timeoutPromise])) as {
+          data: { session: { user: { id: string } } | null };
+          error: Error | null;
+        };
 
-      // Handle refresh token errors
-      if (sessionError?.message?.includes('refresh_token_not_found')) {
-        await supabase.auth.signOut();
-        setState({ user: null, isAuthenticated: false, isLoading: false });
-        clearAuthCache();
-        return;
-      }
+        // Handle refresh token errors
+        if (sessionError?.message?.includes('refresh_token_not_found')) {
+          await supabase.auth.signOut();
+          setState({ user: null, isAuthenticated: false, isLoading: false });
+          clearAuthCache();
+          return;
+        }
 
-      // No session - clear cache and state
-      if (!session?.user) {
-        setState({ isLoading: false, user: null, isAuthenticated: false });
-        clearAuthCache();
+        // No session - clear cache and state
+        if (!session?.user) {
+          setState({ isLoading: false, user: null, isAuthenticated: false });
+          clearAuthCache();
+        }
+        // If session exists, onAuthStateChange handles setting user state
+      } catch (raceError) {
+        // Handle Promise.race errors (including timeout)
+        console.error('Auth initialization race error:', raceError);
+        // If we have cached user, keep them authenticated
+        const cachedUser = loadAuthCache();
+        if (cachedUser) {
+          setState({
+            user: cachedUser,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } else {
+          setState({ isLoading: false, user: null, isAuthenticated: false });
+          clearAuthCache();
+        }
       }
-      // If session exists, onAuthStateChange handles setting user state
     } catch (error) {
       console.error('Error initializing auth:', error);
       setState({ isLoading: false, user: null, isAuthenticated: false });

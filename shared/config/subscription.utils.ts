@@ -7,6 +7,129 @@ import { getSubscriptionConfig } from './subscription.config';
 import type { IPlanConfig, ProcessingMode, ICreditsExpirationConfig, ICreditPack } from './subscription.types';
 
 // ============================================
+// Unified Pricing Resolver - Single Source of Truth
+// ============================================
+
+/**
+ * Unified price index that maps all Stripe price IDs to their metadata
+ * This combines plans and credit packs into a single lookup table
+ */
+interface PriceIndexEntry {
+  type: 'plan' | 'pack';
+  key: string;
+  name: string;
+  stripePriceId: string;
+  priceInCents: number;
+  currency: string;
+  credits: number; // creditsPerCycle for plans, credits for packs
+  maxRollover: number | null;
+}
+
+let _priceIndex: Record<string, PriceIndexEntry> | null = null;
+
+/**
+ * Build the unified price index from subscription.config.ts
+ * This should be the ONLY source of truth for all price lookups
+ */
+function buildPriceIndex(): Record<string, PriceIndexEntry> {
+  const config = getSubscriptionConfig();
+  const index: Record<string, PriceIndexEntry> = {};
+
+  // Add subscription plans to index
+  for (const plan of config.plans.filter(p => p.enabled)) {
+    index[plan.stripePriceId] = {
+      type: 'plan',
+      key: plan.key,
+      name: plan.name,
+      stripePriceId: plan.stripePriceId,
+      priceInCents: plan.priceInCents,
+      currency: plan.currency,
+      credits: plan.creditsPerCycle,
+      maxRollover: plan.maxRollover ?? plan.creditsPerCycle * plan.rolloverMultiplier,
+    };
+  }
+
+  // Add credit packs to index
+  for (const pack of config.creditPacks.filter(p => p.enabled)) {
+    index[pack.stripePriceId] = {
+      type: 'pack',
+      key: pack.key,
+      name: pack.name,
+      stripePriceId: pack.stripePriceId,
+      priceInCents: pack.priceInCents,
+      currency: pack.currency,
+      credits: pack.credits,
+      maxRollover: null, // Credit packs don't have rollover
+    };
+  }
+
+  return index;
+}
+
+/**
+ * Get the unified price index (cached)
+ */
+export function getPriceIndex(): Record<string, PriceIndexEntry> {
+  if (!_priceIndex) {
+    _priceIndex = buildPriceIndex();
+  }
+  return _priceIndex;
+}
+
+/**
+ * Resolve a price ID to its metadata (unified resolver)
+ * Returns null for unknown price IDs - this should be treated as an error
+ */
+export function resolvePriceId(priceId: string): PriceIndexEntry | null {
+  const index = getPriceIndex();
+  return index[priceId] ?? null;
+}
+
+/**
+ * Assert that a price ID is known and valid
+ * Throws an error if the price ID is not found in the index
+ */
+export function assertKnownPriceId(priceId: string): PriceIndexEntry {
+  const resolved = resolvePriceId(priceId);
+  if (!resolved) {
+    throw new Error(`Unknown price ID: ${priceId}. This price is not configured in the subscription config.`);
+  }
+  return resolved;
+}
+
+/**
+ * Resolve a price ID and return normalized data for webhook/session metadata
+ */
+export function resolvePlanOrPack(priceId: string): {
+  type: 'plan' | 'pack';
+  key: string;
+  name: string;
+  creditsPerCycle?: number; // for plans
+  credits?: number; // for packs
+  maxRollover?: number | null; // for plans
+} | null {
+  const resolved = resolvePriceId(priceId);
+  if (!resolved) return null;
+
+  if (resolved.type === 'plan') {
+    return {
+      type: 'plan',
+      key: resolved.key,
+      name: resolved.name,
+      creditsPerCycle: resolved.credits,
+      maxRollover: resolved.maxRollover,
+    };
+  } else {
+    return {
+      type: 'pack',
+      key: resolved.key,
+      name: resolved.name,
+      credits: resolved.credits,
+    };
+  }
+}
+
+// ============================================
 // Plan Lookup Functions
 // ============================================
 
@@ -288,9 +411,16 @@ export function buildStripePrices(): Record<string, string> {
   const config = getSubscriptionConfig();
   const prices: Record<string, string> = {};
 
+  // Add subscription plans
   for (const plan of config.plans) {
     const key = `${plan.key.toUpperCase()}_${plan.interval.toUpperCase()}LY`;
     prices[key] = plan.stripePriceId;
+  }
+
+  // Add credit packs with new naming convention
+  for (const pack of config.creditPacks) {
+    const key = `${pack.key.toUpperCase()}_CREDITS`;
+    prices[key] = pack.stripePriceId;
   }
 
   return prices;
@@ -340,6 +470,49 @@ export function buildSubscriptionPlans(): Record<
   }
 
   return plans;
+}
+
+/**
+ * Build CREDIT_PACKS object from config
+ * For backward compatibility with existing code
+ */
+export function buildCreditPacks(): Record<
+  string,
+  {
+    name: string;
+    description: string;
+    price: number;
+    credits: number;
+    features: readonly string[];
+    popular?: boolean;
+  }
+> {
+  const config = getSubscriptionConfig();
+  const packs: Record<
+    string,
+    {
+      name: string;
+      description: string;
+      price: number;
+      credits: number;
+      features: readonly string[];
+      popular?: boolean;
+    }
+  > = {};
+
+  for (const pack of config.creditPacks) {
+    const key = `${pack.key.toUpperCase()}_CREDITS`;
+    packs[key] = {
+      name: pack.name,
+      description: pack.description,
+      price: pack.priceInCents / 100,
+      credits: pack.credits,
+      features: [], // Credit packs don't have features array in config
+      popular: pack.popular || undefined,
+    };
+  }
+
+  return packs;
 }
 
 /**

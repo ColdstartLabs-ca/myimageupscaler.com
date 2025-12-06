@@ -60,13 +60,11 @@ describe('SubscriptionCreditsService', () => {
           newTierCredits: 1000, // Pro
         });
 
-        // maxReasonable = 200 * 1.5 = 300
-        // currentBalance (300) <= maxReasonable (300)
-        // Add tier difference: 1000 - 200 = 800
+        // With simplified logic: always add tier difference
         expect(result.creditsToAdd).toBe(800);
-        expect(result.reason).toBe('top_up_to_minimum'); // 300 < 1000
+        expect(result.reason).toBe('top_up_to_minimum');
         expect(result.isLegitimate).toBe(true);
-        expect(result.maxReasonableBalance).toBe(300);
+        expect(result.maxReasonableBalance).toBe(0); // Not used anymore
       });
 
       it('should handle Pro user with rollover upgrading to Business', () => {
@@ -76,57 +74,56 @@ describe('SubscriptionCreditsService', () => {
           newTierCredits: 5000, // Business
         });
 
-        // maxReasonable = 1000 * 1.5 = 1500
-        // currentBalance (1400) <= maxReasonable (1500)
-        // Add tier difference: 5000 - 1000 = 4000
+        // With simplified logic: always add tier difference
         expect(result.creditsToAdd).toBe(4000);
-        expect(result.reason).toBe('top_up_to_minimum'); // 1400 < 5000
-        expect(result.maxReasonableBalance).toBe(1500);
+        expect(result.reason).toBe('top_up_to_minimum');
+        expect(result.isLegitimate).toBe(true);
+        expect(result.maxReasonableBalance).toBe(0); // Not used anymore
       });
     });
 
     // ========================================================================
-    // Scenario 3: Farming Attempt (User Has Excessive Credits)
+    // Scenario 3: High Balance Users (No More Blocking)
     // ========================================================================
-    describe('when farming is detected', () => {
-      it('should block credit addition for obvious farming', () => {
+    describe('when user has high existing balance', () => {
+      it('should still add tier difference for high-balance users (PRD fix)', () => {
         const result = SubscriptionCreditsService.calculateUpgradeCredits({
-          currentBalance: 5000, // User downgraded from Business to Hobby
-          previousTierCredits: 200, // Hobby (max reasonable = 300)
-          newTierCredits: 5000, // Trying to upgrade back to Business
+          currentBalance: 5000, // User downgraded from Business to Hobby, now upgrading back
+          previousTierCredits: 200, // Hobby
+          newTierCredits: 5000, // Business
         });
 
-        // maxReasonable = 200 * 1.5 = 300
-        // currentBalance (5000) > maxReasonable (300)
-        // BLOCKED
-        expect(result.creditsToAdd).toBe(0);
-        expect(result.reason).toBe('farming_blocked');
-        expect(result.isLegitimate).toBe(false);
-        expect(result.maxReasonableBalance).toBe(300);
+        // With simplified logic: always add tier difference
+        expect(result.creditsToAdd).toBe(4800); // 5000 - 200
+        expect(result.reason).toBe('top_up_to_minimum');
+        expect(result.isLegitimate).toBe(true);
+        expect(result.maxReasonableBalance).toBe(0); // Not used anymore
       });
 
-      it('should block Hobby user with 1000 credits trying to upgrade', () => {
+      it('should add credits for Hobby user with 1000 credits upgrading to Pro', () => {
         const result = SubscriptionCreditsService.calculateUpgradeCredits({
-          currentBalance: 1000, // From Pro downgrade
+          currentBalance: 1000, // High balance from previous usage
           previousTierCredits: 200, // Hobby
           newTierCredits: 1000, // Pro
         });
 
-        // maxReasonable = 200 * 1.5 = 300
-        // currentBalance (1000) > maxReasonable (300)
-        expect(result.creditsToAdd).toBe(0);
-        expect(result.reason).toBe('farming_blocked');
+        // With simplified logic: always add tier difference
+        expect(result.creditsToAdd).toBe(800); // 1000 - 200
+        expect(result.reason).toBe('top_up_to_minimum');
+        expect(result.isLegitimate).toBe(true);
       });
 
-      it('should block at the boundary (just over reasonable limit)', () => {
+      it('should handle extreme rollover scenarios', () => {
         const result = SubscriptionCreditsService.calculateUpgradeCredits({
-          currentBalance: 301, // Just above 300 (200 * 1.5)
-          previousTierCredits: 200, // Hobby
-          newTierCredits: 1000, // Pro
+          currentBalance: 10000, // Very high balance from purchases and rollover
+          previousTierCredits: 1000, // Pro
+          newTierCredits: 5000, // Business
         });
 
-        expect(result.creditsToAdd).toBe(0);
-        expect(result.reason).toBe('farming_blocked');
+        // With simplified logic: still add tier difference
+        expect(result.creditsToAdd).toBe(4000); // 5000 - 1000
+        expect(result.reason).toBe('top_up_to_minimum');
+        expect(result.isLegitimate).toBe(true);
       });
     });
 
@@ -141,34 +138,23 @@ describe('SubscriptionCreditsService', () => {
           newTierCredits: 1000,
         });
 
-        // User has exactly the new tier amount, within reasonable limits
-        // maxReasonable = 200 * 1.5 = 300
-        // currentBalance (1000) > maxReasonable (300) → farming
-        expect(result.creditsToAdd).toBe(0);
-        expect(result.reason).toBe('farming_blocked');
+        // With simplified logic: always add tier difference regardless of balance
+        expect(result.creditsToAdd).toBe(800); // 1000 - 200
+        expect(result.reason).toBe('top_up_to_minimum');
+        expect(result.isLegitimate).toBe(true);
       });
 
-      it('should handle user at exact reasonable limit', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
-          currentBalance: 300, // Exactly 200 * 1.5
-          previousTierCredits: 200,
-          newTierCredits: 1000,
-        });
-
-        // At the boundary, should preserve excess
-        expect(result.creditsToAdd).toBe(800); // tier difference
-        expect(result.reason).toBe('top_up_to_minimum'); // Because 300 < 1000
-      });
-
-      it('should handle zero current balance', () => {
+      it('should handle user with zero balance upgrading', () => {
         const result = SubscriptionCreditsService.calculateUpgradeCredits({
           currentBalance: 0,
           previousTierCredits: 200,
           newTierCredits: 1000,
         });
 
-        expect(result.creditsToAdd).toBe(800); // Tier difference
+        // Always add tier difference
+        expect(result.creditsToAdd).toBe(800); // 1000 - 200
         expect(result.reason).toBe('top_up_to_minimum');
+        expect(result.isLegitimate).toBe(true);
       });
     });
 
@@ -278,14 +264,14 @@ describe('SubscriptionCreditsService', () => {
       });
 
       expect(explanation).toContain('1100 credits');
-      expect(explanation).toContain('below new tier');
+      expect(explanation).toContain('upgrade to');
       expect(explanation).toContain('5000'); // New tier amount
       expect(explanation).toContain('4000'); // Tier difference
     });
 
-    it('should explain farming block scenario', () => {
+    it('should explain high balance scenario (PRD fix)', () => {
       const result = SubscriptionCreditsService.calculateUpgradeCredits({
-        currentBalance: 5000,
+        currentBalance: 5000, // High balance user
         previousTierCredits: 200,
         newTierCredits: 5000,
       });
@@ -296,10 +282,11 @@ describe('SubscriptionCreditsService', () => {
         newTierCredits: 5000,
       });
 
-      expect(explanation).toContain('Farming detected');
+      // With simplified logic, high balance users are no longer blocked
       expect(explanation).toContain('5000 credits');
-      expect(explanation).toContain('300'); // maxReasonable
-      expect(explanation).toContain('Blocking');
+      expect(explanation).toContain('4800'); // tier difference
+      expect(explanation).toContain('9800'); // final balance
+      expect(explanation).toContain('upgrade to 5000 tier');
     });
 
     it('should explain downgrade scenario', () => {
