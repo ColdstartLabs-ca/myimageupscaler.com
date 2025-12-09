@@ -1,0 +1,502 @@
+[
+  {
+    "domain": "imageupscaler.com",
+    "available": false,
+    "reason": "DNS resolves to: 104.26.8.59, 104.26.9.59 (+1 more)"
+  },
+  {
+    "domain": "imageupscaler.io",
+    "available": false,
+    "reason": "DNS resolves to: 66.33.22.114"
+  },
+  {
+    "domain": "imageupscaler.app",
+    "available": false,
+    "reason": "DNS resolves to: 216.24.57.1"
+  },
+  {
+    "domain": "imageupscaler.ai",
+    "available": false,
+    "reason": "DNS resolves to: 15.197.148.33, 3.33.130.190"
+  },
+  {
+    "domain": "imageaiupscaler.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imageaiupscaler.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imageaiupscaler.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imageaiupscaler.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "myimageupscaler.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "myimageupscaler.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "myimageupscaler.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "myimageupscaler.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imgupscaler.com",
+    "available": false,
+    "reason": "DNS resolves to: 172.67.140.17, 104.21.89.100"
+  },
+  {
+    "domain": "imgupscaler.io",
+    "available": false,
+    "reason": "DNS resolves to: 104.21.10.144, 172.67.131.130"
+  },
+  {
+    "domain": "imgupscaler.app",
+    "available": false,
+    "reason": "DNS resolves to: 172.67.159.138, 104.21.33.71"
+  },
+  {
+    "domain": "imgupscaler.ai",
+    "available": false,
+    "reason": "DNS resolves to: 104.26.3.15, 104.26.2.15 (+1 more)"
+  },
+  {
+    "domain": "imageupscalerhq.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imageupscalerhq.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imageupscalerhq.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imageupscalerhq.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imagexupscaler.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imagexupscaler.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imagexupscaler.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imagexupscaler.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiphotoenhancer.com",
+    "available": false,
+    "reason": "DNS resolves to: 104.21.92.185, 172.67.197.28"
+  },
+  {
+    "domain": "aiphotoenhancer.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiphotoenhancer.app",
+    "available": false,
+    "reason": "DNS resolves to: 52.40.42.113, 44.232.173.249"
+  },
+  {
+    "domain": "aiphotoenhancer.ai",
+    "available": false,
+    "reason": "DNS resolves to: 104.21.42.102, 172.67.204.247"
+  },
+  {
+    "domain": "aipicenhancer.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aipicenhancer.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aipicenhancer.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aipicenhancer.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "photoenhancer.com",
+    "available": false,
+    "reason": "DNS resolves to: 5.161.17.38"
+  },
+  {
+    "domain": "photoenhancer.io",
+    "available": false,
+    "reason": "DNS resolves to: 192.64.119.60"
+  },
+  {
+    "domain": "photoenhancer.app",
+    "available": false,
+    "reason": "DNS resolves to: 76.76.21.21"
+  },
+  {
+    "domain": "photoenhancer.ai",
+    "available": false,
+    "reason": "DNS resolves to: 76.223.54.146, 13.248.169.48"
+  },
+  {
+    "domain": "aiimageenhancer.com",
+    "available": false,
+    "reason": "DNS resolves to: 162.255.119.43"
+  },
+  {
+    "domain": "aiimageenhancer.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiimageenhancer.app",
+    "available": false,
+    "reason": "DNS resolves to: 162.255.119.240"
+  },
+  {
+    "domain": "aiimageenhancer.ai",
+    "available": false,
+    "reason": "DNS resolves to: 52.40.42.113, 44.232.173.249"
+  },
+  {
+    "domain": "aiimgenhancer.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiimgenhancer.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiimgenhancer.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiimgenhancer.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "imageenhancer.com",
+    "available": false,
+    "reason": "DNS resolves to: 104.21.59.67, 172.67.217.152"
+  },
+  {
+    "domain": "imageenhancer.io",
+    "available": false,
+    "reason": "DNS resolves to: 3.33.130.190, 15.197.148.33"
+  },
+  {
+    "domain": "imageenhancer.app",
+    "available": false,
+    "reason": "DNS resolves to: 192.64.119.225"
+  },
+  {
+    "domain": "imageenhancer.ai",
+    "available": false,
+    "reason": "DNS resolves to: 3.33.130.190, 15.197.148.33"
+  },
+  {
+    "domain": "aiimageupscaler.com",
+    "available": false,
+    "reason": "DNS resolves to: 13.223.25.84, 54.243.117.197"
+  },
+  {
+    "domain": "aiimageupscaler.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiimageupscaler.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiimageupscaler.ai",
+    "available": false,
+    "reason": "DNS resolves to: 91.195.240.94"
+  },
+  {
+    "domain": "aiimgupscaler.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiimgupscaler.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiimgupscaler.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiimgupscaler.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscale.com",
+    "available": false,
+    "reason": "DNS resolves to: 162.0.217.72"
+  },
+  {
+    "domain": "aiupscale.io",
+    "available": false,
+    "reason": "DNS resolves to: 192.64.119.225"
+  },
+  {
+    "domain": "aiupscale.app",
+    "available": false,
+    "reason": "DNS resolves to: 104.21.54.171, 172.67.140.176"
+  },
+  {
+    "domain": "aiupscale.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiaiupscale.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiaiupscale.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiaiupscale.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiaiupscale.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "getaiupscale.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "getaiupscale.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "getaiupscale.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "getaiupscale.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiproupscale.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiproupscale.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiproupscale.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiproupscale.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "myaiupscale.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "myaiupscale.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "myaiupscale.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "myaiupscale.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "upscale.com",
+    "available": false,
+    "reason": "DNS resolves to: 52.20.84.62"
+  },
+  {
+    "domain": "upscale.io",
+    "available": false,
+    "reason": "DNS resolves to: 185.158.133.1"
+  },
+  {
+    "domain": "upscale.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "upscale.ai",
+    "available": false,
+    "reason": "DNS resolves to: 151.101.67.52, 151.101.3.52 (+2 more)"
+  },
+  {
+    "domain": "aiupscalehq.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalehq.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalehq.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalehq.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalelab.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalelab.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalelab.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalelab.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalestudio.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalestudio.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalestudio.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscalestudio.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscaleonline.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscaleonline.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscaleonline.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "aiupscaleonline.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "theaiupscale.com",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "theaiupscale.io",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "theaiupscale.app",
+    "available": true,
+    "reason": "No DNS records found"
+  },
+  {
+    "domain": "theaiupscale.ai",
+    "available": true,
+    "reason": "No DNS records found"
+  }
+]
