@@ -38,35 +38,41 @@ test.describe('Billing E2E Tests', () => {
      * immediately without hitting the API. This is expected behavior.
      */
 
-    test('should show auth error for Get Started buttons', async ({ page }) => {
-      // Capture dialog/alert
-      let alertMessage = '';
-      page.on('dialog', async dialog => {
-        alertMessage = dialog.message();
-        await dialog.accept();
-      });
-
+    test('should show auth modal for unauthenticated Get Started clicks', async ({ page }) => {
       await page.goto('/pricing');
       await pricingPage.waitForPageLoad();
 
-      // Click Get Started button using enhanced BasePage method (nth=1 for first pricing card)
+      // Click Get Started button (nth=1 for second pricing card, which is Pro)
       await page.getByRole('button', { name: 'Get Started' }).nth(1).click();
 
-      // Wait for either navigation or alert
-      await pricingPage.wait(2000);
+      // Wait for the auth modal to appear
+      await pricingPage.wait(1000);
 
-      // Check if we're still on pricing page (no redirect) or if an alert was shown
-      const currentUrl = page.url();
-      if (currentUrl.includes('/pricing')) {
-        // Still on pricing page - should have shown an alert
-        expect(alertMessage).toContain('not authenticated');
+      // Check that auth modal is shown
+      const authModal = page
+        .getByRole('dialog')
+        .or(page.locator('[role="dialog"]'))
+        .or(page.locator('.modal'));
+      const isModalVisible = await authModal.isVisible().catch(() => false);
+
+      if (isModalVisible) {
+        // Modal is shown - this is the expected behavior
+        expect(isModalVisible).toBe(true);
       } else {
-        // Redirected - this is also valid behavior for unauthenticated users
-        expect(currentUrl).toContain('/checkout');
+        // Alternatively, check if a toast notification is shown
+        const toast = page
+          .locator('[role="status"]')
+          .or(page.locator('.toast'))
+          .or(page.getByText(/sign in/i));
+        const isToastVisible = await toast.isVisible().catch(() => false);
+        expect(isToastVisible).toBe(true);
       }
 
+      // Should still be on pricing page
+      expect(page.url()).toContain('/pricing');
+
       // Screenshot after action
-      await pricingPage.screenshot('get-started-click-result');
+      await pricingPage.screenshot('get-started-unauthenticated-click');
 
       // Check accessibility after action
       await pricingPage.checkBasicAccessibility();

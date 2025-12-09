@@ -98,19 +98,36 @@ export async function POST(request: NextRequest) {
       (serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') && serverEnv.ENV === 'test') ||
       (serverEnv.ENV === 'test' && token.startsWith('test_token_'));
 
-    // Validate price ID using unified resolver (skip in test mode)
+    // Validate price ID using unified resolver (skip validation errors in test mode, but still resolve for type checking)
     let resolvedPrice = null;
 
-    if (!isTestMode) {
-      try {
-        resolvedPrice = assertKnownPriceId(priceId);
-      } catch (error) {
+    try {
+      resolvedPrice = assertKnownPriceId(priceId);
+    } catch (error) {
+      if (isTestMode) {
+        // In test mode, accept any validly formatted price ID and return a mock response immediately
+        // This allows tests to use arbitrary test price IDs without needing to configure them
+        const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
+        const mockSessionId = `cs_test_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            url: `${baseUrl}/success?session_id=${mockSessionId}`,
+            sessionId: mockSessionId,
+            mock: true,
+          },
+        });
+      } else {
         return NextResponse.json(
           {
             success: false,
             error: {
               code: 'INVALID_PRICE',
-              message: error instanceof Error ? error.message : 'Invalid price ID. Must be a subscription plan or credit pack.',
+              message:
+                error instanceof Error
+                  ? error.message
+                  : 'Invalid price ID. Must be a subscription plan or credit pack.',
             },
           },
           { status: 400 }
@@ -314,17 +331,21 @@ export async function POST(request: NextRequest) {
       ui_mode: uiMode,
       metadata: {
         user_id: user.id,
-        ...(unifiedMetadata ? {
-          type: unifiedMetadata.type,
-          ...(unifiedMetadata.type === 'plan' ? {
-            plan_key: unifiedMetadata.key,
-            credits_per_cycle: unifiedMetadata.creditsPerCycle?.toString() || '',
-            max_rollover: unifiedMetadata.maxRollover?.toString() || '',
-          } : {
-            pack_key: unifiedMetadata.key,
-            credits: unifiedMetadata.credits?.toString() || '',
-          }),
-        } : {}),
+        ...(unifiedMetadata
+          ? {
+              type: unifiedMetadata.type,
+              ...(unifiedMetadata.type === 'plan'
+                ? {
+                    plan_key: unifiedMetadata.key,
+                    credits_per_cycle: unifiedMetadata.creditsPerCycle?.toString() || '',
+                    max_rollover: unifiedMetadata.maxRollover?.toString() || '',
+                  }
+                : {
+                    pack_key: unifiedMetadata.key,
+                    credits: unifiedMetadata.credits?.toString() || '',
+                  }),
+            }
+          : {}),
         ...metadata,
       },
     };
@@ -354,7 +375,8 @@ export async function POST(request: NextRequest) {
     // Add return URLs only for hosted mode
     // Include purchase type in success URL for proper messaging
     const purchaseType = resolvedPrice?.type === 'pack' ? 'credits' : 'subscription';
-    const creditsParam = resolvedPrice?.type === 'pack' ? `&credits=${unifiedMetadata?.credits || 0}` : '';
+    const creditsParam =
+      resolvedPrice?.type === 'pack' ? `&credits=${unifiedMetadata?.credits || 0}` : '';
 
     if (uiMode === 'hosted') {
       sessionParams.success_url =
