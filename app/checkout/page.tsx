@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToastStore } from '@client/store/toastStore';
-import { useAuthStore } from '@client/store/authStore';
+import { useUserStore } from '@client/store/userStore';
 import { StripeService } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
@@ -15,7 +15,9 @@ const getStripePromise = () => {
   const publishableKey = clientEnv.STRIPE_PUBLISHABLE_KEY;
 
   if (!publishableKey) {
-    console.error('Stripe publishable key is not configured. Please set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY in your .env file.');
+    console.error(
+      'Stripe publishable key is not configured. Please set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY in your .env file.'
+    );
     return null;
   }
 
@@ -33,7 +35,7 @@ export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { showToast } = useToastStore();
-  const { isAuthenticated, isLoading: authLoading } = useAuthStore();
+  const { isAuthenticated, isLoading: authLoading } = useUserStore();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -242,11 +244,10 @@ export default function CheckoutPage() {
                       <h3 className="text-lg font-semibold text-amber-800 mb-2">
                         You Already Have an Active Subscription
                       </h3>
-                      <p className="text-amber-700 mb-4">
-                        {error}
-                      </p>
+                      <p className="text-amber-700 mb-4">{error}</p>
                       <p className="text-sm text-amber-600 mb-4">
-                        To change your plan, please use the billing portal to manage your subscription.
+                        To change your plan, please use the billing portal to manage your
+                        subscription.
                       </p>
                       <div className="flex gap-3">
                         <button

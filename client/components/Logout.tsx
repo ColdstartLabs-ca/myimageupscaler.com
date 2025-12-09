@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@client/store/authStore';
+import { useUserStore } from '@client/store/userStore';
 
 export const Logout: React.FC = () => {
-  const { signOut } = useAuthStore();
+  const { signOut } = useUserStore();
   const router = useRouter();
 
   useEffect(() => {

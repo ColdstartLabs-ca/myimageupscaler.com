@@ -1,5 +1,5 @@
 import { InputField } from '@client/components/form/InputField';
-import { useAuthStore } from '@client/store/authStore';
+import { useUserStore } from '@client/store/userStore';
 import { useToastStore } from '@client/store/toastStore';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -20,7 +20,7 @@ export const ForgotPasswordSetNewPasswordForm: React.FC<IProps> = ({ onClose }) 
     formState: { errors },
     watch,
   } = useForm<ISetNewPasswordForm>();
-  const { updatePassword } = useAuthStore();
+  const { updatePassword } = useUserStore();
   const { showToast } = useToastStore();
 
   const onSubmitHandler = async (data: ISetNewPasswordForm) => {

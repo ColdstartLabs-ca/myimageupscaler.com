@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useProfileStore } from '@client/store/profileStore';
+import { useCredits, useSubscription, useUserStore } from '@client/store/userStore';
 import { getPlanByPriceId } from '@shared/config/subscription.utils';
 import { formatDistanceToNow } from 'date-fns';
+import { SmartTooltip } from '@client/components/ui/SmartTooltip';
 
 // Low credit threshold - show warning when credits fall below this amount
 const LOW_CREDIT_THRESHOLD = 5;
@@ -17,21 +17,14 @@ const LOW_CREDIT_THRESHOLD = 5;
  * ```
  */
 export function CreditsDisplay(): JSX.Element {
-  const { profile, subscription, isLoading: loading, error, fetchProfile, invalidate } = useProfileStore();
-
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+  const { total: creditBalance } = useCredits();
+  const subscription = useSubscription();
+  const { isLoading: loading, error, invalidate } = useUserStore();
 
   const handleRefresh = () => {
     invalidate();
-    fetchProfile();
   };
 
-  // Calculate total balance from both pools (subscription + purchased)
-  const subscriptionCredits = profile?.subscription_credits_balance || 0;
-  const purchasedCredits = profile?.purchased_credits_balance || 0;
-  const creditBalance = subscriptionCredits + purchasedCredits;
   const isLowCredits = creditBalance > 0 && creditBalance <= LOW_CREDIT_THRESHOLD;
   const isNoCredits = creditBalance === 0;
 
@@ -51,6 +44,9 @@ export function CreditsDisplay(): JSX.Element {
       expirationText = '';
     }
   }
+
+  // Should show tooltip?
+  const showTooltip = isLowCredits || isNoCredits || showExpiration;
 
   if (loading) {
     return (
@@ -106,8 +102,31 @@ export function CreditsDisplay(): JSX.Element {
       ? 'text-amber-700'
       : 'text-slate-600';
 
-  return (
-    <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full group relative">
+  // Tooltip content
+  const tooltipContent = (
+    <div className="space-y-2">
+      {(isLowCredits || isNoCredits) && (
+        <>
+          <div>
+            {isNoCredits ? 'No credits remaining' : `Low credits: ${creditBalance} remaining`}
+          </div>
+          <a
+            href="/dashboard/billing"
+            className="block text-indigo-400 hover:text-indigo-300 underline text-center"
+            onClick={e => e.stopPropagation()}
+          >
+            Buy more credits →
+          </a>
+        </>
+      )}
+      {showExpiration && expirationText && (
+        <div className="text-amber-300">Credits expire {expirationText}</div>
+      )}
+    </div>
+  );
+
+  const creditsElement = (
+    <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full relative">
       {/* Warning indicator for low/no credits */}
       {(isLowCredits || isNoCredits) && (
         <div className="absolute -top-1 -right-1 z-10">
@@ -119,7 +138,10 @@ export function CreditsDisplay(): JSX.Element {
         </div>
       )}
 
-      <div className={`flex items-center gap-2 ${bgColor} px-3 py-1.5 rounded-full`}>
+      <a
+        href="/dashboard/billing"
+        className={`flex items-center gap-2 ${bgColor} px-3 py-1.5 rounded-full hover:opacity-80 transition-opacity cursor-pointer`}
+      >
         {/* Credits icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -139,55 +161,35 @@ export function CreditsDisplay(): JSX.Element {
         {/* Credits amount */}
         <span className={`text-sm font-semibold ${textColor}`}>{creditBalance}</span>
         <span className={`text-xs font-medium ${subtitleColor}`}>credits</span>
+      </a>
 
-        {/* Refresh button */}
-        <button
-          onClick={handleRefresh}
-          className="ml-1 text-slate-500 hover:text-indigo-600 transition-colors"
-          title="Refresh credits"
+      {/* Refresh button */}
+      <button
+        onClick={handleRefresh}
+        className="text-slate-500 hover:text-indigo-600 transition-colors"
+        title="Refresh credits"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-3.5 w-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-3.5 w-3.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-        </button>
-      </div>
-
-      {/* Tooltip for low credit warning and expiration info */}
-      {((isLowCredits || isNoCredits) || showExpiration) && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto whitespace-nowrap z-20">
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900"></div>
-          <div className="space-y-2">
-            {(isLowCredits || isNoCredits) && (
-              <>
-                <div>{isNoCredits ? 'No credits remaining' : `Low credits: ${creditBalance} remaining`}</div>
-                <a
-                  href="/dashboard/billing"
-                  className="block text-indigo-400 hover:text-indigo-300 underline text-center"
-                  onClick={e => e.stopPropagation()}
-                >
-                  Buy more credits →
-                </a>
-              </>
-            )}
-            {showExpiration && expirationText && (
-              <div className="text-amber-300">
-                Credits expire {expirationText}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+          />
+        </svg>
+      </button>
     </div>
+  );
+
+  return (
+    <SmartTooltip content={tooltipContent} enabled={showTooltip}>
+      {creditsElement}
+    </SmartTooltip>
   );
 }

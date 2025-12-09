@@ -45,18 +45,19 @@ graph TD
 
 **Requests made on authenticated landing page load:**
 
-| Request | Source | Purpose | Duplicated? |
-|---------|--------|---------|-------------|
-| `auth/v1/token` | Supabase SDK | Session refresh | No |
-| `profiles?select=role` | authStateHandler | Get user role | 2x (Strict Mode) |
-| `auth/v1/user` | StripeService.getUserProfile | Get current user | 2x |
-| `auth/v1/user` | StripeService.getActiveSubscription | Get current user | 2x (duplicate!) |
-| `profiles?select=*` | StripeService.getUserProfile | Full profile | 1x |
-| `subscriptions?select=*` | StripeService.getActiveSubscription | Active subscription | 1x |
+| Request                  | Source                              | Purpose             | Duplicated?      |
+| ------------------------ | ----------------------------------- | ------------------- | ---------------- |
+| `auth/v1/token`          | Supabase SDK                        | Session refresh     | No               |
+| `profiles?select=role`   | authStateHandler                    | Get user role       | 2x (Strict Mode) |
+| `auth/v1/user`           | StripeService.getUserProfile        | Get current user    | 2x               |
+| `auth/v1/user`           | StripeService.getActiveSubscription | Get current user    | 2x (duplicate!)  |
+| `profiles?select=*`      | StripeService.getUserProfile        | Full profile        | 1x               |
+| `subscriptions?select=*` | StripeService.getActiveSubscription | Active subscription | 1x               |
 
 **Total: 8-10 requests for data that could be fetched in 1-2 requests.**
 
 Additional issues:
+
 - `useLowCreditWarning` makes independent requests every 5 minutes
 - Each `StripeService` method independently calls `supabase.auth.getUser()`
 - Auth store and profile store fetch overlapping data (profile.role vs full profile)
@@ -80,11 +81,11 @@ The client makes 8-10 redundant Supabase requests on page load because user data
 
 **Alternatives Considered:**
 
-| Approach | Pros | Cons | Decision |
-|----------|------|------|----------|
-| React Query | Built-in caching, stale-while-revalidate | Additional dependency, more boilerplate | Rejected: Zustand already in use |
-| Keep separate stores + SWR | Minimal changes | Still fragmented, complex cache sync | Rejected: Doesn't solve core issue |
-| Unified Zustand store | Single source of truth, simple | Migration effort | **Selected** |
+| Approach                   | Pros                                     | Cons                                    | Decision                           |
+| -------------------------- | ---------------------------------------- | --------------------------------------- | ---------------------------------- |
+| React Query                | Built-in caching, stale-while-revalidate | Additional dependency, more boilerplate | Rejected: Zustand already in use   |
+| Keep separate stores + SWR | Minimal changes                          | Still fragmented, complex cache sync    | Rejected: Doesn't solve core issue |
+| Unified Zustand store      | Single source of truth, simple           | Migration effort                        | **Selected**                       |
 
 ### 2.2 Architecture Diagram
 
@@ -106,10 +107,10 @@ graph TD
 
 ### 2.3 Key Technical Decisions
 
-1. **Single RPC Function**: Create `get_user_data()` PostgreSQL function that returns profile + subscription in one query
+1. **Single RPC Function**: Create `get_user_data()` PostgreSQL function that returns profile + subscription in one query (with auth.uid() security check)
 2. **Supabase Auth Listener**: Use `onAuthStateChange` as single source of truth for auth events
 3. **No Redundant getUser Calls**: Auth state from listener provides user ID; no need to re-fetch
-4. **30-Second Cache**: Fresh data for most interactions; manual invalidation for mutations
+4. **5-Minute Cache**: Fresh data for most interactions; manual invalidation for mutations
 5. **Optimistic Loading**: Default to `isLoading: false` for unauthenticated users (LCP fix)
 
 ### 2.4 Data Model Changes
@@ -122,6 +123,11 @@ RETURNS JSON AS $$
 DECLARE
   result JSON;
 BEGIN
+  -- Security check: Only allow users to fetch their own data
+  IF target_user_id != auth.uid() THEN
+    RAISE EXCEPTION 'Access denied: You can only fetch your own user data';
+  END IF;
+
   SELECT json_build_object(
     'profile', (
       SELECT row_to_json(p)
@@ -190,11 +196,17 @@ sequenceDiagram
 
 ```sql
 -- Create RPC function to fetch all user data in one call
+-- SECURITY: Uses auth.uid() check to prevent cross-tenant data leakage
 CREATE OR REPLACE FUNCTION get_user_data(target_user_id UUID)
 RETURNS JSON AS $$
 DECLARE
   result JSON;
 BEGIN
+  -- Security check: Only allow users to fetch their own data
+  IF target_user_id != auth.uid() THEN
+    RAISE EXCEPTION 'Access denied: You can only fetch your own user data';
+  END IF;
+
   SELECT json_build_object(
     'profile', (
       SELECT row_to_json(p.*)
@@ -219,7 +231,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 GRANT EXECUTE ON FUNCTION get_user_data(UUID) TO authenticated;
 ```
 
-**Justification:** Single database round-trip instead of 3 separate queries.
+**Justification:** Single database round-trip instead of 3 separate queries. Security enforced via `auth.uid()` check.
 
 ---
 
@@ -276,7 +288,10 @@ interface IUserState {
 
   // Auth operations (delegated to Supabase)
   signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string) => Promise<{ emailConfirmationRequired: boolean }>;
+  signUpWithEmail: (
+    email: string,
+    password: string
+  ) => Promise<{ emailConfirmationRequired: boolean }>;
   signOut: () => Promise<void>;
 }
 
@@ -296,8 +311,10 @@ export const useUserStore = create<IUserState>((set, get) => ({
   // Computed (updated when user changes)
   get credits() {
     const user = get().user;
-    return (user?.profile?.subscription_credits_balance ?? 0) +
-           (user?.profile?.purchased_credits_balance ?? 0);
+    return (
+      (user?.profile?.subscription_credits_balance ?? 0) +
+      (user?.profile?.purchased_credits_balance ?? 0)
+    );
   },
   get subscriptionCredits() {
     return get().user?.profile?.subscription_credits_balance ?? 0;
@@ -475,12 +492,14 @@ supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session 
 useUserStore.getState().initialize();
 
 // Convenience hooks
-export const useCredits = () => useUserStore(state => ({
-  total: (state.user?.profile?.subscription_credits_balance ?? 0) +
-         (state.user?.profile?.purchased_credits_balance ?? 0),
-  subscription: state.user?.profile?.subscription_credits_balance ?? 0,
-  purchased: state.user?.profile?.purchased_credits_balance ?? 0,
-}));
+export const useCredits = () =>
+  useUserStore(state => ({
+    total:
+      (state.user?.profile?.subscription_credits_balance ?? 0) +
+      (state.user?.profile?.purchased_credits_balance ?? 0),
+    subscription: state.user?.profile?.subscription_credits_balance ?? 0,
+    purchased: state.user?.profile?.purchased_credits_balance ?? 0,
+  }));
 
 export const useIsAdmin = () => useUserStore(state => state.user?.role === 'admin');
 
@@ -586,11 +605,11 @@ export const useLowCreditWarning = (): void => {
 
 ### Unit Tests
 
-| Function | Test Cases |
-|----------|------------|
-| `loadUserCache` | Valid cache, expired cache, corrupted cache, no cache |
-| `fetchUserData` | Success, RPC error, concurrent calls dedupe |
-| `onAuthStateChange` | SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED |
+| Function            | Test Cases                                            |
+| ------------------- | ----------------------------------------------------- |
+| `loadUserCache`     | Valid cache, expired cache, corrupted cache, no cache |
+| `fetchUserData`     | Success, RPC error, concurrent calls dedupe           |
+| `onAuthStateChange` | SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED                |
 
 ### Integration Tests
 
@@ -600,12 +619,12 @@ export const useLowCreditWarning = (): void => {
 
 ### Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| Cache expired, offline | Show cached data, show error toast |
-| RPC timeout | Retry once, then show error |
-| Concurrent tab auth | Both tabs update via auth listener |
-| Logout in one tab | Other tabs detect via storage event |
+| Scenario               | Expected Behavior                                                 |
+| ---------------------- | ----------------------------------------------------------------- |
+| Cache expired, offline | Show cached data, show error toast                                |
+| RPC error/timeout      | Log error, set error state (no retry - user can manually refresh) |
+| Concurrent tab auth    | Both tabs update via auth listener                                |
+| Logout in one tab      | Other tabs detect via storage event                               |
 
 ---
 

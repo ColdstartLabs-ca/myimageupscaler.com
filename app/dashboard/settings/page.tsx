@@ -1,11 +1,11 @@
 'use client';
 
 import { Bell, Lock, User } from 'lucide-react';
-import { useAuthStore } from '@client/store/authStore';
+import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 
 export default function SettingsPage() {
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
   const { openAuthModal } = useModalStore();
 
   // Check if user is authenticated through email/password (not OAuth)

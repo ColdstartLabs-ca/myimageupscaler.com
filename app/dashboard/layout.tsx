@@ -4,13 +4,13 @@ export const dynamic = 'force-dynamic';
 
 import React from 'react';
 import { DashboardLayout } from '@client/components/dashboard';
-import { useAuthStore } from '@client/store/authStore';
+import { useUserStore } from '@client/store/userStore';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useLowCreditWarning } from '@client/hooks/useLowCreditWarning';
 
 export default function DashboardRootLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading } = useUserStore();
   const router = useRouter();
 
   // Initialize low credit warning for authenticated users

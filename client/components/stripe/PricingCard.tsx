@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@client/store/authStore';
+import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 
@@ -66,7 +66,7 @@ export function PricingCard({
   currentSubscriptionPrice,
 }: IPricingCardProps): JSX.Element {
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useUserStore();
   const { openAuthModal } = useModalStore();
   const { showToast } = useToastStore();
 

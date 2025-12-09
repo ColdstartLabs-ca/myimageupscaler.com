@@ -9,7 +9,7 @@ import { useToastStore } from '@client/store/toastStore';
 import { useCheckoutStore } from '@client/store/checkoutStore';
 import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
 import { HOMEPAGE_TIERS, isStripePricesConfigured } from '@shared/config/stripe';
-import { useAuthStore } from '@client/store/authStore';
+import { useUserStore } from '@client/store/userStore';
 
 // Generate Product structured data for SEO
 const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number]) => ({
@@ -35,8 +35,14 @@ const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number]) => ({
 export const Pricing: React.FC = () => {
   const { openAuthModal } = useModalStore();
   const { showToast } = useToastStore();
-  const { user } = useAuthStore();
-  const { isCheckoutModalOpen, activePriceId, setPendingCheckout, openCheckoutModal, closeCheckoutModal } = useCheckoutStore();
+  const { user } = useUserStore();
+  const {
+    isCheckoutModalOpen,
+    activePriceId,
+    setPendingCheckout,
+    openCheckoutModal,
+    closeCheckoutModal,
+  } = useCheckoutStore();
 
   const handlePricingClick = (tier: (typeof HOMEPAGE_TIERS)[number]) => {
     // Free tier - just open registration

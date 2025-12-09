@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, CreditCard, Settings, HelpCircle, LogOut, Shield } from 'lucide-react';
-import { useAuthStore, useIsAdmin } from '@client/store/authStore';
+import { useUserStore, useIsAdmin } from '@client/store/userStore';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
 
 interface ISidebarItem {
@@ -16,7 +16,7 @@ interface ISidebarItem {
 export const DashboardSidebar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { signOut, user } = useAuthStore();
+  const { signOut, user } = useUserStore();
   const isAdmin = useIsAdmin();
 
   // Build menu items dynamically based on user role

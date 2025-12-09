@@ -1,8 +1,13 @@
+/**
+ * DEPRECATED: Re-export from unified user store.
+ * This maintains backward compatibility with existing imports.
+ * New code should import directly from '@client/store/userStore'.
+ */
 import { create } from 'zustand';
+import { useUserStore } from './userStore';
 import type { IUserProfile, ISubscription } from '@shared/types/stripe';
-import { StripeService } from '@client/services/stripeService';
 
-interface IProfileState {
+export interface IProfileState {
   profile: IUserProfile | null;
   subscription: ISubscription | null;
   isLoading: boolean;
@@ -15,71 +20,37 @@ interface IProfileState {
   reset: () => void;
 }
 
-// Cache duration: 30 seconds (avoids excessive refetches but stays reasonably fresh)
-const CACHE_DURATION = 30 * 1000;
-
-// Track in-flight requests to prevent duplicate calls
-let fetchPromise: Promise<void> | null = null;
-
-export const useProfileStore = create<IProfileState>((set, get) => ({
-  profile: null,
-  subscription: null,
-  isLoading: false,
-  error: null,
-  lastFetched: null,
-
+/**
+ * DEPRECATED: Compatibility wrapper around userStore
+ * Maintains the same API as the old profileStore for backward compatibility
+ */
+export const useProfileStore = create<IProfileState>(() => ({
+  get profile() {
+    return useUserStore.getState().user?.profile ?? null;
+  },
+  get subscription() {
+    return useUserStore.getState().user?.subscription ?? null;
+  },
+  get isLoading() {
+    return useUserStore.getState().isLoading;
+  },
+  get error() {
+    return useUserStore.getState().error;
+  },
+  get lastFetched() {
+    return useUserStore.getState().lastFetched;
+  },
   fetchProfile: async () => {
-    const state = get();
-
-    // If we have fresh data, skip fetch
-    if (state.lastFetched && Date.now() - state.lastFetched < CACHE_DURATION && state.profile) {
-      return;
+    const userId = useUserStore.getState().user?.id;
+    if (userId) {
+      await useUserStore.getState().fetchUserData(userId);
     }
-
-    // If already fetching, wait for that request
-    if (fetchPromise) {
-      await fetchPromise;
-      return;
-    }
-
-    set({ isLoading: true, error: null });
-
-    fetchPromise = (async () => {
-      try {
-        const [profileData, subscriptionData] = await Promise.all([
-          StripeService.getUserProfile(),
-          StripeService.getActiveSubscription(),
-        ]);
-
-        set({
-          profile: profileData,
-          subscription: subscriptionData,
-          isLoading: false,
-          error: null,
-          lastFetched: Date.now(),
-        });
-      } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load profile';
-        set({ error: errorMessage, isLoading: false });
-      } finally {
-        fetchPromise = null;
-      }
-    })();
-
-    await fetchPromise;
   },
-
   invalidate: () => {
-    set({ lastFetched: null });
+    useUserStore.getState().invalidate();
   },
-
   reset: () => {
-    set({
-      profile: null,
-      subscription: null,
-      isLoading: false,
-      error: null,
-      lastFetched: null,
-    });
+    // Profile reset is handled by userStore.reset()
+    // Don't call it here to avoid double-reset
   },
 }));

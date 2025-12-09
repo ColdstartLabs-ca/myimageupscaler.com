@@ -3,7 +3,7 @@
 import { SocialLoginButton } from '@client/components/form/SocialLoginButton';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createClient } from '@shared/utils/supabase/client';
-import { useAuthStore } from '@client/store/authStore';
+import { useUserStore } from '@client/store/userStore';
 import { useModalStore, AuthModalView } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { loginSchema, registerSchema } from '@shared/validation/authValidationSchema';
@@ -43,7 +43,7 @@ const handleAuthAction = async (
 
 export const AuthenticationModal: React.FC = () => {
   const { close, isModalOpen, authModalView, setAuthModalView, openAuthModal } = useModalStore();
-  const { signInWithEmail, signUpWithEmail, changePassword, resetPassword } = useAuthStore();
+  const { signInWithEmail, signUpWithEmail, changePassword, resetPassword } = useUserStore();
   const { showToast } = useToastStore();
 
   const {
@@ -97,7 +97,7 @@ export const AuthenticationModal: React.FC = () => {
       if (result.emailConfirmationRequired) {
         showToast({
           message: 'Please check your email to verify your account',
-          type: 'success'
+          type: 'success',
         });
         close();
         window.location.href = '/verify-email';

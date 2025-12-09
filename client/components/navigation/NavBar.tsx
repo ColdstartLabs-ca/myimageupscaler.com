@@ -1,5 +1,5 @@
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
-import { useAuthStore } from '@client/store/authStore';
+import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { loadEnv } from '@shared/config/env';
 import { AuthProvider } from '@shared/types/authProviders';
@@ -9,7 +9,7 @@ import { useClickOutside } from '@client/hooks/useClickOutside';
 
 export const NavBar = (): JSX.Element => {
   const { openAuthModal } = useModalStore();
-  const { isAuthenticated, isLoading, user, signOut } = useAuthStore();
+  const { isAuthenticated, isLoading, user, signOut } = useUserStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
