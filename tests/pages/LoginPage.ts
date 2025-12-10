@@ -26,6 +26,15 @@ export class LoginPage extends BasePage {
     return this.modal.getByRole('button', { name: 'Sign In' }).first();
   }
 
+  // OAuth elements
+  get googleSignInButton() {
+    return this.modal.getByRole('button', { name: /google/i });
+  }
+
+  get oauthDivider() {
+    return this.modal.getByText(/or continue with/i);
+  }
+
   /**
    * Opens the login modal by clicking the sign in button in header
    *

@@ -37,21 +37,22 @@ This guide will walk you through configuring Google OAuth for your Supabase proj
    ### Authorized JavaScript Origins
 
    - Add:
-     - `http://localhost:5173` (for local development)
+     - `http://localhost:3000` (for local development)
      - `https://cowcemqubuqdtpfklqkr.supabase.co` (for production)
 
    ### Authorized Redirect URIs
 
    - Add:
-     - `http://localhost:5173/auth/v1/callback` (for local development)
      - `https://cowcemqubuqdtpfklqkr.supabase.co/auth/v1/callback` (for production)
+
+   **Note:** Supabase handles OAuth callbacks at their domain (`https://YOUR_PROJECT.supabase.co/auth/v1/callback`), not at localhost. You only need to add your Supabase project URL as a redirect URI.
 
 5. Click **Create**. You’ll receive a **Client ID** and **Client Secret**.
 
-Add the **Client ID** to your `.env` file:
+Add the **Client ID** to your `.env.client` file:
 
 ```
-VITE_GOOGLE_CLIENT_ID=your-google-client-id
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
 ```
 
 ---
@@ -70,8 +71,9 @@ VITE_GOOGLE_CLIENT_ID=your-google-client-id
 
 To test Google OAuth in both environments:
 
-- Run your application locally to ensure the redirect URI points to `http://localhost:5173/auth/v1/callback`.
-- For production, deploy your application and test with the URI `https://cowcemqubuqdtpfklqkr.supabase.co/auth/v1/callback`.
+- Run your application locally with `yarn dev` (runs on `http://localhost:3000`)
+- Click "Continue with Google" - Supabase will redirect to Google, then back to your app
+- For production, deploy your application and test with your production Supabase URL
 
 ---
 

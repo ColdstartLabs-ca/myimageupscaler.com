@@ -40,7 +40,7 @@ Redirect to your application
 
 1. **Google Account** with access to [Google Cloud Console](https://console.cloud.google.com/)
 2. **Supabase Project** - See [Supabase Setup Guide](./supabase-setup.md)
-3. **Your Supabase callback URL** (format: `https://xxxxx.supabase.co/auth/v1/callback`)
+3. **Your Supabase callback URL**: `https://xqysaylskffsfwunczbd.supabase.co/auth/v1/callback`
 
 ## Google Cloud Console Setup
 
@@ -62,14 +62,14 @@ Redirect to your application
 
 #### Fill in App Information:
 
-| Field              | Value                                                      |
-| ------------------ | ---------------------------------------------------------- |
-| App name           | Your app name (e.g., `PixelPerfect`)                       |
-| User support email | Your email                                                 |
-| App logo           | (Optional) Upload your logo                                |
-| App domain         | Your production domain                                     |
-| Authorized domains | Add your domains (e.g., `pixelperfect.app`, `supabase.co`) |
-| Developer contact  | Your email                                                 |
+| Field              | Value                                       |
+| ------------------ | ------------------------------------------- |
+| App name           | Your app name (e.g., `PixelPerfect`)        |
+| User support email | Your email                                  |
+| App logo           | (Optional) Upload your logo                 |
+| App domain         | Your production domain                      |
+| Authorized domains | `supabase.co` (required for Supabase OAuth) |
+| Developer contact  | Your email                                  |
 
 4. Click **Save and Continue**
 
@@ -100,25 +100,30 @@ If your app is in "Testing" mode, add test user emails:
 
 #### Configure Authorized JavaScript Origins:
 
-Add all domains your app runs from:
+Add all domains your app runs from (this allows the OAuth popup to initiate):
 
 ```
 http://localhost:3000
-http://localhost:8788
 https://yourdomain.com
 https://www.yourdomain.com
 https://your-project.pages.dev
 ```
 
+> **Note:** These are your app's domains, not Supabase's domain.
+
 #### Configure Authorized Redirect URIs:
 
-Add your Supabase callback URL:
+Add **only** your Supabase callback URL:
 
 ```
-https://xxxxx.supabase.co/auth/v1/callback
+https://xqysaylskffsfwunczbd.supabase.co/auth/v1/callback
 ```
 
-> **Important:** Replace `xxxxx` with your actual Supabase project reference ID.
+> **Important:**
+>
+> - Do NOT add localhost or your app's domains here
+> - Google redirects to Supabase's callback URL (not your app)
+> - Supabase then redirects back to your app automatically
 
 5. Click **Create**
 6. Copy the **Client ID** and **Client Secret**
