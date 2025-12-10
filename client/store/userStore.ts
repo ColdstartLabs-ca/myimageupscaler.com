@@ -67,13 +67,6 @@ function enablePostAuthRedirect(): void {
   shouldRedirectToDashboard = true;
 }
 
-/** Check if this is an OAuth callback (code param in URL) */
-function isOAuthCallback(): boolean {
-  if (typeof window === 'undefined') return false;
-  const params = new URLSearchParams(window.location.search);
-  return params.has('code');
-}
-
 export const useUserStore = create<IUserState>((set, get) => ({
   // Initial state
   user: null,
@@ -292,8 +285,9 @@ if (typeof window !== 'undefined') {
         });
       }, 0);
 
-      // Redirect to dashboard for active login/signup or OAuth callback
-      if (shouldRedirectToDashboard || isOAuthCallback()) {
+      // Redirect to dashboard for active login/signup (email/password only)
+      // OAuth redirects directly to /dashboard via redirectTo option
+      if (shouldRedirectToDashboard) {
         shouldRedirectToDashboard = false;
         handlePostAuthRedirect();
       }

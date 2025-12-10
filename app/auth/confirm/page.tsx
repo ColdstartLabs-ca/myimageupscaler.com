@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@shared/utils/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { handleAuthRedirect, setAuthIntent } from '@client/utils/authRedirectManager';
 
 export default function AuthConfirmPage() {
   const [status, setStatus] = useState<'loading' | 'success' | 'verified_please_login'>('loading');
@@ -13,26 +14,38 @@ export default function AuthConfirmPage() {
   useEffect(() => {
     const supabase = createClient();
 
+    // Check if we have a next parameter from the original signup flow
+    const nextUrl = searchParams.get('next');
+
+    // Store any intended redirect from the original signup
+    if (nextUrl) {
+      setAuthIntent({
+        action: 'email_confirm',
+        returnTo: nextUrl,
+      });
+    }
+
     // Check if we have a code parameter - this means Supabase already verified the email
     // and is redirecting back for session creation
     const hasCode = searchParams.get('code');
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state change:', event, session?.user?.email);
 
       if (event === 'SIGNED_IN' && session) {
         setStatus('success');
-        setMessage('Email confirmed successfully! Redirecting to your dashboard...');
-        setTimeout(() => {
-          router.push('/dashboard');
+        setMessage('Email confirmed successfully! Redirecting...');
+        // Use the unified redirect handler
+        setTimeout(async () => {
+          await handleAuthRedirect();
         }, 1500);
       } else if (event === 'TOKEN_REFRESHED' && session) {
         setStatus('success');
-        setMessage('Email confirmed successfully! Redirecting to your dashboard...');
-        setTimeout(() => {
-          router.push('/dashboard');
+        setMessage('Email confirmed successfully! Redirecting...');
+        setTimeout(async () => {
+          await handleAuthRedirect();
         }, 1500);
       }
     });
@@ -41,6 +54,7 @@ export default function AuthConfirmPage() {
       console.log('[Auth Confirm] Starting session check...');
       console.log('[Auth Confirm] URL params:', {
         code: hasCode ? 'present' : 'missing',
+        next: nextUrl,
         fullUrl: window.location.href,
       });
 
@@ -55,9 +69,9 @@ export default function AuthConfirmPage() {
       if (session) {
         console.log('[Auth Confirm] Already authenticated, redirecting...');
         setStatus('success');
-        setMessage('Email confirmed successfully! Redirecting to your dashboard...');
-        setTimeout(() => {
-          router.push('/dashboard');
+        setMessage('Email confirmed successfully! Redirecting...');
+        setTimeout(async () => {
+          await handleAuthRedirect();
         }, 1500);
         return;
       }
@@ -76,9 +90,9 @@ export default function AuthConfirmPage() {
           if (data.session) {
             console.log('[Auth Confirm] Code exchange succeeded!');
             setStatus('success');
-            setMessage('Email confirmed successfully! Redirecting to your dashboard...');
-            setTimeout(() => {
-              router.push('/dashboard');
+            setMessage('Email confirmed successfully! Redirecting...');
+            setTimeout(async () => {
+              await handleAuthRedirect();
             }, 1500);
             return;
           }
@@ -119,8 +133,11 @@ export default function AuthConfirmPage() {
   }, [router, status, searchParams]);
 
   const handleLoginClick = () => {
-    // Dispatch a custom event to open the auth modal, or redirect to home
-    // For now, just go to home where login is available
+    // Store the intent to return here after login
+    setAuthIntent({
+      action: 'email_confirm_return',
+      returnTo: window.location.pathname + window.location.search,
+    });
     router.push('/?login=true');
   };
 

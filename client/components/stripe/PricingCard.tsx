@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
+import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 
 interface IPricingCardProps {
   name: string;
@@ -82,7 +83,10 @@ export function PricingCard({
 
     // If not authenticated, show auth modal and store redirect URL
     if (!isAuthenticated) {
-      localStorage.setItem('post_auth_redirect', checkoutUrl);
+      prepareAuthRedirect('checkout', {
+        returnTo: checkoutUrl,
+        context: { priceId, planName: name },
+      });
       openAuthModal('login');
       showToast({
         message: 'Please sign in to complete your purchase',

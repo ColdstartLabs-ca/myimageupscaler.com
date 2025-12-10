@@ -10,6 +10,7 @@ import { useCheckoutStore } from '@client/store/checkoutStore';
 import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
 import { HOMEPAGE_TIERS, isStripePricesConfigured } from '@shared/config/stripe';
 import { useUserStore } from '@client/store/userStore';
+import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 
 // Generate Product structured data for SEO
 const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number]) => ({
@@ -36,17 +37,13 @@ export const Pricing: React.FC = () => {
   const { openAuthModal } = useModalStore();
   const { showToast } = useToastStore();
   const { user } = useUserStore();
-  const {
-    isCheckoutModalOpen,
-    activePriceId,
-    setPendingCheckout,
-    openCheckoutModal,
-    closeCheckoutModal,
-  } = useCheckoutStore();
+  const { isCheckoutModalOpen, activePriceId, openCheckoutModal, closeCheckoutModal } =
+    useCheckoutStore();
 
   const handlePricingClick = (tier: (typeof HOMEPAGE_TIERS)[number]) => {
     // Free tier - just open registration
     if (tier.priceId === null) {
+      prepareAuthRedirect('register');
       openAuthModal('register');
       return;
     }
@@ -62,9 +59,16 @@ export const Pricing: React.FC = () => {
 
     // Check if user is authenticated
     if (!user) {
-      // Save the price ID and prompt user to sign in
-      setPendingCheckout(tier.priceId);
+      // Store checkout intent with price context
+      prepareAuthRedirect('checkout', {
+        returnTo: window.location.pathname,
+        context: { priceId: tier.priceId, planName: tier.name },
+      });
       openAuthModal('login');
+      showToast({
+        message: 'Please sign in to complete your purchase',
+        type: 'info',
+      });
       return;
     }
 

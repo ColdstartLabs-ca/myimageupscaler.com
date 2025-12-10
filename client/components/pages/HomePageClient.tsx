@@ -1,18 +1,55 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Features from '@client/components/pixelperfect/Landing/Features';
 import HowItWorks from '@client/components/pixelperfect/Landing/HowItWorks';
 import { useModalStore } from '@client/store/modalStore';
+import { useToastStore } from '@client/store/toastStore';
+import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 
 export function HomePageClient(): JSX.Element {
   const { openAuthModal } = useModalStore();
+  const { showToast } = useToastStore();
+  const searchParams = useSearchParams();
 
   // Check if any plan has trial enabled
   const config = getSubscriptionConfig();
   const hasTrialEnabled = config.plans.some(plan => plan.trial.enabled);
+
+  // Check for login prompt from middleware redirect
+  useEffect(() => {
+    const loginRequired = searchParams.get('login');
+    const nextUrl = searchParams.get('next');
+
+    if (loginRequired === '1' && nextUrl) {
+      // Store the intended destination
+      prepareAuthRedirect('dashboard_access', {
+        returnTo: nextUrl,
+      });
+
+      // Show a toast explaining why login is needed
+      showToast({
+        message: 'Please sign in to access the dashboard',
+        type: 'info',
+        duration: 5000,
+      });
+
+      // Open the auth modal after a short delay
+      setTimeout(() => {
+        openAuthModal('login');
+      }, 500);
+
+      // Clean up the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('login');
+      url.searchParams.delete('next');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [searchParams, openAuthModal, showToast]);
 
   return (
     <main className="flex-grow bg-slate-50 font-sans selection:bg-indigo-100 selection:text-indigo-700">

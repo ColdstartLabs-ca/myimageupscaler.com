@@ -83,10 +83,15 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
   // Apply security headers
   applySecurityHeaders(response);
 
-  // Unauthenticated user on protected dashboard routes -> redirect to landing
+  // Unauthenticated user on protected dashboard routes -> redirect to landing with login prompt
   if (!user && pathname.startsWith('/dashboard')) {
     const url = req.nextUrl.clone();
     url.pathname = '/';
+
+    // Add query parameters to indicate login is needed and where to return after
+    url.searchParams.set('login', '1');
+    url.searchParams.set('next', pathname);
+
     return NextResponse.redirect(url);
   }
 
