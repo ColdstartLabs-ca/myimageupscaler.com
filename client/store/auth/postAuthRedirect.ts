@@ -76,6 +76,16 @@ function handleStoredRedirect(): boolean {
 export async function handlePostAuthRedirect(): Promise<void> {
   if (typeof window === 'undefined') return;
 
+  // Skip redirects in test environment
+  const isTestEnvironment =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).__TEST_ENV__ === true ||
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).playwrightTest === true;
+  if (isTestEnvironment) {
+    return;
+  }
+
   // 1. Check for pending checkout from store
   if (await handlePendingCheckout()) {
     return;

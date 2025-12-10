@@ -39,12 +39,14 @@ export class UpscalerPage extends BasePage {
 
     // Page header
     this.pageTitle = page.getByRole('heading', { name: 'AI Image Upscaler' });
-    this.pageDescription = page.getByText('Enhance and upscale your images');
+    this.pageDescription = page.getByText(
+      'Enhance and upscale your images using advanced AI technology'
+    );
 
     // Dropzone (empty state)
     this.dropzone = page.locator('.border-dashed');
     this.dropzoneTitle = page.getByText('Click or drag images');
-    this.fileInput = page.locator('input[type="file"]');
+    this.fileInput = page.locator('input[type="file"]').first();
 
     // Workspace sections
     this.workspace = page.locator('.bg-white.rounded-2xl.shadow-xl');
@@ -56,8 +58,11 @@ export class UpscalerPage extends BasePage {
     this.modeSelector = page.getByRole('combobox').first();
     this.scaleSelector = page.locator('select').filter({ hasText: /2x|4x/i });
 
-    // Action buttons - "Process All" is the main action button
-    this.processButton = page.getByRole('button', { name: /process all/i }).or(page.getByRole('button', { name: /process/i }));
+    // Action buttons - Process button with dynamic text (Process All, Processing..., Process Remaining, etc.)
+    this.processButton = page
+      .getByRole('button', { name: /process/i })
+      .or(page.locator('button:has-text("Process")'))
+      .or(page.locator('button:has-text("Processing")'));
     this.clearButton = page.getByRole('button', { name: /clear queue/i });
     this.downloadButton = page.getByRole('button', { name: 'Download Result' });
     this.retryButton = page.getByRole('button', { name: /try again/i });
@@ -92,7 +97,7 @@ export class UpscalerPage extends BasePage {
   async uploadImage(filePath: string): Promise<void> {
     await this.fileInput.setInputFiles(filePath);
     // Wait for the file to be processed and added to queue
-    await this.page.waitForTimeout(500);
+    await this.page.waitForTimeout(1000);
   }
 
   /**
@@ -100,7 +105,8 @@ export class UpscalerPage extends BasePage {
    */
   async uploadImages(filePaths: string[]): Promise<void> {
     await this.fileInput.setInputFiles(filePaths);
-    await this.page.waitForTimeout(500);
+    // Wait for the files to be processed and added to queue
+    await this.page.waitForTimeout(1000);
   }
 
   /**
@@ -114,9 +120,9 @@ export class UpscalerPage extends BasePage {
    * Check if the workspace has files (active state)
    */
   async hasFilesInQueue(): Promise<boolean> {
-    // When files are added, the dropzone title changes
-    const dropzoneVisible = await this.dropzoneTitle.isVisible();
-    return !dropzoneVisible;
+    // Check if there are items in the queue strip or if the queue strip is visible
+    const queueItems = await this.getQueueCount();
+    return queueItems > 0;
   }
 
   /**
@@ -200,7 +206,9 @@ export class UpscalerPage extends BasePage {
         expect(this.downloadButton).toBeVisible({ timeout: 10000 }),
         expect(this.errorMessage).toBeVisible({ timeout: 10000 }),
         expect(this.successIndicator).toBeVisible({ timeout: 10000 }),
-        expect(this.page.locator(':has-text("Enhanced Successfully")')).toBeVisible({ timeout: 10000 }),
+        expect(this.page.locator(':has-text("Enhanced Successfully")')).toBeVisible({
+          timeout: 10000,
+        }),
       ]);
     } catch (error) {
       // If the explicit expectations fail, do a fallback check with more lenient selectors
@@ -249,7 +257,7 @@ export class UpscalerPage extends BasePage {
       this.page.locator('button:has-text("Download Result")'),
       this.downloadButton,
       this.page.locator('button:has-text("Download")'),
-      this.page.getByRole('button', { name: /download/i })
+      this.page.getByRole('button', { name: /download/i }),
     ];
 
     let anyVisible = false;
@@ -312,14 +320,14 @@ export class UpscalerPage extends BasePage {
    * Get the number of items in the queue
    */
   async getQueueCount(): Promise<number> {
-    // Look for queue items in the strip with multiple selectors
-    const queueItems = this.page
-      .locator('[data-testid="queue-item"]')
-      .or(this.queueStrip.locator('img'))
-      .or(this.page.locator('.border-t img'))
-      .or(this.page.locator('[class*="queue"] img'));
+    // Look for queue items in the strip. QueueStrip has images for each item
+    // Exclude the "Add" button dropzone which also contains images
+    const queueStripImages = this.page
+      .locator('.border-t.border-slate-200 img') // Images in QueueStrip
+      .or(this.page.locator('.h-32.bg-white.border-t img')) // More specific QueueStrip selector
+      .or(this.queueStrip.locator('img')); // Fallback to queueStrip locator
 
-    const count = await queueItems.count();
+    const count = await queueStripImages.count();
     return count;
   }
 
@@ -349,17 +357,33 @@ export class UpscalerPage extends BasePage {
   async isProcessing(): Promise<boolean> {
     // Look for the Loader2 with animate-spin class from the BatchSidebar
     const spinner = this.page.locator('button svg.animate-spin').first();
-    const processingButton = this.page.getByRole('button', { name: /processing/i });
     const buttonWithLoader = this.page.locator('button:has(svg.animate-spin)');
-    const processingOverlay = await this.page
-      .locator('.absolute.inset-0.bg-white\\/50')
+
+    // Look for the specific text "Processing..." from BatchSidebar button
+    const processingButton = this.page.getByRole('button', { name: 'Processing...' });
+
+    // Look for any button containing "Processing" text (matches Process All, Processing..., Process Remaining)
+    const buttonWithProcessingText = this.page.locator('button:has-text("Processing")');
+
+    // Look for processing overlay in PreviewArea
+    const processingOverlay = this.page.locator('.absolute.inset-0.bg-white\\/50.backdrop-blur-sm');
+
+    // Check for actual visibility
+    const spinnerVisible = await spinner.isVisible().catch(() => false);
+    const buttonWithLoaderVisible = await buttonWithLoader.isVisible().catch(() => false);
+    const processingButtonVisible = await processingButton.isVisible().catch(() => false);
+    const buttonWithProcessingTextVisible = await buttonWithProcessingText
       .isVisible()
       .catch(() => false);
+    const processingOverlayVisible = await processingOverlay.isVisible().catch(() => false);
 
-    return (await spinner.isVisible()) ||
-           (await processingButton.isVisible()) ||
-           (await buttonWithLoader.isVisible()) ||
-           processingOverlay;
+    return (
+      spinnerVisible ||
+      buttonWithLoaderVisible ||
+      processingButtonVisible ||
+      buttonWithProcessingTextVisible ||
+      processingOverlayVisible
+    );
   }
 
   /**

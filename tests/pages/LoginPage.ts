@@ -35,15 +35,64 @@ export class LoginPage extends BasePage {
     // Wait for header to be visible using enhanced base method
     await this.header.waitFor({ state: 'visible', timeout: 15000 });
 
-    // Use the signInButton from BasePage
-    await expect(this.signInButton).toBeVisible({ timeout: 15000 });
+    // Wait for authentication loading to complete
+    await this.waitForAuthLoadingComplete();
 
-    // Small delay to ensure page is ready
-    await this.wait(500);
+    // Try to find and click the sign in button with multiple strategies
+    try {
+      // First, try desktop sign in button
+      const desktopSignInButton = this.page
+        .locator('button:has-text("Sign In"):not([hidden])')
+        .first();
+      if (await desktopSignInButton.isVisible({ timeout: 5000 })) {
+        await desktopSignInButton.click();
+      } else {
+        // If not visible on desktop, try mobile menu
+        await this.openMobileMenuAndSignIn();
+      }
+    } catch {
+      // Fallback strategy
+      try {
+        await this.openMobileMenuAndSignIn();
+      } catch {
+        // Last resort - look for any sign in button
+        const anySignInButton = this.page.locator('button:has-text("Sign In")').first();
+        await anySignInButton.click({ timeout: 5000 });
+      }
+    }
 
-    // Click sign in button and wait for modal
-    await this.signInButton.click();
-    await this.waitForModal();
+    // Wait for modal to appear with multiple strategies
+    try {
+      await this.waitForModal();
+    } catch {
+      // Fallback: wait a bit and try again
+      await this.wait(1000);
+      await this.waitForModal();
+    }
+  }
+
+  /**
+   * Opens mobile menu and clicks sign in button (mobile-specific flow)
+   */
+  private async openMobileMenuAndSignIn(): Promise<void> {
+    // Check if we're on mobile by looking for mobile menu toggle
+    const mobileMenuToggle = this.page.locator(
+      'button[aria-label="Toggle menu"], .md\\:hidden button'
+    );
+    if (await mobileMenuToggle.isVisible({ timeout: 3000 })) {
+      // Open mobile menu
+      await mobileMenuToggle.click();
+      await this.wait(500); // Wait for menu to animate open
+
+      // Click sign in button inside mobile menu
+      const mobileSignInButton = this.page
+        .locator('[role="navigation"] button:has-text("Sign In"), nav button:has-text("Sign In")')
+        .first();
+      await expect(mobileSignInButton).toBeVisible({ timeout: 5000 });
+      await mobileSignInButton.click();
+    } else {
+      throw new Error('Mobile menu not found and desktop sign in button not visible');
+    }
   }
 
   /**
@@ -206,6 +255,9 @@ export class LoginPage extends BasePage {
    * @param isAuthenticated - Expected authentication state
    */
   async waitForAuthState(isAuthenticated: boolean): Promise<void> {
+    // Always wait for auth loading to complete first
+    await this.waitForAuthLoadingComplete();
+
     if (isAuthenticated) {
       // Wait for sign out button to appear
       await expect(this.signOutButton).toBeVisible({ timeout: 10000 });

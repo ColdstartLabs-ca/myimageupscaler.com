@@ -13,10 +13,12 @@ vi.mock('@server/supabase/supabaseClient', () => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
           single: vi.fn(),
+          maybeSingle: vi.fn(),
           in: vi.fn(() => ({
             order: vi.fn(() => ({
               limit: vi.fn(() => ({
                 single: vi.fn(),
+                maybeSingle: vi.fn(),
               })),
             })),
           })),
@@ -200,7 +202,7 @@ describe('StripeService', () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
+            maybeSingle: vi.fn().mockResolvedValue({
               data: null,
               error: { message: 'Profile not found' },
             }),
@@ -230,7 +232,7 @@ describe('StripeService', () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
+            maybeSingle: vi.fn().mockResolvedValue({
               data: mockProfile,
               error: null,
             }),
@@ -269,7 +271,7 @@ describe('StripeService', () => {
             in: vi.fn().mockReturnValue({
               order: vi.fn().mockReturnValue({
                 limit: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({
+                  maybeSingle: vi.fn().mockResolvedValue({
                     data: null,
                     error: { message: 'No active subscription' },
                   }),
@@ -306,7 +308,7 @@ describe('StripeService', () => {
             in: vi.fn().mockReturnValue({
               order: vi.fn().mockReturnValue({
                 limit: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({
+                  maybeSingle: vi.fn().mockResolvedValue({
                     data: mockSubscription,
                     error: null,
                   }),

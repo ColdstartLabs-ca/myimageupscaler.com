@@ -29,14 +29,16 @@ export class PricingPage extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    // Page header
-    this.pageTitle = page.getByRole('heading', { name: 'Simple, Transparent Pricing' });
+    // Page header - use a more flexible selector for the page title
+    this.pageTitle = page.locator('h1').filter({ hasText: 'Simple, Transparent Pricing' });
     this.pageDescription = page.getByText('Choose the subscription plan that fits your needs');
 
     // Subscription plans section - locate by h2 heading "Choose Your Plan"
     this.subscriptionsTitle = page.getByRole('heading', { name: 'Choose Your Plan' });
     this.subscriptionsSection = page.locator('div.mb-16').filter({ has: this.subscriptionsTitle });
-    this.subscriptionsDescription = page.getByText('Get credits every month with our subscription plans');
+    this.subscriptionsDescription = page.getByText(
+      'Get credits every month with our subscription plans'
+    );
     this.pricingGrid = page.locator('.grid.md\\:grid-cols-3');
 
     // FAQ section
@@ -45,7 +47,9 @@ export class PricingPage extends BasePage {
 
     // Custom plan CTA
     this.customPlanTitle = page.getByRole('heading', { name: 'Need a custom plan?' });
-    this.customPlanSection = page.locator('div.bg-gradient-to-br').filter({ has: this.customPlanTitle });
+    this.customPlanSection = page
+      .locator('div.bg-gradient-to-br')
+      .filter({ has: this.customPlanTitle });
     this.contactSalesButton = page.getByRole('link', { name: 'Contact Sales' });
 
     // Individual plan cards
@@ -67,7 +71,25 @@ export class PricingPage extends BasePage {
    */
   async waitForLoad(): Promise<void> {
     await this.waitForPageLoad();
-    await expect(this.pageTitle).toBeVisible();
+
+    // Wait for the page title to be visible (it should be visible immediately)
+    await expect(this.pageTitle).toBeVisible({ timeout: 5000 });
+
+    // Wait for skeleton cards to be replaced with actual pricing cards
+    // Look for actual pricing plan headings (Hobby, Professional, Business)
+    await expect(this.page.getByRole('heading', { name: 'Hobby' })).toBeVisible({ timeout: 10000 });
+    await expect(this.page.getByRole('heading', { name: 'Professional' })).toBeVisible({
+      timeout: 10000,
+    });
+    await expect(this.page.getByRole('heading', { name: 'Business' })).toBeVisible({
+      timeout: 10000,
+    });
+
+    // Wait for Get Started buttons to be visible (not loading)
+    const getStartedButtons = this.pricingGrid.getByRole('button', { name: 'Get Started' });
+    await expect(getStartedButtons.first()).toBeVisible({ timeout: 5000 });
+
+    // Ensure subscriptions section is visible
     await expect(this.subscriptionsSection).toBeVisible();
   }
 
@@ -122,7 +144,6 @@ export class PricingPage extends BasePage {
     await this.waitForNetworkIdle();
   }
 
-  
   /**
    * Click contact sales button for custom plans
    */
@@ -185,8 +206,12 @@ export class PricingCard {
     this.interval = cardLocator.locator('div:has-text("per")');
     this.credits = cardLocator.locator('div:has-text("credits")');
     this.features = cardLocator.locator('ul.space-y-2');
-    this.subscribeButton = cardLocator.locator('.btn');
-    this.recommendedBadge = cardLocator.locator('.badge');
+    this.subscribeButton = cardLocator
+      .locator('button')
+      .filter({ hasText: /^(Get Started|Upgrade|Downgrade|Start|Current Plan|Scheduled)$/ });
+    this.recommendedBadge = cardLocator.locator(
+      '.absolute.-top-3 .bg-indigo-500, .absolute.-top-3 .bg-green-500, .absolute.-top-3 .bg-orange-500'
+    );
   }
 
   /**

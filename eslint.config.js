@@ -26,8 +26,10 @@ export default [
       'coverage/**/*',
       '.turbo/**/*',
       '.wrangler/**/*',
+      'playwright-report/**/*',
+      'test-results/**/*',
       'next.config.js',
-      'next-env.d.ts'
+      'next-env.d.ts',
     ],
     plugins: {
       react: reactPlugin,
@@ -187,7 +189,7 @@ export default [
       '**/*.spec.ts',
       '**/*.test.ts',
       '**/vitest.config.ts',
-      '**/playwright.config.ts'
+      '**/playwright.config.ts',
     ],
     rules: {
       'no-restricted-syntax': 'off',

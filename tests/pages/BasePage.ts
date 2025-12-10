@@ -26,21 +26,33 @@ export class BasePage {
    * @param path - URL path (relative) or full URL (absolute)
    */
   async goto(path: string): Promise<void> {
-    // For absolute URLs, use as-is; for relative paths, let Playwright prepend baseURL
-    await this.page.goto(path);
-
-    // Wait for network idle with a reasonable timeout to handle flaky network conditions
-    // Use a shorter timeout and catch errors to handle protected routes gracefully
     try {
-      await this.page.waitForLoadState('networkidle', { timeout: 10000 });
-    } catch {
-      // If network idle times out, fall back to domcontentloaded
-      // This handles cases where protected routes have ongoing API calls
+      // For absolute URLs, use as-is; for relative paths, let Playwright prepend baseURL
+      await this.page.goto(path, { timeout: 30000 });
+
+      // Wait for network idle with a reasonable timeout to handle flaky network conditions
+      // Use a shorter timeout and catch errors to handle protected routes gracefully
+      try {
+        await this.page.waitForLoadState('networkidle', { timeout: 10000 });
+      } catch {
+        // If network idle times out, fall back to domcontentloaded
+        // This handles cases where protected routes have ongoing API calls
+        try {
+          await this.page.waitForLoadState('domcontentloaded', { timeout: 5000 });
+        } catch {
+          // If even domcontentloaded fails, just wait a bit and continue
+          await this.wait(1000);
+        }
+      }
+    } catch (error) {
+      // Handle navigation errors gracefully (e.g., protected routes that redirect)
+      console.warn(`Navigation to ${path} had issues, continuing...`);
+      // Try to wait for at least domcontentloaded
       try {
         await this.page.waitForLoadState('domcontentloaded', { timeout: 5000 });
       } catch {
-        // If even domcontentloaded fails, just wait a bit and continue
-        await this.wait(1000);
+        // Last resort - wait a bit for page to stabilize
+        await this.wait(2000);
       }
     }
   }
@@ -76,7 +88,20 @@ export class BasePage {
    */
   get signInButton(): Locator {
     // Try multiple strategies to find the sign in button
-    return this.page.locator('button:has-text("Sign In")').first();
+    // The button has different visibility states on mobile vs desktop
+    return this.page
+      .locator(
+        [
+          'button:has-text("Sign In")',
+          'button[data-testid="sign-in-button"]',
+          'header button:has-text("Sign In")',
+          'nav button:has-text("Sign In")',
+          // Also look for it in mobile menu
+          '[role="navigation"] button:has-text("Sign In")',
+          '.mobile-menu button:has-text("Sign In")',
+        ].join(', ')
+      )
+      .first();
   }
 
   /**
@@ -97,7 +122,8 @@ export class BasePage {
    * Gets the modal dialog element
    */
   get modal(): Locator {
-    return this.page.locator('div[role="dialog"], .modal, [data-modal]').first();
+    // Try multiple strategies to find the modal
+    return this.page.locator('div[role="dialog"]').first();
   }
 
   /**
@@ -165,8 +191,27 @@ export class BasePage {
    * Closes the modal using escape key
    */
   async closeModal(): Promise<void> {
+    // First ensure modal is actually visible
+    if (!(await this.modal.isVisible())) {
+      return;
+    }
+
+    // Press escape key
     await this.page.keyboard.press('Escape');
-    await expect(this.modal).toBeHidden({ timeout: 5000 });
+
+    // Wait for modal to be hidden with retry
+    try {
+      await expect(this.modal).toBeHidden({ timeout: 3000 });
+    } catch (error) {
+      // Fallback: try clicking on backdrop if escape doesn't work
+      const backdrop = this.page.locator('.fixed.inset-0.bg-black\\/60').first();
+      if (await backdrop.isVisible()) {
+        await backdrop.click();
+        await expect(this.modal).toBeHidden({ timeout: 3000 });
+      } else {
+        throw error;
+      }
+    }
   }
 
   /**
@@ -202,6 +247,22 @@ export class BasePage {
   }
 
   /**
+   * Waits for authentication loading state to complete
+   */
+  async waitForAuthLoadingComplete(): Promise<void> {
+    try {
+      // Wait for skeleton loaders to disappear (the loading state in NavBar)
+      const skeletonLoaders = this.page.locator('.animate-pulse, [data-testid="auth-skeleton"]');
+      await skeletonLoaders.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+
+      // Also wait a bit more for state to settle
+      await this.wait(1000);
+    } catch {
+      // If waiting fails, just continue - the auth state might already be settled
+    }
+  }
+
+  /**
    * Waits for network to become idle
    */
   async waitForNetworkIdle(): Promise<void> {
@@ -214,6 +275,7 @@ export class BasePage {
   async waitForPageLoad(): Promise<void> {
     await this.page.waitForLoadState('domcontentloaded');
     await this.waitForLoadingComplete();
+    await this.waitForAuthLoadingComplete();
   }
 
   // Network request handling

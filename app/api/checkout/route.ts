@@ -146,23 +146,25 @@ export async function POST(request: NextRequest) {
       status?: number;
     } | null = null;
 
-    if (serverEnv.ENV === 'test' && token.startsWith('test_token_')) {
-      // Mock authentication for testing
-      // Handle both format: test_token_mock_user_{userId} and test_token_{userId}
-      let mockUserId: string;
-
-      if (token.startsWith('test_token_mock_user_')) {
-        // New format from test data manager
-        mockUserId = token.replace('test_token_mock_user_', '');
+    if (serverEnv.ENV === 'test') {
+      // In test mode, only accept mock tokens
+      if (token.startsWith('test_token_')) {
+        // Mock authentication for testing
+        let mockUserId: string;
+        if (token.startsWith('test_token_mock_user_')) {
+          mockUserId = token.replace('test_token_mock_user_', '');
+        } else {
+          mockUserId = token.replace('test_token_', '');
+        }
+        user = {
+          id: mockUserId,
+          email: `test-${mockUserId}@example.com`,
+        };
       } else {
-        // Legacy format
-        mockUserId = token.replace('test_token_', '');
+        // Reject any non-mock token immediately in test mode
+        // This prevents hanging on invalid tokens during tests
+        authError = { message: 'Invalid test token', status: 401 };
       }
-
-      user = {
-        id: mockUserId,
-        email: `test-${mockUserId}@example.com`,
-      };
     } else {
       // Verify the user with Supabase
       const result = await supabaseAdmin.auth.getUser(token);

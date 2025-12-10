@@ -25,18 +25,24 @@ export async function POST(request: NextRequest) {
     // Extract the JWT token
     const token = authHeader.replace('Bearer ', '');
 
-    // Handle mock authentication in test environment
+    // Handle authentication
     let user: { id: string; email?: string } | null = null;
     let authError: Error | null = null;
 
-    if (serverEnv.ENV === 'test' && token.startsWith('test_token_')) {
-      // Mock authentication for test environment
-      // Token format: test_token_{userId} where userId is 'mock_user_{uniquePart}'
-      const mockUserId = token.replace('test_token_', '');
-      user = {
-        id: mockUserId,
-        email: `test-${mockUserId}@test.local`,
-      };
+    if (serverEnv.ENV === 'test') {
+      // In test mode, only accept mock tokens
+      if (token.startsWith('test_token_')) {
+        // Mock authentication for test environment
+        const mockUserId = token.replace('test_token_', '');
+        user = {
+          id: mockUserId,
+          email: `test-${mockUserId}@test.local`,
+        };
+      } else {
+        // Reject any non-mock token immediately in test mode
+        // This prevents hanging on invalid tokens during tests
+        authError = new Error('Invalid test token');
+      }
     } else {
       // Verify the user with Supabase for non-test environments
       const result = await supabaseAdmin.auth.getUser(token);
