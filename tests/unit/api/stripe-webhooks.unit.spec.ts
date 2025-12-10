@@ -4,7 +4,7 @@ import { POST } from '../../../app/api/webhooks/stripe/route';
 import { supabaseAdmin } from '../../../server/supabase/supabaseAdmin';
 import { stripe } from '../../../server/stripe';
 import { getPlanForPriceId } from '@shared/config/stripe';
-import { getPlanConfig } from '@shared/config/subscription.config';
+import { getPlanConfig, getTrialConfig } from '@shared/config/subscription.config';
 import {
   getPlanByPriceId,
   calculateBalanceWithExpiration,
@@ -39,6 +39,8 @@ vi.mock('@shared/config/stripe', () => ({
     currency: 'usd',
     credits: 200,
     maxRollover: 1200,
+    creditsPerMonth: 200,
+    creditsPerCycle: 200,
   })),
   resolvePriceId: vi.fn((priceId: string) => ({
     type: 'plan',
@@ -49,6 +51,20 @@ vi.mock('@shared/config/stripe', () => ({
     currency: 'usd',
     credits: 200,
     maxRollover: 1200,
+    creditsPerMonth: 200,
+    creditsPerCycle: 200,
+  })),
+  resolvePlanOrPack: vi.fn((priceId: string) => ({
+    type: 'plan',
+    key: 'hobby',
+    name: 'Hobby',
+    stripePriceId: priceId,
+    priceInCents: 1900,
+    currency: 'usd',
+    credits: 200,
+    maxRollover: 1200,
+    creditsPerMonth: 200,
+    creditsPerCycle: 200,
   })),
 }));
 
@@ -60,6 +76,17 @@ vi.mock('@shared/config/subscription.config', () => ({
 vi.mock('@shared/config/subscription.utils', () => ({
   getPlanByPriceId: vi.fn(),
   calculateBalanceWithExpiration: vi.fn(),
+}));
+
+vi.mock('@server/services/SubscriptionCredits', () => ({
+  SubscriptionCreditsService: {
+    calculateUpgradeCredits: vi.fn(() => ({
+      creditsToAdd: 100,
+      reason: 'Upgrade eligible',
+      isLegitimate: true,
+    })),
+    getExplanation: vi.fn(() => 'Mock explanation'),
+  },
 }));
 
 // Helper to create a webhook_events mock that allows events through (for idempotency)
@@ -87,14 +114,15 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
       return {
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(),
+            maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+            single: vi.fn(() => Promise.resolve({ data: null })),
           })),
         })),
-        upsert: vi.fn(),
+        upsert: vi.fn(() => Promise.resolve({ error: null })),
         update: vi.fn(() => ({
-          eq: vi.fn(),
+          eq: vi.fn(() => Promise.resolve({ error: null })),
         })),
-        insert: vi.fn(),
+        insert: vi.fn(() => Promise.resolve({ error: null })),
       };
     }),
   },
@@ -510,6 +538,10 @@ describe('Stripe Webhook Handler', () => {
       // Mock successful plan lookup
       vi.mocked(getPlanForPriceId).mockReturnValue(mockPlan);
       vi.mocked(getPlanConfig).mockReturnValue({ key: 'business', name: 'Business' });
+      vi.mocked(getTrialConfig).mockReturnValue({
+        enabled: false,
+        trialCredits: null,
+      });
 
       const event = {
         type: 'customer.subscription.created',
@@ -528,11 +560,20 @@ describe('Stripe Webhook Handler', () => {
       // Mock successful profile lookup and updates
       const mockSelect = vi.fn(() => ({
         eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              id: 'user_123',
+              subscription_status: 'trialing',
+              subscription_credits_balance: 100,
+              purchased_credits_balance: 0,
+            },
+          })),
           single: vi.fn(() => ({
             data: {
               id: 'user_123',
               subscription_status: 'trialing',
-              credits_balance: 100,
+              subscription_credits_balance: 100,
+              purchased_credits_balance: 0,
             },
           })),
         })),
@@ -549,7 +590,14 @@ describe('Stripe Webhook Handler', () => {
         } else if (table === 'profiles') {
           return { select: mockSelect, update: mockUpdate };
         } else if (table === 'subscriptions') {
-          return { upsert: mockUpsert };
+          return {
+            upsert: mockUpsert,
+            select: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                maybeSingle: vi.fn(() => ({ data: null })),
+              })),
+            })),
+          };
         }
         return {};
       });
@@ -559,7 +607,7 @@ describe('Stripe Webhook Handler', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      expect(mockSelect).toHaveBeenCalledWith('id, subscription_status, credits_balance');
+      expect(mockSelect).toHaveBeenCalledWith('id, subscription_status, subscription_credits_balance, purchased_credits_balance');
       expect(mockUpsert).toHaveBeenCalledWith(
         expect.objectContaining({
           id: 'sub_test_123',
@@ -591,6 +639,9 @@ describe('Stripe Webhook Handler', () => {
       // Mock successful profile lookup and updates
       const mockSelect = vi.fn(() => ({
         eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: { id: 'user_123' },
+          })),
           single: vi.fn(() => ({
             data: { id: 'user_123' },
           })),
@@ -649,11 +700,25 @@ describe('Stripe Webhook Handler', () => {
       // Mock failed profile lookup
       const mockSelect = vi.fn(() => ({
         eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: null,
+          })),
           single: vi.fn(() => ({
             data: null,
           })),
         })),
       }));
+
+      // Add necessary mocks for functions used in subscription handlers
+      vi.mocked(getTrialConfig).mockReturnValue({ enabled: false, trialCredits: null });
+      vi.mocked(getPlanForPriceId).mockReturnValue({
+        type: 'plan',
+        key: 'pro',
+        name: 'Professional',
+        creditsPerMonth: 1000,
+        creditsPerCycle: 1000,
+        maxRollover: 6000,
+      });
 
       vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
         if (table === 'webhook_events') {
@@ -674,6 +739,15 @@ describe('Stripe Webhook Handler', () => {
       // Arrange
       // Mock successful plan lookup to get past that validation
       vi.mocked(getPlanConfig).mockReturnValue({ key: 'pro', name: 'Professional' });
+      vi.mocked(getTrialConfig).mockReturnValue({ enabled: false, trialCredits: null });
+      vi.mocked(getPlanForPriceId).mockReturnValue({
+        type: 'plan',
+        key: 'pro',
+        name: 'Professional',
+        creditsPerMonth: 1000,
+        creditsPerCycle: 1000,
+        maxRollover: 6000,
+      });
 
       const event = {
         type: 'customer.subscription.created',
@@ -692,11 +766,20 @@ describe('Stripe Webhook Handler', () => {
       // Mock successful profile lookup but failed update
       const mockSelect = vi.fn(() => ({
         eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              id: 'user_123',
+              subscription_status: 'active',
+              subscription_credits_balance: 500,
+              purchased_credits_balance: 0,
+            },
+          })),
           single: vi.fn(() => ({
             data: {
               id: 'user_123',
               subscription_status: 'active',
-              credits_balance: 500,
+              subscription_credits_balance: 500,
+              purchased_credits_balance: 0,
             },
           })),
         })),
@@ -713,7 +796,14 @@ describe('Stripe Webhook Handler', () => {
         } else if (table === 'profiles') {
           return { select: mockSelect, update: mockUpdate };
         } else if (table === 'subscriptions') {
-          return { upsert: mockUpsert };
+          return {
+            upsert: mockUpsert,
+            select: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                maybeSingle: vi.fn(() => ({ data: null })),
+              })),
+            })),
+          };
         }
         return {};
       });
@@ -739,13 +829,22 @@ describe('Stripe Webhook Handler', () => {
         maxRollover: 6000,
       };
 
-      // Mock successful plan lookup
+      // Mock successful plan lookup - import resolvePlanOrPack
+      const { resolvePlanOrPack } = await import('@shared/config/stripe');
       vi.mocked(getPlanForPriceId).mockReturnValue(mockPlan);
       vi.mocked(getPlanConfig).mockReturnValue({ key: 'pro', name: 'Professional' });
+      vi.mocked(getTrialConfig).mockReturnValue({ enabled: false, trialCredits: null });
       vi.mocked(getPlanByPriceId).mockReturnValue({ creditsExpiration: { mode: 'never' } });
       vi.mocked(calculateBalanceWithExpiration).mockReturnValue({
         newBalance: 1100,
         expiredAmount: 0,
+      });
+      vi.mocked(resolvePlanOrPack).mockReturnValue({
+        type: 'plan',
+        key: 'pro',
+        name: 'Professional',
+        creditsPerCycle: 1000,
+        maxRollover: 6000,
       });
 
       const customerId = 'cus_test_renewal';
@@ -783,10 +882,19 @@ describe('Stripe Webhook Handler', () => {
       // Mock profile lookup
       const mockSelect = vi.fn(() => ({
         eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              id: userId,
+              subscription_credits_balance: 100,
+              purchased_credits_balance: 0,
+              subscription_status: 'active',
+            },
+          })),
           single: vi.fn(() => ({
             data: {
               id: userId,
-              credits_balance: 100,
+              subscription_credits_balance: 100,
+              purchased_credits_balance: 0,
               subscription_status: 'active',
             },
           })),
@@ -847,6 +955,9 @@ describe('Stripe Webhook Handler', () => {
       // Mock successful profile lookup and update
       const mockSelect = vi.fn(() => ({
         eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: { id: 'user_123' },
+          })),
           single: vi.fn(() => ({
             data: { id: 'user_123' },
           })),
@@ -901,6 +1012,9 @@ describe('Stripe Webhook Handler', () => {
       // Mock failed profile lookup
       const mockSelect = vi.fn(() => ({
         eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: null,
+          })),
           single: vi.fn(() => ({
             data: null,
           })),

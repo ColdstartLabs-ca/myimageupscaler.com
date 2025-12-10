@@ -2,7 +2,7 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST } from '../../../app/api/webhooks/stripe/route';
 import { supabaseAdmin } from '../../../server/supabase/supabaseAdmin';
-import { getPlanForPriceId } from '@shared/config/stripe';
+import { getPlanForPriceId, resolvePlanOrPack, assertKnownPriceId } from '@shared/config/stripe';
 
 // Mock dependencies
 vi.mock('@server/stripe', () => ({
@@ -26,7 +26,7 @@ const getWebhookEventsMock = () => ({
   })),
   insert: vi.fn(() => Promise.resolve({ error: null })), // Claim succeeds
   update: vi.fn(() => ({
-    eq: vi.fn(() => Promise.resolve({ error: null })), // Update succeeds
+    eq: vi.fn().mockResolvedValue({ error: null }), // Update succeeds
   })),
 });
 
@@ -37,17 +37,19 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
       if (table === 'webhook_events') {
         return getWebhookEventsMock();
       }
+      // Default mock for other tables
       return {
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(),
+            maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+            single: vi.fn(() => Promise.resolve({ data: null })),
           })),
         })),
-        upsert: vi.fn(),
+        upsert: vi.fn(() => Promise.resolve({ error: null })),
         update: vi.fn(() => ({
-          eq: vi.fn(),
+          eq: vi.fn(() => Promise.resolve({ error: null })),
         })),
-        insert: vi.fn(),
+        insert: vi.fn(() => Promise.resolve({ error: null })),
       };
     }),
   },
@@ -72,6 +74,48 @@ vi.mock('@shared/config/stripe', () => ({
     BUSINESS_MONTHLY: { creditsPerMonth: 5000 },
   },
   getPlanForPriceId: vi.fn(),
+  resolvePlanOrPack: vi.fn(),
+  assertKnownPriceId: vi.fn(),
+}));
+
+vi.mock('@shared/config/subscription.utils', () => ({
+  calculateBalanceWithExpiration: vi.fn((params) => {
+    // Return the new balance as current balance + new credits (no expiration)
+    const { currentBalance, newCredits } = params;
+    return {
+      newBalance: currentBalance + newCredits,
+      expiredAmount: 0,
+    };
+  }),
+}));
+
+vi.mock('@shared/config/subscription.config', () => ({
+  getTrialConfig: vi.fn(() => ({
+    enabled: false,
+    trialCredits: null,
+  })),
+}));
+
+vi.mock('@server/services/SubscriptionCredits', () => ({
+  SubscriptionCreditsService: {
+    calculateUpgradeCredits: vi.fn(() => ({
+      creditsToAdd: 0,
+      isLegitimate: true,
+      reason: 'test',
+    })),
+    getExplanation: vi.fn(() => 'test explanation'),
+  },
+}));
+
+vi.mock('dayjs', () => ({
+  default: vi.fn(() => ({
+    unix: vi.fn(() => 1640995200), // Mock timestamp
+    toISOString: vi.fn(() => '2022-01-01T00:00:00.000Z'),
+    add: vi.fn(() => ({
+      unix: vi.fn(() => 1643673600),
+    })),
+    diff: vi.fn(() => 30),
+  })),
 }));
 
 describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
@@ -96,6 +140,34 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       }
       return null;
     });
+
+    // Mock resolvePlanOrPack function
+    vi.mocked(resolvePlanOrPack).mockImplementation((priceId: string) => {
+      if (priceId === 'price_hobby_monthly') {
+        return { type: 'plan', name: 'Hobby', creditsPerCycle: 200, maxRollover: 1200 };
+      }
+      if (priceId === 'price_pro_monthly') {
+        return { type: 'plan', name: 'Professional', creditsPerCycle: 1000, maxRollover: 6000 };
+      }
+      if (priceId === 'price_business_monthly') {
+        return { type: 'plan', name: 'Business', creditsPerCycle: 5000, maxRollover: 30000 };
+      }
+      return null;
+    });
+
+    // Mock assertKnownPriceId function
+    vi.mocked(assertKnownPriceId).mockImplementation((priceId: string) => {
+      if (priceId === 'price_hobby_monthly') {
+        return { type: 'plan', name: 'Hobby', creditsPerCycle: 200, maxRollover: 1200 };
+      }
+      if (priceId === 'price_pro_monthly') {
+        return { type: 'plan', name: 'Professional', creditsPerCycle: 1000, maxRollover: 6000 };
+      }
+      if (priceId === 'price_business_monthly') {
+        return { type: 'plan', name: 'Business', creditsPerCycle: 5000, maxRollover: 30000 };
+      }
+      throw new Error(`Unknown price ID: ${priceId}`);
+    });
   });
 
   afterEach(() => {
@@ -117,6 +189,7 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       lines: {
         data: [
           {
+            type: 'subscription',
             price: { id: 'price_hobby_monthly' },
           },
         ],
@@ -137,13 +210,17 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       },
     });
 
-    // Mock profile lookup
-    const mockSelect = vi.fn(() => ({
-      eq: vi.fn(() => ({
-        single: vi.fn(() => ({
-          data: { id: userId, credits_balance: 50 },
-        })),
+    // Mock profile lookup - the webhook looks up by stripe_customer_id
+    const mockEq = vi.fn(() => ({
+      maybeSingle: vi.fn(() => Promise.resolve({
+        data: { id: userId, subscription_credits_balance: 50, purchased_credits_balance: 0 },
       })),
+      single: vi.fn(() => Promise.resolve({
+        data: { id: userId, subscription_credits_balance: 50, purchased_credits_balance: 0 },
+      })),
+    }));
+    const mockSelect = vi.fn(() => ({
+      eq: mockEq,
     }));
 
     (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
@@ -155,8 +232,16 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       return {};
     });
 
-    // Mock successful credit addition
-    (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockResolvedValue({ error: null });
+    // Mock successful RPC calls
+    (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockImplementation((rpcName: string) => {
+      if (rpcName === 'expire_subscription_credits') {
+        return Promise.resolve({ data: 0, error: null });
+      }
+      if (rpcName === 'add_subscription_credits') {
+        return Promise.resolve({ error: null });
+      }
+      return Promise.resolve({ error: null });
+    });
 
     // Act
     const response = await POST(request);
@@ -189,6 +274,7 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       lines: {
         data: [
           {
+            type: 'subscription',
             price: { id: 'price_pro_monthly' },
           },
         ],
@@ -209,13 +295,17 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       },
     });
 
-    // Mock profile lookup
-    const mockSelect = vi.fn(() => ({
-      eq: vi.fn(() => ({
-        single: vi.fn(() => ({
-          data: { id: userId, credits_balance: 100 },
-        })),
+    // Mock profile lookup - the webhook looks up by stripe_customer_id
+    const mockEq = vi.fn(() => ({
+      maybeSingle: vi.fn(() => Promise.resolve({
+        data: { id: userId, subscription_credits_balance: 100, purchased_credits_balance: 0 },
       })),
+      single: vi.fn(() => Promise.resolve({
+        data: { id: userId, subscription_credits_balance: 100, purchased_credits_balance: 0 },
+      })),
+    }));
+    const mockSelect = vi.fn(() => ({
+      eq: mockEq,
     }));
 
     (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
@@ -227,7 +317,16 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       return {};
     });
 
-    (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockResolvedValue({ error: null });
+    // Mock successful RPC calls
+    (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockImplementation((rpcName: string) => {
+      if (rpcName === 'expire_subscription_credits') {
+        return Promise.resolve({ data: 0, error: null });
+      }
+      if (rpcName === 'add_subscription_credits') {
+        return Promise.resolve({ error: null });
+      }
+      return Promise.resolve({ error: null });
+    });
 
     // Act
     const response = await POST(request);
@@ -257,6 +356,7 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       lines: {
         data: [
           {
+            type: 'subscription',
             price: { id: 'price_business_monthly' },
           },
         ],
@@ -277,13 +377,17 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       },
     });
 
-    // Mock profile lookup
-    const mockSelect = vi.fn(() => ({
-      eq: vi.fn(() => ({
-        single: vi.fn(() => ({
-          data: { id: userId, credits_balance: 500 },
-        })),
+    // Mock profile lookup - the webhook looks up by stripe_customer_id
+    const mockEq = vi.fn(() => ({
+      maybeSingle: vi.fn(() => Promise.resolve({
+        data: { id: userId, subscription_credits_balance: 500, purchased_credits_balance: 0 },
       })),
+      single: vi.fn(() => Promise.resolve({
+        data: { id: userId, subscription_credits_balance: 500, purchased_credits_balance: 0 },
+      })),
+    }));
+    const mockSelect = vi.fn(() => ({
+      eq: mockEq,
     }));
 
     (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
@@ -295,7 +399,16 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       return {};
     });
 
-    (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockResolvedValue({ error: null });
+    // Mock successful RPC calls
+    (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockImplementation((rpcName: string) => {
+      if (rpcName === 'expire_subscription_credits') {
+        return Promise.resolve({ data: 0, error: null });
+      }
+      if (rpcName === 'add_subscription_credits') {
+        return Promise.resolve({ error: null });
+      }
+      return Promise.resolve({ error: null });
+    });
 
     // Act
     const response = await POST(request);
@@ -353,6 +466,7 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       lines: {
         data: [
           {
+            type: 'subscription',
             price: { id: 'price_pro_monthly' },
           },
         ],
@@ -374,12 +488,16 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
     });
 
     // Mock profile lookup returning null
-    const mockSelect = vi.fn(() => ({
-      eq: vi.fn(() => ({
-        single: vi.fn(() => ({
-          data: null,
-        })),
+    const mockEq = vi.fn(() => ({
+      maybeSingle: vi.fn(() => Promise.resolve({
+        data: null,
       })),
+      single: vi.fn(() => Promise.resolve({
+        data: null,
+      })),
+    }));
+    const mockSelect = vi.fn(() => ({
+      eq: mockEq,
     }));
 
     (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
