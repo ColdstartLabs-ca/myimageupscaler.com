@@ -205,15 +205,49 @@ WHERE email = 'your-email@gmail.com';
 
 ## Production Deployment
 
-### Publishing Your OAuth App
+### Development vs Production Modes
 
-Before going live, you need to publish your OAuth consent screen:
+Your OAuth app can operate in two modes:
+
+#### Testing Mode (Default - For Development)
+
+**Characteristics:**
+
+- App automatically starts in Testing mode when created
+- Only users you explicitly add as "Test users" can sign in
+- No publishing required
+- Perfect for local development
+
+**To add yourself as a test user:**
 
 1. Go to **OAuth consent screen** in Google Cloud Console
-2. Click **Publish App**
-3. Confirm the warning about verification
+2. Scroll to **Test users** section
+3. Click **Add Users**
+4. Enter your Gmail address
+5. Click **Save**
 
-> **Note:** For apps requesting sensitive scopes or with many users, Google may require verification. This can take several days.
+> **For development:** Just add yourself as a test user - no need to publish!
+
+#### Production Mode (For Public Release)
+
+**When to publish:**
+
+- You want any Google account to be able to sign in
+- You're deploying to production
+
+**How to publish:**
+
+1. Go to **OAuth consent screen** (NOT the Credentials page)
+2. Check the **Publishing status** - should show "Testing"
+3. Look for **"Publish App"** button (usually top-right)
+   - Some UIs show "Push to Production" instead
+4. Click the button and confirm the warning
+
+> **Note:**
+>
+> - If you don't see a "Publish" button, check your Publishing status
+> - For apps requesting sensitive scopes or with many users, Google may require verification (can take several days)
+> - Verification is NOT needed for basic scopes (email, profile, openid)
 
 ### Production Checklist
 
@@ -221,7 +255,7 @@ Before going live, you need to publish your OAuth consent screen:
 - [ ] Add production Supabase callback URL to Authorized Redirect URIs
 - [ ] Update Supabase Site URL to production domain
 - [ ] Add production URLs to Supabase Redirect URLs
-- [ ] Publish OAuth consent screen (move out of Testing mode)
+- [ ] Publish OAuth consent screen (move out of Testing mode) OR ensure your users are added as test users
 - [ ] Test OAuth flow on production
 
 ### Cloudflare Pages Deployment

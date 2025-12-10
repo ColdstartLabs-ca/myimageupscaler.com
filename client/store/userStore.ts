@@ -67,6 +67,13 @@ function enablePostAuthRedirect(): void {
   shouldRedirectToDashboard = true;
 }
 
+/** Check if this is an OAuth callback (code param in URL) */
+function isOAuthCallback(): boolean {
+  if (typeof window === 'undefined') return false;
+  const params = new URLSearchParams(window.location.search);
+  return params.has('code');
+}
+
 export const useUserStore = create<IUserState>((set, get) => ({
   // Initial state
   user: null,
@@ -102,9 +109,16 @@ export const useUserStore = create<IUserState>((set, get) => ({
 
     fetchPromise = (async () => {
       try {
-        const { data, error } = await supabase.rpc('get_user_data', {
+        // Add timeout to prevent hanging forever
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('RPC timeout after 5s')), 5000);
+        });
+
+        const rpcPromise = supabase.rpc('get_user_data', {
           target_user_id: userId,
         });
+
+        const { data, error } = await Promise.race([rpcPromise, timeoutPromise]);
 
         if (error) throw error;
 
@@ -240,46 +254,55 @@ function clearUserCache(): void {
   }
 }
 
-// Auth state listener (single source of truth)
-supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-  const store = useUserStore.getState();
+// Only run client-side initialization
+if (typeof window !== 'undefined') {
+  // Auth state listener (single source of truth)
+  supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+    const store = useUserStore.getState();
 
-  if (event === 'SIGNED_OUT' || !session) {
-    store.reset();
-    return;
-  }
-
-  if (session?.user) {
-    // Set basic user info immediately
-    const basicUser: IUserData = {
-      id: session.user.id,
-      email: session.user.email ?? '',
-      name: session.user.user_metadata?.name,
-      provider: session.user.app_metadata?.provider ?? 'email',
-      role: 'user', // Default, will be updated
-      profile: null,
-      subscription: null,
-    };
-
-    useUserStore.setState({
-      user: basicUser,
-      isAuthenticated: true,
-      isLoading: false,
-    });
-
-    // Fetch full data in background
-    store.fetchUserData(session.user.id);
-
-    // Redirect to dashboard only for active login/signup (not page refresh)
-    if (shouldRedirectToDashboard) {
-      shouldRedirectToDashboard = false;
-      await handlePostAuthRedirect();
+    if (event === 'SIGNED_OUT' || !session) {
+      store.reset();
+      return;
     }
-  }
-});
 
-// Initialize on module load
-useUserStore.getState().initialize();
+    if (session?.user) {
+      // Set basic user info immediately
+      const basicUser: IUserData = {
+        id: session.user.id,
+        email: session.user.email ?? '',
+        name: session.user.user_metadata?.name,
+        provider: session.user.app_metadata?.provider ?? 'email',
+        role: 'user', // Default, will be updated
+        profile: null,
+        subscription: null,
+      };
+
+      // NON-BLOCKING: Show UI immediately with basic user data
+      useUserStore.setState({
+        user: basicUser,
+        isAuthenticated: true,
+        isLoading: false, // Don't block UI!
+      });
+
+      // Fetch full data in background (non-blocking)
+      // Use setTimeout to defer to next tick, avoiding HMR timing issues
+      setTimeout(() => {
+        store.fetchUserData(session.user.id).catch(err => {
+          console.error('Background fetch failed:', err);
+        });
+      }, 0);
+
+      // Redirect to dashboard for active login/signup or OAuth callback
+      if (shouldRedirectToDashboard || isOAuthCallback()) {
+        shouldRedirectToDashboard = false;
+        handlePostAuthRedirect();
+      }
+    }
+  });
+
+  // Initialize on module load (client-side only)
+  useUserStore.getState().initialize();
+}
 
 // Convenience hooks - use useShallow for object selectors to prevent infinite loops
 export const useCredits = (): {
