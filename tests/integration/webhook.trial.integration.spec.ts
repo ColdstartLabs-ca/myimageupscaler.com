@@ -1,14 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { POST as webhookHandler } from '@app/api/webhooks/stripe/route';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { stripe, STRIPE_WEBHOOK_SECRET } from '@server/stripe';
 import { getTrialConfig, getPlanConfig } from '@shared/config/subscription.config';
-import { getPlanForPriceId } from '@shared/config/stripe';
-import dayjs from 'dayjs';
 
 // Mock dependencies
-vi.mock('@server/stripe');
 vi.mock('@server/supabase/supabaseAdmin');
 vi.mock('@shared/config/subscription.config');
 vi.mock('@shared/config/stripe');
@@ -24,14 +20,12 @@ vi.mock('dayjs', () => {
   return mockDayjs;
 });
 
-const mockStripe = vi.mocked(stripe);
 const mockSupabaseAdmin = vi.mocked(supabaseAdmin);
 const mockGetTrialConfig = vi.mocked(getTrialConfig);
 const mockGetPlanConfig = vi.mocked(getPlanConfig);
-const mockGetPlanForPriceId = vi.mocked(getPlanForPriceId);
 
 describe('Webhook Handler - Trial Integration', () => {
-  let mockRequest: (event: any) => NextRequest;
+  let mockRequest: (event: Record<string, unknown>) => NextRequest;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -91,7 +85,7 @@ describe('Webhook Handler - Trial Integration', () => {
       };
     });
 
-    mockRequest = (event: any) => {
+    mockRequest = (event: Record<string, unknown>) => {
       const body = JSON.stringify(event);
       const signature = 'stripe-signature';
 
@@ -117,15 +111,17 @@ describe('Webhook Handler - Trial Integration', () => {
             customer: 'cus_test_123',
             status: 'trialing',
             current_period_start: Math.floor(Date.now() / 1000),
-            current_period_end: Math.floor(Date.now() / 1000) + (14 * 24 * 60 * 60), // 14 days
-            trial_end: Math.floor(Date.now() / 1000) + (14 * 24 * 60 * 60),
+            current_period_end: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60, // 14 days
+            trial_end: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
             cancel_at_period_end: false,
             items: {
-              data: [{
-                price: {
-                  id: 'price_pro_monthly',
+              data: [
+                {
+                  price: {
+                    id: 'price_pro_monthly',
+                  },
                 },
-              }],
+              ],
             },
           },
         },
@@ -153,7 +149,7 @@ describe('Webhook Handler - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock successful credit allocation
       mockSupabaseAdmin.rpc.mockResolvedValue({ error: null });
@@ -217,15 +213,17 @@ describe('Webhook Handler - Trial Integration', () => {
             customer: 'cus_test_123',
             status: 'trialing',
             current_period_start: Math.floor(Date.now() / 1000),
-            current_period_end: Math.floor(Date.now() / 1000) + (14 * 24 * 60 * 60),
-            trial_end: Math.floor(Date.now() / 1000) + (14 * 24 * 60 * 60),
+            current_period_end: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
+            trial_end: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
             cancel_at_period_end: false,
             items: {
-              data: [{
-                price: {
-                  id: 'price_pro_monthly',
+              data: [
+                {
+                  price: {
+                    id: 'price_pro_monthly',
+                  },
                 },
-              }],
+              ],
             },
           },
         },
@@ -253,7 +251,7 @@ describe('Webhook Handler - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock successful credit allocation
       mockSupabaseAdmin.rpc.mockResolvedValue({ error: null });
@@ -314,15 +312,17 @@ describe('Webhook Handler - Trial Integration', () => {
             customer: 'cus_test_123',
             status: 'active', // Converted from trialing
             current_period_start: Math.floor(Date.now() / 1000),
-            current_period_end: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60),
-            trial_end: Math.floor(Date.now() / 1000) - (1 * 24 * 60 * 60), // Trial ended yesterday
+            current_period_end: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+            trial_end: Math.floor(Date.now() / 1000) - 1 * 24 * 60 * 60, // Trial ended yesterday
             cancel_at_period_end: false,
             items: {
-              data: [{
-                price: {
-                  id: 'price_pro_monthly',
+              data: [
+                {
+                  price: {
+                    id: 'price_pro_monthly',
+                  },
                 },
-              }],
+              ],
             },
           },
         },
@@ -350,7 +350,7 @@ describe('Webhook Handler - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock user profile with existing trial credits
       mockSupabaseAdmin.from.mockReturnValue((table: string) => {
@@ -442,15 +442,17 @@ describe('Webhook Handler - Trial Integration', () => {
             customer: 'cus_test_123',
             status: 'active',
             current_period_start: Math.floor(Date.now() / 1000),
-            current_period_end: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60),
-            trial_end: Math.floor(Date.now() / 1000) - (1 * 24 * 60 * 60),
+            current_period_end: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+            trial_end: Math.floor(Date.now() / 1000) - 1 * 24 * 60 * 60,
             cancel_at_period_end: false,
             items: {
-              data: [{
-                price: {
-                  id: 'price_pro_monthly',
+              data: [
+                {
+                  price: {
+                    id: 'price_pro_monthly',
+                  },
                 },
-              }],
+              ],
             },
           },
         },
@@ -478,7 +480,7 @@ describe('Webhook Handler - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock user profile
       mockSupabaseAdmin.from.mockReturnValue((table: string) => {
@@ -570,16 +572,18 @@ describe('Webhook Handler - Trial Integration', () => {
             id: 'sub_test_123',
             customer: 'cus_test_123',
             status: 'trialing',
-            trial_end: Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60), // 3 days from now
+            trial_end: Math.floor(Date.now() / 1000) + 3 * 24 * 60 * 60, // 3 days from now
             current_period_start: Math.floor(Date.now() / 1000),
-            current_period_end: Math.floor(Date.now() / 1000) + (14 * 24 * 60 * 60),
+            current_period_end: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
             cancel_at_period_end: false,
             items: {
-              data: [{
-                price: {
-                  id: 'price_pro_monthly',
+              data: [
+                {
+                  price: {
+                    id: 'price_pro_monthly',
+                  },
                 },
-              }],
+              ],
             },
           },
         },
@@ -648,9 +652,10 @@ describe('Webhook Handler - Trial Integration', () => {
 
       const request = mockRequest(trialWillEndEvent);
       const response = await webhookHandler(request);
+      const responseData = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.received).toBe(true);
+      expect(responseData.received).toBe(true);
 
       // Verify email notification log
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -672,15 +677,17 @@ describe('Webhook Handler - Trial Integration', () => {
             customer: 'cus_test_error',
             status: 'trialing',
             current_period_start: Math.floor(Date.now() / 1000),
-            current_period_end: Math.floor(Date.now() / 1000) + (14 * 24 * 60 * 60),
+            current_period_end: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
             // Missing trial_end
             cancel_at_period_end: false,
             items: {
-              data: [{
-                price: {
-                  id: 'price_pro_monthly',
+              data: [
+                {
+                  price: {
+                    id: 'price_pro_monthly',
+                  },
                 },
-              }],
+              ],
             },
           },
         },
@@ -708,7 +715,7 @@ describe('Webhook Handler - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock webhook event creation
       mockSupabaseAdmin.from.mockReturnValue((table: string) => {

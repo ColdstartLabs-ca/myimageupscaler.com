@@ -37,6 +37,29 @@ export interface IToolPage extends IBasePSEOPage {
   relatedGuides: string[];
   ctaText: string;
   ctaUrl: string;
+  // Interactive tool fields (optional)
+  isInteractive?: boolean;
+  toolComponent?: string; // Component name to render
+  toolConfig?: IToolConfig; // Configuration passed to tool component
+  maxFileSizeMB?: number;
+  acceptedFormats?: string[];
+}
+
+/**
+ * Tool component configuration
+ */
+export interface IToolConfig {
+  // FormatConverter config
+  defaultTargetFormat?: 'jpeg' | 'png' | 'webp';
+  acceptedInputFormats?: string[];
+  availableOutputFormats?: ('jpeg' | 'png' | 'webp')[];
+  // ImageResizer config
+  defaultWidth?: number;
+  defaultHeight?: number;
+  lockDimensions?: boolean;
+  presetFilter?: string;
+  // ImageCompressor config
+  defaultQuality?: number;
 }
 
 /**
@@ -62,7 +85,11 @@ export interface IScalePage extends IBasePSEOPage {
   category: 'scale';
   resolution: string;
   description: string;
-  dimensions?: string;
+  dimensions?: {
+    width: number;
+    height: number;
+    aspectRatio?: string;
+  };
   useCases: IUseCase[];
   benefits: IBenefit[];
   faq: IFAQ[];
@@ -92,8 +119,12 @@ export interface IComparisonPage extends IBasePSEOPage {
   category: 'compare';
   comparisonType: 'vs' | 'best-of' | 'category';
   products?: IProduct[];
-  criteria: IComparisonCriteria[];
-  verdict?: string;
+  criteria?: IComparisonCriteria[];
+  verdict?: {
+    summary: string;
+    winner?: string;
+    reason?: string;
+  };
   faq: IFAQ[];
   relatedComparisons: string[];
 }
@@ -201,15 +232,21 @@ export interface IResult {
 
 export interface IProduct {
   name: string;
-  pricing: string;
+  pricing?: string;
   rating?: number;
-  pros: string[];
-  cons: string[];
+  tagline?: string;
+  description?: string;
+  isRecommended?: boolean;
+  features?: Record<string, string | boolean | number>;
+  pros?: string[];
+  cons?: string[];
 }
 
 export interface IComparisonCriteria {
-  criterion: string;
-  pixelperfect: string;
+  name: string;
+  key: string;
+  criterion?: string;
+  pixelperfect?: string;
   competitor?: string;
   winner?: 'pixelperfect' | 'competitor' | 'tie';
 }

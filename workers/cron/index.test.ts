@@ -6,16 +6,21 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import worker from './index';
-import type { Env } from './index';
+import type { IEnv } from './index';
 
 // Mock environment
-const mockEnv: Env = {
+const mockEnv: IEnv = {
   API_BASE_URL: 'https://api.example.com',
   CRON_SECRET: 'test-secret-123',
 };
 
 // Mock ExecutionContext
-const mockCtx = {
+interface IMockExecutionContext {
+  waitUntil: ReturnType<typeof vi.fn>;
+  passThroughOnException: ReturnType<typeof vi.fn>;
+}
+
+const mockCtx: IMockExecutionContext = {
   waitUntil: vi.fn(),
   passThroughOnException: vi.fn(),
 };
@@ -31,6 +36,7 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
+        // eslint-disable-next-line no-undef
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -40,7 +46,7 @@ describe('Cloudflare Cron Worker', () => {
       });
       global.fetch = fetchMock;
 
-      await worker.scheduled(event, mockEnv, mockCtx as any);
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
 
       // Wait for waitUntil to be called
       expect(mockCtx.waitUntil).toHaveBeenCalled();
@@ -64,6 +70,7 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '5 * * * *',
         scheduledTime: Date.now(),
+        // eslint-disable-next-line no-undef
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -73,7 +80,7 @@ describe('Cloudflare Cron Worker', () => {
       });
       global.fetch = fetchMock;
 
-      await worker.scheduled(event, mockEnv, mockCtx as any);
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
 
       expect(mockCtx.waitUntil).toHaveBeenCalled();
       const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];
@@ -89,6 +96,7 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '5 3 * * *',
         scheduledTime: Date.now(),
+        // eslint-disable-next-line no-undef
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -98,7 +106,7 @@ describe('Cloudflare Cron Worker', () => {
       });
       global.fetch = fetchMock;
 
-      await worker.scheduled(event, mockEnv, mockCtx as any);
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
 
       expect(mockCtx.waitUntil).toHaveBeenCalled();
       const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];
@@ -114,11 +122,12 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '* * * * *',
         scheduledTime: Date.now(),
+        // eslint-disable-next-line no-undef
       } as ScheduledEvent;
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      await worker.scheduled(event, mockEnv, mockCtx as any);
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('Unknown cron pattern'),
@@ -132,6 +141,7 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
+        // eslint-disable-next-line no-undef
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -143,7 +153,7 @@ describe('Cloudflare Cron Worker', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      await worker.scheduled(event, mockEnv, mockCtx as any);
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
 
       expect(mockCtx.waitUntil).toHaveBeenCalled();
       const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];
@@ -161,6 +171,7 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
+        // eslint-disable-next-line no-undef
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockRejectedValue(new Error('Network error'));
@@ -168,16 +179,13 @@ describe('Cloudflare Cron Worker', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      await worker.scheduled(event, mockEnv, mockCtx as any);
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
 
       expect(mockCtx.waitUntil).toHaveBeenCalled();
       const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];
       await waitUntilPromise;
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('error'),
-        expect.any(Error)
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('error'), expect.any(Error));
 
       consoleSpy.mockRestore();
     });
@@ -187,7 +195,7 @@ describe('Cloudflare Cron Worker', () => {
     it('should return health status', async () => {
       const request = new Request('https://worker.dev/health');
 
-      const response = await worker.fetch(request, mockEnv, mockCtx as any);
+      const response = await worker.fetch(request, mockEnv, mockCtx as unknown);
 
       expect(response.status).toBe(200);
       const body = await response.json();
@@ -201,9 +209,12 @@ describe('Cloudflare Cron Worker', () => {
 
   describe('fetch handler - manual trigger', () => {
     it('should trigger cron job via POST', async () => {
-      const request = new Request('https://worker.dev/trigger?pattern=%2A%2F15%20%2A%20%2A%20%2A%20%2A', {
-        method: 'POST',
-      });
+      const request = new Request(
+        'https://worker.dev/trigger?pattern=%2A%2F15%20%2A%20%2A%20%2A%20%2A',
+        {
+          method: 'POST',
+        }
+      );
 
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
@@ -211,7 +222,7 @@ describe('Cloudflare Cron Worker', () => {
       });
       global.fetch = fetchMock;
 
-      const response = await worker.fetch(request, mockEnv, mockCtx as any);
+      const response = await worker.fetch(request, mockEnv, mockCtx as unknown);
 
       expect(response.status).toBe(200);
       const body = await response.json();
@@ -227,7 +238,7 @@ describe('Cloudflare Cron Worker', () => {
         method: 'POST',
       });
 
-      const response = await worker.fetch(request, mockEnv, mockCtx as any);
+      const response = await worker.fetch(request, mockEnv, mockCtx as unknown);
 
       expect(response.status).toBe(400);
       const body = await response.json();
@@ -239,7 +250,7 @@ describe('Cloudflare Cron Worker', () => {
     it('should return 404 for unknown paths', async () => {
       const request = new Request('https://worker.dev/unknown');
 
-      const response = await worker.fetch(request, mockEnv, mockCtx as any);
+      const response = await worker.fetch(request, mockEnv, mockCtx as unknown);
 
       expect(response.status).toBe(404);
       const body = await response.json();
@@ -250,7 +261,7 @@ describe('Cloudflare Cron Worker', () => {
 
   describe('Environment configuration', () => {
     it('should use correct API base URL', async () => {
-      const customEnv: Env = {
+      const customEnv: IEnv = {
         API_BASE_URL: 'https://custom-api.com',
         CRON_SECRET: 'secret',
       };
@@ -258,6 +269,7 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
+        // eslint-disable-next-line no-undef
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -266,7 +278,7 @@ describe('Cloudflare Cron Worker', () => {
       });
       global.fetch = fetchMock;
 
-      await worker.scheduled(event, customEnv, mockCtx as any);
+      await worker.scheduled(event, customEnv, mockCtx as unknown);
 
       expect(mockCtx.waitUntil).toHaveBeenCalled();
       const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];
@@ -279,7 +291,7 @@ describe('Cloudflare Cron Worker', () => {
     });
 
     it('should use correct CRON_SECRET', async () => {
-      const customEnv: Env = {
+      const customEnv: IEnv = {
         API_BASE_URL: 'https://api.com',
         CRON_SECRET: 'custom-secret-456',
       };
@@ -287,6 +299,7 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
+        // eslint-disable-next-line no-undef
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -295,7 +308,7 @@ describe('Cloudflare Cron Worker', () => {
       });
       global.fetch = fetchMock;
 
-      await worker.scheduled(event, customEnv, mockCtx as any);
+      await worker.scheduled(event, customEnv, mockCtx as unknown);
 
       expect(mockCtx.waitUntil).toHaveBeenCalled();
       const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];

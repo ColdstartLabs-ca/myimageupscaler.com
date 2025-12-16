@@ -11,14 +11,10 @@ interface IPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Temporarily disabled static generation due to React version conflict
-// TODO: Re-enable after fixing MDX React version issue
-// export async function generateStaticParams() {
-//   const slugs = getAllSlugs();
-//   return slugs.map(slug => ({ slug }));
-// }
-
-export const dynamic = 'force-dynamic';
+export async function generateStaticParams() {
+  const posts = getAllPosts();
+  return posts.map(post => ({ slug: post.slug }));
+}
 
 export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -178,9 +174,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
         {relatedPosts.length > 0 && (
           <section className="py-16 bg-slate-50 border-t border-slate-200">
             <div className="container mx-auto px-4 max-w-6xl">
-              <h2 className="text-2xl font-bold text-slate-900 mb-8">
-                Related Articles
-              </h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-8">Related Articles</h2>
               <div className="grid md:grid-cols-3 gap-6">
                 {relatedPosts.map(related => (
                   <Link

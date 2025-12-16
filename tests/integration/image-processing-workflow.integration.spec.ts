@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { TestContext } from '../helpers';
 import { readFile } from 'fs/promises';
-import path from 'path';
+import * as path from 'path';
+import type { ITestUser } from '../helpers/test-data-manager';
 
 /**
  * Image Processing Workflow Integration Tests
@@ -15,7 +16,7 @@ import path from 'path';
  */
 test.describe('Image Processing Workflow Integration', () => {
   let ctx: TestContext;
-  let testUser: any;
+  let testUser: ITestUser;
   let testImageBuffer: Buffer;
 
   test.beforeAll(async () => {
@@ -69,13 +70,6 @@ test.describe('Image Processing Workflow Integration', () => {
       const initialData = await initialCreditsResponse.json();
       const initialBalance = initialData.data.balance;
 
-      // Mock successful AI processing
-      const mockAIResponse = {
-        success: true,
-        processedImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
-        processingTime: 2500,
-      };
-
       // Process image (this would normally call AI service)
       const processResponse = await request.post('/api/upscale', {
         headers: {
@@ -106,8 +100,16 @@ test.describe('Image Processing Workflow Integration', () => {
   test.describe('Image Upload and Validation', () => {
     test('should validate supported image formats', async ({ request }) => {
       const unsupportedFormats = [
-        { name: 'GIF', data: 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', type: 'image/gif' },
-        { name: 'BMP', data: 'Qk08AAAAAAAAADYAAAAoAAAAAQAAAAIAAAABABgAAAAAAAQAAAATCwAAEwsAAAAAAAAAAAAA', type: 'image/bmp' },
+        {
+          name: 'GIF',
+          data: 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+          type: 'image/gif',
+        },
+        {
+          name: 'BMP',
+          data: 'Qk08AAAAAAAAADYAAAAoAAAAAQAAAAIAAAABABgAAAAAAAQAAAATCwAAEwsAAAAAAAAAAAAA',
+          type: 'image/bmp',
+        },
       ];
 
       for (const format of unsupportedFormats) {
@@ -153,7 +155,7 @@ test.describe('Image Processing Workflow Integration', () => {
     test('should validate processing parameters', async ({ request }) => {
       const invalidParameters = [
         { scale: 16 }, // Invalid scale
-        { scale: 0 },  // Invalid scale
+        { scale: 0 }, // Invalid scale
         { mode: 'invalid-mode' }, // Invalid mode
         { preserveText: 'not-boolean' }, // Invalid type
       ];
@@ -189,23 +191,26 @@ test.describe('Image Processing Workflow Integration', () => {
       { mode: 'product', expectedCost: 1, scale: 2 },
     ];
 
-    test.each(processingModes)('should calculate correct credits for $mode mode at $scale scale', async ({ mode, scale, expectedCost }, { request }) => {
-      const response = await request.post('/api/upscale/cost-estimate', {
-        headers: {
-          Authorization: `Bearer ${testUser.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          mode,
-          scale,
-          hasImage: true,
-        },
-      });
+    test.each(processingModes)(
+      'should calculate correct credits for $mode mode at $scale scale',
+      async ({ mode, scale, expectedCost }, { request }) => {
+        const response = await request.post('/api/upscale/cost-estimate', {
+          headers: {
+            Authorization: `Bearer ${testUser.token}`,
+            'Content-Type': 'application/json',
+          },
+          data: {
+            mode,
+            scale,
+            hasImage: true,
+          },
+        });
 
-      expect(response.ok()).toBeTruthy();
-      const result = await response.json();
-      expect(result.data.creditsRequired).toBe(expectedCost);
-    });
+        expect(response.ok()).toBeTruthy();
+        const result = await response.json();
+        expect(result.data.creditsRequired).toBe(expectedCost);
+      }
+    );
   });
 
   test.describe('Error Handling and Recovery', () => {
@@ -254,19 +259,21 @@ test.describe('Image Processing Workflow Integration', () => {
 
     test('should handle concurrent requests safely', async ({ request }) => {
       // Make multiple concurrent requests
-      const concurrentRequests = Array(3).fill(null).map(() =>
-        request.post('/api/upscale', {
-          headers: {
-            Authorization: `Bearer ${testUser.token}`,
-            'Content-Type': 'application/json',
-          },
-          data: {
-            image: testImageBuffer.toString('base64'),
-            mode: 'standard',
-            scale: 2,
-          },
-        })
-      );
+      const concurrentRequests = Array(3)
+        .fill(null)
+        .map(() =>
+          request.post('/api/upscale', {
+            headers: {
+              Authorization: `Bearer ${testUser.token}`,
+              'Content-Type': 'application/json',
+            },
+            data: {
+              image: testImageBuffer.toString('base64'),
+              mode: 'standard',
+              scale: 2,
+            },
+          })
+        );
 
       const responses = await Promise.all(concurrentRequests);
 
@@ -281,7 +288,7 @@ test.describe('Image Processing Workflow Integration', () => {
     test('should complete requests within reasonable time', async ({ request }) => {
       const startTime = Date.now();
 
-      const response = await request.post('/api/upscale', {
+      await request.post('/api/upscale', {
         headers: {
           Authorization: `Bearer ${testUser.token}`,
           'Content-Type': 'application/json',

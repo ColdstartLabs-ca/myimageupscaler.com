@@ -1,5 +1,9 @@
-import { APIRequestContext, APIResponse } from '@playwright/test';
-import { StripeWebhookMockFactory, IWebhookTestOptions, IStripeEventMock } from './stripe-webhook-mocks';
+import { APIRequestContext } from '@playwright/test';
+import {
+  StripeWebhookMockFactory,
+  IWebhookTestOptions,
+  IStripeEventMock,
+} from './stripe-webhook-mocks';
 import { ApiResponse } from './api-client';
 
 export interface IWebhookClientOptions {
@@ -150,7 +154,7 @@ export class WebhookClient {
 
     // Add metadata if provided
     if (options.metadata && event.data.object) {
-      (event.data.object as any).metadata = options.metadata;
+      (event.data.object as Record<string, unknown>).metadata = options.metadata;
     }
 
     return this.send(event);
@@ -214,8 +218,20 @@ export class WebhookClient {
    */
   async sendBatch(
     events: Array<{
-      type: 'credit_purchase' | 'subscription_checkout' | 'subscription_created' | 'subscription_updated' | 'subscription_deleted' | 'invoice_payment_succeeded' | 'invoice_payment_failed' | 'custom';
-      options: IWebhookTestOptions & { status?: string; eventType?: string; data?: Record<string, unknown> };
+      type:
+        | 'credit_purchase'
+        | 'subscription_checkout'
+        | 'subscription_created'
+        | 'subscription_updated'
+        | 'subscription_deleted'
+        | 'invoice_payment_succeeded'
+        | 'invoice_payment_failed'
+        | 'custom';
+      options: IWebhookTestOptions & {
+        status?: string;
+        eventType?: string;
+        data?: Record<string, unknown>;
+      };
     }>,
     delayMs: number = 100
   ): Promise<ApiResponse[]> {
@@ -306,10 +322,7 @@ export class WebhookClient {
 
     // In non-test mode with verification enabled, would need actual HMAC-SHA256 implementation
     // For now, return mock signature - real implementation would require crypto module
-    return StripeWebhookMockFactory.createMockSignature(
-      payloadString,
-      secret || 'whsec_test'
-    );
+    return StripeWebhookMockFactory.createMockSignature(payloadString, secret || 'whsec_test');
   }
 
   /**

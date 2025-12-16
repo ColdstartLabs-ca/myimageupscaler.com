@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestContext, ApiClient, WebhookClient } from '../helpers';
+import { TestContext, ApiClient } from '../helpers';
 import { stripeWebhookMocks } from '../helpers/stripe-webhook-mocks';
 
 /**
@@ -336,9 +336,9 @@ test.describe('Billing System Integration', () => {
       expect(testTransaction.type).toBe('purchase');
     });
 
-    test('should track usage transactions', async ({ request }) => {
+    test('should track usage transactions', async () => {
       // Simulate credit deduction (would normally happen during processing)
-      const initialBalance = (await ctx.data.getUserProfile(proUser.id)).credits_balance;
+      const _initialBalance = (await ctx.data.getUserProfile(proUser.id)).credits_balance;
 
       // This would be done by the actual processing logic
       // For testing, we can manually create a usage transaction
@@ -351,7 +351,7 @@ test.describe('Billing System Integration', () => {
   });
 
   test.describe('Billing Security', () => {
-    test('should prevent accessing another user\'s billing data', async ({ request }) => {
+    test("should prevent accessing another user's billing data", async ({ request }) => {
       // Try to access pro user's billing data with free user token
       const response = await request.get('/api/billing/subscription', {
         headers: {

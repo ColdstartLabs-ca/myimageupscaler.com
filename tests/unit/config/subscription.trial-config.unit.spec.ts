@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { getTrialConfig, getPlanConfig, isTrialEnabled, getSubscriptionConfig } from '@shared/config/subscription.config';
+import {
+  getTrialConfig,
+  getPlanConfig,
+  isTrialEnabled,
+  getSubscriptionConfig,
+} from '@shared/config/subscription.config';
 
 describe('Trial Configuration', () => {
   describe('getTrialConfig', () => {
@@ -16,7 +21,10 @@ describe('Trial Configuration', () => {
     it('should return trial configuration when enabled', () => {
       // First, let's enable a trial for testing by temporarily modifying the config
       const config = getSubscriptionConfig();
-      const planIndex = config.plans.findIndex(p => p.stripePriceId === 'price_1SZmVzALMLhQocpfPyRX2W8D'); // Pro plan
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const planIndex = config.plans.findIndex(
+        p => p.stripePriceId === 'price_1SZmVzALMLhQocpfPyRX2W8D'
+      ); // Pro plan
 
       // The trial is currently disabled, so we should get null
       const disabledConfig = getTrialConfig('price_1SZmVzALMLhQocpfPyRX2W8D');

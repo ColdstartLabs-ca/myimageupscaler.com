@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect } from 'vitest';
 
 // Test the middleware helper functions
 describe('Bug Fix: Rate Limit Headers and IP Detection', () => {

@@ -1,10 +1,12 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { rateLimit, publicRateLimit } from '../../server/rateLimit';
 
 describe('Rate Limiting System', () => {
   beforeEach(() => {
     // Clear the in-memory store before each test
-    const rateLimitStore = (global as any).rateLimitStore;
+    const rateLimitStore = (
+      global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+    ).rateLimitStore;
     if (rateLimitStore) {
       rateLimitStore.clear();
     }
@@ -18,7 +20,9 @@ describe('Rate Limiting System', () => {
 
       // Mock the rate limit store
       const store = new Map();
-      (global as any).rateLimitStore = store;
+      (
+        global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+      ).rateLimitStore = store;
 
       // Create a custom rate limiter for testing
       const testRateLimiter = async (id: string) => {
@@ -68,7 +72,9 @@ describe('Rate Limiting System', () => {
 
       // Mock the rate limit store
       const store = new Map();
-      (global as any).rateLimitStore = store;
+      (
+        global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+      ).rateLimitStore = store;
 
       const testRateLimiter = async (id: string) => {
         const now = Date.now();
@@ -122,7 +128,9 @@ describe('Rate Limiting System', () => {
 
       // Mock the rate limit store
       const store = new Map();
-      (global as any).rateLimitStore = store;
+      (
+        global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+      ).rateLimitStore = store;
 
       const testRateLimiter = async (id: string) => {
         const now = Date.now();
@@ -181,7 +189,9 @@ describe('Rate Limiting System', () => {
 
       // Mock the rate limit store
       const store = new Map();
-      (global as any).rateLimitStore = store;
+      (
+        global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+      ).rateLimitStore = store;
 
       const testRateLimiter = async (id: string) => {
         const now = Date.now();
@@ -247,7 +257,9 @@ describe('Rate Limiting System', () => {
 
       // Mock the rate limit store
       const store = new Map();
-      (global as any).rateLimitStore = store;
+      (
+        global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+      ).rateLimitStore = store;
 
       const testRateLimiter = async (id: string) => {
         const now = Date.now();
@@ -261,7 +273,8 @@ describe('Rate Limiting System', () => {
 
         entry.timestamps = entry.timestamps.filter((t: number) => t > windowStart);
 
-        if (entry.timestamps.length >= 10) { // High limit for this test
+        if (entry.timestamps.length >= 10) {
+          // High limit for this test
           return { success: false, remaining: 0, reset: now + windowMs };
         }
 
@@ -292,7 +305,9 @@ describe('Rate Limiting System', () => {
 
       // Mock the rate limit store
       const store = new Map();
-      (global as any).rateLimitStore = store;
+      (
+        global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+      ).rateLimitStore = store;
 
       const testRateLimiter = async (id: string) => {
         const now = Date.now();
@@ -408,7 +423,9 @@ describe('Rate Limiting System', () => {
 
       // Mock the rate limit store
       const store = new Map();
-      (global as any).rateLimitStore = store;
+      (
+        global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+      ).rateLimitStore = store;
 
       const testRateLimiter = async (id: string) => {
         const now = Date.now();
@@ -452,8 +469,7 @@ describe('Rate Limiting System', () => {
 
     test('should handle zero limit edge case', async () => {
       // Test what happens when we create a rate limiter with zero limit
-      const zeroLimitLimiter = async (identifier: string) => {
-        const limit = 0;
+      const zeroLimitLimiter = async (_identifier: string) => {
         const windowMs = 1000;
         const now = Date.now();
 
@@ -477,7 +493,9 @@ describe('Rate Limiting System', () => {
 
       // Mock the rate limit store
       const store = new Map();
-      (global as any).rateLimitStore = store;
+      (
+        global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+      ).rateLimitStore = store;
 
       const testRateLimiter = async (id: string) => {
         const now = Date.now();
@@ -521,7 +539,9 @@ describe('Rate Limiting System', () => {
 
       // Mock the rate limit store
       const store = new Map();
-      (global as any).rateLimitStore = store;
+      (
+        global as unknown as { rateLimitStore?: Map<string, { timestamps: number[] }> }
+      ).rateLimitStore = store;
 
       const testRateLimiter = async (id: string) => {
         const now = Date.now();

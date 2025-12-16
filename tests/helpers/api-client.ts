@@ -1,4 +1,4 @@
-import { APIRequestContext, expect, APIResponse } from '@playwright/test';
+import { APIRequestContext, expect, APIResponse, RequestOptions } from '@playwright/test';
 
 export interface IApiResponse<T = unknown> {
   status: number;
@@ -60,7 +60,7 @@ export class ApiClient {
     data?: unknown,
     options?: IApiRequestOptions
   ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+    const requestOptions: RequestOptions = {
       data,
       headers: {
         'Content-Type': 'application/json',
@@ -87,11 +87,8 @@ export class ApiClient {
    * @param options - Additional request options
    * @returns ApiResponse with fluent assertion methods
    */
-  async get<T = unknown>(
-    endpoint: string,
-    options?: IApiRequestOptions
-  ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+  async get<T = unknown>(endpoint: string, options?: IApiRequestOptions): Promise<ApiResponse<T>> {
+    const requestOptions: RequestOptions = {
       headers: options?.headers || {},
     };
 
@@ -120,7 +117,7 @@ export class ApiClient {
     data?: unknown,
     options?: IApiRequestOptions
   ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+    const requestOptions: RequestOptions = {
       data,
       headers: {
         'Content-Type': 'application/json',
@@ -151,7 +148,7 @@ export class ApiClient {
     endpoint: string,
     options?: IApiRequestOptions
   ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+    const requestOptions: RequestOptions = {
       headers: options?.headers || {},
     };
 
@@ -180,7 +177,7 @@ export class ApiClient {
     data?: unknown,
     options?: IApiRequestOptions
   ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+    const requestOptions: RequestOptions = {
       data,
       headers: {
         'Content-Type': 'application/json',
@@ -241,7 +238,7 @@ export class AuthenticatedApiClient extends ApiClient {
     data?: unknown,
     options?: IApiRequestOptions
   ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+    const requestOptions: RequestOptions = {
       data,
       headers: {
         ...this.authHeaders,
@@ -268,11 +265,8 @@ export class AuthenticatedApiClient extends ApiClient {
    * @param options - Additional request options
    * @returns ApiResponse with fluent assertion methods
    */
-  async get<T = unknown>(
-    endpoint: string,
-    options?: IApiRequestOptions
-  ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+  async get<T = unknown>(endpoint: string, options?: IApiRequestOptions): Promise<ApiResponse<T>> {
+    const requestOptions: RequestOptions = {
       headers: {
         ...this.authHeaders,
         ...options?.headers,
@@ -304,7 +298,7 @@ export class AuthenticatedApiClient extends ApiClient {
     data?: unknown,
     options?: IApiRequestOptions
   ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+    const requestOptions: RequestOptions = {
       data,
       headers: {
         ...this.authHeaders,
@@ -335,7 +329,7 @@ export class AuthenticatedApiClient extends ApiClient {
     endpoint: string,
     options?: IApiRequestOptions
   ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+    const requestOptions: RequestOptions = {
       headers: {
         ...this.authHeaders,
         ...options?.headers,
@@ -367,7 +361,7 @@ export class AuthenticatedApiClient extends ApiClient {
     data?: unknown,
     options?: IApiRequestOptions
   ): Promise<ApiResponse<T>> {
-    const requestOptions: any = {
+    const requestOptions: RequestOptions = {
       data,
       headers: {
         ...this.authHeaders,
@@ -488,7 +482,7 @@ export class ApiResponse<T = unknown> {
    * @returns This instance for chaining
    */
   async expectErrorCode(code: string): Promise<this> {
-    const data = await this.json() as IApiErrorResponse;
+    const data = (await this.json()) as IApiErrorResponse;
     expect(data.success).toBe(false);
     expect(data.error?.code).toBe(code);
     return this;
@@ -501,7 +495,7 @@ export class ApiResponse<T = unknown> {
    * @returns This instance for chaining
    */
   async expectErrorMessage(message: string | RegExp): Promise<this> {
-    const data = await this.json() as IApiErrorResponse;
+    const data = (await this.json()) as IApiErrorResponse;
     expect(data.success).toBe(false);
 
     if (typeof message === 'string') {
@@ -518,10 +512,8 @@ export class ApiResponse<T = unknown> {
    * @param assertions - Partial record of expected data properties
    * @returns This instance for chaining
    */
-  async expectData<K extends keyof T>(
-    assertions: Partial<Record<K, unknown>>
-  ): Promise<this> {
-    const data = await this.json() as IApiSuccessResponse<T>;
+  async expectData<K extends keyof T>(assertions: Partial<Record<K, unknown>>): Promise<this> {
+    const data = (await this.json()) as IApiSuccessResponse<T>;
     expect(data.success).toBe(true);
 
     for (const [key, value] of Object.entries(assertions)) {
@@ -563,9 +555,10 @@ export class ApiResponse<T = unknown> {
    * @param maxMs - Maximum acceptable response time in milliseconds
    * @returns This instance for chaining
    */
-  async expectResponseTime(maxMs: number): Promise<this> {
+  async expectResponseTime(_maxMs: number): Promise<this> {
     // Note: Playwright doesn't expose response timing directly
     // This is a placeholder that could be enhanced with custom timing
+    void _maxMs; // Mark as intentionally unused for now
     console.warn('Response time checking not implemented in Playwright API client');
     return this;
   }
@@ -593,7 +586,7 @@ export class ApiResponse<T = unknown> {
    * @param path - Dot-separated path
    * @returns Value at path or undefined
    */
-  private getNestedValue(obj: any, path: string): unknown {
+  private getNestedValue(obj: Record<string, unknown>, path: string): unknown {
     return path.split('.').reduce((current, key) => current?.[key], obj);
   }
 }

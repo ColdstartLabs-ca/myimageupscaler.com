@@ -496,6 +496,70 @@ export const keywordPageMappings: IKeywordPageMapping[] = [
     },
   },
 
+  // Interactive Tool Pages (Tier 1 - High Volume)
+  {
+    primaryKeyword: 'image resizer',
+    secondaryKeywords: [
+      'resize image online',
+      'online image resizer',
+      'resize image',
+      'image resize tool',
+      'resize photo online',
+      'picture resizer',
+    ],
+    canonicalUrl: '/tools/resize/image-resizer',
+    intent: 'Transactional',
+    tier: 1,
+    priority: 'P0',
+    contentRequirements: {
+      minWords: 1400,
+      sections: ['Hero + Tool', 'How It Works', 'Key Features', 'Use Cases', 'Benefits', 'FAQ'],
+      faqCount: 8,
+      internalLinks: 4,
+    },
+  },
+  {
+    primaryKeyword: 'image compressor',
+    secondaryKeywords: [
+      'compress image online',
+      'online image compressor',
+      'compress image',
+      'image compression tool',
+      'reduce image size',
+      'photo compressor',
+    ],
+    canonicalUrl: '/tools/compress/image-compressor',
+    intent: 'Transactional',
+    tier: 1,
+    priority: 'P0',
+    contentRequirements: {
+      minWords: 1400,
+      sections: ['Hero + Tool', 'How It Works', 'Key Features', 'Use Cases', 'Benefits', 'FAQ'],
+      faqCount: 6,
+      internalLinks: 4,
+    },
+  },
+  {
+    primaryKeyword: 'png to jpg',
+    secondaryKeywords: [
+      'convert png to jpg',
+      'png to jpeg',
+      'png to jpg converter',
+      'png to jpg online',
+      'convert png to jpeg',
+    ],
+    canonicalUrl: '/tools/convert/png-to-jpg',
+    intent: 'Transactional',
+    tier: 1,
+    priority: 'P0',
+    contentRequirements: {
+      minWords: 1400,
+      sections: ['Hero + Tool', 'How It Works', 'Key Features', 'Use Cases', 'Benefits', 'FAQ'],
+      faqCount: 5,
+      internalLinks: 4,
+    },
+  },
+
   // Additional Tier 2 Tool Pages
   {
     primaryKeyword: 'ai image enlarger',

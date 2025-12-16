@@ -1,4 +1,3 @@
-import { APIRequestContext } from '@playwright/test';
 import { TestDataManager, type ITestUser } from './test-data-manager';
 
 export interface ITestContextOptions {
@@ -36,9 +35,10 @@ export class TestContext {
     const { subscription = 'free', tier, credits = 10 } = options || {};
 
     try {
-      const user = subscription === 'free'
-        ? await this.dataManager.createTestUser()
-        : await this.dataManager.createTestUserWithSubscription(subscription, tier, credits);
+      const user =
+        subscription === 'free'
+          ? await this.dataManager.createTestUser()
+          : await this.dataManager.createTestUserWithSubscription(subscription, tier, credits);
 
       this.users.push(user);
       return user;
@@ -47,9 +47,10 @@ export class TestContext {
       if (process.env.ENV === 'test') {
         console.warn('User creation failed, creating mock user for test environment:', error);
         const mockUserId = this.generateUUID();
-        const mockToken = subscription === 'free'
-          ? `test_token_mock_user_${mockUserId}`
-          : `test_token_mock_user_${mockUserId}_sub_${subscription}_${tier || 'pro'}`;
+        const mockToken =
+          subscription === 'free'
+            ? `test_token_mock_user_${mockUserId}`
+            : `test_token_mock_user_${mockUserId}_sub_${subscription}_${tier || 'pro'}`;
 
         const mockUser: ITestUser = {
           id: mockUserId,
@@ -71,11 +72,14 @@ export class TestContext {
    * @param options - User configuration options applied to all users
    * @returns Array of test users
    */
-  async createUsers(count: number, options?: {
-    subscription?: 'free' | 'active' | 'trialing' | 'past_due' | 'canceled';
-    tier?: 'starter' | 'pro' | 'business';
-    credits?: number;
-  }): Promise<ITestUser[]> {
+  async createUsers(
+    count: number,
+    options?: {
+      subscription?: 'free' | 'active' | 'trialing' | 'past_due' | 'canceled';
+      tier?: 'starter' | 'pro' | 'business';
+      credits?: number;
+    }
+  ): Promise<ITestUser[]> {
     const users: ITestUser[] = [];
     for (let i = 0; i < count; i++) {
       const user = await this.createUser(options);
@@ -195,9 +199,9 @@ export class TestContext {
    * @returns A valid UUID string
    */
   private generateUUID(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0;
-      const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0;
+      const v = c == 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   }

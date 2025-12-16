@@ -23,8 +23,6 @@ test.describe('Authentication Flow Integration', () => {
   });
 
   test.describe('User Registration and Profile Creation', () => {
-    let newUser: any;
-
     test('should create user profile after successful registration', async ({ request }) => {
       const api = new ApiClient(request);
       const userData = {
@@ -134,13 +132,13 @@ test.describe('Authentication Flow Integration', () => {
       };
 
       // Make multiple failed login attempts
-      const attempts = Array(10).fill(null).map(() =>
-        api.post('/api/auth/login', loginData)
-      );
+      const attempts = Array(10)
+        .fill(null)
+        .map(() => api.post('/api/auth/login', loginData));
 
       const results = await Promise.allSettled(attempts);
-      const rateLimited = results.filter(result =>
-        result.status === 'fulfilled' && result.value.status === 429
+      const rateLimited = results.filter(
+        result => result.status === 'fulfilled' && result.value.status === 429
       );
 
       expect(rateLimited.length).toBeGreaterThan(0);
@@ -154,13 +152,13 @@ test.describe('Authentication Flow Integration', () => {
       };
 
       // Make concurrent registration requests
-      const concurrentRequests = Array(5).fill(null).map(() =>
-        api.post('/api/auth/register', userData)
-      );
+      const concurrentRequests = Array(5)
+        .fill(null)
+        .map(() => api.post('/api/auth/register', userData));
 
       const results = await Promise.allSettled(concurrentRequests);
-      const successful = results.filter(result =>
-        result.status === 'fulfilled' && result.value.status === 201
+      const successful = results.filter(
+        result => result.status === 'fulfilled' && result.value.status === 201
       );
 
       // Only one should succeed due to unique email constraint
@@ -176,10 +174,7 @@ test.describe('Authentication Flow Integration', () => {
       const testUser = await ctx.createUser();
       const authenticatedApi = api.withAuth(testUser.token);
 
-      const protectedRoutes = [
-        '/api/protected/example',
-        '/api/health',
-      ];
+      const protectedRoutes = ['/api/protected/example', '/api/health'];
 
       for (const route of protectedRoutes) {
         const response = await authenticatedApi.get(route);
@@ -189,9 +184,7 @@ test.describe('Authentication Flow Integration', () => {
 
     test('should block access to protected routes without authentication', async ({ request }) => {
       const api = new ApiClient(request);
-      const protectedRoutes = [
-        '/api/protected/example',
-      ];
+      const protectedRoutes = ['/api/protected/example'];
 
       for (const route of protectedRoutes) {
         const response = await api.get(route);

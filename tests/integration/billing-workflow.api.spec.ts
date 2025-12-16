@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestContext, ApiClient, WebhookClient } from '../helpers';
+import { TestContext, WebhookClient } from '../helpers';
 
 /**
  * Billing Workflow Integration Tests
@@ -112,7 +112,7 @@ test.describe('Billing Workflow Integration', () => {
       const response2 = await webhookClient.sendRawEvent(event);
       expect([200, 202]).toContain(response2.status);
 
-      const data2 = await response2.json() as { received: boolean; skipped?: boolean };
+      const data2 = (await response2.json()) as { received: boolean; skipped?: boolean };
       expect(data2.received).toBe(true);
     });
   });

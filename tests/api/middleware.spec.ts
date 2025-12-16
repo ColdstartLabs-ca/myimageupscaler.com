@@ -120,6 +120,7 @@ test.describe('Middleware - Rate Limiting', () => {
     const responses = await Promise.all(requests);
 
     // Some requests should succeed, but eventually we should hit the limit
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const tooManyRequests = responses.some(r => r.status() === 429);
 
     // If we hit the rate limit, verify the response

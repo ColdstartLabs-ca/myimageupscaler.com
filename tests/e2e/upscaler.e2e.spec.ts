@@ -6,7 +6,7 @@ import { getFixturePath, mockUpscaleSuccessResponse, mockUpscaleErrorResponses }
  * Helper function to set up comprehensive auth mocks for processing tests
  * NOTE: This does NOT mock the /api/upscale endpoint - tests should do that themselves
  */
-async function setupAuthAndApiMocks(page: any, credits = 1000) {
+async function setupAuthAndApiMocks(page: import('@playwright/test').Page, credits = 1000) {
   // Mock Supabase auth endpoints and any auth-related calls
   await page.route('**/auth/v1/session', async route => {
     console.log('🔐 AUTH MOCK: Session endpoint called');
@@ -355,6 +355,7 @@ test.describe('Upscaler E2E Tests', () => {
       // Listen for validation error
       // Note: This tests client-side validation, not API
       // The Dropzone component validates file size before upload
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const errorVisible = page.locator('.text-red-600, [role="alert"]');
 
       // We can't easily create a >5MB file in tests,

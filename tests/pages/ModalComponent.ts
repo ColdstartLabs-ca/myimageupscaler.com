@@ -1,5 +1,4 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { BasePage, type IWaitOptions } from './BasePage';
 
 export interface IModalOptions {
   timeout?: number;
@@ -37,7 +36,9 @@ export class ModalComponent {
    * Gets the modal close button
    */
   get closeButton(): Locator {
-    return this.modal.locator('button[aria-label="Close"], .close-button, [data-close], .modal-close').first();
+    return this.modal
+      .locator('button[aria-label="Close"], .close-button, [data-close], .modal-close')
+      .first();
   }
 
   /**
@@ -161,7 +162,7 @@ export class ModalComponent {
    * @returns Modal title text
    */
   async getTitle(): Promise<string> {
-    return await this.title.textContent() || '';
+    return (await this.title.textContent()) || '';
   }
 
   /**
@@ -170,7 +171,7 @@ export class ModalComponent {
    * @returns Modal content text
    */
   async getContent(): Promise<string> {
-    return await this.content.textContent() || '';
+    return (await this.content.textContent()) || '';
   }
 
   /**
@@ -196,9 +197,7 @@ export class ModalComponent {
    * @param value - Value to fill
    */
   async fillField(fieldLabel: string | RegExp, value: string): Promise<void> {
-    const field = this.modal.getByLabel(fieldLabel).or(
-      this.modal.getByPlaceholder(fieldLabel)
-    );
+    const field = this.modal.getByLabel(fieldLabel).or(this.modal.getByPlaceholder(fieldLabel));
     await expect(field).toBeVisible();
     await field.fill(value);
   }
@@ -262,7 +261,7 @@ export class ModalComponent {
     const focusableElements = this.modal.locator(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
-    const hasFocusableElements = await focusableElements.count() > 0;
+    const hasFocusableElements = (await focusableElements.count()) > 0;
 
     if (!hasFocusableElements) {
       console.warn('Modal appears to have no focusable elements');
@@ -281,7 +280,7 @@ export class ModalComponent {
       const filename = `${name}-${timestamp}.png`;
       await this.modal.screenshot({
         path: `test-results/screenshots/${filename}`,
-        ...options
+        ...options,
       });
     }
   }
@@ -371,7 +370,9 @@ export class ModalComponent {
    */
   async submit(waitForClose = true): Promise<void> {
     // Try to find submit button first
-    const submitButton = this.modal.locator('button[type="submit"], .btn-primary, [data-submit]').first();
+    const submitButton = this.modal
+      .locator('button[type="submit"], .btn-primary, [data-submit]')
+      .first();
 
     if (await submitButton.isVisible()) {
       await submitButton.click();
@@ -392,7 +393,9 @@ export class ModalComponent {
    */
   async dismiss(waitForClose = true): Promise<void> {
     // Try to find cancel/close button
-    const cancelButton = this.modal.locator('button[type="button"], .btn-secondary, .cancel-button, [data-cancel]').first();
+    const cancelButton = this.modal
+      .locator('button[type="button"], .btn-secondary, .cancel-button, [data-cancel]')
+      .first();
 
     if (await cancelButton.isVisible()) {
       await cancelButton.click();

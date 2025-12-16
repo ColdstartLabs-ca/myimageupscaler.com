@@ -7,6 +7,10 @@
 import { cache } from 'react';
 import { keywordPageMappings } from './keyword-mappings';
 import toolsDataFile from '@/app/seo/data/tools.json';
+import freeDataFile from '@/app/seo/data/free.json';
+import scaleDataFile from '@/app/seo/data/scale.json';
+import comparisonDataFile from '@/app/seo/data/comparison.json';
+import guidesDataFile from '@/app/seo/data/guides.json';
 import type {
   IToolPage,
   IFormatPage,
@@ -31,6 +35,24 @@ function generatePageFromMapping(mapping: (typeof keywordPageMappings)[number]):
   const category = mapping.canonicalUrl.split('/')[1] as PSEOPage['category'];
   const slug = mapping.canonicalUrl.split('/')[2];
 
+  // Default FAQ to prevent empty schema
+  const defaultFAQ = [
+    {
+      question: `What is ${mapping.primaryKeyword}?`,
+      answer: `${mapping.primaryKeyword.charAt(0).toUpperCase() + mapping.primaryKeyword.slice(1)} is an AI-powered image enhancement tool that helps you improve image quality, resolution, and clarity instantly.`,
+    },
+    {
+      question: 'Is it free to use?',
+      answer:
+        'Yes! PixelPerfect offers 10 free credits to get started. Each image enhancement uses 1 credit. For unlimited access, check our affordable premium plans.',
+    },
+    {
+      question: 'How long does processing take?',
+      answer:
+        'Most images are processed in 30-60 seconds. Processing time may vary based on image size and enhancement level.',
+    },
+  ];
+
   return {
     slug,
     title: mapping.primaryKeyword
@@ -51,6 +73,7 @@ function generatePageFromMapping(mapping: (typeof keywordPageMappings)[number]):
     secondaryKeywords: mapping.secondaryKeywords,
     lastUpdated: new Date().toISOString(),
     category,
+    faq: defaultFAQ,
   };
 }
 
@@ -107,6 +130,14 @@ export const getAllComparisonSlugs = cache(async (): Promise<string[]> => {
 });
 
 export const getComparisonData = cache(async (slug: string): Promise<IComparisonPage | null> => {
+  const comparisonData = comparisonDataFile as unknown as IPSEODataFile<IComparisonPage>;
+  const page = comparisonData.pages.find(p => p.slug === slug);
+
+  if (page) {
+    return page;
+  }
+
+  // Fallback to mapping-based generation if not in JSON
   const mapping = keywordPageMappings.find(m => m.canonicalUrl === `/compare/${slug}`);
   if (!mapping) return null;
 
@@ -166,6 +197,14 @@ export const getAllGuideSlugs = cache(async (): Promise<string[]> => {
 });
 
 export const getGuideData = cache(async (slug: string): Promise<IGuidePage | null> => {
+  const guidesData = guidesDataFile as unknown as IPSEODataFile<IGuidePage>;
+  const page = guidesData.pages.find(p => p.slug === slug);
+
+  if (page) {
+    return page;
+  }
+
+  // Fallback to mapping-based generation if not in JSON
   const mapping = keywordPageMappings.find(m => m.canonicalUrl === `/guides/${slug}`);
   if (!mapping) return null;
 
@@ -226,6 +265,14 @@ export const getAllScaleSlugs = cache(async (): Promise<string[]> => {
 });
 
 export const getScaleData = cache(async (slug: string): Promise<IScalePage | null> => {
+  const scaleData = scaleDataFile as unknown as IPSEODataFile<IScalePage>;
+  const page = scaleData.pages.find(p => p.slug === slug);
+
+  if (page) {
+    return page;
+  }
+
+  // Fallback to mapping-based generation if not in JSON
   const mapping = keywordPageMappings.find(m => m.canonicalUrl === `/scale/${slug}`);
   if (!mapping) return null;
 
@@ -256,6 +303,14 @@ export const getAllFreeSlugs = cache(async (): Promise<string[]> => {
 });
 
 export const getFreeData = cache(async (slug: string): Promise<IFreePage | null> => {
+  const freeData = freeDataFile as unknown as IPSEODataFile<IFreePage>;
+  const page = freeData.pages.find(p => p.slug === slug);
+
+  if (page) {
+    return page;
+  }
+
+  // Fallback to mapping-based generation if not in JSON
   const mapping = keywordPageMappings.find(m => m.canonicalUrl === `/free/${slug}`);
   if (!mapping) return null;
 

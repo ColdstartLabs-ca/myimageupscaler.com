@@ -10,7 +10,6 @@ import {
   validateStripeConfig,
   CREDIT_PACKS,
 } from '@shared/config/stripe';
-import { BILLING_COPY } from '@shared/constants/billing';
 
 describe('Subscription Configuration', () => {
   describe('STRIPE_PRICES', () => {
@@ -22,7 +21,7 @@ describe('Subscription Configuration', () => {
     });
 
     it('should have valid Stripe price ID format', () => {
-      Object.values(STRIPE_PRICES).forEach((priceId) => {
+      Object.values(STRIPE_PRICES).forEach(priceId => {
         expect(priceId).toMatch(/^price_[a-zA-Z0-9]+$/);
       });
     });
@@ -41,7 +40,7 @@ describe('Subscription Configuration', () => {
         const key = Object.keys(STRIPE_PRICES)[index];
         return !key.includes('_CREDITS');
       });
-      priceIds.forEach((priceId) => {
+      priceIds.forEach(priceId => {
         expect(SUBSCRIPTION_PRICE_MAP[priceId]).toBeDefined();
         expect(SUBSCRIPTION_PRICE_MAP[priceId]).toMatchObject({
           key: expect.any(String),
@@ -112,20 +111,20 @@ describe('Subscription Configuration', () => {
   describe('SUBSCRIPTION_PRICE_IDS', () => {
     it('should contain all subscription price IDs (but not credit packs)', () => {
       // Count only subscription plans, not credit packs
-      const subscriptionCount = Object.keys(STRIPE_PRICES).filter(key =>
-        !key.includes('_CREDITS')
+      const subscriptionCount = Object.keys(STRIPE_PRICES).filter(
+        key => !key.includes('_CREDITS')
       ).length;
       expect(SUBSCRIPTION_PRICE_IDS).toHaveLength(subscriptionCount);
 
       // SUBSCRIPTION_PRICE_IDS should only contain subscription plan price IDs
-      SUBSCRIPTION_PRICE_IDS.forEach((priceId) => {
+      SUBSCRIPTION_PRICE_IDS.forEach(priceId => {
         expect(Object.values(STRIPE_PRICES)).toContain(priceId);
       });
     });
 
     it('should be an array of strings', () => {
       expect(Array.isArray(SUBSCRIPTION_PRICE_IDS)).toBe(true);
-      SUBSCRIPTION_PRICE_IDS.forEach((priceId) => {
+      SUBSCRIPTION_PRICE_IDS.forEach(priceId => {
         expect(typeof priceId).toBe('string');
       });
     });
@@ -158,15 +157,15 @@ describe('Subscription Configuration', () => {
         'price_123_invalid',
       ];
 
-      invalidPriceIds.forEach((priceId) => {
+      invalidPriceIds.forEach(priceId => {
         const plan = getPlanForPriceId(priceId);
         expect(plan).toBeNull();
       });
     });
 
     it('should return null for undefined/null input', () => {
-      expect(getPlanForPriceId(undefined as any)).toBeNull();
-      expect(getPlanForPriceId(null as any)).toBeNull();
+      expect(getPlanForPriceId(undefined as unknown as string)).toBeNull();
+      expect(getPlanForPriceId(null as unknown as string)).toBeNull();
     });
   });
 
@@ -190,15 +189,15 @@ describe('Subscription Configuration', () => {
 
     it('should return null for invalid plan keys', () => {
       const invalidKeys = ['invalid', 'enterprise', 'basic', 'premium', ''];
-      invalidKeys.forEach((key) => {
+      invalidKeys.forEach(key => {
         const plan = getPlanByKey(key);
         expect(plan).toBeNull();
       });
     });
 
     it('should return null for undefined/null input', () => {
-      expect(getPlanByKey(undefined as any)).toBeNull();
-      expect(getPlanByKey(null as any)).toBeNull();
+      expect(getPlanByKey(undefined as unknown as string)).toBeNull();
+      expect(getPlanByKey(null as unknown as string)).toBeNull();
     });
   });
 
@@ -301,17 +300,20 @@ describe('Subscription Configuration', () => {
 
     it('should handle empty/undefined inputs', () => {
       expect(getPlanDisplayName({})).toBe('Unknown Plan');
-      expect(getPlanDisplayName({
-        subscriptionTier: undefined,
-        priceId: undefined,
-        planKey: undefined,
-      })).toBe('Unknown Plan');
+      expect(
+        getPlanDisplayName({
+          subscriptionTier: undefined,
+          priceId: undefined,
+          planKey: undefined,
+        })
+      ).toBe('Unknown Plan');
     });
 
     it('should work with all subscription price IDs', () => {
       // Only test subscription plan price IDs, not credit pack price IDs
       Object.entries(STRIPE_PRICES).forEach(([key, priceId]) => {
-        if (!key.includes('_CREDITS')) { // Skip credit packs
+        if (!key.includes('_CREDITS')) {
+          // Skip credit packs
           const result = getPlanDisplayName({ priceId });
           expect(result).toBeTruthy();
           expect(result).not.toBe('Unknown Plan');

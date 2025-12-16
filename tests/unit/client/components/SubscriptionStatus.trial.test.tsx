@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { SubscriptionStatus } from '@client/components/stripe/SubscriptionStatus';
@@ -110,7 +110,9 @@ describe('SubscriptionStatus - Trial Functionality', () => {
 
     // Check for trial information box
     expect(screen.getByText(/Your trial ends/)).toBeInTheDocument();
-    expect(screen.getByText(/After the trial, you will be charged the regular subscription price/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/After the trial, you will be charged the regular subscription price/)
+    ).toBeInTheDocument();
   });
 
   it('shows correct trial end date when trial_end is provided', async () => {
@@ -212,7 +214,9 @@ describe('SubscriptionStatus - Trial Functionality', () => {
       expect(screen.getByText('Current Period Ends:')).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/Your subscription will be canceled at the end of the period/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Your subscription will be canceled at the end of the period/)
+    ).toBeInTheDocument();
   });
 
   it('loads trial data on mount', async () => {
@@ -248,8 +252,12 @@ describe('SubscriptionStatus - Trial Functionality', () => {
   });
 
   it('shows loading state while fetching trial data', async () => {
-    mockStripeService.getActiveSubscription.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
-    mockStripeService.getUserProfile.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+    mockStripeService.getActiveSubscription.mockImplementation(
+      () => new Promise(resolve => setTimeout(resolve, 100))
+    );
+    mockStripeService.getUserProfile.mockImplementation(
+      () => new Promise(resolve => setTimeout(resolve, 100))
+    );
 
     render(<SubscriptionStatus />);
 

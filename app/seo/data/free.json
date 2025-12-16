@@ -1,0 +1,299 @@
+{
+  "category": "free",
+  "pages": [
+    {
+      "slug": "free-image-upscaler",
+      "title": "Free Image Upscaler",
+      "metaTitle": "Free Image Upscaler - Enhance Photos Online | PixelPerfect",
+      "metaDescription": "Free online image upscaler with AI. Upscale images to 4K with 10 free credits. No signup required, no watermarks. Start enhancing photos now.",
+      "h1": "Free Image Upscaler - Enhance Photos Online with AI",
+      "intro": "Get professional image upscaling completely free. 10 credits to start, no signup required, and zero watermarks on your enhanced images.",
+      "primaryKeyword": "free image upscaler",
+      "secondaryKeywords": ["free photo upscaler", "upscale image free", "free ai upscaler"],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free Image Upscaler",
+      "description": "Experience professional-grade AI image upscaling at no cost. Our free tier gives you 10 credits to upscale images to 4K resolution with the same powerful AI technology used by professionals worldwide.",
+      "features": [
+        {
+          "title": "10 Free Credits",
+          "description": "Start immediately with 10 free image upscaling credits. No credit card, no signup required."
+        },
+        {
+          "title": "No Watermarks",
+          "description": "Unlike other free tools, we never add watermarks to your images. What you create is 100% yours."
+        },
+        {
+          "title": "Full 4K Resolution",
+          "description": "Access the same 4K upscaling capability as premium users. No quality restrictions on free tier."
+        },
+        {
+          "title": "AI-Powered Quality",
+          "description": "Use the same advanced neural networks that power our premium service. Free doesn't mean lower quality."
+        }
+      ],
+      "limitations": [
+        "10 images per month on free tier",
+        "Standard processing speed (30-60 seconds)",
+        "One image at a time (no batch processing)"
+      ],
+      "upgradePoints": [
+        "Unlimited monthly credits",
+        "Batch processing (up to 50 images)",
+        "Priority processing queue"
+      ],
+      "faq": [
+        {
+          "question": "Is it really free?",
+          "answer": "Yes! You get 10 free image upscaling credits every month, no credit card required. These credits renew monthly."
+        },
+        {
+          "question": "Will there be watermarks on my images?",
+          "answer": "Never. All images you create with PixelPerfect are completely watermark-free, even on the free tier."
+        },
+        {
+          "question": "What happens when I run out of free credits?",
+          "answer": "You can upgrade to a premium plan for unlimited credits, or wait until next month when your free credits renew."
+        }
+      ],
+      "relatedFree": ["free-photo-enhancer", "free-image-enhancer"],
+      "upgradePath": "/pricing"
+    },
+    {
+      "slug": "free-photo-enhancer",
+      "title": "Free Photo Enhancer",
+      "metaTitle": "Free Photo Enhancer - AI Enhancement Tool | PixelPerfect",
+      "metaDescription": "Enhance photos free with AI. Fix blur, improve colors, and sharpen details. 10 free enhancements, no watermarks. Try now.",
+      "h1": "Free Photo Enhancer - AI-Powered Photo Enhancement",
+      "intro": "Transform your photos with professional AI enhancement. Fix blur, optimize colors, and enhance details—all for free with no watermarks.",
+      "primaryKeyword": "free photo enhancer",
+      "secondaryKeywords": ["free image enhancer", "enhance photos free", "photo enhancement free"],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free Photo Enhancer",
+      "description": "Bring your photos to life with AI-powered enhancement. Our free tier provides 10 monthly enhancements with the same professional-grade technology trusted by photographers worldwide.",
+      "features": [
+        {
+          "title": "Automatic Enhancement",
+          "description": "AI analyzes and enhances your photos automatically. No sliders, no settings—just perfect results."
+        },
+        {
+          "title": "Color Correction",
+          "description": "Fix white balance, saturation, and vibrancy issues automatically for natural-looking results."
+        },
+        {
+          "title": "Detail Sharpening",
+          "description": "Enhance fine details and textures while keeping skin tones smooth and natural."
+        },
+        {
+          "title": "Noise Reduction",
+          "description": "Eliminate grain from low-light or high-ISO photos without losing important detail."
+        }
+      ],
+      "limitations": [
+        "10 photo enhancements per month",
+        "Single photo processing",
+        "Standard processing speed"
+      ],
+      "upgradePoints": [
+        "Unlimited monthly credits",
+        "Faster processing (10-20 seconds)",
+        "Batch upload up to 50 images"
+      ],
+      "faq": [
+        {
+          "question": "How is this different from the free image upscaler?",
+          "answer": "The photo enhancer focuses on improving quality (color, sharpness, noise) rather than increasing size. It's perfect for fixing photo quality issues."
+        },
+        {
+          "question": "Can I use this for old family photos?",
+          "answer": "Absolutely! The AI is excellent at restoring and enhancing old, faded, or damaged photos to bring them back to life."
+        },
+        {
+          "question": "Do I need to create an account?",
+          "answer": "No account needed for the free tier. Just visit the site and start enhancing. Create an account only if you want to track your usage or upgrade."
+        }
+      ],
+      "relatedFree": ["free-image-upscaler", "free-ai-photo-enhancer"],
+      "upgradePath": "/pricing"
+    },
+    {
+      "slug": "free-image-enhancer",
+      "title": "Free Image Enhancer",
+      "metaTitle": "Free Image Enhancer - Improve Image Quality Online | PixelPerfect",
+      "metaDescription": "Free AI image enhancer to improve quality online. Fix blur, enhance colors, sharpen details. 10 free credits monthly, no watermarks.",
+      "h1": "Free Image Enhancer - Improve Any Image with AI",
+      "intro": "Enhance any image for free with professional AI technology. Improve quality, fix blur, and optimize colors in seconds.",
+      "primaryKeyword": "free image enhancer",
+      "secondaryKeywords": [
+        "enhance image free",
+        "free image quality enhancer",
+        "improve image free"
+      ],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free Image Enhancer",
+      "description": "Professional image enhancement without the professional price tag. Get 10 free enhancements monthly with enterprise-grade AI that rivals Photoshop's results.",
+      "features": [
+        {
+          "title": "One-Click Enhancement",
+          "description": "Upload and enhance with a single click. AI handles all the complex adjustments automatically."
+        },
+        {
+          "title": "Quality Improvement",
+          "description": "Enhance overall image quality by fixing compression artifacts, blur, and low resolution issues."
+        },
+        {
+          "title": "Smart Detail Recovery",
+          "description": "AI intelligently recovers lost details and textures that were degraded by compression or downsizing."
+        },
+        {
+          "title": "Format Flexibility",
+          "description": "Upload JPEG, PNG, or WebP. Download in any format you need, with optimal compression settings."
+        }
+      ],
+      "limitations": [
+        "10 image enhancements monthly",
+        "Max 25MB per image",
+        "Single image processing"
+      ],
+      "upgradePoints": [
+        "Unlimited credits per month",
+        "100MB maximum file size (vs 25MB free)",
+        "API access for automation"
+      ],
+      "faq": [
+        {
+          "question": "What's the difference between enhancement and upscaling?",
+          "answer": "Enhancement improves existing quality (sharpness, color, detail) while upscaling increases the size/resolution. Both can be used together for best results."
+        },
+        {
+          "question": "Will this fix blurry images?",
+          "answer": "The AI can significantly improve mild to moderate blur, especially from compression or slight motion. Extreme blur has physical limits to what can be recovered."
+        },
+        {
+          "question": "How many times can I enhance the same image?",
+          "answer": "Each enhancement uses one credit. You can enhance the same image multiple times if you want to experiment with different settings (on premium plans)."
+        }
+      ],
+      "relatedFree": ["free-photo-enhancer", "free-ai-upscaler"],
+      "upgradePath": "/pricing"
+    },
+    {
+      "slug": "free-ai-photo-enhancer",
+      "title": "Free AI Photo Enhancer",
+      "metaTitle": "Free AI Photo Enhancer - Enhance Photos with AI | PixelPerfect",
+      "metaDescription": "Free AI photo enhancer with neural network technology. Enhance photos automatically, fix quality issues. 10 free credits, no signup needed.",
+      "h1": "Free AI Photo Enhancer - Neural Network Photo Enhancement",
+      "intro": "Harness the power of AI to enhance your photos professionally. Free tier includes 10 monthly credits with full-quality enhancement and no watermarks.",
+      "primaryKeyword": "free ai photo enhancer",
+      "secondaryKeywords": ["ai enhance photo free", "free photo ai", "ai photo enhancement free"],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free AI Photo Enhancer",
+      "description": "Experience state-of-the-art neural network photo enhancement at zero cost. Our AI models are trained on millions of photos to deliver professional results instantly.",
+      "features": [
+        {
+          "title": "Neural Network AI",
+          "description": "Advanced deep learning models trained specifically for photo enhancement, not generic filters."
+        },
+        {
+          "title": "Portrait Optimization",
+          "description": "AI detects faces and optimizes skin tones, texture, and lighting while keeping results natural."
+        },
+        {
+          "title": "Scene Recognition",
+          "description": "Automatically identifies scene type (landscape, portrait, product) and applies optimal enhancements."
+        },
+        {
+          "title": "Lighting Correction",
+          "description": "Fix underexposed or overexposed photos with intelligent shadow and highlight recovery."
+        }
+      ],
+      "limitations": [
+        "10 AI enhancements monthly",
+        "Standard processing priority",
+        "Single photo upload"
+      ],
+      "upgradePoints": [
+        "Latest AI models with custom tuning",
+        "Faster processing (10-20 seconds vs 30-60 seconds)",
+        "Batch AI processing with consistent results"
+      ],
+      "faq": [
+        {
+          "question": "How does AI enhancement differ from regular filters?",
+          "answer": "AI analyzes your specific photo and makes intelligent adjustments based on content. Filters just apply preset changes blindly to any image."
+        },
+        {
+          "question": "Can I use this for professional photography?",
+          "answer": "Absolutely! Many professional photographers use AI enhancement as part of their workflow. The free tier is perfect for testing before upgrading."
+        },
+        {
+          "question": "Does it work on selfies and portraits?",
+          "answer": "Yes, the AI is specially optimized for portraits with skin smoothing, face detection, and natural-looking enhancements that preserve authenticity."
+        }
+      ],
+      "relatedFree": ["free-photo-enhancer", "free-image-enhancer"],
+      "upgradePath": "/pricing"
+    },
+    {
+      "slug": "free-ai-upscaler",
+      "title": "Free AI Upscaler",
+      "metaTitle": "Free AI Upscaler - Upscale Images with AI | PixelPerfect",
+      "metaDescription": "Free AI image upscaler. Increase image resolution with neural networks. 10 free upscales monthly, up to 4K output, no watermarks.",
+      "h1": "Free AI Upscaler - Neural Network Image Upscaling",
+      "intro": "Upscale your images to 4K resolution using advanced AI. Get 10 free upscales every month with the same technology used by professionals.",
+      "primaryKeyword": "free ai upscaler",
+      "secondaryKeywords": ["ai upscale free", "free neural upscaler", "ai image upscaling free"],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free AI Upscaler",
+      "description": "Transform low-resolution images into high-quality visuals with neural network upscaling. Our free tier offers genuine AI upscaling, not simple interpolation.",
+      "features": [
+        {
+          "title": "True AI Upscaling",
+          "description": "Neural networks intelligently generate new pixels instead of simple interpolation for superior quality."
+        },
+        {
+          "title": "Up to 4X Upscaling",
+          "description": "Increase image dimensions up to 4 times on the free tier. Upgrade for 8x upscaling capability."
+        },
+        {
+          "title": "Text Preservation",
+          "description": "AI specifically trained to keep text sharp and legible, perfect for logos and documents."
+        },
+        {
+          "title": "Edge Enhancement",
+          "description": "Smart edge detection and enhancement creates crisp, clean lines without artifacts or halos."
+        }
+      ],
+      "limitations": [
+        "10 upscales per month",
+        "Maximum 4x resolution increase",
+        "One image at a time"
+      ],
+      "upgradePoints": [
+        "Up to 8x upscaling (vs 4x on free tier)",
+        "Unlimited monthly upscales",
+        "Batch processing up to 50 images simultaneously"
+      ],
+      "faq": [
+        {
+          "question": "What's the difference between AI upscaling and regular upscaling?",
+          "answer": "Regular upscaling (interpolation) just stretches pixels. AI upscaling uses neural networks to intelligently generate new detail that looks natural and sharp."
+        },
+        {
+          "question": "Can I upscale images beyond 4x on free tier?",
+          "answer": "The free tier supports up to 4x upscaling. For 8x upscaling and larger outputs, upgrade to a premium plan."
+        },
+        {
+          "question": "How long does AI upscaling take?",
+          "answer": "Typically 30-60 seconds for standard images on the free tier. Premium users get priority processing in 10-20 seconds."
+        }
+      ],
+      "relatedFree": ["free-image-upscaler", "free-ai-photo-enhancer"],
+      "upgradePath": "/pricing"
+    }
+  ]
+}

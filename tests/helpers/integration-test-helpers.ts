@@ -1,4 +1,4 @@
-import { test, expect, type APIRequestContext, type Page } from '@playwright/test';
+import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { TestDataManager } from './test-data-manager';
 
 /**
@@ -47,7 +47,11 @@ export class IntegrationTestHelpers {
       };
     }
 
-    const user = await this.testDataManager.createTestUserWithSubscription(subscription, tier, credits);
+    const user = await this.testDataManager.createTestUserWithSubscription(
+      subscription,
+      tier,
+      credits
+    );
     return {
       id: user.id,
       email: user.email,
@@ -66,7 +70,11 @@ export class IntegrationTestHelpers {
   /**
    * Authenticates a user and returns the session token
    */
-  async authenticateUser(request: APIRequestContext, email: string, password: string): Promise<string> {
+  async authenticateUser(
+    request: APIRequestContext,
+    email: string,
+    password: string
+  ): Promise<string> {
     const response = await request.post('/api/auth/login', {
       data: { email, password },
     });
@@ -136,16 +144,17 @@ export class IntegrationTestHelpers {
   /**
    * Creates a test image buffer for testing
    */
-  createTestImageBuffer(width: number = 100, height: number = 100): Buffer {
+  createTestImageBuffer(): Buffer {
     // Create a simple 1x1 PNG image for testing
-    const pngBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
+    const pngBase64 =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
     return Buffer.from(pngBase64, 'base64');
   }
 
   /**
    * Validates API response structure
    */
-  validateApiResponse(response: any, expectedFields: string[]): void {
+  validateApiResponse(response: Record<string, unknown>, expectedFields: string[]): void {
     expect(response).toHaveProperty('success');
     expect(typeof response.success).toBe('boolean');
 
@@ -164,7 +173,7 @@ export class IntegrationTestHelpers {
   /**
    * Validates error response structure
    */
-  validateErrorResponse(response: any, expectedCode?: string): void {
+  validateErrorResponse(response: Record<string, unknown>, expectedCode?: string): void {
     expect(response.success).toBe(false);
     expect(response.error).toHaveProperty('code');
     expect(response.error).toHaveProperty('message');
@@ -272,7 +281,7 @@ export class IntegrationTestHelpers {
     expect(images.length).toBe(0);
 
     // Check for ARIA labels on interactive elements
-    const buttons = await page.locator('button:not([aria-label]):not([aria-labelledby])').all();
+    await page.locator('button:not([aria-label]):not([aria-labelledby])').all();
     // Note: This is a basic check - in real scenarios, you'd want more sophisticated a11y testing
   }
 
@@ -318,13 +327,9 @@ export class IntegrationTestHelpers {
     const startTime = Date.now();
 
     for (let i = 0; i < maxRequests + 2; i++) {
-      const response = await this.makeAuthenticatedRequest(
-        request,
-        'POST',
-        endpoint,
-        token,
-        { test: i }
-      );
+      const response = await this.makeAuthenticatedRequest(request, 'POST', endpoint, token, {
+        test: i,
+      });
       responses.push(response);
 
       if (response.status === 429) {
@@ -388,7 +393,7 @@ export const customMatchers = {
   /**
    * Checks if response is a successful API response
    */
-  toBeSuccessfulApiResponse(received: any) {
+  toBeSuccessfulApiResponse(received: Record<string, unknown>) {
     const pass = received && received.success === true;
     return {
       message: () => `expected API response to be successful`,
@@ -399,7 +404,7 @@ export const customMatchers = {
   /**
    * Checks if response has specific error code
    */
-  toHaveErrorCode(received: any, expectedCode: string) {
+  toHaveErrorCode(received: Record<string, unknown>, expectedCode: string) {
     const pass = received && received.error && received.error.code === expectedCode;
     return {
       message: () => `expected error code to be ${expectedCode}`,
@@ -425,4 +430,4 @@ export const customMatchers = {
 /**
  * Extend expect with custom matchers
  */
-expect.extend(customMatchers as any);
+expect.extend(customMatchers as unknown as typeof expect.extend);

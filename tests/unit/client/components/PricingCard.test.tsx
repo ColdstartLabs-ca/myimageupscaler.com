@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { PricingCard } from '@client/components/stripe/PricingCard';
@@ -58,11 +58,11 @@ describe('PricingCard', () => {
 
     mockUseModalStore.mockReturnValue({
       openAuthModal: mockOpenAuthModal,
-    } as any);
+    } as { openAuthModal: typeof mockOpenAuthModal });
 
     mockUseToastStore.mockReturnValue({
       showToast: mockShowToast,
-    } as any);
+    } as { showToast: typeof mockShowToast });
 
     mockStripeService.redirectToCheckout.mockResolvedValue(undefined);
   });
@@ -73,11 +73,7 @@ describe('PricingCard', () => {
     price: 29,
     currency: 'USD' as const,
     interval: 'month' as const,
-    features: [
-      '1000 credits per month',
-      'Priority support',
-      'Advanced features',
-    ],
+    features: ['1000 credits per month', 'Priority support', 'Advanced features'],
     priceId: 'price_pro_monthly_123',
   };
 
@@ -135,13 +131,10 @@ describe('PricingCard', () => {
     const subscribeButton = screen.getByText('Subscribe Now');
     await user.click(subscribeButton);
 
-    expect(mockStripeService.redirectToCheckout).toHaveBeenCalledWith(
-      'price_pro_monthly_123',
-      {
-        successUrl: 'http://localhost:3000/success',
-        cancelUrl: 'http://localhost:3000/pricing',
-      }
-    );
+    expect(mockStripeService.redirectToCheckout).toHaveBeenCalledWith('price_pro_monthly_123', {
+      successUrl: 'http://localhost:3000/success',
+      cancelUrl: 'http://localhost:3000/pricing',
+    });
   });
 
   it('shows loading state during checkout process', async () => {
@@ -249,11 +242,7 @@ describe('PricingCard', () => {
     const checkmarkIcons = document.querySelectorAll('svg[data-testid="checkmark-icon"]');
     expect(checkmarkIcons.length).toBe(3);
 
-    const features = [
-      '1000 credits per month',
-      'Priority support',
-      'Advanced features',
-    ];
+    const features = ['1000 credits per month', 'Priority support', 'Advanced features'];
 
     features.forEach(feature => {
       expect(screen.getByText(feature)).toBeInTheDocument();
@@ -298,13 +287,10 @@ describe('PricingCard', () => {
     const subscribeButton = screen.getByText('Subscribe Now');
     await user.click(subscribeButton);
 
-    expect(mockStripeService.redirectToCheckout).toHaveBeenCalledWith(
-      'price_pro_monthly_123',
-      {
-        successUrl: 'http://localhost:3000/success',
-        cancelUrl: 'http://localhost:3000/custom-pricing-page',
-      }
-    );
+    expect(mockStripeService.redirectToCheckout).toHaveBeenCalledWith('price_pro_monthly_123', {
+      successUrl: 'http://localhost:3000/success',
+      cancelUrl: 'http://localhost:3000/custom-pricing-page',
+    });
   });
 
   // Trial-specific tests
@@ -429,13 +415,10 @@ describe('PricingCard', () => {
       const trialButton = screen.getByText('Start 14-Day Trial');
       await user.click(trialButton);
 
-      expect(mockStripeService.redirectToCheckout).toHaveBeenCalledWith(
-        'price_pro_monthly_123',
-        {
-          successUrl: 'http://localhost:3000/success',
-          cancelUrl: 'http://localhost:3000/pricing',
-        }
-      );
+      expect(mockStripeService.redirectToCheckout).toHaveBeenCalledWith('price_pro_monthly_123', {
+        successUrl: 'http://localhost:3000/success',
+        cancelUrl: 'http://localhost:3000/pricing',
+      });
     });
 
     it('handles trial with custom onSelect callback', async () => {

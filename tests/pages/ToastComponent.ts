@@ -1,5 +1,4 @@
 import { Page, Locator, expect } from '@playwright/test';
-import type { IWaitOptions } from './BasePage';
 
 export interface IToastOptions {
   timeout?: number;
@@ -152,7 +151,9 @@ export class ToastComponent {
   async dismiss(toast: Locator, timeout = 5000): Promise<void> {
     if (await toast.isVisible()) {
       // Try to find and click close button
-      const closeButton = toast.locator('button[aria-label="Close"], .close-button, [data-dismiss], [role="button"]').first();
+      const closeButton = toast
+        .locator('button[aria-label="Close"], .close-button, [data-dismiss], [role="button"]')
+        .first();
 
       if (await closeButton.isVisible()) {
         await closeButton.click();
@@ -194,9 +195,7 @@ export class ToastComponent {
     const startTime = Date.now();
 
     while (Date.now() - startTime < timeout) {
-      const hasToast = content
-        ? await this.isVisible(content)
-        : await this.firstToast.isVisible();
+      const hasToast = content ? await this.isVisible(content) : await this.firstToast.isVisible();
 
       if (!hasToast) {
         return;
@@ -220,19 +219,27 @@ export class ToastComponent {
     }
 
     // Check for error indicators
-    const hasErrorClass = await toast.locator('.error, .alert-error, .text-red, [data-type="error"]').isVisible();
+    const hasErrorClass = await toast
+      .locator('.error, .alert-error, .text-red, [data-type="error"]')
+      .isVisible();
     if (hasErrorClass) return 'error';
 
     // Check for success indicators
-    const hasSuccessClass = await toast.locator('.success, .alert-success, .text-green, [data-type="success"]').isVisible();
+    const hasSuccessClass = await toast
+      .locator('.success, .alert-success, .text-green, [data-type="success"]')
+      .isVisible();
     if (hasSuccessClass) return 'success';
 
     // Check for warning indicators
-    const hasWarningClass = await toast.locator('.warning, .alert-warning, .text-yellow, [data-type="warning"]').isVisible();
+    const hasWarningClass = await toast
+      .locator('.warning, .alert-warning, .text-yellow, [data-type="warning"]')
+      .isVisible();
     if (hasWarningClass) return 'warning';
 
     // Check for loading indicators
-    const hasLoadingClass = await toast.locator('.loading, .spinner, [data-loading], [data-type="loading"]').isVisible();
+    const hasLoadingClass = await toast
+      .locator('.loading, .spinner, [data-loading], [data-type="loading"]')
+      .isVisible();
     if (hasLoadingClass) return 'loading';
 
     // Default to info
@@ -314,7 +321,7 @@ export class ToastComponent {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const filename = `${name}-${timestamp}.png`;
       await toast.screenshot({
-        path: `test-results/screenshots/${filename}`
+        path: `test-results/screenshots/${filename}`,
       });
     }
   }

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { SubscriptionStatus } from '@client/components/stripe/SubscriptionStatus';
@@ -116,9 +116,17 @@ describe('SubscriptionStatus', () => {
     const testCases = [
       { status: 'active', expectedText: 'Active', expectedClass: 'bg-green-100 text-green-800' },
       { status: 'trialing', expectedText: 'Trial', expectedClass: 'bg-blue-100 text-blue-800' },
-      { status: 'past_due', expectedText: 'Past Due', expectedClass: 'bg-yellow-100 text-yellow-800' },
+      {
+        status: 'past_due',
+        expectedText: 'Past Due',
+        expectedClass: 'bg-yellow-100 text-yellow-800',
+      },
       { status: 'canceled', expectedText: 'Canceled', expectedClass: 'bg-red-100 text-red-800' },
-      { status: 'incomplete', expectedText: 'incomplete', expectedClass: 'bg-slate-100 text-slate-800' },
+      {
+        status: 'incomplete',
+        expectedText: 'incomplete',
+        expectedClass: 'bg-slate-100 text-slate-800',
+      },
     ];
 
     for (const testCase of testCases) {
@@ -149,7 +157,9 @@ describe('SubscriptionStatus', () => {
     render(<SubscriptionStatus />);
 
     await waitFor(() => {
-      expect(screen.getByText(/subscription will be canceled at the end of the period/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/subscription will be canceled at the end of the period/)
+      ).toBeInTheDocument();
       expect(screen.getByRole('alert')).toBeInTheDocument(); // Warning icon
     });
   });

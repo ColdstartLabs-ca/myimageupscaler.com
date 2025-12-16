@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { POST as checkoutHandler } from '@app/api/checkout/route';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { stripe } from '@server/stripe';
@@ -34,29 +34,37 @@ const mockGetTrialConfig = vi.mocked(getTrialConfig);
 const mockGetPlanConfig = vi.mocked(getPlanConfig);
 
 describe('Checkout API - Trial Integration', () => {
-  let mockRequest: (body: any, headers?: Record<string, string>) => NextRequest;
+  let mockRequest: (body: Record<string, unknown>, headers?: Record<string, string>) => NextRequest;
+
+  // Helper function to create typed mocks
+  const createMockStripe = () =>
+    ({
+      checkout: {
+        sessions: {
+          create: vi.fn(),
+        },
+      },
+      prices: {
+        retrieve: vi.fn(),
+      },
+      customers: {
+        create: vi.fn(),
+      },
+    }) as unknown as typeof stripe;
+
+  const createMockSupabaseAuth = () => ({
+    getUser: vi.fn(),
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     // Setup default mocks
-    mockStripe.checkout = {
-      sessions: {
-        create: vi.fn(),
-      },
-    } as any;
+    mockStripe.checkout = createMockStripe().checkout;
+    mockStripe.prices = createMockStripe().prices;
+    mockStripe.customers = createMockStripe().customers;
 
-    mockStripe.prices = {
-      retrieve: vi.fn(),
-    } as any;
-
-    mockStripe.customers = {
-      create: vi.fn(),
-    } as any;
-
-    mockSupabaseAdmin.auth = {
-      getUser: vi.fn(),
-    } as any;
+    mockSupabaseAdmin.auth = createMockSupabaseAuth() as unknown;
 
     mockSupabaseAdmin.from = vi.fn().mockReturnValue({
       select: vi.fn().mockReturnValue({
@@ -101,7 +109,7 @@ describe('Checkout API - Trial Integration', () => {
       };
     });
 
-    mockRequest = (body: any, headers: Record<string, string> = {}) => {
+    mockRequest = (body: Record<string, unknown>, headers: Record<string, string> = {}) => {
       return new NextRequest('http://localhost:3000/api/checkout', {
         method: 'POST',
         headers: {
@@ -139,18 +147,18 @@ describe('Checkout API - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock successful authentication
       mockSupabaseAdmin.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user_123', email: 'test@example.com' } },
         error: null,
-      } as any);
+      } as unknown);
 
       // Mock Stripe price
       mockStripe.prices.retrieve.mockResolvedValue({
         type: 'recurring',
-      } as any);
+      } as unknown);
 
       // Mock successful checkout session creation
       const mockSession = {
@@ -161,11 +169,14 @@ describe('Checkout API - Trial Integration', () => {
 
       mockStripe.checkout.sessions.create.mockResolvedValue(mockSession);
 
-      const request = mockRequest({
-        priceId: 'price_pro_monthly',
-      }, {
-        Authorization: 'Bearer valid_token',
-      });
+      const request = mockRequest(
+        {
+          priceId: 'price_pro_monthly',
+        },
+        {
+          Authorization: 'Bearer valid_token',
+        }
+      );
 
       const response = await checkoutHandler(request);
       const data = await response.json();
@@ -201,18 +212,18 @@ describe('Checkout API - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock successful authentication
       mockSupabaseAdmin.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user_123', email: 'test@example.com' } },
         error: null,
-      } as any);
+      } as unknown);
 
       // Mock Stripe price
       mockStripe.prices.retrieve.mockResolvedValue({
         type: 'recurring',
-      } as any);
+      } as unknown);
 
       // Mock successful checkout session creation
       const mockSession = {
@@ -223,11 +234,14 @@ describe('Checkout API - Trial Integration', () => {
 
       mockStripe.checkout.sessions.create.mockResolvedValue(mockSession);
 
-      const request = mockRequest({
-        priceId: 'price_hobby_monthly',
-      }, {
-        Authorization: 'Bearer valid_token',
-      });
+      const request = mockRequest(
+        {
+          priceId: 'price_hobby_monthly',
+        },
+        {
+          Authorization: 'Bearer valid_token',
+        }
+      );
 
       const response = await checkoutHandler(request);
       const data = await response.json();
@@ -268,18 +282,18 @@ describe('Checkout API - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock successful authentication
       mockSupabaseAdmin.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user_123', email: 'test@example.com' } },
         error: null,
-      } as any);
+      } as unknown);
 
       // Mock Stripe price
       mockStripe.prices.retrieve.mockResolvedValue({
         type: 'recurring',
-      } as any);
+      } as unknown);
 
       // Mock successful checkout session creation
       const mockSession = {
@@ -290,11 +304,14 @@ describe('Checkout API - Trial Integration', () => {
 
       mockStripe.checkout.sessions.create.mockResolvedValue(mockSession);
 
-      const request = mockRequest({
-        priceId: 'price_trial_7days',
-      }, {
-        Authorization: 'Bearer valid_token',
-      });
+      const request = mockRequest(
+        {
+          priceId: 'price_trial_7days',
+        },
+        {
+          Authorization: 'Bearer valid_token',
+        }
+      );
 
       const response = await checkoutHandler(request);
       const data = await response.json();
@@ -336,18 +353,18 @@ describe('Checkout API - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock successful authentication
       mockSupabaseAdmin.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user_123', email: 'test@example.com' } },
         error: null,
-      } as any);
+      } as unknown);
 
       // Mock Stripe price
       mockStripe.prices.retrieve.mockResolvedValue({
         type: 'recurring',
-      } as any);
+      } as unknown);
 
       // Mock successful checkout session creation
       const mockSession = {
@@ -358,11 +375,14 @@ describe('Checkout API - Trial Integration', () => {
 
       mockStripe.checkout.sessions.create.mockResolvedValue(mockSession);
 
-      const request = mockRequest({
-        priceId: 'price_business_monthly',
-      }, {
-        Authorization: 'Bearer valid_token',
-      });
+      const request = mockRequest(
+        {
+          priceId: 'price_business_monthly',
+        },
+        {
+          Authorization: 'Bearer valid_token',
+        }
+      );
 
       const response = await checkoutHandler(request);
       const data = await response.json();
@@ -403,18 +423,18 @@ describe('Checkout API - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock successful authentication
       mockSupabaseAdmin.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user_123', email: 'test@example.com' } },
         error: null,
-      } as any);
+      } as unknown);
 
       // Mock Stripe price
       mockStripe.prices.retrieve.mockResolvedValue({
         type: 'recurring',
-      } as any);
+      } as unknown);
 
       // Mock successful checkout session creation
       const mockSession = {
@@ -425,13 +445,16 @@ describe('Checkout API - Trial Integration', () => {
 
       mockStripe.checkout.sessions.create.mockResolvedValue(mockSession);
 
-      const request = mockRequest({
-        priceId: 'price_pro_monthly',
-      }, {
-        Authorization: 'Bearer valid_token',
-      });
+      const request = mockRequest(
+        {
+          priceId: 'price_pro_monthly',
+        },
+        {
+          Authorization: 'Bearer valid_token',
+        }
+      );
 
-      const response = await checkoutHandler(request);
+      await checkoutHandler(request);
 
       expect(mockStripe.checkout.sessions.create).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -460,13 +483,16 @@ describe('Checkout API - Trial Integration', () => {
       mockSupabaseAdmin.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user_123', email: 'test@example.com' } },
         error: null,
-      } as any);
+      } as unknown);
 
-      const request = mockRequest({
-        priceId: 'invalid_price_id',
-      }, {
-        Authorization: 'Bearer valid_token',
-      });
+      const request = mockRequest(
+        {
+          priceId: 'invalid_price_id',
+        },
+        {
+          Authorization: 'Bearer valid_token',
+        }
+      );
 
       const response = await checkoutHandler(request);
       const data = await response.json();
@@ -501,27 +527,30 @@ describe('Checkout API - Trial Integration', () => {
           allowMultipleTrials: false,
           autoConvertToPaid: true,
         },
-      } as any);
+      } as unknown);
 
       // Mock successful authentication
       mockSupabaseAdmin.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user_123', email: 'test@example.com' } },
         error: null,
-      } as any);
+      } as unknown);
 
       // Mock Stripe price
       mockStripe.prices.retrieve.mockResolvedValue({
         type: 'recurring',
-      } as any);
+      } as unknown);
 
       // Mock Stripe API error
       mockStripe.checkout.sessions.create.mockRejectedValue(new Error('Stripe API Error'));
 
-      const request = mockRequest({
-        priceId: 'price_pro_monthly',
-      }, {
-        Authorization: 'Bearer valid_token',
-      });
+      const request = mockRequest(
+        {
+          priceId: 'price_pro_monthly',
+        },
+        {
+          Authorization: 'Bearer valid_token',
+        }
+      );
 
       const response = await checkoutHandler(request);
       const data = await response.json();

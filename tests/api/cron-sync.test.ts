@@ -6,7 +6,6 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { resetTestUser } from '../helpers/test-user-reset';
 
 const CRON_SECRET = process.env.CRON_SECRET || 'test-cron-secret';
 
@@ -235,12 +234,12 @@ test.describe('API: Cron Sync Endpoints', () => {
       const responses = await Promise.all(promises);
 
       // Both should succeed
-      responses.forEach((response) => {
+      responses.forEach(response => {
         expect(response.status()).toBe(200);
       });
 
       // Should have different sync run IDs
-      const bodies = await Promise.all(responses.map((r) => r.json()));
+      const bodies = await Promise.all(responses.map(r => r.json()));
       expect(bodies[0].syncRunId).not.toBe(bodies[1].syncRunId);
     });
   });

@@ -195,7 +195,15 @@ export default [
       'no-restricted-syntax': 'off',
       'react-hooks/rules-of-hooks': 'off', // Playwright fixtures use 'use' function that triggers this
       '@typescript-eslint/no-explicit-any': 'warn', // Allow 'any' in tests for mocking
-      '@typescript-eslint/no-unused-vars': 'warn', // Allow unused vars like fixture params
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+        },
+      ], // Allow unused vars like fixture params and underscore-prefixed variables
       'import/no-default-export': 'off', // Test configs often need default exports
       '@typescript-eslint/explicit-module-boundary-types': 'off', // Not needed for test functions
       '@typescript-eslint/no-require-imports': 'off', // Some tests use require() for dynamic imports

@@ -44,7 +44,7 @@ export class BasePage {
           await this.wait(1000);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Handle navigation errors gracefully (e.g., protected routes that redirect)
       console.warn(`Navigation to ${path} had issues, continuing...`);
       // Try to wait for at least domcontentloaded

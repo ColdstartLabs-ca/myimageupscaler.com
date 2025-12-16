@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestContext, ApiClient } from '../helpers';
+import { TestContext } from '../helpers';
 import { createClient } from '@supabase/supabase-js';
 
 /**
@@ -15,8 +15,8 @@ import { createClient } from '@supabase/supabase-js';
 test.describe('Database Operations Integration', () => {
   let ctx: TestContext;
   let testUser: { id: string; email: string; token: string };
-  let adminClient: ReturnType<typeof createClient>;
-  let userClient: ReturnType<typeof createClient>;
+  let _adminClient: ReturnType<typeof createClient>;
+  let _userClient: ReturnType<typeof createClient>;
 
   test.beforeAll(async () => {
     ctx = new TestContext();
@@ -27,7 +27,7 @@ test.describe('Database Operations Integration', () => {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (supabaseUrl && supabaseServiceKey) {
-      adminClient = createClient(supabaseUrl, supabaseServiceKey, {
+      _adminClient = createClient(supabaseUrl, supabaseServiceKey, {
         auth: {
           autoRefreshToken: false,
           persistSession: false,
@@ -35,7 +35,7 @@ test.describe('Database Operations Integration', () => {
       });
 
       // User client for testing RLS policies
-      userClient = createClient(
+      _userClient = createClient(
         supabaseUrl,
         'test-anon-key', // This won't work for actual requests but is fine for structure
         {
@@ -99,9 +99,8 @@ test.describe('Database Operations Integration', () => {
 
       // Verify transaction was logged
       const transactions = await ctx.data.getCreditTransactions(testUser.id);
-      const latestTransaction = transactions.find(t =>
-        t.description?.includes('Test purchase credits') &&
-        t.amount === transactionAmount
+      const latestTransaction = transactions.find(
+        t => t.description?.includes('Test purchase credits') && t.amount === transactionAmount
       );
 
       expect(latestTransaction).toBeDefined();
@@ -124,9 +123,9 @@ test.describe('Database Operations Integration', () => {
       const initialBalance = (await ctx.data.getUserProfile(concurrentUser.id)).credits_balance;
 
       // Make multiple concurrent credit operations
-      const operations = Array(5).fill(null).map((_, index) =>
-        ctx.data.addCredits(concurrentUser.id, 10 + index)
-      );
+      const operations = Array(5)
+        .fill(null)
+        .map((_, index) => ctx.data.addCredits(concurrentUser.id, 10 + index));
 
       await Promise.all(operations);
 
@@ -248,9 +247,9 @@ test.describe('Database Operations Integration', () => {
       const startTime = Date.now();
 
       // Create multiple transactions
-      const bulkOperations = Array(20).fill(null).map((_, index) =>
-        ctx.data.addCredits(performanceUser.id, index + 1)
-      );
+      const bulkOperations = Array(20)
+        .fill(null)
+        .map((_, index) => ctx.data.addCredits(performanceUser.id, index + 1));
 
       await Promise.all(bulkOperations);
 
@@ -265,15 +264,15 @@ test.describe('Database Operations Integration', () => {
 
     test('should maintain performance with concurrent users', async () => {
       const concurrentUsers = await Promise.all(
-        Array(5).fill(null).map(() => ctx.data.createTestUser())
+        Array(5)
+          .fill(null)
+          .map(() => ctx.data.createTestUser())
       );
 
       const startTime = Date.now();
 
       // Perform operations on all users concurrently
-      const operations = concurrentUsers.map(user =>
-        ctx.data.addCredits(user.id, 50)
-      );
+      const operations = concurrentUsers.map(user => ctx.data.addCredits(user.id, 50));
 
       await Promise.all(operations);
 
@@ -284,9 +283,7 @@ test.describe('Database Operations Integration', () => {
       expect(duration).toBeLessThan(15000); // 15 seconds
 
       // Cleanup all users
-      await Promise.all(
-        concurrentUsers.map(user => ctx.data.cleanupUser(user.id))
-      );
+      await Promise.all(concurrentUsers.map(user => ctx.data.cleanupUser(user.id)));
     });
   });
 

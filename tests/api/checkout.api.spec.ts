@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { TestContext, ApiClient } from '../helpers';
 import { STRIPE_PRICES } from '@shared/config/stripe';
-import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
 /**
  * Integration Tests for Stripe Checkout API
@@ -40,15 +39,19 @@ test.describe('API: Stripe Checkout - Authentication', () => {
       'InvalidFormat token123',
       'Bearer',
       'Bearer not.a.valid.jwt',
-      ''
+      '',
     ];
 
     for (const authToken of invalidAuthTokens) {
-      const response = await api.post('/api/checkout', {
-        priceId: 'price_test_auth'
-      }, {
-        headers: { Authorization: authToken }
-      });
+      const response = await api.post(
+        '/api/checkout',
+        {
+          priceId: 'price_test_auth',
+        },
+        {
+          headers: { Authorization: authToken },
+        }
+      );
 
       response.expectStatus(401);
       await response.expectErrorCode('UNAUTHORIZED');
@@ -71,8 +74,8 @@ test.describe('API: Stripe Checkout - Request Validation', () => {
     const api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/checkout', 'invalid json', {
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     response.expectStatus(400);
@@ -92,48 +95,45 @@ test.describe('API: Stripe Checkout - Request Validation', () => {
 });
 
 test.describe('API: Stripe Checkout - Authenticated Users', () => {
-  test(
-    'should handle custom success and cancel URLs',
-    async ({ request }) => {
-      const user = await ctx.createUser();
-      const api = new ApiClient(request).withAuth(user.token);
-      const response = await api.post('/api/checkout', {
-        priceId: STRIPE_PRICES.PRO_MONTHLY,
-        successUrl: 'https://example.com/success',
-        cancelUrl: 'https://example.com/cancel',
-        metadata: {
-          test_key: 'test_value',
-          user_source: 'mobile_app',
-        },
-      });
+  test('should handle custom success and cancel URLs', async ({ request }) => {
+    const user = await ctx.createUser();
+    const api = new ApiClient(request).withAuth(user.token);
+    const response = await api.post('/api/checkout', {
+      priceId: STRIPE_PRICES.PRO_MONTHLY,
+      successUrl: 'https://example.com/success',
+      cancelUrl: 'https://example.com/cancel',
+      metadata: {
+        test_key: 'test_value',
+        user_source: 'mobile_app',
+      },
+    });
 
-      // Should pass validation and create a checkout session
-      expect([200, 400, 500]).toContain(response.status);
-      const data = await response.json();
+    // Should pass validation and create a checkout session
+    expect([200, 400, 500]).toContain(response.status);
+    const data = await response.json();
 
-      if (response.status === 200) {
-        // Success case - checkout session created
-        expect(data.success).toBe(true);
-        expect(data.data.url).toBeTruthy();
-        expect(data.data.sessionId).toBeTruthy();
+    if (response.status === 200) {
+      // Success case - checkout session created
+      expect(data.success).toBe(true);
+      expect(data.data.url).toBeTruthy();
+      expect(data.data.sessionId).toBeTruthy();
 
-        // In test mode with real Stripe keys, should return actual session
-        if (data.data.mock) {
-          expect(data.data.mock).toBe(true);
-        } else {
-          expect(typeof data.data.url).toBe('string');
-          expect(typeof data.data.sessionId).toBe('string');
-          expect(data.data.sessionId).toMatch(/^cs_/);
-        }
+      // In test mode with real Stripe keys, should return actual session
+      if (data.data.mock) {
+        expect(data.data.mock).toBe(true);
       } else {
-        // Error case - should not be a validation error for valid price ID
-        expect(data.error).toBeDefined();
-        if (response.status === 400) {
-          expect(data.error.code).not.toBe('INVALID_PRICE');
-        }
+        expect(typeof data.data.url).toBe('string');
+        expect(typeof data.data.sessionId).toBe('string');
+        expect(data.data.sessionId).toMatch(/^cs_/);
+      }
+    } else {
+      // Error case - should not be a validation error for valid price ID
+      expect(data.error).toBeDefined();
+      if (response.status === 400) {
+        expect(data.error.code).not.toBe('INVALID_PRICE');
       }
     }
-  );
+  });
 
   test('should handle metadata properly', async ({ request }) => {
     const user = await ctx.createUser();
@@ -214,7 +214,7 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
   test('should reject checkout if user has trialing subscription', async ({ request }) => {
     const user = await ctx.createUser({ subscription: 'trialing', tier: 'pro' });
     const api = new ApiClient(request).withAuth(user.token);
-    
+
     const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.BUSINESS_MONTHLY,
     });
@@ -226,7 +226,7 @@ test.describe('API: Stripe Checkout - Authenticated Users', () => {
   test('should allow checkout if user has canceled subscription', async ({ request }) => {
     const user = await ctx.createUser({ subscription: 'canceled' });
     const api = new ApiClient(request).withAuth(user.token);
-    
+
     const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.PRO_MONTHLY,
     });
@@ -322,7 +322,7 @@ test.describe('API: Stripe Checkout - Subscription-Only Validation', () => {
     const user = await ctx.createUser();
     const api = new ApiClient(request).withAuth(user.token);
 
-        const subscriptionPriceIds = Object.values(STRIPE_PRICES);
+    const subscriptionPriceIds = Object.values(STRIPE_PRICES);
 
     for (const priceId of subscriptionPriceIds) {
       const response = await api.post('/api/checkout', { priceId });
@@ -357,14 +357,18 @@ test.describe('API: Stripe Checkout - Error Handling', () => {
 
   test('should handle database connection errors', async ({ request }) => {
     const api = new ApiClient(request);
-    const response = await api.post('/api/checkout', {
-      priceId: 'price_test_db_error_123',
-    }, {
-      headers: {
-        authorization: 'Bearer potentially_valid_but_db_unavailable_token',
-        origin: 'https://example.com',
+    const response = await api.post(
+      '/api/checkout',
+      {
+        priceId: 'price_test_db_error_123',
       },
-    });
+      {
+        headers: {
+          authorization: 'Bearer potentially_valid_but_db_unavailable_token',
+          origin: 'https://example.com',
+        },
+      }
+    );
 
     // Should return 401 or 500 depending on where the error occurs
     expect([401, 500]).toContain(response.status);
@@ -396,8 +400,9 @@ test.describe('API: Stripe Checkout - Error Handling', () => {
 });
 
 test.describe('API: Stripe Checkout - Security and Authorization', () => {
-  test('should prevent access to other users\' customer data', async ({ request }) => {
+  test("should prevent access to other users' customer data", async ({ request }) => {
     const user1 = await ctx.createUser();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user2 = await ctx.createUser();
 
     // User 1 should not be able to access user 2's customer data
@@ -435,11 +440,15 @@ test.describe('API: Stripe Checkout - URL Handling', () => {
     const user = await ctx.createUser();
     const api = new ApiClient(request).withAuth(user.token);
 
-    const response = await api.post('/api/checkout', {
-      priceId: 'price_test_origin_12345',
-    }, {
-      headers: { origin: 'https://mycustomapp.com' }
-    });
+    const response = await api.post(
+      '/api/checkout',
+      {
+        priceId: 'price_test_origin_12345',
+      },
+      {
+        headers: { origin: 'https://mycustomapp.com' },
+      }
+    );
 
     // In test environment with mock mode, expect success response
     response.expectStatus(200);
@@ -466,7 +475,7 @@ test.describe('API: Stripe Checkout - Subscription Metadata Handling', () => {
     const user = await ctx.createUser();
     const api = new ApiClient(request).withAuth(user.token);
 
-        const response = await api.post('/api/checkout', {
+    const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.HOBBY_MONTHLY,
       metadata: {
         source: 'web',
@@ -483,7 +492,7 @@ test.describe('API: Stripe Checkout - Subscription Metadata Handling', () => {
     const user = await ctx.createUser();
     const api = new ApiClient(request).withAuth(user.token);
 
-        const response = await api.post('/api/checkout', {
+    const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.PRO_MONTHLY,
     });
 
@@ -496,7 +505,7 @@ test.describe('API: Stripe Checkout - Subscription Metadata Handling', () => {
     const user = await ctx.createUser();
     const api = new ApiClient(request).withAuth(user.token);
 
-        const response = await api.post('/api/checkout', {
+    const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.BUSINESS_MONTHLY,
       metadata: {
         promotion: 'new_user',
@@ -512,11 +521,13 @@ test.describe('API: Stripe Checkout - Subscription Metadata Handling', () => {
 });
 
 test.describe('API: Stripe Checkout - Integration with Subscription Webhook Flow', () => {
-  test('should create sessions compatible with subscription webhook processing', async ({ request }) => {
+  test('should create sessions compatible with subscription webhook processing', async ({
+    request,
+  }) => {
     const user = await ctx.createUser();
     const api = new ApiClient(request).withAuth(user.token);
 
-        const response = await api.post('/api/checkout', {
+    const response = await api.post('/api/checkout', {
       priceId: STRIPE_PRICES.HOBBY_MONTHLY,
       metadata: {
         source: 'pricing_page',
@@ -534,7 +545,6 @@ test.describe('API: Stripe Checkout - Integration with Subscription Webhook Flow
     const user = await ctx.createUser();
     const api = new ApiClient(request).withAuth(user.token);
 
-    
     // Test all subscription prices create subscription mode
     for (const [, priceId] of Object.entries(STRIPE_PRICES)) {
       const response = await api.post('/api/checkout', { priceId });

@@ -30,14 +30,16 @@ export function generateMetadata(page: PSEOPage, category: PSEOCategory): Metada
       url: canonicalUrl,
       siteName: 'PixelPerfect',
       locale: 'en_US',
-      images: [
-        {
-          url: page.ogImage || `${BASE_URL}/og/${category}-default.png`,
-          width: 1200,
-          height: 630,
-          alt: page.title,
-        },
-      ],
+      ...(page.ogImage && {
+        images: [
+          {
+            url: page.ogImage,
+            width: 1200,
+            height: 630,
+            alt: page.title,
+          },
+        ],
+      }),
     },
 
     // Twitter
@@ -45,7 +47,7 @@ export function generateMetadata(page: PSEOPage, category: PSEOCategory): Metada
       card: 'summary_large_image',
       title: page.metaTitle,
       description: page.metaDescription,
-      images: [page.ogImage || `${BASE_URL}/og/${category}-default.png`],
+      ...(page.ogImage && { images: [page.ogImage] }),
       creator: '@pixelperfect',
     },
 
@@ -120,21 +122,12 @@ export function generateCategoryMetadata(category: PSEOCategory): Metadata {
       url: canonicalUrl,
       siteName: 'PixelPerfect',
       locale: 'en_US',
-      images: [
-        {
-          url: `${BASE_URL}/og/${category}-hub.png`,
-          width: 1200,
-          height: 630,
-          alt: categoryTitles[category],
-        },
-      ],
     },
 
     twitter: {
       card: 'summary_large_image',
       title: categoryTitles[category],
       description: categoryDescriptions[category],
-      images: [`${BASE_URL}/og/${category}-hub.png`],
       creator: '@pixelperfect',
     },
 

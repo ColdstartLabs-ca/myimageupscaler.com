@@ -27,7 +27,7 @@ vi.mock('@shared/utils/supabase/middleware', () => ({
 }));
 
 describe('Authentication Middleware', () => {
-  let consoleSpy: any;
+  let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -68,7 +68,7 @@ describe('Authentication Middleware', () => {
 
       // Mock updateSession to return a response
       const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as any).mockResolvedValue({
+      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
         user: null,
         supabaseResponse: new NextResponse(),
       });
@@ -84,5 +84,4 @@ describe('Authentication Middleware', () => {
       expect(response.headers.get('X-XSS-Protection')).toBe('1; mode=block');
     });
   });
-
 });

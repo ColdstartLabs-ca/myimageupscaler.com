@@ -4,7 +4,7 @@
  * Tests for helper functions used in the Stripe-Database sync system.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { isStripeNotFoundError } from '@server/services/subscription-sync.service';
 import type Stripe from 'stripe';
 
@@ -142,7 +142,7 @@ describe('Subscription Sync Service', () => {
     it('should validate job types', () => {
       const validJobTypes = ['expiration_check', 'webhook_recovery', 'full_reconciliation'];
 
-      validJobTypes.forEach((jobType) => {
+      validJobTypes.forEach(jobType => {
         expect(validJobTypes).toContain(jobType);
       });
     });
@@ -150,7 +150,7 @@ describe('Subscription Sync Service', () => {
     it('should validate sync run statuses', () => {
       const validStatuses = ['running', 'completed', 'failed'];
 
-      validStatuses.forEach((status) => {
+      validStatuses.forEach(status => {
         expect(validStatuses).toContain(status);
       });
     });

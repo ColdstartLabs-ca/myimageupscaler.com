@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestContext, ApiClient } from '../helpers';
+import { TestContext, ApiClient, ApiResponse } from '../helpers';
 
 /**
  * Integration Tests for Analytics Event API
@@ -107,12 +107,16 @@ test.describe('API: Analytics Event Integration', () => {
 
   test('should gracefully handle invalid auth tokens', async ({ request }) => {
     api = new ApiClient(request);
-    const response = await api.post('/api/analytics/event', {
-      eventName: 'login',
-      sessionId: 'invalid_auth_session',
-    }, {
-      headers: { Authorization: 'Bearer invalid_token_12345' }
-    });
+    const response = await api.post(
+      '/api/analytics/event',
+      {
+        eventName: 'login',
+        sessionId: 'invalid_auth_session',
+      },
+      {
+        headers: { Authorization: 'Bearer invalid_token_12345' },
+      }
+    );
 
     // Analytics should not block user actions due to auth failures
     response.expectStatus(200);
@@ -131,7 +135,7 @@ test.describe('API: Analytics Event Integration', () => {
       }));
 
     // Stagger requests slightly to reduce rate limiting and improve reliability
-    const responses: any[] = [];
+    const responses: ApiResponse<unknown>[] = [];
     for (const [index, event] of concurrentEvents.entries()) {
       if (index > 0) {
         await new Promise(resolve => setTimeout(resolve, 50));

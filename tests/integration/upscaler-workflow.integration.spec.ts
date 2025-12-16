@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { TestContext } from '../helpers';
+import type { ITestUser } from '../helpers/test-data-manager';
 
 /**
  * Upscaler Workflow Integration Tests
@@ -13,7 +14,7 @@ import { TestContext } from '../helpers';
 
 test.describe('Upscaler Workflow Integration', () => {
   let ctx: TestContext;
-  let testUser: any;
+  let testUser: ITestUser;
 
   test.beforeAll(async () => {
     ctx = new TestContext();
@@ -105,8 +106,8 @@ test.describe('Upscaler Workflow Integration', () => {
 
         // Check for refund transaction
         const transactions = await ctx.data.getCreditTransactions(testUser.id);
-        const refundTransaction = transactions.find(t =>
-          t.type === 'refund' && t.reference_id === jobId
+        const refundTransaction = transactions.find(
+          t => t.type === 'refund' && t.reference_id === jobId
         );
         expect(refundTransaction).toMatchObject({
           amount: 1,
@@ -218,23 +219,25 @@ test.describe('Upscaler Workflow Integration', () => {
       const jobIds: string[] = [];
 
       // Submit multiple jobs concurrently
-      const submitPromises = Array(concurrentJobs).fill(null).map(async (_, index) => {
-        const response = await request.post('/api/upscale', {
-          headers: {
-            Authorization: `Bearer ${testUser.token}`,
-            'Content-Type': 'application/json',
-          },
-          data: {
-            imageUrl: `https://picsum.photos/100/100?random=${index}`,
-            upscaleFactor: 2,
-          },
-        });
+      const submitPromises = Array(concurrentJobs)
+        .fill(null)
+        .map(async (_, index) => {
+          const response = await request.post('/api/upscale', {
+            headers: {
+              Authorization: `Bearer ${testUser.token}`,
+              'Content-Type': 'application/json',
+            },
+            data: {
+              imageUrl: `https://picsum.photos/100/100?random=${index}`,
+              upscaleFactor: 2,
+            },
+          });
 
-        expect(response.ok()).toBeTruthy();
-        const { jobId } = await response.json();
-        jobIds.push(jobId);
-        return jobId;
-      });
+          expect(response.ok()).toBeTruthy();
+          const { jobId } = await response.json();
+          jobIds.push(jobId);
+          return jobId;
+        });
 
       await Promise.all(submitPromises);
 
@@ -417,28 +420,30 @@ test.describe('Upscaler Workflow Integration', () => {
       expect(response.ok()).toBeTruthy();
       expect(responseTime).toBeLessThan(5000); // Should respond within 5 seconds
 
-      const { jobId, creditsRequired } = await response.json();
+      const { creditsRequired } = await response.json();
       // Higher resolution images should cost more credits
       expect(creditsRequired).toBeGreaterThan(1);
     });
 
     test('should enforce rate limiting', async ({ request }) => {
-      const requests = Array(20).fill(null).map(() =>
-        request.post('/api/upscale', {
-          headers: {
-            Authorization: `Bearer ${testUser.token}`,
-            'Content-Type': 'application/json',
-          },
-          data: {
-            imageUrl: 'https://picsum.photos/100/100',
-            upscaleFactor: 2,
-          },
-        })
-      );
+      const requests = Array(20)
+        .fill(null)
+        .map(() =>
+          request.post('/api/upscale', {
+            headers: {
+              Authorization: `Bearer ${testUser.token}`,
+              'Content-Type': 'application/json',
+            },
+            data: {
+              imageUrl: 'https://picsum.photos/100/100',
+              upscaleFactor: 2,
+            },
+          })
+        );
 
       const results = await Promise.allSettled(requests);
-      const rateLimited = results.filter(result =>
-        result.status === 'fulfilled' && result.value.status() === 429
+      const rateLimited = results.filter(
+        result => result.status === 'fulfilled' && result.value.status() === 429
       );
 
       // Should rate limit after certain number of requests

@@ -7,7 +7,7 @@ export {
   type IApiResponse,
   type IApiErrorResponse,
   type IApiSuccessResponse,
-  type IApiRequestOptions
+  type IApiRequestOptions,
 } from './api-client';
 export { WebhookClient, type IWebhookClientOptions } from './webhook-client';
 export {
@@ -16,8 +16,15 @@ export {
   type SubscriptionStatus,
   type SubscriptionTier,
   type IUserBuilderOptions,
-  type IPresetUserConfig
+  type IPresetUserConfig,
 } from './user-factory';
+
+// Import for internal use in utility functions
+import { TestContext as TestContextClass } from './test-context';
+import { UserFactory as UserFactoryClass } from './user-factory';
+import { ApiClient as ApiClientClass } from './api-client';
+import { WebhookClient as WebhookClientClass } from './webhook-client';
+import type { IWebhookClientOptions as IWebhookClientOptionsType } from './webhook-client';
 
 // Existing exports (maintained for backward compatibility)
 export { TestDataManager, type ITestUser } from './test-data-manager';
@@ -25,7 +32,7 @@ export { IntegrationTestHelpers, testFixtures, customMatchers } from './integrat
 export {
   StripeWebhookMockFactory,
   type IStripeEventMock,
-  type IWebhookTestOptions
+  type IWebhookTestOptions,
 } from './stripe-webhook-mocks';
 export { CheckoutMock } from './checkout-mock';
 export { resetTestUser, cleanupOldTestUsers } from './test-user-reset';
@@ -41,8 +48,8 @@ export type { ITestContextOptions } from './test-context';
  * @returns Object with test context and factory instances
  */
 export function createTestSetup(options?: { autoCleanup?: boolean }) {
-  const context = new TestContext(options);
-  const userFactory = new UserFactory(context.data);
+  const context = new TestContextClass(options);
+  const userFactory = new UserFactoryClass(context.data);
 
   return {
     context,
@@ -60,11 +67,11 @@ export function createTestSetup(options?: { autoCleanup?: boolean }) {
  * @returns AuthenticatedApiClient instance
  */
 export function createAuthenticatedApi(
-  request: any,
+  request: import('@playwright/test').APIRequestContext,
   token: string,
   baseUrl = ''
 ) {
-  return new ApiClient(request, baseUrl).withAuth(token);
+  return new ApiClientClass(request, baseUrl).withAuth(token);
 }
 
 /**
@@ -74,6 +81,9 @@ export function createAuthenticatedApi(
  * @param options - Webhook client options
  * @returns WebhookClient instance
  */
-export function createWebhookClient(request: any, options?: IWebhookClientOptions) {
-  return new WebhookClient(request, options);
+export function createWebhookClient(
+  request: import('@playwright/test').APIRequestContext,
+  options?: IWebhookClientOptionsType
+) {
+  return new WebhookClientClass(request, options);
 }

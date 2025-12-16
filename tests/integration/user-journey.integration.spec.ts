@@ -1,10 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, devices } from '@playwright/test';
 import { TestContext } from '../helpers';
 import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
 import { UpscalerPage } from '../pages/UpscalerPage';
-import { BillingPage } from '../pages/BillingPage';
 import { PricingPage } from '../pages/PricingPage';
+import type { ITestUser } from '../helpers/test-data-manager';
 
 /**
  * Complete User Journey Integration Tests
@@ -19,7 +19,7 @@ import { PricingPage } from '../pages/PricingPage';
  */
 test.describe('Complete User Journey Integration', () => {
   let ctx: TestContext;
-  let testUser: any;
+  let testUser: ITestUser;
 
   test.beforeAll(async () => {
     ctx = new TestContext();
@@ -65,7 +65,7 @@ test.describe('Complete User Journey Integration', () => {
       await expect(page).toHaveURL(/\/(dashboard|upscaler)/);
 
       // Verify user was created in database
-      const { data: profile } = await request.post('/api/auth/verify-email', {
+      await request.post('/api/auth/verify-email', {
         data: { email: newUserEmail },
       });
 
@@ -281,9 +281,9 @@ test.describe('Complete User Journey Integration', () => {
             error: {
               code: 'AI_UNAVAILABLE',
               message: 'AI service temporarily unavailable',
-              details: { retryAfter: 60 }
-            }
-          })
+              details: { retryAfter: 60 },
+            },
+          }),
         });
       });
 
@@ -326,7 +326,7 @@ test.describe('Complete User Journey Integration', () => {
 
     test.use({ ...devices['iPhone 14'] });
 
-    test('should complete user journey on mobile device', async ({ page, request }) => {
+    test('should complete user journey on mobile device', async ({ page }) => {
       const homePage = new HomePage(page);
       const loginPage = new LoginPage(page);
       const upscalerPage = new UpscalerPage(page);
@@ -471,10 +471,17 @@ test.describe('Complete User Journey Integration', () => {
       // Step 6: Memory and resource usage
       const metrics = await page.evaluate(() => {
         if ('memory' in performance) {
-          return {
-            used: (performance as any).memory.usedJSHeapSize,
-            total: (performance as any).memory.totalJSHeapSize,
-          };
+          const perfMemory = (
+            performance as Performance & {
+              memory?: { usedJSHeapSize: number; totalJSHeapSize: number };
+            }
+          ).memory;
+          if (perfMemory) {
+            return {
+              used: perfMemory.usedJSHeapSize,
+              total: perfMemory.totalJSHeapSize,
+            };
+          }
         }
         return null;
       });

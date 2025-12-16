@@ -3,7 +3,7 @@ import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { loadEnv } from '@shared/config/env';
 import { AuthProvider } from '@shared/types/authProviders';
-import { Menu, Zap, X } from 'lucide-react';
+import { Menu, Zap, X, ChevronDown } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useClickOutside } from '@client/hooks/useClickOutside';
 
@@ -11,10 +11,13 @@ export const NavBar = (): JSX.Element => {
   const { openAuthModal } = useModalStore();
   const { isAuthenticated, isLoading, user, signOut } = useUserStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const toolsDropdownRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(dropdownRef, () => setIsDropdownOpen(false));
+  useClickOutside(toolsDropdownRef, () => setIsToolsDropdownOpen(false));
 
   const handleAuthClick = () => {
     if (!isAuthenticated) {
@@ -54,10 +57,44 @@ export const NavBar = (): JSX.Element => {
               Dashboard
             </a>
           )}
+          <div className="relative" ref={toolsDropdownRef}>
+            <button
+              onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
+              className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              Tools
+              <ChevronDown size={16} className="text-slate-500" />
+            </button>
+            {isToolsDropdownOpen && (
+              <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-10">
+                <a
+                  href="/tools/compress/image-compressor"
+                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  Image Compressor
+                </a>
+                <a
+                  href="/tools/convert/png-to-jpg"
+                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  Format Converter
+                </a>
+                <a
+                  href="/tools/resize/image-resizer"
+                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  Image Resizer
+                </a>
+              </div>
+            )}
+          </div>
           <a href="/features" className="text-sm font-medium text-slate-600 hover:text-slate-900">
             Features
           </a>
-          <a href="/how-it-works" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+          <a
+            href="/how-it-works"
+            className="text-sm font-medium text-slate-600 hover:text-slate-900"
+          >
             How it Works
           </a>
           <a href="/pricing" className="text-sm font-medium text-slate-600 hover:text-slate-900">
@@ -220,6 +257,29 @@ export const NavBar = (): JSX.Element => {
                 Dashboard
               </a>
             )}
+            <div className="py-2">
+              <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
+                Tools
+              </p>
+              <a
+                href="/tools/compress/image-compressor"
+                className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+              >
+                Image Compressor
+              </a>
+              <a
+                href="/tools/convert/png-to-jpg"
+                className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+              >
+                Format Converter
+              </a>
+              <a
+                href="/tools/resize/image-resizer"
+                className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+              >
+                Image Resizer
+              </a>
+            </div>
             <a
               href="/features"
               className="block px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"

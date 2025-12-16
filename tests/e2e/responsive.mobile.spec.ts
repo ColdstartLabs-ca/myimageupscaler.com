@@ -17,7 +17,7 @@ async function validateSectionDisplay(
   name: string,
   customAssertions?: () => Promise<void>
 ) {
-  await expect(page.locator(selector)).toBeVisible();
+  await expect(page.page.locator(selector)).toBeVisible();
   await page.checkAriaLabels();
   await page.screenshot(`mobile-${name}`);
 
@@ -27,7 +27,7 @@ async function validateSectionDisplay(
 }
 
 // Helper function to check touch target size
-async function validateTouchTargetSize(element: any) {
+async function validateTouchTargetSize(element: import('@playwright/test').Locator) {
   const box = await element.boundingBox();
   expect(box).not.toBeNull();
   if (box) {
@@ -37,7 +37,7 @@ async function validateTouchTargetSize(element: any) {
 }
 
 // Helper function to check no horizontal overflow
-async function validateNoHorizontalOverflow(page: any) {
+async function validateNoHorizontalOverflow(page: import('@playwright/test').Page) {
   const viewportWidth = await page.evaluate(() => window.innerWidth);
   const scrollWidth = await page.evaluate(() => document.body.scrollWidth);
   expect(scrollWidth).toBeLessThanOrEqual(viewportWidth + 1);
@@ -51,7 +51,7 @@ const landingPageSections = [
     customAssertions: async (page: HomePage) => {
       await page.assertHeroTextReadable();
       await expect(page.versionBadge).toBeVisible();
-    }
+    },
   },
   {
     name: 'workspace',
@@ -59,7 +59,7 @@ const landingPageSections = [
     customAssertions: async (page: HomePage) => {
       await expect(page.dropzone).toBeVisible();
       await validateTouchTargetSize(page.dropzone);
-    }
+    },
   },
   {
     name: 'features',
@@ -68,7 +68,7 @@ const landingPageSections = [
       await page.assertFeaturesVisible();
       const featureCount = await page.featureCards.count();
       expect(featureCount).toBeGreaterThan(0);
-    }
+    },
   },
   {
     name: 'pricing',
@@ -77,7 +77,7 @@ const landingPageSections = [
       await page.assertPricingVisible();
       const pricingCards = await page.pricingCards.count();
       expect(pricingCards).toBeGreaterThan(0);
-    }
+    },
   },
   {
     name: 'footer',
@@ -86,8 +86,8 @@ const landingPageSections = [
       await page.assertFooterVisible();
       const footerLinksCount = await page.footerLinks.count();
       expect(footerLinksCount).toBeGreaterThan(0);
-    }
-  }
+    },
+  },
 ];
 
 test.describe('Mobile Responsive - Landing Page', () => {
@@ -102,7 +102,7 @@ test.describe('Mobile Responsive - Landing Page', () => {
 
   // Consolidated section display test - replaces 6 separate tests
   for (const section of landingPageSections) {
-    test(`should display ${section.name} section correctly`, async ({ page }) => {
+    test(`should display ${section.name} section correctly`, async () => {
       // Special handling for sections that need scrolling
       if (['features', 'pricing', 'footer'].includes(section.name)) {
         await homePage.scrollIntoView(section.selector);
@@ -115,7 +115,7 @@ test.describe('Mobile Responsive - Landing Page', () => {
   }
 
   // Core layout and interaction tests
-  test('should display responsive navigation correctly', async ({ page }) => {
+  test('should display responsive navigation correctly', async () => {
     const isMobile = await homePage.isMobileView();
 
     if (isMobile) {
@@ -130,11 +130,11 @@ test.describe('Mobile Responsive - Landing Page', () => {
     await homePage.screenshot('mobile-navigation');
   });
 
-  test('should not have horizontal overflow', async ({ page }) => {
+  test('should not have horizontal overflow', async () => {
     await homePage.assertNoHorizontalOverflow();
   });
 
-  test('should allow smooth scrolling through entire page', async ({ page }) => {
+  test('should allow smooth scrolling through entire page', async () => {
     await homePage.scrollIntoView('footer');
     await homePage.waitForNetworkIdle();
     await homePage.scrollIntoView('main');
@@ -148,7 +148,7 @@ const upscalerPageElements = [
   {
     name: 'page-title',
     selector: 'h1, .page-title',
-    elementGetter: (page: UpscalerPage) => page.pageTitle
+    elementGetter: (page: UpscalerPage) => page.pageTitle,
   },
   {
     name: 'workspace',
@@ -157,8 +157,8 @@ const upscalerPageElements = [
     customAssertions: async (page: UpscalerPage) => {
       await expect(page.dropzone).toBeVisible();
       await validateTouchTargetSize(page.dropzone);
-    }
-  }
+    },
+  },
 ];
 
 test.describe('Mobile Responsive - Upscaler Page', () => {
@@ -173,7 +173,7 @@ test.describe('Mobile Responsive - Upscaler Page', () => {
 
   // Consolidated element display test - replaces 3 separate tests
   for (const element of upscalerPageElements) {
-    test(`should display ${element.name} correctly`, async ({ page }) => {
+    test(`should display ${element.name} correctly`, async () => {
       if (element.elementGetter) {
         await expect(element.elementGetter(upscalerPage)).toBeVisible();
       } else {
@@ -195,7 +195,7 @@ test.describe('Mobile Responsive - Upscaler Page', () => {
     await upscalerPage.checkAriaLabels();
   });
 
-  test('should handle file upload interactions gracefully', async ({ page }) => {
+  test('should handle file upload interactions gracefully', async () => {
     await upscalerPage.waitForLoadingComplete();
     await expect(upscalerPage.dropzone).toBeVisible();
 
@@ -215,20 +215,20 @@ const pricingCards = [
     name: 'free',
     cardGetter: (page: PricingPage) => page.freeTierCard,
     price: '$19',
-    buttonText: 'Subscribe Now'
+    buttonText: 'Subscribe Now',
   },
   {
     name: 'starter',
     cardGetter: (page: PricingPage) => page.starterTierCard,
     price: '$9.99',
-    buttonText: 'Buy Now'
+    buttonText: 'Buy Now',
   },
   {
     name: 'pro',
     cardGetter: (page: PricingPage) => page.proTierCard,
     price: '$29.99',
-    buttonText: 'Buy Now'
-  }
+    buttonText: 'Buy Now',
+  },
 ];
 
 test.describe('Mobile Responsive - Pricing Page', () => {
@@ -241,7 +241,7 @@ test.describe('Mobile Responsive - Pricing Page', () => {
     await pricingPage.checkBasicAccessibility();
   });
 
-  test('should display all pricing cards correctly', async ({ page }) => {
+  test('should display all pricing cards correctly', async () => {
     await expect(pricingPage.pricingGrid).toBeVisible();
     await pricingPage.checkAriaLabels();
     await pricingPage.screenshot('pricing-cards-mobile');
@@ -249,7 +249,7 @@ test.describe('Mobile Responsive - Pricing Page', () => {
 
   // Consolidated pricing card test - replaces 4 separate tests
   for (const card of pricingCards) {
-    test(`should display ${card.name} card with correct pricing and accessible buttons`, async ({ page }) => {
+    test(`should display ${card.name} card with correct pricing and accessible buttons`, async () => {
       await expect(card.cardGetter(pricingPage)).toBeVisible();
 
       // Check price is displayed and readable
@@ -257,7 +257,8 @@ test.describe('Mobile Responsive - Pricing Page', () => {
       await expect(priceElement).toBeVisible();
 
       // Check button is present and accessible
-      const button = card.cardGetter(pricingPage)
+      const button = card
+        .cardGetter(pricingPage)
         .locator('button')
         .filter({ hasText: card.buttonText })
         .first();
@@ -290,7 +291,9 @@ const viewportSizes = [
 test.describe('Mobile Responsive - Cross-Device Validation', () => {
   // Consolidated viewport test - replaces 4 separate tests
   for (const viewport of viewportSizes) {
-    test(`should render correctly on ${viewport.name} (${viewport.width} x ${viewport.height})`, async ({ page }) => {
+    test(`should render correctly on ${viewport.name} (${viewport.width} x ${viewport.height})`, async ({
+      page,
+    }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.waitForTimeout(100); // Allow viewport to stabilize
 
@@ -356,8 +359,8 @@ test.describe('Mobile Responsive - Cross-Device Validation', () => {
     // Check zoom accessibility (with proper assertion)
     const viewportMeta = await page.locator('meta[name="viewport"]').getAttribute('content');
     if (viewportMeta) {
-      const hasZoomRestriction = viewportMeta.includes('user-scalable=no') ||
-                                viewportMeta.includes('maximum-scale=1.0');
+      const hasZoomRestriction =
+        viewportMeta.includes('user-scalable=no') || viewportMeta.includes('maximum-scale=1.0');
 
       // Make this a proper assertion - either it allows zoom or explicitly documents the restriction
       if (hasZoomRestriction) {

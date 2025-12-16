@@ -23,13 +23,13 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Login Modal', () => {
-    test('should show login form when clicking sign in', async ({ page }) => {
+    test('should show login form when clicking sign in', async () => {
       await loginPage.goto('/');
       await loginPage.openLoginModal();
       await loginPage.assertModalVisible();
     });
 
-    test('can close login modal by pressing Escape key', async ({ page }) => {
+    test('can close login modal by pressing Escape key', async () => {
       await loginPage.goto('/');
       await loginPage.openLoginModal();
       await loginPage.assertModalVisible();
@@ -43,7 +43,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Protected Routes', () => {
-    test('direct URL navigation maintains header functionality', async ({ page }) => {
+    test('direct URL navigation maintains header functionality', async () => {
       // Navigate directly to various pages and verify header still works
       // Note: Only include pages that actually exist
       const pages = ['/', '/pricing'];
@@ -66,7 +66,7 @@ test.describe('Authentication', () => {
       // For now, just verify that navigation doesn't break the header
       try {
         await loginPage.goto('/dashboard/billing');
-        await page.waitForLoadState('domcontentloaded', { timeout: 5000 });
+        await loginPage.waitForPageLoad();
         // Header should still be visible even if route redirects
         await expect(loginPage.header).toBeVisible({ timeout: 10000 });
 
@@ -75,7 +75,7 @@ test.describe('Authentication', () => {
         await loginPage.goto('/');
         await loginPage.waitForPageLoad();
         await expect(loginPage.signInButton).toBeVisible({ timeout: 10000 });
-      } catch (error) {
+      } catch {
         // If navigation fails, that's expected for protected routes without auth
         // Just verify we can still navigate to a working page
         await loginPage.goto('/');
@@ -86,7 +86,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Navigation', () => {
-    test('header shows sign in button when not authenticated', async ({ page }) => {
+    test('header shows sign in button when not authenticated', async () => {
       await loginPage.goto('/');
       await loginPage.waitForPageLoad();
 
@@ -97,7 +97,7 @@ test.describe('Authentication', () => {
       await expect(loginPage.signInButton).toBeVisible({ timeout: 15000 });
     });
 
-    test('sign in button opens login modal', async ({ page }) => {
+    test('sign in button opens login modal', async () => {
       await loginPage.goto('/');
       await loginPage.waitForPageLoad();
 
@@ -110,7 +110,7 @@ test.describe('Authentication', () => {
       await loginPage.assertModalVisible();
     });
 
-    test('navigation elements are accessible', async ({ page }) => {
+    test('navigation elements are accessible', async () => {
       await loginPage.goto('/');
       await loginPage.waitForPageLoad();
 
@@ -154,7 +154,7 @@ test.describe('Authentication', () => {
         } else {
           console.warn('Sign in button not visible, skipping modal interaction');
         }
-      } catch (error) {
+      } catch {
         console.warn('Modal interaction had issues, continuing test...');
       }
 
@@ -165,7 +165,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Form Validation', () => {
-    test('should validate login form inputs', async ({ page }) => {
+    test('should validate login form inputs', async () => {
       await loginPage.goto('/');
       await loginPage.openLoginModal();
 
@@ -182,7 +182,7 @@ test.describe('Authentication', () => {
       await expect(loginPage.modal).toBeVisible();
     });
 
-    test('form fields can be filled and cleared', async ({ page }) => {
+    test('form fields can be filled and cleared', async () => {
       await loginPage.goto('/');
       await loginPage.openLoginModal();
 
@@ -205,7 +205,7 @@ test.describe('Authentication', () => {
       await expect(loginPage.modal.locator('input[placeholder*="password" i]')).toHaveValue('');
     });
 
-    test('form handles rapid successive submissions', async ({ page }) => {
+    test('form handles rapid successive submissions', async () => {
       await loginPage.goto('/');
       await loginPage.openLoginModal();
 
@@ -234,7 +234,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Authentication State Management', () => {
-    test('can check authentication state', async ({ page }) => {
+    test('can check authentication state', async () => {
       await loginPage.goto('/');
       await loginPage.waitForPageLoad();
 
@@ -248,7 +248,7 @@ test.describe('Authentication', () => {
       await expect(loginPage.signOutButton).not.toBeVisible();
     });
 
-    test('waits for authentication state changes', async ({ page }) => {
+    test('waits for authentication state changes', async () => {
       await loginPage.goto('/');
       await loginPage.waitForPageLoad();
 
@@ -298,7 +298,7 @@ test.describe('Authentication', () => {
       await expect(loginPage.modal).toBeVisible();
     });
 
-    test('modal handles rapid open/close operations', async ({ page }) => {
+    test('modal handles rapid open/close operations', async () => {
       await loginPage.goto('/');
 
       // Rapidly open and close modal with error handling
@@ -308,7 +308,7 @@ test.describe('Authentication', () => {
           await loginPage.wait(100); // Slightly longer wait for stability
           await loginPage.closeModal();
           await loginPage.wait(100); // Slightly longer wait for stability
-        } catch (error) {
+        } catch {
           // If an operation fails, continue and try the next iteration
           console.warn(`Modal operation ${i + 1} failed, continuing...`);
           await loginPage.wait(200); // Extra wait before next iteration
@@ -340,7 +340,7 @@ test.describe('Authentication', () => {
       await expect(loginPage.modal).toBeHidden();
     });
 
-    test('maintains proper page accessibility', async ({ page }) => {
+    test('maintains proper page accessibility', async () => {
       await loginPage.goto('/');
 
       // Check accessibility before modal
@@ -360,7 +360,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('OAuth Providers', () => {
-    test('should show Google sign-in button when OAuth is enabled', async ({ page }) => {
+    test('should show Google sign-in button when OAuth is enabled', async () => {
       await loginPage.goto('/');
       await loginPage.openLoginModal();
       await loginPage.assertModalVisible();

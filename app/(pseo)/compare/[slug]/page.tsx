@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getComparisonData, getAllComparisonSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { ComparePageTemplate } from '@/components/pseo/templates/ComparePageTemplate';
 
 interface IComparisonPageProps {
   params: Promise<{ slug: string }>;
@@ -29,13 +30,5 @@ export default async function ComparisonPage({ params }: IComparisonPageProps) {
     notFound();
   }
 
-  return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-6">{comparison.h1}</h1>
-      <p className="text-xl text-gray-600 mb-8">{comparison.intro}</p>
-      <div className="bg-gray-50 p-8 rounded-lg">
-        <p className="text-gray-700">Comparison content coming soon...</p>
-      </div>
-    </div>
-  );
+  return <ComparePageTemplate data={comparison} />;
 }

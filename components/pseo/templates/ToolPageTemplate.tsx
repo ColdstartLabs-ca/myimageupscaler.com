@@ -4,8 +4,8 @@
  * Comprehensive template for tool landing pages
  */
 
-import { getTierByVolume } from '@/lib/seo/keyword-tiers';
 import type { IToolPage } from '@/lib/seo/pseo-types';
+import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -25,8 +25,9 @@ interface IToolPageTemplateProps {
 }
 
 export function ToolPageTemplate({ data }: IToolPageTemplateProps): ReactElement {
-  // Get tier from keyword data if available
-  const tier = data.primaryKeyword ? getTierByVolume(100000).tier : undefined; // Default assumption for tools
+  // Look up tier from keyword mappings
+  const pageMapping = getPageMappingByUrl(`/tools/${data.slug}`);
+  const tier = pageMapping?.tier;
 
   return (
     <div className="min-h-screen bg-white relative">

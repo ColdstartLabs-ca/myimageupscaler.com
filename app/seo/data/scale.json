@@ -1,0 +1,150 @@
+{
+  "category": "scale",
+  "pages": [
+    {
+      "slug": "upscale-to-4k",
+      "title": "Upscale To 4k",
+      "metaTitle": "Upscale Images to 4K Resolution with AI | PixelPerfect",
+      "metaDescription": "Upscale any image to stunning 4K resolution (3840x2160) with AI. Perfect for displays, prints, and professional projects. Try free.",
+      "h1": "Upscale Images to 4K Resolution - Professional Quality",
+      "intro": "Transform your images to stunning 4K resolution (3840x2160 pixels) with AI-powered upscaling. Perfect for modern displays, large prints, and professional projects.",
+      "primaryKeyword": "upscale to 4k",
+      "secondaryKeywords": [
+        "4k upscaling",
+        "convert to 4k",
+        "4k image converter",
+        "upscale to 4k resolution"
+      ],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "scale",
+      "resolution": "4K",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "4K monitors and TVs",
+        "YouTube thumbnails",
+        "Large format printing",
+        "Professional presentations",
+        "Digital signage"
+      ],
+      "benefits": [
+        {
+          "title": "Cinema-Quality Resolution",
+          "description": "4K (3840x2160) is the standard for modern displays, streaming platforms, and professional content.",
+          "metric": "8.3 megapixels"
+        },
+        {
+          "title": "Future-Proof Your Content",
+          "description": "4K is increasingly becoming the minimum standard for professional and consumer displays.",
+          "metric": "4x Full HD"
+        },
+        {
+          "title": "Print at Large Sizes",
+          "description": "4K resolution allows for crisp prints up to 32x18 inches at 300 DPI.",
+          "metric": "32\" x 18\" prints"
+        }
+      ],
+      "technicalSpecs": {
+        "pixelDimensions": "3840 x 2160",
+        "totalPixels": "8,294,400 pixels",
+        "aspectRatio": "16:9 (widescreen)",
+        "comparedToFullHD": "4x the resolution (1920x1080)",
+        "printSize": "Up to 32\" x 18\" at 300 DPI",
+        "displayUses": "4K UHD TVs, monitors, projectors"
+      },
+      "faq": [
+        {
+          "question": "What is 4K resolution exactly?",
+          "answer": "4K resolution (also called Ultra HD or UHD) is 3840 x 2160 pixels—exactly 4 times the resolution of Full HD (1920x1080). The name '4K' comes from the approximately 4000 pixels of horizontal resolution."
+        },
+        {
+          "question": "Can I upscale any image to 4K?",
+          "answer": "Yes! Our AI can upscale images from any starting resolution to 4K. However, starting with higher quality source images will yield better results. Images below 720p may show some artifacts when scaled to 4K."
+        },
+        {
+          "question": "Will my 4K image look good on all screens?",
+          "answer": "Yes. 4K images will look excellent on 4K displays and will be automatically downscaled (looking great) on lower resolution screens. It's better to have higher resolution and scale down than the opposite."
+        },
+        {
+          "question": "How long does it take to upscale to 4K?",
+          "answer": "Typically 45-90 seconds depending on the source image size. Larger source images take slightly longer to process to 4K resolution."
+        }
+      ],
+      "relatedScale": ["upscale-to-hd"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-to-hd",
+      "title": "Upscale To HD",
+      "metaTitle": "Upscale Images to HD 1080p Resolution | PixelPerfect AI",
+      "metaDescription": "Upscale images to Full HD 1080p (1920x1080) with AI. Perfect for web, social media, and standard displays. Fast processing, no watermarks.",
+      "h1": "Upscale Images to HD 1080p - Full HD Quality",
+      "intro": "Enhance your images to Full HD resolution (1920x1080 pixels) with AI. Perfect for websites, social media, YouTube, and standard HD displays.",
+      "primaryKeyword": "upscale to hd",
+      "secondaryKeywords": ["hd upscaling", "1080p upscale", "convert to hd", "full hd upscaler"],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "scale",
+      "resolution": "Full HD (1080p)",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "YouTube videos (1080p standard)",
+        "Website hero images",
+        "Social media posts",
+        "HD monitors and laptops",
+        "Digital presentations"
+      ],
+      "benefits": [
+        {
+          "title": "Web-Optimized Resolution",
+          "description": "1080p is the sweet spot for web content—high quality without massive file sizes.",
+          "metric": "2.1 megapixels"
+        },
+        {
+          "title": "Fast Processing",
+          "description": "Smaller target resolution means faster AI processing compared to 4K upscaling.",
+          "metric": "20-40 seconds"
+        },
+        {
+          "title": "Universal Compatibility",
+          "description": "1080p works perfectly on virtually all modern screens and is the standard for streaming video.",
+          "metric": "Supported everywhere"
+        }
+      ],
+      "technicalSpecs": {
+        "pixelDimensions": "1920 x 1080",
+        "totalPixels": "2,073,600 pixels",
+        "aspectRatio": "16:9 (widescreen)",
+        "comparedTo720p": "2.25x the resolution (1280x720)",
+        "printSize": "Up to 16\" x 9\" at 300 DPI",
+        "displayUses": "Full HD monitors, TVs, laptops, tablets"
+      },
+      "faq": [
+        {
+          "question": "What's the difference between HD and Full HD?",
+          "answer": "HD (720p) is 1280x720 pixels, while Full HD (1080p) is 1920x1080—2.25 times more pixels. When people say 'HD,' they usually mean Full HD (1080p), which is what this tool produces."
+        },
+        {
+          "question": "Is 1080p good enough for professional use?",
+          "answer": "Absolutely! 1080p is still the standard for many professional applications including YouTube, streaming platforms, and web design. It's perfect for screens up to 24 inches and offers an ideal balance of quality and file size."
+        },
+        {
+          "question": "Should I upscale to HD or 4K?",
+          "answer": "Choose HD (1080p) for web content, social media, and standard displays. Choose 4K if you need content for 4K displays, large prints, or want maximum future-proofing."
+        },
+        {
+          "question": "Can I print HD resolution images?",
+          "answer": "Yes! 1080p provides enough resolution for prints up to approximately 16x9 inches at high quality (300 DPI). For larger prints, consider upscaling to 4K instead."
+        }
+      ],
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
+    }
+  ]
+}

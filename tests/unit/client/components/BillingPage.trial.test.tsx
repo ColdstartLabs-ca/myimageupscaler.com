@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import BillingPage from '@app/dashboard/billing/page';
@@ -21,7 +21,7 @@ vi.mock('@client/store/toastStore', () => ({
 }));
 
 vi.mock('@shared/config/stripe', () => ({
-  getPlanDisplayName: vi.fn((data) => data.subscriptionTier || 'Free Plan'),
+  getPlanDisplayName: vi.fn(data => data.subscriptionTier || 'Free Plan'),
 }));
 
 vi.mock('dayjs', () => {
@@ -98,11 +98,11 @@ describe('BillingPage - Trial Functionality', () => {
 
     mockUseToastStore.mockReturnValue({
       showToast: mockShowToast,
-    } as any);
+    } as { showToast: typeof mockShowToast });
 
     mockUseRouter.mockReturnValue({
       push: vi.fn(),
-    } as any);
+    } as { push: ReturnType<typeof vi.fn> });
 
     mockStripeService.getUserProfile.mockResolvedValue(mockTrialProfile);
     mockStripeService.getActiveSubscription.mockResolvedValue(mockTrialSubscription);
@@ -136,7 +136,11 @@ describe('BillingPage - Trial Functionality', () => {
     await waitFor(() => {
       expect(screen.getByText(/Trial Active:/)).toBeInTheDocument();
       expect(screen.getByText(/Your trial ends in 14 days/)).toBeInTheDocument();
-      expect(screen.getByText(/Your card will be charged the regular subscription price after the trial ends/)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Your card will be charged the regular subscription price after the trial ends/
+        )
+      ).toBeInTheDocument();
     });
   });
 
@@ -212,7 +216,9 @@ describe('BillingPage - Trial Functionality', () => {
       expect(screen.getByText('Trial')).toBeInTheDocument();
       expect(screen.getByText('Trial Ends')).toBeInTheDocument();
       expect(screen.getByText('Your trial ends in 14 days')).toBeInTheDocument();
-      expect(screen.getByText(/Your subscription will be canceled at the end of the current period/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Your subscription will be canceled at the end of the current period/)
+      ).toBeInTheDocument();
     });
   });
 
@@ -251,8 +257,12 @@ describe('BillingPage - Trial Functionality', () => {
   });
 
   it('shows loading state while fetching trial data', async () => {
-    mockStripeService.getUserProfile.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
-    mockStripeService.getActiveSubscription.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+    mockStripeService.getUserProfile.mockImplementation(
+      () => new Promise(resolve => setTimeout(resolve, 100))
+    );
+    mockStripeService.getActiveSubscription.mockImplementation(
+      () => new Promise(resolve => setTimeout(resolve, 100))
+    );
 
     render(<BillingPage />);
 

@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getGuideData, getAllGuideSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { GuidePageTemplate } from '@/components/pseo/templates/GuidePageTemplate';
 
 interface IGuidePageProps {
   params: Promise<{ slug: string }>;
@@ -29,13 +30,5 @@ export default async function GuidePage({ params }: IGuidePageProps) {
     notFound();
   }
 
-  return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-6">{guide.h1}</h1>
-      <p className="text-xl text-gray-600 mb-8">{guide.intro}</p>
-      <div className="prose prose-lg max-w-none">
-        <p>Guide content coming soon...</p>
-      </div>
-    </div>
-  );
+  return <GuidePageTemplate data={guide} />;
 }
