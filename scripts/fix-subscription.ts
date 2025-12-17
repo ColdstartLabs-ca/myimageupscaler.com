@@ -46,7 +46,9 @@ async function fixSubscription(customerId: string, dryRun: boolean = false) {
     console.log(`\nProcessing subscription: ${subscription.id}`);
     console.log(`  Status: ${subscription.status}`);
     console.log(`  Price ID: ${subscription.items.data[0]?.price.id}`);
-    console.log(`  Current period: ${new Date(subscription.current_period_start * 1000)} - ${new Date(subscription.current_period_end * 1000)}`);
+    console.log(
+      `  Current period: ${new Date(subscription.current_period_start * 1000)} - ${new Date(subscription.current_period_end * 1000)}`
+    );
 
     // Get the user_id from profiles
     const { data: profile, error: profileError } = await supabase
@@ -95,50 +97,65 @@ async function fixSubscription(customerId: string, dryRun: boolean = false) {
       console.log('  ✅ Subscription record created/updated');
     }
 
-    // Determine plan name using unified resolver
-    let planName = 'Unknown';
+    // Determine plan key using unified resolver
+    // IMPORTANT: Use plan.key (e.g., 'pro') not plan.name (e.g., 'Professional')
+    // This ensures getBatchLimit() and other tier-based logic works correctly
+    let planKey = 'unknown';
+    let planName = 'Unknown'; // Keep for logging purposes
     try {
       const resolved = assertKnownPriceId(priceId);
       if (resolved.type === 'plan') {
+        planKey = resolved.key;
         planName = resolved.name;
-        console.log(`  📋 Resolved plan: ${planName} (${resolved.credits} credits)`);
+        console.log(
+          `  📋 Resolved plan: ${planName} (key: ${planKey}, ${resolved.credits} credits)`
+        );
       } else {
         console.log(`  ⚠️  Price ID ${priceId} resolved to credit pack, not subscription plan`);
+        planKey = 'unknown';
         planName = 'Credit Purchase';
       }
     } catch (error) {
       console.log(`  ❌ Could not resolve price ID ${priceId} with unified resolver`);
       console.log(`  📝 Fallback: Using price ID fragments for plan detection`);
 
-      // Fallback to legacy detection for unknown price IDs
+      // Fallback to legacy detection for unknown price IDs - use keys not names
       if (priceId.includes('hobby') || priceId.includes('Hobby')) {
+        planKey = 'hobby';
         planName = 'Hobby';
       } else if (priceId.includes('pro') || priceId.includes('Pro')) {
+        planKey = 'pro';
         planName = 'Professional';
       } else if (priceId.includes('business') || priceId.includes('Business')) {
+        planKey = 'business';
         planName = 'Business';
       } else {
         // Use price ID itself as last resort
+        planKey = 'unknown';
         planName = `Plan (${priceId.substring(0, 12)}...)`;
       }
     }
 
     // Update profile
     if (dryRun) {
-      console.log(`  🔍 DRY RUN: Would update profile ${userId} - tier: ${planName}, status: ${subscription.status}`);
+      console.log(
+        `  🔍 DRY RUN: Would update profile ${userId} - tier: ${planKey} (${planName}), status: ${subscription.status}`
+      );
     } else {
       const { error: profileUpdateError } = await supabase
         .from('profiles')
         .update({
           subscription_status: subscription.status,
-          subscription_tier: planName,
+          subscription_tier: planKey,
         })
         .eq('id', userId);
 
       if (profileUpdateError) {
         console.error('  ❌ Error updating profile:', profileUpdateError);
       } else {
-        console.log(`  ✅ Profile updated - tier: ${planName}, status: ${subscription.status}`);
+        console.log(
+          `  ✅ Profile updated - tier: ${planKey} (${planName}), status: ${subscription.status}`
+        );
       }
     }
   }
@@ -233,7 +250,7 @@ main()
     console.log('\n✅ Done!');
     process.exit(0);
   })
-  .catch((error) => {
+  .catch(error => {
     console.error('\n❌ Error:', error);
     process.exit(1);
   });

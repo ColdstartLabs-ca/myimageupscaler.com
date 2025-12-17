@@ -447,12 +447,14 @@ export class SubscriptionHandler {
       }
     }
 
-    // Update profile subscription status with human-readable plan name
+    // Update profile subscription status
+    // IMPORTANT: Use plan key (e.g., 'pro') not display name (e.g., 'Professional')
+    // This ensures getBatchLimit() and other tier-based logic works correctly
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({
         subscription_status: subscription.status,
-        subscription_tier: planMetadata.name, // Use friendly name from unified resolver
+        subscription_tier: planMetadata.key,
       })
       .eq('id', userId);
 
@@ -629,10 +631,11 @@ export class SubscriptionHandler {
 
       if (newPlan) {
         // Update profile tier
+        // IMPORTANT: Use plan.key (e.g., 'pro') not plan.name (e.g., 'Professional')
         await supabaseAdmin
           .from('profiles')
           .update({
-            subscription_tier: newPlan.name,
+            subscription_tier: newPlan.key,
           })
           .eq('id', subscription.user_id);
 

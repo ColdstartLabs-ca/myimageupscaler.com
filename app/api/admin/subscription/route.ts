@@ -132,11 +132,12 @@ export async function POST(req: NextRequest) {
             })
             .eq('id', subscription.id);
 
+          // IMPORTANT: Use plan.key (e.g., 'pro') not plan.name (e.g., 'Professional')
           await supabaseAdmin
             .from('profiles')
             .update({
               subscription_status: updatedSub.status,
-              subscription_tier: targetPlan.name,
+              subscription_tier: targetPlan.key,
               updated_at: dayjs().toISOString(),
             })
             .eq('id', userId);
@@ -159,11 +160,12 @@ export async function POST(req: NextRequest) {
 
       // No active Stripe subscription or Stripe update failed
       // Just update the profile directly (admin override)
+      // IMPORTANT: Use plan.key (e.g., 'pro') not plan.name (e.g., 'Professional')
       await supabaseAdmin
         .from('profiles')
         .update({
           subscription_status: 'active',
-          subscription_tier: targetPlan.name,
+          subscription_tier: targetPlan.key,
           updated_at: dayjs().toISOString(),
         })
         .eq('id', userId);

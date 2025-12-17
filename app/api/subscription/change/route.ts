@@ -222,7 +222,10 @@ export async function POST(request: NextRequest) {
       try {
         resolvedCurrent = assertKnownPriceId(currentSubscription.price_id);
         if (resolvedCurrent.type !== 'plan') {
-          console.warn('[PLAN_CHANGE] Current subscription price ID is not a plan:', currentSubscription.price_id);
+          console.warn(
+            '[PLAN_CHANGE] Current subscription price ID is not a plan:',
+            currentSubscription.price_id
+          );
         } else {
           // Still get legacy plan format for compatibility
           currentPlan = getPlanForPriceId(currentSubscription.price_id);
@@ -264,10 +267,11 @@ export async function POST(request: NextRequest) {
           .eq('id', currentSubscription.id);
 
         // Update profile subscription tier
+        // IMPORTANT: Use plan.key (e.g., 'pro') not plan.name (e.g., 'Professional')
         await supabaseAdmin
           .from('profiles')
           .update({
-            subscription_tier: targetPlan.name,
+            subscription_tier: targetPlan.key,
           })
           .eq('id', user.id);
 
@@ -512,10 +516,11 @@ export async function POST(request: NextRequest) {
       await supabaseAdmin.from('subscriptions').update(updateData).eq('id', currentSubscription.id);
 
       // Update profile subscription tier
+      // IMPORTANT: Use plan.key (e.g., 'pro') not plan.name (e.g., 'Professional')
       await supabaseAdmin
         .from('profiles')
         .update({
-          subscription_tier: targetPlan.name,
+          subscription_tier: targetPlan.key,
         })
         .eq('id', user.id);
 

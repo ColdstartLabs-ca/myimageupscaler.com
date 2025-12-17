@@ -81,11 +81,13 @@ export async function syncSubscriptionFromStripe(
   }
 
   // Update profile subscription status
+  // IMPORTANT: Use plan.key (e.g., 'pro') not plan.name (e.g., 'Professional')
+  // This ensures getBatchLimit() can correctly look up the plan configuration
   const { error: profileError } = await supabaseAdmin
     .from('profiles')
     .update({
       subscription_status: subscription.status,
-      subscription_tier: plan.name,
+      subscription_tier: plan.key,
     })
     .eq('id', userId);
 
