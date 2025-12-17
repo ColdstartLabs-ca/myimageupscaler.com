@@ -9,20 +9,176 @@ import { resolvePlanOrPack, assertKnownPriceId } from '@shared/config/stripe';
 
 export const runtime = 'edge'; // Cloudflare Worker compatible
 
+/**
+ * Validates and parses the request body
+ */
+async function parseRequestBody(request: NextRequest): Promise<ICheckoutSessionRequest> {
+  let body: ICheckoutSessionRequest;
+  try {
+    const text = await request.text();
+    body = JSON.parse(text);
+  } catch {
+    throw new Error('Invalid JSON in request body');
+  }
+  return body;
+}
+
+/**
+ * Validates price ID format and basic requirements
+ */
+function validatePriceId(priceId: unknown): string {
+  if (!priceId) {
+    throw new Error('priceId is required');
+  }
+
+  const priceIdStr = String(priceId);
+  if (typeof priceId !== 'string' || priceIdStr.trim() === '') {
+    throw new Error('priceId must be a non-empty string');
+  }
+
+  // Validate basic Stripe price ID format
+  if (!priceIdStr.startsWith('price_') || priceIdStr.length < 10) {
+    throw new Error(
+      'Invalid price ID format. Price IDs must start with "price_" and be valid Stripe price identifiers.'
+    );
+  }
+
+  return priceIdStr;
+}
+
+/**
+ * Extracts user from authentication token
+ */
+async function authenticateUser(authHeader: string | null, token: string) {
+  let user: {
+    id: string;
+    email?: string;
+    user_metadata?: Record<string, string>;
+    app_metadata?: Record<string, string>;
+  } | null = null;
+  let authError: {
+    message: string;
+    status?: number;
+  } | null = null;
+
+  if (serverEnv.ENV === 'test') {
+    // In test mode, only accept mock tokens
+    if (token.startsWith('test_token_')) {
+      let mockUserId: string;
+      if (token.startsWith('test_token_mock_user_')) {
+        mockUserId = token.replace('test_token_mock_user_', '');
+      } else {
+        mockUserId = token.replace('test_token_', '');
+      }
+      user = {
+        id: mockUserId,
+        email: `test-${mockUserId}@example.com`,
+      };
+    } else {
+      authError = { message: 'Invalid test token', status: 401 };
+    }
+  } else {
+    const result = await supabaseAdmin.auth.getUser(token);
+    user = result.data.user;
+    authError = result.error;
+  }
+
+  return { user, authError };
+}
+
+/**
+ * Checks for existing active subscription
+ */
+async function checkExistingSubscription(
+  user: { id: string },
+  resolvedPrice: { type: string } | null,
+  token: string
+) {
+  // Only check for existing subscription if purchasing a subscription plan
+  if (!resolvedPrice || resolvedPrice.type !== 'plan') {
+    return null;
+  }
+
+  let existingSubscription = null;
+
+  if (serverEnv.ENV === 'test' && token.startsWith('test_token_')) {
+    // For mock users, check if subscription status is encoded in the token
+    const tokenParts = token.split('_');
+    if (tokenParts.length > 5) {
+      const subscriptionStatus = tokenParts[tokenParts.length - 2];
+      if (['active', 'trialing'].includes(subscriptionStatus)) {
+        existingSubscription = { status: subscriptionStatus };
+      }
+    }
+  } else {
+    const { data: subscriptionData } = await supabaseAdmin
+      .from('subscriptions')
+      .select('id, status, price_id')
+      .eq('user_id', user.id)
+      .in('status', ['active', 'trialing'])
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    existingSubscription = subscriptionData;
+  }
+
+  return existingSubscription;
+}
+
+/**
+ * Gets or creates Stripe customer ID
+ */
+async function getOrCreateCustomerId(
+  user: { id: string; email?: string },
+  token: string
+): Promise<string> {
+  let customerId = null;
+
+  if (!(serverEnv.ENV === 'test' && token.startsWith('test_token_'))) {
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('stripe_customer_id')
+      .eq('id', user.id)
+      .single();
+
+    customerId = profile?.stripe_customer_id;
+  }
+
+  if (!customerId) {
+    // Create a new Stripe customer
+    const customer = await stripe.customers.create({
+      email: user.email,
+      metadata: {
+        supabase_user_id: user.id,
+      },
+    });
+
+    customerId = customer.id;
+
+    // Update the profile with the new customer ID
+    await supabaseAdmin
+      .from('profiles')
+      .update({ stripe_customer_id: customerId })
+      .eq('id', user.id);
+  }
+
+  return customerId;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // 1. Get the request body
+    // 1. Parse and validate request body
     let body: ICheckoutSessionRequest;
     try {
-      const text = await request.text();
-      body = JSON.parse(text);
-    } catch {
+      body = await parseRequestBody(request);
+    } catch (error) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'VALIDATION_ERROR',
-            message: 'Invalid JSON in request body',
+            message: error instanceof Error ? error.message : 'Invalid JSON in request body',
           },
         },
         { status: 400 }
@@ -31,43 +187,20 @@ export async function POST(request: NextRequest) {
 
     const { priceId, successUrl, cancelUrl, metadata = {}, uiMode = 'hosted' } = body;
 
-    // Basic validation first (always run this, even in test mode)
-    if (!priceId) {
+    // Validate price ID format
+    let validatedPriceId: string;
+    try {
+      validatedPriceId = validatePriceId(priceId);
+    } catch (error) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'priceId is required',
-          },
-        },
-        { status: 400 }
-      );
-    }
-
-    // Basic format validation for price ID (always run, even in test mode)
-    if (typeof priceId !== 'string' || priceId.trim() === '') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'VALIDATION_ERROR',
-            message: 'priceId must be a non-empty string',
-          },
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate basic Stripe price ID format (starts with 'price_' and has reasonable length)
-    if (!priceId.startsWith('price_') || priceId.length < 10) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'INVALID_PRICE',
-            message:
-              'Invalid price ID format. Price IDs must start with "price_" and be valid Stripe price identifiers.',
+            code:
+              error instanceof Error && error.message.includes('Invalid price ID format')
+                ? 'INVALID_PRICE'
+                : 'VALIDATION_ERROR',
+            message: error instanceof Error ? error.message : 'Invalid price ID',
           },
         },
         { status: 400 }
@@ -101,7 +234,7 @@ export async function POST(request: NextRequest) {
     let resolvedPrice = null;
 
     try {
-      resolvedPrice = assertKnownPriceId(priceId);
+      resolvedPrice = assertKnownPriceId(validatedPriceId);
     } catch (error) {
       if (isTestMode) {
         // In test mode, accept any validly formatted price ID and return a mock response immediately
@@ -134,43 +267,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 3. Get user from token (mock authentication for testing)
-    let user: {
-      id: string;
-      email?: string;
-      user_metadata?: Record<string, string>;
-      app_metadata?: Record<string, string>;
-    } | null = null;
-    let authError: {
-      message: string;
-      status?: number;
-    } | null = null;
-
-    if (serverEnv.ENV === 'test') {
-      // In test mode, only accept mock tokens
-      if (token.startsWith('test_token_')) {
-        // Mock authentication for testing
-        let mockUserId: string;
-        if (token.startsWith('test_token_mock_user_')) {
-          mockUserId = token.replace('test_token_mock_user_', '');
-        } else {
-          mockUserId = token.replace('test_token_', '');
-        }
-        user = {
-          id: mockUserId,
-          email: `test-${mockUserId}@example.com`,
-        };
-      } else {
-        // Reject any non-mock token immediately in test mode
-        // This prevents hanging on invalid tokens during tests
-        authError = { message: 'Invalid test token', status: 401 };
-      }
-    } else {
-      // Verify the user with Supabase
-      const result = await supabaseAdmin.auth.getUser(token);
-      user = result.data.user;
-      authError = result.error;
-    }
+    // 3. Authenticate user
+    const { user, authError } = await authenticateUser(null, token);
 
     if (authError || !user) {
       return NextResponse.json(
@@ -186,77 +284,36 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Check if user already has an active subscription (only for subscription purchases)
-    let existingSubscription = null;
+    const existingSubscription = await checkExistingSubscription(user, resolvedPrice, token);
 
-    if (resolvedPrice?.type === 'plan') {
-      // Only check for existing subscription if purchasing a subscription plan
-      if (serverEnv.ENV === 'test' && token.startsWith('test_token_')) {
-        // For mock users, check if subscription status is encoded in the token metadata
-        // Mock users can include subscription info in their token metadata
-
-        // Check if token includes subscription metadata (format: test_token_mock_user_id_sub_status_tier)
-        const tokenParts = token.split('_');
-        if (tokenParts.length > 5) {
-          const subscriptionStatus = tokenParts[tokenParts.length - 2];
-          if (['active', 'trialing'].includes(subscriptionStatus)) {
-            existingSubscription = { status: subscriptionStatus };
-          }
-        }
-      } else {
-        const { data: subscriptionData } = await supabaseAdmin
-          .from('subscriptions')
-          .select('id, status, price_id')
-          .eq('user_id', user.id)
-          .in('status', ['active', 'trialing'])
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        existingSubscription = subscriptionData;
-      }
-
-      if (existingSubscription) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'ALREADY_SUBSCRIBED',
-              message:
-                'You already have an active subscription. Please manage your subscription through the billing portal to upgrade or downgrade.',
-            },
+    if (existingSubscription) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'ALREADY_SUBSCRIBED',
+            message:
+              'You already have an active subscription. Please manage your subscription through the billing portal to upgrade or downgrade.',
           },
-          { status: 400 }
-        );
-      }
+        },
+        { status: 400 }
+      );
     }
 
-    // 5. Get or create Stripe customer
-    let customerId = null;
-
-    if (!(serverEnv.ENV === 'test' && token.startsWith('test_token_'))) {
-      const { data: profile } = await supabaseAdmin
-        .from('profiles')
-        .select('stripe_customer_id')
-        .eq('id', user.id)
-        .single();
-
-      customerId = profile?.stripe_customer_id;
-    }
-
-    // Only use mock mode if we have an explicitly dummy key or are in NODE_ENV=test
-    // Real test keys (sk_test_*) should go through normal Stripe flow
+    // 5. Handle test mode mock response
     if (isTestMode) {
       // Create mock customer ID if it doesn't exist
-      if (!customerId) {
-        customerId = `cus_test_${user.id}`;
+      let customerId = `cus_test_${user.id}`;
 
-        // Only try to update profile for non-mock users
-        if (!token.startsWith('test_token_mock_user_')) {
-          // Update the profile with the mock customer ID
+      // Only try to update profile for non-mock users
+      if (!token.startsWith('test_token_mock_user_')) {
+        try {
           await supabaseAdmin
             .from('profiles')
             .update({ stripe_customer_id: customerId })
             .eq('id', user.id);
+        } catch {
+          // Ignore errors in test mode
         }
       }
 
@@ -274,27 +331,12 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!customerId) {
-      // Create a new Stripe customer
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          supabase_user_id: user.id,
-        },
-      });
+    // 6. Get or create Stripe customer
+    const customerId = await getOrCreateCustomerId(user, token);
 
-      customerId = customer.id;
-
-      // Update the profile with the new customer ID
-      await supabaseAdmin
-        .from('profiles')
-        .update({ stripe_customer_id: customerId })
-        .eq('id', user.id);
-    }
-
-    // 6. Verify price type matches expected (double-check with Stripe in production)
+    // 7. Verify price type matches expected (double-check with Stripe in production)
     if (!isTestMode && resolvedPrice) {
-      const price = await stripe.prices.retrieve(priceId);
+      const price = await stripe.prices.retrieve(validatedPriceId);
       if (resolvedPrice.type === 'plan' && price.type !== 'recurring') {
         return NextResponse.json(
           {
@@ -326,13 +368,13 @@ export async function POST(request: NextRequest) {
     const checkoutMode = resolvedPrice?.type === 'pack' ? 'payment' : 'subscription';
 
     // Use unified metadata format for consistent webhook processing
-    const unifiedMetadata = resolvePlanOrPack(priceId);
+    const unifiedMetadata = resolvePlanOrPack(validatedPriceId);
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       line_items: [
         {
-          price: priceId,
+          price: validatedPriceId,
           quantity: 1,
         },
       ],
@@ -369,7 +411,7 @@ export async function POST(request: NextRequest) {
       };
 
       // Add trial period if configured and enabled
-      const trialConfig = getTrialConfig(priceId);
+      const trialConfig = getTrialConfig(validatedPriceId);
       if (trialConfig && trialConfig.enabled) {
         // Add trial period to subscription
         sessionParams.subscription_data.trial_period_days = trialConfig.durationDays;

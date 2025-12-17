@@ -4,6 +4,138 @@ import ImageComparison from '@client/components/features/image-processing/ImageC
 import { Button } from '@client/components/ui/Button';
 import { IBatchItem, ProcessingStatus, ProcessingStage } from '@shared/types/pixelperfect';
 
+// Extracted Components
+const ScanningLineAnimation: React.FC = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div
+      className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-indigo-400/50 to-transparent"
+      style={{
+        animation: 'scan 2s ease-in-out infinite',
+      }}
+    />
+    <style>{`
+      @keyframes scan {
+        0%, 100% { top: 0%; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        50% { top: 100%; }
+      }
+    `}</style>
+  </div>
+);
+
+const BatchProgressIndicator: React.FC<{ batchProgress?: IBatchProgress | null }> = ({
+  batchProgress,
+}) => {
+  if (!batchProgress || batchProgress.total <= 1) return null;
+
+  return (
+    <div className="flex items-center justify-center gap-2 pb-2 border-b border-slate-100">
+      <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
+        Image {batchProgress.current} of {batchProgress.total}
+      </span>
+    </div>
+  );
+};
+
+const StageIndicator: React.FC<{ stageMessage: string }> = ({ stageMessage }) => (
+  <div className="flex items-center gap-3">
+    <div className="relative">
+      <Loader2 size={20} className="text-indigo-600 animate-spin" />
+      <div className="absolute inset-0 rounded-full border-2 border-indigo-300 animate-ping opacity-30" />
+    </div>
+    <span className="text-sm font-medium text-slate-900">{stageMessage}</span>
+  </div>
+);
+
+const ProgressBar: React.FC<{
+  progress: number;
+  isEnhancing: boolean;
+  estimatedRemaining: number;
+}> = ({ progress, isEnhancing, estimatedRemaining }) => (
+  <div className="space-y-2">
+    <div className="flex justify-between text-xs text-slate-500">
+      <span>{Math.round(progress)}%</span>
+      {isEnhancing && estimatedRemaining > 0 && <span>~{estimatedRemaining}s remaining</span>}
+    </div>
+    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden relative">
+      <div
+        className="h-full bg-indigo-600 transition-all duration-300 relative overflow-hidden"
+        style={{ width: `${progress}%` }}
+      >
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+          style={{
+            animation: 'shimmer 1.5s infinite',
+          }}
+        />
+        <style>{`
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+        `}</style>
+      </div>
+    </div>
+  </div>
+);
+
+const ProcessingDots: React.FC = () => (
+  <div className="flex justify-center gap-1.5 pt-2">
+    {[0, 200, 400].map((delay, i) => (
+      <span
+        key={i}
+        className="w-2 h-2 bg-indigo-500 rounded-full"
+        style={{
+          animation: 'pulse-dot 1.4s ease-in-out infinite',
+          animationDelay: `${delay}ms`,
+        }}
+      />
+    ))}
+    <style>{`
+      @keyframes pulse-dot {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 0.4;
+        }
+        50% {
+          transform: scale(1.3);
+          opacity: 1;
+        }
+      }
+    `}</style>
+  </div>
+);
+
+const StageDescription: React.FC<{ stage: ProcessingStage }> = ({ stage }) => {
+  const descriptions: Record<ProcessingStage, string> = {
+    [ProcessingStage.PREPARING]: 'Encoding and validating your image',
+    [ProcessingStage.ANALYZING]: 'AI is analyzing image quality',
+    [ProcessingStage.ENHANCING]: 'AI model is enhancing your image',
+    [ProcessingStage.FINALIZING]: 'Preparing your enhanced image',
+  };
+
+  return <p className="text-xs text-slate-400 text-center">{descriptions[stage]}</p>;
+};
+
+const ErrorOverlay: React.FC<{
+  item: IBatchItem;
+  onRetry: (item: IBatchItem) => void;
+}> = ({ item, onRetry }) => (
+  <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
+    <div className="bg-white p-6 rounded-xl shadow-xl border border-red-100 text-center max-w-md">
+      <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+        <AlertTriangle size={24} />
+      </div>
+      <h3 className="text-lg font-semibold text-slate-900 mb-2">Processing Failed</h3>
+      <p className="text-slate-600 mb-4">{item.error}</p>
+      <Button size="sm" onClick={() => onRetry(item)}>
+        Try Again
+      </Button>
+    </div>
+  </div>
+);
+
 // Estimated processing times by model (in seconds)
 const MODEL_PROCESSING_TIMES: Record<string, number> = {
   'real-esrgan': 15,
@@ -216,138 +348,34 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
       {activeItem.status === ProcessingStatus.PROCESSING && (
         <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
           {/* Scanning line animation during analyzing */}
-          {activeItem.stage === ProcessingStage.ANALYZING && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div
-                className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-indigo-400/50 to-transparent"
-                style={{
-                  animation: 'scan 2s ease-in-out infinite',
-                }}
-              />
-              <style>{`
-                @keyframes scan {
-                  0%, 100% { top: 0%; opacity: 0; }
-                  10% { opacity: 1; }
-                  90% { opacity: 1; }
-                  50% { top: 100%; }
-                }
-              `}</style>
-            </div>
-          )}
+          {activeItem.stage === ProcessingStage.ANALYZING && <ScanningLineAnimation />}
 
           <div className="w-72 space-y-4 p-6 bg-white rounded-xl shadow-2xl border border-slate-100">
             {/* Batch progress indicator */}
-            {batchProgress && batchProgress.total > 1 && (
-              <div className="flex items-center justify-center gap-2 pb-2 border-b border-slate-100">
-                <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
-                  Image {batchProgress.current} of {batchProgress.total}
-                </span>
-              </div>
-            )}
+            <BatchProgressIndicator batchProgress={batchProgress} />
 
             {/* Stage indicator with spinner */}
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <Loader2 size={20} className="text-indigo-600 animate-spin" />
-                {/* Pulsing ring around spinner */}
-                <div className="absolute inset-0 rounded-full border-2 border-indigo-300 animate-ping opacity-30" />
-              </div>
-              <span className="text-sm font-medium text-slate-900">{stageMessage}</span>
-            </div>
+            <StageIndicator stageMessage={stageMessage} />
 
             {/* Progress bar with smooth animation */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs text-slate-500">
-                <span>{Math.round(displayProgress)}%</span>
-                {isEnhancing && estimatedRemaining > 0 && (
-                  <span>~{estimatedRemaining}s remaining</span>
-                )}
-              </div>
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden relative">
-                <div
-                  className="h-full bg-indigo-600 transition-all duration-300 relative overflow-hidden"
-                  style={{ width: `${displayProgress}%` }}
-                >
-                  {/* Shimmer effect on progress bar */}
-                  <div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                    style={{
-                      animation: 'shimmer 1.5s infinite',
-                    }}
-                  />
-                  <style>{`
-                    @keyframes shimmer {
-                      0% { transform: translateX(-100%); }
-                      100% { transform: translateX(100%); }
-                    }
-                  `}</style>
-                </div>
-              </div>
-            </div>
+            <ProgressBar
+              progress={displayProgress}
+              isEnhancing={isEnhancing}
+              estimatedRemaining={estimatedRemaining}
+            />
 
-            {/* Processing indicator dots - always visible during processing */}
-            <div className="flex justify-center gap-1.5 pt-2">
-              <span
-                className="w-2 h-2 bg-indigo-500 rounded-full"
-                style={{
-                  animation: 'pulse-dot 1.4s ease-in-out infinite',
-                  animationDelay: '0ms',
-                }}
-              />
-              <span
-                className="w-2 h-2 bg-indigo-500 rounded-full"
-                style={{
-                  animation: 'pulse-dot 1.4s ease-in-out infinite',
-                  animationDelay: '200ms',
-                }}
-              />
-              <span
-                className="w-2 h-2 bg-indigo-500 rounded-full"
-                style={{
-                  animation: 'pulse-dot 1.4s ease-in-out infinite',
-                  animationDelay: '400ms',
-                }}
-              />
-              <style>{`
-                @keyframes pulse-dot {
-                  0%, 100% {
-                    transform: scale(1);
-                    opacity: 0.4;
-                  }
-                  50% {
-                    transform: scale(1.3);
-                    opacity: 1;
-                  }
-                }
-              `}</style>
-            </div>
+            {/* Processing indicator dots */}
+            <ProcessingDots />
 
             {/* Stage description */}
-            <p className="text-xs text-slate-400 text-center">
-              {activeItem.stage === ProcessingStage.PREPARING &&
-                'Encoding and validating your image'}
-              {activeItem.stage === ProcessingStage.ANALYZING && 'AI is analyzing image quality'}
-              {activeItem.stage === ProcessingStage.ENHANCING && 'AI model is enhancing your image'}
-              {activeItem.stage === ProcessingStage.FINALIZING && 'Preparing your enhanced image'}
-            </p>
+            {activeItem.stage && <StageDescription stage={activeItem.stage} />}
           </div>
         </div>
       )}
 
       {/* Error Overlay */}
       {activeItem.status === ProcessingStatus.ERROR && (
-        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white p-6 rounded-xl shadow-xl border border-red-100 text-center max-w-md">
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
-              <AlertTriangle size={24} />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Processing Failed</h3>
-            <p className="text-slate-600 mb-4">{activeItem.error}</p>
-            <Button size="sm" onClick={() => onRetry(activeItem)}>
-              Try Again
-            </Button>
-          </div>
-        </div>
+        <ErrorOverlay item={activeItem} onRetry={onRetry} />
       )}
     </div>
   );
