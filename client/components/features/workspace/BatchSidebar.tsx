@@ -117,9 +117,9 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   return (
     <div className="w-full md:w-80 border-b md:border-b-0 md:border-r border-slate-200 bg-white flex flex-col z-20 shadow-sm h-full">
       {/* Header */}
-      <div className="px-6 pt-6 pb-4 border-b border-slate-100 shrink-0">
-        <h3 className="font-semibold text-slate-900 flex items-center gap-2 mb-1">
-          <Settings size={18} /> Batch Settings
+      <div className="px-4 md:px-6 pt-4 md:pt-6 pb-3 md:pb-4 border-b border-slate-100 shrink-0">
+        <h3 className="font-semibold text-slate-900 flex items-center gap-2 mb-1 text-base md:text-base">
+          <Settings size={16} className="md:size-[18px]" /> Batch Settings
         </h3>
         <p className="text-xs text-slate-500">Applies to all {queue.length} images</p>
       </div>
@@ -143,13 +143,13 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
       </div>
 
       {/* Divider */}
-      <div className="px-6 py-4 shrink-0">
+      <div className="px-4 md:px-6 py-3 md:py-4 shrink-0">
         <div className="h-px bg-slate-200"></div>
-        <p className="text-xs font-medium text-slate-500 mt-4 mb-2">Processing Options</p>
+        <p className="text-xs font-medium text-slate-500 mt-3 md:mt-4 mb-2">Processing Options</p>
       </div>
 
       {/* Controls - Scrollable */}
-      <div className="space-y-6 flex-grow overflow-y-auto custom-scrollbar px-6 pb-6">
+      <div className="space-y-4 md:space-y-6 flex-grow overflow-y-auto custom-scrollbar px-4 md:px-6 pb-4 md:pb-6 h-full">
         <ModeSelector mode={config.mode} onChange={handleModeChange} disabled={isProcessing} />
 
         {config.mode === 'enhance' && (

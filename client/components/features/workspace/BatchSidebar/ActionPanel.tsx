@@ -51,7 +51,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
   };
 
   return (
-    <div className="px-6 pt-4 pb-3 space-y-4">
+    <div className="px-4 md:px-6 pt-4 pb-3 space-y-4">
       {/* Current Balance Display */}
       {pendingQueue.length > 0 && (
         <div className="flex items-center justify-between px-1 text-sm">

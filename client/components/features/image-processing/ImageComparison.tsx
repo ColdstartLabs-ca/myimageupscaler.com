@@ -65,22 +65,23 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
 
   return (
     <div className="w-full h-full max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200 flex flex-col">
-      <div className="p-4 border-b border-slate-100 flex justify-between items-center shrink-0">
-        <div className="flex items-center space-x-2">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            Enhanced Successfully
+      <div className="p-3 md:p-4 border-b border-slate-100 flex flex-wrap md:flex-nowrap justify-between items-center gap-2 shrink-0">
+        <div className="flex items-center">
+          <span className="inline-flex items-center px-2 md:px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">
+            ✓ Enhanced
           </span>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex items-center gap-1 md:gap-2">
           <button
             onClick={toggleZoom}
             className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
             title="Toggle Zoom"
           >
-            {zoom === 1 ? <ZoomIn size={20} /> : <ZoomOut size={20} />}
+            {zoom === 1 ? <ZoomIn size={18} /> : <ZoomOut size={18} />}
           </button>
           <Button variant="primary" size="sm" icon={<Download size={16} />} onClick={onDownload}>
-            Download Result
+            <span className="hidden sm:inline">Download Result</span>
+            <span className="sm:hidden">Download</span>
           </Button>
         </div>
       </div>
