@@ -21,12 +21,14 @@ export function CreditsDisplay(): JSX.Element {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const prevLastFetched = useRef(lastFetched);
 
-  // Detect when fetch completes after refresh
+  // Detect when fetch completes after refresh (lastFetched becomes a new timestamp, not null)
   useEffect(() => {
-    if (isRefreshing && lastFetched !== prevLastFetched.current) {
+    if (isRefreshing && lastFetched && lastFetched !== prevLastFetched.current) {
       setIsRefreshing(false);
     }
-    prevLastFetched.current = lastFetched;
+    if (lastFetched) {
+      prevLastFetched.current = lastFetched;
+    }
   }, [lastFetched, isRefreshing]);
 
   const handleRefresh = () => {
