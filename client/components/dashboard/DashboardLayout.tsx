@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { DashboardSidebar } from '@client/components/dashboard/DashboardSidebar';
+import React from 'react';
 
 interface IDashboardLayoutProps {
   children: React.ReactNode;

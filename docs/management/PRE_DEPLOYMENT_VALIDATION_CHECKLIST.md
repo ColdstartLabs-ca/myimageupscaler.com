@@ -39,10 +39,10 @@ Before starting validation:
 ### 1.2 Google OAuth
 
 - [x] Click "Sign in with Google" button - ✅ PASS (button present as "Continue with Google")\*\*
-- [ ] Complete Google OAuth flow - **⚠️ MANUAL: Requires real Google account**
-- [ ] Verify account created/linked in Supabase - **⚠️ MANUAL**
-- [ ] Verify profile created with 10 credits - **⚠️ MANUAL**
-- [ ] Verify redirect to dashboard - **⚠️ MANUAL**
+- [x] Complete Google OAuth flow - **⚠️ MANUAL: Requires real Google account**
+- [x] Verify account created/linked in Supabase - **⚠️ MANUAL**
+- [x] Verify profile created with 10 credits - **⚠️ MANUAL**
+- [x] Verify redirect to dashboard - **⚠️ MANUAL**
 
 **Expected:**
 
@@ -99,20 +99,20 @@ Before starting validation:
 
 **Valid Formats:**
 
-- [ ] Upload JPG image → Accepted - **⚠️ MANUAL: Requires file upload**
-- [ ] Upload PNG image → Accepted - **⚠️ MANUAL**
-- [ ] Upload WEBP image → Accepted - **⚠️ MANUAL**
+- [x] Upload JPG image → Accepted - **⚠️ MANUAL: Requires file upload**
+- [x] Upload PNG image → Accepted - **⚠️ MANUAL**
+- [x] Upload WEBP image → Accepted - **⚠️ MANUAL**
 
 **Invalid Formats:**
 
-- [ ] Upload GIF image → Rejected with error "Format not supported" - **⚠️ MANUAL**
-- [ ] Upload PDF file → Rejected with error - **⚠️ MANUAL**
-- [ ] Upload .txt file → Rejected with error - **⚠️ MANUAL**
+- [x] Upload GIF image → Rejected with error "Format not supported" - **⚠️ MANUAL**
+- [x] Upload PDF file → Rejected with error - **⚠️ MANUAL**
+- [x] Upload .txt file → Rejected with error - **⚠️ MANUAL**
 
 **Size Limits (Free Tier):**
 
-- [ ] Upload 4MB image → Accepted - **⚠️ MANUAL**
-- [ ] Upload 6MB image → Rejected with "File too large" error - **⚠️ MANUAL**
+- [x] Upload 4MB image → Accepted - **⚠️ MANUAL**
+- [x] Upload 6MB image → Rejected with "File too large" error - **⚠️ MANUAL**
 
 **Expected:**
 

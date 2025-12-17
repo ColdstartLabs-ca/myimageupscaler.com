@@ -258,3 +258,4 @@ export class ImageGenerationService {
 - [ ] `/api/upscale` returns 402 if user has 0 credits.
 - [ ] `/api/upscale` decrements 1 credit on success.
 - [ ] Credits are restored if the AI generation throws an error.
+
