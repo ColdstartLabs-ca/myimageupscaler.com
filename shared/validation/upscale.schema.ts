@@ -1,5 +1,39 @@
 import { z } from 'zod';
 
+// Enhancement settings schema (reusable)
+const enhancementSettingsSchema = z.object({
+  clarity: z.boolean().default(true),
+  color: z.boolean().default(true),
+  lighting: z.boolean().default(false),
+  denoise: z.boolean().default(true),
+  artifacts: z.boolean().default(true),
+  details: z.boolean().default(false),
+});
+
+// Nano Banana Pro configuration schema
+const nanoBananaProConfigSchema = z.object({
+  aspectRatio: z
+    .enum([
+      'match_input_image',
+      '1:1',
+      '2:3',
+      '3:2',
+      '3:4',
+      '4:3',
+      '4:5',
+      '5:4',
+      '9:16',
+      '16:9',
+      '21:9',
+    ])
+    .default('match_input_image'),
+  resolution: z.enum(['1K', '2K', '4K']).default('2K'),
+  outputFormat: z.enum(['jpg', 'png']).default('png'),
+  safetyFilterLevel: z
+    .enum(['block_low_and_above', 'block_medium_and_above', 'block_only_high'])
+    .default('block_only_high'),
+});
+
 /**
  * Image validation constants
  */
@@ -91,7 +125,7 @@ export function validateImageDimensions(width: number, height: number): IImageVa
 
 /**
  * Validation schema for the upscale API endpoint
- * Ensures all inputs are properly validated before processing
+ * New format based on Quality Tiers and Additional Options
  *
  * Note: Size validation is intentionally NOT in this schema because
  * the limit depends on user tier. Use validateImageSizeForTier() after
@@ -123,74 +157,36 @@ export const upscaleSchema = z.object({
         ),
       { message: `Invalid image type. Allowed: ${IMAGE_VALIDATION.ALLOWED_TYPES.join(', ')}` }
     ),
-  // Enhancement prompt from LLM analysis
+  // Enhancement prompt from LLM analysis (legacy - will be removed)
   enhancementPrompt: z.string().optional(),
   config: z.object({
-    // Existing fields
-    mode: z.enum(['upscale', 'enhance', 'both', 'custom']),
+    // New quality tier based configuration
+    qualityTier: z
+      .enum(['auto', 'quick', 'face-restore', 'hd-upscale', 'face-pro', 'ultra'])
+      .default('auto'),
     scale: z.union([z.literal(2), z.literal(4), z.literal(8)]).default(2),
-    denoise: z.boolean().default(false),
-    enhanceFace: z.boolean().default(true),
-    preserveText: z.boolean().default(false),
-    customPrompt: z.string().optional(),
 
-    // Enhancement aspect settings for fine-tuned control
-    enhancement: z
+    // Additional options (replaces mode + toggles)
+    additionalOptions: z
       .object({
-        clarity: z.boolean().default(true),
-        color: z.boolean().default(true),
-        lighting: z.boolean().default(false),
-        denoise: z.boolean().default(true),
-        artifacts: z.boolean().default(true),
-        details: z.boolean().default(false),
+        smartAnalysis: z.boolean().default(false), // AI suggests enhancements (hidden when tier='auto')
+        enhance: z.boolean().default(false), // Enable enhancement processing
+        enhanceFaces: z.boolean().default(false), // Face restoration - user opt-in
+        preserveText: z.boolean().default(false), // Text preservation - user opt-in
+        customInstructions: z.string().optional(), // Custom LLM prompt (opens modal when enabled)
+        enhancement: enhancementSettingsSchema.optional(), // Detailed enhancement settings
       })
       .default({
-        clarity: true,
-        color: true,
-        lighting: false,
-        denoise: true,
-        artifacts: true,
-        details: false,
+        smartAnalysis: false,
+        enhance: false,
+        enhanceFaces: false,
+        preserveText: false,
       }),
 
-    // New multi-model architecture fields (PRD Section 6.1)
-    qualityLevel: z.enum(['standard', 'enhanced', 'premium']).default('standard'),
-    selectedModel: z
-      .enum(['auto', 'real-esrgan', 'gfpgan', 'nano-banana', 'clarity-upscaler', 'nano-banana-pro'])
-      .default('auto'),
-    autoModelSelection: z.boolean().default(true),
-    preferredModel: z
-      .enum(['real-esrgan', 'gfpgan', 'nano-banana', 'clarity-upscaler', 'nano-banana-pro'])
-      .optional(),
-    targetResolution: z.enum(['2k', '4k', '8k']).optional(),
-
-    // Nano Banana Pro specific configuration (Upscale Ultra)
-    nanoBananaProConfig: z
-      .object({
-        aspectRatio: z
-          .enum([
-            'match_input_image',
-            '1:1',
-            '2:3',
-            '3:2',
-            '3:4',
-            '4:3',
-            '4:5',
-            '5:4',
-            '9:16',
-            '16:9',
-            '21:9',
-          ])
-          .default('match_input_image'),
-        resolution: z.enum(['1K', '2K', '4K']).default('2K'),
-        outputFormat: z.enum(['jpg', 'png']).default('png'),
-        safetyFilterLevel: z
-          .enum(['block_low_and_above', 'block_medium_and_above', 'block_only_high'])
-          .default('block_only_high'),
-      })
-      .optional(),
+    // Studio tier specific configuration (only for 'studio' tier)
+    nanoBananaProConfig: nanoBananaProConfigSchema.optional(),
   }),
 });
 
 export type IUpscaleInput = z.infer<typeof upscaleSchema>;
-export type IUpscaleConfig = IUpscaleInput['config'];
+export type IUpscaleConfig = z.infer<typeof upscaleSchema>['config'];

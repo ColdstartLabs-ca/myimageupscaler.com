@@ -12,6 +12,14 @@ export interface IImageProcessorResult {
 }
 
 /**
+ * Options passed to processImage
+ */
+export interface IProcessImageOptions {
+  /** Pre-calculated credit cost from the route. If provided, processor uses this instead of recalculating. */
+  creditCost?: number;
+}
+
+/**
  * Common interface for all image processing providers
  *
  * This abstraction allows swapping between different AI providers
@@ -34,11 +42,16 @@ export interface IImageProcessor {
    *
    * @param userId - The authenticated user's ID
    * @param input - The validated upscale input
+   * @param options - Optional processing options (e.g., pre-calculated credit cost)
    * @returns The processed image data and remaining credits
    * @throws InsufficientCreditsError if user has no credits
    * @throws Provider-specific error for processing failures
    */
-  processImage(userId: string, input: IUpscaleInput): Promise<IImageProcessorResult>;
+  processImage(
+    userId: string,
+    input: IUpscaleInput,
+    options?: IProcessImageOptions
+  ): Promise<IImageProcessorResult>;
 
   /**
    * Get the provider name for logging/debugging

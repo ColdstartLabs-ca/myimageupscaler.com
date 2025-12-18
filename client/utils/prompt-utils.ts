@@ -5,7 +5,7 @@ import { IUpscaleConfig, DEFAULT_ENHANCEMENT_SETTINGS } from '@shared/types/pixe
  * Each aspect adds specific instructions for the AI model.
  */
 const generateEnhancePrompt = (config: IUpscaleConfig): string => {
-  const enhancement = config.enhancement || DEFAULT_ENHANCEMENT_SETTINGS;
+  const enhancement = config.additionalOptions.enhancement || DEFAULT_ENHANCEMENT_SETTINGS;
   const actions: string[] = [];
 
   if (enhancement.clarity) {
@@ -41,13 +41,13 @@ const generateEnhancePrompt = (config: IUpscaleConfig): string => {
 };
 
 export const generatePrompt = (config: IUpscaleConfig): string => {
-  // Use custom prompt if in custom mode and a prompt is provided
-  if (config.mode === 'custom' && config.customPrompt && config.customPrompt.trim().length > 0) {
-    return config.customPrompt;
+  // Use custom prompt if provided
+  if (
+    config.additionalOptions.customInstructions &&
+    config.additionalOptions.customInstructions.trim().length > 0
+  ) {
+    return config.additionalOptions.customInstructions;
   }
-
-  // Fallback to 'both' logic if in custom mode but empty prompt, or normal mode logic
-  const effectiveMode = config.mode === 'custom' ? 'both' : config.mode;
 
   // Refined Prompt to avoid IMAGE_RECITATION
   // We frame this as a "Generation" and "Reconstruction" task rather than just "Restoration"
@@ -55,35 +55,45 @@ export const generatePrompt = (config: IUpscaleConfig): string => {
     'Task: Generate a high-definition version of the provided image with significantly improved quality. ' +
     'Core Requirement: Preserve all original elements - composition, subjects, colors, style, and structure must remain unchanged. Only improve technical quality. ';
 
-  // Mode Selection Logic
-  switch (effectiveMode) {
-    case 'upscale':
+  // Quality Tier Logic
+  switch (config.qualityTier) {
+    case 'quick':
       prompt += `Action: Reconstruct the image at ${config.scale}x resolution (target 2K/4K). Aggressively sharpen edges and hallucinate plausible fine details to remove blur. `;
       break;
-    case 'enhance':
+    case 'face-restore':
+    case 'hd-upscale':
+    case 'face-pro':
+    case 'ultra':
       // Use fine-tuned enhancement prompt based on selected aspects
-      prompt += generateEnhancePrompt(config);
+      if (config.additionalOptions.enhance) {
+        prompt += generateEnhancePrompt(config);
+      }
+      prompt += `Action: Reconstruct the image at ${config.scale}x resolution. Simultaneously remove noise/artifacts and sharpen fine details. The output must be crisp and photorealistic. `;
       break;
-    case 'both':
+    case 'auto':
     default:
+      // Auto mode - let the server decide, but provide a comprehensive prompt
+      if (config.additionalOptions.enhance) {
+        prompt += generateEnhancePrompt(config);
+      }
       prompt += `Action: Reconstruct the image at ${config.scale}x resolution. Simultaneously remove noise/artifacts and sharpen fine details. The output must be crisp and photorealistic. `;
       break;
   }
 
   // Feature Constraints
-  if (config.preserveText) {
+  if (config.additionalOptions.preserveText) {
     prompt +=
       'Constraint: Text and logos MUST remain legible, straight, and spelled correctly. Sharpen the text boundaries. ';
   } else {
     prompt += 'Constraint: Prioritize visual aesthetics. ';
   }
 
-  if (config.enhanceFace) {
+  if (config.additionalOptions.enhanceFaces) {
     prompt +=
       "Constraint: Enhance facial features naturally (eyes, skin texture) without altering the person's identity. ";
   }
 
-  if (config.denoise) {
+  if (config.additionalOptions.enhancement?.denoise) {
     prompt += 'Constraint: Apply strong denoising to smooth out flat areas. ';
   }
 

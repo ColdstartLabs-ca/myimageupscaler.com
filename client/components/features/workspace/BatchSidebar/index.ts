@@ -1,12 +1,15 @@
 // BatchSidebar sub-components
-export { ModeSelector } from './ModeSelector';
-export type { IModeSelectorProps } from './ModeSelector';
-
 export { EnhancementPanel } from './EnhancementPanel';
 export type { IEnhancementPanelProps } from './EnhancementPanel';
 
-export { ModelSelector } from './ModelSelector';
-export type { IModelSelectorProps } from './ModelSelector';
+export { QualityTierSelector } from './QualityTierSelector';
+export type { IQualityTierSelectorProps } from './QualityTierSelector';
+
+export { EnhancementOptions } from './EnhancementOptions';
+export type { IEnhancementOptionsProps } from './EnhancementOptions';
+
+export { CustomInstructionsModal } from './CustomInstructionsModal';
+export type { ICustomInstructionsModalProps } from './CustomInstructionsModal';
 
 export { UpscaleFactorSelector } from './UpscaleFactorSelector';
 export type { IUpscaleFactorSelectorProps } from './UpscaleFactorSelector';

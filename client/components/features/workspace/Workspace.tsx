@@ -46,13 +46,16 @@ const Workspace: React.FC = () => {
 
   // Config State
   const [config, setConfig] = useState<IUpscaleConfig>({
-    mode: 'both',
+    qualityTier: 'auto',
     scale: 2,
-    enhanceFace: true,
-    preserveText: false,
-    denoise: true,
-    selectedModel: 'real-esrgan',
-    enhancement: DEFAULT_ENHANCEMENT_SETTINGS,
+    additionalOptions: {
+      smartAnalysis: false, // Hidden when qualityTier='auto'
+      enhance: true,
+      enhanceFaces: true,
+      preserveText: false,
+      customInstructions: undefined,
+      enhancement: DEFAULT_ENHANCEMENT_SETTINGS,
+    },
   });
 
   // Success banner state
@@ -86,7 +89,7 @@ const Workspace: React.FC = () => {
   const handleDownloadSingle = async (url: string, filename: string) => {
     try {
       setDownloadError(null);
-      await downloadSingle(url, filename, config.mode);
+      await downloadSingle(url, filename, config.qualityTier);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to download image';
       setDownloadError(errorMessage);
@@ -196,7 +199,7 @@ const Workspace: React.FC = () => {
               activeItem={activeItem}
               onDownload={handleDownloadSingle}
               onRetry={(item: IBatchItem) => processSingleItem(item, config)}
-              selectedModel={config.selectedModel}
+              selectedModel={config.qualityTier}
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
             />

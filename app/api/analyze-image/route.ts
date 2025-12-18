@@ -7,7 +7,8 @@ import { createLogger } from '@server/monitoring/logger';
 import { ZodError } from 'zod';
 import { z } from 'zod';
 import { serverEnv } from '@shared/config/env';
-import type { SubscriptionTier, ModelId } from '@server/services/model-registry.types';
+import type { SubscriptionTier, ModelId } from '@shared/types/pixelperfect';
+import { modelIdToTier } from '@shared/config/subscription.utils';
 
 // Request validation schema
 const analyzeImageSchema = z.object({
@@ -15,6 +16,8 @@ const analyzeImageSchema = z.object({
   mimeType: z.string().default('image/jpeg'),
   // When false (default), excludes expensive models (8+ credits) from auto selection
   allowExpensiveModels: z.boolean().default(false),
+  // NEW: When true, AI suggests quality tier. When false, only suggests enhancements.
+  suggestTier: z.boolean().default(true),
 });
 
 /**
@@ -288,18 +291,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             noiseLevel: 0.2,
             resolution: '1920x1080',
           },
-          recommendation: {
-            model: mockAnalysis.recommendedModel,
-            reason: mockAnalysis.reasoning,
-            creditCost: modelRegistry.calculateCreditCostWithMode(
-              mockAnalysis.recommendedModel,
-              2,
-              'upscale'
-            ),
-            confidence: mockAnalysis.confidence,
-            alternativeModel: mockAnalysis.alternativeModel,
-            alternativeCost: mockAnalysis.alternativeCost,
-          },
+          // Conditionally include tier recommendation when suggestTier is true
+          ...(validatedInput.suggestTier && {
+            recommendation: {
+              model: mockAnalysis.recommendedModel,
+              tier: modelIdToTier(mockAnalysis.recommendedModel),
+              reason: mockAnalysis.reasoning,
+              creditCost: modelRegistry.calculateCreditCostWithMode(
+                mockAnalysis.recommendedModel,
+                2,
+                'upscale'
+              ),
+              confidence: mockAnalysis.confidence,
+              alternativeModel: mockAnalysis.alternativeModel,
+              alternativeCost: mockAnalysis.alternativeCost,
+              alternativeTier: mockAnalysis.alternativeModel
+                ? modelIdToTier(mockAnalysis.alternativeModel)
+                : null,
+            },
+          }),
           enhancementPrompt: mockAnalysis.enhancementPrompt,
           provider: mockAnalysis.provider,
           processingTimeMs: mockAnalysis.processingTimeMs,
@@ -340,18 +350,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         noiseLevel: 0.2,
         resolution: '1920x1080',
       },
-      recommendation: {
-        model: analysisResult.recommendedModel,
-        reason: analysisResult.reasoning,
-        creditCost: modelRegistry.calculateCreditCostWithMode(
-          analysisResult.recommendedModel,
-          2,
-          'upscale'
-        ),
-        confidence: analysisResult.confidence,
-        alternativeModel: alternativeModel?.id || null,
-        alternativeCost: alternativeCreditCost,
-      },
+      // Conditionally include tier recommendation when suggestTier is true
+      ...(validatedInput.suggestTier && {
+        recommendation: {
+          model: analysisResult.recommendedModel,
+          tier: modelIdToTier(analysisResult.recommendedModel),
+          reason: analysisResult.reasoning,
+          creditCost: modelRegistry.calculateCreditCostWithMode(
+            analysisResult.recommendedModel,
+            2,
+            'upscale'
+          ),
+          confidence: analysisResult.confidence,
+          alternativeModel: alternativeModel?.id || null,
+          alternativeCost: alternativeCreditCost,
+          alternativeTier: alternativeModel ? modelIdToTier(alternativeModel.id) : null,
+        },
+      }),
       enhancementPrompt: analysisResult.enhancementPrompt,
       provider: analysisResult.provider,
       processingTimeMs: analysisResult.processingTimeMs,

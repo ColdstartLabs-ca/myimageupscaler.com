@@ -1,9 +1,9 @@
 import Replicate from 'replicate';
-import { GoogleGenAI, Type } from '@google/genai';
 import { serverEnv } from '@shared/config/env';
 import { ModelRegistry } from './model-registry';
 import type { ILLMAnalysisResult } from './llm-image-analyzer.types';
 import type { ModelId } from '@shared/types/pixelperfect';
+import { withRetry, isRateLimitError } from '@server/utils/retry';
 
 /**
  * Build the analysis prompt dynamically based on eligible models
@@ -65,69 +65,11 @@ Prioritize accuracy over complexity - if a simple upscale will suffice, recommen
 IMPORTANT: Only recommend models from the available list above.`;
 }
 
-/**
- * Build Gemini response schema dynamically based on eligible models
- */
-function buildGeminiResponseSchema(eligibleModelIds: ModelId[]) {
-  return {
-    type: Type.OBJECT,
-    properties: {
-      issues: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            type: {
-              type: Type.STRING,
-              enum: ['blur', 'noise', 'compression', 'damage', 'low_resolution', 'faces', 'text'],
-            },
-            severity: {
-              type: Type.STRING,
-              enum: ['low', 'medium', 'high'],
-            },
-            description: { type: Type.STRING },
-          },
-          required: ['type', 'severity', 'description'],
-        },
-      },
-      contentType: {
-        type: Type.STRING,
-        enum: ['photo', 'portrait', 'document', 'vintage', 'product', 'artwork'],
-      },
-      recommendedModel: {
-        type: Type.STRING,
-        enum: eligibleModelIds,
-      },
-      reasoning: { type: Type.STRING },
-      confidence: { type: Type.NUMBER },
-      alternatives: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.STRING,
-          enum: eligibleModelIds,
-        },
-      },
-      enhancementPrompt: { type: Type.STRING },
-    },
-    required: [
-      'issues',
-      'contentType',
-      'recommendedModel',
-      'reasoning',
-      'confidence',
-      'alternatives',
-      'enhancementPrompt',
-    ],
-  };
-}
-
 export class LLMImageAnalyzer {
   private replicate: Replicate;
-  private genAI: GoogleGenAI;
 
   constructor() {
     this.replicate = new Replicate({ auth: serverEnv.REPLICATE_API_TOKEN });
-    this.genAI = new GoogleGenAI({ apiKey: serverEnv.GEMINI_API_KEY });
   }
 
   async analyze(
@@ -141,7 +83,7 @@ export class LLMImageAnalyzer {
       ? base64Image
       : `data:${mimeType};base64,${base64Image}`;
 
-    // Try Replicate (Qwen3-VL) first
+    // Try Replicate (Qwen3-VL)
     try {
       const result = await this.analyzeWithReplicate(dataUrl, eligibleModels);
       return {
@@ -150,24 +92,12 @@ export class LLMImageAnalyzer {
         processingTimeMs: Date.now() - startTime,
       };
     } catch (replicateError) {
-      console.warn('Replicate analysis failed, trying Gemini fallback:', replicateError);
-
-      // Fallback to Gemini
-      try {
-        const result = await this.analyzeWithGemini(base64Image, mimeType, eligibleModels);
-        return {
-          ...result,
-          provider: 'gemini',
-          processingTimeMs: Date.now() - startTime,
-        };
-      } catch (geminiError) {
-        console.error('Both LLM providers failed:', { replicateError, geminiError });
-        return {
-          ...this.getDefaultResult(eligibleModels),
-          provider: 'fallback',
-          processingTimeMs: Date.now() - startTime,
-        };
-      }
+      console.error('Replicate analysis failed, using default fallback:', replicateError);
+      return {
+        ...this.getDefaultResult(eligibleModels),
+        provider: 'fallback',
+        processingTimeMs: Date.now() - startTime,
+      };
     }
   }
 
@@ -180,60 +110,37 @@ export class LLMImageAnalyzer {
 
     console.log('[LLM Analyzer] Replicate prompt:', prompt);
 
-    const output = await this.replicate.run(
-      serverEnv.QWEN_VL_MODEL_VERSION as `${string}/${string}:${string}`,
+    // Run with retry for rate limits
+    const output = await withRetry(
+      () =>
+        this.replicate.run(serverEnv.QWEN_VL_MODEL_VERSION as `${string}/${string}:${string}`, {
+          input: {
+            image: imageDataUrl,
+            prompt,
+            max_tokens: 1024,
+            temperature: 0.2,
+          },
+        }),
       {
-        input: {
-          image: imageDataUrl,
-          prompt,
-          max_tokens: 1024,
-          temperature: 0.2,
+        shouldRetry: err => isRateLimitError(err.message),
+        onRetry: (attempt, delayMs) => {
+          console.log(
+            `[LLM Analyzer] Rate limited, retrying in ${delayMs}ms (attempt ${attempt}/3)`
+          );
         },
       }
     );
 
     // Qwen returns text, parse JSON from response
     const responseText = Array.isArray(output) ? output.join('') : String(output);
+    console.log('[LLM Analyzer] Replicate response:', responseText);
+
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error('No JSON found in Replicate response');
     }
 
     const result = JSON.parse(jsonMatch[0]) as ILLMAnalysisResult;
-    return this.validateAndAdjustResult(result, eligibleModels);
-  }
-
-  private async analyzeWithGemini(
-    base64Image: string,
-    mimeType: string,
-    eligibleModels: ModelId[]
-  ): Promise<Omit<ILLMAnalysisResult, 'provider' | 'processingTimeMs'>> {
-    // Build prompt and schema dynamically based on eligible models
-    const prompt = buildAnalysisPrompt(eligibleModels);
-    const responseSchema = buildGeminiResponseSchema(eligibleModels);
-
-    console.log('[LLM Analyzer] Gemini prompt:', prompt);
-
-    const response = await this.genAI.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: [
-        {
-          parts: [{ inlineData: { mimeType, data: base64Image } }, { text: prompt }],
-        },
-      ],
-      config: {
-        temperature: 0.2,
-        responseMimeType: 'application/json',
-        responseSchema,
-      },
-    });
-
-    const responseText = response.text;
-    if (!responseText) {
-      throw new Error('No response text from Gemini');
-    }
-
-    const result = JSON.parse(responseText) as ILLMAnalysisResult;
     return this.validateAndAdjustResult(result, eligibleModels);
   }
 

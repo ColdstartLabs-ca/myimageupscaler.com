@@ -5,21 +5,20 @@ import {
   IUpscaleConfig,
   IBatchItem,
   ProcessingStatus,
-  ModelId,
-  IEnhancementSettings,
-  DEFAULT_ENHANCEMENT_SETTINGS,
-  DEFAULT_NANO_BANANA_PRO_CONFIG,
+  QualityTier,
+  IAdditionalOptions,
+  DEFAULT_ADDITIONAL_OPTIONS,
+  QUALITY_TIER_CREDITS,
 } from '@shared/types/pixelperfect';
+import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { downloadBatch } from '@client/utils/download';
 import { useUserData } from '@client/store/userStore';
-import { getCreditCostForMode, calculateModelCreditCost } from '@shared/config/subscription.utils';
 import { generatePrompt } from '@client/utils/prompt-utils';
 import {
-  ModeSelector,
-  EnhancementPanel,
-  ModelSelector,
+  QualityTierSelector,
+  EnhancementOptions,
+  CustomInstructionsModal,
   UpscaleFactorSelector,
-  FeatureToggles,
   ActionPanel,
 } from './BatchSidebar/index';
 
@@ -52,67 +51,80 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   const router = useRouter();
   const { totalCredits, profile } = useUserData();
   const [showInsufficientModal, setShowInsufficientModal] = useState(false);
+  const [showCustomInstructionsModal, setShowCustomInstructionsModal] = useState(false);
 
   // Determine if user is on free tier (no subscription or subscription_tier is null)
   const isFreeUser = !profile?.subscription_tier;
 
   const handleDownloadAll = () => {
-    downloadBatch(queue, config.mode);
+    downloadBatch(queue, config.qualityTier);
   };
 
-  // Calculate credit costs (considering model and scale)
+  // Calculate credit costs using new quality tier system
   const pendingQueue = queue.filter(i => i.status !== ProcessingStatus.COMPLETED);
-  const isAutoModel = config.selectedModel === 'auto';
-  const costPerImage = isAutoModel
-    ? getCreditCostForMode(config.mode)
-    : calculateModelCreditCost({
-        mode: config.mode,
-        modelId: config.selectedModel,
-        scale: config.scale,
-      });
+
+  // Get cost per image based on quality tier, scale, and smart analysis
+  const getCostPerImage = (): number => {
+    const { qualityTier, scale, additionalOptions } = config;
+    const { creditCosts } = getSubscriptionConfig();
+
+    // Smart analysis cost (1 credit when enabled and not in auto mode)
+    // Auto mode always uses smart analysis, so it's included in the base cost
+    const smartAnalysisCost = qualityTier !== 'auto' && additionalOptions?.smartAnalysis ? 1 : 0;
+
+    if (qualityTier === 'auto') {
+      // Auto mode uses variable cost - estimate average (includes smart analysis)
+      return 4;
+    }
+
+    // For explicit tiers, base cost on tier credits and scale multiplier from config
+    const tierCredits = QUALITY_TIER_CREDITS[qualityTier];
+    const baseCost = typeof tierCredits === 'number' ? tierCredits : 4;
+
+    // Use scale multiplier from config (currently all 1.0)
+    const scaleKey = `${scale}x` as '2x' | '4x' | '8x';
+    const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
+
+    return Math.ceil(baseCost * scaleMultiplier) + smartAnalysisCost;
+  };
+
+  const costPerImage = getCostPerImage();
   const totalCost = pendingQueue.length * costPerImage;
 
   // Handler functions for sub-components
-  const handleModeChange = (mode: typeof config.mode) => {
-    setConfig({ ...config, mode });
+  const handleQualityTierChange = (qualityTier: QualityTier) => {
+    setConfig({ ...config, qualityTier });
   };
 
-  const handleEnhancementChange = (enhancement: IEnhancementSettings) => {
-    setConfig({ ...config, enhancement });
+  const handleAdditionalOptionsChange = (additionalOptions: IAdditionalOptions) => {
+    setConfig({ ...config, additionalOptions });
   };
 
   const handleScaleChange = (scale: 2 | 4 | 8) => {
     setConfig({ ...config, scale });
   };
 
-  const handleModelChange = (selectedModel: 'auto' | ModelId) => {
-    setConfig({ ...config, selectedModel });
+  const handleCustomInstructionsSave = (customInstructions: string) => {
+    setConfig({
+      ...config,
+      additionalOptions: {
+        ...config.additionalOptions,
+        customInstructions: customInstructions || undefined,
+      },
+    });
+    setShowCustomInstructionsModal(false);
   };
 
-  const handleNanoBananaProConfigChange = (
-    nanoBananaProConfig: typeof DEFAULT_NANO_BANANA_PRO_CONFIG
-  ) => {
-    setConfig({ ...config, nanoBananaProConfig });
+  const handleOpenCustomInstructions = () => {
+    setShowCustomInstructionsModal(true);
   };
 
-  const handleAllowExpensiveModelsChange = (allowExpensiveModels: boolean) => {
-    setConfig({ ...config, allowExpensiveModels });
+  const handleCloseCustomInstructions = () => {
+    setShowCustomInstructionsModal(false);
   };
 
-  const handlePreserveTextChange = (preserveText: boolean) => {
-    setConfig({ ...config, preserveText });
-  };
-
-  const handleEnhanceFaceChange = (enhanceFace: boolean) => {
-    setConfig({ ...config, enhanceFace });
-  };
-
-  const handlePromptChange = (customPrompt: string) => {
-    setConfig({ ...config, customPrompt });
-  };
-
-  // Generate a placeholder prompt based on current settings (forcing 'both' mode logic to give a good full example)
-  const placeholderPrompt = generatePrompt({ ...config, mode: 'both' });
+  // Generate a placeholder prompt based on current settings
+  const placeholderPrompt = generatePrompt(config);
 
   return (
     <div className="w-full md:w-80 border-b md:border-b-0 md:border-r border-slate-200 bg-white flex flex-col z-20 shadow-sm h-full">
@@ -150,65 +162,52 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
 
       {/* Controls - Scrollable */}
       <div className="space-y-4 md:space-y-6 flex-grow overflow-y-auto custom-scrollbar px-4 md:px-6 pb-4 md:pb-6 h-full">
-        <ModeSelector mode={config.mode} onChange={handleModeChange} disabled={isProcessing} />
-
-        {config.mode === 'enhance' && (
-          <EnhancementPanel
-            settings={config.enhancement || DEFAULT_ENHANCEMENT_SETTINGS}
-            onChange={handleEnhancementChange}
-            disabled={isProcessing}
-          />
-        )}
-
-        {config.mode === 'custom' && (
-          <div className="animate-fade-in">
-            <label className="text-xs font-medium text-slate-500 mb-1 block">
-              Custom Prompt Instructions
-            </label>
-            <textarea
-              className="w-full text-xs p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[140px] resize-y font-mono bg-slate-50 text-slate-800"
-              placeholder={placeholderPrompt}
-              value={config.customPrompt || ''}
-              onChange={e => handlePromptChange(e.target.value)}
-            />
-            <div className="mt-2 flex justify-end">
-              <button
-                className="text-[10px] uppercase font-bold text-indigo-600 hover:text-indigo-800 tracking-wider bg-indigo-50 px-2 py-1 rounded hover:bg-indigo-100 transition-colors"
-                onClick={() => handlePromptChange(placeholderPrompt)}
-              >
-                Load Template
-              </button>
-            </div>
-          </div>
-        )}
-
-        <ModelSelector
-          selectedModel={config.selectedModel}
-          nanoBananaProConfig={config.nanoBananaProConfig || DEFAULT_NANO_BANANA_PRO_CONFIG}
-          allowExpensiveModels={config.allowExpensiveModels ?? false}
-          onModelChange={handleModelChange}
-          onNanoBananaProConfigChange={handleNanoBananaProConfigChange}
-          onAllowExpensiveModelsChange={handleAllowExpensiveModelsChange}
+        {/* 1. Quality Tier Selector */}
+        <QualityTierSelector
+          tier={config.qualityTier}
+          onChange={handleQualityTierChange}
           disabled={isProcessing}
           isFreeUser={isFreeUser}
         />
 
-        {(config.mode === 'upscale' || config.mode === 'both') && (
-          <UpscaleFactorSelector
-            scale={config.scale}
-            onChange={handleScaleChange}
-            disabled={isProcessing}
-          />
-        )}
-
-        <FeatureToggles
-          preserveText={config.preserveText}
-          enhanceFace={config.enhanceFace}
-          onPreserveTextChange={handlePreserveTextChange}
-          onEnhanceFaceChange={handleEnhanceFaceChange}
+        {/* 2. Upscale Factor Selector (unchanged) */}
+        <UpscaleFactorSelector
+          scale={config.scale}
+          onChange={handleScaleChange}
           disabled={isProcessing}
         />
+
+        {/* 3. Enhancement Options (always visible) */}
+        <EnhancementOptions
+          options={config.additionalOptions || DEFAULT_ADDITIONAL_OPTIONS}
+          onChange={handleAdditionalOptionsChange}
+          onOpenCustomInstructions={handleOpenCustomInstructions}
+          selectedTier={config.qualityTier}
+          disabled={isProcessing}
+        />
+
+        {/* 4. Ultra tier specific config (conditional) */}
+        {config.qualityTier === 'ultra' && (
+          <div className="space-y-4 animate-fade-in">
+            <div className="p-4 border border-indigo-200 rounded-lg bg-indigo-50/30">
+              <h4 className="text-sm font-medium text-indigo-900 mb-3">Ultra Settings</h4>
+              {/* Add ultra-specific configuration here */}
+              <p className="text-xs text-indigo-700">
+                Ultra includes maximum quality processing with 4K/8K output support.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* 5. Custom Instructions Modal */}
+      <CustomInstructionsModal
+        isOpen={showCustomInstructionsModal}
+        onClose={handleCloseCustomInstructions}
+        instructions={config.additionalOptions?.customInstructions || ''}
+        onSave={handleCustomInstructionsSave}
+        placeholderPrompt={placeholderPrompt}
+      />
     </div>
   );
 };

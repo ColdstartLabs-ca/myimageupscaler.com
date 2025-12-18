@@ -13,13 +13,39 @@ Refactor the core image processing flow from a technical, mode-based interface t
 
 ### Key Changes
 
-| Before | After |
-|--------|-------|
-| Operation Mode: Upscale / Enhance / Both / Custom | **Removed** - Always upscale + smart enhancements |
-| AI Model: real-esrgan, gfpgan, etc. | Quality Tier: Fast / Standard / Premium / Ultra |
-| Custom mode for custom instructions | Additional Option: Custom Instructions (modal) |
-| Enhance mode for enhancements | Additional Option: Enhance Image (toggle) |
-| enhanceFace / preserveText toggles | Smart auto-detection with user override |
+| Before                                            | After                                                                     |
+| ------------------------------------------------- | ------------------------------------------------------------------------- |
+| Operation Mode: Upscale / Enhance / Both / Custom | **Removed** - Always upscale + default enhancements (user can toggle off) |
+| AI Model: real-esrgan, gfpgan, etc.               | Quality Tier: Essential / Standard / Professional / Studio                |
+| Custom mode for custom instructions               | Additional Option: Custom Instructions (modal)                            |
+| Enhance mode for enhancements                     | Additional Option: Enhance Image (toggle)                                 |
+| enhanceFace / preserveText toggles                | User-controlled toggles (AI suggests when smartAnalysis enabled)          |
+
+### Cleanup Summary
+
+**DELETE (after migration complete):**
+
+- `ModeSelector.tsx` component ✅ Deleted
+- `ModelSelector.tsx` component ✅ Deleted
+
+**DEPRECATED (kept for backward compatibility during migration):**
+
+- `ProcessingMode` type - still used by legacy credit cost calculation
+- `mode` field - still referenced by some processors
+- Mode-based utility functions in `subscription.utils.ts` - kept for gradual migration
+
+**ADD:**
+
+- `QualityTier` type (`auto | essential | standard | professional | studio`)
+- `QUALITY_TIER_CONFIG` with full metadata per tier (including `smartAnalysisAlwaysOn` flag)
+- `IAdditionalOptions` interface with `smartAnalysis` toggle
+- `QualityTierSelector.tsx` component (Auto + 4 explicit tiers)
+- `EnhancementOptions.tsx` component (Smart AI Analysis toggle hidden for Auto tier)
+- `CustomInstructionsModal.tsx` component
+
+**KEEP (refactored):**
+
+- AI analysis functionality via `LLMImageAnalyzer` (called directly in `/api/upscale` for performance, not via separate endpoint)
 
 ---
 
@@ -92,9 +118,9 @@ The current UI presents technical implementation details (modes, model names) in
 ### 2.1 Architecture Summary
 
 1. **Replace Operation Mode with implicit behavior**: Always perform upscaling; enhancements become opt-in via Additional Options
-2. **Rename AI Model to Quality Tier**: Present outcome-focused labels (Fast, Standard, Premium, Ultra) instead of technical model names
+2. **Rename AI Model to Quality Tier**: Present outcome-focused labels (Essential, Standard, Professional, Studio) instead of technical model names
 3. **Consolidate enhancements**: Move enhancement toggles to an "Additional Options" expandable section
-4. **Smart detection with override**: Auto-detect faces/text and apply processing by default; user can toggle off
+4. **Smart Analysis toggle**: When enabled (or Auto tier), AI suggests enhancements; suggestions merge with user selections via OR logic
 5. **Custom Instructions as modal**: Checkbox in Additional Options opens a modal for custom LLM prompts
 
 **Alternatives Considered:**
@@ -108,17 +134,19 @@ The current UI presents technical implementation details (modes, model names) in
 ```mermaid
 flowchart TB
     subgraph NewUI["New BatchSidebar Structure"]
-        A[Quality Tier Selector] --> B["Fast (1 cr)"]
+        A[Quality Tier Selector] --> A1["Auto (1-4 cr)"]
+        A --> B["Essential (1 cr)"]
         A --> C["Standard (2 cr)"]
-        A --> D["Premium (4 cr)"]
-        A --> E["Ultra (8 cr)"]
+        A --> D["Professional (4 cr)"]
+        A --> E["Studio (8 cr)"]
 
         F[Upscale Factor] --> G[2x / 4x / 8x]
 
-        H[Additional Options]
-        H --> I["☑ Enhance Image"]
-        H --> J["☑ Enhance Faces (auto)"]
-        H --> K["☑ Preserve Text (auto)"]
+        H[Enhancement Options]
+        H --> H1["☐ Smart AI Analysis (hidden if Auto)"]
+        H --> I["☐ Enhance Image"]
+        H --> J["☐ Enhance Faces"]
+        H --> K["☐ Preserve Text"]
         H --> L["☐ Custom Instructions"]
 
         I --> M[EnhancementPanel]
@@ -126,7 +154,7 @@ flowchart TB
     end
 
     subgraph API["Updated API Contract"]
-        O[IUpscaleConfig v2] --> P[qualityTier: QualityTier]
+        O[IUpscaleConfig] --> P[qualityTier: QualityTier]
         O --> Q[scale: 2|4|8]
         O --> R[additionalOptions: IAdditionalOptions]
     end
@@ -136,13 +164,13 @@ flowchart TB
 
 ### 2.3 Key Technical Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Quality tier naming | Fast / Standard / Premium / Ultra | User-focused, avoids technical jargon |
-| Smart detection | Client-side heuristics + LLM fallback | No extra API call for simple cases |
-| Custom instructions | Modal (not inline) | Reduces sidebar clutter, better UX for multi-line input |
-| Backward compatibility | API accepts both old and new schema | Gradual migration, no breaking changes |
-| Mode field | Deprecated but supported | Existing clients continue working |
+| Decision            | Choice                                       | Rationale                                                                               |
+| ------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Quality tier naming | Essential / Standard / Professional / Studio | Use-case focused names that hint at intended purpose without implying speed differences |
+| Enhancement toggles | Always visible, user-controlled              | Avoids fragile client-side detection; users explicitly opt-in to features they want     |
+| Custom instructions | Modal (not inline)                           | Reduces sidebar clutter, better UX for multi-line input                                 |
+| Old config handling | **Delete entirely**                          | No deprecated fields; clean codebase over backward compat                               |
+| Migration strategy  | One-time refactor                            | All usages updated in single PR; no gradual migration                                   |
 
 ### 2.4 Data Model Changes
 
@@ -150,82 +178,189 @@ flowchart TB
 
 ```typescript
 // NEW: Quality tier replaces model selection in UI
-export type QualityTier = 'fast' | 'standard' | 'premium' | 'ultra';
+export type QualityTier = 'auto' | 'essential' | 'standard' | 'professional' | 'studio';
 
-// Quality tier to model mapping (internal)
-export const QUALITY_TIER_MODEL_MAP: Record<QualityTier, ModelId> = {
-  fast: 'real-esrgan',
-  standard: 'gfpgan',
-  premium: 'clarity-upscaler',
-  ultra: 'nano-banana-pro',
+// Quality tier metadata for UI display
+export const QUALITY_TIER_CONFIG: Record<
+  QualityTier,
+  {
+    label: string;
+    credits: number | 'variable';
+    modelId: ModelId | null; // null for 'auto' - determined by AI
+    description: string;
+    bestFor: string;
+    smartAnalysisAlwaysOn: boolean; // True for 'auto' tier
+  }
+> = {
+  auto: {
+    label: 'Auto',
+    credits: 'variable', // 1-4 depending on AI recommendation (Studio tier excluded)
+    modelId: null,
+    description: 'AI picks the best quality tier and enhancements',
+    bestFor: 'When you want optimal results without choosing',
+    smartAnalysisAlwaysOn: true, // Always analyzes, no toggle shown
+  },
+  essential: {
+    label: 'Essential',
+    credits: 1,
+    modelId: 'real-esrgan',
+    description: 'Fast upscaling with good quality',
+    bestFor: 'Social media, quick shares, previews',
+    smartAnalysisAlwaysOn: false,
+  },
+  standard: {
+    label: 'Standard',
+    credits: 2,
+    modelId: 'gfpgan',
+    description: 'Balanced quality with face enhancement',
+    bestFor: 'Photos, portraits, everyday images',
+    smartAnalysisAlwaysOn: false,
+  },
+  professional: {
+    label: 'Professional',
+    credits: 4,
+    modelId: 'clarity-upscaler',
+    description: 'High detail preservation, fine textures',
+    bestFor: 'Print-ready images, client work, e-commerce',
+    smartAnalysisAlwaysOn: false,
+  },
+  studio: {
+    label: 'Studio',
+    credits: 8,
+    modelId: 'nano-banana-pro',
+    description: 'Maximum quality, 4K/8K output, AI enhancement',
+    bestFor: 'Large format prints, professional retouching, archival',
+    smartAnalysisAlwaysOn: false,
+  },
 };
 
-export const QUALITY_TIER_CREDITS: Record<QualityTier, number> = {
-  fast: 1,
-  standard: 2,
-  premium: 4,
-  ultra: 8,
-};
+// Convenience accessors (backward compat)
+export const QUALITY_TIER_MODEL_MAP: Record<QualityTier, ModelId> = Object.fromEntries(
+  Object.entries(QUALITY_TIER_CONFIG).map(([k, v]) => [k, v.modelId])
+) as Record<QualityTier, ModelId>;
+
+export const QUALITY_TIER_CREDITS: Record<QualityTier, number> = Object.fromEntries(
+  Object.entries(QUALITY_TIER_CONFIG).map(([k, v]) => [k, v.credits])
+) as Record<QualityTier, number>;
 
 // NEW: Additional options (replaces mode + toggles)
 export interface IAdditionalOptions {
-  enhance: boolean;              // Enable enhancement processing
-  enhanceFaces: boolean;         // Face restoration (auto-detected, can override)
-  preserveText: boolean;         // Text preservation (auto-detected, can override)
-  customInstructions?: string;   // Custom LLM prompt (if provided)
+  smartAnalysis: boolean; // AI suggests enhancements (hidden when tier='auto')
+  enhance: boolean; // Enable enhancement processing (expands sub-options)
+  enhanceFaces: boolean; // Face restoration - user opt-in
+  preserveText: boolean; // Text preservation - user opt-in
+  customInstructions?: string; // Custom LLM prompt (opens modal when enabled)
   enhancement?: IEnhancementSettings; // Detailed enhancement settings
 }
 
-// Updated config interface
-export interface IUpscaleConfigV2 {
+// Updated config interface (replaces IUpscaleConfig entirely)
+export interface IUpscaleConfig {
   qualityTier: QualityTier;
   scale: 2 | 4 | 8;
   additionalOptions: IAdditionalOptions;
-  // Nano Banana Pro specific (only for 'ultra' tier)
+  // Studio tier specific (only for 'studio' tier)
   nanoBananaProConfig?: INanoBananaProConfig;
 }
+```
 
-// DEPRECATED: Old config still accepted for backward compatibility
-export interface IUpscaleConfig {
-  mode: ProcessingMode;          // @deprecated - use additionalOptions
-  selectedModel: 'auto' | ModelId; // @deprecated - use qualityTier
-  // ... rest unchanged
-}
+**Types to DELETE:**
+
+```typescript
+// DELETE: ProcessingMode type
+export type ProcessingMode = 'upscale' | 'enhance' | 'both' | 'custom';
+
+// DELETE: Old IUpscaleConfig fields
+- mode: ProcessingMode
+- selectedModel: 'auto' | ModelId
+- enhanceFace: boolean      // → additionalOptions.enhanceFaces
+- preserveText: boolean     // → additionalOptions.preserveText
+- customPrompt?: string     // → additionalOptions.customInstructions
 ```
 
 ---
 
 ## 2.5 Runtime Execution Flow
 
+### Flow A: Auto Tier (Smart AI Analysis always on)
+
 ```mermaid
 sequenceDiagram
     participant U as User
     participant UI as BatchSidebar
-    participant S as Smart Detector
+    participant API as /api/upscale
+    participant AN as /api/analyze-image
+    participant MR as ModelRegistry
+
+    U->>UI: Upload image
+    U->>UI: Select "Auto" tier
+    Note right of UI: Smart AI Analysis toggle is HIDDEN<br/>(always on for Auto)
+    U->>UI: Click Process
+
+    UI->>API: POST /api/upscale
+    Note right of UI: { qualityTier: 'auto',<br/>scale: 4,<br/>additionalOptions: {...} }
+
+    API->>AN: Analyze image
+    AN-->>API: { recommendedTier: 'professional',<br/>suggestedEnhancements: {<br/>  enhanceFaces: true,<br/>  preserveText: false<br/>} }
+
+    API->>MR: resolveModelFromTier('professional')
+    MR-->>API: 'clarity-upscaler'
+
+    API->>API: Process with AI-selected model + enhancements
+    API-->>UI: { success: true, imageUrl: '...',<br/>usedTier: 'professional', credits: 4 }
+```
+
+### Flow B: Explicit Tier + Optional Smart Analysis
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant UI as BatchSidebar
+    participant API as /api/upscale
+    participant AN as /api/analyze-image
+    participant MR as ModelRegistry
+
+    U->>UI: Upload image
+    U->>UI: Select "Essential" tier
+    U->>UI: Enable "Smart AI Analysis" toggle
+    U->>UI: Click Process
+
+    UI->>API: POST /api/upscale
+    Note right of UI: { qualityTier: 'essential',<br/>additionalOptions: {<br/>  smartAnalysis: true<br/>} }
+
+    API->>AN: Analyze image (enhancements only)
+    AN-->>API: { suggestedEnhancements: {<br/>  enhanceFaces: true,<br/>  preserveText: false<br/>} }
+    Note right of AN: Does NOT suggest tier<br/>(user already chose)
+
+    API->>MR: resolveModelFromTier('essential')
+    MR-->>API: 'real-esrgan'
+
+    API->>API: Process with user's tier + AI enhancements
+    API-->>UI: { success: true, imageUrl: '...',<br/>credits: 1 }
+```
+
+### Flow C: Explicit Tier, No Smart Analysis
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant UI as BatchSidebar
     participant API as /api/upscale
     participant MR as ModelRegistry
 
     U->>UI: Upload image
-    UI->>S: analyzeForSmartDefaults(imageFile)
-    S-->>UI: { hasFaces: true, hasText: false }
-    UI->>UI: Set additionalOptions.enhanceFaces = true
-
-    U->>UI: Select "Premium" tier
-    U->>UI: Check "Enhance Image"
+    U->>UI: Select "Professional" tier
+    U->>UI: Manually enable "Enhance Faces"
+    Note right of UI: Smart AI Analysis toggle OFF
     U->>UI: Click Process
 
     UI->>API: POST /api/upscale
-    Note right of UI: { qualityTier: 'premium',<br/>scale: 4,<br/>additionalOptions: {...} }
+    Note right of UI: { qualityTier: 'professional',<br/>additionalOptions: {<br/>  smartAnalysis: false,<br/>  enhanceFaces: true<br/>} }
 
-    API->>MR: resolveModelFromTier('premium')
+    API->>MR: resolveModelFromTier('professional')
     MR-->>API: 'clarity-upscaler'
 
-    alt Has custom instructions
-        API->>API: Apply custom prompt to processing
-    end
-
-    API->>API: Process with resolved model
-    API-->>UI: { success: true, imageUrl: '...' }
+    API->>API: Process with user's exact settings
+    API-->>UI: { success: true, imageUrl: '...',<br/>credits: 4 }
 ```
 
 ---
@@ -235,6 +370,7 @@ sequenceDiagram
 ### A. `shared/types/pixelperfect.ts`
 
 **Changes Needed:**
+
 - Add `QualityTier` type
 - Add `QUALITY_TIER_MODEL_MAP` constant
 - Add `QUALITY_TIER_CREDITS` constant
@@ -258,51 +394,72 @@ export interface IQualityTierSelectorProps {
   isFreeUser?: boolean;
 }
 
-// Visual design:
-// - 4-button toggle group (like current ModeSelector layout)
-// - Each button shows: Tier name + credit cost badge
-// - Premium/Ultra show lock icon for free users with upgrade prompt
+// Visual design (IMPLEMENTED as dropdown for sidebar space efficiency):
+// - Dropdown selector showing current tier with "Best for" hint
+// - Opens to show all 5 tiers: Auto + 4 explicit tiers
+// - Each option shows: Tier name + credit cost + description
+// - Professional/Studio show lock icon for free users with upgrade prompt
+// - Auto tier shows "Recommended" badge
 ```
 
 **Options:**
 
-| Tier | Label | Credits | Description (tooltip) |
-|------|-------|---------|----------------------|
-| fast | Fast | 1 | Quick upscale for everyday images |
-| standard | Standard | 2 | Balanced quality for most photos |
-| premium | Premium | 4 | High quality for important images |
-| ultra | Ultra | 8 | Maximum quality, 4K/8K output |
+| Tier         | Label        | Credits | Best For                         | Description (tooltip)                                                  |
+| ------------ | ------------ | ------- | -------------------------------- | ---------------------------------------------------------------------- |
+| auto         | Auto         | 1-4     | Optimal results without choosing | AI picks the best tier and enhancements (excludes Studio to cap costs) |
+| essential    | Essential    | 1       | Social media, quick shares       | Fast upscaling with good quality                                       |
+| standard     | Standard     | 2       | Photos, portraits                | Balanced quality with face enhancement                                 |
+| professional | Professional | 4       | Print-ready, client work         | High detail preservation, fine textures                                |
+| studio       | Studio       | 8       | Large prints, archival           | Maximum quality, 4K/8K output, AI enhancement                          |
 
-**Justification:** Single component replacing two, clearer mental model for users.
+**Auto Tier Special Behavior:**
+
+- When selected, Smart AI Analysis toggle is **hidden** in Enhancement Options
+- Credit cost shown as "1-4" (variable based on AI recommendation, Studio excluded)
+- After processing, response includes `usedTier` to show what was actually used
+
+**Justification:** Single component replacing two; Auto tier preserves "hands-off" experience for casual users.
 
 ---
 
-### C. `client/components/features/workspace/BatchSidebar/AdditionalOptions.tsx` (NEW)
+### C. `client/components/features/workspace/BatchSidebar/EnhancementOptions.tsx` (NEW)
 
-**Purpose:** Collapsible section containing enhancement toggles and custom instructions
+**Purpose:** Always-visible section containing enhancement toggles (replaces hidden "Additional Options")
 
 ```typescript
-export interface IAdditionalOptionsProps {
+export interface IEnhancementOptionsProps {
   options: IAdditionalOptions;
   onChange: (options: IAdditionalOptions) => void;
   onOpenCustomInstructions: () => void;
+  selectedTier: QualityTier; // Needed to conditionally hide Smart AI Analysis
   disabled?: boolean;
-  detectedFeatures?: { hasFaces: boolean; hasText: boolean };
 }
 
-// Structure:
-// [Expand/Collapse Header: "Additional Options"]
-//   ☑ Enhance Image → expands EnhancementPanel inline
-//   ☑ Enhance Faces (auto-detected) → simple toggle
-//   ☑ Preserve Text (auto-detected) → simple toggle
+// Structure (IMPLEMENTED as collapsible to reduce sidebar clutter):
+// Smart AI Analysis card (visible when tier !== 'auto')
+// "Smart Analysis Active" indicator (visible when tier === 'auto')
+// Collapsible "Additional Enhancements" section:
+//   ☐ Enhance Image → expands sub-options when checked
+//   ☐ Enhance Faces → simple toggle
+//   ☐ Preserve Text → simple toggle
 //   ☐ Custom Instructions → opens modal when checked
 ```
 
-**Smart Detection Badges:**
-- When faces/text detected, show "(detected)" badge next to toggle
-- User can uncheck to disable auto-applied processing
+**Smart AI Analysis Toggle Behavior:**
 
-**Justification:** Consolidates scattered toggles into logical group, reduces cognitive load.
+| Selected Tier                          | Toggle Visibility | Behavior                                               |
+| -------------------------------------- | ----------------- | ------------------------------------------------------ |
+| Auto                                   | **Hidden**        | Always on - AI picks tier + enhancements               |
+| Essential/Standard/Professional/Studio | **Visible**       | When enabled, AI suggests enhancements only (not tier) |
+
+**Design Rationale:**
+
+- Smart AI Analysis hidden for Auto because it's redundant (always on)
+- For explicit tiers, users can opt-in to AI enhancement suggestions
+- All other toggles in collapsible "Additional Enhancements" section for clean UI
+- "Enhance Image" expands to show sub-options (Clarity, Color, etc.) when enabled
+
+**Justification:** Consolidates scattered toggles into logical group; Smart AI Analysis toggle only shown when meaningful.
 
 ---
 
@@ -334,12 +491,12 @@ export interface ICustomInstructionsModalProps {
 ### E. `client/components/features/workspace/BatchSidebar.tsx` (UPDATE)
 
 **Changes Needed:**
+
 - Remove `ModeSelector` import and usage
 - Replace `ModelSelector` with `QualityTierSelector`
-- Add `AdditionalOptions` component
+- Add `EnhancementOptions` component (always visible)
 - Add `CustomInstructionsModal` component
-- Update config state to use `IUpscaleConfigV2`
-- Add smart detection on image upload
+- Update config state to use new `IUpscaleConfig`
 
 **Updated Structure:**
 
@@ -359,16 +516,16 @@ export interface ICustomInstructionsModalProps {
 
   <UpscaleFactorSelector ... /> {/* unchanged */}
 
-  <AdditionalOptions
+  <EnhancementOptions
     options={config.additionalOptions}
     onChange={handleOptionsChange}
     onOpenCustomInstructions={() => setShowCustomModal(true)}
+    selectedTier={config.qualityTier}  // Pass tier to conditionally hide Smart AI Analysis
     disabled={isProcessing}
-    detectedFeatures={detectedFeatures}
   />
 
-  {/* Ultra tier specific config */}
-  {config.qualityTier === 'ultra' && (
+  {/* Studio tier specific config */}
+  {config.qualityTier === 'studio' && (
     <NanoBananaProSettings ... />
   )}
 
@@ -383,120 +540,103 @@ export interface ICustomInstructionsModalProps {
 
 ---
 
-### F. `client/hooks/pixelperfect/useSmartDetection.ts` (NEW)
-
-**Purpose:** Client-side heuristics for face/text detection to set defaults
-
-```typescript
-export function useSmartDetection() {
-  const detectFeatures = async (file: File): Promise<{
-    hasFaces: boolean;
-    hasText: boolean;
-    confidence: number;
-  }> => {
-    // Simple client-side heuristics:
-    // 1. Check filename for hints (portrait, document, receipt, etc.)
-    // 2. Check image dimensions (portrait aspect ratio → likely face)
-    // 3. Optional: Use browser ML API if available
-
-    // Returns conservative defaults - server can refine with LLM
-  };
-
-  return { detectFeatures };
-}
-```
-
-**Justification:** Avoid API call for obvious cases; improve perceived performance.
-
----
-
-### G. `shared/config/subscription.utils.ts` (UPDATE)
+### F. `shared/config/subscription.utils.ts` (UPDATE)
 
 **Add functions:**
 
 ```typescript
 export function getCreditsForTier(tier: QualityTier): number {
-  return QUALITY_TIER_CREDITS[tier];
+  return QUALITY_TIER_CONFIG[tier].credits;
 }
 
 export function getModelForTier(tier: QualityTier): ModelId {
-  return QUALITY_TIER_MODEL_MAP[tier];
+  return QUALITY_TIER_CONFIG[tier].modelId;
 }
 
-// Backward compatibility: Convert old config to new
-export function migrateConfigToV2(oldConfig: IUpscaleConfig): IUpscaleConfigV2 {
-  const tier = modelToTier(oldConfig.selectedModel);
-  return {
-    qualityTier: tier,
-    scale: oldConfig.scale,
-    additionalOptions: {
-      enhance: oldConfig.mode === 'enhance' || oldConfig.mode === 'both',
-      enhanceFaces: oldConfig.enhanceFace,
-      preserveText: oldConfig.preserveText,
-      customInstructions: oldConfig.customPrompt,
-      enhancement: oldConfig.enhancement,
-    },
-    nanoBananaProConfig: oldConfig.nanoBananaProConfig,
-  };
+export function getTierConfig(tier: QualityTier) {
+  return QUALITY_TIER_CONFIG[tier];
 }
+```
 
-function modelToTier(model: 'auto' | ModelId): QualityTier {
-  switch (model) {
-    case 'real-esrgan': return 'fast';
-    case 'gfpgan': return 'standard';
-    case 'clarity-upscaler': return 'premium';
-    case 'nano-banana-pro': return 'ultra';
-    default: return 'fast'; // auto or unknown defaults to fast
-  }
-}
+**Functions to DELETE:**
+
+```typescript
+// DELETE: Any functions referencing ProcessingMode or old config shape
+- getCreditsForMode()
+- calculateCostByMode()
+- any mode-based logic
 ```
 
 ---
 
-### H. `app/api/upscale/route.ts` (UPDATE)
+### G. `app/api/upscale/route.ts` (UPDATE)
 
 **Changes Needed:**
-- Accept both `IUpscaleConfig` (legacy) and `IUpscaleConfigV2` (new)
-- Add migration layer for backward compatibility
-- Resolve model from quality tier
+
+- Replace old schema with new `IUpscaleConfig` schema
+- Remove all `mode` and `selectedModel` handling
+- Handle Auto tier + Smart AI Analysis logic
 
 ```typescript
-// Schema accepts both formats
-const inputSchema = z.object({
-  // New format
-  qualityTier: z.enum(['fast', 'standard', 'premium', 'ultra']).optional(),
-  additionalOptions: z.object({...}).optional(),
-
-  // Legacy format (deprecated)
-  config: upscaleConfigSchema.optional(),
+// New schema (replaces old entirely)
+const upscaleConfigSchema = z.object({
+  qualityTier: z.enum(['auto', 'essential', 'standard', 'professional', 'studio']),
+  scale: z.union([z.literal(2), z.literal(4), z.literal(8)]),
+  additionalOptions: z.object({
+    smartAnalysis: z.boolean(),
+    enhance: z.boolean(),
+    enhanceFaces: z.boolean(),
+    preserveText: z.boolean(),
+    customInstructions: z.string().optional(),
+    enhancement: enhancementSettingsSchema.optional(),
+  }),
+  nanoBananaProConfig: nanoBananaProConfigSchema.optional(),
 });
 
 // In handler:
-let resolvedConfig: IUpscaleConfigV2;
+let resolvedTier: QualityTier;
+let resolvedEnhancements: Partial<IAdditionalOptions>;
 
-if (input.qualityTier) {
-  // New format - use directly
-  resolvedConfig = input as IUpscaleConfigV2;
-} else if (input.config) {
-  // Legacy format - migrate
-  resolvedConfig = migrateConfigToV2(input.config);
+if (config.qualityTier === 'auto') {
+  // Auto tier: Always run AI analysis for tier + enhancements
+  const analysis = await analyzeImage(imageFile);
+  resolvedTier = analysis.recommendedTier;
+  resolvedEnhancements = analysis.suggestedEnhancements;
+} else if (config.additionalOptions.smartAnalysis) {
+  // Explicit tier + Smart Analysis: AI suggests enhancements only
+  const analysis = await analyzeImage(imageFile, { suggestTier: false });
+  resolvedTier = config.qualityTier;
+  resolvedEnhancements = analysis.suggestedEnhancements;
+} else {
+  // Explicit tier, no Smart Analysis: Use user's exact settings
+  resolvedTier = config.qualityTier;
+  resolvedEnhancements = config.additionalOptions;
 }
 
-// Resolve model from tier
-const modelId = getModelForTier(resolvedConfig.qualityTier);
+const modelId = getModelForTier(resolvedTier);
+const credits = getCreditsForTier(resolvedTier);
+
+// Process with resolved settings
+// Return usedTier in response so UI can show what was actually used (for Auto)
+return { success: true, imageUrl, usedTier: resolvedTier, credits };
 ```
 
-**Justification:** Zero breaking changes for existing clients; gradual migration.
+**Code to DELETE:**
+
+- All `ProcessingMode` switch statements
+- All `selectedModel === 'auto'` branches
+- Legacy config migration code
 
 ---
 
-### I. Files to Delete
+### H. Files to DELETE
 
 ```
 client/components/features/workspace/BatchSidebar/ModeSelector.tsx
+client/components/features/workspace/BatchSidebar/ModelSelector.tsx  (if separate)
 ```
 
-**Justification:** Replaced by `QualityTierSelector` + `AdditionalOptions`.
+**Justification:** Replaced by `QualityTierSelector` + `EnhancementOptions`.
 
 ---
 
@@ -504,42 +644,48 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 
 ### Phase 1: Types & Config (Shared Layer)
 
-- [ ] Add `QualityTier` type to `pixelperfect.ts`
-- [ ] Add `QUALITY_TIER_MODEL_MAP` constant
-- [ ] Add `QUALITY_TIER_CREDITS` constant
-- [ ] Add `IAdditionalOptions` interface
-- [ ] Add `IUpscaleConfigV2` interface
-- [ ] Add `@deprecated` annotations to old fields
+- [ ] Add `QualityTier` type to `pixelperfect.ts` (includes `'auto'`)
+- [ ] Add `QUALITY_TIER_CONFIG` constant with `smartAnalysisAlwaysOn` flag
+- [ ] Add `IAdditionalOptions` interface with `smartAnalysis` field
+- [ ] **Replace** `IUpscaleConfig` interface (not add new one)
+- [ ] **Delete** `ProcessingMode` type
+- [ ] **Delete** old fields: `mode`, `selectedModel`, `enhanceFace`, `preserveText`, `customPrompt`
 - [ ] Add utility functions to `subscription.utils.ts`
+- [ ] **Delete** mode-based utility functions
 
 ### Phase 2: New UI Components
 
-- [ ] Create `QualityTierSelector.tsx`
-- [ ] Create `AdditionalOptions.tsx`
+- [ ] Create `QualityTierSelector.tsx` (Auto + 4 explicit tiers)
+- [ ] Create `EnhancementOptions.tsx` (Smart AI Analysis toggle, hidden for Auto)
 - [ ] Create `CustomInstructionsModal.tsx`
-- [ ] Create `useSmartDetection.ts` hook
 - [ ] Write unit tests for new components
 
 ### Phase 3: BatchSidebar Refactor
 
 - [ ] Update `BatchSidebar.tsx` to use new components
-- [ ] Update `Workspace.tsx` default config to V2 format
-- [ ] Wire up smart detection on image add
-- [ ] Remove `ModeSelector` usage
-- [ ] Test full UI flow
+- [ ] Pass `selectedTier` to `EnhancementOptions` for conditional rendering
+- [ ] Update `Workspace.tsx` default config to new format
+- [ ] **Delete** `ModeSelector.tsx`
+- [ ] **Delete** `ModelSelector.tsx` (if separate)
+- [ ] Remove all `mode` references from UI
+- [ ] Test full UI flow (all 3 flows: Auto, Explicit+SmartAnalysis, Explicit)
 
-### Phase 4: API Backward Compatibility
+### Phase 4: API Refactor
 
-- [ ] Update `/api/upscale` schema to accept both formats
-- [ ] Add config migration in route handler
-- [ ] Add integration tests for both formats
-- [ ] Verify existing tests still pass
+- [ ] **Replace** `/api/upscale` schema entirely (no backward compat)
+- [ ] Implement 3-branch logic: Auto / Explicit+SmartAnalysis / Explicit
+- [ ] Update `/api/analyze-image` to accept `{ suggestTier: boolean }` option
+- [ ] Return `usedTier` in response for Auto tier
+- [ ] Update credit calculation to use tier-based
+- [ ] Fix all TypeScript errors from removed types
+- [ ] Update integration tests for all 3 flows
 
-### Phase 5: Cleanup
+### Phase 5: Cleanup & Verify
 
-- [ ] Delete `ModeSelector.tsx`
-- [ ] Update any remaining references to old types
+- [ ] Search codebase for any remaining `ProcessingMode` references
+- [ ] Search for any remaining `selectedModel` references
 - [ ] Run full test suite
+- [ ] Run `yarn verify`
 - [ ] Update ROADMAP.md
 
 ---
@@ -549,40 +695,69 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 ### Unit Tests
 
 **QualityTierSelector:**
-- Renders all 4 tier options
-- Shows correct credit costs
-- Disables premium/ultra for free users with upgrade prompt
+
+- Renders Auto tier (full width) + 4 explicit tiers (grid)
+- Shows "1-4 credits" for Auto tier (Studio tier excluded from auto-selection)
+- Shows correct credit costs and "Best for" hints for explicit tiers
+- Disables Professional/Studio for free users with upgrade prompt
 - Calls onChange with correct tier value
+- Tooltip shows full description on hover
 
-**AdditionalOptions:**
+**EnhancementOptions:**
+
+- Smart AI Analysis toggle **hidden** when `selectedTier === 'auto'`
+- Smart AI Analysis toggle **visible** for all other tiers
+- All other toggles in collapsible section (expand to access)
 - Toggles control all options correctly
-- Shows "(detected)" badge when features detected
-- Custom instructions checkbox opens modal callback
+- "Enhance Image" expands sub-options when enabled
+- Custom instructions checkbox triggers modal callback
 
-**useSmartDetection:**
-- Returns hasFaces for portrait-like images
-- Returns hasText for document-like filenames
-- Returns conservative defaults for unknown
+**getTierConfig / getCreditsForTier / getModelForTier:**
 
-**migrateConfigToV2:**
-- Correctly maps all mode values
-- Correctly maps all model values
-- Preserves enhancement settings
+- Returns correct config for each tier
+- Returns `null` modelId for Auto tier
+- Returns `'variable'` credits for Auto tier
+- Returns correct modelId for explicit tiers
 
 ### Integration Tests
 
-- Full flow: Upload → Auto-detect → Select tier → Process
+**Flow A: Auto Tier**
+
+- Upload → Select Auto → Process
+- Verify AI analysis called with `suggestTier: true`
+- Verify response includes `usedTier` showing what AI picked
+- Verify credits match the resolved tier
+
+**Flow B: Explicit Tier + Smart AI Analysis**
+
+- Upload → Select Essential → Enable Smart AI Analysis → Process
+- Verify AI analysis called with `suggestTier: false`
+- Verify model is Essential's model (not AI-picked)
+- Verify enhancements are AI-suggested
+
+**Flow C: Explicit Tier, Manual Settings**
+
+- Upload → Select Professional → Manually enable Enhance Faces → Process
+- Verify NO AI analysis called
+- Verify user's exact settings used
+
+**General:**
+
 - Custom instructions modal opens/saves/cancels correctly
-- API accepts both legacy and new config formats
+- API rejects requests with old config format (clean break)
+- Credit deduction matches selected tier
 
 ### Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|------------------|
-| Free user selects Ultra | Upgrade prompt shown, selection blocked |
-| Legacy client sends old config | API migrates and processes normally |
-| No faces detected but user enables | Processing uses face restoration anyway |
-| Custom instructions with special chars | Properly escaped and applied |
+| Scenario                                      | Expected Behavior                                        |
+| --------------------------------------------- | -------------------------------------------------------- |
+| Free user selects Studio                      | Upgrade prompt shown, selection blocked                  |
+| Request with old `mode` field                 | API returns 400 validation error                         |
+| Auto tier selected                            | Smart AI Analysis toggle hidden in UI                    |
+| Auto tier + response                          | Response includes `usedTier` field                       |
+| User enables face enhancement on non-portrait | Processing applies face restoration anyway (user choice) |
+| Custom instructions with special chars        | Properly escaped and applied                             |
+| Studio tier without nanoBananaProConfig       | Uses default NanoBananaPro settings                      |
 
 ---
 
@@ -590,25 +765,40 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 
 ### UI
 
-- [ ] BatchSidebar shows Quality Tier selector (not AI Model)
+- [ ] BatchSidebar shows Quality Tier selector (Auto/Essential/Standard/Professional/Studio)
+- [ ] Auto tier shows "1-4 credits" (variable, Studio excluded)
 - [ ] No Operation Mode selector visible
-- [ ] Additional Options section expandable with all toggles
+- [ ] No AI Model selector visible
+- [ ] Enhancement Options in collapsible section (implemented for sidebar space efficiency)
+- [ ] Smart AI Analysis toggle **hidden** when Auto tier selected
+- [ ] Smart AI Analysis toggle **visible** for all other tiers
+- [ ] Each explicit tier shows credits + "Best for" hint
 - [ ] Custom Instructions opens modal (not inline)
-- [ ] Smart detection badges show when applicable
-- [ ] Free users see upgrade prompt for Premium/Ultra
+- [ ] Free users see upgrade prompt for Professional/Studio
 
 ### API
 
-- [ ] `/api/upscale` accepts `qualityTier` + `additionalOptions` format
-- [ ] `/api/upscale` still accepts legacy `config.mode` + `config.selectedModel`
+- [ ] `/api/upscale` accepts new `IUpscaleConfig` format only
+- [ ] `/api/upscale` rejects old `mode` + `selectedModel` format with 400 error
+- [ ] Auto tier triggers AI analysis with `suggestTier: true`
+- [ ] Explicit tier + smartAnalysis triggers AI analysis with `suggestTier: false`
+- [ ] Explicit tier without smartAnalysis skips AI analysis
+- [ ] Response includes `usedTier` for Auto tier
 - [ ] Credit calculation correct for all tiers
-- [ ] Model resolved correctly from tier
+
+### Codebase Cleanup
+
+- [ ] No `ProcessingMode` type exists
+- [ ] No `selectedModel` field exists
+- [ ] No `mode` field exists in config
+- [ ] `ModeSelector.tsx` deleted
+- [ ] All tests updated to new format
 
 ### Testing
 
-- [ ] All existing tests pass (no regressions)
+- [ ] All tests pass (updated for new format)
 - [ ] New component tests pass
-- [ ] E2E test for full new flow passes
+- [ ] E2E tests for all 3 flows pass (Auto, Explicit+SmartAnalysis, Explicit)
 
 ---
 
@@ -622,15 +812,19 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 
 ### Rollback Plan
 
-**Immediate (config toggle):**
-1. Add feature flag: `USE_OUTCOME_BASED_UI`
-2. Toggle off to restore old UI
-3. API continues supporting both formats regardless
+**This is a breaking change with no backward compatibility.**
 
-**If API issues:**
-1. Revert API changes only
-2. UI falls back to using legacy format
-3. No user-facing impact
+**If issues found post-deploy:**
+
+1. Git revert the entire PR
+2. Redeploy previous version
+3. All changes are atomic - no partial rollback needed
+
+**Pre-deploy verification:**
+
+1. Full test suite passes
+2. Manual QA on staging
+3. Verify no external API consumers (internal app only)
 
 ---
 
@@ -638,111 +832,123 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 
 ### 8.1 Quality Tier Selector Design
 
-**Desktop (md+):**
-```
-┌─────────────────────────────────────────────────────┐
-│  Quality                                            │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐│
-│  │   Fast   │ │ Standard │ │ Premium  │ │  Ultra  ││
-│  │  1 cr    │ │  2 cr    │ │  4 cr    │ │  8 cr   ││
-│  └──────────┘ └──────────┘ └──────────┘ └─────────┘│
-│  Quick upscale for everyday images                  │
-└─────────────────────────────────────────────────────┘
-```
+**Layout Structure:**
 
-**Mobile (<md):**
-```
-┌─────────────────────────────┐
-│  Quality                    │
-│  ┌────────────┬────────────┐│
-│  │    Fast    │  Standard  ││
-│  │   1 cr     │   2 cr     ││
-│  ├────────────┼────────────┤│
-│  │  Premium   │   Ultra    ││
-│  │   4 cr     │   8 cr     ││
-│  └────────────┴────────────┘│
-│  Quick upscale              │
-└─────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph Desktop["Desktop (md+)"]
+        direction TB
+        DA[Auto - Full Width - 1-4 cr]
+        subgraph DGrid["4-Column Grid"]
+            direction LR
+            DE[Essential<br/>1 cr<br/>Social]
+            DS[Standard<br/>2 cr<br/>Photos]
+            DP[Professional<br/>4 cr<br/>Print]
+            DST[Studio<br/>8 cr<br/>Archival]
+        end
+        DA --> DGrid
+    end
+
+    subgraph Mobile["Mobile"]
+        direction TB
+        MA[Auto - Full Width - 1-4 cr]
+        subgraph MGrid["2x2 Grid"]
+            direction TB
+            subgraph MRow1[" "]
+                ME[Essential<br/>1 cr]
+                MS[Standard<br/>2 cr]
+            end
+            subgraph MRow2[" "]
+                MP[Prof.<br/>4 cr]
+                MST[Studio<br/>8 cr]
+            end
+        end
+        MA --> MGrid
+    end
 ```
 
 **Visual States:**
+
 - **Default**: `border-slate-200 bg-white text-slate-600`
 - **Selected**: `border-indigo-600 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-500`
 - **Disabled**: `opacity-50 cursor-not-allowed`
-- **Locked (free user)**: `border-amber-200 bg-amber-50` with lock icon overlay
+- **Locked (free user)**: `border-amber-200 bg-amber-50` with lock icon overlay (Professional/Studio)
 
 **Responsive Breakpoints:**
-- Mobile: 2x2 grid (`grid-cols-2`)
-- Tablet+: 4-column row (`md:grid-cols-4`)
+
+- Mobile: Auto full-width, then 2x2 grid (`grid-cols-2`)
+- Tablet+: Auto full-width, then 4-column row (`md:grid-cols-4`)
 
 ---
 
-### 8.2 Additional Options Section Design
+### 8.2 Enhancement Options Section Design
 
-**Collapsed State:**
-```
-┌─────────────────────────────────────────────────────┐
-│  ▶ Additional Options                          (3) │
-└─────────────────────────────────────────────────────┘
-```
-- Shows count of enabled options in badge
-- Click anywhere to expand
+**IMPLEMENTED: Collapsible for sidebar space efficiency.**
 
-**Expanded State (Desktop):**
-```
-┌─────────────────────────────────────────────────────┐
-│  ▼ Additional Options                               │
-│  ┌─────────────────────────────────────────────────┐│
-│  │ ☑ Enhance Image                                 ││
-│  │   ┌─────────────────────────────────────────┐   ││
-│  │   │ ☑ Clarity  ☑ Color  ☐ Lighting         │   ││
-│  │   │ ☑ Denoise  ☑ Artifacts  ☐ Details      │   ││
-│  │   └─────────────────────────────────────────┘   ││
-│  ├─────────────────────────────────────────────────┤│
-│  │ ☑ Enhance Faces                    (detected)  ││
-│  ├─────────────────────────────────────────────────┤│
-│  │ ☐ Preserve Text                                ││
-│  ├─────────────────────────────────────────────────┤│
-│  │ ☐ Custom Instructions                    ✏️     ││
-│  └─────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────┘
+**Component Structure:**
+
+```mermaid
+flowchart TB
+    subgraph EnhancementOptions["Enhancement Options (collapsible)"]
+        direction TB
+
+        SA["☐ Smart AI Analysis<br/>(HIDDEN if tier=Auto)"]
+
+        EI["☐ Enhance Image"]
+        subgraph SubOptions["Sub-options (shown when Enhance Image checked)"]
+            direction LR
+            C[☑ Clarity]
+            CO[☑ Color]
+            L[☐ Lighting]
+            D[☑ Denoise]
+            A[☑ Artifacts]
+            DE[☐ Details]
+        end
+
+        EF["☐ Enhance Faces"]
+        PT["☐ Preserve Text"]
+        CI["☐ Custom Instructions ✏️"]
+
+        SA --> EI
+        EI --> SubOptions
+        SubOptions --> EF
+        EF --> PT
+        PT --> CI
+    end
 ```
 
-**Expanded State (Mobile):**
+**Smart AI Analysis Visibility Logic:**
+
+```mermaid
+flowchart LR
+    T{Selected Tier?}
+    T -->|Auto| H[Toggle HIDDEN<br/>Always on implicitly]
+    T -->|Essential/Standard/<br/>Professional/Studio| V[Toggle VISIBLE<br/>User can opt-in]
 ```
-┌─────────────────────────────┐
-│  ▼ Additional Options       │
-│  ┌─────────────────────────┐│
-│  │ ☑ Enhance Image         ││
-│  │  ☑ Clarity  ☑ Color    ││
-│  │  ☐ Lighting            ││
-│  │  ☑ Denoise  ☑ Artifacts││
-│  │  ☐ Details             ││
-│  ├─────────────────────────┤│
-│  │ ☑ Enhance Faces  (auto)││
-│  ├─────────────────────────┤│
-│  │ ☐ Preserve Text        ││
-│  ├─────────────────────────┤│
-│  │ ☐ Custom Instructions ✏││
-│  └─────────────────────────┘│
-└─────────────────────────────┘
-```
+
+**Design Rationale:**
+
+- Smart AI Analysis hidden for Auto (redundant - always on)
+- All other options visible by default for feature discovery
+- No auto-detection badges - user explicitly opts in
+- "Enhance Image" sub-options only show when parent is checked
 
 **Component Specifications:**
 
-| Element | Desktop | Mobile |
-|---------|---------|--------|
-| Section padding | `p-4` | `p-3` |
-| Toggle row height | `44px` | `48px` (touch target) |
-| Enhancement grid | `grid-cols-3` | `grid-cols-2` |
-| Checkboxes | `w-4 h-4` | `w-5 h-5` |
-| Font size | `text-sm` | `text-sm` |
+| Element           | Desktop       | Mobile                |
+| ----------------- | ------------- | --------------------- |
+| Section padding   | `p-4`         | `p-3`                 |
+| Toggle row height | `44px`        | `48px` (touch target) |
+| Enhancement grid  | `grid-cols-3` | `grid-cols-2`         |
+| Checkboxes        | `w-4 h-4`     | `w-5 h-5`             |
+| Font size         | `text-sm`     | `text-sm`             |
 
 ---
 
 ### 8.3 Custom Instructions Modal Design
 
 **Desktop (centered modal):**
+
 ```
 ┌───────────────────────────────────────────────────────────┐
 │                                                     ✕     │
@@ -770,6 +976,7 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 ```
 
 **Mobile (bottom sheet):**
+
 ```
 ┌─────────────────────────────┐
 │   ━━━                       │  ← drag handle
@@ -792,6 +999,7 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 ```
 
 **Behavior:**
+
 - Desktop: `max-w-lg` centered modal with backdrop blur
 - Mobile: Bottom sheet that slides up, `max-h-[80vh]`
 - Textarea: `min-h-[200px]` desktop, `min-h-[150px]` mobile
@@ -801,54 +1009,41 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 
 ### 8.4 BatchSidebar Responsive Layout
 
-**Desktop (md+): Fixed width sidebar**
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│ ┌─────────────────────┐ ┌────────────────────────────────────────────┐ │
-│ │   BATCH SIDEBAR     │ │                                            │ │
-│ │   ───────────────   │ │                                            │ │
-│ │   [Action Panel]    │ │              PREVIEW AREA                  │ │
-│ │                     │ │                                            │ │
-│ │   Quality           │ │                                            │ │
-│ │   [Fast][Std][Pr][U]│ │                                            │ │
-│ │                     │ │                                            │ │
-│ │   Upscale Factor    │ │                                            │ │
-│ │   [2x] [4x] [8x]    │ │                                            │ │
-│ │                     │ │                                            │ │
-│ │   ▶ Additional Opts │ │                                            │ │
-│ │                     │ │                                            │ │
-│ │   (scrollable)      │ │                                            │ │
-│ └─────────────────────┘ └────────────────────────────────────────────┘ │
-└────────────────────────────────────────────────────────────────────────┘
+**Desktop Layout:**
+
+```mermaid
+flowchart LR
+    subgraph Desktop["Desktop (md+)"]
+        direction LR
+        subgraph Sidebar["Batch Sidebar (w-80)"]
+            direction TB
+            AP[Action Panel<br/>Process / Download]
+            QT[Quality Tier Selector<br/>Auto / Essential / Standard / Prof / Studio]
+            UF[Upscale Factor<br/>2x / 4x / 8x]
+            EO[Enhancement Options<br/>Smart Analysis / Enhance / Faces / Text / Custom]
+        end
+        Preview[Preview Area<br/>flex-1]
+    end
 ```
 
-**Mobile: Collapsible bottom panel**
-```
-┌─────────────────────────────┐
-│                             │
-│       PREVIEW AREA          │
-│       (full width)          │
-│                             │
-│                             │
-├─────────────────────────────┤
-│  ▼ Settings            ━━━  │  ← drag to expand
-│  ┌─────────────────────────┐│
-│  │  [Process] [Download]   ││
-│  │  2 credits · 1 image    ││
-│  ├─────────────────────────┤│
-│  │  Quality                ││
-│  │  ┌─────────┬───────────┐││
-│  │  │  Fast   │ Standard  │││
-│  │  ├─────────┼───────────┤││
-│  │  │ Premium │   Ultra   │││
-│  │  └─────────┴───────────┘││
-│  │                         ││
-│  │  ▶ Additional Options   ││
-│  └─────────────────────────┘│
-└─────────────────────────────┘
+**Mobile Layout:**
+
+```mermaid
+flowchart TB
+    subgraph Mobile["Mobile"]
+        direction TB
+        Preview[Preview Area<br/>full width]
+        subgraph BottomSheet["Bottom Sheet (collapsible)"]
+            direction TB
+            AP[Action Panel + Credit Summary]
+            QT[Quality: Auto full-width<br/>then 2x2 grid]
+            EO[Enhancement Options]
+        end
+    end
 ```
 
 **Mobile Sidebar Behavior:**
+
 - Default: Collapsed, shows only action buttons + summary
 - Tap header or drag up: Expands to show all options
 - Max height: `60vh` when expanded
@@ -861,14 +1056,15 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 
 **Minimum Touch Targets (WCAG 2.2):**
 
-| Element | Size | Notes |
-|---------|------|-------|
-| Tier buttons | `48px` height | Full width on mobile |
-| Checkboxes | `48x48px` tap area | Visual checkbox can be smaller |
-| Action buttons | `48px` height | Primary CTA is full width |
-| Modal close | `44x44px` | Corner X button |
+| Element        | Size               | Notes                          |
+| -------------- | ------------------ | ------------------------------ |
+| Tier buttons   | `48px` height      | Full width on mobile           |
+| Checkboxes     | `48x48px` tap area | Visual checkbox can be smaller |
+| Action buttons | `48px` height      | Primary CTA is full width      |
+| Modal close    | `44x44px`          | Corner X button                |
 
 **Accessibility Requirements:**
+
 - All interactive elements focusable with keyboard
 - `aria-pressed` on toggle buttons
 - `aria-expanded` on collapsible sections
@@ -881,6 +1077,7 @@ client/components/features/workspace/BatchSidebar/ModeSelector.tsx
 ### 8.6 Animation & Micro-interactions
 
 **Quality Tier Selection:**
+
 ```css
 /* Transition on selection */
 transition: all 150ms ease-out;
@@ -891,6 +1088,7 @@ box-shadow: 0 0 0 2px theme(colors.indigo.500);
 ```
 
 **Additional Options Expand:**
+
 ```css
 /* Smooth height transition */
 transition: max-height 200ms ease-out;
@@ -902,12 +1100,14 @@ transition: max-height 200ms ease-out;
 ```
 
 **Mobile Bottom Sheet:**
+
 ```css
 /* Spring animation for natural feel */
 transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
 ```
 
 **Processing State:**
+
 - Subtle pulse on action button during processing
 - Progress bar with gradient animation
 - Skeleton loading for tier buttons when loading user data
@@ -916,44 +1116,90 @@ transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
 
 ### 8.7 Responsive Component Summary
 
-| Component | Desktop | Mobile |
-|-----------|---------|--------|
-| QualityTierSelector | 4-col grid | 2x2 grid |
-| UpscaleFactorSelector | 3-col row | 3-col row (unchanged) |
-| AdditionalOptions | Full width, inline expand | Full width, inline expand |
-| CustomInstructionsModal | Centered modal | Bottom sheet |
-| BatchSidebar | Fixed 320px left | Bottom collapsible panel |
-| ActionPanel | Fixed in sidebar | Fixed at panel top |
+| Component               | Desktop                    | Mobile                     |
+| ----------------------- | -------------------------- | -------------------------- |
+| QualityTierSelector     | 4-col grid                 | 2x2 grid                   |
+| UpscaleFactorSelector   | 3-col row                  | 3-col row (unchanged)      |
+| EnhancementOptions      | Full width, always visible | Full width, always visible |
+| CustomInstructionsModal | Centered modal             | Bottom sheet               |
+| BatchSidebar            | Fixed 320px left           | Bottom collapsible panel   |
+| ActionPanel             | Fixed in sidebar           | Fixed at panel top         |
 
 ---
 
 ### 8.8 Implementation: Responsive Components
 
 **QualityTierSelector.tsx:**
+
 ```tsx
-<div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-  {TIERS.map(tier => (
+const { auto, ...explicitTiers } = QUALITY_TIER_CONFIG;
+
+return (
+  <div className="space-y-2">
+    {/* Auto tier - full width */}
     <button
-      key={tier.id}
       className={cn(
-        "flex flex-col items-center justify-center",
-        "py-3 px-2 rounded-lg border-2 transition-all",
-        "min-h-[60px] md:min-h-[72px]", // Larger touch target mobile
-        selected === tier.id
-          ? "border-indigo-600 bg-indigo-50 text-indigo-700"
-          : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+        'w-full flex items-center justify-between',
+        'py-3 px-4 rounded-lg border-2 transition-all',
+        selected === 'auto'
+          ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
       )}
+      title={auto.description}
     >
-      <span className="font-semibold text-sm">{tier.label}</span>
-      <span className="text-xs text-slate-500 mt-0.5">
-        {tier.credits} {tier.credits === 1 ? 'credit' : 'credits'}
-      </span>
+      <span className="font-semibold">{auto.label}</span>
+      <span className="text-sm text-slate-500">1-4 credits</span>
     </button>
-  ))}
-</div>
+
+    {/* Explicit tiers - grid */}
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      {Object.entries(explicitTiers).map(([id, tier]) => (
+        <button
+          key={id}
+          className={cn(
+            'flex flex-col items-center justify-center',
+            'py-3 px-2 rounded-lg border-2 transition-all',
+            'min-h-[72px] md:min-h-[80px]',
+            selected === id
+              ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+              : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+          )}
+          title={tier.description}
+        >
+          <span className="font-semibold text-sm">{tier.label}</span>
+          <span className="text-xs text-slate-500">
+            {tier.credits} {tier.credits === 1 ? 'credit' : 'credits'}
+          </span>
+          <span className="text-[10px] text-slate-400 mt-0.5">{tier.bestFor.split(',')[0]}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+);
+```
+
+**EnhancementOptions.tsx (Smart AI Analysis visibility):**
+
+```tsx
+const showSmartAnalysis = selectedTier !== 'auto';
+
+return (
+  <div className="space-y-3">
+    {showSmartAnalysis && (
+      <Toggle
+        label="Smart AI Analysis"
+        description="AI suggests optimal enhancements"
+        checked={options.smartAnalysis}
+        onChange={checked => onChange({ ...options, smartAnalysis: checked })}
+      />
+    )}
+    {/* Rest of toggles... */}
+  </div>
+);
 ```
 
 **Mobile Bottom Sheet (BatchSidebar):**
+
 ```tsx
 // Use @radix-ui/react-dialog or similar for sheet behavior
 <Sheet>
@@ -979,14 +1225,14 @@ transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
 
 ### For Existing Users
 
-- Stored preferences (if any) will need migration
+- Stored preferences will be reset to defaults (new config shape)
 - No action required from users - UI just looks simpler
 
-### For API Consumers (if any external)
+### For API Consumers
 
-- Old format continues to work indefinitely
-- Deprecation warnings in response headers
-- Documentation updated with new format
+- **Breaking change**: Old format no longer accepted
+- This is an internal app - no external API consumers
+- If local storage has old config, clear and use defaults
 
 ---
 

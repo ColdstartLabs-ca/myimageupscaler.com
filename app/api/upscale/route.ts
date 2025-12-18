@@ -7,16 +7,30 @@ import {
 import { ReplicateError } from '@server/services/replicate.service';
 import { ImageProcessorFactory } from '@server/services/image-processor.factory';
 import { ModelRegistry } from '@server/services/model-registry';
+import { LLMImageAnalyzer } from '@server/services/llm-image-analyzer';
 import { ZodError } from 'zod';
 import { createLogger } from '@server/monitoring/logger';
 import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
+
+// Delay between AI analysis and image processing to avoid Replicate rate limits
+// Replicate enforces 1 req/sec for low-credit accounts, with ~30s reset on 429
+const RATE_LIMIT_DELAY_MS = 5000;
+
+/**
+ * Delay helper to avoid Replicate rate limits when using smart analysis
+ */
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 import { upscaleRateLimit } from '@server/rateLimit';
 import { batchLimitCheck } from '@server/services/batch-limit.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import type { IUpscaleResponse } from '@shared/types/pixelperfect';
+import type { IUpscaleResponse, QualityTier, ModelId } from '@shared/types/pixelperfect';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
+import { getCreditsForTier, getModelForTier } from '@shared/config/subscription.utils';
+import { getSubscriptionConfig } from '@shared/config/subscription.config';
 
 function isPaidSubscriptionStatus(status: string | null | undefined): boolean {
   return status === 'active' || status === 'trialing';
@@ -25,6 +39,104 @@ function isPaidSubscriptionStatus(status: string | null | undefined): boolean {
 function normalizePaidTier(tier: string | null | undefined): SubscriptionTier {
   if (tier === 'hobby' || tier === 'pro' || tier === 'business') return tier;
   return 'hobby';
+}
+
+/**
+ * Directly call LLM analyzer for image analysis
+ * Returns AI analysis result with tier and enhancement suggestions
+ */
+async function analyzeImageForProcessing(
+  imageData: string,
+  options: { suggestTier: boolean; userTier: SubscriptionTier; mimeType?: string }
+): Promise<{
+  recommendedTier?: QualityTier;
+  suggestedEnhancements: {
+    enhanceFaces: boolean;
+    preserveText: boolean;
+    enhance: boolean;
+  };
+  enhancementPrompt?: string;
+}> {
+  try {
+    // Get eligible models based on user's subscription tier
+    const modelRegistry = ModelRegistry.getInstance();
+    let eligibleModels = modelRegistry.getModelsByTier(options.userTier);
+
+    // Filter out expensive models (8+ credits) for auto selection
+    eligibleModels = eligibleModels.filter(m => m.creditMultiplier < 8);
+    const eligibleModelIds = eligibleModels.map(m => m.id as ModelId);
+
+    if (eligibleModelIds.length === 0) {
+      // Fallback if no eligible models
+      return {
+        suggestedEnhancements: {
+          enhanceFaces: false,
+          preserveText: false,
+          enhance: false,
+        },
+      };
+    }
+
+    // Extract base64 data (remove data URL prefix if present)
+    const base64Data = imageData.startsWith('data:') ? imageData.split(',')[1] : imageData;
+    const mimeType = options.mimeType || 'image/jpeg';
+
+    // Call LLM analyzer directly
+    const llmAnalyzer = new LLMImageAnalyzer();
+    const analysisResult = await llmAnalyzer.analyze(base64Data, mimeType, eligibleModelIds);
+
+    // Map analysis to tier if suggestTier is true
+    const recommendedTier = options.suggestTier
+      ? modelIdToTier(analysisResult.recommendedModel)
+      : undefined;
+
+    // Determine suggested enhancements from analysis issues
+    const hasFaces = analysisResult.issues.some(i => i.type === 'faces');
+    const hasText = analysisResult.issues.some(i => i.type === 'text' && i.severity !== 'low');
+    const hasDamageOrNoise = analysisResult.issues.some(
+      i => (i.type === 'damage' || i.type === 'noise' || i.type === 'blur') && i.severity !== 'low'
+    );
+
+    return {
+      recommendedTier,
+      suggestedEnhancements: {
+        enhanceFaces: hasFaces,
+        preserveText: hasText,
+        enhance: hasDamageOrNoise,
+      },
+      enhancementPrompt: analysisResult.enhancementPrompt,
+    };
+  } catch (error) {
+    console.error('[analyzeImageForProcessing] LLM analysis failed:', error);
+    // If analysis fails, return defaults
+    return {
+      suggestedEnhancements: {
+        enhanceFaces: false,
+        preserveText: false,
+        enhance: false,
+      },
+    };
+  }
+}
+
+/**
+ * Helper function to map model ID to quality tier
+ */
+function modelIdToTier(modelId: string): QualityTier {
+  switch (modelId) {
+    case 'real-esrgan':
+      return 'quick';
+    case 'gfpgan':
+      return 'face-restore';
+    case 'clarity-upscaler':
+      return 'hd-upscale';
+    case 'flux-2-pro':
+      return 'face-pro';
+    case 'nano-banana-pro':
+      return 'ultra';
+    default:
+      return 'quick';
+  }
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -147,13 +259,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
-    // Determine user tier for model access validation
-    // Active subscriptions without tier default to 'hobby' (lowest paid tier)
-    // to avoid blocking paying users who have missing tier data
-    let userTierForModels: SubscriptionTier = 'free';
-    if (isPaidUser) {
-      userTierForModels = userTier ?? 'hobby';
-    }
+    // Note: User tier validation now happens in the 3-branch logic section
 
     // 8. Validate image size based on user tier (BEFORE charging credits)
     const sizeValidation = validateImageSizeForTier(validatedInput.imageData, isPaidUser);
@@ -171,105 +277,192 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
-    // 9. Model selection and validation
-    const modelRegistry = ModelRegistry.getInstance();
-    let selectedModelId = validatedInput.config.selectedModel;
+    // 9. New 3-branch logic for quality tier processing
+    const config = validatedInput.config;
+    let resolvedTier: QualityTier;
+    let resolvedModelId: ModelId;
+    let resolvedEnhancements = config.additionalOptions;
+    let didRunAIAnalysis = false;
 
-    // If auto mode, use preferredModel hint or default
-    if (selectedModelId === 'auto') {
-      selectedModelId = validatedInput.config.preferredModel || 'real-esrgan';
-    }
-
-    // Validate model exists and is enabled
-    const selectedModel = modelRegistry.getModel(selectedModelId);
-    if (!selectedModel || !selectedModel.isEnabled) {
-      logger.warn('Selected model not available', { modelId: selectedModelId, userId });
-      // Fall back to default model
-      selectedModelId = 'real-esrgan';
-    }
-
-    // Validate model is available for user's tier
-    const eligibleModels = modelRegistry.getModelsByTier(userTierForModels);
-    const isModelEligible = eligibleModels.some(m => m.id === selectedModelId);
-
-    if (!isModelEligible) {
-      logger.warn('Model requires higher tier', {
-        userId,
-        modelId: selectedModelId,
-        userTier: userTierForModels,
-        requiredTier: selectedModel?.tierRestriction,
+    if (config.qualityTier === 'auto') {
+      // Branch A: Auto tier - Always run AI analysis for tier + enhancements
+      logger.info('Auto tier selected, running AI analysis', { userId });
+      const analysis = await analyzeImageForProcessing(validatedInput.imageData, {
+        suggestTier: true,
+        userTier: userTier || 'free',
+        mimeType: validatedInput.mimeType,
       });
+      resolvedTier = analysis.recommendedTier || 'quick';
+      resolvedModelId = (getModelForTier(resolvedTier) || 'real-esrgan') as ModelId;
+      resolvedEnhancements = {
+        ...config.additionalOptions,
+        // For Auto tier, smartAnalysis is always true (inherent to auto mode)
+        smartAnalysis: true,
+        // Apply AI suggestions
+        enhance: analysis.suggestedEnhancements.enhance || config.additionalOptions.enhance,
+        enhanceFaces:
+          analysis.suggestedEnhancements.enhanceFaces || config.additionalOptions.enhanceFaces,
+        preserveText:
+          analysis.suggestedEnhancements.preserveText || config.additionalOptions.preserveText,
+        customInstructions:
+          analysis.enhancementPrompt || config.additionalOptions.customInstructions,
+      };
+      didRunAIAnalysis = true;
+      logger.info('AI analysis completed for Auto tier', {
+        userId,
+        recommendedTier: resolvedTier,
+        resolvedModelId,
+        enhancements: resolvedEnhancements,
+      });
+    } else if (config.additionalOptions.smartAnalysis) {
+      // Branch B: Explicit tier + Smart Analysis - AI suggests enhancements only
+      logger.info('Explicit tier with Smart Analysis', {
+        userId,
+        tier: config.qualityTier,
+      });
+      const analysis = await analyzeImageForProcessing(validatedInput.imageData, {
+        suggestTier: false,
+        userTier: userTier || 'free',
+        mimeType: validatedInput.mimeType,
+      });
+      resolvedTier = config.qualityTier;
+      resolvedModelId = (getModelForTier(resolvedTier) || 'real-esrgan') as ModelId;
+      resolvedEnhancements = {
+        ...config.additionalOptions,
+        // Apply AI suggestions for enhancements only
+        enhance: analysis.suggestedEnhancements.enhance || config.additionalOptions.enhance,
+        enhanceFaces:
+          analysis.suggestedEnhancements.enhanceFaces || config.additionalOptions.enhanceFaces,
+        preserveText:
+          analysis.suggestedEnhancements.preserveText || config.additionalOptions.preserveText,
+        customInstructions:
+          analysis.enhancementPrompt || config.additionalOptions.customInstructions,
+      };
+      didRunAIAnalysis = true;
+      logger.info('AI analysis completed for enhancements', {
+        userId,
+        tier: resolvedTier,
+        resolvedModelId,
+        enhancements: resolvedEnhancements,
+      });
+    } else {
+      // Branch C: Explicit tier, no Smart Analysis - Use user's exact settings
+      logger.info('Explicit tier without Smart Analysis', {
+        userId,
+        tier: config.qualityTier,
+      });
+      resolvedTier = config.qualityTier;
+      resolvedModelId = (getModelForTier(resolvedTier) || 'real-esrgan') as ModelId;
+      // Use user's exact settings from additionalOptions
+      logger.info("Using user's exact settings", {
+        userId,
+        tier: resolvedTier,
+        resolvedModelId,
+        enhancements: resolvedEnhancements,
+      });
+    }
+
+    // Validate model is available for user's subscription tier
+    const modelRegistry = ModelRegistry.getInstance();
+    const selectedModel = modelRegistry.getModel(resolvedModelId);
+    if (!selectedModel || !selectedModel.isEnabled) {
+      logger.error('Resolved model not available', { modelId: resolvedModelId, userId });
       const { body: errorBody, status } = createErrorResponse(
-        ErrorCodes.FORBIDDEN,
-        `Model ${selectedModelId} requires ${selectedModel?.tierRestriction || 'pro'} tier or higher. Please upgrade your subscription or select a different model.`,
-        403
+        ErrorCodes.INTERNAL_ERROR,
+        'Unable to process image with selected quality tier. Please try again.',
+        500
       );
       return NextResponse.json(errorBody, { status });
     }
 
-    // Calculate credit cost based on the model and configuration
-    creditCost = modelRegistry.calculateCreditCostWithMode(
-      selectedModelId,
-      validatedInput.config.scale,
-      validatedInput.config.mode
-    );
+    // Check if model requires higher subscription tier
+    if (selectedModel.tierRestriction) {
+      const minRequiredTier = normalizePaidTier(selectedModel.tierRestriction);
+      const userTierForModels = isPaidUser ? userTier : 'free';
 
-    // 10. Process image with selected model
+      // Tier hierarchy: free < hobby < pro < business
+      const tierLevels: Record<string, number> = { free: 0, hobby: 1, pro: 2, business: 3 };
+      const userLevel = tierLevels[userTierForModels || 'free'] ?? 0;
+      const requiredLevel = tierLevels[minRequiredTier] ?? 0;
+
+      if (userLevel < requiredLevel) {
+        logger.warn('Model requires higher tier', {
+          userId,
+          modelId: resolvedModelId,
+          userTier: userTierForModels,
+          requiredTier: minRequiredTier,
+        });
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.FORBIDDEN,
+          `Quality tier "${resolvedTier}" requires ${minRequiredTier} subscription or higher. Please upgrade your subscription or select a different tier.`,
+          403
+        );
+        return NextResponse.json(errorBody, { status });
+      }
+    }
+
+    // Calculate credit cost using new quality tier system
+    const baseCost = getCreditsForTier(resolvedTier);
+
+    // Get scale multiplier from existing config
+    const { creditCosts } = getSubscriptionConfig();
+    const scaleKey = `${config.scale}x` as '2x' | '4x' | '8x';
+    const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
+
+    // Smart analysis cost: +1 credit when enabled on explicit tier (not auto)
+    // Auto tier already includes smart analysis in its variable cost
+    const smartAnalysisCost =
+      config.qualityTier !== 'auto' && config.additionalOptions.smartAnalysis ? 1 : 0;
+
+    // Apply scale multiplier and bounds, then add smart analysis cost
+    creditCost = Math.ceil(baseCost * scaleMultiplier) + smartAnalysisCost;
+    creditCost = Math.max(creditCost, creditCosts.minimumCost);
+    creditCost = Math.min(creditCost, creditCosts.maximumCost);
+
+    // 10. Process image with resolved model and settings
     let processor;
     try {
-      processor = ImageProcessorFactory.createProcessorForModel(selectedModelId);
+      processor = ImageProcessorFactory.createProcessorForModel(resolvedModelId);
     } catch {
       // Fallback to legacy processor selection if model-specific fails
-      logger.warn('Model-specific processor failed, using fallback', { modelId: selectedModelId });
-      const { primary } = ImageProcessorFactory.createProcessorWithFallback(
-        validatedInput.config.mode
-      );
-      processor = primary;
+      logger.warn('Model-specific processor failed, using fallback', { modelId: resolvedModelId });
+      processor = ImageProcessorFactory.createProcessor('both');
     }
 
     logger.info('Using image processor', {
       provider: processor.providerName,
-      mode: validatedInput.config.mode,
-      selectedModel: selectedModelId,
+      resolvedTier,
+      resolvedModelId,
+      resolvedEnhancements,
       creditCost,
     });
 
-    // Update the input config with the resolved model for the processor
-    // Map enhancementPrompt to customPrompt for processing
-    const inputWithResolvedModel = {
-      ...validatedInput,
+    // Add delay between AI analysis and image processing to avoid Replicate rate limits
+    // Both the analysis (Qwen VL) and processing (upscale models) use Replicate API
+    if (didRunAIAnalysis) {
+      logger.info('Adding rate limit delay after AI analysis', { delayMs: RATE_LIMIT_DELAY_MS });
+      await delay(RATE_LIMIT_DELAY_MS);
+    }
+
+    // Create legacy-compatible input for the processor
+    // Map new quality tier system to legacy format that processors understand
+    const legacyInputForProcessor = {
+      imageData: validatedInput.imageData,
+      mimeType: validatedInput.mimeType,
+      enhancementPrompt: validatedInput.enhancementPrompt,
       config: {
-        ...validatedInput.config,
-        selectedModel: selectedModelId as typeof validatedInput.config.selectedModel,
-        // If enhancementPrompt is provided (from LLM analysis), use it as customPrompt
-        customPrompt: validatedInput.enhancementPrompt || validatedInput.config.customPrompt,
+        // New quality tier system - required by calculateCreditCost
+        qualityTier: resolvedTier,
+        scale: config.scale,
+        additionalOptions: resolvedEnhancements,
+        nanoBananaProConfig: config.nanoBananaProConfig,
       },
     };
 
-    let result;
-
-    try {
-      result = await processor.processImage(userId, inputWithResolvedModel);
-    } catch (error) {
-      // Try fallback provider if error is not due to insufficient credits
-      if (!(error instanceof InsufficientCreditsError)) {
-        const { fallback } = ImageProcessorFactory.createProcessorWithFallback(
-          validatedInput.config.mode
-        );
-        if (fallback && fallback.providerName !== processor.providerName) {
-          logger.warn('Primary provider failed, using fallback', {
-            primaryProvider: processor.providerName,
-            fallbackProvider: fallback.providerName,
-            error: serializeError(error),
-          });
-          result = await fallback.processImage(userId, inputWithResolvedModel);
-        } else {
-          throw error;
-        }
-      } else {
-        throw error;
-      }
-    }
+    // Pass pre-calculated creditCost to ensure consistent billing
+    const result = await processor.processImage(userId, legacyInputForProcessor as never, {
+      creditCost,
+    });
 
     const durationMs = Date.now() - startTime;
 
@@ -277,11 +470,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     await trackServerEvent(
       'image_upscaled',
       {
-        scaleFactor: validatedInput.config.scale,
-        mode: validatedInput.config.mode,
+        scaleFactor: config.scale,
+        qualityTier: resolvedTier,
+        mode: 'both', // Always upscale + enhance in new system
         durationMs,
         creditsUsed: creditCost,
         creditsRemaining: result.creditsRemaining,
+        smartAnalysis: config.additionalOptions.smartAnalysis,
+        autoTier: config.qualityTier === 'auto',
       },
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
     );
@@ -290,13 +486,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       userId,
       durationMs,
       creditsUsed: creditCost,
-      modelUsed: selectedModelId,
+      originalTier: config.qualityTier,
+      usedTier: resolvedTier,
+      modelUsed: resolvedModelId,
+      smartAnalysis: config.additionalOptions.smartAnalysis,
     });
 
-    // 9. Return successful response with enhanced information
+    // Return successful response with enhanced information
     // Get the actual model config for display name
-    const modelConfig = modelRegistry.getModel(selectedModelId);
-    const modelDisplayName = modelConfig?.displayName || selectedModelId;
+    const modelConfig = modelRegistry.getModel(resolvedModelId);
+    const modelDisplayName = modelConfig?.displayName || resolvedModelId;
 
     const response: IUpscaleResponse = {
       success: true,
@@ -305,21 +504,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       expiresAt: result.expiresAt, // Expiry timestamp for URL
       mimeType: result.mimeType || 'image/png',
       processing: {
-        modelUsed: selectedModelId,
+        modelUsed: resolvedModelId,
         modelDisplayName,
         processingTimeMs: durationMs,
         creditsUsed: creditCost,
         creditsRemaining: result.creditsRemaining,
       },
-    };
-
-    // Include analysis hint if auto mode was originally requested
-    if (validatedInput.config.selectedModel === 'auto') {
-      response.analysis = {
-        modelRecommendation: selectedModelId,
+      // Include usedTier for Auto tier responses so UI can show what was actually used
+      usedTier: config.qualityTier === 'auto' ? resolvedTier : undefined,
+      analysis: {
         contentType: undefined, // Would be populated if analyze-image was called first
-      };
-    }
+        modelRecommendation: config.qualityTier === 'auto' ? undefined : resolvedModelId,
+      },
+    };
 
     // Increment batch counter after successful processing
     batchLimitCheck.increment(userId);

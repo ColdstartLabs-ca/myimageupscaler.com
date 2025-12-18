@@ -3,9 +3,18 @@ import { serverEnv } from '@shared/config/env';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import type { IUpscaleInput } from '@shared/validation/upscale.schema';
 import { calculateCreditCost, InsufficientCreditsError } from './image-generation.service';
-import type { IImageProcessor, IImageProcessorResult } from './image-processor.interface';
+import type {
+  IImageProcessor,
+  IImageProcessorResult,
+  IProcessImageOptions,
+} from './image-processor.interface';
 import { serializeError } from '@shared/utils/errors';
 import { ModelRegistry } from './model-registry';
+import {
+  DEFAULT_ENHANCEMENT_SETTINGS,
+  type IEnhancementSettings,
+} from '@shared/types/pixelperfect';
+import { withRetry, isRateLimitError } from '@server/utils/retry';
 
 /**
  * Custom error for Replicate-specific failures
@@ -62,6 +71,19 @@ interface IFluxKontextInput {
 }
 
 /**
+ * Replicate API input for Flux-2-Pro (Black Forest Labs)
+ * Premium face restoration model
+ */
+interface IFlux2ProInput {
+  prompt: string;
+  input_images: string[]; // Array of image URLs/data URLs
+  aspect_ratio?: string;
+  output_format?: 'jpg' | 'png' | 'webp';
+  safety_tolerance?: number; // 1-6, default 2
+  prompt_upsampling?: boolean;
+}
+
+/**
  * Replicate API input for Nano Banana Pro (Google)
  */
 interface INanoBananaProInput {
@@ -85,6 +107,44 @@ interface INanoBananaProInput {
 }
 
 /**
+ * Generate enhancement instructions from the enhancement settings.
+ * This mirrors the client-side logic in prompt-utils.ts to ensure consistency.
+ */
+function generateEnhancementInstructions(enhancement: IEnhancementSettings): string {
+  const actions: string[] = [];
+
+  if (enhancement.clarity) {
+    actions.push('sharpen edges and improve overall clarity');
+  }
+
+  if (enhancement.color) {
+    actions.push('balance color saturation and correct color casts');
+  }
+
+  if (enhancement.lighting) {
+    actions.push('optimize exposure and lighting balance');
+  }
+
+  if (enhancement.denoise) {
+    actions.push('remove sensor noise and grain while preserving details');
+  }
+
+  if (enhancement.artifacts) {
+    actions.push('eliminate compression artifacts and blocky patterns');
+  }
+
+  if (enhancement.details) {
+    actions.push('enhance fine textures and subtle details');
+  }
+
+  if (actions.length === 0) {
+    return '';
+  }
+
+  return actions.join(', ') + '. ';
+}
+
+/**
  * Service for image upscaling via Replicate Real-ESRGAN
  *
  * Cost: ~$0.0017/image on T4 GPU
@@ -96,8 +156,9 @@ export class ReplicateService implements IImageProcessor {
   public readonly providerName = 'Replicate';
   private replicate: Replicate;
   private modelVersion: string;
+  private modelId: string;
 
-  constructor() {
+  constructor(modelId: string = 'real-esrgan') {
     const apiToken = serverEnv.REPLICATE_API_TOKEN;
     if (!apiToken) {
       throw new Error('REPLICATE_API_TOKEN is not configured');
@@ -105,6 +166,7 @@ export class ReplicateService implements IImageProcessor {
 
     this.replicate = new Replicate({ auth: apiToken });
     this.modelVersion = serverEnv.REPLICATE_MODEL_VERSION;
+    this.modelId = modelId;
   }
 
   /**
@@ -122,13 +184,19 @@ export class ReplicateService implements IImageProcessor {
    *
    * @param userId - The authenticated user's ID
    * @param input - The validated upscale input
+   * @param options - Optional processing options (e.g., pre-calculated credit cost)
    * @returns The upscaled image data and remaining credits
    * @throws InsufficientCreditsError if user has no credits
    * @throws ReplicateError if API call fails
    */
-  async processImage(userId: string, input: IUpscaleInput): Promise<IImageProcessorResult> {
+  async processImage(
+    userId: string,
+    input: IUpscaleInput,
+    options?: IProcessImageOptions
+  ): Promise<IImageProcessorResult> {
     const jobId = `rep_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    const creditCost = calculateCreditCost(input.config);
+    // Use pre-calculated credit cost if provided, otherwise calculate locally
+    const creditCost = options?.creditCost ?? calculateCreditCost(input.config);
 
     // Step 1: Deduct credits atomically using FIFO (subscription first, then purchased)
     const { data: balanceResult, error: creditError } = await supabaseAdmin.rpc(
@@ -137,7 +205,7 @@ export class ReplicateService implements IImageProcessor {
         target_user_id: userId,
         amount: creditCost,
         ref_id: jobId,
-        description: `Image upscale via Replicate (${creditCost} credits)`,
+        description: `Image processing via Replicate (${creditCost} credits)`,
       }
     );
 
@@ -208,18 +276,39 @@ export class ReplicateService implements IImageProcessor {
     | IRealEsrganInput
     | IGfpganInput
     | IClarityUpscalerInput
+    | IFlux2ProInput
     | INanoBananaProInput {
     const scale = input.config.scale;
-    const prompt = input.config.customPrompt;
+    const customPrompt = input.config.additionalOptions.customInstructions;
+    const { enhance, enhanceFaces, preserveText } = input.config.additionalOptions;
+    const enhancement = input.config.additionalOptions.enhancement || DEFAULT_ENHANCEMENT_SETTINGS;
+
+    // Generate enhancement instructions from the detailed settings
+    const enhancementInstructions = enhance ? generateEnhancementInstructions(enhancement) : '';
 
     switch (modelId) {
-      case 'clarity-upscaler':
+      case 'clarity-upscaler': {
+        // Use custom prompt if provided, otherwise build from enhancement settings
+        let effectivePrompt = customPrompt;
+        if (!effectivePrompt) {
+          effectivePrompt = 'masterpiece, best quality, highres';
+          if (enhancementInstructions) {
+            effectivePrompt += `. ${enhancementInstructions}`;
+          }
+          if (enhanceFaces) {
+            effectivePrompt += ' Enhance facial features naturally.';
+          }
+          if (preserveText) {
+            effectivePrompt += ' Preserve text and logos clearly.';
+          }
+        }
         return {
           image: imageDataUrl,
-          prompt: prompt || 'masterpiece, best quality, highres',
+          prompt: effectivePrompt,
           scale_factor: scale, // Supports 2-16
           output_format: 'png',
         };
+      }
 
       case 'gfpgan':
         return {
@@ -228,42 +317,77 @@ export class ReplicateService implements IImageProcessor {
           version: 'v1.4',
         };
 
-      case 'flux-kontext-pro':
+      case 'flux-kontext-pro': {
+        let effectivePrompt = customPrompt;
+        if (!effectivePrompt) {
+          effectivePrompt = 'enhance and upscale this image, improve quality and details';
+          if (enhancementInstructions) {
+            effectivePrompt += `. ${enhancementInstructions}`;
+          }
+          if (enhanceFaces) {
+            effectivePrompt += ' Enhance facial features naturally without altering identity.';
+          }
+          if (preserveText) {
+            effectivePrompt += ' Preserve and sharpen any text or logos.';
+          }
+        }
         return {
-          prompt: prompt || 'enhance and upscale this image, improve quality and details',
+          prompt: effectivePrompt,
           input_image: imageDataUrl,
           aspect_ratio: 'match_input_image',
           output_format: 'png',
         };
+      }
+
+      case 'flux-2-pro': {
+        let effectivePrompt = customPrompt;
+        if (!effectivePrompt) {
+          effectivePrompt = 'Restore this image exactly as it would look in higher resolution.';
+          if (enhancementInstructions) {
+            effectivePrompt += ` ${enhancementInstructions}`;
+          }
+          if (enhanceFaces) {
+            effectivePrompt += ' Enhance facial features naturally without altering identity.';
+          }
+          if (preserveText) {
+            effectivePrompt += ' Preserve text and logos clearly.';
+          }
+          effectivePrompt += ' No creative changes.';
+        }
+
+        return {
+          prompt: effectivePrompt,
+          input_images: [imageDataUrl],
+          aspect_ratio: 'match_input_image',
+          output_format: 'png',
+          safety_tolerance: 2,
+          prompt_upsampling: false,
+        };
+      }
 
       case 'nano-banana-pro': {
         // Build a descriptive prompt based on the operation mode
         const ultraConfig = input.config.nanoBananaProConfig;
-        let effectivePrompt = prompt;
+        let effectivePrompt = customPrompt;
 
         if (!effectivePrompt) {
-          // Generate a default prompt based on mode
-          switch (input.config.mode) {
-            case 'upscale':
-              effectivePrompt = `Upscale this image to ${scale}x resolution with enhanced sharpness and detail.`;
-              break;
-            case 'enhance':
-              effectivePrompt =
-                'Enhance this image: improve clarity, colors, lighting, and remove any artifacts or noise.';
-              break;
-            case 'both':
-            default:
-              effectivePrompt = `Upscale this image to ${scale}x resolution while enhancing clarity, colors, and details. Remove noise and artifacts for a crisp, professional result.`;
-              break;
+          // Generate a default prompt based on new quality tier system
+          effectivePrompt = enhance
+            ? `Upscale this image to ${scale}x resolution while enhancing for a crisp, professional result.`
+            : `Upscale this image to ${scale}x resolution with enhanced sharpness and detail.`;
+
+          // Add specific enhancement instructions from the detailed settings
+          if (enhancementInstructions) {
+            effectivePrompt += ` ${enhancementInstructions}`;
           }
 
           // Add face enhancement instruction if enabled
-          if (input.config.enhanceFace) {
+          if (enhanceFaces) {
             effectivePrompt += ' Enhance facial features naturally without altering identity.';
           }
 
           // Add text preservation instruction if enabled
-          if (input.config.preserveText) {
+          if (preserveText) {
             effectivePrompt += ' Preserve and sharpen any text or logos in the image.';
           }
         }
@@ -291,7 +415,7 @@ export class ReplicateService implements IImageProcessor {
         return {
           image: imageDataUrl,
           scale: scale === 2 ? 2 : 4,
-          face_enhance: input.config.enhanceFace || false,
+          face_enhance: enhanceFaces || false,
         };
     }
   }
@@ -311,57 +435,68 @@ export class ReplicateService implements IImageProcessor {
       imageDataUrl = `data:${mimeType};base64,${imageDataUrl}`;
     }
 
-    // Get the model version based on selected model
-    const selectedModel = input.config.selectedModel || 'real-esrgan';
+    // Use the instance's modelId
+    const selectedModel = this.modelId;
     const modelVersion =
       selectedModel !== 'auto' ? this.getModelVersionForId(selectedModel) : this.modelVersion;
 
     // Prepare Replicate input based on model type
     const replicateInput = this.buildModelInput(selectedModel, imageDataUrl, input);
 
+    // Helper to extract URL string from various Replicate output formats
+    const extractUrl = (value: unknown): string | null => {
+      if (typeof value === 'string') {
+        return value;
+      }
+
+      if (value && typeof value === 'object') {
+        // FileOutput objects can be converted to string (they extend URL class)
+        if (typeof (value as { toString?: () => string }).toString === 'function') {
+          const stringified = String(value);
+          if (stringified.startsWith('http')) {
+            return stringified;
+          }
+        }
+
+        // Try .url property (could be string or function)
+        if ('url' in value) {
+          const urlValue = (value as { url: unknown }).url;
+          if (typeof urlValue === 'function') {
+            return urlValue();
+          }
+          if (typeof urlValue === 'string') {
+            return urlValue;
+          }
+        }
+
+        // Try .href property (URL-like objects)
+        if ('href' in value && typeof (value as { href: unknown }).href === 'string') {
+          return (value as { href: string }).href;
+        }
+      }
+
+      return null;
+    };
+
     try {
-      // Run the model - returns output URL(s)
-      const output = await this.replicate.run(modelVersion as `${string}/${string}:${string}`, {
-        input: replicateInput,
-      });
+      // Run with retry for rate limits
+      const output = await withRetry(
+        () =>
+          this.replicate.run(modelVersion as `${string}/${string}:${string}`, {
+            input: replicateInput,
+          }),
+        {
+          shouldRetry: err => isRateLimitError(serializeError(err)),
+          onRetry: (attempt, delayMs) => {
+            console.log(
+              `[Replicate] Rate limited, retrying in ${delayMs}ms (attempt ${attempt}/3)`
+            );
+          },
+        }
+      );
 
       // Handle different output formats
       let outputUrl: string;
-
-      // Helper to extract URL string from various Replicate output formats
-      const extractUrl = (value: unknown): string | null => {
-        if (typeof value === 'string') {
-          return value;
-        }
-
-        if (value && typeof value === 'object') {
-          // FileOutput objects can be converted to string (they extend URL class)
-          if (typeof (value as { toString?: () => string }).toString === 'function') {
-            const stringified = String(value);
-            if (stringified.startsWith('http')) {
-              return stringified;
-            }
-          }
-
-          // Try .url property (could be string or function)
-          if ('url' in value) {
-            const urlValue = (value as { url: unknown }).url;
-            if (typeof urlValue === 'function') {
-              return urlValue();
-            }
-            if (typeof urlValue === 'string') {
-              return urlValue;
-            }
-          }
-
-          // Try .href property (URL-like objects)
-          if ('href' in value && typeof (value as { href: unknown }).href === 'string') {
-            return (value as { href: string }).href;
-          }
-        }
-
-        return null;
-      };
 
       if (Array.isArray(output)) {
         const first = output[0];
@@ -402,7 +537,7 @@ export class ReplicateService implements IImageProcessor {
       // Map Replicate-specific errors
       const message = serializeError(error);
 
-      if (message.includes('rate limit') || message.includes('429')) {
+      if (isRateLimitError(message)) {
         throw new ReplicateError(
           'Replicate rate limit exceeded. Please try again.',
           'RATE_LIMITED'
@@ -426,7 +561,12 @@ export class ReplicateService implements IImageProcessor {
   }
 }
 
-// Export singleton for convenience
+// Export factory function for model-specific instances
+export function createReplicateService(modelId: string): ReplicateService {
+  return new ReplicateService(modelId);
+}
+
+// Export singleton for backward compatibility (default model)
 let replicateServiceInstance: ReplicateService | null = null;
 
 export function getReplicateService(): ReplicateService {

@@ -184,4 +184,3 @@ sequenceDiagram
 - [ ] API tests confirm database updates for `checkout.session.completed`.
 - [ ] CI/CD pipeline runs these tests successfully.
 - [ ] No flakiness in the mocked checkout flow.
-

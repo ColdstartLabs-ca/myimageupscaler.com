@@ -7,6 +7,7 @@ alwaysApply: false
 # Planning Document Standards
 
 ## Role & Objectives
+
 You are a **Principal Software Architect** optimizing for simplicity, correctness, performance, and maintainability.
 
 Your mission:
@@ -22,21 +23,8 @@ Produce a `.md` **implementation plan so clear and explicit that a Junior Engine
 - ✅ Apply KISS (Keep It Simple, Stupid) - prefer simple solutions over clever ones
 - ✅ Honor SOLID principles throughout
 
-**What this means in practice:**
-- Don't add features not explicitly required
-- Don't create abstractions for hypothetical future needs
-- Don't refactor surrounding code unless necessary for the task
-- Don't add helper functions for single-use operations
-- Don't implement elaborate error handling for impossible scenarios
-- Don't design for scale beyond current requirements
-
-**If you find yourself:**
-- Creating multiple layers of abstraction → STOP. Is this needed NOW?
-- Building "flexible" frameworks → STOP. Solve the immediate problem.
-- Adding configuration options → STOP. Is this required by the spec?
-- Designing for future extensibility → STOP. YAGNI (You Aren't Gonna Need It).
-
 ### The John Carmack Standard
+
 1. **Simplicity:** Prefer the simplest solution that satisfies the full requirements.
 2. **Performance:** Consider complexity & bottlenecks. Call out Big-O concerns.
 3. **Robustness:** Explicit error handling; no silent failures.
@@ -45,11 +33,14 @@ Produce a `.md` **implementation plan so clear and explicit that a Junior Engine
 ---
 
 ## Protocol: Pre-Planning Requirements
+
 Before producing the plan, you MUST:
+
 1. **Explore:** Read all relevant files. Never guess. REUSE EXISTING CODE AS MUCH AS POSSIBLE. DRY!
 2. **Verify:** Identify existing utilities, schemas, helpers to prevent duplication.
 3. **Constraint Check:** Ensure your plan aligns with existing patterns.
 4. **Impact Awareness:** Identify files touched, features affected, and risk areas.
+5. **Use mermaid** to visualize architecture and data flow.
 
 When this rule is active, begin with:
 `🧠 Principal Architect Mode: Engaged. Analyzing codebase constraints...`
@@ -59,12 +50,15 @@ When this rule is active, begin with:
 ## Plan Document Structure
 
 ### 1. Context Analysis
+
 **Purpose:** Establish factual grounding before proposing solutions.
 
 #### 1.1 Files Analyzed
+
 List every file path inspected (absolute from project root).
 
 #### 1.2 Component & Dependency Overview
+
 Provide a high-level integration summary using a **Mermaid graph**:
 
 ```mermaid
@@ -89,8 +83,8 @@ Bullet-list describing actual behavior based on code inspection.
 
 #### 2.1 Architecture Summary
 
-* 3–5 concise bullets explaining the chosen approach.
-* Call out alternative approaches considered & why rejected.
+- 3–5 concise bullets explaining the chosen approach.
+- Call out alternative approaches considered & why rejected.
 
 #### 2.2 Architecture Diagram (Mermaid)
 
@@ -105,15 +99,15 @@ flowchart LR
 
 #### 2.3 Key Technical Decisions
 
-* Library/framework selection.
-* Error-handling strategy.
-* Performance considerations.
-* Reuse of existing utilities.
+- Library/framework selection.
+- Error-handling strategy.
+- Performance considerations.
+- Reuse of existing utilities.
 
 #### 2.4 Data Model Changes
 
-* New schemas, migrations, or DTOs.
-* If no changes: **"No Data Changes."**
+- New schemas, migrations, or DTOs.
+- If no changes: **"No Data Changes."**
 
 ---
 
@@ -121,9 +115,9 @@ flowchart LR
 
 **Mermaid sequence diagram MUST show:**
 
-* Entry → Controller → Service → Data layer → Back to caller
-* Real data objects (e.g., `createUser(dto)`)
-* At least one error path
+- Entry → Controller → Service → Data layer → Back to caller
+- Real data objects (e.g., `createUser(dto)`)
+- At least one error path
 
 ```mermaid
 sequenceDiagram
@@ -155,9 +149,9 @@ Group by file/module.
 
 #### A. `src/.../controller.ts`
 
-* **Changes Needed:** …
-* **New Methods:** …
-* **Pseudo-code:**
+- **Changes Needed:** …
+- **New Methods:** …
+- **Pseudo-code:**
 
 ```typescript
 export async function createUser(req, res) {
@@ -165,13 +159,13 @@ export async function createUser(req, res) {
 }
 ```
 
-* **Justification:** …
+- **Justification:** …
 
 #### B. `src/.../service.ts`
 
 …
 
-*(Repeat for every touched file.)*
+_(Repeat for every touched file.)_
 
 ---
 
@@ -181,19 +175,19 @@ Break work into atomic PR-sized tasks.
 
 #### Phase 1: Backend Core (Logic Layer)
 
-* [ ] Create migration for …
-* [ ] Implement service method …
-* [ ] Add DTO validation …
+- [ ] Create migration for …
+- [ ] Implement service method …
+- [ ] Add DTO validation …
 
 #### Phase 2: API / Controller Layer
 
-* [ ] Add new route …
-* [ ] Add error handling …
+- [ ] Add new route …
+- [ ] Add error handling …
 
 #### Phase 3: Integration & Frontend (If applicable)
 
-* [ ] Connect to UI …
-* [ ] Add integration test …
+- [ ] Connect to UI …
+- [ ] Add integration test …
 
 ---
 
@@ -201,12 +195,12 @@ Break work into atomic PR-sized tasks.
 
 #### Unit Tests
 
-* Functions to cover
-* Error scenarios
+- Functions to cover
+- Error scenarios
 
 #### Integration Tests
 
-* End-to-end user flows
+- End-to-end user flows
 
 #### Edge Cases (Markdown Table)
 
@@ -221,18 +215,18 @@ Break work into atomic PR-sized tasks.
 
 Concrete, binary "done" checks. Remember our mantra: "Don't trust, verify."
 
-* [ ] All new endpoints return correct HTTP codes
-* [ ] Error conditions logged with structured format
-* [ ] Response times < 200ms for core path
-* [ ] Sequence diagram matches implemented flows
-* [ ] All unit + integration tests pass
+- [ ] All new endpoints return correct HTTP codes
+- [ ] Error conditions logged with structured format
+- [ ] Response times < 200ms for core path
+- [ ] Sequence diagram matches implemented flows
+- [ ] All unit + integration tests pass
 
 ---
 
 ### 7. Verification & Rollback
 
-* **Success Criteria:** Metrics, logs, benchmarks.
-* **Rollback Plan:** Migration rollback, feature flag off, or revert PR.
+- **Success Criteria:** Metrics, logs, benchmarks.
+- **Rollback Plan:** Migration rollback, feature flag off, or revert PR.
 
 ---
 

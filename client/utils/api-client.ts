@@ -139,7 +139,10 @@ export const analyzeImage = async (
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to analyze image');
+    // Handle error object or string
+    const errorMessage =
+      typeof errorData.error === 'object' ? errorData.error.message : errorData.error;
+    throw new Error(errorMessage || 'Failed to analyze image');
   }
 
   return await response.json();
@@ -159,26 +162,23 @@ export const processImage = async (
     const base64Data = await fileToBase64(file);
 
     let enhancementPrompt: string | undefined;
-    let resolvedModel = config.selectedModel;
+    let resolvedModel: string;
 
-    // If auto mode, analyze image first to get model recommendation and enhancement prompt
-    if (config.selectedModel === 'auto') {
-      // Stage 2: Analyzing
-      onProgress(20, ProcessingStage.ANALYZING);
-      try {
-        const analysis = await analyzeImage(file, {
-          allowExpensiveModels: config.allowExpensiveModels ?? false,
-        });
-        resolvedModel = analysis.recommendation.model as typeof config.selectedModel;
-        enhancementPrompt = analysis.enhancementPrompt;
-        onProgress(40, ProcessingStage.ANALYZING);
-      } catch (error) {
-        console.warn('Image analysis failed, falling back to default model:', error);
-        resolvedModel = 'real-esrgan';
-        onProgress(40, ProcessingStage.ANALYZING);
-      }
-    } else {
+    // Handle different quality tiers
+    if (config.qualityTier === 'auto') {
+      resolvedModel = 'auto'; // Server will determine the best model
       onProgress(30, ProcessingStage.PREPARING);
+    } else {
+      // Use the model associated with the quality tier
+      const { QUALITY_TIER_CONFIG } = await import('@shared/types/pixelperfect');
+      const tierConfig = QUALITY_TIER_CONFIG[config.qualityTier];
+      resolvedModel = tierConfig.modelId || 'real-esrgan';
+      onProgress(30, ProcessingStage.PREPARING);
+    }
+
+    // Use custom instructions if provided
+    if (config.additionalOptions.customInstructions) {
+      enhancementPrompt = config.additionalOptions.customInstructions;
     }
 
     // Get auth token for the API request
@@ -216,13 +216,10 @@ export const processImage = async (
       body: JSON.stringify({
         imageData: base64Data,
         mimeType: file.type || 'image/jpeg',
-        // Pass enhancement prompt if available from analysis
+        // Pass enhancement prompt if available
         enhancementPrompt,
-        config: {
-          ...config,
-          // Use resolved model instead of 'auto'
-          selectedModel: resolvedModel,
-        },
+        config,
+        resolvedModel, // Pass the resolved model for server processing
       }),
     });
 
@@ -242,7 +239,10 @@ export const processImage = async (
         });
       }
 
-      throw new Error(errorData.error || 'Failed to process image');
+      // Handle error object or string
+      const errorMessage =
+        typeof errorData.error === 'object' ? errorData.error.message : errorData.error;
+      throw new Error(errorMessage || 'Failed to process image');
     }
 
     // Stage 4: Finalizing

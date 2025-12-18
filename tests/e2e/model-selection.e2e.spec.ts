@@ -28,16 +28,23 @@ test.describe('E2E: Model Selection UI', () => {
     // Wait for the workspace to load
     await page.waitForTimeout(2000);
 
-    // Look for the model selector - using a more specific selector
-    const modelDropdown = page.locator('select').first();
-    await expect(modelDropdown).toBeVisible({ timeout: 10000 });
+    // Look for the quality tier selector
+    await expect(page.getByText('Quality Tier')).toBeVisible({ timeout: 10000 });
 
-    // Check that options exist
-    const options = await modelDropdown.locator('option').count();
-    expect(options).toBeGreaterThan(0);
+    // Click on the quality tier dropdown to open it
+    const qualityTierButton = page.locator('button').filter({ hasText: 'Auto' }).first();
+    await expect(qualityTierButton).toBeVisible();
 
-    // Check for the AI Model label
-    await expect(page.getByText('AI Model')).toBeVisible({ timeout: 5000 });
+    // Open the dropdown to check options
+    await qualityTierButton.click();
+
+    // Check that tier options exist in the dropdown
+    await expect(page.getByText('Quick')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('HD Upscale')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Face Restore')).toBeVisible({ timeout: 5000 });
+
+    // Check for the Auto tier with recommended badge (use first occurrence)
+    await expect(page.getByText('Recommended').first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should show operation mode buttons', async ({ page }) => {
@@ -45,13 +52,13 @@ test.describe('E2E: Model Selection UI', () => {
     await upscalerPage.uploadImage('tests/fixtures/sample.jpg');
     await page.waitForTimeout(2000);
 
-    // Look for operation mode section
-    await expect(page.getByText('Operation Mode')).toBeVisible();
+    // Look for enhancement options section instead of operation mode
+    await expect(page.getByText('Additional Enhancements')).toBeVisible();
 
-    // Check for mode buttons using text content
-    await expect(page.getByRole('button', { name: 'Upscale' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Enhance' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Both' })).toBeVisible();
+    // Check for enhancement options using the new UI
+    await expect(page.getByText('Enhance Image')).toBeVisible();
+    await expect(page.getByText('Enhance Faces')).toBeVisible();
+    await expect(page.getByText('Preserve Text')).toBeVisible();
   });
 
   test('should show scale options', async ({ page }) => {
@@ -59,7 +66,7 @@ test.describe('E2E: Model Selection UI', () => {
     await upscalerPage.uploadImage('tests/fixtures/sample.jpg');
     await page.waitForTimeout(2000);
 
-    // Check for scale factor section
+    // Check for upscale factor section
     await expect(page.getByText('Upscale Factor')).toBeVisible();
 
     // Look for scale buttons
@@ -73,8 +80,9 @@ test.describe('E2E: Model Selection UI', () => {
     await upscalerPage.uploadImage('tests/fixtures/sample.jpg');
     await page.waitForTimeout(2000);
 
-    // Check for processing options text
+    // Check for processing options in the Additional Enhancements section
     await expect(page.getByText('Preserve Text')).toBeVisible();
-    await expect(page.getByText('Enhance Face')).toBeVisible();
+    await expect(page.getByText('Enhance Faces')).toBeVisible();
+    await expect(page.getByText('Custom Instructions')).toBeVisible();
   });
 });

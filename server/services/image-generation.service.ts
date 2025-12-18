@@ -2,9 +2,13 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { GoogleGenAI } from '@google/genai';
 import { serverEnv } from '@shared/config/env';
 import type { IUpscaleInput, IUpscaleConfig } from '@shared/validation/upscale.schema';
-import { calculateCreditCost as configCalculateCreditCost } from '@shared/config/subscription.utils';
-import type { IImageProcessor, IImageProcessorResult } from './image-processor.interface';
-import { ModelRegistry } from './model-registry';
+import { getCreditsForTier } from '@shared/config/subscription.utils';
+import { getSubscriptionConfig } from '@shared/config/subscription.config';
+import type {
+  IImageProcessor,
+  IImageProcessorResult,
+  IProcessImageOptions,
+} from './image-processor.interface';
 
 /**
  * Custom error class for insufficient credits
@@ -79,17 +83,14 @@ function extractImageDataFromParts(parts: unknown[]): { imageData: string; mimeT
 }
 
 /**
- * Builds the mode-specific prompt segment
+ * Builds the quality-tier specific prompt segment
  */
-function buildModePromptSegment(mode: string, scale: number): string {
-  switch (mode) {
-    case 'upscale':
-      return `Reconstruct the image at ${scale}x resolution (target 2K/4K). Aggressively sharpen edges and hallucinate plausible fine details to remove blur. `;
-    case 'enhance':
-      return 'Refine the image clarity. Remove all JPEG compression artifacts, grain, and sensor noise. Balance the lighting and color saturation for a professional look. ';
-    case 'both':
-    default:
-      return `Reconstruct the image at ${scale}x resolution. Simultaneously remove noise/artifacts and sharpen fine details. The output must be crisp and photorealistic. `;
+function buildQualityPromptSegment(qualityTier: string, scale: number, enhance: boolean): string {
+  // In the new system, we always upscale if scale > 1, and enhance if requested
+  if (enhance) {
+    return `Reconstruct the image at ${scale}x resolution. Simultaneously remove noise/artifacts and sharpen fine details. The output must be crisp and photorealistic. `;
+  } else {
+    return `Reconstruct the image at ${scale}x resolution (target 2K/4K). Aggressively sharpen edges and hallucinate plausible fine details to remove blur. `;
   }
 }
 
@@ -99,13 +100,18 @@ function buildModePromptSegment(mode: string, scale: number): string {
 function buildConstraintSegments(config: IUpscaleConfig): string {
   let constraints = '';
 
-  if (config.enhanceFace) {
+  if (config.additionalOptions.enhanceFaces) {
     constraints +=
       "Constraint: Enhance facial features naturally (eyes, skin texture) without altering the person's identity. ";
   }
 
-  if (config.denoise) {
+  // Apply denoising if enhancement settings include denoise
+  if (config.additionalOptions.enhancement?.denoise) {
     constraints += 'Constraint: Apply strong denoising to smooth out flat areas. ';
+  }
+
+  if (config.additionalOptions.preserveText) {
+    constraints += 'Constraint: Preserve all text, logos, and typography exactly as they appear. ';
   }
 
   return constraints;
@@ -119,24 +125,26 @@ export type IGenerationResult = IImageProcessorResult;
 
 /**
  * Calculate the credit cost for an image processing operation.
- * Uses ModelRegistry as the single source of truth for credit calculations.
+ * Updated to work with new quality tier system.
  *
  * @param config - The upscale configuration
  * @returns The number of credits required
  */
 export function calculateCreditCost(config: IUpscaleConfig): number {
-  // If auto mode selected, use the original calculation method as fallback
-  if (config.selectedModel === 'auto') {
-    return configCalculateCreditCost({
-      mode: config.mode,
-      scale: config.scale,
-    });
-  }
+  // Get base cost from quality tier
+  const baseCost = getCreditsForTier(config.qualityTier);
 
-  // Use ModelRegistry as the single source of truth for credit calculations
-  // This ensures consistency between estimation and actual deduction
-  const modelRegistry = ModelRegistry.getInstance();
-  return modelRegistry.calculateCreditCostWithMode(config.selectedModel, config.scale, config.mode);
+  // Get scale multiplier
+  const { creditCosts } = getSubscriptionConfig();
+  const scaleKey = `${config.scale}x` as '2x' | '4x' | '8x';
+  const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
+
+  // Apply scale multiplier and bounds
+  let creditCost = Math.ceil(baseCost * scaleMultiplier);
+  creditCost = Math.max(creditCost, creditCosts.minimumCost);
+  creditCost = Math.min(creditCost, creditCosts.maximumCost);
+
+  return creditCost;
 }
 
 /**
@@ -177,13 +185,19 @@ export class ImageGenerationService implements IImageProcessor {
    *
    * @param userId - The authenticated user's ID
    * @param input - The validated upscale input
+   * @param options - Optional processing options (e.g., pre-calculated credit cost)
    * @returns The generated image data and remaining credits
    * @throws InsufficientCreditsError if user has no credits
    * @throws AIGenerationError if AI generation fails
    */
-  async processImage(userId: string, input: IUpscaleInput): Promise<IImageProcessorResult> {
+  async processImage(
+    userId: string,
+    input: IUpscaleInput,
+    options?: IProcessImageOptions
+  ): Promise<IImageProcessorResult> {
     const jobId = `gen_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    const creditCost = calculateCreditCost(input.config);
+    // Use pre-calculated credit cost if provided, otherwise calculate locally
+    const creditCost = options?.creditCost ?? calculateCreditCost(input.config);
 
     // Step 1: Deduct credits atomically using FIFO (subscription first, then purchased)
     const { data: balanceResult, error: creditError } = await supabaseAdmin.rpc(
@@ -192,7 +206,7 @@ export class ImageGenerationService implements IImageProcessor {
         target_user_id: userId,
         amount: creditCost,
         ref_id: jobId,
-        description: `Image ${input.config.mode} (${creditCost} credits)`,
+        description: `Image processing (${input.config.qualityTier} tier, ${creditCost} credits)`,
       }
     );
 
@@ -295,18 +309,18 @@ export class ImageGenerationService implements IImageProcessor {
    * Generate the prompt based on configuration
    */
   private generatePrompt(config: IUpscaleConfig): string {
-    // Use custom prompt if in custom mode and a prompt is provided
-    if (config.mode === 'custom' && config.customPrompt && config.customPrompt.trim().length > 0) {
-      return config.customPrompt;
+    // Use custom instructions if provided
+    if (
+      config.additionalOptions.customInstructions &&
+      config.additionalOptions.customInstructions.trim().length > 0
+    ) {
+      return config.additionalOptions.customInstructions;
     }
 
-    // Fallback to 'both' logic if in custom mode but empty prompt, or normal mode logic
-    const effectiveMode = config.mode === 'custom' ? 'both' : config.mode;
-
-    // Build prompt using extracted functions
+    // Build prompt using new quality tier system
     let prompt =
       'Task: Generate a high-definition version of the provided image with significantly improved quality. ';
-    prompt += `Action: ${buildModePromptSegment(effectiveMode, config.scale)}`;
+    prompt += `Action: ${buildQualityPromptSegment(config.qualityTier, config.scale, config.additionalOptions.enhance)}`;
     prompt += buildConstraintSegments(config);
     prompt += 'Output: Return ONLY the generated image.';
 

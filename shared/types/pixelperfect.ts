@@ -13,7 +13,88 @@ export enum ProcessingStage {
   FINALIZING = 'finalizing', // Response handling
 }
 
-export type ProcessingMode = 'upscale' | 'enhance' | 'both' | 'custom';
+export type QualityTier = 'auto' | 'quick' | 'face-restore' | 'hd-upscale' | 'face-pro' | 'ultra';
+
+// Quality tier metadata for UI display
+export const QUALITY_TIER_CONFIG: Record<
+  QualityTier,
+  {
+    label: string;
+    credits: number | 'variable';
+    modelId: ModelId | null; // null for 'auto' - determined by AI
+    description: string;
+    bestFor: string;
+    smartAnalysisAlwaysOn: boolean; // True for 'auto' tier
+  }
+> = {
+  auto: {
+    label: 'Auto',
+    credits: 'variable',
+    modelId: null,
+    description: 'AI picks the best option',
+    bestFor: 'Optimal results without choosing',
+    smartAnalysisAlwaysOn: true,
+  },
+  quick: {
+    label: 'Quick',
+    credits: 1,
+    modelId: 'real-esrgan',
+    description: 'Fast general upscale',
+    bestFor: 'Social media, previews',
+    smartAnalysisAlwaysOn: false,
+  },
+  'face-restore': {
+    label: 'Face Restore',
+    credits: 2,
+    modelId: 'gfpgan',
+    description: 'Restore faces in old/damaged photos',
+    bestFor: 'Old photos, AI-generated faces',
+    smartAnalysisAlwaysOn: false,
+  },
+  'hd-upscale': {
+    label: 'HD Upscale',
+    credits: 4,
+    modelId: 'clarity-upscaler',
+    description: 'High detail preservation',
+    bestFor: 'Textures, print-ready images',
+    smartAnalysisAlwaysOn: false,
+  },
+  'face-pro': {
+    label: 'Face Pro',
+    credits: 6,
+    modelId: 'flux-2-pro',
+    description: 'Premium face enhancement',
+    bestFor: 'Professional portraits',
+    smartAnalysisAlwaysOn: false,
+  },
+  ultra: {
+    label: 'Ultra',
+    credits: 8,
+    modelId: 'nano-banana-pro',
+    description: 'Maximum quality, 4K/8K output',
+    bestFor: 'Large prints, archival',
+    smartAnalysisAlwaysOn: false,
+  },
+};
+
+// Convenience accessors (backward compat)
+export const QUALITY_TIER_MODEL_MAP: Record<QualityTier, ModelId | null> = Object.fromEntries(
+  Object.entries(QUALITY_TIER_CONFIG).map(([k, v]) => [k, v.modelId])
+) as Record<QualityTier, ModelId | null>;
+
+export const QUALITY_TIER_CREDITS: Record<QualityTier, number | 'variable'> = Object.fromEntries(
+  Object.entries(QUALITY_TIER_CONFIG).map(([k, v]) => [k, v.credits])
+) as Record<QualityTier, number | 'variable'>;
+
+// Additional options (replaces mode + toggles)
+export interface IAdditionalOptions {
+  smartAnalysis: boolean; // AI suggests enhancements (hidden when tier='auto')
+  enhance: boolean; // Enable enhancement processing (expands sub-options)
+  enhanceFaces: boolean; // Face restoration - user opt-in
+  preserveText: boolean; // Text preservation - user opt-in
+  customInstructions?: string; // Custom LLM prompt (opens modal when enabled)
+  enhancement?: IEnhancementSettings; // Detailed enhancement settings
+}
 
 // Enhancement aspects - fine-tuned options for what to enhance
 export type EnhancementAspect =
@@ -43,6 +124,16 @@ export const DEFAULT_ENHANCEMENT_SETTINGS: IEnhancementSettings = {
   details: false,
 };
 
+// Default additional options for new UI
+export const DEFAULT_ADDITIONAL_OPTIONS: IAdditionalOptions = {
+  smartAnalysis: false,
+  enhance: true,
+  enhanceFaces: false,
+  preserveText: false,
+  customInstructions: undefined,
+  enhancement: DEFAULT_ENHANCEMENT_SETTINGS,
+};
+
 // Multi-Model Architecture Types
 
 export type SubscriptionTier = 'free' | 'hobby' | 'pro' | 'business';
@@ -52,7 +143,8 @@ export type ModelId =
   | 'gfpgan'
   | 'nano-banana'
   | 'nano-banana-pro'
-  | 'clarity-upscaler';
+  | 'clarity-upscaler'
+  | 'flux-2-pro';
 
 export type ModelCapability =
   | 'upscale'
@@ -139,21 +231,10 @@ export const DEFAULT_NANO_BANANA_PRO_CONFIG: INanoBananaProConfig = {
 };
 
 export interface IUpscaleConfig {
-  mode: ProcessingMode;
+  qualityTier: QualityTier;
   scale: 2 | 4 | 8;
-  enhanceFace: boolean;
-  preserveText: boolean;
-  denoise: boolean;
-  customPrompt?: string;
-  // Enhancement aspect settings for fine-tuned control
-  enhancement: IEnhancementSettings;
-  // Multi-model architecture additions (Phase 1)
-  selectedModel: 'auto' | ModelId;
-  autoModelSelection?: boolean;
-  preferredModel?: ModelId;
-  // Auto mode: allow expensive models (8+ credits) - default false
-  allowExpensiveModels?: boolean;
-  // Nano Banana Pro specific configuration (Upscale Ultra)
+  additionalOptions: IAdditionalOptions;
+  // Studio tier specific (only for 'studio' tier)
   nanoBananaProConfig?: INanoBananaProConfig;
 }
 
@@ -251,6 +332,8 @@ export interface IUpscaleResponse {
     creditsUsed: number;
     creditsRemaining: number;
   };
+  // New field for Auto tier to show what was actually used
+  usedTier?: QualityTier;
   analysis?: {
     damageLevel?: number;
     contentType?: string;

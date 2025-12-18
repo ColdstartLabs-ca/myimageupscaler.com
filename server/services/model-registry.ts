@@ -28,6 +28,7 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'nano-banana': 'gemini-2.5-flash-image',
   'clarity-upscaler':
     'philz1337x/clarity-upscaler:dfad41707589d68ecdccd1dfa600d55a208f9310748e44bfe35b4a6291453d5e',
+  'flux-2-pro': 'black-forest-labs/flux-2-pro',
   'nano-banana-pro': 'google/nano-banana-pro',
 };
 
@@ -39,6 +40,7 @@ const MODEL_COSTS: Record<string, number> = {
   gfpgan: CONFIG_MODEL_COSTS.GFPGAN_COST,
   'nano-banana': CONFIG_MODEL_COSTS.NANO_BANANA_COST, // Google Gemini free tier (500 req/day)
   'clarity-upscaler': CONFIG_MODEL_COSTS.CLARITY_UPSCALER_COST,
+  'flux-2-pro': CONFIG_MODEL_COSTS.FLUX_2_PRO_COST,
   'nano-banana-pro': CONFIG_MODEL_COSTS.NANO_BANANA_PRO_COST,
 };
 
@@ -50,6 +52,7 @@ const MODEL_CREDIT_MULTIPLIERS: Record<string, number> = {
   gfpgan: CREDIT_COSTS.GFPGAN_MULTIPLIER,
   'nano-banana': CREDIT_COSTS.NANO_BANANA_MULTIPLIER,
   'clarity-upscaler': CREDIT_COSTS.CLARITY_UPSCALER_MULTIPLIER,
+  'flux-2-pro': CREDIT_COSTS.FLUX_2_PRO_MULTIPLIER,
   'nano-banana-pro': CREDIT_COSTS.NANO_BANANA_PRO_MULTIPLIER,
 };
 
@@ -95,6 +98,7 @@ export class ModelRegistry {
       gfpgan: serverEnv.MODEL_VERSION_GFPGAN,
       'nano-banana': serverEnv.MODEL_VERSION_NANO_BANANA,
       'clarity-upscaler': serverEnv.MODEL_VERSION_CLARITY_UPSCALER,
+      'flux-2-pro': serverEnv.MODEL_VERSION_FLUX_2_PRO,
       'nano-banana-pro': serverEnv.MODEL_VERSION_NANO_BANANA_PRO,
     };
     return overrides[modelId] || DEFAULT_MODEL_VERSIONS[modelId];
@@ -159,13 +163,13 @@ export class ModelRegistry {
         ],
         isEnabled: true,
       },
-      // Clarity Upscaler (Upscale Plus)
+      // Clarity Upscaler (Standard Face Restoration)
       {
         id: 'clarity-upscaler',
-        displayName: 'Upscale Plus',
+        displayName: 'Face Restore',
         provider: 'replicate',
         modelVersion: this.getModelVersion('clarity-upscaler'),
-        capabilities: ['upscale', 'denoise', 'enhance'],
+        capabilities: ['upscale', 'denoise', 'enhance', 'face-restoration'],
         costPerRun: MODEL_COSTS['clarity-upscaler'],
         creditMultiplier: MODEL_CREDIT_MULTIPLIERS['clarity-upscaler'],
         qualityScore: 9.5,
@@ -178,6 +182,27 @@ export class ModelRegistry {
           CONFIG_MODEL_COSTS.MAX_SCALE_PREMIUM,
         ],
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+      },
+      // Flux-2-Pro (Premium Face Restoration)
+      {
+        id: 'flux-2-pro',
+        displayName: 'Premium Face Restore',
+        provider: 'replicate',
+        modelVersion: this.getModelVersion('flux-2-pro'),
+        capabilities: ['upscale', 'enhance', 'face-restoration', 'denoise'],
+        costPerRun: MODEL_COSTS['flux-2-pro'],
+        creditMultiplier: MODEL_CREDIT_MULTIPLIERS['flux-2-pro'],
+        qualityScore: 9.6,
+        processingTimeMs: TIMEOUTS.CLARITY_UPSCALER_PROCESSING_TIME, // Similar processing time
+        maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+        supportedScales: [
+          CONFIG_MODEL_COSTS.DEFAULT_SCALE,
+          CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD,
+          CONFIG_MODEL_COSTS.MAX_SCALE_PREMIUM,
+        ],
+        isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+        tierRestriction: 'hobby',
       },
       // Nano Banana Pro (Upscale Ultra - Premium)
       {

@@ -158,6 +158,7 @@ const serverEnvSchema = z.object({
   MODEL_VERSION_GFPGAN: z.string().optional(),
   MODEL_VERSION_NANO_BANANA: z.string().optional(),
   MODEL_VERSION_CLARITY_UPSCALER: z.string().optional(),
+  MODEL_VERSION_FLUX_2_PRO: z.string().optional(),
   MODEL_VERSION_NANO_BANANA_PRO: z.string().optional(),
 });
 
@@ -217,6 +218,7 @@ function loadServerEnv(): IServerEnv {
     MODEL_VERSION_GFPGAN: process.env.MODEL_VERSION_GFPGAN,
     MODEL_VERSION_NANO_BANANA: process.env.MODEL_VERSION_NANO_BANANA,
     MODEL_VERSION_CLARITY_UPSCALER: process.env.MODEL_VERSION_CLARITY_UPSCALER,
+    MODEL_VERSION_FLUX_2_PRO: process.env.MODEL_VERSION_FLUX_2_PRO,
     MODEL_VERSION_NANO_BANANA_PRO: process.env.MODEL_VERSION_NANO_BANANA_PRO,
   };
 

@@ -4,12 +4,9 @@
  */
 
 import { getSubscriptionConfig } from './subscription.config';
-import type {
-  IPlanConfig,
-  ProcessingMode,
-  ICreditsExpirationConfig,
-  ICreditPack,
-} from './subscription.types';
+import { QUALITY_TIER_CONFIG, type QualityTier } from '../types/pixelperfect';
+import type { ProcessingMode } from './subscription.types';
+import type { IPlanConfig, ICreditsExpirationConfig, ICreditPack } from './subscription.types';
 
 // ============================================
 // Unified Pricing Resolver - Single Source of Truth
@@ -173,6 +170,39 @@ export function getRecommendedPlan(): IPlanConfig | null {
 }
 
 // ============================================
+// Quality Tier Functions
+// ============================================
+
+/**
+ * Get credits cost for a specific quality tier
+ */
+export function getCreditsForTier(tier: QualityTier): number {
+  const config = QUALITY_TIER_CONFIG[tier].credits;
+  return config === 'variable' ? 0 : config; // Auto tier cost determined at runtime
+}
+
+/**
+ * Get model ID for a specific quality tier
+ */
+export function getModelForTier(tier: QualityTier): string | null {
+  return QUALITY_TIER_CONFIG[tier].modelId;
+}
+
+/**
+ * Get complete configuration for a specific quality tier
+ */
+export function getTierConfig(tier: QualityTier): {
+  label: string;
+  credits: number | 'variable';
+  modelId: string | null;
+  description: string;
+  bestFor: string;
+  smartAnalysisAlwaysOn: boolean;
+} {
+  return QUALITY_TIER_CONFIG[tier];
+}
+
+// ============================================
 // Credit Pack Functions
 // ============================================
 
@@ -212,109 +242,6 @@ export function isPriceIdCreditPack(priceId: string): boolean {
 // ============================================
 
 /**
- * Calculate credit cost for a processing operation
- * Replaces hardcoded switch statement in image-generation.service.ts
- */
-export function calculateCreditCost(config: { mode: ProcessingMode; scale?: number }): number {
-  const { creditCosts } = getSubscriptionConfig();
-
-  // Base cost from mode
-  let cost = creditCosts.modes[config.mode] ?? creditCosts.modes.enhance;
-
-  // Apply scale multiplier if provided
-  if (config.scale) {
-    const scaleKey = `${config.scale}x` as '2x' | '4x' | '8x';
-    const multiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
-    cost = Math.ceil(cost * multiplier);
-  }
-
-  // Apply bounds
-  cost = Math.max(cost, creditCosts.minimumCost);
-  cost = Math.min(cost, creditCosts.maximumCost);
-
-  return cost;
-}
-
-/**
- * Calculate credit cost with model-based multiplier
- * Formula: baseCreditCost × modelMultiplier × scaleMultiplier
- */
-export function calculateModelCreditCost(params: {
-  mode: ProcessingMode;
-  modelId: string;
-  scale: 2 | 4 | 8;
-}): number {
-  const { creditCosts } = getSubscriptionConfig();
-
-  // Base cost from mode
-  const baseCost = creditCosts.modes[params.mode] ?? creditCosts.modes.enhance;
-
-  // Get model multiplier (default to 1 if model not found)
-  const modelMultiplier = creditCosts.modelMultipliers[params.modelId] ?? 1;
-
-  // Get scale multiplier
-  const scaleKey = `${params.scale}x` as '2x' | '4x' | '8x';
-  const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
-
-  // Apply formula: baseCreditCost × modelMultiplier × scaleMultiplier
-  let totalCost = Math.ceil(baseCost * modelMultiplier * scaleMultiplier);
-
-  // Apply bounds
-  totalCost = Math.max(totalCost, creditCosts.minimumCost);
-  totalCost = Math.min(totalCost, creditCosts.maximumCost);
-
-  return totalCost;
-}
-
-/**
- * Get credit cost breakdown for UI display
- * Shows how the total cost is calculated
- */
-export function getCreditCostBreakdown(params: {
-  mode: ProcessingMode;
-  modelId: string;
-  scale: 2 | 4 | 8;
-}): {
-  baseCost: number;
-  modelMultiplier: number;
-  modelCost: number;
-  scaleMultiplier: number;
-  totalCost: number;
-  formula: string;
-} {
-  const { creditCosts } = getSubscriptionConfig();
-
-  // Base cost from mode
-  const baseCost = creditCosts.modes[params.mode] ?? creditCosts.modes.enhance;
-
-  // Get model multiplier
-  const modelMultiplier = creditCosts.modelMultipliers[params.modelId] ?? 1;
-
-  // Calculate cost after model multiplier
-  const modelCost = baseCost * modelMultiplier;
-
-  // Get scale multiplier
-  const scaleKey = `${params.scale}x` as '2x' | '4x' | '8x';
-  const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
-
-  // Calculate total
-  let totalCost = Math.ceil(modelCost * scaleMultiplier);
-
-  // Apply bounds
-  totalCost = Math.max(totalCost, creditCosts.minimumCost);
-  totalCost = Math.min(totalCost, creditCosts.maximumCost);
-
-  return {
-    baseCost,
-    modelMultiplier,
-    modelCost: Math.ceil(modelCost),
-    scaleMultiplier,
-    totalCost,
-    formula: `${baseCost} × ${modelMultiplier} × ${scaleMultiplier} = ${totalCost} credits`,
-  };
-}
-
-/**
  * Get all model multipliers for display
  */
 export function getAllModelMultipliers(): Record<string, number> {
@@ -331,27 +258,11 @@ export function getModelMultiplier(modelId: string): number {
 }
 
 /**
- * Get credit cost for a specific mode (for UI display)
- */
-export function getCreditCostForMode(mode: ProcessingMode): number {
-  const { creditCosts } = getSubscriptionConfig();
-  return creditCosts.modes[mode] ?? creditCosts.minimumCost;
-}
-
-/**
- * Get all mode costs (for pricing display)
- */
-export function getAllCreditCosts(): Record<ProcessingMode, number> {
-  const { creditCosts } = getSubscriptionConfig();
-  return { ...creditCosts.modes };
-}
-
-/**
  * Calculate total credits needed for a batch
  * Used for pre-processing cost preview in the UI
  */
-export function calculateBatchCost(imageCount: number, mode: ProcessingMode): number {
-  return imageCount * getCreditCostForMode(mode);
+export function calculateBatchCost(imageCount: number, costPerImage: number): number {
+  return imageCount * costPerImage;
 }
 
 /**
@@ -719,4 +630,83 @@ export function buildHomepageTiers(): Array<{
   }
 
   return tiers;
+}
+
+/**
+ * Helper function to map model ID to quality tier
+ */
+export function modelIdToTier(modelId: string): QualityTier {
+  switch (modelId) {
+    case 'real-esrgan':
+      return 'quick';
+    case 'gfpgan':
+      return 'face-restore';
+    case 'clarity-upscaler':
+      return 'hd-upscale';
+    case 'flux-2-pro':
+      return 'face-pro';
+    case 'nano-banana-pro':
+      return 'ultra';
+    default:
+      return 'quick';
+  }
+}
+
+// ============================================
+// Legacy Functions (for backward compatibility during migration)
+// ============================================
+
+/**
+ * Get credit cost for a specific mode (legacy)
+ */
+export function getCreditCostForMode(mode: ProcessingMode): number {
+  const { creditCosts } = getSubscriptionConfig();
+  return creditCosts.modes[mode] ?? creditCosts.minimumCost;
+}
+
+/**
+ * Calculate credit cost with model-based multiplier (legacy)
+ */
+export function calculateModelCreditCost(params: {
+  mode: ProcessingMode;
+  modelId: string;
+  scale: 2 | 4 | 8;
+}): number {
+  const { creditCosts } = getSubscriptionConfig();
+
+  // Base cost from mode
+  const baseCost = creditCosts.modes[params.mode] ?? creditCosts.modes.enhance;
+
+  // Get model multiplier (default to 1 if model not found)
+  const modelMultiplier = creditCosts.modelMultipliers[params.modelId] ?? 1;
+
+  // Get scale multiplier
+  const scaleKey = `${params.scale}x` as '2x' | '4x' | '8x';
+  const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
+
+  // Apply formula: baseCreditCost × modelMultiplier × scaleMultiplier
+  let totalCost = Math.ceil(baseCost * modelMultiplier * scaleMultiplier);
+
+  // Apply bounds
+  totalCost = Math.max(totalCost, creditCosts.minimumCost);
+  totalCost = Math.min(totalCost, creditCosts.maximumCost);
+
+  return totalCost;
+}
+
+/**
+ * Calculate credit cost for a processing mode and scale
+ * This is a simplified version that doesn't require model ID
+ */
+export function calculateCreditCost(params: { mode: ProcessingMode; scale?: number }): number {
+  const { creditCosts } = getSubscriptionConfig();
+
+  // Base cost from mode (default to enhance cost if mode not found)
+  let baseCost = creditCosts.modes[params.mode] ?? creditCosts.modes.enhance;
+
+  // Apply bounds (minimum and maximum cost limits)
+  baseCost = Math.max(baseCost, creditCosts.minimumCost);
+  baseCost = Math.min(baseCost, creditCosts.maximumCost);
+
+  return baseCost;
 }

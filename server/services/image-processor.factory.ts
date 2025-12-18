@@ -1,9 +1,9 @@
 import { serverEnv } from '@shared/config/env';
 import type { IImageProcessor } from './image-processor.interface';
-import { ReplicateService } from './replicate.service';
+import { ReplicateService, createReplicateService } from './replicate.service';
 import { ImageGenerationService } from './image-generation.service';
 import { ModelRegistry } from './model-registry';
-import type { ProcessingMode } from '@shared/types/pixelperfect';
+import type { ProcessingMode } from '@shared/config/subscription.types';
 import type {
   SubscriptionTier,
   ContentType,
@@ -30,18 +30,18 @@ import type {
  * - Falls back to legacy behavior when model ID not specified
  */
 export class ImageProcessorFactory {
-  private static replicateInstance: ReplicateService | null = null;
   private static geminiInstance: ImageGenerationService | null = null;
   private static modelRegistry: ModelRegistry | null = null;
+  private static replicateInstances: Map<string, ReplicateService> = new Map();
 
   /**
-   * Get or create a Replicate service instance (singleton)
+   * Get or create a Replicate service instance for a specific model
    */
-  private static getReplicateService(): ReplicateService {
-    if (!this.replicateInstance) {
-      this.replicateInstance = new ReplicateService();
+  private static getReplicateService(modelId: string = 'real-esrgan'): ReplicateService {
+    if (!this.replicateInstances.has(modelId)) {
+      this.replicateInstances.set(modelId, createReplicateService(modelId));
     }
-    return this.replicateInstance;
+    return this.replicateInstances.get(modelId)!;
   }
 
   /**
@@ -88,7 +88,7 @@ export class ImageProcessorFactory {
     // Return appropriate processor
     switch (provider) {
       case 'replicate':
-        return this.getReplicateService();
+        return this.getReplicateService(modelId);
       case 'gemini':
         return this.getGeminiService();
       default:
@@ -146,81 +146,47 @@ export class ImageProcessorFactory {
   /**
    * Legacy method for backward compatibility
    *
-   * @param mode - The processing mode
+   * @param _mode - The processing mode (kept for backward compatibility)
    * @returns An image processor instance
    * @throws Error if no suitable provider is available
    */
-  static createProcessor(mode: ProcessingMode): IImageProcessor {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static createProcessor(_mode: ProcessingMode): IImageProcessor {
     // Try to use model registry with default model
     const registry = this.getModelRegistry();
-    const defaultModel = registry.getModel('real-esrgan-standard');
+    const defaultModel = registry.getModel('real-esrgan');
 
     if (defaultModel && defaultModel.isEnabled) {
       return this.createProcessorForModel(defaultModel.id);
     }
 
-    // Fallback to legacy behavior
-    // Try Replicate first for upscale/both modes (default, fast, cheap)
-    if (['upscale', 'both'].includes(mode) && serverEnv.REPLICATE_API_TOKEN) {
-      try {
-        return this.getReplicateService();
-      } catch (error) {
-        console.warn('Replicate unavailable, falling back to Gemini:', error);
-        // Fall through to Gemini
-      }
-    }
-
-    // Use Gemini for enhance/custom modes or as fallback
-    if (serverEnv.GEMINI_API_KEY) {
-      return this.getGeminiService();
+    // Use Replicate as the primary provider (no Gemini fallback)
+    if (serverEnv.REPLICATE_API_TOKEN) {
+      return this.getReplicateService();
     }
 
     // No providers available
-    throw new Error(
-      'No image processing providers configured. Set REPLICATE_API_TOKEN or GEMINI_API_KEY.'
-    );
+    throw new Error('No image processing providers configured. Set REPLICATE_API_TOKEN.');
   }
 
   /**
-   * Get the best available processor with automatic fallback
+   * Get the best available processor
    *
-   * This method attempts to use the most cost-effective provider
-   * and gracefully falls back if unavailable.
-   *
-   * @param mode - The processing mode
-   * @returns An image processor instance with fallback capability
+   * @param _mode - The processing mode (kept for backward compatibility)
+   * @returns An image processor instance (no fallback - Gemini removed)
+   * @deprecated Use createProcessor instead
    */
-  static createProcessorWithFallback(mode: ProcessingMode): {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static createProcessorWithFallback(_mode: ProcessingMode): {
     primary: IImageProcessor;
     fallback: IImageProcessor | null;
   } {
-    let primary: IImageProcessor;
-    let fallback: IImageProcessor | null = null;
-
-    // For upscale/both: try Replicate first, Gemini as fallback
-    if (['upscale', 'both'].includes(mode)) {
-      if (serverEnv.REPLICATE_API_TOKEN) {
-        try {
-          primary = this.getReplicateService();
-          // Set Gemini as fallback if available
-          if (serverEnv.GEMINI_API_KEY) {
-            fallback = this.getGeminiService();
-          }
-          return { primary, fallback };
-        } catch (error) {
-          console.warn('Replicate initialization failed:', error);
-          // Fall through to Gemini
-        }
-      }
+    // Use Replicate only (Gemini fallback removed)
+    if (serverEnv.REPLICATE_API_TOKEN) {
+      return { primary: this.getReplicateService(), fallback: null };
     }
 
-    // For enhance/custom or fallback: use Gemini
-    if (serverEnv.GEMINI_API_KEY) {
-      primary = this.getGeminiService();
-      return { primary, fallback: null }; // No fallback for Gemini
-    }
-
-    throw new Error('No image processing providers available');
+    throw new Error('No image processing providers available. Set REPLICATE_API_TOKEN.');
   }
 
   /**
@@ -245,11 +211,6 @@ export class ImageProcessorFactory {
       {
         name: 'Replicate',
         available: this.isProviderAvailable('Replicate'),
-        modes: ['upscale', 'both'],
-      },
-      {
-        name: 'Gemini',
-        available: this.isProviderAvailable('Gemini'),
         modes: ['upscale', 'enhance', 'both', 'custom'],
       },
     ];

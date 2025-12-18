@@ -9,6 +9,7 @@ export const MODEL_COSTS = {
   GFPGAN_COST: 0.0025,
   NANO_BANANA_COST: 0.0, // Google Gemini free tier (500 req/day)
   CLARITY_UPSCALER_COST: 0.017,
+  FLUX_2_PRO_COST: 0.05, // black-forest-labs/flux-2-pro - premium face restoration
   NANO_BANANA_PRO_COST: 0.13,
 
   // Cost calculation thresholds
@@ -118,6 +119,20 @@ export const MODEL_CONFIG = {
     cost: MODEL_COSTS.CLARITY_UPSCALER_COST,
     multiplier: 4,
     qualityScore: 9.5,
+    processingTime: MODEL_COSTS.PROCESSING_TIME_SLOW,
+    maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
+    maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+    supportedScales: [
+      MODEL_COSTS.DEFAULT_SCALE,
+      MODEL_COSTS.MAX_SCALE_STANDARD,
+      MODEL_COSTS.MAX_SCALE_PREMIUM,
+    ],
+    tierRestriction: 'hobby',
+  },
+  'flux-2-pro': {
+    cost: MODEL_COSTS.FLUX_2_PRO_COST,
+    multiplier: 6,
+    qualityScore: 9.6,
     processingTime: MODEL_COSTS.PROCESSING_TIME_SLOW,
     maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,

@@ -182,6 +182,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       'real-esrgan': CREDIT_COSTS.REAL_ESRGAN_MULTIPLIER,
       gfpgan: CREDIT_COSTS.GFPGAN_MULTIPLIER,
       'clarity-upscaler': CREDIT_COSTS.CLARITY_UPSCALER_MULTIPLIER,
+      'flux-2-pro': CREDIT_COSTS.FLUX_2_PRO_MULTIPLIER,
       'nano-banana-pro': CREDIT_COSTS.NANO_BANANA_PRO_MULTIPLIER,
     },
     scaleMultipliers: {
