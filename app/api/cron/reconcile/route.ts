@@ -23,8 +23,6 @@ import {
   sleep,
 } from '@server/services/subscription-sync.service';
 
-export const runtime = 'edge';
-
 // Rate limiting: 100ms between Stripe API calls to respect rate limits
 const RATE_LIMIT_DELAY_MS = 100;
 

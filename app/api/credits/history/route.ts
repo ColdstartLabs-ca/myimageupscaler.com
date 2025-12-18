@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
-export const runtime = 'edge';
-
 interface ICreditTransaction {
   id: string;
   amount: number;

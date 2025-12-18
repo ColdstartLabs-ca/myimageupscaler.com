@@ -7,8 +7,6 @@ import { clientEnv, serverEnv } from '@shared/config/env';
 import { getTrialConfig } from '@shared/config/subscription.config';
 import { resolvePlanOrPack, assertKnownPriceId } from '@shared/config/stripe';
 
-export const runtime = 'edge'; // Cloudflare Worker compatible
-
 /**
  * Validates and parses the request body
  */

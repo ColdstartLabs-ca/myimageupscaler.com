@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Pages
+name: Deploy to Cloudflare Workers (OpenNext)
 
 on:
   push:
@@ -59,8 +59,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build for Cloudflare Pages
-        run: yarn pages:build
+      - name: Build for Cloudflare Workers (OpenNext)
+        run: npx opennextjs-cloudflare build
         env:
           # Public environment variables (NEXT_PUBLIC_*)
           # See .env.example for full list
@@ -73,14 +73,20 @@ jobs:
           NEXT_PUBLIC_BASELIME_KEY: ${{ vars.NEXT_PUBLIC_BASELIME_KEY }}
           NEXT_PUBLIC_AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY }}
           NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+          # Server-side environment variables
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Workers
         id: deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .vercel/output/static --project-name=pixelperfect
+          command: opennextjs-cloudflare deploy
 
       - name: Output deployment URL
         run: echo "Deployed to ${{ steps.deploy.outputs.deployment-url }}"

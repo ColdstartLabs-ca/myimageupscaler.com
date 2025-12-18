@@ -7,7 +7,6 @@ import { NextResponse } from 'next/server';
 import { getAllToolSlugs, getToolData } from '@/lib/seo/data-loader';
 import { serverEnv } from '@shared/config/env';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 interface IHealthCheckResult {

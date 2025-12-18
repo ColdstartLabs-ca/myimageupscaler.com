@@ -6,8 +6,6 @@ import { createLogger } from '@server/monitoring/logger';
 import { serverEnv } from '@shared/config/env';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 
-export const runtime = 'edge';
-
 /**
  * GET /api/models
  * Returns available models for the user's tier

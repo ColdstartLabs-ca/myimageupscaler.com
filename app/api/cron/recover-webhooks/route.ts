@@ -19,8 +19,6 @@ import {
   isStripeNotFoundError,
 } from '@server/services/subscription-sync.service';
 
-export const runtime = 'edge';
-
 const MAX_RETRIES = 3;
 const BATCH_SIZE = 50; // Process up to 50 failed events per run
 

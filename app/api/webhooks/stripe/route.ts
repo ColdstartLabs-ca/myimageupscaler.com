@@ -7,8 +7,6 @@ import { InvoiceHandler } from './handlers/invoice.handler';
 import { DisputeHandler } from './handlers/dispute.handler';
 import Stripe from 'stripe';
 
-export const runtime = 'edge'; // Cloudflare Worker compatible
-
 type StripeWebhookEventType =
   | 'checkout.session.completed'
   | 'customer.created'

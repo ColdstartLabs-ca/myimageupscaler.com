@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { MDXRemote } from 'next-mdx-remote/rsc';
+// import { MDXRemote } from 'next-mdx-remote/rsc'; // Temporarily disabled for OpenNext
 import { getPostBySlug, getAllPosts } from '@server/blog';
 import { mdxComponents } from '@client/components/blog/MDXComponents';
 import { Calendar, Clock, ArrowLeft, Tag, User } from 'lucide-react';
@@ -11,10 +11,11 @@ interface IPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const posts = getAllPosts();
-  return posts.map(post => ({ slug: post.slug }));
-}
+// Temporarily disable static generation for OpenNext compatibility
+// export async function generateStaticParams() {
+//   const posts = getAllPosts();
+//   return posts.map(post => ({ slug: post.slug }));
+// }
 
 export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -165,7 +166,12 @@ export default async function BlogPostPage({ params }: IPageProps) {
         <div className="pb-16">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="prose prose-lg prose-slate max-w-none">
-              <MDXRemote source={post.content} components={mdxComponents} />
+              <div className="prose prose-lg max-w-none">
+                {/* Temporarily showing raw content - MDX disabled for OpenNext compatibility */}
+                <pre className="whitespace-pre-wrap bg-gray-100 p-4 rounded-lg text-sm">
+                  {post.content}
+                </pre>
+              </div>
             </div>
           </div>
         </div>

@@ -4,8 +4,6 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { getPlanForPriceId, assertKnownPriceId } from '@shared/config/stripe';
 
-export const runtime = 'edge';
-
 interface ISubscriptionChangeRequest {
   targetPriceId: string;
 }

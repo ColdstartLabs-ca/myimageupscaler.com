@@ -6,8 +6,6 @@ import { z } from 'zod';
 import { getPlanForPriceId } from '@/shared/config/stripe';
 import dayjs from 'dayjs';
 
-export const runtime = 'edge';
-
 const updateSubscriptionSchema = z.object({
   userId: z.string().uuid(),
   action: z.enum(['cancel', 'change']),

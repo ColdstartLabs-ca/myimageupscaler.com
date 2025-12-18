@@ -7,8 +7,6 @@ import { getPlanByPriceId } from '@shared/config/subscription.utils';
 import dayjs from 'dayjs';
 import type Stripe from 'stripe';
 
-export const runtime = 'edge';
-
 interface IPreviewChangeRequest {
   targetPriceId: string;
 }

@@ -54,6 +54,9 @@ Thumbs.db
 # Vercel
 .vercel
 
+# OpenNext
+.open-next/
+
 # Wrangler/Cloudflare
 .wrangler/
 wrangler.toml.bak

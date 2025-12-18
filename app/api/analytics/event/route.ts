@@ -7,8 +7,6 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serializeError } from '@shared/utils/errors';
 import type { IAnalyticsEventName } from '@server/analytics/types';
 
-export const runtime = 'edge';
-
 // Allowed event names for security - matches IAnalyticsEventName type
 const ALLOWED_EVENTS = [
   // Page and session events

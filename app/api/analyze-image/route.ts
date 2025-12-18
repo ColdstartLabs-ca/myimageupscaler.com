@@ -9,8 +9,6 @@ import { z } from 'zod';
 import { serverEnv } from '@shared/config/env';
 import type { SubscriptionTier, ModelId } from '@server/services/model-registry.types';
 
-export const runtime = 'edge';
-
 // Request validation schema
 const analyzeImageSchema = z.object({
   imageData: z.string().min(100, 'Image data is required'),

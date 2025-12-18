@@ -18,8 +18,6 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import type { IUpscaleResponse } from '@shared/types/pixelperfect';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 
-export const runtime = 'edge';
-
 function isPaidSubscriptionStatus(status: string | null | undefined): boolean {
   return status === 'active' || status === 'trialing';
 }

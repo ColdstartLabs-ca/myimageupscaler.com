@@ -3,8 +3,6 @@ import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { clientEnv, serverEnv } from '@shared/config/env';
 
-export const runtime = 'edge';
-
 export async function POST(request: NextRequest) {
   try {
     // 1. Get the authenticated user from the Authorization header

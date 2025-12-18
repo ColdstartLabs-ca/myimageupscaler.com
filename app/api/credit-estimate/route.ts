@@ -8,8 +8,6 @@ import { z } from 'zod';
 import { serverEnv } from '@shared/config/env';
 import type { ModelCapability } from '@shared/types/pixelperfect';
 
-export const runtime = 'edge';
-
 /**
  * Mock user profile for testing in test environment
  */

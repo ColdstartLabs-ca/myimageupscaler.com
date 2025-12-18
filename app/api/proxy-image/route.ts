@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'edge';
-
 /**
  * Proxy endpoint for downloading images from external URLs (e.g., Replicate)
  * This bypasses CORS restrictions that prevent direct browser fetch

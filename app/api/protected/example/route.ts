@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@server/middleware/getAuthenticatedUser';
 
-export const runtime = 'edge'; // Cloudflare Worker compatible
-
 /**
  * Example Protected API Route
  *

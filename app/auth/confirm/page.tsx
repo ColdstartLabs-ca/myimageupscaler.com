@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { createClient } from '@shared/utils/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { handleAuthRedirect, setAuthIntent } from '@client/utils/authRedirectManager';
 
-export default function AuthConfirmPage() {
+function AuthConfirmContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'verified_please_login'>('loading');
   const [message, setMessage] = useState('Confirming your email...');
   const router = useRouter();
@@ -205,5 +205,20 @@ export default function AuthConfirmPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AuthConfirmPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <AuthConfirmContent />
+    </Suspense>
   );
 }

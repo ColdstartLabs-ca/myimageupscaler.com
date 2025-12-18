@@ -1,16 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  eslint: {
-    // Disable ESLint during Cloudflare Pages builds
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     // Keep TypeScript checking enabled
     ignoreBuildErrors: false,
   },
+  // Skip static generation for OpenNext migration
+  ...(process.env.OPENNEXT && {
+    output: 'export',
+    trailingSlash: true,
+  }),
   // Performance optimizations
   images: {
+    unoptimized: process.env.OPENNEXT ? true : false,
     // Allow external images from dicebear for avatars
     remotePatterns: [
       {
@@ -106,5 +108,16 @@ const nextConfig = {
     ];
   },
 };
+
+// Initialize OpenNext for local development with Cloudflare bindings
+if (process.env.NODE_ENV === 'development') {
+  import('@opennextjs/cloudflare')
+    .then(({ initOpenNextCloudflareForDev }) => {
+      initOpenNextCloudflareForDev();
+    })
+    .catch(() => {
+      // Ignore if not installed yet
+    });
+}
 
 export default nextConfig;

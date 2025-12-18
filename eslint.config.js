@@ -12,6 +12,7 @@ export default [
   {
     ignores: [
       '.next/**',
+      '.open-next/**',
       'node_modules/**',
       'out/**',
       'dist/**',
@@ -23,6 +24,7 @@ export default [
       'test-results/**',
       'next-env.d.ts',
       'next.config.js', // Next.js config file
+      'open-next.config.ts', // OpenNext config file
     ],
   },
   {

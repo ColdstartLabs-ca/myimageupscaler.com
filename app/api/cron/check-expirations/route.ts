@@ -22,8 +22,6 @@ import {
   isStripeNotFoundError,
 } from '@server/services/subscription-sync.service';
 
-export const runtime = 'edge';
-
 /**
  * POST handler for expiration check cron job
  */

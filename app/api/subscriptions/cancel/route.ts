@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
-export const runtime = 'edge';
-
 function isSchemaMissingError(error: { code?: string; message?: string } | null | undefined): boolean {
   if (!error) return false;
 

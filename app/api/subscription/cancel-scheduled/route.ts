@@ -3,8 +3,6 @@ import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 
-export const runtime = 'edge';
-
 /**
  * Cancel a scheduled subscription change (downgrade)
  * This releases the Stripe subscription schedule and clears our database fields
