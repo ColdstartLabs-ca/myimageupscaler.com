@@ -13,9 +13,13 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   // Validate URL is from allowed domains (security)
+  // Use strict boundary check to prevent subdomain spoofing (e.g., evilreplicate.com)
   const allowedDomains = ['replicate.delivery', 'replicate.com', 'pbxt.replicate.delivery'];
   const urlObj = new URL(url);
-  const isAllowed = allowedDomains.some(domain => urlObj.hostname.endsWith(domain));
+  const hostname = urlObj.hostname;
+  const isAllowed = allowedDomains.some(
+    domain => hostname === domain || hostname.endsWith('.' + domain)
+  );
 
   if (!isAllowed) {
     return NextResponse.json({ error: 'URL not from allowed domain' }, { status: 403 });

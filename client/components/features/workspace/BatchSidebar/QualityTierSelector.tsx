@@ -1,14 +1,13 @@
 'use client';
 
+import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { QUALITY_TIER_CONFIG, QualityTier } from '@shared/types/pixelperfect';
 import { Check, ChevronDown, Lock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
-// Paid tier requirement mapping (UI-only concern)
-const PAID_TIER_REQUIRED: Partial<Record<QualityTier, boolean>> = {
-  'face-pro': true,
-  ultra: true,
-};
+// Use centralized config for premium tier checks
+const PREMIUM_TIERS = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
 
 export interface IQualityTierSelectorProps {
   tier: QualityTier;
@@ -23,6 +22,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
   disabled = false,
   isFreeUser = false,
 }) => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -36,10 +36,19 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Default free users to 'quick' if they have a premium tier selected
+  useEffect(() => {
+    if (isFreeUser && PREMIUM_TIERS.includes(tier)) {
+      onChange('quick');
+    }
+  }, [isFreeUser, tier, onChange]);
+
   const handleTierSelect = (selectedTier: QualityTier) => {
-    // Check if free user is trying to select paid tier
-    if (isFreeUser && PAID_TIER_REQUIRED[selectedTier]) {
-      return; // Block selection for free users
+    // Redirect free users trying to select premium tiers to pricing
+    if (isFreeUser && PREMIUM_TIERS.includes(selectedTier)) {
+      router.push('/pricing');
+      setIsOpen(false);
+      return;
     }
     onChange(selectedTier);
     setIsOpen(false);
@@ -98,14 +107,17 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
             {/* Auto Tier */}
             <button
               onClick={() => handleTierSelect('auto')}
+              title={isFreeUser ? 'Paid plans only' : undefined}
               className={`
                 w-full flex items-start p-2.5 rounded-lg transition-colors text-left
                 ${tier === 'auto' ? 'bg-indigo-50/80 text-indigo-900' : 'hover:bg-slate-50 text-slate-900'}
+                ${isFreeUser ? 'opacity-60 bg-slate-50/50 hover:opacity-80 cursor-pointer' : ''}
               `}
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-sm">Auto</span>
+                  {isFreeUser && <Lock className="h-3 w-3 text-amber-500" />}
                   <span className="text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full font-medium border border-indigo-200/50">
                     Recommended
                   </span>
@@ -130,17 +142,17 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
               .map(([id, tierConfig]) => {
                 const tierId = id as QualityTier;
                 const isSelected = tier === tierId;
-                const isLocked = isFreeUser && PAID_TIER_REQUIRED[tierId];
+                const isLocked = isFreeUser && PREMIUM_TIERS.includes(tierId);
 
                 return (
                   <button
                     key={id}
                     onClick={() => handleTierSelect(tierId)}
-                    disabled={isLocked}
+                    title={isLocked ? 'Paid plans only' : undefined}
                     className={`
                       w-full flex items-start p-2.5 rounded-lg transition-colors text-left group
                       ${isSelected ? 'bg-indigo-50/80 text-indigo-900' : 'hover:bg-slate-50 text-slate-900'}
-                      ${isLocked ? 'opacity-60 cursor-not-allowed bg-slate-50/50' : ''}
+                      ${isLocked ? 'opacity-60 bg-slate-50/50 hover:opacity-80 cursor-pointer' : ''}
                     `}
                   >
                     <div className="flex-1 min-w-0">
@@ -171,7 +183,10 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
 
           {/* Upgrade Prompt inside dropdown */}
           {isFreeUser && (
-            <div className="p-2.5 bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-100/50 text-xs text-amber-900 flex items-center justify-between">
+            <button
+              onClick={() => router.push('/pricing')}
+              className="w-full p-2.5 bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-100/50 text-xs text-amber-900 flex items-center justify-between hover:from-amber-100/80 hover:to-orange-100/80 transition-colors cursor-pointer"
+            >
               <div className="flex items-center gap-2">
                 <div className="p-1 bg-amber-100 rounded-full">
                   <Lock className="h-3 w-3 text-amber-600" />
@@ -181,7 +196,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
               <span className="text-[10px] font-semibold text-amber-700 bg-white/50 px-2 py-0.5 rounded-full border border-amber-100">
                 UPGRADE
               </span>
-            </div>
+            </button>
           )}
         </div>
       )}

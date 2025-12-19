@@ -70,4 +70,6 @@ export const PUBLIC_API_ROUTES = [
   '/api/health',
   '/api/webhooks/*', // All webhook routes are public (they use their own auth mechanisms)
   '/api/analytics/*', // Analytics events support both anonymous and authenticated tracking
+  '/api/cron/*', // Cron routes use x-cron-secret header auth, not JWT
+  '/api/proxy-image', // Download proxy for CORS bypass (validates allowed domains internally)
 ] as const;

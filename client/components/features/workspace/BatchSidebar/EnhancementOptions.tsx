@@ -15,6 +15,7 @@ export interface IEnhancementOptionsProps {
   onOpenCustomInstructions: () => void;
   selectedTier: QualityTier;
   disabled?: boolean;
+  isFreeUser?: boolean;
 }
 
 export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
@@ -23,6 +24,7 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
   onOpenCustomInstructions,
   selectedTier,
   disabled = false,
+  isFreeUser = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -51,30 +53,41 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
     <div className="space-y-3">
       {/* Smart AI Analysis - Prominent Card */}
       {showSmartAnalysis && (
-        <div className="rounded-lg border border-indigo-100 bg-indigo-50/50 overflow-hidden">
+        <div
+          className={`rounded-lg border overflow-hidden ${
+            isFreeUser
+              ? 'border-slate-200 bg-slate-50/50 opacity-60'
+              : 'border-indigo-100 bg-indigo-50/50'
+          }`}
+          title={isFreeUser ? 'Paid plans only' : undefined}
+        >
           <div className="p-3 flex items-start gap-3">
-            <div className="p-1.5 bg-indigo-100 rounded-md shrink-0">
-              <Brain className="h-4 w-4 text-indigo-600" />
+            <div
+              className={`p-1.5 rounded-md shrink-0 ${isFreeUser ? 'bg-slate-200' : 'bg-indigo-100'}`}
+            >
+              <Brain className={`h-4 w-4 ${isFreeUser ? 'text-slate-500' : 'text-indigo-600'}`} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="smart-analysis"
-                  className="font-medium text-sm text-indigo-900 cursor-pointer"
+                  className={`font-medium text-sm ${isFreeUser ? 'text-slate-600 cursor-not-allowed' : 'text-indigo-900 cursor-pointer'}`}
                 >
                   Smart AI Analysis
                 </label>
                 <input
                   type="checkbox"
                   id="smart-analysis"
-                  checked={options.smartAnalysis}
+                  checked={isFreeUser ? false : options.smartAnalysis}
                   onChange={e => handleToggle('smartAnalysis', e.target.checked)}
-                  disabled={disabled}
+                  disabled={disabled || isFreeUser}
                   className="h-4 w-4 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-50"
                 />
               </div>
-              <p className="text-xs text-indigo-700 mt-1">
-                AI automatically detects image content and optimizes parameters for best results.
+              <p className={`text-xs mt-1 ${isFreeUser ? 'text-slate-500' : 'text-indigo-700'}`}>
+                {isFreeUser
+                  ? 'Upgrade to let AI detect content type and optimize settings automatically.'
+                  : 'AI automatically detects image content and optimizes parameters for best results.'}
               </p>
             </div>
           </div>

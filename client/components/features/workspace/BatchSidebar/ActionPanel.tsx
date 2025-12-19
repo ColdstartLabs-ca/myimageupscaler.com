@@ -1,9 +1,10 @@
 import { InsufficientCreditsModal } from '@client/components/stripe/InsufficientCreditsModal';
 import { Button } from '@client/components/ui/Button';
+import { PremiumUpsellModal } from '@client/components/features/workspace/PremiumUpsellModal';
 import { IBatchItem, ProcessingStatus } from '@shared/types/pixelperfect';
 import { Download, Loader2, Trash2, Wand2 } from 'lucide-react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface IBatchProgress {
   current: number;
@@ -23,6 +24,7 @@ export interface IActionPanelProps {
   showInsufficientModal: boolean;
   setShowInsufficientModal: (show: boolean) => void;
   router: AppRouterInstance;
+  isFreeUser: boolean;
 }
 
 export const ActionPanel: React.FC<IActionPanelProps> = ({
@@ -38,7 +40,11 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
   showInsufficientModal,
   setShowInsufficientModal,
   router,
+  isFreeUser,
 }) => {
+  const [showPremiumUpsellModal, setShowPremiumUpsellModal] = useState(false);
+  const [hasSeenPremiumUpsell, setHasSeenPremiumUpsell] = useState(false);
+
   const pendingQueue = queue.filter(i => i.status !== ProcessingStatus.COMPLETED);
   const hasEnoughCredits = currentBalance >= totalCost;
 
@@ -47,7 +53,25 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
       setShowInsufficientModal(true);
       return;
     }
+
+    // Show premium upsell modal for free users on first process click
+    if (isFreeUser && !hasSeenPremiumUpsell && pendingQueue.length > 0) {
+      setShowPremiumUpsellModal(true);
+      return;
+    }
+
     onProcess();
+  };
+
+  const handleProceedWithFree = () => {
+    setShowPremiumUpsellModal(false);
+    setHasSeenPremiumUpsell(true);
+    onProcess();
+  };
+
+  const handleViewPlans = () => {
+    setShowPremiumUpsellModal(false);
+    router.push('/pricing');
   };
 
   return (
@@ -150,6 +174,14 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
         currentBalance={currentBalance}
         onBuyCredits={() => router.push('/dashboard/billing')}
         onViewPlans={() => router.push('/pricing')}
+      />
+
+      {/* Premium Upsell Modal for Free Users */}
+      <PremiumUpsellModal
+        isOpen={showPremiumUpsellModal}
+        onClose={() => setShowPremiumUpsellModal(false)}
+        onProceed={handleProceedWithFree}
+        onViewPlans={handleViewPlans}
       />
     </div>
   );

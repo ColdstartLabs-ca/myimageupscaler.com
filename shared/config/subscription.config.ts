@@ -204,7 +204,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
     monthlyRefresh: false, // Free users don't get monthly refresh
     monthlyCredits: CREDIT_COSTS.DEFAULT_TRIAL_CREDITS, // Only for paid subscriptions
     maxBalance: CREDIT_COSTS.DEFAULT_FREE_CREDITS, // Free users capped at initial credits
-    batchLimit: 1, // Single image only for free users
+    batchLimit: 5, // Up to 5 images per hour for free users
   },
 
   warnings: {

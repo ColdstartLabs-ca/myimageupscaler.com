@@ -8,32 +8,52 @@
 
 ### Image Enhancement Engine
 
-- **Multiple Upscaling Factors**: 2x, 4x, 8x resolution enhancement
-- **Enhancement Modes**:
-  - Standard (balanced quality boost)
-  - Enhanced (maximum detail restoration)
-  - Gentle (subtle improvement, preserves original feel)
-  - Portrait (optimized for human faces)
-  - Product (optimized for commercial products)
+- **Quality Tiers (Outcome-Based Selection)**:
+  - **Quick** (1 credit) - Fast upscaling for social media using Real-ESRGAN
+  - **Face Restore** (2 credits) - Photo restoration using GFPGAN
+  - **Auto** (1-4 credits) - AI automatically selects optimal model and settings
+  - **HD Upscale** (4 credits) - Professional print quality with Clarity Upscaler
+  - **Face Pro** (6 credits) - Premium portrait enhancement using Flux-2-Pro
+  - **Ultra** (8 credits) - Maximum 4K/8K quality with Nano Banana Pro
+- **Smart AI Analysis**: Premium feature for automatic content detection and optimization
 - **AI-Powered Face Enhancement**: Advanced facial feature reconstruction and improvement
 - **Noise Reduction**: Intelligent denoising while preserving important details
 - **Text Preservation**: Proprietary technology to preserve text, logos, and brand assets during upscaling
+- **Multiple Upscaling Factors**: 2x, 4x, 8x resolution enhancement
+- **Premium Model Restrictions**: Advanced models require paid subscription
 
 ### Batch Processing
 
-- **Pro Tier Feature**: Upload and process up to 50 images simultaneously
+- **Tier-Based Batch Limits**:
+  - Free Tier: 5 images per batch
+  - Hobby Tier: 10 images per batch
+  - Pro Tier: 50 images per batch
+  - Business Tier: 500 images per batch
+- **Paid Feature**: Batch processing now requires paid subscription (Free tier limited to single image)
 - **Queue Management**: Smart processing queue with priority handling
 - **Progress Tracking**: Real-time progress updates for batch jobs
 - **Error Handling**: Individual image error handling without stopping entire batch
+- **Server-Side Enforcement**: Sliding window batch limit tracking to prevent abuse
 
 ### File Support
 
 - **Format Support**: JPEG, PNG, WebP
 - **Size Limits**:
   - Free Tier: 5MB per image
-  - Starter Tier: 10MB per image
+  - Hobby Tier: 10MB per image
   - Pro Tier: 64MB per image
-- **Resolution Support**: Up to 64MP output on Pro tier
+  - Business Tier: 64MB per image
+- **Resolution Support**: Up to 64MP output on Pro/Business tiers
+- **Premium Upscale Support**: 4K/8K output available on Ultra quality tier
+
+### Before-After Comparison & Premium Upsell
+
+- **Interactive Before/After Slider**: Draggable comparison slider demonstrating premium quality
+- **Premium Upsell Modal**: Targeted upsell for free users with visual quality comparisons
+- **Multi-Image Examples**: Multiple before/after samples showing different enhancement types
+- **Touch-Optimized**: Full mobile support with touch gestures
+- **Visual Quality Proof**: Real examples demonstrating premium vs standard quality differences
+- **Conversion-Optimized**: Strategic timing shown on first processing attempt
 
 ## 🚀 API Access
 
@@ -59,36 +79,55 @@
 
 #### Free Tier (Always Free)
 
-- 10 images per month
+- 10 images per month (no refresh)
+- Quick & Face Restore quality tiers only
 - 2x & 4x upscaling
-- Basic enhancement
+- 5 images per batch limit
 - 5MB file limit
 - Community support
+- Single image processing emphasis
 
-#### Starter Tier - $9/month
+#### Hobby Tier - $19/month
 
-- 100 images per month
+- 200 credits per month
+- All quality tiers including HD Upscale
 - All upscaling options (2x, 4x, 8x)
-- Full enhancement suite (all modes)
-- 64MP file support
+- 10 images per batch
+- 10MB file limit
 - Priority processing queue
 - Email support
 
-#### Pro Tier - $29/month
+#### Pro Tier - $49/month
 
-- 500 images per month
+- 1,000 credits per month
+- All quality tiers including Face Pro & Ultra
 - Batch processing (up to 50 images)
 - Text Preservation Mode
-- Credit rollover (unused credits carry over)
+- 64MB file limit
+- Smart AI Analysis
 - Priority support
 - Advanced features
 
+#### Business Tier - $149/month
+
+- 5,000 credits per month
+- All premium features unlocked
+- Batch processing (up to 500 images)
+- 64MB file limit
+- API access with higher rate limits
+- Priority support
+- Enterprise features
+
 ### Credit System
 
-- **Consumption**: 1 credit per image processed
-- **Purchase**: Additional credits available for purchase
-- **Tracking**: Real-time credit balance and transaction history
-- **Management**: Stripe-integrated credit purchasing and subscription management
+- **Tier-Based Costs**: 1-8 credits per image based on quality tier selected
+- **Smart AI Analysis**: +1 credit when AI analysis is enabled
+- **Scale Multipliers**: Higher upscaling factors (4x, 8x) increase credit costs
+- **Monthly Refresh**: Credits reset monthly (no rollover for paid tiers)
+- **Free Tier Caps**: Maximum 10 credits, no monthly refresh
+- **Real-time Tracking**: Live credit balance and cost preview before processing
+- **Transaction History**: Comprehensive credit usage and purchase history
+- **Stripe Integration**: Seamless credit purchasing and subscription management
 
 ## 🔐 Security & Privacy
 
@@ -98,7 +137,10 @@
 - **Row Level Security (RLS)**: Comprehensive database security policies
 - **Authentication**: JWT-based secure authentication via Supabase
 - **Input Validation**: Zod schema validation for all inputs
-- **Rate Limiting**: Tier-based API rate limiting
+- **Tier-Based Rate Limiting**: API limits per subscription tier
+- **Premium Feature Enforcement**: Server-side validation of model access
+- **Batch Limit Tracking**: Sliding window abuse prevention
+- **Domain Whitelisting**: Secure image proxy with allowed domain validation
 
 ### Privacy Features
 
@@ -126,8 +168,12 @@
 - **Database**: Supabase (PostgreSQL with RLS)
 - **Authentication**: Supabase Auth with OAuth providers
 - **Payments**: Stripe integration with webhook handling
-- **AI Processing**: Google Gemini API integration
+- **AI Processing**: Multiple AI model integration (Replicate, Google Gemini)
 - **File Storage**: Supabase Storage with CDN
+- **Model Registry**: Dynamic model selection and tier-based access control
+- **Service-Oriented Architecture**: Factory pattern for image processors
+- **Cloudflare Workers**: Cron jobs for webhook recovery and system maintenance
+- **Batch Limit Tracking**: In-memory sliding window for abuse prevention
 
 ### Monitoring & Analytics
 
@@ -135,6 +181,8 @@
 - **User Analytics**: Amplitude analytics
 - **Performance Monitoring**: Custom performance tracking
 - **Logging**: Comprehensive application logging
+- **Webhook Recovery**: Automatic retry system for failed Stripe events
+- **Health Monitoring**: Cron-based system health checks
 
 ## 🎨 User Interface Features
 
@@ -148,10 +196,14 @@
 
 ### Workspace Interface
 
+- **Outcome-Based Selection**: Quality-focused tiers instead of technical settings
 - **Drag & Drop**: Intuitive file upload interface
-- **Real-time Preview**: Before/after comparison
-- **Progress Tracking**: Live processing status updates
-- **Batch Management**: Queue visualization for batch jobs
+- **Interactive Before/After**: Draggable slider for quality comparison
+- **Progress Tracking**: Live processing status updates with cost preview
+- **Batch Management**: Queue visualization with tier-based limits
+- **Premium Upsell Integration**: Strategic upsell prompts for free users
+- **Smart AI Analysis**: Optional AI-powered enhancement suggestions
+- **Mobile-Optimized**: Touch-friendly interface with bottom sheet UI
 - **Download Management**: Organized file download system
 
 ### User Dashboard
@@ -177,13 +229,19 @@
 - **Database**: Supabase (managed PostgreSQL)
 - **Deployment**: Automated deployment pipeline
 - **Environment Management**: Split environment variables (public vs secrets)
+- **Domain Centralization**: Planned architecture for flexible domain configuration
+- **Cron Jobs**: Cloudflare Workers for webhook recovery and maintenance
+- **Health Monitoring**: Automated system health checks and alerting
 
 ### Business Operations
 
-- **Payment Processing**: Stripe with multiple payment methods
+- **Payment Processing**: Stripe with multiple payment methods and webhook recovery
+- **Subscription Management**: Automated plan syncing and credit allocation
 - **Customer Support**: Email support with ticket system
 - **Legal Compliance**: Privacy policy, terms of service, GDPR compliance
 - **Analytics**: Business metrics and user behavior tracking
+- **Premium Conversion**: Visual before/after comparisons for upsell optimization
+- **Usage Monitoring**: Real-time tracking of API usage and batch limits
 
 ## 📊 Current Metrics & Capabilities
 
@@ -205,17 +263,26 @@
 
 ### ✅ Fully Implemented
 
-- Core image upscaling and enhancement
+- Core image upscaling and enhancement with tier-based model access
+- Premium model restrictions and enforcement
 - Text preservation technology
 - User authentication and management
-- Stripe payment integration
-- REST API with authentication
-- Batch processing (Pro tier)
+- Stripe payment integration with webhook recovery
+- REST API with authentication and tier-based rate limiting
+- Batch processing with tier-based limits
+- Interactive before/after comparison slider
+- Premium upsell modal with visual demonstrations
+- Smart AI Analysis for automatic optimization
+- Outcome-based quality tier selection
+- Mobile-responsive interface
 - GDPR compliance implementation
 - Comprehensive testing suite
+- Service-oriented architecture with model registry
+- Cloudflare Workers for system maintenance
 
 ### 🔄 In Development
 
+- Domain configuration centralization for rebranding support
 - Enhanced analytics dashboard
 - Advanced API key management
 - Additional image processing filters
@@ -243,6 +310,7 @@
 - **User Flow**: `/docs/technical/user-flow.md`
 - **Tech Stack**: `/docs/technical/tech-stack.md`
 - **Roadmap**: `/docs/management/ROADMAP.md`
+- **Feature PRDs**: `/docs/PRDs/` - Premium restrictions, outcome-based flow, batch limits, domain centralization
 
 ---
 
@@ -253,4 +321,37 @@
 - **Legal**: Privacy Policy at `/privacy`, Terms at `/terms`
 - **Status**: System status and uptime monitoring
 
-**Note**: This document represents the current state of PixelPerfect AI as of v2.0. Features and capabilities are continuously evolving. Check the roadmap for upcoming features and improvements.
+**Note**: This document represents the current state of PixelPerfect AI as of v2.1. Features and capabilities are continuously evolving. Check the roadmap for upcoming features and improvements.
+
+---
+
+## 🎯 Recent Major Updates (v2.1)
+
+### Premium Model Restrictions & Quality Tiers
+
+- Implemented tier-based model access control
+- Added outcome-based quality selection (Quick, Face Restore, Auto, HD Upscale, Face Pro, Ultra)
+- Premium features now require paid subscription
+- Enhanced server-side enforcement of model restrictions
+
+### Interactive Before-After Comparison
+
+- New draggable slider component for visual quality demonstrations
+- Premium upsell modal with multiple image examples
+- Touch-optimized for mobile devices
+- Conversion-focused user experience design
+
+### Batch Processing Overhaul
+
+- Tier-based batch limits (Free: 5, Hobby: 10, Pro: 50, Business: 500)
+- Server-side sliding window tracking for abuse prevention
+- Batch processing converted to paid-only feature
+- Enhanced error handling and user feedback
+
+### Architecture & Infrastructure Improvements
+
+- Service-oriented architecture with factory patterns
+- Model registry for dynamic AI model selection
+- Cloudflare Workers for webhook recovery and system maintenance
+- Enhanced security with tier-based rate limiting
+- Planned domain centralization for rebranding support

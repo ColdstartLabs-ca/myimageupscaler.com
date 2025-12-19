@@ -38,7 +38,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
         currentCount,
         availableSlots,
         serverEnforced,
-        userType: limit === 1 ? 'free' : 'paid',
+        userType: limit <= 5 ? 'free' : 'paid',
       });
     }
   }, [isOpen, limit, attempted, currentCount, availableSlots, serverEnforced]);
@@ -49,7 +49,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       attempted,
       currentCount,
       serverEnforced,
-      userType: limit === 1 ? 'free' : 'paid',
+      userType: limit <= 5 ? 'free' : 'paid',
       source: 'batch_limit_modal',
     });
     router.push('/pricing');
@@ -62,7 +62,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       currentCount,
       availableSlots,
       serverEnforced,
-      userType: limit === 1 ? 'free' : 'paid',
+      userType: limit <= 5 ? 'free' : 'paid',
     });
     onAddPartial();
   };
@@ -74,7 +74,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       currentCount,
       availableSlots,
       serverEnforced,
-      userType: limit === 1 ? 'free' : 'paid',
+      userType: limit <= 5 ? 'free' : 'paid',
     });
     onClose();
   };
@@ -110,11 +110,11 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       </div>
 
       {/* Free User Special Message */}
-      {limit === 1 && (
+      {limit <= 5 && (
         <div className="bg-slate-50 rounded-lg p-4 mb-6 border border-slate-200">
           <p className="text-sm text-slate-600">
-            Free users can only process one image at a time. Upgrade to unlock batch processing and
-            handle multiple images simultaneously.
+            Free users can process up to 5 images per hour. Upgrade to unlock higher batch limits
+            and process more images.
           </p>
         </div>
       )}

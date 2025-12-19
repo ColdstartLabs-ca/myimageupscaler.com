@@ -151,6 +151,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           showInsufficientModal={showInsufficientModal}
           setShowInsufficientModal={setShowInsufficientModal}
           router={router}
+          isFreeUser={isFreeUser}
         />
       </div>
 
@@ -184,6 +185,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onOpenCustomInstructions={handleOpenCustomInstructions}
           selectedTier={config.qualityTier}
           disabled={isProcessing}
+          isFreeUser={isFreeUser}
         />
 
         {/* 4. Ultra tier specific config (conditional) */}

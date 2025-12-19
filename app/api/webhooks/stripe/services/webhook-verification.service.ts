@@ -33,9 +33,7 @@ export class WebhookVerificationService {
 
     console.log('Webhook test mode detection:', {
       ENV: serverEnv.ENV,
-      STRIPE_SECRET_KEY: serverEnv.STRIPE_SECRET_KEY,
       isTestMode,
-      includesDummy: serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key'),
     });
 
     // Production safety check: detect misconfigured test webhook secret

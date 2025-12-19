@@ -93,36 +93,39 @@ export async function verifyApiAuth(
 
   const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
-  // Handle test authentication token for testing
-  if (token === 'test_auth_token_for_testing_only') {
-    return {
-      user: {
-        id: 'test-user-id-12345',
-        email: 'test@example.com',
-      },
-    };
-  }
+  // Handle test authentication tokens ONLY in test environment
+  if (serverEnv.ENV === 'test') {
+    // Accept hardcoded test token
+    if (token === 'test_auth_token_for_testing_only') {
+      return {
+        user: {
+          id: 'test-user-id-12345',
+          email: 'test@example.com',
+        },
+      };
+    }
 
-  // For environment-specific test tokens
-  if (token === serverEnv.TEST_AUTH_TOKEN) {
-    return {
-      user: {
-        id: 'test-user-id-12345',
-        email: 'test@example.com',
-      },
-    };
-  }
+    // Accept environment-specific test token
+    if (serverEnv.TEST_AUTH_TOKEN && token === serverEnv.TEST_AUTH_TOKEN) {
+      return {
+        user: {
+          id: 'test-user-id-12345',
+          email: 'test@example.com',
+        },
+      };
+    }
 
-  // Handle mock authentication tokens in test environment
-  // Token format: test_token_{userId} where userId is 'mock_user_{uniquePart}'
-  if (serverEnv.ENV === 'test' && token.startsWith('test_token_')) {
-    const mockUserId = token.replace('test_token_', '');
-    return {
-      user: {
-        id: mockUserId,
-        email: `test-${mockUserId}@test.local`,
-      },
-    };
+    // Handle mock authentication tokens
+    // Token format: test_token_{userId} where userId is 'mock_user_{uniquePart}'
+    if (token.startsWith('test_token_')) {
+      const mockUserId = token.replace('test_token_', '');
+      return {
+        user: {
+          id: mockUserId,
+          email: `test-${mockUserId}@test.local`,
+        },
+      };
+    }
   }
 
   // Validate JWT format for real tokens

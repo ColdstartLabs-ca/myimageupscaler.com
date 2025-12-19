@@ -31,6 +31,7 @@ import type { IUpscaleResponse, QualityTier, ModelId } from '@shared/types/pixel
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 import { getCreditsForTier, getModelForTier } from '@shared/config/subscription.utils';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
+import { MODEL_COSTS } from '@shared/config/model-costs.config';
 
 function isPaidSubscriptionStatus(status: string | null | undefined): boolean {
   return status === 'active' || status === 'trialing';
@@ -277,8 +278,40 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
-    // 9. New 3-branch logic for quality tier processing
+    // 9. Validate premium tier restrictions for free users
     const config = validatedInput.config;
+    const premiumTiers = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
+
+    // Block free users from premium tiers
+    if (!isPaidUser && premiumTiers.includes(config.qualityTier)) {
+      logger.warn('Free user attempted premium tier', {
+        userId,
+        tier: config.qualityTier,
+      });
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.FORBIDDEN,
+        `Quality tier "${config.qualityTier}" requires a paid subscription. Please upgrade or select Quick or Face Restore tier.`,
+        403
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
+    // Block free users from Smart AI Analysis
+    if (
+      !isPaidUser &&
+      MODEL_COSTS.SMART_ANALYSIS_REQUIRES_PAID &&
+      config.additionalOptions.smartAnalysis
+    ) {
+      logger.warn('Free user attempted Smart Analysis', { userId });
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.FORBIDDEN,
+        'Smart AI Analysis requires a paid subscription. Please upgrade or disable this feature.',
+        403
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
+    // 10. New 3-branch logic for quality tier processing
     let resolvedTier: QualityTier;
     let resolvedModelId: ModelId;
     let resolvedEnhancements = config.additionalOptions;
@@ -419,7 +452,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     creditCost = Math.max(creditCost, creditCosts.minimumCost);
     creditCost = Math.min(creditCost, creditCosts.maximumCost);
 
-    // 10. Process image with resolved model and settings
+    // 11. Process image with resolved model and settings
     let processor;
     try {
       processor = ImageProcessorFactory.createProcessorForModel(resolvedModelId);
@@ -524,7 +557,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Get updated batch usage to include in response headers
     const batchUsage = batchLimitCheck.getUsage(userId, userTier);
 
-    // 11. Return successful response with enhanced information and batch headers
+    // 12. Return successful response with enhanced information and batch headers
     return NextResponse.json(response, {
       headers: {
         'X-Batch-Limit': batchUsage.limit.toString(),

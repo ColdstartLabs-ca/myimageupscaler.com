@@ -33,10 +33,39 @@ export const MODEL_COSTS = {
   MAX_SCALE_PREMIUM: 8,
 
   // Model tier restrictions
-  FREE_MODELS: ['real-esrgan'],
-  HOBBY_MODELS: ['real-esrgan', 'gfpgan', 'nano-banana'],
-  PRO_MODELS: ['real-esrgan', 'gfpgan', 'nano-banana', 'clarity-upscaler'],
-  BUSINESS_MODELS: ['real-esrgan', 'gfpgan', 'nano-banana', 'clarity-upscaler', 'nano-banana-pro'],
+  // Note: These are informational constants for UI/reference. Actual enforcement is handled via tierRestriction in MODEL_CONFIG.
+  FREE_MODELS: ['real-esrgan', 'gfpgan', 'nano-banana'], // All models with tierRestriction: null
+  HOBBY_MODELS: [
+    'real-esrgan',
+    'gfpgan',
+    'nano-banana',
+    'clarity-upscaler',
+    'flux-2-pro',
+    'nano-banana-pro',
+  ], // All models accessible with hobby tier
+  PRO_MODELS: [
+    'real-esrgan',
+    'gfpgan',
+    'nano-banana',
+    'clarity-upscaler',
+    'flux-2-pro',
+    'nano-banana-pro',
+  ], // All models accessible with pro tier
+  BUSINESS_MODELS: [
+    'real-esrgan',
+    'gfpgan',
+    'nano-banana',
+    'clarity-upscaler',
+    'flux-2-pro',
+    'nano-banana-pro',
+  ], // All models accessible with business tier
+
+  // Quality tiers requiring paid subscription (free users blocked)
+  PREMIUM_QUALITY_TIERS: ['auto', 'hd-upscale', 'face-pro', 'ultra'] as const,
+  // Quality tiers available to free users
+  FREE_QUALITY_TIERS: ['quick', 'face-restore'] as const,
+  // Smart AI Analysis requires paid subscription
+  SMART_ANALYSIS_REQUIRES_PAID: true,
 
   // Processing time estimates (ms)
   PROCESSING_TIME_FAST: 2000,
