@@ -26,7 +26,7 @@ const nextConfig = {
   // Enable experimental features for better performance
   experimental: {
     // Optimize package imports for smaller bundles
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ['lucide-react', 'react-icons', 'date-fns', '@supabase/supabase-js'],
   },
   async redirects() {
     return [
