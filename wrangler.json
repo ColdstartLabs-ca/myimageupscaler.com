@@ -4,20 +4,20 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2024-12-30",
   "compatibility_flags": ["nodejs_compat"],
-  // Static assets binding (required)
+  "routes": [
+    { "pattern": "myimageupscaler.com/*", "zone_name": "myimageupscaler.com" },
+    { "pattern": "www.myimageupscaler.com/*", "zone_name": "myimageupscaler.com" }
+  ],
   "assets": {
     "binding": "ASSETS",
     "directory": ".open-next/assets"
   },
-  // Image optimization (uses Cloudflare Images)
   "images": {
     "binding": "IMAGES"
   },
-  // Enable logging
   "observability": {
     "enabled": true
   },
-  // Worker self-reference for middleware
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",

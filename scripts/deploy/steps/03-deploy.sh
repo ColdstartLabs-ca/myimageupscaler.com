@@ -13,9 +13,7 @@ step_deploy() {
     # Cron worker
     if [[ -d "workers/cron" ]]; then
         log_info "Deploying cron worker..."
-        cd workers/cron
-        npx wrangler deploy
+        npx wrangler deploy --config workers/cron/wrangler.toml
         log_success "Cron worker deployed"
-        cd "$PROJECT_ROOT"
     fi
 }
