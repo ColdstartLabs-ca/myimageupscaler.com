@@ -36,8 +36,8 @@ const clientEnvSchema = z.object({
   SUPPORT_EMAIL: z.string().email().default('support@pixelperfect.app'),
   LEGAL_EMAIL: z.string().email().default('legal@pixelperfect.app'),
   PRIVACY_EMAIL: z.string().email().default('privacy@pixelperfect.app'),
-  SALES_EMAIL: z.string().email().default('sales@example.com'),
-  TWITTER_HANDLE: z.string().default(''),
+  SALES_EMAIL: z.string().email().default('sales@pixelperfect.app'),
+  TWITTER_HANDLE: z.string().default('pixelperfectai'),
   // Stripe
   STRIPE_PUBLISHABLE_KEY: z.string().default(''),
   // Stripe Credit Pack Price IDs
@@ -69,8 +69,8 @@ function loadClientEnv(): IClientEnv {
     SUPPORT_EMAIL: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@pixelperfect.app',
     LEGAL_EMAIL: process.env.NEXT_PUBLIC_LEGAL_EMAIL || 'legal@pixelperfect.app',
     PRIVACY_EMAIL: process.env.NEXT_PUBLIC_PRIVACY_EMAIL || 'privacy@pixelperfect.app',
-    SALES_EMAIL: process.env.NEXT_PUBLIC_SALES_EMAIL || 'sales@example.com',
-    TWITTER_HANDLE: process.env.NEXT_PUBLIC_TWITTER_HANDLE || '',
+    SALES_EMAIL: process.env.NEXT_PUBLIC_SALES_EMAIL || 'sales@pixelperfect.app',
+    TWITTER_HANDLE: process.env.NEXT_PUBLIC_TWITTER_HANDLE || 'pixelperfectai',
     // Stripe
     STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
     // Stripe Credit Pack Price IDs
