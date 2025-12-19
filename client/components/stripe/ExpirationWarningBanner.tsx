@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
 import { StripeService } from '@client/services/stripeService';
 import { getPlanByPriceId, shouldSendExpirationWarning } from '@shared/config/subscription.utils';
-import type { IUserProfile, ISubscription } from '@shared/types/stripe';
 import { differenceInDays, format } from 'date-fns';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface IExpirationWarningBannerProps {
   /**
@@ -97,21 +97,19 @@ export function ExpirationWarningBanner({ warningDays = 7 }: IExpirationWarningB
 
   return (
     <div
-      className={`rounded-lg p-4 mb-6 ${
-        isUrgent
+      className={`rounded-lg p-4 mb-6 ${isUrgent
           ? 'bg-red-50 border border-red-200'
           : isModerate
             ? 'bg-amber-50 border border-amber-200'
             : 'bg-blue-50 border border-blue-200'
-      }`}
+        }`}
     >
       <div className="flex items-start gap-3">
         {/* Icon */}
         <div className="flex-shrink-0">
           <svg
-            className={`h-5 w-5 ${
-              isUrgent ? 'text-red-600' : isModerate ? 'text-amber-600' : 'text-blue-600'
-            }`}
+            className={`h-5 w-5 ${isUrgent ? 'text-red-600' : isModerate ? 'text-amber-600' : 'text-blue-600'
+              }`}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -127,16 +125,14 @@ export function ExpirationWarningBanner({ warningDays = 7 }: IExpirationWarningB
         {/* Content */}
         <div className="flex-1 min-w-0">
           <h3
-            className={`text-sm font-semibold mb-1 ${
-              isUrgent ? 'text-red-900' : isModerate ? 'text-amber-900' : 'text-blue-900'
-            }`}
+            className={`text-sm font-semibold mb-1 ${isUrgent ? 'text-red-900' : isModerate ? 'text-amber-900' : 'text-blue-900'
+              }`}
           >
             {isUrgent ? 'Credits Expiring Soon!' : 'Credits Will Expire'}
           </h3>
           <p
-            className={`text-sm ${
-              isUrgent ? 'text-red-800' : isModerate ? 'text-amber-800' : 'text-blue-800'
-            }`}
+            className={`text-sm ${isUrgent ? 'text-red-800' : isModerate ? 'text-amber-800' : 'text-blue-800'
+              }`}
           >
             Your <strong>{creditBalance} credit{creditBalance !== 1 ? 's' : ''}</strong> will
             expire on <strong>{formattedDate}</strong>
@@ -150,9 +146,8 @@ export function ExpirationWarningBanner({ warningDays = 7 }: IExpirationWarningB
           <div className="mt-2">
             <Link
               href="/upscaler"
-              className={`text-sm font-medium inline-flex items-center gap-1 hover:underline ${
-                isUrgent ? 'text-red-700' : isModerate ? 'text-amber-700' : 'text-blue-700'
-              }`}
+              className={`text-sm font-medium inline-flex items-center gap-1 hover:underline ${isUrgent ? 'text-red-700' : isModerate ? 'text-amber-700' : 'text-blue-700'
+                }`}
             >
               Start upscaling now
               <svg

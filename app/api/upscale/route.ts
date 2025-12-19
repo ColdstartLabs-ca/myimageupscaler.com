@@ -1,18 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { upscaleSchema, validateImageSizeForTier } from '@shared/validation/upscale.schema';
-import {
-  InsufficientCreditsError,
-  AIGenerationError,
-} from '@server/services/image-generation.service';
-import { ReplicateError } from '@server/services/replicate.service';
-import { ImageProcessorFactory } from '@server/services/image-processor.factory';
-import { ModelRegistry } from '@server/services/model-registry';
-import { LLMImageAnalyzer } from '@server/services/llm-image-analyzer';
-import { ZodError } from 'zod';
-import { createLogger } from '@server/monitoring/logger';
+import type { IUpscaleResponse, ModelId, QualityTier } from '@/shared/types/coreflow.types';
 import { trackServerEvent } from '@server/analytics';
+import { createLogger } from '@server/monitoring/logger';
+import { upscaleRateLimit } from '@server/rateLimit';
+import { batchLimitCheck } from '@server/services/batch-limit.service';
+import {
+  AIGenerationError,
+  InsufficientCreditsError,
+} from '@server/services/image-generation.service';
+import { ImageProcessorFactory } from '@server/services/image-processor.factory';
+import { LLMImageAnalyzer } from '@server/services/llm-image-analyzer';
+import { ModelRegistry } from '@server/services/model-registry';
+import type { SubscriptionTier } from '@server/services/model-registry.types';
+import { ReplicateError } from '@server/services/replicate.service';
+import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
+import { MODEL_COSTS } from '@shared/config/model-costs.config';
+import { getSubscriptionConfig } from '@shared/config/subscription.config';
+import { getCreditsForTier, getModelForTier } from '@shared/config/subscription.utils';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
+import { upscaleSchema, validateImageSizeForTier } from '@shared/validation/upscale.schema';
+import { NextRequest, NextResponse } from 'next/server';
+import { ZodError } from 'zod';
 
 // Delay between AI analysis and image processing to avoid Replicate rate limits
 // Replicate enforces 1 req/sec for low-credit accounts, with ~30s reset on 429
@@ -24,14 +32,6 @@ const RATE_LIMIT_DELAY_MS = 5000;
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-import { upscaleRateLimit } from '@server/rateLimit';
-import { batchLimitCheck } from '@server/services/batch-limit.service';
-import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import type { IUpscaleResponse, QualityTier, ModelId } from '@shared/types/pixelperfect';
-import type { SubscriptionTier } from '@server/services/model-registry.types';
-import { getCreditsForTier, getModelForTier } from '@shared/config/subscription.utils';
-import { getSubscriptionConfig } from '@shared/config/subscription.config';
-import { MODEL_COSTS } from '@shared/config/model-costs.config';
 
 function isPaidSubscriptionStatus(status: string | null | undefined): boolean {
   return status === 'active' || status === 'trialing';

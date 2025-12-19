@@ -3,10 +3,14 @@
  * Helper functions to access configuration values
  */
 
+import { QUALITY_TIER_CONFIG, type QualityTier } from '../types/coreflow.types';
 import { getSubscriptionConfig } from './subscription.config';
-import { QUALITY_TIER_CONFIG, type QualityTier } from '../types/pixelperfect';
-import type { ProcessingMode } from './subscription.types';
-import type { IPlanConfig, ICreditsExpirationConfig, ICreditPack } from './subscription.types';
+import type {
+  ICreditPack,
+  ICreditsExpirationConfig,
+  IPlanConfig,
+  ProcessingMode,
+} from './subscription.types';
 
 // ============================================
 // Unified Pricing Resolver - Single Source of Truth

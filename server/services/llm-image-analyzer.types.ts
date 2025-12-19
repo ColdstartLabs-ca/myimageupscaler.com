@@ -1,4 +1,4 @@
-import type { ModelId } from '@shared/types/pixelperfect';
+import type { ModelId } from '@/shared/types/coreflow.types';
 
 export type IssueType =
   | 'blur'

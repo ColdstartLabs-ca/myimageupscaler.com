@@ -5,7 +5,7 @@ import {
   IAdditionalOptions,
   IEnhancementSettings,
   QualityTier,
-} from '@shared/types/pixelperfect';
+} from '@/shared/types/coreflow.types';
 import { Brain, ChevronDown, Edit3, Sparkles, Type, UserSquare2 } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -54,11 +54,10 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
       {/* Smart AI Analysis - Prominent Card */}
       {showSmartAnalysis && (
         <div
-          className={`rounded-lg border overflow-hidden ${
-            isFreeUser
-              ? 'border-slate-200 bg-slate-50/50 opacity-60'
-              : 'border-indigo-100 bg-indigo-50/50'
-          }`}
+          className={`rounded-lg border overflow-hidden ${isFreeUser
+            ? 'border-slate-200 bg-slate-50/50 opacity-60'
+            : 'border-indigo-100 bg-indigo-50/50'
+            }`}
           title={isFreeUser ? 'Paid plans only' : undefined}
         >
           <div className="p-3 flex items-start gap-3">
@@ -128,9 +127,8 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
 
       {/* Collapsible Content */}
       <div
-        className={`space-y-3 overflow-hidden transition-all duration-300 ease-in-out ${
-          isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        className={`space-y-3 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+          }`}
       >
         {/* Enhance Image */}
         <div className="flex flex-col gap-1 pl-1">

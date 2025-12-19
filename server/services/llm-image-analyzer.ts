@@ -1,9 +1,9 @@
-import Replicate from 'replicate';
+import type { ModelId } from '@/shared/types/coreflow.types';
+import { isRateLimitError, withRetry } from '@server/utils/retry';
 import { serverEnv } from '@shared/config/env';
-import { ModelRegistry } from './model-registry';
+import Replicate from 'replicate';
 import type { ILLMAnalysisResult } from './llm-image-analyzer.types';
-import type { ModelId } from '@shared/types/pixelperfect';
-import { withRetry, isRateLimitError } from '@server/utils/retry';
+import { ModelRegistry } from './model-registry';
 
 /**
  * Build the analysis prompt dynamically based on eligible models

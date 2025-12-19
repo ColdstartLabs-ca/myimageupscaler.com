@@ -1,10 +1,10 @@
+import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
+import { TIMEOUTS } from '@shared/config/timeouts.config';
+import { createClient } from '@shared/utils/supabase/client';
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
-import { createClient } from '@shared/utils/supabase/client';
-import type { IUserProfile, ISubscription } from '@shared/types/stripe';
-import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { handlePostAuthRedirect } from './auth/postAuthRedirect';
-import { TIMEOUTS } from '@shared/config/timeouts.config';
 
 // Cache keys
 const USER_CACHE_KEY = 'pixelperfect_user_cache';

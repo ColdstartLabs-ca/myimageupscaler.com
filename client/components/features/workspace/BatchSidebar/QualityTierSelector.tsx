@@ -1,7 +1,7 @@
 'use client';
 
+import { QUALITY_TIER_CONFIG, QualityTier } from '@/shared/types/coreflow.types';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
-import { QUALITY_TIER_CONFIG, QualityTier } from '@shared/types/pixelperfect';
 import { Check, ChevronDown, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
@@ -167,11 +167,10 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
                     <div className="flex flex-col items-end ml-3 shrink-0">
                       {isSelected && <Check className="h-4 w-4 text-indigo-600 mb-1" />}
                       <div
-                        className={`text-[10px] font-medium px-1.5 py-0.5 rounded border ${
-                          isSelected
-                            ? 'text-indigo-600 bg-white border-indigo-100'
-                            : 'text-slate-500 bg-slate-50 border-slate-100'
-                        }`}
+                        className={`text-[10px] font-medium px-1.5 py-0.5 rounded border ${isSelected
+                          ? 'text-indigo-600 bg-white border-indigo-100'
+                          : 'text-slate-500 bg-slate-50 border-slate-100'
+                          }`}
                       >
                         {formatCredits(tierConfig.credits)}
                       </div>

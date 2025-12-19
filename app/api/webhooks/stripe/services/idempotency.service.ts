@@ -1,5 +1,5 @@
+import type { IIdempotencyResult, WebhookEventStatus } from '@/shared/types/stripe.types';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import type { IIdempotencyResult, WebhookEventStatus } from '@shared/types/stripe';
 
 export class IdempotencyService {
   /**

@@ -1,20 +1,20 @@
-import Replicate from 'replicate';
-import { serverEnv } from '@shared/config/env';
+import {
+  DEFAULT_ENHANCEMENT_SETTINGS,
+  type IEnhancementSettings,
+} from '@/shared/types/coreflow.types';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { isRateLimitError, withRetry } from '@server/utils/retry';
+import { serverEnv } from '@shared/config/env';
+import { serializeError } from '@shared/utils/errors';
 import type { IUpscaleInput } from '@shared/validation/upscale.schema';
+import Replicate from 'replicate';
 import { calculateCreditCost, InsufficientCreditsError } from './image-generation.service';
 import type {
   IImageProcessor,
   IImageProcessorResult,
   IProcessImageOptions,
 } from './image-processor.interface';
-import { serializeError } from '@shared/utils/errors';
 import { ModelRegistry } from './model-registry';
-import {
-  DEFAULT_ENHANCEMENT_SETTINGS,
-  type IEnhancementSettings,
-} from '@shared/types/pixelperfect';
-import { withRetry, isRateLimitError } from '@server/utils/retry';
 
 /**
  * Custom error for Replicate-specific failures

@@ -1,13 +1,12 @@
 'use client';
 
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowLeft, Coins } from 'lucide-react';
-import dayjs from 'dayjs';
-import { IAdminUserDetail } from '@/shared/types/admin';
 import { adminFetch } from '@/client/utils/admin-api-client';
+import { IAdminUserDetail } from '@/shared/types/admin.types';
+import dayjs from 'dayjs';
+import { ArrowLeft, Coins } from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 export default function AdminUserDetailPage() {
   const params = useParams();
@@ -53,9 +52,9 @@ export default function AdminUserDetailPage() {
         setUser(prev =>
           prev
             ? {
-                ...prev,
-                profile: { ...prev.profile, role: newRole as 'user' | 'admin' },
-              }
+              ...prev,
+              profile: { ...prev.profile, role: newRole as 'user' | 'admin' },
+            }
             : null
         );
       }
@@ -209,11 +208,10 @@ export default function AdminUserDetailPage() {
                 <dt className="text-sm text-slate-500">Status</dt>
                 <dd className="mt-1">
                   <span
-                    className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                      user.subscription.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}
+                    className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${user.subscription.status === 'active'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                      }`}
                   >
                     {user.subscription.status}
                   </span>

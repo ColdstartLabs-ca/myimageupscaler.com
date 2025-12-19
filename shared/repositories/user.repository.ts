@@ -1,6 +1,6 @@
+import type { IUserProfile, SubscriptionStatus } from '@/shared/types/stripe.types';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { BaseRepository, IBaseRepository } from './base.repository';
-import type { IUserProfile, SubscriptionStatus } from '@shared/types/stripe';
 
 /**
  * User profile interface for database operations

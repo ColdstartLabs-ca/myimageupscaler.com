@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { MoreVertical, Eye, Coins, CreditCard, Trash2, Shield, ShieldOff } from 'lucide-react';
-import { IAdminUserProfile } from '@/shared/types/admin';
 import { useClickOutside } from '@/client/hooks/useClickOutside';
 import { adminFetch } from '@/client/utils/admin-api-client';
+import { IAdminUserProfile } from '@/shared/types/admin.types';
+import { Coins, CreditCard, Eye, MoreVertical, Shield, ShieldOff, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useCallback, useRef, useState } from 'react';
 
 interface IUserActionsDropdownProps {
   user: IAdminUserProfile;
@@ -109,9 +109,8 @@ function DropdownItem({ icon: Icon, label, onClick, variant = 'default' }: IDrop
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center px-3 py-2 text-sm transition-colors ${
-        variant === 'danger' ? 'text-red-600 hover:bg-red-50' : 'text-slate-700 hover:bg-slate-50'
-      }`}
+      className={`w-full flex items-center px-3 py-2 text-sm transition-colors ${variant === 'danger' ? 'text-red-600 hover:bg-red-50' : 'text-slate-700 hover:bg-slate-50'
+        }`}
     >
       <Icon className="h-4 w-4 mr-2.5" />
       {label}
@@ -352,11 +351,10 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
             {PLANS.map(plan => (
               <label
                 key={plan.id}
-                className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
-                  selectedPlan === plan.id
-                    ? 'border-indigo-500 bg-indigo-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
+                className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${selectedPlan === plan.id
+                  ? 'border-indigo-500 bg-indigo-50'
+                  : 'border-slate-200 hover:border-slate-300'
+                  }`}
               >
                 <div className="flex items-center">
                   <input
@@ -378,11 +376,10 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
         {/* Action Description */}
         {actionDesc && (
           <div
-            className={`p-3 rounded-lg text-sm ${
-              actionDesc.type === 'warning'
-                ? 'bg-amber-50 border border-amber-200 text-amber-800'
-                : 'bg-blue-50 border border-blue-200 text-blue-800'
-            }`}
+            className={`p-3 rounded-lg text-sm ${actionDesc.type === 'warning'
+              ? 'bg-amber-50 border border-amber-200 text-amber-800'
+              : 'bg-blue-50 border border-blue-200 text-blue-800'
+              }`}
           >
             {actionDesc.text}
           </div>

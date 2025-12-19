@@ -1,11 +1,11 @@
+import { AuthProvider } from '@/shared/types/authProviders.types';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
-import { useUserStore } from '@client/store/userStore';
-import { useModalStore } from '@client/store/modalStore';
-import { loadEnv } from '@shared/config/env';
-import { AuthProvider } from '@shared/types/authProviders';
-import { Menu, Zap, X, ChevronDown } from 'lucide-react';
-import { useState, useRef } from 'react';
 import { useClickOutside } from '@client/hooks/useClickOutside';
+import { useModalStore } from '@client/store/modalStore';
+import { useUserStore } from '@client/store/userStore';
+import { loadEnv } from '@shared/config/env';
+import { ChevronDown, Menu, X, Zap } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 export const NavBar = (): JSX.Element => {
   const { openAuthModal } = useModalStore();

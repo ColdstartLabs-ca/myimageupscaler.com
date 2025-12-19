@@ -1,4 +1,4 @@
-import { IUpscaleConfig, DEFAULT_ENHANCEMENT_SETTINGS } from '@shared/types/pixelperfect';
+import { DEFAULT_ENHANCEMENT_SETTINGS, IUpscaleConfig } from '@/shared/types/coreflow.types';
 
 /**
  * Generates enhancement prompt based on selected aspects.

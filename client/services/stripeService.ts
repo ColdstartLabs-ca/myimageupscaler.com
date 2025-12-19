@@ -1,12 +1,12 @@
-import { supabase } from '@server/supabase/supabaseClient';
 import type {
   ICheckoutSessionRequest,
   ICheckoutSessionResponse,
-  IUserProfile,
-  ISubscription,
   IPrice,
   IProduct,
-} from '@shared/types/stripe';
+  ISubscription,
+  IUserProfile,
+} from '@/shared/types/stripe.types';
+import { supabase } from '@server/supabase/supabaseClient';
 
 interface ICreditTransaction {
   id: string;
@@ -178,7 +178,11 @@ export class StripeService {
       return null;
     }
 
-    const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching profile:', error);

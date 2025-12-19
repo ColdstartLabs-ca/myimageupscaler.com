@@ -1,6 +1,6 @@
+import type { ISubscription } from '@/shared/types/stripe.types';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { BaseRepository, IBaseRepository } from './base.repository';
-import type { ISubscription } from '@shared/types/stripe';
 
 /**
  * Subscription interface for database operations
@@ -190,7 +190,10 @@ export class SubscriptionRepository
   }
 
   async findAllByUserId(userId: string): Promise<ISubscriptionDB[]> {
-    return this.findMany({ user_id: userId } as Partial<ISubscriptionDB>, { orderBy: 'created_at', ascending: false });
+    return this.findMany({ user_id: userId } as Partial<ISubscriptionDB>, {
+      orderBy: 'created_at',
+      ascending: false,
+    });
   }
 
   async findActiveByUserId(userId: string): Promise<ISubscriptionDB | null> {

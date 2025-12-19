@@ -1,8 +1,8 @@
-import { IBatchItem, ProcessingStatus } from '@shared/types/pixelperfect';
-import { AlertTriangle, Check, Loader2, Plus, X } from 'lucide-react';
-import React from 'react';
+import { IBatchItem, ProcessingStatus } from '@/shared/types/coreflow.types';
 import { Dropzone } from '@client/components/features/image-processing/Dropzone';
 import { cn } from '@client/utils/cn';
+import { AlertTriangle, Check, Loader2, Plus, X } from 'lucide-react';
+import React from 'react';
 
 interface IQueueStripProps {
   queue: IBatchItem[];

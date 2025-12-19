@@ -1,7 +1,7 @@
+import { IBatchItem, ProcessingStatus } from '@/shared/types/coreflow.types';
+import { PremiumUpsellModal } from '@client/components/features/workspace/PremiumUpsellModal';
 import { InsufficientCreditsModal } from '@client/components/stripe/InsufficientCreditsModal';
 import { Button } from '@client/components/ui/Button';
-import { PremiumUpsellModal } from '@client/components/features/workspace/PremiumUpsellModal';
-import { IBatchItem, ProcessingStatus } from '@shared/types/pixelperfect';
 import { Download, Loader2, Trash2, Wand2 } from 'lucide-react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import React, { useState } from 'react';
@@ -96,12 +96,11 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
           transition-all duration-200
           flex flex-col items-center justify-center gap-1
           disabled:opacity-50 disabled:cursor-not-allowed
-          ${
-            isProcessing || queue.every(i => i.status === ProcessingStatus.COMPLETED)
-              ? 'bg-slate-400'
-              : hasEnoughCredits
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 active:scale-[0.98]'
-                : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg shadow-amber-200 hover:shadow-xl hover:shadow-amber-300 active:scale-[0.98]'
+          ${isProcessing || queue.every(i => i.status === ProcessingStatus.COMPLETED)
+            ? 'bg-slate-400'
+            : hasEnoughCredits
+              ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 active:scale-[0.98]'
+              : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg shadow-amber-200 hover:shadow-xl hover:shadow-amber-300 active:scale-[0.98]'
           }
         `}
       >

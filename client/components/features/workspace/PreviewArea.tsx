@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Check, Layers, AlertTriangle, Loader2 } from 'lucide-react';
+import { IBatchItem, ProcessingStage, ProcessingStatus } from '@/shared/types/coreflow.types';
 import ImageComparison from '@client/components/features/image-processing/ImageComparison';
 import { Button } from '@client/components/ui/Button';
-import { IBatchItem, ProcessingStatus, ProcessingStage } from '@shared/types/pixelperfect';
+import { AlertTriangle, Check, Layers, Loader2 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Extracted Components
 const ScanningLineAnimation: React.FC = () => (

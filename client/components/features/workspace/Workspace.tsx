@@ -1,20 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { DEFAULT_ENHANCEMENT_SETTINGS, IBatchItem, IUpscaleConfig, ProcessingStatus } from '@/shared/types/coreflow.types';
 import { Dropzone } from '@client/components/features/image-processing/Dropzone';
-import { CheckCircle2, Layers, Image, List, Wand2, Loader2, Settings } from 'lucide-react';
-import { useBatchQueue } from '@client/hooks/pixelperfect/useBatchQueue';
-import { IUpscaleConfig, IBatchItem, ProcessingStatus } from '@shared/types/pixelperfect';
 import { BatchSidebar } from '@client/components/features/workspace/BatchSidebar';
 import { PreviewArea } from '@client/components/features/workspace/PreviewArea';
 import { QueueStrip } from '@client/components/features/workspace/QueueStrip';
-import { downloadSingle } from '@client/utils/download';
-import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
-import { BatchLimitModal } from './BatchLimitModal';
-import { useUserData } from '@client/store/userStore';
-import { DEFAULT_ENHANCEMENT_SETTINGS } from '@shared/types/pixelperfect';
 import { TabButton } from '@client/components/ui/TabButton';
+import { useBatchQueue } from '@client/hooks/pixelperfect/useBatchQueue';
+import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
+import { downloadSingle } from '@client/utils/download';
+import { CheckCircle2, Image, Layers, List, Loader2, Settings, Wand2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { BatchLimitModal } from './BatchLimitModal';
+import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
 

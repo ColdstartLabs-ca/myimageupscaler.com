@@ -1,4 +1,4 @@
-import { AuthProvider } from '@shared/types/authProviders';
+import { AuthProvider } from '@/shared/types/authProviders.types';
 
 export interface IAuthUser {
   email: string;

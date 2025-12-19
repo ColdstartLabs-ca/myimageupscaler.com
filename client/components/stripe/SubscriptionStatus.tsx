@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
+import { StripeService } from '@client/services/stripeService';
+import { getPlanDisplayName } from '@shared/config/stripe';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { StripeService } from '@client/services/stripeService';
-import type { ISubscription, IUserProfile } from '@shared/types/stripe';
-import { getPlanDisplayName } from '@shared/config/stripe';
+import { useEffect, useState } from 'react';
 
 // Extend dayjs with relativeTime plugin
 dayjs.extend(relativeTime);

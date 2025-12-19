@@ -1,26 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import {
-  CreditCard,
-  Package,
-  Receipt,
-  ExternalLink,
-  Loader2,
-  RefreshCw,
-  Calendar,
-  ArrowRight,
-} from 'lucide-react';
+import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
+import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
+import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
 import { StripeService } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
 import { getPlanDisplayName, getPlanForPriceId } from '@shared/config/stripe';
-import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
-import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
-import type { IUserProfile, ISubscription } from '@shared/types/stripe';
-import { Plus } from 'lucide-react';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import {
+  ArrowRight,
+  Calendar,
+  CreditCard,
+  ExternalLink,
+  Loader2,
+  Package,
+  Plus,
+  Receipt,
+  RefreshCw,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 // Extend dayjs with relativeTime plugin
 dayjs.extend(relativeTime);
@@ -150,9 +150,9 @@ export default function BillingPage() {
 
   const planName = subscription
     ? getPlanDisplayName({
-        priceId: subscription.price_id,
-        subscriptionTier: profile?.subscription_tier,
-      })
+      priceId: subscription.price_id,
+      subscriptionTier: profile?.subscription_tier,
+    })
     : 'Free Plan';
 
   return (
@@ -299,7 +299,7 @@ export default function BillingPage() {
         </div>
 
         <CreditPackSelector
-          onPurchaseStart={() => {}}
+          onPurchaseStart={() => { }}
           onPurchaseComplete={() => loadBillingData()}
           onError={error =>
             showToast({

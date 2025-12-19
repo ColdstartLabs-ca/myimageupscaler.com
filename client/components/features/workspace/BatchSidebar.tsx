@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Settings } from 'lucide-react';
 import {
-  IUpscaleConfig,
-  IBatchItem,
-  ProcessingStatus,
-  QualityTier,
-  IAdditionalOptions,
   DEFAULT_ADDITIONAL_OPTIONS,
+  IAdditionalOptions,
+  IBatchItem,
+  IUpscaleConfig,
+  ProcessingStatus,
   QUALITY_TIER_CREDITS,
-} from '@shared/types/pixelperfect';
-import { getSubscriptionConfig } from '@shared/config/subscription.config';
-import { downloadBatch } from '@client/utils/download';
+  QualityTier,
+} from '@/shared/types/coreflow.types';
 import { useUserData } from '@client/store/userStore';
+import { downloadBatch } from '@client/utils/download';
 import { generatePrompt } from '@client/utils/prompt-utils';
+import { getSubscriptionConfig } from '@shared/config/subscription.config';
+import { Settings } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import {
-  QualityTierSelector,
-  EnhancementOptions,
-  CustomInstructionsModal,
-  UpscaleFactorSelector,
   ActionPanel,
+  CustomInstructionsModal,
+  EnhancementOptions,
+  QualityTierSelector,
+  UpscaleFactorSelector,
 } from './BatchSidebar/index';
 
 interface IBatchProgress {

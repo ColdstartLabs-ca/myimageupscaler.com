@@ -2,7 +2,7 @@
 
 import { UserActionsDropdown } from '@/client/components/admin/UserActionsDropdown';
 import { adminFetch } from '@/client/utils/admin-api-client';
-import { IAdminUserProfile } from '@/shared/types/admin';
+import { IAdminUserProfile } from '@/shared/types/admin.types';
 import dayjs from 'dayjs';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -122,11 +122,10 @@ export default function AdminUsersPage() {
                   <td className="px-6 py-4 text-sm text-slate-900">{user.email}</td>
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        user.role === 'admin'
-                          ? 'bg-purple-100 text-purple-800'
-                          : 'bg-slate-100 text-slate-800'
-                      }`}
+                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${user.role === 'admin'
+                        ? 'bg-purple-100 text-purple-800'
+                        : 'bg-slate-100 text-slate-800'
+                        }`}
                     >
                       {user.role}
                     </span>

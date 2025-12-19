@@ -1,4 +1,4 @@
-import { AuthProvider } from '@shared/types/authProviders';
+import { AuthProvider } from '@/shared/types/authProviders.types';
 import type { Session } from '@supabase/supabase-js';
 
 /**

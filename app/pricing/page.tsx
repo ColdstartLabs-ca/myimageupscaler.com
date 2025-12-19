@@ -1,22 +1,22 @@
 'use client';
 
+import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
 import {
+  CreditPackSelector,
   PlanChangeModal,
   PricingCard,
-  CreditPackSelector,
   PricingCardSkeleton,
 } from '@client/components/stripe';
 import { StripeService } from '@client/services/stripeService';
+import { clientEnv } from '@shared/config/env';
 import {
   STRIPE_PRICES,
   SUBSCRIPTION_PLANS,
   getPlanForPriceId,
   isStripePricesConfigured,
 } from '@shared/config/stripe';
-import type { ISubscription, IUserProfile } from '@shared/types/stripe';
-import { useEffect, useState, useMemo } from 'react';
-import { Calendar, ArrowRight, X, Loader2 } from 'lucide-react';
-import { clientEnv } from '@shared/config/env';
+import { ArrowRight, Calendar, Loader2, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function PricingPage() {
   const pricesConfigured = isStripePricesConfigured();
@@ -362,7 +362,7 @@ export default function PricingPage() {
 
           <div className="max-w-5xl mx-auto">
             <CreditPackSelector
-              onPurchaseStart={() => {}}
+              onPurchaseStart={() => { }}
               onPurchaseComplete={() => window.location.reload()}
               onError={error => console.error(error)}
             />

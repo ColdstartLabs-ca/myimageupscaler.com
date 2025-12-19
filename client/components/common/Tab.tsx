@@ -9,7 +9,7 @@ import {
   Wand2,
 } from 'lucide-react';
 import { JSX } from 'react';
-import { IconType } from '@shared/types/icons';
+import { IconType } from '@/shared/types/icons.types';
 
 const icons = {
   Coins,

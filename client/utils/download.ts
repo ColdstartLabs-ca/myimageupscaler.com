@@ -1,5 +1,5 @@
+import { IBatchItem } from '@/shared/types/coreflow.types';
 import JSZip from 'jszip';
-import { IBatchItem } from '@shared/types/pixelperfect';
 
 /**
  * Check if URL is external (Replicate, etc.) or internal (data URL)
@@ -118,8 +118,7 @@ export const downloadSingle = async (
     URL.revokeObjectURL(blobUrl);
   } catch (error) {
     console.error('Download failed:', error);
-    const errorMessage =
-      error instanceof Error ? error.message : 'Failed to download image';
+    const errorMessage = error instanceof Error ? error.message : 'Failed to download image';
     throw new Error(`Download failed: ${errorMessage}`);
   }
 };

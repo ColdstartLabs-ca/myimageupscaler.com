@@ -1,7 +1,7 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { AuthProvider } from '@shared/types/authProviders';
+import { AuthProvider } from '@/shared/types/authProviders.types';
 import { loadingStore } from '@client/store/loadingStore';
-import { loadAuthCache, saveAuthCache, clearAuthCache } from './authCache';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { clearAuthCache, loadAuthCache, saveAuthCache } from './authCache';
 import type { IAuthState, IAuthUser, ISignUpResult } from './types';
 
 const AUTH_INIT_TIMEOUT = 5000; // Increased to prevent premature timeouts
@@ -213,9 +213,7 @@ export function createChangePassword(
 /**
  * Creates the resetPassword action.
  */
-export function createResetPassword(
-  supabase: SupabaseClient
-): (email: string) => Promise<void> {
+export function createResetPassword(supabase: SupabaseClient): (email: string) => Promise<void> {
   return async (email: string) => {
     await withLoading(async () => {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {

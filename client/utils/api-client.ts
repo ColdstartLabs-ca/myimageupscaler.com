@@ -1,6 +1,6 @@
-import { IUpscaleConfig, ProcessingStage } from '@shared/types/pixelperfect';
-import { createClient } from '@shared/utils/supabase/client';
+import { IUpscaleConfig, ProcessingStage } from '@/shared/types/coreflow.types';
 import { serverEnv } from '@shared/config/env';
+import { createClient } from '@shared/utils/supabase/client';
 
 /**
  * Error class for batch limit violations
@@ -170,7 +170,7 @@ export const processImage = async (
       onProgress(30, ProcessingStage.PREPARING);
     } else {
       // Use the model associated with the quality tier
-      const { QUALITY_TIER_CONFIG } = await import('@shared/types/pixelperfect');
+      const { QUALITY_TIER_CONFIG } = await import('@/shared/types/coreflow.types');
       const tierConfig = QUALITY_TIER_CONFIG[config.qualityTier];
       resolvedModel = tierConfig.modelId || 'real-esrgan';
       onProgress(30, ProcessingStage.PREPARING);

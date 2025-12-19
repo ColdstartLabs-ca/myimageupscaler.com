@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { ModelCapability } from '@/shared/types/coreflow.types';
+import { createLogger } from '@server/monitoring/logger';
 import { ModelRegistry } from '@server/services/model-registry';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
-import { createLogger } from '@server/monitoring/logger';
-import { ZodError } from 'zod';
-import { z } from 'zod';
 import { serverEnv } from '@shared/config/env';
-import type { ModelCapability } from '@shared/types/pixelperfect';
+import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
+import { NextRequest, NextResponse } from 'next/server';
+import { ZodError, z } from 'zod';
 
 /**
  * Mock user profile for testing in test environment

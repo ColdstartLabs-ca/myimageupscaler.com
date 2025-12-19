@@ -1,16 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
 import {
   IBatchItem,
-  ProcessingStatus,
-  ProcessingStage,
   IUpscaleConfig,
-} from '@shared/types/pixelperfect';
-import { processImage, BatchLimitError } from '@client/utils/api-client';
-import { serializeError } from '@shared/utils/errors';
+  ProcessingStage,
+  ProcessingStatus,
+} from '@/shared/types/coreflow.types';
 import { useToastStore } from '@client/store/toastStore';
 import { useUserData, useUserStore } from '@client/store/userStore';
-import { TIMEOUTS } from '@shared/config/timeouts.config';
+import { BatchLimitError, processImage } from '@client/utils/api-client';
 import { getBatchLimit } from '@shared/config/subscription.utils';
+import { TIMEOUTS } from '@shared/config/timeouts.config';
+import { serializeError } from '@shared/utils/errors';
+import { useCallback, useEffect, useState } from 'react';
 
 interface IBatchProgress {
   current: number;

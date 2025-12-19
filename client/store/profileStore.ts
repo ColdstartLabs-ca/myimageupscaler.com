@@ -3,9 +3,9 @@
  * This maintains backward compatibility with existing imports.
  * New code should import directly from '@client/store/userStore'.
  */
+import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
 import { create } from 'zustand';
 import { useUserStore } from './userStore';
-import type { IUserProfile, ISubscription } from '@shared/types/stripe';
 
 export interface IProfileState {
   profile: IUserProfile | null;

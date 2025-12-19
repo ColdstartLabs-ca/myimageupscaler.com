@@ -1,11 +1,10 @@
 'use client';
 
-import React from 'react';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Users, CreditCard, Coins, TrendingUp } from 'lucide-react';
-import { IAdminStats } from '@/shared/types/admin';
 import { adminFetch } from '@/client/utils/admin-api-client';
+import { IAdminStats } from '@/shared/types/admin.types';
+import { Coins, CreditCard, TrendingUp, Users } from 'lucide-react';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<IAdminStats | null>(null);

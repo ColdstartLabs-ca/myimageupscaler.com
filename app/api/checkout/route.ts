@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import type { ICheckoutSessionRequest } from '@/shared/types/stripe.types';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import type { ICheckoutSessionRequest } from '@shared/types/stripe';
 import { clientEnv, serverEnv } from '@shared/config/env';
+import { assertKnownPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getTrialConfig } from '@shared/config/subscription.config';
-import { resolvePlanOrPack, assertKnownPriceId } from '@shared/config/stripe';
+import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
 
 /**
  * Validates and parses the request body
