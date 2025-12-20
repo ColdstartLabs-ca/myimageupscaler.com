@@ -22,6 +22,12 @@ vi.mock('@client/store/toastStore', () => ({
   })),
 }));
 
+vi.mock('@client/store/userStore', () => ({
+  useUserStore: vi.fn(() => ({
+    isAuthenticated: true,
+  })),
+}));
+
 // Mock window.location
 const mockLocation = {
   origin: 'http://localhost:3000',
@@ -44,10 +50,13 @@ Object.defineProperty(window, 'history', {
 import { StripeService } from '@client/services/stripeService';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
+import { useUserStore } from '@client/store/userStore';
 
 const mockStripeService = vi.mocked(StripeService);
 const mockUseModalStore = vi.mocked(useModalStore);
 const mockUseToastStore = vi.mocked(useToastStore);
+const mockUseUserStore = vi.mocked(useUserStore);
+const mockHistory = window.history as { replaceState: ReturnType<typeof vi.fn> };
 
 describe('PricingCard', () => {
   const mockOpenAuthModal = vi.fn();
@@ -55,6 +64,10 @@ describe('PricingCard', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    mockUseUserStore.mockReturnValue({
+      isAuthenticated: true,
+    } as { isAuthenticated: boolean });
 
     mockUseModalStore.mockReturnValue({
       openAuthModal: mockOpenAuthModal,
@@ -87,7 +100,7 @@ describe('PricingCard', () => {
     expect(screen.getByText('1000 credits per month')).toBeInTheDocument();
     expect(screen.getByText('Priority support')).toBeInTheDocument();
     expect(screen.getByText('Advanced features')).toBeInTheDocument();
-    expect(screen.getByText('Subscribe Now')).toBeInTheDocument();
+    expect(screen.getByText('Get Started')).toBeInTheDocument();
   });
 
   it('displays recommended badge when recommended prop is true', () => {
@@ -128,7 +141,7 @@ describe('PricingCard', () => {
     const user = userEvent.setup();
     render(<PricingCard {...defaultProps} />);
 
-    const subscribeButton = screen.getByText('Subscribe Now');
+    const subscribeButton = screen.getByText('Get Started');
     await user.click(subscribeButton);
 
     expect(mockStripeService.redirectToCheckout).toHaveBeenCalledWith('price_pro_monthly_123', {
@@ -145,7 +158,7 @@ describe('PricingCard', () => {
 
     render(<PricingCard {...defaultProps} />);
 
-    const subscribeButton = screen.getByText('Subscribe Now');
+    const subscribeButton = screen.getByText('Get Started');
     await user.click(subscribeButton);
 
     // Should show loading state
@@ -157,12 +170,12 @@ describe('PricingCard', () => {
     const user = userEvent.setup();
     render(<PricingCard {...defaultProps} />);
 
-    const subscribeButton = screen.getByText('Subscribe Now');
+    const subscribeButton = screen.getByText('Get Started');
     await user.click(subscribeButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Subscribe Now')).toBeInTheDocument();
-      expect(screen.getByText('Subscribe Now')).not.toBeDisabled();
+      expect(screen.getByText('Get Started')).toBeInTheDocument();
+      expect(screen.getByText('Get Started')).not.toBeDisabled();
     });
   });
 
@@ -173,11 +186,11 @@ describe('PricingCard', () => {
 
     render(<PricingCard {...defaultProps} />);
 
-    const subscribeButton = screen.getByText('Subscribe Now');
+    const subscribeButton = screen.getByText('Get Started');
     await user.click(subscribeButton);
 
     await waitFor(() => {
-      expect(mockLocation.replaceState).toHaveBeenCalledWith(
+      expect(mockHistory.replaceState).toHaveBeenCalledWith(
         {},
         '',
         'http://localhost:3000/pricing?checkout_price=price_pro_monthly_123'
@@ -193,7 +206,7 @@ describe('PricingCard', () => {
 
     render(<PricingCard {...defaultProps} />);
 
-    const subscribeButton = screen.getByText('Subscribe Now');
+    const subscribeButton = screen.getByText('Get Started');
     await user.click(subscribeButton);
 
     await waitFor(() => {
@@ -210,7 +223,7 @@ describe('PricingCard', () => {
 
     render(<PricingCard {...defaultProps} />);
 
-    const subscribeButton = screen.getByText('Subscribe Now');
+    const subscribeButton = screen.getByText('Get Started');
     await user.click(subscribeButton);
 
     await waitFor(() => {
@@ -224,14 +237,14 @@ describe('PricingCard', () => {
   it('applies correct styling for recommended card', () => {
     render(<PricingCard {...defaultProps} recommended={true} />);
 
-    const card = screen.getByText('Pro Plan').closest('div');
+    const card = document.querySelector('.relative.bg-white.rounded-2xl');
     expect(card).toHaveClass('border-indigo-500', 'ring-2', 'ring-indigo-500', 'ring-opacity-20');
   });
 
   it('applies correct styling for non-recommended card', () => {
     render(<PricingCard {...defaultProps} recommended={false} />);
 
-    const card = screen.getByText('Pro Plan').closest('div');
+    const card = document.querySelector('.relative.bg-white.rounded-2xl');
     expect(card).toHaveClass('border-slate-200');
     expect(card).not.toHaveClass('border-indigo-500');
   });
@@ -257,7 +270,7 @@ describe('PricingCard', () => {
 
     render(<PricingCard {...defaultProps} />);
 
-    const subscribeButton = screen.getByText('Subscribe Now');
+    const subscribeButton = screen.getByText('Get Started');
     await user.click(subscribeButton);
 
     const loadingButton = screen.getByText('Processing...');
@@ -268,7 +281,7 @@ describe('PricingCard', () => {
   it('has correct button styling for non-loading state', () => {
     render(<PricingCard {...defaultProps} />);
 
-    const subscribeButton = screen.getByText('Subscribe Now');
+    const subscribeButton = screen.getByText('Get Started');
     expect(subscribeButton).toHaveClass(
       'bg-indigo-600',
       'hover:bg-indigo-700',
@@ -284,7 +297,7 @@ describe('PricingCard', () => {
 
     render(<PricingCard {...defaultProps} />);
 
-    const subscribeButton = screen.getByText('Subscribe Now');
+    const subscribeButton = screen.getByText('Get Started');
     await user.click(subscribeButton);
 
     expect(mockStripeService.redirectToCheckout).toHaveBeenCalledWith('price_pro_monthly_123', {
@@ -382,7 +395,8 @@ describe('PricingCard', () => {
 
       render(<PricingCard {...propsWithDisabledTrial} />);
 
-      expect(screen.getByText('Current Plan')).toBeInTheDocument();
+      // Should show "Current Plan" in the button (not in the badge since trial is enabled)
+      expect(screen.getByRole('button', { name: 'Current Plan' })).toBeInTheDocument();
     });
 
     it('handles different trial durations', () => {
@@ -402,6 +416,9 @@ describe('PricingCard', () => {
 
     it('handles trial button click correctly', async () => {
       const user = userEvent.setup();
+      // Reset location href to original value
+      mockLocation.href = 'http://localhost:3000/pricing';
+
       const propsWithTrial = {
         ...defaultProps,
         trial: {

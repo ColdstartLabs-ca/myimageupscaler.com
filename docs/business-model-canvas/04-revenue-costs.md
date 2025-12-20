@@ -5,7 +5,8 @@
 ### Why Credit-Based Subscriptions?
 
 - **Industry standard:** Let's Enhance, VanceAI use this model
-- **Flexibility:** Credits roll over (2-6x by tier), reducing churn
+- **Flexibility:** Credits roll over on personal tiers (3-6x cap), reducing churn
+- **Business tier:** No rollover (like Let's Enhance) - forces usage, reduces liability
 - **Predictable revenue:** Monthly/annual recurring
 - **Upsell opportunities:** Run out of credits → upgrade trigger
 
@@ -70,7 +71,8 @@
 
 - All upscaling modes (2x/4x)
 - All enhancement modes + text preservation
-- Batch upload (10 images)
+- Batch upload (5 images)
+- Credits roll over (up to 3x monthly = 300)
 - Platform presets (Shopify, Amazon, Instagram)
 - 30-day image storage
 - Email support
@@ -142,6 +144,7 @@ Margin: 94.8%
 - Everything in Pro
 - Fastest processing (dedicated A100)
 - Batch upload (500 images)
+- **No credit rollover** (use monthly allocation - like Let's Enhance business plans)
 - API access (25,000 calls/month)
 - Team accounts (up to 5 users)
 - Unlimited image storage

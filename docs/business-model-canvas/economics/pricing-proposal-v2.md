@@ -94,7 +94,8 @@ At $0.0017/image (T4):
 - All upscaling modes (2x/4x)
 - All enhancement presets
 - Text preservation mode
-- Batch upload (10 images)
+- Batch upload (5 images)
+- Credits roll over (up to 3x = 300)
 - Platform presets (Instagram, Amazon, etc.)
 - 30-day image storage
 - Email support
@@ -267,11 +268,13 @@ Timeline: Month 2-3
 - Builds trust
 - Differentiates from Let's Enhance, Pixelcut
 
-### 2. Credit Rollover (2-6x by tier)
+### 2. Credit Rollover (Tiered by Plan)
 
-- Reduces churn
-- Industry best practice (Let's Enhance success)
-- Rollover multiplier increases with tier
+- Reduces churn on personal tiers
+- Industry best practice (Let's Enhance model)
+- **Starter**: 3x rollover cap (up to 300 credits)
+- **Hobby/Pro**: 6x rollover cap
+- **Business**: No rollover (use it or lose it, like Let's Enhance business plans)
 
 ### 3. Monthly Billing Default
 
@@ -294,11 +297,11 @@ Timeline: Month 2-3
 | Upscaling (2x/4x) | ✅     | ✅      | ✅      | ✅        |
 | Enhancement Modes | Basic  | All     | All     | All       |
 | Text Preservation | ❌     | ✅      | ✅      | ✅        |
-| Batch Processing  | ❌     | 10      | 50      | 500       |
+| Batch Processing  | ❌     | 5       | 50      | 500       |
 | API Access        | ❌     | ❌      | ✅      | ✅        |
 | Priority Queue    | ❌     | ❌      | ✅      | ✅        |
 | Team Accounts     | ❌     | ❌      | ❌      | 5         |
-| Credit Rollover   | ❌     | 2x      | 3x      | 6x        |
+| Credit Rollover   | ❌     | 3x      | 6x      | ❌ (none) |
 | Storage           | 7 days | 30 days | 90 days | Unlimited |
 
 ---

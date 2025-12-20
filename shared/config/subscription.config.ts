@@ -177,8 +177,8 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       currency: 'usd',
       interval: 'month',
       creditsPerCycle: CREDIT_COSTS.BUSINESS_MONTHLY_CREDITS,
-      maxRollover: CREDIT_COSTS.BUSINESS_MONTHLY_CREDITS * 6, // 30000 credits max
-      rolloverMultiplier: 6,
+      maxRollover: 0, // No rollover - use it or lose it (like Let's Enhance business plans)
+      rolloverMultiplier: 0,
       trial: {
         enabled: false,
         durationDays: 0,
@@ -195,7 +195,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       },
       features: [
         '5000 credits per month',
-        'Credits roll over (up to 30,000)',
+        'No credit rollover (use monthly allocation)',
         '24/7 priority support',
         'All features included',
         'Dedicated account manager',

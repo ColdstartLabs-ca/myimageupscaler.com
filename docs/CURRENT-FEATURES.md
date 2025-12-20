@@ -89,10 +89,11 @@
 
 #### Starter Tier - $9/month
 
-- 50 credits per month
+- 100 credits per month
+- Credits roll over (up to 3x = 300)
 - All quality tiers including HD Upscale
 - 2x & 4x upscaling
-- 10 images per batch
+- 5 images per batch
 - 10MB file limit
 - Email support
 - Batch processing enabled
@@ -121,6 +122,7 @@
 #### Business Tier - $149/month
 
 - 5,000 credits per month
+- No credit rollover (use monthly allocation)
 - All premium features unlocked
 - Batch processing (up to 500 images)
 - 64MB file limit
@@ -133,7 +135,7 @@
 - **Tier-Based Costs**: 1-8 credits per image based on quality tier selected
 - **Smart AI Analysis**: +1 credit when AI analysis is enabled
 - **Scale Multipliers**: Higher upscaling factors (4x, 8x) increase credit costs
-- **Monthly Refresh**: Credits reset monthly (no rollover for paid tiers)
+- **Credit Rollover**: Tiered rollover (3x Starter, 6x Hobby/Pro, none for Business)
 - **Free Tier Caps**: Maximum 10 credits, no monthly refresh
 - **Real-time Tracking**: Live credit balance and cost preview before processing
 - **Transaction History**: Comprehensive credit usage and purchase history

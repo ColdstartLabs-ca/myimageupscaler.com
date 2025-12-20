@@ -202,7 +202,8 @@
 
 - ✅ No registration for first use (Upscale.media model)
 - ✅ No watermarks on free tier (viral growth)
-- ✅ Credit rollover (reduce churn)
+- ✅ Credit rollover on personal tiers (3x Starter, 6x Hobby/Pro - reduce churn)
+- ✅ No rollover on Business tier (like Let's Enhance - forces usage, reduces liability)
 - ✅ <30 second processing (speed wins)
 - ✅ Transparent pricing (counter Remini damage)
 - ❌ Avoid: No free trial, subscription-only

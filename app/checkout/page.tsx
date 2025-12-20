@@ -10,6 +10,7 @@ import { StripeService } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
+import { BillingErrorBoundary } from '@client/components/stripe/BillingErrorBoundary';
 
 // Initialize Stripe
 const getStripePromise = () => {
@@ -343,8 +344,10 @@ function LoadingFallback() {
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <CheckoutContent />
-    </Suspense>
+    <BillingErrorBoundary context="checkout">
+      <Suspense fallback={<LoadingFallback />}>
+        <CheckoutContent />
+      </Suspense>
+    </BillingErrorBoundary>
   );
 }
