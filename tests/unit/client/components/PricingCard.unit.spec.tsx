@@ -455,7 +455,9 @@ describe('PricingCard', () => {
       const trialButton = screen.getByText('Start 7-Day Trial');
       await user.click(trialButton);
 
-      expect(mockOnSelect).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockOnSelect).toHaveBeenCalled();
+      });
       expect(mockStripeService.redirectToCheckout).not.toHaveBeenCalled();
     });
 

@@ -22,7 +22,7 @@ describe('Unified Pricing Resolver', () => {
         name: 'Starter',
         currency: 'usd',
         credits: 100,
-        maxRollover: 600, // 100 * 6
+        maxRollover: 300, // 100 * 3
       });
 
       // Should contain hobby plan
@@ -55,7 +55,7 @@ describe('Unified Pricing Resolver', () => {
         name: 'Business',
         currency: 'usd',
         credits: 5000,
-        maxRollover: 30000, // 5000 * 6
+        maxRollover: 0, // No rollover for business plan (use it or lose it)
       });
 
       // Should contain credit packs
@@ -87,7 +87,7 @@ describe('Unified Pricing Resolver', () => {
         priceInCents: 900,
         currency: 'usd',
         credits: 100,
-        maxRollover: 600, // 100 * 6
+        maxRollover: 300, // 100 * 3
       });
 
       const hobby = resolvePriceId('price_1SZmVyALMLhQocpf0H7n5ls8');
@@ -222,7 +222,7 @@ describe('Unified Pricing Resolver', () => {
         key: 'starter',
         name: 'Starter',
         credits: 100,
-        maxRollover: 600,
+        maxRollover: 300,
         priceInCents: 900,
       });
     });
@@ -235,7 +235,7 @@ describe('Unified Pricing Resolver', () => {
         key: 'starter',
         name: 'Starter',
         creditsPerCycle: 100,
-        maxRollover: 600,
+        maxRollover: 300,
       });
     });
   });
@@ -270,7 +270,7 @@ describe('Unified Pricing Resolver', () => {
       if (starterPriceIds.length > 0) {
         const starterPlan = resolvePriceId(starterPriceIds[0]);
         expect(starterPlan?.maxRollover).toBeGreaterThan(0);
-        expect(starterPlan?.maxRollover).toBe(600); // 100 * 6
+        expect(starterPlan?.maxRollover).toBe(300); // 100 * 3
       }
     });
   });
@@ -299,13 +299,13 @@ describe('Unified Pricing Resolver', () => {
     test('should verify rollover is enabled for Starter tier', () => {
       const index = getPriceIndex();
       const starterPriceIds = Object.keys(index).filter(
-        key => key.toLowerCase().includes('starter') || key === 'price_1STARTERPLACEHOLDER'
+        key => key.toLowerCase().includes('starter') || key === 'price_1Q4HMKALMLhQocpfhK9XKp4a'
       );
 
       if (starterPriceIds.length > 0) {
         const starterPlan = resolvePriceId(starterPriceIds[0]);
         expect(starterPlan?.maxRollover).toBeGreaterThan(0);
-        expect(starterPlan?.maxRollover).toBe(600); // 100 * 6
+        expect(starterPlan?.maxRollover).toBe(300); // 100 * 3
       }
     });
   });

@@ -182,7 +182,7 @@ export function PricingCard({
         }
       } else {
         showToast({
-          message: 'An unexpected error occurred. Please try again.',
+          message: 'Failed to initiate checkout',
           type: 'error',
         });
       }

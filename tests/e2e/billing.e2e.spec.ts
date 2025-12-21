@@ -341,9 +341,9 @@ test.describe('Billing E2E Tests', () => {
 
       // Check Starter tier features
       await expect(starterCard).toContainText('100 credits per month');
-      await expect(starterCard).toContainText('Credits roll over (up to 600)');
+      await expect(starterCard).toContainText('Credits roll over (up to 300)');
       await expect(starterCard).toContainText('Email support');
-      await expect(starterCard).toContainText('Basic AI models');
+      await expect(starterCard).toContainText('All AI models included');
       await expect(starterCard).toContainText('Batch upload up to 5 images');
 
       // Check for "Get Started" button
@@ -452,7 +452,7 @@ test.describe('Billing E2E Tests', () => {
       // Check that rollover information is displayed for Starter
       const starterCard = page.locator('div').filter({ hasText: 'Starter' }).first();
       await expect(starterCard).toContainText('roll over');
-      await expect(starterCard).toContainText('up to 600');
+      await expect(starterCard).toContainText('up to 300');
 
       // Also check other tiers mention rollover
       const hobbyCard = page.locator('div').filter({ hasText: 'Hobby' }).first();

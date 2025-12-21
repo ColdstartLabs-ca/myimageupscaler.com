@@ -56,7 +56,7 @@ export class PricingPage extends BasePage {
     // Individual plan cards - scope to pricing grid for more specific selection
     // These need to be initialized after pricingGrid is defined
     this.hobbyCard = this.pricingGrid.locator('div').filter({ hasText: 'Hobby' }).first();
-    this.proCard = this.pricingGrid.locator('div').filter({ hasText: 'Pro' }).first();
+    this.proCard = this.pricingGrid.locator('div').filter({ hasText: 'Professional' }).first();
     this.businessCard = this.pricingGrid.locator('div').filter({ hasText: 'Business' }).first();
     this.starterCard = this.pricingGrid.locator('div').filter({ hasText: 'Starter' }).first();
   }
@@ -82,7 +82,7 @@ export class PricingPage extends BasePage {
     // Use exact text matching and scope to pricing grid to avoid conflicts with FAQ headings
     const starterHeading = this.pricingGrid.getByRole('heading', { name: 'Starter', exact: true });
     const hobbyHeading = this.pricingGrid.getByRole('heading', { name: 'Hobby', exact: true });
-    const proHeading = this.pricingGrid.getByRole('heading', { name: 'Pro', exact: true });
+    const proHeading = this.pricingGrid.getByRole('heading', { name: 'Professional', exact: true });
     const businessHeading = this.pricingGrid.getByRole('heading', {
       name: 'Business',
       exact: true,

@@ -20,7 +20,7 @@ describe('getPlanByKey', () => {
     expect(plan?.enabled).toBe(true);
     expect(plan?.priceInCents).toBe(900);
     expect(plan?.creditsPerCycle).toBe(CREDIT_COSTS.STARTER_MONTHLY_CREDITS);
-    expect(plan?.maxRollover).toBe(CREDIT_COSTS.STARTER_MONTHLY_CREDITS * 6);
+    expect(plan?.maxRollover).toBe(CREDIT_COSTS.STARTER_MONTHLY_CREDITS * 3);
     expect(plan?.creditsExpiration.mode).toBe('never');
   });
 
@@ -282,7 +282,7 @@ describe('buildHomepageTiers', () => {
     const starterTier = tiers.find(t => t.name === 'Starter');
 
     expect(starterTier?.features).toContain('100 credits per month');
-    expect(starterTier?.features).toContain('Credits roll over (up to 600)');
+    expect(starterTier?.features).toContain('Credits roll over (up to 300)');
     expect(starterTier?.features).toContain('Email support');
     expect(starterTier?.features).toContain('All AI models included');
     expect(starterTier?.features).toContain('Batch upload up to 5 images');
