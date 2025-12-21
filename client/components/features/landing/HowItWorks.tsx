@@ -29,7 +29,7 @@ const steps = [
 
 const HowItWorks: React.FC = () => {
   return (
-    <section id="how-it-works" className="py-24 bg-base border-y border-white/10">
+    <section id="how-it-works" className="py-24 bg-main border-y border-white/10">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="text-center mb-20">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-4">

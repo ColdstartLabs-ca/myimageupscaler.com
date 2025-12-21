@@ -23,7 +23,7 @@ export default {
       },
       colors: {
         // New dark theme colors
-        base: 'rgb(var(--color-bg-base) / <alpha-value>)',
+        main: 'rgb(var(--color-bg-base) / <alpha-value>)',
         surface: 'rgb(var(--color-bg-surface) / <alpha-value>)',
         'surface-light': 'rgb(var(--color-bg-surface-light) / <alpha-value>)',
         accent: {

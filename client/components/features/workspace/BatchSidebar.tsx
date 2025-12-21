@@ -130,8 +130,8 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
     <div className="w-full md:w-80 border-b md:border-b-0 md:border-r border-white/10 bg-surface flex flex-col z-20 shadow-sm h-full">
       {/* Header */}
       <div className="px-4 md:px-6 pt-4 md:pt-6 pb-3 md:pb-4 border-b border-white/10 shrink-0">
-        <h3 className="font-semibold text-white flex items-center gap-2 mb-1 text-base md:text-base">
-          <Settings size={16} className="md:size-[18px]" /> Batch Settings
+        <h3 className="font-semibold text-text-primary flex items-center gap-2 mb-1 text-base md:text-base">
+          <Settings size={16} className="md:size-[18px] text-text-primary" /> Batch Settings
         </h3>
         <p className="text-xs text-muted-foreground">Applies to all {queue.length} images</p>
       </div>
@@ -187,7 +187,6 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onOpenCustomInstructions={handleOpenCustomInstructions}
           selectedTier={config.qualityTier}
           disabled={isProcessing}
-          isFreeUser={isFreeUser}
         />
 
         {/* 4. Ultra tier specific config (conditional) */}

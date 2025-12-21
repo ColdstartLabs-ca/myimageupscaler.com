@@ -89,7 +89,7 @@ export const Pricing: React.FC = () => {
   };
 
   return (
-    <section id="pricing" className="py-20 bg-base">
+    <section id="pricing" className="py-20 bg-main">
       {/* Product structured data for SEO */}
       {HOMEPAGE_TIERS.filter(tier => tier.priceValue > 0).map(tier => (
         <JsonLd key={`jsonld-${tier.name}`} data={generateProductJsonLd(tier)} />

@@ -79,7 +79,7 @@ export function HomePageClient(): JSX.Element {
   }, [searchParams, openAuthModal, showToast]);
 
   return (
-    <main className="flex-grow bg-base font-sans selection:bg-accent/20 selection:text-white">
+    <main className="flex-grow bg-main font-sans selection:bg-accent/20 selection:text-white">
       {/* Hero Section */}
       <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 overflow-hidden hero-gradient">
         {/* Background Gradients - Enhanced with dynamic light effects */}

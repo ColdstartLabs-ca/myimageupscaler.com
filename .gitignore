@@ -25,6 +25,8 @@ next-env.d.ts
 .env.api
 .env.test
 .env*.local
+.env.api.prod 
+.env.client.prod
 
 # Logs
 logs

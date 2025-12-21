@@ -25,7 +25,7 @@ export const Layout = ({ children }: ILayoutProps): JSX.Element => {
   }
 
   return (
-    <div className="min-h-screen bg-base flex flex-col">
+    <div className="min-h-screen bg-main flex flex-col">
       <LoadingBackdrop />
       <div className="max-w-[1600px] mx-auto w-full flex-1 flex flex-col">
         <NavBar />

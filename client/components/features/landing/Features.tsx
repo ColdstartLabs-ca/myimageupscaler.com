@@ -55,7 +55,7 @@ const Features: React.FC = () => {
   return (
     <section id="features" className="py-24 bg-surface relative overflow-hidden">
       {/* Decorative bg blob */}
-      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1/3 h-full bg-base -z-10 skew-x-12 opacity-50"></div>
+      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1/3 h-full bg-main -z-10 skew-x-12 opacity-50"></div>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="mx-auto max-w-2xl lg:text-center mb-16">
