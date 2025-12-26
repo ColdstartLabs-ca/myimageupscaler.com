@@ -104,44 +104,69 @@ export const useUserStore = create<IUserState>((set, get) => ({
     }
 
     fetchPromise = (async () => {
-      try {
-        // Add timeout to prevent hanging forever
-        const timeoutPromise = new Promise<never>((_, reject) => {
-          setTimeout(() => reject(new Error('RPC timeout after 5s')), 5000);
-        });
+      const MAX_RETRIES = 2;
+      let lastError: Error | null = null;
 
-        const rpcPromise = supabase.rpc('get_user_data', {
-          target_user_id: userId,
-        });
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        try {
+          // On retry, wait a bit for session to stabilize
+          if (attempt > 0) {
+            await new Promise(resolve => setTimeout(resolve, 500 * attempt));
+          }
 
-        const { data, error } = await Promise.race([rpcPromise, timeoutPromise]);
-
-        if (error) throw error;
-
-        const currentUser = get().user;
-        if (currentUser) {
-          const updatedUser: IUserData = {
-            ...currentUser,
-            profile: data?.profile ?? null,
-            subscription: data?.subscription ?? null,
-            role: data?.profile?.role ?? 'user',
-          };
-          set({
-            user: updatedUser,
-            lastFetched: Date.now(),
-            error: null,
+          // Add timeout to prevent hanging forever
+          const timeoutPromise = new Promise<never>((_, reject) => {
+            setTimeout(() => reject(new Error('RPC timeout after 5s')), 5000);
           });
-          saveUserCache(updatedUser);
+
+          const rpcPromise = supabase.rpc('get_user_data', {
+            target_user_id: userId,
+          });
+
+          const { data, error } = await Promise.race([rpcPromise, timeoutPromise]);
+
+          if (error) {
+            // Retry on auth-related errors (session not ready yet)
+            const isAuthError =
+              error.message?.includes('JWT') ||
+              error.message?.includes('token') ||
+              error.message?.includes('auth') ||
+              error.code === 'PGRST301';
+            if (isAuthError && attempt < MAX_RETRIES) {
+              lastError = error;
+              continue;
+            }
+            throw error;
+          }
+
+          const currentUser = get().user;
+          if (currentUser) {
+            const updatedUser: IUserData = {
+              ...currentUser,
+              profile: data?.profile ?? null,
+              subscription: data?.subscription ?? null,
+              role: data?.profile?.role ?? 'user',
+            };
+            set({
+              user: updatedUser,
+              lastFetched: Date.now(),
+              error: null,
+            });
+            saveUserCache(updatedUser);
+          }
+          return; // Success, exit retry loop
+        } catch (err) {
+          lastError = err instanceof Error ? err : new Error('Unknown error');
+          if (attempt === MAX_RETRIES) {
+            console.error('Failed to fetch user data after retries:', lastError);
+            set({ error: lastError.message });
+          }
         }
-      } catch (err) {
-        console.error('Failed to fetch user data:', err);
-        set({ error: err instanceof Error ? err.message : 'Failed to load user data' });
-      } finally {
-        fetchPromise = null;
       }
     })();
 
     await fetchPromise;
+    fetchPromise = null;
   },
 
   invalidate: () => {
@@ -324,12 +349,13 @@ if (typeof window !== 'undefined') {
       });
 
       // Fetch full data in background (non-blocking)
-      // Use setTimeout to defer to next tick, avoiding HMR timing issues
+      // Use setTimeout with small delay to allow session cookies to stabilize
+      // This helps prevent auth errors on fresh OAuth logins
       setTimeout(() => {
         store.fetchUserData(session.user.id).catch(err => {
           console.error('Background fetch failed:', err);
         });
-      }, 0);
+      }, 100);
 
       // Redirect to dashboard for active login/signup (email/password only)
       // OAuth redirects directly to /dashboard via redirectTo option

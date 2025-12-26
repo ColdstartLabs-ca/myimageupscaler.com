@@ -4,7 +4,6 @@ import { useEffect, useState, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@shared/utils/supabase/client';
 import { handleAuthRedirect, setAuthIntent } from '@client/utils/authRedirectManager';
-import '@client/store/auth'; // Ensure auth store is initialized
 
 function AuthCallbackContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -29,8 +28,22 @@ function AuthCallbackContent() {
         if (hasRedirected.current) return;
         hasRedirected.current = true;
         setStatus('success');
-        // Give the UI a moment to show success state, then redirect
-        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Validate the session is properly established by calling getUser()
+        // This ensures tokens are exchanged and cookies are written
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        if (userError || !user) {
+          console.error('Failed to validate user after auth:', userError);
+          setStatus('error');
+          hasRedirected.current = false;
+          return;
+        }
+
+        // Give cookies time to propagate before navigation
+        await new Promise(resolve => setTimeout(resolve, 100));
         await handleAuthRedirect();
       };
 

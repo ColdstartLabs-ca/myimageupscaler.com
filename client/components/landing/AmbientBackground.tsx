@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-interface AmbientBackgroundProps {
+interface IAmbientBackgroundProps {
   variant?: 'hero' | 'section' | 'subtle';
 }
 
-export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({ variant = 'hero' }) => {
+export const AmbientBackground: React.FC<IAmbientBackgroundProps> = ({ variant = 'hero' }) => {
   if (variant === 'hero') {
     return (
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
