@@ -21,20 +21,27 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  // Cache the rect to avoid repeated getBoundingClientRect calls during drag
+  const rectRef = useRef<DOMRect | null>(null);
 
   const handleMouseDown = useCallback(() => {
+    // Cache the rect when drag starts to avoid layout thrashing
+    if (containerRef.current) {
+      rectRef.current = containerRef.current.getBoundingClientRect();
+    }
     setIsDragging(true);
   }, []);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
+    rectRef.current = null;
   }, []);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent | React.MouseEvent | TouchEvent) => {
-      if (!isDragging || !containerRef.current) return;
+      if (!isDragging || !rectRef.current) return;
 
-      const rect = containerRef.current.getBoundingClientRect();
+      const rect = rectRef.current;
       const clientX =
         'touches' in e ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX;
       const x = clientX - rect.left;

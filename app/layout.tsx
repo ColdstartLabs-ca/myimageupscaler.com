@@ -123,6 +123,11 @@ export default function RootLayout({ children }: { children: ReactNode }): JSX.E
       suppressHydrationWarning
     >
       <head>
+        {/* Preconnect to critical third-party origins for faster loading */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://js.stripe.com" />
+        <link rel="dns-prefetch" href="https://js.stripe.com" />
         <JsonLd data={websiteJsonLd} />
         <JsonLd data={organizationJsonLd} />
       </head>
