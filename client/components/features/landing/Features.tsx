@@ -2,37 +2,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  Type,
-  Zap,
-  ShieldCheck,
-  Image as ImageIcon,
-  Sparkles,
-  Lock,
-  Cpu,
-  CheckCircle2,
-} from 'lucide-react';
+import { Type, Zap, Image as ImageIcon, Sparkles, Lock, Cpu, CheckCircle2 } from 'lucide-react';
 import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/MotionWrappers';
 
 const features = [
   {
     icon: Type,
     name: 'Text Preservation',
-    description:
-      'Proprietary text detection ensures logos and fonts remain sharp and readable, unlike traditional GANs.',
-    color: 'text-accent',
-  },
-  {
-    icon: Zap,
-    name: 'Lightning Fast',
-    description: 'Optimized processing engine enhances images quickly with advanced AI technology.',
-    color: 'text-accent',
-  },
-  {
-    icon: ShieldCheck,
-    name: 'Ethical AI',
-    description:
-      'Zero-retention policy for enterprise security. We restore faithfully without altering identity or content.',
+    description: 'Proprietary technology preserves text, logos, and brand assets during upscaling.',
     color: 'text-accent',
   },
   {
@@ -40,6 +17,20 @@ const features = [
     name: 'Batch Processing',
     description:
       'Upload multiple images at once. Paid tiers support batch processing: Hobby (10 images), Pro (50 images), Business (500 images). Free tier limited to single image.',
+    color: 'text-accent',
+  },
+  {
+    icon: Zap,
+    name: 'Multiple Quality Tiers',
+    description:
+      'Choose from 6 quality tiers: Quick, Face Restore, Auto, HD Upscale, Face Pro, and Ultra - from 1-8 credits per image.',
+    color: 'text-accent',
+  },
+  {
+    icon: Cpu,
+    name: 'Smart AI Analysis',
+    description:
+      'Premium feature for automatic content detection and optimization (available on Pro tier and above).',
     color: 'text-accent',
   },
 ];
