@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { createClient } from '@shared/utils/supabase/client';
-import { setAuthIntent } from '@client/utils/authRedirectManager';
+import { handleAuthRedirect, setAuthIntent } from '@client/utils/authRedirectManager';
 import '@client/store/auth'; // Ensure auth store is initialized
 
 function AuthCallbackContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -24,28 +24,35 @@ function AuthCallbackContent() {
         });
       }
 
+      // Function to handle successful auth and redirect
+      const handleSuccess = async () => {
+        if (hasRedirected.current) return;
+        hasRedirected.current = true;
+        setStatus('success');
+        // Give the UI a moment to show success state, then redirect
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await handleAuthRedirect();
+      };
+
       // Listen for auth state changes
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          setStatus('success');
-          // The redirect will be handled by the postAuthRedirect in authStateHandler
-          // No need to manually redirect here
+          await handleSuccess();
         } else if (event === 'SIGNED_OUT') {
           setStatus('error');
         }
       });
 
-      // Check if we already have a session
+      // Check if we already have a session (code exchange may have already happened)
       const {
         data: { session },
         error,
       } = await supabase.auth.getSession();
 
       if (session) {
-        setStatus('success');
-        // The redirect will be handled by the auth state handler after initialization
+        await handleSuccess();
       } else if (error) {
         setStatus('error');
       }
@@ -56,7 +63,7 @@ function AuthCallbackContent() {
     };
 
     handleCallback();
-  }, [router, searchParams]);
+  }, [searchParams]);
 
   if (status === 'loading') {
     return (
@@ -91,7 +98,7 @@ function AuthCallbackContent() {
           <h1 className="text-xl font-semibold mb-2">Sign In Error</h1>
           <p className="text-muted-foreground mb-4">There was an error completing your sign in.</p>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => (window.location.href = '/')}
             className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
             Return to Home

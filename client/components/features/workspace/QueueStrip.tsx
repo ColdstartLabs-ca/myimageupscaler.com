@@ -26,9 +26,9 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
   return (
     <div
       className={cn(
-        'bg-main border-t md:border-t-0 border-white/5 p-4',
+        'bg-main border-t md:border-t-0 border-white/5 py-4 px-6',
         // Desktop: horizontal strip with fixed height, Mobile: vertical list that fills available space
-        'h-full md:h-32 flex flex-col md:flex-row gap-3 md:gap-4 overflow-y-auto md:overflow-y-hidden md:overflow-x-auto custom-scrollbar'
+        'h-full md:h-40 flex flex-col md:flex-row items-center gap-3 md:gap-6 overflow-y-auto md:overflow-y-hidden md:overflow-x-auto custom-scrollbar'
       )}
     >
       {/* Header - Mobile only */}

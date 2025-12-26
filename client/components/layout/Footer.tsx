@@ -22,11 +22,6 @@ export const Footer = (): JSX.Element => {
             <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Product</h4>
             <ul className="space-y-4 text-sm font-medium">
               <li>
-                <Link href="/upscaler" className="hover:text-accent transition-colors">
-                  Image Upscaler
-                </Link>
-              </li>
-              <li>
                 <Link href="/pricing" className="hover:text-accent transition-colors">
                   Pricing Plans
                 </Link>
@@ -55,11 +50,6 @@ export const Footer = (): JSX.Element => {
                 >
                   Contact Support
                 </a>
-              </li>
-              <li>
-                <Link href="/dashboard" className="hover:text-accent transition-colors">
-                  Member Dashboard
-                </Link>
               </li>
             </ul>
           </div>

@@ -57,6 +57,30 @@ export const NavBar = (): JSX.Element => {
               Dashboard
             </a>
           )}
+          <a
+            href="/features"
+            className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
+          >
+            Features
+          </a>
+          <a
+            href="/how-it-works"
+            className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
+          >
+            How it Works
+          </a>
+          <a
+            href="/pricing"
+            className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
+          >
+            Pricing
+          </a>
+          <a
+            href="/blog"
+            className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
+          >
+            Blog
+          </a>
           <div className="relative" ref={toolsDropdownRef}>
             <button
               onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
@@ -89,28 +113,10 @@ export const NavBar = (): JSX.Element => {
             )}
           </div>
           <a
-            href="/features"
+            href="/help"
             className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
           >
-            Features
-          </a>
-          <a
-            href="/how-it-works"
-            className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
-          >
-            How it Works
-          </a>
-          <a
-            href="/pricing"
-            className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
-          >
-            Pricing
-          </a>
-          <a
-            href="/blog"
-            className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
-          >
-            Blog
+            Support
           </a>
         </nav>
 
@@ -266,6 +272,30 @@ export const NavBar = (): JSX.Element => {
                 Dashboard
               </a>
             )}
+            <a
+              href="/features"
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+            >
+              Features
+            </a>
+            <a
+              href="/how-it-works"
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+            >
+              How it Works
+            </a>
+            <a
+              href="/pricing"
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+            >
+              Pricing
+            </a>
+            <a
+              href="/blog"
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+            >
+              Blog
+            </a>
             <div className="py-2">
               <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
                 Tools
@@ -290,28 +320,10 @@ export const NavBar = (): JSX.Element => {
               </a>
             </div>
             <a
-              href="/features"
+              href="/help"
               className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
             >
-              Features
-            </a>
-            <a
-              href="/how-it-works"
-              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-            >
-              How it Works
-            </a>
-            <a
-              href="/pricing"
-              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-            >
-              Pricing
-            </a>
-            <a
-              href="/blog"
-              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-            >
-              Blog
+              Support
             </a>
             {!isAuthenticated && (
               <>

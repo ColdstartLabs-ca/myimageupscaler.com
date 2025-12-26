@@ -266,25 +266,19 @@ const Workspace: React.FC = () => {
               isProcessingBatch={isProcessingBatch}
             />
           </div>
-        </div>
 
-        {/* Queue Strip */}
-        <div
-          className={cn(
-            'w-full md:w-64 border-t md:border-t-0 md:border-l bg-surface',
-            // Mobile: full height when active, Desktop: fixed width sidebar
-            mobileTab === 'queue' ? 'flex-1 md:flex-none' : 'hidden md:block'
-          )}
-        >
-          <QueueStrip
-            queue={queue}
-            activeId={activeId}
-            isProcessing={isProcessingBatch}
-            onSelect={setActiveId}
-            onRemove={removeItem}
-            onAddFiles={addFiles}
-            batchLimit={batchLimit}
-          />
+          {/* Queue Strip at bottom */}
+          <div className="hidden md:block">
+            <QueueStrip
+              queue={queue}
+              activeId={activeId}
+              isProcessing={isProcessingBatch}
+              onSelect={setActiveId}
+              onRemove={removeItem}
+              onAddFiles={addFiles}
+              batchLimit={batchLimit}
+            />
+          </div>
         </div>
       </div>
 
@@ -352,6 +346,24 @@ const Workspace: React.FC = () => {
           Queue
         </TabButton>
       </nav>
+
+      {/* Mobile Queue View (Hidden on desktop) */}
+      {mobileTab === 'queue' && (
+        <div className="flex-1 overflow-hidden md:hidden bg-main">
+          <QueueStrip
+            queue={queue}
+            activeId={activeId}
+            isProcessing={isProcessingBatch}
+            onSelect={(id) => {
+              setActiveId(id);
+              setMobileTab('preview');
+            }}
+            onRemove={removeItem}
+            onAddFiles={addFiles}
+            batchLimit={batchLimit}
+          />
+        </div>
+      )}
 
       {/* Batch Limit Modal */}
       <BatchLimitModal
