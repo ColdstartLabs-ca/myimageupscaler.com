@@ -44,7 +44,8 @@ export const NavBar = (): JSX.Element => {
             <Zap size={22} fill="currentColor" />
           </div>
           <span className="hidden xs:inline text-2xl font-black tracking-tight text-white">
-            {clientEnv.APP_NAME}<span className="text-accent">.</span>
+            {clientEnv.APP_NAME}
+            <span className="text-accent">.</span>
           </span>
         </a>
 
@@ -87,7 +88,13 @@ export const NavBar = (): JSX.Element => {
               className="flex items-center gap-1.5 text-sm font-bold text-text-muted hover:text-white transition-all group"
             >
               Tools
-              <ChevronDown size={14} className={cn("text-text-muted transition-transform group-hover:text-white", isToolsDropdownOpen && "rotate-180")} />
+              <ChevronDown
+                size={14}
+                className={cn(
+                  'text-text-muted transition-transform group-hover:text-white',
+                  isToolsDropdownOpen && 'rotate-180'
+                )}
+              />
             </button>
             {isToolsDropdownOpen && (
               <div className="absolute top-full left-0 mt-4 w-56 glass-dropdown rounded-2xl py-3 z-50 animate-in fade-in zoom-in-95 duration-200">
@@ -96,6 +103,12 @@ export const NavBar = (): JSX.Element => {
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
                   Image Compressor
+                </a>
+                <a
+                  href="/tools/compress/bulk-image-compressor"
+                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
+                >
+                  Bulk Compressor
                 </a>
                 <a
                   href="/tools/convert/png-to-jpg"
@@ -108,6 +121,12 @@ export const NavBar = (): JSX.Element => {
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
                   Image Resizer
+                </a>
+                <a
+                  href="/tools/resize/bulk-image-resizer"
+                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
+                >
+                  Bulk Resizer
                 </a>
               </div>
             )}
@@ -130,7 +149,9 @@ export const NavBar = (): JSX.Element => {
             <>
               <div className="hidden sm:flex items-center gap-2 glass-strong px-4 py-2 rounded-full border-white/5">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="text-xs font-black text-white/80 uppercase tracking-tighter">10 Free Credits</span>
+                <span className="text-xs font-black text-white/80 uppercase tracking-tighter">
+                  10 Free Credits
+                </span>
               </div>
               <button
                 onClick={handleAuthClick}
@@ -307,6 +328,12 @@ export const NavBar = (): JSX.Element => {
                 Image Compressor
               </a>
               <a
+                href="/tools/compress/bulk-image-compressor"
+                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+              >
+                Bulk Compressor
+              </a>
+              <a
                 href="/tools/convert/png-to-jpg"
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
@@ -317,6 +344,12 @@ export const NavBar = (): JSX.Element => {
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
                 Image Resizer
+              </a>
+              <a
+                href="/tools/resize/bulk-image-resizer"
+                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+              >
+                Bulk Resizer
               </a>
             </div>
             <a
