@@ -18,7 +18,13 @@ import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { getCreditsForTier, getModelForTier } from '@shared/config/subscription.utils';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
-import { upscaleSchema, validateImageSizeForTier } from '@shared/validation/upscale.schema';
+import {
+  decodeImageDimensions,
+  upscaleSchema,
+  validateImageDimensions,
+  validateImageSizeForTier,
+  validateMagicBytes,
+} from '@shared/validation/upscale.schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
@@ -278,6 +284,45 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
+    // 8a. Validate magic bytes match claimed MIME type
+    const magicValidation = validateMagicBytes(validatedInput.imageData, validatedInput.mimeType);
+    if (!magicValidation.valid) {
+      logger.warn('Magic byte validation failed', {
+        userId,
+        claimedMime: validatedInput.mimeType,
+        detectedMime: magicValidation.detectedMimeType,
+      });
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        magicValidation.error || 'Invalid image format',
+        400
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
+    // 8b. Decode and validate dimensions
+    const dimensions = decodeImageDimensions(validatedInput.imageData);
+    if (dimensions) {
+      const dimValidation = validateImageDimensions(dimensions.width, dimensions.height);
+      if (!dimValidation.valid) {
+        logger.warn('Dimension validation failed', {
+          userId,
+          width: dimensions.width,
+          height: dimensions.height,
+          error: dimValidation.error,
+        });
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          dimValidation.error || 'Image dimensions out of range',
+          400
+        );
+        return NextResponse.json(errorBody, { status });
+      }
+    } else {
+      // Could not decode dimensions - proceed with caution
+      logger.warn('Could not decode image dimensions', { userId });
+    }
+
     // 9. Validate premium tier restrictions for free users
     const config = validatedInput.config;
     const premiumTiers = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
@@ -493,9 +538,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     };
 
     // Pass pre-calculated creditCost to ensure consistent billing
-    const result = await processor.processImage(userId, legacyInputForProcessor as never, {
-      creditCost,
-    });
+    // Add 2-minute timeout to prevent hung requests
+    const PROCESSING_TIMEOUT_MS = 120000;
+
+    const result = await Promise.race([
+      processor.processImage(userId, legacyInputForProcessor as never, {
+        creditCost,
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new Error('Image processing timeout - request took longer than 2 minutes')),
+          PROCESSING_TIMEOUT_MS
+        )
+      ),
+    ]);
 
     const durationMs = Date.now() - startTime;
 

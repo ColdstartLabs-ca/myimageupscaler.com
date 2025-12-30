@@ -27,8 +27,10 @@ export async function preprocessForAnalysis(file: File): Promise<IPreprocessedIm
     const img = new Image();
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+    const objectUrl = URL.createObjectURL(file);
 
     if (!ctx) {
+      URL.revokeObjectURL(objectUrl);
       reject(new Error('Canvas not supported'));
       return;
     }
@@ -49,6 +51,8 @@ export async function preprocessForAnalysis(file: File): Promise<IPreprocessedIm
       // Convert to JPEG for smaller size
       const imageData = canvas.toDataURL('image/jpeg', ANALYSIS_QUALITY);
 
+      URL.revokeObjectURL(objectUrl);
+
       resolve({
         imageData,
         mimeType: 'image/jpeg',
@@ -61,8 +65,12 @@ export async function preprocessForAnalysis(file: File): Promise<IPreprocessedIm
       });
     };
 
-    img.onerror = () => reject(new Error('Failed to load image'));
-    img.src = URL.createObjectURL(file);
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Failed to load image'));
+    };
+
+    img.src = objectUrl;
   });
 }
 
