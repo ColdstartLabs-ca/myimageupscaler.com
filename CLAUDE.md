@@ -10,6 +10,7 @@
 - **Interface naming**: Prefix with `I` (e.g., `IBlogPost`)
 - **Update roadmap**: Modify `docs/management/ROADMAP.md` for new features
 - **Debug**: Check `yarn dev` logs (uses concurrently)
+- **Logging**: Server logging: `server/monitoring/logger.ts` - client: `client/utils/logger.ts`
 - **Dayjs**: For date handling.
 - **Testing**: Make sure to only test relevant behavior.
 - **Docs**: Use mermaid if diagrams/flows are needed.
