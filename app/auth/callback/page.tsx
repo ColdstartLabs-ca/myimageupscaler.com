@@ -82,7 +82,7 @@ function AuthCallbackContent() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
           <p className="text-muted-foreground">Completing sign in...</p>
         </div>
       </div>
@@ -112,7 +112,7 @@ function AuthCallbackContent() {
           <p className="text-muted-foreground mb-4">There was an error completing your sign in.</p>
           <button
             onClick={() => (window.location.href = '/')}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"
           >
             Return to Home
           </button>
@@ -142,7 +142,7 @@ export default function AuthCallbackPage() {
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-background">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
             <p className="text-muted-foreground">Loading...</p>
           </div>
         </div>

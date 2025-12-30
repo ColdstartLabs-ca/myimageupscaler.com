@@ -411,7 +411,7 @@ export function BulkImageResizer({
 
   return (
     <div className="w-full max-w-6xl mx-auto">
-      <div className="p-6 border-2 border-white/10 bg-surface shadow-lg rounded-xl">
+      <div className="p-6 border-2 border-border bg-surface shadow-lg rounded-xl">
         {/* Header */}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-text-primary mb-2">{title}</h2>
@@ -440,7 +440,7 @@ export function BulkImageResizer({
                 onChange={e =>
                   setOptions(prev => ({ ...prev, width: parseInt(e.target.value) || 1 }))
                 }
-                className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-white"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-text-primary"
               />
             </div>
 
@@ -453,7 +453,7 @@ export function BulkImageResizer({
                 {options.maintainAspectRatio ? 'Height' : 'Height (px)'}
               </label>
               {options.maintainAspectRatio ? (
-                <div className="w-full px-3 py-2 border border-white/10 rounded-lg bg-surface/50 text-text-muted italic">
+                <div className="w-full px-3 py-2 border border-border rounded-lg bg-surface/50 text-text-muted italic">
                   Auto (keeps aspect ratio)
                 </div>
               ) : (
@@ -466,7 +466,7 @@ export function BulkImageResizer({
                   onChange={e =>
                     setOptions(prev => ({ ...prev, height: parseInt(e.target.value) || 1 }))
                   }
-                  className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-white"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-text-primary"
                 />
               )}
             </div>
@@ -488,7 +488,7 @@ export function BulkImageResizer({
                     format: e.target.value as 'jpeg' | 'png' | 'webp',
                   }))
                 }
-                className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-white"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-text-primary"
               >
                 <option value="jpeg">JPEG</option>
                 <option value="png">PNG</option>
@@ -524,7 +524,7 @@ export function BulkImageResizer({
                 onChange={e =>
                   setOptions(prev => ({ ...prev, maintainAspectRatio: e.target.checked }))
                 }
-                className="w-4 h-4 text-accent border-white/20 rounded focus:ring-accent"
+                className="w-4 h-4 text-accent border-border rounded focus:ring-accent"
               />
               <label
                 htmlFor="aspect-ratio"
@@ -552,7 +552,7 @@ export function BulkImageResizer({
                       fitMode: e.target.value as 'fit' | 'fill',
                     }))
                   }
-                  className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-white"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-text-primary"
                 >
                   <option value="fit">Fit (within bounds)</option>
                   <option value="fill">Fill (may crop)</option>
@@ -585,7 +585,7 @@ export function BulkImageResizer({
               ${
                 dragActive
                   ? 'border-accent bg-accent/10 scale-[1.02]'
-                  : 'border-white/20 hover:border-accent/50 bg-surface-light/30'
+                  : 'border-border hover:border-accent/50 bg-surface-light/30'
               }
             `}
           >
@@ -616,7 +616,7 @@ export function BulkImageResizer({
                     />
                     {image.processedBlob && (
                       <div className="absolute inset-0 bg-success/80 rounded flex items-center justify-center">
-                        <Check className="w-6 h-6 text-white" />
+                        <Check className="w-6 h-6 text-text-primary" />
                       </div>
                     )}
                   </div>
@@ -662,7 +662,7 @@ export function BulkImageResizer({
                     ) : image.error ? (
                       <button
                         onClick={() => processSingleImage(image.id)}
-                        className="px-3 py-1 text-xs bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"
+                        className="px-3 py-1 text-xs bg-accent text-text-primary rounded-lg hover:bg-accent-hover transition-colors"
                       >
                         Retry
                       </button>
@@ -690,7 +690,7 @@ export function BulkImageResizer({
             {/* Add More Button */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-3 border-2 border-dashed border-white/20 rounded-lg text-text-secondary hover:border-accent hover:text-accent transition-colors mb-4"
+              className="w-full py-3 border-2 border-dashed border-border rounded-lg text-text-secondary hover:border-accent hover:text-accent transition-colors mb-4"
             >
               + Add More Images
             </button>
@@ -704,7 +704,7 @@ export function BulkImageResizer({
               <button
                 onClick={processAllImages}
                 disabled={isProcessingAll || anyProcessing}
-                className="flex-1 px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-6 py-3 bg-accent text-text-primary font-medium rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isProcessingAll || anyProcessing ? (
                   <>
@@ -720,7 +720,7 @@ export function BulkImageResizer({
             {allProcessed && (
               <button
                 onClick={downloadAllAsZip}
-                className="flex-1 px-6 py-3 bg-success text-white font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-6 py-3 bg-success text-text-primary font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />
                 Download All as ZIP
@@ -749,7 +749,7 @@ export function BulkImageResizer({
       {/* Upscaler CTA Modal */}
       {showUpscalerCTA && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-surface border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-surface border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             {/* Close button */}
             <button
               onClick={() => setShowUpscalerCTA(false)}
@@ -772,7 +772,7 @@ export function BulkImageResizer({
             </p>
 
             {/* Divider */}
-            <div className="border-t border-white/10 my-6" />
+            <div className="border-t border-border my-6" />
 
             {/* Upsell */}
             <div className="bg-gradient-to-br from-accent/10 to-purple-500/10 rounded-xl p-4 mb-6">
@@ -796,7 +796,7 @@ export function BulkImageResizer({
             <div className="space-y-3">
               <Link
                 href="/upscaler/"
-                className="w-full px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
+                className="w-full px-6 py-3 bg-accent text-text-primary font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4" />
                 Try AI Upscaler Free
@@ -807,7 +807,7 @@ export function BulkImageResizer({
                   downloadAllAsZip();
                   setShowUpscalerCTA(false);
                 }}
-                className="w-full px-6 py-3 bg-success text-white font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
+                className="w-full px-6 py-3 bg-success text-text-primary font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />
                 Download My Files

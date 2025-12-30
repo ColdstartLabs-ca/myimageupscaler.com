@@ -302,7 +302,7 @@ export function BulkImageCompressor(): React.ReactElement {
 
   return (
     <div className="w-full max-w-5xl mx-auto">
-      <div className="p-6 border-2 border-white/10 bg-surface shadow-lg rounded-xl">
+      <div className="p-6 border-2 border-border bg-surface shadow-lg rounded-xl">
         {/* Header */}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-text-primary mb-2">Bulk Image Compressor</h2>
@@ -323,7 +323,7 @@ export function BulkImageCompressor(): React.ReactElement {
 
         {/* Upload Area */}
         {images.length === 0 && (
-          <div className="border-2 border-dashed border-white/20 rounded-xl p-12 text-center hover:border-accent/50 transition-colors">
+          <div className="border-2 border-dashed border-border rounded-xl p-12 text-center hover:border-accent/50 transition-colors">
             <FileImage className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-xl font-semibold text-text-primary mb-2">
               Drop images here or click to upload
@@ -344,7 +344,7 @@ export function BulkImageCompressor(): React.ReactElement {
         {images.length > 0 && images.length < 20 && (
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="w-full p-4 border-2 border-dashed border-white/20 rounded-lg text-text-secondary hover:border-accent/50 hover:text-accent transition-colors flex items-center justify-center gap-2 mb-6"
+            className="w-full p-4 border-2 border-dashed border-border rounded-lg text-text-secondary hover:border-accent/50 hover:text-accent transition-colors flex items-center justify-center gap-2 mb-6"
           >
             <FileImage className="w-5 h-5" />
             Add More Images
@@ -398,7 +398,7 @@ export function BulkImageCompressor(): React.ReactElement {
                 setOptions(prev => ({ ...prev, targetSizeKB: parseInt(e.target.value) || 0 }))
               }
               placeholder="No limit"
-              className="w-full px-3 py-2 bg-surface border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white"
+              className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-text-primary"
             />
             <p className="text-xs text-text-muted mt-1">
               Leave empty for quality-based compression
@@ -419,7 +419,7 @@ export function BulkImageCompressor(): React.ReactElement {
                   format: e.target.value as 'jpeg' | 'png' | 'webp',
                 }))
               }
-              className="w-full px-3 py-2 bg-surface border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white"
+              className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-text-primary"
             >
               <option value="jpeg">JPEG (best for photos)</option>
               <option value="webp">WebP (best compression)</option>
@@ -434,7 +434,7 @@ export function BulkImageCompressor(): React.ReactElement {
             {images.map(image => (
               <div
                 key={image.id}
-                className="flex items-center gap-4 p-3 bg-surface-light rounded-lg border border-white/10"
+                className="flex items-center gap-4 p-3 bg-surface-light rounded-lg border border-border"
               >
                 {/* Thumbnail */}
                 <div className="relative w-16 h-16 flex-shrink-0">
@@ -589,7 +589,7 @@ export function BulkImageCompressor(): React.ReactElement {
       {/* Upscaler CTA Modal */}
       {showUpscalerCTA && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-surface border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-surface border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             {/* Close button */}
             <button
               onClick={() => setShowUpscalerCTA(false)}
@@ -615,7 +615,7 @@ export function BulkImageCompressor(): React.ReactElement {
             </p>
 
             {/* Divider */}
-            <div className="border-t border-white/10 my-6" />
+            <div className="border-t border-border my-6" />
 
             {/* Upsell */}
             <div className="bg-gradient-to-br from-accent/10 to-purple-500/10 rounded-xl p-4 mb-6">

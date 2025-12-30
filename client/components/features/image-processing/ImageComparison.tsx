@@ -67,14 +67,14 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
     <div className="w-full h-full max-w-6xl mx-auto bg-surface rounded-xl shadow-lg overflow-hidden border border-white/10 flex flex-col">
       <div className="p-3 md:p-4 border-b border-white/10 flex flex-wrap md:flex-nowrap justify-between items-center gap-2 shrink-0">
         <div className="flex items-center">
-          <span className="inline-flex items-center px-2 md:px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">
+          <span className="inline-flex items-center px-2 md:px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/20 text-success whitespace-nowrap">
             ✓ Enhanced
           </span>
         </div>
         <div className="flex items-center gap-1 md:gap-2">
           <button
             onClick={toggleZoom}
-            className="p-2 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
+            className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 rounded-md transition-colors"
             title="Toggle Zoom"
           >
             {zoom === 1 ? <ZoomIn size={18} /> : <ZoomOut size={18} />}
@@ -127,11 +127,11 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
 
         {/* Slider Handle */}
         <div
-          className="absolute top-0 bottom-0 w-1 bg-surface shadow-[0_0_10px_rgba(0,0,0,0.3)] cursor-col-resize flex items-center justify-center z-10 transform -translate-x-1/2"
+          className="absolute top-0 bottom-0 w-1 bg-surface shadow-[0_0_10px_rgba(var(--color-text-primary),0.3)] cursor-col-resize flex items-center justify-center z-10 transform -translate-x-1/2"
           style={{ left: `${sliderPosition}%` }}
         >
           <div className="w-8 h-8 bg-surface rounded-full shadow-lg flex items-center justify-center">
-            <ArrowLeftRight size={16} className="text-indigo-600" />
+            <ArrowLeftRight size={16} className="text-accent" />
           </div>
         </div>
 
@@ -139,7 +139,7 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
         <div className="absolute bottom-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded pointer-events-none">
           Original
         </div>
-        <div className="absolute bottom-4 right-4 bg-indigo-600/80 text-white text-xs px-2 py-1 rounded pointer-events-none">
+        <div className="absolute bottom-4 right-4 bg-accent/80 text-white text-xs px-2 py-1 rounded pointer-events-none">
           Enhanced
         </div>
       </div>

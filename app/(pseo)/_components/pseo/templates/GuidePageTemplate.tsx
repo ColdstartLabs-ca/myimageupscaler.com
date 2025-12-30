@@ -28,8 +28,8 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
   // Difficulty badge styling
   const difficultyStyles = {
     beginner: 'bg-surface-light text-success',
-    intermediate: 'bg-yellow-100 text-yellow-700',
-    advanced: 'bg-red-100 text-red-700',
+    intermediate: 'bg-warning/20 text-warning',
+    advanced: 'bg-error/20 text-error',
   };
 
   return (
@@ -76,7 +76,7 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
           {/* Hero Section with Guide Badge */}
           <div className="relative">
             <div className="absolute -top-4 left-0 flex gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-100 text-emerald-700 text-sm font-semibold rounded-full">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-success/20 text-success text-sm font-semibold rounded-full">
                 <BookOpen className="w-4 h-4" />
                 {data.guideType === 'how-to' ? 'How-To Guide' : 'Tutorial'}
               </span>
@@ -142,10 +142,10 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
                     <div
                       key={idx}
                       id={`step-${idx + 1}`}
-                      className="relative bg-surface border-2 border-white/10 rounded-xl p-6 hover:border-accent transition-colors"
+                      className="relative bg-surface border-2 border-border rounded-xl p-6 hover:border-accent transition-colors"
                     >
                       {/* Step Number Badge */}
-                      <div className="absolute -top-4 -left-4 w-12 h-12 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg">
+                      <div className="absolute -top-4 -left-4 w-12 h-12 bg-success text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg">
                         {idx + 1}
                       </div>
 
@@ -155,7 +155,7 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
                           <p className="text-muted-foreground leading-relaxed">{step.content}</p>
                         </div>
                         {step.image && (
-                          <div className="mt-4 rounded-lg overflow-hidden border border-white/10">
+                          <div className="mt-4 rounded-lg overflow-hidden border border-border">
                             <img
                               src={step.image}
                               alt={step.title}
@@ -165,14 +165,14 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
                           </div>
                         )}
                         {step.tip && (
-                          <div className="mt-4 p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded">
+                          <div className="mt-4 p-4 bg-success/10 border-l-4 border-success rounded">
                             <div className="flex items-start gap-2">
-                              <Lightbulb className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                              <Lightbulb className="w-5 h-5 text-success shrink-0 mt-0.5" />
                               <div>
-                                <div className="font-semibold text-emerald-900 text-sm mb-1">
+                                <div className="font-semibold text-text-primary text-sm mb-1">
                                   Pro Tip:
                                 </div>
-                                <p className="text-sm text-emerald-800">{step.tip}</p>
+                                <p className="text-sm text-text-secondary">{step.tip}</p>
                               </div>
                             </div>
                           </div>
@@ -189,15 +189,15 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
           {data.tips && data.tips.length > 0 && (
             <FadeIn delay={0.5}>
               <section className="py-12">
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-8 border border-emerald-200">
+                <div className="bg-gradient-to-br from-success/10 to-success/5 rounded-xl p-8 border border-success/20">
                   <div className="flex items-center gap-2 mb-6">
-                    <Lightbulb className="w-6 h-6 text-emerald-600" />
+                    <Lightbulb className="w-6 h-6 text-success" />
                     <h2 className="text-2xl font-bold">Pro Tips & Best Practices</h2>
                   </div>
                   <ul className="space-y-3">
                     {data.tips.map((tip, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
                         <span className="text-muted-foreground">{tip}</span>
                       </li>
                     ))}
@@ -229,21 +229,21 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
           {/* Related Guides */}
           {data.relatedGuides && data.relatedGuides.length > 0 && (
             <FadeIn delay={0.6}>
-              <section className="py-8 border-t border-white/10">
+              <section className="py-8 border-t border-border">
                 <h2 className="text-2xl font-bold mb-6">Related Guides</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {data.relatedGuides.map((slug, idx) => (
                     <Link
                       key={idx}
                       href={`/guides/${slug}`}
-                      className="p-4 border border-white/10 rounded-lg hover:border-accent hover:shadow-md transition-all group bg-surface"
+                      className="p-4 border border-border rounded-lg hover:border-accent hover:shadow-md transition-all group bg-surface"
                     >
                       <div className="flex items-center gap-2">
-                        <BookOpen className="w-5 h-5 text-emerald-600" />
+                        <BookOpen className="w-5 h-5 text-success" />
                         <span className="text-sm font-medium text-primary capitalize flex-1">
                           {slug.replace(/-/g, ' ')}
                         </span>
-                        <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
+                        <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-success group-hover:translate-x-1 transition-all" />
                       </div>
                     </Link>
                   ))}
@@ -262,7 +262,7 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
                     <Link
                       key={idx}
                       href={`/tools/${slug}`}
-                      className="p-4 bg-surface rounded-lg hover:bg-emerald-50 hover:border-emerald-200 border border-transparent transition-all"
+                      className="p-4 bg-surface rounded-lg hover:bg-success/10 hover:border-success/20 border border-transparent transition-all"
                     >
                       <span className="text-sm font-medium text-primary capitalize">
                         {slug.replace(/-/g, ' ')}

@@ -69,11 +69,11 @@ export const Modal: React.FC<IModalProps> = ({
         {/* Header */}
         {(title || showCloseButton) && (
           <div className="flex items-center justify-between p-6 border-b border-border">
-            {title && <h2 className="text-xl font-bold text-primary">{title}</h2>}
+            {title && <h2 className="text-xl font-bold text-text-primary">{title}</h2>}
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="p-2 text-muted-foreground hover:text-secondary hover:bg-surface/80 rounded-lg transition-colors"
+                className="p-2 text-text-muted hover:text-text-primary hover:bg-surface/80 rounded-lg transition-colors"
                 aria-label="Close modal"
               >
                 <X size={20} />

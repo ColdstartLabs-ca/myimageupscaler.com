@@ -118,15 +118,15 @@ export function FreePageTemplate({ data }: IFreePageTemplateProps): ReactElement
 
                   <div className="grid md:grid-cols-2 gap-6">
                     {/* Free Tier */}
-                    <div className="bg-surface border-2 border-white/10 rounded-xl p-6">
+                    <div className="bg-surface border-2 border-border rounded-xl p-6">
                       <div className="flex items-center gap-2 mb-4">
-                        <Sparkles className="w-5 h-5 text-green-600" />
+                        <Sparkles className="w-5 h-5 text-success" />
                         <h3 className="text-xl font-bold">Free Plan</h3>
                       </div>
                       <div className="space-y-3">
                         {data.features.slice(0, 3).map((feature, idx) => (
                           <div key={idx} className="flex items-start gap-2">
-                            <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                            <Check className="w-5 h-5 text-success shrink-0 mt-0.5" />
                             <span className="text-sm text-muted-foreground">{feature.title}</span>
                           </div>
                         ))}
@@ -140,7 +140,7 @@ export function FreePageTemplate({ data }: IFreePageTemplateProps): ReactElement
                     </div>
 
                     {/* Premium Tier */}
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 relative">
+                    <div className="bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/20 rounded-xl p-6 relative">
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                         <span className="inline-block px-3 py-1 bg-accent text-white text-xs font-bold rounded-full">
                           RECOMMENDED
@@ -152,15 +152,15 @@ export function FreePageTemplate({ data }: IFreePageTemplateProps): ReactElement
                       <div className="space-y-3 mb-6">
                         {data.features.map((feature, idx) => (
                           <div key={idx} className="flex items-start gap-2">
-                            <Check className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                            <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                             <span className="text-sm text-muted-foreground">{feature.title}</span>
                           </div>
                         ))}
                         {data.upgradePoints &&
                           data.upgradePoints.map((point, idx) => (
                             <div key={idx} className="flex items-start gap-2">
-                              <Check className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                              <span className="text-sm font-medium text-blue-900">{point}</span>
+                              <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                              <span className="text-sm font-medium text-text-primary">{point}</span>
                             </div>
                           ))}
                       </div>
@@ -200,14 +200,14 @@ export function FreePageTemplate({ data }: IFreePageTemplateProps): ReactElement
           {/* Related Free Tools */}
           {data.relatedFree && data.relatedFree.length > 0 && (
             <FadeIn delay={0.6}>
-              <section className="py-8 border-t border-white/10">
+              <section className="py-8 border-t border-border">
                 <h2 className="text-2xl font-bold mb-6">More Free Tools</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {data.relatedFree.map((slug, idx) => (
                     <Link
                       key={idx}
                       href={`/free/${slug}`}
-                      className="p-4 border border-white/10 rounded-lg hover:border-green-500 hover:shadow-md transition-all"
+                      className="p-4 border border-border rounded-lg hover:border-success hover:shadow-md transition-all"
                     >
                       <span className="text-sm font-medium text-primary capitalize">
                         {slug.replace(/-/g, ' ')}

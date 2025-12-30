@@ -10,7 +10,7 @@ export default async function UseCasesHubPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-6">Image Upscaling Use Cases</h1>
-      <p className="text-xl text-gray-600 mb-12">
+      <p className="text-xl text-text-secondary mb-12">
         Discover how AI image enhancement helps different industries
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -22,9 +22,7 @@ export default async function UseCasesHubPage() {
           >
             <h2 className="text-xl font-semibold mb-2">{useCase.title}</h2>
             <p className="text-gray-600 text-sm">{useCase.description}</p>
-            <span className="inline-block mt-4 text-blue-600 text-sm font-medium">
-              Learn more →
-            </span>
+            <span className="inline-block mt-4 text-accent text-sm font-medium">Learn more →</span>
           </Link>
         ))}
       </div>

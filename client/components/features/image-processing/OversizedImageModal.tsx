@@ -54,7 +54,7 @@ const ImagePreview: React.FC<{ file: File; previewUrl: string }> = ({ file, prev
 const ErrorMessage: React.FC<{ error: string | null }> = ({ error }) => {
   if (!error) return null;
   return (
-    <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">
+    <div className="p-4 bg-error/10 border border-error/20 rounded-xl text-sm text-error">
       {error}
     </div>
   );

@@ -22,15 +22,15 @@ const Toast: React.FC<IToastProps> = ({ vertical = 'bottom', horizontal = 'end' 
   const getToastColors = (type: string) => {
     switch (type) {
       case 'success':
-        return 'bg-green-500 text-white';
+        return 'bg-success text-white';
       case 'error':
-        return 'bg-red-500 text-white';
+        return 'bg-error text-white';
       case 'warning':
-        return 'bg-yellow-500 text-white';
+        return 'bg-warning text-white';
       case 'info':
-        return 'bg-blue-500 text-white';
+        return 'bg-accent text-white';
       default:
-        return 'bg-gray-800 text-white';
+        return 'bg-surface text-text-primary';
     }
   };
 

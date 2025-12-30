@@ -8,7 +8,7 @@ export default function SupportPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">Help & Support</h1>
+        <h1 className="text-2xl font-bold text-primary">Help & Support</h1>
         <p className="text-muted-foreground mt-1">Get help with {clientEnv.APP_NAME}</p>
       </div>
 

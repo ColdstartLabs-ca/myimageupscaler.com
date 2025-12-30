@@ -77,10 +77,10 @@ export default function AdminUserDetailPage() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-600 mb-4">{error}</p>
+        <p className="text-error mb-4">{error}</p>
         <Link
           href="/dashboard/admin/users"
-          className="text-indigo-600 hover:text-indigo-900 inline-block"
+          className="text-accent hover:text-accent-hover inline-block"
         >
           Back to users
         </Link>
@@ -94,7 +94,7 @@ export default function AdminUserDetailPage() {
         <p className="text-muted-foreground">User not found</p>
         <Link
           href="/dashboard/admin/users"
-          className="text-indigo-600 hover:text-indigo-900 mt-4 inline-block"
+          className="text-accent hover:text-accent-hover mt-4 inline-block"
         >
           Back to users
         </Link>
@@ -164,7 +164,7 @@ export default function AdminUserDetailPage() {
             <h3 className="font-medium text-primary">Credits</h3>
             <button
               onClick={() => setShowCreditModal(true)}
-              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent-hover transition-colors"
             >
               <Coins className="h-4 w-4 mr-1.5" />
               Adjust Credits
@@ -188,7 +188,7 @@ export default function AdminUserDetailPage() {
                         {dayjs(tx.created_at).format('MMM D')}
                       </span>
                     </div>
-                    <span className={tx.amount > 0 ? 'text-green-600' : 'text-red-600'}>
+                    <span className={tx.amount > 0 ? 'text-success' : 'text-error'}>
                       {tx.amount > 0 ? '+' : ''}
                       {tx.amount}
                     </span>
@@ -210,8 +210,8 @@ export default function AdminUserDetailPage() {
                   <span
                     className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                       user.subscription.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-success/20 text-success'
+                        : 'bg-warning/20 text-warning'
                     }`}
                   >
                     {user.subscription.status}
@@ -344,7 +344,7 @@ function CreditAdjustmentModal({
               required
             />
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-error">{error}</p>}
           <div className="flex justify-end space-x-3">
             <button
               type="button"
@@ -356,7 +356,7 @@ function CreditAdjustmentModal({
             <button
               type="submit"
               disabled={submitting}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
             >
               {submitting ? 'Saving...' : 'Adjust Credits'}
             </button>

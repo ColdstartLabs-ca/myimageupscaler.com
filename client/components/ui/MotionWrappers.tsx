@@ -284,9 +284,9 @@ export function GlowPulse({ children, className = '' }: IGlowPulseProps): ReactE
     <motion.div
       animate={{
         boxShadow: [
-          '0 0 20px rgba(45, 129, 255, 0.3)',
-          '0 0 40px rgba(45, 129, 255, 0.5)',
-          '0 0 20px rgba(45, 129, 255, 0.3)',
+          '0 0 20px rgb(var(--color-accent) / 0.3)',
+          '0 0 40px rgb(var(--color-accent) / 0.5)',
+          '0 0 20px rgb(var(--color-accent) / 0.3)',
         ],
       }}
       transition={{

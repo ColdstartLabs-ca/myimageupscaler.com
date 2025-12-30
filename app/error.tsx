@@ -38,8 +38,8 @@ export default function GlobalError({
       <body>
         <div className="min-h-screen flex items-center justify-center bg-surface px-4">
           <div className="max-w-md w-full bg-surface rounded-lg shadow-lg p-8">
-            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
-              <AlertTriangle className="h-6 w-6 text-red-600" />
+            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-error/20 rounded-full">
+              <AlertTriangle className="h-6 w-6 text-error" />
             </div>
 
             <div className="mt-6 text-center">
@@ -55,7 +55,7 @@ export default function GlobalError({
                     Error details (dev only)
                   </summary>
                   <div className="mt-2 p-3 bg-surface-light rounded text-xs font-mono overflow-auto max-h-48">
-                    <p className="font-bold text-red-600">{error.toString()}</p>
+                    <p className="font-bold text-error">{error.toString()}</p>
                     {error.digest && (
                       <p className="mt-1 text-muted-foreground">Digest: {error.digest}</p>
                     )}
@@ -72,7 +72,7 @@ export default function GlobalError({
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <button
                 onClick={reset}
-                className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Try Again

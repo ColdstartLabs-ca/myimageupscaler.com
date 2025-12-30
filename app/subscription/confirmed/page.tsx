@@ -66,18 +66,16 @@ function SubscriptionConfirmedContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-surface to-main flex items-center justify-center p-4">
       <div className="max-w-lg w-full">
         {/* Success Icon */}
         <div className="text-center mb-8">
           <div
             className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${
-              isDowngrade ? 'bg-orange-100' : 'bg-green-100'
+              isDowngrade ? 'bg-warning/20' : 'bg-success/20'
             } mb-4`}
           >
-            <CheckCircle
-              className={`w-8 h-8 ${isDowngrade ? 'text-orange-600' : 'text-green-600'}`}
-            />
+            <CheckCircle className={`w-8 h-8 ${isDowngrade ? 'text-warning' : 'text-success'}`} />
           </div>
           <h1 className="text-2xl font-bold text-primary mb-2">
             {isDowngrade ? 'Downgrade Scheduled' : 'Upgrade Complete!'}
@@ -114,9 +112,7 @@ function SubscriptionConfirmedContent() {
                 <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                   {isDowngrade ? 'Scheduled Plan' : 'New Plan'}
                 </p>
-                <p
-                  className={`font-semibold ${isDowngrade ? 'text-orange-600' : 'text-green-600'}`}
-                >
+                <p className={`font-semibold ${isDowngrade ? 'text-warning' : 'text-success'}`}>
                   {resolvedNewPlan?.name || newPlan?.name}
                 </p>
                 <p className="text-sm text-muted-foreground">
@@ -131,13 +127,13 @@ function SubscriptionConfirmedContent() {
             {isDowngrade ? (
               <>
                 {/* Downgrade Info */}
-                <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-lg">
-                  <Calendar className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                <div className="flex items-start gap-3 p-4 bg-warning/10 rounded-lg">
+                  <Calendar className="w-5 h-5 text-warning mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-primary">
                       Keep using {resolvedOldPlan?.name || oldPlan?.name || 'Current Plan'} until
                     </p>
-                    <p className="text-lg font-semibold text-orange-600">
+                    <p className="text-lg font-semibold text-warning">
                       {effectiveDate ? formatDate(effectiveDate) : 'End of billing period'}
                     </p>
                   </div>
@@ -154,7 +150,7 @@ function SubscriptionConfirmedContent() {
                   </div>
                 </div>
 
-                <div className="text-sm text-muted-foreground bg-blue-50 p-4 rounded-lg">
+                <div className="text-sm text-muted-foreground bg-accent/10 p-4 rounded-lg">
                   <p className="font-medium text-primary mb-1">What happens next?</p>
                   <ul className="space-y-1 list-disc list-inside">
                     <li>
@@ -173,8 +169,8 @@ function SubscriptionConfirmedContent() {
             ) : (
               <>
                 {/* Upgrade Info */}
-                <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
-                  <Sparkles className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                <div className="flex items-start gap-3 p-4 bg-success/20 rounded-lg">
+                  <Sparkles className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-primary">Your new plan is active now!</p>
                     <p className="text-sm text-muted-foreground">
@@ -199,7 +195,7 @@ function SubscriptionConfirmedContent() {
                   </div>
                 )}
 
-                <div className="text-sm text-muted-foreground bg-blue-50 p-4 rounded-lg">
+                <div className="text-sm text-muted-foreground bg-accent/10 p-4 rounded-lg">
                   <p className="font-medium text-primary mb-1">What&apos;s included?</p>
                   <ul className="space-y-1 list-disc list-inside">
                     <li>
@@ -219,7 +215,7 @@ function SubscriptionConfirmedContent() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/dashboard"
-                className="flex-1 px-4 py-2.5 bg-indigo-600 text-white text-center font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                className="flex-1 px-4 py-2.5 bg-accent text-white text-center font-medium rounded-lg hover:bg-accent-hover transition-colors"
               >
                 Go to Dashboard
               </Link>
@@ -236,7 +232,7 @@ function SubscriptionConfirmedContent() {
         {/* Help Link */}
         <p className="text-center text-sm text-muted-foreground mt-6">
           Questions?{' '}
-          <Link href="/help" className="text-indigo-600 hover:text-indigo-700">
+          <Link href="/help" className="text-accent hover:text-accent-hover">
             Contact support
           </Link>
         </p>

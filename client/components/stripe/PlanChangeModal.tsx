@@ -137,7 +137,7 @@ export function PlanChangeModal({
         <ModalHeader
           title={currentPlan ? 'Change Plan' : 'Select Plan'}
           icon={Icon}
-          iconClassName={isUpgrade ? 'text-green-600' : 'text-orange-600'}
+          iconClassName={isUpgrade ? 'text-success' : 'text-warning'}
           onClose={onClose}
           disabled={changing}
         />
@@ -182,9 +182,9 @@ export function PlanChangeModal({
 
               {/* Downgrade: Show Scheduled Change Info */}
               {preview.is_downgrade && preview.effective_date && (
-                <div className="border border-orange-200 bg-orange-50 rounded-lg p-4 mb-6">
+                <div className="border border-warning/20 bg-warning/10 rounded-lg p-4 mb-6">
                   <div className="flex items-start gap-3">
-                    <Calendar className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                    <Calendar className="w-5 h-5 text-warning mt-0.5 flex-shrink-0" />
                     <div>
                       <h3 className="font-medium text-primary mb-1">Scheduled Downgrade</h3>
                       <p className="text-sm text-muted-foreground mb-3">
@@ -215,9 +215,7 @@ export function PlanChangeModal({
                 <button
                   onClick={handleConfirmChange}
                   className={`px-6 py-2 text-white rounded-lg transition-colors ${
-                    isUpgrade
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-orange-600 hover:bg-orange-700'
+                    isUpgrade ? 'bg-success hover:bg-success/80' : 'bg-warning hover:bg-warning/80'
                   } ${changing ? 'opacity-50 cursor-not-allowed' : ''}`}
                   disabled={changing}
                 >

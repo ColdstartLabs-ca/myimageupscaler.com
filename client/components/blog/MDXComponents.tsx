@@ -34,25 +34,25 @@ interface IChildrenProps {
 }
 
 const H1 = ({ children }: IHeadingProps): JSX.Element => (
-  <h1 className="text-3xl font-bold text-primary mt-8 mb-4">{children}</h1>
+  <h1 className="text-3xl font-bold text-text-primary mt-8 mb-4">{children}</h1>
 );
 
 const H2 = ({ children }: IHeadingProps): JSX.Element => (
-  <h2 className="text-2xl font-semibold text-primary mt-8 mb-4 pb-2 border-b border-white/10">
+  <h2 className="text-2xl font-semibold text-text-primary mt-8 mb-4 pb-2 border-b border-white/10">
     {children}
   </h2>
 );
 
 const H3 = ({ children }: IHeadingProps): JSX.Element => (
-  <h3 className="text-xl font-semibold text-primary mt-6 mb-3">{children}</h3>
+  <h3 className="text-xl font-semibold text-text-primary mt-6 mb-3">{children}</h3>
 );
 
 const H4 = ({ children }: IHeadingProps): JSX.Element => (
-  <h4 className="text-lg font-medium text-muted-foreground mt-4 mb-2">{children}</h4>
+  <h4 className="text-lg font-medium text-text-secondary mt-4 mb-2">{children}</h4>
 );
 
 const Paragraph = ({ children }: IChildrenProps): JSX.Element => (
-  <p className="text-muted-foreground leading-relaxed mb-4">{children}</p>
+  <p className="text-text-secondary leading-relaxed mb-4">{children}</p>
 );
 
 const Anchor = ({ href, children }: ILinkProps): JSX.Element => {
@@ -62,7 +62,7 @@ const Anchor = ({ href, children }: ILinkProps): JSX.Element => {
     return (
       <Link
         href={href}
-        className="text-indigo-600 hover:text-indigo-800 underline underline-offset-2"
+        className="text-accent hover:text-accent-hover underline underline-offset-2"
       >
         {children}
       </Link>
@@ -74,7 +74,7 @@ const Anchor = ({ href, children }: ILinkProps): JSX.Element => {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-indigo-600 hover:text-indigo-800 underline underline-offset-2"
+      className="text-accent hover:text-accent-hover underline underline-offset-2"
     >
       {children}
     </a>
@@ -90,7 +90,7 @@ const MDXImage = ({ src, alt }: IMdxImageProps): JSX.Element | null => {
         <img src={src} alt={alt || ''} className="w-full h-full object-cover" />
       </div>
       {alt && (
-        <figcaption className="text-center text-sm text-muted-foreground mt-2">{alt}</figcaption>
+        <figcaption className="text-center text-sm text-text-secondary mt-2">{alt}</figcaption>
       )}
     </figure>
   );
@@ -101,31 +101,31 @@ const CodeBlock = ({ children, className }: ICodeProps): JSX.Element => {
 
   if (isInline) {
     return (
-      <code className="bg-surface-light text-indigo-600 px-1.5 py-0.5 rounded text-sm font-mono">
+      <code className="bg-surface-light text-accent px-1.5 py-0.5 rounded text-sm font-mono">
         {children}
       </code>
     );
   }
 
   return (
-    <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto my-6">
+    <pre className="bg-surface text-text-primary p-4 rounded-lg overflow-x-auto my-6 border border-white/10">
       <code className={`${className} text-sm font-mono`}>{children}</code>
     </pre>
   );
 };
 
 const Blockquote = ({ children }: IBlockquoteProps): JSX.Element => (
-  <blockquote className="border-l-4 border-indigo-500 pl-4 my-6 italic text-muted-foreground bg-indigo-50 py-3 pr-4 rounded-r-lg">
+  <blockquote className="border-l-4 border-accent pl-4 my-6 italic text-text-secondary bg-accent/10 py-3 pr-4 rounded-r-lg">
     {children}
   </blockquote>
 );
 
 const UnorderedList = ({ children }: IListProps): JSX.Element => (
-  <ul className="list-disc list-inside space-y-2 text-muted-foreground mb-4 ml-4">{children}</ul>
+  <ul className="list-disc list-inside space-y-2 text-text-secondary mb-4 ml-4">{children}</ul>
 );
 
 const OrderedList = ({ children }: IListProps): JSX.Element => (
-  <ol className="list-decimal list-inside space-y-2 text-muted-foreground mb-4 ml-4">{children}</ol>
+  <ol className="list-decimal list-inside space-y-2 text-text-secondary mb-4 ml-4">{children}</ol>
 );
 
 const ListItem = ({ children }: IChildrenProps): JSX.Element => (
@@ -147,7 +147,7 @@ const TableHead = ({ children }: IChildrenProps): JSX.Element => (
 );
 
 const TableBody = ({ children }: IChildrenProps): JSX.Element => (
-  <tbody className="divide-y divide-slate-200">{children}</tbody>
+  <tbody className="divide-y divide-white/10">{children}</tbody>
 );
 
 const TableRow = ({ children }: IChildrenProps): JSX.Element => (
@@ -155,13 +155,13 @@ const TableRow = ({ children }: IChildrenProps): JSX.Element => (
 );
 
 const TableHeader = ({ children }: IChildrenProps): JSX.Element => (
-  <th className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground border border-white/10">
+  <th className="px-4 py-3 text-left text-sm font-semibold text-text-secondary border border-white/10">
     {children}
   </th>
 );
 
 const TableCell = ({ children }: IChildrenProps): JSX.Element => (
-  <td className="px-4 py-3 text-sm text-muted-foreground border border-white/10">{children}</td>
+  <td className="px-4 py-3 text-sm text-text-secondary border border-white/10">{children}</td>
 );
 
 // Callout component for tips, warnings, etc.
@@ -172,10 +172,10 @@ interface ICalloutProps {
 
 const Callout = ({ type = 'info', children }: ICalloutProps): JSX.Element => {
   const styles = {
-    info: 'bg-blue-50 border-blue-500 text-blue-800',
-    warning: 'bg-amber-50 border-amber-500 text-amber-800',
-    tip: 'bg-green-50 border-green-500 text-green-800',
-    error: 'bg-red-50 border-red-500 text-red-800',
+    info: 'bg-accent/10 border-accent text-text-primary',
+    warning: 'bg-warning/10 border-warning text-text-primary',
+    tip: 'bg-success/10 border-success text-text-primary',
+    error: 'bg-error/10 border-error text-text-primary',
   };
 
   const icons = {

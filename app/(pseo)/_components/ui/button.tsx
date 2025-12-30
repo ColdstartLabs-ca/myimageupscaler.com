@@ -24,7 +24,7 @@ export const Button = ({
     primary:
       'bg-accent hover:bg-accent-hover text-white shadow-md hover:shadow-lg glow-blue hover:glow-blue-lg focus:ring-accent',
     secondary: 'glass-card hover:bg-surface-light text-white hover:text-accent focus:ring-accent',
-    ghost: 'hover:bg-surface-light text-muted-foreground hover:text-white focus:ring-accent',
+    ghost: 'hover:bg-surface-light text-text-secondary hover:text-text-primary focus:ring-accent',
     accent:
       'bg-success hover:bg-success/90 text-white shadow-md hover:shadow-lg focus:ring-success',
   };

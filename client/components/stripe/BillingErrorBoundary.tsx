@@ -172,8 +172,8 @@ export class BillingErrorBoundary extends React.Component<
       return (
         <div className="min-h-screen bg-surface flex items-center justify-center px-4">
           <div className="max-w-md w-full bg-surface-light rounded-lg shadow-lg p-8">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-red-100 rounded-full">
-              <Icon className="w-8 h-8 text-red-600" />
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-error/10 rounded-full">
+              <Icon className="w-8 h-8 text-error" />
             </div>
 
             <h1 className="text-2xl font-bold text-primary text-center mb-4">
@@ -207,8 +207,8 @@ export class BillingErrorBoundary extends React.Component<
 
             {/* Additional help text for specific contexts */}
             {this.props.context === 'checkout' && (
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-800">
+              <div className="mt-6 p-4 bg-info/10 rounded-lg border border-info/20">
+                <p className="text-sm text-info">
                   <strong>Need help?</strong> If you continue to experience issues, please contact
                   our support team at {clientEnv.SUPPORT_EMAIL} or try using a different browser or
                   device.

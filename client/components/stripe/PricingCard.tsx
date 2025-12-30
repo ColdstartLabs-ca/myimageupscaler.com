@@ -218,49 +218,51 @@ export function PricingCard({
 
   return (
     <div
-      className={`relative bg-white rounded-2xl shadow-lg border-2 ${
+      className={`relative bg-surface rounded-2xl shadow-lg border-2 ${
         scheduled
-          ? 'border-orange-500 ring-2 ring-orange-500 ring-opacity-20 opacity-90'
+          ? 'border-warning ring-2 ring-warning ring-opacity-20 opacity-90'
           : isCurrentPlan
-            ? 'border-emerald-500 ring-2 ring-emerald-500 ring-opacity-20 opacity-90'
+            ? 'border-success ring-2 ring-success ring-opacity-20 opacity-90'
             : recommended
-              ? 'border-indigo-500 ring-2 ring-indigo-500 ring-opacity-20'
-              : 'border-slate-200'
+              ? 'border-accent ring-2 ring-accent ring-opacity-20'
+              : 'border-surface-light'
       }`}
     >
       {scheduled && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-warning text-white px-4 py-1 rounded-full text-sm font-medium">
           Scheduled
         </div>
       )}
       {isCurrentPlan && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-success text-white px-4 py-1 rounded-full text-sm font-medium">
           {disabledReason}
         </div>
       )}
       {!disabled && !scheduled && recommended && !trial?.enabled && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-white px-4 py-1 rounded-full text-sm font-medium">
           Recommended
         </div>
       )}
       {!disabled && !scheduled && trial?.enabled && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-success text-white px-4 py-1 rounded-full text-sm font-medium">
           {trial.durationDays}-day free trial
         </div>
       )}
       <div className="p-8">
-        <h2 className="text-2xl font-bold text-center text-gray-900 mb-2">{name}</h2>
-        {description && <p className="text-center text-sm text-gray-600 mb-6">{description}</p>}
+        <h2 className="text-2xl font-bold text-center text-text-primary mb-2">{name}</h2>
+        {description && (
+          <p className="text-center text-sm text-text-secondary mb-6">{description}</p>
+        )}
 
         <div className="text-center my-6">
-          <div className="text-4xl font-bold text-gray-900">
+          <div className="text-4xl font-bold text-text-primary">
             {currency === 'USD' ? '$' : currency}
             {price}
           </div>
-          {interval && <div className="text-sm text-gray-600 mt-1">per {interval}</div>}
+          {interval && <div className="text-sm text-text-secondary mt-1">per {interval}</div>}
         </div>
 
-        <div className="border-t border-gray-200 pt-6 mb-6"></div>
+        <div className="border-t border-surface-light pt-6 mb-6"></div>
 
         <ul className="space-y-3 mb-8">
           {features.map((feature, index) => (
@@ -280,7 +282,7 @@ export function PricingCard({
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              <span className="text-sm text-gray-700">{feature}</span>
+              <span className="text-sm text-text-primary">{feature}</span>
             </li>
           ))}
         </ul>
@@ -291,14 +293,14 @@ export function PricingCard({
             disabled={disabled || isProcessing || loading || retryCount >= 3}
             className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
               scheduled
-                ? 'bg-orange-500/20 text-orange-400 cursor-not-allowed'
+                ? 'bg-warning/20 text-warning cursor-not-allowed'
                 : isCurrentPlan
-                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                  ? 'bg-surface-light text-text-muted cursor-not-allowed'
                   : hasError
-                    ? 'bg-red-500/80 hover:bg-red-600 text-white'
+                    ? 'bg-error/80 hover:bg-error/90 text-white'
                     : isProcessing || loading
-                      ? 'bg-slate-300 text-slate-600 cursor-not-allowed'
-                      : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg'
+                      ? 'bg-surface-light text-text-muted cursor-not-allowed'
+                      : 'bg-accent hover:bg-accent-hover text-white shadow-md hover:shadow-lg'
             }`}
           >
             {isProcessing || loading ? (
@@ -334,7 +336,7 @@ export function PricingCard({
             <button
               onClick={onCancelScheduled}
               disabled={cancelingScheduled}
-              className="w-full py-2 px-6 rounded-lg font-medium text-sm text-orange-400 hover:text-orange-300 hover:bg-orange-500/20 border border-orange-500/30 transition-colors disabled:opacity-50"
+              className="w-full py-2 px-6 rounded-lg font-medium text-sm text-warning hover:text-warning/90 hover:bg-warning/20 border border-warning/30 transition-colors disabled:opacity-50"
             >
               {cancelingScheduled ? 'Canceling...' : 'Cancel Scheduled Change'}
             </button>

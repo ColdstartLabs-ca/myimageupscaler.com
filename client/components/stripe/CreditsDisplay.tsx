@@ -62,24 +62,20 @@ export function CreditsDisplay(): JSX.Element {
 
   if (error) {
     return (
-      <div className="flex items-center gap-2 bg-red-50 px-3 py-1.5 rounded-full">
-        <span className="text-xs font-medium text-red-600">Error loading credits</span>
+      <div className="flex items-center gap-2 bg-error/10 px-3 py-1.5 rounded-full">
+        <span className="text-xs font-medium text-error">Error loading credits</span>
       </div>
     );
   }
 
   // Determine background color and icon based on credit level
-  const bgColor = isNoCredits
-    ? 'bg-red-500/20'
-    : isLowCredits
-      ? 'bg-amber-500/20'
-      : 'bg-surface-light';
-  const iconColor = isNoCredits ? 'text-red-500' : isLowCredits ? 'text-amber-500' : 'text-accent';
-  const textColor = isNoCredits ? 'text-red-400' : isLowCredits ? 'text-amber-400' : 'text-white';
+  const bgColor = isNoCredits ? 'bg-error/20' : isLowCredits ? 'bg-warning/20' : 'bg-surface-light';
+  const iconColor = isNoCredits ? 'text-error' : isLowCredits ? 'text-warning' : 'text-accent';
+  const textColor = isNoCredits ? 'text-error' : isLowCredits ? 'text-warning' : 'text-white';
   const subtitleColor = isNoCredits
-    ? 'text-red-300'
+    ? 'text-error/80'
     : isLowCredits
-      ? 'text-amber-300'
+      ? 'text-warning/80'
       : 'text-muted-foreground';
 
   // Tooltip content
@@ -109,7 +105,12 @@ export function CreditsDisplay(): JSX.Element {
         <div className="absolute -top-1 -right-1 z-10">
           <div className="relative">
             <svg className="h-2 w-2 animate-pulse" fill="currentColor" viewBox="0 0 8 8">
-              <circle cx="4" cy="4" r="4" fill={isNoCredits ? '#DC2626' : '#F59E0B'} />
+              <circle
+                cx="4"
+                cy="4"
+                r="4"
+                fill={isNoCredits ? 'rgb(var(--color-error))' : 'rgb(var(--color-warning))'}
+              />
             </svg>
           </div>
         </div>

@@ -67,7 +67,7 @@ export default function AdminUsersPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="pl-10 pr-4 py-2 border border-white/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="pl-10 pr-4 py-2 border border-white/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function AdminUsersPage() {
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-red-600">
+                <td colSpan={6} className="px-6 py-4 text-center text-error">
                   {error}
                 </td>
               </tr>
@@ -124,7 +124,7 @@ export default function AdminUsersPage() {
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                         user.role === 'admin'
-                          ? 'bg-purple-100 text-purple-800'
+                          ? 'bg-secondary/20 text-secondary'
                           : 'bg-surface-light text-primary'
                       }`}
                     >
@@ -137,7 +137,7 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-6 py-4">
                     {user.subscription_tier ? (
-                      <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                      <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-success/20 text-success">
                         {user.subscription_tier}
                       </span>
                     ) : (

@@ -36,8 +36,8 @@ export default function DashboardError({
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-surface rounded-lg border border-white/10 p-8">
-        <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
-          <AlertTriangle className="h-6 w-6 text-red-600" />
+        <div className="flex items-center justify-center w-12 h-12 mx-auto bg-error/20 rounded-full">
+          <AlertTriangle className="h-6 w-6 text-error" />
         </div>
 
         <div className="mt-6 text-center">
@@ -52,7 +52,7 @@ export default function DashboardError({
                 Error details (dev only)
               </summary>
               <div className="mt-2 p-3 bg-surface-light rounded text-xs font-mono overflow-auto max-h-40">
-                <p className="font-bold text-red-600">{error.toString()}</p>
+                <p className="font-bold text-error">{error.toString()}</p>
                 {error.digest && (
                   <p className="mt-1 text-muted-foreground">Digest: {error.digest}</p>
                 )}
@@ -69,7 +69,7 @@ export default function DashboardError({
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <button
             onClick={reset}
-            className="flex-1 inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="flex-1 inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Try Again

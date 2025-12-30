@@ -28,7 +28,7 @@ const useCaseConfigs: Record<string, { icon: ReactElement; color: string }> = {
         />
       </svg>
     ),
-    color: '#f97316',
+    color: 'rgb(var(--color-warning))',
   },
   realestate: {
     icon: (
@@ -46,7 +46,7 @@ const useCaseConfigs: Record<string, { icon: ReactElement; color: string }> = {
         />
       </svg>
     ),
-    color: '#10b981',
+    color: 'rgb(var(--color-success))',
   },
   social: {
     icon: (
@@ -64,7 +64,7 @@ const useCaseConfigs: Record<string, { icon: ReactElement; color: string }> = {
         />
       </svg>
     ),
-    color: '#8b5cf6',
+    color: 'rgb(var(--color-accent))',
   },
   print: {
     icon: (
@@ -82,7 +82,7 @@ const useCaseConfigs: Record<string, { icon: ReactElement; color: string }> = {
         />
       </svg>
     ),
-    color: '#3b82f6',
+    color: 'rgb(var(--color-secondary))',
   },
   default: {
     icon: (
@@ -100,7 +100,7 @@ const useCaseConfigs: Record<string, { icon: ReactElement; color: string }> = {
         />
       </svg>
     ),
-    color: '#6366f1',
+    color: 'rgb(var(--color-accent))',
   },
 };
 
@@ -137,7 +137,7 @@ export function UseCaseCard({ useCase }: IUseCaseCardProps): ReactElement {
   const { icon, color } = getConfigForUseCase(useCase.title);
 
   return (
-    <div className="bg-surface rounded-xl border border-white/10 p-8 h-full flex flex-col hover:shadow-lg hover:border-accent/30 transition-all duration-300">
+    <div className="bg-surface rounded-xl border border-border p-8 h-full flex flex-col hover:shadow-lg hover:border-accent/30 transition-all duration-300">
       {/* Icon */}
       <div
         className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 shadow-md text-white"
@@ -156,7 +156,7 @@ export function UseCaseCard({ useCase }: IUseCaseCardProps): ReactElement {
 
       {/* Example */}
       {useCase.example && (
-        <div className="mt-6 pt-4 border-t border-white/10">
+        <div className="mt-6 pt-4 border-t border-border">
           <p className="text-sm text-muted-foreground">
             <span className="font-semibold text-primary">Example: </span>
             {useCase.example}

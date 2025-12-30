@@ -68,7 +68,7 @@ export function SmartTooltip({
   // Get tooltip position classes
   const getTooltipClasses = (): string => {
     const base =
-      'absolute px-3 py-2 bg-surface text-primary text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto whitespace-nowrap z-50';
+      'absolute px-3 py-2 bg-surface text-text-primary text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto whitespace-nowrap z-50';
 
     switch (tooltipPosition) {
       case 'top':

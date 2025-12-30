@@ -45,8 +45,8 @@ export function InsufficientCreditsModal({
 
           {/* Header */}
           <div className="mb-6 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900">
-              <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-warning/10 dark:bg-warning/20">
+              <AlertCircle className="h-6 w-6 text-warning dark:text-warning/80" />
             </div>
             <h2 className="mb-2 text-2xl font-bold text-primary dark:text-gray-100">
               Not Enough Credits
@@ -60,13 +60,13 @@ export function InsufficientCreditsModal({
           <div className="mb-6 space-y-3">
             <button
               onClick={onBuyCredits}
-              className="w-full rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
+              className="w-full rounded-lg bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-hover"
             >
               Buy {deficit}+ Credits
             </button>
             <button
               onClick={onViewPlans}
-              className="w-full rounded-lg border border-white/20 bg-surface px-6 py-3 font-medium text-muted-foreground transition-colors hover:bg-surface dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+              className="w-full rounded-lg border border-border bg-surface px-6 py-3 font-medium text-muted-foreground transition-colors hover:bg-surface dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
             >
               View Plans (Save up to 58%)
             </button>
@@ -74,7 +74,7 @@ export function InsufficientCreditsModal({
 
           {/* Alternative suggestion */}
           {maxImagesWithCurrentBalance > 0 && (
-            <div className="rounded-lg border border-white/10 bg-surface p-4 dark:border-gray-700 dark:bg-gray-900">
+            <div className="rounded-lg border border-border bg-surface p-4 dark:border-gray-700 dark:bg-gray-900">
               <p className="text-sm text-muted-foreground dark:text-gray-400">
                 Or reduce batch size to {maxImagesWithCurrentBalance}{' '}
                 {maxImagesWithCurrentBalance === 1 ? 'image' : 'images'} to process with your

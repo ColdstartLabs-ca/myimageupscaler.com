@@ -26,7 +26,7 @@ export const FeatureToggles: React.FC<IFeatureTogglesProps> = ({
           checked={preserveText}
           onChange={e => onPreserveTextChange(e.target.checked)}
           disabled={disabled}
-          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-50"
+          className="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent disabled:opacity-50"
         />
         <Type className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">Preserve Text</span>
@@ -38,7 +38,7 @@ export const FeatureToggles: React.FC<IFeatureTogglesProps> = ({
           checked={enhanceFace}
           onChange={e => onEnhanceFaceChange(e.target.checked)}
           disabled={disabled}
-          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-50"
+          className="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent disabled:opacity-50"
         />
         <UserSquare2 className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">Enhance Face</span>

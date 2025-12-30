@@ -215,7 +215,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
 
       {error && (
         <div className="absolute inset-x-0 -bottom-16 flex items-center justify-center">
-          <div className="bg-red-500/20 text-red-400 text-sm font-medium px-4 py-2 rounded-full shadow-sm border border-red-500/20 flex items-center animate-fade-in-up">
+          <div className="bg-error/20 text-error text-sm font-medium px-4 py-2 rounded-full shadow-sm border border-error/20 flex items-center animate-fade-in-up">
             <AlertCircle size={16} className="mr-2" />
             {error}
           </div>

@@ -83,25 +83,25 @@ export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundary
       return (
         <div className="min-h-screen flex items-center justify-center bg-surface px-4">
           <div className="max-w-md w-full bg-surface rounded-lg shadow-lg p-8">
-            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
-              <AlertTriangle className="h-6 w-6 text-red-600" />
+            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-error/10 rounded-full">
+              <AlertTriangle className="h-6 w-6 text-error" />
             </div>
 
             <div className="mt-6 text-center">
-              <h1 className="text-2xl font-bold text-primary">Something went wrong</h1>
-              <p className="mt-2 text-muted-foreground">
+              <h1 className="text-2xl font-bold text-text-primary">Something went wrong</h1>
+              <p className="mt-2 text-text-secondary">
                 We encountered an unexpected error. Please try refreshing the page.
               </p>
 
               {serverEnv.ENV === 'development' && this.state.error && (
                 <details className="mt-4 text-left">
-                  <summary className="cursor-pointer text-sm text-muted-foreground hover:text-muted-foreground">
+                  <summary className="cursor-pointer text-sm text-text-secondary hover:text-text-muted">
                     Error details (dev only)
                   </summary>
                   <div className="mt-2 p-3 bg-surface-light rounded text-xs font-mono overflow-auto max-h-48">
-                    <p className="font-bold text-red-600">{this.state.error.toString()}</p>
+                    <p className="font-bold text-error">{this.state.error.toString()}</p>
                     {this.state.errorInfo && (
-                      <pre className="mt-2 text-muted-foreground whitespace-pre-wrap">
+                      <pre className="mt-2 text-text-secondary whitespace-pre-wrap">
                         {this.state.errorInfo.componentStack}
                       </pre>
                     )}
@@ -113,14 +113,14 @@ export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundary
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <button
                 onClick={this.resetError}
-                className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Try Again
               </button>
               <a
                 href="/"
-                className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-white/20 rounded-lg shadow-sm text-sm font-medium text-muted-foreground bg-surface hover:bg-surface focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-white/20 rounded-lg shadow-sm text-sm font-medium text-text-secondary bg-surface hover:bg-surface focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
               >
                 <Home className="h-4 w-4 mr-2" />
                 Go Home

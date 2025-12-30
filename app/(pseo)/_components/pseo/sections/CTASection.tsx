@@ -71,7 +71,7 @@ export function CTASection({
         <Link
           href={ctaUrl}
           onClick={handleCTAClick}
-          className="group inline-flex items-center gap-3 px-10 py-5 bg-base text-accent rounded-xl font-semibold text-xl hover:bg-surface transition-all duration-300 shadow-2xl hover:shadow-[0_30px_60px_-12px_rgba(0,0,0,0.4)] hover:-translate-y-1 border border-white/20"
+          className="group inline-flex items-center gap-3 px-10 py-5 bg-base text-accent rounded-xl font-semibold text-xl hover:bg-surface transition-all duration-300 shadow-2xl hover:shadow-[0_30px_60px_-12px_rgba(var(--color-text-primary),0.4)] hover:-translate-y-1 border border-border"
         >
           {ctaText}
           <svg

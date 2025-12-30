@@ -248,7 +248,7 @@ export function FormatConverter({
                 onChange={e =>
                   setOptions(prev => ({ ...prev, targetFormat: e.target.value as ImageFormat }))
                 }
-                className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-base text-white"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-base text-text-primary"
               >
                 {(sourceMime ? filteredOutputFormats : availableOutputFormats).map(fmt => (
                   <option key={fmt} value={fmt}>
@@ -295,18 +295,18 @@ export function FormatConverter({
                     onChange={e =>
                       setOptions(prev => ({ ...prev, backgroundColor: e.target.value }))
                     }
-                    className="h-10 w-20 border border-white/20 rounded cursor-pointer"
+                    className="h-10 w-20 border border-border rounded cursor-pointer"
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={() => setOptions(prev => ({ ...prev, backgroundColor: '#FFFFFF' }))}
-                      className="px-3 py-2 bg-surface text-white border border-white/20 rounded hover:bg-surface-light text-sm"
+                      className="px-3 py-2 bg-surface text-text-primary border border-border rounded hover:bg-surface-light text-sm"
                     >
                       White
                     </button>
                     <button
                       onClick={() => setOptions(prev => ({ ...prev, backgroundColor: '#000000' }))}
-                      className="px-3 py-2 bg-surface-light text-white border border-white/20 rounded hover:bg-surface text-sm"
+                      className="px-3 py-2 bg-surface-light text-text-primary border border-border rounded hover:bg-surface text-sm"
                     >
                       Black
                     </button>

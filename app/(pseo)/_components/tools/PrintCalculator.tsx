@@ -107,10 +107,10 @@ export function PrintCalculator(): React.ReactElement {
   }, [calcPrintWidth, calcPrintHeight, calcDPI]);
 
   const qualityColors = {
-    excellent: 'text-green-400',
-    good: 'text-emerald-400',
-    acceptable: 'text-yellow-400',
-    poor: 'text-red-400',
+    excellent: 'text-success',
+    good: 'text-success',
+    acceptable: 'text-warning',
+    poor: 'text-error',
   };
 
   return (

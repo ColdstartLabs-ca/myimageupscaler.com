@@ -120,7 +120,7 @@ export function InteractiveTool({
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div className="p-6 border-2 border-white/10 bg-surface shadow-lg rounded-xl">
+      <div className="p-6 border-2 border-border bg-surface shadow-lg rounded-xl">
         {/* Header */}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-primary mb-2">{title}</h2>
@@ -138,9 +138,9 @@ export function InteractiveTool({
 
         {/* Error Display */}
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-800">{error}</p>
+          <div className="mb-4 p-4 bg-error/10 border border-error/20 rounded-lg flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-error flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-text-primary">{error}</p>
           </div>
         )}
 

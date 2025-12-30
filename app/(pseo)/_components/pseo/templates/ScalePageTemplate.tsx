@@ -102,27 +102,23 @@ export function ScalePageTemplate({ data }: IScalePageTemplateProps): ReactEleme
           {data.dimensions && (
             <FadeIn delay={0.3}>
               <section className="py-8">
-                <div className="max-w-2xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-8 border border-white/10">
+                <div className="max-w-2xl mx-auto bg-gradient-to-br from-surface-light to-surface-light/50 rounded-xl p-8 border border-border">
                   <div className="flex items-center justify-center gap-3 mb-4">
-                    <Maximize2 className="w-6 h-6 text-purple-600" />
+                    <Maximize2 className="w-6 h-6 text-accent" />
                     <h2 className="text-2xl font-bold">{data.resolution} Specifications</h2>
                   </div>
                   <div className="grid grid-cols-2 gap-6 text-center">
                     <div>
-                      <div className="text-3xl font-bold text-purple-600">
-                        {data.dimensions.width}
-                      </div>
+                      <div className="text-3xl font-bold text-accent">{data.dimensions.width}</div>
                       <div className="text-sm text-muted-foreground mt-1">Width (pixels)</div>
                     </div>
                     <div>
-                      <div className="text-3xl font-bold text-purple-600">
-                        {data.dimensions.height}
-                      </div>
+                      <div className="text-3xl font-bold text-accent">{data.dimensions.height}</div>
                       <div className="text-sm text-muted-foreground mt-1">Height (pixels)</div>
                     </div>
                   </div>
                   {data.dimensions.aspectRatio && (
-                    <div className="mt-6 pt-6 border-t border-white/20 text-center">
+                    <div className="mt-6 pt-6 border-t border-border text-center">
                       <div className="text-sm text-muted-foreground">Aspect Ratio</div>
                       <div className="text-xl font-semibold text-primary mt-1">
                         {data.dimensions.aspectRatio}
@@ -143,9 +139,9 @@ export function ScalePageTemplate({ data }: IScalePageTemplateProps): ReactEleme
                   {data.useCases.map((useCase, idx) => (
                     <div
                       key={idx}
-                      className="bg-surface border border-white/10 rounded-xl p-6 hover:border-accent hover:shadow-lg transition-all"
+                      className="bg-surface border border-border rounded-xl p-6 hover:border-accent hover:shadow-lg transition-all"
                     >
-                      <Zap className="w-8 h-8 text-purple-600 mb-3" />
+                      <Zap className="w-8 h-8 text-accent mb-3" />
                       <h3 className="font-semibold text-lg mb-2">{useCase.title}</h3>
                       <p className="text-sm text-muted-foreground">{useCase.description}</p>
                     </div>
@@ -158,14 +154,14 @@ export function ScalePageTemplate({ data }: IScalePageTemplateProps): ReactEleme
           {/* Benefits */}
           {data.benefits && data.benefits.length > 0 && (
             <FadeIn delay={0.5}>
-              <section className="py-12 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl px-8">
+              <section className="py-12 bg-gradient-to-br from-accent/10 to-accent/5 rounded-2xl px-8">
                 <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
                   Why Upscale to {data.resolution}?
                 </h2>
                 <div className="grid md:grid-cols-3 gap-6">
                   {data.benefits.map((benefit, idx) => (
                     <div key={idx} className="text-center">
-                      <div className="text-3xl font-bold text-purple-600 mb-2">
+                      <div className="text-3xl font-bold text-accent mb-2">
                         {benefit.metric || '✓'}
                       </div>
                       <h3 className="font-semibold mb-2">{benefit.title}</h3>
@@ -199,19 +195,19 @@ export function ScalePageTemplate({ data }: IScalePageTemplateProps): ReactEleme
           {/* Related Resolutions */}
           {data.relatedScales && data.relatedScales.length > 0 && (
             <FadeIn delay={0.6}>
-              <section className="py-8 border-t border-white/10">
+              <section className="py-8 border-t border-border">
                 <h2 className="text-2xl font-bold mb-6">Other Resolutions</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {data.relatedScales.map((slug, idx) => (
                     <Link
                       key={idx}
                       href={`/scale/${slug}`}
-                      className="p-4 border border-white/10 rounded-lg hover:border-purple-500 hover:shadow-md transition-all group"
+                      className="p-4 border border-border rounded-lg hover:border-accent hover:shadow-md transition-all group"
                     >
                       <span className="text-sm font-medium text-primary capitalize">
                         {slug.replace(/-/g, ' ').replace('upscale to ', '')}
                       </span>
-                      <ArrowRight className="inline-block w-4 h-4 ml-1 text-muted-foreground group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className="inline-block w-4 h-4 ml-1 text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all" />
                     </Link>
                   ))}
                 </div>

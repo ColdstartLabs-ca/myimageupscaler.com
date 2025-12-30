@@ -130,7 +130,7 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
                   </div>
                 )}
                 {item.status === ProcessingStatus.ERROR && (
-                  <div className="bg-red-500 p-0.5 rounded-full text-white">
+                  <div className="bg-error p-0.5 rounded-full text-white">
                     <AlertTriangle size={12} strokeWidth={3} />
                   </div>
                 )}
@@ -146,7 +146,7 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
                       e.stopPropagation();
                       onRemove(item.id);
                     }}
-                    className="p-2 -mr-1 text-muted-foreground hover:text-red-400 active:text-red-500 active:bg-red-500/20 rounded-lg transition-colors touch-manipulation"
+                    className="p-2 -mr-1 text-muted-foreground hover:text-error active:text-error active:bg-error/20 rounded-lg transition-colors touch-manipulation"
                     aria-label="Remove image"
                   >
                     <X size={18} />
@@ -157,12 +157,12 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
             {/* Progress bar - mobile */}
             <div className="mt-1 h-1 bg-white/5 rounded-full overflow-hidden">
               {item.status === ProcessingStatus.COMPLETED ? (
-                <div className="h-full bg-emerald-500 w-full shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                <div className="h-full bg-emerald-500 w-full shadow-[0_0_8px_rgba(var(--color-success),0.5)]"></div>
               ) : item.status === ProcessingStatus.ERROR ? (
-                <div className="h-full bg-red-500 w-full shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+                <div className="h-full bg-error w-full shadow-[0_0_8px_rgba(var(--color-error),0.5)]"></div>
               ) : (
                 <div
-                  className="h-full bg-gradient-to-r from-accent to-secondary transition-all duration-300 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                  className="h-full bg-gradient-to-r from-accent to-secondary transition-all duration-300 shadow-[0_0_8px_rgba(var(--color-accent),0.5)]"
                   style={{ width: `${item.progress}%` }}
                 ></div>
               )}
@@ -178,7 +178,7 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
                   e.stopPropagation();
                   onRemove(item.id);
                 }}
-                className="absolute top-1 right-1 p-1 bg-black/60 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:scale-110"
+                className="absolute top-1 right-1 p-1 bg-black/60 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-error hover:scale-110"
               >
                 <X size={14} />
               </button>
@@ -187,12 +187,12 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
             {/* Status Indicators - Desktop */}
             <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/5">
               {item.status === ProcessingStatus.COMPLETED ? (
-                <div className="h-full bg-emerald-500 w-full shadow-[0_-2px_8px_rgba(16,185,129,0.5)]"></div>
+                <div className="h-full bg-emerald-500 w-full shadow-[0_-2px_8px_rgba(var(--color-success),0.5)]"></div>
               ) : item.status === ProcessingStatus.ERROR ? (
-                <div className="h-full bg-red-500 w-full shadow-[0_-2px_8px_rgba(239,68,68,0.5)]"></div>
+                <div className="h-full bg-error w-full shadow-[0_-2px_8px_rgba(var(--color-error),0.5)]"></div>
               ) : (
                 <div
-                  className="h-full bg-gradient-to-r from-accent to-secondary transition-all duration-300 shadow-[0_-2px_8px_rgba(59,130,246,0.5)]"
+                  className="h-full bg-gradient-to-r from-accent to-secondary transition-all duration-300 shadow-[0_-2px_8px_rgba(var(--color-accent),0.5)]"
                   style={{ width: `${item.progress}%` }}
                 ></div>
               )}
@@ -206,7 +206,7 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
                 </div>
               )}
               {item.status === ProcessingStatus.ERROR && (
-                <div className="bg-red-500/90 p-1.5 rounded-full text-white shadow-lg shadow-red-500/20 scale-110">
+                <div className="bg-error/90 p-1.5 rounded-full text-white shadow-lg shadow-error/20 scale-110">
                   <AlertTriangle size={14} strokeWidth={4} />
                 </div>
               )}

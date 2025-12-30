@@ -10,14 +10,14 @@ interface IProrationCardProps {
  */
 export function ProrationCard({ amountDue }: IProrationCardProps): JSX.Element {
   const getVariantStyles = () => {
-    if (amountDue > 0) return 'border-blue-200 bg-blue-50';
-    if (amountDue < 0) return 'border-green-200 bg-green-50';
-    return 'border-white/10 bg-surface';
+    if (amountDue > 0) return 'border-info/20 bg-info/10';
+    if (amountDue < 0) return 'border-success/20 bg-success/10';
+    return 'border-border bg-surface';
   };
 
   const getAmountStyles = () => {
-    if (amountDue > 0) return 'text-blue-900';
-    if (amountDue < 0) return 'text-green-900';
+    if (amountDue > 0) return 'text-info';
+    if (amountDue < 0) return 'text-success';
     return 'text-primary';
   };
 

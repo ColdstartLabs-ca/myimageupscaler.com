@@ -236,17 +236,17 @@ const Workspace: React.FC = () => {
           {/* Download Error Notification */}
           {downloadError && (
             <div className="p-4">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-sm font-bold">
+              <div className="bg-error/10 border border-error/20 rounded-lg p-4 flex items-start gap-3">
+                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-error/20 flex items-center justify-center text-error text-sm font-bold">
                   !
                 </div>
                 <div className="flex-grow">
-                  <h4 className="text-sm font-semibold text-red-900 mb-1">Download Failed</h4>
-                  <p className="text-sm text-red-700">{downloadError}</p>
+                  <h4 className="text-sm font-semibold text-error mb-1">Download Failed</h4>
+                  <p className="text-sm text-error/80">{downloadError}</p>
                 </div>
                 <button
                   onClick={() => setDownloadError(null)}
-                  className="flex-shrink-0 text-red-400 hover:text-red-600 transition-colors"
+                  className="flex-shrink-0 text-error/70 hover:text-error transition-colors"
                   aria-label="Dismiss error"
                 >
                   <span className="sr-only">Dismiss</span>×
@@ -354,7 +354,7 @@ const Workspace: React.FC = () => {
             queue={queue}
             activeId={activeId}
             isProcessing={isProcessingBatch}
-            onSelect={(id) => {
+            onSelect={id => {
               setActiveId(id);
               setMobileTab('preview');
             }}

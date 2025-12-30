@@ -143,15 +143,15 @@ export default function PricingPageClient() {
   }, [subscription?.price_id]);
 
   return (
-    <main className="flex-1 bg-background-secondary">
+    <main className="flex-1 bg-main">
       <div className="container mx-auto py-16 px-6">
         {/* Current credits banner for logged-in users */}
         {!loading && profile && (
-          <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
+          <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-primary-600 font-medium">Your current balance</p>
-                <p className="text-2xl font-bold text-primary-700">
+                <p className="text-sm text-accent font-medium">Your current balance</p>
+                <p className="text-2xl font-bold text-accent-hover">
                   {(profile.subscription_credits_balance ?? 0) +
                     (profile.purchased_credits_balance ?? 0)}{' '}
                   credits
@@ -159,8 +159,8 @@ export default function PricingPageClient() {
               </div>
               {subscription && (
                 <div className="text-right">
-                  <p className="text-sm text-primary-600">Active subscription</p>
-                  <p className="font-medium text-primary-700">
+                  <p className="text-sm text-accent">Active subscription</p>
+                  <p className="font-medium text-accent-hover">
                     {getPlanForPriceId(subscription.price_id)?.name || profile.subscription_tier}
                   </p>
                 </div>
@@ -171,16 +171,16 @@ export default function PricingPageClient() {
 
         {/* Scheduled Downgrade Banner */}
         {!loading && subscription?.scheduled_price_id && subscription?.scheduled_change_date && (
-          <div className="bg-warning-50 border border-warning-200 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
+          <div className="bg-warning/10 border border-warning/20 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
             <div className="flex items-start gap-3">
-              <Calendar className="w-5 h-5 text-warning-600 mt-0.5 flex-shrink-0" />
+              <Calendar className="w-5 h-5 text-warning mt-0.5 flex-shrink-0" />
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-medium text-content-primary">Scheduled Plan Change</h3>
+                  <h3 className="font-medium text-text-primary">Scheduled Plan Change</h3>
                   <button
                     onClick={handleCancelScheduledChange}
                     disabled={cancelingSchedule}
-                    className="flex items-center gap-1 px-3 py-1 text-sm text-warning-600 hover:text-warning-700 hover:bg-warning-100 rounded transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-warning hover:text-warning/80 hover:bg-warning/20 rounded transition-colors disabled:opacity-50"
                   >
                     {cancelingSchedule ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -190,15 +190,15 @@ export default function PricingPageClient() {
                     Cancel
                   </button>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-content-secondary mt-1">
+                <div className="flex items-center gap-2 text-sm text-text-secondary mt-1">
                   <span className="font-medium">
                     {getPlanForPriceId(subscription.price_id)?.name}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-content-tertiary" />
-                  <span className="font-medium text-warning-600">
+                  <ArrowRight className="w-4 h-4 text-text-muted" />
+                  <span className="font-medium text-warning">
                     {getPlanForPriceId(subscription.scheduled_price_id)?.name}
                   </span>
-                  <span className="text-content-tertiary">
+                  <span className="text-text-muted">
                     on{' '}
                     {new Date(subscription.scheduled_change_date).toLocaleDateString('en-US', {
                       month: 'long',
@@ -214,11 +214,11 @@ export default function PricingPageClient() {
 
         {/* Configuration Warning (dev only) */}
         {!pricesConfigured && (
-          <div className="bg-warning-50 border border-warning-200 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
+          <div className="bg-warning/10 border border-warning/20 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
             <div className="flex items-center gap-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-warning-600 flex-shrink-0"
+                className="h-6 w-6 text-warning flex-shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -229,7 +229,7 @@ export default function PricingPageClient() {
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                 />
               </svg>
-              <span className="text-warning-800">
+              <span className="text-warning">
                 Stripe Price IDs are not configured. Add them to your .env file to enable purchases.
               </span>
             </div>
@@ -238,10 +238,10 @@ export default function PricingPageClient() {
 
         {/* Page Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-content-primary mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
             Simple, Transparent Pricing
           </h1>
-          <p className="text-lg text-content-secondary max-w-2xl mx-auto">
+          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
             Choose the subscription plan that fits your needs. Get monthly credits with automatic
             rollover.
           </p>
@@ -249,10 +249,10 @@ export default function PricingPageClient() {
 
         {/* Subscription Plans Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-content-primary mb-8">
+          <h2 className="text-3xl font-bold text-center text-text-primary mb-8">
             Choose Your Plan
           </h2>
-          <p className="text-center text-content-secondary mb-8">
+          <p className="text-center text-text-secondary mb-8">
             Get credits every month with our subscription plans. Cancel anytime.
           </p>
 
@@ -406,12 +406,12 @@ export default function PricingPageClient() {
         </div>
 
         {/* Credit Packs Section */}
-        <div className="mt-16 border-t border-border-primary pt-16">
+        <div className="mt-16 border-t border-border pt-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-content-primary mb-4">
+            <h2 className="text-3xl font-bold text-text-primary mb-4">
               Need Credits Without a Subscription?
             </h2>
-            <p className="text-lg text-content-secondary max-w-2xl mx-auto">
+            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
               One-time credit packs that never expire. Perfect for occasional projects.
             </p>
           </div>
@@ -425,13 +425,13 @@ export default function PricingPageClient() {
           </div>
 
           <div className="mt-8 text-center">
-            <p className="text-sm text-content-tertiary mb-2">
+            <p className="text-sm text-text-muted mb-2">
               <strong>Value Comparison:</strong> Subscriptions offer 11-58% cheaper credits for
               regular users
             </p>
             <a
               href="#subscriptions"
-              className="text-sm text-primary-600 hover:text-primary-700 underline"
+              className="text-sm text-accent hover:text-accent-hover underline"
             >
               Compare subscription plans
             </a>
@@ -440,68 +440,66 @@ export default function PricingPageClient() {
 
         {/* FAQ Section */}
         <div className="max-w-3xl mx-auto mt-16">
-          <h2 className="text-3xl font-bold text-center text-content-primary mb-8">
+          <h2 className="text-3xl font-bold text-center text-text-primary mb-8">
             Frequently Asked Questions
           </h2>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="bg-background-primary p-6 rounded-lg border border-border-primary">
-              <h3 className="text-lg font-semibold text-content-primary mb-2">
+            <div className="bg-surface p-6 rounded-lg border border-border">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">
                 What are credits used for?
               </h3>
-              <p className="text-content-secondary">
+              <p className="text-text-secondary">
                 Credits are used for image processing actions. Each image processed consumes a
                 certain number of credits based on the upscaling factor and features used.
               </p>
             </div>
 
-            <div className="bg-background-primary p-6 rounded-lg border border-border-primary">
-              <h3 className="text-lg font-semibold text-content-primary mb-2">
-                Do credits expire?
-              </h3>
-              <p className="text-content-secondary">
+            <div className="bg-surface p-6 rounded-lg border border-border">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">Do credits expire?</h3>
+              <p className="text-text-secondary">
                 Subscription credits roll over month-to-month up to your plan&apos;s maximum limit
                 as long as your subscription is active.
               </p>
             </div>
 
-            <div className="bg-background-primary p-6 rounded-lg border border-border-primary">
-              <h3 className="text-lg font-semibold text-content-primary mb-2">
+            <div className="bg-surface p-6 rounded-lg border border-border">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">
                 What is batch processing?
               </h3>
-              <p className="text-content-secondary">
+              <p className="text-text-secondary">
                 Batch processing allows you to upload and process multiple images at once. Free
                 users can process 1 image at a time, while paid plans support batch processing of up
                 to 10, 50, or 500 images simultaneously depending on your plan.
               </p>
             </div>
 
-            <div className="bg-background-primary p-6 rounded-lg border border-border-primary">
-              <h3 className="text-lg font-semibold text-content-primary mb-2">
+            <div className="bg-surface p-6 rounded-lg border border-border">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">
                 Can I cancel my subscription anytime?
               </h3>
-              <p className="text-content-secondary">
+              <p className="text-text-secondary">
                 Yes! You can cancel your subscription at any time. You&apos;ll continue to have
                 access until the end of your billing period, and any remaining credits will stay in
                 your account.
               </p>
             </div>
 
-            <div className="bg-background-primary p-6 rounded-lg border border-border-primary">
-              <h3 className="text-lg font-semibold text-content-primary mb-2">
+            <div className="bg-surface p-6 rounded-lg border border-border">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">
                 What payment methods do you accept?
               </h3>
-              <p className="text-content-secondary">
+              <p className="text-text-secondary">
                 We accept all major credit cards (Visa, Mastercard, American Express) and various
                 other payment methods through Stripe.
               </p>
             </div>
 
-            <div className="bg-background-primary p-6 rounded-lg border border-border-primary">
-              <h3 className="text-lg font-semibold text-content-primary mb-2">
+            <div className="bg-surface p-6 rounded-lg border border-border">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">
                 Is there a free plan?
               </h3>
-              <p className="text-content-secondary">
+              <p className="text-text-secondary">
                 Yes! Free users get initial credits to try the service. However, batch processing
                 and advanced features require a paid subscription. Free users can process one image
                 at a time.
@@ -512,15 +510,15 @@ export default function PricingPageClient() {
 
         {/* CTA Section */}
         <div className="text-center mt-16">
-          <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl p-8 max-w-2xl mx-auto border border-primary-100">
-            <h3 className="text-2xl font-bold text-content-primary mb-4">Need a custom plan?</h3>
-            <p className="text-content-secondary mb-6">
+          <div className="bg-gradient-to-br from-accent/10 to-secondary/10 rounded-2xl p-8 max-w-2xl mx-auto border border-accent/20">
+            <h3 className="text-2xl font-bold text-text-primary mb-4">Need a custom plan?</h3>
+            <p className="text-text-secondary mb-6">
               Contact us for enterprise pricing, bulk discounts, or custom integration requirements.
             </p>
             <div className="flex justify-center">
               <a
                 href={`mailto:${clientEnv.SALES_EMAIL}`}
-                className="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
+                className="inline-flex items-center px-6 py-3 bg-accent hover:bg-accent-hover text-white font-medium rounded-lg transition-colors"
               >
                 Contact Sales
               </a>

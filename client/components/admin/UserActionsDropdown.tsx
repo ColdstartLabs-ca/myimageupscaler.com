@@ -111,7 +111,7 @@ function DropdownItem({ icon: Icon, label, onClick, variant = 'default' }: IDrop
       onClick={onClick}
       className={`w-full flex items-center px-3 py-2 text-sm transition-colors ${
         variant === 'danger'
-          ? 'text-red-600 hover:bg-red-50'
+          ? 'text-error hover:bg-error/10'
           : 'text-muted-foreground hover:bg-surface'
       }`}
     >
@@ -176,7 +176,7 @@ function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
             min="0"
             value={newBalance}
             onChange={e => setNewBalance(e.target.value)}
-            className="mt-1 block w-full rounded-lg border-white/20 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-lg border-white/20 shadow-sm focus:border-accent focus:ring-accent"
             required
           />
           <p className="mt-1 text-sm text-muted-foreground">
@@ -185,7 +185,7 @@ function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
           </p>
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-error">{error}</p>}
 
         <ModalActions onClose={onClose} submitLabel="Save" submitting={submitting} />
       </form>
@@ -330,7 +330,7 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Stripe Status:</span>
             <span
-              className={`font-medium ${hasActiveStripeSubscription ? 'text-green-600' : 'text-muted-foreground'}`}
+              className={`font-medium ${hasActiveStripeSubscription ? 'text-success' : 'text-muted-foreground'}`}
             >
               {stripeData?.stripeSubscription?.status || 'No subscription'}
             </span>
@@ -356,7 +356,7 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
                 key={plan.id}
                 className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
                   selectedPlan === plan.id
-                    ? 'border-indigo-500 bg-indigo-50'
+                    ? 'border-accent bg-accent/10'
                     : 'border-white/10 hover:border-white/20'
                 }`}
               >
@@ -367,7 +367,7 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
                     value={plan.id}
                     checked={selectedPlan === plan.id}
                     onChange={() => setSelectedPlan(plan.id)}
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 text-accent focus:ring-accent"
                   />
                   <span className="ml-3 font-medium text-primary">{plan.name}</span>
                 </div>
@@ -382,15 +382,15 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
           <div
             className={`p-3 rounded-lg text-sm ${
               actionDesc.type === 'warning'
-                ? 'bg-amber-50 border border-amber-200 text-amber-800'
-                : 'bg-blue-50 border border-blue-200 text-blue-800'
+                ? 'bg-warning/10 border border-warning/20 text-warning'
+                : 'bg-accent/10 border border-accent/20 text-accent'
             }`}
           >
             {actionDesc.text}
           </div>
         )}
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-error">{error}</p>}
 
         <div className="flex justify-end space-x-3 pt-2">
           <button
@@ -404,7 +404,7 @@ function SubscriptionModal({ user, onClose, onSuccess }: IModalProps) {
             type="button"
             onClick={handleSubmit}
             disabled={submitting || !hasChanged}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors disabled:opacity-50"
           >
             {submitting ? 'Saving...' : 'Save'}
           </button>
@@ -464,7 +464,7 @@ function RoleChangeModal({ user, onClose, onSuccess }: IModalProps) {
           </p>
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-error">{error}</p>}
 
         <ModalActions
           onClose={onClose}
@@ -506,8 +506,8 @@ function DeleteUserModal({ user, onClose, onSuccess }: IModalProps) {
   return (
     <Modal title="Delete User" onClose={onClose}>
       <div className="space-y-4">
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-800">
+        <div className="p-3 bg-error/10 border border-error/20 rounded-lg">
+          <p className="text-sm text-error">
             <strong>Warning:</strong> This action is irreversible. All user data including credits,
             subscriptions, and transaction history will be permanently deleted.
           </p>
@@ -515,18 +515,18 @@ function DeleteUserModal({ user, onClose, onSuccess }: IModalProps) {
 
         <div>
           <label className="block text-sm font-medium text-muted-foreground">
-            Type <span className="font-mono text-red-600">{user.email}</span> to confirm
+            Type <span className="font-mono text-error">{user.email}</span> to confirm
           </label>
           <input
             type="text"
             value={confirmEmail}
             onChange={e => setConfirmEmail(e.target.value)}
-            className="mt-1 block w-full rounded-lg border-white/20 shadow-sm focus:border-red-500 focus:ring-red-500"
+            className="mt-1 block w-full rounded-lg border-white/20 shadow-sm focus:border-error focus:ring-error"
             placeholder="user@example.com"
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-error">{error}</p>}
 
         <ModalActions
           onClose={onClose}
@@ -586,8 +586,8 @@ function ModalActions({
 }: IModalActionsProps) {
   const buttonClass =
     variant === 'danger'
-      ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
-      : 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500';
+      ? 'bg-error hover:bg-error/90 focus:ring-error'
+      : 'bg-accent hover:bg-accent-hover focus:ring-accent';
 
   const content = (
     <div className="flex justify-end space-x-3 pt-2">

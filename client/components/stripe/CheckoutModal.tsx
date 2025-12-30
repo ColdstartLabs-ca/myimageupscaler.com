@@ -147,7 +147,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           {loading && (
             <div className="flex items-center justify-center py-20">
               <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
                 <p className="text-muted-foreground">Loading checkout...</p>
               </div>
             </div>
@@ -155,12 +155,12 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
 
           {error && (
             <div className="p-8">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h3 className="text-red-800 font-semibold mb-2">Error</h3>
-                <p className="text-red-600">{error}</p>
+              <div className="bg-error/10 border border-error/20 rounded-lg p-4">
+                <h3 className="text-error font-semibold mb-2">Error</h3>
+                <p className="text-error/80">{error}</p>
                 <button
                   onClick={onClose}
-                  className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  className="mt-4 px-4 py-2 bg-error text-white rounded-lg hover:bg-error/80 transition-colors"
                 >
                   Close
                 </button>

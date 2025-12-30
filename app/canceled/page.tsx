@@ -27,7 +27,7 @@ export default function CanceledPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/pricing"
-              className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Pricing
@@ -43,7 +43,7 @@ export default function CanceledPage() {
           {/* Help Section */}
           <div className="mt-12 p-6 bg-surface-light rounded-xl">
             <div className="flex items-center justify-center gap-2 mb-3">
-              <HelpCircle className="h-5 w-5 text-indigo-600" />
+              <HelpCircle className="h-5 w-5 text-accent" />
               <h3 className="font-semibold">Need Help?</h3>
             </div>
             <p className="text-sm text-muted-foreground mb-4">

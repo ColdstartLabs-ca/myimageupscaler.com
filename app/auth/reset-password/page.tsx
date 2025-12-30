@@ -83,13 +83,13 @@ function ResetPasswordContent() {
 
         {status === 'loading' && (
           <div className="flex flex-col items-center py-8">
-            <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mb-4" />
+            <Loader2 className="w-8 h-8 text-accent animate-spin mb-4" />
             <p className="text-muted-foreground">Verifying reset link...</p>
           </div>
         )}
 
         {status === 'error' && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg text-center">
+          <div className="bg-error/10 text-error p-4 rounded-lg text-center">
             <p>{error || 'Invalid or expired reset link.'}</p>
             <button
               onClick={() => router.push('/')}
@@ -110,7 +110,7 @@ function LoadingFallback() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
         <p className="text-muted-foreground">Loading...</p>
       </div>
     </div>

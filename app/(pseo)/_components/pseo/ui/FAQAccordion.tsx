@@ -22,7 +22,7 @@ export function FAQAccordion({
   onToggle,
 }: IFAQAccordionProps): ReactElement {
   return (
-    <div className="glass-card hover:border-white/20 transition-colors">
+    <div className="glass-card hover:border-border transition-colors">
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between p-6 text-left group"

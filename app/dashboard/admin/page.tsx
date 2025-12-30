@@ -40,7 +40,7 @@ export default function AdminDashboard() {
   if (error) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-red-600">
+        <div className="text-error">
           <p className="font-medium">Error loading stats</p>
           <p className="text-sm">{error}</p>
         </div>
@@ -56,29 +56,29 @@ export default function AdminDashboard() {
           title="Total Users"
           value={stats?.totalUsers || 0}
           icon={Users}
-          iconBg="bg-blue-100"
-          iconColor="text-blue-600"
+          iconBg="bg-accent/20"
+          iconColor="text-accent"
         />
         <StatsCard
           title="Active Subscriptions"
           value={stats?.activeSubscriptions || 0}
           icon={CreditCard}
-          iconBg="bg-green-100"
-          iconColor="text-green-600"
+          iconBg="bg-success/20"
+          iconColor="text-success"
         />
         <StatsCard
           title="Credits Issued"
           value={stats?.totalCreditsIssued || 0}
           icon={Coins}
-          iconBg="bg-yellow-100"
-          iconColor="text-yellow-600"
+          iconBg="bg-warning/20"
+          iconColor="text-warning"
         />
         <StatsCard
           title="Credits Used"
           value={stats?.totalCreditsUsed || 0}
           icon={TrendingUp}
-          iconBg="bg-purple-100"
-          iconColor="text-purple-600"
+          iconBg="bg-secondary/20"
+          iconColor="text-secondary"
         />
       </div>
 

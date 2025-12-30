@@ -39,11 +39,11 @@ const calculateStrength = (password: string): IStrengthResult => {
   const normalizedScore = Math.min(4, Math.floor(score / 1.75));
 
   const strengthLevels: IStrengthResult[] = [
-    { score: 0, label: 'Too weak', color: 'text-red-400', bgColor: 'bg-red-500' },
-    { score: 1, label: 'Weak', color: 'text-orange-400', bgColor: 'bg-orange-500' },
+    { score: 0, label: 'Too weak', color: 'text-error', bgColor: 'bg-error' },
+    { score: 1, label: 'Weak', color: 'text-warning', bgColor: 'bg-warning' },
     { score: 2, label: 'Fair', color: 'text-yellow-400', bgColor: 'bg-yellow-500' },
     { score: 3, label: 'Good', color: 'text-lime-400', bgColor: 'bg-lime-500' },
-    { score: 4, label: 'Strong', color: 'text-green-400', bgColor: 'bg-green-500' },
+    { score: 4, label: 'Strong', color: 'text-success', bgColor: 'bg-success' },
   ];
 
   return strengthLevels[normalizedScore];
@@ -81,7 +81,7 @@ export const PasswordStrengthIndicator: React.FC<IPasswordStrengthIndicatorProps
       </div>
       <div className="flex items-center justify-between">
         <p className={`text-xs font-medium ${strength.color}`}>{strength.label}</p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-text-muted">
           {requirements.filter(r => r.met).length}/{requirements.length} requirements
         </p>
       </div>
@@ -90,7 +90,7 @@ export const PasswordStrengthIndicator: React.FC<IPasswordStrengthIndicatorProps
           <div
             key={index}
             className={`flex items-center gap-1 text-[11px] transition-colors duration-200 ${
-              req.met ? 'text-green-400' : 'text-muted-foreground'
+              req.met ? 'text-success' : 'text-text-muted'
             }`}
           >
             {req.met ? (

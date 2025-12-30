@@ -71,7 +71,7 @@ export default function HelpPage(): JSX.Element {
                 <p className="text-muted-foreground mb-4">To get started:</p>
                 <ol className="list-decimal pl-6 space-y-2 text-muted-foreground">
                   <li>
-                    <Link href="/dashboard" className="text-indigo-600 hover:underline">
+                    <Link href="/dashboard" className="text-accent hover:underline">
                       Create an account
                     </Link>{' '}
                     using email or Google
@@ -79,7 +79,7 @@ export default function HelpPage(): JSX.Element {
                   <li>You&apos;ll receive 10 free credits to try the service</li>
                   <li>
                     Navigate to the{' '}
-                    <Link href="/upscaler" className="text-indigo-600 hover:underline">
+                    <Link href="/upscaler" className="text-accent hover:underline">
                       Upscaler
                     </Link>
                   </li>
@@ -242,7 +242,7 @@ export default function HelpPage(): JSX.Element {
               <div className="px-5 pb-5">
                 <p className="text-muted-foreground mb-4">
                   Visit our{' '}
-                  <Link href="/pricing" className="text-indigo-600 hover:underline">
+                  <Link href="/pricing" className="text-accent hover:underline">
                     Pricing page
                   </Link>{' '}
                   to choose from our subscription plans:
@@ -309,7 +309,7 @@ export default function HelpPage(): JSX.Element {
                 <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
                   <li>
                     Your{' '}
-                    <Link href="/dashboard/billing" className="text-indigo-600 hover:underline">
+                    <Link href="/dashboard/billing" className="text-accent hover:underline">
                       Billing Dashboard
                     </Link>
                   </li>
@@ -422,7 +422,7 @@ export default function HelpPage(): JSX.Element {
                     If the problem persists, contact{' '}
                     <a
                       href={`mailto:${clientEnv.SUPPORT_EMAIL}`}
-                      className="text-indigo-600 hover:underline"
+                      className="text-accent hover:underline"
                     >
                       {clientEnv.SUPPORT_EMAIL}
                     </a>
@@ -499,7 +499,7 @@ export default function HelpPage(): JSX.Element {
                 </ul>
                 <p className="text-muted-foreground mt-4">
                   Read our full{' '}
-                  <Link href="/privacy" className="text-indigo-600 hover:underline">
+                  <Link href="/privacy" className="text-accent hover:underline">
                     Privacy Policy
                   </Link>{' '}
                   for details.
@@ -569,7 +569,7 @@ export default function HelpPage(): JSX.Element {
         </section>
 
         {/* Contact Support */}
-        <section className="mt-16 p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
+        <section className="mt-16 p-8 bg-gradient-to-br from-accent/10 to-secondary/10 rounded-xl border border-accent/20">
           <h2 className="text-2xl font-bold mb-4">Still need help?</h2>
           <p className="text-muted-foreground mb-6">
             Can&apos;t find the answer you&apos;re looking for? Our support team is here to help.
@@ -577,7 +577,7 @@ export default function HelpPage(): JSX.Element {
           <div className="flex flex-col sm:flex-row gap-4">
             <a
               href={`mailto:${clientEnv.SUPPORT_EMAIL}`}
-              className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -606,13 +606,13 @@ export default function HelpPage(): JSX.Element {
 
         {/* Related Links */}
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-wrap gap-6">
-          <Link href="/privacy" className="text-indigo-600 hover:underline">
+          <Link href="/privacy" className="text-accent hover:underline">
             Privacy Policy
           </Link>
-          <Link href="/terms" className="text-indigo-600 hover:underline">
+          <Link href="/terms" className="text-accent hover:underline">
             Terms of Service
           </Link>
-          <Link href="/blog" className="text-indigo-600 hover:underline">
+          <Link href="/blog" className="text-accent hover:underline">
             Blog
           </Link>
         </div>

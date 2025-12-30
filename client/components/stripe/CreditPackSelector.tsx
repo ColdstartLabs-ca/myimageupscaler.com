@@ -58,7 +58,7 @@ export function CreditPackSelector({
           <div
             key={pack.key}
             className={`relative glass border rounded-xl p-6 transition-all cursor-pointer hover:border-accent/50 hover:shadow-md ${
-              selectedPack === pack.key ? 'border-accent ring-2 ring-accent' : 'border-white/10'
+              selectedPack === pack.key ? 'border-accent ring-2 ring-accent' : 'border-border'
             } ${pack.popular ? 'border-accent/30' : ''}`}
             onClick={() => handlePurchase(pack)}
           >
@@ -84,15 +84,15 @@ export function CreditPackSelector({
 
               <ul className="text-sm text-left space-y-2 mt-4">
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                  <Check className="h-4 w-4 text-success flex-shrink-0" />
                   <span className="text-muted-foreground">Never expire</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                  <Check className="h-4 w-4 text-success flex-shrink-0" />
                   <span className="text-muted-foreground">Use anytime</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                  <Check className="h-4 w-4 text-success flex-shrink-0" />
                   <span className="text-muted-foreground">Stack with subscription</span>
                 </li>
               </ul>
@@ -100,7 +100,7 @@ export function CreditPackSelector({
               <button
                 className={`w-full px-4 py-3 rounded-lg font-medium transition-colors mt-4 ${
                   pack.popular
-                    ? 'bg-accent hover:bg-accent-hover text-white glow-blue'
+                    ? 'bg-accent hover:bg-accent-hover text-white shadow-[0_0_20px_rgba(var(--color-accent),0.3)]'
                     : 'glass hover:bg-surface/10 text-white'
                 }`}
               >

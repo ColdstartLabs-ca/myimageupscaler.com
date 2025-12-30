@@ -101,10 +101,10 @@ export function ExpirationWarningBanner({
     <div
       className={`rounded-lg p-4 mb-6 ${
         isUrgent
-          ? 'bg-red-50 border border-red-200'
+          ? 'bg-error/10 border border-error/20'
           : isModerate
-            ? 'bg-amber-50 border border-amber-200'
-            : 'bg-blue-50 border border-blue-200'
+            ? 'bg-warning/10 border border-warning/20'
+            : 'bg-info/10 border border-info/20'
       }`}
     >
       <div className="flex items-start gap-3">
@@ -112,7 +112,7 @@ export function ExpirationWarningBanner({
         <div className="flex-shrink-0">
           <svg
             className={`h-5 w-5 ${
-              isUrgent ? 'text-red-600' : isModerate ? 'text-amber-600' : 'text-blue-600'
+              isUrgent ? 'text-error' : isModerate ? 'text-warning' : 'text-info'
             }`}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
@@ -130,14 +130,14 @@ export function ExpirationWarningBanner({
         <div className="flex-1 min-w-0">
           <h3
             className={`text-sm font-semibold mb-1 ${
-              isUrgent ? 'text-red-900' : isModerate ? 'text-amber-900' : 'text-blue-900'
+              isUrgent ? 'text-error' : isModerate ? 'text-warning' : 'text-info'
             }`}
           >
             {isUrgent ? 'Credits Expiring Soon!' : 'Credits Will Expire'}
           </h3>
           <p
             className={`text-sm ${
-              isUrgent ? 'text-red-800' : isModerate ? 'text-amber-800' : 'text-blue-800'
+              isUrgent ? 'text-error/80' : isModerate ? 'text-warning/80' : 'text-info/80'
             }`}
           >
             Your{' '}
@@ -156,7 +156,7 @@ export function ExpirationWarningBanner({
             <Link
               href="/upscaler"
               className={`text-sm font-medium inline-flex items-center gap-1 hover:underline ${
-                isUrgent ? 'text-red-700' : isModerate ? 'text-amber-700' : 'text-blue-700'
+                isUrgent ? 'text-error/70' : isModerate ? 'text-warning/70' : 'text-info/70'
               }`}
             >
               Start upscaling now

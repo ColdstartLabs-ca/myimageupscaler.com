@@ -84,7 +84,7 @@ function SuccessContent(): JSX.Element {
     return (
       <main className="flex-1 flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-indigo-600 mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 animate-spin text-accent mx-auto mb-4" />
           <p className="text-lg text-muted-foreground">
             {isCredits ? 'Processing your purchase...' : 'Activating your subscription...'}
           </p>
@@ -102,8 +102,8 @@ function SuccessContent(): JSX.Element {
         <div className="max-w-lg mx-auto text-center">
           {/* Success Icon */}
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100">
-              <CheckCircle className="h-12 w-12 text-green-600" />
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-success/20">
+              <CheckCircle className="h-12 w-12 text-success" />
             </div>
           </div>
 
@@ -119,15 +119,15 @@ function SuccessContent(): JSX.Element {
 
           {/* Credits Balance */}
           {credits !== null && (
-            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-indigo-600 font-medium">Your current balance</p>
-              <p className="text-3xl font-bold text-indigo-700">{credits} credits</p>
+            <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 mb-6">
+              <p className="text-sm text-accent font-medium">Your current balance</p>
+              <p className="text-3xl font-bold text-accent-hover">{credits} credits</p>
             </div>
           )}
 
           {/* Polling timeout notice */}
           {pollTimedOut && (
-            <div className="flex items-center justify-center gap-2 text-amber-600 mb-6">
+            <div className="flex items-center justify-center gap-2 text-warning mb-6">
               <AlertCircle className="h-4 w-4" />
               <p className="text-sm">
                 {isCredits
@@ -150,7 +150,7 @@ function SuccessContent(): JSX.Element {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/dashboard"
-              className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
             >
               Go to Dashboard
               <ArrowRight className="h-4 w-4 ml-2" />
@@ -171,7 +171,7 @@ function SuccessContent(): JSX.Element {
               If you have any questions, please{' '}
               <a
                 href={`mailto:${clientEnv.SUPPORT_EMAIL}`}
-                className="text-indigo-600 hover:text-indigo-700 underline"
+                className="text-accent hover:text-accent-hover underline"
               >
                 contact support
               </a>
@@ -188,7 +188,7 @@ function LoadingFallback(): JSX.Element {
   return (
     <main className="flex-1 flex items-center justify-center min-h-[60vh]">
       <div className="text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-indigo-600 mx-auto mb-4" />
+        <Loader2 className="h-12 w-12 animate-spin text-accent mx-auto mb-4" />
         <p className="text-lg text-muted-foreground">Loading...</p>
       </div>
     </main>

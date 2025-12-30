@@ -8,7 +8,7 @@ export const LoadingBackdrop = (): JSX.Element | null => {
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
       <svg
-        className="animate-spin h-10 w-10 text-indigo-600"
+        className="animate-spin h-10 w-10 text-accent"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

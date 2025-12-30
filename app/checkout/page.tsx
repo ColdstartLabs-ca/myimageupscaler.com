@@ -126,7 +126,7 @@ function CheckoutContent() {
             </p>
             <button
               onClick={handleGoBack}
-              className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+              className="inline-flex items-center px-6 py-3 bg-accent hover:bg-accent-hover text-white font-medium rounded-lg transition-colors"
             >
               View Plans
             </button>
@@ -142,7 +142,7 @@ function CheckoutContent() {
       <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="bg-surface rounded-lg shadow-lg p-8 max-w-md w-full">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
             <h1 className="text-xl font-semibold text-primary mb-2">Checking Authentication</h1>
             <p className="text-muted-foreground">Please wait...</p>
           </div>
@@ -220,7 +220,7 @@ function CheckoutContent() {
             {loading && (
               <div className="flex items-center justify-center py-20">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
                   <p className="text-muted-foreground">Loading secure checkout...</p>
                 </div>
               </div>
@@ -228,12 +228,12 @@ function CheckoutContent() {
 
             {error && errorCode === 'ALREADY_SUBSCRIBED' && (
               <div className="p-8">
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+                <div className="bg-warning/10 border border-warning/20 rounded-lg p-6">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-8 w-8 text-amber-500"
+                        className="h-8 w-8 text-warning"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -247,18 +247,18 @@ function CheckoutContent() {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-amber-800 mb-2">
+                      <h3 className="text-lg font-semibold text-text-primary mb-2">
                         You Already Have an Active Subscription
                       </h3>
-                      <p className="text-amber-700 mb-4">{error}</p>
-                      <p className="text-sm text-amber-600 mb-4">
+                      <p className="text-text-secondary mb-4">{error}</p>
+                      <p className="text-sm text-text-muted mb-4">
                         To change your plan, please use the billing portal to manage your
                         subscription.
                       </p>
                       <div className="flex gap-3">
                         <button
                           onClick={() => router.push('/dashboard/billing')}
-                          className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+                          className="px-4 py-2 bg-warning text-white rounded-lg hover:bg-warning/80 transition-colors"
                         >
                           Manage Subscription
                         </button>
@@ -277,9 +277,9 @@ function CheckoutContent() {
 
             {error && errorCode !== 'ALREADY_SUBSCRIBED' && (
               <div className="p-8">
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <h3 className="text-red-800 font-semibold mb-2">Error</h3>
-                  <p className="text-red-600">{error}</p>
+                <div className="bg-error/10 border border-error/20 rounded-lg p-4">
+                  <h3 className="text-error font-semibold mb-2">Error</h3>
+                  <p className="text-error">{error}</p>
                   <div className="mt-4 flex gap-3">
                     <button
                       onClick={handleGoBack}
@@ -289,7 +289,7 @@ function CheckoutContent() {
                     </button>
                     <button
                       onClick={() => window.location.reload()}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      className="px-4 py-2 bg-error text-white rounded-lg hover:bg-error/80 transition-colors"
                     >
                       Try Again
                     </button>
@@ -335,7 +335,7 @@ function LoadingFallback() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
         <p className="text-muted-foreground">Loading...</p>
       </div>
     </div>

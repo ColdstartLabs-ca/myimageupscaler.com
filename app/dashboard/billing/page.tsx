@@ -107,10 +107,10 @@ export default function BillingPage() {
 
   const getSubscriptionStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      active: 'bg-green-500/20 text-green-400',
-      trialing: 'bg-blue-500/20 text-blue-400',
-      past_due: 'bg-amber-500/20 text-amber-400',
-      canceled: 'bg-red-500/20 text-red-400',
+      active: 'bg-success/20 text-success',
+      trialing: 'bg-accent/20 text-accent',
+      past_due: 'bg-warning/20 text-warning',
+      canceled: 'bg-error/20 text-error',
     };
     return (
       <span
@@ -135,11 +135,11 @@ export default function BillingPage() {
   if (error) {
     return (
       <div className="space-y-6">
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 text-center">
-          <p className="text-red-400 mb-4">{error}</p>
+        <div className="bg-error/10 border border-error/20 rounded-xl p-6 text-center">
+          <p className="text-error mb-4">{error}</p>
           <button
             onClick={loadBillingData}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
+            className="px-4 py-2 bg-error text-white rounded-lg text-sm font-medium hover:bg-error/80 transition-colors"
           >
             Try Again
           </button>
@@ -236,8 +236,8 @@ export default function BillingPage() {
 
             {/* Trial Information */}
             {subscription.status === 'trialing' && subscription.trial_end && (
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mt-3">
-                <p className="text-sm text-blue-300">
+              <div className="bg-accent/10 border border-accent/20 rounded-lg p-3 mt-3">
+                <p className="text-sm text-accent/80">
                   <strong>Trial Active:</strong> Your trial ends{' '}
                   {dayjs(subscription.trial_end).fromNow()}. Your card will be charged the regular
                   subscription price after the trial ends.
@@ -246,8 +246,8 @@ export default function BillingPage() {
             )}
 
             {subscription.cancel_at_period_end && (
-              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mt-3">
-                <p className="text-sm text-amber-300">
+              <div className="bg-warning/10 border border-warning/20 rounded-lg p-3 mt-3">
+                <p className="text-sm text-warning/80">
                   Your subscription will be canceled at the end of the current period.
                 </p>
               </div>
@@ -255,15 +255,15 @@ export default function BillingPage() {
 
             {/* Scheduled Downgrade Alert */}
             {subscription.scheduled_price_id && subscription.scheduled_change_date && (
-              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mt-3">
+              <div className="bg-warning/10 border border-warning/20 rounded-lg p-4 mt-3">
                 <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                  <Calendar className="w-5 h-5 text-warning mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
                     <h4 className="font-medium text-white mb-1">Scheduled Plan Change</h4>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                       <span className="font-medium">{planName}</span>
                       <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                      <span className="font-medium text-amber-400">
+                      <span className="font-medium text-warning">
                         {getPlanForPriceId(subscription.scheduled_price_id)?.name || 'New Plan'}
                       </span>
                     </div>
@@ -274,7 +274,7 @@ export default function BillingPage() {
                     </p>
                     <button
                       onClick={() => router.push('/pricing')}
-                      className="mt-2 text-sm text-amber-400 hover:text-amber-300 font-medium"
+                      className="mt-2 text-sm text-warning hover:text-warning/80 font-medium"
                     >
                       Change or cancel this
                     </button>
@@ -309,8 +309,8 @@ export default function BillingPage() {
           }
         />
 
-        <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-          <p className="text-sm text-blue-300">
+        <div className="mt-4 p-3 bg-accent/10 border border-accent/20 rounded-lg">
+          <p className="text-sm text-accent/80">
             💡 <strong>Tip:</strong>{' '}
             {subscription
               ? 'Subscriptions offer better value (up to 58% cheaper per credit)'

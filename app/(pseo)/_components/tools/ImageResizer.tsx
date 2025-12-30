@@ -250,7 +250,7 @@ export function ImageResizer({
               <select
                 id="preset"
                 onChange={e => handlePresetSelect(e.target.value)}
-                className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-white"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-text-primary"
               >
                 <option value="">Choose a preset...</option>
                 {presets.map(preset => (
@@ -278,7 +278,7 @@ export function ImageResizer({
                     format: e.target.value as 'jpeg' | 'png' | 'webp',
                   }))
                 }
-                className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-white"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-text-primary"
               >
                 <option value="jpeg">JPEG</option>
                 <option value="png">PNG</option>
@@ -301,7 +301,7 @@ export function ImageResizer({
                 max={10000}
                 value={options.width}
                 onChange={e => handleWidthChange(parseInt(e.target.value) || 1)}
-                className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
               />
             </div>
 
@@ -326,7 +326,7 @@ export function ImageResizer({
                 value={options.height}
                 onChange={e => handleHeightChange(parseInt(e.target.value) || 1)}
                 disabled={options.maintainAspectRatio}
-                className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-surface disabled:text-muted-foreground disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-surface disabled:text-text-muted disabled:cursor-not-allowed"
               />
             </div>
 
@@ -358,7 +358,7 @@ export function ImageResizer({
                 onChange={e =>
                   setOptions(prev => ({ ...prev, maintainAspectRatio: e.target.checked }))
                 }
-                className="w-4 h-4 text-accent border-white/20 rounded focus:ring-accent"
+                className="w-4 h-4 text-accent border-border rounded focus:ring-accent"
               />
               <label
                 htmlFor="aspect-ratio"
@@ -372,7 +372,7 @@ export function ImageResizer({
           {/* File Info */}
           {file && (
             <div className="bg-surface rounded-lg p-4 text-sm">
-              <p className="text-muted-foreground">
+              <p className="text-text-secondary">
                 <span className="font-medium">Original:</span> {file.name} (
                 {(file.size / 1024 / 1024).toFixed(2)}MB)
               </p>

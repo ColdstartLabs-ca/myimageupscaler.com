@@ -96,16 +96,21 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
           transition-all duration-300
           flex flex-col items-center justify-center gap-1
           disabled:opacity-50 disabled:cursor-not-allowed
-          ${isProcessing || queue.every(i => i.status === ProcessingStatus.COMPLETED)
-            ? 'bg-white/5 text-text-muted'
-            : hasEnoughCredits
-              ? 'gradient-cta shine-effect active:scale-[0.98] shadow-lg shadow-accent/20'
-              : 'bg-gradient-to-r from-amber-500 to-orange-500 active:scale-[0.98] shadow-lg shadow-amber-500/20'
+          ${
+            isProcessing || queue.every(i => i.status === ProcessingStatus.COMPLETED)
+              ? 'bg-white/5 text-text-muted'
+              : hasEnoughCredits
+                ? 'gradient-cta shine-effect active:scale-[0.98] shadow-lg shadow-accent/20'
+                : 'bg-gradient-to-r from-amber-500 to-orange-500 active:scale-[0.98] shadow-lg shadow-amber-500/20'
           }
         `}
       >
         <div className="flex items-center justify-center gap-2 relative z-10">
-          {isProcessing ? <Loader2 className="animate-spin" size={18} /> : <Wand2 size={18} className={hasEnoughCredits ? "text-white" : ""} />}
+          {isProcessing ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : (
+            <Wand2 size={18} className={hasEnoughCredits ? 'text-white' : ''} />
+          )}
           <span className="text-sm font-black tracking-tight">
             {isProcessing && batchProgress
               ? `Processing ${batchProgress.current} / ${batchProgress.total}`
@@ -157,7 +162,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
 
       <Button
         variant="ghost"
-        className="w-full text-muted-foreground hover:text-red-400 hover:bg-red-500/20"
+        className="w-full text-muted-foreground hover:text-error hover:bg-error/20"
         onClick={onClear}
         disabled={isProcessing}
         icon={<Trash2 size={16} />}

@@ -48,7 +48,7 @@ export function SubscriptionStatus(): JSX.Element {
       <div className="bg-surface rounded-xl shadow-lg p-6">
         <div className="flex items-center gap-2">
           <svg
-            className="animate-spin h-5 w-5 text-indigo-600"
+            className="animate-spin h-5 w-5 text-accent"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -83,7 +83,7 @@ export function SubscriptionStatus(): JSX.Element {
         <div className="flex justify-end">
           <a
             href="/pricing"
-            className="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center justify-center px-4 py-2 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
           >
             View Plans
           </a>
@@ -96,13 +96,13 @@ export function SubscriptionStatus(): JSX.Element {
     const baseClasses = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium';
     switch (status) {
       case 'active':
-        return <span className={`${baseClasses} bg-green-100 text-green-800`}>Active</span>;
+        return <span className={`${baseClasses} bg-success/20 text-success`}>Active</span>;
       case 'trialing':
-        return <span className={`${baseClasses} bg-blue-100 text-blue-800`}>Trial</span>;
+        return <span className={`${baseClasses} bg-info/20 text-info`}>Trial</span>;
       case 'past_due':
-        return <span className={`${baseClasses} bg-yellow-100 text-yellow-800`}>Past Due</span>;
+        return <span className={`${baseClasses} bg-warning/10 text-warning`}>Past Due</span>;
       case 'canceled':
-        return <span className={`${baseClasses} bg-red-100 text-red-800`}>Canceled</span>;
+        return <span className={`${baseClasses} bg-error/10 text-error`}>Canceled</span>;
       default:
         return <span className={`${baseClasses} bg-surface-light text-primary`}>{status}</span>;
     }
@@ -151,7 +151,7 @@ export function SubscriptionStatus(): JSX.Element {
 
         {/* Trial specific information */}
         {subscription.status === 'trialing' && subscription.trial_end && (
-          <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800">
+          <div className="flex items-center gap-2 p-3 bg-info/10 border border-info/20 rounded-lg text-info">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="shrink-0 h-5 w-5"
@@ -176,7 +176,7 @@ export function SubscriptionStatus(): JSX.Element {
         )}
 
         {subscription.cancel_at_period_end && (
-          <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
+          <div className="flex items-center gap-2 p-3 bg-warning/10 border border-warning/20 rounded-lg text-warning">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="shrink-0 h-5 w-5"
@@ -207,7 +207,7 @@ export function SubscriptionStatus(): JSX.Element {
         </button>
         <a
           href="/dashboard/billing"
-          className="px-3 py-1.5 text-sm bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+          className="px-3 py-1.5 text-sm bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
         >
           Manage Subscription
         </a>

@@ -123,8 +123,8 @@ const ErrorOverlay: React.FC<{
   onRetry: (item: IBatchItem) => void;
 }> = ({ item, onRetry }) => (
   <div className="absolute inset-0 bg-surface/50 backdrop-blur-sm flex items-center justify-center">
-    <div className="bg-surface p-6 rounded-xl shadow-xl border border-red-500/20 text-center max-w-md">
-      <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-red-400">
+    <div className="bg-surface p-6 rounded-xl shadow-xl border border-error/20 text-center max-w-md">
+      <div className="w-12 h-12 bg-error/20 rounded-full flex items-center justify-center mx-auto mb-4 text-error">
         <AlertTriangle size={24} />
       </div>
       <h3 className="text-lg font-semibold text-white mb-2">Processing Failed</h3>

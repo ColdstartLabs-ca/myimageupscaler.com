@@ -53,7 +53,7 @@ export const ToggleButtonGroup = <T extends string>({
               ${
                 isSelected
                   ? 'border-accent bg-accent/10 text-accent'
-                  : 'border-white/10 text-muted-foreground hover:bg-surface-light hover:text-white'
+                  : 'border-border text-text-secondary hover:bg-surface-light hover:text-text-primary'
               }
               ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
             `}

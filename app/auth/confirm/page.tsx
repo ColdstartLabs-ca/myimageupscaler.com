@@ -149,9 +149,9 @@ function AuthConfirmContent() {
           <div
             className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
               status === 'success'
-                ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                ? 'bg-gradient-to-r from-success to-success/80'
                 : status === 'verified_please_login'
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                  ? 'bg-gradient-to-r from-success to-success/80'
                   : 'bg-accent glow-blue'
             }`}
           >

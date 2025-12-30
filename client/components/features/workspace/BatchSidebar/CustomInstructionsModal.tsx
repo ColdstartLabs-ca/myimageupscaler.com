@@ -89,11 +89,11 @@ export const CustomInstructionsModal: React.FC<ICustomInstructionsModalProps> = 
     >
       <div className="space-y-4">
         {/* Description */}
-        <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <Lightbulb className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-          <div className="text-sm text-blue-800">
+        <div className="flex items-start gap-3 p-3 bg-accent/10 border border-accent/20 rounded-lg">
+          <Lightbulb className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-primary">
             <p className="font-medium mb-1">Custom AI Instructions</p>
-            <p className="text-blue-700">
+            <p className="text-muted-foreground">
               Tell the AI exactly how to process your image. Be specific about what you want to
               enhance, preserve, or change.
             </p>
@@ -115,25 +115,25 @@ export const CustomInstructionsModal: React.FC<ICustomInstructionsModalProps> = 
             placeholder={placeholderPrompt}
             className={`
               w-full min-h-[200px] p-3 rounded-lg border border-white/10 text-sm
-              focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+              focus:ring-2 focus:ring-accent focus:border-accent
               resize-none transition-colors
-              ${isOverLimit ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}
+              ${isOverLimit ? 'border-error focus:ring-error focus:border-error' : ''}
             `}
             maxLength={maxCharacters}
           />
 
           {/* Character count */}
           <div className="flex items-center justify-between mt-2">
-            <span className={`text-xs ${isOverLimit ? 'text-red-600' : 'text-muted-foreground'}`}>
+            <span className={`text-xs ${isOverLimit ? 'text-error' : 'text-muted-foreground'}`}>
               {characterCount} / {maxCharacters} characters
               {isOverLimit && (
-                <span className="ml-2 text-red-600 font-medium">
+                <span className="ml-2 text-error font-medium">
                   (Please reduce to {maxCharacters} characters)
                 </span>
               )}
             </span>
 
-            {isOverLimit && <span className="text-xs text-red-600">Character limit exceeded</span>}
+            {isOverLimit && <span className="text-xs text-error">Character limit exceeded</span>}
           </div>
         </div>
 
@@ -144,7 +144,7 @@ export const CustomInstructionsModal: React.FC<ICustomInstructionsModalProps> = 
             <button
               type="button"
               onClick={handleLoadTemplate}
-              className="flex items-center gap-2 text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+              className="flex items-center gap-2 text-xs text-accent hover:text-accent-hover font-medium"
             >
               <Download className="h-3 w-3" />
               Load Template
@@ -168,7 +168,7 @@ export const CustomInstructionsModal: React.FC<ICustomInstructionsModalProps> = 
                 key={index}
                 type="button"
                 onClick={() => setCurrentInstructions(template.prompt)}
-                className="p-2 text-left border border-white/10 rounded-lg hover:bg-surface hover:border-white/20 transition-colors"
+                className="p-2 text-left border border-white/10 rounded-lg hover:bg-surface hover:border-border transition-colors"
               >
                 <div className="text-xs font-medium text-muted-foreground mb-1">
                   {template.title}
@@ -197,7 +197,7 @@ export const CustomInstructionsModal: React.FC<ICustomInstructionsModalProps> = 
               ${
                 isOverLimit || !currentInstructions.trim()
                   ? 'bg-surface-light text-muted-foreground cursor-not-allowed'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                  : 'bg-accent text-white hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2'
               }
             `}
           >

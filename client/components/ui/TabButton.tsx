@@ -19,10 +19,10 @@ export const TabButton: React.FC<ITabButtonProps> = ({ active, onClick, icon: Ic
         'flex-1 flex flex-col items-center justify-center py-3 px-3 text-xs font-medium transition-colors duration-200 min-w-[60px] touch-manipulation',
         active
           ? 'text-accent bg-accent/10 glow-blue'
-          : 'text-secondary hover:text-primary hover:bg-surface/50'
+          : 'text-text-secondary hover:text-text-primary hover:bg-surface/50'
       )}
     >
-      <Icon className={cn('h-5 w-5 mb-1', active ? 'text-accent' : 'text-tertiary')} />
+      <Icon className={cn('h-5 w-5 mb-1', active ? 'text-accent' : 'text-text-muted')} />
       <span>{children}</span>
     </button>
   );

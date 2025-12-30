@@ -96,21 +96,18 @@ export function FileUpload({
           'border-2 border-dashed rounded-lg p-12 text-center transition-all cursor-pointer',
           isDragging
             ? 'border-accent bg-surface-light'
-            : 'border-white/20 bg-surface hover:border-accent hover:bg-surface-light',
-          disabled && 'opacity-50 cursor-not-allowed hover:border-white/20 hover:bg-surface',
+            : 'border-border bg-surface hover:border-accent hover:bg-surface-light',
+          disabled && 'opacity-50 cursor-not-allowed hover:border-border hover:bg-surface',
           className
         )}
       >
         <Upload
-          className={cn(
-            'w-12 h-12 mx-auto mb-4',
-            isDragging ? 'text-blue-500' : 'text-muted-foreground'
-          )}
+          className={cn('w-12 h-12 mx-auto mb-4', isDragging ? 'text-accent' : 'text-text-muted')}
         />
-        <p className="text-lg font-medium text-muted-foreground mb-2">
+        <p className="text-lg font-medium text-text-secondary mb-2">
           {isDragging ? 'Drop your image here' : 'Drop your image here or click to browse'}
         </p>
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="text-sm text-text-secondary mb-4">
           Supports {formatList} up to {maxFileSizeMB}MB
         </p>
         <div

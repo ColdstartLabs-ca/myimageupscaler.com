@@ -72,7 +72,7 @@ export function CancelSubscriptionModal({
         <ModalHeader
           title="Cancel Subscription"
           icon={AlertTriangle}
-          iconClassName="text-red-600"
+          iconClassName="text-error"
           onClose={onClose}
           disabled={loading}
         />
@@ -130,8 +130,8 @@ function CancellationReasonForm({
   return (
     <>
       {/* Cancellation Info */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
+      <div className="bg-info/10 border border-info/20 rounded-lg p-4">
+        <p className="text-sm text-info">
           <strong>
             Your {planName} plan will remain active until {formattedEndDate}.
           </strong>
@@ -151,7 +151,7 @@ function CancellationReasonForm({
           {CANCELLATION_REASONS.map(reason => (
             <label
               key={reason}
-              className="flex items-center p-3 border border-white/10 rounded-lg hover:bg-surface cursor-pointer transition-colors"
+              className="flex items-center p-3 border border-border rounded-lg hover:bg-surface cursor-pointer transition-colors"
             >
               <input
                 type="radio"
@@ -159,7 +159,7 @@ function CancellationReasonForm({
                 value={reason}
                 checked={selectedReason === reason}
                 onChange={e => onReasonChange(e.target.value)}
-                className="w-4 h-4 text-indigo-600 border-white/20 focus:ring-indigo-500"
+                className="w-4 h-4 text-accent border-border focus:ring-accent"
               />
               <span className="ml-3 text-sm text-muted-foreground">{reason}</span>
             </label>
@@ -172,7 +172,7 @@ function CancellationReasonForm({
             value={customReason}
             onChange={e => onCustomReasonChange(e.target.value)}
             placeholder="Please tell us why you're canceling..."
-            className="mt-3 w-full px-4 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+            className="mt-3 w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent resize-none"
             rows={3}
           />
         )}
@@ -189,7 +189,7 @@ function CancellationReasonForm({
         </button>
         <button
           onClick={onContinue}
-          className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
+          className="flex-1 px-4 py-3 bg-error hover:bg-error/80 text-white font-medium rounded-lg transition-colors"
           disabled={loading}
         >
           Continue
@@ -216,8 +216,8 @@ function CancellationConfirmation({
     <>
       {/* Confirmation Step */}
       <div className="text-center space-y-4">
-        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-          <AlertTriangle className="h-8 w-8 text-red-600" />
+        <div className="w-16 h-16 bg-error/10 rounded-full flex items-center justify-center mx-auto">
+          <AlertTriangle className="h-8 w-8 text-error" />
         </div>
         <div>
           <h3 className="text-lg font-semibold text-primary mb-2">Are you sure?</h3>
@@ -239,7 +239,7 @@ function CancellationConfirmation({
         </button>
         <button
           onClick={onConfirm}
-          className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 px-4 py-3 bg-error hover:bg-error/80 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading}
         >
           {loading ? 'Canceling...' : 'Yes, Cancel Subscription'}

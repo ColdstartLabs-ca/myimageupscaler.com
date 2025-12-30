@@ -24,7 +24,7 @@ export function HowItWorksSection({
   }
 
   return (
-    <section className="py-20 bg-surface rounded-2xl my-20 border border-white/10">
+    <section className="py-20 bg-surface rounded-2xl my-20 border border-border">
       <FadeIn>
         <div className="text-center mb-16 px-6">
           <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">{title}</h2>

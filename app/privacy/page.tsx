@@ -75,7 +75,7 @@ export default function PrivacyPolicyPage(): JSX.Element {
                 href="https://stripe.com/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-indigo-600 hover:underline"
+                className="text-accent hover:underline"
               >
                 Privacy Policy
               </a>
@@ -95,7 +95,9 @@ export default function PrivacyPolicyPage(): JSX.Element {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-primary mb-4">3. How We Use Your Information</h2>
+            <h2 className="text-2xl font-semibold text-primary mb-4">
+              3. How We Use Your Information
+            </h2>
             <p className="text-muted-foreground mb-4">We use the collected information to:</p>
             <ul className="list-disc pl-6 mb-4 text-muted-foreground">
               <li>Provide, maintain, and improve our services</li>
@@ -110,7 +112,9 @@ export default function PrivacyPolicyPage(): JSX.Element {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-primary mb-4">4. Data Sharing and Disclosure</h2>
+            <h2 className="text-2xl font-semibold text-primary mb-4">
+              4. Data Sharing and Disclosure
+            </h2>
             <p className="text-muted-foreground mb-4">
               We do not sell your personal information. We may share your information with:
             </p>
@@ -185,10 +189,7 @@ export default function PrivacyPolicyPage(): JSX.Element {
             </ul>
             <p className="text-muted-foreground">
               To exercise these rights, please contact us at{' '}
-              <a
-                href={`mailto:${clientEnv.PRIVACY_EMAIL}`}
-                className="text-indigo-600 hover:underline"
-              >
+              <a href={`mailto:${clientEnv.PRIVACY_EMAIL}`} className="text-accent hover:underline">
                 {clientEnv.PRIVACY_EMAIL}
               </a>
               .
@@ -222,7 +223,9 @@ export default function PrivacyPolicyPage(): JSX.Element {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-primary mb-4">10. International Data Transfers</h2>
+            <h2 className="text-2xl font-semibold text-primary mb-4">
+              10. International Data Transfers
+            </h2>
             <p className="text-muted-foreground">
               Your information may be transferred to and processed in countries other than your
               country of residence. These countries may have different data protection laws. By
@@ -252,7 +255,7 @@ export default function PrivacyPolicyPage(): JSX.Element {
                 Email:{' '}
                 <a
                   href={`mailto:${clientEnv.PRIVACY_EMAIL}`}
-                  className="text-indigo-600 hover:underline"
+                  className="text-accent hover:underline"
                 >
                   {clientEnv.PRIVACY_EMAIL}
                 </a>

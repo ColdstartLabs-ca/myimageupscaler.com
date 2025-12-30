@@ -70,7 +70,7 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
           {/* Hero Section with Comparison Badge */}
           <div className="relative">
             <div className="absolute -top-4 left-0">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-100 text-orange-700 text-sm font-semibold rounded-full">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-warning/20 text-warning text-sm font-semibold rounded-full">
                 <Star className="w-4 h-4" />
                 Comparison
               </span>
@@ -95,7 +95,7 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
                   Head-to-Head Comparison
                 </h2>
                 <div className="overflow-x-auto">
-                  <table className="w-full bg-surface border border-white/10 rounded-xl overflow-hidden">
+                  <table className="w-full bg-surface border border-border rounded-xl overflow-hidden">
                     <thead className="bg-surface">
                       <tr>
                         <th className="px-6 py-4 text-left text-sm font-semibold text-primary">
@@ -121,7 +121,7 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200">
+                    <tbody className="divide-y divide-border">
                       {data.criteria.map((criterion, idx) => (
                         <tr key={idx} className="hover:bg-surface">
                           <td className="px-6 py-4 text-sm font-medium text-primary">
@@ -138,9 +138,9 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
                               >
                                 {typeof value === 'boolean' ? (
                                   value ? (
-                                    <Check className="w-5 h-5 text-green-600 mx-auto" />
+                                    <Check className="w-5 h-5 text-success mx-auto" />
                                   ) : (
-                                    <X className="w-5 h-5 text-slate-300 mx-auto" />
+                                    <X className="w-5 h-5 text-muted-foreground mx-auto" />
                                   )
                                 ) : (
                                   <span className="text-sm text-muted-foreground">
@@ -163,7 +163,7 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
           {data.verdict && (
             <FadeIn delay={0.4}>
               <section className="py-12">
-                <div className="max-w-3xl mx-auto bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-accent-200 rounded-xl p-8">
+                <div className="max-w-3xl mx-auto bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/20 rounded-xl p-8">
                   <div className="flex items-center gap-2 mb-4">
                     <Award className="w-6 h-6 text-accent" />
                     <h2 className="text-2xl font-bold">Our Verdict</h2>
@@ -171,7 +171,7 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
                   <div className="prose prose-slate max-w-none">
                     <p className="text-muted-foreground leading-relaxed">{data.verdict.summary}</p>
                     {data.verdict.winner && (
-                      <div className="mt-4 p-4 bg-surface rounded-lg border border-accent-200">
+                      <div className="mt-4 p-4 bg-surface rounded-lg border border-accent/20">
                         <div className="font-semibold text-primary mb-1">Winner:</div>
                         <div className="text-lg font-bold text-accent">{data.verdict.winner}</div>
                         {data.verdict.reason && (
@@ -200,8 +200,8 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
                       key={idx}
                       className={`border rounded-xl p-6 ${
                         product.isRecommended
-                          ? 'border-accent-300 bg-surface-light'
-                          : 'border-white/10 bg-surface'
+                          ? 'border-accent/50 bg-surface-light'
+                          : 'border-border bg-surface'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -213,7 +213,7 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
                         </div>
                         {product.rating && (
                           <div className="flex items-center gap-1">
-                            <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                            <Star className="w-5 h-5 text-warning fill-warning" />
                             <span className="font-bold text-lg">{product.rating}</span>
                             <span className="text-sm text-muted-foreground">/5</span>
                           </div>
@@ -224,11 +224,11 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
                       )}
                       {product.pros && product.pros.length > 0 && (
                         <div className="mb-4">
-                          <h4 className="font-semibold text-sm text-green-700 mb-2">Pros:</h4>
+                          <h4 className="font-semibold text-sm text-success mb-2">Pros:</h4>
                           <ul className="space-y-1">
                             {product.pros.map((pro, pIdx) => (
                               <li key={pIdx} className="flex items-start gap-2 text-sm">
-                                <Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                                <Check className="w-4 h-4 text-success shrink-0 mt-0.5" />
                                 <span className="text-muted-foreground">{pro}</span>
                               </li>
                             ))}
@@ -237,11 +237,11 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
                       )}
                       {product.cons && product.cons.length > 0 && (
                         <div>
-                          <h4 className="font-semibold text-sm text-red-700 mb-2">Cons:</h4>
+                          <h4 className="font-semibold text-sm text-error mb-2">Cons:</h4>
                           <ul className="space-y-1">
                             {product.cons.map((con, cIdx) => (
                               <li key={cIdx} className="flex items-start gap-2 text-sm">
-                                <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                                <X className="w-4 h-4 text-error shrink-0 mt-0.5" />
                                 <span className="text-muted-foreground">{con}</span>
                               </li>
                             ))}
@@ -277,19 +277,19 @@ export function ComparePageTemplate({ data }: IComparePageTemplateProps): ReactE
           {/* Related Comparisons */}
           {data.relatedComparisons && data.relatedComparisons.length > 0 && (
             <FadeIn delay={0.6}>
-              <section className="py-8 border-t border-white/10">
+              <section className="py-8 border-t border-border">
                 <h2 className="text-2xl font-bold mb-6">More Comparisons</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {data.relatedComparisons.map((slug, idx) => (
                     <Link
                       key={idx}
                       href={`/compare/${slug}`}
-                      className="p-4 border border-white/10 rounded-lg hover:border-orange-500 hover:shadow-md transition-all group"
+                      className="p-4 border border-border rounded-lg hover:border-warning hover:shadow-md transition-all group"
                     >
                       <span className="text-sm font-medium text-primary capitalize">
                         {slug.replace(/-/g, ' ')}
                       </span>
-                      <ArrowRight className="inline-block w-4 h-4 ml-1 text-muted-foreground group-hover:text-orange-600 group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className="inline-block w-4 h-4 ml-1 text-muted-foreground group-hover:text-warning group-hover:translate-x-1 transition-all" />
                     </Link>
                   ))}
                 </div>

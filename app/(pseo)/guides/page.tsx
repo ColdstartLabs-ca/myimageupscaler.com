@@ -10,7 +10,9 @@ export default async function GuidesHubPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-6">Guides & Tutorials</h1>
-      <p className="text-xl text-gray-600 mb-12">Learn how to get the most out of your images</p>
+      <p className="text-xl text-text-secondary mb-12">
+        Learn how to get the most out of your images
+      </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {guides.map(guide => (
           <Link
@@ -20,9 +22,7 @@ export default async function GuidesHubPage() {
           >
             <h2 className="text-xl font-semibold mb-2">{guide.title}</h2>
             <p className="text-gray-600 text-sm">{guide.description}</p>
-            <span className="inline-block mt-4 text-blue-600 text-sm font-medium">
-              Read guide →
-            </span>
+            <span className="inline-block mt-4 text-accent text-sm font-medium">Read guide →</span>
           </Link>
         ))}
       </div>

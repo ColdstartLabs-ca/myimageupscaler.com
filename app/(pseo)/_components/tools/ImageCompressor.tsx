@@ -207,7 +207,7 @@ export function ImageCompressor(): React.ReactElement {
                 onChange={e =>
                   setOptions(prev => ({ ...prev, maxWidth: parseInt(e.target.value) || 100 }))
                 }
-                className="w-full px-3 py-2 bg-surface border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white"
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-text-primary"
               />
             </div>
 
@@ -228,7 +228,7 @@ export function ImageCompressor(): React.ReactElement {
                 onChange={e =>
                   setOptions(prev => ({ ...prev, maxHeight: parseInt(e.target.value) || 100 }))
                 }
-                className="w-full px-3 py-2 bg-surface border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white"
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-text-primary"
               />
             </div>
 
@@ -249,7 +249,7 @@ export function ImageCompressor(): React.ReactElement {
                     format: e.target.value as 'jpeg' | 'png' | 'webp',
                   }))
                 }
-                className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-white"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-text-primary"
               >
                 <option value="jpeg">JPEG (best for photos)</option>
                 <option value="webp">WebP (best compression)</option>
@@ -266,7 +266,7 @@ export function ImageCompressor(): React.ReactElement {
                 onChange={e =>
                   setOptions(prev => ({ ...prev, maintainAspectRatio: e.target.checked }))
                 }
-                className="w-4 h-4 text-accent border-white/20 rounded focus:ring-accent bg-surface"
+                className="w-4 h-4 text-accent border-border rounded focus:ring-accent bg-surface"
               />
               <label
                 htmlFor="aspect-ratio"
@@ -279,7 +279,7 @@ export function ImageCompressor(): React.ReactElement {
 
           {/* Compression Stats */}
           {file && processedBlob && (
-            <div className="bg-surface-light rounded-lg p-4 border border-white/10">
+            <div className="bg-surface-light rounded-lg p-4 border border-border">
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
                   <p className="text-2xl font-bold text-primary">

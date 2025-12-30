@@ -16,8 +16,8 @@ export default function HistoryPage() {
       {/* History List */}
       <div className="bg-surface rounded-xl border border-white/10 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-            <Clock size={20} className="text-indigo-600" />
+          <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
+            <Clock size={20} className="text-accent" />
           </div>
           <div>
             <h2 className="font-semibold text-primary">Recent Uploads</h2>

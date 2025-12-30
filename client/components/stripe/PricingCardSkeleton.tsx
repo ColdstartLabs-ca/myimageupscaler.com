@@ -16,11 +16,11 @@ export function PricingCardSkeleton({
   return (
     <div
       className={`relative bg-surface rounded-2xl shadow-lg border-2 animate-pulse ${
-        recommended ? 'border-indigo-200' : 'border-white/10'
+        recommended ? 'border-accent/30' : 'border-border'
       }`}
     >
       {/* Skeleton badge */}
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-surface-light text-slate-200 px-8 py-1 rounded-full text-sm font-medium">
+      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-surface-light text-text-muted px-8 py-1 rounded-full text-sm font-medium">
         Loading
       </div>
 
@@ -37,16 +37,16 @@ export function PricingCardSkeleton({
 
         {/* Price skeleton */}
         <div className="text-center my-6">
-          <div className="text-4xl font-bold text-slate-200">
+          <div className="text-4xl font-bold text-text-muted">
             <div className="h-12 bg-surface-light rounded mx-auto w-1/3"></div>
           </div>
-          <div className="text-sm text-slate-200 mt-1">
+          <div className="text-sm text-text-muted mt-1">
             <div className="h-4 bg-surface-light rounded mx-auto w-1/4"></div>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="border-t border-white/10 pt-6 mb-6"></div>
+        <div className="border-t border-border pt-6 mb-6"></div>
 
         {/* Features skeleton */}
         <ul className="space-y-3 mb-8">

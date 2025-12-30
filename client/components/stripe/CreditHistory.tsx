@@ -61,7 +61,7 @@ export function CreditHistory({ limit = 50 }: IProps): JSX.Element {
         <h3 className="text-lg font-semibold text-primary mb-4">Transaction History</h3>
         <div className="flex items-center justify-center py-12">
           <svg
-            className="animate-spin h-8 w-8 text-indigo-600"
+            className="animate-spin h-8 w-8 text-accent"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -89,8 +89,8 @@ export function CreditHistory({ limit = 50 }: IProps): JSX.Element {
     return (
       <div className="bg-surface rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold text-primary mb-4">Transaction History</h3>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="bg-error/10 border border-error/20 rounded-lg p-4">
+          <p className="text-sm text-error">{error}</p>
         </div>
       </div>
     );
@@ -183,7 +183,7 @@ export function CreditHistory({ limit = 50 }: IProps): JSX.Element {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`text-sm font-semibold ${
-                      transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                      transaction.amount > 0 ? 'text-success' : 'text-error'
                     }`}
                   >
                     {transaction.amount > 0 ? '+' : ''}

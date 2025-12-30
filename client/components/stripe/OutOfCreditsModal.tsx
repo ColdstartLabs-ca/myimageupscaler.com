@@ -37,8 +37,8 @@ export function OutOfCreditsModal({
 
           {/* Header */}
           <div className="text-center mb-6">
-            <div className="mx-auto w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4">
-              <AlertCircle className="h-6 w-6 text-amber-600" />
+            <div className="mx-auto w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-4">
+              <AlertCircle className="h-6 w-6 text-warning" />
             </div>
             <h2 className="text-2xl font-bold text-primary mb-2">You&apos;re Out of Credits</h2>
             <p className="text-muted-foreground">
@@ -52,7 +52,7 @@ export function OutOfCreditsModal({
               onClick={() => setShowSubscriptionCTA(false)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 !showSubscriptionCTA
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-accent text-white'
                   : 'bg-surface-light text-muted-foreground hover:bg-surface-light'
               }`}
             >
@@ -62,7 +62,7 @@ export function OutOfCreditsModal({
               onClick={() => setShowSubscriptionCTA(true)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 showSubscriptionCTA
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-accent text-white'
                   : 'bg-surface-light text-muted-foreground hover:bg-surface-light'
               }`}
             >
@@ -93,7 +93,7 @@ export function OutOfCreditsModal({
               </p>
               <a
                 href="/pricing"
-                className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+                className="inline-flex items-center px-6 py-3 bg-accent hover:bg-accent-hover text-white font-medium rounded-lg transition-colors"
               >
                 View Subscription Plans
               </a>
