@@ -34,13 +34,13 @@ interface IDashboardSidebarProps {
 export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const { signOut, user, isLoading } = useUserStore();
+  const { signOut, user, isLoading, error } = useUserStore();
   const isAdmin = useIsAdmin();
   const subscription = useSubscription();
   const logger = useLogger('DashboardSidebar');
 
-  // Check if profile data is still loading
-  const isProfileLoading = isLoading || (user && !user.profile);
+  // Check if profile data is still loading (but not if there's an error)
+  const isProfileLoading = isLoading || (user && !user.profile && !error);
 
   // Resolve subscription to plan name - prioritize profile's subscription_tier
   const planDisplayName = getPlanDisplayName({
@@ -157,6 +157,8 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
               <span className="inline-flex items-center mt-1 px-2 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent">
                 {isProfileLoading ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
+                ) : error ? (
+                  'Plan unavailable'
                 ) : (
                   `${planDisplayName} Plan`
                 )}
