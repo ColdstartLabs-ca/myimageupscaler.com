@@ -53,9 +53,15 @@ export class InvoiceHandler {
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
 
+    // FIX: Throw error instead of silent return - Stripe will retry
     if (!profile) {
-      console.error(`No profile found for customer ${customerId}`);
-      return;
+      console.error(`[WEBHOOK_RETRY] No profile found for customer ${customerId}`, {
+        invoiceId: invoice.id,
+        subscriptionId,
+        customerId,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Profile not found for customer ${customerId} - webhook will retry`);
     }
 
     const userId = profile.id;
@@ -241,9 +247,14 @@ export class InvoiceHandler {
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
 
+    // FIX: Throw error instead of silent return - Stripe will retry
     if (!profile) {
-      console.error(`No profile found for customer ${customerId}`);
-      return;
+      console.error(`[WEBHOOK_RETRY] No profile found for customer ${customerId}`, {
+        invoiceId: invoice.id,
+        customerId,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Profile not found for customer ${customerId} - webhook will retry`);
     }
 
     const userId = profile.id;

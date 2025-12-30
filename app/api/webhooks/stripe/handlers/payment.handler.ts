@@ -167,6 +167,7 @@ export class PaymentHandler {
 
   /**
    * Handle charge refund - clawback credits from appropriate pool
+   * FIXED: Support multiple reference prefixes (invoice_, pi_, session_)
    */
   static async handleChargeRefunded(charge: IStripeChargeExtended): Promise<void> {
     const customerId = charge.customer;
@@ -184,85 +185,70 @@ export class PaymentHandler {
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
 
+    // FIX: Throw error instead of silent return - Stripe will retry
     if (!profile) {
-      console.error(`No profile found for customer ${customerId} for charge refund`);
-      return;
+      console.error(`[WEBHOOK_RETRY] No profile found for customer ${customerId}`, {
+        chargeId: charge.id,
+        customerId,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Profile not found for customer ${customerId} - webhook will retry`);
     }
 
     const userId = profile.id;
-
-    console.log(
-      `[CHARGE_REFUND] Processing refund for charge ${charge.id}: ${refundAmount} cents for user ${userId}`
-    );
-
-    // Get the invoice to determine if this is subscription or credit pack refund
     const invoiceId = charge.invoice;
+    const paymentIntentId = charge.payment_intent as string | null;
 
-    try {
-      if (invoiceId) {
-        // Subscription refund - clawback using invoice reference
+    console.log(`[CHARGE_REFUND] Processing refund for charge ${charge.id}:`, {
+      userId,
+      refundAmount,
+      invoiceId,
+      paymentIntentId,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Try multiple reference formats to find the original transaction
+    // Credit packs use pi_ or session_, subscriptions use invoice_
+    const referenceIds = [
+      invoiceId ? `invoice_${invoiceId}` : null,
+      paymentIntentId ? `pi_${paymentIntentId}` : null,
+      `session_${charge.id}`, // Fallback: some old transactions used session ID
+    ].filter(Boolean) as string[];
+
+    let clawbackSucceeded = false;
+
+    for (const refId of referenceIds) {
+      try {
         const { data: result, error } = await supabaseAdmin.rpc('clawback_from_transaction_v2', {
           p_target_user_id: userId,
-          p_original_ref_id: `invoice_${invoiceId}`,
-          p_reason: `Charge refund: ${charge.id} (${refundAmount} cents)`,
+          p_original_ref_id: refId,
+          p_reason: `Refund for charge ${charge.id} (${refundAmount} cents)`,
         });
 
-        if (error) {
-          console.error(`[CHARGE_REFUND] Failed to clawback credits:`, error);
-          throw error;
+        if (!error && result && result.length > 0 && result[0]?.success) {
+          console.log(`[CHARGE_REFUND] Clawback succeeded with ref_id: ${refId}`, {
+            creditsClawedBack: result[0].credits_clawed_back,
+            subscriptionClawed: result[0].subscription_clawed,
+            purchasedClawed: result[0].purchased_clawed,
+            newSubscriptionBalance: result[0].new_subscription_balance,
+            newPurchasedBalance: result[0].new_purchased_balance,
+          });
+          clawbackSucceeded = true;
+          break;
         }
-
-        if (result && result.length > 0) {
-          const clawbackResult = result[0];
-          if (clawbackResult.success) {
-            console.log(
-              `[CHARGE_REFUND] Clawed back ${clawbackResult.credits_clawed_back} credits ` +
-                `(sub: ${clawbackResult.subscription_clawed}, pur: ${clawbackResult.purchased_clawed}) ` +
-                `New balances - sub: ${clawbackResult.new_subscription_balance}, pur: ${clawbackResult.new_purchased_balance}`
-            );
-          } else {
-            console.error(`[CHARGE_REFUND] Clawback failed: ${clawbackResult.error_message}`);
-          }
-        }
-      } else {
-        // Credit pack refund (no invoice) - use payment intent
-        const paymentIntentId = charge.payment_intent as string;
-
-        if (!paymentIntentId) {
-          console.warn(
-            `[CHARGE_REFUND] Charge ${charge.id} has no invoice or payment_intent - cannot clawback`
-          );
-          return;
-        }
-
-        const { data: result, error } = await supabaseAdmin.rpc('clawback_purchased_credits', {
-          p_target_user_id: userId,
-          p_payment_intent_id: `pi_${paymentIntentId}`,
-          p_reason: `Credit pack refund: ${charge.id} (${refundAmount} cents)`,
-        });
-
-        if (error) {
-          console.error(`[CHARGE_REFUND] Failed to clawback purchased credits:`, error);
-          throw error;
-        }
-
-        if (result && result.length > 0) {
-          const clawbackResult = result[0];
-          if (clawbackResult.success) {
-            console.log(
-              `[CHARGE_REFUND] Clawed back ${clawbackResult.credits_clawed_back} purchased credits. ` +
-                `New purchased balance: ${clawbackResult.new_balance}`
-            );
-          } else {
-            console.error(
-              `[CHARGE_REFUND] Purchased credits clawback failed: ${clawbackResult.error_message}`
-            );
-          }
-        }
+      } catch (err) {
+        console.warn(`[CHARGE_REFUND] Clawback attempt failed for ref_id ${refId}:`, err);
       }
-    } catch (error) {
-      console.error(`[CHARGE_REFUND] Error during credit clawback:`, error);
-      throw error;
+    }
+
+    if (!clawbackSucceeded) {
+      console.warn(`[CHARGE_REFUND] Could not correlate refund to any transaction`, {
+        userId,
+        chargeId: charge.id,
+        attemptedRefIds: referenceIds,
+      });
+      // Don't throw - refund processed even if clawback fails
+      // This avoids blocking legitimate refunds for old transactions
     }
   }
 
@@ -280,9 +266,14 @@ export class PaymentHandler {
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
 
+    // FIX: Throw error instead of silent return - Stripe will retry
     if (!profile) {
-      console.error(`[INVOICE_REFUND] No profile found for customer ${customerId}`);
-      return;
+      console.error(`[WEBHOOK_RETRY] No profile found for customer ${customerId}`, {
+        invoiceId: invoice.id,
+        customerId,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Profile not found for customer ${customerId} - webhook will retry`);
     }
 
     try {

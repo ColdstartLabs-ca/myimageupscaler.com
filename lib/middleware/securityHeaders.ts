@@ -27,20 +27,23 @@ export function applySecurityHeaders(res: NextResponse): void {
 
 /**
  * Apply CORS headers to API responses
+ * SECURITY FIX: Don't allow wildcard for missing Origin
+ * Browsers always send Origin header. No header means non-browser request (e.g., webhook) which doesn't need CORS.
  */
 export function applyCorsHeaders(res: NextResponse, origin?: string): void {
-  // Set CORS headers for API responses
+  // Only set CORS headers if origin is provided and allowed
   if (origin && ALLOWED_ORIGINS.includes(origin)) {
     res.headers.set('Access-Control-Allow-Origin', origin);
-  } else if (!origin) {
-    // For requests without origin header, allow from anywhere
-    res.headers.set('Access-Control-Allow-Origin', '*');
+    res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.headers.set(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, X-Requested-With'
+    );
+    res.headers.set('Access-Control-Allow-Credentials', 'true');
+    res.headers.set('Access-Control-Max-Age', '86400'); // 24 hours
   }
-
-  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.headers.set('Access-Control-Allow-Credentials', 'true');
-  res.headers.set('Access-Control-Max-Age', '86400'); // 24 hours
+  // REMOVED: Wildcard fallback for missing origin
+  // Non-browser clients (webhooks, APIs) don't need CORS headers
 }
 
 /**

@@ -742,9 +742,15 @@ describe('Stripe Webhook Handler', () => {
       // Act
       const response = await POST(request);
 
-      // Assert
-      expect(response.status).toBe(200);
-      expect(consoleSpy.error).toHaveBeenCalledWith('No profile found for customer cus_test_123');
+      // Assert - FIX: Now throws error for Stripe retry (was silent 200)
+      expect(response.status).toBe(500);
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '[WEBHOOK_RETRY] No profile found for customer cus_test_123',
+        expect.objectContaining({
+          subscriptionId: 'sub_test_123',
+          customerId: 'cus_test_123',
+        })
+      );
     });
 
     test('should handle subscription update errors gracefully', async () => {
@@ -1054,10 +1060,14 @@ describe('Stripe Webhook Handler', () => {
       // Act
       const response = await POST(request);
 
-      // Assert
-      expect(response.status).toBe(200);
+      // Assert - FIX: Now throws error for Stripe retry (was silent 200)
+      expect(response.status).toBe(500);
       expect(consoleSpy.error).toHaveBeenCalledWith(
-        'No profile found for customer cus_missing_123'
+        '[WEBHOOK_RETRY] No profile found for customer cus_missing_123',
+        expect.objectContaining({
+          invoiceId: 'in_test_failed_123',
+          customerId: 'cus_missing_123',
+        })
       );
     });
 

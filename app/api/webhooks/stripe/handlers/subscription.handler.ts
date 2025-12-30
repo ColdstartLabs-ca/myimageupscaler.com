@@ -85,9 +85,15 @@ export class SubscriptionHandler {
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
 
+    // FIX: Throw error instead of silent return - Stripe will retry
     if (!profile) {
-      console.error(`No profile found for customer ${customerId}`);
-      return;
+      console.error(`[WEBHOOK_RETRY] No profile found for customer ${customerId}`, {
+        subscriptionId: subscription.id,
+        customerId,
+        status: subscription.status,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Profile not found for customer ${customerId} - webhook will retry`);
     }
 
     const userId = profile.id;
@@ -99,12 +105,27 @@ export class SubscriptionHandler {
     // making the DB value stale (it already has the NEW price_id)
     const { data: existingSubscription } = await supabaseAdmin
       .from('subscriptions')
-      .select('price_id')
+      .select('price_id, updated_at')
       .eq('id', subscription.id)
       .maybeSingle();
 
     // Prefer Stripe's previous_attributes (accurate) over DB (may be stale after plan change)
     const previousPriceId = options?.previousPriceId || existingSubscription?.price_id || null;
+
+    // RACE CONDITION LOGGING: Detect when DB price_id differs from Stripe's previous_attributes
+    // This indicates the /api/subscription/change route updated the DB before the webhook fired
+    if (options?.previousPriceId && existingSubscription?.price_id !== options.previousPriceId) {
+      console.warn('[WEBHOOK_RACE] DB price_id differs from Stripe previous_attributes', {
+        userId: profile.id,
+        subscriptionId: subscription.id,
+        dbPriceId: existingSubscription?.price_id,
+        stripePreviousPriceId: options.previousPriceId,
+        currentPriceId: subscription.items.data[0]?.price.id,
+        dbUpdatedAt: existingSubscription?.updated_at,
+        timestamp: new Date().toISOString(),
+        note: 'Using Stripe previous_attributes for accurate plan change detection',
+      });
+    }
 
     // Get price ID and resolve using unified resolver
     const priceId = subscription.items.data[0]?.price.id || '';
@@ -487,9 +508,14 @@ export class SubscriptionHandler {
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
 
+    // FIX: Throw error instead of silent return - Stripe will retry
     if (!profile) {
-      console.error(`No profile found for customer ${customerId}`);
-      return;
+      console.error(`[WEBHOOK_RETRY] No profile found for customer ${customerId}`, {
+        subscriptionId: subscription.id,
+        customerId,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Profile not found for customer ${customerId} - webhook will retry`);
     }
 
     const userId = profile.id;
@@ -535,9 +561,14 @@ export class SubscriptionHandler {
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
 
+    // FIX: Throw error instead of silent return - Stripe will retry
     if (!profile) {
-      console.error(`No profile found for customer ${customerId}`);
-      return;
+      console.error(`[WEBHOOK_RETRY] No profile found for customer ${customerId}`, {
+        subscriptionId: subscription.id,
+        customerId,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Profile not found for customer ${customerId} - webhook will retry`);
     }
 
     const userId = profile.id;
