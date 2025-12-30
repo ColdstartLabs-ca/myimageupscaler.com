@@ -166,7 +166,7 @@ export class PaymentHandler {
   }
 
   /**
-   * Handle charge refund - clawback credits
+   * Handle charge refund - clawback credits from appropriate pool
    */
   static async handleChargeRefunded(charge: IStripeChargeExtended): Promise<void> {
     const customerId = charge.customer;
@@ -192,29 +192,110 @@ export class PaymentHandler {
     const userId = profile.id;
 
     console.log(
-      `Processing refund for charge ${charge.id}: ${refundAmount} cents for user ${userId}`
+      `[CHARGE_REFUND] Processing refund for charge ${charge.id}: ${refundAmount} cents for user ${userId}`
     );
 
-    // Get the invoice to find the original credit transaction
+    // Get the invoice to determine if this is subscription or credit pack refund
     const invoiceId = charge.invoice;
 
-    if (!invoiceId) {
-      console.warn(`Charge ${charge.id} has no invoice - cannot clawback credits`);
-      // For charges without invoices (one-time payments), we can't easily determine which credits to clawback
-      // This is acceptable as our system is subscription-only
+    try {
+      if (invoiceId) {
+        // Subscription refund - clawback using invoice reference
+        const { data: result, error } = await supabaseAdmin.rpc('clawback_from_transaction_v2', {
+          p_target_user_id: userId,
+          p_original_ref_id: `invoice_${invoiceId}`,
+          p_reason: `Charge refund: ${charge.id} (${refundAmount} cents)`,
+        });
+
+        if (error) {
+          console.error(`[CHARGE_REFUND] Failed to clawback credits:`, error);
+          throw error;
+        }
+
+        if (result && result.length > 0) {
+          const clawbackResult = result[0];
+          if (clawbackResult.success) {
+            console.log(
+              `[CHARGE_REFUND] Clawed back ${clawbackResult.credits_clawed_back} credits ` +
+                `(sub: ${clawbackResult.subscription_clawed}, pur: ${clawbackResult.purchased_clawed}) ` +
+                `New balances - sub: ${clawbackResult.new_subscription_balance}, pur: ${clawbackResult.new_purchased_balance}`
+            );
+          } else {
+            console.error(`[CHARGE_REFUND] Clawback failed: ${clawbackResult.error_message}`);
+          }
+        }
+      } else {
+        // Credit pack refund (no invoice) - use payment intent
+        const paymentIntentId = charge.payment_intent as string;
+
+        if (!paymentIntentId) {
+          console.warn(
+            `[CHARGE_REFUND] Charge ${charge.id} has no invoice or payment_intent - cannot clawback`
+          );
+          return;
+        }
+
+        const { data: result, error } = await supabaseAdmin.rpc('clawback_purchased_credits', {
+          p_target_user_id: userId,
+          p_payment_intent_id: `pi_${paymentIntentId}`,
+          p_reason: `Credit pack refund: ${charge.id} (${refundAmount} cents)`,
+        });
+
+        if (error) {
+          console.error(`[CHARGE_REFUND] Failed to clawback purchased credits:`, error);
+          throw error;
+        }
+
+        if (result && result.length > 0) {
+          const clawbackResult = result[0];
+          if (clawbackResult.success) {
+            console.log(
+              `[CHARGE_REFUND] Clawed back ${clawbackResult.credits_clawed_back} purchased credits. ` +
+                `New purchased balance: ${clawbackResult.new_balance}`
+            );
+          } else {
+            console.error(
+              `[CHARGE_REFUND] Purchased credits clawback failed: ${clawbackResult.error_message}`
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`[CHARGE_REFUND] Error during credit clawback:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Handle invoice payment refunded - clawback subscription credits
+   */
+  static async handleInvoicePaymentRefunded(invoice: Stripe.Invoice): Promise<void> {
+    const customerId = invoice.customer as string;
+
+    console.log(`[INVOICE_REFUND] Invoice ${invoice.id} payment refunded`);
+
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('stripe_customer_id', customerId)
+      .maybeSingle();
+
+    if (!profile) {
+      console.error(`[INVOICE_REFUND] No profile found for customer ${customerId}`);
       return;
     }
 
     try {
-      // Clawback all credits added from this invoice transaction
-      const { data: result, error } = await supabaseAdmin.rpc('clawback_credits_from_transaction', {
-        p_target_user_id: userId,
-        p_original_ref_id: `invoice_${invoiceId}`,
-        p_reason: `Refund for charge ${charge.id} (${refundAmount} cents)`,
+      // Clawback using invoice reference - will route to correct pool automatically
+      // The clawback function will find the original transaction and remove all credits from it
+      const { data: result, error } = await supabaseAdmin.rpc('clawback_from_transaction_v2', {
+        p_target_user_id: profile.id,
+        p_original_ref_id: `invoice_${invoice.id}`,
+        p_reason: `Invoice refund: ${invoice.id}`,
       });
 
       if (error) {
-        console.error(`Failed to clawback credits for refund:`, error);
+        console.error(`[INVOICE_REFUND] Failed to clawback credits:`, error);
         throw error;
       }
 
@@ -222,27 +303,17 @@ export class PaymentHandler {
         const clawbackResult = result[0];
         if (clawbackResult.success) {
           console.log(
-            `Successfully clawed back ${clawbackResult.credits_clawed_back} credits. New balance: ${clawbackResult.new_balance}`
+            `[INVOICE_REFUND] Clawed back ${clawbackResult.credits_clawed_back} credits ` +
+              `(sub: ${clawbackResult.subscription_clawed}, pur: ${clawbackResult.purchased_clawed}) ` +
+              `New balances - sub: ${clawbackResult.new_subscription_balance}, pur: ${clawbackResult.new_purchased_balance}`
           );
         } else {
-          console.error(`Clawback failed: ${clawbackResult.error_message}`);
+          console.error(`[INVOICE_REFUND] Clawback failed: ${clawbackResult.error_message}`);
         }
       }
     } catch (error) {
-      console.error(`Error during credit clawback:`, error);
-      // Re-throw to mark webhook as failed and trigger retry
+      console.error(`[INVOICE_REFUND] Error during credit clawback:`, error);
       throw error;
     }
-  }
-
-  /**
-   * Handle invoice payment refunded
-   */
-  static async handleInvoicePaymentRefunded(invoice: Stripe.Invoice): Promise<void> {
-    console.log(`Invoice ${invoice.id} payment refunded`);
-
-    // TODO: Implement invoice refund handling logic
-    // This would involve clawing back credits from the original invoice transaction
-    // Similar to handleChargeRefunded but for invoice refunds
   }
 }

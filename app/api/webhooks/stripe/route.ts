@@ -21,6 +21,8 @@ type StripeWebhookEventType =
   | 'invoice_payment.failed'
   | 'charge.refunded'
   | 'charge.dispute.created'
+  | 'charge.dispute.updated'
+  | 'charge.dispute.closed'
   | 'invoice.payment_refunded'
   | 'subscription_schedule.completed';
 
@@ -173,6 +175,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         case 'charge.dispute.created':
           await DisputeHandler.handleChargeDisputeCreated(event.data.object as Stripe.Dispute);
+          break;
+
+        case 'charge.dispute.updated':
+          await DisputeHandler.handleChargeDisputeUpdated(event.data.object as Stripe.Dispute);
+          break;
+
+        case 'charge.dispute.closed':
+          await DisputeHandler.handleChargeDisputeClosed(event.data.object as Stripe.Dispute);
           break;
 
         case 'invoice.payment_refunded':
