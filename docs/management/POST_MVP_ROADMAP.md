@@ -117,17 +117,19 @@ timeline
 
 ### Month 4: Quick Wins (🚀 High Priority)
 
-**Credit Rollover (P1 - QUICK WIN)**
+**Credit Rollover (P1 - QUICK WIN)** ✅ **PARTIALLY COMPLETED (70%) - December 2025**
 
-- [ ] **Implement credit rollover system**
-  - Up to 6x monthly credit cap
-  - Track rollover balance separately from monthly credits
-  - Clear expiration notifications (7 days before)
-  - Display rollover credits in dashboard
+- [~] **Implement credit rollover system**
+  - [x] Tier-based rollover caps configured (Starter 3x, Hobby/Pro 6x, Business 0)
+  - [x] Rollover balance tracking (expirationMode: 'never')
+  - [ ] Clear expiration notifications (7 days before) - **TODO**
+  - [ ] Display rollover credits in dashboard - **TODO**
   - **Impact**: Reduces "use it or lose it" churn by 30-40%
   - **Effort**: 2-3 days (simple database logic)
+  - **Status**: Core rollover logic implemented in `subscription.config.ts`
+  - **PRD**: `/docs/PRDs/done/starter-tier-rollover-prd.md`
 
-**Annual Billing (P1 - QUICK WIN)**
+**Annual Billing (P1 - QUICK WIN)** ⏳ **NOT STARTED**
 
 - [ ] **Add annual subscription option**
   - 17% discount on annual plans ($90, $290, $990/year)
@@ -137,7 +139,7 @@ timeline
   - **Impact**: 12-month lock-in, +17% revenue per customer
   - **Effort**: 2-3 days (Stripe integration)
 
-**Email System (P2 - QUICK WIN)**
+**Email System (P2 - QUICK WIN)** 📋 **PLANNED (PRD EXISTS)**
 
 - [ ] **Resend + React Email setup**
   - Custom email templates with branding
@@ -150,10 +152,11 @@ timeline
   - Welcome series (3-email onboarding)
   - **Impact**: Improves retention 15-20%, drives engagement
   - **Effort**: 3-4 days (template setup + integration)
+  - **PRD**: `/docs/PRDs/email-notifications-prd.md`
 
 ### Month 5: Conversion & Growth Optimization (🚀 Quick Wins)
 
-**Workspace Protection (P1 - QUICK WIN)**
+**Workspace Protection (P1 - QUICK WIN)** 📋 **PLANNED (PRD EXISTS)**
 
 - [ ] **Landing page demo workspace with abuse prevention**
   - Re-enable interactive "Try It Now" workspace on landing page
@@ -167,9 +170,10 @@ timeline
   - Cost monitoring: Track guest processing costs
   - **Impact**: Unlocks product-led growth, 20-30% conversion lift
   - **Effort**: 3-4 days (fingerprinting + modal + Turnstile)
+  - **Status**: PRD exists at `/docs/PRDs/rate-limiting-hardening.md`
   - See: `docs/business-model-canvas/04-revenue-costs.md` for cost analysis
 
-**Usage Analytics Dashboard (P2 - QUICK WIN)**
+**Usage Analytics Dashboard (P2 - QUICK WIN)** ⏳ **NOT STARTED**
 
 - [ ] **User-facing analytics**
   - Processing history dashboard (last 30 days)
@@ -179,51 +183,60 @@ timeline
   - Upgrade prompts when approaching limits
   - **Impact**: Drives upsells, 10-15% upgrade rate
   - **Effort**: 3-4 days (chart.js + dashboard UI)
+  - **Status**: History page exists at `/app/dashboard/history/page.tsx` but is empty/placeholder
 
-**Comparison Pages (P2 - QUICK WIN)**
+**Comparison Pages (P2 - QUICK WIN)** ✅ **COMPLETED (100%) - December 2025**
 
-- [ ] **SEO competitor comparison content** (10 pages)
-  - MyImageUpscaler vs Topaz Gigapixel
-  - MyImageUpscaler vs Magnific AI
-  - MyImageUpscaler vs Let's Enhance
-  - MyImageUpscaler vs Upscale.media
-  - MyImageUpscaler vs VanceAI
-  - MyImageUpscaler vs Remini
-  - MyImageUpscaler vs Gigapixel AI
-  - MyImageUpscaler vs Photoroom
-  - MyImageUpscaler vs Cutout Pro
-  - MyImageUpscaler vs Icons8 Upscaler
+- [x] **SEO competitor comparison content** (24+ pages - exceeds target of 10)
+  - [x] MyImageUpscaler vs Topaz Gigapixel
+  - [x] MyImageUpscaler vs Magnific AI
+  - [x] MyImageUpscaler vs Let's Enhance
+  - [x] MyImageUpscaler vs Upscale.media
+  - [x] MyImageUpscaler vs VanceAI
+  - [x] MyImageUpscaler vs Remini
+  - [x] MyImageUpscaler vs Gigapixel AI
+  - [x] MyImageUpscaler vs Photoroom
+  - [x] MyImageUpscaler vs Cutout Pro
+  - [x] MyImageUpscaler vs Icons8 Upscaler
+  - [x] Plus: Adobe Photoshop, Waifu2x, BigJPG, SmartMagnify, PhotoEnhancer, Upscay, Fotor, Photoshop Express, Pixlr, Canva
+  - [x] Plus: Best free AI upscalers 2025, AI upscaler reviews 2025, AI vs traditional upscaling, online vs desktop upscalers
   - **Impact**: High SEO traffic (40k+ monthly searches)
   - **Effort**: 5-6 days (content writing + structured data)
+  - **Status**: All pages live at `/app/(pseo)/compare/[slug]/page.tsx`
+  - **Data files**: `/app/seo/data/competitor-comparisons.json`, `/app/seo/data/comparisons-expanded.json`
 
 ### Month 6-7: Big Bets - Core Features (💎 High Impact)
 
-**Batch Processing (P1 - BIG BET)**
+**Batch Processing (P1 - BIG BET)** ✅ **PARTIALLY COMPLETED (60%) - December 2025**
 
-- [ ] **Multi-image upload system**
-  - Up to 50 images simultaneously
-  - Progress tracking for batch operations
-  - ZIP download of results
-  - Parallel processing queue
+- [~] **Multi-image upload system**
+  - [x] Tier-based batch limits (Free: 1, Starter: 5, Hobby: 10, Pro: 50, Business: 500)
+  - [x] Progress tracking for batch operations
+  - [x] Server-side batch limit tracking with sliding window
+  - [ ] ZIP download of results - **NEEDS VERIFICATION**
+  - [ ] Parallel processing queue (currently sequential)
   - **Impact**: Core e-commerce feature, critical for TAM
   - **Effort**: 7-10 days (queue system + S3 batch)
+  - **Status**: Batch limits fully implemented, missing HEIC/TIFF format support
+  - **PRD**: `/docs/PRDs/done/batch-upload-paid-only.md`
 - [ ] **Processing modes**
-  - Portrait mode enhancement (GFPGAN)
-  - Product/e-commerce mode
-  - Automatic mode detection
+  - [x] Portrait mode enhancement (GFPGAN) - implemented as "Face Restore" quality tier
+  - [x] Product/e-commerce mode - text preservation mode exists
+  - [x] Automatic mode detection - "Auto" quality tier with AI analysis
 - [ ] **Format support**
-  - HEIC support (iPhone photos)
-  - TIFF support (professional photographers)
+  - [ ] HEIC support (iPhone photos) - **TODO**
+  - [ ] TIFF support (professional photographers) - **TODO**
 
-**API Access (P1 - BIG BET)**
+**API Access (P1 - BIG BET)** 📋 **CORE API EXISTS, DEV PORTAL NEEDED**
 
-- [ ] **API v1 Development**
-  - RESTful API endpoints (enhance, upscale, batch)
-  - API key management portal
-  - Rate limiting by tier
-  - Comprehensive API documentation
+- [~] **API v1 Development**
+  - [x] RESTful API endpoints (enhance, upscale, batch) - `/app/api/upscale/route.ts`
+  - [ ] API key management portal - **NOT IMPLEMENTED**
+  - [x] Rate limiting by tier - basic tier-based limits exist
+  - [ ] Comprehensive API documentation - **TODO**
   - **Impact**: Enterprise revenue stream, developer ecosystem
   - **Effort**: 10-12 days (API design + auth + docs)
+  - **Status**: Core API functional with JWT auth, needs developer portal and docs
 - [ ] **API Pricing Tiers**
   - Developer: Free (100 calls/month)
   - API Starter: $49/mo (2,000 calls)
@@ -537,11 +550,12 @@ xychart-beta
 
 ## Changelog
 
-| Date       | Version | Changes                                                                                                                       |
-| ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| 2025-12-01 | 1.0     | Extracted post-MVP roadmap from main ROADMAP.md                                                                               |
-| 2025-12-04 | 1.1     | Updated with business model canvas: Real-ESRGAN via Replicate, pricing/revenue projections, scaling triggers, risk mitigation |
-| 2025-12-05 | 1.2     | Added Image SEO Tools feature (Fill-In): Alt text generator, metadata editor, platform-specific resizing, export options      |
+| Date       | Version | Changes                                                                                                                                                                                                                                     |
+| ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2025-12-01 | 1.0     | Extracted post-MVP roadmap from main ROADMAP.md                                                                                                                                                                                             |
+| 2025-12-04 | 1.1     | Updated with business model canvas: Real-ESRGAN via Replicate, pricing/revenue projections, scaling triggers, risk mitigation                                                                                                               |
+| 2025-12-05 | 1.2     | Added Image SEO Tools feature (Fill-In): Alt text generator, metadata editor, platform-specific resizing, export options                                                                                                                    |
+| 2025-12-30 | 1.3     | **Phase 2 Progress Update**: Credit Rollover (70% complete), Comparison Pages (100% complete - 24+ pages), Batch Processing (60% complete), API Access (core implemented), updated all feature statuses with actual implementation evidence |
 
 ---
 

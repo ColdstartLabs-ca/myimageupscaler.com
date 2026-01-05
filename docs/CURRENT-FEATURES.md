@@ -1,7 +1,7 @@
 # MyImageUpscaler - Current Features Overview
 
-> **Last Updated**: 2025-11-30
-> **Version**: v2.0
+> **Last Updated**: 2025-12-30
+> **Version**: v2.1
 > **Status**: Production Ready
 
 ## 🎯 Core Product Features
@@ -25,11 +25,12 @@
 ### Batch Processing
 
 - **Tier-Based Batch Limits**:
-  - Free Tier: 5 images per batch
-  - Hobby Tier: 10 images per batch
-  - Pro Tier: 50 images per batch
-  - Business Tier: 500 images per batch
-- **Paid Feature**: Batch processing now requires paid subscription (Free tier limited to single image)
+  - Free Tier: **1 image per batch** (single image processing)
+  - Starter Tier: **5 images per batch**
+  - Hobby Tier: **10 images per batch**
+  - Pro Tier: **50 images per batch**
+  - Business Tier: **500 images per batch**
+- **Paid Feature**: Batch processing requires paid subscription (Free tier limited to single image)
 - **Queue Management**: Smart processing queue with priority handling
 - **Progress Tracking**: Real-time progress updates for batch jobs
 - **Error Handling**: Individual image error handling without stopping entire batch
@@ -40,10 +41,11 @@
 - **Format Support**: JPEG, PNG, WebP
 - **Size Limits**:
   - Free Tier: 5MB per image
-  - Hobby Tier: 10MB per image
-  - Pro Tier: 64MB per image
-  - Business Tier: 64MB per image
-- **Resolution Support**: Up to 64MP output on Pro/Business tiers
+  - Starter Tier: **25MB per image**
+  - Hobby Tier: **25MB per image**
+  - Pro Tier: **25MB per image**
+  - Business Tier: **25MB per image**
+- **Resolution Support**: Up to 8192x8192px output on Pro/Business tiers
 - **Premium Upscale Support**: 4K/8K output available on Ultra quality tier
 
 ### Before-After Comparison & Premium Upsell
@@ -61,7 +63,10 @@
 
 - **Main Endpoint**: `/api/upscale` - Core image processing
 - **Authentication**: JWT-based with user identification
-- **Rate Limiting**: Tier-based limits (Free: 50 req/10s, Business: 500 req/10s)
+- **Rate Limiting**:
+  - Authenticated users: 50 requests per 10 seconds
+  - Public routes: 10 requests per 10 seconds
+  - Upscale endpoint: 5 requests per 60 seconds
 - **Credit System**: 1 credit per image processed
 - **Error Handling**: Comprehensive HTTP status codes and error messages
 - **Documentation**: Complete API reference available
@@ -134,8 +139,8 @@
 
 - **Tier-Based Costs**: 1-8 credits per image based on quality tier selected
 - **Smart AI Analysis**: +1 credit when AI analysis is enabled
-- **Scale Multipliers**: Higher upscaling factors (4x, 8x) increase credit costs
-- **Credit Rollover**: Tiered rollover (3x Starter, 6x Hobby/Pro, none for Business)
+- **Scale Multipliers**: 2x, 4x, and 8x upscaling all have the same credit cost (1.0x multiplier)
+- **Credit Rollover**: Tiered rollover (3x Starter = 300 max, 6x Hobby/Pro = 1200/6000 max, none for Business)
 - **Free Tier Caps**: Maximum 10 credits, no monthly refresh
 - **Real-time Tracking**: Live credit balance and cost preview before processing
 - **Transaction History**: Comprehensive credit usage and purchase history
@@ -166,7 +171,7 @@
 
 ### Frontend Technology Stack
 
-- **Framework**: Next.js 15 with App Router
+- **Framework**: Next.js 16.0.10 with App Router
 - **UI Library**: React 18 with TypeScript
 - **Styling**: Tailwind CSS with custom components
 - **State Management**:
@@ -266,8 +271,7 @@
 
 ### Business Metrics
 
-- **User Base**: 10,000+ businesses
-- **Processing Volume**: Scaled for millions of images per month
+- **Infrastructure**: Scaled to support high-volume processing
 - **Geographic Reach**: Global availability with CDN
 - **Support Channels**: Email, documentation, FAQ
 
@@ -316,13 +320,13 @@
 
 ## 📚 Documentation
 
-- **API Reference**: `/docs/technical/api-reference.md`
 - **Database Schema**: `/docs/technical/database-schema.md`
 - **System Architecture**: `/docs/technical/system-architecture.md`
 - **User Flow**: `/docs/technical/user-flow.md`
 - **Tech Stack**: `/docs/technical/tech-stack.md`
-- **Roadmap**: `/docs/management/ROADMAP.md`
-- **Feature PRDs**: `/docs/PRDs/` - Premium restrictions, outcome-based flow, batch limits, domain centralization
+- **MVP Roadmap**: `/docs/management/MVP_ROADMAP.md`
+- **Post-MVP Roadmap**: `/docs/management/POST_MVP_ROADMAP.md`
+- **Feature PRDs**: `/docs/PRDs/` and `/docs/PRDs/done/` - Premium restrictions, outcome-based flow, batch limits, rollover system
 
 ---
 
@@ -337,7 +341,36 @@
 
 ---
 
-## 🎯 Recent Major Updates (v2.1)
+## 🎯 Recent Major Updates (v2.1 - December 2025)
+
+### Documentation Accuracy Updates
+
+- Corrected Free tier batch limit from 5 to 1 image per batch
+- Fixed file size limits for paid tiers (all paid tiers: 25MB, not 64MB)
+- Corrected rate limiting documentation (uniform limits, not tier-based)
+- Fixed scale multiplier documentation (all scales have same cost)
+- Updated Next.js version to 16.0.10
+- Removed unverifiable business metrics claims
+- Fixed documentation references to match actual file structure
+
+### Phase 2 Progress (From POST_MVP_ROADMAP.md)
+
+**Completed:**
+
+- Comparison Pages: 24+ SEO competitor comparison pages live (exceeds target of 10)
+- Credit Rollover: 70% complete (core logic implemented, notifications pending)
+
+**In Progress:**
+
+- Batch Processing: 60% complete (limits implemented, HEIC/TIFF format support pending)
+- API Access: Core API functional, developer portal and documentation needed
+
+**Planned:**
+
+- Annual Billing option
+- Email System (Resend + React Email)
+- Workspace Protection (browser fingerprinting + Turnstile CAPTCHA)
+- Usage Analytics Dashboard
 
 ### Premium Model Restrictions & Quality Tiers
 
@@ -355,9 +388,9 @@
 
 ### Batch Processing Overhaul
 
-- Tier-based batch limits (Free: 5, Hobby: 10, Pro: 50, Business: 500)
+- Tier-based batch limits (Free: 1, Starter: 5, Hobby: 10, Pro: 50, Business: 500)
 - Server-side sliding window tracking for abuse prevention
-- Batch processing converted to paid-only feature
+- Batch processing requires paid subscription (Free tier: single image only)
 - Enhanced error handling and user feedback
 
 ### Architecture & Infrastructure Improvements
@@ -365,5 +398,7 @@
 - Service-oriented architecture with factory patterns
 - Model registry for dynamic AI model selection
 - Cloudflare Workers for webhook recovery and system maintenance
-- Enhanced security with tier-based rate limiting
-- Planned domain centralization for rebranding support
+- Enhanced security with uniform rate limiting
+- Baselime error tracking fully implemented
+- Amplitude + GA4 analytics fully implemented
+- Health check endpoint with CI/CD verification

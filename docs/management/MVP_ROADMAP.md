@@ -181,14 +181,19 @@ timeline
   - Production build configuration
   - Bundle size optimization
   - Asset optimization
-- [ ] **Cloudflare Pages setup**
-  - Connect GitHub repository
-  - Configure production variables
-  - Set up custom domain
-- [ ] **Monitoring & Analytics**
-  - Baselime error tracking
-  - Amplitude + GA4 analytics
-  - Health check endpoint
+- [~] **Cloudflare Pages setup**
+  - [x] wrangler.toml configuration
+  - [x] GitHub Actions CI/CD workflow (.github/workflows/deploy.yml)
+  - [x] OpenNext.js Cloudflare adapter configured
+  - [x] Local deployment script (scripts/deploy/deploy.sh)
+  - [ ] Manual: Connect GitHub repository in Cloudflare dashboard
+  - [ ] Manual: Set up custom domain DNS records
+  - [ ] Manual: Configure production environment variables in GitHub Actions
+- [x] **Monitoring & Analytics** ✅ **Completed December 2025**
+  - [x] Baselime error tracking (client + server logger integration)
+  - [x] Amplitude analytics (client SDK + server HTTP API)
+  - [x] Google Analytics 4 (gtag.js integration)
+  - [x] Health check endpoint (/api/health with CI/CD verification)
 
 ## MVP Feature Summary
 
