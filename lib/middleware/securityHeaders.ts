@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { SECURITY_HEADERS, buildCspHeader } from '@shared/config/security';
+import { getSecurityHeaders, buildCspHeader } from '@shared/config/security';
 import { clientEnv } from '@shared/config/env';
 
 /**
@@ -16,8 +16,8 @@ const ALLOWED_ORIGINS = [
  * Includes standard security headers and Content Security Policy
  */
 export function applySecurityHeaders(res: NextResponse): void {
-  // Apply standard security headers
-  Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {
+  // Apply standard security headers (environment-aware)
+  Object.entries(getSecurityHeaders()).forEach(([key, value]) => {
     res.headers.set(key, value);
   });
 

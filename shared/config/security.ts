@@ -17,8 +17,9 @@ export const CSP_POLICY = {
     "'unsafe-eval'",
     'https://*.googletagmanager.com',
     'https://js.stripe.com',
+    'https://accounts.google.com',
   ],
-  'style-src': ["'self'", "'unsafe-inline'"],
+  'style-src': ["'self'", "'unsafe-inline'", 'https://accounts.google.com'],
   'img-src': ["'self'", 'blob:', 'data:', 'https:'],
   'font-src': ["'self'"],
   'connect-src': [
@@ -30,8 +31,9 @@ export const CSP_POLICY = {
     'https://*.googletagmanager.com',
     'https://rum.baselime.io',
     'https://api.stripe.com',
+    'https://accounts.google.com',
   ],
-  'frame-src': ['https://js.stripe.com'],
+  'frame-src': ['https://js.stripe.com', 'https://accounts.google.com'],
   'object-src': ["'none'"],
   'base-uri': ["'self'"],
   'form-action': ["'self'"],
@@ -63,6 +65,20 @@ export function buildCspHeader(): string {
 
 /**
  * Standard security headers for all responses
+ * Note: Referrer-Policy differs by environment for Google Identity Services compatibility
+ * - Development (HTTP localhost): 'no-referrer-when-downgrade' required for GIS
+ * - Production (HTTPS): 'strict-origin-when-cross-origin' for security
+ */
+export const getSecurityHeaders = () => ({
+  'X-Frame-Options': 'DENY',
+  'X-Content-Type-Options': 'nosniff',
+  'X-XSS-Protection': '1; mode=block',
+  'Referrer-Policy': isDevelopment() ? 'no-referrer-when-downgrade' : 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+});
+
+/**
+ * @deprecated Use getSecurityHeaders() instead for environment-aware headers
  */
 export const SECURITY_HEADERS = {
   'X-Frame-Options': 'DENY',

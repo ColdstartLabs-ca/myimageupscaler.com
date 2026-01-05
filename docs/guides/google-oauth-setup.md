@@ -1,6 +1,6 @@
 # Google OAuth Setup Guide
 
-This guide walks you through setting up Google OAuth for authentication with Supabase.
+This guide walks you through setting up Google OAuth for authentication with Supabase, using Google Identity Services (GIS) for native sign-in.
 
 ## Table of Contents
 
@@ -14,30 +14,49 @@ This guide walks you through setting up Google OAuth for authentication with Sup
 
 ## Overview
 
-Google OAuth allows users to sign in to your application using their Google account. This provides:
+This app uses **Google Identity Services (GIS)** for native Google sign-in. This provides:
 
-- **Seamless UX** - One-click sign in with existing Google accounts
-- **Security** - No password management required
-- **Profile Data** - Access to user's name, email, and profile picture
+- **Native App Branding** - Consent screen shows your domain (myimageupscaler.com) instead of Supabase's
+- **Better UX** - Popup-based flow keeps users on your site
+- **FedCM Ready** - Compatible with Chrome's third-party cookie phase-out
+- **Seamless Fallback** - Automatically falls back to redirect OAuth if GIS unavailable
 
-### Authentication Flow
+### Authentication Flow (GIS - Primary)
+
+```
+User clicks "Sign in with Google"
+    ↓
+Google Identity Services popup appears
+(Shows: "Continue to myimageupscaler.com")
+    ↓
+User selects Google account
+    ↓
+Google returns ID token to browser
+    ↓
+App calls supabase.auth.signInWithIdToken()
+    ↓
+Supabase validates token and creates session
+    ↓
+User redirected to dashboard
+```
+
+### Fallback Flow (Redirect OAuth)
+
+If GIS is unavailable (script blocked, browser incompatible), the app automatically falls back to redirect-based OAuth:
 
 ```
 User clicks "Sign in with Google"
     ↓
 Redirect to Google OAuth consent screen
+(Shows: "Continue to xqysaylskffsfwunczbd.supabase.co")
     ↓
 User grants permission
     ↓
 Google redirects to Supabase callback URL
-(https://xqysaylskffsfwunczbd.supabase.co/auth/v1/callback)
     ↓
-Supabase creates/updates user and session
+Supabase creates session and redirects to /auth/callback
     ↓
-Supabase redirects to your app's callback page
-(e.g., https://myimageupscaler.com/auth/callback)
-    ↓
-App callback page completes auth and redirects user
+App completes auth and redirects user
 ```
 
 ## Prerequisites
@@ -53,7 +72,7 @@ App callback page completes auth and redirects user
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Click the project dropdown (top-left, next to "Google Cloud")
 3. Click **New Project** or select an existing one
-4. Enter a project name (e.g., `myimageupscaler.com-auth`)
+4. Enter a project name (e.g., `myimageupscaler-auth`)
 5. Click **Create**
 
 ### Step 2: Configure OAuth Consent Screen
@@ -68,11 +87,11 @@ App callback page completes auth and redirects user
 
 | Field              | Value                                       |
 | ------------------ | ------------------------------------------- |
-| App name           | Your app name (e.g., `myimageupscaler.com`) |
+| App name           | Your app name (e.g., `MyImageUpscaler`)     |
 | User support email | Your email                                  |
 | App logo           | (Optional) Upload your logo                 |
 | App domain         | Your production domain                      |
-| Authorized domains | `supabase.co` (required for Supabase OAuth) |
+| Authorized domains | `myimageupscaler.com`, `supabase.co`        |
 | Developer contact  | Your email                                  |
 
 4. Click **Save and Continue**
@@ -87,7 +106,7 @@ App callback page completes auth and redirects user
 3. Click **Update**
 4. Click **Save and Continue**
 
-#### Test Users (External apps only):
+#### Test Users (External apps in Testing mode):
 
 If your app is in "Testing" mode, add test user emails:
 
@@ -100,33 +119,34 @@ If your app is in "Testing" mode, add test user emails:
 1. Navigate to **APIs & Services** → **Credentials**
 2. Click **Create Credentials** → **OAuth client ID**
 3. Select **Application type**: `Web application`
-4. Enter a name (e.g., `myimageupscaler.com Web Client`)
+4. Enter a name (e.g., `MyImageUpscaler Web Client`)
 
 #### Configure Authorized JavaScript Origins:
 
-Add all domains your app runs from (this allows the OAuth popup to initiate):
+**CRITICAL for Google Identity Services:** Add ALL of these origins:
 
 ```
+http://localhost
 http://localhost:3000
 https://myimageupscaler.com
 https://www.myimageupscaler.com
 ```
 
-> **Note:** These are your app's domains, not Supabase's domain.
+> **Important:** For localhost development, you MUST add BOTH:
+> - `http://localhost` (without port)
+> - `http://localhost:3000` (with port)
+>
+> GIS requires both origins to function correctly. Missing either will cause a 403 error.
 
 #### Configure Authorized Redirect URIs:
 
-Add **only** your Supabase callback URL:
+Add **only** your Supabase callback URL (used for fallback OAuth):
 
 ```
 https://xqysaylskffsfwunczbd.supabase.co/auth/v1/callback
 ```
 
-> **Important:**
->
-> - Do NOT add localhost or your app's domains here
-> - Google redirects to Supabase's callback URL (not your app)
-> - Supabase then redirects back to your app automatically
+> **Note:** The GIS popup flow doesn't use redirect URIs - they're only needed for the fallback redirect OAuth flow.
 
 5. Click **Create**
 6. Copy the **Client ID** and **Client Secret**
@@ -136,45 +156,69 @@ https://xqysaylskffsfwunczbd.supabase.co/auth/v1/callback
 Store these securely - you'll need them for Supabase configuration:
 
 ```
-Client ID: 123456789-abcdefg.apps.googleusercontent.com
+Client ID: 756001348384-xxxxxxxxxx.apps.googleusercontent.com
 Client Secret: GOCSPX-xxxxxxxxxxxxxxxx
 ```
 
 ## Supabase Configuration
 
-### Step 1: Find Your Callback URL
+### Step 1: Enable Google Provider
 
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
 2. Select your project
 3. Navigate to **Authentication** → **Providers**
 4. Click on **Google**
-5. Copy the **Callback URL** shown
+5. Toggle **Enable Google provider** to ON
+6. Paste your **Client ID** from Google Cloud
+7. Paste your **Client Secret** from Google Cloud
 
-### Step 2: Enable Google Provider
+### Step 2: Configure Client IDs for ID Token Auth
 
-1. Toggle **Enable Google provider** to ON
-2. Paste your **Client ID** from Google Cloud
-3. Paste your **Client Secret** from Google Cloud
-4. Click **Save**
+For the GIS flow (signInWithIdToken), add your Client ID to the allowed list:
+
+1. In the Google provider settings, find **Client IDs** field
+2. Add your Client ID: `756001348384-xxxxxxxxxx.apps.googleusercontent.com`
+3. Click **Save**
+
+> **Note:** This is required for Supabase to accept ID tokens from your Google client.
 
 ### Step 3: Configure Redirect URLs
 
-These are the URLs where **Supabase redirects users back to your app** after OAuth authentication. Your app's `/auth/callback` page handles the final session setup.
+These are used for the fallback OAuth flow:
 
 1. Navigate to **Authentication** → **URL Configuration**
 2. Set **Site URL** to your production URL:
    ```
    https://myimageupscaler.com
    ```
-3. Add **Redirect URLs** for all environments (wildcards allowed):
+3. Add **Redirect URLs** for all environments:
    ```
    http://localhost:3000/**
-   http://localhost:8788/**
    https://myimageupscaler.com/**
    https://www.myimageupscaler.com/**
    ```
 
-> **Note:** Wildcards (`/**`) allow any path on these domains. You can also specify exact paths like `/auth/callback` for stricter security.
+## Environment Variables
+
+Ensure your `.env.client` has the Google Client ID:
+
+```bash
+# .env.client
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=756001348384-xxxxxxxxxx.apps.googleusercontent.com
+```
+
+## Content Security Policy
+
+The app's CSP is configured to allow Google Identity Services. If you're having issues, verify these are in your CSP:
+
+```
+script-src: https://accounts.google.com
+style-src: https://accounts.google.com
+connect-src: https://accounts.google.com
+frame-src: https://accounts.google.com
+```
+
+See `shared/config/security.ts` for the full CSP configuration.
 
 ## Testing
 
@@ -190,11 +234,11 @@ These are the URLs where **Supabase redirects users back to your app** after OAu
 
 3. Click "Sign in with Google"
 
-4. Select your Google account (must be a test user if app is in Testing mode)
+4. A popup should appear showing "Continue to localhost" or your domain
 
-5. Grant permissions on the consent screen
+5. Select your Google account
 
-6. You should be redirected back to your app, authenticated
+6. You should be redirected to your app, authenticated
 
 ### Verify User Creation
 
@@ -211,14 +255,9 @@ WHERE email = 'your-email@gmail.com';
 
 ### Development vs Production Modes
 
-Your OAuth app can operate in two modes:
-
 #### Testing Mode (Default - For Development)
 
-**Characteristics:**
-
-- App automatically starts in Testing mode when created
-- Only users you explicitly add as "Test users" can sign in
+- Only users added as "Test users" can sign in
 - No publishing required
 - Perfect for local development
 
@@ -230,52 +269,79 @@ Your OAuth app can operate in two modes:
 4. Enter your Gmail address
 5. Click **Save**
 
-> **For development:** Just add yourself as a test user - no need to publish!
-
 #### Production Mode (For Public Release)
 
-**When to publish:**
+1. Go to **OAuth consent screen**
+2. Click **"Publish App"** to move out of Testing mode
+3. Confirm the warning
 
-- You want any Google account to be able to sign in
-- You're deploying to production
-
-**How to publish:**
-
-1. Go to **OAuth consent screen** (NOT the Credentials page)
-2. Check the **Publishing status** - should show "Testing"
-3. Look for **"Publish App"** button (usually top-right)
-   - Some UIs show "Push to Production" instead
-4. Click the button and confirm the warning
-
-> **Note:**
->
-> - If you don't see a "Publish" button, check your Publishing status
-> - For apps requesting sensitive scopes or with many users, Google may require verification (can take several days)
-> - Verification is NOT needed for basic scopes (email, profile, openid)
+> **Note:** For apps requesting only basic scopes (email, profile, openid), Google verification is typically not required.
 
 ### Production Checklist
 
-- [ ] Add `https://myimageupscaler.com` to Authorized JavaScript Origins in Google Cloud
-- [ ] Verify Supabase callback URL is in Authorized Redirect URIs: `https://xqysaylskffsfwunczbd.supabase.co/auth/v1/callback`
-- [ ] Update Supabase Site URL to `https://myimageupscaler.com`
-- [ ] Add `https://myimageupscaler.com/auth/callback` to Supabase Redirect URLs
-- [ ] Publish OAuth consent screen (move out of Testing mode) OR ensure your users are added as test users
+- [ ] Add all production domains to Authorized JavaScript Origins:
+  - `https://myimageupscaler.com`
+  - `https://www.myimageupscaler.com`
+- [ ] Verify Supabase callback URL in Authorized Redirect URIs
+- [ ] Add Client ID to Supabase's "Client IDs" field for ID token auth
+- [ ] Update Supabase Site URL to production domain
+- [ ] Publish OAuth consent screen (or add users as test users)
 - [ ] Test OAuth flow on production
-
-### Cloudflare Pages Deployment
-
-Google OAuth credentials (Client ID and Secret) are configured in Supabase, not in your app's environment variables. The `NEXT_PUBLIC_GOOGLE_CLIENT_ID` in `.env.client` is optional and only used for reference/display purposes - the actual OAuth flow is handled entirely by Supabase.
 
 ## Troubleshooting
 
-### "Error 400: redirect_uri_mismatch"
+### "[GSI_LOGGER]: The given origin is not allowed for the given client ID"
 
-**Cause:** The redirect URI doesn't match what's configured in Google Cloud.
+**Cause:** Missing authorized JavaScript origin in Google Cloud Console.
 
 **Solution:**
 
-1. Check your Supabase callback URL: `https://xxxxx.supabase.co/auth/v1/callback`
-2. Ensure this EXACT URL is in Google Cloud Console → Credentials → Authorized redirect URIs
+1. Go to Google Cloud Console → Credentials → Your OAuth Client
+2. Add ALL required origins to "Authorized JavaScript origins":
+   - `http://localhost` (without port - **commonly missed!**)
+   - `http://localhost:3000` (with port)
+   - Your production domains
+3. Wait 2-5 minutes for changes to propagate
+
+### 403 Forbidden on `/gsi/status`
+
+**Cause:** Missing `http://localhost` origin or CSP/Referrer-Policy issues.
+
+**Solution:**
+
+1. Verify `http://localhost` (no port) is in Authorized JavaScript Origins
+2. Check CSP allows `https://accounts.google.com` in connect-src and style-src
+3. For localhost, ensure Referrer-Policy is `no-referrer-when-downgrade`
+
+### "Google One Tap not displayed: unknown_reason"
+
+**Cause:** Various - could be CSP, origin issues, or browser settings.
+
+**Solution:**
+
+1. Check browser console for specific errors
+2. Verify all CSP directives allow Google's domains
+3. Clear browser cache and cookies
+4. Try in incognito mode
+
+### Fallback to redirect OAuth keeps triggering
+
+**Cause:** GIS script not loading or failing to initialize.
+
+**Solution:**
+
+1. Check network tab for blocked requests to `accounts.google.com`
+2. Verify CSP allows `script-src https://accounts.google.com`
+3. Check if ad blockers are blocking Google scripts
+
+### "Error 400: redirect_uri_mismatch"
+
+**Cause:** Redirect URI doesn't match Google Cloud config (fallback flow).
+
+**Solution:**
+
+1. Verify Supabase callback URL: `https://xxxxx.supabase.co/auth/v1/callback`
+2. Ensure this EXACT URL is in Authorized redirect URIs
 3. Wait 5 minutes for changes to propagate
 
 ### "Access blocked: App is in testing mode"
@@ -287,14 +353,20 @@ Google OAuth credentials (Client ID and Secret) are configured in Supabase, not 
 1. Add the user's email to Test Users in OAuth consent screen
 2. OR publish the app (OAuth consent screen → Publish App)
 
-### "Sign in with Google" button not working
+### CSP violations in console
 
-**Cause:** Missing or incorrect Google credentials in Supabase.
+**Cause:** Content Security Policy blocking Google Identity Services.
 
 **Solution:**
 
-1. Verify Client ID and Client Secret in Supabase → Authentication → Providers → Google
-2. Ensure Google provider is enabled (toggle ON)
+Verify `shared/config/security.ts` includes:
+
+```typescript
+'script-src': ['https://accounts.google.com'],
+'style-src': ['https://accounts.google.com'],
+'connect-src': ['https://accounts.google.com'],
+'frame-src': ['https://accounts.google.com'],
+```
 
 ### User not created in database
 
@@ -302,7 +374,7 @@ Google OAuth credentials (Client ID and Secret) are configured in Supabase, not 
 
 **Solution:**
 
-1. Check `handle_new_user` trigger exists (see [Supabase Setup](./supabase-setup.md))
+1. Check `handle_new_user` trigger exists
 2. Verify the user exists in `auth.users` table
 3. Manually create profile if needed:
    ```sql
@@ -311,35 +383,19 @@ Google OAuth credentials (Client ID and Secret) are configured in Supabase, not 
    FROM auth.users WHERE email = 'user@gmail.com';
    ```
 
-### "This app isn't verified"
-
-**Cause:** Google showing warning for unverified apps requesting sensitive scopes.
-
-**Solution:**
-
-1. For development/testing, click "Advanced" → "Go to [App Name] (unsafe)"
-2. For production, submit app for verification in OAuth consent screen
-
-### CORS errors
-
-**Cause:** Missing authorized JavaScript origin.
-
-**Solution:**
-
-1. Add your domain to Authorized JavaScript Origins in Google Cloud Console
-2. Include both `http://` and `https://` versions
-3. Include both `www` and non-`www` versions if applicable
-
 ## Security Best Practices
 
 1. **Restrict authorized domains** - Only add domains you control
 2. **Use HTTPS in production** - Required for OAuth
 3. **Don't expose Client Secret** - Keep it in Supabase only
-4. **Review scopes** - Only request what you need
+4. **Nonce validation** - The app uses SHA-256 hashed nonces for replay protection
 5. **Monitor OAuth consent screen** - Check for suspicious activity
+6. **Keep CSP strict** - Only allow necessary Google domains
 
 ## Additional Resources
 
+- [Google Identity Services Documentation](https://developers.google.com/identity/gsi/web/guides/overview)
+- [Supabase signInWithIdToken Docs](https://supabase.com/docs/reference/javascript/auth-signinwithidtoken)
 - [Supabase Google Auth Docs](https://supabase.com/docs/guides/auth/social-login/auth-google)
-- [Google OAuth 2.0 Documentation](https://developers.google.com/identity/protocols/oauth2)
+- [FedCM Migration Guide](https://developers.google.com/identity/gsi/web/guides/fedcm-migration)
 - [Google Cloud Console](https://console.cloud.google.com/)
