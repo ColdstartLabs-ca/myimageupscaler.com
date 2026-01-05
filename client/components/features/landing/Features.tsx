@@ -9,29 +9,25 @@ const features = [
   {
     icon: Type,
     name: 'Text & Logos Stay Sharp',
-    description:
-      'Tired of upscalers that blur your brand name into mush? Our proprietary tech keeps text crisp and logos pixel-perfect—even at 4x scale.',
+    description: 'Most AI image enhancers blur text. Ours keeps it crisp—even at 4x scale.',
     color: 'text-accent',
   },
   {
     icon: ImageIcon,
-    name: 'Fix Hundreds at Once',
-    description:
-      'Stop wasting hours processing images one by one. Batch upload up to 500 images and let AI handle the tedious work while you focus on what matters.',
+    name: 'Batch Upscale 500 Images',
+    description: 'Bulk photo enhancer. Upload hundreds of images, get 4K results in minutes.',
     color: 'text-accent',
   },
   {
     icon: Zap,
-    name: 'From Quick Fix to Ultra Quality',
-    description:
-      'Need a fast preview or a print-ready masterpiece? Choose from 6 quality tiers to match your deadline and budget—from 1-8 credits per image.',
+    name: '6 Quality Tiers',
+    description: 'From quick previews to print-ready 4K. Pick the quality that fits your budget.',
     color: 'text-accent',
   },
   {
     icon: Cpu,
-    name: 'AI That Actually Gets It',
-    description:
-      'No more guessing which settings to use. Our AI detects faces, text, and product shots automatically—then applies the perfect enhancement for each.',
+    name: 'Smart AI Detection',
+    description: 'Auto-detects faces, text, products—applies the right enhancement automatically.',
     color: 'text-accent',
   },
 ];
@@ -49,15 +45,15 @@ const Features: React.FC = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="mx-auto max-w-2xl lg:text-center mb-16">
           <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
-            Built for Real Problems
+            AI Photo Enhancer Features
           </h2>
           <p className="text-4xl font-black tracking-tight text-white sm:text-5xl">
-            Finally, an upscaler that{' '}
-            <span className="gradient-text-primary">doesn&apos;t destroy your work</span>
+            Image quality enhancer that{' '}
+            <span className="gradient-text-primary">preserves real detail</span>
           </p>
           <p className="mt-6 text-xl text-text-secondary leading-8 font-light">
-            Most AI upscalers create a blurry, over-smoothed mess. Ours reconstructs authentic
-            detail—so your images look naturally sharp, not artificially processed.
+            No blur, no artifacts. Our AI image upscaler reconstructs authentic detail—naturally
+            sharp, not over-processed.
           </p>
         </FadeIn>
 
