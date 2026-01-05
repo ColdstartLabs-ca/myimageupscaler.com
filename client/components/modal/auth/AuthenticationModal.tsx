@@ -225,6 +225,7 @@ export const AuthenticationModal: React.FC = () => {
     <div className="font-sans">
       <Modal
         title={getModalTitle()}
+        showLogo={true}
         onClose={close}
         isOpen={isOpen}
         showCloseButton={false}

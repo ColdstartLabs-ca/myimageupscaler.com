@@ -4,6 +4,8 @@ import React, { forwardRef, useEffect, useState } from 'react';
 
 interface IModalProps {
   title: string;
+  subtitle?: string;
+  showLogo?: boolean;
   children: React.ReactNode;
   onClose: () => void;
   isOpen: boolean;
@@ -12,7 +14,19 @@ interface IModalProps {
 }
 
 export const Modal = forwardRef<HTMLDivElement, IModalProps>(
-  ({ title, children, onClose, isOpen, showCloseButton = true, modalId }, ref) => {
+  (
+    {
+      title,
+      subtitle,
+      showLogo = false,
+      children,
+      onClose,
+      isOpen,
+      showCloseButton = true,
+      modalId,
+    },
+    ref
+  ) => {
     const [isAnimating, setIsAnimating] = useState(false);
     const [shouldRender, setShouldRender] = useState(isOpen);
 
@@ -71,7 +85,23 @@ export const Modal = forwardRef<HTMLDivElement, IModalProps>(
             className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border/50 px-6 py-5 z-10"
             id="modal-title"
           >
-            <h3 className="text-2xl font-bold text-center text-foreground pr-8">{title}</h3>
+            {showLogo && (
+              <div className="flex justify-center mb-4">
+                <img
+                  src="/logo/horizontal-logo-compact.png"
+                  alt="MyImageUpscaler"
+                  className="h-8 w-auto"
+                />
+              </div>
+            )}
+            <h3
+              className={`text-2xl font-bold text-center text-foreground ${showCloseButton ? 'pr-8' : ''}`}
+            >
+              {title}
+            </h3>
+            {subtitle && (
+              <p className="text-sm text-muted-foreground text-center mt-1">{subtitle}</p>
+            )}
             {showCloseButton && (
               <button
                 className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-lg p-1.5 hover:bg-muted/50 active:scale-95"
