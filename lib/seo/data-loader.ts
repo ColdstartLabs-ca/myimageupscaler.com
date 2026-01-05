@@ -294,6 +294,11 @@ export const getAllFreeTools = cache(async (): Promise<IFreePage[]> => {
   return freeTools.filter((f): f is IFreePage => f !== null);
 });
 
+// Get tools that reference a specific blog post
+export const getToolsForBlogPost = cache(async (blogSlug: string): Promise<IToolPage[]> => {
+  return toolsData.pages.filter(tool => tool.relatedBlogPosts?.includes(blogSlug));
+});
+
 // Aggregate function for sitemap
 export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
   const [tools, formats, comparisons, useCases, guides, alternatives, scales, freeTools] =

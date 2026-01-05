@@ -47,33 +47,42 @@ export function HomePageClient(): JSX.Element {
   const config = getSubscriptionConfig();
   const hasTrialEnabled = config.plans.some(plan => plan.trial.enabled);
 
-  // Check for login prompt from middleware redirect
+  // Check for auth prompts from URL params
   useEffect(() => {
     const loginRequired = searchParams.get('login');
+    const signupRequired = searchParams.get('signup');
     const nextUrl = searchParams.get('next');
 
+    // Handle login redirect (from middleware)
     if (loginRequired === '1' && nextUrl) {
-      // Store the intended destination
       prepareAuthRedirect('dashboard_access', {
         returnTo: nextUrl,
       });
 
-      // Show a toast explaining why login is needed
       showToast({
         message: 'Please sign in to access the dashboard',
         type: 'info',
         duration: 5000,
       });
 
-      // Open the auth modal after a short delay
       setTimeout(() => {
         openAuthModal('login');
       }, 500);
 
-      // Clean up the URL
       const url = new URL(window.location.href);
       url.searchParams.delete('login');
       url.searchParams.delete('next');
+      window.history.replaceState({}, '', url.toString());
+    }
+
+    // Handle signup prompt (from blog CTAs, etc.)
+    if (signupRequired === '1') {
+      setTimeout(() => {
+        openAuthModal('register');
+      }, 300);
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete('signup');
       window.history.replaceState({}, '', url.toString());
     }
   }, [searchParams, openAuthModal, showToast]);

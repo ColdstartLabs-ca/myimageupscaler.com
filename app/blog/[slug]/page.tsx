@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { clientEnv } from '@shared/config/env';
 import { ReadingProgress } from '@client/components/blog/ReadingProgress';
+import { RelatedToolsSection } from '../_components/RelatedToolsSection';
 
 // Convert MDX Callout components to blockquotes with type markers
 function preprocessContent(content: string): string {
@@ -335,6 +336,9 @@ export default async function BlogPostPage({ params }: IPageProps) {
             </div>
           </div>
         </div>
+
+        {/* Related Tools */}
+        <RelatedToolsSection blogSlug={slug} />
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
