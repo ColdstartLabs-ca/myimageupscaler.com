@@ -30,10 +30,14 @@ Redirect to Google OAuth consent screen
 User grants permission
     ↓
 Google redirects to Supabase callback URL
+(https://xqysaylskffsfwunczbd.supabase.co/auth/v1/callback)
     ↓
 Supabase creates/updates user and session
     ↓
-Redirect to your application
+Supabase redirects to your app's callback page
+(e.g., https://myimageupscaler.com/auth/callback)
+    ↓
+App callback page completes auth and redirects user
 ```
 
 ## Prerequisites
@@ -104,9 +108,8 @@ Add all domains your app runs from (this allows the OAuth popup to initiate):
 
 ```
 http://localhost:3000
-https://yourdomain.com
-https://www.yourdomain.com
-https://your-project.pages.dev
+https://myimageupscaler.com
+https://www.myimageupscaler.com
 ```
 
 > **Note:** These are your app's domains, not Supabase's domain.
@@ -156,21 +159,22 @@ Client Secret: GOCSPX-xxxxxxxxxxxxxxxx
 
 ### Step 3: Configure Redirect URLs
 
+These are the URLs where **Supabase redirects users back to your app** after OAuth authentication. Your app's `/auth/callback` page handles the final session setup.
+
 1. Navigate to **Authentication** → **URL Configuration**
 2. Set **Site URL** to your production URL:
    ```
-   https://yourdomain.com
+   https://myimageupscaler.com
    ```
-3. Add **Redirect URLs** for all environments:
+3. Add **Redirect URLs** for all environments (wildcards allowed):
    ```
    http://localhost:3000/**
    http://localhost:8788/**
-   https://yourdomain.com/**
-   https://www.yourdomain.com/**
-   https://your-project.pages.dev/**
+   https://myimageupscaler.com/**
+   https://www.myimageupscaler.com/**
    ```
 
-> **Note:** Use wildcard `/**` to allow any path on these domains.
+> **Note:** Wildcards (`/**`) allow any path on these domains. You can also specify exact paths like `/auth/callback` for stricter security.
 
 ## Testing
 
@@ -251,16 +255,16 @@ Your OAuth app can operate in two modes:
 
 ### Production Checklist
 
-- [ ] Add production domain to Authorized JavaScript Origins
-- [ ] Add production Supabase callback URL to Authorized Redirect URIs
-- [ ] Update Supabase Site URL to production domain
-- [ ] Add production URLs to Supabase Redirect URLs
+- [ ] Add `https://myimageupscaler.com` to Authorized JavaScript Origins in Google Cloud
+- [ ] Verify Supabase callback URL is in Authorized Redirect URIs: `https://xqysaylskffsfwunczbd.supabase.co/auth/v1/callback`
+- [ ] Update Supabase Site URL to `https://myimageupscaler.com`
+- [ ] Add `https://myimageupscaler.com/auth/callback` to Supabase Redirect URLs
 - [ ] Publish OAuth consent screen (move out of Testing mode) OR ensure your users are added as test users
 - [ ] Test OAuth flow on production
 
 ### Cloudflare Pages Deployment
 
-No additional environment variables needed for Google OAuth - credentials are stored in Supabase.
+Google OAuth credentials (Client ID and Secret) are configured in Supabase, not in your app's environment variables. The `NEXT_PUBLIC_GOOGLE_CLIENT_ID` in `.env.client` is optional and only used for reference/display purposes - the actual OAuth flow is handled entirely by Supabase.
 
 ## Troubleshooting
 
