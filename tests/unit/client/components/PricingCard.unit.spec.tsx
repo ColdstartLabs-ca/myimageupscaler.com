@@ -237,16 +237,16 @@ describe('PricingCard', () => {
   it('applies correct styling for recommended card', () => {
     render(<PricingCard {...defaultProps} recommended={true} />);
 
-    const card = document.querySelector('.relative.bg-white.rounded-2xl');
-    expect(card).toHaveClass('border-indigo-500', 'ring-2', 'ring-indigo-500', 'ring-opacity-20');
+    const card = document.querySelector('.relative.bg-surface.rounded-2xl');
+    expect(card).toHaveClass('border-accent', 'ring-2', 'ring-accent', 'ring-opacity-20');
   });
 
   it('applies correct styling for non-recommended card', () => {
     render(<PricingCard {...defaultProps} recommended={false} />);
 
-    const card = document.querySelector('.relative.bg-white.rounded-2xl');
-    expect(card).toHaveClass('border-slate-200');
-    expect(card).not.toHaveClass('border-indigo-500');
+    const card = document.querySelector('.relative.bg-surface.rounded-2xl');
+    expect(card).toHaveClass('border-surface-light');
+    expect(card).not.toHaveClass('border-accent');
   });
 
   it('renders all features with checkmark icons', () => {
@@ -275,7 +275,7 @@ describe('PricingCard', () => {
 
     const loadingButton = screen.getByText('Processing...');
     expect(loadingButton).toBeDisabled();
-    expect(loadingButton).toHaveClass('bg-slate-300', 'text-slate-600', 'cursor-not-allowed');
+    expect(loadingButton).toHaveClass('bg-surface-light', 'text-text-muted', 'cursor-not-allowed');
   });
 
   it('has correct button styling for non-loading state', () => {
@@ -283,8 +283,8 @@ describe('PricingCard', () => {
 
     const subscribeButton = screen.getByText('Get Started');
     expect(subscribeButton).toHaveClass(
-      'bg-indigo-600',
-      'hover:bg-indigo-700',
+      'bg-accent',
+      'hover:bg-accent-hover',
       'text-white',
       'shadow-md',
       'hover:shadow-lg'

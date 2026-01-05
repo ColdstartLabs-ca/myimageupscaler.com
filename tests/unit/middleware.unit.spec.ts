@@ -20,6 +20,7 @@ vi.mock('@shared/config/env', () => ({
     ENV: 'test',
     AMPLITUDE_API_KEY: 'test_amplitude_api_key',
   },
+  isDevelopment: () => false,
 }));
 
 vi.mock('@shared/utils/supabase/middleware', () => ({

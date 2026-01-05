@@ -184,13 +184,19 @@ vi.mock('dayjs', () => ({
 }));
 
 describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
-  let consoleSpy: ReturnType<typeof vi.spyOn>;
+  let consoleSpy: {
+    log: ReturnType<typeof vi.spyOn>;
+    error: ReturnType<typeof vi.spyOn>;
+    warn: ReturnType<typeof vi.spyOn>;
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    consoleSpy = {
+      log: vi.spyOn(console, 'log').mockImplementation(() => {}),
+      error: vi.spyOn(console, 'error').mockImplementation(() => {}),
+      warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
+    };
 
     // Mock plan lookup for different price IDs
     vi.mocked(getPlanByPriceId).mockImplementation((priceId: string) => {
@@ -350,7 +356,7 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
       ref_id: `invoice_${invoiceId}`,
       description: 'Monthly subscription renewal - Hobby plan',
     });
-    expect(consoleSpy).toHaveBeenCalledWith(
+    expect(consoleSpy.log).toHaveBeenCalledWith(
       expect.stringContaining('Added 200 subscription credits')
     );
   });
@@ -620,8 +626,16 @@ describe('Bug Fix: Billing Credit Renewal on invoice.payment_succeeded', () => {
     // Act
     const response = await POST(request);
 
-    // Assert
-    expect(response.status).toBe(200);
+    // Assert - FIX: Now throws 500 to enable Stripe retry (was silent 200)
+    expect(response.status).toBe(500);
     expect(supabaseAdmin.rpc).not.toHaveBeenCalled();
+    expect(consoleSpy.error).toHaveBeenCalledWith(
+      '[WEBHOOK_RETRY] No profile found for customer cus_unknown',
+      expect.objectContaining({
+        invoiceId: 'in_test_no_profile',
+        customerId: 'cus_unknown',
+        timestamp: expect.any(String),
+      })
+    );
   });
 });
