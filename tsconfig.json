@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -20,12 +24,24 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@client/*": ["./client/*"],
-      "@server/*": ["./server/*"],
-      "@shared/*": ["./shared/*"],
-      "@app/*": ["./app/*"],
-      "@lib/*": ["./lib/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@client/*": [
+        "./client/*"
+      ],
+      "@server/*": [
+        "./server/*"
+      ],
+      "@shared/*": [
+        "./shared/*"
+      ],
+      "@app/*": [
+        "./app/*"
+      ],
+      "@lib/*": [
+        "./lib/*"
+      ]
     },
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true
@@ -40,7 +56,19 @@
     "next-env.d.ts",
     "middleware.ts",
     ".next/dev/types/**/*.ts",
-    ".next/dev/dev/types/**/*.ts"
+    ".next/dev/dev/types/**/*.ts",
+    ".next-test-147231-1767643616549/types/**/*.ts",
+    ".next-test-147231-1767643616549/dev/types/**/*.ts",
+    ".next-test-148771-1767643646369/types/**/*.ts",
+    ".next-test-148771-1767643646369/dev/types/**/*.ts",
+    ".next-test-150566-1767643686525/types/**/*.ts",
+    ".next-test-150566-1767643686525/dev/types/**/*.ts",
+    ".next-test-152969-1767643782208/types/**/*.ts",
+    ".next-test-152969-1767643782208/dev/types/**/*.ts",
+    ".next-test-164872-1767644042865/types/**/*.ts",
+    ".next-test-164872-1767644042865/dev/types/**/*.ts",
+    ".next-test-165703-1767644072438/types/**/*.ts",
+    ".next-test-165703-1767644072438/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
