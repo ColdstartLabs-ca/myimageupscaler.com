@@ -24,9 +24,9 @@ const ORGANIZATION_SCHEMA = {
   url: BASE_URL,
   logo: {
     '@type': 'ImageObject',
-    url: `${BASE_URL}/logo.png`,
-    width: 512,
-    height: 512,
+    url: `${BASE_URL}/logo/vertical-logo-compact.png`,
+    width: 201,
+    height: 133,
   },
   sameAs: [
     `https://twitter.com/${TWITTER_HANDLE}`,
