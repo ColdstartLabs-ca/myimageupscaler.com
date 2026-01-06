@@ -19,6 +19,7 @@ const sitemaps = [
   { name: 'sitemap-alternatives.xml', lastmod: new Date().toISOString() },
   { name: 'sitemap-guides.xml', lastmod: new Date().toISOString() },
   { name: 'sitemap-free.xml', lastmod: new Date().toISOString() },
+  { name: 'sitemap-platforms.xml', lastmod: new Date().toISOString() },
   { name: 'sitemap-images.xml', lastmod: new Date().toISOString() },
 ];
 

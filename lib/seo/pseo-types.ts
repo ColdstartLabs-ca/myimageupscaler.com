@@ -198,6 +198,24 @@ export interface IBulkToolPage extends IBasePSEOPage {
 }
 
 /**
+ * Platform page data structure
+ * For pages like /platforms/midjourney-upscaler, /platforms/stable-diffusion-upscaler
+ */
+export interface IPlatformPage extends IBasePSEOPage {
+  category: 'platforms';
+  platformName: string;
+  platformType: 'ai-generator' | 'design-tool' | 'photo-editor';
+  description: string;
+  benefits: IBenefit[];
+  integration: string[];
+  useCases: IUseCase[];
+  workflowSteps: string[];
+  faq: IFAQ[];
+  relatedPlatforms: string[];
+  relatedTools: string[];
+}
+
+/**
  * Union type for all pSEO pages
  */
 export type PSEOPage =
@@ -209,7 +227,8 @@ export type PSEOPage =
   | IAlternativePage
   | IGuidePage
   | IFreePage
-  | IBulkToolPage;
+  | IBulkToolPage
+  | IPlatformPage;
 
 /**
  * Supporting interfaces

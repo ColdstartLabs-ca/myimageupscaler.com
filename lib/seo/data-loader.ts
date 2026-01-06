@@ -18,6 +18,7 @@ import guidesDataFile from '@/app/seo/data/guides.json';
 import formatsDataFile from '@/app/seo/data/formats.json';
 import useCasesDataFile from '@/app/seo/data/use-cases.json';
 import alternativesDataFile from '@/app/seo/data/alternatives.json';
+import platformsDataFile from '@/app/seo/data/platforms.json';
 import type {
   IToolPage,
   IFormatPage,
@@ -27,6 +28,7 @@ import type {
   IAlternativePage,
   IGuidePage,
   IFreePage,
+  IPlatformPage,
   PSEOPage,
   IPSEODataFile,
 } from './pseo-types';
@@ -294,6 +296,22 @@ export const getAllFreeTools = cache(async (): Promise<IFreePage[]> => {
   return freeTools.filter((f): f is IFreePage => f !== null);
 });
 
+// Platform Pages
+const platformsData = platformsDataFile as IPSEODataFile<IPlatformPage>;
+
+export const getAllPlatformSlugs = cache(async (): Promise<string[]> => {
+  return platformsData.pages.map(page => page.slug);
+});
+
+export const getPlatformData = cache(async (slug: string): Promise<IPlatformPage | null> => {
+  const platform = platformsData.pages.find(page => page.slug === slug);
+  return platform || null;
+});
+
+export const getAllPlatforms = cache(async (): Promise<IPlatformPage[]> => {
+  return platformsData.pages;
+});
+
 // Get tools that reference a specific blog post
 export const getToolsForBlogPost = cache(async (blogSlug: string): Promise<IToolPage[]> => {
   return toolsData.pages.filter(tool => tool.relatedBlogPosts?.includes(blogSlug));
@@ -301,17 +319,27 @@ export const getToolsForBlogPost = cache(async (blogSlug: string): Promise<ITool
 
 // Aggregate function for sitemap
 export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
-  const [tools, formats, comparisons, useCases, guides, alternatives, scales, freeTools] =
-    await Promise.all([
-      getAllTools(),
-      getAllFormats(),
-      getAllComparisons(),
-      getAllUseCases(),
-      getAllGuides(),
-      getAllAlternatives(),
-      getAllScales(),
-      getAllFreeTools(),
-    ]);
+  const [
+    tools,
+    formats,
+    comparisons,
+    useCases,
+    guides,
+    alternatives,
+    scales,
+    freeTools,
+    platforms,
+  ] = await Promise.all([
+    getAllTools(),
+    getAllFormats(),
+    getAllComparisons(),
+    getAllUseCases(),
+    getAllGuides(),
+    getAllAlternatives(),
+    getAllScales(),
+    getAllFreeTools(),
+    getAllPlatforms(),
+  ]);
 
   return [
     ...tools,
@@ -322,5 +350,6 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     ...alternatives,
     ...scales,
     ...freeTools,
+    ...platforms,
   ];
 });
