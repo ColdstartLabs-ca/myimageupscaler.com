@@ -30,6 +30,7 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
     'philz1337x/clarity-upscaler:dfad41707589d68ecdccd1dfa600d55a208f9310748e44bfe35b4a6291453d5e',
   'flux-2-pro': 'black-forest-labs/flux-2-pro',
   'nano-banana-pro': 'google/nano-banana-pro',
+  'qwen-image-edit': 'qwen/qwen-image-edit-2511',
 };
 
 /**
@@ -42,6 +43,7 @@ const MODEL_COSTS: Record<string, number> = {
   'clarity-upscaler': CONFIG_MODEL_COSTS.CLARITY_UPSCALER_COST,
   'flux-2-pro': CONFIG_MODEL_COSTS.FLUX_2_PRO_COST,
   'nano-banana-pro': CONFIG_MODEL_COSTS.NANO_BANANA_PRO_COST,
+  'qwen-image-edit': CONFIG_MODEL_COSTS.QWEN_IMAGE_EDIT_COST,
 };
 
 /**
@@ -54,6 +56,7 @@ const MODEL_CREDIT_MULTIPLIERS: Record<string, number> = {
   'clarity-upscaler': CREDIT_COSTS.CLARITY_UPSCALER_MULTIPLIER,
   'flux-2-pro': CREDIT_COSTS.FLUX_2_PRO_MULTIPLIER,
   'nano-banana-pro': CREDIT_COSTS.NANO_BANANA_PRO_MULTIPLIER,
+  'qwen-image-edit': CREDIT_COSTS.QWEN_IMAGE_EDIT_MULTIPLIER,
 };
 
 /**
@@ -100,6 +103,7 @@ export class ModelRegistry {
       'clarity-upscaler': serverEnv.MODEL_VERSION_CLARITY_UPSCALER,
       'flux-2-pro': serverEnv.MODEL_VERSION_FLUX_2_PRO,
       'nano-banana-pro': serverEnv.MODEL_VERSION_NANO_BANANA_PRO,
+      'qwen-image-edit': serverEnv.MODEL_VERSION_QWEN_IMAGE_EDIT,
     };
     return overrides[modelId] || DEFAULT_MODEL_VERSIONS[modelId];
   }
@@ -225,6 +229,27 @@ export class ModelRegistry {
         processingTimeMs: TIMEOUTS.NANO_BANANA_PRO_PROCESSING_TIME,
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION_ULTRA,
+        supportedScales: [
+          CONFIG_MODEL_COSTS.DEFAULT_SCALE,
+          CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD,
+          CONFIG_MODEL_COSTS.MAX_SCALE_PREMIUM,
+        ],
+        isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+        tierRestriction: 'hobby',
+      },
+      // Qwen Image Edit (Budget Image Editing - Premium)
+      {
+        id: 'qwen-image-edit',
+        displayName: 'Image Edit',
+        provider: 'replicate',
+        modelVersion: this.getModelVersion('qwen-image-edit'),
+        capabilities: ['upscale', 'enhance', 'denoise', 'damage-repair'],
+        costPerRun: MODEL_COSTS['qwen-image-edit'],
+        creditMultiplier: MODEL_CREDIT_MULTIPLIERS['qwen-image-edit'],
+        qualityScore: 9.2,
+        processingTimeMs: TIMEOUTS.CLARITY_UPSCALER_PROCESSING_TIME, // ~4-5 seconds
+        maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [
           CONFIG_MODEL_COSTS.DEFAULT_SCALE,
           CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD,

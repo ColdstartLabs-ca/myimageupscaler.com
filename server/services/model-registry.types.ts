@@ -30,7 +30,8 @@ export type ModelId =
   | 'gfpgan'
   | 'nano-banana'
   | 'nano-banana-pro'
-  | 'clarity-upscaler';
+  | 'clarity-upscaler'
+  | 'qwen-image-edit';
 
 /**
  * Model configuration interface as defined in the PRD

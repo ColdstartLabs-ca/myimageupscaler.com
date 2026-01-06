@@ -11,6 +11,7 @@ export const MODEL_COSTS = {
   CLARITY_UPSCALER_COST: 0.017,
   FLUX_2_PRO_COST: 0.05, // black-forest-labs/flux-2-pro - premium face restoration
   NANO_BANANA_PRO_COST: 0.13,
+  QWEN_IMAGE_EDIT_COST: 0.03, // qwen/qwen-image-edit-2511 - budget image editing
 
   // Cost calculation thresholds
   COST_CENT_MULTIPLIER: 100, // Convert dollars to cents
@@ -42,6 +43,7 @@ export const MODEL_COSTS = {
     'clarity-upscaler',
     'flux-2-pro',
     'nano-banana-pro',
+    'qwen-image-edit',
   ], // All models accessible with hobby tier
   PRO_MODELS: [
     'real-esrgan',
@@ -50,6 +52,7 @@ export const MODEL_COSTS = {
     'clarity-upscaler',
     'flux-2-pro',
     'nano-banana-pro',
+    'qwen-image-edit',
   ], // All models accessible with pro tier
   BUSINESS_MODELS: [
     'real-esrgan',
@@ -58,6 +61,7 @@ export const MODEL_COSTS = {
     'clarity-upscaler',
     'flux-2-pro',
     'nano-banana-pro',
+    'qwen-image-edit',
   ], // All models accessible with business tier
 
   // Quality tiers requiring paid subscription (free users blocked)
@@ -179,6 +183,20 @@ export const MODEL_CONFIG = {
     processingTime: MODEL_COSTS.PROCESSING_TIME_ULTRA,
     maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION_ULTRA,
+    supportedScales: [
+      MODEL_COSTS.DEFAULT_SCALE,
+      MODEL_COSTS.MAX_SCALE_STANDARD,
+      MODEL_COSTS.MAX_SCALE_PREMIUM,
+    ],
+    tierRestriction: 'hobby',
+  },
+  'qwen-image-edit': {
+    cost: MODEL_COSTS.QWEN_IMAGE_EDIT_COST,
+    multiplier: 3,
+    qualityScore: 9.2,
+    processingTime: MODEL_COSTS.PROCESSING_TIME_MEDIUM,
+    maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
+    maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
     supportedScales: [
       MODEL_COSTS.DEFAULT_SCALE,
       MODEL_COSTS.MAX_SCALE_STANDARD,

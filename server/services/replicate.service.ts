@@ -107,6 +107,21 @@ interface INanoBananaProInput {
 }
 
 /**
+ * Replicate API input for Qwen Image Edit 2511
+ * Budget image editing model - cheaper alternative to nano-banana-pro
+ */
+interface IQwenImageEditInput {
+  prompt: string;
+  image: string[]; // Array of image URIs
+  seed?: number;
+  aspect_ratio?: 'match_input_image' | '1:1' | '16:9' | '9:16' | '4:3' | '3:4';
+  output_format?: 'webp' | 'jpg' | 'png';
+  output_quality?: number; // 0-100, default 95
+  go_fast?: boolean;
+  disable_safety_checker?: boolean;
+}
+
+/**
  * Generate enhancement instructions from the enhancement settings.
  * This mirrors the client-side logic in prompt-utils.ts to ensure consistency.
  */
@@ -277,7 +292,8 @@ export class ReplicateService implements IImageProcessor {
     | IGfpganInput
     | IClarityUpscalerInput
     | IFlux2ProInput
-    | INanoBananaProInput {
+    | INanoBananaProInput
+    | IQwenImageEditInput {
     const scale = input.config.scale;
     const customPrompt = input.config.additionalOptions.customInstructions;
     const { enhance, enhanceFaces, preserveText } = input.config.additionalOptions;
@@ -406,6 +422,38 @@ export class ReplicateService implements IImageProcessor {
           resolution: ultraConfig?.resolution || scaleToResolution[scale] || '2K',
           output_format: ultraConfig?.outputFormat || 'png',
           safety_filter_level: ultraConfig?.safetyFilterLevel || 'block_only_high',
+        };
+      }
+
+      case 'qwen-image-edit': {
+        // Qwen Image Edit - budget alternative to nano-banana-pro
+        let effectivePrompt = customPrompt;
+
+        if (!effectivePrompt) {
+          effectivePrompt = enhance
+            ? `Upscale and enhance this image to ${scale}x resolution with improved clarity and detail.`
+            : `Upscale this image to ${scale}x resolution maintaining quality and sharpness.`;
+
+          if (enhancementInstructions) {
+            effectivePrompt += ` ${enhancementInstructions}`;
+          }
+
+          if (enhanceFaces) {
+            effectivePrompt += ' Enhance facial features naturally without altering identity.';
+          }
+
+          if (preserveText) {
+            effectivePrompt += ' Preserve and sharpen any text or logos in the image.';
+          }
+        }
+
+        return {
+          prompt: effectivePrompt,
+          image: [imageDataUrl],
+          aspect_ratio: 'match_input_image',
+          output_format: 'png',
+          output_quality: 95,
+          go_fast: true,
         };
       }
 
