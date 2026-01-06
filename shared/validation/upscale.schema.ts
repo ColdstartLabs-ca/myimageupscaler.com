@@ -162,7 +162,7 @@ export const upscaleSchema = z.object({
   config: z.object({
     // New quality tier based configuration
     qualityTier: z
-      .enum(['auto', 'quick', 'face-restore', 'hd-upscale', 'face-pro', 'ultra'])
+      .enum(['auto', 'quick', 'face-restore', 'budget-edit', 'hd-upscale', 'face-pro', 'ultra'])
       .default('auto'),
     scale: z.union([z.literal(2), z.literal(4), z.literal(8)]).default(2),
 

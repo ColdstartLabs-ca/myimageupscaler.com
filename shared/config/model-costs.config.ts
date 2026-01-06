@@ -65,7 +65,7 @@ export const MODEL_COSTS = {
   ], // All models accessible with business tier
 
   // Quality tiers requiring paid subscription (free users blocked)
-  PREMIUM_QUALITY_TIERS: ['auto', 'hd-upscale', 'face-pro', 'ultra'] as const,
+  PREMIUM_QUALITY_TIERS: ['auto', 'budget-edit', 'hd-upscale', 'face-pro', 'ultra'] as const,
   // Quality tiers available to free users
   FREE_QUALITY_TIERS: ['quick', 'face-restore'] as const,
   // Smart AI Analysis requires paid subscription

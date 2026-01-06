@@ -13,7 +13,14 @@ export enum ProcessingStage {
   FINALIZING = 'finalizing', // Response handling
 }
 
-export type QualityTier = 'auto' | 'quick' | 'face-restore' | 'hd-upscale' | 'face-pro' | 'ultra';
+export type QualityTier =
+  | 'auto'
+  | 'quick'
+  | 'face-restore'
+  | 'budget-edit'
+  | 'hd-upscale'
+  | 'face-pro'
+  | 'ultra';
 
 // Quality tier metadata for UI display
 export const QUALITY_TIER_CONFIG: Record<
@@ -49,6 +56,14 @@ export const QUALITY_TIER_CONFIG: Record<
     modelId: 'gfpgan',
     description: 'Restore faces in old/damaged photos',
     bestFor: 'Old photos, AI-generated faces',
+    smartAnalysisAlwaysOn: false,
+  },
+  'budget-edit': {
+    label: 'Budget Edit',
+    credits: 3,
+    modelId: 'qwen-image-edit',
+    description: 'AI-powered image editing',
+    bestFor: 'General enhancement, budget-friendly',
     smartAnalysisAlwaysOn: false,
   },
   'hd-upscale': {
@@ -144,7 +159,8 @@ export type ModelId =
   | 'nano-banana'
   | 'nano-banana-pro'
   | 'clarity-upscaler'
-  | 'flux-2-pro';
+  | 'flux-2-pro'
+  | 'qwen-image-edit';
 
 export type ModelCapability =
   | 'upscale'
