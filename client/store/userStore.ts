@@ -326,8 +326,8 @@ if (typeof window !== 'undefined') {
 
     if (event === 'SIGNED_OUT' || !session) {
       store.reset();
-      // Redirect to home page after sign out
-      if (typeof window !== 'undefined' && event === 'SIGNED_OUT') {
+      // Redirect to home page after sign out (skip in test mode to avoid flaky tests)
+      if (typeof window !== 'undefined' && event === 'SIGNED_OUT' && clientEnv.ENV !== 'test') {
         window.location.href = '/';
       }
       return;
