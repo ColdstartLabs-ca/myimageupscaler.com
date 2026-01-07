@@ -59,6 +59,8 @@ export const PSEO_CATEGORIES = [
   'free',
   'bulk-tools',
   'platforms',
+  'content',
+  'ai-features',
 ] as const;
 
 export type PSEOCategory = (typeof PSEO_CATEGORIES)[number];
@@ -85,6 +87,8 @@ export function getCategoryDisplayName(category: PSEOCategory): string {
     free: 'Free Tools',
     'bulk-tools': 'Bulk Tools',
     platforms: 'Platform Integration',
+    content: 'Content Types',
+    'ai-features': 'AI Features',
   };
   return names[category];
 }
@@ -104,6 +108,8 @@ export function getCategoryDescription(category: PSEOCategory): string {
     free: 'Free AI image tools - no credit card required',
     'bulk-tools': 'Batch process multiple images at once - resize, compress, and optimize',
     platforms: `Enhance images from your favorite platforms - Midjourney, Stable Diffusion, DALL-E, and more`,
+    content: 'Upscale specific content types - family photos, digital art, logos, anime, and more',
+    'ai-features': 'Advanced AI features - face restoration, portrait enhancement, noise reduction, and more',
   };
   return descriptions[category];
 }

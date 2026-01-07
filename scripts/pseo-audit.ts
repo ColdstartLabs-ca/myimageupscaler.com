@@ -211,7 +211,9 @@ class PSeoAuditor {
         })
       );
 
-      const schemaTypes = schemaScripts.map((s: any) => s['@type']).filter(Boolean);
+      const schemaTypes = schemaScripts
+        .map((s: Record<string, unknown>) => s['@type'])
+        .filter(Boolean);
       const hasSchema = schemaTypes.length > 0;
 
       if (!hasSchema) {

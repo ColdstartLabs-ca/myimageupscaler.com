@@ -15,12 +15,8 @@ import { useEffect } from 'react';
 
 // Lazy load below-the-fold sections to reduce initial JS bundle
 // These sections will only load when user scrolls near them
-const Features = lazy(() =>
-  import('@client/components/features/landing/Features').then(m => ({ default: m.default }))
-);
-const HowItWorks = lazy(() =>
-  import('@client/components/features/landing/HowItWorks').then(m => ({ default: m.default }))
-);
+const Features = lazy(() => import('@client/components/features/landing/Features'));
+const HowItWorks = lazy(() => import('@client/components/features/landing/HowItWorks'));
 const FAQ = lazy(() => import('@client/components/ui/FAQ').then(m => ({ default: m.FAQ })));
 
 // Animation variants for hero section

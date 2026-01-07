@@ -29,6 +29,8 @@ import type {
   IGuidePage,
   IFreePage,
   IPlatformPage,
+  IContentTypePage,
+  IAIFeaturePage,
   PSEOPage,
   IPSEODataFile,
 } from './pseo-types';
@@ -317,6 +319,64 @@ export const getToolsForBlogPost = cache(async (blogSlug: string): Promise<ITool
   return toolsData.pages.filter(tool => tool.relatedBlogPosts?.includes(blogSlug));
 });
 
+// Content-Type Pages
+export const getAllContentSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const data = await import('@/app/seo/data/content.json');
+    return (data as unknown as IPSEODataFile<IContentTypePage>).pages.map(page => page.slug);
+  } catch {
+    return [];
+  }
+});
+
+export const getContentData = cache(async (slug: string): Promise<IContentTypePage | null> => {
+  try {
+    const data = await import('@/app/seo/data/content.json');
+    const contentData = data as unknown as IPSEODataFile<IContentTypePage>;
+    return contentData.pages.find(page => page.slug === slug) || null;
+  } catch {
+    return null;
+  }
+});
+
+export const getAllContentPages = cache(async (): Promise<IContentTypePage[]> => {
+  try {
+    const data = await import('@/app/seo/data/content.json');
+    return (data as unknown as IPSEODataFile<IContentTypePage>).pages;
+  } catch {
+    return [];
+  }
+});
+
+// AI Feature Pages
+export const getAllAIFeatureSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const data = await import('@/app/seo/data/ai-features.json');
+    return (data as unknown as IPSEODataFile<IAIFeaturePage>).pages.map(page => page.slug);
+  } catch {
+    return [];
+  }
+});
+
+export const getAIFeatureData = cache(async (slug: string): Promise<IAIFeaturePage | null> => {
+  try {
+    const data = await import('@/app/seo/data/ai-features.json');
+    const aiFeatureData = data as unknown as IPSEODataFile<IAIFeaturePage>;
+    return aiFeatureData.pages.find(page => page.slug === slug) || null;
+  } catch {
+    return null;
+  }
+});
+
+export const getAllAIFeaturePages = cache(async (): Promise<IAIFeaturePage[]> => {
+  try {
+    const data = await import('@/app/seo/data/ai-features.json');
+    return (data as unknown as IPSEODataFile<IAIFeaturePage>).pages;
+  } catch {
+    return [];
+  }
+});
+
 // Aggregate function for sitemap
 export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
   const [
@@ -329,6 +389,8 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     scales,
     freeTools,
     platforms,
+    contentPages,
+    aiFeatures,
   ] = await Promise.all([
     getAllTools(),
     getAllFormats(),
@@ -339,6 +401,8 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     getAllScales(),
     getAllFreeTools(),
     getAllPlatforms(),
+    getAllContentPages(),
+    getAllAIFeaturePages(),
   ]);
 
   return [
@@ -351,5 +415,7 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     ...scales,
     ...freeTools,
     ...platforms,
+    ...contentPages,
+    ...aiFeatures,
   ];
 });

@@ -89,6 +89,27 @@ export const META_PATTERNS: Record<PSEOCategory, IMetaPattern> = {
     titleMaxLength: 60,
     descriptionMaxLength: 160,
   },
+  platforms: {
+    title: `{Platform} Image Enhancement - AI Upscaling | ${APP_NAME}`,
+    description:
+      'Enhance {Platform} images with AI. Upscale and improve quality from {Platform} exports. Perfect for {UseCase}.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
+  content: {
+    title: `Upscale {ContentType} - AI Enhancement Free | ${APP_NAME}`,
+    description:
+      'Upscale and enhance {ContentType} with AI. Improve quality, restore details, and get professional results. Free online tool.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
+  'ai-features': {
+    title: `{FeatureName} - AI-Powered {FeatureType} | ${APP_NAME}`,
+    description:
+      '{FeatureName} using advanced AI technology. {Description}. Free online tool with instant results.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
 };
 
 /**

@@ -216,6 +216,65 @@ export interface IPlatformPage extends IBasePSEOPage {
 }
 
 /**
+ * Content-type specific upscaling page
+ * For pages like /content/upscale-old-family-photos, /content/upscale-digital-art
+ */
+export interface IContentTypePage extends IBasePSEOPage {
+  category: 'content';
+  contentType: string;
+  contentDescription: string;
+  targetAudience: string[];
+  commonChallenges: string[];
+  features: IFeature[];
+  useCases: IUseCase[];
+  benefits: IBenefit[];
+  howItWorks: IHowItWorksStep[];
+  beforeAfterExamples?: IBeforeAfterExample[];
+  tips: string[];
+  faq: IFAQ[];
+  relatedContent: string[];
+  relatedTools: string[];
+  ctaText: string;
+  ctaUrl: string;
+}
+
+/**
+ * AI Feature page data structure
+ * For pages like /ai-features/ai-face-restoration, /ai-features/ai-portrait-enhancer
+ */
+export interface IAIFeaturePage extends IBasePSEOPage {
+  category: 'ai-features';
+  featureName: string;
+  featureType: 'enhancement' | 'restoration' | 'correction' | 'generation';
+  technology: string;
+  description: string;
+  capabilities: string[];
+  features: IFeature[];
+  useCases: IUseCase[];
+  benefits: IBenefit[];
+  howItWorks: IHowItWorksStep[];
+  limitations: string[];
+  isInteractive?: boolean;
+  toolComponent?: string;
+  faq: IFAQ[];
+  relatedFeatures: string[];
+  relatedTools: string[];
+  ctaText: string;
+  ctaUrl: string;
+}
+
+/**
+ * Before/after example for content-type pages
+ */
+export interface IBeforeAfterExample {
+  title: string;
+  description: string;
+  beforeImage?: string;
+  afterImage?: string;
+  improvement: string;
+}
+
+/**
  * Union type for all pSEO pages
  */
 export type PSEOPage =
@@ -228,7 +287,9 @@ export type PSEOPage =
   | IGuidePage
   | IFreePage
   | IBulkToolPage
-  | IPlatformPage;
+  | IPlatformPage
+  | IContentTypePage
+  | IAIFeaturePage;
 
 /**
  * Supporting interfaces
