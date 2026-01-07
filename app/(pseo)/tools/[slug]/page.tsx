@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getToolData, getAllToolSlugs, generateMetadata as generatePageMetadata } from '@/lib/seo';
 import { ToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/ToolPageTemplate';
+import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { generateToolSchema } from '@/lib/seo';
 
@@ -35,10 +36,13 @@ export default async function ToolPage({ params }: IToolPageProps) {
 
   const schema = generateToolSchema(tool);
 
+  // Use InteractiveToolPageTemplate for tools with embedded functionality
+  const Template = tool.isInteractive ? InteractiveToolPageTemplate : ToolPageTemplate;
+
   return (
     <>
       <SchemaMarkup schema={schema} />
-      <ToolPageTemplate data={tool} />
+      <Template data={tool} />
     </>
   );
 }

@@ -1120,10 +1120,373 @@
       ],
       "relatedTools": ["ai-image-upscaler"],
       "relatedGuides": []
+    },
+    {
+      "slug": "cartoon-image-upscaler",
+      "title": "Cartoon Image Upscaler",
+      "metaTitle": "Cartoon Image Upscaler Online - Enhance Cartoons & Comics | MyImageUpscaler",
+      "metaDescription": "Upscale cartoon images, comics, and illustrations with AI. Clean lines, vibrant colors preserved. Free online cartoon upscaler.",
+      "h1": "Cartoon Image Upscaler Online",
+      "intro": "Enhance your favorite cartoon screenshots, comic panels, and illustrations while preserving the clean lines and flat colors that define cartoon and comic art styles.",
+      "primaryKeyword": "cartoon image upscaler",
+      "secondaryKeywords": [
+        "cartoon upscaler",
+        "upscale cartoons",
+        "comic image upscaler",
+        "cartoon enlargement",
+        "illustration upscaler"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "description": "Specialized upscaling for cartoon images, Western comics, and illustrated content using AI technology optimized for drawn artwork with flat colors and clean lines.",
+      "imageTypes": [
+        {
+          "type": "Western Cartoons",
+          "description": "Animated series and movies from Western studios",
+          "examples": "Disney, Warner Bros, Cartoon Network content",
+          "notes": "Works well for most modern animated content"
+        },
+        {
+          "type": "Digital Comics",
+          "description": "Digitally created comic books and graphic novels",
+          "examples": "Webcomics, digital-first releases, indie comics",
+          "notes": "Excellent results with clean digital source"
+        },
+        {
+          "type": "Cartoon Illustrations",
+          "description": "Custom artwork and character designs",
+          "examples": "OC art, fan art, commissioned illustrations",
+          "notes": "Preserves artist style and color choices"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Clean Line Preservation",
+          "description": "AI maintains crisp outlines without blurring or ghosting common in traditional upscaling."
+        },
+        {
+          "title": "Flat Color Areas",
+          "description": "Solid color blocks remain smooth without banding or artifacts."
+        },
+        {
+          "title": "Style Consistency",
+          "description": "Upscaled images maintain the original artistic style and appearance."
+        }
+      ],
+      "commonIssues": [
+        {
+          "issue": "Blurry Lines",
+          "solution": "AI upscalers trained on various art styles maintain crisp edges better than standard upscaling."
+        },
+        {
+          "issue": "Color Bleeding",
+          "solution": "Quality AI upscaling respects color boundaries and prevents bleeding between adjacent areas."
+        },
+        {
+          "issue": "Artifacts at High Scale",
+          "solution": "Start with 2x and progressively upscale if needed. Very high scale factors (8x) may show limitations."
+        }
+      ],
+      "bestPractices": [
+        "Start with highest quality source available",
+        "Use PNG format to preserve quality",
+        "Clean dust/scratches from scanned comics before upscaling",
+        "Select appropriate scale factor - 2x and 4x typically work best",
+        "Avoid over-upscaling - 8x may show diminishing returns"
+      ],
+      "faq": [
+        {
+          "question": "What's the best upscaler for cartoon images?",
+          "answer": "AI upscalers work well for cartoons because they understand the characteristics of drawn content - flat colors, clean lines, and specific shading styles. Our AI upscaler handles various cartoon and comic art styles effectively."
+        },
+        {
+          "question": "Can I upscale old comic book panels?",
+          "answer": "Yes! AI upscaling works well with comic book panels, whether scanned from print or digital sources. For best results with scans, clean dust and scratches first, then upscale starting at 2x."
+        },
+        {
+          "question": "Will upscaling damage the art style?",
+          "answer": "No, our AI upscaler is designed to preserve artistic style including line quality, color choices, and overall appearance. The enhancement adds detail without changing the artist's intent."
+        },
+        {
+          "question": "What's the maximum resolution for cartoon wallpapers?",
+          "answer": "You can upscale to 4K (3840x2160) or higher depending on your needs. For modern displays, 1920x1080 (1080p), 2560x1440 (1440p), or 3840x2160 (4K) are common targets."
+        },
+        {
+          "question": "Is there a free cartoon upscaler?",
+          "answer": "Yes! Our AI upscaler handles cartoon and comic images with a free tier. You can upscale cartoons, comics, and illustrations without watermarks. Premium plans offer batch processing for entire collections."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "portrait-photo-upscaler",
+      "title": "Portrait Photo Upscaler",
+      "metaTitle": "Portrait Photo Upscaler - AI Face Enhancement | MyImageUpscaler",
+      "metaDescription": "Upscale portrait photos with AI face enhancement. Improve facial details, skin texture, and overall quality. Free online portrait upscaler.",
+      "h1": "Portrait Photo Upscaler - AI Face Enhancement",
+      "intro": "Transform your portrait photos with specialized AI face enhancement technology. Improve facial features, skin texture, and overall image quality while maintaining natural appearance.",
+      "primaryKeyword": "portrait photo upscaler",
+      "secondaryKeywords": [
+        "portrait enhancer",
+        "face upscaler",
+        "portrait enhancement",
+        "photo enlarger",
+        "face detail enhancement"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "description": "Professional portrait enhancement using AI models specialized for facial feature reconstruction and improvement. Perfect for headshots, social media photos, and professional portraits.",
+      "supportedTiers": {
+        "faceRestore": {
+          "name": "Face Restore",
+          "credits": 2,
+          "model": "GFPGAN",
+          "description": "Photo restoration with facial feature reconstruction"
+        },
+        "facePro": {
+          "name": "Face Pro",
+          "credits": 6,
+          "model": "Flux-2-Pro",
+          "description": "Premium portrait enhancement with advanced facial detail improvement"
+        },
+        "ultra": {
+          "name": "Ultra Quality",
+          "credits": 8,
+          "model": "Nano Banana Pro",
+          "description": "Maximum 4K/8K quality for professional portraits"
+        }
+      },
+      "useCases": [
+        {
+          "title": "Professional Headshots",
+          "description": "Enhance LinkedIn, portfolio, and business headshots with improved facial clarity and detail.",
+          "recommendedTier": "Face Pro",
+          "example": "Upscale a basic headshot to high-resolution professional quality"
+        },
+        {
+          "title": "Social Media Portraits",
+          "description": "Improve profile photos for Instagram, Facebook, Twitter, and dating apps.",
+          "recommendedTier": "Face Restore",
+          "example": "Enhance selfie quality with better facial features and skin texture"
+        },
+        {
+          "title": "Old Photo Restoration",
+          "description": "Restore and enhance aged or damaged portrait photographs.",
+          "recommendedTier": "Face Restore",
+          "example": "Bring new life to vintage family photos with facial reconstruction"
+        },
+        {
+          "title": "Print Preparation",
+          "description": "Prepare portrait photos for large format printing.",
+          "recommendedTier": "Ultra",
+          "example": "Upscale for poster or canvas printing with maximum quality"
+        }
+      ],
+      "features": {
+        "faceEnhancement": "Advanced AI models (GFPGAN, Flux-2-Pro) for facial feature reconstruction",
+        "skinTexture": "Natural skin texture improvement without plastic appearance",
+        "detailPreservation": "Eyes, lips, and other features maintain natural appearance",
+        "resolution": "Support for up to 8K output on Ultra quality tier",
+        "batchProcessing": "Available on Pro tier for multiple portraits"
+      },
+      "bestPractices": [
+        "Start with Face Restore for general improvements",
+        "Use Face Pro for professional headshots and critical portraits",
+        "Select Ultra tier for large format printing needs",
+        "Ensure good lighting in source photos for best results",
+        "Avoid extreme upscaling (8x) for very low quality sources"
+      ],
+      "faq": [
+        {
+          "question": "What's the difference between Face Restore and Face Pro?",
+          "answer": "Face Restore (2 credits) uses GFPGAN for photo restoration with facial feature reconstruction. Face Pro (6 credits) uses Flux-2-Pro for premium portrait enhancement with advanced detail improvement. Face Pro delivers superior results for professional portraits."
+        },
+        {
+          "question": "Can portrait upscaler fix blurry faces?",
+          "answer": "Yes! Our face enhancement models specialize in reconstructing facial details from blurry or low-quality photos. Results vary based on source quality, but significant improvement is typical for moderately blurry images."
+        },
+        {
+          "question": "Will my portraits look unnatural or plastic?",
+          "answer": "Our AI models are designed to maintain natural appearance. Skin texture and features are enhanced while preserving realistic characteristics. For subtle results, Face Restore is recommended over Face Pro."
+        },
+        {
+          "question": "What resolution can portrait photos be upscaled to?",
+          "answer": "With Ultra quality tier, portraits can be upscaled to 4K or 8K resolution (up to 8192x8192px). This is ideal for large format printing or professional use."
+        },
+        {
+          "question": "Is there a free portrait upscaler?",
+          "answer": "Yes! The Free tier includes Face Restore quality (2 credits = 1 image) and Quick quality (1 credit = 1 image). You can enhance portrait photos with no watermarks. For frequent use, paid tiers offer more credits and batch processing."
+        },
+        {
+          "question": "Can I upscale multiple portraits at once?",
+          "answer": "Batch processing is available on paid tiers (Starter: 5 images, Hobby: 10 images, Pro: 50 images, Business: 500 images per batch). Free tier processes single images only."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "product-photo-background-removal",
+      "title": "Product Photo Background Removal",
+      "metaTitle": "Remove Backgrounds from Product Photos | E-commerce Images",
+      "metaDescription": "Remove backgrounds from product photos for Amazon, eBay, Etsy, and Shopify. Create white backgrounds that meet marketplace requirements. Free AI tool.",
+      "h1": "Product Photo Background Removal for E-commerce",
+      "intro": "Create professional product images with clean white backgrounds that meet marketplace requirements. Our AI removes complex backgrounds while preserving product details.",
+      "primaryKeyword": "product photo background removal",
+      "secondaryKeywords": [
+        "remove background product photo",
+        "ecommerce background removal",
+        "amazon white background",
+        "product image background remover"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Professional product photo preparation for online marketplaces. Remove busy backgrounds and create clean, white backgrounds that meet Amazon, eBay, and Etsy requirements.",
+      "challenges": [
+        "Marketplace requirements demand pure white (255,255,255) backgrounds",
+        "Product shadows and reflections need to be preserved or removed cleanly",
+        "Complex product shapes with holes or transparent parts are difficult",
+        "Consistent background across entire product catalog is essential"
+      ],
+      "solutions": [
+        {
+          "problem": "Busy or cluttered backgrounds distract from products",
+          "solution": "AI instantly removes backgrounds and replaces with pure white",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Manual editing is time-consuming for large catalogs",
+          "solution": "Batch processing removes backgrounds from multiple images at once",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Complex product edges look unprofessional",
+          "solution": "AI preserves fine details and creates clean, professional edges",
+          "tool": "ai-background-remover"
+        }
+      ],
+      "results": [
+        {
+          "metric": "Processing Time",
+          "improvement": "90% faster",
+          "description": "Remove backgrounds in seconds vs. minutes with manual editing"
+        },
+        {
+          "metric": "Marketplace Compliance",
+          "improvement": "100%",
+          "description": "Pure white backgrounds meet Amazon and eBay requirements"
+        },
+        {
+          "metric": "Cost Savings",
+          "improvement": "Free",
+          "description": "No subscription fees for unlimited background removal"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Does this create Amazon-compliant white backgrounds?",
+          "answer": "Yes, our background remover creates pure white (RGB 255,255,255) backgrounds that meet Amazon's main image requirements. The product is isolated cleanly for a professional marketplace appearance."
+        },
+        {
+          "question": "Can it handle products with complex shapes?",
+          "answer": "The AI handles complex shapes including products with holes, transparent parts, and intricate edges. Results are best with clear contrast between product and background."
+        },
+        {
+          "question": "How do I process many product photos at once?",
+          "answer": "While the free tool processes one image at a time, you can quickly cycle through your catalog. For bulk operations, API access is available for automated workflows."
+        },
+        {
+          "question": "Will it preserve product shadows?",
+          "answer": "The AI removes background completely, including shadows. For product photos with natural shadows, you may want to add a subtle drop shadow after removal for a polished look."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "portrait-background-removal",
+      "title": "Portrait Background Removal",
+      "metaTitle": "Remove Background from Portrait Photos | Headshot Editing",
+      "metaDescription": "Remove backgrounds from portraits and headshots with AI. Professional results with hair detail preservation. Free online tool for LinkedIn, resumes, and more.",
+      "h1": "Portrait Background Removal - Professional Headshots",
+      "intro": "Transform casual photos into professional headshots by removing distracting backgrounds. Our AI preserves complex hair details and creates clean cutouts.",
+      "primaryKeyword": "portrait background removal",
+      "secondaryKeywords": [
+        "remove background portrait",
+        "headshot background remover",
+        "linkedin photo background",
+        "profile picture background removal"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Professional & Personal",
+      "description": "Professional portrait and headshot preparation with AI background removal. Perfect for LinkedIn profiles, resumes, ID photos, and professional branding.",
+      "challenges": [
+        "Hair and fine edges are notoriously difficult to cut out cleanly",
+        "Professional photo editing software has steep learning curves",
+        "Hiring photographers or editors for simple headshots is expensive",
+        "Consistent background style across team photos requires skill"
+      ],
+      "solutions": [
+        {
+          "problem": "Hair creates messy edges with traditional selection tools",
+          "solution": "AI specifically trained to handle fine hair details and wispy edges",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Need professional headshot but only have casual photo",
+          "solution": "Remove casual background and replace with solid color for professional look",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Team photos have inconsistent backgrounds",
+          "solution": "Remove all backgrounds and apply consistent style across team",
+          "tool": "ai-background-remover"
+        }
+      ],
+      "results": [
+        {
+          "metric": "Hair Detail Preservation",
+          "improvement": "Excellent",
+          "description": "AI handles wispy hair, curls, and fine strands without halo effects"
+        },
+        {
+          "metric": "Time to Professional Headshot",
+          "improvement": "Under 30 seconds",
+          "description": "Transform any portrait to professional quality instantly"
+        },
+        {
+          "metric": "Cost",
+          "improvement": "Free vs $50-200",
+          "description": "Professional headshot editing at no cost"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Will it handle curly or frizzy hair?",
+          "answer": "Yes, our AI is specifically trained to handle all hair types including curly, frizzy, and wispy hair. The model detects fine strands and preserves natural-looking edges without the halo effect common in traditional tools."
+        },
+        {
+          "question": "Can I use this for LinkedIn profile photos?",
+          "answer": "Absolutely. Remove your current background and either keep it transparent or add a solid professional color. The result is a clean, professional headshot perfect for LinkedIn."
+        },
+        {
+          "question": "What about glasses and reflections?",
+          "answer": "The AI handles glasses well, preserving the frames and lenses. Strong reflections in glasses may show some edge artifacts, but most eyewear is processed cleanly."
+        },
+        {
+          "question": "Is this suitable for ID or passport photos?",
+          "answer": "Yes, you can remove backgrounds and add compliant white or blue backgrounds. Note that official ID photos may have specific lighting and composition requirements beyond background color."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-photo-enhancer"],
+      "relatedGuides": []
     }
   ],
   "meta": {
-    "totalPages": 8,
-    "lastUpdated": "2025-12-26T00:00:00Z"
+    "totalPages": 12,
+    "lastUpdated": "2026-01-06T00:00:00Z"
   }
 }

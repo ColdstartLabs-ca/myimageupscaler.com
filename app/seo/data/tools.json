@@ -325,10 +325,434 @@
       ],
       "ctaText": "Enhance Photo Free",
       "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-background-remover",
+      "title": "AI Background Remover",
+      "metaTitle": "AI Background Remover - Remove Image Backgrounds Instantly | MyImageUpscaler",
+      "metaDescription": "Remove backgrounds from images instantly with AI. Free online tool for product photos, portraits, and graphics. No watermarks, transparent PNG output.",
+      "h1": "AI Background Remover",
+      "intro": "Remove backgrounds from any image in seconds. Our AI precisely detects subjects and creates clean cutouts with transparent backgrounds.",
+      "primaryKeyword": "ai background remover",
+      "secondaryKeywords": [
+        "remove background",
+        "background remover",
+        "remove bg",
+        "bg remover",
+        "transparent background",
+        "cut out image"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "AI Background Remover",
+      "description": "Transform any image with professional background removal. Our AI uses advanced segmentation to detect subjects with pixel-perfect precision, handling complex edges like hair and fur that traditional tools struggle with.",
+      "features": [
+        {
+          "title": "Instant AI Detection",
+          "description": "Advanced neural networks identify subjects automatically. No manual selection or tracing required."
+        },
+        {
+          "title": "Hair & Fine Edge Detection",
+          "description": "AI handles complex edges like hair, fur, and transparent objects that traditional tools miss."
+        },
+        {
+          "title": "Transparent PNG Output",
+          "description": "Download images with transparent backgrounds ready for any design project or platform."
+        },
+        {
+          "title": "Batch Processing",
+          "description": "Remove backgrounds from multiple images at once. Perfect for e-commerce catalogs and product photography."
+        },
+        {
+          "title": "No Watermarks",
+          "description": "All outputs are clean and ready to use, even on the free tier."
+        },
+        {
+          "title": "Browser-Based Processing",
+          "description": "Images are processed locally in your browser for privacy. No uploads to external servers."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "E-commerce Product Photos",
+          "description": "Create professional product images with white or transparent backgrounds for Amazon, eBay, Etsy, and Shopify.",
+          "example": "Remove busy backgrounds from product shots and replace with pure white for marketplace compliance."
+        },
+        {
+          "title": "Portrait & Headshot Editing",
+          "description": "Create professional headshots by removing distracting backgrounds from portraits.",
+          "example": "Transform a casual photo into a LinkedIn-ready professional headshot."
+        },
+        {
+          "title": "Graphic Design",
+          "description": "Extract subjects for use in posters, social media graphics, marketing materials, and presentations.",
+          "example": "Cut out a person from a photo to place them in a custom designed background."
+        },
+        {
+          "title": "Photo Compositing",
+          "description": "Combine subjects from different photos or place them in new scenes.",
+          "example": "Extract a product and place it in a lifestyle setting for marketing campaigns."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Pixel-Perfect Edges",
+          "description": "AI produces clean cutouts without halos or rough edges that plague manual selection tools.",
+          "metric": "Advanced segmentation model"
+        },
+        {
+          "title": "Handles Complex Subjects",
+          "description": "Hair, fur, transparent objects, and intricate details are preserved with remarkable accuracy.",
+          "metric": "Trained on millions of images"
+        },
+        {
+          "title": "Privacy-First Processing",
+          "description": "Images are processed in your browser using WebAssembly. Your photos never leave your device.",
+          "metric": "100% client-side processing"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Drag and drop or click to browse. Supports JPEG, PNG, and WebP formats."
+        },
+        {
+          "step": 2,
+          "title": "AI Processes Locally",
+          "description": "Our AI model runs in your browser, detecting and isolating the subject with precision."
+        },
+        {
+          "step": 3,
+          "title": "Download Result",
+          "description": "Preview your image with transparent background and download as PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is the background remover free?",
+          "answer": "Yes, remove backgrounds from images for free with no watermarks. The tool runs entirely in your browser with no usage limits."
+        },
+        {
+          "question": "How does local processing work?",
+          "answer": "The AI model runs directly in your web browser using WebAssembly technology. Your images are processed on your device and never uploaded to our servers, ensuring complete privacy."
+        },
+        {
+          "question": "What output formats are available?",
+          "answer": "Images are exported as PNG files with transparent backgrounds. PNG preserves transparency for use in design software, websites, and print materials."
+        },
+        {
+          "question": "Can it handle hair and fur?",
+          "answer": "Yes, our AI is specifically trained to handle fine details like hair, fur, and semi-transparent objects. It produces clean edges without the halo effect common in traditional tools."
+        },
+        {
+          "question": "Is there a file size limit?",
+          "answer": "Since processing happens in your browser, the limit depends on your device's memory. Most devices handle images up to 4096x4096 pixels smoothly."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": [],
+      "ctaText": "Remove Background Free",
+      "ctaUrl": "/tools/ai-background-remover"
+    },
+    {
+      "slug": "remove-bg",
+      "title": "Remove BG - Quick Background Remover",
+      "metaTitle": "Remove BG Online Free - Instant Background Removal Tool",
+      "metaDescription": "Remove BG from any photo in seconds. Free online tool to remove backgrounds instantly. No signup required, works in your browser.",
+      "h1": "Remove BG Instantly",
+      "intro": "Remove BG from photos with one click. Our AI-powered tool instantly detects subjects and removes backgrounds, giving you clean transparent images.",
+      "primaryKeyword": "remove bg",
+      "secondaryKeywords": [
+        "remove bg online",
+        "remove bg free",
+        "bg remover",
+        "remove background online",
+        "background eraser"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Remove BG Tool",
+      "description": "The fastest way to remove BG from any image. Upload your photo and get a transparent background in seconds. Perfect for quick edits and batch processing.",
+      "features": [
+        {
+          "title": "One-Click BG Removal",
+          "description": "Upload and instantly remove the background. No manual selection needed."
+        },
+        {
+          "title": "Smart Edge Detection",
+          "description": "AI automatically detects edges including hair and fine details."
+        },
+        {
+          "title": "Instant Download",
+          "description": "Get your transparent PNG immediately after processing."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Quick Social Media Edits",
+          "description": "Remove backgrounds from photos for Instagram, TikTok, and other social platforms.",
+          "example": "Create transparent stickers and profile pictures in seconds."
+        },
+        {
+          "title": "Product Photography",
+          "description": "Clean up product photos for online stores and marketplaces.",
+          "example": "Remove cluttered backgrounds from product shots."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Lightning Fast",
+          "description": "Remove backgrounds in under 5 seconds with AI processing.",
+          "metric": "< 5 seconds"
+        },
+        {
+          "title": "No Account Needed",
+          "description": "Start removing backgrounds immediately without signup.",
+          "metric": "Zero friction"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Image",
+          "description": "Drop your image or click to upload."
+        },
+        {
+          "step": 2,
+          "title": "Auto Remove BG",
+          "description": "AI removes the background automatically."
+        },
+        {
+          "step": 3,
+          "title": "Download",
+          "description": "Save your transparent PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is remove BG free?",
+          "answer": "Yes, completely free with no watermarks. Process unlimited images in your browser."
+        },
+        {
+          "question": "Do I need to create an account?",
+          "answer": "No account required. Just upload and remove backgrounds instantly."
+        },
+        {
+          "question": "What file types are supported?",
+          "answer": "JPEG, PNG, and WebP images up to 10MB."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
+      "relatedGuides": [],
+      "ctaText": "Remove BG Now",
+      "ctaUrl": "/tools/remove-bg"
+    },
+    {
+      "slug": "transparent-background-maker",
+      "title": "Transparent Background Maker",
+      "metaTitle": "Transparent Background Maker - Create PNG with Transparent BG",
+      "metaDescription": "Make transparent backgrounds for any image. Free online tool to create PNG images with transparent backgrounds for logos, graphics, and photos.",
+      "h1": "Transparent Background Maker",
+      "intro": "Create transparent backgrounds for any image instantly. Perfect for logos, product photos, and graphics that need to overlay on different backgrounds.",
+      "primaryKeyword": "transparent background maker",
+      "secondaryKeywords": [
+        "make background transparent",
+        "transparent background",
+        "transparent png maker",
+        "clear background",
+        "transparent image creator"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Transparent Background Maker",
+      "description": "Turn any image into a transparent PNG. Our AI removes the background and creates clean transparent images ready for use in designs, websites, and presentations.",
+      "features": [
+        {
+          "title": "PNG with Transparency",
+          "description": "Output high-quality PNG files with full alpha channel transparency."
+        },
+        {
+          "title": "Perfect for Logos",
+          "description": "Create transparent versions of logos and graphics for any background."
+        },
+        {
+          "title": "Clean Edges",
+          "description": "AI produces smooth, professional edges without halos."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Logo Transparency",
+          "description": "Convert logos to transparent PNGs for use on websites and marketing materials.",
+          "example": "Make your logo work on any colored background."
+        },
+        {
+          "title": "Graphic Design",
+          "description": "Create transparent assets for design projects and compositions.",
+          "example": "Extract elements for use in Photoshop, Canva, or Figma."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Professional Quality",
+          "description": "Export-ready transparent PNGs with clean alpha channels.",
+          "metric": "32-bit PNG output"
+        },
+        {
+          "title": "Preserves Details",
+          "description": "Complex shapes and fine details are preserved accurately.",
+          "metric": "Pixel-perfect edges"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Upload any image with a background you want to remove."
+        },
+        {
+          "step": 2,
+          "title": "AI Creates Transparency",
+          "description": "Our AI detects the subject and makes the background transparent."
+        },
+        {
+          "step": 3,
+          "title": "Download Transparent PNG",
+          "description": "Get your image with a transparent background as a PNG file."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What format is the output?",
+          "answer": "All images are exported as PNG files which support transparency. This is the standard format for transparent images."
+        },
+        {
+          "question": "Can I make a logo transparent?",
+          "answer": "Yes, upload your logo and the tool will remove the background, leaving only the logo with transparency."
+        },
+        {
+          "question": "Will it work with complex shapes?",
+          "answer": "Yes, the AI handles complex shapes, hair, and fine details while creating clean transparent edges."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "remove-bg"],
+      "relatedGuides": [],
+      "ctaText": "Make Transparent",
+      "ctaUrl": "/tools/transparent-background-maker"
+    },
+    {
+      "slug": "image-cutout-tool",
+      "title": "Image Cutout Tool - Cut Out Objects from Photos",
+      "metaTitle": "Image Cutout Tool - Cut Out Any Object from Photos Free",
+      "metaDescription": "Cut out objects and people from photos instantly. Free AI-powered cutout tool for precise selections. No Photoshop skills needed.",
+      "h1": "Image Cutout Tool",
+      "intro": "Cut out anything from your photos with precision. Our AI automatically detects and extracts subjects, people, products, and objects from any image.",
+      "primaryKeyword": "image cutout tool",
+      "secondaryKeywords": [
+        "cut out image",
+        "photo cutout",
+        "cutout maker",
+        "extract object from image",
+        "cut out person from photo"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Image Cutout Tool",
+      "description": "Professional image cutouts without Photoshop. AI-powered tool that precisely cuts out subjects from photos, handling complex edges like hair and fur automatically.",
+      "features": [
+        {
+          "title": "Precision AI Cutouts",
+          "description": "Advanced AI creates pixel-perfect cutouts of any subject."
+        },
+        {
+          "title": "Hair & Fur Detection",
+          "description": "Handles the most challenging cutouts including hair and animal fur."
+        },
+        {
+          "title": "No Skills Required",
+          "description": "Get Photoshop-quality cutouts without any manual work."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Cut Out People",
+          "description": "Extract people from photos for composites, collages, and designs.",
+          "example": "Cut out a person to place them on a different background."
+        },
+        {
+          "title": "Product Cutouts",
+          "description": "Create clean product cutouts for e-commerce and catalogs.",
+          "example": "Extract products from lifestyle photos for white background shots."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Photoshop Quality",
+          "description": "Professional-grade cutouts that rival manual Photoshop work.",
+          "metric": "AI-powered precision"
+        },
+        {
+          "title": "Instant Results",
+          "description": "Get perfect cutouts in seconds instead of hours.",
+          "metric": "< 10 seconds"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Photo",
+          "description": "Upload the image containing the subject you want to cut out."
+        },
+        {
+          "step": 2,
+          "title": "AI Cuts Out Subject",
+          "description": "Our AI identifies and precisely cuts out the main subject."
+        },
+        {
+          "step": 3,
+          "title": "Download Cutout",
+          "description": "Download your cutout as a transparent PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Can I cut out multiple objects?",
+          "answer": "The tool automatically detects and cuts out the main subject in your image. For multiple objects, process each separately."
+        },
+        {
+          "question": "How accurate are the cutouts?",
+          "answer": "Our AI produces highly accurate cutouts, even handling difficult edges like hair, fur, and semi-transparent objects."
+        },
+        {
+          "question": "Is this better than Photoshop?",
+          "answer": "For most cutout tasks, our AI produces results comparable to manual Photoshop work but in seconds instead of minutes or hours."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "transparent-background-maker"],
+      "relatedGuides": [],
+      "ctaText": "Cut Out Now",
+      "ctaUrl": "/tools/image-cutout-tool"
     }
   ],
   "meta": {
-    "totalPages": 2,
-    "lastUpdated": "2025-12-19T00:00:00Z"
+    "totalPages": 6,
+    "lastUpdated": "2026-01-06T00:00:00Z"
   }
 }

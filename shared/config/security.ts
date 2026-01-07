@@ -15,6 +15,8 @@ export const CSP_POLICY = {
     "'self'",
     "'unsafe-inline'",
     "'unsafe-eval'",
+    "'wasm-unsafe-eval'",
+    'blob:',
     'https://*.googletagmanager.com',
     'https://js.stripe.com',
     'https://accounts.google.com',
@@ -24,6 +26,7 @@ export const CSP_POLICY = {
   'font-src': ["'self'"],
   'connect-src': [
     "'self'",
+    'blob:',
     'https://*.supabase.co',
     'wss://*.supabase.co',
     'https://*.amplitude.com',
@@ -32,8 +35,10 @@ export const CSP_POLICY = {
     'https://rum.baselime.io',
     'https://api.stripe.com',
     'https://accounts.google.com',
+    'https://staticimgly.com', // @imgly/background-removal WASM model
   ],
   'frame-src': ['https://js.stripe.com', 'https://accounts.google.com'],
+  'worker-src': ["'self'", 'blob:'], // Web Workers for @imgly/background-removal
   'object-src': ["'none'"],
   'base-uri': ["'self'"],
   'form-action': ["'self'"],

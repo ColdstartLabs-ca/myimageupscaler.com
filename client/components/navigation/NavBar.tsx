@@ -140,6 +140,12 @@ export const NavBar = (): JSX.Element => {
                 >
                   Bulk Resizer
                 </a>
+                <a
+                  href="/tools/ai-background-remover"
+                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
+                >
+                  Background Remover
+                </a>
               </div>
             )}
           </div>
@@ -362,6 +368,12 @@ export const NavBar = (): JSX.Element => {
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
                 Bulk Resizer
+              </a>
+              <a
+                href="/tools/ai-background-remover"
+                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+              >
+                Background Remover
               </a>
             </div>
             <a

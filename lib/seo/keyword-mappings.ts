@@ -608,6 +608,107 @@ export const keywordPageMappings: IKeywordPageMapping[] = [
       internalLinks: 4,
     },
   },
+
+  // Background Removal Pages (Tier 1 - High Volume)
+  {
+    primaryKeyword: 'ai background remover',
+    secondaryKeywords: [
+      'background remover',
+      'remove background',
+      'remove bg',
+      'bg remover',
+      'transparent background',
+      'cut out image',
+    ],
+    canonicalUrl: '/tools/ai-background-remover',
+    intent: 'Transactional',
+    tier: 1,
+    priority: 'P0',
+    contentRequirements: {
+      minWords: 1400,
+      sections: [
+        'Hero + Introduction',
+        'What Is AI Background Removal',
+        'How It Works',
+        'Key Features',
+        'Use Cases',
+        'Benefits',
+        'FAQ',
+      ],
+      faqCount: 5,
+      internalLinks: 4,
+    },
+  },
+  {
+    primaryKeyword: 'free background remover',
+    secondaryKeywords: [
+      'remove background free',
+      'background remover online free',
+      'free bg remover',
+      'remove bg free',
+    ],
+    canonicalUrl: '/free/free-background-remover',
+    intent: 'Transactional',
+    tier: 1,
+    priority: 'P0',
+    contentRequirements: {
+      minWords: 1400,
+      sections: [
+        'Hero + Introduction',
+        'Why Free Tools Matter',
+        'How It Works',
+        'Key Features',
+        'Privacy Benefits',
+        'FAQ',
+      ],
+      faqCount: 4,
+      internalLinks: 4,
+    },
+  },
+  {
+    primaryKeyword: 'product photo background removal',
+    secondaryKeywords: [
+      'remove background product photo',
+      'ecommerce background removal',
+      'amazon white background',
+      'product image background remover',
+    ],
+    canonicalUrl: '/use-cases/product-photo-background-removal',
+    intent: 'Commercial',
+    tier: 2,
+    priority: 'P0',
+    contentRequirements: {
+      minWords: 1400,
+      sections: [
+        'Hero + Introduction',
+        'Marketplace Requirements',
+        'How It Works',
+        'Results',
+        'FAQ',
+      ],
+      faqCount: 4,
+      internalLinks: 4,
+    },
+  },
+  {
+    primaryKeyword: 'portrait background removal',
+    secondaryKeywords: [
+      'remove background portrait',
+      'headshot background remover',
+      'linkedin photo background',
+      'profile picture background removal',
+    ],
+    canonicalUrl: '/use-cases/portrait-background-removal',
+    intent: 'Commercial',
+    tier: 2,
+    priority: 'P1',
+    contentRequirements: {
+      minWords: 1400,
+      sections: ['Hero + Introduction', 'Hair Detail Handling', 'How It Works', 'Results', 'FAQ'],
+      faqCount: 4,
+      internalLinks: 4,
+    },
+  },
 ];
 
 /**
