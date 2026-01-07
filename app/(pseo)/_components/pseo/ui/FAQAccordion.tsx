@@ -7,6 +7,7 @@
 'use client';
 
 import { ReactElement } from 'react';
+import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface IFAQAccordionProps {
   question: string;
@@ -47,7 +48,10 @@ export function FAQAccordion({
       </button>
       {isOpen && (
         <div className="px-6 pb-6 pt-0">
-          <p className="text-text-secondary leading-relaxed">{answer}</p>
+          <MarkdownRenderer
+            content={answer}
+            className="prose prose-invert prose-slate max-w-none prose-p:text-gray-300 prose-strong:text-white prose-a:text-accent"
+          />
         </div>
       )}
     </div>

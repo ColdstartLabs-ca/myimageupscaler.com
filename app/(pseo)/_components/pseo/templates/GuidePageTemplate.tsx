@@ -13,6 +13,7 @@ import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
+import { MarkdownRenderer } from '../ui/MarkdownRenderer';
 import { BookOpen, Clock, BarChart3, Lightbulb, CheckCircle2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -125,7 +126,10 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
           {data.description && (
             <FadeIn delay={0.3}>
               <div className="max-w-3xl mx-auto py-8">
-                <p className="text-lg text-muted-foreground leading-relaxed">{data.description}</p>
+                <MarkdownRenderer
+                  content={data.description}
+                  className="prose prose-invert prose-slate max-w-none prose-p:text-gray-300 dark:prose-p:text-gray-300"
+                />
               </div>
             </FadeIn>
           )}
@@ -151,9 +155,10 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
 
                       <div className="ml-8">
                         <h3 className="text-xl font-bold mb-3">{step.title}</h3>
-                        <div className="prose prose-slate max-w-none">
-                          <p className="text-muted-foreground leading-relaxed">{step.content}</p>
-                        </div>
+                        <MarkdownRenderer
+                          content={step.content}
+                          className="prose prose-invert prose-slate max-w-none prose-p:text-gray-300 prose-headings:text-white prose-strong:text-white prose-code:text-accent prose-a:text-accent hover:prose-a:text-accent/80 prose-li:text-gray-300"
+                        />
                         {step.image && (
                           <div className="mt-4 rounded-lg overflow-hidden border border-border">
                             <img
@@ -198,7 +203,10 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
                     {data.tips.map((tip, idx) => (
                       <li key={idx} className="flex items-start gap-3">
                         <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
-                        <span className="text-muted-foreground">{tip}</span>
+                        <MarkdownRenderer
+                          content={tip}
+                          className="prose prose-p:text-gray-300 prose-strong:text-white prose-a:text-accent"
+                        />
                       </li>
                     ))}
                   </ul>

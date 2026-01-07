@@ -275,6 +275,63 @@ export interface IBeforeAfterExample {
 }
 
 /**
+ * Format × Scale multiplier page
+ * For pages like /format-scale/jpeg-upscale-2x, /format-scale/webp-upscale-4x
+ */
+export interface IFormatScalePage extends IBasePSEOPage {
+  category: 'format-scale';
+  format: string;
+  scaleFactor: string;
+  formatDescription: string;
+  scaleExpectations: string;
+  useCases: IUseCase[];
+  benefits: IBenefit[];
+  bestPractices: string[];
+  tips: string[];
+  faq: IFAQ[];
+  relatedFormats: string[];
+  relatedScales: string[];
+}
+
+/**
+ * Platform × Format multiplier page
+ * For pages like /platform-format/midjourney-upscaler-png, /platform-format/sd-upscaler-webp
+ */
+export interface IPlatformFormatPage extends IBasePSEOPage {
+  category: 'platform-format';
+  platform: string;
+  format: string;
+  platformDescription: string;
+  formatDescription: string;
+  platformSettings: string;
+  exportTips: string[];
+  workflowTips: string[];
+  benefits: IBenefit[];
+  useCases: IUseCase[];
+  faq: IFAQ[];
+  relatedPlatforms: string[];
+  relatedFormats: string[];
+}
+
+/**
+ * Device × Use Case multiplier page
+ * For pages like /device-use/mobile-social-media-upscaler, /device-use/desktop-professional-upscaler
+ */
+export interface IDeviceUseCasePage extends IBasePSEOPage {
+  category: 'device-use';
+  device: 'mobile' | 'desktop' | 'tablet';
+  useCase: string;
+  deviceDescription: string;
+  useCaseDescription: string;
+  deviceConstraints: string[];
+  useCaseBenefits: string[];
+  tips: string[];
+  faq: IFAQ[];
+  relatedDevices: string[];
+  relatedUseCases: string[];
+}
+
+/**
  * Union type for all pSEO pages
  */
 export type PSEOPage =
@@ -289,7 +346,10 @@ export type PSEOPage =
   | IBulkToolPage
   | IPlatformPage
   | IContentTypePage
-  | IAIFeaturePage;
+  | IAIFeaturePage
+  | IFormatScalePage
+  | IPlatformFormatPage
+  | IDeviceUseCasePage;
 
 /**
  * Supporting interfaces

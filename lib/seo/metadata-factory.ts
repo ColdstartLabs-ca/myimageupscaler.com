@@ -95,6 +95,8 @@ export function generateCategoryMetadata(category: PSEOCategory): Metadata {
     free: `Free AI Image Tools - No Sign-Up Required | ${APP_NAME}`,
     'bulk-tools': `Bulk Image Tools - Resize, Compress Multiple Images | ${APP_NAME}`,
     platforms: `Platform-Specific Image Enhancement | ${APP_NAME}`,
+    content: `Image Content & Assets | ${APP_NAME}`,
+    'ai-features': `AI-Powered Image Features | ${APP_NAME}`,
   };
 
   const categoryDescriptions: Record<PSEOCategory, string> = {
@@ -115,6 +117,8 @@ export function generateCategoryMetadata(category: PSEOCategory): Metadata {
       'Batch process multiple images at once. Bulk resize, compress, and optimize images with our free browser-based tools.',
     platforms:
       'Enhance images from your favorite AI platforms. Upscale Midjourney, Stable Diffusion, DALL-E exports and more.',
+    content: `Comprehensive image content and asset library. Tutorials, examples, and resources for image enhancement at ${APP_NAME}.`,
+    'ai-features': `Advanced AI-powered features for intelligent image enhancement. Automation, smart detection, and professional results.`,
   };
 
   return {

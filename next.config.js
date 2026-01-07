@@ -11,6 +11,8 @@ const nextConfig = {
   ...(process.env.OPENNEXT && {
     output: 'export',
   }),
+  // Transpile packages for proper ESM handling
+  transpilePackages: ['react-markdown', 'remark-gfm', 'unified', 'bail'],
   // Performance optimizations
   images: {
     unoptimized: process.env.OPENNEXT ? true : false,
