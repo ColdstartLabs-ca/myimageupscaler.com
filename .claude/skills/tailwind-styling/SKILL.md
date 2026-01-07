@@ -101,8 +101,7 @@ Multiple styles available in CSS:
 
 ```typescript
 // Gradient buttons
-className = 'cta-gradient-subtle px-6 py-3 rounded-lg';
-className = 'cta-gradient-cyan px-6 py-3 rounded-lg';
+className = 'gradient-cta shine-effect px-6 py-3 rounded-lg';
 
 // 3D effect button
 className = 'cta-3d px-6 py-3 rounded-lg';
