@@ -43,7 +43,8 @@
     "stripe:setup": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts'",
     "stripe:setup:test": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts --test'",
     "stripe:setup:prod": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts --prod'",
-    "stripe:check": "./scripts/load-env.sh --print"
+    "stripe:check": "./scripts/load-env.sh --print",
+    "i18n:check": "tsx scripts/check-translations.ts"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.31.3",
