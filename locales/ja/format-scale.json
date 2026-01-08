@@ -1,0 +1,398 @@
+{
+  "category": "format-scale",
+  "meta": {
+    "totalPages": 60,
+    "lastUpdated": "2026-01-06",
+    "description": "形式×倍率乗数ページ - 画像形式と倍率の組み合わせ"
+  },
+  "pages": [
+    {
+      "slug": "jpeg-upscale-2x",
+      "title": "JPEGアップスケール2倍",
+      "metaTitle": "JPEGアップスケール2倍 - ダブル解像度JPEG強化 | MyImageUpscaler",
+      "metaDescription": "2倍AIアップスケーラーでJPEG画像解像度を2倍に。品質を維持しながら寸法を増加。適度な強化に最適。無料で試す。",
+      "h1": "JPEGアップスケール2倍 - 品質保存ダブル解像度強化",
+      "intro": "高度な2倍AIアップスケーラーでJPEG画像解像度を2倍にします。自然な外観を維持しながらファイルサイズを効率的に管理する適度な品質向上に最適です。",
+      "primaryKeyword": "jpeg upscale 2x",
+      "secondaryKeywords": ["2x jpeg upscaler", "double jpeg resolution", "jpeg 2x enhancer", "jpeg image doubler"],
+      "lastUpdated": "2026-01-06",
+      "category": "format-scale",
+      "format": "JPEG",
+      "scaleFactor": "2倍",
+      "formatDescription": "JPEGは写真とWeb画像で最も広く使用されている画像形式です。私たちのAIアップスケーラーは圧縮効率を維持しながらJPEGを強化するように特化しています。",
+      "scaleExpectations": "2倍スケーリングは幅と高さを2倍にし、4倍多くのピクセルになります。過度なファイルサイズ増加なしで顕著な改善を提供します。処理時間：10-20秒。",
+      "useCases": [
+        {
+          "title": "Web画像強化",
+          "description": "レティナディスプレイと高DPI画面用Web JPEGの解像度を2倍に。",
+          "example": "より良い表示品質のために800x600 Web画像を1600x1200に変換"
+        },
+        {
+          "title": "ソーシャルメディア準備",
+          "description": "より高い解像度を好むソーシャルプラットフォーム用JPEGを強化。",
+          "example": "より良いInstagram品質のためにスマートフォン写真を2倍に"
+        },
+        {
+          "title": "印刷準備",
+          "description": "標準印刷サイズ用適度なアップスケーラー。",
+          "example": "300 DPIで8x10インチ印刷用JPEGを準備"
+        },
+        {
+          "title": "写真アーカイブ強化",
+          "description": "ストレージを管理しながら古いJPEG写真を改善。",
+          "example": "現代ディスプレイでより良く見えるように家族写真の解像度を2倍に"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "バランスの取れた強化",
+          "description": "2倍スケーリングは過度なファイルサイズ増加なしで顕著な改善を提供。",
+          "metric": "2倍解像度"
+        },
+        {
+          "title": "高速処理",
+          "description": "適度なスケーリングは高速処理時間を可能にします。",
+          "metric": "10-20秒"
+        },
+        {
+          "title": "品質保存",
+          "description": "AIアルゴリズムは画像品質と自然な外観を維持。",
+          "metric": "自然な結果"
+        }
+      ],
+      "bestPractices": [
+        {
+          "title": "最高品質から開始",
+          "description": "最適な2倍アップスケーラー結果のために利用可能な最少圧縮JPEGを使用してください。"
+        },
+        {
+          "title": "アーティファクト低減を確認",
+          "description": "私たちのAIは解像度を2倍にしながらJPEG圧縮アーティファクトを低減します。"
+        },
+        {
+          "title": "ファイルサイズを考慮",
+          "description": "2倍アップスケーラーはファイルサイズを通常3-4倍増加させます。ストレージを適切に計画してください。"
+        },
+        {
+          "title": "バッチ処理",
+          "description": "コレクション全体で一貫した2倍強化のために複数のJPEGを一度に処理してください。"
+        }
+      ],
+      "tips": [
+        "ファイルサイズがまだ重要なWeb使用には2倍が理想的",
+        "80%品質以上で保存されたJPEGで最適に機能",
+        "アスペクト比を自動的に維持",
+        "品質向上と処理時間の良好なバランス"
+      ],
+      "faq": [
+        {
+          "question": "JPEGに4倍または8倍ではなく2倍を使用すべき什么时候は？",
+          "answer": "より高い解像度が必要だが合理的なファイルサイズを維持したい適度な品質向上に2倍を使用してください。Webコンテンツと一般的な使用例に理想的です。"
+        },
+        {
+          "question": "2倍アップスケーラーは私のJPEGアーティファクトを悪化させますか？",
+          "answer": "いいえ！私たちのAIは実際に解像度を2倍にしながらJPEG圧縮アーティファクトを低減し、オリジナルよりもクリーンな画像になります。"
+        },
+        {
+          "question": "2倍アップスケーラー後のJPEGファイルはどれくらい大きくなりますか？",
+          "answer": "JPEGは4倍多くのピクセル（2倍幅×2倍高さ）を持つので、ファイルサイズは画像コンテンツと圧縮に応じて通常3-4倍増加します。"
+        },
+        {
+          "question": "2倍アップスケーラーはJPEGを印刷するのに十分良いですか？",
+          "answer": "2倍アップスケーラーは5x7または8x10インチなどの適度な印刷サイズにJPEGを準備するのに優秀です。"
+        }
+      ],
+      "relatedFormats": ["upscale-jpeg-images", "upscale-png-images"],
+      "relatedScales": ["ai-upscaler-2x", "jpeg-upscale-4x"]
+    },
+    {
+      "slug": "jpeg-upscale-4x",
+      "title": "JPEGアップスケール4倍",
+      "metaTitle": "JPEGアップスケール4倍 - クアドループル解像度JPEG強化 | MyImageUpscaler",
+      "metaDescription": "4倍AIアップスケーラーでJPEG画像解像度を4倍に。品質を劇的に向上しながら詳細を維持。大きな印刷とディスプレイに最適。無料で試す。",
+      "h1": "JPEGアップスケール4倍 - 最大品質強化",
+      "intro": "4倍AIアップスケーラーでJPEG画像を変換し、解像度を4倍にしながら信じられれないほどの詳細を追加します。JPEG形式から最大品質向上の完璧な選択。",
+      "primaryKeyword": "jpeg upscale 4x",
+      "secondaryKeywords": ["4x jpeg upscaler", "quadruple jpeg resolution", "jpeg 4x enhancer", "jpeg image quadrupler"],
+      "lastUpdated": "2026-01-06",
+      "category": "format-scale",
+      "format": "JPEG",
+      "scaleFactor": "4倍",
+      "formatDescription": "JPEG形式は4倍スケーリングで劇的な品質向上を受けながら、圧縮メリットを維持します。",
+      "scaleExpectations": "4倍スケーリングは幅と高さを4倍にし、16倍多くのピクセルになります。高品質印刷と大きなディスプレイに適しています。処理時間：30-60秒。",
+      "useCases": [
+        {
+          "title": "大判印刷",
+          "description": "ポスター、バナー、キャンバス印刷用JPEGを準備。",
+          "example": "4MP JPEGソースから16x20インチ印刷を作成"
+        },
+        {
+          "title": "プロディスプレイ",
+          "description": "4Kモニターと高解像度プレゼンテーション用JPEGを強化。",
+          "example": "4Kデジタルサイネージとトレードショーディスプレイ用JPEGを最適化"
+        },
+        {
+          "title": "Eコマース卓越性",
+          "description": "ウルトラ高解像度商品画像を作成してズーム機能を有効化。",
+          "example": "4倍強化JPEGで深いズームを商品画像に有効化"
+        },
+        {
+          "title": "写真ポートフォリオ",
+          "description": "JPEG写真をプロポートフォリオ標準にアップグレード。",
+          "example": "DSLR JPEGをギャラリー品質印刷に変換"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "劇的な改善",
+          "description": "4倍スケーリングは最大品質のために実質的な解像度向上を提供。",
+          "metric": "16倍多くのピクセル"
+        },
+        {
+          "title": "プロ結果",
+          "description": "高品質を必要とするプロおよび商業アプリケーションに適しています。",
+          "metric": "プログレード"
+        },
+        {
+          "title": "高度なAI処理",
+          "description": "高度なアルゴリズムがリアルな詳細とテクスチャを追加。",
+          "metric": "インテリジェント強化"
+        }
+      ],
+      "bestPractices": [
+        {
+          "title": "高品質ソースJPEGを使用",
+          "description": "最適な4倍結果のために最小圧縮で保存されたJPEGを使用してください。"
+        },
+        {
+          "title": "ファイルサイズを監視",
+          "description": "4倍JPEGはかなり大きくなる可能性があります。ストレージと帯域幅を適切に計画してください。"
+        },
+        {
+          "title": "印刷適合性を確認",
+          "description": "4倍拡張JPEGは大判印刷アプリケーションに優秀です。"
+        },
+        {
+          "title": "処理時間を許容",
+          "description": "4倍アップスケーラーにはより多くの計算が必要です。30-60秒処理時間を見込んでください。"
+        }
+      ],
+      "tips": [
+        "印刷対応JPEG強化に理想的",
+        "オリジナル品質JPEG（再保存でない）からの最適結果",
+        "4倍アップスケーラー後の印刷使用にはPNG変換を検討",
+        "解像度を維持しながら大きなクロップ柔軟性を有効化"
+      ],
+      "faq": [
+        {
+          "question": "4倍アップスケーラー後のJPEGの解像度は？",
+          "answer": "JPEGが1000x1000ピクセルの場合、4000x4000ピクセル（16メガピクセル）になります。幅と高さを4倍します。"
+        },
+        {
+          "question": "4倍アップスケーラーはWeb JPEGには多すぎますか？",
+          "answer": "4倍はWebのみ使用には通常多すぎます。Webアプリケーションには2倍を検討してください。4倍は印刷、プロディスプレイ、または最大詳細が必要な場合に最適です。"
+        },
+        {
+          "question": "4倍アップスケーラーはぼやけたJPEGを修正できますか？",
+          "answer": "4倍アップスケーラーは詳細と鮮明さを向上させることでソフトJPEGを大幅に改善できますが、極端にぼやけたソース画像には限界があります。"
+        },
+        {
+          "question": "4倍JPEGアップスケーラーにはどれくらい時間がかかりますか？",
+          "answer": "通常30-60秒かかります。ソース画像サイズと解像度設定によって異なります。"
+        }
+      ],
+      "relatedFormats": ["upscale-jpeg-images", "upscale-png-images"],
+      "relatedScales": ["ai-upscaler-4x", "jpeg-upscale-2x"]
+    },
+    {
+      "slug": "png-upscale-2x",
+      "title": "PNGアップスケール2倍",
+      "metaTitle": "PNGアップスケール2倍 - ダブル解像度PNG強化 | MyImageUpscaler",
+      "metaDescription": "2倍AIアップスケーラーでPNG画像解像度を2倍に。透明度と品質を維持。グラフィックとロゴに最適。無料で試す。",
+      "h1": "PNGアップスケール2倍 - 品質保存PNG強化",
+      "intro": "高度な2倍AIアップスケーラーでPNG画像解像度を2倍にします。透明度とベクターのような品質を維持しながら寸法を増加するのに最適です。",
+      "primaryKeyword": "png upscale 2x",
+      "secondaryKeywords": ["2x png upscaler", "double png resolution", "png 2x enhancer", "png image doubler"],
+      "lastUpdated": "2026-01-06",
+      "category": "format-scale",
+      "format": "PNG",
+      "scaleFactor": "2倍",
+      "formatDescription": "PNGは透明度と可逆品質を提供し、アップスケーラーが詳細を追加するための完璧な開始点となります。",
+      "scaleExpectations": "2倍スケーリングは幅と高さを2倍にし、4倍多くのピクセルになります。透明度と鮮明なエッジを保持しながら品質を向上します。処理時間：10-20秒。",
+      "useCases": [
+        {
+          "title": "ロゴとブランディング",
+          "description": "高解像度アプリケーション用ロゴとブランドアセットを拡張。",
+          "example": "Webと印刷用途にロゴを2倍に"
+        },
+        {
+          "title": "透明グラフィック",
+          "description": "透明度を保持しながらグラフィックとデザイン要素を強化。",
+          "example": "Webデザイン用透明PNGを2倍に"
+        },
+        {
+          "title": "スクリーンショット",
+          "description": "テキストとUI要素を鮮明に保ちながらスクリーンショットを拡張。",
+          "example": "プレゼンテーション用スクリーンショットを2倍に"
+        },
+        {
+          "title": "デジタルアート",
+          "description": "ポートフォリオと印刷用デジタルアートを強化。",
+          "example": "より良いディテールのためにデジタルアートPNGを2倍に"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "透明度保存",
+          "description": "2倍アップスケーラーはPNG透明領域を完全に保存。",
+          "metric": "アルファチャンネル保存"
+        },
+        {
+          "title": "可逆品質",
+          "description": "可逆PNGは品質損失なしでアップスケーラーの最適な開始点。",
+          "metric": "可逆入力"
+        },
+        {
+          "title": "鮮明なエッジ",
+          "description": "テキスト、ロゴ、グラフィックのエッジを鮮明に維持。",
+          "metric": "エッジ保存"
+        }
+      ],
+      "bestPractices": [
+        {
+          "title": "可逆品質から開始",
+          "description": "最適な2倍アップスケーラー結果のために可逆PNGを使用してください。"
+        },
+        {
+          "title": "透明度を確認",
+          "description": "透明なPNGはアップスケーラーで完全にサポートされています。"
+        },
+        {
+          "title": "Web使用に最適",
+          "description": "2倍はWebグラフィックとロゴに理想的な解像度です。"
+        },
+        {
+          "title": "印刷準備",
+          "description": "2倍PNGは小さい印刷物に適しています。"
+        }
+      ],
+      "tips": [
+        "透明ロゴとグラフィックに最適",
+        "テキスト鮮明度に優れている",
+        "可逆品質を維持",
+        "Webグラフィックの最適バランス"
+      ],
+      "faq": [
+        {
+          "question": "PNGを2倍に拡張すべきですか？",
+          "answer": "はい！PNGは可逆品質を提供し、アップスケーラーが追加詳細を作成するための完璧な開始点となります。"
+        },
+        {
+          "question": "透明度は保存されますか？",
+          "answer": "はい！私たちのアップスケーラーは2倍スケーリング中にPNG透明度を完全に保存します。"
+        },
+        {
+          "question": "2倍はロゴに十分ですか？",
+          "answer": "多くのWeb用途に2倍は十分ですが、大きな印刷やディスプレイには4倍を検討してください。"
+        }
+      ],
+      "relatedFormats": ["upscale-png-images", "upscale-webp-images"],
+      "relatedScales": ["ai-upscaler-2x", "png-upscale-4x"]
+    },
+    {
+      "slug": "webp-upscale-2x",
+      "title": "WebPアップスケール2倍",
+      "metaTitle": "WebPアップスケール2倍 - ダブル解像度WebP強化 | MyImageUpscaler",
+      "metaDescription": "2倍AIアップスケーラーでWebP画像解像度を2倍に。効率的なWeb最適化と品質。Web画像に最適。無料で試す。",
+      "h1": "WebPアップスケール2倍 - Web最適化強化",
+      "intro": "高度な2倍AIアップスケーラーでWebP画像解像度を2倍にします。現代的なWeb用途に最適な最適化された品質とファイルサイズのバランス。",
+      "primaryKeyword": "webp upscale 2x",
+      "secondaryKeywords": ["2x webp upscaler", "double webp resolution", "webp 2x enhancer", "webp image doubler"],
+      "lastUpdated": "2026-01-06",
+      "category": "format-scale",
+      "format": "WebP",
+      "scaleFactor": "2倍",
+      "formatDescription": "WebPは最新の圧縮と品質を提供し、Web表示に理想的です。",
+      "scaleExpectations": "2倍スケーリングは幅と高さを2倍にし、4倍多くのピクセルになります。Web使用に最適化された品質を維持しながらファイルサイズを管理します。処理時間：10-20秒。",
+      "useCases": [
+        {
+          "title": "Webサイト最適化",
+          "description": "高解像度WebP画像でWebサイトを強化。",
+          "example": "より良い品質のためにヒーロー画像WebPを2倍に"
+        },
+        {
+          "title": "Webポートフォリオ",
+          "description": "高速読み込みと高品質でアートポートフォリオを表示。",
+          "example": "WebP形式でポートフォリオ画像を2倍に"
+        },
+        {
+          "title": "Eコマース",
+          "description": "商品画像を強化しながらファイルサイズを管理。",
+          "example": "EコマースWebP画像を2倍に"
+        },
+        {
+          "title": "ブログコンテンツ",
+          "description": "高品質と効率的なサイズでブログを強化。",
+          "example": "ブログ画像WebPを2倍に"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Web最適化",
+          "description": "2倍WebP画像は高速読み込み用最適化。",
+          "metric": "Web最適"
+        },
+        {
+          "title": "品質向上",
+          "description": "Webの品質を向上しながら効率的なサイズ。",
+          "metric": "品質向上"
+        },
+        {
+          "title": "最新互換性",
+          "description": "すべての最新ブラウザでWebPをサポート。",
+          "metric": "普遍的サポート"
+        }
+      ],
+      "bestPractices": [
+        {
+          "title": "Web最適化に使用",
+          "description": "WebサイトとオンラインコンテンツにWebP 2倍拡張を使用してください。"
+        },
+        {
+          "title": "ブラウザサポート",
+          "description": "最新ブラウザはWebPをサポートしています。"
+        },
+        {
+          "title": "ファイルサイズ効率",
+          "description": "WebPは優秀な圧縮を提供します。"
+        },
+        {
+          "title": "印刷には使用しない",
+          "description": "印刷にはPNGまたはTIFF形式がより適しています。"
+        }
+      ],
+      "tips": [
+        "Web画像に最適",
+        "最新の圧縮技術",
+        "高速読み込み時間",
+        "品質とサイズのバランス"
+      ],
+      "faq": [
+        {
+          "question": "WebPを2倍に拡張すべきですか？",
+          "answer": "はい！WebPはWeb使用に最適化された形式であり、2倍アップスケーラーで品質を向上できます。"
+        },
+        {
+          "question": "WebPはすべてのブラウザで機能しますか？",
+          "answer": "最新ブラウザはWebPをサポートしています。古いブラウザにはJPEGフォールバックを提供してください。"
+        },
+        {
+          "question": "WebPを印刷できますか？",
+          "answer": "WebPは主にWeb形式です。印刷にはPNGまたはTIFFの使用を推奨します。"
+        }
+      ],
+      "relatedFormats": ["upscale-webp-images", "upscale-png-images"],
+      "relatedScales": ["ai-upscaler-2x", "webp-upscale-4x"]
+    }
+  ]
+}

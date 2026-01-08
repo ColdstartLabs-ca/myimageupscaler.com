@@ -1,5 +1,5 @@
 {
-  "category": "platform-format",
+  "category": "formato-plataforma",
   "pages": [
     {
       "slug": "midjourney-upscaler-png",
@@ -10,13 +10,14 @@
       "intro": "Mejora tus exportaciones PNG de Midjourney a impresionante alta resolución preservando el estilo artístico único y cualquier transparencia.",
       "primaryKeyword": "escalador de midjourney png",
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Midjourney",
       "format": "PNG"
     }
   ],
   "meta": {
     "totalPages": 43,
-    "lastUpdated": "2026-01-06"
+    "lastUpdated": "2026-01-06",
+    "description": "Páginas multiplicadoras de Plataforma × Formato - combinaciones de plataformas de IA con formatos de exportación"
   }
 }

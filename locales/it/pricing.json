@@ -1,60 +1,60 @@
 {
   "page": {
-    "title": "Simple, Transparent Pricing",
-    "subtitle": "Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover."
+    "title": "Prezzi Semplici e Trasparenti",
+    "subtitle": "Scegli piano abbonamento adatto alle tue esigenze. Ottieni crediti mensili con rollover automatico."
   },
   "subscription": {
-    "title": "Choose Your Plan",
-    "subtitle": "Get credits every month with our subscription plans. Cancel anytime."
+    "title": "Scegli Tuo Piano",
+    "subtitle": "Ottieni crediti ogni mese con nostri piani abbonamento. Cancella in qualsiasi momento."
   },
   "currentBalance": {
-    "title": "Your current balance",
-    "credits": "credits",
-    "activeSubscription": "Active subscription"
+    "title": "Tuo saldo attuale",
+    "credits": "crediti",
+    "activeSubscription": "abbonamento attivo"
   },
   "scheduledChange": {
-    "title": "Scheduled Plan Change",
-    "cancel": "Cancel",
-    "on": "on"
+    "title": "Cambio Piano Programmato",
+    "cancel": "Cancella",
+    "on": "il"
   },
-  "configurationWarning": "Stripe Price IDs are not configured. Add them to your .env file to enable purchases.",
+  "configurationWarning": "Stripe Price IDs non sono configurati. Aggiungili al tuo file .env per abilitare acquisti.",
   "creditPacks": {
-    "title": "Need Credits Without a Subscription?",
-    "subtitle": "One-time credit packs that never expire. Perfect for occasional projects.",
-    "valueComparison": "Value Comparison:",
-    "valueComparisonText": "Subscriptions offer 11-58% cheaper credits for regular users",
-    "comparePlans": "Compare subscription plans"
+    "title": "Ti Servono Crediti Senza Abbonamento?",
+    "subtitle": "Pacchetti crediti una tantum che non scadono mai. Perfetto per progetti occasionali.",
+    "valueComparison": "Confronto Valore:",
+    "valueComparisonText": "Gli abbonamenti offrono crediti 11-58% più economici per utenti regolari",
+    "comparePlans": "Confronta piani abbonamento"
   },
   "faq": {
-    "title": "Frequently Asked Questions",
+    "title": "Domande Frequenti",
     "creditsUsedFor": {
-      "question": "What are credits used for?",
-      "answer": "Credits are used for image processing actions. Each image processed consumes a certain number of credits based on the upscaling factor and features used."
+      "question": "A cosa servono i crediti?",
+      "answer": "I crediti sono usati per azioni elaborazione immagini. Ogni immagine elaborata consuma un certo numero di crediti basato su fattore upscaling e funzionalità usate."
     },
     "creditsExpire": {
-      "question": "Do credits expire?",
-      "answer": "Subscription credits roll over month-to-month up to your plan's maximum limit as long as your subscription is active."
+      "question": "I crediti scadono?",
+      "answer": "I crediti abbonamento si accumulano mese per mese fino a limite massimo tuo piano finché abbonamento è attivo."
     },
     "batchProcessing": {
-      "question": "What is batch processing?",
-      "answer": "Batch processing allows you to upload and process multiple images at once. Free users can process 1 image at a time, while paid plans support batch processing of up to 10, 50, or 500 images simultaneously depending on your plan."
+      "question": "Cos'è elaborazione batch?",
+      "answer": "Elaborazione batch permette di caricare ed elaborare più immagini contemporaneamente. Utenti gratuiti possono elaborare 1 immagine alla volta, mentre piani a pagamento supportano elaborazione batch fino a 10, 50 o 500 immagini simultaneamente a seconda tuo piano."
     },
     "cancelSubscription": {
-      "question": "Can I cancel my subscription anytime?",
-      "answer": "Yes! You can cancel your subscription at any time. You'll continue to have access until the end of your billing period, and any remaining credits will stay in your account."
+      "question": "Posso cancellare abbonamento in qualsiasi momento?",
+      "answer": "Sì! Puoi cancellare abbonamento in qualsiasi momento. Continuerai ad avere accesso fino alla fine tuo periodo fatturazione e eventuali crediti rimanenti rimarranno account."
     },
     "paymentMethods": {
-      "question": "What payment methods do you accept?",
-      "answer": "We accept all major credit cards (Visa, Mastercard, American Express) and various other payment methods through Stripe."
+      "question": "Quali metodi pagamento accettate?",
+      "answer": "Accettiamo tutte principali carte di credito (Visa, Mastercard, American Express) e vari altri metodi pagamento tramite Stripe."
     },
     "freePlan": {
-      "question": "Is there a free plan?",
-      "answer": "Yes! Free users get initial credits to try the service. However, batch processing and advanced features require a paid subscription. Free users can process one image at a time."
+      "question": "C'è un piano gratuito?",
+      "answer": "Sì! Utenti gratuiti ricevono crediti iniziali per provare servizio. Tuttavia, elaborazione batch e funzionalità avanzate richiedono abbonamento a pagamento. Utenti gratuiti possono elaborare un'immagine alla volta."
     }
   },
   "customPlan": {
-    "title": "Need a custom plan?",
-    "description": "Contact us for enterprise pricing, bulk discounts, or custom integration requirements.",
-    "contactSales": "Contact Sales"
+    "title": "Ti serve un piano personalizzato?",
+    "description": "Contattaci per pricing enterprise, sconti bulk o requisiti integrazione personalizzata.",
+    "contactSales": "Contatta Vendite"
   }
 }

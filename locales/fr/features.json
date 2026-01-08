@@ -1,37 +1,41 @@
 {
   "page": {
-    "title": "Powerful Features for",
-    "titleHighlight": "Professional Results",
-    "subtitle": "Everything you need to enhance your images with cutting-edge AI technology. From text preservation to batch processing, we've got you covered."
+    "badge": "Fonctionnalités",
+    "title": "Amélioration d'images",
+    "titleHighlight": "Propulsé par l'IA",
+    "subtitle": "Technologie d'upscaling IA avancée pour des résultats professionnels avec préservation du texte."
   },
   "section": {
-    "badge": "AI Photo Enhancer Features",
-    "title": "Image quality enhancer that",
-    "titleHighlight": "preserves real detail",
-    "description": "No blur, no artifacts—just crisp, professional results. Our AI understands the difference between noise and detail."
+    "badge": "Fonctionnalités de l'améliorateur photo IA",
+    "title": "Améliorateur de qualité d'image qui",
+    "titleHighlight": "préserve les détails réels",
+    "description": "Pas de flou, pas d'artefacts—juste des résultats nets et professionnels. Notre IA comprend la différence entre le bruit et les détails."
   },
   "features": {
-    "textLogos": {
-      "name": "Text & Logos Stay Sharp",
-      "description": "Most AI image enhancers blur text. Ours keeps it crisp—even at 4x scale."
-    },
     "batchUpscale": {
-      "name": "Batch Upscale 500 Images",
-      "description": "Bulk photo enhancer. Upload hundreds of images, get 4K results in minutes."
+      "name": "Traitement par lots",
+      "description": "Améliorez plusieurs images à la fois pour gagner du temps"
     },
     "qualityTiers": {
-      "name": "6 Quality Tiers",
-      "description": "From 2x to 8x with 6 enhancement modes. Fine-tune results for photos, graphics, anime, and more."
+      "name": "Niveaux de qualité",
+      "description": "Choisissez entre 2x, 4x et 8x pour différents besoins de sortie"
     },
     "smartDetection": {
-      "name": "Smart AI Detection",
-      "description": "Automatically selects the best AI model for your image type. Portraits, landscapes, and more get specialized treatment."
+      "name": "Détection intelligente",
+      "description": "IA qui détecte automatiquement le type d'image et optimise le résultat"
+    },
+    "textLogos": {
+      "name": "Texte et logos",
+      "description": "Préservation spécialisée du texte pour des résultats nets et lisibles"
     }
   },
   "secondaryFeatures": {
-    "faceEnhancement": "Face Enhancement",
-    "secureProcessing": "Secure Processing",
-    "fastProcessing": "Fast Processing",
-    "highAvailability": "High Availability"
+    "faceEnhancement": "Amélioration des visages",
+    "secureProcessing": "Traitement sécurisé",
+    "fastProcessing": "Traitement rapide",
+    "highAvailability": "Haute disponibilité"
+  },
+  "meta": {
+    "lastUpdated": "2025-12-19T00:00:00Z"
   }
 }

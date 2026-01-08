@@ -1,31 +1,31 @@
 {
   "page": {
-    "title": "How it",
-    "titleHighlight": "Works",
-    "subtitle": "Transform your workflow in three simple steps. No complex settings, just professional results every time."
+    "title": "Como",
+    "titleHighlight": "Funciona",
+    "subtitle": "Transforme seu fluxo de trabalho em três passos simples. Sem configurações complexas, apenas resultados profissionais todas as vezes."
   },
   "section": {
-    "badge": "No Learning Curve",
-    "title": "Skip Photoshop.",
-    "titleHighlight": "Get results in 30 seconds.",
-    "description": "Professional image enhancement in three simple steps. No complex software, no learning curve—just drag, drop, and get results."
+    "badge": "Sem Curva de Aprendizado",
+    "title": "Esqueça o Photoshop.",
+    "titleHighlight": "Obtenha resultados em 30 segundos.",
+    "description": "Aprimoramento profissional de imagem em três passos simples. Sem software complexo, sem curva de aprendizado—apenas arraste, solte e obtenha resultados."
   },
   "steps": {
     "upload": {
-      "name": "Upload",
-      "description": "Drop that blurry image you've been avoiding. No complex settings—just drag, drop, and go."
+      "name": "Carregar",
+      "description": "Solte aquela imagem borrada que você vem evitando. Sem configurações complexas—apenas arraste, solte e comece."
     },
     "enhancement": {
-      "name": "AI Enhancement",
-      "description": "Watch as AI reconstructs lost detail, sharpens edges, and fixes noise—all while keeping your text readable."
+      "name": "Aprimoramento com IA",
+      "description": "Assista enquanto a IA reconstrói detalhes perdidos, afia bordas e corrige ruído—tudo mantendo seu texto legível."
     },
     "download": {
-      "name": "Download & Use",
-      "description": "Get your crisp, professional result in under 30 seconds. Finally, images you're proud to publish."
+      "name": "Baixar e Usar",
+      "description": "Obtenha seu resultado nítido e profissional em menos de 30 segundos. Finalmente, imagens que você tem orgulho de publicar."
     }
   },
   "status": {
-    "systemOperational": "System Operational",
-    "nodesActive": "Global AI Nodes Active"
+    "systemOperational": "Sistema Operacional",
+    "nodesActive": "Nós de IA Globais Ativos"
   }
 }

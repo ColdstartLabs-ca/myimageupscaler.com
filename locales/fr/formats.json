@@ -1,607 +1,1096 @@
 {
-  "formats": {
-    "jpeg": {
-      "title": "Optimiseur JPEG - Compressez et améliorez vos JPEG",
-      "description": "Optimisez vos images JPEG gratuitement. Compressez sans perte de qualité visible, améliorez la netteté et convertissez vers d'autres formats.",
-      "keywords": "JPEG, JPG, optimiser, compresser, améliorer, outil gratuit",
-      "h1": "Outil JPEG Gratuit",
-      "h1_sub": "Compressez, améliorez et convertissez vos JPEG.",
-      "what_title": "Qu'est-ce que le format JPEG ?",
-      "what_content": "JPEG (Joint Photographic Experts Group) est le format d'image le plus utilisé pour les photos et le web. Il offre une excellente compression avec une bonne qualité, idéal pour partager et stocker des photographies.",
-      "features_title": "Pourquoi utiliser JPEG ?",
-      "features": [
-        "Excellent taux de compression pour les photos",
-        "Compatible avec tous les appareils et plateformes",
-        "Idéal pour le web et le partage",
-        "Supporte millions de couleurs",
-        "Tailles de fichier réduites"
+  "category": "formats",
+  "meta": {
+    "totalPages": 10,
+    "lastUpdated": "2025-12-19T00:00:00Z"
+  },
+  "pages": [
+    {
+      "slug": "upscale-jpeg-images",
+      "title": "Upscale JPEG Images",
+      "metaTitle": "Upscale JPEG Images to 4K - AI JPEG Enlarger | MyImageUpscaler",
+      "metaDescription": "Enhance JPEG image quality and resolution with AI. Upscale JPEGs to 4K without losing quality. Perfect for photos and web images. Try free.",
+      "h1": "Upscale JPEG Images - Enhance Quality & Resolution",
+      "intro": "Transform compressed JPEG images into high-resolution masterpieces with our AI-powered upscaling technology. Preserve quality while increasing size up to 8x.",
+      "primaryKeyword": "upscale jpeg images",
+      "secondaryKeywords": [
+        "jpeg upscaler",
+        "jpg upscaler",
+        "enhance jpeg quality",
+        "jpeg image enlarger"
       ],
-      "tools_title": "Outils JPEG disponibles",
-      "tools": [
-        "Compression intelligente sans perte de qualité visible",
-        "Amélioration de la netteté et des détails",
-        "Agrandissement jusqu'à 4x avec IA",
-        "Conversion vers PNG, WebP, TIFF",
-        "Optimisation pour le web",
-        "Correction des couleurs et exposition"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "JPEG",
+      "extension": "jpeg",
+      "description": "JPEG (Joint Photographic Experts Group) is the most widely used image format for photography and web images. Our AI upscaler specializes in enhancing JPEGs while maintaining compression efficiency.",
+      "characteristics": [
+        {
+          "title": "Lossy Compression",
+          "description": "JPEGs use lossy compression which can cause artifacts. Our AI removes compression artifacts while upscaling."
+        },
+        {
+          "title": "24-bit Color",
+          "description": "Supports up to 16.7 million colors, perfect for photographs and complex images."
+        },
+        {
+          "title": "Widely Compatible",
+          "description": "Universal support across all devices, browsers, and platforms."
+        },
+        {
+          "title": "Small File Size",
+          "description": "Efficient compression keeps file sizes manageable without sacrificing too much quality."
+        }
       ],
-      "when_use": "Quand utiliser JPEG",
-      "when_use_cases": [
-        "Photographies numériques",
-        "Images pour sites web",
-        "Partage sur réseaux sociaux",
-        "Archivage photo",
-        "E-mail et messagerie"
+      "useCases": [
+        {
+          "title": "Photography Enhancement",
+          "description": "Upscale smartphone photos and digital camera shots for print or high-resolution displays.",
+          "example": "Transform a 2MP smartphone photo into a 16MP print-quality image"
+        },
+        {
+          "title": "Web Image Optimization",
+          "description": "Increase resolution of web images for retina displays and high-DPI screens.",
+          "example": "Convert 800x600 web images to 3200x2400 for 4K displays"
+        },
+        {
+          "title": "Print Preparation",
+          "description": "Prepare JPEG images for large format printing while maintaining quality.",
+          "example": "Upscale web-optimized images for poster or banner printing"
+        },
+        {
+          "title": "E-commerce Product Photos",
+          "description": "Enhance product images for zoom functionality and detailed viewing.",
+          "example": "Increase product image resolution for better customer experience"
+        }
       ],
-      "compression_tips": "Conseils de compression JPEG",
-      "tips": [
-        "Utilisez une qualité de 80-85% pour un bon équilibre",
-        "Évitez la recompression multiple (perte de qualité à chaque fois)",
-        "Pour le web, visez moins de 200 Ko par image",
-        "Redimensionnez avant de compresser pour de meilleurs résultats"
+      "bestPractices": [
+        {
+          "title": "Start with Highest Quality",
+          "description": "Use the least compressed JPEG available for best upscaling results."
+        },
+        {
+          "title": "Avoid Multiple Saves",
+          "description": "Don't resave JPEGs multiple times before upscaling to minimize quality loss."
+        },
+        {
+          "title": "Consider PNG Alternative",
+          "description": "For images with text or sharp edges, consider converting to PNG first."
+        },
+        {
+          "title": "Batch Processing",
+          "description": "Process multiple JPEGs at once for consistent results across photo collections."
+        }
       ],
-      "faq_title": "Questions fréquentes sur JPEG",
       "faq": [
         {
-          "q": "Quelle est la différence entre JPEG et JPG ?",
-          "a": "C'est le même format. JPG est l'ancienne extension limitée à 3 caractères des systèmes Windows. Les deux sont identiques."
+          "question": "Can JPEG upscaling fix compression artifacts?",
+          "answer": "Yes! Our AI is trained to recognize and remove JPEG compression artifacts while adding new detail during upscaling. The result is a cleaner, higher-quality image."
         },
         {
-          "q": "JPEG est-il un format avec perte ?",
-          "a": "Oui, JPEG utilise une compression avec perte, mais notre IA minimise la perte de qualité visible."
+          "question": "What's the maximum JPEG file size I can upload?",
+          "answer": "You can upload JPEG files up to 25MB in size. For larger files, consider compressing first or splitting into multiple uploads."
         },
         {
-          "q": "Puis-je convertir JPEG en PNG sans perte ?",
-          "a": "Vous pouvez convertir, mais la qualité originale de JPEG ne sera pas récupérée. PNG préserve les futures modifications sans perte supplémentaire."
+          "question": "Will upscaled JPEGs have more compression artifacts?",
+          "answer": "No. Our AI upscaler actually reduces existing compression artifacts while adding new detail. You'll get a cleaner image than the original."
         },
         {
-          "q": "Quelle qualité JPEG choisir ?",
-          "a": "80-85% est optimal pour le web. 90-100% pour l'archivage de haute qualité, mais les fichiers seront plus volumineux."
+          "question": "Should I upscale before or after converting JPEG to PNG?",
+          "answer": "It's usually better to upscale while in JPEG format, then convert to PNG if needed. This preserves the original color profile and reduces file size."
+        },
+        {
+          "question": "Can I upscale old, heavily compressed JPEGs?",
+          "answer": "Yes, our AI can work with heavily compressed JPEGs, though results vary based on the level of compression. Generally, you'll see significant improvement even with poor quality originals."
         }
+      ],
+      "relatedFormats": [
+        "upscale-png-images",
+        "upscale-webp-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "how-to-fix-blurry-photos"
       ]
     },
-    "png": {
-      "title": "Optimiseur PNG - Compressez et améliorez vos PNG",
-      "description": "Optimisez vos images PNG gratuitement. Réduisez la taille, améliorez la qualité et gérez la transparence.",
-      "keywords": "PNG, optimiser, compresser, transparence, outil gratuit",
-      "h1": "Outil PNG Gratuit",
-      "h1_sub": "Optimisez vos PNG avec transparence et qualité.",
-      "what_title": "Qu'est-ce que le format PNG ?",
-      "what_content": "PNG (Portable Network Graphics) est un format d'image avec perte qui supporte la transparence. Il est idéal pour les graphiques, logos, et images nécessitant un fond transparent.",
-      "features_title": "Avantages de PNG",
-      "features": [
-        "Compression sans perte de qualité",
-        "Support de la transparence (alpha channel)",
-        "Idéal pour graphiques et logos",
-        "Meilleur pour le texte et les lignes nettes",
-        "Large gamme de couleurs (PNG-24)"
+    {
+      "slug": "upscale-png-images",
+      "title": "Upscale PNG Images",
+      "metaTitle": "Upscale PNG Images with Transparency - AI PNG Enlarger | MyImageUpscaler",
+      "metaDescription": "Enhance PNG images while preserving transparency. Upscale PNGs to 4K resolution with AI. Perfect for logos, graphics, and transparent images.",
+      "h1": "Upscale PNG Images - Preserve Transparency & Quality",
+      "intro": "Enhance PNG images with perfect transparency preservation. Our AI maintains sharp edges and transparent backgrounds while increasing resolution up to 8x.",
+      "primaryKeyword": "upscale png images",
+      "secondaryKeywords": [
+        "png upscaler",
+        "transparent image upscaler",
+        "enhance png quality",
+        "png image enlarger"
       ],
-      "tools_title": "Outils PNG disponibles",
-      "tools": [
-        "Compression intelligente préservant la transparence",
-        "Conversion PNG en JPEG pour réduire la taille",
-        "Agrandissement PNG avec IA",
-        "Suppression d'arrière-plan",
-        "Conversion vers WebP moderne",
-        "Optimisation pour le web"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "PNG",
+      "extension": "png",
+      "description": "PNG (Portable Network Graphics) supports lossless compression and transparency. Perfect for logos, graphics, and images requiring transparent backgrounds.",
+      "characteristics": [
+        {
+          "title": "Lossless Compression",
+          "description": "PNG uses lossless compression, preserving every pixel perfectly."
+        },
+        {
+          "title": "Transparency Support",
+          "description": "Full alpha channel support for transparent and semi-transparent pixels."
+        },
+        {
+          "title": "Sharp Edges",
+          "description": "Excellent for text, logos, and graphics with sharp edges."
+        },
+        {
+          "title": "Limited Colors",
+          "description": "Supports both 8-bit (256 colors) and 24-bit (16.7M colors) modes."
+        }
       ],
-      "when_use": "Quand utiliser PNG",
-      "when_use_cases": [
-        "Logos et branding",
-        "Graphiques avec transparence",
-        "Captures d'écran",
-        "Images texte et diagrammes",
-        "Design UI/UX"
+      "useCases": [
+        {
+          "title": "Logo Enhancement",
+          "description": "Upscale company logos and brand assets for high-resolution displays and print.",
+          "example": "Transform a 200x200 logo into 1600x1600 for billboard use"
+        },
+        {
+          "title": "Transparent Graphics",
+          "description": "Enhance images with transparent backgrounds for web overlays and design work.",
+          "example": "Upscale product cutouts for e-commerce with perfect transparency"
+        },
+        {
+          "title": "Text and Icons",
+          "description": "Increase resolution of text-heavy graphics and UI icons.",
+          "example": "Enhance app icons for retina and 4K displays"
+        },
+        {
+          "title": "Screenshots",
+          "description": "Improve screenshot quality for documentation and presentations.",
+          "example": "Upscale UI screenshots for high-resolution presentation slides"
+        }
       ],
-      "vs_jpeg": "PNG vs JPEG",
-      "comparison": [
-        "PNG : sans perte, avec transparence, fichiers plus volumineux",
-        "JPEG : avec perte, pas de transparence, fichiers plus petits",
-        "Choisissez PNG pour les graphiques, JPEG pour les photos"
+      "bestPractices": [
+        {
+          "title": "Preserve Transparency",
+          "description": "Our AI maintains perfect alpha channel transparency during upscaling."
+        },
+        {
+          "title": "Optimize File Size",
+          "description": "Consider optimizing PNGs before upscaling for faster processing."
+        },
+        {
+          "title": "Use for Text/Graphics",
+          "description": "PNG is ideal for upscaling images with text, logos, or sharp edges."
+        },
+        {
+          "title": "Maintain Aspect Ratio",
+          "description": "Keep original proportions to avoid distortion of graphics and text."
+        }
       ],
-      "faq_title": "Questions fréquentes sur PNG",
       "faq": [
         {
-          "q": "Pourquoi mes fichiers PNG sont-ils si volumineux ?",
-          "a": "PNG est sans perte, donc les fichiers sont plus grands. Utilisez notre optimiseur pour réduire la taille sans perte de qualité."
+          "question": "Will transparency be preserved when upscaling PNGs?",
+          "answer": "Absolutely! Our AI maintains perfect alpha channel transparency. All transparent and semi-transparent areas remain exactly as intended."
         },
         {
-          "q": "La transparence sera-t-elle préservée lors de la conversion ?",
-          "a": "En PNG→Oui, mais en PNG→JPEG, la transparence sera remplacée par un fond blanc par défaut."
+          "question": "Is PNG better than JPEG for upscaling?",
+          "answer": "PNG is better for images with text, logos, or transparency. JPEG is better for photographs. Each format has its strengths for different types of images."
         },
         {
-          "q": "Quelle est la différence entre PNG-8 et PNG-24 ?",
-          "a": "PNG-8 supporte 256 couleurs (plus petit), PNG-24 supporte des millions de couleurs (meilleure qualité mais plus volumineux)."
+          "question": "Can I upscale animated PNGs?",
+          "answer": "Currently, we support static PNG images. For animated content, consider extracting frames and upscaling them individually."
         },
         {
-          "q": "Puis-je agrandir un PNG sans qualité ?",
-          "a": "Oui, notre IA peut agrandir les PNG tout en préservant la netteté et la transparence."
+          "question": "Why are PNG files larger than JPEGs?",
+          "answer": "PNG uses lossless compression which preserves all image data, resulting in larger files but perfect quality. JPEG uses lossy compression for smaller files."
+        },
+        {
+          "question": "Can text in PNGs be upscaled clearly?",
+          "answer": "Yes! Our AI is specifically trained to handle text and graphics in PNGs, maintaining sharp, readable text even at high magnification."
         }
+      ],
+      "relatedFormats": [
+        "upscale-jpeg-images",
+        "upscale-webp-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "how-to-fix-blurry-photos"
       ]
     },
-    "webp": {
-      "title": "Convertisseur et Optimiseur WebP",
-      "description": "Convertissez vos images en WebP pour des sites web plus rapides. Format moderne avec une compression supérieure.",
-      "keywords": "WebP, convertir, optimiser, format moderne, compression",
-      "h1": "Outil WebP Gratuit",
-      "h1_sub": "Convertissez et optimisez en WebP pour un web plus rapide.",
-      "what_title": "Qu'est-ce que le format WebP ?",
-      "what_content": "WebP est un format d'image moderne développé par Google. Il offre une compression supérieure à JPEG et PNG, avec ou sans perte, et supporte la transparence et l'animation.",
-      "features_title": "Avantages de WebP",
-      "features": [
-        "Compression 25-35% meilleure que JPEG",
-        "Support de la transparence comme PNG",
-        "Animations comme GIF",
-        "Compatible avec 95% des navigateurs",
-        "Chargement web plus rapide"
+    {
+      "slug": "upscale-webp-images",
+      "title": "Upscale WebP Images",
+      "metaTitle": "Upscale WebP Images - AI WebP Enlarger | MyImageUpscaler",
+      "metaDescription": "Enhance WebP image quality with AI upscaling. Increase resolution while maintaining WebP benefits. Fast, free, and high-quality WebP enhancement.",
+      "h1": "Upscale WebP Images - Modern Format Enhancement",
+      "intro": "Enhance modern WebP images with our advanced AI upscaler. Enjoy the benefits of WebP's efficiency with increased resolution for better display quality.",
+      "primaryKeyword": "upscale webp images",
+      "secondaryKeywords": [
+        "webp upscaler",
+        "enhance webp quality",
+        "webp image enlarger",
+        "webp resolution booster"
       ],
-      "tools_title": "Outils WebP disponibles",
-      "tools": [
-        "Conversion JPEG/PNG en WebP",
-        "Compression WebP intelligente",
-        "Conversion WebP vers JPEG/PNG",
-        "Optimisation pour le web",
-        "Agrandissement WebP avec IA",
-        "Support animations WebP"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "WebP",
+      "extension": "webp",
+      "description": "WebP is Google's modern image format offering superior compression and quality. Perfect for web optimization with support for both lossy and lossless compression.",
+      "characteristics": [
+        {
+          "title": "Modern Compression",
+          "description": "Advanced compression algorithms provide better quality than JPEG at similar file sizes."
+        },
+        {
+          "title": "Dual Mode Support",
+          "description": "Supports both lossy (like JPEG) and lossless (like PNG) compression."
+        },
+        {
+          "title": "Transparency Support",
+          "description": "Alpha channel support for transparent images, even with lossy compression."
+        },
+        {
+          "title": "Animation Support",
+          "description": "Built-in support for animated images like GIFs but with better compression."
+        }
       ],
-      "when_use": "Quand utiliser WebP",
-      "when_use_cases": [
-        "Sites web et applications",
-        "Images responsive",
-        "Optimisation SEO (Core Web Vitals)",
-        "Réduction de la bande passante",
-        "Chargement mobile rapide"
+      "useCases": [
+        {
+          "title": "Web Optimization",
+          "description": "Upscale WebP images while maintaining web-friendly file sizes for faster loading.",
+          "example": "Enhance hero images for retina displays without increasing load time"
+        },
+        {
+          "title": "Responsive Images",
+          "description": "Create high-resolution versions of WebP images for responsive image sets.",
+          "example": "Generate 2x and 3x versions for responsive srcset attributes"
+        },
+        {
+          "title": "Performance Balance",
+          "description": "Maintain the performance benefits of WebP while improving image quality.",
+          "example": "Upscale product images for zoom functionality with optimized file sizes"
+        },
+        {
+          "title": "Progressive Enhancement",
+          "description": "Enhance WebP images for modern browsers that support the format.",
+          "example": "Create high-fidelity versions for cutting-edge web experiences"
+        }
       ],
-      "browser_support": "Compatibilité navigateur",
-      "support_note": "WebP est compatible avec Chrome, Firefox, Edge, Safari (depuis 2020). Pour les anciens navigateurs, prévoyez une alternative JPEG/PNG.",
-      "faq_title": "Questions fréquentes sur WebP",
+      "bestPractices": [
+        {
+          "title": "Check Browser Support",
+          "description": "Ensure your target audience supports WebP before using exclusively."
+        },
+        {
+          "title": "Maintain Efficiency",
+          "description": "Our AI preserves WebP's compression benefits while increasing resolution."
+        },
+        {
+          "title": "Use Appropriate Mode",
+          "description": "Choose lossless for graphics, lossy for photographs based on content type."
+        },
+        {
+          "title": "Consider Fallbacks",
+          "description": "Provide JPEG/PNG fallbacks for browsers that don't support WebP."
+        }
+      ],
       "faq": [
         {
-          "q": "Pourquoi utiliser WebP au lieu de JPEG ?",
-          "a": "WebP offre une compression 25-35% meilleure pour une qualité équivalente, ce qui signifie des sites plus rapides et moins de bande passante."
+          "question": "Is WebP better than JPEG for upscaling?",
+          "answer": "WebP often provides better quality at similar file sizes to JPEG. Our AI works excellently with WebP, making it a great choice for web images."
         },
         {
-          "q": "Est-ce que WebP supporte la transparence ?",
-          "a": "Oui, WebP supporte la transparence comme PNG, mais avec une meilleure compression."
+          "question": "Can I convert upscaled WebP to other formats?",
+          "answer": "Yes! After upscaling, you can download your enhanced image in WebP, JPEG, or PNG format based on your needs."
         },
         {
-          "q": "Puis-je convertir WebP vers JPEG ?",
-          "a": "Oui, notre outil convertit WebP vers JPEG ou PNG si vous avez besoin d'une compatibilité maximale."
+          "question": "Does WebP upscaling support transparency?",
+          "answer": "Absolutely! WebP supports alpha channel transparency, and our AI preserves it perfectly during upscaling."
         },
         {
-          "q": "Est-ce que WebP fonctionne sur tous les appareils ?",
-          "a": "WebP est compatible avec 95% des navigateurs modernes. Pour une compatibilité 100%, prévoyez une alternative."
+          "question": "Are WebP images good for print after upscaling?",
+          "answer": "While primarily a web format, upscaled WebP images can work for print, especially when converted to PNG for printing."
+        },
+        {
+          "question": "How does WebP compression affect upscaling quality?",
+          "answer": "WebP's advanced compression actually helps maintain quality during upscaling. Our AI can work effectively with both lossy and lossless WebP images."
         }
+      ],
+      "relatedFormats": [
+        "upscale-jpeg-images",
+        "upscale-png-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "how-to-fix-blurry-photos"
       ]
     },
-    "tiff": {
-      "title": "Convertisseur et Optimiseur TIFF",
-      "description": "Convertissez et optimisez vos images TIFF pour l'impression et l'archivage professionnel.",
-      "keywords": "TIFF, TIF, impression, haute qualité, archivage, format professionnel",
-      "h1": "Outil TIFF Gratuit",
-      "h1_sub": "Convertissez et optimisez vos TIFF pour impression.",
-      "what_title": "Qu'est-ce que le format TIFF ?",
-      "what_content": "TIFF (Tagged Image File Format) est un format d'image de haute qualité sans perte, utilisé principalement pour l'impression professionnelle, la photographie et l'archivage.",
-      "features_title": "Avantages de TIFF",
-      "features": [
-        "Qualité sans perte",
-        "Support de profils colorimétriques (CMYK, RGB)",
-        "Plusieurs couches et pages",
-        "Compression LZW sans perte",
-        "Standard de l'industrie de l'impression"
+    {
+      "slug": "upscale-heic-images",
+      "title": "Upscale HEIC Images",
+      "metaTitle": "Upscale HEIC Images - AI HEIC Enlarger | MyImageUpscaler",
+      "metaDescription": "Enhance HEIC image quality with AI upscaling. Upscale iPhone & iOS photos to 4K resolution without losing quality. Free HEIC enhancer.",
+      "h1": "Upscale HEIC Images - Enhance iPhone & iOS Photos",
+      "intro": "Transform your iPhone and iOS HEIC photos into stunning high-resolution images. Our AI upscaler works perfectly with Apple's HEIC format for quality enhancement.",
+      "primaryKeyword": "upscale heic images",
+      "secondaryKeywords": [
+        "heic upscaler",
+        "iphone photo upscaler",
+        "enhance heic quality",
+        "heic image enlarger",
+        "ios photo enhancer"
       ],
-      "tools_title": "Outils TIFF disponibles",
-      "tools": [
-        "Conversion TIFF vers JPEG pour le web",
-        "Compression TIFF intelligente",
-        "Agrandissement TIFF haute qualité",
-        "Conversion TIFF en PNG",
-        "Optimisation pour l'impression",
-        "Extraction de pages TIFF multipages"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "HEIC",
+      "extension": "heic",
+      "description": "HEIC (High Efficiency Image Container) is Apple's modern image format for iOS and macOS devices. Offers superior compression while maintaining excellent quality, making it perfect for iPhone photography.",
+      "characteristics": [
+        {
+          "title": "Apple's Format",
+          "description": "Native format for iPhone, iPad, and Mac since iOS 11, optimized for Apple devices."
+        },
+        {
+          "title": "Superior Compression",
+          "description": "HEIC provides 50% better compression than JPEG while maintaining the same quality."
+        },
+        {
+          "title": "Rich Metadata",
+          "description": "Supports extensive metadata including depth data, Live Photos, and HDR information."
+        },
+        {
+          "title": "Multiple Images",
+          "description": "Can store multiple image sizes and exposures in a single container."
+        }
       ],
-      "when_use": "Quand utiliser TIFF",
-      "when_use_cases": [
-        "Impression professionnelle",
-        "Photographie de haute qualité",
-        "Archivage à long terme",
-        "Documents numérisés importants",
-        "Publications et magazines"
+      "useCases": [
+        {
+          "title": "iPhone Photo Enhancement",
+          "description": "Upscale iPhone photos for printing or high-resolution display while maintaining Apple's quality.",
+          "example": "Transform a 12MP iPhone photo into a 48MP print-quality image"
+        },
+        {
+          "title": "iOS Photography",
+          "description": "Enhance iPad and iPod touch photos for professional use or large format printing.",
+          "example": "Upscale iOS screenshots and photos for presentations and marketing materials"
+        },
+        {
+          "title": "Print from Mobile",
+          "description": "Prepare iPhone photos for large format printing with AI-enhanced detail.",
+          "example": "Create poster-quality prints from smartphone HEIC images"
+        },
+        {
+          "title": "Cross-Platform Use",
+          "description": "Convert and upscale HEIC images for use on non-Apple platforms and devices.",
+          "example": "Enhance iPhone photos for use on Windows, Android, or web projects"
+        }
       ],
-      "vs_other": "TIFF vs JPEG/PNG",
-      "comparison": [
-        "TIFF : qualité maximale, fichiers volumineux, impression",
-        "JPEG : compression élevée, web, partage",
-        "PNG : transparence, graphiques, taille moyenne"
+      "bestPractices": [
+        {
+          "title": "Transfer Original Quality",
+          "description": "Use 'Keep Originals' setting when transferring from iPhone to preserve HEIC format."
+        },
+        {
+          "title": "Preserve Metadata",
+          "description": "Our AI maintains important EXIF data and metadata during the upscaling process."
+        },
+        {
+          "title": "Check Compatibility",
+          "description": "Convert HEIC to JPEG or PNG after upscaling for universal compatibility if needed."
+        },
+        {
+          "title": "Use High Efficiency",
+          "description": "Take advantage of HEIC's superior quality when upscaling for best results."
+        }
       ],
-      "faq_title": "Questions fréquentes sur TIFF",
       "faq": [
         {
-          "q": "Pourquoi TIFF est-il si volumineux ?",
-          "a": "TIFF est sans perte et stocke toutes les données de l'image, ce qui donne des fichiers volumineux mais une qualité maximale."
+          "question": "Why are my iPhone photos in HEIC format?",
+          "answer": "Apple switched to HEIC as the default format in iOS 11 because it offers better quality at half the file size of JPEG. Our AI upscaler works excellently with HEIC images."
         },
         {
-          "q": "Puis-je utiliser TIFF pour le web ?",
-          "a": "Non, TIFF n'est pas recommandé pour le web en raison de sa taille. Convertissez-le en JPEG ou WebP pour un usage en ligne."
+          "question": "Can I upscale HEIC photos from my iPhone?",
+          "answer": "Yes! Our AI upscaler fully supports HEIC format. Simply upload your iPhone photos directly from your device for enhancement."
         },
         {
-          "q": "TIFF supporte-t-il plusieurs pages ?",
-          "a": "Oui, TIFF peut stocker plusieurs pages dans un seul fichier, idéal pour les documents multipages."
+          "question": "Will I lose quality converting HEIC to JPEG?",
+          "answer": "When done after AI upscaling, the quality loss is minimal. Our AI enhances the image first, then you can convert without noticeable degradation."
         },
         {
-          "q": "Quelle compression TIFF utiliser ?",
-          "a": "LZW est recommandée pour une compression sans perte. JPEG dans TIFF peut être utilisé mais avec perte de qualité."
+          "question": "Is HEIC better than JPEG for upscaling?",
+          "answer": "HEIC often provides better starting quality due to superior compression technology. This gives our AI more detail to work with, potentially resulting in better upscaled images."
+        },
+        {
+          "question": "Can Windows and Android users open HEIC images?",
+          "answer": "Our upscaler works on all platforms. After upscaling, you can download in universal formats like JPEG or PNG for maximum compatibility."
+        },
+        {
+          "question": "Does upscaling preserve Live Photos and depth data?",
+          "answer": "Our AI focuses on enhancing the primary image. For best results with Live Photos, the enhanced image maintains excellent quality for the still photo component."
         }
+      ],
+      "relatedFormats": [
+        "upscale-jpeg-images",
+        "upscale-png-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "how-to-fix-blurry-photos"
       ]
     },
-    "bmp": {
-      "title": "Convertisseur BMP - Convertissez et optimisez vos BMP",
-      "description": "Convertissez vos images BMP en formats modernes comme JPEG, PNG ou WebP pour une meilleure compatibilité.",
-      "keywords": "BMP, bitmap, convertir, optimiser, format ancien",
-      "h1": "Convertisseur BMP Gratuit",
-      "h1_sub": "Convertissez BMP en formats modernes.",
-      "what_title": "Qu'est-ce que le format BMP ?",
-      "what_content": "BMP (Bitmap) est un format d'image ancien non compressé. Il offre une qualité maximale mais crée des fichiers très volumineux, ce qui le rend peu adapté au web.",
-      "features_title": "Caractéristiques de BMP",
-      "features": [
-        "Qualité sans perte",
-        "Pas de compression (fichiers volumineux)",
-        "Support de toutes les profondeurs de couleur",
-        "Compatible avec tous les systèmes Windows",
-        "Simple et universel"
+    {
+      "slug": "upscale-raw-images",
+      "title": "Upscale RAW Images",
+      "metaTitle": "Upscale RAW Images - AI RAW Photo Enlarger | MyImageUpscaler",
+      "metaDescription": "Enhance RAW photos with AI upscaling. Upscale DSLR and mirrorless RAW files to 4K+ resolution while preserving image quality. Perfect for professional photography.",
+      "h1": "Upscale RAW Images - Professional Photo Enhancement",
+      "intro": "Transform your professional RAW photos into stunning high-resolution images. Our AI upscaler preserves the exceptional quality and detail of RAW format files while increasing resolution up to 8x.",
+      "primaryKeyword": "upscale raw images",
+      "secondaryKeywords": [
+        "raw upscaler",
+        "dslr photo upscaler",
+        "enhance raw quality",
+        "raw image enlarger",
+        "professional photo upscaler"
       ],
-      "tools_title": "Outils BMP disponibles",
-      "tools": [
-        "Conversion BMP vers JPEG pour le web",
-        "Conversion BMP vers PNG avec transparence",
-        "Conversion BMP vers WebP moderne",
-        "Compression intelligente BMP",
-        "Agrandissement BMP avec IA",
-        "Optimisation de la taille"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "RAW",
+      "extension": "raw",
+      "description": "RAW format contains unprocessed image data directly from your camera sensor. Provides maximum quality and editing flexibility, making it ideal for professional photography and high-end upscaling.",
+      "characteristics": [
+        {
+          "title": "Unprocessed Data",
+          "description": "RAW files contain all data captured by the sensor, no in-camera processing applied."
+        },
+        {
+          "title": "Greater Bit Depth",
+          "description": "Typically 12-14 bits per channel vs 8 bits in JPEG, providing more color information."
+        },
+        {
+          "title": "Wider Color Gamut",
+          "description": "Captures more colors than standard formats, essential for professional work."
+        },
+        {
+          "title": "No Compression Artifacts",
+          "description": "Lossless or no compression means pristine image quality for AI enhancement."
+        }
       ],
-      "when_use": "Quand utiliser BMP",
-      "when_use_cases": [
-        "Applications Windows internes",
-        "Développement logiciel",
-        "Systèmes embarqués",
-        "Compatibilité legacy"
+      "useCases": [
+        {
+          "title": "Professional Photography",
+          "description": "Upscale DSLR and mirrorless RAW files for large format prints and exhibitions.",
+          "example": "Transform a 24MP RAW file into a 192MP image for billboard printing"
+        },
+        {
+          "title": "Stock Photography",
+          "description": "Increase resolution of RAW stock photos to meet higher licensing tier requirements.",
+          "example": "Upscale RAW images for premium stock photo collections"
+        },
+        {
+          "title": "Print Production",
+          "description": "Prepare RAW files for magazines, brochures, and high-quality print materials.",
+          "example": "Enhance RAW photos for full-page magazine advertisements"
+        },
+        {
+          "title": "Archival Enhancement",
+          "description": "Future-proof RAW images by creating higher-resolution versions for archival purposes.",
+          "example": "Upscale important RAW photos for permanent digital archives"
+        }
       ],
-      "why_convert": "Pourquoi convertir BMP ?",
-      "convert_reasons": [
-        "Les fichiers BMP sont trop volumineux pour le web",
-        "JPEG/PNG/WebP sont mieux compatibles",
-        "Réduction de l'espace de stockage de 90%+",
-        "Meilleure compatibilité avec les outils modernes",
-        "Chargement plus rapide"
+      "bestPractices": [
+        {
+          "title": "Shoot RAW",
+          "description": "Always capture in RAW when upscaling is planned for maximum quality potential."
+        },
+        {
+          "title": "Edit After Upscaling",
+          "description": "Perform AI upscaling first, then apply edits to the enhanced high-resolution file."
+        },
+        {
+          "title": "Maintain Color Profile",
+          "description": "Our AI preserves the wide color gamut and color accuracy of RAW files."
+        },
+        {
+          "title": "Convert for Final Use",
+          "description": "Convert to JPEG or PNG after upscaling for easier sharing and printing."
+        }
       ],
-      "faq_title": "Questions fréquentes sur BMP",
       "faq": [
         {
-          "q": "Pourquoi ne pas utiliser BMP pour le web ?",
-          "a": "BMP est non compressé, donc les fichiers sont énormes (10x+ plus gros que JPEG). Cela ralentit considérablement le chargement des pages."
+          "question": "Why upscale RAW instead of JPEG?",
+          "answer": "RAW files contain significantly more image data and color information than JPEGs. This gives our AI much more detail to work with, resulting in superior upscaling quality."
         },
         {
-          "q": "La conversion BMP vers JPEG perd-elle de la qualité ?",
-          "a": "Oui, JPEG est avec perte, mais notre IA minimise la perte visible. Pour une qualité sans perte, convertissez vers PNG."
+          "question": "What RAW formats are supported?",
+          "answer": "We support most common RAW formats including CR3, CR2, NEF, ARW, DNG, RAF, ORF, PEF, and others from major camera manufacturers."
         },
         {
-          "q": "BMP est-il encore utilisé ?",
-          "a": "Surtout dans des applications legacy et Windows internes. Pour un usage moderne, préférez JPEG, PNG ou WebP."
+          "question": "Will I lose RAW advantages after upscaling?",
+          "answer": "You can download in RAW-compatible formats or convert to JPEG/PNG. Our AI preserves the enhanced quality in whichever format you choose."
         },
         {
-          "q": "Puis-je convertir BMP en PNG ?",
-          "a": "Oui, et c'est recommandé pour préserver la qualité sans perte tout en réduisant la taille du fichier."
+          "question": "How large can RAW files be for upscaling?",
+          "answer": "We support RAW files up to 50MB. For larger files, consider exporting to a slightly compressed format first."
+        },
+        {
+          "question": "Is RAW upscaling worth it for print?",
+          "answer": "Absolutely. The additional data in RAW files combined with our AI upscaling produces exceptional print quality, especially for large format prints."
         }
+      ],
+      "relatedFormats": [
+        "upscale-jpeg-images",
+        "upscale-tiff-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "professional-photo-upscaling-guide"
       ]
     },
-    "gif": {
-      "title": "Créeur et Optimiseur GIF",
-      "description": "Créez et optimisez vos GIF animations. Réduisez la taille, ajustez la vitesse et convertissez vers des formats modernes.",
-      "keywords": "GIF, animation, optimiser, convertir, créer, outil gratuit",
-      "h1": "Outil GIF Gratuit",
-      "h1_sub": "Créez et optimisez vos GIF animations.",
-      "what_title": "Qu'est-ce que le format GIF ?",
-      "what_content": "GIF (Graphics Interchange Format) est un format d'image animé compressé. Il supporte 256 couleurs et des animations simples, largement utilisé pour les memes et animations courtes.",
-      "features_title": "Avantages de GIF",
-      "features": [
-        "Support de l'animation",
-        "Transparence basique",
-        "Universellement compatible",
-        "Idéal pour animations simples",
-        "256 couleurs suffisent pour graphiques"
+    {
+      "slug": "upscale-tiff-images",
+      "title": "Upscale TIFF Images",
+      "metaTitle": "Upscale TIFF Images - Lossless TIFF Enlarger | MyImageUpscaler",
+      "metaDescription": "Enhance TIFF images with AI upscaling. Upscale TIFF files without compression artifacts. Perfect for print and archival quality image enhancement.",
+      "h1": "Upscale TIFF Images - Lossless Quality Enhancement",
+      "intro": "Enhance TIFF images while maintaining their lossless quality. Our AI upscaler preserves every detail of your TIFF files while increasing resolution for print and archival purposes.",
+      "primaryKeyword": "upscale tiff images",
+      "secondaryKeywords": [
+        "tiff upscaler",
+        "lossless image upscaler",
+        "enhance tiff quality",
+        "tiff image enlarger",
+        "print photo upscaler"
       ],
-      "tools_title": "Outils GIF disponibles",
-      "tools": [
-        "Optimisation de la taille GIF",
-        "Ajustement de la vitesse d'animation",
-        "Conversion GIF vers vidéo (MP4)",
-        "Extraction d'images de GIF",
-        "Création de GIF à partir d'images",
-        "Conversion GIF vers WebP animé"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "TIFF",
+      "extension": "tiff",
+      "description": "TIFF (Tagged Image File Format) is a lossless format widely used in professional printing, publishing, and archival. Supports multiple layers and pages with excellent quality preservation.",
+      "characteristics": [
+        {
+          "title": "Lossless Compression",
+          "description": "TIFF supports lossless compression, ensuring no quality loss from compression artifacts."
+        },
+        {
+          "title": "High Bit Depth",
+          "description": "Supports up to 32-bit per channel for incredible color accuracy and detail."
+        },
+        {
+          "title": "Multi-Page Support",
+          "description": "Can store multiple images in a single file, useful for related image sets."
+        },
+        {
+          "title": "Print Industry Standard",
+          "description": "Widely used in professional printing and publishing industries."
+        }
       ],
-      "when_use": "Quand utiliser GIF",
-      "when_use_cases": [
-        "Animations simples et courtes",
-        "Mèmes internet",
-        "Logos animés",
-        "Illustrations animées",
-        "Interfaces utilisateur"
+      "useCases": [
+        {
+          "title": "Print Production",
+          "description": "Upscale TIFF images for magazines, books, and professional print materials.",
+          "example": "Enhance TIFF files for high-end brochure and catalog printing"
+        },
+        {
+          "title": "Archival Scanning",
+          "description": "Increase resolution of scanned documents and artwork while preserving quality.",
+          "example": "Upscale scanned artwork for museum-quality reproductions"
+        },
+        {
+          "title": "Document Enhancement",
+          "description": "Improve scanned document resolution for better readability and OCR accuracy.",
+          "example": "Enhance document scans for archival and legal purposes"
+        },
+        {
+          "title": "Graphic Design",
+          "description": "Upscale TIFF graphics and illustrations for large format reproduction.",
+          "example": "Transform design assets for billboard and banner printing"
+        }
       ],
-      "gif_vs_video": "GIF vs MP4/WebM",
-      "comparison": [
-        "GIF : 256 couleurs, fichiers volumineux, compatible partout",
-        "MP4 : millions de couleurs, compression 10x meilleure",
-        "WebP animé : meilleure qualité que GIF, compression similaire",
-        "Recommandation : Utilisez MP4 pour les longues animations, GIF pour les courtes"
+      "bestPractices": [
+        {
+          "title": "Use for Print",
+          "description": "TIFF is ideal for print work due to lossless quality and industry adoption."
+        },
+        {
+          "title": "Preserve Quality",
+          "description": "Our AI maintains TIFF's lossless quality characteristics during upscaling."
+        },
+        {
+          "title": "Consider File Size",
+          "description": "TIFF files can be very large; factor this into your storage and workflow planning."
+        },
+        {
+          "title": "Convert After Processing",
+          "description": "Consider converting to JPEG after upscaling for web use to reduce file size."
+        }
       ],
-      "faq_title": "Questions fréquentes sur GIF",
       "faq": [
         {
-          "q": "Pourquoi mes fichiers GIF sont-ils si volumineux ?",
-          "a": "GIF est un format ancien avec une compression limitée. Convertissez en MP4 ou WebP animé pour des fichiers 10x plus petits."
+          "question": "When should I use TIFF vs JPEG?",
+          "answer": "Use TIFF for professional print and archival work where quality is critical. Use JPEG for web and everyday use. Our AI works excellently with both formats."
         },
         {
-          "q": "Combien de couleurs un GIF peut-il avoir ?",
-          "a": "GIF est limité à 256 couleurs. Pour les photos et vidéos, utilisez MP4 qui supporte des millions de couleurs."
+          "question": "Is TIFF upscaling better quality than JPEG?",
+          "answer": "TIFF's lossless nature provides a better starting point for upscaling. However, our AI can produce excellent results from both formats when the source quality is good."
         },
         {
-          "q": "Puis-je convertir GIF en MP4 ?",
-          "a": "Oui, notre outil convertit les GIF en MP4 avec une réduction de taille de 90%+ pour une qualité équivalente ou meilleure."
+          "question": "Can I upscale multi-page TIFF files?",
+          "answer": "Currently, we support single-page TIFF images. For multi-page files, please extract individual pages first."
         },
         {
-          "q": "Quelle est la durée maximale d'un GIF ?",
-          "a": "Techniquement pas de limite, mais les GIF deviennent très volumineux. Pour plus de 10 secondes, préférez MP4."
+          "question": "Why are TIFF files so large?",
+          "answer": "TIFF uses lossless compression and often contains uncompressed image data, which maximizes quality but increases file size significantly."
+        },
+        {
+          "question": "Is TIFF suitable for web images after upscaling?",
+          "answer": "While possible, TIFF files are typically too large for web use. We recommend converting to JPEG or PNG after upscaling for web deployment."
         }
+      ],
+      "relatedFormats": [
+        "upscale-raw-images",
+        "upscale-png-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "print-preparation-guide"
       ]
     },
-    "svg": {
-      "title": "Optimiseur et Convertisseur SVG",
-      "description": "Optimisez et convertissez vos images SVG vectorielles. Réduisez la taille du code et améliorez les performances.",
-      "keywords": "SVG, vectoriel, optimiser, convertir, format vectoriel",
-      "h1": "Outil SVG Gratuit",
-      "h1_sub": "Optimisez et convertissez vos SVG.",
-      "what_title": "Qu'est-ce que le format SVG ?",
-      "what_content": "SVG (Scalable Vector Graphics) est un format d'image vectorielle basé sur XML. Contrairement aux images bitmap (JPEG, PNG), les SVG peuvent être agrandis à l'infini sans perte de qualité.",
-      "features_title": "Avantages de SVG",
-      "features": [
-        "Infinitely scalable without quality loss",
-        "Taille de fichier très petite",
-        "Éditable avec un éditeur de texte",
-        "Support d'animation et d'interactivité",
-        "Parfait pour le responsive design",
-        "SEO-friendly (texte sélectionnable)"
+    {
+      "slug": "upscale-bmp-images",
+      "title": "Upscale BMP Images",
+      "metaTitle": "Upscale BMP Images - AI Bitmap Enlarger | MyImageUpscaler",
+      "metaDescription": "Enhance BMP images with AI upscaling. Upscale bitmap files to higher resolution with quality preservation. Fast and free BMP enhancement tool.",
+      "h1": "Upscale BMP Images - Bitmap Quality Enhancement",
+      "intro": "Enhance your BMP (bitmap) images with advanced AI upscaling technology. Increase resolution while maintaining the lossless quality characteristics of the bitmap format.",
+      "primaryKeyword": "upscale bmp images",
+      "secondaryKeywords": [
+        "bmp upscaler",
+        "bitmap upscaler",
+        "enhance bmp quality",
+        "bmp image enlarger"
       ],
-      "tools_title": "Outils SVG disponibles",
-      "tools": [
-        "Optimisation du code SVG",
-        "Conversion SVG vers PNG/JPEG (rasterisation)",
-        "Minification SVG",
-        "Conversion de formats vers SVG",
-        "Nettoyage du SVG inutile",
-        "Optimisation des chemins et attributs"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "BMP",
+      "extension": "bmp",
+      "description": "BMP (Bitmap) is an uncompressed raster image format. Provides lossless quality but with large file sizes. Commonly used in Windows applications and legacy systems.",
+      "characteristics": [
+        {
+          "title": "Uncompressed Format",
+          "description": "BMP files are typically uncompressed, ensuring no quality loss from compression."
+        },
+        {
+          "title": "Simple Structure",
+          "description": "Straightforward file format makes it widely compatible across systems."
+        },
+        {
+          "title": "Large File Sizes",
+          "description": "No compression means significantly larger files compared to other formats."
+        },
+        {
+          "title": "Windows Native",
+          "description": "Natively supported by Windows and commonly used in Windows applications."
+        }
       ],
-      "when_use": "Quand utiliser SVG",
-      "when_use_cases": [
-        "Logos et icônes",
-        "Graphiques et diagrammes",
-        "Illustrations simples",
-        "Design responsive",
-        "Interfaces utilisateur",
-        "Animations web"
+      "useCases": [
+        {
+          "title": "Legacy Image Enhancement",
+          "description": "Upscale older BMP images from legacy software and systems.",
+          "example": "Enhance historical BMP images for modern display resolutions"
+        },
+        {
+          "title": "Windows Applications",
+          "description": "Improve BMP graphics used in Windows software and interfaces.",
+          "example": "Upscale application icons and UI assets for high-DPI displays"
+        },
+        {
+          "title": "Document Imaging",
+          "description": "Enhance scanned documents stored as BMP files.",
+          "example": "Improve BMP document scans for better readability and printing"
+        },
+        {
+          "title": "Simple Graphics",
+          "description": "Upscale simple graphics and illustrations that don't require complex formats.",
+          "example": "Enhance basic logos and icons for higher resolution use"
+        }
       ],
-      "optimization_tips": "Conseils d'optimisation SVG",
-      "tips": [
-        "Supprimez les métadonnées et commentaires inutiles",
-        "Utilisez des chemins simplifiés",
-        "Évitez les effets bitmap dans le SVG",
-        "Minifiez le code pour la production",
-        "Utilisez svgo pour une optimisation automatique"
+      "bestPractices": [
+        {
+          "title": "Consider Modern Formats",
+          "description": "After upscaling, consider converting to PNG or WebP for better file size efficiency."
+        },
+        {
+          "title": "Preserve Quality",
+          "description": "Our AI maintains BMP's lossless quality while increasing resolution."
+        },
+        {
+          "title": "Use for Compatibility",
+          "description": "BMP is useful when maximum compatibility with older systems is required."
+        },
+        {
+          "title": "Optimize After Upscaling",
+          "description": "Convert to more efficient formats after enhancement for storage and sharing."
+        }
       ],
-      "faq_title": "Questions fréquentes sur SVG",
       "faq": [
         {
-          "q": "Quand utiliser SVG au lieu de PNG ?",
-          "a": "Utilisez SVG pour les logos, icônes et graphiques simples qui doivent être redimensionnés. PNG est mieux pour les photos et images complexes."
+          "question": "Is BMP better quality than JPEG?",
+          "answer": "BMP is uncompressed while JPEG is compressed, so BMP technically has higher quality. However, our AI can produce excellent results from both formats."
         },
         {
-          "q": "Puis-je convertir SVG en PNG ?",
-          "a": "Oui, notre outil peut convertir (rasteriser) SVG en PNG à n'importe quelle résolution (2K, 4K, 8K)."
+          "question": "Why would I use BMP instead of PNG?",
+          "answer": "BMP is useful for legacy Windows compatibility. PNG is generally better for modern use due to better compression and transparency support."
         },
         {
-          "q": "L'optimisation SVG affecte-t-elle la qualité ?",
-          "a": "Non, l'optimisation nettoie simplement le code sans modifier l'apparence visuelle."
+          "question": "Can I convert BMP after upscaling?",
+          "answer": "Yes! After enhancing your BMP image, you can download it in BMP, JPEG, PNG, or WebP format based on your needs."
         },
         {
-          "q": "SVG est-il compatible avec tous les navigateurs ?",
-          "a": "Oui, SVG est compatible avec tous les navigateurs modernes depuis des années."
+          "question": "Are BMP files too large for practical use?",
+          "answer": "BMP files are large due to lack of compression. We recommend converting to PNG after upscaling for a better balance of quality and file size."
+        },
+        {
+          "question": "Does BMP upscaling preserve all image data?",
+          "answer": "Yes. Since BMP is uncompressed, our AI can work with all the original image data, potentially producing excellent upscaled results."
         }
+      ],
+      "relatedFormats": [
+        "upscale-png-images",
+        "upscale-jpeg-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "format-selection-guide"
       ]
     },
-    "heic": {
-      "title": "Convertisseur HEIC vers JPEG/PNG",
-      "description": "Convertissez vos photos HEIC d'iPhone en formats universels comme JPEG ou PNG pour une meilleure compatibilité.",
-      "keywords": "HEIC, HEIF, iPhone, convertir, JPEG, PNG, Apple",
-      "h1": "Convertisseur HEIC Gratuit",
-      "h1_sub": "Convertissez HEIC en JPEG/PNG facilement.",
-      "what_title": "Qu'est-ce que le format HEIC ?",
-      "what_content": "HEIC (High Efficiency Image Container) est le format par défaut des photos d'iPhone depuis iOS 11. Il offre une meilleure compression que JPEG mais n'est pas compatible avec tous les appareils.",
-      "features_title": "Avantages de HEIC",
-      "features": [
-        "Compression 50% meilleure que JPEG",
-        "Qualité d'image équivalente ou supérieure",
-        "Support de plusieurs images dans un fichier",
-        "Support de profondeurs de 16 bits",
-        "Format par défaut sur iPhone"
+    {
+      "slug": "upscale-svg-images",
+      "title": "Upscale SVG Images",
+      "metaTitle": "Upscale SVG Images - Vector to Raster Converter | MyImageUpscaler",
+      "metaDescription": "Convert and upscale SVG images to high-resolution raster formats. Perfect for print and high-DPI displays. Free SVG enhancement tool.",
+      "h1": "Upscale SVG Images - Vector to High-Resolution Raster",
+      "intro": "Convert your SVG (Scalable Vector Graphics) to stunning high-resolution raster images. Perfect for printing vector designs at any size without losing quality.",
+      "primaryKeyword": "upscale svg images",
+      "secondaryKeywords": [
+        "svg upscaler",
+        "vector to raster converter",
+        "svg to high resolution",
+        "svg image enlarger"
       ],
-      "limitations": "Limitations de HEIC",
-      "limitations_list": [
-        "Pas compatible avec Windows anciens",
-        "Certains logiciels ne le supportent pas",
-        "Difficile à partager avec Android",
-        "Moins compatible sur le web"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "SVG",
+      "extension": "svg",
+      "description": "SVG (Scalable Vector Graphics) is a vector format that scales infinitely without quality loss. Our tool converts SVGs to high-resolution raster images optimized for specific use cases.",
+      "characteristics": [
+        {
+          "title": "Vector Format",
+          "description": "SVG uses mathematical paths rather than pixels, enabling infinite scaling without quality loss."
+        },
+        {
+          "title": "Small File Size",
+          "description": "Vector data is typically much smaller than raster images of equivalent quality."
+        },
+        {
+          "title": "Editable",
+          "description": "SVG files can be edited with vector software like Illustrator or Inkscape."
+        },
+        {
+          "title": "Web Optimized",
+          "description": "Perfect for icons, logos, and graphics on the web due to scalability and small size."
+        }
       ],
-      "tools_title": "Outils HEIC disponibles",
-      "tools": [
-        "Conversion HEIC vers JPEG",
-        "Conversion HEIC vers PNG",
-        "Conversion HEIC vers WebP",
-        "Agrandissement HEIC avec IA",
-        "Optimisation HEIC",
-        "Extraction d'images de fichiers HEIC multiples"
+      "useCases": [
+        {
+          "title": "Logo Printing",
+          "description": "Convert SVG logos to high-resolution raster images for large format printing.",
+          "example": "Transform a vector logo into a 10,000px raster image for billboard printing"
+        },
+        {
+          "title": "Icon Sets",
+          "description": "Generate high-resolution raster versions of SVG icons for multiple display densities.",
+          "example": "Create @1x, @2x, @3x, and @4x raster icon sets from SVG sources"
+        },
+        {
+          "title": "Illustration Export",
+          "description": "Convert vector illustrations to print-quality raster images.",
+          "example": "Export SVG artwork as 600 DPI raster for professional printing"
+        },
+        {
+          "title": "Presentation Graphics",
+          "description": "Convert SVG graphics to high-resolution raster for presentation slides.",
+          "example": "Transform vector charts into crisp raster images for 4K presentations"
+        }
       ],
-      "when_use": "Pourquoi convertir HEIC ?",
-      "when_use_cases": [
-        "Partage avec utilisateurs Android/Windows",
-        "Upload sur des plateformes web",
-        "Compatibilité avec logiciels anciens",
-        "Impression chez des tireuses photos",
-        "Archivage dans un format universel"
+      "bestPractices": [
+        {
+          "title": "Choose Target Resolution",
+          "description": "Select the output resolution based on your intended use (web, print, display)."
+        },
+        {
+          "title": "Maintain Aspect Ratio",
+          "description": "Preserve the original SVG proportions for accurate conversion."
+        },
+        {
+          "title": "Use Vector When Possible",
+          "description": "Keep SVGs as vectors for web use; convert to raster only when necessary."
+        },
+        {
+          "title": "Export Multiple Sizes",
+          "description": "Create different raster resolutions for various use cases from a single SVG."
+        }
       ],
-      "faq_title": "Questions fréquentes sur HEIC",
       "faq": [
         {
-          "q": "Pourquoi mon iPhone utilise-t-il HEIC ?",
-          "a": "Apple utilise HEIC par défaut car il offre une meilleure compression que JPEG, économisant de l'espace tout en préservant la qualité."
+          "question": "Why convert SVG to raster if SVG scales infinitely?",
+          "answer": "Some applications require raster formats (JPEG, PNG) and don't support SVG. Converting to high-resolution raster ensures compatibility while maintaining quality."
         },
         {
-          "q": "La conversion HEIC vers JPEG perd-elle de la qualité ?",
-          "a": "Notre conversion minimise la perte de qualité. Pour une qualité sans perte, convertissez vers PNG."
+          "question": "What's the best resolution for converting SVG?",
+          "answer": "For web, 2x or 3x your display size. For print, 300 DPI at your print dimensions. Our tool can help you determine the optimal resolution."
         },
         {
-          "q": "Puis-je ouvrir HEIC sur Windows ?",
-          "a": "Windows 10/11 supporte HEIC nativement. Pour les anciennes versions, convertissez en JPEG."
+          "question": "Will I lose quality converting SVG to raster?",
+          "answer": "Converting to very high resolution raster maintains excellent quality for practical purposes. SVG's infinite scaling lets us create extremely detailed raster images."
         },
         {
-          "q": "Est-ce que HEIC supporte la transparence ?",
-          "a": "Non, HEIC ne supporte pas la transparence comme PNG. Pour la transparence, convertissez vers PNG."
+          "question": "Can I upscale an existing raster SVG export?",
+          "answer": "If you have the original SVG file, it's better to re-export at higher resolution. If you only have a raster export, our AI can enhance it further."
+        },
+        {
+          "question": "What format should I convert SVG to?",
+          "answer": "PNG for transparency support, JPEG for photographs, or WebP for web optimization. Choose based on your content and use case."
         }
+      ],
+      "relatedFormats": [
+        "upscale-png-images",
+        "upscale-jpeg-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "vector-to-raster-guide"
       ]
     },
-    "raw": {
-      "title": "Convertisseur et Traitement RAW",
-      "description": "Convertissez et traitez vos fichiers RAW d'appareils photo. Développez, ajustez et exportez vers des formats universels.",
-      "keywords": "RAW, CR2, NEF, ARW, DNG, convertir, développer, format raw",
-      "h1": "Outil RAW Gratuit",
-      "h1_sub": "Convertissez et développez vos fichiers RAW.",
-      "what_title": "Qu'est-ce que le format RAW ?",
-      "what_content": "RAW est un format d'image non compressé qui contient toutes les données capturées par le capteur de l'appareil photo. Il offre une qualité maximale et une flexibilité totale pour le post-traitement.",
-      "features_title": "Avantages de RAW",
-      "features": [
-        "Qualité d'image maximale",
-        "Données brutes du capteur (14-16 bits)",
-        "Flexibilité totale en post-traitement",
-        "Balance des blancs ajustable",
-        "Large gamme dynamique",
-        "Pas d'artefacts de compression"
+    {
+      "slug": "upscale-gif-images",
+      "title": "Upscale GIF Images",
+      "metaTitle": "Upscale GIF Images - AI GIF Enlarger | MyImageUpscaler",
+      "metaDescription": "Enhance GIF images with AI upscaling. Upscale animated and static GIFs to higher resolution. Perfect for memes, social media, and web graphics.",
+      "h1": "Upscale GIF Images - Animated & Static Enhancement",
+      "intro": "Enhance both animated and static GIF images with our AI upscaler. Increase resolution while preserving animation frames and transparency for better quality display.",
+      "primaryKeyword": "upscale gif images",
+      "secondaryKeywords": [
+        "gif upscaler",
+        "animated gif upscaler",
+        "enhance gif quality",
+        "gif image enlarger"
       ],
-      "formats_title": "Formats RAW pris en charge",
-      "raw_formats": [
-        "Canon : CR2, CR3",
-        "Nikon : NEF, NRW",
-        "Sony : ARW",
-        "Adobe : DNG",
-        "Fujifilm : RAF",
-        "Panasonic : RW2",
-        "Olympus : ORF",
-        "Pentax : PEF"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "GIF",
+      "extension": "gif",
+      "description": "GIF (Graphics Interchange Format) supports animation and transparency with 256 colors. Widely used for memes, simple animations, and web graphics despite color limitations.",
+      "characteristics": [
+        {
+          "title": "Animation Support",
+          "description": "GIF can store multiple frames for simple animations, widely supported across platforms."
+        },
+        {
+          "title": "256 Color Limit",
+          "description": "Limited color palette can cause banding, which our AI can improve during upscaling."
+        },
+        {
+          "title": "Transparency",
+          "description": "Supports single-color transparency for overlay effects and cutouts."
+        },
+        {
+          "title": "Universal Support",
+          "description": "One of the most widely supported image formats across all platforms and browsers."
+        }
       ],
-      "tools_title": "Outils RAW disponibles",
-      "tools": [
-        "Conversion RAW vers JPEG",
-        "Conversion RAW vers PNG",
-        "Conversion RAW vers TIFF",
-        "Développement RAW automatique",
-        "Agrandissement RAW avec IA",
-        "Ajustement exposition et couleurs"
+      "useCases": [
+        {
+          "title": "Meme Enhancement",
+          "description": "Upscale meme GIFs for better quality sharing on social media and messaging apps.",
+          "example": "Transform a grainy 320x240 meme GIF into crisp 1280x960 high resolution"
+        },
+        {
+          "title": "Animated Graphics",
+          "description": "Enhance animated icons, logos, and UI elements for high-DPI displays.",
+          "example": "Upscale loading animations for retina and 4K display clarity"
+        },
+        {
+          "title": "Social Media Content",
+          "description": "Improve GIF quality for Twitter, Instagram, and other social platforms.",
+          "example": "Enhance reaction GIFs for better quality in social posts"
+        },
+        {
+          "title": "Vintage GIFs",
+          "description": "Restore and enhance older GIFs from the early internet era.",
+          "example": "Upscale classic web GIFs for modern display quality"
+        }
       ],
-      "when_use": "Quand utiliser RAW",
-      "when_use_cases": [
-        "Photographie professionnelle",
-        "Scènes à forte gamme dynamique",
-        "Post-traitement important",
-        "Grandes impressions",
-        "Archivage de haute qualité"
+      "bestPractices": [
+        {
+          "title": "Frame-by-Frame Enhancement",
+          "description": "Our AI enhances each frame individually while maintaining animation consistency."
+        },
+        {
+          "title": "Consider Alternatives",
+          "description": "For new content, consider video formats (WebM, MP4) instead of GIF for better quality."
+        },
+        {
+          "title": "Preserve Animation",
+          "description": "All frames and timing are preserved during the upscaling process."
+        },
+        {
+          "title": "Optimize File Size",
+          "description": "Enhanced GIFs may be larger; consider optimizing after upscaling."
+        }
       ],
-      "faq_title": "Questions fréquentes sur RAW",
       "faq": [
         {
-          "q": "Quelle est la différence entre RAW et JPEG ?",
-          "a": "RAW contient toutes les données du capteur pour une flexibilité maximale. JPEG est déjà traité et compressé par l'appareil photo."
+          "question": "Can I upscale animated GIFs?",
+          "answer": "Yes! Our AI processes each frame individually while preserving the animation sequence and timing, resulting in higher-quality animated GIFs."
         },
         {
-          "q": "Puis-je convertir RAW en JPEG sans perte de qualité ?",
-          "a": "La conversion RAW→JPEG entraîne une perte de données car JPEG est avec perte. Pour préserver la qualité, convertissez vers TIFF."
+          "question": "Will upscaling fix GIF color banding?",
+          "answer": "Our AI can reduce the appearance of banding artifacts common in GIFs, though the 256-color limitation will still apply to the output format."
         },
         {
-          "q": "Est-ce que le traitement RAW est inclus dans le plan gratuit ?",
-          "a": "Oui, vous pouvez convertir jusqu'à 5 fichiers RAW par jour gratuitement."
+          "question": "Are upscaled GIFs worth the larger file size?",
+          "answer": "For short animations and memes, the quality improvement is often worth it. For longer animations, consider using video formats instead."
         },
         {
-          "q": "Pourquoi les fichiers RAW sont-ils si volumineux ?",
-          "a": "RAW stocke toutes les données brutes du capleur sans compression, ce qui donne des fichiers 3-6x plus volumineux que JPEG."
+          "question": "Can I convert GIF to video after upscaling?",
+          "description": "Yes! After upscaling, you can use other tools to convert your enhanced GIF to WebM or MP4 for better compression and quality."
+        },
+        {
+          "question": "Why does my GIF have a limited color palette?",
+          "answer": "GIF format is limited to 256 colors by design. Our AI works within this constraint to produce the best possible quality within those limitations."
         }
+      ],
+      "relatedFormats": [
+        "upscale-png-images",
+        "upscale-webp-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "animation-optimization-guide"
       ]
     },
-    "avif": {
-      "title": "Convertisseur et Optimiseur AVIF",
-      "description": "Découvrez AVIF, le format d'image nouvelle génération. Compression supérieure et qualité exceptionnelle.",
-      "keywords": "AVIF, format nouvelle génération, compression, AV1, futur du web",
-      "h1": "Outil AVIF Gratuit",
-      "h1_sub": "Découvrez le format d'image du futur.",
-      "what_title": "Qu'est-ce que le format AVIF ?",
-      "what_content": "AVIF (AV1 Image File Format) est le format d'image le plus récent, basé sur le codec vidéo AV1. Il offre une compression 50% meilleure que JPEG avec une qualité supérieure.",
-      "features_title": "Avantages d'AVIF",
-      "features": [
-        "Compression 50% meilleure que JPEG",
-        "Support HDR (gamme dynamique élevée)",
-        "Transparence comme PNG",
-        "Large gamme de couleurs (12 bits)",
-        "Format open-source",
-        "Futur du web"
+    {
+      "slug": "upscale-avif-images",
+      "title": "Upscale AVIF Images",
+      "metaTitle": "Upscale AVIF Images - Next-Gen AVIF Enlarger | MyImageUpscaler",
+      "metaDescription": "Enhance AVIF images with AI upscaling. Upscale next-generation AVIF files to higher resolution with quality preservation. Future-proof image enhancement.",
+      "h1": "Upscale AVIF Images - Next-Generation Format Enhancement",
+      "intro": "Enhance cutting-edge AVIF images with our advanced AI upscaler. Support the latest image format technology while increasing resolution for optimal display quality.",
+      "primaryKeyword": "upscale avif images",
+      "secondaryKeywords": [
+        "avif upscaler",
+        "av1 image upscaler",
+        "enhance avif quality",
+        "avif image enlarger"
       ],
-      "comparison_title": "Comparaison des formats",
-      "comparison": [
-        "JPEG : compression basique, largement compatible",
-        "WebP : compression 25-35% meilleure que JPEG",
-        "AVIF : compression 50% meilleure que JPEG, meilleure qualité"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "formats",
+      "formatName": "AVIF",
+      "extension": "avif",
+      "description": "AVIF (AV1 Image Format) is the newest image format based on the AV1 video codec. Offers superior compression and quality compared to JPEG, PNG, and WebP, representing the future of web images.",
+      "characteristics": [
+        {
+          "title": "Superior Compression",
+          "description": "AVIF provides better quality than JPEG at 50% smaller file sizes on average."
+        },
+        {
+          "title": "Modern Codec",
+          "description": "Based on the AV1 video codec, the most advanced video compression technology available."
+        },
+        {
+          "title": "HDR Support",
+          "description": "Native support for high dynamic range content, including wide color gamut."
+        },
+        {
+          "title": "Growing Support",
+          "description": "Rapidly gaining browser and platform support as the next web standard."
+        }
       ],
-      "tools_title": "Outils AVIF disponibles",
-      "tools": [
-        "Conversion JPEG/PNG vers AVIF",
-        "Conversion AVIF vers JPEG/PNG",
-        "Optimisation AVIF",
-        "Agrandissement AVIF avec IA",
-        "Support AVIF HDR",
-        "Conversion par lots AVIF"
+      "useCases": [
+        {
+          "title": "Next-Gen Web Optimization",
+          "description": "Upscale AVIF images for cutting-edge web performance optimization.",
+          "example": "Enhance AVIF hero images for maximum quality with minimal file size"
+        },
+        {
+          "title": "Future-Proof Content",
+          "description": "Prepare image assets using the latest format technology for longevity.",
+          "example": "Convert and upscale legacy images to AVIF for modern web deployment"
+        },
+        {
+          "title": "HDR Content",
+          "description": "Enhance high dynamic range images with full AVIF capability preservation.",
+          "example": "Upscale HDR photos for premium display experiences"
+        },
+        {
+          "title": "Progressive Enhancement",
+          "description": "Use AVIF for modern browsers while providing fallbacks for older ones.",
+          "example": "Create AVIF image sets with automatic fallback generation"
+        }
       ],
-      "browser_support": "Compatibilité navigateur",
-      "support_note": "AVIF est compatible avec Chrome 85+, Firefox 93+, Safari 16+. Prévoyez une alternative pour les anciens navigateurs.",
-      "when_use": "Quand utiliser AVIF",
-      "when_use_cases": [
-        "Sites web modernes",
-        "Optimisation maximale des performances",
-        "Contenu HDR",
-        "Applications compatibles",
-        "Futur-ready"
+      "bestPractices": [
+        {
+          "title": "Check Browser Support",
+          "description": "AVIF is supported in modern browsers; provide fallbacks for older ones."
+        },
+        {
+          "title": "Use for New Projects",
+          "description": "AVIF is ideal for new web projects targeting modern browsers and devices."
+        },
+        {
+          "title": "Maintain Quality",
+          "description": "Our AI preserves AVIF's exceptional quality characteristics during upscaling."
+        },
+        {
+          "title": "Provide Fallbacks",
+          "description": "Offer JPEG or WebP versions for browsers that don't support AVIF yet."
+        }
       ],
-      "faq_title": "Questions fréquentes sur AVIF",
       "faq": [
         {
-          "q": "Pourquoi utiliser AVIF au lieu de WebP ?",
-          "a": "AVIF offre une compression 50% meilleure que JPEG contre 25-35% pour WebP, avec une qualité supérieure, surtout pour les images complexes."
+          "question": "Is AVIF better than WebP?",
+          "answer": "AVIF generally provides better compression and quality than WebP, especially for complex images. However, WebP has broader browser support currently."
         },
         {
-          "q": "Est-ce que AVIF remplace JPEG ?",
-          "a": "AVIF est l'avenir, mais JPEG reste le standard actuel. Utilisez AVIF avec une alternative JPEG pour une compatibilité maximale."
+          "question": "Should I use AVIF or JPEG for upscaling?",
+          "answer": "Use AVIF if your target audience uses modern browsers. JPEG is safer for universal compatibility. Our AI works excellently with both formats."
         },
         {
-          "q": "Puis-je convertir AVIF vers JPEG ?",
-          "a": "Oui, notre outil convertit AVIF vers JPEG si vous avez besoin d'une compatibilité plus large."
+          "question": "Can I convert AVIF to other formats after upscaling?",
+          "answer": "Yes! After enhancing your AVIF image, you can download it in JPEG, PNG, WebP, or keep it as AVIF based on your needs."
         },
         {
-          "q": "Est-ce que AVIF supporte la transparence ?",
-          "a": "Oui, AVIF supporte la transparence (alpha channel) comme PNG, mais avec une bien meilleure compression."
+          "question": "What browsers support AVIF?",
+          "answer": "AVIF is supported in Chrome 85+, Firefox 93+, Safari 16+, and Edge. About 75% of users globally have AVIF support."
+        },
+        {
+          "question": "Is AVIF ready for production use?",
+          "answer": "Yes, with proper fallbacks. AVIF is production-ready for modern web applications, especially when paired with JPEG or WebP fallbacks for older browsers."
         }
+      ],
+      "relatedFormats": [
+        "upscale-webp-images",
+        "upscale-jpeg-images"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality",
+        "next-gen-image-formats-guide"
       ]
     }
-  }
+  ]
 }

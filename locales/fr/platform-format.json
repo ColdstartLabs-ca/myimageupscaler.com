@@ -1,0 +1,91 @@
+{
+  "category": "platform-format",
+  "meta": {
+    "totalPages": 43,
+    "lastUpdated": "2026-01-06",
+    "description": "Pages multiplicateurs Plateforme × Format - combinaisons de plateformes IA avec des formats d'export"
+  },
+  "pages": [
+    {
+      "slug": "midjourney-upscaler-png",
+      "title": "Agrandisseur Midjourney PNG",
+      "metaTitle": "Agrandisseur PNG Midjourney - Améliorez les images MJ PNG | MyImageUpscaler",
+      "metaDescription": "Agrandissez les images PNG Midjourney à 4K sans perte de qualité. Parfait pour l'export d'art IA avec transparence. Agrandisseur MJ PNG gratuit.",
+      "h1": "Agrandisseur PNG Midjourney - Améliorez l'art IA avec transparence",
+      "intro": "Améliorez vos exports PNG Midjourney à une haute résolution stupéfiante tout en préservant le style artistique unique et toute transparence. Notre agrandisseur spécialisé fonctionne parfaitement avec le format de sortie PNG de Midjourney.",
+      "primaryKeyword": "agrandisseur midjourney png",
+      "secondaryKeywords": [
+        "agrandir midjourney png",
+        "amplificateur midjourney png",
+        "agrandisseur image midjourney",
+        "agrandisseur art ia"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "platform-format",
+      "platform": "Midjourney",
+      "format": "PNG",
+      "platformDescription": "Midjourney crée un art IA stupéfiant avec le format PNG étant l'option d'export de plus haute qualité.",
+      "formatDescription": "PNG fournit une qualité sans perte et une transparence optionnelle, ce qui le rend idéal pour les exports Midjourney.",
+      "platformSettings": "Exportez de Midjourney en utilisant le format PNG pour une qualité maximale. Utilisez d'abord les commandes --upscale, puis améliorez davantage avec notre agrandisseur.",
+      "exportTips": [
+        "Choisissez toujours le format PNG lors de l'export de Midjourney pour l'agrandissement",
+        "Utilisez le bouton d'agrandissement dans Midjourney (U1-U4) avant d'exporter pour une meilleure qualité de départ",
+        "Les fichiers PNG de Midjourney sont plus gros mais contiennent plus de détails que JPEG",
+        "Évitez d'utiliser le paramètre --quality à des réglages bas si vous prévoyez d'agrandir"
+      ],
+      "workflowTips": [
+        "Générez votre image dans Midjourney avec votre prompt préféré",
+        "Utilisez d'abord les boutons d'agrandissement U1-U4 dans Midjourney",
+        "Exportez/téléchargez l'image au format PNG",
+        "Téléchargez sur notre agrandisseur pour une amélioration supplémentaire à 4K ou plus",
+        "Téléchargez votre PNG Midjourney amélioré prêt pour l'impression ou l'affichage"
+      ],
+      "benefits": [
+        {
+          "title": "Préserver le style artistique",
+          "description": "Maintient l'esthétique IA unique de Midjourney tout en améliorant la qualité PNG.",
+          "metric": "Style préservé"
+        },
+        {
+          "title": "Qualité maximale",
+          "description": "Travailler avec le format PNG assure aucun artefact de compression de MJ lui-même.",
+          "metric": "Entrée sans perte"
+        },
+        {
+          "title": "Support de transparence",
+          "description": "Maintient toutes les zones transparentes dans les exports PNG Midjourney.",
+          "metric": "Alpha préservé"
+        },
+        {
+          "title": "Prêt pour l'impression",
+          "description": "Crée des versions en résolution d'impression de vos créations Midjourney.",
+          "metric": "Jusqu'à 8K"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Imprimer l'art Midjourney",
+          "description": "Agrandissez les PNG MJ pour les impressions sur toile, les affiches et les produits.",
+          "example": "Créez des impressions de qualité galerie à partir des exports PNG Midjourney"
+        },
+        {
+          "title": "Amélioration réseaux sociaux",
+          "description": "Améliorez les PNG Midjourney pour Instagram, Pinterest et les communautés d'art.",
+          "example": "Créez des versions haute résolution pour un impact social maximal"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Pourquoi exporter Midjourney en PNG pour l'agrandissement ?",
+          "answer": "Le format PNG fournit la plus haute qualité de Midjourney sans artefacts de compression, donnant à notre IA plus de détails avec lesquels travailler pendant l'agrandissement."
+        },
+        {
+          "question": "Dois-je utiliser l'agrandissement Midjourney d'abord ?",
+          "answer": "Oui ! Utilisez toujours l'agrandissement intégré de Midjourney (U1-U4) avant d'exporter, puis utilisez notre agrandisseur pour une amélioration supplémentaire à des résolutions encore plus élevées."
+        }
+      ],
+      "relatedPlatforms": ["stable-diffusion-upscaler-png", "dalle-upscaler-png"],
+      "relatedFormats": ["upscale-png-images", "midjourney-upscaler-webp"]
+    }
+  ]
+}

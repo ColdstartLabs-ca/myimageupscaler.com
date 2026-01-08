@@ -1,60 +1,60 @@
 {
   "page": {
-    "title": "Simple, Transparent Pricing",
-    "subtitle": "Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover."
+    "title": "Preços Simples e Transparentes",
+    "subtitle": "Escolha o plano de assinatura que se adapta às suas necessidades. Obtenha créditos mensais com rollover automático."
   },
   "subscription": {
-    "title": "Choose Your Plan",
-    "subtitle": "Get credits every month with our subscription plans. Cancel anytime."
+    "title": "Escolha Seu Plano",
+    "subtitle": "Obtenha créditos todo mês com nossos planos de assinatura. Cancele a qualquer momento."
   },
   "currentBalance": {
-    "title": "Your current balance",
-    "credits": "credits",
-    "activeSubscription": "Active subscription"
+    "title": "Seu saldo atual",
+    "credits": "créditos",
+    "activeSubscription": "Assinatura ativa"
   },
   "scheduledChange": {
-    "title": "Scheduled Plan Change",
-    "cancel": "Cancel",
-    "on": "on"
+    "title": "Mudança de Plano Agendada",
+    "cancel": "Cancelar",
+    "on": "em"
   },
-  "configurationWarning": "Stripe Price IDs are not configured. Add them to your .env file to enable purchases.",
+  "configurationWarning": "IDs de Preço Stripe não estão configurados. Adicione-os ao seu arquivo .env para habilitar compras.",
   "creditPacks": {
-    "title": "Need Credits Without a Subscription?",
-    "subtitle": "One-time credit packs that never expire. Perfect for occasional projects.",
-    "valueComparison": "Value Comparison:",
-    "valueComparisonText": "Subscriptions offer 11-58% cheaper credits for regular users",
-    "comparePlans": "Compare subscription plans"
+    "title": "Precisa de Créditos Sem Assinatura?",
+    "subtitle": "Pacotes de créditos únicos que nunca expiram. Perfeito para projetos ocasionais.",
+    "valueComparison": "Comparação de Valor:",
+    "valueComparisonText": "Assinaturas oferecem créditos 11-58% mais baratos para usuários regulares",
+    "comparePlans": "Comparar planos de assinatura"
   },
   "faq": {
-    "title": "Frequently Asked Questions",
+    "title": "Perguntas Frequentes",
     "creditsUsedFor": {
-      "question": "What are credits used for?",
-      "answer": "Credits are used for image processing actions. Each image processed consumes a certain number of credits based on the upscaling factor and features used."
+      "question": "Para que servem os créditos?",
+      "answer": "Créditos são usados para ações de processamento de imagem. Cada imagem processada consome um certo número de créditos baseado no fator de ampliação e recursos usados."
     },
     "creditsExpire": {
-      "question": "Do credits expire?",
-      "answer": "Subscription credits roll over month-to-month up to your plan's maximum limit as long as your subscription is active."
+      "question": "Os créditos expiram?",
+      "answer": "Créditos de assinatura rolam mês a mês até o limite máximo do seu plano, desde que sua assinatura permaneça ativa."
     },
     "batchProcessing": {
-      "question": "What is batch processing?",
-      "answer": "Batch processing allows you to upload and process multiple images at once. Free users can process 1 image at a time, while paid plans support batch processing of up to 10, 50, or 500 images simultaneously depending on your plan."
+      "question": "O que é processamento em lote?",
+      "answer": "O processamento em lote permite carregar e processar múltiplas imagens de uma vez. Usuários gratuitos podem processar 1 imagem por vez, enquanto planos pagos suportam processamento em lote de até 10, 50 ou 500 imagens simultaneamente dependendo do seu plano."
     },
     "cancelSubscription": {
-      "question": "Can I cancel my subscription anytime?",
-      "answer": "Yes! You can cancel your subscription at any time. You'll continue to have access until the end of your billing period, and any remaining credits will stay in your account."
+      "question": "Posso cancelar minha assinatura a qualquer momento?",
+      "answer": "Sim! Você pode cancelar sua assinatura a qualquer momento. Você continuará tendo acesso até o fim do seu período de cobrança, e quaisquer créditos restantes permanecerão em sua conta."
     },
     "paymentMethods": {
-      "question": "What payment methods do you accept?",
-      "answer": "We accept all major credit cards (Visa, Mastercard, American Express) and various other payment methods through Stripe."
+      "question": "Quais métodos de pagamento vocês aceitam?",
+      "answer": "Aceitamos todos os principais cartões de crédito (Visa, Mastercard, American Express) e vários outros métodos de pagamento através do Stripe."
     },
     "freePlan": {
-      "question": "Is there a free plan?",
-      "answer": "Yes! Free users get initial credits to try the service. However, batch processing and advanced features require a paid subscription. Free users can process one image at a time."
+      "question": "Existe um plano gratuito?",
+      "answer": "Sim! Usuários gratuitos recebem créditos iniciais para experimentar o serviço. No entanto, processamento em lote e recursos avançados requerem uma assinatura paga. Usuários gratuitos podem processar uma imagem por vez."
     }
   },
   "customPlan": {
-    "title": "Need a custom plan?",
-    "description": "Contact us for enterprise pricing, bulk discounts, or custom integration requirements.",
-    "contactSales": "Contact Sales"
+    "title": "Precisa de um plano personalizado?",
+    "description": "Entre em contato conosco para preços empresariais, descontos em volume ou requisitos de integração personalizada.",
+    "contactSales": "Contatar Vendas"
   }
 }

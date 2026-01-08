@@ -1,33 +1,33 @@
 {
   "page": {
-    "badge": "Tips, Tutorials & Guides",
-    "title": "Image Enhancement",
-    "titleHighlight": "Insights & Expertise",
-    "subtitle": "Master the art of AI image upscaling, photo restoration, and professional photography optimization with our in-depth guides."
+    "badge": "Conseils, tutoriels et guides",
+    "title": "Amélioration d'images",
+    "titleHighlight": "Perspectives et expertise",
+    "subtitle": "Maîtrisez l'art de l'upscaling d'images par IA, de la restauration de photos et de l'optimisation photographique professionnelle avec nos guides approfondis."
   },
   "listing": {
-    "moreArticles": "More Articles",
-    "pagination": "Page {currentPage} of {totalPages}",
-    "previous": "Previous",
-    "next": "Next",
-    "featured": "Featured",
-    "readArticle": "Read Article",
-    "read": "Read",
-    "noPosts": "No blog posts yet. Check back soon!"
+    "moreArticles": "Plus d'articles",
+    "pagination": "Page {currentPage} sur {totalPages}",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "featured": "En vedette",
+    "readArticle": "Lire l'article",
+    "read": "Lire",
+    "noPosts": "Aucun article de blog pour le moment. Revenez bientôt !"
   },
   "cta": {
-    "title": "Ready to Transform Your Images?",
-    "description": "Join over 10,000 businesses using {appName} to enhance their images. Start your free trial today.",
-    "primaryButton": "Start Free Trial",
-    "secondaryButton": "View Pricing",
-    "disclaimer": "No credit card required • 10 free credits • Cancel anytime"
+    "title": "Prêt à transformer vos images ?",
+    "description": "Rejoignez plus de 10 000 entreprises utilisant {appName} pour améliorer leurs images. Commencez votre essai gratuit aujourd'hui.",
+    "primaryButton": "Commencer l'essai gratuit",
+    "secondaryButton": "Voir les tarifs",
+    "disclaimer": "Aucune carte de crédit requise • 10 crédits gratuits • Annulez à tout moment"
   },
   "article": {
-    "by": "By",
-    "readTime": "{min} min read",
-    "backToListing": "← Back to Blog",
-    "relatedPosts": "Related Posts",
-    "share": "Share",
-    "copyLink": "Copy Link"
+    "by": "Par",
+    "readTime": "{min} min de lecture",
+    "backToListing": "← Retour au blog",
+    "relatedPosts": "Articles connexes",
+    "share": "Partager",
+    "copyLink": "Copier le lien"
   }
 }

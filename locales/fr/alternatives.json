@@ -1,0 +1,599 @@
+{
+  "category": "alternatives",
+  "pages": [
+    {
+      "slug": "midjourney-upscaler",
+      "title": "Midjourney Upscaler - Améliorez vos images IA jusqu'à une qualité 4K",
+      "metaTitle": "Midjourney Upscaler Gratuit | Améliorez les images MJ en 4K en ligne",
+      "metaDescription": "Améliorez les images Midjourney à 4K sans perte de qualité. Notre upscaler IA spécialisé préserve les détails artistiques et les textures de vos créations MJ.",
+      "h1": "Midjourney Upscaler - Améliorez vos images IA à 4K",
+      "intro": "Midjourney crée des œuvres d'art IA étonnantes, mais les sorties par défaut sont parfois limitées en résolution. Notre upscaler spécialisé augmente vos images MJ tout en préservant les détails artistiques et les textures uniques qui rendent votre art spécial.",
+      "primaryKeyword": "midjourney upscaler",
+      "secondaryKeywords": [
+        "améliorer image midjourney",
+        "upscaler midjourney 4k",
+        "agrandir image midjourney"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "platforms",
+      "platform": "Midjourney",
+      "benefits": [
+        {
+          "title": "Qualité artistique préservée",
+          "description": "Entraîné spécifiquement sur l'art IA pour préserver les styles et textures uniques de Midjourney"
+        },
+        {
+          "title": "Upscaling jusqu'à 8x",
+          "description": "Passez de 1024px à plus de 8000px tout en maintenant la clarté"
+        },
+        {
+          "title": "Aucune perte de détails",
+          "description": "Les traits fins, les textures et les effets artistiques restent nets"
+        },
+        {
+          "title": "Traitement par lots",
+          "description": "Améliorez plusieurs images Midjourney à la fois"
+        },
+        {
+          "title": "Gratuit à essayer",
+          "description": "10 crédits gratuits pour tester la qualité"
+        }
+      ],
+      "integration": {
+        "title": "Fonctionne parfaitement avec Midjourney",
+        "description": "Téléchargez simplement vos images depuis Discord ou la galerie web Midjourney et améliorez-les instantanément.",
+        "steps": [
+          {
+            "step": 1,
+            "title": "Générez",
+            "description": "Créez votre image dans Midjourney"
+          },
+          {
+            "step": 2,
+            "title": "Téléchargez",
+            "description": "Sauvegardez l'image sur votre appareil"
+          },
+          {
+            "step": 3,
+            "title": "Améliorez",
+            "description": "Téléchargez sur MyImageUpscaler et choisissez votre facteur d'échelle"
+          }
+        ]
+      },
+      "useCases": [
+        {
+          "title": "Impressions artistiques",
+          "description": "Imprimez vos créations Midjourney en grand format sans perte de qualité"
+        },
+        {
+          "title": "Présentations professionnelles",
+          "description": "Utilisez des images MJ haute résolution dans des présentations et des portfolios"
+        },
+        {
+          "title": "Contenu web",
+          "description": "Créez des sites web visuellement époustouflants avec des bannières MJ 4K"
+        },
+        {
+          "title": "Vente d'art numérique",
+          "description": "Vendez des tirages haute résolution de vos créations IA"
+        }
+      ],
+      "workflowSteps": [
+        {
+          "step": 1,
+          "title": "Téléchargez votre image Midjourney",
+          "description": "Importez n'importe quelle image MJ depuis Discord ou la galerie web"
+        },
+        {
+          "step": 2,
+          "title": "Choisissez le facteur d'échelle",
+          "description": "Sélectionnez 2x, 4x, ou 8x selon vos besoins de sortie"
+        },
+        {
+          "step": 3,
+          "title": "Traitement IA",
+          "description": "Notre IA améliore tout en préservant le style artistique de Midjourney"
+        },
+        {
+          "step": 4,
+          "title": "Téléchargez",
+          "description": "Obtenez votre image 4K prête à l'emploi"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Est-ce que l'upscaling affecte le style artistique de Midjourney ?",
+          "answer": "Non, notre upscaler est entraîné spécifiquement sur l'art IA pour préserver les styles uniques de Midjourney. Il améliore la résolution tout en maintenant l'esthétique artistique originale."
+        },
+        {
+          "question": "Quelle résolution puis-je attendre ?",
+          "answer": "Pour les images Midjourney standard (1024x1024), vous pouvez atteindre jusqu'à 8192x8192 pixels avec notre upscaling 8x."
+        },
+        {
+          "question": "Puis-je améliorer des images MJ générées avec les paramètres --stylize ?",
+          "answer": "Absolument. Notre upscaler préserve tous les effets stylistiques de Midjourney, y compris ceux créés avec --stylize, --chaos et d'autres paramètres."
+        },
+        {
+          "question": "Combien de temps prend le traitement ?",
+          "answer": "Typiquement 30-60 secondes pour une image Midjourney standard, selon le facteur d'échelle choisi."
+        }
+      ]
+    },
+    {
+      "slug": "stable-diffusion-upscaler",
+      "title": "Stable Diffusion Upscaler - Améliorez vos images SD",
+      "metaTitle": "Upscaler Stable Diffusion Gratuit | Améliorez les images SD à 4K",
+      "metaDescription": "Améliorez vos images Stable Diffusion à 4K et plus. Préservez les détails, les textures et la qualité artistique de vos créations SD.",
+      "h1": "Stable Diffusion Upscaler - Améliorez vos images SD",
+      "intro": "Les images Stable Diffusion peuvent bénéficier d'un upscaling intelligent qui préserve les détails et les textures. Notre upscaler est entraîné sur l'art IA pour améliorer vos créations SD tout en maintenant leur qualité artistique.",
+      "primaryKeyword": "stable diffusion upscaler",
+      "secondaryKeywords": [
+        "améliorer image stable diffusion",
+        "upscaler sd 4k",
+        "agrandir image stable diffusion"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "platforms",
+      "platform": "Stable Diffusion",
+      "benefits": [
+        {
+          "title": "Préservation des textures",
+          "description": "Entraîné pour conserver les textures complexes de Stable Diffusion"
+        },
+        {
+          "title": "Jusqu'à 8x la résolution",
+          "description": "Passez de 512px à 4096px ou plus"
+        },
+        {
+          "title": "Qualité cohérente",
+          "description": "Maintient le style artistique cohérent de SD"
+        },
+        {
+          "title": "Aucun logiciel requis",
+          "description": "Fonctionne entièrement dans votre navigateur"
+        },
+        {
+          "title": "Rapide et facile",
+          "description": "Obtenez des résultats en quelques secondes"
+        }
+      ],
+      "integration": {
+        "title": "Complétez votre flux de travail SD",
+        "description": "Que vous utilisiez Automatic1111, ComfyUI ou un autre frontend, notre upscaler s'intègre parfaitement à votre flux de travail Stable Diffusion.",
+        "steps": [
+          {
+            "step": 1,
+            "title": "Générez",
+            "description": "Créez votre image dans Stable Diffusion"
+          },
+          {
+            "step": 2,
+            "title": "Exportez",
+            "description": "Sauvegardez l'image générée"
+          },
+          {
+            "step": 3,
+            "title": "Améliorez",
+            "description": "Téléchargez sur MyImageUpscaler pour un upscaling final"
+          }
+        ]
+      },
+      "useCases": [
+        {
+          "title": "Amélioration après génération",
+          "description": "Augmentez la résolution des images SD pour des impressions ou un web haute résolution"
+        },
+        {
+          "title": "Préparation pour l'impression",
+          "description": "Préparez vos créations SD pour l'impression grand format"
+        },
+        {
+          "title": "Ventes d'art numérique",
+          "description": "Créez des tirages haute résolution de vos créations SD"
+        },
+        {
+          "title": "Portfolios professionnels",
+          "description": "Présentez votre art SD dans la plus haute qualité"
+        }
+      ],
+      "workflowSteps": [
+        {
+          "step": 1,
+          "title": "Générez dans SD",
+          "description": "Créez votre image avec Stable Diffusion"
+        },
+        {
+          "step": 2,
+          "title": "Téléchargez ici",
+          "description": "Importez votre image SD générée"
+        },
+        {
+          "step": 3,
+          "title": "Choisissez l'échelle",
+          "description": "Sélectionnez 2x, 4x, ou 8x selon vos besoins"
+        },
+        {
+          "step": 4,
+          "title": "Téléchargez",
+          "description": "Obtenez votre image améliorée haute résolution"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Est-ce que cela fonctionne avec les checkpoints SD personnalisés ?",
+          "answer": "Oui, notre upscaler fonctionne avec toutes les images Stable Diffusion, quel que soit le checkpoint ou le modèle utilisé pour la génération."
+        },
+        {
+          "question": "Dois-je utiliser des options d'upscaling dans SD ?",
+          "answer": "Non besoin. Vous pouvez générer à votre résolution standard et utiliser notre outil pour un upscaling plus rapide et de meilleure qualité."
+        },
+        {
+          "question": "Est-ce que cela fonctionne avec img2img ?",
+          "answer": "Absolument. Les images créées avec img2img dans SD peuvent être améliorées tout aussi efficacement que les images txt2img."
+        },
+        {
+          "question": "Quelle est la résolution maximale de sortie ?",
+          "answer": "Pour une image SD standard de 512x512, vous pouvez atteindre jusqu'à 4096x4096 pixels avec notre option 8x."
+        }
+      ]
+    },
+    {
+      "slug": "dalle-upscaler",
+      "title": "DALL-E Upscaler - Améliorez vos images DALL-E",
+      "metaTitle": "Upscaler DALL-E Gratuit | Améliorez les images DALL-E à 4K",
+      "metaDescription": "Améliorez vos images DALL-E et DALL-E 3 à 4K et plus. Préservez les détails et la qualité artistique de vos créations OpenAI.",
+      "h1": "DALL-E Upscaler - Améliorez vos images DALL-E",
+      "intro": "Les images DALL-E d'OpenAI sont impressionnantes, mais parfois vous avez besoin de plus de résolution. Notre upscaler spécialisé augmente vos créations DALL-E et DALL-E 3 tout en préservant leur qualité et leurs détails artistiques.",
+      "primaryKeyword": "dalle upscaler",
+      "secondaryKeywords": [
+        "améliorer image dalle",
+        "upscaler dalle 3",
+        "agrandir image dalle"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "platforms",
+      "platform": "DALL-E",
+      "benefits": [
+        {
+          "title": "Fonctionne avec DALL-E et DALL-E 3",
+          "description": "Prise en charge complète des deux générations DALL-E"
+        },
+        {
+          "title": "Amélioration 8x",
+          "description": "Augmentez considérablement la résolution"
+        },
+        {
+          "title": "Qualité préservée",
+          "description": "Maintient le style artistique cohérent de DALL-E"
+        },
+        {
+          "title": "Traitement rapide",
+          "description": "Obtenez des résultats en 30-60 secondes"
+        },
+        {
+          "title": "Facile à utiliser",
+          "description": "Aucune connaissance technique requise"
+        }
+      ],
+      "integration": {
+        "title": "Utilisez avec ChatGPT Plus ou l'API DALL-E",
+        "description": "Que vous génériez des images via ChatGPT Plus ou directement via l'API d'OpenAI, notre upscaler améliore vos résultats.",
+        "steps": [
+          {
+            "step": 1,
+            "title": "Générez",
+            "description": "Créez votre image avec DALL-E via ChatGPT ou l'API"
+          },
+          {
+            "step": 2,
+            "title": "Téléchargez",
+            "description": "Sauvegardez l'image générée par DALL-E"
+          },
+          {
+            "step": 3,
+            "title": "Améliorez",
+            "description": "Téléchargez sur MyImageUpscaler pour augmenter la résolution"
+          }
+        ]
+      },
+      "useCases": [
+        {
+          "title": "Contenu ChatGPT Plus",
+          "description": "Améliorez les images DALL-E 3 créées via ChatGPT Plus"
+        },
+        {
+          "title": "Contenu de marque",
+          "description": "Créez des visuels haute résolution pour votre marque"
+        },
+        {
+          "title": "Présentations",
+          "description": "Utilisez des images DALL-E 4K dans des présentations professionnelles"
+        },
+        {
+          "title": "Marketing numérique",
+          "description": "Créez des visuels marketing haute résolution"
+        }
+      ],
+      "workflowSteps": [
+        {
+          "step": 1,
+          "title": "Créez dans DALL-E",
+          "description": "Générez votre image via ChatGPT Plus ou l'API"
+        },
+        {
+          "step": 2,
+          "title": "Téléchargez",
+          "description": "Importez votre image DALL-E"
+        },
+        {
+          "step": 3,
+          "title": "Choisissez l'échelle",
+          "description": "Sélectionnez 2x, 4x, ou 8x"
+        },
+        {
+          "step": 4,
+          "title": "Téléchargez",
+          "description": "Obtenez votre image haute résolution"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Est-ce que cela fonctionne avec DALL-E 3 dans ChatGPT Plus ?",
+          "answer": "Oui, notre upscaler fonctionne parfaitement avec les images DALL-E 3 générées via ChatGPT Plus ainsi qu'avec les versions DALL-E précédentes."
+        },
+        {
+          "question": "Puis-je améliorer des images DALL-E éditées ?",
+          "answer": "Absolument. Que vous ayez généré l'image originale ou utilisé les fonctionnalités d'édition de DALL-E, notre upscaler améliorera la résolution finale."
+        },
+        {
+          "question": "Est-ce que l'upscaling affecte le style de DALL-E ?",
+          "answer": "Non, notre IA préserve le style artistique de DALL-E tout en améliorant la résolution et les détails."
+        },
+        {
+          "question": "Quelle est la taille de fichier maximale ?",
+          "answer": "Nous prenons en charge les images DALL-E jusqu'à 10 MB, ce qui couvre toutes les sorties standard de DALL-E."
+        }
+      ]
+    },
+    {
+      "slug": "canva-upscaler",
+      "title": "Canva Upscaler - Améliorez vos designs Canva",
+      "metaTitle": "Upscaler Canva Gratuit | Améliorez les designs Canva à 4K",
+      "metaDescription": "Améliorez vos designs et images Canva à 4K. Parfait pour les créations Canva exportées qui ont besoin de plus de résolution pour l'impression ou le web.",
+      "h1": "Canva Upscaler - Améliorez vos designs Canva",
+      "intro": "Vous avez créé un design incroyable dans Canva, mais vous avez besoin de plus de résolution ? Notre upscaler augmente vos créations Canva tout en préservant la qualité et la clarté du design.",
+      "primaryKeyword": "canva upscaler",
+      "secondaryKeywords": [
+        "améliorer image canva",
+        "upscaler design canva",
+        "agrandir image canva"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "platforms",
+      "platform": "Canva",
+      "benefits": [
+        {
+          "title": "Fonctionne avec tous les designs Canva",
+          "description": "Présentations, posters, graphiques réseaux sociaux et plus"
+        },
+        {
+          "title": "Amélioration jusqu'à 8x",
+          "description": "Augmentez considérablement la résolution"
+        },
+        {
+          "title": "Texte net",
+          "description": "Préserve la clarté du texte et des logos"
+        },
+        {
+          "title": "Couleurs fidèles",
+          "description": "Maintient les couleurs de votre design Canva"
+        },
+        {
+          "title": "Exportation facile",
+          "description": "Téléchargez depuis Canva, améliorez, et utilisez"
+        }
+      ],
+      "integration": {
+        "title": "Complétez votre flux de travail Canva",
+        "description": "Canva est excellent pour le design, mais les résolutions d'exportation sont parfois limitées. Notre upscaler comble cette lacune.",
+        "steps": [
+          {
+            "step": 1,
+            "title": "Concevez",
+            "description": "Créez votre design dans Canva"
+          },
+          {
+            "step": 2,
+            "title": "Exportez",
+            "description": "Téléchargez votre design en PNG ou JPG"
+          },
+          {
+            "step": 3,
+            "title": "Améliorez",
+            "description": "Téléchargez sur MyImageUpscaler pour augmenter la résolution"
+          }
+        ]
+      },
+      "useCases": [
+        {
+          "title": "Impressions grand format",
+          "description": "Améliorez les designs Canva pour les affiches et bannières"
+        },
+        {
+          "title": "Matériel marketing",
+          "description": "Créez des dépliants et brochures haute résolution"
+        },
+        {
+          "title": "Présentations",
+          "description": "Améliorez les présentations Canva pour des écrans 4K"
+        },
+        {
+          "title": "Réseaux sociaux",
+          "description": "Assurez-vous que vos graphiques sont nets sur toutes les plateformes"
+        }
+      ],
+      "workflowSteps": [
+        {
+          "step": 1,
+          "title": "Concevez dans Canva",
+          "description": "Créez votre design parfait"
+        },
+        {
+          "step": 2,
+          "title": "Exportez en PNG/JPG",
+          "description": "Téléchargez votre design depuis Canva"
+        },
+        {
+          "step": 3,
+          "title": "Améliorez",
+          "description": "Téléchargez sur MyImageUpscaler et choisissez l'échelle"
+        },
+        {
+          "step": 4,
+          "title": "Utilisez",
+          "description": "Téléchargez et utilisez votre design haute résolution"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Est-ce que cela fonctionne avec Canva Pro ?",
+          "answer": "Oui, que vous utilisiez Canva gratuit ou Pro, notre upscaler améliore tous les designs exportés."
+        },
+        {
+          "question": "Puis-je améliorer des designs avec du texte ?",
+          "answer": "Absolument. Notre upscaler préserve la clarté du texte, ce qui est idéal pour les designs Canva avec beaucoup de texte."
+        },
+        {
+          "question": "Quel format d'exportation dois-je utiliser depuis Canva ?",
+          "answer": "PNG est recommandé pour la meilleure qualité, mais JPG fonctionne également. Évitez PDF car il nécessite une conversion supplémentaire."
+        },
+        {
+          "question": "Est-ce que cela fonctionne avec les designs Canva animés ?",
+          "answer": "Pour les designs animés, exportez chaque image et améliorez-les individuellement. Pour les designs statiques, le processus est direct."
+        }
+      ]
+    },
+    {
+      "slug": "photoshop-upscaler",
+      "title": "Photoshop Upscaler - Améliorez vos images PS",
+      "metaTitle": "Upscaler Photoshop Gratuit | Améliorez vos images PS à 4K",
+      "metaDescription": "Améliorez vos images Photoshop à 4K et plus. Alternative rapide et facile à l'upscaling traditionnel dans Photoshop.",
+      "h1": "Photoshop Upscaler - Améliorez vos images PS",
+      "intro": "Photoshop est excellent pour l'édition, mais l'upscaling traditionnel peut donner des résultats flous. Notre upscaler IA offre des résultats plus rapides et de meilleure qualité sans courbe d'apprentissage complexe.",
+      "primaryKeyword": "photoshop upscaler",
+      "secondaryKeywords": [
+        "améliorer image photoshop",
+        "upscaler ps",
+        "alternative upscaling photoshop"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "platforms",
+      "platform": "Photoshop",
+      "benefits": [
+        {
+          "title": "Plus rapide que PS traditionnel",
+          "description": "Obtenez des résultats en secondes, pas en minutes"
+        },
+        {
+          "title": "Qualité IA supérieure",
+          "description": "Meilleure préservation des détails que le bicubique"
+        },
+        {
+          "title": "Facile à utiliser",
+          "description": "Aucune connaissance technique complexe requise"
+        },
+        {
+          "title": "Fonctionne avec tous les formats",
+          "description": "PNG, JPG, TIFF, et plus"
+        },
+        {
+          "title": "Aucun Photoshop requis",
+          "description": "Utilisez-le comme alternative autonome"
+        }
+      ],
+      "integration": {
+        "title": "Utilisez seul ou avec Photoshop",
+        "description": "Utilisez notre upscaler comme alternative à l'upscaling Photoshop ou améliorez vos images PS éditées avant l'exportation finale.",
+        "steps": [
+          {
+            "step": 1,
+            "title": "Éditez",
+            "description": "Faites vos éditions dans Photoshop"
+          },
+          {
+            "step": 2,
+            "title": "Exportez",
+            "description": "Sauvegardez votre image éditée"
+          },
+          {
+            "step": 3,
+            "title": "Améliorez",
+            "description": "Téléchargez sur MyImageUpscaler pour l'upscaling IA"
+          }
+        ]
+      },
+      "useCases": [
+        {
+          "title": "Post-production photo",
+          "description": "Améliorez les photos après édition dans Photoshop"
+        },
+        {
+          "title": "Design graphique",
+          "description": "Augmentez la résolution des designs graphiques"
+        },
+        {
+          "title": "Préparation à l'impression",
+          "description": "Préparez des images pour l'impression grand format"
+        },
+        {
+          "title": "Workflow rapide",
+          "description": "Obtenez des résultats rapides sans paramètres complexes"
+        }
+      ],
+      "workflowSteps": [
+        {
+          "step": 1,
+          "title": "Éditez dans Photoshop",
+          "description": "Apportez vos modifications et améliorations"
+        },
+        {
+          "step": 2,
+          "title": "Exportez l'image",
+          "description": "Sauvegardez votre image éditée"
+        },
+        {
+          "step": 3,
+          "title": "Améliorez ici",
+          "description": "Téléchargez sur MyImageUpscaler pour l'upscaling IA"
+        },
+        {
+          "step": 4,
+          "title": "Finalisez",
+          "description": "Téléchargez votre image haute résolution"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Est-ce que cela remplace l'upscaling de Photoshop ?",
+          "answer": "Notre upscaler IA offre souvent de meilleurs résultats que les méthodes d'upscaling traditionnelles de Photoshop, avec une qualité supérieure des détails et une plus grande rapidité."
+        },
+        {
+          "question": "Puis-je utiliser cela avec Photoshop Elements ?",
+          "answer": "Oui, notre upscaler fonctionne avec toutes les images exportées de Photoshop, Elements ou toute autre logiciel d'édition."
+        },
+        {
+          "question": "Est-ce que cela préserve les calques Photoshop ?",
+          "answer": "Notre upscaler fonctionne sur des images fusionnées. Pour les projets multicouches, améliorez l'image fusionnée finale ou améliorez les calques individuellement."
+        },
+        {
+          "question": "Est-ce que cela fonctionne avec les fichiers PSD ?",
+          "answer": "Exportez d'abord votre PSD en PNG ou JPG, puis téléchargez pour l'upscaling. Nous traitons des images raster, pas des fichiers de calques."
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "totalPages": 5,
+    "lastUpdated": "2025-12-19T00:00:00Z"
+  }
+}

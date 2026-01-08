@@ -1,0 +1,526 @@
+{
+  "category": "use-cases",
+  "pages": [
+    {
+      "slug": "ecommerce-product-photos",
+      "title": "Eコマース商品写真",
+      "metaTitle": "プラットフォーム別Eコマース商品写真要件 | MyImageUpscaler",
+      "metaDescription": "Amazon、eBay、Etsy、Shopifyの正確な画像要件。最小サイズ、アスペクト比、プラットフォーム基準を満たす方法で商品写真を拡張する方法を学ぶ。",
+      "h1": "Eコマース商品写真要件",
+      "intro": "すべてのマーケットプレイスには特定の画像要件があります。各プラットフォームに必要なものと到達方法を正確に紹介します。",
+      "primaryKeyword": "ecommerce product photos",
+      "secondaryKeywords": [
+        "product image requirements",
+        "amazon photo size",
+        "ebay image requirements",
+        "etsy photo dimensions"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Eコマース",
+      "description": "主要Eコマースプラットフォームの特定画像要件と、それらを満たす方法のガイダンス。",
+      "platformRequirements": [
+        {
+          "platform": "Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px（ズーム用）",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1推奨",
+          "format": "JPEG、PNG、GIF、TIFF",
+          "background": "メイン画像用純粋な白（RGB 255,255,255）",
+          "notes": "商品はフレームの85%を満たす必要があります。メイン画像に透かし、ロゴ、テキストなし。"
+        },
+        {
+          "platform": "eBay",
+          "minimumSize": "500x500px",
+          "recommendedSize": "1600x1600px",
+          "maxFileSize": "12MB",
+          "aspectRatio": "1:1推奨",
+          "format": "JPEG、PNG、GIF、TIFF、BMP",
+          "background": "白または薄い灰色推奨",
+          "notes": "リストあたり最大24枚の画像。境界、透かし、プロモーションテキストなし。"
+        },
+        {
+          "platform": "Etsy",
+          "minimumSize": "短辺2000px",
+          "recommendedSize": "2700x2025px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3推奨",
+          "format": "JPEG、PNG、GIF",
+          "background": "選択可 - ライフスタイルショットは良好に機能",
+          "notes": "最初の画像はサムネイル。ショップアイコン用5:4比率。"
+        },
+        {
+          "platform": "Shopify",
+          "minimumSize": "最小なし",
+          "recommendedSize": "2048x2048px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "一貫性のために1:1",
+          "format": "JPEG、PNG、GIF、HEIC、WebP",
+          "background": "テーマ依存",
+          "notes": "商品間で一貫したサイジングは外観を向上。自動WebP変換。"
+        },
+        {
+          "platform": "WooCommerce",
+          "minimumSize": "テーマ依存",
+          "recommendedSize": "最小1200x1200px",
+          "maxFileSize": "サーバー依存",
+          "aspectRatio": "テーマ設定で設定",
+          "format": "JPEG、PNG、GIF、WebP",
+          "background": "テーマ依存",
+          "notes": "サムネイルサイズ変更後に画像再生成を有効にしてください。"
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "サプライヤー画像が小さすぎる",
+          "solution": "少なくとも2000x2000pxに拡張。ほとんどのサプライヤー画像は500-800px - ズーム機能に3-4倍拡張。",
+          "howTo": "アップスケーラーにアップロード、4倍を選択、ダウンロード。500px画像は2000pxになります。"
+        },
+        {
+          "problem": "画像の背景色が間違っている",
+          "solution": "Amazonは純粋な白（255,255,255）を必要とします。拡張前に背景除去ツールを使用。",
+          "howTo": "最初に背景を除去、白背景を追加、必要に応じて拡張。"
+        },
+        {
+          "problem": "商品がフレームを十分に満たしていない",
+          "solution": "拡張前に商品を中央に配置して画像をクロップ。その後最小サイズに拡張。",
+          "howTo": "最小マージンで商品にクロップ、その後2000pxに到達するために2-4倍拡張。"
+        },
+        {
+          "problem": "拡張後画像がぼやけている",
+          "solution": "AIアップスケーラーは鮮明さを保存しますが、非常に低品質ソースには限界があります。利用可能な最高品質ソースを使用。",
+          "howTo": "サプライヤーにより高い解像度を依頼、または拡張前に強化。"
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "ソース画像サイズを確認",
+          "description": "画像を右クリック、プロパティ/寸法を確認。現在のサイズをメモ。"
+        },
+        {
+          "step": 2,
+          "title": "必要な拡張係数を計算",
+          "description": "ソースが500pxで2000px必要な場合、それは4倍拡張です。"
+        },
+        {
+          "step": 3,
+          "title": "画像を拡張",
+          "description": "アップスケーラーにアップロード、適切な係数を選択、結果をダウンロード。"
+        },
+        {
+          "step": 4,
+          "title": "出力を確認",
+          "description": "最終寸法がプラットフォーム要件を満たすことを確認。テキスト/ロゴが鮮明であることを確認。"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Amazon商品画像にはどの解像度が必要ですか？",
+          "answer": "Amazonは最小1000x1000pxを必要としますが、2000x2000px以上を推奨してズーム機能を有効にします。ズーム機能は1500px以上の画像でホバーすると有効になります。"
+        },
+        {
+          "question": "すべてのプラットフォームで同じ画像を使用できますか？",
+          "answer": "はい、最も厳しい要件に準備すれば。純粋な白背景で2000x2000px画像を作成すれば、これらはクロップでAmazon、eBay、Etsyで動作します。"
+        },
+        {
+          "question": "拡張画像はAmazonの品質チェックを通過しますか？",
+          "answer": "AI拡張画像は、ソースが極端に低品質でなければ通常通過します。300px未満の画像を拡張するのは避けてください。代わりにサプライヤーにより良いソース画像を依頼してください。"
+        },
+        {
+          "question": "異なるアスペクト比をどのように処理しますか？",
+          "answer": "ほとんどのプラットフォームは1:1（正方形）を好みます。商品が長方形の場合、白いスペースを追加して正方形にするか、合うようにクロップしてください。Amazonのメイン画像は正方形でなければなりません。"
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["background-removal-guide"]
+    },
+    {
+      "slug": "real-estate-listings",
+      "title": "不動産リスティング写真ガイドライン",
+      "metaTitle": "プラットフォーム別不動産写真要件 | MLS、Zillow、Realtor.com",
+      "metaDescription": "MLS、Zillow、Realtor.com、Redfinの画像要件。最適なサイズ、アスペクト比、リスティング写真を準備する方法を学ぶ。",
+      "h1": "不動産リスティング写真要件",
+      "intro": "異なる不動産プラットフォームには異なる画像仕様があります。主要リスティングサイトに必要なものを紹介します。",
+      "primaryKeyword": "real estate listing photos",
+      "secondaryKeywords": [
+        "mls photo requirements",
+        "zillow image size",
+        "real estate photography"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "不動産",
+      "description": "不動産リスティングプラットフォームの特定画像要件と、それらを満たす方法のガイダンス。",
+      "platformRequirements": [
+        {
+          "platform": "MLS（地域により変動）",
+          "minimumSize": "典型的な最小640x480px",
+          "recommendedSize": "2048x1536px以上",
+          "maxFileSize": "5-15MB（変動）",
+          "aspectRatio": "4:3が最も一般的",
+          "format": "JPEG",
+          "notes": "要件は地域MLSにより変動。地元のMLSガイドラインを確認してください。ほとんどは最大50枚の写真を受け付けます。"
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3推奨",
+          "format": "JPEG、PNG",
+          "notes": "最大200枚の写真。最初の写真は検索結果に表示されます - 重要です。"
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "MLSから同期。より高解像度画像は検索ランキングで優先されます。"
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px以上",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "リスティングで写真品質を強調。HDR写真は良好に機能します。"
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "電話写真が暗すぎる",
+          "solution": "写真強化ツールで露出と影を向上。インテリアショットに最適。",
+          "howTo": "写真強化ツールにアップロード、AI自動補正露出に任せ、必要に応じて拡張。"
+        },
+        {
+          "problem": "広角レンズ歪み",
+          "solution": "歪み補正は拡張前に行うべき。ほとんどの編集アプリにレンズ補正があります。",
+          "howTo": "最初にLightroom/Photosアプリでレンズ補正を適用、その後補正画像を拡張。"
+        },
+        {
+          "problem": "古い電話からの画像が小さすぎる",
+          "solution": "2-3年前の電話には2倍、古い電話には3-4倍拡張して現在の基準に到達。",
+          "howTo": "1080x810px画像は2倍拡張で2160x1620pxになり、Zillowの推奨サイズを超えます。"
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "ゴールデンアワーに撮影",
+          "description": "早朝または夕方の光が最も魅力的です。厳しい昼下がりの影を避けてください。"
+        },
+        {
+          "tip": "インテリアに三脚を使用",
+          "description": "より長い露出で明るいインテリアを鮮明に。低光部屋に必須。"
+        },
+        {
+          "tip": "最初に外観をキャプチャ",
+          "description": "外観写真は朝の光で最も機能します。撮影を外側から開始するようにスケジュール。"
+        },
+        {
+          "tip": "撮影前に部屋をステージング",
+          "description": "雑物、個人アイテム、邪魔なオブジェクトを除去。少ないほど多い。"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Zillowに最適な写真サイズは？",
+          "answer": "Zillowは最小2048x1536pxを推奨します。より大きな画像（最大50MB）は大きな画面とモバイルピンチツーズームで良好に表示されます。"
+        },
+        {
+          "question": "不動産写真にHDRを使用すべきですか？",
+          "answer": "HDRは窓が明るいが部屋が暗いインテリアショットに役立ちます。自然に見えるHDRを使用し、過度に処理されたスタイルは避けてください。"
+        },
+        {
+          "question": "リスティングには何枚の写真が必要ですか？",
+          "answer": "最適な物件には25-50枚の写真が推奨されます。外観、すべての部屋、主要な機能、近所のコンテキストを含めてください。"
+        },
+        {
+          "question": "古い電話で撮影した写真を拡張できますか？",
+          "answer": "はい、品質はソースに依存します。iPhone 6時代の写真（2-3MP）は4-6MPに合理的に拡張できます。非常に古い写真には限界があります。"
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["interior-photography-tips"]
+    },
+    {
+      "slug": "social-media-images",
+      "title": "ソーシャルメディア画像サイズ",
+      "metaTitle": "2025年ソーシャルメディア画像サイズガイド | Instagram、Facebook、Twitter、LinkedIn",
+      "metaDescription": "ソーシャルメディア画像寸法の完全ガイド。Instagram、Facebook、Twitter、LinkedIn、TikTok、Pinterestの最適なサイズと正確なピクセル寸法。",
+      "h1": "ソーシャルメディア画像サイズガイド",
+      "intro": "すべてのプラットフォームで異なる最適な画像サイズがあります。2025年の各プラットフォームの正確な寸法を紹介します。",
+      "primaryKeyword": "social media image size",
+      "secondaryKeywords": [
+        "instagram image size",
+        "facebook photo dimensions",
+        "twitter image size",
+        "linkedin image dimensions"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "ソーシャルメディア",
+      "description": "プラットフォーム固有要件を備えたソーシャルメディア画像寸法の完全リファレンス。",
+      "platformRequirements": [
+        {
+          "platform": "Instagram",
+          "imageTypes": [
+            { "type": "正方形投稿", "dimensions": "1080x1080px", "aspectRatio": "1:1" },
+            { "type": "縦長投稿", "dimensions": "1080x1350px", "aspectRatio": "4:5" },
+            { "type": "横長投稿", "dimensions": "1080x566px", "aspectRatio": "1.91:1" },
+            { "type": "ストーリー/リール", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "プロフィール画像", "dimensions": "320x320px", "aspectRatio": "1:1" }
+          ],
+          "notes": "縦長（4:5）はフィードでより多くの画面スペースを得ます。ストーリーは9:16垂直です。"
+        },
+        {
+          "platform": "Facebook",
+          "imageTypes": [
+            { "type": "共有画像", "dimensions": "1200x630px", "aspectRatio": "1.91:1" },
+            { "type": "正方形投稿", "dimensions": "1200x1200px", "aspectRatio": "1:1" },
+            { "type": "カバー写真", "dimensions": "820x312px（デスクトップ）", "aspectRatio": "2.63:1" },
+            { "type": "プロフィール画像", "dimensions": "170x170px", "aspectRatio": "1:1" },
+            { "type": "ストーリー", "dimensions": "1080x1920px", "aspectRatio": "9:16" }
+          ],
+          "notes": "カバー写真はモバイルで異なって表示（640x360px可視領域）。重要なコンテンツを中央に配置してください。"
+        },
+        {
+          "platform": "Twitter/X",
+          "imageTypes": [
+            { "type": "インストリーム画像", "dimensions": "1600x900px", "aspectRatio": "16:9" },
+            { "type": "単一画像", "dimensions": "1200x675px", "aspectRatio": "16:9" },
+            { "type": "二つの画像", "dimensions": "それぞれ700x800px", "aspectRatio": "7:8" },
+            { "type": "プロフィール画像", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "ヘッダー", "dimensions": "1500x500px", "aspectRatio": "3:1" }
+          ],
+          "notes": "16:9画像がタイムラインで最適に表示。正方形画像はクロップされます。"
+        },
+        {
+          "platform": "LinkedIn",
+          "imageTypes": [
+            { "type": "共有画像", "dimensions": "1200x627px", "aspectRatio": "1.91:1" },
+            { "type": "会社カバー", "dimensions": "1128x191px", "aspectRatio": "5.9:1" },
+            { "type": "プロフィール画像", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "背景", "dimensions": "1584x396px", "aspectRatio": "4:1" }
+          ],
+          "notes": "プロの写真はより良く機能します。フィルターと重い効果は避けてください。"
+        },
+        {
+          "platform": "TikTok",
+          "imageTypes": [
+            { "type": "ビデオ/写真", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "プロフィール画像", "dimensions": "200x200px", "aspectRatio": "1:1" }
+          ],
+          "notes": "垂直9:16必須。水平コンテンツはレターボックスされます。"
+        },
+        {
+          "platform": "Pinterest",
+          "imageTypes": [
+            { "type": "標準ピン", "dimensions": "1000x1500px", "aspectRatio": "2:3" },
+            { "type": "長いピン", "dimensions": "1000x2100px", "aspectRatio": "1:2.1" },
+            { "type": "正方形ピン", "dimensions": "1000x1000px", "aspectRatio": "1:1" },
+            { "type": "プロフィール画像", "dimensions": "165x165px", "aspectRatio": "1:1" }
+          ],
+          "notes": "2:3垂直ピンが最適に機能します。より高いピンはフィードでより多くの可視性を得ます。"
+        }
+      ],
+      "upscalingGuide": [
+        {
+          "scenario": "Instagram用古い写真",
+          "source": "640x480px横長写真",
+          "target": "1080x1080px正方形投稿",
+          "solution": "2倍拡張して1280x960pxにし、その後正方形960x960pxにクロップ、1080x1080pxに拡張"
+        },
+        {
+          "scenario": "Twitter用スクリーンショット",
+          "source": "750x500pxスクリーンショット",
+          "target": "タイムライン用1600x900px",
+          "solution": "2倍拡張して1500x1000pxにし、パディングを追加するか16:9アスペクト比にクロップ"
+        },
+        {
+          "scenario": "Pinterest用商品写真",
+          "source": "800x800px商品ショット",
+          "target": "1000x1500px垂直ピン",
+          "solution": "1200x1200pxに拡張し、2:3比率のために上下に垂直スペースを追加"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Instagram投稿に最適なサイズは？",
+          "answer": "1080x1350px（4:5縦長）は最もフィードスペースを占有します。1080x1080px（正方形）も標準です。横長は避けてください - フィードで小さく見えます。"
+        },
+        {
+          "question": "画像がInstagramでぼやけて見えるのはなぜですか？",
+          "answer": "Instagramは画像を圧縮します。再サンプリングを避けるために正確に1080px幅でアップロードしてください。より高解像度画像はダウンスケールされ、鮮明さを失う可能性があります。"
+        },
+        {
+          "question": "ソーシャルメディア用に画像を拡張すべきですか？",
+          "answer": "ソースがプラットフォーム最小値を下回る場合は拡張してください。ただし、プラットフォーム推奨を超えて拡張しないでください - 4000px画像はとにかく1080pxに圧縮されます。"
+        },
+        {
+          "question": "どの形式を使うべきですか？",
+          "answer": "写真にはJPEG（より小さいファイル、十分な品質）。テキストまたは透明度を持つグラフィックにはPNG。すべてのプラットフォームは両方を受け付けます。"
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["image-compression-guide"]
+    },
+    {
+      "slug": "print-preparation",
+      "title": "印刷サイズガイド",
+      "metaTitle": "印刷用画像解像度ガイド | DPI計算機とサイズチャート",
+      "metaDescription": "任意の印刷サイズの正確なピクセル寸法を計算。DPI要件、用紙サイズ、プロ印刷用画像を準備する方法。",
+      "h1": "印刷解像度ガイド",
+      "intro": "印刷は画面ディスプレイより高い解像度を必要とします。異なる印刷サイズに必要なものを正確に紹介します。",
+      "primaryKeyword": "image resolution for printing",
+      "secondaryKeywords": [
+        "print dpi requirements",
+        "photo print size",
+        "pixels to inches",
+        "300 dpi image size"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "写真と印刷",
+      "description": "DPI要件とサイズ計算を備えた印刷用画像準備の完全ガイド。",
+      "dpiExplanation": {
+        "title": "DPIの理解",
+        "content": "DPI（1インチあたりのドット数）は印刷品質を決定します。標準写真印刷には300 DPIが必要です。より低いDPIは可視的なピクセルになります。より高いDPIは可視的な利点はありませんがファイルサイズを増加させます。",
+        "recommendations": [
+          {
+            "quality": "プロ印刷",
+            "dpi": "300 DPI",
+            "use": "写真、アートプリント、雑誌"
+          },
+          { "quality": "標準印刷", "dpi": "240-300 DPI", "use": "家庭印刷、スナップショット" },
+          {
+            "quality": "大判（視聴距離3フィート以上）",
+            "dpi": "150-200 DPI",
+            "use": "ポスター、バナー"
+          },
+          {
+            "quality": "ビルボード（視聴距離10フィート以上）",
+            "dpi": "50-100 DPI",
+            "use": "大きな屋外ディスプレイ"
+          }
+        ]
+      },
+      "printSizeChart": [
+        {
+          "size": "4x6インチ",
+          "pixels300dpi": "1200x1800",
+          "pixels240dpi": "960x1440",
+          "megapixels": "2.2 MP"
+        },
+        {
+          "size": "5x7インチ",
+          "pixels300dpi": "1500x2100",
+          "pixels240dpi": "1200x1680",
+          "megapixels": "3.2 MP"
+        },
+        {
+          "size": "8x10インチ",
+          "pixels300dpi": "2400x3000",
+          "pixels240dpi": "1920x2400",
+          "megapixels": "7.2 MP"
+        },
+        {
+          "size": "11x14インチ",
+          "pixels300dpi": "3300x4200",
+          "pixels240dpi": "2640x3360",
+          "megapixels": "13.9 MP"
+        },
+        {
+          "size": "16x20インチ",
+          "pixels300dpi": "4800x6000",
+          "pixels240dpi": "3840x4800",
+          "megapixels": "28.8 MP"
+        },
+        {
+          "size": "20x24インチ",
+          "pixels300dpi": "6000x7200",
+          "pixels240dpi": "4800x5760",
+          "megapixels": "43.2 MP"
+        },
+        {
+          "size": "24x36インチ",
+          "pixels300dpi": "7200x10800",
+          "pixels240dpi": "5760x8640",
+          "megapixels": "77.8 MP"
+        },
+        {
+          "size": "A4（8.27x11.69インチ）",
+          "pixels300dpi": "2480x3508",
+          "pixels240dpi": "1984x2806",
+          "megapixels": "8.7 MP"
+        },
+        {
+          "size": "A3（11.69x16.54インチ）",
+          "pixels300dpi": "3508x4961",
+          "pixels240dpi": "2806x3969",
+          "megapixels": "17.4 MP"
+        }
+      ],
+      "calculationFormula": {
+        "title": "必要ピクセルを計算",
+        "formula": "ピクセル = 印刷サイズ（インチ）× DPI",
+        "example": "300 DPIでの8x10インチ印刷の場合：8×300 = 2400ピクセル幅、10×300 = 3000ピクセル高さ"
+      },
+      "upscalingForPrint": [
+        {
+          "scenario": "8x10印刷用スマートフォン写真",
+          "source": "4032x3024px（12MP iPhone）",
+          "requirement": "300 DPIで2400x3000px",
+          "solution": "すでに十分 - 拡張不要。4:5アスペクト比にクロップ。"
+        },
+        {
+          "scenario": "8x10印刷用Web画像",
+          "source": "800x600px Web画像",
+          "requirement": "300 DPIで2400x3000px",
+          "solution": "4倍拡張して3200x2400pxにし、2400x3000pxにクロップまたはキャンバススペースを追加。"
+        },
+        {
+          "scenario": "ポスター用Instagram写真",
+          "source": "1080x1080px",
+          "requirement": "24x24ポスター用300 DPIで7200x7200px",
+          "solution": "8倍拡張して8640x8640pxに。品質は限定的 - 大判には150 DPIを検討。"
+        }
+      ],
+      "printingTips": [
+        {
+          "tip": "消費者印刷用sRGBカラープロファイルを使用",
+          "description": "ほとんどの消費者プリンターと印刷サービスはsRGBを期待します。必要に応じてAdobe RGBから変換してください。"
+        },
+        {
+          "tip": "エッジツーエッジ印刷用にブラッドを追加",
+          "description": "フルブリードプロ印刷用に各エッジに0.125インチ（300 DPIで37.5ピクセル）を追加してください。"
+        }
+      ],
+      "faq": [
+        {
+          "question": "印刷にはどの解像度が必要ですか？",
+          "answer": "標準的な高品質印刷には300 DPIが推奨されています。大判印刷には150-200 DPIが許容されます。"
+        },
+        {
+          "question": "スマートフォン写真を印刷できますか？",
+          "answer": "はい！最新のスマートフォンは十分なメガピクセルを持っています。アスペクト比をクロップする必要があるかもしれません。"
+        },
+        {
+          "question": "Web画像を印刷できますか？",
+          "answer": "できますが、拡張が必要です。品質はオリジナルサイズに依存します。"
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["color-profile-guide"]
+    }
+  ],
+  "meta": {
+    "totalPages": 12,
+    "lastUpdated": "2026-01-06",
+    "description": "業界固有の使用例ページ（Eコマース、不動産、ソーシャルメディア、印刷準備など）"
+  }
+}

@@ -1,0 +1,515 @@
+{
+  "category": "platform-format",
+  "meta": {
+    "totalPages": 43,
+    "lastUpdated": "2026-01-06",
+    "description": "プラットフォーム×形式乗数ページ - AIプラットフォームとエクスポート形式の組み合わせ"
+  },
+  "pages": [
+    {
+      "slug": "midjourney-upscaler-png",
+      "title": "MidjourneyアップスケーラーPNG",
+      "metaTitle": "Midjourney PNGアップスケーラー - MJ PNG画像強化 | MyImageUpscaler",
+      "metaDescription": "品質を損なわずにMidjourney PNG画像を4Kに拡張。透明度を持つAIアートエクスポートに最適。無料MJ PNGアップスケーラー。",
+      "h1": "Midjourney PNGアップスケーラー - 透明度を持つAIアート強化",
+      "intro": "ユニークなアーティスティックスタイルと透明度を保存しながら、Midjourney PNGエクスポートを素晴らしい高解像度に強化します。専用アップスケーラーはMidjourneyのPNG出力形式で完璧に動作します。",
+      "primaryKeyword": "midjourney upscaler png",
+      "secondaryKeywords": [
+        "upscale midjourney png",
+        "midjourney png enhancer",
+        "midjourney image upscaler",
+        "ai art upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "platform-format",
+      "platform": "Midjourney",
+      "format": "PNG",
+      "platformDescription": "MidjourneyはPNG形式が最高品質エクスポートオプションである素晴らしいAIアートを作成します。",
+      "formatDescription": "PNGは可逆品質とオプションの透明度を提供し、Midjourneyエクスポートに理想的です。",
+      "platformSettings": "最大品質のためにMidjourneyからPNG形式を使用してエクスポート。最初に--upscaleコマンドを使用し、その後アップスケーラーでさらに強化。",
+      "exportTips": [
+        "アップスケーラー用Midjourneyからのエクスポート時は常にPNG形式を選択",
+        "より良い開始品質のために最初にMidjourneyのアップスケールボタン（U1-U4）を使用",
+        "MidjourneyのPNGファイルはJPEGより大きいがより多くの詳細が含まれる",
+        "アップスケーラーを計画している場合は低設定で--qualityパラメータを使用しない"
+      ],
+      "workflowTips": [
+        "好みのプロンプトでMidjourneyで画像を生成",
+        "最初にMidjourneyのU1-U4アップスケールボタンを使用",
+        "PNG形式で画像をエクスポート/ダウンロード",
+        "4K以上への追加強化のためにアップスケーラーにアップロード",
+        "印刷またはディスプレイ準備完了の強化Midjourney PNGをダウンロード"
+      ],
+      "benefits": [
+        {
+          "title": "アーティスティックスタイル保存",
+          "description": "PNG品質を強化しながらMidjourneyのユニークなAI美学を維持。",
+          "metric": "スタイル保存済み"
+        },
+        {
+          "title": "最大品質",
+          "description": "PNG形式での作業はMJ自体からの圧縮アーティファクトがないことを保証。",
+          "metric": "可逆入力"
+        },
+        {
+          "title": "透明度対応",
+          "description": "Midjourney PNGエクスポートの透明な領域を維持。",
+          "metric": "アルファ保存済み"
+        },
+        {
+          "title": "印刷対応",
+          "description": "Midjourney作成の印刷解像度バージョンを作成。",
+          "metric": "最大8K"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Midjourneyアート印刷",
+          "description": "キャンバス印刷、ポスター、商品用MJ PNGを拡張。",
+          "example": "Midjourney PNGエクスポートからギャラリー品質印刷を作成"
+        },
+        {
+          "title": "ソーシャルメディア強化",
+          "description": "Instagram、Pinterest、アートコミュニティ用Midjourney PNGを強化。",
+          "example": "最大ソーシャルメディアインパクト用高解像度バージョンを作成"
+        },
+        {
+          "title": "ポートフォリオ品質",
+          "description": "プロアートポートフォリオ用Midjourney作成を強化。",
+          "example": "プロポートフォリオディスプレイ用4Kに拡張"
+        },
+        {
+          "title": "NFT準備",
+          "description": "NFTミントに適した高解像度Midjourney PNGを作成。",
+          "example": "NFTプラットフォーム用最大解像度でAIアートを準備"
+        }
+      ],
+      "faq": [
+        {
+          "question": "アップスケーラー用にMidjourneyをPNGとしてエクスポートするのはなぜですか？",
+          "answer": "PNG形式は圧縮アーティファクトなしでMidjourneyから最高品質を提供し、アップスケーラー中にAIが作業できるより多くの詳細を与えます。"
+        },
+        {
+          "question": "最初にMidjourneyのアップスケーラーを使うべきですか？",
+          "answer": "はい！エクスポート前に常にMidjourneyの内蔵アップスケーラー（U1-U4）を使用し、その後さらに高解像度への追加強化にアップスケーラーを使用してください。"
+        },
+        {
+          "question": "アップスケーラーはMidjourneyスタイルを変更しますか？",
+          "answer": "いいえ、私たちのアップスケーラーは解像度を強化しながらMidjourney画像のオリジナルアーティスティックスタイルと美学を維持するように設計されています。"
+        },
+        {
+          "question": "PNG形式のMidjourneyグリッド画像を拡張できますか？",
+          "answer": "最適結果のために、最初にMidjourneyのアップスケーラー機能を使用して個別の高解像度画像を取得し、その後アップスケーラーでさらに強化してください。"
+        },
+        {
+          "question": "Midjourney PNGからどの解像度を達成できますか？",
+          "answer": "MidjourneyのPNGエクスポート（通常v5で1024x1024以上）から開始して、8倍まで拡張でき、8192x8192ピクセルまでの解像度を達成できます。"
+        }
+      ],
+      "relatedPlatforms": ["stable-diffusion-upscaler-png", "dalle-upscaler-png"],
+      "relatedFormats": ["upscale-png-images", "midjourney-upscaler-webp"]
+    },
+    {
+      "slug": "midjourney-upscaler-webp",
+      "title": "MidjourneyアップスケーラーWebP",
+      "metaTitle": "Midjourney WebPアップスケーラー - MJ WebP画像強化 | MyImageUpscaler",
+      "metaDescription": "AIでMidjourney WebP画像を拡張。解像度を強化しながらMJ出力をWebP形式に変換。Web使用に最適。無料で試す。",
+      "h1": "Midjourney WebPアップスケーラー - Web最適化MJ強化",
+      "intro": "Midjourney画像を強化し、同時に効率的なWebP形式に変換します。高品質と最適化されたファイルサイズの両方を必要とするWebアプリケーションに最適です。",
+      "primaryKeyword": "midjourney upscaler webp",
+      "secondaryKeywords": [
+        "upscale midjourney webp",
+        "midjourney webp enhancer",
+        "convert midjourney to webp",
+        "ai art webp upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "platform-format",
+      "platform": "Midjourney",
+      "format": "WebP",
+      "platformDescription": "Midjourney画像はWeb最適化用WebP形式と優秀に動作します。",
+      "formatDescription": "WebPはJPEGと比較して優秀な圧縮と品質を提供し、WebでのMidjourneyアート表示に最適です。",
+      "platformSettings": "最初に（最高品質で）PNG形式でMidjourney画像をエクスポートし、その後WebPに変換して拡張。",
+      "exportTips": [
+        "最大品質のために最初にPNGとしてMidjourneyからエクスポート",
+        "ツールはアップスケーラー中にWebPに変換",
+        "WebPはMidjourney作成のWeb表示に理想的",
+        "JPEGより小さいファイルサイズで優秀な品質を維持"
+      ],
+      "workflowTips": [
+        "Midjourneyで画像を生成",
+        "より良い開始品質のためにアップスケールボタン（U1-U4）を使用",
+        "PNG形式でエクスポート（利用可能な最高品質）",
+        "アップスケーラーにアップロードし出力形式としてWebPを選択",
+        "目標解像度を選択（Webには2倍、4倍推奨）",
+        "最適化WebP形式で強化Midjourney画像をダウンロード"
+      ],
+      "benefits": [
+        {
+          "title": "Web最適化",
+          "description": "WebP形式は高速読み込みWeb画像のために優秀な圧縮を提供。",
+          "metric": "30%小さいファイル"
+        },
+        {
+          "title": "品質保存",
+          "description": "Web最適化中にMidjourneyのアーティスティック品質を維持。",
+          "metric": "優秀な品質"
+        },
+        {
+          "title": "最新形式",
+          "description": "WebPはMJアート表示用すべての最新ブラウザでサポート。",
+          "metric": "普遍的サポート"
+        },
+        {
+          "title": "高速読み込み",
+          "description": "WebPの効率はアートポートフォリオのより高速なページ読み込みを意味。",
+          "metric": "より高速なページ"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Webポートフォリオ",
+          "description": "WebP最適化でオンラインポートフォリオにMidjourneyアートを表示。",
+          "example": "高速読み込みアートポートフォリオ画像を作成"
+        },
+        {
+          "title": "Eコマースアート",
+          "description": "Web最適化WebP画像でMidjourney作成を販売。",
+          "example": "AI生成アートを備えた商品画像を最適化"
+        },
+        {
+          "title": "ソーシャルメディア",
+          "description": "WebP効率でプラットフォームにMidjourneyアートを共有。",
+          "example": "高速読み込み時間で高品質AIアートを投稿"
+        },
+        {
+          "title": "ブログ画像",
+          "description": "WebPでMidjourneyアートを備えたブログ投稿を強化。",
+          "example": "WebP最適化で魅力的なブログヘッダーを作成"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Midjourney画像にWebPを使用するのはなぜですか？",
+          "answer": "WebPはJPEGより30%小さいファイルサイズでより良い品質を提供し、高速なページ読み込みを維持しながらMidjourneyアートのWeb表示に最適です。"
+        },
+        {
+          "question": "Midjourneyから直接WebPとしてエクスポートすべきですか？",
+          "answer": "Midjourneyは直接WebPにエクスポートしません。最初にPNGとしてエクスポート（最高品質）し、その後ツールを使用して拡張と同時にWebPに変換してください。"
+        },
+        {
+          "question": "WebPはMidjourney画像品質を下げますか？",
+          "answer": "いいえ！WebPは実際に同様かそれより小さいファイルサイズでJPEGより良い品質を提供します。Midjourneyアートは素晴らしく見えます。"
+        },
+        {
+          "question": "WebPはすべてのプラットフォームと互換性がありますか？",
+          "answer": "WebPはすべての最新ブラウザ（Chrome、Firefox、Safari 16+、Edge）でサポートされています。古いブラウザにはJPEGフォールバックを提供してください。"
+        },
+        {
+          "question": "Midjourney画像の印刷にWebPを使用できますか？",
+          "answer": "WebPは主にWeb形式です。印刷には、Midjourney PNGまたはTIFFの拡張を推奨します。Web表示のみにWebPを使用してください。"
+        }
+      ],
+      "relatedPlatforms": ["stable-diffusion-upscaler-webp", "dalle-upscaler-webp"],
+      "relatedFormats": ["upscale-webp-images", "midjourney-upscaler-png"]
+    },
+    {
+      "slug": "midjourney-upscaler-jpg",
+      "title": "MidjourneyアップスケーラーJPG",
+      "metaTitle": "Midjourney JPGアップスケーラー - MJ JPEG画像強化 | MyImageUpscaler",
+      "metaDescription": "AIでMidjourney JPG/JPEG画像を拡張。圧縮アーティファクトを修正し解像度を強化。MJアート共有に最適。無料で試す。",
+      "h1": "Midjourney JPGアップスケーラー - AIアート用JPEG強化",
+      "intro": "圧縮アーティファクトを低減しながらMidjourney JPEG画像を強化します。JPEG形式を好むプラットフォームでAIアートを品質向上して共有するのに最適です。",
+      "primaryKeyword": "midjourney upscaler jpg",
+      "secondaryKeywords": [
+        "upscale midjourney jpg",
+        "midjourney jpeg enhancer",
+        "midjourney jpg upscaler",
+        "enhance midjourney jpeg"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "platform-format",
+      "platform": "Midjourney",
+      "format": "JPEG",
+      "platformDescription": "JPEGとしてエクスポートされたMidjourney画像はアーティファクト低減と強化で利益を得ることができます。",
+      "formatDescription": "JPEG形式は広く互換性がありますが圧縮がある場合があります。私たちのAIはアーティファクトを除去しながらMJ JPEGを強化します。",
+      "platformSettings": "最適結果のために、Midjourney画像をPNGとしてエクスポートし、拡張後にJPEGに変換。JPEGとしてエクスポートする場合は最高品質を使用。",
+      "exportTips": [
+        "最高品質のために最初にPNGとしてMidjourney画像をエクスポート",
+        "JPEGとしてエクスポートする必要がある場合は利用可能な最高品質設定を使用",
+        "私たちのAIは拡張中にJPEG圧縮アーティファクトを低減",
+        "最大品質にはPNG形式を検討し、その後JPEGに変換"
+      ],
+      "workflowTips": [
+        "Midjourneyで画像を生成",
+        "可能な場合は最適な開始品質のためにPNG形式でエクスポート",
+        "専用Midjourney JPEGアップスケーラーにアップロード",
+        "ツールは解像度を強化し圧縮アーティファクトを低減",
+        "品質向上で強化JPEGをダウンロード",
+        "オプション：強化後に可逆ストレージ用PNGに戻す"
+      ],
+      "benefits": [
+        {
+          "title": "アーティファクト低減",
+          "description": "Midjourney画像を強化しながらJPEG圧縮アーティファクトを低減。",
+          "metric": "よりクリーンな画像"
+        },
+        {
+          "title": "普遍的形式",
+          "description": "JPEGは事実上すべてのプラットフォームとデバイスと互換性。",
+          "metric": "100%互換"
+        },
+        {
+          "title": "ソーシャルメディア対応",
+          "description": "強化JPEGはすべてのソーシャルメディアプラットフォームで完璧に動作。",
+          "metric": "ソーシャル対応済み"
+        },
+        {
+          "title": "共有可能品質",
+          "description": "Midjourneyアート共有に最適な高品質JPEGを作成。",
+          "metric": "共有最適化済み"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "ソーシャルメディア共有",
+          "description": "Instagram、Facebook、Twitterで強化Midjourney JPEGを共有。",
+          "example": "すべてのソーシャルプラットフォームで高品質MJアートを投稿"
+        },
+        {
+          "title": "メッセージングアプリ",
+          "description": "WhatsApp、Telegram、メッセージングで強化Midjourney JPEGを送信。",
+          "example": "友達と最大品質でAIアートを共有"
+        },
+        {
+          "title": "ブログ投稿",
+          "description": "ブログ投稿と記事で強化Midjourney JPEGを使用。",
+          "example": "AI生成画像でコンテンツを説明"
+        },
+        {
+          "title": "メール添付",
+          "description": "JPEG互換性でメール経由でMidjourneyアートを送信。",
+          "example": "メール経由でクライアントとAI作成を共有"
+        }
+      ],
+      "faq": [
+        {
+          "question": "MidjourneyをJPEGまたはPNGとしてエクスポートすべきですか？",
+          "answer": "常に最適品質のために最初にPNGとしてMidjourneyをエクスポートしてください。必要に応じて拡張後にJPEGに変換できます。PNGはAIが作業する可逆品質を提供します。"
+        },
+        {
+          "question": "JPEGアップスケーラーはMidjourneyアートに適していますか？",
+          "answer": "はい！JPEGは最も互換性のある形式であり、拡張Midjourney JPEGはあらゆるプラットフォームで動作します。ただし、最初にPNGとしてエクスポートすると最高品質が得られます。"
+        },
+        {
+          "question": "アップスケーラーはJPEGアーティファクトを修正できますか？",
+          "answer": "はい！私たちのAIは解像度を強化しながらJPEG圧縮アーティファクトを低減しますが、開始品質は重要です。"
+        },
+        {
+          "question": "Midjourney JPEGを印刷できますか？",
+          "answer": "JPEGは小さい印刷で機能しますが、印刷物にはPNGまたはTIFFの使用を推奨します。JPEGは主にWeb使用向けです。"
+        }
+      ],
+      "relatedPlatforms": ["stable-diffusion-upscaler-jpg", "dalle-upscaler-jpg"],
+      "relatedFormats": ["upscale-jpeg-images", "midjourney-upscaler-png"]
+    },
+    {
+      "slug": "stable-diffusion-upscaler-png",
+      "title": "Stable DiffusionアップスケーラーPNG",
+      "metaTitle": "Stable Diffusion PNGアップスケーラー - SD PNG画像強化 | MyImageUpscaler",
+      "metaDescription": "品質を損なわずにStable Diffusion PNG画像を4Kに拡張。透明度と可逆品質。AIアート印刷に最適。無料SDアップスケーラー。",
+      "h1": "Stable Diffusion PNGアップスケーラー - 可逆AIアート強化",
+      "intro": "Stable Diffusion PNGエクスポートを印刷品質または高解像度ディスプレイ用に強化します。SDおよびSDXL出力用の専用アップスケーラー。",
+      "primaryKeyword": "stable diffusion upscaler png",
+      "secondaryKeywords": [
+        "upscale stable diffusion png",
+        "sd png enhancer",
+        "sdxl upscaler png",
+        "ai art png upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "platform-format",
+      "platform": "Stable Diffusion",
+      "format": "PNG",
+      "platformDescription": "Stable DiffusionはPNG形式で出力でき、これは最高品質エクスポートです。",
+      "formatDescription": "PNGは可逆圧縮を提供し、Stable Diffusion生成に最適で、保存や印刷のために完全な詳細を保持します。",
+      "platformSettings": "Automatic1111またはComfyUIからPNG形式でエクスポート。Hi-Res Fixを有効にしてより良い開始品質。",
+      "exportTips": [
+        "常に最適品質のためにPNG形式でStable Diffusionをエクスポート",
+        "生成時にHi-Res Fixを使用してより良い開始解像度",
+        "PNGはSD生成の保存用最高品質形式",
+        "TIFFも保存用に可逆品質を提供"
+      ],
+      "workflowTips": [
+        "好みのモデルと設定でStable Diffusionで画像を生成",
+        "SD 1.5ではHi-Res Fixを有効にするかSDXLネイティブ解像度を使用",
+        "圧縮なしでPNG形式で保存/エクスポート",
+        "ターゲット解像度のアップスケーラーにアップロード",
+        "強化SD PNG画像をダウンロード"
+      ],
+      "benefits": [
+        {
+          "title": "可逆品質",
+          "description": "PNGはSD生成から最大詳細を保持。",
+          "metric": "完全な詳細保持"
+        },
+        {
+          "title": "モデルスタイル保存",
+          "description": "様々なSDチェックポイントの独特な特性を維持。",
+          "metric": "スタイル保存済み"
+        },
+        {
+          "title": "印刷対応",
+          "description": "SD作成の印刷解像度バージョンを作成。",
+          "metric": "最大8K"
+        },
+        {
+          "title": "詳細強化",
+          "description": "SD生成のテクスチャと細かい要素を鮮明に。",
+          "metric": "鮮明な詳細"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "SDアート印刷",
+          "description": "Stable Diffusion生成からギャラリー品質印刷を作成。",
+          "example": "キャンバス印刷、ポスター、アートプリント用PNGを拡張"
+        },
+        {
+          "title": "テクスチャ作成",
+          "description": "ゲームアセットと3Dモデリング用高解像度テクスチャを生成。",
+          "example": "ゲーム開発用高解像度テクスチャを作成"
+        },
+        {
+          "title": "ストック写真",
+          "description": "ストック写真提出と販売用SD画像を拡張。",
+          "example": "ストックサイトに提出する高解像度バージョンを作成"
+        },
+        {
+          "title": "ポートフォリオ",
+          "description": "プロアートポートフォリオ用SD生成を強化。",
+          "example": "4Kまたは8Kでプロポートフォリオ表示用画像を準備"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Stable DiffusionをPNGとしてエクスポートすべきですか？",
+          "answer": "はい！PNGは最高品質と可逆圧縮を提供し、アップスケーラーが作業できる完全な詳細を保持します。"
+        },
+        {
+          "question": "SDXL PNGを拡張できますか？",
+          "answer": "もちろんです！SDXLのネイティブ1024x1024はアップスケーラーの素晴らしい開始点です。"
+        },
+        {
+          "question": "PNGアップスケーラーはアニメスタイルで機能しますか？",
+          "answer": "はい！アニメモデルとチェックポイントはPNGアップスケーラーで優秀に動作し、線品質とセシェーディング技術を保存します。"
+        },
+        {
+          "question": "印刷にどの解像度が必要ですか？",
+          "answer": "標準印刷には4倍拡張（4000x4000以上）を推奨し、ポスターやキャンバスには8倍を使用してください。"
+        }
+      ],
+      "relatedPlatforms": ["midjourney-upscaler-png", "dalle-upscaler-png"],
+      "relatedFormats": ["upscale-png-images", "stable-diffusion-upscaler-webp"]
+    },
+    {
+      "slug": "dalle-upscaler-png",
+      "title": "DALL-EアップスケーラーPNG",
+      "metaTitle": "DALL-E PNGアップスケーラー - DALL-E画像強化 | MyImageUpscaler",
+      "metaDescription": "DALL-E画像をPNG形式で拡張。ChatGPTからDALL-E画像をダウンロードし、PNGで強化。印刷品質AIアート。無料で試す。",
+      "h1": "DALL-E PNGアップスケーラー - OpenAI画像強化",
+      "intro": "ChatGPTからDALL-E画像をダウンロードし、最高品質PNG形式で強化します。DALL-E 2とDALL-E 3出力用の専用アップスケーラー。",
+      "primaryKeyword": "dalle upscaler png",
+      "secondaryKeywords": [
+        "upscale dalle png",
+        "dall-e png enhancer",
+        "chatgpt image upscaler",
+        "openai png upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "platform-format",
+      "platform": "DALL-E",
+      "format": "PNG",
+      "platformDescription": "DALL-EはChatGPT経由でアクセスでき、PNG形式は最高品質エクスポートです。",
+      "formatDescription": "PNGはDALL-E生成の可逆品質保存に理想的で、将来の印刷または拡張用に最適です。",
+      "platformSettings": "ChatGPTからPNG形式でDALL-E画像をダウンロード。スクリーンショットを避けてください。",
+      "exportTips": [
+        "ChatGPTから直接PNGとしてDALL-E画像をダウンロード",
+        "スクリーンショットは品質を低下させるので避けてください",
+        "PNGはアップスケーラー用の最適品質を保持",
+        "DALL-E 3画像はより高い詳細を持っています"
+      ],
+      "workflowTips": [
+        "ChatGPTまたはAPI経由でDALL-Eで画像を生成",
+        "利用可能な最高品質でダウンロード（PNG形式）",
+        "専用DALL-E PNGアップスケーラーにアップロード",
+        "ターゲット解像度を選択（印刷には4K推奨）",
+        "強化DALL-E PNG画像をダウンロード"
+      ],
+      "benefits": [
+        {
+          "title": "OpenAI品質",
+          "description": "DALL-E 3の改善された詳細とテクスチャレンダリングを保持。",
+          "metric": "品質保持済み"
+        },
+        {
+          "title": "印刷対応",
+          "description": "印刷用途のDALL-E PNGを高解像度に拡張。",
+          "metric": "最大8K"
+        },
+        {
+          "title": "テキスト保存",
+          "description": "DALL-E生成テキストを鮮明に維持。",
+          "metric": "テキスト保存済み"
+        },
+        {
+          "title": "可逆ストレージ",
+          "description": "将来編集のために可逆品質で保存。",
+          "metric": "アーカイブ品質"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "DALL-Eアート印刷",
+          "description": "DALL-E作成から高品質印刷を作成。",
+          "example": "キャンバス印刷、アートプリント、ポスター用画像を拡張"
+        },
+        {
+          "title": "マーケティング資料",
+          "description": "DALL-E画像をブロシュア、プレゼンテーション、広告用に強化。",
+          "example": "プロマーケティング資料用DALL-E画像を準備"
+        },
+        {
+          "title": "Webグラフィック",
+          "description": "高解像度ヒーロー画像とWebサイトグラフィックを作成。",
+          "example": "Webサイトデザイン用DALL-Eヒーロー画像を拡張"
+        },
+        {
+          "title": "商品モックアップ",
+          "description": "プレゼンテーションとプロトタイピング用DALL-E商品コンセプトを強化。",
+          "example": "プロダクトデザイン提示用高解像度モックアップを作成"
+        }
+      ],
+      "faq": [
+        {
+          "question": "DALL-E画像をPNGとして拡張すべきですか？",
+          "answer": "はい！PNGは最高品質と可逆圧縮を提供し、DALL-E画像の印刷や将来使用に最適です。"
+        },
+        {
+          "question": "ChatGPTからDALL-E画像を最適にエクスポートするには？",
+          "answer": "直接画像としてダウンロードし、スクリーンショットを避けてください。可能な場合はPNG形式を探してください。"
+        },
+        {
+          "question": "DALL-E 3 PNGを拡張できますか？",
+          "answer": "もちろんです！私たちのアップスケーラーはDALL-E 3の改善された詳細とテクスチャを強化します。"
+        },
+        {
+          "question": "DALL-E PNGを印刷できますか？",
+          "answer": "はい！4K拡張PNG画像は印刷に優秀です。品質が基準を満たすことを確認するために小さなテスト印刷を検討してください。"
+        }
+      ],
+      "relatedPlatforms": ["midjourney-upscaler-png", "stable-diffusion-upscaler-png"],
+      "relatedFormats": ["upscale-png-images", "dalle-upscaler-jpg"]
+    }
+  ]
+}

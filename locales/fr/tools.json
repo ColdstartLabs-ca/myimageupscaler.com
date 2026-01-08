@@ -1,4 +1,6 @@
 {
+  "category": "tools",
+  "pages": null,
   "tools": {
     "image-upscaler": {
       "title": "Agrandisseur d'images IA",
@@ -442,5 +444,10 @@
       "pro_required": "Fonctionnalité Pro requise",
       "upgrade_link": "Découvrir les plans Pro"
     }
+  },
+  "meta": {
+    "totalPages": 7,
+    "lastUpdated": "2025-12-19T00:00:00Z",
+    "description": "Pages d'outils avec descriptions, caractéristiques et FAQ pour chaque outil"
   }
 }

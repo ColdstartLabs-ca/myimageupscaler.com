@@ -1,5 +1,5 @@
 {
-  "category": "guides",
+  "category": "Leitfaeden",
   "pages": [
     {
       "slug": "how-to-upscale-images",
@@ -16,7 +16,7 @@
         "auf 4k skalieren tutorial"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "guides",
+      "category": "Leitfaeden",
       "guideType": "how-to",
       "description": "Vollständige Schritt-für-Schritt-Anleitung zum Skalieren von Bildern mit KI-Technologie. Lernen Sie professionelle Techniken zur Erhöhung der Bildauflösung unter Erhaltung von Qualität und Details.",
       "difficulty": "beginner",
@@ -100,7 +100,7 @@
         "webp kompression"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
+      "category": "Leitfaeden",
       "guideType": "explainer",
       "description": "Alles, was Sie über das WebP-Bildformat wissen müssen. Verstehen Sie die Vorteile, Kompressionstechniken, Kompatibilität und wie man WebP-Bilder unter Beibehaltung der Qualität skaliert.",
       "difficulty": "beginner",

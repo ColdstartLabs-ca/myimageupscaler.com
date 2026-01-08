@@ -1,60 +1,60 @@
 {
   "page": {
-    "title": "Simple, Transparent Pricing",
-    "subtitle": "Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover."
+    "title": "Einfache, transparente Preise",
+    "subtitle": "Wählen Sie den Abonnementplan, der zu Ihren Bedürfnissen passt. Erhalten Sie monatliche Guthaben mit automatischer Übertragung."
   },
   "subscription": {
-    "title": "Choose Your Plan",
-    "subtitle": "Get credits every month with our subscription plans. Cancel anytime."
+    "title": "Wählen Sie Ihren Plan",
+    "subtitle": "Erhalten Sie jeden Monat Guthaben mit unseren Abonnementplänen. Jederzeit kündbar."
   },
   "currentBalance": {
-    "title": "Your current balance",
-    "credits": "credits",
-    "activeSubscription": "Active subscription"
+    "title": "Ihr aktuelles Guthaben",
+    "credits": "Guthaben",
+    "activeSubscription": "Aktives Abonnement"
   },
   "scheduledChange": {
-    "title": "Scheduled Plan Change",
-    "cancel": "Cancel",
-    "on": "on"
+    "title": "Geplante Planänderung",
+    "cancel": "Abbrechen",
+    "on": "am"
   },
-  "configurationWarning": "Stripe Price IDs are not configured. Add them to your .env file to enable purchases.",
+  "configurationWarning": "Stripe-Preis-IDs sind nicht konfiguriert. Fügen Sie sie Ihrer .env-Datei hinzu, um Käufe zu aktivieren.",
   "creditPacks": {
-    "title": "Need Credits Without a Subscription?",
-    "subtitle": "One-time credit packs that never expire. Perfect for occasional projects.",
-    "valueComparison": "Value Comparison:",
-    "valueComparisonText": "Subscriptions offer 11-58% cheaper credits for regular users",
-    "comparePlans": "Compare subscription plans"
+    "title": "Guthaben ohne Abonnement benötigt?",
+    "subtitle": "Einmalige Guthaben-Pakete, die niemals verfallen. Perfekt für gelegentliche Projekte.",
+    "valueComparison": "Wertvergleich:",
+    "valueComparisonText": "Abonnements bieten 11-58% günstigere Guthaben für regelmäßige Nutzer",
+    "comparePlans": "Abonnementpläne vergleichen"
   },
   "faq": {
-    "title": "Frequently Asked Questions",
+    "title": "Häufig gestellte Fragen",
     "creditsUsedFor": {
-      "question": "What are credits used for?",
-      "answer": "Credits are used for image processing actions. Each image processed consumes a certain number of credits based on the upscaling factor and features used."
+      "question": "Wofür werden Guthaben verwendet?",
+      "answer": "Guthaben werden für Bildverarbeitungsaktionen verwendet. Jedes verarbeitete Bild verbraucht eine bestimmte Anzahl an Guthaben, basierend auf dem Upscaling-Faktor und den verwendeten Funktionen."
     },
     "creditsExpire": {
-      "question": "Do credits expire?",
-      "answer": "Subscription credits roll over month-to-month up to your plan's maximum limit as long as your subscription is active."
+      "question": "Verfallen Guthaben?",
+      "answer": "Abonnement-Guthaben werden monatlich bis zum maximalen Limit Ihres Plans übertragen, solange Ihr Abonnement aktiv ist."
     },
     "batchProcessing": {
-      "question": "What is batch processing?",
-      "answer": "Batch processing allows you to upload and process multiple images at once. Free users can process 1 image at a time, while paid plans support batch processing of up to 10, 50, or 500 images simultaneously depending on your plan."
+      "question": "Was ist Batch-Verarbeitung?",
+      "answer": "Die Batch-Verarbeitung ermöglicht Ihnen, mehrere Bilder gleichzeitig hochzuladen und zu verarbeiten. Kostenlose Nutzer können 1 Bild gleichzeitig verarbeiten, während kostenpflichtige Pläne die Batch-Verarbeitung von bis zu 10, 50 oder 500 Bildern gleichzeitig unterstützen, je nach Plan."
     },
     "cancelSubscription": {
-      "question": "Can I cancel my subscription anytime?",
-      "answer": "Yes! You can cancel your subscription at any time. You'll continue to have access until the end of your billing period, and any remaining credits will stay in your account."
+      "question": "Kann ich mein Abonnement jederzeit kündigen?",
+      "answer": "Ja! Sie können Ihr Abonnement jederzeit kündigen. Sie haben bis zum Ende Ihres Abrechnungszeitraums weiterhin Zugriff, und alle verbleibenden Guthaben verbleiben in Ihrem Konto."
     },
     "paymentMethods": {
-      "question": "What payment methods do you accept?",
-      "answer": "We accept all major credit cards (Visa, Mastercard, American Express) and various other payment methods through Stripe."
+      "question": "Welche Zahlungsmethoden akzeptieren Sie?",
+      "answer": "Wir akzeptieren alle gängigen Kreditkarten (Visa, Mastercard, American Express) und verschiedene andere Zahlungsmethoden über Stripe."
     },
     "freePlan": {
-      "question": "Is there a free plan?",
-      "answer": "Yes! Free users get initial credits to try the service. However, batch processing and advanced features require a paid subscription. Free users can process one image at a time."
+      "question": "Gibt es einen kostenlosen Plan?",
+      "answer": "Ja! Kostenlose Nutzer erhalten anfängliche Guthaben, um den Service zu testen. However erfordert die Batch-Verarbeitung und erweiterte Funktionen ein kostenpflichtiges Abonnement. Kostenlose Nutzer können ein Bild gleichzeitig verarbeiten."
     }
   },
   "customPlan": {
-    "title": "Need a custom plan?",
-    "description": "Contact us for enterprise pricing, bulk discounts, or custom integration requirements.",
-    "contactSales": "Contact Sales"
+    "title": "Benötigen Sie einen benutzerdefinierten Plan?",
+    "description": "Kontaktieren Sie uns für Enterprise-Preise, Mengenrabatte oder benutzerdefinierte Integrationsanforderungen.",
+    "contactSales": "Vertrieb kontaktieren"
   }
 }

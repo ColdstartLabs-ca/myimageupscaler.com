@@ -1,31 +1,31 @@
 {
   "page": {
-    "title": "How it",
-    "titleHighlight": "Works",
-    "subtitle": "Transform your workflow in three simple steps. No complex settings, just professional results every time."
+    "title": "Come",
+    "titleHighlight": "Funziona",
+    "subtitle": "Trasforma il tuo flusso di lavoro in tre semplici passaggi. Nessuna impostazione complessa, solo risultati professionali ogni volta."
   },
   "section": {
-    "badge": "No Learning Curve",
-    "title": "Skip Photoshop.",
-    "titleHighlight": "Get results in 30 seconds.",
-    "description": "Professional image enhancement in three simple steps. No complex software, no learning curve—just drag, drop, and get results."
+    "badge": "Nessuna Curva di Apprendimento",
+    "title": "Salta Photoshop.",
+    "titleHighlight": "Ottieni risultati in 30 secondi.",
+    "description": "Miglioramento immagine professionale in tre semplici passaggi. Nessun software complesso, nessuna curva di apprendimento - trascina, rilascia e ottieni risultati."
   },
   "steps": {
     "upload": {
-      "name": "Upload",
-      "description": "Drop that blurry image you've been avoiding. No complex settings—just drag, drop, and go."
+      "name": "Carica",
+      "description": "Rilascia quell'immagine sfocata che stavi evitando. Nessuna impostazione complessa - trascina, rilascia e vai."
     },
     "enhancement": {
-      "name": "AI Enhancement",
-      "description": "Watch as AI reconstructs lost detail, sharpens edges, and fixes noise—all while keeping your text readable."
+      "name": "Miglioramento AI",
+      "description": "Guarda mentre AI ricostruisce dettagli persi, affina bordi e corregge rumore - mantenendo testo leggibile."
     },
     "download": {
-      "name": "Download & Use",
-      "description": "Get your crisp, professional result in under 30 seconds. Finally, images you're proud to publish."
+      "name": "Scarica e Usa",
+      "description": "Ottieni risultato nitido e professionale in meno di 30 secondi. Finalmente immagini di cui andare fieri di pubblicare."
     }
   },
   "status": {
-    "systemOperational": "System Operational",
-    "nodesActive": "Global AI Nodes Active"
+    "systemOperational": "Sistema Operativo",
+    "nodesActive": "Nodi AI Globali Attivi"
   }
 }

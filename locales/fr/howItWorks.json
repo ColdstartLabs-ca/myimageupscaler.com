@@ -1,31 +1,31 @@
 {
   "page": {
-    "title": "How it",
-    "titleHighlight": "Works",
-    "subtitle": "Transform your workflow in three simple steps. No complex settings, just professional results every time."
+    "title": "Comment ça",
+    "titleHighlight": "Marche",
+    "subtitle": "Transformez votre flux de travail en trois étapes simples. Pas de paramètres complexes, juste des résultats professionnels à chaque fois."
   },
   "section": {
-    "badge": "No Learning Curve",
-    "title": "Skip Photoshop.",
-    "titleHighlight": "Get results in 30 seconds.",
-    "description": "Professional image enhancement in three simple steps. No complex software, no learning curve—just drag, drop, and get results."
+    "badge": "Aucune courbe d'apprentissage",
+    "title": "Oubliez Photoshop.",
+    "titleHighlight": "Obtenez des résultats en 30 secondes.",
+    "description": "Amélioration d'images professionnelles en trois étapes simples. Pas de logiciel complexe, pas de courbe d'apprentissage—simplement glisser, déposer et obtenir des résultats."
   },
   "steps": {
     "upload": {
-      "name": "Upload",
-      "description": "Drop that blurry image you've been avoiding. No complex settings—just drag, drop, and go."
+      "name": "Télécharger",
+      "description": "Déposez cette image floue que vous évitiez. Pas de paramètres complexes—simplement glisser, déposer et commencer."
     },
     "enhancement": {
-      "name": "AI Enhancement",
-      "description": "Watch as AI reconstructs lost detail, sharpens edges, and fixes noise—all while keeping your text readable."
+      "name": "Amélioration IA",
+      "description": "Regardez l'IA reconstruire les détails perdus, affiner les bords et corriger le bruit—tout en gardant votre texte lisible."
     },
     "download": {
-      "name": "Download & Use",
-      "description": "Get your crisp, professional result in under 30 seconds. Finally, images you're proud to publish."
+      "name": "Télécharger et utiliser",
+      "description": "Obtenez votre résultat net et professionnel en moins de 30 secondes. Enfin, des images dont vous êtes fier de publier."
     }
   },
   "status": {
-    "systemOperational": "System Operational",
-    "nodesActive": "Global AI Nodes Active"
+    "systemOperational": "Système opérationnel",
+    "nodesActive": "Nœuds IA actifs dans le monde"
   }
 }

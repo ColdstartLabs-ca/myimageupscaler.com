@@ -1,0 +1,967 @@
+{
+  "category": "use-cases",
+  "pages": [
+    {
+      "slug": "ecommerce-product-photos",
+      "title": "Foto Prodotti E-commerce",
+      "metaTitle": "Requisiti Foto Prodotti E-commerce per Piattaforma | MyImageUpscaler",
+      "metaDescription": "Requisiti immagine esatti per Amazon, eBay, Etsy, Shopify. Scopri dimensioni minime, rapporti di aspetto e come upscalare foto prodotti per soddisfare standard piattaforma.",
+      "h1": "Requisiti Foto Prodotti E-commerce",
+      "intro": "Ogni marketplace ha requisiti di immagine specifici. Ecco esattamente cosa ti serve per ogni piattaforma e come arrivarci.",
+      "primaryKeyword": "foto prodotti ecommerce",
+      "secondaryKeywords": [
+        "requisiti immagine prodotto",
+        "dimensione foto amazon",
+        "requisiti immagine ebay",
+        "dimensioni foto etsy"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Requisiti di immagine specifici per principali piattaforme e-commerce con guida su come soddisfarli.",
+      "platformRequirements": [
+        {
+          "platform": "Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (per zoom)",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 preferito",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Bianco puro (RGB 255,255,255) per immagine principale",
+          "notes": "Il prodotto deve riempire 85% della cornice. Nessuna filigrana, loghi o testo sull'immagine principale."
+        },
+        {
+          "platform": "eBay",
+          "minimumSize": "500x500px",
+          "recommendedSize": "1600x1600px",
+          "maxFileSize": "12MB",
+          "aspectRatio": "1:1 preferito",
+          "format": "JPEG, PNG, GIF, TIFF, BMP",
+          "background": "Bianco o grigio chiaro preferito",
+          "notes": "Fino a 24 immagini per inserzione. Nessun bordo, filigrana o testo promozionale."
+        },
+        {
+          "platform": "Etsy",
+          "minimumSize": "2000px lato più corto",
+          "recommendedSize": "2700x2025px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3 raccomandato",
+          "format": "JPEG, PNG, GIF",
+          "background": "A tua scelta - gli scatti di stile di vita funzionano bene",
+          "notes": "La prima immagine è la miniatura. Rapporto 5:4 per icona negozio."
+        },
+        {
+          "platform": "Shopify",
+          "minimumSize": "Nessun minimo",
+          "recommendedSize": "2048x2048px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "1:1 per coerenza",
+          "format": "JPEG, PNG, GIF, HEIC, WebP",
+          "background": "Dipende dal tema",
+          "notes": "Dimensionamento coerente tra prodotti migliora l'aspetto. Conversione automatica WebP."
+        },
+        {
+          "platform": "WooCommerce",
+          "minimumSize": "Dipende dal tema",
+          "recommendedSize": "1200x1200px minimo",
+          "maxFileSize": "Dipende dal server",
+          "aspectRatio": "Configura nelle impostazioni tema",
+          "format": "JPEG, PNG, GIF, WebP",
+          "background": "Dipende dal tema",
+          "notes": "Abilita rigenerazione immagini dopo aver cambiato dimensioni miniature."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Le immagini del fornitore sono troppo piccole",
+          "solution": "Upscala ad almeno 2000x2000px. La maggior parte delle immagini del fornitore sono 500-800px - upscala 3-4x per funzionalità zoom.",
+          "howTo": "Carica all'upscaler, seleziona 4x, scarica. Un'immagine 500px diventa 2000px."
+        },
+        {
+          "problem": "Le immagini hanno colore di sfondo sbagliato",
+          "solution": "Amazon richiede bianco puro (255,255,255). Usa uno strumento di rimozione sfondo prima dell'upscaling.",
+          "howTo": "Rimuovi lo sfondo prima, aggiungi sfondo bianco, poi upscala se necessario."
+        },
+        {
+          "problem": "Il prodotto non riempie abbastanza la cornice",
+          "solution": "Ritaglia l'immagine prima dell'upscaling per centrare il prodotto. Quindi upscala per soddisfare la dimensione minima.",
+          "howTo": "Ritaglia al prodotto con margini minimi, poi upscala 2-4x per raggiungere 2000px."
+        },
+        {
+          "problem": "Le immagini sono sfocate dopo l'upscaling",
+          "solution": "L'upscaling AI preserva la nitidezza, ma le sorgenti di qualità molto bassa hanno limiti. Usa la sorgente di qualità più alta disponibile.",
+          "howTo": "Richiedi risoluzione più alta dal fornitore, o migliora prima dell'upscaling."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Controlla dimensione immagine sorgente",
+          "description": "Clic destro sull'immagine, controlla proprietà/dimensioni. Nota la dimensione attuale."
+        },
+        {
+          "step": 2,
+          "title": "Calcola fattore di upscale necessario",
+          "description": "Se la sorgente è 500px e ti servono 2000px, quello è upscaling 4x."
+        },
+        {
+          "step": 3,
+          "title": "Upscala immagine",
+          "description": "Carica all'upscaler, seleziona il fattore appropriato, scarica il risultato."
+        },
+        {
+          "step": 4,
+          "title": "Verifica output",
+          "description": "Controlla che le dimensioni finali soddisfino i requisiti della piattaforma. Verifica che testo/loghi rimangano nitidi."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quale risoluzione necessitano le foto di prodotti Amazon?",
+          "answer": "Amazon richiede minimo 1000x1000px, ma raccomanda 2000x2000px o più per abilitare la funzionalità zoom. La funzione zoom si attiva quando passi su immagini 1500px o più grandi."
+        },
+        {
+          "question": "Posso usare la stessa immagine su tutte le piattaforme?",
+          "answer": "Sì, se prepari per i requisiti più esigenti. Crea immagini 2000x2000px su sfondo bianco puro - queste funzionano su Amazon, eBay e Etsy con ritaglio."
+        },
+        {
+          "question": "Le immagini upscaled passeranno il controllo qualità di Amazon?",
+          "answer": "Le immagini upscaled AI tipicamente passano se la sorgente non era di qualità estremamente bassa. Evita di upscalare immagini più piccole di 300px - richiedi invece immagini sorgente migliori dai fornitori."
+        },
+        {
+          "question": "Come gestisco diversi rapporti di aspetto?",
+          "answer": "La maggior parte delle piattaforme preferisce 1:1 (quadrato). Se il tuo prodotto è rettangolare, aggiungi spazio bianco per renderlo quadrato, o ritaglia per adattare. L'immagine principale di Amazon deve essere quadrata."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["background-removal-guide"]
+    },
+    {
+      "slug": "real-estate-listings",
+      "title": "Linee Guida Foto Real Estate",
+      "metaTitle": "Requisiti Foto Real Estate per Piattaforma | MLS, Zillow, Realtor.com",
+      "metaDescription": "Requisiti immagine per MLS, Zillow, Realtor.com e Redfin. Scopri dimensioni ottimali, rapporti di aspetto e come preparare foto di inserzione.",
+      "h1": "Requisiti Foto Inserzioni Real Estate",
+      "intro": "Diverse piattaforme real estate hanno diverse specifiche delle immagini. Ecco cosa ti serve per i principali siti di inserzione.",
+      "primaryKeyword": "foto inserzioni real estate",
+      "secondaryKeywords": [
+        "requisiti foto mls",
+        "dimensione immagine zillow",
+        "fotografia real estate"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Real Estate",
+      "description": "Requisiti di immagine specifici per piattaforme di inserzione real estate con guida su come soddisfarli.",
+      "platformRequirements": [
+        {
+          "platform": "MLS (varia per regione)",
+          "minimumSize": "640x480px minimo tipico",
+          "recommendedSize": "2048x1536px o più",
+          "maxFileSize": "5-15MB (varia)",
+          "aspectRatio": "4:3 più comune",
+          "format": "JPEG",
+          "notes": "I requisiti variano per MLS regionale. Controlla le linee guida MLS locali. La maggior parte accetta fino a 50 foto."
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3 preferito",
+          "format": "JPEG, PNG",
+          "notes": "Fino a 200 foto. La prima foto appare nei risultati di ricerca - rendila contare."
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Sincronizza da MLS. Le immagini ad alta risoluzione ottengono priorità nei risultati di ricerca."
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px o più",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Enfatizza la qualità delle foto nelle inserzioni. Le foto HDR funzionano bene."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Le foto del telefono sembrano troppo scure",
+          "solution": "Usa il nostro Miglioratore Foto per migliorare l'esposizione e le ombre. Funziona bene per scatti interni.",
+          "howTo": "Carica al Miglioratore Foto, lascia che l'AI corregga automaticamente l'esposizione, poi upscala se necessario."
+        },
+        {
+          "problem": "Distorsione dell'obiettivo grandangolare",
+          "solution": "La correzione della distorsione dovrebbe essere fatta prima dell'upscaling. La maggior parte delle app di editing ha la correzione dell'obiettivo.",
+          "howTo": "Applica la correzione dell'obiettivo in Lightroom/app Foto prima, poi upscala l'immagine corretta."
+        },
+        {
+          "problem": "Le immagini dal telefono vecchio sono troppo piccole",
+          "solution": "Upscala 2x per telefonini di 2-3 anni fa, 3-4x per telefonini più vecchi per soddisfare gli standard attuali.",
+          "howTo": "Un'immagine 1080x810px upscaled 2x diventa 2160x1620px - sopra la dimensione raccomandata di Zillow."
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "Scatta durante l'ora d'oro",
+          "description": "La luce del mattino presto o del tardo pomeriggio è più lusinghiera. Evita ombre dure del mezzogiorno."
+        },
+        {
+          "tip": "Usa treppiedi per interni",
+          "description": "Permette esposizioni più lunghe per interni più luminosi senza sfocatura. Essenziale per stanze con poca luce."
+        },
+        {
+          "tip": "Cattura l'esterno prima",
+          "description": "Le foto esterne funzionano meglio con la luce del mattino. Programma lo shoot per iniziare all'esterno."
+        },
+        {
+          "tip": "Prepara le stanze prima di scattare",
+          "description": "Rimuovi il disordine, oggetti personali e oggetti distratti. Meno è più."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual è la migliore dimensione delle foto per Zillow?",
+          "answer": "Zillow raccomanda 2048x1536px minimo. Le immagini più grandi (fino a 50MB) visualizzano meglio su schermi grandi e pinch-to-zoom mobile."
+        },
+        {
+          "question": "Dovrei usare HDR per foto real estate?",
+          "answer": "HDR aiuta per scatti interni dove le finestre sono luminose ma le stanze sono scure. Usa HDR dall'aspetto naturale, non stili sovra-processati."
+        },
+        {
+          "question": "Quante foto dovrebbe avere un'inserzione?",
+          "answer": "25-50 foto è ottimale per la maggior parte delle proprietà. Includi esterno, tutte le stanze, caratteristiche chiave e contesto del quartiere."
+        },
+        {
+          "question": "Posso upscalare foto scattate con un telefono vecchio?",
+          "answer": "Sì, ma la qualità dipende dalla sorgente. Le foto di iPhone era 6 (2-3MP) possono upscalare ragionevolmente a 4-6MP. Le foto molto vecchie hanno limiti."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["interior-photography-tips"]
+    },
+    {
+      "slug": "social-media-images",
+      "title": "Dimensioni Immagini Social Media",
+      "metaTitle": "Guida Dimensione Immagini Social Media 2025 | Instagram, Facebook, Twitter, LinkedIn",
+      "metaDescription": "Guida completa alle dimensioni delle immagini social media. Dimensioni ottimali per Instagram, Facebook, Twitter, LinkedIn, TikTok e Pinterest con dimensioni pixel esatte.",
+      "h1": "Guida Dimensione Immagini Social Media",
+      "intro": "Ogni piattaforma ha diverse dimensioni di immagine ottimali. Ecco le dimensioni esatte per ogni piattaforma nel 2025.",
+      "primaryKeyword": "dimensione immagine social media",
+      "secondaryKeywords": [
+        "dimensione immagine instagram",
+        "dimensioni foto facebook",
+        "dimensione immagine twitter",
+        "dimensioni immagine linkedin"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Social Media",
+      "description": "Riferimento completo per dimensioni immagini social media con requisiti specifici piattaforma.",
+      "platformRequirements": [
+        {
+          "platform": "Instagram",
+          "imageTypes": [
+            { "type": "Post Quadrato", "dimensions": "1080x1080px", "aspectRatio": "1:1" },
+            { "type": "Post Ritratto", "dimensions": "1080x1350px", "aspectRatio": "4:5" },
+            { "type": "Post Paesaggio", "dimensions": "1080x566px", "aspectRatio": "1.91:1" },
+            { "type": "Storia/Reel", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Foto Profilo", "dimensions": "320x320px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Il ritratto (4:5) occupa più spazio nel feed. Le storie sono 9:16 verticale."
+        },
+        {
+          "platform": "Facebook",
+          "imageTypes": [
+            { "type": "Immagine Condivisa", "dimensions": "1200x630px", "aspectRatio": "1.91:1" },
+            { "type": "Post Quadrato", "dimensions": "1200x1200px", "aspectRatio": "1:1" },
+            { "type": "Foto Copertina", "dimensions": "820x312px (desktop)", "aspectRatio": "2.63:1" },
+            { "type": "Foto Profilo", "dimensions": "170x170px", "aspectRatio": "1:1" },
+            { "type": "Storia", "dimensions": "1080x1920px", "aspectRatio": "9:16" }
+          ],
+          "notes": "La foto copertina visualizza diversamente su mobile (area visibile 640x360px). Centra il contenuto importante."
+        },
+        {
+          "platform": "Twitter/X",
+          "imageTypes": [
+            { "type": "Immagine Nel Flusso", "dimensions": "1600x900px", "aspectRatio": "16:9" },
+            { "type": "Immagine Singola", "dimensions": "1200x675px", "aspectRatio": "16:9" },
+            { "type": "Due Immagini", "dimensions": "700x800px ciascuna", "aspectRatio": "7:8" },
+            { "type": "Foto Profilo", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "Intestazione", "dimensions": "1500x500px", "aspectRatio": "3:1" }
+          ],
+          "notes": "Le immagini 16:9 visualizzano meglio nella timeline. Le immagini quadrate vengono ritagliate."
+        },
+        {
+          "platform": "LinkedIn",
+          "imageTypes": [
+            { "type": "Immagine Condivisa", "dimensions": "1200x627px", "aspectRatio": "1.91:1" },
+            { "type": "Copertina Azienda", "dimensions": "1128x191px", "aspectRatio": "5.9:1" },
+            { "type": "Foto Profilo", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "Sfondo", "dimensions": "1584x396px", "aspectRatio": "4:1" }
+          ],
+          "notes": "Le foto professionali funzionano meglio. Evita filtri ed effetti pesanti."
+        },
+        {
+          "platform": "TikTok",
+          "imageTypes": [
+            { "type": "Video/Foto", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Foto Profilo", "dimensions": "200x200px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Verticale 9:16 è richiesto. Il contenuto orizzontale viene letterboxato."
+        },
+        {
+          "platform": "Pinterest",
+          "imageTypes": [
+            { "type": "Pin Standard", "dimensions": "1000x1500px", "aspectRatio": "2:3" },
+            { "type": "Pin Lungo", "dimensions": "1000x2100px", "aspectRatio": "1:2.1" },
+            { "type": "Pin Quadrato", "dimensions": "1000x1000px", "aspectRatio": "1:1" },
+            { "type": "Foto Profilo", "dimensions": "165x165px", "aspectRatio": "1:1" }
+          ],
+          "notes": "I pin verticali 2:3 funzionano meglio. I pin più alti ottengono più visibilità nel feed."
+        }
+      ],
+      "upscalingGuide": [
+        {
+          "scenario": "Vecchia foto per Instagram",
+          "source": "foto paesaggistica 640x480px",
+          "target": "post quadrato 1080x1080px",
+          "solution": "Upscala 2x a 1280x960px, poi ritaglia a quadrato 960x960px, upscala a 1080x1080px"
+        },
+        {
+          "scenario": "Screenshot per Twitter",
+          "source": "screenshot 750x500px",
+          "target": "1600x900px per timeline",
+          "solution": "Upscala 2x a 1500x1000px, aggiungi riempimento o ritaglia a rapporto di aspetto 16:9"
+        },
+        {
+          "scenario": "Foto prodotto per Pinterest",
+          "source": "scatto prodotto 800x800px",
+          "target": "pin verticale 1000x1500px",
+          "solution": "Upscala a 1200x1200px, aggiungi spazio verticale sopra/sotto per rapporto 2:3"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual è la migliore dimensione per post Instagram?",
+          "answer": "1080x1350px (4:5 ritratto) occupa più spazio nel feed. 1080x1080px (quadrato) è anche standard. Evita il paesaggio - appare più piccolo nei feed."
+        },
+        {
+          "question": "Perché le mie immagini sembrano sfocate su Instagram?",
+          "answer": "Instagram comprime le immagini. Carica esattamente a 1080px di larghezza per evitare il ricampionamento. Le immagini ad alta risoluzione vengono ridimensionate e possono perdere nitidezza."
+        },
+        {
+          "question": "Dovrei upscalare le immagini per social media?",
+          "answer": "Upscala se la tua sorgente è sotto i minimi della piattaforma. Ma non upscalare oltre le raccomandazioni della piattaforma - un'immagine 4000px verrà compressa a 1080px comunque."
+        },
+        {
+          "question": "Quale formato dovrei usare?",
+          "answer": "JPEG per foto (dimensione file più piccola, qualità abbastanza buona). PNG per grafiche con testo o trasparenza. Tutte le piattaforme accettano entrambi."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["image-compression-guide"]
+    },
+    {
+      "slug": "print-preparation",
+      "title": "Guida Dimensione Stampa",
+      "metaTitle": "Guida Risoluzione Immagini per Stampare | Calcolatore DPI e Grafico Dimensioni",
+      "metaDescription": "Calcola dimensioni pixel esatte per qualsiasi dimensione di stampa. Requisiti DPI, dimensioni carta e come preparare immagini per stampa professionale.",
+      "h1": "Guida Risoluzione Stampa",
+      "intro": "La stampa richiede risoluzione più alta rispetto al display dello schermo. Ecco esattamente cosa ti serve per diverse dimensioni di stampa.",
+      "primaryKeyword": "risoluzione immagini per stampa",
+      "secondaryKeywords": [
+        "requisiti dpi stampa",
+        "dimensione stampa foto",
+        "pixel a pollici",
+        "dimensione immagine 300 dpi"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Fotografia e Stampa",
+      "description": "Guida completa alla preparazione di immagini per stampa con requisiti DPI e calcoli dimensione.",
+      "dpiExplanation": {
+        "title": "Comprendere il DPI",
+        "content": "Il DPI (Punti Per Pollice) determina la qualità di stampa. La stampa foto standard richiede 300 DPI. DPI inferiori risultano in pixel visibili. DPI più alti non offrono benefici visibili ma aumentano la dimensione del file.",
+        "recommendations": [
+          {
+            "quality": "Stampe professionali",
+            "dpi": "300 DPI",
+            "use": "Foto, stampe d'arte, riviste"
+          },
+          { "quality": "Stampe standard", "dpi": "240-300 DPI", "use": "Stampa domestica, snapshot" },
+          {
+            "quality": "Grande formato (distanza visualizzazione 3ft+)",
+            "dpi": "150-200 DPI",
+            "use": "Poster, banner"
+          },
+          {
+            "quality": "Billboard (distanza visualizzazione 10ft+)",
+            "dpi": "50-100 DPI",
+            "use": "Display esterni grandi"
+          }
+        ]
+      },
+      "printSizeChart": [
+        {
+          "size": "4x6 pollici",
+          "pixels300dpi": "1200x1800",
+          "pixels240dpi": "960x1440",
+          "megapixels": "2.2 MP"
+        },
+        {
+          "size": "5x7 pollici",
+          "pixels300dpi": "1500x2100",
+          "pixels240dpi": "1200x1680",
+          "megapixels": "3.2 MP"
+        },
+        {
+          "size": "8x10 pollici",
+          "pixels300dpi": "2400x3000",
+          "pixels240dpi": "1920x2400",
+          "megapixels": "7.2 MP"
+        },
+        {
+          "size": "11x14 pollici",
+          "pixels300dpi": "3300x4200",
+          "pixels240dpi": "2640x3360",
+          "megapixels": "13.9 MP"
+        },
+        {
+          "size": "16x20 pollici",
+          "pixels300dpi": "4800x6000",
+          "pixels240dpi": "3840x4800",
+          "megapixels": "28.8 MP"
+        },
+        {
+          "size": "20x24 pollici",
+          "pixels300dpi": "6000x7200",
+          "pixels240dpi": "4800x5760",
+          "megapixels": "43.2 MP"
+        },
+        {
+          "size": "24x36 pollici",
+          "pixels300dpi": "7200x10800",
+          "pixels240dpi": "5760x8640",
+          "megapixels": "77.8 MP"
+        },
+        {
+          "size": "A4 (8.27x11.69 pollici)",
+          "pixels300dpi": "2480x3508",
+          "pixels240dpi": "1984x2806",
+          "megapixels": "8.7 MP"
+        },
+        {
+          "size": "A3 (11.69x16.54 pollici)",
+          "pixels300dpi": "3508x4961",
+          "pixels240dpi": "2806x3969",
+          "megapixels": "17.4 MP"
+        }
+      ],
+      "calculationFormula": {
+        "title": "Calcola Pixel Richiesti",
+        "formula": "Pixel = Dimensione Stampa (pollici) × DPI",
+        "example": "Per stampa 8x10 pollici a 300 DPI: 8×300 = 2400 pixel larghi, 10×300 = 3000 pixel alti"
+      },
+      "upscalingForPrint": [
+        {
+          "scenario": "Foto smartphone a stampa 8x10",
+          "source": "4032x3024px (12MP iPhone)",
+          "requirement": "2400x3000px a 300 DPI",
+          "solution": "Già sufficiente - nessun upscaling necessario. Ritaglia a rapporto di aspetto 4:5."
+        },
+        {
+          "scenario": "Immagine web a stampa 8x10",
+          "source": "800x600px immagine web",
+          "requirement": "2400x3000px a 300 DPI",
+          "solution": "Upscala 4x a 3200x2400px, ritaglia a 2400x3000px o aggiungi spazio canvas."
+        },
+        {
+          "scenario": "Foto Instagram a poster",
+          "source": "1080x1080px",
+          "requirement": "7200x7200px per poster 24x24 a 300 DPI",
+          "solution": "Upscala 8x a 8640x8640px. La qualità potrebbe essere limitata - considera 150 DPI per grande formato."
+        }
+      ],
+      "printingTips": [
+        {
+          "tip": "Usa profilo colore sRGB per stampa consumer",
+          "description": "La maggior parte delle stampanti e servizi di stampa consumer si aspettano sRGB. Converti da Adobe RGB se necessario."
+        },
+        {
+          "tip": "Aggiungi bleed per stampe bordo-bordo",
+          "description": "Aggiungi 0,125 pollici (37,5 pixel a 300 DPI) a ogni bordo per stampe professionali con bleed completo."
+        },
+        {
+          "tip": "Prova a schermo a dimensione effettiva",
+          "description": "Visualizza al 100% di zoom per controllare pixel visibili o artefatti prima della stampa."
+        },
+        {
+          "tip": "Salva come TIFF o JPEG di alta qualità",
+          "description": "TIFF è senza perdita. Se usi JPEG, esporta al 95-100% di qualità per evitare artefatti di compressione."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quale DPI mi serve per stampare foto?",
+          "answer": "300 DPI è lo standard per stampe foto fino a 16x20 pollici. Per stampe più grandi viste da distanza (poster, banner), 150-200 DPI è accettabile."
+        },
+        {
+          "question": "Posso upscalare un'immagine piccola per stampa grande?",
+          "answer": "L'upscaling AI funziona bene per ingrandimenti 2-4x. Oltre, la qualità dipende dalla sorgente. Un'immagine 1000px può ragionevolmente diventare una stampa 4000px (8x10 a 300 DPI)."
+        },
+        {
+          "question": "Perché la mia stampa sembra pixelata?",
+          "answer": "Risoluzione insufficiente. Controlla se la tua immagine sorgente ha abbastanza pixel per la dimensione di stampa a 300 DPI. Usa il grafico sopra per verificare."
+        },
+        {
+          "question": "Qual è la dimensione di stampa massima per la mia immagine?",
+          "answer": "Dividi le dimensioni pixel per 300 per dimensione massima a piena qualità. Un'immagine 3000x2000px stampa a 10x6,7 pollici a 300 DPI, o 20x13,3 pollici a 150 DPI."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "old-photo-restoration",
+      "title": "Ripristino Vecchie Foto",
+      "metaTitle": "Come Ripristinare Vecchie Foto | Guida Scansione e Miglioramento",
+      "metaDescription": "Guida completa al ripristino di foto vecchie e danneggiate. Suggerimenti scansione, flusso di miglioramento e aspettative realistiche per ripristino foto.",
+      "h1": "Guida Ripristino Vecchie Foto",
+      "intro": "Il ripristino di vecchie foto coinvolge più passaggi: corretta scansione, miglioramento e aspettative realistiche su cosa è possibile.",
+      "primaryKeyword": "ripristina vecchie foto",
+      "secondaryKeywords": [
+        "ripristina vecchie foto",
+        "ripara foto danneggiate",
+        "ripristino foto",
+        "miglioramento foto vintage"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Ripristino Foto",
+      "description": "Guida passo-passo al ripristino di foto vecchie e danneggiate con aspettative realistiche.",
+      "scanningGuide": {
+        "title": "Scansione Vecchie Foto",
+        "steps": [
+          {
+            "step": 1,
+            "title": "Pulisci il letto dello scanner",
+            "description": "La polvere e le impronte digitali sul vetro appariranno nella tua scansione. Usa panno in microfibra."
+          },
+          {
+            "step": 2,
+            "title": "Maneggia le foto con cura",
+            "description": "Le vecchie foto sono fragili. Usa guanti in cotone se disponibili. Non forzare le foto piegate ad appiattire."
+          },
+          {
+            "step": 3,
+            "title": "Scansiona a 600 DPI minimo",
+            "description": "Risoluzione più alta dà più dettagli con cui lavorare. 1200 DPI per foto gravemente danneggiate."
+          },
+          {
+            "step": 4,
+            "title": "Scansiona come TIFF, non JPEG",
+            "description": "TIFF è senza perdita e preserva tutti i dettagli. Converti in JPEG solo dopo l'editing."
+          },
+          {
+            "step": 5,
+            "title": "Scansiona a colori, anche per B/N",
+            "description": "La scansione a colori cattura tonalità sottili che aiutano con il ripristino."
+          }
+        ]
+      },
+      "damageTypes": [
+        {
+          "type": "Sbiancamento/giallura",
+          "description": "I colori sono spostati o sbiaditi nel tempo",
+          "canFix": "Sì - l'AI può ripristinare l'equilibrio colore e saturazione originale",
+          "limitations": "Le immagini gravemente sbiadite potrebbero mancare di dettagli da recuperare"
+        },
+        {
+          "type": "Graffi e pieghe",
+          "description": "Danni fisici visibili come linee o marchi",
+          "canFix": "Parziale - l'AI può ridurre la visibilità, non rimuovere completamente",
+          "limitations": "Graffi profondi o pieghe attraverso i volti sono difficili"
+        },
+        {
+          "type": "Sfocatura/messa a fuoco morbida",
+          "description": "L'immagine manca di nitidezza o era fuori fuoco",
+          "canFix": "Parziale - sfocatura moderata può essere migliorata",
+          "limitations": "Sfocatura grave non può essere completamente corretta - il dettaglio non era stato catturato"
+        },
+        {
+          "type": "Sezioni mancanti/strappi",
+          "description": "Parti della foto sono strappate o mancanti",
+          "canFix": "No - l'AI non può ricostruire dati immagine mancanti",
+          "limitations": "Richiede fotoritocco manuale da un professionista"
+        },
+        {
+          "type": "Danno da acqua/macchie",
+          "description": "Scolorimento da umidità o versamenti",
+          "canFix": "Parziale - la correzione colore aiuta, ma la perdita di texture è permanente",
+          "limitations": "Aree dove l'emulsione è sollevata non possono essere recuperate"
+        }
+      ],
+      "restorationWorkflow": [
+        {
+          "step": 1,
+          "title": "Scansiona ad alta risoluzione",
+          "description": "600+ DPI come TIFF. Questo è il tuo file master - non modificare l'originale."
+        },
+        {
+          "step": 2,
+          "title": "Crea una copia di lavoro",
+          "description": "Duplica la scansione. Lavora sulla copia, mantieni l'originale intatto."
+        },
+        {
+          "step": 3,
+          "title": "Ritaglia e raddrizza",
+          "description": "Rimuovi bordi, artefatti dello scanner. Raddrizza se la foto è stata scansionata storta."
+        },
+        {
+          "step": 4,
+          "title": "Esegui attraverso Miglioratore Foto",
+          "description": "Il miglioramento AI migliora colore, riduce rumore e affina dettagli."
+        },
+        {
+          "step": 5,
+          "title": "Upscala se necessario",
+          "description": "Se necessiti dimensioni più grandi, upscala dopo il miglioramento per migliore qualità."
+        },
+        {
+          "step": 6,
+          "title": "Esporta appropriatamente",
+          "description": "TIFF per archivio, JPEG di alta qualità per condivisione e stampa."
+        }
+      ],
+      "realisticExpectations": {
+        "title": "Cosa Il Ripristino AI Può e Non Può Fare",
+        "canDo": [
+          "Migliora equilibrio colore e rimuovi giallura",
+          "Riduce visibilità di graffi minori",
+          "Affina sfocatura morbida e aggiunge dettagli apparenti",
+          "Riduce rumore e grana pellicola",
+          "Aumenta risoluzione per stampa"
+        ],
+        "cannotDo": [
+          "Ricostruisce sezioni mancanti o strappate",
+          "Corregge completamente immagini fuori fuoco",
+          "Rimuove perfettamente graffi profondi o pieghe",
+          "Aggiunge dettagli che non sono mai stati catturati",
+          "Ripristina foto che sono quasi completamente distrutte"
+        ]
+      },
+      "faq": [
+        {
+          "question": "Puoi ripristinare una foto strappata?",
+          "answer": "L'AI non può ricostruire sezioni mancanti. Per foto strappate, le sezioni devono essere scansionate insieme e allineate manualmente, poi fotoritoccate a mano. L'AI può poi migliorare il risultato combinato."
+        },
+        {
+          "question": "A quale risoluzione dovrei scansionare vecchie foto?",
+          "answer": "Minimo 600 DPI per foto standard. 1200 DPI per stampe piccole o con dettagli fini. Più alto è meglio - puoi sempre ridimensionare dopo."
+        },
+        {
+          "question": "Dovresti ripristinare il colore nelle foto in bianco e nero?",
+          "answer": "Quello è colorazione, un processo diverso. I nostri strumenti migliorano il contenuto esistente - non aggiungiamo colore a B/N. La colorazione AI è una categoria separata."
+        },
+        {
+          "question": "Quanto miglioramento posso aspettarmi?",
+          "answer": "Le foto moderatamente danneggiate vedono un miglioramento significativo. Le foto gravemente danneggiate sembreranno migliori ma non diventeranno perfette. Le foto molto vecchie (pre-1900) hanno limiti intrinseci."
+        }
+      ],
+      "relatedTools": ["ai-photo-enhancer", "ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "amazon-product-photos",
+      "title": "Upscaling Foto Prodotti Amazon",
+      "metaTitle": "Upscala Foto Prodotti per Inserzioni Amazon | MyImageUpscaler",
+      "metaDescription": "Soddisfa requisito immagine Amazon 2000x2000px con upscaling AI. Trasforma foto fornitori in immagini prodotto zoom-ready. Strumento gratuito, nessuna filigrana.",
+      "h1": "Upscala Foto Prodotti per Amazon",
+      "intro": "Amazon richiede immagini minime 1000x1000px e raccomanda 2000x2000px per zoom. Ecco come upscalare foto fornitori per soddisfare questi requisiti.",
+      "primaryKeyword": "upscale foto prodotti amazon",
+      "secondaryKeywords": [
+        "dimensione immagine prodotto amazon",
+        "foto inserzioni amazon",
+        "requisiti immagine amazon 2025",
+        "upscale foto fornitori",
+        "dimensione immagine zoom amazon",
+        "fotografia prodotti fba"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Guida completa alla preparazione di immagini prodotti per inserzioni Amazon, inclusi requisiti dimensione, standard sfondo bianco e flusso di lavoro upscaling AI.",
+      "platformRequirements": [
+        {
+          "platform": "Immagine Principale Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (per zoom)",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 (quadrato)",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Bianco puro (RGB 255,255,255)",
+          "notes": "Il prodotto deve riempire 85% della cornice. Nessun testo, loghi, filigrane o bordi."
+        },
+        {
+          "platform": "Immagini Addizionali Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 preferito",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Qualsiasi (scenari di stile di vita permessi)",
+          "notes": "Può mostrare il prodotto in uso, imballaggio, confronto dimensionale e infografiche."
+        },
+        {
+          "platform": "Contenuto A+ Amazon",
+          "minimumSize": "Varia per modulo",
+          "recommendedSize": "Fino a 970px largo",
+          "maxFileSize": "2MB per immagine",
+          "aspectRatio": "Vari (dipendente dal modulo)",
+          "format": "JPEG, PNG",
+          "background": "Appropriato al tema",
+          "notes": "Le immagini ad alta risoluzione visualizzano meglio su moduli A+ desktop e mobile."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Le immagini del fornitore sono solo 500-800px",
+          "solution": "Usa upscaling AI per ingrandire 3-4x. Un'immagine 500px diventa 2000px con capacità zoom.",
+          "howTo": "Carica immagine fornitore, seleziona upscaling 4x, scarica a 2000x2000px o più."
+        },
+        {
+          "problem": "Immagini rifiutate per non soddisfare minimo 1000px",
+          "solution": "Upscala prima, poi ritaglia a rapporto 1:1 se necessario.",
+          "howTo": "Upscala ad almeno 1200px, poi ritaglia a 1000x1000px o 2000x2000px quadrato."
+        },
+        {
+          "problem": "Funzione zoom non funzionante sull'inserzione",
+          "solution": "Lo zoom Amazon richiede minimo 1500px sul lato più lungo, raccomanda 2000px+.",
+          "howTo": "Upscala tutte le immagini prodotto a 2000x2000px per assicurare che lo zoom funzioni."
+        },
+        {
+          "problem": "I dettagli del prodotto sembrano sfocati dopo l'upscaling",
+          "solution": "L'upscaling AI preserva testo e dettagli fini unlike ridimensionamento tradizionale.",
+          "howTo": "Usa upscaler AI specificamente addestrato per fotografia prodotti e conservazione testo."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Verifica qualità immagine sorgente",
+          "description": "Controlla dimensioni originali. Le immagini sotto 300px potrebbero non upscalare bene per Amazon."
+        },
+        {
+          "step": 2,
+          "title": "Rimuovi o sostituisci lo sfondo",
+          "description": "Per l'immagine principale, assicura sfondo bianco puro (255,255,255) prima dell'upscaling."
+        },
+        {
+          "step": 3,
+          "title": "Carica all'upscaler AI",
+          "description": "Seleziona upscaling 4x per immagini 500px, 2x per immagini 1000px per raggiungere target 2000px."
+        },
+        {
+          "step": 4,
+          "title": "Ritaglia a rapporto 1:1",
+          "description": "Assicurati che l'immagine finale sia quadrata con il prodotto che riempie 85% della cornice."
+        },
+        {
+          "step": 5,
+          "title": "Verifica dimensione file e formato",
+          "description": "Salva come JPEG sotto 10MB. Usa qualità 85-95% per migliore bilanciamento dimensione/qualità."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quale dimensione immagine richiedono le foto di prodotti Amazon?",
+          "answer": "Amazon richiede minimo 1000x1000px ma raccomanda fortemente 2000x2000px o più. La funzione zoom si attiva solo su immagini 1500px o più sul lato più lungo, e 2000px+ fornisce la migliore esperienza cliente."
+        },
+        {
+          "question": "Posso upscalare foto di fornitori di dropshipping per Amazon?",
+          "answer": "Sì, l'upscaling AI funziona bene per foto fornitori tipicamente da 500-800px. Upscala 3-4x per raggiungere la raccomandazione 2000px di Amazon. Assicurati di avere diritti di usare le immagini commercialmente."
+        },
+        {
+          "question": "Le immagini upscaled passeranno il controllo qualità di Amazon?",
+          "answer": "Le immagini upscaled AI tipicamente passano i controlli automatizzati di Amazon se la sorgente non era di qualità estremamente bassa. Concentrati su immagini sorgente sopra 300px per migliori risultati. I dettagli prodotto e il testo rimangono nitidi attraverso il processo upscaling."
+        },
+        {
+          "question": "Perché le mie immagini Amazon non hanno lo zoom?",
+          "answer": "La funzione zoom di Amazon richiede immagini di almeno 1500px sul lato più lungo, con 2000px+ raccomandato. Upscala le tue immagini a 2000x2000px per assicurare che lo zoom funzioni per tutti i clienti."
+        },
+        {
+          "question": "Qual è il miglior formato per immagini di prodotti Amazon?",
+          "answer": "JPEG è preferito per la maggior parte delle foto prodotto grazie a dimensioni file più piccole. Usa impostazione qualità 85-95%. PNG è meglio solo se necessiti trasparenza (anche se le immagini principali Amazon richiedono sfondi bianchi comunque)."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "real-estate-photo-enhancement",
+      "title": "Miglioramento Foto Real Estate",
+      "metaTitle": "Migliora Foto Real Estate con AI | Immagini Inserzioni Proprietà",
+      "metaDescription": "Trasforma foto proprietà con miglioramento AI. Correggi illuminazione, upscala risoluzione e fai distinguere le inserzioni. Usato da agenti e fotografi.",
+      "h1": "Miglioramento Foto Real Estate AI",
+      "intro": "Le foto di inserzione dall'aspetto professionale vendono proprietà più velocemente. Migliora e upscala immagini proprietà per soddisfare standard MLS e superare la concorrenza.",
+      "primaryKeyword": "miglioramento fotografia real estate",
+      "secondaryKeywords": [
+        "editing foto proprietà",
+        "miglioramento immagine real estate",
+        "miglioramento foto inserzione",
+        "qualità foto mls",
+        "immagini inserzione proprietà",
+        "editing fotografia real estate"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Real Estate",
+      "description": "Guida completa al miglioramento di foto real estate per MLS, Zillow e altre piattaforme di inserzione proprietà usando strumenti AI.",
+      "platformRequirements": [
+        {
+          "platform": "MLS (La Maggior Parte dei Sistemi)",
+          "minimumSize": "640x480px",
+          "recommendedSize": "2048x1536px o più",
+          "maxFileSize": "10-15MB varia",
+          "aspectRatio": "4:3 più comune",
+          "format": "JPEG",
+          "notes": "Le foto di qualità più alta ottengono più visualizzazioni. Molti sistemi MLS ora supportano immagini HD."
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px+",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3 preferito",
+          "format": "JPEG, PNG",
+          "notes": "La prima foto è cruciale - appare nei risultati di ricerca. Le immagini ad alta risoluzione si classificano meglio."
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Le immagini ad alta risoluzione ricevono posizionamento prioritario nei risultati di ricerca."
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px+",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Le foto di qualità influenzano direttamente le visualizzazioni e le richieste di inserzione."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Le foto interne sono troppo scure",
+          "solution": "Il miglioramento AI corregge automaticamente l'esposizione e porta fuori dettagli ombra.",
+          "howTo": "Carica al miglioratore foto, lascia che l'AI corregga automaticamente, poi upscala se la risoluzione è insufficiente."
+        },
+        {
+          "problem": "Le foto del telefono vecchio mancano di risoluzione",
+          "solution": "Upscala 2-3x per soddisfare gli standard moderni. Una foto 1200px diventa 2400-3600px.",
+          "howTo": "Carica all'upscaler AI, seleziona 2x o 3x, verifica che l'output soddisfi i requisiti della piattaforma."
+        },
+        {
+          "problem": "Sovraesposizione finestra da esterni luminosi",
+          "solution": "Il miglioramento AI può recuperare alcuni dettagli finestra e bilanciare esposizione interno/esterno.",
+          "howTo": "Esegui attraverso il miglioratore prima, poi upscala l'immagine corretta."
+        },
+        {
+          "problem": "Le foto dell'agente precedente sono di bassa qualità",
+          "solution": "Migliora e upscala foto esistenti programmando nuova fotografia professionale.",
+          "howTo": "Elabora batch attraverso il miglioratore e l'upscaler per migliorare immediatamente."
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "Scatta durante l'ora d'oro per gli esterni",
+          "description": "Il mattino presto o il tardo pomeriggio fornisce luce naturale lusinghiera senza ombre dure."
+        },
+        {
+          "tip": "Accendi tutte le luci interne",
+          "description": "Anche durante gli shoot di giorno, le luci interne aggiungono calore e rendono gli spazi invitanti."
+        },
+        {
+          "tip": "Usa treppiedi per risultati coerenti",
+          "description": "Il treppiedi permette esposizioni più lunghe per interni più luminosi e assicura orizzonti livello."
+        },
+        {
+          "tip": "Scatta dagli angoli per massimo spazio",
+          "description": "Scattare dagli angoli della stanza mostra due pareti e rende gli spazi più grandi."
+        },
+        {
+          "tip": "Prepara prima di scattare",
+          "description": "Rimuovi oggetti personali, chiudi coperchi del water, disegna i mobili per mostrare il flusso di traffico."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Valuta qualità foto esistente",
+          "description": "Controlla risoluzione, esposizione e composizione. Identifica quali immagini necessitano miglioramento versus reshoot."
+        },
+        {
+          "step": 2,
+          "title": "Esegui primo miglioramento AI",
+          "description": "Carica al miglioratore foto per correggere esposizione, bilanciamento colore e chiarezza prima dell'upscaling."
+        },
+        {
+          "step": 3,
+          "title": "Upscala a risoluzione target",
+          "description": "Ingrandisci foto migliorate a 2048px o più per visualizzazione ottimale sui siti di inserzione."
+        },
+        {
+          "step": 4,
+          "title": "Esporta nel formato corretto",
+          "description": "Salva come JPEG al 85-95% di qualità. La maggior parte dei sistemi MLS richiede formato JPEG."
+        },
+        {
+          "step": 5,
+          "title": "Ordina foto strategicamente",
+          "description": "Inizia con il migliore scatto esterno, poi le stanze chiave. La prima foto appare nei risultati di ricerca."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Il miglioramento AI può sostituire la fotografia real estate professionale?",
+          "answer": "Il miglioramento AI migliora dramaticamente le foto esistenti ma non sostituisce la fotografia professionale per inserzioni di alto valore. Usa il miglioramento per migliorare buone foto o come soluzione temporanea programmando uno shoot professionale."
+        },
+        {
+          "question": "Quale risoluzione dovrebbero essere le foto real estate?",
+          "answer": "Punta a 2048x1536px minimo. Questo soddisfa i requisiti per Zillow, MLS e Realtor.com fornendo immagini nitide sia su desktop che mobile. Risoluzione più alta (2560px+) può migliorare la classifica della ricerca su alcune piattaforme."
+        },
+        {
+          "question": "Come correggo foto interne scure?",
+          "answer": "Il miglioramento foto AI corregge automaticamente l'esposizione e schiarisce le ombre. Carica il tuo scatto interno scuro, lascia che l'AI analizzi e corregga, poi scarica la versione migliorata. Per migliori risultati, migliora prima dell'upscaling."
+        },
+        {
+          "question": "Le foto migliorate sembreranno false o sovra-processate?",
+          "answer": "Il miglioramento AI di qualità produce risultati dall'aspetto naturale. Evita strumenti che creano l'aspetto sovra-saturato e pesante HDR che gli acquirenti diffidano. Il nostro miglioratore dà priorità a correzioni realistiche su effetti drammatici."
+        },
+        {
+          "question": "Quante foto dovrebbe avere un'inserzione real estate?",
+          "answer": "25-50 foto è ottimale per la maggior parte delle proprietà. Includi esterno, tutte le stanze principali, caratteristiche chiave (cucina, bagni, armadi) e eventuali punti di vendita unici. La qualità conta più della quantità - 25 ottime foto battono 50 mediocri."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": []
+    }
+  ],
+  "meta": {
+    "totalPages": 12,
+    "lastUpdated": "2026-01-06T00:00:00Z"
+  }
+}

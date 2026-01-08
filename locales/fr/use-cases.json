@@ -1,0 +1,377 @@
+{
+  "category": "use-cases",
+  "pages": [
+    {
+      "slug": "ecommerce-product-photos",
+      "title": "Photos de produits e-commerce",
+      "metaTitle": "Exigences des photos de produits e-commerce par plateforme | MyImageUpscaler",
+      "metaDescription": "Exigences d'image exactes pour Amazon, eBay, Etsy, Shopify. Apprenez les tailles minimales, les proportions et comment agrandir les photos de produits pour répondre aux normes des plateformes.",
+      "h1": "Exigences des photos de produits e-commerce",
+      "intro": "Chaque place de marché a des exigences d'image spécifiques. Voici exactement ce dont vous avez besoin pour chaque plateforme et comment y arriver.",
+      "primaryKeyword": "photos de produits e-commerce",
+      "secondaryKeywords": [
+        "exigences image produit",
+        "taille photo amazon",
+        "exigences image ebay",
+        "dimensions photo etsy"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Exigences d'image spécifiques pour les principales plateformes e-commerce avec des conseils sur comment les rencontrer.",
+      "platformRequirements": [
+        {
+          "platform": "Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (pour zoom)",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 préféré",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Blanc pur (RGB 255,255,255) pour l'image principale",
+          "notes": "Le produit doit remplir 85% du cadre. Aucun filigrane, logo ou texte sur l'image principale."
+        },
+        {
+          "platform": "eBay",
+          "minimumSize": "500x500px",
+          "recommendedSize": "1600x1600px",
+          "maxFileSize": "12MB",
+          "aspectRatio": "1:1 préféré",
+          "format": "JPEG, PNG, GIF, TIFF, BMP",
+          "background": "Blanc ou gris clair préféré",
+          "notes": "Jusqu'à 24 images par annonce. Aucune bordure, filigrane ou texte promotionnel."
+        },
+        {
+          "platform": "Etsy",
+          "minimumSize": "2000px côté le plus court",
+          "recommendedSize": "2700x2025px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3 recommandé",
+          "format": "JPEG, PNG, GIF",
+          "background": "Au choix - les photos de style de vie fonctionnent bien",
+          "notes": "La première image est la miniature. Rapport 5:4 pour l'icône de boutique."
+        },
+        {
+          "platform": "Shopify",
+          "minimumSize": "Aucun minimum",
+          "recommendedSize": "2048x2048px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "1:1 pour la cohérence",
+          "format": "JPEG, PNG, GIF, HEIC, WebP",
+          "background": "Dépend du thème",
+          "notes": "Une taille cohérente à travers les produits améliore l'apparence. Conversion automatique WebP."
+        },
+        {
+          "platform": "WooCommerce",
+          "minimumSize": "Dépend du thème",
+          "recommendedSize": "1200x1200px minimum",
+          "maxFileSize": "Dépend du serveur",
+          "aspectRatio": "Configurer dans les paramètres du thème",
+          "format": "JPEG, PNG, GIF, WebP",
+          "background": "Dépend du thème",
+          "notes": "Activez la régénération d'images après avoir changé les tailles des miniatures."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Les images fournisseur sont trop petites",
+          "solution": "Agrandissez à au moins 2000x2000px. La plupart des images fournisseur sont 500-800px - agrandissez 3-4x pour la fonction de zoom.",
+          "howTo": "Téléchargez sur l'agrandisseur, sélectionnez 4x, téléchargez. Une image 500px devient 2000px."
+        },
+        {
+          "problem": "Les images ont une mauvaise couleur de fond",
+          "solution": "Amazon exige du blanc pur (255,255,255). Utilisez un outil de suppression de fond avant l'agrandissement.",
+          "howTo": "Supprimez le fond d'abord, ajoutez un fond blanc, puis agrandissez si nécessaire."
+        },
+        {
+          "problem": "Le produit ne remplit pas assez le cadre",
+          "solution": "Recadrez l'image avant l'agrandissement pour centrer le produit. Ensuite agrandissez pour atteindre la taille minimale.",
+          "howTo": "Recadrez sur le produit avec des marges minimales, puis agrandissez 2-4x pour atteindre 2000px."
+        },
+        {
+          "problem": "Les images sont floues après l'agrandissement",
+          "solution": "L'agrandissement IA préserve la netteté, mais les sources de très basse qualité ont des limites. Utilisez la source de plus haute qualité disponible.",
+          "howTo": "Demandez une résolution plus élevée au fournisseur, ou améliorez avant l'agrandissement."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Vérifiez la taille de l'image source",
+          "description": "Clic droit sur l'image, vérifiez les propriétés/dimensions. Notez la taille actuelle."
+        },
+        {
+          "step": 2,
+          "title": "Calculez le facteur d'agrandissement nécessaire",
+          "description": "Si la source est 500px et vous avez besoin de 2000px, c'est un agrandissement 4x."
+        },
+        {
+          "step": 3,
+          "title": "Agrandissez l'image",
+          "description": "Téléchargez sur l'agrandisseur, sélectionnez le facteur approprié, téléchargez le résultat."
+        },
+        {
+          "step": 4,
+          "title": "Vérifiez la sortie",
+          "description": "Vérifiez que les dimensions finales répondent aux exigences de la plateforme. Vérifiez que le texte/logos restent nets."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quelle résolution les images de produits Amazon nécessitent-elles ?",
+          "answer": "Amazon exige minimum 1000x1000px, mais recommande 2000x2000px ou plus pour activer la fonction de zoom. Le zoom s'active au survol sur les images 1500px ou plus."
+        },
+        {
+          "question": "Puis-je utiliser la même image sur toutes les plateformes ?",
+          "answer": "Oui, si vous préparez pour les exigences les plus exigeantes. Créez des images 2000x2000px sur fond blanc pur - celles-ci fonctionnent sur Amazon, eBay et Etsy avec recadrage."
+        },
+        {
+          "question": "Les images agrandies passeront-elles le contrôle de qualité d'Amazon ?",
+          "answer": "Les images agrandies par IA passent typiquement si la source n'était pas de qualité extrêmement basse. Évitez d'agrandir des images de moins de 300px - demandez de meilleures images source aux fournisseurs à la place."
+        },
+        {
+          "question": "Comment gérer les différentes proportions ?",
+          "answer": "La plupart des plateformes préfèrent 1:1 (carré). Si votre produit est rectangulaire, soit ajoutez de l'espace blanc pour le rendre carré, soit recadrez pour ajuster. L'image principale Amazon doit être carrée."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["background-removal-guide"]
+    },
+    {
+      "slug": "real-estate-listings",
+      "title": "Directives photo immobilières",
+      "metaTitle": "Exigences des photos immobilières par plateforme | MLS, Zillow, Realtor.com",
+      "metaDescription": "Exigences d'image pour MLS, Zillow, Realtor.com et Redfin. Apprenez les tailles optimales, les proportions et comment préparer les photos de annonces.",
+      "h1": "Exigences des photos d'annonces immobilières",
+      "intro": "Différentes plateformes immobilières ont des spécifications d'image différentes. Voici ce dont vous avez besoin pour les principaux sites d'annonces.",
+      "primaryKeyword": "photos annonces immobilières",
+      "secondaryKeywords": [
+        "exigences photos mls",
+        "taille image zillow",
+        "photographie immobilire"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Immobilier",
+      "description": "Exigences d'image spécifiques pour les plateformes d'annonces immobilières avec des conseils pour les rencontrer.",
+      "platformRequirements": [
+        {
+          "platform": "MLS (varie par région)",
+          "minimumSize": "640x480px minimum typique",
+          "recommendedSize": "2048x1536px ou plus",
+          "maxFileSize": "5-15MB (varie)",
+          "aspectRatio": "4:3 le plus commun",
+          "format": "JPEG",
+          "notes": "Les exigences varient par MLS régional. Vérifiez les directives de votre MLS local. La plupart acceptent jusqu'à 50 photos."
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3 préféré",
+          "format": "JPEG, PNG",
+          "notes": "Jusqu'à 200 photos. La première photo apparaît dans les résultats de recherche - faites-la compter."
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Synchronise depuis MLS. Les images de plus haute résolution ont la priorité dans le classement des recherches."
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px ou plus",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Met l'accent sur la qualité photo dans les annonces. Les photos HDR fonctionnent bien."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Les photos de téléphone ont l'air trop sombres",
+          "solution": "Utilisez notre Amplificateur Photo pour améliorer l'exposition et les ombres. Fonctionne bien pour les prises de vue intérieures.",
+          "howTo": "Téléchargez sur l'Amplificateur Photo, laissez l'IA corriger automatiquement l'exposition, puis agrandissez si nécessaire."
+        },
+        {
+          "problem": "Distorsion de l'objectif grand-angle",
+          "solution": "La correction de la distorsion doit être faite avant l'agrandissement. La plupart des applications de montage ont une correction d'objectif.",
+          "howTo": "Appliquez la correction d'objectif dans Lightroom/Application Photo d'abord, puis agrandissez l'image corrigée."
+        },
+        {
+          "problem": "Les images de l'ancien téléphone sont trop petites",
+          "solution": "Agrandissez 2x pour les téléphones de 2-3 ans, 3-4x pour les téléphones plus anciens pour répondre aux normes actuelles.",
+          "howTo": "Une image 1080x810px agrandie 2x devient 2160x1620px - au-dessus de la taille recommandée de Zillow."
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "Photographiez pendant l'heure dorée",
+          "description": "La lumière tôt le matin ou tard l'après-midi est la plus flatteuse. Évitez les ombres dures de midi."
+        },
+        {
+          "tip": "Utilisez un trépied pour les intérieurs",
+          "description": "Permet une exposition plus longue pour des intérieurs plus lumineux sans flou. Essentiel pour les pièces peu lumineuses."
+        },
+        {
+          "tip": "Capturez l'extérieur d'abord",
+          "description": "Les photos extérieures fonctionnent mieux avec la lumière du matin. Planifiez la séance pour commencer à l'extérieur."
+        },
+        {
+          "tip": "Mettez en scène les pièces avant de photographier",
+          "description": "Supprimez l'encombrement, les articles personnels et les objets distrayants. Moins c'est plus."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quelle est la meilleure taille de photo pour Zillow ?",
+          "answer": "Zillow recommande 2048x1536px minimum. Les images plus grandes (jusqu'à 50MB) s'affichent mieux sur les grands écrans et le pincement zoom mobile."
+        },
+        {
+          "question": "Dois-je utiliser HDR pour les photos immobilières ?",
+          "answer": "HDR aide pour les prises de vue intérieures où les fenêtres sont lumineuses mais les pièces sombres. Utilisez un HDR d'aspect naturel, pas les styles surtraités."
+        },
+        {
+          "question": "Combien de photos une annonce doit-elle avoir ?",
+          "answer": "25-50 photos est optimal pour la plupart des propriétés. Incluez l'extérieur, toutes les pièces, les caractéristiques clés et le contexte du quartier."
+        },
+        {
+          "question": "Puis-je agrandir des photos prises avec un ancien téléphone ?",
+          "answer": "Oui, mais la qualité dépend de la source. Les photos iPhone 6 (2-3MP) peuvent raisonnablement être agrandies à 4-6MP. Les très anciennes photos ont des limites."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["interior-photography-tips"]
+    },
+    {
+      "slug": "social-media-images",
+      "title": "Tailles d'images réseaux sociaux",
+      "metaTitle": "Guide des tailles d'images réseaux sociaux 2025 | Instagram, Facebook, Twitter, LinkedIn",
+      "metaDescription": "Guide complet des dimensions d'images réseaux sociaux. Tailles optimales pour Instagram, Facebook, Twitter, LinkedIn, TikTok et Pinterest avec dimensions exactes en pixels.",
+      "h1": "Guide des tailles d'images réseaux sociaux",
+      "intro": "Chaque plateforme a des tailles d'image optimales différentes. Voici les dimensions exactes pour chaque plateforme en 2025.",
+      "primaryKeyword": "taille image reseaux sociaux",
+      "secondaryKeywords": [
+        "taille image instagram",
+        "dimensions photo facebook",
+        "taille image twitter",
+        "dimensions image linkedin"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Réseaux Sociaux",
+      "description": "Référence complète pour les dimensions d'images réseaux sociaux avec des exigences spécifiques par plateforme.",
+      "platformRequirements": [
+        {
+          "platform": "Instagram",
+          "imageTypes": [
+            { "type": "Publication carrée", "dimensions": "1080x1080px", "aspectRatio": "1:1" },
+            { "type": "Publication portrait", "dimensions": "1080x1350px", "aspectRatio": "4:5" },
+            { "type": "Publication paysage", "dimensions": "1080x566px", "aspectRatio": "1.91:1" },
+            { "type": "Story/Reel", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Photo de profil", "dimensions": "320x320px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Le portrait (4:5) prend plus de place dans les fils. Les Stories sont 9:16 vertical."
+        },
+        {
+          "platform": "Facebook",
+          "imageTypes": [
+            { "type": "Image partagée", "dimensions": "1200x630px", "aspectRatio": "1.91:1" },
+            { "type": "Publication carrée", "dimensions": "1200x1200px", "aspectRatio": "1:1" },
+            { "type": "Photo de couverture", "dimensions": "820x312px (bureau)", "aspectRatio": "2.63:1" },
+            { "type": "Photo de profil", "dimensions": "170x170px", "aspectRatio": "1:1" },
+            { "type": "Story", "dimensions": "1080x1920px", "aspectRatio": "9:16" }
+          ],
+          "notes": "La photo de couverture s'affiche différemment sur mobile (640x360px zone visible). Centrez le contenu important."
+        },
+        {
+          "platform": "Twitter/X",
+          "imageTypes": [
+            { "type": "Image dans le flux", "dimensions": "1600x900px", "aspectRatio": "16:9" },
+            { "type": "Image unique", "dimensions": "1200x675px", "aspectRatio": "16:9" },
+            { "type": "Deux images", "dimensions": "700x800px chacune", "aspectRatio": "7:8" },
+            { "type": "Photo de profil", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "En-tête", "dimensions": "1500x500px", "aspectRatio": "3:1" }
+          ],
+          "notes": "Les images 16:9 s'affichent le mieux dans la chronologie. Les images carrées sont recadrées."
+        },
+        {
+          "platform": "LinkedIn",
+          "imageTypes": [
+            { "type": "Image partagée", "dimensions": "1200x627px", "aspectRatio": "1.91:1" },
+            { "type": "Couverture entreprise", "dimensions": "1128x191px", "aspectRatio": "5.9:1" },
+            { "type": "Photo de profil", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "Arrière-plan", "dimensions": "1584x396px", "aspectRatio": "4:1" }
+          ],
+          "notes": "Les photos professionnelles performent mieux. Évitez les filtres et les effets lourds."
+        },
+        {
+          "platform": "TikTok",
+          "imageTypes": [
+            { "type": "Vidéo/Photo", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Photo de profil", "dimensions": "200x200px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Le vertical 9:16 est requis. Le contenu horizontal est encadré de barres noires."
+        },
+        {
+          "platform": "Pinterest",
+          "imageTypes": [
+            { "type": "Épingle standard", "dimensions": "1000x1500px", "aspectRatio": "2:3" },
+            { "type": "Longue épingle", "dimensions": "1000x2100px", "aspectRatio": "1:2.1" },
+            { "type": "Épingle carrée", "dimensions": "1000x1000px", "aspectRatio": "1:1" },
+            { "type": "Photo de profil", "dimensions": "165x165px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Les épingles verticales 2:3 performent le mieux. Les épingles plus hautes ont plus de visibilité dans le flux."
+        }
+      ],
+      "upscalingGuide": [
+        {
+          "scenario": "Ancienne photo pour Instagram",
+          "source": "Photo paysage 640x480px",
+          "target": "Publication carrée 1080x1080px",
+          "solution": "Agrandissez 2x à 1280x960px, puis recadrez en carré 960x960px, agrandissez à 1080x1080px"
+        },
+        {
+          "scenario": "Capture d'écran pour Twitter",
+          "source": "Capture d'écran 750x500px",
+          "target": "1600x900px pour la chronologie",
+          "solution": "Agrandissez 2x à 1500x1000px, ajoutez un rembourrage ou recadrez au rapport 16:9"
+        },
+        {
+          "scenario": "Photo de produit pour Pinterest",
+          "source": "Photo de produit 800x800px",
+          "target": "Épingle verticale 1000x1500px",
+          "solution": "Agrandissez à 1200x1200px, ajoutez un espace vertical au-dessus/en-dessous pour le rapport 2:3"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quelle est la meilleure taille pour les publications Instagram ?",
+          "answer": "1080x1350px (4:5 portrait) prend le plus de place dans le flux. 1080x1080px (carré) est aussi standard. Évitez le paysage - il apparaît plus petit dans les flux."
+        },
+        {
+          "question": "Pourquoi mes images ont-elles l'air floues sur Instagram ?",
+          "answer": "Instagram compresse les images. Téléchargez exactement à 1080px de large pour éviter le rééchantillonnage. Les images de plus haute résolution sont réduites et peuvent perdre en netteté."
+        },
+        {
+          "question": "Dois-je agrandir les images pour les réseaux sociaux ?",
+          "answer": "Agrandissez si votre source est en dessous des minimums des plateformes. Mais n'agrandissez pas au-delà des recommandations des plateformes - une image 4000px sera compressée à 1080px quand même."
+        },
+        {
+          "question": "Quel format dois-je utiliser ?",
+          "answer": "JPEG pour les photos (fichier plus petit, qualité assez bonne). PNG pour les graphiques avec du texte ou la transparence. Toutes les plateformes acceptent les deux."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["image-compression-guide"]
+    }
+  ],
+  "meta": {
+    "totalPages": 12,
+    "lastUpdated": "2026-01-06T00:00:00Z"
+  }
+}

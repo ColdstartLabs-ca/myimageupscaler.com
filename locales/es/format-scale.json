@@ -1,5 +1,5 @@
 {
-  "category": "format-scale",
+  "category": "formato-escala",
   "pages": [
     {
       "slug": "jpeg-upscale-2x",
@@ -10,13 +10,14 @@
       "intro": "Duplica tu resolución JPEG con nuestro escalador 2X IA avanzado. Perfecto para mejora de calidad moderada manteniendo apariencia natural.",
       "primaryKeyword": "jpeg escalar 2x",
       "lastUpdated": "2026-01-06",
-      "category": "format-scale",
+      "category": "formato-escala",
       "format": "JPEG",
       "scaleFactor": "2X"
     }
   ],
   "meta": {
     "totalPages": 60,
-    "lastUpdated": "2026-01-06"
+    "lastUpdated": "2026-01-06",
+    "description": "Páginas multiplicadoras de Formato × Escala - combinaciones de formatos de imagen con factores de escala"
   }
 }

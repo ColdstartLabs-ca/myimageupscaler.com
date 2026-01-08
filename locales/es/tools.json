@@ -1,5 +1,5 @@
 {
-  "category": "tools",
+  "category": "herramientas",
   "pages": [
     {
       "slug": "ai-image-upscaler",
@@ -18,7 +18,7 @@
         "ampliador de fotos"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "toolName": "Escalador de Imágenes IA",
       "description": "Transforma imágenes de baja resolución en visuales de alta calidad. A diferencia del redimensionamiento tradicional que crea desenfoque, nuestra IA reconstruye el detalle al escalar.",
       "features": [
@@ -180,7 +180,7 @@
         "mejorador de imagenes"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "toolName": "Mejorador de Fotos IA",
       "description": "Mejora la calidad de foto manteniendo la misma resolución. Ideal para corregir problemas antes de escalar, o cuando solo necesitas mejor calidad en el tamaño actual.",
       "features": [
@@ -339,7 +339,7 @@
         "recortar imagen"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
@@ -470,7 +470,7 @@
         "quitar fondo de imagen"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
@@ -566,7 +566,7 @@
         "fondo claro"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
@@ -663,7 +663,7 @@
         "recortar persona de foto"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,

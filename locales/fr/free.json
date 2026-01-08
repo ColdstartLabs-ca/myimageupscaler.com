@@ -1,419 +1,404 @@
 {
-  "free": {
-    "free-image-upscaler": {
-      "title": "Agrandisseur d'images gratuit 100% - Sans inscription",
-      "description": "Agrandissez vos images gratuitement jusqu'à 4x. Pas d'inscription requise, résultats instantanés, traitement illimité.",
-      "keywords": "agrandisseur d'images gratuit, sans inscription, gratuit 100%, illimité",
-      "h1": "Agrandisseur d'Images Gratuit 100%",
-      "h1_sub": "Agrandissez jusqu'à 4x sans inscription. Vraiment gratuit, illimité.",
-      "features_title": "Pourquoi choisir notre outil gratuit ?",
+  "category": "free",
+  "pages": [
+    {
+      "slug": "free-image-upscaler",
+      "title": "Free Image Upscaler",
+      "metaTitle": "Free Image Upscaler - Enhance Photos Online | MyImageUpscaler",
+      "metaDescription": "Free online image upscaler with AI. Upscale images to 4K with 10 free credits. No signup required, no watermarks. Start enhancing photos now.",
+      "h1": "Free Image Upscaler - Enhance Photos Online with AI",
+      "intro": "Get professional image upscaling completely free. 10 credits to start, no signup required, and zero watermarks on your enhanced images.",
+      "primaryKeyword": "free image upscaler",
+      "secondaryKeywords": [
+        "free photo upscaler",
+        "upscale image free",
+        "free ai upscaler"
+      ],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free Image Upscaler",
+      "description": "Experience professional-grade AI image upscaling at no cost. Our free tier gives you 10 credits to upscale images to 4K resolution with the same powerful AI technology used by professionals worldwide.",
       "features": [
-        "100% gratuit - pas de frais cachés",
-        "Agrandissement jusqu'à 4x",
-        "Sans inscription requise",
-        "Résultats instantanés",
-        "Traitement local sécurisé",
-        "5 images par jour"
+        {
+          "title": "10 Free Credits",
+          "description": "Start immediately with 10 free image upscaling credits. No credit card, no signup required."
+        },
+        {
+          "title": "No Watermarks",
+          "description": "Unlike other free tools, we never add watermarks to your images. What you create is 100% yours."
+        },
+        {
+          "title": "Full 4K Resolution",
+          "description": "Access the same 4K upscaling capability as premium users. No quality restrictions on free tier."
+        },
+        {
+          "title": "AI-Powered Quality",
+          "description": "Use the same advanced neural networks that power our premium service. Free doesn't mean lower quality."
+        }
       ],
-      "how_title": "Comment utiliser l'outil gratuit ?",
-      "how_steps": [
-        "Cliquez sur 'Télécharger une image'",
-        "Sélectionnez votre photo (jusqu'à 10 Mo)",
-        "Choisissez 2x, 3x ou 4x",
-        "Téléchargez votre image agrandie"
-      ],
-      "limitations_title": "Limitations de la version gratuite",
       "limitations": [
-        "5 images par jour",
-        "Taille maximale : 10 Mo",
-        "Résolution maximale : 4096 x 4096",
-        "Files d'attente prioritaires pour les Pro"
+        "10 images per month on free tier",
+        "Standard processing speed (30-60 seconds)",
+        "One image at a time (no batch processing)"
       ],
-      "upgrade_title": "Passez à la version Pro",
-      "upgrade_benefits": [
-        "Agrandissement illimité",
-        "Images jusqu'à 50 Mo",
-        "Résolution jusqu'à 8K",
-        "Pas de files d'attente",
-        "Support prioritaire",
-        "Outils avancés exclusifs"
+      "upgradePoints": [
+        "Unlimited monthly credits",
+        "Batch processing (up to 50 images)",
+        "Priority processing queue"
       ],
-      "faq_title": "Questions sur la version gratuite",
       "faq": [
         {
-          "q": "Est-ce vraiment 100% gratuit ?",
-          "a": "Oui, la version gratuite est complètement gratuite, sans carte bancaire requise. Vous pouvez agrandir jusqu'à 5 images par jour."
+          "question": "Is it really free?",
+          "answer": "Yes! You get 10 free image upscaling credits every month, no credit card required. These credits renew monthly."
         },
         {
-          "q": "Pourquoi demander une adresse e-mail ?",
-          "a": "Nous ne demandons PAS d'e-mail pour la version gratuite. Téléchargez simplement et utilisez l'outil immédiatement."
+          "question": "Will there be watermarks on my images?",
+          "answer": "Never. All images you create with MyImageUpscaler are completely watermark-free, even on the free tier."
         },
         {
-          "q": "Puis-je utiliser les images commercialement ?",
-          "a": "Oui, vous conservez tous les droits sur vos images traitées, qu'elles soient gratuites ou Pro."
-        },
-        {
-          "q": "Y a-t-il un filigrane sur les images gratuites ?",
-          "a": "Non, nous n'ajoutons JAMAIS de filigrane sur les images, gratuites ou Pro."
-        },
-        {
-          "q": "Comment augmenter la limite à 5 images ?",
-          "a": "Passez à un plan Pro pour un agrandissement illimité et bien d'autres avantages."
+          "question": "What happens when I run out of free credits?",
+          "answer": "You can upgrade to a premium plan for unlimited credits, or wait until next month when your free credits renew."
         }
       ],
-      "cta_free": "Commencer gratuitement",
-      "cta_pro": "Découvrir les plans Pro",
-      "trust_badge": "Plus de 100 000 utilisateurs satisfaits"
+      "relatedFree": [
+        "free-photo-enhancer",
+        "free-image-enhancer"
+      ],
+      "upgradePath": "/pricing"
     },
-    "free-photo-enhancer": {
-      "title": "Améliorateur de photos gratuit - Améliorez automatiquement vos photos",
-      "description": "Améliorez vos photos gratuitement en ligne. Correction automatique du flou, luminosité, couleurs et plus.",
-      "keywords": "améliorateur photo gratuit, corriger flou, améliorer luminosité, couleurs",
-      "h1": "Améliorateur de Photos Gratuit",
-      "h1_sub": "Transformez vos photos en un clic. Sans inscription.",
-      "features_title": "Améliorations automatiques gratuites",
-      "features": [
-        "Correction automatique du flou",
-        "Optimisation de la luminosité",
-        "Amélioration des couleurs",
-        "Réduction du bruit",
-        "Ajustement du contraste",
-        "5 améliorations par jour"
+    {
+      "slug": "free-photo-enhancer",
+      "title": "Free Photo Enhancer",
+      "metaTitle": "Free Photo Enhancer - AI Enhancement Tool | MyImageUpscaler",
+      "metaDescription": "Enhance photos free with AI. Fix blur, improve colors, and sharpen details. 10 free enhancements, no watermarks. Try now.",
+      "h1": "Free Photo Enhancer - AI-Powered Photo Enhancement",
+      "intro": "Transform your photos with professional AI enhancement. Fix blur, optimize colors, and enhance details—all for free with no watermarks.",
+      "primaryKeyword": "free photo enhancer",
+      "secondaryKeywords": [
+        "free image enhancer",
+        "enhance photos free",
+        "photo enhancement free"
       ],
-      "enhancements_title": "Types d'améliorations",
-      "enhancements": [
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free Photo Enhancer",
+      "description": "Bring your photos to life with AI-powered enhancement. Our free tier provides 10 monthly enhancements with the same professional-grade technology trusted by photographers worldwide.",
+      "features": [
         {
-          "type": "Netteté",
-          "description": "Récupérez les détails des photos floues"
+          "title": "Automatic Enhancement",
+          "description": "AI analyzes and enhances your photos automatically. No sliders, no settings—just perfect results."
         },
         {
-          "type": "Luminosité",
-          "description": "Éclaircissez les photos sous-exposées"
+          "title": "Color Correction",
+          "description": "Fix white balance, saturation, and vibrancy issues automatically for natural-looking results."
         },
         {
-          "type": "Couleurs",
-          "description": "Rendez les couleurs plus vives"
+          "title": "Detail Sharpening",
+          "description": "Enhance fine details and textures while keeping skin tones smooth and natural."
         },
         {
-          "type": "Contraste",
-          "description": "Améliorez la profondeur de l'image"
-        },
-        {
-          "type": "Bruit",
-          "description": "Réduisez le grain des photos ISO élevées"
-        },
-        {
-          "type": "Visage",
-          "description": "Améliorez les portraits automatiquement"
+          "title": "Noise Reduction",
+          "description": "Eliminate grain from low-light or high-ISO photos without losing important detail."
         }
       ],
-      "before_after": "Avant / Après",
-      "before_after_desc": "Voyez la différence que fait notre IA",
-      "how_title": "Comment améliorer une photo ?",
-      "how_steps": [
-        "Téléchargez votre photo",
-        "L'IA analyse et améliore automatiquement",
-        "Comparez avant/après",
-        "Téléchargez le résultat"
+      "limitations": [
+        "10 photo enhancements per month",
+        "Single photo processing",
+        "Standard processing speed"
       ],
-      "faq_title": "Questions sur l'améliorateur gratuit",
+      "upgradePoints": [
+        "Unlimited monthly credits",
+        "Faster processing (10-20 seconds)",
+        "Batch upload up to 50 images"
+      ],
       "faq": [
         {
-          "q": "L'amélioration fonctionne-t-elle sur toutes les photos ?",
-          "a": "Notre IA fonctionne sur la plupart des photos. Les meilleurs résultats sont obtenus avec des photos floues, sous-exposées ou avec des couleurs ternes."
+          "question": "How is this different from the free image upscaler?",
+          "answer": "The photo enhancer focuses on improving quality (color, sharpness, noise) rather than increasing size. It's perfect for fixing photo quality issues."
         },
         {
-          "q": "Puis-je annuler les modifications ?",
-          "a": "L'amélioration est non-destructive. Vous gardez l'originale et pouvez télécharger les deux versions."
+          "question": "Can I use this for old family photos?",
+          "answer": "Absolutely! The AI is excellent at restoring and enhancing old, faded, or damaged photos to bring them back to life."
         },
         {
-          "q": "L'amélioration est-elle définitive ?",
-          "a": "Nous téléchargeons à la fois l'originale et la version améliorée, vous pouvez donc choisir."
-        },
-        {
-          "q": "Puis-je améliorer plusieurs photos à la fois ?",
-          "a": "Le traitement par lots est disponible avec un plan Pro. La version gratuite traite une image à la fois."
+          "question": "Do I need to create an account?",
+          "answer": "No account needed for the free tier. Just visit the site and start enhancing. Create an account only if you want to track your usage or upgrade."
         }
       ],
-      "cta_title": "Améliorez vos photos maintenant",
-      "cta_button": "Télécharger une photo"
+      "relatedFree": [
+        "free-image-upscaler",
+        "free-ai-photo-enhancer"
+      ],
+      "upgradePath": "/pricing"
     },
-    "free-background-remover": {
-      "title": "Supprimeur d'arrière-plan gratuit - Transparent PNG en un clic",
-      "description": "Supprimez l'arrière-plan de vos photos gratuitement. Obtenez un transparent PNG parfait en un clic sans inscription.",
-      "keywords": "supprimer arrière-plan gratuit, transparent PNG, outil gratuit, découpe photo",
-      "h1": "Supprimeur d'Arrière-plan Gratuit",
-      "h1_sub": "Supprimez les arrière-plans en un clic. 100% gratuit.",
-      "features_title": "Suppression d'arrière-plan gratuite",
+    {
+      "slug": "free-image-enhancer",
+      "title": "Free Image Enhancer",
+      "metaTitle": "Free Image Enhancer - Improve Image Quality Online | MyImageUpscaler",
+      "metaDescription": "Free AI image enhancer to improve quality online. Fix blur, enhance colors, sharpen details. 10 free credits monthly, no watermarks.",
+      "h1": "Free Image Enhancer - Improve Any Image with AI",
+      "intro": "Enhance any image for free with professional AI technology. Improve quality, fix blur, and optimize colors in seconds.",
+      "primaryKeyword": "free image enhancer",
+      "secondaryKeywords": [
+        "enhance image free",
+        "free image quality enhancer",
+        "improve image free"
+      ],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free Image Enhancer",
+      "description": "Professional image enhancement without the professional price tag. Get 10 free enhancements monthly with enterprise-grade AI that rivals Photoshop's results.",
       "features": [
-        "Détection automatique du sujet",
-        "Contours précis et nets",
-        "Support des cheveux et détails fins",
-        "Export PNG transparent",
-        "3 suppressions par jour gratuitement",
-        "Sans inscription"
-      ],
-      "how_title": "Comment supprimer l'arrière-plan ?",
-      "how_steps": [
-        "Téléchargez votre image",
-        "L'IA détecte le sujet automatiquement",
-        "L'arrière-plan est supprimé",
-        "Téléchargez en PNG transparent"
-      ],
-      "perfect_for": "Parfait pour",
-      "use_cases": [
-        "Photos de produits e-commerce",
-        "Photos de profil professionnelles",
-        "Design créatif et montage",
-        "Marketing et publicité",
-        "Création de contenu"
-      ],
-      "examples_title": "Exemples de suppression",
-      "examples": [
-        "Produits sur fond blanc",
-        "Portraits sans arrière-plan",
-        "Logos et icônes",
-        "Vêtements et accessoires",
-        "Photos d'événements"
-      ],
-      "faq_title": "Questions sur le suppression gratuite",
-      "faq": [
         {
-          "q": "La suppression est-elle vraiment automatique ?",
-          "a": "Oui, notre IA détecte et supprime l'arrière-plan automatiquement. Pas de sélection manuelle nécessaire."
+          "title": "One-Click Enhancement",
+          "description": "Upload and enhance with a single click. AI handles all the complex adjustments automatically."
         },
         {
-          "q": "Comment les cheveux sont-ils gérés ?",
-          "a": "Notre IA gère les cheveux et détails fins avec précision, créant des contours naturels."
+          "title": "Quality Improvement",
+          "description": "Enhance overall image quality by fixing compression artifacts, blur, and low resolution issues."
         },
         {
-          "q": "Puis-je affiner manuellement le résultat ?",
-          "a": "La version gratuite offre un résultat automatique. Pour des outils d'affinement manuel, passez à Pro."
+          "title": "Smart Detail Recovery",
+          "description": "AI intelligently recovers lost details and textures that were degraded by compression or downsizing."
         },
         {
-          "q": "Le PNG est-il vraiment transparent ?",
-          "a": "Oui, nous exportons en PNG avec un canal alpha complet pour une transparence parfaite."
-        },
-        {
-          "q": "Combien d'images puis-je traiter gratuitement ?",
-          "a": "3 suppressions par jour. Passez à Pro pour un traitement illimité et des outils avancés."
+          "title": "Format Flexibility",
+          "description": "Upload JPEG, PNG, or WebP. Download in any format you need, with optimal compression settings."
         }
       ],
-      "cta_title": "Supprimez un arrière-plan maintenant",
-      "cta_button": "Choisir une image"
+      "limitations": [
+        "10 image enhancements monthly",
+        "Max 25MB per image",
+        "Single image processing"
+      ],
+      "upgradePoints": [
+        "Unlimited credits per month",
+        "100MB maximum file size (vs 25MB free)",
+        "API access for automation"
+      ],
+      "faq": [
+        {
+          "question": "What's the difference between enhancement and upscaling?",
+          "answer": "Enhancement improves existing quality (sharpness, color, detail) while upscaling increases the size/resolution. Both can be used together for best results."
+        },
+        {
+          "question": "Will this fix blurry images?",
+          "answer": "The AI can significantly improve mild to moderate blur, especially from compression or slight motion. Extreme blur has physical limits to what can be recovered."
+        },
+        {
+          "question": "How many times can I enhance the same image?",
+          "answer": "Each enhancement uses one credit. You can enhance the same image multiple times if you want to experiment with different settings (on premium plans)."
+        }
+      ],
+      "relatedFree": [
+        "free-photo-enhancer",
+        "free-ai-upscaler"
+      ],
+      "upgradePath": "/pricing"
     },
-    "free-image-compressor": {
-      "title": "Compresseur d'images gratuit - Réduisez la taille jusqu'à 80%",
-      "description": "Compressez vos images gratuitement en ligne. Réduisez la taille jusqu'à 80% sans perte de qualité visible.",
-      "keywords": "compresseur images gratuit, réduire taille, optimiser, compression intelligente",
-      "h1": "Compresseur d'Images Gratuit",
-      "h1_sub": "Réduisez la taille jusqu'à 80% gratuitement.",
-      "features_title": "Compression intelligente gratuite",
+    {
+      "slug": "free-ai-photo-enhancer",
+      "title": "Free AI Photo Enhancer",
+      "metaTitle": "Free AI Photo Enhancer - Enhance Photos with AI | MyImageUpscaler",
+      "metaDescription": "Free AI photo enhancer with neural network technology. Enhance photos automatically, fix quality issues. 10 free credits, no signup needed.",
+      "h1": "Free AI Photo Enhancer - Neural Network Photo Enhancement",
+      "intro": "Harness the power of AI to enhance your photos professionally. Free tier includes 10 monthly credits with full-quality enhancement and no watermarks.",
+      "primaryKeyword": "free ai photo enhancer",
+      "secondaryKeywords": [
+        "ai enhance photo free",
+        "free photo ai",
+        "ai photo enhancement free"
+      ],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free AI Photo Enhancer",
+      "description": "Experience state-of-the-art neural network photo enhancement at zero cost. Our AI models are trained on millions of photos to deliver professional results instantly.",
       "features": [
-        "Réduction jusqu'à 80% de la taille",
-        "Qualité préservée par IA",
-        "Support JPEG, PNG, WebP",
-        "Comparaison avant/après",
-        "Compression par lots (Pro)",
-        "10 compressions par jour"
-      ],
-      "how_title": "Comment compresser une image ?",
-      "how_steps": [
-        "Téléchargez votre image",
-        "Choisissez le niveau de compression",
-        "Prévisualisez avant/après",
-        "Téléchargez le fichier optimisé"
-      ],
-      "levels_title": "Niveaux de compression",
-      "levels": [
         {
-          "name": "Faible",
-          "description": "Qualité maximale, réduction de 20-40%"
+          "title": "Neural Network AI",
+          "description": "Advanced deep learning models trained specifically for photo enhancement, not generic filters."
         },
         {
-          "name": "Moyen",
-          "description": "Bon équilibre, réduction de 40-60%"
+          "title": "Portrait Optimization",
+          "description": "AI detects faces and optimizes skin tones, texture, and lighting while keeping results natural."
         },
         {
-          "name": "Élevé",
-          "description": "Taille minimale, réduction de 60-80%"
+          "title": "Scene Recognition",
+          "description": "Automatically identifies scene type (landscape, portrait, product) and applies optimal enhancements."
+        },
+        {
+          "title": "Lighting Correction",
+          "description": "Fix underexposed or overexposed photos with intelligent shadow and highlight recovery."
         }
       ],
-      "use_cases_title": "Quand compresser ?",
-      "use_cases": [
-        "Optimiser des images pour le web",
-        "Accélérer le chargement des sites",
-        "Réduire l'espace de stockage",
-        "Partager plus facilement par e-mail",
-        "Améliorer les Core Web Vitals"
+      "limitations": [
+        "10 AI enhancements monthly",
+        "Standard processing priority",
+        "Single photo upload"
       ],
-      "faq_title": "Questions sur le compresseur gratuit",
+      "upgradePoints": [
+        "Latest AI models with custom tuning",
+        "Faster processing (10-20 seconds vs 30-60 seconds)",
+        "Batch AI processing with consistent results"
+      ],
       "faq": [
         {
-          "q": "La compression affecte-t-elle la qualité ?",
-          "a": "Notre IA compresse intelligemment pour minimiser la perte de qualité. La différence est imperceptible pour la plupart des utilisations."
+          "question": "How does AI enhancement differ from regular filters?",
+          "answer": "AI analyzes your specific photo and makes intelligent adjustments based on content. Filters just apply preset changes blindly to any image."
         },
         {
-          "q": "Quelle est la différence avec les autres compresseurs ?",
-          "a": "Notre IA analyse le contenu de l'image pour compresser sélectivement, préservant mieux les zones importantes que la compression classique."
+          "question": "Can I use this for professional photography?",
+          "answer": "Absolutely! Many professional photographers use AI enhancement as part of their workflow. The free tier is perfect for testing before upgrading."
         },
         {
-          "q": "Puis-je compresser plusieurs images à la fois ?",
-          "a": "La version gratuite compresse une image à la fois. Pour le traitement par lots, passez à Pro."
-        },
-        {
-          "q": "Les métadonnées sont-elles conservées ?",
-          "a": "Par défaut oui, mais vous pouvez choisir de les supprimer pour plus de confidentialité et réduire encore la taille."
-        },
-        {
-          "q": "Quelle est la taille maximale du fichier ?",
-          "a": "10 Mo pour les utilisateurs gratuits. Jusqu'à 50 Mo avec un plan Pro."
+          "question": "Does it work on selfies and portraits?",
+          "answer": "Yes, the AI is specially optimized for portraits with skin smoothing, face detection, and natural-looking enhancements that preserve authenticity."
         }
       ],
-      "cta_title": "Compressez vos images maintenant",
-      "cta_button": "Télécharger une image"
+      "relatedFree": [
+        "free-photo-enhancer",
+        "free-image-enhancer"
+      ],
+      "upgradePath": "/pricing"
     },
-    "free-format-converter": {
-      "title": "Convertisseur de formats gratuit - JPEG, PNG, WebP et plus",
-      "description": "Convertissez vos images entre JPEG, PNG, WebP et plus gratuitement. Conversion rapide en ligne sans inscription.",
-      "keywords": "convertisseur format gratuit, JPEG PNG WebP, convertir image",
-      "h1": "Convertisseur de Formats Gratuit",
-      "h1_sub": "Convertissez entre tous les formats populaires gratuitement.",
-      "features_title": "Conversion gratuite illimitée",
+    {
+      "slug": "free-ai-upscaler",
+      "title": "Free AI Upscaler",
+      "metaTitle": "Free AI Upscaler - Upscale Images with AI | MyImageUpscaler",
+      "metaDescription": "Free AI image upscaler. Increase image resolution with neural networks. 10 free upscales monthly, up to 4K output, no watermarks.",
+      "h1": "Free AI Upscaler - Neural Network Image Upscaling",
+      "intro": "Upscale your images to 4K resolution using advanced AI. Get 10 free upscales every month with the same technology used by professionals.",
+      "primaryKeyword": "free ai upscaler",
+      "secondaryKeywords": [
+        "ai upscale free",
+        "free neural upscaler",
+        "ai image upscaling free"
+      ],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "free",
+      "toolName": "Free AI Upscaler",
+      "description": "Transform low-resolution images into high-quality visuals with neural network upscaling. Our free tier offers genuine AI upscaling, not simple interpolation.",
       "features": [
-        "Support de 10+ formats d'image",
-        "Conversion rapide et de haute qualité",
-        "Sans inscription requise",
-        "Conservation de la qualité",
-        "Conversion par lots (Pro)",
-        "10 conversions par jour"
-      ],
-      "formats_title": "Formats pris en charge",
-      "formats": [
-        "JPEG / JPG",
-        "PNG (avec transparence)",
-        "WebP",
-        "GIF",
-        "TIFF",
-        "BMP",
-        "SVG (vectoriel)",
-        "HEIC (iPhone)",
-        "AVIF (nouvelle génération)",
-        "RAW (appareils photo)"
-      ],
-      "popular_conversions": "Conversions populaires",
-      "conversions": [
-        "PNG vers JPEG",
-        "JPEG vers PNG",
-        "WebP vers JPEG",
-        "HEIC vers JPEG",
-        "GIF vers MP4",
-        "SVG vers PNG"
-      ],
-      "how_title": "Comment convertir ?",
-      "how_steps": [
-        "Téléchargez votre image",
-        "Sélectionnez le format de sortie",
-        "Ajustez la qualité si disponible",
-        "Téléchargez le fichier converti"
-      ],
-      "faq_title": "Questions sur le convertisseur gratuit",
-      "faq": [
         {
-          "q": "La conversion est-elle sans perte ?",
-          "a": "Cela dépend des formats. PNG→WebP peut être sans perte, JPEG→PNG entraîne une perte de la qualité originale de JPEG."
+          "title": "True AI Upscaling",
+          "description": "Neural networks intelligently generate new pixels instead of simple interpolation for superior quality."
         },
         {
-          "q": "Puis-je convertir HEIC d'iPhone ?",
-          "a": "Oui, notre outil convertit HEIC vers JPEG, PNG ou WebP pour une compatibilité maximale."
+          "title": "Up to 4X Upscaling",
+          "description": "Increase image dimensions up to 4 times on the free tier. Upgrade for 8x upscaling capability."
         },
         {
-          "q": "Combien de formats sont pris en charge ?",
-          "a": "Plus de 10 formats, y compris JPEG, PNG, WebP, GIF, TIFF, BMP, SVG, HEIC, AVIF et RAW."
+          "title": "Text Preservation",
+          "description": "AI specifically trained to keep text sharp and legible, perfect for logos and documents."
         },
         {
-          "q": "La transparence est-elle préservée ?",
-          "a": "Oui, lors de la conversion entre formats supportant la transparence (PNG, WebP, GIF)."
-        },
-        {
-          "q": "Puis-je convertir plusieurs images ?",
-          "a": "La version gratuite convertit une image à la fois. Pour le traitement par lots, passez à Pro."
+          "title": "Edge Enhancement",
+          "description": "Smart edge detection and enhancement creates crisp, clean lines without artifacts or halos."
         }
       ],
-      "cta_title": "Convertissez une image maintenant",
-      "cta_button": "Choisir un fichier"
+      "limitations": [
+        "10 upscales per month",
+        "Maximum 4x resolution increase",
+        "One image at a time"
+      ],
+      "upgradePoints": [
+        "Up to 8x upscaling (vs 4x on free tier)",
+        "Unlimited monthly upscales",
+        "Batch processing up to 50 images simultaneously"
+      ],
+      "faq": [
+        {
+          "question": "What's the difference between AI upscaling and regular upscaling?",
+          "answer": "Regular upscaling (interpolation) just stretches pixels. AI upscaling uses neural networks to intelligently generate new detail that looks natural and sharp."
+        },
+        {
+          "question": "Can I upscale images beyond 4x on free tier?",
+          "answer": "The free tier supports up to 4x upscaling. For 8x upscaling and larger outputs, upgrade to a premium plan."
+        },
+        {
+          "question": "How long does AI upscaling take?",
+          "answer": "Typically 30-60 seconds for standard images on the free tier. Premium users get priority processing in 10-20 seconds."
+        }
+      ],
+      "relatedFree": [
+        "free-image-upscaler",
+        "free-ai-photo-enhancer"
+      ],
+      "upgradePath": "/pricing"
     },
-    "free-batch-processor": {
-      "title": "Traitement par lots gratuit - Traitez jusqu'à 10 images",
-      "description": "Traitez plusieurs images en une seule fois gratuitement. Agrandissez, compressez et convertissez en lot.",
-      "keywords": "traitement par lots gratuit, multiple images, bulk, traiter lots",
-      "h1": "Traitement par Lots Gratuit",
-      "h1_sub": "Traitez jusqu'à 10 images à la fois gratuitement.",
-      "features_title": "Traitement par lots gratuit",
+    {
+      "slug": "free-background-remover",
+      "title": "Free Background Remover",
+      "metaTitle": "Free Background Remover - Remove Image Backgrounds Online | MyImageUpscaler",
+      "metaDescription": "Remove backgrounds from images for free. AI-powered tool that works in your browser. No signup, no watermarks, unlimited use. Try now.",
+      "h1": "Free Background Remover - Remove Backgrounds Instantly",
+      "intro": "Remove backgrounds from any image completely free. Our AI processes images in your browser for instant results with no limits and no watermarks.",
+      "primaryKeyword": "free background remover",
+      "secondaryKeywords": [
+        "remove background free",
+        "background remover online free",
+        "free bg remover",
+        "remove bg free"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "free",
+      "toolName": "Free Background Remover",
+      "description": "Professional background removal at zero cost. Our AI model runs entirely in your browser, so there are no usage limits, no watermarks, and your images never leave your device.",
       "features": [
-        "Jusqu'à 10 images par lot",
-        "Opérations multiples : agrandir, compresser, convertir",
-        "Paramètres uniformes pour le lot",
-        "Téléchargement en ZIP",
-        "1 lot par jour gratuitement",
-        "Sans inscription"
-      ],
-      "operations_title": "Opérations disponibles",
-      "operations": [
-        "Agrandissement (2x, 3x, 4x)",
-        "Compression intelligente",
-        "Conversion de format",
-        "Amélioration automatique",
-        "Suppression d'arrière-plan",
-        "Redimensionnement"
-      ],
-      "how_title": "Comment traiter par lot ?",
-      "how_steps": [
-        "Sélectionnez jusqu'à 10 images",
-        "Choisissez les opérations à effectuer",
-        "Configurez les paramètres",
-        "Lancez le traitement",
-        "Téléchargez le ZIP"
-      ],
-      "free_vs_pro": "Gratuit vs Pro",
-      "comparison": [
-        "Gratuit : 10 images, 1 lot/jour, paramètres uniformes",
-        "Pro : 100 images, illimité, paramètres personnalisés"
-      ],
-      "use_cases_title": "Cas d'utilisation du traitement par lots",
-      "use_cases": [
-        "Optimiser un album de photos",
-        "Préparer des images produits",
-        "Convertir un dossier d'images",
-        "Compresser pour le web",
-        "Créer des formats multiples"
-      ],
-      "faq_title": "Questions sur le traitement par lots gratuit",
-      "faq": [
         {
-          "q": "Combien d'images puis-je traiter gratuitement ?",
-          "a": "Jusqu'à 10 images par lot, 1 lot par jour. Pour plus, passez à Pro."
+          "title": "Unlimited Free Use",
+          "description": "No credits, no limits. Remove backgrounds from as many images as you want, completely free."
         },
         {
-          "q": "Puis-je utiliser des paramètres différents pour chaque image ?",
-          "a": "La version gratuite applique les mêmes paramètres à tout le lot. Pour des paramètres personnalisés, passez à Pro."
+          "title": "No Watermarks Ever",
+          "description": "Download clean images with transparent backgrounds. No logos, no watermarks, no branding."
         },
         {
-          "q": "Combien de temps prend le traitement ?",
-          "a": "Environ 30-60 secondes pour 10 images, selon les opérations choisies."
+          "title": "100% Private",
+          "description": "Processing happens in your browser. Your images never upload to any server."
         },
         {
-          "q": "Le téléchargement est-il en ZIP ?",
-          "a": "Oui, toutes les images traitées sont regroupées dans un fichier ZIP pratique."
-        },
-        {
-          "q": "Puis-je annuler et recommencer ?",
-          "a": "Oui, vous pouvez annuler le traitement en cours et recommencer avec de nouveaux paramètres."
+          "title": "AI-Powered Precision",
+          "description": "Advanced neural networks detect subjects and handle complex edges like hair and fur."
         }
       ],
-      "cta_title": "Traitez vos images par lots",
-      "cta_button": "Sélectionner des images",
-      "upgrade_note": "Besoin de plus ? Découvrez nos plans Pro"
+      "limitations": [
+        "Processing speed depends on your device",
+        "Very large images may be slower on mobile devices",
+        "Requires modern browser with WebAssembly support"
+      ],
+      "upgradePoints": [
+        "Server-side processing for faster results",
+        "API access for automated workflows",
+        "Batch processing for bulk operations"
+      ],
+      "faq": [
+        {
+          "question": "Is this really unlimited and free?",
+          "answer": "Yes! Because the AI runs in your browser, there are no server costs per image. Use it as much as you want with no limits, no signup, and no watermarks."
+        },
+        {
+          "question": "Why is it free when others charge?",
+          "answer": "Traditional background removers process images on their servers, which costs money. Our tool uses WebAssembly to run the AI model directly in your browser, eliminating server costs."
+        },
+        {
+          "question": "Are my images private?",
+          "answer": "Completely. Your images are processed locally on your device and never uploaded anywhere. We cannot see or access your images."
+        },
+        {
+          "question": "What browsers are supported?",
+          "answer": "Any modern browser with WebAssembly support works: Chrome, Firefox, Safari, and Edge. Mobile browsers are supported but may be slower on older devices."
+        }
+      ],
+      "relatedFree": [
+        "free-image-upscaler",
+        "free-photo-enhancer"
+      ],
+      "upgradePath": "/pricing"
     }
+  ],
+  "meta": {
+    "totalPages": 6,
+    "lastUpdated": "2026-01-06T00:00:00Z"
   }
 }

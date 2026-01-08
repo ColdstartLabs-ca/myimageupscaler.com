@@ -1,0 +1,64 @@
+{
+  "category": "device-use",
+  "meta": {
+    "totalPages": 20,
+    "lastUpdated": "2026-01-06",
+    "description": "Pages multiplicateurs Appareil × Cas d'utilisation - combinaisons d'appareils avec des cas d'utilisation spécifiques pour l'agrandissement d'images"
+  },
+  "pages": [
+    {
+      "slug": "mobile-social-media-upscaler",
+      "title": "Agrandisseur mobile pour réseaux sociaux",
+      "metaTitle": "Agrandisseur d'images mobile pour réseaux sociaux | Améliorez les photos pour Instagram, TikTok | MyImageUpscaler",
+      "metaDescription": "Agrandissez les photos mobiles pour les plateformes de réseaux sociaux. Parfait pour Instagram, TikTok, Facebook. Améliorez les photos de smartphone à une résolution optimale. Essai gratuit.",
+      "h1": "Agrandisseur mobile pour réseaux sociaux - Parfait pour Instagram, TikTok et plus",
+      "intro": "Transformez vos photos mobiles en images magnifiques prêtes pour les réseaux sociaux avec notre agrandisseur spécialisé. Optimisé pour les appareils photo smartphone et les exigences des plateformes sociales.",
+      "primaryKeyword": "agrandisseur mobile reseaux sociaux",
+      "secondaryKeywords": ["agrandisseur photo mobile pour reseaux sociaux", "amplificateur smartphone reseaux sociaux", "agrandisseur photo instagram", "amplificateur image tiktok"],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "mobile",
+      "useCase": "Réseaux Sociaux",
+      "deviceDescription": "Les appareils photo mobiles ont considérablement amélioré mais bénéficient encore d'une amélioration IA pour l'usage sur les réseaux sociaux.",
+      "useCaseDescription": "Les plateformes de réseaux sociaux nécessitent des dimensions et une qualité spécifiques. Notre agrandisseur optimise les photos mobiles pour un engagement maximal.",
+      "deviceConstraints": [
+        "Les appareils photo mobiles ont des capteurs plus petits que les appareils photo professionnels",
+        "Contrôles manuels limités par rapport aux reflex/hybrides",
+        "La compression JPEG peut réduire la qualité",
+        "Les objectifs à ouverture fixe peuvent limiter le contrôle créatif"
+      ],
+      "useCaseBenefits": [
+        "Dimensions optimisées pour les plateformes pour Instagram, TikTok, Facebook",
+        "Détails améliorés pour un meilleur engagement sur les écrans haute densité",
+        "Qualité cohérente sur plusieurs plateformes sociales",
+        "Téléchargements plus rapides avec des tailles de fichiers optimisées"
+      ],
+      "tips": [
+        "Utilisez les paramètres d'export haute résolution sur votre téléphone avant l'agrandissement",
+        "Agrandissez les photos verticales pour un optimal sur Instagram Stories et TikTok",
+        "Traitez plusieurs photos mobiles pour une qualité cohérente du flux social",
+        "Considérez les proportions spécifiques aux plateformes lors de l'agrandissement"
+      ],
+      "faq": [
+        {
+          "question": "Quelle résolution dois-je utiliser pour les photos mobiles sur les réseaux sociaux ?",
+          "answer": "Pour une qualité optimale sur les écrans haute densité modernes, agrandissez les photos mobiles à 2x ou 4x. Cela assure des images nettes sur les écrans retina et 4K."
+        },
+        {
+          "question": "Cela fonctionne-t-il pour Instagram et TikTok ?",
+          "answer": "Oui ! Notre agrandisseur maintient les proportions et améliore la qualité pour toutes les plateformes sociales, y compris Instagram, TikTok, Facebook et Twitter."
+        },
+        {
+          "question": "Puis-je agrandir des photos de n'importe quel smartphone ?",
+          "answer": "Absolument ! Notre agrandisseur fonctionne avec les photos de n'importe quel smartphone - iPhone, Samsung, Google Pixel, OnePlus, et plus."
+        },
+        {
+          "question": "L'agrandissement rendra-t-il mes photos mobiles professionnelles ?",
+          "answer": "Bien que l'agrandissement améliore la qualité et la résolution, obtenir des résultats vraiment professionnels dépend aussi de l'éclairage, de la composition et de la qualité photo originale."
+        }
+      ],
+      "relatedDevices": ["desktop-social-media-upscaler", "tablet-social-media-upscaler"],
+      "relatedUseCases": ["mobile-web-graphics-upscaler", "mobile-messaging-upscaler"]
+    }
+  ]
+}

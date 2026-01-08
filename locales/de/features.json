@@ -1,37 +1,37 @@
 {
   "page": {
-    "title": "Powerful Features for",
-    "titleHighlight": "Professional Results",
-    "subtitle": "Everything you need to enhance your images with cutting-edge AI technology. From text preservation to batch processing, we've got you covered."
+    "title": "Leistungsstarke Funktionen für",
+    "titleHighlight": "Professionelle Ergebnisse",
+    "subtitle": "Alles was Sie benötigen, um Ihre Bilder mit modernster KI-Technologie zu verbessern. Von der Texterhaltung bis zur Batch-Verarbeitung – wir haben alles für Sie."
   },
   "section": {
-    "badge": "AI Photo Enhancer Features",
-    "title": "Image quality enhancer that",
-    "titleHighlight": "preserves real detail",
-    "description": "No blur, no artifacts—just crisp, professional results. Our AI understands the difference between noise and detail."
+    "badge": "KI-Fotoverbesserer-Funktionen",
+    "title": "Bildqualitätsverbesserer, der",
+    "titleHighlight": "echte Details bewahrt",
+    "description": "Keine Unschärfe, keine Artefakte – nur knusprige, professionelle Ergebnisse. Unsere KI versteht den Unterschied zwischen Rauschen und Details."
   },
   "features": {
     "textLogos": {
-      "name": "Text & Logos Stay Sharp",
-      "description": "Most AI image enhancers blur text. Ours keeps it crisp—even at 4x scale."
+      "name": "Text & Logos bleiben scharf",
+      "description": "Die meisten KI-Bildverbesserer verschwommen Text. Unserer hält ihn knusprig – sogar bei 4-facher Skalierung."
     },
     "batchUpscale": {
-      "name": "Batch Upscale 500 Images",
-      "description": "Bulk photo enhancer. Upload hundreds of images, get 4K results in minutes."
+      "name": "Batch-Upscaling von 500 Bildern",
+      "description": "Bulk-Fotoverbesserer. Laden Sie Hunderte von Bildern hoch und erhalten Sie in Minuten 4K-Ergebnisse."
     },
     "qualityTiers": {
-      "name": "6 Quality Tiers",
-      "description": "From 2x to 8x with 6 enhancement modes. Fine-tune results for photos, graphics, anime, and more."
+      "name": "6 Qualitätsstufen",
+      "description": "Von 2-fach bis 8-fach mit 6 Verbesserungsmodi. Feinabstimmung der Ergebnisse für Fotos, Grafiken, Anime und mehr."
     },
     "smartDetection": {
-      "name": "Smart AI Detection",
-      "description": "Automatically selects the best AI model for your image type. Portraits, landscapes, and more get specialized treatment."
+      "name": "Intelligente KI-Erkennung",
+      "description": "Wählt automatisch das beste KI-Modell für Ihren Bildtyp. Porträts, Landschaften und mehr erhalten spezialisierte Behandlung."
     }
   },
   "secondaryFeatures": {
-    "faceEnhancement": "Face Enhancement",
-    "secureProcessing": "Secure Processing",
-    "fastProcessing": "Fast Processing",
-    "highAvailability": "High Availability"
+    "faceEnhancement": "Gesichtsverbesserung",
+    "secureProcessing": "Sichere Verarbeitung",
+    "fastProcessing": "Schnelle Verarbeitung",
+    "highAvailability": "Hohe Verfügbarkeit"
   }
 }

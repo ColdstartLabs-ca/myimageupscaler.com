@@ -1,5 +1,5 @@
 {
-  "category": "device-use",
+  "category": "uso-dispositivo",
   "pages": [
     {
       "slug": "mobile-social-media-upscaler",
@@ -10,13 +10,14 @@
       "intro": "Transforma tus fotos móviles en imágenes impresionantes listas para redes sociales con nuestro escalador especializado. Optimizado para cámaras de smartphone y requisitos de plataformas sociales.",
       "primaryKeyword": "escalador de redes sociales movil",
       "lastUpdated": "2026-01-06",
-      "category": "device-use",
+      "category": "uso-dispositivo",
       "device": "mobile",
       "useCase": "Social Media"
     }
   ],
   "meta": {
     "totalPages": 20,
-    "lastUpdated": "2026-01-06"
+    "lastUpdated": "2026-01-06",
+    "description": "Páginas multiplicadoras de Dispositivo × Caso de Uso - combinaciones de dispositivos con casos de uso específicos para escalado de imágenes"
   }
 }

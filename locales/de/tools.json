@@ -1,5 +1,5 @@
 {
-  "category": "tools",
+  "category": "Werkzeuge",
   "pages": [
     {
       "slug": "ai-image-upscaler",
@@ -19,7 +19,7 @@
         "ki bild vergrößerer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "tools",
+      "category": "Werkzeuge",
       "toolName": "KI-Bild-Upscaler",
       "description": "Verwandeln Sie Bilder mit niedriger Auflösung in hochwertige Bilder. Im Gegensatz zum herkömmlichen Ändern der Größe, das Unschärfe erzeugt, rekonstruiert unsere KI Details beim Skalieren.",
       "features": [
@@ -183,7 +183,7 @@
         "bild klarheit verbesserer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "tools",
+      "category": "Werkzeuge",
       "toolName": "KI-Foto-Verbesserer",
       "description": "Verbessern Sie die Fotoqualität bei gleichbleibender Auflösung. Ideal zum Korrigieren von Problemen vor dem Upscaling oder wenn Sie nur bessere Qualität in der aktuellen Größe benötigen.",
       "features": [
@@ -343,7 +343,7 @@
         "bild ausschneiden"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "tools",
+      "category": "Werkzeuge",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
@@ -475,7 +475,7 @@
         "hintergrund radierer"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "tools",
+      "category": "Werkzeuge",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
@@ -572,7 +572,7 @@
         "transparenter bild erzeuger"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "tools",
+      "category": "Werkzeuge",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
@@ -669,7 +669,7 @@
         "person aus foto ausschneiden"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "tools",
+      "category": "Werkzeuge",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,

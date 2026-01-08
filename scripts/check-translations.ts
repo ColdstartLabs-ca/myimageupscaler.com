@@ -5,6 +5,7 @@
  * Checks for missing translations across locales by comparing:
  * 1. Missing translation files (e.g., pt has no alternatives.json)
  * 2. Missing translation keys within files
+ * 3. Untranslated content (values identical to English reference)
  *
  * Usage:
  *   npx ts-node scripts/check-translations.ts [options]
@@ -36,6 +37,8 @@ interface ITranslationReport {
     totalNamespaces: number;
     missingFiles: number;
     missingKeys: number;
+    untranslatedFiles: number;
+    untranslatedKeys: number;
   };
   missingFiles: Array<{
     locale: string;
@@ -45,6 +48,13 @@ interface ITranslationReport {
     locale: string;
     namespace: string;
     keys: string[];
+  }>;
+  untranslatedContent: Array<{
+    locale: string;
+    namespace: string;
+    keys: string[];
+    totalKeys: number;
+    percentage: number;
   }>;
   extraFiles: Array<{
     locale: string;
@@ -195,6 +205,26 @@ function flattenKeys(
   return keys;
 }
 
+function flattenKeyValues(
+  obj: Record<string, unknown>,
+  prefix = ''
+): Map<string, string> {
+  const keyValues = new Map<string, string>();
+
+  for (const [key, value] of Object.entries(obj)) {
+    const fullKey = prefix ? `${prefix}.${key}` : key;
+
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      const nested = flattenKeyValues(value as Record<string, unknown>, fullKey);
+      nested.forEach((v, k) => keyValues.set(k, v));
+    } else if (typeof value === 'string') {
+      keyValues.set(fullKey, value);
+    }
+  }
+
+  return keyValues;
+}
+
 function checkTranslations(options: ICLIOptions): ITranslationReport {
   const report: ITranslationReport = {
     summary: {
@@ -202,9 +232,12 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
       totalNamespaces: 0,
       missingFiles: 0,
       missingKeys: 0,
+      untranslatedFiles: 0,
+      untranslatedKeys: 0,
     },
     missingFiles: [],
     missingKeys: [],
+    untranslatedContent: [],
     extraFiles: [],
     extraKeys: [],
   };
@@ -302,6 +335,39 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
             keys: extraKeys.sort(),
           });
         }
+
+        // Check for untranslated content (values identical to English)
+        const referenceKeyValues = flattenKeyValues(referenceTranslation);
+        const localeKeyValues = flattenKeyValues(localeTranslation);
+        const untranslatedKeys: string[] = [];
+
+        referenceKeyValues.forEach((refValue, key) => {
+          const localeValue = localeKeyValues.get(key);
+          if (localeValue === refValue) {
+            untranslatedKeys.push(key);
+          }
+        });
+
+        if (untranslatedKeys.length > 0) {
+          const totalKeys = referenceKeyValues.size;
+          const percentage = Math.round((untranslatedKeys.length / totalKeys) * 100);
+
+          // Only report if significant portion is untranslated (>50% or all keys match)
+          // This avoids false positives for files with legitimately same values (e.g., brand names)
+          if (percentage >= 50) {
+            report.untranslatedContent.push({
+              locale,
+              namespace,
+              keys: untranslatedKeys.sort(),
+              totalKeys,
+              percentage,
+            });
+            report.summary.untranslatedKeys += untranslatedKeys.length;
+            if (percentage === 100) {
+              report.summary.untranslatedFiles++;
+            }
+          }
+        }
       }
     }
   }
@@ -315,7 +381,7 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
     return;
   }
 
-  const { summary, missingFiles, missingKeys, extraFiles, extraKeys } = report;
+  const { summary, missingFiles, missingKeys, untranslatedContent, extraFiles, extraKeys } = report;
 
   console.log('\n========================================');
   console.log('       TRANSLATION CHECK REPORT        ');
@@ -367,6 +433,27 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
     console.log('');
   }
 
+  // Untranslated content (values identical to English)
+  if (untranslatedContent.length > 0) {
+    console.log('----------------------------------------');
+    console.log(`UNTRANSLATED CONTENT (${untranslatedContent.length} files)`);
+    console.log('----------------------------------------');
+
+    for (const { locale, namespace, keys, totalKeys, percentage } of untranslatedContent) {
+      console.log(`\n  ${locale.toUpperCase()} / ${namespace}.json (${percentage}% untranslated - ${keys.length}/${totalKeys} keys):`);
+      // Only show first 10 keys to avoid overwhelming output
+      const displayKeys = keys.slice(0, 10);
+      displayKeys.forEach((key) => console.log(`    - ${key}`));
+      if (keys.length > 10) {
+        console.log(`    ... and ${keys.length - 10} more`);
+      }
+    }
+    console.log('');
+  } else if (options.verbose) {
+    console.log('No untranslated content found.');
+    console.log('');
+  }
+
   // Extra files (warnings)
   if (extraFiles.length > 0 && options.verbose) {
     console.log('----------------------------------------');
@@ -397,11 +484,17 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
   console.log('                SUMMARY                ');
   console.log('========================================');
 
-  const hasIssues = summary.missingFiles > 0 || summary.missingKeys > 0;
+  const hasIssues =
+    summary.missingFiles > 0 ||
+    summary.missingKeys > 0 ||
+    summary.untranslatedFiles > 0 ||
+    summary.untranslatedKeys > 0;
 
   if (hasIssues) {
-    console.log(`\n  Missing files: ${summary.missingFiles}`);
-    console.log(`  Missing keys:  ${summary.missingKeys}`);
+    console.log(`\n  Missing files:       ${summary.missingFiles}`);
+    console.log(`  Missing keys:        ${summary.missingKeys}`);
+    console.log(`  Untranslated files:  ${summary.untranslatedFiles}`);
+    console.log(`  Untranslated keys:   ${summary.untranslatedKeys}`);
     console.log('\n  Status: INCOMPLETE');
   } else {
     console.log('\n  All translations are complete!');
@@ -416,7 +509,12 @@ const options = parseArgs();
 const report = checkTranslations(options);
 printReport(report, options);
 
-// Exit with error code if there are missing translations
-if (report.summary.missingFiles > 0 || report.summary.missingKeys > 0) {
+// Exit with error code if there are missing or untranslated translations
+if (
+  report.summary.missingFiles > 0 ||
+  report.summary.missingKeys > 0 ||
+  report.summary.untranslatedFiles > 0 ||
+  report.summary.untranslatedKeys > 0
+) {
   process.exit(1);
 }

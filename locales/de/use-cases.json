@@ -1,0 +1,1493 @@
+{
+  "category": "Anwendungsfaelle",
+  "pages": [
+    {
+      "slug": "ecommerce-product-photos",
+      "title": "E-Commerce-Produktfotos",
+      "metaTitle": "E-Commerce Produktfoto-Anforderungen nach Plattform | MyImageUpscaler",
+      "metaDescription": "Genaue Bildanforderungen fuer Amazon, eBay, Etsy, Shopify. Erfahren Sie Mindestgroessen, Seitenverhaeltnisse und wie Sie Produktfotos hochskalieren.",
+      "h1": "E-Commerce Produktfoto-Anforderungen",
+      "intro": "Jeder Marktplatz hat spezifische Bildanforderungen. Hier ist genau das, was Sie fuer jede Plattform benoetigen und wie Sie es erreichen.",
+      "primaryKeyword": "e-commerce produktfotos",
+      "secondaryKeywords": [
+        "produktbild anforderungen",
+        "amazon foto groesse",
+        "ebay bild anforderungen",
+        "etsy foto abmessungen"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "E-Commerce",
+      "description": "Spezifische Bildanforderungen fuer grosse E-Commerce-Plattformen mit Anleitung zur Erfuellung.",
+      "platformRequirements": [
+        {
+          "platform": "Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (fuer Zoom)",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 bevorzugt",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Reinweiss (RGB 255,255,255) fuer Hauptbild",
+          "notes": "Produkt muss 85% des Rahmens fuellen. Keine Wasserzeichen, Logos oder Text auf dem Hauptbild."
+        },
+        {
+          "platform": "eBay",
+          "minimumSize": "500x500px",
+          "recommendedSize": "1600x1600px",
+          "maxFileSize": "12MB",
+          "aspectRatio": "1:1 bevorzugt",
+          "format": "JPEG, PNG, GIF, TIFF, BMP",
+          "background": "Weiss oder hellgrau bevorzugt",
+          "notes": "Bis zu 24 Bilder pro Angebot. Keine Raender, Wasserzeichen oder Werbetexte."
+        },
+        {
+          "platform": "Etsy",
+          "minimumSize": "2000px kuerzeste Seite",
+          "recommendedSize": "2700x2025px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3 empfohlen",
+          "format": "JPEG, PNG, GIF",
+          "background": "Ihre Wahl - Lifestyle-Aufnahmen funktionieren gut",
+          "notes": "Erstes Bild ist Miniaturansicht. 5:4 Verhaeltnis fuer Shop-Symbol."
+        },
+        {
+          "platform": "Shopify",
+          "minimumSize": "Kein Minimum",
+          "recommendedSize": "2048x2048px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "1:1 fuer Konsistenz",
+          "format": "JPEG, PNG, GIF, HEIC, WebP",
+          "background": "Theme-abhaengig",
+          "notes": "Konsistente Groessen bei allen Produkten verbessern das Erscheinungsbild. Automatische WebP-Konvertierung."
+        },
+        {
+          "platform": "WooCommerce",
+          "minimumSize": "Theme-abhaengig",
+          "recommendedSize": "1200x1200px Minimum",
+          "maxFileSize": "Server-abhaengig",
+          "aspectRatio": "In Theme-Einstellungen konfigurieren",
+          "format": "JPEG, PNG, GIF, WebP",
+          "background": "Theme-abhaengig",
+          "notes": "Aktivieren Sie die Bildregeneration nach Aenderung der Miniaturbildgroessen."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Lieferantenbilder sind zu klein",
+          "solution": "Hochskalieren auf mindestens 2000x2000px. Die meisten Lieferantenbilder sind 500-800px - skalieren Sie 3-4x fuer Zoom-Funktionalitaet.",
+          "howTo": "Zum Upscaler hochladen, 4x waehlen, herunterladen. Ein 500px Bild wird zu 2000px."
+        },
+        {
+          "problem": "Bilder haben falsche Hintergrundfarbe",
+          "solution": "Amazon erfordert reinweiss (255,255,255). Verwenden Sie ein Hintergrundentfernungs-Tool vor dem Hochskalieren.",
+          "howTo": "Zuerst Hintergrund entfernen, weissen Hintergrund hinzufuegen, dann bei Bedarf hochskalieren."
+        },
+        {
+          "problem": "Produkt fuellt nicht genug vom Rahmen",
+          "solution": "Bild vor dem Hochskalieren zuschneiden, um das Produkt zu zentrieren. Dann hochskalieren, um Mindestgroesse zu erreichen.",
+          "howTo": "Auf Produkt mit minimalen Raendern zuschneiden, dann 2-4x hochskalieren, um 2000px zu erreichen."
+        },
+        {
+          "problem": "Bilder sind nach dem Hochskalieren unscharf",
+          "solution": "KI-Hochskalierung bewahrt Schaerfe, aber sehr niedrige Qualitaetsquellen haben Grenzen. Verwenden Sie die hoechste verfuegbare Qualitaetsquelle.",
+          "howTo": "Hoehere Aufloesung vom Lieferanten anfordern oder vor dem Hochskalieren verbessern."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Quellbildgroesse pruefen",
+          "description": "Rechtsklick auf Bild, Eigenschaften/Abmessungen pruefen. Aktuelle Groesse notieren."
+        },
+        {
+          "step": 2,
+          "title": "Benoetigten Skalierungsfaktor berechnen",
+          "description": "Wenn die Quelle 500px ist und Sie 2000px benoetigen, ist das 4x Hochskalierung."
+        },
+        {
+          "step": 3,
+          "title": "Bild hochskalieren",
+          "description": "Zum Upscaler hochladen, passenden Faktor waehlen, Ergebnis herunterladen."
+        },
+        {
+          "step": 4,
+          "title": "Ausgabe ueberpruefen",
+          "description": "Ueberpruefen Sie, ob die endgueltigen Abmessungen die Plattformanforderungen erfuellen. Stellen Sie sicher, dass Text/Logos scharf bleiben."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Welche Aufloesung benoetigen Amazon-Produktbilder?",
+          "answer": "Amazon erfordert mindestens 1000x1000px, empfiehlt aber 2000x2000px oder groesser, um die Zoom-Funktion zu aktivieren. Die Zoom-Funktion aktiviert sich beim Ueberfahren von Bildern mit 1500px oder groesser."
+        },
+        {
+          "question": "Kann ich dasselbe Bild auf allen Plattformen verwenden?",
+          "answer": "Ja, wenn Sie fuer die anspruchsvollsten Anforderungen vorbereiten. Erstellen Sie 2000x2000px Bilder auf reinweissem Hintergrund - diese funktionieren auf Amazon, eBay und Etsy mit Zuschneiden."
+        },
+        {
+          "question": "Werden hochskalierte Bilder Amazons Qualitaetspruefung bestehen?",
+          "answer": "KI-hochskalierte Bilder bestehen normalerweise, wenn die Quelle nicht extrem niedrige Qualitaet hatte. Vermeiden Sie das Hochskalieren von Bildern unter 300px - fordern Sie stattdessen bessere Quellbilder von Lieferanten an."
+        },
+        {
+          "question": "Wie gehe ich mit verschiedenen Seitenverhaeltnissen um?",
+          "answer": "Die meisten Plattformen bevorzugen 1:1 (quadratisch). Wenn Ihr Produkt rechteckig ist, fuegen Sie entweder Weissraum hinzu, um es quadratisch zu machen, oder schneiden Sie es zu. Amazons Hauptbild muss quadratisch sein."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["background-removal-guide"]
+    },
+    {
+      "slug": "real-estate-listings",
+      "title": "Immobilienfoto-Richtlinien",
+      "metaTitle": "Immobilienfoto-Anforderungen nach Plattform | MLS, Zillow, Realtor.com",
+      "metaDescription": "Bildanforderungen fuer MLS, Zillow, Realtor.com und Redfin. Erfahren Sie optimale Groessen, Seitenverhaeltnisse und wie Sie Angebotsfotos vorbereiten.",
+      "h1": "Immobilienangebots-Fotoanforderungen",
+      "intro": "Verschiedene Immobilienplattformen haben unterschiedliche Bildspezifikationen. Hier ist, was Sie fuer die wichtigsten Angebotsseiten benoetigen.",
+      "primaryKeyword": "immobilienangebots fotos",
+      "secondaryKeywords": [
+        "mls foto anforderungen",
+        "zillow bildgroesse",
+        "immobilienfotografie"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "Immobilien",
+      "description": "Spezifische Bildanforderungen fuer Immobilienangebots-Plattformen mit Anleitung zur Erfuellung.",
+      "platformRequirements": [
+        {
+          "platform": "MLS (variiert nach Region)",
+          "minimumSize": "640x480px typisches Minimum",
+          "recommendedSize": "2048x1536px oder groesser",
+          "maxFileSize": "5-15MB (variiert)",
+          "aspectRatio": "4:3 am haeufigsten",
+          "format": "JPEG",
+          "notes": "Anforderungen variieren je nach regionaler MLS. Pruefen Sie Ihre lokalen MLS-Richtlinien. Die meisten akzeptieren bis zu 50 Fotos."
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3 bevorzugt",
+          "format": "JPEG, PNG",
+          "notes": "Bis zu 200 Fotos. Das erste Foto erscheint in den Suchergebnissen - machen Sie es zaehlen."
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Synchronisiert von MLS. Hoehere Aufloesungsbilder erhalten Prioritaet in Suchrankings."
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px oder groesser",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Betont Fotoqualitaet in Angeboten. HDR-Fotos funktionieren gut."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Handyfotos sehen zu dunkel aus",
+          "solution": "Verwenden Sie unseren Foto-Enhancer, um Belichtung und Schatten zu verbessern. Funktioniert gut fuer Innenaufnahmen.",
+          "howTo": "Zum Foto-Enhancer hochladen, KI die Belichtung automatisch korrigieren lassen, dann bei Bedarf hochskalieren."
+        },
+        {
+          "problem": "Weitwinkelobjektiv-Verzerrung",
+          "solution": "Verzerrungskorrektur sollte vor dem Hochskalieren erfolgen. Die meisten Bearbeitungs-Apps haben Objektivkorrektur.",
+          "howTo": "Zuerst Objektivkorrektur in Lightroom/Fotos-App anwenden, dann das korrigierte Bild hochskalieren."
+        },
+        {
+          "problem": "Bilder von aelteren Handys sind zu klein",
+          "solution": "2x hochskalieren fuer 2-3 Jahre alte Handys, 3-4x fuer aeltere Handys, um aktuelle Standards zu erfuellen.",
+          "howTo": "Ein 1080x810px Bild 2x hochskaliert wird zu 2160x1620px - ueber Zillows empfohlener Groesse."
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "Waehrend der goldenen Stunde fotografieren",
+          "description": "Fruehmorgens oder spaeter Nachmittag ist das schmeichelhafteste Licht. Vermeiden Sie harte Mittagsschatten."
+        },
+        {
+          "tip": "Stativ fuer Innenraeume verwenden",
+          "description": "Ermoeglicht laengere Belichtung fuer hellere Innenraeume ohne Unschaerfe. Unverzichtbar fuer Raeume mit wenig Licht."
+        },
+        {
+          "tip": "Zuerst aussen fotografieren",
+          "description": "Aussenfotos funktionieren am besten bei Morgenlicht. Planen Sie das Shooting, um draussen zu beginnen."
+        },
+        {
+          "tip": "Raeume vor dem Fotografieren inszenieren",
+          "description": "Unordnung, persoenliche Gegenstaende und ablenkende Objekte entfernen. Weniger ist mehr."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Was ist die beste Fotogroesse fuer Zillow?",
+          "answer": "Zillow empfiehlt mindestens 2048x1536px. Groessere Bilder (bis zu 50MB) werden auf grossen Bildschirmen und beim mobilen Pinch-to-Zoom besser angezeigt."
+        },
+        {
+          "question": "Sollte ich HDR fuer Immobilienfotos verwenden?",
+          "answer": "HDR hilft bei Innenaufnahmen, wenn Fenster hell sind, aber Raeume dunkel. Verwenden Sie natuerlich wirkendes HDR, nicht ueberbearbeitete Stile."
+        },
+        {
+          "question": "Wie viele Fotos sollte ein Angebot haben?",
+          "answer": "25-50 Fotos ist optimal fuer die meisten Immobilien. Einschliesslich Aussen, alle Raeume, wichtige Merkmale und Nachbarschaftskontext."
+        },
+        {
+          "question": "Kann ich mit einem alten Handy aufgenommene Fotos hochskalieren?",
+          "answer": "Ja, aber die Qualitaet haengt von der Quelle ab. Fotos aus der iPhone 6 Aera (2-3MP) koennen vernuenftig auf 4-6MP hochskaliert werden. Sehr alte Fotos haben Grenzen."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["interior-photography-tips"]
+    },
+    {
+      "slug": "social-media-images",
+      "title": "Social-Media-Bildgroessen",
+      "metaTitle": "Social-Media-Bildgroessen-Leitfaden 2025 | Instagram, Facebook, Twitter, LinkedIn",
+      "metaDescription": "Kompletter Leitfaden fuer Social-Media-Bildabmessungen. Optimale Groessen fuer Instagram, Facebook, Twitter, LinkedIn, TikTok und Pinterest mit genauen Pixelabmessungen.",
+      "h1": "Social-Media-Bildgroessen-Leitfaden",
+      "intro": "Jede Plattform hat unterschiedliche optimale Bildgroessen. Hier sind die genauen Abmessungen fuer jede Plattform im Jahr 2025.",
+      "primaryKeyword": "social media bildgroesse",
+      "secondaryKeywords": [
+        "instagram bildgroesse",
+        "facebook foto abmessungen",
+        "twitter bildgroesse",
+        "linkedin bild abmessungen"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "Social Media",
+      "description": "Komplette Referenz fuer Social-Media-Bildabmessungen mit plattformspezifischen Anforderungen.",
+      "platformRequirements": [
+        {
+          "platform": "Instagram",
+          "imageTypes": [
+            { "type": "Quadratischer Post", "dimensions": "1080x1080px", "aspectRatio": "1:1" },
+            { "type": "Hochformat-Post", "dimensions": "1080x1350px", "aspectRatio": "4:5" },
+            { "type": "Querformat-Post", "dimensions": "1080x566px", "aspectRatio": "1.91:1" },
+            { "type": "Story/Reel", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Profilbild", "dimensions": "320x320px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Hochformat (4:5) erhaelt mehr Bildschirmflaeche in Feeds. Stories sind 9:16 vertikal."
+        },
+        {
+          "platform": "Facebook",
+          "imageTypes": [
+            { "type": "Geteiltes Bild", "dimensions": "1200x630px", "aspectRatio": "1.91:1" },
+            { "type": "Quadratischer Post", "dimensions": "1200x1200px", "aspectRatio": "1:1" },
+            { "type": "Titelbild", "dimensions": "820x312px (Desktop)", "aspectRatio": "2.63:1" },
+            { "type": "Profilbild", "dimensions": "170x170px", "aspectRatio": "1:1" },
+            { "type": "Story", "dimensions": "1080x1920px", "aspectRatio": "9:16" }
+          ],
+          "notes": "Titelbild wird auf Mobilgeraeten anders angezeigt (640x360px sichtbarer Bereich). Wichtige Inhalte zentrieren."
+        },
+        {
+          "platform": "Twitter/X",
+          "imageTypes": [
+            { "type": "In-Stream-Bild", "dimensions": "1600x900px", "aspectRatio": "16:9" },
+            { "type": "Einzelbild", "dimensions": "1200x675px", "aspectRatio": "16:9" },
+            { "type": "Zwei Bilder", "dimensions": "700x800px jeweils", "aspectRatio": "7:8" },
+            { "type": "Profilbild", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "Header", "dimensions": "1500x500px", "aspectRatio": "3:1" }
+          ],
+          "notes": "16:9 Bilder werden in der Timeline am besten angezeigt. Quadratische Bilder werden zugeschnitten."
+        },
+        {
+          "platform": "LinkedIn",
+          "imageTypes": [
+            { "type": "Geteiltes Bild", "dimensions": "1200x627px", "aspectRatio": "1.91:1" },
+            { "type": "Firmen-Cover", "dimensions": "1128x191px", "aspectRatio": "5.9:1" },
+            { "type": "Profilbild", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "Hintergrund", "dimensions": "1584x396px", "aspectRatio": "4:1" }
+          ],
+          "notes": "Professionelle Fotos funktionieren besser. Vermeiden Sie Filter und starke Effekte."
+        },
+        {
+          "platform": "TikTok",
+          "imageTypes": [
+            { "type": "Video/Foto", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Profilbild", "dimensions": "200x200px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Vertikal 9:16 ist erforderlich. Horizontale Inhalte werden mit Letterbox versehen."
+        },
+        {
+          "platform": "Pinterest",
+          "imageTypes": [
+            { "type": "Standard-Pin", "dimensions": "1000x1500px", "aspectRatio": "2:3" },
+            { "type": "Langer Pin", "dimensions": "1000x2100px", "aspectRatio": "1:2.1" },
+            { "type": "Quadratischer Pin", "dimensions": "1000x1000px", "aspectRatio": "1:1" },
+            { "type": "Profilbild", "dimensions": "165x165px", "aspectRatio": "1:1" }
+          ],
+          "notes": "2:3 vertikale Pins funktionieren am besten. Hoehe Pins erhalten mehr Sichtbarkeit im Feed."
+        }
+      ],
+      "upscalingGuide": [
+        {
+          "scenario": "Altes Foto fuer Instagram",
+          "source": "640x480px Querformat-Foto",
+          "target": "1080x1080px quadratischer Post",
+          "solution": "2x auf 1280x960px hochskalieren, dann auf Quadrat 960x960px zuschneiden, auf 1080x1080px hochskalieren"
+        },
+        {
+          "scenario": "Screenshot fuer Twitter",
+          "source": "750x500px Screenshot",
+          "target": "1600x900px fuer Timeline",
+          "solution": "2x auf 1500x1000px hochskalieren, Polsterung hinzufuegen oder auf 16:9 Seitenverhaeltnis zuschneiden"
+        },
+        {
+          "scenario": "Produktfoto fuer Pinterest",
+          "source": "800x800px Produktaufnahme",
+          "target": "1000x1500px vertikaler Pin",
+          "solution": "Auf 1200x1200px hochskalieren, vertikalen Platz oben/unten fuer 2:3 Verhaeltnis hinzufuegen"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Was ist die beste Groesse fuer Instagram-Posts?",
+          "answer": "1080x1350px (4:5 Hochformat) nimmt den meisten Feed-Platz ein. 1080x1080px (quadratisch) ist auch Standard. Vermeiden Sie Querformat - es erscheint kleiner in Feeds."
+        },
+        {
+          "question": "Warum sehen meine Bilder auf Instagram unscharf aus?",
+          "answer": "Instagram komprimiert Bilder. Laden Sie mit genau 1080px Breite hoch, um erneutes Sampling zu vermeiden. Hoehere Aufloesungsbilder werden herunterskaliert und koennen an Schaerfe verlieren."
+        },
+        {
+          "question": "Sollte ich Bilder fuer Social Media hochskalieren?",
+          "answer": "Hochskalieren, wenn Ihre Quelle unter den Plattform-Mindestanforderungen liegt. Aber nicht ueber Plattformempfehlungen hinaus hochskalieren - ein 4000px Bild wird sowieso auf 1080px komprimiert."
+        },
+        {
+          "question": "Welches Format sollte ich verwenden?",
+          "answer": "JPEG fuer Fotos (kleinere Datei, gute Qualitaet). PNG fuer Grafiken mit Text oder Transparenz. Alle Plattformen akzeptieren beide."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["image-compression-guide"]
+    },
+    {
+      "slug": "print-preparation",
+      "title": "Druckgroessen-Leitfaden",
+      "metaTitle": "Bildaufloesung fuer Druck-Leitfaden | DPI-Rechner & Groessentabelle",
+      "metaDescription": "Berechnen Sie genaue Pixelabmessungen fuer jede Druckgroesse. DPI-Anforderungen, Papierformate und wie Sie Bilder fuer professionellen Druck vorbereiten.",
+      "h1": "Druckaufloesungs-Leitfaden",
+      "intro": "Druck erfordert hoehere Aufloesung als Bildschirmanzeige. Hier ist genau das, was Sie fuer verschiedene Druckgroessen benoetigen.",
+      "primaryKeyword": "bildaufloesung fuer druck",
+      "secondaryKeywords": [
+        "druck dpi anforderungen",
+        "foto druckgroesse",
+        "pixel zu zoll",
+        "300 dpi bildgroesse"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "Fotografie & Druck",
+      "description": "Kompletter Leitfaden zur Vorbereitung von Bildern fuer den Druck mit DPI-Anforderungen und Groessenberechnungen.",
+      "dpiExplanation": {
+        "title": "DPI verstehen",
+        "content": "DPI (Punkte pro Zoll) bestimmt die Druckqualitaet. Standard-Fotodruck erfordert 300 DPI. Niedrigerer DPI fuehrt zu sichtbaren Pixeln. Hoeherer DPI bietet keinen sichtbaren Vorteil, erhoeht aber die Dateigroesse.",
+        "recommendations": [
+          {
+            "quality": "Professionelle Drucke",
+            "dpi": "300 DPI",
+            "use": "Fotos, Kunstdrucke, Magazine"
+          },
+          { "quality": "Standarddrucke", "dpi": "240-300 DPI", "use": "Heimdruck, Schnappschuesse" },
+          {
+            "quality": "Grossformat (Betrachtungsabstand 1m+)",
+            "dpi": "150-200 DPI",
+            "use": "Poster, Banner"
+          },
+          {
+            "quality": "Plakatwaende (Betrachtungsabstand 3m+)",
+            "dpi": "50-100 DPI",
+            "use": "Grosse Aussenwerbung"
+          }
+        ]
+      },
+      "printSizeChart": [
+        {
+          "size": "10x15 cm",
+          "pixels300dpi": "1200x1800",
+          "pixels240dpi": "960x1440",
+          "megapixels": "2,2 MP"
+        },
+        {
+          "size": "13x18 cm",
+          "pixels300dpi": "1500x2100",
+          "pixels240dpi": "1200x1680",
+          "megapixels": "3,2 MP"
+        },
+        {
+          "size": "20x25 cm",
+          "pixels300dpi": "2400x3000",
+          "pixels240dpi": "1920x2400",
+          "megapixels": "7,2 MP"
+        },
+        {
+          "size": "28x35 cm",
+          "pixels300dpi": "3300x4200",
+          "pixels240dpi": "2640x3360",
+          "megapixels": "13,9 MP"
+        },
+        {
+          "size": "40x50 cm",
+          "pixels300dpi": "4800x6000",
+          "pixels240dpi": "3840x4800",
+          "megapixels": "28,8 MP"
+        },
+        {
+          "size": "50x60 cm",
+          "pixels300dpi": "6000x7200",
+          "pixels240dpi": "4800x5760",
+          "megapixels": "43,2 MP"
+        },
+        {
+          "size": "60x90 cm",
+          "pixels300dpi": "7200x10800",
+          "pixels240dpi": "5760x8640",
+          "megapixels": "77,8 MP"
+        },
+        {
+          "size": "A4 (21x29,7 cm)",
+          "pixels300dpi": "2480x3508",
+          "pixels240dpi": "1984x2806",
+          "megapixels": "8,7 MP"
+        },
+        {
+          "size": "A3 (29,7x42 cm)",
+          "pixels300dpi": "3508x4961",
+          "pixels240dpi": "2806x3969",
+          "megapixels": "17,4 MP"
+        }
+      ],
+      "calculationFormula": {
+        "title": "Benoetigte Pixel berechnen",
+        "formula": "Pixel = Druckgroesse (cm) x DPI / 2,54",
+        "example": "Fuer 20x25 cm Druck bei 300 DPI: 20x300/2,54 = 2362 Pixel breit, 25x300/2,54 = 2953 Pixel hoch"
+      },
+      "upscalingForPrint": [
+        {
+          "scenario": "Smartphone-Foto zu 20x25 cm Druck",
+          "source": "4032x3024px (12MP iPhone)",
+          "requirement": "2400x3000px bei 300 DPI",
+          "solution": "Bereits ausreichend - kein Hochskalieren noetig. Auf 4:5 Seitenverhaeltnis zuschneiden."
+        },
+        {
+          "scenario": "Web-Bild zu 20x25 cm Druck",
+          "source": "800x600px Web-Bild",
+          "requirement": "2400x3000px bei 300 DPI",
+          "solution": "4x auf 3200x2400px hochskalieren, auf 2400x3000px zuschneiden oder Leinwandbereich hinzufuegen."
+        },
+        {
+          "scenario": "Instagram-Foto zu Poster",
+          "source": "1080x1080px",
+          "requirement": "7200x7200px fuer 60x60cm Poster bei 300 DPI",
+          "solution": "8x auf 8640x8640px hochskalieren. Qualitaet kann begrenzt sein - erwaegen Sie 150 DPI fuer Grossformat."
+        }
+      ],
+      "printingTips": [
+        {
+          "tip": "sRGB-Farbprofil fuer Verbraucherdruck verwenden",
+          "description": "Die meisten Verbraucherdrucker und Druckdienste erwarten sRGB. Bei Bedarf von Adobe RGB konvertieren."
+        },
+        {
+          "tip": "Beschnitt fuer randlose Drucke hinzufuegen",
+          "description": "Fuegen Sie 3mm (ca. 35 Pixel bei 300 DPI) an jeder Kante fuer professionelle Drucke mit vollem Beschnitt hinzu."
+        },
+        {
+          "tip": "Auf Bildschirm in tatsaechlicher Groesse pruefen",
+          "description": "Bei 100% Zoom ansehen, um nach sichtbaren Pixeln oder Artefakten zu suchen, bevor Sie drucken."
+        },
+        {
+          "tip": "Als TIFF oder hochwertiges JPEG speichern",
+          "description": "TIFF ist verlustfrei. Bei Verwendung von JPEG mit 95-100% Qualitaet exportieren, um Kompressionsartefakte zu vermeiden."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Welchen DPI benoetigen ich fuer den Fotodruck?",
+          "answer": "300 DPI ist der Standard fuer Fotodrucke bis zu 40x50 cm. Fuer groessere Drucke aus der Ferne betrachtet (Poster, Banner) sind 150-200 DPI akzeptabel."
+        },
+        {
+          "question": "Kann ich ein kleines Bild fuer einen grossen Druck hochskalieren?",
+          "answer": "KI-Hochskalierung funktioniert gut fuer 2-4x Vergroesserung. Darueber hinaus haengt die Qualitaet von der Quelle ab. Ein 1000px Bild kann vernuenftig ein 4000px (20x25cm bei 300 DPI) Druck werden."
+        },
+        {
+          "question": "Warum sieht mein Druck pixelig aus?",
+          "answer": "Ungenuegend Aufloesung. Ueberpruefen Sie, ob Ihr Quellbild genuegend Pixel fuer die Druckgroesse bei 300 DPI hat. Verwenden Sie die obige Tabelle zur Ueberpruefung."
+        },
+        {
+          "question": "Was ist die maximale Druckgroesse fuer mein Bild?",
+          "answer": "Teilen Sie die Pixelabmessungen durch 300 fuer maximale Groesse bei voller Qualitaet. Ein 3000x2000px Bild druckt bei 25x17cm bei 300 DPI oder 50x33cm bei 150 DPI."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "old-photo-restoration",
+      "title": "Alte Fotos restaurieren",
+      "metaTitle": "So restaurieren Sie alte Fotos | Scan- & Verbesserungsleitfaden",
+      "metaDescription": "Kompletter Leitfaden zur Restaurierung alter und beschaedigter Fotos. Scan-Tipps, Verbesserungs-Workflow und realistische Erwartungen an die Fotorestaurierung.",
+      "h1": "Leitfaden zur Restaurierung alter Fotos",
+      "intro": "Die Restaurierung alter Fotos umfasst mehrere Schritte: korrektes Scannen, Verbesserung und realistische Erwartungen an das Moegliche.",
+      "primaryKeyword": "alte fotos restaurieren",
+      "secondaryKeywords": [
+        "alte fotos restaurieren",
+        "beschaedigte fotos reparieren",
+        "fotorestaurierung",
+        "vintage foto verbesserung"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "Fotorestaurierung",
+      "description": "Schritt-fuer-Schritt-Anleitung zur Restaurierung alter und beschaedigter Fotos mit realistischen Erwartungen.",
+      "scanningGuide": {
+        "title": "Alte Fotos scannen",
+        "steps": [
+          {
+            "step": 1,
+            "title": "Scannerglas reinigen",
+            "description": "Staub und Fingerabdruecke auf dem Glas erscheinen in Ihrem Scan. Verwenden Sie ein Mikrofasertuch."
+          },
+          {
+            "step": 2,
+            "title": "Fotos vorsichtig handhaben",
+            "description": "Alte Fotos sind zerbrechlich. Verwenden Sie wenn moeglich Baumwollhandschuhe. Zwingen Sie gebogene Fotos nicht flach."
+          },
+          {
+            "step": 3,
+            "title": "Mit mindestens 600 DPI scannen",
+            "description": "Hoehere Aufloesung gibt mehr Detail zum Arbeiten. 1200 DPI fuer stark beschaedigte Fotos."
+          },
+          {
+            "step": 4,
+            "title": "Als TIFF scannen, nicht JPEG",
+            "description": "TIFF ist verlustfrei und bewahrt alle Details. Erst nach der Bearbeitung in JPEG konvertieren."
+          },
+          {
+            "step": 5,
+            "title": "In Farbe scannen, auch bei S/W",
+            "description": "Farbscan erfasst subtile Toene, die bei der Restaurierung helfen."
+          }
+        ]
+      },
+      "damageTypes": [
+        {
+          "type": "Verblassen/Vergilben",
+          "description": "Farben haben sich im Laufe der Zeit verschoben oder sind verblasst",
+          "canFix": "Ja - KI kann urspruengliche Farbbalance und Saettigung wiederherstellen",
+          "limitations": "Stark verblasste Bilder haben moeglicherweise nicht genuegend Detail zur Wiederherstellung"
+        },
+        {
+          "type": "Kratzer und Knicke",
+          "description": "Physische Schaeden sichtbar als Linien oder Markierungen",
+          "canFix": "Teilweise - KI kann Sichtbarkeit reduzieren, nicht vollstaendig entfernen",
+          "limitations": "Tiefe Kratzer oder Knicke durch Gesichter sind schwierig"
+        },
+        {
+          "type": "Unschaerfe/weicher Fokus",
+          "description": "Bild fehlt Schaerfe oder war unscharf",
+          "canFix": "Teilweise - maessige Unschaerfe kann verbessert werden",
+          "limitations": "Starke Unschaerfe kann nicht vollstaendig behoben werden - das Detail wurde nicht erfasst"
+        },
+        {
+          "type": "Fehlende Teile/Risse",
+          "description": "Teile des Fotos sind gerissen oder fehlen",
+          "canFix": "Nein - KI kann fehlende Bilddaten nicht rekonstruieren",
+          "limitations": "Erfordert manuelle Retusche durch einen Fachmann"
+        },
+        {
+          "type": "Wasserschaden/Flecken",
+          "description": "Verfaerbungen durch Feuchtigkeit oder verschuettete Fluessigkeiten",
+          "canFix": "Teilweise - Farbkorrektur hilft, aber Texturverlust ist dauerhaft",
+          "limitations": "Bereiche, in denen Emulsion abgeloest ist, koennen nicht wiederhergestellt werden"
+        }
+      ],
+      "restorationWorkflow": [
+        {
+          "step": 1,
+          "title": "Mit hoher Aufloesung scannen",
+          "description": "600+ DPI als TIFF. Dies ist Ihre Masterdatei - das Original nicht bearbeiten."
+        },
+        {
+          "step": 2,
+          "title": "Arbeitskopie erstellen",
+          "description": "Scan duplizieren. An der Kopie arbeiten, das Original unberuehrt lassen."
+        },
+        {
+          "step": 3,
+          "title": "Zuschneiden und ausrichten",
+          "description": "Raender, Scanner-Artefakte entfernen. Ausrichten, wenn das Foto schief gescannt wurde."
+        },
+        {
+          "step": 4,
+          "title": "Durch Foto-Enhancer laufen lassen",
+          "description": "KI-Verbesserung verbessert Farbe, reduziert Rauschen und schaerft Details."
+        },
+        {
+          "step": 5,
+          "title": "Bei Bedarf hochskalieren",
+          "description": "Wenn Sie groessere Abmessungen benoetigen, nach der Verbesserung fuer beste Qualitaet hochskalieren."
+        },
+        {
+          "step": 6,
+          "title": "Entsprechend exportieren",
+          "description": "TIFF fuer Archivierung, hochwertiges JPEG zum Teilen und Drucken."
+        }
+      ],
+      "realisticExpectations": {
+        "title": "Was KI-Restaurierung kann und was nicht",
+        "canDo": [
+          "Farbbalance verbessern und Vergilbung entfernen",
+          "Sichtbarkeit von kleinen Kratzern reduzieren",
+          "Weichen Fokus schaerfen und scheinbares Detail hinzufuegen",
+          "Rauschen und Filmkorn reduzieren",
+          "Aufloesung fuer Druck erhoehen"
+        ],
+        "cannotDo": [
+          "Fehlende oder zerrissene Abschnitte rekonstruieren",
+          "Komplett unscharfe Bilder reparieren",
+          "Tiefe Kratzer oder Knicke perfekt entfernen",
+          "Detail hinzufuegen, das nie erfasst wurde",
+          "Fast vollstaendig zerstoerte Fotos wiederherstellen"
+        ]
+      },
+      "faq": [
+        {
+          "question": "Kann man ein zerrissenes Foto restaurieren?",
+          "answer": "KI kann fehlende Abschnitte nicht rekonstruieren. Bei zerrissenen Fotos muessen die Teile zusammen gescannt und manuell ausgerichtet, dann von Hand retuschiert werden. KI kann dann das kombinierte Ergebnis verbessern."
+        },
+        {
+          "question": "Mit welcher Aufloesung sollte ich alte Fotos scannen?",
+          "answer": "Mindestens 600 DPI fuer Standardfotos. 1200 DPI fuer kleine Abzuege oder solche mit feinen Details. Hoeher ist besser - Sie koennen spaeter immer herunterskalieren."
+        },
+        {
+          "question": "Sollte ich Schwarz-Weiss-Fotos kolorieren?",
+          "answer": "Das ist Kolorierung, ein anderer Prozess. Unsere Tools verbessern vorhandene Inhalte - wir fuegen S/W keine Farbe hinzu. Kolorierungs-KI ist eine separate Kategorie."
+        },
+        {
+          "question": "Welche Verbesserung kann ich erwarten?",
+          "answer": "Maessig beschaedigte Fotos zeigen deutliche Verbesserung. Stark beschaedigte Fotos sehen besser aus, werden aber nicht perfekt. Sehr alte Fotos (vor 1900) haben inhaerennte Einschraenkungen."
+        }
+      ],
+      "relatedTools": ["ai-photo-enhancer", "ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "amazon-product-photos",
+      "title": "Amazon Produktfoto-Hochskalierung",
+      "metaTitle": "Produktfotos fuer Amazon-Angebote hochskalieren | MyImageUpscaler",
+      "metaDescription": "Erfuellen Sie Amazons 2000x2000px Bildanforderung mit KI-Hochskalierung. Verwandeln Sie Lieferantenfotos in Zoom-faehige Produktbilder. Kostenloses Tool, keine Wasserzeichen.",
+      "h1": "Produktfotos fuer Amazon hochskalieren",
+      "intro": "Amazon erfordert mindestens 1000x1000px Bilder und empfiehlt 2000x2000px fuer Zoom. So skalieren Sie Lieferantenfotos hoch, um diese Anforderungen zu erfuellen.",
+      "primaryKeyword": "produktfotos amazon hochskalieren",
+      "secondaryKeywords": [
+        "amazon produktbild groesse",
+        "amazon angebots fotos",
+        "amazon bild anforderungen 2025",
+        "lieferantenfotos hochskalieren",
+        "amazon zoom bildgroesse",
+        "fba produktfotografie"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "E-Commerce",
+      "description": "Kompletter Leitfaden zur Vorbereitung von Produktbildern fuer Amazon-Angebote, einschliesslich Groessenanforderungen, Weisshintergrund-Standards und KI-Hochskalierungs-Workflow.",
+      "platformRequirements": [
+        {
+          "platform": "Amazon Hauptbild",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (fuer Zoom)",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 (quadratisch)",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Reinweiss (RGB 255,255,255)",
+          "notes": "Produkt muss 85% des Rahmens fuellen. Kein Text, Logos, Wasserzeichen oder Raender."
+        },
+        {
+          "platform": "Amazon Zusaetzliche Bilder",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 bevorzugt",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Beliebig (Lifestyle-Aufnahmen erlaubt)",
+          "notes": "Kann Produkt in Verwendung, Verpackung, Groessenvergleich und Infografiken zeigen."
+        },
+        {
+          "platform": "Amazon A+ Content",
+          "minimumSize": "Variiert nach Modul",
+          "recommendedSize": "Bis zu 970px breit",
+          "maxFileSize": "2MB pro Bild",
+          "aspectRatio": "Verschiedene (modulabhaengig)",
+          "format": "JPEG, PNG",
+          "background": "Theme-angemessen",
+          "notes": "Hoeher aufgeloeste Bilder werden in Desktop- und mobilen A+-Modulen besser angezeigt."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Lieferantenbilder sind nur 500-800px",
+          "solution": "KI-Hochskalierung 3-4x verwenden. Ein 500px Bild wird zu 2000px mit Zoom-Faehigkeit.",
+          "howTo": "Lieferantenbild hochladen, 4x Hochskalierung waehlen, bei 2000x2000px oder groesser herunterladen."
+        },
+        {
+          "problem": "Bilder abgelehnt wegen Nichterfuellung des 1000px Minimums",
+          "solution": "Zuerst hochskalieren, dann bei Bedarf auf quadratisches 1:1 Verhaeltnis zuschneiden.",
+          "howTo": "Auf mindestens 1200px hochskalieren, dann auf 1000x1000px oder 2000x2000px Quadrat zuschneiden."
+        },
+        {
+          "problem": "Zoom-Funktion funktioniert nicht bei Angebot",
+          "solution": "Amazon-Zoom erfordert mindestens 1500px auf laengster Seite, 2000px+ empfohlen.",
+          "howTo": "Alle Produktbilder auf 2000x2000px hochskalieren, um sicherzustellen, dass Zoom funktioniert."
+        },
+        {
+          "problem": "Produktdetails sehen nach Hochskalierung unscharf aus",
+          "solution": "KI-Hochskalierung bewahrt Text und feine Details im Gegensatz zu traditioneller Groessenanpassung.",
+          "howTo": "KI-Upscaler speziell fuer Produktfotografie und Texterhaltung trainiert verwenden."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Quellbildqualitaet pruefen",
+          "description": "Originalabmessungen ueberpruefen. Bilder unter 300px koennen fuer Amazon moeglicherweise nicht gut hochskaliert werden."
+        },
+        {
+          "step": 2,
+          "title": "Hintergrund entfernen oder ersetzen",
+          "description": "Fuer Hauptbild reinweissen Hintergrund (255,255,255) vor dem Hochskalieren sicherstellen."
+        },
+        {
+          "step": 3,
+          "title": "Zum KI-Upscaler hochladen",
+          "description": "4x Hochskalierung fuer 500px Bilder, 2x fuer 1000px Bilder waehlen, um 2000px Ziel zu erreichen."
+        },
+        {
+          "step": 4,
+          "title": "Auf 1:1 Verhaeltnis zuschneiden",
+          "description": "Sicherstellen, dass das finale Bild quadratisch ist mit Produkt, das 85% des Rahmens fuellt."
+        },
+        {
+          "step": 5,
+          "title": "Dateigroesse und Format ueberpruefen",
+          "description": "Als JPEG unter 10MB speichern. 85-95% Qualitaet fuer bestes Groessen-/Qualitaetsverhaeltnis verwenden."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Welche Bildgroesse erfordert Amazon fuer Produktfotos?",
+          "answer": "Amazon erfordert mindestens 1000x1000px, empfiehlt aber dringend 2000x2000px oder groesser. Die Zoom-Funktion aktiviert sich nur bei Bildern mit 1500px oder groesser auf der laengsten Seite, und 2000px+ bietet das beste Kundenerlebnis."
+        },
+        {
+          "question": "Kann ich Dropshipping-Lieferantenfotos fuer Amazon hochskalieren?",
+          "answer": "Ja, KI-Hochskalierung funktioniert gut fuer Lieferantenfotos, die typischerweise 500-800px haben. Skalieren Sie 3-4x hoch, um Amazons 2000px Empfehlung zu erreichen. Stellen Sie sicher, dass Sie die Rechte haben, die Bilder kommerziell zu nutzen."
+        },
+        {
+          "question": "Werden hochskalierte Bilder Amazons Qualitaetspruefung bestehen?",
+          "answer": "KI-hochskalierte Bilder bestehen normalerweise Amazons automatische Pruefungen, wenn die Quelle nicht extrem niedrige Qualitaet hatte. Konzentrieren Sie sich auf Quellbilder ueber 300px fuer beste Ergebnisse. Produktdetails und Text bleiben durch den Hochskalierungsprozess scharf."
+        },
+        {
+          "question": "Warum haben meine Amazon-Bilder keinen Zoom?",
+          "answer": "Amazons Zoom-Funktion erfordert Bilder mit mindestens 1500px auf der laengsten Seite, 2000px+ empfohlen. Skalieren Sie Ihre Bilder auf 2000x2000px hoch, um sicherzustellen, dass Zoom fuer alle Kunden funktioniert."
+        },
+        {
+          "question": "Was ist das beste Format fuer Amazon-Produktbilder?",
+          "answer": "JPEG wird fuer die meisten Produktfotos wegen kleinerer Dateigroessen bevorzugt. Verwenden Sie 85-95% Qualitaetseinstellung. PNG ist nur besser, wenn Sie Transparenz benoetigen (obwohl Amazon-Hauptbilder sowieso weisse Hintergruende erfordern)."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "real-estate-photo-enhancement",
+      "title": "Immobilienfoto-Verbesserung",
+      "metaTitle": "Immobilienfotos mit KI verbessern | Immobilienangebotsbilder",
+      "metaDescription": "Verwandeln Sie Immobilienfotos mit KI-Verbesserung. Beheben Sie Beleuchtung, skalieren Sie Aufloesung hoch und lassen Sie Angebote herausstechen. Von Maklern und Fotografen verwendet.",
+      "h1": "KI Immobilienfoto-Verbesserung",
+      "intro": "Professionell aussehende Angebotsfotos verkaufen Immobilien schneller. Verbessern und skalieren Sie Immobilienbilder hoch, um MLS-Standards zu erfuellen und die Konkurrenz zu uebertreffen.",
+      "primaryKeyword": "immobilienfotografie verbesserung",
+      "secondaryKeywords": [
+        "immobilienfoto bearbeitung",
+        "immobilienbild verbesserung",
+        "angebotsfoto verbesserung",
+        "mls foto qualitaet",
+        "immobilienangebots bilder",
+        "immobilienfotografie bearbeitung"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "Immobilien",
+      "description": "Umfassender Leitfaden zur Verbesserung von Immobilienfotos fuer MLS, Zillow und andere Immobilienangebotsplattformen mit KI-Tools.",
+      "platformRequirements": [
+        {
+          "platform": "MLS (Die meisten Systeme)",
+          "minimumSize": "640x480px",
+          "recommendedSize": "2048x1536px oder groesser",
+          "maxFileSize": "10-15MB variiert",
+          "aspectRatio": "4:3 am haeufigsten",
+          "format": "JPEG",
+          "notes": "Hoehere Qualitaetsfotos erhalten mehr Aufrufe. Viele MLS-Systeme unterstuetzen jetzt HD-Bilder."
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px+",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3 bevorzugt",
+          "format": "JPEG, PNG",
+          "notes": "Erstes Foto ist entscheidend - es erscheint in Suchergebnissen. Hochaufloesende Bilder ranken besser."
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Hoeher aufgeloeste Bilder erhalten Prioritaetsplatzierung in Suchergebnissen."
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px+",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Qualitaetsfotos wirken sich direkt auf Angebotsaufrufe und Anfragen aus."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Innenfotos sind zu dunkel",
+          "solution": "KI-Verbesserung korrigiert automatisch Belichtung und bringt Schattendetails hervor.",
+          "howTo": "Zum Foto-Enhancer hochladen, KI automatisch korrigieren lassen, dann hochskalieren, wenn Aufloesung ungenuegend ist."
+        },
+        {
+          "problem": "Aelteren Handyfotos fehlt Aufloesung",
+          "solution": "2-3x hochskalieren, um moderne Standards zu erfuellen. Ein 1200px Foto wird zu 2400-3600px.",
+          "howTo": "Zum KI-Upscaler hochladen, 2x oder 3x waehlen, ueberpruefen, ob Ausgabe Plattformanforderungen erfuellt."
+        },
+        {
+          "problem": "Fenster-Ueberbelichtung durch helle Aussen",
+          "solution": "KI-Verbesserung kann einige Fensterdetails wiederherstellen und Innen-/Aussenbelichtung ausgleichen.",
+          "howTo": "Zuerst durch Enhancer laufen lassen, dann das korrigierte Bild hochskalieren."
+        },
+        {
+          "problem": "Fotos vom vorherigen Makler sind niedrige Qualitaet",
+          "solution": "Vorhandene Fotos verbessern und hochskalieren, waehrend Sie neue professionelle Fotografie planen.",
+          "howTo": "Stapelweise durch Enhancer und Upscaler verarbeiten, um sofort zu verbessern."
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "Waehrend der goldenen Stunde fuer Aussenaufnahmen fotografieren",
+          "description": "Fruehmorgens oder spaeter Nachmittag bietet schmeichelhaftes natuerliches Licht ohne harte Schatten."
+        },
+        {
+          "tip": "Alle Innenlichter einschalten",
+          "description": "Auch bei Tagesaufnahmen fuegen Innenlichter Waerme hinzu und lassen Raeume einladender wirken."
+        },
+        {
+          "tip": "Stativ fuer konsistente Ergebnisse verwenden",
+          "description": "Stativ ermoeglicht laengere Belichtungen fuer hellere Innenraeume und stellt waagerechte Horizonte sicher."
+        },
+        {
+          "tip": "Von Ecken fuer maximalen Raum fotografieren",
+          "description": "Von Raumecken aus fotografieren zeigt zwei Waende und laesst Raeume groesser erscheinen."
+        },
+        {
+          "tip": "Vor dem Fotografieren inszenieren",
+          "description": "Persoenliche Gegenstaende entfernen, Toilettendeckel schliessen, Moebel arrangieren, um Verkehrsfluss zu zeigen."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Vorhandene Fotoqualitaet bewerten",
+          "description": "Aufloesung, Belichtung und Komposition pruefen. Identifizieren, welche Bilder Verbesserung vs. Neufoto benoetigen."
+        },
+        {
+          "step": 2,
+          "title": "Zuerst KI-Verbesserung durchfuehren",
+          "description": "Zum Foto-Enhancer hochladen, um Belichtung, Farbbalance und Klarheit vor dem Hochskalieren zu beheben."
+        },
+        {
+          "step": 3,
+          "title": "Auf Zielaufloesung hochskalieren",
+          "description": "Verbesserte Fotos auf 2048px oder hoeher vergroessern fuer optimale Anzeige auf Angebotsseiten."
+        },
+        {
+          "step": 4,
+          "title": "Im richtigen Format exportieren",
+          "description": "Als JPEG mit 85-95% Qualitaet speichern. Die meisten MLS-Systeme erfordern JPEG-Format."
+        },
+        {
+          "step": 5,
+          "title": "Fotos strategisch anordnen",
+          "description": "Mit bestem Aussenfoto beginnen, dann wichtige Raeume. Erstes Foto erscheint in Suchergebnissen."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Kann KI-Verbesserung professionelle Immobilienfotografie ersetzen?",
+          "answer": "KI-Verbesserung verbessert vorhandene Fotos dramatisch, ersetzt aber nicht professionelle Fotografie fuer hochwertige Angebote. Verwenden Sie Verbesserung, um gute Fotos zu verbessern oder als temporaere Loesung, waehrend Sie ein professionelles Shooting planen."
+        },
+        {
+          "question": "Welche Aufloesung sollten Immobilienfotos haben?",
+          "answer": "Streben Sie mindestens 2048x1536px an. Dies erfuellt Anforderungen fuer Zillow, MLS und Realtor.com bei gleichzeitig scharfen Bildern auf Desktop und Mobil. Hoehere Aufloesung (2560px+) kann das Suchranking auf einigen Plattformen verbessern."
+        },
+        {
+          "question": "Wie behebe ich dunkle Innenfotos?",
+          "answer": "KI-Fotoverbesserung korrigiert automatisch Belichtung und hellt Schatten auf. Laden Sie Ihre dunkle Innenaufnahme hoch, lassen Sie die KI analysieren und korrigieren, dann laden Sie die verbesserte Version herunter. Fuer beste Ergebnisse vor dem Hochskalieren verbessern."
+        },
+        {
+          "question": "Werden verbesserte Fotos kuenstlich oder ueberbearbeitet aussehen?",
+          "answer": "Qualitaets-KI-Verbesserung produziert natuerlich aussehende Ergebnisse. Vermeiden Sie Tools, die den uebersaettigten, HDR-lastigen Look erzeugen, dem Kaeufer misstrauen. Unser Enhancer priorisiert realistische Korrekturen gegenueber dramatischen Effekten."
+        },
+        {
+          "question": "Wie viele Fotos sollte ein Immobilienangebot haben?",
+          "answer": "25-50 Fotos ist optimal fuer die meisten Immobilien. Einschliesslich Aussen, alle Hauptraeume, wichtige Merkmale (Kueche, Baeder, Schraenke) und alle einzigartigen Verkaufsargumente. Qualitaet zaehlt mehr als Quantitaet - 25 grossartige Fotos schlagen 50 mittelmässige."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "anime-image-upscaler",
+      "title": "Anime-Bild-Upscaler",
+      "metaTitle": "Anime-Bild-Upscaler Online - Anime & Manga-Kunst hochskalieren | MyImageUpscaler",
+      "metaDescription": "Anime-Bilder, Manga-Panels und Illustrationen ohne Artefakte hochskalieren. KI bewahrt klare Linien und flache Farben. Kostenloses Online-Tool fuer Anime-Fans.",
+      "h1": "Anime-Bild-Upscaler Online",
+      "intro": "Skalieren Sie Ihre Lieblings-Anime-Screenshots, Manga-Scans und digitale Kunst hoch, waehrend Sie die klaren Linien und lebhaften Farben bewahren, die den Anime-Stil definieren.",
+      "primaryKeyword": "anime bild upscaler",
+      "secondaryKeywords": [
+        "anime hochskalieren",
+        "anime upscaler online",
+        "manga upscaler",
+        "anime screenshot hochskalieren",
+        "waifu upscaler",
+        "anime wallpaper hochskalieren"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "Digitale Kunst & Unterhaltung",
+      "description": "Spezialisierter Leitfaden zum Hochskalieren von Anime-Bildern, Manga-Kunst und japanischem Stil-Illustrationen mit KI-Technologie, die fuer gezeichnete Inhalte optimiert ist.",
+      "contentTypes": [
+        {
+          "type": "Anime-Screenshots",
+          "description": "Aufnahmen aus Anime-Serien und Filmen",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Funktioniert gut fuer die meisten modernen Anime. Aeltere Anime (vor 2000) koennen mehr Artefakte zeigen."
+        },
+        {
+          "type": "Manga-Scans",
+          "description": "Gescannte Manga-Seiten und Panels",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Bewahrt Linienkunst und Rastertone. Staub/Kratzer vor dem Hochskalieren entfernen."
+        },
+        {
+          "type": "Digitale Anime-Kunst",
+          "description": "Fan-Art, Illustrationen und digitale Zeichnungen",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Ausgezeichnete Ergebnisse mit sauberer digitaler Kunst. Bewahrt flache Farben und scharfe Kanten."
+        },
+        {
+          "type": "Anime-Wallpaper",
+          "description": "Desktop- und Mobile-Hintergruende",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Hochskalieren, um Ihre Bildschirmaufloesung zu erreichen. 4K-Monitore benoetigen 3840px+ Breite."
+        },
+        {
+          "type": "Spiel-CGs",
+          "description": "Visual Novel und Spiel-Artwork",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Aeltere VN-CGs benoetigen oft 4x Hochskalierung. Moderne Spiele normalerweise bei 2x ausreichend."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Hochskalierung fuegt unerwuenschte Textur oder Rauschen hinzu",
+          "solution": "KI-Upscaler, die auf Anime trainiert sind, bewahren flache Farbbereiche besser als Allzweck-Tools.",
+          "howTo": "KI-Upscaler mit unseren fuer Illustration und Artwork optimierten Einstellungen verwenden."
+        },
+        {
+          "problem": "Linienkunst wird verschwommen oder verdoppelt",
+          "solution": "Qualitaets-Anime-Hochskalierung erhaelt klare Linien ohne Ghosting oder Unschaerfe.",
+          "howTo": "Mit 2x Hochskalierung beginnen. Wenn Qualitaet gut ist, das Ergebnis fuer hoehere Aufloesung erneut hochskalieren."
+        },
+        {
+          "problem": "JPEG-Artefakte werden nach dem Hochskalieren sichtbarer",
+          "solution": "KI-Hochskalierung kann JPEG-Artefakte waehrend der Vergroesserung reduzieren. Hoechste verfuegbare Qualitaetsquelle verwenden.",
+          "howTo": "Wenn moeglich, PNG-Quelle finden. Fuer JPEGs hilft Verbesserung vor dem Hochskalieren."
+        },
+        {
+          "problem": "Kleine Bilder werden bei 4x pixelig",
+          "solution": "Sehr kleine Quellen (unter 200px) haben Grenzen. Inkrementell hochskalieren: 2x, dann erneut 2x.",
+          "howTo": "Zuerst bei 2x hochladen, Ergebnis herunterladen, dann Ergebnis fuer weitere 2x hochladen."
+        }
+      ],
+      "targetResolutions": [
+        {
+          "use": "Handy-Wallpaper",
+          "resolution": "1080x2400px (moderne Handys)",
+          "source": "540x1200px Minimum",
+          "scaleFactor": "2x"
+        },
+        {
+          "use": "Desktop-Wallpaper (1080p)",
+          "resolution": "1920x1080px",
+          "source": "960x540px Minimum",
+          "scaleFactor": "2x"
+        },
+        {
+          "use": "Desktop-Wallpaper (1440p)",
+          "resolution": "2560x1440px",
+          "source": "640x360px bei 4x, 1280x720px bei 2x",
+          "scaleFactor": "2x-4x"
+        },
+        {
+          "use": "Desktop-Wallpaper (4K)",
+          "resolution": "3840x2160px",
+          "source": "960x540px bei 4x, 1920x1080px bei 2x",
+          "scaleFactor": "2x-4x"
+        },
+        {
+          "use": "Druck (Poster)",
+          "resolution": "300 DPI bei Druckgroesse",
+          "source": "Berechnen: Druck cm x 300 / 2,54",
+          "scaleFactor": "Variiert nach Quelle"
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Hoechste Qualitaetsquelle finden",
+          "description": "Wenn moeglich, nach PNG-Versionen suchen. Hoehere Quellqualitaet bedeutet bessere Hochskalierungsergebnisse."
+        },
+        {
+          "step": 2,
+          "title": "Aktuelle Aufloesung pruefen",
+          "description": "Rechtsklick auf Bild, Eigenschaften anzeigen. Abmessungen notieren, um benoetigten Skalierungsfaktor zu berechnen."
+        },
+        {
+          "step": 3,
+          "title": "Benoetigten Skalierungsfaktor berechnen",
+          "description": "Fuer 4K-Wallpaper (3840px breit) von 960px Quelle benoetigen Sie 4x Hochskalierung."
+        },
+        {
+          "step": 4,
+          "title": "Hochladen und hochskalieren",
+          "description": "Passenden Skalierungsfaktor waehlen. Fuer Anime funktionieren 2x und 4x normalerweise am besten."
+        },
+        {
+          "step": 5,
+          "title": "Ueberpruefen und exportieren",
+          "description": "Ergebnis auf Artefakte pruefen. Als PNG herunterladen, um Qualitaet ohne weitere Kompression zu bewahren."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Was ist der beste Upscaler fuer Anime-Bilder?",
+          "answer": "KI-Upscaler funktionieren am besten fuer Anime, weil sie die Eigenschaften von gezeichneten Inhalten verstehen - flache Farben, klare Linien und spezifische Schattierungsstile. Traditionelle Hochskalierung macht Anime verschwommen, waehrend KI die knackige Aesthetik erhaelt."
+        },
+        {
+          "question": "Kann ich alte Anime-Screenshots auf 4K hochskalieren?",
+          "answer": "Ja, aber die Ergebnisse variieren je nach Quellqualitaet. Moderner Anime (nach 2010) skaliert ausgezeichnet hoch. Aelterer Anime (1990er-2000er) funktioniert gut mit einigen kleinen Artefakten. Sehr alter Anime (1980er) kann sichtbare Einschraenkungen zeigen. Mit 2x beginnen und Qualitaet bewerten."
+        },
+        {
+          "question": "Wie skaliere ich Manga hoch, ohne Details zu verlieren?",
+          "answer": "KI-Hochskalierung bewahrt Linienkunst und Rastertone, die Manga definieren. Fuer beste Ergebnisse: Selbst bei Digitalisierung mit 600+ DPI scannen, Staub/Kratzer vor dem Hochskalieren reinigen und 2x-4x Skalierungsfaktor verwenden. PNG-Format bewahrt Qualitaet besser als JPEG."
+        },
+        {
+          "question": "Wird Hochskalierung JPEG-Artefakte von Anime-Bildern entfernen?",
+          "answer": "KI-Hochskalierung kann JPEG-Kompressionsartefakte waehrend der Vergroesserung reduzieren. Stark komprimierte Quellen werden jedoch immer noch einige Artefakte zeigen. Fuer beste Ergebnisse die hoechste verfuegbare Qualitaetsquelle finden - PNG bevorzugt, hochwertiges JPEG akzeptabel."
+        },
+        {
+          "question": "Welche Aufloesung sollten Anime-Wallpaper haben?",
+          "answer": "Passend zu Ihrem Bildschirm: 1920x1080 fuer 1080p-Displays, 2560x1440 fuer 1440p und 3840x2160 fuer 4K. Handy-Wallpaper benoetigen typischerweise 1080x2400 fuer moderne Geraete. Skalieren Sie Ihre Quelle auf diese Zielaufloesungen hoch."
+        },
+        {
+          "question": "Gibt es einen kostenlosen Anime-Upscaler?",
+          "answer": "Ja, unser KI-Upscaler verarbeitet Anime-Bilder kostenlos ohne Wasserzeichen. Sie koennen Anime-Screenshots, Manga-Panels und digitale Kunst bis zu 4x ohne Bezahlung hochskalieren. Premium-Plaene bieten Stapelverarbeitung und hoehere Dateigroessenlimits."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "cartoon-image-upscaler",
+      "title": "Cartoon-Bild-Upscaler",
+      "metaTitle": "Cartoon-Bild-Upscaler Online - Cartoons & Comics verbessern | MyImageUpscaler",
+      "metaDescription": "Cartoon-Bilder, Comics und Illustrationen mit KI hochskalieren. Klare Linien, lebhafte Farben bewahrt. Kostenloser Online-Cartoon-Upscaler.",
+      "h1": "Cartoon-Bild-Upscaler Online",
+      "intro": "Verbessern Sie Ihre Lieblings-Cartoon-Screenshots, Comic-Panels und Illustrationen, waehrend Sie die klaren Linien und flachen Farben bewahren, die Cartoon- und Comic-Kunststile definieren.",
+      "primaryKeyword": "cartoon bild upscaler",
+      "secondaryKeywords": [
+        "cartoon upscaler",
+        "cartoons hochskalieren",
+        "comic bild upscaler",
+        "cartoon vergroesserung",
+        "illustration upscaler"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "description": "Spezialisierte Hochskalierung fuer Cartoon-Bilder, westliche Comics und illustrierte Inhalte mit KI-Technologie, die fuer gezeichnete Kunstwerke mit flachen Farben und klaren Linien optimiert ist.",
+      "imageTypes": [
+        {
+          "type": "Westliche Cartoons",
+          "description": "Animationsserien und Filme von westlichen Studios",
+          "examples": "Disney, Warner Bros, Cartoon Network Inhalte",
+          "notes": "Funktioniert gut fuer die meisten modernen Animationsinhalte"
+        },
+        {
+          "type": "Digitale Comics",
+          "description": "Digital erstellte Comics und Graphic Novels",
+          "examples": "Webcomics, Digital-First-Veroeffentlichungen, Indie-Comics",
+          "notes": "Ausgezeichnete Ergebnisse mit sauberer digitaler Quelle"
+        },
+        {
+          "type": "Cartoon-Illustrationen",
+          "description": "Benutzerdefinierte Kunstwerke und Charakterdesigns",
+          "examples": "OC-Kunst, Fan-Art, Auftragsillustration",
+          "notes": "Bewahrt Kuenstlerstil und Farbwahl"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Klare Linienbewahrung",
+          "description": "KI erhaelt knackige Konturen ohne Verschwimmen oder Ghosting, das bei traditioneller Hochskalierung ueblich ist."
+        },
+        {
+          "title": "Flache Farbbereiche",
+          "description": "Solide Farbflochen bleiben glatt ohne Banding oder Artefakte."
+        },
+        {
+          "title": "Stilkonsistenz",
+          "description": "Hochskalierte Bilder behalten den urspruenglichen kuenstlerischen Stil und das Erscheinungsbild."
+        }
+      ],
+      "commonIssues": [
+        {
+          "issue": "Verschwommene Linien",
+          "solution": "KI-Upscaler, die auf verschiedenen Kunststilen trainiert sind, erhalten knackige Kanten besser als Standard-Hochskalierung."
+        },
+        {
+          "issue": "Farbverlaufen",
+          "solution": "Qualitaets-KI-Hochskalierung respektiert Farbgrenzen und verhindert Verlaufen zwischen benachbarten Bereichen."
+        },
+        {
+          "issue": "Artefakte bei hoher Skalierung",
+          "solution": "Mit 2x beginnen und bei Bedarf progressiv hochskalieren. Sehr hohe Skalierungsfaktoren (8x) koennen Einschraenkungen zeigen."
+        }
+      ],
+      "bestPractices": [
+        "Mit hoechster verfuegbarer Qualitaetsquelle beginnen",
+        "PNG-Format verwenden, um Qualitaet zu bewahren",
+        "Staub/Kratzer von gescannten Comics vor dem Hochskalieren entfernen",
+        "Passenden Skalierungsfaktor waehlen - 2x und 4x funktionieren normalerweise am besten",
+        "Ueber-Hochskalieren vermeiden - 8x kann abnehmende Ertraege zeigen"
+      ],
+      "faq": [
+        {
+          "question": "Was ist der beste Upscaler fuer Cartoon-Bilder?",
+          "answer": "KI-Upscaler funktionieren gut fuer Cartoons, weil sie die Eigenschaften von gezeichneten Inhalten verstehen - flache Farben, klare Linien und spezifische Schattierungsstile. Unser KI-Upscaler verarbeitet verschiedene Cartoon- und Comic-Kunststile effektiv."
+        },
+        {
+          "question": "Kann ich alte Comic-Panels hochskalieren?",
+          "answer": "Ja! KI-Hochskalierung funktioniert gut mit Comic-Panels, ob von Print gescannt oder aus digitalen Quellen. Fuer beste Ergebnisse mit Scans zuerst Staub und Kratzer reinigen, dann mit 2x beginnend hochskalieren."
+        },
+        {
+          "question": "Wird Hochskalierung den Kunststil beschaedigen?",
+          "answer": "Nein, unser KI-Upscaler ist darauf ausgelegt, kuenstlerischen Stil einschliesslich Linienqualitaet, Farbwahl und Gesamterscheinung zu bewahren. Die Verbesserung fuegt Detail hinzu, ohne die Absicht des Kuenstlers zu aendern."
+        },
+        {
+          "question": "Was ist die maximale Aufloesung fuer Cartoon-Wallpaper?",
+          "answer": "Sie koennen auf 4K (3840x2160) oder hoeher hochskalieren, abhaengig von Ihren Beduerfnissen. Fuer moderne Displays sind 1920x1080 (1080p), 2560x1440 (1440p) oder 3840x2160 (4K) uebliche Ziele."
+        },
+        {
+          "question": "Gibt es einen kostenlosen Cartoon-Upscaler?",
+          "answer": "Ja! Unser KI-Upscaler verarbeitet Cartoon- und Comic-Bilder mit einer kostenlosen Stufe. Sie koennen Cartoons, Comics und Illustrationen ohne Wasserzeichen hochskalieren. Premium-Plaene bieten Stapelverarbeitung fuer ganze Sammlungen."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "portrait-photo-upscaler",
+      "title": "Portrait-Foto-Upscaler",
+      "metaTitle": "Portrait-Foto-Upscaler - KI-Gesichtsverbesserung | MyImageUpscaler",
+      "metaDescription": "Portraitfotos mit KI-Gesichtsverbesserung hochskalieren. Gesichtsdetails, Hautstruktur und Gesamtqualitaet verbessern. Kostenloser Online-Portrait-Upscaler.",
+      "h1": "Portrait-Foto-Upscaler - KI-Gesichtsverbesserung",
+      "intro": "Verwandeln Sie Ihre Portraitfotos mit spezialisierter KI-Gesichtsverbesserungstechnologie. Verbessern Sie Gesichtszuege, Hautstruktur und Gesamtbildqualitaet bei gleichzeitiger Bewahrung des natuerlichen Aussehens.",
+      "primaryKeyword": "portrait foto upscaler",
+      "secondaryKeywords": [
+        "portrait enhancer",
+        "gesichts upscaler",
+        "portrait verbesserung",
+        "foto vergroesserer",
+        "gesichtsdetail verbesserung"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "description": "Professionelle Portraitverbesserung mit KI-Modellen, die auf Gesichtszug-Rekonstruktion und -Verbesserung spezialisiert sind. Perfekt fuer Kopfbilder, Social-Media-Fotos und professionelle Portraits.",
+      "supportedTiers": {
+        "faceRestore": {
+          "name": "Gesichtswiederherstellung",
+          "credits": 2,
+          "model": "GFPGAN",
+          "description": "Fotorestaurierung mit Gesichtszug-Rekonstruktion"
+        },
+        "facePro": {
+          "name": "Gesicht Pro",
+          "credits": 6,
+          "model": "Flux-2-Pro",
+          "description": "Premium-Portraitverbesserung mit fortgeschrittener Gesichtsdetail-Verbesserung"
+        },
+        "ultra": {
+          "name": "Ultra-Qualitaet",
+          "credits": 8,
+          "model": "Nano Banana Pro",
+          "description": "Maximale 4K/8K-Qualitaet fuer professionelle Portraits"
+        }
+      },
+      "useCases": [
+        {
+          "title": "Professionelle Kopfbilder",
+          "description": "LinkedIn-, Portfolio- und Geschaeftskopfbilder mit verbesserter Gesichtsklarheit und Detail verbessern.",
+          "recommendedTier": "Gesicht Pro",
+          "example": "Ein einfaches Kopfbild auf hochaufloesende professionelle Qualitaet hochskalieren"
+        },
+        {
+          "title": "Social-Media-Portraits",
+          "description": "Profilfotos fuer Instagram, Facebook, Twitter und Dating-Apps verbessern.",
+          "recommendedTier": "Gesichtswiederherstellung",
+          "example": "Selfie-Qualitaet mit besseren Gesichtszuegen und Hautstruktur verbessern"
+        },
+        {
+          "title": "Alte Foto-Restaurierung",
+          "description": "Gealterte oder beschaedigte Portraitfotos restaurieren und verbessern.",
+          "recommendedTier": "Gesichtswiederherstellung",
+          "example": "Vintage-Familienfotos mit Gesichtsrekonstruktion neues Leben einhauchen"
+        },
+        {
+          "title": "Druckvorbereitung",
+          "description": "Portraitfotos fuer Grossformatdruck vorbereiten.",
+          "recommendedTier": "Ultra",
+          "example": "Fuer Poster- oder Leinwanddruck mit maximaler Qualitaet hochskalieren"
+        }
+      ],
+      "features": {
+        "faceEnhancement": "Fortgeschrittene KI-Modelle (GFPGAN, Flux-2-Pro) fuer Gesichtszug-Rekonstruktion",
+        "skinTexture": "Natuerliche Hautstrukturverbesserung ohne plastisches Aussehen",
+        "detailPreservation": "Augen, Lippen und andere Merkmale behalten natuerliches Aussehen",
+        "resolution": "Unterstuetzung fuer bis zu 8K-Ausgabe bei Ultra-Qualitaetsstufe",
+        "batchProcessing": "Verfuegbar auf Pro-Stufe fuer mehrere Portraits"
+      },
+      "bestPractices": [
+        "Mit Gesichtswiederherstellung fuer allgemeine Verbesserungen beginnen",
+        "Gesicht Pro fuer professionelle Kopfbilder und kritische Portraits verwenden",
+        "Ultra-Stufe fuer Grossformat-Druckbeduerfnisse waehlen",
+        "Gute Beleuchtung in Quellfotos fuer beste Ergebnisse sicherstellen",
+        "Extreme Hochskalierung (8x) fuer sehr niedrige Qualitaetsquellen vermeiden"
+      ],
+      "faq": [
+        {
+          "question": "Was ist der Unterschied zwischen Gesichtswiederherstellung und Gesicht Pro?",
+          "answer": "Gesichtswiederherstellung (2 Credits) verwendet GFPGAN fuer Fotorestaurierung mit Gesichtszug-Rekonstruktion. Gesicht Pro (6 Credits) verwendet Flux-2-Pro fuer Premium-Portraitverbesserung mit fortgeschrittener Detailverbesserung. Gesicht Pro liefert ueberlegene Ergebnisse fuer professionelle Portraits."
+        },
+        {
+          "question": "Kann Portrait-Upscaler unscharfe Gesichter reparieren?",
+          "answer": "Ja! Unsere Gesichtsverbesserungsmodelle sind auf die Rekonstruktion von Gesichtsdetails aus unscharfen oder niedrigqualitativen Fotos spezialisiert. Ergebnisse variieren je nach Quellqualitaet, aber signifikante Verbesserung ist typisch fuer maessig unscharfe Bilder."
+        },
+        {
+          "question": "Werden meine Portraits unnatuerlich oder plastisch aussehen?",
+          "answer": "Unsere KI-Modelle sind darauf ausgelegt, natuerliches Aussehen zu bewahren. Hautstruktur und Merkmale werden verbessert, waehrend realistische Eigenschaften erhalten bleiben. Fuer subtile Ergebnisse wird Gesichtswiederherstellung gegenueber Gesicht Pro empfohlen."
+        },
+        {
+          "question": "Auf welche Aufloesung koennen Portraitfotos hochskaliert werden?",
+          "answer": "Mit Ultra-Qualitaetsstufe koennen Portraits auf 4K oder 8K Aufloesung (bis zu 8192x8192px) hochskaliert werden. Dies ist ideal fuer Grossformatdruck oder professionelle Verwendung."
+        },
+        {
+          "question": "Gibt es einen kostenlosen Portrait-Upscaler?",
+          "answer": "Ja! Die kostenlose Stufe beinhaltet Gesichtswiederherstellungsqualitaet (2 Credits = 1 Bild) und Schnellqualitaet (1 Credit = 1 Bild). Sie koennen Portraitfotos ohne Wasserzeichen verbessern. Fuer haeufige Nutzung bieten bezahlte Stufen mehr Credits und Stapelverarbeitung."
+        },
+        {
+          "question": "Kann ich mehrere Portraits auf einmal hochskalieren?",
+          "answer": "Stapelverarbeitung ist auf bezahlten Stufen verfuegbar (Starter: 5 Bilder, Hobby: 10 Bilder, Pro: 50 Bilder, Business: 500 Bilder pro Stapel). Die kostenlose Stufe verarbeitet nur einzelne Bilder."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "product-photo-background-removal",
+      "title": "Produktfoto-Hintergrundentfernung",
+      "metaTitle": "Hintergruende von Produktfotos entfernen | E-Commerce-Bilder",
+      "metaDescription": "Hintergruende von Produktfotos fuer Amazon, eBay, Etsy und Shopify entfernen. Weisse Hintergruende erstellen, die Marktplatzanforderungen erfuellen. Kostenloses KI-Tool.",
+      "h1": "Produktfoto-Hintergrundentfernung fuer E-Commerce",
+      "intro": "Erstellen Sie professionelle Produktbilder mit sauberen weissen Hintergruenden, die Marktplatzanforderungen erfuellen. Unsere KI entfernt komplexe Hintergruende bei gleichzeitiger Bewahrung von Produktdetails.",
+      "primaryKeyword": "produktfoto hintergrundentfernung",
+      "secondaryKeywords": [
+        "hintergrund produktfoto entfernen",
+        "ecommerce hintergrundentfernung",
+        "amazon weisser hintergrund",
+        "produktbild hintergrund entferner"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "E-Commerce",
+      "description": "Professionelle Produktfoto-Vorbereitung fuer Online-Marktplaetze. Unruhige Hintergruende entfernen und saubere, weisse Hintergruende erstellen, die Amazon-, eBay- und Etsy-Anforderungen erfuellen.",
+      "challenges": [
+        "Marktplatzanforderungen verlangen reinweisse (255,255,255) Hintergruende",
+        "Produktschatten und Reflexionen muessen bewahrt oder sauber entfernt werden",
+        "Komplexe Produktformen mit Loechern oder transparenten Teilen sind schwierig",
+        "Konsistenter Hintergrund ueber den gesamten Produktkatalog ist wesentlich"
+      ],
+      "solutions": [
+        {
+          "problem": "Unruhige oder ueberladene Hintergruende lenken von Produkten ab",
+          "solution": "KI entfernt sofort Hintergruende und ersetzt durch reinweiss",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Manuelle Bearbeitung ist zeitaufwaendig fuer grosse Kataloge",
+          "solution": "Stapelverarbeitung entfernt Hintergruende von mehreren Bildern gleichzeitig",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Komplexe Produktkanten sehen unprofessionell aus",
+          "solution": "KI bewahrt feine Details und erstellt saubere, professionelle Kanten",
+          "tool": "ai-background-remover"
+        }
+      ],
+      "results": [
+        {
+          "metric": "Verarbeitungszeit",
+          "improvement": "90% schneller",
+          "description": "Hintergruende in Sekunden vs. Minuten mit manueller Bearbeitung entfernen"
+        },
+        {
+          "metric": "Marktplatz-Konformitaet",
+          "improvement": "100%",
+          "description": "Reinweisse Hintergruende erfuellen Amazon- und eBay-Anforderungen"
+        },
+        {
+          "metric": "Kostenersparnis",
+          "improvement": "Kostenlos",
+          "description": "Keine Abogebuehren fuer unbegrenzte Hintergrundentfernung"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Erstellt dies Amazon-konforme weisse Hintergruende?",
+          "answer": "Ja, unser Hintergrundentferner erstellt reinweisse (RGB 255,255,255) Hintergruende, die Amazons Hauptbildanforderungen erfuellen. Das Produkt wird sauber isoliert fuer ein professionelles Marktplatz-Erscheinungsbild."
+        },
+        {
+          "question": "Kann es Produkte mit komplexen Formen verarbeiten?",
+          "answer": "Die KI verarbeitet komplexe Formen einschliesslich Produkte mit Loechern, transparenten Teilen und komplizierten Kanten. Ergebnisse sind am besten mit klarem Kontrast zwischen Produkt und Hintergrund."
+        },
+        {
+          "question": "Wie verarbeite ich viele Produktfotos auf einmal?",
+          "answer": "Waehrend das kostenlose Tool ein Bild nach dem anderen verarbeitet, koennen Sie schnell durch Ihren Katalog wechseln. Fuer Massenoperationen ist API-Zugang fuer automatisierte Workflows verfuegbar."
+        },
+        {
+          "question": "Wird es Produktschatten bewahren?",
+          "answer": "Die KI entfernt den Hintergrund vollstaendig, einschliesslich Schatten. Fuer Produktfotos mit natuerlichen Schatten moechten Sie moeglicherweise nach der Entfernung einen subtilen Schlagschatten fuer einen polierten Look hinzufuegen."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "portrait-background-removal",
+      "title": "Portrait-Hintergrundentfernung",
+      "metaTitle": "Hintergrund von Portraitfotos entfernen | Kopfbild-Bearbeitung",
+      "metaDescription": "Hintergruende von Portraits und Kopfbildern mit KI entfernen. Professionelle Ergebnisse mit Haardetail-Bewahrung. Kostenloses Online-Tool fuer LinkedIn, Lebenslauf und mehr.",
+      "h1": "Portrait-Hintergrundentfernung - Professionelle Kopfbilder",
+      "intro": "Verwandeln Sie Gelegenheitsfotos in professionelle Kopfbilder durch Entfernen ablenkender Hintergruende. Unsere KI bewahrt komplexe Haardetails und erstellt saubere Ausschnitte.",
+      "primaryKeyword": "portrait hintergrundentfernung",
+      "secondaryKeywords": [
+        "hintergrund portrait entfernen",
+        "kopfbild hintergrund entferner",
+        "linkedin foto hintergrund",
+        "profilbild hintergrundentfernung"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "Anwendungsfaelle",
+      "industry": "Professionell & Persoenlich",
+      "description": "Professionelle Portrait- und Kopfbild-Vorbereitung mit KI-Hintergrundentfernung. Perfekt fuer LinkedIn-Profile, Lebenslaeufe, Ausweisfotos und professionelles Branding.",
+      "challenges": [
+        "Haare und feine Kanten sind beruehmt schwer sauber auszuschneiden",
+        "Professionelle Fotobearbeitungssoftware hat steile Lernkurven",
+        "Fotografen oder Bildbearbeiter fuer einfache Kopfbilder zu engagieren ist teuer",
+        "Konsistenter Hintergrundstil bei Teamfotos erfordert Geschick"
+      ],
+      "solutions": [
+        {
+          "problem": "Haare erstellen unordentliche Kanten mit traditionellen Auswahlwerkzeugen",
+          "solution": "KI speziell trainiert, um feine Haardetails und flauschige Kanten zu verarbeiten",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Brauche professionelles Kopfbild, habe aber nur Gelegenheitsfoto",
+          "solution": "Gelegenheitshintergrund entfernen und durch Einfarbigkeit fuer professionellen Look ersetzen",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Teamfotos haben inkonsistente Hintergruende",
+          "solution": "Alle Hintergruende entfernen und konsistenten Stil im gesamten Team anwenden",
+          "tool": "ai-background-remover"
+        }
+      ],
+      "results": [
+        {
+          "metric": "Haardetail-Bewahrung",
+          "improvement": "Ausgezeichnet",
+          "description": "KI verarbeitet flauschige Haare, Locken und feine Straehnen ohne Halo-Effekte"
+        },
+        {
+          "metric": "Zeit bis zum professionellen Kopfbild",
+          "improvement": "Unter 30 Sekunden",
+          "description": "Jedes Portrait sofort in professionelle Qualitaet verwandeln"
+        },
+        {
+          "metric": "Kosten",
+          "improvement": "Kostenlos vs. 50-200 Euro",
+          "description": "Professionelle Kopfbild-Bearbeitung ohne Kosten"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wird es lockiges oder krauses Haar verarbeiten?",
+          "answer": "Ja, unsere KI ist speziell trainiert, um alle Haartypen einschliesslich lockiges, krauses und flauschiges Haar zu verarbeiten. Das Modell erkennt feine Straehnen und bewahrt natuerlich aussehende Kanten ohne den Halo-Effekt, der bei traditionellen Werkzeugen ueblich ist."
+        },
+        {
+          "question": "Kann ich dies fuer LinkedIn-Profilfotos verwenden?",
+          "answer": "Absolut. Entfernen Sie Ihren aktuellen Hintergrund und behalten Sie ihn entweder transparent oder fuegen Sie eine solide professionelle Farbe hinzu. Das Ergebnis ist ein sauberes, professionelles Kopfbild, perfekt fuer LinkedIn."
+        },
+        {
+          "question": "Was ist mit Brillen und Reflexionen?",
+          "answer": "Die KI verarbeitet Brillen gut, bewahrt die Rahmen und Glaeser. Starke Reflexionen in Brillen koennen einige Kantenartefakte zeigen, aber die meisten Brillen werden sauber verarbeitet."
+        },
+        {
+          "question": "Ist dies fuer Ausweis- oder Passfotos geeignet?",
+          "answer": "Ja, Sie koennen Hintergruende entfernen und konforme weisse oder blaue Hintergruende hinzufuegen. Beachten Sie, dass offizielle Ausweisfotos moeglicherweise spezifische Beleuchtungs- und Kompositionsanforderungen ueber die Hintergrundfarbe hinaus haben."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-photo-enhancer"],
+      "relatedGuides": []
+    }
+  ],
+  "meta": {
+    "totalPages": 12,
+    "lastUpdated": "2026-01-06T00:00:00Z",
+    "description": "Anwendungsfall-Seiten - spezifische Anwendungsszenarien fuer Bildverbesserung und -hochskalierung"
+  }
+}

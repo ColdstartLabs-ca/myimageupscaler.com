@@ -1,0 +1,418 @@
+{
+  "category": "scale",
+  "pages": [
+    {
+      "slug": "upscale-to-4k",
+      "title": "4Kに拡張",
+      "metaTitle": "AIで画像を4K解像度に拡張 | MyImageUpscaler",
+      "metaDescription": "AIで画像を素晴らしい4K解像度（3840x2160）に拡張。ディスプレイ、印刷、プロプロジェクトに最適。無料で試す。",
+      "h1": "画像を4K解像度に拡張 - プロ品質",
+      "intro": "AI駆動アップスケーラーで画像を素晴らしい4K解像度（3840x2160ピクセル）に変換します。最新ディスプレイ、大きな印刷、プロプロジェクトに最適です。",
+      "primaryKeyword": "upscale to 4k",
+      "secondaryKeywords": [
+        "4k upscaling",
+        "convert to 4k",
+        "4k image converter",
+        "upscale to 4k resolution"
+      ],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "scale",
+      "resolution": "4K",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "4Kモニターとテレビ",
+        "YouTubeサムネイル",
+        "大判印刷",
+        "プロプレゼンテーション",
+        "デジタルサイネージ"
+      ],
+      "benefits": [
+        {
+          "title": "シネマ品質解像度",
+          "description": "4K（3840x2160）は最新ディスプレイ、ストリーミングプラットフォーム、プロコンテンツの標準。",
+          "metric": "8.3メガピクセル"
+        },
+        {
+          "title": "将来対応",
+          "description": "4Kはプロとコンシューマディスプレイの最小標準になりつつあります。",
+          "metric": "フルHDの4倍"
+        },
+        {
+          "title": "大きいサイズで印刷",
+          "description": "4K解像度は300 DPIで最大32x18インチの鮮明な印刷を可能にします。",
+          "metric": "32\" x 18\" 印刷"
+        }
+      ],
+      "technicalSpecs": {
+        "pixelDimensions": "3840 x 2160",
+        "totalPixels": "8,294,400ピクセル",
+        "aspectRatio": "16:9（ワイドスクリーン）",
+        "comparedToFullHD": "フルHD（1920x1080）の4倍の解像度",
+        "printSize": "300 DPIで最大32\" x 18\"",
+        "displayUses": "4K UHDテレビ、モニター、プロジェクター"
+      },
+      "faq": [
+        {
+          "question": "4K解像度とは正確には何ですか？",
+          "answer": "4K解像度（Ultra HDまたはUHDとも呼ばれる）は3840 x 2160ピクセルで、フルHD（1920x1080）の正確に4倍の解像度です。'4K'という名前は約4000ピクセルの水平解像度に由来します。"
+        },
+        {
+          "question": "任意の画像を4Kに拡張できますか？",
+          "answer": "はい！私たちのAIは任意の開始解像度から4Kまで画像を拡張できます。ただし、より高品質のソース画像がより良い結果をもたらします。720p未満の画像は4Kに拡張すると若干のアーティファクトが見える場合があります。"
+        },
+        {
+          "question": "4K画像はすべての画面で良好に見えますか？",
+          "answer": "はい。4K画像は4Kディスプレイで素晴らしく見え、より低い解像度画面では自動的に縮小され（良好に見えます）、高い解像度を持って縮小する方が逆よりも良いです。"
+        },
+        {
+          "question": "4Kに拡張するにはどれくらい時間がかかりますか？",
+          "answer": "通常、ソース画像サイズに応じて45-90秒です。大きなソース画像は4K解像度への処理に少し時間がかかります。"
+        }
+      ],
+      "relatedScale": ["upscale-to-hd"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-to-hd",
+      "title": "HDに拡張",
+      "metaTitle": "画像をHD 1080p解像度に拡張 | MyImageUpscaler AI",
+      "metaDescription": "AIで画像をフルHD 1080p（1920x1080）に拡張。Web、ソーシャルメディア、標準ディスプレイに最適。高速処理、透かしなし。",
+      "h1": "画像をHD 1080pに拡張 - フルHD品質",
+      "intro": "AIで画像をフルHD解像度（1920x1080ピクセル）に強化します。Webサイト、ソーシャルメディア、YouTube、標準HDディスプレイに最適です。",
+      "primaryKeyword": "upscale to hd",
+      "secondaryKeywords": ["hd upscaling", "1080p upscale", "convert to hd", "full hd upscaler"],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "scale",
+      "resolution": "フルHD（1080p）",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "YouTubeビデオ（1080p標準）",
+        "Webサイトヒーロー画像",
+        "ソーシャルメディア投稿",
+        "HDモニターとラップトップ",
+        "デジタルプレゼンテーション"
+      ],
+      "benefits": [
+        {
+          "title": "Web最適化解像度",
+          "description": "1080pは巨大なファイルサイズなしで高品質のWebコンテンツの甘い点。",
+          "metric": "2.1メガピクセル"
+        },
+        {
+          "title": "高速処理",
+          "description": "より小さいターゲット解像度は4Kアップスケーラーより高速なAI処理を意味します。",
+          "metric": "20-40秒"
+        },
+        {
+          "title": "普遍的互換性",
+          "description": "1080pは事実上すべての最新画面で完璧に動作し、ストリーミングビデオの標準です。",
+          "metric": "どこでもサポート"
+        }
+      ],
+      "technicalSpecs": {
+        "pixelDimensions": "1920 x 1080",
+        "totalPixels": "2,073,600ピクセル",
+        "aspectRatio": "16:9（ワイドスクリーン）",
+        "comparedTo720p": "（1280x720）の2.25倍の解像度",
+        "printSize": "300 DPIで最大16\" x 9\"",
+        "displayUses": "フルHDモニター、テレビ、ラップトップ、タブレット"
+      },
+      "faq": [
+        {
+          "question": "HDとフルHDの違いは？",
+          "answer": "HD（720p）は1280x720ピクセル、フルHD（1080p）は1920x1080で2.25倍多くのピクセルです。人々が'HD'と言うとき、通常フルHD（1080p）を指し、これがこのツールが生成するものです。"
+        },
+        {
+          "question": "1080pはプロ使用に十分良いですか？",
+          "answer": "もちろんです！1080pは多くのプロアプリケーションでまだ標準であり、YouTube、ストリーミングプラットフォーム、Webデザインが含まれます。24インチまでの画面に最適で、品質とファイルサイズの理想的なバランスを提供します。"
+        },
+        {
+          "question": "HDまたは4Kに拡張すべきですか？",
+          "answer": "Webコンテンツ、ソーシャルメディア、標準ディスプレイにはHD（1080p）を選択してください。4Kディスプレイ、大きな印刷、最大の将来対応が必要な場合は4Kを選択してください。"
+        },
+        {
+          "question": "HD解像度画像を印刷できますか？",
+          "answer": "はい！1080pは高品質で最大約16x9インチの印刷に十分な解像度を提供します。より大きな印刷には、代わりに4Kへの拡張を検討してください。"
+        }
+      ],
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-to-8k",
+      "title": "8Kに拡張",
+      "metaTitle": "8K解像度（7680x4320）に画像を拡張 | AI 8Kアップスケーラー",
+      "metaDescription": "AIで画像を8K解像度に変換。8Kディスプレイ、プロ印刷、最大詳細に最適。8倍拡張利用可能。無料で試す。",
+      "h1": "画像を8K解像度に拡張 - ウルトラハイデフィニション",
+      "intro": "高度なAIアップスケーラーで画像を息をのむような8K解像度（7680x4320ピクセル）に変換します。プロディスプレイ、大判印刷、将来対応コンテンツの究極の選択。",
+      "primaryKeyword": "upscale to 8k",
+      "secondaryKeywords": [
+        "8k upscaler",
+        "8k image enhancer",
+        "convert to 8k",
+        "7680x4320 upscaling",
+        "ultra hd upscaler"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "scale",
+      "resolution": "8K UHD",
+      "dimensions": {
+        "width": 7680,
+        "height": 4320,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "8Kテレビとモニター",
+        "大判印刷",
+        "プロ写真",
+        "映画制作",
+        "建築ビジュアライゼーション"
+      ],
+      "benefits": [
+        {
+          "title": "ウルトラ高詳細",
+          "description": "8Kは3320万ピクセルの前所未有の詳細を提供し、大きな画面とプロアプリケーションに最適です。",
+          "metric": "33.2メガピクセル"
+        },
+        {
+          "title": "プロ標準",
+          "description": "8Kはプロコンテンツ作成とハイエンドディスプレイの標準になりつつあります。",
+          "metric": "フルHDの16倍"
+        },
+        {
+          "title": "大量印刷能力",
+          "description": "8K解像度は300 DPIで最大64x36インチの結晶のような鮮明な印刷を可能にします。",
+          "metric": "64\" x 36\" 印刷"
+        }
+      ],
+      "technicalSpecs": {
+        "pixelDimensions": "7680 x 4320",
+        "totalPixels": "33,177,600ピクセル",
+        "aspectRatio": "16:9（ワイドスクリーン）",
+        "comparedTo4K": "（3840x2160）の4倍の解像度",
+        "printSize": "300 DPIで最大64\" x 36\"",
+        "displayUses": "8K UHDテレビ、モニター、プロジェクター"
+      },
+      "faq": [
+        {
+          "question": "8K解像度とは正確には何ですか？",
+          "answer": "8K解像度は7680 x 4320ピクセルで、フルHD（1920x1080）の16倍、4K（3840x2160）の4倍の解像度です。"
+        },
+        {
+          "question": "8Kに拡張する価値はありますか？",
+          "answer": "プロ用途、大判印刷、将来対応コンテンツにははい。一般的なWeb使用には8Kは過剰で、4Kまたは1080pで十分です。"
+        },
+        {
+          "question": "8Kに拡張するにはどれくらい時間がかかりますか？",
+          "answer": "8K処理はより多くの計算を必要とし、通常60-120秒かかります。ファイルサイズもかなり大きくなります。"
+        },
+        {
+          "question": "8K画像はすべての画面で機能しますか？",
+          "answer": "はい、8K画像はより低い解像度画面で自動的に縮小されます。ただし、ファイルサイズと処理時間を考慮してください。"
+        }
+      ],
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-2x",
+      "title": "2倍拡張",
+      "metaTitle": "AI画像2倍アップスケーラー | ダブル解像度強化 | MyImageUpscaler",
+      "metaDescription": "AIで画像を2倍（200%）に拡張。写真、グラフィック、アートワークをダブル解像度に強化。高速処理。無料で試す。",
+      "h1": "2倍画像アップスケーラー - ダブル解像度強化",
+      "intro": "高度な2倍AIアップスケーラーで画像解像度を2倍（200%）にします。品質向上とファイルサイズ管理の間で自然な外観を維持するのに最適です。",
+      "primaryKeyword": "upscale 2x",
+      "secondaryKeywords": ["2x upscaler", "double resolution", "200% upscale", "image doubler"],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "scale",
+      "resolution": "2倍",
+      "dimensions": {
+        "multiplier": 2,
+        "pixelIncrease": "幅と高さが2倍",
+        "totalPixelIncrease": "4倍多くのピクセル"
+      },
+      "targetUses": [
+        "Web画像強化",
+        "ソーシャルメディア準備",
+        "印刷準備",
+        "アーカイブ強化"
+      ],
+      "benefits": [
+        {
+          "title": "バランスの取れた強化",
+          "description": "2倍拡張は過度なファイルサイズ増加なしで顕著な改善を提供。",
+          "metric": "2倍解像度"
+        },
+        {
+          "title": "高速処理",
+          "description": "適度な拡張は高速処理時間を可能にします。",
+          "metric": "10-20秒"
+        },
+        {
+          "title": "品質保存",
+          "description": "AIアルゴリズムは画像品質と自然な外観を維持。",
+          "metric": "自然な結果"
+        }
+      ],
+      "technicalSpecs": {
+        "multiplier": "2x（200%）",
+        "widthHeight": "幅と高さが2倍",
+        "totalPixels": "4倍多くのピクセル",
+        "processingTime": "10-20秒",
+        "fileSizeIncrease": "通常3-4倍"
+      },
+      "faq": [
+        {
+          "question": "2倍拡張とはどういう意味ですか？",
+          "answer": "2倍拡張は幅と高さの両方を2倍にし、4倍多くのピクセル（2 x 2 = 4）になります。"
+        },
+        {
+          "question": "いつ2倍拡張を使用すべきですか？",
+          "answer": "Webコンテンツ、ソーシャルメディア、適度な品質向上が必要な標準印刷には2倍拡張が最適です。"
+        },
+        {
+          "question": "2倍拡張後に品質は良くなりますか？",
+          "answer": "はい！私たちのAIは詳細を強化し、鮮明さを向上させ、画像の全体的な外観を改善します。"
+        }
+      ],
+      "relatedScale": ["upscale-4x"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-4x",
+      "title": "4倍拡張",
+      "metaTitle": "AI画像4倍アップスケーラー | 4倍解像度強化 | MyImageUpscaler",
+      "metaDescription": "AIで画像を4倍（400%）に拡張。写真、グラフィック、アートワークを4倍解像度に強化。プロ品質。無料で試す。",
+      "h1": "4倍画像アップスケーラー - 最大品質強化",
+      "intro": "高度な4倍AIアップスケーラーで画像解像度を4倍（400%）にします。印刷、プロディスプレイ、最大詳細が必要なアプリケーションに最適です。",
+      "primaryKeyword": "upscale 4x",
+      "secondaryKeywords": ["4x upscaler", "quadruple resolution", "400% upscale", "4x image enhancer"],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "scale",
+      "resolution": "4倍",
+      "dimensions": {
+        "multiplier": 4,
+        "pixelIncrease": "幅と高さが4倍",
+        "totalPixelIncrease": "16倍多くのピクセル"
+      },
+      "targetUses": [
+        "大判印刷",
+        "プロディスプレイ",
+        "Eコマース",
+        "写真ポートフォリオ"
+      ],
+      "benefits": [
+        {
+          "title": "劇的な改善",
+          "description": "4倍拡張は最大品質のために実質的な解像度向上を提供。",
+          "metric": "16倍多くのピクセル"
+        },
+        {
+          "title": "プロ結果",
+          "description": "高品質を必要とするプロおよび商業アプリケーションに適しています。",
+          "metric": "プログレード"
+        },
+        {
+          "title": "高度なAI処理",
+          "description": "高度なアルゴリズムがリアルな詳細とテクスチャを追加。",
+          "metric": "インテリジェント強化"
+        }
+      ],
+      "technicalSpecs": {
+        "multiplier": "4x（400%）",
+        "widthHeight": "幅と高さが4倍",
+        "totalPixels": "16倍多くのピクセル",
+        "processingTime": "30-60秒",
+        "fileSizeIncrease": "通常10-15倍"
+      },
+      "faq": [
+        {
+          "question": "4倍拡張とはどういう意味ですか？",
+          "answer": "4倍拡張は幅と高さの両方を4倍にし、16倍多くのピクセル（4 x 4 = 16）になります。"
+        },
+        {
+          "question": "いつ4倍拡張を使用すべきですか？",
+          "answer": "印刷物、プロディスプレイ、Eコマースズーム機能、最大品質が必要なアプリケーションには4倍拡張が最適です。"
+        },
+        {
+          "question": "4倍拡張はファイルサイズに影響しますか？",
+          "answer": "はい、4倍拡張はファイルサイズを大幅に増加させます（通常10-15倍）。ストレージと帯域幅を考慮してください。"
+        }
+      ],
+      "relatedScale": ["upscale-2x", "upscale-8x"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-8x",
+      "title": "8倍拡張",
+      "metaTitle": "AI画像8倍アップスケーラー | 8倍解像度強化 | MyImageUpscaler",
+      "metaDescription": "AIで画像を8倍（800%）に拡張。写真、グラフィック、アートワークを8倍解像度に強化。究極の詳細。無料で試す。",
+      "h1": "8倍画像アップスケーラー - 究極の解像度強化",
+      "intro": "高度な8倍AIアップスケーラーで画像解像度を8倍（800%）にします。大判印刷、プロ写真、最大詳細が必要なアプリケーションに最適です。",
+      "primaryKeyword": "upscale 8x",
+      "secondaryKeywords": ["8x upscaler", "8x resolution", "800% upscale", "maximum image upscaling"],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "scale",
+      "resolution": "8倍",
+      "dimensions": {
+        "multiplier": 8,
+        "pixelIncrease": "幅と高さが8倍",
+        "totalPixelIncrease": "64倍多くのピクセル"
+      },
+      "targetUses": [
+        "大判印刷",
+        "ギャラリー展示",
+        "商業印刷",
+        " ultra-high-end applications"
+      ],
+      "benefits": [
+        {
+          "title": "最大解像度",
+          "description": "8倍拡張は可能な最高解像度向上を提供。",
+          "metric": "64倍多くのピクセル"
+        },
+        {
+          "title": "究極の詳細",
+          "description": "極端な拡大を必要とするアプリケーションに最適。",
+          "metric": "究極の品質"
+        },
+        {
+          "title": "プロフェッショナル",
+          "description": "商業およびハイエンドアプリケーションに適しています。",
+          "metric": "商業グレード"
+        }
+      ],
+      "technicalSpecs": {
+        "multiplier": "8x（800%）",
+        "widthHeight": "幅と高さが8倍",
+        "totalPixels": "64倍多くのピクセル",
+        "processingTime": "60-120秒",
+        "fileSizeIncrease": "非常に大きなファイル"
+      },
+      "faq": [
+        {
+          "question": "8倍拡張とはどういう意味ですか？",
+          "answer": "8倍拡張は幅と高さの両方を8倍にし、64倍多くのピクセル（8 x 8 = 64）になります。"
+        },
+        {
+          "question": "いつ8倍拡張を使用すべきですか？",
+          "answer": "大判印刷、ギャラリー展示、商業印刷、最高レベルの詳細が必要なアプリケーションに8倍拡張が最適です。"
+        },
+        {
+          "question": "8倍拡張に副作用はありますか？",
+          "answer": "ファイルサイズは非常に大きくなり、処理時間が長くなります。また、ソース画像品質が重要です。"
+        }
+      ],
+      "relatedScale": ["upscale-4x"],
+      "relatedTools": ["ai-image-upscaler"]
+    }
+  ]
+}

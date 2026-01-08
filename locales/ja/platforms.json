@@ -1,0 +1,561 @@
+{
+  "category": "platforms",
+  "pages": [
+    {
+      "slug": "midjourney-upscaler",
+      "title": "Midjourneyアップスケーラー - AI画像を4K品質に強化",
+      "metaTitle": "無料Midjourneyアップスケーラー | MJ画像を4Kオンラインで強化",
+      "metaDescription": "品質を損なわずにMidjourney画像を4Kに拡張。詳細を保存、アーティファクトを修正、テキスト鮮明度を強化する無料AIアップスケーラー。すべてのMJバージョンで動作。",
+      "h1": "Midjourneyアップスケーラー - AI画像を4Kに強化",
+      "intro": "Midjourneyは素晴らしいAIアートを作成しますが、デフォルトの解像度はプロ使用、大きな印刷、または高品質ディスプレイには不十分な場合があります。専用Midjourneyアップスケーラーは、AI生成アートを特別にするユニークなアーティスティックスタイルと詳細を保存しながら、画像を4K解像度に強化します。",
+      "primaryKeyword": "midjourney upscaler",
+      "secondaryKeywords": [
+        "upscale midjourney image",
+        "midjourney image enhancer",
+        "improve midjourney resolution",
+        "midjourney 4k upscaler",
+        "enhance ai art"
+      ],
+      "platformName": "Midjourney",
+      "platformType": "ai-generator",
+      "description": "Midjourney AI生成画像の専用アップスケーラーで、アーティスティックスタイルと詳細を保存しながら解像度を強化。",
+      "benefits": [
+        {
+          "title": "アーティスティックスタイル保存",
+          "description": "MidjourneyのAIアートスタイルのユニークな美学特性を維持"
+        },
+        {
+          "title": "圧縮アーティファクト修正",
+          "description": "画像鮮明度を強化しながらJPEG圧縮アーティファクトを除去"
+        },
+        {
+          "title": "細かい詳細強化",
+          "description": "AIジェネレーターが作成する複雑なパターンとテクスチャを鮮明に"
+        },
+        {
+          "title": "印刷対応品質",
+          "description": "大判印刷用の解像度に画像を拡張"
+        },
+        {
+          "title": "テキスト鮮明度",
+          "description": "拡張後もテキスト要素を鮮明で読み可能に保持"
+        }
+      ],
+      "integration": [
+        "最適結果のためにMidjourneyからPNG形式でエクスポート",
+        "最初にMidjourneyのアップスケーラー機能を使用し、その後さらに強化",
+        "すべてのMidjourneyバージョン（v1-v6とNiji）をサポート",
+        "グリッド画像と拡張単一画像の両方で動作",
+        "複数のMidjourney作成をバッチ処理"
+      ],
+      "useCases": [
+        {
+          "title": "Midjourneyアート印刷",
+          "description": "キャンバス印刷、ポスター、商品用AIアートワークを拡張。"
+        },
+        {
+          "title": "ソーシャルメディア強化",
+          "description": "Instagram、Pinterest、アートコミュニティ用高解像度バージョンを作成。"
+        },
+        {
+          "title": "ポートフォリオ品質",
+          "description": "プロアートおよびデザインポートフォリオ用画像を強化。"
+        },
+        {
+          "title": "NFT準備",
+          "description": "NFTミントに適した高解像度バージョンを作成。"
+        },
+        {
+          "title": "大判ディスプレイ",
+          "description": "トレードショー、展示、デジタルサイネージ用画像を準備。"
+        }
+      ],
+      "workflowSteps": [
+        "好みのプロンプトとパラメータでMidjourneyで画像を生成",
+        "PNG形式で画像をエクスポート/保存（利用可能な最高品質）",
+        "アップスケーラーにアップロードしターゲット解像度を選択（2倍、4倍、またはカスタム）",
+        "ユースケースに基づいて強化レベルを選択（Web、印刷、またはウルトラ高解像度）",
+        "使用準備完了の強化4K Midjourney画像をダウンロード"
+      ],
+      "faq": [
+        {
+          "question": "Midjourney画像を拡張する必要があるのはなぜですか？",
+          "answer": "Midjourneyのデフォルト解像度（v5+で1024x1024以上）は、プロ印刷、大判ディスプレイ、または高品質アプリケーションには不十分な場合があります。アップスケーラーはアーティスティックスタイルを維持しながら詳細を強化します。"
+        },
+        {
+          "question": "アップスケーラーはMidjourney画像のスタイルを変更しますか？",
+          "answer": "いいえ、私たちのアップスケーラーは解像度と鮮明さを強化しながらMidjourney画像のオリジナルアーティスティックスタイルと美学の質を保存するように設計されています。"
+        },
+        {
+          "question": "Midjourneyからエクスポートする最適な形式は？",
+          "answer": "アップスケーラー用にはPNG形式が最高品質を提供します。可能な場合はJPEGを避けてください。アップスケーラー中に圧縮アーティファクトが増幅される可能性があります。"
+        },
+        {
+          "question": "Midjourneyグリッド画像を拡張できますか？",
+          "answer": "はい、ただし最適結果のために、最初にMidjourneyのアップスケーラー機能を使用して個別の高解像度画像を取得し、その後アップスケーラーでさらに強化してください。"
+        },
+        {
+          "question": "これはMidjourney Niji（アニメ）画像で機能しますか？",
+          "answer": "もちろんです！私たちのアップスケーラーはNiji画像で優秀に動作し、アニメスタイルを保存しながら線品質と詳細を強化します。"
+        },
+        {
+          "question": "拡張Midjourney画像を印刷できますか？",
+          "answer": "はい、拡張画像は印刷に適しています。標準印刷には4倍拡張を推奨し、大判ポスターとキャンバス印刷には8倍を使用してください。"
+        },
+        {
+          "question": "Midjourney画像をどのくらい大きく拡張できますか？",
+          "answer": "オリジナル解像度の8倍まで拡張できます。Midjourney v5+画像（1024x1024）の場合、8192x8192ピクセルまでの出力を意味します。"
+        },
+        {
+          "question": "アップスケーラーはMidjourneyアーティファクトを修正しますか？",
+          "answer": "私たちのアップスケーラーは特定の圧縮アーティファクトを低減し全体的な鮮明度を向上できますが、オリジナルAI生成選択を根本的に変更または'修正'することはありません。"
+        }
+      ],
+      "relatedPlatforms": ["stable-diffusion-upscaler", "dalle-upscaler", "canva-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/midjourney-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "stable-diffusion-upscaler",
+      "title": "Stable Diffusionアップスケーラー - SD画像を印刷品質に強化",
+      "metaTitle": "無料Stable Diffusionアップスケーラー | SDを4K/8Kに強化",
+      "metaDescription": "AI詳細を保存しながらStable Diffusion画像を拡張。アーティファクトを修正、鮮明度を強化、印刷用準備。SDXL、SD 1.5、アニメモデルで動作。",
+      "h1": "Stable Diffusionアップスケーラー - 印刷品質AI画像強化",
+      "intro": "Stable Diffusionは信じられないほどのAI生成画像を作成しますが、デフォルトの512x512または1024x1024解像度はプロ印刷や高品質ディスプレイには不十分です。専用アップスケーラーはSDおよびSDXL画像を4K以上に強化し、Stable Diffusion出力をユニークにする複雑な詳細とスタイルを保存します。",
+      "primaryKeyword": "stable diffusion upscaler",
+      "secondaryKeywords": [
+        "upscale stable diffusion",
+        "sd upscaler",
+        "sdxl upscaler",
+        "enhance ai images",
+        "stable diffusion 4k"
+      ],
+      "platformName": "Stable Diffusion",
+      "platformType": "ai-generator",
+      "description": "Stable Diffusion出力の高度なアップスケーラー。SD 1.5、SDXL、カスタムチェックポイントモデルをサポート。",
+      "benefits": [
+        {
+          "title": "モデルスタイル保存",
+          "description": "様々なSDモデルとチェックポイントの特定の特性を維持"
+        },
+        {
+          "title": "ピクセル化修正",
+          "description": "詳細を強化しながら低解像度生成からのピクセル化を除去"
+        },
+        {
+          "title": "細かい詳細強化",
+          "description": "SD生成のテクスチャ、肌の詳細、複雑な要素を鮮明に"
+        },
+        {
+          "title": "すべての解像度をサポート",
+          "description": "512x512 SD 1.5、1024x1024 SDXL、カスタム解像度出力で動作"
+        },
+        {
+          "title": "バッチ処理",
+          "description": "効率的なワークフローのため複数のSD生成を一度に拡張"
+        }
+      ],
+      "integration": [
+        "Automatic1111、ComfyUI、WebUI出力で動作",
+        "SDXLネイティブ1024x1024解像度をサポート",
+        "すべてのSDモデルチェックポイントと互換性",
+        "img2imgとtxt2img出力を等しく処理",
+        "Hi-Res Fixパス結果を保存"
+      ],
+      "useCases": [
+        {
+          "title": "SDアートワーク印刷",
+          "description": "Stable Diffusion生成からギャラリー品質印刷を作成。"
+        },
+        {
+          "title": "テクスチャ作成",
+          "description": "ゲームアセットと3Dモデリング用高解像度テクスチャを生成。"
+        },
+        {
+          "title": "ストック強化",
+          "description": "ストック写真提出と販売用SD画像を拡張。"
+        },
+        {
+          "title": "商品ビジュアライゼーション",
+          "description": "マーケティング資料の商品モックアップとビジュアライゼーションを強化。"
+        },
+        {
+          "title": "デジタルアートポートフォリオ",
+          "description": "SD生成からプロポートフォリオ作品を作成。"
+        }
+      ],
+      "workflowSteps": [
+        "好みのモデルと設定でStable Diffusionで画像を生成",
+        "より良い開始品質のためにHi-Res Fixまたはより高い解像度設定を使用",
+        "圧縮なしでPNG形式で出力を保存",
+        "アップスケーラーにアップロードしターゲット解像度を選択",
+        "強化高解像度SD画像をダウンロード"
+      ],
+      "faq": [
+        {
+          "question": "Stable Diffusionでどの解像度を生成すべきですか？",
+          "answer": "最適アップスケーラー結果のために、SDXLのネイティブ1024x1024を使用するか、SD 1.5でHi-Res Fixを有効にしてください。より高い開始解像度はより良い拡張結果をもたらします。"
+        },
+        {
+          "question": "特定のSDチェックポイントからの画像を拡張できますか？",
+          "answer": "はい！私たちのアップスケーラーは任意のSDチェックポイントまたはLoRAからの画像で動作し、各モデルのユニークなスタイル特性を保存します。"
+        },
+        {
+          "question": "SDXL画像で機能しますか？",
+          "answer": "もちろんです。SDXLのネイティブ1024x1024解像度は素晴らしい開始点であり、私たちのアップスケーラーは4K以上にさらに強化できます。"
+        },
+        {
+          "question": "アップスケーラーはSD画像に詳細を追加しますか？",
+          "answer": "私たちのアップスケーラーは既存の詳細を強化し画像を鮮明にしますが、オリジナル生成になかった詳細を'幻覚'することはありません。"
+        },
+        {
+          "question": "アニメスタイルStable Diffusion画像を拡張できますか？",
+          "answer": "はい、私たちのアップスケーラーはアニメスタイルモデルとチェックポイントで優秀に動作し、線品質とセシェーディング技術を保存します。"
+        },
+        {
+          "question": "img2img出力は？",
+          "answer": "img2img出力は私たちのアップスケーラーで優秀に動作します。利用可能な最高品質設定で保存するだけです。"
+        },
+        {
+          "question": "ControlNet出力で使用できますか？",
+          "answer": "はい、ControlNet画像は良好に拡張されます。ControlNetの構造ガイダンスは拡張出力で保存されます。"
+        },
+        {
+          "question": "SDの内蔵アップスケーラーと比較してどうですか？",
+          "answer": "私たちのアップスケーラーは印刷品質出力とアーティファクト低減に焦点を当て、SDの内部アップスケーラーを補完します。多くのアーティストは両方を使用しています。"
+        }
+      ],
+      "relatedPlatforms": ["midjourney-upscaler", "dalle-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/stable-diffusion-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "dalle-upscaler",
+      "title": "DALL-Eアップスケーラー - OpenAI画像をウルトラHDに強化",
+      "metaTitle": "無料DALL-Eアップスケーラー | DALL-E 2と3画像を強化",
+      "metaDescription": "DALL-E画像を4K/8K解像度に拡張。圧縮を修正、詳細を強化、印刷用準備。DALL-E 2とDALL-E 3出力で動作。",
+      "h1": "DALL-Eアップスケーラー - OpenAI画像用ウルトラHD強化",
+      "intro": "DALL-Eは印象的なAI生成画像を作成しますが、解像度はプロプロジェクト、印刷、または高品質ディスプレイのニーズを満たさない場合があります。専用DALL-Eアップスケーラーは画像を4K以上に強化し、OpenAIの署名スタイルと各生成をユニークにする詳細を保存します。",
+      "primaryKeyword": "dalle upscaler",
+      "secondaryKeywords": [
+        "upscale dalle",
+        "dalle image enhancer",
+        "dall-e 2 upscaler",
+        "dall-e 3 upscaler",
+        "enhance openai images"
+      ],
+      "platformName": "DALL-E",
+      "platformType": "ai-generator",
+      "description": "DALL-E 2とDALL-E 3画像のプロアップスケーラー。OpenAIのユニークなアーティスティックスタイルに最適化。",
+      "benefits": [
+        {
+          "title": "DALL-Eスタイル保存",
+          "description": "OpenAIの distinctiveアーティスティックスタイルとカラーパレットを維持"
+        },
+        {
+          "title": "フォトリアリズム強化",
+          "description": "フォトリアリスティックDALL-E生成のリアリズムを向上"
+        },
+        {
+          "title": "圧縮修正",
+          "description": "ChatGPTインターフェースダウンロードからの圧縮アーティファクトを低減"
+        },
+        {
+          "title": "テキスト強化",
+          "description": "拡張後もレンダリングされたテキストを鮮明で読み可能に保持"
+        },
+        {
+          "title": "印刷対応",
+          "description": "プロ印刷アプリケーションに適した解像度を作成"
+        }
+      ],
+      "integration": [
+        "DALL-E 2（1024x1024）とDALL-E 3画像で動作",
+        "ChatGPTインターフェースダウンロード用最適化",
+        "正方形と長方形DALL-E出力の両方をサポート",
+        "DALL-E 3の改善された詳細とテクスチャレンダリングを処理",
+        "複数の生成を効率的にバッチ処理"
+      ],
+      "useCases": [
+        {
+          "title": "DALL-Eアート印刷",
+          "description": "DALL-E生成から高品質印刷を作成。"
+        },
+        {
+          "title": "マーケティング資料",
+          "description": "ブロシュア、プレゼンテーション、広告用DALL-E画像を強化。"
+        },
+        {
+          "title": "Webグラフィック",
+          "description": "高解像度ヒーロー画像とWebサイトグラフィックを作成。"
+        },
+        {
+          "title": "本の説明",
+          "description": "印刷およびデジタル出版物用DALL-E説明を拡張。"
+        },
+        {
+          "title": "商品モックアップ",
+          "description": "プレゼンテーションとプロトタイピング用DALL-E商品コンセプトを強化。"
+        }
+      ],
+      "workflowSteps": [
+        "ChatGPTまたはAPI経由でDALL-Eを使用して画像を生成",
+        "利用可能な最高品質で画像をダウンロード",
+        "専用DALL-Eアップスケーラーにアップロード",
+        "ターゲット解像度を選択（ほとんどの使用に4K推奨）",
+        "強化ウルトラHD DALL-E画像をダウンロード"
+      ],
+      "faq": [
+        {
+          "question": "DALL-E 3画像で機能しますか？",
+          "answer": "はい！私たちのアップスケーラーはDALL-E 2とDALL-E 3の両方に最適化されており、DALL-E 3出力の改善された詳細とテクスチャレンダリングを強化します。"
+        },
+        {
+          "question": "DALL-Eからエクスポートする最適な方法は？",
+          "answer": "利用可能なときはChatGPTから直接PNG形式で画像をダウンロードしてください。スクリーンショットは品質を低下させるので避けてください。"
+        },
+        {
+          "question": "長方形DALL-E画像を拡張できますか？",
+          "answer": "はい、クラシックな正方形形式とDALL-E 3の長方形出力の両方をサポートしています。"
+        },
+        {
+          "question": "アップスケーラーはDALL-Eのテキストレンダリングを向上させますか？",
+          "answer": "アップスケーラーは既存のテキストを�明明瞭にしますが、オリジナル生成にあったスペルミスを修正することはありません。"
+        },
+        {
+          "question": "拡張DALL-E画像を印刷できますか？",
+          "answer": "はい、4K拡張画像は印刷に優秀です。品質が基準を満たすことを確認するために小さなテスト印刷を検討してください。"
+        },
+        {
+          "question": "ChatGPT経由のDALL-Eで機能しますか？",
+          "answer": "もちろんです。ChatGPTのDALL-E統合を通じて生成された画像は私たちのアップスケーラーで完璧に動作します。"
+        },
+        {
+          "question": "DALL-E編集バリエーションは？",
+          "answer": "すべてのDALL-Eバリエーションと編集を拡張できます。各バリエーションは独立画像として扱われます。"
+        },
+        {
+          "question": "商業使用にDALL-E画像を拡張できますか？",
+          "answer": "はい、拡張画像はOpenAIの条件に従ってオリジナルDALL-E生成と同じ使用権を保持します。"
+        }
+      ],
+      "relatedPlatforms": ["midjourney-upscaler", "stable-diffusion-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "photo-enhancer"],
+      "ogImage": "/og-images/dalle-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "canva-upscaler",
+      "title": "Canvaアップスケーラー - Canvaデザインを印刷品質に強化",
+      "metaTitle": "無料Canvaアップスケーラー | Canva画像を4K/8Kに強化",
+      "metaDescription": "品質損失なしでCanvaデザインを拡張。印刷、プレゼンテーション、プロ使用に最適。テキスト、グラフィック、写真を強化。",
+      "h1": "Canvaアップスケーラー - Canvaデザインのプロ強化",
+      "intro": "Canvaはデザインを簡単にしますが、ダウンロード解像度制限はプロ印刷、大きなディスプレイ、または高品質プレゼンテーションでイライラする可能性があります。専用Canvaアップスケーラーはデザインを4K以上に強化し、テキスト鮮明度、ベクターグラフィック鮮明さ、画像品質を保存してデザインを際立たせます。",
+      "primaryKeyword": "canva upscaler",
+      "secondaryKeywords": [
+        "upscale canva design",
+        "canva image enhancer",
+        "improve canva resolution",
+        "canva 4k upscaler",
+        "enhance canva exports"
+      ],
+      "platformName": "Canva",
+      "platformType": "design-tool",
+      "description": "Canvaデザインの専用アップスケーラー。プロ出力用テキスト鮮明度、グラフィック、画像を保存。",
+      "benefits": [
+        {
+          "title": "テキスト鮮明度保存",
+          "description": "Canvaテキスト要素を任意の解像度で鮮明で読み可能に保持"
+        },
+        {
+          "title": "グラフィック強化",
+          "description": "形状、アイコン、デザイン要素のベクターのような品質を維持"
+        },
+        {
+          "title": "写真対応",
+          "description": "同じ画像でデザイン要素と埋め込み写真の両方を強化"
+        },
+        {
+          "title": "印刷品質",
+          "description": "プロ印刷に適した高解像度出力を作成"
+        },
+        {
+          "title": "ブランド色保存",
+          "description": "ブランド一貫出力のために正確な色再現を保存"
+        }
+      ],
+      "integration": [
+        "最適品質のためにCanvaからPNG形式でダウンロード",
+        "すべてのCanva Proダウンロード解像度をサポート",
+        "標準およびプレミアムダウンロードの両方で動作",
+        "Canvaの様々なアスペクト比を正しく処理",
+        "アニメーションデザインエクスポートと互換性"
+      ],
+      "useCases": [
+        {
+          "title": "印刷マーケティング資料",
+          "description": "プロ印刷用ブロシュア、フライヤー、ポスターを拡張。"
+        },
+        {
+          "title": "プレゼンテーション強化",
+          "description": "大規模会場プレゼンテーション用高解像度スライドを作成。"
+        },
+        {
+          "title": "ソーシャルメディアグラフィック",
+          "description": "複数プラットフォームと画面サイズ用デザインを強化。"
+        },
+        {
+          "title": "ブランド資料",
+          "description": "様々な使用用ロゴ、名刺、ブランドアセットを拡張。"
+        },
+        {
+          "title": "商品デザイン",
+          "description": "オンデマンド印刷商品用Canvaデザインを準備。"
+        }
+      ],
+      "workflowSteps": [
+        "すべての要素を完了したCanvaでデザインを完成",
+        "PNGとしてダウンロード（利用可能な最高品質 - 必要に応じてProを使用）",
+        "Canva最適化アップスケーラーにアップロード",
+        "意図する使用に基づいてターゲット解像度を選択",
+        "強化高解像度Canvaデザインをダウンロード"
+      ],
+      "faq": [
+        {
+          "question": "Canvaデザインを拡張する必要があるのはなぜですか？",
+          "answer": "Canvaの無料ティアには解像度制限があり、Proダウンロードでさえ大判印刷やウルトラ高解像度ディスプレイには不十分な場合があります。"
+        },
+        {
+          "question": "拡張後もテキストは鮮明ですか？",
+          "answer": "はい、私たちのアップスケーラーはCanvaデザインのテキスト鮮明度を維持するように特別に最適化されており、フォントを鮮明で読み可能に保ちます。"
+        },
+        {
+          "question": "埋め込み写真を含むデザインを拡張できますか？",
+          "answer": "はい、デザイン要素と埋め込み写真の両方が強化されます。混合コンテンツ複雑デザインは良好に動作します。"
+        },
+        {
+          "question": "Canvaからダウンロードする最適な形式は？",
+          "answer": "PNG形式が最高品質を提供します。拡張する予定の場合はJPEGとしてダウンロードを避けてください。圧縮アーティファクトが増幅されます。"
+        },
+        {
+          "question": "大判印刷に拡張できますか？",
+          "answer": "はい、4K-8K拡張デザインはポスター、バナー、その他大判印刷アプリケーションで良好に動作します。"
+        },
+        {
+          "question": "Canva Proダウンロードで機能しますか？",
+          "answer": "はい、Proのより高い解像度開始点はさらに良い拡張結果をもたらします。"
+        },
+        {
+          "question": "色は正確に残りますか？",
+          "answer": "私たちのアップスケーラーは色精度を維持し、ブランド資料と特定の色要件を持つデザインに重要です。"
+        },
+        {
+          "question": "アニメーションCanvaデザインを拡張できますか？",
+          "answer": "静的エクスポートの場合ははい。アニメーションデザインの場合、各フレームを個別にエクスポートし、拡張後に再組み立ててください。"
+        }
+      ],
+      "relatedPlatforms": ["photoshop-upscaler", "midjourney-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/canva-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "photoshop-upscaler",
+      "title": "Photoshopアップスケーラー - PSDエクスポートをウルトラHDに強化",
+      "metaTitle": "無料Photoshopアップスケーラー | PSD画像を4K/8Kに強化",
+      "metaDescription": "PhotoshopエクスポートとPSDレイヤーを拡張。詳細編集、コンポジット、アートワークを印刷品質に強化。レイヤー効果とフィルターを保存。",
+      "h1": "Photoshopアップスケーラー - Adobe Photoshop用ウルトラHD強化",
+      "intro": "Adobe Photoshopは画像編集の業界標準ですが、大判印刷やウルトラ高解像度ディスプレイ用の十分な解像度でのエクスポートは挑戦的です。専用Photoshopアップスケーラーはエクスポート画像とアートワークを4K以上に強化し、複雑な詳細、レイヤー効果、Photoshop出力を定義するプロ品質を保存します。",
+      "primaryKeyword": "photoshop upscaler",
+      "secondaryKeywords": [
+        "upscale photoshop images",
+        "photoshop image enhancer",
+        "enhance psd exports",
+        "adobe photoshop upscaler",
+        "photoshop 4k upscaler"
+      ],
+      "platformName": "Photoshop",
+      "platformType": "photo-editor",
+      "description": "Photoshopエクスポートとアートワークのプロアップスケーラー。複雑な編集とレイヤーコンポジットに最適化。",
+      "benefits": [
+        {
+          "title": "編集品質保存",
+          "description": "複雑なPhotoshop編集と調整の品質を維持"
+        },
+        {
+          "title": "詳細強化",
+          "description": "Photoshop編集が作成する細かい詳細を鮮明に"
+        },
+        {
+          "title": "すべての形式をサポート",
+          "description": "PSDエクスポート、PNG、TIFF、その他Photoshop形式で動作"
+        },
+        {
+          "title": "印刷対応",
+          "description": "プロ印刷アプリケーションに適した解像度を作成"
+        },
+        {
+          "title": "コンポジット",
+          "description": "マルチレイヤーPhotoshopファイルを優秀に処理"
+        }
+      ],
+      "integration": [
+        "Photoshop内蔵アップスケーラーの前に使用",
+        "RAWファイルから直接機能",
+        "すべてのPhotoshopエクスポート形式をサポート",
+        "レイヤー効果を保存",
+        "Photoshopワークフローに統合"
+      ],
+      "useCases": [
+        {
+          "title": "プロ写真編集",
+          "description": "Photoshopワークフロー中に画像を拡張。"
+        },
+        {
+          "title": "グラフィックデザイン",
+          "description": "デザイン資産とプロジェクトを強化。"
+        },
+        {
+          "title": "デジタルアート",
+          "description": "Photoshopで作成されたアートワークを印刷品質に強化。"
+        },
+        {
+          "title": "印刷準備",
+          "description": "印刷用最終出力を準備。"
+        }
+      ],
+      "workflowSteps": [
+        "Photoshopで画像を編集",
+        "最高品質でエクスポート（PNG/TIFF推奨）",
+        "アップスケーラーにアップロード",
+        "ターゲット解像度を選択",
+        "強化画像をダウンロード"
+      ],
+      "faq": [
+        {
+          "question": "Photoshopでいつアップスケーラーを使うべきですか？",
+          "answer": "最適結果のために、編集前にアップスケーラーを使用してください。"
+        },
+        {
+          "question": "PSDレイヤーを直接拡張できますか？",
+          "answer": "レイヤーをフラット化してから拡張してください。"
+        },
+        {
+          "question": "Photoshop内蔵アップスケーラーより良いですか？",
+          "answer": "より高度なAI詳細強化を提供します。"
+        }
+      ],
+      "relatedPlatforms": ["canva-upscaler", "lightroom-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "photo-enhancer"],
+      "ogImage": "/og-images/photoshop-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    }
+  ],
+  "meta": {
+    "totalPages": 5,
+    "lastUpdated": "2026-01-06",
+    "description": "AIプラットフォーム固有のアップスケーリングページ（Midjourney、Stable Diffusion、DALL-E、Canva、Photoshop）"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "category": "formats",
+  "category": "formatos",
   "meta": {
     "totalPages": 10,
     "lastUpdated": "2025-12-19T00:00:00Z"
@@ -20,7 +20,7 @@
         "ampliador de imagenes jpeg"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "JPEG",
       "extension": "jpeg",
       "description": "JPEG (Joint Photographic Experts Group) es el formato de imagen más utilizado para fotografía e imágenes web. Nuestro escalador IA se especializa en mejorar JPEGs manteniendo la eficiencia de compresión.",
@@ -122,7 +122,7 @@
         "ampliador de imagenes png"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "PNG",
       "extension": "png",
       "description": "PNG (Portable Network Graphics) soporta compresión sin pérdida y transparencia. Perfecto para logotipos, gráficos e imágenes que requieren fondos transparentes.",
@@ -224,7 +224,7 @@
         "potenciador de resolución webp"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "WebP",
       "extension": "webp",
       "description": "WebP es el formato de imagen moderno de Google que ofrece superior compresión y calidad. Perfecto para optimización web con soporte para compresión tanto con pérdida como sin pérdida.",
@@ -327,7 +327,7 @@
         "mejorador de fotos ios"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "HEIC",
       "extension": "heic",
       "description": "HEIC (High Efficiency Image Container) es el formato de imagen moderno de Apple para dispositivos iOS y macOS. Ofrece superior compresión manteniendo excelente calidad, haciéndolo perfecto para fotografía iPhone.",
@@ -434,7 +434,7 @@
         "escalador de fotos profesional"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "RAW",
       "extension": "raw",
       "description": "El formato RAW contiene datos de imagen no procesados directamente de tu sensor de cámara. Proporciona máxima calidad y flexibilidad de edición, haciéndolo ideal para fotografía profesional y escalado de alta gama.",
@@ -540,7 +540,7 @@
         "escalador de fotos de impresion"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "TIFF",
       "extension": "tiff",
       "description": "TIFF (Tagged Image File Format) es un formato sin pérdida ampliamente usado en impresión profesional, publicación y archivo. Soporta múltiples capas y páginas con excelente preservación de calidad.",
@@ -642,7 +642,7 @@
         "ampliador de imagenes bmp"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "BMP",
       "extension": "bmp",
       "description": "BMP (Bitmap) es un formato de imagen raster no comprimido. Proporciona calidad sin pérdida pero con tamaños de archivo grandes. Comúnmente usado en aplicaciones Windows y sistemas heredados.",
@@ -744,7 +744,7 @@
         "ampliador de imagenes svg"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "SVG",
       "extension": "svg",
       "description": "SVG (Scalable Vector Graphics) es un formato vectorial que escala infinitamente sin pérdida de calidad. Nuestra herramienta convierte SVGs a imágenes raster de alta resolución optimizadas para casos de uso específicos.",
@@ -846,7 +846,7 @@
         "ampliador de imagenes gif"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "GIF",
       "extension": "gif",
       "description": "GIF (Graphics Interchange Format) soporta animación y transparencia con 256 colores. Ampliamente usado para memes, animaciones simples y gráficos web a pesar de limitaciones de color.",
@@ -951,7 +951,7 @@
         "ampliador de imagenes avif"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "formatos",
       "formatName": "AVIF",
       "extension": "avif",
       "description": "AVIF (AV1 Image Format) es el formato de imagen más reciente basado en el códec de video AV1. Ofrece superior compresión y calidad comparado con JPEG, PNG y WebP, representando el futuro de imágenes web.",

@@ -1,0 +1,144 @@
+{
+  "category": "use-cases",
+  "pages": [
+    {
+      "slug": "ecommerce-product-photos",
+      "title": "Fotos de Produtos de E-commerce",
+      "metaTitle": "Requisitos de Foto de Produto de E-commerce por Plataforma | MyImageUpscaler",
+      "metaDescription": "Requisitos exatos de imagem para Amazon, eBay, Etsy, Shopify. Aprenda tamanhos mínimos, proporções e como ampliar fotos de produtos para atender padrões de plataforma.",
+      "h1": "Requisitos de Foto de Produto de E-commerce",
+      "intro": "Cada marketplace tem requisitos específicos de imagem. Aqui está exatamente o que você precisa para cada plataforma e como chegar lá.",
+      "primaryKeyword": "fotos de produtos ecommerce",
+      "secondaryKeywords": [
+        "requisitos de imagem de produto",
+        "tamanho de foto amazon",
+        "requisitos de imagem ebay",
+        "dimensões de foto etsy"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Requisitos específicos de imagem para principais plataformas de e-commerce com orientação sobre como atendê-los.",
+      "platformRequirements": [
+        {
+          "platform": "Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (para zoom)",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 preferido",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Branco puro (RGB 255,255,255) para imagem principal",
+          "notes": "Produto deve preencher 85% do quadro. Sem marcas d'água, logotipos ou texto na imagem principal."
+        },
+        {
+          "platform": "eBay",
+          "minimumSize": "500x500px",
+          "recommendedSize": "1600x1600px",
+          "maxFileSize": "12MB",
+          "aspectRatio": "1:1 preferido",
+          "format": "JPEG, PNG, GIF, TIFF, BMP",
+          "background": "Branco ou cinza claro preferido",
+          "notes": "Até 24 imagens por listagem. Sem bordas, marcas d'água ou texto promocional."
+        },
+        {
+          "platform": "Etsy",
+          "minimumSize": "2000px lado mais curto",
+          "recommendedSize": "2700x2025px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3 recomendado",
+          "format": "JPEG, PNG, GIF",
+          "background": "Sua escolha - fotos de estilo de vida funcionam bem",
+          "notes": "Primeira imagem é a miniatura. Proporção 5:4 para ícone da loja."
+        },
+        {
+          "platform": "Shopify",
+          "minimumSize": "Sem mínimo",
+          "recommendedSize": "2048x2048px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "1:1 para consistência",
+          "format": "JPEG, PNG, GIF, HEIC, WebP",
+          "background": "Dependente do tema",
+          "notes": "Dimensionamento consistente através de produtos melhora aparência. Conversão automática WebP."
+        },
+        {
+          "platform": "WooCommerce",
+          "minimumSize": "Dependente do tema",
+          "recommendedSize": "1200x1200px mínimo",
+          "maxFileSize": "Dependente do servidor",
+          "aspectRatio": "Configure nas configurações do tema",
+          "format": "JPEG, PNG, GIF, WebP",
+          "background": "Dependente do tema",
+          "notes": "Habilite regeneração de imagem após alterar tamanhos de miniatura."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Imagens do fornecedor são muito pequenas",
+          "solution": "Amplie para pelo menos 2000x2000px. A maioria das imagens de fornecedor são 500-800px - amplie 3-4x para funcionalidade de zoom.",
+          "howTo": "Faça upload para o ampliador, selecione 4x, baixe. Uma imagem 500px torna-se 2000px."
+        },
+        {
+          "problem": "Imagens têm cor de fundo errada",
+          "solution": "Amazon exige branco puro (255,255,255). Use uma ferramenta de remoção de fundo antes de ampliar.",
+          "howTo": "Remova o fundo primeiro, adicione fundo branco, depois amplie se necessário."
+        },
+        {
+          "problem": "Produto não preenche enough do quadro",
+          "solution": "Corte a imagem antes de ampliar para centralizar o produto. Depois amplie para atender o tamanho mínimo.",
+          "howTo": "Corte para o produto com margens mínimas, depois amplie 2-4x para alcançar 2000px."
+        },
+        {
+          "problem": "Imagens estão borradas após ampliação",
+          "solution": "Ampliação de IA preserva nitidez, mas fontes de qualidade muito baixa têm limites. Use fonte de mais alta qualidade disponível.",
+          "howTo": "Solicite resolução mais alta do fornecedor, ou melhore antes de ampliar."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Verifique o tamanho da imagem fonte",
+          "description": "Clique com o botão direito na imagem, verifique propriedades/dimensões. Note o tamanho atual."
+        },
+        {
+          "step": 2,
+          "title": "Calcule o fator de ampliação necessário",
+          "description": "Se a fonte é 500px e você precisa 2000px, isso é ampliação 4x."
+        },
+        {
+          "step": 3,
+          "title": "Amplie a imagem",
+          "description": "Faça upload para o ampliador, selecione o fator apropriado, baixe o resultado."
+        },
+        {
+          "step": 4,
+          "title": "Verifique a saída",
+          "description": "Verifique se as dimensões finais atendem aos requisitos da plataforma. Verifique se texto/logotipos permanecem nítidos."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Que resolução as fotos de produto Amazon precisam?",
+          "answer": "Amazon exige mínimo 1000x1000px, mas recomenda 2000x2000px ou maior para habilitar funcionalidade de zoom. O recurso de zoom ativa quando passa o mouse em imagens 1500px ou maiores."
+        },
+        {
+          "question": "Posso usar a mesma imagem em todas as plataformas?",
+          "answer": "Sim, se você preparar para os requisitos mais exigentes. Crie imagens 2000x2000px em fundo branco puro - essas funcionam na Amazon, eBay e Etsy com corte."
+        },
+        {
+          "question": "Imagens ampliadas passarão na verificação de qualidade da Amazon?",
+          "answer": "Imagens ampliadas por IA tipicamente passam se a fonte não fosse extremamente baixa qualidade. Evite ampliar imagens menores que 300px - solicite melhores imagens fonte dos fornecedores em vez disso."
+        },
+        {
+          "question": "Como lido com diferentes proporções?",
+          "answer": "A maioria das plataformas prefere 1:1 (quadrado). Se seu produto é retangular, adicione espaço em branco para torná-lo quadrado, ou corte para caber. A imagem principal da Amazon deve ser quadrada."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["background-removal-guide"]
+    }
+  ],
+  "meta": {
+    "totalPages": 12,
+    "lastUpdated": "2026-01-06T00:00:00Z"
+  }
+}

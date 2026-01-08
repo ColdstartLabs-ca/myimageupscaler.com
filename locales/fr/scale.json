@@ -1,0 +1,226 @@
+{
+  "category": "scale",
+  "pages": [
+    {
+      "slug": "upscale-to-4k",
+      "title": "Agrandir vers 4K",
+      "metaTitle": "Agrandissez les images à la résolution 4K avec l'IA | MyImageUpscaler",
+      "metaDescription": "Agrandissez n'importe quelle image à une résolution 4K stupéfiante (3840x2160) avec l'IA. Parfait pour les affichages, les impressions et les projets professionnels. Essai gratuit.",
+      "h1": "Agrandissez les images à la résolution 4K - Qualité professionnelle",
+      "intro": "Transformez vos images à une résolution 4K stupéfiante (3840x2160 pixels) avec l'agrandissement alimenté par l'IA. Parfait pour les affichages modernes, les grandes impressions et les projets professionnels.",
+      "primaryKeyword": "agrandir vers 4k",
+      "secondaryKeywords": [
+        "agrandissement 4k",
+        "convertir vers 4k",
+        "convertisseur image 4k",
+        "agrandir vers résolution 4k"
+      ],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "scale",
+      "resolution": "4K",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "Écrans et TV 4K",
+        "Miniatures YouTube",
+        "Impression grand format",
+        "Présentations professionnelles",
+        "Signalisation numérique"
+      ],
+      "benefits": [
+        {
+          "title": "Résolution de qualité cinéma",
+          "description": "4K (3840x2160) est le standard pour les affichages modernes, les plateformes de streaming et le contenu professionnel.",
+          "metric": "8,3 mégapixels"
+        },
+        {
+          "title": "Préparez votre contenu pour l'avenir",
+          "description": "4K devient progressivement le standard minimum pour les affichages professionnels et grand public.",
+          "metric": "4x Full HD"
+        },
+        {
+          "title": "Imprimez en grandes tailles",
+          "description": "La résolution 4K permet des impressions nettes jusqu'à 32x18 pouces à 300 DPI.",
+          "metric": "Impressions 32\" x 18\""
+        }
+      ],
+      "technicalSpecs": {
+        "pixelDimensions": "3840 x 2160",
+        "totalPixels": "8 294 400 pixels",
+        "aspectRatio": "16:9 (écran large)",
+        "comparedToFullHD": "4x la résolution (1920x1080)",
+        "printSize": "Jusqu'à 32\" x 18\" à 300 DPI",
+        "displayUses": "TV UHD 4K, moniteurs, projecteurs"
+      },
+      "faq": [
+        {
+          "question": "Qu'est-ce que la résolution 4K exactement ?",
+          "answer": "La résolution 4K (aussi appelée Ultra HD ou UHD) est 3840 x 2160 pixels - exactement 4 fois la résolution du Full HD (1920x1080). Le nom '4K' vient des environ 4000 pixels de résolution horizontale."
+        },
+        {
+          "question": "Puis-je agrandir n'importe quelle image vers 4K ?",
+          "answer": "Oui ! Notre IA peut agrandir les images de n'importe quelle résolution de départ vers 4K. Cependant, commencer avec des images source de plus haute qualité donnera de meilleurs résultats. Les images sous 720p peuvent montrer des artefacts lors de la mise à l'échelle vers 4K."
+        },
+        {
+          "question": "Mon image 4K aura-t-elle l'air bien sur tous les écrans ?",
+          "answer": "Oui. Les images 4K auront un aspect excellent sur les affichages 4K et seront automatiquement réduites (en ayant l'air bien) sur les écrans de résolution inférieure. Il est préférable d'avoir une résolution plus élevée et de réduire que l'inverse."
+        },
+        {
+          "question": "Combien de temps faut-il pour agrandir vers 4K ?",
+          "answer": "Typiquement 45-90 secondes selon la taille de l'image source. Les images source plus grandes prennent légèrement plus de temps pour être traitées à la résolution 4K."
+        }
+      ],
+      "relatedScale": ["upscale-to-hd"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-to-hd",
+      "title": "Agrandir vers HD",
+      "metaTitle": "Agrandissez les images à la résolution HD 1080p | MyImageUpscaler IA",
+      "metaDescription": "Agrandissez les images à Full HD 1080p (1920x1080) avec l'IA. Parfait pour le web, les réseaux sociaux et les affichages standard. Traitement rapide, sans filigrane.",
+      "h1": "Agrandissez les images à HD 1080p - Qualité Full HD",
+      "intro": "Améliorez vos images à la résolution Full HD (1920x1080 pixels) avec l'IA. Parfait pour les sites web, les réseaux sociaux, YouTube et les affichages HD.",
+      "primaryKeyword": "agrandir vers hd",
+      "secondaryKeywords": ["agrandissement hd", "agrandissement 1080p", "convertir vers hd", "agrandisseur full hd"],
+      "lastUpdated": "2025-12-10T00:00:00Z",
+      "category": "scale",
+      "resolution": "Full HD (1080p)",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "Vidéos YouTube (standard 1080p)",
+        "Images hero de sites web",
+        "Publications réseaux sociaux",
+        "Moniteurs et ordinateurs portables HD",
+        "Présentations numériques"
+      ],
+      "benefits": [
+        {
+          "title": "Résolution optimisée pour le web",
+          "description": "1080p est le point idéal pour le contenu web - haute qualité sans tailles de fichiers massives.",
+          "metric": "2,1 mégapixels"
+        },
+        {
+          "title": "Traitement rapide",
+          "description": "Résolution cible plus petite signifie un traitement IA plus rapide comparé à l'agrandissement 4K.",
+          "metric": "20-40 secondes"
+        },
+        {
+          "title": "Compatibilité universelle",
+          "description": "1080p fonctionne parfaitement sur pratiquement tous les écrans modernes et est le standard pour la vidéo en streaming.",
+          "metric": "Supporté partout"
+        }
+      ],
+      "technicalSpecs": {
+        "pixelDimensions": "1920 x 1080",
+        "totalPixels": "2 073 600 pixels",
+        "aspectRatio": "16:9 (écran large)",
+        "comparedTo720p": "2,25x la résolution (1280x720)",
+        "printSize": "Jusqu'à 16\" x 9\" à 300 DPI",
+        "displayUses": "Moniteurs Full HD, TV, ordinateurs portables, tablettes"
+      },
+      "faq": [
+        {
+          "question": "Quelle est la différence entre HD et Full HD ?",
+          "answer": "HD (720p) est 1280x720 pixels, tandis que Full HD (1080p) est 1920x1080 - 2,25 fois plus de pixels. Quand les gens disent 'HD', ils veulent généralement dire Full HD (1080p), c'est ce que cet outil produit."
+        },
+        {
+          "question": "1080p est-il assez bon pour un usage professionnel ?",
+          "answer": "Absolument ! 1080p est toujours le standard pour de nombreuses applications professionnelles y compris YouTube, les plateformes de streaming et la conception web. C'est parfait pour les écrans jusqu'à 24 pouces et offre un équilibre idéal entre qualité et taille de fichier."
+        },
+        {
+          "question": "Dois-je agrandir vers HD ou 4K ?",
+          "answer": "Choisissez HD (1080p) pour le contenu web, les réseaux sociaux et les affichages standard. Choisissez 4K si vous avez besoin de contenu pour les affichages 4K, les grandes impressions, ou voulez une protection maximale pour l'avenir."
+        },
+        {
+          "question": "Puis-je imprimer des images HD ?",
+          "answer": "Oui ! 1080p fournit une résolution suffisante pour les impressions jusqu'à environ 16x9 pouces à haute qualité (300 DPI). Pour les impressions plus grandes, envisagez d'agrandir vers 4K à la place."
+        }
+      ],
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-to-8k",
+      "title": "Agrandir vers 8K",
+      "metaTitle": "Agrandissez les images à la résolution 8K (7680x4320) | Agrandisseur IA 8K",
+      "metaDescription": "Convertissez les images à la résolution 8K avec l'IA. Parfait pour les affichages 8K, l'impression professionnelle et les détails maximum. Agrandissement 8x disponible. Essai gratuit.",
+      "h1": "Agrandissez les images à la résolution 8K - Ultra haute définition",
+      "intro": "Transformez vos images à une résolution 8K à couper le souffle (7680x4320 pixels) avec l'agrandissement IA avancé. Le choix ultime pour les affichages professionnels, l'impression grand format et un contenu futur-proof.",
+      "primaryKeyword": "agrandir vers 8k",
+      "secondaryKeywords": [
+        "agrandisseur 8k",
+        "amplificateur image 8k",
+        "convertir vers 8k",
+        "agrandissement 7680x4320",
+        "agrandisseur ultra hd"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "scale",
+      "resolution": "8K UHD",
+      "dimensions": {
+        "width": 7680,
+        "height": 4320,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "TV et moniteurs 8K",
+        "Impression grand format",
+        "Photographie professionnelle",
+        "Production cinéma",
+        "Visualisation architecturale"
+      ],
+      "benefits": [
+        {
+          "title": "Détails ultra-hauts",
+          "description": "8K fournit des détails sans précédent avec 33,2 millions de pixels, parfait pour les grands écrans et les applications professionnelles.",
+          "metric": "33,2 mégapixels"
+        },
+        {
+          "title": "Standard professionnel",
+          "description": "8K devient le standard pour la création de contenu professionnelle et les affichages haut de gamme.",
+          "metric": "16x Full HD"
+        },
+        {
+          "title": "Capacité d'impression massive",
+          "description": "La résolution 8K permet des impressions cristallines jusqu'à 64x36 pouces à 300 DPI.",
+          "metric": "Impressions 64\" x 36\""
+        }
+      ],
+      "technicalSpecs": {
+        "pixelDimensions": "7680 x 4320",
+        "totalPixels": "33 177 600 pixels",
+        "aspectRatio": "16:9 (écran large)",
+        "comparedTo4K": "4x la résolution (3840x2160)",
+        "printSize": "Jusqu'à 64\" x 36\" à 300 DPI",
+        "displayUses": "TV UHD 8K, moniteurs professionnels, projecteurs cinéma"
+      },
+      "faq": [
+        {
+          "question": "Qu'est-ce qui rend 8K spécial comparé à 4K ?",
+          "answer": "8K a 4 fois plus de pixels que 4K (33,2M vs 8,3M), fournissant des détails incroyablement fins qui sont visibles sur les grands écrans et lors de l'impression en grandes tailles. C'est particulièrement précieux pour la photographie professionnelle et la cinématographie."
+        },
+        {
+          "question": "L'agrandissement 8K vaut-il le coup pour les photos régulières ?",
+          "answer": "Pour la plupart des utilisateurs, 4K est suffisant. Choisissez 8K si vous avez besoin de détails extrêmes pour les grandes impressions, les affichages professionnels, ou voulez une protection maximale pour l'avenir pour votre contenu. Le temps de traitement est plus long en raison de la haute résolution."
+        },
+        {
+          "question": "Combien de temps prend l'agrandissement 8K ?",
+          "answer": "Typiquement 2-4 minutes selon la qualité et la taille de l'image source. Le processus nécessite un calcul important en raison des 33,2 millions de pixels de sortie."
+        },
+        {
+          "question": "Les images 8K fonctionneront-elles sur les écrans réguliers ?",
+          "answer": "Oui ! Les images 8K seront automatiquement réduites pour s'adapter à n'importe quel affichage tout en maintenant une excellente qualité. Avoir un contenu source de résolution plus élevée fournit toujours de meilleurs résultats lorsqu'il est affiché sur des écrans plus petits."
+        }
+      ],
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
+    }
+  ]
+}

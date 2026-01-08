@@ -1,0 +1,416 @@
+{
+  "category": "Plattform-Format",
+  "meta": {
+    "totalPages": 48,
+    "lastUpdated": "2026-01-06",
+    "description": "Platform × Format pages - specific image formats for different platforms"
+  },
+  "pages": [
+    {
+      "slug": "instagram-jpeg",
+      "title": "Instagram JPEG Image Guide",
+      "metaTitle": "Instagram JPEG-Bilder: Richtlinien, Größen & Optimierung | MyImageUpscaler",
+      "metaDescription": "JPEG-Bilder für Instagram optimieren. Erfahren Sie die besten Einstellungen, Komprimierungsregeln und wie Sie Qualität für Posts, Stories und Reels erhalten.",
+      "h1": "JPEG-Bilder für Instagram optimieren",
+      "intro": "Beherrschen Sie die JPEG-Komprimierung von Instagram für beste Qualität. Verstehen Sie Upload-Limits, Komprimierungsalgorithmen und wie Sie Ihre Bilder für maximale Schärfe und minimale Artefakte vorbereiten.",
+      "primaryKeyword": "instagram jpeg",
+      "secondaryKeywords": [
+        "instagram bildqualität",
+        "instagram kompression",
+        "jpeg für instagram",
+        "instagram bildgröße"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "Plattform-Format",
+      "platform": "Instagram",
+      "format": "JPEG",
+      "platformRequirements": {
+        "aspectRatios": [
+          {
+            "ratio": "1:1 (Quadrat)",
+            "resolution": "1080x1080px",
+            "use": "Standard-Posts, am häufigsten verwendet"
+          },
+          {
+            "ratio": "4:5 (Hochformat)",
+            "resolution": "1080x1350px",
+            "use": "Vertikale Posts,最大限度地 occupies Feed space"
+          },
+          {
+            "ratio": "1.91:1 (Querformat)",
+            "resolution": "1080x566px",
+            "use": "Landschafts-Posts"
+          },
+          {
+            "ratio": "9:16 (Vertikal)",
+            "resolution": "1080x1920px",
+            "use": "Stories und Reels"
+          }
+        ],
+        "fileSize": {
+          "recommended": "Unter 500 KB für beste Qualität",
+          "maximum": "Externe Uploads bis zu 30 MB",
+          "note": "Größere Dateien werden stärker komprimiert"
+        },
+        "quality": {
+          "resolution": "1080px Breite empfohlen",
+          "compression": "Instagram komprimiert alle Uploads",
+          "format": "JPEG und PNG unterstützt"
+        }
+      },
+      "jpegSpecific": {
+        "uploadWorkflow": [
+          {
+            "step": 1,
+            "title": "Bei 1080px Breite vorbereiten",
+            "description": "Skalieren Sie Bilder auf genau 1080px Breite, um erneute Komprimierung durch Instagram zu vermeiden."
+          },
+          {
+            "step": 2,
+            "title": "Qualitätseinstellungen wählen",
+            "description": "Verwenden Sie 80-90% JPEG-Qualität für gute Balance zwischen Dateigröße und Bildqualität."
+          },
+          {
+            "step": 3,
+            "title": "sRGB-Farbraum",
+            "description": "Stellen Sie sicher, dass Bilder im sRGB-Farbraum sind für konsistente Farben auf allen Geräten."
+          },
+          {
+            "step": 4,
+            "title": "Testen und überprüfen",
+            "description": "Laden Sie hoch und überprüfen Sie das Ergebnis auf verschiedenen Geräten vor dem Posten."
+          }
+        ],
+        "bestPractices": [
+          {
+            "practice": "Vermeiden Sie übermäßige Komprimierung",
+            "description": "Höhere Qualitätseinstellungen verwenden, da Instagram erneut komprimiert"
+          },
+          {
+            "practice": "Schärfe vor dem Upload",
+            "description": "Leichte Schärfung anwenden, um Komprimierungsweichheit auszugleichen"
+          },
+          {
+            "practice": "Metadaten entfernen",
+            "description": "Exif-Daten entfernen, um Dateigröße zu reduzieren ohne die Bildqualität zu beeinträchtigen"
+          },
+          {
+            "practice": "Batch-Konsistenz",
+            "description": "Gleiche Einstellungen auf Serien von Bildern anwenden für visuelle Konsistenz"
+          }
+        ]
+      },
+      "commonIssues": [
+        {
+          "issue": "Instagram macht meine Bilder unscharf",
+          "solution": "Laden Sie bei exakt 1080px Breite hoch. Höhere Auflösungen werden herunterskaliert und verlieren Schärfe.",
+          "howTo": "Skalieren Sie auf 1080px Breite vor dem Upload mit sRGB-Farbprofil."
+        },
+        {
+          "issue": "JPEG-Artefakte nach Instagram-Upload",
+          "solution": "Verwenden Sie höhere JPEG-Qualitätseinstellungen (85-95%) vor dem Upload.",
+          "howTo": "Instagram komprimiert erneut, also starten Sie mit höherer Qualität, um Endqualität zu wahren."
+        },
+        {
+          "issue": "Farben sehen auf Instagram anders aus",
+          "solution": "Verwenden Sie sRGB-Farbraum. Andere Profile werden von Instagram konvertiert.",
+          "howTo": "In Ihrem Bildbearbeitungsprogramm in sRGB konvertieren oder exportieren."
+        },
+        {
+          "issue": "Große JPEG-Dateien werden abgelehnt",
+          "solution": "Dateigröße unter 1 MB halten für zuverlässigen Upload.",
+          "howTo": "JPEG-Qualität reduzieren oder Bildgröße optimieren, während 1080px Breite beibehalten wird."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Welche JPEG-Qualität ist am besten für Instagram?",
+          "answer": "Verwenden Sie 85-95% JPEG-Qualität. Höhere Qualität (95%+) ist am besten, aber halten Sie die Datei unter 500 KB für optimale Ergebnisse. Instagram komprimiert erneut, also starten Sie mit hoher Qualität."
+        },
+        {
+          "question": "Sollte ich JPEG oder PNG für Instagram verwenden?",
+          "answer": "JPEG wird für Fotos empfohlen (kleinere Dateigröße, akzeptable Qualität). PNG nur für Grafiken mit Text oder wenn Transparenz benötigt wird. Für die meisten Fotos ist JPEG die bessere Wahl."
+        },
+        {
+          "question": "Warum sehen meine Instagram-Bilder unscharf aus?",
+          "answer": "Häufige Ursachen: Auflösung nicht genau 1080px Breite, übermäßige Komprimierung oder Verwendung eines anderen Farbraums als sRGB. Laden Sie bei 1080px mit hoher Qualität und sRGB hoch."
+        },
+        {
+          "question": "Macht Instagram meine JPEG-Qualität schlechter?",
+          "answer": "Ja, Instagram komprimiert alle Uploads erneut, unabhängig von der ursprünglichen Qualität. Verwenden Sie hohe Qualitätseinstellungen (85-95%) vor dem Upload, um die Endqualität zu maximieren."
+        },
+        {
+          "question": "Kann ich JPEG-Bilder in voller Auflösung auf Instagram hochladen?",
+          "answer": "Instagram skaliert alle Bilder auf maximal 1080px Breite herunter. Das Hochladen höherer Auflösungen ergibt keinen Qualitätsvorteil und führt zu mehr Komprimierung. Bleiben Sie bei 1080px."
+        }
+      ],
+      "relatedFormats": ["instagram-png", "instagram-webp"],
+      "relatedPlatforms": ["facebook-jpeg", "twitter-jpeg"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "amazon-jpeg",
+      "title": "Amazon Product JPEG Guide",
+      "metaTitle": "Amazon-Produkt-JPEGs: Anforderungen, Weißer Hintergrund & Qualität | MyImageUpscaler",
+      "metaDescription": "JPEG-Produktbilder für Amazon optimieren. Erfahren Sie 2000x2000px-Anforderungen, reiner weißer Hintergrund RGB 255,255,255 und wie man Zoom aktiviert.",
+      "h1": "JPEG-Produktbilder für Amazon optimieren",
+      "intro": "Amazons strenge Bildanforderungen erfordern präzise JPEG-Vorbereitung. Erfahren Sie die 2000x2000px-Spezifikationen, reinen weißen Hintergrund und Qualitätsstandards für professionelle Produktbilder, die akzeptiert werden und verkaufen.",
+      "primaryKeyword": "amazon product jpeg",
+      "secondaryKeywords": [
+        "amazon bildanforderungen",
+        "amazon jpeg spezifikationen",
+        "amazon produktfoto qualität",
+        "amazon weißer hintergrund"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "Plattform-Format",
+      "platform": "Amazon",
+      "format": "JPEG",
+      "platformRequirements": {
+        "mainImage": {
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (für Zoom)",
+          "aspectRatio": "1:1 (Quadrat erforderlich)",
+          "backgroundColor": "Reinweiß RGB 255,255,255",
+          "format": "JPEG, PNG, TIFF, GIF",
+          "fileSize": "Maximum 10 MB",
+          "contentRules": "Produkt muss 85 % des Rahmens füllen. Keine Wasserzeichen, Logos oder Text auf Hauptbild."
+        },
+        "additionalImages": {
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px",
+          "aspectRatio": "1:1 bevorzugt",
+          "backgroundColor": "Any (Lifestyle-Aufnahmen erlaubt)",
+          "format": "JPEG, PNG, TIFF, GIF",
+          "fileSize": "Maximum 10 MB pro Bild",
+          "contentRules": "Kann Produkt in Nutzung, Verpackung, Größenvergleich und Infografiken zeigen."
+        }
+      },
+      "jpegSpecific": {
+        "preparationWorkflow": [
+          {
+            "step": 1,
+            "title": "Hintergrund entfernen oder ersetzen",
+            "description": "Erstellen Sie reinen weißen Hintergrund (RGB 255,255,255) für Hauptbilder. Keine Schatten oder Farbverläufe."
+          },
+          {
+            "step": 2,
+            "title": "Auf 2000x2000px skalieren",
+            "description": "Upscale-Bilder auf Amazons empfohlene Größe für Zoom-Funktionalität und beste Präsentation."
+          },
+          {
+            "step": 3,
+            "title": "Auf 1:1 zuschneiden",
+            "description": "Stellen Sie sicher, dass das Bild quadratisch ist und das Produkt 85 % des Rahmens füllt."
+          },
+          {
+            "step": 4,
+            "title": "Als JPEG speichern",
+            "description": "Exportieren Sie bei hoher Qualität (85-95%) unter 10 MB Dateigröße."
+          },
+          {
+            "step": 5,
+            "title": "Verifizieren",
+            "description": "Prüfen Sie Bild auf Spezifikationen, bevor Sie auf Amazon hochladen."
+          }
+        ],
+        "qualityStandards": {
+          "sharpness": "Produktdetails müssen scharf und klar sein",
+          "colorAccuracy": "Wahre Farben darstellen, keine übermäßige Sättigung",
+          "lighting": "Gleichmäßige Beleuchtung ohne harte Schatten",
+          "noArtifacts": "Keine JPEG-Kompressionsartefakte sichtbar beim Zoom"
+        }
+      },
+      "commonIssues": [
+        {
+          "issue": "Bilder werden wegen Hintergrund abgelehnt",
+          "solution": "Verwenden Sie reinen weißen Hintergrund RGB 255,255,255",
+          "howTo": "Hintergrundentfernungs-Tool verwenden, dann reinen weißen Hintergrund hinzufügen."
+        },
+        {
+          "issue": "Zoom funktioniert nicht auf meinen Bildern",
+          "solution": "Bilder müssen mindestens 1500px auf der längsten Seite sein, 2000px+ empfohlen",
+          "howTo": "Upscale auf mindestens 2000x2000px für zuverlässige Zoom-Funktionalität."
+        },
+        {
+          "issue": "JPEG-Artefakte sichtbar beim Zoom",
+          "solution": "Verwenden Sie höhere JPEG-Qualität (90-95%)",
+          "howTo": "Exportieren Sie mit minimaler Komprimierung während die Dateigröße unter 10 MB bleibt."
+        },
+        {
+          "issue": "Produkt füllt 85 % des Rahmens nicht",
+          "solution": "Vor dem Upscaling auf Produkt zuschneiden",
+          "howTo": "Auf Produkt zuschneiden mit minimalem Rand, dann auf 2000x2000px skalieren."
+        },
+        {
+          "issue": "Lieferantenbilder zu klein",
+          "solution": "Mit KI-Upscaling auf 2000x2000px vergrößern",
+          "howTo": "Lieferantenbild hochladen, 4X-Upscaling wählen, herunterladen."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Welche JPEG-Qualität sollte ich für Amazon verwenden?",
+          "answer": "Verwenden Sie 85-95% JPEG-Qualität. Höhere Qualität (90-95%) wird für Produktbilder empfohlen, um Details beim Zoom beizubehalten. Stellen Sie sicher, dass die Datei unter 10 MB bleibt."
+        },
+        {
+          "question": "Warum werden meine Amazon-Bilder abgelehnt?",
+          "answer": "Häufige Gründe: Hintergrung nicht reinweiß (RGB 255,255,255), Bild kleiner als 1000x1000px, Datei größer als 10 MB, Produkt füllt nicht 85% des Rahmens, oder enthält nicht zugelassene Text/Logos."
+        },
+        {
+          "question": "Kann ich JPEG oder PNG für Amazon verwenden?",
+          "answer": "JPEG wird für Produktbilder aufgrund kleinerer Dateigröße und schnellerer Ladezeiten empfohlen. PNG ist akzeptabel, bietet aber selten Qualitätsvorteile für Fotos. Verwenden Sie JPEG bei 85-95% Qualität."
+        },
+        {
+          "question": "Wie aktiviere ich Zoom auf meinen Amazon-Bildern?",
+          "answer": "Zoom wird automatisch aktiviert, wenn Bilder 1500px oder mehr auf der längsten Seite haben. Für beste Ergebnisse verwenden Sie 2000x2000px oder größer. Stellen Sie sicher, dass Bilder scharf sind, damit Zoom effektiv ist."
+        },
+        {
+          "question": "Muss ich 2000x2000px für Amazon verwenden?",
+          "answer": "Minimum ist 1000x1000px, aber 2000x2000px wird dringend empfohlen für Zoom-Funktionalität und beste Kunden Erfahrung. Bilder unter 1500px zeigen kein Zoom an."
+        }
+      ],
+      "relatedFormats": ["amazon-png", "amazon-tiff"],
+      "relatedPlatforms": ["ebay-jpeg", "etsy-jpeg"],
+      "relatedTools": ["ai-image-upscaler", "ai-background-remover"]
+    },
+    {
+      "slug": "etsy-jpeg",
+      "title": "Etsy JPEG Image Guide",
+      "metaTitle": "Etsy-JPEG-Bilder: Anforderungen, Optimierung & Best Practices | MyImageUpscaler",
+      "metaDescription": "JPEG-Bilder für Etsy-Listen optimieren. Erfahren Sie 2000px-Anforderungen, Seitenverhältnis-Empfehlungen und wie Sie Verkaufsfotos erstellen.",
+      "h1": "JPEG-Bilder für Etsy-Listen optimieren",
+      "intro": "Etsys Bildstandards erfordern sorgfältige JPEG-Vorbereitung für optimale Darstellung in Suchergebnissen und Listen. Erfahren Sie die Spezifikationen, Optimierungstipps und Best Practices für JPEG-Bilder, die Aufmerksamkeit erregen und verkaufen.",
+      "primaryKeyword": "etsy jpeg",
+      "secondaryKeywords": [
+        "etsy bildanforderungen",
+        "etsy foto qualität",
+        "etsy jpeg optimierung",
+        "etsy listen fotos"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "Plattform-Format",
+      "platform": "Etsy",
+      "format": "JPEG",
+      "platformRequirements": {
+        "listings": {
+          "minimumSize": "2000px auf der kürzesten Seite (erforderlich)",
+          "recommendedSize": "2000-2700px auf der kürzesten Seite",
+          "aspectRatio": "4:3 oder 5:4 empfohlen",
+          "format": "JPEG oder PNG",
+          "fileSize": "Maximum 20 MB pro Bild",
+          "thumbnails": "Erstes Bild ist Vorschaubild für Listen",
+          "quantity": "Bis zu 10 Bilder pro Listing"
+        },
+        "shopIcon": {
+          "size": "500x500pxMinimum",
+          "aspectRatio": "1:1 (Quadrat)",
+          "format": "JPEG oder PNG"
+        },
+        "shopBanner": {
+          "size": "1200x300px empfohlen (760px auf mobilen Geräten sichtbar)",
+          "format": "JPEG oder PNG"
+        }
+      },
+      "jpegSpecific": {
+        "preparationWorkflow": [
+          {
+            "step": 1,
+            "title": "Höchste Qualität verwenden",
+            "description": "Beginnen Sie mit gut belichteten, scharfen Fotos. Qualität später nicht hinzufügen."
+          },
+          {
+            "step": 2,
+            "title": "Auf mindestens 2000px skalieren",
+            "description": "Stellen Sie sicher, dass die kürzeste Seite 2000px oder mehr für Etsy-Anforderungen misst."
+          },
+          {
+            "step": 3,
+            "title": "Für Web optimieren",
+            "description": "JPEG-Qualität 80-90% verwenden. Dateigröße sollte unter 5 MB für schnelles Laden sein."
+          },
+          {
+            "step": 4,
+            "title": "Produkt fokussieren",
+            "description": "Produkt sollte 70-80% des Bildrahmens füllen für klare Darstellung."
+          },
+          {
+            "step": 5,
+            "title": "Lifestyle-Kontext hinzufügen",
+            "description": "Zusätzliche Bilder können Produkt in Nutzung zeigen. Etsy erlaubt kreative Hintergründe."
+          }
+        ],
+        "qualityTips": [
+          {
+            "tip": "Natürliche Beleuchtung",
+            "description": "Vermeiden Sie Blitz; verwenden Sie natürliches Licht für echte Farben und Details."
+          },
+          {
+            "tip": "Sauberer Hintergrund",
+            "description": "Etsy erlaubt Lifestyle-Hintergründe, aber saubere Hintergründe lenken mehr auf Produkt."
+          },
+          {
+            "tip": "Mehrere Winkel",
+            "description": "Zeigen Sie Produkt aus verschiedenen Perspektiven in zusätzlichen Bildern."
+          },
+          {
+            "tip": "Größenreferenz",
+            "description": "Fügen Sie in einem Bild ein Objekt zur Größenreferenz hinzu."
+          }
+        ]
+      },
+      "commonIssues": [
+        {
+          "issue": "Bilder erfüllen nicht 2000px-Minimum",
+          "solution": "Upscale auf mindestens 2000px auf der kürzesten Seite",
+          "howTo": "Bild hochladen, geeigneten Upscaling-Faktor wählen, herunterladen."
+        },
+        {
+          "issue": "JPEG-Komprimierung macht Details unscharf",
+          "solution": "Verwenden Sie höhere Qualitätseinstellungen (85-90%)",
+          "howTo": "Exportieren Sie mit weniger Komprimierung während Datei unter 5 MB bleibt."
+        },
+        {
+          "issue": "Farben sehen auf Etsy anders aus",
+          "solution": "Verwenden Sie sRGB-Farbraum",
+          "howTo": "In sRGB konvertieren oder exportieren für konsistente Farben auf Web."
+        },
+        {
+          "issue": "Dateigröße zu groß für Upload",
+          "solution": "JPEG-Qualität reduzieren oder Bildgröße optimieren",
+          "howTo": "Ziel für 2-5 MB Dateigröße bei 80-90% Qualität."
+        },
+        {
+          "issue": "Erstes Bild sieht nicht überzeugend aus",
+          "solution": "Bestes Bild als erstes verwenden",
+          "howTo": "Wählen Sie das schärfste, am besten beleuchtete Bild als Vorschaubild."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Welche JPEG-Qualität ist am besten für Etsy?",
+          "answer": "Verwenden Sie 80-90% JPEG-Qualität. Höhere Qualität (85-90%) bewahrt Produktdetails während die Dateigröße handhabbar bleibt. Ziel für Dateigrößen von 2-5 MB für optimales Laden."
+        },
+        {
+          "question": "Kann ich JPEG oder PNG für Etsy verwenden?",
+          "answer": "JPEG wird für Produktfotos wegen kleinerer Dateigröße empfohlen. PNG ist besser für Grafiken mit Text oder wenn Sie Transparenz benötigen. Für die meisten Produktfotos ist JPEG die bessere Wahl."
+        },
+        {
+          "question": "Muss ich 2000px für Etsy verwenden?",
+          "answer": "Ja, Etsy erfordert mindestens 2000px auf der kürzesten Seite für alle Listen. Dies ist obligatorisch, keine Empfehlung. Kleinere Bilder werden nicht akzeptiert."
+        },
+        {
+          "question": "Wie viele Bilder kann ich auf Etsy verwenden?",
+          "answer": "Sie können bis zu 10 Bilder pro Listing hochladen. Das erste Bild ist Ihr Vorschaubild in Suchergebnissen und sollte am besten sein. Verwenden Sie zusätzliche Bilder, um Details, Winkel und Nutzung zu zeigen."
+        },
+        {
+          "question": "Sollte ich weißen Hintergrund für Etsy verwenden?",
+          "answer": "Etsy erlaubt kreative Hintergründe im Gegensatz zu Amazon. Ein sauberer, weißer oder neutraler Hintergrund kann hilfreich sein, aber Lifestyle-Aufnahmen mit Kontext werden auf Etsy geschätzt."
+        }
+      ],
+      "relatedFormats": ["etsy-png"],
+      "relatedPlatforms": ["amazon-jpeg", "ebay-jpeg"],
+      "relatedTools": ["ai-image-upscaler"]
+    }
+  ]
+}

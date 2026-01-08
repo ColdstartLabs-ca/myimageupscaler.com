@@ -1,0 +1,267 @@
+{
+  "category": "Vergleichen",
+  "pages": [
+    {
+      "slug": "image-upscaler-comparison",
+      "title": "Best AI Image Upscaler 2025: Complete Comparison",
+      "metaTitle": "Best AI Image Upscaler 2025: Top Tools Compared & Rated",
+      "metaDescription": "Compare the best AI image upscalers of 2025. Topaz, MyImageUpscaler, BigJPG, Waifu2x, and more. Features, pricing, quality tests, and recommendations.",
+      "h1": "Best AI Image Upscaler 2025 - Complete Comparison & Testing",
+      "intro": "We tested and compared 15+ AI image upscalers on real photos, anime, text, and graphics. Here's our comprehensive comparison of features, quality, pricing, and use cases.",
+      "primaryKeyword": "ai image upscaler comparison",
+      "secondaryKeywords": [
+        "best ai upscaler",
+        "topaz vs others",
+        "free upscaler",
+        "image upscaler reviews"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Vergleichen",
+      "topPicks": [
+        {
+          "rank": 1,
+          "name": "MyImageUpscaler",
+          "overallScore": 9.2,
+          "bestFor": "Best overall - photos, text, and professional use",
+          "startingPrice": "Free tier, $19/month",
+          "strengths": [
+            "Excellent text preservation",
+            "Web-based, accessible from any device",
+            "Batch processing available",
+            "Good balance of quality and speed"
+          ],
+          "weaknesses": [
+            "Requires internet connection",
+            "Processing limited to 8x"
+          ]
+        },
+        {
+          "rank": 2,
+          "name": "Topaz Gigapixel AI",
+          "overallScore": 9.0,
+          "bestFor": "Professional photographers and detailed control",
+          "startingPrice": "$99.99 one-time",
+          "strengths": [
+            "Industry leader for photo upscaling",
+            "Advanced face and detail enhancement",
+            "Offline processing",
+            "Batch processing included"
+          ],
+          "weaknesses": [
+            "Expensive one-time cost",
+            "Desktop software only",
+            "Text upscaling is weak",
+            "Steep learning curve"
+          ]
+        },
+        {
+          "rank": 3,
+          "name": "Waifu2x",
+          "overallScore": 8.5,
+          "bestFor": "Free anime and artwork upscaling",
+          "startingPrice": "Free",
+          "strengths": [
+            "Excellent for anime/manga",
+            "Completely free",
+            "Open source",
+            "Noise reduction built-in"
+          ],
+          "weaknesses": [
+            "Only for anime/artwork",
+            "No photo enhancement",
+            "Text becomes blurry",
+            "No batch processing"
+          ]
+        },
+        {
+          "rank": 4,
+          "name": "BigJPG",
+          "overallScore": 8.0,
+          "bestFor": "Budget anime upscaling",
+          "startingPrice": "Free, $6/month premium",
+          "strengths": [
+            "Good anime upscaling",
+            "Affordable",
+            "Simple interface"
+          ],
+          "weaknesses": [
+            "Limited to anime",
+            "No photo enhancement",
+            "No text preservation",
+            "Basic features only"
+          ]
+        },
+        {
+          "rank": 5,
+          "name": "VanceAI",
+          "overallScore": 7.8,
+          "bestFor": "Users wanting multiple AI tools",
+          "startingPrice": "$9.90/month",
+          "strengths": [
+            "Multiple AI tools available",
+            "Good quality upscaling",
+            "API access"
+          ],
+          "weaknesses": [
+            "Credits expire",
+            "Upscaling uses many credits",
+            "Interface can be confusing"
+          ]
+        }
+      ],
+      "comparisonCriteria": {
+        "quality": {
+          "title": "Image Quality Tests",
+          "tests": [
+            {
+              "testName": "Photo Upscaling",
+              "description": "Testing on landscape, portrait, and product photos",
+              "winner": "Topaz Gigapixel AI"
+            },
+            {
+              "testName": "Text Preservation",
+              "description": "Testing with documents, screenshots, and graphics with text",
+              "winner": "MyImageUpscaler"
+            },
+            {
+              "testName": "Anime Upscaling",
+              "description": "Testing on anime screenshots and manga scans",
+              "winner": "Waifu2x"
+            },
+            {
+              "testName": "Face Enhancement",
+              "description": "Testing portrait photos and facial details",
+              "winner": "Topaz Gigapixel AI"
+            }
+          ]
+        },
+        "features": {
+          "title": "Feature Comparison",
+          "features": [
+            {
+              "feature": "Batch Processing",
+              "available": ["MyImageUpscaler", "Topaz Gigapixel AI", "VanceAI", "Let's Enhance"]
+            },
+            {
+              "feature": "API Access",
+              "available": ["MyImageUpscaler", "VanceAI", "Let's Enhance"]
+            },
+            {
+              "feature": "Offline Mode",
+              "available": ["Topaz Gigapixel AI", "Waifu2x"]
+            },
+            {
+              "feature": "Free Tier",
+              "available": ["MyImageUpscaler", "BigJPG", "Waifu2x", "VanceAI"]
+            }
+          ]
+        },
+        "pricing": {
+          "title": "Pricing Comparison",
+          "plans": [
+            {
+              "service": "MyImageUpscaler",
+              "free": "10 credits",
+              "starter": "$19/month (100 credits)",
+              "value": "Best value for most users"
+            },
+            {
+              "service": "Topaz Gigapixel AI",
+              "free": "None",
+              "starter": "$99.99 one-time",
+              "value": "Best for heavy users long-term"
+            },
+            {
+              "service": "BigJPG",
+              "free": "Very limited",
+              "starter": "$6/month",
+              "value": "Cheapest, but limited features"
+            },
+            {
+              "service": "Waifu2x",
+              "free": "Unlimited",
+              "starter": "N/A",
+              "value": "Best free option for anime"
+            },
+            {
+              "service": "VanceAI",
+              "free": "3 credits/month",
+              "starter": "$9.90/month (100 credits)",
+              "value": "Good for multiple AI tools"
+            }
+          ]
+        }
+      },
+      "useCaseRecommendations": [
+        {
+          "useCase": "General Photo Upscaling",
+          "recommendation": "Topaz Gigapixel AI or MyImageUpscaler",
+          "reasoning": "Both provide excellent photo quality. Topaz for professionals, MyImageUpscaler for accessibility and value."
+        },
+        {
+          "useCase": "E-commerce Product Images",
+          "recommendation": "MyImageUpscaler",
+          "reasoning": "Best text preservation, fast processing, web-based convenience for team access."
+        },
+        {
+          "useCase": "Anime/Manga Enlargement",
+          "recommendation": "Waifu2x (free) or BigJPG (paid)",
+          "reasoning": "Specialized tools for anime content with excellent style preservation."
+        },
+        {
+          "useCase": "Professional Photography",
+          "recommendation": "Topaz Gigapixel AI",
+          "reasoning": "Industry standard, advanced controls, face enhancement, offline processing."
+        },
+        {
+          "useCase": "Occasional/Infrequent Use",
+          "recommendation": "MyImageUpscaler or Waifu2x",
+          "reasoning": "MyImageUpscaler gives free credits, Waifu2x is completely free for anime."
+        },
+        {
+          "useCase": "Social Media Enhancement",
+          "recommendation": "MyImageUpscaler",
+          "reasoning": "Web-based, batch processing, handles both photos and text graphics well."
+        },
+        {
+          "useCase": "Batch Processing Large Libraries",
+          "recommendation": "Topaz Gigapixel AI or MyImageUpscaler",
+          "reasoning": "Both handle batch processing efficiently. Topaz offline, MyImageUpscaler cloud-based."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Which AI image upscaler has the best quality?",
+          "answer": "Topaz Gigapixel AI has the best photo quality, MyImageUpscaler has the best text preservation, and Waifu2x is best for anime. Choose based on your content type."
+        },
+        {
+          "question": "Are free AI upscalers good enough?",
+          "answer": "Free upscalers like Waifu2x (excellent for anime) and MyImageUpscaler (10 free credits) are quite good. Paid tools offer more features, batch processing, and higher quality for demanding use cases."
+        },
+        {
+          "question": "Is AI upscaling better than traditional resizing?",
+          "answer": "Absolutely. AI upscaling adds realistic details, textures, and sharpness that traditional bicubic/bilinear interpolation cannot. The difference is dramatic, especially at 2x and higher scaling factors."
+        },
+        {
+          "question": "How much should I pay for an AI upscaler?",
+          "answer": "Casual users: Use free tiers first (MyImageUpscaler, Waifu2x). Regular use: $10-20/month (MyImageUpscaler, VanceAI). Heavy/professional use: $100 one-time for Topaz Gigapixel is cost-effective long-term."
+        },
+        {
+          "question": "Can AI upscalers remove noise and artifacts?",
+          "answer": "Many AI upscalers including MyImageUpscaler and Topaz Gigapixel include noise reduction and artifact removal as part of the upscaling process, improving overall image quality."
+        },
+        {
+          "question": "Will upscaled images look fake or over-processed?",
+          "answer": "Quality AI upscalers produce natural-looking results. Over-processing is more common with lower-quality tools or extreme upscaling factors (8x+) on very small source images."
+        }
+      ],
+      "relatedComparisons": ["vs-topaz", "vs-bigjpg", "vs-waifu2x"],
+      "ctaText": "Try MyImageUpscaler Free",
+      "ctaUrl": "/?signup=1"
+    }
+  ],
+  "meta": {
+    "totalPages": 21,
+    "lastUpdated": "2025-12-19T00:00:00Z"
+  }
+}

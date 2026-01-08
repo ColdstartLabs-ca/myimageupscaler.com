@@ -1,154 +1,154 @@
 {
   "page": {
-    "title": "Help & FAQ",
-    "subtitle": "Find answers to common questions about using {appName}"
+    "title": "Aiuto e FAQ",
+    "subtitle": "Trova risposte a domande comuni su uso {appName}"
   },
   "quickLinks": {
-    "gettingStarted": "Getting Started",
-    "gettingStartedDesc": "Learn how to use the service",
-    "creditsBilling": "Credits & Billing",
-    "creditsBillingDesc": "Understand pricing and payments",
-    "technicalSupport": "Technical Support",
-    "technicalSupportDesc": "Troubleshoot issues"
+    "gettingStarted": "Per Iniziare",
+    "gettingStartedDesc": "Impara come usare il servizio",
+    "creditsBilling": "Crediti e Fatturazione",
+    "creditsBillingDesc": "Capisci prezzi e pagamenti",
+    "technicalSupport": "Supporto Tecnico",
+    "technicalSupportDesc": "Risolvi problemi"
   },
   "gettingStarted": {
-    "title": "Getting Started",
+    "title": "Per Iniziare",
     "faqs": {
       "howToStart": {
-        "question": "How do I start using {appName}?",
-        "answerIntro": "To get started:",
-        "answerStep1": "Create an account",
-        "answerStep2": "using email or Google",
-        "answerStep3": "You'll receive 10 free credits to try the service",
-        "answerStep4": "Navigate to the",
+        "question": "Come iniziare a usare {appName}?",
+        "answerIntro": "Per iniziare:",
+        "answerStep1": "Crea un account",
+        "answerStep2": "usando email o Google",
+        "answerStep3": "Riceverai 10 crediti gratuiti per provare il servizio",
+        "answerStep4": "Naviga allo",
         "answerStep5": "Upscaler",
-        "answerStep6": "Upload an image (JPG, PNG, or WEBP format)",
-        "answerStep7": "Choose your upscale factor (2x or 4x)",
-        "answerStep8": "Click \"Enhance Image\" and wait for processing",
-        "answerStep9": "Download your enhanced image"
+        "answerStep6": "Carica un'immagine (formato JPG, PNG o WEBP)",
+        "answerStep7": "Scegli fattore upscaling (2x o 4x)",
+        "answerStep8": "Clicca \"Migliora Immagine\" e attendi elaborazione",
+        "answerStep9": "Scarica immagine migliorata"
       },
       "supportedFormats": {
-        "question": "What image formats are supported?",
-        "answerIntro": "We currently support the following image formats:",
-        "format1": "JPG/JPEG - Most common format for photos",
-        "format2": "PNG - Best for images with transparency or text",
-        "format3": "WEBP - Modern format with good compression",
-        "maxFileSize": "Maximum file size for free tier:",
+        "question": "Quali formati immagine sono supportati?",
+        "answerIntro": "Attualmente supportiamo i seguenti formati immagine:",
+        "format1": "JPG/JPEG - Formato più comune per foto",
+        "format2": "PNG - Meglio per immagini con trasparenza o testo",
+        "format3": "WEBP - Formato moderno con buona compressione",
+        "maxFileSize": "Dimensione massima file per livello gratuito:",
         "maxFileSizeValue": "5MB"
       },
       "upscaleDifference": {
-        "question": "What is the difference between 2x and 4x upscaling?",
-        "2xIntro": "2x Upscaling:",
-        "2xDesc": "Doubles the width and height of your image (4x total pixels). Best for moderate quality improvements.",
-        "4xIntro": "4x Upscaling:",
-        "4xDesc": "Quadruples the width and height (16x total pixels). Best for significant enlargements or very small source images.",
-        "example": "Example: A 500x500px image becomes 1000x1000px at 2x, or 2000x2000px at 4x."
+        "question": "Qual è differenza tra upscaling 2x e 4x?",
+        "2xIntro": "Upscaling 2X:",
+        "2xDesc": "Raddoppia larghezza e altezza immagine (4x pixel totali). Meglio per miglioramenti qualità moderati.",
+        "4xIntro": "Upscaling 4X:",
+        "4xDesc": "Quadruplica larghezza e altezza (16x pixel totali). Meglio per ingrandimenti significativi o immagini sorgente molto piccole.",
+        "example": "Esempio: Un'immagine 500x500px diventa 1000x1000px a 2x, o 2000x2000px a 4x."
       },
       "processingTime": {
-        "question": "How long does image processing take?",
-        "answer": "Processing typically takes 30-60 seconds depending on image size and current server load. You'll see a progress indicator while your image is being enhanced."
+        "question": "Quanto tempo richiede elaborazione immagine?",
+        "answer": "L'elaborazione richiede tipicamente 30-60 secondi a seconda dimensione immagine e carico server attuale. Vedrai indicatore progress mentre immagine viene migliorata."
       }
     }
   },
   "creditsBilling": {
-    "title": "Credits & Billing",
+    "title": "Crediti e Fatturazione",
     "faqs": {
       "whatAreCredits": {
-        "question": "What are credits?",
-        "answerPart1": "Credits are the currency used for processing images. Each image enhancement consumes 1 credit, regardless of upscale factor.",
-        "answerPart2": "New users receive",
-        "answerPart3": "10 free credits",
-        "answerPart4": "to try the service."
+        "question": "Cosa sono i crediti?",
+        "answerPart1": "I crediti sono valuta usata per elaborare immagini. Ogni miglioramento immagine consuma 1 credito, indipendentemente da fattore upscaling.",
+        "answerPart2": "Nuovi utenti ricevono",
+        "answerPart3": "10 crediti gratuiti",
+        "answerPart4": "per provare il servizio."
       },
       "purchaseCredits": {
-        "question": "How do I purchase more credits?",
-        "answerIntro": "Visit our",
-        "pricingPage": "Pricing page",
-        "answerMid": "to choose from our subscription plans:",
-        "plan1": "Hobby: 200 credits/month for $19/month",
-        "plan2": "Professional: 1000 credits/month for $49/month",
-        "plan3": "Business: 5000 credits/month for $149/month"
+        "question": "Come acquisto più crediti?",
+        "answerIntro": "Visita il nostro",
+        "pricingPage": "pagina Prezzi",
+        "answerMid": "per scegliere dai nostri piani abbonamento:",
+        "plan1": "Hobby: 200 crediti/mese per $19/mese",
+        "plan2": "Professionale: 1000 crediti/mese per $49/mese",
+        "plan3": "Business: 5000 crediti/mese per $149/mese"
       },
       "creditsExpire": {
-        "question": "Do credits expire?",
-        "answer": "Subscription credits roll over month-to-month up to 6× your monthly credit allowance, as long as your subscription remains active. For example, the Hobby plan can accumulate up to 1,200 credits (6 × 200)."
+        "question": "I crediti scadono?",
+        "answer": "I crediti abbonamento si accumulano mese per mese fino a 6× tua concessione mensile crediti, finché abbonamento rimane attivo. Per esempio, piano Hobby può accumulare fino a 1.200 crediti (6 × 200)."
       },
       "cancelSubscription": {
-        "question": "Can I cancel my subscription?",
-        "answerIntro": "Yes! You can cancel anytime through:",
-        "option1": "Your",
-        "option2": "Billing Dashboard",
-        "option3": "The Stripe customer portal",
-        "answerOutro": "You'll continue to have access until the end of your billing period, and any remaining credits will stay in your account."
+        "question": "Posso cancellare abbonamento?",
+        "answerIntro": "Sì! Puoi cancellare in qualsiasi momento tramite:",
+        "option1": "Tuo",
+        "option2": "Dashboard Fatturazione",
+        "option3": "Portale clienti Stripe",
+        "answerOutro": "Continuerai ad avere accesso fino alla fine periodo fatturazione e eventuali crediti rimanenti rimarranno account."
       },
       "paymentMethods": {
-        "question": "What payment methods do you accept?",
-        "answer": "We accept all major credit cards (Visa, Mastercard, American Express) and various other payment methods through Stripe, our secure payment processor."
+        "question": "Quali metodi di pagamento accettate?",
+        "answer": "Accettiamo tutte principali carte di credito (Visa, Mastercard, American Express) e vari altri metodi pagamento tramite Stripe, nostro processatore pagamenti sicuro."
       },
       "refunds": {
-        "question": "Can I get a refund?",
-        "answerIntro": "Due to the nature of digital services, refunds are generally not provided for used credits. However, we may issue refunds at our discretion for:",
-        "reason1": "Technical failures that result in lost credits",
-        "reason2": "Duplicate charges",
-        "reason3": "Service unavailability",
-        "contactSupport": "for assistance."
+        "question": "Posso ottenere rimborso?",
+        "answerIntro": "A causa natura servizi digitali, rimborsi generalmente non sono forniti per crediti usati. Tuttavia, possiamo emettere rimborsi a nostra discrezione per:",
+        "reason1": "Fallimenti tecnici che risultano in crediti persi",
+        "reason2": "Addebiti duplicati",
+        "reason3": "Indisponibilità servizio",
+        "contactSupport": "per assistenza."
       }
     }
   },
   "technicalSupport": {
-    "title": "Technical Support",
+    "title": "Supporto Tecnico",
     "faqs": {
       "failedProcessing": {
-        "question": "My image failed to process. What should I do?",
-        "answerIntro": "If processing fails:",
-        "step1": "Your credit should be automatically refunded",
-        "step2": "Check that your image meets our requirements (format, size)",
-        "step3": "Try a different image to rule out file corruption",
-        "step4": "Clear your browser cache and try again",
-        "step5": "If the problem persists, contact"
+        "question": "Elaborazione immagine fallita. Cosa devo fare?",
+        "answerIntro": "Se elaborazione fallisce:",
+        "step1": "Il tuo credito dovrebbe essere rimborsato automaticamente",
+        "step2": "Verifica che immagine soddisfi requisiti (formato, dimensione)",
+        "step3": "Prova immagine diversa per escludere corruzione file",
+        "step4": "Svuota cache browser e riprova",
+        "step5": "Se problema persiste, contatta"
       },
       "qualityIssues": {
-        "question": "The quality isn't what I expected. Why?",
-        "answerIntro": "AI enhancement works best with certain types of images:",
-        "result1": "Best results: Photos with clear subjects, product images, real estate photos",
-        "result2": "Good results: Graphics with text, logos, illustrations",
-        "result3": "Variable results: Very low-resolution images, heavily compressed images, abstract art",
-        "answerOutro": "The quality of your source image greatly affects the final result. Starting with a higher-quality source will produce better enhancements."
+        "question": "Qualità non è quella aspettata. Perché?",
+        "answerIntro": "Miglioramento AI funziona meglio con certi tipi immagini:",
+        "result1": "Migliori risultati: Foto con soggetti chiari, immagini prodotto, foto immobiliari",
+        "result2": "Buoni risultati: Grafica con testo, loghi, illustrazioni",
+        "result3": "Risultati variabili: Immagini molto bassa risoluzione, immagini pesantemente compresse, arte astratta",
+        "answerOutro": "Qualità immagine sorgente influenza notevolmente risultato finale. Iniziare con sorgente più alta qualità produrrà miglioramenti migliori."
       },
       "dataPrivacy": {
-        "question": "Is my data secure and private?",
-        "answerIntro": "Yes! We take privacy seriously:",
-        "point1": "Images are processed in real-time and not permanently stored",
-        "point2": "We do not use your images to train AI models",
-        "point3": "All data transmission is encrypted with HTTPS",
-        "point4": "We comply with data protection regulations",
-        "answerOutro": "Read our full",
+        "question": "I miei dati sono sicuri e privati?",
+        "answerIntro": "Sì! Prendiamo privacy seriamente:",
+        "point1": "Immagini sono elaborate in tempo reale e non memorizzate permanentemente",
+        "point2": "Non usiamo tue immagini per addestrare modelli AI",
+        "point3": "Tutta trasmissione dati è crittografata con HTTPS",
+        "point4": "Conformiamo a regolazioni protezione dati",
+        "answerOutro": "Leggi nostra completa",
         "privacyPolicy": "Privacy Policy",
-        "answerEnd": "for details."
+        "answerEnd": "per dettagli."
       },
       "commercialUse": {
-        "question": "Can I use enhanced images commercially?",
-        "answer": "Yes! You retain all rights to your images. We do not claim any ownership of your uploaded or enhanced images. However, you must have the legal right to use the original image you upload. We are not responsible for copyright violations related to your source images."
+        "question": "Posso usare immagini migliorate commercialmente?",
+        "answer": "Sì! Mantieni tutti diritti alle tue immagini. Non rivendichiamo alcuna proprietà delle tue immagini caricate o migliorate. Tuttavia, devi avere diritto legale di usare immagine originale che carichi. Non siamo responsabili per violazioni copyright relative alle tue immagini sorgente."
       },
       "browserSupport": {
-        "question": "What browsers are supported?",
-        "answerIntro": "works best on modern browsers:",
-        "browser1": "Chrome/Edge (latest 2 versions)",
-        "browser2": "Firefox (latest 2 versions)",
-        "browser3": "Safari (latest 2 versions)",
-        "jsNote": "JavaScript must be enabled for the service to function."
+        "question": "Quali browser sono supportati?",
+        "answerIntro": "funziona meglio su browser moderni:",
+        "browser1": "Chrome/Edge (ultime 2 versioni)",
+        "browser2": "Firefox (ultime 2 versioni)",
+        "browser3": "Safari (ultime 2 versioni)",
+        "jsNote": "JavaScript deve essere abilitato per servizio funzionare."
       }
     }
   },
   "cta": {
-    "title": "Still need help?",
-    "description": "Can't find the answer you're looking for? Our support team is here to help.",
-    "emailSupport": "Email Support",
-    "viewPricing": "View Pricing"
+    "title": "Hai ancora bisogno di aiuto?",
+    "description": "Non trovi risposta che cerchi? Il nostro team supporto qui per aiutare.",
+    "emailSupport": "Supporto Email",
+    "viewPricing": "Visualizza Prezzi"
   },
   "relatedLinks": {
     "privacy": "Privacy Policy",
-    "terms": "Terms of Service",
+    "terms": "Termini di Servizio",
     "blog": "Blog"
   }
 }

@@ -1,0 +1,584 @@
+{
+  "category": "platforms",
+  "pages": [
+    {
+      "slug": "midjourney-upscaler",
+      "title": "Agrandisseur Midjourney - Ameliorez les images IA en qualite 4K",
+      "metaTitle": "Agrandisseur Midjourney gratuit | Ameliorez les images MJ en 4K en ligne",
+      "metaDescription": "Agrandissez les images Midjourney en 4K sans perte de qualite. Outil IA gratuit qui preserve les details, corrige les artefacts et ameliore la nettete du texte. Compatible avec toutes les versions MJ.",
+      "h1": "Agrandisseur Midjourney - Ameliorez vos images IA en 4K",
+      "intro": "Midjourney cree de superbes oeuvres d'art IA, mais sa resolution par defaut peut ne pas suffire pour un usage professionnel, de grands tirages ou des ecrans haute qualite. Notre agrandisseur Midjourney specialise ameliore vos images en resolution 4K tout en preservant le style artistique unique et les details qui rendent l'art genere par IA si special.",
+      "primaryKeyword": "agrandisseur midjourney",
+      "secondaryKeywords": [
+        "agrandir image midjourney",
+        "ameliorer image midjourney",
+        "ameliorer resolution midjourney",
+        "midjourney 4k",
+        "ameliorer art ia"
+      ],
+      "platformName": "Midjourney",
+      "platformType": "ai-generator",
+      "description": "Agrandissement specialise pour les images generees par Midjourney, ameliorant la resolution tout en preservant le style artistique et les details.",
+      "benefits": [
+        {
+          "title": "Preserve le style artistique",
+          "description": "Maintient les qualites esthetiques uniques du style artistique IA de Midjourney"
+        },
+        {
+          "title": "Corrige les artefacts de compression",
+          "description": "Supprime les artefacts de compression JPEG tout en ameliorant la clarte de l'image"
+        },
+        {
+          "title": "Ameliore les details fins",
+          "description": "Affine les motifs et textures complexes crees par les generateurs IA"
+        },
+        {
+          "title": "Qualite prete pour l'impression",
+          "description": "Agrandit vers des resolutions adaptees a l'impression grand format"
+        },
+        {
+          "title": "Nettete du texte",
+          "description": "Garde tout element textuel net et lisible apres agrandissement"
+        }
+      ],
+      "integration": [
+        "Exportez depuis Midjourney en format PNG pour de meilleurs resultats",
+        "Utilisez d'abord la fonction d'agrandissement de Midjourney, puis ameliorez davantage",
+        "Compatible avec toutes les versions de Midjourney (v1-v6 et Niji)",
+        "Fonctionne avec les images en grille et les images uniques agrandies",
+        "Traitement par lots de plusieurs creations Midjourney"
+      ],
+      "useCases": [
+        {
+          "title": "Imprimer l'art Midjourney",
+          "description": "Agrandissez les oeuvres IA pour des impressions sur toile, affiches et produits derives"
+        },
+        {
+          "title": "Amelioration reseaux sociaux",
+          "description": "Creez des versions haute resolution pour Instagram, Pinterest et les communautes artistiques"
+        },
+        {
+          "title": "Qualite portfolio",
+          "description": "Ameliorez les images pour des portfolios professionnels d'art et de design"
+        },
+        {
+          "title": "Preparation NFT",
+          "description": "Creez des versions haute resolution adaptees au minting de NFT"
+        },
+        {
+          "title": "Affichage grand format",
+          "description": "Preparez des images pour les salons professionnels, expositions et affichage numerique"
+        }
+      ],
+      "workflowSteps": [
+        "Generez votre image dans Midjourney avec vos prompts et parametres preferes",
+        "Exportez ou enregistrez l'image en format PNG (meilleure qualite disponible)",
+        "Telechargez vers notre agrandisseur et selectionnez votre resolution cible (2x, 4x ou personnalisee)",
+        "Choisissez le niveau d'amelioration selon votre usage (web, impression ou ultra haute resolution)",
+        "Telechargez votre image Midjourney amelioree en 4K prete a l'emploi"
+      ],
+      "faq": [
+        {
+          "question": "Pourquoi dois-je agrandir les images Midjourney ?",
+          "answer": "La resolution par defaut de Midjourney (1024x1024 ou plus pour v5+) peut ne pas suffire pour l'impression professionnelle, les ecrans grand format ou les applications haute qualite. L'agrandissement ameliore les details tout en maintenant le style artistique."
+        },
+        {
+          "question": "L'agrandissement va-t-il changer le style de mon image Midjourney ?",
+          "answer": "Notre agrandisseur est concu pour preserver le style artistique original et les qualites esthetiques de vos images Midjourney tout en ameliorant la resolution et la nettete."
+        },
+        {
+          "question": "Quel est le meilleur format pour exporter depuis Midjourney ?",
+          "answer": "Le format PNG offre la meilleure qualite pour l'agrandissement. Evitez le JPEG si possible, car les artefacts de compression peuvent etre amplifies pendant le processus d'agrandissement."
+        },
+        {
+          "question": "Puis-je agrandir les images en grille de Midjourney ?",
+          "answer": "Oui, mais pour de meilleurs resultats, utilisez d'abord la fonction d'agrandissement de Midjourney pour obtenir des images individuelles haute resolution, puis ameliorez-les davantage avec notre agrandisseur."
+        },
+        {
+          "question": "Cela fonctionne-t-il avec les images Midjourney Niji (anime) ?",
+          "answer": "Absolument ! Notre agrandisseur fonctionne excellemment avec les images Niji, preservant le style anime tout en ameliorant la qualite des lignes et des details."
+        },
+        {
+          "question": "Puis-je imprimer des images Midjourney agrandies ?",
+          "answer": "Oui, les images agrandies sont adaptees a l'impression. Nous recommandons un agrandissement 4x pour les tirages standards et 8x pour les affiches grand format et les impressions sur toile."
+        },
+        {
+          "question": "Jusqu'a quelle taille puis-je agrandir mes images Midjourney ?",
+          "answer": "Vous pouvez agrandir jusqu'a 8x la resolution originale. Pour les images Midjourney v5+ (1024x1024), cela signifie des sorties jusqu'a 8192x8192 pixels."
+        },
+        {
+          "question": "L'agrandissement corrige-t-il les artefacts Midjourney ?",
+          "answer": "Notre agrandisseur peut reduire certains artefacts de compression et ameliorer la clarte globale, mais il ne modifiera pas fondamentalement ou ne 'corrigera' pas les choix de generation IA originaux."
+        }
+      ],
+      "relatedPlatforms": ["stable-diffusion-upscaler", "dalle-upscaler", "canva-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/midjourney-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "stable-diffusion-upscaler",
+      "title": "Agrandisseur Stable Diffusion - Ameliorez les images SD en qualite impression",
+      "metaTitle": "Agrandisseur Stable Diffusion gratuit | Ameliorez SD en 4K/8K",
+      "metaDescription": "Agrandissez les images Stable Diffusion en preservant les details IA. Corrigez les artefacts, ameliorez la clarte et preparez pour l'impression. Compatible SDXL, SD 1.5, modeles Anime.",
+      "h1": "Agrandisseur Stable Diffusion - Amelioration qualite impression pour images IA",
+      "intro": "Stable Diffusion produit d'incroyables images generees par IA, mais la resolution par defaut de 512x512 ou 1024x1024 n'est pas suffisante pour l'impression professionnelle ou les ecrans haute qualite. Notre agrandisseur specialise ameliore vos images SD et SDXL en 4K et au-dela tout en preservant les details complexes et le style qui rendent les sorties Stable Diffusion uniques.",
+      "primaryKeyword": "agrandisseur stable diffusion",
+      "secondaryKeywords": [
+        "agrandir stable diffusion",
+        "agrandisseur sd",
+        "agrandisseur sdxl",
+        "ameliorer images ia",
+        "stable diffusion 4k"
+      ],
+      "platformName": "Stable Diffusion",
+      "platformType": "ai-generator",
+      "description": "Agrandissement avance pour les sorties Stable Diffusion, compatible SD 1.5, SDXL et modeles checkpoint personnalises.",
+      "benefits": [
+        {
+          "title": "Preserve le style du modele",
+          "description": "Maintient les caracteristiques specifiques des differents modeles SD et checkpoints"
+        },
+        {
+          "title": "Corrige la pixellisation",
+          "description": "Elimine la pixellisation des generations basse resolution tout en ameliorant les details"
+        },
+        {
+          "title": "Ameliore les details fins",
+          "description": "Affine les textures, les details de peau et les elements complexes dans les generations SD"
+        },
+        {
+          "title": "Compatible toutes resolutions",
+          "description": "Fonctionne avec SD 1.5 512x512, SDXL 1024x1024 et les sorties a resolution personnalisee"
+        },
+        {
+          "title": "Traitement par lots",
+          "description": "Agrandissez plusieurs generations SD a la fois pour des flux de travail efficaces"
+        }
+      ],
+      "integration": [
+        "Fonctionne avec les sorties Automatic1111, ComfyUI et WebUI",
+        "Compatible avec la resolution native SDXL 1024x1024",
+        "Compatible avec tous les checkpoints de modeles SD",
+        "Gere aussi bien les sorties img2img que txt2img",
+        "Preserve les resultats du passage Hi-Res Fix"
+      ],
+      "useCases": [
+        {
+          "title": "Imprimer l'art SD",
+          "description": "Creez des tirages de qualite galerie a partir de vos generations Stable Diffusion"
+        },
+        {
+          "title": "Creation de textures",
+          "description": "Generez des textures haute resolution pour les assets de jeux et la modelisation 3D"
+        },
+        {
+          "title": "Amelioration stock",
+          "description": "Agrandissez les images SD pour les soumissions et ventes de photos stock"
+        },
+        {
+          "title": "Visualisation produit",
+          "description": "Ameliorez les maquettes et visualisations de produits pour le marketing"
+        },
+        {
+          "title": "Portfolios d'art numerique",
+          "description": "Creez des pieces de portfolio professionnelles a partir des generations SD"
+        }
+      ],
+      "workflowSteps": [
+        "Generez votre image dans Stable Diffusion avec votre modele et parametres preferes",
+        "Utilisez Hi-Res Fix ou des parametres de resolution plus eleves pour une meilleure qualite de depart",
+        "Enregistrez la sortie en format PNG sans compression",
+        "Telechargez vers notre agrandisseur et selectionnez votre resolution cible",
+        "Telechargez votre image SD haute resolution amelioree"
+      ],
+      "faq": [
+        {
+          "question": "A quelle resolution dois-je generer dans Stable Diffusion ?",
+          "answer": "Pour de meilleurs resultats d'agrandissement, utilisez la resolution native SDXL 1024x1024, ou activez Hi-Res Fix dans SD 1.5. Une resolution de depart plus elevee donne de meilleurs resultats agrandis."
+        },
+        {
+          "question": "Puis-je agrandir des images de checkpoints SD specifiques ?",
+          "answer": "Oui ! Notre agrandisseur fonctionne avec les images de n'importe quel checkpoint SD ou LoRA, preservant les caracteristiques de style uniques de chaque modele."
+        },
+        {
+          "question": "Cela fonctionne-t-il avec les images SDXL ?",
+          "answer": "Absolument. La resolution native SDXL 1024x1024 est un excellent point de depart, et notre agrandisseur peut l'ameliorer davantage vers 4K et au-dela."
+        },
+        {
+          "question": "L'agrandissement ajoutera-t-il des details a mes images SD ?",
+          "answer": "Notre agrandisseur ameliore les details existants et affine l'image, mais il ne 'hallucine' pas de nouveaux details qui n'etaient pas dans la generation originale."
+        },
+        {
+          "question": "Puis-je agrandir des images Stable Diffusion style anime ?",
+          "answer": "Oui, notre agrandisseur fonctionne excellemment avec les modeles et checkpoints style anime, preservant la qualite des lignes et les techniques de cel-shading."
+        },
+        {
+          "question": "Qu'en est-il des sorties img2img ?",
+          "answer": "Les sorties img2img fonctionnent tres bien avec notre agrandisseur. Assurez-vous simplement de sauvegarder avec les parametres de qualite les plus eleves disponibles."
+        },
+        {
+          "question": "Puis-je utiliser ceci avec les sorties ControlNet ?",
+          "answer": "Oui, les images ControlNet s'agrandissent bien. Le guidage structurel de ControlNet est preserve dans la sortie agrandie."
+        },
+        {
+          "question": "Comment cela se compare-t-il a l'agrandisseur integre de SD ?",
+          "answer": "Notre agrandisseur se concentre sur la sortie qualite impression et la reduction des artefacts, complementant l'agrandissement interne de SD. Beaucoup d'artistes utilisent les deux."
+        }
+      ],
+      "relatedPlatforms": ["midjourney-upscaler", "dalle-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/stable-diffusion-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "dalle-upscaler",
+      "title": "Agrandisseur DALL-E - Ameliorez les images OpenAI en Ultra HD",
+      "metaTitle": "Agrandisseur DALL-E gratuit | Ameliorez les images DALL-E 2 et 3",
+      "metaDescription": "Agrandissez les images DALL-E en resolution 4K/8K. Corrigez la compression, ameliorez les details et preparez pour l'impression. Compatible DALL-E 2 et DALL-E 3.",
+      "h1": "Agrandisseur DALL-E - Amelioration Ultra HD pour images OpenAI",
+      "intro": "DALL-E cree des images impressionnantes generees par IA, mais la resolution peut ne pas repondre a vos besoins pour les projets professionnels, l'impression ou les ecrans haute qualite. Notre agrandisseur DALL-E specialise ameliore vos images en 4K et au-dela tout en preservant le style signature d'OpenAI et les details qui rendent chaque generation unique.",
+      "primaryKeyword": "agrandisseur dalle",
+      "secondaryKeywords": [
+        "agrandir dalle",
+        "amelioreur image dalle",
+        "agrandisseur dall-e 2",
+        "agrandisseur dall-e 3",
+        "ameliorer images openai"
+      ],
+      "platformName": "DALL-E",
+      "platformType": "ai-generator",
+      "description": "Agrandissement professionnel pour les images DALL-E 2 et DALL-E 3, optimise pour le style artistique unique d'OpenAI.",
+      "benefits": [
+        {
+          "title": "Preserve le style DALL-E",
+          "description": "Maintient le style artistique distinctif et la palette de couleurs d'OpenAI"
+        },
+        {
+          "title": "Ameliore le photorealisme",
+          "description": "Ameliore le realisme dans les generations DALL-E photorealistes"
+        },
+        {
+          "title": "Corrige la compression",
+          "description": "Reduit les artefacts de compression des telechargements de l'interface ChatGPT"
+        },
+        {
+          "title": "Amelioration du texte",
+          "description": "Garde le texte rendu net et lisible apres agrandissement"
+        },
+        {
+          "title": "Pret pour l'impression",
+          "description": "Cree une resolution adaptee aux applications d'impression professionnelle"
+        }
+      ],
+      "integration": [
+        "Fonctionne avec DALL-E 2 (1024x1024) et les images DALL-E 3",
+        "Optimise pour les telechargements de l'interface ChatGPT",
+        "Compatible avec les sorties DALL-E carrees et rectangulaires",
+        "Gere le rendu ameliore des details et textures de DALL-E 3",
+        "Traitement par lots efficace de plusieurs generations"
+      ],
+      "useCases": [
+        {
+          "title": "Imprimer l'art DALL-E",
+          "description": "Creez des tirages de haute qualite a partir de vos generations DALL-E"
+        },
+        {
+          "title": "Supports marketing",
+          "description": "Ameliorez les images DALL-E pour les brochures, presentations et publicites"
+        },
+        {
+          "title": "Graphiques web",
+          "description": "Creez des images hero haute resolution et des graphiques de site web"
+        },
+        {
+          "title": "Illustrations de livres",
+          "description": "Agrandissez les illustrations DALL-E pour les publications imprimees et numeriques"
+        },
+        {
+          "title": "Maquettes de produits",
+          "description": "Ameliorez les concepts de produits DALL-E pour les presentations et le prototypage"
+        }
+      ],
+      "workflowSteps": [
+        "Generez votre image en utilisant DALL-E via ChatGPT ou l'API",
+        "Telechargez l'image dans la meilleure qualite disponible",
+        "Telechargez vers notre agrandisseur DALL-E specialise",
+        "Selectionnez votre resolution cible (4K recommande pour la plupart des usages)",
+        "Telechargez votre image DALL-E amelioree en ultra-HD"
+      ],
+      "faq": [
+        {
+          "question": "Cela fonctionne-t-il avec les images DALL-E 3 ?",
+          "answer": "Oui ! Notre agrandisseur est optimise pour DALL-E 2 et DALL-E 3, ameliorant le rendu des details et textures ameliore dans les sorties DALL-E 3."
+        },
+        {
+          "question": "Quelle est la meilleure facon d'exporter depuis DALL-E ?",
+          "answer": "Telechargez les images directement depuis ChatGPT en format PNG quand disponible. Evitez de faire des captures d'ecran, car elles reduisent la qualite."
+        },
+        {
+          "question": "Puis-je agrandir des images DALL-E rectangulaires ?",
+          "answer": "Oui, nous supportons le format carre classique et les sorties rectangulaires de DALL-E 3."
+        },
+        {
+          "question": "L'agrandissement ameliorera-t-il le rendu du texte de DALL-E ?",
+          "answer": "L'agrandissement affine le texte existant, le rendant plus clair, mais ne corrigera pas les erreurs d'orthographe qui etaient dans la generation originale."
+        },
+        {
+          "question": "Puis-je imprimer des images DALL-E agrandies ?",
+          "answer": "Oui, les images agrandies en 4K sont excellentes pour l'impression. Nous recommandons de tester un petit tirage d'abord pour s'assurer que la qualite repond a vos standards."
+        },
+        {
+          "question": "Cela fonctionne-t-il avec DALL-E via ChatGPT ?",
+          "answer": "Absolument. Les images generees via l'integration DALL-E de ChatGPT fonctionnent parfaitement avec notre agrandisseur."
+        },
+        {
+          "question": "Qu'en est-il des variations et modifications DALL-E ?",
+          "answer": "Toutes les variations et modifications DALL-E peuvent etre agrandies. Chaque variation est traitee comme une image independante."
+        },
+        {
+          "question": "Puis-je agrandir des images DALL-E pour un usage commercial ?",
+          "answer": "Oui, les images agrandies conservent les memes droits d'utilisation que la generation DALL-E originale selon les conditions d'OpenAI."
+        }
+      ],
+      "relatedPlatforms": ["midjourney-upscaler", "stable-diffusion-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "photo-enhancer"],
+      "ogImage": "/og-images/dalle-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "canva-upscaler",
+      "title": "Agrandisseur Canva - Ameliorez les designs Canva en qualite impression",
+      "metaTitle": "Agrandisseur Canva gratuit | Ameliorez les images Canva en 4K/8K",
+      "metaDescription": "Agrandissez les designs Canva sans perte de qualite. Parfait pour l'impression, les presentations et l'usage professionnel. Ameliore texte, graphiques et photos.",
+      "h1": "Agrandisseur Canva - Amelioration professionnelle pour designs Canva",
+      "intro": "Canva rend le design facile, mais ses limites de resolution de telechargement peuvent etre frustrantes pour l'impression professionnelle, les grands ecrans ou les presentations haute qualite. Notre agrandisseur Canva specialise ameliore vos designs en 4K et au-dela tout en preservant la clarte du texte, la nettete des graphiques vectoriels et la qualite d'image qui font ressortir vos designs.",
+      "primaryKeyword": "agrandisseur canva",
+      "secondaryKeywords": [
+        "agrandir design canva",
+        "amelioreur image canva",
+        "ameliorer resolution canva",
+        "canva 4k",
+        "ameliorer exports canva"
+      ],
+      "platformName": "Canva",
+      "platformType": "design-tool",
+      "description": "Agrandissement specialise pour les designs Canva, preservant la clarte du texte, les graphiques et les images pour une sortie professionnelle.",
+      "benefits": [
+        {
+          "title": "Preserve la clarte du texte",
+          "description": "Garde les elements de texte Canva nets et lisibles a toute resolution"
+        },
+        {
+          "title": "Ameliore les graphiques",
+          "description": "Maintient une qualite vectorielle des formes, icones et elements de design"
+        },
+        {
+          "title": "Supporte les photos",
+          "description": "Ameliore a la fois les elements de design et les photos integrees dans la meme image"
+        },
+        {
+          "title": "Qualite impression",
+          "description": "Cree une sortie haute resolution adaptee a l'impression professionnelle"
+        },
+        {
+          "title": "Maintient les couleurs de marque",
+          "description": "Preserve une reproduction precise des couleurs pour des sorties coherentes avec la marque"
+        }
+      ],
+      "integration": [
+        "Telechargez depuis Canva en format PNG pour la meilleure qualite",
+        "Compatible avec toutes les resolutions de telechargement Canva Pro",
+        "Fonctionne avec les telechargements standards et premium",
+        "Gere correctement les differents ratios d'aspect de Canva",
+        "Compatible avec les exports de designs animes"
+      ],
+      "useCases": [
+        {
+          "title": "Imprimer les supports marketing",
+          "description": "Agrandissez brochures, flyers et affiches pour l'impression professionnelle"
+        },
+        {
+          "title": "Amelioration de presentations",
+          "description": "Creez des diapositives haute resolution pour les presentations en grande salle"
+        },
+        {
+          "title": "Graphiques reseaux sociaux",
+          "description": "Ameliorez les designs pour plusieurs plateformes et tailles d'ecran"
+        },
+        {
+          "title": "Supports de marque",
+          "description": "Agrandissez logos, cartes de visite et assets de marque pour divers usages"
+        },
+        {
+          "title": "Design de produits derives",
+          "description": "Preparez les designs Canva pour les produits d'impression a la demande"
+        }
+      ],
+      "workflowSteps": [
+        "Completez votre design dans Canva avec tous les elements finalises",
+        "Telechargez en PNG (meilleure qualite disponible - utilisez Pro si necessaire)",
+        "Telechargez vers notre agrandisseur optimise Canva",
+        "Selectionnez votre resolution cible selon l'usage prevu",
+        "Telechargez votre design Canva haute resolution ameliore"
+      ],
+      "faq": [
+        {
+          "question": "Pourquoi dois-je agrandir les designs Canva ?",
+          "answer": "Le niveau gratuit de Canva a des limites de resolution, et meme les telechargements Pro peuvent ne pas suffire pour l'impression grand format ou les ecrans ultra haute resolution."
+        },
+        {
+          "question": "Le texte restera-t-il net une fois agrandi ?",
+          "answer": "Oui, notre agrandisseur est specifiquement optimise pour maintenir la clarte du texte dans les designs Canva, gardant les polices nettes et lisibles."
+        },
+        {
+          "question": "Puis-je agrandir des designs avec des photos integrees ?",
+          "answer": "Oui, les elements de design et les photos integrees sont ameliores. Les designs complexes avec du contenu mixte fonctionnent bien."
+        },
+        {
+          "question": "Quel est le meilleur format pour telecharger depuis Canva ?",
+          "answer": "Le format PNG offre la meilleure qualite. Evitez de telecharger en JPEG si vous prevoyez d'agrandir, car les artefacts de compression seront amplifies."
+        },
+        {
+          "question": "Puis-je agrandir pour l'impression grand format ?",
+          "answer": "Oui, les designs agrandis en 4K-8K fonctionnent bien pour les affiches, bannieres et autres applications d'impression grand format."
+        },
+        {
+          "question": "Cela fonctionne-t-il avec les telechargements Canva Pro ?",
+          "answer": "Oui, et le point de depart a resolution plus elevee de Pro donnera des resultats agrandis encore meilleurs."
+        },
+        {
+          "question": "Les couleurs resteront-elles precises ?",
+          "answer": "Notre agrandisseur maintient la precision des couleurs, important pour les supports de marque et les designs avec des exigences de couleur specifiques."
+        },
+        {
+          "question": "Puis-je agrandir des designs Canva animes ?",
+          "answer": "Pour les exports statiques, oui. Pour les designs animes, exportez chaque frame individuellement, puis reassemblez apres agrandissement."
+        }
+      ],
+      "relatedPlatforms": ["photoshop-upscaler", "midjourney-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/canva-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "photoshop-upscaler",
+      "title": "Agrandisseur Photoshop - Ameliorez les exports PSD en Ultra HD",
+      "metaTitle": "Agrandisseur Photoshop gratuit | Ameliorez les images PSD en 4K/8K",
+      "metaDescription": "Agrandissez les exports Photoshop et les calques PSD. Ameliorez les retouches detaillees, les compositions et les oeuvres en qualite impression. Preserve les effets de calques et filtres.",
+      "h1": "Agrandisseur Photoshop - Amelioration Ultra HD pour Adobe Photoshop",
+      "intro": "Adobe Photoshop est la norme de l'industrie pour l'edition d'images, mais exporter a une resolution suffisante pour l'impression grand format ou les ecrans ultra haute resolution peut etre difficile. Notre agrandisseur Photoshop specialise ameliore vos images et oeuvres exportees en 4K et au-dela tout en preservant les details complexes, les effets de calques et la qualite professionnelle qui definit les sorties Photoshop.",
+      "primaryKeyword": "agrandisseur photoshop",
+      "secondaryKeywords": [
+        "agrandir images photoshop",
+        "amelioreur image photoshop",
+        "ameliorer exports psd",
+        "agrandisseur adobe photoshop",
+        "photoshop 4k"
+      ],
+      "platformName": "Photoshop",
+      "platformType": "photo-editor",
+      "description": "Agrandissement professionnel pour les exports et oeuvres Photoshop, optimise pour les retouches complexes et les compositions avec calques.",
+      "benefits": [
+        {
+          "title": "Preserve la qualite des retouches",
+          "description": "Maintient la qualite des retouches et ajustements Photoshop complexes"
+        },
+        {
+          "title": "Ameliore les details",
+          "description": "Affine les details fins que les retouches Photoshop creent"
+        },
+        {
+          "title": "Supporte tous les formats",
+          "description": "Fonctionne avec les exports PSD, PNG, TIFF et autres formats Photoshop"
+        },
+        {
+          "title": "Pret pour l'impression",
+          "description": "Cree une resolution adaptee aux applications d'impression professionnelle"
+        },
+        {
+          "title": "Compositions",
+          "description": "Gere les compositions multi-calques complexes et les manipulations photo"
+        }
+      ],
+      "integration": [
+        "Exportez depuis Photoshop en TIFF ou PNG pour une qualite sans perte",
+        "Supporte les images avec des objets dynamiques et des effets de calques",
+        "Fonctionne avec les modes coleur RVB et CMJN",
+        "Gere les images 16 bits et 32 bits par canal",
+        "Compatible avec les sorties de Remplissage generatif Photoshop"
+      ],
+      "useCases": [
+        {
+          "title": "Projets d'impression",
+          "description": "Agrandissez les oeuvres Photoshop pour l'impression grand format et les expositions"
+        },
+        {
+          "title": "Manipulation photo",
+          "description": "Ameliorez les compositions photo complexes et les manipulations pour une sortie haute resolution"
+        },
+        {
+          "title": "Art numerique",
+          "description": "Agrandissez les oeuvres peintes numeriquement pour le portfolio et l'impression"
+        },
+        {
+          "title": "Retouche",
+          "description": "Ameliorez les photos retouchees pour le portfolio professionnel et la livraison client"
+        },
+        {
+          "title": "Creation de textures",
+          "description": "Creez des textures haute resolution pour les jeux et le cinema a partir d'originaux Photoshop"
+        }
+      ],
+      "workflowSteps": [
+        "Completez votre travail d'edition dans Photoshop avec les calques aplatis",
+        "Exportez en utilisant Fichier > Exporter sous - choisissez TIFF ou PNG pour la meilleure qualite",
+        "Telechargez vers notre agrandisseur optimise Photoshop",
+        "Selectionnez la resolution cible selon vos besoins de sortie",
+        "Telechargez votre image Photoshop amelioree en ultra-HD"
+      ],
+      "faq": [
+        {
+          "question": "Quel est le meilleur format pour exporter depuis Photoshop ?",
+          "answer": "TIFF (non compresse) ou PNG sont ideaux. Evitez la compression JPEG si vous prevoyez d'agrandir, car les artefacts seront amplifies."
+        },
+        {
+          "question": "Puis-je agrandir des fichiers PSD avec calques ?",
+          "answer": "Exportez des versions aplaties de chaque calque separement, puis agrandissez individuellement. Les calques maintiennent leur relation apres amelioration."
+        },
+        {
+          "question": "Cela fonctionne-t-il avec les objets dynamiques ?",
+          "answer": "Oui, mais assurez-vous que les objets dynamiques sont pixellises a la plus haute resolution avant l'agrandissement pour de meilleurs resultats."
+        },
+        {
+          "question": "Puis-je agrandir des images 16 bits ou 32 bits ?",
+          "answer": "Oui, notre agrandisseur supporte les images a profondeur de bits elevee de Photoshop, preservant la gamme tonale et la precision des couleurs."
+        },
+        {
+          "question": "Qu'en est-il des images CMJN ?",
+          "answer": "Oui, les images CMJN pour l'impression peuvent etre agrandies. La precision des couleurs est preservee tout au long du processus."
+        },
+        {
+          "question": "Puis-je agrandir les resultats du Remplissage generatif Photoshop ?",
+          "answer": "Absolument. Les sorties de Remplissage generatif fonctionnent tres bien avec notre agrandisseur pour une amelioration transparente."
+        },
+        {
+          "question": "Les effets de calques seront-ils preserves ?",
+          "answer": "Les effets de calques doivent etre integres a l'image (aplatis) avant l'export, mais leurs resultats visuels sont preserves dans la sortie agrandie."
+        },
+        {
+          "question": "Puis-je agrandir pour l'impression grand format ?",
+          "answer": "Oui, les images agrandies sont excellentes pour les affiches, bannieres, art mural et autres applications grand format."
+        }
+      ],
+      "relatedPlatforms": ["canva-upscaler", "stable-diffusion-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "photo-enhancer"],
+      "ogImage": "/og-images/photoshop-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    }
+  ],
+  "meta": {
+    "totalPages": 5,
+    "lastUpdated": "2026-01-06"
+  }
+}

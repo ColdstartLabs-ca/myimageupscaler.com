@@ -1,0 +1,584 @@
+{
+  "category": "Plattformen",
+  "meta": {
+    "totalPages": 12,
+    "lastUpdated": "2025-12-19T00:00:00Z",
+    "description": "Social media and marketplace platform-specific image requirements"
+  },
+  "pages": [
+    {
+      "slug": "instagram",
+      "title": "Instagram Image Requirements",
+      "metaTitle": "Instagram-Bildanforderungen 2025: Alle Größen, Formate & Spezifikationen",
+      "metaDescription": "Offizielle Instagram-Bildgrößen und Spezifikationen für Posts, Stories, Reels, Profilbilder. Pixel-perfekte Abmessungen für beste Qualität.",
+      "h1": "Instagram-Bildanforderungen & Spezifikationen 2025",
+      "intro": "Instagram komprimiert alle Bilder, aber wenn Sie die korrekten Abmessungen und Formate verwenden, können Sie die bestmögliche Qualität erzielen. Hier sind die aktuellen Spezifikationen für jeden Bildtyp auf Instagram.",
+      "primaryKeyword": "instagram bildgröße",
+      "secondaryKeywords": [
+        "instagram bildanforderungen",
+        "instagram auflösung",
+        "instagram post größe",
+        "instagram story größe"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Plattformen",
+      "platform": "Instagram",
+      "imageTypes": [
+        {
+          "type": "Square Post",
+          "dimensions": "1080x1080px",
+          "aspectRatio": "1:1",
+          "use": "Standard-Posts",
+          "fileSize": "Unter 500 KB empfohlen",
+          "note": "Am häufigsten verwendet, funktioniert gut auf allen Geräten"
+        },
+        {
+          "type": "Portrait Post",
+          "dimensions": "1080x1350px",
+          "aspectRatio": "4:5",
+          "use": "Vertikale Posts",
+          "fileSize": "Unter 500 KB empfohlen",
+          "note": "Nimmt den meisten Feed-Platz ein, wird für Engagement empfohlen"
+        },
+        {
+          "type": "Landscape Post",
+          "dimensions": "1080x566px",
+          "aspectRatio": "1.91:1",
+          "use": "Querformat-Posts",
+          "fileSize": "Unter 500 KB empfohlen",
+          "note": "Erscheinengeringer im Feed, für Landschaftsaufnahmen"
+        },
+        {
+          "type": "Story/Reel",
+          "dimensions": "1080x1920px",
+          "aspectRatio": "9:16",
+          "use": "Stories und Reels",
+          "fileSize": "Unter 1 MB empfohlen",
+          "note": "Volle vertikale Bildschirmhöhe"
+        },
+        {
+          "type": "Profile Picture",
+          "dimensions": "320x320px",
+          "aspectRatio": "1:1",
+          "use": "Profilbild",
+          "fileSize": "Kleine Datei in Ordnung",
+          "note": "Wird auf Kreis zugeschnitten"
+        },
+        {
+          "type": "IGTV Thumbnail",
+          "dimensions": "420x654px",
+          "aspectRatio": "1:1.55",
+          "use": "IGTV-Vorschaubild",
+          "fileSize": "Unter 2 MB",
+          "note": "Nur für IGTV-Inhalte"
+        }
+      ],
+      "technicalSpecs": {
+        "resolution": "1080px Breite empfohlen",
+        "compression": "Instagram komprimiert alle Uploads",
+        "formats": "JPEG und PNG unterstützt",
+        "colorSpace": "sRGB empfohlen",
+        "fileSizeLimit": "30 MB für externe Uploads"
+      },
+      "bestPractices": [
+        {
+          "practice": "Bei 1080px hochladen",
+          "description": "Vermeiden Sie erneutes Downsampling durch Hochladen bei der Zielauflösung von 1080px Breite."
+        },
+        {
+          "practice": "Porträt (4:5) für Posts verwenden",
+          "description": "4:5 nimmt im Feed den meisten Platz ein und führt zu besserem Engagement."
+        },
+        {
+          "practice": "sRGB-Farbraum",
+          "description": "Verwenden Sie sRGB für konsistente Farben auf allen Geräten."
+        },
+        {
+          "practice": "Qualität beibehalten",
+          "description": "Verwenden Sie 80-90% JPEG-Qualität vor dem Upload."
+        },
+        {
+          "practice": "Mobile First",
+          "description": "Die meisten Nutzer sehen Ihre Inhalte auf Mobilgeräten, priorisieren Sie mobile Darstellung."
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Zu hochauflösend hochladen",
+          "fix": "Bleiben Sie bei 1080px Breite. Höhere Auflösung wird herunterskaliert und kann Schärfe verlieren."
+        },
+        {
+          "mistake": "Falsches Seitenverhältnis",
+          "fix": "Verwenden Sie 1:1, 4:5 oder 1.91:1 für Posts, 9:16 für Stories."
+        },
+        {
+          "mistake": "Übermäßige Komprimierung",
+          "fix": "Verwenden Sie höhere JPEG-Qualität (85-90%) vor dem Upload."
+        },
+        {
+          "mistake": "Falscher Farbraum",
+          "fix": "Konvertieren Sie in sRGB für konsistente Farben auf Instagram."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Warum werden meine Instagram-Bilder unscharf?",
+          "answer": "Häufige Ursachen: Auflösung nicht genau 1080px, übermäßige Komprimierung oder falscher Farbraum. Laden Sie bei exakt 1080px Breite mit 85-90% Qualität und sRGB-Farbprofil hoch."
+        },
+        {
+          "question": "Welches ist das beste Instagram-Seitenverhältnis für Engagement?",
+          "answer": "4:5 (Hochformat/Portrait) nimmt im Feed den meisten Platz ein und führt typischerweise zu besserem Engagement als Quadrat oder Querformat."
+        },
+        {
+          "question": "Sollte ich JPEG oder PNG für Instagram verwenden?",
+          "answer": "JPEG wird für Fotos empfohlen (kleinere Datei, gute Qualität). PNG nur für Grafiken mit Text oder wenn Transparenz benötigt wird."
+        },
+        {
+          "question": "Wie kann ich Instagram-Komprimierung vermeiden?",
+          "answer": "Sie können Komprimierung nicht vollständig vermeiden, aber minimieren Sie Auswirkungen durch Hochladen bei exakt 1080px Breite, Verwenden von sRGB und hoher JPEG-Qualität (85-90%)."
+        },
+        {
+          "question": "Was ist die maximale Bildgröße für Instagram?",
+          "answer": "Instagram skaliert alle Bilder auf maximal 1080px Breite herunter. Das Hochladen höherer Auflösungen ergibt keinen Qualitätsvorteil und führt zu mehr Komprimierung."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedFormats": ["instagram-jpeg", "instagram-png"]
+    },
+    {
+      "slug": "facebook",
+      "title": "Facebook Image Requirements",
+      "metaTitle": "Facebook-Bildgrößen 2025: Posts, Cover, Profil & Anzeigen",
+      "metaDescription": "Aktuelle Facebook-Bildspezifikationen für Posts, Cover-Fotos, Profilbilder und Anzeigen. Optimale Größen für beste Qualität und Reichweite.",
+      "h1": "Facebook-Bildanforderungen & Spezifikationen 2025",
+      "intro": "Facebook hat spezifische Bildgrößen für verschiedene Inhaltstypen. Die richtigen Abmessungen zu verwenden, stellt sicher, dass Ihre Bilder professionell aussehen und nicht beschnitten oder verzerrt werden.",
+      "primaryKeyword": "facebook bildgröße",
+      "secondaryKeywords": [
+        "facebook bildanforderungen",
+        "facebook cover foto größe",
+        "facebook post größe",
+        "facebook profilbild größe"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Plattformen",
+      "platform": "Facebook",
+      "imageTypes": [
+        {
+          "type": "Shared Image/Post",
+          "dimensions": "1200x630px",
+          "aspectRatio": "1.91:1",
+          "use": "Standard-Link-Vorschau-Posts",
+          "note": "Wird für geteilte Links und Blog-Posts verwendet"
+        },
+        {
+          "type": "Square Post",
+          "dimensions": "1200x1200px",
+          "aspectRatio": "1:1",
+          "use": "Quadratische Bild-Posts",
+          "note": "Gut für Produktaufnahmen und Fotos"
+        },
+        {
+          "type": "Cover Photo (Desktop)",
+          "dimensions": "820x312px",
+          "aspectRatio": "2.63:1",
+          "use": "Seiten- oder Profil-Cover-Foto",
+          "note": "Wird auf Desktop anders angezeigt als Mobil"
+        },
+        {
+          "type": "Cover Photo (Mobile)",
+          "dimensions": "640x360px sichtbar",
+          "aspectRatio": "16:9",
+          "use": "Cover-Foto auf Mobilgeräten",
+          "note": "Kleinerer sichtbarer Bereich auf Mobil"
+        },
+        {
+          "type": "Profile Picture",
+          "dimensions": "170x170px auf Desktop, 128x128px auf Mobil",
+          "aspectRatio": "1:1",
+          "use": "Profilbild",
+          "note": "Wird auf Kreis zugeschnitten"
+        },
+        {
+          "type": "Story",
+          "dimensions": "1080x1920px",
+          "aspectRatio": "9:16",
+          "use": "Facebook Stories",
+          "note": "Volle Bildschirmhöhe auf Mobil"
+        },
+        {
+          "type": "Ad Image",
+          "dimensions": "1200x628px empfohlen",
+          "aspectRatio": "1.91:1",
+          "use": "Facebook-Werbebilder",
+          "note": "Muss Text-Policy-Richtlinien einhalten"
+        }
+      ],
+      "technicalSpecs": {
+        "resolution": "1200px Breite empfohlen für Posts",
+        "compression": "Facebook komprimiert Bilder",
+        "formats": "JPEG und PNG unterstützt",
+        "colorSpace": "sRGB empfohlen",
+        "fileSize": "Unter 500 KB für beste Ergebnisse"
+      },
+      "bestPractices": [
+        {
+          "practice": "Wichtigen Inhalt zentrieren",
+          "description": "Für Cover-Fotos: Wichtiger Inhalt sollte in der sicheren Zone mittig platziert werden."
+        },
+        {
+          "practice": "Mobile First",
+          "description": "Die meisten Facebook-Nutzer sind mobil. Stellen Sie sicher, dass Bilder auf Mobilgeräten gut aussehen."
+        },
+        {
+          "practice": "Text im Bild minimieren",
+          "description": "Facebook begrenzt Reichweite für Bilder mit mehr als 20% Text."
+        },
+        {
+          "practice": "Konsistente Branding",
+          "description": "Verwenden Sie konsistente Bildstile für Posts zur Stärkung der Markenbekanntheit."
+        },
+        {
+          "practice": "sRGB verwenden",
+          "description": "sRGB-Farbraum für konsistente Farben auf allen Geräten."
+        }
+      ],
+      "commonIssues": [
+        {
+          "issue": "Cover-Foto wird auf Mobil beschnitten",
+          "solution": "Wichtigen Inhalt in der sicheren Zone mittig platzieren (640x360px Bereich)",
+          "howTo": "Design für Desktop, aber sicherstellen, dass wichtige Elemente im mittigen Bereich bleiben."
+        },
+        {
+          "issue": "Bilder werden nach Upload unscharf",
+          "solution": "Bei empfohlener Auflösung und hoher Qualität hochladen",
+          "howTo": "1200px Breite für Posts, 85-90% JPEG-Qualität, sRGB-Farbprofil."
+        },
+        {
+          "issue": "Profilbild quadratisch halten",
+          "solution": "Wichtigen Inhalt im Kreis zentrieren",
+          "howTo": "Design für quadratisches 1:1-Format mit wichtigem Inhalt zentriert."
+        },
+        {
+          "issue": "Anzeige-Warnung zu Text",
+          "solution": "Text reduzieren oder Bild neu gestalten",
+          "howTo": "Weniger als 20% des Bildes mit Text bedecken lassen."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wie groß sollte ein Facebook-Post-Bild sein?",
+          "answer": "1200x630px (1.91:1) ist Standard für Link-Posts. 1200x1200px (1:1) für quadratische Bild-Posts. Verwenden Sie 1200px Breite für beste Qualität."
+        },
+        {
+          "question": "Warum sieht mein Facebook-Cover-Foto auf Mobil anders aus?",
+          "answer": "Cover-Fotos werden auf Desktop und Mobil unterschiedlich beschnitten. Auf Mobil ist nur ein 640x360px-Bereich in der Mitte sichtbar. Zentrieren Sie wichtigen Inhalt."
+        },
+        {
+          "question": "Welches Bildformat wird von Facebook unterstützt?",
+          "answer": "Facebook unterstützt JPEG und PNG. JPEG wird für Fotos empfohlen (kleinere Datei). PNG für Grafiken mit Text oder Transparenz."
+        },
+        {
+          "question": "Wie viel Text ist in Facebook-Bildern zulässig?",
+          "answer": "Für Anzeigen begrenzt Facebook die Reichweite für Bilder mit mehr als 20% Text. Für organisches Traffic gilt keine harte Regel, aber weniger Text wird empfohlen."
+        },
+        {
+          "question": "Muss ich verschiedene Größen für Desktop und Mobile hochladen?",
+          "answer": "Nein, Facebook passt automatisch an. Aber designen Sie unter Berücksichtigung von Mobile (besonders für Cover-Fotos), da die meisten Nutzer mobil sind."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedFormats": ["facebook-jpeg", "facebook-png"]
+    },
+    {
+      "slug": "twitter",
+      "title": "Twitter/X Image Requirements",
+      "metaTitle": "Twitter/X-Bildgrößen 2025: Posts, Header, Profil & Anzeigen",
+      "metaDescription": "Aktuelle Twitter/X-Bildspezifikationen für Posts, Header, Profilbilder und Anzeigen. Optimale Größen für beste Qualität und Engagement.",
+      "h1": "Twitter/X-Bildanforderungen & Spezifikationen 2025",
+      "intro": "Twitter (jetzt X) hat spezifische Bildgrößen für verschiedene Inhaltstypen. Die richtigen Abmessungen zu verwenden, stellt sicher, dass Ihre Bilder professionell aussehen und nicht beschnitten werden.",
+      "primaryKeyword": "twitter bildgröße",
+      "secondaryKeywords": [
+        "x bildgröße",
+        "twitter header größe",
+        "twitter post bild größe",
+        "twitter profilbild größe"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Plattformen",
+      "platform": "Twitter/X",
+      "imageTypes": [
+        {
+          "type": "In-Stream Photo",
+          "dimensions": "1600x900px",
+          "aspectRatio": "16:9",
+          "use": "Posts mit einzelnen Bildern",
+          "note": "Wird nicht beschnitten, zeigt vollständig"
+        },
+        {
+          "type": "Single Image Tweet",
+          "dimensions": "1200x675px",
+          "aspectRatio": "16:9",
+          "use": "Einzelnes Bild im Tweet",
+          "note": "Optimales Seitenverhältnis für Anzeige"
+        },
+        {
+          "type": "Multiple Images (2)",
+          "dimensions": "700x800px pro Bild",
+          "aspectRatio": "7:8",
+          "use": "Tweets mit zwei Bildern",
+          "note": "Werden nebeneinander angezeigt"
+        },
+        {
+          "type": "Multiple Images (3+)",
+          "dimensions": "1200x675px empfohlen",
+          "aspectRatio": "16:9 oder 1:1",
+          "use": "Tweets mit drei oder mehr Bildern",
+          "note": "Werden als Gitter angezeigt"
+        },
+        {
+          "type": "Header Photo",
+          "dimensions": "1500x500px",
+          "aspectRatio": "3:1",
+          "use": "Profil-Header-Banner",
+          "note": "Wird auf Mobil mit oben zentriertem Profilbild überlagert"
+        },
+        {
+          "type": "Profile Picture",
+          "dimensions": "400x400px",
+          "aspectRatio": "1:1",
+          "use": "Profilbild",
+          "note": "Wird auf Kreis zugeschnitten"
+        }
+      ],
+      "technicalSpecs": {
+        "resolution": "1200px Breite empfohlen für Posts",
+        "compression": "Twitter/X komprimiert Bilder",
+        "formats": "JPEG und PNG unterstützt",
+        "colorSpace": "sRGB empfohlen",
+        "fileSize": "Unter 5 MB für Uploads",
+        "maxFileSize": "15 MB für JPEG, 5 MB für PNG/GIF"
+      },
+      "bestPractices": [
+        {
+          "practice": "16:9 für einzelne Bilder verwenden",
+          "description": "16:9 (Querformat) sieht im Timeline-Stream am besten aus."
+        },
+        {
+          "practice": "Mehrfache Bilder konsistent halten",
+          "description": "Bei mehreren Bilder gleiche Abmessungen für konsistentes Gitter verwenden."
+        },
+        {
+          "practice": "Header-Design sicherung",
+          "description": "Wichtiger Inhalt im Header sollte mittig und oben platziert werden.",
+          "reason": "Profilbild überlagert den Header unten links auf Mobil."
+        },
+        {
+          "practice": "Alt-Text hinzufügen",
+          "description": "Beschreibenden Alt-Text für Barrierefreiheit hinzufügen.",
+          "reason": "Verbessert die Erfahrung für blinde Nutzer und Screen-Reader-Nutzer."
+        },
+        {
+          "practice": "High Quality Uploads",
+          "description": "Hohe Qualitätseinstellungen (85-90%) für JPEGs verwenden.",
+          "reason": "Twitter/X komprimiert erneut, also mit hoher Qualität starten."
+        }
+      ],
+      "commonIssues": [
+        {
+          "issue": "Bilder werden beschnitten",
+          "solution": "16:9-Seitenverhältnis für einzelne Bilder verwenden",
+          "howTo": "Querformate (16:9) werden im Stream vollständig angezeigt. Quadratische Bilder werden beschnitten."
+        },
+        {
+          "issue": "Header wird von Profilbild überlagert",
+          "solution": "Wichtigen Inhalt oben und mittig platzieren",
+          "howTo": "Design Sie unter Berücksichtigung der Profilbild-Position unten links auf Mobilgeräten."
+        },
+        {
+          "issue": "JPEG-Artefakte nach Upload",
+          "solution": "Höhere Qualitätseinstellungen vor dem Upload verwenden",
+          "howTo": "85-90% JPEG-Qualität mit sRGB-Farbprofil für beste Ergebnisse."
+        },
+        {
+          "issue": "Mehrfache Bilder sehen ungleichmäßig aus",
+          "solution": "Gleiche Abmessungen für alle Bilder in einem Tweet verwenden",
+          "howTo": "Alle Bilder auf gleiches Seitenverhältnis (z.B. alle 16:9 oder alle 1:1) zuschneiden."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wie groß sollten Twitter-Bilder sein?",
+          "answer": "1200x675px (16:9) ist optimal für einzelne Bilder. Für zwei Bilder nebeneinander verwenden Sie 700x800px (7:8). Für drei oder mehr Bilder ist 1200x675px oder 1200x1200px gut."
+        },
+        {
+          "question": "Warum werden meine Twitter-Bilder beschnitten?",
+          "answer": "Twitter zeigt Bilder mit 16:9-Seitenverhältnis am besten an. Quadratische oder hochformatige Bilder werden beschnitten, um ins 16:9-Format zu passen. Verwenden Sie 16:9 für beste Anzeige."
+        },
+        {
+          "question": "Sollte ich JPEG oder PNG für Twitter verwenden?",
+          "answer": "JPEG wird für Fotos empfohlen (kleinere Datei). PNG für Grafiken mit Text oder wenn Sie Transparenz benötigen. Beide Formate werden akzeptiert."
+        },
+        {
+          "question": "Wie groß ist ein Twitter-Header-Foto?",
+          "answer": "1500x500px (3:1) ist die empfohlene Größe. Beachten Sie, dass Ihr Profilbild den Header unten links auf Mobilgeräten überlagert, also platzieren Sie wichtigen Inhalt entsprechend."
+        },
+        {
+          "question": "Gibt es eine Dateigrößenbeschränkung auf Twitter?",
+          "answer": "Ja, 15 MB für JPEG-Uploads, 5 MB für PNG/GIF. Für beste Ergebnisse halten Sie Bilder unter 5 MB mit 85-90% JPEG-Qualität."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedFormats": ["twitter-jpeg", "twitter-png"]
+    },
+    {
+      "slug": "linkedin",
+      "title": "LinkedIn Image Requirements",
+      "metaTitle": "LinkedIn-Bildgrößen 2025: Posts, Profil, Banner & Unternehmen",
+      "metaDescription": "Aktuelle LinkedIn-Bildspezifikationen für Posts, Profilbilder, Banner und Unternehmensoptimierung. Professionelle Bildgrößen.",
+      "h1": "LinkedIn-Bildanforderungen & Spezifikationen 2025",
+      "intro": "LinkedIn ist eine professionelle Plattform, und Ihre Bilder sollten Qualität und Professionalität widerspiegeln. Verwenden Sie diese korrekten Abmessungen für beste Darstellung.",
+      "primaryKeyword": "linkedin bildgröße",
+      "secondaryKeywords": [
+        "linkedin profilbild größe",
+        "linkedin banner größe",
+        "linkedin post bild größe",
+        "linkedin hintergrundbild"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Plattformen",
+      "platform": "LinkedIn",
+      "imageTypes": [
+        {
+          "type": "Shared Post/Image",
+          "dimensions": "1200x627px",
+          "aspectRatio": "1.91:1",
+          "use": "Geteilte Blog-Posts und Link-Vorschauen",
+          "note": "Wird für alle Link-Vorschauen verwendet"
+        },
+        {
+          "type": "Document Post",
+          "dimensions": "Verschiedene",
+          "aspectRatio": "Variiert",
+          "use": "PDF-Dokument-Posts",
+          "note": "Upload als PDF, LinkedIn zeigt Vorschau"
+        },
+        {
+          "type": "Profile Photo",
+          "dimensions": "400x400px",
+          "aspectRatio": "1:1",
+          "use": "Persönliches Profilbild",
+          "note": "Wird auf Kreis zugeschnitten, sollte professionell aussehen"
+        },
+        {
+          "type": "Banner/Cover Photo",
+          "dimensions": "1584x396px",
+          "aspectRatio": "4:1",
+          "use": "Profil-Hintergrundbild",
+          "note": "Persönliches Profilbanner"
+        },
+        {
+          "type": "Company Logo",
+          "dimensions": "300x300px",
+          "aspectRatio": "1:1",
+          "use": "Unternehmens-Logobild",
+          "note": "Unternehmensseiten-Profilbild"
+        },
+        {
+          "type": "Company Cover Photo",
+          "dimensions": "1128x191px",
+          "aspectRatio": "5.9:1",
+          "use": "Unternehmensseiten-Banner",
+          "note": "Sehr breit, Banner-Design erfordert"
+        },
+        {
+          "type": "Banner Image",
+          "dimensions": "1584x396px",
+          "aspectRatio": "4:1",
+          "use": "Profilbanner-Hintergrund",
+          "note": "Persönliches Profil-Hintergrundbild"
+        }
+      ],
+      "technicalSpecs": {
+        "resolution": "1200px Breite empfohlen für Posts",
+        "compression": "LinkedIn komprimiert Bilder",
+        "formats": "JPEG und PNG unterstützt",
+        "colorSpace": "sRGB empfohlen",
+        "fileSize": "Unter 5 MB empfohlen",
+        "maxFileSize": "8 MB für JPEG/PNG"
+      },
+      "bestPractices": [
+        {
+          "practice": "Professionelle Qualität",
+          "description": "Verwenden Sie hochwertige Fotos, die Professionalität ausstrahlen.",
+          "reason": "LinkedIn ist eine professionelle Plattform, Qualität spiegelt Ihre Marke wider."
+        },
+        {
+          "practice": "Konsistentes Branding",
+          "description": "Verwenden Sie konsistente Fotos und Banner über Ihre Profile hinweg.",
+          "reason": "Stärkt die professionelle Identität und Markenbekanntheit."
+        },
+        {
+          "practice": "Banner-Design sicherung",
+          "description": "Platzieren Sie wichtigen Inhalt im Banner mittig.",
+          "reason": "Banner werden auf verschiedenen Geräten unterschiedlich beschnitten."
+        },
+        {
+          "practice": "Profilbild-Professionalität",
+          "description": "Verwenden Sie ein professionelles Headshot als Profilbild.",
+          "reason": "Erster Eindruck ist wichtig auf LinkedIn."
+        },
+        {
+          "practice": "Alt-Text hinzufügen",
+          "description": "Fügen Sie beschreibenden Alt-Text für alle Bilder hinzu.",
+          "reason": "Barrierefreiheit und SEO-Vorteile."
+        }
+      ],
+      "professionalTips": [
+        {
+          "tip": "Vermeiden Sie übermäßige Filter",
+          "description": "Natürlich aussehende Fotos wirken professioneller als stark gefilterte."
+        },
+        {
+          "tip": "Kleidung beachten",
+          "description": "Berufsentsprechende Kleidung verstärkt Professionalität."
+        },
+        {
+          "tip": "Gute Beleuchtung",
+          "description": "Gute Beleuchtung ist wichtiger als teure Ausrüstung."
+        },
+        {
+          "tip": "Einfache Hintergründe",
+          "description": "Unkomplizierte Hintergründe lenken vom Gesicht ab."
+        },
+        {
+          "tip": "Aktuelle Fotos verwenden",
+          "description": "Verwenden Sie aktuelle Fotos, die Sie realistisch darstellen."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wie groß sollte ein LinkedIn-Profilbild sein?",
+          "answer": "400x400px (1:1 Quadrat) ist die empfohlene Größe. Wird auf Kreis zugeschnitten, also stellen Sie sicher, dass Ihr Gesicht zentriert ist. Verwenden Sie ein professionelles Headshot."
+        },
+        {
+          "question": "Wie groß ist ein LinkedIn-Banner/Hintergrundbild?",
+          "answer": "1584x396px (4:1) für persönliche Profilbanner. Für Unternehmensseiten ist 1128x191px (5.9:1) die korrekte Größe."
+        },
+        {
+          "question": "Welches Bildformat sollte ich für LinkedIn verwenden?",
+          "answer": "JPEG wird für Fotos empfohlen. PNG für Grafiken mit Text oder Logos. Verwenden Sie sRGB-Farbprofil für konsistente Farben."
+        },
+        {
+          "question": "Warum sehen meine LinkedIn-Bilder unscharf aus?",
+          "answer": "LinkedIn komprimiert Bilder. Verwenden Sie 1200px Breite für Posts mit hoher Qualität (85-90%) und sRGB-Farbprofil für beste Ergebnisse."
+        },
+        {
+          "question": "Kann ich dasselbe Bild auf LinkedIn und Twitter verwenden?",
+          "answer": "Technisch ja, aber Sie sollten für jede Plattform optimieren. LinkedIn bevorzugt professionelle Bilder, Twitter erlaubt mehr Kreativität. Passen Sie bei Bedarf das Seitenverhältnis an."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedFormats": ["linkedin-jpeg", "linkedin-png"]
+    }
+  ]
+}

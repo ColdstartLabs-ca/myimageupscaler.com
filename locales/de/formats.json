@@ -1,5 +1,5 @@
 {
-  "category": "formats",
+  "category": "Formate",
   "meta": {
     "totalPages": 10,
     "lastUpdated": "2025-12-19T00:00:00Z"
@@ -20,7 +20,7 @@
         "jpeg bild vergrößerer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "JPEG",
       "extension": "jpeg",
       "description": "JPEG (Joint Photographic Experts Group) ist das am weitesten verbreitete Bildformat für Fotografie und Webbilder. Unser KI-Upscaler spezialisziert sich auf die Verbesserung von JPEGs bei gleichzeitiger Erhaltung der Kompressionseffizienz.",
@@ -122,7 +122,7 @@
         "png bild vergrößerer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "PNG",
       "extension": "png",
       "description": "PNG (Portable Network Graphics) unterstützt verlustfreie Kompression und Transparenz. Perfekt für Logos, Grafiken und Bilder, die transparente Hintergründe erfordern.",
@@ -224,7 +224,7 @@
         "webp auflösungsbooster"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "WebP",
       "extension": "webp",
       "description": "WebP ist Googles modernes Bildformat mit überlegener Kompression und Qualität. Perfekt für Weboptimierung mit Unterstützung für sowohl verlustbehaftete als auch verlustfreie Kompression.",
@@ -327,7 +327,7 @@
         "ios foto verbesserer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "HEIC",
       "extension": "heic",
       "description": "HEIC (High Efficiency Image Container) ist Apples modernes Bildformat für iOS- und macOS-Geräte. Bietet überlegene Kompression bei gleichzeitiger Erhaltung ausgezeichneter Qualität, perfekt für iPhone-Fotografie.",
@@ -434,7 +434,7 @@
         "professioneller foto upscaler"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "RAW",
       "extension": "raw",
       "description": "RAW-Format enthält unverarbeitete Bilddaten direkt von Ihrem Kamerasensor. Bietet maximale Qualität und Bearbeitungsflexibilität, ideal für professionelle Fotografie und High-End-Upscaling.",
@@ -540,7 +540,7 @@
         "druck foto upscaler"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "TIFF",
       "extension": "tiff",
       "description": "TIFF (Tagged Image File Format) ist ein verlustfreies Format, das weithin in professionellem Druck, Publishing und Archivierung verwendet wird. Unterstützt mehrere Ebenen und Seiten mit ausgezeichneter Qualitätserhaltung.",
@@ -642,7 +642,7 @@
         "bmp bild vergrößerer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "BMP",
       "extension": "bmp",
       "description": "BMP (Bitmap) ist ein unkomprimiertes Rasterbildformat. Bietet verlustfreie Qualität aber mit großen Dateigrößen. Häufig verwendet in Windows-Anwendungen und Legacy-Systemen.",
@@ -744,7 +744,7 @@
         "svg bild vergrößerer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "SVG",
       "extension": "svg",
       "description": "SVG (Scalable Vector Graphics) ist ein Vektorformat, das unendlich ohne Qualitätsverlust skaliert. Unser Tool konvertiert SVGs in hochauflösende Rasterbilder, die für spezifische Anwendungsfälle optimiert sind.",
@@ -846,7 +846,7 @@
         "gif bild vergrößerer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "GIF",
       "extension": "gif",
       "description": "GIF (Graphics Interchange Format) unterstützt Animation und Transparenz mit 256 Farben. Weithin verwendet für Memes, einfache Animationen und Webgrafiken trotz Farbbeschränkungen.",
@@ -951,7 +951,7 @@
         "avif bild vergrößerer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "formats",
+      "category": "Formate",
       "formatName": "AVIF",
       "extension": "avif",
       "description": "AVIF (AV1 Image Format) ist das neueste Bildformat basierend auf dem AV1-Video-Codec. Bietet überlegene Kompression und Qualität im Vergleich zu JPEG, PNG und WebP und repräsentiert die Zukunft von Webbildern.",
