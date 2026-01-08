@@ -3,6 +3,7 @@ import { loginSchema } from '@shared/validation/authValidationSchema';
 import React, { FormEventHandler } from 'react';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { z } from 'zod';
+import { useTranslations } from 'next-intl';
 
 export type ILoginForm = z.infer<typeof loginSchema>;
 
@@ -13,6 +14,8 @@ interface ILoginFormProps {
 }
 
 export const LoginForm: React.FC<ILoginFormProps> = ({ onSubmit, register, errors }) => {
+  const t = useTranslations('auth');
+
   return (
     <form onSubmit={onSubmit} className="flex flex-col space-y-5">
       <p className="text-center text-muted-foreground text-sm mb-1">
@@ -21,14 +24,14 @@ export const LoginForm: React.FC<ILoginFormProps> = ({ onSubmit, register, error
       <InputField
         {...register('email')}
         type="email"
-        placeholder="Email address"
+        placeholder={t('form.email')}
         className="w-full"
         error={errors.email?.message}
       />
       <InputField
         {...register('password')}
         type="password"
-        placeholder="Password"
+        placeholder={t('form.password')}
         className="w-full"
         error={errors.password?.message}
       />
@@ -36,7 +39,7 @@ export const LoginForm: React.FC<ILoginFormProps> = ({ onSubmit, register, error
         type="submit"
         className="w-full px-4 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-accent/25 hover:shadow-xl hover:shadow-accent/30 active:scale-[0.98] mt-2 glow-blue"
       >
-        Sign In
+        {t('common.signIn')}
       </button>
     </form>
   );

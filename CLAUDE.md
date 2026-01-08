@@ -11,6 +11,10 @@ Check `.claude/skills/` for relevant patterns.
 - **Docs**: No auto-generated .md files unless explicitly requested.
 - **Environment Variables**: NEVER use `process.env` directly. Use `clientEnv` or `serverEnv` from `@shared/config/env`.
 
+## Before Starting
+
+- If something is unclear or vague, ask AskUserQuestion before implementing.
+
 ## Before Finishing
 
 - Write tests for your changes

@@ -9,6 +9,7 @@ import { useToastStore } from '@client/store/toastStore';
 import { loginSchema, registerSchema } from '@shared/validation/authValidationSchema';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 import { Modal } from '@client/components/modal/Modal';
 import { ChangePasswordForm } from '@client/components/modal/auth/ChangePasswordForm';
 import { ForgotPasswordForm } from '@client/components/modal/auth/ForgotPasswordForm';
@@ -45,6 +46,7 @@ export const AuthenticationModal: React.FC = () => {
   const { close, isModalOpen, authModalView, setAuthModalView, openAuthModal } = useModalStore();
   const { signInWithEmail, signUpWithEmail, changePassword, resetPassword } = useUserStore();
   const { showToast } = useToastStore();
+  const t = useTranslations('auth');
 
   const {
     register: loginRegister,
@@ -84,9 +86,10 @@ export const AuthenticationModal: React.FC = () => {
   const onLoginSubmit = async (data: ILoginForm) => {
     await handleAuthAction(
       () => signInWithEmail(data.email, data.password),
-      'Signed in successfully!',
+      t('messages.signedInSuccessfully'),
       showToast,
-      close
+      close,
+      t('messages.authenticationFailed')
     );
   };
 
@@ -96,20 +99,20 @@ export const AuthenticationModal: React.FC = () => {
 
       if (result.emailConfirmationRequired) {
         showToast({
-          message: 'Please check your email to verify your account',
+          message: t('messages.pleaseCheckEmail'),
           type: 'success',
         });
         close();
         window.location.href = '/verify-email';
       } else {
-        showToast({ message: 'Account created successfully!', type: 'success' });
+        showToast({ message: t('messages.accountCreated'), type: 'success' });
         close();
         // onAuthStateChange handles redirect to dashboard
       }
     } catch (error) {
       console.error('Registration error:', error);
       showToast({
-        message: error instanceof Error ? error.message : 'Registration failed',
+        message: error instanceof Error ? error.message : t('messages.registrationFailed'),
         type: 'error',
       });
     }
@@ -118,30 +121,30 @@ export const AuthenticationModal: React.FC = () => {
   const handleChangePassword = async (data: { currentPassword: string; newPassword: string }) => {
     await handleAuthAction(
       () => changePassword(data.currentPassword, data.newPassword),
-      'Password changed successfully!',
+      t('messages.passwordChanged'),
       showToast,
       close,
-      'Failed to change password'
+      t('messages.changePasswordFailed')
     );
   };
 
   const handleForgotPassword = async (data: { email: string }) => {
     await handleAuthAction(
       () => resetPassword(data.email),
-      'Password reset link sent! Check your email.',
+      t('messages.resetLinkSent'),
       showToast,
       close,
-      'Failed to send reset link'
+      t('messages.sendResetLinkFailed')
     );
   };
 
   const getModalTitle = (): string => {
     const titles: Record<AuthModalView, string> = {
-      login: 'Sign In',
-      register: 'Create Account',
-      changePassword: 'Change Password',
-      forgotPassword: 'Forgot Password',
-      setNewPassword: 'Set New Password',
+      login: t('modal.signIn'),
+      register: t('modal.createAccount'),
+      changePassword: t('modal.changePassword'),
+      forgotPassword: t('modal.forgotPassword'),
+      setNewPassword: t('modal.setNewPassword'),
     };
     return titles[authModalView];
   };
@@ -163,7 +166,7 @@ export const AuthenticationModal: React.FC = () => {
               onClick={() => setAuthModalView('login')}
               className="text-accent text-center hover:text-accent-hover font-medium w-full mt-6 text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
             >
-              Back to Login
+              {t('modal.backToLogin')}
             </button>
           </>
         );
@@ -184,7 +187,7 @@ export const AuthenticationModal: React.FC = () => {
                 onClick={() => setAuthModalView('login')}
                 className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
               >
-                Already have an account? Sign in
+                {t('modal.alreadyHaveAccount')}
               </button>
             </div>
           </>
@@ -206,14 +209,14 @@ export const AuthenticationModal: React.FC = () => {
                 onClick={() => setAuthModalView('register')}
                 className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
               >
-                Don&apos;t have an account? Create one
+                {t('modal.dontHaveAccount')}
               </button>
               <button
                 type="button"
                 onClick={() => setAuthModalView('forgotPassword')}
                 className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
               >
-                Forgot Password?
+                {t('modal.forgotPasswordLink')}
               </button>
             </div>
           </>

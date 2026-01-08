@@ -1,0 +1,37 @@
+{
+  "page": {
+    "title": "Powerful Features for",
+    "titleHighlight": "Professional Results",
+    "subtitle": "Everything you need to enhance your images with cutting-edge AI technology. From text preservation to batch processing, we've got you covered."
+  },
+  "section": {
+    "badge": "AI Photo Enhancer Features",
+    "title": "Image quality enhancer that",
+    "titleHighlight": "preserves real detail",
+    "description": "No blur, no artifacts—just crisp, professional results. Our AI understands the difference between noise and detail."
+  },
+  "features": {
+    "textLogos": {
+      "name": "Text & Logos Stay Sharp",
+      "description": "Most AI image enhancers blur text. Ours keeps it crisp—even at 4x scale."
+    },
+    "batchUpscale": {
+      "name": "Batch Upscale 500 Images",
+      "description": "Bulk photo enhancer. Upload hundreds of images, get 4K results in minutes."
+    },
+    "qualityTiers": {
+      "name": "6 Quality Tiers",
+      "description": "From 2x to 8x with 6 enhancement modes. Fine-tune results for photos, graphics, anime, and more."
+    },
+    "smartDetection": {
+      "name": "Smart AI Detection",
+      "description": "Automatically selects the best AI model for your image type. Portraits, landscapes, and more get specialized treatment."
+    }
+  },
+  "secondaryFeatures": {
+    "faceEnhancement": "Face Enhancement",
+    "secureProcessing": "Secure Processing",
+    "fastProcessing": "Fast Processing",
+    "highAvailability": "High Availability"
+  }
+}

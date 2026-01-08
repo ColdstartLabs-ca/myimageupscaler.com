@@ -87,6 +87,7 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
   // Enable static rendering
   setRequestLocale(locale);
 
+  // Get messages for this locale (setRequestLocale ensures correct locale is used)
   const messages = await getMessages();
 
   const websiteJsonLd = {
@@ -143,7 +144,7 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
       <body
         className={`${inter.className} bg-base text-foreground antialiased selection:bg-accent/20 selection:text-white`}
       >
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <GoogleAnalytics />
           <AhrefsAnalytics />
           <ClientProviders>

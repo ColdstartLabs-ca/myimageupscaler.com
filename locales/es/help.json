@@ -1,0 +1,154 @@
+{
+  "page": {
+    "title": "Ayuda y Preguntas Frecuentes",
+    "subtitle": "Encuentra respuestas a preguntas comunes sobre el uso de {appName}"
+  },
+  "quickLinks": {
+    "gettingStarted": "Comenzando",
+    "gettingStartedDesc": "Aprende a usar el servicio",
+    "creditsBilling": "Créditos y Facturación",
+    "creditsBillingDesc": "Entiende los precios y pagos",
+    "technicalSupport": "Soporte Técnico",
+    "technicalSupportDesc": "Soluciona problemas"
+  },
+  "gettingStarted": {
+    "title": "Comenzando",
+    "faqs": {
+      "howToStart": {
+        "question": "¿Cómo empiezo a usar {appName}?",
+        "answerIntro": "Para comenzar:",
+        "answerStep1": "Crea una cuenta",
+        "answerStep2": "usando correo o Google",
+        "answerStep3": "Recibirás 10 créditos gratuitos para probar el servicio",
+        "answerStep4": "Navega a",
+        "answerStep5": "Upscaler",
+        "answerStep6": "Sube una imagen (formato JPG, PNG o WEBP)",
+        "answerStep7": "Elige tu factor de mejora (2x o 4x)",
+        "answerStep8": "Haz clic en \"Mejorar Imagen\" y espera el procesamiento",
+        "answerStep9": "Descarga tu imagen mejorada"
+      },
+      "supportedFormats": {
+        "question": "¿Qué formatos de imagen son compatibles?",
+        "answerIntro": "Actualmente admitimos los siguientes formatos de imagen:",
+        "format1": "JPG/JPEG - El formato más común para fotos",
+        "format2": "PNG - Mejor para imágenes con transparencia o texto",
+        "format3": "WEBP - Formato moderno con buena compresión",
+        "maxFileSize": "Tamaño máximo de archivo para tier gratuito:",
+        "maxFileSizeValue": "5MB"
+      },
+      "upscaleDifference": {
+        "question": "¿Cuál es la diferencia entre mejora 2x y 4x?",
+        "2xIntro": "Mejora 2x:",
+        "2xDesc": "Duplica el ancho y alto de tu imagen (4x píxeles totales). Mejor para mejoras moderadas de calidad.",
+        "4xIntro": "Mejora 4x:",
+        "4xDesc": "Cuadruplica el ancho y alto (16x píxeles totales). Mejor para ampliaciones significativas o imágenes fuente muy pequeñas.",
+        "example": "Ejemplo: Una imagen de 500x500px se convierte en 1000x1000px a 2x, o 2000x2000px a 4x."
+      },
+      "processingTime": {
+        "question": "¿Cuánto tiempo tarda el procesamiento de imagen?",
+        "answer": "El procesamiento típicamente toma 30-60 segundos dependiendo del tamaño de imagen y la carga actual del servidor. Verás un indicador de progreso mientras tu imagen está siendo mejorada."
+      }
+    }
+  },
+  "creditsBilling": {
+    "title": "Créditos y Facturación",
+    "faqs": {
+      "whatAreCredits": {
+        "question": "¿Qué son los créditos?",
+        "answerPart1": "Los créditos son la moneda usada para procesar imágenes. Cada mejora de imagen consume 1 crédito, independientemente del factor de escala.",
+        "answerPart2": "Los nuevos usuarios reciben",
+        "answerPart3": "10 créditos gratuitos",
+        "answerPart4": "para probar el servicio."
+      },
+      "purchaseCredits": {
+        "question": "¿Cómo compro más créditos?",
+        "answerIntro": "Visita nuestra",
+        "pricingPage": "Página de Precios",
+        "answerMid": "para elegir entre nuestros planes de suscripción:",
+        "plan1": "Hobby: 200 créditos/mes por $19/mes",
+        "plan2": "Professional: 1000 créditos/mes por $49/mes",
+        "plan3": "Business: 5000 créditos/mes por $149/mes"
+      },
+      "creditsExpire": {
+        "question": "¿Los créditos expiran?",
+        "answer": "Los créditos de suscripción se acumulan mes a mes hasta 6× tu asignación mensual de créditos, siempre que tu suscripción permanezca activa. Por ejemplo, el plan Hobby puede acumular hasta 1,200 créditos (6 × 200)."
+      },
+      "cancelSubscription": {
+        "question": "¿Puedo cancelar mi suscripción?",
+        "answerIntro": "¡Sí! Puedes cancelar en cualquier momento a través de:",
+        "option1": "Tu",
+        "option2": "Panel de Facturación",
+        "option3": "El portal de clientes de Stripe",
+        "answerOutro": "Continuarás teniendo acceso hasta el final de tu período de facturación, y cualquier crédito restante permanecerá en tu cuenta."
+      },
+      "paymentMethods": {
+        "question": "¿Qué métodos de pago aceptan?",
+        "answer": "Aceptamos todas las tarjetas de crédito principales (Visa, Mastercard, American Express) y varios otros métodos de pago a través de Stripe, nuestro procesador de pago seguro."
+      },
+      "refunds": {
+        "question": "¿Puedo obtener un reembolso?",
+        "answerIntro": "Debido a la naturaleza de los servicios digitales, generalmente no se proporcionan reembolsos por créditos usados. Sin embargo, podemos emitir reembolsos a nuestra discreción por:",
+        "reason1": "Fallos técnicos que resulten en créditos perdidos",
+        "reason2": "Cargos duplicados",
+        "reason3": "Indisponibilidad del servicio",
+        "contactSupport": "para asistencia."
+      }
+    }
+  },
+  "technicalSupport": {
+    "title": "Soporte Técnico",
+    "faqs": {
+      "failedProcessing": {
+        "question": "Mi imagen falló al procesarse. ¿Qué debo hacer?",
+        "answerIntro": "Si el procesamiento falla:",
+        "step1": "Tu crédito debería ser reembolsado automáticamente",
+        "step2": "Verifica que tu imagen cumpla con nuestros requisitos (formato, tamaño)",
+        "step3": "Prueba una imagen diferente para descartar corrupción de archivo",
+        "step4": "Limpia el caché de tu navegador e inténtalo de nuevo",
+        "step5": "Si el problema persiste, contacta"
+      },
+      "qualityIssues": {
+        "question": "La calidad no es lo que esperaba. ¿Por qué?",
+        "answerIntro": "La mejora con IA funciona mejor con ciertos tipos de imágenes:",
+        "result1": "Mejores resultados: Fotos con sujetos claros, imágenes de productos, fotos inmobiliarias",
+        "result2": "Buenos resultados: Gráficos con texto, logotipos, ilustraciones",
+        "result3": "Resultados variables: Imágenes de muy baja resolución, imágenes muy comprimidas, arte abstracto",
+        "answerOutro": "La calidad de tu imagen fuente afecta grandemente el resultado final. Comenzar con una fuente de mayor calidad producirá mejores mejoras."
+      },
+      "dataPrivacy": {
+        "question": "¿Están seguros mis datos y privacidad?",
+        "answerIntro": "¡Sí! Tomamos la privacidad en serio:",
+        "point1": "Las imágenes se procesan en tiempo real y no se almacenan permanentemente",
+        "point2": "No usamos tus imágenes para entrenar modelos de IA",
+        "point3": "Toda la transmisión de datos está encriptada con HTTPS",
+        "point4": "Cumplimos con las regulaciones de protección de datos",
+        "answerOutro": "Lee nuestra",
+        "privacyPolicy": "Política de Privacidad",
+        "answerEnd": "para más detalles."
+      },
+      "commercialUse": {
+        "question": "¿Puedo usar imágenes mejoradas comercialmente?",
+        "answer": "¡Sí! Conservas todos los derechos sobre tus imágenes. No reclamamos ninguna propiedad de tus imágenes subidas o mejoradas. Sin embargo, debes tener el derecho legal de usar la imagen original que subes. No somos responsables por violaciones de derechos de autor relacionadas con tus imágenes fuente."
+      },
+      "browserSupport": {
+        "question": "¿Qué navegadores son compatibles?",
+        "answerIntro": "funciona mejor en navegadores modernos:",
+        "browser1": "Chrome/Edge (últimas 2 versiones)",
+        "browser2": "Firefox (últimas 2 versiones)",
+        "browser3": "Safari (últimas 2 versiones)",
+        "jsNote": "JavaScript debe estar habilitado para que el servicio funcione."
+      }
+    }
+  },
+  "cta": {
+    "title": "¿Todavía necesitas ayuda?",
+    "description": "¿No puedes encontrar la respuesta que buscas? Nuestro equipo de soporte está aquí para ayudar.",
+    "emailSupport": "Correo de Soporte",
+    "viewPricing": "Ver Precios"
+  },
+  "relatedLinks": {
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "blog": "Blog"
+  }
+}

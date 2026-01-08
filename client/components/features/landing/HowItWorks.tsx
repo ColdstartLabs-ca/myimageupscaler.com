@@ -4,32 +4,32 @@ import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/Mot
 import { motion } from 'framer-motion';
 import { ArrowRight, Download, UploadCloud, Wand2 } from 'lucide-react';
 import React from 'react';
-
-const steps = [
-  {
-    id: 1,
-    name: 'Upload',
-    description:
-      "Drop that blurry image you've been avoiding. No complex settings—just drag, drop, and go.",
-    icon: UploadCloud,
-  },
-  {
-    id: 2,
-    name: 'AI Enhancement',
-    description:
-      'Watch as AI reconstructs lost detail, sharpens edges, and fixes noise—all while keeping your text readable.',
-    icon: Wand2,
-  },
-  {
-    id: 3,
-    name: 'Download & Use',
-    description:
-      "Get your crisp, professional result in under 30 seconds. Finally, images you're proud to publish.",
-    icon: Download,
-  },
-];
+import { useTranslations } from 'next-intl';
 
 const HowItWorks: React.FC = () => {
+  const t = useTranslations('howItWorks');
+
+  const steps = [
+    {
+      id: 1,
+      name: t('steps.upload.name'),
+      description: t('steps.upload.description'),
+      icon: UploadCloud,
+    },
+    {
+      id: 2,
+      name: t('steps.enhancement.name'),
+      description: t('steps.enhancement.description'),
+      icon: Wand2,
+    },
+    {
+      id: 3,
+      name: t('steps.download.name'),
+      description: t('steps.download.description'),
+      icon: Download,
+    },
+  ];
+
   return (
     <section
       id="how-it-works"
@@ -38,15 +38,14 @@ const HowItWorks: React.FC = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="text-center mb-24">
           <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
-            No Learning Curve
+            {t('section.badge')}
           </h2>
           <p className="text-4xl font-black tracking-tight text-white sm:text-5xl mb-6">
-            Skip Photoshop.{' '}
-            <span className="gradient-text-primary">Get results in 30 seconds.</span>
+            {t('section.title')}{' '}
+            <span className="gradient-text-primary">{t('section.titleHighlight')}</span>
           </p>
           <p className="text-xl text-text-secondary max-w-2xl mx-auto font-light">
-            You shouldn&apos;t need a design degree to fix a blurry image. Three clicks, zero
-            tutorials, professional quality.
+            {t('section.description')}
           </p>
         </FadeIn>
 
@@ -121,10 +120,10 @@ const HowItWorks: React.FC = () => {
               <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
             </span>
             <span className="text-sm font-bold text-text-secondary tracking-widest uppercase">
-              System Operational
+              {t('status.systemOperational')}
             </span>
             <span className="text-white/10 mx-2">|</span>
-            <span className="text-xs text-text-muted font-medium">Global AI Nodes Active</span>
+            <span className="text-xs text-text-muted font-medium">{t('status.nodesActive')}</span>
           </div>
         </FadeIn>
       </div>

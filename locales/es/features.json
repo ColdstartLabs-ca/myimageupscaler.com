@@ -1,0 +1,37 @@
+{
+  "page": {
+    "title": "Características Potentes para",
+    "titleHighlight": "Resultados Profesionales",
+    "subtitle": "Todo lo que necesitas para mejorar tus imágenes con tecnología IA de vanguardia. Desde la preservación de texto hasta el procesamiento por lotes, lo tenemos cubierto."
+  },
+  "section": {
+    "badge": "Características del Mejorador de Fotos con IA",
+    "title": "Mejorador de calidad de imagen que",
+    "titleHighlight": "preserva el detalle real",
+    "description": "Sin desenfoque, sin artefactos— solo resultados nítidos y profesionales. Nuestra IA entiende la diferencia entre el ruido y el detalle."
+  },
+  "features": {
+    "textLogos": {
+      "name": "El Texto y Logotipos Permanecen Nítidos",
+      "description": "La mayoría de los mejoradores de imágenes con IA desenfocan el texto. El nuestro lo mantiene nítido—incluso a escala 4x."
+    },
+    "batchUpscale": {
+      "name": "Mejora por Lotes de 500 Imágenes",
+      "description": "Mejorador de fotos por lotes. Sube cientos de imágenes, obtén resultados 4K en minutos."
+    },
+    "qualityTiers": {
+      "name": "6 Niveles de Calidad",
+      "description": "De 2x a 8x con 6 modos de mejora. Ajusta los resultados para fotos, gráficos, anime y más."
+    },
+    "smartDetection": {
+      "name": "Detección Inteligente con IA",
+      "description": "Selecciona automáticamente el mejor modelo de IA para tu tipo de imagen. Retratos, paisajes y más reciben tratamiento especializado."
+    }
+  },
+  "secondaryFeatures": {
+    "faceEnhancement": "Mejora Facial",
+    "secureProcessing": "Procesamiento Seguro",
+    "fastProcessing": "Procesamiento Rápido",
+    "highAvailability": "Alta Disponibilidad"
+  }
+}

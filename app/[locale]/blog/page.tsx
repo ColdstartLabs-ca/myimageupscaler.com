@@ -6,6 +6,7 @@ import { Calendar, Clock, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from
 import { clientEnv } from '@shared/config/env';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { BlogSearch } from '@client/components/blog/BlogSearch';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: 'Blog - Image Enhancement Tips & Guides',
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
 const POSTS_PER_PAGE = 6;
 
 interface IBlogPageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ page?: string; q?: string }>;
 }
 
@@ -32,10 +34,13 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-export default async function BlogPage({ searchParams }: IBlogPageProps) {
-  const params = await searchParams;
+export default async function BlogPage({ params, searchParams }: IBlogPageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const searchQueryParams = await searchParams;
+  const t = await getTranslations('blog');
   const allPosts = getAllPosts();
-  const searchQuery = params.q?.toLowerCase().trim();
+  const searchQuery = searchQueryParams.q?.toLowerCase().trim();
 
   // Filter posts by search query
   const filteredPosts = searchQuery
@@ -54,7 +59,7 @@ export default async function BlogPage({ searchParams }: IBlogPageProps) {
   const shuffledPosts = searchQuery ? otherPosts : shuffleArray(otherPosts);
 
   // Calculate pagination
-  const currentPage = Number(params.page) || 1;
+  const currentPage = Number(searchQueryParams.page) || 1;
   const totalPages = Math.ceil(shuffledPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
@@ -68,17 +73,16 @@ export default async function BlogPage({ searchParams }: IBlogPageProps) {
         <div className="container mx-auto px-4 max-w-5xl text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
-            Tips, Tutorials & Guides
+            {t('page.badge')}
           </div>
           <h1 className="font-display text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-            Image Enhancement
+            {t('page.title')}
             <span className="block bg-gradient-to-r from-accent via-secondary to-tertiary bg-clip-text text-transparent">
-              Insights & Expertise
+              {t('page.titleHighlight')}
             </span>
           </h1>
           <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed mb-8">
-            Master the art of AI image upscaling, photo restoration, and professional photography
-            optimization with our in-depth guides.
+            {t('page.subtitle')}
           </p>
           <BlogSearch />
         </div>
@@ -111,7 +115,7 @@ export default async function BlogPage({ searchParams }: IBlogPageProps) {
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-surface/20" />
                     <div className="absolute top-4 left-4 z-10">
                       <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-accent text-white shadow-lg">
-                        Featured
+                        {t('listing.featured')}
                       </span>
                     </div>
                   </div>
@@ -142,7 +146,7 @@ export default async function BlogPage({ searchParams }: IBlogPageProps) {
                         })}
                       </span>
                       <span className="inline-flex items-center gap-2 text-accent font-semibold group-hover:gap-3 transition-all">
-                        Read Article
+                        {t('listing.readArticle')}
                         <ArrowRight className="w-4 h-4" />
                       </span>
                     </div>
@@ -160,15 +164,15 @@ export default async function BlogPage({ searchParams }: IBlogPageProps) {
           {shuffledPosts.length === 0 && !featuredPost ? (
             <div className="text-center py-20 bg-surface rounded-3xl border border-border">
               <Sparkles className="w-12 h-12 text-accent/50 mx-auto mb-4" />
-              <p className="text-text-secondary text-lg">No blog posts yet. Check back soon!</p>
+              <p className="text-text-secondary text-lg">{t('listing.noPosts')}</p>
             </div>
           ) : shuffledPosts.length > 0 ? (
             <>
               <h2 className="font-display text-2xl font-bold text-white mb-8">
-                More Articles
+                {t('listing.moreArticles')}
                 {totalPages > 1 && (
                   <span className="text-base font-normal text-text-secondary ml-2">
-                    Page {currentPage} of {totalPages}
+                    {t('listing.pagination', { currentPage, totalPages })}
                   </span>
                 )}
               </h2>
@@ -229,7 +233,7 @@ export default async function BlogPage({ searchParams }: IBlogPageProps) {
                             })}
                           </span>
                           <span className="text-sm text-accent font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                            Read
+                            {t('listing.read')}
                             <ArrowRight className="w-3.5 h-3.5" />
                           </span>
                         </div>
@@ -250,12 +254,12 @@ export default async function BlogPage({ searchParams }: IBlogPageProps) {
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-lg hover:border-accent/50 hover:bg-accent/5 transition-all"
                     >
                       <ChevronLeft className="w-4 h-4" />
-                      Previous
+                      {t('listing.previous')}
                     </Link>
                   ) : (
                     <span className="inline-flex items-center gap-2 px-4 py-2 text-muted-foreground cursor-not-allowed opacity-50">
                       <ChevronLeft className="w-4 h-4" />
-                      Previous
+                      {t('listing.previous')}
                     </span>
                   )}
 
@@ -284,12 +288,12 @@ export default async function BlogPage({ searchParams }: IBlogPageProps) {
                       scroll={false}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-lg hover:border-accent/50 hover:bg-accent/5 transition-all"
                     >
-                      Next
+                      {t('listing.next')}
                       <ChevronRight className="w-4 h-4" />
                     </Link>
                   ) : (
                     <span className="inline-flex items-center gap-2 px-4 py-2 text-muted-foreground cursor-not-allowed opacity-50">
-                      Next
+                      {t('listing.next')}
                       <ChevronRight className="w-4 h-4" />
                     </span>
                   )}
@@ -306,16 +310,16 @@ export default async function BlogPage({ searchParams }: IBlogPageProps) {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
         <div className="container mx-auto px-4 max-w-4xl text-center relative z-10">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to Enhance Your Images?
+            {t('cta.title')}
           </h2>
           <p className="text-white/80 mb-8 text-lg max-w-xl mx-auto">
-            Try our AI-powered image upscaler and see the difference for yourself.
+            {t('cta.description', { appName: clientEnv.APP_NAME })}
           </p>
           <Link
             href="/?signup=1"
             className="inline-flex items-center gap-2 px-8 py-4 bg-white text-accent font-semibold rounded-xl hover:bg-white/90 hover:shadow-lg transition-all duration-300"
           >
-            Try {clientEnv.APP_NAME} Free
+            {t('cta.primaryButton')}
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

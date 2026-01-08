@@ -1,0 +1,31 @@
+{
+  "page": {
+    "title": "How it",
+    "titleHighlight": "Works",
+    "subtitle": "Transform your workflow in three simple steps. No complex settings, just professional results every time."
+  },
+  "section": {
+    "badge": "No Learning Curve",
+    "title": "Skip Photoshop.",
+    "titleHighlight": "Get results in 30 seconds.",
+    "description": "Professional image enhancement in three simple steps. No complex software, no learning curve—just drag, drop, and get results."
+  },
+  "steps": {
+    "upload": {
+      "name": "Upload",
+      "description": "Drop that blurry image you've been avoiding. No complex settings—just drag, drop, and go."
+    },
+    "enhancement": {
+      "name": "AI Enhancement",
+      "description": "Watch as AI reconstructs lost detail, sharpens edges, and fixes noise—all while keeping your text readable."
+    },
+    "download": {
+      "name": "Download & Use",
+      "description": "Get your crisp, professional result in under 30 seconds. Finally, images you're proud to publish."
+    }
+  },
+  "status": {
+    "systemOperational": "System Operational",
+    "nodesActive": "Global AI Nodes Active"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "page": {
+    "title": "Cómo",
+    "titleHighlight": "Funciona",
+    "subtitle": "Transforma tu flujo de trabajo en tres simples pasos. Sin configuraciones complejas, solo resultados profesionales cada vez."
+  },
+  "section": {
+    "badge": "Sin Curva de Aprendizaje",
+    "title": "Omite Photoshop.",
+    "titleHighlight": "Obtén resultados en 30 segundos.",
+    "description": "Mejora de imágenes profesional en tres simples pasos. Sin software complejo, sin curva de aprendizaje—solo arrastra, suelta y obtén resultados."
+  },
+  "steps": {
+    "upload": {
+      "name": "Subir",
+      "description": "Suelta esa imagen borrosa que has estado evitando. Sin configuraciones complejas—solo arrastra, suelta y adelante."
+    },
+    "enhancement": {
+      "name": "Mejora con IA",
+      "description": "Observa cómo la IA reconstruye el detalle perdido, afila los bordes y corrige el ruido—todo manteniendo tu texto legible."
+    },
+    "download": {
+      "name": "Descargar y Usar",
+      "description": "Obtén tu resultado nítido y profesional en menos de 30 segundos. Finalmente, imágenes de las que estarás orgulloso de publicar."
+    }
+  },
+  "status": {
+    "systemOperational": "Sistema Operativo",
+    "nodesActive": "Nodos IA Globales Activos"
+  }
+}

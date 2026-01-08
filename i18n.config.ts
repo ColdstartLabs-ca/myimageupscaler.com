@@ -22,20 +22,36 @@ export default getRequestConfig(async ({ requestLocale }) => {
     dashboard,
     auth,
     pricing,
+    features,
+    help,
+    howItWorks,
+    blog,
     defaultCommon,
     defaultDashboard,
     defaultAuth,
     defaultPricing,
+    defaultFeatures,
+    defaultHelp,
+    defaultHowItWorks,
+    defaultBlog,
   ] = await Promise.all([
     import(`./locales/${locale}/common.json`),
     import(`./locales/${locale}/dashboard.json`),
     import(`./locales/${locale}/auth.json`),
     import(`./locales/${locale}/pricing.json`),
+    import(`./locales/${locale}/features.json`),
+    import(`./locales/${locale}/help.json`),
+    import(`./locales/${locale}/howItWorks.json`),
+    import(`./locales/${locale}/blog.json`),
     // Load default locale (English) as fallback
     import(`./locales/${DEFAULT_LOCALE}/common.json`),
     import(`./locales/${DEFAULT_LOCALE}/dashboard.json`),
     import(`./locales/${DEFAULT_LOCALE}/auth.json`),
     import(`./locales/${DEFAULT_LOCALE}/pricing.json`),
+    import(`./locales/${DEFAULT_LOCALE}/features.json`),
+    import(`./locales/${DEFAULT_LOCALE}/help.json`),
+    import(`./locales/${DEFAULT_LOCALE}/howItWorks.json`),
+    import(`./locales/${DEFAULT_LOCALE}/blog.json`),
   ]);
 
   const defaultMessages = {
@@ -43,6 +59,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
     dashboard: defaultDashboard.default,
     auth: defaultAuth.default,
     pricing: defaultPricing.default,
+    features: defaultFeatures.default,
+    help: defaultHelp.default,
+    howItWorks: defaultHowItWorks.default,
+    blog: defaultBlog.default,
   };
 
   return {
@@ -52,6 +72,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
       dashboard: dashboard.default,
       auth: auth.default,
       pricing: pricing.default,
+      features: features.default,
+      help: help.default,
+      howItWorks: howItWorks.default,
+      blog: blog.default,
     },
     getMessageFallback: ({ key, namespace }) => {
       // Try to get the message from default locale (English)

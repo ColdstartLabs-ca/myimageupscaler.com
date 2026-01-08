@@ -4,56 +4,58 @@ import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/Mot
 import { motion } from 'framer-motion';
 import { CheckCircle2, Cpu, Image as ImageIcon, Lock, Sparkles, Type, Zap } from 'lucide-react';
 import React from 'react';
-
-const features = [
-  {
-    icon: Type,
-    name: 'Text & Logos Stay Sharp',
-    description: 'Most AI image enhancers blur text. Ours keeps it crisp—even at 4x scale.',
-    color: 'text-accent',
-  },
-  {
-    icon: ImageIcon,
-    name: 'Batch Upscale 500 Images',
-    description: 'Bulk photo enhancer. Upload hundreds of images, get 4K results in minutes.',
-    color: 'text-accent',
-  },
-  {
-    icon: Zap,
-    name: '6 Quality Tiers',
-    description: 'From quick previews to print-ready 4K. Pick the quality that fits your budget.',
-    color: 'text-accent',
-  },
-  {
-    icon: Cpu,
-    name: 'Smart AI Detection',
-    description: 'Auto-detects faces, text, products—applies the right enhancement automatically.',
-    color: 'text-accent',
-  },
-];
-
-const secondaryFeatures = [
-  { icon: Sparkles, name: 'Face Enhancement' },
-  { icon: Lock, name: 'Secure Processing' },
-  { icon: Cpu, name: 'Fast Processing' },
-  { icon: CheckCircle2, name: 'High Availability' },
-];
+import { useTranslations } from 'next-intl';
 
 const Features: React.FC = () => {
+  const t = useTranslations('features');
+
+  const features = [
+    {
+      icon: Type,
+      name: t('features.textLogos.name'),
+      description: t('features.textLogos.description'),
+      color: 'text-accent',
+    },
+    {
+      icon: ImageIcon,
+      name: t('features.batchUpscale.name'),
+      description: t('features.batchUpscale.description'),
+      color: 'text-accent',
+    },
+    {
+      icon: Zap,
+      name: t('features.qualityTiers.name'),
+      description: t('features.qualityTiers.description'),
+      color: 'text-accent',
+    },
+    {
+      icon: Cpu,
+      name: t('features.smartDetection.name'),
+      description: t('features.smartDetection.description'),
+      color: 'text-accent',
+    },
+  ];
+
+  const secondaryFeatures = [
+    { icon: Sparkles, name: t('secondaryFeatures.faceEnhancement') },
+    { icon: Lock, name: t('secondaryFeatures.secureProcessing') },
+    { icon: Cpu, name: t('secondaryFeatures.fastProcessing') },
+    { icon: CheckCircle2, name: t('secondaryFeatures.highAvailability') },
+  ];
+
   return (
     <section id="features" className="py-32 bg-main relative overflow-hidden">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="mx-auto max-w-2xl lg:text-center mb-16">
           <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
-            AI Photo Enhancer Features
+            {t('section.badge')}
           </h2>
           <p className="text-4xl font-black tracking-tight text-white sm:text-5xl">
-            Image quality enhancer that{' '}
-            <span className="gradient-text-primary">preserves real detail</span>
+            {t('section.title')}{' '}
+            <span className="gradient-text-primary">{t('section.titleHighlight')}</span>
           </p>
           <p className="mt-6 text-xl text-text-secondary leading-8 font-light">
-            No blur, no artifacts. Our AI image upscaler reconstructs authentic detail—naturally
-            sharp, not over-processed.
+            {t('section.description')}
           </p>
         </FadeIn>
 

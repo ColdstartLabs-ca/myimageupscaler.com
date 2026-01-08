@@ -1,0 +1,33 @@
+{
+  "page": {
+    "badge": "Consejos, Tutoriales y Guías",
+    "title": "Mejora de Imágenes",
+    "titleHighlight": "Ideas y Experiencia",
+    "subtitle": "Domina el arte del escalado de imágenes con IA, restauración de fotos y optimización de fotografía profesional con nuestras guías profundas."
+  },
+  "listing": {
+    "moreArticles": "Más Artículos",
+    "pagination": "Página {currentPage} de {totalPages}",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "featured": "Destacado",
+    "readArticle": "Leer Artículo",
+    "read": "Leer",
+    "noPosts": "No hay artículos de blog todavía. ¡Vuelve pronto!"
+  },
+  "cta": {
+    "title": "¿Listo para Transformar Tus Imágenes?",
+    "description": "Únete a más de 10,000 empresas que usan {appName} para mejorar sus imágenes. Comienza tu prueba gratuita hoy.",
+    "primaryButton": "Comenzar Prueba Gratuita",
+    "secondaryButton": "Ver Precios",
+    "disclaimer": "No se requiere tarjeta de crédito • 10 créditos gratuitos • Cancela cuando quieras"
+  },
+  "article": {
+    "by": "Por",
+    "readTime": "{min} min de lectura",
+    "backToListing": "← Volver al Blog",
+    "relatedPosts": "Artículos Relacionados",
+    "share": "Compartir",
+    "copyLink": "Copiar Enlace"
+  }
+}

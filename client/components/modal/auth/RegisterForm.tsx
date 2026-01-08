@@ -4,6 +4,7 @@ import { registerSchema } from '@shared/validation/authValidationSchema';
 import React, { FormEventHandler } from 'react';
 import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
 import { z } from 'zod';
+import { useTranslations } from 'next-intl';
 
 export type IRegisterForm = z.infer<typeof registerSchema>;
 
@@ -20,6 +21,7 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
   errors,
   watch,
 }) => {
+  const t = useTranslations('auth');
   const password = watch('password') || '';
   const passwordConfirmation = watch('passwordConfirmation') || '';
   const passwordsMatch =
@@ -28,12 +30,12 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
   return (
     <form onSubmit={onSubmit} className="flex flex-col space-y-5">
       <p className="text-center text-muted-foreground text-sm mb-1">
-        Create an account to continue
+        {t('register.createAccountToContinue')}
       </p>
       <InputField
         {...register('email')}
         type="email"
-        placeholder="Email address"
+        placeholder={t('form.email')}
         className="w-full"
         error={errors.email?.message}
       />
@@ -41,7 +43,7 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
         <InputField
           {...register('password')}
           type="password"
-          placeholder="Password"
+          placeholder={t('form.password')}
           className="w-full"
           error={errors.password?.message}
           success={passwordsMatch && !errors.password}
@@ -51,7 +53,7 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
       <InputField
         {...register('passwordConfirmation')}
         type="password"
-        placeholder="Confirm Password"
+        placeholder={t('form.confirmPassword')}
         className="w-full"
         error={errors.passwordConfirmation?.message}
         success={passwordsMatch && !errors.passwordConfirmation}
@@ -64,23 +66,23 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
             className="mt-0.5 h-4 w-4 rounded border-border bg-surface text-accent focus:ring-2 focus:ring-accent focus:ring-offset-2 cursor-pointer"
           />
           <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-            I agree to the{' '}
+            {t('register.agreeToTerms')}{' '}
             <a
               href="/terms"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:text-accent-hover underline"
             >
-              Terms of Service
+              {t('register.termsOfService')}
             </a>{' '}
-            and{' '}
+            {t('register.and')}{' '}
             <a
               href="/privacy"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:text-accent-hover underline"
             >
-              Privacy Policy
+              {t('register.privacyPolicy')}
             </a>
           </span>
         </label>
@@ -92,7 +94,7 @@ export const RegisterForm: React.FC<IRegisterFormProps> = ({
         type="submit"
         className="w-full px-4 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-accent/25 hover:shadow-xl hover:shadow-accent/30 active:scale-[0.98] mt-2 glow-blue"
       >
-        Create Account
+        {t('register.createAccount')}
       </button>
     </form>
   );
