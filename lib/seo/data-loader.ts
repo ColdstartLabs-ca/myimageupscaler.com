@@ -43,7 +43,7 @@ import type {
   IPSEODataFile,
 } from './pseo-types';
 
-// Type-safe data imports
+// Type-safe data imports (English fallback)
 const toolsData = toolsDataFile as IPSEODataFile<IToolPage>;
 const formatsData = formatsDataFile as unknown as IPSEODataFile<IFormatPage>;
 const useCasesData = useCasesDataFile as unknown as IPSEODataFile<IUseCasePage>;
@@ -51,6 +51,29 @@ const alternativesData = alternativesDataFile as unknown as IPSEODataFile<IAlter
 const formatScaleData = formatScaleDataFile as unknown as IPSEODataFile<IFormatScalePage>;
 const platformFormatData = platformFormatDataFile as unknown as IPSEODataFile<IPlatformFormatPage>;
 const deviceUseData = deviceUseDataFile as unknown as IPSEODataFile<IDeviceUseCasePage>;
+
+/**
+ * Load locale-specific pSEO data file
+ * Falls back to English if locale file doesn't exist
+ */
+async function loadLocalizedPSEOData<T extends PSEOPage>(
+  namespace: string,
+  locale: Locale,
+  fallbackData: IPSEODataFile<T>
+): Promise<IPSEODataFile<T>> {
+  if (locale === 'en') {
+    return fallbackData;
+  }
+
+  try {
+    // Dynamic import of locale-specific file
+    const localizedData = await import(`@/locales/${locale}/${namespace}.json`);
+    return localizedData.default as IPSEODataFile<T>;
+  } catch {
+    // Locale file doesn't exist, fall back to English
+    return fallbackData;
+  }
+}
 
 /**
  * Generate fallback page data from keyword mappings
@@ -407,10 +430,12 @@ export const getAllPlatformFormatSlugs = cache(async (): Promise<string[]> => {
   return platformFormatData.pages.map(page => page.slug);
 });
 
-export const getPlatformFormatData = cache(async (slug: string): Promise<IPlatformFormatPage | null> => {
-  const page = platformFormatData.pages.find(p => p.slug === slug);
-  return page || null;
-});
+export const getPlatformFormatData = cache(
+  async (slug: string): Promise<IPlatformFormatPage | null> => {
+    const page = platformFormatData.pages.find(p => p.slug === slug);
+    return page || null;
+  }
+);
 
 export const getAllPlatformFormat = cache(async (): Promise<IPlatformFormatPage[]> => {
   return platformFormatData.pages;
@@ -503,21 +528,23 @@ export const getToolDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IToolPage>> => {
     const isLocalized = isCategoryLocalized('tools', locale);
 
-    // For English or localized categories, try to load translated data
-    if (locale === 'en' || isLocalized) {
-      const data = await getToolData(slug);
+    // For non-localized categories in non-English locales, return null
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
-    // For non-localized categories in non-English locales, return null
+    // Load locale-specific data file
+    const localizedData = await loadLocalizedPSEOData<IToolPage>('tools', locale, toolsData);
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -529,19 +556,21 @@ export const getFormatDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IFormatPage>> => {
     const isLocalized = isCategoryLocalized('formats', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getFormatData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const localizedData = await loadLocalizedPSEOData<IFormatPage>('formats', locale, formatsData);
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -553,19 +582,26 @@ export const getComparisonDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IComparisonPage>> => {
     const isLocalized = isCategoryLocalized('compare', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getComparisonData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const comparisonData = comparisonDataFile as unknown as IPSEODataFile<IComparisonPage>;
+    const localizedData = await loadLocalizedPSEOData<IComparisonPage>(
+      'compare',
+      locale,
+      comparisonData
+    );
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -577,19 +613,25 @@ export const getAlternativeDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IAlternativePage>> => {
     const isLocalized = isCategoryLocalized('alternatives', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getAlternativeData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const localizedData = await loadLocalizedPSEOData<IAlternativePage>(
+      'alternatives',
+      locale,
+      alternativesData
+    );
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -601,19 +643,25 @@ export const getPlatformDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IPlatformPage>> => {
     const isLocalized = isCategoryLocalized('platforms', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getPlatformData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const localizedData = await loadLocalizedPSEOData<IPlatformPage>(
+      'platforms',
+      locale,
+      platformsData
+    );
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -625,19 +673,22 @@ export const getGuideDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IGuidePage>> => {
     const isLocalized = isCategoryLocalized('guides', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getGuideData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const guidesData = guidesDataFile as unknown as IPSEODataFile<IGuidePage>;
+    const localizedData = await loadLocalizedPSEOData<IGuidePage>('guides', locale, guidesData);
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -649,19 +700,25 @@ export const getUseCaseDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IUseCasePage>> => {
     const isLocalized = isCategoryLocalized('use-cases', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getUseCaseData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const localizedData = await loadLocalizedPSEOData<IUseCasePage>(
+      'use-cases',
+      locale,
+      useCasesData
+    );
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -673,19 +730,22 @@ export const getScaleDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IScalePage>> => {
     const isLocalized = isCategoryLocalized('scale', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getScaleData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const scaleData = scaleDataFile as unknown as IPSEODataFile<IScalePage>;
+    const localizedData = await loadLocalizedPSEOData<IScalePage>('scale', locale, scaleData);
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -697,19 +757,22 @@ export const getFreeDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IFreePage>> => {
     const isLocalized = isCategoryLocalized('free', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getFreeData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const freeData = freeDataFile as unknown as IPSEODataFile<IFreePage>;
+    const localizedData = await loadLocalizedPSEOData<IFreePage>('free', locale, freeData);
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -721,19 +784,25 @@ export const getFormatScaleDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IFormatScalePage>> => {
     const isLocalized = isCategoryLocalized('format-scale', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getFormatScaleData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const localizedData = await loadLocalizedPSEOData<IFormatScalePage>(
+      'format-scale',
+      locale,
+      formatScaleData
+    );
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -742,22 +811,31 @@ export const getFormatScaleDataWithLocale = cache(
  * Load platform-format data with localization check
  */
 export const getPlatformFormatDataWithLocale = cache(
-  async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IPlatformFormatPage>> => {
+  async (
+    slug: string,
+    locale: Locale = 'en'
+  ): Promise<ILocalizedDataResult<IPlatformFormatPage>> => {
     const isLocalized = isCategoryLocalized('platform-format', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getPlatformFormatData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const localizedData = await loadLocalizedPSEOData<IPlatformFormatPage>(
+      'platform-format',
+      locale,
+      platformFormatData
+    );
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );
@@ -766,22 +844,31 @@ export const getPlatformFormatDataWithLocale = cache(
  * Load device-use data with localization check
  */
 export const getDeviceUseDataWithLocale = cache(
-  async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IDeviceUseCasePage>> => {
+  async (
+    slug: string,
+    locale: Locale = 'en'
+  ): Promise<ILocalizedDataResult<IDeviceUseCasePage>> => {
     const isLocalized = isCategoryLocalized('device-use', locale);
 
-    if (locale === 'en' || isLocalized) {
-      const data = await getDeviceUseData(slug);
+    if (locale !== 'en' && !isLocalized) {
       return {
-        data,
-        hasTranslation: data !== null,
-        isLocalizedCategory: isLocalized,
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: false,
       };
     }
 
+    const localizedData = await loadLocalizedPSEOData<IDeviceUseCasePage>(
+      'device-use',
+      locale,
+      deviceUseData
+    );
+    const data = localizedData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data: null,
-      hasTranslation: false,
-      isLocalizedCategory: false,
+      data,
+      hasTranslation: data !== null,
+      isLocalizedCategory: isLocalized,
     };
   }
 );

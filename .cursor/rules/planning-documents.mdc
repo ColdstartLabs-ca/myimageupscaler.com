@@ -197,18 +197,6 @@ Binary done checks:
 - "yarn tsc passes" as sole verification
 - Touching 10+ files in one phase
 
-### Cross-Repo Workflow (when needed)
-
-```
-1. rpg-shared: modify → commit → yarn publish
-2. rpg-api: yarn upgrade rpg-shared@latest
-3. rpg-client: yarn upgrade rpg-shared@latest (if needed)
-```
-
-Only cross-repo when adding shared types/events/DTOs.
-
----
-
 ## Principles
 
 - **SRP, KISS, DRY, YAGNI** - Always
