@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename);
 // Configuration
 const LOCALES_DIR = path.join(__dirname, '..', 'locales');
 const REFERENCE_LOCALE = 'en'; // English is the source of truth
-const EXCLUDED_LOCALES = ['ja']; // Locales to exclude from checks (e.g., Japanese not yet translated)
+const EXCLUDED_LOCALES = []; // Locales to exclude from checks
 
 interface ITranslationReport {
   summary: {

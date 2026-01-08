@@ -1,31 +1,31 @@
 {
   "page": {
-    "title": "How it",
-    "titleHighlight": "Works",
-    "subtitle": "Transform your workflow in three simple steps. No complex settings, just professional results every time."
+    "title": "仕組み",
+    "titleHighlight": "",
+    "subtitle": "3つの簡単なステップでワークフローを変革します。複雑な設定はなく、常にプロフェッショナルな結果が得られます。"
   },
   "section": {
-    "badge": "No Learning Curve",
-    "title": "Skip Photoshop.",
-    "titleHighlight": "Get results in 30 seconds.",
-    "description": "Professional image enhancement in three simple steps. No complex software, no learning curve—just drag, drop, and get results."
+    "badge": "学習曲線なし",
+    "title": "Photoshopは不要。",
+    "titleHighlight": "30秒で結果を得る。",
+    "description": "3つの簡単なステップでプロフェッショナルな画像強化。複雑なソフトウェア、学習曲線なし—ドラッグ＆ドロップして結果を得るだけです。"
   },
   "steps": {
     "upload": {
-      "name": "Upload",
-      "description": "Drop that blurry image you've been avoiding. No complex settings—just drag, drop, and go."
+      "name": "アップロード",
+      "description": "避けていたぼやけた画像をドロップしてください。複雑な設定なし—ドラッグ＆ドロップして完了です。"
     },
     "enhancement": {
-      "name": "AI Enhancement",
-      "description": "Watch as AI reconstructs lost detail, sharpens edges, and fixes noise—all while keeping your text readable."
+      "name": "AI強化",
+      "description": "AIが失われたディテールを再構築し、エッジを鮮明にし、ノイズを修正する様子をご覧ください—テキストを読みやすく保ちながら。"
     },
     "download": {
-      "name": "Download & Use",
-      "description": "Get your crisp, professional result in under 30 seconds. Finally, images you're proud to publish."
+      "name": "ダウンロードして使用",
+      "description": "30秒以内に鮮明でプロフェッショナルな結果を取得します。公開する誇れる画像がついに手に入ります。"
     }
   },
   "status": {
-    "systemOperational": "System Operational",
-    "nodesActive": "Global AI Nodes Active"
+    "systemOperational": "システム稼働中",
+    "nodesActive": "グローバルAIノードアクティブ"
   }
 }

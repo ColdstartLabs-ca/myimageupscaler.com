@@ -1,60 +1,60 @@
 {
   "page": {
-    "title": "Simple, Transparent Pricing",
-    "subtitle": "Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover."
+    "title": "シンプルで透明性のある料金プラン",
+    "subtitle": "ニーズに合ったサブスクリプションプランを選択してください。自動繰り越しで月次クレジットを取得できます。"
   },
   "subscription": {
-    "title": "Choose Your Plan",
-    "subtitle": "Get credits every month with our subscription plans. Cancel anytime."
+    "title": "プランを選択",
+    "subtitle": "サブスクリプションプランで毎月クレジットを取得します。いつでもキャンセル可能です。"
   },
   "currentBalance": {
-    "title": "Your current balance",
-    "credits": "credits",
-    "activeSubscription": "Active subscription"
+    "title": "現在の残高",
+    "credits": "クレジット",
+    "activeSubscription": "アクティブなサブスクリプション"
   },
   "scheduledChange": {
-    "title": "Scheduled Plan Change",
-    "cancel": "Cancel",
-    "on": "on"
+    "title": "予定されたプラン変更",
+    "cancel": "キャンセル",
+    "on": "日付"
   },
-  "configurationWarning": "Stripe Price IDs are not configured. Add them to your .env file to enable purchases.",
+  "configurationWarning": "Stripe価格IDが設定されていません。購入を有効にするには.envファイルに追加してください。",
   "creditPacks": {
-    "title": "Need Credits Without a Subscription?",
-    "subtitle": "One-time credit packs that never expire. Perfect for occasional projects.",
-    "valueComparison": "Value Comparison:",
-    "valueComparisonText": "Subscriptions offer 11-58% cheaper credits for regular users",
-    "comparePlans": "Compare subscription plans"
+    "title": "サブスクリプションなしでクレジットが必要ですか？",
+    "subtitle": "期限切れにならない使い切りクレジットパック。たまにプロジェクトに最適です。",
+    "valueComparison": "価値比較：",
+    "valueComparisonText": "サブスクリプションは通常のユーザーに11〜58%安いクレジットを提供します",
+    "comparePlans": "サブスクリプションプランを比較"
   },
   "faq": {
-    "title": "Frequently Asked Questions",
+    "title": "よくある質問",
     "creditsUsedFor": {
-      "question": "What are credits used for?",
-      "answer": "Credits are used for image processing actions. Each image processed consumes a certain number of credits based on the upscaling factor and features used."
+      "question": "クレジットは何に使用されますか？",
+      "answer": "クレジットは画像処理アクションに使用されます。処理された各画像は、アップスケーリング倍率と使用された機能に基づいて一定数のクレジットを消費します。"
     },
     "creditsExpire": {
-      "question": "Do credits expire?",
-      "answer": "Subscription credits roll over month-to-month up to your plan's maximum limit as long as your subscription is active."
+      "question": "クレジットは期限切れになりますか？",
+      "answer": "サブスクリプションクレジットは、サブスクリプションが有効である限り、プランの最大制限まで月次で繰り越されます。"
     },
     "batchProcessing": {
-      "question": "What is batch processing?",
-      "answer": "Batch processing allows you to upload and process multiple images at once. Free users can process 1 image at a time, while paid plans support batch processing of up to 10, 50, or 500 images simultaneously depending on your plan."
+      "question": "バッチ処理とは何ですか？",
+      "answer": "バッチ処理を使用すると、複数の画像を一度にアップロードして処理できます。無料ユーザーは一度に1枚の画像を処理できますが、有料プランはプランに応じて最大10、50、または500枚の画像の同時バッチ処理をサポートします。"
     },
     "cancelSubscription": {
-      "question": "Can I cancel my subscription anytime?",
-      "answer": "Yes! You can cancel your subscription at any time. You'll continue to have access until the end of your billing period, and any remaining credits will stay in your account."
+      "question": "サブスクリプションをいつでもキャンセルできますか？",
+      "answer": "はい！サブスクリプションをいつでもキャンセルできます。請求期間の終了までアクセスを継続でき、残りのクレジットはアカウントに残ります。"
     },
     "paymentMethods": {
-      "question": "What payment methods do you accept?",
-      "answer": "We accept all major credit cards (Visa, Mastercard, American Express) and various other payment methods through Stripe."
+      "question": "どのような支払い方法を受け付けていますか？",
+      "answer": "Stripeを通じて、主要なクレジットカード（Visa、Mastercard、American Express）およびその他のさまざまな支払い方法を受け付けています。"
     },
     "freePlan": {
-      "question": "Is there a free plan?",
-      "answer": "Yes! Free users get initial credits to try the service. However, batch processing and advanced features require a paid subscription. Free users can process one image at a time."
+      "question": "無料プランはありますか？",
+      "answer": "はい！無料ユーザーはサービスを試すための初期クレジットを取得できます。ただし、バッチ処理と高度な機能には有料サブスクリプションが必要です。無料ユーザーは一度に1枚の画像を処理できます。"
     }
   },
   "customPlan": {
-    "title": "Need a custom plan?",
-    "description": "Contact us for enterprise pricing, bulk discounts, or custom integration requirements.",
-    "contactSales": "Contact Sales"
+    "title": "カスタムプランが必要ですか？",
+    "description": "エンタープライズ価格、大量割引、またはカスタム統合については、お問い合わせください。",
+    "contactSales": "セールスに連絡"
   }
 }

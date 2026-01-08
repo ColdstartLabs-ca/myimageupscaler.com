@@ -1,37 +1,37 @@
 {
   "page": {
-    "title": "Powerful Features for",
-    "titleHighlight": "Professional Results",
-    "subtitle": "Everything you need to enhance your images with cutting-edge AI technology. From text preservation to batch processing, we've got you covered."
+    "title": "プロフェッショナルな結果のための",
+    "titleHighlight": "強力な機能",
+    "subtitle": "最先端のAI技術で画像を強化するために必要なすべて。テキスト保持から一括処理まで、私たちがサポートします。"
   },
   "section": {
-    "badge": "AI Photo Enhancer Features",
-    "title": "Image quality enhancer that",
-    "titleHighlight": "preserves real detail",
-    "description": "No blur, no artifacts—just crisp, professional results. Our AI understands the difference between noise and detail."
+    "badge": "AIフォトエンハンサー機能",
+    "title": "本当のディテールを保持する",
+    "titleHighlight": "画像品質向上ツール",
+    "description": "ぼやけもノイズもない、鮮明でプロフェッショナルな結果だけ。私たちのAIはノイズとディテールの違いを理解しています。"
   },
   "features": {
     "textLogos": {
-      "name": "Text & Logos Stay Sharp",
-      "description": "Most AI image enhancers blur text. Ours keeps it crisp—even at 4x scale."
+      "name": "テキストとロゴが鮮明に",
+      "description": "ほとんどのAI画像エンハンサーはテキストをぼやけさせます。私たちは4倍の拡大でも鮮明に保ちます。"
     },
     "batchUpscale": {
-      "name": "Batch Upscale 500 Images",
-      "description": "Bulk photo enhancer. Upload hundreds of images, get 4K results in minutes."
+      "name": "500枚の画像を一括高画質化",
+      "description": "一括フォトエンハンサー。数百枚の画像をアップロードし、数分で4Kの結果を取得。"
     },
     "qualityTiers": {
-      "name": "6 Quality Tiers",
-      "description": "From 2x to 8x with 6 enhancement modes. Fine-tune results for photos, graphics, anime, and more."
+      "name": "6つの品質ティア",
+      "description": "2倍から8倍まで6つの強化モード。写真、グラフィック、アニメなどに合わせて結果を微調整。"
     },
     "smartDetection": {
-      "name": "Smart AI Detection",
-      "description": "Automatically selects the best AI model for your image type. Portraits, landscapes, and more get specialized treatment."
+      "name": "スマートAI検出",
+      "description": "画像タイプに最適なAIモデルを自動選択。ポートレート、風景などが専門的な処理を受けます。"
     }
   },
   "secondaryFeatures": {
-    "faceEnhancement": "Face Enhancement",
-    "secureProcessing": "Secure Processing",
-    "fastProcessing": "Fast Processing",
-    "highAvailability": "High Availability"
+    "faceEnhancement": "顔の強化",
+    "secureProcessing": "セキュアな処理",
+    "fastProcessing": "高速処理",
+    "highAvailability": "高可用性"
   }
 }
