@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename);
 // Configuration
 const LOCALES_DIR = path.join(__dirname, '..', 'locales');
 const REFERENCE_LOCALE = 'en'; // English is the source of truth
-const EXCLUDED_LOCALES = []; // Locales to exclude from checks
+const EXCLUDED_LOCALES: string[] = []; // Locales to exclude from checks
 
 interface ITranslationReport {
   summary: {
@@ -75,6 +75,7 @@ interface ICLIOptions {
   filesOnly: boolean;
   json: boolean;
   verbose: boolean;
+  debug: boolean;
 }
 
 function parseArgs(): ICLIOptions {
@@ -84,6 +85,7 @@ function parseArgs(): ICLIOptions {
     filesOnly: false,
     json: false,
     verbose: false,
+    debug: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -105,6 +107,10 @@ function parseArgs(): ICLIOptions {
         break;
       case '--verbose':
         options.verbose = true;
+        break;
+      case '--debug':
+        options.debug = true;
+        options.verbose = true; // Debug implies verbose
         break;
       case '--help':
         printHelp();
@@ -129,6 +135,7 @@ Options:
   --files-only         Only check for missing files, not keys
   --json               Output as JSON (useful for CI/CD)
   --verbose            Show all checked items, not just missing ones
+  --debug              Show detailed debug info (file structure, key counts, etc.)
   --help               Show this help message
 
 Examples:
@@ -194,13 +201,13 @@ function flattenKeys(obj: Record<string, unknown>, prefix = ''): Set<string> {
       const nestedKeys = flattenKeys(value as Record<string, unknown>, fullKey);
       nestedKeys.forEach(k => keys.add(k));
     } else if (Array.isArray(value)) {
-      // Handle arrays by checking each element's keys
+      // Handle arrays by checking each element's keys with index
       // Add the array key itself
       keys.add(fullKey);
-      // Then recurse into array elements to check their nested keys
+      // Then recurse into array elements with index in key path
       value.forEach((item, index) => {
         if (item && typeof item === 'object' && !Array.isArray(item)) {
-          const itemKeys = flattenKeys(item as Record<string, unknown>, fullKey);
+          const itemKeys = flattenKeys(item as Record<string, unknown>, `${fullKey}[${index}]`);
           itemKeys.forEach(k => keys.add(k));
         }
       });
@@ -222,10 +229,13 @@ function flattenKeyValues(obj: Record<string, unknown>, prefix = ''): Map<string
       const nested = flattenKeyValues(value as Record<string, unknown>, fullKey);
       nested.forEach((v, k) => keyValues.set(k, v));
     } else if (Array.isArray(value)) {
-      // Handle arrays by recursing into each element
-      value.forEach(item => {
+      // Handle arrays by recursing into each element with index in key path
+      value.forEach((item, index) => {
         if (item && typeof item === 'object' && !Array.isArray(item)) {
-          const itemValues = flattenKeyValues(item as Record<string, unknown>, fullKey);
+          const itemValues = flattenKeyValues(
+            item as Record<string, unknown>,
+            `${fullKey}[${index}]`
+          );
           itemValues.forEach((v, k) => keyValues.set(k, v));
         }
       });
@@ -314,6 +324,39 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
 
         const referenceKeys = flattenKeys(referenceTranslation);
         const localeKeys = flattenKeys(localeTranslation);
+
+        // Debug output for file structure
+        if (options.debug) {
+          console.log(`\n[DEBUG] ${locale}/${namespace}.json`);
+          console.log(`  Reference keys: ${referenceKeys.size}`);
+          console.log(`  Locale keys: ${localeKeys.size}`);
+
+          // Check array structures
+          const refPages = (referenceTranslation as Record<string, unknown>)['pages'];
+          const locPages = (localeTranslation as Record<string, unknown>)['pages'];
+          if (Array.isArray(refPages) && Array.isArray(locPages)) {
+            console.log(`  Reference pages array: ${refPages.length} items`);
+            console.log(`  Locale pages array: ${locPages.length} items`);
+            if (refPages.length !== locPages.length) {
+              console.log(`  ⚠️  MISMATCH: Different array lengths!`);
+            }
+            // Show slugs for comparison
+            const refSlugs = refPages
+              .map((p: Record<string, unknown>) => p.slug)
+              .filter(Boolean) as string[];
+            const locSlugs = locPages
+              .map((p: Record<string, unknown>) => p.slug)
+              .filter(Boolean) as string[];
+            const missingSlugs = refSlugs.filter(s => !locSlugs.includes(s));
+            const extraSlugs = locSlugs.filter(s => !refSlugs.includes(s));
+            if (missingSlugs.length > 0) {
+              console.log(`  Missing slugs: ${missingSlugs.join(', ')}`);
+            }
+            if (extraSlugs.length > 0) {
+              console.log(`  Extra slugs: ${extraSlugs.join(', ')}`);
+            }
+          }
+        }
 
         // Find missing keys
         const missingKeys: string[] = [];

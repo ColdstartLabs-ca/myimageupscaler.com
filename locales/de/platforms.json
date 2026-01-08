@@ -1,584 +1,584 @@
 {
-  "category": "Plattformen",
-  "meta": {
-    "totalPages": 12,
-    "lastUpdated": "2025-12-19T00:00:00Z",
-    "description": "Social media and marketplace platform-specific image requirements"
-  },
+  "category": "platforms",
   "pages": [
     {
-      "slug": "instagram",
-      "title": "Instagram Image Requirements",
-      "metaTitle": "Instagram-Bildanforderungen 2025: Alle Größen, Formate & Spezifikationen",
-      "metaDescription": "Offizielle Instagram-Bildgrößen und Spezifikationen für Posts, Stories, Reels, Profilbilder. Pixel-perfekte Abmessungen für beste Qualität.",
-      "h1": "Instagram-Bildanforderungen & Spezifikationen 2025",
-      "intro": "Instagram komprimiert alle Bilder, aber wenn Sie die korrekten Abmessungen und Formate verwenden, können Sie die bestmögliche Qualität erzielen. Hier sind die aktuellen Spezifikationen für jeden Bildtyp auf Instagram.",
-      "primaryKeyword": "instagram bildgröße",
+      "slug": "midjourney-upscaler",
+      "title": "Midjourney Upscaler - Verbessern KI Bilder to 4K Qualität",
+      "metaTitle": "Kostenlos Midjourney Upscaler | Verbessern MJ Bilder to 4K Online",
+      "metaDescription": "Upscale Midjourney Bilder to 4K without losing Qualität. Kostenlos KI-Upscaler that preserves details, fixes artifacts, and enhances text clarity. Works with all MJ versions.",
+      "h1": "Midjourney Upscaler - Verbessern Your KI Bilder to 4K",
+      "intro": "Midjourney creates stunning KI-Kunst, but its default Auflösung may not be enough for Professionell use, large prints, or high-Qualität displays. Our specialized Midjourney Upscaler enhances your Bilder to 4K Auflösung while preserving the unique artistic style and details that make KI-Generiert Kunst special.",
+      "primaryKeyword": "Midjourney Upscaler",
       "secondaryKeywords": [
-        "instagram bildanforderungen",
-        "instagram auflösung",
-        "instagram post größe",
-        "instagram story größe"
+        "upscale Midjourney image",
+        "Midjourney image enhancer",
+        "improve Midjourney Auflösung",
+        "Midjourney 4k Upscaler",
+        "Verbessern KI-Kunst"
       ],
-      "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "Plattformen",
-      "platform": "Instagram",
-      "imageTypes": [
+      "platformName": "Midjourney",
+      "platformType": "KI-Generator",
+      "description": "Specialized upscaling for Midjourney KI-Generiert Bilder, enhancing Auflösung while preserving artistic style and details.",
+      "benefits": [
         {
-          "type": "Square Post",
-          "dimensions": "1080x1080px",
-          "aspectRatio": "1:1",
-          "use": "Standard-Posts",
-          "fileSize": "Unter 500 KB empfohlen",
-          "note": "Am häufigsten verwendet, funktioniert gut auf allen Geräten"
+          "title": "Preserve Artistic Style",
+          "description": "Maintains the unique aesthetic qualities of Midjourney's KI-Kunst style"
         },
         {
-          "type": "Portrait Post",
-          "dimensions": "1080x1350px",
-          "aspectRatio": "4:5",
-          "use": "Vertikale Posts",
-          "fileSize": "Unter 500 KB empfohlen",
-          "note": "Nimmt den meisten Feed-Platz ein, wird für Engagement empfohlen"
+          "title": "Fix Compression Artifacts",
+          "description": "Removes JPEG compression artifacts while enhancing image clarity"
         },
         {
-          "type": "Landscape Post",
-          "dimensions": "1080x566px",
-          "aspectRatio": "1.91:1",
-          "use": "Querformat-Posts",
-          "fileSize": "Unter 500 KB empfohlen",
-          "note": "Erscheinengeringer im Feed, für Landschaftsaufnahmen"
+          "title": "Verbessern Fine Details",
+          "description": "Sharpens intricate patterns and textures that KI generators create"
         },
         {
-          "type": "Story/Reel",
-          "dimensions": "1080x1920px",
-          "aspectRatio": "9:16",
-          "use": "Stories und Reels",
-          "fileSize": "Unter 1 MB empfohlen",
-          "note": "Volle vertikale Bildschirmhöhe"
+          "title": "Print-Ready Qualität",
+          "description": "Upscale to resolutions suitable for large format printing"
         },
         {
-          "type": "Profile Picture",
-          "dimensions": "320x320px",
-          "aspectRatio": "1:1",
-          "use": "Profilbild",
-          "fileSize": "Kleine Datei in Ordnung",
-          "note": "Wird auf Kreis zugeschnitten"
-        },
-        {
-          "type": "IGTV Thumbnail",
-          "dimensions": "420x654px",
-          "aspectRatio": "1:1.55",
-          "use": "IGTV-Vorschaubild",
-          "fileSize": "Unter 2 MB",
-          "note": "Nur für IGTV-Inhalte"
+          "title": "Text Clarity",
+          "description": "Keeps any text elements sharp and readable after upscaling"
         }
       ],
-      "technicalSpecs": {
-        "resolution": "1080px Breite empfohlen",
-        "compression": "Instagram komprimiert alle Uploads",
-        "formats": "JPEG und PNG unterstützt",
-        "colorSpace": "sRGB empfohlen",
-        "fileSizeLimit": "30 MB für externe Uploads"
-      },
-      "bestPractices": [
+      "integration": [
+        "Export from Midjourney in PNG format for Bester results",
+        "Use upscaling feature in Midjourney first, then Verbessern further",
+        "Supports all Midjourney versions (v1-v6 and Niji)",
+        "Works with both grid Bilder and upscaled single Bilder",
+        "Batch process multiple Midjourney creations"
+      ],
+      "useCases": [
         {
-          "practice": "Bei 1080px hochladen",
-          "description": "Vermeiden Sie erneutes Downsampling durch Hochladen bei der Zielauflösung von 1080px Breite."
+          "title": "Print Midjourney Kunst",
+          "description": "Upscale KI artwork for canvas prints, posters, and merchandise"
         },
         {
-          "practice": "Porträt (4:5) für Posts verwenden",
-          "description": "4:5 nimmt im Feed den meisten Platz ein und führt zu besserem Engagement."
+          "title": "Social Media Verbesserung",
+          "description": "Create high-Auflösung versions for Instagram, Pinterest, and Kunst communities"
         },
         {
-          "practice": "sRGB-Farbraum",
-          "description": "Verwenden Sie sRGB für konsistente Farben auf allen Geräten."
+          "title": "Portfolio Qualität",
+          "description": "Verbessern Bilder for Professionell Kunst and design portfolios"
         },
         {
-          "practice": "Qualität beibehalten",
-          "description": "Verwenden Sie 80-90% JPEG-Qualität vor dem Upload."
+          "title": "NFT Preparation",
+          "description": "Create high-Auflösung versions suitable for NFT minting"
         },
         {
-          "practice": "Mobile First",
-          "description": "Die meisten Nutzer sehen Ihre Inhalte auf Mobilgeräten, priorisieren Sie mobile Darstellung."
+          "title": "Large Format Display",
+          "description": "Prepare Bilder for trade shows, exhibitions, and digital signage"
         }
       ],
-      "commonMistakes": [
-        {
-          "mistake": "Zu hochauflösend hochladen",
-          "fix": "Bleiben Sie bei 1080px Breite. Höhere Auflösung wird herunterskaliert und kann Schärfe verlieren."
-        },
-        {
-          "mistake": "Falsches Seitenverhältnis",
-          "fix": "Verwenden Sie 1:1, 4:5 oder 1.91:1 für Posts, 9:16 für Stories."
-        },
-        {
-          "mistake": "Übermäßige Komprimierung",
-          "fix": "Verwenden Sie höhere JPEG-Qualität (85-90%) vor dem Upload."
-        },
-        {
-          "mistake": "Falscher Farbraum",
-          "fix": "Konvertieren Sie in sRGB für konsistente Farben auf Instagram."
-        }
+      "workflowSteps": [
+        "Generate your image in Midjourney using your preferred prompts and parameters",
+        "Export or save the image in PNG format (highest Qualität available)",
+        "Upload to our Upscaler and select your target Auflösung (2x, 4x, or custom)",
+        "Choose Verbesserung level based on your use case (web, print, or ultra-high-res)",
+        "Download your enhanced 4K Midjourney image ready for use"
       ],
       "faq": [
         {
-          "question": "Warum werden meine Instagram-Bilder unscharf?",
-          "answer": "Häufige Ursachen: Auflösung nicht genau 1080px, übermäßige Komprimierung oder falscher Farbraum. Laden Sie bei exakt 1080px Breite mit 85-90% Qualität und sRGB-Farbprofil hoch."
+          "question": "Why do I need to upscale Midjourney Bilder?",
+          "answer": "Midjourney's default Auflösung (1024x1024 or higher for v5+) may not be sufficient for Professionell printing, large format displays, or high-Qualität applications. Upscaling enhances detail while maintaining the artistic style."
         },
         {
-          "question": "Welches ist das beste Instagram-Seitenverhältnis für Engagement?",
-          "answer": "4:5 (Hochformat/Portrait) nimmt im Feed den meisten Platz ein und führt typischerweise zu besserem Engagement als Quadrat oder Querformat."
+          "question": "Will upscaling change my Midjourney image's style?",
+          "answer": "Our Upscaler is designed to preserve the original artistic style and aesthetic qualities of your Midjourney Bilder while enhancing Auflösung and sharpness."
         },
         {
-          "question": "Sollte ich JPEG oder PNG für Instagram verwenden?",
-          "answer": "JPEG wird für Fotos empfohlen (kleinere Datei, gute Qualität). PNG nur für Grafiken mit Text oder wenn Transparenz benötigt wird."
+          "question": "What's the Bester format to export from Midjourney?",
+          "answer": "PNG format provides the highest Qualität for upscaling. Avoid JPEG if possible, as compression artifacts can be amplified during the upscaling process."
         },
         {
-          "question": "Wie kann ich Instagram-Komprimierung vermeiden?",
-          "answer": "Sie können Komprimierung nicht vollständig vermeiden, aber minimieren Sie Auswirkungen durch Hochladen bei exakt 1080px Breite, Verwenden von sRGB und hoher JPEG-Qualität (85-90%)."
+          "question": "Can I upscale Midjourney grid Bilder?",
+          "answer": "Yes, but for Bester results, first use Midjourney's upscale feature to get individual high-res Bilder, then Verbessern them further with our Upscaler."
         },
         {
-          "question": "Was ist die maximale Bildgröße für Instagram?",
-          "answer": "Instagram skaliert alle Bilder auf maximal 1080px Breite herunter. Das Hochladen höherer Auflösungen ergibt keinen Qualitätsvorteil und führt zu mehr Komprimierung."
+          "question": "Does this work with Midjourney Niji (anime) Bilder?",
+          "answer": "Absolutely! Our Upscaler works excellently with Niji Bilder, preserving the anime style while enhancing line Qualität and details."
+        },
+        {
+          "question": "Can I print upscaled Midjourney Bilder?",
+          "answer": "Yes, upscaled Bilder are suitable for printing. We recommend 4x upscaling for standard prints and 8x for large format posters and canvas prints."
+        },
+        {
+          "question": "How big can I upscale my Midjourney Bilder?",
+          "answer": "You can upscale up to 8x the original Auflösung. For Midjourney v5+ Bilder (1024x1024), this means outputs up to 8192x8192 pixels."
+        },
+        {
+          "question": "Does upscaling fix Midjourney artifacts?",
+          "answer": "Our Upscaler can reduce certain compression artifacts and Verbessern overall clarity, but it won't fundamentally alter or 'fix' the original KI generation choices."
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedFormats": ["instagram-jpeg", "instagram-png"]
+      "relatedPlatforms": ["stable-diffusion-Upscaler", "dalle-Upscaler", "Canva-Upscaler"],
+      "relatedTools": ["KI-image-Upscaler", "bulk-image-Upscaler"],
+      "ogImage": "/og-Bilder/Midjourney-Upscaler.png",
+      "lastUpdated": "2026-01-06"
     },
     {
-      "slug": "facebook",
-      "title": "Facebook Image Requirements",
-      "metaTitle": "Facebook-Bildgrößen 2025: Posts, Cover, Profil & Anzeigen",
-      "metaDescription": "Aktuelle Facebook-Bildspezifikationen für Posts, Cover-Fotos, Profilbilder und Anzeigen. Optimale Größen für beste Qualität und Reichweite.",
-      "h1": "Facebook-Bildanforderungen & Spezifikationen 2025",
-      "intro": "Facebook hat spezifische Bildgrößen für verschiedene Inhaltstypen. Die richtigen Abmessungen zu verwenden, stellt sicher, dass Ihre Bilder professionell aussehen und nicht beschnitten oder verzerrt werden.",
-      "primaryKeyword": "facebook bildgröße",
+      "slug": "stable-diffusion-upscaler",
+      "title": "Stable Diffusion Upscaler - Verbessern SD Bilder to Print Qualität",
+      "metaTitle": "Kostenlos Stable Diffusion Upscaler | Verbessern SD to 4K/8K",
+      "metaDescription": "Upscale Stable Diffusion Bilder while preserving KI details. Fix artifacts, Verbessern clarity, and prepare for print. Works with SDXL, SD 1.5, Anime models.",
+      "h1": "Stable Diffusion Upscaler - Print Qualität KI Image Verbesserung",
+      "intro": "Stable Diffusion produces incredible KI-Generiert Bilder, but the default 512x512 or 1024x1024 Auflösung isn't enough for Professionell printing or high-Qualität displays. Our specialized Upscaler enhances your SD and SDXL Bilder to 4K and beyond while preserving the intricate details and style that make Stable Diffusion outputs unique.",
+      "primaryKeyword": "Stable Diffusion Upscaler",
       "secondaryKeywords": [
-        "facebook bildanforderungen",
-        "facebook cover foto größe",
-        "facebook post größe",
-        "facebook profilbild größe"
+        "upscale Stable Diffusion",
+        "sd Upscaler",
+        "sdxl Upscaler",
+        "Verbessern KI Bilder",
+        "Stable Diffusion 4k"
       ],
-      "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "Plattformen",
-      "platform": "Facebook",
-      "imageTypes": [
+      "platformName": "Stable Diffusion",
+      "platformType": "KI-Generator",
+      "description": "Advanced upscaling for Stable Diffusion outputs, supporting SD 1.5, SDXL, and custom checkpoint models.",
+      "benefits": [
         {
-          "type": "Shared Image/Post",
-          "dimensions": "1200x630px",
-          "aspectRatio": "1.91:1",
-          "use": "Standard-Link-Vorschau-Posts",
-          "note": "Wird für geteilte Links und Blog-Posts verwendet"
+          "title": "Preserve Model Style",
+          "description": "Maintains the specific characteristics of different SD models and checkpoints"
         },
         {
-          "type": "Square Post",
-          "dimensions": "1200x1200px",
-          "aspectRatio": "1:1",
-          "use": "Quadratische Bild-Posts",
-          "note": "Gut für Produktaufnahmen und Fotos"
+          "title": "Fix Pixelation",
+          "description": "Eliminates pixelation from low-Auflösung generations while enhancing details"
         },
         {
-          "type": "Cover Photo (Desktop)",
-          "dimensions": "820x312px",
-          "aspectRatio": "2.63:1",
-          "use": "Seiten- oder Profil-Cover-Foto",
-          "note": "Wird auf Desktop anders angezeigt als Mobil"
+          "title": "Verbessern Fine Details",
+          "description": "Sharpens textures, skin details, and intricate elements in SD generations"
         },
         {
-          "type": "Cover Photo (Mobile)",
-          "dimensions": "640x360px sichtbar",
-          "aspectRatio": "16:9",
-          "use": "Cover-Foto auf Mobilgeräten",
-          "note": "Kleinerer sichtbarer Bereich auf Mobil"
+          "title": "Supports All Resolutions",
+          "description": "Works with 512x512 SD 1.5, 1024x1024 SDXL, and custom Auflösung outputs"
         },
         {
-          "type": "Profile Picture",
-          "dimensions": "170x170px auf Desktop, 128x128px auf Mobil",
-          "aspectRatio": "1:1",
-          "use": "Profilbild",
-          "note": "Wird auf Kreis zugeschnitten"
-        },
-        {
-          "type": "Story",
-          "dimensions": "1080x1920px",
-          "aspectRatio": "9:16",
-          "use": "Facebook Stories",
-          "note": "Volle Bildschirmhöhe auf Mobil"
-        },
-        {
-          "type": "Ad Image",
-          "dimensions": "1200x628px empfohlen",
-          "aspectRatio": "1.91:1",
-          "use": "Facebook-Werbebilder",
-          "note": "Muss Text-Policy-Richtlinien einhalten"
+          "title": "Batch Processing",
+          "description": "Upscale multiple SD generations at once for efficient workflows"
         }
       ],
-      "technicalSpecs": {
-        "resolution": "1200px Breite empfohlen für Posts",
-        "compression": "Facebook komprimiert Bilder",
-        "formats": "JPEG und PNG unterstützt",
-        "colorSpace": "sRGB empfohlen",
-        "fileSize": "Unter 500 KB für beste Ergebnisse"
-      },
-      "bestPractices": [
+      "integration": [
+        "Works with Automatic1111, ComfyUI, and WebUI outputs",
+        "Supports SDXL native 1024x1024 Auflösung",
+        "Compatible with all SD model checkpoints",
+        "Handles img2img and txt2img outputs equally well",
+        "Preserves High-Res Fix pass results"
+      ],
+      "useCases": [
         {
-          "practice": "Wichtigen Inhalt zentrieren",
-          "description": "Für Cover-Fotos: Wichtiger Inhalt sollte in der sicheren Zone mittig platziert werden."
+          "title": "Print SD Artwork",
+          "description": "Create gallery-Qualität prints from your Stable Diffusion generations"
         },
         {
-          "practice": "Mobile First",
-          "description": "Die meisten Facebook-Nutzer sind mobil. Stellen Sie sicher, dass Bilder auf Mobilgeräten gut aussehen."
+          "title": "Texture Creation",
+          "description": "Generate high-Auflösung textures for game assets and 3D modeling"
         },
         {
-          "practice": "Text im Bild minimieren",
-          "description": "Facebook begrenzt Reichweite für Bilder mit mehr als 20% Text."
+          "title": "Stock Verbesserung",
+          "description": "Upscale SD Bilder for stock photo submissions and sales"
         },
         {
-          "practice": "Konsistente Branding",
-          "description": "Verwenden Sie konsistente Bildstile für Posts zur Stärkung der Markenbekanntheit."
+          "title": "Product Visualization",
+          "description": "Verbessern product mockups and visualizations for marketing materials"
         },
         {
-          "practice": "sRGB verwenden",
-          "description": "sRGB-Farbraum für konsistente Farben auf allen Geräten."
+          "title": "Digital Kunst Portfolios",
+          "description": "Create Professionell portfolio pieces from SD generations"
         }
       ],
-      "commonIssues": [
-        {
-          "issue": "Cover-Foto wird auf Mobil beschnitten",
-          "solution": "Wichtigen Inhalt in der sicheren Zone mittig platzieren (640x360px Bereich)",
-          "howTo": "Design für Desktop, aber sicherstellen, dass wichtige Elemente im mittigen Bereich bleiben."
-        },
-        {
-          "issue": "Bilder werden nach Upload unscharf",
-          "solution": "Bei empfohlener Auflösung und hoher Qualität hochladen",
-          "howTo": "1200px Breite für Posts, 85-90% JPEG-Qualität, sRGB-Farbprofil."
-        },
-        {
-          "issue": "Profilbild quadratisch halten",
-          "solution": "Wichtigen Inhalt im Kreis zentrieren",
-          "howTo": "Design für quadratisches 1:1-Format mit wichtigem Inhalt zentriert."
-        },
-        {
-          "issue": "Anzeige-Warnung zu Text",
-          "solution": "Text reduzieren oder Bild neu gestalten",
-          "howTo": "Weniger als 20% des Bildes mit Text bedecken lassen."
-        }
+      "workflowSteps": [
+        "Generate your image in Stable Diffusion using your preferred model and settings",
+        "Use Hi-Res Fix or higher Auflösung settings for better starting Qualität",
+        "Save the output in PNG format without compression",
+        "Upload to our Upscaler and select your target Auflösung",
+        "Download your enhanced high-Auflösung SD image"
       ],
       "faq": [
         {
-          "question": "Wie groß sollte ein Facebook-Post-Bild sein?",
-          "answer": "1200x630px (1.91:1) ist Standard für Link-Posts. 1200x1200px (1:1) für quadratische Bild-Posts. Verwenden Sie 1200px Breite für beste Qualität."
+          "question": "What Auflösung should I generate at in Stable Diffusion?",
+          "answer": "For Bester upscaling results, use SDXL's native 1024x1024, or enable Hi-Res Fix in SD 1.5. Higher starting Auflösung yields better upscaled results."
         },
         {
-          "question": "Warum sieht mein Facebook-Cover-Foto auf Mobil anders aus?",
-          "answer": "Cover-Fotos werden auf Desktop und Mobil unterschiedlich beschnitten. Auf Mobil ist nur ein 640x360px-Bereich in der Mitte sichtbar. Zentrieren Sie wichtigen Inhalt."
+          "question": "Can I upscale Bilder from specific SD checkpoints?",
+          "answer": "Yes! Our Upscaler works with Bilder from any SD checkpoint or LoRA, preserving the unique style characteristics of each model."
         },
         {
-          "question": "Welches Bildformat wird von Facebook unterstützt?",
-          "answer": "Facebook unterstützt JPEG und PNG. JPEG wird für Fotos empfohlen (kleinere Datei). PNG für Grafiken mit Text oder Transparenz."
+          "question": "Does this work with SDXL Bilder?",
+          "answer": "Absolutely. SDXL's native 1024x1024 Auflösung is a great starting point, and our Upscaler can Verbessern it further to 4K and beyond."
         },
         {
-          "question": "Wie viel Text ist in Facebook-Bildern zulässig?",
-          "answer": "Für Anzeigen begrenzt Facebook die Reichweite für Bilder mit mehr als 20% Text. Für organisches Traffic gilt keine harte Regel, aber weniger Text wird empfohlen."
+          "question": "Will upscaling add detail to my SD Bilder?",
+          "answer": "Our Upscaler enhances existing details and sharpens the image, but it doesn't 'hallucinate' new details that weren't in the original generation."
         },
         {
-          "question": "Muss ich verschiedene Größen für Desktop und Mobile hochladen?",
-          "answer": "Nein, Facebook passt automatisch an. Aber designen Sie unter Berücksichtigung von Mobile (besonders für Cover-Fotos), da die meisten Nutzer mobil sind."
+          "question": "Can I upscale anime-style Stable Diffusion Bilder?",
+          "answer": "Yes, our Upscaler works excellently with anime-style models and checkpoints, preserving line Qualität and cel-shading techniques."
+        },
+        {
+          "question": "What about img2img outputs?",
+          "answer": "img2img outputs work great with our Upscaler. Just ensure you save at the highest Qualität setting available."
+        },
+        {
+          "question": "Can I use this with ControlNet outputs?",
+          "answer": "Yes, ControlNet Bilder upscale well. The structural guidance from ControlNet is preserved in the upscaled output."
+        },
+        {
+          "question": "How does this compare to SD's built-in Upscaler?",
+          "answer": "Our Upscaler focuses on print-Qualität output and artifact reduction, complementing SD's internal upscaling. Many artists use both."
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedFormats": ["facebook-jpeg", "facebook-png"]
+      "relatedPlatforms": ["Midjourney-Upscaler", "dalle-Upscaler"],
+      "relatedTools": ["KI-image-Upscaler", "bulk-image-Upscaler"],
+      "ogImage": "/og-Bilder/stable-diffusion-Upscaler.png",
+      "lastUpdated": "2026-01-06"
     },
     {
-      "slug": "twitter",
-      "title": "Twitter/X Image Requirements",
-      "metaTitle": "Twitter/X-Bildgrößen 2025: Posts, Header, Profil & Anzeigen",
-      "metaDescription": "Aktuelle Twitter/X-Bildspezifikationen für Posts, Header, Profilbilder und Anzeigen. Optimale Größen für beste Qualität und Engagement.",
-      "h1": "Twitter/X-Bildanforderungen & Spezifikationen 2025",
-      "intro": "Twitter (jetzt X) hat spezifische Bildgrößen für verschiedene Inhaltstypen. Die richtigen Abmessungen zu verwenden, stellt sicher, dass Ihre Bilder professionell aussehen und nicht beschnitten werden.",
-      "primaryKeyword": "twitter bildgröße",
+      "slug": "dalle-upscaler",
+      "title": "DALL-E Upscaler - Verbessern OpenAI Bilder to Ultra HD",
+      "metaTitle": "Kostenlos DALL-E Upscaler | Verbessern DALL-E 2 & 3 Bilder",
+      "metaDescription": "Upscale DALL-E Bilder to 4K/8K Auflösung. Fix compression, Verbessern details, and prepare for print. Works with DALL-E 2 and DALL-E 3 outputs.",
+      "h1": "DALL-E Upscaler - Ultra HD Verbesserung for OpenAI Bilder",
+      "intro": "DALL-E creates impressive KI-Generiert Bilder, but the Auflösung may not meet your needs for Professionell projects, printing, or high-Qualität displays. Our specialized DALL-E Upscaler enhances your Bilder to 4K and beyond while preserving OpenAI's signature style and the details that make each generation unique.",
+      "primaryKeyword": "dalle Upscaler",
       "secondaryKeywords": [
-        "x bildgröße",
-        "twitter header größe",
-        "twitter post bild größe",
-        "twitter profilbild größe"
+        "upscale dalle",
+        "dalle image enhancer",
+        "DALL-E 2 Upscaler",
+        "DALL-E 3 Upscaler",
+        "Verbessern openai Bilder"
       ],
-      "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "Plattformen",
-      "platform": "Twitter/X",
-      "imageTypes": [
+      "platformName": "DALL-E",
+      "platformType": "KI-Generator",
+      "description": "Professionell upscaling for DALL-E 2 and DALL-E 3 Bilder, optimized for OpenAI's unique artistic style.",
+      "benefits": [
         {
-          "type": "In-Stream Photo",
-          "dimensions": "1600x900px",
-          "aspectRatio": "16:9",
-          "use": "Posts mit einzelnen Bildern",
-          "note": "Wird nicht beschnitten, zeigt vollständig"
+          "title": "Preserve DALL-E Style",
+          "description": "Maintains OpenAI's distinctive artistic style and color palette"
         },
         {
-          "type": "Single Image Tweet",
-          "dimensions": "1200x675px",
-          "aspectRatio": "16:9",
-          "use": "Einzelnes Bild im Tweet",
-          "note": "Optimales Seitenverhältnis für Anzeige"
+          "title": "Verbessern Photorealism",
+          "description": "Improves realism in photorealistic DALL-E generations"
         },
         {
-          "type": "Multiple Images (2)",
-          "dimensions": "700x800px pro Bild",
-          "aspectRatio": "7:8",
-          "use": "Tweets mit zwei Bildern",
-          "note": "Werden nebeneinander angezeigt"
+          "title": "Fix Compression",
+          "description": "Reduces compression artifacts from ChatGPT interface downloads"
         },
         {
-          "type": "Multiple Images (3+)",
-          "dimensions": "1200x675px empfohlen",
-          "aspectRatio": "16:9 oder 1:1",
-          "use": "Tweets mit drei oder mehr Bildern",
-          "note": "Werden als Gitter angezeigt"
+          "title": "Text Verbesserung",
+          "description": "Keeps rendered text sharp and readable after upscaling"
         },
         {
-          "type": "Header Photo",
-          "dimensions": "1500x500px",
-          "aspectRatio": "3:1",
-          "use": "Profil-Header-Banner",
-          "note": "Wird auf Mobil mit oben zentriertem Profilbild überlagert"
-        },
-        {
-          "type": "Profile Picture",
-          "dimensions": "400x400px",
-          "aspectRatio": "1:1",
-          "use": "Profilbild",
-          "note": "Wird auf Kreis zugeschnitten"
+          "title": "Print Ready",
+          "description": "Creates Auflösung suitable for Professionell printing applications"
         }
       ],
-      "technicalSpecs": {
-        "resolution": "1200px Breite empfohlen für Posts",
-        "compression": "Twitter/X komprimiert Bilder",
-        "formats": "JPEG und PNG unterstützt",
-        "colorSpace": "sRGB empfohlen",
-        "fileSize": "Unter 5 MB für Uploads",
-        "maxFileSize": "15 MB für JPEG, 5 MB für PNG/GIF"
-      },
-      "bestPractices": [
+      "integration": [
+        "Works with DALL-E 2 (1024x1024) and DALL-E 3 Bilder",
+        "Optimized for ChatGPT interface downloads",
+        "Supports both square and rectangular DALL-E outputs",
+        "Handles DALL-E 3's improved detail and texture rendering",
+        "Batch process multiple generations efficiently"
+      ],
+      "useCases": [
         {
-          "practice": "16:9 für einzelne Bilder verwenden",
-          "description": "16:9 (Querformat) sieht im Timeline-Stream am besten aus."
+          "title": "Print DALL-E Kunst",
+          "description": "Create high-Qualität prints from your DALL-E generations"
         },
         {
-          "practice": "Mehrfache Bilder konsistent halten",
-          "description": "Bei mehreren Bilder gleiche Abmessungen für konsistentes Gitter verwenden."
+          "title": "Marketing Materials",
+          "description": "Verbessern DALL-E Bilder for brochures, presentations, and ads"
         },
         {
-          "practice": "Header-Design sicherung",
-          "description": "Wichtiger Inhalt im Header sollte mittig und oben platziert werden.",
-          "reason": "Profilbild überlagert den Header unten links auf Mobil."
+          "title": "Web Graphics",
+          "description": "Create high-Auflösung hero Bilder and website graphics"
         },
         {
-          "practice": "Alt-Text hinzufügen",
-          "description": "Beschreibenden Alt-Text für Barrierefreiheit hinzufügen.",
-          "reason": "Verbessert die Erfahrung für blinde Nutzer und Screen-Reader-Nutzer."
+          "title": "Book Illustrations",
+          "description": "Upscale DALL-E illustrations for print and digital publications"
         },
         {
-          "practice": "High Quality Uploads",
-          "description": "Hohe Qualitätseinstellungen (85-90%) für JPEGs verwenden.",
-          "reason": "Twitter/X komprimiert erneut, also mit hoher Qualität starten."
+          "title": "Product Mockups",
+          "description": "Verbessern DALL-E product concepts for presentations and prototyping"
         }
       ],
-      "commonIssues": [
-        {
-          "issue": "Bilder werden beschnitten",
-          "solution": "16:9-Seitenverhältnis für einzelne Bilder verwenden",
-          "howTo": "Querformate (16:9) werden im Stream vollständig angezeigt. Quadratische Bilder werden beschnitten."
-        },
-        {
-          "issue": "Header wird von Profilbild überlagert",
-          "solution": "Wichtigen Inhalt oben und mittig platzieren",
-          "howTo": "Design Sie unter Berücksichtigung der Profilbild-Position unten links auf Mobilgeräten."
-        },
-        {
-          "issue": "JPEG-Artefakte nach Upload",
-          "solution": "Höhere Qualitätseinstellungen vor dem Upload verwenden",
-          "howTo": "85-90% JPEG-Qualität mit sRGB-Farbprofil für beste Ergebnisse."
-        },
-        {
-          "issue": "Mehrfache Bilder sehen ungleichmäßig aus",
-          "solution": "Gleiche Abmessungen für alle Bilder in einem Tweet verwenden",
-          "howTo": "Alle Bilder auf gleiches Seitenverhältnis (z.B. alle 16:9 oder alle 1:1) zuschneiden."
-        }
+      "workflowSteps": [
+        "Generate your image using DALL-E via ChatGPT or the API",
+        "Download the image in the highest available Qualität",
+        "Upload to our specialized DALL-E Upscaler",
+        "Select your target Auflösung (4K recommended for most uses)",
+        "Download your enhanced ultra-HD DALL-E image"
       ],
       "faq": [
         {
-          "question": "Wie groß sollten Twitter-Bilder sein?",
-          "answer": "1200x675px (16:9) ist optimal für einzelne Bilder. Für zwei Bilder nebeneinander verwenden Sie 700x800px (7:8). Für drei oder mehr Bilder ist 1200x675px oder 1200x1200px gut."
+          "question": "Does this work with DALL-E 3 Bilder?",
+          "answer": "Yes! Our Upscaler is optimized for both DALL-E 2 and DALL-E 3, enhancing the improved detail and texture rendering in DALL-E 3 outputs."
         },
         {
-          "question": "Warum werden meine Twitter-Bilder beschnitten?",
-          "answer": "Twitter zeigt Bilder mit 16:9-Seitenverhältnis am besten an. Quadratische oder hochformatige Bilder werden beschnitten, um ins 16:9-Format zu passen. Verwenden Sie 16:9 für beste Anzeige."
+          "question": "What's the Bester way to export from DALL-E?",
+          "answer": "Download Bilder directly from ChatGPT in PNG format when available. Avoid taking screenshots, as they reduce Qualität."
         },
         {
-          "question": "Sollte ich JPEG oder PNG für Twitter verwenden?",
-          "answer": "JPEG wird für Fotos empfohlen (kleinere Datei). PNG für Grafiken mit Text oder wenn Sie Transparenz benötigen. Beide Formate werden akzeptiert."
+          "question": "Can I upscale rectangular DALL-E Bilder?",
+          "answer": "Yes, we support both the classic square format and DALL-E 3's rectangular outputs."
         },
         {
-          "question": "Wie groß ist ein Twitter-Header-Foto?",
-          "answer": "1500x500px (3:1) ist die empfohlene Größe. Beachten Sie, dass Ihr Profilbild den Header unten links auf Mobilgeräten überlagert, also platzieren Sie wichtigen Inhalt entsprechend."
+          "question": "Will upscaling improve DALL-E's text rendering?",
+          "answer": "Upscaling sharpens existing text, making it clearer, but won't fix spelling errors that were in the original generation."
         },
         {
-          "question": "Gibt es eine Dateigrößenbeschränkung auf Twitter?",
-          "answer": "Ja, 15 MB für JPEG-Uploads, 5 MB für PNG/GIF. Für beste Ergebnisse halten Sie Bilder unter 5 MB mit 85-90% JPEG-Qualität."
+          "question": "Can I print upscaled DALL-E Bilder?",
+          "answer": "Yes, 4K upscaled Bilder are excellent for printing. We recommend testing a small print first to ensure Qualität meets your standards."
+        },
+        {
+          "question": "Does this work with DALL-E via ChatGPT?",
+          "answer": "Absolutely. Bilder Generiert through ChatGPT's DALL-E integration work perfectly with our Upscaler."
+        },
+        {
+          "question": "What about DALL-E edit variations?",
+          "answer": "All DALL-E variations and edits can be upscaled. Each variation is treated as an independent image."
+        },
+        {
+          "question": "Can I upscale DALL-E Bilder for commercial use?",
+          "answer": "Yes, upscaled Bilder maintain the same usage rights as the original DALL-E generation according to OpenAI's terms."
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedFormats": ["twitter-jpeg", "twitter-png"]
+      "relatedPlatforms": ["Midjourney-Upscaler", "stable-diffusion-Upscaler"],
+      "relatedTools": ["KI-image-Upscaler", "photo-enhancer"],
+      "ogImage": "/og-Bilder/dalle-Upscaler.png",
+      "lastUpdated": "2026-01-06"
     },
     {
-      "slug": "linkedin",
-      "title": "LinkedIn Image Requirements",
-      "metaTitle": "LinkedIn-Bildgrößen 2025: Posts, Profil, Banner & Unternehmen",
-      "metaDescription": "Aktuelle LinkedIn-Bildspezifikationen für Posts, Profilbilder, Banner und Unternehmensoptimierung. Professionelle Bildgrößen.",
-      "h1": "LinkedIn-Bildanforderungen & Spezifikationen 2025",
-      "intro": "LinkedIn ist eine professionelle Plattform, und Ihre Bilder sollten Qualität und Professionalität widerspiegeln. Verwenden Sie diese korrekten Abmessungen für beste Darstellung.",
-      "primaryKeyword": "linkedin bildgröße",
+      "slug": "canva-upscaler",
+      "title": "Canva Upscaler - Verbessern Canva Designs to Print Qualität",
+      "metaTitle": "Kostenlos Canva Upscaler | Verbessern Canva Bilder to 4K/8K",
+      "metaDescription": "Upscale Canva designs without Qualität loss. Perfekt für print, presentations, and Professionell use. Verbessern text, graphics, and Fotos.",
+      "h1": "Canva Upscaler - Professionell Verbesserung for Canva Designs",
+      "intro": "Canva makes design easy, but its download Auflösung limits can be frustrating for Professionell printing, large displays, or high-Qualität presentations. Our specialized Canva Upscaler enhances your designs to 4K and beyond while preserving text clarity, vector graphics sharpness, and image Qualität that makes your designs stand out.",
+      "primaryKeyword": "Canva Upscaler",
       "secondaryKeywords": [
-        "linkedin profilbild größe",
-        "linkedin banner größe",
-        "linkedin post bild größe",
-        "linkedin hintergrundbild"
+        "upscale Canva design",
+        "Canva image enhancer",
+        "improve Canva Auflösung",
+        "Canva 4k Upscaler",
+        "Verbessern Canva exports"
       ],
-      "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "Plattformen",
-      "platform": "LinkedIn",
-      "imageTypes": [
+      "platformName": "Canva",
+      "platformType": "design-Tool",
+      "description": "Specialized upscaling for Canva designs, preserving text clarity, graphics, and Bilder for Professionell output.",
+      "benefits": [
         {
-          "type": "Shared Post/Image",
-          "dimensions": "1200x627px",
-          "aspectRatio": "1.91:1",
-          "use": "Geteilte Blog-Posts und Link-Vorschauen",
-          "note": "Wird für alle Link-Vorschauen verwendet"
+          "title": "Preserve Text Clarity",
+          "description": "Keeps Canva text elements sharp and readable at any Auflösung"
         },
         {
-          "type": "Document Post",
-          "dimensions": "Verschiedene",
-          "aspectRatio": "Variiert",
-          "use": "PDF-Dokument-Posts",
-          "note": "Upload als PDF, LinkedIn zeigt Vorschau"
+          "title": "Verbessern Graphics",
+          "description": "Maintains vector-like Qualität of shapes, icons, and design elements"
         },
         {
-          "type": "Profile Photo",
-          "dimensions": "400x400px",
-          "aspectRatio": "1:1",
-          "use": "Persönliches Profilbild",
-          "note": "Wird auf Kreis zugeschnitten, sollte professionell aussehen"
+          "title": "Support Fotos",
+          "description": "Enhances both design elements and embedded Fotos in the same image"
         },
         {
-          "type": "Banner/Cover Photo",
-          "dimensions": "1584x396px",
-          "aspectRatio": "4:1",
-          "use": "Profil-Hintergrundbild",
-          "note": "Persönliches Profilbanner"
+          "title": "Print Qualität",
+          "description": "Creates high-Auflösung output suitable for Professionell printing"
         },
         {
-          "type": "Company Logo",
-          "dimensions": "300x300px",
-          "aspectRatio": "1:1",
-          "use": "Unternehmens-Logobild",
-          "note": "Unternehmensseiten-Profilbild"
-        },
-        {
-          "type": "Company Cover Photo",
-          "dimensions": "1128x191px",
-          "aspectRatio": "5.9:1",
-          "use": "Unternehmensseiten-Banner",
-          "note": "Sehr breit, Banner-Design erfordert"
-        },
-        {
-          "type": "Banner Image",
-          "dimensions": "1584x396px",
-          "aspectRatio": "4:1",
-          "use": "Profilbanner-Hintergrund",
-          "note": "Persönliches Profil-Hintergrundbild"
+          "title": "Maintain Brand Colors",
+          "description": "Preserves accurate color reproduction for brand-consistent outputs"
         }
       ],
-      "technicalSpecs": {
-        "resolution": "1200px Breite empfohlen für Posts",
-        "compression": "LinkedIn komprimiert Bilder",
-        "formats": "JPEG und PNG unterstützt",
-        "colorSpace": "sRGB empfohlen",
-        "fileSize": "Unter 5 MB empfohlen",
-        "maxFileSize": "8 MB für JPEG/PNG"
-      },
-      "bestPractices": [
+      "integration": [
+        "Download from Canva in PNG format for Bester Qualität",
+        "Supports all Canva Pro download resolutions",
+        "Works with both standard and premium downloads",
+        "Handles Canva's various aspect ratios correctly",
+        "Compatible with animated design exports"
+      ],
+      "useCases": [
         {
-          "practice": "Professionelle Qualität",
-          "description": "Verwenden Sie hochwertige Fotos, die Professionalität ausstrahlen.",
-          "reason": "LinkedIn ist eine professionelle Plattform, Qualität spiegelt Ihre Marke wider."
+          "title": "Print Marketing Materials",
+          "description": "Upscale brochures, flyers, and posters for Professionell printing"
         },
         {
-          "practice": "Konsistentes Branding",
-          "description": "Verwenden Sie konsistente Fotos und Banner über Ihre Profile hinweg.",
-          "reason": "Stärkt die professionelle Identität und Markenbekanntheit."
+          "title": "Presentation Verbesserung",
+          "description": "Create high-Auflösung slides for large venue presentations"
         },
         {
-          "practice": "Banner-Design sicherung",
-          "description": "Platzieren Sie wichtigen Inhalt im Banner mittig.",
-          "reason": "Banner werden auf verschiedenen Geräten unterschiedlich beschnitten."
+          "title": "Social Media Graphics",
+          "description": "Verbessern designs for multiple platforms and screen sizes"
         },
         {
-          "practice": "Profilbild-Professionalität",
-          "description": "Verwenden Sie ein professionelles Headshot als Profilbild.",
-          "reason": "Erster Eindruck ist wichtig auf LinkedIn."
+          "title": "Brand Materials",
+          "description": "Upscale logos, business cards, and brand assets for various uses"
         },
         {
-          "practice": "Alt-Text hinzufügen",
-          "description": "Fügen Sie beschreibenden Alt-Text für alle Bilder hinzu.",
-          "reason": "Barrierefreiheit und SEO-Vorteile."
+          "title": "Merchandise Design",
+          "description": "Prepare Canva designs for print-on-demand products"
         }
       ],
-      "professionalTips": [
-        {
-          "tip": "Vermeiden Sie übermäßige Filter",
-          "description": "Natürlich aussehende Fotos wirken professioneller als stark gefilterte."
-        },
-        {
-          "tip": "Kleidung beachten",
-          "description": "Berufsentsprechende Kleidung verstärkt Professionalität."
-        },
-        {
-          "tip": "Gute Beleuchtung",
-          "description": "Gute Beleuchtung ist wichtiger als teure Ausrüstung."
-        },
-        {
-          "tip": "Einfache Hintergründe",
-          "description": "Unkomplizierte Hintergründe lenken vom Gesicht ab."
-        },
-        {
-          "tip": "Aktuelle Fotos verwenden",
-          "description": "Verwenden Sie aktuelle Fotos, die Sie realistisch darstellen."
-        }
+      "workflowSteps": [
+        "Complete your design in Canva with all elements finalized",
+        "Download as PNG (highest Qualität available - use Pro if needed)",
+        "Upload to our Canva-optimized Upscaler",
+        "Select your target Auflösung based on intended use",
+        "Download your enhanced high-Auflösung Canva design"
       ],
       "faq": [
         {
-          "question": "Wie groß sollte ein LinkedIn-Profilbild sein?",
-          "answer": "400x400px (1:1 Quadrat) ist die empfohlene Größe. Wird auf Kreis zugeschnitten, also stellen Sie sicher, dass Ihr Gesicht zentriert ist. Verwenden Sie ein professionelles Headshot."
+          "question": "Why do I need to upscale Canva designs?",
+          "answer": "Canva's Kostenlos tier has Auflösung limits, and even Pro downloads may not be sufficient for large format printing or ultra-high-Auflösung displays."
         },
         {
-          "question": "Wie groß ist ein LinkedIn-Banner/Hintergrundbild?",
-          "answer": "1584x396px (4:1) für persönliche Profilbanner. Für Unternehmensseiten ist 1128x191px (5.9:1) die korrekte Größe."
+          "question": "Will text stay sharp when upscaled?",
+          "answer": "Yes, our Upscaler is specifically optimized to maintain text clarity in Canva designs, keeping fonts crisp and readable."
         },
         {
-          "question": "Welches Bildformat sollte ich für LinkedIn verwenden?",
-          "answer": "JPEG wird für Fotos empfohlen. PNG für Grafiken mit Text oder Logos. Verwenden Sie sRGB-Farbprofil für konsistente Farben."
+          "question": "Can I upscale designs with embedded Fotos?",
+          "answer": "Yes, both the design elements and any embedded Fotos are enhanced. Complex designs with mixed content work well."
         },
         {
-          "question": "Warum sehen meine LinkedIn-Bilder unscharf aus?",
-          "answer": "LinkedIn komprimiert Bilder. Verwenden Sie 1200px Breite für Posts mit hoher Qualität (85-90%) und sRGB-Farbprofil für beste Ergebnisse."
+          "question": "What's the Bester format to download from Canva?",
+          "answer": "PNG format provides the highest Qualität. Avoid downloading as JPEG if you plan to upscale, as compression artifacts will be amplified."
         },
         {
-          "question": "Kann ich dasselbe Bild auf LinkedIn und Twitter verwenden?",
-          "answer": "Technisch ja, aber Sie sollten für jede Plattform optimieren. LinkedIn bevorzugt professionelle Bilder, Twitter erlaubt mehr Kreativität. Passen Sie bei Bedarf das Seitenverhältnis an."
+          "question": "Can I upscale for large format printing?",
+          "answer": "Yes, 4K-8K upscaled designs work well for posters, banners, and other large format print applications."
+        },
+        {
+          "question": "Does this work with Canva Pro downloads?",
+          "answer": "Yes, and Pro's higher Auflösung starting point will yield even better upscaled results."
+        },
+        {
+          "question": "Will colors remain accurate?",
+          "answer": "Our Upscaler maintains color accuracy, important for brand materials and designs with specific color requirements."
+        },
+        {
+          "question": "Can I upscale animated Canva designs?",
+          "answer": "For static exports, yes. For animated designs, export each frame individually, then reassemble after upscaling."
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedFormats": ["linkedin-jpeg", "linkedin-png"]
+      "relatedPlatforms": ["Photoshop-Upscaler", "Midjourney-Upscaler"],
+      "relatedTools": ["KI-image-Upscaler", "bulk-image-Upscaler"],
+      "ogImage": "/og-Bilder/Canva-Upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "photoshop-upscaler",
+      "title": "Photoshop Upscaler - Verbessern PSD Exports to Ultra HD",
+      "metaTitle": "Kostenlos Photoshop Upscaler | Verbessern PSD Bilder to 4K/8K",
+      "metaDescription": "Upscale Photoshop exports and PSD layers. Verbessern detailed edits, composites, and artwork to print Qualität. Preserve layer effects and filters.",
+      "h1": "Photoshop Upscaler - Ultra HD Verbesserung for Adobe Photoshop",
+      "intro": "Adobe Photoshop is the industry standard for image editing, but exporting at sufficient Auflösung for large format printing or ultra-high-Auflösung displays can be challenging. Our specialized Photoshop Upscaler enhances your exported Bilder and artwork to 4K and beyond while preserving the intricate details, layer effects, and Professionell Qualität that defines Photoshop output.",
+      "primaryKeyword": "Photoshop Upscaler",
+      "secondaryKeywords": [
+        "upscale Photoshop Bilder",
+        "Photoshop image enhancer",
+        "Verbessern psd exports",
+        "adobe Photoshop Upscaler",
+        "Photoshop 4k Upscaler"
+      ],
+      "platformName": "Photoshop",
+      "platformType": "photo-editor",
+      "description": "Professionell upscaling for Photoshop exports and artwork, optimized for complex edits and layered compositions.",
+      "benefits": [
+        {
+          "title": "Preserve Edit Qualität",
+          "description": "Maintains the Qualität of complex Photoshop edits and adjustments"
+        },
+        {
+          "title": "Verbessern Details",
+          "description": "Sharpens fine details that Photoshop editing creates"
+        },
+        {
+          "title": "Support All Formats",
+          "description": "Works with PSD exports, PNG, TIFF, and other Photoshop formats"
+        },
+        {
+          "title": "Print Ready",
+          "description": "Creates Auflösung suitable for Professionell printing applications"
+        },
+        {
+          "title": "Composites",
+          "description": "Handles complex multi-layer composites and photo manipulations"
+        }
+      ],
+      "integration": [
+        "Export from Photoshop in TIFF or PNG for lossless Qualität",
+        "Supports Bilder with smart objects and layer effects",
+        "Works with both RGB and CMYK color modes",
+        "Handles 16-bit and 32-bit per channel Bilder",
+        "Compatible with Photoshop Generative Fill outputs"
+      ],
+      "useCases": [
+        {
+          "title": "Print Projects",
+          "description": "Upscale Photoshop artwork for large format printing and exhibitions"
+        },
+        {
+          "title": "Photo Manipulation",
+          "description": "Verbessern complex photo composites and manipulations for high-res output"
+        },
+        {
+          "title": "Digital Kunst",
+          "description": "Upscale digitally painted artwork for portfolio and print"
+        },
+        {
+          "title": "Retouching",
+          "description": "Verbessern retouched Fotos for Professionell portfolio and client delivery"
+        },
+        {
+          "title": "Texture Creation",
+          "description": "Create high-Auflösung textures for game and film from Photoshop originals"
+        }
+      ],
+      "workflowSteps": [
+        "Complete your editing work in Photoshop with layers flattened",
+        "Export using File > Export As - choose TIFF or PNG for Bester Qualität",
+        "Upload to our Photoshop-optimized Upscaler",
+        "Select target Auflösung based on your output needs",
+        "Download your enhanced ultra-HD Photoshop image"
+      ],
+      "faq": [
+        {
+          "question": "What's the Bester format to export from Photoshop?",
+          "answer": "TIFF (uncompressed) or PNG are ideal. Avoid JPEG compression if you plan to upscale, as artifacts will be amplified."
+        },
+        {
+          "question": "Can I upscale layered PSD files?",
+          "answer": "Export flattened versions of each layer separately, then upscale individually. Layers maintain their relationship after Verbesserung."
+        },
+        {
+          "question": "Does this work with smart objects?",
+          "answer": "Yes, but ensure smart objects are rasterized at the highest Auflösung before upscaling for Bester results."
+        },
+        {
+          "question": "Can I upscale 16-bit or 32-bit Bilder?",
+          "answer": "Yes, our Upscaler supports high bit-depth Bilder from Photoshop, preserving tonal range and color accuracy."
+        },
+        {
+          "question": "What about CMYK Bilder?",
+          "answer": "Yes, CMYK Bilder for print can be upscaled. Color accuracy is preserved throughout the process."
+        },
+        {
+          "question": "Can I upscale Photoshop Generative Fill results?",
+          "answer": "Absolutely. Gen Fill outputs work great with our Upscaler for seamless Verbesserung."
+        },
+        {
+          "question": "Will layer effects be preserved?",
+          "answer": "Layer effects must be baked into the image (flattened) before export, but their visual results are preserved in the upscaled output."
+        },
+        {
+          "question": "Can I upscale for large format printing?",
+          "answer": "Yes, upscaled Bilder are excellent for posters, banners, wall Kunst, and other large format applications."
+        }
+      ],
+      "relatedPlatforms": ["Canva-Upscaler", "stable-diffusion-Upscaler"],
+      "relatedTools": ["KI-image-Upscaler", "photo-enhancer"],
+      "ogImage": "/og-Bilder/Photoshop-Upscaler.png",
+      "lastUpdated": "2026-01-06"
     }
-  ]
+  ],
+  "meta": {
+    "totalPages": 5,
+    "lastUpdated": "2025-12-19T00:00:00Z"
+  }
 }

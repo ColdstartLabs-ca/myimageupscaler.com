@@ -1,367 +1,1018 @@
 {
-  "category": "Gerätenutzung",
+  "category": "device-use",
   "pages": [
     {
-      "slug": "mobile-image-upscaler",
-      "title": "Mobile Bild-Upscaler - Handy & Tablet KI-Verbesserung",
-      "metaTitle": "Mobile Bild-Upscaler - KI-Verbesserung für Handys & Tablets",
-      "metaDescription": "Skalieren Sie Bilder auf Ihrem Handy oder Tablet mit KI. Keine App-Download erforderlich. Funktioniert auf iPhone, Android, iPad und allen mobilen Geräten. Kostenlos testen.",
-      "h1": "Mobile Bild-Upscaler - KI-Verbesserung Unterwegs",
-      "intro": "Verbessern und skalieren Sie Bilder direkt von Ihrem Handy oder Tablet. Unser webbasiertes Tool funktioniert perfekt auf allen mobilen Geräten ohne Installation einer App.",
-      "primaryKeyword": "mobile bild upscaler",
+      "slug": "mobile-social-media-upscaler",
+      "title": "Mobil Social Media Upscaler",
+      "metaTitle": "Mobil Social Media Bild-Upscaler | Verbessern Fotos for Instagram, TikTok | MyImageUpscaler",
+      "metaDescription": "Upscale Mobil Fotos for Social Media platforms. Perfekt für Instagram, TikTok, Facebook. Verbessern smartphone Fotos to optimal Auflösung. Try Kostenlos.",
+      "h1": "Mobil Social Media Upscaler - Perfekt für Instagram, TikTok & More",
+      "intro": "Transform your Mobil Fotos into stunning Social Media-ready Bilder with our specialized Upscaler. Optimized for smartphone cameras and social platform requirements.",
+      "primaryKeyword": "Mobil Social Media Upscaler",
       "secondaryKeywords": [
-        "handy upscaler",
-        "android upscaler",
-        "iphone upscaler",
-        "tablet upscaler"
+        "Mobil photo Upscaler for Social Media",
+        "smartphone Social Media enhancer",
+        "instagram photo Upscaler",
+        "tiktok image enhancer"
       ],
-      "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "Gerätenutzung",
-      "deviceTypes": [
-        "Smartphones (iPhone, Android)",
-        "Tablets (iPad, Android-Tablets)",
-        "Mobile Browser (Safari, Chrome)",
-        "Mobilfunk und WLAN-Verbindungen"
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Mobil",
+      "useCase": "Social Media",
+      "deviceDescription": "Mobil device cameras have improved significantly but still benefit from AI Verbesserung for Social Media use.",
+      "useCaseDescription": "Social Media platforms require specific dimensions and Qualität. Our Upscaler optimizes Mobil Fotos for maximum engagement.",
+      "deviceConstraints": [
+        "Mobil cameras have smaller sensors than Professionell cameras",
+        "Limited manual controls compared to DSLR/mirrorless",
+        "JPEG compression can reduce Qualität",
+        "Fixed aperture lenses can limit creative control"
       ],
-      "benefits": [
-        {
-          "title": "Keine App erforderlich",
-          "description": "Funktioniert direkt in Ihrem mobilen Browser - kein Download oder Installation erforderlich.",
-          "metric": "Sofortiger Zugriff"
-        },
-        {
-          "title": "Volle Funktionalität",
-          "description": "Alle Upscaling-Funktionen auf dem Handy verfügbar, keine abgespeckte Version.",
-          "metric": "100% Funktionen"
-        },
-        {
-          "title": "Für mobil optimiert",
-          "description": "Touch-freundliche Oberfläche und schnelle Verarbeitung für mobile Verbindungen.",
-          "metric": "Mobile-First-Design"
-        },
-        {
-          "title": "Akku-effizient",
-          "description": "Cloud-Verarbeitung bedeutet, dass Ihr Handy-Akku nicht entladen wird.",
-          "metric": "Geringer Akku-Verbrauch"
-        }
+      "useCaseBenefits": [
+        "Platform-optimized dimensions for Instagram, TikTok, Facebook",
+        "Enhanced details for better engagement on high-density displays",
+        "Consistent Qualität across multiple social platforms",
+        "Faster uploads with optimized file sizes"
       ],
-      "useCases": [
-        {
-          "scenario": "Immobilienmakler vor Ort",
-          "description": "Skalieren Sie Immobilienfotos sofort nach der Aufnahme für MLS-Listenanforderungen.",
-          "workflow": "Fotos mit Handy machen, zu Upscaler hochladen, verbesserte Versionen für Liste herunterladen"
-        },
-        {
-          "scenario": "Social-Media-Content-Ersteller",
-          "description": "Skalieren Sie Handy-Fotos schnell für Instagram, TikTok und Facebook-Posts.",
-          "workflow": "Inhalte aufnehmen, für bessere Qualität skalieren, direkt auf Plattformen posten"
-        },
-        {
-          "scenario": "Online-Verkäufer",
-          "description": "Verbessern Sie Produktfotos, die mit dem Handy gemacht wurden, für Amazon-, eBay- oder Etsy-Listen.",
-          "workflow": "Produktfotos mit Handy machen, für Marktplatzanforderungen skalieren, Artikel auflisten"
-        },
-        {
-          "scenario": "Dokumentenverbesserung",
-          "description": "Verbessern Sie Fotos von Dokumenten, Whiteboards oder Notizen, die mit der Handy-Kamera gemacht wurden.",
-          "workflow": "Foto von Dokument, Text skalieren und verbessern, verbesserte Version speichern oder teilen"
-        }
-      ],
-      "mobileFeatures": [
-        {
-          "feature": "Touch-optimierte Oberfläche",
-          "description": "Große Buttons, einfache Uploads und gestenbasierte Navigation, die für Touchscreens entwickelt wurden."
-        },
-        {
-          "feature": "Schneller mobile Upload",
-          "description": "Optimierte Bildkompression für schnelle Uploads sogar bei Mobilfunkverbindungen."
-        },
-        {
-          "feature": "Automatische Kamera-Erkennung",
-          "description": "Nahtloser Zugriff auf Ihre Fotobibliothek oder Kamera für einfache Bildauswahl."
-        },
-        {
-          "feature": "Hintergrundverarbeitung",
-          "description": "Nutzen Sie Ihr Handy weiter, während das Upscaling in der Cloud stattfindet."
-        }
+      "tips": [
+        "Use high-Auflösung export settings on your phone before upscaling",
+        "Upscale vertical shots for optimal Instagram Stories and TikTok",
+        "Batch process multiple Mobil Fotos for consistent social feed Qualität",
+        "Consider platform-specific aspect ratios when upscaling"
       ],
       "faq": [
         {
-          "question": "Muss ich eine App herunterladen?",
-          "answer": "Nein! Unser Upscaler funktioniert vollständig in Ihrem mobilen Browser. Besuchen Sie einfach unsere Website auf Ihrem Handy oder Tablet und beginnen Sie mit dem Skalieren."
+          "question": "What Auflösung should I upscale Mobil Fotos to for Social Media?",
+          "answer": "For optimal Qualität on modern high-density displays, upscale Mobil Fotos to 2x or 4x. This ensures sharp Bilder on retina displays and 4K screens."
         },
         {
-          "question": "Funktioniert das auf meinem iPhone?",
-          "answer": "Absolut! Wir unterstützen alle iPhones einschließlich der neuesten Modelle sowie iPads. Funktioniert in Safari und jedem mobilen Browser."
+          "question": "Does this work for both Instagram and TikTok?",
+          "answer": "Yes! Our Upscaler maintains aspect ratios and enhances Qualität for all social platforms including Instagram, TikTok, Facebook, and Twitter."
         },
         {
-          "question": "Kann ich das auf Android-Handys verwenden?",
-          "answer": "Ja! Unser Tool ist kompatibel mit allen Android-Handys und -Tablets. Funktioniert in Chrome, Firefox, Samsung Internet und allen gängigen mobilen Browsern."
+          "question": "Can I upscale Fotos from any smartphone?",
+          "answer": "Absolutely! Our Upscaler works with Fotos from any smartphone - iPhone, Samsung, Google Pixel, OnePlus, and more."
         },
         {
-          "question": "Funktioniert es über mobile Daten?",
-          "answer": "Ja, aber WLAN wird für schnellere Uploads empfohlen. Unser optimiertes Upload-System minimiert die Datennutzung unter Beibehaltung der Qualität."
-        },
-        {
-          "question": "Ist mobile Qualität gleich wie Desktop?",
-          "answer": "Ja! Die gleiche leistungsstarke KI-Verarbeitung wird verwendet. Sie erhalten identische Ergebnisse, egal ob Sie von mobil oder desktop hochladen."
-        },
-        {
-          "question": "Wie viel Akku verbraucht mobiles Upscaling?",
-          "answer": "Sehr wenig! Die Verarbeitung findet in der Cloud statt, sodass der Akku Ihres Handys nicht für schwere Berechnungen genutzt wird. Nur der erste Upload und Download nutzen lokale Energie."
-        },
-        {
-          "question": "Kann ich auf meine Fotobibliothek zugreifen?",
-          "answer": "Ja! Sowohl auf iOS als auch auf Android können Sie Bilder direkt aus Ihrer Fotobibliothek oder Kamerarolle für Upscaling auswählen."
-        },
-        {
-          "question": "Ist mobiles Upscaling sicher?",
-          "answer": "Ja! Wir verwenden HTTPS-Verschlüsselung für alle Uploads und Downloads. Ihre Bilder werden sicher verarbeitet und nach der Verarbeitung gelöscht."
+          "question": "Will upscaling make my Mobil Fotos look Professionell?",
+          "answer": "While upscaling enhances Qualität and Auflösung, achieving truly Professionell results also depends on lighting, composition, and original photo Qualität."
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "ctaText": "Mobiles Upscaling Jetzt Testen",
-      "ctaUrl": "/?signup=1"
+      "relatedDevices": ["Desktop-social-media-Upscaler", "Tablet-social-media-Upscaler"],
+      "relatedUseCases": ["Mobil-web-graphics-Upscaler", "Mobil-Messaging-Upscaler"]
     },
     {
-      "slug": "desktop-image-upscaler",
-      "title": "Desktop Bild-Upscaler - PC & Mac KI-Verbesserung",
-      "metaTitle": "Desktop Bild-Upscaler - KI-Verbesserung für PC & Mac",
-      "metaDescription": "Professionelle Desktop-Bild-Upscaling mit KI. Funktioniert auf Windows-PC, Mac und allen Desktop-Browsern. Batch-Verarbeitung, hohe Auflösung, keine Wasserzeichen.",
-      "h1": "Desktop Bild-Upscaler - Professionelle KI-Verbesserung",
-      "intro": "Professionelle KI-Bild-Upscaling optimiert für Desktop-Computer. Nutzen Sie größere Bildschirme, leistungsstarke Prozessoren und Desktop-Workflows für Batch-Verarbeitung und Projekte mit hohem Volumen.",
-      "primaryKeyword": "desktop bild upscaler",
+      "slug": "mobile-web-graphics-upscaler",
+      "title": "Mobil Web-Grafiken Upscaler",
+      "metaTitle": "Mobil Web-Grafiken Upscaler | Verbessern Bilder for Websites | MyImageUpscaler",
+      "metaDescription": "Upscale Mobil Fotos for Web-Grafiken and websites. Perfekt für blogs, portfolios, and Online content. Verbessern smartphone Bilder for web. Try Kostenlos.",
+      "h1": "Mobil Web-Grafiken Upscaler - Web-Ready Mobil Verbesserung",
+      "intro": "Convert your Mobil Fotos into Professionell Web-Grafiken with our specialized Upscaler. Perfekt für content creators, bloggers, and anyone needing web-ready Bilder from their smartphone.",
+      "primaryKeyword": "Mobil Web-Grafiken Upscaler",
       "secondaryKeywords": [
-        "pc upscaler",
-        "mac upscaler",
-        "windows upscaler",
-        "desktop foto verbesserer"
+        "Mobil photo web enhancer",
+        "smartphone Web-Grafiken Upscaler",
+        "Mobil website Bilder",
+        "Verbessern Mobil Fotos for web"
       ],
-      "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "Gerätenutzung",
-      "platforms": [
-        "Windows-PC",
-        "Mac (macOS)",
-        "Linux",
-        "Alle Desktop-Browser (Chrome, Firefox, Safari, Edge)"
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Mobil",
+      "useCase": "Web-Grafiken",
+      "deviceDescription": "Mobil devices are convenient for Content-Erstellung but produce Bilder needing Verbesserung for Professionell web use.",
+      "useCaseDescription": "Web-Grafiken require specific dimensions and Qualität standards. Our Upscaler optimizes Mobil Fotos for website use.",
+      "deviceConstraints": [
+        "Mobil JPEG compression can affect web Qualität",
+        "Limited Auflösung compared to Professionell cameras",
+        "Variable color accuracy across devices",
+        "Fixed lens limitations affect composition flexibility"
       ],
-      "benefits": [
-        {
-          "title": "Großer Bildschirm-Arbeitsbereich",
-          "description": "Nutzen Sie die Bildschirmfläche für detaillierte Bildinspektion und -vergleich.",
-          "metric": "Bessere Sichtbarkeit"
-        },
-        {
-          "title": "Batch-Verarbeitung",
-          "description": "Verarbeiten Sie mehrere Bilder gleichzeitig mit desktop-optimierten Batch-Workflows.",
-          "metric": "Bis zu 500 Bilder"
-        },
-        {
-          "title": "Tastaturkürzel",
-          "description": "Effizienter Tatur-getriebener Workflow für Power-User und Hochvolumen-Verarbeitung.",
-          "metric": "Produktivitätsfokussiert"
-        },
-        {
-          "title": "Lokaler Dateizugriff",
-          "description": "Direkter Zugriff auf lokale Ordner und Laufwerke für nahtloses Dateimanagement.",
-          "metric": "Voller Dateisystem-Zugriff"
-        }
+      "useCaseBenefits": [
+        "Web-optimized dimensions for hero Bilder and banners",
+        "Enhanced Qualität for Professionell website appearance",
+        "Fast loading times with optimized compression",
+        "Consistent Qualität across web projects"
       ],
-      "desktopFeatures": [
-        {
-          "feature": "Nebeneinander-Vergleich",
-          "description": "Zeigen Sie Original und skalierte Bilder gleichzeitig auf großen Desktop-Bildschirmen an."
-        },
-        {
-          "feature": "Drag-and-Drop-Upload",
-          "description": "Intuitive Drag-and-Drop-Oberfläche für schnelle Batch-Datei-Uploads aus Ordnern."
-        },
-        {
-          "feature": "Hochauflösende Vorschau",
-          "description": "Vollauflösungs-Vorschau und Zoom zur Inspektion feiner Details auf Desktop-Monitoren."
-        },
-        {
-          "feature": "Hintergrund-Tab-Verarbeitung",
-          "description": "Arbeiten Sie weiter in anderen Tabs, während Upscaling im Hintergrund abgeschlossen wird."
-        },
-        {
-          "feature": "Direktes Download-Management",
-          "description": "Organisierter Downloads-Ordner mit klaren Namenskonventionen für Batch-Ausgaben."
-        }
-      ],
-      "professionalUseCases": [
-        {
-          "useCase": "Fotostudio",
-          "description": "Batch-Verarbeitung von Kundenfotos für Druckvorbereitung und Portfolio-Arbeit.",
-          "typicalVolume": "50-500 Bilder pro Sitzung"
-        },
-        {
-          "useCase": "E-Commerce-Unternehmen",
-          "description": "Bereiten Sie gesamte Produktkataloge mit skalierten Bildern für Marktplatzanforderungen vor.",
-          "typicalVolume": "100-1000+ Bilder"
-        },
-        {
-          "useCase": "Grafikdesign-Studio",
-          "description": "Skalieren Sie Logos, Grafiken und Design-Assets für hochauflösende Ausgabe.",
-          "typicalVolume": "10-100 Assets pro Projekt"
-        },
-        {
-          "useCase": "Druckerei",
-          "description": "Bereiten Sie Kundenbilder für Großformatdruck unter Beibehaltung der Qualität vor.",
-          "typicalVolume": "20-200 Bilder pro Auftrag"
-        }
+      "tips": [
+        "Consider 2x upscaling for most Web-Grafiken to balance Qualität and file size",
+        "Use PNG format for graphics requiring transparency after upscaling",
+        "Test upscaled Bilder on both Desktop and Mobil web views",
+        "Batch process multiple Mobil Fotos for consistent Web-Grafiken"
       ],
       "faq": [
         {
-          "question": "Muss ich Software installieren?",
-          "answer": "Keine Installation erforderlich! Unser webbasiertes Tool läuft in jedem Desktop-Browser. Besuchen Sie einfach unsere Website auf Windows, Mac oder Linux."
+          "question": "What's the best Auflösung for Mobil Fotos on websites?",
+          "answer": "For most Web-Grafiken, 2x upscaling (typically 2000-3000px wide) provides excellent Qualität while maintaining manageable file sizes."
         },
         {
-          "question": "Ist Desktop schneller als mobil?",
-          "answer": "Desktop-Workflows sind oft effizienter für Batch-Verarbeitung aufgrund größerer Bildschirme, Tastaturkürzel und Drag-and-Drop-Funktionalität, obwohl die eigentliche KI-Verarbeitungsgeschwindigkeit gleich ist."
+          "question": "Should I use JPEG or PNG for Web-Grafiken from Mobil?",
+          "answer": "Use JPEG for photographs and PNG for graphics with transparency. Our Upscaler works with both formats from Mobil devices."
         },
         {
-          "question": "Kann ich das mit Photoshop oder Lightroom verwenden?",
-          "answer": "Ja! Exportieren Sie Bilder aus Photoshop/Lightroom, skalieren Sie mit unserem Tool und importieren Sie sie dann für weitere Bearbeitung zurück. Viele Profis verwenden diesen Workflow."
+          "question": "Can I create blog headers from Mobil Fotos?",
+          "answer": "Absolutely! Upscale Mobil Fotos 2x or 4x for blog headers, then crop to your desired aspect ratio. The enhanced Qualität looks Professionell."
         },
         {
-          "question": "Was ist die maximale Batch-Größe auf Desktop?",
-          "answer": "Business-Plan erlaubt bis zu 500 Bilder pro Batch. Kostenlose und Starter-Pläne haben niedrigere Limits, unterstützen aber immer noch mehrere gleichzeitige Uploads."
-        },
-        {
-          "question": "Funktioniert das auf meinem Linux-Computer?",
-          "answer": "Absolut! Unser webbasiertes Tool funktioniert auf jedem Betriebssystem mit einem modernen Webbrowser, einschließlich aller Linux-Distributionen."
-        },
-        {
-          "question": "Kann ich auf Netzwerklaufwerke und NAS zugreifen?",
-          "answer": "Ja! Sie können Dateien von jedem eingebundenen Laufwerk, Netzwerkfreigabe oder NAS auswählen, auf das Ihr Betriebssystem zugreifen kann."
+          "question": "Will upscaled Mobil Fotos load fast on websites?",
+          "answer": "Yes! While Auflösung increases, modern web compression and delivery methods (CDNs, responsive Bilder) ensure fast loading times."
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "ctaText": "Desktop-Upscaling Starten",
-      "ctaUrl": "/?signup=1"
+      "relatedDevices": ["Desktop-web-graphics-Upscaler", "Tablet-web-graphics-Upscaler"],
+      "relatedUseCases": ["Mobil-social-media-Upscaler", "Mobil-E-Commerce-Upscaler"]
     },
     {
-      "slug": "tablet-upscaler",
-      "title": "Tablet Bild-Upscaler - iPad & Android Tablet Verbesserung",
-      "metaTitle": "Tablet Bild-Upscaler - KI-Verbesserung für iPad & Android",
-      "metaDescription": "Skalieren Sie Bilder auf Ihrem iPad oder Android-Tablet mit KI. Touch-optimierte Oberfläche, funktioniert mit Fotos-App. Professionelle Qualität auf Tablet.",
-      "h1": "Tablet Bild-Upscaler - Professionelle Verbesserung auf Tablets",
-      "intro": "Verwandeln Sie Ihr Tablet in eine professionelle Bildverbesserungs-Workstation. Unsere touch-optimierte Oberfläche bringt Desktop-Qualitäts-Upscaling auf iPad und Android-Tablets.",
-      "primaryKeyword": "tablet upscaler",
+      "slug": "mobile-ecommerce-upscaler",
+      "title": "Mobil E-commerce Upscaler",
+      "metaTitle": "Mobil E-commerce Bild-Upscaler | Product Fotos from Phone | MyImageUpscaler",
+      "metaDescription": "Upscale Mobil product Fotos for e-commerce. Perfekt für Online stores, Etsy sellers, and product photography from smartphones. Try Kostenlos.",
+      "h1": "Mobil E-commerce Upscaler - Professionell Product Fotos from Phone",
+      "intro": "Transform your smartphone product Fotos into Professionell e-commerce Bilder with our specialized Upscaler. Perfekt für Online sellers, small businesses, and entrepreneurs.",
+      "primaryKeyword": "Mobil E-Commerce Upscaler",
       "secondaryKeywords": [
-        "ipad upscaler",
-        "android tablet upscaler",
-        "touch upscaler",
-        "tablet foto verbesserer"
+        "Mobil product photo Upscaler",
+        "smartphone E-Commerce enhancer",
+        "etsy photo Upscaler",
+        "Online store image enhancer"
       ],
-      "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "Gerätenutzung",
-      "supportedTablets": [
-        "iPad (alle Modelle einschließlich iPad Pro)",
-        "Android-Tablets (Samsung Galaxy Tab, Google Pixel Slate, etc.)",
-        "Microsoft Surface (touch-optimierter Browser-Modus)"
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Mobil",
+      "useCase": "E-commerce",
+      "deviceDescription": "Smartphone cameras can capture Qualität product Fotos but need Verbesserung for Professionell e-commerce standards.",
+      "useCaseDescription": "E-commerce requires high-Qualität, zoomable product Bilder. Our Upscaler enhances Mobil Fotos for Online sales.",
+      "deviceConstraints": [
+        "Limited depth-of-field control affects product isolation",
+        "Lighting challenges without Professionell equipment",
+        "Variable white balance affects color accuracy",
+        "JPEG compression can reduce fine product details"
       ],
-      "benefits": [
-        {
-          "title": "Großer Touch-Arbeitsbereich",
-          "description": "Tablet-Bildschirme bieten das perfekte Gleichgewicht zwischen Portabilität und Arbeitsbereich für Bildverbesserung.",
-          "metric": "Das Beste aus beiden Welten"
-        },
-        {
-          "title": "Fotobibliotheks-Integration",
-          "description": "Nahtloser Zugriff auf die Fotobibliothek und Kamerarolle Ihres Tablets.",
-          "metric": "Native Integration"
-        },
-        {
-          "title": "Touch-optimierte Steuerungen",
-          "description": "Große Buttons und intuitive Gesten, die speziell für Touch-Interaktion entwickelt wurden.",
-          "metric": "Touch-First-Design"
-        },
-        {
-          "title": "Tragbarer Profi",
-          "description": "Desktop-Qualitäts-Verarbeitung auf einem Gerät, das Sie überallhin mitnehmen können.",
-          "metric": "Professionell unterwegs"
-        }
+      "useCaseBenefits": [
+        "Zoom-ready product Bilder for detailed customer inspection",
+        "Professionell appearance increases customer trust",
+        "Consistent Qualität across entire product catalog",
+        "Multi-platform optimization (Amazon, Etsy, Shopify)"
       ],
-      "tabletFeatures": [
-        {
-          "feature": "Gesten-Navigation",
-          "description": "Wischen, Pinch und Tippen zur Navigation und Inspektion von skalierten Bildern mit vertrauten Tablet-Gesten."
-        },
-        {
-          "feature": "Split-Screen-Workflow",
-          "description": "Verwenden Sie den Split-Screen-Modus, um Original und skalierte Bilder nebeneinander zu vergleichen."
-        },
-        {
-          "feature": "Direkter Fotos-App-Zugriff",
-          "description": "Öffnen Sie Bilder direkt aus der Fotos-App auf iPad oder Galerie auf Android-Tablets."
-        },
-        {
-          "feature": "Stylus-Support",
-          "description": "Funktioniert mit Apple Pencil, S Pen und anderen Tablet-Styluses für präzise Interaktion."
-        },
-        {
-          "feature": "Optimierter Upload",
-          "description": "Intelligente Dateiauswahl, die speziell für Touch-Oberflächen und Tablet-Workflows entwickelt wurde."
-        }
-      ],
-      "useCases": [
-        {
-          "scenario": "Fotograf vor Ort",
-          "description": "Schnelles Skalieren und Überprüfen von Fotos während des Shootings mit iPad vor Ort.",
-          "workflow": "Fotos auf Tablet übertragen, skalieren, Qualität überprüfen, weiter aufnehmen"
-        },
-        {
-          "scenario": "Design-Studio-Zusammenarbeit",
-          "description": "Designteam überprüft und skaliert visuelle Assets auf Tablets während Meetings.",
-          "workflow": "Designs auf Tablet teilen, kollaborativ skalieren, für Produktion exportieren"
-        },
-        {
-          "scenario": "Immobilienbesichtigungen",
-          "description": "Makler verbessern und überprüfen Immobilienfotos auf Tablet zwischen Besichtigungen.",
-          "workflow": "Immobilie mit Tablet fotografieren, sofort skalieren, in Liste verwenden"
-        },
-        {
-          "scenario": "Kreativer Profi",
-          "description": "Illustratoren und Künstler skalieren Kunstwerke auf Tablets für Portfolio und Druckvorbereitung.",
-          "workflow": "Kunstwerk erstellen, auf Tablet skalieren, für Druck oder Web vorbereiten"
-        }
+      "tips": [
+        "Use good lighting when capturing product Fotos on Mobil",
+        "Upscale 4x for products requiring extreme zoom capability",
+        "Maintain consistent backgrounds for Professionell catalog appearance",
+        "Consider PNG format for products with clean backgrounds"
       ],
       "faq": [
         {
-          "question": "Funktioniert das auf iPad?",
-          "answer": "Ja! Wir sind vollständig für iPad optimiert, einschließlich iPad Pro. Funktioniert in Safari und jedem iOS-Browser mit touch-optimierten Steuerungen."
+          "question": "Can I really sell products with Mobil phone Fotos?",
+          "answer": "Yes! With proper lighting and our Upscaler, Mobil Fotos can achieve Professionell Qualität suitable for e-commerce platforms."
         },
         {
-          "question": "Kann ich das auf Android-Tablets verwenden?",
-          "answer": "Absolut! Funktioniert auf allen Android-Tablets einschließlich Samsung Galaxy Tab, Lenovo und anderen Marken. Optimiert für Chrome und Android-Browser."
+          "question": "What Auflösung is best for e-commerce product Fotos?",
+          "answer": "For e-commerce, 4x upscaling is recommended to enable deep zoom functionality. Most platforms recommend 1000px minimum, but 2000px+ is ideal."
         },
         {
-          "question": "Ist Qualität gleich wie Desktop?",
-          "answer": "Ja! Sie erhalten identische KI-Verarbeitungsqualität. Der Vorteil von Tablets ist die Kombination aus Qualitätsverarbeitung mit Portabilität und Touch-Interaktion."
+          "question": "Does this work for Etsy and Amazon product Fotos?",
+          "answer": "Yes! Our Upscaler optimizes Mobil Fotos for all major e-commerce platforms including Etsy, Amazon, Shopify, and WooCommerce."
         },
         {
-          "question": "Kann ich Apple Pencil oder Stylus verwenden?",
-          "answer": "Ja! Unsere Oberfläche reagiert auf Stylus-Eingabe auf kompatiblen Tablets. Großartig für präzise Navigation und Bildinspektion."
-        },
-        {
-          "question": "Funktioniert das offline?",
-          "answer": "Eine Internetverbindung ist für KI-Verarbeitung in der Cloud erforderlich. Sie können jedoch Bilder aus der Tablet-Galerie laden, während Sie offline sind, und hochladen, wenn Sie verbunden sind."
-        },
-        {
-          "question": "Kann ich in meine Fotobibliothek speichern?",
-          "answer": "Ja! Nach dem Upscaling können Sie Bilder direkt in die Fotobibliothek oder Galerie Ihres Tablets für einfachen Zugriff speichern."
+          "question": "How do I get Professionell lighting with Mobil product Fotos?",
+          "answer": "Use natural light near windows or consider affordable ring lights and light boxes. Good lighting combined with upscaling creates Professionell results."
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "ctaText": "Tablet-Upscaling Testen",
-      "ctaUrl": "/?signup=1"
+      "relatedDevices": ["Desktop-E-Commerce-Upscaler", "Tablet-E-Commerce-Upscaler"],
+      "relatedUseCases": ["Mobil-web-graphics-Upscaler", "Desktop-E-Commerce-Upscaler"]
+    },
+    {
+      "slug": "mobile-messaging-upscaler",
+      "title": "Mobil Messaging Upscaler",
+      "metaTitle": "Mobil Messaging Bild-Upscaler | Verbessern Fotos for Sharing | MyImageUpscaler",
+      "metaDescription": "Upscale Mobil Fotos for Messaging apps and sharing. Perfekt für WhatsApp, Telegram, Discord. Verbessern Bilder before sharing. Try Kostenlos.",
+      "h1": "Mobil Messaging Upscaler - Better Qualität for Photo Sharing",
+      "intro": "Verbessern your Mobil Fotos before sharing on Messaging apps with our specialized Upscaler. Perfekt für WhatsApp, Telegram, Discord, and personal photo sharing.",
+      "primaryKeyword": "Mobil Messaging Upscaler",
+      "secondaryKeywords": [
+        "Mobil photo enhancer for Messaging",
+        "whatsapp photo Upscaler",
+        "telegram image enhancer",
+        "sharing app photo Upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Mobil",
+      "useCase": "Messaging",
+      "deviceDescription": "Mobil Messaging apps compress Bilder, making pre-Verbesserung valuable for maintaining Qualität.",
+      "useCaseDescription": "Messaging and sharing apps need Qualität optimization. Our Upscaler prepares Mobil Fotos to withstand compression.",
+      "deviceConstraints": [
+        "Apps compress Bilder during upload/transmission",
+        "Size limits affect Qualität transmission",
+        "Multiple shares degrade Qualität over time",
+        "Platform-specific compression varies by app"
+      ],
+      "useCaseBenefits": [
+        "Better Qualität after app compression",
+        "Clearer Bilder on recipient devices",
+        "Professionell appearance for business Messaging",
+        "Preserves details when Bilder are re-shared"
+      ],
+      "tips": [
+        "Upscale 2x for Messaging to balance Qualität and transmission speed",
+        "Share original Qualität when apps allow (WhatsApp setting)",
+        "Consider PNG for graphics shared via Messaging",
+        "Batch Verbessern Fotos before sending to groups"
+      ],
+      "faq": [
+        {
+          "question": "Why do Messaging apps reduce photo Qualität?",
+          "answer": "Messaging apps compress Bilder to save bandwidth and storage. Upscaling before sharing helps maintain Qualität after this compression."
+        },
+        {
+          "question": "Does upscaling help with WhatsApp photo Qualität?",
+          "answer": "Yes! Upscaling before WhatsApp sends helps maintain Qualität even after WhatsApp's compression, especially noticeable on larger screens."
+        },
+        {
+          "question": "Can I use this for business Messaging and clients?",
+          "answer": "Absolutely! Enhanced Mobil Fotos present a more Professionell image when sharing work with clients via Messaging apps."
+        },
+        {
+          "question": "What's the best format for Messaging apps?",
+          "answer": "JPEG is most compatible across Messaging apps. Upscale 2x for optimal balance between Qualität and transmission speed."
+        }
+      ],
+      "relatedDevices": ["Desktop-Messaging-Upscaler", "Tablet-Messaging-Upscaler"],
+      "relatedUseCases": ["Mobil-social-media-Upscaler", "Tablet-Messaging-Upscaler"]
+    },
+    {
+      "slug": "mobile-content-creation-upscaler",
+      "title": "Mobil Content-Erstellung Upscaler",
+      "metaTitle": "Mobil Content-Erstellung Upscaler | Verbessern Bilder for Creators | MyImageUpscaler",
+      "metaDescription": "Upscale Mobil Bilder for Content-Erstellung. Perfekt für creators, influencers, and digital content from smartphones. Try Kostenlos.",
+      "h1": "Mobil Content-Erstellung Upscaler - Professionell Verbesserung for Creators",
+      "intro": "Elevate your Mobil Content-Erstellung with our specialized Upscaler. Perfekt für influencers, creators, and anyone producing visual content from their smartphone.",
+      "primaryKeyword": "Mobil Content-Erstellung Upscaler",
+      "secondaryKeywords": [
+        "Mobil creator image enhancer",
+        "smartphone content Upscaler",
+        "influencer photo Upscaler",
+        "creator tools Mobil"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Mobil",
+      "useCase": "Content-Erstellung",
+      "deviceDescription": "Content creators increasingly use Mobil devices but need Verbesserung for Professionell output.",
+      "useCaseDescription": "Content-Erstellung requires high-Qualität visuals across platforms. Our Upscaler enhances Mobil content to Professionell standards.",
+      "deviceConstraints": [
+        "Mobil processing limits batch workflows",
+        "Limited advanced editing capabilities on Mobil",
+        "Storage constraints affect original Qualität",
+        "Variable output Qualität across Mobil apps"
+      ],
+      "useCaseBenefits": [
+        "Professionell Qualität from Mobil content workflows",
+        "Cross-platform consistency for content distribution",
+        "Enhanced detail for premium content tiers",
+        "Time-saving batch processing for creators"
+      ],
+      "tips": [
+        "Use 4x upscaling for flagship content pieces",
+        "Maintain consistent editing styles across upscaled content",
+        "Organize Mobil content libraries before batch upscaling",
+        "Consider different scaling for different platforms (2x web, 4x print)"
+      ],
+      "faq": [
+        {
+          "question": "Can Mobil content compete with Professionell camera Qualität?",
+          "answer": "While Professionell cameras have advantages, modern smartphones combined with AI upscaling can produce excellent Qualität for most Content-Erstellung needs."
+        },
+        {
+          "question": "What upscaling level should creators use?",
+          "answer": "Use 2x for web content and Social Media, 4x for premium downloads or print products. Adjust based on your content strategy."
+        },
+        {
+          "question": "Does this work for Video-Thumbnails too?",
+          "answer": "Yes! Upscaling Mobil Fotos for Video-Thumbnails (YouTube, TikTok) creates more Professionell, eye-catching content."
+        },
+        {
+          "question": "Can I batch process Mobil content for efficiency?",
+          "answer": "Yes! Our Upscaler supports batch processing, Perfekt für creators managing multiple pieces of content from Mobil shoots."
+        }
+      ],
+      "relatedDevices": ["Desktop-content-creation-Upscaler", "Tablet-content-creation-Upscaler"],
+      "relatedUseCases": ["Mobil-social-media-Upscaler", "Desktop-content-creation-Upscaler"]
+    },
+    {
+      "slug": "desktop-professional-printing-upscaler",
+      "title": "Desktop Professioneller Druck Upscaler",
+      "metaTitle": "Desktop Professioneller Druck Upscaler | Print-Qualität Verbesserung | MyImageUpscaler",
+      "metaDescription": "Upscale Desktop Bilder for Professioneller Druck. Perfekt für large format, gallery prints, and commercial printing. Try Kostenlos.",
+      "h1": "Desktop Professioneller Druck Upscaler - Gallery-Qualität Prints",
+      "intro": "Transform your Desktop Bilder into stunning print-Qualität artwork with our Professionell Upscaler. Perfekt für photographers, artists, and anyone requiring gallery-Qualität prints.",
+      "primaryKeyword": "Desktop Professioneller Druck Upscaler",
+      "secondaryKeywords": [
+        "Desktop print Upscaler",
+        "Professionell photo printing Verbesserung",
+        "gallery print Upscaler",
+        "large format Desktop Upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Desktop",
+      "useCase": "Professioneller Druck",
+      "deviceDescription": "Desktop workflows provide access to high-Auflösung Bilder suitable for Professioneller Druck Verbesserung.",
+      "useCaseDescription": "Professioneller Druck requires maximum Auflösung and Qualität. Our Upscaler prepares Desktop Bilder for gallery and commercial printing.",
+      "deviceConstraints": [
+        "Print requires higher Auflösung than digital display",
+        "Color management critical for accurate print reproduction",
+        "Large file sizes challenge storage and transfer",
+        "Print-specific aspect ratios may require cropping"
+      ],
+      "useCaseBenefits": [
+        "Gallery-Qualität Auflösung for large format printing",
+        "Print-optimized color and detail Verbesserung",
+        "Suitable for commercial printing standards",
+        "Enables extreme enlargement without Qualität loss"
+      ],
+      "tips": [
+        "Use 4x or 8x upscaling for Professioneller Druck applications",
+        "Convert to TIFF after upscaling for print workflow compatibility",
+        "Consider color profile management (Adobe RGB for print)",
+        "Test print small samples before large format printing"
+      ],
+      "faq": [
+        {
+          "question": "What Auflösung do I need for Professioneller Druck?",
+          "answer": "For Professioneller Druck at 300 DPI, use 4x upscaling. For large format printing viewed from distance, 2x may be sufficient."
+        },
+        {
+          "question": "Can I really print upscaled Bilder professionally?",
+          "answer": "Yes! Our KI-Upscaler adds realistic detail during Verbesserung, making upscaled Bilder suitable for Professionell gallery and commercial printing."
+        },
+        {
+          "question": "What format should I use for printing after upscaling?",
+          "answer": "TIFF is Ideal für Professioneller Druck due to lossless compression. JPEG can work for smaller prints but TIFF preserves maximum Qualität."
+        },
+        {
+          "question": "Does this work for canvas prints and gallery displays?",
+          "answer": "Absolutely! 4x or 8x upscaled Bilder are excellent for canvas prints, gallery exhibitions, and fine art reproductions."
+        }
+      ],
+      "relatedDevices": ["Tablet-content-creation-Upscaler", "Mobil-content-creation-Upscaler"],
+      "relatedUseCases": ["Desktop-photo-editing-Upscaler", "Desktop-graphic-design-Upscaler"]
+    },
+    {
+      "slug": "desktop-photo-editing-upscaler",
+      "title": "Desktop Foto-Bearbeitung Upscaler",
+      "metaTitle": "Desktop Foto-Bearbeitung Upscaler | Verbessern Bilder in Editing Workflow | MyImageUpscaler",
+      "metaDescription": "Upscale Desktop Fotos during editing workflow. Perfekt für Photoshop, Lightroom, and Professionell Foto-Bearbeitung. Try Kostenlos.",
+      "h1": "Desktop Foto-Bearbeitung Upscaler - Editing Workflow Verbesserung",
+      "intro": "Integrate upscaling into your Desktop Foto-Bearbeitung workflow for maximum Qualität Verbesserung. Perfekt für Photoshop, Lightroom, and Professionell Foto-Bearbeitung workflows.",
+      "primaryKeyword": "Desktop Foto-Bearbeitung Upscaler",
+      "secondaryKeywords": [
+        "photoshop Upscaler",
+        "lightroom image enhancer",
+        "Desktop Foto-Bearbeitung Verbesserung",
+        "Professionell photo Upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Desktop",
+      "useCase": "Foto-Bearbeitung",
+      "deviceDescription": "Desktop Foto-Bearbeitung provides powerful tools combined with upscaling for maximum Qualität results.",
+      "useCaseDescription": "Foto-Bearbeitung workflows benefit from upscaling at the right stage. Our Upscaler integrates seamlessly with Desktop editing.",
+      "deviceConstraints": [
+        "Upscaling should happen before heavy editing for best results",
+        "Large files challenge system resources during editing",
+        "Format choices affect editing flexibility",
+        "Layer management important for non-destructive workflows"
+      ],
+      "useCaseBenefits": [
+        "Higher Auflösung for more detailed editing work",
+        "Better results when cropping during editing",
+        "Professionell output for print and web use",
+        "Flexible output formats for various editing needs"
+      ],
+      "tips": [
+        "Upscale RAW files before conversion for maximum Qualität",
+        "Use TIFF format between upscaling and editing to preserve Qualität",
+        "Consider 2x for general editing, 4x for print projects",
+        "Maintain original files for non-destructive workflows"
+      ],
+      "faq": [
+        {
+          "question": "When should I upscale in my Foto-Bearbeitung workflow?",
+          "answer": "For best results, upscale early in your workflow - after basic adjustments but before detailed editing or retouching."
+        },
+        {
+          "question": "Does upscaling work with RAW files in editing software?",
+          "answer": "Yes! Upscaling RAW files before converting to TIFF/PSD for editing provides maximum Qualität and detail for your editing work."
+        },
+        {
+          "question": "What format should I use for editing after upscaling?",
+          "answer": "TIFF is Ideal für editing after upscaling due to lossless Qualität. PSD works for Photoshop workflows with layers."
+        },
+        {
+          "question": "Can I edit after upscaling or should I edit before?",
+          "answer": "Both approaches work! Upscale first for maximum editing detail, or edit first then upscale the final result. Choose based on your workflow."
+        }
+      ],
+      "relatedDevices": ["Tablet-photo-editing-Upscaler", "Mobil-content-creation-Upscaler"],
+      "relatedUseCases": [
+        "Desktop-Professionell-printing-Upscaler",
+        "Desktop-graphic-design-Upscaler"
+      ]
+    },
+    {
+      "slug": "desktop-graphic-design-upscaler",
+      "title": "Desktop Grafik-Design Upscaler",
+      "metaTitle": "Desktop Grafik-Design Upscaler | Verbessern Design Assets | MyImageUpscaler",
+      "metaDescription": "Upscale Desktop graphics and design assets. Perfekt für designers, illustrators, and visual design projects. Try Kostenlos.",
+      "h1": "Desktop Grafik-Design Upscaler - Design Asset Verbesserung",
+      "intro": "Verbessern your design assets and graphics with our Desktop-optimized Upscaler. Perfekt für graphic designers, illustrators, and visual design professionals.",
+      "primaryKeyword": "Desktop Grafik-Design Upscaler",
+      "secondaryKeywords": [
+        "design asset Upscaler",
+        "illustration enhancer",
+        "graphics upscaling Desktop",
+        "designer Bild-Upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Desktop",
+      "useCase": "Grafik-Design",
+      "deviceDescription": "Desktop Grafik-Design workflows require high-Auflösung assets for various output requirements.",
+      "useCaseDescription": "Grafik-Design needs scalable, high-Qualität assets. Our Upscaler enhances design elements for Professionell use.",
+      "deviceConstraints": [
+        "Design assets need multiple Auflösung versions",
+        "Vector-to-raster conversion requires sufficient Auflösung",
+        "Print and web have different design Auflösung requirements",
+        "File size management important for design workflows"
+      ],
+      "useCaseBenefits": [
+        "High-Auflösung versions for print design",
+        "Crisp graphics for retina displays",
+        "Flexible assets for multiple design applications",
+        "Professionell Qualität for client deliverables"
+      ],
+      "tips": [
+        "Use 4x upscaling for design assets destined for print",
+        "Maintain PNG format for transparency needs in design",
+        "Create multiple Auflösung versions for different uses",
+        "Consider design context when choosing upscaling level"
+      ],
+      "faq": [
+        {
+          "question": "When should graphic designers use upscaling?",
+          "answer": "Use upscaling when creating high-Auflösung print materials, preparing assets for retina displays, or when client projects require larger sizes than source assets."
+        },
+        {
+          "question": "Does upscaling work for logos and brand assets?",
+          "answer": "Yes! For raster logos, upscaling creates higher Auflösung versions. Ideally, work with vector originals, but upscaling helps when only raster files are available."
+        },
+        {
+          "question": "What's the best format for Grafik-Design after upscaling?",
+          "answer": "PNG for graphics requiring transparency, TIFF for print materials, and JPEG for web-only graphics. Choose based on your design needs."
+        },
+        {
+          "question": "Can I upscale illustrations for design projects?",
+          "answer": "Absolutely! Digital illustrations, artwork, and design elements all benefit from upscaling when higher Auflösung versions are needed."
+        }
+      ],
+      "relatedDevices": ["Tablet-content-creation-Upscaler", "Desktop-photo-editing-Upscaler"],
+      "relatedUseCases": ["Desktop-Professionell-printing-Upscaler", "Desktop-E-Commerce-Upscaler"]
+    },
+    {
+      "slug": "desktop-ecommerce-upscaler",
+      "title": "Desktop E-commerce Upscaler",
+      "metaTitle": "Desktop E-commerce Upscaler | Professionell Product Bilder | MyImageUpscaler",
+      "metaDescription": "Upscale product Bilder for e-commerce on Desktop. Perfekt für Amazon, Shopify, and Online stores. Professionell Qualität. Try Kostenlos.",
+      "h1": "Desktop E-commerce Upscaler - Professionell Product Verbesserung",
+      "intro": "Transform your product Bilder into Professionell e-commerce assets with our Desktop Upscaler. Perfekt für Online stores, marketplaces, and Professionell product photography.",
+      "primaryKeyword": "Desktop E-Commerce Upscaler",
+      "secondaryKeywords": [
+        "product Bild-Upscaler",
+        "amazon image enhancer",
+        "shopify photo Upscaler",
+        "Professionell E-Commerce Bilder"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Desktop",
+      "useCase": "E-commerce",
+      "deviceDescription": "Desktop workflows enable Professionell e-commerce image preparation with upscaling Verbesserung.",
+      "useCaseDescription": "E-commerce requires high-Qualität, zoomable product Bilder. Desktop upscaling prepares product Fotos for Online sales.",
+      "deviceConstraints": [
+        "Multiple product Bilder require efficient workflows",
+        "Platform-specific image requirements vary",
+        "White background consistency important for catalogs",
+        "Color accuracy critical for product representation"
+      ],
+      "useCaseBenefits": [
+        "Deep zoom capability for product inspection",
+        "Platform-optimized for Amazon, Shopify, eBay",
+        "Professionell appearance increases conversion",
+        "Batch processing for entire product catalogs"
+      ],
+      "tips": [
+        "Use 4x upscaling for products requiring maximum zoom",
+        "Maintain consistent backgrounds across product lines",
+        "Consider platform requirements (Amazon white backgrounds)",
+        "Batch process entire catalogs for consistency"
+      ],
+      "faq": [
+        {
+          "question": "What Auflösung is best for e-commerce product Bilder?",
+          "answer": "For maximum zoom capability, 4x upscaling is ideal. Most platforms recommend 1000-2000px minimum, with 3000px+ for optimal zoom."
+        },
+        {
+          "question": "Does this work for Amazon product Bilder?",
+          "answer": "Yes! Our Upscaler prepares product Bilder specifically for Amazon's requirements, including Auflösung, white backgrounds, and Qualität standards."
+        },
+        {
+          "question": "Can I batch process multiple product Bilder?",
+          "answer": "Yes! Batch processing is Perfekt für e-commerce, allowing you to Verbessern entire product catalogs efficiently while maintaining consistency."
+        },
+        {
+          "question": "What format should e-commerce Bilder use after upscaling?",
+          "answer": "JPEG is standard for e-commerce product Bilder. Use PNG only if transparency is required, but note file size will be larger."
+        }
+      ],
+      "relatedDevices": ["Mobil-E-Commerce-Upscaler", "Tablet-E-Commerce-Upscaler"],
+      "relatedUseCases": ["Desktop-graphic-design-Upscaler", "Desktop-web-graphics-Upscaler"]
+    },
+    {
+      "slug": "desktop-social-media-upscaler",
+      "title": "Desktop Social Media Management Upscaler",
+      "metaTitle": "Desktop Social Media Management Upscaler | Content Manager Verbesserung | MyImageUpscaler",
+      "metaDescription": "Upscale Bilder for Social Media management on Desktop. Perfekt für Social Media managers, content schedulers, and brand management. Try Kostenlos.",
+      "h1": "Desktop Social Media Management Upscaler - Professionell Content Verbesserung",
+      "intro": "Streamline your Social Media management workflow with our Desktop Upscaler. Perfekt für Social Media managers, content strategists, and brand professionals managing multiple platforms.",
+      "primaryKeyword": "Desktop Social Media management Upscaler",
+      "secondaryKeywords": [
+        "Social Media manager Upscaler",
+        "content scheduler image enhancer",
+        "brand content Upscaler",
+        "multi-platform social Verbesserung"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Desktop",
+      "useCase": "Social Media Management",
+      "deviceDescription": "Desktop Social Media management requires efficient workflows for multiple platforms and content calendars.",
+      "useCaseDescription": "Social Media management needs Qualität content across platforms. Desktop upscaling optimizes Bilder for multi-platform distribution.",
+      "deviceConstraints": [
+        "Multiple platforms have different dimension requirements",
+        "Content calendars need advance preparation",
+        "Brand consistency across all social channels",
+        "Efficient workflow for high-volume content"
+      ],
+      "useCaseBenefits": [
+        "Multi-platform optimization in one workflow",
+        "Consistent brand Qualität across channels",
+        "Batch processing for content calendar efficiency",
+        "Platform-specific dimension preparation"
+      ],
+      "tips": [
+        "Create different scaled versions for different platforms",
+        "Batch prepare content weekly for Social Media calendars",
+        "Maintain brand style consistency across upscaled content",
+        "Organize by platform during batch processing"
+      ],
+      "faq": [
+        {
+          "question": "How do I prepare content for multiple social platforms?",
+          "answer": "Use 2x or 4x upscaling then crop to platform-specific dimensions. This ensures maximum Qualität across Instagram, Facebook, Twitter, and LinkedIn."
+        },
+        {
+          "question": "Is this good for Social Media management agencies?",
+          "answer": "Absolutely! Batch processing multiple client Bilder efficiently is Perfekt für agencies managing Social Media for multiple brands."
+        },
+        {
+          "question": "What Auflösung works best for Social Media management?",
+          "answer": "4x upscaling provides flexibility to crop for any platform while maintaining Qualität. Use 2x for faster processing of large batches."
+        },
+        {
+          "question": "Can I maintain brand consistency with upscaling?",
+          "answer": "Yes! Consistent upscaling parameters across your content library help maintain brand Qualität standards while optimizing for each platform."
+        }
+      ],
+      "relatedDevices": ["Mobil-social-media-Upscaler", "Tablet-social-media-Upscaler"],
+      "relatedUseCases": ["Desktop-content-creation-Upscaler", "Desktop-web-graphics-Upscaler"]
+    },
+    {
+      "slug": "desktop-video-thumbnails-upscaler",
+      "title": "Desktop Video Thumbnail Upscaler",
+      "metaTitle": "Desktop Video Thumbnail Upscaler | YouTube & Video-Thumbnails | MyImageUpscaler",
+      "metaDescription": "Upscale Video-Thumbnails on Desktop. Perfekt für YouTube, TikTok, and video content creators. Enhanced click-through rates. Try Kostenlos.",
+      "h1": "Desktop Video Thumbnail Upscaler - Eye-Catching Thumbnails",
+      "intro": "Create compelling Video-Thumbnails with our Desktop Upscaler. Perfekt für YouTubers, content creators, and anyone needing attention-grabbing thumbnails.",
+      "primaryKeyword": "Desktop video thumbnail Upscaler",
+      "secondaryKeywords": [
+        "youtube thumbnail Upscaler",
+        "video thumbnail enhancer",
+        "thumbnail creator Desktop",
+        "video content Upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Desktop",
+      "useCase": "Video-Thumbnails",
+      "deviceDescription": "Desktop video editing workflows require high-Qualität thumbnails for maximum viewer engagement.",
+      "useCaseDescription": "Video-Thumbnails need to stand out and attract clicks. Desktop upscaling creates Professionell, eye-catching thumbnails.",
+      "deviceConstraints": [
+        "Thumbnails compete for attention in crowded feeds",
+        "Text elements must remain readable at small sizes",
+        "Platform-specific dimension requirements",
+        "Fast processing needed for frequent Content-Erstellung"
+      ],
+      "useCaseBenefits": [
+        "Crisp, Professionell thumbnails for higher CTR",
+        "Text remains readable after Verbesserung",
+        "Platform-optimized dimensions (YouTube, TikTok, etc.)",
+        "Stand out in crowded video feeds"
+      ],
+      "tips": [
+        "Use 2x upscaling for thumbnails - balances Qualität and processing speed",
+        "Ensure text elements remain large and readable",
+        "Test thumbnails at small sizes to verify effectiveness",
+        "Maintain consistent branding across thumbnail library"
+      ],
+      "faq": [
+        {
+          "question": "What Auflösung is best for Video-Thumbnails?",
+          "answer": "For YouTube thumbnails (1280x720), 2x upscaling creates crisp 2560x1440 versions that look Professionell and attract clicks."
+        },
+        {
+          "question": "Does upscaling help with click-through rates?",
+          "answer": "Yes! Higher Qualität, sharper thumbnails stand out in feeds and can improve click-through rates. Professionell appearance builds viewer trust."
+        },
+        {
+          "question": "Can I add text after upscaling thumbnails?",
+          "answer": "Yes! Upscale first for maximum Qualität, then add text elements in your video editing or graphics software."
+        },
+        {
+          "question": "Does this work for all video platforms?",
+          "answer": "Yes! Our Upscaler prepares thumbnails for YouTube, TikTok, Instagram Reels, Facebook Video, and all major video platforms."
+        }
+      ],
+      "relatedDevices": ["Tablet-content-creation-Upscaler", "Desktop-content-creation-Upscaler"],
+      "relatedUseCases": ["Desktop-social-media-Upscaler", "Desktop-graphic-design-Upscaler"]
+    },
+    {
+      "slug": "desktop-presentations-upscaler",
+      "title": "Desktop Presentation Upscaler",
+      "metaTitle": "Desktop Presentation Bild-Upscaler | PowerPoint & Keynote Verbesserung | MyImageUpscaler",
+      "metaDescription": "Upscale Bilder for Präsentationen on Desktop. Perfekt für PowerPoint, Keynote, and Professionell Präsentationen. Try Kostenlos.",
+      "h1": "Desktop Presentation Upscaler - Professionell Presentation Verbesserung",
+      "intro": "Verbessern your presentation visuals with our Desktop Upscaler. Perfekt für business Präsentationen, educational content, and Professionell slideshows.",
+      "primaryKeyword": "Desktop presentation Upscaler",
+      "secondaryKeywords": [
+        "presentation image enhancer",
+        "powerpoint photo Upscaler",
+        "keynote image enhancer",
+        "business presentation Bilder"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Desktop",
+      "useCase": "Präsentationen",
+      "deviceDescription": "Desktop presentation software requires high-Qualität Bilder for Professionell display on large screens.",
+      "useCaseDescription": "Präsentationen need crisp, Professionell visuals. Desktop upscaling prepares Bilder for PowerPoint, Keynote, and slides.",
+      "deviceConstraints": [
+        "Large venue displays require higher Auflösung",
+        "Projection can reduce perceived Qualität",
+        "File size considerations for presentation portability",
+        "Multiple Bilder need consistent Qualität"
+      ],
+      "useCaseBenefits": [
+        "Crisp Bilder on large projection screens",
+        "Professionell appearance for business Präsentationen",
+        "High-detail Bilder for zoom-in during presentation",
+        "Consistent Qualität across all visuals"
+      ],
+      "tips": [
+        "Use 2x or 4x depending on venue screen size",
+        "Test presentation on actual display before presenting",
+        "Consider embedded file size limits for Präsentationen",
+        "Maintain consistent Qualität across all presentation Bilder"
+      ],
+      "faq": [
+        {
+          "question": "What Auflösung is best for presentation Bilder?",
+          "answer": "For typical conference room displays, 2x upscaling is sufficient. For large venue projection, use 4x to ensure Bilder remain crisp."
+        },
+        {
+          "question": "Will upscaled Bilder make my PowerPoint file too large?",
+          "answer": "Higher Auflösung Bilder increase file size, but 2x upscaling usually provides good balance. Consider compressing after inserting if needed."
+        },
+        {
+          "question": "Does this work for Keynote Präsentationen too?",
+          "answer": "Yes! Upscaled Bilder work perfectly in Keynote, PowerPoint, Google Slides, and all major presentation software."
+        },
+        {
+          "question": "Can I zoom into upscaled Bilder during Präsentationen?",
+          "answer": "Yes! 4x upscaled Bilder provide excellent Qualität even when zoomed in during Präsentationen, allowing detailed examination of visuals."
+        }
+      ],
+      "relatedDevices": ["Tablet-content-creation-Upscaler", "Mobil-content-creation-Upscaler"],
+      "relatedUseCases": ["Desktop-E-Commerce-Upscaler", "Desktop-Professionell-printing-Upscaler"]
+    },
+    {
+      "slug": "tablet-digital-art-upscaler",
+      "title": "Tablet Digitale Kunst Upscaler",
+      "metaTitle": "Tablet Digitale Kunst Upscaler | Verbessern iPad & Tablet Art | MyImageUpscaler",
+      "metaDescription": "Upscale Digitale Kunst created on tablets. Perfekt für iPad Pro, Android tablets, and digital artists. Print-ready Qualität. Try Kostenlos.",
+      "h1": "Tablet Digitale Kunst Upscaler - Professionell Digitale Kunst Verbesserung",
+      "intro": "Transform your Tablet-created Digitale Kunst into stunning high-Auflösung artwork with our specialized Upscaler. Perfekt für iPad Pro, Surface, and digital artists.",
+      "primaryKeyword": "Tablet Digitale Kunst Upscaler",
+      "secondaryKeywords": [
+        "ipad art Upscaler",
+        "Tablet drawing enhancer",
+        "Digitale Kunst Auflösung Upscaler",
+        "procreate Upscaler"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Tablet",
+      "useCase": "Digitale Kunst",
+      "deviceDescription": "Tablets like iPad Pro are excellent for Digitale Kunst but output Auflösung may need Verbesserung for print or display.",
+      "useCaseDescription": "Digitale Kunst from tablets benefits from upscaling for print products and high-Auflösung display. Enhanced for Professionell use.",
+      "deviceConstraints": [
+        "Tablet canvas size may limit output Auflösung",
+        "Layer complexity affects export Qualität",
+        "File size management during artwork creation",
+        "Color accuracy varies across Tablet displays"
+      ],
+      "useCaseBenefits": [
+        "Print-ready Auflösung from Tablet artwork",
+        "Gallery-Qualität Digitale Kunst for sale",
+        "High-Auflösung versions for prints and merchandise",
+        "Professionell output from portable creation workflow"
+      ],
+      "tips": [
+        "Use 4x upscaling for print products from Tablet art",
+        "Export at highest Auflösung from your art app first",
+        "Consider working in larger canvas sizes when possible",
+        "Maintain layers until after upscaling for flexibility"
+      ],
+      "faq": [
+        {
+          "question": "Can I make prints from iPad Procreate artwork?",
+          "answer": "Yes! Upscale your Procreate and other Tablet artwork 4x to create print-ready files for prints, merchandise, and gallery display."
+        },
+        {
+          "question": "What Auflösung should I export from Tablet art apps?",
+          "answer": "Export at the maximum Auflösung your art app supports, then use our Upscaler to Verbessern further for print products."
+        },
+        {
+          "question": "Does upscaling work for all Tablet art apps?",
+          "answer": "Yes! Whether you use Procreate, Adobe Fresco, Clip Studio, or other Tablet art apps, upscaling enhances your digital artwork."
+        },
+        {
+          "question": "Can I sell prints of upscaled Tablet art?",
+          "answer": "Absolutely! 4x upscaled Tablet art is excellent Qualität for print sales, gallery exhibitions, and art prints."
+        }
+      ],
+      "relatedDevices": [
+        "Desktop-photo-editing-Upscaler",
+        "Desktop-Professionell-printing-Upscaler"
+      ],
+      "relatedUseCases": ["Tablet-photo-editing-Upscaler", "Tablet-content-creation-Upscaler"]
+    },
+    {
+      "slug": "tablet-photo-editing-upscaler",
+      "title": "Tablet Foto-Bearbeitung Upscaler",
+      "metaTitle": "Tablet Foto-Bearbeitung Upscaler | iPad & Tablet Photo Verbesserung | MyImageUpscaler",
+      "metaDescription": "Upscale Fotos during Tablet Foto-Bearbeitung. Perfekt für iPad, Surface, and Mobil Foto-Bearbeitung workflows. Try Kostenlos.",
+      "h1": "Tablet Foto-Bearbeitung Upscaler - Mobil Editing Verbesserung",
+      "intro": "Verbessern your Fotos during Tablet editing workflows with our specialized Upscaler. Perfekt für iPad, Surface Pro, and Foto-Bearbeitung on the go.",
+      "primaryKeyword": "Tablet Foto-Bearbeitung Upscaler",
+      "secondaryKeywords": [
+        "ipad photo Upscaler",
+        "Tablet photo enhancer",
+        "surface Foto-Bearbeitung Upscaler",
+        "Mobil Foto-Bearbeitung Verbesserung"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Tablet",
+      "useCase": "Foto-Bearbeitung",
+      "deviceDescription": "Tablets offer powerful Foto-Bearbeitung capabilities with upscaling for flexible workflows anywhere.",
+      "useCaseDescription": "Tablet Foto-Bearbeitung benefits from upscaling for Professionell output Qualität while maintaining Mobil flexibility.",
+      "deviceConstraints": [
+        "Tablet apps may have limited RAW processing",
+        "Storage management for large photo libraries",
+        "Screen size affects detailed editing precision",
+        "Export format options vary across apps"
+      ],
+      "useCaseBenefits": [
+        "Professionell Qualität from Mobil editing workflows",
+        "Flexible editing location without Desktop constraints",
+        "High-Auflösung output for print and web",
+        "Efficient Tablet-based workflow Verbesserung"
+      ],
+      "tips": [
+        "Use 2x upscaling for most Tablet editing workflows",
+        "Consider cloud storage for large upscaled files",
+        "Export as TIFF when Tablet apps support it",
+        "Use stylus for precise editing on Tablet interface"
+      ],
+      "faq": [
+        {
+          "question": "Is Tablet Foto-Bearbeitung good enough for Professionell work?",
+          "answer": "Yes! Modern tablets combined with upscaling can produce Professionell-Qualität results suitable for many applications."
+        },
+        {
+          "question": "What's the best upscaling level for Tablet editing?",
+          "answer": "2x is usually sufficient for Tablet editing workflows, providing enhanced Qualität while maintaining manageable file sizes."
+        },
+        {
+          "question": "Does this work with iPad Foto-Bearbeitung apps?",
+          "answer": "Yes! Our Upscaler works with Fotos edited on iPad using Affinity Photo, Lightroom Mobil, and other Tablet editing apps."
+        },
+        {
+          "question": "Can I print Fotos edited and upscaled on tablets?",
+          "answer": "Absolutely! 2x or 4x upscaled Fotos edited on tablets are suitable for printing. 4x recommended for larger prints."
+        }
+      ],
+      "relatedDevices": ["Desktop-photo-editing-Upscaler", "Mobil-content-creation-Upscaler"],
+      "relatedUseCases": ["Tablet-digital-art-Upscaler", "Tablet-social-media-Upscaler"]
+    },
+    {
+      "slug": "tablet-social-media-upscaler",
+      "title": "Tablet Social Media Upscaler",
+      "metaTitle": "Tablet Social Media Upscaler | iPad Social Content Verbesserung | MyImageUpscaler",
+      "metaDescription": "Upscale content for Social Media on tablets. Perfekt für content creators using iPad and tablets for Social Media. Try Kostenlos.",
+      "h1": "Tablet Social Media Upscaler - Content Creator Verbesserung",
+      "intro": "Verbessern your Social Media content created on tablets with our specialized Upscaler. Perfekt für iPad content creators and Social Media managers.",
+      "primaryKeyword": "Tablet Social Media Upscaler",
+      "secondaryKeywords": [
+        "ipad Social Media Upscaler",
+        "Tablet content enhancer",
+        "Social Media Tablet Upscaler",
+        "creator Tablet Verbesserung"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Tablet",
+      "useCase": "Social Media",
+      "deviceDescription": "Tablets are excellent for Social Media Content-Erstellung and benefit from upscaling for platform Qualität.",
+      "useCaseDescription": "Social Media content from tablets reaches maximum Qualität with upscaling Verbesserung for all major platforms.",
+      "deviceConstraints": [
+        "Platform-specific app limitations on tablets",
+        "Export Qualität varies by Social Media apps",
+        "File size management for cloud sharing",
+        "Portrait orientation common on tablets"
+      ],
+      "useCaseBenefits": [
+        "Platform-optimized content from Tablet workflow",
+        "High-Qualität vertical Video-Thumbnails",
+        "Professionell appearance for Tablet-created content",
+        "Efficient batch processing for content calendars"
+      ],
+      "tips": [
+        "Use 2x upscaling for most Social Media content from tablets",
+        "Leverage Tablet screen size for composition and editing",
+        "Batch prepare content during creative sessions",
+        "Test on target platforms before scheduling"
+      ],
+      "faq": [
+        {
+          "question": "Is Tablet good for Social Media Content-Erstellung?",
+          "answer": "Yes! Tablets like iPad Pro are excellent for Social Media Content-Erstellung, especially with upscaling Verbesserung."
+        },
+        {
+          "question": "What upscaling level for Social Media on tablets?",
+          "answer": "2x is Ideal für most Social Media content, providing excellent Qualität while maintaining efficient processing."
+        },
+        {
+          "question": "Does this work for Instagram and TikTok content from tablets?",
+          "answer": "Yes! Upscale content created on tablets for all major platforms including Instagram, TikTok, Facebook, and more."
+        },
+        {
+          "question": "Can I batch process Social Media content on tablets?",
+          "answer": "Yes! Batch processing multiple pieces of content is efficient on tablets and helps maintain consistent Qualität."
+        }
+      ],
+      "relatedDevices": ["Mobil-social-media-Upscaler", "Desktop-social-media-Upscaler"],
+      "relatedUseCases": ["Tablet-content-creation-Upscaler", "Tablet-digital-art-Upscaler"]
+    },
+    {
+      "slug": "tablet-ecommerce-upscaler",
+      "title": "Tablet E-commerce Upscaler",
+      "metaTitle": "Tablet E-commerce Upscaler | Mobil Product Photo Verbesserung | MyImageUpscaler",
+      "metaDescription": "Upscale product Fotos on tablets for e-commerce. Perfekt für Online sellers using tablets for product photography. Try Kostenlos.",
+      "h1": "Tablet E-commerce Upscaler - Product Photo Verbesserung",
+      "intro": "Transform your product Fotos captured or edited on tablets into Professionell e-commerce Bilder. Perfekt für Mobil product photography workflows.",
+      "primaryKeyword": "Tablet E-Commerce Upscaler",
+      "secondaryKeywords": [
+        "Tablet product photo Upscaler",
+        "ipad E-Commerce enhancer",
+        "Mobil product photography Upscaler",
+        "Online store Tablet Verbesserung"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Tablet",
+      "useCase": "E-commerce",
+      "deviceDescription": "Tablets offer convenient product photo capture and editing with upscaling for Professionell e-commerce output.",
+      "useCaseDescription": "E-commerce product photography from tablets benefits from upscaling for Professionell Online store presentation.",
+      "deviceConstraints": [
+        "Lighting challenges without studio equipment",
+        "Limited manual camera controls on tablets",
+        "File management for large product catalogs",
+        "Color accuracy varying by Tablet display"
+      ],
+      "useCaseBenefits": [
+        "Professionell product Qualität from Mobil workflow",
+        "Zoom-enabled product Bilder for stores",
+        "Consistent catalog Qualität from Tablet photography",
+        "Cost-effective product photography solution"
+      ],
+      "tips": [
+        "Use 4x upscaling for products requiring zoom capability",
+        "Good lighting essential for Tablet product photography",
+        "Consider portable lighting solutions for Tablet shoots",
+        "Maintain consistent backgrounds across product line"
+      ],
+      "faq": [
+        {
+          "question": "Can I use Tablet Fotos for Professionell e-commerce?",
+          "answer": "Yes! With proper lighting and our Upscaler, Tablet Fotos can achieve Professionell Qualität suitable for e-commerce platforms."
+        },
+        {
+          "question": "What upscaling level for e-commerce product Fotos on tablets?",
+          "answer": "4x upscaling recommended for e-commerce to enable deep zoom functionality and Professionell presentation."
+        },
+        {
+          "question": "Does this work for Etsy and Amazon sellers using tablets?",
+          "answer": "Yes! Tablet-captured and upscaled product Fotos work excellently for Etsy, Amazon, Shopify, and other e-commerce platforms."
+        },
+        {
+          "question": "How do I get good lighting for Tablet product photography?",
+          "answer": "Use natural light near windows or portable LED panels. Good lighting combined with upscaling creates Professionell product Fotos."
+        }
+      ],
+      "relatedDevices": ["Mobil-E-Commerce-Upscaler", "Desktop-E-Commerce-Upscaler"],
+      "relatedUseCases": ["Tablet-social-media-Upscaler", "Tablet-content-creation-Upscaler"]
+    },
+    {
+      "slug": "tablet-content-creation-upscaler",
+      "title": "Tablet Content-Erstellung Upscaler",
+      "metaTitle": "Tablet Content-Erstellung Upscaler | iPad Creator Verbesserung | MyImageUpscaler",
+      "metaDescription": "Upscale content created on tablets. Perfekt für creators using iPad and tablets for content production. Try Kostenlos.",
+      "h1": "Tablet Content-Erstellung Upscaler - Creator Verbesserung",
+      "intro": "Verbessern your content created on tablets with our specialized Upscaler. Perfekt für digital creators, influencers, and content producers using iPad workflows.",
+      "primaryKeyword": "Tablet Content-Erstellung Upscaler",
+      "secondaryKeywords": [
+        "ipad content creator Upscaler",
+        "Tablet creator Verbesserung",
+        "Mobil content production Upscaler",
+        "creator Tablet tools"
+      ],
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "Tablet",
+      "useCase": "Content-Erstellung",
+      "deviceDescription": "Tablets provide excellent Content-Erstellung capabilities with upscaling Verbesserung for Professionell output.",
+      "useCaseDescription": "Content-Erstellung on tablets reaches Professionell Qualität with AI upscaling for various distribution platforms.",
+      "deviceConstraints": [
+        "Tablet screen size affects detailed editing",
+        "File management for large content libraries",
+        "App ecosystem varies by Tablet platform",
+        "Export options limited by Tablet apps"
+      ],
+      "useCaseBenefits": [
+        "Professionell Qualität from portable creation workflow",
+        "Flexible creation location without Desktop constraints",
+        "Cross-platform content optimization",
+        "Efficient Tablet-based creator workflow"
+      ],
+      "tips": [
+        "Use stylus for precise Content-Erstellung on tablets",
+        "Leverage Tablet portability for on-location creation",
+        "Organize content libraries before batch upscaling",
+        "Consider 2x or 4x based on content destination"
+      ],
+      "faq": [
+        {
+          "question": "Are tablets good enough for Professionell Content-Erstellung?",
+          "answer": "Yes! Modern tablets like iPad Pro combined with upscaling can produce Professionell-Qualität content for many applications."
+        },
+        {
+          "question": "What upscaling level should content creators use on tablets?",
+          "answer": "Use 2x for web and Social Media content, 4x for print products or premium downloads from your Tablet workflow."
+        },
+        {
+          "question": "Does this work for all types of content creators?",
+          "answer": "Yes! Whether you create Digitale Kunst, photography, graphics, or other visual content, Tablet upscaling enhances your work."
+        },
+        {
+          "question": "Can I maintain a Professionell workflow entirely on tablets?",
+          "answer": "Yes! Many creators successfully maintain Professionell Tablet-only workflows, with upscaling providing Desktop-Qualität output."
+        }
+      ],
+      "relatedDevices": ["Desktop-content-creation-Upscaler", "Mobil-content-creation-Upscaler"],
+      "relatedUseCases": ["Tablet-digital-art-Upscaler", "Tablet-social-media-Upscaler"]
     }
   ],
   "meta": {
-    "totalPages": 3,
-    "lastUpdated": "2025-12-19T00:00:00Z",
-    "description": "Geräte × Anwendungsfall Multiplikatorseiten - Kombinationen von Geräten mit spezifischen Anwendungsfällen für Bildskalierung"
+    "totalPages": 17,
+    "lastUpdated": "2025-12-19T00:00:00Z"
   }
 }

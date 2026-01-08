@@ -84,7 +84,12 @@
       "h1": "Bilder auf HD 1080p upscale - Full HD-Qualität",
       "intro": "Verbessern Sie Ihre Bilder auf Full HD-Auflösung (1920x1080 Pixel) mit KI. Perfekt für Websites, Social Media, YouTube und Standard-HD-Displays.",
       "primaryKeyword": "auf hd upscale",
-      "secondaryKeywords": ["hd upscaling", "1080p upscale", "in hd konvertieren", "full hd upscaler"],
+      "secondaryKeywords": [
+        "hd upscaling",
+        "1080p upscale",
+        "in hd konvertieren",
+        "full hd upscaler"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "Skala",
       "resolution": "Full HD (1080p)",
@@ -528,10 +533,769 @@
       ],
       "relatedScale": ["ai-upscaler-4x", "ai-upscaler-8x"],
       "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "ai-upscaler-4x",
+      "title": "4X-KI-Bild-Upscaler",
+      "metaTitle": "4X AI Image Upscaler | Quadruple Resolution with AI Technology",
+      "metaDescription": "Quadruple your image resolution with 4X AI upscaling. Dramatically improve quality while maintaining detail. Perfect for large prints and displays. Try free.",
+      "h1": "4X AI Upscaler - Maximum Quality Enhancement",
+      "intro": "Transform your images with 4X AI upscaling that quadruples resolution while adding incredible detail. The perfect choice for maximum quality improvement without going to extreme resolutions.",
+      "primaryKeyword": "4X-KI-Bild-Upscaler",
+      "secondaryKeywords": [
+        "4x image upscaler",
+        "quadruple resolution tool",
+        "4x ai enhancement",
+        "4k upscaler tool",
+        "maximum quality upscaler"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "4X Enhanced",
+      "dimensions": {
+        "width": "Variable",
+        "height": "Variable",
+        "aspectRatio": "Maintained"
+      },
+      "targetUses": [
+        "High-quality printing",
+        "Large format displays",
+        "Professional photography",
+        "Artwork enhancement",
+        "E-commerce excellence"
+      ],
+      "benefits": [
+        {
+          "title": "Dramatic Improvement",
+          "description": "4X scaling provides substantial resolution increase for maximum quality.",
+          "metric": "16x more pixels"
+        },
+        {
+          "title": "Professional Results",
+          "description": "Suitable for professional and commercial applications requiring high quality.",
+          "metric": "Professional grade"
+        },
+        {
+          "title": "Advanced AI Processing",
+          "description": "Sophisticated algorithms add realistic details and textures.",
+          "metric": "Intelligent enhancement"
+        }
+      ],
+      "technicalSpecs": {
+        "scaleFactor": "4x both width and height",
+        "pixelIncrease": "16x total pixels",
+        "processingTime": "30-60 seconds",
+        "qualityEnhancement": "AI-powered detail generation",
+        "supportedFormats": "JPEG, PNG, WebP"
+      },
+      "faq": [
+        {
+          "question": "What resolution will my image be after 4X upscaling?",
+          "answer": "If your image is 1000x1000 pixels, it will become 4000x4000 pixels. We multiply both width and height by 4, resulting in 16 times more total pixels."
+        },
+        {
+          "question": "Is 4X upscaling better than 4K upscaling?",
+          "answer": "They serve different purposes. 4X scales relative to your original size, while 4K creates a specific resolution (3840x2160). Choose 4X if you want to maintain your aspect ratio and scale proportionally."
+        },
+        {
+          "question": "Can 4X upscaling add realistic details?",
+          "answer": "Yes! Our AI is trained to generate realistic details and textures that weren't visible in lower resolution, creating natural-looking enhancements rather than just enlarging pixels."
+        },
+        {
+          "question": "How long does 4X upscaling take?",
+          "answer": "Typically 30-60 seconds depending on your image size and content. The AI needs time to intelligently generate new details for the larger resolution."
+        }
+      ],
+      "relatedScale": ["ai-upscaler-2x", "upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "image-upscaler-4k",
+      "title": "Bild-Upscaler 4K",
+      "metaTitle": "Image Upscaler 4K | Convert Images to 4K Resolution Free",
+      "metaDescription": "Upscale any image to 4K resolution (3840x2160) with AI. Professional quality enhancement for photos, art, and graphics. Fast processing, no watermarks.",
+      "h1": "Image Upscaler 4K - Convert Any Image to 4K Quality",
+      "intro": "Transform your images to professional 4K resolution with our specialized upscaler. Perfect for content creators, photographers, and anyone needing the highest quality image enhancement.",
+      "primaryKeyword": "Bild-Upscaler 4K",
+      "secondaryKeywords": [
+        "4k image converter",
+        "image to 4k tool",
+        "4k photo upscaler",
+        "3840x2160 converter",
+        "professional 4k enhancement"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "4K UHD",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "Content creation",
+        "Professional portfolios",
+        "Digital art",
+        "Print media",
+        "4K displays"
+      ],
+      "benefits": [
+        {
+          "title": "Industry Standard",
+          "description": "4K is the professional standard for high-quality content and displays.",
+          "metric": "8.3 megapixels"
+        },
+        {
+          "title": "Versatile Format",
+          "description": "Works with all image types and maintains professional quality standards.",
+          "metric": "Universal compatibility"
+        },
+        {
+          "title": "Print Ready",
+          "description": "4K resolution produces excellent results for large format printing.",
+          "metric": "Professional printing"
+        }
+      ],
+      "technicalSpecs": {
+        "targetResolution": "3840 x 2160 pixels",
+        "totalPixels": "8,294,400",
+        "aspectRatio": "16:9 standard",
+        "maxPrintSize": "32\" x 18\" at 300 DPI",
+        "supportedInputFormats": "JPEG, PNG, WebP, TIFF, BMP"
+      },
+      "faq": [
+        {
+          "question": "What makes 4K upscaling different from regular upscaling?",
+          "answer": "4K upscaling specifically targets the professional 3840x2160 resolution standard, ensuring compatibility with 4K displays and professional workflows while maintaining aspect ratio standards."
+        },
+        {
+          "question": "Can I use 4K upscaler for portraits?",
+          "answer": "Absolutely! Our 4K upscaler is excellent for portraits, enhancing facial features, skin texture, and details while maintaining natural appearance suitable for professional photography."
+        },
+        {
+          "question": "Will 4K images work on regular websites?",
+          "answer": "Yes! While 4K images are large, they can be optimized for web use. The benefit is having high-resolution source images that look great at any display size."
+        },
+        {
+          "question": "How do I know if 4K is necessary for my project?",
+          "answer": "Choose 4K if you're targeting 4K displays, large prints, professional portfolios, or want maximum quality. For web-only content, HD (1080p) might be sufficient."
+        }
+      ],
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "hd-upscaler",
+      "title": "HD-Bild-Upscaler",
+      "metaTitle": "HD Image Upscaler | Convert Images to HD Quality Free",
+      "metaDescription": "Upscale images to HD quality with AI. Perfect enhancement for web, social media, and displays. Fast processing, maintains quality. Try free.",
+      "h1": "HD Upscaler - Professional HD Quality Enhancement",
+      "intro": "Upgrade your images to crisp HD quality with our AI-powered HD upscaler. The perfect solution for enhancing photos and graphics for modern displays and web content.",
+      "primaryKeyword": "HD-Bild-Upscaler",
+      "secondaryKeywords": [
+        "hd image enhancer",
+        "image to hd converter",
+        "hd photo upscaler",
+        "720p upscaler",
+        "high definition upscaler"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "HD (720p)",
+      "dimensions": {
+        "width": 1280,
+        "height": 720,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "Web content",
+        "Social media",
+        "Digital displays",
+        "Mobile apps",
+        "Online portfolios"
+      ],
+      "benefits": [
+        {
+          "title": "Optimized for Web",
+          "description": "HD resolution provides excellent quality with manageable file sizes for web use.",
+          "metric": "0.9 megapixels"
+        },
+        {
+          "title": "Universal Support",
+          "description": "HD is supported by virtually all devices and platforms.",
+          "metric": "100% compatible"
+        },
+        {
+          "title": "Schnelle Verarbeitung",
+          "description": "Quick enhancement due to moderate resolution requirements.",
+          "metric": "10-25 seconds"
+        }
+      ],
+      "technicalSpecs": {
+        "targetResolution": "1280 x 720 pixels",
+        "totalPixels": "921,600",
+        "aspectRatio": "16:9 standard",
+        "printSize": "Up to 10\" x 6\" at 300 DPI",
+        "compressionOptimized": "Ja"
+      },
+      "faq": [
+        {
+          "question": "What's the difference between HD and Full HD upscaling?",
+          "answer": "HD (720p) is 1280x720 pixels, while Full HD (1080p) is 1920x1080. HD provides excellent quality for most web uses while maintaining smaller file sizes."
+        },
+        {
+          "question": "Is HD upscaling good enough for professional use?",
+          "answer": "HD is perfect for web design, social media, and digital portfolios. For large prints or 4K displays, consider Full HD (1080p) or 4K upscaling instead."
+        },
+        {
+          "question": "Can HD upscaler improve old photos?",
+          "answer": "Yes! Our HD upscaler can significantly improve old or low-quality photos by increasing resolution and enhancing details, making them suitable for digital use."
+        },
+        {
+          "question": "How does HD upscaling affect file size?",
+          "answer": "HD creates images that are large enough for quality but small enough for efficient web use, providing an excellent balance between quality and file size."
+        }
+      ],
+      "relatedScale": ["upscale-to-hd", "upscale-to-1080p"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "image-upscaler-8k",
+      "title": "Bild-Upscaler 8K",
+      "metaTitle": "8K Image Upscaler | Ultimate Resolution Enhancement (7680x4320)",
+      "metaDescription": "Upscale images to 8K resolution with AI. Maximum quality enhancement for professional use, large prints, and future-proof content. Try free.",
+      "h1": "Image Upscaler 8K - Ultimate Resolution Enhancement",
+      "intro": "Achieve unprecedented image quality with 8K upscaling. Transform any image to ultra-high 8K resolution (7680x4320) for professional applications and maximum detail preservation.",
+      "primaryKeyword": "Bild-Upscaler 8K",
+      "secondaryKeywords": [
+        "8k image enhancer",
+        "8k photo upscaler",
+        "7680x4320 converter",
+        "Ultra HD Bild-Upscaler",
+        "maximum resolution tool"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "8K UHD",
+      "dimensions": {
+        "width": 7680,
+        "height": 4320,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "Professional photography",
+        "Large format printing",
+        "Cinema production",
+        "Architectural visualization",
+        "Future-proof content"
+      ],
+      "benefits": [
+        {
+          "title": "Maximum Detail",
+          "description": "8K provides the highest consumer resolution available with incredible detail.",
+          "metric": "33.2 megapixels"
+        },
+        {
+          "title": "Professional Grade",
+          "description": "Suitable for the most demanding professional applications.",
+          "metric": "Industry leading"
+        },
+        {
+          "title": "Future-Proof",
+          "description": "8K content will remain relevant as display technology advances.",
+          "metric": "Future ready"
+        }
+      ],
+      "technicalSpecs": {
+        "targetResolution": "7680 x 4320 pixels",
+        "totalPixels": "33,177,600",
+        "aspectRatio": "16:9 standard",
+        "maxPrintSize": "64\" x 36\" at 300 DPI",
+        "professionalGrade": "Ja"
+      },
+      "faq": [
+        {
+          "question": "Who needs 8K upscaling?",
+          "answer": "8K is essential for professionals in photography, cinematography, large format printing, and anyone creating content for future-proof applications or ultra-high-end displays."
+        },
+        {
+          "question": "Is 8K overkill for most users?",
+          "answer": "For most casual users, 4K provides excellent quality. 8K is for professionals who need maximum detail, large prints, or are creating content that must remain relevant as technology advances."
+        },
+        {
+          "question": "How long does 8K upscaling take?",
+          "answer": "8K upscaling typically takes 3-5 minutes due to the massive 33.2 million pixels that need to be generated. The processing time is worth it for the incredible quality."
+        },
+        {
+          "question": "Can 8K images be viewed on regular computers?",
+          "answer": "Yes! 8K images will be automatically downscaled to fit your display while maintaining excellent quality. Having 8K source ensures your images look great on any device."
+        }
+      ],
+      "relatedScale": ["upscale-to-8k"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "resolution-enhancer",
+      "title": "Auflösungsverbesserer",
+      "metaTitle": "AI Resolution Enhancer | Increase Image Resolution Online Free",
+      "metaDescription": "Enhance image resolution with AI. Increase pixel count, improve clarity, and add detail automatically. Perfect for photos and graphics. Try free.",
+      "h1": "AI Resolution Enhancer - Smart Image Quality Improvement",
+      "intro": "Enhance your image resolution intelligently with AI that adds realistic details and improves clarity. Perfect for upgrading low-quality images to professional standards.",
+      "primaryKeyword": "Auflösungsverbesserer",
+      "secondaryKeywords": [
+        "image resolution enhancer",
+        "ai resolution booster",
+        "increase image resolution",
+        "pixel enhancer",
+        "resolution upscaler"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "Variable",
+      "dimensions": {
+        "width": "User selectable",
+        "height": "User selectable",
+        "aspectRatio": "Maintained"
+      },
+      "targetUses": [
+        "Custom resolution needs",
+        "Resolution optimization",
+        "Quality improvement",
+        "Professional workflows",
+        "Print preparation"
+      ],
+      "benefits": [
+        {
+          "title": "Flexible Enhancement",
+          "description": "Choose your target resolution based on specific needs and use cases.",
+          "metric": "Custom output"
+        },
+        {
+          "title": "Smart Enhancement",
+          "description": "AI intelligently adds appropriate details for each resolution level.",
+          "metric": "Intelligent scaling"
+        },
+        {
+          "title": "Quality Focused",
+          "description": "Maintains and improves image quality throughout the enhancement process.",
+          "metric": "Quality preserved"
+        }
+      ],
+      "technicalSpecs": {
+        "resolutionOptions": ["HD", "Full HD", "2K", "4K", "8K", "Brauch"],
+        "maxUpscaling": "Up to 8x original resolution",
+        "qualityEnhancement": "AI-based detail generation",
+        "flexibility": "User-selectable output resolution",
+        "supportedFormats": "JPEG, PNG, WebP, TIFF, BMP"
+      },
+      "faq": [
+        {
+          "question": "How does resolution enhancement work?",
+          "answer": "Our AI analyzes your image and intelligently generates new pixels based on surrounding patterns, adding realistic details rather than simply enlarging existing pixels."
+        },
+        {
+          "question": "Can I choose any resolution for enhancement?",
+          "answer": "Yes! Our tool offers preset resolutions (HD, 4K, 8K) and allows custom resolution input to meet your specific needs."
+        },
+        {
+          "question": "Will resolution enhancement make my images look fake?",
+          "answer": "No! Our AI is trained to generate natural-looking details that enhance rather than distort your images. The results look professionally enhanced, not artificial."
+        },
+        {
+          "question": "What's the best resolution to choose?",
+          "answer": "Choose based on your use case: HD (720p) for web, Full HD (1080p) for standard use, 4K for professional work, and 8K for maximum quality or large prints."
+        }
+      ],
+      "relatedScale": ["ai-upscaler-2x", "ai-upscaler-4x"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "2k-upscaler",
+      "title": "2K-Bild-Upscaler",
+      "metaTitle": "2K Image Upscaler | Convert to 2K Resolution (2560x1440) Free",
+      "metaDescription": "Upscale images to 2K resolution (2560x1440) with AI. Perfect balance of quality and file size for professional use. Fast processing. Try free.",
+      "h1": "2K Upscaler - Professional 2K Resolution Enhancement",
+      "intro": "Transform your images to crisp 2K resolution (2560x1440) with AI upscaling. The sweet spot between HD and 4K, offering excellent quality for professional applications.",
+      "primaryKeyword": "2K-Bild-Upscaler",
+      "secondaryKeywords": [
+        "2k image enhancer",
+        "1440p upscaler",
+        "2k resolution tool",
+        "2560x1440 converter",
+        "qhd upscaler"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "2K QHD",
+      "dimensions": {
+        "width": 2560,
+        "height": 1440,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "Professional monitors",
+        "High-end displays",
+        "Print media",
+        "Digital design",
+        "Content creation"
+      ],
+      "benefits": [
+        {
+          "title": "Quality Balance",
+          "description": "2K provides excellent quality with more manageable file sizes than 4K.",
+          "metric": "3.7 megapixels"
+        },
+        {
+          "title": "Professional Standard",
+          "description": "2K (QHD) is the standard for many professional monitors and displays.",
+          "metric": "Professional grade"
+        },
+        {
+          "title": "Efficient Processing",
+          "description": "Faster processing than 4K while still providing high-quality results.",
+          "metric": "20-40 seconds"
+        }
+      ],
+      "technicalSpecs": {
+        "targetResolution": "2560 x 1440 pixels",
+        "totalPixels": "3,686,400",
+        "aspectRatio": "16:9 standard",
+        "comparedTo1080p": "1.78x more pixels",
+        "printSize": "Up to 22\" x 12\" at 300 DPI",
+        "qualityLevel": "High professional"
+      },
+      "faq": [
+        {
+          "question": "What is 2K resolution exactly?",
+          "answer": "2K (also called QHD or 1440p) is 2560x1440 pixels - about 1.78 times more pixels than 1080p. It's the standard for many high-end monitors and displays."
+        },
+        {
+          "question": "Is 2K better than 1080p?",
+          "answer": "2K provides noticeably better quality than 1080p with more detail and sharper images, especially on larger screens. It's an excellent step up without the file size of 4K."
+        },
+        {
+          "question": "Should I choose 2K or 4K?",
+          "answer": "Choose 2K for professional monitors and efficient workflows. Choose 4K for maximum quality or if you specifically need 4K resolution for your use case."
+        },
+        {
+          "question": "Can 2K images be printed well?",
+          "answer": "Yes! 2K resolution provides excellent print quality up to 22x12 inches at 300 DPI, making it suitable for most professional printing needs."
+        }
+      ],
+      "relatedScale": ["upscale-to-hd", "upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "ultra-hd-upscaler",
+      "title": "Ultra HD Bild-Upscaler",
+      "metaTitle": "Ultra HD Image Upscaler | Convert to UHD Quality (4K+)",
+      "metaDescription": "Upscale images to Ultra HD quality with AI. Perfect for 4K displays, professional projects, and maximum detail enhancement. Try free.",
+      "h1": "Ultra HD Upscaler - Premium UHD Quality Enhancement",
+      "intro": "Elevate your images to Ultra HD quality with advanced AI upscaling technology. Perfect for creating content that meets the highest professional standards and display requirements.",
+      "primaryKeyword": "Ultra HD Bild-Upscaler",
+      "secondaryKeywords": [
+        "uhd image enhancer",
+        "ultra hd converter",
+        "4k+ upscaler",
+        "premium upscaler",
+        "high-end resolution tool"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "Ultra HD",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "aspectRatio": "16:9"
+      },
+      "targetUses": [
+        "Premium content creation",
+        "Professional portfolios",
+        "High-end displays",
+        "Commercial printing",
+        "Cinema production"
+      ],
+      "benefits": [
+        {
+          "title": "Premium Quality",
+          "description": "Ultra HD provides the highest consumer-grade resolution available.",
+          "metric": "8.3+ megapixels"
+        },
+        {
+          "title": "Professional Standard",
+          "description": "UHD is the standard for premium content and high-end applications.",
+          "metric": "Industry standard"
+        },
+        {
+          "title": "Maximum Compatibility",
+          "description": "Works perfectly with all modern Ultra HD displays and systems.",
+          "metric": "UHD compatible"
+        }
+      ],
+      "technicalSpecs": {
+        "minimumResolution": "3840 x 2160 (4K)",
+        "maximumResolution": "7680 x 4320 (8K)",
+        "qualityStandard": "Ultra HD specification",
+        "colorDepth": "Deep color support",
+        "professionalFeatures": "HDR ready"
+      },
+      "faq": [
+        {
+          "question": "What's the difference between Ultra HD and 4K?",
+          "answer": "Ultra HD and 4K are essentially the same resolution (3840x2160). Ultra HD is the consumer marketing term, while 4K is the professional term. Both refer to the same high-quality standard."
+        },
+        {
+          "question": "Is Ultra HD upscaling worth it for social media?",
+          "answer": "While Ultra HD provides excellent quality, it may be overkill for social media. However, having UHD source content ensures your images look great on any platform or device."
+        },
+        {
+          "question": "Can Ultra HD upscaler handle old photos?",
+          "answer": "Yes! Our Ultra HD upscaler can significantly enhance old photos, increasing resolution and restoring details to meet modern quality standards."
+        },
+        {
+          "question": "How does Ultra HD compare to 8K?",
+          "answer": "Ultra HD (4K) provides excellent quality for most professional uses. 8K offers 4 times more pixels but is mainly needed for specialized applications like cinema or extremely large prints."
+        }
+      ],
+      "relatedScale": ["upscale-to-4k", "upscale-to-8k"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "pixel-boost-upscaler",
+      "title": "Pixel-Boost-Bild-Upscaler",
+      "metaTitle": "Pixel Boost Upscaler | AI-Powered Pixel Enhancement Tool",
+      "metaDescription": "Boost pixels and enhance image quality with AI. Increase resolution, add detail, and improve clarity. Perfect for any image type. Try free.",
+      "h1": "Pixel Boost Upscaler - Advanced Pixel Enhancement Technology",
+      "intro": "Boost your image pixels intelligently with advanced AI that enhances resolution and adds realistic detail. The perfect tool for upgrading any image to professional quality standards.",
+      "primaryKeyword": "Pixel-Boost-Bild-Upscaler",
+      "secondaryKeywords": [
+        "pixel enhancer",
+        "pixel booster tool",
+        "image pixel enhancer",
+        "pixel resolution booster",
+        "advanced pixel upscaler"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "Variable",
+      "dimensions": {
+        "width": "Flexibel",
+        "height": "Flexibel",
+        "aspectRatio": "Maintained"
+      },
+      "targetUses": [
+        "Quality enhancement",
+        "Resolution boosting",
+        "Detail improvement",
+        "Professional workflows",
+        "Content optimization"
+      ],
+      "benefits": [
+        {
+          "title": "Pixel Intelligence",
+          "description": "Advanced AI analyzes and enhances pixels at the most granular level.",
+          "metric": "Pixel-perfect"
+        },
+        {
+          "title": "Detail Generation",
+          "description": "Creates realistic details that weren't present in the original image.",
+          "metric": "Smart enhancement"
+        },
+        {
+          "title": "Quality Boost",
+          "description": "Significantly improves overall image quality and clarity.",
+          "metric": "Quality enhanced"
+        }
+      ],
+      "technicalSpecs": {
+        "enhancementMethod": "AI-powered pixel analysis",
+        "boostLevels": ["2x", "4x", "8x", "Brauch"],
+        "detailGeneration": "Intelligent texture creation",
+        "qualityImprovement": "Multi-factor enhancement",
+        "processingSpeed": "Optimized for speed"
+      },
+      "faq": [
+        {
+          "question": "How does pixel boosting differ from regular upscaling?",
+          "answer": "Pixel boosting uses advanced AI to intelligently analyze and enhance each pixel, adding realistic details and improving quality rather than just enlarging existing pixels."
+        },
+        {
+          "question": "What types of images benefit most from pixel boosting?",
+          "answer": "All image types benefit! Photos get enhanced details, artwork becomes sharper, graphics gain clarity, and old photos are significantly improved."
+        },
+        {
+          "question": "Can pixel boosting fix pixelated images?",
+          "answer": "Yes! Our pixel boost upscaler can significantly reduce pixelation by intelligently filling in details and creating smooth transitions between pixels."
+        },
+        {
+          "question": "How much can pixel boosting improve my images?",
+          "answer": "Pixel boosting can improve resolution up to 8x while significantly enhancing image quality, clarity, and detail. The exact improvement depends on your source image quality."
+        }
+      ],
+      "relatedScale": ["resolution-enhancer", "ai-upscaler-4x"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-8x",
+      "title": "8X Upscaler",
+      "metaTitle": "8X AI Image Upscaler | 8x Resolution Enhancement Tool",
+      "metaDescription": "Upscale images by 8x with AI. Maximum resolution enhancement for professional printing and displays. 64x pixel increase. Try free.",
+      "h1": "8X AI Upscaler - Maximum Resolution Enhancement",
+      "intro": "Transform your images with our powerful 8X AI upscaler that increases resolution by 8 times while adding incredible detail. The ultimate choice for maximum quality enhancement and extreme upscaling needs.",
+      "primaryKeyword": "8X Upscaler",
+      "secondaryKeywords": [
+        "8x image upscaler",
+        "8x resolution enhancer",
+        "8x ai upscaling",
+        "maximum resolution tool",
+        "extreme upscaler"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "8X Enhanced",
+      "dimensions": {
+        "width": "Variable",
+        "height": "Variable",
+        "aspectRatio": "Maintained"
+      },
+      "targetUses": [
+        "Large format printing",
+        "Professional displays",
+        "Extreme enlargement",
+        "Print media production",
+        "Archival quality"
+      ],
+      "benefits": [
+        {
+          "title": "Maximum Enhancement",
+          "description": "8X scaling provides the highest practical upscaling factor with excellent quality.",
+          "metric": "64x more pixels"
+        },
+        {
+          "title": "Print Ready",
+          "description": "8X upscaling enables large format printing from small source images.",
+          "metric": "Professional printing"
+        },
+        {
+          "title": "Future Proof",
+          "description": "Maximum resolution ensures content remains relevant as technology advances.",
+          "metric": "Maximum quality"
+        }
+      ],
+      "technicalSpecs": {
+        "scaleFactor": "8x both width and height",
+        "pixelIncrease": "64x total pixels",
+        "processingTime": "60-120 seconds",
+        "qualityEnhancement": "Advanced AI detail generation",
+        "supportedFormats": "JPEG, PNG, WebP"
+      },
+      "faq": [
+        {
+          "question": "What does 8X upscaling mean?",
+          "answer": "8X upscaling multiplies both the width and height of your image by 8, resulting in 64 times more total pixels. For example, a 500x500 image becomes 4000x4000 pixels."
+        },
+        {
+          "question": "When should I use 8X upscaling?",
+          "answer": "Use 8X when you need maximum resolution from small source images. It's ideal for large format printing, professional displays, or when you need extreme enlargement while maintaining quality."
+        },
+        {
+          "question": "Will 8X upscaling make my image look blurry?",
+          "answer": "No! Our AI is specifically trained for extreme upscaling, adding realistic details and textures that maintain sharpness and quality even at 8X magnification."
+        },
+        {
+          "question": "How long does 8X upscaling take?",
+          "answer": "8X upscaling typically takes 60-120 seconds depending on your image size and content. The advanced AI processing requires time to generate 64x more pixels intelligently."
+        },
+        {
+          "question": "Can I print 8X upscaled images?",
+          "answer": "Absolutely! 8X upscaling is excellent for large format printing. Even small photos can be enlarged to poster or banner size while maintaining professional quality."
+        }
+      ],
+      "relatedScale": ["upscale-16x", "ai-upscaler-4x"],
+      "relatedTools": ["ai-image-upscaler"]
+    },
+    {
+      "slug": "upscale-16x",
+      "title": "16X Upscaler",
+      "metaTitle": "16X AI Image Upscaler | Extreme 16x Resolution Enhancement",
+      "metaDescription": "Upscale images by 16x with AI. Extreme resolution enhancement for specialized applications. 256x pixel increase. Maximum quality. Try free.",
+      "h1": "16X AI Upscaler - Extreme Resolution Enhancement",
+      "intro": "Achieve extreme resolution enhancement with our 16X AI upscaler. Multiply your image dimensions by 16 while adding remarkable detail. For specialized applications requiring maximum possible upscaling.",
+      "primaryKeyword": "16X Upscaler",
+      "secondaryKeywords": [
+        "16x image upscaler",
+        "16x resolution enhancer",
+        "extreme upscaling",
+        "maximum resolution tool",
+        "ultra upscaler"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "Skalieren",
+      "resolution": "16X Enhanced",
+      "dimensions": {
+        "width": "Variable",
+        "height": "Variable",
+        "aspectRatio": "Maintained"
+      },
+      "targetUses": [
+        "Specialized printing",
+        "Professional photography",
+        "Extreme enlargement",
+        "Archival projects",
+        "Research applications"
+      ],
+      "benefits": [
+        {
+          "title": "Extreme Enhancement",
+          "description": "16X scaling pushes the boundaries of AI upscaling to the maximum.",
+          "metric": "256x more pixels"
+        },
+        {
+          "title": "Specialized Use",
+          "description": "Ideal for specialized applications requiring extreme resolution enhancement.",
+          "metric": "Professional grade"
+        },
+        {
+          "title": "Maximum Detail",
+          "description": "Advanced AI generates unprecedented detail even at extreme magnification.",
+          "metric": "Ultra enhancement"
+        }
+      ],
+      "technicalSpecs": {
+        "scaleFactor": "16x both width and height",
+        "pixelIncrease": "256x total pixels",
+        "processingTime": "2-5 minutes",
+        "qualityEnhancement": "State-of-the-art AI detail generation",
+        "supportedFormats": "JPEG, PNG, WebP"
+      },
+      "faq": [
+        {
+          "question": "What does 16X upscaling mean?",
+          "answer": "16X upscaling multiplies both the width and height of your image by 16, resulting in 256 times more total pixels. For example, a 250x250 image becomes 4000x4000 pixels."
+        },
+        {
+          "question": "When should I use 16X upscaling?",
+          "answer": "16X upscaling is for specialized applications requiring extreme enlargement from very small source images. Use when 8X isn't enough and you need maximum possible resolution enhancement."
+        },
+        {
+          "question": "Is 16X upscaling too much for regular photos?",
+          "answer": "For most users, 4X or 8X upscaling is sufficient. 16X is for specialized applications like forensic enhancement, archival restoration, or extreme printing needs."
+        },
+        {
+          "question": "How long does 16X upscaling take?",
+          "answer": "16X upscaling typically takes 2-5 minutes due to the computational intensity of generating 256x more pixels with AI enhancement."
+        },
+        {
+          "question": "Will 16X upscaling reduce quality?",
+          "answer": "Our AI is optimized for extreme upscaling, but results depend on source quality. For best results with 16X, start with the highest quality source image available."
+        }
+      ],
+      "relatedScale": ["upscale-8x", "ai-upscaler-4x"],
+      "relatedTools": ["ai-image-upscaler"]
     }
   ],
   "meta": {
-    "totalPages": 7,
+    "totalPages": 17,
     "lastUpdated": "2025-12-19T00:00:00Z"
   }
 }

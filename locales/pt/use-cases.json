@@ -135,6 +135,1358 @@
       ],
       "relatedTools": ["ai-image-upscaler"],
       "relatedGuides": ["background-removal-guide"]
+    },
+    {
+      "slug": "real-estate-listings",
+      "title": "Diretrizes de Fotos de Imóveis",
+      "metaTitle": "Requisitos de Foto de Imóvel por Plataforma | MLS, Zillow, Realtor.com",
+      "metaDescription": "Requisitos de imagem para MLS, Zillow, Realtor.com e Redfin. Aprenda tamanhos ótimos, proporções e como preparar fotos de listagem.",
+      "h1": "Requisitos de Foto de Listagem de Imóveis",
+      "intro": "Diferentes plataformas de imóveis têm especificações de imagem diferentes. Aqui está o que você precisa para os principais sites de listagem.",
+      "primaryKeyword": "fotos de listagem de imóveis",
+      "secondaryKeywords": [
+        "requisitos de foto mls",
+        "tamanho de imagem zillow",
+        "fotografia de imóveis"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Imóveis",
+      "description": "Requisitos específicos de imagem para plataformas de listagem de imóveis com orientação sobre como atendê-los.",
+      "platformRequirements": [
+        {
+          "platform": "MLS (varia por região)",
+          "minimumSize": "640x480px mínimo típico",
+          "recommendedSize": "2048x1536px ou maior",
+          "maxFileSize": "5-15MB (varia)",
+          "aspectRatio": "4:3 mais comum",
+          "format": "JPEG",
+          "notes": "Os requisitos variam por MLS regional. Verifique as diretrizes do seu MLS local. A maioria aceita até 50 fotos."
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3 preferido",
+          "format": "JPEG, PNG",
+          "notes": "Até 200 fotos. A primeira foto aparece nos resultados de busca - faça valer a pena."
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Sincroniza do MLS. Imagens de maior resolução obtêm prioridade nos rankings de busca."
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px ou maior",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Ênfase na qualidade da foto nas listagens. Fotos HDR funcionam bem."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Fotos de celular ficam muito escuras",
+          "solution": "Use nosso Melhorador de Fotos para melhorar exposição e sombras. Funciona bem para fotos internas.",
+          "howTo": "Faça upload para o Melhorador de Fotos, deixe a IA corrigir exposição automaticamente, depois amplie se necessário."
+        },
+        {
+          "problem": "Distorção de lente grande-angular",
+          "solution": "A correção de distorção deve ser feita antes de ampliar. A maioria dos aplicativos de edição tem correção de lente.",
+          "howTo": "Aplique correção de lente no Lightroom/aplicativo Fotos primeiro, depois amplie a imagem corrigida."
+        },
+        {
+          "problem": "Imagens de celular antigo são muito pequenas",
+          "solution": "Amplie 2x para celulares de 2-3 anos, 3-4x para celulares mais antigos para atender padrões atuais.",
+          "howTo": "Uma imagem 1080x810px ampliada 2x torna-se 2160x1620px - acima do tamanho recomendado do Zillow."
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "Fotografe durante a hora dourada",
+          "description": "Luz do início da manhã ou final da tarde é mais favorecedora. Evite sombras duras do meio-dia."
+        },
+        {
+          "tip": "Use um tripé para interiores",
+          "description": "Permite exposição mais longa para interiores mais brilhantes sem borrão. Essencial para ambientes com pouca luz."
+        },
+        {
+          "tip": "Capture exterior primeiro",
+          "description": "Fotos externas funcionam melhor com luz da manhã. Programe a sessão para começar do lado de fora."
+        },
+        {
+          "tip": "Organize quartos antes de fotografar",
+          "description": "Remova bagunça, itens pessoais e objetos distrativos. Menos é mais."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é o melhor tamanho de foto para Zillow?",
+          "answer": "Zillow recomenda mínimo 2048x1536px. Imagens maiores (até 50MB) exibem melhor em telas grandes e pinch-to-zoom móvel."
+        },
+        {
+          "question": "Devo usar HDR para fotos de imóveis?",
+          "answer": "HDR ajuda com fotos internas onde janelas estão brilhantes mas quartos estão escuros. Use HDR de aparência natural, não estilos superprocessados."
+        },
+        {
+          "question": "Quantas fotos uma listagem deve ter?",
+          "answer": "25-50 fotos é ótimo para a maioria das propriedades. Inclua exterior, todos os quartos, recursos-chave e contexto do bairro."
+        },
+        {
+          "question": "Posso ampliar fotos tiradas com celular antigo?",
+          "answer": "Sim, mas a qualidade depende da fonte. Fotos da era iPhone 6 (2-3MP) podem ampliar razoavelmente para 4-6MP. Fotos muito antigas têm limites."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["interior-photography-tips"]
+    },
+    {
+      "slug": "social-media-images",
+      "title": "Tamanhos de Imagem de Mídia Social",
+      "metaTitle": "Guia de Tamanho de Imagem de Mídia Social 2025 | Instagram, Facebook, Twitter, LinkedIn",
+      "metaDescription": "Guia completo de dimensões de imagem de mídia social. Tamanhos ótimos para Instagram, Facebook, Twitter, LinkedIn, TikTok e Pinterest com dimensões exatas em pixels.",
+      "h1": "Guia de Tamanho de Imagem de Mídia Social",
+      "intro": "Cada plataforma tem diferentes tamanhos ótimos de imagem. Aqui estão as dimensões exatas para cada plataforma em 2025.",
+      "primaryKeyword": "tamanho de imagem de mídia social",
+      "secondaryKeywords": [
+        "tamanho de imagem instagram",
+        "dimensões de foto facebook",
+        "tamanho de imagem twitter",
+        "dimensões de imagem linkedin"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Mídia Social",
+      "description": "Referência completa para dimensões de imagem de mídia social com requisitos específicos da plataforma.",
+      "platformRequirements": [
+        {
+          "platform": "Instagram",
+          "imageTypes": [
+            { "type": "Postagem Quadrada", "dimensions": "1080x1080px", "aspectRatio": "1:1" },
+            { "type": "Postagem Retrato", "dimensions": "1080x1350px", "aspectRatio": "4:5" },
+            { "type": "Postagem Paisagem", "dimensions": "1080x566px", "aspectRatio": "1.91:1" },
+            { "type": "Story/Reel", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Foto de Perfil", "dimensions": "320x320px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Retrato (4:5) ocupa mais espaço na tela nos feeds. Stories são 9:16 vertical."
+        },
+        {
+          "platform": "Facebook",
+          "imageTypes": [
+            { "type": "Imagem Compartilhada", "dimensions": "1200x630px", "aspectRatio": "1.91:1" },
+            { "type": "Postagem Quadrada", "dimensions": "1200x1200px", "aspectRatio": "1:1" },
+            { "type": "Capa", "dimensions": "820x312px (desktop)", "aspectRatio": "2.63:1" },
+            { "type": "Foto de Perfil", "dimensions": "170x170px", "aspectRatio": "1:1" },
+            { "type": "Story", "dimensions": "1080x1920px", "aspectRatio": "9:16" }
+          ],
+          "notes": "Capa exibe diferente no móvel (640x360px visíveis). Centralize conteúdo importante."
+        },
+        {
+          "platform": "Twitter/X",
+          "imageTypes": [
+            { "type": "Imagem no Feed", "dimensions": "1600x900px", "aspectRatio": "16:9" },
+            { "type": "Imagem Única", "dimensions": "1200x675px", "aspectRatio": "16:9" },
+            { "type": "Duas Imagens", "dimensions": "700x800px cada", "aspectRatio": "7:8" },
+            { "type": "Foto de Perfil", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "Cabeçalho", "dimensions": "1500x500px", "aspectRatio": "3:1" }
+          ],
+          "notes": "Imagens 16:9 exibem melhor na timeline. Imagens quadradas são cortadas."
+        },
+        {
+          "platform": "LinkedIn",
+          "imageTypes": [
+            { "type": "Imagem Compartilhada", "dimensions": "1200x627px", "aspectRatio": "1.91:1" },
+            { "type": "Capa de Empresa", "dimensions": "1128x191px", "aspectRatio": "5.9:1" },
+            { "type": "Foto de Perfil", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "Fundo", "dimensions": "1584x396px", "aspectRatio": "4:1" }
+          ],
+          "notes": "Fotos profissionais funcionam melhor. Evite filtros e efeitos pesados."
+        },
+        {
+          "platform": "TikTok",
+          "imageTypes": [
+            { "type": "Vídeo/Foto", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Foto de Perfil", "dimensions": "200x200px", "aspectRatio": "1:1" }
+          ],
+          "notes": "9:16 vertical é obrigatório. Conteúdo horizontal fica com letterbox."
+        },
+        {
+          "platform": "Pinterest",
+          "imageTypes": [
+            { "type": "Pin Padrão", "dimensions": "1000x1500px", "aspectRatio": "2:3" },
+            { "type": "Pin Longo", "dimensions": "1000x2100px", "aspectRatio": "1:2.1" },
+            { "type": "Pin Quadrado", "dimensions": "1000x1000px", "aspectRatio": "1:1" },
+            { "type": "Foto de Perfil", "dimensions": "165x165px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Pins verticais 2:3 funcionam melhor. Pins mais altos obtêm mais visibilidade no feed."
+        }
+      ],
+      "upscalingGuide": [
+        {
+          "scenario": "Foto antiga para Instagram",
+          "source": "foto 640x480px",
+          "target": "postagem 1080x1080px quadrada",
+          "solution": "Amplie 2x para 1280x960px, depois corte para quadrado 960x960px, amplie para 1080x1080px"
+        },
+        {
+          "scenario": "Screenshot para Twitter",
+          "source": "screenshot 750x500px",
+          "target": "1600x900px para timeline",
+          "solution": "Amplie 2x para 1500x1000px, adicione preenchimento ou corte para proporção 16:9"
+        },
+        {
+          "scenario": "Foto de produto para Pinterest",
+          "source": "foto 800x800px",
+          "target": "pin vertical 1000x1500px",
+          "solution": "Amplie para 1200x1200px, adicione espaço vertical acima/abaixo para proporção 2:3"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é o melhor tamanho para postagens do Instagram?",
+          "answer": "1080x1350px (4:5 retrato) ocupa mais espaço no feed. 1080x1080px (quadrado) também é padrão. Evite paisagem - aparece menor nos feeds."
+        },
+        {
+          "question": "Por que minhas imagens ficam borradas no Instagram?",
+          "answer": "Instagram comprime imagens. Faça upload exatamente em 1080px de largura para evitar reamostragem. Imagens de maior resolução são reduzidas e podem perder nitidez."
+        },
+        {
+          "question": "Devo ampliar imagens para mídia social?",
+          "answer": "Amplie se sua fonte está abaixo dos mínimos da plataforma. Mas não amplie além das recomendações - uma imagem 4000px será comprimida para 1080px de qualquer forma."
+        },
+        {
+          "question": "Que formato devo usar?",
+          "answer": "JPEG para fotos (arquivo menor, qualidade boa o suficiente). PNG para gráficos com texto ou transparência. Todas as plataformas aceitam ambos."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["image-compression-guide"]
+    },
+    {
+      "slug": "print-preparation",
+      "title": "Guia de Tamanho de Impressão",
+      "metaTitle": "Resolução de Imagem para Guia de Impressão | Calculadora DPI & Gráfico de Tamanho",
+      "metaDescription": "Calcule dimensões exatas de pixel para qualquer tamanho de impressão. Requisitos de DPI, tamanhos de papel e como preparar imagens para impressão profissional.",
+      "h1": "Guia de Resolução de Impressão",
+      "intro": "Impressão requer resolução mais alta que exibição de tela. Aqui está exatamente o que você precisa para diferentes tamanhos de impressão.",
+      "primaryKeyword": "resolução de imagem para impressão",
+      "secondaryKeywords": [
+        "requisitos dpi de impressão",
+        "tamanho de impressão de foto",
+        "pixels para polegadas",
+        "tamanho de imagem 300 dpi"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Fotografia & Impressão",
+      "description": "Guia completo para preparar imagens para impressão com requisitos de DPI e cálculos de tamanho.",
+      "dpiExplanation": {
+        "title": "Entendendo DPI",
+        "content": "DPI (Dots Per Inch) determina a qualidade de impressão. Impressão de foto padrão requer 300 DPI. DPI mais baixo resulta em pixels visíveis. DPI mais alto não oferece benefício visível mas aumenta o tamanho do arquivo.",
+        "recommendations": [
+          {
+            "quality": "Impressões profissionais",
+            "dpi": "300 DPI",
+            "use": "Fotos, impressões de arte, revistas"
+          },
+          {
+            "quality": "Impressões padrão",
+            "dpi": "240-300 DPI",
+            "use": "Impressão doméstica, instantâneos"
+          },
+          {
+            "quality": "Formato grande (distância de visualização 3m+)",
+            "dpi": "150-200 DPI",
+            "use": "Pôsteres, banners"
+          },
+          {
+            "quality": "Billboards (distância de visualização 10m+)",
+            "dpi": "50-100 DPI",
+            "use": "Exibições externas grandes"
+          }
+        ]
+      },
+      "printSizeChart": [
+        {
+          "size": "4x6 polegadas",
+          "pixels300dpi": "1200x1800",
+          "pixels240dpi": "960x1440",
+          "megapixels": "2.2 MP"
+        },
+        {
+          "size": "5x7 polegadas",
+          "pixels300dpi": "1500x2100",
+          "pixels240dpi": "1200x1680",
+          "megapixels": "3.2 MP"
+        },
+        {
+          "size": "8x10 polegadas",
+          "pixels300dpi": "2400x3000",
+          "pixels240dpi": "1920x2400",
+          "megapixels": "7.2 MP"
+        },
+        {
+          "size": "11x14 polegadas",
+          "pixels300dpi": "3300x4200",
+          "pixels240dpi": "2640x3360",
+          "megapixels": "13.9 MP"
+        },
+        {
+          "size": "16x20 polegadas",
+          "pixels300dpi": "4800x6000",
+          "pixels240dpi": "3840x4800",
+          "megapixels": "28.8 MP"
+        },
+        {
+          "size": "20x24 polegadas",
+          "pixels300dpi": "6000x7200",
+          "pixels240dpi": "4800x5760",
+          "megapixels": "43.2 MP"
+        },
+        {
+          "size": "24x36 polegadas",
+          "pixels300dpi": "7200x10800",
+          "pixels240dpi": "5760x8640",
+          "megapixels": "77.8 MP"
+        },
+        {
+          "size": "A4 (8.27x11.69 polegadas)",
+          "pixels300dpi": "2480x3508",
+          "pixels240dpi": "1984x2806",
+          "megapixels": "8.7 MP"
+        },
+        {
+          "size": "A3 (11.69x16.54 polegadas)",
+          "pixels300dpi": "3508x4961",
+          "pixels240dpi": "2806x3969",
+          "megapixels": "17.4 MP"
+        }
+      ],
+      "calculationFormula": {
+        "title": "Calcule Pixels Necessários",
+        "formula": "Pixels = Tamanho de Impressão (polegadas) × DPI",
+        "example": "Para impressão 8x10 polegadas a 300 DPI: 8×300 = 2400 pixels de largura, 10×300 = 3000 pixels de altura"
+      },
+      "upscalingForPrint": [
+        {
+          "scenario": "Foto de celular para impressão 8x10",
+          "source": "4032x3024px (12MP iPhone)",
+          "requirement": "2400x3000px a 300 DPI",
+          "solution": "Já suficiente - sem ampliação necessária. Corte para proporção 4:5."
+        },
+        {
+          "scenario": "Imagem web para impressão 8x10",
+          "source": "imagem web 800x600px",
+          "requirement": "2400x3000px a 300 DPI",
+          "solution": "Amplie 4x para 3200x2400px, corte para 2400x3000px ou adicione espaço na tela."
+        },
+        {
+          "scenario": "Foto do Instagram para pôster",
+          "source": "1080x1080px",
+          "requirement": "7200x7200px para pôster 24x24 a 300 DPI",
+          "solution": "Amplie 8x para 8640x8640px. Qualidade pode ser limitada - considere 150 DPI para formato grande."
+        }
+      ],
+      "printingTips": [
+        {
+          "tip": "Use perfil de cor sRGB para impressão de consumidor",
+          "description": "A maioria das impressoras e serviços de impressão espera sRGB. Converta de Adobe RGB se necessário."
+        },
+        {
+          "tip": "Adicione sangramento para impressões borda a borda",
+          "description": "Adicione 0.125 polegadas (37.5 pixels a 300 DPI) a cada borda para impressões profissionais com sangramento total."
+        },
+        {
+          "tip": "Prove na tela em tamanho real",
+          "description": "Visualize em 100% de zoom para verificar pixels ou artefatos visíveis antes de imprimir."
+        },
+        {
+          "tip": "Salve como TIFF ou JPEG de alta qualidade",
+          "description": "TIFF é sem perdas. Se usar JPEG, exporte em 95-100% de qualidade para evitar artefatos de compressão."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Que DPI preciso para imprimir fotos?",
+          "answer": "300 DPI é o padrão para impressões de foto até 16x20 polegadas. Para impressões maiores vistas à distância (pôsteres, banners), 150-200 DPI é aceitável."
+        },
+        {
+          "question": "Posso ampliar uma imagem pequena para impressão grande?",
+          "answer": "Ampliação de IA funciona bem para aumento de 2-4x. Além disso, a qualidade depende da fonte. Uma imagem 1000px pode razoavelmente tornar-se uma impressão 4000px (8x10 a 300 DPI)."
+        },
+        {
+          "question": "Por que minha impressão está pixelada?",
+          "answer": "Resolução insuficiente. Verifique se sua imagem fonte tem pixels suficientes para o tamanho de impressão a 300 DPI. Use o gráfico acima para verificar."
+        },
+        {
+          "question": "Qual é o tamanho máximo de impressão para minha imagem?",
+          "answer": "Divida dimensões de pixel por 300 para tamanho máximo em qualidade total. Uma imagem 3000x2000px imprime em 10x6.7 polegadas a 300 DPI, ou 20x13.3 polegadas a 150 DPI."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "old-photo-restoration",
+      "title": "Restauração de Fotos Antigas",
+      "metaTitle": "Como Restaurar Fotos Antigas | Guia de Digitalização & Melhoria",
+      "metaDescription": "Guia completo para restaurar fotos antigas e danificadas. Dicas de digitalização, fluxo de trabalho de melhoria e expectativas realistas para restauração de fotos.",
+      "h1": "Guia de Restauração de Fotos Antigas",
+      "intro": "Restaurar fotos antigas envolve múltiplas etapas: digitalização adequada, melhoria e expectativas realistas sobre o que é possível.",
+      "primaryKeyword": "restaurar fotos antigas",
+      "secondaryKeywords": [
+        "restaurar fotos antigas",
+        "consertar fotos danificadas",
+        "restauração de foto",
+        "melhoria de foto vintage"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Restauração de Fotos",
+      "description": "Guia passo a passo para restaurar fotos antigas e danificadas com expectativas realistas.",
+      "scanningGuide": {
+        "title": "Digitalizando Fotos Antigas",
+        "steps": [
+          {
+            "step": 1,
+            "title": "Limpe o leitor",
+            "description": "Poeira e impressões digitais no vidro aparecerão na sua digitalização. Use pano de microfibra."
+          },
+          {
+            "step": 2,
+            "title": "Manuseie fotos com cuidado",
+            "description": "Fotos antigas são frágeis. Use luvas de algodão se disponíveis. Não force fotos curvadas a ficar planas."
+          },
+          {
+            "step": 3,
+            "title": "Digitalize a 600 DPI mínimo",
+            "description": "Resolução mais alta dá mais detalhes para trabalhar. 1200 DPI para fotos severamente danificadas."
+          },
+          {
+            "step": 4,
+            "title": "Digitalize como TIFF, não JPEG",
+            "description": "TIFF é sem perdas e preserva todos os detalhes. Converta para JPEG somente após editar."
+          },
+          {
+            "step": 5,
+            "title": "Digitalize em cor, mesmo para P&B",
+            "description": "Digitalização em cor captura tons sutis que ajudam na restauração."
+          }
+        ]
+      },
+      "damageTypes": [
+        {
+          "type": "Desbotamento/amarelecimento",
+          "description": "Cores mudaram ou desbotaram ao longo do tempo",
+          "canFix": "Sim - IA pode restaurar equilíbrio de cor e saturação originais",
+          "limitations": "Imagens severamente desbotadas podem carecer de detalhes para recuperar"
+        },
+        {
+          "type": "Riscos e dobras",
+          "description": "Dano físico visível como linhas ou marcas",
+          "canFix": "Parcial - IA pode reduzir visibilidade, não remover completamente",
+          "limitations": "Riscos profundos ou dobras através de rostos são difíceis"
+        },
+        {
+          "type": "Borrão/foco suave",
+          "description": "Imagem carece de nitidez ou estava fora de foco",
+          "canFix": "Parcial - borrão moderado pode ser melhorado",
+          "limitations": "Borrão severo não pode ser totalmente corrigido - o detalhe não foi capturado"
+        },
+        {
+          "type": "Seções ausentes/rasgos",
+          "description": "Partes da foto estão rasgadas ou ausentes",
+          "canFix": "Não - IA não pode reconstruir dados de imagem ausentes",
+          "limitations": "Requer retoque manual por profissional"
+        },
+        {
+          "type": "Dano de água/manchas",
+          "description": "Descoloração de umidade ou derramamentos",
+          "canFix": "Parcial - correção de cor ajuda, mas perda de textura é permanente",
+          "limitations": "Áreas onde emulsão está levantada não podem ser recuperadas"
+        }
+      ],
+      "restorationWorkflow": [
+        {
+          "step": 1,
+          "title": "Digitalize em alta resolução",
+          "description": "600+ DPI como TIFF. Este é seu arquivo mestre - não edite o original."
+        },
+        {
+          "step": 2,
+          "title": "Faça uma cópia de trabalho",
+          "description": "Duplicado a digitalização. Trabalhe na cópia, mantenha o original intocado."
+        },
+        {
+          "step": 3,
+          "title": "Corte e endireite",
+          "description": "Remova bordas, artefatos do scanner. Endireite se a foto foi digitalizada torta."
+        },
+        {
+          "step": 4,
+          "title": "Execute através do Melhorador de Fotos",
+          "description": "Melhoria de IA melhora cor, reduz ruído e afia detalhes."
+        },
+        {
+          "step": 5,
+          "title": "Amplie se necessário",
+          "description": "Se você precisa dimensões maiores, amplie após melhoria para melhor qualidade."
+        },
+        {
+          "step": 6,
+          "title": "Exporte apropriadamente",
+          "description": "TIFF para arquivo, JPEG de alta qualidade para compartilhar e imprimir."
+        }
+      ],
+      "realisticExpectations": {
+        "title": "O que a Restauração de IA Pode e Não Pode Fazer",
+        "canDo": [
+          "Melhorar equilíbrio de cor e remover amarelecimento",
+          "Reduzir visibilidade de riscos menores",
+          "Afilar foco suave e adicionar detalhe aparente",
+          "Reduzir ruído e grão de filme",
+          "Aumentar resolução para impressão"
+        ],
+        "cannotDo": [
+          "Reconstruir seções ausentes ou rasgadas",
+          "Corrigir imagens completamente fora de foco",
+          "Remover riscos profundos ou dobras perfeitamente",
+          "Adicionar detalhe que nunca foi capturado",
+          "Restaurar fotos que estão quase completamente destruídas"
+        ]
+      },
+      "faq": [
+        {
+          "question": "Posso restaurar uma foto rasgada?",
+          "answer": "IA não pode reconstruir seções ausentes. Para fotos rasgadas, as seções devem ser digitalizadas juntas e alinhadas manualmente, depois retocadas à mão. IA pode então melhorar o resultado combinado."
+        },
+        {
+          "question": "Que resolução devo digitalizar fotos antigas?",
+          "answer": "Mínimo 600 DPI para fotos padrão. 1200 DPI para impressões pequenas ou aquelas com detalhes finos. Mais alto é melhor - você sempre pode reduzir depois."
+        },
+        {
+          "question": "Devo restaurar cor para fotos preto e branco?",
+          "answer": "Isso é colorização, um processo diferente. Nossas ferramentas melhoram conteúdo existente - não adicionamos cor a P&B. Colorização de IA é uma categoria separada."
+        },
+        {
+          "question": "Quanta melhoria posso esperar?",
+          "answer": "Fotos moderadamente danificadas veem melhoria significativa. Fotos severamente danificadas ficarão melhores mas não se tornarão perfeitas. Fotos muito antigas (pré-1900) têm limitações inerentes."
+        }
+      ],
+      "relatedTools": ["ai-photo-enhancer", "ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "amazon-product-photos",
+      "title": "Ampliação de Fotos de Produtos Amazon",
+      "metaTitle": "Amplie Fotos de Produtos para Listagens Amazon | MyImageUpscaler",
+      "metaDescription": "Atenda ao requisito de imagem 2000x2000px da Amazon com ampliação de IA. Transforme fotos de fornecedor em imagens de produto com zoom. Ferramenta gratuita, sem marcas d'água.",
+      "h1": "Amplie Fotos de Produtos para Amazon",
+      "intro": "Amazon exige imagens mínimo 1000x1000px e recomenda 2000x2000px para zoom. Aqui está como ampliar fotos de fornecedor para atender esses requisitos.",
+      "primaryKeyword": "ampliar fotos de produtos amazon",
+      "secondaryKeywords": [
+        "tamanho de imagem de produto amazon",
+        "fotos de listagem amazon",
+        "requisitos de imagem amazon 2025",
+        "ampliar fotos de fornecedor",
+        "tamanho de imagem zoom amazon",
+        "fotografia de produtos fba"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Guia completo para preparar imagens de produto para listagens Amazon, incluindo requisitos de tamanho, padrões de fundo branco e fluxo de trabalho de ampliação de IA.",
+      "platformRequirements": [
+        {
+          "platform": "Imagem Principal Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (para zoom)",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 (quadrado)",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Branco puro (RGB 255,255,255)",
+          "notes": "Produto deve preencher 85% do quadro. Sem texto, logotipos, marcas d'água ou bordas."
+        },
+        {
+          "platform": "Imagens Adicionais Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 preferido",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Qualquer (fotos de estilo de vida permitidas)",
+          "notes": "Pode mostrar produto em uso, embalagem, comparação de tamanho e infográficos."
+        },
+        {
+          "platform": "Conteúdo A+ Amazon",
+          "minimumSize": "Varia por módulo",
+          "recommendedSize": "Até 970px de largura",
+          "maxFileSize": "2MB por imagem",
+          "aspectRatio": "Vários (dependente de módulo)",
+          "format": "JPEG, PNG",
+          "background": "Apropriado ao tema",
+          "notes": "Imagens de maior resolução exibem melhor em módulos A+ desktop e móvel."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Imagens de fornecedor são apenas 500-800px",
+          "solution": "Use ampliação de IA para aumentar 3-4x. Uma imagem 500px torna-se 2000px com capacidade de zoom.",
+          "howTo": "Faça upload de imagem de fornecedor, selecione ampliação 4x, baixe em 2000x2000px ou maior."
+        },
+        {
+          "problem": "Imagens rejeitadas por não atenderem mínimo 1000px",
+          "solution": "Amplie primeiro, depois corte para proporção quadrada 1:1 se necessário.",
+          "howTo": "Amplie para pelo menos 1200px, depois corte para 1000x1000px ou 2000x2000px quadrado."
+        },
+        {
+          "problem": "Recurso de zoom não funcionando na listagem",
+          "solution": "Zoom Amazon exige mínimo 1500px no lado mais longo, recomenda 2000px+.",
+          "howTo": "Amplie todas as imagens de produto para 2000x2000px para garantir que o zoom funcione."
+        },
+        {
+          "problem": "Detalhes do produto ficam borrados após ampliação",
+          "solution": "Ampliação de IA preserva texto e detalhes finos ao contrário de redimensionamento tradicional.",
+          "howTo": "Use ampliador de IA especificamente treinado para fotografia de produto e preservação de texto."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Audite qualidade da imagem fonte",
+          "description": "Verifique dimensões originais. Imagens under 300px podem não ampliar bem para Amazon."
+        },
+        {
+          "step": 2,
+          "title": "Remova ou substitua fundo",
+          "description": "Para imagem principal, garanta fundo branco puro (255,255,255) antes de ampliar."
+        },
+        {
+          "step": 3,
+          "title": "Faça upload para ampliador de IA",
+          "description": "Selecione ampliação 4x para imagens 500px, 2x para imagens 1000px para alcançar alvo 2000px."
+        },
+        {
+          "step": 4,
+          "title": "Corte para proporção 1:1",
+          "description": "Garanta que a imagem final seja quadrada com produto preenchendo 85% do quadro."
+        },
+        {
+          "step": 5,
+          "title": "Verifique tamanho de arquivo e formato",
+          "description": "Salve como JPEG under 10MB. Use 85-95% de qualidade para melhor equilíbrio tamanho/qualidade."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Que tamanho de imagem Amazon exige para fotos de produtos?",
+          "answer": "Amazon exige mínimo 1000x1000px mas recomenda fortemente 2000x2000px ou maior. O recurso de zoom só ativa em imagens 1500px ou maiores no lado mais longo, e 2000px+ fornece a melhor experiência do cliente."
+        },
+        {
+          "question": "Posso ampliar fotos de fornecedor dropshipping para Amazon?",
+          "answer": "Sim, ampliação de IA funciona bem para fotos de fornecedor tipicamente variando de 500-800px. Amplie 3-4x para alcançar recomendação 2000px da Amazon. Garanta que você tem direitos para usar as imagens comercialmente."
+        },
+        {
+          "question": "Imagens ampliadas passarão na verificação de qualidade da Amazon?",
+          "answer": "Imagens ampliadas por IA tipicamente passam nas verificações automatizadas da Amazon se a fonte não fosse qualidade extremamente baixa. Foque em imagens fonte above 300px para melhores resultados. Detalhes de produto e texto permanecem nítidos através do processo de ampliação."
+        },
+        {
+          "question": "Por que minhas imagens Amazon não têm zoom?",
+          "answer": "O recurso de zoom da Amazon exige que imagens sejam pelo menos 1500px no lado mais longo, com 2000px+ recomendado. Amplie suas imagens para 2000x2000px para garantir que o zoom funcione para todos os clientes."
+        },
+        {
+          "question": "Qual é o melhor formato para imagens de produto Amazon?",
+          "answer": "JPEG é preferido para a maioria das fotos de produto devido a tamanhos de arquivo menores. Use configuração de qualidade 85-95%. PNG é melhor somente se você precisa transparência (embora imagens principais Amazon exijam fundos brancos de qualquer forma)."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "real-estate-photo-enhancement",
+      "title": "Melhoria de Fotos de Imóveis",
+      "metaTitle": "Melhore Fotos de Imóveis com IA | Imagens de Listagem de Propriedades",
+      "metaDescription": "Transforme fotos de propriedades com melhoria de IA. Corrija iluminação, amplie resolução e faça listagens se destacarem. Usado por corretores e fotógrafos.",
+      "h1": "Melhoria de Fotos de Imóveis com IA",
+      "intro": "Fotos de listagem com aparência profissional vendem propriedades mais rápido. Melhore e amplie imagens de propriedades para atender padrões MLS e superar a concorrência.",
+      "primaryKeyword": "melhoria de fotografia de imóveis",
+      "secondaryKeywords": [
+        "edição de foto de propriedade",
+        "melhoria de imagem de imóveis",
+        "melhoria de foto de listagem",
+        "qualidade de foto mls",
+        "imagens de listagem de propriedades",
+        "edição de fotografia de imóveis"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Imóveis",
+      "description": "Guia abrangente para melhorar fotos de imóveis para MLS, Zillow e outras plataformas de listagem de propriedades usando ferramentas de IA.",
+      "platformRequirements": [
+        {
+          "platform": "MLS (A maioria dos sistemas)",
+          "minimumSize": "640x480px",
+          "recommendedSize": "2048x1536px ou maior",
+          "maxFileSize": "10-15MB varia",
+          "aspectRatio": "4:3 mais comum",
+          "format": "JPEG",
+          "notes": "Fotos de maior qualidade obtêm mais visualizações. Muitos sistemas MLS agora suportam imagens HD."
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px+",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3 preferido",
+          "format": "JPEG, PNG",
+          "notes": "A primeira foto é crucial - aparece nos resultados de busca. Imagens de alta resolução rankeiam melhor."
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Imagens de maior resolução recebem colocação prioritária nos resultados de busca."
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px+",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Fotos de qualidade impactam diretamente visualizações e consultas de listagem."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Fotos internas estão muito escuras",
+          "solution": "Melhoria de IA corrige exposição automaticamente e traz detalhes de sombra.",
+          "howTo": "Faça upload para melhorador de fotos, deixe IA autocorrigir, depois amplie se resolução for insuficiente."
+        },
+        {
+          "problem": "Fotos de celular antigo carecem de resolução",
+          "solution": "Amplie 2-3x para atender padrões modernos. Uma foto 1200px torna-se 2400-3600px.",
+          "howTo": "Faça upload para ampliador de IA, selecione 2x ou 3x, verifique se a saída atende requisitos da plataforma."
+        },
+        {
+          "problem": "Sobrexposição de janela de exteriores brilhantes",
+          "solution": "Melhoria de IA pode recuperar algum detalhe de janela e equilibrar exposição interior/exterior.",
+          "howTo": "Execute através do melhorador primeiro, depois amplie a imagem corrigida."
+        },
+        {
+          "problem": "Fotos de corretor anterior são baixa qualidade",
+          "solution": "Melhore e amplie fotos existentes enquanto agenda nova fotografia profissional.",
+          "howTo": "Processe lote através do melhorador e ampliador para melhorar imediatamente."
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "Fotografe durante a hora dourada para exteriores",
+          "description": "Início da manhã ou final da tarde fornece luz natural favorecedora sem sombras duras."
+        },
+        {
+          "tip": "Acenda todas as luzes internas",
+          "description": "Mesmo durante sessões diurnas, luzes internas adicionam calor e fazem espaços parecerem convidativos."
+        },
+        {
+          "tip": "Use um tripé para resultados consistentes",
+          "description": "Tripé permite exposições mais longas para interiores mais brilhantes e garante horizontes nivelados."
+        },
+        {
+          "tip": "Fotografe dos cantos para máximo espaço",
+          "description": "Fotografar dos cantos do quarto mostra duas paredes e faz espaços parecerem maiores."
+        },
+        {
+          "tip": "Organize antes de fotografar",
+          "description": "Remova itens pessoais, feche tampas de vaso sanitário, organize móveis para mostrar fluxo de tráfego."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Avalie qualidade de foto existente",
+          "description": "Verifique resolução, exposição e composição. Identifique quais imagens precisam de melhoria vs. nova sessão."
+        },
+        {
+          "step": 2,
+          "title": "Execute melhoria de IA primeiro",
+          "description": "Faça upload para melhorador de fotos para corrigir exposição, equilíbrio de cor e clareza antes de ampliar."
+        },
+        {
+          "step": 3,
+          "title": "Amplie para resolução alvo",
+          "description": "Amplia fotos melhoradas para 2048px ou maior para exibição ótima em sites de listagem."
+        },
+        {
+          "step": 4,
+          "title": "Exporte no formato correto",
+          "description": "Salve como JPEG em 85-95% de qualidade. A maioria dos sistemas MLS exige formato JPEG."
+        },
+        {
+          "step": 5,
+          "title": "Ordene fotos estrategicamente",
+          "description": "Comece com melhor foto externa, depois quartos-chave. A primeira foto aparece nos resultados de busca."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Melhoria de IA pode substituir fotografia profissional de imóveis?",
+          "answer": "Melhoria de IA dramaticamente melhora fotos existentes mas não substitui fotografia profissional para listagens de alto valor. Use melhoria para melhorar boas fotos ou como solução temporária enquanto agenda uma sessão profissional."
+        },
+        {
+          "question": "Que resolução fotos de imóveis devem ter?",
+          "answer": "Mire para mínimo 2048x1536px. Isso atende requisitos para Zillow, MLS e Realtor.com enquanto fornece imagens nítidas em desktop e móvel. Resolução mais alta (2560px+) pode melhorar ranking de busca em algumas plataformas."
+        },
+        {
+          "question": "Como conserto fotos internas escuras?",
+          "answer": "Melhoria de foto de IA corrige exposição automaticamente e clareia sombras. Faça upload de sua foto interna escura, deixe IA analisar e corrigir, depois baixe a versão melhorada. Para melhores resultados, melhore antes de ampliar."
+        },
+        {
+          "question": "Fotos melhoradas ficarão com aparência falsa ou superprocessada?",
+          "answer": "Melhoria de IA de qualidade produz resultados de aparência natural. Evite ferramentas que criam a aparência super-saturada, pesada em HDR que compradores desconfiam. Nosso melhorador prioriza correções realistas sobre efeitos dramáticos."
+        },
+        {
+          "question": "Quantas fotos uma listagem de imóveis deve ter?",
+          "answer": "25-50 fotos é ótimo para a maioria das propriedades. Inclua exterior, todos os quartos principais, recursos-chave (cozinha, banheiros, armários) e quaisquer pontos de venda únicos. Qualidade importa mais que quantidade - 25 ótimas fotos vencem 50 medíocres."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "anime-image-upscaler",
+      "title": "Ampliador de Imagens Anime",
+      "metaTitle": "Ampliador de Imagens Anime Online - Amplie Arte Anime & Manga | MyImageUpscaler",
+      "metaDescription": "Amplie imagens anime, painéis manga e ilustrações sem artefatos. IA preserva linhas limpas e cores planas. Ferramenta online gratuita para fãs de anime.",
+      "h1": "Ampliador de Imagens Anime Online",
+      "intro": "Amplie seus screenshots de anime favoritos, digitalizações manga e arte digital enquanto preserva as linhas limpas e cores vibrantes que definem o estilo anime.",
+      "primaryKeyword": "ampliador de imagem anime",
+      "secondaryKeywords": [
+        "ampliar anime",
+        "ampliador anime online",
+        "ampliador manga",
+        "ampliar screenshot anime",
+        "ampliador waifu",
+        "ampliar wallpaper anime"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Arte Digital & Entretenimento",
+      "description": "Guia especializado para ampliar imagens anime, arte manga e ilustrações de estilo japonês usando tecnologia de IA otimizada para conteúdo desenhado.",
+      "contentTypes": [
+        {
+          "type": "Screenshots Anime",
+          "description": "Capturas de séries e filmes anime",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Funciona bem para a maioria de anime moderno. Anime antigo (pré-2000) pode mostrar mais artefatos."
+        },
+        {
+          "type": "Digitalizações Manga",
+          "description": "Páginas manga digitalizadas e painéis",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Preserva arte de linha e screentones. Remova poeira/riscos antes de ampliar."
+        },
+        {
+          "type": "Arte Digital Anime",
+          "description": "Arte de fã, ilustrações e desenhos digitais",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Resultados excelentes com arte digital limpa. Preserva cores planas e bordas afiadas."
+        },
+        {
+          "type": "Wallpapers Anime",
+          "description": "Wallpapers desktop e móveis",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Amplie para corresponder sua resolução de tela. Monitores 4K precisam 3840px+ de largura."
+        },
+        {
+          "type": "CGs de Jogos",
+          "description": "Arte de visual novel e jogos",
+          "bestScaleFactor": "2x-4x",
+          "notes": "CGs de VN antigos frequentemente precisam ampliação 4x. Jogos modernos geralmente suficientes em 2x."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Ampliação adiciona textura ou ruído indesejado",
+          "solution": "Ampliadores de IA treinados em anime preservam áreas de cor plana melhor que ferramentas de propósito geral.",
+          "howTo": "Use ampliador de IA com nossas configurações otimizadas para ilustração e arte."
+        },
+        {
+          "problem": "Arte de linha fica borrada ou duplicada",
+          "solution": "Ampliação de anime de qualidade mantém linhas nítidas sem ghosting ou borrão.",
+          "howTo": "Comece com ampliação 2x primeiro. Se qualidade for boa, amplie o resultado novamente para resolução mais alta."
+        },
+        {
+          "problem": "Artefatos JPEG ficam mais visíveis após ampliação",
+          "solution": "Ampliação de IA pode reduzir artefatos JPEG enquanto amplia. Use fonte de maior qualidade disponível.",
+          "howTo": "Se possível, encontre fonte PNG. Para JPEGs, melhoria antes de ampliação ajuda."
+        },
+        {
+          "problem": "Imagens pequenas ficam pixeladas em 4x",
+          "solution": "Fontes muito pequenas (under 200px) têm limites. Amplie incrementalmente: 2x, depois 2x novamente.",
+          "howTo": "Faça upload em 2x primeiro, baixe resultado, depois faça upload do resultado para outro 2x."
+        }
+      ],
+      "targetResolutions": [
+        {
+          "use": "Wallpaper de Celular",
+          "resolution": "1080x2400px (celulares modernos)",
+          "source": "540x1200px mínimo",
+          "scaleFactor": "2x"
+        },
+        {
+          "use": "Wallpaper Desktop (1080p)",
+          "resolution": "1920x1080px",
+          "source": "960x540px mínimo",
+          "scaleFactor": "2x"
+        },
+        {
+          "use": "Wallpaper Desktop (1440p)",
+          "resolution": "2560x1440px",
+          "source": "640x360px em 4x, 1280x720px em 2x",
+          "scaleFactor": "2x-4x"
+        },
+        {
+          "use": "Wallpaper Desktop (4K)",
+          "resolution": "3840x2160px",
+          "source": "960x540px em 4x, 1920x1080px em 2x",
+          "scaleFactor": "2x-4x"
+        },
+        {
+          "use": "Impressão (Pôster)",
+          "resolution": "300 DPI em tamanho de impressão",
+          "source": "Calcule: polegadas de impressão x 300",
+          "scaleFactor": "Varia por fonte"
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Encontre fonte de maior qualidade",
+          "description": "Procure versões PNG quando possível. Fonte de maior qualidade significa melhores resultados de ampliação."
+        },
+        {
+          "step": 2,
+          "title": "Verifique resolução atual",
+          "description": "Clique com botão direito na imagem, veja propriedades. Note dimensões para calcular fator de escala necessário."
+        },
+        {
+          "step": 3,
+          "title": "Calcule fator de escala necessário",
+          "description": "Para wallpaper 4K (3840px largo) de fonte 960px, você precisa ampliação 4x."
+        },
+        {
+          "step": 4,
+          "title": "Faça upload e amplie",
+          "description": "Selecione fator de escala apropriado. Para anime, 2x e 4x tipicamente funcionam melhor."
+        },
+        {
+          "step": 5,
+          "title": "Revise e exporte",
+          "description": "Verifique resultado para artefatos. Baixe como PNG para preservar qualidade sem compressão adicional."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é o melhor ampliador para imagens anime?",
+          "answer": "Ampliadores de IA funcionam melhor para anime porque entendem as características de conteúdo desenhado - cores planas, linhas limpas e estilos de sombreamento específicos. Ampliação tradicional faz anime parecer borrado, enquanto IA mantém a estética nítida."
+        },
+        {
+          "question": "Posso ampliar screenshots anime antigos para 4K?",
+          "answer": "Sim, mas resultados variam por qualidade da fonte. Anime moderno (pós-2010) amplia excelentemente. Anime antigo (1990s-2000s) funciona bem com alguns artefatos menores. Anime muito antigo (1980s) pode mostrar limitações visíveis. Comece com 2x e avalie qualidade."
+        },
+        {
+          "question": "Como amplio manga sem perder detalhe?",
+          "answer": "Ampliação de IA preserva arte de linha e screentones que definem manga. Para melhores resultados: digitalize em 600+ DPI se digitizar você mesmo, limpe poeira/riscos antes de ampliar, e use fator de escala 2x-4x. Formato PNG preserva qualidade melhor que JPEG."
+        },
+        {
+          "question": "Ampliação removerá artefatos JPEG de imagens anime?",
+          "answer": "Ampliação de IA pode reduzir artefatos de compressão JPEG enquanto amplia. No entanto, fontes muito comprimidas ainda mostrarão alguns artefatos. Para melhores resultados, encontre fonte de maior qualidade disponível - PNG preferido, JPEG de alta qualidade aceitável."
+        },
+        {
+          "question": "Que resolução wallpapers anime devem ter?",
+          "answer": "Corresponda sua tela: 1920x1080 para telas 1080p, 2560x1440 para 1440p, e 3840x2160 para 4K. Wallpapers de celular tipicamente precisam 1080x2400 para dispositivos modernos. Amplie sua fonte para essas resoluções alvo."
+        },
+        {
+          "question": "Existe um ampliador anime gratuito?",
+          "answer": "Sim, nosso ampliador de IA lida com imagens anime gratuitamente sem marcas d'água. Você pode ampliar screenshots anime, painéis manga e arte digital até 4x sem pagar. Planos premium oferecem processamento em lote e limites de tamanho de arquivo mais altos."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "cartoon-image-upscaler",
+      "title": "Ampliador de Imagens de Desenho Animado",
+      "metaTitle": "Ampliador de Imagens de Desenho Animado Online - Melhore Desenhos & Quadrinhos | MyImageUpscaler",
+      "metaDescription": "Amplie imagens de desenho animado, quadrinhos e ilustrações com IA. Linhas limpas, cores vibrantes preservadas. Ferramenta online gratuita de ampliação de desenho.",
+      "h1": "Ampliador de Imagens de Desenho Animado Online",
+      "intro": "Melhore seus screenshots de desenho animado favoritos, painéis de quadrinhos e ilustrações enquanto preserva as linhas limpas e cores planas que definem estilos de arte de desenho e quadrinhos.",
+      "primaryKeyword": "ampliador de imagem de desenho animado",
+      "secondaryKeywords": [
+        "ampliador de desenho animado",
+        "ampliar desenhos animados",
+        "ampliador de imagem de quadrinhos",
+        "ampliação de desenho animado",
+        "ampliador de ilustração"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "description": "Ampliação especializada para imagens de desenho animado, quadrinhos ocidentais e conteúdo ilustrado usando tecnologia de IA otimizada para arte desenhada com cores planas e linhas limpas.",
+      "imageTypes": [
+        {
+          "type": "Desenhos Animados Ocidentais",
+          "description": "Séries e filmes animados de estúdios ocidentais",
+          "examples": "Disney, Warner Bros, conteúdo Cartoon Network",
+          "notes": "Funciona bem para a maioria de conteúdo animado moderno"
+        },
+        {
+          "type": "Quadrinhos Digitais",
+          "description": "Quadrinhos e novelas gráficas criadas digitalmente",
+          "examples": "Webcomics, lançamentos digitais-first, quadrinhos indie",
+          "notes": "Resultados excelentes com fonte digital limpa"
+        },
+        {
+          "type": "Ilustrações de Desenho Animado",
+          "description": "Arte personalizada e designs de personagens",
+          "examples": "Arte OC, arte de fã, ilustrações encomendadas",
+          "notes": "Preserva estilo de artista e escolhas de cor"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Preservação de Linha Limpa",
+          "description": "IA mantém contornos nítidos sem borrão ou ghosting comum em ampliação tradicional."
+        },
+        {
+          "title": "Áreas de Cor Plana",
+          "description": "Blocos de cor sólida permanecem suaves sem banding ou artefatos."
+        },
+        {
+          "title": "Consistência de Estilo",
+          "description": "Imagens ampliadas mantêm o estilo artístico e aparência originais."
+        }
+      ],
+      "commonIssues": [
+        {
+          "issue": "Linhas Borradas",
+          "solution": "Ampliadores de IA treinados em vários estilos de arte mantêm bordas afiadas melhor que ampliação padrão."
+        },
+        {
+          "issue": "Sangramento de Cor",
+          "solution": "Ampliação de IA de qualidade respeita limites de cor e previne sangramento entre áreas adjacentes."
+        },
+        {
+          "issue": "Artefatos em Escala Alta",
+          "solution": "Comece com 2x e amplie progressivamente se necessário. Fatores de escala muito altos (8x) podem mostrar limitações."
+        }
+      ],
+      "bestPractices": [
+        "Comece com fonte de maior qualidade disponível",
+        "Use formato PNG para preservar qualidade",
+        "Limpe poeira/riscos de quadrinhos digitalizados antes de ampliar",
+        "Selecione fator de escala apropriado - 2x e 4x tipicamente funcionam melhor",
+        "Evite super-ampliação - 8x pode mostrar retornos decrescentes"
+      ],
+      "faq": [
+        {
+          "question": "Qual é o melhor ampliador para imagens de desenho animado?",
+          "answer": "Ampliadores de IA funcionam bem para desenhos animados porque entendem as características de conteúdo desenhado - cores planas, linhas limpas e estilos de sombreamento específicos. Nosso ampliador de IA lida efetivamente com vários estilos de arte de desenho e quadrinho."
+        },
+        {
+          "question": "Posso ampliar painéis de quadrinhos antigos?",
+          "answer": "Sim! Ampliação de IA funciona bem com painéis de quadrinhos, sejam digitalizados de impressão ou fontes digitais. Para melhores resultados com digitalizações, limpe poeira e riscos primeiro, depois amplie começando em 2x."
+        },
+        {
+          "question": "Ampliação danificará o estilo de arte?",
+          "answer": "Não, nosso ampliador de IA é projetado para preservar estilo artístico incluindo qualidade de linha, escolhas de cor e aparência geral. O melhoria adiciona detalhe sem mudar a intenção do artista."
+        },
+        {
+          "question": "Qual é a resolução máxima para wallpapers de desenho animado?",
+          "answer": "Você pode ampliar para 4K (3840x2160) ou maior dependendo de suas necessidades. Para telas modernas, 1920x1080 (1080p), 2560x1440 (1440p), ou 3840x2160 (4K) são alvos comuns."
+        },
+        {
+          "question": "Existe um ampliador de desenho animado gratuito?",
+          "answer": "Sim! Nosso ampliador de IA lida com imagens de desenho e quadrinho com uma camada gratuita. Você pode ampliar desenhos animados, quadrinhos e ilustrações sem marcas d'água. Planos premium oferecem processamento em lote para coleções inteiras."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "portrait-photo-upscaler",
+      "title": "Ampliador de Fotos de Retrato",
+      "metaTitle": "Ampliador de Fotos de Retrato - Melhoria de Rosto de IA | MyImageUpscaler",
+      "metaDescription": "Amplie fotos de retrato com melhoria de rosto de IA. Melhore detalhes faciais, textura de pele e qualidade geral. Ferramenta online gratuita de ampliação de retrato.",
+      "h1": "Ampliador de Fotos de Retrato - Melhoria de Rosto de IA",
+      "intro": "Transforme suas fotos de retrato com tecnologia de melhoria de rosto de IA especializada. Melhore características faciais, textura de pele e qualidade geral de imagem enquanto mantém aparência natural.",
+      "primaryKeyword": "ampliador de foto de retrato",
+      "secondaryKeywords": [
+        "melhorador de retrato",
+        "ampliador de rosto",
+        "melhoria de retrato",
+        "ampliador de foto",
+        "melhoria de detalhe facial"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "description": "Melhoria de retrato profissional usando modelos de IA especializados para reconstrução e melhoria de características faciais. Perfeito para headshots, fotos de mídia social e retratos profissionais.",
+      "supportedTiers": {
+        "faceRestore": {
+          "name": "Restauração de Rosto",
+          "credits": 2,
+          "model": "GFPGAN",
+          "description": "Restauração de foto com reconstrução de características faciais"
+        },
+        "facePro": {
+          "name": "Rosto Pro",
+          "credits": 6,
+          "model": "Flux-2-Pro",
+          "description": "Melhoria de retrato premium com melhoria avançada de detalhe facial"
+        },
+        "ultra": {
+          "name": "Qualidade Ultra",
+          "credits": 8,
+          "model": "Nano Banana Pro",
+          "description": "Qualidade máxima 4K/8K para retratos profissionais"
+        }
+      },
+      "useCases": [
+        {
+          "title": "Headshots Profissionais",
+          "description": "Melhore headshots de LinkedIn, portfólio e negócios com clareza e detalhe facial melhorados.",
+          "recommendedTier": "Rosto Pro",
+          "example": "Amplie um headshot básico para qualidade profissional de alta resolução"
+        },
+        {
+          "title": "Retratos de Mídia Social",
+          "description": "Melhore fotos de perfil para Instagram, Facebook, Twitter e aplicativos de namoro.",
+          "recommendedTier": "Restauração de Rosto",
+          "example": "Melhore qualidade de selfie com melhores características faciais e textura de pele"
+        },
+        {
+          "title": "Restauração de Foto Antiga",
+          "description": "Restaure e melhore fotografias de retrato envelhecidas ou danificadas.",
+          "recommendedTier": "Restauração de Rosto",
+          "example": "Dê nova vida a fotos de família vintage com reconstrução facial"
+        },
+        {
+          "title": "Preparação de Impressão",
+          "description": "Prepare fotos de retrato para impressão de formato grande.",
+          "recommendedTier": "Ultra",
+          "example": "Amplie para impressão de pôster ou tela com qualidade máxima"
+        }
+      ],
+      "features": {
+        "faceEnhancement": "Modelos de IA avançados (GFPGAN, Flux-2-Pro) para reconstrução de características faciais",
+        "skinTexture": "Melhoria de textura de pele natural sem aparência plástica",
+        "detailPreservation": "Olhos, lábios e outras características mantêm aparência natural",
+        "resolution": "Suporte para saída até 8K na camada de qualidade Ultra",
+        "batchProcessing": "Disponível na camada Pro para múltiplos retratos"
+      },
+      "bestPractices": [
+        "Comece com Restauração de Rosto para melhorias gerais",
+        "Use Rosto Pro para headshots profissionais e retratos críticos",
+        "Selecione camada Ultra para necessidades de impressão de formato grande",
+        "Garanta boa iluminação em fotos fonte para melhores resultados",
+        "Evite ampliação extrema (8x) para fontes de qualidade muito baixa"
+      ],
+      "faq": [
+        {
+          "question": "Qual é a diferença entre Restauração de Rosto e Rosto Pro?",
+          "answer": "Restauração de Rosto (2 créditos) usa GFPGAN para restauração de foto com reconstrução de características faciais. Rosto Pro (6 créditos) usa Flux-2-Pro para melhoria de retrato premium com melhoria avançada de detalhe. Rosto Pro entrega resultados superiores para retratos profissionais."
+        },
+        {
+          "question": "Ampliador de retrato pode consertar rostos borrados?",
+          "answer": "Sim! Nossos modelos de melhoria de rosto especializam-se em reconstruir detalhes faciais de fotos borradas ou baixa qualidade. Resultados variam baseados na qualidade da fonte, mas melhoria significativa é típica para imagens moderadamente borradas."
+        },
+        {
+          "question": "Meus retratos ficarão com aparência não natural ou plástica?",
+          "answer": "Nossos modelos de IA são projetados para manter aparência natural. Textura de pele e características são melhoradas enquanto preservam características realistas. Para resultados sutis, Restauração de Rosto é recomendada sobre Rosto Pro."
+        },
+        {
+          "question": "Que resolução fotos de retrato podem ser ampliadas?",
+          "answer": "Com camada de qualidade Ultra, retratos podem ser ampliados para resolução 4K ou 8K (até 8192x8192px). Isso é ideal para impressão de formato grande ou uso profissional."
+        },
+        {
+          "question": "Existe um ampliador de retrato gratuito?",
+          "answer": "Sim! A camada Gratuita inclui qualidade Restauração de Rosto (2 créditos = 1 imagem) e qualidade Quick (1 crédito = 1 imagem). Você pode melhorar fotos de retrato sem marcas d'água. Para uso frequente, camadas pagas oferecem mais créditos e processamento em lote."
+        },
+        {
+          "question": "Posso ampliar múltiplos retratos de uma vez?",
+          "answer": "Processamento em lote está disponível em camadas pagas (Starter: 5 imagens, Hobby: 10 imagens, Pro: 50 imagens, Business: 500 imagens por lote). Camada gratuita processa imagens únicas apenas."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "product-photo-background-removal",
+      "title": "Remoção de Fundo de Fotos de Produtos",
+      "metaTitle": "Remova Fundos de Fotos de Produtos | Imagens de E-commerce",
+      "metaDescription": "Remova fundos de fotos de produtos para Amazon, eBay, Etsy e Shopify. Crie fundos brancos que atendem requisitos de marketplace. Ferramenta de IA gratuita.",
+      "h1": "Remoção de Fundo de Foto de Produto para E-commerce",
+      "intro": "Crie imagens de produto profissionais com fundos brancos limpos que atendem requisitos de marketplace. Nossa IA remove fundos complexos enquanto preserva detalhes do produto.",
+      "primaryKeyword": "remoção de fundo de foto de produto",
+      "secondaryKeywords": [
+        "remover fundo de foto de produto",
+        "remoção de fundo de e-commerce",
+        "fundo branco amazon",
+        "removedor de fundo de imagem de produto"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Preparação profissional de fotos de produto para marketplaces online. Remova fundos ocupados e crie fundos brancos limpos que atendem requisitos Amazon, eBay e Etsy.",
+      "challenges": [
+        "Requisitos de marketplace exigem fundos brancos puros (255,255,255)",
+        "Sombras e reflexões de produto precisam ser preservadas ou removidas limpa",
+        "Formas de produto complexas com buracos ou partes transparentes são difíceis",
+        "Fundo consistente através do catálogo de produto inteiro é essencial"
+      ],
+      "solutions": [
+        {
+          "problem": "Fundos ocupados ou bagunçados distraem de produtos",
+          "solution": "IA instantaneamente remove fundos e substitui com branco puro",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Edição manual é demorada para catálogos grandes",
+          "solution": "Processamento em lote remove fundos de múltiplas imagens de uma vez",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Bordas de produto complexas parecem não profissionais",
+          "solution": "IA preserva detalhes finos e cria bordas limpas e profissionais",
+          "tool": "ai-background-remover"
+        }
+      ],
+      "results": [
+        {
+          "metric": "Tempo de Processamento",
+          "improvement": "90% mais rápido",
+          "description": "Remova fundos em segundos vs. minutos com edição manual"
+        },
+        {
+          "metric": "Conformidade de Marketplace",
+          "improvement": "100%",
+          "description": "Fundos brancos puros atendem requisitos Amazon e eBay"
+        },
+        {
+          "metric": "Economia de Custo",
+          "improvement": "Grátis",
+          "description": "Sem taxas de assinatura para remoção ilimitada de fundo"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Isso cria fundos brancos conformes Amazon?",
+          "answer": "Sim, nosso removedor de fundo cria fundos brancos puros (RGB 255,255,255) que atendem requisitos de imagem principal da Amazon. O produto é isolado limpa para uma aparência de marketplace profissional."
+        },
+        {
+          "question": "Pode lidar com produtos com formas complexas?",
+          "answer": "A IA lida com formas complexas incluindo produtos com buracos, partes transparentes e bordas intrincadas. Resultados são melhores com contraste claro entre produto e fundo."
+        },
+        {
+          "question": "Como processo muitas fotos de produto de uma vez?",
+          "answer": "Enquanto a ferramenta gratuita processa uma imagem de cada vez, você pode rapidamente ciclar através de seu catálogo. Para operações em massa, acesso API está disponível para fluxos de trabalho automatizados."
+        },
+        {
+          "question": "Preservará sombras de produto?",
+          "answer": "A IA remove fundo completamente, incluindo sombras. Para fotos de produto com sombras naturais, você pode querer adicionar uma sombra sutil de queda após remoção para uma aparência polida."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "portrait-background-removal",
+      "title": "Remoção de Fundo de Retrato",
+      "metaTitle": "Remova Fundo de Fotos de Retrato | Edição de Headshot",
+      "metaDescription": "Remova fundos de retratos e headshots com IA. Resultados profissionais com preservação de detalhe de cabelo. Ferramenta online gratuita para LinkedIn, currículos e mais.",
+      "h1": "Remoção de Fundo de Retrato - Headshots Profissionais",
+      "intro": "Transforme fotos casuais em headshots profissionais removendo fundos distrativos. Nossa IA preserva detalhes de cabelo complexos e cria recortes limpos.",
+      "primaryKeyword": "remoção de fundo de retrato",
+      "secondaryKeywords": [
+        "remover fundo de retrato",
+        "removedor de fundo de headshot",
+        "fundo de foto linkedin",
+        "remoção de fundo de foto de perfil"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Profissional & Pessoal",
+      "description": "Preparação profissional de retrato e headshot com remoção de fundo de IA. Perfeito para perfis LinkedIn, currículos, fotos de ID e branding profissional.",
+      "challenges": [
+        "Cabelo e bordas finas são notoriamente difíceis de recortar limpa",
+        "Software de edição de foto profissional tem curvas de aprendizado íngremes",
+        "Contratar fotógrafos ou editores para headshots simples é caro",
+        "Estilo de fundo consistente através de fotos de equipe requer habilidade"
+      ],
+      "solutions": [
+        {
+          "problem": "Cabelo cria bordas bagunçadas com ferramentas de seleção tradicionais",
+          "solution": "IA especificamente treinada para lidar com detalhes de cabelo finos e bordas frouxas",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Precisa de headshot profissional mas só tem foto casual",
+          "solution": "Remova fundo casual e substitua com cor sólida para aparência profissional",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Fotos de equipe têm fundos inconsistentes",
+          "solution": "Remova todos os fundos e aplique estilo consistente através da equipe",
+          "tool": "ai-background-remover"
+        }
+      ],
+      "results": [
+        {
+          "metric": "Preservação de Detalhe de Cabelo",
+          "improvement": "Excelente",
+          "description": "IA lida com cabelo frouxo, cachos e fios finos sem efeitos de halo"
+        },
+        {
+          "metric": "Tempo para Headshot Profissional",
+          "improvement": "Under 30 segundos",
+          "description": "Transforme qualquer retrato para qualidade profissional instantaneamente"
+        },
+        {
+          "metric": "Custo",
+          "improvement": "Grátis vs $50-200",
+          "description": "Edição de headshot profissional sem custo"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Lidará com cabelo cacheado ou frisado?",
+          "answer": "Sim, nossa IA é especificamente treinada para lidar com todos os tipos de cabelo incluindo cacheado, frisado e cabelo frouxo. O modelo detecta fios finos e preserva bordas de aparência natural sem o efeito de halo comum em ferramentas tradicionais."
+        },
+        {
+          "question": "Posso usar isso para fotos de perfil LinkedIn?",
+          "answer": "Absolutamente. Remova seu fundo atual e mantenha transparente ou adicione uma cor profissional sólida. O resultado é um headshot limpo e profissional perfeito para LinkedIn."
+        },
+        {
+          "question": "E óculos e reflexões?",
+          "answer": "A IA lida bem com óculos, preservando armações e lentes. Reflexões fortes em óculos podem mostrar alguns artefatos de borda, mas a maioria de óculos é processada limpa."
+        },
+        {
+          "question": "Isso é adequado para fotos de ID ou passaporte?",
+          "answer": "Sim, você pode remover fundos e adicionar fundos brancos ou azuis conformes. Note que fotos de ID oficiais podem ter requisitos específicos de iluminação e composição além da cor de fundo."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-photo-enhancer"],
+      "relatedGuides": []
     }
   ],
   "meta": {
