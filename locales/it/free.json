@@ -9,8 +9,12 @@
       "h1": "Strumento Aumento Immagine Gratuito - Migliora Foto Online con AI",
       "intro": "Ottieni aumento immagine professionale completamente gratuito. 10 crediti per iniziare, nessuna iscrizione richiesta, zero filigrane sulle tue immagini migliorate.",
       "primaryKeyword": "strumento aumento immagine gratuito",
-      "secondaryKeywords": ["strumento aumento foto gratuito", "aumenta immagine gratis", "upscaler AI gratuito"],
-      "lastUpdated": "2025-12-10T00:00:00Z",
+      "secondaryKeywords": [
+        "strumento aumento foto gratuito",
+        "aumenta immagine gratis",
+        "upscaler AI gratuito"
+      ],
+      "lastUpdated": "2026-01-08",
       "category": "free",
       "toolName": "Strumento Aumento Immagine Gratuito",
       "description": "Sperimenta aumento immagine AI di qualità professionale senza costi. Il nostro livello gratuito ti offre 10 crediti per aumentare immagini a risoluzione 4K con la stessa potente tecnologia AI usata dai professionisti in tutto il mondo.",
@@ -67,7 +71,11 @@
       "h1": "Miglioratore Foto Gratuito - Miglioramento Foto AI",
       "intro": "Trasforma le tue foto con miglioramento professionale AI. Correggi sfocatura, ottimizza colori e migliora dettagli - tutto gratuito senza filigrane.",
       "primaryKeyword": "miglioratore foto gratuito",
-      "secondaryKeywords": ["miglioratore immagini gratuito", "migliora foto gratis", "miglioramento foto gratuito"],
+      "secondaryKeywords": [
+        "miglioratore immagini gratuito",
+        "migliora foto gratis",
+        "miglioramento foto gratuito"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Miglioratore Foto Gratuito",
@@ -187,7 +195,11 @@
       "h1": "Miglioratore Foto AI Gratuito - Miglioramento Foto Rete Neurale",
       "intro": "Sfrutta la potenza della AI per migliorare professionalmente le tue foto. Il livello gratuito include 10 crediti mensili con pieno miglioramento qualità e nessuna filigrana.",
       "primaryKeyword": "miglioratore foto AI gratuito",
-      "secondaryKeywords": ["AI migliora foto gratis", "foto AI gratuita", "miglioramento foto AI gratuito"],
+      "secondaryKeywords": [
+        "AI migliora foto gratis",
+        "foto AI gratuita",
+        "miglioramento foto AI gratuito"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Miglioratore Foto AI Gratuito",
@@ -245,7 +257,11 @@
       "h1": "Upscaler AI Gratuito - Aumento Immagine Rete Neurale",
       "intro": "Aumenta le tue immagini a risoluzione 4K usando AI avanzata. Ottieni 10 aumenti gratuiti ogni mese con la stessa tecnologia usata dai professionisti.",
       "primaryKeyword": "upscaler AI gratuito",
-      "secondaryKeywords": ["AI aumenta gratis", "upscaler neurale gratuito", "aumento immagine AI gratuito"],
+      "secondaryKeywords": [
+        "AI aumenta gratis",
+        "upscaler neurale gratuito",
+        "aumento immagine AI gratuito"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Upscaler AI Gratuito",
@@ -309,7 +325,7 @@
         "strumento rimozione sfondo gratuito",
         "rimuovi sfondo bg gratis"
       ],
-      "lastUpdated": "2026-01-06T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "free",
       "toolName": "Rimuovi Sfondo Gratuito",
       "description": "Rimozione sfondo professionale a costo zero. Il nostro modello AI esegue interamente nel tuo browser, quindi non ci sono limiti di utilizzo, nessuna filigrana, e le tue immagini non lasciano mai il tuo dispositivo.",
@@ -365,6 +381,6 @@
   ],
   "meta": {
     "totalPages": 6,
-    "lastUpdated": "2026-01-06T00:00:00Z"
+    "lastUpdated": "2026-01-08"
   }
 }

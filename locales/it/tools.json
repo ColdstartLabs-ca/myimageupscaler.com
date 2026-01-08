@@ -18,7 +18,7 @@
         "photo enlarger",
         "ai image enlarger"
       ],
-      "lastUpdated": "2025-12-19T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "tools",
       "toolName": "AI Image Upscaler",
       "description": "Trasforma immagini a bassa risoluzione in visualizzazioni di alta qualità. A differenza del ridimensionamento tradizionale che crea sfocatura, la nostra AI ricostruisce i dettagli durante l'aumento.",
@@ -342,7 +342,7 @@
         "transparent background",
         "cut out image"
       ],
-      "lastUpdated": "2026-01-06T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "tools",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
@@ -474,7 +474,7 @@
         "remove background online",
         "background eraser"
       ],
-      "lastUpdated": "2026-01-06T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "tools",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
@@ -571,7 +571,7 @@
         "clear background",
         "transparent image creator"
       ],
-      "lastUpdated": "2026-01-06T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "tools",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
@@ -668,7 +668,7 @@
         "extract object from image",
         "cut out person from photo"
       ],
-      "lastUpdated": "2026-01-06T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "tools",
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
@@ -753,6 +753,6 @@
   ],
   "meta": {
     "totalPages": 6,
-    "lastUpdated": "2026-01-06T00:00:00Z"
+    "lastUpdated": "2026-01-08"
   }
 }

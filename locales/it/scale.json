@@ -754,5 +754,9 @@
       "relatedScale": ["upscale-to-hd", "upscale-to-1080p"],
       "relatedTools": ["ai-image-upscaler"]
     }
-  ]
+  ],
+  "meta": {
+    "totalPages": 11,
+    "lastUpdated": "2026-01-08"
+  }
 }

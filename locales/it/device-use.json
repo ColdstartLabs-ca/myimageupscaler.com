@@ -2,7 +2,7 @@
   "category": "device-use",
   "meta": {
     "totalPages": 20,
-    "lastUpdated": "2026-01-06",
+    "lastUpdated": "2026-01-08",
     "description": "Pagine moltiplicatrici Dispositivo × Caso d'uso - combinazioni di dispositivi con casi d'uso specifici per l'upscaling di immagini"
   },
   "pages": [
@@ -14,7 +14,12 @@
       "h1": "Upscaler Social Media Mobile - Perfetto per Instagram, TikTok e Altri",
       "intro": "Trasforma le tue foto mobili in immagini stupende pronte per i social media con il nostro upscaler specializzato. Ottimizzato per fotocamere smartphone e requisiti delle piattaforme social.",
       "primaryKeyword": "upscaler social media mobile",
-      "secondaryKeywords": ["upscaler foto mobile per social media", "miglioratore smartphone social media", "upscaler foto instagram", "miglioratore immagini tiktok"],
+      "secondaryKeywords": [
+        "upscaler foto mobile per social media",
+        "miglioratore smartphone social media",
+        "upscaler foto instagram",
+        "miglioratore immagini tiktok"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",
@@ -68,7 +73,12 @@
       "h1": "Upscaler Grafiche Web Mobile - Miglioramento Mobile Pronto per il Web",
       "intro": "Converti le tue foto mobili in grafiche web professionali con il nostro upscaler specializzato. Perfetto per creatori di contenuti, blogger e chiunque abbia bisogno di immagini pronte per il web dal proprio smartphone.",
       "primaryKeyword": "upscaler grafiche web mobile",
-      "secondaryKeywords": ["miglioratore foto web mobile", "upscaler grafiche web smartphone", "immagini sito web mobile", "migliora foto mobile per web"],
+      "secondaryKeywords": [
+        "miglioratore foto web mobile",
+        "upscaler grafiche web smartphone",
+        "immagini sito web mobile",
+        "migliora foto mobile per web"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",
@@ -122,7 +132,12 @@
       "h1": "Upscaler E-commerce Mobile - Foto Prodotti Professionali da Telefono",
       "intro": "Trasforma le tue foto di prodotti smartphone in immagini e-commerce professionali con il nostro upscaler specializzato. Perfetto per venditori online, piccole imprese e imprenditori.",
       "primaryKeyword": "upscaler ecommerce mobile",
-      "secondaryKeywords": ["upscaler foto prodotto mobile", "miglioratore ecommerce smartphone", "upscaler foto etsy", "miglioratore immagini negozio online"],
+      "secondaryKeywords": [
+        "upscaler foto prodotto mobile",
+        "miglioratore ecommerce smartphone",
+        "upscaler foto etsy",
+        "miglioratore immagini negozio online"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",
@@ -176,7 +191,12 @@
       "h1": "Upscaler Messaggistica Mobile - Qualità Migliore per Condivisione Foto",
       "intro": "Migliora le tue foto mobili prima di condividere sulle app di messaggistica con il nostro upscaler specializzato. Perfetto per WhatsApp, Telegram, Discord e condivisione personale di foto.",
       "primaryKeyword": "upscaler messaggistica mobile",
-      "secondaryKeywords": ["miglioratore foto mobile per messaggistica", "upscaler foto whatsapp", "miglioratore immagini telegram", "upscaler foto app condivisione"],
+      "secondaryKeywords": [
+        "miglioratore foto mobile per messaggistica",
+        "upscaler foto whatsapp",
+        "miglioratore immagini telegram",
+        "upscaler foto app condivisione"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",
@@ -230,7 +250,12 @@
       "h1": "Upscaler Creazione Contenuti Mobile - Miglioramento Professionale per Creator",
       "intro": "Eleva la tua creazione di contenuti mobile con il nostro upscaler specializzato. Perfetto per influencer, creator e chiunque produca contenuti visivi dal proprio smartphone.",
       "primaryKeyword": "upscaler creazione contenuti mobile",
-      "secondaryKeywords": ["miglioratore immagini creator mobile", "upscaler contenuti smartphone", "upscaler foto influencer", "strumenti creator mobile"],
+      "secondaryKeywords": [
+        "miglioratore immagini creator mobile",
+        "upscaler contenuti smartphone",
+        "upscaler foto influencer",
+        "strumenti creator mobile"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",
@@ -284,7 +309,12 @@
       "h1": "Upscaler Stampa Professionale Desktop - Stampe Qualità Galleria",
       "intro": "Trasforma le tue immagini desktop in opere d'arte di qualità di stampa stupende con il nostro upscaler professionale. Perfetto per fotografi, artisti e chiunque richieda stampe di qualità galleria.",
       "primaryKeyword": "upscaler stampa professionale desktop",
-      "secondaryKeywords": ["upscaler stampa desktop", "miglioramento fotografia professionale", "upscaler stampe galleria", "upscaler grande formato desktop"],
+      "secondaryKeywords": [
+        "upscaler stampa desktop",
+        "miglioramento fotografia professionale",
+        "upscaler stampe galleria",
+        "upscaler grande formato desktop"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "desktop",
@@ -338,7 +368,12 @@
       "h1": "Upscaler Editing Foto Desktop - Miglioramento Flusso di Editing",
       "intro": "Integra l'upscaling nel tuo flusso di editing foto desktop per il massimo miglioramento della qualità. Perfetto per Photoshop, Lightroom e flussi di editing foto professionale.",
       "primaryKeyword": "upscaler editing foto desktop",
-      "secondaryKeywords": ["upscaler photoshop", "miglioratore immagini lightroom", "miglioramento editing foto desktop", "upscaler foto professionale"],
+      "secondaryKeywords": [
+        "upscaler photoshop",
+        "miglioratore immagini lightroom",
+        "miglioramento editing foto desktop",
+        "upscaler foto professionale"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "desktop",
@@ -382,7 +417,10 @@
         }
       ],
       "relatedDevices": ["tablet-photo-editing-upscaler", "mobile-content-creation-upscaler"],
-      "relatedUseCases": ["desktop-professional-printing-upscaler", "desktop-graphic-design-upscaler"]
+      "relatedUseCases": [
+        "desktop-professional-printing-upscaler",
+        "desktop-graphic-design-upscaler"
+      ]
     },
     {
       "slug": "desktop-graphic-design-upscaler",
@@ -392,7 +430,12 @@
       "h1": "Upscaler Design Grafico Desktop - Miglioramento Asset di Design",
       "intro": "Migliora i tuoi asset di design e grafiche con il nostro upscaler ottimizzato per desktop. Perfetto per designer grafici, illustratori e professionisti del design visuale.",
       "primaryKeyword": "upscaler design grafico desktop",
-      "secondaryKeywords": ["upscaler asset design", "miglioratore illustrazioni", "upscaling grafiche desktop", "upscaler immagini designer"],
+      "secondaryKeywords": [
+        "upscaler asset design",
+        "miglioratore illustrazioni",
+        "upscaling grafiche desktop",
+        "upscaler immagini designer"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "desktop",
@@ -446,7 +489,12 @@
       "h1": "Upscaler E-commerce Desktop - Miglioramento Prodotti Professionale",
       "intro": "Trasforma le tue immagini prodotti in asset e-commerce professionali con il nostro upscaler desktop. Perfetto per negozi online, marketplace e fotografia prodotti professionale.",
       "primaryKeyword": "upscaler ecommerce desktop",
-      "secondaryKeywords": ["upscaler immagine prodotto", "miglioratore immagini amazon", "upscaler foto shopify", "immagini ecommerce professionali"],
+      "secondaryKeywords": [
+        "upscaler immagine prodotto",
+        "miglioratore immagini amazon",
+        "upscaler foto shopify",
+        "immagini ecommerce professionali"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "desktop",
@@ -500,7 +548,12 @@
       "h1": "Upscaler Gestione Social Media Desktop - Miglioramento Contenuti Professionale",
       "intro": "Streamline il tuo flusso di gestione social media con il nostro upscaler desktop. Perfetto per social media manager, strateghi di contenuti e professionisti del brand che gestiscono più piattaforme.",
       "primaryKeyword": "upscaler gestione social media desktop",
-      "secondaryKeywords": ["upscaler social media manager", "miglioratore immagini scheduler contenuti", "upscaler contenuti brand", "miglioramento social multipiattaforma"],
+      "secondaryKeywords": [
+        "upscaler social media manager",
+        "miglioratore immagini scheduler contenuti",
+        "upscaler contenuti brand",
+        "miglioramento social multipiattaforma"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "desktop",
@@ -554,7 +607,12 @@
       "h1": "Upscaler Miniature Video Desktop - Miniature Accattivanti",
       "intro": "Crea miniature video convincenti con il nostro upscaler desktop. Perfetto per YouTuber, creator di contenuti e chiunque necessiti miniature che attirano l'attenzione.",
       "primaryKeyword": "upscaler miniature video desktop",
-      "secondaryKeywords": ["upscaler miniature youtube", "miglioratore miniature video", "creatore miniature desktop", "upscaler contenuti video"],
+      "secondaryKeywords": [
+        "upscaler miniature youtube",
+        "miglioratore miniature video",
+        "creatore miniature desktop",
+        "upscaler contenuti video"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "desktop",
@@ -608,7 +666,12 @@
       "h1": "Upscaler Presentazioni Desktop - Miglioramento Presentazioni Professionale",
       "intro": "Migliora i tuoi visivi di presentazione con il nostro upscaler desktop. Perfetto per presentazioni aziendali, contenuti educativi e presentazioni professionali.",
       "primaryKeyword": "upscaler presentazioni desktop",
-      "secondaryKeywords": ["miglioratore immagini presentazioni", "upscaler foto powerpoint", "miglioratore immagini keynote", "immagini presentazioni aziendali"],
+      "secondaryKeywords": [
+        "miglioratore immagini presentazioni",
+        "upscaler foto powerpoint",
+        "miglioratore immagini keynote",
+        "immagini presentazioni aziendali"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "desktop",
@@ -662,7 +725,12 @@
       "h1": "Upscaler Arte Digitale Tablet - Miglioramento Arte Digitale Professionale",
       "intro": "Trasforma la tua arte digitale creata su tablet in opere d'arte ad alta risoluzione stupende con il nostro upscaler specializzato. Perfetto per iPad Pro, Surface e artisti digitali.",
       "primaryKeyword": "upscaler arte digitale tablet",
-      "secondaryKeywords": ["upscaler arte ipad", "miglioratore disegni tablet", "upscaler risoluzione arte digitale", "upscaler procreate"],
+      "secondaryKeywords": [
+        "upscaler arte ipad",
+        "miglioratore disegni tablet",
+        "upscaler risoluzione arte digitale",
+        "upscaler procreate"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "tablet",
@@ -705,7 +773,10 @@
           "answer": "Assolutamente! L'arte tablet upscaled 4x è di qualità eccellente per vendite di stampe, mostre di galleria e stampe d'arte."
         }
       ],
-      "relatedDevices": ["desktop-photo-editing-upscaler", "desktop-professional-printing-upscaler"],
+      "relatedDevices": [
+        "desktop-photo-editing-upscaler",
+        "desktop-professional-printing-upscaler"
+      ],
       "relatedUseCases": ["tablet-photo-editing-upscaler", "tablet-content-creation-upscaler"]
     },
     {
@@ -716,7 +787,12 @@
       "h1": "Upscaler Editing Foto Tablet - Miglioramento Editing Mobile",
       "intro": "Migliora le tue foto durante i flussi di editing tablet con il nostro upscaler specializzato. Perfetto per iPad, Surface Pro e editing foto in movimento.",
       "primaryKeyword": "upscaler editing foto tablet",
-      "secondaryKeywords": ["upscaler foto ipad", "miglioratore foto tablet", "upscaler editing foto surface", "miglioramento editing foto mobile"],
+      "secondaryKeywords": [
+        "upscaler foto ipad",
+        "miglioratore foto tablet",
+        "upscaler editing foto surface",
+        "miglioramento editing foto mobile"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "tablet",
@@ -770,7 +846,12 @@
       "h1": "Upscaler Social Media Tablet - Miglioramento Creator",
       "intro": "Migliora i tuoi contenuti di social media creati su tablet con il nostro upscaler specializzato. Perfetto per creator iPad e social media manager.",
       "primaryKeyword": "upscaler social media tablet",
-      "secondaryKeywords": ["upscaler social media ipad", "miglioratore contenuti tablet", "upscaler social media tablet", "miglioramento creator tablet"],
+      "secondaryKeywords": [
+        "upscaler social media ipad",
+        "miglioratore contenuti tablet",
+        "upscaler social media tablet",
+        "miglioramento creator tablet"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "Tablet",
@@ -824,7 +905,12 @@
       "h1": "Upscaler E-commerce Tablet - Miglioramento Foto Prodotti",
       "intro": "Trasforma le tue foto prodotti catturate o modificate su tablet in immagini e-commerce professionali. Perfetto per flussi di fotografia prodotti mobile.",
       "primaryKeyword": "upscaler ecommerce tablet",
-      "secondaryKeywords": ["upscaler foto prodotto tablet", "miglioratore ecommerce ipad", "upscaler fotografia prodotti mobile", "miglioramento negozio online tablet"],
+      "secondaryKeywords": [
+        "upscaler foto prodotto tablet",
+        "miglioratore ecommerce ipad",
+        "upscaler fotografia prodotti mobile",
+        "miglioramento negozio online tablet"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "tablet",
@@ -878,7 +964,12 @@
       "h1": "Upscaler Creazione Contenuti Tablet - Miglioramento Creator",
       "intro": "Migliora i tuoi contenuti creati su tablet con il nostro upscaler specializzato. Perfetto per creator digitali, influencer e producer di contenuti che usano flussi iPad.",
       "primaryKeyword": "upscaler creazione contenuti tablet",
-      "secondaryKeywords": ["upscaler creator contenuti ipad", "miglioramento creator tablet", "upscaler produzione contenuti mobile", "strumenti creator tablet"],
+      "secondaryKeywords": [
+        "upscaler creator contenuti ipad",
+        "miglioramento creator tablet",
+        "upscaler produzione contenuti mobile",
+        "strumenti creator tablet"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "tablet",

@@ -84,7 +84,12 @@
       "h1": "Agrandissez les images à HD 1080p - Qualité Full HD",
       "intro": "Améliorez vos images à la résolution Full HD (1920x1080 pixels) avec l'IA. Parfait pour les sites web, les réseaux sociaux, YouTube et les affichages HD.",
       "primaryKeyword": "agrandir vers hd",
-      "secondaryKeywords": ["agrandissement hd", "agrandissement 1080p", "convertir vers hd", "agrandisseur full hd"],
+      "secondaryKeywords": [
+        "agrandissement hd",
+        "agrandissement 1080p",
+        "convertir vers hd",
+        "agrandisseur full hd"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "scale",
       "resolution": "Full HD (1080p)",
@@ -222,5 +227,9 @@
       "relatedScale": ["upscale-to-4k"],
       "relatedTools": ["ai-image-upscaler"]
     }
-  ]
+  ],
+  "meta": {
+    "totalPages": 3,
+    "lastUpdated": "2026-01-08"
+  }
 }

@@ -9,7 +9,11 @@
       "h1": "Kostenloser Bild-Upscaler - Fotos Online mit KI Verbessern",
       "intro": "Erhalten Sie professionelles Bild-Upscaling völlig kostenlos. 10 Gutschriften zum Starten, keine Anmeldung erforderlich, und null Wasserzeichen auf Ihren verbesserten Bildern.",
       "primaryKeyword": "kostenloser bild upscaler",
-      "secondaryKeywords": ["kostenloser foto upscaler", "bild kostenlos skalieren", "kostenloser ki upscaler"],
+      "secondaryKeywords": [
+        "kostenloser foto upscaler",
+        "bild kostenlos skalieren",
+        "kostenloser ki upscaler"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "Kostenlos",
       "toolName": "Kostenloser Bild-Upscaler",
@@ -67,7 +71,11 @@
       "h1": "Kostenloser Foto-Verbesserer - KI-gestützte Fotoverbesserung",
       "intro": "Verwandeln Sie Ihre Fotos mit professioneller KI-Verbesserung. Korrigieren Sie Unschärfe, optimieren Sie Farben und verbessern Sie Details – alles kostenlos ohne Wasserzeichen.",
       "primaryKeyword": "kostenloser foto verbesserer",
-      "secondaryKeywords": ["kostenloser bild verbesserer", "fotos kostenlos verbessern", "foto verbesserung kostenlos"],
+      "secondaryKeywords": [
+        "kostenloser bild verbesserer",
+        "fotos kostenlos verbessern",
+        "foto verbesserung kostenlos"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "Kostenlos",
       "toolName": "Kostenloser Foto-Verbesserer",
@@ -187,7 +195,11 @@
       "h1": "Kostenloser KI-Foto-Verbesserer - Neuronales Netzwerk Fotoverbesserung",
       "intro": "Nutzen Sie die Kraft der KI, um Ihre Fotos professionell zu verbessern. Kostenlose Stufe umfasst 10 monatliche Gutschriften mit voller Qualitätsverbesserung und ohne Wasserzeichen.",
       "primaryKeyword": "kostenloser ki foto verbesserer",
-      "secondaryKeywords": ["ki foto verbessern kostenlos", "kostenlose foto ki", "ki foto verbesserung kostenlos"],
+      "secondaryKeywords": [
+        "ki foto verbessern kostenlos",
+        "kostenlose foto ki",
+        "ki foto verbesserung kostenlos"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "Kostenlos",
       "toolName": "Kostenloser KI-Foto-Verbesserer",
@@ -245,7 +257,11 @@
       "h1": "Kostenloser KI-Upscaler - Neuronales Netzwerk Bild-Upscaling",
       "intro": "Skalieren Sie Ihre Bilder auf 4K-Auflösung mit fortschrittlicher KI. Erhalten Sie jeden Monat 10 kostenlose Upscalings mit derselben Technologie, die von Profis verwendet wird.",
       "primaryKeyword": "kostenloser ki upscaler",
-      "secondaryKeywords": ["ki skalieren kostenlos", "kostenloser neuraler upscaler", "ki bild upscaling kostenlos"],
+      "secondaryKeywords": [
+        "ki skalieren kostenlos",
+        "kostenloser neuraler upscaler",
+        "ki bild upscaling kostenlos"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "Kostenlos",
       "toolName": "Kostenloser KI-Upscaler",
@@ -365,6 +381,6 @@
   ],
   "meta": {
     "totalPages": 6,
-    "lastUpdated": "2026-01-06T00:00:00Z"
+    "lastUpdated": "2026-01-08T00:00:00Z"
   }
 }

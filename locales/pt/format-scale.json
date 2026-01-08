@@ -2,7 +2,7 @@
   "category": "formato-scale",
   "meta": {
     "totalPages": 60,
-    "lastUpdated": "2026-01-06",
+    "lastUpdated": "2026-01-08T00:00:00Z",
     "description": "formato × Scale multiplier pages - combinations of imagem formatos with scale factors"
   },
   "pages": [
@@ -107,14 +107,8 @@
           "answer": "2X ampliação is Excelente para preparing JPEGs for moderado impressão tamanhos like 5x7 or 8x10 inches at Bom qualidade."
         }
       ],
-      "relatedFormats": [
-        "ampliar-jpeg-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-2x",
-        "jpeg-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-jpeg-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ai-ampliador-2x", "jpeg-ampliar-4x"]
     },
     {
       "slug": "jpeg-ampliar-4x",
@@ -217,15 +211,8 @@
           "answer": "Typically 30-60 segundos depending on your JPEG tamanho. The AI needs tempo to intelligently generate new detalhes for the larger resolução."
         }
       ],
-      "relatedFormats": [
-        "ampliar-jpeg-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-4x",
-        "jpeg-ampliar-2x",
-        "jpeg-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-jpeg-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ai-ampliador-4x", "jpeg-ampliar-2x", "jpeg-ampliar-8x"]
     },
     {
       "slug": "jpeg-ampliar-8x",
@@ -328,15 +315,8 @@
           "answer": "Absolutamente! 8X ampliação is Excelente para Impressão em Grande formatoo. Even pequeno JPEGs can be enlarged to poster or banner tamanho mantendo profissional qualidade."
         }
       ],
-      "relatedFormats": [
-        "ampliar-jpeg-imagemns",
-        "ampliar-raw-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-8x",
-        "jpeg-ampliar-4x",
-        "jpeg-ampliar-16x"
-      ]
+      "relatedFormats": ["ampliar-jpeg-imagemns", "ampliar-raw-imagemns"],
+      "relatedScales": ["ampliar-8x", "jpeg-ampliar-4x", "jpeg-ampliar-16x"]
     },
     {
       "slug": "jpeg-ampliar-16x",
@@ -439,14 +419,8 @@
           "answer": "16X ampliação typically takes 2-5 minutos due to the computational intensity of generating 256x mais pixels com IA enhancement from JPEG sources."
         }
       ],
-      "relatedFormats": [
-        "ampliar-jpeg-imagemns",
-        "ampliar-raw-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-16x",
-        "jpeg-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-jpeg-imagemns", "ampliar-raw-imagemns"],
+      "relatedScales": ["ampliar-16x", "jpeg-ampliar-8x"]
     },
     {
       "slug": "png-ampliar-2x",
@@ -549,14 +523,8 @@
           "answer": "Sim! Our AI is specifically trained to handle texto and graphics in PNGs during 2X scaling, maintaining nítido, readable texto even at doubled resolução."
         }
       ],
-      "relatedFormats": [
-        "ampliar-png-imagemns",
-        "ampliar-jpeg-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-2x",
-        "png-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-png-imagemns", "ampliar-jpeg-imagemns"],
+      "relatedScales": ["ai-ampliador-2x", "png-ampliar-4x"]
     },
     {
       "slug": "png-ampliar-4x",
@@ -659,15 +627,8 @@
           "answer": "Absolutamente! 4X PNGs are Excelente para Impressão Profissional, especially when transparência is required. The lossless qualidade ensures Excelente impressão results."
         }
       ],
-      "relatedFormats": [
-        "ampliar-png-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-4x",
-        "png-ampliar-2x",
-        "png-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-png-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ai-ampliador-4x", "png-ampliar-2x", "png-ampliar-8x"]
     },
     {
       "slug": "png-ampliar-8x",
@@ -770,15 +731,8 @@
           "answer": "Absolutamente! 8X PNGs are Excelente para Impressão em Grande formatoo, especially when transparência is required. They produce profissional-qualidade impressãos."
         }
       ],
-      "relatedFormats": [
-        "ampliar-png-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-8x",
-        "png-ampliar-4x",
-        "png-ampliar-16x"
-      ]
+      "relatedFormats": ["ampliar-png-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ampliar-8x", "png-ampliar-4x", "png-ampliar-16x"]
     },
     {
       "slug": "png-ampliar-16x",
@@ -881,14 +835,8 @@
           "answer": "Sim! If you have access to the original vector arquivos (SVG, AI, EPS), recreate at the desired tamanho rather than 16X ampliação the PNG. Vector graphics will always be superior at extreme tamanhos."
         }
       ],
-      "relatedFormats": [
-        "ampliar-png-imagemns",
-        "ampliar-svg-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-16x",
-        "png-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-png-imagemns", "ampliar-svg-imagemns"],
+      "relatedScales": ["ampliar-16x", "png-ampliar-8x"]
     },
     {
       "slug": "webp-ampliar-2x",
@@ -991,14 +939,8 @@
           "answer": "While possible, webP is primarily a web formato. For impressão, consider converting 2X upscaled webP to PNG or TIFF for Melhor impressão workflow compatibility."
         }
       ],
-      "relatedFormats": [
-        "ampliar-webp-imagemns",
-        "ampliar-jpeg-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-2x",
-        "webp-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-webp-imagemns", "ampliar-jpeg-imagemns"],
+      "relatedScales": ["ai-ampliador-2x", "webp-ampliar-4x"]
     },
     {
       "slug": "webp-ampliar-4x",
@@ -1101,15 +1043,8 @@
           "answer": "Our 4X ampliador currently Suporta static webP imagemns. For animated webP, consider extracting frames and processing individually, or Usar the static version."
         }
       ],
-      "relatedFormats": [
-        "ampliar-webp-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-4x",
-        "webp-ampliar-2x",
-        "webp-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-webp-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ai-ampliador-4x", "webp-ampliar-2x", "webp-ampliar-8x"]
     },
     {
       "slug": "webp-ampliar-8x",
@@ -1212,14 +1147,8 @@
           "answer": "Sim! After 8X ampliação, you can convert to PNG or TIFF for impressão Usar, or keep as webP for web deployment. We offer multiple download formatos."
         }
       ],
-      "relatedFormats": [
-        "ampliar-webp-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-8x",
-        "webp-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-webp-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ampliar-8x", "webp-ampliar-4x"]
     },
     {
       "slug": "webp-ampliar-16x",
@@ -1317,14 +1246,8 @@
           "answer": "For extreme scaling like 16X, lossless formatos like PNG or TIFF may be mais appropriate unless you specifically need webP's compressão characteristics."
         }
       ],
-      "relatedFormats": [
-        "ampliar-webp-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-16x",
-        "webp-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-webp-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ampliar-16x", "webp-ampliar-8x"]
     },
     {
       "slug": "heic-ampliar-2x",
@@ -1418,14 +1341,8 @@
           "answer": "Sim! 2X ampliação is Ideal para iPhone fotos, providing Nãoticeable improvement mantendo natural appearance and managing arquivo tamanho efficiently."
         }
       ],
-      "relatedFormats": [
-        "ampliar-heic-imagemns",
-        "ampliar-jpeg-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-2x",
-        "heic-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-heic-imagemns", "ampliar-jpeg-imagemns"],
+      "relatedScales": ["ai-ampliador-2x", "heic-ampliar-4x"]
     },
     {
       "slug": "heic-ampliar-4x",
@@ -1519,15 +1436,8 @@
           "answer": "Typically 30-60 segundos depending on your HEIC foto tamanho. The AI needs tempo to intelligently Aprimorar at 4X resolução."
         }
       ],
-      "relatedFormats": [
-        "ampliar-heic-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-4x",
-        "heic-ampliar-2x",
-        "heic-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-heic-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ai-ampliador-4x", "heic-ampliar-2x", "heic-ampliar-8x"]
     },
     {
       "slug": "heic-ampliar-8x",
@@ -1612,14 +1522,8 @@
           "answer": "Absolutamente! 8X ampliação is Excelente para Impressão em Grande formatoo from iPhone HEIC fotos."
         }
       ],
-      "relatedFormats": [
-        "ampliar-heic-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-8x",
-        "heic-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-heic-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ampliar-8x", "heic-ampliar-4x"]
     },
     {
       "slug": "raw-ampliar-2x",
@@ -1709,14 +1613,8 @@
           "answer": "Always ampliar RAW arquivos first, then convert to other formatos. This Preservar máximo imagem data for the AI to Funciona with."
         }
       ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-2x",
-        "raw-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-raw-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ai-ampliador-2x", "raw-ampliar-4x"]
     },
     {
       "slug": "raw-ampliar-4x",
@@ -1806,15 +1704,8 @@
           "answer": "Absolutamente! 4X upscaled RAW fotos are Ideal para Impressão em Grande formatoo, gallery exhibitions, and commercial applications."
         }
       ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-4x",
-        "raw-ampliar-2x",
-        "raw-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-raw-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ai-ampliador-4x", "raw-ampliar-2x", "raw-ampliar-8x"]
     },
     {
       "slug": "raw-ampliar-8x",
@@ -1904,15 +1795,8 @@
           "answer": "Absolutamente! 8X upscaled RAW fotos are Ideal para the mais demanding impressão applications, from fine art to commercial advertising."
         }
       ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-8x",
-        "raw-ampliar-4x",
-        "raw-ampliar-16x"
-      ]
+      "relatedFormats": ["ampliar-raw-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ampliar-8x", "raw-ampliar-4x", "raw-ampliar-16x"]
     },
     {
       "slug": "raw-ampliar-16x",
@@ -2002,14 +1886,8 @@
           "answer": "Não. 16X RAW ampliação is for especializado applications only. mais fotographers will find 2X, 4X, or 8X sufficient."
         }
       ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-16x",
-        "raw-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-raw-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ampliar-16x", "raw-ampliar-8x"]
     },
     {
       "slug": "heic-ampliar-16x",
@@ -2094,14 +1972,8 @@
           "answer": "Não. 16X HEIC ampliação is for especializado applications only. mais users will find 2X, 4X, or 8X sufficient."
         }
       ],
-      "relatedFormats": [
-        "ampliar-heic-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-16x",
-        "heic-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-heic-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ampliar-16x", "heic-ampliar-8x"]
     },
     {
       "slug": "tiff-ampliar-2x",
@@ -2204,14 +2076,8 @@
           "answer": "TIFF arquivos will be approximately 4 vezes larger (2x width × 2x height) since TIFF Usar lossless compressão."
         }
       ],
-      "relatedFormats": [
-        "ampliar-tiff-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-2x",
-        "tiff-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-tiff-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ai-ampliador-2x", "tiff-ampliar-4x"]
     },
     {
       "slug": "tiff-ampliar-4x",
@@ -2314,15 +2180,8 @@
           "answer": "Absolutamente! 4X upscaled TIFFs are Perfeito para gallery exhibitions and fine art impressão."
         }
       ],
-      "relatedFormats": [
-        "ampliar-tiff-imagemns",
-        "ampliar-raw-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-4x",
-        "tiff-ampliar-2x",
-        "tiff-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-tiff-imagemns", "ampliar-raw-imagemns"],
+      "relatedScales": ["ai-ampliador-4x", "tiff-ampliar-2x", "tiff-ampliar-8x"]
     },
     {
       "slug": "tiff-ampliar-8x",
@@ -2412,15 +2271,8 @@
           "answer": "Sim! Our AI Manter Perfeito lossless qualidade even at 8X magnification, making it Ideal para the mais demanding applications."
         }
       ],
-      "relatedFormats": [
-        "ampliar-tiff-imagemns",
-        "ampliar-raw-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-8x",
-        "tiff-ampliar-4x",
-        "tiff-ampliar-16x"
-      ]
+      "relatedFormats": ["ampliar-tiff-imagemns", "ampliar-raw-imagemns"],
+      "relatedScales": ["ampliar-8x", "tiff-ampliar-4x", "tiff-ampliar-16x"]
     },
     {
       "slug": "tiff-ampliar-16x",
@@ -2505,14 +2357,8 @@
           "answer": "Não. 16X TIFF ampliação is for especializado applications only. mais users will find 2X, 4X, or 8X sufficient."
         }
       ],
-      "relatedFormats": [
-        "ampliar-tiff-imagemns",
-        "ampliar-raw-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-16x",
-        "tiff-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-tiff-imagemns", "ampliar-raw-imagemns"],
+      "relatedScales": ["ampliar-16x", "tiff-ampliar-8x"]
     },
     {
       "slug": "bmp-ampliar-2x",
@@ -2602,14 +2448,8 @@
           "answer": "BMP arquivos will be approximately 4 vezes larger after 2X ampliação since BMP is uncompressed."
         }
       ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-2x",
-        "bmp-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-bmp-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ai-ampliador-2x", "bmp-ampliar-4x"]
     },
     {
       "slug": "bmp-ampliar-4x",
@@ -2699,15 +2539,8 @@
           "answer": "Sim! After 4X ampliação and formato conversion to TIFF, BMP imagemns can be Excelente para impressão."
         }
       ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-4x",
-        "bmp-ampliar-2x",
-        "bmp-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-bmp-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ai-ampliador-4x", "bmp-ampliar-2x", "bmp-ampliar-8x"]
     },
     {
       "slug": "bmp-ampliar-8x",
@@ -2788,15 +2621,8 @@
           "answer": "Absolutamente! Always convert to PNG or TIFF after 8X ampliação for Melhor compatibility and storage efficiency."
         }
       ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-8x",
-        "bmp-ampliar-4x",
-        "bmp-ampliar-16x"
-      ]
+      "relatedFormats": ["ampliar-bmp-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ampliar-8x", "bmp-ampliar-4x", "bmp-ampliar-16x"]
     },
     {
       "slug": "bmp-ampliar-16x",
@@ -2863,14 +2689,8 @@
           "answer": "16X BMP ampliação is only for highly especializado applications requiring extreme BMP resolução. Usar only when Absolutamente necessary."
         }
       ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "ampliar-tiff-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-16x",
-        "bmp-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-bmp-imagemns", "ampliar-tiff-imagemns"],
+      "relatedScales": ["ampliar-16x", "bmp-ampliar-8x"]
     },
     {
       "slug": "avif-ampliar-2x",
@@ -2960,14 +2780,8 @@
           "answer": "Sim! AVIF Suporta alfa channel transparência, and our AI Preservar it during 2X ampliação."
         }
       ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "ampliar-webp-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-2x",
-        "avif-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-avif-imagemns", "ampliar-webp-imagemns"],
+      "relatedScales": ["ai-ampliador-2x", "avif-ampliar-4x"]
     },
     {
       "slug": "avif-ampliar-4x",
@@ -3057,15 +2871,8 @@
           "answer": "Absolutamente! 4X AVIF is Perfeito para premium websites where you want Qualidade Máxima with optimal arquivo tamanhos."
         }
       ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "ampliar-webp-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-4x",
-        "avif-ampliar-2x",
-        "avif-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-avif-imagemns", "ampliar-webp-imagemns"],
+      "relatedScales": ["ai-ampliador-4x", "avif-ampliar-2x", "avif-ampliar-8x"]
     },
     {
       "slug": "avif-ampliar-8x",
@@ -3142,15 +2949,8 @@
           "answer": "Usar 8X AVIF for ultra-premium web applications where Qualidade Máxima justifies the arquivo tamanho."
         }
       ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "ampliar-webp-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-8x",
-        "avif-ampliar-4x",
-        "avif-ampliar-16x"
-      ]
+      "relatedFormats": ["ampliar-avif-imagemns", "ampliar-webp-imagemns"],
+      "relatedScales": ["ampliar-8x", "avif-ampliar-4x", "avif-ampliar-16x"]
     },
     {
       "slug": "avif-ampliar-16x",
@@ -3212,14 +3012,8 @@
           "answer": "16X AVIF ampliação is only for highly especializado applications requiring extreme resolução. Usar only when Absolutamente necessary."
         }
       ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "ampliar-webp-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-16x",
-        "avif-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-avif-imagemns", "ampliar-webp-imagemns"],
+      "relatedScales": ["ampliar-16x", "avif-ampliar-8x"]
     },
     {
       "slug": "gif-ampliar-2x",
@@ -3309,14 +3103,8 @@
           "answer": "Não. GIF is limited to 256 cores, making it unAdequado para fotos. Usar JPEG or PNG for fotographic content."
         }
       ],
-      "relatedFormats": [
-        "ampliar-gif-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-2x",
-        "gif-ampliar-4x"
-      ]
+      "relatedFormats": ["ampliar-gif-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ai-ampliador-2x", "gif-ampliar-4x"]
     },
     {
       "slug": "gif-ampliar-4x",
@@ -3406,15 +3194,8 @@
           "answer": "After 4X ampliação and conversion to PNG or TIFF, GIF graphics can be Excelente para impressão applications."
         }
       ],
-      "relatedFormats": [
-        "ampliar-gif-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ai-ampliador-4x",
-        "gif-ampliar-2x",
-        "gif-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-gif-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ai-ampliador-4x", "gif-ampliar-2x", "gif-ampliar-8x"]
     },
     {
       "slug": "gif-ampliar-8x",
@@ -3490,15 +3271,8 @@
           "answer": "Absolutamente! Always convert to PNG after 8X ampliação for muito Melhor qualidade, mais cores, and improved arquivo tamanho efficiency."
         }
       ],
-      "relatedFormats": [
-        "ampliar-gif-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-8x",
-        "gif-ampliar-4x",
-        "gif-ampliar-16x"
-      ]
+      "relatedFormats": ["ampliar-gif-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ampliar-8x", "gif-ampliar-4x", "gif-ampliar-16x"]
     },
     {
       "slug": "gif-ampliar-16x",
@@ -3565,14 +3339,8 @@
           "answer": "16X GIF ampliação is only for highly especializado applications requiring extreme GIF resolução. Usar only when Absolutamente necessary."
         }
       ],
-      "relatedFormats": [
-        "ampliar-gif-imagemns",
-        "ampliar-png-imagemns"
-      ],
-      "relatedScales": [
-        "ampliar-16x",
-        "gif-ampliar-8x"
-      ]
+      "relatedFormats": ["ampliar-gif-imagemns", "ampliar-png-imagemns"],
+      "relatedScales": ["ampliar-16x", "gif-ampliar-8x"]
     }
   ]
 }

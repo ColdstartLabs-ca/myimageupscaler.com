@@ -282,7 +282,11 @@
           "imageTypes": [
             { "type": "Immagine Condivisa", "dimensions": "1200x630px", "aspectRatio": "1.91:1" },
             { "type": "Post Quadrato", "dimensions": "1200x1200px", "aspectRatio": "1:1" },
-            { "type": "Foto Copertina", "dimensions": "820x312px (desktop)", "aspectRatio": "2.63:1" },
+            {
+              "type": "Foto Copertina",
+              "dimensions": "820x312px (desktop)",
+              "aspectRatio": "2.63:1"
+            },
             { "type": "Foto Profilo", "dimensions": "170x170px", "aspectRatio": "1:1" },
             { "type": "Storia", "dimensions": "1080x1920px", "aspectRatio": "9:16" }
           ],
@@ -396,7 +400,11 @@
             "dpi": "300 DPI",
             "use": "Foto, stampe d'arte, riviste"
           },
-          { "quality": "Stampe standard", "dpi": "240-300 DPI", "use": "Stampa domestica, snapshot" },
+          {
+            "quality": "Stampe standard",
+            "dpi": "240-300 DPI",
+            "use": "Stampa domestica, snapshot"
+          },
           {
             "quality": "Grande formato (distanza visualizzazione 3ft+)",
             "dpi": "150-200 DPI",
@@ -962,6 +970,6 @@
   ],
   "meta": {
     "totalPages": 12,
-    "lastUpdated": "2026-01-06T00:00:00Z"
+    "lastUpdated": "2026-01-08"
   }
 }

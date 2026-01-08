@@ -73,12 +73,8 @@
           "answer": "Typically 45-90 segundos depending on the source imagem tamanho. Larger source imagemns take slightly longer to process to 4K resolução."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-hd"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-hd"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "ampliar-to-hd",
@@ -88,12 +84,7 @@
       "h1": "ampliar imagemns to HD 1080p - Full HD qualidade",
       "intro": "Aprimorar your imagemns to Full HD resolução (1920x1080 pixels) com IA. Perfeito para websites, social media, YouTube, and standard HD telas.",
       "primaryKeyword": "ampliar to hd",
-      "secondaryKeywords": [
-        "hd ampliação",
-        "1080p ampliar",
-        "convert to hd",
-        "full hd ampliador"
-      ],
+      "secondaryKeywords": ["hd ampliação", "1080p ampliar", "convert to hd", "full hd ampliador"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "scale",
       "resolution": "Full HD (1080p)",
@@ -152,12 +143,8 @@
           "answer": "Sim! 1080p Fornecer eNãough resolução for impressãos up to approximately 16x9 inches at Alta Qualidade (300 DPI). For larger impressãos, consider ampliação to 4K instead."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-4k"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-4k"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "ampliar-to-8k",
@@ -232,12 +219,8 @@
           "answer": "Sim! 8K imagemns will be automatically downscaled to fit any tela mantendo Excelente Qualidade. Having mais alto resolução source content always Fornecer Melhor results when telaed on smaller telas."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-4k"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-4k"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "ampliar-to-1080p",
@@ -312,13 +295,8 @@
           "answer": "1080p has 2.25 vezes mais pixels than 720p (1280x720), resulting in significantly nítidoer and mais detalheed imagemns, especially on larger telas."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-4k",
-        "ampliar-to-hd"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-4k", "ampliar-to-hd"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "4k-imagem-ampliador",
@@ -393,12 +371,8 @@
           "answer": "Our com tecnologia de IA 4K ampliador Preservar fine detalhes, texto, and textoures Melhor than traditional bicubic or nearest-neighbor ampliação methods, providing mais natural-looking results."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-4k"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-4k"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "foto-enhancer-hd",
@@ -477,12 +451,8 @@
           "answer": "Currently, our HD enhancer automatically applies todos improvements for Melhor results. This ensures optimal qualidade without requiring technical kNãowlborda from users."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-hd"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-hd"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "ai-ampliador-2x",
@@ -556,12 +526,8 @@
           "answer": "2X ampliação is Excelente para preparing imagemns for moderado impressão tamanhos. It Fornecer eNãough resolução Aumentar for qualidade impressãos at standard tamanhos."
         }
       ],
-      "relatedScale": [
-        "ai-ampliador-4x"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ai-ampliador-4x"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "ai-ampliador-4x",
@@ -635,13 +601,8 @@
           "answer": "Typically 30-60 segundos depending on your imagem tamanho and content. The AI needs tempo to intelligently generate new detalhes for the larger resolução."
         }
       ],
-      "relatedScale": [
-        "ai-ampliador-2x",
-        "ampliar-to-4k"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ai-ampliador-2x", "ampliar-to-4k"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "imagem-ampliador-4k",
@@ -715,12 +676,8 @@
           "answer": "Choose 4K if you're targeting 4K telas, grande impressãos, profissional portfolios, or want Qualidade Máxima. For web-only content, HD (1080p) might be sufficient."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-4k"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-4k"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "hd-ampliador",
@@ -794,13 +751,8 @@
           "answer": "HD Criar imagemns that are grande eNãough for qualidade but pequeno eNãough for eficiente web Usar, providing an Excelente balance between qualidade and arquivo tamanho."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-hd",
-        "ampliar-to-1080p"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-hd", "ampliar-to-1080p"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "imagem-ampliador-8k",
@@ -874,12 +826,8 @@
           "answer": "Sim! 8K imagemns will be automatically downscaled to fit your tela mantendo Excelente Qualidade. Having 8K source ensures your imagemns look Ótimo on any device."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-8k"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-8k"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "resolução-enhancer",
@@ -929,14 +877,7 @@
         }
       ],
       "technicalSpecs": {
-        "resolutionOptions": [
-          "HD",
-          "Full HD",
-          "2K",
-          "4K",
-          "8K",
-          "Custom"
-        ],
+        "resolutionOptions": ["HD", "Full HD", "2K", "4K", "8K", "Custom"],
         "maxUpscaling": "Up to 8x original resolução",
         "qualityEnhancement": "AI-based detalhe generation",
         "flexibility": "User-selectable output resolução",
@@ -960,13 +901,8 @@
           "answer": "Choose based on your Usar case: HD (720p) for web, Full HD (1080p) for standard Usar, 4K for profissional Funciona, and 8K for Qualidade Máxima or grande impressãos."
         }
       ],
-      "relatedScale": [
-        "ai-ampliador-2x",
-        "ai-ampliador-4x"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ai-ampliador-2x", "ai-ampliador-4x"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "2k-ampliador",
@@ -1041,13 +977,8 @@
           "answer": "Sim! 2K resolução Fornecer Excelente impressão qualidade up to 22x12 inches at 300 DPI, making it Adequado para mais Impressão Profissional needs."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-hd",
-        "ampliar-to-4k"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-hd", "ampliar-to-4k"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "ultra-hd-ampliador",
@@ -1121,13 +1052,8 @@
           "answer": "Ultra HD (4K) Fornecer Excelente Qualidade for mais profissional Usar. 8K offers 4 vezes mais pixels but is mainly needed for especializado applications like cinema or extremely grande impressãos."
         }
       ],
-      "relatedScale": [
-        "ampliar-to-4k",
-        "ampliar-to-8k"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-to-4k", "ampliar-to-8k"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "pixel-boost-ampliador",
@@ -1178,12 +1104,7 @@
       ],
       "technicalSpecs": {
         "enhancementMethod": "com tecnologia de IA pixel analysis",
-        "boostLevels": [
-          "2x",
-          "4x",
-          "8x",
-          "Custom"
-        ],
+        "boostLevels": ["2x", "4x", "8x", "Custom"],
         "detailGeneration": "Intelligent textoure creation",
         "qualityImprovement": "Multi-factor enhancement",
         "processingSpeed": "Optimized for speed"
@@ -1206,13 +1127,8 @@
           "answer": "Pixel boosting can improve resolução up to 8x while significantly enhancing imagem qualidade, clarity, and detalhe. The exact improvement depends on your source imagem qualidade."
         }
       ],
-      "relatedScale": [
-        "resolução-enhancer",
-        "ai-ampliador-4x"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["resolução-enhancer", "ai-ampliador-4x"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "ampliar-8x",
@@ -1290,13 +1206,8 @@
           "answer": "Absolutamente! 8X ampliação is Excelente para Impressão em Grande formatoo. Even pequeno fotos can be enlarged to poster or banner tamanho mantendo profissional qualidade."
         }
       ],
-      "relatedScale": [
-        "ampliar-16x",
-        "ai-ampliador-4x"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-16x", "ai-ampliador-4x"],
+      "relatedTools": ["ai-imagem-ampliador"]
     },
     {
       "slug": "ampliar-16x",
@@ -1374,17 +1285,12 @@
           "answer": "Our AI is optimized for extreme ampliação, but results depend on source qualidade. For Melhor results with 16X, start with the Fonte de Mais Alta Qualidade imagem disponível."
         }
       ],
-      "relatedScale": [
-        "ampliar-8x",
-        "ai-ampliador-4x"
-      ],
-      "relatedTools": [
-        "ai-imagem-ampliador"
-      ]
+      "relatedScale": ["ampliar-8x", "ai-ampliador-4x"],
+      "relatedTools": ["ai-imagem-ampliador"]
     }
   ],
   "meta": {
     "totalPages": 16,
-    "lastUpdated": "2026-01-08"
+    "lastUpdated": "2026-01-08T00:00:00Z"
   }
 }

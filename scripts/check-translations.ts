@@ -30,6 +30,7 @@ const __dirname = path.dirname(__filename);
 // Configuration
 const LOCALES_DIR = path.join(__dirname, '..', 'locales');
 const REFERENCE_LOCALE = 'en'; // English is the source of truth
+const EXCLUDED_LOCALES = ['ja']; // Locales to exclude from checks (e.g., Japanese not yet translated)
 
 interface ITranslationReport {
   summary: {
@@ -151,10 +152,11 @@ Examples:
 function getLocales(): string[] {
   return fs
     .readdirSync(LOCALES_DIR)
-    .filter((item) => {
+    .filter(item => {
       const itemPath = path.join(LOCALES_DIR, item);
       return fs.statSync(itemPath).isDirectory();
     })
+    .filter(locale => !EXCLUDED_LOCALES.includes(locale))
     .sort();
 }
 
@@ -164,15 +166,12 @@ function getNamespaces(locale: string): string[] {
 
   return fs
     .readdirSync(localeDir)
-    .filter((file) => file.endsWith('.json'))
-    .map((file) => file.replace('.json', ''))
+    .filter(file => file.endsWith('.json'))
+    .map(file => file.replace('.json', ''))
     .sort();
 }
 
-function loadTranslation(
-  locale: string,
-  namespace: string
-): Record<string, unknown> | null {
+function loadTranslation(locale: string, namespace: string): Record<string, unknown> | null {
   const filePath = path.join(LOCALES_DIR, locale, `${namespace}.json`);
   if (!fs.existsSync(filePath)) return null;
 
@@ -185,10 +184,7 @@ function loadTranslation(
   }
 }
 
-function flattenKeys(
-  obj: Record<string, unknown>,
-  prefix = ''
-): Set<string> {
+function flattenKeys(obj: Record<string, unknown>, prefix = ''): Set<string> {
   const keys = new Set<string>();
 
   for (const [key, value] of Object.entries(obj)) {
@@ -196,7 +192,7 @@ function flattenKeys(
 
     if (value && typeof value === 'object' && !Array.isArray(value)) {
       const nestedKeys = flattenKeys(value as Record<string, unknown>, fullKey);
-      nestedKeys.forEach((k) => keys.add(k));
+      nestedKeys.forEach(k => keys.add(k));
     } else {
       keys.add(fullKey);
     }
@@ -205,10 +201,7 @@ function flattenKeys(
   return keys;
 }
 
-function flattenKeyValues(
-  obj: Record<string, unknown>,
-  prefix = ''
-): Map<string, string> {
+function flattenKeyValues(obj: Record<string, unknown>, prefix = ''): Map<string, string> {
   const keyValues = new Map<string, string>();
 
   for (const [key, value] of Object.entries(obj)) {
@@ -243,9 +236,9 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
   };
 
   // Get all locales and filter if specified
-  let locales = getLocales().filter((l) => l !== REFERENCE_LOCALE);
+  let locales = getLocales().filter(l => l !== REFERENCE_LOCALE);
   if (options.locale) {
-    locales = locales.filter((l) => l === options.locale);
+    locales = locales.filter(l => l === options.locale);
     if (locales.length === 0) {
       console.error(`Locale "${options.locale}" not found.`);
       console.error(`Available locales: ${getLocales().join(', ')}`);
@@ -305,7 +298,7 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
 
         // Find missing keys
         const missingKeys: string[] = [];
-        referenceKeys.forEach((key) => {
+        referenceKeys.forEach(key => {
           if (!localeKeys.has(key)) {
             missingKeys.push(key);
           }
@@ -322,7 +315,7 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
 
         // Find extra keys
         const extraKeys: string[] = [];
-        localeKeys.forEach((key) => {
+        localeKeys.forEach(key => {
           if (!referenceKeys.has(key)) {
             extraKeys.push(key);
           }
@@ -341,7 +334,20 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
         const localeKeyValues = flattenKeyValues(localeTranslation);
         const untranslatedKeys: string[] = [];
 
+        // Keys that should be excluded from untranslated check
+        // These are technical identifiers or universal values that legitimately match across locales
+        const excludedKeys = new Set([
+          'category',
+          'meta.lastUpdated',
+          'meta.totalPages',
+          'meta.description',
+        ]);
+
         referenceKeyValues.forEach((refValue, key) => {
+          // Skip excluded keys
+          if (excludedKeys.has(key)) {
+            return;
+          }
           const localeValue = localeKeyValues.get(key);
           if (localeValue === refValue) {
             untranslatedKeys.push(key);
@@ -409,7 +415,7 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
 
     for (const [locale, namespaces] of Object.entries(byLocale)) {
       console.log(`\n  ${locale.toUpperCase()}:`);
-      namespaces.forEach((ns) => console.log(`    - ${ns}.json`));
+      namespaces.forEach(ns => console.log(`    - ${ns}.json`));
     }
     console.log('');
   } else if (options.verbose) {
@@ -425,7 +431,7 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
 
     for (const { locale, namespace, keys } of missingKeys) {
       console.log(`\n  ${locale.toUpperCase()} / ${namespace}.json (${keys.length} keys):`);
-      keys.forEach((key) => console.log(`    - ${key}`));
+      keys.forEach(key => console.log(`    - ${key}`));
     }
     console.log('');
   } else if (options.verbose) {
@@ -440,10 +446,12 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
     console.log('----------------------------------------');
 
     for (const { locale, namespace, keys, totalKeys, percentage } of untranslatedContent) {
-      console.log(`\n  ${locale.toUpperCase()} / ${namespace}.json (${percentage}% untranslated - ${keys.length}/${totalKeys} keys):`);
+      console.log(
+        `\n  ${locale.toUpperCase()} / ${namespace}.json (${percentage}% untranslated - ${keys.length}/${totalKeys} keys):`
+      );
       // Only show first 10 keys to avoid overwhelming output
       const displayKeys = keys.slice(0, 10);
-      displayKeys.forEach((key) => console.log(`    - ${key}`));
+      displayKeys.forEach(key => console.log(`    - ${key}`));
       if (keys.length > 10) {
         console.log(`    ... and ${keys.length - 10} more`);
       }
@@ -474,7 +482,7 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
 
     for (const { locale, namespace, keys } of extraKeys) {
       console.log(`\n  ${locale.toUpperCase()} / ${namespace}.json (${keys.length} keys):`);
-      keys.forEach((key) => console.log(`    - ${key}`));
+      keys.forEach(key => console.log(`    - ${key}`));
     }
     console.log('');
   }

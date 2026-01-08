@@ -2,8 +2,8 @@
   "category": "Format-Skala",
   "meta": {
     "totalPages": 60,
-    "lastUpdated": "2026-01-06",
-    "description": "Format × Scale multiplier pages - combinations of image formats with scale factors"
+    "lastUpdated": "2026-01-08",
+    "description": "Format × Skalierungs-Multiplikator-Seiten - Kombinationen aus Bildformaten und Skalierungsfaktoren"
   },
   "pages": [
     {
@@ -14,7 +14,12 @@
       "h1": "JPEG-Upscaling 2X - Auflösung verdoppeln mit Qualitätserhaltung",
       "intro": "Verdoppeln Sie Ihre JPEG-Bildauflösung mit unserem fortschrittlichen 2X-KI-Upscaler. Perfekt für moderate Qualitätsverbesserung unter Beibehaltung des natürlichen Aussehens und effizienter Dateigrößenverwaltung.",
       "primaryKeyword": "jpeg upscale 2x",
-      "secondaryKeywords": ["2x jpeg upscaler", "jpeg auflösung verdoppeln", "jpeg 2x enhancer", "jpeg bild verdoppeln"],
+      "secondaryKeywords": [
+        "2x jpeg upscaler",
+        "jpeg auflösung verdoppeln",
+        "jpeg 2x enhancer",
+        "jpeg bild verdoppeln"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "Format-Skala",
       "format": "JPEG",
@@ -113,7 +118,12 @@
       "h1": "JPEG-Upscaling 4X - Maximale Qualitätsverbesserung",
       "intro": "Transformieren Sie Ihre JPEG-Bilder mit 4X-KI-Upscaling, das die Auflösung vervierfacht und unglaubliche Details hinzufügt. Die perfekte Wahl für maximale Qualitätsverbesserung aus dem JPEG-Format.",
       "primaryKeyword": "jpeg upscale 4x",
-      "secondaryKeywords": ["4x jpeg upscaler", "jpeg auflösung vervierfachen", "jpeg 4x enhancer", "jpeg bild vervierfachen"],
+      "secondaryKeywords": [
+        "4x jpeg upscaler",
+        "jpeg auflösung vervierfachen",
+        "jpeg 4x enhancer",
+        "jpeg bild vervierfachen"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "Format-Skala",
       "format": "JPEG",
@@ -212,7 +222,12 @@
       "h1": "JPEG-Upscaling 8X - Maximale Auflösungsverbesserung",
       "intro": "Transformieren Sie Ihre JPEG-Bilder mit unserem leistungsstarken 8X-KI-Upscaler, der die Auflösung um 8-mal erhöht und unglaubliche Details hinzufügt. Die ultimative Wahl für maximale Qualitätsverbesserung.",
       "primaryKeyword": "jpeg upscale 8x",
-      "secondaryKeywords": ["8x jpeg upscaler", "extreme jpeg auflösung", "jpeg 8x enhancer", "maximales jpeg upscaling"],
+      "secondaryKeywords": [
+        "8x jpeg upscaler",
+        "extreme jpeg auflösung",
+        "jpeg 8x enhancer",
+        "maximales jpeg upscaling"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "Format-Skala",
       "format": "JPEG",
@@ -311,7 +326,12 @@
       "h1": "JPEG-Upscaling 16X - Extreme Auflösungsverbesserung",
       "intro": "Erreichen Sie extreme Auflösungsverbesserung mit unserem 16X-KI-Upscaler. Multiplizieren Sie Ihre JPEG-Abmessungen mit 16 und fügen Sie bemerkenswerte Details hinzu. Für spezialisierte Anwendungen, die maximales mögliches Upscaling erfordern.",
       "primaryKeyword": "jpeg upscale 16x",
-      "secondaryKeywords": ["16x jpeg upscaler", "extreme jpeg verbesserung", "jpeg 16x upscaling", "maximale jpeg auflösung"],
+      "secondaryKeywords": [
+        "16x jpeg upscaler",
+        "extreme jpeg verbesserung",
+        "jpeg 16x upscaling",
+        "maximale jpeg auflösung"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "Format-Skala",
       "format": "JPEG",
@@ -410,7 +430,12 @@
       "h1": "PNG-Upscaling 2X - Auflösung verdoppeln mit Transparenz erhalten",
       "intro": "Verdoppeln Sie Ihre PNG-Bildauflösung mit unserem fortschrittlichen 2X-KI-Upscaler bei perfekter Erhaltung der Alphakanal-Transparenz. Ideal für Logos, Grafiken und Bilder mit transparenten Hintergründen.",
       "primaryKeyword": "png upscale 2x",
-      "secondaryKeywords": ["2x png upscaler", "png auflösung verdoppeln", "png 2x enhancer", "transparentes bild upscaler"],
+      "secondaryKeywords": [
+        "2x png upscaler",
+        "png auflösung verdoppeln",
+        "png 2x enhancer",
+        "transparentes bild upscaler"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "Format-Skala",
       "format": "PNG",

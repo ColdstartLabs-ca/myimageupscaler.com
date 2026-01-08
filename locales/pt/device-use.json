@@ -2,7 +2,7 @@
   "category": "device-use",
   "meta": {
     "totalPages": 20,
-    "lastUpdated": "2026-01-06",
+    "lastUpdated": "2026-01-08T00:00:00Z",
     "description": "Páginas multiplicadoras Dispositivo × Caso de Uso - combinações de dispositivos com casos de uso específicos para ampliação de imagem"
   },
   "pages": [
@@ -14,7 +14,12 @@
       "h1": "Ampliador de Mídia Social Mobile - Perfeito para Instagram, TikTok e Mais",
       "intro": "Transforme suas fotos móveis em imagens impressionantes prontas para mídia social com nosso ampliador especializado. Otimizado para câmeras de smartphone e requisitos de plataformas sociais.",
       "primaryKeyword": "ampliador de mídia social mobile",
-      "secondaryKeywords": ["ampliador de foto mobile para mídia social", "melhorador de smartphone mídia social", "ampliador de foto instagram", "melhorador de imagem tiktok"],
+      "secondaryKeywords": [
+        "ampliador de foto mobile para mídia social",
+        "melhorador de smartphone mídia social",
+        "ampliador de foto instagram",
+        "melhorador de imagem tiktok"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",
@@ -68,7 +73,12 @@
       "h1": "Ampliador de Gráficos Web Mobile - Melhoramento Mobile Pronto para Web",
       "intro": "Converta suas fotos móveis em gráficos web profissionais com nosso ampliador especializado. Perfeito para criadores de conteúdo, blogueiros e qualquer pessoa precisando de imagens prontas para web do seu smartphone.",
       "primaryKeyword": "ampliador de gráficos web mobile",
-      "secondaryKeywords": ["melhorador de foto web mobile", "ampliador de gráficos smartphone", "imagens de site mobile", "melhorar fotos mobile para web"],
+      "secondaryKeywords": [
+        "melhorador de foto web mobile",
+        "ampliador de gráficos smartphone",
+        "imagens de site mobile",
+        "melhorar fotos mobile para web"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",
@@ -122,7 +132,12 @@
       "h1": "Ampliador de E-commerce Mobile - Fotos de Produtos Profissionais do Telefone",
       "intro": "Transforme suas fotos de produtos de smartphone em imagens de e-commerce profissionais com nosso ampliador especializado. Perfeito para vendedores online, pequenos negócios e empreendedores.",
       "primaryKeyword": "ampliador ecommerce mobile",
-      "secondaryKeywords": ["ampliador de foto de produto mobile", "melhorador de ecommerce smartphone", "ampliador de foto etsy", "melhorador de imagem de loja online"],
+      "secondaryKeywords": [
+        "ampliador de foto de produto mobile",
+        "melhorador de ecommerce smartphone",
+        "ampliador de foto etsy",
+        "melhorador de imagem de loja online"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",
@@ -176,7 +191,12 @@
       "h1": "Ampliador de Mensagens Mobile - Melhor Qualidade para Compartilhamento de Fotos",
       "intro": "Melhore suas fotos móveis antes de compartilhar em aplicativos de mensagens com nosso ampliador especializado. Perfeito para WhatsApp, Telegram, Discord e compartilhamento pessoal de fotos.",
       "primaryKeyword": "ampliador de mensagens mobile",
-      "secondaryKeywords": ["melhorador de foto mobile para mensagens", "ampliador de foto whatsapp", "melhorador de imagem telegram", "ampliador de foto aplicativo compartilhamento"],
+      "secondaryKeywords": [
+        "melhorador de foto mobile para mensagens",
+        "ampliador de foto whatsapp",
+        "melhorador de imagem telegram",
+        "ampliador de foto aplicativo compartilhamento"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",
@@ -230,7 +250,12 @@
       "h1": "Ampliador de Criação de Conteúdo Mobile - Melhoramento Profissional para Criadores",
       "intro": "Eleve sua criação de conteúdo mobile com nosso ampliador especializado. Perfeito para influenciadores, criadores e qualquer pessoa produzindo conteúdo visual do seu smartphone.",
       "primaryKeyword": "ampliador de criação de conteúdo mobile",
-      "secondaryKeywords": ["melhorador de imagem criador mobile", "ampliador de conteúdo smartphone", "ampliador de foto influenciador", "ferramentas de criador mobile"],
+      "secondaryKeywords": [
+        "melhorador de imagem criador mobile",
+        "ampliador de conteúdo smartphone",
+        "ampliador de foto influenciador",
+        "ferramentas de criador mobile"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "mobile",

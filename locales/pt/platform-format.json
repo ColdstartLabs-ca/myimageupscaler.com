@@ -2,7 +2,7 @@
   "category": "platform-formato",
   "meta": {
     "totalPages": 43,
-    "lastUpdated": "2026-01-06",
+    "lastUpdated": "2026-01-08T00:00:00Z",
     "description": "Platform × formato multiplier pages - combinations of AI platforms with export formatos"
   },
   "pages": [
@@ -106,14 +106,8 @@
           "answer": "Starting from Midjourney's PNG export (typically 1024x1024 or mais alto for v5), we can ampliar up to 8x, achieving resoluçãos up to 8192x8192 pixels."
         }
       ],
-      "relatedPlatforms": [
-        "stable-diffusion-ampliador-png",
-        "dalle-ampliador-png"
-      ],
-      "relatedFormats": [
-        "ampliar-png-imagemns",
-        "midjourney-ampliador-webp"
-      ]
+      "relatedPlatforms": ["stable-diffusion-ampliador-png", "dalle-ampliador-png"],
+      "relatedFormats": ["ampliar-png-imagemns", "midjourney-ampliador-webp"]
     },
     {
       "slug": "midjourney-ampliador-webp",
@@ -216,14 +210,8 @@
           "answer": "webP is primarily a web formato. For impressão, we recommend ampliação Midjourney PNGs or TIFFs. Usar webP for web tela only."
         }
       ],
-      "relatedPlatforms": [
-        "stable-diffusion-ampliador-webp",
-        "dalle-ampliador-webp"
-      ],
-      "relatedFormats": [
-        "ampliar-webp-imagemns",
-        "midjourney-ampliador-png"
-      ]
+      "relatedPlatforms": ["stable-diffusion-ampliador-webp", "dalle-ampliador-webp"],
+      "relatedFormats": ["ampliar-webp-imagemns", "midjourney-ampliador-png"]
     },
     {
       "slug": "midjourney-ampliador-jpg",
@@ -326,14 +314,8 @@
           "answer": "Sim, but for Melhor impressão results, consider ampliação the PNG export and converting to JPEG after, or using PNG/TIFF directly for impressão workflows."
         }
       ],
-      "relatedPlatforms": [
-        "stable-diffusion-ampliador-jpg",
-        "dalle-ampliador-jpg"
-      ],
-      "relatedFormats": [
-        "ampliar-jpeg-imagemns",
-        "midjourney-ampliador-png"
-      ]
+      "relatedPlatforms": ["stable-diffusion-ampliador-jpg", "dalle-ampliador-jpg"],
+      "relatedFormats": ["ampliar-jpeg-imagemns", "midjourney-ampliador-png"]
     },
     {
       "slug": "stable-diffusion-ampliador-png",
@@ -436,14 +418,8 @@
           "answer": "Sim, our ampliador Funciona Excelentely with anime-style models and checkpoints, preserving line qualidade and cel-shading techniques while enhancing resolução."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-png",
-        "dalle-ampliador-png"
-      ],
-      "relatedFormats": [
-        "ampliar-png-imagemns",
-        "stable-diffusion-ampliador-webp"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-png", "dalle-ampliador-png"],
+      "relatedFormats": ["ampliar-png-imagemns", "stable-diffusion-ampliador-webp"]
     },
     {
       "slug": "stable-diffusion-ampliador-webp",
@@ -546,14 +522,8 @@
           "answer": "webP is supported by todos moderno browsers. For telaing SD art on websites, it's the optimal choice. For impressão, Usar PNG or TIFF."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-webp",
-        "dalle-ampliador-webp"
-      ],
-      "relatedFormats": [
-        "ampliar-webp-imagemns",
-        "stable-diffusion-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-webp", "dalle-ampliador-webp"],
+      "relatedFormats": ["ampliar-webp-imagemns", "stable-diffusion-ampliador-png"]
     },
     {
       "slug": "stable-diffusion-ampliador-jpg",
@@ -656,14 +626,8 @@
           "answer": "If you must save as JPEG, Usar qualidade 95-100. Melhor yet, save as PNG and let our ampliador handle the conversion after enhancement."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-jpg",
-        "dalle-ampliador-jpg"
-      ],
-      "relatedFormats": [
-        "ampliar-jpeg-imagemns",
-        "stable-diffusion-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-jpg", "dalle-ampliador-jpg"],
+      "relatedFormats": ["ampliar-jpeg-imagemns", "stable-diffusion-ampliador-png"]
     },
     {
       "slug": "dalle-ampliador-png",
@@ -765,14 +729,8 @@
           "answer": "Sim, 4K upscaled DALL-E PNGs are Excelente para impressão. We recommend testing a pequeno impressão first to ensure qualidade meets your standards."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-png",
-        "stable-diffusion-ampliador-png"
-      ],
-      "relatedFormats": [
-        "ampliar-png-imagemns",
-        "dalle-ampliador-jpg"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-png", "stable-diffusion-ampliador-png"],
+      "relatedFormats": ["ampliar-png-imagemns", "dalle-ampliador-jpg"]
     },
     {
       "slug": "dalle-ampliador-webp",
@@ -875,14 +833,8 @@
           "answer": "Sim! Our tool Funciona Excelentely with both DALL-E 2 and DALL-E 3 imagemns, converting both to alto-qualidade webP formato during ampliação."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-webp",
-        "stable-diffusion-ampliador-webp"
-      ],
-      "relatedFormats": [
-        "ampliar-webp-imagemns",
-        "dalle-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-webp", "stable-diffusion-ampliador-webp"],
+      "relatedFormats": ["ampliar-webp-imagemns", "dalle-ampliador-png"]
     },
     {
       "slug": "dalle-ampliador-jpg",
@@ -984,14 +936,8 @@
           "answer": "JPEG can Funciona for impressão, but for Melhor impressão results, consider ampliação DALL-E PNG exports and converting to JPEG after, or using PNG directly."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-jpg",
-        "stable-diffusion-ampliador-jpg"
-      ],
-      "relatedFormats": [
-        "ampliar-jpeg-imagemns",
-        "dalle-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-jpg", "stable-diffusion-ampliador-jpg"],
+      "relatedFormats": ["ampliar-jpeg-imagemns", "dalle-ampliador-png"]
     },
     {
       "slug": "canva-ampliador-png",
@@ -1093,14 +1039,8 @@
           "answer": "Sim! 4K-8K upscaled Canva PNGs Funciona well for posters, banners, and other grande formato impressão applications."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-png",
-        "figma-ampliador-png"
-      ],
-      "relatedFormats": [
-        "ampliar-png-imagemns",
-        "canva-ampliador-jpg"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-png", "figma-ampliador-png"],
+      "relatedFormats": ["ampliar-png-imagemns", "canva-ampliador-jpg"]
     },
     {
       "slug": "canva-ampliador-webp",
@@ -1203,14 +1143,8 @@
           "answer": "webP is primarily a web formato. For impressão Canva designs, consider using PNG or TIFF formatos instead."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-webp",
-        "figma-ampliador-webp"
-      ],
-      "relatedFormats": [
-        "ampliar-webp-imagemns",
-        "canva-ampliador-png"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-webp", "figma-ampliador-webp"],
+      "relatedFormats": ["ampliar-webp-imagemns", "canva-ampliador-png"]
     },
     {
       "slug": "canva-ampliador-jpg",
@@ -1312,14 +1246,8 @@
           "answer": "For ampliação, export as PNG and convert to JPEG after. If you must export as JPEG, Usar the highest qualidade setting disponível (usually qualidade slider at máximo)."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-jpg",
-        "figma-ampliador-jpg"
-      ],
-      "relatedFormats": [
-        "ampliar-jpeg-imagemns",
-        "canva-ampliador-png"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-jpg", "figma-ampliador-jpg"],
+      "relatedFormats": ["ampliar-jpeg-imagemns", "canva-ampliador-png"]
     },
     {
       "slug": "fotoshop-ampliador-png",
@@ -1422,14 +1350,8 @@
           "answer": "Sim, CMYK fotoshop PNGs for impressão can be upscaled. cor accuracy is preserved throughout the process."
         }
       ],
-      "relatedPlatforms": [
-        "canva-ampliador-png",
-        "lightroom-ampliador-png"
-      ],
-      "relatedFormats": [
-        "ampliar-png-imagemns",
-        "fotoshop-ampliador-tiff"
-      ]
+      "relatedPlatforms": ["canva-ampliador-png", "lightroom-ampliador-png"],
+      "relatedFormats": ["ampliar-png-imagemns", "fotoshop-ampliador-tiff"]
     },
     {
       "slug": "fotoshop-ampliador-webp",
@@ -1532,14 +1454,8 @@
           "answer": "Sim! Gen Fill outputs Funciona Ótimo with our ampliador when converted to webP formato for web tela."
         }
       ],
-      "relatedPlatforms": [
-        "canva-ampliador-webp",
-        "lightroom-ampliador-webp"
-      ],
-      "relatedFormats": [
-        "ampliar-webp-imagemns",
-        "fotoshop-ampliador-png"
-      ]
+      "relatedPlatforms": ["canva-ampliador-webp", "lightroom-ampliador-webp"],
+      "relatedFormats": ["ampliar-webp-imagemns", "fotoshop-ampliador-png"]
     },
     {
       "slug": "fotoshop-ampliador-jpg",
@@ -1641,14 +1557,8 @@
           "answer": "Sim, CMYK imagemns can be upscaled. For impressão workflows, you may want to Manter CMYK throughout or convert to sRGB for web Usar."
         }
       ],
-      "relatedPlatforms": [
-        "canva-ampliador-jpg",
-        "lightroom-ampliador-jpg"
-      ],
-      "relatedFormats": [
-        "ampliar-jpeg-imagemns",
-        "fotoshop-ampliador-png"
-      ]
+      "relatedPlatforms": ["canva-ampliador-jpg", "lightroom-ampliador-jpg"],
+      "relatedFormats": ["ampliar-jpeg-imagemns", "fotoshop-ampliador-png"]
     },
     {
       "slug": "midjourney-ampliador-heic",
@@ -1741,14 +1651,8 @@
           "answer": "HEIC is natively supported on todos moderno Apple devices (iPhone, iPad, Mac) running recent iOS and macOS versions."
         }
       ],
-      "relatedPlatforms": [
-        "stable-diffusion-ampliador-heic",
-        "dalle-ampliador-heic"
-      ],
-      "relatedFormats": [
-        "ampliar-heic-imagemns",
-        "midjourney-ampliador-png"
-      ]
+      "relatedPlatforms": ["stable-diffusion-ampliador-heic", "dalle-ampliador-heic"],
+      "relatedFormats": ["ampliar-heic-imagemns", "midjourney-ampliador-png"]
     },
     {
       "slug": "midjourney-ampliador-tiff",
@@ -1841,14 +1745,8 @@
           "answer": "Both TIFF and PNG are lossless, but TIFF is mais widely supported in Impressão Profissional workflows. Either formato Fornecer Excelente Qualidade."
         }
       ],
-      "relatedPlatforms": [
-        "stable-diffusion-ampliador-tiff",
-        "dalle-ampliador-tiff"
-      ],
-      "relatedFormats": [
-        "ampliar-tiff-imagemns",
-        "midjourney-ampliador-png"
-      ]
+      "relatedPlatforms": ["stable-diffusion-ampliador-tiff", "dalle-ampliador-tiff"],
+      "relatedFormats": ["ampliar-tiff-imagemns", "midjourney-ampliador-png"]
     },
     {
       "slug": "stable-diffusion-ampliador-heic",
@@ -1936,14 +1834,8 @@
           "answer": "Sim! HEIC conversion Funciona with todos Stable Diffusion models - anime, realistic, artistic, and SDXL."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-heic",
-        "dalle-ampliador-heic"
-      ],
-      "relatedFormats": [
-        "ampliar-heic-imagemns",
-        "stable-diffusion-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-heic", "dalle-ampliador-heic"],
+      "relatedFormats": ["ampliar-heic-imagemns", "stable-diffusion-ampliador-png"]
     },
     {
       "slug": "stable-diffusion-ampliador-tiff",
@@ -2037,14 +1929,8 @@
           "answer": "Sim! TIFF conversion Funciona with todos Stable Diffusion checkpoints and LoRAs, preserving their unique style characteristics."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-tiff",
-        "dalle-ampliador-tiff"
-      ],
-      "relatedFormats": [
-        "ampliar-tiff-imagemns",
-        "stable-diffusion-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-tiff", "dalle-ampliador-tiff"],
+      "relatedFormats": ["ampliar-tiff-imagemns", "stable-diffusion-ampliador-png"]
     },
     {
       "slug": "dalle-ampliador-heic",
@@ -2132,14 +2018,8 @@
           "answer": "Sim! Our tool Funciona Excelentely with both DALL-E 2 and DALL-E 3 imagemns, converting both to alto-qualidade HEIC formato."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-heic",
-        "stable-diffusion-ampliador-heic"
-      ],
-      "relatedFormats": [
-        "ampliar-heic-imagemns",
-        "dalle-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-heic", "stable-diffusion-ampliador-heic"],
+      "relatedFormats": ["ampliar-heic-imagemns", "dalle-ampliador-png"]
     },
     {
       "slug": "dalle-ampliador-tiff",
@@ -2232,14 +2112,8 @@
           "answer": "Sim! Our tool Funciona Excelentely with both DALL-E 2 and DALL-E 3 imagemns, creating alto-qualidade TIFF arquivos for impressão and archival."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-tiff",
-        "stable-diffusion-ampliador-tiff"
-      ],
-      "relatedFormats": [
-        "ampliar-tiff-imagemns",
-        "dalle-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-tiff", "stable-diffusion-ampliador-tiff"],
+      "relatedFormats": ["ampliar-tiff-imagemns", "dalle-ampliador-png"]
     },
     {
       "slug": "canva-ampliador-heic",
@@ -2327,14 +2201,8 @@
           "answer": "Sim! HEIC conversion is compatible with todos Canva design elements. After ampliação, you can re-import to Canva if needed."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-heic",
-        "figma-ampliador-heic"
-      ],
-      "relatedFormats": [
-        "ampliar-heic-imagemns",
-        "canva-ampliador-png"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-heic", "figma-ampliador-heic"],
+      "relatedFormats": ["ampliar-heic-imagemns", "canva-ampliador-png"]
     },
     {
       "slug": "canva-ampliador-tiff",
@@ -2427,14 +2295,8 @@
           "answer": "Sim! TIFF conversion Funciona with todos Canva Pro features, maintaining the highest qualidade for profissional designs."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-tiff",
-        "figma-ampliador-tiff"
-      ],
-      "relatedFormats": [
-        "ampliar-tiff-imagemns",
-        "canva-ampliador-png"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-tiff", "figma-ampliador-tiff"],
+      "relatedFormats": ["ampliar-tiff-imagemns", "canva-ampliador-png"]
     },
     {
       "slug": "fotoshop-ampliador-heic",
@@ -2522,14 +2384,8 @@
           "answer": "Sim! Gen Fill outputs Funciona Ótimo with our ampliador when converted to HEIC formato for Apple ecosystem integration."
         }
       ],
-      "relatedPlatforms": [
-        "canva-ampliador-heic",
-        "lightroom-ampliador-heic"
-      ],
-      "relatedFormats": [
-        "ampliar-heic-imagemns",
-        "fotoshop-ampliador-png"
-      ]
+      "relatedPlatforms": ["canva-ampliador-heic", "lightroom-ampliador-heic"],
+      "relatedFormats": ["ampliar-heic-imagemns", "fotoshop-ampliador-png"]
     },
     {
       "slug": "fotoshop-ampliador-tiff",
@@ -2632,14 +2488,8 @@
           "answer": "Sim, CMYK fotoshop TIFFs for impressão can be upscaled. cor accuracy is preserved throughout the process."
         }
       ],
-      "relatedPlatforms": [
-        "canva-ampliador-tiff",
-        "lightroom-ampliador-tiff"
-      ],
-      "relatedFormats": [
-        "ampliar-tiff-imagemns",
-        "fotoshop-ampliador-png"
-      ]
+      "relatedPlatforms": ["canva-ampliador-tiff", "lightroom-ampliador-tiff"],
+      "relatedFormats": ["ampliar-tiff-imagemns", "fotoshop-ampliador-png"]
     },
     {
       "slug": "midjourney-ampliador-raw",
@@ -2737,14 +2587,8 @@
           "answer": "RAW formato Preservar Qualidade Máxima and cor depth, giving you mais headroom for profissional editing and achieving the Melhor possible results."
         }
       ],
-      "relatedPlatforms": [
-        "stable-diffusion-ampliador-raw",
-        "dalle-ampliador-raw"
-      ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "midjourney-ampliador-png"
-      ]
+      "relatedPlatforms": ["stable-diffusion-ampliador-raw", "dalle-ampliador-raw"],
+      "relatedFormats": ["ampliar-raw-imagemns", "midjourney-ampliador-png"]
     },
     {
       "slug": "midjourney-ampliador-bmp",
@@ -2842,14 +2686,8 @@
           "answer": "Sim! BMP is natively supported by todos versions of Windows and virtually todos Windows applications."
         }
       ],
-      "relatedPlatforms": [
-        "stable-diffusion-ampliador-bmp",
-        "dalle-ampliador-bmp"
-      ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "midjourney-ampliador-png"
-      ]
+      "relatedPlatforms": ["stable-diffusion-ampliador-bmp", "dalle-ampliador-bmp"],
+      "relatedFormats": ["ampliar-bmp-imagemns", "midjourney-ampliador-png"]
     },
     {
       "slug": "midjourney-ampliador-avif",
@@ -2947,14 +2785,8 @@
           "answer": "For web Usar, AVIF is Excelente. For impressão or archival storage, consider lossless formatos like PNG or TIFF instead."
         }
       ],
-      "relatedPlatforms": [
-        "stable-diffusion-ampliador-avif",
-        "dalle-ampliador-avif"
-      ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "midjourney-ampliador-webp"
-      ]
+      "relatedPlatforms": ["stable-diffusion-ampliador-avif", "dalle-ampliador-avif"],
+      "relatedFormats": ["ampliar-avif-imagemns", "midjourney-ampliador-webp"]
     },
     {
       "slug": "stable-diffusion-ampliador-raw",
@@ -3052,14 +2884,8 @@
           "answer": "Both Fornecer Excelente Qualidade. RAW offers mais editing flexibility in profissional foto software, while PNG is mais universally supported."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-raw",
-        "dalle-ampliador-raw"
-      ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "stable-diffusion-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-raw", "dalle-ampliador-raw"],
+      "relatedFormats": ["ampliar-raw-imagemns", "stable-diffusion-ampliador-png"]
     },
     {
       "slug": "stable-diffusion-ampliador-bmp",
@@ -3157,14 +2983,8 @@
           "answer": "Sim! BMP is natively supported by todos versions of Windows and virtually todos Windows applications."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-bmp",
-        "dalle-ampliador-bmp"
-      ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "stable-diffusion-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-bmp", "dalle-ampliador-bmp"],
+      "relatedFormats": ["ampliar-bmp-imagemns", "stable-diffusion-ampliador-png"]
     },
     {
       "slug": "stable-diffusion-ampliador-avif",
@@ -3262,14 +3082,8 @@
           "answer": "For moderno web Usar, AVIF is Excelente. For impressão or archival storage, consider lossless formatos like PNG or TIFF instead."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-avif",
-        "dalle-ampliador-avif"
-      ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "stable-diffusion-ampliador-webp"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-avif", "dalle-ampliador-avif"],
+      "relatedFormats": ["ampliar-avif-imagemns", "stable-diffusion-ampliador-webp"]
     },
     {
       "slug": "dalle-ampliador-raw",
@@ -3367,14 +3181,8 @@
           "answer": "Download as PNG from DALL-E, then convert to RAW with our ampliador for máximo editing flexibility in profissional software."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-raw",
-        "stable-diffusion-ampliador-raw"
-      ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "dalle-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-raw", "stable-diffusion-ampliador-raw"],
+      "relatedFormats": ["ampliar-raw-imagemns", "dalle-ampliador-png"]
     },
     {
       "slug": "dalle-ampliador-bmp",
@@ -3472,14 +3280,8 @@
           "answer": "Sim! BMP is natively supported by todos versions of Windows and virtually todos Windows applications."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-bmp",
-        "stable-diffusion-ampliador-bmp"
-      ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "dalle-ampliador-png"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-bmp", "stable-diffusion-ampliador-bmp"],
+      "relatedFormats": ["ampliar-bmp-imagemns", "dalle-ampliador-png"]
     },
     {
       "slug": "dalle-ampliador-avif",
@@ -3577,14 +3379,8 @@
           "answer": "For moderno web Usar, AVIF is Excelente. For impressão or archival storage, consider lossless formatos like PNG or TIFF instead."
         }
       ],
-      "relatedPlatforms": [
-        "midjourney-ampliador-avif",
-        "stable-diffusion-ampliador-avif"
-      ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "dalle-ampliador-webp"
-      ]
+      "relatedPlatforms": ["midjourney-ampliador-avif", "stable-diffusion-ampliador-avif"],
+      "relatedFormats": ["ampliar-avif-imagemns", "dalle-ampliador-webp"]
     },
     {
       "slug": "canva-ampliador-raw",
@@ -3682,14 +3478,8 @@
           "answer": "Download as PNG from Canva, then convert to RAW with our ampliador for máximo editing flexibility in profissional software."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-raw",
-        "lightroom-ampliador-raw"
-      ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "canva-ampliador-png"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-raw", "lightroom-ampliador-raw"],
+      "relatedFormats": ["ampliar-raw-imagemns", "canva-ampliador-png"]
     },
     {
       "slug": "canva-ampliador-bmp",
@@ -3787,14 +3577,8 @@
           "answer": "Sim! BMP is natively supported by todos versions of Windows and virtually todos Windows applications."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-bmp",
-        "lightroom-ampliador-bmp"
-      ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "canva-ampliador-png"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-bmp", "lightroom-ampliador-bmp"],
+      "relatedFormats": ["ampliar-bmp-imagemns", "canva-ampliador-png"]
     },
     {
       "slug": "canva-ampliador-avif",
@@ -3892,14 +3676,8 @@
           "answer": "For moderno web Usar, AVIF is Excelente. For impressão or archival storage, consider lossless formatos like PNG or TIFF instead."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-avif",
-        "lightroom-ampliador-avif"
-      ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "canva-ampliador-webp"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-avif", "lightroom-ampliador-avif"],
+      "relatedFormats": ["ampliar-avif-imagemns", "canva-ampliador-webp"]
     },
     {
       "slug": "fotoshop-ampliador-raw",
@@ -3997,14 +3775,8 @@
           "answer": "Export as PNG or TIFF from fotoshop for Qualidade Máxima input before RAW conversion with our ampliador."
         }
       ],
-      "relatedPlatforms": [
-        "canva-ampliador-raw",
-        "lightroom-ampliador-raw"
-      ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "fotoshop-ampliador-png"
-      ]
+      "relatedPlatforms": ["canva-ampliador-raw", "lightroom-ampliador-raw"],
+      "relatedFormats": ["ampliar-raw-imagemns", "fotoshop-ampliador-png"]
     },
     {
       "slug": "fotoshop-ampliador-bmp",
@@ -4102,14 +3874,8 @@
           "answer": "Sim! BMP is natively supported by todos versions of Windows and virtually todos Windows applications."
         }
       ],
-      "relatedPlatforms": [
-        "canva-ampliador-bmp",
-        "lightroom-ampliador-bmp"
-      ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "fotoshop-ampliador-png"
-      ]
+      "relatedPlatforms": ["canva-ampliador-bmp", "lightroom-ampliador-bmp"],
+      "relatedFormats": ["ampliar-bmp-imagemns", "fotoshop-ampliador-png"]
     },
     {
       "slug": "fotoshop-ampliador-avif",
@@ -4207,14 +3973,8 @@
           "answer": "For moderno web Usar, AVIF is Excelente. For impressão or archival storage, consider lossless formatos like PNG or TIFF instead."
         }
       ],
-      "relatedPlatforms": [
-        "canva-ampliador-avif",
-        "lightroom-ampliador-avif"
-      ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "fotoshop-ampliador-webp"
-      ]
+      "relatedPlatforms": ["canva-ampliador-avif", "lightroom-ampliador-avif"],
+      "relatedFormats": ["ampliar-avif-imagemns", "fotoshop-ampliador-webp"]
     },
     {
       "slug": "lightroom-ampliador-raw",
@@ -4316,14 +4076,8 @@
           "answer": "We Suporta RAW formatos from major camera manufacturers including CaNãon, Nikon, Sony, Fuji, and others compatible with Lightroom."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-raw",
-        "canva-ampliador-raw"
-      ],
-      "relatedFormats": [
-        "ampliar-raw-imagemns",
-        "lightroom-ampliador-png"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-raw", "canva-ampliador-raw"],
+      "relatedFormats": ["ampliar-raw-imagemns", "lightroom-ampliador-png"]
     },
     {
       "slug": "lightroom-ampliador-bmp",
@@ -4425,14 +4179,8 @@
           "answer": "Sim! Our ampliador Funciona with fotos exported from both Lightroom Classic and Lightroom CC."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-bmp",
-        "canva-ampliador-bmp"
-      ],
-      "relatedFormats": [
-        "ampliar-bmp-imagemns",
-        "lightroom-ampliador-png"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-bmp", "canva-ampliador-bmp"],
+      "relatedFormats": ["ampliar-bmp-imagemns", "lightroom-ampliador-png"]
     },
     {
       "slug": "lightroom-ampliador-avif",
@@ -4534,14 +4282,8 @@
           "answer": "Sim! Our ampliador Funciona with fotos exported from both Lightroom Classic and Lightroom CC."
         }
       ],
-      "relatedPlatforms": [
-        "fotoshop-ampliador-avif",
-        "canva-ampliador-avif"
-      ],
-      "relatedFormats": [
-        "ampliar-avif-imagemns",
-        "lightroom-ampliador-webp"
-      ]
+      "relatedPlatforms": ["fotoshop-ampliador-avif", "canva-ampliador-avif"],
+      "relatedFormats": ["ampliar-avif-imagemns", "lightroom-ampliador-webp"]
     }
   ]
 }

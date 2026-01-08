@@ -114,7 +114,7 @@
       "relatedPlatforms": ["stable-diffusion-upscaler", "dalle-upscaler", "canva-upscaler"],
       "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
       "ogImage": "/og-images/midjourney-upscaler.png",
-      "lastUpdated": "2026-01-06"
+      "lastUpdated": "2026-01-08"
     },
     {
       "slug": "stable-diffusion-upscaler",
@@ -229,7 +229,7 @@
       "relatedPlatforms": ["midjourney-upscaler", "dalle-upscaler"],
       "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
       "ogImage": "/og-images/stable-diffusion-upscaler.png",
-      "lastUpdated": "2026-01-06"
+      "lastUpdated": "2026-01-08"
     },
     {
       "slug": "dalle-upscaler",
@@ -344,7 +344,7 @@
       "relatedPlatforms": ["midjourney-upscaler", "stable-diffusion-upscaler"],
       "relatedTools": ["ai-image-upscaler", "photo-enhancer"],
       "ogImage": "/og-images/dalle-upscaler.png",
-      "lastUpdated": "2026-01-06"
+      "lastUpdated": "2026-01-08"
     },
     {
       "slug": "canva-upscaler",
@@ -459,7 +459,7 @@
       "relatedPlatforms": ["photoshop-upscaler", "midjourney-upscaler"],
       "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
       "ogImage": "/og-images/canva-upscaler.png",
-      "lastUpdated": "2026-01-06"
+      "lastUpdated": "2026-01-08"
     },
     {
       "slug": "photoshop-upscaler",
@@ -574,11 +574,11 @@
       "relatedPlatforms": ["canva-upscaler", "stable-diffusion-upscaler"],
       "relatedTools": ["ai-image-upscaler", "photo-enhancer"],
       "ogImage": "/og-images/photoshop-upscaler.png",
-      "lastUpdated": "2026-01-06"
+      "lastUpdated": "2026-01-08"
     }
   ],
   "meta": {
     "totalPages": 5,
-    "lastUpdated": "2026-01-06"
+    "lastUpdated": "2026-01-08"
   }
 }

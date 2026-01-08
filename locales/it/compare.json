@@ -1,8 +1,8 @@
 {
-  "category": "confronta",
+  "category": "compare",
   "meta": {
     "totalPages": 2,
-    "lastUpdated": "2025-12-19",
+    "lastUpdated": "2026-01-08",
     "description": "Pagine di confronto per comparazioni di prodotti SEO"
   },
   "pages": [
@@ -144,7 +144,12 @@
             "watermark": "No",
             "freeTier": "Illimitato (risoluzione limitata)"
           },
-          "pros": ["Piano gratuito generoso", "Semplice da usare", "Nessun watermark", "Elaborazione veloce"],
+          "pros": [
+            "Piano gratuito generoso",
+            "Semplice da usare",
+            "Nessun watermark",
+            "Elaborazione veloce"
+          ],
           "cons": [
             "Upscale massimo inferiore (4x)",
             "Nessuna elaborazione batch",
@@ -169,7 +174,11 @@
                 "score": "Molto buona",
                 "notes": "Eccellente per la maggior parte dei casi d'uso"
               },
-              { "product": "Let's Enhance", "score": "Buona", "notes": "Forte sulle foto prodotti" },
+              {
+                "product": "Let's Enhance",
+                "score": "Buona",
+                "notes": "Forte sulle foto prodotti"
+              },
               { "product": "Upscale.media", "score": "Adeguata", "notes": "Base ma funzionale" }
             ]
           },
@@ -182,7 +191,11 @@
                 "score": "Molto buona",
                 "notes": "Training specializzato per il testo"
               },
-              { "product": "Let's Enhance", "score": "Buona", "notes": "Decente sulle etichette prodotti" },
+              {
+                "product": "Let's Enhance",
+                "score": "Buona",
+                "notes": "Decente sulle etichette prodotti"
+              },
               {
                 "product": "Topaz Gigapixel AI",
                 "score": "Moderata",
@@ -235,7 +248,11 @@
             "name": "Velocita",
             "description": "Tempo per elaborare le immagini",
             "rankings": [
-              { "product": "MyImageUpscaler", "score": "Veloce", "notes": "Elaborazione GPU cloud" },
+              {
+                "product": "MyImageUpscaler",
+                "score": "Veloce",
+                "notes": "Elaborazione GPU cloud"
+              },
               { "product": "Upscale.media", "score": "Veloce", "notes": "Elaborazione rapida" },
               { "product": "Let's Enhance", "score": "Moderata", "notes": "Puo essere piu lenta" },
               {

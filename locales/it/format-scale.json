@@ -2,7 +2,7 @@
   "category": "format-scale",
   "meta": {
     "totalPages": 60,
-    "lastUpdated": "2026-01-06",
+    "lastUpdated": "2026-01-08",
     "description": "Pagine moltiplicatrici Formato × Scala - combinazioni di formati immagine con fattori di scala"
   },
   "pages": [
@@ -14,7 +14,12 @@
       "h1": "JPEG Upscale 2X - Doppio Risoluzione con Conservazione Qualità",
       "intro": "Raddoppia la risoluzione delle tue immagini JPEG con il nostro upscaler AI 2X avanzato. Perfetto per miglioramento qualità moderato mantenendo l'aspetto naturale e gestendo efficientemente le dimensioni del file.",
       "primaryKeyword": "jpeg upscale 2x",
-      "secondaryKeywords": ["upscaler jpeg 2x", "doppio risoluzione jpeg", "enhancer jpeg 2x", "raddoppiatore immagine jpeg"],
+      "secondaryKeywords": [
+        "upscaler jpeg 2x",
+        "doppio risoluzione jpeg",
+        "enhancer jpeg 2x",
+        "raddoppiatore immagine jpeg"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "format-scale",
       "format": "JPEG",
@@ -113,7 +118,12 @@
       "h1": "JPEG Upscale 4X - Miglioramento Qualità Massimo",
       "intro": "Trasforma le tue immagini JPEG con upscaling AI 4X che quadruplica la risoluzione aggiungendo dettagli incredibili. La scelta perfetta per il miglioramento qualità massimo dal formato JPEG.",
       "primaryKeyword": "jpeg upscale 4x",
-      "secondaryKeywords": ["upscaler jpeg 4x", "quadruplo risoluzione jpeg", "enhancer jpeg 4x", "quadruplicatore immagine jpeg"],
+      "secondaryKeywords": [
+        "upscaler jpeg 4x",
+        "quadruplo risoluzione jpeg",
+        "enhancer jpeg 4x",
+        "quadruplicatore immagine jpeg"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "format-scale",
       "format": "JPEG",
@@ -212,7 +222,12 @@
       "h1": "PNG Upscale 2X - Doppio Risoluzione con Trasparenza",
       "intro": "Raddoppia la risoluzione delle tue immagini PNG con il nostro upscaler AI 2X avanzato. Perfetto per grafiche con trasparenza, loghi e artwork che necessitano di essere più grandi mantenendo la qualità.",
       "primaryKeyword": "png upscale 2x",
-      "secondaryKeywords": ["upscaler png 2x", "doppio risoluzione png", "enhancer png 2x", "raddoppiatore immagine png"],
+      "secondaryKeywords": [
+        "upscaler png 2x",
+        "doppio risoluzione png",
+        "enhancer png 2x",
+        "raddoppiatore immagine png"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "format-scale",
       "format": "PNG",
@@ -311,7 +326,12 @@
       "h1": "PNG Upscale 4X - Massima Qualità con Trasparenza",
       "intro": "Quadrupla la risoluzione delle tue immagini PNG con il nostro upscaler AI 4X avanzato. Perfetto per loghi, grafiche e artwork che necessitano di essere molto più grandi mantenendo la trasparenza e la qualità.",
       "primaryKeyword": "png upscale 4x",
-      "secondaryKeywords": ["upscaler png 4x", "quadruplo risoluzione png", "enhancer png 4x", "quadruplicatore immagine png"],
+      "secondaryKeywords": [
+        "upscaler png 4x",
+        "quadruplo risoluzione png",
+        "enhancer png 4x",
+        "quadruplicatore immagine png"
+      ],
       "lastUpdated": "2026-01-06",
       "category": "format-scale",
       "format": "PNG",

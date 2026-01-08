@@ -15,7 +15,7 @@
         "aumenta risoluzione immagine",
         "tutorial aumento a 4k"
       ],
-      "lastUpdated": "2025-12-10T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "guides",
       "guideType": "how-to",
       "description": "Guida completa passo-passo per aumentare immagini usando tecnologia AI. Impara tecniche professionali per aumentare risoluzione immagine mantenendo qualità e dettagli.",
@@ -99,7 +99,7 @@
         "converti webp",
         "compressione webp"
       ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "guides",
       "guideType": "explainer",
       "description": "Tutto ciò che devi sapere sul formato immagine WebP. Comprendi i suoi vantaggi, tecniche di compressione, compatibilità e come aumentare immagini WebP mantenendo la qualità.",
@@ -184,7 +184,7 @@
         "heic vs jpg",
         "converti heic"
       ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "guides",
       "guideType": "explainer",
       "description": "Guida completa al formato HEIC usato da iPhone e iPad. Comprendi compressione, qualità, problemi compatibilità e come aumentare foto HEIC mantenendo qualità immagine di Apple.",
@@ -269,7 +269,7 @@
         "editing immagini raw",
         "formato camera raw"
       ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "guides",
       "guideType": "explainer",
       "description": "Guida completa al formato fotografia RAW. Comprendi vantaggi scatto RAW, workflow elaborazione RAW e come aumentare immagini RAW mantenendo qualità professionale.",
@@ -354,7 +354,7 @@
         "tiff per stampa",
         "formato immagine professionale"
       ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "guides",
       "guideType": "explainer",
       "description": "Guida completa al formato TIFF per imaging professionale. Comprendi compressione lossless, colore 16-bit, workflow stampa e come aumentare immagini TIFF mantenendo qualità massima.",
@@ -439,7 +439,7 @@
         "formato immagine bmp",
         "converti bmp"
       ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "guides",
       "guideType": "explainer",
       "description": "Guida al formato bitmap BMP. Comprendi dettagli tecnici, limitazioni, alternative moderne e come aumentare immagini BMP per migliore qualità e compatibilità.",
@@ -524,7 +524,7 @@
         "immagini scalabili",
         "aumento svg"
       ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "guides",
       "guideType": "explainer",
       "description": "Guida completa al formato vettoriale SVG. Comprendi differenza tra grafica vettoriale e raster, quando usare SVG e come gestire immagini SVG che necessitano miglioramento risoluzione.",
@@ -603,13 +603,8 @@
       "h1": "Formato GIF Spiegato: Capire Grafica e Animazioni",
       "intro": "GIF (Graphics Interchange Format) è meglio conosciuto per animazioni ma ha limitazioni per immagini statiche. Scopri quando GIF è appropriato, alternative moderne e come lavorare efficacemente con file GIF.",
       "primaryKeyword": "formato gif",
-      "secondaryKeywords": [
-        "gif vs png",
-        "animazione gif",
-        "aumenta gif",
-        "immagini animate"
-      ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
+      "secondaryKeywords": ["gif vs png", "animazione gif", "aumenta gif", "immagini animate"],
+      "lastUpdated": "2026-01-08",
       "category": "guides",
       "guideType": "explainer",
       "description": "Guida al formato GIF per entrambe animazioni e immagini statiche. Comprendi limitazione 256 colori, quando usare GIF, alternative moderne (WebP/APNG) e come migliorare qualità GIF.",
@@ -694,7 +689,7 @@
         "compressione immagine",
         "supporto browser avif"
       ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
+      "lastUpdated": "2026-01-08",
       "category": "guides",
       "guideType": "explainer",
       "description": "Guida completa al formato immagine next-generation AVIF. Comprendi vantaggi tecnici su WebP e JPEG, stato supporto browser attuale, strategie implementazione e come AVIF impatterà prestazioni web.",
@@ -769,6 +764,6 @@
   ],
   "meta": {
     "totalPages": 9,
-    "lastUpdated": "2025-12-26T00:00:00Z"
+    "lastUpdated": "2026-01-08"
   }
 }
