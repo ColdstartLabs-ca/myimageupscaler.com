@@ -20,6 +20,7 @@ import { getPlanDisplayName } from '@shared/config/stripe';
 import { useLogger } from '@client/utils/logger';
 import { cn } from '@client/utils/cn';
 import { clientEnv } from '@shared/config/env';
+import { useTranslations } from 'next-intl';
 
 interface ISidebarItem {
   label: string;
@@ -39,6 +40,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
   const isAdmin = useIsAdmin();
   const subscription = useSubscription();
   const logger = useLogger('DashboardSidebar');
+  const t = useTranslations('dashboard.sidebar');
 
   // Check if profile data is still loading (but not if there's an error)
   const isProfileLoading = isLoading || (user && !user.profile && !error);
@@ -51,18 +53,18 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
 
   // Build menu items dynamically based on user role
   const menuItems: ISidebarItem[] = [
-    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
-    { label: 'Settings', href: '/dashboard/settings', icon: Settings },
+    { label: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
+    { label: t('billing'), href: '/dashboard/billing', icon: CreditCard },
+    { label: t('settings'), href: '/dashboard/settings', icon: Settings },
   ];
 
   // Add Admin menu item if user is admin
   if (isAdmin) {
-    menuItems.push({ label: 'Admin', href: '/dashboard/admin', icon: Shield });
+    menuItems.push({ label: t('admin'), href: '/dashboard/admin', icon: Shield });
   }
 
   const bottomMenuItems: ISidebarItem[] = [
-    { label: 'Help & Support', href: '/dashboard/support', icon: HelpCircle },
+    { label: t('helpSupport'), href: '/dashboard/support', icon: HelpCircle },
   ];
 
   const isActive = (href: string) => {
@@ -121,7 +123,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
           <button
             className="md:hidden absolute top-4 right-4 p-2 rounded-lg text-muted-foreground hover:text-white hover:bg-surface-light transition-colors"
             onClick={onClose}
-            aria-label="Close menu"
+            aria-label={t('closeMenu')}
           >
             <X className="h-5 w-5" />
           </button>
@@ -154,7 +156,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
                 <p className="text-sm font-medium text-white truncate">{user?.name || 'User'}</p>
                 {isAdmin && (
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-accent/20 text-accent">
-                    Admin
+                    {t('admin')}
                   </span>
                 )}
               </div>
@@ -163,9 +165,9 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
                 {isProfileLoading ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
                 ) : error ? (
-                  'Plan unavailable'
+                  t('planUnavailable')
                 ) : (
-                  `${planDisplayName} Plan`
+                  `${planDisplayName} ${t('plan')}`
                 )}
               </span>
             </div>
@@ -239,7 +241,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
             className="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-red-500/10 hover:text-red-500 transition-all duration-200"
           >
             <LogOut size={20} className="mr-3 text-muted-foreground" />
-            Sign Out
+            {t('signOut')}
           </button>
         </div>
       </aside>

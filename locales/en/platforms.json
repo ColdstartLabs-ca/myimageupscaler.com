@@ -1,0 +1,584 @@
+{
+  "category": "platforms",
+  "pages": [
+    {
+      "slug": "midjourney-upscaler",
+      "title": "Midjourney Upscaler - Enhance AI Images to 4K Quality",
+      "metaTitle": "Free Midjourney Upscaler | Enhance MJ Images to 4K Online",
+      "metaDescription": "Upscale Midjourney images to 4K without losing quality. Free AI upscaler that preserves details, fixes artifacts, and enhances text clarity. Works with all MJ versions.",
+      "h1": "Midjourney Upscaler - Enhance Your AI Images to 4K",
+      "intro": "Midjourney creates stunning AI art, but its default resolution may not be enough for professional use, large prints, or high-quality displays. Our specialized Midjourney upscaler enhances your images to 4K resolution while preserving the unique artistic style and details that make AI-generated art special.",
+      "primaryKeyword": "midjourney upscaler",
+      "secondaryKeywords": [
+        "upscale midjourney image",
+        "midjourney image enhancer",
+        "improve midjourney resolution",
+        "midjourney 4k upscaler",
+        "enhance ai art"
+      ],
+      "platformName": "Midjourney",
+      "platformType": "ai-generator",
+      "description": "Specialized upscaling for Midjourney AI-generated images, enhancing resolution while preserving artistic style and details.",
+      "benefits": [
+        {
+          "title": "Preserve Artistic Style",
+          "description": "Maintains the unique aesthetic qualities of Midjourney's AI art style"
+        },
+        {
+          "title": "Fix Compression Artifacts",
+          "description": "Removes JPEG compression artifacts while enhancing image clarity"
+        },
+        {
+          "title": "Enhance Fine Details",
+          "description": "Sharpens intricate patterns and textures that AI generators create"
+        },
+        {
+          "title": "Print-Ready Quality",
+          "description": "Upscale to resolutions suitable for large format printing"
+        },
+        {
+          "title": "Text Clarity",
+          "description": "Keeps any text elements sharp and readable after upscaling"
+        }
+      ],
+      "integration": [
+        "Export from Midjourney in PNG format for best results",
+        "Use upscaling feature in Midjourney first, then enhance further",
+        "Supports all Midjourney versions (v1-v6 and Niji)",
+        "Works with both grid images and upscaled single images",
+        "Batch process multiple Midjourney creations"
+      ],
+      "useCases": [
+        {
+          "title": "Print Midjourney Art",
+          "description": "Upscale AI artwork for canvas prints, posters, and merchandise"
+        },
+        {
+          "title": "Social Media Enhancement",
+          "description": "Create high-resolution versions for Instagram, Pinterest, and art communities"
+        },
+        {
+          "title": "Portfolio Quality",
+          "description": "Enhance images for professional art and design portfolios"
+        },
+        {
+          "title": "NFT Preparation",
+          "description": "Create high-resolution versions suitable for NFT minting"
+        },
+        {
+          "title": "Large Format Display",
+          "description": "Prepare images for trade shows, exhibitions, and digital signage"
+        }
+      ],
+      "workflowSteps": [
+        "Generate your image in Midjourney using your preferred prompts and parameters",
+        "Export or save the image in PNG format (highest quality available)",
+        "Upload to our upscaler and select your target resolution (2x, 4x, or custom)",
+        "Choose enhancement level based on your use case (web, print, or ultra-high-res)",
+        "Download your enhanced 4K Midjourney image ready for use"
+      ],
+      "faq": [
+        {
+          "question": "Why do I need to upscale Midjourney images?",
+          "answer": "Midjourney's default resolution (1024x1024 or higher for v5+) may not be sufficient for professional printing, large format displays, or high-quality applications. Upscaling enhances detail while maintaining the artistic style."
+        },
+        {
+          "question": "Will upscaling change my Midjourney image's style?",
+          "answer": "Our upscaler is designed to preserve the original artistic style and aesthetic qualities of your Midjourney images while enhancing resolution and sharpness."
+        },
+        {
+          "question": "What's the best format to export from Midjourney?",
+          "answer": "PNG format provides the highest quality for upscaling. Avoid JPEG if possible, as compression artifacts can be amplified during the upscaling process."
+        },
+        {
+          "question": "Can I upscale Midjourney grid images?",
+          "answer": "Yes, but for best results, first use Midjourney's upscale feature to get individual high-res images, then enhance them further with our upscaler."
+        },
+        {
+          "question": "Does this work with Midjourney Niji (anime) images?",
+          "answer": "Absolutely! Our upscaler works excellently with Niji images, preserving the anime style while enhancing line quality and details."
+        },
+        {
+          "question": "Can I print upscaled Midjourney images?",
+          "answer": "Yes, upscaled images are suitable for printing. We recommend 4x upscaling for standard prints and 8x for large format posters and canvas prints."
+        },
+        {
+          "question": "How big can I upscale my Midjourney images?",
+          "answer": "You can upscale up to 8x the original resolution. For Midjourney v5+ images (1024x1024), this means outputs up to 8192x8192 pixels."
+        },
+        {
+          "question": "Does upscaling fix Midjourney artifacts?",
+          "answer": "Our upscaler can reduce certain compression artifacts and enhance overall clarity, but it won't fundamentally alter or 'fix' the original AI generation choices."
+        }
+      ],
+      "relatedPlatforms": ["stable-diffusion-upscaler", "dalle-upscaler", "canva-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/midjourney-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "stable-diffusion-upscaler",
+      "title": "Stable Diffusion Upscaler - Enhance SD Images to Print Quality",
+      "metaTitle": "Free Stable Diffusion Upscaler | Enhance SD to 4K/8K",
+      "metaDescription": "Upscale Stable Diffusion images while preserving AI details. Fix artifacts, enhance clarity, and prepare for print. Works with SDXL, SD 1.5, Anime models.",
+      "h1": "Stable Diffusion Upscaler - Print Quality AI Image Enhancement",
+      "intro": "Stable Diffusion produces incredible AI-generated images, but the default 512x512 or 1024x1024 resolution isn't enough for professional printing or high-quality displays. Our specialized upscaler enhances your SD and SDXL images to 4K and beyond while preserving the intricate details and style that make Stable Diffusion outputs unique.",
+      "primaryKeyword": "stable diffusion upscaler",
+      "secondaryKeywords": [
+        "upscale stable diffusion",
+        "sd upscaler",
+        "sdxl upscaler",
+        "enhance ai images",
+        "stable diffusion 4k"
+      ],
+      "platformName": "Stable Diffusion",
+      "platformType": "ai-generator",
+      "description": "Advanced upscaling for Stable Diffusion outputs, supporting SD 1.5, SDXL, and custom checkpoint models.",
+      "benefits": [
+        {
+          "title": "Preserve Model Style",
+          "description": "Maintains the specific characteristics of different SD models and checkpoints"
+        },
+        {
+          "title": "Fix Pixelation",
+          "description": "Eliminates pixelation from low-resolution generations while enhancing details"
+        },
+        {
+          "title": "Enhance Fine Details",
+          "description": "Sharpens textures, skin details, and intricate elements in SD generations"
+        },
+        {
+          "title": "Supports All Resolutions",
+          "description": "Works with 512x512 SD 1.5, 1024x1024 SDXL, and custom resolution outputs"
+        },
+        {
+          "title": "Batch Processing",
+          "description": "Upscale multiple SD generations at once for efficient workflows"
+        }
+      ],
+      "integration": [
+        "Works with Automatic1111, ComfyUI, and WebUI outputs",
+        "Supports SDXL native 1024x1024 resolution",
+        "Compatible with all SD model checkpoints",
+        "Handles img2img and txt2img outputs equally well",
+        "Preserves High-Res Fix pass results"
+      ],
+      "useCases": [
+        {
+          "title": "Print SD Artwork",
+          "description": "Create gallery-quality prints from your Stable Diffusion generations"
+        },
+        {
+          "title": "Texture Creation",
+          "description": "Generate high-resolution textures for game assets and 3D modeling"
+        },
+        {
+          "title": "Stock Enhancement",
+          "description": "Upscale SD images for stock photo submissions and sales"
+        },
+        {
+          "title": "Product Visualization",
+          "description": "Enhance product mockups and visualizations for marketing materials"
+        },
+        {
+          "title": "Digital Art Portfolios",
+          "description": "Create professional portfolio pieces from SD generations"
+        }
+      ],
+      "workflowSteps": [
+        "Generate your image in Stable Diffusion using your preferred model and settings",
+        "Use Hi-Res Fix or higher resolution settings for better starting quality",
+        "Save the output in PNG format without compression",
+        "Upload to our upscaler and select your target resolution",
+        "Download your enhanced high-resolution SD image"
+      ],
+      "faq": [
+        {
+          "question": "What resolution should I generate at in Stable Diffusion?",
+          "answer": "For best upscaling results, use SDXL's native 1024x1024, or enable Hi-Res Fix in SD 1.5. Higher starting resolution yields better upscaled results."
+        },
+        {
+          "question": "Can I upscale images from specific SD checkpoints?",
+          "answer": "Yes! Our upscaler works with images from any SD checkpoint or LoRA, preserving the unique style characteristics of each model."
+        },
+        {
+          "question": "Does this work with SDXL images?",
+          "answer": "Absolutely. SDXL's native 1024x1024 resolution is a great starting point, and our upscaler can enhance it further to 4K and beyond."
+        },
+        {
+          "question": "Will upscaling add detail to my SD images?",
+          "answer": "Our upscaler enhances existing details and sharpens the image, but it doesn't 'hallucinate' new details that weren't in the original generation."
+        },
+        {
+          "question": "Can I upscale anime-style Stable Diffusion images?",
+          "answer": "Yes, our upscaler works excellently with anime-style models and checkpoints, preserving line quality and cel-shading techniques."
+        },
+        {
+          "question": "What about img2img outputs?",
+          "answer": "img2img outputs work great with our upscaler. Just ensure you save at the highest quality setting available."
+        },
+        {
+          "question": "Can I use this with ControlNet outputs?",
+          "answer": "Yes, ControlNet images upscale well. The structural guidance from ControlNet is preserved in the upscaled output."
+        },
+        {
+          "question": "How does this compare to SD's built-in upscaler?",
+          "answer": "Our upscaler focuses on print-quality output and artifact reduction, complementing SD's internal upscaling. Many artists use both."
+        }
+      ],
+      "relatedPlatforms": ["midjourney-upscaler", "dalle-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/stable-diffusion-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "dalle-upscaler",
+      "title": "DALL-E Upscaler - Enhance OpenAI Images to Ultra HD",
+      "metaTitle": "Free DALL-E Upscaler | Enhance DALL-E 2 & 3 Images",
+      "metaDescription": "Upscale DALL-E images to 4K/8K resolution. Fix compression, enhance details, and prepare for print. Works with DALL-E 2 and DALL-E 3 outputs.",
+      "h1": "DALL-E Upscaler - Ultra HD Enhancement for OpenAI Images",
+      "intro": "DALL-E creates impressive AI-generated images, but the resolution may not meet your needs for professional projects, printing, or high-quality displays. Our specialized DALL-E upscaler enhances your images to 4K and beyond while preserving OpenAI's signature style and the details that make each generation unique.",
+      "primaryKeyword": "dalle upscaler",
+      "secondaryKeywords": [
+        "upscale dalle",
+        "dalle image enhancer",
+        "dall-e 2 upscaler",
+        "dall-e 3 upscaler",
+        "enhance openai images"
+      ],
+      "platformName": "DALL-E",
+      "platformType": "ai-generator",
+      "description": "Professional upscaling for DALL-E 2 and DALL-E 3 images, optimized for OpenAI's unique artistic style.",
+      "benefits": [
+        {
+          "title": "Preserve DALL-E Style",
+          "description": "Maintains OpenAI's distinctive artistic style and color palette"
+        },
+        {
+          "title": "Enhance Photorealism",
+          "description": "Improves realism in photorealistic DALL-E generations"
+        },
+        {
+          "title": "Fix Compression",
+          "description": "Reduces compression artifacts from ChatGPT interface downloads"
+        },
+        {
+          "title": "Text Enhancement",
+          "description": "Keeps rendered text sharp and readable after upscaling"
+        },
+        {
+          "title": "Print Ready",
+          "description": "Creates resolution suitable for professional printing applications"
+        }
+      ],
+      "integration": [
+        "Works with DALL-E 2 (1024x1024) and DALL-E 3 images",
+        "Optimized for ChatGPT interface downloads",
+        "Supports both square and rectangular DALL-E outputs",
+        "Handles DALL-E 3's improved detail and texture rendering",
+        "Batch process multiple generations efficiently"
+      ],
+      "useCases": [
+        {
+          "title": "Print DALL-E Art",
+          "description": "Create high-quality prints from your DALL-E generations"
+        },
+        {
+          "title": "Marketing Materials",
+          "description": "Enhance DALL-E images for brochures, presentations, and ads"
+        },
+        {
+          "title": "Web Graphics",
+          "description": "Create high-resolution hero images and website graphics"
+        },
+        {
+          "title": "Book Illustrations",
+          "description": "Upscale DALL-E illustrations for print and digital publications"
+        },
+        {
+          "title": "Product Mockups",
+          "description": "Enhance DALL-E product concepts for presentations and prototyping"
+        }
+      ],
+      "workflowSteps": [
+        "Generate your image using DALL-E via ChatGPT or the API",
+        "Download the image in the highest available quality",
+        "Upload to our specialized DALL-E upscaler",
+        "Select your target resolution (4K recommended for most uses)",
+        "Download your enhanced ultra-HD DALL-E image"
+      ],
+      "faq": [
+        {
+          "question": "Does this work with DALL-E 3 images?",
+          "answer": "Yes! Our upscaler is optimized for both DALL-E 2 and DALL-E 3, enhancing the improved detail and texture rendering in DALL-E 3 outputs."
+        },
+        {
+          "question": "What's the best way to export from DALL-E?",
+          "answer": "Download images directly from ChatGPT in PNG format when available. Avoid taking screenshots, as they reduce quality."
+        },
+        {
+          "question": "Can I upscale rectangular DALL-E images?",
+          "answer": "Yes, we support both the classic square format and DALL-E 3's rectangular outputs."
+        },
+        {
+          "question": "Will upscaling improve DALL-E's text rendering?",
+          "answer": "Upscaling sharpens existing text, making it clearer, but won't fix spelling errors that were in the original generation."
+        },
+        {
+          "question": "Can I print upscaled DALL-E images?",
+          "answer": "Yes, 4K upscaled images are excellent for printing. We recommend testing a small print first to ensure quality meets your standards."
+        },
+        {
+          "question": "Does this work with DALL-E via ChatGPT?",
+          "answer": "Absolutely. Images generated through ChatGPT's DALL-E integration work perfectly with our upscaler."
+        },
+        {
+          "question": "What about DALL-E edit variations?",
+          "answer": "All DALL-E variations and edits can be upscaled. Each variation is treated as an independent image."
+        },
+        {
+          "question": "Can I upscale DALL-E images for commercial use?",
+          "answer": "Yes, upscaled images maintain the same usage rights as the original DALL-E generation according to OpenAI's terms."
+        }
+      ],
+      "relatedPlatforms": ["midjourney-upscaler", "stable-diffusion-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "photo-enhancer"],
+      "ogImage": "/og-images/dalle-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "canva-upscaler",
+      "title": "Canva Upscaler - Enhance Canva Designs to Print Quality",
+      "metaTitle": "Free Canva Upscaler | Enhance Canva Images to 4K/8K",
+      "metaDescription": "Upscale Canva designs without quality loss. Perfect for print, presentations, and professional use. Enhance text, graphics, and photos.",
+      "h1": "Canva Upscaler - Professional Enhancement for Canva Designs",
+      "intro": "Canva makes design easy, but its download resolution limits can be frustrating for professional printing, large displays, or high-quality presentations. Our specialized Canva upscaler enhances your designs to 4K and beyond while preserving text clarity, vector graphics sharpness, and image quality that makes your designs stand out.",
+      "primaryKeyword": "canva upscaler",
+      "secondaryKeywords": [
+        "upscale canva design",
+        "canva image enhancer",
+        "improve canva resolution",
+        "canva 4k upscaler",
+        "enhance canva exports"
+      ],
+      "platformName": "Canva",
+      "platformType": "design-tool",
+      "description": "Specialized upscaling for Canva designs, preserving text clarity, graphics, and images for professional output.",
+      "benefits": [
+        {
+          "title": "Preserve Text Clarity",
+          "description": "Keeps Canva text elements sharp and readable at any resolution"
+        },
+        {
+          "title": "Enhance Graphics",
+          "description": "Maintains vector-like quality of shapes, icons, and design elements"
+        },
+        {
+          "title": "Support Photos",
+          "description": "Enhances both design elements and embedded photos in the same image"
+        },
+        {
+          "title": "Print Quality",
+          "description": "Creates high-resolution output suitable for professional printing"
+        },
+        {
+          "title": "Maintain Brand Colors",
+          "description": "Preserves accurate color reproduction for brand-consistent outputs"
+        }
+      ],
+      "integration": [
+        "Download from Canva in PNG format for best quality",
+        "Supports all Canva Pro download resolutions",
+        "Works with both standard and premium downloads",
+        "Handles Canva's various aspect ratios correctly",
+        "Compatible with animated design exports"
+      ],
+      "useCases": [
+        {
+          "title": "Print Marketing Materials",
+          "description": "Upscale brochures, flyers, and posters for professional printing"
+        },
+        {
+          "title": "Presentation Enhancement",
+          "description": "Create high-resolution slides for large venue presentations"
+        },
+        {
+          "title": "Social Media Graphics",
+          "description": "Enhance designs for multiple platforms and screen sizes"
+        },
+        {
+          "title": "Brand Materials",
+          "description": "Upscale logos, business cards, and brand assets for various uses"
+        },
+        {
+          "title": "Merchandise Design",
+          "description": "Prepare Canva designs for print-on-demand products"
+        }
+      ],
+      "workflowSteps": [
+        "Complete your design in Canva with all elements finalized",
+        "Download as PNG (highest quality available - use Pro if needed)",
+        "Upload to our Canva-optimized upscaler",
+        "Select your target resolution based on intended use",
+        "Download your enhanced high-resolution Canva design"
+      ],
+      "faq": [
+        {
+          "question": "Why do I need to upscale Canva designs?",
+          "answer": "Canva's free tier has resolution limits, and even Pro downloads may not be sufficient for large format printing or ultra-high-resolution displays."
+        },
+        {
+          "question": "Will text stay sharp when upscaled?",
+          "answer": "Yes, our upscaler is specifically optimized to maintain text clarity in Canva designs, keeping fonts crisp and readable."
+        },
+        {
+          "question": "Can I upscale designs with embedded photos?",
+          "answer": "Yes, both the design elements and any embedded photos are enhanced. Complex designs with mixed content work well."
+        },
+        {
+          "question": "What's the best format to download from Canva?",
+          "answer": "PNG format provides the highest quality. Avoid downloading as JPEG if you plan to upscale, as compression artifacts will be amplified."
+        },
+        {
+          "question": "Can I upscale for large format printing?",
+          "answer": "Yes, 4K-8K upscaled designs work well for posters, banners, and other large format print applications."
+        },
+        {
+          "question": "Does this work with Canva Pro downloads?",
+          "answer": "Yes, and Pro's higher resolution starting point will yield even better upscaled results."
+        },
+        {
+          "question": "Will colors remain accurate?",
+          "answer": "Our upscaler maintains color accuracy, important for brand materials and designs with specific color requirements."
+        },
+        {
+          "question": "Can I upscale animated Canva designs?",
+          "answer": "For static exports, yes. For animated designs, export each frame individually, then reassemble after upscaling."
+        }
+      ],
+      "relatedPlatforms": ["photoshop-upscaler", "midjourney-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/canva-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    },
+    {
+      "slug": "photoshop-upscaler",
+      "title": "Photoshop Upscaler - Enhance PSD Exports to Ultra HD",
+      "metaTitle": "Free Photoshop Upscaler | Enhance PSD Images to 4K/8K",
+      "metaDescription": "Upscale Photoshop exports and PSD layers. Enhance detailed edits, composites, and artwork to print quality. Preserve layer effects and filters.",
+      "h1": "Photoshop Upscaler - Ultra HD Enhancement for Adobe Photoshop",
+      "intro": "Adobe Photoshop is the industry standard for image editing, but exporting at sufficient resolution for large format printing or ultra-high-resolution displays can be challenging. Our specialized Photoshop upscaler enhances your exported images and artwork to 4K and beyond while preserving the intricate details, layer effects, and professional quality that defines Photoshop output.",
+      "primaryKeyword": "photoshop upscaler",
+      "secondaryKeywords": [
+        "upscale photoshop images",
+        "photoshop image enhancer",
+        "enhance psd exports",
+        "adobe photoshop upscaler",
+        "photoshop 4k upscaler"
+      ],
+      "platformName": "Photoshop",
+      "platformType": "photo-editor",
+      "description": "Professional upscaling for Photoshop exports and artwork, optimized for complex edits and layered compositions.",
+      "benefits": [
+        {
+          "title": "Preserve Edit Quality",
+          "description": "Maintains the quality of complex Photoshop edits and adjustments"
+        },
+        {
+          "title": "Enhance Details",
+          "description": "Sharpens fine details that Photoshop editing creates"
+        },
+        {
+          "title": "Support All Formats",
+          "description": "Works with PSD exports, PNG, TIFF, and other Photoshop formats"
+        },
+        {
+          "title": "Print Ready",
+          "description": "Creates resolution suitable for professional printing applications"
+        },
+        {
+          "title": "Composites",
+          "description": "Handles complex multi-layer composites and photo manipulations"
+        }
+      ],
+      "integration": [
+        "Export from Photoshop in TIFF or PNG for lossless quality",
+        "Supports images with smart objects and layer effects",
+        "Works with both RGB and CMYK color modes",
+        "Handles 16-bit and 32-bit per channel images",
+        "Compatible with Photoshop Generative Fill outputs"
+      ],
+      "useCases": [
+        {
+          "title": "Print Projects",
+          "description": "Upscale Photoshop artwork for large format printing and exhibitions"
+        },
+        {
+          "title": "Photo Manipulation",
+          "description": "Enhance complex photo composites and manipulations for high-res output"
+        },
+        {
+          "title": "Digital Art",
+          "description": "Upscale digitally painted artwork for portfolio and print"
+        },
+        {
+          "title": "Retouching",
+          "description": "Enhance retouched photos for professional portfolio and client delivery"
+        },
+        {
+          "title": "Texture Creation",
+          "description": "Create high-resolution textures for game and film from Photoshop originals"
+        }
+      ],
+      "workflowSteps": [
+        "Complete your editing work in Photoshop with layers flattened",
+        "Export using File > Export As - choose TIFF or PNG for best quality",
+        "Upload to our Photoshop-optimized upscaler",
+        "Select target resolution based on your output needs",
+        "Download your enhanced ultra-HD Photoshop image"
+      ],
+      "faq": [
+        {
+          "question": "What's the best format to export from Photoshop?",
+          "answer": "TIFF (uncompressed) or PNG are ideal. Avoid JPEG compression if you plan to upscale, as artifacts will be amplified."
+        },
+        {
+          "question": "Can I upscale layered PSD files?",
+          "answer": "Export flattened versions of each layer separately, then upscale individually. Layers maintain their relationship after enhancement."
+        },
+        {
+          "question": "Does this work with smart objects?",
+          "answer": "Yes, but ensure smart objects are rasterized at the highest resolution before upscaling for best results."
+        },
+        {
+          "question": "Can I upscale 16-bit or 32-bit images?",
+          "answer": "Yes, our upscaler supports high bit-depth images from Photoshop, preserving tonal range and color accuracy."
+        },
+        {
+          "question": "What about CMYK images?",
+          "answer": "Yes, CMYK images for print can be upscaled. Color accuracy is preserved throughout the process."
+        },
+        {
+          "question": "Can I upscale Photoshop Generative Fill results?",
+          "answer": "Absolutely. Gen Fill outputs work great with our upscaler for seamless enhancement."
+        },
+        {
+          "question": "Will layer effects be preserved?",
+          "answer": "Layer effects must be baked into the image (flattened) before export, but their visual results are preserved in the upscaled output."
+        },
+        {
+          "question": "Can I upscale for large format printing?",
+          "answer": "Yes, upscaled images are excellent for posters, banners, wall art, and other large format applications."
+        }
+      ],
+      "relatedPlatforms": ["canva-upscaler", "stable-diffusion-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "photo-enhancer"],
+      "ogImage": "/og-images/photoshop-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    }
+  ],
+  "meta": {
+    "totalPages": 5,
+    "lastUpdated": "2026-01-06"
+  }
+}

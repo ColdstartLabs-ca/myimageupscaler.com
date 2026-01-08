@@ -1,0 +1,22 @@
+{
+  "category": "format-scale",
+  "pages": [
+    {
+      "slug": "jpeg-upscale-2x",
+      "title": "JPEG Escalar 2X",
+      "metaTitle": "JPEG Escalar 2X - Doble Resolución JPEG | MyImageUpscaler",
+      "metaDescription": "Doble resolución JPEG con escalado 2X IA. Mantiene calidad aumentando dimensiones. Perfecto para mejora moderada. Prueba gratis.",
+      "h1": "JPEG Escalar 2X - Doble Resolución con Preservación de Calidad",
+      "intro": "Duplica tu resolución JPEG con nuestro escalador 2X IA avanzado. Perfecto para mejora de calidad moderada manteniendo apariencia natural.",
+      "primaryKeyword": "jpeg escalar 2x",
+      "lastUpdated": "2026-01-06",
+      "category": "format-scale",
+      "format": "JPEG",
+      "scaleFactor": "2X"
+    }
+  ],
+  "meta": {
+    "totalPages": 60,
+    "lastUpdated": "2026-01-06"
+  }
+}

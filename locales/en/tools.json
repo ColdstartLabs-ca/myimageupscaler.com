@@ -1,0 +1,758 @@
+{
+  "category": "tools",
+  "pages": [
+    {
+      "slug": "ai-image-upscaler",
+      "title": "AI Image Upscaler",
+      "metaTitle": "AI Image Upscaler - Enlarge Images to 4K Without Quality Loss | MyImageUpscaler",
+      "metaDescription": "Upscale images up to 8x with AI. Free online tool that preserves text and logos. No watermarks. Perfect for e-commerce, print, and social media.",
+      "h1": "AI Image Upscaler",
+      "intro": "Increase image resolution up to 8x while preserving sharpness. Our AI adds realistic detail instead of just stretching pixels.",
+      "primaryKeyword": "ai image upscaler",
+      "secondaryKeywords": [
+        "image upscaler",
+        "ai upscale image",
+        "upscale image online",
+        "4k image upscaler",
+        "image enlarger",
+        "photo enlarger",
+        "ai image enlarger"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "tools",
+      "toolName": "AI Image Upscaler",
+      "description": "Transform low-resolution images into high-quality visuals. Unlike traditional resizing that creates blur, our AI reconstructs detail as it upscales.",
+      "features": [
+        {
+          "title": "Up to 8x Upscaling",
+          "description": "Increase image dimensions from 2x to 8x. A 500px image becomes 4000px at 8x."
+        },
+        {
+          "title": "Text & Logo Preservation",
+          "description": "Trained specifically to keep text readable and logos sharp - critical for product images and documents."
+        },
+        {
+          "title": "Batch Processing",
+          "description": "Process up to 50 images at once on Pro plans. Individual processing on free tier."
+        },
+        {
+          "title": "No Watermarks",
+          "description": "All outputs are clean, even on the free tier. Your images, your way."
+        },
+        {
+          "title": "Multiple Formats",
+          "description": "Upload JPEG, PNG, or WebP. Download in any format with quality settings."
+        },
+        {
+          "title": "Fast Processing",
+          "description": "Most images process in 30-60 seconds using cloud GPU infrastructure."
+        }
+      ],
+      "technicalSpecs": {
+        "maxInputSize": "64MB (5MB on free tier)",
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
+        "maxUpscale": "8x",
+        "processingTime": "30-60 seconds typical",
+        "outputFormats": ["JPEG", "PNG", "WebP"],
+        "qualitySettings": "Adjustable JPEG quality 1-100%"
+      },
+      "useCases": [
+        {
+          "title": "E-commerce Product Photos",
+          "description": "Meet marketplace image requirements. Amazon needs 1000x1000px minimum, eBay recommends 1600px.",
+          "example": "Upscale a 400x400px supplier image to 1600x1600px for your listing."
+        },
+        {
+          "title": "Print Preparation",
+          "description": "Print requires 300 DPI. An 8x10 inch print needs 2400x3000 pixels.",
+          "example": "Turn a 600x750px web image into a print-ready 2400x3000px file."
+        },
+        {
+          "title": "Social Media",
+          "description": "Instagram recommends 1080x1080px for posts, 1080x1920px for stories.",
+          "example": "Upscale old photos before posting - they'll look sharper even after compression."
+        },
+        {
+          "title": "Website Hero Images",
+          "description": "Full-width hero images need 1920px+ width for retina displays.",
+          "example": "Upscale a stock photo to 3840px width for crisp display on 4K monitors."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Real Detail Generation",
+          "description": "AI adds plausible detail rather than just interpolating pixels. Edges stay sharp, textures look natural.",
+          "metric": "Neural network trained on millions of image pairs"
+        },
+        {
+          "title": "Preserves What Matters",
+          "description": "Text, logos, and fine details stay crisp. Most upscalers blur these elements.",
+          "metric": "Specialized training for text preservation"
+        },
+        {
+          "title": "No Technical Skills Needed",
+          "description": "Upload, select scale, download. No Photoshop or technical knowledge required.",
+          "metric": "3-step process"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Drag and drop or click to browse. Supports JPEG, PNG, WebP up to 64MB."
+        },
+        {
+          "step": 2,
+          "title": "Select Scale Factor",
+          "description": "Choose 2x, 4x, or 8x. Preview shows estimated output dimensions."
+        },
+        {
+          "step": 3,
+          "title": "Download Result",
+          "description": "Preview your upscaled image, then download in your preferred format."
+        }
+      ],
+      "commonQuestions": [
+        {
+          "question": "How is this different from Photoshop's Image Size?",
+          "answer": "Photoshop's bicubic scaling just interpolates between pixels, creating blur. Our AI actually generates new detail based on patterns learned from millions of images. The result is sharper edges and more realistic textures."
+        },
+        {
+          "question": "What's the maximum I can upscale?",
+          "answer": "8x is the maximum in a single pass. You can download the 8x result and upscale again for even higher resolution, though quality may degrade with extreme enlargement."
+        },
+        {
+          "question": "Will upscaling fix a blurry photo?",
+          "answer": "Upscaling increases resolution but won't remove existing blur. For blurry photos, use our Photo Enhancer first to sharpen, then upscale. The combination works well."
+        },
+        {
+          "question": "How many images can I upscale for free?",
+          "answer": "10 images per month on the free tier, with no watermarks. Paid plans start at $9/month for higher limits."
+        },
+        {
+          "question": "Are my images stored on your servers?",
+          "answer": "Images are automatically deleted within 1 hour of processing. We don't use your images for training or share them with third parties."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is the AI image upscaler free?",
+          "answer": "Yes, 10 free credits per month with no watermarks. Each upscale uses 1 credit. Paid plans start at $9/month for more credits."
+        },
+        {
+          "question": "What formats are supported?",
+          "answer": "Upload JPEG, PNG, or WebP. Download in any of these formats. Max file size is 64MB (5MB on free tier)."
+        },
+        {
+          "question": "How long does upscaling take?",
+          "answer": "30-60 seconds for most images. Larger images or 8x upscaling may take slightly longer."
+        },
+        {
+          "question": "Can I upscale images for commercial use?",
+          "answer": "Yes, you retain full rights to your upscaled images. Use them for any purpose - personal, commercial, print, or web."
+        }
+      ],
+      "relatedTools": ["ai-photo-enhancer"],
+      "relatedGuides": ["print-size-guide", "ecommerce-image-requirements"],
+      "relatedBlogPosts": [
+        "image-resolution-for-printing-complete-guide",
+        "social-media-image-sizes-guide-2025",
+        "ai-image-enhancement-ecommerce-guide",
+        "how-to-upscale-images-without-losing-quality",
+        "stable-diffusion-upscaling-complete-guide",
+        "upscale-midjourney-images-4k-8k-print-guide"
+      ],
+      "ctaText": "Upscale Image Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-photo-enhancer",
+      "title": "AI Photo Enhancer",
+      "metaTitle": "AI Photo Enhancer - Fix Blurry Photos, Restore Old Images | MyImageUpscaler",
+      "metaDescription": "Enhance photo quality with AI. Fix blur, improve colors, reduce noise, restore old photos. Free online tool with natural-looking results.",
+      "h1": "AI Photo Enhancer",
+      "intro": "Improve photo quality without changing dimensions. Fix blur, enhance colors, reduce noise, and restore old or damaged photos.",
+      "primaryKeyword": "ai photo enhancer",
+      "secondaryKeywords": [
+        "photo enhancer",
+        "ai enhance photo",
+        "fix blurry photo",
+        "photo quality enhancer",
+        "image enhancer",
+        "picture enhancer",
+        "image clarity enhancer"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "tools",
+      "toolName": "AI Photo Enhancer",
+      "description": "Improve photo quality while keeping the same resolution. Ideal for fixing issues before upscaling, or when you just need better quality at the current size.",
+      "features": [
+        {
+          "title": "Deblur & Sharpen",
+          "description": "Reduce motion blur and soft focus. Works best on moderately blurry images - severe blur has physical limits."
+        },
+        {
+          "title": "Noise Reduction",
+          "description": "Remove grain from low-light or high-ISO photos while preserving detail."
+        },
+        {
+          "title": "Color Correction",
+          "description": "Auto-adjust white balance, exposure, and contrast. Fix color casts from indoor lighting."
+        },
+        {
+          "title": "Face Enhancement",
+          "description": "Automatically detect and enhance faces with appropriate skin tone handling."
+        },
+        {
+          "title": "Old Photo Restoration",
+          "description": "Reduce scratches, fix fading, and restore color to vintage photos."
+        },
+        {
+          "title": "Before/After Preview",
+          "description": "Compare original and enhanced versions side-by-side before downloading."
+        }
+      ],
+      "technicalSpecs": {
+        "maxInputSize": "64MB (5MB on free tier)",
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
+        "processingTime": "20-45 seconds typical",
+        "outputFormats": ["JPEG", "PNG", "WebP"],
+        "preservesExif": "Optional - keep or strip metadata"
+      },
+      "useCases": [
+        {
+          "title": "Old Photo Restoration",
+          "description": "Restore scanned family photos from the 60s-90s. Fix fading, scratches, and color shifts.",
+          "example": "Restore grandparents' wedding photo for an anniversary gift."
+        },
+        {
+          "title": "Low-Light Photo Fixes",
+          "description": "Reduce noise from phone photos taken in dim restaurants or evening events.",
+          "example": "Clean up grainy party photos from your phone's night mode."
+        },
+        {
+          "title": "Portrait Improvement",
+          "description": "Enhance portraits with face detection for natural skin tones and sharpness.",
+          "example": "Improve a LinkedIn headshot taken with a phone camera."
+        },
+        {
+          "title": "Pre-Upscaling Preparation",
+          "description": "Enhance quality before upscaling for best results. Fix issues at original size first.",
+          "example": "Sharpen a blurry photo, then upscale it 4x for printing."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Natural Results",
+          "description": "Avoids the over-processed 'HDR look'. Enhancements look like a better camera, not a filter.",
+          "metric": "Trained on professional photography"
+        },
+        {
+          "title": "Automatic Detection",
+          "description": "AI identifies what's wrong - blur, noise, color issues - and applies appropriate fixes.",
+          "metric": "Multi-model analysis"
+        },
+        {
+          "title": "Preserves Character",
+          "description": "Old photos keep their vintage feel. We reduce damage, not character.",
+          "metric": "Context-aware enhancement"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Photo",
+          "description": "Drag and drop or browse. Works with photos from any era or source."
+        },
+        {
+          "step": 2,
+          "title": "AI Analysis",
+          "description": "Our AI scans for blur, noise, color issues, and damage. Different issues get different treatments."
+        },
+        {
+          "step": 3,
+          "title": "Review & Download",
+          "description": "Use the before/after slider to compare, then download your enhanced photo."
+        }
+      ],
+      "commonQuestions": [
+        {
+          "question": "Can you fix severely blurry photos?",
+          "answer": "We can significantly improve moderately blurry photos. Severe blur (like strong motion blur or completely out of focus) has physical limits - the original detail simply wasn't captured. You'll see improvement, but don't expect perfection."
+        },
+        {
+          "question": "What's the difference between this and the upscaler?",
+          "answer": "The Photo Enhancer improves quality at the same resolution (sharpening, color, noise). The Upscaler increases dimensions. For best results on low-quality images: enhance first, then upscale."
+        },
+        {
+          "question": "Will my enhanced photos look over-processed?",
+          "answer": "No. We specifically train to avoid the artificial 'HDR look' or over-sharpened appearance. Results look like a better camera was used, not like a filter was applied."
+        },
+        {
+          "question": "Can you restore very old or damaged photos?",
+          "answer": "Yes, though results vary with damage severity. We can reduce (not eliminate) scratches, fix fading, and restore color. Severe damage like torn sections can't be reconstructed."
+        },
+        {
+          "question": "Does enhancement work on screenshots?",
+          "answer": "Yes, particularly for text clarity and noise reduction. For screenshots with text, this tool can improve readability."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is the photo enhancer free?",
+          "answer": "Yes, 10 free enhancements per month with no watermarks. Paid plans offer more credits."
+        },
+        {
+          "question": "What types of photos work best?",
+          "answer": "Photos with moderate issues see the best improvement. Slightly blurry, noisy, or faded photos enhance well. Severely damaged photos will improve but have limits."
+        },
+        {
+          "question": "Can I enhance and upscale together?",
+          "answer": "Yes, but run them separately for best results. Enhance first to fix quality issues, then upscale the enhanced image."
+        },
+        {
+          "question": "Does this work on phone photos?",
+          "answer": "Absolutely. Phone photos often have noise from small sensors and can benefit significantly from enhancement."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["photo-restoration-tips", "before-after-workflow"],
+      "relatedBlogPosts": [
+        "restore-old-photos-ai-enhancement-guide",
+        "fix-blurry-photos-ai-methods-guide",
+        "real-estate-photo-enhancement-guide",
+        "how-to-upscale-images-without-losing-quality"
+      ],
+      "ctaText": "Enhance Photo Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-background-remover",
+      "title": "AI Background Remover",
+      "metaTitle": "AI Background Remover - Remove Image Backgrounds Instantly | MyImageUpscaler",
+      "metaDescription": "Remove backgrounds from images instantly with AI. Free online tool for product photos, portraits, and graphics. No watermarks, transparent PNG output.",
+      "h1": "AI Background Remover",
+      "intro": "Remove backgrounds from any image in seconds. Our AI precisely detects subjects and creates clean cutouts with transparent backgrounds.",
+      "primaryKeyword": "ai background remover",
+      "secondaryKeywords": [
+        "remove background",
+        "background remover",
+        "remove bg",
+        "bg remover",
+        "transparent background",
+        "cut out image"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "AI Background Remover",
+      "description": "Transform any image with professional background removal. Our AI uses advanced segmentation to detect subjects with pixel-perfect precision, handling complex edges like hair and fur that traditional tools struggle with.",
+      "features": [
+        {
+          "title": "Instant AI Detection",
+          "description": "Advanced neural networks identify subjects automatically. No manual selection or tracing required."
+        },
+        {
+          "title": "Hair & Fine Edge Detection",
+          "description": "AI handles complex edges like hair, fur, and transparent objects that traditional tools miss."
+        },
+        {
+          "title": "Transparent PNG Output",
+          "description": "Download images with transparent backgrounds ready for any design project or platform."
+        },
+        {
+          "title": "Batch Processing",
+          "description": "Remove backgrounds from multiple images at once. Perfect for e-commerce catalogs and product photography."
+        },
+        {
+          "title": "No Watermarks",
+          "description": "All outputs are clean and ready to use, even on the free tier."
+        },
+        {
+          "title": "Browser-Based Processing",
+          "description": "Images are processed locally in your browser for privacy. No uploads to external servers."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "E-commerce Product Photos",
+          "description": "Create professional product images with white or transparent backgrounds for Amazon, eBay, Etsy, and Shopify.",
+          "example": "Remove busy backgrounds from product shots and replace with pure white for marketplace compliance."
+        },
+        {
+          "title": "Portrait & Headshot Editing",
+          "description": "Create professional headshots by removing distracting backgrounds from portraits.",
+          "example": "Transform a casual photo into a LinkedIn-ready professional headshot."
+        },
+        {
+          "title": "Graphic Design",
+          "description": "Extract subjects for use in posters, social media graphics, marketing materials, and presentations.",
+          "example": "Cut out a person from a photo to place them in a custom designed background."
+        },
+        {
+          "title": "Photo Compositing",
+          "description": "Combine subjects from different photos or place them in new scenes.",
+          "example": "Extract a product and place it in a lifestyle setting for marketing campaigns."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Pixel-Perfect Edges",
+          "description": "AI produces clean cutouts without halos or rough edges that plague manual selection tools.",
+          "metric": "Advanced segmentation model"
+        },
+        {
+          "title": "Handles Complex Subjects",
+          "description": "Hair, fur, transparent objects, and intricate details are preserved with remarkable accuracy.",
+          "metric": "Trained on millions of images"
+        },
+        {
+          "title": "Privacy-First Processing",
+          "description": "Images are processed in your browser using WebAssembly. Your photos never leave your device.",
+          "metric": "100% client-side processing"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Drag and drop or click to browse. Supports JPEG, PNG, and WebP formats."
+        },
+        {
+          "step": 2,
+          "title": "AI Processes Locally",
+          "description": "Our AI model runs in your browser, detecting and isolating the subject with precision."
+        },
+        {
+          "step": 3,
+          "title": "Download Result",
+          "description": "Preview your image with transparent background and download as PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is the background remover free?",
+          "answer": "Yes, remove backgrounds from images for free with no watermarks. The tool runs entirely in your browser with no usage limits."
+        },
+        {
+          "question": "How does local processing work?",
+          "answer": "The AI model runs directly in your web browser using WebAssembly technology. Your images are processed on your device and never uploaded to our servers, ensuring complete privacy."
+        },
+        {
+          "question": "What output formats are available?",
+          "answer": "Images are exported as PNG files with transparent backgrounds. PNG preserves transparency for use in design software, websites, and print materials."
+        },
+        {
+          "question": "Can it handle hair and fur?",
+          "answer": "Yes, our AI is specifically trained to handle fine details like hair, fur, and semi-transparent objects. It produces clean edges without the halo effect common in traditional tools."
+        },
+        {
+          "question": "Is there a file size limit?",
+          "answer": "Since processing happens in your browser, the limit depends on your device's memory. Most devices handle images up to 4096x4096 pixels smoothly."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": [],
+      "ctaText": "Remove Background Free",
+      "ctaUrl": "/tools/ai-background-remover"
+    },
+    {
+      "slug": "remove-bg",
+      "title": "Remove BG - Quick Background Remover",
+      "metaTitle": "Remove BG Online Free - Instant Background Removal Tool",
+      "metaDescription": "Remove BG from any photo in seconds. Free online tool to remove backgrounds instantly. No signup required, works in your browser.",
+      "h1": "Remove BG Instantly",
+      "intro": "Remove BG from photos with one click. Our AI-powered tool instantly detects subjects and removes backgrounds, giving you clean transparent images.",
+      "primaryKeyword": "remove bg",
+      "secondaryKeywords": [
+        "remove bg online",
+        "remove bg free",
+        "bg remover",
+        "remove background online",
+        "background eraser"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Remove BG Tool",
+      "description": "The fastest way to remove BG from any image. Upload your photo and get a transparent background in seconds. Perfect for quick edits and batch processing.",
+      "features": [
+        {
+          "title": "One-Click BG Removal",
+          "description": "Upload and instantly remove the background. No manual selection needed."
+        },
+        {
+          "title": "Smart Edge Detection",
+          "description": "AI automatically detects edges including hair and fine details."
+        },
+        {
+          "title": "Instant Download",
+          "description": "Get your transparent PNG immediately after processing."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Quick Social Media Edits",
+          "description": "Remove backgrounds from photos for Instagram, TikTok, and other social platforms.",
+          "example": "Create transparent stickers and profile pictures in seconds."
+        },
+        {
+          "title": "Product Photography",
+          "description": "Clean up product photos for online stores and marketplaces.",
+          "example": "Remove cluttered backgrounds from product shots."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Lightning Fast",
+          "description": "Remove backgrounds in under 5 seconds with AI processing.",
+          "metric": "< 5 seconds"
+        },
+        {
+          "title": "No Account Needed",
+          "description": "Start removing backgrounds immediately without signup.",
+          "metric": "Zero friction"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Image",
+          "description": "Drop your image or click to upload."
+        },
+        {
+          "step": 2,
+          "title": "Auto Remove BG",
+          "description": "AI removes the background automatically."
+        },
+        {
+          "step": 3,
+          "title": "Download",
+          "description": "Save your transparent PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is remove BG free?",
+          "answer": "Yes, completely free with no watermarks. Process unlimited images in your browser."
+        },
+        {
+          "question": "Do I need to create an account?",
+          "answer": "No account required. Just upload and remove backgrounds instantly."
+        },
+        {
+          "question": "What file types are supported?",
+          "answer": "JPEG, PNG, and WebP images up to 10MB."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
+      "relatedGuides": [],
+      "ctaText": "Remove BG Now",
+      "ctaUrl": "/tools/remove-bg"
+    },
+    {
+      "slug": "transparent-background-maker",
+      "title": "Transparent Background Maker",
+      "metaTitle": "Transparent Background Maker - Create PNG with Transparent BG",
+      "metaDescription": "Make transparent backgrounds for any image. Free online tool to create PNG images with transparent backgrounds for logos, graphics, and photos.",
+      "h1": "Transparent Background Maker",
+      "intro": "Create transparent backgrounds for any image instantly. Perfect for logos, product photos, and graphics that need to overlay on different backgrounds.",
+      "primaryKeyword": "transparent background maker",
+      "secondaryKeywords": [
+        "make background transparent",
+        "transparent background",
+        "transparent png maker",
+        "clear background",
+        "transparent image creator"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Transparent Background Maker",
+      "description": "Turn any image into a transparent PNG. Our AI removes the background and creates clean transparent images ready for use in designs, websites, and presentations.",
+      "features": [
+        {
+          "title": "PNG with Transparency",
+          "description": "Output high-quality PNG files with full alpha channel transparency."
+        },
+        {
+          "title": "Perfect for Logos",
+          "description": "Create transparent versions of logos and graphics for any background."
+        },
+        {
+          "title": "Clean Edges",
+          "description": "AI produces smooth, professional edges without halos."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Logo Transparency",
+          "description": "Convert logos to transparent PNGs for use on websites and marketing materials.",
+          "example": "Make your logo work on any colored background."
+        },
+        {
+          "title": "Graphic Design",
+          "description": "Create transparent assets for design projects and compositions.",
+          "example": "Extract elements for use in Photoshop, Canva, or Figma."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Professional Quality",
+          "description": "Export-ready transparent PNGs with clean alpha channels.",
+          "metric": "32-bit PNG output"
+        },
+        {
+          "title": "Preserves Details",
+          "description": "Complex shapes and fine details are preserved accurately.",
+          "metric": "Pixel-perfect edges"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Upload any image with a background you want to remove."
+        },
+        {
+          "step": 2,
+          "title": "AI Creates Transparency",
+          "description": "Our AI detects the subject and makes the background transparent."
+        },
+        {
+          "step": 3,
+          "title": "Download Transparent PNG",
+          "description": "Get your image with a transparent background as a PNG file."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What format is the output?",
+          "answer": "All images are exported as PNG files which support transparency. This is the standard format for transparent images."
+        },
+        {
+          "question": "Can I make a logo transparent?",
+          "answer": "Yes, upload your logo and the tool will remove the background, leaving only the logo with transparency."
+        },
+        {
+          "question": "Will it work with complex shapes?",
+          "answer": "Yes, the AI handles complex shapes, hair, and fine details while creating clean transparent edges."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "remove-bg"],
+      "relatedGuides": [],
+      "ctaText": "Make Transparent",
+      "ctaUrl": "/tools/transparent-background-maker"
+    },
+    {
+      "slug": "image-cutout-tool",
+      "title": "Image Cutout Tool - Cut Out Objects from Photos",
+      "metaTitle": "Image Cutout Tool - Cut Out Any Object from Photos Free",
+      "metaDescription": "Cut out objects and people from photos instantly. Free AI-powered cutout tool for precise selections. No Photoshop skills needed.",
+      "h1": "Image Cutout Tool",
+      "intro": "Cut out anything from your photos with precision. Our AI automatically detects and extracts subjects, people, products, and objects from any image.",
+      "primaryKeyword": "image cutout tool",
+      "secondaryKeywords": [
+        "cut out image",
+        "photo cutout",
+        "cutout maker",
+        "extract object from image",
+        "cut out person from photo"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Image Cutout Tool",
+      "description": "Professional image cutouts without Photoshop. AI-powered tool that precisely cuts out subjects from photos, handling complex edges like hair and fur automatically.",
+      "features": [
+        {
+          "title": "Precision AI Cutouts",
+          "description": "Advanced AI creates pixel-perfect cutouts of any subject."
+        },
+        {
+          "title": "Hair & Fur Detection",
+          "description": "Handles the most challenging cutouts including hair and animal fur."
+        },
+        {
+          "title": "No Skills Required",
+          "description": "Get Photoshop-quality cutouts without any manual work."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Cut Out People",
+          "description": "Extract people from photos for composites, collages, and designs.",
+          "example": "Cut out a person to place them on a different background."
+        },
+        {
+          "title": "Product Cutouts",
+          "description": "Create clean product cutouts for e-commerce and catalogs.",
+          "example": "Extract products from lifestyle photos for white background shots."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Photoshop Quality",
+          "description": "Professional-grade cutouts that rival manual Photoshop work.",
+          "metric": "AI-powered precision"
+        },
+        {
+          "title": "Instant Results",
+          "description": "Get perfect cutouts in seconds instead of hours.",
+          "metric": "< 10 seconds"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Photo",
+          "description": "Upload the image containing the subject you want to cut out."
+        },
+        {
+          "step": 2,
+          "title": "AI Cuts Out Subject",
+          "description": "Our AI identifies and precisely cuts out the main subject."
+        },
+        {
+          "step": 3,
+          "title": "Download Cutout",
+          "description": "Download your cutout as a transparent PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Can I cut out multiple objects?",
+          "answer": "The tool automatically detects and cuts out the main subject in your image. For multiple objects, process each separately."
+        },
+        {
+          "question": "How accurate are the cutouts?",
+          "answer": "Our AI produces highly accurate cutouts, even handling difficult edges like hair, fur, and semi-transparent objects."
+        },
+        {
+          "question": "Is this better than Photoshop?",
+          "answer": "For most cutout tasks, our AI produces results comparable to manual Photoshop work but in seconds instead of minutes or hours."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "transparent-background-maker"],
+      "relatedGuides": [],
+      "ctaText": "Cut Out Now",
+      "ctaUrl": "/tools/image-cutout-tool"
+    }
+  ],
+  "meta": {
+    "totalPages": 6,
+    "lastUpdated": "2026-01-06T00:00:00Z"
+  }
+}

@@ -2,6 +2,7 @@
  * Schema Markup Generator Module
  * Based on PRD-PSEO-04 Section 2.1: Schema Generator Module
  * Generates JSON-LD structured data for different page types
+ * Phase 5: Added inLanguage property for multi-language SEO
  */
 
 import type {
@@ -13,10 +14,33 @@ import type {
   IProduct,
 } from './pseo-types';
 import { clientEnv } from '@shared/config/env';
+import type { Locale } from '../../i18n/config';
 
 const BASE_URL = clientEnv.BASE_URL;
 const APP_NAME = clientEnv.APP_NAME;
 const TWITTER_HANDLE = clientEnv.TWITTER_HANDLE;
+
+/**
+ * Get ISO 639-1 language code from locale
+ * Maps our locale codes to Schema.org inLanguage format
+ *
+ * @param locale - The locale code
+ * @returns ISO 639-1 language code
+ *
+ * @example
+ * ```ts
+ * getLanguageCode('en'); // 'en'
+ * getLanguageCode('es'); // 'es'
+ * ```
+ */
+function getLanguageCode(locale: Locale): string {
+  const languageMap: Record<Locale, string> = {
+    en: 'en',
+    es: 'es',
+  };
+
+  return languageMap[locale] || 'en';
+}
 
 const ORGANIZATION_SCHEMA = {
   '@type': 'Organization',
@@ -79,9 +103,14 @@ export function generateReviewSchemas(products: IProduct[]): object[] {
 /**
  * Generate schema for Tool pages
  * Combines SoftwareApplication + FAQPage + BreadcrumbList
+ * Phase 5: Added inLanguage property
+ *
+ * @param tool - The tool page data
+ * @param locale - The locale for this page instance (default: 'en')
  */
-export function generateToolSchema(tool: IToolPage): object {
+export function generateToolSchema(tool: IToolPage, locale: Locale = 'en'): object {
   const canonicalUrl = `${BASE_URL}/tools/${tool.slug}`;
+  const language = getLanguageCode(locale);
 
   return {
     '@context': 'https://schema.org',
@@ -93,6 +122,7 @@ export function generateToolSchema(tool: IToolPage): object {
         applicationCategory: 'MultimediaApplication',
         operatingSystem: 'Web Browser',
         url: canonicalUrl,
+        inLanguage: language,
         offers: {
           '@type': 'Offer',
           price: '0',

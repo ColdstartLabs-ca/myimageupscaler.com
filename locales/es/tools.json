@@ -1,0 +1,752 @@
+{
+  "category": "tools",
+  "pages": [
+    {
+      "slug": "ai-image-upscaler",
+      "title": "Escalador de Imágenes IA",
+      "metaTitle": "Escalador de Imágenes IA - Amplía Imágenes a 4K Sin Pérdida de Calidad | MyImageUpscaler",
+      "metaDescription": "Escala imágenes hasta 8x con IA. Herramienta online gratuita que conserva texto y logotipos. Sin marcas de agua. Perfecto para e-commerce, impresión y redes sociales.",
+      "h1": "Escalador de Imágenes IA",
+      "intro": "Aumenta la resolución de imagen hasta 8x mientras preserva la nitidez. Nuestra IA añade detalle realista en lugar de simplemente estirar píxeles.",
+      "primaryKeyword": "escalador de imagenes ia",
+      "secondaryKeywords": [
+        "escalador de imagenes",
+        "escalar imagen ia",
+        "escalar imagen online",
+        "escalador 4k",
+        "ampliar imagen",
+        "ampliador de fotos"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "tools",
+      "toolName": "Escalador de Imágenes IA",
+      "description": "Transforma imágenes de baja resolución en visuales de alta calidad. A diferencia del redimensionamiento tradicional que crea desenfoque, nuestra IA reconstruye el detalle al escalar.",
+      "features": [
+        {
+          "title": "Escalado hasta 8x",
+          "description": "Aumenta las dimensiones de imagen de 2x a 8x. Una imagen de 500px se convierte en 4000px a 8x."
+        },
+        {
+          "title": "Preservación de Texto y Logotipos",
+          "description": "Entrenado específicamente para mantener el texto legible y los logotipos nítidos, crítico para imágenes de productos y documentos."
+        },
+        {
+          "title": "Procesamiento por Lotes",
+          "description": "Procesa hasta 50 imágenes a la vez en planes Pro. Procesamiento individual en nivel gratuito."
+        },
+        {
+          "title": "Sin Marcas de Agua",
+          "description": "Todas las salidas están limpias, incluso en el nivel gratuito. Tus imágenes, a tu manera."
+        },
+        {
+          "title": "Múltiples Formatos",
+          "description": "Sube JPEG, PNG o WebP. Descarga en cualquier formato con configuración de calidad."
+        },
+        {
+          "title": "Procesamiento Rápido",
+          "description": "La mayoría de las imágenes se procesan en 30-60 segundos usando infraestructura GPU en la nube."
+        }
+      ],
+      "technicalSpecs": {
+        "maxInputSize": "64MB (5MB en nivel gratuito)",
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
+        "maxUpscale": "8x",
+        "processingTime": "30-60 segundos típico",
+        "outputFormats": ["JPEG", "PNG", "WebP"],
+        "qualitySettings": "Calidad JPEG ajustable 1-100%"
+      },
+      "useCases": [
+        {
+          "title": "Fotos de Productos E-commerce",
+          "description": "Cumple con los requisitos de imagen del mercado. Amazon necesita mínimo 1000x1000px, eBay recomienda 1600px.",
+          "example": "Escala una imagen de proveedor de 400x400px a 1600x1600px para tu listado."
+        },
+        {
+          "title": "Preparación para Impresión",
+          "description": "La impresión requiere 300 DPI. Una impresión de 8x10 pulgadas necesita 2400x3000 píxeles.",
+          "example": "Convierte una imagen web de 600x750px en un archivo listo para imprimir de 2400x3000px."
+        },
+        {
+          "title": "Redes Sociales",
+          "description": "Instagram recomienda 1080x1080px para publicaciones, 1080x1920px para historias.",
+          "example": "Escala fotos antiguas antes de publicar, se verán más nítidas incluso después de la compresión."
+        },
+        {
+          "title": "Imágenes Hero de Sitios Web",
+          "description": "Las imágenes hero de ancho completo necesitan 1920px+ de ancho para pantallas retina.",
+          "example": "Escala una foto de stock a 3840px de ancho para visualización nítida en monitores 4K."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Generación Real de Detalle",
+          "description": "La IA añade detalle plausible en lugar de simplemente interpolar píxeles. Los bordes se mantienen nítidos, las texturas se ven naturales.",
+          "metric": "Red neuronal entrenada en millones de pares de imágenes"
+        },
+        {
+          "title": "Preserva lo Importante",
+          "description": "El texto, logotipos y detalles finos se mantienen nítidos. La mayoría de escaladores desenfocan estos elementos.",
+          "metric": "Entrenamiento especializado para preservación de texto"
+        },
+        {
+          "title": "Sin Necesidad de Habilidades Técnicas",
+          "description": "Sube, selecciona escala, descarga. No se necesita Photoshop o conocimiento técnico.",
+          "metric": "Proceso de 3 pasos"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Sube Tu Imagen",
+          "description": "Arrastra y suelta o haz clic para explorar. Admite JPEG, PNG, WebP hasta 64MB."
+        },
+        {
+          "step": 2,
+          "title": "Selecciona el Factor de Escala",
+          "description": "Elige 2x, 4x u 8x. La vista previa muestra las dimensiones de salida estimadas."
+        },
+        {
+          "step": 3,
+          "title": "Descarga el Resultado",
+          "description": "Vista previa de tu imagen escalada, luego descarga en tu formato preferido."
+        }
+      ],
+      "commonQuestions": [
+        {
+          "question": "¿Cómo es esto diferente del Tamaño de Imagen de Photoshop?",
+          "answer": "El escalado bicúbico de Photoshop solo interpola entre píxeles, creando desenfoque. Nuestra IA realmente genera nuevo detalle basado en patrones aprendidos de millones de imágenes. El resultado son bordes más nítidos y texturas más realistas."
+        },
+        {
+          "question": "¿Cuál es el máximo que puedo escalar?",
+          "answer": "8x es el máximo en una sola pasada. Puedes descargar el resultado 8x y escalar nuevamente para una resolución aún mayor, aunque la calidad puede degradarse con ampliaciones extremas."
+        },
+        {
+          "question": "¿El escalado arreglará una foto borrosa?",
+          "answer": "El escalado aumenta la resolución pero no elimina el desenfoque existente. Para fotos borrosas, usa nuestro Mejorador de Fotos primero para enfocar, luego escala. La combinación funciona bien."
+        },
+        {
+          "question": "¿Cuántas imágenes puedo escalar gratis?",
+          "answer": "10 imágenes por mes en el nivel gratuito, sin marcas de agua. Los planes de pago comienzan en $9/mes para límites más altos."
+        },
+        {
+          "question": "¿Se almacenan mis imágenes en sus servidores?",
+          "answer": "Las imágenes se eliminan automáticamente dentro de 1 hora después del procesamiento. No usamos tus imágenes para entrenamiento ni las compartimos con terceros."
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Es gratis el escalador de imágenes IA?",
+          "answer": "Sí, 10 créditos gratis por mes sin marcas de agua. Cada escala usa 1 crédito. Los planes de pago comienzan en $9/mes para más créditos."
+        },
+        {
+          "question": "¿Qué formatos son compatibles?",
+          "answer": "Sube JPEG, PNG o WebP. Descarga en cualquiera de estos formatos. El tamaño máximo de archivo es 64MB (5MB en nivel gratuito)."
+        },
+        {
+          "question": "¿Cuánto tiempo tarda el escalado?",
+          "answer": "30-60 segundos para la mayoría de las imágenes. Imágenes más grandes o escalado 8x pueden tardar un poco más."
+        },
+        {
+          "question": "¿Puedo escalar imágenes para uso comercial?",
+          "answer": "Sí, conservas todos los derechos sobre tus imágenes escaladas. Úsalas para cualquier propósito: personal, comercial, impresión o web."
+        }
+      ],
+      "relatedTools": ["ai-photo-enhancer"],
+      "relatedGuides": ["print-size-guide", "ecommerce-image-requirements"],
+      "relatedBlogPosts": [
+        "image-resolution-for-printing-complete-guide",
+        "social-media-image-sizes-guide-2025",
+        "ai-image-enhancement-ecommerce-guide",
+        "how-to-upscale-images-without-losing-quality",
+        "stable-diffusion-upscaling-complete-guide",
+        "upscale-midjourney-images-4k-8k-print-guide"
+      ],
+      "ctaText": "Escalar Imagen Gratis",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-photo-enhancer",
+      "title": "Mejorador de Fotos IA",
+      "metaTitle": "Mejorador de Fotos IA - Corrige Fotos Borrosas, Restaura Imágenes Antiguas | MyImageUpscaler",
+      "metaDescription": "Mejora la calidad de fotos con IA. Corrige desenfoque, mejora colores, reduce ruido, restaura fotos antiguas. Herramienta online gratuita con resultados de aspecto natural.",
+      "h1": "Mejorador de Fotos IA",
+      "intro": "Mejora la calidad de fotos sin cambiar las dimensiones. Corrige desenfoque, mejora colores, reduce ruido y restaura fotos antiguas o dañadas.",
+      "primaryKeyword": "mejorador de fotos ia",
+      "secondaryKeywords": [
+        "mejorador de fotos",
+        "mejorar foto ia",
+        "corregir foto borrosa",
+        "mejorador de calidad de foto",
+        "mejorador de imagenes"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "tools",
+      "toolName": "Mejorador de Fotos IA",
+      "description": "Mejora la calidad de foto manteniendo la misma resolución. Ideal para corregir problemas antes de escalar, o cuando solo necesitas mejor calidad en el tamaño actual.",
+      "features": [
+        {
+          "title": "Desenfoque y Enfoque",
+          "description": "Reduce el desenfoque de movimiento y el enfoque suave. Funciona mejor en imágenes moderadamente borrosas, el desenfoque severo tiene límites físicos."
+        },
+        {
+          "title": "Reducción de Ruido",
+          "description": "Elimina el grano de fotos con poca luz o alto ISO preservando el detalle."
+        },
+        {
+          "title": "Corrección de Color",
+          "description": "Ajusta automáticamente el balance de blancos, exposición y contraste. Corrige el dominio de color de la iluminación interior."
+        },
+        {
+          "title": "Mejora de Rostros",
+          "description": "Detecta y mejora automáticamente los rostros con el manejo apropiado del tono de piel."
+        },
+        {
+          "title": "Restauración de Fotos Antiguas",
+          "description": "Reduce rayaduras, corrige el desvanecimiento y restaura el color de fotos vintage."
+        },
+        {
+          "title": "Vista Previa Antes/Después",
+          "description": "Compara las versiones original y mejorada lado a lado antes de descargar."
+        }
+      ],
+      "technicalSpecs": {
+        "maxInputSize": "64MB (5MB en nivel gratuito)",
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
+        "processingTime": "20-45 segundos típico",
+        "outputFormats": ["JPEG", "PNG", "WebP"],
+        "preservesExif": "Opcional - mantener o eliminar metadatos"
+      },
+      "useCases": [
+        {
+          "title": "Restauración de Fotos Antiguas",
+          "description": "Restaura fotos de familia escaneadas de los años 60-90. Corrige desvanecimiento, rayaduras y cambios de color.",
+          "example": "Restaura la foto de boda de tus abuelos como regalo de aniversario."
+        },
+        {
+          "title": "Correcciones de Fotos con Poca Luz",
+          "description": "Reduce el ruido de fotos de teléfono tomadas en restaurantes oscuros o eventos nocturnos.",
+          "example": "Limpia fotos granuladas de fiestas del modo nocturno de tu teléfono."
+        },
+        {
+          "title": "Mejora de Retratos",
+          "description": "Mejora retratos con detección de rostro para tonos de piel naturales y nitidez.",
+          "example": "Mejora una foto de perfil para LinkedIn tomada con cámara de teléfono."
+        },
+        {
+          "title": "Preparación Pre-Escalado",
+          "description": "Mejora la calidad antes de escalar para mejores resultados. Corrige problemas primero en el tamaño original.",
+          "example": "Enfoca una foto borrosa, luego escala 4x para impresión."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Resultados Naturales",
+          "description": "Evita el aspecto 'HDR' sobreprocesado. Las mejoras parecen una mejor cámara, no un filtro.",
+          "metric": "Entrenado en fotografía profesional"
+        },
+        {
+          "title": "Detección Automática",
+          "description": "La IA identifica qué está mal: desenfoque, ruido, problemas de color y aplica las correcciones apropiadas.",
+          "metric": "Análisis multi-modelo"
+        },
+        {
+          "title": "Preserva el Carácter",
+          "description": "Las fotos antiguas mantienen su sensación vintage. Reducimos el daño, no el carácter.",
+          "metric": "Mejora consciente del contexto"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Sube Tu Foto",
+          "description": "Arrastra y suelta o explora. Funciona con fotos de cualquier era o fuente."
+        },
+        {
+          "step": 2,
+          "title": "Análisis IA",
+          "description": "Nuestra IA escanea en busca de desenfoque, ruido, problemas de color y daño. Diferentes problemas reciben diferentes tratamientos."
+        },
+        {
+          "step": 3,
+          "title": "Revisa y Descarga",
+          "description": "Usa el control deslizante antes/después para comparar, luego descarga tu foto mejorada."
+        }
+      ],
+      "commonQuestions": [
+        {
+          "question": "¿Puedes corregir fotos severamente borrosas?",
+          "answer": "Podemos mejorar significativamente fotos moderadamente borrosas. El desenfoque severo (como desenfoque fuerte de movimiento o completamente fuera de foco) tiene límites físicos: el detalle original simplemente no fue capturado. Verás mejora, pero no esperes perfección."
+        },
+        {
+          "question": "¿Cuál es la diferencia entre esto y el escalador?",
+          "answer": "El Mejorador de Fotos mejora la calidad en la misma resolución (enfoque, color, ruido). El Escalador aumenta las dimensiones. Para mejores resultados en imágenes de baja calidad: mejora primero, luego escala."
+        },
+        {
+          "question": "¿Mis fotos mejoradas se verán sobreprocesadas?",
+          "answer": "No. Específicamente entrenamos para evitar el aspecto 'HDR' artificial o la apariencia sobre-enfocada. Los resultados parecen que se usó una mejor cámara, no que se aplicó un filtro."
+        },
+        {
+          "question": "¿Puedes restaurar fotos muy antiguas o dañadas?",
+          "answer": "Sí, aunque los resultados varían con la severidad del daño. Podemos reducir (no eliminar) rayaduras, corregir el desvanecimiento y restaurar el color. El daño severo como secciones rotas no puede reconstruirse."
+        },
+        {
+          "question": "¿La mejora funciona en capturas de pantalla?",
+          "answer": "Sí, particularmente para claridad de texto y reducción de ruido. Para capturas de pantalla con texto, esta herramienta puede mejorar la legibilidad."
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Es gratis el mejorador de fotos?",
+          "answer": "Sí, 10 mejoras gratis por mes sin marcas de agua. Los planes de pago ofrecen más créditos."
+        },
+        {
+          "question": "¿Qué tipos de fotos funcionan mejor?",
+          "answer": "Las fotos con problemas moderados ven la mejor mejora. Fotos ligeramente borrosas, ruidosas o desvanecidas se mejoran bien. Las fotos severamente dañadas mejorarán pero tienen límites."
+        },
+        {
+          "question": "¿Puedo mejorar y escalar juntas?",
+          "answer": "Sí, pero ejecútalas por separado para mejores resultados. Mejora primero para corregir problemas de calidad, luego escala la imagen mejorada."
+        },
+        {
+          "question": "¿Esto funciona en fotos de teléfono?",
+          "answer": "Absolutamente. Las fotos de teléfono a menudo tienen ruido de sensores pequeños y pueden beneficiarse significativamente de la mejora."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["photo-restoration-tips", "before-after-workflow"],
+      "relatedBlogPosts": [
+        "restore-old-photos-ai-enhancement-guide",
+        "fix-blurry-photos-ai-methods-guide",
+        "real-estate-photo-enhancement-guide",
+        "how-to-upscale-images-without-losing-quality"
+      ],
+      "ctaText": "Mejorar Foto Gratis",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-background-remover",
+      "title": "Eliminador de Fondos IA",
+      "metaTitle": "Eliminador de Fondos IA - Elimina Fondos de Imágenes al Instante | MyImageUpscaler",
+      "metaDescription": "Elimina fondos de imágenes al instante con IA. Herramienta online gratuita para fotos de productos, retratos y gráficos. Sin marcas de agua, salida PNG transparente.",
+      "h1": "Eliminador de Fondos IA",
+      "intro": "Elimina fondos de cualquier imagen en segundos. Nuestra IA detecta con precisión los sujetos y crea recortes limpios con fondos transparentes.",
+      "primaryKeyword": "eliminador de fondos ia",
+      "secondaryKeywords": [
+        "eliminar fondo",
+        "eliminador de fondo",
+        "quitar fondo",
+        "fondo transparente",
+        "recortar imagen"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Eliminador de Fondos IA",
+      "description": "Transforma cualquier imagen con eliminación de fondo profesional. Nuestra IA usa segmentación avanzada para detectar sujetos con precisión píxel-perfecta, manejando bordes complejos como cabello y piel con los que las herramientas tradicionales luchan.",
+      "features": [
+        {
+          "title": "Detección IA Instantánea",
+          "description": "Las redes neuronales avanzadas identifican sujetos automáticamente. No se necesita selección manual o rastreo."
+        },
+        {
+          "title": "Detección de Cabello y Bordes Finos",
+          "description": "La IA maneja bordes complejos como cabello, piel y objetos transparentes que las herramientas tradicionales omiten."
+        },
+        {
+          "title": "Salida PNG Transparente",
+          "description": "Descarga imágenes con fondos transparentes listas para cualquier proyecto de diseño o plataforma."
+        },
+        {
+          "title": "Procesamiento por Lotes",
+          "description": "Elimina fondos de múltiples imágenes a la vez. Perfecto para catálogos e-commerce y fotografía de productos."
+        },
+        {
+          "title": "Sin Marcas de Agua",
+          "description": "Todas las salidas están limpias y listas para usar, incluso en el nivel gratuito."
+        },
+        {
+          "title": "Procesamiento Basado en Navegador",
+          "description": "Las imágenes se procesan localmente en tu navegador para privacidad. No hay subidas a servidores externos."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Fotos de Productos E-commerce",
+          "description": "Crea imágenes de productos profesionales con fondos blancos o transparentes para Amazon, eBay, Etsy y Shopify.",
+          "example": "Elimina fondos ocupados de tomas de productos y reemplaza con blanco puro para cumplimiento del mercado."
+        },
+        {
+          "title": "Edición de Retratos y Fotos de Perfil",
+          "description": "Crea retratos profesionales eliminando fondos distractores de retratos.",
+          "example": "Transforma una foto casual en un retrato profesional listo para LinkedIn."
+        },
+        {
+          "title": "Diseño Gráfico",
+          "description": "Extrae sujetos para usar en carteles, gráficos de redes sociales, materiales de marketing y presentaciones.",
+          "example": "Recorta una persona de una foto para colocarla en un fondo personalizado."
+        },
+        {
+          "title": "Composición de Fotos",
+          "description": "Combina sujetos de diferentes fotos o los coloca en nuevas escenas.",
+          "example": "Extrae un producto y lo coloca en un entorno de estilo de vida para campañas de marketing."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Bordes Píxel-Perfectos",
+          "description": "La IA produce recortes limpios sin halos o bordes rugosos que plaguan las herramientas de selección manual.",
+          "metric": "Modelo de segmentación avanzado"
+        },
+        {
+          "title": "Maneja Sujetos Complejos",
+          "description": "Cabello, piel, objetos transparentes y detalles intrincados se preservan con precisión notable.",
+          "metric": "Entrenado en millones de imágenes"
+        },
+        {
+          "title": "Procesamiento Prioritario de Privacidad",
+          "description": "Las imágenes se procesan en tu navegador usando WebAssembly. Tus fotos nunca salen de tu dispositivo.",
+          "metric": "100% procesamiento del lado del cliente"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Sube Tu Imagen",
+          "description": "Arrastra y suelta o haz clic para explorar. Admite formatos JPEG, PNG y WebP."
+        },
+        {
+          "step": 2,
+          "title": "La IA Procesa Localmente",
+          "description": "Nuestro modelo de IA se ejecuta en tu navegador, detectando y aislando el sujeto con precisión."
+        },
+        {
+          "step": 3,
+          "title": "Descarga el Resultado",
+          "description": "Vista previa de tu imagen con fondo transparente y descarga como PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Es gratis el eliminador de fondos?",
+          "answer": "Sí, elimina fondos de imágenes gratis sin marcas de agua. La herramienta se ejecuta completamente en tu navegador sin límites de uso."
+        },
+        {
+          "question": "¿Cómo funciona el procesamiento local?",
+          "answer": "El modelo de IA se ejecuta directamente en tu navegador web usando tecnología WebAssembly. Tus imágenes se procesan en tu dispositivo y nunca se suben a nuestros servidores, garantizando privacidad completa."
+        },
+        {
+          "question": "¿Qué formatos de salida están disponibles?",
+          "answer": "Las imágenes se exportan como archivos PNG con fondos transparentes. PNG preserva la transparencia para usar en software de diseño, sitios web y materiales de impresión."
+        },
+        {
+          "question": "¿Puede manejar cabello y piel?",
+          "answer": "Sí, nuestra IA está específicamente entrenada para manejar detalles finos como cabello, piel y objetos semitransparentes. Produce bordes limpios sin el efecto halo común en herramientas tradicionales."
+        },
+        {
+          "question": "¿Hay un límite de tamaño de archivo?",
+          "answer": "Dado que el procesamiento ocurre en tu navegador, el límite depende de la memoria de tu dispositivo. La mayoría de dispositivos manejan imágenes hasta 4096x4096 píxeles sin problemas."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": [],
+      "ctaText": "Eliminar Fondo Gratis",
+      "ctaUrl": "/tools/ai-background-remover"
+    },
+    {
+      "slug": "remove-bg",
+      "title": "Quitar Fondo - Eliminador Rápido de Fondos",
+      "metaTitle": "Quitar Fondo Online Gratis - Herramienta de Eliminación Rápida de Fondos",
+      "metaDescription": "Quita el fondo de cualquier foto en segundos. Herramienta online gratuita para eliminar fondos al instante. No se requiere registro, funciona en tu navegador.",
+      "h1": "Quitar Fondo al Instante",
+      "intro": "Quita el fondo de fotos con un clic. Nuestra herramienta con IA detecta instantáneamente sujetos y elimina fondos, dándote imágenes limpias y transparentes.",
+      "primaryKeyword": "quitar fondo",
+      "secondaryKeywords": [
+        "quitar fondo online",
+        "quitar fondo gratis",
+        "eliminador de fondo",
+        "quitar fondo de imagen"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Herramienta Quitar Fondo",
+      "description": "La forma más rápida de quitar el fondo de cualquier imagen. Sube tu foto y obtén un fondo transparente en segundos. Perfecto para ediciones rápidas y procesamiento por lotes.",
+      "features": [
+        {
+          "title": "Eliminación de Fondo con Un Clic",
+          "description": "Sube y elimina instantáneamente el fondo. No se necesita selección manual."
+        },
+        {
+          "title": "Detección Inteligente de Bordes",
+          "description": "La IA detecta automáticamente bordes incluyendo cabello y detalles finos."
+        },
+        {
+          "title": "Descarga Instantánea",
+          "description": "Obtén tu PNG transparente inmediatamente después del procesamiento."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Ediciones Rápidas para Redes Sociales",
+          "description": "Elimina fondos de fotos para Instagram, TikTok y otras plataformas sociales.",
+          "example": "Crea stickers transparentes y fotos de perfil en segundos."
+        },
+        {
+          "title": "Fotografía de Productos",
+          "description": "Limpia fotos de productos para tiendas online y mercados.",
+          "example": "Elimina fondos desordenados de tomas de productos."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Ultrarrápido",
+          "description": "Elimina fondos en menos de 5 segundos con procesamiento IA.",
+          "metric": "< 5 segundos"
+        },
+        {
+          "title": "Sin Cuenta Necesaria",
+          "description": "Comienza a eliminar fondos inmediatamente sin registro.",
+          "metric": "Fricción cero"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Sube Imagen",
+          "description": "Suelta tu imagen o haz clic para subir."
+        },
+        {
+          "step": 2,
+          "title": "Elimina Fondo Automáticamente",
+          "description": "La IA elimina el fondo automáticamente."
+        },
+        {
+          "step": 3,
+          "title": "Descarga",
+          "description": "Guarda tu PNG transparente."
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Es gratis quitar fondo?",
+          "answer": "Sí, completamente gratis sin marcas de agua. Procesa imágenes ilimitadas en tu navegador."
+        },
+        {
+          "question": "¿Necesito crear una cuenta?",
+          "answer": "No se requiere cuenta. Solo sube y elimina fondos instantáneamente."
+        },
+        {
+          "question": "¿Qué tipos de archivo son compatibles?",
+          "answer": "Imágenes JPEG, PNG y WebP hasta 10MB."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
+      "relatedGuides": [],
+      "ctaText": "Quitar Fondo Ahora",
+      "ctaUrl": "/tools/remove-bg"
+    },
+    {
+      "slug": "transparent-background-maker",
+      "title": "Creador de Fondo Transparente",
+      "metaTitle": "Creador de Fondo Transparente - Crea PNG con Fondo Transparente",
+      "metaDescription": "Crea fondos transparentes para cualquier imagen. Herramienta online gratuita para crear imágenes PNG con fondos transparentes para logotipos, gráficos y fotos.",
+      "h1": "Creador de Fondo Transparente",
+      "intro": "Crea fondos transparentes para cualquier imagen al instante. Perfecto para logotipos, fotos de productos y gráficos que necesitan superponerse en diferentes fondos.",
+      "primaryKeyword": "creador de fondo transparente",
+      "secondaryKeywords": [
+        "hacer fondo transparente",
+        "fondo transparente",
+        "creador png transparente",
+        "fondo claro"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Creador de Fondo Transparente",
+      "description": "Convierte cualquier imagen en un PNG transparente. Nuestra IA elimina el fondo y crea imágenes limpias y transparentes listas para usar en diseños, sitios web y presentaciones.",
+      "features": [
+        {
+          "title": "PNG con Transparencia",
+          "description": "Salida de archivos PNG de alta calidad con transparencia completa del canal alfa."
+        },
+        {
+          "title": "Perfecto para Logotipos",
+          "description": "Crea versiones transparentes de logotipos y gráficos para cualquier fondo."
+        },
+        {
+          "title": "Bordes Limpios",
+          "description": "La IA produce bordes suaves y profesionales sin halos."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Transparencia de Logotipos",
+          "description": "Convierte logotipos en PNGs transparentes para usar en sitios web y materiales de marketing.",
+          "example": "Haz que tu logotipo funcione en cualquier fondo de color."
+        },
+        {
+          "title": "Diseño Gráfico",
+          "description": "Crea activos transparentes para proyectos de diseño y composiciones.",
+          "example": "Extrae elementos para usar en Photoshop, Canva o Figma."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Calidad Profesional",
+          "description": "PNGs transparentes listos para exportar con canales alfa limpios.",
+          "metric": "Salida PNG de 32 bits"
+        },
+        {
+          "title": "Preserva Detalles",
+          "description": "Las formas complejas y detalles finos se preservan con precisión.",
+          "metric": "Bordes píxel-perfectos"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Sube Tu Imagen",
+          "description": "Sube cualquier imagen con un fondo que quieras eliminar."
+        },
+        {
+          "step": 2,
+          "title": "La IA Crea Transparencia",
+          "description": "Nuestra IA detecta el sujeto y hace el fondo transparente."
+        },
+        {
+          "step": 3,
+          "title": "Descarga PNG Transparente",
+          "description": "Obtén tu imagen con fondo transparente como archivo PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Qué formato es la salida?",
+          "answer": "Todas las imágenes se exportan como archivos PNG que soportan transparencia. Este es el formato estándar para imágenes transparentes."
+        },
+        {
+          "question": "¿Puedo hacer un logotipo transparente?",
+          "answer": "Sí, sube tu logotipo y la herramienta eliminará el fondo, dejando solo el logotipo con transparencia."
+        },
+        {
+          "question": "¿Funcionará con formas complejas?",
+          "answer": "Sí, la IA maneja formas complejas, cabello y detalles finos mientras crea bordes limpios y transparentes."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "remove-bg"],
+      "relatedGuides": [],
+      "ctaText": "Hacer Transparente",
+      "ctaUrl": "/tools/transparent-background-maker"
+    },
+    {
+      "slug": "image-cutout-tool",
+      "title": "Herramienta de Recorte de Imagen - Recorta Objetos de Fotos",
+      "metaTitle": "Herramienta de Recorte de Imagen - Recorta Cualquier Objeto de Fotos Gratis",
+      "metaDescription": "Recorta objetos y personas de fotos al instante. Herramienta de recorte con IA gratuita para selecciones precisas. No se necesitan habilidades de Photoshop.",
+      "h1": "Herramienta de Recorte de Imagen",
+      "intro": "Recorta cualquier cosa de tus fotos con precisión. Nuestra IA detecta y extrae automáticamente sujetos, personas, productos y objetos de cualquier imagen.",
+      "primaryKeyword": "herramienta de recorte de imagen",
+      "secondaryKeywords": [
+        "recortar imagen",
+        "recorte de foto",
+        "recortadora",
+        "extraer objeto de imagen",
+        "recortar persona de foto"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Herramienta de Recorte de Imagen",
+      "description": "Recortes de imagen profesionales sin Photoshop. Herramienta con IA que recorta con precisión sujetos de fotos, manejando bordes complejos como cabello y piel automáticamente.",
+      "features": [
+        {
+          "title": "Recortes IA de Precisión",
+          "description": "La IA avanzada crea recortes píxel-perfectos de cualquier sujeto."
+        },
+        {
+          "title": "Detección de Cabello y Piel",
+          "description": "Maneja los recortes más desafiantes incluyendo cabello y piel de animales."
+        },
+        {
+          "title": "Sin Habilidades Necesarias",
+          "description": "Obtén recortes de calidad de Photoshop sin ningún trabajo manual."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Recortar Personas",
+          "description": "Extrae personas de fotos para composiciones, collages y diseños.",
+          "example": "Recorta una persona para colocarla en un fondo diferente."
+        },
+        {
+          "title": "Recortes de Productos",
+          "description": "Crea recortes de productos limpios para e-commerce y catálogos.",
+          "example": "Extrae productos de fotos de estilo de vida para tomas de fondo blanco."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Calidad de Photoshop",
+          "description": "Recortes de grado profesional que rivalizan con el trabajo manual de Photoshop.",
+          "metric": "Precisión con IA"
+        },
+        {
+          "title": "Resultados Instantáneos",
+          "description": "Obtén recortes perfectos en segundos en lugar de horas.",
+          "metric": "< 10 segundos"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Sube Foto",
+          "description": "Sube la imagen que contiene el sujeto que quieres recortar."
+        },
+        {
+          "step": 2,
+          "title": "La IA Recorta el Sujeto",
+          "description": "Nuestra IA identifica y recorta con precisión el sujeto principal."
+        },
+        {
+          "step": 3,
+          "title": "Descarga Recorte",
+          "description": "Descarga tu recorte como PNG transparente."
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Puedo recortar múltiples objetos?",
+          "answer": "La herramienta detecta y recorta automáticamente el sujeto principal en tu imagen. Para múltiples objetos, procesa cada uno por separado."
+        },
+        {
+          "question": "¿Qué tan precisos son los recortes?",
+          "answer": "Nuestra IA produce recortes altamente precisos, incluso manejando bordes difíciles como cabello, piel y objetos semitransparentes."
+        },
+        {
+          "question": "¿Es esto mejor que Photoshop?",
+          "answer": "Para la mayoría de tareas de recorte, nuestra IA produce resultados comparables al trabajo manual de Photoshop pero en segundos en lugar de minutos u horas."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "transparent-background-maker"],
+      "relatedGuides": [],
+      "ctaText": "Recortar Ahora",
+      "ctaUrl": "/tools/image-cutout-tool"
+    }
+  ],
+  "meta": {
+    "totalPages": 6,
+    "lastUpdated": "2026-01-06T00:00:00Z"
+  }
+}

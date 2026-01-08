@@ -1,6 +1,7 @@
 /**
  * SEO Module - Programmatic SEO Infrastructure
  * Centralized exports for keyword management, mapping, tracking, and routing
+ * Phase 5: Added hreflang generator exports
  */
 
 // Types
@@ -123,3 +124,14 @@ export {
 
 // Metadata Factory
 export { generateMetadata, generateCategoryMetadata } from './metadata-factory';
+
+// Hreflang Generator (Phase 5)
+export {
+  generateHreflangAlternates,
+  generatePSEOHreflangAlternates,
+  getLocalizedPath,
+  formatHreflangForMetadata,
+  getCanonicalUrl as getHreflangCanonicalUrl,
+  validateHreflangAlternates,
+  getOpenGraphLocale,
+} from './hreflang-generator';

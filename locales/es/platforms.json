@@ -1,0 +1,124 @@
+{
+  "category": "platforms",
+  "pages": [
+    {
+      "slug": "midjourney-upscaler",
+      "title": "Escalador de Midjourney - Mejora Imágenes IA a Calidad 4K",
+      "metaTitle": "Escalador de Midjourney Gratis | Mejora Imágenes MJ a 4K Online",
+      "metaDescription": "Escala imágenes de Midjourney a 4K sin perder calidad. Escalador IA gratis que preserva detalles, corrige artefactos y mejora claridad de texto. Funciona con todas las versiones de MJ.",
+      "h1": "Escalador de Midjourney - Mejora Tus Imágenes IA a 4K",
+      "intro": "Midjourney crea arte IA impresionante, pero su resolución predeterminada puede no ser suficiente para uso profesional, impresiones grandes o pantallas de alta calidad. Nuestro escalador de Midjourney especializado mejora tus imágenes a resolución 4K preservando el estilo artístico único y detalles que hacen especial al arte generado por IA.",
+      "primaryKeyword": "escalador de midjourney",
+      "secondaryKeywords": [
+        "escalar imagen de midjourney",
+        "mejorador de imagenes midjourney",
+        "mejorar resolucion midjourney",
+        "escalador 4k midjourney",
+        "mejorar arte ia"
+      ],
+      "platformName": "Midjourney",
+      "platformType": "ai-generator",
+      "description": "Escalado especializado para imágenes generadas por IA de Midjourney, mejorando resolución preservando estilo artístico y detalles.",
+      "benefits": [
+        {
+          "title": "Preserva Estilo Artístico",
+          "description": "Mantiene las cualidades estéticas únicas del estilo de arte IA de Midjourney"
+        },
+        {
+          "title": "Corrige Artefactos de Compresión",
+          "description": "Elimina artefactos de compresión JPEG mejorando la claridad de imagen"
+        },
+        {
+          "title": "Mejora Detalles Finos",
+          "description": "Afina patrones intrincados y texturas que crean los generadores de IA"
+        },
+        {
+          "title": "Calidad Lista para Imprimir",
+          "description": "Escala a resoluciones adecuadas para impresión de gran formato"
+        },
+        {
+          "title": "Claridad de Texto",
+          "description": "Mantiene elementos de texto nítidos y legibles después de escalar"
+        }
+      ],
+      "integration": [
+        "Exporta desde Midjourney en formato PNG para mejores resultados",
+        "Usa la función de escalado en Midjourney primero, luego mejora más",
+        "Soporta todas las versiones de Midjourney (v1-v6 y Niji)",
+        "Funciona con imágenes de cuadrícula e imágenes individuales escaladas",
+        "Procesa por lotes múltiples creaciones de Midjourney"
+      ],
+      "useCases": [
+        {
+          "title": "Imprimir Arte de Midjourney",
+          "description": "Escala arte de IA para impresiones en lienzo, pósters y mercancía"
+        },
+        {
+          "title": "Mejora para Redes Sociales",
+          "description": "Crea versiones de alta resolución para Instagram, Pinterest y comunidades de arte"
+        },
+        {
+          "title": "Calidad de Portafolio",
+          "description": "Mejora imágenes para portafolios profesionales de arte y diseño"
+        },
+        {
+          "title": "Preparación NFT",
+          "description": "Crea versiones de alta resolución adecuadas para acuñar NFTs"
+        },
+        {
+          "title": "Visualización de Gran Formato",
+          "description": "Prepara imágenes para ferias comerciales, exhibiciones y señalización digital"
+        }
+      ],
+      "workflowSteps": [
+        "Genera tu imagen en Midjourney usando tus prompts y parámetros preferidos",
+        "Exporta o guarda la imagen en formato PNG (máxima calidad disponible)",
+        "Sube a nuestro escalador y selecciona tu resolución objetivo (2x, 4x o personalizada)",
+        "Elige el nivel de mejora basado en tu caso de uso (web, impresión o ultra alta resolución)",
+        "Descarga tu imagen de Midjourney mejorada a 4K lista para usar"
+      ],
+      "faq": [
+        {
+          "question": "¿Por qué necesito escalar imágenes de Midjourney?",
+          "answer": "La resolución predeterminada de Midjourney (1024x1024 o más para v5+) puede no ser suficiente para impresión profesional, visualización de gran formato o aplicaciones de alta calidad. El escalado mejora el detalle manteniendo el estilo artístico."
+        },
+        {
+          "question": "¿El escalado cambiará el estilo de mi imagen de Midjourney?",
+          "answer": "Nuestro escalador está diseñado para preservar el estilo artístico original y cualidades estéticas de tus imágenes de Midjourney mejorando la resolución y nitidez."
+        },
+        {
+          "question": "¿Cuál es el mejor formato para exportar desde Midjourney?",
+          "answer": "El formato PNG proporciona la más alta calidad para escalar. Evita JPEG si es posible, ya que los artefactos de compresión pueden amplificarse durante el proceso de escalado."
+        },
+        {
+          "question": "¿Puedo escalar imágenes de cuadrícula de Midjourney?",
+          "answer": "Sí, pero para mejores resultados, primero usa la función de escalado de Midjourney para obtener imágenes individuales de alta resolución, luego mejora más con nuestro escalador."
+        },
+        {
+          "question": "¿Esto funciona con imágenes de Midjourney Niji (anime)?",
+          "answer": "¡Absolutamente! Nuestro escalador funciona excelentemente con imágenes Niji, preservando el estilo anime mejorando la calidad de línea y detalles."
+        },
+        {
+          "question": "¿Puedo imprimir imágenes de Midjourney escaladas?",
+          "answer": "Sí, las imágenes escaladas son adecuadas para imprimir. Recomendamos escalado 4x para impresiones estándar y 8x para pósters de gran formato e impresiones en lienzo."
+        },
+        {
+          "question": "¿Qué tan grande puedo escalar mis imágenes de Midjourney?",
+          "answer": "Puedes escalar hasta 8x la resolución original. Para imágenes de Midjourney v5+ (1024x1024), esto significa salidas hasta 8192x8192 píxeles."
+        },
+        {
+          "question": "¿El escalado corrige artefactos de Midjourney?",
+          "answer": "Nuestro escalador puede reducir ciertos artefactos de compresión y mejorar la claridad general, pero no alterará fundamentalmente o 'corregirá' las elecciones de generación IA originales."
+        }
+      ],
+      "relatedPlatforms": ["stable-diffusion-upscaler", "dalle-upscaler", "canva-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "bulk-image-upscaler"],
+      "ogImage": "/og-images/midjourney-upscaler.png",
+      "lastUpdated": "2026-01-06"
+    }
+  ],
+  "meta": {
+    "totalPages": 6,
+    "lastUpdated": "2026-01-06"
+  }
+}

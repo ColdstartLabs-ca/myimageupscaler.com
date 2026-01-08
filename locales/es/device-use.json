@@ -1,0 +1,22 @@
+{
+  "category": "device-use",
+  "pages": [
+    {
+      "slug": "mobile-social-media-upscaler",
+      "title": "Escalador de Redes Sociales Móvil",
+      "metaTitle": "Escalador de Imágenes de Redes Sociales Móvil | MyImageUpscaler",
+      "metaDescription": "Escala fotos móviles para redes sociales. Perfecto para Instagram, TikTok, Facebook. Mejora fotos de smartphone a resolución óptima. Prueba gratis.",
+      "h1": "Escalador de Redes Sociales Móvil - Perfecto para Instagram, TikTok y Más",
+      "intro": "Transforma tus fotos móviles en imágenes impresionantes listas para redes sociales con nuestro escalador especializado. Optimizado para cámaras de smartphone y requisitos de plataformas sociales.",
+      "primaryKeyword": "escalador de redes sociales movil",
+      "lastUpdated": "2026-01-06",
+      "category": "device-use",
+      "device": "mobile",
+      "useCase": "Social Media"
+    }
+  ],
+  "meta": {
+    "totalPages": 20,
+    "lastUpdated": "2026-01-06"
+  }
+}

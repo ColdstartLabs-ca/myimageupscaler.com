@@ -1,0 +1,42 @@
+{
+  "category": "scale",
+  "pages": [
+    {
+      "slug": "upscale-2x",
+      "title": "Escalar 2X - Doble Resolución",
+      "metaTitle": "Escalar 2X - Doble Resolución de Imagen | MyImageUpscaler",
+      "metaDescription": "Duplica la resolución de imagen con escalado 2X IA. Mejora calidad mientras aumentas tamaño. Perfecto para mejora moderada. Prueba gratis.",
+      "h1": "Escalar 2X - Doble Resolución con Preservación de Calidad",
+      "intro": "Duplica la resolución de tu imagen con nuestro escalador 2X IA avanzado. Perfecto para mejora de calidad moderada manteniendo apariencia natural.",
+      "primaryKeyword": "escalar 2x",
+      "lastUpdated": "2026-01-06",
+      "category": "scale"
+    },
+    {
+      "slug": "upscale-4x",
+      "title": "Escalar 4X - Cuádruple Resolución",
+      "metaTitle": "Escalar 4X - Amplía Imagen a 4X | MyImageUpscaler",
+      "metaDescription": "Cuadruplica resolución con escalado 4X IA. Aumenta imagen 4x manteniendo calidad. Ideal para impresión y visualización de alta resolución.",
+      "h1": "Escalar 4X - Ampliación de Cuádruple Resolución",
+      "intro": "Aumenta tu imagen a 4X la resolución original con nuestra tecnología de escalado IA. Perfecto para impresión de alta calidad y pantallas 4K.",
+      "primaryKeyword": "escalar 4x",
+      "lastUpdated": "2026-01-06",
+      "category": "scale"
+    },
+    {
+      "slug": "upscale-8x",
+      "title": "Escalar 8X - Resolución Máxima",
+      "metaTitle": "Escalar 8X - Ampliación Máxima de Imagen | MyImageUpscaler",
+      "metaDescription": "Escala imagen 8X con IA. Resolución máxima para impresión de gran formato. Mejora fotos a ultra alta resolución sin perder calidad.",
+      "h1": "Escalar 8X - Resolución Máxima para Uso Profesional",
+      "intro": "Lleva tus imágenes al siguiente nivel con escalado 8X. Aumenta resolución 8 veces para impresiones de gran formato y usos profesionales.",
+      "primaryKeyword": "escalar 8x",
+      "lastUpdated": "2026-01-06",
+      "category": "scale"
+    }
+  ],
+  "meta": {
+    "totalPages": 3,
+    "lastUpdated": "2026-01-06"
+  }
+}

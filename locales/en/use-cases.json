@@ -1,0 +1,1492 @@
+{
+  "category": "use-cases",
+  "pages": [
+    {
+      "slug": "ecommerce-product-photos",
+      "title": "E-commerce Product Photos",
+      "metaTitle": "E-commerce Product Photo Requirements by Platform | MyImageUpscaler",
+      "metaDescription": "Exact image requirements for Amazon, eBay, Etsy, Shopify. Learn minimum sizes, aspect ratios, and how to upscale product photos to meet platform standards.",
+      "h1": "E-commerce Product Photo Requirements",
+      "intro": "Every marketplace has specific image requirements. Here's exactly what you need for each platform and how to get there.",
+      "primaryKeyword": "ecommerce product photos",
+      "secondaryKeywords": [
+        "product image requirements",
+        "amazon photo size",
+        "ebay image requirements",
+        "etsy photo dimensions"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Specific image requirements for major e-commerce platforms with guidance on how to meet them.",
+      "platformRequirements": [
+        {
+          "platform": "Amazon",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (for zoom)",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 preferred",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Pure white (RGB 255,255,255) for main image",
+          "notes": "Product must fill 85% of frame. No watermarks, logos, or text on main image."
+        },
+        {
+          "platform": "eBay",
+          "minimumSize": "500x500px",
+          "recommendedSize": "1600x1600px",
+          "maxFileSize": "12MB",
+          "aspectRatio": "1:1 preferred",
+          "format": "JPEG, PNG, GIF, TIFF, BMP",
+          "background": "White or light gray preferred",
+          "notes": "Up to 24 images per listing. No borders, watermarks, or promotional text."
+        },
+        {
+          "platform": "Etsy",
+          "minimumSize": "2000px shortest side",
+          "recommendedSize": "2700x2025px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3 recommended",
+          "format": "JPEG, PNG, GIF",
+          "background": "Your choice - lifestyle shots work well",
+          "notes": "First image is thumbnail. 5:4 ratio for shop icon."
+        },
+        {
+          "platform": "Shopify",
+          "minimumSize": "No minimum",
+          "recommendedSize": "2048x2048px",
+          "maxFileSize": "20MB",
+          "aspectRatio": "1:1 for consistency",
+          "format": "JPEG, PNG, GIF, HEIC, WebP",
+          "background": "Theme-dependent",
+          "notes": "Consistent sizing across products improves appearance. Automatic WebP conversion."
+        },
+        {
+          "platform": "WooCommerce",
+          "minimumSize": "Theme-dependent",
+          "recommendedSize": "1200x1200px minimum",
+          "maxFileSize": "Server-dependent",
+          "aspectRatio": "Configure in theme settings",
+          "format": "JPEG, PNG, GIF, WebP",
+          "background": "Theme-dependent",
+          "notes": "Enable image regeneration after changing thumbnail sizes."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Supplier images are too small",
+          "solution": "Upscale to at least 2000x2000px. Most supplier images are 500-800px - upscale 3-4x for zoom functionality.",
+          "howTo": "Upload to upscaler, select 4x, download. A 500px image becomes 2000px."
+        },
+        {
+          "problem": "Images have wrong background color",
+          "solution": "Amazon requires pure white (255,255,255). Use a background removal tool before upscaling.",
+          "howTo": "Remove background first, add white background, then upscale if needed."
+        },
+        {
+          "problem": "Product doesn't fill enough of the frame",
+          "solution": "Crop image before upscaling to center product. Then upscale to meet minimum size.",
+          "howTo": "Crop to product with minimal margins, then upscale 2-4x to reach 2000px."
+        },
+        {
+          "problem": "Images are blurry after upscaling",
+          "solution": "AI upscaling preserves sharpness, but very low quality sources have limits. Use highest quality source available.",
+          "howTo": "Request higher resolution from supplier, or enhance before upscaling."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Check source image size",
+          "description": "Right-click image, check properties/dimensions. Note current size."
+        },
+        {
+          "step": 2,
+          "title": "Calculate needed upscale factor",
+          "description": "If source is 500px and you need 2000px, that's 4x upscaling."
+        },
+        {
+          "step": 3,
+          "title": "Upscale image",
+          "description": "Upload to upscaler, select appropriate factor, download result."
+        },
+        {
+          "step": 4,
+          "title": "Verify output",
+          "description": "Check final dimensions meet platform requirements. Verify text/logos remain sharp."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What resolution do Amazon product images need?",
+          "answer": "Amazon requires minimum 1000x1000px, but recommends 2000x2000px or larger to enable zoom functionality. The zoom feature activates when hovering on images 1500px or larger."
+        },
+        {
+          "question": "Can I use the same image on all platforms?",
+          "answer": "Yes, if you prepare for the most demanding requirements. Create 2000x2000px images on pure white background - these work on Amazon, eBay, and Etsy with cropping."
+        },
+        {
+          "question": "Will upscaled images pass Amazon's quality check?",
+          "answer": "AI-upscaled images typically pass if the source wasn't extremely low quality. Avoid upscaling images smaller than 300px - request better source images from suppliers instead."
+        },
+        {
+          "question": "How do I handle different aspect ratios?",
+          "answer": "Most platforms prefer 1:1 (square). If your product is rectangular, either add white space to make it square, or crop to fit. Amazon's main image must be square."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["background-removal-guide"]
+    },
+    {
+      "slug": "real-estate-listings",
+      "title": "Real Estate Photo Guidelines",
+      "metaTitle": "Real Estate Photo Requirements by Platform | MLS, Zillow, Realtor.com",
+      "metaDescription": "Image requirements for MLS, Zillow, Realtor.com, and Redfin. Learn optimal sizes, aspect ratios, and how to prepare listing photos.",
+      "h1": "Real Estate Listing Photo Requirements",
+      "intro": "Different real estate platforms have different image specifications. Here's what you need for the major listing sites.",
+      "primaryKeyword": "real estate listing photos",
+      "secondaryKeywords": [
+        "mls photo requirements",
+        "zillow image size",
+        "real estate photography"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Real Estate",
+      "description": "Specific image requirements for real estate listing platforms with guidance on meeting them.",
+      "platformRequirements": [
+        {
+          "platform": "MLS (varies by region)",
+          "minimumSize": "640x480px typical minimum",
+          "recommendedSize": "2048x1536px or larger",
+          "maxFileSize": "5-15MB (varies)",
+          "aspectRatio": "4:3 most common",
+          "format": "JPEG",
+          "notes": "Requirements vary by regional MLS. Check your local MLS guidelines. Most accept up to 50 photos."
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3 preferred",
+          "format": "JPEG, PNG",
+          "notes": "Up to 200 photos. First photo appears in search results - make it count."
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Syncs from MLS. Higher resolution images get priority in search rankings."
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px or larger",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Emphasizes photo quality in listings. HDR photos perform well."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Phone photos look too dark",
+          "solution": "Use our Photo Enhancer to improve exposure and shadows. Works well for interior shots.",
+          "howTo": "Upload to Photo Enhancer, let AI auto-correct exposure, then upscale if needed."
+        },
+        {
+          "problem": "Wide-angle lens distortion",
+          "solution": "Distortion correction should be done before upscaling. Most editing apps have lens correction.",
+          "howTo": "Apply lens correction in Lightroom/Photos app first, then upscale the corrected image."
+        },
+        {
+          "problem": "Images from older phone are too small",
+          "solution": "Upscale 2x for 2-3 year old phones, 3-4x for older phones to meet current standards.",
+          "howTo": "A 1080x810px image upscaled 2x becomes 2160x1620px - above Zillow's recommended size."
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "Shoot during golden hour",
+          "description": "Early morning or late afternoon light is most flattering. Avoid harsh midday shadows."
+        },
+        {
+          "tip": "Use a tripod for interiors",
+          "description": "Allows longer exposure for brighter interiors without blur. Essential for low-light rooms."
+        },
+        {
+          "tip": "Capture exterior first",
+          "description": "Exterior photos work best in morning light. Schedule shoot to start outside."
+        },
+        {
+          "tip": "Stage rooms before shooting",
+          "description": "Remove clutter, personal items, and distracting objects. Less is more."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What's the best photo size for Zillow?",
+          "answer": "Zillow recommends 2048x1536px minimum. Larger images (up to 50MB) display better on large screens and mobile pinch-to-zoom."
+        },
+        {
+          "question": "Should I use HDR for real estate photos?",
+          "answer": "HDR helps with interior shots where windows are bright but rooms are dark. Use natural-looking HDR, not over-processed styles."
+        },
+        {
+          "question": "How many photos should a listing have?",
+          "answer": "25-50 photos is optimal for most properties. Include exterior, all rooms, key features, and neighborhood context."
+        },
+        {
+          "question": "Can I upscale photos taken with an old phone?",
+          "answer": "Yes, but quality depends on the source. iPhone 6 era photos (2-3MP) can upscale reasonably to 4-6MP. Very old photos have limits."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["interior-photography-tips"]
+    },
+    {
+      "slug": "social-media-images",
+      "title": "Social Media Image Sizes",
+      "metaTitle": "Social Media Image Size Guide 2025 | Instagram, Facebook, Twitter, LinkedIn",
+      "metaDescription": "Complete guide to social media image dimensions. Optimal sizes for Instagram, Facebook, Twitter, LinkedIn, TikTok, and Pinterest with exact pixel dimensions.",
+      "h1": "Social Media Image Size Guide",
+      "intro": "Every platform has different optimal image sizes. Here are the exact dimensions for each platform in 2025.",
+      "primaryKeyword": "social media image size",
+      "secondaryKeywords": [
+        "instagram image size",
+        "facebook photo dimensions",
+        "twitter image size",
+        "linkedin image dimensions"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Social Media",
+      "description": "Complete reference for social media image dimensions with platform-specific requirements.",
+      "platformRequirements": [
+        {
+          "platform": "Instagram",
+          "imageTypes": [
+            { "type": "Square Post", "dimensions": "1080x1080px", "aspectRatio": "1:1" },
+            { "type": "Portrait Post", "dimensions": "1080x1350px", "aspectRatio": "4:5" },
+            { "type": "Landscape Post", "dimensions": "1080x566px", "aspectRatio": "1.91:1" },
+            { "type": "Story/Reel", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Profile Picture", "dimensions": "320x320px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Portrait (4:5) gets more screen real estate in feeds. Stories are 9:16 vertical."
+        },
+        {
+          "platform": "Facebook",
+          "imageTypes": [
+            { "type": "Shared Image", "dimensions": "1200x630px", "aspectRatio": "1.91:1" },
+            { "type": "Square Post", "dimensions": "1200x1200px", "aspectRatio": "1:1" },
+            { "type": "Cover Photo", "dimensions": "820x312px (desktop)", "aspectRatio": "2.63:1" },
+            { "type": "Profile Picture", "dimensions": "170x170px", "aspectRatio": "1:1" },
+            { "type": "Story", "dimensions": "1080x1920px", "aspectRatio": "9:16" }
+          ],
+          "notes": "Cover photo displays differently on mobile (640x360px visible area). Center important content."
+        },
+        {
+          "platform": "Twitter/X",
+          "imageTypes": [
+            { "type": "In-Stream Image", "dimensions": "1600x900px", "aspectRatio": "16:9" },
+            { "type": "Single Image", "dimensions": "1200x675px", "aspectRatio": "16:9" },
+            { "type": "Two Images", "dimensions": "700x800px each", "aspectRatio": "7:8" },
+            { "type": "Profile Picture", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "Header", "dimensions": "1500x500px", "aspectRatio": "3:1" }
+          ],
+          "notes": "16:9 images display best in timeline. Square images get cropped."
+        },
+        {
+          "platform": "LinkedIn",
+          "imageTypes": [
+            { "type": "Shared Image", "dimensions": "1200x627px", "aspectRatio": "1.91:1" },
+            { "type": "Company Cover", "dimensions": "1128x191px", "aspectRatio": "5.9:1" },
+            { "type": "Profile Picture", "dimensions": "400x400px", "aspectRatio": "1:1" },
+            { "type": "Background", "dimensions": "1584x396px", "aspectRatio": "4:1" }
+          ],
+          "notes": "Professional photos perform better. Avoid filters and heavy effects."
+        },
+        {
+          "platform": "TikTok",
+          "imageTypes": [
+            { "type": "Video/Photo", "dimensions": "1080x1920px", "aspectRatio": "9:16" },
+            { "type": "Profile Picture", "dimensions": "200x200px", "aspectRatio": "1:1" }
+          ],
+          "notes": "Vertical 9:16 is required. Horizontal content gets letterboxed."
+        },
+        {
+          "platform": "Pinterest",
+          "imageTypes": [
+            { "type": "Standard Pin", "dimensions": "1000x1500px", "aspectRatio": "2:3" },
+            { "type": "Long Pin", "dimensions": "1000x2100px", "aspectRatio": "1:2.1" },
+            { "type": "Square Pin", "dimensions": "1000x1000px", "aspectRatio": "1:1" },
+            { "type": "Profile Picture", "dimensions": "165x165px", "aspectRatio": "1:1" }
+          ],
+          "notes": "2:3 vertical pins perform best. Taller pins get more visibility in feed."
+        }
+      ],
+      "upscalingGuide": [
+        {
+          "scenario": "Old photo for Instagram",
+          "source": "640x480px landscape photo",
+          "target": "1080x1080px square post",
+          "solution": "Upscale 2x to 1280x960px, then crop to square 960x960px, upscale to 1080x1080px"
+        },
+        {
+          "scenario": "Screenshot for Twitter",
+          "source": "750x500px screenshot",
+          "target": "1600x900px for timeline",
+          "solution": "Upscale 2x to 1500x1000px, add padding or crop to 16:9 aspect ratio"
+        },
+        {
+          "scenario": "Product photo for Pinterest",
+          "source": "800x800px product shot",
+          "target": "1000x1500px vertical pin",
+          "solution": "Upscale to 1200x1200px, add vertical space above/below for 2:3 ratio"
+        }
+      ],
+      "faq": [
+        {
+          "question": "What's the best size for Instagram posts?",
+          "answer": "1080x1350px (4:5 portrait) takes up the most feed space. 1080x1080px (square) is also standard. Avoid landscape - it appears smaller in feeds."
+        },
+        {
+          "question": "Why do my images look blurry on Instagram?",
+          "answer": "Instagram compresses images. Upload at exactly 1080px width to avoid resampling. Higher resolution images get downscaled and can lose sharpness."
+        },
+        {
+          "question": "Should I upscale images for social media?",
+          "answer": "Upscale if your source is below platform minimums. But don't upscale beyond platform recommendations - a 4000px image will be compressed to 1080px anyway."
+        },
+        {
+          "question": "What format should I use?",
+          "answer": "JPEG for photos (smaller file, good enough quality). PNG for graphics with text or transparency. All platforms accept both."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["image-compression-guide"]
+    },
+    {
+      "slug": "print-preparation",
+      "title": "Print Size Guide",
+      "metaTitle": "Image Resolution for Printing Guide | DPI Calculator & Size Chart",
+      "metaDescription": "Calculate exact pixel dimensions for any print size. DPI requirements, paper sizes, and how to prepare images for professional printing.",
+      "h1": "Print Resolution Guide",
+      "intro": "Print requires higher resolution than screen display. Here's exactly what you need for different print sizes.",
+      "primaryKeyword": "image resolution for printing",
+      "secondaryKeywords": [
+        "print dpi requirements",
+        "photo print size",
+        "pixels to inches",
+        "300 dpi image size"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Photography & Printing",
+      "description": "Complete guide to preparing images for print with DPI requirements and size calculations.",
+      "dpiExplanation": {
+        "title": "Understanding DPI",
+        "content": "DPI (Dots Per Inch) determines print quality. Standard photo printing requires 300 DPI. Lower DPI results in visible pixels. Higher DPI offers no visible benefit but increases file size.",
+        "recommendations": [
+          {
+            "quality": "Professional prints",
+            "dpi": "300 DPI",
+            "use": "Photos, art prints, magazines"
+          },
+          { "quality": "Standard prints", "dpi": "240-300 DPI", "use": "Home printing, snapshots" },
+          {
+            "quality": "Large format (viewing distance 3ft+)",
+            "dpi": "150-200 DPI",
+            "use": "Posters, banners"
+          },
+          {
+            "quality": "Billboards (viewing distance 10ft+)",
+            "dpi": "50-100 DPI",
+            "use": "Large outdoor displays"
+          }
+        ]
+      },
+      "printSizeChart": [
+        {
+          "size": "4x6 inches",
+          "pixels300dpi": "1200x1800",
+          "pixels240dpi": "960x1440",
+          "megapixels": "2.2 MP"
+        },
+        {
+          "size": "5x7 inches",
+          "pixels300dpi": "1500x2100",
+          "pixels240dpi": "1200x1680",
+          "megapixels": "3.2 MP"
+        },
+        {
+          "size": "8x10 inches",
+          "pixels300dpi": "2400x3000",
+          "pixels240dpi": "1920x2400",
+          "megapixels": "7.2 MP"
+        },
+        {
+          "size": "11x14 inches",
+          "pixels300dpi": "3300x4200",
+          "pixels240dpi": "2640x3360",
+          "megapixels": "13.9 MP"
+        },
+        {
+          "size": "16x20 inches",
+          "pixels300dpi": "4800x6000",
+          "pixels240dpi": "3840x4800",
+          "megapixels": "28.8 MP"
+        },
+        {
+          "size": "20x24 inches",
+          "pixels300dpi": "6000x7200",
+          "pixels240dpi": "4800x5760",
+          "megapixels": "43.2 MP"
+        },
+        {
+          "size": "24x36 inches",
+          "pixels300dpi": "7200x10800",
+          "pixels240dpi": "5760x8640",
+          "megapixels": "77.8 MP"
+        },
+        {
+          "size": "A4 (8.27x11.69 inches)",
+          "pixels300dpi": "2480x3508",
+          "pixels240dpi": "1984x2806",
+          "megapixels": "8.7 MP"
+        },
+        {
+          "size": "A3 (11.69x16.54 inches)",
+          "pixels300dpi": "3508x4961",
+          "pixels240dpi": "2806x3969",
+          "megapixels": "17.4 MP"
+        }
+      ],
+      "calculationFormula": {
+        "title": "Calculate Required Pixels",
+        "formula": "Pixels = Print Size (inches) × DPI",
+        "example": "For 8x10 inch print at 300 DPI: 8×300 = 2400 pixels wide, 10×300 = 3000 pixels tall"
+      },
+      "upscalingForPrint": [
+        {
+          "scenario": "Smartphone photo to 8x10 print",
+          "source": "4032x3024px (12MP iPhone)",
+          "requirement": "2400x3000px at 300 DPI",
+          "solution": "Already sufficient - no upscaling needed. Crop to 4:5 aspect ratio."
+        },
+        {
+          "scenario": "Web image to 8x10 print",
+          "source": "800x600px web image",
+          "requirement": "2400x3000px at 300 DPI",
+          "solution": "Upscale 4x to 3200x2400px, crop to 2400x3000px or add canvas space."
+        },
+        {
+          "scenario": "Instagram photo to poster",
+          "source": "1080x1080px",
+          "requirement": "7200x7200px for 24x24 poster at 300 DPI",
+          "solution": "Upscale 8x to 8640x8640px. Quality may be limited - consider 150 DPI for large format."
+        }
+      ],
+      "printingTips": [
+        {
+          "tip": "Use sRGB color profile for consumer printing",
+          "description": "Most consumer printers and print services expect sRGB. Convert from Adobe RGB if needed."
+        },
+        {
+          "tip": "Add bleed for edge-to-edge prints",
+          "description": "Add 0.125 inches (37.5 pixels at 300 DPI) to each edge for professional prints with full bleed."
+        },
+        {
+          "tip": "Proof on screen at actual size",
+          "description": "View at 100% zoom to check for visible pixels or artifacts before printing."
+        },
+        {
+          "tip": "Save as TIFF or high-quality JPEG",
+          "description": "TIFF is lossless. If using JPEG, export at 95-100% quality to avoid compression artifacts."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What DPI do I need for printing photos?",
+          "answer": "300 DPI is the standard for photo prints up to 16x20 inches. For larger prints viewed from distance (posters, banners), 150-200 DPI is acceptable."
+        },
+        {
+          "question": "Can I upscale a small image for a large print?",
+          "answer": "AI upscaling works well for 2-4x enlargement. Beyond that, quality depends on source. A 1000px image can reasonably become a 4000px (8x10 at 300 DPI) print."
+        },
+        {
+          "question": "Why does my print look pixelated?",
+          "answer": "Insufficient resolution. Check if your source image has enough pixels for the print size at 300 DPI. Use the chart above to verify."
+        },
+        {
+          "question": "What's the maximum print size for my image?",
+          "answer": "Divide pixel dimensions by 300 for max size at full quality. A 3000x2000px image prints at 10x6.7 inches at 300 DPI, or 20x13.3 inches at 150 DPI."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "old-photo-restoration",
+      "title": "Old Photo Restoration",
+      "metaTitle": "How to Restore Old Photos | Scanning & Enhancement Guide",
+      "metaDescription": "Complete guide to restoring old and damaged photos. Scanning tips, enhancement workflow, and realistic expectations for photo restoration.",
+      "h1": "Old Photo Restoration Guide",
+      "intro": "Restoring old photos involves multiple steps: proper scanning, enhancement, and realistic expectations about what's possible.",
+      "primaryKeyword": "restore old photos",
+      "secondaryKeywords": [
+        "restore old photos",
+        "fix damaged photos",
+        "photo restoration",
+        "vintage photo enhancement"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Photo Restoration",
+      "description": "Step-by-step guide to restoring old and damaged photos with realistic expectations.",
+      "scanningGuide": {
+        "title": "Scanning Old Photos",
+        "steps": [
+          {
+            "step": 1,
+            "title": "Clean the scanner bed",
+            "description": "Dust and fingerprints on the glass will appear in your scan. Use microfiber cloth."
+          },
+          {
+            "step": 2,
+            "title": "Handle photos carefully",
+            "description": "Old photos are fragile. Use cotton gloves if available. Don't force bent photos flat."
+          },
+          {
+            "step": 3,
+            "title": "Scan at 600 DPI minimum",
+            "description": "Higher resolution gives more detail to work with. 1200 DPI for severely damaged photos."
+          },
+          {
+            "step": 4,
+            "title": "Scan as TIFF, not JPEG",
+            "description": "TIFF is lossless and preserves all detail. Convert to JPEG only after editing."
+          },
+          {
+            "step": 5,
+            "title": "Scan in color, even for B&W",
+            "description": "Color scanning captures subtle tones that help with restoration."
+          }
+        ]
+      },
+      "damageTypes": [
+        {
+          "type": "Fading/yellowing",
+          "description": "Colors have shifted or faded over time",
+          "canFix": "Yes - AI can restore original color balance and saturation",
+          "limitations": "Severely faded images may lack detail to recover"
+        },
+        {
+          "type": "Scratches and creases",
+          "description": "Physical damage visible as lines or marks",
+          "canFix": "Partial - AI can reduce visibility, not fully remove",
+          "limitations": "Deep scratches or creases through faces are difficult"
+        },
+        {
+          "type": "Blur/soft focus",
+          "description": "Image lacks sharpness or was out of focus",
+          "canFix": "Partial - moderate blur can be improved",
+          "limitations": "Severe blur cannot be fully fixed - the detail wasn't captured"
+        },
+        {
+          "type": "Missing sections/tears",
+          "description": "Parts of the photo are torn or missing",
+          "canFix": "No - AI cannot reconstruct missing image data",
+          "limitations": "Requires manual retouching by a professional"
+        },
+        {
+          "type": "Water damage/staining",
+          "description": "Discoloration from moisture or spills",
+          "canFix": "Partial - color correction helps, but texture loss is permanent",
+          "limitations": "Areas where emulsion is lifted can't be recovered"
+        }
+      ],
+      "restorationWorkflow": [
+        {
+          "step": 1,
+          "title": "Scan at high resolution",
+          "description": "600+ DPI as TIFF. This is your master file - don't edit the original."
+        },
+        {
+          "step": 2,
+          "title": "Make a working copy",
+          "description": "Duplicate the scan. Work on the copy, keep the original untouched."
+        },
+        {
+          "step": 3,
+          "title": "Crop and straighten",
+          "description": "Remove borders, scanner artifacts. Straighten if photo was scanned crooked."
+        },
+        {
+          "step": 4,
+          "title": "Run through Photo Enhancer",
+          "description": "AI enhancement improves color, reduces noise, and sharpens details."
+        },
+        {
+          "step": 5,
+          "title": "Upscale if needed",
+          "description": "If you need larger dimensions, upscale after enhancement for best quality."
+        },
+        {
+          "step": 6,
+          "title": "Export appropriately",
+          "description": "TIFF for archival, high-quality JPEG for sharing and printing."
+        }
+      ],
+      "realisticExpectations": {
+        "title": "What AI Restoration Can and Cannot Do",
+        "canDo": [
+          "Improve color balance and remove yellowing",
+          "Reduce visibility of minor scratches",
+          "Sharpen soft focus and add apparent detail",
+          "Reduce noise and film grain",
+          "Increase resolution for printing"
+        ],
+        "cannotDo": [
+          "Reconstruct missing or torn sections",
+          "Fix completely out-of-focus images",
+          "Remove deep scratches or creases perfectly",
+          "Add detail that was never captured",
+          "Restore photos that are almost completely destroyed"
+        ]
+      },
+      "faq": [
+        {
+          "question": "Can you restore a torn photo?",
+          "answer": "AI can't reconstruct missing sections. For torn photos, the sections must be scanned together and manually aligned, then retouched by hand. AI can then enhance the combined result."
+        },
+        {
+          "question": "What resolution should I scan old photos?",
+          "answer": "Minimum 600 DPI for standard photos. 1200 DPI for small prints or those with fine detail. Higher is better - you can always downscale later."
+        },
+        {
+          "question": "Should I restore color to black and white photos?",
+          "answer": "That's colorization, a different process. Our tools enhance existing content - we don't add color to B&W. Colorization AI is a separate category."
+        },
+        {
+          "question": "How much improvement can I expect?",
+          "answer": "Moderately damaged photos see significant improvement. Severely damaged photos will look better but won't become perfect. Very old photos (pre-1900) have inherent limitations."
+        }
+      ],
+      "relatedTools": ["ai-photo-enhancer", "ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "amazon-product-photos",
+      "title": "Amazon Product Photo Upscaling",
+      "metaTitle": "Upscale Product Photos for Amazon Listings | MyImageUpscaler",
+      "metaDescription": "Meet Amazon's 2000x2000px image requirement with AI upscaling. Turn supplier photos into zoom-ready product images. Free tool, no watermarks.",
+      "h1": "Upscale Product Photos for Amazon",
+      "intro": "Amazon requires minimum 1000x1000px images and recommends 2000x2000px for zoom. Here's how to upscale supplier photos to meet these requirements.",
+      "primaryKeyword": "upscale product photos amazon",
+      "secondaryKeywords": [
+        "amazon product image size",
+        "amazon listing photos",
+        "amazon image requirements 2025",
+        "upscale supplier photos",
+        "amazon zoom image size",
+        "fba product photography"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Complete guide to preparing product images for Amazon listings, including size requirements, white background standards, and AI upscaling workflow.",
+      "platformRequirements": [
+        {
+          "platform": "Amazon Main Image",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px (for zoom)",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 (square)",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Pure white (RGB 255,255,255)",
+          "notes": "Product must fill 85% of frame. No text, logos, watermarks, or borders."
+        },
+        {
+          "platform": "Amazon Additional Images",
+          "minimumSize": "1000x1000px",
+          "recommendedSize": "2000x2000px",
+          "maxFileSize": "10MB",
+          "aspectRatio": "1:1 preferred",
+          "format": "JPEG, PNG, GIF, TIFF",
+          "background": "Any (lifestyle shots allowed)",
+          "notes": "Can show product in use, packaging, size comparison, and infographics."
+        },
+        {
+          "platform": "Amazon A+ Content",
+          "minimumSize": "Varies by module",
+          "recommendedSize": "Up to 970px wide",
+          "maxFileSize": "2MB per image",
+          "aspectRatio": "Various (module dependent)",
+          "format": "JPEG, PNG",
+          "background": "Theme-appropriate",
+          "notes": "Higher resolution images display better on desktop and mobile A+ modules."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Supplier images are only 500-800px",
+          "solution": "Use AI upscaling to enlarge 3-4x. A 500px image becomes 2000px with zoom capability.",
+          "howTo": "Upload supplier image, select 4x upscale, download at 2000x2000px or larger."
+        },
+        {
+          "problem": "Images rejected for not meeting 1000px minimum",
+          "solution": "Upscale first, then crop to square 1:1 ratio if needed.",
+          "howTo": "Upscale to at least 1200px, then crop to 1000x1000px or 2000x2000px square."
+        },
+        {
+          "problem": "Zoom feature not working on listing",
+          "solution": "Amazon zoom requires 1500px minimum on longest side, recommends 2000px+.",
+          "howTo": "Upscale all product images to 2000x2000px to ensure zoom works."
+        },
+        {
+          "problem": "Product details look blurry after upscaling",
+          "solution": "AI upscaling preserves text and fine details unlike traditional resizing.",
+          "howTo": "Use AI upscaler specifically trained for product photography and text preservation."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Audit source image quality",
+          "description": "Check original dimensions. Images under 300px may not upscale well for Amazon."
+        },
+        {
+          "step": 2,
+          "title": "Remove or replace background",
+          "description": "For main image, ensure pure white background (255,255,255) before upscaling."
+        },
+        {
+          "step": 3,
+          "title": "Upload to AI upscaler",
+          "description": "Select 4x upscale for 500px images, 2x for 1000px images to reach 2000px target."
+        },
+        {
+          "step": 4,
+          "title": "Crop to 1:1 ratio",
+          "description": "Ensure final image is square with product filling 85% of frame."
+        },
+        {
+          "step": 5,
+          "title": "Verify file size and format",
+          "description": "Save as JPEG under 10MB. Use 85-95% quality for best size/quality balance."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What image size does Amazon require for product photos?",
+          "answer": "Amazon requires minimum 1000x1000px but strongly recommends 2000x2000px or larger. The zoom feature only activates on images 1500px or larger on the longest side, and 2000px+ provides the best customer experience."
+        },
+        {
+          "question": "Can I upscale dropshipping supplier photos for Amazon?",
+          "answer": "Yes, AI upscaling works well for supplier photos typically ranging from 500-800px. Upscale 3-4x to reach Amazon's 2000px recommendation. Ensure you have rights to use the images commercially."
+        },
+        {
+          "question": "Will upscaled images pass Amazon's quality check?",
+          "answer": "AI-upscaled images typically pass Amazon's automated checks if the source wasn't extremely low quality. Focus on source images above 300px for best results. Product details and text remain sharp through the upscaling process."
+        },
+        {
+          "question": "Why do my Amazon images not have zoom?",
+          "answer": "Amazon's zoom feature requires images to be at least 1500px on the longest side, with 2000px+ recommended. Upscale your images to 2000x2000px to ensure zoom works for all customers."
+        },
+        {
+          "question": "What's the best format for Amazon product images?",
+          "answer": "JPEG is preferred for most product photos due to smaller file sizes. Use 85-95% quality setting. PNG is better only if you need transparency (though Amazon main images require white backgrounds anyway)."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "real-estate-photo-enhancement",
+      "title": "Real Estate Photo Enhancement",
+      "metaTitle": "Enhance Real Estate Photos with AI | Property Listing Images",
+      "metaDescription": "Transform property photos with AI enhancement. Fix lighting, upscale resolution, and make listings stand out. Used by agents and photographers.",
+      "h1": "AI Real Estate Photo Enhancement",
+      "intro": "Professional-looking listing photos sell properties faster. Enhance and upscale property images to meet MLS standards and outshine the competition.",
+      "primaryKeyword": "real estate photography enhancement",
+      "secondaryKeywords": [
+        "property photo editing",
+        "real estate image enhancement",
+        "listing photo enhancement",
+        "mls photo quality",
+        "property listing images",
+        "real estate photography editing"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Real Estate",
+      "description": "Comprehensive guide to enhancing real estate photos for MLS, Zillow, and other property listing platforms using AI tools.",
+      "platformRequirements": [
+        {
+          "platform": "MLS (Most Systems)",
+          "minimumSize": "640x480px",
+          "recommendedSize": "2048x1536px or larger",
+          "maxFileSize": "10-15MB varies",
+          "aspectRatio": "4:3 most common",
+          "format": "JPEG",
+          "notes": "Higher quality photos get more views. Many MLS systems now support HD images."
+        },
+        {
+          "platform": "Zillow",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px+",
+          "maxFileSize": "50MB",
+          "aspectRatio": "4:3 preferred",
+          "format": "JPEG, PNG",
+          "notes": "First photo is crucial - it appears in search results. High-res images rank better."
+        },
+        {
+          "platform": "Realtor.com",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2560x1920px",
+          "maxFileSize": "100MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Higher resolution images receive priority placement in search results."
+        },
+        {
+          "platform": "Redfin",
+          "minimumSize": "1024x768px",
+          "recommendedSize": "2048x1536px+",
+          "maxFileSize": "20MB",
+          "aspectRatio": "4:3",
+          "format": "JPEG",
+          "notes": "Quality photos directly impact listing views and inquiries."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Interior photos are too dark",
+          "solution": "AI enhancement automatically corrects exposure and brings out shadow detail.",
+          "howTo": "Upload to photo enhancer, let AI auto-correct, then upscale if resolution is insufficient."
+        },
+        {
+          "problem": "Older phone photos lack resolution",
+          "solution": "Upscale 2-3x to meet modern standards. A 1200px photo becomes 2400-3600px.",
+          "howTo": "Upload to AI upscaler, select 2x or 3x, verify output meets platform requirements."
+        },
+        {
+          "problem": "Window blow-out from bright exteriors",
+          "solution": "AI enhancement can recover some window detail and balance interior/exterior exposure.",
+          "howTo": "Run through enhancer first, then upscale the corrected image."
+        },
+        {
+          "problem": "Photos from previous agent are low quality",
+          "solution": "Enhance and upscale existing photos while scheduling new professional photography.",
+          "howTo": "Process batch through enhancer and upscaler to improve immediately."
+        }
+      ],
+      "photographyTips": [
+        {
+          "tip": "Shoot during golden hour for exteriors",
+          "description": "Early morning or late afternoon provides flattering natural light without harsh shadows."
+        },
+        {
+          "tip": "Turn on all interior lights",
+          "description": "Even during day shoots, interior lights add warmth and make spaces feel inviting."
+        },
+        {
+          "tip": "Use a tripod for consistent results",
+          "description": "Tripod allows longer exposures for brighter interiors and ensures level horizons."
+        },
+        {
+          "tip": "Shoot from corners for maximum space",
+          "description": "Shooting from room corners shows two walls and makes spaces appear larger."
+        },
+        {
+          "tip": "Stage before shooting",
+          "description": "Remove personal items, close toilet lids, arrange furniture to show traffic flow."
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Assess existing photo quality",
+          "description": "Check resolution, exposure, and composition. Identify which images need enhancement vs. reshoot."
+        },
+        {
+          "step": 2,
+          "title": "Run AI enhancement first",
+          "description": "Upload to photo enhancer to fix exposure, color balance, and clarity before upscaling."
+        },
+        {
+          "step": 3,
+          "title": "Upscale to target resolution",
+          "description": "Enlarge enhanced photos to 2048px or higher for optimal display on listing sites."
+        },
+        {
+          "step": 4,
+          "title": "Export in correct format",
+          "description": "Save as JPEG at 85-95% quality. Most MLS systems require JPEG format."
+        },
+        {
+          "step": 5,
+          "title": "Order photos strategically",
+          "description": "Lead with best exterior shot, then key rooms. First photo appears in search results."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Can AI enhancement replace professional real estate photography?",
+          "answer": "AI enhancement dramatically improves existing photos but doesn't replace professional photography for high-value listings. Use enhancement to improve good photos or as a temporary solution while scheduling a professional shoot."
+        },
+        {
+          "question": "What resolution should real estate photos be?",
+          "answer": "Aim for 2048x1536px minimum. This meets requirements for Zillow, MLS, and Realtor.com while providing sharp images on both desktop and mobile. Higher resolution (2560px+) can improve search ranking on some platforms."
+        },
+        {
+          "question": "How do I fix dark interior photos?",
+          "answer": "AI photo enhancement automatically corrects exposure and brightens shadows. Upload your dark interior shot, let the AI analyze and correct, then download the improved version. For best results, enhance before upscaling."
+        },
+        {
+          "question": "Will enhanced photos look fake or over-processed?",
+          "answer": "Quality AI enhancement produces natural-looking results. Avoid tools that create the over-saturated, HDR-heavy look that buyers distrust. Our enhancer prioritizes realistic corrections over dramatic effects."
+        },
+        {
+          "question": "How many photos should a real estate listing have?",
+          "answer": "25-50 photos is optimal for most properties. Include exterior, all main rooms, key features (kitchen, bathrooms, closets), and any unique selling points. Quality matters more than quantity - 25 great photos beat 50 mediocre ones."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "anime-image-upscaler",
+      "title": "Anime Image Upscaler",
+      "metaTitle": "Anime Image Upscaler Online - Upscale Anime & Manga Art | MyImageUpscaler",
+      "metaDescription": "Upscale anime images, manga panels, and illustrations without artifacts. AI preserves clean lines and flat colors. Free online tool for anime fans.",
+      "h1": "Anime Image Upscaler Online",
+      "intro": "Upscale your favorite anime screenshots, manga scans, and digital art while preserving the clean lines and vibrant colors that define anime style.",
+      "primaryKeyword": "anime image upscaler",
+      "secondaryKeywords": [
+        "upscale anime",
+        "anime upscaler online",
+        "manga upscaler",
+        "anime screenshot upscale",
+        "waifu upscaler",
+        "anime wallpaper upscale"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Digital Art & Entertainment",
+      "description": "Specialized guide to upscaling anime images, manga art, and Japanese-style illustrations using AI technology optimized for drawn content.",
+      "contentTypes": [
+        {
+          "type": "Anime Screenshots",
+          "description": "Captures from anime series and movies",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Works well for most modern anime. Older anime (pre-2000) may show more artifacts."
+        },
+        {
+          "type": "Manga Scans",
+          "description": "Scanned manga pages and panels",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Preserves line art and screentones. Remove dust/scratches before upscaling."
+        },
+        {
+          "type": "Digital Anime Art",
+          "description": "Fan art, illustrations, and digital drawings",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Excellent results with clean digital art. Preserves flat colors and sharp edges."
+        },
+        {
+          "type": "Anime Wallpapers",
+          "description": "Desktop and mobile wallpapers",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Upscale to match your screen resolution. 4K monitors need 3840px+ width."
+        },
+        {
+          "type": "Game CGs",
+          "description": "Visual novel and game artwork",
+          "bestScaleFactor": "2x-4x",
+          "notes": "Older VN CGs often need 4x upscaling. Modern games usually sufficient at 2x."
+        }
+      ],
+      "commonProblems": [
+        {
+          "problem": "Upscaling adds unwanted texture or noise",
+          "solution": "AI upscalers trained on anime preserve flat color areas better than general-purpose tools.",
+          "howTo": "Use AI upscaler with our settings optimized for illustration and artwork."
+        },
+        {
+          "problem": "Line art becomes blurry or doubled",
+          "solution": "Quality anime upscaling maintains crisp lines without ghosting or blur.",
+          "howTo": "Start with 2x upscale first. If quality is good, upscale the result again for higher resolution."
+        },
+        {
+          "problem": "JPEG artifacts become more visible after upscaling",
+          "solution": "AI upscaling can reduce JPEG artifacts while enlarging. Use highest quality source available.",
+          "howTo": "If possible, find PNG source. For JPEGs, enhancement before upscaling helps."
+        },
+        {
+          "problem": "Small images become pixelated at 4x",
+          "solution": "Very small sources (under 200px) have limits. Upscale incrementally: 2x, then 2x again.",
+          "howTo": "Upload at 2x first, download result, then upload result for another 2x."
+        }
+      ],
+      "targetResolutions": [
+        {
+          "use": "Phone Wallpaper",
+          "resolution": "1080x2400px (modern phones)",
+          "source": "540x1200px minimum",
+          "scaleFactor": "2x"
+        },
+        {
+          "use": "Desktop Wallpaper (1080p)",
+          "resolution": "1920x1080px",
+          "source": "960x540px minimum",
+          "scaleFactor": "2x"
+        },
+        {
+          "use": "Desktop Wallpaper (1440p)",
+          "resolution": "2560x1440px",
+          "source": "640x360px at 4x, 1280x720px at 2x",
+          "scaleFactor": "2x-4x"
+        },
+        {
+          "use": "Desktop Wallpaper (4K)",
+          "resolution": "3840x2160px",
+          "source": "960x540px at 4x, 1920x1080px at 2x",
+          "scaleFactor": "2x-4x"
+        },
+        {
+          "use": "Print (Poster)",
+          "resolution": "300 DPI at print size",
+          "source": "Calculate: print inches x 300",
+          "scaleFactor": "Varies by source"
+        }
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "Find highest quality source",
+          "description": "Search for PNG versions when possible. Higher source quality means better upscale results."
+        },
+        {
+          "step": 2,
+          "title": "Check current resolution",
+          "description": "Right-click image, view properties. Note dimensions to calculate needed scale factor."
+        },
+        {
+          "step": 3,
+          "title": "Calculate scale factor needed",
+          "description": "For 4K wallpaper (3840px wide) from 960px source, you need 4x upscaling."
+        },
+        {
+          "step": 4,
+          "title": "Upload and upscale",
+          "description": "Select appropriate scale factor. For anime, 2x and 4x typically work best."
+        },
+        {
+          "step": 5,
+          "title": "Review and export",
+          "description": "Check result for artifacts. Download as PNG to preserve quality without further compression."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What's the best upscaler for anime images?",
+          "answer": "AI upscalers work best for anime because they understand the characteristics of drawn content - flat colors, clean lines, and specific shading styles. Traditional upscaling makes anime look blurry, while AI maintains the crisp aesthetic."
+        },
+        {
+          "question": "Can I upscale old anime screenshots to 4K?",
+          "answer": "Yes, but results vary by source quality. Modern anime (post-2010) upscales excellently. Older anime (1990s-2000s) works well with some minor artifacts. Very old anime (1980s) may show visible limitations. Start with 2x and assess quality."
+        },
+        {
+          "question": "How do I upscale manga without losing detail?",
+          "answer": "AI upscaling preserves line art and screentones that define manga. For best results: scan at 600+ DPI if digitizing yourself, clean dust/scratches before upscaling, and use 2x-4x scale factor. PNG format preserves quality better than JPEG."
+        },
+        {
+          "question": "Will upscaling remove JPEG artifacts from anime images?",
+          "answer": "AI upscaling can reduce JPEG compression artifacts while enlarging. However, heavily compressed sources will still show some artifacts. For best results, find the highest quality source available - PNG preferred, high-quality JPEG acceptable."
+        },
+        {
+          "question": "What resolution should anime wallpapers be?",
+          "answer": "Match your screen: 1920x1080 for 1080p displays, 2560x1440 for 1440p, and 3840x2160 for 4K. Phone wallpapers typically need 1080x2400 for modern devices. Upscale your source to these target resolutions."
+        },
+        {
+          "question": "Is there a free anime upscaler?",
+          "answer": "Yes, our AI upscaler handles anime images for free with no watermarks. You can upscale anime screenshots, manga panels, and digital art up to 4x without paying. Premium plans offer batch processing and higher file size limits."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "cartoon-image-upscaler",
+      "title": "Cartoon Image Upscaler",
+      "metaTitle": "Cartoon Image Upscaler Online - Enhance Cartoons & Comics | MyImageUpscaler",
+      "metaDescription": "Upscale cartoon images, comics, and illustrations with AI. Clean lines, vibrant colors preserved. Free online cartoon upscaler.",
+      "h1": "Cartoon Image Upscaler Online",
+      "intro": "Enhance your favorite cartoon screenshots, comic panels, and illustrations while preserving the clean lines and flat colors that define cartoon and comic art styles.",
+      "primaryKeyword": "cartoon image upscaler",
+      "secondaryKeywords": [
+        "cartoon upscaler",
+        "upscale cartoons",
+        "comic image upscaler",
+        "cartoon enlargement",
+        "illustration upscaler"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "description": "Specialized upscaling for cartoon images, Western comics, and illustrated content using AI technology optimized for drawn artwork with flat colors and clean lines.",
+      "imageTypes": [
+        {
+          "type": "Western Cartoons",
+          "description": "Animated series and movies from Western studios",
+          "examples": "Disney, Warner Bros, Cartoon Network content",
+          "notes": "Works well for most modern animated content"
+        },
+        {
+          "type": "Digital Comics",
+          "description": "Digitally created comic books and graphic novels",
+          "examples": "Webcomics, digital-first releases, indie comics",
+          "notes": "Excellent results with clean digital source"
+        },
+        {
+          "type": "Cartoon Illustrations",
+          "description": "Custom artwork and character designs",
+          "examples": "OC art, fan art, commissioned illustrations",
+          "notes": "Preserves artist style and color choices"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Clean Line Preservation",
+          "description": "AI maintains crisp outlines without blurring or ghosting common in traditional upscaling."
+        },
+        {
+          "title": "Flat Color Areas",
+          "description": "Solid color blocks remain smooth without banding or artifacts."
+        },
+        {
+          "title": "Style Consistency",
+          "description": "Upscaled images maintain the original artistic style and appearance."
+        }
+      ],
+      "commonIssues": [
+        {
+          "issue": "Blurry Lines",
+          "solution": "AI upscalers trained on various art styles maintain crisp edges better than standard upscaling."
+        },
+        {
+          "issue": "Color Bleeding",
+          "solution": "Quality AI upscaling respects color boundaries and prevents bleeding between adjacent areas."
+        },
+        {
+          "issue": "Artifacts at High Scale",
+          "solution": "Start with 2x and progressively upscale if needed. Very high scale factors (8x) may show limitations."
+        }
+      ],
+      "bestPractices": [
+        "Start with highest quality source available",
+        "Use PNG format to preserve quality",
+        "Clean dust/scratches from scanned comics before upscaling",
+        "Select appropriate scale factor - 2x and 4x typically work best",
+        "Avoid over-upscaling - 8x may show diminishing returns"
+      ],
+      "faq": [
+        {
+          "question": "What's the best upscaler for cartoon images?",
+          "answer": "AI upscalers work well for cartoons because they understand the characteristics of drawn content - flat colors, clean lines, and specific shading styles. Our AI upscaler handles various cartoon and comic art styles effectively."
+        },
+        {
+          "question": "Can I upscale old comic book panels?",
+          "answer": "Yes! AI upscaling works well with comic book panels, whether scanned from print or digital sources. For best results with scans, clean dust and scratches first, then upscale starting at 2x."
+        },
+        {
+          "question": "Will upscaling damage the art style?",
+          "answer": "No, our AI upscaler is designed to preserve artistic style including line quality, color choices, and overall appearance. The enhancement adds detail without changing the artist's intent."
+        },
+        {
+          "question": "What's the maximum resolution for cartoon wallpapers?",
+          "answer": "You can upscale to 4K (3840x2160) or higher depending on your needs. For modern displays, 1920x1080 (1080p), 2560x1440 (1440p), or 3840x2160 (4K) are common targets."
+        },
+        {
+          "question": "Is there a free cartoon upscaler?",
+          "answer": "Yes! Our AI upscaler handles cartoon and comic images with a free tier. You can upscale cartoons, comics, and illustrations without watermarks. Premium plans offer batch processing for entire collections."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "portrait-photo-upscaler",
+      "title": "Portrait Photo Upscaler",
+      "metaTitle": "Portrait Photo Upscaler - AI Face Enhancement | MyImageUpscaler",
+      "metaDescription": "Upscale portrait photos with AI face enhancement. Improve facial details, skin texture, and overall quality. Free online portrait upscaler.",
+      "h1": "Portrait Photo Upscaler - AI Face Enhancement",
+      "intro": "Transform your portrait photos with specialized AI face enhancement technology. Improve facial features, skin texture, and overall image quality while maintaining natural appearance.",
+      "primaryKeyword": "portrait photo upscaler",
+      "secondaryKeywords": [
+        "portrait enhancer",
+        "face upscaler",
+        "portrait enhancement",
+        "photo enlarger",
+        "face detail enhancement"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "use-cases",
+      "description": "Professional portrait enhancement using AI models specialized for facial feature reconstruction and improvement. Perfect for headshots, social media photos, and professional portraits.",
+      "supportedTiers": {
+        "faceRestore": {
+          "name": "Face Restore",
+          "credits": 2,
+          "model": "GFPGAN",
+          "description": "Photo restoration with facial feature reconstruction"
+        },
+        "facePro": {
+          "name": "Face Pro",
+          "credits": 6,
+          "model": "Flux-2-Pro",
+          "description": "Premium portrait enhancement with advanced facial detail improvement"
+        },
+        "ultra": {
+          "name": "Ultra Quality",
+          "credits": 8,
+          "model": "Nano Banana Pro",
+          "description": "Maximum 4K/8K quality for professional portraits"
+        }
+      },
+      "useCases": [
+        {
+          "title": "Professional Headshots",
+          "description": "Enhance LinkedIn, portfolio, and business headshots with improved facial clarity and detail.",
+          "recommendedTier": "Face Pro",
+          "example": "Upscale a basic headshot to high-resolution professional quality"
+        },
+        {
+          "title": "Social Media Portraits",
+          "description": "Improve profile photos for Instagram, Facebook, Twitter, and dating apps.",
+          "recommendedTier": "Face Restore",
+          "example": "Enhance selfie quality with better facial features and skin texture"
+        },
+        {
+          "title": "Old Photo Restoration",
+          "description": "Restore and enhance aged or damaged portrait photographs.",
+          "recommendedTier": "Face Restore",
+          "example": "Bring new life to vintage family photos with facial reconstruction"
+        },
+        {
+          "title": "Print Preparation",
+          "description": "Prepare portrait photos for large format printing.",
+          "recommendedTier": "Ultra",
+          "example": "Upscale for poster or canvas printing with maximum quality"
+        }
+      ],
+      "features": {
+        "faceEnhancement": "Advanced AI models (GFPGAN, Flux-2-Pro) for facial feature reconstruction",
+        "skinTexture": "Natural skin texture improvement without plastic appearance",
+        "detailPreservation": "Eyes, lips, and other features maintain natural appearance",
+        "resolution": "Support for up to 8K output on Ultra quality tier",
+        "batchProcessing": "Available on Pro tier for multiple portraits"
+      },
+      "bestPractices": [
+        "Start with Face Restore for general improvements",
+        "Use Face Pro for professional headshots and critical portraits",
+        "Select Ultra tier for large format printing needs",
+        "Ensure good lighting in source photos for best results",
+        "Avoid extreme upscaling (8x) for very low quality sources"
+      ],
+      "faq": [
+        {
+          "question": "What's the difference between Face Restore and Face Pro?",
+          "answer": "Face Restore (2 credits) uses GFPGAN for photo restoration with facial feature reconstruction. Face Pro (6 credits) uses Flux-2-Pro for premium portrait enhancement with advanced detail improvement. Face Pro delivers superior results for professional portraits."
+        },
+        {
+          "question": "Can portrait upscaler fix blurry faces?",
+          "answer": "Yes! Our face enhancement models specialize in reconstructing facial details from blurry or low-quality photos. Results vary based on source quality, but significant improvement is typical for moderately blurry images."
+        },
+        {
+          "question": "Will my portraits look unnatural or plastic?",
+          "answer": "Our AI models are designed to maintain natural appearance. Skin texture and features are enhanced while preserving realistic characteristics. For subtle results, Face Restore is recommended over Face Pro."
+        },
+        {
+          "question": "What resolution can portrait photos be upscaled to?",
+          "answer": "With Ultra quality tier, portraits can be upscaled to 4K or 8K resolution (up to 8192x8192px). This is ideal for large format printing or professional use."
+        },
+        {
+          "question": "Is there a free portrait upscaler?",
+          "answer": "Yes! The Free tier includes Face Restore quality (2 credits = 1 image) and Quick quality (1 credit = 1 image). You can enhance portrait photos with no watermarks. For frequent use, paid tiers offer more credits and batch processing."
+        },
+        {
+          "question": "Can I upscale multiple portraits at once?",
+          "answer": "Batch processing is available on paid tiers (Starter: 5 images, Hobby: 10 images, Pro: 50 images, Business: 500 images per batch). Free tier processes single images only."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "product-photo-background-removal",
+      "title": "Product Photo Background Removal",
+      "metaTitle": "Remove Backgrounds from Product Photos | E-commerce Images",
+      "metaDescription": "Remove backgrounds from product photos for Amazon, eBay, Etsy, and Shopify. Create white backgrounds that meet marketplace requirements. Free AI tool.",
+      "h1": "Product Photo Background Removal for E-commerce",
+      "intro": "Create professional product images with clean white backgrounds that meet marketplace requirements. Our AI removes complex backgrounds while preserving product details.",
+      "primaryKeyword": "product photo background removal",
+      "secondaryKeywords": [
+        "remove background product photo",
+        "ecommerce background removal",
+        "amazon white background",
+        "product image background remover"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "use-cases",
+      "industry": "E-commerce",
+      "description": "Professional product photo preparation for online marketplaces. Remove busy backgrounds and create clean, white backgrounds that meet Amazon, eBay, and Etsy requirements.",
+      "challenges": [
+        "Marketplace requirements demand pure white (255,255,255) backgrounds",
+        "Product shadows and reflections need to be preserved or removed cleanly",
+        "Complex product shapes with holes or transparent parts are difficult",
+        "Consistent background across entire product catalog is essential"
+      ],
+      "solutions": [
+        {
+          "problem": "Busy or cluttered backgrounds distract from products",
+          "solution": "AI instantly removes backgrounds and replaces with pure white",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Manual editing is time-consuming for large catalogs",
+          "solution": "Batch processing removes backgrounds from multiple images at once",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Complex product edges look unprofessional",
+          "solution": "AI preserves fine details and creates clean, professional edges",
+          "tool": "ai-background-remover"
+        }
+      ],
+      "results": [
+        {
+          "metric": "Processing Time",
+          "improvement": "90% faster",
+          "description": "Remove backgrounds in seconds vs. minutes with manual editing"
+        },
+        {
+          "metric": "Marketplace Compliance",
+          "improvement": "100%",
+          "description": "Pure white backgrounds meet Amazon and eBay requirements"
+        },
+        {
+          "metric": "Cost Savings",
+          "improvement": "Free",
+          "description": "No subscription fees for unlimited background removal"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Does this create Amazon-compliant white backgrounds?",
+          "answer": "Yes, our background remover creates pure white (RGB 255,255,255) backgrounds that meet Amazon's main image requirements. The product is isolated cleanly for a professional marketplace appearance."
+        },
+        {
+          "question": "Can it handle products with complex shapes?",
+          "answer": "The AI handles complex shapes including products with holes, transparent parts, and intricate edges. Results are best with clear contrast between product and background."
+        },
+        {
+          "question": "How do I process many product photos at once?",
+          "answer": "While the free tool processes one image at a time, you can quickly cycle through your catalog. For bulk operations, API access is available for automated workflows."
+        },
+        {
+          "question": "Will it preserve product shadows?",
+          "answer": "The AI removes background completely, including shadows. For product photos with natural shadows, you may want to add a subtle drop shadow after removal for a polished look."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
+      "relatedGuides": []
+    },
+    {
+      "slug": "portrait-background-removal",
+      "title": "Portrait Background Removal",
+      "metaTitle": "Remove Background from Portrait Photos | Headshot Editing",
+      "metaDescription": "Remove backgrounds from portraits and headshots with AI. Professional results with hair detail preservation. Free online tool for LinkedIn, resumes, and more.",
+      "h1": "Portrait Background Removal - Professional Headshots",
+      "intro": "Transform casual photos into professional headshots by removing distracting backgrounds. Our AI preserves complex hair details and creates clean cutouts.",
+      "primaryKeyword": "portrait background removal",
+      "secondaryKeywords": [
+        "remove background portrait",
+        "headshot background remover",
+        "linkedin photo background",
+        "profile picture background removal"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
+      "category": "use-cases",
+      "industry": "Professional & Personal",
+      "description": "Professional portrait and headshot preparation with AI background removal. Perfect for LinkedIn profiles, resumes, ID photos, and professional branding.",
+      "challenges": [
+        "Hair and fine edges are notoriously difficult to cut out cleanly",
+        "Professional photo editing software has steep learning curves",
+        "Hiring photographers or editors for simple headshots is expensive",
+        "Consistent background style across team photos requires skill"
+      ],
+      "solutions": [
+        {
+          "problem": "Hair creates messy edges with traditional selection tools",
+          "solution": "AI specifically trained to handle fine hair details and wispy edges",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Need professional headshot but only have casual photo",
+          "solution": "Remove casual background and replace with solid color for professional look",
+          "tool": "ai-background-remover"
+        },
+        {
+          "problem": "Team photos have inconsistent backgrounds",
+          "solution": "Remove all backgrounds and apply consistent style across team",
+          "tool": "ai-background-remover"
+        }
+      ],
+      "results": [
+        {
+          "metric": "Hair Detail Preservation",
+          "improvement": "Excellent",
+          "description": "AI handles wispy hair, curls, and fine strands without halo effects"
+        },
+        {
+          "metric": "Time to Professional Headshot",
+          "improvement": "Under 30 seconds",
+          "description": "Transform any portrait to professional quality instantly"
+        },
+        {
+          "metric": "Cost",
+          "improvement": "Free vs $50-200",
+          "description": "Professional headshot editing at no cost"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Will it handle curly or frizzy hair?",
+          "answer": "Yes, our AI is specifically trained to handle all hair types including curly, frizzy, and wispy hair. The model detects fine strands and preserves natural-looking edges without the halo effect common in traditional tools."
+        },
+        {
+          "question": "Can I use this for LinkedIn profile photos?",
+          "answer": "Absolutely. Remove your current background and either keep it transparent or add a solid professional color. The result is a clean, professional headshot perfect for LinkedIn."
+        },
+        {
+          "question": "What about glasses and reflections?",
+          "answer": "The AI handles glasses well, preserving the frames and lenses. Strong reflections in glasses may show some edge artifacts, but most eyewear is processed cleanly."
+        },
+        {
+          "question": "Is this suitable for ID or passport photos?",
+          "answer": "Yes, you can remove backgrounds and add compliant white or blue backgrounds. Note that official ID photos may have specific lighting and composition requirements beyond background color."
+        }
+      ],
+      "relatedTools": ["ai-background-remover", "ai-photo-enhancer"],
+      "relatedGuides": []
+    }
+  ],
+  "meta": {
+    "totalPages": 12,
+    "lastUpdated": "2026-01-06T00:00:00Z"
+  }
+}
