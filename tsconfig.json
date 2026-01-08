@@ -41,6 +41,9 @@
       ],
       "@lib/*": [
         "./lib/*"
+      ],
+      "@locales/*": [
+        "./locales/*"
       ]
     },
     "forceConsistentCasingInFileNames": true,

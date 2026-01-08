@@ -12,6 +12,7 @@ import {
   addUserContextHeaders,
   handlePageAuth,
 } from '@lib/middleware';
+import { DEFAULT_LOCALE, isValidLocale, LOCALE_COOKIE, type Locale } from '@/i18n/config';
 
 /**
  * Handle WWW to non-WWW redirect for SEO consistency
@@ -26,6 +27,125 @@ function handleWWWRedirect(req: NextRequest): NextResponse | null {
     url.protocol = req.nextUrl.protocol;
     url.hostname = hostname.slice(4); // Remove 'www.' prefix
     return NextResponse.redirect(url, 301); // Permanent redirect for SEO
+  }
+
+  return null;
+}
+
+/**
+ * Detect and validate locale from request
+ * Priority: URL path > Cookie > Accept-Language header > Default
+ */
+function detectLocale(req: NextRequest): Locale {
+  const pathname = req.nextUrl.pathname;
+  const segments = pathname.split('/').filter(Boolean);
+
+  // 1. Check URL path for locale prefix
+  if (segments.length > 0 && isValidLocale(segments[0])) {
+    return segments[0] as Locale;
+  }
+
+  // 2. Check cookie
+  const cookieLocale = req.cookies.get(LOCALE_COOKIE)?.value;
+  if (cookieLocale && isValidLocale(cookieLocale)) {
+    return cookieLocale;
+  }
+
+  // 3. Check Accept-Language header
+  const acceptLanguage = req.headers.get('Accept-Language');
+  if (acceptLanguage) {
+    const preferredLocales = acceptLanguage
+      .split(',')
+      .map(lang => {
+        const [locale, qValue] = lang.trim().split(';q=');
+        const quality = qValue ? parseFloat(qValue) : 1;
+        return { locale: locale.split('-')[0], quality };
+      })
+      .sort((a, b) => b.quality - a.quality);
+
+    for (const { locale } of preferredLocales) {
+      if (isValidLocale(locale)) {
+        return locale as Locale;
+      }
+    }
+  }
+
+  // 4. Fallback to default
+  return DEFAULT_LOCALE;
+}
+
+/**
+ * Handle locale routing
+ * - Redirects root to locale-prefixed path if needed
+ * - Sets locale cookie for persistence
+ * - Skips API routes, static files, and other special routes
+ */
+function handleLocaleRouting(req: NextRequest): NextResponse | null {
+  const pathname = req.nextUrl.pathname;
+
+  // Skip API routes
+  if (pathname.startsWith('/api/')) {
+    return null;
+  }
+
+  // Skip static files and Next.js internals
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/static/') ||
+    pathname.includes('.') // Files with extensions
+  ) {
+    return null;
+  }
+
+  // Skip sitemap, robots.txt, etc.
+  if (
+    pathname === '/sitemap.xml' ||
+    pathname === '/robots.txt' ||
+    pathname.startsWith('/sitemap-')
+  ) {
+    return null;
+  }
+
+  const segments = pathname.split('/').filter(Boolean);
+  const detectedLocale = detectLocale(req);
+
+  // If path has no locale prefix, handle locale routing
+  if (segments.length === 0 || !isValidLocale(segments[0])) {
+    const url = req.nextUrl.clone();
+
+    // For default locale (en), rewrite to /en/... internally (keeps URL clean)
+    if (detectedLocale === DEFAULT_LOCALE) {
+      url.pathname = `/en${pathname === '/' ? '' : pathname}`;
+      return NextResponse.rewrite(url);
+    }
+
+    // For non-default locales, redirect to show locale in URL
+    url.pathname = `/${detectedLocale}${pathname}`;
+    const response = NextResponse.redirect(url);
+
+    // Set locale cookie
+    response.cookies.set(LOCALE_COOKIE, detectedLocale, {
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      sameSite: 'lax',
+    });
+
+    return response;
+  }
+
+  // Path has locale prefix, ensure cookie is set
+  const pathLocale = segments[0] as Locale;
+  if (isValidLocale(pathLocale)) {
+    const response = NextResponse.next();
+
+    // Update cookie if needed
+    if (req.cookies.get(LOCALE_COOKIE)?.value !== pathLocale) {
+      response.cookies.set(LOCALE_COOKIE, pathLocale, {
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        sameSite: 'lax',
+      });
+    }
+
+    return response;
   }
 
   return null;
@@ -184,9 +304,12 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
  * Next.js Middleware
  *
  * Responsibilities:
- * 1. Page routes: Session refresh via cookies, auth-based redirects
- * 2. API routes: JWT verification via Authorization header, rate limiting
- * 3. Security headers on all responses
+ * 1. Locale detection and routing (must be first for page routes)
+ * 2. WWW to non-WWW redirect for SEO
+ * 3. Legacy URL redirects for SEO
+ * 4. Page routes: Session refresh via cookies, auth-based redirects
+ * 5. API routes: JWT verification via Authorization header, rate limiting
+ * 6. Security headers on all responses
  */
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const pathname = req.nextUrl.pathname;
@@ -195,6 +318,12 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   const wwwRedirect = handleWWWRedirect(req);
   if (wwwRedirect) {
     return wwwRedirect;
+  }
+
+  // Handle locale routing for page routes (before legacy redirects)
+  const localeRouting = handleLocaleRouting(req);
+  if (localeRouting) {
+    return localeRouting;
   }
 
   // Handle legacy redirects for SEO

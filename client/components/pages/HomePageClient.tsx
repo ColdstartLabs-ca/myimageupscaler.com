@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 // Lazy load below-the-fold sections to reduce initial JS bundle
 // These sections will only load when user scrolls near them
@@ -47,6 +48,7 @@ export function HomePageClient(): JSX.Element {
   const { openAuthModal } = useModalStore();
   const { showToast } = useToastStore();
   const searchParams = useSearchParams();
+  const t = useTranslations('homepage');
 
   // Check if any plan has trial enabled
   const config = getSubscriptionConfig();
@@ -65,7 +67,7 @@ export function HomePageClient(): JSX.Element {
       });
 
       showToast({
-        message: 'Please sign in to access the dashboard',
+        message: t('toastLoginRequired'),
         type: 'info',
         duration: 5000,
       });
@@ -90,7 +92,7 @@ export function HomePageClient(): JSX.Element {
       url.searchParams.delete('signup');
       window.history.replaceState({}, '', url.toString());
     }
-  }, [searchParams, openAuthModal, showToast]);
+  }, [searchParams, openAuthModal, showToast, t]);
 
   return (
     <div className="flex-grow bg-main font-sans selection:bg-accent/20 selection:text-white">
@@ -110,12 +112,10 @@ export function HomePageClient(): JSX.Element {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-xs font-semibold text-accent mb-8 hover:shadow-xl hover:shadow-accent/20 transition-all duration-300 cursor-default group"
           >
             <Sparkles size={14} className="text-secondary animate-pulse" />
-            <span className="group-hover:scale-105 transition-transform">
-              AI-Powered Enhancement
-            </span>
+            <span className="group-hover:scale-105 transition-transform">{t('badge')}</span>
             <span className="w-px h-3 bg-white/10 mx-1"></span>
             <span className="text-muted-foreground group-hover:text-white transition-colors">
-              v2.0 2025 Edition
+              {t('badgeVersion')}
             </span>
           </motion.div>
 
@@ -123,27 +123,27 @@ export function HomePageClient(): JSX.Element {
             variants={heroItemVariants}
             className="text-6xl font-black tracking-tight text-white sm:text-7xl md:text-8xl mb-6 max-w-5xl mx-auto leading-[1.05]"
           >
-            AI Image Upscaler & <span className="gradient-text-primary">Photo Enhancer</span>
+            {t('heroTitle')} <span className="gradient-text-primary">{t('heroTitleHighlight')}</span>
           </motion.h1>
 
           <motion.h2
             variants={heroItemVariants}
             className="mx-auto mt-6 max-w-2xl text-2xl sm:text-3xl text-text-secondary leading-relaxed font-semibold"
           >
-            Enhance image quality to 4K in seconds.
+            {t('heroSubtitle')}
             <br />
-            <span className="text-white">No blur. No artifacts.</span>
+            <span className="text-white">{t('heroSubtitleHighlight')}</span>
           </motion.h2>
 
           <motion.p
             variants={heroItemVariants}
             className="mx-auto mt-6 max-w-2xl text-xl sm:text-2xl text-text-secondary leading-relaxed font-light"
           >
-            Free AI photo enhancer that{' '}
-            <span className="text-white font-medium">reconstructs real detail</span>—not the
-            plastic, over-smoothed look. The only image quality enhancer that{' '}
+            {t('heroDescription')}{' '}
+            <span className="text-white font-medium">{t('heroDescriptionHighlight')}</span>
+            {t('heroDescriptionMiddle')}{' '}
             <span className="relative text-white font-bold decoration-secondary underline decoration-2 underline-offset-4">
-              keeps text sharp
+              {t('heroDescriptionTextSharp')}
             </span>
             .
           </motion.p>
@@ -160,7 +160,7 @@ export function HomePageClient(): JSX.Element {
               whileTap={{ scale: 0.98 }}
             >
               <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-              {hasTrialEnabled ? 'Fix My Images Free' : 'Upscale My First Image'}
+              {hasTrialEnabled ? t('ctaFixImages') : t('ctaUpscaleFirst')}
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </motion.button>
             <motion.button
@@ -169,12 +169,12 @@ export function HomePageClient(): JSX.Element {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Sign In
+              {t('ctaSignIn')}
             </motion.button>
           </motion.div>
 
           <motion.p variants={heroItemVariants} className="mt-4 text-sm text-text-muted">
-            10 free credits &bull; No credit card required &bull; Results in under 30 seconds
+            {t('ctaSubtext')}
           </motion.p>
 
           {/* Hero Before/After Slider */}
@@ -203,35 +203,27 @@ export function HomePageClient(): JSX.Element {
           <AmbientBackground variant="section" />
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-lg text-text-secondary">
-                Everything you need to know about AI image upscaling
-              </p>
+              <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">{t('faqTitle')}</h2>
+              <p className="text-lg text-text-secondary">{t('faqSubtitle')}</p>
             </div>
             <Suspense fallback={<div className="animate-pulse h-64 bg-white/5 rounded-xl" />}>
               <FAQ
                 items={[
                   {
-                    question: 'How do I upscale an image without losing quality?',
-                    answer:
-                      'Our AI-powered upscaler uses advanced neural networks to intelligently enlarge images while preserving details, edges, and text clarity. Unlike traditional bicubic upscaling that creates blurry pixels, our AI reconstructs realistic details based on millions of high-quality image pairs, resulting in sharp, professional-looking 4K upscales.',
+                    question: t('faq1Question'),
+                    answer: t('faq1Answer'),
                   },
                   {
-                    question: 'What is the best AI image upscaler?',
-                    answer:
-                      'MyImageUpscaler combines web-based convenience, superior text preservation, and affordable pricing to deliver professional-quality results. Unlike desktop software that costs $99+, our online solution delivers comparable quality with no installation, free credits to start, and unique algorithms that keep text sharp—making it the best choice for most users.',
+                    question: t('faq2Question'),
+                    answer: t('faq2Answer'),
                   },
                   {
-                    question: 'How to upscale images for free?',
-                    answer:
-                      'You can upscale images for free by signing up for an account, which gives you 10 free credits. Each credit processes one image at 2x upscaling. Simply upload your image, select your enhancement level, and download your upscaled result. No credit card required for the free tier.',
+                    question: t('faq3Question'),
+                    answer: t('faq3Answer'),
                   },
                   {
-                    question: 'Is AI upscaling better than traditional upscaling?',
-                    answer:
-                      'Yes, AI upscaling is significantly better than traditional methods. Traditional upscaling uses interpolation to estimate new pixels, resulting in blurry images. AI upscaling uses deep learning trained on millions of images to intelligently reconstruct realistic details, edges, and textures, producing sharp, professional results that are nearly indistinguishable from native high-resolution images.',
+                    question: t('faq4Question'),
+                    answer: t('faq4Answer'),
                   },
                 ]}
               />
@@ -246,11 +238,10 @@ export function HomePageClient(): JSX.Element {
           <AmbientBackground variant="section" />
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">
-              Enhance photos online. Pay less than a coffee.
+              {t('pricingCtaTitle')}
             </h2>
             <p className="text-lg sm:text-xl text-text-secondary mb-10 max-w-2xl mx-auto font-light">
-              Stop wasting hours in Photoshop. Our AI image enhancer delivers print-ready results in
-              seconds.
+              {t('pricingCtaDescription')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <motion.a
@@ -259,7 +250,7 @@ export function HomePageClient(): JSX.Element {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                See What It Costs
+                {t('ctaSeeWhatItCosts')}
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </motion.a>
               <motion.button
@@ -268,12 +259,10 @@ export function HomePageClient(): JSX.Element {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {hasTrialEnabled ? 'Try 10 Free Credits' : 'Get 10 Free Credits'}
+                {hasTrialEnabled ? t('ctaTryFreeCredits') : t('ctaGetFreeCredits')}
               </motion.button>
             </div>
-            <p className="mt-6 text-sm text-text-muted">
-              10 free credits &bull; No credit card &bull; Unused credits roll over
-            </p>
+            <p className="mt-6 text-sm text-text-muted">{t('pricingCtaSubtext')}</p>
           </div>
         </section>
       </FadeIn>
@@ -287,12 +276,12 @@ export function HomePageClient(): JSX.Element {
 
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl sm:text-6xl font-black text-white mb-6">
-              Free AI photo upscaler.
+              {t('finalCtaTitle')}
               <br />
-              <span className="gradient-text-primary">4K quality in 30 seconds.</span>
+              <span className="gradient-text-primary">{t('finalCtaTitleHighlight')}</span>
             </h2>
             <p className="text-xl text-text-secondary mb-12 max-w-2xl mx-auto font-light">
-              10,000+ businesses use our image quality enhancer. Try it free—no credit card needed.
+              {t('finalCtaDescription')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <motion.button
@@ -302,7 +291,7 @@ export function HomePageClient(): JSX.Element {
                 whileTap={{ scale: 0.95 }}
               >
                 <Sparkles size={22} className="group-hover:rotate-12 transition-transform" />
-                {hasTrialEnabled ? 'Fix My Images Now' : 'Start Upscaling Free'}
+                {hasTrialEnabled ? t('ctaFixImagesNow') : t('ctaStartUpscaling')}
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </motion.button>
               <motion.a
@@ -311,12 +300,10 @@ export function HomePageClient(): JSX.Element {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Compare Plans
+                {t('ctaComparePlans')}
               </motion.a>
             </div>
-            <p className="mt-8 text-sm text-text-muted">
-              10 free credits &bull; No credit card &bull; See results before you pay
-            </p>
+            <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext')}</p>
           </div>
         </section>
       </FadeIn>

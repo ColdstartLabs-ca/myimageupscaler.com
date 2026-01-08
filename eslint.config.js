@@ -187,6 +187,25 @@ export default [
       ],
     },
   },
+  // i18n and data loader files - allow dynamic imports for locale/data file loading
+  {
+    files: ['i18n.config.ts', 'lib/seo/data-loader.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'CallExpression[callee.name="require"]',
+          message: 'Inline require() is forbidden. Use static imports at the top of the file.',
+        },
+        {
+          selector: 'MemberExpression[object.object.name="process"][object.property.name="env"]',
+          message:
+            'Direct process.env access is forbidden. Import from "@shared/config/env" instead: `import { clientEnv, serverEnv } from "@shared/config/env"`',
+        },
+        // Note: Dynamic import() is allowed for locale/data file loading
+      ],
+    },
+  },
   // Test files - relax process.env restriction since tests can't use @/config/env
   {
     files: [

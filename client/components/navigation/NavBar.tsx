@@ -8,8 +8,11 @@ import { clientEnv } from '@shared/config/env';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { LocaleSwitcher } from '@client/components/i18n/LocaleSwitcher';
 
 export const NavBar = (): JSX.Element => {
+  const t = useTranslations('nav');
   const { openAuthModal } = useModalStore();
   const { isAuthenticated, isLoading, user, signOut } = useUserStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -67,39 +70,39 @@ export const NavBar = (): JSX.Element => {
               href="/dashboard"
               className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
             >
-              Dashboard
+              {t('dashboard')}
             </a>
           )}
           <a
             href="/features"
             className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
           >
-            Features
+            {t('features')}
           </a>
           <a
             href="/how-it-works"
             className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
           >
-            How it Works
+            {t('howItWorks')}
           </a>
           <a
             href="/pricing"
             className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
           >
-            Pricing
+            {t('pricing')}
           </a>
           <a
             href="/blog"
             className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
           >
-            Blog
+            {t('blog')}
           </a>
           <div className="relative" ref={toolsDropdownRef}>
             <button
               onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
               className="flex items-center gap-1.5 text-sm font-bold text-text-muted hover:text-white transition-all group"
             >
-              Tools
+              {t('tools')}
               <ChevronDown
                 size={14}
                 className={cn(
@@ -114,37 +117,37 @@ export const NavBar = (): JSX.Element => {
                   href="/tools/compress/image-compressor"
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
-                  Image Compressor
+                  {t('imageCompressor')}
                 </a>
                 <a
                   href="/tools/compress/bulk-image-compressor"
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
-                  Bulk Compressor
+                  {t('bulkCompressor')}
                 </a>
                 <a
                   href="/tools/convert/png-to-jpg"
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
-                  Format Converter
+                  {t('formatConverter')}
                 </a>
                 <a
                   href="/tools/resize/image-resizer"
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
-                  Image Resizer
+                  {t('imageResizer')}
                 </a>
                 <a
                   href="/tools/resize/bulk-image-resizer"
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
-                  Bulk Resizer
+                  {t('bulkResizer')}
                 </a>
                 <a
                   href="/tools/ai-background-remover"
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
-                  Background Remover
+                  {t('backgroundRemover')}
                 </a>
               </div>
             )}
@@ -153,11 +156,12 @@ export const NavBar = (): JSX.Element => {
             href="/help"
             className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
           >
-            Support
+            {t('support')}
           </a>
         </nav>
 
         <div className="flex items-center gap-4">
+          <LocaleSwitcher />
           {isLoading ? (
             <div className="hidden md:flex items-center gap-3">
               <div className="h-10 w-24 bg-white/5 rounded-full animate-pulse"></div>
@@ -168,21 +172,21 @@ export const NavBar = (): JSX.Element => {
               <div className="hidden sm:flex items-center gap-2 glass-strong px-4 py-2 rounded-full border-border">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span className="text-xs font-black text-white/80 uppercase tracking-tighter">
-                  10 Free Credits
+                  {t('freeCredits')}
                 </span>
               </div>
               <button
                 onClick={handleAuthClick}
                 className="hidden sm:inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-text-muted hover:text-white hover:bg-white/5 h-10 px-5 py-2"
               >
-                Sign In
+                {t('signIn')}
               </button>
               <button
                 onClick={() => openAuthModal('register')}
                 className="inline-flex items-center justify-center rounded-xl text-sm font-black transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 gradient-cta shine-effect text-white shadow-lg shadow-accent/20 h-10 px-3 sm:px-6 py-2"
               >
-                <span className="hidden sm:inline">Get Started Free</span>
-                <span className="sm:hidden">Get Started</span>
+                <span className="hidden sm:inline">{t('getStartedFree')}</span>
+                <span className="sm:hidden">{t('getStarted')}</span>
               </button>
             </>
           ) : (
@@ -223,7 +227,7 @@ export const NavBar = (): JSX.Element => {
                         href="/dashboard"
                         className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors cursor-pointer"
                       >
-                        Dashboard
+                        {t('dashboard')}
                       </a>
                     </li>
                     <li>
@@ -231,7 +235,7 @@ export const NavBar = (): JSX.Element => {
                         href="/dashboard/billing"
                         className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors cursor-pointer"
                       >
-                        Billing
+                        {t('billing')}
                       </a>
                     </li>
                     <li>
@@ -239,7 +243,7 @@ export const NavBar = (): JSX.Element => {
                         href="/dashboard/settings"
                         className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors cursor-pointer"
                       >
-                        Settings
+                        {t('settings')}
                       </a>
                     </li>
                     <li>
@@ -247,7 +251,7 @@ export const NavBar = (): JSX.Element => {
                         href="/dashboard/history"
                         className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors cursor-pointer"
                       >
-                        History
+                        {t('history')}
                       </a>
                     </li>
                     <li>
@@ -255,7 +259,7 @@ export const NavBar = (): JSX.Element => {
                         href="/help"
                         className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors cursor-pointer"
                       >
-                        Help
+                        {t('support')}
                       </a>
                     </li>
                     <li>
@@ -263,7 +267,7 @@ export const NavBar = (): JSX.Element => {
                         href="/pricing"
                         className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors cursor-pointer"
                       >
-                        View Plans
+                        {t('viewPlans')}
                       </a>
                     </li>
                     {isPasswordUser && (
@@ -272,7 +276,7 @@ export const NavBar = (): JSX.Element => {
                           onClick={handleChangePassword}
                           className="block w-full text-left px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors cursor-pointer"
                         >
-                          Change Password
+                          {t('changePassword')}
                         </button>
                       </li>
                     )}
@@ -281,7 +285,7 @@ export const NavBar = (): JSX.Element => {
                         onClick={signOut}
                         className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-lg transition-colors cursor-pointer"
                       >
-                        Sign Out
+                        {t('signOut')}
                       </button>
                     </li>
                   </ul>
@@ -292,7 +296,7 @@ export const NavBar = (): JSX.Element => {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 text-muted-foreground hover:text-white transition-colors"
-            aria-label="Toggle menu"
+            aria-label={t('toggleMenu')}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -308,79 +312,79 @@ export const NavBar = (): JSX.Element => {
                 href="/dashboard"
                 className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
-                Dashboard
+                {t('dashboard')}
               </a>
             )}
             <a
               href="/features"
               className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
             >
-              Features
+              {t('features')}
             </a>
             <a
               href="/how-it-works"
               className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
             >
-              How it Works
+              {t('howItWorks')}
             </a>
             <a
               href="/pricing"
               className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
             >
-              Pricing
+              {t('pricing')}
             </a>
             <a
               href="/blog"
               className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
             >
-              Blog
+              {t('blog')}
             </a>
             <div className="py-2">
               <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                Tools
+                {t('tools')}
               </p>
               <a
                 href="/tools/compress/image-compressor"
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
-                Image Compressor
+                {t('imageCompressor')}
               </a>
               <a
                 href="/tools/compress/bulk-image-compressor"
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
-                Bulk Compressor
+                {t('bulkCompressor')}
               </a>
               <a
                 href="/tools/convert/png-to-jpg"
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
-                Format Converter
+                {t('formatConverter')}
               </a>
               <a
                 href="/tools/resize/image-resizer"
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
-                Image Resizer
+                {t('imageResizer')}
               </a>
               <a
                 href="/tools/resize/bulk-image-resizer"
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
-                Bulk Resizer
+                {t('bulkResizer')}
               </a>
               <a
                 href="/tools/ai-background-remover"
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
-                Background Remover
+                {t('backgroundRemover')}
               </a>
             </div>
             <a
               href="/help"
               className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
             >
-              Support
+              {t('support')}
             </a>
             {!isAuthenticated && (
               <>
@@ -389,13 +393,13 @@ export const NavBar = (): JSX.Element => {
                     onClick={handleAuthClick}
                     className="block w-full text-left px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
                   >
-                    Sign In
+                    {t('signIn')}
                   </button>
                   <button
                     onClick={() => openAuthModal('register')}
                     className="block w-full mt-2 px-4 py-2 text-sm font-semibold bg-accent hover:bg-accent-hover text-white rounded-lg transition-all glow-blue"
                   >
-                    Get Started Free
+                    {t('getStartedFree')}
                   </button>
                 </div>
               </>

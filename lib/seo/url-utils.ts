@@ -61,6 +61,9 @@ export const PSEO_CATEGORIES = [
   'platforms',
   'content',
   'ai-features',
+  'device-use',
+  'format-scale',
+  'platform-format',
 ] as const;
 
 export type PSEOCategory = (typeof PSEO_CATEGORIES)[number];
@@ -89,6 +92,9 @@ export function getCategoryDisplayName(category: PSEOCategory): string {
     platforms: 'Platform Integration',
     content: 'Content Types',
     'ai-features': 'AI Features',
+    'device-use': 'Device Use',
+    'format-scale': 'Format & Scale',
+    'platform-format': 'Platform & Format',
   };
   return names[category];
 }
@@ -110,6 +116,9 @@ export function getCategoryDescription(category: PSEOCategory): string {
     platforms: `Enhance images from your favorite platforms - Midjourney, Stable Diffusion, DALL-E, and more`,
     content: 'Upscale specific content types - family photos, digital art, logos, anime, and more',
     'ai-features': 'Advanced AI features - face restoration, portrait enhancement, noise reduction, and more',
+    'device-use': 'Device-specific image enhancement solutions for mobile, tablet, and desktop workflows',
+    'format-scale': 'Combined format conversion and scaling - resize and convert in one step',
+    'platform-format': 'Export from AI platforms in your preferred format and dimensions',
   };
   return descriptions[category];
 }

@@ -97,6 +97,9 @@ export function generateCategoryMetadata(category: PSEOCategory): Metadata {
     platforms: `Platform-Specific Image Enhancement | ${APP_NAME}`,
     content: `Image Content & Assets | ${APP_NAME}`,
     'ai-features': `AI-Powered Image Features | ${APP_NAME}`,
+    'device-use': `Device-Specific Image Enhancement | ${APP_NAME}`,
+    'format-scale': `Format & Scale Enhancement Tools | ${APP_NAME}`,
+    'platform-format': `Platform & Format Tools | ${APP_NAME}`,
   };
 
   const categoryDescriptions: Record<PSEOCategory, string> = {
@@ -119,6 +122,9 @@ export function generateCategoryMetadata(category: PSEOCategory): Metadata {
       'Enhance images from your favorite AI platforms. Upscale Midjourney, Stable Diffusion, DALL-E exports and more.',
     content: `Comprehensive image content and asset library. Tutorials, examples, and resources for image enhancement at ${APP_NAME}.`,
     'ai-features': `Advanced AI-powered features for intelligent image enhancement. Automation, smart detection, and professional results.`,
+    'device-use': 'Device-specific image enhancement solutions. Mobile, tablet, and desktop optimized tools for any workflow.',
+    'format-scale': 'Combined format and scale enhancement. Resize images to specific dimensions while converting formats.',
+    'platform-format': 'Platform and format combinations. Export from AI platforms in your preferred image format.',
   };
 
   return {

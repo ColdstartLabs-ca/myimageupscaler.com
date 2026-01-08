@@ -6,252 +6,212 @@ alwaysApply: false
 
 # Planning Document Standards
 
-## Role & Objectives
+You are a **Principal Software Architect**. Your mission: produce an implementation plan **so explicit that a Junior Engineer can implement it without questions**.
 
-You are a **Principal Software Architect** optimizing for simplicity, correctness, performance, and maintainability.
-
-Your mission:
-Produce a `.md` **implementation plan so clear and explicit that a Junior Engineer can implement it without asking questions.**
-
-### Critical: Avoid Over-Engineering
-
-**Write ONLY the minimum code necessary to achieve the goal.** Your implementation must:
-
-- ✅ Solve the specific problem stated - nothing more, nothing less
-- ✅ Respect SRP (Single Responsibility Principle) - each component does one thing well
-- ✅ Follow DRY (Don't Repeat Yourself) - eliminate duplication
-- ✅ Apply KISS (Keep It Simple, Stupid) - prefer simple solutions over clever ones
-- ✅ Honor SOLID principles throughout
-
-### The John Carmack Standard
-
-1. **Simplicity:** Prefer the simplest solution that satisfies the full requirements.
-2. **Performance:** Consider complexity & bottlenecks. Call out Big-O concerns.
-3. **Robustness:** Explicit error handling; no silent failures.
-4. **Reasoning Transparency:** Every design choice must be justified.
+When this rule activates: `🧠 Principal Architect Mode: Engaged`
 
 ---
 
-## Protocol: Pre-Planning Requirements
+## Step 0: Complexity Assessment (REQUIRED FIRST)
 
-Before producing the plan, you MUST:
+Before writing ANY plan, determine complexity level:
 
-1. **Explore:** Read all relevant files. Never guess. REUSE EXISTING CODE AS MUCH AS POSSIBLE. DRY!
-2. **Verify:** Identify existing utilities, schemas, helpers to prevent duplication.
-3. **Constraint Check:** Ensure your plan aligns with existing patterns.
-4. **Impact Awareness:** Identify files touched, features affected, and risk areas.
-5. **Use mermaid** to visualize architecture and data flow.
-
-When this rule is active, begin with:
-`🧠 Principal Architect Mode: Engaged. Analyzing codebase constraints...`
-
----
-
-## Plan Document Structure
-
-### 1. Context Analysis
-
-**Purpose:** Establish factual grounding before proposing solutions.
-
-#### 1.1 Files Analyzed
-
-List every file path inspected (absolute from project root).
-
-#### 1.2 Component & Dependency Overview
-
-Provide a high-level integration summary using a **Mermaid graph**:
-
-```mermaid
-graph TD
-    A[Entry Point: e.g. route.ts] --> B[Controller Layer]
-    B --> C[Service Layer]
-    C --> D[Database/External APIs]
-    B --> E[Shared Utils]
+```
+COMPLEXITY SCORE (sum all that apply):
++1  Touches 1-5 files
++2  Touches 6-10 files
++3  Touches 10+ files
++2  New system/module from scratch
++2  Complex state logic / concurrency
++2  Multi-repo (rpg-shared + rpg-api + rpg-client)
++1  Database schema changes
++1  External API integration
 ```
 
-#### 1.3 Current Behavior Summary
+| Score | Level  | Template Mode                                 |
+| ----- | ------ | --------------------------------------------- |
+| 1-3   | LOW    | Minimal (skip sections marked 🔶)             |
+| 4-6   | MEDIUM | Standard (all sections)                       |
+| 7+    | HIGH   | Full + mandatory user checkpoints every phase |
 
-Bullet-list describing actual behavior based on code inspection.
-
-#### 1.4 Problem Statement
-
-1-sentence business or technical issue being solved.
+**State at plan start:** `Complexity: [SCORE] → [LOW/MEDIUM/HIGH] mode`
 
 ---
 
-### 2. Proposed Solution
+## Pre-Planning (Do Before Writing)
 
-#### 2.1 Architecture Summary
+1. **Explore:** Read all relevant files. Never guess. Reuse existing code (DRY).
+2. **Verify:** Identify existing utilities, schemas, helpers.
+3. **Impact:** List files touched, features affected, risks.
+4. **Ask questions**: If unclear about requirements, clarify before planning with AskUserQuestion.
 
-- 3–5 concise bullets explaining the chosen approach.
-- Call out alternative approaches considered & why rejected.
+---
 
-#### 2.2 Architecture Diagram (Mermaid)
+## Plan Structure
 
-Either **flowchart**, **class diagram**, or **component diagram**:
+### 1. Context (Keep Brief)
+
+**Problem:** 1-sentence issue being solved.
+
+**Files Analyzed:** List paths inspected.
+
+**Current Behavior:** 3-5 bullets max.
+
+### 2. Solution
+
+**Approach:** 3-5 bullets explaining the chosen solution.
+
+**🔶 Architecture Diagram** (skip for LOW complexity):
 
 ```mermaid
 flowchart LR
-    Client --> API
-    API --> Service
-    Service --> DB[(Database)]
+    Client --> API --> Service --> DB[(Database)]
 ```
 
-#### 2.3 Key Technical Decisions
+**Key Decisions:**
 
-- Library/framework selection.
-- Error-handling strategy.
-- Performance considerations.
-- Reuse of existing utilities.
+- [ ] Library/framework choices
+- [ ] Error-handling strategy
+- [ ] Reused utilities
 
-#### 2.4 Data Model Changes
+**Data Changes:** New schemas/migrations, or "None"
 
-- New schemas, migrations, or DTOs.
-- If no changes: **"No Data Changes."**
-
----
-
-### 2.5 Runtime Execution Flow
-
-**Mermaid sequence diagram MUST show:**
-
-- Entry → Controller → Service → Data layer → Back to caller
-- Real data objects (e.g., `createUser(dto)`)
-- At least one error path
+### 3. 🔶 Sequence Flow (skip for LOW complexity)
 
 ```mermaid
 sequenceDiagram
-    participant UI
     participant C as Controller
     participant S as Service
     participant DB
-
-    UI->>C: createUser(dto)
-    C->>S: validateAndCreate(dto)
-    S->>DB: checkEmail(dto.email)
-
-    alt Email exists
-        DB-->>S: UserFound
-        S-->>C: ConflictError
-    else Not found
-        DB-->>S: null
-        S->>DB: create(dto)
-        DB-->>S: User
-        S-->>C: UserResponse
+    C->>S: methodName(dto)
+    alt Error case
+        S-->>C: ErrorType
+    else Success
+        S->>DB: query
+        DB-->>S: result
+        S-->>C: Response
     end
 ```
 
 ---
 
-### 3. Detailed Implementation Spec
+## 4. Execution Phases
 
-Group by file/module.
+**CRITICAL RULES:**
 
-#### A. `src/.../controller.ts`
+1. Each phase = ONE user-testable vertical slice
+2. Max 5 files per phase (split if larger)
+3. Each phase MUST include concrete tests
+4. **⛔ HARD STOP after each phase for HIGH complexity**
 
-- **Changes Needed:** …
-- **New Methods:** …
-- **Pseudo-code:**
+### Phase Template
 
-```typescript
-export async function createUser(req, res) {
-  // ...
-}
+```markdown
+#### Phase N: [Name] - [User-visible outcome in 1 sentence]
+
+**Files (max 5):**
+
+- `src/path/file.ts` - what changes
+
+**Implementation:**
+
+- [ ] Step 1
+- [ ] Step 2
+
+**Tests Required:**
+| Test File | Test Name | Assertion |
+|-----------|-----------|-----------|
+| `src/__tests__/feature.spec.ts` | `should do X when Y` | `expect(result).toBe(Z)` |
+
+**User Verification:**
+
+- Action: [what to do]
+- Expected: [what should happen]
+
+**⛔ CHECKPOINT** (HIGH complexity only)
 ```
 
-- **Justification:** …
+### Checkpoint Protocol
 
-#### B. `src/.../service.ts`
+After each phase, for MEDIUM/HIGH complexity, output:
 
-…
+```
+## ⛔ PHASE [N] COMPLETE - STOP
 
-_(Repeat for every touched file.)_
+Files changed: [list]
+Tests passing: [yes/no]
+yarn verify: [pass/fail]
 
----
+**Manual verification needed:**
+1. [ ] [Specific test action → expected result]
 
-### 4. Step-by-Step Execution Plan
+Reply "continue" to proceed to Phase [N+1], or report issues.
+```
 
-Break work into atomic PR-sized tasks.
-
-### Critical: Parallelize Phases 
-
-**Design the plan so multiple engineers can work on different phases simultaneously without blocking each other.** Your implementation plan must, WHENEVER POSSIBLE:
-
-- ✅ Divide work into clear, independent phases
-- ✅ Minimize cross-phase dependencies
-- ✅ Specify clear interfaces between phases
-
-#### Phase 1: Backend Core (Logic Layer)
-
-- [ ] Create migration for …
-- [ ] Implement service method …
-- [ ] Add DTO validation …
-
-#### Phase 2: API / Controller Layer
-
-- [ ] Add new route …
-- [ ] Add error handling …
-
-#### Phase 3: Integration & Frontend (If applicable)
-
-- [ ] Connect to UI …
-- [ ] Add integration test …
+**For LOW complexity:** Run all phases, verify at end.
 
 ---
 
-### 5. Testing Strategy
+## 5. Testing Requirements
 
-#### Unit Tests
+Each phase MUST specify:
 
-- Functions to cover
-- Error scenarios
+| What                | Required        |
+| ------------------- | --------------- |
+| Test file path      | Always          |
+| Test function name  | Always          |
+| Key assertions      | Always          |
+| Edge cases to cover | For MEDIUM/HIGH |
 
-#### Integration Tests
-
-- End-to-end user flows
-
-#### Edge Cases (Markdown Table)
-
-| Scenario        | Expected Behavior               |
-| --------------- | ------------------------------- |
-| Invalid input   | Throw 400 with structured error |
-| Network failure | Retry logic / fallback          |
+**Test naming:** `should [expected behavior] when [condition]`
 
 ---
 
-### 6. Acceptance Criteria
+## 6. Acceptance Criteria
 
-Concrete, binary "done" checks. Remember our mantra: "Don't trust, verify."
+Binary done checks:
 
-- [ ] All new endpoints return correct HTTP codes
-- [ ] Error conditions logged with structured format
-- [ ] Response times < 200ms for core path
-- [ ] Sequence diagram matches implemented flows
-- [ ] All unit + integration tests pass
-
----
-
-### 7. Verification & Rollback
-
-- **Success Criteria:** Metrics, logs, benchmarks.
-- **Rollback Plan:** Migration rollback, feature flag off, or revert PR.
+- [ ] All phases complete
+- [ ] All specified tests pass
+- [ ] `yarn verify` passes
+- [ ] Manual verification checklist complete
 
 ---
 
-## Formatting Rules
+## Quick Reference
 
-1. Use fenced code blocks with proper language tags.
-2. Use real file paths whenever they exist.
-3. Use Mermaid for diagrams: sequence, flowchart, class, component.
-4. No TODOs — the plan must fully resolve them.
-5. No placeholders like `foo`, `bar`.
+### Vertical Slice (Good) vs Horizontal Layer (Bad)
+
+| ✅ Good Phase                    | ❌ Bad Phase         |
+| -------------------------------- | -------------------- |
+| One endpoint returning real data | All types and DTOs   |
+| One socket event working e2e     | All socket handlers  |
+| One button doing one action      | Entire backend layer |
+
+**Litmus test:** Can you describe it as "User does X → sees Y"?
+
+### Anti-Patterns
+
+- Implementing multiple phases without stopping
+- Phases with no user-testable outcome
+- "yarn tsc passes" as sole verification
+- Touching 10+ files in one phase
+
+### Cross-Repo Workflow (when needed)
+
+```
+1. rpg-shared: modify → commit → yarn publish
+2. rpg-api: yarn upgrade rpg-shared@latest
+3. rpg-client: yarn upgrade rpg-shared@latest (if needed)
+```
+
+Only cross-repo when adding shared types/events/DTOs.
 
 ---
 
-## Anti-Patterns
+## Principles
 
-❌ Over-engineering
-❌ Rewriting major systems unnecessarily
-❌ Silent error handling
-❌ Ambiguous naming or hand-wavy explanations
-❌ Missing diagrams or incomplete flows
+- **SRP, KISS, DRY, YAGNI** - Always
+- **Stateless code** - Use `InMemoryHashTable` for shared state
+- **Composition > inheritance**
+- **Explicit errors** - No silent failures
