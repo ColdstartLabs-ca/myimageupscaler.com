@@ -2,22 +2,27 @@
   "category": "camera-raw",
   "pages": [
     {
-      "slug": "cr2-to-jpg",
-      "title": "CR2 zu JPG: Canon RAW Konverter",
-      "metaTitle": "CR2 zu JPG Konverter - Kostenlose Canon RAW Umwandlung | MyImageUpscaler",
-      "metaDescription": "Konvertieren Sie CR2 zu JPG kostenlos. Wandeln Sie Canon RAW-Dateien mit unserem CR2 zu JPG-Konverter schnell und einfach um. Keine Installation erforderlich.",
-      "h1": "CR2 zu JPG Konverter",
-      "intro": "Wandeln Sie Ihre Canon CR2 RAW-Dateien in das weit verbreitete JPG-Format um, um sie einfach zu teilen und zu bearbeiten. Unser Tool bewahrt die Bildqualität während der Konvertierung.",
-      "primaryKeyword": "cr2 to jpg",
+      "slug": "upscale-nef-images",
+      "title": "NEF-Bilder skalieren",
+      "metaTitle": "NEF-Bilder skalieren | MyImageUpscaler",
+      "metaDescription": "Fortschrittliche KI-gesteuerte NEF-Skalierung für Nikon-Fotografen. Verbessern Sie RAW-Dateien von D850, Z9, Z7, Z6 mit überlegener Detailerhaltung. Workflow-Integration mit Nikons Farbwissenschaft.",
+      "h1": "NEF RAW-Bild-Skalierung",
+      "intro": "Bringen Sie Ihre Nikon NEF RAW-Dateien mit modernster KI-Skalierungstechnologie auf ein außergewöhnliches Niveau an Detail und Klarheit. Unsere ausgeklügelten Algorithmen sind sorgfältig entwickelt, um Nikons einzigartige Sensoreigenschaften, Farbwissenschaft und Metadatenstruktur zu verstehen und zu verbessern. Ob Sie mit dem Flaggschiff Z9, dem beliebten D850 oder einer Nikon-Kamera dazwischen fotografieren, unser Upscaler liefert außergewöhnliche Ergebnisse, die das authentische Nikon-Look bewahren und gleichzeitig Ihre kreativen Möglichkeiten erheblich erweitern.",
+      "primaryKeyword": "nef bilder skalieren",
       "secondaryKeywords": [
-        "cr2 converter",
-        "canon raw to jpg",
-        "convert cr2 files",
-        "cr2 image converter"
+        "nef upscaler",
+        "nikon raw upscaler",
+        "nef dateien verbessern",
+        "nef bildverbesserung",
+        "nikon raw bildverarbeitung",
+        "d850 skalierung",
+        "z9 raw verbesserung",
+        "nikon z serie upscaler",
+        "professionelle nikon verarbeitung"
       ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
+      "lastUpdated": "2025-01-19",
       "category": "camera-raw",
-      "toolName": "CR2 to JPG Converter",
+      "toolName": "CR2 zu JPG Konverter",
       "description": "Wandeln Sie Canon CR2 RAW-Dateien in JPG um, um Ihre Fotos einfach zu teilen, zu bearbeiten und zu drucken. Perfekt für Fotografen, die schnell ihre RAW-Dateien konvertieren müssen.",
       "features": [
         {

@@ -1,99 +1,437 @@
 {
-  "category": "device-specific",
+  "category": "scale",
   "pages": [
     {
-      "slug": "iphone-image-upscaler",
-      "title": "iPhone Bild-Upscaler App",
-      "metaTitle": "iPhone Bild-Upscaler - Fotos auf dem iPhone vergrößern | MyImageUpscaler",
-      "metaDescription": "Vergrößern und verbessern Sie iPhone-Fotos mit unserem KI-Upscaler. Funktioniert direkt auf Ihrem iPhone - keine App-Installation erforderlich.",
-      "h1": "iPhone Bild-Upscaler",
-      "intro": "Werten Sie Ihre iPhone-Fotos mit KI-gesteuerter Bildvergrößerung und -verbesserung auf. Perfekt für iPhone-Nutzer.",
-      "primaryKeyword": "iphone image upscaler",
+      "slug": "iphone-wallpaper-sizes",
+      "title": "iPhone-Hintergrundbild-Größen",
+      "metaTitle": "iPhone-Hintergrundbild-Größen | MyImageUpscaler",
+      "metaDescription": "Exakte Hintergrundbild-Abmessungen für jedes iPhone-Modell. iPhone 15, 14, 13, SE und ältere. Pixel-Abmessungen zum Kopieren und Einfügen.",
+      "h1": "iPhone-Hintergrundbild-Größen-Leitfaden",
+      "intro": "Finden Sie die exakten Hintergrundbild-Abmessungen für Ihr iPhone-Modell. Alle Größen berücksichtigen die Notch und die Dynamic Island.",
+      "primaryKeyword": "iphone hintergrundbild größe",
       "secondaryKeywords": [
-        "iphone photo enhancer",
-        "mobile image upscaler",
-        "ios image enhancement"
+        "iphone hintergrundbild abmessungen",
+        "iphone 15 hintergrundbild größe",
+        "iphone sperrbildschirm größe"
       ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "device-specific",
-      "features": [
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "scale",
+      "deviceFamily": "iPhone",
+      "quickReference": {
+        "mostCommon": "1290x2796px",
+        "note": "Wenn unsicher, verwenden Sie 1290x2796px - es funktioniert gut auf den meisten modernen iPhones, wenn beschnitten."
+      },
+      "dimensions": [
         {
-          "title": "iPhone-Optimierung",
-          "description": "Speziell für iPhone-Kamera-Fotos entwickelt"
+          "model": "iPhone 15 Pro Max / 16 Pro Max",
+          "width": 1290,
+          "height": 2796,
+          "aspectRatio": "19.5:9",
+          "notes": "Dynamic Island oben"
         },
         {
-          "title": "Browser-basiert",
-          "description": "Keine App-Installation erforderlich"
+          "model": "iPhone 15 Pro / 16 Pro",
+          "width": 1179,
+          "height": 2556,
+          "aspectRatio": "19.5:9",
+          "notes": "Dynamic Island oben"
         },
         {
-          "title": "KI-verbessert",
-          "description": "Neuronale Netzwerke für natürliche Ergebnisse"
+          "model": "iPhone 15 Plus / 14 Plus",
+          "width": 1284,
+          "height": 2778,
+          "aspectRatio": "19.5:9",
+          "notes": "Dynamic Island oben"
         },
         {
-          "title": "Privat und sicher",
-          "description": "Bilder werden lokal verarbeitet"
+          "model": "iPhone 15 / 14",
+          "width": 1179,
+          "height": 2556,
+          "aspectRatio": "19.5:9",
+          "notes": "Dynamic Island (15) / Notch (14)"
+        },
+        {
+          "model": "iPhone 13 / 13 Pro",
+          "width": 1170,
+          "height": 2532,
+          "aspectRatio": "19.5:9",
+          "notes": "Notch oben"
+        },
+        {
+          "model": "iPhone 13 Mini / 12 Mini",
+          "width": 1080,
+          "height": 2340,
+          "aspectRatio": "19.5:9",
+          "notes": "Notch oben"
+        },
+        {
+          "model": "iPhone SE (3./2. Generation)",
+          "width": 750,
+          "height": 1334,
+          "aspectRatio": "16:9",
+          "notes": "Keine Notch, Home-Button"
+        },
+        {
+          "model": "iPhone 11 / XR",
+          "width": 828,
+          "height": 1792,
+          "aspectRatio": "19.5:9",
+          "notes": "Notch oben"
+        },
+        {
+          "model": "iPhone 8 / 7 / 6",
+          "width": 750,
+          "height": 1334,
+          "aspectRatio": "16:9",
+          "notes": "Keine Notch, Home-Button"
+        },
+        {
+          "model": "iPhone 8 Plus / 7 Plus",
+          "width": 1080,
+          "height": 1920,
+          "aspectRatio": "16:9",
+          "notes": "Keine Notch, Home-Button"
         }
       ],
-      "benefits": [
+      "tips": [
         {
-          "title": "Einfach zu bedienen",
-          "description": "Keine technische Kenntnisse erforderlich",
-          "metric": "Perfekt für alle iPhone-Nutzer"
+          "title": "Berücksichtigen Sie die Notch/Dynamic Island",
+          "description": "Platzieren Sie keine wichtigen Inhalte ganz oben auf Ihrem Hintergrundbild. Die oberen 50-100 Pixel können von der Notch oder Dynamic Island verdeckt werden."
         },
         {
-          "title": "Schnelle Ergebnisse",
-          "description": "Verarbeiten Sie Fotos in Sekunden",
-          "metric": "Schnellste KI-Verarbeitung"
+          "title": "Sperrbildschirm vs. Startbildschirm",
+          "description": "iOS verwendet dieselbe Bildgröße für beide, aber Uhr und Widgets können Teile abdecken. Halten Sie Brennpunkte zentriert."
         },
         {
-          "title": "Professionelle Qualität",
-          "description": "KI-gesteuerte Upscaling-Ergebnisse",
-          "metric": "Druckfertige Qualität"
+          "title": "Parallax-Effekt fügt Beschneidung hinzu",
+          "description": "iOS-Perspektiv-Zoom beschneidet etwa 10% an jedem Rand. Deaktivieren Sie es in den Einstellungen oder fügen Sie einen zusätzlichen Rand zu Ihrem Bild hinzu."
         }
       ],
-      "howItWorks": [
+      "upscalingGuide": {
+        "scenario": "Möchten Sie ein 640x960 Bild als iPhone 15-Hintergrundbild verwenden",
+        "target": "1290x2796px",
+        "steps": [
+          "4x hochskalieren auf 2560x3840px",
+          "Auf 19.5:9 Seitenverhältnis zuschneiden (1290x2796 oder die hochskalierte Größe verwenden)",
+          "Wenn die Qualität gut ist, direkt zuschneiden; wenn nicht, erneut hochskalieren"
+        ]
+      },
+      "faq": [
         {
-          "step": 1,
-          "title": "iPhone-Foto auswählen",
-          "description": "Wählen Sie ein Foto aus Ihrer Fotogalerie aus"
+          "question": "Welche Hintergrundbildgröße für iPhone 15?",
+          "answer": "1179x2556 Pixel für iPhone 15 und 15 Pro, 1290x2796 für 15 Pro Max, 1284x2778 für 15 Plus."
         },
         {
-          "step": 2,
-          "title": "Upscaling-Faktor wählen",
-          "description": "Wählen Sie 2x, 4x oder benutzerdefinierte Größe"
+          "question": "Kann ich dasselbe Hintergrundbild für alle iPhones verwenden?",
+          "answer": "Erstellen Sie bei 1290x2796 (größte Pro Max Größe) und iOS wird es entsprechend für kleinere Bildschirme zuschneiden."
         },
         {
-          "step": 3,
-          "title": "Verbessertes Foto speichern",
-          "description": "Speichern Sie Ihr vergrößertes Foto"
+          "question": "Warum sieht mein Hintergrundbild verschwommen aus?",
+          "answer": "Ihr Bild ist zu niedrig aufgelöst. iPhone-Displays sind sehr scharf (460 PPI auf Pro-Modellen). Skalieren Sie Ihr Bild auf die oben genannten Abmessungen hoch."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedPages": ["android-wallpaper-sizes"]
+    },
+    {
+      "slug": "android-wallpaper-sizes",
+      "title": "Android-Hintergrundbild-Größen",
+      "metaTitle": "Android-Hintergrundbild-Größen | MyImageUpscaler",
+      "metaDescription": "Hintergrundbild-Abmessungen für beliebte Android-Handys. Samsung Galaxy, Google Pixel, OnePlus und mehr mit exakten Pixel-Abmessungen.",
+      "h1": "Android-Hintergrundbild-Größen-Leitfaden",
+      "intro": "Android-Hintergrundbildgrößen variieren je nach Hersteller und Modell. Hier sind die Abmessungen für die beliebtesten Geräte.",
+      "primaryKeyword": "android hintergrundbild größe",
+      "secondaryKeywords": [
+        "samsung hintergrundbild größe",
+        "pixel hintergrundbild abmessungen",
+        "android handy hintergrundgröße"
+      ],
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "scale",
+      "deviceFamily": "Android",
+      "quickReference": {
+        "mostCommon": "1440x3200px",
+        "note": "Diese Größe funktioniert für die meisten Flagship-Android-Handys. Android skaliert gut."
+      },
+      "dimensionsByBrand": [
+        {
+          "brand": "Samsung Galaxy S-Serie",
+          "models": [
+            {
+              "model": "Galaxy S24 Ultra",
+              "width": 1440,
+              "height": 3120,
+              "aspectRatio": "19.5:9"
+            },
+            {
+              "model": "Galaxy S24+",
+              "width": 1440,
+              "height": 3120,
+              "aspectRatio": "19.5:9"
+            },
+            {
+              "model": "Galaxy S24",
+              "width": 1080,
+              "height": 2340,
+              "aspectRatio": "19.5:9"
+            },
+            {
+              "model": "Galaxy S23 Ultra",
+              "width": 1440,
+              "height": 3088,
+              "aspectRatio": "19.3:9"
+            },
+            {
+              "model": "Galaxy S23",
+              "width": 1080,
+              "height": 2340,
+              "aspectRatio": "19.5:9"
+            }
+          ]
+        },
+        {
+          "brand": "Google Pixel",
+          "models": [
+            {
+              "model": "Pixel 9 Pro XL",
+              "width": 1344,
+              "height": 2992,
+              "aspectRatio": "20:9"
+            },
+            {
+              "model": "Pixel 9 Pro",
+              "width": 1280,
+              "height": 2856,
+              "aspectRatio": "20:9"
+            },
+            {
+              "model": "Pixel 9",
+              "width": 1080,
+              "height": 2424,
+              "aspectRatio": "20:9"
+            },
+            {
+              "model": "Pixel 8 Pro",
+              "width": 1344,
+              "height": 2992,
+              "aspectRatio": "20:9"
+            },
+            {
+              "model": "Pixel 8",
+              "width": 1080,
+              "height": 2400,
+              "aspectRatio": "20:9"
+            },
+            {
+              "model": "Pixel 7a",
+              "width": 1080,
+              "height": 2400,
+              "aspectRatio": "20:9"
+            }
+          ]
+        },
+        {
+          "brand": "OnePlus",
+          "models": [
+            {
+              "model": "OnePlus 12",
+              "width": 1440,
+              "height": 3168,
+              "aspectRatio": "19.8:9"
+            },
+            {
+              "model": "OnePlus 11",
+              "width": 1440,
+              "height": 3216,
+              "aspectRatio": "20.1:9"
+            }
+          ]
+        }
+      ],
+      "tips": [
+        {
+          "title": "Android Scroll-Hintergrundbilder",
+          "description": "Einige Android-Launcher unterstützen Scroll-Hintergrundbilder, die breiter als der Bildschirm sind. Erstellen Sie mit 2x Breite für diesen Effekt."
+        },
+        {
+          "title": "Loch-Kameras",
+          "description": "Die meisten modernen Android-Handys haben eine Loch-Kamera. Vermeiden Sie es, wichtige Inhalte oben links oder oben mittig zu platzieren."
+        },
+        {
+          "title": "Android skaliert gut",
+          "description": "Android geht mit mismatchten Hintergrundbildgrößen besser um als iOS. Ein etwas größeres Bild wird automatisch zugeschnitten."
         }
       ],
       "faq": [
         {
-          "question": "Funktioniert dies auf allen iPhone-Modellen?",
-          "answer": "Ja, unser Tool funktioniert auf allen modernen iPhone-Modellen mit iOS 12 oder höher."
+          "question": "Welche Hintergrundbildgröße für Samsung Galaxy S24?",
+          "answer": "1080x2340 für Galaxy S24, 1440x3120 für S24+ und S24 Ultra."
         },
         {
-          "question": "Muss ich eine App installieren?",
-          "answer": "Nein, alles funktioniert direkt in Ihrem Browser - keine Installation erforderlich."
+          "question": "Benötigt Android exakte Abmessungen?",
+          "answer": "Nein. Android geht mit Zuschneiden gut um. Verwenden Sie ein größeres Bild und Android lässt Sie es positionieren. 1440x3200 funktioniert für die meisten Handys."
         },
         {
-          "question": "Sind meine Fotos sicher?",
-          "answer": "Absolut, alle Bilder werden lokal in Ihrem Browser verarbeitet und werden niemals auf einen Server hochgeladen."
+          "question": "Was ist mit Android-Tablets?",
+          "answer": "Tablets variieren stark. Überprüfen Sie die Anzeige Ihres Tablets in Einstellungen > Info zum Telefon > Anzeige. Übliche Größen sind 2560x1600 und 2800x1752."
         }
       ],
-      "limitations": [
-        "Erfordert moderne iOS-Version",
-        "Internetverbindung für browser-basierte Verarbeitung",
-        "Dateigrößen-Limits gelten"
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedPages": ["iphone-wallpaper-sizes"]
+    },
+    {
+      "slug": "desktop-wallpaper-sizes",
+      "title": "Desktop- & Monitor-Hintergrundbild-Größen",
+      "metaTitle": "Desktop- & Monitor-Hintergrundbild-Größen | MyImageUpscaler",
+      "metaDescription": "Monitor-Hintergrundbild-Abmessungen für alle Bildschirme. 1080p, 1440p, 4K, 5K, Ultrawide und Multi-Monitor-Setups.",
+      "h1": "Desktop-Hintergrundbild-Größen-Leitfaden",
+      "intro": "Finden Sie die richtige Hintergrundbildgröße für Ihren Monitor. Deckt Standard-, Ultrawide- und Multi-Monitor-Setups ab.",
+      "primaryKeyword": "desktop hintergrundbild größe",
+      "secondaryKeywords": [
+        "4k hintergrundbild größe",
+        "1440p hintergrundbild abmessungen",
+        "ultrawide hintergrundbild größe"
       ],
-      "relatedTools": ["mobile-image-optimizer", "smartphone-photo-enhancer"],
-      "ctaText": "iPhone Upscaling starten",
-      "ctaUrl": "/device-specific/iphone-image-upscaler"
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "scale",
+      "deviceFamily": "Desktop",
+      "quickReference": {
+        "mostCommon": "1920x1080px (1080p)",
+        "note": "4K (3840x2160) wird zum Standard für neue Monitore."
+      },
+      "dimensions": [
+        {
+          "resolution": "Full HD (1080p)",
+          "width": 1920,
+          "height": 1080,
+          "aspectRatio": "16:9",
+          "notes": "Am häufigsten, funktioniert auf den meisten Monitoren"
+        },
+        {
+          "resolution": "QHD (1440p)",
+          "width": 2560,
+          "height": 1440,
+          "aspectRatio": "16:9",
+          "notes": "Beliebt für Gaming-Monitore"
+        },
+        {
+          "resolution": "4K UHD",
+          "width": 3840,
+          "height": 2160,
+          "aspectRatio": "16:9",
+          "notes": "Moderner Standard für High-End-Displays"
+        },
+        {
+          "resolution": "5K",
+          "width": 5120,
+          "height": 2880,
+          "aspectRatio": "16:9",
+          "notes": "Apple Studio Display, iMac 5K"
+        },
+        {
+          "resolution": "8K",
+          "width": 7680,
+          "height": 4320,
+          "aspectRatio": "16:9",
+          "notes": "Selten, nur High-End-Displays"
+        },
+        {
+          "resolution": "Ultrawide (2560)",
+          "width": 2560,
+          "height": 1080,
+          "aspectRatio": "21:9",
+          "notes": "Günstige Ultrawide-Monitore"
+        },
+        {
+          "resolution": "Ultrawide (3440)",
+          "width": 3440,
+          "height": 1440,
+          "aspectRatio": "21:9",
+          "notes": "Standard-Ultrawide"
+        },
+        {
+          "resolution": "Super Ultrawide",
+          "width": 5120,
+          "height": 1440,
+          "aspectRatio": "32:9",
+          "notes": "Samsung Odyssey G9 und ähnliche"
+        },
+        {
+          "resolution": "Dual 1080p (nebeneinander)",
+          "width": 3840,
+          "height": 1080,
+          "aspectRatio": "32:9",
+          "notes": "Zwei 1080p-Monitore überspannend"
+        },
+        {
+          "resolution": "Dual 1440p (nebeneinander)",
+          "width": 5120,
+          "height": 1440,
+          "aspectRatio": "32:9",
+          "notes": "Zwei 1440p-Monitore überspannend"
+        },
+        {
+          "resolution": "Dual 4K (nebeneinander)",
+          "width": 7680,
+          "height": 2160,
+          "aspectRatio": "32:9",
+          "notes": "Zwei 4K-Monitore überspannend"
+        }
+      ],
+      "tips": [
+        {
+          "title": "Überprüfen Sie Ihre tatsächliche Auflösung",
+          "description": "Rechtsklick Desktop > Anzeigeeinstellungen (Windows) oder Systemeinstellungen > Displays (Mac), um die genauen Abmessungen zu sehen."
+        },
+        {
+          "title": "Multi-Monitor-Überspannung",
+          "description": "Für Hintergrundbilder, die Monitore überspannen, addieren Sie die Breiten. Zwei 1920x1080 Monitore = 3840x1080 insgesamt."
+        },
+        {
+          "title": "Skalierung ist wichtig",
+          "description": "Ein 4K-Monitor bei 150% Skalierung verwendet immer noch 3840x2160 für Hintergrundbilder. Verwenden Sie die volle Auflösung unabhängig von der Skalierung."
+        }
+      ],
+      "upscalingGuide": [
+        {
+          "source": "1080p Hintergrundbild",
+          "target": "4K (3840x2160)",
+          "upscale": "2x Upscaling gibt genau 4K",
+          "quality": "Gute Ergebnisse mit KI-Upscaling"
+        },
+        {
+          "source": "1440p Hintergrundbild",
+          "target": "4K (3840x2160)",
+          "upscale": "1.5x - muss nach 2x Upscaling evtl. beschnitten werden",
+          "quality": "Ausgezeichnete Ergebnisse"
+        },
+        {
+          "source": "720p Hintergrundbild",
+          "target": "4K (3840x2160)",
+          "upscale": "3x Upscaling (1280 → 3840)",
+          "quality": "Akzeptabel, hängt von der Quellqualität ab"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Was ist mein Monitor?",
+          "answer": "Windows: Rechtsklick Desktop > Anzeigeeinstellungen > Auflösung. Mac: Apple-Menü > Systemeinstellungen > Displays."
+        },
+        {
+          "question": "Sollte Hintergrundbild genau zum Monitor passen?",
+          "answer": "Idealerweise ja. Größer ist OK (wird zugeschnitten/skaliert). Kleiner sieht beim Strecken verschwommen aus."
+        },
+        {
+          "question": "Was ist mit Retina/HiDPI-Displays?",
+          "answer": "Verwenden Sie die tatsächliche Auflösung, nicht die 'sieht aus wie'-Auflösung. Ein 27\" iMac bei 'sieht aus wie 2560x1440' verwendet tatsächlich 5120x2880 für Hintergrundbilder."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedPages": ["iphone-wallpaper-sizes", "android-wallpaper-sizes"]
     }
   ],
   "meta": {
     "totalPages": 3,
-    "lastUpdated": "2025-12-26T00:00:00Z"
+    "lastUpdated": "2025-12-19T00:00:00Z"
   }
 }

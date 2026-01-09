@@ -86,7 +86,11 @@
   "locale": {
     "en": "Englisch",
     "es": "Spanisch",
+    "fr": "Französisch",
     "de": "Deutsch",
+    "it": "Italienisch",
+    "pt": "Portugiesisch",
+    "ja": "Japanisch",
     "switchLanguage": "Sprache wechseln"
   },
   "common": {
