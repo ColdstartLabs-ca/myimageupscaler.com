@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: IAlternativePageProps): Promi
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'alternatives');
+  return generatePageMetadata(result.data, 'alternatives', locale);
 }
 
 export default async function AlternativePage({ params }: IAlternativePageProps) {
@@ -30,12 +30,7 @@ export default async function AlternativePage({ params }: IAlternativePageProps)
   // If no data and not English locale, show localized template with banner
   if (!result.data && locale !== 'en') {
     return (
-      <LocalizedPageTemplate
-        locale={locale}
-        pageData={null}
-        category="alternatives"
-        slug={slug}
-      >
+      <LocalizedPageTemplate locale={locale} pageData={null} category="alternatives" slug={slug}>
         <></>
       </LocalizedPageTemplate>
     );

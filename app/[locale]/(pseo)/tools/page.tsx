@@ -1,8 +1,17 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getAllTools } from '@/lib/seo/data-loader';
 import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
+import type { Locale } from '@/i18n/config';
 
-export const metadata = generateCategoryMetadata('tools');
+interface IToolsHubPageProps {
+  params: Promise<{ locale: Locale }>;
+}
+
+export async function generateMetadata({ params }: IToolsHubPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  return generateCategoryMetadata('tools', locale);
+}
 
 export default async function ToolsHubPage() {
   const tools = await getAllTools();

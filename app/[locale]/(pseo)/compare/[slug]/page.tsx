@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: IComparisonPageProps): Promis
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'compare');
+  return generatePageMetadata(result.data, 'compare', locale);
 }
 
 export default async function ComparisonPage({ params }: IComparisonPageProps) {
@@ -34,12 +34,7 @@ export default async function ComparisonPage({ params }: IComparisonPageProps) {
   // If no data and not English locale, show localized template with banner
   if (!result.data && locale !== 'en') {
     return (
-      <LocalizedPageTemplate
-        locale={locale}
-        pageData={null}
-        category="compare"
-        slug={slug}
-      >
+      <LocalizedPageTemplate locale={locale} pageData={null} category="compare" slug={slug}>
         <></>
       </LocalizedPageTemplate>
     );

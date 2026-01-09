@@ -124,6 +124,25 @@ function handleLocaleRouting(req: NextRequest): NextResponse | null {
     return null;
   }
 
+  // Skip pSEO (programmatic SEO) paths - these serve default English content
+  // without locale prefix for SEO purposes
+  if (
+    pathname.startsWith('/tools/') ||
+    pathname.startsWith('/formats/') ||
+    pathname.startsWith('/scale/') ||
+    pathname.startsWith('/guides/') ||
+    pathname.startsWith('/free/') ||
+    pathname.startsWith('/alternatives/') ||
+    pathname.startsWith('/compare/') ||
+    pathname.startsWith('/platforms/') ||
+    pathname.startsWith('/use-cases/') ||
+    pathname.startsWith('/device-use/') ||
+    pathname.startsWith('/format-scale/') ||
+    pathname.startsWith('/platform-format/')
+  ) {
+    return null;
+  }
+
   const segments = pathname.split('/').filter(Boolean);
   const detectedLocale = detectLocale(req);
 
@@ -172,22 +191,39 @@ function handleLocaleRouting(req: NextRequest): NextResponse | null {
 /**
  * Legacy URL redirects for SEO
  * Maps old/incorrect URLs to their new canonical locations
+ *
+ * Handles paths both with and without locale prefix:
+ * - /tools/bulk-image-resizer → /tools/resize/bulk-image-resizer
+ * - /en/tools/bulk-image-resizer → /en/tools/resize/bulk-image-resizer
  */
 function handleLegacyRedirects(req: NextRequest): NextResponse | null {
-  const pathname = req.nextUrl.pathname;
+  let pathname = req.nextUrl.pathname;
   const trailingSlashRemoved =
     pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
 
+  // Extract locale prefix if present
+  const segments = trailingSlashRemoved.split('/').filter(Boolean);
+  let localePrefix = '';
+  let pathWithoutLocale = trailingSlashRemoved;
+
+  if (segments.length > 0 && isValidLocale(segments[0])) {
+    localePrefix = `/${segments[0]}`;
+    pathWithoutLocale = '/' + segments.slice(1).join('/');
+  }
+
+  // Define redirects without locale prefix
   const redirectMap: Record<string, string> = {
     '/tools/bulk-image-resizer': '/tools/resize/bulk-image-resizer',
     '/tools/bulk-image-compressor': '/tools/compress/bulk-image-compressor',
   };
 
-  const newPathname = redirectMap[trailingSlashRemoved];
+  // Check if path (without locale) matches a redirect
+  const newRedirectPath = redirectMap[pathWithoutLocale];
 
-  if (newPathname) {
+  if (newRedirectPath) {
     const url = req.nextUrl.clone();
-    url.pathname = newPathname;
+    // Preserve locale prefix in the redirect
+    url.pathname = `${localePrefix}${newRedirectPath}`;
     return NextResponse.redirect(url, 301); // Permanent redirect for SEO
   }
 
@@ -324,7 +360,7 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
  * Responsibilities:
  * 1. Locale detection and routing (must be first for page routes)
  * 2. WWW to non-WWW redirect for SEO
- * 3. Legacy URL redirects for SEO
+ * 3. Legacy URL redirects for SEO (must come before locale routing to catch old URLs)
  * 4. Page routes: Session refresh via cookies, auth-based redirects
  * 5. API routes: JWT verification via Authorization header, rate limiting
  * 6. Security headers on all responses
@@ -338,16 +374,16 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     return wwwRedirect;
   }
 
-  // Handle locale routing for page routes (before legacy redirects)
-  const localeRouting = handleLocaleRouting(req);
-  if (localeRouting) {
-    return localeRouting;
-  }
-
-  // Handle legacy redirects for SEO
+  // Handle legacy redirects for SEO (before locale routing to catch old URLs)
   const legacyRedirect = handleLegacyRedirects(req);
   if (legacyRedirect) {
     return legacyRedirect;
+  }
+
+  // Handle locale routing for page routes
+  const localeRouting = handleLocaleRouting(req);
+  if (localeRouting) {
+    return localeRouting;
   }
 
   // Route to appropriate handler

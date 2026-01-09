@@ -494,9 +494,13 @@ export function generateAlternativeSchema(alternative: IAlternativePage): object
 /**
  * Generate schema for Homepage
  * Combines WebApplication with AggregateRating + FAQPage
+ * Phase 5: Added locale parameter for inLanguage property
+ *
+ * @param locale - The locale for this page instance (default: 'en')
  */
-export function generateHomepageSchema(): Record<string, unknown> {
+export function generateHomepageSchema(locale: Locale = 'en'): Record<string, unknown> {
   const canonicalUrl = BASE_URL;
+  const language = getLanguageCode(locale);
 
   return {
     '@context': 'https://schema.org',
@@ -509,6 +513,7 @@ export function generateHomepageSchema(): Record<string, unknown> {
         url: canonicalUrl,
         applicationCategory: 'MultimediaApplication',
         operatingSystem: 'Web Browser',
+        inLanguage: language,
         offers: {
           '@type': 'Offer',
           price: '0',

@@ -1,6 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getToolDataWithLocale, getAllToolSlugs, generateMetadata as generatePageMetadata } from '@/lib/seo';
+import {
+  getToolDataWithLocale,
+  getAllToolSlugs,
+  generateMetadata as generatePageMetadata,
+} from '@/lib/seo';
 import { ToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/ToolPageTemplate';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { LocalizedPageTemplate } from '@/app/[locale]/(pseo)/_components/pseo/templates/LocalizedPageTemplate';
@@ -25,7 +29,7 @@ export async function generateMetadata({ params }: IToolPageProps): Promise<Meta
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'tools');
+  return generatePageMetadata(result.data, 'tools', locale);
 }
 
 export default async function ToolPage({ params }: IToolPageProps) {
@@ -35,12 +39,7 @@ export default async function ToolPage({ params }: IToolPageProps) {
   // If no translation for this locale (but category is localized), show banner
   if (!result.data && locale !== 'en') {
     return (
-      <LocalizedPageTemplate
-        locale={locale}
-        pageData={null}
-        category="tools"
-        slug={slug}
-      >
+      <LocalizedPageTemplate locale={locale} pageData={null} category="tools" slug={slug}>
         <></>
       </LocalizedPageTemplate>
     );
@@ -51,7 +50,7 @@ export default async function ToolPage({ params }: IToolPageProps) {
     notFound();
   }
 
-  const schema = generateToolSchema(result.data);
+  const schema = generateToolSchema(result.data, locale);
 
   // Use InteractiveToolPageTemplate for tools with embedded functionality
   const Template = result.data.isInteractive ? InteractiveToolPageTemplate : ToolPageTemplate;
