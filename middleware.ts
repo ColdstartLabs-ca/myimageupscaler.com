@@ -124,9 +124,14 @@ function handleLocaleRouting(req: NextRequest): NextResponse | null {
     return null;
   }
 
-  // Skip pSEO (programmatic SEO) paths - these serve default English content
-  // without locale prefix for SEO purposes
-  if (
+  // Extract path segments to check for locale prefix
+  const segments = pathname.split('/').filter(Boolean);
+
+  // Skip pSEO (programmatic SEO) paths WITHOUT locale prefix
+  // These serve default English content from app/(pseo)/ without locale prefix for SEO purposes
+  // Localized versions (e.g., /es/tools/) are handled by app/[locale]/(pseo)/
+  const hasLocalePrefix = segments.length > 0 && isValidLocale(segments[0]);
+  const isPSEOPath =
     pathname.startsWith('/tools/') ||
     pathname.startsWith('/formats/') ||
     pathname.startsWith('/scale/') ||
@@ -138,12 +143,13 @@ function handleLocaleRouting(req: NextRequest): NextResponse | null {
     pathname.startsWith('/use-cases/') ||
     pathname.startsWith('/device-use/') ||
     pathname.startsWith('/format-scale/') ||
-    pathname.startsWith('/platform-format/')
-  ) {
+    pathname.startsWith('/platform-format/');
+
+  // Only skip locale routing for pSEO paths that DON'T have a locale prefix
+  if (isPSEOPath && !hasLocalePrefix) {
     return null;
   }
 
-  const segments = pathname.split('/').filter(Boolean);
   const detectedLocale = detectLocale(req);
 
   // If path has no locale prefix, handle locale routing
@@ -211,10 +217,10 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     pathWithoutLocale = '/' + segments.slice(1).join('/');
   }
 
-  // Define redirects without locale prefix
+  // Define redirects without locale prefix (trailing slashes will be added by Next.js)
   const redirectMap: Record<string, string> = {
-    '/tools/bulk-image-resizer': '/tools/resize/bulk-image-resizer',
-    '/tools/bulk-image-compressor': '/tools/compress/bulk-image-compressor',
+    '/tools/bulk-image-resizer': '/tools/resize/bulk-image-resizer/',
+    '/tools/bulk-image-compressor': '/tools/compress/bulk-image-compressor/',
   };
 
   // Check if path (without locale) matches a redirect
