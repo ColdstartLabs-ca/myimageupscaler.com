@@ -1,0 +1,74 @@
+Priority,Category,File Path,Line,Column,Hardcoded String,Type,Translation Key,Notes
+1,Conversion-Critical,app/(pseo)/_components/pseo/sections/CTASection.tsx,98,19,10 free credits,span,cta.benefits.freeCredits,CTA benefit badge
+1,Conversion-Critical,app/(pseo)/_components/pseo/sections/CTASection.tsx,108,19,Quick signup,span,cta.benefits.quickSignup,CTA benefit badge
+1,Conversion-Critical,app/(pseo)/_components/pseo/sections/CTASection.tsx,118,19,Instant results,span,cta.benefits.instantResults,CTA benefit badge
+1,Conversion-Critical,app/(pseo)/_components/pseo/sections/HeroSection.tsx,64,18,AI-Powered Tool,div,hero.badge.aiPoweredTool,Badge with animated ping - complex JSX
+1,Conversion-Critical,app/(pseo)/_components/pseo/sections/HeroSection.tsx,113,23,Free to start,span,hero.features.freeToStart,Feature benefit
+1,Conversion-Critical,app/(pseo)/_components/pseo/sections/HeroSection.tsx,123,23,No watermarks,span,hero.features.noWatermarks,Feature benefit
+1,Conversion-Critical,app/(pseo)/_components/pseo/sections/HeroSection.tsx,133,23,Instant results,span,hero.features.instantResults,Feature benefit
+1,Conversion-Critical,app/[locale]/(pseo)/_components/pseo/sections/CTASection.tsx,98,19,10 free credits,span,cta.benefits.freeCredits,DUPLICATE - Locale variant
+1,Conversion-Critical,app/[locale]/(pseo)/_components/pseo/sections/CTASection.tsx,108,19,Quick signup,span,cta.benefits.quickSignup,DUPLICATE - Locale variant
+1,Conversion-Critical,app/[locale]/(pseo)/_components/pseo/sections/CTASection.tsx,118,19,Instant results,span,cta.benefits.instantResults,DUPLICATE - Locale variant
+1,Conversion-Critical,app/[locale]/(pseo)/_components/pseo/sections/HeroSection.tsx,64,18,AI-Powered Tool,div,hero.badge.aiPoweredTool,DUPLICATE - Locale variant
+1,Conversion-Critical,app/[locale]/(pseo)/_components/pseo/sections/HeroSection.tsx,113,23,Free to start,span,hero.features.freeToStart,DUPLICATE - Locale variant
+1,Conversion-Critical,app/[locale]/(pseo)/_components/pseo/sections/HeroSection.tsx,123,23,No watermarks,span,hero.features.noWatermarks,DUPLICATE - Locale variant
+1,Conversion-Critical,app/[locale]/(pseo)/_components/pseo/sections/HeroSection.tsx,133,23,Instant results,span,hero.features.instantResults,DUPLICATE - Locale variant
+2,Functional,app/(pseo)/_components/tools/BackgroundRemover.tsx,125,87,Original,label,backgroundRemover.labels.original,Form label
+2,Functional,app/(pseo)/_components/tools/BackgroundRemover.tsx,143,87,Background Removed,label,backgroundRemover.labels.backgroundRemoved,Form label
+2,Functional,app/(pseo)/_components/tools/BackgroundRemover.tsx,180,69,File Details,h3,backgroundRemover.fileDetails.heading,Section heading
+2,Functional,app/(pseo)/_components/tools/BackgroundRemover.tsx,183,59,Name:,span,backgroundRemover.fileDetails.name,File info label
+2,Functional,app/(pseo)/_components/tools/BackgroundRemover.tsx,187,59,Size:,span,backgroundRemover.fileDetails.size,File info label
+2,Functional,app/(pseo)/_components/tools/BackgroundRemover.tsx,191,59,Type:,span,backgroundRemover.fileDetails.type,File info label
+2,Functional,app/(pseo)/_components/tools/BackgroundRemover.tsx,196,61,Output:,span,backgroundRemover.fileDetails.output,File info label
+2,Functional,app/(pseo)/_components/tools/BackgroundRemover.tsx,197,52,PNG ({size}MB),span,backgroundRemover.fileDetails.pngFormat,Partial hardcode - has dynamic size
+2,Functional,app/(pseo)/_components/tools/BackgroundRemover.tsx,198,75,PNG ({size}MB),span,backgroundRemover.fileDetails.pngFormat,DUPLICATE - code duplication issue
+2,Functional,app/[locale]/(pseo)/_components/tools/BackgroundRemover.tsx,199,52,PNG ({size}MB),span,backgroundRemover.fileDetails.pngFormat,Partial conversion - only PNG remains
+2,Functional,app/[locale]/(pseo)/_components/tools/BackgroundRemover.tsx,200,75,PNG ({size}MB),span,backgroundRemover.fileDetails.pngFormat,Partial conversion - only PNG remains
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,182,89,Original Image,label,formatConverter.labels.originalImage,Form label
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,202,89,Conversion Preview,label,formatConverter.labels.conversionPreview,Form label
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,242,16,Convert To,label,formatConverter.labels.convertTo,Format selection label
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,265,96,Quality,label,formatConverter.labels.quality,Quality setting label
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,287,18,Background Color (for transparent areas),label,formatConverter.labels.backgroundColor,Color picker label - long text
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,304,22,White,button,formatConverter.buttons.whiteColor,Color preset button
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,310,22,Black,button,formatConverter.buttons.blackColor,Color preset button
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,315,67,JPEG doesn't support transparency. Transparent areas will be filled with this color.,p,formatConverter.info.jpegTransparency,Long informational text
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,327,47,Converting:,span,formatConverter.status.converting,Status label
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,330,47,Original:,span,formatConverter.status.original,File info label
+2,Functional,app/(pseo)/_components/tools/FormatConverter.tsx,334,51,Result:,span,formatConverter.status.result,File info label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,124,89,Original Image,label,imageCompressor.labels.originalImage,Form label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,144,89,Compression Preview,label,imageCompressor.labels.compressionPreview,Form label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,150,71,Quality Setting,p,imageCompressor.labels.qualitySetting,Form label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,154,45,% smaller,p,imageCompressor.info.smallerPercentage,Partial hardcode - percentage wrapper
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,157,68,MB →,p,imageCompressor.info.sizeArrow,Hardcoded arrow separator
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,173,96,Compression Quality,label,imageCompressor.labels.compressionQuality,Setting label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,188,23,Smaller file (lower quality),span,imageCompressor.hints.smallerFile,Slider hint text
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,189,23,Larger file (higher quality),span,imageCompressor.hints.largerFile,Slider hint text
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,198,16,Max Width (px),label,imageCompressor.labels.maxWidth,Dimension input label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,219,16,Max Height (px),label,imageCompressor.labels.maxHeight,Dimension input label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,240,16,Output Format,label,imageCompressor.labels.outputFormat,Format selection label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,254,38,JPEG (best for photos),option,imageCompressor.formats.jpeg,Format option
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,255,38,WebP (best compression),option,imageCompressor.formats.webp,Format option
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,256,37,PNG (lossless),option,imageCompressor.formats.png,Format option
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,274,16,Maintain aspect ratio,label,imageCompressor.labels.maintainAspectRatio,Checkbox label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,288,64,Original Size,p,imageCompressor.info.originalSize,Info section label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,292,64,Reduction,p,imageCompressor.info.reduction,Info section label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,298,64,Compressed Size,p,imageCompressor.info.compressedSize,Info section label
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,306,45,💡 Compression Tips:,p,imageCompressor.tips.heading,Tips heading with emoji - KEEP EMOJI
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,308,19,For web use, 70-80% quality is usually optimal,li,imageCompressor.tips.webQuality,Tip text
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,309,19,WebP format offers best compression with great quality,li,imageCompressor.tips.webpCompression,Tip text
+2,Functional,app/(pseo)/_components/tools/ImageCompressor.tsx,310,19,JPEG works best for photos, PNG for graphics with transparency,li,imageCompressor.tips.formatChoices,Tip text
+2,Functional,app/[locale]/(pseo)/_components/tools/ImageCompressor.tsx,159,68,MB →,p,imageCompressor.info.sizeArrow,Partial conversion - only arrow remains
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,205,89,Original Image,label,imageResizer.labels.originalImage,Form label
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,225,89,Preview (New Size),label,imageResizer.labels.previewNewSize,Form label
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,233,71,New dimensions,p,imageResizer.info.newDimensions,Info text
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,247,16,Preset Sizes,label,imageResizer.labels.presetSizes,Selection label
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,269,16,Output Format,label,imageResizer.labels.outputFormat,Format selection label
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,285,38,WebP,option,imageResizer.formats.webp,Format option
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,294,16,Width (px),label,imageResizer.labels.width,Dimension input label
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,313,16,Height (px) ...,label,imageResizer.labels.height,Dimension input label - conditional content
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,316,84,(auto-calculated),span,imageResizer.hints.autoCalculated,Conditional hint when aspect ratio locked
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,338,16,Quality: {quality}%,label,imageResizer.labels.quality,Quality label - has dynamic value
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,366,16,Maintain aspect ratio,label,imageResizer.labels.maintainAspectRatio,Checkbox label
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,376,47,Original:,span,imageResizer.info.original,File info label
+2,Functional,app/(pseo)/_components/tools/ImageResizer.tsx,377,55,Original: {file.name} (...),p,imageResizer.info.originalFile,File info display - has filename interpolation
+2,Functional,app/[locale]/(pseo)/_components/tools/ImageResizer.tsx,292,38,WebP,option,imageResizer.formats.webp,Partial conversion - only WebP remains

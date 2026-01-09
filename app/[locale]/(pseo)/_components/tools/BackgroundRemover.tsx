@@ -10,10 +10,12 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { InteractiveTool } from './InteractiveTool';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 type ProcessingStage = 'idle' | 'loading-model' | 'processing' | 'done';
 
 export function BackgroundRemover(): React.ReactElement {
+  const t = useTranslations('pseo-tools.backgroundRemover');
   const [stage, setStage] = useState<ProcessingStage>('idle');
   const [progress, setProgress] = useState(0);
   const [processedUrl, setProcessedUrl] = useState<string | null>(null);
@@ -78,8 +80,8 @@ export function BackgroundRemover(): React.ReactElement {
 
   return (
     <InteractiveTool
-      title="Remove Background"
-      description="Remove backgrounds from images instantly using AI. Works entirely in your browser for complete privacy."
+      title={t('title')}
+      description={t('description')}
       maxFileSizeMB={10}
       acceptedFormats={['image/jpeg', 'image/png', 'image/webp']}
       onProcess={handleRemoveBackground}
@@ -93,8 +95,8 @@ export function BackgroundRemover(): React.ReactElement {
                 <Loader2 className="w-5 h-5 animate-spin text-accent" />
                 <span className="text-sm font-medium text-primary">
                   {stage === 'loading-model'
-                    ? 'Loading AI model (first time only)...'
-                    : 'Removing background...'}
+                    ? t('loadingModel')
+                    : t('removingBackground')}
                 </span>
               </div>
               <div className="w-full bg-surface rounded-full h-2 overflow-hidden">
@@ -110,10 +112,10 @@ export function BackgroundRemover(): React.ReactElement {
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 {stage === 'loading-model'
-                  ? 'Downloading AI model (~15MB). This only happens once and is cached for future use.'
+                  ? t('downloadingModel')
                   : progress < 10
-                    ? 'Analyzing image...'
-                    : `Processing: ${progress}%`}
+                    ? t('analyzingImage')
+                    : t('processingPercent', { percent: progress })}
               </p>
             </div>
           )}
@@ -123,7 +125,7 @@ export function BackgroundRemover(): React.ReactElement {
             {/* Original Image */}
             <div>
               <label className="text-sm font-medium mb-2 block text-muted-foreground">
-                Original
+                {t('originalLabel')}
               </label>
               <div className="relative aspect-square border rounded-lg overflow-hidden bg-surface-light">
                 {previewUrl && (
@@ -141,7 +143,7 @@ export function BackgroundRemover(): React.ReactElement {
             {/* Result Image */}
             <div>
               <label className="text-sm font-medium mb-2 block text-muted-foreground">
-                Background Removed
+                {t('backgroundRemovedLabel')}
               </label>
               <div
                 className="relative aspect-square border rounded-lg overflow-hidden"
@@ -167,7 +169,7 @@ export function BackgroundRemover(): React.ReactElement {
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
-                    {isProcessing ? 'Processing...' : 'Result will appear here'}
+                    {isProcessing ? t('processingLabel') : t('resultWillAppear')}
                   </div>
                 )}
               </div>
@@ -177,23 +179,23 @@ export function BackgroundRemover(): React.ReactElement {
           {/* File Info */}
           {file && (
             <div className="bg-surface-light rounded-lg p-4 border border-border">
-              <h3 className="text-sm font-medium text-primary mb-2">File Details</h3>
+              <h3 className="text-sm font-medium text-primary mb-2">{t('fileDetailsTitle')}</h3>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <span className="text-muted-foreground">Name:</span>{' '}
+                  <span className="text-muted-foreground">{t('nameLabel')}</span>{' '}
                   <span className="text-primary">{file.name}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Size:</span>{' '}
+                  <span className="text-muted-foreground">{t('sizeLabel')}</span>{' '}
                   <span className="text-primary">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Type:</span>{' '}
+                  <span className="text-muted-foreground">{t('typeLabel')}</span>{' '}
                   <span className="text-primary">{file.type}</span>
                 </div>
                 {processedBlob && (
                   <div>
-                    <span className="text-muted-foreground">Output:</span>{' '}
+                    <span className="text-muted-foreground">{t('outputLabel')}</span>{' '}
                     <span className="text-success">
                       PNG ({(processedBlob.size / 1024 / 1024).toFixed(2)} MB)
                     </span>

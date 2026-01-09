@@ -2,7 +2,6 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getAllTools } from '@/lib/seo/data-loader';
 import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateCategoryMetadata('tools', 'en');
@@ -13,8 +12,6 @@ export default async function ToolsHubPage() {
 
   return (
     <>
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path="/tools" />
       <div className="container mx-auto px-4 py-12 bg-base min-h-screen">
         <h1 className="text-4xl font-bold mb-6 text-text-primary">AI Image Tools</h1>
         <p className="text-xl text-text-secondary mb-12">

@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useCallback, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Download,
   RefreshCw,
@@ -59,10 +60,14 @@ interface IBulkImageResizerProps {
 export function BulkImageResizer({
   defaultWidth = 1920,
   defaultHeight = 1080,
-  title = 'Bulk Image Resizer',
-  description = 'Resize multiple images at once with our free bulk image resizer. All processing happens in your browser.',
+  title,
+  description,
   maxFiles = 20,
 }: IBulkImageResizerProps): React.ReactElement {
+  const t = useTranslations('pseo-tools');
+  const defaultTitle = title || t('bulkImageResizer.defaultTitle');
+  const defaultDescription = description || t('bulkImageResizer.defaultDescription');
+
   const [options, setOptions] = useState<IResizeOptions>({
     width: defaultWidth,
     height: defaultHeight,
@@ -86,7 +91,7 @@ export function BulkImageResizer({
       // Check max files limit using functional update
       setImages(prevImages => {
         if (prevImages.length + files.length > maxFiles) {
-          alert(`You can only process up to ${maxFiles} images at once.`);
+          alert(t('bulkImageResizer.maxFilesAlert', { max: maxFiles }));
           return prevImages;
         }
 
@@ -122,6 +127,7 @@ export function BulkImageResizer({
         return [...prevImages, ...newImages];
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable from next-intl
     [maxFiles]
   );
 
@@ -414,22 +420,22 @@ export function BulkImageResizer({
       <div className="p-6 border-2 border-border bg-surface shadow-lg rounded-xl">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-text-primary mb-2">{title}</h2>
-          <p className="text-text-secondary">{description}</p>
+          <h2 className="text-2xl font-bold text-text-primary mb-2">{defaultTitle}</h2>
+          <p className="text-text-secondary">{defaultDescription}</p>
         </div>
 
         {/* Settings Panel */}
         <div className="bg-surface-light/50 rounded-xl p-6 mb-6">
           <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
             <Package className="w-5 h-5 text-accent" />
-            Resize Settings
+            {t('bulkImageResizer.resizeSettings')}
           </h3>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Width */}
             <div>
               <label htmlFor="width" className="mb-2 block text-sm font-medium text-text-secondary">
-                Width (px)
+                {t('bulkImageResizer.widthLabel')}
               </label>
               <input
                 id="width"
@@ -450,11 +456,11 @@ export function BulkImageResizer({
                 htmlFor="height"
                 className="mb-2 block text-sm font-medium text-text-secondary"
               >
-                {options.maintainAspectRatio ? 'Height' : 'Height (px)'}
+                {options.maintainAspectRatio ? t('bulkImageResizer.heightLabel') : t('bulkImageResizer.heightPx')}
               </label>
               {options.maintainAspectRatio ? (
                 <div className="w-full px-3 py-2 border border-border rounded-lg bg-surface/50 text-text-muted italic">
-                  Auto (keeps aspect ratio)
+                  {t('bulkImageResizer.autoKeepsAspectRatio')}
                 </div>
               ) : (
                 <input
@@ -477,7 +483,7 @@ export function BulkImageResizer({
                 htmlFor="format"
                 className="mb-2 block text-sm font-medium text-text-secondary"
               >
-                Output Format
+                {t('bulkImageResizer.outputFormatLabel')}
               </label>
               <select
                 id="format"
@@ -502,7 +508,7 @@ export function BulkImageResizer({
                 htmlFor="quality"
                 className="mb-2 block text-sm font-medium text-text-secondary"
               >
-                Quality: {options.quality}%
+                {t('bulkImageResizer.qualityLabel')} {options.quality}%
               </label>
               <input
                 id="quality"
@@ -530,7 +536,7 @@ export function BulkImageResizer({
                 htmlFor="aspect-ratio"
                 className="text-sm font-medium text-text-secondary cursor-pointer"
               >
-                Maintain aspect ratio
+                {t('bulkImageResizer.maintainAspectRatio')}
               </label>
             </div>
 
@@ -541,7 +547,7 @@ export function BulkImageResizer({
                   htmlFor="fit-mode"
                   className="mb-2 block text-sm font-medium text-text-secondary"
                 >
-                  Fit Mode
+                  {t('bulkImageResizer.fitModeLabel')}
                 </label>
                 <select
                   id="fit-mode"
@@ -554,8 +560,8 @@ export function BulkImageResizer({
                   }
                   className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-text-primary"
                 >
-                  <option value="fit">Fit (within bounds)</option>
-                  <option value="fill">Fill (may crop)</option>
+                  <option value="fit">{t('bulkImageResizer.fitWithinBounds')}</option>
+                  <option value="fill">{t('bulkImageResizer.fillMayCrop')}</option>
                 </select>
               </div>
             )}
@@ -591,12 +597,12 @@ export function BulkImageResizer({
           >
             <Upload className="w-16 h-16 mx-auto mb-4 text-accent" />
             <h3 className="text-xl font-semibold text-text-primary mb-2">
-              Drag & Drop Images Here
+              {t('bulkImageResizer.dragDropTitle')}
             </h3>
             <p className="text-text-secondary mb-4">
-              or click to browse • Up to {maxFiles} images at once
+              {t('bulkImageResizer.orClickToBrowse')} • {t('bulkImageResizer.upToImages', { max: maxFiles })}
             </p>
-            <p className="text-sm text-text-muted">Supports JPEG, PNG, and WebP formats</p>
+            <p className="text-sm text-text-muted">{t('bulkImageResizer.supportsFormats')}</p>
           </div>
         ) : (
           <>
@@ -649,7 +655,7 @@ export function BulkImageResizer({
                     {image.isProcessing ? (
                       <div className="flex items-center gap-2">
                         <RefreshCw className="w-4 h-4 text-accent animate-spin" />
-                        <span className="text-xs text-text-secondary">Processing...</span>
+                        <span className="text-xs text-text-secondary">{t('bulkImageResizer.processingLabel')}</span>
                       </div>
                     ) : image.processedBlob ? (
                       <button
@@ -664,14 +670,14 @@ export function BulkImageResizer({
                         onClick={() => processSingleImage(image.id)}
                         className="px-3 py-1 text-xs bg-accent text-text-primary rounded-lg hover:bg-accent-hover transition-colors"
                       >
-                        Retry
+                        {t('bulkImageResizer.retryButton')}
                       </button>
                     ) : (
                       <button
                         onClick={() => processSingleImage(image.id)}
                         className="px-3 py-1 text-xs bg-surface text-text-secondary rounded-lg hover:bg-surface-light transition-colors"
                       >
-                        Process
+                        {t('bulkImageResizer.processButton')}
                       </button>
                     )}
 
@@ -692,7 +698,7 @@ export function BulkImageResizer({
               onClick={() => fileInputRef.current?.click()}
               className="w-full py-3 border-2 border-dashed border-border rounded-lg text-text-secondary hover:border-accent hover:text-accent transition-colors mb-4"
             >
-              + Add More Images
+              + {t('bulkImageResizer.addMoreImages')}
             </button>
           </>
         )}
@@ -709,10 +715,10 @@ export function BulkImageResizer({
                 {isProcessingAll || anyProcessing ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    Processing...
+                    {t('bulkImageResizer.processingLabel')}
                   </>
                 ) : (
-                  `Process All (${images.filter(i => !i.processedBlob).length})`
+                  t('bulkImageResizer.processAllButton', { count: images.filter(i => !i.processedBlob).length })
                 )}
               </button>
             )}
@@ -723,7 +729,7 @@ export function BulkImageResizer({
                 className="flex-1 px-6 py-3 bg-success text-text-primary font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />
-                Download All as ZIP
+                {t('bulkImageResizer.downloadAllZip')}
               </button>
             )}
 
@@ -732,7 +738,7 @@ export function BulkImageResizer({
               className="px-6 py-3 bg-surface-light text-text-secondary font-medium rounded-lg hover:bg-surface transition-colors flex items-center justify-center gap-2"
             >
               <RefreshCw className="w-4 h-4" />
-              Reset
+              {t('bulkImageResizer.resetButton')}
             </button>
           </div>
         )}
@@ -741,8 +747,7 @@ export function BulkImageResizer({
       {/* Info Footer */}
       <div className="mt-4 text-center text-sm text-text-secondary">
         <p>
-          All processing happens in your browser using the Canvas API. Your images are never
-          uploaded to our servers.
+          {t('bulkImageResizer.privacyInfo')}
         </p>
       </div>
 
@@ -764,11 +769,12 @@ export function BulkImageResizer({
             </div>
 
             <h3 className="text-xl font-bold text-text-primary text-center mb-2">
-              Images Resized Successfully!
+              {t('bulkImageResizer.successModal.title')}
             </h3>
             <p className="text-text-secondary text-center mb-6">
-              Your {images.length} image{images.length > 1 ? 's have' : ' has'} been resized and
-              ready to download.
+              {images.length === 1
+                ? t('bulkImageResizer.successModal.imageResized', { count: images.length })
+                : t('bulkImageResizer.successModal.imagesResized', { count: images.length })}
             </p>
 
             {/* Divider */}
@@ -782,11 +788,10 @@ export function BulkImageResizer({
                 </div>
                 <div>
                   <h4 className="font-semibold text-text-primary mb-1">
-                    Want to enhance quality too?
+                    {t('bulkImageResizer.successModal.enhanceQualityTitle')}
                   </h4>
                   <p className="text-sm text-text-secondary">
-                    Our AI upscaler can increase resolution up to 4x while enhancing details,
-                    perfect for print or large displays.
+                    {t('bulkImageResizer.successModal.enhanceQualityDesc')}
                   </p>
                 </div>
               </div>
@@ -799,7 +804,7 @@ export function BulkImageResizer({
                 className="w-full px-6 py-3 bg-accent text-text-primary font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4" />
-                Try AI Upscaler Free
+                {t('bulkImageResizer.successModal.tryAiUpscaler')}
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <button
@@ -810,7 +815,7 @@ export function BulkImageResizer({
                 className="w-full px-6 py-3 bg-success text-text-primary font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />
-                Download My Files
+                {t('bulkImageResizer.successModal.downloadFiles')}
               </button>
             </div>
 
@@ -818,11 +823,11 @@ export function BulkImageResizer({
             <div className="flex items-center justify-center gap-4 mt-4 text-xs text-text-muted">
               <span className="flex items-center gap-1">
                 <Check className="w-3 h-3 text-success" />
-                10 free credits
+                {t('bulkImageResizer.successModal.freeCredits')}
               </span>
               <span className="flex items-center gap-1">
                 <Check className="w-3 h-3 text-success" />
-                No signup required
+                {t('bulkImageResizer.successModal.noSignupRequired')}
               </span>
             </div>
           </div>

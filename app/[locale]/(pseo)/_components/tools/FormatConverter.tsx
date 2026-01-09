@@ -9,6 +9,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { InteractiveTool } from './InteractiveTool';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 type ImageFormat = 'jpeg' | 'png' | 'webp';
 
@@ -31,10 +32,10 @@ interface IFormatConverterProps {
   description?: string;
 }
 
-const FORMAT_INFO: Record<ImageFormat, { label: string; description: string; emoji: string }> = {
-  jpeg: { label: 'JPEG', description: 'Best for photos, smaller files', emoji: '📸' },
-  png: { label: 'PNG', description: 'Lossless, supports transparency', emoji: '🖼️' },
-  webp: { label: 'WebP', description: 'Modern format, best compression', emoji: '🌐' },
+const FORMAT_EMOJI: Record<ImageFormat, string> = {
+  jpeg: '📸',
+  png: '🖼️',
+  webp: '🌐',
 };
 
 export function FormatConverter({
@@ -48,9 +49,16 @@ export function FormatConverter({
     'image/svg+xml',
   ],
   availableOutputFormats = ['jpeg', 'png', 'webp'],
-  title = 'Convert Image Format',
-  description = 'Free online image format converter - convert between JPEG, PNG, and WebP',
+  title,
+  description,
 }: IFormatConverterProps): React.ReactElement {
+  const t = useTranslations('pseo-tools.formatConverter');
+
+  const formatInfo = (format: ImageFormat) => ({
+    label: t(`formatInfo.${format}.label`),
+    description: t(`formatInfo.${format}.description`),
+    emoji: FORMAT_EMOJI[format],
+  });
   const [options, setOptions] = useState<IConvertOptions>({
     targetFormat: defaultTargetFormat,
     quality: 90,
@@ -180,7 +188,7 @@ export function FormatConverter({
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-2 block text-muted-foreground">
-                  Original Image
+                  {t('originalImageLabel')}
                 </label>
                 <div className="relative border rounded-lg overflow-hidden bg-surface-light">
                   <Image
@@ -200,7 +208,7 @@ export function FormatConverter({
               </div>
               <div>
                 <label className="text-sm font-medium mb-2 block text-muted-foreground">
-                  Conversion Preview
+                  {t('conversionPreviewLabel')}
                 </label>
                 <div className="border rounded-lg p-6 bg-surface-light flex items-center justify-center min-h-[200px]">
                   <div className="text-center">
@@ -240,7 +248,7 @@ export function FormatConverter({
                 htmlFor="format"
                 className="mb-2 block text-sm font-medium text-muted-foreground"
               >
-                Convert To
+                {t('convertToLabel')}
               </label>
               <select
                 id="format"
@@ -250,12 +258,14 @@ export function FormatConverter({
                 }
                 className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-base text-text-primary"
               >
-                {(sourceMime ? filteredOutputFormats : availableOutputFormats).map(fmt => (
-                  <option key={fmt} value={fmt}>
-                    {FORMAT_INFO[fmt].emoji} {FORMAT_INFO[fmt].label} -{' '}
-                    {FORMAT_INFO[fmt].description}
-                  </option>
-                ))}
+                {(sourceMime ? filteredOutputFormats : availableOutputFormats).map(fmt => {
+                  const info = formatInfo(fmt);
+                  return (
+                    <option key={fmt} value={fmt}>
+                      {info.emoji} {info.label} - {info.description}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
@@ -263,7 +273,7 @@ export function FormatConverter({
             <div>
               <div className="flex justify-between items-center mb-2">
                 <label htmlFor="quality" className="text-sm font-medium text-muted-foreground">
-                  Quality
+                  {t('qualityLabel')}
                 </label>
                 <span className="text-sm font-bold text-accent">{options.quality}%</span>
               </div>
@@ -285,7 +295,7 @@ export function FormatConverter({
                   htmlFor="bgColor"
                   className="mb-2 block text-sm font-medium text-muted-foreground"
                 >
-                  Background Color (for transparent areas)
+                  {t('backgroundColorLabel')}
                 </label>
                 <div className="flex gap-3">
                   <input
@@ -302,19 +312,18 @@ export function FormatConverter({
                       onClick={() => setOptions(prev => ({ ...prev, backgroundColor: '#FFFFFF' }))}
                       className="px-3 py-2 bg-surface text-text-primary border border-border rounded hover:bg-surface-light text-sm"
                     >
-                      White
+                      {t('whiteButton')}
                     </button>
                     <button
                       onClick={() => setOptions(prev => ({ ...prev, backgroundColor: '#000000' }))}
                       className="px-3 py-2 bg-surface-light text-text-primary border border-border rounded hover:bg-surface text-sm"
                     >
-                      Black
+                      {t('blackButton')}
                     </button>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  JPEG doesn&apos;t support transparency. Transparent areas will be filled with this
-                  color.
+                  {t('jpegTransparencyNote')}
                 </p>
               </div>
             )}
@@ -324,14 +333,14 @@ export function FormatConverter({
           {file && (
             <div className="bg-surface-light rounded-lg p-4 border border-accent/30">
               <p className="text-sm text-muted-foreground">
-                <span className="font-medium">Converting:</span> {sourceFormat} →{' '}
+                <span className="font-medium">{t('convertingInfo')}</span> {sourceFormat} →{' '}
                 {options.targetFormat.toUpperCase()}
                 {' • '}
-                <span className="font-medium">Original:</span> {(originalSize / 1024).toFixed(1)}KB
+                <span className="font-medium">{t('originalInfo')}</span> {(originalSize / 1024).toFixed(1)}KB
                 {convertedSize > 0 && (
                   <>
                     {' • '}
-                    <span className="font-medium">Result:</span> {(convertedSize / 1024).toFixed(1)}
+                    <span className="font-medium">{t('resultInfo')}</span> {(convertedSize / 1024).toFixed(1)}
                     KB
                   </>
                 )}

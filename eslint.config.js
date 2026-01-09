@@ -5,6 +5,7 @@ import typescriptParser from '@typescript-eslint/parser';
 import importPlugin from 'eslint-plugin-import';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import i18nextPlugin from 'eslint-plugin-i18next';
 import globals from 'globals';
 
 export default [
@@ -42,6 +43,7 @@ export default [
       'react-hooks': reactHooks,
       import: importPlugin,
       '@typescript-eslint': typescriptEslint,
+      i18next: i18nextPlugin,
     },
     languageOptions: {
       parser: typescriptParser,
@@ -98,6 +100,34 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'error',
       'react/react-in-jsx-scope': 'off', // Not needed with React 17+
       'react/jsx-uses-react': 'off', // Not needed with React 17+
+      // i18n: Flag hardcoded strings that should use i18n
+      'i18next/no-literal-string': [
+        'warn',
+        {
+          markupOnly: true, // Only check JSX, not regular JS strings
+          ignoreAttribute: [
+            'data-testid',
+            'data-cy',
+            'className',
+            'style',
+            'styleName',
+            'type',
+            'id',
+            'aria-label',
+            'placeholder',
+            'alt',
+            'key',
+            'name',
+            'role',
+            'src',
+            'href',
+            'target',
+          ],
+          ignoreCallee: ['console.log', 'console.warn', 'console.error'],
+          ignoreProperty: ['key'],
+          ignoreTag: ['Styled', 'styled', 'Script', 'Link', 'Image'],
+        },
+      ],
     },
   },
   {
@@ -106,6 +136,7 @@ export default [
       react: reactPlugin,
       'react-hooks': reactHooks,
       '@typescript-eslint': typescriptEslint,
+      i18next: i18nextPlugin,
     },
     languageOptions: {
       parser: typescriptParser,
@@ -154,6 +185,34 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
+      // i18n: Flag hardcoded strings that should use i18n
+      'i18next/no-literal-string': [
+        'warn',
+        {
+          markupOnly: true,
+          ignoreAttribute: [
+            'data-testid',
+            'data-cy',
+            'className',
+            'style',
+            'styleName',
+            'type',
+            'id',
+            'aria-label',
+            'placeholder',
+            'alt',
+            'key',
+            'name',
+            'role',
+            'src',
+            'href',
+            'target',
+          ],
+          ignoreCallee: ['console.log', 'console.warn', 'console.error'],
+          ignoreProperty: ['key'],
+          ignoreTag: ['Styled', 'styled', 'Script', 'Link', 'Image'],
+        },
+      ],
     },
   },
   // OVERRIDES - These MUST come after main config to take precedence

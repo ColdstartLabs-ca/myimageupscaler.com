@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface ICalculatorResult {
   pixelsRequired: { width: number; height: number };
@@ -11,26 +12,27 @@ interface ICalculatorResult {
   recommendation: string;
 }
 
-const COMMON_PRINT_SIZES = [
-  { label: '4x6 inches', width: 4, height: 6 },
-  { label: '5x7 inches', width: 5, height: 7 },
-  { label: '8x10 inches', width: 8, height: 10 },
-  { label: '11x14 inches', width: 11, height: 14 },
-  { label: '16x20 inches', width: 16, height: 20 },
-  { label: '20x24 inches', width: 20, height: 24 },
-  { label: '24x36 inches (poster)', width: 24, height: 36 },
-  { label: 'A4 (8.27x11.69)', width: 8.27, height: 11.69 },
-  { label: 'A3 (11.69x16.54)', width: 11.69, height: 16.54 },
-  { label: 'Custom', width: 0, height: 0 },
+const COMMON_PRINT_SIZES = (t: (key: string) => string) => [
+  { label: t('presetSizes.4x6'), width: 4, height: 6, key: '4x6' },
+  { label: t('presetSizes.5x7'), width: 5, height: 7, key: '5x7' },
+  { label: t('presetSizes.8x10'), width: 8, height: 10, key: '8x10' },
+  { label: t('presetSizes.11x14'), width: 11, height: 14, key: '11x14' },
+  { label: t('presetSizes.16x20'), width: 16, height: 20, key: '16x20' },
+  { label: t('presetSizes.20x24'), width: 20, height: 24, key: '20x24' },
+  { label: t('presetSizes.24x36'), width: 24, height: 36, key: '24x36' },
+  { label: t('presetSizes.a4'), width: 8.27, height: 11.69, key: 'a4' },
+  { label: t('presetSizes.a3'), width: 11.69, height: 16.54, key: 'a3' },
+  { label: t('custom'), width: 0, height: 0, key: 'custom' },
 ];
 
 export function PrintCalculator(): React.ReactElement {
+  const t = useTranslations('pseo-tools.printCalculator');
   const [mode, setMode] = useState<'check' | 'calculate'>('check');
 
   // Mode: Check if image can print at size
   const [imageWidth, setImageWidth] = useState<number>(1920);
   const [imageHeight, setImageHeight] = useState<number>(1080);
-  const [selectedSize, setSelectedSize] = useState<string>('8x10 inches');
+  const [selectedSize, setSelectedSize] = useState<string>(t('presetSizes.8x10'));
   const [customWidth, setCustomWidth] = useState<number>(8);
   const [customHeight, setCustomHeight] = useState<number>(10);
   const [targetDPI, setTargetDPI] = useState<number>(300);
@@ -40,12 +42,22 @@ export function PrintCalculator(): React.ReactElement {
   const [calcPrintHeight, setCalcPrintHeight] = useState<number>(10);
   const [calcDPI, setCalcDPI] = useState<number>(300);
 
+  const printSizes = useMemo(() => COMMON_PRINT_SIZES(t), [t]);
+
+  // Initialize selectedSize when printSizes becomes available
+  useEffect(() => {
+    if (printSizes.length > 0 && selectedSize === t('presetSizes.8x10')) {
+      setSelectedSize(printSizes[2].label);
+    }
+  }, []);
+
   const printSize = useMemo(() => {
-    if (selectedSize === 'Custom') {
+    const custom = t('custom');
+    if (selectedSize === custom) {
       return { width: customWidth, height: customHeight };
     }
-    return COMMON_PRINT_SIZES.find(s => s.label === selectedSize) || { width: 8, height: 10 };
-  }, [selectedSize, customWidth, customHeight]);
+    return printSizes.find(s => s.label === selectedSize) || { width: 8, height: 10 };
+  }, [selectedSize, customWidth, customHeight, t, printSizes]);
 
   const checkResult = useMemo((): ICalculatorResult => {
     const requiredWidth = Math.ceil(printSize.width * targetDPI);
@@ -62,18 +74,17 @@ export function PrintCalculator(): React.ReactElement {
 
     if (currentDPI >= 300) {
       quality = 'excellent';
-      recommendation = 'Your image has plenty of resolution for this print size.';
+      recommendation = t('recommendations.excellent');
     } else if (currentDPI >= 240) {
       quality = 'good';
-      recommendation = "Good quality print. Most people won't notice it's not 300 DPI.";
+      recommendation = t('recommendations.good');
     } else if (currentDPI >= 150) {
       quality = 'acceptable';
-      recommendation =
-        "Acceptable for viewing at arm's length. Consider upscaling for close-up viewing.";
+      recommendation = t('recommendations.acceptable');
     } else {
       quality = 'poor';
       canPrint = false;
-      recommendation = 'Too low resolution. Upscaling recommended before printing.';
+      recommendation = t('recommendations.poor');
     }
 
     // Calculate upscale factor needed
@@ -92,7 +103,7 @@ export function PrintCalculator(): React.ReactElement {
       upscaleNeeded,
       recommendation,
     };
-  }, [imageWidth, imageHeight, printSize, targetDPI]);
+  }, [imageWidth, imageHeight, printSize, targetDPI, t]);
 
   const calcResult = useMemo(() => {
     const requiredWidth = Math.ceil(calcPrintWidth * calcDPI);
@@ -115,7 +126,7 @@ export function PrintCalculator(): React.ReactElement {
 
   return (
     <div className="rounded-xl border border-border-primary bg-surface-secondary p-6">
-      <h3 className="mb-4 text-xl font-semibold text-text-primary">Print Size Calculator</h3>
+      <h3 className="mb-4 text-xl font-semibold text-text-primary">{t('title')}</h3>
 
       {/* Mode Toggle */}
       <div className="mb-6 flex gap-2">
@@ -127,7 +138,7 @@ export function PrintCalculator(): React.ReactElement {
               : 'bg-surface-tertiary text-text-secondary hover:text-text-primary'
           }`}
         >
-          Check My Image
+          {t('checkMyImage')}
         </button>
         <button
           onClick={() => setMode('calculate')}
@@ -137,7 +148,7 @@ export function PrintCalculator(): React.ReactElement {
               : 'bg-surface-tertiary text-text-secondary hover:text-text-primary'
           }`}
         >
-          Calculate Pixels Needed
+          {t('calculatePixelsNeeded')}
         </button>
       </div>
 
@@ -146,7 +157,7 @@ export function PrintCalculator(): React.ReactElement {
           {/* Image Dimensions Input */}
           <div>
             <label className="mb-2 block text-sm font-medium text-text-secondary">
-              Your image dimensions (pixels)
+              {t('imageDimensionsLabel')}
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -156,7 +167,7 @@ export function PrintCalculator(): React.ReactElement {
                 className="w-28 rounded-lg border border-border-primary bg-surface-tertiary px-3 py-2 text-text-primary focus:border-accent-primary focus:outline-none"
                 min="1"
               />
-              <span className="text-text-muted">x</span>
+              <span className="text-text-muted">{t('pixelsSeparator')}</span>
               <input
                 type="number"
                 value={imageHeight}
@@ -164,28 +175,28 @@ export function PrintCalculator(): React.ReactElement {
                 className="w-28 rounded-lg border border-border-primary bg-surface-tertiary px-3 py-2 text-text-primary focus:border-accent-primary focus:outline-none"
                 min="1"
               />
-              <span className="text-sm text-text-muted">px</span>
+              <span className="text-sm text-text-muted">{t('pixelsLabel')}</span>
             </div>
           </div>
 
           {/* Print Size Selection */}
           <div>
             <label className="mb-2 block text-sm font-medium text-text-secondary">
-              Desired print size
+              {t('desiredPrintSizeLabel')}
             </label>
             <select
               value={selectedSize}
               onChange={e => setSelectedSize(e.target.value)}
               className="w-full rounded-lg border border-border-primary bg-surface-tertiary px-3 py-2 text-text-primary focus:border-accent-primary focus:outline-none"
             >
-              {COMMON_PRINT_SIZES.map(size => (
-                <option key={size.label} value={size.label}>
+              {printSizes.map(size => (
+                <option key={size.key} value={size.label}>
                   {size.label}
                 </option>
               ))}
             </select>
 
-            {selectedSize === 'Custom' && (
+            {selectedSize === t('custom') && (
               <div className="mt-3 flex items-center gap-2">
                 <input
                   type="number"
@@ -195,7 +206,7 @@ export function PrintCalculator(): React.ReactElement {
                   min="1"
                   step="0.1"
                 />
-                <span className="text-text-muted">x</span>
+                <span className="text-text-muted">{t('pixelsSeparator')}</span>
                 <input
                   type="number"
                   value={customHeight}
@@ -204,31 +215,32 @@ export function PrintCalculator(): React.ReactElement {
                   min="1"
                   step="0.1"
                 />
-                <span className="text-sm text-text-muted">inches</span>
+                <span className="text-sm text-text-muted">{t('inches')}</span>
               </div>
             )}
           </div>
 
           {/* Target DPI */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-text-secondary">Target DPI</label>
+            <label className="mb-2 block text-sm font-medium text-text-secondary">{t('targetDpiLabel')}</label>
             <select
               value={targetDPI}
               onChange={e => setTargetDPI(Number(e.target.value))}
               className="w-full rounded-lg border border-border-primary bg-surface-tertiary px-3 py-2 text-text-primary focus:border-accent-primary focus:outline-none"
             >
-              <option value={300}>300 DPI (professional quality)</option>
-              <option value={240}>240 DPI (standard prints)</option>
-              <option value={150}>150 DPI (large format / posters)</option>
+              <option value={300}>{t('dpi300Professional')}</option>
+              <option value={240}>{t('dpi240Standard')}</option>
+              <option value={150}>{t('dpi150LargeFormat')}</option>
+              <option value={72}>{t('dpi72ScreenOnly')}</option>
             </select>
           </div>
 
           {/* Results */}
           <div className="rounded-lg border border-border-primary bg-surface-primary p-4">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-sm text-text-secondary">Print Quality:</span>
+              <span className="text-sm text-text-secondary">{t('printQualityLabel')}</span>
               <span className={`font-semibold capitalize ${qualityColors[checkResult.quality]}`}>
-                {checkResult.quality} ({checkResult.currentDPI} DPI)
+                {t(`quality.${checkResult.quality}`)} ({checkResult.currentDPI} DPI)
               </span>
             </div>
 
@@ -236,20 +248,20 @@ export function PrintCalculator(): React.ReactElement {
 
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-text-muted">Pixels needed at {targetDPI} DPI:</span>
+                <span className="text-text-muted">{t('pixelsNeededAt', { dpi: targetDPI })}</span>
                 <span className="font-mono text-text-primary">
                   {checkResult.pixelsRequired.width} x {checkResult.pixelsRequired.height}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-text-muted">Your image:</span>
+                <span className="text-text-muted">{t('yourImage')}</span>
                 <span className="font-mono text-text-primary">
                   {imageWidth} x {imageHeight}
                 </span>
               </div>
               {checkResult.upscaleNeeded && (
                 <div className="flex justify-between">
-                  <span className="text-text-muted">Upscale needed:</span>
+                  <span className="text-text-muted">{t('upscaleNeeded')}</span>
                   <span className="font-mono text-accent-primary">
                     {checkResult.upscaleNeeded}x
                   </span>
@@ -262,7 +274,7 @@ export function PrintCalculator(): React.ReactElement {
                 href="/?signup=1"
                 className="mt-4 block w-full rounded-lg bg-accent-primary py-2 text-center font-medium text-white transition-colors hover:bg-accent-secondary"
               >
-                Upscale {checkResult.upscaleNeeded}x Now
+                {t('upscaleNow', { factor: checkResult.upscaleNeeded })}
               </a>
             )}
           </div>
@@ -272,7 +284,7 @@ export function PrintCalculator(): React.ReactElement {
           {/* Print Size Input */}
           <div>
             <label className="mb-2 block text-sm font-medium text-text-secondary">
-              Print size (inches)
+              {t('printSizeLabel')}
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -283,7 +295,7 @@ export function PrintCalculator(): React.ReactElement {
                 min="1"
                 step="0.1"
               />
-              <span className="text-text-muted">x</span>
+              <span className="text-text-muted">{t('pixelsSeparator')}</span>
               <input
                 type="number"
                 value={calcPrintHeight}
@@ -292,45 +304,45 @@ export function PrintCalculator(): React.ReactElement {
                 min="1"
                 step="0.1"
               />
-              <span className="text-sm text-text-muted">inches</span>
+              <span className="text-sm text-text-muted">{t('inches')}</span>
             </div>
           </div>
 
           {/* DPI Selection */}
           <div>
             <label className="mb-2 block text-sm font-medium text-text-secondary">
-              Print quality (DPI)
+              {t('printQualityDpiLabel')}
             </label>
             <select
               value={calcDPI}
               onChange={e => setCalcDPI(Number(e.target.value))}
               className="w-full rounded-lg border border-border-primary bg-surface-tertiary px-3 py-2 text-text-primary focus:border-accent-primary focus:outline-none"
             >
-              <option value={300}>300 DPI (professional quality)</option>
-              <option value={240}>240 DPI (standard prints)</option>
-              <option value={150}>150 DPI (large format / posters)</option>
-              <option value={72}>72 DPI (screen only)</option>
+              <option value={300}>{t('dpi300Professional')}</option>
+              <option value={240}>{t('dpi240Standard')}</option>
+              <option value={150}>{t('dpi150LargeFormat')}</option>
+              <option value={72}>{t('dpi72ScreenOnly')}</option>
             </select>
           </div>
 
           {/* Results */}
           <div className="rounded-lg border border-border-primary bg-surface-primary p-4">
-            <h4 className="mb-3 font-medium text-text-primary">Required Image Size:</h4>
+            <h4 className="mb-3 font-medium text-text-primary">{t('requiredImageSize')}</h4>
 
             <div className="mb-4 text-center">
               <span className="font-mono text-2xl text-accent-primary">
-                {calcResult.width} x {calcResult.height}
+                {calcResult.width} {t('pixelsSeparator')} {calcResult.height}
               </span>
-              <span className="ml-2 text-sm text-text-muted">pixels</span>
+              <span className="ml-2 text-sm text-text-muted">{t('pixelsLabel')}</span>
             </div>
 
             <div className="text-center text-sm text-text-secondary">
-              {calcResult.megapixels} megapixels needed
+              {t('megapixelsNeeded', { megapixels: calcResult.megapixels })}
             </div>
 
             <div className="mt-4 border-t border-border-primary pt-4">
               <p className="text-xs text-text-muted">
-                Formula: {calcPrintWidth}&quot; x {calcDPI} DPI = {calcResult.width}px width
+                {t('formula')}: {calcPrintWidth}&quot; x {calcDPI} DPI = {calcResult.width}px {t('width')}
               </p>
             </div>
           </div>

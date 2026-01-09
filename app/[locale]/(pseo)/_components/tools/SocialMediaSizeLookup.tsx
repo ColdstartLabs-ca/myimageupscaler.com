@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface IPlatformSize {
   type: string;
@@ -78,6 +79,7 @@ const PLATFORMS: IPlatform[] = [
 ];
 
 export function SocialMediaSizeLookup(): React.ReactElement {
+  const t = useTranslations('pseo-tools.socialMediaSizeLookup');
   const [selectedPlatform, setSelectedPlatform] = useState<string>('Instagram');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 

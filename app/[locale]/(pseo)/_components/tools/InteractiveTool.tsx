@@ -8,6 +8,7 @@
 import React, { useState, useCallback, ReactNode } from 'react';
 import { Download, RefreshCw, AlertCircle } from 'lucide-react';
 import { FileUpload } from '@/app/(pseo)/_components/ui/FileUpload';
+import { useTranslations } from 'next-intl';
 
 export interface IInteractiveToolProps {
   title: string;
@@ -34,6 +35,7 @@ export function InteractiveTool({
   children,
   onProcess,
 }: IInteractiveToolProps): React.ReactElement {
+  const t = useTranslations('pseo-tools.interactiveTool');
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [processedBlob, setProcessedBlob] = useState<Blob | null>(null);
@@ -46,14 +48,14 @@ export function InteractiveTool({
 
       // Validate file size
       if (selectedFile.size > maxFileSizeMB * 1024 * 1024) {
-        setError(`File size must be less than ${maxFileSizeMB}MB`);
+        setError(t('fileSizeError', { maxSize: maxFileSizeMB }));
         return;
       }
 
       // Validate file type
       if (!acceptedFormats.includes(selectedFile.type)) {
         setError(
-          `Invalid file format. Accepted formats: ${acceptedFormats.map(f => f.split('/')[1].toUpperCase()).join(', ')}`
+          t('invalidFormatError', { formats: acceptedFormats.map(f => f.split('/')[1].toUpperCase()).join(', ') })
         );
         return;
       }
@@ -65,7 +67,7 @@ export function InteractiveTool({
       const url = URL.createObjectURL(selectedFile);
       setPreviewUrl(url);
     },
-    [maxFileSizeMB, acceptedFormats]
+    [maxFileSizeMB, acceptedFormats, t]
   );
 
   const handleProcess = useCallback(async () => {
@@ -166,10 +168,10 @@ export function InteractiveTool({
                   {isProcessing ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin" />
-                      Processing...
+                      {t('processingButton')}
                     </>
                   ) : (
-                    'Process Image'
+                    t('processImageButton')
                   )}
                 </button>
               )}
@@ -180,7 +182,7 @@ export function InteractiveTool({
                   className="flex-1 px-6 py-3 bg-success text-white font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  Download Result
+                  {t('downloadResultButton')}
                 </button>
               )}
 
@@ -189,7 +191,7 @@ export function InteractiveTool({
                 className="px-6 py-3 bg-surface-light text-muted-foreground font-medium rounded-lg hover:bg-surface-light transition-colors flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-4 h-4" />
-                Start Over
+                {t('startOverButton')}
               </button>
             </div>
           </>
@@ -199,7 +201,7 @@ export function InteractiveTool({
       {/* Info Footer */}
       <div className="mt-4 text-center text-sm text-muted-foreground">
         <p>
-          All processing happens in your browser. Your images are never uploaded to our servers.
+          {t('privacyFooter')}
         </p>
       </div>
     </div>

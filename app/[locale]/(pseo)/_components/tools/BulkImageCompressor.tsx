@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useCallback, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Download,
   RefreshCw,
@@ -42,6 +43,7 @@ interface IImageFile {
 }
 
 export function BulkImageCompressor(): React.ReactElement {
+  const t = useTranslations('pseo-tools');
   const [options, setOptions] = useState<ICompressOptions>({
     quality: 80,
     targetSizeKB: 0, // 0 means no target size
@@ -199,7 +201,7 @@ export function BulkImageCompressor(): React.ReactElement {
           setImages(prev =>
             prev.map(img =>
               img.id === imageId
-                ? { ...img, isProcessing: false, error: 'Failed to compress image' }
+                ? { ...img, isProcessing: false, error: t('bulkImageCompressor.errorCompressing') }
                 : img
             )
           );
@@ -207,11 +209,12 @@ export function BulkImageCompressor(): React.ReactElement {
       } catch {
         setImages(prev =>
           prev.map(img =>
-            img.id === imageId ? { ...img, isProcessing: false, error: 'Compression failed' } : img
+            img.id === imageId ? { ...img, isProcessing: false, error: t('bulkImageCompressor.errorCompressing') } : img
           )
         );
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable from next-intl
     [images, options.quality, options.targetSizeKB, compressImage, compressWithTargetSize]
   );
 
@@ -305,9 +308,9 @@ export function BulkImageCompressor(): React.ReactElement {
       <div className="p-6 border-2 border-border bg-surface shadow-lg rounded-xl">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-text-primary mb-2">Bulk Image Compressor</h2>
+          <h2 className="text-2xl font-bold text-text-primary mb-2">{t('bulkImageCompressor.title')}</h2>
           <p className="text-text-secondary">
-            Compress multiple images at once. All processing happens in your browser.
+            {t('bulkImageCompressor.description')}
           </p>
         </div>
 
@@ -326,16 +329,16 @@ export function BulkImageCompressor(): React.ReactElement {
           <div className="border-2 border-dashed border-border rounded-xl p-12 text-center hover:border-accent/50 transition-colors">
             <FileImage className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-xl font-semibold text-text-primary mb-2">
-              Drop images here or click to upload
+              {t('bulkImageCompressor.dropImagesTitle')}
             </h3>
             <p className="text-text-secondary mb-4">
-              Upload up to 20 images at once (JPEG, PNG, WebP)
+              {t('bulkImageCompressor.uploadLimit')}
             </p>
             <button
               onClick={() => fileInputRef.current?.click()}
               className="px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
             >
-              Select Images
+              {t('bulkImageCompressor.selectImagesButton')}
             </button>
           </div>
         )}
@@ -347,7 +350,7 @@ export function BulkImageCompressor(): React.ReactElement {
             className="w-full p-4 border-2 border-dashed border-border rounded-lg text-text-secondary hover:border-accent/50 hover:text-accent transition-colors flex items-center justify-center gap-2 mb-6"
           >
             <FileImage className="w-5 h-5" />
-            Add More Images
+            {t('bulkImageCompressor.addMoreImages')}
           </button>
         )}
 
@@ -357,7 +360,7 @@ export function BulkImageCompressor(): React.ReactElement {
           <div>
             <div className="flex justify-between items-center mb-2">
               <label htmlFor="quality" className="text-sm font-medium text-text-secondary">
-                Quality
+                {t('bulkImageCompressor.qualityLabel')}
               </label>
               <span className="text-lg font-bold text-accent">{options.quality}%</span>
             </div>
@@ -372,10 +375,10 @@ export function BulkImageCompressor(): React.ReactElement {
             />
             <p className="text-xs text-text-muted mt-1">
               {options.quality < 50
-                ? 'Lower quality, smaller files'
+                ? t('bulkImageCompressor.lowerQuality')
                 : options.quality > 80
-                  ? 'Higher quality, larger files'
-                  : 'Balanced quality and size'}
+                  ? t('bulkImageCompressor.higherQuality')
+                  : t('bulkImageCompressor.balancedQuality')}
             </p>
           </div>
 
@@ -385,7 +388,7 @@ export function BulkImageCompressor(): React.ReactElement {
               htmlFor="targetSize"
               className="text-sm font-medium text-text-secondary mb-2 block"
             >
-              Target Size (KB, optional)
+              {t('bulkImageCompressor.targetSizeLabel')}
             </label>
             <input
               id="targetSize"
@@ -397,18 +400,18 @@ export function BulkImageCompressor(): React.ReactElement {
               onChange={e =>
                 setOptions(prev => ({ ...prev, targetSizeKB: parseInt(e.target.value) || 0 }))
               }
-              placeholder="No limit"
+              placeholder={t('bulkImageCompressor.noLimitPlaceholder')}
               className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-text-primary"
             />
             <p className="text-xs text-text-muted mt-1">
-              Leave empty for quality-based compression
+              {t('bulkImageCompressor.targetSizeHint')}
             </p>
           </div>
 
           {/* Format */}
           <div>
             <label htmlFor="format" className="text-sm font-medium text-text-secondary mb-2 block">
-              Output Format
+              {t('bulkImageCompressor.outputFormatLabel')}
             </label>
             <select
               id="format"
@@ -421,9 +424,9 @@ export function BulkImageCompressor(): React.ReactElement {
               }
               className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-text-primary"
             >
-              <option value="jpeg">JPEG (best for photos)</option>
-              <option value="webp">WebP (best compression)</option>
-              <option value="png">PNG (lossless)</option>
+              <option value="jpeg">{t('bulkImageCompressor.formatJpegBestPhotos')}</option>
+              <option value="webp">{t('bulkImageCompressor.formatWebpBestCompression')}</option>
+              <option value="png">{t('bulkImageCompressor.formatPngLossless')}</option>
             </select>
           </div>
         </div>
@@ -478,7 +481,7 @@ export function BulkImageCompressor(): React.ReactElement {
                   {image.isProcessing && (
                     <p className="text-xs text-accent mt-1 flex items-center gap-1">
                       <RefreshCw className="w-3 h-3 animate-spin" />
-                      Compressing...
+                      {t('bulkImageCompressor.compressingLabel')}
                     </p>
                   )}
                 </div>
@@ -513,23 +516,23 @@ export function BulkImageCompressor(): React.ReactElement {
             <div className="grid grid-cols-4 gap-4 text-center">
               <div>
                 <p className="text-2xl font-bold text-text-primary">{images.length}</p>
-                <p className="text-xs text-text-secondary">Images</p>
+                <p className="text-xs text-text-secondary">{t('bulkImageCompressor.imagesLabel')}</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-primary">
                   {(totalOriginalSize / 1024).toFixed(0)}KB
                 </p>
-                <p className="text-xs text-text-secondary">Original</p>
+                <p className="text-xs text-text-secondary">{t('bulkImageCompressor.originalLabel')}</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-success">{avgCompressionRatio}%</p>
-                <p className="text-xs text-text-secondary">Avg Reduction</p>
+                <p className="text-xs text-text-secondary">{t('bulkImageCompressor.avgReduction')}</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-accent">
                   {(totalCompressedSize / 1024).toFixed(0)}KB
                 </p>
-                <p className="text-xs text-text-secondary">Compressed</p>
+                <p className="text-xs text-text-secondary">{t('bulkImageCompressor.compressedLabel')}</p>
               </div>
             </div>
           </div>
@@ -547,10 +550,15 @@ export function BulkImageCompressor(): React.ReactElement {
                 {isProcessingAll ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    Processing {processedCount}/{images.length}...
+                    {t('bulkImageCompressor.processingCount', {
+                      current: processedCount,
+                      total: images.length,
+                    })}
                   </>
                 ) : (
-                  `Compress ${images.length} Image${images.length > 1 ? 's' : ''}`
+                  (images.length === 1
+                    ? t('bulkImageCompressor.compressButton', { count: images.length })
+                    : t('bulkImageCompressor.compressButtonPlural', { count: images.length }))
                 )}
               </button>
             )}
@@ -561,7 +569,7 @@ export function BulkImageCompressor(): React.ReactElement {
                 className="flex-1 px-6 py-3 bg-success text-white font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
               >
                 <Package className="w-4 h-4" />
-                Download All as ZIP
+                {t('bulkImageCompressor.downloadAllZip')}
               </button>
             )}
 
@@ -570,7 +578,7 @@ export function BulkImageCompressor(): React.ReactElement {
               className="px-6 py-3 bg-surface text-text-secondary font-medium rounded-lg hover:bg-surface-light transition-colors flex items-center justify-center gap-2"
             >
               <RefreshCw className="w-4 h-4" />
-              Clear All
+              {t('bulkImageCompressor.clearAllButton')}
             </button>
           </div>
         )}
@@ -578,11 +586,11 @@ export function BulkImageCompressor(): React.ReactElement {
 
       {/* Tips */}
       <div className="mt-4 p-4 bg-surface rounded-lg text-sm text-text-secondary">
-        <p className="font-medium mb-2">Tips:</p>
+        <p className="font-medium mb-2">{t('bulkImageCompressor.tipsTitle')}</p>
         <ul className="space-y-1 ml-4 list-disc">
-          <li>70-80% quality is optimal for web use</li>
-          <li>WebP format offers best compression with modern browser support</li>
-          <li>Set a target size (KB) to automatically find the best quality</li>
+          <li>{t('bulkImageCompressor.tip1')}</li>
+          <li>{t('bulkImageCompressor.tip2')}</li>
+          <li>{t('bulkImageCompressor.tip3')}</li>
         </ul>
       </div>
 
@@ -604,14 +612,16 @@ export function BulkImageCompressor(): React.ReactElement {
             </div>
 
             <h3 className="text-xl font-bold text-text-primary text-center mb-2">
-              Images Compressed Successfully!
+              {t('bulkImageCompressor.successModal.title')}
             </h3>
             <p className="text-text-secondary text-center mb-2">
               You saved <span className="text-success font-semibold">{avgCompressionRatio}%</span>{' '}
-              on {images.length} image{images.length > 1 ? 's' : ''}.
+              on {images.length === 1
+                ? t('bulkImageCompressor.successModal.imageResized', { count: images.length })
+                : t('bulkImageCompressor.successModal.imagesResized', { count: images.length })}
             </p>
             <p className="text-text-muted text-center text-sm mb-6">
-              Download your files below or try our premium tools.
+              {t('bulkImageCompressor.successModal.downloadPrompt')}
             </p>
 
             {/* Divider */}
@@ -624,10 +634,9 @@ export function BulkImageCompressor(): React.ReactElement {
                   <Sparkles className="w-5 h-5 text-accent" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-text-primary mb-1">Need higher resolution?</h4>
+                  <h4 className="font-semibold text-text-primary mb-1">{t('bulkImageCompressor.successModal.higherResolutionTitle')}</h4>
                   <p className="text-sm text-text-secondary">
-                    Our AI upscaler can increase resolution up to 4x while enhancing details and
-                    sharpness.
+                    {t('bulkImageCompressor.successModal.higherResolutionDesc')}
                   </p>
                 </div>
               </div>
@@ -640,7 +649,7 @@ export function BulkImageCompressor(): React.ReactElement {
                 className="w-full px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4" />
-                Try AI Upscaler Free
+                {t('bulkImageCompressor.successModal.tryAiUpscaler')}
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <button
@@ -651,7 +660,7 @@ export function BulkImageCompressor(): React.ReactElement {
                 className="w-full px-6 py-3 bg-success text-white font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />
-                Download My Files
+                {t('bulkImageCompressor.successModal.downloadFiles')}
               </button>
             </div>
 
@@ -659,11 +668,11 @@ export function BulkImageCompressor(): React.ReactElement {
             <div className="flex items-center justify-center gap-4 mt-4 text-xs text-text-muted">
               <span className="flex items-center gap-1">
                 <Check className="w-3 h-3 text-success" />
-                10 free credits
+                {t('bulkImageCompressor.successModal.freeCredits')}
               </span>
               <span className="flex items-center gap-1">
                 <Check className="w-3 h-3 text-success" />
-                No signup required
+                {t('bulkImageCompressor.successModal.noSignupRequired')}
               </span>
             </div>
           </div>

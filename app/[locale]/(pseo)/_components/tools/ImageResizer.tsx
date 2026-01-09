@@ -9,6 +9,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { InteractiveTool } from './InteractiveTool';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 interface IResizeOptions {
   width: number;
@@ -24,20 +25,20 @@ interface IPresetSize {
   height: number;
 }
 
-const ALL_PRESET_SIZES: IPresetSize[] = [
-  { label: 'Instagram Post (1080x1080)', width: 1080, height: 1080 },
-  { label: 'Instagram Story (1080x1920)', width: 1080, height: 1920 },
-  { label: 'Facebook Post (1200x630)', width: 1200, height: 630 },
-  { label: 'Facebook Cover (820x312)', width: 820, height: 312 },
-  { label: 'Twitter Post (1200x675)', width: 1200, height: 675 },
-  { label: 'Twitter Header (1500x500)', width: 1500, height: 500 },
-  { label: 'YouTube Thumbnail (1280x720)', width: 1280, height: 720 },
-  { label: 'LinkedIn Post (1200x627)', width: 1200, height: 627 },
-  { label: 'LinkedIn Banner (1584x396)', width: 1584, height: 396 },
-  { label: 'Pinterest Pin (1000x1500)', width: 1000, height: 1500 },
-  { label: '4K (3840x2160)', width: 3840, height: 2160 },
-  { label: 'Full HD (1920x1080)', width: 1920, height: 1080 },
-  { label: 'HD (1280x720)', width: 1280, height: 720 },
+const ALL_PRESET_SIZES_CONFIG = [
+  { key: 'instagramPost', width: 1080, height: 1080 },
+  { key: 'instagramStory', width: 1080, height: 1920 },
+  { key: 'facebookPost', width: 1200, height: 630 },
+  { key: 'facebookCover', width: 820, height: 312 },
+  { key: 'twitterPost', width: 1200, height: 675 },
+  { key: 'twitterHeader', width: 1500, height: 500 },
+  { key: 'youtubeThumbnail', width: 1280, height: 720 },
+  { key: 'linkedinPost', width: 1200, height: 627 },
+  { key: 'linkedinBanner', width: 1584, height: 396 },
+  { key: 'pinterestPin', width: 1000, height: 1500 },
+  { key: '4k', width: 3840, height: 2160 },
+  { key: 'fullHd', width: 1920, height: 1080 },
+  { key: 'hd', width: 1280, height: 720 },
 ];
 
 interface IImageResizerProps {
@@ -57,13 +58,27 @@ export function ImageResizer({
   defaultWidth = 1080,
   defaultHeight = 1080,
   presetFilter,
-  title = 'Resize Your Image',
-  description = 'Free online image resizer - resize images to any dimension instantly',
+  title,
+  description,
 }: IImageResizerProps): React.ReactElement {
+  const t = useTranslations('pseo-tools.imageResizer');
+  const tPresets = useTranslations('pseo-tools.presetSizes');
+
+  // Use provided title/description or fall back to translations
+  const displayTitle = title || t('defaultTitle');
+  const displayDescription = description || t('defaultDescription');
+
+  // Build presets with translated labels
+  const allPresets: IPresetSize[] = ALL_PRESET_SIZES_CONFIG.map(config => ({
+    label: tPresets(config.key),
+    width: config.width,
+    height: config.height,
+  }));
+
   // Filter presets based on presetFilter prop
   const presets = presetFilter
-    ? ALL_PRESET_SIZES.filter(p => p.label.toLowerCase().includes(presetFilter.toLowerCase()))
-    : ALL_PRESET_SIZES;
+    ? allPresets.filter(p => p.label.toLowerCase().includes(presetFilter.toLowerCase()))
+    : allPresets;
 
   const [options, setOptions] = useState<IResizeOptions>({
     width: defaultWidth,
@@ -195,7 +210,7 @@ export function ImageResizer({
   );
 
   return (
-    <InteractiveTool title={title} description={description} onProcess={handleResize}>
+    <InteractiveTool title={displayTitle} description={displayDescription} onProcess={handleResize}>
       {({ file, previewUrl }) => (
         <div className="space-y-6">
           {/* Preview */}
@@ -203,7 +218,7 @@ export function ImageResizer({
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-2 block text-muted-foreground">
-                  Original Image
+                  {t('originalImageLabel')}
                 </label>
                 <div className="relative border rounded-lg overflow-hidden bg-surface-light">
                   <Image
@@ -223,14 +238,14 @@ export function ImageResizer({
               </div>
               <div>
                 <label className="text-sm font-medium mb-2 block text-muted-foreground">
-                  Preview (New Size)
+                  {t('previewNewSizeLabel')}
                 </label>
                 <div className="border rounded-lg p-4 bg-surface-light flex items-center justify-center min-h-[200px]">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-muted-foreground">
                       {options.width} × {options.height}
                     </p>
-                    <p className="text-sm text-muted-foreground mt-1">New dimensions</p>
+                    <p className="text-sm text-muted-foreground mt-1">{t('newDimensions')}</p>
                   </div>
                 </div>
               </div>
@@ -245,14 +260,14 @@ export function ImageResizer({
                 htmlFor="preset"
                 className="mb-2 block text-sm font-medium text-muted-foreground"
               >
-                Preset Sizes
+                {t('presetSizesLabel')}
               </label>
               <select
                 id="preset"
                 onChange={e => handlePresetSelect(e.target.value)}
                 className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-surface text-text-primary"
               >
-                <option value="">Choose a preset...</option>
+                <option value="">{t('choosePreset')}</option>
                 {presets.map(preset => (
                   <option key={preset.label} value={preset.label}>
                     {preset.label}
@@ -267,7 +282,7 @@ export function ImageResizer({
                 htmlFor="format"
                 className="mb-2 block text-sm font-medium text-muted-foreground"
               >
-                Output Format
+                {t('outputFormatLabel')}
               </label>
               <select
                 id="format"
@@ -292,7 +307,7 @@ export function ImageResizer({
                 htmlFor="width"
                 className="mb-2 block text-sm font-medium text-muted-foreground"
               >
-                Width (px)
+                {t('widthLabel')}
               </label>
               <input
                 id="width"
@@ -311,10 +326,10 @@ export function ImageResizer({
                 htmlFor="height"
                 className="mb-2 block text-sm font-medium text-muted-foreground"
               >
-                Height (px)
+                {t('heightLabel')}
                 {options.maintainAspectRatio && (
                   <span className="ml-2 text-xs text-muted-foreground font-normal">
-                    (auto-calculated)
+                    {t('autoCalculated')}
                   </span>
                 )}
               </label>
@@ -336,7 +351,7 @@ export function ImageResizer({
                 htmlFor="quality"
                 className="mb-2 block text-sm font-medium text-muted-foreground"
               >
-                Quality: {options.quality}%
+                {t('qualityLabel')} {options.quality}%
               </label>
               <input
                 id="quality"
@@ -364,7 +379,7 @@ export function ImageResizer({
                 htmlFor="aspect-ratio"
                 className="text-sm font-medium text-muted-foreground cursor-pointer"
               >
-                Maintain aspect ratio
+                {t('maintainAspectRatio')}
               </label>
             </div>
           </div>
@@ -373,7 +388,7 @@ export function ImageResizer({
           {file && (
             <div className="bg-surface rounded-lg p-4 text-sm">
               <p className="text-text-secondary">
-                <span className="font-medium">Original:</span> {file.name} (
+                <span className="font-medium">{t('originalLabel')}</span> {file.name} (
                 {(file.size / 1024 / 1024).toFixed(2)}MB)
               </p>
             </div>
