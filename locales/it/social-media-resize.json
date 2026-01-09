@@ -1,57 +1,57 @@
 {
-  "category": "Strumenti",
+  "category": "strumenti",
   "pages": [
     {
-      "slug": "resize-image-for-pinterest",
+      "slug": "ridimensiona-immagine-per-pinterest",
       "title": "Ridimensiona Immagine per Pinterest",
       "metaTitle": "Ridimensiona Immagine per Pinterest | MyImageUpscaler",
       "metaDescription": "Perfect Pinterest image resizer for all pin sizes. Standard pins, story pins, board covers, and video thumbnAIls. Gratuito online tool with 2025 Pinterest dimensioni and ottimizzazione.",
       "h1": "Ridimensionatore Immagini Pinterest - dimensioni Pin Perfette per 2025",
       "intro": "Crea perfect Pinterest pins with our specialized image resizer. Automatically ottimizza your images for Pinterest's 2025 requirements including standard pins, Idea Pins, video content, and board covers con AI-powered ottimizzazione.",
-      "primaryKeyword": "resize image for pinterest",
+      "primaryKeyword": "ridimensiona immagine per pinterest",
       "secondaryKeywords": [
-        "pinterest image sizes 2025",
+        "dimensioni immagini pinterest 2025",
         "pin dimensioni guide",
-        "pinterest resizer tool",
+        "strumento di ridimensionamento pinterest",
         "social media image ottimizzazione",
         "pinterest marketing consigli",
-        "pinterest video thumbnail size",
+        "dimensione anteprima video pinterest",
         "pinterest board cover dimensioni"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "Strumenti",
+      "category": "strumenti",
       "toolName": "Pinterest Ridimensionatore Immagini",
       "description": "Advanced Pinterest image resizing tool with 2025 specifications and marketing ottimizzazione caratteristiche",
       "isInteractive": true,
-      "toolComponent": "ImmagineRidimensionar",
+      "toolComponent": "ImageResizer",
       "platformSpecifications": {
         "currentRequirements": {
           "standardPins": {
-            "recommended": "1000x1500 pixels",
+            "recommended": "1000x1500 pixel",
             "aspectRatio": "2:3",
-            "minimum": "600x900 pixels",
+            "minimum": "600x900 pixel",
             "fileFormat": "JPG, PNG",
             "maxFileSize": "32MB"
           },
           "squarePins": {
-            "recommended": "1000x1000 pixels",
+            "recommended": "1000x1000 pixel",
             "aspectRatio": "1:1",
             "fileFormat": "JPG, PNG"
           },
           "storyPins": {
-            "recommended": "1080x1920 pixels",
+            "recommended": "1080x1920 pixel",
             "aspectRatio": "9:16",
-            "videoLength": "15-60 seconds",
+            "videoLength": "15-60 secondi",
             "fileFormat": "MP4, JPG, PNG"
           },
           "videoPins": {
-            "thumbnail": "1080x1920 pixels",
+            "thumbnail": "1080x1920 pixel",
             "aspectRatio": "9:16, 1:1, 2:3",
-            "maxDuration": "15 minutes",
-            "resolution": "1080x1920 minimum"
+            "maxDuration": "15 minuti",
+            "resolution": "1080x1920 minimo"
           },
           "boardCovers": {
-            "recommended": "800x800 pixels",
+            "recommended": "800x800 pixel",
             "aspectRatio": "1:1",
             "fileFormat": "JPG, PNG",
             "maxFileSize": "32MB"
@@ -68,7 +68,7 @@
           "designGuidelines": {
             "textOverlays": "Usa 60-70 characters max, sans-serif fonts, 24pt minimum size, high contrast backgrounds",
             "colorPalette": "Limit to 3-4 colors, maintain marca consistency, test contrast ratios for accessibility",
-            "composition": "Rule of thirds, negative space, clear focal point, avoid clutter",
+            "composition": "Regola dei terzi, spazio negativo, punto focale chiaro, evitare il disordine",
             "branding": "Consistent logo placement, marca colors, font hierarchy, visual style"
           }
         },
@@ -76,17 +76,17 @@
           "thumbnailStrategy": {
             "faceDetection": "Images with faces Ottieni 35% more engagement. Usa authentic expressions, eye contact.",
             "colors": "Red, orange, and pink tones increase click-through by 15%. Usa vibrant, saturated colors.",
-            "asymmetry": "Slightly off-center composition performs 20% better than perfectly centered images.",
-            "contrast": "Alto contrast images perform better in feeds. Test with grayscale to ensure readability."
+            "asymmetry": "Le composizioni leggermente decentrate funzionano il 20% meglio delle immagini perfettamente centralizzate.",
+            "contrast": "Le immagini ad alto contrasto funzionano meglio nei feed. Testare in scala di grigi per garantire la leggibilità."
           },
           "timing": {
-            "bestPostingTimes": "8-11 PM, 2-4 PM weekends. Peak engagement varies by audience timezone.",
-            "seasonalContent": "Plan 6-8 weeks ahead. Holiday content performs 40% better when posted early.",
+            "bestPostingTimes": "20-23, 14-16 nei weekend. L'engagement di picco varia in base al fuso orario del pubblico.",
+            "seasonalContent": "Pianificare 6-8 settimane prima. I contenuti stagionali funzionano il 40% meglio se pubblicati in anticipo.",
             "trendingTopics": "Monitor Pinterest Trends tool. Crea content 1-2 weeks before trend peaks."
           },
           "engagementFactors": {
             "multipleImages": "Pins with 4-5 images Ottieni 2x more saves than single images.",
-            "descriptiveAltText": "Include 3-5 keywords naturally. Describe image content and user benefit.",
+            "descriptiveAltText": "Includere 3-5 parole chiave in modo naturale. Descrivere il contenuto dell'immagine e il beneficio per l'utente.",
             "hashtags": "Usa 3-5 relevant hashtags. Mix broad (#home decor) and specific (#bohobedroomideas) terms."
           }
         },
@@ -94,43 +94,43 @@
           "ideoRequirements": {
             "format": "MP4, MOV, WebM",
             "frameRate": "24-30 FPS",
-            "bitrate": "8-10 Mbps for 1080p",
-            "audio": "AAC stereo, 128kbps minimum",
-            "subtitles": "85% of users watch without sound. Include burn-in captions."
+            "bitrate": "8-10 Mbps per 1080p",
+            "audio": "AAC stereo, 128kbps minimo",
+            "subtitles": "L'85% degli utenti guarda senza audio. Includere sottotitoli integrati."
           },
           "ideaPins": {
-            "slides": "3-20 slides per Idea Pin",
-            "duration": "2 seconds minimum per slide",
+            "slides": "3-20 slide per Idea Pin",
+            "duration": "2 secondi minimi per slide",
             "coverImage": "High-quality thumbnail with clear titolo",
-            "storytelling": "Narrative arc, clear progression, value in each slide"
+            "storytelling": "Arc narrativo, progressione chiara, valore in ogni slide"
           },
           "videoOptimization": {
             "thumbnailGeneration": "Crea custom thumbnails from video. Usa most engaging frame.",
             "editing": "Keep cuts quick, add text overlays, include marca elements.",
-            "length": "15-30 seconds optimal. First 3 seconds crucial for retention."
+            "length": "15-30 secondi ottimali. I primi 3 secondi sono cruciali per il mantenimento dell'attenzione."
           }
         },
         "technicalOptimization": {
           "compression": {
-            "jpgSettings": "80-85% quality, progressive encoding, sRGB color space",
-            "pngSettings": "Lossless compression for graphics, reduce color palette where possible",
+            "jpgSettings": "Qualità 80-85%, codifica progressiva, spazio colore sRGB",
+            "pngSettings": "Compressione senza perdita per grafica, ridurre la tavolozza dei colori dove possibile",
             "fileSize": "Target < 1MB for pins, < 5MB for video thumbnails. Usa WebP for 25% smaller files."
           },
           "loadingPerformance": {
             "lazyLoad": "Pinterest automatically lazy loads. ottimizza for initial viewport.",
-            "preload": "Critical above-fold content. Prioritize hero images.",
+            "preload": "Contenuto critico sopra la piega. Dare priorità alle immagini principali.",
             "cdn": "Pinterest's CDN optimizes, but Inizia with well-optimized files."
           }
         },
         "contentStrategy": {
           "planningWorkflows": {
             "batchCreation": "Crea 30-60 pins monthly. Usa templates for consistency.",
-            "contentPillars": "Develop 5-7 core content themes. Maintain 80/20 value to promotion ratio.",
+            "contentPillars": "Sviluppare 5-7 temi di contenuto principali. Mantenere un rapporto 80/20 valore a promozione.",
             "scheduling": "Usa Pinterest Planner API. Space posts 2-4 hours apart.",
-            "testing": "A/B test formats weekly. Documento results in content calendar."
+            "testing": "Test A/B settimanale dei formati. Documentare i risultati nel calendario dei contenuti."
           },
           "platformIntegration": {
-            "crossPosting": "Repurpose Instagram Reels as Pinterest Video Pins. Tailor to platform differences.",
+            "crossPosting": "Riusare i Reels Instagram come Video Pins Pinterest. Adattare alle differenze di piattaforma.",
             "websiteIntegration": "Add Pin It buttons. Enable Rich Pins for automatic sync.",
             "analytics": "Track Pin stats, audience insights, and conversion metrics through Pinterest Analytics.",
             "influencerCollaboration": "Brand guidelines for consistent pin creation. Provide approved assets."
@@ -159,12 +159,20 @@
             "colorTrends": {
               "palette1": {
                 "name": "Digital Lavender",
-                "hex": ["#E0B0FF", "#9370DB", "#4B0082"],
+                "hex": [
+                  "#E0B0FF",
+                  "#9370DB",
+                  "#4B0082"
+                ],
                 "usage": "Lifestyle content, fashion, beauty"
               },
               "palette2": {
                 "name": "Earth Svantaggicious",
-                "hex": ["#8B7355", "#D2B48C", "#F5DEB3"],
+                "hex": [
+                  "#8B7355",
+                  "#D2B48C",
+                  "#F5DEB3"
+                ],
                 "usage": "Home decor, sustainable products, organic content"
               }
             }
@@ -341,7 +349,10 @@
           "description": "Apply AI ottimizzazione and download perfectly sized, platform-ready content"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "social-media-scheduler"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "social-media-scheduler"
+      ],
       "relatedGuides": [
         "how-to-ampliamento-images-without-losing-quality",
         "pinterest-marketing-strategy-guide"
@@ -559,12 +570,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Neon Dreams",
-                "hex": ["#FF006E", "#FB5607", "#FFBE0B", "#8338EC"],
+                "hex": [
+                  "#FF006E",
+                  "#FB5607",
+                  "#FFBE0B",
+                  "#8338EC"
+                ],
                 "usage": "Inviotainment, fashion, youth-oriented content"
               },
               "palette2": {
                 "name": "Minimalist Earth",
-                "hex": ["#2D6A4F", "#40916C", "#74C69D", "#D8F3DC"],
+                "hex": [
+                  "#2D6A4F",
+                  "#40916C",
+                  "#74C69D",
+                  "#D8F3DC"
+                ],
                 "usage": "Wellness, sustainability, educational content"
               }
             }
@@ -743,7 +764,10 @@
           "description": "Apply engagement ottimizzazione and export TikTok-ready content instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "video-thumbnail-generator"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "video-thumbnail-generator"
+      ],
       "relatedGuides": [
         "how-to-ampliamento-images-without-losing-quality",
         "tiktok-marketing-strategy-guide"
@@ -997,12 +1021,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Muted Vibrance",
-                "hex": ["#FF6B6B", "#4ECDC4", "#45B7D1", "#F7DC6F"],
+                "hex": [
+                  "#FF6B6B",
+                  "#4ECDC4",
+                  "#45B7D1",
+                  "#F7DC6F"
+                ],
                 "usage": "Lifestyle, fashion, creative content"
               },
               "palette2": {
                 "name": "Natural Harmony",
-                "hex": ["#8B7355", "#A0522D", "#D2B48C", "#F5DEB3"],
+                "hex": [
+                  "#8B7355",
+                  "#A0522D",
+                  "#D2B48C",
+                  "#F5DEB3"
+                ],
                 "usage": "Wellness, organic, sustainable content"
               }
             }
@@ -1182,7 +1216,10 @@
           "description": "Apply engagement ottimizzazione and export Instagram-ready content"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "instagram-grid-pianoner"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "instagram-grid-pianoner"
+      ],
       "relatedGuides": [
         "how-to-ampliamento-images-without-losing-quality",
         "instagram-marketing-strategy-guide"
@@ -1528,12 +1565,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Vibrant Energy",
-                "hex": ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A"],
+                "hex": [
+                  "#FF6B6B",
+                  "#4ECDC4",
+                  "#45B7D1",
+                  "#FFA07A"
+                ],
                 "usage": "Inviotainment, gaming, high-energy content"
               },
               "palette2": {
                 "name": "Professionale Trust",
-                "hex": ["#2C3E50", "#34495E", "#95A5A6", "#ECF0F1"],
+                "hex": [
+                  "#2C3E50",
+                  "#34495E",
+                  "#95A5A6",
+                  "#ECF0F1"
+                ],
                 "usage": "Educational, business, authoritative content"
               }
             }
@@ -1712,7 +1759,10 @@
           "description": "Preview on multiple devices and export YouTube-ready graphics"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "video-thumbnail-generator"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "video-thumbnail-generator"
+      ],
       "relatedGuides": [
         "how-to-ampliamento-images-without-losing-quality",
         "youtube-channel-growth-guide"
@@ -2026,12 +2076,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Digital Blue",
-                "hex": ["#4267B2", "#1877F2", "#8B9DC3", "#DFE3EE"],
+                "hex": [
+                  "#4267B2",
+                  "#1877F2",
+                  "#8B9DC3",
+                  "#DFE3EE"
+                ],
                 "usage": "Professionale content, technology, business services"
               },
               "palette2": {
                 "name": "Warm Connection",
-                "hex": ["#FF6B6B", "#F7DC6F", "#82E0AA", "#85C1E2"],
+                "hex": [
+                  "#FF6B6B",
+                  "#F7DC6F",
+                  "#82E0AA",
+                  "#85C1E2"
+                ],
                 "usage": "Comunità building, lifestyle, relationship-focused content"
               }
             }
@@ -2211,7 +2271,10 @@
           "description": "Preview on multiple devices and export Facebook-ready content"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "facebook-ad-creator"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "facebook-ad-creator"
+      ],
       "relatedGuides": [
         "how-to-ampliamento-images-without-losing-quality",
         "facebook-marketing-strategy-guide"
@@ -2330,8 +2393,12 @@
           "description": "Ottieni your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-ampliamento-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-ampliamento-images-without-losing-quality"
+      ],
       "ctaText": "Inizia Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2446,8 +2513,12 @@
           "description": "Ottieni your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-ampliamento-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-ampliamento-images-without-losing-quality"
+      ],
       "ctaText": "Inizia Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2562,8 +2633,12 @@
           "description": "Ottieni your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-ampliamento-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-ampliamento-images-without-losing-quality"
+      ],
       "ctaText": "Inizia Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2678,8 +2753,12 @@
           "description": "Ottieni your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-ampliamento-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-ampliamento-images-without-losing-quality"
+      ],
       "ctaText": "Inizia Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2794,8 +2873,12 @@
           "description": "Ottieni your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-ampliamento-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-ampliamento-images-without-losing-quality"
+      ],
       "ctaText": "Inizia Resizing",
       "ctaUrl": "/?signup=1"
     }

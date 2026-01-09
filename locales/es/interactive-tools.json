@@ -1,26 +1,26 @@
 {
-  "category": "tools",
+  "category": "herramientas",
   "pages": [
     {
-      "slug": "image-resizer",
-      "title": "Image Resizer",
-      "metaTitle": "Image Resizer | MyImageUpscaler",
-      "metaDescription": "Resize images online for Free. No upload required - all processing happens in your browser. Supports JPEG, PNG, WebP. Perfect for social media, web, and print.",
-      "h1": "Free online Image Resizer - Resize Images Instantly",
-      "intro": "Resize your images to any dimension in seconds. Our Free online image resizer works entirely in your browser - no upload, no signup, no watermarks. Perfect for social media, websites, and print.",
-      "primaryKeyword": "image resizer",
+      "slug": "redimensionador-imagenes",
+      "title": "Redimensionador de Imágenes",
+      "metaTitle": "Redimensionador de Imágenes | MyImageUpscaler",
+      "metaDescription": "Redimensiona imágenes gratis en línea. Sin carga requerida - todo el procesamiento ocurre en tu navegador. Soporta JPEG, PNG, WebP. Perfecto para redes sociales, web e impresión.",
+      "h1": "Redimensionador de Imágenes Gratis en Línea - Redimensiona Imágenes al Instante",
+      "intro": "Redimensiona tus imágenes a cualquier dimensión en segundos. Nuestro redimensionador de imágenes gratis funciona completamente en tu navegador - sin carga, sin registro, sin marcas de agua. Perfecto para redes sociales, sitios web e impresión.",
+      "primaryKeyword": "redimensionador de imágenes",
       "secondaryKeywords": [
-        "resize image online",
-        "online image resizer",
-        "resize image",
-        "image resize tool",
-        "resize photo online",
-        "picture resizer"
+        "redimensionar imágenes en línea",
+        "redimensionador de imágenes en línea",
+        "redimensionar imagen",
+        "herramienta de redimensionado de imágenes",
+        "redimensionar fotos en línea",
+        "redimensionador de fotos"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
-      "toolName": "Image Resizer",
-      "description": "Professional image resizing tool that works directly in your browser. Resize images to exact dimensions, choose from social media presets, or maintain aspect ratio automatically. No quality loss with our advanced canvas technology.",
+      "category": "herramientas",
+      "toolName": "Redimensionador de Imágenes",
+      "description": "Herramienta profesional de redimensionado de imágenes que funciona directamente en tu navegador. Redimensiona imágenes a dimensiones exactas, elige entre preestablecidos de redes sociales o mantiene la proporción automáticamente. Sin pérdida de calidad con nuestra tecnología avanzada de lienzo.",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "maxFileSizeMB": 25,
@@ -31,60 +31,60 @@
       ],
       "features": [
         {
-          "title": "Instant Browser-Based Resizing",
-          "description": "All processing happens locally in your browser. Your images never leave your device, ensuring complete privacy and instant results."
+          "title": "Redimensionado Instantáneo Basado en Navegador",
+          "description": "Todo el procesamiento ocurre localmente en tu navegador. Tus imágenes nunca abandonan tu dispositivo, asegurando privacidad completa e instantes resultados."
         },
         {
-          "title": "Social Media Presets",
-          "description": "One-click resize to perfect dimensions for Instagram, Facebook, Twitter, LinkedIn, and YouTube. No more guessing sizes."
+          "title": "Preestablecidos de Redes Sociales",
+          "description": "Redimensiona con un clic a dimensiones perfectas para Instagram, Facebook, Twitter, LinkedIn y YouTube. Más adivinar tamaños."
         },
         {
-          "title": "Custom dimensions",
-          "description": "Enter exact pixel dimensions or let our smart aspect ratio calculator mAIntAIn perfect proportions automatically."
+          "title": "Dimensiones personalizadas",
+          "description": "Ingresa dimensiones exactas en píxeles o deja que nuestra calculadora inteligente de proporciones mantenga proporciones perfectas automáticamente."
         },
         {
-          "title": "Multiple Output formats",
-          "description": "Export as JPEG, PNG, or WebP with adjustable quality settings. Perfect for web optimization or high-quality downloads."
+          "title": "Múltiples formatos de salida",
+          "description": "Exporta como JPEG, PNG o WebP con ajustes de calidad configurables. Perfecto para optimización web o descargas de alta calidad."
         },
         {
-          "title": "Batch-Ready Workflow",
-          "description": "Save your preset settings and resize multiple images quickly with consistent results every time."
+          "title": "Flujo de trabajo listo para lotes",
+          "description": "Guarda tus preestablecidos y redimensiona múltiples imágenes rápidamente con resultados consistentes cada vez."
         },
         {
-          "title": "No Watermarks Ever",
-          "description": "Completely Free with zero watermarks, signup requirements, or hidden fees. results avAIlable to everyone."
+          "title": "Sin marcas de agua nunca",
+          "description": "Completamente gratis sin marcas de agua, requisitos de registro o tarifas ocultas. resultados disponibles para todos."
         }
       ],
       "useCases": [
         {
-          "title": "Social Media Posts",
-          "description": "Resize images to exact specifications for Instagram posts (1080x1080), Stories (1080x1920), Facebook covers, and more.",
-          "example": "Turn a 4000x3000 photo into perfect Instagram dimensions in one click"
+          "title": "Publicaciones de Redes Sociales",
+          "description": "Redimensiona imágenes a especificaciones exactas para publicaciones de Instagram (1080x1080), Historias (1080x1920), portadas de Facebook y más.",
+          "example": "Transforma una foto 4000x3000 en dimensiones perfectas de Instagram en un clic"
         },
         {
-          "title": "Website Optimization",
-          "description": "Reduce image file size for faster page loading while mAIntAIning visual quality for your website or blog.",
-          "example": "Resize hero images to 1920x1080 for optimal web"
+          "title": "Optimización de Sitios Web",
+          "description": "Reduce el tamaño del archivo de imagen para una carga de página más rápida mientras mantienes la calidad visual para tu sitio web o blog.",
+          "example": "Redimensiona imágenes hero a 1920x1080 para web óptima"
         },
         {
-          "title": "EmAIl Attachments",
-          "description": "Shrink large images to emAIl-friendly sizes without sacrificing too much quality.",
-          "example": "Reduce a 10MB photo to under 1MB for easy emAIl sharing"
+          "title": "Adjuntos de Correo Electrónico",
+          "description": "Encoge imágenes grandes a tamaños compatibles con correo electrónico sin sacrificar demasiada calidad.",
+          "example": "Reduce una foto de 10MB a menos de 1MB para compartir fácil por correo electrónico"
         },
         {
-          "title": "Profile Pictures",
-          "description": "Create perfectly sized avatars and profile photos for any platform with our preset dimensions.",
-          "example": "Resize headshots to 400x400 for LinkedIn or Discord"
+          "title": "Fotos de Perfil",
+          "description": "Crea fotos de avatar y de perfil perfectamente dimensionadas para cualquier plataforma con nuestras dimensiones preestablecidas.",
+          "example": "Redimensiona fotos de cabeza a 400x400 para LinkedIn o Discord"
         }
       ],
       "benefits": [
         {
-          "title": "100% Private & Secure",
-          "description": "Images never leave your browser. No upload to servers means your photos stay completely private.",
-          "metric": "Zero server uploads"
+          "title": "100% Privado y Seguro",
+          "description": "Las imágenes nunca abandonan el navegador. Sin carga a servidores significa que tus fotos permanecen completamente privadas.",
+          "metric": "Cero cargas a servidores"
         },
         {
-          "title": "Lightning Fast",
+          "title": "Rapidez Relámpago",
           "description": "Instant processing with no wAIting in queues or upload delays. Resize hundreds of images in minutes.",
           "metric": "< 1 second per image"
         },

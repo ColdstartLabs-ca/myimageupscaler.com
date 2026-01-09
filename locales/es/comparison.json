@@ -25,7 +25,11 @@
           "quality": "Excepcional",
           "speed": "Lento",
           "cost": "Medio",
-          "bestFor": ["Mejora significativa", "Restauración de fotos", "Impresión de gran formato"],
+          "bestFor": [
+            "Mejora significativa",
+            "Restauración de fotos",
+            "Impresión de gran formato"
+          ],
           "pros": [
             "Genera detalles nuevos y realistas",
             "Mejora imágenes borrosas o de baja resolución",
@@ -45,7 +49,11 @@
           "quality": "Bueno",
           "speed": "Rápido",
           "cost": "Gratis",
-          "bestFor": ["Uso general", "Redimensionamiento menor", "Procesamiento rápido"],
+          "bestFor": [
+            "Uso general",
+            "Redimensionamiento menor",
+            "Procesamiento rápido"
+          ],
           "pros": [
             "Rápido y ampliamente disponible",
             "Buenos resultados para cambios menores",
@@ -65,7 +73,11 @@
           "quality": "Muy Bueno",
           "speed": "Medio",
           "cost": "Gratis",
-          "bestFor": ["Impresión", "Trabajo profesional", "Aplicaciones críticas"],
+          "bestFor": [
+            "Impresión",
+            "Trabajo profesional",
+            "Aplicaciones críticas"
+          ],
           "pros": [
             "Excelente preservación de bordes",
             "Mayor nitidez que bicúbico",
@@ -127,7 +139,37 @@
         }
       ],
       "ctaText": "Probar Escalado con IA",
-      "ctaUrl": "/compare/ai-vs-traditional-upscaling"
+      "ctaUrl": "/compare/ai-vs-traditional-upscaling",
+      "category": "comparar",
+      "products": [
+        {
+          "name": "MyImageUpscaler",
+          "type": "Basado en web",
+          "pricing": "Gratis (10/mes) | $9-$49/mes",
+          "tagline": "Mejor para ampliación rápida y cotidiana",
+          "description": "Amplificador basado en web sin necesidad de instalación. Buen equilibrio entre calidad y conveniencia para la mayoría de usuarios.",
+          "bestFor": [
+            "Ampliaciones rápidas puntuales",
+            "Usuarios que no quieren software",
+            "Vendedores de e-commerce",
+            "Contenido de redes sociales"
+          ],
+          "features": {
+            "maxUpscale": "8x",
+            "batchProcessing": "Hasta 50 en Pro",
+            "textPreservation": "Bueno",
+            "processingSpeed": "30-60 segundos",
+            "watermark": "Nunca",
+            "freeTier": "10 créditos/mes"
+          },
+          "pros": [
+            "No se necesita instalación de software",
+            "Sin marcas de agua en el plan gratis",
+            "Bueno preservación de texto y logos",
+            "Procesamiento rápido a través de la nube"
+          ]
+        }
+      ]
     }
   ],
   "meta": {

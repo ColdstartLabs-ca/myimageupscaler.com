@@ -140,31 +140,39 @@
           "visualStyles": {
             "aestheticMovements": [
               {
-                "trend": "Authentic imperfection",
-                "description": "Slightly unpolished, user-generated content style. Real-life scenarios."
+                "trend": "Authenticité imparfaite",
+                "description": "Style légèrement non poli, style de contenu généré par les utilisateurs. Scénarios de la vie réelle."
               },
               {
-                "trend": "Bold typography",
-                "description": "Oversized text, mixed fonts, kinetic typography in video content."
+                "trend": "Typographie audacieuse",
+                "description": "Texte en gros, polises mélangées, typographie cinétique dans les contenus vidéo."
               },
               {
-                "trend": "Sustainable aesthetic",
-                "description": "Earth tones, natural materials, eco-friendly context in product shots."
+                "trend": "Esthétique durable",
+                "description": "Tons terreux, matériaux naturels, contexte écoresponsable dans les plans produits."
               },
               {
-                "trend": "90s nostalgia",
-                "description": "Film grain, vintage filters, retro color grading, analog textures."
+                "trend": "Nostalgie des années 90",
+                "description": "Grain de film, filtres vintage, gradation de couleur rétro, textures analogiques."
               }
             ],
             "colorTrends": {
               "palette1": {
                 "name": "Numérique Lavender",
-                "hex": ["#E0B0FF", "#9370DB", "#4B0082"],
+                "hex": [
+                  "#E0B0FF",
+                  "#9370DB",
+                  "#4B0082"
+                ],
                 "usage": "Contenu lifestyle, mode, beauté"
               },
               "palette2": {
                 "name": "Conscience Écologique",
-                "hex": ["#8B7355", "#D2B48C", "#F5DEB3"],
+                "hex": [
+                  "#8B7355",
+                  "#D2B48C",
+                  "#F5DEB3"
+                ],
                 "usage": "Décoration maison, produits durables, contenu biologique"
               }
             }
@@ -280,7 +288,7 @@
         },
         {
           "title": "Production d\"Idea Pins",
-          "description": "Prepare multi-slide content for Pinterest's story format with consistent branding",
+          "description": "Préparer du contenu multi-slides pour le format story de Pinterest avec une marque cohérente",
           "example": "DIY creators creating step-by-step tutorials with cohesive visual Design"
         }
       ],
@@ -295,11 +303,11 @@
         },
         {
           "question": "What file Format should I use for Pinterest pins?",
-          "answer": "Use JPG for photographic content with 80-85% quality, PNG for graphics with text, and consider WebP for 25% smaller file sizes with comparable quality. Always keep file sizes under 32MB."
+          "answer": "Utilisez JPG pour le contenu photographique avec une qualité de 80-85%, PNG pour les graphiques avec du texte, et envisagez WebP pour des tailles de fichier 25% plus petites avec une qualité comparable. Gardez toujours les tailles de fichier sous 32MB."
         },
         {
           "question": "How do I create effective Pinterest video thumbnails?",
-          "answer": "Extract the most engaging frame from your video, add compelling text overlay (under 60 characters), and ensure 1080x1920 dimensions. Include a clear call-to-action and brand elements for consistency."
+          "answer": "Extrayez le cadre le plus engageant de votre vidéo, ajoutez un texte superposé percutant (moins de 60 caractères), et assurez-vous des dimensions 1080x1920. Incluez un appel à l'action clair et des éléments de marque pour la cohérence."
         },
         {
           "question": "What are the latest Pinterest Image trends for 2025?",
@@ -308,12 +316,12 @@
       ],
       "benefits": [
         {
-          "title": "2025 Compliance",
-          "description": "All dimensions and specifications updated for current Pinterest requirements"
+          "title": "Conformité 2025",
+          "description": "Toutes les dimensions et spécifications mises à jour pour les exigences actuelles de Pinterest"
         },
         {
           "title": "Engagement Optimisation",
-          "description": "AI-powered optimization based on latest Pinterest engagement data"
+          "description": "Optimisation basée sur l'IA avec les données d'engagement Pinterest les plus récentes"
         },
         {
           "title": "Lot Campaign Outils",
@@ -341,7 +349,10 @@
           "description": "Appliquez l'optimisation par IA et téléchargez du contenu parfaitement dimensionné et prêt pour la plateforme."
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "social-media-scheduler"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "social-media-scheduler"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "pinterest-marketing-strategy-guide"
@@ -369,7 +380,7 @@
       "lastUpdated": "2025-01-19",
       "category": "tools",
       "toolName": "TikTok Image Resizer",
-      "description": "Advanced TikTok image resizing tool optimized for vertical-first content and fast-paced user engagement",
+      "description": "Outil de redimensionnement d'images TikTok avancé optimisé pour le contenu vertical et l'engagement utilisateur rapide",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "platformSpecifications": {
@@ -559,12 +570,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Neon Dreams",
-                "hex": ["#FF006E", "#FB5607", "#FFBE0B", "#8338EC"],
+                "hex": [
+                  "#FF006E",
+                  "#FB5607",
+                  "#FFBE0B",
+                  "#8338EC"
+                ],
                 "usage": "Entertainment, fashion, youth-oriented content"
               },
               "palette2": {
                 "name": "Minimalist Earth",
-                "hex": ["#2D6A4F", "#40916C", "#74C69D", "#D8F3DC"],
+                "hex": [
+                  "#2D6A4F",
+                  "#40916C",
+                  "#74C69D",
+                  "#D8F3DC"
+                ],
                 "usage": "Wellness, sustainability, educational content"
               }
             }
@@ -743,7 +764,10 @@
           "description": "Appliquez l\"optimisation de l\"engagement et exportez le contenu prêt TikTok instantanément"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "video-thumbnail-generator"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "video-thumbnail-generator"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "tiktok-marketing-strategy-guide"
@@ -997,12 +1021,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Muted Vibrance",
-                "hex": ["#FF6B6B", "#4ECDC4", "#45B7D1", "#F7DC6F"],
+                "hex": [
+                  "#FF6B6B",
+                  "#4ECDC4",
+                  "#45B7D1",
+                  "#F7DC6F"
+                ],
                 "usage": "Lifestyle, fashion, creative content"
               },
               "palette2": {
                 "name": "Natural Harmony",
-                "hex": ["#8B7355", "#A0522D", "#D2B48C", "#F5DEB3"],
+                "hex": [
+                  "#8B7355",
+                  "#A0522D",
+                  "#D2B48C",
+                  "#F5DEB3"
+                ],
                 "usage": "Wellness, organic, sustainable content"
               }
             }
@@ -1182,7 +1216,10 @@
           "description": "Apply engagement optimization and export Instagram-ready content"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "instagram-grid-planner"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "instagram-grid-planner"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "instagram-marketing-strategy-guide"
@@ -1528,12 +1565,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Énergie Vibrante",
-                "hex": ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A"],
+                "hex": [
+                  "#FF6B6B",
+                  "#4ECDC4",
+                  "#45B7D1",
+                  "#FFA07A"
+                ],
                 "usage": "Divertissement, jeux, contenu haute énergie"
               },
               "palette2": {
                 "name": "Professionnel Trust",
-                "hex": ["#2C3E50", "#34495E", "#95A5A6", "#ECF0F1"],
+                "hex": [
+                  "#2C3E50",
+                  "#34495E",
+                  "#95A5A6",
+                  "#ECF0F1"
+                ],
                 "usage": "Éducatif, entreprise, contenu autoritaire"
               }
             }
@@ -1712,7 +1759,10 @@
           "description": "Prévisualisez sur plusieurs appareils et exportez des graphiques prêts pour YouTube"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "video-thumbnail-generator"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "video-thumbnail-generator"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "youtube-channel-growth-guide"
@@ -2026,12 +2076,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Numérique Blue",
-                "hex": ["#4267B2", "#1877F2", "#8B9DC3", "#DFE3EE"],
+                "hex": [
+                  "#4267B2",
+                  "#1877F2",
+                  "#8B9DC3",
+                  "#DFE3EE"
+                ],
                 "usage": "Professionnel content, technology, business services"
               },
               "palette2": {
                 "name": "Warm Connection",
-                "hex": ["#FF6B6B", "#F7DC6F", "#82E0AA", "#85C1E2"],
+                "hex": [
+                  "#FF6B6B",
+                  "#F7DC6F",
+                  "#82E0AA",
+                  "#85C1E2"
+                ],
                 "usage": "Community building, lifestyle, relationship-focused content"
               }
             }
@@ -2211,7 +2271,10 @@
           "description": "Prévisualisez sur plusieurs appareils et exportez du contenu prêt pour Facebook"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "facebook-ad-creator"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "facebook-ad-creator"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "facebook-marketing-strategy-guide"
@@ -2330,8 +2393,12 @@
           "description": "Get your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "Start Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2446,8 +2513,12 @@
           "description": "Obtenez votre image optimisée instantanément"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "Start Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2562,8 +2633,12 @@
           "description": "Get your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "Start Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2678,8 +2753,12 @@
           "description": "Get your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "Start Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2735,18 +2814,18 @@
         },
         {
           "title": "Personal expression",
-          "description": "Optimize images for personal expression",
-          "example": "Perfect sizing for personal expression"
+          "description": "Optimisez les images pour l\"expression personnelle",
+          "example": "Dimensionnement parfait pour l\"expression personnelle"
         },
         {
           "title": "Communication Optimisation",
-          "description": "Optimize images for communication optimization",
+          "description": "Optimisez les images pour l\"optimisation de la communication",
           "example": "Perfect sizing for communication Optimisation"
         },
         {
-          "title": "Social platform setup",
-          "description": "Optimize images for social platform setup",
-          "example": "Perfect sizing for social platform setup"
+          "title": "Configuration de plateforme sociale",
+          "description": "Optimisez les images pour la configuration de plateforme sociale",
+          "example": "Dimensionnement parfait pour la configuration de plateforme sociale"
         }
       ],
       "faq": [
@@ -2755,7 +2834,7 @@
           "answer": "Telegram profile pictures work Meilleur at 512x512 pixels for optimal Qualité and display."
         },
         {
-          "question": "How should I size Telegram chat backgrounds?",
+          "question": "Comment dimensionner les arrière-plans de chat Telegram?",
           "answer": "Chat backgrounds should be high-Résolution Images that work well on both mobile and desktop devices."
         },
         {
@@ -2765,8 +2844,8 @@
       ],
       "benefits": [
         {
-          "title": "Instant Results",
-          "description": "Get perfectly sized images in seconds"
+          "title": "Résultats Instantanés",
+          "description": "Obtenez des images parfaitement dimensionnées en secondes"
         },
         {
           "title": "No Qualité Loss",
@@ -2774,28 +2853,32 @@
         },
         {
           "title": "Gratuit to Use",
-          "description": "No subscription or payment required"
+          "description": "Aucun abonnement ou paiement requis"
         }
       ],
       "howItWorks": [
         {
           "step": 1,
           "title": "Télécharger Image",
-          "description": "Choose your image file to resize"
+          "description": "Choisissez votre fichier image à redimensionner"
         },
         {
           "step": 2,
           "title": "Select Size",
-          "description": "Choose platform-specific preset or custom size"
+          "description": "Choisissez un préréglage spécifique à la plateforme ou une taille personnalisée"
         },
         {
           "step": 3,
           "title": "Télécharger",
-          "description": "Get your optimized image instantly"
+          "description": "Obtenez votre image optimisée instantanément"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "Start Resizing",
       "ctaUrl": "/?signup=1"
     }
@@ -2803,6 +2886,6 @@
   "meta": {
     "totalPages": 10,
     "lastUpdated": "2025-12-19T00:00:00Z",
-    "contentExpansion": "Comprehensive 2025 specifications with platform-specific best practices, engagement optimization, video content guidelines, technical optimization, content strategy, design trends, analytics, and marketing integration for Pinterest, TikTok, Instagram, YouTube, and Facebook. Remaining platforms include basic expansion with current specifications."
+    "contentExpansion": "Spécifications complètes 2025 avec meilleures pratiques spécifiques à la plateforme, optimisation de l\"engagement, lignes directrices de contenu vidéo, optimisation technique, stratégie de contenu, tendances du design, analyses et intégration marketing pour Pinterest, TikTok, Instagram, YouTube et Facebook. Les plateformes restantes incluent une expansion de base avec les spécifications actuelles."
   }
 }

@@ -45,17 +45,41 @@
       ],
       "platformSpecs": {
         "ios": {
-          "formats": ["HEIC", "JPEG", "PNG", "WebP (iOS 14+)"],
-          "resolutions": ["1x", "2x", "3x para diferentes densidades de pantalla"],
+          "formats": [
+            "HEIC",
+            "JPEG",
+            "PNG",
+            "WebP (iOS 14+)"
+          ],
+          "resolutions": [
+            "1x",
+            "2x",
+            "3x para diferentes densidades de pantalla"
+          ],
           "recommended": "HEIC para fotos, WebP para web"
         },
         "android": {
-          "formats": ["WebP", "JPEG", "PNG", "HEIF"],
-          "resolutions": ["mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"],
+          "formats": [
+            "WebP",
+            "JPEG",
+            "PNG",
+            "HEIF"
+          ],
+          "resolutions": [
+            "mdpi",
+            "hdpi",
+            "xhdpi",
+            "xxhdpi",
+            "xxxhdpi"
+          ],
           "recommended": "WebP para todo, PNG para gráficos"
         },
         "mobileWeb": {
-          "formats": ["WebP primario", "JPEG fallback", "PNG para transparencia"],
+          "formats": [
+            "WebP primario",
+            "JPEG fallback",
+            "PNG para transparencia"
+          ],
           "viewport": "Ancho típico de 320-414px",
           "recommended": "Progressive JPEG con carga perezosa"
         }
@@ -98,7 +122,55 @@
         }
       ],
       "ctaText": "Optimizar tus Imágenes Móviles",
-      "ctaUrl": "/device-optimization/mobile-image-optimization"
+      "ctaUrl": "/device-optimization/mobile-image-optimization",
+      "challenges": [
+        {
+          "challenge": "Ancho de Banda Limitado",
+          "description": "Las redes móviles varían desde 3G lento hasta 5G rápido, requiriendo entrega de imágenes adaptativa."
+        },
+        {
+          "challenge": "Restricciones de Almacenamiento",
+          "description": "Los dispositivos móviles tienen espacio de almacenamiento limitado, requiriendo almacenamiento en caché eficiente de imágenes y compresión."
+        },
+        {
+          "challenge": "Duración de Batería",
+          "description": "El procesamiento de imágenes y las transferencias de red consumen batería, requiriendo estrategias de optimización."
+        },
+        {
+          "challenge": "Densidades de Pantalla Variables",
+          "description": "Los dispositivos móviles van desde 1x hasta 4x de densidad de píxeles, requiriendo estrategias de imágenes responsivas."
+        }
+      ],
+      "platformSpecific": [
+        {
+          "platform": "iOS",
+          "optimizations": [
+            {
+              "technique": "Soporte HEIF/HEIC",
+              "description": "Usar formato HEIF para 50% de ahorro de espacio con misma calidad",
+              "implementation": "Soporte nativo iOS 11+, conversión automática para dispositivos más antiguos"
+            },
+            {
+              "technique": "Afinamiento de App",
+              "description": "Entregar recursos de imágenes específicos del dispositivo",
+              "implementation": "Catálogos de activos con variantes @1x, @2x, @3x"
+            },
+            {
+              "technique": "Gestión de Memoria",
+              "description": "Optimizar la carga de imágenes para prevenir bloqueos por memoria",
+              "implementation": "Submuestreo de imágenes, carga diferida, pools de memoria"
+            }
+          ]
+        },
+        {
+          "platform": "Android",
+          "optimizations": [
+            {
+              "technique": "Soporte WebP"
+            }
+          ]
+        }
+      ]
     }
   ],
   "meta": {

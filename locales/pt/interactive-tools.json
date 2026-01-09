@@ -1,26 +1,26 @@
 {
-  "category": "tools",
+  "category": "ferramentas",
   "pages": [
     {
-      "slug": "image-resizer",
-      "title": "Image Resizer",
-      "metaTitle": "Image Resizer | MyImageUpscaler",
-      "metaDescription": "Resize images online for Free. No upload required - all processing happens in your browser. Supports JPEG, PNG, WebP. Perfect for social media, web, and print.",
-      "h1": "Free online Image Resizer - Resize Images Instantly",
-      "intro": "Resize your images to any dimension in seconds. Our Free online image resizer works entirely in your browser - no upload, no signup, no watermarks. Perfect for social media, websites, and print.",
-      "primaryKeyword": "image resizer",
+      "slug": "redimensionador-de-imagens",
+      "title": "Redimensionador de Imagens",
+      "metaTitle": "Redimensionador de Imagens | MyImageUpscaler",
+      "metaDescription": "Redimensione imagens online gratuitamente. Sem upload necessário - todo processamento acontece no seu navegador. Suporta JPEG, PNG, WebP. Perfeito para redes sociais, web e impresso.",
+      "h1": "Redimensionador de Imagens Online Gratuito - Redimensione Imagens Instantaneamente",
+      "intro": "Redimensione suas imagens para qualquer dimensão em segundos. Nosso redimensionador de imagens online gratuito funciona inteiramente no seu navegador - sem upload, sem cadastro, sem marcas dágua. Perfeito para redes sociais, websites e impresso.",
+      "primaryKeyword": "redimensionador de imagens",
       "secondaryKeywords": [
-        "resize image online",
-        "online image resizer",
-        "resize image",
-        "image resize tool",
-        "resize photo online",
-        "picture resizer"
+        "redimensionar imagem online",
+        "redimensionador de imagens online",
+        "redimensionar imagem",
+        "ferramenta de redimensionamento de imagem",
+        "redimensionar foto online",
+        "redimensionador de fotos"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
-      "toolName": "Image Resizer",
-      "description": "Professional image resizing tool that works directly in your browser. Resize images to exact dimensions, choose from social media presets, or maintain aspect ratio automatically. No quality loss with our advanced canvas technology.",
+      "category": "ferramentas",
+      "toolName": "Redimensionador de Imagens",
+      "description": "Ferramenta profissional de redimensionamento de imagens que funciona diretamente no seu navegador. Redimensione imagens para dimenses exatas, escolha entre presets de redes sociais ou mantenha a proporção automática. Sem perda de qualidade com nossa tecnologia de canvas avanada.",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "maxFileSizeMB": 25,
@@ -31,28 +31,28 @@
       ],
       "features": [
         {
-          "title": "Instant Browser-Based Resizing",
-          "description": "All processing happens locally in your browser. Your images never leave your device, ensuring complete privacy and instant results."
+          "title": "Redimensionamento Instantneo no Navegador",
+          "description": "Todo processamento acontece localmente no seu navegador. Suas imagens nunca deixam seu dispositivo, garantindo privacidade completa e resultados instantneos."
         },
         {
-          "title": "Social Media Presets",
-          "description": "One-click resize to perfect dimensions for Instagram, Facebook, Twitter, LinkedIn, and YouTube. No more guessing sizes."
+          "title": "Presets de Redes Sociais",
+          "description": "Redimensionamento com um clique para dimenses perfeitas do Instagram, Facebook, Twitter, LinkedIn e YouTube. Sem mais adivinhao de tamanhos."
         },
         {
-          "title": "Custom dimensions",
-          "description": "Enter exact pixel dimensions or let our smart aspect ratio calculator mAIntAIn perfect proportions automatically."
+          "title": "Dimenses personalizadas",
+          "description": "Digite dimenses exatas em pixels ou deixe nosso calculador inteligente de proporo manter propores perfeitas automaticamente."
         },
         {
-          "title": "Multiple Output formats",
-          "description": "Export as JPEG, PNG, or WebP with adjustable quality settings. Perfect for web optimization or high-quality downloads."
+          "title": "Mltiplos formatos de sada",
+          "description": "Exporte como JPEG, PNG ou WebP com configuraes de qualidade ajustveis. Perfeito para otimizao web ou downloads de alta qualidade."
         },
         {
-          "title": "Batch-Ready Workflow",
-          "description": "Save your preset settings and resize multiple images quickly with consistent results every time."
+          "title": "Fluxo de trabalho pronto para lote",
+          "description": "Salve suas configuraes de preset e redimensione mltiplas imagens rapidamente com resultados consistentes toda vez."
         },
         {
-          "title": "No Watermarks Ever",
-          "description": "Completely Free with zero watermarks, signup requirements, or hidden fees. results avAIlable to everyone."
+          "title": "Sem Marcas Dágua Nunca",
+          "description": "Completamente Gratuito com zero marcas dágua, requisitos de cadastro ou taxas ocultas. resultados disponveis para todos."
         }
       ],
       "useCases": [

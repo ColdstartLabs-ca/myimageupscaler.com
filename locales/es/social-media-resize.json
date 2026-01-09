@@ -13,7 +13,10 @@
         "instagram post size",
         "instagram story dimensions",
         "instagram reel size",
-        "instagram photo size guide"
+        "instagram photo size guide",
+        "consejos de marketing de pinterest",
+        "tamaño de miniatura de video de pinterest",
+        "dimensiones de portada de tablero de pinterest"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "category": "social-media-resize",
@@ -70,7 +73,10 @@
         }
       ],
       "technicalSpecs": {
-        "acceptedFormats": ["JPG", "PNG"],
+        "acceptedFormats": [
+          "JPG",
+          "PNG"
+        ],
         "colorSpace": "sRGB",
         "maxFileSize": "30MB para uploads",
         "compression": "Instagram comprime imágenes; usa alta calidad de origen"
@@ -113,7 +119,36 @@
         }
       ],
       "ctaText": "Redimensionar para Instagram",
-      "ctaUrl": "/social-media-resize/instagram-image-sizes"
+      "ctaUrl": "/social-media-resize/instagram-image-sizes",
+      "toolName": "Redimensionador de Imágenes Pinterest",
+      "toolComponent": "ImageResizer",
+      "platformSpecifications": {
+        "currentRequirements": {
+          "standardPins": {
+            "recommended": "1000x1500 píxeles",
+            "aspectRatio": "2:3",
+            "minimum": "600x900 píxeles",
+            "fileFormat": "JPG, PNG",
+            "maxFileSize": "32MB"
+          },
+          "squarePins": {
+            "recommended": "1000x1000 píxeles",
+            "aspectRatio": "1:1",
+            "fileFormat": "JPG, PNG"
+          },
+          "storyPins": {
+            "recommended": "1080x1920 píxeles",
+            "aspectRatio": "9:16",
+            "videoLength": "15-60 segundos",
+            "fileFormat": "MP4, JPG, PNG"
+          },
+          "videoPins": {
+            "thumbnail": "1080x1920 píxeles",
+            "aspectRatio": "9:16, 1:1, 2:3",
+            "maxDuration": "15 minutos"
+          }
+        }
+      }
     }
   ],
   "meta": {

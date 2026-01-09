@@ -159,12 +159,20 @@
             "colorTrends": {
               "palette1": {
                 "name": "Lavanda Digital",
-                "hex": ["#E0B0FF", "#9370DB", "#4B0082"],
+                "hex": [
+                  "#E0B0FF",
+                  "#9370DB",
+                  "#4B0082"
+                ],
                 "usage": "Conteúdo de estilo de vida, moda, beleza"
               },
               "palette2": {
                 "name": "Consciência Terrena",
-                "hex": ["#8B7355", "#D2B48C", "#F5DEB3"],
+                "hex": [
+                  "#8B7355",
+                  "#D2B48C",
+                  "#F5DEB3"
+                ],
                 "usage": "Decoração de lar, produtos sustentáveis, conteúdo orgânico"
               }
             }
@@ -300,106 +308,109 @@
         },
         {
           "question": "How do I create effective Pinterest video thumbnAIls?",
-          "answer": "Extract the most engaging frame from your video, add compelling text overlay (under 60 characters), and ensure 1080x1920 dimensions. Include a clear call-to-action and brand elements for consistency."
+          "answer": "Extraia o quadro mais envolvente do seu vídeo, adicione sobreposição de texto atraente (menos de 60 caracteres) e garanta dimensões 1080x1920. Inclua uma chamada para ação clara e elementos da marca para consistência."
         },
         {
-          "question": "What are the latest Pinterest image trends for 2025?",
-          "answer": "Current trends include authentic imperfection, bold typography overlays, sustAInable/earth-tone aesthetics, and 90s nostalgia with vintage filters. Video content continues to dominate, with short-form vertical video leading engagement."
+          "question": "Quais são as tendências mais recentes de imagens do Pinterest para 2025?",
+          "answer": "As tendências atuais incluem imperfeição autêntica, sobrelays de tipografia ousada, estéticas sustentáveis/tons terrosos e nostalgia dos anos 90 com filtros vintage. O conteúdo de vídeo continua a dominar, com vídeo vertical em formato curto liderando o engajamento."
         }
       ],
       "benefits": [
         {
-          "title": "2025 Compliance",
-          "description": "All dimensions and specifications updated for current Pinterest requirements"
+          "title": "Conformidade 2025",
+          "description": "Todas as dimensões e especificações atualizadas para requisitos atuais do Pinterest"
         },
         {
-          "title": "Engagement Optimization",
-          "description": "AI-powered optimization based on latest Pinterest engagement data"
+          "title": "Otimização de Engajamento",
+          "description": "Otimização com base em dados mais recentes de engajamento do Pinterest"
         },
         {
-          "title": "Batch CampAIgn tools",
-          "description": "Process entire content calendars with consistent branding and optimization"
+          "title": "Ferramentas de Campanha em Lote",
+          "description": "Processe calendários de inteiros com consistência de marca e otimização"
         },
         {
-          "title": "Image Processing Tool",
-          "description": "Track pin and get recommendations for improvement"
+          "title": "Ferramenta de Processamento de Imagem",
+          "description": "Acompanhe pin e obtenha recomendações para melhoria"
         }
       ],
       "howItWorks": [
         {
           "step": 1,
-          "title": "Upload Content",
-          "description": "Upload images, videos, or select from templates designed for Pinterest"
+          "title": "Upload de Conteúdo",
+          "description": "Faça upload de imagens, vídeos ou selecione de modelos designados para Pinterest"
         },
         {
           "step": 2,
-          "title": "Choose format",
-          "description": "Select from standard pins, Idea Pins, video content, or board covers with 2025 specifications"
+          "title": "Escolha formato",
+          "description": "Selecione de pins padrão, Idea Pins, conteúdo de vídeo ou capas de board com especificações 2025"
         },
         {
           "step": 3,
-          "title": "Optimize & Download",
-          "description": "Apply AI optimization and download perfectly sized, platform-ready content"
+          "title": "Otimizar & Baixar",
+          "description": "Aplique otimização com IA e baixe conteúdo perfeitamente dimensionado, pronto para plataforma"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "social-media-scheduler"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "social-media-scheduler"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "pinterest-marketing-strategy-guide"
       ],
-      "ctaText": "start Creating Pinterest-Optimized Content",
+      "ctaText": "começar a Criar Conteúdo Otimizado para Pinterest",
       "ctaUrl": "/?signup=1"
     },
     {
-      "slug": "resize-image-for-tiktok",
-      "title": "Resize Image for TikTok",
-      "metaTitle": "Resize Image for TikTok | MyImageUpscaler",
-      "metaDescription": "Perfect TikTok image resizer for profile pictures, video thumbnAIls, TikTok Stories, and ad creatives. Free online tool with 2025 TikTok specifications and engagement optimization.",
-      "h1": "TikTok Image Resizer - Perfect TikTok dimensions for 2025",
-      "intro": "Optimize your images for TikTok's fast-paced platform with our specialized resizing tool. Perfect for profile pictures, video thumbnAIls, TikTok Stories, and ad creatives that capture attention in the first 3 seconds.",
-      "primaryKeyword": "resize image for tiktok",
+      "slug": "redimensionar-para-tiktok",
+      "title": "Redimensionar Imagem para TikTok",
+      "metaTitle": "Redimensionar Imagem para TikTok | MyImageUpscaler",
+      "metaDescription": "Redimensionador de imagens perfeito para fotos de perfil, thumbnails de vídeo, TikTok Stories e criativos de anúncio. Ferramenta online gratuita com especificações TikTok 2025 e otimização de engajamento.",
+      "h1": "Redimensionador de Imagens TikTok - Dimensões perfeitas para TikTok 2025",
+      "intro": "Otimize suas imagens para a plataforma de ritmo acelerado do TikTok com nossa ferramenta de redimensionamento especializada. Perfeito para fotos de perfil, thumbnails de vídeo, TikTok Stories e criativos de anúncio que capturam atenção nos primeiros 3 segundos.",
+      "primaryKeyword": "redimensionar imagem para tiktok",
       "secondaryKeywords": [
-        "tiktok image sizes 2025",
-        "tiktok profile picture size",
-        "tiktok thumbnail dimensions",
-        "tiktok video cover image",
-        "social media image optimization",
-        "tiktok ad creative specs",
-        "tiktok story image size"
+        "tamanhos de imagens tiktok 2025",
+        "tamanho de foto de perfil tiktok",
+        "dimensões de thumbnail tiktok",
+        "imagem de capa de vídeo tiktok",
+        "otimização de imagens para redes sociais",
+        "especificações de criativo de anúncio tiktok",
+        "tamanho de imagem story tiktok"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
-      "toolName": "TikTok Image Resizer",
-      "description": "Advanced TikTok image resizing tool optimized for vertical-first content and fast-paced user engagement",
+      "category": "ferramentas",
+      "toolName": "Redimensionador de Imagens TikTok",
+      "description": "Ferramenta avançada de redimensionamento de imagens TikTok otimizada para conteúdo vertical-first e engajamento rápido do usuário",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "platformSpecifications": {
         "currentRequirements": {
           "profilePictures": {
             "recommended": "200x200 pixels",
-            "display": "Circular crop",
+            "display": "Corte circular",
             "fileFormat": "JPG, PNG",
             "maxFileSize": "20MB",
-            "safeZone": "Leave 10% padding for circular crop"
+            "safeZone": "Deixe 10% de margem para corte circular"
           },
           "videoThumbnails": {
             "recommended": "1080x1920 pixels",
             "aspectRatio": "9:16",
             "minimum": "540x960 pixels",
             "fileFormat": "JPG, PNG",
-            "compression": "High quality, minimal compression"
+            "compression": "Alta qualidade, compressão mínima"
           },
           "tiktokStories": {
             "recommended": "1080x1920 pixels",
             "aspectRatio": "9:16",
-            "duration": "24 hours",
+            "duration": "24 horas",
             "fileFormat": "JPG, PNG",
-            "interactiveElements": "Supports stickers, polls, Q&A"
+            "interactiveElements": "Suporta stickers, enquetes, Q&A"
           },
           "adCreatives": {
-            "imageAds": "1080x1920 pixels (9:16) or 1080x1080 pixels (1:1)",
-            "carouselAds": "1080x1920 per card, 2-35 cards",
-            "sparkAds": "Same as organic content",
+            "imageAds": "1080x1920 pixels (9:16) ou 1080x1080 pixels (1:1)",
+            "carouselAds": "1080x1920 por cartão, 2-35 cartões",
+            "sparkAds": "Mesmo que conteúdo orgânico",
             "fileFormat": "JPG, PNG",
             "maxFileSize": "50MB"
           }
@@ -407,34 +418,34 @@
         "bestPractices": {
           "contentTypes": {
             "profileOptimization": {
-              "headshots": "High-resolution photos, good lighting, clear background, professional appearance",
-              "brandLogos": "Clean vector graphics, readable at small size, brand-consistent colors",
-              "creativeAvatars": "Unique illustrations or designs that reflect brand personality",
-              "consistency": "Match profile picture across all social platforms for brand recognition"
+              "headshots": "Fotos de alta resolução, boa iluminação, fundo claro, aparência profissional",
+              "brandLogos": "Gráficos vetoriais limpos, legíveis em tamanho pequeno, cores consistentes com a marca",
+              "creativeAvatars": "Illustrações ou designs únicos que refletem personalidade da marca",
+              "consistency": "Combine foto de perfil em todas as plataformas sociais para reconhecimento de marca"
             },
             "videoThumbnails": {
-              "hookFrames": "Choose frames with highest emotional impact or curiosity factor",
-              "textOverlays": "Add compelling hook text (3-4 words) in upper third of image",
-              "faces": "Include human faces when possible - 40% higher engagement",
-              "colorContrast": "Use bright, saturated colors to stand out in feed"
+              "hookFrames": "Escolha quadros com maior impacto emocional ou fator de curiosidade",
+              "textOverlays": "Adicione texto de gancho atraente (3-4 palavras) no terço superior da imagem",
+              "faces": "Inclua rostos humanos quando possível - 40% mais engajamento",
+              "colorContrast": "Use cores brilhantes e saturadas para se destacar no feed"
             },
             "storyContent": {
-              "fullScreenDesign": "Design for mobile first, use entire 9:16 canvas",
-              "safeAreas": "Leave 10% margin on edges for UI elements",
-              "textReadability": "Large fonts, high contrast, minimal text per frame",
-              "interactiveElements": "Design space for stickers, polls, and other TikTok features"
+              "fullScreenDesign": "Design primeiro para mobile, use todo o canvas 9:16",
+              "safeAreas": "Deixe margem de 10% nas bordas para elementos de UI",
+              "textReadability": "Fontes grandes, alto contraste, texto mínimo por quadro",
+              "interactiveElements": "Design espaço para stickers, enquetes e outros recursos TikTok"
             }
           },
           "designGuidelines": {
-            "visualHierarchy": "Most important element in top third, secondary information below",
+            "visualHierarchy": "Elemento mais importante no terço superior, informação secundária abaixo",
             "colorPsychology": {
-              "red": "Urgency, excitement, food content performance",
-              "blue": "Trust, technology, educational content",
-              "yellow": "Happiness, attention-grabbing, youth-oriented content",
-              "green": "Nature, health, sustainability content"
+              "red": "Urgência, excitação, conteúdo de comida performa melhor",
+              "blue": "Confiança, tecnologia, conteúdo educacional",
+              "yellow": "Felicidade, cativante, conteúdo voltado para jovens",
+              "green": "Natureza, saúde, conteúdo sustentável"
             },
             "typography": {
-              "fontChoices": "Bold sans-serif fonts perform best",
+              "fontChoices": "Fontes sans-serif ousadas performam melhor",
               "textPlacement": "Upper or lower third, avoid center where TikTok UI appears",
               "readability": "Minimum 40pt for main text, high contrast essential",
               "brandConsistency": "Use consistent fonts across all TikTok content"
@@ -560,12 +571,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Neon Dreams",
-                "hex": ["#FF006E", "#FB5607", "#FFBE0B", "#8338EC"],
+                "hex": [
+                  "#FF006E",
+                  "#FB5607",
+                  "#FFBE0B",
+                  "#8338EC"
+                ],
                 "usage": "Entertainment, fashion, youth-oriented content"
               },
               "palette2": {
                 "name": "Minimalist Earth",
-                "hex": ["#2D6A4F", "#40916C", "#74C69D", "#D8F3DC"],
+                "hex": [
+                  "#2D6A4F",
+                  "#40916C",
+                  "#74C69D",
+                  "#D8F3DC"
+                ],
                 "usage": "Wellness, sustainability, educational content"
               }
             }
@@ -744,7 +765,10 @@
           "description": "Apply engagement optimization and export TikTok-ready content instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "video-thumbnail-generator"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "video-thumbnail-generator"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "tiktok-marketing-strategy-guide"
@@ -998,12 +1022,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Muted Vibrance",
-                "hex": ["#FF6B6B", "#4ECDC4", "#45B7D1", "#F7DC6F"],
+                "hex": [
+                  "#FF6B6B",
+                  "#4ECDC4",
+                  "#45B7D1",
+                  "#F7DC6F"
+                ],
                 "usage": "Lifestyle, fashion, creative content"
               },
               "palette2": {
                 "name": "Natural Harmony",
-                "hex": ["#8B7355", "#A0522D", "#D2B48C", "#F5DEB3"],
+                "hex": [
+                  "#8B7355",
+                  "#A0522D",
+                  "#D2B48C",
+                  "#F5DEB3"
+                ],
                 "usage": "Wellness, organic, sustainable content"
               }
             }
@@ -1183,7 +1217,10 @@
           "description": "Apply engagement optimization and export Instagram-ready content"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "instagram-grid-planner"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "instagram-grid-planner"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "instagram-marketing-strategy-guide"
@@ -1529,12 +1566,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Vibrant Energy",
-                "hex": ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A"],
+                "hex": [
+                  "#FF6B6B",
+                  "#4ECDC4",
+                  "#45B7D1",
+                  "#FFA07A"
+                ],
                 "usage": "Entertainment, gaming, high-energy content"
               },
               "palette2": {
                 "name": "Professional Trust",
-                "hex": ["#2C3E50", "#34495E", "#95A5A6", "#ECF0F1"],
+                "hex": [
+                  "#2C3E50",
+                  "#34495E",
+                  "#95A5A6",
+                  "#ECF0F1"
+                ],
                 "usage": "Educational, business, authoritative content"
               }
             }
@@ -1713,7 +1760,10 @@
           "description": "Preview on multiple devices and export YouTube-ready graphics"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "video-thumbnail-generator"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "video-thumbnail-generator"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "youtube-channel-growth-guide"
@@ -2027,12 +2077,22 @@
             "colorTrends": {
               "palette1": {
                 "name": "Digital Blue",
-                "hex": ["#4267B2", "#1877F2", "#8B9DC3", "#DFE3EE"],
+                "hex": [
+                  "#4267B2",
+                  "#1877F2",
+                  "#8B9DC3",
+                  "#DFE3EE"
+                ],
                 "usage": "Professional content, technology, business services"
               },
               "palette2": {
                 "name": "Warm Connection",
-                "hex": ["#FF6B6B", "#F7DC6F", "#82E0AA", "#85C1E2"],
+                "hex": [
+                  "#FF6B6B",
+                  "#F7DC6F",
+                  "#82E0AA",
+                  "#85C1E2"
+                ],
                 "usage": "Community building, lifestyle, relationship-focused content"
               }
             }
@@ -2212,7 +2272,10 @@
           "description": "Preview on multiple devices and export Facebook-ready content"
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "facebook-ad-creator"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "facebook-ad-creator"
+      ],
       "relatedGuides": [
         "how-to-upscale-images-without-losing-quality",
         "facebook-marketing-strategy-guide"
@@ -2331,8 +2394,12 @@
           "description": "Get your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "start Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2447,8 +2514,12 @@
           "description": "Get your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "start Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2563,8 +2634,12 @@
           "description": "Get your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "start Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2679,8 +2754,12 @@
           "description": "Get your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "start Resizing",
       "ctaUrl": "/?signup=1"
     },
@@ -2795,8 +2874,12 @@
           "description": "Get your optimized image instantly"
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedGuides": [
+        "how-to-upscale-images-without-losing-quality"
+      ],
       "ctaText": "start Resizing",
       "ctaUrl": "/?signup=1"
     }

@@ -1,5 +1,5 @@
 {
-  "category": "compare",
+  "category": "比較",
   "pages": [
     {
       "slug": "best-ai-upscalers",
@@ -8,75 +8,75 @@
       "metaDescription": "Honest 比較 of AI画像アップスケーラーs. We 比較 MyImageUpスケールr, トップaz, Let's Enhance, and others with real pros and cons for each.",
       "h1": "AI画像アップスケーラー 比較 2025",
       "intro": "Every upスケールr has trade-offs. Here's an honest 比較 to help you choose the right tool for your needs.",
-      "primaryKeyword": "best ai upscaler",
+      "primaryKeyword": "最高のai拡大ソフト",
       "secondaryKeywords": [
-        "ai upscaler comparison",
-        "image upscaler review",
+        "ai 拡大ソフト比較",
+        "画像拡大ソフトレビュー",
         "topaz vs myimageupscaler"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "compare",
-      "comparisonType": "roundup",
+      "category": "比較",
+      "comparisonType": "まとめ",
       "products": [
         {
           "name": "MyImageUpscaler",
-          "type": "Web-based",
-          "pricing": "Free (10/mo) | $9-$49/mo",
+          "type": "Webベース",
+          "pricing": "無料（10/月）| $9-$49/月",
           "rating": 4.5,
-          "tagline": "Best for quick, everyday upscaling",
-          "description": "Web-based upscaler with no installation required. Good balance of quality and convenience for most users.",
+          "tagline": "日常的な迅速な拡大に最適",
+          "description": "インストール不要のWebベース拡大ソフト。大多数のユーザーにとって品質と利便性の良いバランスを提供します。",
           "bestFor": [
-            "Quick one-off upscales",
-            "Users who don't want software",
-            "E-commerce sellers",
-            "Social media content"
+            "迅速なワンオフ拡大",
+            "ソフトウェアを望まないユーザー",
+            "ECセラー",
+            "ソーシャルメディアコンテンツ"
           ],
           "features": {
             "maxUpscale": "8x",
-            "batchProcessing": "Up to 50 on Pro",
-            "textPreservation": "Good",
-            "processingSpeed": "30-60 seconds",
-            "watermark": "Never",
-            "freeTier": "10 credits/month"
+            "batchProcessing": "Proで最大50",
+            "textPreservation": "良好",
+            "processingSpeed": "30-60秒",
+            "watermark": "なし",
+            "freeTier": "10クレジット/月"
           },
           "pros": [
-            "No software installation needed",
-            "No watermarks on free tier",
-            "Good text and logo preservation",
-            "Fast processing via cloud",
-            "Simple, intuitive interface"
+            "ソフトウェアのインストール不要",
+            "無料プランに透かしなし",
+            "テキストとロゴの良好な保存",
+            "クラウドによる高速処理",
+            "シンプルで直感的なインターフェース"
           ],
           "cons": [
-            "Requires internet connection",
-            "Large files take longer to upload",
-            "Less control than desktop software",
-            "Monthly credit limits on lower tiers"
+            "インターネット接続が必要",
+            "大きなファイルはアップロードに時間がかかる",
+            "デスクトップソフトウェアよりコントロールが少ない",
+            "ロワー階層では月間クレジット制限あり"
           ]
         },
         {
           "name": "Topaz Gigapixel AI",
-          "type": "Desktop software",
-          "pricing": "$99.99 one-time (or $199/year for updates)",
+          "type": "デスクトップソフトウェア",
+          "pricing": "$99.99 一括購入（またはアップデートには$199/年）",
           "rating": 4.7,
-          "tagline": "Best for professional photographers",
-          "description": "Desktop application with advanced controls and excellent quality. Higher learning curve but more powerful.",
+          "tagline": "プロフェッショナルフォトグラファーに最適",
+          "description": "高度なコントロールと優れた品質を備えるデスクトップアプリケーション。学習曲線は高いですが、より強力です。",
           "bestFor": [
-            "Professional photographers",
-            "Print preparation",
-            "Users who upscale frequently",
-            "Those wanting maximum control"
+            "プロフェッショナルフォトグラファー",
+            "印刷準備",
+            "頻繁に拡大するユーザー",
+            "最大のコントロールを望む人"
           ],
           "features": {
             "maxUpscale": "6x",
-            "batchProcessing": "Unlimited",
-            "textPreservation": "Moderate",
-            "processingSpeed": "60-180 seconds (hardware dependent)",
-            "watermark": "No",
-            "freeTier": "30-day trial"
+            "batchProcessing": "無制限",
+            "textPreservation": "中程度",
+            "processingSpeed": "60-180秒（ハードウェア依存）",
+            "watermark": "なし",
+            "freeTier": "30日間トライアル"
           },
           "pros": [
-            "Excellent overall image quality",
-            "One-time purchase option",
+            "優れた全体的な画像品質",
+            "一括購入オプション",
             "Works offline",
             "Advanced controls and settings",
             "Unlimited local processing",

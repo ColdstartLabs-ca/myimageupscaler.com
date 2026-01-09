@@ -55,10 +55,52 @@
               "description": "Versión optimizada entrenada en imágenes del mundo real, proporcionando mejores resultados para aplicaciones prácticas."
             }
           ]
+        },
+        {
+          "title": "Métricas de Calidad y Evaluación",
+          "content": "Entender cómo evaluar la calidad de ampliación ayuda a elegir la enfoque adecuado para tus necesidades.",
+          "subsections": [
+            {
+              "name": "PSNR (Relación Señal-a-Ruido Pico)",
+              "description": "Métrica técnica que mide la calidad de reconstrucción, aunque no siempre correlaciona con la calidad percibida."
+            },
+            {
+              "name": "SSIM (Índice de Similitud Estructural)",
+              "description": "Mide la similitud estructural entre imágenes originales y ampliadas."
+            },
+            {
+              "name": "LPIPS (Similitud de Patches de Imagen Perceptual Aprendida)",
+              "description": "Métrica moderna mejor alineada con la percepción humana de la calidad de la imagen."
+            }
+          ]
+        },
+        {
+          "title": "Técnicas de Optimización",
+          "content": "Técnicas avanzadas para lograr resultados óptimos de ampliación para diferentes tipos de imágenes.",
+          "subsections": [
+            {
+              "name": "Procesamiento Consciente del Contenido",
+              "description": "Diferentes enfoques de ampliación para diferentes tipos de contenido (rostros, texto, escenas naturales)."
+            },
+            {
+              "name": "Manejo de Ruido",
+              "description": "Técnicas para gestionar y reducir ruido durante el proceso de ampliación."
+            },
+            {
+              "name": "Prevención de Artefactos",
+              "description": "Métodos para evitar artefactos comunes de ampliación como halos, desenfoque o texturas poco realistas."
+            }
+          ]
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": ["JPEG", "PNG", "TIFF", "WebP", "BMP"],
+        "supportedFormats": [
+          "JPEG",
+          "PNG",
+          "TIFF",
+          "WebP",
+          "BMP"
+        ],
         "maxUpscaleFactor": "La mayoría de sistemas soportan escalado 2x, 4x, y algunos hasta 8x",
         "processingTime": "Varía de segundos a minutos dependiendo del tamaño de imagen y complejidad del modelo",
         "memoryRequirements": "Depende del tamaño de imagen y modelo, típicamente 2-8GB de RAM"
@@ -76,8 +118,23 @@
           "answer": "La interpolación tradicional (bilineal, bicúbica) simplemente promedia píxeles cercanos, creando resultados borrosos. El escalado con IA usa patrones aprendidos para generar detalles realistas y nítidos."
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
-      "relatedPages": ["image-resolution-guide", "neural-network-basics"]
+      "relatedTools": [
+        "ai-image-upscaler"
+      ],
+      "relatedPages": [
+        "image-resolution-guide",
+        "neural-network-basics"
+      ],
+      "commonIssues": [
+        {
+          "problem": "Generación de texturas poco realistas",
+          "solution": "Usar factores de ampliación conservadores o modelos específicamente entrenados para tu tipo de contenido"
+        },
+        {
+          "problem": "Desenfoque o distorsión de texto",
+          "solution": "Usar modelos de ampliación optimizados para texto o pre-procesar áreas de texto por separado"
+        }
+      ]
     },
     {
       "slug": "image-resolution-explained",
@@ -119,8 +176,14 @@
           "answer": "Puedes aumentar las dimensiones de píxeles, pero no puedes agregar detalles nuevos. El escalado con IA puede ayudar, pero siempre es mejor comenzar con resolución adecuada."
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "image-resolution-calculator"],
-      "relatedPages": ["print-production-guide", "digital-image-optimization"]
+      "relatedTools": [
+        "ai-image-upscaler",
+        "image-resolution-calculator"
+      ],
+      "relatedPages": [
+        "print-production-guide",
+        "digital-image-optimization"
+      ]
     }
   ],
   "meta": {

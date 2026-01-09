@@ -1,34 +1,34 @@
 {
-  "category": "industry-insights",
+  "category": "informações-do-setor",
   "pages": [
     {
-      "slug": "real-estate-photo-enhancement",
-      "title": "Real Estate Photo Enhancement with AI",
-      "metaTitle": "Real Estate Photo Enhancement with AI | MyImageUpscaler",
-      "metaDescription": "Transform real estate photos with AI upscaling. Make properties look stunning, attract more buyers, and sell faster with image enhancement.",
-      "h1": "AI Image Enhancement for Real Estate Photography",
-      "intro": "real estate photography can make or break a property sale. Learn how AI image enhancement is transforming the industry by making every property look its absolute .",
-      "primaryKeyword": "real estate photo enhancement",
+      "slug": "melhoria-fotográfica-imobiliária",
+      "title": "Melhoria Fotográfica Imobiliária com IA",
+      "metaTitle": "Melhoria Fotográfica Imobiliária com IA | MyImageUpscaler",
+      "metaDescription": "Transforme fotos imobiliárias com upscale de IA. Torne propriedades estonteantes, atrai mais compradores e venda mais rápido com melhoria de imagem.",
+      "h1": "Melhoria de Imagem por IA para Fotografia Imobiliária",
+      "intro": "a fotografia imobiliária pode fazer ou quebrar uma venda de propriedade. Descubra como a melhoria de imagem por IA está transformando a indústria, fazendo com que cada propriedade tenha a aparência absoluta .",
+      "primaryKeyword": "melhoria fotográfica imobiliária",
       "secondaryKeywords": [
-        "property photo editing",
-        "real estate image upscaling",
-        "mls photo enhancement"
+        "edição de fotos de propriedade",
+        "upscale de imagem imobiliária",
+        "melhoria de foto mls"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "industry-insights",
-      "industry": "Real Estate",
+      "category": "informações-do-setor",
+      "industry": "Imobiliário",
       "problem": {
-        "title": "The Challenge: Poor Photos Kill Property Sales",
-        "description": "92% of home buyers search online first, and photos are the #1 factor in scheduling viewings. Dark, small, or low-quality images can cost you potential buyers and thousands in sale price."
+        "title": "O Desafio: Más Fotos Morteam Vendas de Propriedades",
+        "description": "92% dos compradores de casas procuram primeiro online, e as fotos são o fator #1 na agendamento de visitas. Imagens escuras, pequenas ou de baixa qualidade podem custar-lhe compradores potenciais e milhares no preço de venda."
       },
       "solution": {
-        "title": "AI Enhancement Transforms Property Images",
-        "description": "AI upscaling automatically improves photo quality, brightens spaces, enhances details, and creates professional-grade images that make properties irresistible to potential buyers."
+        "title": "A Melhoria por IA Transforma Imagens de Propriedade",
+        "description": "O upscale por IA melhora automaticamente a qualidade da foto, clareia espaços, melhora os detalhes e cria imagens de padrão profissional que tornam as propriedades irresistíveis para compradores potenciais."
       },
       "applications": [
         {
-          "type": "Interior Photos",
-          "description": "Brighten dark rooms, enhance natural light, improve color accuracy, and upscale for large displays",
+          "type": "Fotos de Interiores",
+          "description": "Clareie quartos escuros, melhore a luz natural, melhore a precisão da cor e faça upscale para grandes telas",
           "benefits": [
             "Rooms appear larger and brighter",
             "True-to-life colors",

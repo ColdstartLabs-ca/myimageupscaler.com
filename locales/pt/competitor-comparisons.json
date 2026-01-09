@@ -1,92 +1,92 @@
 {
-  "category": "compare",
+  "category": "comparação",
   "pages": [
     {
       "slug": "myimageupscaler-vs-topaz-gigapixel",
-      "title": "MyImageUpscaler vs az GigAPIxel AI: Complete 2025 comparison",
-      "metaTitle": "MyImageUpscaler vs az GigAPIxel AI: Complete 2025 comparison | MyImageUpscaler",
-      "metaDescription": "In-depth comparison of MyImageUpscaler vs az GigAPIxel AI. comparison quality, pricing, features, and to choose the AI upscaler for your needs.",
-      "h1": "MyImageUpscaler vs az GigAPIxel AI: Which AI Upscaler Wins in 2025?",
-      "intro": "Comprehensive comparison between MyImageUpscaler and az GigAPIxel AI, two leading AI image upscaling solutions. We comparison image quality, pricing, features, ease of use, and overall value for different user needs.",
-      "primaryKeyword": "topaz gigapixel comparison",
+      "title": "MyImageUpscaler vs Topaz Gigapixel AI: Comparação completa 2025",
+      "metaTitle": "MyImageUpscaler vs Topaz Gigapixel AI: Comparação completa 2025 | MyImageUpscaler",
+      "metaDescription": "Comparação detalhada entre MyImageUpscaler e Topaz Gigapixel AI. Comparamos qualidade, preços, recursos e ajudamos a escolher o melhor amplificador de IA para suas necessidades.",
+      "h1": "MyImageUpscaler vs Topaz Gigapixel AI: Qual Amplificador de IA Ganha em 2025?",
+      "intro": "Comparação abrangente entre MyImageUpscaler e Topaz Gigapixel AI, duas soluções líderes em ampliação de imagem com IA. Comparamos qualidade da imagem, preços, recursos, facilidade de uso e valor geral para diferentes necessidades do usuário.",
+      "primaryKeyword": "comparação topaz gigapixel",
       "secondaryKeywords": [
-        "gigapixel ai alternative",
-        "topaz vs online upscaler",
-        "ai upscaler comparison",
-        "best ai upscaler 2025"
+        "alternativa gigapixel ai",
+        "topaz vs amplificador online",
+        "comparação amplificador ia",
+        "melhor amplificador ia 2025"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
       "products": [
         {
           "name": "MyImageUpscaler",
-          "pricing": "Free tier, $9.99/month Pro",
+          "pricing": "Gratuito, $9.99/mês Pro",
           "rating": 4.8,
-          "tagline": "Fast, accessible AI upscaling in your browser",
-          "description": "Web-based AI image upscaler offering instant enhancement with no software installation required.",
+          "tagline": "Ampliação de IA rápida e acessível no seu navegador",
+          "description": "Amplificador de imagem baseado em web que oferece aprimoramento instantâneo sem necessidade de instalação de software.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mês",
             "free_tier": true,
-            "speed": "Instant (5-15 seconds)",
-            "max_resolution": "Unlimited",
+            "speed": "Instantâneo (5-15 segundos)",
+            "max_resolution": "Ilimitado",
             "batch_processing": true,
             "no_installation": true,
             "raw_support": true,
             "api_access": true
           },
           "pros": [
-            "No software installation required",
-            "Faster processing speeds",
-            "More affordable pricing",
-            "Free tier for testing",
-            "Excellent for web workflows",
-            "API integration available"
+            "Nenhuma instalação de software necessária",
+            "Velocidades de processamento mais rápidas",
+            "Preços mais acessíveis",
+            "Plano gratuito para testes",
+            "Excelente para fluxos de trabalho na web",
+            "Integração de API disponível"
           ],
           "cons": [
-            "Requires internet connection",
-            "Fewer advanced controls",
-            "Web-based limitations on very large files"
+            "Requer conexão com a internet",
+            "Menos controles avançados",
+            "Limitações baseadas em web para arquivos muito grandes"
           ]
         },
         {
           "name": "Topaz Gigapixel AI",
-          "pricing": "$99.99 one-time",
+          "pricing": "$99.99 pagamento único",
           "rating": 4.6,
-          "tagline": "Professional desktop AI upscaling with advanced controls",
-          "description": "Desktop software offering advanced AI upscaling with extensive customization options and professional features.",
+          "tagline": "Ampliação de IA profissional para desktop com controles avançados",
+          "description": "Software desktop que oferece ampliação avançada com IA com amplas opções de personalização e recursos profissionais.",
           "isRecommended": false,
           "features": {
-            "price": "$99.99 one-time",
+            "price": "$99.99 pagamento único",
             "free_tier": false,
-            "speed": "Slow (30-120 seconds)",
-            "max_resolution": "Limited by hardware",
+            "speed": "Lento (30-120 segundos)",
+            "max_resolution": "Limitado pelo hardware",
             "batch_processing": true,
             "no_installation": false,
             "raw_support": true,
             "api_access": false
           },
           "pros": [
-            "Advanced customization options",
-            "One-time purchase",
-            "Works offline",
-            "Extensive format support",
-            "Professional-grade controls",
-            "Very high maximum quality"
+            "Opções avançadas de personalização",
+            "Pagamento único",
+            "Funciona offline",
+            "Suporte extensivo de formatos",
+            "Controles de nível profissional",
+            "Qualidade máxima muito alta"
           ],
           "cons": [
-            "Expensive upfront cost",
-            "Slow processing speeds",
-            "Requires powerful hardware",
-            "Steep learning curve",
-            "No free trial"
+            "Custo inicial caro",
+            "Velocidades de processamento lentas",
+            "Requer hardware poderoso",
+            "Curva de aprendizado íngreme",
+            "Sem período de teste gratuito"
           ]
         }
       ],
       "criteria": [
         {
-          "name": "Pricing",
-          "key": "price"
+          "name": "Preços",
+          "key": "preço"
         },
         {
           "name": "Free Tier",

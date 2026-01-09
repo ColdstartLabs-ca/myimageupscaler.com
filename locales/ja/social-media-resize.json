@@ -1,5 +1,5 @@
 {
-  "category": "tools",
+  "category": "ツール",
   "pages": [
     {
       "slug": "resize-image-for-pinterest",
@@ -8,50 +8,50 @@
       "metaDescription": "Perfect Pinterest image reサイズr for all pin サイズs. Standard pins, story pins, board covers, and video thumbnAIls. 無料 オンライン tool with 2025 Pinterest 寸法 and optimization.",
       "h1": "Pinterest Image Reサイズr - Perfect Pin サイズs for 2025",
       "intro": "Create perfect Pinterest pins with our specialized image reサイズr. Automatically optimize your images for Pinterest's 2025 requirements including standard pins, Idea Pins, video content, and board covers with AI-powered optimization.",
-      "primaryKeyword": "resize image for pinterest",
+      "primaryKeyword": "pinterest用画像リサイズ",
       "secondaryKeywords": [
-        "pinterest image sizes 2025",
-        "pin dimensions guide",
-        "pinterest resizer tool",
-        "social media image optimization",
-        "pinterest marketing tips",
-        "pinterest video thumbnail size",
-        "pinterest board cover dimensions"
+        "pinterest 画像サイズ 2025",
+        "pin 次元ガイド",
+        "pinterest リザイザー ツール",
+        "ソーシャルメディア 画像最適化",
+        "pinterest マーケティング チップ",
+        "pinterest ビデオ サムネイル サイズ",
+        "pinterest ボード カバー 次元"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
-      "toolName": "Pinterest Image Resizer",
-      "description": "Advanced Pinterest image resizing tool with 2025 specifications and marketing optimization features",
+      "category": "ツール",
+      "toolName": "Pinterest画像リサイズ",
+      "description": "2025仕様とマーケティング最適化機能を備えた高度なPinterest画像リサイズツール",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "platformSpecifications": {
         "currentRequirements": {
           "standardPins": {
-            "recommended": "1000x1500 pixels",
+            "recommended": "1000x1500ピクセル",
             "aspectRatio": "2:3",
-            "minimum": "600x900 pixels",
+            "minimum": "600x900ピクセル",
             "fileFormat": "JPG, PNG",
             "maxFileSize": "32MB"
           },
           "squarePins": {
-            "recommended": "1000x1000 pixels",
+            "recommended": "1000x1000ピクセル",
             "aspectRatio": "1:1",
             "fileFormat": "JPG, PNG"
           },
           "storyPins": {
-            "recommended": "1080x1920 pixels",
+            "recommended": "1080x1920ピクセル",
             "aspectRatio": "9:16",
-            "videoLength": "15-60 seconds",
+            "videoLength": "15-60秒",
             "fileFormat": "MP4, JPG, PNG"
           },
           "videoPins": {
-            "thumbnail": "1080x1920 pixels",
+            "thumbnail": "1080x1920ピクセル",
             "aspectRatio": "9:16, 1:1, 2:3",
-            "maxDuration": "15 minutes",
-            "resolution": "1080x1920 minimum"
+            "maxDuration": "15分",
+            "resolution": "1080x1920最低"
           },
           "boardCovers": {
-            "recommended": "800x800 pixels",
+            "recommended": "800x800ピクセル",
             "aspectRatio": "1:1",
             "fileFormat": "JPG, PNG",
             "maxFileSize": "32MB"
@@ -59,29 +59,29 @@
         },
         "bestPractices": {
           "contentTypes": {
-            "infographics": "1000x1500 vertical format with clear typography, high contrast, and brand-consistent colors. Include 3-5 data points per pin.",
-            "productPhotography": "Clean backgrounds, 1000x1500 or 1000x1000 dimensions, multiple angles, lifestyle context, and consistent lighting.",
-            "blogThumbnails": "Vertical format with compelling headlines, brand colors, and clear value proposition. Use 2:3 aspect ratio.",
-            "recipePins": "Step-by-step visuals, final hero shot, ingredient list overlay. 1000x1500 optimal with high food photography quality.",
-            "diyProjects": "Before/after comparisons, step-by-step process shots, material lists. Use bright, clear imagery."
+            "infographics": "明確なタイポグラフィ、高コントラスト、ブランド一貫性のある色を備えた1000x1500縦フォーマット。ピンごとに3-5データポイントを含めます。",
+            "productPhotography": "クリーンな背景、1000x1500または1000x1000サイズ、複数の角度、ライフスタイルコンテキスト、一貫した照明。",
+            "blogThumbnails": "説得力のある見出し、ブランドカラー、明確な価値提案を使用した縦フォーマット。2:3アスペクト比を使用します。",
+            "recipePins": "ステップバイステップのビジュアル、最終的なヒーローショット、材料リストオーバーレイ。高品質な食撮りを備えた1000x1500が最適です。",
+            "diyProjects": "前後比較、ステップバイステップ処理ショット、材料リスト。明確なビジュアルを使用します。"
           },
           "designGuidelines": {
-            "textOverlays": "Use 60-70 characters max, sans-serif fonts, 24pt minimum size, high contrast backgrounds",
-            "colorPalette": "Limit to 3-4 colors, maintain brand consistency, test contrast ratios for accessibility",
-            "composition": "Rule of thirds, negative space, clear focal point, avoid clutter",
-            "branding": "Consistent logo placement, brand colors, font hierarchy, visual style"
+            "textOverlays": "最大60-70文字を使用、サンセリフフォント、最小24ptサイズ、高コントラスト背景",
+            "colorPalette": "3-4色に制限、ブランドの一貫性を維持、アクセシビリティのコントラスト比をテスト",
+            "composition": "三分割法、ネガティブスペース、明確な焦点、散らかりを避ける",
+            "branding": "一貫したロゴ配置、ブランドカラー、フォント階層、ビジュアルスタイル"
           }
         },
         "engagementOptimization": {
           "thumbnailStrategy": {
-            "faceDetection": "Images with faces get 35% more engagement. Use authentic expressions, eye contact.",
-            "colors": "Red, orange, and pink tones increase click-through by 15%. Use vibrant, saturated colors.",
-            "asymmetry": "Slightly off-center composition performs 20% better than perfectly centered images.",
-            "contrast": "High contrast images perform better in feeds. Test with grayscale to ensure readability."
+            "faceDetection": "顔がある画像は35%エンゲージメントが増加します。本物の表情、アイコンタクトを使用します。",
+            "colors": "赤、オレンジ、ピンクのトーンはクリック率を15%増加させます。鮮やかな彩度の高い色を使用します。",
+            "asymmetry": "少しオフセンター構成は、完璧に中央揃えの画像より20%良いパフォーマンスを発揮します。",
+            "contrast": "高コントラスト画像はフィードでより良いパフォーマンスを発揮します。読みやすさを確保するためにグレースケールでテストします。"
           },
           "timing": {
-            "bestPostingTimes": "8-11 PM, 2-4 PM weekends. Peak engagement varies by audience timezone.",
-            "seasonalContent": "Plan 6-8 weeks ahead. Holiday content performs 40% better when posted early.",
+            "bestPostingTimes": "20-23時、14-16時週末。ピークエンゲージメントはオーディエンスのタイムゾーンによって異なります。",
+            "seasonalContent": "6-8週間先を計画します。ホリデーコンテンツは早期に投稿した場合に40%良いパフォーマンスを発揮します。",
             "trendingTopics": "Monitor Pinterest Trends tool. Create content 1-2 weeks before trend peaks."
           },
           "engagementFactors": {
