@@ -3,775 +3,683 @@
   "pages": [
     {
       "slug": "convert-jpeg-to-png",
-      "title": "Convert JPEG to PNG",
-      "metaTitle": "Convert JPEG to PNG | MyImageUpscaler",
-      "metaDescription": "Convert JPEG files to PNG format online for Free. High-quality JPG to PNG conversion with transparency support. Perfect for logos, graphics, and use.",
-      "h1": "Convert JPEG to PNG - Preserve quality with Transparency Support",
-      "intro": "Transform your JPEG images to PNG format with our online converter. Perfect for mAIntAIning image quality while adding transparency support, ideal for logos, graphics, and design work.",
-      "primaryKeyword": "convert jpeg to png",
+      "title": "Converter JPEG para PNG",
+      "metaTitle": "Converter JPEG para PNG | MyImageUpscaler",
+      "metaDescription": "Converta arquivos JPEG para o formato PNG online gratuitamente. Conversão de JPG para PNG de alta qualidade com suporte a transparência. Perfeito para logotipos, gráficos e design.",
+      "h1": "Converter JPEG para PNG - Preserve a qualidade com suporte a transparência",
+      "intro": "Transforme suas imagens JPEG em formato PNG com nosso conversor online. Perfeito para manter a qualidade da imagem enquanto adiciona suporte a transparência, ideal para logotipos, gráficos e trabalhos de design.",
+      "primaryKeyword": "converter jpeg para png",
       "secondaryKeywords": [
-        "jpg to png converter",
-        "jpeg to png online",
-        "image format converter",
-        "transparency conversion",
-        "jpeg png tool"
+        "conversor jpg para png",
+        "jpeg para png online",
+        "conversor de formato de imagem",
+        "conversão com transparência",
+        "ferramenta jpeg png"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "JPEG to PNG Converter",
-      "description": "Professional JPEG to PNG conversion tool with quality optimization and transparency options",
+      "toolName": "Conversor de JPEG para PNG",
+      "description": "Ferramenta profissional de conversão de JPEG para PNG com otimização de qualidade e opções de transparência",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "JPEG",
       "toFormat": "PNG",
       "conversionFeatures": {
-        "qualityEnhancement": "Improves image quality during conversion process",
-        "transparencySupport": "Adds transparent background options",
-        "compressionLevel": "Adjustable PNG compression for file size balance",
-        "colorDepth": "Supports 8-bit, 24-bit, and 32-bit color depth"
+        "qualityEnhancement": "Melhora a qualidade da imagem durante o processo de conversão",
+        "transparencySupport": "Adiciona opções de fundo transparente",
+        "compressionLevel": "Compressão PNG ajustável para equilibrar qualidade e tamanho do arquivo",
+        "colorDepth": "Suporta profundidade de cor de 8 bits, 24 bits e 32 bits"
       },
       "commonUseCases": [
         {
-          "title": "Logo Conversion",
-          "description": "Convert JPEG logos to PNG with transparent backgrounds for professional use",
-          "example": "Convert company logo for website use with transparent background"
+          "title": "Conversão de Logotipos",
+          "description": "Converta logotipos JPEG para PNG com fundos transparentes para uso profissional",
+          "example": "Converta o logotipo da empresa para uso em sites com fundo transparente"
         },
         {
-          "title": "Design Work",
-          "description": "Convert JPEG graphics to PNG for design software compatibility",
-          "example": "Convert product images for use in Adobe Illustrator and Photoshop"
+          "title": "Trabalho de Design",
+          "description": "Converta gráficos JPEG para PNG para compatibilidade com softwares de design",
+          "example": "Converta imagens de produtos para uso no Adobe Illustrator e Photoshop"
         },
         {
-          "title": "Quality Preservation",
-          "description": "Convert JPEG to lossless PNG for archival and editing purposes",
-          "example": "Convert important photos to PNG for lossless editing and storage"
+          "title": "Preservação de Qualidade",
+          "description": "Converta JPEG para PNG sem perdas para fins de arquivamento e edição",
+          "example": "Converta fotos importantes para PNG para edição e armazenamento sem perdas"
         },
         {
-          "title": "Web Graphics",
-          "description": "Create web-compatible PNG images with transparency from JPEG sources",
-          "example": "Convert web banners to PNG for better text rendering and transparency"
+          "title": "Gráficos para Web",
+          "description": "Crie imagens PNG compatíveis com a web com transparência a partir de fontes JPEG",
+          "example": "Converta banners web para PNG para melhor renderização de texto e transparência"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "JPG",
-          "PNG"
-        ],
+        "supportedFormats": ["JPEG", "JPG", "PNG"],
         "maxFileSize": "40MB",
         "outputOptions": [
-          "24-bit PNG",
-          "32-bit PNG with transparency",
-          "8-bit PNG optimized"
+          "PNG de 24 bits",
+          "PNG de 32 bits com transparência",
+          "PNG de 8 bits otimizado"
         ],
-        "colorSpace": "sRGB, Adobe RGB, Grayscale support",
-        "batchLimit": "15 files per conversion"
+        "colorSpace": "Suporte a sRGB, Adobe RGB e Tons de Cinza",
+        "batchLimit": "15 arquivos por conversão"
       },
       "advantages": [
-        "Lossless PNG format for quality preservation",
-        "Transparency support for professional graphics",
-        "Multiple compression level options",
-        "Color depth optimization",
-        "Professional design workflow compatibility"
+        "Formato PNG sem perdas para preservação da qualidade",
+        "Suporte a transparência para gráficos profissionais",
+        "Múltiplas opções de nível de compressão",
+        "Otimização da profundidade de cor",
+        "Compatibilidade profissional com fluxos de trabalho de design"
       ],
       "faq": [
         {
-          "question": "Why would I convert JPEG to PNG?",
-          "answer": "PNG offers lossless compression and transparency support, making it ideal for logos, graphics, and images requiring editing. JPEG to PNG conversion preserves quality while adding features."
+          "question": "Por que eu converteria JPEG para PNG?",
+          "answer": "O PNG oferece compressão sem perdas e suporte a transparência, sendo ideal para logotipos, gráficos e imagens que requerem edição. A conversão de JPEG para PNG preserva a qualidade enquanto adiciona recursos."
         },
         {
-          "question": "Will my PNG files be larger than JPEGs?",
-          "answer": "Yes, PNG files are typically larger than JPEGs due to lossless compression. However, you gAIn quality preservation and transparency support, which are essential for work."
+          "question": "Meus arquivos PNG serão maiores que os JPEGs?",
+          "answer": "Sim, os arquivos PNG são tipicamente maiores que os JPEGs devido à compressão sem perdas. No entanto, você ganha preservação de qualidade e suporte a transparência, essenciais para trabalhos profissionais."
         },
         {
-          "question": "Can I add transparency to JPEG images?",
-          "answer": "Yes! Our converter can detect backgrounds and create transparent versions, or you can specify areas for transparency. Perfect for removing white backgrounds from logos and graphics."
+          "question": "Posso adicionar transparência a imagens JPEG?",
+          "answer": "Sim! Nosso conversor pode detectar fundos e criar versões transparentes, ou você pode especificar áreas para transparência. Perfeito para remover fundos brancos de logotipos e gráficos."
         },
         {
-          "question": "Is PNG better than JPEG for all images?",
-          "answer": "Not necessarily. PNG is better for graphics, logos, and images requiring transparency or editing. JPEG remAIns better for photographs due to smaller file sizes with good quality."
+          "question": "O PNG é melhor que o JPEG para todas as imagens?",
+          "answer": "Não necessariamente. O PNG é melhor para gráficos, logotipos e imagens que requerem transparência ou edição. O JPEG continua sendo melhor para fotografias devido aos tamanhos menores de arquivo com boa qualidade."
         },
         {
-          "question": "Can I control the PNG compression level?",
-          "answer": "Yes! Our converter offers adjustable compression levels, allowing you to balance file size and quality according to your specific needs."
+          "question": "Posso controlar o nível de compressão do PNG?",
+          "answer": "Sim! Nosso conversor oferece níveis de compressão ajustáveis, permitindo que você equilibre o tamanho do arquivo e a qualidade de acordo com suas necessidades específicas."
         }
       ],
-      "relatedTools": [
-        "convert-png-to-jpeg",
-        "convert-webp-to-png",
-        "add-transparency-to-images"
-      ],
-      "relatedGuides": [
-        "understanding-image-formats",
-        "when-to-use-png-vs-jpeg"
-      ]
+      "relatedTools": ["convert-png-to-jpeg", "convert-webp-to-png", "add-transparency-to-images"],
+      "relatedGuides": ["understanding-image-formats", "when-to-use-png-vs-jpeg"]
     },
     {
       "slug": "convert-webp-to-jpeg",
-      "title": "Convert WebP to JPEG",
-      "metaTitle": "Convert WebP to JPEG | MyImageUpscaler",
-      "metaDescription": "Convert WebP images to JPEG format online for Free. High-quality WebP to JPG conversion with universal compatibility. Perfect for web images and social media.",
-      "h1": "Convert WebP to JPEG - Universal Compatibility Converter",
-      "intro": "Transform your WebP images to widely compatible JPEG format with our fast online converter. Ideal for making modern web images work everywhere while mAIntAIning excellent quality and reducing file size.",
-      "primaryKeyword": "convert webp to jpeg",
+      "title": "Converter WebP para JPEG",
+      "metaTitle": "Converter WebP para JPEG | MyImageUpscaler",
+      "metaDescription": "Converta imagens WebP para o formato JPEG online gratuitamente. Conversão de WebP para JPG de alta qualidade com compatibilidade universal. Perfeito para imagens web e redes sociais.",
+      "h1": "Converter WebP para JPEG - Conversor de Compatibilidade Universal",
+      "intro": "Transforme suas imagens WebP no formato JPEG amplamente compatível com nosso conversor online rápido. Ideal para fazer imagens web modernas funcionarem em qualquer lugar, mantendo excelente qualidade e reduzindo o tamanho do arquivo.",
+      "primaryKeyword": "converter webp para jpeg",
       "secondaryKeywords": [
-        "webp to jpg converter",
-        "webp to jpeg online",
-        "modern image converter",
-        "web format converter",
-        "webp compatibility tool"
+        "conversor webp para jpg",
+        "webp para jpeg online",
+        "conversor de imagem moderno",
+        "conversor de formato web",
+        "ferramenta de compatibilidade webp"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "WebP to JPEG Converter",
-      "description": "Fast WebP to JPEG conversion tool with quality optimization and universal compatibility",
+      "toolName": "Conversor de WebP para JPEG",
+      "description": "Ferramenta rápida de conversão de WebP para JPEG com otimização de qualidade e compatibilidade universal",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "WebP",
       "toFormat": "JPEG",
       "conversionFeatures": {
-        "qualityPreservation": "Maintains WebP quality while converting to JPEG",
-        "transparencyHandling": "Intelligently handles WebP transparency in JPEG output",
-        "compressionOptimization": "Optimizes JPEG compression for best quality-to-size ratio",
-        "batchProcessing": "Convert multiple WebP files simultaneously"
+        "qualityPreservation": "Mantém a qualidade WebP ao converter para JPEG",
+        "transparencyHandling": "Lida inteligentemente com a transparência WebP na saída JPEG",
+        "compressionOptimization": "Otimiza a compressão JPEG para a melhor relação qualidade-tamanho",
+        "batchProcessing": "Converta múltiplos arquivos WebP simultaneamente"
       },
       "commonUseCases": [
         {
-          "title": "Social Media Sharing",
-          "description": "Convert WebP images to JPEG for universal social media platform support",
-          "example": "Convert WebP graphics for Instagram, Facebook, and Twitter sharing"
+          "title": "Compartilhamento em Redes Sociais",
+          "description": "Converta imagens WebP para JPEG para suporte universal em plataformas de redes sociais",
+          "example": "Converta gráficos WebP para compartilhamento no Instagram, Facebook e Twitter"
         },
         {
-          "title": "Email Compatibility",
-          "description": "Make WebP images email-compatible by converting to JPEG format",
-          "example": "Convert WebP screenshots for business email attachments"
+          "title": "Compatibilidade de E-mail",
+          "description": "Torne as imagens WebP compatíveis com e-mail convertendo-as para o formato JPEG",
+          "example": "Converta capturas de tela WebP para anexos de e-mail comercial"
         },
         {
-          "title": "Legacy Software Support",
-          "description": "Enable WebP images to work in older software that doesn't support WebP",
-          "example": "Convert WebP images for use in older versions of Microsoft Office"
+          "title": "Suporte a Softwares Antigos",
+          "description": "Permite que imagens WebP funcionem em softwares mais antigos que não suportam WebP",
+          "example": "Converta imagens WebP para uso em versões anteriores do Microsoft Office"
         },
         {
-          "title": "Print Preparation",
-          "description": "Convert WebP web images to JPEG for printing and document use",
-          "example": "Convert WebP product images for catalog and brochure printing"
+          "title": "Preparação para Impressão",
+          "description": "Converta imagens web WebP para JPEG para impressão e uso em documentos",
+          "example": "Converta imagens de produtos WebP para impressão de catálogos e brochuras"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "WebP",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["WebP", "JPEG", "JPG"],
         "maxFileSize": "30MB",
-        "outputOptions": [
-          "High Quality JPEG",
-          "Web Optimized JPEG",
-          "Progressive JPEG"
-        ],
-        "colorSpace": "sRGB, Adobe RGB support",
-        "batchLimit": "25 files per conversion"
+        "outputOptions": ["JPEG de Alta Qualidade", "JPEG Otimizado para Web", "JPEG Progressivo"],
+        "colorSpace": "Suporte a sRGB, Adobe RGB",
+        "batchLimit": "25 arquivos por conversão"
       },
       "advantages": [
-        "Lightning-fast conversion speeds",
-        "Intelligent transparency handling",
-        "Optimized file sizes for web and email",
-        "Universal JPEG compatibility guaranteed"
+        "Velocidades de conversão extremamente rápidas",
+        "Tratamento inteligente de transparência",
+        "Tamanhos de arquivo otimizados para web e e-mail",
+        "Compatibilidade universal com JPEG garantida"
       ],
       "faq": [
         {
-          "question": "Why convert WebP to JPEG instead of using WebP directly?",
-          "answer": "While WebP offers excellent compression, JPEG has universal compatibility. Converting ensures your images work everywhere, including older devices, emAIl clients, and software that don't support WebP yet."
+          "question": "Por que converter WebP para JPEG em vez de usar WebP diretamente?",
+          "answer": "Embora o WebP ofereça excelente compressão, o JPEG tem compatibilidade universal. A conversão garante que suas imagens funcionem em todos os lugares, incluindo dispositivos antigos, clientes de e-mail e softwares que ainda não suportam WebP."
         },
         {
-          "question": "What happens to WebP transparency when converting to JPEG?",
-          "answer": "Our converter intelligently handles WebP transparency by replacing transparent areas with a background color of your choice. You can choose white, black, or custom colors."
+          "question": "O que acontece com a transparência do WebP ao converter para JPEG?",
+          "answer": "Nosso conversor lida inteligentemente com a transparência do WebP, substituindo as áreas transparentes por uma cor de fundo de sua escolha. Você pode escolher branco, preto ou cores personalizadas."
         },
         {
-          "question": "Will the converted JPEGs be larger than WebP files?",
-          "answer": "JPEG files are typically larger than WebP files for the same image quality, but our optimization algorithms minimize size differences while ensuring universal compatibility."
+          "question": "Os JPEGs convertidos serão maiores que os arquivos WebP?",
+          "answer": "Arquivos JPEG são tipicamente maiores que arquivos WebP para a mesma qualidade de imagem, mas nossos algoritmos de otimização minimizam as diferenças de tamanho enquanto garantem compatibilidade universal."
         },
         {
-          "question": "Is the quality preserved during WebP to JPEG conversion?",
-          "answer": "Yes! Our advanced conversion algorithms mAIntAIn maximum quality during the process. While there may be minimal quality differences due to format characteristics, we optimize for the possible JPEG output."
+          "question": "A qualidade é preservada durante a conversão de WebP para JPEG?",
+          "answer": "Sim! Nossos algoritmos avançados de conversão mantêm a qualidade máxima durante o processo. Embora possa haver diferenças mínimas de qualidade devido às características do formato, otimizamos para a melhor saída JPEG possível."
         }
       ],
-      "relatedTools": [
-        "convert-jpeg-to-webp",
-        "convert-png-to-webp"
-      ],
-      "relatedGuides": [
-        "understanding-webp-format",
-        "image-optimization-guide"
-      ]
+      "relatedTools": ["convert-jpeg-to-webp", "convert-png-to-webp"],
+      "relatedGuides": ["understanding-webp-format", "image-optimization-guide"]
     },
     {
       "slug": "convert-png-to-jpeg",
-      "title": "Convert PNG to JPEG",
-      "metaTitle": "Convert PNG to JPEG | MyImageUpscaler",
-      "metaDescription": "Convert PNG images to JPEG format online for Free. High-quality PNG to JPG conversion with file size optimization. Perfect for photos and web images.",
-      "h1": "Convert PNG to JPEG - Optimize File size with quality",
-      "intro": "Convert your PNG images to JPEG format with our intelligent converter that balances quality and file size. Perfect for reducing file sizes while mAIntAIning excellent image quality for photos and web use.",
-      "primaryKeyword": "convert png to jpeg",
+      "title": "Converter PNG para JPEG",
+      "metaTitle": "Converter PNG para JPEG | MyImageUpscaler",
+      "metaDescription": "Converta imagens PNG para o formato JPEG online gratuitamente. Conversão de PNG para JPG de alta qualidade com otimização de tamanho de arquivo. Perfeito para fotos e imagens web.",
+      "h1": "Converter PNG para JPEG - Otimize o tamanho do arquivo com qualidade",
+      "intro": "Converta suas imagens PNG para o formato JPEG com nosso conversor inteligente que equilibra qualidade e tamanho do arquivo. Perfeito para reduzir tamanhos de arquivo enquanto mantém excelente qualidade de imagem para fotos e uso na web.",
+      "primaryKeyword": "converter png para jpeg",
       "secondaryKeywords": [
-        "png to jpg converter",
-        "png to jpeg online",
-        "image optimizer",
-        "file size reducer",
-        "png compression tool"
+        "conversor png para jpg",
+        "png para jpeg online",
+        "otimizador de imagem",
+        "redutor de tamanho de arquivo",
+        "ferramenta de compressão png"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "PNG to JPEG Converter",
-      "description": "Intelligent PNG to JPEG conversion tool with quality optimization and file size reduction",
+      "toolName": "Conversor de PNG para JPEG",
+      "description": "Ferramenta inteligente de conversão de PNG para JPEG com otimização de qualidade e redução de tamanho de arquivo",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "PNG",
       "toFormat": "JPEG",
       "conversionFeatures": {
-        "qualityOptimization": "Intelligent quality optimization for best results",
-        "fileSizeReduction": "Significant file size reduction while maintaining quality",
-        "transparencyHandling": "Handles PNG transparency with background color options",
-        "compressionControl": "Adjustable JPEG compression levels"
+        "qualityOptimization": "Otimização inteligente de qualidade para melhores resultados",
+        "fileSizeReduction": "Redução significativa no tamanho do arquivo mantendo a qualidade",
+        "transparencyHandling": "Lida com a transparência do PNG com opções de cor de fundo",
+        "compressionControl": "Níveis de compressão JPEG ajustáveis"
       },
       "commonUseCases": [
         {
-          "title": "Web Optimization",
-          "description": "Convert PNG images to JPEG for faster website loading times",
-          "example": "Convert PNG product images to JPEG for e-commerce website optimization"
+          "title": "Otimização para Web",
+          "description": "Converta imagens PNG para JPEG para tempos de carregamento de sites mais rápidos",
+          "example": "Converta imagens de produtos PNG para JPEG para otimização de sites de e-commerce"
         },
         {
-          "title": "Email Optimization",
-          "description": "Reduce PNG file sizes for faster email sending and delivery",
-          "example": "Convert PNG screenshots to JPEG for business email communication"
+          "title": "Otimização de E-mail",
+          "description": "Reduza os tamanhos dos arquivos PNG para envio e entrega de e-mails mais rápidos",
+          "example": "Converta capturas de tela PNG para JPEG para comunicação por e-mail comercial"
         },
         {
-          "title": "Photo Sharing",
-          "description": "Convert PNG photos to JPEG for universal sharing compatibility",
-          "example": "Convert PNG family photos to JPEG for social media sharing"
+          "title": "Compartilhamento de Fotos",
+          "description": "Converta fotos PNG para JPEG para compatibilidade universal de compartilhamento",
+          "example": "Converta fotos de família PNG para JPEG para compartilhar em redes sociais"
         },
         {
-          "title": "Storage Optimization",
-          "description": "Reduce storage requirements by converting PNGs to smaller JPEGs",
-          "example": "Convert PNG image library to JPEG for cloud storage efficiency"
+          "title": "Otimização de Armazenamento",
+          "description": "Reduza os requisitos de armazenamento convertendo PNGs em JPEGs menores",
+          "example": "Converta bibliotecas de imagens PNG para JPEG para eficiência de armazenamento em nuvem"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "PNG",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["PNG", "JPEG", "JPG"],
         "maxFileSize": "50MB",
         "outputOptions": [
-          "High Quality JPEG",
-          "Web Optimized JPEG",
-          "Balanced Quality/Size"
+          "JPEG de Alta Qualidade",
+          "JPEG Otimizado para Web",
+          "Qualidade/Tamanho Equilibrados"
         ],
-        "colorSpace": "sRGB, Adobe RGB, Grayscale support",
-        "batchLimit": "20 files per conversion"
+        "colorSpace": "Suporte a sRGB, Adobe RGB, Tons de Cinza",
+        "batchLimit": "20 arquivos por conversão"
       },
       "advantages": [
-        "Significant file size reduction (up to 80%)",
-        "Intelligent quality preservation algorithms",
-        "Fast conversion speeds",
-        "Background color options for transparency",
-        "Web optimization features"
+        "Redução significativa no tamanho do arquivo (até 80%)",
+        "Algoritmos inteligentes de preservação de qualidade",
+        "Velocidades de conversão rápidas",
+        "Opções de cor de fundo para transparência",
+        "Recursos de otimização web"
       ],
       "faq": [
         {
-          "question": "How much smaller will JPEG files be comparisond to PNG?",
-          "answer": "JPEG files are typically 50-80% smaller than PNG files for photographic content, while mAIntAIning similar visual quality. The exact reduction depends on image content and compression settings."
+          "question": "Quanto menores serão os arquivos JPEG em comparação ao PNG?",
+          "answer": "Arquivos JPEG são tipicamente 50-80% menores que os arquivos PNG para conteúdo fotográfico, mantendo uma qualidade visual semelhante. A redução exata depende do conteúdo da imagem e das configurações de compressão."
         },
         {
-          "question": "What happens to PNG transparency when converting to JPEG?",
-          "answer": "Since JPEG doesn't support transparency, our converter replaces transparent areas with a background color of your choice (white, black, or custom color)."
+          "question": "O que acontece com a transparência do PNG ao converter para JPEG?",
+          "answer": "Como o JPEG não suporta transparência, nosso conversor substitui as áreas transparentes por uma cor de fundo de sua escolha (branco, preto ou cor personalizada)."
         },
         {
-          "question": "When should I use PNG vs JPEG?",
-          "answer": "Use PNG for graphics, logos, and images requiring transparency or lossless quality. Use JPEG for photographs and images where file size is important and slight quality loss is acceptable."
+          "question": "Quando devo usar PNG vs JPEG?",
+          "answer": "Use PNG para gráficos, logotipos e imagens que requerem transparência ou qualidade sem perdas. Use JPEG para fotografias e imagens onde o tamanho do arquivo é importante e uma leve perda de qualidade é aceitável."
         },
         {
-          "question": "Can I control the JPEG quality level?",
-          "answer": "Yes! Our converter offers adjustable quality settings from 1-100, allowing you to balance file size and image quality according to your needs."
+          "question": "Posso controlar o nível de qualidade do JPEG?",
+          "answer": "Sim! Nosso conversor oferece configurações de qualidade ajustáveis de 1 a 100, permitindo que você equilibre o tamanho do arquivo e a qualidade da imagem de acordo com suas necessidades."
         }
       ],
-      "relatedTools": [
-        "convert-jpeg-to-png",
-        "convert-png-to-webp",
-        "compress-png-files"
-      ],
-      "relatedGuides": [
-        "understanding-image-formats",
-        "image-optimization-guide"
-      ]
+      "relatedTools": ["convert-jpeg-to-png", "convert-png-to-webp", "compress-png-files"],
+      "relatedGuides": ["understanding-image-formats", "image-optimization-guide"]
     },
     {
       "slug": "convert-bmp-to-jpeg",
-      "title": "Convert BMP to JPEG",
-      "metaTitle": "Convert BMP to JPEG | MyImageUpscaler",
-      "metaDescription": "Convert BMP images to JPEG format online for Free. Reduce BMP file sizes while mAIntAIning quality. Perfect for legacy image files and Windows users.",
-      "h1": "Convert BMP to JPEG - Optimize Legacy Image Files",
-      "intro": "Convert your BMP images to modern JPEG format with our efficient converter. Perfect for reducing large BMP file sizes while making them universally compatible with modern devices and web platforms.",
-      "primaryKeyword": "convert bmp to jpeg",
+      "title": "Converter BMP para JPEG",
+      "metaTitle": "Converter BMP para JPEG | MyImageUpscaler",
+      "metaDescription": "Converta imagens BMP para o formato JPEG online gratuitamente. Reduza o tamanho dos arquivos BMP mantendo a qualidade. Perfeito para arquivos de imagem legados e usuários do Windows.",
+      "h1": "Converter BMP para JPEG - Otimize arquivos de imagem legados",
+      "intro": "Converta suas imagens BMP para o formato JPEG moderno com nosso conversor eficiente. Perfeito para reduzir tamanhos de arquivos BMP grandes enquanto os torna universalmente compatíveis com dispositivos e plataformas web modernos.",
+      "primaryKeyword": "converter bmp para jpeg",
       "secondaryKeywords": [
-        "bmp to jpg converter",
-        "bitmap to jpeg",
-        "windows image converter",
-        "bmp optimization",
-        "legacy format converter"
+        "conversor bmp para jpg",
+        "bitmap para jpeg",
+        "conversor de imagem windows",
+        "otimização bmp",
+        "conversor de formato legado"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "BMP to JPEG Converter",
-      "description": "Efficient BMP to JPEG conversion for legacy image optimization",
+      "toolName": "Conversor de BMP para JPEG",
+      "description": "Conversão eficiente de BMP para JPEG para otimização de imagens legadas",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "BMP",
       "toFormat": "JPEG",
       "conversionFeatures": {
-        "fileSizeReduction": "Reduces BMP file sizes by 70-90%",
-        "qualityOptimization": "Optimizes quality during compression",
-        "colorDepth": "Handles various BMP color depths (1-bit to 32-bit)",
-        "batchProcessing": "Convert multiple BMP files at once"
+        "fileSizeReduction": "Reduz o tamanho dos arquivos BMP em 70-90%",
+        "qualityOptimization": "Otimiza a qualidade durante a compressão",
+        "colorDepth": "Lida com várias profundidades de cor BMP (1 bit a 32 bits)",
+        "batchProcessing": "Converta múltiplos arquivos BMP de uma vez"
       },
       "commonUseCases": [
         {
-          "title": "Legacy File Modernization",
-          "description": "Convert old BMP files to modern JPEG format for current use",
-          "example": "Convert Windows XP screenshots and old graphics to JPEG"
+          "title": "Modernização de Arquivos Legados",
+          "description": "Converta arquivos BMP antigos para o formato JPEG moderno para uso atual",
+          "example": "Converta capturas de tela do Windows XP e gráficos antigos para JPEG"
         },
         {
-          "title": "File Size Reduction",
-          "description": "Significantly reduce BMP file sizes for storage and sharing",
-          "example": "Convert large BMP graphics to JPEG for email and web use"
+          "title": "Redução de Tamanho de Arquivo",
+          "description": "Reduza significativamente o tamanho dos arquivos BMP para armazenamento e compartilhamento",
+          "example": "Converta gráficos BMP grandes para JPEG para uso em e-mail e web"
         },
         {
-          "title": "Web Compatibility",
-          "description": "Make BMP images web-compatible with JPEG conversion",
-          "example": "Convert BMP icons and graphics for website use"
+          "title": "Compatibilidade com a Web",
+          "description": "Torne as imagens BMP compatíveis com a web via conversão para JPEG",
+          "example": "Converta ícones e gráficos BMP para uso em sites"
         },
         {
-          "title": "Document Integration",
-          "description": "Convert BMP images for use in modern documents and presentations",
-          "example": "Convert BMP charts for PowerPoint and Word documents"
+          "title": "Integração em Documentos",
+          "description": "Converta imagens BMP para uso em documentos e apresentações modernas",
+          "example": "Converta gráficos BMP para documentos do PowerPoint e Word"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "BMP",
-          "DIB",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["BMP", "DIB", "JPEG", "JPG"],
         "maxFileSize": "100MB",
-        "outputOptions": [
-          "Standard JPEG",
-          "High Quality JPEG",
-          "Web Optimized"
-        ],
-        "colorSpace": "sRGB, Grayscale, 256-color support",
-        "batchLimit": "15 files per conversion"
+        "outputOptions": ["JPEG Padrão", "JPEG de Alta Qualidade", "Otimizado para Web"],
+        "colorSpace": "Suporte a sRGB, Tons de Cinza, 256 cores",
+        "batchLimit": "15 arquivos por conversão"
       }
     },
     {
       "slug": "convert-gif-to-jpeg",
-      "title": "Convert GIF to JPEG",
-      "metaTitle": "Convert GIF to JPEG | MyImageUpscaler",
-      "metaDescription": "Convert GIF images to JPEG format online for Free. Convert static GIFs or extract frames from animated GIFs. Perfect for graphics and web images.",
-      "h1": "Convert GIF to JPEG - Static Image Conversion",
-      "intro": "Convert your GIF images to high-quality JPEG format with our intelligent converter. Perfect for converting static GIF images or extracting the first frame from animated GIFs for better quality and compatibility.",
-      "primaryKeyword": "convert gif to jpeg",
+      "title": "Converter GIF para JPEG",
+      "metaTitle": "Converter GIF para JPEG | MyImageUpscaler",
+      "metaDescription": "Converta imagens GIF para o formato JPEG online gratuitamente. Converta GIFs estáticos ou extraia quadros de GIFs animados. Perfeito para gráficos e imagens web.",
+      "h1": "Converter GIF para JPEG - Conversão de Imagem Estática",
+      "intro": "Converta suas imagens GIF para o formato JPEG de alta qualidade com nosso conversor inteligente. Perfeito para converter imagens GIF estáticas ou extrair o primeiro quadro de GIFs animados para melhor qualidade e compatibilidade.",
+      "primaryKeyword": "converter gif para jpeg",
       "secondaryKeywords": [
-        "gif to jpg converter",
-        "gif frame extractor",
-        "gif to jpeg online",
-        "static gif converter"
+        "conversor gif para jpg",
+        "extrator de quadro gif",
+        "gif para jpeg online",
+        "conversor de gif estático"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "GIF to JPEG Converter",
-      "description": "Intelligent GIF to JPEG conversion for static images and frame extraction",
+      "toolName": "Conversor de GIF para JPEG",
+      "description": "Conversão inteligente de GIF para JPEG para imagens estáticas e extração de quadros",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "GIF",
       "toFormat": "JPEG",
       "conversionFeatures": {
-        "staticConversion": "Converts static GIFs to high-quality JPEG",
-        "frameExtraction": "Extracts first frame from animated GIFs",
-        "qualityEnhancement": "Improves quality beyond GIF's 256-color limitation",
-        "colorOptimization": "Optimizes colors for JPEG format"
+        "staticConversion": "Converte GIFs estáticos para JPEG de alta qualidade",
+        "frameExtraction": "Extrai o primeiro quadro de GIFs animados",
+        "qualityEnhancement": "Melhora a qualidade além da limitação de 256 cores do GIF",
+        "colorOptimization": "Otimiza cores para o formato JPEG"
       },
       "commonUseCases": [
         {
-          "title": "Static GIF Conversion",
-          "description": "Convert static GIF graphics to JPEG for better quality",
-          "example": "Convert logo GIFs to high-quality JPEG for print use"
+          "title": "Conversão de GIF Estático",
+          "description": "Converta gráficos GIF estáticos para JPEG para melhor qualidade",
+          "example": "Converta logotipos GIF para JPEG de alta qualidade para uso em impressão"
         },
         {
-          "title": "Frame Extraction",
-          "description": "Extract first frame from animated GIFs as JPEG image",
-          "example": "Extract thumbnail from animated product GIF for catalog"
+          "title": "Extração de Quadros",
+          "description": "Extraia o primeiro quadro de GIFs animados como imagem JPEG",
+          "example": "Extraia miniatura de um GIF de produto animado para catálogo"
         },
         {
-          "title": "Web Optimization",
-          "description": "Convert GIF images to JPEG for better compression",
-          "example": "Convert static GIF graphics to JPEG for website optimization"
+          "title": "Otimização para Web",
+          "description": "Converta imagens GIF para JPEG para melhor compressão",
+          "example": "Converta gráficos GIF estáticos para JPEG para otimização de sites"
         },
         {
-          "title": "Quality Improvement",
-          "description": "Convert GIF graphics to JPEG for better color depth",
-          "example": "Convert GIF photos to JPEG for improved color representation"
+          "title": "Melhoria de Qualidade",
+          "description": "Converta gráficos GIF para JPEG para melhor profundidade de cor",
+          "example": "Converta fotos GIF para JPEG para melhor representação de cores"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "GIF",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["GIF", "JPEG", "JPG"],
         "maxFileSize": "50MB",
-        "outputOptions": [
-          "High Quality JPEG",
-          "Web Optimized",
-          "Standard JPEG"
-        ],
-        "colorSpace": "sRGB, Enhanced color from GIF 256-color limitation",
-        "batchLimit": "15 files per conversion"
+        "outputOptions": ["JPEG de Alta Qualidade", "Otimizado para Web", "JPEG Padrão"],
+        "colorSpace": "sRGB, cor aprimorada a partir da limitação de 256 cores do GIF",
+        "batchLimit": "15 arquivos por conversão"
       }
     },
     {
       "slug": "convert-svg-to-jpeg",
-      "title": "Convert SVG to JPEG",
-      "metaTitle": "Convert SVG to JPEG | MyImageUpscaler",
-      "metaDescription": "Convert SVG vector graphics to JPEG images online. High-quality SVG to JPEG conversion with control. Perfect for logos and vector graphics.",
-      "h1": "Convert SVG to JPEG - Vector to Raster Conversion",
-      "intro": "Convert your SVG vector graphics to high-quality JPEG raster images with our converter. Perfect for making scalable vector graphics compatible with all devices and platforms while controlling output .",
-      "primaryKeyword": "convert svg to jpeg",
+      "title": "Converter SVG para JPEG",
+      "metaTitle": "Converter SVG para JPEG | MyImageUpscaler",
+      "metaDescription": "Converta gráficos vetoriais SVG em imagens JPEG online. Conversão de SVG para JPEG de alta qualidade com controle. Perfeito para logotipos e gráficos vetoriais.",
+      "h1": "Converter SVG para JPEG - Conversão de Vetor para Raster",
+      "intro": "Converta seus gráficos vetoriais SVG em imagens raster JPEG de alta qualidade com nosso conversor. Perfeito para tornar gráficos vetoriais escaláveis compatíveis com todos os dispositivos e plataformas enquanto controla a saída.",
+      "primaryKeyword": "converter svg para jpeg",
       "secondaryKeywords": [
-        "svg to jpg converter",
-        "vector to raster converter",
-        "svg to image",
-        "scalable graphics converter",
-        "logo format converter"
+        "conversor svg para jpg",
+        "conversor de vetor para raster",
+        "svg para imagem",
+        "conversor de gráficos escaláveis",
+        "conversor de formato de logotipo"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "SVG to JPEG Converter",
-      "description": "Professional SVG to JPEG conversion with resolution control and quality optimization",
+      "toolName": "Conversor de SVG para JPEG",
+      "description": "Conversão profissional de SVG para JPEG com controle de resolução e otimização de qualidade",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "SVG",
       "toFormat": "JPEG",
       "conversionFeatures": {
-        "resolutionControl": "Custom output resolution and dimensions",
-        "dimensionControl": "Set custom width and height in pixels",
-        "qualityOptimization": "Optimize JPEG quality for web or print use",
-        "scalability": "Maintains quality at any output size"
+        "resolutionControl": "Resolução e dimensões de saída personalizadas",
+        "dimensionControl": "Defina largura e altura personalizadas em pixels",
+        "qualityOptimization": "Otimize a qualidade JPEG para uso em web ou impressão",
+        "scalability": "Mantém a qualidade em qualquer tamanho de saída"
       },
       "commonUseCases": [
         {
-          "title": "Logo Conversion",
-          "description": "Convert SVG logos to JPEG for universal compatibility",
-          "example": "Convert company SVG logo to JPEG for email signatures and documents"
+          "title": "Conversão de Logotipo",
+          "description": "Converta logotipos SVG para JPEG para compatibilidade universal",
+          "example": "Converta o logotipo da empresa de SVG para JPEG para assinaturas de e-mail e documentos"
         },
         {
-          "title": "Icon Conversion",
-          "description": "Convert SVG icons and graphics to JPEG for web use",
-          "example": "Convert website SVG icons to JPEG for older browser compatibility"
+          "title": "Conversão de Ícones",
+          "description": "Converta ícones e gráficos SVG para JPEG para uso na web",
+          "example": "Converta ícones SVG do site para JPEG para compatibilidade com navegadores antigos"
         },
         {
-          "title": "Illustration Export",
-          "description": "Export SVG illustrations as high-resolution JPEG images",
-          "example": "Convert vector artwork to JPEG for print and publication use"
+          "title": "Exportação de Ilustração",
+          "description": "Exporte ilustrações SVG como imagens JPEG de alta resolução",
+          "example": "Converta arte vetorial para JPEG para uso em impressão e publicações"
         },
         {
-          "title": "Web Graphics",
-          "description": "Convert SVG web graphics to JPEG for faster loading",
-          "example": "Convert complex SVG graphics to JPEG for better page load times"
+          "title": "Gráficos para Web",
+          "description": "Converta gráficos web SVG para JPEG para carregamento mais rápido",
+          "example": "Converta gráficos SVG complexos para JPEG para melhores tempos de carregamento de página"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "SVG",
-          "SVGZ",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["SVG", "SVGZ", "JPEG", "JPG"],
         "maxFileSize": "10MB",
-        "outputOptions": [
-          "Web JPEG",
-          "High Quality JPEG",
-          "Custom Resolution"
-        ],
-        "colorSpace": "sRGB support",
-        "batchLimit": "20 files per conversion"
+        "outputOptions": ["JPEG para Web", "JPEG de Alta Qualidade", "Resolução Personalizada"],
+        "colorSpace": "Suporte a sRGB",
+        "batchLimit": "20 arquivos por conversão"
       }
     },
     {
       "slug": "convert-jpeg-to-webp",
-      "title": "Convert JPEG to WebP",
-      "metaTitle": "Convert JPEG to WebP | MyImageUpscaler",
-      "metaDescription": "Convert JPEG images to WebP format for better web . High-quality JPG to WebP conversion with 25-35% file size reduction. Perfect for website optimization.",
-      "h1": "Convert JPEG to WebP - Modern Web Image Optimization",
-      "intro": "Convert your JPEG images to modern WebP format for superior web and compression. Achieve 25-35% smaller file sizes while mAIntAIning equivalent visual quality for faster website loading.",
-      "primaryKeyword": "convert jpeg to webp",
+      "title": "Converter JPEG para WebP",
+      "metaTitle": "Converter JPEG para WebP | MyImageUpscaler",
+      "metaDescription": "Converta imagens JPEG para o formato WebP para melhor otimização web. Conversão de JPG para WebP de alta qualidade com redução de 25-35% no tamanho do arquivo. Perfeito para otimização de sites.",
+      "h1": "Converter JPEG para WebP - Otimização de Imagem Web Moderna",
+      "intro": "Converta suas imagens JPEG para o formato WebP moderno para compressão e otimização web superiores. Alcance tamanhos de arquivo 25-35% menores mantendo a qualidade visual equivalente para um carregamento de site mais rápido.",
+      "primaryKeyword": "converter jpeg para webp",
       "secondaryKeywords": [
-        "jpg to webp converter",
-        "jpeg to webp online",
-        "image optimization",
-        "web performance",
-        "modern image format"
+        "conversor jpg para webp",
+        "jpeg para webp online",
+        "otimização de imagem",
+        "performance web",
+        "formato de imagem moderno"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "JPEG to WebP Converter",
-      "description": "Modern JPEG to WebP conversion for web optimization and performance",
+      "toolName": "Conversor de JPEG para WebP",
+      "description": "Conversão moderna de JPEG para WebP para otimização e performance web",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "JPEG",
       "toFormat": "WebP",
       "conversionFeatures": {
-        "fileSizeReduction": "25-35% smaller files than equivalent JPEGs",
-        "qualityMaintenance": "Preserves visual quality while reducing file size",
-        "compressionControl": "Adjustable WebP compression settings",
-        "modernBrowserSupport": "Optimized for modern web browsers and platforms"
+        "fileSizeReduction": "Arquivos 25-35% menores que JPEGs equivalentes",
+        "qualityMaintenance": "Preserva a qualidade visual enquanto reduz o tamanho do arquivo",
+        "compressionControl": "Configurações de compressão WebP ajustáveis",
+        "modernBrowserSupport": "Otimizado para navegadores e plataformas web modernos"
       },
       "commonUseCases": [
         {
-          "title": "Website Optimization",
-          "description": "Convert JPEG images to WebP for faster website loading times",
-          "example": "Convert product JPEGs to WebP for e-commerce website speed"
+          "title": "Otimização de Sites",
+          "description": "Converta imagens JPEG para WebP para tempos de carregamento de sites mais rápidos",
+          "example": "Converta JPEGs de produtos para WebP para velocidade de sites de e-commerce"
         },
         {
-          "title": "SEO Improvement",
-          "description": "Improve page load speed and SEO with WebP image optimization",
-          "example": "Convert blog post images to WebP for better Google PageSpeed scores"
+          "title": "Melhoria de SEO",
+          "description": "Melhore a velocidade de carregamento da página e o SEO com otimização de imagem WebP",
+          "example": "Converta imagens de posts de blog para WebP para melhores pontuações no Google PageSpeed"
         },
         {
-          "title": "Mobile Performance",
-          "description": "Optimize JPEGs for mobile devices with WebP conversion",
-          "example": "Convert website images to WebP for better mobile experience"
+          "title": "Performance Mobile",
+          "description": "Otimize JPEGs para dispositivos móveis com conversão para WebP",
+          "example": "Converta imagens de sites para WebP para uma melhor experiência móvel"
         },
         {
-          "title": "Bandwidth Savings",
-          "description": "Reduce bandwidth costs with smaller WebP file sizes",
-          "example": "Convert high-traffic website images to WebP for bandwidth efficiency"
+          "title": "Economia de Banda",
+          "description": "Reduza os custos de largura de banda com tamanhos de arquivo WebP menores",
+          "example": "Converta imagens de sites de alto tráfego para WebP para eficiência de banda"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "JPG",
-          "WebP"
-        ],
+        "supportedFormats": ["JPEG", "JPG", "WebP"],
         "maxFileSize": "40MB",
-        "outputOptions": [
-          "Lossless WebP",
-          "Lossy WebP",
-          "High Quality WebP"
-        ],
-        "colorSpace": "sRGB, Adobe RGB support",
-        "batchLimit": "25 files per conversion"
+        "outputOptions": ["WebP sem perdas", "WebP com perdas", "WebP de Alta Qualidade"],
+        "colorSpace": "Suporte a sRGB, Adobe RGB",
+        "batchLimit": "25 arquivos por conversão"
       }
     },
     {
       "slug": "convert-png-to-webp",
-      "title": "Convert PNG to WebP",
-      "metaTitle": "Convert PNG to WebP | MyImageUpscaler",
-      "metaDescription": "Convert PNG images to WebP format with transparency support. High-quality PNG to WebP conversion for web optimization. Perfect for logos and graphics.",
-      "h1": "Convert PNG to WebP - Modern Graphics with Transparency",
-      "intro": "Convert your PNG images and graphics to modern WebP format while preserving transparency and achieving superior compression. Perfect for optimizing logos, icons, and graphics for the web.",
-      "primaryKeyword": "convert png to webp",
+      "title": "Converter PNG para WebP",
+      "metaTitle": "Converter PNG para WebP | MyImageUpscaler",
+      "metaDescription": "Converta imagens PNG para o formato WebP com suporte a transparência. Conversão de PNG para WebP de alta qualidade para otimização web. Perfeito para logotipos e gráficos.",
+      "h1": "Converter PNG para WebP - Gráficos Modernos com Transparência",
+      "intro": "Converta suas imagens e gráficos PNG para o formato WebP moderno, preservando a transparência e alcançando uma compressão superior. Perfeito para otimizar logotipos, ícones e gráficos para a web.",
+      "primaryKeyword": "converter png para webp",
       "secondaryKeywords": [
-        "png to webp converter",
-        "transparent webp",
-        "graphics optimization",
-        "logo to webp",
-        "web performance images"
+        "conversor png para webp",
+        "webp transparente",
+        "otimização de gráficos",
+        "logotipo para webp",
+        "imagens de performance web"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "PNG to WebP Converter",
-      "description": "Modern PNG to WebP conversion with transparency preservation and optimization",
+      "toolName": "Conversor de PNG para WebP",
+      "description": "Conversão moderna de PNG para WebP com preservação de transparência e otimização",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "PNG",
       "toFormat": "WebP",
       "conversionFeatures": {
-        "transparencyPreservation": "Maintains perfect transparency in WebP format",
-        "fileSizeReduction": "Significant size reduction while maintaining quality",
-        "losslessOption": "Lossless WebP conversion for perfect quality preservation",
-        "compressionOptimization": "Optimized compression for graphics and text"
+        "transparencyPreservation": "Mantém transparência perfeita no formato WebP",
+        "fileSizeReduction": "Redução significativa de tamanho mantendo a qualidade",
+        "losslessOption": "Conversão WebP sem perdas para preservação perfeita da qualidade",
+        "compressionOptimization": "Compressão otimizada para gráficos e texto"
       },
       "commonUseCases": [
         {
-          "title": "Logo Optimization",
-          "description": "Convert PNG logos to WebP with transparency for web performance",
-          "example": "Convert company logo PNG to WebP for faster website loading"
+          "title": "Otimização de Logotipo",
+          "description": "Converta logotipos PNG para WebP com transparência para performance web",
+          "example": "Converta o logotipo da empresa de PNG para WebP para carregamento mais rápido do site"
         },
         {
-          "title": "Icon Conversion",
-          "description": "Convert PNG icons and UI elements to WebP for better performance",
-          "example": "Convert website icon PNGs to WebP for improved page speed"
+          "title": "Conversão de Ícones",
+          "description": "Converta ícones PNG e elementos de UI para WebP para melhor performance",
+          "example": "Converta ícones PNG do site para WebP para melhorar a velocidade da página"
         },
         {
-          "title": "Graphics Optimization",
-          "description": "Convert PNG graphics and charts to WebP for web use",
-          "example": "Convert infographics and data visualizations to WebP format"
+          "title": "Otimização de Gráficos",
+          "description": "Converta gráficos e diagramas PNG para WebP para uso na web",
+          "example": "Converta infográficos e visualizações de dados para o formato WebP"
         },
         {
-          "title": "App Development",
-          "description": "Convert PNG assets to WebP for mobile app optimization",
-          "example": "Convert app icon PNGs to WebP for smaller app size"
+          "title": "Desenvolvimento de Apps",
+          "description": "Converta assets PNG para WebP para otimização de aplicativos móveis",
+          "example": "Converta ícones de apps de PNG para WebP para menor tamanho de aplicativo"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "PNG",
-          "WebP"
-        ],
+        "supportedFormats": ["PNG", "WebP"],
         "maxFileSize": "30MB",
-        "outputOptions": [
-          "Lossless WebP",
-          "Lossy WebP",
-          "WebP with Alpha"
-        ],
-        "colorSpace": "sRGB, transparency with alpha channel support",
-        "batchLimit": "20 files per conversion"
+        "outputOptions": ["WebP sem perdas", "WebP com perdas", "WebP com Alpha"],
+        "colorSpace": "sRGB, suporte a transparência com canal alfa",
+        "batchLimit": "20 arquivos por conversão"
       }
     },
     {
       "slug": "convert-webp-to-png",
-      "title": "Convert WebP to PNG",
-      "metaTitle": "Convert WebP to PNG | MyImageUpscaler",
-      "metaDescription": "Convert WebP images to PNG format online for Free. High-quality WebP to PNG conversion with transparency preservation. Perfect for lossless image editing.",
-      "h1": "Convert WebP to PNG - Lossless format with Transparency",
-      "intro": "Transform your WebP images to lossless PNG format with our fast online converter. Perfect for preserving transparency and image quality for editing and use.",
-      "primaryKeyword": "convert webp to png",
+      "title": "Converter WebP para PNG",
+      "metaTitle": "Converter WebP para PNG | MyImageUpscaler",
+      "metaDescription": "Converta imagens WebP para o formato PNG online gratuitamente. Conversão de WebP para PNG de alta qualidade com preservação de transparência. Perfeito para edição de imagem sem perdas.",
+      "h1": "Converter WebP para PNG - Formato sem perdas com Transparência",
+      "intro": "Transforme suas imagens WebP em formato PNG sem perdas com nosso conversor online rápido. Perfeito para preservar a transparência e a qualidade da imagem para edição e uso profissional.",
+      "primaryKeyword": "converter webp para png",
       "secondaryKeywords": [
-        "webp to png converter",
-        "webp to png online",
-        "lossless converter",
-        "transparency preservation",
-        "webp compatibility"
+        "conversor webp para png",
+        "webp para png online",
+        "conversor sem perdas",
+        "preservação de transparência",
+        "compatibilidade webp"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "WebP to PNG Converter",
-      "description": "Fast WebP to PNG conversion with transparency preservation and lossless quality",
+      "toolName": "Conversor de WebP para PNG",
+      "description": "Conversão rápida de WebP para PNG com preservação de transparência e qualidade sem perdas",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "WebP",
       "toFormat": "PNG",
       "conversionFeatures": {
-        "transparencyPreservation": "Maintains WebP transparency in PNG output",
-        "losslessConversion": "Preserves full image quality in PNG format",
-        "colorDepth": "Supports full color depth and alpha channels",
-        "batchProcessing": "Convert multiple WebP files simultaneously"
+        "transparencyPreservation": "Mantém a transparência WebP na saída PNG",
+        "losslessConversion": "Preserva a qualidade total da imagem no formato PNG",
+        "colorDepth": "Suporta profundidade de cor total e canais alfa",
+        "batchProcessing": "Converta múltiplos arquivos WebP simultaneamente"
       },
       "commonUseCases": [
         {
-          "title": "Design Work",
-          "description": "Convert WebP images to PNG for design software compatibility",
-          "example": "Convert WebP assets for use in Adobe Photoshop and Illustrator"
+          "title": "Trabalho de Design",
+          "description": "Converta imagens WebP para PNG para compatibilidade com softwares de design",
+          "example": "Converta assets WebP para uso no Adobe Photoshop e Illustrator"
         },
         {
-          "title": "Quality Preservation",
-          "description": "Convert WebP to lossless PNG for editing and archival",
-          "example": "Convert WebP graphics to PNG for further editing without quality loss"
+          "title": "Preservação de Qualidade",
+          "description": "Converta WebP para PNG sem perdas para edição e arquivamento",
+          "example": "Converta gráficos WebP para PNG para edição posterior sem perda de qualidade"
         },
         {
-          "title": "Legacy Software",
-          "description": "Make WebP images compatible with older software",
-          "example": "Convert WebP images for use in applications that don't support WebP"
+          "title": "Software Legado",
+          "description": "Torne as imagens WebP compatíveis com softwares mais antigos",
+          "example": "Converta imagens WebP para uso em aplicativos que não suportam WebP"
         },
         {
-          "title": "Print Preparation",
-          "description": "Convert WebP to PNG for high-quality printing",
-          "example": "Convert WebP graphics to PNG for professional printing services"
+          "title": "Preparação para Impressão",
+          "description": "Converta WebP para PNG para impressão de alta qualidade",
+          "example": "Converta gráficos WebP para PNG para serviços de impressão profissional"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "WebP",
-          "PNG"
-        ],
+        "supportedFormats": ["WebP", "PNG"],
         "maxFileSize": "30MB",
-        "outputOptions": [
-          "Lossless PNG",
-          "PNG with Alpha",
-          "Optimized PNG"
-        ],
-        "colorSpace": "sRGB, transparency with alpha channel support",
-        "batchLimit": "25 files per conversion"
+        "outputOptions": ["PNG sem perdas", "PNG com Alpha", "PNG Otimizado"],
+        "colorSpace": "sRGB, suporte a transparência com canal alfa",
+        "batchLimit": "25 arquivos por conversão"
       }
     },
     {
       "slug": "convert-svg-to-png",
-      "title": "Convert SVG to PNG",
-      "metaTitle": "Convert SVG to PNG | MyImageUpscaler",
-      "metaDescription": "Convert SVG vector graphics to PNG format online with transparency. High-quality SVG to PNG conversion with control. Perfect for logos and graphics.",
-      "h1": "Convert SVG to PNG - Vector to High-quality Raster",
-      "intro": "Convert your SVG vector graphics to high-quality PNG raster images with perfect transparency support. Ideal for creating logos, icons, and graphics that need scalability and universal compatibility.",
-      "primaryKeyword": "convert svg to png",
+      "title": "Converter SVG para PNG",
+      "metaTitle": "Converter SVG para PNG | MyImageUpscaler",
+      "metaDescription": "Converta gráficos vetoriais SVG para o formato PNG online com transparência. Conversão de SVG para PNG de alta qualidade com controle. Perfeito para logotipos e gráficos.",
+      "h1": "Converter SVG para PNG - De Vetor para Raster de Alta Qualidade",
+      "intro": "Converta seus gráficos vetoriais SVG para imagens raster PNG de alta qualidade com suporte perfeito a transparência. Ideal para criar logotipos, ícones e gráficos que precisam de escalabilidade e compatibilidade universal.",
+      "primaryKeyword": "converter svg para png",
       "secondaryKeywords": [
-        "svg to png converter",
-        "vector to png",
-        "scalable graphics converter",
-        "logo to png",
-        "svg resolution control"
+        "conversor svg para png",
+        "vetor para png",
+        "conversor de gráficos escaláveis",
+        "logotipo para png",
+        "controle de resolução svg"
       ],
       "lastUpdated": "2025-01-19",
       "category": "tools",
-      "toolName": "SVG to PNG Converter",
-      "description": "Professional SVG to PNG conversion with transparency and resolution control",
+      "toolName": "Conversor de SVG para PNG",
+      "description": "Conversão profissional de SVG para PNG com transparência e controle de resolução",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "SVG",
       "toFormat": "PNG",
       "conversionFeatures": {
-        "resolutionControl": "Custom output resolution and dimensions",
-        "transparencyPreservation": "Maintains perfect transparency in PNG format",
-        "scalingQuality": "Maintains quality at any output size",
-        "losslessQuality": "Creates lossless PNG files for maximum quality"
+        "resolutionControl": "Resolução e dimensões de saída personalizadas",
+        "transparencyPreservation": "Mantém transparência perfeita no formato PNG",
+        "scalingQuality": "Mantém a qualidade em qualquer tamanho de saída",
+        "losslessQuality": "Cria arquivos PNG sem perdas para máxima qualidade"
       },
       "commonUseCases": [
         {
-          "title": "Logo Export",
-          "description": "Convert SVG logos to PNG with transparency for universal use",
-          "example": "Convert company logo SVG to PNG for website and document use"
+          "title": "Exportação de Logotipo",
+          "description": "Converta logotipos SVG para PNG com transparência para uso universal",
+          "example": "Converta o logotipo da empresa de SVG para PNG para uso em sites e documentos"
         },
         {
-          "title": "Icon Creation",
-          "description": "Convert SVG icons to PNG for apps and websites",
-          "example": "Convert UI icon SVGs to PNG for mobile app development"
+          "title": "Criação de Ícones",
+          "description": "Converta ícones SVG para PNG para apps e sites",
+          "example": "Converta SVGs de ícones de UI para PNG para desenvolvimento de apps móveis"
         },
         {
-          "title": "High-Resolution Export",
-          "description": "Export SVG graphics as high-resolution PNG for printing",
-          "example": "Convert vector artwork to high-res PNG for print publication"
+          "title": "Exportação em Alta Resolução",
+          "description": "Exporte gráficos SVG como PNG de alta resolução para impressão",
+          "example": "Converta arte vetorial para PNG de alta resolução para publicação impressa"
         },
         {
-          "title": "Web Graphics",
-          "description": "Convert SVG graphics to PNG for browser compatibility",
-          "example": "Convert complex SVG graphics to PNG for older browser support"
+          "title": "Gráficos para Web",
+          "description": "Converta gráficos SVG para PNG para compatibilidade de navegadores",
+          "example": "Converta gráficos SVG complexos para PNG para suporte a navegadores antigos"
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "SVG",
-          "SVGZ",
-          "PNG"
-        ],
+        "supportedFormats": ["SVG", "SVGZ", "PNG"],
         "maxFileSize": "10MB",
-        "outputOptions": [
-          "Web PNG",
-          "High Resolution PNG",
-          "Custom Dimensions"
-        ],
-        "colorSpace": "sRGB, transparency with alpha channel support",
-        "batchLimit": "25 files per conversion"
+        "outputOptions": ["PNG para Web", "PNG de Alta Resolução", "Dimensões Personalizadas"],
+        "colorSpace": "sRGB, suporte a transparência com canal alfa",
+        "batchLimit": "25 arquivos por conversão"
       }
     }
   ]

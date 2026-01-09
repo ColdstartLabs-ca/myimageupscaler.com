@@ -3,778 +3,673 @@
   "pages": [
     {
       "slug": "old-photo-restoration-guide",
-      "title": "Old Photo Restoration: Complete Guide",
-      "metaTitle": "Old Photo Restoration: Complete Guide | MyImageUpscaler",
-      "metaDescription": "Complete guide to old photo restoration. Learn to restore damaged, faded, and torn vintage photos with AI and traditional techniques. Step-by-step instructions.",
-      "h1": "Old Photo Restoration: Complete Guide",
-      "intro": "Restoring old photographs preserves precious memories and family history. This comprehensive guide covers both traditional and AI-powered techniques for bringing damaged vintage photos back to life.",
-      "primaryKeyword": "old photo restoration",
+      "title": "Restauração de Fotos Antigas: Guia Completo",
+      "metaTitle": "Restauração de Fotos Antigas: Guia Completo | MyImageUpscaler",
+      "metaDescription": "Guia completo para restauração de fotos antigas. Aprenda a restaurar fotos vintage danificadas, desbotadas e rasgadas com IA e técnicas tradicionais. Instruções passo a passo.",
+      "h1": "Restauração de Fotos Antigas: Guia Completo",
+      "intro": "Restaurar fotografias antigas preserva memórias preciosas e a história da família. Este guia abrangente cobre técnicas tradicionais e impulsionadas por IA para dar vida nova a fotos vintage danificadas.",
+      "primaryKeyword": "restauração de fotos antigas",
       "secondaryKeywords": [
-        "vintage photo repair",
-        "damaged photo restoration",
-        "family photo restoration"
+        "reparo de fotos vintage",
+        "restauração de fotos danificadas",
+        "restauração de fotos de família"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "photo-restoration",
-      "difficulty": "Intermediate",
+      "difficulty": "Intermediário",
       "photoTypes": [
-        "Faded Photos",
-        "Torn Photos",
-        "Scratched Photos",
-        "Water Damaged",
-        "Creased Photos"
+        "Fotos Desbotadas",
+        "Fotos Rasgadas",
+        "Fotos Arranhadas",
+        "Danos por Água",
+        "Fotos Amassadas"
       ],
       "restorationProcess": [
         {
           "step": 1,
-          "name": "Assessment and Scanning",
-          "description": "Evaluate damage and create high-quality digital copies",
-          "details": "Inspect for tears, fading, stains, and physical damage. Scan at 300-600 DPI for best results."
+          "name": "Avaliação e Digitalização",
+          "description": "Avalie o dano e crie cópias digitais de alta qualidade",
+          "details": "Inspecione por rasgos, desbotamento, manchas e danos físicos. Digitalize em 300-600 DPI para melhores resultados."
         },
         {
           "step": 2,
-          "name": "Digital Cleanup",
-          "description": "Remove dust, scratches, and basic imperfections",
-          "details": "Use healing brush tools and dust removal filters to clean up surface damage."
+          "name": "Limpeza Digital",
+          "description": "Remova poeira, arranhões e imperfeições básicas",
+          "details": "Use ferramentas de pincel de recuperação e filtros de remoção de poeira para limpar danos na superfície."
         },
         {
           "step": 3,
-          "name": "Color Correction",
-          "description": "Restore faded colors and correct color casts",
-          "details": "Adjust levels, curves, and color balance to bring back natural colors."
+          "name": "Correção de Cor",
+          "description": "Restaure cores desbotadas e corrija distorções de cor",
+          "details": "Ajuste níveis, curvas e equilíbrio de cores para recuperar cores naturais."
         },
         {
           "step": 4,
-          "name": "Damage Repair",
-          "description": "Fix tears, stains, and major damage",
-          "details": "Use cloning, content-aware fill, and reconstruction techniques."
+          "name": "Reparo de Danos",
+          "description": "Corrija rasgos, manchas e danos maiores",
+          "details": "Use clonagem, preenchimento sensível ao conteúdo e técnicas de reconstrução."
         },
         {
           "step": 5,
-          "name": "Enhancement and Final Touches",
-          "description": "Sharpen details and apply final improvements",
-          "details": "Subtle sharpening, noise reduction, and final adjustments."
+          "name": "Aprimoramento e Toques Finais",
+          "description": "Refine detalhes e aplique melhorias finais",
+          "details": "Nitidez sutil, redução de ruído e ajustes finais."
         }
       ],
       "commonDamageTypes": [
         {
-          "damage": "Fading and Color Loss",
-          "causes": [
-            "UV exposure",
-            "Age",
-            "Chemical degradation",
-            "Poor storage"
-          ],
-          "restoration": "Color correction, levels adjustment, contrast enhancement"
+          "damage": "Desbotamento e Perda de Cor",
+          "causes": ["Exposição UV", "Idade", "Degradação química", "Armazenamento inadequado"],
+          "restoration": "Correção de cor, ajuste de níveis, aprimoramento de contraste"
         },
         {
-          "damage": "Physical Tears and Rips",
-          "causes": [
-            "Handling",
-            "Age",
-            "Accidents",
-            "Poor storage"
-          ],
-          "restoration": "Content-aware fill, cloning, manual reconstruction"
+          "damage": "Rasgos Físicos e Rupturas",
+          "causes": ["Manuseio", "Idade", "Acidentes", "Armazenamento inadequado"],
+          "restoration": "Preenchimento sensível ao conteúdo, clonagem, reconstrução manual"
         },
         {
-          "damage": "Scratches and Abrasions",
-          "causes": [
-            "Dirt",
-            "Cleaning attempts",
-            "Handling",
-            "Storage"
-          ],
-          "restoration": "Healing brushes, scratch removal filters, careful cloning"
+          "damage": "Arranhões e Abrasões",
+          "causes": ["Sujeira", "Tentativas de limpeza", "Manuseio", "Armazenamento"],
+          "restoration": "Pincéis de recuperação, filtros de remoção de arranhões, clonagem cuidadosa"
         },
         {
-          "damage": "Water Stains",
-          "causes": [
-            "Floods",
-            "Humidity",
-            "Spills",
-            "Water damage"
-          ],
-          "restoration": "Color correction, stain removal, selective editing"
+          "damage": "Manchas de Água",
+          "causes": ["Inundações", "Umidade", "Derramamentos", "Danos por água"],
+          "restoration": "Correção de cor, remoção de manchas, edição seletiva"
         },
         {
-          "damage": "Mold and Mildew",
-          "causes": [
-            "High humidity",
-            "Poor ventilation",
-            "Water damage"
-          ],
-          "restoration": "Careful cleaning, color correction, damage reconstruction"
+          "damage": "Mofo e Bolor",
+          "causes": ["Alta umidade", "Má ventilação", "Danos por água"],
+          "restoration": "Limpeza cuidadosa, correção de cor, reconstrução de danos"
         }
       ],
       "aiRestorationTools": [
         {
-          "tool": "AI-Powered Auto-Enhancement",
-          "description": "Automatically detect and correct common photo issues",
+          "tool": "Auto-Aprimoramento Impulsionado por IA",
+          "description": "Detecte e corrija automaticamente problemas comuns em fotos",
           "features": [
-            "Color restoration",
-            "Scratch removal",
-            "Damage detection",
-            "Quality enhancement"
+            "Restauração de cor",
+            "Remoção de arranhões",
+            "Detecção de danos",
+            "Aprimoramento de qualidade"
           ]
         },
         {
-          "tool": "Neural Network Restoration",
-          "description": "Deep learning models trained on vintage photo restoration",
+          "tool": "Restauração por Rede Neural",
+          "description": "Modelos de deep learning treinados na restauração de fotos vintage",
           "features": [
-            "Intelligent reconstruction",
-            "Pattern recognition",
-            "Context-aware repair"
+            "Reconstrução inteligente",
+            "Reconhecimento de padrões",
+            "Reparo sensível ao contexto"
           ]
         },
         {
-          "tool": "AI Colorization",
-          "description": "Add realistic colors to black and white photographs",
-          "features": [
-            "Historical accuracy",
-            "Natural color palettes",
-            "User control"
-          ]
+          "tool": "Colorização por IA",
+          "description": "Adicione cores realistas a fotografias em preto e branco",
+          "features": ["Precisão histórica", "Paletas de cores naturais", "Controle do usuário"]
         },
         {
-          "tool": "Automated Damage Detection",
-          "description": "AI identifies and categorizes different types of damage",
-          "features": [
-            "Damage classification",
-            "Repair suggestions",
-            "Priority assessment"
-          ]
+          "tool": "Detecção Automática de Danos",
+          "description": "A IA identifica e categoriza diferentes tipos de danos",
+          "features": ["Classificação de danos", "Sugestões de reparo", "Avaliação de prioridade"]
         }
       ],
       "traditionalTechniques": [
         {
-          "technique": "Cloning and Healing",
-          "description": "Manually copy good areas to cover damaged sections",
-          "useCase": "Small to medium damage, texture preservation"
+          "technique": "Clonagem e Recuperação",
+          "description": "Copie manualmente áreas boas para cobrir seções danificadas",
+          "useCase": "Danos pequenos a médios, preservação de textura"
         },
         {
-          "technique": "Content-Aware Fill",
-          "description": "Intelligently fill damaged areas based on surrounding content",
-          "useCase": "Complex backgrounds, natural scenes, irregular damage"
+          "technique": "Preenchimento Sensível ao Conteúdo",
+          "description": "Preencha inteligentemente áreas danificadas com base no conteúdo circundante",
+          "useCase": "Fundos complexos, cenas naturais, danos irregulares"
         },
         {
-          "technique": "Frequency Separation",
-          "description": "Separate texture and color for precise restoration",
-          "useCase": "Skin tones, complex textures, subtle improvements"
+          "technique": "Separação de Frequência",
+          "description": "Separe textura e cor para restauração precisa",
+          "useCase": "Tons de pele, texturas complexas, melhorias sutis"
         },
         {
-          "technique": "Layer Masking",
-          "description": "Apply corrections selectively to specific areas",
-          "useCase": "Targeted repairs, gradual transitions, precise control"
+          "technique": "Máscara de Camada",
+          "description": "Aplique correções seletivamente a áreas específicas",
+          "useCase": "Reparos direcionados, transições graduais, controle preciso"
         }
       ],
       "equipmentNeeded": [
         {
-          "equipment": "Flatbed Scanner",
-          "specifications": "300-600 DPI, 48-bit color, transparency adapter optional",
-          "purpose": "High-quality digitization of original photos"
+          "equipment": "Scanner de Mesa",
+          "specifications": "300-600 DPI, cor de 48 bits, adaptador de transparência opcional",
+          "purpose": "Digitalização de alta qualidade de fotos originais"
         },
         {
-          "equipment": "Photo Editing Software",
-          "options": [
-            "Adobe Photoshop",
-            "Affinity Photo",
-            "GIMP (free)"
-          ],
-          "purpose": "Digital restoration work and editing"
+          "equipment": "Software de Edição de Fotos",
+          "options": ["Adobe Photoshop", "Affinity Photo", "GIMP (grátis)"],
+          "purpose": "Trabalho de restauração digital e edição"
         },
         {
-          "equipment": "Graphics Tablet",
-          "specifications": "Pressure-sensitive, medium size",
-          "purpose": "Precise control for detailed restoration work"
+          "equipment": "Mesa Digitalizadora",
+          "specifications": "Sensível à pressão, tamanho médio",
+          "purpose": "Controle preciso para trabalho de restauração detalhado"
         },
         {
-          "equipment": "Color Calibrated Monitor",
-          "specifications": "99% sRGB coverage, calibration capability",
-          "purpose": "Accurate color correction and assessment"
+          "equipment": "Monitor Calibrado",
+          "specifications": "99% de cobertura sRGB, capacidade de calibração",
+          "purpose": "Correção de cor e avaliação precisas"
         }
       ],
       "bestPractices": [
-        "Always work on copies, never original files",
-        "Document restoration steps for reproducibility",
-        "Use non-destructive editing techniques",
-        "Test corrections on small areas first",
-        "Preserve historical accuracy when possible"
+        "Sempre trabalhe em cópias, nunca nos arquivos originais",
+        "Documente as etapas de restauração para reprodutibilidade",
+        "Use técnicas de edição não destrutivas",
+        "Teste correções em pequenas áreas primeiro",
+        "Preserve a precisão histórica quando possível"
       ],
       "commonMistakes": [
-        "Over-restoration making photos look unnaturally perfect",
-        "Not preserving original character and imperfections",
-        "Using destructive editing techniques",
-        "Ignoring the photo's historical context",
-        "Not making backup copies before starting"
+        "Restauração excessiva fazendo as fotos parecerem artificialmente perfeitas",
+        "Não preservar o caráter original e as imperfeições",
+        "Usar técnicas de edição destrutivas",
+        "Ignorar o contexto histórico da foto",
+        "Não fazer cópias de backup antes de começar"
       ],
       "faq": [
         {
-          "question": "Can all damaged photos be restored?",
-          "answer": "Most photos can be significantly improved, but severely damaged photos with large missing areas may have limitations. AI tools have expanded restoration possibilities dramatically."
+          "question": "Todas as fotos danificadas podem ser restauradas?",
+          "answer": "A maioria das fotos pode ser significativamente melhorada, mas fotos severamente danificadas com grandes áreas ausentes podem ter limitações. Ferramentas de IA expandiram dramaticamente as possibilidades de restauração."
         },
         {
-          "question": "How long does photo restoration take?",
-          "answer": "Simple repairs might take 30 minutes to 2 hours, while complex restoration can take 8-20+ hours depending on damage severity and desired quality."
+          "question": "Quanto tempo leva a restauração de uma foto?",
+          "answer": "Reparos simples podem levar de 30 minutos a 2 horas, enquanto restaurações complexas podem levar de 8 a 20+ horas, dependendo da gravidade dos danos e da qualidade desejada."
         },
         {
-          "question": "Should I colorize old black and white photos?",
-          "answer": "Colorization is optional and depends on your goals. It can make photos more engaging but may lose historical authenticity. Consider keeping both versions."
+          "question": "Devo colorir fotos antigas em preto e branco?",
+          "answer": "A colorização é opcional e depende dos seus objetivos. Pode tornar as fotos mais envolventes, mas pode perder a autenticidade histórica. Considere manter as duas versões."
         }
       ],
-      "relatedTools": [
-        "ai-photo-restorer",
-        "old-photo-enhancer"
-      ],
-      "relatedPages": [
-        "vintage-photo-colorization",
-        "family-photo-preservation"
-      ]
+      "relatedTools": ["ai-photo-restorer", "old-photo-enhancer"],
+      "relatedPages": ["vintage-photo-colorization", "family-photo-preservation"]
     },
     {
       "slug": "vintage-photo-colorization",
-      "title": "Vintage Photo Colorization Guide",
-      "metaTitle": "Vintage Photo Colorization Guide | MyImageUpscaler",
-      "metaDescription": "Complete guide to vintage photo colorization. Learn to add realistic colors to black and white photos using AI tools and manual techniques for authentic results.",
-      "h1": "Vintage Photo Colorization: Complete Guide",
-      "intro": "Colorizing vintage black and white photographs brings them to life and makes history more relatable. This guide covers both AI-powered and manual techniques for adding realistic, historically accurate colors to old photos.",
-      "primaryKeyword": "vintage photo colorization",
+      "title": "Guia de Colorização de Fotos Vintage",
+      "metaTitle": "Guia de Colorização de Fotos Vintage | MyImageUpscaler",
+      "metaDescription": "Guia completo para colorização de fotos vintage. Aprenda a adicionar cores realistas a fotos em preto e branco usando ferramentas de IA e técnicas manuais para resultados autênticos.",
+      "h1": "Colorização de Fotos Vintage: Guia Completo",
+      "intro": "Colorir fotografias vintage em preto e branco dá vida a elas e torna a história mais próxima. Este guia cobre técnicas impulsionadas por IA e manuais para adicionar cores realistas e historicamente precisas a fotos antigas.",
+      "primaryKeyword": "colorização de fotos vintage",
       "secondaryKeywords": [
-        "black white photo colorization",
-        "add color old photos",
-        "historical photo coloring"
+        "colorização de fotos preto e branco",
+        "adicionar cor a fotos antigas",
+        "colorir fotos históricas"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "photo-restoration",
-      "difficulty": "Advanced",
+      "difficulty": "Avançado",
       "colorizationMethods": [
-        "AI Automatic",
-        "AI-Assisted Manual",
-        "Purely Manual",
-        "Hybrid Approach"
+        "IA Automática",
+        "IA Assistida Manualmente",
+        "Puramente Manual",
+        "Abordagem Híbrida"
       ],
       "historicalConsiderations": [
         {
-          "consideration": "Research Period Colors",
-          "description": "Study historical color palettes, clothing dyes, and materials from the photo's era",
+          "consideration": "Pesquisar Cores do Período",
+          "description": "Estude paletas de cores históricas, corantes de roupas e materiais da era da foto",
           "resources": [
-            "Historical photographs",
-            "Museum collections",
-            "Period documents",
-            "Fashion archives"
+            "Fotografias históricas",
+            "Coleções de museus",
+            "Documentos do período",
+            "Arquivos de moda"
           ]
         },
         {
-          "consideration": "Context and Setting",
-          "description": "Consider location, occasion, and social status when choosing colors",
+          "consideration": "Contexto e Cenário",
+          "description": "Considere o local, a ocasião e o status social ao escolher as cores",
           "examples": [
-            "Working class vs. wealthy clothing",
-            "Urban vs. rural settings",
-            "Formal vs. casual occasions"
+            "Roupas da classe trabalhadora vs. abastada",
+            "Cenários urbanos vs. rurais",
+            "Ocasiões formais vs. casuais"
           ]
         },
         {
-          "consideration": "Natural vs. Artificial Lighting",
-          "description": "Account for lighting conditions when applying colors",
+          "consideration": "Iluminação Natural vs. Artificial",
+          "description": "Leve em conta as condições de iluminação ao aplicar as cores",
           "effects": [
-            "Warm indoor lighting",
-            "Cool daylight",
-            "Mixed lighting conditions"
+            "Iluminação interna quente",
+            "Luz do dia fria",
+            "Condições de iluminação mista"
           ]
         }
       ],
       "aiColorizationTools": [
         {
-          "tool": "Deep Learning Colorization",
-          "description": "Neural networks trained on millions of color images",
+          "tool": "Colorização por Deep Learning",
+          "description": "Redes neurais treinadas em milhões de imagens coloridas",
           "features": [
-            "Automatic color detection",
-            "Natural color palettes",
-            "Historical learning"
+            "Detecção automática de cores",
+            "Paletas de cores naturais",
+            "Aprendizado histórico"
           ],
-          "bestFor": [
-            "Quick results",
-            "Natural scenes",
-            "General colorization"
-          ]
+          "bestFor": ["Resultados rápidos", "Cenas naturais", "Colorização geral"]
         },
         {
-          "tool": "GAN-Based Colorization",
-          "description": "Generative adversarial networks for realistic color generation",
+          "tool": "Colorização baseada em GAN",
+          "description": "Redes generativas adversárias para geração de cores realistas",
           "features": [
-            "Highly realistic results",
-            "Texture awareness",
-            "Context understanding"
+            "Resultados altamente realistas",
+            "Percepção de textura",
+            "Compreensão do contexto"
           ],
-          "bestFor": [
-            "Professional results",
-            "Complex scenes",
-            "High-quality output"
-          ]
+          "bestFor": ["Resultados profissionais", "Cenas complexas", "Saída de alta qualidade"]
         },
         {
-          "tool": "Reference-Based Colorization",
-          "description": "Use reference images to guide color choices",
+          "tool": "Colorização baseada em Referência",
+          "description": "Use imagens de referência para guiar as escolhas de cores",
           "features": [
-            "User control",
-            "Reference matching",
-            "Color consistency"
+            "Controle do usuário",
+            "Correspondência de referência",
+            "Consistência de cor"
           ],
-          "bestFor": [
-            "Historical accuracy",
-            "Specific requirements",
-            "Artistic control"
-          ]
+          "bestFor": ["Precisão histórica", "Requisitos específicos", "Controle artístico"]
         }
       ],
       "manualColorizationProcess": [
         {
           "step": 1,
-          "name": "Research and Planning",
-          "description": "Research historical colors and plan color scheme",
+          "name": "Pesquisa e Planejamento",
+          "description": "Pesquise cores históricas e planeje o esquema de cores",
           "actions": [
-            "Study era-appropriate colors",
-            "Find reference images",
-            "Plan color palette"
+            "Estude as cores apropriadas para a época",
+            "Encontre imagens de referência",
+            "Planeje a paleta de cores"
           ]
         },
         {
           "step": 2,
-          "name": "Base Color Application",
-          "description": "Apply basic colors using color fill layers",
+          "name": "Aplicação de Cor Base",
+          "description": "Aplique cores básicas usando camadas de preenchimento de cor",
           "actions": [
-            "Create color fill layers",
-            "Use appropriate blending modes",
-            "Mask specific areas"
+            "Crie camadas de preenchimento de cor",
+            "Use modos de mesclagem apropriados",
+            "Mascare áreas específicas"
           ]
         },
         {
           "step": 3,
-          "name": "Skin Tones",
-          "description": "Carefully colorize skin with natural tones",
+          "name": "Tons de Pele",
+          "description": "Colora a pele cuidadosamente com tons naturais",
           "actions": [
-            "Research period-appropriate skin tones",
-            "Use multiple color layers",
-            "Blend carefully"
+            "Pesquise tons de pele apropriados para o período",
+            "Use múltiplas camadas de cor",
+            "Misture cuidadosamente"
           ]
         },
         {
           "step": 4,
-          "name": "Clothing and Fabrics",
-          "description": "Add colors to clothing with attention to materials",
+          "name": "Roupas e Tecidos",
+          "description": "Adicione cores às roupas com atenção aos materiais",
           "actions": [
-            "Consider fabric types",
-            "Research period dyes",
-            "Add texture-appropriate colors"
+            "Considere tipos de tecido",
+            "Pesquise corantes da época",
+            "Adicione cores apropriadas à textura"
           ]
         },
         {
           "step": 5,
-          "name": "Environmental Colors",
-          "description": "Colorize background and environmental elements",
-          "actions": [
-            "Natural elements",
-            "Architecture",
-            "Lighting effects"
-          ]
+          "name": "Cores Ambientais",
+          "description": "Colora o fundo e os elementos ambientais",
+          "actions": ["Elementos naturais", "Arquitetura", "Efeitos de iluminação"]
         },
         {
           "step": 6,
-          "name": "Integration and Blending",
-          "description": "Blend colors naturally and adjust overall harmony",
+          "name": "Integração e Mesclagem",
+          "description": "Misture as cores naturalmente e ajuste a harmonia geral",
           "actions": [
-            "Adjust color harmony",
-            "Add lighting effects",
-            "Fine-tune saturation"
+            "Ajuste a harmonia das cores",
+            "Adicione efeitos de iluminação",
+            "Refine a saturação"
           ]
         }
       ],
       "colorizationChallenges": [
         {
-          "challenge": "Skin Tones",
+          "challenge": "Tons de Pele",
           "difficulties": [
-            "Historical variations",
-            "Lighting conditions",
-            "Age effects",
-            "Ethnic accuracy"
+            "Variações históricas",
+            "Condições de iluminação",
+            "Efeitos da idade",
+            "Precisão étnica"
           ],
-          "solutions": [
-            "Reference photos",
-            "Multiple color layers",
-            "Subtle variations"
-          ]
+          "solutions": ["Fotos de referência", "Múltiplas camadas de cor", "Variações sutis"]
         },
         {
-          "challenge": "Clothing Colors",
+          "challenge": "Cores das Roupas",
           "difficulties": [
-            "Unknown original colors",
-            "Period accuracy",
-            "Fabric materials",
-            "Social status indicators"
+            "Cores originais desconhecidas",
+            "Precisão do período",
+            "Materiais dos tecidos",
+            "Indicadores de status social"
           ],
-          "solutions": [
-            "Historical research",
-            "Reference fashion",
-            "Probable color choices"
-          ]
+          "solutions": ["Pesquisa histórica", "Moda de referência", "Escolhas de cores prováveis"]
         },
         {
-          "challenge": "Environmental Colors",
+          "challenge": "Cores Ambientais",
           "difficulties": [
-            "Natural elements",
-            "Architecture",
-            "Unknown locations",
-            "Lighting effects"
+            "Elementos naturais",
+            "Arquitetura",
+            "Locais desconhecidos",
+            "Efeitos de iluminação"
           ],
           "solutions": [
-            "Location research",
-            "Natural color palettes",
-            "Lighting consistency"
+            "Pesquisa do local",
+            "Paletas de cores naturais",
+            "Consistência de iluminação"
           ]
         }
       ],
       "technicalTechniques": [
         {
-          "technique": "Color Fill Layers",
-          "description": "Use separate layers for each color category",
-          "benefits": [
-            "Easy adjustments",
-            "Non-destructive editing",
-            "Fine control"
-          ]
+          "technique": "Camadas de Preenchimento de Cor",
+          "description": "Use camadas separadas para cada categoria de cor",
+          "benefits": ["Ajustes fáceis", "Edição não destrutiva", "Controle refinado"]
         },
         {
-          "technique": "Gradient Mapping",
-          "description": "Map grayscale values to color gradients",
-          "benefits": [
-            "Natural transitions",
-            "Consistent colors",
-            "Quick results"
-          ]
+          "technique": "Mapeamento de Gradiente",
+          "description": "Mapeie valores de tons de cinza para gradientes de cor",
+          "benefits": ["Transições naturais", "Cores consistentes", "Resultados rápidos"]
         },
         {
-          "technique": "Blending Modes",
-          "description": "Use various blending modes for natural color integration",
-          "benefits": [
-            "Realistic mixing",
-            "Texture preservation",
-            "Subtle effects"
-          ]
+          "technique": "Modos de Mesclagem",
+          "description": "Use vários modos de mesclagem para integração natural de cores",
+          "benefits": ["Mistura realista", "Preservação de textura", "Efeitos sutis"]
         },
         {
-          "technique": "Masking Techniques",
-          "description": "Precisely control where colors are applied",
-          "benefits": [
-            "Sharp edges",
-            "Selective coloring",
-            "Detailed control"
-          ]
+          "technique": "Técnicas de Mascaramento",
+          "description": "Controle precisamente onde as cores são aplicadas",
+          "benefits": ["Bordas nítidas", "Coloração seletiva", "Controle detalhado"]
         }
       ],
       "historicalPeriods": [
         {
-          "period": "Victorian Era (1837-1901)",
+          "period": "Era Vitoriana (1837-1901)",
           "characteristics": [
-            "Sepia tones",
-            "Formal clothing",
-            "Dark rich colors",
-            "Natural dyes"
+            "Tons sépia",
+            "Roupas formais",
+            "Cores ricas e escuras",
+            "Corantes naturais"
+          ],
+          "commonColors": ["Marrons", "Vermelhos escuros", "Azuis profundos", "Tons terrosos"]
+        },
+        {
+          "period": "Início do Século XX (1900-1920)",
+          "characteristics": [
+            "Início da fotografia colorida",
+            "Influências do Art Nouveau",
+            "Cores industriais"
           ],
           "commonColors": [
-            "Browns",
-            "Dark reds",
-            "Deep blues",
-            "Earthy tones"
+            "Tons suaves",
+            "Novos corante sintéticos",
+            "Cinzos industriais",
+            "Pastéis suaves"
           ]
         },
         {
-          "period": "Early 20th Century (1900-1920)",
+          "period": "Décadas de 1920-1940",
           "characteristics": [
-            "Beginning of color photography",
-            "Art nouveau influences",
-            "Industrial colors"
+            "Ousadia do Art Déco",
+            "Restrições econômicas",
+            "Influência de Hollywood"
           ],
           "commonColors": [
-            "Muted tones",
-            "Emerging synthetic dyes",
-            "Industrial grays",
-            "Soft pastels"
+            "Contrastes ousados",
+            "Elegância monocromática",
+            "Filmes coloridos emergentes",
+            "Cores foscas do tempo de guerra"
           ]
         },
         {
-          "period": "1920s-1940s",
+          "period": "Décadas de 1950-1970",
           "characteristics": [
-            "Art deco boldness",
-            "Economic constraints",
-            "Hollywood influence"
+            "Modernismo de meados do século",
+            "Cores vibrantes",
+            "Influência da cultura pop"
           ],
           "commonColors": [
-            "Bold contrasts",
-            "Monochrome elegance",
-            "Emerging color films",
-            "War-time drabness"
-          ]
-        },
-        {
-          "period": "1950s-1970s",
-          "characteristics": [
-            "Mid-century modern",
-            "Vibrant colors",
-            "Pop culture influence"
-          ],
-          "commonColors": [
-            "Bright primaries",
-            "Pastel trends",
-            "Earth tones revival",
-            "Psychedelic colors"
+            "Primárias brilhantes",
+            "Tendências pastéis",
+            "Renascimento dos tons terrosos",
+            "Cores psicodélicas"
           ]
         }
       ],
       "bestPractices": [
-        "Research historical accuracy for the photo's time period",
-        "Use reference photos from the same era when possible",
-        "Start with AI colorization, then refine manually for best results",
-        "Preserve the original black and white version",
-        "Consider the photo's context and social setting"
+        "Pesquise a precisão histórica para o período da foto",
+        "Use fotos de referência da mesma era sempre que possível",
+        "Comece com a colorização por IA e refine manualmente para melhores resultados",
+        "Preserve a versão original em preto e branco",
+        "Considere o contexto da foto e o cenário social"
       ],
       "commonMistakes": [
-        "Using modern, anachronistic colors",
-        "Over-saturating colors for dramatic effect",
-        "Not considering lighting and environmental conditions",
-        "Ignoring historical context and social status indicators",
-        "Making all colors equally vibrant without considering age and wear"
+        "Usar cores modernas e anacrônicas",
+        "Saturar demais as cores para efeito dramático",
+        "Não considerar a iluminação e as condições ambientais",
+        "Ignorar o contexto histórico e os indicadores de status social",
+        "Tornar todas as cores igualmente vibrantes sem considerar a idade e o desgaste"
       ],
       "faq": [
         {
-          "question": "Can AI colorization be historically accurate?",
-          "answer": "AI colorization has improved dramatically but may not always be historically accurate. Use it as a starting point, then research and adjust for historical accuracy."
+          "question": "A colorização por IA pode ser historicamente precisa?",
+          "answer": "A colorização por IA melhorou dramaticamente, mas nem sempre é historicamente precisa. Use-a como ponto de partida e, em seguida, pesquise e ajuste para precisão histórica."
         },
         {
-          "question": "Should I colorize every old photo I find?",
-          "answer": "Not necessarily. Some photos may be more powerful in black and white. Consider the photo's emotional impact and historical significance before colorizing."
+          "question": "Devo colorir todas as fotos antigas que encontrar?",
+          "answer": "Não necessariamente. Algumas fotos podem ser mais impactantes em preto e branco. Considere o impacto emocional e a importância histórica da foto antes de colorir."
         },
         {
-          "question": "How do I know what colors to use for clothing?",
-          "answer": "Research fashion from the specific era, consider social status and occasion, and look for similar period photographs with known colors."
+          "question": "Como sei quais cores usar para as roupas?",
+          "answer": "Pesquise a moda da era específica, considere o status social e a ocasião, e procure fotografias de época semelhantes com cores conhecidas."
         }
       ],
-      "relatedTools": [
-        "ai-photo-colorizer",
-        "vintage-photo-editor"
-      ],
-      "relatedPages": [
-        "old-photo-restoration",
-        "historical-photo-preservation"
-      ]
+      "relatedTools": ["ai-photo-colorizer", "vintage-photo-editor"],
+      "relatedPages": ["old-photo-restoration", "historical-photo-preservation"]
     },
     {
       "slug": "damaged-photo-repair",
-      "title": "Damaged Photo Repair Techniques",
-      "metaTitle": "Damaged Photo Repair Techniques | MyImageUpscaler",
-      "metaDescription": "Complete guide to damaged photo repair. Learn to fix torn, scratched, water damaged, and faded photos using professional restoration techniques and AI tools.",
-      "h1": "Damaged Photo Repair: Professional Guide",
-      "intro": "Damaged photographs carry irreplaceable memories that deserve professional restoration. This comprehensive guide covers advanced techniques for repairing various types of photo damage, from simple scratches to severe tears and water damage.",
-      "primaryKeyword": "damaged photo repair",
+      "title": "Técnicas de Reparo de Fotos Danificadas",
+      "metaTitle": "Técnicas de Reparo de Fotos Danificadas | MyImageUpscaler",
+      "metaDescription": "Guia completo para reparo de fotos danificadas. Aprenda a consertar fotos rasgadas, arranhadas, danificadas por água e desbotadas usando técnicas de restauração profissional e ferramentas de IA.",
+      "h1": "Reparo de Fotos Danificadas: Guia Profissional",
+      "intro": "Fotografias danificadas carregam memórias insubstituíveis que merecem restauração profissional. Este guia abrangente cobre técnicas avançadas para reparar vários tipos de danos em fotos, desde simples arranhões até rasgos severos e danos por água.",
+      "primaryKeyword": "reparo de fotos danificadas",
       "secondaryKeywords": [
-        "torn photo restoration",
-        "scratched photo fix",
-        "water damaged photo repair"
+        "restauração de fotos rasgadas",
+        "conserto de fotos arranhadas",
+        "reparo de fotos danificadas por água"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "photo-restoration",
-      "difficulty": "Expert",
+      "difficulty": "Especialista",
       "damageTypes": [
-        "Tears & Rips",
-        "Scratches",
-        "Water Damage",
-        "Fading",
-        "Stains",
-        "Mold Damage"
+        "Rasgos e Rupturas",
+        "Arranhões",
+        "Danos por Água",
+        "Desbotamento",
+        "Manchas",
+        "Danos por Mofo"
       ],
       "repairWorkflow": [
         {
-          "phase": "Assessment",
-          "description": "Thoroughly evaluate damage type and severity",
+          "phase": "Avaliação",
+          "description": "Avalie detalhadamente o tipo e a gravidade do dano",
           "actions": [
-            "Document all damage",
-            "Prioritize repairs",
-            "Plan restoration approach"
+            "Documente todos os danos",
+            "Priorize os reparos",
+            "Planeje a abordagem de restauração"
           ]
         },
         {
-          "phase": "Stabilization",
-          "description": "Stabilize the photo and prevent further damage",
+          "phase": "Estabilização",
+          "description": "Estabilize a foto e evite mais danos",
+          "actions": ["Limpeza suave", "Aplainamento", "Controle ambiental"]
+        },
+        {
+          "phase": "Digitalização",
+          "description": "Crie cópias digitais de alta qualidade para o trabalho de reparo",
           "actions": [
-            "Gentle cleaning",
-            "Flattening",
-            "Environmental control"
+            "Digitalização em alta resolução",
+            "Múltiplas passagens",
+            "Seleção de formato"
           ]
         },
         {
-          "phase": "Digitization",
-          "description": "Create high-quality digital copies for repair work",
-          "actions": [
-            "High-resolution scanning",
-            "Multiple passes",
-            "Format selection"
-          ]
+          "phase": "Reparo Digital",
+          "description": "Repare os danos usando ferramentas e técnicas digitais",
+          "actions": ["Reparos estruturais", "Correção de cor", "Restauração de detalhes"]
         },
         {
-          "phase": "Digital Repair",
-          "description": "Repair damage using digital tools and techniques",
-          "actions": [
-            "Structural repairs",
-            "Color correction",
-            "Detail restoration"
-          ]
-        },
-        {
-          "phase": "Enhancement",
-          "description": "Enhance and finalize the restored image",
-          "actions": [
-            "Sharpening",
-            "Color balance",
-            "Final adjustments"
-          ]
+          "phase": "Aprimoramento",
+          "description": "Aprimore e finalize a imagem restaurada",
+          "actions": ["Nitidez", "Equilíbrio de cores", "Ajustes finais"]
         }
       ],
       "specificRepairTechniques": [
         {
-          "damage": "Torn Photos",
+          "damage": "Fotos Rasgadas",
           "techniques": [
             {
-              "method": "Digital Reconstruction",
-              "description": "Reconstruct missing areas using surrounding content",
+              "method": "Reconstrução Digital",
+              "description": "Reconstrua áreas ausentes usando o conteúdo circundante",
               "steps": [
-                "Align pieces",
-                "Clone matching areas",
-                "Blend edges",
-                "Rebuild details"
+                "Alinhe as peças",
+                "Clone as áreas correspondentes",
+                "Misture as bordas",
+                "Reconstrua os detalhes"
               ]
             },
             {
-              "method": "Content-Aware Fill",
-              "description": "Use AI to intelligently fill missing areas",
+              "method": "Preenchimento Sensível ao Conteúdo",
+              "description": "Use IA para preencher inteligentemente as áreas ausentes",
               "steps": [
-                "Select missing areas",
-                "Adjust fill settings",
-                "Refine results",
-                "Blend naturally"
+                "Selecione as áreas ausentes",
+                "Ajuste as configurações de preenchimento",
+                "Refine os resultados",
+                "Misture naturalmente"
               ]
             },
             {
-              "method": "Layered Assembly",
-              "description": "Digitally assemble torn pieces like a puzzle",
+              "method": "Montagem em Camadas",
+              "description": "Monte digitalmente as peças rasgadas como um quebra-cabeça",
               "steps": [
-                "Separate pieces",
-                "Align edges",
-                "Blend seams",
-                "Smooth transitions"
+                "Separe as peças",
+                "Alinhe as bordas",
+                "Misture as emendas",
+                "Suavize as transições"
               ]
             }
           ]
         },
         {
-          "damage": "Scratches and Abrasions",
+          "damage": "Arranhões e Abrasões",
           "techniques": [
             {
-              "method": "Healing Brush",
-              "description": "Sample and blend surrounding areas to cover scratches",
+              "method": "Pincel de Recuperação",
+              "description": "Amostre e misture áreas circundantes para cobrir arranhões",
               "steps": [
-                "Identify scratch patterns",
-                "Select source areas",
-                "Brush carefully",
-                "Vary brush size"
+                "Identifique os padrões de arranhões",
+                "Selecione as áreas de origem",
+                "Pincele com cuidado",
+                "Varie o tamanho do pincel"
               ]
             },
             {
-              "method": "Frequency Separation",
-              "description": "Separate texture and tone for targeted repair",
+              "method": "Separação de Frequência",
+              "description": "Separe a textura e o tom para um reparo direcionado",
               "steps": [
-                "Create frequency layers",
-                "Repair texture separately",
-                "Rebuild tone",
-                "Merge results"
+                "Crie camadas de frequência",
+                "Repare a textura separadamente",
+                "Reconstrua o tom",
+                "Mescle os resultados"
               ]
             },
             {
-              "method": "Clone Stamp",
-              "description": "Copy matching areas to cover damage",
+              "method": "Carimbo de Clonagem",
+              "description": "Copie áreas correspondentes para cobrir os danos",
               "steps": [
-                "Find matching texture",
-                "Set appropriate opacity",
-                "Clone carefully",
-                "Blend edges"
+                "Encontre uma textura correspondente",
+                "Defina a opacidade apropriada",
+                "Clone com cuidado",
+                "Misture as bordas"
               ]
             }
           ]
         },
         {
-          "damage": "Water Damage",
+          "damage": "Danos por Água",
           "techniques": [
             {
-              "method": "Color Correction",
-              "description": "Correct color shifts and stains from water damage",
+              "method": "Correção de Cor",
+              "description": "Corrija mudanças de cor e manchas decorrentes de danos por água",
               "steps": [
-                "Identify stained areas",
-                "Adjust color balance",
-                "Use selective color",
-                "Blend corrections"
+                "Identifique as áreas manchadas",
+                "Ajuste o equilíbrio de cores",
+                "Use cor seletiva",
+                "Misture as correções"
               ]
             },
             {
-              "method": "Stain Removal",
-              "description": "Remove water stains and discoloration",
+              "method": "Remoção de Manchas",
+              "description": "Remova manchas de água e descoloração",
               "steps": [
-                "Isolate stained areas",
-                "Use healing tools",
-                "Adjust levels",
-                "Smooth transitions"
+                "Isole as áreas manchadas",
+                "Use ferramentas de recuperação",
+                "Ajuste os níveis",
+                "Suavize as transições"
               ]
             },
             {
-              "method": "Texture Restoration",
-              "description": "Restore texture damaged by water",
+              "method": "Restauração de Textura",
+              "description": "Restaure a textura danificada pela água",
               "steps": [
-                "Rebuild surface texture",
-                "Add appropriate grain",
-                "Match original finish",
-                "Blend naturally"
+                "Reconstrua a textura da superfície",
+                "Adicione granulação apropriada",
+                "Corresponda ao acabamento original",
+                "Misture naturalmente"
               ]
             }
           ]
         },
         {
-          "damage": "Fading and Color Loss",
+          "damage": "Desbotamento e Perda de Cor",
           "techniques": [
             {
-              "method": "Levels Adjustment",
-              "description": "Restore contrast and tonal range",
+              "method": "Ajuste de Níveis",
+              "description": "Restaure o contraste e a faixa tonal",
               "steps": [
-                "Analyze histogram",
-                "Adjust black/white points",
-                "Fine-tune midtones",
-                "Check clipping"
+                "Analise o histograma",
+                "Ajuste os pontos de preto/branco",
+                "Refine os tons médios",
+                "Verifique o clipping"
               ]
             },
             {
-              "method": "Color Balance",
-              "description": "Correct color casts and restore natural colors",
+              "method": "Equilíbrio de Cores",
+              "description": "Corrija distorções de cor e restaure as cores naturais",
               "steps": [
-                "Identify color casts",
-                "Adjust color channels",
-                "Fine-tune balance",
-                "Preserve skin tones"
+                "Identifique as distorções de cor",
+                "Ajuste os canais de cor",
+                "Refine o equilíbrio",
+                "Preserve os tons de pele"
               ]
             },
             {
-              "method": "Selective Enhancement",
-              "description": "Target specific areas for color restoration",
+              "method": "Aprimoramento Seletivo",
+              "description": "Direcione áreas específicas para restauração de cor",
               "steps": [
-                "Create adjustment masks",
-                "Apply local corrections",
-                "Blend edges",
-                "Review results"
+                "Crie máscaras de ajuste",
+                "Aplique correções locais",
+                "Misture as bordas",
+                "Revise os resultados"
               ]
             }
           ]
@@ -782,18 +677,14 @@
       ],
       "advancedRepairTools": [
         {
-          "tool": "Photoshop Restoration Tools",
+          "tool": "Ferramentas de Restauração do Photoshop",
           "features": [
-            "Content-Aware Fill",
-            "Healing Brushes",
-            "Clone Stamp",
-            "Patch Tool"
+            "Preenchimento Sensível ao Conteúdo",
+            "Pincéis de Recuperação",
+            "Carimbo de Clonagem",
+            "Ferramenta de Correção"
           ],
-          "bestFor": [
-            "Professional restoration",
-            "Complex damage",
-            "Precise control"
-          ]
+          "bestFor": ["Restauração profissional", "Danos complexos", "Controle preciso"]
         },
         {
           "tool": "AI-Powered Repair",
@@ -802,24 +693,12 @@
             "Intelligent reconstruction",
             "Pattern recognition"
           ],
-          "bestFor": [
-            "Quick repairs",
-            "Complex patterns",
-            "Large damaged areas"
-          ]
+          "bestFor": ["Quick repairs", "Complex patterns", "Large damaged areas"]
         },
         {
           "tool": "Specialized Restoration Software",
-          "features": [
-            "Dedicated repair tools",
-            "Historical presets",
-            "Batch processing"
-          ],
-          "bestFor": [
-            "Vintage photos",
-            "Consistent results",
-            "Workflow efficiency"
-          ]
+          "features": ["Dedicated repair tools", "Historical presets", "Batch processing"],
+          "bestFor": ["Vintage photos", "Consistent results", "Workflow efficiency"]
         }
       ],
       "preventionMethods": [
@@ -836,12 +715,7 @@
         {
           "method": "Handling Procedures",
           "description": "Handle photos carefully to prevent new damage",
-          "guidelines": [
-            "Clean hands",
-            "Support backing",
-            "Avoid bending",
-            "Use cotton gloves"
-          ]
+          "guidelines": ["Clean hands", "Support backing", "Avoid bending", "Use cotton gloves"]
         },
         {
           "method": "Display Protection",
@@ -911,304 +785,258 @@
           "answer": "Minor damage can often be repaired at home with practice. For valuable or severely damaged photos, consider professional restoration to avoid further damage."
         }
       ],
-      "relatedTools": [
-        "photo-damage-repairer",
-        "professional-restoration-suite"
-      ],
-      "relatedPages": [
-        "old-photo-restoration",
-        "photo-conservation-methods"
-      ]
+      "relatedTools": ["photo-damage-repairer", "professional-restoration-suite"],
+      "relatedPages": ["old-photo-restoration", "photo-conservation-methods"]
     },
     {
       "slug": "photo-conservation-methods",
-      "title": "Photo Conservation: Preservation Methods",
-      "metaTitle": "Photo Conservation: Preservation Methods | MyImageUpscaler",
-      "metaDescription": "Complete guide to photo conservation. Learn proper photo storage, preservation methods, environmental control, and archival techniques to protect photographs for future generations.",
-      "h1": "Photo Conservation: Complete Preservation Guide",
-      "intro": "Proper photo conservation protects precious memories for future generations. This comprehensive guide covers archival-quality storage methods, environmental control, and preservation techniques for both physical and digital photographs.",
-      "primaryKeyword": "photo conservation",
+      "title": "Conservação de Fotos: Métodos de Preservação",
+      "metaTitle": "Conservação de Fotos: Métodos de Preservação | MyImageUpscaler",
+      "metaDescription": "Guia completo de conservação de fotos. Aprenda sobre armazenamento adequado, métodos de preservação, controle ambiental e técnicas de arquivamento para proteger fotografias para as futuras gerações.",
+      "h1": "Conservação de Fotos: Guia Completo de Preservação",
+      "intro": "A conservação adequada de fotos protege memórias preciosas para as futuras gerações. Este guia abrangente cobre métodos de armazenamento com qualidade de arquivo, controle ambiental e técnicas de preservação para fotografias físicas e digitais.",
+      "primaryKeyword": "conservação de fotos",
       "secondaryKeywords": [
-        "photo preservation methods",
-        "archival photo storage",
-        "photograph conservation"
+        "métodos de preservação de fotos",
+        "armazenamento de fotos em arquivo",
+        "conservação de fotografias"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "photo-restoration",
-      "focus": "Prevention and long-term preservation",
+      "focus": "Prevenção e preservação a longo prazo",
       "conservationTypes": [
-        "Physical Conservation",
-        "Digital Preservation",
-        "Environmental Control",
-        "Handling Procedures"
+        "Conservação Física",
+        "Preservação Digital",
+        "Controle Ambiental",
+        "Procedimentos de Manuseio"
       ],
       "physicalConservation": [
         {
-          "aspect": "Storage Materials",
+          "aspect": "Materiais de Armazenamento",
           "requirements": {
-            "sleeves": "Archival-quality polypropylene or polyester sleeves",
-            "albums": "Acid-free, lignin-free photo albums",
-            "boxes": "Archival corrugated board or conservation boxes",
-            "enclosures": "pH-neutral materials without PVC"
+            "sleeves": "Envelopes de polipropileno ou poliéster com qualidade de arquivo",
+            "albums": "Álbuns de fotos livres de ácido e lignina",
+            "boxes": "Caixas de papelão corrugado ou de conservação com qualidade de arquivo",
+            "enclosures": "Materiais de pH neutro sem PVC"
           },
           "avoid": [
-            "PVC plastic",
-            "Magnetic albums",
-            "Acidic paper",
-            "Rubber cement",
-            "Regular tape"
+            "Plástico PVC",
+            "Álbuns magnéticos",
+            "Papel ácido",
+            "Cola de borracha",
+            "Fita adesiva comum"
           ]
         },
         {
-          "aspect": "Environmental Conditions",
+          "aspect": "Condições Ambientais",
           "idealConditions": {
-            "temperature": "65-70°F (18-21°C)",
-            "humidity": "30-50% relative humidity",
-            "light": "No direct sunlight, minimal UV exposure",
-            "airQuality": "Clean, filtered air, no pollutants"
+            "temperature": "18-21°C (65-70°F)",
+            "humidity": "30-50% de umidade relativa",
+            "light": "Sem luz solar direta, exposição UV mínima",
+            "airQuality": "Ar limpo e filtrado, sem poluentes"
           },
-          "monitoring": [
-            "Hygrometers",
-            "Thermometers",
-            "Light meters",
-            "Regular inspections"
-          ]
+          "monitoring": ["Higrômetros", "Termômetros", "Medidores de luz", "Inspeções regulares"]
         },
         {
-          "aspect": "Display Considerations",
+          "aspect": "Considerações de Exibição",
           "bestPractices": {
-            "framing": "UV-filtering glass or acrylic",
-            "matting": "Acid-free mat board with proper spacing",
-            "location": "Avoid direct sunlight and heat sources",
-            "rotation": "Rotate displayed photos to reduce light exposure"
+            "framing": "Vidro ou acrílico com filtragem UV",
+            "matting": "Passepartout livre de ácido com espaçamento adequado",
+            "location": "Evite luz solar direta e fontes de calor",
+            "rotation": "Faça o rodízio das fotos exibidas para reduzir a exposição à luz"
           }
         }
       ],
       "digitalPreservation": [
         {
-          "aspect": "File Formats",
+          "aspect": "Formatos de Arquivo",
           "recommendations": {
-            "masterFiles": "TIFF or DNG for archival quality",
-            "accessFiles": "JPEG or PNG for regular access",
-            "metadata": "Embedded metadata in standard formats",
-            "backup": "Multiple copies in different locations"
+            "masterFiles": "TIFF ou DNG para qualidade de arquivo",
+            "accessFiles": "JPEG ou PNG para acesso regular",
+            "metadata": "Metadados incorporados em formatos padrão",
+            "backup": "Múltiplas cópias em locais diferentes"
           }
         },
         {
-          "aspect": "Storage Solutions",
+          "aspect": "Soluções de Armazenamento",
           "options": {
-            "local": "External hard drives with regular replacement",
-            "cloud": "Multiple cloud services for redundancy",
-            "archival": "Long-term cloud storage or institutional archives",
-            "hybrid": "Combination of local and cloud storage"
+            "local": "Discos rígidos externos com substituição regular",
+            "cloud": "Múltiplos serviços de nuvem para redundância",
+            "archival": "Armazenamento em nuvem de longo prazo ou arquivos institucionais",
+            "hybrid": "Combinação de armazenamento local e em nuvem"
           }
         },
         {
-          "aspect": "Data Management",
+          "aspect": "Gestão de Dados",
           "practices": {
-            "organization": "Consistent naming conventions and folder structure",
-            "metadata": "Complete embedded metadata and external databases",
-            "verification": "Regular file integrity checks",
-            "migration": "Plan for format migration as technology changes"
+            "organization": "Convenções de nomenclatura e estrutura de pastas consistentes",
+            "metadata": "Metadados incorporados completos e bancos de dados externos",
+            "verification": "Verificações regulares de integridade de arquivos",
+            "migration": "Plano para migração de formato conforme a tecnologia muda"
           }
         }
       ],
       "handlingProcedures": [
         {
-          "procedure": "Clean Hands",
-          "description": "Always handle photos with clean, dry hands",
-          "details": "Wash hands thoroughly, avoid lotions, consider cotton gloves for valuable photos"
+          "procedure": "Mãos Limpas",
+          "description": "Sempre manuseie as fotos com as mãos limpas e secas",
+          "details": "Lave bem as mãos, evite loções, considere luvas de algodão para fotos valiosas"
         },
         {
-          "procedure": "Support",
-          "description": "Support photos from underneath to prevent stress",
-          "details": "Use both hands, support edges evenly, avoid bending or flexing"
+          "procedure": "Suporte",
+          "description": "Dê suporte às fotos por baixo para evitar estresse",
+          "details": "Use as duas mãos, apoie as bordas uniformemente, evite dobrar ou flexionar"
         },
         {
-          "procedure": "Environment",
-          "description": "Handle photos in appropriate environmental conditions",
-          "details": "Clean work surface, no food or drinks, stable temperature and humidity"
+          "procedure": "Ambiente",
+          "description": "Manuseie as fotos em condições ambientais adequadas",
+          "details": "Superfície de trabalho limpa, sem comida ou bebida, temperatura e umidade estáveis"
         },
         {
-          "procedure": "Tools",
-          "description": "Use appropriate tools for photo handling",
-          "details": "Photographic tongs, cotton gloves, clean work surface, proper lighting"
+          "procedure": "Ferramentas",
+          "description": "Use ferramentas apropriadas para o manuseio de fotos",
+          "details": "Pinças fotográficas, luvas de algodão, superfície de trabalho limpa, iluminação adequada"
         }
       ],
       "conservationSupplies": [
         {
-          "supply": "Archival Sleeves",
-          "types": [
-            "Polypropylene",
-            "Polyester",
-            "Polyethylene"
-          ],
-          "features": [
-            "Acid-free",
-            "No PVC",
-            "Static-free",
-            "Chemically stable"
-          ]
+          "supply": "Envelopes de Arquivo",
+          "types": ["Polipropileno", "Poliéster", "Polietileno"],
+          "features": ["Livre de ácido", "Sem PVC", "Livre de estática", "Quimicamente estável"]
         },
         {
-          "supply": "Storage Boxes",
-          "types": [
-            "Conservation boxes",
-            "Archival corrugated",
-            "Metal enclosures"
-          ],
-          "features": [
-            "Acid-free",
-            "pH-neutral",
-            "Light-tight",
-            "Moisture resistant"
-          ]
+          "supply": "Caixas de Armazenamento",
+          "types": ["Caixas de conservação", "Corrugado de arquivo", "Invólucros metálicos"],
+          "features": ["Livre de ácido", "pH neutro", "À prova de luz", "Resistente à umidade"]
         },
         {
-          "supply": "Monitoring Equipment",
-          "types": [
-            "Hygrometers",
-            "Thermometers",
-            "Light meters",
-            "pH testing strips"
-          ],
+          "supply": "Equipamento de Monitoramento",
+          "types": ["Higrômetros", "Termômetros", "Medidores de luz", "Tiras de teste de pH"],
           "features": [
-            "Calibrated accuracy",
-            "Data logging",
-            "Alarm functions",
-            "Portability"
+            "Precisão calibrada",
+            "Registro de dados",
+            "Funções de alarme",
+            "Portabilidade"
           ]
         }
       ],
       "conservationLevels": [
         {
-          "level": "Basic",
-          "description": "Essential conservation for family photos",
+          "level": "Básico",
+          "description": "Conservação essencial para fotos de família",
           "requirements": [
-            "Acid-free storage",
-            "Basic environmental control",
-            "Digital backup",
-            "Proper handling"
+            "Armazenamento livre de ácido",
+            "Controle ambiental básico",
+            "Backup digital",
+            "Manuseio adequado"
           ]
         },
         {
-          "level": "Intermediate",
-          "description": "Enhanced conservation for valuable collections",
+          "level": "Intermediário",
+          "description": "Conservação aprimorada para coleções valiosas",
           "requirements": [
-            "Archival materials",
-            "Environmental monitoring",
-            "Multiple digital backups",
-            "Documentation"
+            "Materiais de arquivo",
+            "Monitoramento ambiental",
+            "Múltiplos backups digitais",
+            "Documentação"
           ]
         },
         {
-          "level": "Professional",
-          "description": "Museum-quality conservation for historically significant photos",
+          "level": "Profissional",
+          "description": "Conservação com qualidade de museu para fotos historicamente significativas",
           "requirements": [
-            "Conservator consultation",
-            "Custom enclosures",
-            "Climate control systems",
-            "Professional documentation"
+            "Consulta com conservador",
+            "Invólucros personalizados",
+            "Sistemas de controle climático",
+            "Documentação profissional"
           ]
         }
       ],
       "threatAssessment": [
         {
-          "threat": "Environmental",
+          "threat": "Ambiental",
           "risks": [
-            "Temperature fluctuations",
-            "High humidity",
-            "Light exposure",
-            "Air pollution"
+            "Flutuações de temperatura",
+            "Alta umidade",
+            "Exposição à luz",
+            "Poluição do ar"
           ],
           "mitigation": [
-            "Climate control",
-            "UV protection",
-            "Air filtration",
-            "Regular monitoring"
+            "Controle climático",
+            "Proteção UV",
+            "Filtragem de ar",
+            "Monitoramento regular"
           ]
         },
         {
-          "threat": "Biological",
-          "risks": [
-            "Mold growth",
-            "Insect damage",
-            "Bacterial growth"
-          ],
+          "threat": "Biológica",
+          "risks": ["Crescimento de mofo", "Danos por insetos", "Crescimento bacteriano"],
           "mitigation": [
-            "Humidity control",
-            "Regular inspection",
-            "Clean storage",
-            "Prompt treatment"
+            "Controle de umidade",
+            "Inspeção regular",
+            "Armazenamento limpo",
+            "Tratamento imediato"
           ]
         },
         {
-          "threat": "Mechanical",
+          "threat": "Mecânica",
           "risks": [
-            "Physical damage",
-            "Handling stress",
-            "Improper storage",
-            "Accidents"
+            "Danos físicos",
+            "Estresse de manuseio",
+            "Armazenamento inadequado",
+            "Acidentes"
           ],
           "mitigation": [
-            "Proper handling",
-            "Supportive storage",
-            "Protective enclosures",
-            "Careful access"
+            "Manuseio adequado",
+            "Armazenamento com suporte",
+            "Invólucros protetores",
+            "Acesso cuidadoso"
           ]
         },
         {
-          "threat": "Chemical",
-          "risks": [
-            "Acid migration",
-            "Pollutants",
-            "Improper materials",
-            "Deterioration"
-          ],
+          "threat": "Química",
+          "risks": ["Migração de ácido", "Poluentes", "Materiais inadequados", "Deterioração"],
           "mitigation": [
-            "Archival materials",
-            "Isolation from pollutants",
-            "Regular testing",
-            "Material selection"
+            "Materiais de arquivo",
+            "Isolamento de poluentes",
+            "Testes regulares",
+            "Seleção de materiais"
           ]
         }
       ],
       "conservationSchedule": [
         {
-          "frequency": "Daily",
+          "frequency": "Diário",
+          "tasks": ["Monitorar condições ambientais", "Verificar ameaças imediatas"]
+        },
+        {
+          "frequency": "Mensal",
           "tasks": [
-            "Monitor environmental conditions",
-            "Check for immediate threats"
+            "Inspeção visual",
+            "Revisão de dados ambientais",
+            "Limpar áreas de armazenamento"
           ]
         },
         {
-          "frequency": "Monthly",
+          "frequency": "Trimestral",
           "tasks": [
-            "Visual inspection",
-            "Environmental data review",
-            "Clean storage areas"
+            "Inspeção detalhada das fotos",
+            "Verificação de backup",
+            "Verificação da condição dos suprimentos"
           ]
         },
         {
-          "frequency": "Quarterly",
+          "frequency": "Anual",
           "tasks": [
-            "Detailed photo inspection",
-            "Backup verification",
-            "Supply condition check"
-          ]
-        },
-        {
-          "frequency": "Annually",
-          "tasks": [
-            "Professional assessment",
-            "Comprehensive inventory",
-            "Long-term planning review"
+            "Avaliação profissional",
+            "Inventário abrangente",
+            "Revisão do planejamento de longo prazo"
           ]
         }
       ],
       "professionalResources": [
         {
-          "resource": "Conservation Organizations",
+          "resource": "Organizações de Conservação",
           "examples": [
             "American Institute for Conservation",
             "Society of American Archivists",
@@ -1216,7 +1044,7 @@
           ]
         },
         {
-          "resource": "Suppliers",
+          "resource": "Fornecedores",
           "examples": [
             "Gaylord Archival",
             "Light Impressions",
@@ -1225,416 +1053,336 @@
           ]
         },
         {
-          "resource": "Educational Resources",
+          "resource": "Recursos Educacionais",
           "examples": [
-            "Conservation workshops",
-            "Online courses",
-            "Publications",
-            "Professional networks"
+            "Workshops de conservação",
+            "Cursos online",
+            "Publicações",
+            "Redes profissionais"
           ]
         }
       ],
       "bestPractices": [
-        "Establish conservation standards based on photo value and importance",
-        "Implement monitoring systems for environmental conditions",
-        "Create detailed documentation and inventories",
-        "Plan for long-term digital preservation",
-        "Regularly review and update conservation procedures"
+        "Estabeleça padrões de conservação baseados no valor e importância da foto",
+        "Implemente sistemas de monitoramento para condições ambientais",
+        "Crie documentação e inventários detalhados",
+        "Planeje a preservação digital de longo prazo",
+        "Revise e atualize regularmente os procedimentos de conservação"
       ],
       "faq": [
         {
-          "question": "How long can properly conserved photos last?",
-          "answer": "With proper conservation, modern photographs can last 100-200+ years. Historical photos can be preserved for many more decades with appropriate care."
+          "question": "Quanto tempo podem durar fotos conservadas corretamente?",
+          "answer": "Com conservação adequada, as fotografias modernas podem durar de 100 a 200 anos ou mais. Fotos históricas podem ser preservadas por muito mais décadas com os devidos cuidados."
         },
         {
-          "question": "What's the biggest threat to photo collections?",
-          "answer": "Environmental factors, especially temperature and humidity fluctuations, are typically the biggest threats. Improper storage materials and handling are also significant risks."
+          "question": "Qual é a maior ameaça às coleções de fotos?",
+          "answer": "Fatores ambientais, especialmente flutuações de temperatura e umidade, são tipicamente as maiores ameaças. Materiais de armazenamento e manuseio inadequados também são riscos significativos."
         },
         {
-          "question": "Should I digitize all my photos for conservation?",
-          "answer": "Digitization is essential for digital preservation but doesn't replace physical conservation. Use both approaches for comprehensive protection."
+          "question": "Devo digitalizar todas as minhas fotos para preservação?",
+          "answer": "A digitalização é essencial para a preservação digital, mas não substitui a conservação física. Use ambas as abordagens para uma proteção abrangente."
         }
       ],
-      "relatedTools": [
-        "photo-conservation-tracker",
-        "archival-storage-manager"
-      ],
-      "relatedPages": [
-        "old-photo-restoration",
-        "museum-quality-preservation"
-      ]
+      "relatedTools": ["photo-conservation-tracker", "archival-storage-manager"],
+      "relatedPages": ["old-photo-restoration", "museum-quality-preservation"]
     },
     {
       "slug": "family-photo-preservation",
-      "title": "Family Photo Preservation: Complete Guide",
-      "metaTitle": "Family Photo Preservation: Complete Guide | MyImageUpscaler",
-      "metaDescription": "Complete guide to family photo preservation. Learn to organize, restore, digitize, and preserve family photos and photo albums for future generations.",
-      "h1": "Family Photo Preservation: Complete Guide",
-      "intro": "Family photos capture irreplaceable memories and connections to our past. This comprehensive guide helps you preserve, organize, and share your family's photographic heritage for future generations.",
-      "primaryKeyword": "family photo preservation",
+      "title": "Preservação de Fotos de Família: Guia Completo",
+      "metaTitle": "Preservação de Fotos de Família: Guia Completo | MyImageUpscaler",
+      "metaDescription": "Guia completo para preservação de fotos de família. Aprenda a organizar, restaurar, digitalizar e preservar fotos e álbuns de família para as futuras gerações.",
+      "h1": "Preservação de Fotos de Família: Guia Completo",
+      "intro": "As fotos de família capturam memórias insubstituíveis e conexões com o nosso passado. Este guia abrangente ajuda você a preservar, organizar e compartilhar o patrimônio fotográfico da sua família para as futuras gerações.",
+      "primaryKeyword": "preservação de fotos de família",
       "secondaryKeywords": [
-        "family photo organization",
-        "photo album preservation",
-        "family history photos"
+        "organização de fotos de família",
+        "preservação de álbuns de fotos",
+        "fotos de história da família"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "photo-restoration",
-      "focus": "Family heritage and genealogy",
+      "focus": "Patrimônio familiar e genealogia",
       "preservationStages": [
         {
-          "stage": "Collection and Assessment",
-          "description": "Gather and evaluate all family photos",
+          "stage": "Coleta e Avaliação",
+          "description": "Reunir e avaliar todas as fotos da família",
           "actions": [
-            "Locate all photos",
-            "Assess condition",
-            "Identify people",
-            "Date and context"
+            "Localizar todas as fotos",
+            "Avaliar a condição",
+            "Identificar as pessoas",
+            "Data e contexto"
           ]
         },
         {
-          "stage": "Organization and Documentation",
-          "description": "Systematically organize and document the collection",
+          "stage": "Organização e Documentação",
+          "description": "Organizar e documentar sistematicamente a coleção",
           "actions": [
-            "Create inventory",
-            "Label photos",
-            "Record stories",
-            "Family input"
+            "Criar inventário",
+            "Etiquetar fotos",
+            "Registrar histórias",
+            "Contribuição da família"
           ]
         },
         {
-          "stage": "Conservation and Repair",
-          "description": "Preserve physical photos and repair damage",
-          "actions": "Proper storage, gentle cleaning, professional repair, environmental control"
+          "stage": "Conservação e Reparo",
+          "description": "Preservar fotos físicas e reparar danos",
+          "actions": "Armazenamento adequado, limpeza suave, reparo profissional, controle ambiental"
         },
         {
-          "stage": "Digitization and Backup",
-          "description": "Create digital copies and backup systems",
+          "stage": "Digitalização e Backup",
+          "description": "Criar cópias digitais e sistemas de backup",
           "actions": [
-            "High-quality scanning",
-            "Multiple backups",
-            "Cloud storage",
-            "Family sharing"
+            "Digitalização de alta qualidade",
+            "Múltiplos backups",
+            "Armazenamento em nuvem",
+            "Compartilhamento familiar"
           ]
         },
         {
-          "stage": "Sharing and Education",
-          "description": "Share preserved photos with family members",
+          "stage": "Compartilhamento e Educação",
+          "description": "Compartilhar fotos preservadas com membros da família",
           "actions": [
-            "Family albums",
-            "Digital galleries",
-            "Story telling",
-            "Educational context"
+            "Álbuns de família",
+            "Galerias digitais",
+            "Narração de histórias",
+            "Contexto educacional"
           ]
         }
       ],
       "photoTypes": [
         {
-          "type": "19th Century Photos",
+          "type": "Fotos do Século XIX",
           "characteristics": [
-            "Daguerreotypes",
-            "Tintypes",
-            "Early paper prints",
-            "Hand coloring"
+            "Daguerreótipos",
+            "Ferrotipos",
+            "Primeiras impressões em papel",
+            "Coloração manual"
           ],
           "challenges": [
-            "Fragile materials",
-            "Unique processes",
-            "Specialized conservation needs"
+            "Materiais frágeis",
+            "Processos únicos",
+            "Necessidades de conservação especializadas"
           ]
         },
         {
-          "type": "Early 20th Century",
+          "type": "Início do Século XX",
           "characteristics": [
-            "Postcards",
-            "Cabinet cards",
-            "Early snapshots",
-            "Albumen prints"
+            "Cartões postais",
+            "Cartões de visita",
+            "Primeiros instantâneos",
+            "Impressões em albumina"
+          ],
+          "challenges": ["Papel ácido", "Desbotamento", "Danos em álbuns", "Armazenamento precário"]
+        },
+        {
+          "type": "Meados do Século XX",
+          "characteristics": [
+            "Instantâneos 35mm",
+            "Fotos coloridas",
+            "Fotos instantâneas (Polaroid)",
+            "Álbuns de fotos"
           ],
           "challenges": [
-            "Acidic paper",
-            "Fading",
-            "Album damage",
-            "Poor storage"
+            "Desbotamento de cores",
+            "Deterioração do plástico",
+            "Danos em álbuns magnéticos"
           ]
         },
         {
-          "type": "Mid-20th Century",
+          "type": "Fotos Digitais Modernas",
           "characteristics": [
-            "35mm snapshots",
-            "Color photos",
-            "Instant photos",
-            "Photo albums"
+            "Arquivos digitais",
+            "Redes sociais",
+            "Fotos de smartphone",
+            "Armazenamento em nuvem"
           ],
-          "challenges": [
-            "Color fading",
-            "Plastic deterioration",
-            "Magnetic album damage"
-          ]
-        },
-        {
-          "type": "Modern Digital Photos",
-          "characteristics": [
-            "Digital files",
-            "Social media",
-            "Smartphone photos",
-            "Cloud storage"
-          ],
-          "challenges": [
-            "Format obsolescence",
-            "Data loss",
-            "Metadata preservation"
-          ]
+          "challenges": ["Obsolescência de formato", "Perda de dados", "Preservação de metadados"]
         }
       ],
       "organizationMethods": [
         {
-          "method": "Chronological Organization",
-          "description": "Organize photos by date and time period",
+          "method": "Organização Cronológica",
+          "description": "Organizar fotos por data e período de tempo",
           "benefits": [
-            "Historical context",
-            "Easy timeline building",
-            "Generation tracking"
+            "Contexto histórico",
+            "Construção fácil de linha do tempo",
+            "Rastreamento de gerações"
           ],
-          "implementation": "Decade-based sorting, major events, family milestones"
+          "implementation": "Classificação por década, grandes eventos, marcos familiares"
         },
         {
-          "method": "Family Branch Organization",
-          "description": "Organize by family lines and relationships",
+          "method": "Organização por Ramo Familiar",
+          "description": "Organizar por linhagens familiares e relacionamentos",
           "benefits": [
-            "Genealogy tracking",
-            "Relationship clarity",
-            "Inheritance patterns"
+            "Rastreamento genealógico",
+            "Clareza de relacionamentos",
+            "Padrões de herança"
           ],
-          "implementation": "Family trees, individual branches, group photos"
+          "implementation": "Árvores genealógicas, ramos individuais, fotos em grupo"
         },
         {
-          "method": "Event-Based Organization",
-          "description": "Organize by specific events and occasions",
+          "method": "Organização por Evento",
+          "description": "Organizar por eventos e ocasiões específicas",
           "benefits": [
-            "Story telling",
-            "Event history",
-            "Celebration tracking"
+            "Narração de histórias",
+            "Histórico de eventos",
+            "Rastreamento de celebrações"
           ],
-          "implementation": "Weddings, holidays, births, graduations, travels"
+          "implementation": "Casamentos, feriados, nascimentos, formaturas, viagens"
         },
         {
-          "method": "Location-Based Organization",
-          "description": "Organize by geographic locations",
-          "benefits": [
-            "Family movements",
-            "Historical geography",
-            "Property history"
-          ],
-          "implementation": "Family homes, vacation spots, significant locations"
+          "method": "Organização por Localização",
+          "description": "Organizar por localizações geográficas",
+          "benefits": ["Movimentos familiares", "Geografia histórica", "Propriedade histórica"],
+          "implementation": "Casas de família, locais de férias, locais significativos"
         }
       ],
       "documentationEssentials": [
         {
-          "element": "People Identification",
-          "description": "Identify and document all individuals in photos",
+          "element": "Identificação de Pessoas",
+          "description": "Identificar e documentar todos os indivíduos nas fotos",
           "information": [
-            "Full names",
-            "Relationships",
-            "Approximate ages",
-            "Life dates"
+            "Nomes completos",
+            "Relacionamentos",
+            "Idades aproximadas",
+            "Datas de vida"
           ]
         },
         {
-          "element": "Dating and Context",
-          "description": "Determine when and where photos were taken",
-          "information": [
-            "Date or period",
-            "Location",
-            "Occasion",
-            "Photographer"
-          ]
+          "element": "Data e Contexto",
+          "description": "Determinar quando e onde as fotos foram tiradas",
+          "information": ["Data ou período", "Localização", "Ocasião", "Fotógrafo"]
         },
         {
-          "element": "Stories and Memories",
-          "description": "Record associated stories and family memories",
-          "information": [
-            "Events",
-            "Traditions",
-            "Emotions",
-            "Cultural context"
-          ]
+          "element": "Histórias e Memórias",
+          "description": "Registrar histórias associadas e memórias familiares",
+          "information": ["Eventos", "Tradições", "Emoções", "Contexto cultural"]
         },
         {
-          "element": "Technical Details",
-          "description": "Document technical and preservation information",
-          "information": [
-            "Photo type",
-            "Condition",
-            "Conservation needs",
-            "Location"
-          ]
+          "element": "Detalhes Técnicos",
+          "description": "Documentar informações técnicas e de preservação",
+          "information": ["Tipo de foto", "Condição", "Necessidades de conservação", "Localização"]
         }
       ],
       "digitizationStandards": [
         {
-          "standard": "Resolution",
-          "recommendation": "300-600 DPI for prints, 1200+ DPI for small detailed photos",
-          "reason": "Capture fine details and allow future enlargements"
+          "standard": "Resolução",
+          "recommendation": "300-600 DPI para impressões, 1200+ DPI para fotos pequenas detalhadas",
+          "reason": "Capturar detalhes finos e permitir ampliações futuras"
         },
         {
-          "standard": "Color Depth",
-          "recommendation": "48-bit color for color photos, 16-bit grayscale for B&W",
-          "reason": "Maximum detail capture and editing flexibility"
+          "standard": "Profundidade de Cor",
+          "recommendation": "Cores de 48 bits para fotos coloridas, escala de cinza de 16 bits para P&B",
+          "reason": "Captura máxima de detalhes e flexibilidade de edição"
         },
         {
-          "standard": "File Format",
-          "recommendation": "TIFF for archival masters, JPEG for access copies",
-          "reason": "Preservation quality vs. practical usability"
+          "standard": "Formato de Arquivo",
+          "recommendation": "TIFF para masters de arquivo, JPEG para cópias de acesso",
+          "reason": "Qualidade de preservação vs. usabilidade prática"
         },
         {
-          "standard": "Metadata",
-          "recommendation": "Complete IPTC and EXIF metadata with family information",
-          "reason": "Preserve identification and context within files"
+          "standard": "Metadados",
+          "recommendation": "Metadados IPTC e EXIF completos com informações da família",
+          "reason": "Preservar identificação e contexto dentro dos arquivos"
         }
       ],
       "sharingStrategies": [
         {
-          "strategy": "Family Website",
-          "description": "Create dedicated family photo website",
+          "strategy": "Site da Família",
+          "description": "Criar um site dedicado para fotos da família",
           "benefits": [
-            "Centralized access",
-            "Story telling",
-            "Collaborative contributions"
+            "Acesso centralizado",
+            "Narração de histórias",
+            "Contribuições colaborativas"
           ],
-          "tools": [
-            "Dedicated hosting",
-            "Photo galleries",
-            "Family forums"
-          ]
+          "tools": ["Hospedagem dedicada", "Galerias de fotos", "Fóruns familiares"]
         },
         {
-          "strategy": "Digital Albums",
-          "description": "Create digital photo albums for family members",
-          "benefits": [
-            "Portable sharing",
-            "Printed gifts",
-            "Easy access"
-          ],
-          "tools": [
-            "Photo book services",
-            "Digital frames",
-            "Tablet viewing"
-          ]
+          "strategy": "Álbuns Digitais",
+          "description": "Criar álbuns de fotos digitais para membros da família",
+          "benefits": ["Compartilhamento portátil", "Presentes impressos", "Acesso fácil"],
+          "tools": ["Serviços de fotolivros", "Porta-retratos digitais", "Visualização em tablet"]
         },
         {
-          "strategy": "Social Media Groups",
-          "description": "Use private social media groups for family sharing",
+          "strategy": "Grupos em Redes Sociais",
+          "description": "Usar grupos privados em redes sociais para compartilhamento familiar",
           "benefits": [
-            "Easy access",
-            "Mobile friendly",
-            "Interactive discussions"
+            "Acesso fácil",
+            "Amigável para dispositivos móveis",
+            "Discussões interativas"
           ],
-          "tools": [
-            "Facebook groups",
-            "WhatsApp",
-            "Family apps"
-          ]
+          "tools": ["Grupos de Facebook", "WhatsApp", "Apps de família"]
         },
         {
-          "strategy": "Cloud Sharing",
-          "description": "Share photos through cloud storage services",
-          "benefits": [
-            "Large file support",
-            "Access control",
-            "Automatic backup"
-          ],
-          "tools": [
-            "Google Photos",
-            "Amazon Photos",
-            "Family cloud folders"
-          ]
+          "strategy": "Compartilhamento em Nuvem",
+          "description": "Compartilhar fotos através de serviços de armazenamento em nuvem",
+          "benefits": ["Suporte a arquivos grandes", "Controle de acesso", "Backup automático"],
+          "tools": ["Google Photos", "Amazon Photos", "Pastas de nuvem da família"]
         }
       ],
       "familyInvolvement": [
         {
-          "activity": "Photo Identification Parties",
-          "description": "Gather family members to identify people and stories",
-          "benefits": [
-            "Collective memory",
-            "Social bonding",
-            "Story sharing"
-          ]
+          "activity": "Festas de Identificação de Fotos",
+          "description": "Reunir familiares para identificar pessoas e histórias",
+          "benefits": ["Memória coletiva", "Vínculo social", "Compartilhamento de histórias"]
         },
         {
-          "activity": "Memory Interviews",
-          "description": "Interview older family members about photo context",
-          "benefits": [
-            "Historical context",
-            "Personal stories",
-            "Oral history preservation"
-          ]
+          "activity": "Entrevistas de Memórica",
+          "description": "Entrevistar familiares mais velhos sobre o contexto das fotos",
+          "benefits": ["Contexto histórico", "Histórias pessoais", "Preservação da história oral"]
         },
         {
-          "activity": "Collaborative Tagging",
-          "description": "Enable family members to add tags and information",
-          "benefits": [
-            "Crowdsourced knowledge",
-            "Engagement",
-            "Shared ownership"
-          ]
+          "activity": "Marcação Colaborativa",
+          "description": "Permitir que membros da família adicionem etiquetas e informações",
+          "benefits": ["Conhecimento coletivo", "Engajamento", "Propriedade compartilhada"]
         },
         {
-          "activity": "Generational Transfer",
-          "description": "Teach younger family members preservation techniques",
-          "benefits": [
-            "Skill transfer",
-            "Continuity",
-            "Future preservation"
-          ]
+          "activity": "Transferência Geracional",
+          "description": "Ensinar técnicas de preservação aos membros mais jovens da família",
+          "benefits": ["Transferência de habilidades", "Continuidade", "Preservação futura"]
         }
       ],
       "preservationChallenges": [
         {
-          "challenge": "Identifying Unknown People",
-          "solution": "Share with extended family, use genealogy resources, compare with known photos"
+          "challenge": "Identificar Pessoas Desconhecidas",
+          "solution": "Compartilhar com a família estendida, usar recursos de genealogia, comparar com fotos conhecidas"
         },
         {
-          "challenge": "Damaged or Faded Photos",
-          "solution": "Professional restoration services, AI enhancement tools, careful conservation"
+          "challenge": "Fotos Danificadas ou Desbotadas",
+          "solution": "Serviços de restauração profissional, ferramentas de aprimoramento por IA, conservação cuidadosa"
         },
         {
-          "challenge": "Scattered Collections",
-          "solution": "Family outreach, photo sharing networks, centralized digital repository"
+          "challenge": "Coleções Dispersas",
+          "solution": "Alcance familiar, redes de compartilhamento de fotos, repositório digital centralizado"
         },
         {
-          "challenge": "Technology Obsolescence",
-          "solution": "Multiple format preservation, regular format migration, cloud storage"
+          "challenge": "Obsolescência Tecnológica",
+          "solution": "Preservação em múltiplos formatos, migração de formato regular, armazenamento em nuvem"
         }
       ],
       "bestPractices": [
-        "Start preservation projects early before further deterioration",
-        "Involve multiple family members in identification and documentation",
-        "Create both physical and digital preservation systems",
-        "Establish clear organization systems that others can understand",
-        "Plan for long-term preservation and accessibility"
+        "Inicie projetos de preservação cedo, antes de uma maior deterioração",
+        "Envolva vários membros da família na identificação e documentação",
+        "Crie sistemas de preservação tanto físicos quanto digitais",
+        "Estabeleça sistemas de organização claros que outros possam entender",
+        "Planeje a preservação e acessibilidade a longo prazo"
       ],
       "faq": [
         {
-          "question": "How do I identify people in old family photos?",
-          "answer": "Share with older family members, compare with known photos, use family resemblances, check clothing and hairstyles for period clues, and consult genealogy resources."
+          "question": "Como identifico as pessoas em fotos de família antigas?",
+          "answer": "Compartilhe com familiares mais velhos, compare com fotos conhecidas, use semelhanças familiares, verifique roupas e penteados para pistas da época e consulte recursos de genealogia."
         },
         {
-          "question": "What's the best way to share large family photo collections?",
-          "answer": "Use a combination of methods: cloud storage for masters, shared galleries for viewing, and printed albums for special occasions. Consider different family members' tech comfort levels."
+          "question": "Qual é a melhor maneira de compartilhar grandes coleções de fotos de família?",
+          "answer": "Use uma combinação de métodos: armazenamento em nuvem para os masters, galerias compartilhadas para visualização e álbuns impressos para ocasiões especiais. Considere os diferentes níveis de conforto tecnológico dos membros da família."
         },
         {
-          "question": "How can I get younger family members interested in old photos?",
-          "answer": "Tell compelling stories, connect photos to family history, use technology they're comfortable with, and show how these photos connect to their own identity and heritage."
+          "question": "Como posso interessar os membros mais jovens da família em fotos antigas?",
+          "answer": "Conte histórias envolventes, conecte as fotos à história da família, use tecnologias com as quais eles se sintam confortáveis e mostre como essas fotos se conectam à sua própria identidade e patrimônio."
         }
       ],
-      "relatedTools": [
-        "family-photo-organizer",
-        "photo-digitization-service"
-      ],
-      "relatedPages": [
-        "photo-conservation-methods",
-        "genealogy-photo-management"
-      ]
+      "relatedTools": ["family-photo-organizer", "photo-digitization-service"],
+      "relatedPages": ["photo-conservation-methods", "genealogy-photo-management"]
     }
   ],
   "meta": {

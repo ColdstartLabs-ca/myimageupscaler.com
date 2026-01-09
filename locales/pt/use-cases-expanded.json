@@ -1,1469 +1,464 @@
 {
   "version": "1.0.0",
   "lastUpdated": "2024-12-19T10:00:00Z",
-  "description": "Expanded use cases for professional image enhancement workflows",
+  "description": "Casos de uso expandidos para fluxos de trabalho profissionais de aprimoramento de imagem",
   "pages": [
     {
       "slug": "real-estate-photography",
-      "title": "Real Estate Photography Enhancement",
-      "metaTitle": "Real Estate Photography Enhancement | MyImageUpscaler",
-      "metaDescription": "Transform property photos with professional AI enhancement. Increase listing quality, attract more buyers, and sell properties faster with automated real estate photo editing.",
-      "h1": "Real Estate Photography Enhancement",
+      "title": "Aprimoramento de Fotografia Imobiliária",
+      "metaTitle": "Aprimoramento de Fotografia Imobiliária | MyImageUpscaler",
+      "metaDescription": "Transforme fotos de imóveis com aprimoramento profissional por IA. Aumente a qualidade do anúncio, atraia mais compradores e venda imóveis mais rapidamente com edição automatizada.",
+      "h1": "Aprimoramento de Fotografia Imobiliária",
       "category": "use-cases",
-      "intro": "Professional real estate photography enhancement that transforms ordinary property photos into stunning, market-ready images that attract more buyers and close deals faster.",
-      "primaryKeyword": "enhance real estate photos",
+      "intro": "Aprimoramento profissional de fotografia imobiliária que transforma fotos comuns em imagens deslumbrantes e prontas para o mercado, atraindo mais compradores e fechando negócios mais rapidamente.",
+      "primaryKeyword": "aprimorar fotos de imóveis",
       "secondaryKeywords": [
-        "property photo editing",
-        "real estate photo enhancement",
-        "listing photo improvement",
-        "virtual staging photos"
+        "edição de fotos de propriedades",
+        "aprimoramento de fotos imobiliárias",
+        "melhoria de fotos de anúncios",
+        "fotos de encenação virtual"
       ],
-      "description": "Comprehensive enhancement solutions specifically designed for real estate photography, including interior shots, exterior photos, aerial photography, and virtual staging. Our AI-powered tools help real estate professionals create stunning property listings that stand out in competitive markets.",
+      "description": "Soluções abrangentes de aprimoramento projetadas especificamente para fotografia imobiliária, incluindo fotos internas, externas, fotografia aérea e encenação virtual. Nossas ferramentas baseadas em IA ajudam profissionais do setor imobiliário a criar anúncios de propriedades impressionantes que se destacam em mercados competitivos.",
       "useCases": [
-        "Interior room enhancement for optimal lighting and space perception",
-        "Exterior property photos with sky replacement and landscaping enhancement",
-        "Virtual staging for empty properties and furniture placement",
-        "Aerial photography enhancement for property boundaries and features",
-        "Twilight photography creation from day shots",
-        "HDR processing for challenging lighting situations"
+        "Aprimoramento de ambientes internos para iluminação e percepção de espaço ideais",
+        "Fotos externas de propriedades com substituição de céu e melhoria de paisagismo",
+        "Encenação virtual para propriedades vazias e colocação de móveis",
+        "Aprimoramento de fotografia aérea para limites e características da propriedade",
+        "Criação de fotografia crepuscular a partir de fotos diurnas",
+        "Processamento HDR para situações de iluminação desafiadoras"
       ],
       "benefits": [
-        "75% increase in listing engagement rates",
-        "40% reduction in time-on-market for enhanced listings",
-        "Professional-grade results without photography expertise",
-        "Consistent quality across entire property portfolios",
-        "Cost-effective alternative to professional photographers",
-        "Automated workflow for bulk property processing"
+        "Aumento de 75% nas taxas de engajamento dos anúncios",
+        "Redução de 40% no tempo de mercado para anúncios aprimorados",
+        "Resultados de nível profissional sem a necessidade de perícia em fotografia",
+        "Qualidade consistente em todo o portfólio de propriedades",
+        "Alternativa econômica aos fotógrafos profissionais",
+        "Fluxo de trabalho automatizado para processamento de propriedades em lote"
       ],
       "workflow": [
-        "Upload original property photos (JPEG, RAW, or drone imagery)",
-        "Select enhancement type: Interior, Exterior, Aerial, or Virtual Staging",
-        "Customize settings: brightness, contrast, saturation, sharpness",
-        "Process with AI algorithms trained on real estate photography",
-        "Review and download enhanced images in web-ready formats",
-        "Optional: Apply brand watermark and metadata for MLS compliance"
+        "Faça o upload das fotos originais da propriedade (JPEG, RAW ou imagens de drone)",
+        "Selecione o tipo de aprimoramento: Interior, Exterior, Aéreo ou Encenação Virtual",
+        "Personalize as configurações: brilho, contraste, saturação, nitidez",
+        "Processe com algoritmos de IA treinados em fotografia imobiliária",
+        "Revise e baixe as imagens aprimoradas em formatos prontos para a web",
+        "Opcional: Aplique marca d'água da marca e metadados para conformidade com o MLS"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "TIFF",
-          "RAW",
-          "HEIC",
-          "DNG"
-        ],
-        "maxResolution": "Up to 100MP for professional real estate cameras",
+        "supportedFormats": ["JPEG", "PNG", "TIFF", "RAW", "HEIC", "DNG"],
+        "maxResolution": "Até 100MP para câmeras imobiliárias profissionais",
         "outputFormats": [
-          "JPEG (web-optimized)",
-          "PNG (print-ready)",
-          "TIFF (high-res)"
+          "JPEG (otimizado para web)",
+          "PNG (pronto para impressão)",
+          "TIFF (alta resolução)"
         ],
-        "batchProcessing": "Up to 500 property photos per batch",
-        "turnaroundTime": "30-60 seconds per image"
+        "batchProcessing": "Até 500 fotos de propriedades por lote",
+        "turnaroundTime": "30-60 segundos por imagem"
       },
       "caseStudies": [
         {
-          "title": "Luxury Real Estate Agency Success",
-          "description": "High-end real estate agency increased listing views by 180% and reduced time-on-market by 45 days after implementing AI enhancement for all property photos.",
-          "metrics": "2.5x ROI within first quarter, 300+ properties enhanced monthly"
+          "title": "Sucesso de Agência Imobiliária de Luxo",
+          "description": "Uma agência imobiliária de alto padrão aumentou as visualizações de anúncios em 180% e reduziu o tempo de mercado em 45 dias após implementar o aprimoramento por IA para todas as fotos de propriedades.",
+          "metrics": "ROI de 2,5x no primeiro trimestre, mais de 300 propriedades aprimoradas mensalmente"
         },
         {
-          "title": "Property Management Company Transformation",
-          "description": "Nationwide property management company standardized photo quality across 5000+ listings, resulting in increased tenant applications and higher rental rates.",
-          "metrics": "35% increase in qualified leads, consistent brand presentation"
+          "title": "Transformação de Empresa de Gestão de Propriedades",
+          "description": "Uma empresa nacional de gestão de propriedades padronizou a qualidade das fotos em mais de 5.000 anúncios, resultando em um aumento nas solicitações de inquilinos e taxas de aluguel mais altas.",
+          "metrics": "Aumento de 35% em leads qualificados, apresentação de marca consistente"
         }
       ],
       "bestPractices": [
-        "Capture photos during optimal daylight conditions for best enhancement results",
-        "Use RAW format when possible for maximum enhancement flexibility",
-        "Apply consistent enhancement settings across all property photos",
-        "Maintain realistic representation - avoid over-enhancement",
-        "Include before/after examples in marketing materials",
-        "Ensure MLS compliance with enhancement and disclosure requirements"
+        "Capture fotos durante condições ideais de luz do dia para os melhores resultados de aprimoramento",
+        "Use o formato RAW quando possível para máxima flexibilidade de aprimoramento",
+        "Aplique configurações de aprimoramento consistentes em todas as fotos da propriedade",
+        "Mantenha uma representação realista - evite o excesso de aprimoramento",
+        "Inclua exemplos de antes/depois nos materiais de marketing",
+        "Garanta a conformidade com o MLS em relação aos requisitos de aprimoramento e divulgação"
       ],
       "softwareRecommendations": {
-        "professionalTools": [
-          "Adobe Lightroom Classic",
-          "Capture One",
-          "Phase One"
-        ],
-        "aiEnhancement": [
-          "MyImageUpscaler",
-          "Adobe Photoshop Neural Filters",
-          "Topaz Labs"
-        ],
-        "virtualStaging": [
-          "BoxBrownie",
-          "Virtual Staging Solutions",
-          "roOomy"
-        ],
-        "droneProcessing": [
-          "DroneDeploy",
-          "Pix4Dmapper",
-          "DJI Terra"
-        ]
+        "professionalTools": ["Adobe Lightroom Classic", "Capture One", "Phase One"],
+        "aiEnhancement": ["MyImageUpscaler", "Adobe Photoshop Neural Filters", "Topaz Labs"],
+        "virtualStaging": ["BoxBrownie", "Virtual Staging Solutions", "roOomy"],
+        "droneProcessing": ["DroneDeploy", "Pix4Dmapper", "DJI Terra"]
       },
       "fileSizeGuidelines": {
-        "webListings": "Under 500KB for fast loading",
-        "printBrochures": "2-5MB for high-quality printing",
-        "virtualTours": "1-2MB for zoom and pan functionality",
-        "mlsSubmissions": "Follow specific MLS requirements (typically under 10MB)"
+        "webListings": "Abaixo de 500KB para carregamento rápido",
+        "printBrochures": "2-5MB para impressão de alta qualidade",
+        "virtualTours": "1-2MB para funcionalidade de zoom e panorâmica",
+        "mlsSubmissions": "Siga os requisitos específicos do MLS (normalmente abaixo de 10MB)"
       },
       "faqs": [
         {
-          "question": "Is AI enhancement allowed by MLS regulations?",
-          "answer": "Most MLS systems allow enhancement as long as it doesn't misrepresent the property. Avoid removing permanent features, adding non-existent elements, or making unrealistic changes. Always disclose virtual staging."
+          "question": "O aprimoramento por IA é permitido pelas regulamentações do MLS?",
+          "answer": "A maioria dos sistemas MLS permite o aprimoramento, desde que não deturpe a propriedade. Evite remover características permanentes, adicionar elementos inexistentes ou fazer mudanças irrealistas. Sempre divulgue a encenação virtual."
         },
         {
-          "question": "Can you enhance photos taken with smartphone cameras?",
-          "answer": "Yes! Our AI is specifically trained to enhance smartphone photos, improving clarity, lighting, and composition to near-professional quality. Perfect for quick property updates and walkthrough recordings."
+          "question": "É possível aprimorar fotos tiradas com câmeras de smartphones?",
+          "answer": "Sim! Nossa IA é especificamente treinada para aprimorar fotos de smartphones, melhorando a clareza, a iluminação e a composição para uma qualidade quase profissional. Perfeito para atualizações rápidas de propriedades e gravações de visitas guiadas."
         },
         {
-          "question": "How do you handle challenging lighting situations?",
-          "answer": "Our AI algorithms excel at correcting common lighting issues in real estate photography, including dark rooms, blown-out windows, and mixed lighting conditions. We can also create HDR-like effects from single exposures."
+          "question": "Como vocês lidam com situações de iluminação desafiadoras?",
+          "answer": "Nossos algoritmos de IA são excelentes na correção de problemas comuns de iluminação em fotografia imobiliária, incluindo salas escuras, janelas superexpostas e condições de iluminação mista. Também podemos criar efeitos semelhantes ao HDR a partir de exposições únicas."
         },
         {
-          "question": "What's the difference between virtual staging and photo enhancement?",
-          "answer": "Photo enhancement improves existing photos of empty or furnished spaces, while virtual staging adds digital furniture and decor to empty rooms. Both can be combined for maximum impact."
+          "question": "Qual é a diferença entre encenação virtual e aprimoramento de fotos?",
+          "answer": "O aprimoramento de fotos melhora fotos existentes de espaços vazios ou mobiliados, enquanto a encenação virtual adiciona móveis e decoração digitais a salas vazias. Ambos podem ser combinados para o máximo impacto."
         },
         {
-          "question": "Can you batch process entire property portfolios?",
-          "answer": "Yes, our batch processing can handle hundreds of property photos simultaneously, applying consistent enhancement settings across your entire portfolio for brand consistency."
+          "question": "É possível processar em lote portfólios inteiros de propriedades?",
+          "answer": "Sim, nosso processamento em lote pode lidar com centenas de fotos de propriedades simultaneamente, aplicando configurações de aprimoramento consistentes em todo o seu portfólio para consistência da marca."
         },
         {
-          "question": "How do you ensure realistic enhancement results?",
-          "answer": "Our AI is trained on millions of professional real estate photos and includes safeguards to prevent over-enhancement. We focus on improving clarity, lighting, and color while maintaining natural appearance."
+          "question": "Como vocês garantem resultados de aprimoramento realistas?",
+          "answer": "Nossa IA é treinada em milhões de fotos imobiliárias profissionais e inclui salvaguardas para evitar o excesso de aprimoramento. Focamos em melhorar a clareza, a iluminação e a cor, mantendo uma aparência natural."
         }
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Enhance Your Property Photos",
+      "ctaText": "Aprimore Suas Fotos de Propriedades",
       "ctaUrl": "/?signup=1"
     },
     {
       "slug": "product-photography-enhancement",
-      "title": "Product Photography Enhancement",
-      "metaTitle": "Product Photography Enhancement | MyImageUpscaler",
-      "metaDescription": "professional product photo enhancement for e-commerce. Increase conversion rates with AI-powered background removal, lighting correction, and product image optimization.",
-      "h1": "Product Photography Enhancement",
+      "title": "Aprimoramento de Fotografia de Produto",
+      "metaTitle": "Aprimoramento de Fotografia de Produto | MyImageUpscaler",
+      "metaDescription": "Aprimoramento profissional de fotos de produtos para e-commerce. Aumente as taxas de conversão com remoção de fundo por IA, correção de iluminação e otimização de imagem de produto.",
+      "h1": "Aprimoramento de Fotografia de Produto",
       "category": "use-cases",
-      "intro": "Transform ordinary product photos into professional, conversion-optimized images that drive sales and enhance brand perception across all e-commerce platforms.",
-      "primaryKeyword": "product photography enhancement",
+      "intro": "Transforme fotos comuns de produtos em imagens profissionais e otimizadas para conversão que impulsionam as vendas e melhoram a percepção da marca em todas as plataformas de e-commerce.",
+      "primaryKeyword": "aprimoramento de fotografia de produto",
       "secondaryKeywords": [
-        "e-commerce product photos",
-        "product image editing",
-        "background removal",
-        "product photo optimization"
+        "fotos de produtos para e-commerce",
+        "edição de imagem de produto",
+        "remoção de fundo",
+        "otimização de foto de produto"
       ],
-      "description": "Comprehensive product photography enhancement solutions designed specifically for e-commerce success. From background removal and lighting correction to color accuracy and detail enhancement, our AI-powered tools ensure your products look their best across all platforms and devices.",
+      "description": "Soluções abrangentes de aprimoramento de fotografia de produtos projetadas especificamente para o sucesso do e-commerce. Desde a remoção de fundo e correção de iluminação até a precisão de cores e aprimoramento de detalhes, nossas ferramentas baseadas em IA garantem que seus produtos tenham a melhor aparência em todas as plataformas e dispositivos.",
       "useCases": [
-        "Background removal and replacement for consistent brand presentation",
-        "Lighting correction and shadow enhancement for product depth",
-        "Color accuracy optimization for true-to-life product representation",
-        "Detail enhancement showing textures, materials, and craftsmanship",
-        "Multi-angle product photo optimization for 360° views",
-        "Lifestyle product photo enhancement for social media marketing"
+        "Remoção e substituição de fundo para uma apresentação de marca consistente",
+        "Correção de iluminação e aprimoramento de sombras para profundidade do produto",
+        "Otimização da precisão de cores para uma representação fiel do produto",
+        "Aprimoramento de detalhes mostrando texturas, materiais e acabamento",
+        "Otimização de fotos de produtos em vários ângulos para visualizações em 360°",
+        "Aprimoramento de fotos de produtos em estilo de vida para marketing em redes sociais"
       ],
       "benefits": [
-        "65% increase in conversion rates for enhanced product photos",
-        "85% reduction in product return rates due to accurate representation",
-        "Professional studio quality without expensive equipment",
-        "Consistent brand presentation across all product lines",
-        "Automated workflow for large product catalogs",
-        "Platform-specific optimization (Amazon, Shopify, eBay, social media)"
+        "Aumento de 65% nas taxas de conversão para fotos de produtos aprimoradas",
+        "Redução de 85% nas taxas de devolução de produtos devido à representação precisa",
+        "Qualidade de estúdio profissional sem equipamentos caros",
+        "Apresentação de marca consistente em todas as linhas de produtos",
+        "Fluxo de trabalho automatizado para grandes catálogos de produtos",
+        "Otimização específica da plataforma (Amazon, Shopify, eBay, redes sociais)"
       ],
       "workflow": [
-        "Upload original product photos or packshots",
-        "Select enhancement type: Background removal, Lighting correction, or Complete enhancement",
-        "Choose output specifications: platform requirements, size, format",
-        "Optional: Add brand colors, logo watermark, or custom backgrounds",
-        "Process with AI trained on e-commerce photography best practices",
-        "Download platform-ready images with proper metadata and naming"
+        "Faça o upload das fotos originais dos produtos ou fotos de embalagem",
+        "Selecione o tipo de aprimoramento: Remoção de fundo, Correção de iluminação ou Aprimoramento completo",
+        "Escolha as especificações de saída: requisitos da plataforma, tamanho, formato",
+        "Opcional: Adicione cores da marca, marca d'água com logotipo ou fundos personalizados",
+        "Processe com IA treinada nas melhores práticas de fotografia de e-commerce",
+        "Baixe imagens prontas para a plataforma com metadados e nomes adequados"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "TIFF",
-          "RAW",
-          "HEIC"
-        ],
-        "maxResolution": "Up to 50MP for professional product photography",
-        "outputFormats": [
-          "JPEG (web-optimized)",
-          "PNG (transparent)",
-          "TIFF (print)"
-        ],
-        "batchProcessing": "Up to 1000 product images per batch",
-        "platformSupport": [
-          "Amazon",
-          "Shopify",
-          "eBay",
-          "Etsy",
-          "Walmart",
-          "Social Media"
-        ]
+        "supportedFormats": ["JPEG", "PNG", "TIFF", "RAW", "HEIC"],
+        "maxResolution": "Até 50MP para fotografia de produto profissional",
+        "outputFormats": ["JPEG (otimizado para web)", "PNG (transparente)", "TIFF (impressão)"],
+        "batchProcessing": "Até 1.000 imagens de produtos por lote",
+        "platformSupport": ["Amazon", "Shopify", "eBay", "Etsy", "Walmart", "Redes Sociais"]
       },
       "caseStudies": [
         {
-          "title": "Fashion E-commerce Brand Success",
-          "description": "Online fashion retailer implemented AI product enhancement across 5000+ SKUs, resulting in 180% increase in conversion rates and 40% reduction in return rates.",
-          "metrics": "3x ROI within 2 months, 99.8% customer satisfaction with product accuracy"
+          "title": "Sucesso de Marca de E-commerce de Moda",
+          "description": "Uma varejista de moda online implementou o aprimoramento de produto por IA em mais de 5.000 SKUs, resultando em um aumento de 180% nas taxas de conversão e uma redução de 40% nas taxas de devolução.",
+          "metrics": "ROI de 3x em 2 meses, 99,8% de satisfação do cliente com a precisão do produto"
         },
         {
-          "title": "Electronics Marketplace Optimization",
-          "description": "Electronics marketplace enhanced 10000+ product listings with AI optimization, achieving 120% increase in click-through rates and higher average order values.",
-          "metrics": "2.8x ROI, consistent quality across diverse product categories"
+          "title": "Otimização de Marketplace de Eletrônicos",
+          "description": "Um marketplace de eletrônicos aprimorou mais de 10.000 anúncios de produtos com otimização por IA, alcançando um aumento de 120% nas taxas de cliques e valores médios de pedido mais altos.",
+          "metrics": "ROI de 2,8x, qualidade consistente em diversas categorias de produtos"
         }
       ],
       "bestPractices": [
-        "Use consistent lighting and background for all product photos",
-        "Capture multiple angles and details for comprehensive enhancement",
-        "Maintain true-to-life colors - avoid over-saturation",
-        "Follow platform-specific guidelines for image requirements",
-        "Use high-resolution source images for best enhancement results",
-        "Test enhanced images across different devices and platforms"
+        "Use iluminação e fundo consistentes para todas as fotos de produtos",
+        "Capture vários ângulos e detalhes para um aprimoramento abrangente",
+        "Mantenha cores fiéis à realidade - evite a supersaturação",
+        "Siga as diretrizes específicas da plataforma para os requisitos de imagem",
+        "Use imagens de origem de alta resolução para os melhores resultados de aprimoramento",
+        "Teste as imagens aprimoradas em diferentes dispositivos e plataformas"
       ],
       "softwareRecommendations": {
-        "professionalTools": [
-          "Adobe Photoshop",
-          "Capture One",
-          "Phase One"
-        ],
-        "ecommerceTools": [
-          "MyImageUpscaler",
-          "Remove.bg",
-          "Pixelcut",
-          "Canva Pro"
-        ],
+        "professionalTools": ["Adobe Photoshop", "Capture One", "Phase One"],
+        "ecommerceTools": ["MyImageUpscaler", "Remove.bg", "Pixelcut", "Canva Pro"],
         "platformSpecific": [
           "Amazon Product Imaging",
           "Shopify Image Editor",
           "eBay Photo Services"
         ],
-        "batchProcessing": [
-          "Adobe Lightroom",
-          "Bridge",
-          "Automated Workflows"
-        ]
+        "batchProcessing": ["Adobe Lightroom", "Bridge", "Fluxos de Trabalho Automatizados"]
       },
       "fileSizeGuidelines": {
-        "webOptimized": "100-300KB for fast loading",
-        "highQuality": "500KB-2MB for zoom and detail views",
-        "printCatalogs": "5-10MB for catalog printing",
-        "socialMedia": "500KB-1MB for social media platforms"
+        "webOptimized": "100-300KB para carregamento rápido",
+        "highQuality": "500KB-2MB para visualizações de zoom e detalhes",
+        "printCatalogs": "5-10MB para impressão de catálogos",
+        "socialMedia": "500KB-1MB para plataformas de redes sociais"
       },
       "faqs": [
         {
-          "question": "Can AI enhancement replace professional product photography?",
-          "answer": "AI enhancement significantly improves product photos and can achieve professional results, especially for e-commerce. However, for high-end campaigns and large-scale advertising, professional photography combined with AI enhancement delivers optimal results."
+          "question": "O aprimoramento por IA pode substituir a fotografia de produto profissional?",
+          "answer": "O aprimoramento por IA melhora significativamente as fotos de produtos e pode alcançar resultados profissionais, especialmente para e-commerce. No entanto, para campanhas de alto padrão e publicidade em larga escala, a fotografia profissional combinada com o aprimoramento por IA oferece resultados ideais."
         },
         {
-          "question": "How do you ensure color accuracy across different devices?",
-          "answer": "Our AI includes advanced color calibration algorithms that optimize for sRGB web standards while maintaining true-to-life product colors. We also provide device-specific optimization for consistent appearance across all platforms."
+          "question": "Como vocês garantem a precisão das cores em diferentes dispositivos?",
+          "answer": "Nossa IA inclui algoritmos avançados de calibração de cores que otimizam para os padrões web sRGB, mantendo as cores reais dos produtos. Também fornecemos otimização específica para dispositivos para uma aparência consistente em todas as plataformas."
         },
         {
-          "question": "Can you remove backgrounds automatically?",
-          "answer": "Yes, our AI background removal is 99.9% accurate for most products, including complex items like jewelry, clothing, and transparent objects. Manual refinement options are available for challenging cases."
+          "question": "Vocês conseguem remover fundos automaticamente?",
+          "answer": "Sim, nossa remoção de fundo por IA é 99,9% precisa para a maioria dos produtos, incluindo itens complexos como joias, roupas e objetos transparentes. Opções de refinamento manual estão disponíveis para casos desafiadores."
         },
         {
-          "question": "What file formats work best for e-commerce platforms?",
-          "answer": "JPEG is best for most e-commerce platforms due to small file size and universal compatibility. PNG is preferred for transparent backgrounds. We optimize each format for the specific platform's requirements."
+          "question": "Quais formatos de arquivo funcionam melhor para plataformas de e-commerce?",
+          "answer": "O JPEG é o melhor para a maioria das plataformas de e-commerce devido ao tamanho pequeno do arquivo e à compatibilidade universal. O PNG é preferido para fundos transparentes. Otimizamos cada formato para os requisitos específicos da plataforma."
         },
         {
-          "question": "How do you handle reflective and transparent products?",
-          "answer": "Our AI includes specialized algorithms for handling reflective surfaces, glass, and transparent materials. It can reduce glare, enhance clarity, and maintain product transparency while improving overall image quality."
+          "question": "Como vocês lidam com produtos reflexivos e transparentes?",
+          "answer": "Nossa IA inclui algoritmos especializados para lidar com superfícies reflexivas, vidro e materiais transparentes. Ela pode reduzir o brilho, melhorar a clareza e manter a transparência do produto enquanto melhora a qualidade geral da imagem."
         },
         {
-          "question": "Can you maintain brand consistency across enhanced images?",
-          "answer": "Yes, we can apply brand-specific enhancement profiles, color grading, and style guidelines to ensure all product photos maintain consistent brand appearance across your entire catalog."
+          "question": "Vocês conseguem manter a consistência da marca nas imagens aprimoradas?",
+          "answer": "Sim, podemos aplicar perfis de aprimoramento específicos da marca, gradação de cores e diretrizes de estilo para garantir que todas as fotos de produtos mantenham uma aparência de marca consistente em todo o seu catálogo."
         }
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Enhance Your Product Photos",
+      "ctaText": "Aprimore Suas Fotos de Produtos",
       "ctaUrl": "/?signup=1"
     },
     {
       "slug": "medical-scientific-imaging",
-      "title": "Medical & Scientific Image Enhancement",
-      "metaTitle": "Medical & Scientific Image Enhancement | MyImageUpscaler",
-      "metaDescription": "professional medical and scientific image enhancement with AI. Improve X-ray, MRI, CT scans, microscopy images, and research photography for better analysis and diagnosis.",
-      "h1": "Medical & Scientific Image Enhancement",
+      "title": "Aprimoramento de Imagens Médicas e Científicas",
+      "metaTitle": "Aprimoramento de Imagens Médicas e Científicas | MyImageUpscaler",
+      "metaDescription": "Aprimoramento profissional de imagens médicas e científicas com IA. Melhore radiografias, ressonâncias magnéticas, tomografias computadorizadas, imagens de microscopia e fotografia de pesquisa para melhor análise e diagnóstico.",
+      "h1": "Aprimoramento de Imagens Médicas e Científicas",
       "category": "use-cases",
-      "intro": "Advanced AI-powered image enhancement specifically designed for medical and scientific applications, improving clarity, contrast, and detAIl while mAIntAIning diagnostic accuracy and research integrity.",
-      "primaryKeyword": "medical scientific image enhancement",
+      "intro": "Aprimoramento de imagem avançado baseado em IA, especificamente projetado para aplicações médicas e científicas, melhorando a clareza, o contraste e os detalhes, mantendo a precisão diagnóstica e a integridade da pesquisa.",
+      "primaryKeyword": "aprimoramento de imagem médica científica",
       "secondaryKeywords": [
-        "medical image processing",
-        "scientific imaging",
-        "research photo enhancement",
-        "medical diagnosis images"
+        "processamento de imagem médica",
+        "imagem científica",
+        "aprimoramento de foto de pesquisa",
+        "imagens de diagnóstico médico"
       ],
-      "description": "Specialized image enhancement solutions for medical professionals, researchers, and scientists. Our AI algorithms are trained to enhance medical imaging (X-rays, MRI, CT scans), microscopy images, and scientific photographs while preserving diagnostic accuracy and maintaining scientific integrity.",
+      "description": "Soluções especializadas de aprimoramento de imagem para profissionais médicos, pesquisadores e cientistas. Nossos algoritmos de IA são treinados para aprimorar imagens médicas (radiografias, ressonâncias magnéticas, tomografias computadorizadas), imagens de microscopia e fotografias científicas, preservando a precisão diagnóstica e mantendo a integridade científica.",
       "useCases": [
-        "Medical imaging enhancement for X-rays, MRI, and CT scans",
-        "Microscopy image enhancement for research and diagnostics",
-        "Scientific photography enhancement for publications and presentations",
-        "Historical medical document preservation and enhancement",
-        "Telemedicine image optimization for remote consultations",
-        "Educational medical imaging enhancement for teaching materials"
+        "Aprimoramento de imagens médicas para radiografias, ressonâncias magnéticas e tomografias",
+        "Aprimoramento de imagens de microscopia para pesquisa e diagnóstico",
+        "Aprimoramento de fotografias científicas para publicações e apresentações",
+        "Preservação e aprimoramento de documentos médicos históricos",
+        "Otimização de imagens de telemedicina para consultas remotas",
+        "Aprimoramento educacional de imagens médicas para materiais de ensino"
       ],
       "benefits": [
-        "Improved diagnostic accuracy with enhanced image clarity",
-        "90% reduction in image processing time for researchers",
-        "Publication-ready images for scientific journals",
-        "HIPAA-compliant processing for medical images",
-        "Preservation of historical medical documents and photographs",
-        "Enhanced educational materials for medical training"
+        "Melhoria na precisão diagnóstica com clareza de imagem aprimorada",
+        "Redução de 90% no tempo de processamento de imagem para pesquisadores",
+        "Imagens prontas para publicação em revistas científicas",
+        "Processamento em conformidade com a HIPAA para imagens médicas",
+        "Preservação de documentos e fotografias médicas históricas",
+        "Materiais educacionais aprimorados para treinamento médico"
       ],
       "workflow": [
-        "Upload medical or scientific images (DICOM, JPEG, TIFF, RAW)",
-        "Select imaging type: Medical (X-ray, MRI, CT), Microscopy, or Scientific photography",
-        "Choose enhancement focus: Contrast, clarity, noise reduction, or comprehensive",
-        "Apply specialized AI algorithms trained for medical/scientific imaging",
-        "Review enhanced images with before/after comparison tools",
-        "Export in appropriate formats for publications, presentations, or analysis"
+        "Faça o upload de imagens médicas ou científicas (DICOM, JPEG, TIFF, RAW)",
+        "Selecione o tipo de imagem: Médica (radiografia, ressonância, tomografia), Microscopia ou Fotografia científica",
+        "Escolha o foco do aprimoramento: Contraste, clareza, redução de ruído ou abrangente",
+        "Aplique algoritmos de IA especializados treinados para imagens médicas/científicas",
+        "Revise as imagens aprimoradas com ferramentas de comparação antes/depois",
+        "Exporte em formatos apropriados para publicações, apresentações ou análises"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "DICOM",
-          "JPEG",
-          "TIFF",
-          "PNG",
-          "RAW",
-          "BMP"
-        ],
-        "maxResolution": "Unlimited for medical imaging and scientific photography",
+        "supportedFormats": ["DICOM", "JPEG", "TIFF", "PNG", "RAW", "BMP"],
+        "maxResolution": "Ilimitada para imagens médicas e fotografia científica",
         "outputFormats": [
-          "TIFF (high-res)",
-          "JPEG (presentation)",
+          "TIFF (alta resolução)",
+          "JPEG (apresentação)",
           "PNG (web)",
-          "DICOM (medical)"
+          "DICOM (médico)"
         ],
-        "batchProcessing": "Up to 1000 images for research datasets",
-        "compliance": [
-          "HIPAA compliant",
-          "FDA registered",
-          "ISO 13485 certified"
-        ]
+        "batchProcessing": "Até 1.000 imagens para conjuntos de dados de pesquisa",
+        "compliance": ["Compatível com HIPAA", "Registrado no FDA", "Certificado ISO 13485"]
       },
       "caseStudies": [
         {
-          "title": "Medical Research Laboratory Efficiency",
-          "description": "Research laboratory implemented AI enhancement for microscopy images, reducing image processing time by 85% and improving publication acceptance rates by 45%.",
-          "metrics": "300+ research publications supported, 99.9% accuracy maintained"
+          "title": "Eficiência de Laboratório de Pesquisa Médica",
+          "description": "Um laboratório de pesquisa implementou o aprimoramento por IA para imagens de microscopia, reduzindo o tempo de processamento de imagem em 85% e melhorando as taxas de aceitação de publicações em 45%.",
+          "metrics": "Mais de 300 publicações de pesquisa apoiadas, precisão de 99,9% mantida"
         },
         {
-          "title": "Telemedicine Platform Integration",
-          "description": "Telemedicine platform integrated AI enhancement for remote consultations, improving diagnostic confidence by 40% and reducing referral rates by 30%.",
-          "metrics": "50000+ patient consultations enhanced, HIPAA compliant processing"
+          "title": "Integração de Plataforma de Telemedicina",
+          "description": "Uma plataforma de telemedicina integrou o aprimoramento por IA para consultas remotas, melhorando a confiança diagnóstica em 40% e reduzindo as taxas de encaminhamento em 30%.",
+          "metrics": "Mais de 50.000 consultas de pacientes aprimoradas, processamento compatível com a HIPAA"
         }
       ],
       "bestPractices": [
-        "Always maintain original image integrity for diagnostic purposes",
-        "Use enhancement as an aid, not replacement for professional analysis",
-        "Follow institutional guidelines for medical image processing",
-        "Validate enhanced results with medical professionals",
-        "Maintain patient privacy and data security (HIPAA compliance)",
-        "Document enhancement parameters for research reproducibility"
+        "Sempre mantenha a integridade da imagem original para fins diagnósticos",
+        "Use o aprimoramento como um auxílio, não como substituto para a análise profissional",
+        "Siga as diretrizes institucionais para o processamento de imagens médicas",
+        "Valide os resultados aprimorados com profissionais médicos",
+        "Mantenha a privacidade do paciente e a segurança dos dados (conformidade com HIPAA)",
+        "Documente os parâmetros de aprimoramento para reprodutibilidade da pesquisa"
       ],
       "softwareRecommendations": {
-        "medicalImaging": [
-          "ImageJ",
-          "3D Slicer",
-          "OsiriX",
-          "RadiAnt DICOM Viewer"
-        ],
-        "microscopy": [
-          "Fiji",
-          "CellProfiler",
-          "Imaris",
-          "NIS-Elements"
-        ],
-        "scientificImaging": [
-          "MyImageUpscaler",
-          "Adobe Photoshop",
-          "GIMP"
-        ],
-        "researchTools": [
-          "MATLAB",
-          "Python (OpenCV, scikit-image)",
-          "R (imager package)"
-        ]
+        "medicalImaging": ["ImageJ", "3D Slicer", "OsiriX", "RadiAnt DICOM Viewer"],
+        "microscopy": ["Fiji", "CellProfiler", "Imaris", "NIS-Elements"],
+        "scientificImaging": ["MyImageUpscaler", "Adobe Photoshop", "GIMP"],
+        "researchTools": ["MATLAB", "Python (OpenCV, scikit-image)", "R (pacote imager)"]
       },
       "fileSizeGuidelines": {
-        "medicalImaging": "Original size for diagnostic accuracy",
-        "publications": "300-600 DPI for journal requirements",
-        "presentations": "150-300 DPI for PowerPoint/presentations",
-        "educational": "72-150 DPI for web-based materials"
+        "medicalImaging": "Tamanho original para precisão diagnóstica",
+        "publications": "300-600 DPI para requisitos de revistas",
+        "presentations": "150-300 DPI para PowerPoint/apresentações",
+        "educational": "72-150 DPI para materiais baseados na web"
       },
       "faqs": [
         {
-          "question": "Is AI-enhanced medical imaging suitable for diagnosis?",
-          "answer": "AI enhancement is designed to improve visualization for trained medical professionals but should never replace professional medical diagnosis. Always consult qualified healthcare providers for medical interpretation."
+          "question": "As imagens médicas aprimoradas por IA são adequadas para diagnóstico?",
+          "answer": "O aprimoramento por IA é projetado para melhorar a visualização para profissionais médicos treinados, mas nunca deve substituir o diagnóstico médico profissional. Sempre consulte profissionais de saúde qualificados para interpretação médica."
         },
         {
-          "question": "How do you ensure HIPAA compliance for medical images?",
-          "answer": "We use encrypted connections, secure servers, and do not store medical images longer than necessary for processing. All data is processed in compliance with HIPAA regulations and medical privacy standards."
+          "question": "Como vocês garantem a conformidade com a HIPAA para imagens médicas?",
+          "answer": "Usamos conexões criptografadas, servidores seguros e não armazenamos imagens médicas por mais tempo do que o necessário para o processamento. Todos os dados são processados em conformidade com as regulamentações da HIPAA e os padrões de privacidade médica."
         },
         {
-          "question": "Can you enhance historical medical documents?",
-          "answer": "Yes, our AI can significantly improve old medical photographs, X-rays, and documents while preserving historical accuracy. This is valuable for medical education and archival purposes."
+          "question": "É possível aprimorar documentos médicos históricos?",
+          "answer": "Sim, nossa IA pode melhorar significativamente fotografias médicas antigas, radiografias e documentos, preservando a precisão histórica. Isso é valioso para educação médica e fins de arquivamento."
         },
         {
-          "question": "What microscopy techniques do you support?",
-          "answer": "We support enhancement for light microscopy, electron microscopy, fluorescence microscopy, and confocal microscopy images. Our AI is trained to enhance contrast, reduce noise, and improve clarity across various microscopy techniques."
+          "question": "Quais técnicas de microscopia vocês suportam?",
+          "answer": "Suportamos o aprimoramento para imagens de microscopia óptica, microscopia eletrônica, microscopia de fluorescência e microscopia confocal. Nossa IA é treinada para melhorar o contraste, reduzir o ruído e melhorar a clareza em várias técnicas de microscopia."
         },
         {
-          "question": "Can you process DICOM files?",
-          "answer": "Yes, we can process DICOM files and other medical imaging formats. Our enhancement algorithms are specifically trained to work with medical imaging while preserving diagnostic information."
+          "question": "Vocês conseguem processar arquivos DICOM?",
+          "answer": "Sim, podemos processar arquivos DICOM e outros formatos de imagem médica. Nossos algoritmos de aprimoramento são especificamente treinados para trabalhar com imagens médicas enquanto preservam as informações diagnósticas."
         },
         {
-          "question": "How do you ensure scientific integrity in enhanced images?",
-          "answer": "Our enhancement maintains the original image data and only improves visualization. We provide detailed processing logs and avoid modifications that could misrepresent scientific findings."
+          "question": "Como vocês garantem a integridade científica em imagens aprimoradas?",
+          "answer": "Nosso aprimoramento mantém os dados da imagem original e apenas melhora a visualização. Fornecemos logs de processamento detalhados e evitamos modificações que possam deturpar as descobertas científicas."
         }
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Enhance Medical & Scientific Images",
+      "ctaText": "Aprimore Imagens Médicas e Científicas",
       "ctaUrl": "/?signup=1"
     },
     {
       "slug": "architecture-construction",
-      "title": "Architecture & Construction Imaging",
-      "metaTitle": "Architecture & Construction Imaging | MyImageUpscaler",
-      "metaDescription": "professional architecture and construction photo enhancement. Improve architectural photography, construction progress photos, and building documentation with AI-powered image optimization.",
-      "h1": "Architecture & Construction Imaging",
+      "title": "Imagens de Arquitetura e Construção",
+      "metaTitle": "Imagens de Arquitetura e Construção | MyImageUpscaler",
+      "metaDescription": "Aprimoramento profissional de fotos de arquitetura e construção. Melhore a fotografia arquitetônica, fotos de progresso de construção e documentação de edifícios com otimização de imagem por IA.",
+      "h1": "Imagens de Arquitetura e Construção",
       "category": "use-cases",
-      "intro": "Comprehensive image enhancement solutions for architects, construction professionals, and real estate developers, transforming architectural photography and construction documentation into professional, presentation-ready materials.",
-      "primaryKeyword": "architecture construction photo enhancement",
+      "intro": "Soluções abrangentes de aprimoramento de imagem para arquitetos, profissionais da construção e incorporadores imobiliários, transformando a fotografia arquitetônica e a documentação de construção em materiais profissionais prontos para apresentação.",
+      "primaryKeyword": "aprimoramento de foto de arquitetura construção",
       "secondaryKeywords": [
-        "architectural photography",
-        "construction documentation",
-        "building progress photos",
-        "architectural visualization"
+        "fotografia arquitetônica",
+        "documentação de construção",
+        "fotos de progresso de obras",
+        "visualização arquitetônica"
       ],
-      "description": "Specialized enhancement solutions for architectural photography, construction progress documentation, and building project presentations. Our AI-powered tools improve clarity, lighting, and detail in architectural images while maintaining technical accuracy and professional standards.",
+      "description": "Soluções de aprimoramento especializadas para fotografia arquitetônica, documentação de progresso de construção e apresentações de projetos de edifícios. Nossas ferramentas baseadas em IA melhoram a clareza, a iluminação e os detalhes em imagens arquitetônicas, mantendo a precisão técnica e os padrões profissionais.",
       "useCases": [
-        "Architectural photography enhancement for portfolio and marketing",
-        "Construction progress documentation and monitoring",
-        "Building material and texture enhancement for presentations",
-        "Blueprint and drawing enhancement for client presentations",
-        "Before/after construction comparison photography",
-        "Architectural rendering enhancement and realistic visualization"
+        "Aprimoramento de fotografia arquitetônica para portfólio e marketing",
+        "Documentação e monitoramento do progresso da construção",
+        "Aprimoramento de materiais de construção e texturas para apresentações",
+        "Aprimoramento de plantas e desenhos para apresentações a clientes",
+        "Fotografia de comparação antes/depois da construção",
+        "Aprimoramento de renderização arquitetônica e visualização realista"
       ],
       "benefits": [
-        "Professional architectural photography without expensive equipment",
-        "Clear construction documentation for project management",
-        "Enhanced client presentations with improved visual materials",
-        "Better portfolio materials for architects and designers",
-        "Time-lapse construction photography enhancement",
-        "Consistent quality across all project documentation"
+        "Fotografia arquitetônica profissional sem equipamentos caros",
+        "Documentação de construção clara para gestão de projetos",
+        "Apresentações a clientes aprimoradas com materiais visuais melhorados",
+        "Melhores materiais de portfólio para arquitetos e designers",
+        "Aprimoramento de fotografia de lapso de tempo da construção",
+        "Qualidade consistente em toda a documentação do projeto"
       ],
       "workflow": [
-        "Upload architectural photos or construction documentation",
-        "Select enhancement type: Architecture, Construction progress, or Technical drawings",
-        "Choose focus areas: Building details, site conditions, or overall composition",
-        "Apply AI enhancement optimized for architectural subjects",
-        "Optional: Add weather enhancement or time-of-day adjustment",
-        "Download presentation-ready images with proper scaling and metadata"
+        "Faça o upload de fotos arquitetônicas ou documentação de construção",
+        "Selecione o tipo de aprimoramento: Arquitetura, Progresso da construção ou Desenhos técnicos",
+        "Escolha as áreas de foco: Detalhes do edifício, condições do local ou composição geral",
+        "Aplique o aprimoramento por IA otimizado para temas arquitetônicos",
+        "Opcional: Adicione aprimoramento climático ou ajuste de hora do dia",
+        "Baixe imagens prontas para apresentação com escala e metadados adequados"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "TIFF",
-          "RAW",
-          "PNG",
-          "DNG",
-          "HEIC"
-        ],
-        "maxResolution": "Up to 100MP for professional architectural cameras",
+        "supportedFormats": ["JPEG", "TIFF", "RAW", "PNG", "DNG", "HEIC"],
+        "maxResolution": "Até 100MP para câmeras arquitetônicas profissionais",
         "outputFormats": [
-          "JPEG (presentation)",
-          "TIFF (print)",
+          "JPEG (apresentação)",
+          "TIFF (impressão)",
           "PNG (web)",
-          "PDF (documentation)"
+          "PDF (documentação)"
         ],
-        "batchProcessing": "Up to 500 construction progress photos per batch",
+        "batchProcessing": "Até 500 fotos de progresso de construção por lote",
         "specializedFeatures": [
-          "Perspective correction",
-          "HDR processing",
-          "Detail enhancement"
+          "Correção de perspectiva",
+          "Processamento HDR",
+          "Aprimoramento de detalhes"
         ]
       },
       "caseStudies": [
         {
-          "title": "Architecture Firm Portfolio Enhancement",
-          "description": "Architecture firm enhanced 2000+ project photos for portfolio and marketing materials, resulting in 150% increase in client inquiries and better project presentations.",
-          "metrics": "3x ROI, professional portfolio quality without additional photography costs"
+          "title": "Aprimoramento de Portfólio de Escritório de Arquitetura",
+          "description": "Um escritório de arquitetura aprimorou mais de 2.000 fotos de projetos para portfólio e materiais de marketing, resultando em um aumento de 150% nas consultas de clientes e melhores apresentações de projetos.",
+          "metrics": "ROI de 3x, qualidade de portfólio profissional sem custos adicionais de fotografia"
         },
         {
-          "title": "Construction Company Progress Tracking",
-          "description": "Large construction company implemented enhanced progress photography for 50+ active projects, improving stakeholder communication and reducing on-site meetings by 40%.",
-          "metrics": "2.5x ROI, enhanced project documentation and client satisfaction"
+          "title": "Acompanhamento de Progresso de Empresa de Construção",
+          "description": "Uma grande empresa de construção implementou a fotografia de progresso aprimorada para mais de 50 projetos ativos, melhorando a comunicação com as partes interessadas e reduzindo as reuniões no local em 40%.",
+          "metrics": "ROI de 2,5x, documentação de projeto aprimorada e satisfação do cliente"
         }
       ],
       "bestPractices": [
-        "Capture photos during optimal lighting conditions for best enhancement",
-        "Maintain consistent angles and perspectives for progress photography",
-        "Use proper architectural photography techniques for best results",
-        "Apply enhancement while maintaining realistic building representation",
-        "Document weather and lighting conditions for context",
-        "Ensure accurate color representation for materials and finishes"
+        "Capture fotos durante condições de iluminação ideais para o melhor aprimoramento",
+        "Mantenha ângulos e perspectivas consistentes para a fotografia de progresso",
+        "Use técnicas de fotografia arquitetônica adequadas para os melhores resultados",
+        "Aplique o aprimoramento mantendo uma representação realista do edifício",
+        "Documente as condições climáticas e de iluminação para o contexto",
+        "Garanta uma representação de cores precisa para materiais e acabamentos"
       ],
       "softwareRecommendations": {
-        "architecturalTools": [
-          "AutoCAD",
-          "Revit",
-          "SketchUp",
-          "Lumion"
-        ],
-        "photography": [
-          "Adobe Lightroom",
-          "Capture One",
-          "Phase One"
-        ],
-        "enhancement": [
-          "MyImageUpscaler",
-          "Adobe Photoshop",
-          "Topaz Labs"
-        ],
-        "projectManagement": [
-          "Procore",
-          "PlanGrid",
-          "BIM 360",
-          "CoConstruct"
-        ]
+        "architecturalTools": ["AutoCAD", "Revit", "SketchUp", "Lumion"],
+        "photography": ["Adobe Lightroom", "Capture One", "Phase One"],
+        "enhancement": ["MyImageUpscaler", "Adobe Photoshop", "Topaz Labs"],
+        "projectManagement": ["Procore", "PlanGrid", "BIM 360", "CoConstruct"]
       },
       "fileSizeGuidelines": {
-        "portfolioPrint": "10-20MB for high-quality portfolio printing",
-        "presentations": "2-5MB for client presentations",
-        "webPortfolio": "500KB-2MB for online portfolios",
-        "documentation": "1-3MB for project documentation"
+        "portfolioPrint": "10-20MB para impressão de portfólio de alta qualidade",
+        "presentations": "2-5MB para apresentações a clientes",
+        "webPortfolio": "500KB-2MB para portfólios online",
+        "documentation": "1-3MB para documentação de projetos"
       },
       "faqs": [
         {
-          "question": "Can you enhance photos taken with smartphones for construction sites?",
-          "answer": "Yes! Our AI is excellent at enhancing smartphone photos from construction sites, improving clarity, lighting, and detail to professional standards for documentation and client updates."
+          "question": "É possível aprimorar fotos tiradas com smartphones para canteiros de obras?",
+          "answer": "Sim! Nossa IA é excelente para aprimorar fotos de smartphones de canteiros de obras, melhorando a clareza, a iluminação e os detalhes conforme os padrões profissionais para documentação e atualizações de clientes."
         },
         {
-          "question": "How do you handle different lighting conditions on construction sites?",
-          "answer": "Our AI can correct challenging lighting including harsh sunlight, shadows, indoor lighting, and mixed conditions. We can also create consistent lighting across progress photos taken at different times."
+          "question": "Como vocês lidam com diferentes condições de iluminação em canteiros de obras?",
+          "answer": "Nossa IA pode corrigir iluminação desafiadora, incluindo luz solar intensa, sombras, iluminação interna e condições mistas. Também podemos criar uma iluminação consistente em fotos de progresso tiradas em horários diferentes."
         },
         {
-          "question": "Can you enhance technical drawings and blueprints?",
-          "answer": "Yes, we can enhance technical drawings, blueprints, and construction documents, improving line clarity, text readability, and overall presentation quality for client materials and documentation."
+          "question": "É possível aprimorar desenhos técnicos e plantas?",
+          "answer": "Sim, podemos aprimorar desenhos técnicos, plantas e documentos de construção, melhorando a clareza das linhas, a legibilidade do texto e a qualidade geral da apresentação para materiais de clientes e documentação."
         },
         {
-          "question": "What about drone photography of construction sites?",
-          "answer": "We can enhance aerial drone photography of construction sites, improving site overview, progress documentation, and marketing materials for real estate development projects."
+          "question": "E quanto à fotografia com drone de canteiros de obras?",
+          "answer": "Podemos aprimorar a fotografia aérea com drone de canteiros de obras, melhorando a visão geral do local, a documentação do progresso e os materiais de marketing para projetos de desenvolvimento imobiliário."
         },
         {
-          "question": "How do you maintain accurate building representation?",
-          "answer": "Our enhancement focuses on improving clarity and lighting while maintaining the actual building appearance, materials, and colors. We avoid modifications that could misrepresent the final structure."
+          "question": "Como vocês mantêm uma representação fiel do edifício?",
+          "answer": "Nosso aprimoramento foca em melhorar a clareza e a iluminação enquanto mantém a aparência real do edifício, materiais e cores. Evitamos modificações que possam deturpar a estrutura final."
         },
         {
-          "question": "Can you create before/after comparisons for marketing?",
-          "answer": "Yes, we can enhance both before and after photos to create compelling before/after comparisons for marketing materials, while maintaining realistic representation of the actual improvements."
+          "question": "Vocês conseguem criar comparações antes/depois para marketing?",
+          "answer": "Sim, podemos aprimorar tanto as fotos de antes quanto as de depois para criar comparações atraentes de antes/depois para materiais de marketing, mantendo a representação realista das melhorias reais."
         }
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Enhance Architecture & Construction Photos",
-      "ctaUrl": "/?signup=1"
-    },
-    {
-      "slug": "print-publishing-workflows",
-      "title": "Print & Publishing Image Optimization",
-      "metaTitle": "Print & Publishing Image Optimization | MyImageUpscaler",
-      "metaDescription": "professional image optimization for print and publishing. Enhance book covers, magazine photos, marketing materials, and print publications with AI-powered image upscaling and optimization.",
-      "h1": "Print & Publishing Image Optimization",
-      "category": "use-cases",
-      "intro": "Specialized image enhancement and optimization solutions for print publishing, including books, magazines, marketing materials, and commercial printing, ensuring publication-ready quality at any size.",
-      "primaryKeyword": "print publishing image optimization",
-      "secondaryKeywords": [
-        "print image enhancement",
-        "publishing photo optimization",
-        "commercial printing",
-        "book cover enhancement"
-      ],
-      "description": "Comprehensive image enhancement solutions specifically designed for print publishing workflows. From book covers and magazine layouts to marketing materials and commercial printing, our AI-powered tools ensure your images meet professional printing standards and look their best in any print format.",
-      "useCases": [
-        "Book cover enhancement and optimization for all print sizes",
-        "Magazine and newspaper photo enhancement for publication",
-        "Marketing materials enhancement for brochures and flyers",
-        "Commercial printing optimization for catalogs and direct mail",
-        "Fine art print preparation and gallery-quality enhancement",
-        "Educational textbook and academic publication enhancement"
-      ],
-      "benefits": [
-        "Print-ready quality at any resolution without source limitations",
-        "90% reduction in pre-press image preparation time",
-        "Cost-effective alternative to reshooting for low-resolution images",
-        "Consistent quality across all print materials and formats",
-        "CMYK color space optimization for accurate print reproduction",
-        "Automated workflow for large publishing projects"
-      ],
-      "workflow": [
-        "Upload source images (any resolution or format)",
-        "Select print type and specifications (size, DPI, color space)",
-        "Choose enhancement focus: Resolution, color accuracy, or comprehensive",
-        "Apply AI enhancement optimized for print production standards",
-        "Preview in simulated print conditions with soft-proofing",
-        "Download print-ready files with proper color profiles and metadata"
-      ],
-      "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "TIFF",
-          "PNG",
-          "RAW",
-          "PSD",
-          "HEIC"
-        ],
-        "maxResolution": "Unlimited for print applications",
-        "outputFormats": [
-          "TIFF (CMYK)",
-          "PDF (print-ready)",
-          "JPEG (RGB)",
-          "PSD (layered)"
-        ],
-        "colorSpaces": [
-          "CMYK",
-          "RGB",
-          "Grayscale",
-          "Spot colors"
-        ],
-        "printStandards": [
-          "ISO 12647",
-          "GRACoL",
-          "SWOP",
-          "FOGRA"
-        ]
-      },
-      "caseStudies": [
-        {
-          "title": "Publishing House Workflow Optimization",
-          "description": "Major publishing house implemented AI enhancement for book covers and interior images, reducing pre-press costs by 60% and improving print quality across 500+ annual publications.",
-          "metrics": "4x ROI, 99.5% print quality consistency, faster time-to-market"
-        },
-        {
-          "title": "Magazine Publisher Digital Archive Enhancement",
-          "description": "Magazine publisher enhanced 50,000+ historical images for modern reprinting, creating new revenue streams from archived content with print-ready quality.",
-          "metrics": "250% ROI on archive enhancement project, new product line launches"
-        }
-      ],
-      "bestPractices": [
-        "Always work with the highest quality source available",
-        "Consider final print size and viewing distance when enhancing",
-        "Use appropriate DPI settings (300 for standard print, 600+ for fine art)",
-        "Test enhanced images with actual printing when possible",
-        "Maintain consistent color management across all images",
-        "Consider paper type and printing method in enhancement decisions"
-      ],
-      "softwareRecommendations": {
-        "professionalTools": [
-          "Adobe InDesign",
-          "Adobe Photoshop",
-          "QuarkXPress"
-        ],
-        "prepressTools": [
-          "Adobe Acrobat Pro",
-          "Preflight Tools",
-          "Color Management Software"
-        ],
-        "enhancementTools": [
-          "MyImageUpscaler",
-          "Topaz Labs",
-          "ON1 Resize"
-        ],
-        "colorManagement": [
-          "X-Rite i1Profiler",
-          "Datacolor Spyder",
-          "Pantone Color Manager"
-        ]
-      },
-      "fileSizeGuidelines": {
-        "standardPrint": "10-50MB for high-quality print reproduction",
-        "largeFormat": "100-500MB for posters and banners",
-        "fineArt": "50-200MB for gallery-quality printing",
-        "newsprint": "5-20MB for newspaper reproduction"
-      },
-      "faqs": [
-        {
-          "question": "Can you enhance web images for print publication?",
-          "answer": "Yes! Our AI can upscale web-resolution images (72 DPI) to print-quality (300+ DPI) while maintaining natural appearance. Perfect for using web-sourced images in print publications."
-        },
-        {
-          "question": "How do you handle CMYK color conversion?",
-          "answer": "Our AI includes advanced CMYK conversion algorithms that maintain color accuracy while optimizing for print reproduction. We support various print standards including ISO 12647, GRACoL, and SWOP."
-        },
-        {
-          "question": "What print sizes can you enhance images for?",
-          "answer": "We can enhance images for any print size, from small book covers to large-format posters and banners. Our AI maintains quality regardless of final output dimensions."
-        },
-        {
-          "question": "Can you enhance images for specific paper types?",
-          "answer": "Yes, we can optimize enhancement for different paper types including coated, uncoated, glossy, and textured papers, ensuring optimal reproduction on each surface."
-        },
-        {
-          "question": "How do you ensure consistency across multiple images?",
-          "answer": "We can apply consistent enhancement profiles across multiple images, ensuring uniform appearance, color balance, and quality across entire publications and marketing campaigns."
-        },
-        {
-          "question": "Can you prepare files for commercial printing standards?",
-          "answer": "Absolutely! We prepare files according to commercial printing standards including proper resolution, color profiles, bleed settings, and file formats required by print service providers."
-        }
-      ],
-      "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Optimize Images for Print Publishing",
-      "ctaUrl": "/?signup=1"
-    },
-    {
-      "slug": "social-media-content-creation",
-      "title": "Social Media Content Creation",
-      "metaTitle": "Social Media Content Creation | MyImageUpscaler",
-      "metaDescription": "Professional social media image enhancement for content creators. Optimize photos for Instagram, TikTok, YouTube, Facebook, and all social platforms with AI-powered enhancement.",
-      "h1": "Social Media Content Creation",
-      "category": "use-cases",
-      "intro": "Comprehensive image enhancement solutions specifically designed for social media content creation, ensuring your visual content stands out across all platforms and drives maximum engagement.",
-      "primaryKeyword": "social media content creation enhancement",
-      "secondaryKeywords": [
-        "social media photo enhancement",
-        "content creator tools",
-        "Instagram optimization",
-        "viral content preparation"
-      ],
-      "description": "Professional image enhancement solutions for social media content creators, influencers, and digital marketers. Our AI-powered tools optimize visual content for all major social platforms, improving engagement, reach, and visual appeal while maintaining platform-specific requirements and best practices.",
-      "useCases": [
-        "Instagram post and Stories enhancement for maximum engagement",
-        "YouTube thumbnail optimization for higher click-through rates",
-        "TikTok video cover and content enhancement",
-        "Facebook ad creative optimization for better performance",
-        "LinkedIn professional content enhancement",
-        "Cross-platform content adaptation and optimization"
-      ],
-      "benefits": [
-        "180% increase in social media engagement rates",
-        "Professional-quality content without expensive equipment",
-        "Platform-specific optimization for all major social networks",
-        "Automated workflow for consistent content quality",
-        "A/B testing ready variations for performance optimization",
-        "Time-saving batch processing for content calendars"
-      ],
-      "workflow": [
-        "Upload original photos or video frames",
-        "Select target platform(s) and content type",
-        "Choose enhancement style: Professional, Artistic, or Platform-optimized",
-        "Apply AI enhancement trained on viral content analysis",
-        "Optional: Add text overlays, filters, or branding elements",
-        "Download platform-ready files with proper specifications"
-      ],
-      "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "HEIC",
-          "WebP",
-          "AVIF"
-        ],
-        "platformSupport": [
-          "Instagram",
-          "TikTok",
-          "YouTube",
-          "Facebook",
-          "Twitter",
-          "LinkedIn",
-          "Pinterest"
-        ],
-        "outputFormats": [
-          "Platform-optimized JPEG",
-          "PNG with transparency",
-          "WebP for web"
-        ],
-        "batchProcessing": "Up to 100 content pieces per batch",
-        "performanceOptimization": [
-          "Fast loading",
-          "Mobile-first",
-          "High engagement"
-        ]
-      },
-      "caseStudies": [
-        {
-          "title": "Content Creator Engagement Success",
-          "description": "Lifestyle content creator enhanced all social media content with AI optimization, achieving 300% increase in engagement and 2x follower growth within 3 months.",
-          "metrics": "5x ROI on content creation, consistent viral content performance"
-        },
-        {
-          "title": "Brand Social Media Transformation",
-          "description": "E-commerce brand implemented AI enhancement across all social platforms, resulting in 150% increase in social-driven sales and improved brand perception.",
-          "metrics": "3x ROI, reduced content creation costs by 60%"
-        }
-      ],
-      "bestPractices": [
-        "Maintain consistent brand aesthetic across all platforms",
-        "Optimize for mobile viewing - most social media is mobile-first",
-        "Test different enhancement styles for each platform's audience",
-        "Use platform-specific dimensions and requirements",
-        "Create content variations for A/B testing and optimization",
-        "Stay current with platform trends and algorithm preferences"
-      ],
-      "softwareRecommendations": {
-        "contentCreation": [
-          "Canva Pro",
-          "Adobe Creative Suite",
-          "Figma"
-        ],
-        "enhancementTools": [
-          "MyImageUpscaler",
-          "VSCO",
-          "Adobe Lightroom Mobile"
-        ],
-        "videoEditing": [
-          "CapCut",
-          "Adobe Premiere Pro",
-          "Final Cut Pro"
-        ],
-        "socialManagement": [
-          "Buffer",
-          "Hootsuite",
-          "Later",
-          "Planoly"
-        ]
-      },
-      "fileSizeGuidelines": {
-        "instagramFeed": "500KB-2MB for optimal loading and quality",
-        "storiesContent": "1-5MB for high-quality Stories",
-        "youtubeThumbnails": "2-5MB for HD thumbnail quality",
-        "tiktokContent": "1-3MB for optimal performance"
-      },
-      "faqs": [
-        {
-          "question": "Which social media platforms do you optimize for?",
-          "answer": "We optimize for all major platforms including Instagram, TikTok, YouTube, Facebook, Twitter, LinkedIn, Pinterest, and emerging platforms. Each has specific optimization algorithms."
-        },
-        {
-          "question": "Can you enhance smartphone photos for professional social media?",
-          "answer": "Absolutely! Our AI excels at enhancing smartphone photos to professional social media standards, improving clarity, lighting, and composition for maximum engagement."
-        },
-        {
-          "question": "How do you optimize for different platform algorithms?",
-          "answer": "Our AI analyzes successful content patterns on each platform and optimizes images for algorithm preferences, including engagement factors, trending styles, and platform-specific visual requirements."
-        },
-        {
-          "question": "Can you create content variations for A/B testing?",
-          "answer": "Yes! We can create multiple enhancement variations of the same image, allowing you to test different styles, compositions, and visual approaches to optimize engagement."
-        },
-        {
-          "question": "What about video content and thumbnails?",
-          "answer": "We enhance video thumbnails, cover images, and can even improve video frame quality. Our thumbnail optimization is specifically designed to increase click-through rates."
-        },
-        {
-          "question": "How do you maintain brand consistency across platforms?",
-          "answer": "We can apply brand-specific enhancement profiles, color grading, and style guidelines to ensure consistent brand appearance while adapting to each platform's unique requirements."
-        }
-      ],
-      "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Enhance Your Social Media Content",
-      "ctaUrl": "/?signup=1"
-    },
-    {
-      "slug": "web-design-development",
-      "title": "Web Design & Development Optimization",
-      "metaTitle": "Web Design & Development Optimization | MyImageUpscaler",
-      "metaDescription": "professional image optimization for web design and development. Enhance website images, improve performance, and optimize user experience with AI-powered web image optimization.",
-      "h1": "Web Design & Development Optimization",
-      "category": "use-cases",
-      "intro": "Comprehensive image optimization solutions specifically designed for web design and development, ensuring fast loading, high quality, and responsive performance across all devices and platforms.",
-      "primaryKeyword": "web design image optimization",
-      "secondaryKeywords": [
-        "website image enhancement",
-        "web development optimization",
-        "responsive image optimization",
-        "website performance"
-      ],
-      "description": "Professional image enhancement and optimization solutions for web designers, developers, and digital agencies. Our AI-powered tools optimize images for web performance, responsive design, and user experience while maintaining visual quality and brand consistency.",
-      "useCases": [
-        "Website hero images and banners optimization",
-        "E-commerce product images for web performance",
-        "Responsive image optimization for all devices",
-        "Portfolio and gallery image optimization",
-        "Blog content image enhancement and optimization",
-        "Mobile-first image optimization and performance"
-      ],
-      "benefits": [
-        "70% faster website loading times with optimized images",
-        "Improved SEO rankings with optimized image metadata",
-        "Better user experience with responsive, fast-loading images",
-        "Consistent quality across all devices and screen sizes",
-        "Reduced bandwidth costs with efficient image compression",
-        "Professional web design without image quality limitations"
-      ],
-      "workflow": [
-        "Upload original images (any source or quality)",
-        "Select web usage type: Hero, gallery, product, or general content",
-        "Choose optimization targets: Speed, quality, or balanced approach",
-        "Specify responsive breakpoints and device requirements",
-        "Apply AI web optimization with compression and format selection",
-        "Download optimized images with responsive variants and metadata"
-      ],
-      "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "WebP",
-          "AVIF",
-          "HEIC",
-          "GIF"
-        ],
-        "outputFormats": [
-          "Modern WebP/AVIF",
-          "Fallback JPEG/PNG",
-          "Responsive srcset"
-        ],
-        "optimizationTargets": [
-          "Core Web Vitals",
-          "Lighthouse scores",
-          "Mobile performance"
-        ],
-        "responsiveSupport": [
-          "Multi-device",
-          "Multi-resolution",
-          "Art direction"
-        ],
-        "webStandards": [
-          "W3C",
-          "Google PageSpeed",
-          "GTmetrix optimization"
-        ]
-      },
-      "caseStudies": [
-        {
-          "title": "E-commerce Site Performance Transformation",
-          "description": "Online retail site optimized 10,000+ product images with AI optimization, achieving 60% faster page loads and 35% increase in conversion rates.",
-          "metrics": "4x ROI, improved Core Web Vitals scores, better SEO rankings"
-        },
-        {
-          "title": "Portfolio Website Enhancement",
-          "description": "Design agency optimized portfolio images across all client projects, achieving 80% faster loading times and better client presentation quality.",
-          "metrics": "3x ROI, enhanced client satisfaction, reduced bounce rates"
-        }
-      ],
-      "bestPractices": [
-        "Use modern image formats (WebP, AVIF) with fallbacks for older browsers",
-        "Implement responsive images with appropriate breakpoints",
-        "Optimize for mobile-first design principles",
-        "Balance file size and visual quality for user experience",
-        "Include proper alt text and metadata for SEO",
-        "Test performance across different devices and network conditions"
-      ],
-      "softwareRecommendations": {
-        "designTools": [
-          "Figma",
-          "Sketch",
-          "Adobe XD",
-          "Framer"
-        ],
-        "developmentTools": [
-          "VS Code",
-          "Sublime Text",
-          "WebStorm"
-        ],
-        "optimizationTools": [
-          "MyImageUpscaler",
-          "ImageOptim",
-          "TinyPNG",
-          "Cloudinary"
-        ],
-        "performanceTools": [
-          "Google PageSpeed Insights",
-          "GTmetrix",
-          "WebPageTest"
-        ]
-      },
-      "fileSizeGuidelines": {
-        "heroImages": "500KB-2MB for high-quality hero sections",
-        "contentImages": "100-500KB for general content",
-        "thumbnails": "50-200KB for gallery and grid layouts",
-        "mobileOptimized": "200KB-1MB for mobile-first optimization"
-      },
-      "faqs": [
-        {
-          "question": "What image formats should I use for modern websites?",
-          "answer": "Use WebP or AVIF for modern browsers with JPEG/PNG fallbacks for older browsers. Our AI automatically generates the optimal format mix for maximum compatibility and performance."
-        },
-        {
-          "question": "How do you optimize for Core Web Vitals?",
-          "answer": "Our AI optimizes images specifically for Core Web Vitals including Largest Contentful Paint (LCP), Cumulative Layout Shift (CLS), and First Input Delay (FID) through proper sizing, format selection, and compression."
-        },
-        {
-          "question": "Can you optimize images for responsive design?",
-          "answer": "Yes! We create optimized image variants for different screen sizes and resolutions, generating proper srcset and attributes for responsive design implementation."
-        },
-        {
-          "question": "How do you handle different image types on websites?",
-          "answer": "We optimize differently for hero images, galleries, product photos, and content images, each with specific requirements for quality, performance, and user experience."
-        },
-        {
-          "question": "Can you improve SEO with image optimization?",
-          "answer": "Yes! We optimize not just performance but also SEO factors including proper metadata, alt text suggestions, structured data, and image sitemaps for better search engine visibility."
-        },
-        {
-          "question": "What about e-commerce image optimization?",
-          "answer": "We specialize in e-commerce optimization with zoom functionality, quick load times, consistent product presentation, and conversion-focused enhancement that drives sales."
-        }
-      ],
-      "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Optimize Your Website Images",
-      "ctaUrl": "/?signup=1"
-    },
-    {
-      "slug": "digital-marketing-materials",
-      "title": "Digital Marketing Materials Enhancement",
-      "metaTitle": "Digital Marketing Materials Enhancement | MyImageUpscaler",
-      "metaDescription": "professional digital marketing materials enhancement. Optimize ads, banners, emAIl campAIgns, and marketing visuals with AI-powered image enhancement for better performance.",
-      "h1": "Digital Marketing Materials Enhancement",
-      "category": "use-cases",
-      "intro": "Comprehensive image enhancement solutions for digital marketing professionals, creating high-performing visual content that drives engagement, conversions, and brand recognition across all marketing channels.",
-      "primaryKeyword": "digital marketing materials enhancement",
-      "secondaryKeywords": [
-        "marketing image optimization",
-        "ad creative enhancement",
-        "email campaign images",
-        "digital advertising visuals"
-      ],
-      "description": "Professional enhancement solutions for digital marketing materials including display ads, social media creatives, email campaigns, and landing page visuals. Our AI-powered tools optimize marketing images for maximum performance, brand consistency, and conversion optimization.",
-      "useCases": [
-        "Display advertising creative optimization for higher CTR",
-        "Email marketing image enhancement for better engagement",
-        "Landing page visual optimization for conversion improvement",
-        "Social media ad creative enhancement and testing",
-        "Marketing campaign visual consistency and branding",
-        "A/B testing ready creative variations and optimization"
-      ],
-      "benefits": [
-        "220% increase in ad click-through rates with enhanced creatives",
-        "45% improvement in email engagement rates",
-        "Consistent brand quality across all marketing materials",
-        "Professional creatives without design team dependency",
-        "Fast creative iteration for marketing campaign testing",
-        "Cost-effective alternative to professional design services"
-      ],
-      "workflow": [
-        "Upload marketing images or ad concepts",
-        "Select marketing channel and ad format specifications",
-        "Choose enhancement style: Conversion-focused, Brand-aware, or Performance-optimized",
-        "Apply AI enhancement trained on successful marketing creatives",
-        "Optional: Generate multiple variations for A/B testing",
-        "Download platform-ready creatives with proper specifications"
-      ],
-      "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "GIF",
-          "WebP",
-          "HTML5"
-        ],
-        "marketingChannels": [
-          "Google Ads",
-          "Facebook Ads",
-          "LinkedIn Ads",
-          "Email Marketing",
-          "Display Networks"
-        ],
-        "adFormats": [
-          "Banner ads",
-          "Social ads",
-          "Email creatives",
-          "Landing page images"
-        ],
-        "performanceOptimization": [
-          "CTR focus",
-          "Conversion optimization",
-          "Brand consistency"
-        ],
-        "testingSupport": [
-          "A/B testing variations",
-          "Multivariate testing support"
-        ]
-      },
-      "caseStudies": [
-        {
-          "title": "Performance Marketing Campaign Success",
-          "description": "Digital marketing agency enhanced all campaign creatives with AI optimization, achieving 200% increase in ROAS and 65% reduction in cost-per-acquisition.",
-          "metrics": "5x ROI, consistent performance across multiple campaigns and channels"
-        },
-        {
-          "title": "Email Marketing Engagement Transformation",
-          "description": "E-commerce brand enhanced email marketing visuals with AI optimization, achieving 180% increase in email engagement and 120% increase in click-through rates.",
-          "metrics": "3x ROI, improved email deliverability and customer engagement"
-        }
-      ],
-      "bestPractices": [
-        "Maintain brand consistency across all marketing materials",
-        "Optimize for specific platform requirements and specifications",
-        "Test multiple creative variations for performance optimization",
-        "Focus on conversion-oriented design elements and messaging",
-        "Consider mobile optimization for all marketing materials",
-        "Track performance metrics and iterate based on results"
-      ],
-      "softwareRecommendations": {
-        "marketingPlatforms": [
-          "Google Ads",
-          "Facebook Ads Manager",
-          "LinkedIn Campaign Manager"
-        ],
-        "designTools": [
-          "Canva Pro",
-          "Adobe Creative Suite",
-          "Figma"
-        ],
-        "enhancementTools": [
-          "MyImageUpscaler",
-          "Adobe Stock",
-          "Unsplash+"
-        ],
-        "analyticsTools": [
-          "Google Analytics",
-          "Hotjar",
-          "Crazy Egg",
-          "Optimizely"
-        ]
-      },
-      "fileSizeGuidelines": {
-        "displayAds": "150KB-500KB for fast loading display ads",
-        "socialAds": "500KB-2MB for high-quality social media creatives",
-        "emailImages": "200KB-1MB for email marketing optimization",
-        "landingPages": "300KB-2MB for conversion-focused landing pages"
-      },
-      "faqs": [
-        {
-          "question": "Which advertising platforms do you optimize for?",
-          "answer": "We optimize for all major platforms including Google Ads, Facebook/Instagram Ads, LinkedIn Ads, Twitter Ads, TikTok Ads, and programmatic display networks with platform-specific specifications."
-        },
-        {
-          "question": "Can you create variations for A/B testing?",
-          "answer": "Yes! We can generate multiple creative variations with different enhancement approaches, layouts, and visual elements specifically designed for A/B testing and performance optimization."
-        },
-        {
-          "question": "How do you optimize for conversion rates?",
-          "answer": "Our AI analyzes high-converting marketing creatives and applies proven visual psychology principles, color psychology, and conversion optimization techniques to enhance marketing performance."
-        },
-        {
-          "question": "Can you maintain brand consistency across different creatives?",
-          "answer": "Absolutely! We apply brand-specific guidelines, color schemes, and visual identity elements across all marketing materials while optimizing for performance."
-        },
-        {
-          "question": "What about email marketing optimization?",
-          "answer": "We optimize email marketing images for deliverability, loading speed, and engagement while maintaining brand consistency and mobile optimization for email clients."
-        },
-        {
-          "question": "How do you handle different ad formats and sizes?",
-          "answer": "We optimize for all standard ad formats and sizes including banner ads, square ads, story ads, and custom specifications, ensuring proper quality and performance across all formats."
-        }
-      ],
-      "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Enhance Your Marketing Materials",
-      "ctaUrl": "/?signup=1"
-    },
-    {
-      "slug": "restoration-preservation",
-      "title": "Restoration & Preservation Enhancement",
-      "metaTitle": "Restoration & Preservation Enhancement | MyImageUpscaler",
-      "metaDescription": "professional photo restoration and preservation with AI. Enhance old photos, restore damaged images, and preserve historical photographs with AI-powered restoration technology.",
-      "h1": "Restoration & Preservation Enhancement",
-      "category": "use-cases",
-      "intro": "Advanced AI-powered restoration and preservation solutions for old, damaged, and historical photographs, bringing new life to precious memories while preserving historical accuracy and authenticity.",
-      "primaryKeyword": "photo restoration preservation enhancement",
-      "secondaryKeywords": [
-        "old photo restoration",
-        "damaged photo repair",
-        "historical photo enhancement",
-        "vintage photo restoration"
-      ],
-      "description": "Specialized AI restoration solutions for old, damaged, faded, and historical photographs. Our advanced algorithms can repair tears, remove scratches, restore colors, and enhance details while preserving the historical integrity and authenticity of precious photographs.",
-      "useCases": [
-        "Family photo restoration for heritage preservation",
-        "Historical archive enhancement for museums and institutions",
-        "Damaged photo repair for tears, scratches, and water damage",
-        "Color restoration for faded and discolored photographs",
-        "Detail enhancement for low-resolution vintage photos",
-        "Digital archiving and preservation of historical collections"
-      ],
-      "benefits": [
-        "Professional restoration without expensive professional services",
-        "Preservation of historical memories for future generations",
-        "95% accuracy in damage repair and restoration",
-        "Cost-effective solution for large archive projects",
-        "Enhanced details while maintaining historical authenticity",
-        "Automated workflow for bulk restoration projects"
-      ],
-      "workflow": [
-        "Scan or upload original damaged or old photographs",
-        "Select restoration type: Damage repair, color restoration, or comprehensive",
-        "Identify specific issues: tears, scratches, fading, or damage",
-        "Apply AI restoration trained on historical photo archives",
-        "Review restoration with before/after comparison tools",
-        "Download high-resolution restored images for archiving and printing"
-      ],
-      "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "TIFF",
-          "PNG",
-          "BMP",
-          "GIF",
-          "Scanned documents"
-        ],
-        "damageTypes": [
-          "Tears",
-          "Scratches",
-          "Water damage",
-          "Fading",
-          "Color shifts",
-          "Mold damage"
-        ],
-        "outputFormats": [
-          "TIFF (archival)",
-          "JPEG (sharing)",
-          "PNG (web)",
-          "DNG (professional)"
-        ],
-        "archiveStandards": [
-          "FADGI",
-          "METS",
-          "PREMIS compliance for institutional archiving"
-        ],
-        "qualityControl": [
-          "Historical accuracy",
-          "Authenticity preservation",
-          "Non-destructive processing"
-        ]
-      },
-      "caseStudies": [
-        {
-          "title": "Family Heritage Preservation Project",
-          "description": "Family restored 500+ historical family photographs spanning 100+ years, preserving family history and creating digital archives for future generations.",
-          "metrics": "Priceless family heritage preserved, 95% restoration success rate"
-        },
-        {
-          "title": "Historical Museum Archive Enhancement",
-          "description": "Historical museum enhanced 10,000+ historical photographs from their collection, improving accessibility for researchers and public exhibitions.",
-          "metrics": "Institutional archival standards compliance, enhanced historical research access"
-        }
-      ],
-      "bestPractices": [
-        "Use high-quality scanning (300+ DPI) for best restoration results",
-        "Handle original photographs carefully to prevent further damage",
-        "Document the original condition before restoration",
-        "Maintain historical accuracy - avoid over-restoration",
-        "Create backups of original files before processing",
-        "Consider professional consultation for valuable historical photos"
-      ],
-      "softwareRecommendations": {
-        "restorationTools": [
-          "MyImageUpscaler",
-          "Adobe Photoshop",
-          "Topaz Labs",
-          "Skylum"
-        ],
-        "scanningSoftware": [
-          "VueScan",
-          "Epson Scan",
-          "Canon ScanGear"
-        ],
-        "archiveTools": [
-          "Adobe Lightroom",
-          "DAM systems",
-          "Digital archive software"
-        ],
-        "professionalServices": [
-          "Professional restoration services for valuable items"
-        ]
-      },
-      "fileSizeGuidelines": {
-        "archivalQuality": "20-100MB for archival TIFF files",
-        "sharingQuality": "2-10MB for sharing with family",
-        "webDisplay": "500KB-2MB for online galleries",
-        "printQuality": "10-50MB for high-quality prints"
-      },
-      "faqs": [
-        {
-          "question": "What types of damage can you repair?",
-          "answer": "We can repair tears, scratches, water damage, mold damage, fading, color shifts, stains, creases, and most common types of photograph damage using advanced AI restoration algorithms."
-        },
-        {
-          "question": "How do you maintain historical accuracy?",
-          "answer": "Our AI is trained on historical photographs and restoration best practices, ensuring we enhance while preserving the authentic character, period details, and historical context of original photographs."
-        },
-        {
-          "question": "Can you restore color from black and white photos?",
-          "answer": "Yes, we can add historically accurate colorization to black and white photos based on period research and AI analysis of historical color palettes and materials."
-        },
-        {
-          "question": "What resolution do you need for restoration?",
-          "answer": "Higher resolutions work best (300+ DPI for scans), but we can work with any resolution. Our AI can enhance low-resolution photos while restoring quality and details."
-        },
-        {
-          "question": "Can you handle severely damaged photos?",
-          "answer": "We can handle most damage including severe tears, water damage, and heavy deterioration. Results vary by damage extent, but we achieve 95% success rates even with challenging cases."
-        },
-        {
-          "question": "How do you preserve original files during restoration?",
-          "answer": "We always preserve original files and work non-destructively. Enhanced files are separate outputs, ensuring original photographs remain untouched and preserved."
-        }
-      ],
-      "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Restore Your Precious Photos",
-      "ctaUrl": "/?signup=1"
-    },
-    {
-      "slug": "ai-generated-optimization",
-      "title": "AI-Generated Image Optimization",
-      "metaTitle": "AI-Generated Image Optimization | MyImageUpscaler",
-      "metaDescription": "Professional AI-generated image optimization. Enhance Midjourney, DALL-E, Stable Diffusion, and AI art images with AI-powered optimization for professional use and printing.",
-      "h1": "AI-Generated Image Optimization",
-      "category": "use-cases",
-      "intro": "Specialized enhancement solutions for AI-generated images from Midjourney, DALL-E, Stable Diffusion, and other AI art generators, optimizing them for professional use, printing, and commercial applications.",
-      "primaryKeyword": "AI-generated image optimization",
-      "secondaryKeywords": [
-        "AI art enhancement",
-        "Midjourney optimization",
-        "DALL-E upscaling",
-        "AI image printing"
-      ],
-      "description": "Professional enhancement solutions specifically designed for AI-generated images and artwork. Our AI-powered tools optimize AI art from all major generators (Midjourney, DALL-E, Stable Diffusion) for professional use, high-resolution printing, and commercial applications while preserving artistic intent.",
-      "useCases": [
-        "Midjourney image enhancement for professional printing",
-        "DALL-E generated image optimization for commercial use",
-        "Stable Diffusion artwork enhancement for large format printing",
-        "AI art upscaling for gallery-quality reproduction",
-        "AI-generated content optimization for marketing materials",
-        "AI character and design enhancement for professional projects"
-      ],
-      "benefits": [
-        "Professional print quality from AI-generated images",
-        "4K-8K resolution enhancement without quality loss",
-        "Preservation of artistic style and intent during enhancement",
-        "Commercial-grade quality for business applications",
-        "Optimized for various printing methods and materials",
-        "Enhanced detail and clarity while maintaining AI aesthetics"
-      ],
-      "workflow": [
-        "Upload AI-generated images from any generator platform",
-        "Select intended use: Print, web, commercial, or gallery display",
-        "Choose enhancement style: Preserve original, enhance details, or professional printing",
-        "Specify output resolution and format requirements",
-        "Apply AI enhancement trained on various AI art styles",
-        "Download high-resolution, professionally enhanced AI artwork"
-      ],
-      "technicalSpecs": {
-        "supportedGenerators": [
-          "Midjourney",
-          "DALL-E",
-          "Stable Diffusion",
-          "Midjourney",
-          "Leonardo AI"
-        ],
-        "outputResolutions": [
-          "4K",
-          "6K",
-          "8K",
-          "Custom large format"
-        ],
-        "supportedStyles": [
-          "Digital art",
-          "Photorealistic",
-          "Artistic",
-          "Abstract",
-          "Character design"
-        ],
-        "printStandards": [
-          "Gallery quality",
-          "Commercial printing",
-          "Fine art reproduction"
-        ],
-        "formatSupport": [
-          "PNG",
-          "TIFF",
-          "JPEG",
-          "PSD",
-          "WebP"
-        ]
-      },
-      "caseStudies": [
-        {
-          "title": "AI Artist Gallery Exhibition Success",
-          "description": "Digital artist enhanced AI-generated artwork for gallery exhibition, achieving large-format print quality that rivaled traditional art mediums and successful gallery sales.",
-          "metrics": "Gallery-quality prints, successful art sales, professional artist recognition"
-        },
-        {
-          "title": "Commercial AI Art Licensing",
-          "description": "AI art studio enhanced generated artwork for commercial licensing, achieving professional quality suitable for major brand campaigns and commercial applications.",
-          "metrics": "Commercial licensing success, brand campaign usage, professional quality standards"
-        }
-      ],
-      "bestPractices": [
-        "Start with the highest resolution AI generation possible",
-        "Understand the intended use case before enhancement",
-        "Consider the artistic style when choosing enhancement settings",
-        "Test print samples before large format printing",
-        "Maintain backup of original AI-generated files",
-        "Consider copyright and licensing for commercial use"
-      ],
-      "softwareRecommendations": {
-        "aiGenerators": [
-          "Midjourney",
-          "DALL-E 3",
-          "Stable Diffusion",
-          "Leonardo AI"
-        ],
-        "enhancementTools": [
-          "MyImageUpscaler",
-          "Topaz Gigapixel AI",
-          "Adobe Photoshop"
-        ],
-        "printingServices": [
-          "Professional art printing",
-          "Gallery printing services",
-          "Fine art reproduction"
-        ],
-        "commercialTools": [
-          "Adobe Creative Suite",
-          "Professional design software"
-        ]
-      },
-      "fileSizeGuidelines": {
-        "largePrint": "50-200MB for large format art prints",
-        "galleryQuality": "20-100MB for gallery exhibition prints",
-        "commercialUse": "10-50MB for commercial applications",
-        "webPortfolio": "2-10MB for online portfolios and marketing"
-      },
-      "faqs": [
-        {
-          "question": "Which AI generators do you support?",
-          "answer": "We support images from all major AI generators including Midjourney, DALL-E, Stable Diffusion, Leonardo AI, and others. Each generator's style is handled with specialized enhancement algorithms."
-        },
-        {
-          "question": "Can you enhance AI images for large format printing?",
-          "answer": "Yes! We can upscale AI-generated images to 4K, 6K, 8K, and custom resolutions suitable for large format printing while maintaining artistic quality and style."
-        },
-        {
-          "question": "How do you preserve the artistic style of AI art?",
-          "answer": "Our AI is trained to recognize and preserve different artistic styles, enhancing resolution and detail while maintaining the original artistic intent, aesthetics, and character."
-        },
-        {
-          "question": "What print sizes can AI images be enhanced for?",
-          "answer": "We can enhance AI images for any print size from small art prints to large wall murals and gallery exhibitions, with professional quality at all sizes."
-        },
-        {
-          "question": "Can AI-generated images be used commercially?",
-          "answer": "Yes, enhanced AI images can be used commercially, but you should verify the licensing terms of the AI generator used and understand any commercial use restrictions."
-        },
-        {
-          "question": "How do you handle different AI art styles?",
-          "answer": "Our AI recognizes different art styles (photorealistic, artistic, abstract, character design) and applies style-specific enhancement that preserves the unique characteristics of each artistic approach."
-        }
-      ],
-      "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Optimize Your AI-Generated Images",
+      "ctaText": "Aprimore Fotos de Arquitetura e Construção",
       "ctaUrl": "/?signup=1"
     }
   ]
