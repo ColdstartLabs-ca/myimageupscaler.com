@@ -5,9 +5,9 @@
       "slug": "bulk-image-resizer",
       "title": "一括画像リサイザー",
       "metaTitle": "一括画像リサイザー | MyImageUpscaler",
-      "metaDescription": "Reサイズ multiple images at once with our 無料 一括画像リサイザー. Mass reサイズ photos to any dimension. ブラウザで動作 - アップロード不要.",
-      "h1": "無料 一括画像リサイザー - Mass Reサイズ Photos Instantly",
-      "intro": "Reサイズ up to 20 images simultaneously with precise dimension control. MAIntAIn aspect ratios or set custom サイズs for all your photos at once.",
+      "metaDescription": "無料の一括画像リサイザーで複数の画像を一度にリサイズ。あらゆる寸法に写真を一括リサイズ。ブラウザで動作 - アップロード不要。",
+      "h1": "無料一括画像リサイザー - 複数の写真を即座にリサイズ",
+      "intro": "最大20枚の画像を同時に正確な寸法制御でリサイズ。すべての写真のアスペクト比を維持するか、一度にカスタムサイズを設定します。",
       "primaryKeyword": "bulk image resizer",
       "secondaryKeywords": [
         "bulk resize",
@@ -20,146 +20,136 @@
       "category": "bulk-tools",
       "toolName": "Bulk Image Resizer",
       "toolComponent": "BulkImageResizer",
-      "description": "Process multiple images at once instead of one by one. Perfect for photographers, e-commerce sellers, and anyone managing large photo collections who needs consistent dimensions across batches.",
+      "description": "1枚ずつ処理するのではなく、複数の画像を一度に処理します。一貫した寸法が必要な写真家、Eコマース販売者、大規模な写真コレクションを管理するすべての人に最適です。",
       "maxFiles": 20,
-      "acceptedFormats": [
-        "JPEG",
-        "PNG",
-        "WebP"
-      ],
+      "acceptedFormats": ["JPEG", "PNG", "WebP"],
       "features": [
         {
-          "title": "Reサイズ Up to 20 Images",
-          "description": "Process a full batch of images in one go. No need to reサイズ files individually - save hours of repetitive work."
+          "title": "最大20枚の画像をリサイズ",
+          "description": "画像の完全なバッチを一度に処理。ファイルを個別にリサイズする必要はありません - 数時間の反復作業を節約できます。"
         },
         {
-          "title": "Uniform 寸法",
-          "description": "Apply the same width, height, or percentage to all images. Ensure consistency across product catalogs, galleries, or social media posts."
+          "title": "均一な寸法",
+          "description": "すべての画像に同じ幅、高さ、またはパーセンテージを適用。商品カタログ、ギャラリー、ソーシャルメディア投稿全体で一貫性を確保します。"
         },
         {
-          "title": "Aspect Ratio Lock",
-          "description": "Toggle aspect ratio locking to prevent distortion. Images mAIntAIn their proportions while resizing to your target 寸法."
+          "title": "アスペクト比ロック",
+          "description": "アスペクト比のロックを切り替えて歪みを防止。リサイズ中に画像はターゲット寸法に合わせて比例を維持します。"
         },
         {
-          "title": "Percentage or Pixels",
-          "description": "Choose exact pixel 寸法 (like 1920x1080) or reサイズ by percentage (50%, 150%, etc.) for flexible scaling options."
+          "title": "パーセンテージまたはピクセル",
+          "description": "正確なピクセル寸法（1920x1080など）またはパーセンテージ（50%、150%など）によるリサイズを選択し、柔軟なスケーリングオプションを提供します。"
         },
         {
-          "title": "Download as ZIP",
-          "description": "Get all reサイズd images in a single ZIP file download. Organized with original filenames preserved for easy identification."
+          "title": "ZIPとしてダウンロード",
+          "description": "リサイズされたすべての画像を1つのZIPファイルでダウンロード。元のファイル名が保持され、簡単に識別できます。"
         },
         {
-          "title": "100% Browser-Based",
-          "description": "All processing happens locally in your browser. Your photos never leave your device - no server uploads required."
+          "title": "100%ブラウザベース",
+          "description": "すべての処理はブラウザでローカルに行われます。写真はデバイスから離れることはありません - サーバーへのアップロードは不要です。"
         }
       ],
       "useCases": [
         {
-          "title": "E-commerce Product Photos",
-          "description": "Reサイズ entire product catalogs to meet marketplace requirements. Ensure every listing has consistent, compliant 寸法.",
-          "example": "Reサイズ 500 product photos to 1000x1000px for Amazon or eBay requirements in one batch."
+          "title": "Eコマース商品写真",
+          "description": "マーケットプレイスの要件を満たすために商品カタログ全体をリサイズ。すべての出品が一貫した準拠した寸法を持つことを確認します。",
+          "example": "AmazonやeBayの要件に合わせて500枚の商品写真を1回のバッチで1000x1000pxにリサイズ。"
         },
         {
-          "title": "Social Media Batches",
-          "description": "Prepare multiple posts for Instagram, Facebook, or Twitter with platform-specific サイズs.",
-          "example": "Reサイズ 15 photos to 1080x1080px for a week of Instagram posts at once."
+          "title": "ソーシャルメディアバッチ",
+          "description": "Instagram、Facebook、またはTwitter向けにプラットフォーム固有のサイズで複数の投稿を準備。",
+          "example": "1週間分のInstagram投稿用に15枚の写真を1080x1080pxにリサイズ。"
         },
         {
-          "title": "Website Galleries",
-          "description": "Create uniform thumbnAIl サイズs or full-解像度 gallery images from mixed source files.",
-          "example": "Convert various photo サイズs to consistent 800x600px gallery thumbnAIls."
+          "title": "Webサイトギャラリー",
+          "description": "混合ソースファイルから均一なサムネイルサイズまたはフル解像度のギャラリー画像を作成。",
+          "example": "様々な写真サイズを一貫した800x600pxのギャラリーサムネイルに変換。"
         },
         {
-          "title": "Photo Album Organization",
-          "description": "Standardize family photos, event photography, or scanned image collections to consistent 寸法.",
-          "example": "Reサイズ a vacation photo set to 1920px width for consistent display."
+          "title": "写真アルバム整理",
+          "description": "家族写真、イベント写真、またはスキャンされた画像コレクションを一貫した寸法に標準化。",
+          "example": "一貫した表示のために休暇の写真セットを1920px幅にリサイズ。"
         }
       ],
       "benefits": [
         {
-          "title": "Save Hours of Manual Work",
-          "description": "Resizing 100 images individually could take 2-3 hours. Our bulk tool processes them in under 2 minutes.",
-          "metric": "60x faster than manual resizing"
+          "title": "数時間の手作業を節約",
+          "description": "100枚の画像を個別にリサイズするには2〜3時間かかる場合があります。当社の一括ツールは2分以内に処理します。",
+          "metric": "手作業リサイズより60倍高速"
         },
         {
-          "title": "Consistent Results",
-          "description": "Every image in your batch gets exactly the same treatment. No variation or human error between files.",
-          "metric": "Pixel-perfect consistency across batches"
+          "title": "一貫した結果",
+          "description": "バッチ内のすべての画像がまったく同じ処理を受けます。ファイル間のばらつきや人為的なエラーはありません。",
+          "metric": "バッチ間でピクセル完璧な一貫性"
         },
         {
-          "title": "Complete プライバシー",
-          "description": "Photos process in your browser. No uploads to external servers means your images stay private and secure.",
-          "metric": "Client-side processing only"
+          "title": "完全なプライバシー",
+          "description": "写真はブラウザで処理されます。外部サーバーへのアップロードがないため、画像はプライベートで安全に保たれます。",
+          "metric": "クライアントサイド処理のみ"
         }
       ],
       "howItWorks": [
         {
           "step": 1,
-          "title": "Upload Multiple Images",
-          "description": "Drag and drop up to 20 images at once, or click to browse. All major フォーマットs supported."
+          "title": "複数の画像をアップロード",
+          "description": "最大20枚の画像をドラッグ＆ドロップするか、クリックして参照。すべての主要なフォーマットがサポートされています。"
         },
         {
           "step": 2,
-          "title": "Set Target 寸法",
-          "description": "Enter your desired width/height in pixels or choose a percentage. Lock aspect ratio if needed."
+          "title": "ターゲット寸法を設定",
+          "description": "希望する幅/高さをピクセルまたはパーセンテージで入力。必要に応じてアスペクト比をロックします。"
         },
         {
           "step": 3,
-          "title": "Download ZIP File",
-          "description": "All reサイズd images are packaged in a ZIP file with original filenames intact. Download and you're done."
+          "title": "ZIPファイルをダウンロード",
+          "description": "リサイズされたすべての画像が元のファイル名を保持したZIPファイルにまとめられます。ダウンロードして完了です。"
         }
       ],
       "faq": [
         {
-          "question": "Is the 一括画像リサイザー really 無料?",
-          "answer": "Yes, completely 無料 with no limits. Reサイズ up to 20 images at a time, as many batches as you need. 登録不要."
+          "question": "一括画像リサイザーは本当に無料ですか？",
+          "answer": "はい、制限なしで完全に無料。最大20枚の画像を一度にリサイズでき、必要な数だけバッチ処理できます。登録不要。"
         },
         {
-          "question": "What happens to my original images?",
-          "answer": "Your original images are never modified or uploaded. All processing creates new reサイズd copies locally in your browser."
+          "question": "元の画像はどうなりますか？",
+          "answer": "元の画像が変更されたりアップロードされたりすることはありません。すべての処理はブラウザで新しいリサイズされたコピーを作成します。"
         },
         {
-          "question": "Can I reサイズ images to different サイズs in one batch?",
-          "answer": "Currently, all images in a batch get the same 寸法. For different サイズs, run separate batches or use our individual image reサイズr."
+          "question": "1回のバッチで画像を異なるサイズにリサイズできますか？",
+          "answer": "現在、バッチ内のすべての画像は同じ寸法になります。異なるサイズの場合は、別々のバッチを実行するか、個別の画像リサイザーを使用してください。"
         },
         {
-          "question": "Will this reduce image 品質?",
-          "answer": "Resizing to smaller 寸法 mAIntAIns 品質. Enlarging images may cause pixelation - for significant upsizing, use our AI upスケールr instead."
+          "question": "画質は低下しますか？",
+          "answer": "より小さい寸法へのリサイズは画質を維持します。画像の拡大はピクセル化を引き起こす可能性があります - 大きな拡大には、代わりにAIアップスケーラーを使用してください。"
         },
         {
-          "question": "What's the maximum image file サイズ?",
-          "answer": "Individual images up to 10MB are supported. For very large files, consider resizing in smaller batches."
+          "question": "最大画像ファイルサイズは？",
+          "answer": "最大10MBまでの個別画像がサポートされています。非常に大きなファイルの場合は、小さなバッチでリサイズすることを検討してください。"
         },
         {
-          "question": "Do my photos upload to a server?",
-          "answer": "No. All processing happens entirely in your browser using the Canvas API. Your photos never leave your device."
+          "question": "写真はサーバーにアップロードされますか？",
+          "answer": "いいえ。すべての処理はCanvas APIを使用して完全にブラウザで行われます。写真はデバイスから離れることはありません。"
         }
       ],
       "limitations": [
-        "Maximum 20 images per batch",
-        "Individual files up to 10MB",
-        "Same dimensions applied to all images in batch",
-        "Browser-based processing speed depends on your device"
+        "バッチあたり最大20枚の画像",
+        "個別ファイル最大10MB",
+        "バッチ内のすべての画像に同じ寸法が適用されます",
+        "ブラウザベースの処理速度はデバイスに依存します"
       ],
       "outputFormat": "zip",
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
-      "relatedGuides": [
-        "ecommerce-image-requirements",
-        "social-media-image-sizes"
-      ],
-      "ctaText": "開始 Bulk Resizing",
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["ecommerce-image-requirements", "social-media-image-sizes"],
+      "ctaText": "一括リサイズを開始",
       "ctaUrl": "/bulk-tools/bulk-image-resizer"
     },
     {
       "slug": "bulk-image-compressor",
       "title": "一括画像圧縮ツール",
       "metaTitle": "一括画像圧縮ツール | MyImageUpscaler",
-      "metaDescription": "Compress multiple images at once. Reduce file サイズs by up to 80% with our 無料 一括画像圧縮ツール. Browser-based, アップロード不要.",
-      "h1": "無料 一括画像圧縮ツール - Optimize Multiple Photos",
-      "intro": "Reduce file サイズs across entire image batches while mAIntAIning visual 品質. Perfect for web optimization, storage savings, and faster uploads.",
+      "metaDescription": "複数の画像を一度に圧縮。無料の一括画像圧縮ツールでファイルサイズを最大80%削減。ブラウザベース、アップロード不要。",
+      "h1": "無料一括画像圧縮ツール - 複数の写真を最適化",
+      "intro": "視覚的な画質を維持しながら、画像バッチ全体のファイルサイズを削減。Web最適化、ストレージの節約、より高速なアップロードに最適です。",
       "primaryKeyword": "bulk image compressor",
       "secondaryKeywords": [
         "batch image compressor",
@@ -171,137 +161,127 @@
       "category": "bulk-tools",
       "toolName": "Bulk Image Compressor",
       "toolComponent": "BulkImageCompressor",
-      "description": "Optimize multiple images simultaneously to reduce file sizes without noticeable quality loss. Ideal for preparing images for websites, email attachments, or cloud storage.",
+      "description": "複数の画像を同時に最適化して、目立つ品質損失なくファイルサイズを削減します。Webサイト、メール添付、またはクラウドストレージ用に画像を準備するのに理想的です。",
       "maxFiles": 20,
-      "acceptedFormats": [
-        "JPEG",
-        "PNG",
-        "WebP"
-      ],
+      "acceptedFormats": ["JPEG", "PNG", "WebP"],
       "features": [
         {
-          "title": "Compress Up to 20 Images",
-          "description": "Process entire batches in one operation. No more compressing images one at a time."
+          "title": "最大20枚の画像を圧縮",
+          "description": "1回の操作でバッチ全体を処理。もう1枚ずつ画像を圧縮する必要はありません。"
         },
         {
-          "title": "Adjustable 品質 Levels",
-          "description": "Choose from preset compression levels or fine-tune with a custom 品質 slider. Preview compression before committing."
+          "title": "調整可能な品質レベル",
+          "description": "プリセット圧縮レベルから選択するか、カスタム品質スライダーで微調整。コミット前に圧縮をプレビュー。"
         },
         {
-          "title": "Smart Compression",
-          "description": "Our algorithm reduces file サイズ while preserving visual 品質. Get up to 80% reduction with minimal impact."
+          "title": "スマート圧縮",
+          "description": "当社のアルゴリズムは視覚的な品質を保ちながらファイルサイズを削減。最小限の影響で最大80%の削減を実現。"
         },
         {
-          "title": "フォーマット Conversion",
-          "description": "Optionally convert images to more efficient フォーマットs like WebP during compression for additional savings."
+          "title": "フォーマット変換",
+          "description": "圧縮中にWebPのようなより効率的なフォーマットに画像をオプションで変換して追加の節約。"
         },
         {
-          "title": "サイズ 比較 Preview",
-          "description": "See original vs. compressed file サイズs for each image before downloading. Know exactly what you're saving."
+          "title": "サイズ比較プレビュー",
+          "description": "ダウンロード前に各画像の元のファイルサイズと圧縮後のファイルサイズを表示。正確に何が節約できるかを把握できます。"
         },
         {
-          "title": "100% Private Processing",
-          "description": "All compression happens in your browser. Your images never upload to any server."
+          "title": "100%プライベート処理",
+          "description": "すべての圧縮はブラウザで行われます。画像はサーバーにアップロードされません。"
         }
       ],
       "useCases": [
         {
-          "title": "Website Speed Optimization",
-          "description": "Reduce page load times by compressing all site images. Faster sites rank better and convert more visitors.",
-          "example": "Compress 50 product images from 500KB to 100KB each, saving 20MB of page weight."
+          "title": "Webサイト速度の最適化",
+          "description": "すべてのサイト画像を圧縮してページ読み込み時間を短縮。高速なサイトはランキングが高く、より多くの訪問者をコンバートします。",
+          "example": "50枚の商品画像をそれぞれ500KBから100KBに圧縮し、20MBのページ重量を節約。"
         },
         {
-          "title": "EmAIl Attachment Preparation",
-          "description": "Get under emAIl サイズ limits by compressing multiple photos before attaching. Send more images per message.",
-          "example": "Compress 10 vacation photos to fit within a 25MB emAIl limit instead of just 2-3."
+          "title": "メール添付の準備",
+          "description": "添付前に複数の写真を圧縮してメールサイズ制限をクリア。メッセージあたりの画像を増加。",
+          "example": "10枚の休暇写真を圧縮して2〜3枚ではなく25MBのメール制限に収める。"
         },
         {
-          "title": "Cloud Storage Management",
-          "description": "Reduce storage costs and upload times by optimizing images before backing up to cloud services.",
-          "example": "Compress a photo archive before uploading to Google Drive or Dropbox to use less space."
+          "title": "クラウドストレージ管理",
+          "description": "クラウドサービスにバックアップする前に画像を最適化してストレージコストとアップロード時間を削減。",
+          "example": "GoogleドライブまたはDropboxにアップロードする前に写真アーカイブを圧縮してスペースを節約。"
         },
         {
-          "title": "E-commerce パフォーマンス",
-          "description": "Speed up オンライン stores by optimizing all product images. Better UX means more sales.",
-          "example": "Batch compress your entire product catalog for faster page loads."
+          "title": "Eコマースパフォーマンス",
+          "description": "すべての商品画像を最適化してオンラインストアを高速化。より良いUXはより多くの販売を意味します。",
+          "example": "より高速なページ読み込みのために商品カタログ全体を一括圧縮。"
         }
       ],
       "benefits": [
         {
-          "title": "Significant File サイズ Reduction",
-          "description": "Achieve 50-80% file サイズ reduction with minimal 品質 loss. Your images look nearly identical at a fraction of the サイズ.",
-          "metric": "Up to 80% smaller files"
+          "title": "大幅なファイルサイズ削減",
+          "description": "最小限の品質損失で50〜80%のファイルサイズ削減を実現。画像はほぼ同じ見た目でサイズの一部になります。",
+          "metric": "最大80%小さいファイル"
         },
         {
-          "title": "Faster Load Times",
-          "description": "Smaller images mean faster websites, quicker emAIl uploads, and better user experiences.",
-          "metric": "2-5x faster page loads"
+          "title": "より高速な読み込み時間",
+          "description": "小さい画像はより高速なWebサイト、より高速なメールアップロード、より良いユーザー体験を意味します。",
+          "metric": "2〜5倍高速なページ読み込み"
         },
         {
-          "title": "Storage Cost Savings",
-          "description": "Use less disk space, bandwidth, and cloud storage. Pay less for hosting and storage services.",
-          "metric": "Save gigabytes of storage"
+          "title": "ストレージコストの節約",
+          "description": "より少ないディスク容量、帯域幅、クラウドストレージを使用。ホスティングとストレージサービスの支払いを削減。",
+          "metric": "ギガバイトのストレージを節約"
         }
       ],
       "howItWorks": [
         {
           "step": 1,
-          "title": "Upload Your Images",
-          "description": "Select up to 20 images from your device. Drag and drop for fastest results."
+          "title": "画像をアップロード",
+          "description": "デバイスから最大20枚の画像を選択。ドラッグ＆ドロップで最速の結果。"
         },
         {
           "step": 2,
-          "title": "Choose Compression Level",
-          "description": "Pick a preset (Low, Medium, High) or adjust the 品質 slider. Preview サイズ savings for each image."
+          "title": "圧縮レベルを選択",
+          "description": "プリセット（低、中、高）を選択するか、品質スライダーを調整。各画像のサイズ節約をプレビュー。"
         },
         {
           "step": 3,
-          "title": "Download Optimized ZIP",
-          "description": "Get all compressed images in a single ZIP file. Original filenames are preserved."
+          "title": "最適化されたZIPをダウンロード",
+          "description": "圧縮されたすべての画像を1つのZIPファイルで取得。元のファイル名が保持されます。"
         }
       ],
       "faq": [
         {
-          "question": "How much can I reduce image file サイズs?",
-          "answer": "Typical compression achieves 50-80% file サイズ reduction. Actual savings depend on the original image - already-compressed images see less benefit than uncompressed originals."
+          "question": "画像ファイルサイズをどの程度削減できますか？",
+          "answer": "一般的な圧縮で50〜80%のファイルサイズ削減を実現。実際の節約は元の画像に依存します - 既に圧縮された画像は非圧縮のオリジナルよりもメリットが少なくなります。"
         },
         {
-          "question": "Will compression damage my image 品質?",
-          "answer": "Our compression is designed to be visually lossless - meaning the file shrinks but the image looks nearly identical. For photos with heavy compression needs, some minor artifacts may appear at extreme settings."
+          "question": "圧縮は画像品質を損ないますか？",
+          "answer": "当社の圧縮は視覚的に可逆的になるように設計されています - つまりファイルは縮小しますが画像はほぼ同じに見えます。重い圧縮が必要な写真の場合、極端な設定でマイナーなアーティファクトが現れる可能性があります。"
         },
         {
-          "question": "Can I compress PNGs with transparency?",
-          "answer": "Yes, PNG transparency is preserved during compression. Note that JPEGs don't support transparency - they'll get a solid background."
+          "question": "透明度を持つPNGを圧縮できますか？",
+          "answer": "はい、PNG透明度は圧縮中に保持されます。JPEGは透明度をサポートしていないことに注意してください - 固体の背景になります。"
         },
         {
-          "question": "What's the difference between this and the upスケールr?",
-          "answer": "The compressor reduces file サイズ without changing 寸法. The upスケールr increases 寸法 and improves 品質. They serve different purposes - use compressor to save space, upスケールr to enlarge."
+          "question": "アップスケーラーとの違いは何ですか？",
+          "answer": "コンプレッサーは寸法を変更せずにファイルサイズを削減します。アップスケーラーは寸法を増やし品質を向上します。それぞれ異なる目的を持ちます - スペースを節約するにはコンプレッサー、拡大するにはアップスケーラーを使用してください。"
         },
         {
-          "question": "Is this better than Photoshop's Save for Web?",
-          "answer": "Similar 品質 compression, but our tool handles batches of 20 images at once instead of one by one. Plus, it's 無料 and runs entirely in your browser."
+          "question": "これはPhotoshopのWeb用保存より優れていますか？",
+          "answer": "同様の品質圧縮ですが、当社のツールは1枚ずつではなく一度に20枚の画像のバッチを処理します。さらに、無料で完全にブラウザで実行されます。"
         },
         {
-          "question": "Do you permanently delete my images?",
-          "answer": "Your images never leave your browser in the first place. All compression is local and temporary. Nothing is stored on any server."
+          "question": "画像は永続的に削除されますか？",
+          "answer": "画像は最初からブラウザを離れることはありません。すべての圧縮はローカルで一時的です。サーバーには何も保存されません。"
         }
       ],
       "limitations": [
-        "Maximum 20 images per batch",
-        "Individual files up to 10MB",
-        "Very compressed images may show quality loss at extreme settings",
-        "Compression speed depends on your device and image sizes"
+        "バッチあたり最大20枚の画像",
+        "個別ファイル最大10MB",
+        "非常に圧縮された画像は極端な設定で品質損失を示す可能性があります",
+        "圧縮速度はデバイスと画像サイズに依存します"
       ],
       "outputFormat": "zip",
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
-      "relatedGuides": [
-        "ecommerce-image-requirements",
-        "website-optimization-guide"
-      ],
-      "ctaText": "開始 Bulk Compressing",
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["ecommerce-image-requirements", "website-optimization-guide"],
+      "ctaText": "一括圧縮を開始",
       "ctaUrl": "/bulk-tools/bulk-image-compressor"
     }
   ],

@@ -40,7 +40,7 @@
         {
           "title": "Preparación para Impresión",
           "description": "Escalado moderado para tamaños de impresión estándar.",
-          "example": "Prepare JPEGs for 8x10 inch prints at 300 DPI"
+          "example": "Prepare JPEGs para impresiones de 8x10 pulgadas a 300 DPI"
         },
         {
           "title": "Mejora de Archivo de Fotos",
@@ -136,28 +136,28 @@
         "jpeg potenciador 4x",
         "jpeg cuadruplicador de imagen"
       ],
-      "formatDescription": "JPEG format receives dramatic quality improvements with 4X scaling while maintaining its compression benefits.",
+      "formatDescription": "El formato JPEG recibe mejoras dramáticas de calidad con escalado 4X mientras mantiene sus beneficios de compresión.",
       "scaleExpectations": "El escalado 4X multiplica tanto el ancho como la altura, resultando en 16 veces más píxeles. Proporciona una mejora significativa sin un aumento excesivo del tamaño del archivo. Tiempo de procesamiento: 20-40 segundos.",
       "useCases": [
         {
           "title": "Impresión de Gran Formato",
-          "description": "Prepare JPEGs for posters, banners, and canvas prints.",
-          "example": "Create 16x20 inch prints from 4MP JPEG source"
+          "description": "Prepare JPEGs para pósters, pancartas e impresiones en lienzo.",
+          "example": "Cree impresiones de 16x20 pulgadas desde fuente JPEG de 4MP"
         },
         {
-          "title": "Professional Displays",
-          "description": "Enhance JPEGs for 4K monitors and high-resolution presentations.",
-          "example": "Optimize JPEGs for 4K digital signage and trade show displays"
+          "title": "Pantallas Profesionales",
+          "description": "Mejore JPEGs para monitores 4K y presentaciones de alta resolución.",
+          "example": "Optimice JPEGs para señalización digital 4K y pantallas de ferias comerciales"
         },
         {
-          "title": "E-commerce Excellence",
-          "description": "Create ultra-high-resolution product images for zoom functionality.",
-          "example": "Enable deep zoom on product images with 4X enhanced JPEGs"
+          "title": "Excelencia en E-commerce",
+          "description": "Cree imágenes de productos de ultra alta resolución para funcionalidad de zoom.",
+          "example": "Habilite zoom profundo en imágenes de productos con JPEGs mejorados 4X"
         },
         {
-          "title": "Photography Portfolios",
-          "description": "Upgrade JPEG photos to professional portfolio standards.",
-          "example": "Transform DSLR JPEGs into gallery-quality prints"
+          "title": "Portafolios de Fotografía",
+          "description": "Actualice fotos JPEG a estándares de portafolio profesional.",
+          "example": "Transforme JPEGs de DSLR en impresiones de calidad de galería"
         }
       ],
       "benefits": [
@@ -248,28 +248,28 @@
         "jpeg potenciador 8x",
         "maximum jpeg upscaling"
       ],
-      "formatDescription": "JPEG format achieves maximum quality enhancement with 8X scaling, pushing the boundaries of what's possible from compressed images.",
+      "formatDescription": "El formato JPEG logra mejora máxima de calidad con escalado 8X, empujando los límites de lo posible desde imágenes comprimidas.",
       "scaleExpectations": "El escalado 8X multiplica tanto el ancho como la altura, resultando en 64 veces más píxeles. Proporciona una mejora extrema sin un aumento excesivo del tamaño del archivo. Tiempo de procesamiento: 40-60 segundos.",
       "useCases": [
         {
-          "title": "Extreme Enlargement",
-          "description": "Create massive prints from small JPEG source images.",
-          "example": "Transform a 2MP JPEG into a 16MP print-quality image"
+          "title": "Agrandamiento Extremo",
+          "description": "Cree impresiones masivas desde imágenes JPEG fuente pequeñas.",
+          "example": "Transforme un JPEG de 2MP en una imagen de calidad de impresión de 16MP"
         },
         {
-          "title": "Professional Printing",
-          "description": "Prepare JPEGs for large format commercial printing.",
-          "example": "Upscale JPEGs for billboard or banner printing"
+          "title": "Impresión Profesional",
+          "description": "Prepare JPEGs para impresión comercial de formato grande.",
+          "example": "Escale JPEGs para impresión de vallas publicitarias o pancartas"
         },
         {
-          "title": "Archival Projects",
-          "description": "Future-proof JPEG images by creating maximum resolution versions.",
-          "example": "Create archival-quality versions of important JPEG photos"
+          "title": "Proyectos de Archivo",
+          "description": "Futuro-pruebe imágenes JPEG creando versiones de máxima resolución.",
+          "example": "Cree versiones de calidad de archivo de fotos JPEG importantes"
         },
         {
           "title": "Fotografía Profesional",
-          "description": "Extract maximum possible quality from JPEG format for professional use.",
-          "example": "Enhance camera JPEGs to maximum printable resolution"
+          "description": "Extraiga la máxima calidad posible del formato JPEG para uso profesional.",
+          "example": "Mejore JPEGs de cámara a máxima resolución imprimible"
         }
       ],
       "benefits": [

@@ -1,0 +1,107 @@
+{
+  "category": "camera-raw",
+  "pages": [
+    {
+      "slug": "upscale-nef-images",
+      "title": "Upscale NEF Images",
+      "metaTitle": "Upscale NEF Images | MyImageUpscaler",
+      "metaDescription": "Advanced AI-powered NEF upscaling for Nikon photographers. Enhance RAW files from D850, Z9, Z7, Z6 with superior detAIl retention. workflow integration with Nikon's color science.",
+      "h1": "NEF RAW Image Upscaling",
+      "intro": "Elevate your Nikon NEF RAW files to extraordinary levels of detAIl and clarity with cutting-edge AI upscaling technology. Our sophisticated algorithms are meticulously engineered to understand and enhance Nikon's unique sensor characteristics, color science, and metadata structure. Whether you're shooting with the flagship Z9, the beloved D850, or any Nikon camera in between, our upscaler delivers exceptional results that mAIntAIn the authentic Nikon look while significantly expanding your creative possibilities.",
+      "primaryKeyword": "upscale nef images",
+      "secondaryKeywords": [
+        "nef upscaler",
+        "nikon raw upscaler",
+        "enhance nef files",
+        "nef image enhancement",
+        "nikon raw image processing",
+        "d850 upscaling",
+        "z9 raw enhancement",
+        "nikon z series upscaler",
+        "professional nikon processing"
+      ],
+      "lastUpdated": "2025-01-19",
+      "category": "camera-raw",
+      "toolName": "CR2 to JPG Converter",
+      "description": "Wandeln Sie Canon CR2 RAW-Dateien in JPG um, um Ihre Fotos einfach zu teilen, zu bearbeiten und zu drucken. Perfekt für Fotografen, die schnell ihre RAW-Dateien konvertieren müssen.",
+      "features": [
+        {
+          "title": "CR2 zu JPG Konvertierung",
+          "description": "Wandeln Sie Canon RAW-Dateien schnell in JPG um"
+        },
+        {
+          "title": "Qualitätserhalt",
+          "description": "Behalten Sie die Bildqualität während der Konvertierung bei"
+        },
+        {
+          "title": "Stapelverarbeitung",
+          "description": "Konvertieren Sie mehrere CR2-Dateien gleichzeitig"
+        },
+        {
+          "title": "Einfach zu bedienen",
+          "description": "Keine technischen Kenntnisse erforderlich"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Schnelle Konvertierung",
+          "description": "Wandeln Sie CR2-Dateien in Sekunden in JPG um",
+          "metric": "Sekundenschnelle Konvertierung"
+        },
+        {
+          "title": "Einfaches Teilen",
+          "description": "JPG-Dateien können auf allen Plattformen einfach geteilt werden",
+          "metric": "Universelle Kompatibilität"
+        },
+        {
+          "title": "Qualitätsbewusst",
+          "description": "Kontrollieren Sie die JPG-Qualitätsstufe",
+          "metric": "Einstellbare Qualität"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "CR2-Datei hochladen",
+          "description": "Wählen Sie Ihre CR2 RAW-Datei von Ihrem Gerät aus"
+        },
+        {
+          "step": 2,
+          "title": "Qualität wählen",
+          "description": "Wählen Sie die gewünschte JPG-Qualitätsstufe"
+        },
+        {
+          "step": 3,
+          "title": "JPG herunterladen",
+          "description": "Laden Sie Ihre konvertierte JPG-Datei herunter"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Was ist eine CR2-Datei?",
+          "answer": "CR2 ist Canon proprietäres RAW-Format, das alle Bilddaten von der Kamera speichert und maximale Flexibilität bei der Bearbeitung bietet."
+        },
+        {
+          "question": "Verliere ich Qualität bei der Konvertierung?",
+          "answer": "JPG ist ein komprimiertes Format, aber Sie können die Qualitätseinstellungen wählen, um die Balance zwischen Dateigröße und Bildqualität zu steuern."
+        },
+        {
+          "question": "Kann ich mehrere CR2-Dateien gleichzeitig konvertieren?",
+          "answer": "Ja, unser Tool unterstützt die Stapelverarbeitung für die gleichzeitige Konvertierung mehrerer Dateien."
+        }
+      ],
+      "limitations": [
+        "Kann nur CR2-Dateien konvertieren",
+        "Qualitätsverlust je nach Komprimierungsgrad",
+        "Metadaten können teilweise verloren gehen"
+      ],
+      "relatedTools": ["image-format-converter", "raw-to-jpg"],
+      "ctaText": "CR2 zu JPG konvertieren",
+      "ctaUrl": "/camera-raw/cr2-to-jpg"
+    }
+  ],
+  "meta": {
+    "totalPages": 8,
+    "lastUpdated": "2025-12-26T00:00:00Z"
+  }
+}
