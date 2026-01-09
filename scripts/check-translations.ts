@@ -6,6 +6,7 @@
  * 1. Missing translation files (e.g., pt has no alternatives.json)
  * 2. Missing translation keys within files
  * 3. Untranslated content (values identical to English reference)
+ * 4. pSEO data files without i18n integration (e.g., interactive-tools.json)
  *
  * Usage:
  *   npx ts-node scripts/check-translations.ts [options]
@@ -15,6 +16,7 @@
  *   --locale <code>      Check specific locale (e.g., pt, de)
  *   --keys-only          Only check for missing keys, not files
  *   --files-only         Only check for missing files, not keys
+ *   --check-pseo         Check pSEO data files for i18n coverage
  *   --json               Output as JSON
  *   --verbose            Show all checked items, not just missing ones
  */
@@ -29,18 +31,42 @@ const __dirname = path.dirname(__filename);
 
 // Configuration
 const LOCALES_DIR = path.join(__dirname, '..', 'locales');
+const PSEO_DATA_DIR = path.join(__dirname, '..', 'app', 'seo', 'data');
 const REFERENCE_LOCALE = 'en'; // English is the source of truth
 const EXCLUDED_LOCALES: string[] = []; // Locales to exclude from checks
+
+// pSEO data files that are known to NOT need translations (technical/config files)
+const PSEO_EXCLUDED_FILES = new Set([
+  'ai-features', // Technical config
+  'content', // Internal content management
+]);
+
+interface IPSEODataFile {
+  name: string;
+  pageCount: number;
+  hasTranslation: boolean;
+  translationNamespace?: string;
+  sampleContent?: string[];
+}
+
+interface IInvalidJsonFile {
+  locale: string;
+  namespace: string;
+  error: string;
+}
 
 interface ITranslationReport {
   summary: {
     totalLocales: number;
     totalNamespaces: number;
+    invalidJsonFiles: number;
     missingFiles: number;
     missingKeys: number;
     untranslatedFiles: number;
     untranslatedKeys: number;
+    pseoWithoutI18n: number;
   };
+  invalidJsonFiles: IInvalidJsonFile[];
   missingFiles: Array<{
     locale: string;
     namespace: string;
@@ -66,6 +92,7 @@ interface ITranslationReport {
     namespace: string;
     keys: string[];
   }>;
+  pseoWithoutI18n: IPSEODataFile[];
 }
 
 interface ICLIOptions {
@@ -73,6 +100,7 @@ interface ICLIOptions {
   locale?: string;
   keysOnly: boolean;
   filesOnly: boolean;
+  checkPseo: boolean;
   json: boolean;
   verbose: boolean;
   debug: boolean;
@@ -83,6 +111,7 @@ function parseArgs(): ICLIOptions {
   const options: ICLIOptions = {
     keysOnly: false,
     filesOnly: false,
+    checkPseo: true, // Check pSEO by default
     json: false,
     verbose: false,
     debug: false,
@@ -101,6 +130,12 @@ function parseArgs(): ICLIOptions {
         break;
       case '--files-only':
         options.filesOnly = true;
+        break;
+      case '--check-pseo':
+        options.checkPseo = true;
+        break;
+      case '--no-pseo':
+        options.checkPseo = false;
         break;
       case '--json':
         options.json = true;
@@ -133,13 +168,15 @@ Options:
   --locale <code>      Check specific locale (e.g., pt, de, fr)
   --keys-only          Only check for missing keys, not files
   --files-only         Only check for missing files, not keys
+  --check-pseo         Check pSEO data files for i18n coverage (default: on)
+  --no-pseo            Skip pSEO data file checks
   --json               Output as JSON (useful for CI/CD)
   --verbose            Show all checked items, not just missing ones
   --debug              Show detailed debug info (file structure, key counts, etc.)
   --help               Show this help message
 
 Examples:
-  # Check all translations
+  # Check all translations (including pSEO data files)
   npx ts-node scripts/check-translations.ts
 
   # Check only Portuguese translations
@@ -153,6 +190,9 @@ Examples:
 
   # Output as JSON for CI/CD
   npx ts-node scripts/check-translations.ts --json
+
+  # Skip pSEO data file checks
+  npx ts-node scripts/check-translations.ts --no-pseo
 `);
 }
 
@@ -178,8 +218,37 @@ function getNamespaces(locale: string): string[] {
     .sort();
 }
 
-function loadTranslation(locale: string, namespace: string): Record<string, unknown> | null {
+interface ILoadResult {
+  data: Record<string, unknown> | null;
+  error?: string;
+}
+
+function loadTranslation(locale: string, namespace: string): ILoadResult {
   const filePath = path.join(LOCALES_DIR, locale, `${namespace}.json`);
+  if (!fs.existsSync(filePath)) return { data: null };
+
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    return { data: JSON.parse(content) };
+  } catch (error) {
+    const errorMessage = error instanceof SyntaxError ? error.message : 'Unknown parsing error';
+    return { data: null, error: errorMessage };
+  }
+}
+
+function getPSEODataFiles(): string[] {
+  if (!fs.existsSync(PSEO_DATA_DIR)) return [];
+
+  return fs
+    .readdirSync(PSEO_DATA_DIR)
+    .filter(file => file.endsWith('.json'))
+    .map(file => file.replace('.json', ''))
+    .filter(name => !PSEO_EXCLUDED_FILES.has(name))
+    .sort();
+}
+
+function loadPSEOData(dataFile: string): Record<string, unknown> | null {
+  const filePath = path.join(PSEO_DATA_DIR, `${dataFile}.json`);
   if (!fs.existsSync(filePath)) return null;
 
   try {
@@ -189,6 +258,44 @@ function loadTranslation(locale: string, namespace: string): Record<string, unkn
     console.error(`Error parsing ${filePath}:`, error);
     return null;
   }
+}
+
+function checkPSEODataFiles(translationNamespaces: string[]): IPSEODataFile[] {
+  const pseoFiles = getPSEODataFiles();
+  const missingI18n: IPSEODataFile[] = [];
+
+  for (const pseoFile of pseoFiles) {
+    const data = loadPSEOData(pseoFile);
+    if (!data) continue;
+
+    // Check if there's a corresponding translation file
+    const hasTranslation = translationNamespaces.includes(pseoFile);
+
+    // Get page count if it's a pSEO data file with pages array
+    const pages = data.pages as Array<Record<string, unknown>> | undefined;
+    const pageCount = Array.isArray(pages) ? pages.length : 0;
+
+    // Extract sample content (titles from first few pages)
+    let sampleContent: string[] = [];
+    if (Array.isArray(pages) && pages.length > 0) {
+      sampleContent = pages
+        .slice(0, 3)
+        .map(p => (p.title as string) || (p.slug as string) || 'Unknown')
+        .filter(Boolean);
+    }
+
+    // If no translation exists, this is a gap
+    if (!hasTranslation && pageCount > 0) {
+      missingI18n.push({
+        name: pseoFile,
+        pageCount,
+        hasTranslation: false,
+        sampleContent,
+      });
+    }
+  }
+
+  return missingI18n;
 }
 
 function flattenKeys(obj: Record<string, unknown>, prefix = ''): Set<string> {
@@ -252,16 +359,20 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
     summary: {
       totalLocales: 0,
       totalNamespaces: 0,
+      invalidJsonFiles: 0,
       missingFiles: 0,
       missingKeys: 0,
       untranslatedFiles: 0,
       untranslatedKeys: 0,
+      pseoWithoutI18n: 0,
     },
+    invalidJsonFiles: [],
     missingFiles: [],
     missingKeys: [],
     untranslatedContent: [],
     extraFiles: [],
     extraKeys: [],
+    pseoWithoutI18n: [],
   };
 
   // Get all locales and filter if specified
@@ -288,6 +399,31 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
 
   report.summary.totalLocales = locales.length;
   report.summary.totalNamespaces = referenceNamespaces.length;
+
+  // First pass: validate all JSON files for syntax errors
+  const allLocales = [REFERENCE_LOCALE, ...locales];
+  for (const locale of allLocales) {
+    const namespaces = getNamespaces(locale);
+    for (const namespace of namespaces) {
+      if (options.namespace && namespace !== options.namespace) continue;
+
+      const result = loadTranslation(locale, namespace);
+      if (result.error) {
+        // Check if we already recorded this error
+        const alreadyRecorded = report.invalidJsonFiles.some(
+          f => f.locale === locale && f.namespace === namespace
+        );
+        if (!alreadyRecorded) {
+          report.invalidJsonFiles.push({
+            locale,
+            namespace,
+            error: result.error,
+          });
+          report.summary.invalidJsonFiles++;
+        }
+      }
+    }
+  }
 
   // Check each locale against the reference
   for (const locale of locales) {
@@ -316,8 +452,32 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
     // Check for missing keys
     if (!options.filesOnly) {
       for (const namespace of referenceNamespaces) {
-        const referenceTranslation = loadTranslation(REFERENCE_LOCALE, namespace);
-        const localeTranslation = loadTranslation(locale, namespace);
+        const referenceResult = loadTranslation(REFERENCE_LOCALE, namespace);
+        const localeResult = loadTranslation(locale, namespace);
+
+        // Track invalid JSON files
+        if (referenceResult.error) {
+          report.invalidJsonFiles.push({
+            locale: REFERENCE_LOCALE,
+            namespace,
+            error: referenceResult.error,
+          });
+          report.summary.invalidJsonFiles++;
+          continue;
+        }
+
+        if (localeResult.error) {
+          report.invalidJsonFiles.push({
+            locale,
+            namespace,
+            error: localeResult.error,
+          });
+          report.summary.invalidJsonFiles++;
+          continue;
+        }
+
+        const referenceTranslation = referenceResult.data;
+        const localeTranslation = localeResult.data;
 
         if (!referenceTranslation) continue;
         if (!localeTranslation) continue; // Already reported as missing file
@@ -440,6 +600,13 @@ function checkTranslations(options: ICLIOptions): ITranslationReport {
     }
   }
 
+  // Check pSEO data files for i18n coverage
+  if (options.checkPseo) {
+    const referenceNamespaces = getNamespaces(REFERENCE_LOCALE);
+    report.pseoWithoutI18n = checkPSEODataFiles(referenceNamespaces);
+    report.summary.pseoWithoutI18n = report.pseoWithoutI18n.length;
+  }
+
   return report;
 }
 
@@ -449,7 +616,16 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
     return;
   }
 
-  const { summary, missingFiles, missingKeys, untranslatedContent, extraFiles, extraKeys } = report;
+  const {
+    summary,
+    invalidJsonFiles,
+    missingFiles,
+    missingKeys,
+    untranslatedContent,
+    extraFiles,
+    extraKeys,
+    pseoWithoutI18n,
+  } = report;
 
   console.log('\n========================================');
   console.log('       TRANSLATION CHECK REPORT        ');
@@ -459,6 +635,22 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
   console.log(`Locales checked: ${summary.totalLocales}`);
   console.log(`Namespaces checked: ${summary.totalNamespaces}`);
   console.log('');
+
+  // Invalid JSON files (syntax errors)
+  if (invalidJsonFiles.length > 0) {
+    console.log('----------------------------------------');
+    console.log(`INVALID JSON FILES (${invalidJsonFiles.length})`);
+    console.log('----------------------------------------');
+
+    for (const { locale, namespace, error } of invalidJsonFiles) {
+      console.log(`\n  ${locale}/${namespace}.json:`);
+      console.log(`    Error: ${error}`);
+    }
+    console.log('');
+  } else if (options.verbose) {
+    console.log('All JSON files are valid.');
+    console.log('');
+  }
 
   // Missing files
   if (missingFiles.length > 0) {
@@ -549,22 +741,49 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
     console.log('');
   }
 
+  // pSEO data files without i18n (CRITICAL - these pages won't be translated)
+  if (pseoWithoutI18n.length > 0) {
+    console.log('----------------------------------------');
+    console.log(`PSEO DATA WITHOUT I18N (${pseoWithoutI18n.length} files)`);
+    console.log('----------------------------------------');
+    console.log('\n  These pSEO data files have no translation support.');
+    console.log('  Pages using this data will show English content for ALL locales!\n');
+
+    for (const { name, pageCount, sampleContent } of pseoWithoutI18n) {
+      console.log(`  ${name}.json (${pageCount} pages)`);
+      if (sampleContent && sampleContent.length > 0) {
+        console.log(`    Sample pages: ${sampleContent.join(', ')}`);
+      }
+    }
+    console.log('');
+    console.log('  To fix: Create corresponding translation files in locales/*/');
+    console.log('  Example: locales/ja/interactive-tools.json');
+    console.log('');
+  } else if (options.verbose) {
+    console.log('All pSEO data files have translation coverage.');
+    console.log('');
+  }
+
   // Summary
   console.log('========================================');
   console.log('                SUMMARY                ');
   console.log('========================================');
 
   const hasIssues =
+    summary.invalidJsonFiles > 0 ||
     summary.missingFiles > 0 ||
     summary.missingKeys > 0 ||
     summary.untranslatedFiles > 0 ||
-    summary.untranslatedKeys > 0;
+    summary.untranslatedKeys > 0 ||
+    summary.pseoWithoutI18n > 0;
 
   if (hasIssues) {
-    console.log(`\n  Missing files:       ${summary.missingFiles}`);
+    console.log(`\n  Invalid JSON files:  ${summary.invalidJsonFiles}`);
+    console.log(`  Missing files:       ${summary.missingFiles}`);
     console.log(`  Missing keys:        ${summary.missingKeys}`);
     console.log(`  Untranslated files:  ${summary.untranslatedFiles}`);
     console.log(`  Untranslated keys:   ${summary.untranslatedKeys}`);
+    console.log(`  pSEO without i18n:   ${summary.pseoWithoutI18n}`);
     console.log('\n  Status: INCOMPLETE');
   } else {
     console.log('\n  All translations are complete!');
@@ -579,12 +798,14 @@ const options = parseArgs();
 const report = checkTranslations(options);
 printReport(report, options);
 
-// Exit with error code if there are missing or untranslated translations
+// Exit with error code if there are any issues
 if (
+  report.summary.invalidJsonFiles > 0 ||
   report.summary.missingFiles > 0 ||
   report.summary.missingKeys > 0 ||
   report.summary.untranslatedFiles > 0 ||
-  report.summary.untranslatedKeys > 0
+  report.summary.untranslatedKeys > 0 ||
+  report.summary.pseoWithoutI18n > 0
 ) {
   process.exit(1);
 }
