@@ -7,10 +7,12 @@ PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
 # Parse flags
 export SKIP_SECRETS="false"
 export SKIP_TESTS="false"
+export SKIP_I18N="false"
 for arg in "$@"; do
     case $arg in
         --skip-secrets) SKIP_SECRETS="true" ;;
         --skip-tests) SKIP_TESTS="true" ;;
+        --skip-i18n) SKIP_I18N="true" ;;
     esac
 done
 
@@ -61,15 +63,20 @@ else
 fi
 
 # Check translations
-echo -e "${CYAN}▸ Checking translations...${NC}"
-cd "$PROJECT_ROOT"
-if ! yarn i18n:check --no-pseo; then
-    echo -e "${RED}✗ Translation check failed. Deployment blocked.${NC}"
-    echo -e "${YELLOW}  Run 'yarn i18n:check' to see details${NC}"
-    exit 1
+if [ "$SKIP_I18N" = "false" ]; then
+    echo -e "${CYAN}▸ Checking translations...${NC}"
+    cd "$PROJECT_ROOT"
+    if ! yarn i18n:check --no-pseo; then
+        echo -e "${RED}✗ Translation check failed. Deployment blocked.${NC}"
+        echo -e "${YELLOW}  Run 'yarn i18n:check' to see details${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✓ All translations valid${NC}"
+    echo ""
+else
+    echo -e "${YELLOW}▸ Skipping i18n checks (--skip-i18n flag)${NC}"
+    echo ""
 fi
-echo -e "${GREEN}✓ All translations valid${NC}"
-echo ""
 
 source "$SCRIPT_DIR/steps/01-preflight.sh" && step_preflight
 source "$SCRIPT_DIR/steps/02-build.sh" && step_build

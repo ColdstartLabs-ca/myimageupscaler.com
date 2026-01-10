@@ -9,7 +9,6 @@ import { GoogleAnalytics } from '@client/components/analytics/GoogleAnalytics';
 import { Layout } from '@client/components/layout/Layout';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { DEFAULT_LOCALE } from '@/i18n/config';
-import { getOpenGraphLocale } from '@/lib/seo/hreflang-generator';
 import { clientEnv } from '@shared/config/env';
 import '@client/styles/index.css';
 
@@ -54,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
       'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
     openGraph: {
       type: 'website',
-      locale: getOpenGraphLocale(DEFAULT_LOCALE),
+      // Note: locale is handled by SeoMetaTags component in pages to avoid duplicates
       url: '/',
       siteName: clientEnv.APP_NAME,
     },

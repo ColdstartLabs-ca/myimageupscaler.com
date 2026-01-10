@@ -9,11 +9,7 @@ import { Metadata } from 'next';
 import type { PSEOPage } from './pseo-types';
 import type { PSEOCategory } from './url-utils';
 import { clientEnv } from '@shared/config/env';
-import {
-  generateHreflangAlternates,
-  getCanonicalUrl,
-  getOpenGraphLocale,
-} from './hreflang-generator';
+import { getCanonicalUrl, getOpenGraphLocale } from './hreflang-generator';
 import type { Locale } from '../../i18n/config';
 
 const BASE_URL = clientEnv.BASE_URL;
@@ -32,24 +28,25 @@ const TWITTER_HANDLE = clientEnv.TWITTER_HANDLE;
 export function generateMetadata(
   page: PSEOPage,
   category: PSEOCategory,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   locale: Locale = 'en'
 ): Metadata {
   const path = `/${category}/${page.slug}`;
   const canonicalUrl = getCanonicalUrl(path);
-  const ogLocale = getOpenGraphLocale(locale);
+  // Note: og:locale is rendered via SeoMetaTags component to avoid duplicates
 
   return {
     title: page.metaTitle,
     description: page.metaDescription,
 
     // Open Graph
+    // Note: locale is handled by SeoMetaTags component to avoid duplicates
     openGraph: {
       title: page.metaTitle,
       description: page.metaDescription,
       type: 'website',
       url: canonicalUrl,
       siteName: APP_NAME,
-      locale: ogLocale,
       ...(page.ogImage && {
         images: [
           {
@@ -107,8 +104,8 @@ export function generateMetadata(
 export function generateCategoryMetadata(category: PSEOCategory, locale: Locale = 'en'): Metadata {
   const path = `/${category}`;
   const canonicalUrl = getCanonicalUrl(path);
-  const hreflangAlternates = generateHreflangAlternates(path);
   const ogLocale = getOpenGraphLocale(locale);
+  // Note: hreflang links are rendered via HreflangLinks component to avoid duplicates
 
   const categoryTitles: Record<PSEOCategory, string> = {
     tools: `AI Image Tools - Upscaler, Enhancer & More | ${APP_NAME}`,
@@ -176,9 +173,9 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
       creator: `@${TWITTER_HANDLE}`,
     },
 
+    // Canonical only - hreflang links are rendered via HreflangLinks component
     alternates: {
       canonical: canonicalUrl,
-      languages: hreflangAlternates,
     },
 
     robots: {

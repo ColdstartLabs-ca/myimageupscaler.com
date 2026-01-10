@@ -11,7 +11,6 @@ import { Layout } from '@client/components/layout/Layout';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { SUPPORTED_LOCALES, isValidLocale } from '@/i18n/config';
 import { clientEnv } from '@shared/config/env';
-import { getOpenGraphLocale } from '@/lib/seo/hreflang-generator';
 import '@client/styles/index.css';
 
 const APP_NAME = clientEnv.APP_NAME;
@@ -39,7 +38,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  // Await params for Next.js, but og:locale is handled by SeoMetaTags in pages
+  await params;
 
   return {
     metadataBase: new URL(clientEnv.BASE_URL),
@@ -51,7 +51,7 @@ export async function generateMetadata({
       'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
     openGraph: {
       type: 'website',
-      locale: getOpenGraphLocale(locale as 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja'),
+      // Note: locale is handled by SeoMetaTags component in pages to avoid duplicates
       url: '/',
       siteName: APP_NAME,
     },
