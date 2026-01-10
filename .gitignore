@@ -79,3 +79,6 @@ template
 
 
 .playwright-mcp
+
+# Google Cloud
+cloud/keys/
