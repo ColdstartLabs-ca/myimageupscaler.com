@@ -114,5 +114,32 @@
     "amount": "Montant",
     "date": "Date",
     "noDescription": "Aucune description"
+  },
+  "sidebar": {
+    "admin": "Admin"
+  },
+  "settings": {
+    "notifications": "Notifications"
+  },
+  "support": {
+    "documentation": "Documentation",
+    "message": "Message"
+  },
+  "imageComparison": {
+    "original": "Original"
+  },
+  "upgradeSuccessBanner": {
+    "image": "image",
+    "images": "images"
+  },
+  "users": {
+    "table": {
+      "actions": "Actions"
+    }
+  },
+  "userDetail": {
+    "fields": {
+      "admin": "Admin"
+    }
   }
 }

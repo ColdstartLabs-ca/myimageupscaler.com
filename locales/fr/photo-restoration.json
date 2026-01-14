@@ -513,22 +513,22 @@
       "repairWorkflow": [
         {
           "phase": "Assessment",
-          "description": "Thoroughly evaluate damage type and severity",
+          "description": "Évaluer minutieusement le type et la gravité des dommages",
           "actions": ["Document all damage", "Prioritize repairs", "Plan restoration approach"]
         },
         {
           "phase": "Stabilization",
-          "description": "Stabilize the photo and prevent further damage",
+          "description": "Stabiliser la photo et prévenir d'autres dommages",
           "actions": ["Gentle cleaning", "Flattening", "Environmental control"]
         },
         {
           "phase": "Digitization",
-          "description": "Create high-quality digital copies for repair work",
+          "description": "Créer des copies numériques haute qualité pour les travaux de réparation",
           "actions": ["High-resolution scanning", "Multiple passes", "Format selection"]
         },
         {
           "phase": "Numérique Repair",
-          "description": "Repair damage using digital tools and techniques",
+          "description": "Réparer les dommages en utilisant des outils et techniques numériques",
           "actions": ["Structural repairs", "Color correction", "Detail restoration"]
         },
         {
@@ -543,12 +543,12 @@
           "techniques": [
             {
               "method": "Numérique Reconstruction",
-              "description": "Reconstruct missing areas using surrounding content",
+              "description": "Reconstruire les zones manquantes en utilisant le contenu environnant",
               "steps": ["Align pieces", "Clone matching areas", "Blend edges", "Rebuild details"]
             },
             {
               "method": "Content-Aware Fill",
-              "description": "Use AI to intelligently fill missing areas",
+              "description": "Utiliser l'IA pour remplir intelligemment les zones manquantes",
               "steps": [
                 "Select missing areas",
                 "Adjust fill settings",
@@ -558,7 +558,7 @@
             },
             {
               "method": "Layered Assembly",
-              "description": "Digitally assemble torn pieces like a puzzle",
+              "description": "Assembler numériquement les pièces déchirées comme un puzzle",
               "steps": ["Separate pieces", "Align edges", "Blend seams", "Smooth transitions"]
             }
           ]
@@ -603,7 +603,7 @@
           "techniques": [
             {
               "method": "Color Correction",
-              "description": "Correct color shifts and stains from water damage",
+              "description": "Corriger les changements de couleur et les taches des dégâts des eaux",
               "steps": [
                 "Identify stained areas",
                 "Adjust color balance",
@@ -793,7 +793,7 @@
     },
     {
       "slug": "photo-conservation-methods",
-      "title": "Photo Conservation: Preservation Methods",
+      "title": "Conservation des photos : Méthodes de préservation",
       "metaTitle": "Photo Conservation Guide - Preserve & Store Photos Long Term",
       "metaDescription": "Complet Guide to Photo conservation. Learn proper Photo storage, preservation methods, environmental control, and archival techniques to protect photographs for future generations.",
       "h1": "Photo Conservation: Complet Preservation Guide",
@@ -1212,13 +1212,13 @@
         },
         {
           "method": "Family Branch Organization",
-          "description": "Organize by family lines and relationships",
+          "description": "Organiser par lignées familiales et relations",
           "benefits": ["Suivi généalogique", "Clarté des relations", "Motifs d'héritage"],
           "implementation": "Arbres généalogiques, branches individuelles, photos de groupe"
         },
         {
           "method": "Event-Based Organization",
-          "description": "Organize by specific events and occasions",
+          "description": "Organiser par événements et occasions spécifiques",
           "benefits": ["Narration", "Histoire des événements", "Suivi des célébrations"],
           "implementation": "Mariages, vacances, naissances, remises de diplômes, voyages"
         },
@@ -1232,22 +1232,22 @@
       "documentationEssentials": [
         {
           "element": "People Identification",
-          "description": "Identify and document all individuals in photos",
+          "description": "Identifier et documenter toutes les personnes sur les photos",
           "information": ["Noms complets", "Relations", "Âges approximatifs", "Dates de vie"]
         },
         {
           "element": "Dating and Context",
-          "description": "Determine when and where photos were taken",
+          "description": "Déterminer quand et où les photos ont été prises",
           "information": ["Date ou période", "Lieu", "Occasion", "Photographe"]
         },
         {
           "element": "Stories and Memories",
-          "description": "Record associated stories and family memories",
+          "description": "Enregistrer les histoires et souvenirs familiaux associés",
           "information": ["Événements", "Traditions", "Émotions", "Contexte culturel"]
         },
         {
           "element": "Technical Details",
-          "description": "Document technical and preservation information",
+          "description": "Documenter les informations techniques et de préservation",
           "information": ["Type de photo", "État", "Besoins de conservation", "Emplacement"]
         }
       ],

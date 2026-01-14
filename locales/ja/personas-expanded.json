@@ -1440,14 +1440,14 @@
         },
         {
           "title": "ソーシャルメディア対応",
-          "description": "Optimized for Instagram posts, stories, and other social platforms"
+          "description": "Instagramの投稿、ストーリー、その他のソーシャルプラットフォームに最適化"
         },
         {
-          "title": "Profile Enhancement",
-          "description": "Improve profile pictures and brand imagery across platforms"
+          "title": "プロフィール強化",
+          "description": "プラットフォーム全体でプロフィール写真とブランド画像を改善"
         },
         {
-          "title": "Content Series Consistency",
+          "title": "コンテンツシリーズの一貫性",
           "description": "MAIntAIn visual consistency across content series and playlists"
         }
       ],
@@ -1460,36 +1460,36 @@
       ],
       "workflows": {
         "contentPlanning": [
-          "Visual identity development and brand guidelines creation",
-          "Thumbnail strategy for maximum click-through rates",
-          "Content calendar planning with visual consistency",
-          "Platform-specific visual requirement planning"
+          "ビジュアルアイデンティティ開発とブランドガイドライン作成",
+          "最大クリック率のためのサムネイル戦略",
+          "視覚的一貫性を持つコンテンツカレンダー計画",
+          "プラットフォーム別の視覚要件計画"
         ],
         "contentCreation": [
-          "Video thumbnail capture and selection process",
-          "Enhancement of screen captures and gameplay footage",
-          "Brand visual element creation and optimization",
-          "Multi-platform content preparation and adaptation"
+          "動画サムネイルのキャプチャと選択プロセス",
+          "スクリーンキャプチャとゲームプレイ映像の強化",
+          "ブランドビジュアル要素の作成と最適化",
+          "マルチプラットフォームコンテンツの準備と適応"
         ],
         "distribution": [
-          "Platform-specific optimization for YouTube, Instagram, TikTok",
-          "Social media content scheduling with enhanced visuals",
-          "Email newsletter preparation with enhanced imagery",
-          "Website and blog content visual optimization"
+          "YouTube、Instagram、TikTok のプラットフォーム別最適化",
+          "強化されたビジュアルによるソーシャルメディアコンテンツスケジューリング",
+          "強化された画像によるメールニュースレター準備",
+          "ウェブサイトとブログコンテンツの視覚的最適化"
         ]
       },
       "professionalChallenges": {
         "technical": [
-          "Creating eye-catching thumbnails that stand out in crowded feeds",
-          "Maintaining consistent quality across different content types",
-          "Optimizing visuals for multiple platform requirements",
-          "Balancing file size with visual quality for fast loading"
+          "混雑したフィードで目立つ目を引くサムネイルの作成",
+          "異なるコンテンツタイプ間で一貫した品質を維持",
+          "複数のプラットフォーム要件に対応したビジュアルの最適化",
+          "高速読み込みのためにファイルサイズと画質のバランス"
         ],
         "creative": [
-          "Developing unique visual style in saturated markets",
-          "Maintaining brand consistency across diverse content",
-          "Creating engaging visuals that accurately represent content",
-          "Adapting visual style for different audience segments"
+          "飽和市場でのユニークなビジュアルスタイルの開発",
+          "多様なコンテンツ間でブランドの一貫性を維持",
+          "コンテンツを正確に表現する魅力的なビジュアルの作成",
+          "異なるオーディエンスセグメントに向けたビジュアルスタイルの適応"
         ],
         "business": [
           "改善された視覚的プレゼンテーションを通じたオーディエンスの成長",
@@ -1580,20 +1580,20 @@
       },
       "qualityStandards": {
         "thumbnails": {
-          "resolution": "Minimum 1280x720px for quality thumbnails",
-          "compression": "Optimized for fast loading without quality loss",
-          "color": "High contrast for visibility in small sizes",
-          "text": "Readable and complementing the visual content"
+          "resolution": "高品質サムネイルのために最低1280x720px",
+          "compression": "品質損失なしの高速読み込みに最適化",
+          "color": "小さいサイズでの視認性のためのコントラスト",
+          "text": "読みやすくビジュアルコンテンツを補完"
         },
         "content": {
-          "videoQuality": "1080p or 4K depending on content type",
-          "audioQuality": "Clear, balanced audio for professional presentation",
-          "graphics": "Crisp, readable text and graphics",
-          "consistency": "Uniform quality across all content"
+          "videoQuality": "コンテンツタイプに応じて1080pまたは4K",
+          "audioQuality": "プロフェッショナルなプレゼンテーションのための明瞭でバランスの取れたオーディオ",
+          "graphics": "鮮明で読みやすいテキストとグラフィック",
+          "consistency": "すべてのコンテンツで均一な品質"
         },
         "platform": {
-          "YouTube": "Optimized for both desktop and mobile viewing",
-          "Instagram": "Square and vertical formats for different post types",
+          "YouTube": "デスクトップとモバイル視聴の両方に最適化",
+          "Instagram": "異なる投稿タイプの正方形と垂直フォーマット",
           "TikTok": "モバイル消費のために最適化された縦形式",
           "Twitch": "ゲーミングコンテンツ用に最適化されたストリームオーバーレイ"
         }
@@ -1740,10 +1740,10 @@
         },
         {
           "title": "UI要素最適化",
-          "description": "Enhance user interface elements and icons for better visibility"
+          "description": "視認性を高めるためのユーザーインターフェース要素とアイコンの強化"
         },
         {
-          "title": "Store Asset Creation",
+          "title": "ストアアセット作成",
           "description": "Create high-品質 screenshots and promotional materials"
         }
       ],
@@ -1756,42 +1756,42 @@
       ],
       "workflows": {
         "assetCreation": [
-          "Concept art creation and visualization with enhanced reference materials",
-          "Sprite and texture creation with resolution planning",
+          "強化された参照資料によるコンセプトアート作成と可視化",
+          "解像度計画を含むスプライトとテクスチャ作成",
           "UI element design with multi-resolution support",
-          "Character and environment asset development"
+          "キャラクターと環境アセット開発"
         ],
         "technicalImplementation": [
-          "Asset optimization for different platform requirements",
-          "Integration with game engines and development pipelines",
-          "Performance testing and optimization of enhanced assets",
-          "Memory and loading optimization for enhanced textures"
+          "異なるプラットフォーム要件のためのアセット最適化",
+          "ゲームエンジンと開発パイプラインとの統合",
+          "強化されたアセットのパフォーマンステストと最適化",
+          "強化されたテクスチャのメモリと読み込みの最適化"
         ],
         "marketingMaterials": [
-          "Store page screenshots and promotional materials",
-          "Trailer creation with enhanced gameplay footage",
-          "Social media marketing assets and press kits",
-          "Website and landing page visual content"
+          "ストアページのスクリーンショットとプロモーション素材",
+          "強化されたゲームプレイ映像によるトレーラー作成",
+          "ソーシャルメディアマーケティングアセットとプレスキット",
+          "ウェブサイトとランディングページのビジュアルコンテンツ"
         ]
       },
       "professionalChallenges": {
         "technical": [
-          "Maintaining pixel art authenticity during enhancement",
-          "Optimizing assets for different platform performance requirements",
-          "Preserving animation frame consistency",
-          "Managing memory budgets with higher resolution assets"
+          "強化中のピクセルアートの真正性維持",
+          "異なるプラットフォームパフォーマンス要件のためのアセット最適化",
+          "アニメーションフレームの一貫性維持",
+          "より高い解像度アセットでのメモリ予算管理"
         ],
         "artistic": [
-          "Maintaining artistic style during technical enhancement",
-          "Balancing visual improvement with performance requirements",
-          "Creating consistent art direction across enhanced assets",
-          "Preserving intended visual aesthetics and game atmosphere"
+          "技術的強化中の芸術的スタイル維持",
+          "視覚的改善とパフォーマンス要件のバランス",
+          "強化されたアセット間で一貫したアートディレクション作成",
+          "意図されたビジュアル美学とゲームの雰囲気の保存"
         ],
         "business": [
           "Competing with AAA studio visual quality",
-          "Marketing games effectively with enhanced visuals",
-          "Managing development costs and time constraints",
-          "Creating successful store listings and promotional materials"
+          "強化されたビジュアルによるゲームの効果的マーケティング",
+          "開発コストと時間制約の管理",
+          "成功するストア掲載とプロモーション素材の作成"
         ],
         "design": [
           "高品質なプロモーション資料の必要性",
@@ -1802,62 +1802,62 @@
       },
       "softwareRecommendations": {
         "gameEngines": [
-          "Unity - Cross-platform game development with asset optimization",
-          "Unreal Engine - High-fidelity game development tools",
-          "Godot - Open-source game engine with 2D focus",
-          "GameMaker Studio - Professional 2D game development"
+          "Unity - アセット最適化付きクロスプラットフォームゲーム開発",
+          "Unreal Engine - 高忠実度ゲーム開発ツール",
+          "Godot - 2D重視のオープンソースゲームエンジン",
+          "GameMaker Studio - プロフェッショナル2Dゲーム開発"
         ],
         "artTools": [
-          "Aseprite - Professional pixel art and animation",
-          "Photoshop - Digital painting and texture creation",
-          "Krita - Professional digital painting software",
-          "Procreate - iPad-based digital art creation"
+          "Aseprite - プロフェッショナルピクセルアートとアニメーション",
+          "Photoshop - デジタルペイントとテクスチャ作成",
+          "Krita - プロフェッショナルデジタルペイントソフトウェア",
+          "Procreate - iPadベースのデジタルアート作成"
         ],
         "developmentTools": [
-          "TexturePacker - Sprite sheet optimization",
-          "RenderDoc - Graphics debugging and optimization",
-          "Luminar AI - AI-powered texture enhancement",
-          "Topaz Gigapixel AI - Specialized upscaling for game assets"
+          "TexturePacker - スプライトシート最適化",
+          "RenderDoc - グラフィックデバッグと最適化",
+          "Luminar AI - AI駆動テクスチャ強化",
+          "Topaz Gigapixel AI - ゲームアセット専用アップスケーリング"
         ]
       },
       "industryBestPractices": {
         "assetOptimization": [
-          "Create assets at highest resolution first, then optimize down",
-          "Maintain consistent pixel density across related assets",
-          "Test enhanced assets on target platforms early",
-          "Use appropriate compression for different asset types"
+          "最初に最高解像度でアセットを作成し、その後最適化",
+          "関連アセット間で一貫したピクセル密度を維持",
+          "早期にターゲットプラットフォームで強化アセットをテスト",
+          "異なるアセットタイプに適切な圧縮を使用"
         ],
         "performanceManagement": [
-          "Monitor memory usage with enhanced textures",
-          "Implement asset loading strategies for enhanced content",
-          "Test performance on minimum target specifications",
-          "Balance visual quality with frame rate requirements"
+          "強化されたテクスチャでメモリ使用量を監視",
+          "強化されたコンテンツのアセット読み込み戦略を実装",
+          "最小ターゲット仕様でパフォーマンスをテスト",
+          "フレームレート要件とビジュアル品質のバランス"
         ],
         "artDirection": [
-          "Maintain consistent visual style across all enhanced assets",
-          "Document enhancement guidelines for team consistency",
-          "Test enhanced assets in actual game lighting conditions",
-          "Preserve game atmosphere and intended emotional impact"
+          "すべての強化アセットで一貫したビジュアルスタイルを維持",
+          "チームの一貫性のための強化ガイドラインを文書化",
+          "実際のゲーム照明条件で強化アセットをテスト",
+          "ゲームの雰囲気と意図された感情的影響を保存"
         ]
       },
       "caseStudies": [
         {
-          "title": "Indie Game Visual Upgrade Success",
-          "scenario": "Indie developer upgrading pixel art game for modern high-resolution displays",
-          "solution": "Careful enhancement maintaining pixel art aesthetics while improving clarity",
-          "results": "4x increase in player engagement and successful port to modern gaming platforms"
+          "title": "インディーゲームビジュアルアップグレード成功",
+          "scenario": "モダンな高解像度ディスプレイ向けにピクセルアートゲームをアップグレードするインディー開発者",
+          "solution": "明確さを改善しながらピクセルアート美学を維持する慎重な強化",
+          "results": "プレイヤーエンゲージメントが4倍増加し、最新のゲームプラットフォームへの移植が成功"
         },
         {
-          "title": "Mobile Game Performance Optimization",
-          "scenario": "Mobile studio improving visual quality without performance loss",
-          "solution": "Smart enhancement with automatic optimization for different device specifications",
-          "results": "50% improvement in visual quality with maintained 60fps performance on target devices"
+          "title": "モバイルゲームパフォーマンス最適化",
+          "scenario": "パフォーマンス低下なしで視覚品質を向上させるモバイルスタジオ",
+          "solution": "異なるデバイス仕様に自動最適化するスマート強化",
+          "results": "ターゲットデバイスで60fpsパフォーマンスを維持しながら視覚品質が50%向上"
         },
         {
-          "title": "Steam Store Listing Enhancement",
-          "scenario": "Indie developer improving store presence through enhanced screenshots and materials",
-          "solution": "Professional enhancement of gameplay screenshots and promotional materials",
-          "results": "200% increase in wishlist additions and significantly higher conversion rates"
+          "title": "Steamストア掲載強化",
+          "scenario": "強化されたスクリーンショットと素材でストアプレゼンスを改善するインディー開発者",
+          "solution": "ゲームプレイスクリーンショットとプロモーション素材のプロフェッショナル強化",
+          "results": "ウィッシュリスト追加が200%増加し、コンバージョン率が大幅に向上"
         }
       ],
       "fileFormats": {
@@ -1871,13 +1871,13 @@
           "PNG - Maintaining crisp pixel art integrity",
           "GIF - For simple animations and previews",
           "ASE - Aseprite native format for pixel art",
-          "Custom formats for specific game engines"
+          "特定のゲームエンジン用のカスタムフォーマット"
         ],
         "marketing": [
           "JPEG - For screenshots and web marketing",
           "PNG - For crisp marketing graphics",
           "GIF - For animated gameplay previews",
-          "MP4 - For video trailers and gameplay footage"
+          "MP4 - 動画トレーラーとゲームプレイ映像用"
         ],
         "conceptArt": ["強化された参照資料を使用したコンセプトアート作成と視覚化"],
         "assetDevelopment": [
@@ -1887,36 +1887,36 @@
       },
       "qualityStandards": {
         "resolutions": {
-          "pixelArt": "Maintain clean pixel boundaries at display resolution",
-          "HD": "1920x1080 standard for modern gaming",
-          "4K": "3840x2160 for high-end gaming displays",
-          "mobile": "Optimized for various mobile device resolutions"
+          "pixelArt": "表示解像度でクリーンなピクセル境界を維持",
+          "HD": "モダンゲーミングの1920x1080標準",
+          "4K": "ハイエンドゲームディスプレイ用3840x2160",
+          "mobile": "様々なモバイルデバイス解像度に最適化"
         },
         "performance": {
-          "memoryBudgets": "Stay within platform memory limitations",
-          "loadingTimes": "Optimize for fast asset loading",
-          "frameRate": "Maintain consistent performance targets",
-          "scalability": "Adapt to different hardware capabilities"
+          "memoryBudgets": "プラットフォームメモリ制限内に収める",
+          "loadingTimes": "高速アセット読み込みの最適化",
+          "frameRate": "一貫したパフォーマンスターゲットを維持",
+          "scalability": "異なるハードウェア能力に適応"
         },
         "visual": {
-          "consistency": "Uniform quality across all game assets",
-          "readability": "Clear visibility of important game elements",
-          "atmosphere": "Maintain intended game mood and style",
-          "accessibility": "Clear visual communication for all players"
+          "consistency": "すべてのゲームアセットで均一な品質",
+          "readability": "重要なゲーム要素の鮮明な視認性",
+          "atmosphere": "意図されたゲームの雰囲気とスタイルを維持",
+          "accessibility": "すべてのプレイヤーのための明確なビジュアルコミュニケーション"
         }
       },
       "automationWorkflows": {
         "batchProcessing": [
-          "Enhance multiple similar assets with consistent settings",
-          "Automate optimization for different platform requirements",
+          "一貫した設定で複数の類似アセットを強化",
+          "異なるプラットフォーム要件の自動最適化",
           "Batch process UI elements for consistent visual quality",
-          "Create texture atlases from enhanced individual sprites"
+          "強化された個々のスプライトからテクスチャアトラスを作成"
         ],
         "integration": [
-          "Connect with game engine asset pipelines",
-          "Automate screenshot capture and enhancement for marketing",
-          "Integrate with build processes for asset optimization",
-          "Create automated testing for enhanced asset performance"
+          "ゲームエンジンアセットパイプラインに接続",
+          "マーケティング用のスクリーンショットキャプチャと強化を自動化",
+          "アセット最適化のビルドプロセスとの統合",
+          "強化アセットパフォーマンスの自動テスト作成"
         ]
       },
       "collaborationTips": {

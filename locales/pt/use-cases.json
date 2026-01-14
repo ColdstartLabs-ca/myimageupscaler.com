@@ -1,5 +1,5 @@
 {
-  "category": "use-cases",
+  "category": "casos-de-uso",
   "pages": [
     {
       "slug": "ecommerce-product-photos",
@@ -16,7 +16,7 @@
         "dimensões de foto etsy"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "E-commerce",
       "description": "Requisitos específicos de imagem para principais plataformas de e-commerce com orientação sobre como atendê-los.",
       "platformRequirements": [
@@ -150,7 +150,7 @@
         "fotografia de imóveis"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "Imóveis",
       "description": "Requisitos específicos de imagem para plataformas de listagem de imóveis com orientação sobre como atendê-los.",
       "platformRequirements": [
@@ -262,7 +262,7 @@
         "dimensões de imagem linkedin"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "Mídia Social",
       "description": "Referência completa para dimensões de imagem de mídia social com requisitos específicos da plataforma.",
       "platformRequirements": [
@@ -484,7 +484,7 @@
         "tamanho de imagem 300 dpi"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "Fotografia & Impressão",
       "description": "Guia completo para preparar imagens para impressão com requisitos de DPI e cálculos de tamanho.",
       "dpiExplanation": {
@@ -648,7 +648,7 @@
         "melhoria de foto vintage"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "Restauração de Fotos",
       "description": "Guia passo a passo para restaurar fotos antigas e danificadas com expectativas realistas.",
       "scanningGuide": {
@@ -800,7 +800,7 @@
         "fotografia de produtos fba"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "E-commerce",
       "description": "Guia completo para preparar imagens de produto para listagens Amazon, incluindo requisitos de tamanho, padrões de fundo branco e fluxo de trabalho de ampliação de IA.",
       "platformRequirements": [
@@ -926,7 +926,7 @@
         "edição de fotografia de imóveis"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "Imóveis",
       "description": "Guia abrangente para melhorar fotos de imóveis para MLS, Zillow e outras plataformas de listagem de propriedades usando ferramentas de IA.",
       "platformRequirements": [
@@ -1080,7 +1080,7 @@
         "ampliar wallpaper anime"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "Arte Digital & Entretenimento",
       "description": "Guia especializado para ampliar imagens anime, arte manga e ilustrações de estilo japonês usando tecnologia de IA otimizada para conteúdo desenhado.",
       "contentTypes": [
@@ -1241,7 +1241,7 @@
         "ampliador de ilustração"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "description": "Ampliação especializada para imagens de desenho animado, quadrinhos ocidentais e conteúdo ilustrado usando tecnologia de IA otimizada para arte desenhada com cores planas e linhas limpas.",
       "imageTypes": [
         {
@@ -1339,7 +1339,7 @@
         "melhoria de detalhe facial"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "description": "Melhoria de retrato profissional usando modelos de IA especializados para reconstrução e melhoria de características faciais. Perfeito para headshots, fotos de mídia social e retratos profissionais.",
       "supportedTiers": {
         "faceRestore": {
@@ -1445,7 +1445,7 @@
         "removedor de fundo de imagem de produto"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "E-commerce",
       "description": "Preparação profissional de fotos de produto para marketplaces online. Remova fundos ocupados e crie fundos brancos limpos que atendem requisitos Amazon, eBay e Etsy.",
       "challenges": [
@@ -1524,7 +1524,7 @@
         "remoção de fundo de foto de perfil"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "use-cases",
+      "category": "casos-de-uso",
       "industry": "Profissional & Pessoal",
       "description": "Preparação profissional de retrato e headshot com remoção de fundo de IA. Perfeito para perfis LinkedIn, currículos, fotos de ID e branding profissional.",
       "challenges": [

@@ -237,11 +237,11 @@
         "batchLimit": "20 files per conversion"
       },
       "advantages": [
-        "Significant file size reduction (up to 80%)",
-        "Intelligent quality preservation algorithms",
-        "Fast conversion speeds",
-        "Background color options for transparency",
-        "Web optimization features"
+        "大幅なファイルサイズ削減（最大80%）",
+        "インテリジェントな品質保存アルゴリズム",
+        "高速変換",
+        "透明度向け背景色オプション",
+        "Web最適化機能"
       ],
       "faq": [
         {
@@ -249,11 +249,11 @@
           "answer": "JPEG files are typically 50-80% smaller than PNG files for photographic content, while mAIntAIning similar visual 品質. The exact reduction depends on image content and compression settings."
         },
         {
-          "question": "What happens to PNG transparency when converting to JPEG?",
-          "answer": "Since JPEG doesn't support transparency, our converter replaces transparent areas with a background color of your choice (white, black, or custom color)."
+          "question": "PNGをJPEGに変換すると透明度はどうなりますか？",
+          "answer": "JPEGは透明度をサポートしていないため、コンバーターは透明な領域を選択した背景色（白、黒、またはカスタム色）に置き換えます。"
         },
         {
-          "question": "When should I use PNG vs JPEG?",
+          "question": "PNGとJPEGのどちらを使用すべきですか？",
           "answer": "Use PNG for graphics, logos, and images requiring transparency or lossless 品質. Use JPEG for photographs and images where file サイズ is important and slight 品質 loss is acceptable."
         },
         {
@@ -442,10 +442,10 @@
     },
     {
       "slug": "convert-jpeg-to-webp",
-      "title": "Convert JPEG to WebP",
-      "metaTitle": "Convert JPEG to WebP | MyImageUpscaler",
+      "title": "JPEGをWebPに変換",
+      "metaTitle": "JPEGをWebPに変換 | MyImageUpscaler",
       "metaDescription": "Convert JPEG images to WebP フォーマット for better web パフォーマンス. High-品質 JPG to WebP conversion with 25-35% file サイズ reduction. Perfect for website optimization.",
-      "h1": "Convert JPEG to WebP - Modern Web Image Optimization",
+      "h1": "JPEGをWebPに変換 - モダンなWeb画像最適化",
       "intro": "Convert your JPEG images to modern WebP フォーマット for superior web パフォーマンス and compression. Achieve 25-35% smaller file サイズs while mAIntAIning equivalent visual 品質 for faster website loading.",
       "primaryKeyword": "convert jpeg to webp",
       "secondaryKeywords": [
@@ -458,37 +458,37 @@
       "lastUpdated": "2025-01-19",
       "category": "tools",
       "toolName": "JPEG to WebP Converter",
-      "description": "Modern JPEG to WebP conversion for web optimization and performance",
+      "description": "Web最適化とパフォーマンスのためのモダンなJPEGからWebPへの変換",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
       "fromFormat": "JPEG",
       "toFormat": "WebP",
       "conversionFeatures": {
-        "fileSizeReduction": "25-35% smaller files than equivalent JPEGs",
-        "qualityMaintenance": "Preserves visual quality while reducing file size",
-        "compressionControl": "Adjustable WebP compression settings",
-        "modernBrowserSupport": "Optimized for modern web browsers and platforms"
+        "fileSizeReduction": "同等のJPEGより25-35%小さいファイル",
+        "qualityMaintenance": "ファイルサイズを削減しながら視覚品質を維持",
+        "compressionControl": "調整可能なWebP圧縮設定",
+        "modernBrowserSupport": "モダンなWebブラウザとプラットフォームに最適化"
       },
       "commonUseCases": [
         {
-          "title": "Website Optimization",
-          "description": "Convert JPEG images to WebP for faster website loading times",
-          "example": "Convert product JPEGs to WebP for e-commerce website speed"
+          "title": "Webサイト最適化",
+          "description": "より高速なWebサイト読み込み時間のためにJPEG画像をWebPに変換",
+          "example": "eコマースWebサイト速度のために製品JPEGをWebPに変換"
         },
         {
-          "title": "SEO Improvement",
-          "description": "Improve page load speed and SEO with WebP image optimization",
-          "example": "Convert blog post images to WebP for better Google PageSpeed scores"
+          "title": "SEO改善",
+          "description": "WebP画像最適化でページ読み込み速度とSEOを改善",
+          "example": "より良いGoogle PageSpeedスコアのためにブログ投稿画像をWebPに変換"
         },
         {
-          "title": "Mobile Performance",
-          "description": "Optimize JPEGs for mobile devices with WebP conversion",
-          "example": "Convert website images to WebP for better mobile experience"
+          "title": "モバイルパフォーマンス",
+          "description": "WebP変換でモバイルデバイス向けにJPEGを最適化",
+          "example": "より良いモバイル体験のためにWebサイト画像をWebPに変換"
         },
         {
-          "title": "Bandwidth Savings",
-          "description": "Reduce bandwidth costs with smaller WebP file sizes",
-          "example": "Convert high-traffic website images to WebP for bandwidth efficiency"
+          "title": "帯域幅節約",
+          "description": "より小さなWebPファイルサイズで帯域幅コストを削減",
+          "example": "帯域幅効率のために高トラフィックWebサイト画像をWebPに変換"
         }
       ],
       "technicalSpecs": {
@@ -502,7 +502,7 @@
     {
       "slug": "convert-png-to-webp",
       "title": "PNGをWebPに変換",
-      "metaTitle": "Convert PNG to WebP | MyImageUpscaler",
+      "metaTitle": "PNGをWebPに変換 | MyImageUpscaler",
       "metaDescription": "Convert PNG images to WebP フォーマット with transparency support. High-品質 PNG to WebP conversion for web optimization. Perfect for logos and graphics.",
       "h1": "PNGからWebPへの変換 - 透明性を備えた最新のグラフィック",
       "intro": "Convert your PNG images and graphics to modern WebP フォーマット while preserving transparency and achieving superior compression. Perfect for optimizing logos, icons, and graphics for the web.",
@@ -665,14 +665,14 @@
         {
           "title": "Webグラフィックス",
           "description": "SVGグラフィックスをブラウザ互換性のためにPNGに変換",
-          "example": "Convert complex SVG graphics to PNG for older browser support"
+          "example": "古いブラウザサポートのために複雑なSVGグラフィックをPNGに変換"
         }
       ],
       "technicalSpecs": {
         "supportedFormats": ["SVG", "SVGZ", "PNG"],
         "maxFileSize": "10MB",
-        "outputOptions": ["Web PNG", "High Resolution PNG", "Custom Dimensions"],
-        "colorSpace": "sRGB, transparency with alpha channel support",
+        "outputOptions": ["Web PNG", "高解像度PNG", "カスタム寸法"],
+        "colorSpace": "sRGB、アルファチャンネルサポート付き透明度",
         "batchLimit": "25 files per conversion"
       }
     }

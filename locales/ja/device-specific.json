@@ -65,7 +65,7 @@
           "width": 750,
           "height": 1334,
           "aspectRatio": "16:9",
-          "notes": "No notch, home button"
+          "notes": "ノッチなし、ホームボタン"
         },
         {
           "model": "iPhone 11 / XR",
@@ -219,7 +219,7 @@
       "deviceFamily": "Android",
       "quickReference": {
         "mostCommon": "1440x3200px",
-        "note": "This size works for most flagship Android phones. Android scales well."
+        "note": "このサイズはほとんどのフラッグシップAndroid携帯で動作します。Androidはよくスケールされます。"
       },
       "dimensionsByBrand": [
         {

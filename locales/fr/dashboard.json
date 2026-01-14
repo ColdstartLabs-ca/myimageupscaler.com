@@ -125,5 +125,25 @@
     "errorLoadingStats": "Erreur lors du chargement des statistiques"
   },
   "loading": "Chargement...",
-  "planUnavailable": "Forfait indisponible"
+  "planUnavailable": "Forfait indisponible",
+  "creditHistory": {
+    "description": "Description"
+  },
+  "imageComparison": {
+    "original": "Original"
+  },
+  "upgradeSuccessBanner": {
+    "image": "image",
+    "images": "images"
+  },
+  "users": {
+    "table": {
+      "actions": "Actions"
+    }
+  },
+  "userDetail": {
+    "fields": {
+      "admin": "Admin"
+    }
+  }
 }

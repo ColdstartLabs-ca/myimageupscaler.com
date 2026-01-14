@@ -471,7 +471,7 @@
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "Facebook Image Resizer",
-      "description": "Instantly resize images to Facebook's recommended dimensions. Supports posts, cover photos, and profile pictures.",
+      "description": "Facebookの推奨寸法に画像を即座にリサイズ。投稿、カバー写真、プロフィール画像をサポート。",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "toolConfig": {
@@ -747,7 +747,7 @@
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "LinkedIn Image Resizer",
-      "description": "Instantly resize images to LinkedIn's recommended dimensions. Supports posts (1200x627) and banner images (1584x396).",
+      "description": "LinkedInの推奨寸法に画像を即座にリサイズ。投稿（1200x627）とバナー画像（1584x396）をサポート。",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "toolConfig": {

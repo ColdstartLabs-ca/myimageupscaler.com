@@ -131,5 +131,25 @@
     "activityFeedComingSoon": "Le fil d\"activité sera implémenté dans une future version.",
     "loadingStats": "Chargement des statistiques...",
     "errorLoadingStats": "Erreur lors du chargement des statistiques"
+  },
+  "sidebar": {
+    "admin": "Admin"
+  },
+  "settings": {
+    "notifications": "Notifications"
+  },
+  "support": {
+    "documentation": "Documentation",
+    "message": "Message"
+  },
+  "creditHistory": {
+    "description": "Description"
+  },
+  "imageComparison": {
+    "original": "Original"
+  },
+  "upgradeSuccessBanner": {
+    "image": "image",
+    "images": "images"
   }
 }

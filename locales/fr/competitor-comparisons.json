@@ -224,7 +224,7 @@
         },
         {
           "name": "Specialized Outil",
-          "key": "specialized_tool"
+          "key": "outil_spécialisé"
         },
         {
           "name": "Traitement Speed",
@@ -232,7 +232,7 @@
         },
         {
           "name": "Courbe d\"Apprentissage",
-          "key": "learning_curve"
+          "key": "courbe_d_apprentissage"
         },
         {
           "name": "Lot Traitement",
@@ -240,7 +240,7 @@
         },
         {
           "name": "Basé sur le Web",
-          "key": "web_based"
+          "key": "basé_sur_le_web"
         },
         {
           "name": "Gratuit Tier",
@@ -351,19 +351,19 @@
       "criteria": [
         {
           "name": "Gratuit Credits",
-          "key": "free_credits"
+          "key": "crédits_gratuits"
         },
         {
           "name": "Traitement Speed",
-          "key": "processing_speed"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Image Qualité",
-          "key": "image_quality"
+          "key": "qualité_d_image"
         },
         {
           "name": "Support client",
-          "key": "customer_support"
+          "key": "support_client"
         },
         {
           "name": "Accès API",
@@ -371,7 +371,7 @@
         },
         {
           "name": "Pro Fonctionnalités",
-          "key": "pro_features"
+          "key": "fonctionnalités_pro"
         },
         {
           "name": "Prix",
@@ -486,23 +486,23 @@
         },
         {
           "name": "Modern IA",
-          "key": "modern_ai"
+          "key": "ia_moderne"
         },
         {
           "name": "Support Universel",
-          "key": "universal_support"
+          "key": "support_universel"
         },
         {
           "name": "Traitement Speed",
-          "key": "processing_speed"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Facilité d\"Utilisation",
-          "key": "ease_of_use"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Support Client",
-          "key": "customer_support"
+          "key": "support_client"
         },
         {
           "name": "Gratuit Tier",
@@ -621,11 +621,11 @@
         },
         {
           "name": "Professionnel Qualité",
-          "key": "professional_quality"
+          "key": "qualité_professionnelle"
         },
         {
           "name": "Support client",
-          "key": "customer_support"
+          "key": "support_client"
         },
         {
           "name": "Accès API",
@@ -633,7 +633,7 @@
         },
         {
           "name": "Unlimited Traitement",
-          "key": "unlimited_processing"
+          "key": "traitement_illimité"
         },
         {
           "name": "Lot Traitement",
@@ -741,15 +741,15 @@
       "criteria": [
         {
           "name": "Gratuit Limit",
-          "key": "free_limit"
+          "key": "limite_gratuite"
         },
         {
           "name": "Taille de Fichier Max",
-          "key": "max_filesize"
+          "key": "taille_max_fichier"
         },
         {
           "name": "Traitement Speed",
-          "key": "processing_speed"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Qualité",
@@ -757,7 +757,7 @@
         },
         {
           "name": "Support Client",
-          "key": "customer_support"
+          "key": "support_client"
         },
         {
           "name": "Prix",
@@ -869,19 +869,19 @@
       "criteria": [
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "qualité_de_sortie"
         },
         {
           "name": "Upscaling Qualité",
-          "key": "upscaling_quality"
+          "key": "options_de_personnalisation"
         },
         {
           "name": "Traitement Speed",
-          "key": "processing_speed"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Support Qualité",
-          "key": "support_quality"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Additional Fonctionnalités",
@@ -889,7 +889,7 @@
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "rapport_qualité_prix"
         },
         {
           "name": "Rapport qualité-prix",
@@ -1001,27 +1001,27 @@
       "criteria": [
         {
           "name": "Plateforme",
-          "key": "platform"
+          "key": "précision_de_l_augmentation"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "qualité_d_image"
         },
         {
           "name": "Traitement Power",
-          "key": "processing_power"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Gratuit Usage",
-          "key": "free_usage"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Formats fichiers",
-          "key": "file_formats"
+          "key": "coût"
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "support_client"
         },
         {
           "name": "Professionnel Use",
@@ -1156,19 +1156,19 @@
       "criteria": [
         {
           "name": "Utilisation illimitée",
-          "key": "unlimited_usage"
+          "key": "qualité_de_l_augmentation"
         },
         {
           "name": "Pas de filigranes",
-          "key": "no_watermarks"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Max Résolution",
-          "key": "max_resolution"
+          "key": "coût"
         },
         {
           "name": "Support client",
@@ -1176,7 +1176,7 @@
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "fonctionnalités_avancées"
         },
         {
           "name": "Polyvalence",
@@ -1283,27 +1283,27 @@
       "criteria": [
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "qualité_de_sortie"
         },
         {
           "name": "IA Qualité",
-          "key": "ai_quality"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Traitement Speed",
-          "key": "processing_speed"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Expérience utilisateur",
-          "key": "user_experience"
+          "key": "options_de_personnalisation"
         },
         {
           "name": "Support client",
-          "key": "customer_support"
+          "key": "coût"
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "support_client"
         },
         {
           "name": "Proposition de valeur",
@@ -1415,23 +1415,23 @@
       "criteria": [
         {
           "name": "IA Technology",
-          "key": "ai_technology"
+          "key": "qualité_d_image"
         },
         {
           "name": "Ease of Use",
-          "key": "ease_of_use"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Consistency",
-          "key": "consistency"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Updates",
-          "key": "updates"
+          "key": "coût"
         },
         {
           "name": "Customer Support",
-          "key": "customer_support"
+          "key": "support_client"
         },
         {
           "name": "Gratuit Tier",
@@ -1547,27 +1547,27 @@
       "criteria": [
         {
           "name": "Spécialisation",
-          "key": "specialization"
+          "key": "puissance_ia"
         },
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "qualité_d_image"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Lot Traitement",
-          "key": "traitement_lot"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Pas de filigranes",
-          "key": "no_watermarks"
+          "key": "coût"
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "support_client"
         },
         {
           "name": "Professionnel Use",
@@ -1676,27 +1676,27 @@
       "criteria": [
         {
           "name": "Spécialisation",
-          "key": "specialization"
+          "key": "qualité_de_sortie"
         },
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Traitement Qualité",
-          "key": "processing_quality"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Vitesse",
-          "key": "vitesse"
+          "key": "options_de_personnalisation"
         },
         {
           "name": "Support client",
-          "key": "customer_support"
+          "key": "coût"
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "support_client"
         },
         {
           "name": "Valeur pour l'augmentation de résolution",
@@ -1805,27 +1805,27 @@
       "criteria": [
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "précision_d_augmentation"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "qualité_d_image"
         },
         {
           "name": "Spécialisation",
-          "key": "specialization"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Support client",
-          "key": "customer_support"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "coût"
         },
         {
           "name": "Confiance marque",
-          "key": "brand_trust"
+          "key": "support_client"
         },
         {
           "name": "Rapport qualité-prix",
@@ -1934,27 +1934,27 @@
       "criteria": [
         {
           "name": "Gratuit Usage",
-          "key": "free_usage"
+          "key": "qualité_de_sortie"
         },
         {
           "name": "IA Qualité",
-          "key": "ai_quality"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Spécialisation",
-          "key": "specialization"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Facilité utilisation",
-          "key": "ease_of_use"
+          "key": "options_de_personnalisation"
         },
         {
           "name": "Traitement Speed",
-          "key": "processing_speed"
+          "key": "coût"
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "support_client"
         },
         {
           "name": "Professionnel Qualité",
@@ -2063,23 +2063,23 @@
       "criteria": [
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "qualité_d_image"
         },
         {
           "name": "IA Qualité",
-          "key": "ai_quality"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Spécialisation",
-          "key": "specialization"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Professionnel Results",
-          "key": "professional_results"
+          "key": "coût"
         },
         {
           "name": "Lot Traitement",
-          "key": "traitement_lot"
+          "key": "support_client"
         },
         {
           "name": "Prix",
@@ -2217,27 +2217,27 @@
       "criteria": [
         {
           "name": "prix",
-          "key": "prix"
+          "key": "qualité_de_sortie"
         },
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "vitesse",
-          "key": "vitesse"
+          "key": "options_de_personnalisation"
         },
         {
           "name": "Customer Support",
-          "key": "customer_support"
+          "key": "coût"
         },
         {
           "name": "Ease of Use",
-          "key": "ease_of_use"
+          "key": "support_client"
         },
         {
           "name": "Overall Value",
@@ -2345,27 +2345,27 @@
       "criteria": [
         {
           "name": "Gratuit Limit",
-          "key": "free_limit"
+          "key": "précision_d_augmentation"
         },
         {
           "name": "Taille max fichier",
-          "key": "max_filesize"
+          "key": "qualité_d_image"
         },
         {
           "name": "Traitement Speed",
-          "key": "processing_speed"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Support client",
-          "key": "customer_support"
+          "key": "coût"
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "support_client"
         },
         {
           "name": "Professionnel Use",
@@ -2499,27 +2499,27 @@
       "criteria": [
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "qualité_de_sortie"
         },
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Vitesse",
-          "key": "vitesse"
+          "key": "options_de_personnalisation"
         },
         {
           "name": "Support client",
-          "key": "customer_support"
+          "key": "coût"
         },
         {
           "name": "Facilité utilisation",
-          "key": "ease_of_use"
+          "key": "support_client"
         },
         {
           "name": "Valeur globale",
@@ -2654,23 +2654,23 @@
       "criteria": [
         {
           "name": "Usage illimité",
-          "key": "unlimited_usage"
+          "key": "qualité_d_image"
         },
         {
           "name": "Sans filigranes",
-          "key": "no_watermarks"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Max Résolution",
-          "key": "max_resolution"
+          "key": "coût"
         },
         {
           "name": "Support client",
-          "key": "customer_support"
+          "key": "support_client"
         },
         {
           "name": "Prix",
@@ -2780,27 +2780,27 @@
       "criteria": [
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "qualité_de_sortie"
         },
         {
           "name": "Taille max fichier",
-          "key": "max_filesize"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Traitement Speed",
-          "key": "processing_speed"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "options_de_personnalisation"
         },
         {
           "name": "Lot Limits",
-          "key": "batch_limits"
+          "key": "coût"
         },
         {
           "name": "Prix",
-          "key": "prix"
+          "key": "support_client"
         },
         {
           "name": "Specialized Fonctionnalités",
@@ -2907,27 +2907,27 @@
       "criteria": [
         {
           "name": "Gratuit Tier",
-          "key": "version_gratuite"
+          "key": "précision_d_augmentation"
         },
         {
           "name": "Max Filesize",
-          "key": "max_filesize"
+          "key": "qualité_d_image"
         },
         {
           "name": "Traitement Speed",
-          "key": "processing_speed"
+          "key": "vitesse_de_traitement"
         },
         {
           "name": "Qualité",
-          "key": "Qualité"
+          "key": "facilité_d_utilisation"
         },
         {
           "name": "Specialization",
-          "key": "specialization"
+          "key": "coût"
         },
         {
           "name": "prix",
-          "key": "prix"
+          "key": "support_client"
         },
         {
           "name": "Feature Focus",
@@ -2955,6 +2955,346 @@
         {
           "question": "When should I choose Clipdrop over MyImageUpscaler?",
           "answer": "Choose Clipdrop if you need Plusieurs IA Outils in one platform (background removal, relighting, cleanup, etc.) alongside upscaling. For dedicated upscaling with better Qualité tiers and pricing, MyImageUpscaler is the superior choice."
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_de_sortie"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "options_de_personnalisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_d_image"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_de_sortie"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "options_de_personnalisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "précision_d_augmentation"
+        },
+        {
+          "key": "qualité_d_image"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_de_sortie"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "options_de_personnalisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_d_image"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_de_sortie"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "options_de_personnalisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "précision_d_augmentation"
+        },
+        {
+          "key": "qualité_d_image"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_de_sortie"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "options_de_personnalisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_d_image"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_de_sortie"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "options_de_personnalisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "précision_d_augmentation"
+        },
+        {
+          "key": "qualité_d_image"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_de_sortie"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "options_de_personnalisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_d_image"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "qualité_de_sortie"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "options_de_personnalisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
+        }
+      ]
+    },
+    {
+      "criteria": [
+        {
+          "key": "précision_d_augmentation"
+        },
+        {
+          "key": "qualité_d_image"
+        },
+        {
+          "key": "vitesse_de_traitement"
+        },
+        {
+          "key": "facilité_d_utilisation"
+        },
+        {
+          "key": "coût"
+        },
+        {
+          "key": "support_client"
         }
       ]
     }

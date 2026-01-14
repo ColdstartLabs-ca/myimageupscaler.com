@@ -167,5 +167,28 @@
     "supportForFormats": "Prise en charge de JPG, PNG et WEBP",
     "freeLimitText": "Jusqu'à 5MB par fichier • 1 image à la fois • Passez à la version supérieure pour le traitement par lot",
     "paidLimitText": "Jusqu'à 10MB par fichier • Traitement par lot disponible"
+  },
+  "sidebar": {
+    "admin": "Admin"
+  },
+  "settings": {
+    "notifications": "Notifications"
+  },
+  "support": {
+    "documentation": "Documentation",
+    "message": "Message"
+  },
+  "creditHistory": {
+    "description": "Description"
+  },
+  "users": {
+    "table": {
+      "actions": "Actions"
+    }
+  },
+  "userDetail": {
+    "fields": {
+      "admin": "Admin"
+    }
   }
 }

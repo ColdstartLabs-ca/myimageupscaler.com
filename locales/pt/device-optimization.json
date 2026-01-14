@@ -922,7 +922,7 @@
         "wearable app performance"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "device-optimization",
+      "category": "otimizacao-de-dispositivo",
       "platform": "Wearable",
       "deviceTypes": ["Smartwatches", "Fitness Trackers", "Smart Rings", "AR Glasses"],
       "extremeConstraints": [

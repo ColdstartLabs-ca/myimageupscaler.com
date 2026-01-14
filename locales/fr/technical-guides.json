@@ -1113,15 +1113,15 @@
           "subsections": [
             {
               "name": "Couches convolutionnelles",
-              "description": "Feature extraction and pattern recognition in images."
+              "description": "Extraction de caractéristiques et reconnaissance de formes dans les images."
             },
             {
               "name": "Pooling Layers",
-              "description": "Downsampling and spatial hierarchy building."
+              "description": "Sous-échantillonnage et construction de hiérarchie spatiale."
             },
             {
               "name": "Fully Connected Layers",
-              "description": "Classification and final decision making."
+              "description": "Classification et prise de décision finale."
             }
           ]
         },
@@ -1182,7 +1182,7 @@
         },
         {
           "phase": "Model Architecture",
-          "description": "Designing network structure for specific tasks",
+          "description": "Conception de la structure du réseau pour des tâches spécifiques",
           "considerations": ["Task requirements", "Computational resources", "Temps d'entraînement"]
         },
         {
@@ -1251,7 +1251,7 @@
       "implementationChallenges": [
         {
           "challenge": "Training Data Requirements",
-          "solution": "Use transfer learning, data augmentation, and synthetic data generation"
+          "solution": "Utiliser l'apprentissage par transfert, l'augmentation des données et la synthèse de données"
         },
         {
           "challenge": "Computational Resources",
@@ -1259,19 +1259,19 @@
         },
         {
           "challenge": "Overfitting",
-          "solution": "Regularization techniques, dropout, early stopping, data augmentation"
+          "solution": "Techniques de régularisation, abandon, arrêt précoce, augmentation des données"
         },
         {
           "challenge": "Real-time Traitement",
-          "solution": "Model quantization, pruning, efficient architectures"
+          "solution": "Quantification de modèle, élagage, architectures efficaces"
         }
       ],
       "bestPractices": [
-        "Start with pre-trained models when possible",
-        "Use appropriate data augmentation techniques",
-        "Monitor training metrics closely to detect overfitting",
-        "Validate on diverse test datasets",
-        "Consider computational constraints in model design"
+        "Commencer par des modèles pré-entraînés lorsque possible",
+        "Utiliser des techniques d'augmentation de données appropriées",
+        "Surveiller de près les métriques d'entraînement pour détecter le surapprentissage",
+        "Valider sur des ensembles de données de test diversifiés",
+        "Considérer les contraintes computationnelles dans la conception du modèle"
       ],
       "faq": [
         {
@@ -1280,7 +1280,7 @@
         },
         {
           "question": "How much training data do neural networks need?",
-          "answer": "Varies by task: thousands for basic tasks, hundreds of thousands for complex applications. Transfer learning can reduce requirements significantly."
+          "answer": "Varie selon la tâche : milliers pour les tâches de base, centaines de milliers pour les applications complexes. L'apprentissage par transfert peut réduire considérablement les exigences."
         },
         {
           "question": "Can neural networks process Images in real-time?",
@@ -1314,15 +1314,15 @@
           "subsections": [
             {
               "name": "Page Load Speed",
-              "description": "How image size and format impact Core Web Vitals and user experience."
+              "description": "Comment la taille et le format de l'image impactent les Core Web Vitals et l'expérience utilisateur."
             },
             {
               "name": "Bandwidth Usage",
-              "description": "Data consumption and cost implications for users and hosting."
+              "description": "Consommation de données et implications de coûts pour les utilisateurs et l'hébergement."
             },
             {
               "name": "SEO Impact",
-              "description": "How image optimization affects search engine rankings."
+              "description": "Comment l'optimisation des images affecte les classements des moteurs de recherche."
             }
           ]
         },
@@ -1332,15 +1332,15 @@
           "subsections": [
             {
               "name": "Compression Optimisation",
-              "description": "Finding the sweet spot between file size and visual quality."
+              "description": "Trouver le juste équilibre entre la taille du fichier et la qualité visuelle."
             },
             {
               "name": "Format Selection",
-              "description": "Choosing the optimal format based on content and use case."
+              "description": "Choisir le format optimal en fonction du contenu et du cas d'usage."
             },
             {
               "name": "Dimension Optimisation",
-              "description": "Serving appropriately sized images for different devices and contexts."
+              "description": "Servir des images de taille appropriée pour différents appareils et contextes."
             }
           ]
         },
@@ -1531,25 +1531,25 @@
           "subsections": [
             {
               "name": "Non-Destructive Editing",
-              "description": "Techniques for editing without permanently altering original pixels."
+              "description": "Techniques d'édition sans altérer de manière permanente les pixels originaux."
             },
             {
               "name": "Editing Strategy",
-              "description": "Planning your approach based on image content and intended use."
+              "description": "Planifier votre approche en fonction du contenu de l'image et de l'utilisation prévue."
             },
             {
               "name": "Qualité Standards",
-              "description": "Industry benchmarks and quality criteria for professional work."
+              "description": "Références de l'industrie et critères de qualité pour un travail professionnel."
             }
           ]
         },
         {
           "title": "Pre-Traitement Workflow",
-          "content": "Initial steps before creative editing begins.",
+          "content": "Étapes initiales avant le début de l'édition créative.",
           "subsections": [
             {
               "name": "File Organization",
-              "description": "Systematic file naming, folder structure, and backup strategies."
+              "description": "Nomination systématique des fichiers, structure des dossiers et stratégies de sauvegarde."
             },
             {
               "name": "RAW Traitement",
@@ -1557,7 +1557,7 @@
             },
             {
               "name": "Initial Assessment",
-              "description": "Evaluating image quality and identifying editing needs."
+              "description": "Évaluation de la qualité de l'image et identification des besoins d'édition."
             }
           ]
         },
@@ -1567,15 +1567,15 @@
           "subsections": [
             {
               "name": "Global Adjustments",
-              "description": "Overall image corrections affecting the entire photograph."
+              "description": "Corrections d'image globales affectant l'ensemble de la photographie."
             },
             {
               "name": "Selective Editing",
-              "description": "Targeted adjustments to specific image areas."
+              "description": "Ajustements ciblés sur des zones spécifiques de l'image."
             },
             {
               "name": "Retouching",
-              "description": "Detailed corrections and enhancements."
+              "description": "Corrections et améliorations détaillées."
             }
           ]
         }
@@ -1584,49 +1584,49 @@
         {
           "step": 1,
           "name": "Import and Organize",
-          "description": "Import files, apply metadata, organize into folders",
+          "description": "Importer les fichiers, appliquer les métadonnées, organiser en dossiers",
           "tools": ["Lightroom", "Bridge", "Capture One"],
           "duration": "5-10 minutes per Lot"
         },
         {
           "step": 2,
           "name": "Initial Culling",
-          "description": "Review and select best images, mark rejects",
+          "description": "Examiner et sélectionner les meilleures images, marquer les rejets",
           "tools": ["Lightroom", "Photo Mechanic"],
           "duration": "1-2 minutes per Image"
         },
         {
           "step": 3,
           "name": "RAW Development",
-          "description": "Exposure, white balance, lens corrections",
+          "description": "Exposition, balance des blancs, corrections d'objectif",
           "tools": ["Lightroom", "Capture One", "Camera Raw"],
           "duration": "2-5 minutes per Image"
         },
         {
           "step": 4,
           "name": "Global Adjustments",
-          "description": "Tone, contrast, color, clarity adjustments",
+          "description": "Ajustements de tonalité, contraste, couleur, clarté",
           "tools": ["Lightroom", "Photoshop", "Capture One"],
           "duration": "3-8 minutes per Image"
         },
         {
           "step": 5,
           "name": "Selective Editing",
-          "description": "Masks, gradients, local adjustments",
+          "description": "Masques, dégradés, ajustements locaux",
           "tools": ["Photoshop", "Lightroom", "Capture One"],
           "duration": "5-15 minutes per Image"
         },
         {
           "step": 6,
           "name": "Retouching",
-          "description": "Spot removal, skin smoothing, detail enhancement",
+          "description": "Retouche de taches, lissage de la peau, amélioration des détails",
           "tools": ["Photoshop", "Lightroom", "Retouching software"],
           "duration": "10-30 minutes per Image"
         },
         {
           "step": 7,
           "name": "Final Output",
-          "description": "Sharpening, export settings, file preparation",
+          "description": "Amélioration de la netteté, paramètres d'exportation, préparation des fichiers",
           "tools": ["Lightroom", "Photoshop", "Export software"],
           "duration": "2-5 minutes per Image"
         }
@@ -1736,7 +1736,14 @@
         }
       ],
       "relatedTools": ["ai-image-upscaler", "photo-editor"],
-      "relatedPages": ["color-correction-guide", "photo-retouching-techniques"]
+      "relatedPages": ["color-correction-guide", "photo-retouching-techniques"],
+      "qualityConsiderations": [
+        "Maintenir la qualité d'image pendant le traitement",
+        "Éviter la sur-amélioration et les artefacts",
+        "Préserver les détails et la texture",
+        "Contrôler le bruit et la granularité",
+        "Maintenir la précision des couleurs"
+      ]
     },
     {
       "slug": "image-scaling-algorithms",
@@ -1763,15 +1770,15 @@
           "subsections": [
             {
               "name": "Interpolation Theory",
-              "description": "Mathematical foundations of pixel value prediction and reconstruction."
+              "description": "Méthodes pour augmenter la résolution des images avec une perte de qualité minimale."
             },
             {
               "name": "Scaling Direction",
-              "description": "Upscaling vs downscaling and their different challenges."
+              "description": "Algorithmes traditionnels vs approches modernes par IA."
             },
             {
               "name": "Qualité Metrics",
-              "description": "Measuring scaling quality and comparing algorithm performance."
+              "description": "Quand et comment utiliser différentes techniques d'augmentation."
             }
           ]
         },
@@ -1781,15 +1788,15 @@
           "subsections": [
             {
               "name": "Nearest Neighbor",
-              "description": "Simplest method, fast but produces blocky results."
+              "description": "Méthodes classiques d'interpolation et leurs cas d'usage."
             },
             {
               "name": "Bilinear Interpolation",
-              "description": "Uses 4 nearest pixels, smooth results but some blurring."
+              "description": "Implémentations IA utilisant des réseaux neuronaux profonds."
             },
             {
               "name": "Bicubic Interpolation",
-              "description": "Uses 16 nearest pixels, better sharpness with more artifacts."
+              "description": "Avantages et inconvénients des différentes approches."
             }
           ]
         },
@@ -1967,16 +1974,16 @@
         }
       ],
       "bestPractices": [
-        "Choose algorithm based on content type and use case",
-        "Consider computational resources when selecting methods",
-        "Test algorithms with representative image samples",
-        "Use higher-quality algorithms for critical applications",
+        "Commencer avec la résolution la plus élevée disponible",
+        "Utiliser des méthodes IA pour les facteurs d'augmentation importants",
+        "Surveiller les artefacts et les détails irréalistes",
+        "Ajuster les paramètres selon le contenu de l'image",
         "Understand trade-offs between speed and quality"
       ],
       "faq": [
         {
           "question": "Which algorithm should I use for general photography?",
-          "answer": "Bicubic for most cases, Lanczos for critical applications. Consider IA upscaling for significant enlargement needs."
+          "answer": "Pour des facteurs jusqu'à 2x, le bicubique est souvent suffisant. Pour 4x ou plus, les méthodes IA donnent de meilleurs résultats avec moins de perte de qualité."
         },
         {
           "question": "Why do different scaling algorithms produce different results?",
@@ -1988,7 +1995,70 @@
         }
       ],
       "relatedTools": ["ai-image-upscaler", "image-rescaler"],
-      "relatedPages": ["image-resolution-guide", "interpolation-methods-comparison"]
+      "relatedPages": ["image-resolution-guide", "interpolation-methods-comparison"],
+      "upscalingMethods": [
+        {
+          "description": "Méthode rapide mais peut produire des résultats flous"
+        },
+        {
+          "description": "Meilleur pour les images avec des lignes nettes et des bords"
+        },
+        {
+          "description": "Résultats de haute qualité avec des réseaux neuronaux entraînés"
+        }
+      ]
+    },
+    {
+      "sections": [
+        {
+          "subsections": [
+            {
+              "description": "Principes de compression d'image et techniques de réduction de taille."
+            },
+            {
+              "description": "Compromis entre la taille du fichier et la fidélité visuelle."
+            },
+            {
+              "description": "Formats d'image modernes et leurs algorithmes de compression."
+            }
+          ]
+        },
+        {
+          "subsections": [
+            {
+              "description": "Compression avec perte pour les images photographiques."
+            },
+            {
+              "description": "Compression sans perte pour les graphiques et les illustrations."
+            },
+            {
+              "description": "Techniques de compression adaptatives et hybrides."
+            }
+          ]
+        }
+      ],
+      "compressionTechniques": [
+        {
+          "description": "Méthode éprouvée avec des résultats prévisibles"
+        },
+        {
+          "description": "Fichiers plus petits avec une bonne qualité visuelle"
+        },
+        {
+          "description": "Technologie moderne avec une meilleure compression"
+        }
+      ],
+      "bestPractices": [
+        "Viser les bonnes pratiques de compression (85-95% de qualité)",
+        "Utiliser différents niveaux pour différents contenus",
+        "Considérer le cas d'usage et les conditions de visualisation"
+      ],
+      "faq": [
+        null,
+        {
+          "answer": "JPEG est meilleur pour les photographies, PNG pour les graphiques avec des couleurs plates, WebP offre le meilleur des deux mondes avec une meilleure compression."
+        }
+      ]
     }
   ],
   "meta": {

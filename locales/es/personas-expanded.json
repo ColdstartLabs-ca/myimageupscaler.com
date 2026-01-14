@@ -1409,24 +1409,24 @@
       "industry": "Creación de Contenido Digital",
       "audience": "Blogueros, YouTubers, podcasters, influencers de redes sociales",
       "painPoints": [
-        "Need for eye-catching thumbnails",
+        "Necesidad de miniaturas llamativas",
         "Multiple plataforma requirements",
-        "Time constraints for content creation",
-        "Building consistent brand visuals",
-        "Standing out in crowded content space"
+        "Restricciones de tiempo para la creacion de contenido",
+        "Construir visuales de marca consistentes",
+        "Destacarse en el espacio de contenido saturado"
       ],
       "solutions": [
         {
           "title": "Thumbnail Mejora",
-          "description": "Create compelling thumbnails that increase click-through rates"
+          "description": "Crear miniaturas convincentes que aumenten las tasas de clics"
         },
         {
-          "title": "Cross-Platform Optimization",
+          "title": "Optimizacion Multiplataforma",
           "description": "Generate perfect imágenes for YouTube, Instagram, TikTok, and other platforms"
         },
         {
-          "title": "Brand Building",
-          "description": "Maintain consistent visual style across all content channels"
+          "title": "Construccion de Marca",
+          "description": "Mantener un estilo visual consistente en todos los canales de contenido"
         },
         {
           "title": "Rápido Production",
@@ -1435,65 +1435,65 @@
       ],
       "features": [
         {
-          "title": "YouTube ThumbnAIl Optimization",
+          "title": "Optimizacion de Miniaturas de YouTube",
           "description": "Perfect sizing and mejora for YouTube video thumbnAIls"
         },
         {
-          "title": "Social Media Ready",
-          "description": "Optimized for Instagram posts, stories, and other social platforms"
+          "title": "Listo para Redes Sociales",
+          "description": "Optimizado para publicaciones de Instagram, stories y otras plataformas sociales"
         },
         {
           "title": "Profile Mejora",
-          "description": "Improve profile pictures and brand imagery across platforms"
+          "description": "Mejorar fotos de perfil e imagenes de marca en plataformas"
         },
         {
-          "title": "Content Series Consistency",
-          "description": "Maintain visual consistency across content series and playlists"
+          "title": "Consistencia de Serie de Contenido",
+          "description": "Mantener consistencia visual en series de contenido y listas de reproduccion"
         }
       ],
       "useCases": [
-        "YouTube video thumbnails",
+        "Miniaturas de videos de YouTube",
         "Instagram post mejora",
-        "TikTok content visuals",
+        "Visuales de contenido de TikTok",
         "Blog post imágenes",
-        "Podcast cover art"
+        "Arte de portada de podcasts"
       ],
       "workflows": {
         "contentPlanning": [
-          "Visual identity development and brand guidelines creation",
-          "Thumbnail strategy for maximum click-through rates",
-          "Content calendar planning with visual consistency",
-          "Platform-specific visual requirement planning"
+          "Desarrollo de identidad visual y creacion de pautas de marca",
+          "Estrategia de miniaturas para maximizar tasas de clics",
+          "Planificacion de calendario de contenido con consistencia visual",
+          "Planificacion de requisitos visuales especificos de plataforma"
         ],
         "contentCreation": [
           "Video thumbnail capture and selection proceso",
           "Mejora of screen captures and gameplay footage",
-          "Brand visual element creation and optimization",
-          "Multi-platform content preparation and adaptation"
+          "Creacion y optimizacion de elementos visuales de marca",
+          "Preparacion y adaptacion de contenido multiplataforma"
         ],
         "distribution": [
-          "Platform-specific optimization for YouTube, Instagram, TikTok",
-          "Social media content scheduling with enhanced visuals",
-          "Email newsletter preparation with enhanced imagery",
-          "Website and blog content visual optimization"
+          "Optimizacion especifica de plataforma para YouTube, Instagram, TikTok",
+          "Programacion de contenido en redes sociales con visuales mejorados",
+          "Preparacion de boletines por correo electronico con imagenes mejoradas",
+          "Optimizacion visual de contenido de sitios web y blogs"
         ]
       },
       "professionalChallenges": {
         "technical": [
-          "Creating eye-catching thumbnails that stand out in crowded feeds",
+          "Crear miniaturas llamativas que destaquen en feeds saturados",
           "Maintaining consistent calidad across different content types",
           "Optimizing visuals for multiple plataforma requirements",
           "Balancing file size with visual calidad for rápido loading"
         ],
         "creative": [
-          "Developing unique visual style in saturated markets",
-          "Maintaining brand consistency across diverse content",
-          "Creating engaging visuals that accurately represent content",
-          "Adapting visual style for different audience segments"
+          "Desarrollar un estilo visual unico en mercados saturados",
+          "Mantener la consistencia de la marca en diversos contenidos",
+          "Crear visuales atractivos que representen con precision el contenido",
+          "Adaptar el estilo visual para diferentes segmentos de audiencia"
         ],
         "business": [
-          "Growing audience through improved visual presentation",
-          "Monetizing enhanced content through sponsorships and partnerships",
+          "Crecer la audiencia a traves de una presentacion visual mejorada",
+          "Monetizar contenido mejorado a traves de patrocinios y asociaciones",
           "Competir con contenido producido profesionalmente",
           "Justificar inversión de tiempo en actividades de mejora"
         ]
@@ -1688,27 +1688,27 @@
       "audience": "Dueños de pequeñas empresas, emprendedores, gerentes de marketing independientes",
       "painPoints": [
         "Resolución limitada en assets de juego",
-        "Need for high-quality promotional materials",
+        "Necesidad de materiales promocionales de alta calidad",
         "Pixel art preservation during ampliación",
         "Multiple plataforma requirements",
-        "Budget constraints for asset creation"
+        "Restricciones presupuestarias para la creacion de activos"
       ],
       "solutions": [
         {
           "title": "Texture Mejora",
-          "description": "Improve game textures while maintaining performance characteristics"
+          "description": "Mejorar texturas de juegos manteniendo caracteristicas de rendimiento"
         },
         {
-          "title": "Pixel Art Preservation",
+          "title": "Preservacion de Pixel Art",
           "description": "Ampliar pixel art while maintaining authentic retro appearance"
         },
         {
-          "title": "Marketing Materials",
-          "description": "Create high-quality promotional assets for game stores and marketing"
+          "title": "Materiales de Marketing",
+          "description": "Crear activos promocionales de alta calidad para tiendas de juegos y marketing"
         },
         {
           "title": "Multi-Platform Soporte",
-          "description": "Generate assets optimized for different gaming platforms"
+          "description": "Generar activos optimizados para diferentes plataformas de juegos"
         }
       ],
       "features": [
@@ -1721,77 +1721,77 @@
           "description": "Improve game sprites and character art for mejor visual calidad"
         },
         {
-          "title": "UI Element Optimization",
+          "title": "Optimizacion de Elementos de Interfaz",
           "description": "Mejorar usuario interface elements and icons for mejor visibility"
         },
         {
-          "title": "Store Asset Creation",
-          "description": "Create high-quality screenshots and promotional materials"
+          "title": "Creacion de Activos de Tienda",
+          "description": "Crear capturas de pantalla de alta calidad y materiales promocionales"
         }
       ],
       "useCases": [
-        "2D game development",
-        "Indie game promotion",
-        "Mobile game assets",
-        "Steam store optimization",
-        "Game trailer creation"
+        "Desarrollo de juegos 2D",
+        "Promocion de juegos independientes",
+        "Activos de juegos moviles",
+        "Optimizacion de tienda Steam",
+        "Creacion de tráilers de juegos"
       ],
       "workflows": {
         "assetCreation": [
-          "Concept art creation and visualization with enhanced reference materials",
-          "Sprite and texture creation with resolution planning",
+          "Creacion de arte conceptual y visualizacion con materiales de referencia mejorados",
+          "Creacion de sprites y texturas con planificacion de resolucion",
           "Ui element design with multi-resolution soporte",
-          "Character and environment asset development"
+          "Desarrollo de activos de personajes y entornos"
         ],
         "technicalImplementation": [
           "Asset optimization for different plataforma requirements",
           "Integracion with game engines and development pipelines",
-          "Performance testing and optimization of enhanced assets",
-          "Memory and loading optimization for enhanced textures"
+          "Pruebas de rendimiento y optimizacion de activos mejorados",
+          "Optimizacion de memoria y carga para texturas mejoradas"
         ],
         "marketingMaterials": [
-          "Store page screenshots and promotional materials",
-          "Trailer creation with enhanced gameplay footage",
-          "Social media marketing assets and press kits",
-          "Website and landing page visual content"
+          "Capturas de pantalla de pagina de tienda y materiales promocionales",
+          "Creacion de tráilers con game play mejorado",
+          "Activos de marketing en redes sociales y kits de prensa",
+          "Contenido visual de sitios web y paginas de aterrizaje"
         ]
       },
       "professionalChallenges": {
         "technical": [
           "Maintaining pixel art authenticity during mejora",
           "Optimizing assets for different plataforma performance requirements",
-          "Preserving animation frame consistency",
-          "Managing memory budgets with higher resolution assets"
+          "Preservar la consistencia de cuadros de animacion",
+          "Gestionar presupuestos de memoria con activos de mayor resolucion"
         ],
         "artistic": [
           "Maintaining artistic style during technical mejora",
-          "Balancing visual improvement with performance requirements",
-          "Creating consistent art direction across enhanced assets",
-          "Preserving intended visual aesthetics and game atmosphere"
+          "Equilibrar la mejora visual con los requisitos de rendimiento",
+          "Crear una direccion artistica consistente en activos mejorados",
+          "Preservar esteticas visuales previstas y atmosfera del juego"
         ],
         "business": [
           "Competing with Aaa studio visual calidad",
-          "Marketing games effectively with enhanced visuals",
-          "Managing development costs and time constraints",
-          "Creating successful store listings and promotional materials"
+          "Marketing efectivo de juegos con visuales mejorados",
+          "Gestionar costos de desarrollo y restricciones de tiempo",
+          "Crear listados de tienda exitosos y materiales promocionales"
         ]
       },
       "softwareRecommendations": {
         "gameEngines": [
-          "Unity - Cross-platform game development with asset optimization",
+          "Unity - Desarrollo de juegos multiplataforma con optimizacion de activos",
           "Unreal Engine - High-fidelity game development herramientas",
-          "Godot - Open-source game engine with 2D focus",
+          "Godot - Motor de juegos de codigo abierto con enfoque 2D",
           "GameMaker Studio - Profesional 2D game development"
         ],
         "artTools": [
           "Aseprite - Profesional pixel art and animation",
-          "Photoshop - Digital painting and texture creation",
+          "Photoshop - Pintura digital y creacion de texturas",
           "Krita - Profesional digital painting software",
-          "Procreate - iPad-based digital art creation"
+          "Procreate - Creacion de arte digital basado en iPad"
         ],
         "developmentTools": [
-          "TexturePacker - Sprite sheet optimization",
-          "RenderDoc - Graphics debugging and optimization",
+          "TexturePacker - Optimizacion de hojas de sprites",
+          "RenderDoc - Depuracion y optimizacion de graficos",
           "Luminar AI - Mejora de textura impulsada por IA",
           "Topaz Gigapixel AI - Escalado especializado para activos de juego"
         ]
@@ -1881,26 +1881,26 @@
           "Mejorar multiple similar assets with consistent settings",
           "Automate optimization for different plataforma requirements",
           "Batch proceso Ui elements for consistent visual calidad",
-          "Create texture atlases from enhanced individual sprites"
+          "Crear atlas de texturas desde sprites individuales mejorados"
         ],
         "integration": [
-          "Connect with game engine asset pipelines",
+          "Conectar con tuberias de activos de motores de juegos",
           "Automate screenshot capture and mejora for marketing",
-          "Integrate with build processes for asset optimization",
-          "Create automated testing for enhanced asset performance"
+          "Integrar con procesos de construccion para optimizacion de activos",
+          "Crear pruebas automatizadas para rendimiento de activos mejorados"
         ]
       },
       "collaborationTips": {
         "teamCoordination": [
           "Establish asset mejora standards for art team",
           "Create documentation for mejora workflows",
-          "Coordinate between artists and programmers on asset requirements",
-          "Maintain version control for enhanced asset iterations"
+          "Coordinar entre artistas y programadores sobre requisitos de activos",
+          "Mantener control de versiones para iteraciones de activos mejorados"
         ],
         "communityEngagement": [
-          "Share enhanced screenshots with gaming community",
-          "Gather feedback on enhanced visuals from players",
-          "Participate in game development forums and communities",
+          "Compartir capturas de pantalla mejoradas con la comunidad de juegos",
+          "Recopilar comentarios sobre visuales mejorados de jugadores",
+          "Participar en foros y comunidades de desarrollo de juegos",
           "Mostrar proceso de mejora para valor de marketing"
         ]
       },
@@ -2045,7 +2045,7 @@
           "Competir con servicios de impresión en línea",
           "Justifying mejora servicio costs to customers",
           "Managing customer expectations for print calidad",
-          "Differentiating services in competitive printing markets"
+          "Diferenciar servicios en mercados de impresion competitivos"
         ],
         "operational": [
           "Training staff on mejora techniques and calidad standards",
@@ -2057,18 +2057,18 @@
       "softwareRecommendations": {
         "printing": [
           "Adobe Creative Suite - Profesional print design and preparation",
-          "CorelDRAW - Vector graphics and print layout",
+          "CorelDRAW - Graficos vectoriales y diseño de impresion",
           "Affinity Publisher - Profesional desktop publishing",
           "QuarkXPress - Profesional print design software"
         ],
         "colorManagement": [
           "X-Rite i1Profiler - Profesional color calibration",
-          "Datacolor Spyder - Monitor calibration for accurate color",
-          "ColorThink Pro - Color management and profiling",
-          "ProfileMaker - Custom Icc profile creation"
+          "Datacolor Spyder - Calibracion de monitor para color preciso",
+          "ColorThink Pro - Gestion y creacion de perfiles de color",
+          "ProfileMaker - Creacion de perfiles ICC personalizados"
         ],
         "workflow": [
-          "Efi Fiery - Digital printing workflow management",
+          "Efi Fiery - Gestion de flujo de trabajo de impresion digital",
           "ColorGate - Profesional color management and proofing",
           "Onyx Graphics - Grande formato printing workflow",
           "Caldera - Rip software for profesional printing"
@@ -2078,19 +2078,19 @@
         "qualityControl": [
           "Implement standardized mejora workflows for consistency",
           "Create calidad benchmarks for different print types",
-          "Maintain calibration of all printing equipment",
+          "Mantener calibracion de todo el equipo de impresion",
           "Document mejora processes for training purposes"
         ],
         "customerEducation": [
-          "Educate customers about print requirements and limitations",
+          "Educar a los clientes sobre requisitos y limitaciones de impresion",
           "Provide clear guidelines for imagen submission",
           "Show before/after examples of mejora capabilities",
-          "Set realistic expectations for print results"
+          "Establecer expectativas realistas para resultados de impresion"
         ],
         "technicalStandards": [
           "Uso appropriate color profiles for different printing processes",
-          "Maintain consistent resolution standards across projects",
-          "Test enhanced files with actual printing equipment",
+          "Mantener estandares de resolucion consistentes en proyectos",
+          "Probar archivos mejorados con equipo de impresion real",
           "Keep detailed records of successful mejora settings"
         ]
       },
@@ -2099,7 +2099,7 @@
           "title": "Foto Lab Business Expansion",
           "scenario": "Foto lab adding mejora services to compete with en línea services",
           "solution": "Comprehensive mejora workflow with staff training and customer education",
-          "results": "40% increase in revenue and 60% reduction in customer rework requests"
+          "results": "40% de aumento en ingresos y 60% de reduccion en solicitudes de retrabajo del cliente"
         },
         {
           "title": "Large Format Print Shop Calidad Improvement",
@@ -2108,70 +2108,70 @@
           "results": "95% reduction in print calidad complaints and expanded servicio offerings"
         },
         {
-          "title": "Commercial Print Shop Value-Added Services",
+          "title": "Servicios de Valor Agregado de Taller de Impresion Comercial",
           "scenario": "Commercial printer adding mejora services to differentiate from competitors",
           "solution": "Premium mejora services with specialized workflows for different print types",
-          "results": "25% increase in profit margins and improved customer retention rates"
+          "results": "25% de aumento en margenes de beneficio y tasas mejoradas de retencion de clientes"
         }
       ],
       "fileFormats": {
         "printReady": [
-          "Pdf/X-1a - Print industry standard with embedded profiles",
+          "PDF/X-1a - Estandar de industria de impresion con perfiles integrados",
           "Pdf/X-4 - Modern Pdf standard with transparency soporte",
           "Tiff - High-quality formato for photographic printing",
           "Eps - Vector formato for logos and graphics"
         ],
         "working": [
-          "Psd - Layered files for editing and composition",
+          "PSD - Archivos en capas para edicion y composicion",
           "IA - Vector files for scalable graphics",
-          "Indd - InDesign files for multi-page documents",
-          "RAW - Camera files for maximum editing flexibility"
+          "INDD - Archivos InDesign para documentos de multiples paginas",
+          "RAW - Archivos de camara para maxima flexibilidad de edicion"
         ],
         "delivery": [
-          "High-resolution Jpeg - For customer approval",
-          "Print-ready Pdf - For final production",
-          "Package files - Complete job with all assets",
-          "Proof prints - Physical samples for approval"
+          "JPEG de alta resolucion - Para aprobacion del cliente",
+          "PDF listo para imprimir - Para produccion final",
+          "Archivos de paquete - Trabajo completo con todos los activos",
+          "Impresiones de prueba - Muestras fisicas para aprobacion"
         ]
       },
       "qualityStandards": {
         "resolution": {
-          "photoPrinting": "300 DPI for standard photographic printing",
+          "photoPrinting": "300 DPI para impresion fotografica estandar",
           "largeFormat": "150-200 DPI for grande formato applications",
-          "fineArt": "300-600 DPI for high-quality art reproduction",
+          "fineArt": "300-600 DPI para reproduccion de arte de alta calidad",
           "businessCards": "300 DPI for pequeño formato printing"
         },
         "colorManagement": [
-          "Cmyk conversion for offset printing",
-          "Rgb for digital printing processes",
-          "Pantone for spot color printing",
-          "Custom profiles for specific printing equipment"
+          "Conversion CMYK para impresion offset",
+          "RGB para procesos de impresion digital",
+          "Pantone para impresion de color de spot",
+          "Perfiles personalizados para equipo de impresion especifico"
         ],
         "filePreparation": [
           "Bleed and trim marks for profesional finishing",
-          "Proper font embedding and outline conversion",
-          "Color profile embedding for consistency",
+          "Incrustacion y conversion de contornos de fuentes adecuadas",
+          "Incrustacion de perfil de color para consistencia",
           "Appropriate compression settings for calidad"
         ]
       },
       "automationWorkflows": {
         "batchProcessing": [
           "Automated mejora for multiple customer orders",
-          "Standardized workflows for common print types",
+          "Flujos de trabajo estandarizados para tipos comunes de impresion",
           "Calidad control checks within automated workflows",
           "Batch color correction and mejora"
         ],
         "integration": [
-          "Connect with order management systems",
-          "Automated file preparation for printing equipment",
-          "Customer approval workflows with enhanced previews",
+          "Conectar con sistemas de gestion de pedidos",
+          "Preparacion automatizada de archivos para equipo de impresion",
+          "Flujos de trabajo de aprobacion del cliente con vistas previas mejoradas",
           "Integracion with billing and project management systems"
         ]
       },
       "collaborationTips": {
         "customerRelations": [
           "Provide clear communication about mejora capabilities",
-          "Offer consultation services for optimal print results",
+          "Ofrecer servicios de consultoria para resultados de impresion optimos",
           "Create educational materials for imagen submission guidelines",
           "Build long-term relationships through calidad servicio"
         ],
@@ -2348,42 +2348,42 @@
         "productivity": [
           "Trello - Gestión de proyecto para campañas de marketing",
           "Asana - Gestión de tarea y colaboración del equipo",
-          "Google Workspace - Business productivity suite",
+          "Google Workspace - Suite de productividad empresarial",
           "Dropbox Business - File sharing and colaboracion"
         ]
       },
       "industryBestPractices": {
         "brandConsistency": [
-          "Create simple brand guidelines for consistent visual presentation",
+          "Crear pautas de marca simples para presentacion visual consistente",
           "Uso consistent color schemes and typography across all materials",
           "Maintain profesional calidad across all customer touchpoints",
           "Create plantillas for recurring marketing needs"
         ],
         "costEffectiveMarketing": [
-          "Focus on high-impact, low-cost visual improvements",
-          "Repurpose enhanced content across multiple marketing channels",
+          "Centrarse en mejoras visuales de alto impacto y bajo costo",
+          "Reutilizar contenido mejorado en multiples canales de marketing",
           "Uso customer fotos and testimonials with profesional mejora",
-          "Leverage local events and community engagement for content creation"
+          "Aprovechar eventos locales y participacion comunitaria para creacion de contenido"
         ],
         "localOptimization": [
           "Optimize imágenes for Google Business Profile and local search",
           "Showcase local community involvement with enhanced fotos",
-          "Create location-specific visual content for targeted marketing",
+          "Crear contenido visual especifico de ubicacion para marketing dirigido",
           "Uso enhanced imágenes to build trust with local customers"
         ]
       },
       "caseStudies": [
         {
-          "title": "Local Restaurant Visual Transformation",
-          "scenario": "Family restaurant competing with chain establishments on visual presentation",
+          "title": "Transformacion Visual de Restaurante Local",
+          "scenario": "Restaurante familiar compitiendo con establecimientos de cadena en presentacion visual",
           "solution": "Comprehensive mejora of food photography, ambiance fotos and marketing materials",
-          "results": "45% increase in customer inquiries and 30% improvement in local search rankings"
+          "results": "45% de aumento en consultas de clientes y 30% de mejora en rankings de busqueda local"
         },
         {
           "title": "Servicio Business Profesional Imagen Development",
           "scenario": "Home services contractor upgrading profesional appearance for competitive advantage",
           "solution": "Enhanced before/after fotos profesional headshots, and servicio demonstration materials",
-          "results": "60% increase in quote requests and improved customer trust and conversion rates"
+          "results": "60% de aumento en solicitudes de cotizacion y tasas mejoradas de confianza y conversion de clientes"
         },
         {
           "title": "Retail Shop E-commerce Mejora",
@@ -2395,19 +2395,19 @@
       "fileFormats": {
         "web": [
           "Jpeg - Optimized for website and social media uso",
-          "Png - For logos and graphics with transparency",
+          "PNG - Para logotipos y graficos con transparencia",
           "WebP - Modern formato for faster loading",
-          "Svg - For scalable logos and icons"
+          "SVG - Para logotipos e iconos escalables"
         ],
         "print": [
-          "Pdf - For brochures, flyers, and business cards",
-          "High-resolution Jpeg - For print marketing materials",
+          "PDF - Para folletos, volantes y tarjetas de presentacion",
+          "JPEG de alta resolucion - Para materiales de marketing impresos",
           "Eps - For profesional printing services",
-          "Tiff - For high-quality reproduction needs"
+          "TIFF - Para necesidades de reproduccion de alta calidad"
         ],
         "social": [
-          "Platform-optimized sizes for each social network",
-          "Instagram: 1080x1080px square posts",
+          "Tamanos optimizados para plataforma para cada red social",
+          "Instagram: publicaciones cuadradas de 1080x1080px",
           "Facebook: 1200x630px shared imágenes",
           "LinkedIn: 1200x627px profesional posts"
         ]
@@ -2416,27 +2416,27 @@
         "professional": {
           "consistency": "Uniform calidad across all business materials",
           "resolution": "Appropriate resolution for intended uso (web vs print)",
-          "colorAccuracy": "True-to-life representation for products and services",
-          "branding": "Consistent visual elements and brand representation"
+          "colorAccuracy": "Representacion fiel para productos y servicios",
+          "branding": "Elementos visuales consistentes y representacion de marca"
         },
         "webOptimized": {
           "loadingSpeed": "Optimized file sizes for rápido website loading",
           "mobileFriendly": "Responsive imágenes that work on all devices",
           "seoReady": "Properly tagged and described imágenes for search optimization",
-          "accessibility": "Alt text and descriptions for accessibility compliance"
+          "accessibility": "Texto alternativo y descripciones para cumplimiento de accesibilidad"
         },
         "socialMedia": {
-          "platformSpecific": "Optimized for each social media platform's requirements",
-          "engaging": "Eye-catching visuals that encourage interaction",
-          "consistent": "Brand-consistent imagery across all platforms",
-          "shareable": "Content that customers want to share with their networks"
+          "platformSpecific": "Optimizado para los requisitos de cada plataforma de redes sociales",
+          "engaging": "Visuales llamativos que fomentan la interaccion",
+          "consistent": "Imagenes consistentes con la marca en todas las plataformas",
+          "shareable": "Contenido que los clientes desean compartir con sus redes"
         }
       },
       "automationWorkflows": {
         "efficiency": [
-          "Create templates for recurring social media posts and marketing materials",
+          "Crear plantillas para publicaciones recurrentes en redes sociales y materiales de marketing",
           "Batch mejorar fotos from events or foto shoots",
-          "Schedule social media posting with enhanced content",
+          "Programar publicacion en redes sociales con contenido mejorado",
           "Automate imagen optimization for website and e-commerce platforms"
         ],
         "integration": [
@@ -2449,14 +2449,14 @@
       "collaborationTips": {
         "community": [
           "Engage with local business associations for networking and colaboracion",
-          "Partner with complementary businesses for cross-promotion",
+          "Asociarse con empresas complementarias para promocion cruzada",
           "Participate in community events with enhanced foto documentation",
-          "Share enhanced content with local media for press coverage opportunities"
+          "Compartir contenido mejorado con medios locales para oportunidades de cobertura de prensa"
         ],
         "customerRelations": [
           "Uso enhanced fotos in customer communications and follow-ups",
           "Showcase customer testimonials with profesional foto mejora",
-          "Create enhanced before/after examples to demonstrate value",
+          "Crear ejemplos de antes/despues mejorados para demostrar valor",
           "Build trust through consistent profesional visual presentation"
         ]
       },
@@ -2468,10 +2468,10 @@
           "Integracion with local marketing automation platforms"
         ],
         "business": [
-          "Increased importance of visual content in local search rankings",
-          "Growth in video content requiring enhanced still frames",
+          "Mayor importancia del contenido visual en rankings de busqueda local",
+          "Crecimiento en contenido de video que requiere cuadros mejorados",
           "Integracion with en línea review platforms and customer feedback systems",
-          "Focus on authentic, relatable business imagery over stock photography"
+          "Enfoque en imagenes empresariales autenticas y relacionables sobre fotografia de stock"
         ]
       },
       "faq": [
@@ -2484,7 +2484,7 @@
           "answer": "Absolutely, our mejora significantly improves smartphone fotos for profesional uso"
         },
         {
-          "question": "Will this help with local marketing?",
+          "question": "¿Esto ayudara con el marketing local?",
           "answer": "Yes, high-quality imágenes significantly improve local marketing effectiveness and customer perception."
         },
         {
@@ -2519,14 +2519,14 @@
       "lastUpdated": "2025-01-19",
       "category": "Personas",
       "persona": "Fotógrafos Profesionales",
-      "targetAudience": "Full-stack developers, front-end specialists, and web agencies building websites and applications",
+      "targetAudience": "Desarrolladores full-stack, especialistas front-end y agencias web que crean sitios web y aplicaciones",
       "challenges": [
         {
           "challenge": "Performance vs Calidad Balance",
           "description": "Need to maintain imagen calidad while optimizing for rápido loading times and usuario experience"
         },
         {
-          "challenge": "Responsive Design Requirements",
+          "challenge": "Requisitos de Diseno Responsivo",
           "description": "Creating imágenes that look great on all devices and screen sizes while managing file sizes"
         },
         {
@@ -2534,7 +2534,7 @@
           "description": "Generating different imagen formats for various browsers and uso cases (WebP, AVIF, JPEG, PNG)"
         },
         {
-          "challenge": "SEO Optimization",
+          "challenge": "Optimizacion SEO",
           "description": "Creating imágenes that rank well in search engines with proper alt text and structured data"
         }
       ],
@@ -2544,7 +2544,7 @@
           "description": "Mejorar imágenes while optimizing file sizes for rápido loading times and mejor usuario experience"
         },
         {
-          "title": "Multi-Format Generation",
+          "title": "Generacion Multi-Formato",
           "description": "Create multiple imagen formats automatically for different browser soporte and uso cases"
         },
         {
@@ -2552,7 +2552,7 @@
           "description": "Generate complete responsive imagen sets with breakpoints and optimized sizes"
         },
         {
-          "title": "SEO-Ready Output",
+          "title": "Salida Lista para SEO",
           "description": "Create imágenes optimized for search engines with proper metadata and structured data"
         }
       ],
@@ -2562,11 +2562,11 @@
           "description": "Generate modern web formats for mejor compression and performance"
         },
         {
-          "title": "Lazy Load Optimization",
+          "title": "Optimizacion de Carga Perezosa",
           "description": "Create placeholder imágenes optimized for lazy loading implementations"
         },
         {
-          "title": "CDN-Ready Output",
+          "title": "Salida Lista para CDN",
           "description": "Generate imágenes optimized for Content Delivery Network distribution"
         },
         {
@@ -2581,7 +2581,7 @@
           "solution": "Automated mejora workflow generating WebP, AVIF, and fallback formats with responsive imagen sets"
         },
         {
-          "title": "Portfolio Website Visual Upgrade",
+          "title": "Actualizacion Visual de Sitio Web de Portafolio",
           "scenario": "Freelance developer improving personal portfolio visual calidad while maintaining performance standards",
           "solution": "Selective mejora of key imágenes with modern format generation and responsive sizing"
         },
@@ -2603,7 +2603,7 @@
           "example": "Mejorar editorial imágenes and infographics for mejor readability and sharing"
         },
         {
-          "title": "Hero and Banner Optimization",
+          "title": "Optimizacion de Hero y Banners",
           "description": "Create stunning hero imágenes and banners that load quickly across all devices",
           "example": "Mejorar promotional banners with responsive sets for different screen sizes"
         },
@@ -2614,17 +2614,17 @@
         }
       ],
       "technicalSpecs": {
-        "outputFormats": ["WebP", "Avif", "Jpeg", "Png", "Gif"],
+        "outputFormats": ["WebP", "AVIF", "JPEG", "PNG", "GIF"],
         "optimization": {
-          "compression": "Advanced compression algorithms for web optimization",
-          "resizing": "Smart resizing with content-aware cropping",
-          "colorSpace": "sRGB optimization for consistent web display",
-          "metadata": "SEO-friendly metadata and structured data generation"
+          "compression": "Algoritmos de compresion avanzados para optimizacion web",
+          "resizing": "Redimensionamiento inteligente con recorte consciente del contenido",
+          "colorSpace": "Optimizacion sRGB para visualizacion web consistente",
+          "metadata": "Generacion de metadatos amigables para SEO y datos estructurados"
         },
         "performance": {
           "fileSizes": "Optimized file sizes for rápido loading",
           "loading": "Lazy load and progressive mejora soporte",
-          "cdn": "CDN-optimized output with global edge caching"
+          "cdn": "Salida optimizada para CDN con almacenamiento en caché de borde global"
         }
       },
       "faq": [
