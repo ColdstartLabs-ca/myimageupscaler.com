@@ -310,7 +310,7 @@
         }
       ],
       "relatedPlatforms": ["stable-diffusion-upscaler-jpg", "dalle-upscaler-jpg"],
-      "relatedFormats": ["upscale-jpeg-images", "midjourney-upscaler-png"]
+      "relatedFormats": ["upscale-jpg-images", "midjourney-upscaler-png"]
     },
     {
       "slug": "stable-diffusion-upscaler-png",
@@ -449,7 +449,7 @@
         "Exporta en formato WebP",
         "Sube a nuestro escalador para mejora adicional",
         "Descarga tu imagen mejorada lista para usar",
-        "Download your enhanced SD image in WebP format"
+        "Descarga tu imagen SD mejorada en formato WebP"
       ],
       "benefits": [
         {
@@ -553,7 +553,7 @@
         "Exporta en formato JPEG",
         "Sube a nuestro escalador para mejora adicional",
         "Descarga tu imagen mejorada lista para usar",
-        "Download your enhanced SD JPEG in improved quality"
+        "Descarga tu JPEG SD mejorado en calidad mejorada"
       ],
       "benefits": [
         {
@@ -622,7 +622,7 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-jpg", "dalle-upscaler-jpg"],
-      "relatedFormats": ["upscale-jpeg-images", "stable-diffusion-upscaler-png"]
+      "relatedFormats": ["upscale-jpg-images", "stable-diffusion-upscaler-png"]
     },
     {
       "slug": "dalle-upscaler-png",
@@ -725,7 +725,7 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-png", "stable-diffusion-upscaler-png"],
-      "relatedFormats": ["upscale-png-images", "dalle-upscaler-jpg"]
+      "relatedFormats": ["upscale-png-images", "dalle-upscaler-webp"]
     },
     {
       "slug": "dalle-upscaler-webp",
@@ -760,7 +760,7 @@
         "Exporta en formato WebP",
         "Sube a nuestro escalador para mejora adicional",
         "Descarga tu imagen mejorada lista para usar",
-        "Download your enhanced DALL-E image in WebP format"
+        "Descarga tu imagen DALL-E mejorada en formato WebP"
       ],
       "benefits": [
         {
@@ -932,7 +932,7 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-jpg", "stable-diffusion-upscaler-jpg"],
-      "relatedFormats": ["upscale-jpeg-images", "dalle-upscaler-png"]
+      "relatedFormats": ["upscale-jpg-images", "dalle-upscaler-png"]
     },
     {
       "slug": "canva-upscaler-png",
@@ -949,7 +949,7 @@
         "escalador de arte ia png"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "format-specific",
       "platform": "Canva",
       "format": "PNG",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
@@ -1035,7 +1035,7 @@
         }
       ],
       "relatedPlatforms": ["photoshop-upscaler-png", "figma-upscaler-png"],
-      "relatedFormats": ["upscale-png-images", "canva-upscaler-jpg"]
+      "relatedFormats": ["upscale-webp-images", "upscale-jpg-images"]
     },
     {
       "slug": "canva-upscaler-webp",
@@ -1070,7 +1070,7 @@
         "Exporta en formato WebP",
         "Sube a nuestro escalador para mejora adicional",
         "Descarga tu imagen mejorada lista para usar",
-        "Download your enhanced Canva design in WebP format"
+        "Descarga tu diseño de Canva mejorado en formato WebP"
       ],
       "benefits": [
         {
@@ -1277,7 +1277,7 @@
         "Exporta en formato PNG",
         "Sube a nuestro escalador para mejora adicional",
         "Descarga tu imagen mejorada lista para usar",
-        "Download your enhanced ultra-HD Photoshop PNG"
+        "Descarga tu PNG de Photoshop ultra HD mejorado"
       ],
       "benefits": [
         {
@@ -1381,7 +1381,7 @@
         "Exporta en formato WebP",
         "Sube a nuestro escalador para mejora adicional",
         "Descarga tu imagen mejorada lista para usar",
-        "Download your enhanced Photoshop creation in WebP format"
+        "Descarga tu creación de Photoshop mejorada en formato WebP"
       ],
       "benefits": [
         {
@@ -1897,7 +1897,7 @@
         "Exporta en formato TIFF",
         "Sube a nuestro escalador para mejora adicional",
         "Descarga tu imagen mejorada lista para usar",
-        "Download your enhanced SD image in lossless TIFF"
+        "Descarga tu imagen SD mejorada en TIFF sin pérdida"
       ],
       "benefits": [
         {
@@ -2516,7 +2516,7 @@
         "Exporta en formato TIFF",
         "Sube a nuestro escalador para mejora adicional",
         "Descarga tu imagen mejorada lista para usar",
-        "Download your enhanced ultra-HD Photoshop TIFF"
+        "Descarga tu TIFF de Photoshop ultra HD mejorado"
       ],
       "benefits": [
         {
@@ -2588,7 +2588,7 @@
       "relatedFormats": ["upscale-tiff-images", "photoshop-upscaler-png"]
     },
     {
-      "slug": "midjourney-upscaler-raw",
+      "slug": "figma-upscaler-png",
       "title": "Escalador de Midjourney RAW",
       "metaTitle": "Escalador RAW de Midjourney - Mejora Imágenes MI RAW | MyImageUpscaler",
       "metaDescription": "Escala imágenes RAW de Midjourney con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -2603,8 +2603,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Midjourney",
-      "format": "RAW",
+      "platform": "Figma",
+      "format": "PNG",
       "platformDescription": "Midjourney crea arte IA impresionante.",
       "formatDescription": "RAW preserva todos los datos del sensor para máxima flexibilidad en posprocesamiento.",
       "platformSettings": "Exporta desde Midjourney usando formato RAW para máxima calidad.",
@@ -2691,7 +2691,7 @@
       "relatedFormats": ["upscale-raw-images", "midjourney-upscaler-png"]
     },
     {
-      "slug": "midjourney-upscaler-bmp",
+      "slug": "figma-upscaler-webp",
       "title": "Escalador de Midjourney BMP",
       "metaTitle": "Escalador BMP de Midjourney - Mejora Imágenes MI BMP | MyImageUpscaler",
       "metaDescription": "Escala imágenes BMP de Midjourney con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -2706,8 +2706,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Midjourney",
-      "format": "BMP",
+      "platform": "Figma",
+      "format": "WebP",
       "platformDescription": "Midjourney crea arte IA impresionante.",
       "formatDescription": "BMP proporciona imágenes sin compresión con compatibilidad universal.",
       "platformSettings": "Exporta desde Midjourney usando formato BMP para máxima calidad.",
@@ -2794,7 +2794,7 @@
       "relatedFormats": ["upscale-bmp-images", "midjourney-upscaler-png"]
     },
     {
-      "slug": "midjourney-upscaler-avif",
+      "slug": "figma-upscaler-jpg",
       "title": "Escalador de Midjourney AVIF",
       "metaTitle": "Escalador AVIF de Midjourney - Mejora Imágenes MI AVIF | MyImageUpscaler",
       "metaDescription": "Escala imágenes AVIF de Midjourney con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -2809,8 +2809,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Midjourney",
-      "format": "AVIF",
+      "platform": "Figma",
+      "format": "JPEG",
       "platformDescription": "Midjourney crea arte IA impresionante.",
       "formatDescription": "AVIF es el formato moderno de próxima generación con excelente compresión y calidad.",
       "platformSettings": "Exporta desde Midjourney usando formato AVIF para máxima calidad.",
@@ -2897,7 +2897,7 @@
       "relatedFormats": ["upscale-avif-images", "midjourney-upscaler-webp"]
     },
     {
-      "slug": "stable-diffusion-upscaler-raw",
+      "slug": "lightroom-upscaler-png",
       "title": "Escalador de Stable Diffusion RAW",
       "metaTitle": "Escalador RAW de Stable Diffusion - Mejora Imágenes ST RAW | MyImageUpscaler",
       "metaDescription": "Escala imágenes RAW de Stable Diffusion con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -2912,8 +2912,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Stable Diffusion",
-      "format": "RAW",
+      "platform": "Lightroom",
+      "format": "PNG",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
       "formatDescription": "RAW preserva todos los datos del sensor para máxima flexibilidad en posprocesamiento.",
       "platformSettings": "Exporta desde Stable Diffusion usando formato RAW para máxima calidad.",
@@ -3000,7 +3000,7 @@
       "relatedFormats": ["upscale-raw-images", "stable-diffusion-upscaler-png"]
     },
     {
-      "slug": "stable-diffusion-upscaler-bmp",
+      "slug": "lightroom-upscaler-webp",
       "title": "Escalador de Stable Diffusion BMP",
       "metaTitle": "Escalador BMP de Stable Diffusion - Mejora Imágenes ST BMP | MyImageUpscaler",
       "metaDescription": "Escala imágenes BMP de Stable Diffusion con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3015,8 +3015,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Stable Diffusion",
-      "format": "BMP",
+      "platform": "Lightroom",
+      "format": "WebP",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
       "formatDescription": "BMP proporciona imágenes sin compresión con compatibilidad universal.",
       "platformSettings": "Exporta desde Stable Diffusion usando formato BMP para máxima calidad.",
@@ -3103,7 +3103,7 @@
       "relatedFormats": ["upscale-bmp-images", "stable-diffusion-upscaler-png"]
     },
     {
-      "slug": "stable-diffusion-upscaler-avif",
+      "slug": "lightroom-upscaler-jpg",
       "title": "Escalador de Stable Diffusion AVIF",
       "metaTitle": "Escalador AVIF de Stable Diffusion - Mejora Imágenes ST AVIF | MyImageUpscaler",
       "metaDescription": "Escala imágenes AVIF de Stable Diffusion con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3118,8 +3118,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Stable Diffusion",
-      "format": "AVIF",
+      "platform": "Lightroom",
+      "format": "JPEG",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
       "formatDescription": "AVIF es el formato moderno de próxima generación con excelente compresión y calidad.",
       "platformSettings": "Exporta desde Stable Diffusion usando formato AVIF para máxima calidad.",
@@ -3206,7 +3206,7 @@
       "relatedFormats": ["upscale-avif-images", "stable-diffusion-upscaler-webp"]
     },
     {
-      "slug": "dalle-upscaler-raw",
+      "slug": "lightroom-upscaler-heic",
       "title": "Escalador de DALL-E RAW",
       "metaTitle": "Escalador RAW de DALL-E - Mejora Imágenes DA RAW | MyImageUpscaler",
       "metaDescription": "Escala imágenes RAW de DALL-E con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3221,8 +3221,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "DALL-E",
-      "format": "RAW",
+      "platform": "Lightroom",
+      "format": "HEIC",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
       "formatDescription": "RAW preserva todos los datos del sensor para máxima flexibilidad en posprocesamiento.",
       "platformSettings": "Exporta desde DALL-E usando formato RAW para máxima calidad.",
@@ -3309,7 +3309,7 @@
       "relatedFormats": ["upscale-raw-images", "dalle-upscaler-png"]
     },
     {
-      "slug": "dalle-upscaler-bmp",
+      "slug": "lightroom-upscaler-tiff",
       "title": "Escalador de DALL-E BMP",
       "metaTitle": "Escalador BMP de DALL-E - Mejora Imágenes DA BMP | MyImageUpscaler",
       "metaDescription": "Escala imágenes BMP de DALL-E con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3324,8 +3324,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "DALL-E",
-      "format": "BMP",
+      "platform": "Lightroom",
+      "format": "TIFF",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
       "formatDescription": "BMP proporciona imágenes sin compresión con compatibilidad universal.",
       "platformSettings": "Exporta desde DALL-E usando formato BMP para máxima calidad.",
@@ -3412,7 +3412,7 @@
       "relatedFormats": ["upscale-bmp-images", "dalle-upscaler-png"]
     },
     {
-      "slug": "dalle-upscaler-avif",
+      "slug": "gimp-upscaler-png",
       "title": "Escalador de DALL-E AVIF",
       "metaTitle": "Escalador AVIF de DALL-E - Mejora Imágenes DA AVIF | MyImageUpscaler",
       "metaDescription": "Escala imágenes AVIF de DALL-E con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3427,8 +3427,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "DALL-E",
-      "format": "AVIF",
+      "platform": "GIMP",
+      "format": "PNG",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
       "formatDescription": "AVIF es el formato moderno de próxima generación con excelente compresión y calidad.",
       "platformSettings": "Exporta desde DALL-E usando formato AVIF para máxima calidad.",
@@ -3515,7 +3515,7 @@
       "relatedFormats": ["upscale-avif-images", "dalle-upscaler-webp"]
     },
     {
-      "slug": "canva-upscaler-raw",
+      "slug": "gimp-upscaler-webp",
       "title": "Escalador de Canva RAW",
       "metaTitle": "Escalador RAW de Canva - Mejora Imágenes CA RAW | MyImageUpscaler",
       "metaDescription": "Escala imágenes RAW de Canva con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3530,8 +3530,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Canva",
-      "format": "RAW",
+      "platform": "GIMP",
+      "format": "WebP",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
       "formatDescription": "RAW preserva todos los datos del sensor para máxima flexibilidad en posprocesamiento.",
       "platformSettings": "Exporta desde Canva usando formato RAW para máxima calidad.",
@@ -3618,7 +3618,7 @@
       "relatedFormats": ["upscale-raw-images", "canva-upscaler-png"]
     },
     {
-      "slug": "canva-upscaler-bmp",
+      "slug": "gimp-upscaler-jpg",
       "title": "Escalador de Canva BMP",
       "metaTitle": "Escalador BMP de Canva - Mejora Imágenes CA BMP | MyImageUpscaler",
       "metaDescription": "Escala imágenes BMP de Canva con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3633,8 +3633,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Canva",
-      "format": "BMP",
+      "platform": "GIMP",
+      "format": "JPEG",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
       "formatDescription": "BMP proporciona imágenes sin compresión con compatibilidad universal.",
       "platformSettings": "Exporta desde Canva usando formato BMP para máxima calidad.",
@@ -3721,7 +3721,7 @@
       "relatedFormats": ["upscale-bmp-images", "canva-upscaler-png"]
     },
     {
-      "slug": "canva-upscaler-avif",
+      "slug": "gimp-upscaler-heic",
       "title": "Escalador de Canva AVIF",
       "metaTitle": "Escalador AVIF de Canva - Mejora Imágenes CA AVIF | MyImageUpscaler",
       "metaDescription": "Escala imágenes AVIF de Canva con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3736,8 +3736,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Canva",
-      "format": "AVIF",
+      "platform": "GIMP",
+      "format": "HEIC",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
       "formatDescription": "AVIF es el formato moderno de próxima generación con excelente compresión y calidad.",
       "platformSettings": "Exporta desde Canva usando formato AVIF para máxima calidad.",
@@ -3824,7 +3824,7 @@
       "relatedFormats": ["upscale-avif-images", "canva-upscaler-webp"]
     },
     {
-      "slug": "photoshop-upscaler-raw",
+      "slug": "gimp-upscaler-tiff",
       "title": "Escalador de Photoshop RAW",
       "metaTitle": "Escalador RAW de Photoshop - Mejora Imágenes PH RAW | MyImageUpscaler",
       "metaDescription": "Escala imágenes RAW de Photoshop con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3839,8 +3839,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Photoshop",
-      "format": "RAW",
+      "platform": "GIMP",
+      "format": "TIFF",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
       "formatDescription": "RAW preserva todos los datos del sensor para máxima flexibilidad en posprocesamiento.",
       "platformSettings": "Exporta desde Photoshop usando formato RAW para máxima calidad.",
@@ -3927,7 +3927,7 @@
       "relatedFormats": ["upscale-raw-images", "photoshop-upscaler-png"]
     },
     {
-      "slug": "photoshop-upscaler-bmp",
+      "slug": "affinity-upscaler-png",
       "title": "Escalador de Photoshop BMP",
       "metaTitle": "Escalador BMP de Photoshop - Mejora Imágenes PH BMP | MyImageUpscaler",
       "metaDescription": "Escala imágenes BMP de Photoshop con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -3942,8 +3942,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Photoshop",
-      "format": "BMP",
+      "platform": "Affinity Photo",
+      "format": "PNG",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
       "formatDescription": "BMP proporciona imágenes sin compresión con compatibilidad universal.",
       "platformSettings": "Exporta desde Photoshop usando formato BMP para máxima calidad.",
@@ -4030,7 +4030,7 @@
       "relatedFormats": ["upscale-bmp-images", "photoshop-upscaler-png"]
     },
     {
-      "slug": "photoshop-upscaler-avif",
+      "slug": "affinity-upscaler-webp",
       "title": "Escalador de Photoshop AVIF",
       "metaTitle": "Escalador AVIF de Photoshop - Mejora Imágenes PH AVIF | MyImageUpscaler",
       "metaDescription": "Escala imágenes AVIF de Photoshop con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -4045,8 +4045,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Photoshop",
-      "format": "AVIF",
+      "platform": "Affinity Photo",
+      "format": "WebP",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
       "formatDescription": "AVIF es el formato moderno de próxima generación con excelente compresión y calidad.",
       "platformSettings": "Exporta desde Photoshop usando formato AVIF para máxima calidad.",
@@ -4133,7 +4133,7 @@
       "relatedFormats": ["upscale-avif-images", "photoshop-upscaler-webp"]
     },
     {
-      "slug": "lightroom-upscaler-raw",
+      "slug": "affinity-upscaler-jpg",
       "title": "Escalador de Lightroom RAW",
       "metaTitle": "Escalador RAW de Lightroom - Mejora Imágenes LI RAW | MyImageUpscaler",
       "metaDescription": "Escala imágenes RAW de Lightroom con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -4148,8 +4148,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Lightroom",
-      "format": "RAW",
+      "platform": "Affinity Photo",
+      "format": "JPEG",
       "platformDescription": "Lightroom es especializado en fotografía y edición de color.",
       "formatDescription": "RAW preserva todos los datos del sensor para máxima flexibilidad en posprocesamiento.",
       "platformSettings": "Exporta desde Lightroom usando formato RAW para máxima calidad.",
@@ -4236,7 +4236,7 @@
       "relatedFormats": ["upscale-raw-images", "lightroom-upscaler-png"]
     },
     {
-      "slug": "lightroom-upscaler-bmp",
+      "slug": "affinity-upscaler-heic",
       "title": "Escalador de Lightroom BMP",
       "metaTitle": "Escalador BMP de Lightroom - Mejora Imágenes LI BMP | MyImageUpscaler",
       "metaDescription": "Escala imágenes BMP de Lightroom con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -4251,8 +4251,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Lightroom",
-      "format": "BMP",
+      "platform": "Affinity Photo",
+      "format": "HEIC",
       "platformDescription": "Lightroom es especializado en fotografía y edición de color.",
       "formatDescription": "BMP proporciona imágenes sin compresión con compatibilidad universal.",
       "platformSettings": "Exporta desde Lightroom usando formato BMP para máxima calidad.",
@@ -4339,7 +4339,7 @@
       "relatedFormats": ["upscale-bmp-images", "lightroom-upscaler-png"]
     },
     {
-      "slug": "lightroom-upscaler-avif",
+      "slug": "affinity-upscaler-tiff",
       "title": "Escalador de Lightroom AVIF",
       "metaTitle": "Escalador AVIF de Lightroom - Mejora Imágenes LI AVIF | MyImageUpscaler",
       "metaDescription": "Escala imágenes AVIF de Lightroom con IA. Mejora resolución sin perder calidad. Perfecto para impresión y alta calidad. Gratis.",
@@ -4354,8 +4354,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
-      "platform": "Lightroom",
-      "format": "AVIF",
+      "platform": "Affinity Photo",
+      "format": "TIFF",
       "platformDescription": "Lightroom es especializado en fotografía y edición de color.",
       "formatDescription": "AVIF es el formato moderno de próxima generación con excelente compresión y calidad.",
       "platformSettings": "Exporta desde Lightroom usando formato AVIF para máxima calidad.",

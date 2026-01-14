@@ -246,9 +246,9 @@
       "workflow": [
         "医療または科学画像をアップロード（DICOM、JPEG、TIFF、RAW）",
         "イメージングタイプを選択：医療（X線、MRI、CT）、顕微鏡、または科学写真",
-        "Choose enhancement focus: Contrast, clarity, noise reduction, or comprehensive",
-        "Apply specialized AI algorithms trained for medical/scientific imaging",
-        "Review enhanced images with before/after comparison tools",
+        "拡張焦点を選択：コントラスト、鮮明度、ノイズ低減、または包括的",
+        "医学/科学イメージング用に訓練された専門AIアルゴリズムを適用",
+        "前後比較ツールで拡張画像をレビュー",
         "出版物、プレゼンテーション、または分析に適切なフォーマットでエクスポート"
       ],
       "technicalSpecs": {
@@ -604,29 +604,29 @@
           "LinkedIn",
           "Pinterest"
         ],
-        "outputFormats": ["Platform-optimized JPEG", "PNG with transparency", "WebP for web"],
-        "batchProcessing": "Up to 100 content pieces per batch",
-        "performanceOptimization": ["Fast loading", "Mobile-first", "High engagement"]
+        "outputFormats": ["プラットフォーム最適化JPEG", "透過付きPNG", "Web用WebP"],
+        "batchProcessing": "バッチあたり最大100コンテンツ",
+        "performanceOptimization": ["高速読み込み", "モバイルファースト", "高エンゲージメント"]
       },
       "caseStudies": [
         {
-          "title": "Content Creator Engagement Success",
-          "description": "Lifestyle content creator enhanced all social media content with AI optimization, achieving 300% increase in engagement and 2x follower growth within 3 months.",
-          "metrics": "5x ROI on content creation, consistent viral content performance"
+          "title": "コンテンツクリエイターエンゲージメント成功",
+          "description": "ライフスタイルコンテンツクリエイターがAI最適化ですべてのソーシャルメディアコンテンツを拡張し、3ヶ月以内にエンゲージメント300%増加とフォロワー2倍増を達成。",
+          "metrics": "コンテンツ作成で5倍のROI、一貫したバイラルコンテンツパフォーマンス"
         },
         {
-          "title": "Brand Social Media Transformation",
-          "description": "E-commerce brand implemented AI enhancement across all social platforms, resulting in 150% increase in social-driven sales and improved brand perception.",
-          "metrics": "3x ROI, reduced content creation costs by 60%"
+          "title": "ブランドソーシャルメディア変革",
+          "description": "EコマースブランドがすべてのソーシャルプラットフォームでAI拡張を実装し、ソーシャル駆動型売上150%増加とブランド認知向上を実現。",
+          "metrics": "3倍のROI、コンテンツ作成コスト60%削減"
         }
       ],
       "bestPractices": [
-        "Maintain consistent brand aesthetic across all platforms",
-        "Optimize for mobile viewing - most social media is mobile-first",
-        "Test different enhancement styles for each platform's audience",
-        "Use platform-specific dimensions and requirements",
-        "Create content variations for A/B testing and optimization",
-        "Stay current with platform trends and algorithm preferences"
+        "すべてのプラットフォームで一貫したブランド美観を維持",
+        "モバイル視聴用に最適化 - ほとんどのソーシャルメディアはモバイルファースト",
+        "各プラットフォームのオーディエンス向けに異なる拡張スタイルをテスト",
+        "プラットフォーム固有の寸法と要件を使用",
+        "A/Bテストと最適化のためのコンテンツバリエーションを作成",
+        "プラットフォームトレンドとアルゴリズム設定を最新に保つ"
       ],
       "softwareRecommendations": {
         "contentCreation": ["Canva Pro", "Adobe Creative Suite", "Figma"],
@@ -635,47 +635,47 @@
         "socialManagement": ["Buffer", "Hootsuite", "Later", "Planoly"]
       },
       "fileSizeGuidelines": {
-        "instagramFeed": "500KB-2MB for optimal loading and quality",
-        "storiesContent": "1-5MB for high-quality Stories",
-        "youtubeThumbnails": "2-5MB for HD thumbnail quality",
-        "tiktokContent": "1-3MB for optimal performance"
+        "instagramFeed": "最適な読み込みと品質のために500KB-2MB",
+        "storiesContent": "高品質ストリーズのために1-5MB",
+        "youtubeThumbnails": "HDサムネイル品質のために2-5MB",
+        "tiktokContent": "最適なパフォーマンスのために1-3MB"
       },
       "faqs": [
         {
-          "question": "Which social media platforms do you optimize for?",
-          "answer": "We optimize for all major platforms including Instagram, TikTok, YouTube, Facebook, Twitter, LinkedIn, Pinterest, and emerging platforms. Each has specific optimization algorithms."
+          "question": "どのソーシャルメディアプラットフォームに対応していますか？",
+          "answer": "Instagram、TikTok、YouTube、Facebook、Twitter、LinkedIn、Pinterest、新兴プラットフォームを含むすべての主要プラットフォームに対応しています。それぞれに特定の最適化アルゴリズムがあります。"
         },
         {
-          "question": "Can you enhance smartphone photos for professional social media?",
-          "answer": "Absolutely! Our AI excels at enhancing smartphone photos to professional social media standards, improving clarity, lighting, and composition for maximum engagement."
+          "question": "スマートフォン写真をプロフェッショナルソーシャルメディア用に拡張できますか？",
+          "answer": "もちろんです！当社のAIは、スマートフォン写真をプロフェッショナルソーシャルメディア基準に拡張するのに優れており、最大エンゲージメントのために鮮明度、照明、構図を改善します。"
         },
         {
-          "question": "How do you optimize for different platform algorithms?",
-          "answer": "Our AI analyzes successful content patterns on each platform and optimizes images for algorithm preferences, including engagement factors, trending styles, and platform-specific visual requirements."
+          "question": "異なるプラットフォームアルゴリズム用にどのように最適化しますか？",
+          "answer": "当社のAIは各プラットフォームで成功したコンテンツパターンを分析し、エンゲージメント要因、トレンドスタイル、プラットフォーム固有の視覚要件を含むアルゴリズム設定用に画像を最適化します。"
         },
         {
-          "question": "Can you create content variations for A/B testing?",
-          "answer": "Yes! We can create multiple enhancement variations of the same image, allowing you to test different styles, compositions, and visual approaches to optimize engagement."
+          "question": "A/Bテスト用のコンテンツバリエーションを作成できますか？",
+          "answer": "はい！同じ画像の複数の拡張バリエーションを作成でき、エンゲージメントを最適化するために異なるスタイル、構成、視覚的アプローチをテストできます。"
         },
         {
-          "question": "What about video content and thumbnails?",
-          "answer": "We enhance video thumbnails, cover images, and can even improve video frame quality. Our thumbnail optimization is specifically designed to increase click-through rates."
+          "question": "ビデオコンテンツとサムネイルはどうですか？",
+          "answer": "ビデオサムネイル、カバー画像を拡張し、ビデオフレーム品質さえ改善できます。サムネイル最適化は特にクリック率を向上するように設計されています。"
         },
         {
-          "question": "How do you maintain brand consistency across platforms?",
-          "answer": "We can apply brand-specific enhancement profiles, color grading, and style guidelines to ensure consistent brand appearance while adapting to each platform's unique requirements."
+          "question": "プラットフォーム間でブランド一貫性をどのように維持しますか？",
+          "answer": "ブランド固有の拡張プロファイル、色グレーディング、スタイルガイドラインを適用し、各プラットフォームの固有要件に適応しながら一貫したブランド外観を保証できます。"
         }
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "ctaText": "Enhance Your Social Media Content",
+      "ctaText": "ソーシャルメディアコンテンツを拡張",
       "ctaUrl": "/?signup=1"
     },
     {
       "slug": "jewelry-luxury-goods",
       "title": "宝石や高級品",
-      "metaTitle": "Web Design & Development Optimization | MyImageUpscaler",
+      "metaTitle": "Webデザイン＆開発最適化 | MyImageUpscaler",
       "metaDescription": "プロフェッショナル image optimization for web design and development. Enhance website images, improve パフォーマンス, and optimize user experience with AI-powered web image optimization.",
-      "h1": "Web Design & Development Optimization",
+      "h1": "Webデザイン＆開発最適化",
       "category": "use-cases",
       "intro": "Comprehensive image optimization solutions specifically designed for web design and development, ensuring fast loading, high 品質, and responsive パフォーマンス across all devices and platforms.",
       "primaryKeyword": "web design image optimization",

@@ -258,16 +258,16 @@
         "90% reduction in imagen procesamiento time for researchers",
         "Publication-ready imágenes for scientific journals",
         "HIPAA-compliant procesamiento for medical imágenes",
-        "Preservation of historical medical documents and photographs",
-        "Enhanced educational materials for medical training"
+        "Preservación de documentos médicos históricos y fotografías",
+        "Materiales educativos mejorados para capacitación médica"
       ],
       "workflow": [
         "Upload medical or scientific imágenes (DICOM, JPEG, TIFF, RAW)",
-        "Select imaging type: Medical (X-ray, MRI, CT), Microscopy, or Scientific photography",
+        "Selecciona el tipo de imagen: Médica (rayos X, MRI, CT), Microscopio o fotografía científica",
         "Choose mejora focus: Contrast, clarity, noise reduction, or comprehensive",
         "Apply specialized IA algorithms trained for medical/scientific imaging",
         "Review enhanced imágenes with before/after comparison herramientas",
-        "Export in appropriate formats for publications, presentations, or analysis"
+        "Exportar en formatos apropiados para publicaciones, presentaciones o análisis"
       ],
       "technicalSpecs": {
         "supportedFormats": ["DICOM", "JPEG", "TIFF", "PNG", "RAW", "BMP"],
@@ -278,7 +278,7 @@
       },
       "caseStudies": [
         {
-          "title": "Medical Research Laboratory Efficiency",
+          "title": "Eficiencia de laboratorio de investigación médica",
           "description": "Research laboratory implemented IA mejora for microscopy imágenes reducing imagen procesamiento time by 85% and improving publication acceptance rates by 45%.",
           "metrics": "300+ research publications supported, 99.9% accuracy maintained"
         },
@@ -340,10 +340,10 @@
     },
     {
       "slug": "architecture-construction",
-      "title": "Architecture & Construction Imaging",
-      "metaTitle": "Architecture & Construction Imaging | MyImageUpscaler",
+      "title": "Imágenes de arquitectura y construcción",
+      "metaTitle": "Imágenes de arquitectura y construcción | MyImageUpscaler",
       "metaDescription": "profesional architecture and construction foto mejora Improve architectural photography, construction progress fotos and building documentation with AI-powered imagen optimization.",
-      "h1": "Architecture & Construction Imaging",
+      "h1": "Imágenes de arquitectura y construcción",
       "category": "use-cases",
       "intro": "Comprehensive imagen mejora solutions for architects, construction profesionales and real estate developers, transforming architectural photography and construction documentation into profesional presentation-ready materials.",
       "primaryKeyword": "architecture construction foto mejora",
@@ -356,7 +356,7 @@
       "description": "Specialized mejora solutions for architectural photography, construction progress documentation, and building project presentations. Our AI-powered herramientas improve clarity, lighting, and detail in architectural imágenes while maintaining technical accuracy and profesional standards.",
       "useCases": [
         "Architectural photography mejora for portfolio and marketing",
-        "Construction progress documentation and monitoring",
+        "Documentación y monitoreo del progreso de la construcción",
         "Building material and texture mejora for presentations",
         "Blueprint and drawing mejora for client presentations",
         "Before/after construction comparación photography",
@@ -476,7 +476,7 @@
         "Book cover mejora and optimization for all print sizes",
         "Magazine and newspaper foto mejora for publication",
         "Marketing materials mejora for brochures and flyers",
-        "Commercial printing optimization for catalogs and direct mail",
+        "Optimización de impresión comercial para catálogos y correo directo",
         "Fine art print preparation and gallery-quality mejora",
         "Educational textbook and academic publication mejora"
       ],
@@ -485,12 +485,12 @@
         "90% reduction in pre-press imagen preparation time",
         "Cost-effective alternative to reshooting for low-resolution imágenes",
         "Consistent calidad across all print materials and formats",
-        "CMYK color space optimization for accurate print reproduction",
+        "Optimización del espacio de color CMYK para reproducción de impresión precisa",
         "Automated workflow for grande publishing projects"
       ],
       "workflow": [
         "Upload source imágenes (any resolution or format)",
-        "Select print type and specifications (size, DPI, color space)",
+        "Selecciona el tipo de impresión y especificaciones (tamaño, DPI, espacio de color)",
         "Choose mejora focus: Resolution, color accuracy, or comprehensive",
         "Apply IA mejora optimized for print production standards",
         "Preview in simulated print conditions with soft-proofing",

@@ -457,7 +457,7 @@
           "upgradePath": "Actualizaciones anuales por $29/año"
         },
         {
-          "name": "Let's Enhance",
+          "name": "Lets Enhance",
           "pricing": "$9-39/mes",
           "features": [
             "✓ Múltiples modelos de IA",
@@ -523,7 +523,7 @@
             "scenario": "Aficionado (50 imágenes/mes)",
             "freeOption": "$0 (con límites)",
             "affordablePaid": "$228/año",
-            "premiumOption": "$99.99/year",
+            "premiumOption": "$99.99/año",
             "recommendation": "Compra única o suscripción de nivel medio",
             "breakEven": "5-6 meses comparado con premium"
           },
@@ -967,457 +967,477 @@
       "comparisonType": "workflows",
       "workflowTypes": [
         {
-          "type": "Desktop Automation",
-          "description": "Local processing with scripting and automation tools",
-          "tools": ["Python scripts", "Command line tools", "Watch folders"],
+          "type": "Automatización de escritorio",
+          "description": "Procesamiento local con herramientas de scripting y automatización",
+          "tools": ["Scripts de Python", "Herramientas de línea de comandos", "Carpetas vigiladas"],
           "pros": [
-            "Complete control over processing",
-            "No upload requirements",
-            "Works with sensitive data",
-            "One-time software cost"
+            "Control completo del procesamiento",
+            "Sin requisitos de carga",
+            "Funciona con datos sensibles",
+            "Costo único de software"
           ],
           "cons": [
-            "Hardware limitations",
-            "Manual setup required",
-            "Limited parallel processing",
-            "Maintenance overhead"
+            "Limitaciones de hardware",
+            "Configuración manual requerida",
+            "Procesamiento paralelo limitado",
+            "Sobrecarga de mantenimiento"
           ],
-          "bestFor": ["Photography studios", "Print shops", "Sensitive data processing"],
-          "setupComplexity": "Medium-High",
+          "bestFor": ["Estudios de fotografía", "Imprentas", "Procesamiento de datos sensibles"],
+          "setupComplexity": "Medio-Alto",
           "costPerImage": "$0.001-0.01",
-          "throughput": "100-500 images/hour"
+          "throughput": "100-500 imágenes/hora"
         },
         {
-          "type": "Cloud API Integration",
-          "description": "Programmatic access to cloud upscaling services",
-          "tools": ["REST APIs", "SDKs", "Webhooks"],
+          "type": "Integración con API en la nube",
+          "description": "Acceso programático a servicios de ampliación en la nube",
+          "tools": ["APIs REST", "SDKs", "Webhooks"],
           "pros": [
-            "Scalable processing",
-            "No hardware concerns",
-            "Professional SLAs",
-            "Easy integration"
+            "Procesamiento escalable",
+            "Sin preocupaciones de hardware",
+            "SLAs profesionales",
+            "Fácil integración"
           ],
           "cons": [
-            "Recurring costs",
-            "Internet dependency",
-            "Data privacy considerations",
-            "Rate limiting"
+            "Costos recurrentes",
+            "Dependencia de internet",
+            "Consideraciones de privacidad de datos",
+            "Limitación de tasa"
           ],
-          "bestFor": ["Web applications", "E-commerce platforms", "SaaS integration"],
-          "setupComplexity": "Medium",
+          "bestFor": [
+            "Aplicaciones web",
+            "Plataformas de comercio electrónico",
+            "Integración SaaS"
+          ],
+          "setupComplexity": "Medio",
           "costPerImage": "$0.05-0.50",
-          "throughput": "1000-10000 images/hour"
+          "throughput": "1000-10000 imágenes/hora"
         },
         {
-          "type": "Hybrid Approach",
-          "description": "Combining local and cloud processing for optimal results",
-          "tools": ["Queue systems", "Load balancers", "Custom routing"],
+          "type": "Enfoque híbrido",
+          "description": "Combinando procesamiento local y en la nube para resultados óptimos",
+          "tools": ["Sistemas de cola", "Balanceadores de carga", "Enrutamiento personalizado"],
           "pros": [
-            "Optimized cost/performance",
-            "Redundancy options",
-            "Flexible routing",
-            "Best of both worlds"
+            "Costo/rendimiento optimizado",
+            "Opciones de redundancia",
+            "Enrutamiento flexible",
+            "Lo mejor de ambos mundos"
           ],
           "cons": [
-            "Complex setup",
-            "Multiple systems to manage",
-            "Integration challenges",
-            "Higher initial cost"
+            "Configuración compleja",
+            "Múltiples sistemas para gestionar",
+            "Desafíos de integración",
+            "Costo inicial más alto"
           ],
-          "bestFor": ["Large enterprises", "Mixed sensitivity data", "Variable workloads"],
-          "setupComplexity": "High",
+          "bestFor": [
+            "Grandes empresas",
+            "Datos de sensibilidad mixta",
+            "Cargas de trabajo variables"
+          ],
+          "setupComplexity": "Alto",
           "costPerImage": "$0.02-0.30",
-          "throughput": "500-5000 images/hour"
+          "throughput": "500-5000 imágenes/hora"
         },
         {
-          "type": "Enterprise Solutions",
-          "description": "Complete managed solutions with enterprise features",
-          "tools": ["Dedicated infrastructure", "On-premise options", "Managed services"],
+          "type": "Soluciones empresariales",
+          "description": "Soluciones completas gestionadas con características empresariales",
+          "tools": [
+            "Infraestructura dedicada",
+            "Opciones en las instalaciones",
+            "Servicios gestionados"
+          ],
           "pros": [
-            "Full service management",
-            "Compliance features",
-            "24/7 support",
-            "Custom development"
+            "Gestión completa del servicio",
+            "Características de cumplimiento",
+            "Soporte 24/7",
+            "Desarrollo personalizado"
           ],
           "cons": [
-            "Highest cost",
-            "Vendor lock-in",
-            "Longer implementation",
-            "Complex procurement"
+            "Costo más alto",
+            "Bloqueo de proveedor",
+            "Implementación más larga",
+            "Adquisición compleja"
           ],
-          "bestFor": ["Fortune 500 companies", "Government agencies", "Healthcare organizations"],
-          "setupComplexity": "High",
+          "bestFor": [
+            "Empresas Fortune 500",
+            "Agencias gubernamentales",
+            "Organizaciones de atención médica"
+          ],
+          "setupComplexity": "Alto",
           "costPerImage": "$0.10-1.00",
-          "throughput": "10000+ images/hour"
+          "throughput": "10000+ imágenes/hora"
         }
       ],
       "implementationExamples": [
         {
-          "scenario": "E-commerce Platform Product Images",
+          "scenario": "Imágenes de productos de plataforma de comercio electrónico",
           "requirements": {
-            "volume": "10,000 images/month",
-            "quality": "High for main product shots",
-            "speed": "24-hour processing window",
-            "budget": "$500/month"
+            "volume": "10,000 imágenes/mes",
+            "quality": "Alta para fotos principales de productos",
+            "speed": "Ventana de procesamiento de 24 horas",
+            "budget": "$500/mes"
           },
           "solution": {
-            "type": "Cloud API",
-            "provider": "MyImageUpscaler API",
-            "architecture": "Watch folder → Queue → API processing → CDN storage",
-            "cost": "$450/month",
-            "implementation": "2 weeks",
-            "roi": "40% reduction in manual work"
+            "type": "API en la nube",
+            "provider": "API de MyImageUpscaler",
+            "architecture": "Carpeta vigilada → Cola → Procesamiento API → Almacenamiento CDN",
+            "cost": "$450/mes",
+            "implementation": "2 semanas",
+            "roi": "40% reducción en trabajo manual"
           }
         },
         {
-          "scenario": "Photography Studio Wedding Packages",
+          "scenario": "Paquetes de bodas de estudio de fotografía",
           "requirements": {
-            "volume": "5,000 images/month",
-            "quality": "Professional print quality",
-            "speed": "48-hour turnaround",
-            "budget": "$2,000 setup, $200/month"
+            "volume": "5,000 imágenes/mes",
+            "quality": "Calidad de impresión profesional",
+            "speed": "Tiempo de entrega de 48 horas",
+            "budget": "$2,000 configuración, $200/mes"
           },
           "solution": {
-            "type": "Desktop Automation",
-            "tools": "Python + Topaz Gigapixel + Watch folders",
-            "architecture": "Network storage → Watch folder → Batch processing → Final delivery",
-            "cost": "$2,200 initial, $25/month",
-            "implementation": "1 month",
-            "roi": "80% time savings"
+            "type": "Automatización de escritorio",
+            "tools": "Python + Topaz Gigapixel + Carpetas vigiladas",
+            "architecture": "Almacenamiento en red → Carpeta vigilada → Procesamiento por lotes → Entrega final",
+            "cost": "$2,200 inicial, $25/mes",
+            "implementation": "1 mes",
+            "roi": "80% ahorro de tiempo"
           }
         },
         {
-          "scenario": "Stock Photography Agency",
+          "scenario": "Agencia de fotografía de stock",
           "requirements": {
-            "volume": "100,000 images/month",
-            "quality": "Multiple quality levels",
-            "speed": "Real-time for submissions",
-            "budget": "$10,000/month"
+            "volume": "100,000 imágenes/mes",
+            "quality": "Múltiples niveles de calidad",
+            "speed": "Tiempo real para envíos",
+            "budget": "$10,000/mes"
           },
           "solution": {
-            "type": "Hybrid + Enterprise",
-            "architecture": "Edge processing + Cloud validation + Archive storage",
-            "cost": "$9,500/month",
-            "implementation": "6 months",
-            "roi": "60% operational efficiency"
+            "type": "Híbrido + Empresarial",
+            "architecture": "Procesamiento edge + Validación en la nube + Almacenamiento de archivo",
+            "cost": "$9,500/mes",
+            "implementation": "6 meses",
+            "roi": "60% eficiencia operativa"
           }
         }
       ],
       "automationTools": {
         "desktop": [
           {
-            "name": "Python with PIL/OpenCV",
+            "name": "Python con PIL/OpenCV",
             "setup": "pip install pillow opencv-python requests",
-            "complexity": "Medium",
-            "features": ["File watching", "Format conversion", "Batch processing"],
-            "codeExample": "```python\nfrom PIL import Image\nimport os\nimport requests\n\ndef batch_upscale(folder_path, api_key):\n    for filename in os.listdir(folder_path):\n        if filename.lower().endswith(('.jpg', '.png')):\n            # API call here\n            pass\n```"
+            "complexity": "Medio",
+            "features": [
+              "Monitoreo de archivos",
+              "Conversión de formato",
+              "Procesamiento por lotes"
+            ],
+            "codeExample": "```python\nfrom PIL import Image\nimport os\nimport requests\n\ndef batch_upscale(folder_path, api_key):\n    for filename in os.listdir(folder_path):\n        if filename.lower().endswith((.jpg, .png)):\n            # Llamada API aquí\n            pass\n```"
           },
           {
-            "name": "PowerShell/Bash scripting",
-            "setup": "Native to OS",
-            "complexity": "Low",
-            "features": ["File operations", "Process automation", "Integration"],
-            "limitation": "Limited image processing capabilities"
+            "name": "Scripting de PowerShell/Bash",
+            "setup": "Nativo del SO",
+            "complexity": "Bajo",
+            "features": ["Operaciones de archivos", "Automatización de procesos", "Integración"],
+            "limitation": "Capacidades limitadas de procesamiento de imágenes"
           }
         ],
         "cloud": [
           {
             "name": "AWS Lambda + API Gateway",
-            "setup": "Serverless functions",
-            "complexity": "High",
-            "features": ["Auto-scaling", "Pay-per-use", "High availability"],
-            "cost": "$0.20 per 1M requests + compute"
+            "setup": "Funciones serverless",
+            "complexity": "Alto",
+            "features": ["Auto-escalado", "Pago por uso", "Alta disponibilidad"],
+            "cost": "$0.20 por 1M solicitudes + computo"
           },
           {
             "name": "Google Cloud Functions",
-            "setup": "Serverless functions",
-            "complexity": "High",
-            "features": ["Multi-region", "Integrated services", "Security"],
-            "cost": "$0.40 per 1M invocations + compute"
+            "setup": "Funciones serverless",
+            "complexity": "Alto",
+            "features": ["Multirregión", "Servicios integrados", "Seguridad"],
+            "cost": "$0.40 por 1M invocaciones + computo"
           },
           {
-            "name": "Zapier/Make automation",
-            "setup": "No-code platform",
-            "complexity": "Low",
-            "features": ["Visual builder", "3000+ integrations", "Quick setup"],
-            "cost": "$20-500/month based on usage"
+            "name": "Automatización Zapier/Make",
+            "setup": "Plataforma sin código",
+            "complexity": "Bajo",
+            "features": ["Constructor visual", "Más de 3000 integraciones", "Configuración rápida"],
+            "cost": "$20-500/mes según uso"
           }
         ]
       },
       "bestPractices": {
         "preProcessing": [
-          "Validate input formats and resolutions",
-          "Check for corrupted files",
-          "Standardize color spaces",
-          "Remove metadata if sensitive",
-          "Organize by priority"
+          "Validar formatos de entrada y resoluciones",
+          "Verificar archivos corruptos",
+          "Estandarizar espacios de color",
+          "Eliminar metadatos si son sensibles",
+          "Organizar por prioridad"
         ],
         "processing": [
-          "Implement error handling and retries",
-          "Use queue systems for reliability",
-          "Monitor progress and performance",
-          "Log all processing events",
-          "Implement quality checks"
+          "Implementar manejo de errores y reintentos",
+          "Usar sistemas de cola para confiabilidad",
+          "Monitorear progreso y rendimiento",
+          "Registrar todos los eventos de procesamiento",
+          "Implementar verificaciones de calidad"
         ],
         "postProcessing": [
-          "Verify output quality",
-          "Organize processed files",
-          "Generate reports and statistics",
-          "Archive original files",
-          "Clean up temporary files"
+          "Verificar calidad de salida",
+          "Organizar archivos procesados",
+          "Generar informes y estadísticas",
+          "Archivar archivos originales",
+          "Limpiar archivos temporales"
         ],
         "monitoring": [
-          "Set up alerts for failures",
-          "Track processing metrics",
-          "Monitor costs and usage",
-          "Regular performance reviews",
-          "Backup critical configurations"
+          "Configurar alertas para fallos",
+          "Rastrear métricas de procesamiento",
+          "Monitorear costos y uso",
+          "Revisiones regulares de rendimiento",
+          "Hacer copia de seguridad de configuraciones críticas"
         ]
       },
       "optimizationStrategies": {
         "performance": [
           {
-            "strategy": "Parallel Processing",
-            "description": "Process multiple images simultaneously",
-            "implementation": "Use worker threads or distributed processing",
-            "gain": "2-10x speed improvement"
+            "strategy": "Procesamiento paralelo",
+            "description": "Procesar múltiples imágenes simultáneamente",
+            "implementation": "Usar subprocesos de trabajo o procesamiento distribuido",
+            "gain": "Mejora de velocidad de 2-10x"
           },
           {
-            "strategy": "Smart Batching",
-            "description": "Group similar images for optimal processing",
-            "implementation": "Sort by size, format, or content type",
-            "gain": "15-30% efficiency improvement"
+            "strategy": "Procesamiento por lotes inteligente",
+            "description": "Agrupar imágenes similares para procesamiento óptimo",
+            "implementation": "Ordenar por tamaño, formato o tipo de contenido",
+            "gain": "Mejora de eficiencia del 15-30%"
           },
           {
-            "strategy": "Caching",
-            "description": "Store and reuse processed results",
-            "implementation": "Hash-based duplicate detection",
-            "gain": "50-80% reduction in redundant work"
+            "strategy": "Almacenamiento en caché",
+            "description": "Almacenar y reutilizar resultados procesados",
+            "implementation": "Detección de duplicados basada en hash",
+            "gain": "Reducción del 50-80% en trabajo redundante"
           }
         ],
         "cost": [
           {
-            "strategy": "Tiered Processing",
-            "description": "Different quality levels for different uses",
-            "implementation": "High quality for premium, standard for bulk",
-            "gain": "30-50% cost reduction"
+            "strategy": "Procesamiento por niveles",
+            "description": "Diferentes niveles de calidad para diferentes usos",
+            "implementation": "Alta calidad para premium, estándar para volumen",
+            "gain": "Reducción de costos del 30-50%"
           },
           {
-            "strategy": "Scheduled Processing",
-            "description": "Process during off-peak hours",
-            "implementation": "Queue with time-based processing",
-            "gain": "20-40% cost savings"
+            "strategy": "Procesamiento programado",
+            "description": "Procesar durante horas fuera de punta",
+            "implementation": "Cola con procesamiento basado en tiempo",
+            "gain": "Ahorros de costos del 20-40%"
           }
         ]
       },
       "caseStudies": [
         {
-          "company": "Major E-commerce Platform",
-          "challenge": "Processing 50,000 daily product images",
-          "solution": "Cloud API with queue management",
+          "company": "Plataforma importante de comercio electrónico",
+          "challenge": "Procesando 50,000 imágenes diarias de productos",
+          "solution": "API en la nube con gestión de colas",
           "results": {
-            "processingTime": "Reduced from 48 hours to 4 hours",
-            "cost": "60% reduction vs manual processing",
-            "quality": "92% customer satisfaction",
+            "processingTime": "Reducido de 48 horas a 4 horas",
+            "cost": "60% reducción vs procesamiento manual",
+            "quality": "92% satisfacción del cliente",
             "uptime": "99.9%"
           }
         },
         {
-          "company": "Photography Studio Chain",
-          "challenge": "Consistent quality across 100+ studios",
-          "solution": "Standardized desktop automation",
+          "company": "Cadena de estudios de fotografía",
+          "challenge": "Calidad consistente en más de 100 estudios",
+          "solution": "Automatización de escritorio estandarizada",
           "results": {
-            "consistency": "95% quality standardization",
-            "turnaround": "70% faster delivery",
-            "training": "80% reduction in training time",
-            "errors": "90% reduction in processing errors"
+            "consistency": "95% estandarización de calidad",
+            "turnaround": "70% entrega más rápida",
+            "training": "80% reducción en tiempo de capacitación",
+            "errors": "90% reducción en errores de procesamiento"
           }
         }
       ],
       "faq": [
         {
-          "question": "What's the most cost-effective batch processing solution?",
-          "answer": "For volumes under 10,000 images/month, cloud APIs are most cost-effective. For higher volumes, hybrid solutions with local processing for non-sensitive content provide better value."
+          "question": "¿Cuál es la solución de procesamiento por lotes más rentable?",
+          "answer": "Para volúmenes inferiores a 10,000 imágenes/mes, las APIs en la nube son las más rentables. Para volúmenes más altos, las soluciones híbridas con procesamiento local para contenido no sensible ofrecen mejor valor."
         },
         {
-          "question": "How do I handle fAIled batch jobs?",
-          "answer": "Implement retry logic with exponential backoff, track fAIled jobs in a separate queue, and set up alerts for monitoring. Most fAIlures are temporary network issues or rate limits."
+          "question": "¿Cómo manejo los trabajos por lotes fallidos?",
+          "answer": "Implementa lógica de reintento con retroceso exponencial, rastrea trabajos fallidos en una cola separada y configura alertas para monitoreo. La mayoría de los fallos son problemas temporales de red o límites de tasa."
         },
         {
-          "question": "Can I mix different upscaling models in one batch?",
-          "answer": "Yes, advanced workflows can route images to different models based on content analysis (text, photos, graphics, etc.) for optimal results."
+          "question": "¿Puedo mezclar diferentes modelos de ampliación en un lote?",
+          "answer": "Sí, los flujos de trabajo avanzados pueden enrutar imágenes a diferentes modelos según el análisis del contenido (texto, fotos, gráficos, etc.) para resultados óptimos."
         },
         {
-          "question": "How do I ensure consistent quality across batches?",
-          "answer": "Implement quality checks, use consistent parameters, mAIntAIn model versions, and regularly audit results. Automated quality scoring helps mAIntAIn standards."
+          "question": "¿Cómo aseguro una calidad consistente entre lotes?",
+          "answer": "Implementa verificaciones de calidad, usa parámetros consistentes, mantén versiones de modelos y audita resultados regularmente. La puntuación de calidad automatizada ayuda a mantener los estándares."
         }
       ]
     },
     {
       "useCaseSpecificOptimizations": [
         {
-          "optimalSetup": "SRCNN with temporal filtering on GPU",
-          "useCase": "Real-time Video Enhancement",
+          "optimalSetup": "SRCNN con filtrado temporal en GPU",
+          "useCase": "Mejora de video en tiempo real",
           "requirements": {
-            "speed": "Under 100ms per frame",
-            "quality": "Moderate improvement acceptable",
-            "consistency": "Frame-to-frame stability"
+            "speed": "Menos de 100ms por cuadro",
+            "quality": "Mejora moderada aceptable",
+            "consistency": "Estabilidad cuadro a cuadro"
           },
           "recommendations": [
-            "Use lightweight CNN models",
-            "Temporal consistency constraints",
-            "Hardware-accelerated inference",
-            "Lower resolution processing"
+            "Usar modelos CNN ligeros",
+            "Restricciones de consistencia temporal",
+            "Inferencia acelerada por hardware",
+            "Procesamiento de menor resolución"
           ]
         },
         {
-          "useCase": "E-commerce Product Images",
+          "useCase": "Imágenes de productos de comercio electrónico",
           "requirements": {
-            "speed": "Under 5 seconds per image",
-            "quality": "High for main products",
-            "batch": "Process thousands daily"
+            "speed": "Menos de 5 segundos por imagen",
+            "quality": "Alta para productos principales",
+            "batch": "Procesar miles diariamente"
           },
           "recommendations": [
-            "Tiered quality levels",
-            "Smart batching",
-            "Cloud processing with queue",
-            "Automated quality checks"
+            "Niveles de calidad por niveles",
+            "Procesamiento por lotes inteligente",
+            "Procesamiento en la nube con cola",
+            "Verificaciones de calidad automatizadas"
           ],
-          "optimalSetup": "Real-ESRGAN for premium, bicubic for thumbnails"
+          "optimalSetup": "Real-ESRGAN para premium, bicúbico para miniaturas"
         },
         {
-          "useCase": "Medical Imaging",
+          "useCase": "Imágenes médicas",
           "requirements": {
-            "speed": "Under 30 seconds acceptable",
-            "quality": "Maximum accuracy required",
-            "validation": "Clinical validation needed"
+            "speed": "Menos de 30 segundos aceptable",
+            "quality": "Máxima precisión requerida",
+            "validation": "Validación clínica necesaria"
           },
           "recommendations": [
-            "Ensemble methods",
-            "Domain-specific training",
-            "Uncertainty quantification",
-            "Clinical verification"
+            "Métodos de conjunto",
+            "Entrenamiento específico del dominio",
+            "Cuantificación de incertidumbre",
+            "Verificación clínica"
           ],
-          "optimalSetup": "Custom-trained ensemble models"
+          "optimalSetup": "Modelos de conjunto entrenados personalizados"
         },
         {
-          "useCase": "Art Restoration",
+          "useCase": "Restauración de arte",
           "requirements": {
-            "speed": "Minutes acceptable",
-            "quality": "Preserve artistic intent",
-            "control": "Manual override options"
+            "speed": "Minutos aceptables",
+            "quality": "Preservar la intención artística",
+            "control": "Opciones de anulación manual"
           },
           "recommendations": [
-            "High-quality models",
-            "Expert review process",
-            "Iterative refinement",
-            "Multiple quality passes"
+            "Modelos de alta calidad",
+            "Proceso de revisión experta",
+            "Refinamiento iterativo",
+            "Múltiples pasadas de calidad"
           ],
-          "optimalSetup": "SwinIR with manual refinement tools"
+          "optimalSetup": "SwinIR con herramientas de refinamiento manual"
         }
       ],
       "decisionFramework": {
         "factors": [
           {
-            "factor": "Time Sensitivity",
+            "factor": "Sensibilidad al tiempo",
             "questions": [
-              "Is real-time processing required?",
-              "What's the maximum acceptable delay?",
-              "Can processing be deferred?"
+              "¿Se requiere procesamiento en tiempo real?",
+              "¿Cuál es el retraso máximo aceptable?",
+              "¿Se puede diferir el procesamiento?"
             ],
-            "impact": "High - determines processing method"
+            "impact": "Alto - determina el método de procesamiento"
           },
           {
-            "factor": "Quality Requirements",
+            "factor": "Requisitos de calidad",
             "questions": [
-              "Is output for critical applications?",
-              "Will results be printed?",
-              "Is brand reputation at stake?"
+              "¿Es la salida para aplicaciones críticas?",
+              "¿Se imprimirán los resultados?",
+              "¿Está en juego la reputación de la marca?"
             ],
-            "impact": "High - affects model selection"
+            "impact": "Alto - afecta la selección del modelo"
           },
           {
-            "factor": "Volume",
+            "factor": "Volumen",
             "questions": [
-              "How many images per day/month?",
-              "Are batches predictable?",
-              "Are there peak periods?"
+              "¿Cuántas imágenes por día/mes?",
+              "¿Son los lotes predecibles?",
+              "¿Hay períodos pico?"
             ],
-            "impact": "Medium - influences infrastructure"
+            "impact": "Medio - influye en la infraestructura"
           },
           {
-            "factor": "Cost Constraints",
+            "factor": "Restricciones de costo",
             "questions": [
-              "What's the budget per image?",
-              "Are hardware costs acceptable?",
-              "Is operational budget flexible?"
+              "¿Cuál es el presupuesto por imagen?",
+              "¿Son aceptables los costos de hardware?",
+              "¿Es flexible el presupuesto operativo?"
             ],
-            "impact": "Medium - affects solution choice"
+            "impact": "Medio - afecta la elección de solución"
           },
           {
-            "factor": "Content Type",
+            "factor": "Tipo de contenido",
             "questions": [
-              "What types of images?",
-              "Is there sensitive content?",
-              "Are special formats needed?"
+              "¿Qué tipos de imágenes?",
+              "¿Hay contenido sensible?",
+              "¿Se necesitan formatos especiales?"
             ],
-            "impact": "Medium - influences model choice"
+            "impact": "Medio - influye en la elección del modelo"
           }
         ],
         "recommendationMatrix": {
-          "urgent_lowQuality": "Bicubic/Lightweight CNN",
+          "urgent_lowQuality": "Bicúbico/CNN ligero",
           "urgent_mediumQuality": "Real-ESRGAN Lite",
-          "urgent_highQuality": "Cloud GPU processing",
-          "normal_lowVolume_highQuality": "Desktop GPU solutions",
-          "normal_highVolume_mediumQuality": "Cloud API solutions",
-          "normal_highVolume_highQuality": "Hybrid solutions",
-          "flexible_criticalQuality": "Ensemble/Custom models"
+          "urgent_highQuality": "Procesamiento GPU en la nube",
+          "normal_lowVolume_highQuality": "Soluciones GPU de escritorio",
+          "normal_highVolume_mediumQuality": "Soluciones API en la nube",
+          "normal_highVolume_highQuality": "Soluciones híbridas",
+          "flexible_criticalQuality": "Modelos de conjunto/personalizados"
         }
       },
       "futureTrends": {
         "emergingTechnologies": [
           {
-            "technology": "Neuromorphic Computing",
-            "impact": "10-100x efficiency improvement",
-            "timeline": "2-5 years",
-            "implications": "Real-time high-quality processing"
+            "technology": "Computación neuromórfica",
+            "impact": "Mejora de eficiencia de 10-100x",
+            "timeline": "2-5 años",
+            "implications": "Procesamiento de alta calidad en tiempo real"
           },
           {
-            "technology": "Quantum-inspired Algorithms",
-            "impact": "Better optimization for large models",
-            "timeline": "3-7 years",
-            "implications": "Faster convergence, better quality"
+            "technology": "Algoritmos inspirados en lo cuántico",
+            "impact": "Mejor optimización para modelos grandes",
+            "timeline": "3-7 años",
+            "implications": "Convergencia más rápida, mejor calidad"
           },
           {
-            "technology": "Edge AI Chips",
-            "impact": "Local processing at cloud speeds",
-            "timeline": "1-3 years",
-            "implications": "Privacy-preserving fast processing"
+            "technology": "Chips AI edge",
+            "impact": "Procesamiento local a velocidades de nube",
+            "timeline": "1-3 años",
+            "implications": "Procesamiento rápido que preserva la privacidad"
           }
         ],
         "researchDirections": [
-          "Adaptive model selection",
-          "Quality-aware processing",
-          "Energy-efficient algorithms",
-          "Real-time ensemble methods"
+          "Selección adaptativa de modelos",
+          "Procesamiento consciente de la calidad",
+          "Algoritmos eficientes en energía",
+          "Métodos de conjunto en tiempo real"
         ]
       },
       "faq": [
         {
-          "question": "What's the fastest upscaler that still provides good quality?",
-          "answer": "Real-ESRGAN Lite provides the speed-to-quality ratio, processing 4K images in 2-3 seconds with 7/10 quality. For faster needs, lightweight CNN models process in under 1 second with moderate quality."
+          "question": "¿Cuál es el ampliador más rápido que aún proporciona buena calidad?",
+          "answer": "Real-ESRGAN Lite proporciona la mejor relación velocidad-calidad, procesando imágenes 4K en 2-3 segundos con calidad 7/10. Para necesidades más rápidas, los modelos CNN ligeros procesan en menos de 1 segundo con calidad moderada."
         },
         {
-          "question": "Is the quality difference worth the extra processing time?",
-          "answer": "It depends on your use case. For web content, the difference between 7/10 and 9/10 quality might not be noticeable. For print or work, the extra time is usually justified."
+          "question": "¿Vale la pena la diferencia de calidad el tiempo de procesamiento adicional?",
+          "answer": "Depende de tu caso de uso. Para contenido web, es posible que la diferencia entre calidad 7/10 y 9/10 no sea notable. Para impresión o trabajo artístico, el tiempo adicional generalmente se justifica."
         },
         {
-          "question": "How can I optimize for both speed and quality?",
-          "answer": "Use adaptive processing - run fast models first, then selectively apply high-quality models to important images. Content-aware routing can also optimize the balance."
+          "question": "¿Cómo puedo optimizar tanto la velocidad como la calidad?",
+          "answer": "Usa procesamiento adaptativo: ejecuta modelos rápidos primero, luego aplica selectivamente modelos de alta calidad a imágenes importantes. El enrutamiento consciente del contenido también puede optimizar el equilibrio."
         },
         {
-          "question": "Will faster hardware improve quality or just speed?",
-          "answer": "Better hardware primarily improves speed but enables use of more complex models that can provide better quality. The ceiling is the model capability, not the hardware."
+          "question": "¿El hardware más mejorará la calidad o solo la velocidad?",
+          "answer": "Mejor hardware mejora principalmente la velocidad pero permite el uso de modelos más complejos que pueden proporcionar mejor calidad. El techo es la capacidad del modelo, no el hardware."
         }
       ],
       "slug": "speed-vs-quality-tradeoffs",
@@ -1600,7 +1620,7 @@
             "energy": "120W"
           },
           {
-            "model": "Ensemble (3 models)",
+            "model": "Ensemble (3 modelos)",
             "time": "24s",
             "psnr": "32.1 dB",
             "ssim": "0.93",

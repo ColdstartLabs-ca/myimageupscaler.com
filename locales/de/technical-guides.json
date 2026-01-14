@@ -43,11 +43,11 @@
           "content": "Verschiedene KI-Modelle verwenden unterschiedliche Ansätze zur Bildhochskalierung, jeweils mit einzigartigen Stärken und Anwendungen.",
           "subsections": [
             {
-              "name": "SRCNN (Super-Resolution CNN)",
+              "name": "SRCNN (Super-Auflösung CNN)",
               "description": "Pionierhafter Ansatz unter Verwendung tiefer Faltungsnetzwerke für Super-Auflösung von Bildern."
             },
             {
-              "name": "ESRGAN (Enhanced Super-Resolution GAN)",
+              "name": "ESRGAN (Enhanced Super-Auflösung GAN)",
               "description": "Fortgeschrittener GAN-basierter Ansatz, der überlegene Detailgenerierung und natürliche Ergebnisse erzielt."
             },
             {
@@ -330,7 +330,7 @@
           "content": "Detaillierte Analyse der am weitesten verbreiteten Bildformate und ihrer Eigenschaften.",
           "subsections": [
             {
-              "name": "JPEG (Joint Photographic Experts Group)",
+              "name": "JPEG (Joint Fotographic Expertes Group)",
               "description": "Häufigstes verlustbehaftetes Format, hervorragend für Fotos und komplexe Bilder."
             },
             {
@@ -346,7 +346,7 @@
               "description": "Begrenzt auf 256 Farben, wird hauptsächlich für einfache Animationen und Grafiken verwendet."
             },
             {
-              "name": "TIFF (Tagged Image File Format)",
+              "name": "TIFF (Tagged Bild Datei Format)",
               "description": "Professionelles Format mit verlustfreier Komprimierung und hoher Bittiefe."
             },
             {
@@ -360,11 +360,11 @@
           "content": "Neuere Formate für spezifische Anwendungsfälle und verbesserte Leistung.",
           "subsections": [
             {
-              "name": "AVIF (AV1 Image File Format)",
+              "name": "AVIF (AV1 Bild Datei Format)",
               "description": "Format der nächsten Generation mit überlegener Komprimierung und Qualität."
             },
             {
-              "name": "HEIC (High Efficiency Image Container)",
+              "name": "HEIC (Hoch Efficiency Bild Container)",
               "description": "Apples Format mit ausgezeichneter Komprimierung und hoher Qualität."
             },
             {
@@ -627,7 +627,7 @@
       ],
       "toolsComparison": [
         {
-          "tool": "ImageMagick",
+          "tool": "BildMagick",
           "type": "Befehlszeile",
           "bestFor": "Fortgeschrittene Benutzer, Scripting, Serverumgebungen",
           "learningCurve": "Steil",
@@ -723,7 +723,7 @@
           "content": "Verständnis der Grundlagen der Farbtheorie und der digitalen Farbdarstellung.",
           "subsections": [
             {
-              "name": "Color Models",
+              "name": "Color Modellle",
               "description": "RGB-, CMYK-, HSL- und LAB-Farbräume und ihre Anwendungen in der Bildverarbeitung."
             },
             {
@@ -737,7 +737,7 @@
           ]
         },
         {
-          "title": "Color Correction Techniques",
+          "title": "Color Correction Techniken",
           "content": "Technische Ansätze zur Korrektur von Farbproblemen in Bildern.",
           "subsections": [
             {
@@ -1209,10 +1209,10 @@
         {
           "phase": "Datenvorbereitung",
           "description": "Sammlung, Bereinigung und Verbesserung von Bilddatensätzen",
-          "considerations": ["Datensatzgröße", "Quality labels", "Augmentation strategies"]
+          "considerations": ["Datensatzgröße", "Qualität labels", "Augmentation strategies"]
         },
         {
-          "phase": "Model Architecture",
+          "phase": "Modell Architecture",
           "description": "Entwerfen der Netzwerkstruktur für spezifische Aufgaben",
           "considerations": ["Task requirements", "Computational resources", "Training time"]
         },
@@ -1245,14 +1245,14 @@
           "applications": [
             "Verbesserung bei schlechten Lichtverhältnissen",
             "Medical imaging",
-            "Photography"
+            "Fotography"
           ]
         },
         {
           "task": "Inpainting",
           "description": "Ausfüllen fehlender oder beschädigter Bildbereiche",
           "networks": ["Context Encoders", "Partial Convolutions", "CoModGAN"],
-          "applications": ["Photo restoration", "Object removal", "Damage repair"]
+          "applications": ["Foto restoration", "Object removal", "Damage repair"]
         },
         {
           "task": "Style Transfer",
@@ -1393,7 +1393,7 @@
           ]
         },
         {
-          "title": "Optimization Techniques",
+          "title": "Optimization Techniken",
           "content": "Technische Ansätze zur Reduzierung der Bilddateigrößen unter Beibehaltung der Qualität.",
           "subsections": [
             {
@@ -1401,7 +1401,7 @@
               "description": "Finden Sie das optimale Gleichgewicht zwischen Dateigröße und visueller Qualität."
             },
             {
-              "name": "Format Selection",
+              "name": "Format Auswählenion",
               "description": "Wahl des optimalen Formats basierend auf Inhalt und Anwendungsfall."
             },
             {
@@ -1434,7 +1434,7 @@
           "step": 1,
           "name": "Quelloptimierung",
           "description": "Mit hochwertigen Quellbildern beginnen, angemessen komprimieren",
-          "tools": ["Adobe Photoshop", "Squoosh", "ImageOptim"]
+          "tools": ["Adobe Fotoshop", "Squoosh", "BildOptim"]
         },
         {
           "step": 2,
@@ -1527,10 +1527,10 @@
           "tool": "Squoosh",
           "type": "Web-basiert",
           "bestFor": "Schnelle Optimierung, Formatvergleich",
-          "features": ["Mehrere Formate", "Echtzeitvorschau", "Quality comparison"]
+          "features": ["Mehrere Formate", "Echtzeitvorschau", "Qualität comparison"]
         },
         {
-          "tool": "ImageOptim",
+          "tool": "BildOptim",
           "type": "Desktop",
           "bestFor": "Mac-Benutzer, Batch-Verarbeitung",
           "features": ["Automatische Optimierung", "Drag-and-Drop", "Mehrere Formate"]
@@ -1660,7 +1660,7 @@
           "step": 2,
           "name": "Erste Sichtung",
           "description": "Überprüfen und wählen Sie die besten Bilder aus, markieren Sie Ablehnungen",
-          "tools": ["Lightroom", "Photo Mechanic"],
+          "tools": ["Lightroom", "Foto Mechanic"],
           "duration": "1-2 Minuten pro Bild"
         },
         {
@@ -1761,12 +1761,12 @@
       "professionalTools": [
         {
           "category": "RAW-Verarbeitung",
-          "tools": ["Adobe Lightroom", "Capture One", "DxO PhotoLab", "RAW Power"],
+          "tools": ["Adobe Lightroom", "Capture One", "DxO FotoLab", "RAW Power"],
           "selection": "Basierend auf Workflow-Präferenzen, Kamera-Unterstützung und Feature-Anforderungen"
         },
         {
           "category": "Pixel-Bearbeitung",
-          "tools": ["Adobe Photoshop", "Affinity Photo", "Capture One", "ON1"],
+          "tools": ["Adobe Fotoshop", "Affinity Foto", "Capture One", "ON1"],
           "selection": "Basierend auf Komplexität, Integrationsbedarf und Budget"
         },
         {
@@ -1883,16 +1883,16 @@
       "algorithmComparison": [
         {
           "algorithm": "Nearest Neighbor",
-          "complexity": "Very Low",
-          "speed": "Fastest",
+          "complexity": "Very Niedrig",
+          "speed": "Schnellest",
           "quality": "Poor (blocky)",
-          "bestFor": ["Pixel art", "Fast previews", "Real-time applications"],
+          "bestFor": ["Pixel art", "Schnell previews", "Real-time applications"],
           "artifacts": ["Blockiness", "Aliasing"]
         },
         {
           "algorithm": "Bilinear",
-          "complexity": "Low",
-          "speed": "Fast",
+          "complexity": "Niedrig",
+          "speed": "Schnell",
           "quality": "Akzeptabel (glatt, aber unscharf)",
           "bestFor": ["General use", "Real-time", "Memory-constrained"],
           "artifacts": ["Blurring", "Loss of detail"]
@@ -1918,7 +1918,7 @@
           "complexity": "Sehr hoch",
           "speed": "Sehr langsam",
           "quality": "Hervorragend (intelligente Detailgenerierung)",
-          "bestFor": ["Significant upscaling", "Quality-critical", "Professional enhancement"],
+          "bestFor": ["Significant upscaling", "Qualität-critical", "Professionell enhancement"],
           "artifacts": ["Potential unrealistic details", "Style-dependent"]
         }
       ],
@@ -1941,7 +1941,7 @@
       ],
       "practicalApplications": [
         {
-          "useCase": "Web Image Resizing",
+          "useCase": "Web Bild Resizing",
           "recommended": "Bicubic or Lanczos for downsizing",
           "reasoning": "Gute Balance aus Qualität und Geschwindigkeit für Web-Nutzung"
         },
@@ -1977,12 +1977,12 @@
           "metric": "Strukturelle Ähnlichkeit (SSIM)",
           "description": "Wahrnehmungsbasierte Ähnlichkeitsmessung",
           "use": "Bessere Korrelation mit wahrgenommener Qualität",
-          "limitations": "Complexity in calculation"
+          "limitations": "Komplexity in calculation"
         },
         {
           "metric": "LPIPS",
           "description": "Deep learning-based perceptual metric",
-          "use": "Closest to human perception",
+          "use": "Schließenst to human perception",
           "limitations": "Computationally expensive"
         }
       ],
@@ -1998,7 +1998,7 @@
         {
           "factor": "Content Type",
           "considerations": [
-            "Photographs vs graphics",
+            "Fotographs vs graphics",
             "Text vs natural images",
             "Edge preservation needs"
           ]
@@ -2007,7 +2007,7 @@
           "factor": "Scaling Factor",
           "considerations": [
             "Small adjustments vs major changes",
-            "Upscaling vs downscaling",
+            "Skalierung vs downscaling",
             "Integer vs fractional scaling"
           ]
         }
