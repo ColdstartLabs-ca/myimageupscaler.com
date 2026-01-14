@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getPlatformFormatDataWithLocale, getAllPlatformFormatSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
+import { getRelatedPages } from '@/lib/seo/related-pages';
 import { PlatformFormatPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformFormatPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
@@ -45,6 +46,9 @@ export default async function PlatformFormatPage({ params }: IPlatformFormatPage
   // Generate rich schema markup with FAQPage and BreadcrumbList
   const schema = generatePSEOSchema(result.data, 'platform-format', locale);
 
+  // Fetch related pages for internal linking
+  const relatedPages = await getRelatedPages('platform-format', slug, locale);
+
   const path = `/platform-format/${slug}`;
 
   return (
@@ -54,7 +58,7 @@ export default async function PlatformFormatPage({ params }: IPlatformFormatPage
       {/* Hreflang links for multi-language SEO */}
       <HreflangLinks path={path} />
       <SchemaMarkup schema={schema} />
-      <PlatformFormatPageTemplate data={result.data} locale={locale} />
+      <PlatformFormatPageTemplate data={result.data} locale={locale} relatedPages={relatedPages} />
     </>
   );
 }

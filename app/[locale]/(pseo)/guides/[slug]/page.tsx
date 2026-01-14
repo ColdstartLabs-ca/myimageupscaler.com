@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getGuideData, getAllGuideSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { getRelatedPages } from '@/lib/seo/related-pages';
 import { GuidePageTemplate } from '@/app/(pseo)/_components/pseo/templates/GuidePageTemplate';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
@@ -32,5 +33,8 @@ export default async function GuidePage({ params }: IGuidePageProps) {
     notFound();
   }
 
-  return <GuidePageTemplate data={guide} locale={locale} />;
+  // Fetch related pages for internal linking
+  const relatedPages = await getRelatedPages('guides', slug, locale);
+
+  return <GuidePageTemplate data={guide} locale={locale} relatedPages={relatedPages} />;
 }

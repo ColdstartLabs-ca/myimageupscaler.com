@@ -5,6 +5,7 @@
 
 import type { IToolPage, IToolConfig } from '@/lib/seo/pseo-types';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
+import type { IRelatedPage } from '@/lib/seo/related-pages';
 import React, { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -14,6 +15,7 @@ import { FAQSection } from '../sections/FAQSection';
 import { FeaturesSection } from '../sections/FeaturesSection';
 import { HowItWorksSection } from '../sections/HowItWorksSection';
 import { UseCasesSection } from '../sections/UseCasesSection';
+import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 
@@ -66,10 +68,14 @@ function getToolProps(componentName: string, config?: IToolConfig): Record<strin
 
 interface IInteractiveToolPageTemplateProps {
   data: IToolPage;
+  locale?: string;
+  relatedPages?: IRelatedPage[];
 }
 
 export function InteractiveToolPageTemplate({
   data,
+  locale = 'en',
+  relatedPages = [],
 }: IInteractiveToolPageTemplateProps): ReactElement {
   const pageMapping = getPageMappingByUrl(`/tools/${data.slug}`);
   const tier = pageMapping?.tier;
@@ -159,6 +165,9 @@ export function InteractiveToolPageTemplate({
 
           {/* FAQ */}
           <FAQSection faqs={data.faq} pageType="tool" slug={data.slug} />
+
+          {/* Related Pages */}
+          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
 
           {/* Upgrade CTA */}
           <div className="py-8">

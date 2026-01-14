@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getFormatDataWithLocale, getAllFormatSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
 import { generateFormatSchema } from '@/lib/seo/schema-generator';
+import { getRelatedPages } from '@/lib/seo/related-pages';
 import { FormatPageTemplate } from '@/app/(pseo)/_components/pseo/templates/FormatPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
@@ -45,6 +46,9 @@ export default async function FormatPage({ params }: IFormatPageProps) {
   // Generate rich schema markup with @graph structure (WebPage + FAQPage + BreadcrumbList)
   const schema = generateFormatSchema(result.data, locale);
 
+  // Fetch related pages for internal linking
+  const relatedPages = await getRelatedPages('formats', slug, locale);
+
   const path = `/formats/${slug}`;
 
   return (
@@ -54,7 +58,7 @@ export default async function FormatPage({ params }: IFormatPageProps) {
       {/* Hreflang links for multi-language SEO */}
       <HreflangLinks path={path} />
       <SchemaMarkup schema={schema} />
-      <FormatPageTemplate data={result.data} locale={locale} />
+      <FormatPageTemplate data={result.data} locale={locale} relatedPages={relatedPages} />
     </>
   );
 }

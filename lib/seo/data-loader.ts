@@ -140,7 +140,10 @@ export const getToolData = cache(async (slug: string): Promise<IToolPage | null>
 });
 
 export const getAllTools = cache(async (): Promise<IToolPage[]> => {
-  return toolsData.pages;
+  return toolsData.pages.map(page => ({
+    ...page,
+    category: 'tools' as const,
+  }));
 });
 
 // Format Pages
@@ -154,7 +157,10 @@ export const getFormatData = cache(async (slug: string): Promise<IFormatPage | n
 });
 
 export const getAllFormats = cache(async (): Promise<IFormatPage[]> => {
-  return formatsData.pages;
+  return formatsData.pages.map(page => ({
+    ...page,
+    category: 'formats' as const,
+  }));
 });
 
 // Comparison Pages
@@ -204,7 +210,10 @@ export const getUseCaseData = cache(async (slug: string): Promise<IUseCasePage |
 });
 
 export const getAllUseCases = cache(async (): Promise<IUseCasePage[]> => {
-  return useCasesData.pages;
+  return useCasesData.pages.map(page => ({
+    ...page,
+    category: 'use-cases' as const,
+  }));
 });
 
 // Guide Pages
@@ -257,7 +266,10 @@ export const getAlternativeData = cache(async (slug: string): Promise<IAlternati
 });
 
 export const getAllAlternatives = cache(async (): Promise<IAlternativePage[]> => {
-  return alternativesData.pages;
+  return alternativesData.pages.map(page => ({
+    ...page,
+    category: 'alternatives' as const,
+  }));
 });
 
 // Scale Pages
@@ -350,7 +362,10 @@ export const getPlatformData = cache(async (slug: string): Promise<IPlatformPage
 });
 
 export const getAllPlatforms = cache(async (): Promise<IPlatformPage[]> => {
-  return platformsData.pages;
+  return platformsData.pages.map(page => ({
+    ...page,
+    category: 'platforms' as const,
+  }));
 });
 
 // Get tools that reference a specific blog post
@@ -381,7 +396,10 @@ export const getContentData = cache(async (slug: string): Promise<IContentTypePa
 export const getAllContentPages = cache(async (): Promise<IContentTypePage[]> => {
   try {
     const data = await import('@/app/seo/data/content.json');
-    return (data as unknown as IPSEODataFile<IContentTypePage>).pages;
+    return (data as unknown as IPSEODataFile<IContentTypePage>).pages.map(page => ({
+      ...page,
+      category: 'content' as const,
+    }));
   } catch {
     return [];
   }
@@ -410,7 +428,10 @@ export const getAIFeatureData = cache(async (slug: string): Promise<IAIFeaturePa
 export const getAllAIFeaturePages = cache(async (): Promise<IAIFeaturePage[]> => {
   try {
     const data = await import('@/app/seo/data/ai-features.json');
-    return (data as unknown as IPSEODataFile<IAIFeaturePage>).pages;
+    return (data as unknown as IPSEODataFile<IAIFeaturePage>).pages.map(page => ({
+      ...page,
+      category: 'ai-features' as const,
+    }));
   } catch {
     return [];
   }
@@ -427,7 +448,10 @@ export const getFormatScaleData = cache(async (slug: string): Promise<IFormatSca
 });
 
 export const getAllFormatScale = cache(async (): Promise<IFormatScalePage[]> => {
-  return formatScaleData.pages;
+  return formatScaleData.pages.map(page => ({
+    ...page,
+    category: 'format-scale' as const,
+  }));
 });
 
 // Platform × Format Multiplier Pages
@@ -443,7 +467,10 @@ export const getPlatformFormatData = cache(
 );
 
 export const getAllPlatformFormat = cache(async (): Promise<IPlatformFormatPage[]> => {
-  return platformFormatData.pages;
+  return platformFormatData.pages.map(page => ({
+    ...page,
+    category: 'platform-format' as const,
+  }));
 });
 
 // Device × Use Case Multiplier Pages
@@ -457,7 +484,10 @@ export const getDeviceUseData = cache(async (slug: string): Promise<IDeviceUseCa
 });
 
 export const getAllDeviceUse = cache(async (): Promise<IDeviceUseCasePage[]> => {
-  return deviceUseData.pages;
+  return deviceUseData.pages.map(page => ({
+    ...page,
+    category: 'device-use' as const,
+  }));
 });
 
 // Aggregate function for sitemap

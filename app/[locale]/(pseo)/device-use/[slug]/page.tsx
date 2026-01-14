@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getDeviceUseDataWithLocale, getAllDeviceUseSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
+import { getRelatedPages } from '@/lib/seo/related-pages';
 import { DeviceUsePageTemplate } from '@/app/(pseo)/_components/pseo/templates/DeviceUsePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
@@ -45,6 +46,9 @@ export default async function DeviceUsePage({ params }: IDeviceUsePageProps) {
   // Generate rich schema markup with FAQPage and BreadcrumbList
   const schema = generatePSEOSchema(result.data, 'device-use', locale);
 
+  // Fetch related pages for internal linking
+  const relatedPages = await getRelatedPages('device-use', slug, locale);
+
   const path = `/device-use/${slug}`;
 
   return (
@@ -54,7 +58,7 @@ export default async function DeviceUsePage({ params }: IDeviceUsePageProps) {
       {/* Hreflang links for multi-language SEO */}
       <HreflangLinks path={path} />
       <SchemaMarkup schema={schema} />
-      <DeviceUsePageTemplate data={result.data} locale={locale} />
+      <DeviceUsePageTemplate data={result.data} locale={locale} relatedPages={relatedPages} />
     </>
   );
 }

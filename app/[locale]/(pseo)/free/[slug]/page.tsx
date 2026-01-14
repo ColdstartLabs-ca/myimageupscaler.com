@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getFreeData, getAllFreeSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { getRelatedPages } from '@/lib/seo/related-pages';
 import { FreePageTemplate } from '@/app/(pseo)/_components/pseo/templates/FreePageTemplate';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
@@ -32,5 +33,8 @@ export default async function FreePage({ params }: IFreePageProps) {
     notFound();
   }
 
-  return <FreePageTemplate data={freeTool} locale={locale} />;
+  // Fetch related pages for internal linking
+  const relatedPages = await getRelatedPages('free', slug, locale);
+
+  return <FreePageTemplate data={freeTool} locale={locale} relatedPages={relatedPages} />;
 }

@@ -5,6 +5,7 @@ import {
   getAllToolSlugs,
   generateMetadata as generatePageMetadata,
 } from '@/lib/seo';
+import { getRelatedPages } from '@/lib/seo/related-pages';
 import { ToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/ToolPageTemplate';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
@@ -51,6 +52,9 @@ export default async function ToolPage({ params }: IToolPageProps) {
   const schema = generateToolSchema(result.data, locale);
   const path = `/tools/${slug}`;
 
+  // Fetch related pages for internal linking
+  const relatedPages = await getRelatedPages('tools', slug, locale);
+
   // Use InteractiveToolPageTemplate for tools with embedded functionality
   const Template = result.data.isInteractive ? InteractiveToolPageTemplate : ToolPageTemplate;
 
@@ -61,7 +65,7 @@ export default async function ToolPage({ params }: IToolPageProps) {
       {/* Hreflang links for multi-language SEO */}
       <HreflangLinks path={path} />
       <SchemaMarkup schema={schema} />
-      <Template data={result.data} />
+      <Template data={result.data} locale={locale} relatedPages={relatedPages} />
     </>
   );
 }
