@@ -476,6 +476,31 @@ export const keywordPageMappings: IKeywordPageMapping[] = [
       internalLinks: 5,
     },
   },
+  {
+    primaryKeyword: 'midjourney vs stable diffusion',
+    secondaryKeywords: [
+      'midjourney stable diffusion comparison',
+      'midjourney vs sd',
+      'stable diffusion vs midjourney',
+    ],
+    canonicalUrl: '/compare/midjourney-vs-stable-diffusion',
+    intent: 'Comparison',
+    tier: 3,
+    priority: 'P1',
+    contentRequirements: {
+      minWords: 1400,
+      sections: [
+        'Introduction',
+        'Feature Comparison',
+        'Pricing Comparison',
+        'Performance Comparison',
+        'Use Case Recommendations',
+        'FAQ',
+      ],
+      faqCount: 6,
+      internalLinks: 5,
+    },
+  },
 
   // Guide Pages (Tier 1-3)
   {

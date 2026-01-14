@@ -2,11 +2,11 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getUseCaseDataWithLocale, getAllUseCaseSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { generateUseCaseSchema } from '@/lib/seo/schema-generator';
 import { UseCasePageTemplate } from '@/app/(pseo)/_components/pseo/templates/UseCasePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
-import { clientEnv } from '@shared/config/env';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
 
@@ -42,19 +42,8 @@ export default async function UseCasePage({ params }: IUseCasePageProps) {
     notFound();
   }
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: result.data.metaTitle,
-    description: result.data.metaDescription,
-    url: `${clientEnv.BASE_URL}/${locale}/use-cases/${slug}`,
-    inLanguage: locale,
-    isPartOf: {
-      '@type': 'WebSite',
-      name: clientEnv.APP_NAME,
-      url: clientEnv.BASE_URL,
-    },
-  };
+  // Generate rich schema markup with @graph structure (Article + FAQPage + BreadcrumbList)
+  const schema = generateUseCaseSchema(result.data);
 
   const path = `/use-cases/${slug}`;
 

@@ -1,4 +1,4 @@
-import { test, expect } from '../test-fixtures';
+import { test, expect } from '../tests/test-fixtures';
 
 /**
  * SEO Redirects E2E Tests

@@ -1,10 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { generateToolSchema } from '@/lib/seo/schema-generator';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { clientEnv } from '@shared/config/env';
-import type { IFeature, IUseCase, IBenefit, IHowItWorksStep, IFAQ } from '@/lib/seo/pseo-types';
+import type { IFeature, IUseCase, IBenefit, IHowItWorksStep, IFAQ, IToolPage } from '@/lib/seo/pseo-types';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
 
@@ -62,7 +63,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
 }
 
 export default async function CompressToolPage({ params }: IPageProps) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const t = await getTranslations('interactive-tools');
 
   // Only allow compress tool slugs
@@ -77,8 +78,8 @@ export default async function CompressToolPage({ params }: IPageProps) {
     notFound();
   }
 
-  // Build tool data from translations
-  const tool = {
+  // Build tool data from translations - satisfies IToolPage interface
+  const tool: IToolPage = {
     slug,
     title: toolData.title as string,
     metaTitle: toolData.metaTitle as string,
@@ -90,49 +91,29 @@ export default async function CompressToolPage({ params }: IPageProps) {
       ? (toolData.secondaryKeywords as string[])
       : [],
     lastUpdated: toolData.lastUpdated as string,
-    category: 'tools' as const,
+    category: 'tools',
     toolName: toolData.toolName as string,
-    toolComponent: toolData.toolComponent as string,
     description: toolData.description as string,
-    maxFiles: Number(toolData.maxFiles) || 20,
-    acceptedFormats: Array.isArray(toolData.acceptedFormats)
-      ? (toolData.acceptedFormats as unknown as string[])
-      : [],
-    features: Array.isArray(toolData.features) ? (toolData.features as unknown as IFeature[]) : [],
-    useCases: Array.isArray(toolData.useCases) ? (toolData.useCases as unknown as IUseCase[]) : [],
-    benefits: Array.isArray(toolData.benefits) ? (toolData.benefits as unknown as IBenefit[]) : [],
-    howItWorks: Array.isArray(toolData.howItWorks)
-      ? (toolData.howItWorks as unknown as IHowItWorksStep[])
-      : [],
-    faq: Array.isArray(toolData.faq) ? (toolData.faq as unknown as IFAQ[]) : [],
-    limitations: Array.isArray(toolData.limitations)
-      ? (toolData.limitations as unknown as string[])
-      : [],
-    outputFormat: toolData.outputFormat as string,
-    relatedTools: Array.isArray(toolData.relatedTools)
-      ? (toolData.relatedTools as unknown as string[])
-      : [],
-    relatedGuides: Array.isArray(toolData.relatedGuides)
-      ? (toolData.relatedGuides as unknown as string[])
-      : [],
+    features: Array.isArray(toolData.features) ? (toolData.features as IFeature[]) : [],
+    useCases: Array.isArray(toolData.useCases) ? (toolData.useCases as IUseCase[]) : [],
+    benefits: Array.isArray(toolData.benefits) ? (toolData.benefits as IBenefit[]) : [],
+    howItWorks: Array.isArray(toolData.howItWorks) ? (toolData.howItWorks as IHowItWorksStep[]) : [],
+    faq: Array.isArray(toolData.faq) ? (toolData.faq as IFAQ[]) : [],
+    relatedTools: Array.isArray(toolData.relatedTools) ? (toolData.relatedTools as string[]) : [],
+    relatedGuides: Array.isArray(toolData.relatedGuides) ? (toolData.relatedGuides as string[]) : [],
     ctaText: toolData.ctaText as string,
     ctaUrl: toolData.ctaUrl as string,
+    // Optional interactive tool fields
+    isInteractive: true,
+    toolComponent: toolData.toolComponent as string,
+    maxFileSizeMB: Number(toolData.maxFileSizeMB) || undefined,
+    acceptedFormats: Array.isArray(toolData.acceptedFormats)
+      ? (toolData.acceptedFormats as string[])
+      : [],
   };
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: tool.toolName,
-    description: tool.description,
-    applicationCategory: 'MultimediaApplication',
-    operatingSystem: 'Web Browser',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-    },
-    featureList: tool.features.map(f => f.title).join(', '),
-  };
+  // Generate rich schema markup with @graph structure (SoftwareApplication + FAQPage + BreadcrumbList)
+  const schema = generateToolSchema(tool, locale);
 
   return (
     <>

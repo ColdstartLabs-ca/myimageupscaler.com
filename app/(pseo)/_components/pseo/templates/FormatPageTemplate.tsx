@@ -7,8 +7,8 @@
 
 import type { IFormatPage } from '@/lib/seo/pseo-types';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
-import { getRelatedPages, type IRelatedPage } from '@/lib/seo/related-pages';
-import { ReactElement, useEffect, useState } from 'react';
+import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { ReactElement } from 'react';
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -25,30 +25,13 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 interface IFormatPageTemplateProps {
   data: IFormatPage;
   locale?: string;
+  relatedPages?: IRelatedPage[];
 }
 
-export function FormatPageTemplate({ data, locale }: IFormatPageTemplateProps): ReactElement {
+export function FormatPageTemplate({ data, locale, relatedPages = [] }: IFormatPageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/formats/${data.slug}`);
   const tier = pageMapping?.tier;
-
-  // State for related pages
-  const [relatedPages, setRelatedPages] = useState<IRelatedPage[]>([]);
-
-  // Fetch related pages on mount
-  useEffect(() => {
-    getRelatedPages(
-      'formats',
-      data.slug,
-      (locale as 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja') || 'en'
-    )
-      .then(pages => {
-        setRelatedPages(pages);
-      })
-      .catch(err => {
-        console.error('[FormatPageTemplate] Error fetching related pages:', err);
-      });
-  }, [data.slug, locale]);
 
   // Get locale-aware labels for before/after slider
   const getBeforeAfterLabels = (locale?: string) => {

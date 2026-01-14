@@ -1,235 +1,366 @@
 /**
  * pSEO Static Params Tests
  *
- * Tests for generateStaticParams() in localized pSEO routes
- * Phase 2: Tools, Formats, Guides, Free, Scale
+ * Tests for generateStaticParams() functions in localized pSEO routes.
+ * This verifies that all routes generate params with locale parameter included,
+ * preventing /undefined/ URLs from appearing in the build output.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
-import {
-  getAllToolSlugs,
-  getAllFormatSlugs,
-  getAllGuideSlugs,
-  getAllFreeSlugs,
-  getAllScaleSlugs,
-} from '@/lib/seo';
 
-describe('pSEO Static Params - Phase 2', () => {
-  describe('SUPPORTED_LOCALES', () => {
-    it('should have 7 supported locales', () => {
-      expect(SUPPORTED_LOCALES).toHaveLength(7);
+// Mock the data loader functions
+vi.mock('@/lib/seo/data-loader', async () => {
+  const actual =
+    await vi.importActual<typeof import('@/lib/seo/data-loader')>('@/lib/seo/data-loader');
+  return {
+    ...actual,
+    getAllPlatformSlugs: async () => ['midjourney-upscaler', 'canva-upscaler'],
+    getAllFormatScaleSlugs: async () => ['upscale-jpeg-2x', 'upscale-png-4x'],
+    getAllDeviceUseSlugs: async () => ['mobile-upscaler', 'desktop-upscaler'],
+    getAllPlatformFormatSlugs: async () => ['midjourney-jpeg-upscaler', 'canva-png-upscaler'],
+    getAllUseCaseSlugs: async () => ['enhance-photos', 'restore-old-images'],
+    getAllAlternativeSlugs: async () => ['waifu2x-alternative', 'letsenhance-alternative'],
+    getAllComparisonSlugs: async () => ['topaz-vs-midjourney', 'canva-vs-adobe'],
+  };
+});
+
+describe('pSEO Static Params Generation', () => {
+  describe('platforms/[slug]/page.tsx', () => {
+    test('should generate params with all locales for platforms', async () => {
+      // Import the actual generateStaticParams function
+      const { generateStaticParams } = await import('@/app/[locale]/(pseo)/platforms/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      // Should have 2 slugs × 7 locales = 14 params
+      expect(params).toHaveLength(14);
+
+      // Check that specific locale combinations exist
+      expect(params).toContainEqual({ slug: 'midjourney-upscaler', locale: 'en' });
+      expect(params).toContainEqual({ slug: 'midjourney-upscaler', locale: 'es' });
+      expect(params).toContainEqual({ slug: 'canva-upscaler', locale: 'pt' });
+      expect(params).toContainEqual({ slug: 'canva-upscaler', locale: 'de' });
     });
 
-    it('should include en as the first locale', () => {
-      expect(SUPPORTED_LOCALES[0]).toBe('en');
-    });
+    test('should not include undefined locale', async () => {
+      const { generateStaticParams } = await import('@/app/[locale]/(pseo)/platforms/[slug]/page');
 
-    it('should contain all expected locales', () => {
-      const expectedLocales = ['en', 'es', 'pt', 'de', 'fr', 'it', 'ja'];
-      expect(SUPPORTED_LOCALES).toEqual(expect.arrayContaining(expectedLocales));
-    });
-  });
+      const params = await generateStaticParams();
 
-  describe('Tools Category', () => {
-    it('should have tool slugs available', async () => {
-      const slugs = await getAllToolSlugs();
-      expect(slugs.length).toBeGreaterThan(0);
-      expect(slugs).toEqual(expect.any(Array));
-    });
+      // Verify all params have defined locale
+      expect(params.every(p => p.locale !== undefined)).toBe(true);
 
-    it('should not include undefined in tool slugs', async () => {
-      const slugs = await getAllToolSlugs();
-      expect(slugs.every(slug => slug !== undefined)).toBe(true);
-      expect(slugs.every(slug => typeof slug === 'string')).toBe(true);
-    });
-  });
+      // Verify no params have undefined as locale value
+      expect(params.some(p => p.locale === 'undefined')).toBe(false);
 
-  describe('Formats Category', () => {
-    it('should have format slugs available', async () => {
-      const slugs = await getAllFormatSlugs();
-      expect(slugs.length).toBeGreaterThan(0);
-      expect(slugs).toEqual(expect.any(Array));
-    });
-
-    it('should not include undefined in format slugs', async () => {
-      const slugs = await getAllFormatSlugs();
-      expect(slugs.every(slug => slug !== undefined)).toBe(true);
-      expect(slugs.every(slug => typeof slug === 'string')).toBe(true);
-    });
-  });
-
-  describe('Guides Category', () => {
-    it('should have guide slugs available', async () => {
-      const slugs = await getAllGuideSlugs();
-      expect(slugs.length).toBeGreaterThan(0);
-      expect(slugs).toEqual(expect.any(Array));
-    });
-
-    it('should not include undefined in guide slugs', async () => {
-      const slugs = await getAllGuideSlugs();
-      expect(slugs.every(slug => slug !== undefined)).toBe(true);
-      expect(slugs.every(slug => typeof slug === 'string')).toBe(true);
+      // Verify all params have valid locale from SUPPORTED_LOCALES
+      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale as any))).toBe(true);
     });
   });
 
-  describe('Free Category', () => {
-    it('should have free slugs available', async () => {
-      const slugs = await getAllFreeSlugs();
-      expect(slugs.length).toBeGreaterThan(0);
-      expect(slugs).toEqual(expect.any(Array));
+  describe('format-scale/[slug]/page.tsx', () => {
+    test('should generate params with all locales for format-scale', async () => {
+      const { generateStaticParams } =
+        await import('@/app/[locale]/(pseo)/format-scale/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      // Should have 2 slugs × 7 locales = 14 params
+      expect(params).toHaveLength(14);
+
+      // Check that specific locale combinations exist
+      expect(params).toContainEqual({ slug: 'upscale-jpeg-2x', locale: 'en' });
+      expect(params).toContainEqual({ slug: 'upscale-jpeg-2x', locale: 'fr' });
+      expect(params).toContainEqual({ slug: 'upscale-png-4x', locale: 'it' });
+      expect(params).toContainEqual({ slug: 'upscale-png-4x', locale: 'ja' });
     });
 
-    it('should not include undefined in free slugs', async () => {
-      const slugs = await getAllFreeSlugs();
-      expect(slugs.every(slug => slug !== undefined)).toBe(true);
-      expect(slugs.every(slug => typeof slug === 'string')).toBe(true);
+    test('should not include undefined locale', async () => {
+      const { generateStaticParams } =
+        await import('@/app/[locale]/(pseo)/format-scale/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      expect(params.every(p => p.locale !== undefined)).toBe(true);
+      expect(params.some(p => p.locale === 'undefined')).toBe(false);
+      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale as any))).toBe(true);
     });
   });
 
-  describe('Scale Category', () => {
-    it('should have scale slugs available', async () => {
-      const slugs = await getAllScaleSlugs();
-      expect(slugs.length).toBeGreaterThan(0);
-      expect(slugs).toEqual(expect.any(Array));
+  describe('device-use/[slug]/page.tsx', () => {
+    test('should generate params with all locales for device-use', async () => {
+      const { generateStaticParams } = await import('@/app/[locale]/(pseo)/device-use/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      // Should have 2 slugs × 7 locales = 14 params
+      expect(params).toHaveLength(14);
+
+      // Check that specific locale combinations exist
+      expect(params).toContainEqual({ slug: 'mobile-upscaler', locale: 'en' });
+      expect(params).toContainEqual({ slug: 'mobile-upscaler', locale: 'es' });
+      expect(params).toContainEqual({ slug: 'desktop-upscaler', locale: 'pt' });
     });
 
-    it('should not include undefined in scale slugs', async () => {
-      const slugs = await getAllScaleSlugs();
-      expect(slugs.every(slug => slug !== undefined)).toBe(true);
-      expect(slugs.every(slug => typeof slug === 'string')).toBe(true);
+    test('should not include undefined locale', async () => {
+      const { generateStaticParams } = await import('@/app/[locale]/(pseo)/device-use/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      expect(params.every(p => p.locale !== undefined)).toBe(true);
+      expect(params.some(p => p.locale === 'undefined')).toBe(false);
+      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale as any))).toBe(true);
     });
   });
 
-  describe('Static Params Generation Pattern', () => {
-    it('should generate correct locale-slug combinations for tools', async () => {
-      const slugs = await getAllToolSlugs();
-      const expectedCount = slugs.length * SUPPORTED_LOCALES.length;
+  describe('platform-format/[slug]/page.tsx', () => {
+    test('should generate params with all locales for platform-format', async () => {
+      const { generateStaticParams } =
+        await import('@/app/[locale]/(pseo)/platform-format/[slug]/page');
 
-      // Simulate generateStaticParams pattern
-      const params = SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
+      const params = await generateStaticParams();
 
-      expect(params).toHaveLength(expectedCount);
-      expect(params.every(p => p.slug && p.locale)).toBe(true);
-      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale))).toBe(true);
+      // Should have 2 slugs × 7 locales = 14 params
+      expect(params).toHaveLength(14);
+
+      // Check that specific locale combinations exist
+      expect(params).toContainEqual({ slug: 'midjourney-jpeg-upscaler', locale: 'en' });
+      expect(params).toContainEqual({ slug: 'midjourney-jpeg-upscaler', locale: 'de' });
+      expect(params).toContainEqual({ slug: 'canva-png-upscaler', locale: 'fr' });
     });
 
-    it('should generate correct locale-slug combinations for formats', async () => {
-      const slugs = await getAllFormatSlugs();
-      const expectedCount = slugs.length * SUPPORTED_LOCALES.length;
+    test('should not include undefined locale', async () => {
+      const { generateStaticParams } =
+        await import('@/app/[locale]/(pseo)/platform-format/[slug]/page');
 
-      // Simulate generateStaticParams pattern
-      const params = SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
+      const params = await generateStaticParams();
 
-      expect(params).toHaveLength(expectedCount);
-      expect(params.every(p => p.slug && p.locale)).toBe(true);
-      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale))).toBe(true);
+      expect(params.every(p => p.locale !== undefined)).toBe(true);
+      expect(params.some(p => p.locale === 'undefined')).toBe(false);
+      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale as any))).toBe(true);
+    });
+  });
+
+  describe('Cross-category consistency', () => {
+    test('should generate same number of params per slug across all categories', async () => {
+      const [platformsParams, formatScaleParams, deviceUseParams, platformFormatParams] =
+        await Promise.all([
+          import('@/app/[locale]/(pseo)/platforms/[slug]/page').then(m => m.generateStaticParams()),
+          import('@/app/[locale]/(pseo)/format-scale/[slug]/page').then(m =>
+            m.generateStaticParams()
+          ),
+          import('@/app/[locale]/(pseo)/device-use/[slug]/page').then(m =>
+            m.generateStaticParams()
+          ),
+          import('@/app/[locale]/(pseo)/platform-format/[slug]/page').then(m =>
+            m.generateStaticParams()
+          ),
+        ]);
+
+      // Each category should have 2 slugs × 7 locales = 14 params
+      expect(platformsParams).toHaveLength(14);
+      expect(formatScaleParams).toHaveLength(14);
+      expect(deviceUseParams).toHaveLength(14);
+      expect(platformFormatParams).toHaveLength(14);
     });
 
-    it('should generate correct locale-slug combinations for guides', async () => {
-      const slugs = await getAllGuideSlugs();
-      const expectedCount = slugs.length * SUPPORTED_LOCALES.length;
+    test('should include all SUPPORTED_LOCALES in each category', async () => {
+      const [platformsParams, formatScaleParams, deviceUseParams, platformFormatParams] =
+        await Promise.all([
+          import('@/app/[locale]/(pseo)/platforms/[slug]/page').then(m => m.generateStaticParams()),
+          import('@/app/[locale]/(pseo)/format-scale/[slug]/page').then(m =>
+            m.generateStaticParams()
+          ),
+          import('@/app/[locale]/(pseo)/device-use/[slug]/page').then(m =>
+            m.generateStaticParams()
+          ),
+          import('@/app/[locale]/(pseo)/platform-format/[slug]/page').then(m =>
+            m.generateStaticParams()
+          ),
+        ]);
 
-      // Simulate generateStaticParams pattern
-      const params = SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
+      const extractLocales = (params: Awaited<typeof platformsParams>) =>
+        params.map(p => p.locale).filter((v, i, a) => a.indexOf(v) === i);
 
-      expect(params).toHaveLength(expectedCount);
-      expect(params.every(p => p.slug && p.locale)).toBe(true);
-      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale))).toBe(true);
+      const platformsLocales = extractLocales(platformsParams);
+      const formatScaleLocales = extractLocales(formatScaleParams);
+      const deviceUseLocales = extractLocales(deviceUseParams);
+      const platformFormatLocales = extractLocales(platformFormatParams);
+
+      // Each category should include all 7 supported locales
+      expect(platformsLocales).toHaveLength(SUPPORTED_LOCALES.length);
+      expect(formatScaleLocales).toHaveLength(SUPPORTED_LOCALES.length);
+      expect(deviceUseLocales).toHaveLength(SUPPORTED_LOCALES.length);
+      expect(platformFormatLocales).toHaveLength(SUPPORTED_LOCALES.length);
+
+      // All should match SUPPORTED_LOCALES
+      expect(platformsLocales).toEqual(expect.arrayContaining([...SUPPORTED_LOCALES]));
+      expect(formatScaleLocales).toEqual(expect.arrayContaining([...SUPPORTED_LOCALES]));
+      expect(deviceUseLocales).toEqual(expect.arrayContaining([...SUPPORTED_LOCALES]));
+      expect(platformFormatLocales).toEqual(expect.arrayContaining([...SUPPORTED_LOCALES]));
+    });
+  });
+
+  // Phase 3: Additional categories
+  describe('use-cases/[slug]/page.tsx', () => {
+    test('should generate params with all locales for use-cases', async () => {
+      const { generateStaticParams } = await import('@/app/[locale]/(pseo)/use-cases/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      // Should have 2 slugs × 7 locales = 14 params
+      expect(params).toHaveLength(14);
+
+      // Check that specific locale combinations exist
+      expect(params).toContainEqual({ slug: 'enhance-photos', locale: 'en' });
+      expect(params).toContainEqual({ slug: 'enhance-photos', locale: 'es' });
+      expect(params).toContainEqual({ slug: 'restore-old-images', locale: 'pt' });
+      expect(params).toContainEqual({ slug: 'restore-old-images', locale: 'de' });
     });
 
-    it('should generate correct locale-slug combinations for free tools', async () => {
-      const slugs = await getAllFreeSlugs();
-      const expectedCount = slugs.length * SUPPORTED_LOCALES.length;
+    test('should not include undefined locale', async () => {
+      const { generateStaticParams } = await import('@/app/[locale]/(pseo)/use-cases/[slug]/page');
 
-      // Simulate generateStaticParams pattern
-      const params = SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
+      const params = await generateStaticParams();
 
-      expect(params).toHaveLength(expectedCount);
-      expect(params.every(p => p.slug && p.locale)).toBe(true);
-      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale))).toBe(true);
+      expect(params.every(p => p.locale !== undefined)).toBe(true);
+      expect(params.some(p => p.locale === 'undefined')).toBe(false);
+      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale as any))).toBe(true);
+    });
+  });
+
+  describe('alternatives/[slug]/page.tsx', () => {
+    test('should generate params with all locales for alternatives', async () => {
+      const { generateStaticParams } =
+        await import('@/app/[locale]/(pseo)/alternatives/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      // Should have 2 slugs × 7 locales = 14 params
+      expect(params).toHaveLength(14);
+
+      // Check that specific locale combinations exist
+      expect(params).toContainEqual({ slug: 'waifu2x-alternative', locale: 'en' });
+      expect(params).toContainEqual({ slug: 'waifu2x-alternative', locale: 'fr' });
+      expect(params).toContainEqual({ slug: 'letsenhance-alternative', locale: 'it' });
+      expect(params).toContainEqual({ slug: 'letsenhance-alternative', locale: 'ja' });
     });
 
-    it('should generate correct locale-slug combinations for scale', async () => {
-      const slugs = await getAllScaleSlugs();
-      const expectedCount = slugs.length * SUPPORTED_LOCALES.length;
+    test('should not include undefined locale', async () => {
+      const { generateStaticParams } =
+        await import('@/app/[locale]/(pseo)/alternatives/[slug]/page');
 
-      // Simulate generateStaticParams pattern
-      const params = SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
+      const params = await generateStaticParams();
 
-      expect(params).toHaveLength(expectedCount);
-      expect(params.every(p => p.slug && p.locale)).toBe(true);
-      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale))).toBe(true);
+      expect(params.every(p => p.locale !== undefined)).toBe(true);
+      expect(params.some(p => p.locale === 'undefined')).toBe(false);
+      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale as any))).toBe(true);
+    });
+  });
+
+  describe('compare/[slug]/page.tsx', () => {
+    test('should generate params with all locales for compare', async () => {
+      const { generateStaticParams } = await import('@/app/[locale]/(pseo)/compare/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      // Should have 2 slugs × 7 locales = 14 params
+      expect(params).toHaveLength(14);
+
+      // Check that specific locale combinations exist
+      expect(params).toContainEqual({ slug: 'topaz-vs-midjourney', locale: 'en' });
+      expect(params).toContainEqual({ slug: 'topaz-vs-midjourney', locale: 'es' });
+      expect(params).toContainEqual({ slug: 'canva-vs-adobe', locale: 'pt' });
     });
 
-    it('should generate params for all pSEO categories', async () => {
-      const [toolSlugs, formatSlugs, guideSlugs, freeSlugs, scaleSlugs] = await Promise.all([
-        getAllToolSlugs(),
-        getAllFormatSlugs(),
-        getAllGuideSlugs(),
-        getAllFreeSlugs(),
-        getAllScaleSlugs(),
+    test('should not include undefined locale', async () => {
+      const { generateStaticParams } = await import('@/app/[locale]/(pseo)/compare/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      expect(params.every(p => p.locale !== undefined)).toBe(true);
+      expect(params.some(p => p.locale === 'undefined')).toBe(false);
+      expect(params.every(p => SUPPORTED_LOCALES.includes(p.locale as any))).toBe(true);
+    });
+  });
+
+  describe('Nested tool routes', () => {
+    test('should generate params for nested tool routes (resize)', async () => {
+      const { generateStaticParams } =
+        await import('@/app/[locale]/(pseo)/tools/resize/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      // Should have 6 resize slugs × 7 locales = 42 params
+      expect(params.length).toBeGreaterThan(0);
+
+      // Check that params include both slug and locale
+      expect(params.every(p => p.slug !== undefined && p.locale !== undefined)).toBe(true);
+
+      // Check that all locales are present for a specific slug
+      const imageResizerParams = params.filter(p => p.slug === 'image-resizer');
+      expect(imageResizerParams.length).toBe(SUPPORTED_LOCALES.length);
+    });
+
+    test('should generate params for nested tool routes (convert)', async () => {
+      const { generateStaticParams } =
+        await import('@/app/[locale]/(pseo)/tools/convert/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      // Should have 6 conversion slugs × 7 locales = 42 params
+      expect(params.length).toBeGreaterThan(0);
+
+      // Check that params include both slug and locale
+      expect(params.every(p => p.slug !== undefined && p.locale !== undefined)).toBe(true);
+
+      // Check that all locales are present for a specific slug
+      const pngToJpgParams = params.filter(p => p.slug === 'png-to-jpg');
+      expect(pngToJpgParams.length).toBe(SUPPORTED_LOCALES.length);
+    });
+
+    test('should generate params for nested tool routes (compress)', async () => {
+      const { generateStaticParams } =
+        await import('@/app/[locale]/(pseo)/tools/compress/[slug]/page');
+
+      const params = await generateStaticParams();
+
+      // Should have 2 compress slugs × 7 locales = 14 params
+      expect(params.length).toBeGreaterThan(0);
+
+      // Check that params include both slug and locale
+      expect(params.every(p => p.slug !== undefined && p.locale !== undefined)).toBe(true);
+
+      // Check that all locales are present for a specific slug
+      const compressorParams = params.filter(p => p.slug === 'image-compressor');
+      expect(compressorParams.length).toBe(SUPPORTED_LOCALES.length);
+    });
+
+    test('should include all SUPPORTED_LOCALES in nested tool routes', async () => {
+      const [resizeParams, convertParams, compressParams] = await Promise.all([
+        import('@/app/[locale]/(pseo)/tools/resize/[slug]/page').then(m =>
+          m.generateStaticParams()
+        ),
+        import('@/app/[locale]/(pseo)/tools/convert/[slug]/page').then(m =>
+          m.generateStaticParams()
+        ),
+        import('@/app/[locale]/(pseo)/tools/compress/[slug]/page').then(m =>
+          m.generateStaticParams()
+        ),
       ]);
 
-      // All categories should return slugs
-      expect(toolSlugs.length).toBeGreaterThan(0);
-      expect(formatSlugs.length).toBeGreaterThan(0);
-      expect(guideSlugs.length).toBeGreaterThan(0);
-      expect(freeSlugs.length).toBeGreaterThan(0);
-      expect(scaleSlugs.length).toBeGreaterThan(0);
+      const extractLocales = (params: Awaited<typeof resizeParams>) =>
+        params.map(p => p.locale).filter((v, i, a) => a.indexOf(v) === i);
 
-      // Simulate params generation for all categories
-      const toolsParams = SUPPORTED_LOCALES.flatMap(locale =>
-        toolSlugs.map(slug => ({ slug, locale }))
-      );
-      const formatsParams = SUPPORTED_LOCALES.flatMap(locale =>
-        formatSlugs.map(slug => ({ slug, locale }))
-      );
-      const guidesParams = SUPPORTED_LOCALES.flatMap(locale =>
-        guideSlugs.map(slug => ({ slug, locale }))
-      );
-      const freeParams = SUPPORTED_LOCALES.flatMap(locale =>
-        freeSlugs.map(slug => ({ slug, locale }))
-      );
-      const scaleParams = SUPPORTED_LOCALES.flatMap(locale =>
-        scaleSlugs.map(slug => ({ slug, locale }))
-      );
+      const resizeLocales = extractLocales(resizeParams);
+      const convertLocales = extractLocales(convertParams);
+      const compressLocales = extractLocales(compressParams);
 
-      // All params should have locale property
-      expect(toolsParams.every(p => p.locale)).toBe(true);
-      expect(formatsParams.every(p => p.locale)).toBe(true);
-      expect(guidesParams.every(p => p.locale)).toBe(true);
-      expect(freeParams.every(p => p.locale)).toBe(true);
-      expect(scaleParams.every(p => p.locale)).toBe(true);
-
-      // No undefined locales
-      expect(toolsParams.every(p => p.locale !== undefined)).toBe(true);
-      expect(formatsParams.every(p => p.locale !== undefined)).toBe(true);
-      expect(guidesParams.every(p => p.locale !== undefined)).toBe(true);
-      expect(freeParams.every(p => p.locale !== undefined)).toBe(true);
-      expect(scaleParams.every(p => p.locale !== undefined)).toBe(true);
-    });
-
-    it('should not generate undefined locale in any params', async () => {
-      const [toolSlugs, formatSlugs, guideSlugs, freeSlugs, scaleSlugs] = await Promise.all([
-        getAllToolSlugs(),
-        getAllFormatSlugs(),
-        getAllGuideSlugs(),
-        getAllFreeSlugs(),
-        getAllScaleSlugs(),
-      ]);
-
-      const allParams = [
-        ...SUPPORTED_LOCALES.flatMap(locale => toolSlugs.map(slug => ({ slug, locale }))),
-        ...SUPPORTED_LOCALES.flatMap(locale => formatSlugs.map(slug => ({ slug, locale }))),
-        ...SUPPORTED_LOCALES.flatMap(locale => guideSlugs.map(slug => ({ slug, locale }))),
-        ...SUPPORTED_LOCALES.flatMap(locale => freeSlugs.map(slug => ({ slug, locale }))),
-        ...SUPPORTED_LOCALES.flatMap(locale => scaleSlugs.map(slug => ({ slug, locale }))),
-      ];
-
-      // Critical test: ensure no undefined locales
-      expect(allParams.every(p => p.locale !== undefined)).toBe(true);
-      expect(allParams.some(p => p.locale === undefined)).toBe(false);
+      // Each nested route should include all 7 supported locales
+      expect(resizeLocales).toEqual(expect.arrayContaining([...SUPPORTED_LOCALES]));
+      expect(convertLocales).toEqual(expect.arrayContaining([...SUPPORTED_LOCALES]));
+      expect(compressLocales).toEqual(expect.arrayContaining([...SUPPORTED_LOCALES]));
     });
   });
 });

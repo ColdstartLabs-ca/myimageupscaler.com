@@ -2,13 +2,13 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAlternativeDataWithLocale, getAllAlternativeSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { generateAlternativeSchema } from '@/lib/seo/schema-generator';
 import { AlternativePageTemplate } from '@/app/(pseo)/_components/pseo/templates/AlternativePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
-import { clientEnv } from '@shared/config/env';
 
 interface IAlternativePageProps {
   params: Promise<{ slug: string; locale: Locale }>;
@@ -42,19 +42,8 @@ export default async function AlternativePage({ params }: IAlternativePageProps)
     notFound();
   }
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: result.data.metaTitle,
-    description: result.data.metaDescription,
-    url: `${clientEnv.BASE_URL}/${locale}/alternatives/${slug}`,
-    inLanguage: locale,
-    isPartOf: {
-      '@type': 'WebSite',
-      name: clientEnv.APP_NAME,
-      url: clientEnv.BASE_URL,
-    },
-  };
+  // Generate rich schema markup with @graph structure (ItemList + Article + FAQPage + BreadcrumbList)
+  const schema = generateAlternativeSchema(result.data);
 
   const path = `/alternatives/${slug}`;
 

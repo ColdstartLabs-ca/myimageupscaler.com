@@ -8,8 +8,8 @@
 
 import type { IScalePage } from '@/lib/seo/pseo-types';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
-import { getRelatedPages, type IRelatedPage } from '@/lib/seo/related-pages';
-import { ReactElement, useEffect, useState } from 'react';
+import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { ReactElement } from 'react';
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -26,26 +26,13 @@ import type { Locale } from '@/i18n/config';
 interface IScalePageTemplateProps {
   data: IScalePage;
   locale?: Locale;
+  relatedPages?: IRelatedPage[];
 }
 
-export function ScalePageTemplate({ data, locale }: IScalePageTemplateProps): ReactElement {
+export function ScalePageTemplate({ data, locale, relatedPages = [] }: IScalePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/scale/${data.slug}`);
   const tier = pageMapping?.tier;
-
-  // State for related pages
-  const [relatedPages, setRelatedPages] = useState<IRelatedPage[]>([]);
-
-  // Fetch related pages on mount
-  useEffect(() => {
-    getRelatedPages(
-      'scale',
-      data.slug,
-      (locale as 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja') || 'en'
-    ).then(pages => {
-      setRelatedPages(pages);
-    });
-  }, [data.slug, locale]);
 
   // Get locale-aware labels for before/after slider
   const getBeforeAfterLabels = (locale?: string) => {

@@ -2,13 +2,13 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPlatformFormatDataWithLocale, getAllPlatformFormatSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { PlatformFormatPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformFormatPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
-import { clientEnv } from '@shared/config/env';
 
 interface IPlatformFormatPageProps {
   params: Promise<{ slug: string; locale: Locale }>;
@@ -42,19 +42,8 @@ export default async function PlatformFormatPage({ params }: IPlatformFormatPage
     notFound();
   }
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: result.data.metaTitle,
-    description: result.data.metaDescription,
-    url: `${clientEnv.BASE_URL}/${locale}/platform-format/${slug}`,
-    inLanguage: locale,
-    isPartOf: {
-      '@type': 'WebSite',
-      name: clientEnv.APP_NAME,
-      url: clientEnv.BASE_URL,
-    },
-  };
+  // Generate rich schema markup with FAQPage and BreadcrumbList
+  const schema = generatePSEOSchema(result.data, 'platform-format', locale);
 
   const path = `/platform-format/${slug}`;
 

@@ -16,6 +16,7 @@ import type {
   IFormatScalePage,
   IDeviceUseCasePage,
   IPlatformFormatPage,
+  IFormatPage,
 } from './pseo-types';
 import { clientEnv } from '@shared/config/env';
 import type { Locale } from '../../i18n/config';
@@ -404,6 +405,77 @@ export function generateUseCaseSchema(useCase: IUseCasePage): object {
             '@type': 'ListItem',
             position: 3,
             name: useCase.title,
+            item: canonicalUrl,
+          },
+        ],
+      },
+    ],
+  };
+}
+
+/**
+ * Generate schema for Format pages
+ * Combines WebPage + FAQPage + BreadcrumbList
+ */
+export function generateFormatSchema(format: IFormatPage, locale: Locale = 'en'): object {
+  const canonicalUrl =
+    locale === 'en' ? `${BASE_URL}/formats/${format.slug}` : `${BASE_URL}/${locale}/formats/${format.slug}`;
+  const language = getLanguageCode(locale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${canonicalUrl}#webpage`,
+        name: format.metaTitle,
+        description: format.metaDescription,
+        url: canonicalUrl,
+        inLanguage: language,
+        isPartOf: {
+          '@type': 'WebSite',
+          name: APP_NAME,
+          url: BASE_URL,
+        },
+        about: {
+          '@type': 'Thing',
+          name: format.primaryKeyword,
+        },
+      },
+      ...(format.faq && format.faq.length > 0
+        ? [
+            {
+              '@type': 'FAQPage',
+              mainEntity: format.faq.map(item => ({
+                '@type': 'Question',
+                name: item.question,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: item.answer,
+                },
+              })),
+            },
+          ]
+        : []),
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: BASE_URL,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Formats',
+            item: `${BASE_URL}/formats`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: format.formatName,
             item: canonicalUrl,
           },
         ],

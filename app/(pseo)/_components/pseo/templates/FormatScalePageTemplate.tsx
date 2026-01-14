@@ -7,8 +7,8 @@
 
 import type { IFormatScalePage } from '@/lib/seo/pseo-types';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
-import { getRelatedPages, type IRelatedPage } from '@/lib/seo/related-pages';
-import { ReactElement, useEffect, useState } from 'react';
+import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { ReactElement } from 'react';
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -27,29 +27,17 @@ interface IFormatScalePageTemplateProps {
     bestPractices?: Array<string | { title: string; description: string }>;
   };
   locale?: string;
+  relatedPages?: IRelatedPage[];
 }
 
 export function FormatScalePageTemplate({
   data,
   locale,
+  relatedPages = [],
 }: IFormatScalePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/format-scale/${data.slug}`);
   const tier = pageMapping?.tier;
-
-  // State for related pages
-  const [relatedPages, setRelatedPages] = useState<IRelatedPage[]>([]);
-
-  // Fetch related pages on mount
-  useEffect(() => {
-    getRelatedPages(
-      'format-scale',
-      data.slug,
-      (locale as 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja') || 'en'
-    ).then(pages => {
-      setRelatedPages(pages);
-    });
-  }, [data.slug, locale]);
 
   // Normalize bestPractices to handle both string[] and object[]
   const normalizedBestPractices = data.bestPractices?.map(bp =>
