@@ -15,6 +15,7 @@
  *   npx tsx scripts/setup-stripe.ts          # Use credentials from .env.api
  *   npx tsx scripts/setup-stripe.ts --test   # Force test mode
  *   npx tsx scripts/setup-stripe.ts --prod   # Force production mode
+ *   npx tsx scripts/setup-stripe.ts --debug  # Save output file (stripe-setup-output-*.txt)
  */
 
 import Stripe from 'stripe';
@@ -136,8 +137,9 @@ class StripeSetup {
   private rl: readline.Interface;
   private isTestMode: boolean;
   private envPath: string;
+  private isDebug: boolean;
 
-  constructor(secretKey: string, isTestMode: boolean, envPath: string) {
+  constructor(secretKey: string, isTestMode: boolean, envPath: string, isDebug: boolean) {
     this.stripe = new Stripe(secretKey, {
       apiVersion: '2025-11-17.clover',
     });
@@ -147,6 +149,7 @@ class StripeSetup {
     });
     this.isTestMode = isTestMode;
     this.envPath = envPath;
+    this.isDebug = isDebug;
   }
 
   private log(message: string, color: keyof typeof colors = 'reset'): void {
@@ -568,8 +571,12 @@ class StripeSetup {
       lines.push('');
     });
 
-    fs.writeFileSync(outputPath, lines.join('\n'), 'utf-8');
-    this.log(`Configuration saved to: ${outputPath}`, 'green');
+    if (this.isDebug) {
+      fs.writeFileSync(outputPath, lines.join('\n'), 'utf-8');
+      this.log(`Configuration saved to: ${outputPath}`, 'green');
+    } else {
+      this.log('Configuration output to file skipped (use --debug to enable)', 'yellow');
+    }
   }
 }
 
@@ -577,6 +584,7 @@ class StripeSetup {
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const forceMode = args.find(arg => arg === '--test' || arg === '--prod' || arg === '--dev');
+  const isDebug = args.includes('--debug');
 
   // Determine which .env file to use based on mode
   let envPath: string;
@@ -632,9 +640,10 @@ async function main(): Promise<void> {
   }
 
   console.log(`${colors.blue}Using env file: ${envPath}${colors.reset}`);
-  console.log(`${colors.blue}Stripe mode: ${isTestMode ? 'TEST' : 'PRODUCTION'}${colors.reset}\n`);
+  console.log(`${colors.blue}Stripe mode: ${isTestMode ? 'TEST' : 'PRODUCTION'}${colors.reset}`);
+  console.log(`${colors.blue}Debug mode: ${isDebug ? 'enabled' : 'disabled'}${colors.reset}\n`);
 
-  const setup = new StripeSetup(secretKey, isTestMode, envPath);
+  const setup = new StripeSetup(secretKey, isTestMode, envPath, isDebug);
   await setup.run();
 }
 

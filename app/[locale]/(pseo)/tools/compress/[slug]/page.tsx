@@ -6,6 +6,7 @@ import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { clientEnv } from '@shared/config/env';
 import type { IFeature, IUseCase, IBenefit, IHowItWorksStep, IFAQ } from '@/lib/seo/pseo-types';
 import type { Locale } from '@/i18n/config';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
 // Compress tool slugs from interactive-tools.json
 const COMPRESS_SLUGS = ['image-compressor', 'bulk-image-compressor'];
@@ -15,7 +16,7 @@ interface IPageProps {
 }
 
 export async function generateStaticParams() {
-  return COMPRESS_SLUGS.map(slug => ({ slug }));
+  return SUPPORTED_LOCALES.flatMap(locale => COMPRESS_SLUGS.map(slug => ({ slug, locale })));
 }
 
 export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {

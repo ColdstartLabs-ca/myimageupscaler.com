@@ -2,12 +2,13 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPlatformDataWithLocale, getAllPlatformSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { PlatformPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import type { Locale } from '@/i18n/config';
-import { clientEnv } from '@shared/config/env';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
 interface IPlatformPageProps {
   params: Promise<{ slug: string; locale: Locale }>;
@@ -15,7 +16,7 @@ interface IPlatformPageProps {
 
 export async function generateStaticParams() {
   const slugs = await getAllPlatformSlugs();
-  return slugs.map(slug => ({ slug }));
+  return SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
 }
 
 export async function generateMetadata({ params }: IPlatformPageProps): Promise<Metadata> {
@@ -41,19 +42,8 @@ export default async function PlatformPage({ params }: IPlatformPageProps) {
     notFound();
   }
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: result.data.metaTitle,
-    description: result.data.metaDescription,
-    url: `${clientEnv.BASE_URL}/${locale}/platforms/${slug}`,
-    inLanguage: locale,
-    isPartOf: {
-      '@type': 'WebSite',
-      name: clientEnv.APP_NAME,
-      url: clientEnv.BASE_URL,
-    },
-  };
+  // Generate rich schema markup with FAQPage and BreadcrumbList
+  const schema = generatePSEOSchema(result.data, 'platforms', locale);
 
   const path = `/platforms/${slug}`;
 

@@ -1,12 +1,12 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getFormatScaleData, getAllFormatScaleSlugs } from '@/lib/seo/data-loader';
+import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { FormatScalePageTemplate } from '@/app/(pseo)/_components/pseo/templates/FormatScalePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
-import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
-import { clientEnv } from '@shared/config/env';
 
 interface IFormatScalePageProps {
   params: Promise<{ slug: string }>;
@@ -23,30 +23,7 @@ export async function generateMetadata({ params }: IFormatScalePageProps): Promi
 
   if (!formatScale) return {};
 
-  const path = `/format-scale/${slug}`;
-  const canonicalUrl = getCanonicalUrl(path);
-
-  return {
-    title: formatScale.metaTitle,
-    description: formatScale.metaDescription,
-    openGraph: {
-      title: formatScale.metaTitle,
-      description: formatScale.metaDescription,
-      type: 'website',
-      url: canonicalUrl,
-      siteName: clientEnv.APP_NAME,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: formatScale.metaTitle,
-      description: formatScale.metaDescription,
-      creator: `@${clientEnv.TWITTER_HANDLE}`,
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  };
+  return generatePageMetadata(formatScale, 'format-scale', 'en');
 }
 
 export default async function FormatScalePage({ params }: IFormatScalePageProps) {
@@ -57,19 +34,8 @@ export default async function FormatScalePage({ params }: IFormatScalePageProps)
     notFound();
   }
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: formatScale.metaTitle,
-    description: formatScale.metaDescription,
-    url: `${clientEnv.BASE_URL}/format-scale/${slug}`,
-    inLanguage: 'en',
-    isPartOf: {
-      '@type': 'WebSite',
-      name: clientEnv.APP_NAME,
-      url: clientEnv.BASE_URL,
-    },
-  };
+  // Generate rich schema markup with FAQPage and BreadcrumbList
+  const schema = generatePSEOSchema(formatScale, 'format-scale', 'en');
 
   const path = `/format-scale/${slug}`;
 

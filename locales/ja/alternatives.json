@@ -1,5 +1,5 @@
 {
-  "category": "alternatives",
+  "category": "代替案",
   "pages": [
     {
       "slug": "vs-topaz",
@@ -16,7 +16,7 @@
         "テキスト保存"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "topaz",
       "competitorName": "Topaz Gigapixel AI",
       "competitorPricing": "$99.99一回払い",
@@ -121,7 +121,7 @@
         "アニメアップスケーラー"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "bigjpg",
       "competitorName": "BigJPG",
       "competitorPricing": "無料制限あり、月額$6有料",
@@ -225,7 +225,7 @@
         "写真アップスケーラー"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "waifu2x",
       "competitorName": "Waifu2x",
       "competitorPricing": "無料",
@@ -329,7 +329,7 @@
         "photo upscaler"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "remini",
       "competitorName": "Remini",
       "competitorPricing": "無料制限あり、月額$9.99プレミアム",
@@ -433,7 +433,7 @@
         "テキスト保存"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "icons8",
       "competitorName": "Icons8 Upscaler",
       "competitorPricing": "無料制限あり、月額$19有料",
@@ -537,7 +537,7 @@
         "free upscaler comparison"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "upscayl",
       "competitorName": "Upscayl",
       "competitorPricing": "無料",
@@ -641,7 +641,7 @@
         "benvista alternative"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "photozoom",
       "competitorName": "PhotoZoom Pro",
       "competitorPricing": "$169一回払い",
@@ -742,10 +742,10 @@
         "gigapixel ai alternative",
         "better than gigapixel",
         "ai upscaler comparison",
-        "text preservation"
+        "テキスト保存"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "gigapixel",
       "competitorName": "Gigapixel AI",
       "competitorPricing": "$99.99一回払い",
@@ -849,7 +849,7 @@
         "text preservation"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "imgupscaler",
       "competitorName": "ImgUpscaler",
       "competitorPricing": "無料",
@@ -953,7 +953,7 @@
         "text preservation"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "letsenhance",
       "competitorName": "Let's Enhance",
       "competitorPricing": "月額$9から複雑なティア",
@@ -1053,11 +1053,11 @@
       "secondaryKeywords": [
         "vanceai alternative",
         "better than vanceai",
-        "ai upscaler comparison",
-        "text preservation"
+        "AIアップスケール比較",
+        "テキスト保存"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "vanceai",
       "competitorName": "VanceAI",
       "competitorPricing": "無料制限あり, $9.90/月有料",
@@ -1161,7 +1161,7 @@
         "photo upscaler"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "remini",
       "competitorName": "Remini",
       "competitorPricing": "無料制限あり, $9.99/month premium",
@@ -1205,9 +1205,9 @@
           "competitor": "いいえne - face focus only"
         },
         {
-          "feature": "Professional Use",
-          "myimageupscaler": "Business and professional ready",
-          "competitor": "Consumer-focused only"
+          "feature": "プロフェッショナル用途",
+          "myimageupscaler": "ビジネスやプロフェッショナル向け",
+          "competitor": "コンシューマー向けのみ"
         },
         {
           "feature": "Upscaling",
@@ -1265,7 +1265,7 @@
         "text preservation"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "icons8",
       "competitorName": "Icons8 Upscaler",
       "competitorPricing": "無料制限あり, $19/月有料",
@@ -1369,7 +1369,7 @@
         "free upscaler comparison"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "upscayl",
       "competitorName": "Upscayl",
       "competitorPricing": "無料",
@@ -1473,7 +1473,7 @@
         "benvista alternative"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "photozoom",
       "competitorName": "PhotoZoom Pro",
       "competitorPricing": "$169 一回払い",
@@ -1502,7 +1502,7 @@
       ],
       "comparisonTable": [
         {
-          "feature": "Technology",
+          "feature": "技術",
           "myimageupscaler": "Modern AI technology",
           "competitor": "Traditional S-Spline"
         },
@@ -1577,7 +1577,7 @@
         "text preservation"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "gigapixel",
       "competitorName": "Gigapixel AI",
       "competitorPricing": "$99.99 一回払い",
@@ -1681,7 +1681,7 @@
         "specialized vs general"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "iloveimg",
       "competitorName": "iLoveIMG",
       "competitorPricing": "無料制限あり, $9/月有料",
@@ -1785,7 +1785,7 @@
         "specialized upscaling"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "fotor",
       "competitorName": "Fotor",
       "competitorPricing": "無料制限あり, $8.99/month pro",
@@ -1797,7 +1797,7 @@
           "theirLimitation": "基本のupscaling as secondary feature"
         },
         {
-          "title": "Text Excellence",
+          "title": "テキストの優位性",
           "ourAdvantage": "優秀なtextとgraphics preservation",
           "theirLimitation": "General editing, no text optimization"
         },
@@ -1886,10 +1886,10 @@
         "pixelcut alternative",
         "better than pixelcut",
         "product photo upscaler",
-        "versatile upscaling"
+        "多目的アップスケール"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "alternatives",
+      "category": "代替案",
       "competitor": "pixelcut",
       "competitorName": "Pixelcut",
       "competitorPricing": "無料",
@@ -1939,7 +1939,7 @@
         },
         {
           "feature": "無料利用",
-          "myimageupscaler": "10 free credits",
+          "myimageupscaler": "無料10クレジット",
           "competitor": "Limited free features"
         },
         {

@@ -4,9 +4,13 @@
  * Comprehensive template for tool landing pages
  */
 
+'use client';
+
 import type { IToolPage } from '@/lib/seo/pseo-types';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
-import { ReactElement } from 'react';
+import { getRelatedPages, type IRelatedPage } from '@/lib/seo/related-pages';
+import { ReactElement, useEffect, useState } from 'react';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { BenefitsSection } from '../sections/BenefitsSection';
@@ -16,6 +20,7 @@ import { FeaturesSection } from '../sections/FeaturesSection';
 import { HeroSection } from '../sections/HeroSection';
 import { HowItWorksSection } from '../sections/HowItWorksSection';
 import { RelatedBlogPostsSection } from '../sections/RelatedBlogPostsSection';
+import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { UseCasesSection } from '../sections/UseCasesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 
@@ -30,6 +35,40 @@ export function ToolPageTemplate({ data, locale }: IToolPageTemplateProps): Reac
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/tools/${data.slug}`);
   const tier = pageMapping?.tier;
+
+  // State for related pages
+  const [relatedPages, setRelatedPages] = useState<IRelatedPage[]>([]);
+
+  // Fetch related pages on mount
+  useEffect(() => {
+    getRelatedPages(
+      'tools',
+      data.slug,
+      (locale as 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja') || 'en'
+    )
+      .then(pages => {
+        setRelatedPages(pages);
+      })
+      .catch(err => {
+        console.error('[ToolPageTemplate] Error fetching related pages:', err);
+      });
+  }, [data.slug, locale]);
+
+  // Get locale-aware labels for before/after slider
+  const getBeforeAfterLabels = (locale?: string) => {
+    const labels: Record<string, { before: string; after: string }> = {
+      en: { before: 'Before', after: 'After' },
+      es: { before: 'Antes', after: 'Después' },
+      pt: { before: 'Antes', after: 'Depois' },
+      de: { before: 'Vorher', after: 'Nachher' },
+      fr: { before: 'Avant', after: 'Après' },
+      it: { before: 'Prima', after: 'Dopo' },
+      ja: { before: '前', after: '後' },
+    };
+    return labels[locale || 'en'] || labels.en;
+  };
+
+  const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
     <div className="min-h-screen bg-base relative">
@@ -96,6 +135,21 @@ export function ToolPageTemplate({ data, locale }: IToolPageTemplateProps): Reac
             </FadeIn>
           )}
 
+          {/* Before/After Slider */}
+          <FadeIn delay={0.25}>
+            <div className="py-12">
+              <div className="max-w-3xl mx-auto">
+                <BeforeAfterSlider
+                  beforeUrl="/before-after/women-before.webp"
+                  afterUrl="/before-after/women-after.webp"
+                  beforeLabel={sliderLabels.before}
+                  afterLabel={sliderLabels.after}
+                  className="shadow-2xl shadow-accent/10"
+                />
+              </div>
+            </div>
+          </FadeIn>
+
           {/* Features */}
           <FeaturesSection features={data.features} />
 
@@ -107,6 +161,9 @@ export function ToolPageTemplate({ data, locale }: IToolPageTemplateProps): Reac
 
           {/* Use Cases */}
           <UseCasesSection useCases={data.useCases} />
+
+          {/* Related Pages */}
+          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
 
           {/* Related Blog Posts */}
           {data.relatedBlogPosts && data.relatedBlogPosts.length > 0 && (

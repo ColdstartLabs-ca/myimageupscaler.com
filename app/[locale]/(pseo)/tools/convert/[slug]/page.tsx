@@ -7,6 +7,7 @@ import { generateToolSchema } from '@/lib/seo/schema-generator';
 import { clientEnv } from '@shared/config/env';
 import type { IFeature, IUseCase, IBenefit, IHowItWorksStep, IFAQ } from '@/lib/seo/pseo-types';
 import type { Locale } from '@/i18n/config';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
 // Conversion tool slugs from interactive-tools.json
 const CONVERSION_SLUGS = [
@@ -23,7 +24,7 @@ interface IPageProps {
 }
 
 export async function generateStaticParams() {
-  return CONVERSION_SLUGS.map(slug => ({ slug }));
+  return SUPPORTED_LOCALES.flatMap(locale => CONVERSION_SLUGS.map(slug => ({ slug, locale })));
 }
 
 export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {

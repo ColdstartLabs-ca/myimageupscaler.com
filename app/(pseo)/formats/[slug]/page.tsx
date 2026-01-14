@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getFormatData, getAllFormatSlugs } from '@/lib/seo/data-loader';
+import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
 import { FormatPageTemplate } from '@/app/(pseo)/_components/pseo/templates/FormatPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
-import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
 import { clientEnv } from '@shared/config/env';
 
 interface IFormatPageProps {
@@ -23,30 +23,7 @@ export async function generateMetadata({ params }: IFormatPageProps): Promise<Me
 
   if (!format) return {};
 
-  const path = `/formats/${slug}`;
-  const canonicalUrl = getCanonicalUrl(path);
-
-  return {
-    title: format.metaTitle,
-    description: format.metaDescription,
-    openGraph: {
-      title: format.metaTitle,
-      description: format.metaDescription,
-      type: 'website',
-      url: canonicalUrl,
-      siteName: clientEnv.APP_NAME,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: format.metaTitle,
-      description: format.metaDescription,
-      creator: `@${clientEnv.TWITTER_HANDLE}`,
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  };
+  return generatePageMetadata(format, 'formats', 'en');
 }
 
 export default async function FormatPage({ params }: IFormatPageProps) {
@@ -57,18 +34,68 @@ export default async function FormatPage({ params }: IFormatPageProps) {
     notFound();
   }
 
+  const canonicalUrl = `${clientEnv.BASE_URL}/formats/${slug}`;
+
+  // Build the graph array with WebPage and optional FAQPage
+  const graphItems: object[] = [
+    {
+      '@type': 'WebPage',
+      '@id': `${canonicalUrl}#webpage`,
+      name: format.metaTitle,
+      description: format.metaDescription,
+      url: canonicalUrl,
+      inLanguage: 'en',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: clientEnv.APP_NAME,
+        url: clientEnv.BASE_URL,
+      },
+    },
+  ];
+
+  // Add FAQPage schema if FAQ data exists
+  if (format.faq && format.faq.length > 0) {
+    graphItems.push({
+      '@type': 'FAQPage',
+      mainEntity: format.faq.map(item => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    });
+  }
+
+  // Add BreadcrumbList schema
+  graphItems.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: clientEnv.BASE_URL,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Formats',
+        item: `${clientEnv.BASE_URL}/formats`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: format.formatName || format.title,
+        item: canonicalUrl,
+      },
+    ],
+  });
+
   const schema = {
     '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: format.metaTitle,
-    description: format.metaDescription,
-    url: `${clientEnv.BASE_URL}/formats/${slug}`,
-    inLanguage: 'en',
-    isPartOf: {
-      '@type': 'WebSite',
-      name: clientEnv.APP_NAME,
-      url: clientEnv.BASE_URL,
-    },
+    '@graph': graphItems,
   };
 
   const path = `/formats/${slug}`;

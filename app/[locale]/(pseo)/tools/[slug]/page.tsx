@@ -12,6 +12,7 @@ import { generateToolSchema } from '@/lib/seo';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import type { Locale } from '@/i18n/config';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
 interface IToolPageProps {
   params: Promise<{ slug: string; locale: Locale }>;
@@ -20,7 +21,7 @@ interface IToolPageProps {
 // Generate static paths at build time
 export async function generateStaticParams() {
   const slugs = await getAllToolSlugs();
-  return slugs.map(slug => ({ slug }));
+  return SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
 }
 
 // Generate metadata using factory

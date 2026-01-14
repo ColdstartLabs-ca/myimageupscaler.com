@@ -2,6 +2,15 @@ import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import { vi } from 'vitest';
 
+// Mock React cache function - needed for data-loader tests
+vi.mock('react', async () => {
+  const actual = await vi.importActual<typeof React>('react');
+  return {
+    ...actual,
+    cache: (fn: (...args: unknown[]) => unknown) => fn,
+  };
+});
+
 // Mock Next.js router
 vi.mock('next/router', () => ({
   useRouter() {

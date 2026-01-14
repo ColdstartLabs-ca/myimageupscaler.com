@@ -12,6 +12,10 @@ import type {
   IUseCasePage,
   IAlternativePage,
   IProduct,
+  IPlatformPage,
+  IFormatScalePage,
+  IDeviceUseCasePage,
+  IPlatformFormatPage,
 } from './pseo-types';
 import { clientEnv } from '@shared/config/env';
 import type { Locale } from '../../i18n/config';
@@ -715,5 +719,200 @@ export function generatePricingSchema(): object {
         ],
       },
     ],
+  };
+}
+
+/**
+ * Generate schema for pSEO pages (platforms, format-scale, device-use, platform-format)
+ * Combines WebPage with FAQPage and BreadcrumbList
+ * Phase 4: Added comprehensive schema support for pSEO templates
+ *
+ * @param data - The pSEO page data (IPlatformPage, IFormatScalePage, IDeviceUseCasePage, or IPlatformFormatPage)
+ * @param category - The category path (e.g., 'platforms', 'format-scale', 'device-use', 'platform-format')
+ * @param locale - The locale for this page instance (default: 'en')
+ */
+export function generatePSEOSchema(
+  data: IPlatformPage | IFormatScalePage | IDeviceUseCasePage | IPlatformFormatPage,
+  category: string,
+  locale: Locale = 'en'
+): object {
+  // Build the canonical URL based on category and slug
+  const canonicalUrl =
+    locale === 'en'
+      ? `${BASE_URL}/${category}/${data.slug}`
+      : `${BASE_URL}/${locale}/${category}/${data.slug}`;
+
+  const language = getLanguageCode(locale);
+
+  // Get the page title based on data type
+  const getPageTitle = (): string => {
+    if ('platformName' in data) {
+      const platformData = data as IPlatformPage;
+      return platformData.platformName || platformData.title;
+    }
+    if ('format' in data && 'scaleFactor' in data) {
+      const formatScaleData = data as IFormatScalePage;
+      return `${formatScaleData.format} ${formatScaleData.scaleFactor}`;
+    }
+    if ('device' in data && 'useCase' in data) {
+      const deviceUseData = data as IDeviceUseCasePage;
+      return `${deviceUseData.device} ${deviceUseData.useCase}`;
+    }
+    if ('platform' in data && 'format' in data) {
+      const platformFormatData = data as IPlatformFormatPage;
+      return `${platformFormatData.platform} ${platformFormatData.format}`;
+    }
+    // Fallback for any other type
+    const baseData = data as
+      | IPlatformPage
+      | IFormatScalePage
+      | IDeviceUseCasePage
+      | IPlatformFormatPage;
+    return baseData.title;
+  };
+
+  const pageTitle = getPageTitle();
+
+  // Build breadcrumb list based on category
+  const getBreadcrumbItems = () => {
+    const baseBreadcrumbs = [
+      {
+        '@type': 'ListItem' as const,
+        position: 1,
+        name: 'Home',
+        item: BASE_URL,
+      },
+    ];
+
+    // Add category-specific breadcrumbs
+    switch (category) {
+      case 'platforms':
+        return [
+          ...baseBreadcrumbs,
+          {
+            '@type': 'ListItem' as const,
+            position: 2,
+            name: 'Platforms',
+            item: `${BASE_URL}/platforms`,
+          },
+          {
+            '@type': 'ListItem' as const,
+            position: 3,
+            name: pageTitle,
+            item: canonicalUrl,
+          },
+        ];
+      case 'format-scale':
+        return [
+          ...baseBreadcrumbs,
+          {
+            '@type': 'ListItem' as const,
+            position: 2,
+            name: 'Format Scale',
+            item: `${BASE_URL}/format-scale`,
+          },
+          {
+            '@type': 'ListItem' as const,
+            position: 3,
+            name: pageTitle,
+            item: canonicalUrl,
+          },
+        ];
+      case 'device-use':
+        return [
+          ...baseBreadcrumbs,
+          {
+            '@type': 'ListItem' as const,
+            position: 2,
+            name: 'Device Use',
+            item: `${BASE_URL}/device-use`,
+          },
+          {
+            '@type': 'ListItem' as const,
+            position: 3,
+            name: pageTitle,
+            item: canonicalUrl,
+          },
+        ];
+      case 'platform-format':
+        return [
+          ...baseBreadcrumbs,
+          {
+            '@type': 'ListItem' as const,
+            position: 2,
+            name: 'Platform Format',
+            item: `${BASE_URL}/platform-format`,
+          },
+          {
+            '@type': 'ListItem' as const,
+            position: 3,
+            name: pageTitle,
+            item: canonicalUrl,
+          },
+        ];
+      default:
+        return [
+          ...baseBreadcrumbs,
+          {
+            '@type': 'ListItem' as const,
+            position: 2,
+            name: category,
+            item: `${BASE_URL}/${category}`,
+          },
+          {
+            '@type': 'ListItem' as const,
+            position: 3,
+            name: pageTitle,
+            item: canonicalUrl,
+          },
+        ];
+    }
+  };
+
+  // Build the graph array
+  const graphItems: object[] = [
+    {
+      '@type': 'WebPage',
+      '@id': `${canonicalUrl}#webpage`,
+      name: data.metaTitle,
+      description: data.metaDescription,
+      url: canonicalUrl,
+      inLanguage: language,
+      isPartOf: {
+        '@type': 'WebSite',
+        name: APP_NAME,
+        url: BASE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: data.primaryKeyword,
+      },
+    },
+  ];
+
+  // Add FAQPage schema if FAQ data exists and is not empty
+  if (data.faq && data.faq.length > 0) {
+    graphItems.push({
+      '@type': 'FAQPage',
+      mainEntity: data.faq.map(item => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    });
+  }
+
+  // Add BreadcrumbList schema
+  graphItems.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: getBreadcrumbItems(),
+  });
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': graphItems,
   };
 }

@@ -3,32 +3,34 @@ import { notFound } from 'next/navigation';
 import { getScaleData, getAllScaleSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
 import { ScalePageTemplate } from '@/app/(pseo)/_components/pseo/templates/ScalePageTemplate';
+import type { Locale } from '@/i18n/config';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
 interface IScalePageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: Locale }>;
 }
 
 export async function generateStaticParams() {
   const slugs = await getAllScaleSlugs();
-  return slugs.map(slug => ({ slug }));
+  return SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
 }
 
 export async function generateMetadata({ params }: IScalePageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const scale = await getScaleData(slug);
 
   if (!scale) return {};
 
-  return generatePageMetadata(scale, 'scale');
+  return generatePageMetadata(scale, 'scale', locale);
 }
 
 export default async function ScalePage({ params }: IScalePageProps) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const scale = await getScaleData(slug);
 
   if (!scale) {
     notFound();
   }
 
-  return <ScalePageTemplate data={scale} />;
+  return <ScalePageTemplate data={scale} locale={locale} />;
 }

@@ -2,7 +2,11 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getGuideData, getAllGuideSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { generateGuideSchema } from '@/lib/seo/schema-generator';
 import { GuidePageTemplate } from '@/app/(pseo)/_components/pseo/templates/GuidePageTemplate';
+import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
+import { HreflangLinks } from '@client/components/seo/HreflangLinks';
+import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 interface IGuidePageProps {
   params: Promise<{ slug: string }>;
@@ -19,7 +23,7 @@ export async function generateMetadata({ params }: IGuidePageProps): Promise<Met
 
   if (!guide) return {};
 
-  return generatePageMetadata(guide, 'guides');
+  return generatePageMetadata(guide, 'guides', 'en');
 }
 
 export default async function GuidePage({ params }: IGuidePageProps) {
@@ -30,5 +34,19 @@ export default async function GuidePage({ params }: IGuidePageProps) {
     notFound();
   }
 
-  return <GuidePageTemplate data={guide} />;
+  // Generate rich schema markup with HowTo, Article, FAQPage, and BreadcrumbList
+  const schema = generateGuideSchema(guide);
+
+  const path = `/guides/${slug}`;
+
+  return (
+    <>
+      {/* SEO meta tags - canonical and og:locale */}
+      <SeoMetaTags path={path} locale="en" />
+      {/* Hreflang links for multi-language SEO */}
+      <HreflangLinks path={path} />
+      <SchemaMarkup schema={schema} />
+      <GuidePageTemplate data={guide} />
+    </>
+  );
 }

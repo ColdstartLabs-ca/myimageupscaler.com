@@ -1,12 +1,12 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPlatformData, getAllPlatformSlugs } from '@/lib/seo/data-loader';
+import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { PlatformPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
-import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
-import { clientEnv } from '@shared/config/env';
 
 interface IPlatformPageProps {
   params: Promise<{ slug: string }>;
@@ -23,30 +23,7 @@ export async function generateMetadata({ params }: IPlatformPageProps): Promise<
 
   if (!platform) return {};
 
-  const path = `/platforms/${slug}`;
-  const canonicalUrl = getCanonicalUrl(path);
-
-  return {
-    title: platform.metaTitle,
-    description: platform.metaDescription,
-    openGraph: {
-      title: platform.metaTitle,
-      description: platform.metaDescription,
-      type: 'website',
-      url: canonicalUrl,
-      siteName: clientEnv.APP_NAME,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: platform.metaTitle,
-      description: platform.metaDescription,
-      creator: `@${clientEnv.TWITTER_HANDLE}`,
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  };
+  return generatePageMetadata(platform, 'platforms', 'en');
 }
 
 export default async function PlatformPage({ params }: IPlatformPageProps) {
@@ -57,19 +34,8 @@ export default async function PlatformPage({ params }: IPlatformPageProps) {
     notFound();
   }
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: platform.metaTitle,
-    description: platform.metaDescription,
-    url: `${clientEnv.BASE_URL}/platforms/${slug}`,
-    inLanguage: 'en',
-    isPartOf: {
-      '@type': 'WebSite',
-      name: clientEnv.APP_NAME,
-      url: clientEnv.BASE_URL,
-    },
-  };
+  // Generate rich schema markup with FAQPage and BreadcrumbList
+  const schema = generatePSEOSchema(platform, 'platforms', 'en');
 
   const path = `/platforms/${slug}`;
 

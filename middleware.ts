@@ -16,6 +16,48 @@ import { DEFAULT_LOCALE, isValidLocale, LOCALE_COOKIE, type Locale } from '@/i18
 import { getLocaleFromCountry } from '@lib/i18n/country-locale-map';
 
 /**
+ * Tracking and analytics query parameters that should be stripped from canonical URLs
+ * These params don't affect page content and should be removed for SEO
+ */
+const TRACKING_QUERY_PARAMS = [
+  'signup',
+  'login',
+  'next',
+  'ref',
+  'source',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_term',
+  'utm_content',
+  'fbclid',
+  'gclid',
+  'msclkid',
+];
+
+/**
+ * Strip tracking query parameters from URL for canonical URL generation
+ * Returns a clean URL without tracking parameters for SEO purposes
+ *
+ * @param url - The Next.js URL object
+ * @returns Cleaned URL without tracking parameters
+ *
+ * @example
+ * // Input: https://example.com/tools/upscaler?signup=1&utm_source=google
+ * // Output: https://example.com/tools/upscaler/
+ */
+function stripTrackingParams(url: URL): URL {
+  const cleanUrl = new URL(url.toString());
+
+  // Remove all tracking query parameters
+  for (const param of TRACKING_QUERY_PARAMS) {
+    cleanUrl.searchParams.delete(param);
+  }
+
+  return cleanUrl;
+}
+
+/**
  * Handle WWW to non-WWW redirect for SEO consistency
  * Redirects www.myimageupscaler.com to myimageupscaler.com
  */
@@ -27,10 +69,60 @@ function handleWWWRedirect(req: NextRequest): NextResponse | null {
     const url = req.nextUrl.clone();
     url.protocol = req.nextUrl.protocol;
     url.hostname = hostname.slice(4); // Remove 'www.' prefix
-    return NextResponse.redirect(url, 301); // Permanent redirect for SEO
+    const response = NextResponse.redirect(url, 301); // Permanent redirect for SEO
+    applySecurityHeaders(response);
+    return response;
   }
 
   return null;
+}
+
+/**
+ * Handle query parameter cleanup for SEO
+ * Strips tracking and analytics query parameters to ensure clean canonical URLs
+ *
+ * This function redirects to a clean URL without tracking parameters for SEO purposes.
+ * The original tracking params are preserved in headers for application use if needed.
+ *
+ * Tracking params removed: signup, login, next, ref, source, utm_*, fbclid, gclid, msclkid
+ *
+ * @param req - The Next.js request object
+ * @returns NextResponse with cleaned URL, or null if no tracking params present
+ *
+ * @example
+ * // Request: /?signup=1&utm_source=google
+ * // Response: Redirects to / (params stripped, page can still access original via headers)
+ */
+function handleTrackingParams(req: NextRequest): NextResponse | null {
+  const originalSearchParams = req.nextUrl.searchParams;
+  const hasTrackingParams = TRACKING_QUERY_PARAMS.some(param => originalSearchParams.has(param));
+
+  if (!hasTrackingParams) {
+    return null;
+  }
+
+  // Create a clean URL without tracking parameters
+  const cleanUrl = stripTrackingParams(req.nextUrl);
+
+  // Always redirect to clean URL for SEO
+  // This ensures the canonical URL is always clean in the browser
+  const url = req.nextUrl.clone();
+  url.search = cleanUrl.search;
+
+  const response = NextResponse.redirect(url, 301); // Permanent redirect for SEO
+
+  // Apply security headers
+  applySecurityHeaders(response);
+
+  // Preserve original tracking params in headers for app logic if needed
+  for (const param of TRACKING_QUERY_PARAMS) {
+    const value = originalSearchParams.get(param);
+    if (value) {
+      response.headers.set(`x-original-${param}`, value);
+    }
+  }
+
+  return response;
 }
 
 /**
@@ -159,12 +251,17 @@ function handleLocaleRouting(req: NextRequest): NextResponse | null {
     // For default locale (en), rewrite to /en/... internally (keeps URL clean)
     if (detectedLocale === DEFAULT_LOCALE) {
       url.pathname = `/en${pathname === '/' ? '' : pathname}`;
-      return NextResponse.rewrite(url);
+      const response = NextResponse.rewrite(url);
+      applySecurityHeaders(response);
+      return response;
     }
 
     // For non-default locales, redirect to show locale in URL
     url.pathname = `/${detectedLocale}${pathname}`;
     const response = NextResponse.redirect(url);
+
+    // Apply security headers
+    applySecurityHeaders(response);
 
     // Set locale cookie
     response.cookies.set(LOCALE_COOKIE, detectedLocale, {
@@ -179,6 +276,9 @@ function handleLocaleRouting(req: NextRequest): NextResponse | null {
   const pathLocale = segments[0] as Locale;
   if (isValidLocale(pathLocale)) {
     const response = NextResponse.next();
+
+    // Apply security headers
+    applySecurityHeaders(response);
 
     // Update cookie if needed
     if (req.cookies.get(LOCALE_COOKIE)?.value !== pathLocale) {
@@ -367,9 +467,10 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
  * 1. Locale detection and routing (must be first for page routes)
  * 2. WWW to non-WWW redirect for SEO
  * 3. Legacy URL redirects for SEO (must come before locale routing to catch old URLs)
- * 4. Page routes: Session refresh via cookies, auth-based redirects
- * 5. API routes: JWT verification via Authorization header, rate limiting
- * 6. Security headers on all responses
+ * 4. Tracking parameter cleanup for SEO (strip UTM, signup, etc. params)
+ * 5. Page routes: Session refresh via cookies, auth-based redirects
+ * 6. API routes: JWT verification via Authorization header, rate limiting
+ * 7. Security headers on all responses
  */
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const pathname = req.nextUrl.pathname;
@@ -384,6 +485,12 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   const legacyRedirect = handleLegacyRedirects(req);
   if (legacyRedirect) {
     return legacyRedirect;
+  }
+
+  // Handle tracking parameter cleanup for SEO (before locale routing)
+  const trackingParamsCleanup = handleTrackingParams(req);
+  if (trackingParamsCleanup) {
+    return trackingParamsCleanup;
   }
 
   // Handle locale routing for page routes

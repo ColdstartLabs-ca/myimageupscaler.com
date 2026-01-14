@@ -3,14 +3,19 @@
  * Template for device × use case multiplier pages (mobile social media, desktop professional, etc.)
  */
 
+'use client';
+
 import type { IDeviceUseCasePage } from '@/lib/seo/pseo-types';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
-import { ReactElement } from 'react';
+import { getRelatedPages, type IRelatedPage } from '@/lib/seo/related-pages';
+import { ReactElement, useEffect, useState } from 'react';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { CTASection } from '../sections/CTASection';
 import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
+import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 
@@ -23,6 +28,20 @@ export function DeviceUsePageTemplate({ data, locale }: IDeviceUsePageTemplatePr
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/device-use/${data.slug}`);
   const tier = pageMapping?.tier;
+
+  // State for related pages
+  const [relatedPages, setRelatedPages] = useState<IRelatedPage[]>([]);
+
+  // Fetch related pages on mount
+  useEffect(() => {
+    getRelatedPages(
+      'device-use',
+      data.slug,
+      (locale as 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja') || 'en'
+    ).then(pages => {
+      setRelatedPages(pages);
+    });
+  }, [data.slug, locale]);
 
   // Get device icon
   const getDeviceIcon = (device: string) => {
@@ -37,6 +56,22 @@ export function DeviceUsePageTemplate({ data, locale }: IDeviceUsePageTemplatePr
         return '💻';
     }
   };
+
+  // Get locale-aware labels for before/after slider
+  const getBeforeAfterLabels = (locale?: string) => {
+    const labels: Record<string, { before: string; after: string }> = {
+      en: { before: 'Before', after: 'After' },
+      es: { before: 'Antes', after: 'Después' },
+      pt: { before: 'Antes', after: 'Depois' },
+      de: { before: 'Vorher', after: 'Nachher' },
+      fr: { before: 'Avant', after: 'Après' },
+      it: { before: 'Prima', after: 'Dopo' },
+      ja: { before: '前', after: '後' },
+    };
+    return labels[locale || 'en'] || labels.en;
+  };
+
+  const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
     <div className="min-h-screen bg-base relative">
@@ -119,6 +154,21 @@ export function DeviceUsePageTemplate({ data, locale }: IDeviceUsePageTemplatePr
             </div>
           </FadeIn>
 
+          {/* Before/After Slider */}
+          <FadeIn delay={0.25}>
+            <div className="py-12">
+              <div className="max-w-3xl mx-auto">
+                <BeforeAfterSlider
+                  beforeUrl="/before-after/women-before.webp"
+                  afterUrl="/before-after/women-after.webp"
+                  beforeLabel={sliderLabels.before}
+                  afterLabel={sliderLabels.after}
+                  className="shadow-2xl shadow-accent/10"
+                />
+              </div>
+            </div>
+          </FadeIn>
+
           {/* Device Constraints */}
           {data.deviceConstraints && data.deviceConstraints.length > 0 && (
             <FadeIn delay={0.3}>
@@ -181,6 +231,9 @@ export function DeviceUsePageTemplate({ data, locale }: IDeviceUsePageTemplatePr
               </section>
             </FadeIn>
           )}
+
+          {/* Related Pages */}
+          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
 
           {/* FAQ */}
           {data.faq && data.faq.length > 0 && (

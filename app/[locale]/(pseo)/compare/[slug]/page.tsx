@@ -6,6 +6,7 @@ import { ComparePageTemplate } from '@/app/(pseo)/_components/pseo/templates/Com
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { generateComparisonSchema } from '@/lib/seo/schema-generator';
 import type { Locale } from '@/i18n/config';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
 interface IComparisonPageProps {
   params: Promise<{ slug: string; locale: Locale }>;
@@ -13,7 +14,7 @@ interface IComparisonPageProps {
 
 export async function generateStaticParams() {
   const slugs = await getAllComparisonSlugs();
-  return slugs.map(slug => ({ slug }));
+  return SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
 }
 
 export async function generateMetadata({ params }: IComparisonPageProps): Promise<Metadata> {

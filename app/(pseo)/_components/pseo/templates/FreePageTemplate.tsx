@@ -4,28 +4,65 @@
  * with clear upgrade paths to premium
  */
 
+'use client';
+
 import type { IFreePage } from '@/lib/seo/pseo-types';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
-import { ReactElement } from 'react';
+import { getRelatedPages, type IRelatedPage } from '@/lib/seo/related-pages';
+import { ReactElement, useEffect, useState } from 'react';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { CTASection } from '../sections/CTASection';
 import { FAQSection } from '../sections/FAQSection';
 import { FeaturesSection } from '../sections/FeaturesSection';
 import { HeroSection } from '../sections/HeroSection';
+import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { Check, X, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import type { Locale } from '@/i18n/config';
 
 interface IFreePageTemplateProps {
   data: IFreePage;
+  locale?: Locale;
 }
 
-export function FreePageTemplate({ data }: IFreePageTemplateProps): ReactElement {
+export function FreePageTemplate({ data, locale }: IFreePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/free/${data.slug}`);
   const tier = pageMapping?.tier;
+
+  // State for related pages
+  const [relatedPages, setRelatedPages] = useState<IRelatedPage[]>([]);
+
+  // Fetch related pages on mount
+  useEffect(() => {
+    getRelatedPages(
+      'free',
+      data.slug,
+      (locale as 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja') || 'en'
+    ).then(pages => {
+      setRelatedPages(pages);
+    });
+  }, [data.slug, locale]);
+
+  // Get locale-aware labels for before/after slider
+  const getBeforeAfterLabels = (locale?: string) => {
+    const labels: Record<string, { before: string; after: string }> = {
+      en: { before: 'Before', after: 'After' },
+      es: { before: 'Antes', after: 'Después' },
+      pt: { before: 'Antes', after: 'Depois' },
+      de: { before: 'Vorher', after: 'Nachher' },
+      fr: { before: 'Avant', after: 'Après' },
+      it: { before: 'Prima', after: 'Dopo' },
+      ja: { before: '前', after: '後' },
+    };
+    return labels[locale || 'en'] || labels.en;
+  };
+
+  const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
     <div className="min-h-screen bg-surface relative">
@@ -98,6 +135,21 @@ export function FreePageTemplate({ data }: IFreePageTemplateProps): ReactElement
               </div>
             </FadeIn>
           )}
+
+          {/* Before/After Slider */}
+          <FadeIn delay={0.25}>
+            <div className="py-12">
+              <div className="max-w-3xl mx-auto">
+                <BeforeAfterSlider
+                  beforeUrl="/before-after/women-before.webp"
+                  afterUrl="/before-after/women-after.webp"
+                  beforeLabel={sliderLabels.before}
+                  afterLabel={sliderLabels.after}
+                  className="shadow-2xl shadow-accent/10"
+                />
+              </div>
+            </div>
+          </FadeIn>
 
           {/* Free Features */}
           {data.features && data.features.length > 0 && (
@@ -182,6 +234,9 @@ export function FreePageTemplate({ data }: IFreePageTemplateProps): ReactElement
           {data.faq && data.faq.length > 0 && (
             <FAQSection faqs={data.faq} pageType="free" slug={data.slug} />
           )}
+
+          {/* Related Pages */}
+          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
 
           {/* Upgrade CTA */}
           <div className="py-8">

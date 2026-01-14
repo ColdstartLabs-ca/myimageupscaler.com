@@ -3,28 +3,65 @@
  * Template for guide/tutorial landing pages (how-to, tutorials, explainers)
  */
 
+'use client';
+
 import type { IGuidePage } from '@/lib/seo/pseo-types';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
-import { ReactElement } from 'react';
+import { getRelatedPages, type IRelatedPage } from '@/lib/seo/related-pages';
+import { ReactElement, useEffect, useState } from 'react';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { CTASection } from '../sections/CTASection';
 import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
+import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { MarkdownRenderer } from '../ui/MarkdownRenderer';
 import { BookOpen, Clock, BarChart3, Lightbulb, CheckCircle2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import type { Locale } from '@/i18n/config';
 
 interface IGuidePageTemplateProps {
   data: IGuidePage;
+  locale?: Locale;
 }
 
-export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactElement {
+export function GuidePageTemplate({ data, locale }: IGuidePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/guides/${data.slug}`);
   const tier = pageMapping?.tier;
+
+  // State for related pages
+  const [relatedPages, setRelatedPages] = useState<IRelatedPage[]>([]);
+
+  // Fetch related pages on mount
+  useEffect(() => {
+    getRelatedPages(
+      'guides',
+      data.slug,
+      (locale as 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja') || 'en'
+    ).then(pages => {
+      setRelatedPages(pages);
+    });
+  }, [data.slug, locale]);
+
+  // Get locale-aware labels for before/after slider
+  const getBeforeAfterLabels = (locale?: string) => {
+    const labels: Record<string, { before: string; after: string }> = {
+      en: { before: 'Before', after: 'After' },
+      es: { before: 'Antes', after: 'Después' },
+      pt: { before: 'Antes', after: 'Depois' },
+      de: { before: 'Vorher', after: 'Nachher' },
+      fr: { before: 'Avant', after: 'Après' },
+      it: { before: 'Prima', after: 'Dopo' },
+      ja: { before: '前', after: '後' },
+    };
+    return labels[locale || 'en'] || labels.en;
+  };
+
+  const sliderLabels = getBeforeAfterLabels(locale);
 
   // Difficulty badge styling
   const difficultyStyles = {
@@ -134,6 +171,21 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
             </FadeIn>
           )}
 
+          {/* Before/After Slider */}
+          <FadeIn delay={0.32}>
+            <div className="py-12">
+              <div className="max-w-3xl mx-auto">
+                <BeforeAfterSlider
+                  beforeUrl="/before-after/women-before.webp"
+                  afterUrl="/before-after/women-after.webp"
+                  beforeLabel={sliderLabels.before}
+                  afterLabel={sliderLabels.after}
+                  className="shadow-2xl shadow-accent/10"
+                />
+              </div>
+            </div>
+          </FadeIn>
+
           {/* Step-by-Step Instructions */}
           {data.steps && data.steps.length > 0 && (
             <FadeIn delay={0.4}>
@@ -219,6 +271,9 @@ export function GuidePageTemplate({ data }: IGuidePageTemplateProps): ReactEleme
           {data.faq && data.faq.length > 0 && (
             <FAQSection faqs={data.faq} pageType="guide" slug={data.slug} />
           )}
+
+          {/* Related Pages */}
+          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
 
           {/* CTA */}
           <div className="py-8">

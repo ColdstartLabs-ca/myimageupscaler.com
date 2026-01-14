@@ -3,9 +3,13 @@
  * Template for format × scale multiplier pages (JPEG 2x, PNG 4x, etc.)
  */
 
+'use client';
+
 import type { IFormatScalePage } from '@/lib/seo/pseo-types';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
-import { ReactElement } from 'react';
+import { getRelatedPages, type IRelatedPage } from '@/lib/seo/related-pages';
+import { ReactElement, useEffect, useState } from 'react';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { BenefitsSection } from '../sections/BenefitsSection';
@@ -13,6 +17,7 @@ import { CTASection } from '../sections/CTASection';
 import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
 import { UseCasesSection } from '../sections/UseCasesSection';
+import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 
@@ -32,10 +37,40 @@ export function FormatScalePageTemplate({
   const pageMapping = getPageMappingByUrl(`/format-scale/${data.slug}`);
   const tier = pageMapping?.tier;
 
+  // State for related pages
+  const [relatedPages, setRelatedPages] = useState<IRelatedPage[]>([]);
+
+  // Fetch related pages on mount
+  useEffect(() => {
+    getRelatedPages(
+      'format-scale',
+      data.slug,
+      (locale as 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja') || 'en'
+    ).then(pages => {
+      setRelatedPages(pages);
+    });
+  }, [data.slug, locale]);
+
   // Normalize bestPractices to handle both string[] and object[]
   const normalizedBestPractices = data.bestPractices?.map(bp =>
     typeof bp === 'string' ? { title: bp, description: '' } : bp
   );
+
+  // Get locale-aware labels for before/after slider
+  const getBeforeAfterLabels = (locale?: string) => {
+    const labels: Record<string, { before: string; after: string }> = {
+      en: { before: 'Before', after: 'After' },
+      es: { before: 'Antes', after: 'Después' },
+      pt: { before: 'Antes', after: 'Depois' },
+      de: { before: 'Vorher', after: 'Nachher' },
+      fr: { before: 'Avant', after: 'Après' },
+      it: { before: 'Prima', after: 'Dopo' },
+      ja: { before: '前', after: '後' },
+    };
+    return labels[locale || 'en'] || labels.en;
+  };
+
+  const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
     <div className="min-h-screen bg-base relative">
@@ -120,6 +155,21 @@ export function FormatScalePageTemplate({
             </div>
           </FadeIn>
 
+          {/* Before/After Slider */}
+          <FadeIn delay={0.25}>
+            <div className="py-12">
+              <div className="max-w-3xl mx-auto">
+                <BeforeAfterSlider
+                  beforeUrl="/before-after/women-before.webp"
+                  afterUrl="/before-after/women-after.webp"
+                  beforeLabel={sliderLabels.before}
+                  afterLabel={sliderLabels.after}
+                  className="shadow-2xl shadow-accent/10"
+                />
+              </div>
+            </div>
+          </FadeIn>
+
           {/* Benefits */}
           {data.benefits && data.benefits.length > 0 && (
             <BenefitsSection benefits={data.benefits} />
@@ -174,6 +224,9 @@ export function FormatScalePageTemplate({
               </section>
             </FadeIn>
           )}
+
+          {/* Related Pages */}
+          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
 
           {/* FAQ */}
           {data.faq && data.faq.length > 0 && (

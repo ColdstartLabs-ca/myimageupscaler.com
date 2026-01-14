@@ -8,6 +8,7 @@ import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import type { Locale } from '@/i18n/config';
 import { clientEnv } from '@shared/config/env';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
 interface IFormatPageProps {
   params: Promise<{ slug: string; locale: Locale }>;
@@ -15,7 +16,7 @@ interface IFormatPageProps {
 
 export async function generateStaticParams() {
   const slugs = await getAllFormatSlugs();
-  return slugs.map(slug => ({ slug }));
+  return SUPPORTED_LOCALES.flatMap(locale => slugs.map(slug => ({ slug, locale })));
 }
 
 export async function generateMetadata({ params }: IFormatPageProps): Promise<Metadata> {

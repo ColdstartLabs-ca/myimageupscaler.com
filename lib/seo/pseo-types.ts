@@ -223,6 +223,11 @@ export interface IPlatformPage extends IBasePSEOPage {
   faq: IFAQ[];
   relatedPlatforms: string[];
   relatedTools: string[];
+  // Phase 8: Content expansion fields
+  detailedDescription?: string;
+  technicalDetails?: string;
+  bestPractices?: string[];
+  comparisonNotes?: string;
 }
 
 /**
@@ -301,6 +306,10 @@ export interface IFormatScalePage extends IBasePSEOPage {
   faq: IFAQ[];
   relatedFormats: string[];
   relatedScales: string[];
+  // Phase 8: Content expansion fields
+  detailedDescription?: string;
+  technicalDetails?: string;
+  comparisonNotes?: string;
 }
 
 /**
@@ -321,6 +330,11 @@ export interface IPlatformFormatPage extends IBasePSEOPage {
   faq: IFAQ[];
   relatedPlatforms: string[];
   relatedFormats: string[];
+  // Phase 8: Content expansion fields
+  detailedDescription?: string;
+  technicalDetails?: string;
+  bestPractices?: string[];
+  comparisonNotes?: string;
 }
 
 /**
@@ -339,6 +353,11 @@ export interface IDeviceUseCasePage extends IBasePSEOPage {
   faq: IFAQ[];
   relatedDevices: string[];
   relatedUseCases: string[];
+  // Phase 8: Content expansion fields
+  detailedDescription?: string;
+  technicalDetails?: string;
+  bestPractices?: string[];
+  comparisonNotes?: string;
 }
 
 /**
