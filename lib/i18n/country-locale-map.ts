@@ -45,9 +45,9 @@ export const COUNTRY_LOCALE_MAP: Record<string, Locale> = {
   // =====================
   FR: 'fr', // France (highest priority - large market)
   BE: 'fr', // Belgium (French-speaking majority)
-  CA: 'fr', // Canada (French-speaking Quebec)
   MC: 'fr', // Monaco
   AD: 'fr', // Andorra
+  // Note: Canada (CA) excluded - defaults to English (majority language)
 
   // =====================
   // Italian (it)

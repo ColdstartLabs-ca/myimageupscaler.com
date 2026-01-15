@@ -2,6 +2,7 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
+import React from 'react';
 
 // Mock translations for stripe.cancelSubscription
 const mockTranslations = {
