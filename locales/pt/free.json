@@ -9,11 +9,7 @@
       "h1": "Ampliador de Imagem Grátis - Aprimore Fotos Online com IA",
       "intro": "Obtenha ampliação de imagem profissional completamente grátis. 10 créditos para começar, sem cadastro necessário, e zero marcas d'água em suas imagens aprimoradas.",
       "primaryKeyword": "ampliador de imagem grátis",
-      "secondaryKeywords": [
-        "ampliador de foto grátis",
-        "ampliar imagem grátis",
-        "ampliador de ia grátis"
-      ],
+      "secondaryKeywords": ["ampliador de foto grátis", "ampliar imagem grátis", "ampliador de ia grátis"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Ampliador de Imagem Grátis",
@@ -284,11 +280,7 @@
           "description": "Detecção e aprimoramento inteligente de borda cria linhas limpas e nítidas sem artefatos ou halos."
         }
       ],
-      "limitations": [
-        "10 ampliações por mês",
-        "Aumento máximo de resolução 4x",
-        "Uma imagem por vez"
-      ],
+      "limitations": ["10 ampliações por mês", "Aumento máximo de resolução 4x", "Uma imagem por vez"],
       "upgradePoints": [
         "Até 8x de ampliação (vs 4x no tier grátis)",
         "Ampliações mensais ilimitadas",

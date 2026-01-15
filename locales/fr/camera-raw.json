@@ -23,8 +23,26 @@
       "lastUpdated": "2025-01-19",
       "cameraBrand": "Nikon",
       "cameraModels": {
-        "professional": ["Z9", "Z8", "Z7 II", "Z7", "Z6 II", "Z6", "Z5", "Zf"],
-        "dslr": ["D850", "D780", "D750", "D610", "D500", "D7500", "D5600", "D3500"],
+        "professional": [
+          "Z9",
+          "Z8",
+          "Z7 II",
+          "Z7",
+          "Z6 II",
+          "Z6",
+          "Z5",
+          "Zf"
+        ],
+        "dslr": [
+          "D850",
+          "D780",
+          "D750",
+          "D610",
+          "D500",
+          "D7500",
+          "D5600",
+          "D3500"
+        ],
         "legacy": ["D4", "D3X", "D3S", "D700", "D300", "D200"]
       },
       "formatSpecs": {
@@ -344,7 +362,16 @@
         ],
         "enthusiastFullFrame": ["EOS RP", "EOS R8", "6D Mark II", "6D", "5D Mark III"],
         "apsCPro": ["EOS R7", "EOS R10", "90D", "80D", "7D Mark II", "7D Mark III"],
-        "entryLevel": ["EOS R50", "EOS R100", "850D", "250D", "200D II", "1500D", "1300D", "1200D"]
+        "entryLevel": [
+          "EOS R50",
+          "EOS R100",
+          "850D",
+          "250D",
+          "200D II",
+          "1500D",
+          "1300D",
+          "1200D"
+        ]
       },
       "formatSpecs": {
         "fullForm": "Canon Raw version 2",

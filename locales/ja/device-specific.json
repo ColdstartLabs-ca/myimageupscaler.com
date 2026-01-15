@@ -61,7 +61,7 @@
           "notes": "上部にノッチ"
         },
         {
-          "model": "iPhone SE (3rd/2nd gen)",
+          "model": "iPhone SE (第3世代/第2世代)",
           "width": 750,
           "height": 1334,
           "aspectRatio": "16:9",
@@ -223,7 +223,7 @@
       },
       "dimensionsByBrand": [
         {
-          "brand": "Samsung Galaxy S Series",
+          "brand": "Samsung Galaxy Sシリーズ",
           "models": [
             {
               "model": "Galaxy S24 Ultra",
@@ -376,11 +376,7 @@
       "h1": "Deskトップ Wallpaper サイズ ガイド",
       "intro": "Find the right wallpaper サイズ for your monitor. Covers standard, ultRAWide, and multi-monitor setups.",
       "primaryKeyword": "desktop wallpaper size",
-      "secondaryKeywords": [
-        "4k wallpaper size",
-        "1440p wallpaper dimensions",
-        "ultrawide wallpaper size"
-      ],
+      "secondaryKeywords": ["4k wallpaper size", "1440p wallpaper dimensions", "ultrawide wallpaper size"],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "拡大",
       "deviceFamily": "デスクトップ",
@@ -443,55 +439,55 @@
           "width": 5120,
           "height": 1440,
           "aspectRatio": "32:9",
-          "notes": "Samsung Odyssey G9 and similar"
+          "notes": "Samsung Odyssey G9と同類"
         },
         {
-          "resolution": "Dual 1080p (side by side)",
+          "resolution": "デュアル1080p (並列)",
           "width": 3840,
           "height": 1080,
           "aspectRatio": "32:9",
-          "notes": "Two 1080p monitors spanning"
+          "notes": "2つの1080pモニターにまたがる"
         },
         {
-          "resolution": "Dual 1440p (side by side)",
+          "resolution": "デュアル1440p (並列)",
           "width": 5120,
           "height": 1440,
           "aspectRatio": "32:9",
-          "notes": "Two 1440p monitors spanning"
+          "notes": "2つの1440pモニターにまたがる"
         },
         {
-          "resolution": "Dual 4K (side by side)",
+          "resolution": "デュアル4K (並列)",
           "width": 7680,
           "height": 2160,
           "aspectRatio": "32:9",
-          "notes": "Two 4K monitors spanning"
+          "notes": "2つの4Kモニターにまたがる"
         }
       ],
       "tips": [
         {
-          "title": "Check your actual resolution",
-          "description": "Right-click desktop > Display settings (Windows) or System Preferences > Displays (Mac) to see exact dimensions."
+          "title": "実際の解像度を確認する",
+          "description": "デスクトップを右クリック > ディスプレイ設定(Windows)またはシステム環境設定 > ディスプレイ(Mac)で正確な寸法を確認できます。"
         },
         {
-          "title": "Multi-monitor spanning",
-          "description": "For wallpapers that span monitors, add the widths together. Two 1920x1080 monitors = 3840x1080 total."
+          "title": "マルチモニター対応",
+          "description": "モニターにまたがる壁紙の場合、幅を合計します。2つの1920x1080モニター = 合計3840x1080。"
         },
         {
-          "title": "Scaling matters",
-          "description": "A 4K monitor at 150% scaling still uses 3840x2160 for wallpapers. Use full resolution regardless of scaling."
+          "title": "スケーリングが重要",
+          "description": "150%スケーリングの4Kモニターでも、壁紙には3840x2160が使用されます。スケーリングに関係なくフル解像度を使用してください。"
         }
       ],
       "upscalingGuide": [
         {
           "source": "1080p wallpaper",
           "target": "4K (3840x2160)",
-          "upscale": "2x upscaling gives exactly 4K",
-          "quality": "Good results with AI upscaling"
+          "upscale": "2倍のアップスケーリングで正確に4Kに",
+          "quality": "AIアップスケーリングで良好な結果"
         },
         {
           "source": "1440p wallpaper",
           "target": "4K (3840x2160)",
-          "upscale": "1.5x - may need crop after upscaling 2x",
+          "upscale": "1.5倍 - アップスケーリング2倍後にクロップが必要な場合があります",
           "quality": "優れた結果"
         },
         {

@@ -160,11 +160,7 @@
           "description": "Laden Sie JPEG, PNG oder WebP hoch. Laden Sie in jedem gewünschten Format mit optimalen Kompressionseinstellungen herunter."
         }
       ],
-      "limitations": [
-        "10 Bildverbesserungen monatlich",
-        "Max 25MB pro Bild",
-        "Einzelbildverarbeitung"
-      ],
+      "limitations": ["10 Bildverbesserungen monatlich", "Max 25MB pro Bild", "Einzelbildverarbeitung"],
       "upgradePoints": [
         "Unbegrenzte Gutschriften pro Monat",
         "100MB maximale Dateigröße (vs 25MB kostenlos)",

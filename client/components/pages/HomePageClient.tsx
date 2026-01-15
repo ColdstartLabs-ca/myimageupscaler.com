@@ -97,7 +97,7 @@ export function HomePageClient(): JSX.Element {
   return (
     <div className="flex-grow bg-main font-sans selection:bg-accent/20 selection:text-white">
       {/* Hero Section */}
-      <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025">
+      <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025 overflow-hidden">
         <AmbientBackground variant="hero" />
 
         <motion.div

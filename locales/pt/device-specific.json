@@ -1,5 +1,5 @@
 {
-  "category": "scale",
+  "category": "escala",
   "pages": [
     {
       "slug": "iphone-wallpaper-sizes",
@@ -15,7 +15,7 @@
         "tamanho de tela de bloqueio iphone"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "deviceFamily": "iPhone",
       "quickReference": {
         "mostCommon": "1290x2796px",
@@ -147,7 +147,7 @@
         "tamanho de fundo de telefone android"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "deviceFamily": "Android",
       "quickReference": {
         "mostCommon": "1440x3200px",
@@ -155,7 +155,7 @@
       },
       "dimensionsByBrand": [
         {
-          "brand": "Samsung Galaxy S Series",
+          "brand": "Samsung Galaxy S Série",
           "models": [
             {
               "model": "Galaxy S24 Ultra",
@@ -293,7 +293,7 @@
         "tamanho de papel de parede ultrawide"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "deviceFamily": "Desktop",
       "quickReference": {
         "mostCommon": "1920x1080px (1080p)",
