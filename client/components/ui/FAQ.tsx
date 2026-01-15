@@ -12,10 +12,22 @@ export interface IFAQItem {
 export interface IFAQProps {
   items: IFAQItem[];
   className?: string;
+  openIndex?: number | null;
+  onToggle?: (index: number) => void;
 }
 
-export function FAQ({ items, className = '' }: IFAQProps): JSX.Element {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+export function FAQ({
+  items,
+  className = '',
+  openIndex: controlledOpenIndex,
+  onToggle: controlledOnToggle,
+}: IFAQProps): JSX.Element {
+  const [internalOpenIndex, setInternalOpenIndex] = useState<number | null>(null);
+
+  // Use controlled or uncontrolled state
+  const isControlled = controlledOpenIndex !== undefined && controlledOnToggle !== undefined;
+  const openIndex = isControlled ? controlledOpenIndex : internalOpenIndex;
+  const setOpenIndex = isControlled ? controlledOnToggle : setInternalOpenIndex;
 
   const toggleOpen = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);

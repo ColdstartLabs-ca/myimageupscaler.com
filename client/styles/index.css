@@ -220,22 +220,22 @@
   .ambient-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(150px);
-    opacity: 0.5;
+    filter: blur(120px);
+    opacity: 0.6;
     pointer-events: none;
     will-change: transform;
   }
 
   .ambient-orb-violet {
-    background: rgba(139, 92, 246, 0.15);
+    background: rgba(139, 92, 246, 0.25);
   }
 
   .ambient-orb-blue {
-    background: rgba(59, 130, 246, 0.12);
+    background: rgba(59, 130, 246, 0.2);
   }
 
   .ambient-orb-teal {
-    background: rgba(20, 184, 166, 0.1);
+    background: rgba(20, 184, 166, 0.18);
   }
 
   /* === HERO GRADIENT 2025 === */

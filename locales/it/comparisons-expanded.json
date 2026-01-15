@@ -1144,9 +1144,9 @@
           },
           {
             "name": "Zapier/Crea/Fai automation",
-            "setup": "No-code platform",
+            "setup": "Piattaforma no-code",
             "complexity": "Basso",
-            "features": ["Visual builder", "3000+ integrations", "Veloce setup"],
+            "features": ["Costruttore visuale", "3000+ integrations", "Veloce setup"],
             "cost": "$20-500/month based on usage"
           }
         ]
@@ -1154,21 +1154,21 @@
       "bestPractices": {
         "preProcessing": [
           "Validate input formats and risoluziones",
-          "Check for corrupted files",
-          "Standardize color spaces",
-          "Remove metadata if sensitive",
-          "Organize by priority"
+          "Verifica presenza di file corrotti",
+          "Standardizza gli spazi colore",
+          "Rimuovi i metadati se sensibili",
+          "Organizza per priorità"
         ],
         "processing": [
-          "Implement error handling and retries",
+          "Implementa la gestione degli errori e i tentativi",
           "Usa queue systems for reliability",
-          "Monitor progress and performance",
-          "Log all processing events",
-          "Implement quality checks"
+          "Monitora i progressi e le prestazioni",
+          "Registra tutti gli eventi di elaborazione",
+          "Implementa controlli di qualità"
         ],
         "postProcessing": [
-          "Verify output quality",
-          "Organize processed files",
+          "Verifica la qualità in uscita",
+          "Organizza i file elaborati",
           "Genera report e statistiche",
           "Archivia i file originali",
           "Pulisci i file temporanei"
@@ -1196,7 +1196,7 @@
             "gain": "Miglioramento efficienza 15-30%"
           },
           {
-            "strategy": "Caching",
+            "strategy": "Cache",
             "description": "Archivia e riutilizza i risultati elaborati",
             "implementation": "Rilevamento duplicati basato su hash",
             "gain": "Riduzione 50-80% del lavoro ridondante"
@@ -1362,7 +1362,7 @@
           ],
           "characteristics": {
             "processingTime": "30-120+ secondi per immagine",
-            "quality": "State-of-the-art",
+            "quality": "All'avanguardia",
             "useCases": ["Applicazioni critiche", "Imaging medico", "Restauro artistico"],
             "hardware": "Alto-end GPU/Cloud",
             "cost": "Alto"
@@ -1877,43 +1877,43 @@
           "security": "Eccellente - provider cannot access content",
           "compliance": "Forte protezione della privacy",
           "pros": [
-            "Maximum privacy",
-            "Provider cannot access data",
-            "Strong encryption",
+            "Privacy massima",
+            "Il provider non può accedere ai dati",
+            "Crittografia forte",
             "Privacy by design"
           ],
           "cons": [
             "Limitato availability",
             "Fewer caratteristiche",
             "Altoer costs",
-            "Newer technology"
+            "Tecnologia più recente"
           ],
-          "bestFor": "Maximum privacy requirements",
-          "providers": ["Emerging zero-knowledge services", "Homomorphic encryption"]
+          "bestFor": "Requisiti di privacy massima",
+          "providers": ["Servizi zero-knowledge emergenti", "Crittografia omomorfica"]
         }
       },
       "bestPractices": {
         "dataClassification": [
           {
-            "level": "Public",
+            "level": "Pubblico",
             "description": "No privacy concerns",
             "processing": "Any online service acceptable",
             "examples": "Stock photos, marketing materials"
           },
           {
-            "level": "Internal",
+            "level": "Interno",
             "description": "Internal business Usa only",
             "processing": "Corporate-approved cloud services",
             "examples": "Internal documents, business photos"
           },
           {
-            "level": "Confidential",
+            "level": "Riservato",
             "description": "Aziendale confidential information",
             "processing": "On-premise or private cloud",
             "examples": "Prodotto designs, financial documents"
           },
           {
-            "level": "Restricted",
+            "level": "Restritto",
             "description": "Highest sensitivity",
             "processing": "Local processing only, air-gapped systems",
             "examples": "Medical records, legal documents, government ID"
@@ -1930,7 +1930,7 @@
           "Documento all security procedures"
         ],
         "privacyByDesign": [
-          "Minimize data collection",
+          "Minimizza la raccolta dati",
           "Automatic data deletion",
           "Privacy-focused AI models",
           "Transparent data handling",
