@@ -99,6 +99,10 @@ export function getCategoryDisplayName(category: PSEOCategory): string {
     'device-use': 'Device Use',
     'format-scale': 'Format & Scale',
     'platform-format': 'Platform & Format',
+    'photo-restoration': 'Photo Restoration',
+    'camera-raw': 'Camera RAW',
+    'industry-insights': 'Industry Insights',
+    'device-optimization': 'Device Optimization',
   };
   return names[category];
 }
@@ -125,6 +129,12 @@ export function getCategoryDescription(category: PSEOCategory): string {
       'Device-specific image enhancement solutions for mobile, tablet, and desktop workflows',
     'format-scale': 'Combined format conversion and scaling - resize and convert in one step',
     'platform-format': 'Export from AI platforms in your preferred format and dimensions',
+    'photo-restoration':
+      'Restore and repair old, faded, or damaged photos with AI-powered technology',
+    'camera-raw': 'Enhance Camera RAW files from major camera brands with AI upscaling',
+    'industry-insights': 'Industry-specific image enhancement solutions for professional workflows',
+    'device-optimization':
+      'Optimize images for specific devices and platforms for best performance',
   };
   return descriptions[category];
 }

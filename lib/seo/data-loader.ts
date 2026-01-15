@@ -33,6 +33,7 @@ import type {
   IAlternativePage,
   IGuidePage,
   IFreePage,
+  IBulkToolPage,
   IPlatformPage,
   IContentTypePage,
   IAIFeaturePage,
@@ -504,15 +505,17 @@ export const getAllPhotoRestorationSlugs = cache(async (): Promise<string[]> => 
   }
 });
 
-export const getPhotoRestorationData = cache(async (slug: string): Promise<IPhotoRestorationPage | null> => {
-  try {
-    const data = await import('@/app/seo/data/photo-restoration.json');
-    const photoRestorationData = data as unknown as IPSEODataFile<IPhotoRestorationPage>;
-    return photoRestorationData.pages.find(page => page.slug === slug) || null;
-  } catch {
-    return null;
+export const getPhotoRestorationData = cache(
+  async (slug: string): Promise<IPhotoRestorationPage | null> => {
+    try {
+      const data = await import('@/app/seo/data/photo-restoration.json');
+      const photoRestorationData = data as unknown as IPSEODataFile<IPhotoRestorationPage>;
+      return photoRestorationData.pages.find(page => page.slug === slug) || null;
+    } catch {
+      return null;
+    }
   }
-});
+);
 
 export const getAllPhotoRestorationPages = cache(async (): Promise<IPhotoRestorationPage[]> => {
   try {
@@ -568,15 +571,17 @@ export const getAllIndustryInsightsSlugs = cache(async (): Promise<string[]> => 
   }
 });
 
-export const getIndustryInsightsData = cache(async (slug: string): Promise<IIndustryInsightPage | null> => {
-  try {
-    const data = await import('@/app/seo/data/industry-insights.json');
-    const industryInsightsData = data as unknown as IPSEODataFile<IIndustryInsightPage>;
-    return industryInsightsData.pages.find(page => page.slug === slug) || null;
-  } catch {
-    return null;
+export const getIndustryInsightsData = cache(
+  async (slug: string): Promise<IIndustryInsightPage | null> => {
+    try {
+      const data = await import('@/app/seo/data/industry-insights.json');
+      const industryInsightsData = data as unknown as IPSEODataFile<IIndustryInsightPage>;
+      return industryInsightsData.pages.find(page => page.slug === slug) || null;
+    } catch {
+      return null;
+    }
   }
-});
+);
 
 export const getAllIndustryInsightsPages = cache(async (): Promise<IIndustryInsightPage[]> => {
   try {
@@ -600,15 +605,17 @@ export const getAllDeviceOptimizationSlugs = cache(async (): Promise<string[]> =
   }
 });
 
-export const getDeviceOptimizationData = cache(async (slug: string): Promise<IDeviceOptimizationPage | null> => {
-  try {
-    const data = await import('@/app/seo/data/device-optimization.json');
-    const deviceOptimizationData = data as unknown as IPSEODataFile<IDeviceOptimizationPage>;
-    return deviceOptimizationData.pages.find(page => page.slug === slug) || null;
-  } catch {
-    return null;
+export const getDeviceOptimizationData = cache(
+  async (slug: string): Promise<IDeviceOptimizationPage | null> => {
+    try {
+      const data = await import('@/app/seo/data/device-optimization.json');
+      const deviceOptimizationData = data as unknown as IPSEODataFile<IDeviceOptimizationPage>;
+      return deviceOptimizationData.pages.find(page => page.slug === slug) || null;
+    } catch {
+      return null;
+    }
   }
-});
+);
 
 export const getAllDeviceOptimizationPages = cache(async (): Promise<IDeviceOptimizationPage[]> => {
   try {

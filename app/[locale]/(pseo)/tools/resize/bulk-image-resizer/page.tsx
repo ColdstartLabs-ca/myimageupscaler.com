@@ -1,14 +1,19 @@
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
+import type { Locale } from '@/i18n/config';
+import type { IBenefit, IFAQ, IFeature, IHowItWorksStep, IUseCase } from '@/lib/seo/pseo-types';
 import { generateToolSchema } from '@/lib/seo/schema-generator';
 import { clientEnv } from '@shared/config/env';
-import type { IFeature, IUseCase, IBenefit, IHowItWorksStep, IFAQ } from '@/lib/seo/pseo-types';
+import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
+import { notFound } from 'next/navigation';
 
 // Bulk Image Resizer slug
 const BULK_RESIZER_SLUG = 'bulk-image-resizer';
+
+interface IPageProps {
+  params: Promise<{ locale: Locale }>;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('interactive-tools');
@@ -51,7 +56,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function BulkImageResizerPage() {
+export default async function BulkImageResizerPage({ params }: IPageProps) {
+  const { locale } = await params;
   const t = await getTranslations('interactive-tools');
 
   // Get the pages array and find the tool by slug
@@ -103,7 +109,7 @@ export default async function BulkImageResizerPage() {
     ctaUrl: toolData.ctaUrl as string,
   };
 
-  const schema = generateToolSchema(tool);
+  const schema = generateToolSchema(tool, locale);
 
   return (
     <>

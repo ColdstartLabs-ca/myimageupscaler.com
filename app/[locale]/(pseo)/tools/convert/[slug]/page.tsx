@@ -70,7 +70,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
 }
 
 export default async function ConversionToolPage({ params }: IPageProps) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const t = await getTranslations('interactive-tools');
 
   // Only allow conversion tool slugs
@@ -127,7 +127,7 @@ export default async function ConversionToolPage({ params }: IPageProps) {
     ctaUrl: toolData.ctaUrl as string,
   };
 
-  const schema = generateToolSchema(tool);
+  const schema = generateToolSchema(tool, locale);
 
   return (
     <>

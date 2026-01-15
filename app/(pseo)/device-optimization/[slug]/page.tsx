@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getDeviceOptimizationData, getAllDeviceOptimizationSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
-import { UseCasePageTemplate } from '@/app/(pseo)/_components/pseo/templates/UseCasePageTemplate';
+import { GenericPSEOPageTemplate } from '@/app/(pseo)/_components/pseo/templates/GenericPSEOPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
@@ -17,7 +17,9 @@ export async function generateStaticParams() {
   return slugs.map(slug => ({ slug }));
 }
 
-export async function generateMetadata({ params }: IDeviceOptimizationPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: IDeviceOptimizationPageProps): Promise<Metadata> {
   const { slug } = await params;
   const page = await getDeviceOptimizationData(slug);
 
@@ -44,7 +46,7 @@ export default async function DeviceOptimizationPage({ params }: IDeviceOptimiza
       <SeoMetaTags path={path} locale="en" />
       <HreflangLinks path={path} />
       <SchemaMarkup schema={schema} />
-      <UseCasePageTemplate data={page} />
+      <GenericPSEOPageTemplate data={page} />
     </>
   );
 }

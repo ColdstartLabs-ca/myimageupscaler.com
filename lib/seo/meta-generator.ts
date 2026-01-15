@@ -131,6 +131,34 @@ export const META_PATTERNS: Record<PSEOCategory, IMetaPattern> = {
     titleMaxLength: 60,
     descriptionMaxLength: 160,
   },
+  'photo-restoration': {
+    title: `{RestorationType} - AI Photo Restoration Free | ${APP_NAME}`,
+    description:
+      '{Description} Restore old, faded, or damaged photos with AI. Free online photo restoration tool.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
+  'camera-raw': {
+    title: `{CameraBrand} {RawFormat} Upscaler - AI Enhancement | ${APP_NAME}`,
+    description:
+      '{Description} Enhance {RawFormat} files from {CameraBrand} cameras. AI-powered RAW processing.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
+  'industry-insights': {
+    title: `{Industry} Image Enhancement - AI Solutions | ${APP_NAME}`,
+    description:
+      '{Description} AI-powered image enhancement for {Industry} applications. Improve quality and efficiency.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
+  'device-optimization': {
+    title: `{Platform} Image Optimization - Performance Solutions | ${APP_NAME}`,
+    description:
+      '{Description} Optimize images for {Platform} devices. Improve loading times and user experience.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
 };
 
 /**

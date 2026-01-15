@@ -17,6 +17,12 @@ import type {
   IDeviceUseCasePage,
   IPlatformFormatPage,
   IFormatPage,
+  IBulkToolPage,
+  IPhotoRestorationPage,
+  ICameraRawPage,
+  IContentTypePage,
+  IIndustryInsightPage,
+  IDeviceOptimizationPage,
 } from './pseo-types';
 import { clientEnv } from '@shared/config/env';
 import type { Locale } from '../../i18n/config';
@@ -419,7 +425,9 @@ export function generateUseCaseSchema(useCase: IUseCasePage): object {
  */
 export function generateFormatSchema(format: IFormatPage, locale: Locale = 'en'): object {
   const canonicalUrl =
-    locale === 'en' ? `${BASE_URL}/formats/${format.slug}` : `${BASE_URL}/${locale}/formats/${format.slug}`;
+    locale === 'en'
+      ? `${BASE_URL}/formats/${format.slug}`
+      : `${BASE_URL}/${locale}/formats/${format.slug}`;
   const language = getLanguageCode(locale);
 
   return {
@@ -795,16 +803,26 @@ export function generatePricingSchema(): object {
 }
 
 /**
- * Generate schema for pSEO pages (platforms, format-scale, device-use, platform-format)
+ * Generate schema for pSEO pages (platforms, format-scale, device-use, platform-format, bulk-tools, photo-restoration, camera-raw, content, industry-insights, device-optimization)
  * Combines WebPage with FAQPage and BreadcrumbList
  * Phase 4: Added comprehensive schema support for pSEO templates
  *
- * @param data - The pSEO page data (IPlatformPage, IFormatScalePage, IDeviceUseCasePage, or IPlatformFormatPage)
- * @param category - The category path (e.g., 'platforms', 'format-scale', 'device-use', 'platform-format')
+ * @param data - The pSEO page data
+ * @param category - The category path (e.g., 'platforms', 'format-scale', 'device-use', 'platform-format', 'bulk-tools', 'photo-restoration', 'camera-raw', 'content', 'industry-insights', 'device-optimization')
  * @param locale - The locale for this page instance (default: 'en')
  */
 export function generatePSEOSchema(
-  data: IPlatformPage | IFormatScalePage | IDeviceUseCasePage | IPlatformFormatPage,
+  data:
+    | IPlatformPage
+    | IFormatScalePage
+    | IDeviceUseCasePage
+    | IPlatformFormatPage
+    | IBulkToolPage
+    | IPhotoRestorationPage
+    | ICameraRawPage
+    | IContentTypePage
+    | IIndustryInsightPage
+    | IDeviceOptimizationPage,
   category: string,
   locale: Locale = 'en'
 ): object {
@@ -834,13 +852,32 @@ export function generatePSEOSchema(
       const platformFormatData = data as IPlatformFormatPage;
       return `${platformFormatData.platform} ${platformFormatData.format}`;
     }
-    // Fallback for any other type
-    const baseData = data as
-      | IPlatformPage
-      | IFormatScalePage
-      | IDeviceUseCasePage
-      | IPlatformFormatPage;
-    return baseData.title;
+    if ('restorationType' in data) {
+      const restorationData = data as IPhotoRestorationPage;
+      return restorationData.restorationType || restorationData.title;
+    }
+    if ('cameraBrand' in data) {
+      const cameraRawData = data as ICameraRawPage;
+      return `${cameraRawData.cameraBrand} ${cameraRawData.rawFormat}`;
+    }
+    if ('contentType' in data) {
+      const contentData = data as IContentTypePage;
+      return contentData.contentType || contentData.title;
+    }
+    if ('industry' in data && 'problem' in data) {
+      const industryData = data as IIndustryInsightPage;
+      return industryData.industry || industryData.title;
+    }
+    if ('platform' in data && typeof data.platform === 'string' && 'challenges' in data) {
+      const deviceOptData = data as IDeviceOptimizationPage;
+      return `${deviceOptData.platform} ${deviceOptData.title}`;
+    }
+    if ('toolName' in data) {
+      const bulkToolData = data as IBulkToolPage;
+      return bulkToolData.toolName || bulkToolData.title;
+    }
+    // Fallback for any other type - just return the title
+    return (data as { title: string }).title;
   };
 
   const pageTitle = getPageTitle();

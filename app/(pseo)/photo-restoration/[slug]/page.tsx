@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getPhotoRestorationData, getAllPhotoRestorationSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
-import { ToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/ToolPageTemplate';
+import { GenericPSEOPageTemplate } from '@/app/(pseo)/_components/pseo/templates/GenericPSEOPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
@@ -44,7 +44,7 @@ export default async function PhotoRestorationPage({ params }: IPhotoRestoration
       <SeoMetaTags path={path} locale="en" />
       <HreflangLinks path={path} />
       <SchemaMarkup schema={schema} />
-      <ToolPageTemplate data={page} />
+      <GenericPSEOPageTemplate data={page} />
     </>
   );
 }

@@ -35,6 +35,9 @@ const PSEO_DATA_DIR = path.join(__dirname, '..', 'app', 'seo', 'data');
 const REFERENCE_LOCALE = 'en'; // English is the source of truth
 const EXCLUDED_LOCALES: string[] = []; // Locales to exclude from checks
 
+// Supported locales
+type Locale = 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja';
+
 // pSEO data files that are known to NOT need translations (technical/config files)
 const PSEO_EXCLUDED_FILES = new Set([
   'ai-features', // Technical config
@@ -50,6 +53,7 @@ interface IPSEODataFile {
   hasStaticImport?: boolean;
   hasGetTranslations?: boolean;
   architecturalIssue?: 'static-import' | 'no-i18n';
+  localesWithTranslations?: Locale[];
 }
 
 interface IInvalidJsonFile {
@@ -388,11 +392,17 @@ function checkPSEODataFiles(translationNamespaces: string[]): IPSEODataFile[] {
     // Check if there's a corresponding translation file in ANY non-English locale
     // We check all locales (not just English) to see if translations exist
     const allLocales = getLocales();
-    const hasTranslationInAnyLocale = allLocales.some(locale => {
-      if (locale === REFERENCE_LOCALE) return false; // Skip English
+    const localesWithTranslations: Locale[] = [];
+
+    for (const locale of allLocales) {
+      if (locale === REFERENCE_LOCALE) continue;
       const localeNamespaces = getNamespaces(locale);
-      return localeNamespaces.includes(pseoFile);
-    });
+      if (localeNamespaces.includes(pseoFile)) {
+        localesWithTranslations.push(locale as Locale);
+      }
+    }
+
+    const hasTranslationInAnyLocale = localesWithTranslations.length > 0;
     const hasTranslation = hasTranslationInAnyLocale || translationNamespaces.includes(pseoFile);
 
     // Get page count if it's a pSEO data file with pages array
@@ -420,14 +430,18 @@ function checkPSEODataFiles(translationNamespaces: string[]): IPSEODataFile[] {
       hasStaticImport: architectural.hasStaticImport,
       hasGetTranslations: architectural.hasGetTranslations,
       architecturalIssue: architectural.architecturalIssue,
+      localesWithTranslations,
     };
 
-    // If no translation exists or has architectural issues, this is a gap
+    // If no translation exists, this is a gap
+    // Static imports in app/(pseo)/ are OK for English - the localized versions
+    // in app/[locale]/(pseo)/ use locale-aware loading
     if (!hasTranslation && pageCount > 0) {
       missingI18n.push(reportEntry);
-    } else if (architectural.architecturalIssue) {
-      missingI18n.push(reportEntry);
     }
+    // Don't flag static-import as an issue if translations exist
+    // The architecture correctly uses static imports for English (app/(pseo)/)
+    // and locale-aware loading for other locales (app/[locale]/(pseo)/)
   }
 
   return missingI18n;
@@ -1036,7 +1050,7 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
 
       for (const file of byIssueType['no-i18n']) {
         console.log(`  📁 ${file.name}.json (${file.pageCount} pages)`);
-        console.log(`     ❌ No locales/${file.name}.json found`);
+        console.log(`     ❌ No translations found in locales/{locale}/${file.name}.json`);
         if (file.hasStaticImport) {
           console.log(`     🚨 Uses static import (compounding the issue)`);
         }
@@ -1059,13 +1073,15 @@ function printReport(report: ITranslationReport, options: ICLIOptions): void {
 
     // Show solutions
     console.log('\n🛠️  SOLUTIONS:');
-    console.log('\n  For static import issues:');
-    console.log('    1. Replace static import with getTranslations()');
-    console.log('    2. Example: Replace `import data from "@/app/seo/data/tools.json"');
-    console.log('       with `const t = await getTranslations("tools")');
-    console.log('    3. Access data via t(`pages.slug.field`)\n');
+    console.log('\n  For static import issues (English-only pages):');
+    console.log('    Static imports in app/(pseo)/ are OK for English content.');
+    console.log('    Localized versions are served from app/[locale]/(pseo)/');
+    console.log('    which use getToolDataWithLocale() for locale-aware loading.\n');
 
     console.log('  For missing translation files:');
+    console.log('    1. Create translation files: locales/{locale}/{dataFile}.json');
+    console.log('    2. Copy structure from English version');
+    console.log('    3. Translate content while keeping keys intact\n');
     console.log('    1. Create translation files: locales/{locale}/{dataFile}.json');
     console.log('    2. Copy structure from English version');
     console.log('    3. Translate content while keeping keys intact\n');
