@@ -46,12 +46,11 @@ export function FAQSection({
     return <></>;
   }
 
-  function handleFAQToggle(index: number): void {
-    const newIndex = openIndex === index ? null : index;
-    setOpenIndex(newIndex);
+  function handleFAQToggle(index: number | null): void {
+    setOpenIndex(index);
 
     // Track FAQ expansion
-    if (newIndex === index && pageType && slug) {
+    if (index !== null && pageType && slug) {
       analytics.track('pseo_faq_expanded', {
         pageType,
         slug,
@@ -63,7 +62,7 @@ export function FAQSection({
   }
 
   // Convert IFAQ to IFAQItem format
-  const faqItems: IFAQItem[] = faqs.map((faq) => ({
+  const faqItems: IFAQItem[] = faqs.map(faq => ({
     question: faq.question,
     answer: faq.answer,
   }));
@@ -83,11 +82,7 @@ export function FAQSection({
         </p>
       </motion.div>
       <div className="relative z-10">
-        <FAQ
-          items={faqItems}
-          openIndex={openIndex}
-          onToggle={handleFAQToggle}
-        />
+        <FAQ items={faqItems} openIndex={openIndex} onToggle={handleFAQToggle} />
       </div>
     </section>
   );

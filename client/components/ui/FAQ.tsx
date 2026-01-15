@@ -13,7 +13,7 @@ export interface IFAQProps {
   items: IFAQItem[];
   className?: string;
   openIndex?: number | null;
-  onToggle?: (index: number) => void;
+  onToggle?: (index: number | null) => void;
 }
 
 export function FAQ({

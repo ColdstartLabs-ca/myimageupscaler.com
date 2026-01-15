@@ -9,14 +9,15 @@
 import type { IFAQ } from '@/lib/seo/pseo-types';
 import { analytics } from '@client/analytics/analyticsClient';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
+import { FAQ } from '@client/components/ui/FAQ';
+import type { IFAQItem } from '@client/components/ui/FAQ';
 import { ReactElement, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FAQAccordion } from '../ui/FAQAccordion';
 
 interface IFAQSectionProps {
   faqs: IFAQ[];
   title?: string;
-  pageType?:
+  pageType:
     | 'tool'
     | 'comparison'
     | 'guide'
@@ -27,28 +28,6 @@ interface IFAQSectionProps {
     | 'free';
   slug?: string;
 }
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.4, 0.25, 1] as const,
-    },
-  },
-};
 
 export function FAQSection({
   faqs,
@@ -62,24 +41,29 @@ export function FAQSection({
     return <></>;
   }
 
-  function handleFAQToggle(index: number, question: string): void {
-    const newIndex = openIndex === index ? null : index;
-    setOpenIndex(newIndex);
+  function handleFAQToggle(index: number | null): void {
+    setOpenIndex(index);
 
     // Track FAQ expansion
-    if (newIndex === index && pageType && slug) {
+    if (index !== null && pageType && slug) {
       analytics.track('pseo_faq_expanded', {
         pageType,
         slug,
         elementType: 'faq',
         elementId: `faq-${index}`,
-        question,
+        question: faqs[index].question,
       });
     }
   }
 
+  // Convert IFAQ to IFAQItem format
+  const faqItems: IFAQItem[] = faqs.map(faq => ({
+    question: faq.question,
+    answer: faq.answer,
+  }));
+
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="py-24 relative">
       <AmbientBackground variant="section" />
       <motion.div
         className="text-center mb-16 relative z-10"
@@ -92,23 +76,9 @@ export function FAQSection({
           Find answers to common questions about our tool and how it works.
         </p>
       </motion.div>
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="max-w-3xl mx-auto space-y-6 relative z-10"
-      >
-        {faqs.map((faq, index) => (
-          <motion.div key={index} variants={itemVariants}>
-            <FAQAccordion
-              question={faq.question}
-              answer={faq.answer}
-              isOpen={openIndex === index}
-              onToggle={() => handleFAQToggle(index, faq.question)}
-            />
-          </motion.div>
-        ))}
-      </motion.div>
+      <div className="relative z-10">
+        <FAQ items={faqItems} openIndex={openIndex} onToggle={handleFAQToggle} />
+      </div>
     </section>
   );
 }
