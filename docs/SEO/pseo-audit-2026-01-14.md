@@ -239,7 +239,7 @@ const hreflangLinks = generateSitemapHreflangLinks(`/alternatives/${slug}`);
 
 ### 4.2 Meta Descriptions
 
-**Status:** EXCELLENT (camera-raw.json fixed ✅ COMPLETE)
+**Status:** EXCELLENT ✅ (camera-raw.json fixed)
 
 | Metric         | Value       | Target  | Status  |
 | -------------- | ----------- | ------- | ------- |

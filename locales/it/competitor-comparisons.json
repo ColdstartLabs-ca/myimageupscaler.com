@@ -147,7 +147,7 @@
       "primaryKeyword": "myimageupscaler vs adobe photoshop",
       "secondaryKeywords": [
         "photoshop ai ampliamento",
-        "adobe neural filters",
+        "filtri neurali adobe",
         "image ampliamento software comparison",
         "miglior upscaler foto"
       ],
@@ -220,31 +220,31 @@
       "criteria": [
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Strumento Specializzato",
-          "key": "specialized_tool"
+          "key": "strumento_specializzato"
         },
         {
           "name": "Velocità di Elaborazione",
-          "key": "speed"
+          "key": "velocità"
         },
         {
           "name": "Curva di Apprendimento",
-          "key": "learning_curve"
+          "key": "curva_di_apprendimento"
         },
         {
           "name": "Elaborazione in Batch",
-          "key": "batch_processing"
+          "key": "elaborazione_in_batch"
         },
         {
           "name": "Basato sul Web",
-          "key": "web_based"
+          "key": "basato_su_web"
         },
         {
           "name": "Versione Gratuita",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         }
       ],
       "verdict": {
@@ -351,23 +351,23 @@
       "criteria": [
         {
           "name": "Crediti Gratuiti",
-          "key": "free_credits"
+          "key": "crediti_gratuiti"
         },
         {
           "name": "Velocità di Elaborazione",
-          "key": "processing_speed"
+          "key": "velocità_elaborazione"
         },
         {
           "name": "Qualità dell'Immagine",
-          "key": "image_quality"
+          "key": "qualità_immagine"
         },
         {
           "name": "Supporto Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Accesso API",
-          "key": "api_access"
+          "key": "accesso_api"
         },
         {
           "name": "Funzionalità Pro",
@@ -375,7 +375,7 @@
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         }
       ],
       "verdict": {
@@ -482,31 +482,31 @@
       "criteria": [
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "AI Moderna",
-          "key": "modern_ai"
+          "key": "ai_moderna"
         },
         {
           "name": "Supporto Universale",
-          "key": "universal_support"
+          "key": "supporto_universale"
         },
         {
           "name": "Velocita di Elaborazione",
-          "key": "processing_speed"
+          "key": "velocità_elaborazione"
         },
         {
           "name": "Ease of Usa",
-          "key": "ease_of_use"
+          "key": "facilità_duso"
         },
         {
           "name": "Supporto Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Versione Gratuita",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         }
       ],
       "verdict": {
@@ -613,31 +613,31 @@
       "criteria": [
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Versione Gratuita",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "Qualita Professionale",
-          "key": "professional_quality"
+          "key": "qualità_professionale"
         },
         {
           "name": "Supporto Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Accesso API",
-          "key": "api_access"
+          "key": "accesso_api"
         },
         {
           "name": "Elaborazione illimitata",
-          "key": "unlimited_processing"
+          "key": "elaborazione Illimitata"
         },
         {
           "name": "Elaborazione batch",
-          "key": "batch_processing"
+          "key": "elaborazione_in_batch"
         }
       ],
       "verdict": {
@@ -671,12 +671,12 @@
       "metaDescription": "comparison MyImageUpscaler vs BigJPG online AI upscalers. quality, speed, pricing, and caratteristiche analysis for JPG image miglioramento and ampliamento needs.",
       "h1": "MyImageUpscaler vs BigJPG: quale upscaler online funziona meglio?",
       "intro": "Direct comparison of two popular online AI ampliamento services focusing on JPG miglioramento. Analyze real-world , pricing structures, and user experience for optimal image miglioramento results.",
-      "primaryKeyword": "bigjpg comparison",
+      "primaryKeyword": "confronto bigjpg",
       "secondaryKeywords": [
-        "bigjpg alternative",
-        "online jpg upscaler",
+        "alternativa a bigjpg",
+        "upscaler jpg online",
         "jpg miglioramento comparison",
-        "best jpg upscaler online"
+        "miglior upscaler jpg online"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
@@ -714,8 +714,8 @@
           "description": "Upscaler JPG online di base con utilizzo gratuito limitato e opzioni premium convenienti per utenti occasionali.",
           "isRecommended": false,
           "features": {
-            "price": "$6/month",
-            "free_limit": "5 images/day",
+            "price": "$6/mese",
+            "free_limit": "5 immagini/giorno",
             "max_filesize": "10MB",
             "processing_speed": "Medio",
             "quality": "Buono",
@@ -741,31 +741,31 @@
       "criteria": [
         {
           "name": "Limite Gratuito",
-          "key": "free_limit"
+          "key": "limite_gratuito"
         },
         {
           "name": "Dimensione Massima File",
-          "key": "max_filesize"
+          "key": "dimensione_massima_file"
         },
         {
           "name": "Velocità di Elaborazione",
-          "key": "processing_speed"
+          "key": "velocità_elaborazione"
         },
         {
           "name": "Qualità",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Supporto Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Professional Usa",
-          "key": "professional_use"
+          "key": "uso_professionale"
         }
       ],
       "verdict": {
@@ -788,7 +788,7 @@
         },
         {
           "question": "Come confronta la qualità dell'immagine?",
-          "answer": "MyImageUpscaler produces significantly better quality results, especially at higher scale factors and with detAIled images."
+          "answer": "MyImageUpscaler produce risultati di qualità significativamente migliore, specialmente a fattori di scala più elevati e con immagini dettagliate."
         }
       ]
     },
@@ -801,10 +801,10 @@
       "intro": "Comprehensive comparison of two AI image miglioramento platforms. Analyze ampliamento quality, feature sets, pricing modellos, and overall value for photographers and digital content creators.",
       "primaryKeyword": "myimageupscaler vs smartmagnify",
       "secondaryKeywords": [
-        "smartmagnify alternative",
+        "alternativa a smartmagnify",
         "ai image miglioramento comparison",
         "photo miglioramento tools",
-        "best ai enhancer"
+        "miglior enhancer ai"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
@@ -817,7 +817,7 @@
           "description": "Full-featured AI upscaler offering professional quality miglioramento with unlimited free access and premium caratteristiche.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_tier": "Illimitato",
             "upscaling_quality": "Eccellente",
             "additional_features": true,
@@ -842,8 +842,8 @@
           "description": "AI miglioramento service offering basic ampliamento along with other image processing tools with a credit-based pricing modello.",
           "isRecommended": false,
           "features": {
-            "price": "$19/month",
-            "free_tier": "10 credits/month",
+            "price": "$19/mese",
+            "free_tier": "10 crediti/mese",
             "upscaling_quality": "Buono",
             "additional_features": true,
             "processing_speed": "Medio",
@@ -869,19 +869,19 @@
       "criteria": [
         {
           "name": "Versione Gratuita",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "ampliamento Quality",
-          "key": "upscaling_quality"
+          "key": "qualità_upscaling"
         },
         {
           "name": "Velocita di Elaborazione",
-          "key": "processing_speed"
+          "key": "velocità_elaborazione"
         },
         {
           "name": "Supporto Qualita",
-          "key": "support_quality"
+          "key": "qualità_supporto"
         },
         {
           "name": "Additional Caratteristiche",
@@ -889,11 +889,11 @@
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Rapporto Qualità-Prezzo",
-          "key": "value_for_money"
+          "key": "rapporto_qualità_prezzo"
         }
       ],
       "verdict": {
@@ -945,7 +945,7 @@
           "description": "Upscaler AI basato sul web che offre risultati di qualità professionale con elaborazione gratuita illimitata e funzionalità premium.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "platform": "Basato sul Web",
             "free_usage": "Illimitato",
             "quality": "Professionale",
@@ -970,7 +970,7 @@
           "description": "Applicazione mobile che offre funzionalità di base di miglioramento e upscaling foto ottimizzate per l'uso smartphone.",
           "isRecommended": false,
           "features": {
-            "price": "$4.99/month",
+            "price": "$4.99/mese",
             "platform": "App mobile",
             "free_usage": "Limitato with ads",
             "quality": "Base",
@@ -998,31 +998,31 @@
       "criteria": [
         {
           "name": "Piattaforma",
-          "key": "platform"
+          "key": "piattaforma"
         },
         {
           "name": "Qualita",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Potenza di Elaborazione",
-          "key": "processing_power"
+          "key": "potenza_elaborazione"
         },
         {
           "name": "Gratuito Usage",
-          "key": "free_usage"
+          "key": "uso_gratuito"
         },
         {
           "name": "Formati di file",
-          "key": "file_formats"
+          "key": "formati_file"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Professional Usa",
-          "key": "professional_use"
+          "key": "uso_professionale"
         }
       ],
       "verdict": {
@@ -1050,7 +1050,7 @@
       ]
     },
     {
-      "slug": "best-free-ai-upscalers-2025",
+      "slug": "migliori-upscaler-ai-gratis-2025",
       "title": "Upscaler AI Gratuiti 2025: Guida al confronto completo",
       "metaTitle": "Upscaler AI Gratuiti 2025: Guida al confronto completo | MyImageUpscaler",
       "metaDescription": "Confronto completo degli upscaler AI gratuiti nel 2025. Test e confronto di MyImageUpscaler, alternative Gigapixel e altri strumenti gratuiti di miglioramento immagini.",
@@ -1064,7 +1064,7 @@
         "alternativa gigapixel gratuita"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
-      "comparisonType": "best-of",
+      "comparisonType": "migliori-di",
       "products": [
         {
           "name": "MyImageUpscaler",
@@ -1129,7 +1129,7 @@
           "description": "Semplice upscaler JPG online con uso gratuito molto limitato adatto a esigenze basiche occasionali.",
           "isRecommended": false,
           "features": {
-            "price": "5 images/day free",
+            "price": "5 immagini/giorno gratis",
             "unlimited_usage": false,
             "no_watermarks": true,
             "quality": "Base",
@@ -1153,15 +1153,15 @@
       "criteria": [
         {
           "name": "Illimitato Usage",
-          "key": "unlimited_usage"
+          "key": "uso Illimitato"
         },
         {
           "name": "Nessun Watermark",
-          "key": "no_watermarks"
+          "key": "senza_watermark"
         },
         {
           "name": "Qualita",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Max Risoluzione",
@@ -1169,15 +1169,15 @@
         },
         {
           "name": "Supportoo Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Versatilità",
-          "key": "versatility"
+          "key": "versatilità"
         }
       ],
       "verdict": {
@@ -1213,23 +1213,23 @@
       "intro": "DetAIled comparison of two modern AI ampliamento platforms. Analyze algorithm quality, user experience, pricing modellos, and technical capabilities for optimal image miglioramento.",
       "primaryKeyword": "myimageupscaler vs upscay",
       "secondaryKeywords": [
-        "upscay alternative",
-        "modern ai upscaler",
+        "alternativa a upscay",
+        "upscaler ai moderno",
         "ai ampliamento platform comparison",
-        "best modern upscaler"
+        "miglior upscaler moderno"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Gratuito tier, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Upscaler AI moderno leader con accesso gratuito illimitato",
           "description": "State-of-the-art AI upscaler using the latest neural network technology with unlimited free processing and premium caratteristiche.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_tier": "Illimitato",
             "ai_quality": "All'avanguardia",
             "processing_speed": "Veloce",
@@ -1254,8 +1254,8 @@
           "description": "Contemporary AI upscaler offering multiple miglioramento modellos and a clean interface with limited free usage.",
           "isRecommended": false,
           "features": {
-            "price": "$15/month",
-            "free_tier": "10 images total",
+            "price": "$15/mese",
+            "free_tier": "10 immagini totali",
             "ai_quality": "Buono",
             "processing_speed": "Medio",
             "user_experience": "Buono",
@@ -1280,31 +1280,31 @@
       "criteria": [
         {
           "name": "Gratuito Tier",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "AI Qualita",
-          "key": "ai_quality"
+          "key": "qualità_ai"
         },
         {
           "name": "Velocita di Elaborazione",
-          "key": "processing_speed"
+          "key": "velocità_elaborazione"
         },
         {
           "name": "Esperienza Utente",
-          "key": "user_experience"
+          "key": "esperenza_utente"
         },
         {
           "name": "Supportoo Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Proposta di Valore",
-          "key": "value_proposition"
+          "key": "proposta_di_valore"
         }
       ],
       "verdict": {
@@ -1340,23 +1340,23 @@
       "intro": "Technical comparison between MyImmagineUpscaler's proprietary AI technology and the open-source Real-ESRGAN algorithm. Analyze quality output, accessibility, and practical usability for different user types.",
       "primaryKeyword": "myimageupscaler vs realesrgan",
       "secondaryKeywords": [
-        "realesrgan alternative",
+        "alternativa a realesrgan",
         "ai ampliamento algorithms",
-        "esrgan comparison",
-        "best realesrgan implementation"
+        "confronto esrgan",
+        "migliore implementazione realesrgan"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Versione gratuita, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Avanzato proprietary AI technology",
           "description": "Cutting-edge AI upscaler using proprietary neural network technology Ottimizzato per ease of Usa and consistent results.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_tier": "Illimitato",
             "ai_technology": "Proprietaria avanzata",
             "ease_of_use": "Molto facile",
@@ -1412,31 +1412,31 @@
       "criteria": [
         {
           "name": "Tecnologia AI",
-          "key": "ai_technology"
+          "key": "tecnologia_ai"
         },
         {
           "name": "Ease of Usa",
-          "key": "ease_of_use"
+          "key": "facilità_duso"
         },
         {
           "name": "Svantaggiistency",
-          "key": "consistency"
+          "key": "coerenza"
         },
         {
           "name": "Aggiornas",
-          "key": "updates"
+          "key": "aggiornamenti"
         },
         {
           "name": "Supportoo Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Gratuito Tier",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "Accessibilità",
-          "key": "accessibility"
+          "key": "accessibilità"
         }
       ],
       "verdict": {
@@ -1470,25 +1470,25 @@
       "metaDescription": "comparison MyImageUpscaler vs Remini AI photo miglioramento apps. quality, caratteristiche, pricing, and ease of Usa analysis for photo miglioramento and restoration needs.",
       "h1": "MyImageUpscaler vs Remini: AI Photo miglioramento Showdown",
       "intro": "Comprehensive comparison between MyImageUpscaler's specialized upscaler and Remini's general photo miglioramento app. Analyze which service delivers better results for different photo types and Usa cases.",
-      "primaryKeyword": "remini comparison",
+      "primaryKeyword": "confronto remini",
       "secondaryKeywords": [
-        "remini alternative",
-        "ai photo enhancer comparison",
-        "photo restoration app",
-        "best ai photo enhancer"
+        "alternativa a remini",
+        "confronto enhancer foto ai",
+        "app di ripristino foto",
+        "miglior enhancer foto ai"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Gratuito tier, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Specialized AI ampliamento with unlimited free access",
           "description": "Professional AI upscaler focused on delivering the highest quality ampliamento results with unlimited free processing.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "specialization": "ampliamento",
             "free_tier": "Illimitato",
             "quality": "Professionale",
@@ -1513,7 +1513,7 @@
           "description": "Mobile app offering general photo miglioramento, restoration, and improvement caratteristiche with a credit-based system.",
           "isRecommended": false,
           "features": {
-            "price": "$4.99/month",
+            "price": "$4.99/mese",
             "specialization": "General miglioramento",
             "free_tier": "Limitato with ads",
             "quality": "Buono",
@@ -1541,31 +1541,31 @@
       "criteria": [
         {
           "name": "Specializzazione",
-          "key": "specialization"
+          "key": "specializzazione"
         },
         {
           "name": "Gratuito Tier",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "Qualita",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Elaborazione in batch",
-          "key": "batch_processing"
+          "key": "elaborazione_in_batch"
         },
         {
           "name": "Nessun Watermark",
-          "key": "no_watermarks"
+          "key": "senza_watermark"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Professional Usa",
-          "key": "professional_use"
+          "key": "uso_professionale"
         }
       ],
       "verdict": {
@@ -1599,25 +1599,25 @@
       "metaDescription": "comparison MyImageUpscaler vs Fotor AI photo miglioramento tools. quality, caratteristiche, pricing, and analysis for online photo editing and ampliamento.",
       "h1": "MyImageUpscaler vs Fotor: AI miglioramento Tool comparison",
       "intro": "comparison MyImageUpscaler's dedicated AI ampliamento with Fotor's comprehensive photo editing suite. Analyze which service provides better image miglioramento for different workflows and user needs.",
-      "primaryKeyword": "fotor comparison",
+      "primaryKeyword": "confronto fotor",
       "secondaryKeywords": [
-        "fotor alternative",
-        "online photo editor comparison",
-        "ai photo enhancer tools",
-        "best online photo upscaler"
+        "alternativa a fotor",
+        "confronto editor foto online",
+        "strumenti enhancer foto ai",
+        "miglior upscaler foto online"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Gratuito tier, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Professionale AI upscaler with unlimited free access",
           "description": "Specialized AI upscaler delivering professional quality results with unlimited free processing and no limitazioni.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "specialization": "AI ampliamento",
             "free_tier": "Illimitato",
             "processing_quality": "Eccellente",
@@ -1642,7 +1642,7 @@
           "description": "Comprehensive online photo editor including basic AI miglioramento tools along with extensive editing caratteristiche.",
           "isRecommended": false,
           "features": {
-            "price": "$8.99/month",
+            "price": "$8.99/mese",
             "specialization": "Completato editing suite",
             "free_tier": "Limitato",
             "processing_quality": "Buono",
@@ -1670,31 +1670,31 @@
       "criteria": [
         {
           "name": "Specializzazione",
-          "key": "specialization"
+          "key": "specializzazione"
         },
         {
           "name": "Versione gratuita",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "Elaborazione Qualità",
-          "key": "processing_quality"
+          "key": "qualità_elaborazione"
         },
         {
           "name": "Velocità",
-          "key": "speed"
+          "key": "velocità"
         },
         {
           "name": "Supportoo Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Value for ampliamento",
-          "key": "value_for_upscaling"
+          "key": "valore_per_upscaling"
         }
       ],
       "verdict": {
@@ -1730,10 +1730,10 @@
       "intro": "comparison MyImageUpscaler's AI ampliamento with Adobe Photoshop Express's basic miglioramento caratteristiche. Analyze which service delivers better value for different users and budgets.",
       "primaryKeyword": "myimageupscaler vs photoshop express",
       "secondaryKeywords": [
-        "photoshop express alternative",
-        "free photo enhancer",
-        "adobe photo tools",
-        "best free photo upscaler"
+        "alternativa a photoshop express",
+        "enhancer foto gratis",
+        "strumenti foto adobe",
+        "miglior upscaler foto gratis"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
@@ -1746,7 +1746,7 @@
           "description": "Professionale AI upscaler offering unlimited free processing with superior quality and customer support.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_tier": "Illimitato",
             "quality": "Professionale",
             "specialization": "AI ampliamento",
@@ -1771,7 +1771,7 @@
           "description": "Adobe's online version of Photoshop offering basic editing tools and AI caratteristiche with limited free usage.",
           "isRecommended": false,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_tier": "Limitato",
             "quality": "Buono",
             "specialization": "Modifica generale",
@@ -1799,23 +1799,23 @@
       "criteria": [
         {
           "name": "Gratuito Tier",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "Qualita",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Specializzazione",
-          "key": "specialization"
+          "key": "specializzazione"
         },
         {
           "name": "Supportoo Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Fiducia del marchio",
@@ -1823,7 +1823,7 @@
         },
         {
           "name": "Rapporto Qualità-Prezzo",
-          "key": "value_for_money"
+          "key": "rapporto_qualità_prezzo"
         }
       ],
       "verdict": {
@@ -1875,7 +1875,7 @@
           "description": "Upscaler AI specializzato che offre risultati di qualità professionale con elaborazione gratuita illimitata ed eccellente supporto clienti.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_usage": "Illimitato",
             "ai_quality": "Eccellente",
             "specialization": "AI ampliamento",
@@ -1900,7 +1900,7 @@
           "description": "Editor foto online completo che offre strumenti di modifica, livelli, filtri e funzionalità di base di miglioramento AI.",
           "isRecommended": false,
           "features": {
-            "price": "$7.99/month",
+            "price": "$7.99/mese",
             "free_usage": "Limitato",
             "ai_quality": "Base",
             "specialization": "Modifica generale",
@@ -1928,31 +1928,31 @@
       "criteria": [
         {
           "name": "Gratuito Usage",
-          "key": "free_usage"
+          "key": "uso_gratuito"
         },
         {
           "name": "AI Qualità",
-          "key": "ai_quality"
+          "key": "qualità_ai"
         },
         {
           "name": "Specializzazione",
-          "key": "specialization"
+          "key": "specializzazione"
         },
         {
           "name": "Ease of Usa",
-          "key": "ease_of_use"
+          "key": "facilità_duso"
         },
         {
           "name": "Velocità elaborazione",
-          "key": "processing_speed"
+          "key": "velocità_elaborazione"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Professionale Qualità",
-          "key": "professional_quality"
+          "key": "qualità_professionale"
         }
       ],
       "verdict": {
@@ -1986,25 +1986,25 @@
       "metaDescription": "comparison MyImageUpscaler AI upscaler with Canva's AI photo miglioramento caratteristiche. quality, caratteristiche, pricing, and suitability analysis for design workflows.",
       "h1": "Myimageupscaler vs Canva: AI Photo miglioramento comparison",
       "intro": "comparison MyImageUpscaler's AI upscaler with Canva's AI photo miglioramento tools integrated into their design platform. Analyze which provides better results for different workflows.",
-      "primaryKeyword": "canva comparison",
+      "primaryKeyword": "confronto canva",
       "secondaryKeywords": [
-        "canva alternative",
+        "alternativa a canva",
         "design tool ai caratteristiche",
-        "canva photo enhancer",
-        "best ai for design"
+        "enhancer foto canva",
+        "miglior ai per il design"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Gratuito tier, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Professionale AI upscaler with unlimited free access",
           "description": "Upscaler AI specializzato che fornisce risultati di qualità professionale con elaborazione gratuita illimitata e tecnologia AI avanzata.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_tier": "Illimitato",
             "ai_quality": "Eccellente",
             "specialization": "AI ampliamento",
@@ -2029,7 +2029,7 @@
           "description": "Popular design platform offering basic AI photo miglioramento tools integrated into their comprehensive design suite.",
           "isRecommended": false,
           "features": {
-            "price": "$15/month",
+            "price": "$15/mese",
             "free_tier": "Limitato",
             "ai_quality": "Base",
             "specialization": "Piattaforma di design",
@@ -2057,31 +2057,31 @@
       "criteria": [
         {
           "name": "Gratuito Tier",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "AI Qualita",
-          "key": "ai_quality"
+          "key": "qualità_ai"
         },
         {
           "name": "Specializzazione",
-          "key": "specialization"
+          "key": "specializzazione"
         },
         {
           "name": "Professionale Results",
-          "key": "professional_results"
+          "key": "risultati_professionali"
         },
         {
           "name": "Elaborazione in batch",
-          "key": "batch_processing"
+          "key": "elaborazione_in_batch"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Rapporto Qualità-Prezzo",
-          "key": "value_for_money"
+          "key": "rapporto_qualità_prezzo"
         }
       ],
       "verdict": {
@@ -2109,31 +2109,31 @@
       ]
     },
     {
-      "slug": "ai-upscaler-reviews-2025",
+      "slug": "recensioni-upscaler-ai-2025",
       "title": "AI Upscaler Recensioni 2025: Completato Buyer's guide",
       "metaTitle": "AI Upscaler Recensioni 2025: Completato Buyer's guide | MyImmagineUpscaler",
       "metaDescription": "Comprehensive AI upscaler reviews for 2025. comparison MyImageUpscaler, GigAPIxel AI alternatives, and leading AI ampliamento tools with detAIled analysis.",
       "h1": "AI Upscaler Recensioni 2025: Completato Buyer's guide",
       "intro": "Exhaustive review and comparison of the AI upscalers avAIlable in 2025. We test quality, pricing, caratteristiche, and real-world per aiutarti a scegliere the AI upscaler.",
-      "primaryKeyword": "ai upscaler reviews 2025",
+      "primaryKeyword": "recensioni upscaler ai 2025",
       "secondaryKeywords": [
-        "best ai upscaler 2025",
-        "ai upscaler comparison",
-        "top rated upscalers",
-        "ai image enhancer reviews"
+        "miglior upscaler ai 2025",
+        "confronto upscaler ai",
+        "upscaler più votati",
+        "recensioni enhancer immagini ai"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
-      "comparisonType": "best-of",
+      "comparisonType": "migliori-di",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Gratuito tier, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Migliore overall AI upscaler with unlimited free access",
           "description": "Professionale AI upscaler delivering exceptional quality with unlimited free processing and excellent customer support.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_tier": "Illimitato",
             "quality": "Professionale",
             "speed": "Veloce",
@@ -2152,7 +2152,7 @@
         },
         {
           "name": "Topaz Gigapixel AI",
-          "pricing": "$99.99 one-time",
+          "pricing": "$99.99 una tantum",
           "rating": 4.6,
           "tagline": "Professionale desktop AI upscaler",
           "description": "Well-established desktop software offering advanced AI ampliamento with extensive customization options.",
@@ -2180,15 +2180,15 @@
           ]
         },
         {
-          "name": "Adobe Fotohop",
-          "pricing": "$22.99/month",
+          "name": "VanceAI",
+          "pricing": "$22.99/mese",
           "rating": 4.7,
           "tagline": "Professional image editing con AI caratteristiche",
           "description": "Industry-standard photo editing software con AI ampliamento caratteristiche as one of many capabilities.",
           "isRecommended": false,
           "features": {
-            "price": "$22.99/month",
-            "free_tier": "7-day trial",
+            "price": "$22.99/mese",
+            "free_tier": "prova di 7 giorni",
             "quality": "Buono",
             "speed": "Lento",
             "customer_support": "Professionale",
@@ -2211,31 +2211,31 @@
       "criteria": [
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Versione gratuita",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "Qualità",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Velocità",
-          "key": "speed"
+          "key": "velocità"
         },
         {
           "name": "Supporto Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Ease of Usa",
-          "key": "ease_of_use"
+          "key": "facilità_duso"
         },
         {
           "name": "Valore Complessivo",
-          "key": "overall_value"
+          "key": "valore_complessivo"
         }
       ],
       "verdict": {
@@ -2263,31 +2263,31 @@
       ]
     },
     {
-      "slug": "myimageupscaler-vs-ampliamento-media",
+      "slug": "myimageupscaler-vs-waifu2x",
       "title": "MyImageUpscaler vs ampliamento.media: online AI Upscaler comparison",
       "metaTitle": "MyImageUpscaler vs ampliamento.media: online AI Upscaler comparison | MyImageUpscaler",
       "metaDescription": "comparison MyImageUpscaler vs ampliamento.media online AI upscalers. quality, pricing, caratteristiche, and analysis for image miglioramento and ampliamento.",
       "h1": "MyImageUpscaler vs ampliamento.media: Which online AI Upscaler is Better?",
       "intro": "Direct comparison of two popular online AI ampliamento services. Analyze image quality, pricing modellos, feature sets, and overall user experience to Trova the online solution.",
-      "primaryKeyword": "ampliamento.media comparison",
+      "primaryKeyword": "myimageupscaler vs waifu2x",
       "secondaryKeywords": [
-        "ampliamento media alternative",
-        "online ai upscaler comparison",
-        "best online upscaler",
+        "alternativa a waifu2x",
+        "confronto upscaler ai online",
+        "miglior upscaler online",
         "ampliamento media vs myimageupscaler"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Versione gratuita, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Premium AI ampliamento with unlimited free access",
           "description": "Advanced AI upscaler offering professional quality with generous free tier and affordable premium caratteristiche.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_limit": "Illimitato",
             "max_filesize": "50MB",
             "processing_speed": "Veloce",
@@ -2305,15 +2305,15 @@
           "cons": ["Servizio più recente (anche se tecnologia provata)"]
         },
         {
-          "name": "ampliamento.media",
+          "name": "waifu2x",
           "pricing": "Gratuito 5 images/day, $9/month Premium",
           "rating": 4.1,
           "tagline": "Simple online image ampliamento service",
           "description": "Base online AI upscaler with limited free usage and affordable premium options for casual users.",
           "isRecommended": false,
           "features": {
-            "price": "$9/month",
-            "free_limit": "5 images/day",
+            "price": "$9/mese",
+            "free_limit": "5 immagini/giorno",
             "max_filesize": "10MB",
             "processing_speed": "Medio",
             "quality": "Buono",
@@ -2339,31 +2339,31 @@
       "criteria": [
         {
           "name": "Gratuito Limit",
-          "key": "free_limit"
+          "key": "limite_gratuito"
         },
         {
           "name": "Max Fileize",
-          "key": "max_filesize"
+          "key": "dimensione_massima_file"
         },
         {
           "name": "Velocita di Elaborazione",
-          "key": "processing_speed"
+          "key": "velocità_elaborazione"
         },
         {
           "name": "Qualita",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Supportoo Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Professional Usa",
-          "key": "professional_use"
+          "key": "uso_professionale"
         }
       ],
       "verdict": {
@@ -2391,31 +2391,31 @@
       ]
     },
     {
-      "slug": "best-ai-upscaler",
+      "slug": "miglior-upscaler-ai",
       "title": "AI Upscaler 2025: Completato comparison & Recensioni",
       "metaTitle": "AI Upscaler 2025: Completato comparison & Recensioni | MyImmagineUpscaler",
       "metaDescription": "Comprehensive comparison of the AI upscalers in 2025. comparison MyImageUpscaler, az GigAPIxel, and other AI ampliamento tools for quality and value.",
       "h1": "AI Upscaler in 2025: Completato comparison guide",
       "intro": "Exhaustive comparison of the AI upscalers avAIlable in 2025. We test quality, caratteristiche, pricing, and overall value per aiutarti a scegliere the AI ampliamento solution.",
-      "primaryKeyword": "best ai upscaler 2025",
+      "primaryKeyword": "miglior upscaler ai 2025",
       "secondaryKeywords": [
-        "best ai image upscaler",
-        "top ai upscaler",
-        "ai upscaler comparison",
+        "miglior upscaler immagini ai",
+        "top upscaler ai",
+        "confronto upscaler ai",
         "best image ampliamento tool"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
-      "comparisonType": "best-of",
+      "comparisonType": "migliori-di",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Gratuito tier, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Migliore overall AI upscaler with unlimited free access",
           "description": "Professionale AI upscaler delivering exceptional quality with unlimited free processing and excellent customer support.",
           "isRecommended": true,
           "features": {
-            "price": "$9.99/month",
+            "price": "$9.99/mese",
             "free_tier": "Illimitato",
             "quality": "Professionale",
             "speed": "Veloce",
@@ -2434,7 +2434,7 @@
         },
         {
           "name": "Topaz Gigapixel AI",
-          "pricing": "$99.99 one-time",
+          "pricing": "$99.99 una tantum",
           "rating": 4.6,
           "tagline": "Professionale desktop AI upscaler",
           "description": "Well-established desktop software offering advanced AI ampliamento with extensive customization options.",
@@ -2462,15 +2462,15 @@
           ]
         },
         {
-          "name": "Adobe Fotohop",
-          "pricing": "$22.99/month",
+          "name": "VanceAI",
+          "pricing": "$22.99/mese",
           "rating": 4.7,
           "tagline": "Professional image editing con AI caratteristiche",
           "description": "Industry-standard photo editing software con AI ampliamento caratteristiche as one of many capabilities.",
           "isRecommended": false,
           "features": {
-            "price": "$22.99/month",
-            "free_tier": "7-day trial",
+            "price": "$22.99/mese",
+            "free_tier": "prova di 7 giorni",
             "quality": "Buono",
             "speed": "Lento",
             "customer_support": "Professionale",
@@ -2493,31 +2493,31 @@
       "criteria": [
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Livello Gratuito",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "Qualità",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Velocità",
-          "key": "speed"
+          "key": "velocità"
         },
         {
           "name": "Supporto Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Ease of Usa",
-          "key": "ease_of_use"
+          "key": "facilità_duso"
         },
         {
           "name": "Valore Complessivo",
-          "key": "overall_value"
+          "key": "valore_complessivo"
         }
       ],
       "verdict": {
@@ -2545,7 +2545,7 @@
       ]
     },
     {
-      "slug": "best-free-ai-photo-enhancer",
+      "slug": "miglior-enhancer-foto-ai-gratis",
       "title": "Strumenti Miglioramento Foto AI Gratuiti 2025: Guida completa",
       "metaTitle": "Strumenti Miglioramento Foto AI Gratuiti 2025: Guida completa | MyImageUpscaler",
       "metaDescription": "Guida completa ai strumenti di miglioramento foto AI gratuiti nel 2025. Confronta MyImageUpscaler e altri strumenti gratuiti per qualità, funzionalità e limitazioni.",
@@ -2559,7 +2559,7 @@
         "editor foto ai gratuito"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
-      "comparisonType": "best-of",
+      "comparisonType": "migliori-di",
       "products": [
         {
           "name": "MyImageUpscaler",
@@ -2648,15 +2648,15 @@
       "criteria": [
         {
           "name": "Illimitato Usage",
-          "key": "unlimited_usage"
+          "key": "uso Illimitato"
         },
         {
           "name": "Nessun Watermark",
-          "key": "no_watermarks"
+          "key": "senza_watermark"
         },
         {
           "name": "Qualita",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Risoluzione Massima",
@@ -2664,15 +2664,15 @@
         },
         {
           "name": "Supportoo Clienti",
-          "key": "customer_support"
+          "key": "assistenza_clienti"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Versatilità",
-          "key": "versatility"
+          "key": "versatilità"
         }
       ],
       "verdict": {
@@ -2706,30 +2706,30 @@
       "metaDescription": "comparison MyImageUpscaler vs Icons8 Smart Upscaler. quality, pricing, caratteristiche, and batch processing analysis for image ampliamento needs.",
       "h1": "MyImageUpscaler vs Icons8: Which AI Upscaler is Migliore?",
       "intro": "Direct comparison of two popular AI ampliamento services. Analyze image quality, pricing modellos, batch capabilities, and overall user experience to Trova the solution.",
-      "primaryKeyword": "icons8 upscaler comparison",
+      "primaryKeyword": "confronto upscaler icons8",
       "secondaryKeywords": [
-        "icons8 smart upscaler alternative",
+        "alternativa smart upscaler icons8",
         "icons8 vs myimageupscaler",
         "bulk image ampliamento comparison",
-        "best batch upscaler"
+        "miglior upscaler batch"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Gratuito tier, $9-149/month",
           "rating": 4.8,
           "tagline": "Premium AI ampliamento with specialized quality tiers",
           "description": "Advanced AI upscaler offering multiple quality tiers including Face Restore, Face Pro, and Ultra for specialized Usa cases.",
           "isRecommended": true,
           "features": {
-            "price": "$9-149/month",
-            "free_tier": "10 images/month",
-            "max_filesize": "25MB (paid)",
+            "price": "$9-149/mese",
+            "free_tier": "10 immagini/mese",
+            "max_filesize": "25MB (a pagamento)",
             "processing_speed": "Veloce",
             "quality": "Eccellente",
-            "batch_limits": "5-500 images"
+            "batch_limits": "5-500 immagini"
           },
           "pros": [
             "Multipli quality livellos for different needs",
@@ -2774,27 +2774,27 @@
       "criteria": [
         {
           "name": "Gratuito Tier",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "Max Fileize",
-          "key": "max_filesize"
+          "key": "dimensione_massima_file"
         },
         {
           "name": "Velocita di Elaborazione",
-          "key": "processing_speed"
+          "key": "velocità_elaborazione"
         },
         {
           "name": "Qualita",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Limiti batch",
-          "key": "batch_limits"
+          "key": "limiti_batch"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Specialized Caratteristiche",
@@ -2832,27 +2832,27 @@
       "metaDescription": "comparison MyImageUpscaler vs Clipdrop AI upscaler. quality, pricing, caratteristiche, and analysis for image miglioramento and ampliamento.",
       "h1": "MyImmagineUpscaler vs Clipdrop: Which AI Enhancer is Migliore?",
       "intro": "Comprehensive comparison between MyImageUpscaler's specialized upscaler and Clipdrop's multi-tool AI platform. Analyze quality, pricing, and caratteristiche for your image miglioramento needs.",
-      "primaryKeyword": "clipdrop upscaler comparison",
+      "primaryKeyword": "confronto upscaler clipdrop",
       "secondaryKeywords": [
-        "clipdrop alternative",
-        "stability ai upscaler vs myimageupscaler",
-        "ai image enhancer comparison",
-        "clipdrop smart upscaler"
+        "alternativa a clipdrop",
+        "upscaler stability ai vs myimageupscaler",
+        "confronto enhancer immagini ai",
+        "smart upscaler clipdrop"
       ],
       "lastUpdated": "2025-01-19T00:00:00Z",
       "comparisonType": "vs",
       "products": [
         {
-          "name": "MyImmagineUpscaler",
+          "name": "MyImageUpscaler",
           "pricing": "Versione gratuita, $9-149/month",
           "rating": 4.8,
           "tagline": "Specialized AI ampliamento with quality tiers",
           "description": "Dedicated AI upscaler with multiple quality tiers, face miglioramento, and text preservation technology.",
           "isRecommended": true,
           "features": {
-            "price": "$9-149/month",
-            "free_tier": "10 images/month",
-            "max_filesize": "25MB (paid)",
+            "price": "$9-149/mese",
+            "free_tier": "10 immagini/mese",
+            "max_filesize": "25MB (a pagamento)",
             "processing_speed": "Veloce",
             "quality": "Eccellente",
             "specialization": "ampliamento-focused"
@@ -2862,7 +2862,7 @@
             "Multipli quality livellos (Veloce, Face Restore, Auto, HD, Face Pro, Ultra)",
             "Testo preservation technology",
             "Face miglioramento (GFPGAN, Flux-2-Pro)",
-            "8K output support",
+            "supporto output 8K",
             "Prezzi più convenienti"
           ],
           "cons": ["Focused on ampliamento (not a full editing suite)"]
@@ -2901,31 +2901,31 @@
       "criteria": [
         {
           "name": "Gratuito Tier",
-          "key": "free_tier"
+          "key": "livello_gratuito"
         },
         {
           "name": "Max Fileize",
-          "key": "max_filesize"
+          "key": "dimensione_massima_file"
         },
         {
           "name": "Velocita di Elaborazione",
-          "key": "processing_speed"
+          "key": "velocità_elaborazione"
         },
         {
           "name": "Qualita",
-          "key": "quality"
+          "key": "qualità"
         },
         {
           "name": "Specializzazione",
-          "key": "specialization"
+          "key": "specializzazione"
         },
         {
           "name": "Prezzo",
-          "key": "price"
+          "key": "prezzo"
         },
         {
           "name": "Focus sulle funzionalità",
-          "key": "feature_focus"
+          "key": "focus_funzionalità"
         }
       ],
       "verdict": {

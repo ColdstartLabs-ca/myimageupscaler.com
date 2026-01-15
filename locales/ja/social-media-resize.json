@@ -989,12 +989,12 @@
               "palette2": {
                 "hex": ["#8B7355", "#A0522D", "#D2B48C", "#F5DEB3"],
                 "usage": "ウェルネス、オーガニック、持続可能コンテンツ",
-                "name": "Natural Harmony"
+                "name": "ナチュラルハーモニー"
               },
               "palette1": {
-                "name": "Muted Vibrance",
+                "name": "ミュートヴァイブランス",
                 "hex": ["#FF6B6B", "#4ECDC4", "#45B7D1", "#F7DC6F"],
-                "usage": "Lifestyle, fashion, creative content"
+                "usage": "ライフスタイル、ファッション、クリエイティブコンテンツ"
               }
             },
             "aestheticMovements": [
@@ -1008,11 +1008,11 @@
               },
               {
                 "trend": "デジタルアートフュージョン",
-                "description": "Photography combined with digital art elements and augmented reality effects."
+                "description": "写真とデジタルアート要素、拡張現実効果の組み合わせ。"
               },
               {
-                "trend": "Sustainable Aesthetic",
-                "description": "Earth tones, natural materials, eco-friendly context in all content."
+                "trend": "サステナブル・エステティック",
+                "description": "アーストーン、自然素材、すべてのコンテンツでのエコフレンドリーなコンテキスト。"
               }
             ]
           },
@@ -1052,55 +1052,55 @@
             },
             "audienceGrowth": {
               "followerAnalysis": "フォロワー成長率とデモグラフィックを追跡",
-              "engagementRate": "Calculate engagement rate by follower count",
-              "audienceInsights": "Use Instagram Insights for demographic data",
-              "competitorAnalysis": "Monitor competitor strategies and performance"
+              "engagementRate": "フォロワー数でエンゲージメント率を計算",
+              "audienceInsights": "人口統計データにInstagram Insightsを使用",
+              "competitorAnalysis": "競合他社の戦略とパフォーマンスを監視"
             }
           }
         },
         "marketingIntegration": {
           "campaignStrategies": {
             "organicMarketing": {
-              "contentMarketing": "Educational content that provides value",
-              "communityBuilding": "Engage with comments and user-generated content",
-              "influencerCollaboration": "Partner with relevant influencers for authentic reach",
-              "seasonalCampaigns": "Holiday and event-specific content themes"
+              "contentMarketing": "価値を提供する教育的コンテンツ",
+              "communityBuilding": "コメントとユーザー生成コンテンツに参加",
+              "influencerCollaboration": "本物的なリーチのために関連インフルエンサーと協力",
+              "seasonalCampaigns": "休日やイベント特有のコンテンツテーマ"
             },
             "paidAdvertising": {
-              "feedAds": "Native-looking ads that blend with organic content",
-              "storyAds": "Full-screen vertical ads with interactive elements",
-              "reelsAds": "Native video ads in Reels feed",
-              "exploreAds": "Ads in Explore section for discovery"
+              "feedAds": "オーガニックコンテンツと融合するネイティブ広告",
+              "storyAds": "インタラクティブ要素を備えた全画面垂直広告",
+              "reelsAds": "Reelsフィード内のネイティブ動画広告",
+              "exploreAds": "発見のためのExploreセクションの広告"
             }
           },
           "conversionOptimization": {
             "salesFunnel": {
-              "awareness": "Educational content and brand storytelling",
-              "consideration": "Product showcases and user testimonials",
-              "conversion": "Direct product demonstrations and offers",
-              "retention": "Customer success stories and community features"
+              "awareness": "教育的コンテンツとブランドストーリーテリング",
+              "consideration": "製品ショーケースとユーザーの証言",
+              "conversion": "直接の製品デモンストレーションとオファー",
+              "retention": "顧客の成功事例とコミュニティ機能"
             },
             "shoppingFeatures": {
-              "instagramShopping": "Tag products directly in posts and stories",
-              "productTags": "Detailed product information with pricing",
-              "shoppingStickers": "Direct checkout from Stories",
-              "collectionAds": "Showcase product collections with multiple items"
+              "instagramShopping": "投稿とストーリーで製品を直接タグ付け",
+              "productTags": "価格付きの詳細な製品情報",
+              "shoppingStickers": "ストーリーから直接チェックアウト",
+              "collectionAds": "複数のアイテムで製品コレクションを紹介"
             }
           }
         }
       },
       "features": [
         {
-          "title": "All Instagram formats",
-          "description": "Complete support for posts, Stories, Reels, carousels, and profile pictures with 2025 specs"
+          "title": "すべてのInstagramフォーマット対応",
+          "description": "2025年の仕様に対応する投稿、ストーリーズ、リール、カルーセル、プロフィール写真の完全サポート"
         },
         {
-          "title": "Grid Planning tools",
-          "description": "Visual grid preview to ensure cohesive Instagram feed aesthetics"
+          "title": "グリッドプランニングツール",
+          "description": "Instagramフィードの美学を統一するためのビジュアルグリッドプレビュー"
         },
         {
-          "title": "Batch Processing",
-          "description": "Process multiple images for consistent brand appearance across content"
+          "title": "バッチ処理",
+          "description": "コンテンツ全体で一貫したブランド外観のために複数の画像を処理"
         },
         {
           "title": "エンゲージメント最適化",
@@ -1163,15 +1163,15 @@
         },
         {
           "title": "グリッドプランニング",
-          "description": "Preview and plan your Instagram feed layout before posting"
+          "description": "投稿する前にInstagramフィードのレイアウトをプレビューして計画"
         },
         {
-          "title": "Engagement Analytics",
-          "description": "Get AI-powered recommendations based on Instagram engagement patterns"
+          "title": "エンゲージメント分析",
+          "description": "Instagramのエンゲージメントパターンに基づいたAI推奨事項を取得"
         },
         {
-          "title": "Complete format Support",
-          "description": "Support for all Instagram content types including newest features"
+          "title": "完全なフォーマットサポート",
+          "description": "最新機能を含むすべてのInstagramコンテンツタイプのサポート"
         }
       ],
       "lastUpdated": "2025-01-19",
@@ -1183,18 +1183,18 @@
       "ctaUrl": "/?signup=1",
       "howItWorks": [
         {
-          "title": "Upload Images",
-          "description": "Upload single images or batches for consistent content creation",
+          "title": "画像をアップロード",
+          "description": "一貫したコンテンツ作成のために単一またはバッチ画像をアップロード",
           "step": 1
         },
         {
-          "title": "Choose format",
-          "description": "Select from posts, Stories, Reels, carousels, or profile formats",
+          "title": "フォーマットを選択",
+          "description": "投稿、ストーリーズ、リール、カルーセル、プロフィールフォーマットから選択",
           "step": 2
         },
         {
-          "title": "Optimize & Download",
-          "description": "Apply engagement optimization and export Instagram-ready content",
+          "title": "最適化してダウンロード",
+          "description": "エンゲージメント最適化を適用してInstagram対応コンテンツをエクスポート",
           "step": 3
         }
       ],
@@ -1363,28 +1363,28 @@
             "thumbnailHonesty": {
               "accurateRepresentation": "サムネイルはコンテンツを正確に表現すべき",
               "avoidClickbait": "誤解を招くサムネイルはチャンネルの評判を損なう",
-              "expectationManagement": "Set realistic expectations for content quality",
-              "consistency": "Maintain style while delivering on promises"
+              "expectationManagement": "コンテンツ品質の現実的な期待を設定",
+              "consistency": "約束を守りながらスタイルを維持"
             },
             "engagementSignals": {
-              "firstImpression": "Thumbnail should encourage immediate clicking",
-              "contentQuality": "High-quality thumbnails signal high-quality content",
-              "professionalStandards": "Consistent quality builds viewer trust",
-              "brandRecognition": "Instantly recognizable thumbnails build loyalty"
+              "firstImpression": "サムネイルはすぐにクリックを促す必要があります",
+              "contentQuality": "高品質のサムネイルは高品質のコンテンツを示します",
+              "professionalStandards": "一貫した品質は視聴者の信頼を構築します",
+              "brandRecognition": "すぐに認識できるサムネイルは忠誠心を構築します"
             }
           },
           "algorithmOptimization": {
             " engagementMetrics": {
-              "clickThroughRate": "Primary factor for video recommendation",
-              "watchTime": "Thumbnail affects initial engagement and retention",
-              "sessionTime": "Thumbnails that keep viewers on platform longer",
-              "viewerSatisfaction": "Accurate thumbnails improve viewer satisfaction"
+              "clickThroughRate": "動画推奨の主要な要素",
+              "watchTime": "サムネイルは初期のエンゲージメントと維持率に影響します",
+              "sessionTime": "視聴者をプラットフォームに長く留めるサムネイル",
+              "viewerSatisfaction": "正確なサムネイルは視聴者の満足度を向上させます"
             },
             "discoveryFactors": {
-              "suggestedVideos": "Thumbnails compete in suggested video sections",
-              "searchResults": "Stand out in search result listings",
-              "browseFeatures": "Appear in YouTube's various browsing sections",
-              "externalEmbeds": "Thumbnails visible when videos are embedded"
+              "suggestedVideos": "サムネイルはおすすめ動画セクションで競合します",
+              "searchResults": "検索結果リストで目立つ",
+              "browseFeatures": "YouTubeの様々なブラウジングセクションに表示",
+              "externalEmbeds": "動画が埋め込まれたときにサムネイルが表示されます"
             }
           }
         },
@@ -1392,9 +1392,9 @@
           "endScreenStrategy": {
             "elementPlacement": {
               "numberLimit": "雑然さを回避するために最大4つの要素",
-              "strategicPositioning": "Plan end screen elements 20-30 seconds before end",
-              "visualHierarchy": "Most important action gets prominent placement",
-              "sizeOptimization": "Maximum 300x300 pixels per element"
+              "strategicPositioning": "終了の20〜30秒前にエンドスクリーン要素を計画",
+              "visualHierarchy": "最も重要なアクションに目立つ配置を取得",
+              "sizeOptimization": "要素あたり最大300x300ピクセル"
             },
             "callToAction": {
               "subscribeButton": "目立つ購読要素の配置",
@@ -1419,16 +1419,16 @@
           },
           "youtubeShortsOptimization": {
             "verticalFirstDesign": {
-              "mobileOptimization": "Design specifically for mobile viewing",
-              "fullScreenImpact": "Use entire 9:16 canvas effectively",
-              "thumbStopperContent": "Create scroll-stopping first frame",
-              "rapidEngagement": "Hook viewers in first 2-3 seconds"
+              "mobileOptimization": "モバイル視聴用に特別に設計",
+              "fullScreenImpact": "9:16キャンバス全体を効果的に使用",
+              "thumbStopperContent": "スクロールを止める最初のフレームを作成",
+              "rapidEngagement": "最初の2〜3秒で視聴者を惹きつける"
             },
             "trendingIntegration": {
-              "audioLeverage": "Use trending audio for algorithm preference",
-              "challengeParticipation": "Join relevant hashtag challenges",
-              "quickValue": "Provide immediate value or entertainment",
-              "loopPotential": "Create content that works well on repeat"
+              "audioLeverage": "アルゴリズム設定のためにトレンドオーディオを使用",
+              "challengeParticipation": "関連するハッシュタグチャレンジに参加",
+              "quickValue": "即座の価値またはエンターテイメントを提供",
+              "loopPotential": "繰り返しでも機能するコンテンツを作成"
             }
           }
         },
@@ -1471,14 +1471,14 @@
             "colorContrast": {
               "wcagCompliance": "最低4.5:1のコントラスト比を維持",
               "colorBlindness": "色覚シミュレーターでテスト",
-              "readability": "Ensure text remains readable on all backgrounds",
-              "alternativeIndicators": "Use shapes and patterns in addition to color"
+              "readability": "すべての背景でテキストが読みやすいことを確認",
+              "alternativeIndicators": "色に加えて形とパターンを使用"
             },
             "screenReaderOptimization": {
-              "descriptiveAltText": "Write detailed, accurate descriptions",
-              "contextRelevance": "Include relevant information about video content",
-              "keywordOptimization": "Include relevant keywords for search visibility",
-              "contentDescription": "Provide context about video purpose and value"
+              "descriptiveAltText": "詳細で正確な説明を書く",
+              "contextRelevance": "動画コンテンツに関する関連情報を含める",
+              "keywordOptimization": "検索表示のために関連キーワードを含める",
+              "contentDescription": "動画の目的と価値に関するコンテキストを提供"
             }
           }
         },
@@ -1498,12 +1498,12 @@
             },
             "aestheticMovements": [
               {
-                "trend": "Minimalist Impact",
-                "description": "Clean design with bold, impactful elements. Lots of negative space with strategic color accents."
+                "trend": "ミニマリストインパクト",
+                "description": "大胆でインパクトのある要素を備えたクリーンなデザイン。戦略的な色のアクセントを備えた多くのネガティブスペース。"
               },
               {
                 "description": "本物の感情を持つリアルで未加工の瞬間。過度に洗練されたストックスタイルのイメージから離れる。",
-                "trend": "Authentic Connection"
+                "trend": "本物的な接続"
               },
               {
                 "trend": "デジタルイノベーション",
@@ -1589,30 +1589,30 @@
         "contentStrategy": {
           "planningWorkflows": {
             "thumbnailStrategy": {
-              "brandTemplates": "Create 3-5 thumbnail templates for different content types",
-              "batchCreation": "Create multiple thumbnails in single sessions for consistency",
-              "testingSchedule": "A/B test thumbnail styles monthly",
-              "performanceTracking": "Document which styles perform best for different content"
+              "brandTemplates": "異なるコンテンツタイプのために3〜5つのサムネイルテンプレートを作成",
+              "batchCreation": "一貫性のために単一セッションで複数のサムネイルを作成",
+              "testingSchedule": "月に1回サムネイルスタイルをA/Bテスト",
+              "performanceTracking": "異なるコンテンツでどのスタイルが最も機能するかを文書化"
             },
             "contentCalendars": {
-              "seasonalPlanning": "Plan thumbnail themes 2-3 months in advance",
-              "seriesConsistency": "Maintain consistent style across multi-part series",
-              "trendIntegration": "Prepare templates for trending content opportunities",
-              "brandEvolution": "Gradually evolve thumbnail style as channel grows"
+              "seasonalPlanning": "2〜3ヶ月前にサムネイルテーマを計画",
+              "seriesConsistency": "マルチパートシリーズ間で一貫したスタイルを維持",
+              "trendIntegration": "トレンドコンテンツの機会のためにテンプレートを準備",
+              "brandEvolution": "チャンネルの成長に合わせてサムネイルスタイルを徐々に進化"
             }
           },
           "platformIntegration": {
             "crossPlatformStrategy": {
-              "instagramAdaptation": "Convert YouTube thumbnails for Instagram Stories and Reels",
-              "tikTokCreation": "Create TikTok-friendly versions of YouTube content",
-              "facebookOptimization": "Adapt content for Facebook's algorithm preferences",
-              "linkedinAdaptation": "Create professional versions for business audience"
+              "instagramAdaptation": "Instagramストーリーズとリール用にYouTubeサムネイルを変換",
+              "tikTokCreation": "YouTubeコンテンツのTikTokフレンドリーバージョンを作成",
+              "facebookOptimization": "Facebookのアルゴリズム設定用にコンテンツを適応",
+              "linkedinAdaptation": "ビジネス聴衆用にプロフェッショナルバージョンを作成"
             },
             "websiteIntegration": {
-              "videoEmbeds": "Ensure thumbnails look good when embedded on websites",
-              "blogIntegration": "Create complementary blog post thumbnails",
-              "emailMarketing": "Use thumbnails in email newsletters and campaigns",
-              "socialSharing": "Optimize thumbnails for social media sharing previews"
+              "videoEmbeds": "ウェブサイトに埋め込まれたときにサムネイルが良く見えることを確認",
+              "blogIntegration": "ブログ投稿用の補完的なサムネイルを作成",
+              "emailMarketing": "メールニュースレターとキャンペーンでサムネイルを使用",
+              "socialSharing": "ソーシャルメディア共有プレビュー用にサムネイルを最適化"
             }
           }
         }
@@ -1675,10 +1675,7 @@
         }
       ],
       "relatedTools": ["ai-image-upscaler", "video-thumbnail-generator"],
-      "relatedGuides": [
-        "how-to-upscale-images-without-losing-quality",
-        "youtube-channel-growth-guide"
-      ],
+      "relatedGuides": ["how-to-upscale-images-without-losing-quality", "youtube-channel-growth-guide"],
       "ctaText": "今すぐ完璧なYouTubeグラフィックを作成",
       "ctaUrl": "/?signup=1",
       "slug": "resize-image-for-youtube",
@@ -1917,38 +1914,38 @@
               "alternatives": "色に加えてパターンと形状を使用"
             },
             "imageDescriptions": {
-              "altText": "Write descriptive alt text for all images",
-              "contextRelevance": "Include relevant information about image content",
-              "brandElements": "Describe important brand elements in images",
-              "callToAction": "Include CTAs in image descriptions when appropriate"
+              "altText": "すべての画像に説明的な代替テキストを書く",
+              "contextRelevance": "画像コンテンツに関する関連情報を含める",
+              "brandElements": "画像の重要なブランド要素を説明",
+              "callToAction": "適切な場合は画像の説明にCTAを含める"
             }
           },
           "compressionSettings": {
             "jpgOptimization": {
-              "qualitySettings": "80-85% quality for optimal balance",
-              "progressiveLoading": "Enable progressive JPEG for faster loading",
-              "colorOptimization": "Optimize for web color display",
-              "fileSizeBalance": "Target under 1MB for posts, under 4MB for covers"
+              "qualitySettings": "最適なバランスのために80〜85%の品質",
+              "progressiveLoading": "より高速な読み込みのためにプログレッシブJPEGを有効にする",
+              "colorOptimization": "ウェブカラー表示用に最適化",
+              "fileSizeBalance": "投稿用は1MB未満、カバー用は4MB未満を目指す"
             },
             "pngUsage": {
-              "graphicsAndText": "Use PNG for graphics with sharp edges or text",
-              "transparency": "Properly handle alpha channels",
-              "compression": "Lossless compression for quality maintenance",
-              "fileSize": "Larger file sizes but higher quality for graphics"
+              "graphicsAndText": "シャープなエッジやテキストを備えたグラフィックにPNGを使用",
+              "transparency": "アルファチャンネルを適切に処理",
+              "compression": "品質維持のための可逆圧縮",
+              "fileSize": "グラフィック用のファイルサイズは大きいが品質は高い"
             }
           },
           "loadingPerformance": {
             "mobileOptimization": {
-              "fileSizePriority": "Prioritize faster loading on mobile",
-              "aboveFold": "Optimize first image in posts for quick loading",
-              "progressiveDisplay": "Use formats that load progressively",
-              "connectionSpeed": "Consider slow connection users"
+              "fileSizePriority": "モバイルでのより高速な読み込みを優先",
+              "aboveFold": "高速読み込みのために投稿の最初の画像を最適化",
+              "progressiveDisplay": "プログレッシブに読み込むフォーマットを使用",
+              "connectionSpeed": "遅い接続ユーザーを考慮"
             },
             "qualityMaintenance": {
-              "highResolution": "Ensure sharp display on high-DPI screens",
-              "colorAccuracy": "Maintain consistent color across devices",
-              "compressionBalance": "Find optimal compression without quality loss",
-              "testing": "Test across various devices and connections"
+              "highResolution": "高DPI画面で鮮明な表示を確保",
+              "colorAccuracy": "デバイス間で一貫した色を維持",
+              "compressionBalance": "品質を損なわずに最適な圧縮を見つける",
+              "testing": "様々なデバイスと接続でテスト"
             }
           }
         },
@@ -2051,9 +2048,9 @@
             },
             "audienceGrowth": {
               "followerAnalysis": "フォロワー成長とデモグラフィックを追跡",
-              "engagementRate": "Calculate engagement rate by follower count",
-              "reachExpansion": "Strategies to expand content reach",
-              "communityBuilding": "Develop strategies for active community engagement"
+              "engagementRate": "フォロワー数でエンゲージメント率を計算",
+              "reachExpansion": "コンテンツのリーチを拡大する戦略",
+              "communityBuilding": "アクティブなコミュニティエンゲージメントのための戦略を策定"
             }
           }
         },
@@ -2061,59 +2058,59 @@
           "facebookStories": {
             "engagementFeatures": {
               "interactiveStickers": "エンゲージメントのための投票、質問、クイズ",
-              "swipeUpLinks": "Available for verified accounts with 10,000+ followers",
-              "musicIntegration": "Use licensed music for enhanced storytelling",
-              "filtersAndEffects": "Platform-native effects for authenticity"
+              "swipeUpLinks": "10,000人以上のフォロワーを持つ認証アカウントで利用可能",
+              "musicIntegration": "強化されたストーリーテリングのためにライセンス音楽を使用",
+              "filtersAndEffects": "本物味のためのプラットフォームネイティブエフェクト"
             },
             "designStrategy": {
-              "fullScreenImpact": "Use entire 9:16 canvas effectively",
-              "firstFrame": "Create compelling first frame for thumb-stop effect",
-              "textOverlays": "Large, readable text for sound-off viewing",
-              "brandConsistency": "Maintain brand elements across Stories"
+              "fullScreenImpact": "9:16キャンバス全体を効果的に使用",
+              "firstFrame": "サムストップ効果のための魅力的な最初のフレームを作成",
+              "textOverlays": "サウンドオフ視聴用の大きな読みやすいテキスト",
+              "brandConsistency": "ストーリーズ全体でブランド要素を維持"
             }
           },
           "facebookWatch": {
             "videoThumbnails": {
-              "optimalSize": "1280x720 pixels (16:9 ratio)",
-              "compellingFrames": "Select most engaging frames from video",
-              "textOverlays": "Add compelling titles and hooks",
-              "brandElements": "Include consistent branding in thumbnails"
+              "optimalSize": "1280x720ピクセル（16:9比率）",
+              "compellingFrames": "動画から最も魅力的なフレームを選択",
+              "textOverlays": "魅力的なタイトルとフックを追加",
+              "brandElements": "サムネイルに一貫したブランディングを含める"
             },
             "coverImages": {
-              "playlistCovers": "1640x924 pixels for playlist covers",
-              "showCovers": "1640x924 pixels for Facebook Watch show covers",
-              "episodeThumbnails": "1280x720 pixels for individual episodes",
-              "brandConsistency": "Maintain visual style across all content"
+              "playlistCovers": "プレイリストカバー用に1640x924ピクセル",
+              "showCovers": "Facebook Watch番組カバー用に1640x924ピクセル",
+              "episodeThumbnails": "個々のエピソード用に1280x720ピクセル",
+              "brandConsistency": "すべてのコンテンツでビジュアルスタイルを維持"
             }
           }
         },
         "marketingIntegration": {
           "campaignStrategies": {
             "businessGrowth": {
-              "brandAwareness": "Consistent visual branding across all content",
-              "leadGeneration": "Create content that drives website traffic and leads",
-              "customerAcquisition": "Target new customer segments with relevant content",
-              "retentionMarketing": "Engage existing customers with valuable content"
+              "brandAwareness": "すべてのコンテンツで一貫したビジュアルブランディング",
+              "leadGeneration": "ウェブサイトトラフィックとリードを促進するコンテンツを作成",
+              "customerAcquisition": "関連するコンテンツで新しい顧客セグメントをターゲット",
+              "retentionMarketing": "価値のあるコンテンツで既存の顧客を惹きつける"
             },
             "advertising": {
-              "boostedPosts": "Boost high-performing organic content",
-              "targetedAds": "Create custom ads for specific audience segments",
-              "retargetingCampaigns": "Re-engage website visitors with Facebook ads",
-              "lookalikeAudiences": "Expand reach with similar audience targeting"
+              "boostedPosts": "高パフォーマンスのオーガニックコンテンツをブースト",
+              "targetedAds": "特定の視聴者セグメント用のカスタム広告を作成",
+              "retargetingCampaigns": "Facebook広告でウェブサイト訪問者を再エンゲージ",
+              "lookalikeAudiences": "類似した視聴者ターゲティングでリーチを拡大"
             }
           },
           "conversionOptimization": {
             "salesFunnel": {
-              "awareness": "Educational content that introduces brand value",
-              "consideration": "Product showcases and customer testimonials",
-              "conversion": "Direct product promotions and special offers",
-              "loyalty": "Customer success stories and community features"
+              "awareness": "ブランド価値を紹介する教育的コンテンツ",
+              "consideration": "製品ショーケースと顧客の証言",
+              "conversion": "直接の製品プロモーションと特別オファー",
+              "loyalty": "顧客の成功事例とコミュニティ機能"
             },
             "socialCommerce": {
-              "facebookMarketplace": "Optimize product images for marketplace listings",
-              "facebookShops": "Create compelling shop visuals and product galleries",
-              "instagramShopping": "Coordinate Facebook and Instagram shopping strategies",
-              "liveShopping": "Plan live shopping events with proper visual preparation"
+              "facebookMarketplace": "マーケットプレイスリスト用に製品画像を最適化",
+              "facebookShops": "魅力的なショップビジュアルと製品ギャラリーを作成",
+              "instagramShopping": "FacebookとInstagramのショッピング戦略を調整",
+              "liveShopping": "適切なビジュアル準備でライブショッピングイベントを計画"
             }
           }
         }
@@ -2149,87 +2146,87 @@
       "toolComponent": "ImageResizer",
       "features": [
         {
-          "title": "Complete Facebook formats",
-          "description": "All Facebook image types including posts, covers, Stories, ads, Marketplace, and events"
+          "title": "完全なFacebookフォーマット対応",
+          "description": "投稿、カバー、ストーリーズ、広告、マーケットプレイス、イベントを含むすべてのFacebook画像タイプ"
         },
         {
-          "title": "Business Page tools",
-          "description": "Specialized templates and optimization for Facebook business pages"
+          "title": "ビジネスページツール",
+          "description": "Facebookビジネスページ用の特化したテンプレートと最適化"
         },
         {
-          "title": "Marketplace Optimization",
-          "description": "Perfect sizing for Facebook Marketplace listings with attention-grabbing photos"
+          "title": "マーケットプレイス最適化",
+          "description": "注目を集める写真を備えたFacebookマーケットプレイスリスト用の完璧なサイジング"
         },
         {
-          "title": "Ad Creative Templates",
-          "description": "Facebook-ready ad templates that comply with platform specifications"
+          "title": "広告クリエイティブテンプレート",
+          "description": "プラットフォーム仕様に準拠したFacebook対応広告テンプレート"
         }
       ],
       "useCases": [
         {
-          "title": "Facebook marketing campAIgns",
-          "description": "Create cohesive campAIgn visuals across posts, Stories, and ads with consistent branding",
-          "example": "Local businesses creating multi-format campAIgns for product launches and events"
+          "title": "Facebookマーケティングキャンペーン",
+          "description": "一貫したブランディングで投稿、ストーリーズ、広告全体で cohesive キャンペーンビジュアルを作成",
+          "example": "製品発売とイベントのためにマルチフォーマットキャンペーンを作成する地元企業"
         },
         {
-          "title": "Business page optimization",
-          "description": "ize Facebook presence with optimized cover photos, profile pictures, and content",
-          "example": "Service businesses establishing authority through consistent visual branding"
+          "title": "ビジネスページの最適化",
+          "description": "最適化されたカバー写真、プロフィール写真、コンテンツでFacebookプレゼンスを最適化",
+          "example": "一貫したビジュアルブランディングを通じて権威を確立するサービスビジネス"
         },
         {
-          "title": "Facebook Marketplace success",
-          "description": "Create compelling product photos that attract buyers and drive sales on Marketplace",
-          "example": "E-commerce sellers optimizing product photography for higher conversion rates"
+          "title": "Facebookマーケットプレイスの成功",
+          "description": "バイヤーを惹きつけ、マーケットプレイスで販売を促進する魅力的な製品写真を作成",
+          "example": "より高いコンバージョン率のために製品写真を最適化するEコマースセラー"
         },
         {
-          "title": "Brand presence management",
-          "description": "MAIntAIn consistent visual identity while adapting content for different Facebook formats",
-          "example": "National brands coordinating visual identity across franchise and corporate pages"
+          "title": "ブランドプレゼンス管理",
+          "description": "異なるFacebookフォーマット用にコンテンツを適応させながら一貫したビジュアルアイデンティティを維持",
+          "example": "フランチャイズと企業ページ間でビジュアルアイデンティティを調整する全国ブランド"
         },
         {
-          "title": "Facebook advertising preparation",
-          "description": "Prepare ad creatives that meet Facebook's specifications and perform well in feed",
-          "example": "Digital agencies creating Facebook ad campAIgns for multiple clients"
+          "title": "Facebook広告の準備",
+          "description": "Facebookの仕様を満たし、フィードで機能する広告クリエイティブを準備",
+          "example": "複数のクライアント用にFacebook広告キャンペーンを作成するデジタルエージェンシー"
         }
       ],
       "faq": [
         {
-          "question": "What's the size for Facebook posts in 2025?",
-          "answer": "Facebook posts work at 1200x630 pixels (1.91:1 ratio) for optimal display. Square posts at 1080x1080 pixels also perform well, as do portrAIt posts at 1080x1350 pixels (4:5 ratio)."
+          "question": "2025年のFacebook投稿のサイズは？",
+          "answer": "Facebook投稿は最適な表示のために1200x630ピクセル（1.91:1比率）で動作します。1080x1080ピクセルの正方形の投稿も同様に機能します。1080x1350ピクセル（4:5比率）の縦長の投稿も同様です。"
         },
         {
-          "question": "How do I optimize Facebook cover photos for all devices?",
-          "answer": "Upload cover photos at 2048x1152 pixels to ensure quality across devices. Important content should be in the center safe zone (100px margins from edges) as Facebook displays different portions on desk vs mobile."
+          "question": "すべてのデバイス用にFacebookカバー写真を最適化するには？",
+          "answer": "デバイス間で品質を確保するために2048x1152ピクセルでカバー写真をアップロードします。Facebookはデスクトップとモバイルで異なる部分を表示するため、重要なコンテンツは中央の安全ゾーン（端から100pxの余白）にある必要があります。"
         },
         {
-          "question": "What are Facebook Marketplace photo requirements?",
-          "answer": "Marketplace photos should be 1200x900 pixels (4:3 ratio) with a minimum of 800x600 pixels. Use high-quality, well-lit photos showing products clearly. Maximum 20 photos per listing with 10MB file size limit each."
+          "question": "Facebookマーケットプレイスの写真要件は何ですか？",
+          "answer": "マーケットプレイスの写真は1200x900ピクセル（4:3比率）、最小800x600ピクセルである必要があります。製品を明確に示す高品質で明るい写真を使用します。リストごとに最大20枚の写真、各10MBのファイルサイズ制限。"
         },
         {
-          "question": "How should I size Facebook Stories for optimal engagement?",
-          "answer": "Facebook Stories should be 1080x1920 pixels (9:16 vertical format). Leave a 10% margin around edges for UI elements, use large readable text, and include interactive elements like polls and stickers."
+          "question": "最適なエンゲージメントのためにFacebookストーリーズをどのようにサイズ設定すればよいですか？",
+          "answer": "Facebookストーリーズは1080x1920ピクセル（9:16垂直フォーマット）である必要があります。UI要素用に端から10%の余白を残し、大きな読みやすいテキストを使用し、投票やステッカーなどのインタラクティブ要素を含めます。"
         },
         {
-          "question": "What are current Facebook image trends for 2025?",
-          "answer": "Current trends include authentic connection (real, unpolished moments), minimalist ism (clean design with purposeful color use), bold expression (vibrant colors and typography), and sustAInable visuals (earth tones and eco-friendly contexts)."
+          "question": "2025年の現在のFacebook画像トレンドは何ですか？",
+          "answer": "現在のトレンドには、本物的な接続（本物で未洗練の瞬間）、ミニマリズム（目的のある色を使用したクリーンなデザイン）、大胆な表現（鮮やかな色とタイポグラフィ）、サステナブルなビジュアル（アーストーンとエコフレンドリーなコンテキスト）が含まれます。"
         }
       ],
       "benefits": [
         {
-          "title": "2025 Facebook Compliance",
-          "description": "All specifications updated for current Facebook requirements and algorithm preferences"
+          "title": "2025年Facebook準拠",
+          "description": "現在のFacebook要件とアルゴリズム設定に更新されたすべての仕様"
         },
         {
-          "title": "Business Page Optimization",
-          "description": "Specialized tools for Facebook business pages and marketing campAIgns"
+          "title": "ビジネスページの最適化",
+          "description": "Facebookビジネスページとマーケティングキャンペーン用の特化したツール"
         },
         {
-          "title": "Marketplace Ready",
-          "description": "Perfect sizing and optimization for Facebook Marketplace listings"
+          "title": "マーケットプレイス対応",
+          "description": "Facebookマーケットプレイスリスト用の完璧なサイジングと最適化"
         },
         {
-          "title": "Ad Compliant Templates",
-          "description": "Facebook ad templates that meet all platform specifications"
+          "title": "広告準拠テンプレート",
+          "description": "すべてのプラットフォーム仕様を満たすFacebook広告テンプレート"
         }
       ],
       "isInteractive": true
@@ -2242,13 +2239,7 @@
       "h1": "Twitter画像リサイザー - 完璧なTwitter寸法",
       "intro": "専用画像リサイザーでインパクトのあるTwitterビジュアルを作成。ツイート画像、ヘッダー写真、プロフィール写真、Twitterカードに最適。",
       "primaryKeyword": "twitter用画像リサイズ",
-      "secondaryKeywords": [
-        "twitter画像サイズ",
-        "twitterヘッダー寸法",
-        "twitterプロフィール写真",
-        "ツイート画像リサイズ",
-        "twitter最適化"
-      ],
+      "secondaryKeywords": ["twitter画像サイズ", "twitterヘッダー寸法", "twitterプロフィール写真", "ツイート画像リサイズ", "twitter最適化"],
       "lastUpdated": "2025-01-19",
       "category": "ツール",
       "toolName": "Twitter画像リサイザー",
@@ -2346,7 +2337,7 @@
       ],
       "relatedTools": ["ai-image-upscaler"],
       "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
-      "ctaText": "start Resizing",
+      "ctaText": "リサイズを開始",
       "ctaUrl": "/?signup=1",
       "isInteractive": true
     },
@@ -2470,13 +2461,7 @@
       "h1": "Discord画像リサイザー - 完璧なDiscord寸法",
       "intro": "専用画像リサイザーでDiscord体験を最適化。プロフィール写真、サーバーアイコン、カスタム絵文字、サーバーバナーに最適。",
       "primaryKeyword": "discord用画像リサイズ",
-      "secondaryKeywords": [
-        "discord画像サイズ",
-        "discordプロフィール写真",
-        "discordサーバーアイコン",
-        "discord絵文字サイズ",
-        "ゲーム画像リサイズ"
-      ],
+      "secondaryKeywords": ["discord画像サイズ", "discordプロフィール写真", "discordサーバーアイコン", "discord絵文字サイズ", "ゲーム画像リサイズ"],
       "lastUpdated": "2025-01-19",
       "category": "ツール",
       "toolName": "Discord画像リサイザー",
@@ -2590,13 +2575,7 @@
       "h1": "Reddit画像リサイザー - 最適なReddit寸法",
       "intro": "専用画像リサイザーでRedditプレゼンスを強化。投稿画像、プロフィールアバター、コミュニティバナー、サムネイルプレビューに最適。",
       "primaryKeyword": "reddit用画像リサイズ",
-      "secondaryKeywords": [
-        "reddit画像サイズ",
-        "reddit投稿画像",
-        "redditアバターサイズ",
-        "redditバナー寸法",
-        "ソーシャルメディアリサイズ"
-      ],
+      "secondaryKeywords": ["reddit画像サイズ", "reddit投稿画像", "redditアバターサイズ", "redditバナー寸法", "ソーシャルメディアリサイズ"],
       "lastUpdated": "2025-01-19",
       "category": "ツール",
       "toolName": "Reddit画像リサイザー",
@@ -2716,101 +2695,101 @@
       "lastUpdated": "2025-01-19",
       "category": "tools",
       "toolName": "Telegram画像リサイザー",
-      "description": "Specialized Telegram image resizing tool for messaging and communication platforms",
+      "description": "メッセージングとコミュニケーションプラットフォーム用の特化したTelegram画像リサイズツール",
       "toolComponent": "ImageResizer",
       "features": [
         {
-          "title": "Profile Pictures",
-          "description": "Perfect 512x512 profile pictures for Telegram accounts"
+          "title": "プロフィール写真",
+          "description": "Telegramアカウント用の完璧な512x512プロフィール写真"
         },
         {
-          "title": "Chat Backgrounds",
-          "description": "Optimize images for custom chat backgrounds and wallpapers"
+          "title": "チャット背景",
+          "description": "カスタムチャット背景と壁紙用に画像を最適化"
         },
         {
-          "title": "Channel Photos",
-          "description": "Create perfect channel profile photos and cover images"
+          "title": "チャンネル写真",
+          "description": "完璧なチャンネルプロフィール写真とカバー画像を作成"
         },
         {
-          "title": "Sticker Preparation",
-          "description": "Prepare images for Telegram sticker creation (512x512 recommended)"
+          "title": "ステッカーの準備",
+          "description": "Telegramステッカー作成用に画像を準備（512x512推奨）"
         }
       ],
       "useCases": [
         {
-          "title": "Messaging app customization",
-          "description": "Optimize images for messaging app customization",
-          "example": "Perfect sizing for messaging app customization"
+          "title": "メッセージングアプリのカスタマイズ",
+          "description": "メッセージングアプリのカスタマイズ用に画像を最適化",
+          "example": "メッセージングアプリのカスタマイズ用の完璧なサイジング"
         },
         {
-          "title": "Channel branding",
-          "description": "Optimize images for channel branding",
-          "example": "Perfect sizing for channel branding"
+          "title": "チャンネルブランディング",
+          "description": "チャンネルブランディング用に画像を最適化",
+          "example": "チャンネルブランディング用の完璧なサイジング"
         },
         {
-          "title": "Personal expression",
-          "description": "Optimize images for personal expression",
-          "example": "Perfect sizing for personal expression"
+          "title": "個人的な表現",
+          "description": "個人的な表現用に画像を最適化",
+          "example": "個人的な表現用の完璧なサイジング"
         },
         {
-          "title": "Communication optimization",
-          "description": "Optimize images for communication optimization",
-          "example": "Perfect sizing for communication optimization"
+          "title": "コミュニケーションの最適化",
+          "description": "コミュニケーションの最適化用に画像を最適化",
+          "example": "コミュニケーションの最適化用の完璧なサイジング"
         },
         {
-          "title": "Social platform setup",
-          "description": "Optimize images for social platform setup",
-          "example": "Perfect sizing for social platform setup"
+          "title": "ソーシャルプラットフォームのセットアップ",
+          "description": "ソーシャルプラットフォームのセットアップ用に画像を最適化",
+          "example": "ソーシャルプラットフォームのセットアップ用の完璧なサイジング"
         }
       ],
       "faq": [
         {
-          "question": "What's the size for Telegram profile pictures?",
-          "answer": "Telegram profile pictures work at 512x512 pixels for optimal quality and display."
+          "question": "Telegramプロフィール写真のサイズは？",
+          "answer": "Telegramプロフィール写真は最適な品質と表示のために512x512ピクセルで動作します。"
         },
         {
-          "question": "How should I size Telegram chat backgrounds?",
-          "answer": "Chat backgrounds should be high- images that work well on both mobile and desk devices."
+          "question": "Telegramチャット背景をどのようにサイズ設定すればよいですか？",
+          "answer": "チャット背景は、モバイルとデスクトップデバイスの両方で機能する高画質の画像である必要があります。"
         },
         {
-          "question": "Can I use resized images for Telegram stickers?",
-          "answer": "Yes, resized images at 512x512 pixels work perfectly for creating custom Telegram stickers."
+          "question": "リサイズした画像をTelegramステッカーに使用できますか？",
+          "answer": "はい、512x512ピクセルのリサイズされた画像は、カスタムTelegramステッカーの作成に完璧に機能します。"
         }
       ],
       "benefits": [
         {
-          "title": "Instant Results",
-          "description": "Get perfectly sized images in seconds"
+          "title": "即座の結果",
+          "description": "数秒で完璧にサイズ設定された画像を取得"
         },
         {
-          "title": "No quality Loss",
-          "description": "MAIntAIn image quality while resizing"
+          "title": "品質の低下なし",
+          "description": "リサイズ中に画像品質を維持"
         },
         {
-          "title": "Free to Use",
-          "description": "No subscription or payment required"
+          "title": "無料で使用",
+          "description": "サブスクリプションや支払いは不要"
         }
       ],
       "howItWorks": [
         {
-          "title": "Upload Image",
-          "description": "Choose your image file to resize",
+          "title": "画像をアップロード",
+          "description": "リサイズする画像ファイルを選択",
           "step": 1
         },
         {
-          "title": "Select size",
-          "description": "Choose platform-specific preset or custom size",
+          "title": "サイズを選択",
+          "description": "プラットフォーム固有のプリセットまたはカスタムサイズを選択",
           "step": 2
         },
         {
-          "title": "Download",
-          "description": "Get your optimized image instantly",
+          "title": "ダウンロード",
+          "description": "最適化された画像をすぐに取得",
           "step": 3
         }
       ],
       "relatedTools": ["ai-image-upscaler"],
       "relatedGuides": ["how-to-upscale-images-without-losing-quality"],
-      "ctaText": "start Resizing",
+      "ctaText": "リサイズを開始",
       "ctaUrl": "/?signup=1",
       "isInteractive": true
     }

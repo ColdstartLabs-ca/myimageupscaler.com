@@ -65,14 +65,14 @@ export function DeviceUsePageTemplate({
   const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
-    <div className="min-h-screen bg-base relative">
+    <div className="min-h-screen bg-main relative">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
+            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
         }}
       />
 
@@ -80,7 +80,7 @@ export function DeviceUsePageTemplate({
       <div
         className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(45, 129, 255, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)',
         }}
       />
 
@@ -123,7 +123,7 @@ export function DeviceUsePageTemplate({
             <div className="py-8">
               <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-6">
                 {data.deviceDescription && (
-                  <div className="bg-surface-light rounded-xl p-6 border border-border-default">
+                  <div className="glass-card-2025">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-2xl">{getDeviceIcon(data.device)}</span>
                       <h3 className="text-lg font-semibold text-text-primary capitalize">
@@ -134,7 +134,7 @@ export function DeviceUsePageTemplate({
                   </div>
                 )}
                 {data.useCaseDescription && (
-                  <div className="bg-surface-light rounded-xl p-6 border border-border-default">
+                  <div className="glass-card-2025">
                     <h3 className="text-lg font-semibold text-text-primary mb-3">
                       {data.useCase} Use Case
                     </h3>
@@ -145,25 +145,10 @@ export function DeviceUsePageTemplate({
             </div>
           </FadeIn>
 
-          {/* Before/After Slider */}
-          <FadeIn delay={0.25}>
-            <div className="py-12">
-              <div className="max-w-3xl mx-auto">
-                <BeforeAfterSlider
-                  beforeUrl="/before-after/women-before.webp"
-                  afterUrl="/before-after/women-after.webp"
-                  beforeLabel={sliderLabels.before}
-                  afterLabel={sliderLabels.after}
-                  className="shadow-2xl shadow-accent/10"
-                />
-              </div>
-            </div>
-          </FadeIn>
-
           {/* Device Constraints */}
           {data.deviceConstraints && data.deviceConstraints.length > 0 && (
             <FadeIn delay={0.3}>
-              <section className="py-12">
+              <section className="py-16">
                 <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
                   {data.device.charAt(0).toUpperCase() + data.device.slice(1)} Considerations
                 </h2>
@@ -184,7 +169,7 @@ export function DeviceUsePageTemplate({
           {/* Use Case Benefits */}
           {data.useCaseBenefits && data.useCaseBenefits.length > 0 && (
             <FadeIn delay={0.4}>
-              <section className="py-12">
+              <section className="py-16">
                 <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
                   Benefits for {data.useCase}
                 </h2>
@@ -402,7 +387,7 @@ export function DeviceUsePageTemplate({
           {/* Tips */}
           {data.tips && data.tips.length > 0 && (
             <FadeIn delay={0.65}>
-              <section className="py-12">
+              <section className="py-16">
                 <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
                   Pro Tips
                 </h2>

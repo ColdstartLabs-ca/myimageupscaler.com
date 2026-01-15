@@ -6,8 +6,34 @@
 'use client';
 
 import { analytics } from '@client/analytics/analyticsClient';
-import Link from 'next/link';
+import { AmbientBackground } from '@client/components/landing/AmbientBackground';
+import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
+import { motion } from 'framer-motion';
 import { ReactElement } from 'react';
+
+// Animation variants for hero section
+const heroContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const heroItemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.4, 0.25, 1] as const,
+    },
+  },
+};
 
 interface IHeroSectionProps {
   h1: string;
@@ -51,42 +77,54 @@ export function HeroSection({
   const subtitle = h1Parts[1];
 
   return (
-    <section className="pt-12 pb-16 md:pt-16 md:pb-20 relative overflow-hidden">
-      {/* Background glow effects */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-accent/10 via-accent/5 to-transparent rounded-full blur-[140px] -z-10" />
+    <section className="pt-12 pb-16 md:pt-16 md:pb-20 relative overflow-hidden hero-gradient-2025">
+      <AmbientBackground variant="hero" />
 
-      <div className="text-center max-w-4xl mx-auto relative z-10">
+      <motion.div
+        className="text-center max-w-4xl mx-auto relative z-10"
+        initial="hidden"
+        animate="visible"
+        variants={heroContainerVariants}
+      >
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-muted-foreground font-medium text-sm mb-8">
+        <motion.div variants={heroItemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-muted-foreground font-medium text-sm mb-8 hover:shadow-xl hover:shadow-accent/20 transition-all duration-300 cursor-default group">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
           </span>
           AI-Powered Tool
-        </div>
+        </motion.div>
 
         {/* Main Headline */}
-        <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-8 tracking-tight text-text-primary leading-[1.05]">
+        <motion.h1
+          variants={heroItemVariants}
+          className="text-6xl sm:text-6xl md:text-8xl font-black mb-8 tracking-tight text-white leading-[1.05]"
+        >
           {mainTitle}
           {subtitle && (
-            <span className="block mt-4 bg-gradient-to-r from-accent via-accent-light to-cyan-400 bg-clip-text text-transparent">
+            <span className="block mt-4 gradient-text-primary">
               {subtitle}
             </span>
           )}
-        </h1>
+        </motion.h1>
 
         {/* Intro Text */}
-        <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+        <motion.p
+          variants={heroItemVariants}
+          className="text-xl md:text-2xl text-text-secondary mb-10 max-w-3xl mx-auto leading-relaxed font-light"
+        >
           {intro}
-        </p>
+        </motion.p>
 
         {/* CTA Section */}
         {ctaText && ctaUrl && (
-          <div className="flex flex-col items-center gap-8">
-            <Link
+          <motion.div variants={heroItemVariants} className="flex flex-col items-center gap-8">
+            <motion.a
               href={ctaUrl}
               onClick={handleCTAClick}
-              className="group relative inline-flex items-center gap-3 px-10 py-5 text-white rounded-xl font-semibold text-xl transition-all duration-300 gradient-cta shine-effect hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-accent/20"
+              className="group relative inline-flex items-center gap-3 px-10 py-5 text-white rounded-xl font-semibold text-xl transition-all duration-300 gradient-cta shine-effect shadow-xl shadow-accent/20"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               {ctaText}
               <svg
@@ -98,10 +136,10 @@ export function HeroSection({
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
-            </Link>
+            </motion.a>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-base text-muted-foreground">
+            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-base text-text-secondary">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
                   <path
@@ -133,9 +171,19 @@ export function HeroSection({
                 <span>Instant results</span>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
-      </div>
+
+        {/* Hero Before/After Slider */}
+        <motion.div
+          className="mt-12"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.7, ease: [0.25, 0.4, 0.25, 1] as const }}
+        >
+          <HeroBeforeAfter />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

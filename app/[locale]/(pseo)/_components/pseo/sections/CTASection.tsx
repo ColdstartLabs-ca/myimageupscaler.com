@@ -6,7 +6,8 @@
 'use client';
 
 import { analytics } from '@client/analytics/analyticsClient';
-import Link from 'next/link';
+import { AmbientBackground } from '@client/components/landing/AmbientBackground';
+import { motion } from 'framer-motion';
 import { ReactElement } from 'react';
 
 interface ICTASectionProps {
@@ -46,47 +47,72 @@ export function CTASection({
   }
 
   return (
-    <section className="py-20 rounded-2xl text-center text-white relative overflow-hidden hero-gradient">
-      {/* Background decorations */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-20 animate-float"
-          style={{ background: 'rgb(var(--color-accent))', filter: 'blur(80px)' }}
-        />
-        <div
-          className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full opacity-30 animate-float-delayed"
-          style={{ background: 'rgb(var(--color-success))', filter: 'blur(80px)' }}
-        />
-      </div>
+    <section className="py-24 relative overflow-hidden section-glow-top">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-main to-accent/10"></div>
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
+      ></div>
+      <AmbientBackground variant="subtle" />
 
-      <div className="relative max-w-4xl mx-auto px-6">
-        <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-text-primary">
+      <div className="relative max-w-4xl mx-auto px-6 text-center relative z-10">
+        <motion.h2
+          className="text-4xl sm:text-6xl font-black text-white mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
+        >
           {title}
-        </h2>
-        <p className="text-xl md:text-2xl mb-10 text-text-secondary/90 max-w-2xl mx-auto font-light">
+          <br />
+          <span className="gradient-text-primary">Try it free today</span>
+        </motion.h2>
+        <motion.p
+          className="text-xl text-text-secondary mb-10 max-w-2xl mx-auto font-light"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.25, 0.4, 0.25, 1] }}
+        >
           {description}
-        </p>
+        </motion.p>
 
         {/* CTA Button */}
-        <Link
-          href={ctaUrl}
-          onClick={handleCTAClick}
-          className="group inline-flex items-center gap-3 px-10 py-5 text-white rounded-xl font-semibold text-xl transition-all duration-300 gradient-cta shine-effect hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-accent/20"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
         >
-          {ctaText}
-          <svg
-            className="w-6 h-6 group-hover:translate-x-1 transition-transform"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2.5}
+          <motion.a
+            href={ctaUrl}
+            onClick={handleCTAClick}
+            className="group inline-flex items-center gap-3 px-10 py-5 text-white rounded-xl font-semibold text-xl transition-all duration-300 gradient-cta shine-effect shadow-xl shadow-accent/20"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
-        </Link>
+            {ctaText}
+            <svg
+              className="w-6 h-6 group-hover:translate-x-1 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </motion.a>
+        </motion.div>
 
         {/* Trust indicators */}
-        <div className="mt-10 flex flex-wrap justify-center gap-8 text-base text-text-secondary/80">
+        <motion.div
+          className="mt-10 flex flex-wrap justify-center gap-8 text-base text-text-secondary/80"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
+        >
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -117,7 +143,7 @@ export function CTASection({
             </svg>
             <span>Instant results</span>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,5 +1,5 @@
 {
-  "category": "use-cases",
+  "category": "活用事例",
   "pages": [
     {
       "slug": "ecommerce-product-photos",
@@ -8,15 +8,10 @@
       "metaDescription": "Amazon、eBay、Etsy、Shopifyの正確な画像要件。最小サイズ、アスペクト比、プラットフォーム基準を満たす方法で商品写真を拡張する方法を学ぶ。",
       "h1": "Eコマース商品写真要件",
       "intro": "すべてのマーケットプレイスには特定の画像要件があります。各プラットフォームに必要なものと到達方法を正確に紹介します。",
-      "primaryKeyword": "ecommerce product photos",
-      "secondaryKeywords": [
-        "product image requirements",
-        "amazon photo size",
-        "ebay image requirements",
-        "etsy photo dimensions"
-      ],
+      "primaryKeyword": "ECサイト商品写真",
+      "secondaryKeywords": ["商品画像要件", "Amazon写真サイズ", "eBay画像要件", "Etsy写真サイズ"],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "Eコマース",
       "description": "主要Eコマースプラットフォームの特定画像要件と、それらを満たす方法のガイダンス。",
       "platformRequirements": [
@@ -143,14 +138,10 @@
       "metaDescription": "MLS、Zillow、Realtor.com、Redfinの画像要件。最適なサイズ、アスペクト比、リスティング写真を準備する方法を学ぶ。",
       "h1": "不動産リスティング写真要件",
       "intro": "異なる不動産プラットフォームには異なる画像仕様があります。主要リスティングサイトに必要なものを紹介します。",
-      "primaryKeyword": "real estate listing photos",
-      "secondaryKeywords": [
-        "mls photo requirements",
-        "zillow image size",
-        "real estate photography"
-      ],
+      "primaryKeyword": "不動産掲載写真",
+      "secondaryKeywords": ["MLS写真要件", "Zillow画像サイズ", "不動産写真撮影"],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "不動産",
       "description": "不動産リスティングプラットフォームの特定画像要件と、それらを満たす方法のガイダンス。",
       "platformRequirements": [
@@ -254,15 +245,10 @@
       "metaDescription": "ソーシャルメディア画像寸法の完全ガイド。Instagram、Facebook、Twitter、LinkedIn、TikTok、Pinterestの最適なサイズと正確なピクセル寸法。",
       "h1": "ソーシャルメディア画像サイズガイド",
       "intro": "すべてのプラットフォームで異なる最適な画像サイズがあります。2025年の各プラットフォームの正確な寸法を紹介します。",
-      "primaryKeyword": "social media image size",
-      "secondaryKeywords": [
-        "instagram image size",
-        "facebook photo dimensions",
-        "twitter image size",
-        "linkedin image dimensions"
-      ],
+      "primaryKeyword": "ソーシャルメディア画像サイズ",
+      "secondaryKeywords": ["Instagram画像サイズ", "Facebook写真寸法", "Twitter画像サイズ", "LinkedIn画像寸法"],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "ソーシャルメディア",
       "description": "プラットフォーム固有要件を備えたソーシャルメディア画像寸法の完全リファレンス。",
       "platformRequirements": [
@@ -476,15 +462,10 @@
       "metaDescription": "任意の印刷サイズの正確なピクセル寸法を計算。DPI要件、用紙サイズ、プロ印刷用画像を準備する方法。",
       "h1": "印刷解像度ガイド",
       "intro": "印刷は画面ディスプレイより高い解像度を必要とします。異なる印刷サイズに必要なものを正確に紹介します。",
-      "primaryKeyword": "image resolution for printing",
-      "secondaryKeywords": [
-        "print dpi requirements",
-        "photo print size",
-        "pixels to inches",
-        "300 dpi image size"
-      ],
+      "primaryKeyword": "印刷用画像解像度",
+      "secondaryKeywords": ["印刷DPI要件", "写真印刷サイズ", "ピクセルからインチへ", "300 DPI画像サイズ"],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "写真と印刷",
       "description": "DPI要件とサイズ計算を備えた印刷用画像準備の完全ガイド。",
       "dpiExplanation": {
@@ -640,15 +621,10 @@
       "metaDescription": "古い写真やダメージを受けた写真を修復する完全ガイド。スキャンのヒント、強化ワークフロー、写真修復の現実的な期待。",
       "h1": "古い写真の修復ガイド",
       "intro": "古い写真の修復には複数のステップが含まれます：適切なスキャン、強化、そして可能なことについての現実的な期待。",
-      "primaryKeyword": "restore old photos",
-      "secondaryKeywords": [
-        "restore old photos",
-        "fix damaged photos",
-        "photo restoration",
-        "vintage photo enhancement"
-      ],
+      "primaryKeyword": "古い写真を修復",
+      "secondaryKeywords": ["古い写真を修復", "破損写真の修復", "写真修復", "ヴィンテージ写真補正"],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "写真修復",
       "description": "現実的な期待を持った古い写真やダメージを受けた写真を修復するためのステップバイステップガイド。",
       "scanningGuide": {
@@ -790,17 +766,17 @@
       "metaDescription": "AIアップスケーリングでAmazonの2000x2000px画像要件を満たします。サプライヤー写真をズーム対応商品画像に変換。無料ツール、透かしなし。",
       "h1": "Amazon用に商品写真をアップスケール",
       "intro": "Amazonは最小1000x1000px画像を必要とし、ズームには2000x2000pxを推奨しています。サプライヤー写真をこれらの要件に満たすようにアップスケールする方法はこちらです。",
-      "primaryKeyword": "upscale product photos amazon",
+      "primaryKeyword": "Amazon商品写真を高解像度化",
       "secondaryKeywords": [
-        "amazon product image size",
-        "amazon listing photos",
-        "amazon image requirements 2025",
-        "upscale supplier photos",
-        "amazon zoom image size",
-        "fba product photography"
+        "Amazon商品画像サイズ",
+        "Amazon商品掲載写真",
+        "Amazon画像要件2025",
+        "サプライヤー写真を高解像度化",
+        "Amazonズーム画像サイズ",
+        "FBA商品写真撮影"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "Eコマース",
       "description": "サイズ要件、白背景基準、AIアップスケーリングワークフローを含む、Amazonリスティング用の商品画像を準備するための完全ガイド。",
       "platformRequirements": [
@@ -916,17 +892,10 @@
       "metaDescription": "AI強化でプロパティ写真を変換します。照明を修正し、解像度をアップスケールし、リスティングを目立たせます。エージェントとカメラマンによって使用されます。",
       "h1": "AI不動産写真強化",
       "intro": "プロフェッショナルな見た目のリスティング写真は物件をより早く販売します。MLS基準を満たし、競合他社よりも目立つようにプロパティ画像を強化してアップスケールしてください。",
-      "primaryKeyword": "real estate photography enhancement",
-      "secondaryKeywords": [
-        "property photo editing",
-        "real estate image enhancement",
-        "listing photo enhancement",
-        "mls photo quality",
-        "property listing images",
-        "real estate photography editing"
-      ],
+      "primaryKeyword": "不動産写真補正",
+      "secondaryKeywords": ["物件写真編集", "不動産画像補正", "掲載写真補正", "MLS写真品質", "物件掲載画像", "不動産写真編集"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "不動産",
       "description": "AIツールを使用して、MLS、Zillow、およびその他のプロパティリスティングプラットフォーム用の不動産写真を強化するための包括的なガイド。",
       "platformRequirements": [
@@ -1070,17 +1039,17 @@
       "metaDescription": "アーティファクトなしでアニメ画像、マンガパネル、イラストをアップスケール。AIはクリーンな線と平面的な色を保存します。アニメファンのための無料オンラインツール。",
       "h1": "アニメ画像アップスケーラーオンライン",
       "intro": "アニメスタイルを定義するクリーンな線と鮮やかな色を保存しながら、お気に入りのアニメスクリーンショット、マンガスキャン、デジタルアートをアップスケールしてください。",
-      "primaryKeyword": "anime image upscaler",
+      "primaryKeyword": "アニメ画像高解像度化ツール",
       "secondaryKeywords": [
-        "upscale anime",
-        "anime upscaler online",
-        "manga upscaler",
-        "anime screenshot upscale",
-        "waifu upscaler",
-        "anime wallpaper upscale"
+        "アニメを高解像度化",
+        "オンラインアニメ高解像度化",
+        "漫画高解像度化",
+        "アニメスクリーンショット高解像度化",
+        "ワイフ高解像度化",
+        "アニメ壁紙高解像度化"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "デジタルアート＆エンターテイメント",
       "description": "描かれたコンテンツに最適化されたAI技術を使用して、アニメ画像、マンガアート、日本風のイラストをアップスケールするための専門的なガイド。",
       "contentTypes": [
@@ -1232,16 +1201,10 @@
       "metaDescription": "AIで漫画画像、コミック、イラストをアップスケール。クリーンな線、鮮やかな色を保存。無料オンライン漫画アップスケーラー。",
       "h1": "漫画画像アップスケーラーオンライン",
       "intro": "漫画やコミックアートスタイルを定義するクリーンな線と平面的な色を保存しながら、お気に入りの漫画スクリーンショット、コミックパネル、イラストを強化してください。",
-      "primaryKeyword": "cartoon image upscaler",
-      "secondaryKeywords": [
-        "cartoon upscaler",
-        "upscale cartoons",
-        "comic image upscaler",
-        "cartoon enlargement",
-        "illustration upscaler"
-      ],
+      "primaryKeyword": "漫画画像高解像度化ツール",
+      "secondaryKeywords": ["漫画高解像度化", "漫画を高解像度化", "コミック画像高解像度化", "漫画拡大", "イラスト高解像度化"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "description": "平面的な色とクリーンな線を持つ描かれたアートワークに最適化されたAI技術を使用して、漫画画像、西洋コミック、イラストコンテンツの専門的なアップスケーリング。",
       "imageTypes": [
         {
@@ -1330,16 +1293,10 @@
       "metaDescription": "AI顔面強化でポートレート写真をアップスケール。顔の詳細、肌のテクスチャ、全体的な品質を改善。無料オンラインポートレートアップスケーラー。",
       "h1": "ポートレート写真アップスケーラー - AI顔面強化",
       "intro": "専門的なAI顔面強化技術でポートレート写真を変換してください。自然な外観を維持しながら、顔の特徴、肌のテクスチャ、全体的な画像品質を改善します。",
-      "primaryKeyword": "portrait photo upscaler",
-      "secondaryKeywords": [
-        "portrait enhancer",
-        "face upscaler",
-        "portrait enhancement",
-        "photo enlarger",
-        "face detail enhancement"
-      ],
+      "primaryKeyword": "ポートレート写真高解像度化ツール",
+      "secondaryKeywords": ["ポートレート補正", "顔高解像度化", "ポートレート補正", "写真拡大ツール", "顔ディテール補正"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "description": "顔の特徴再構築と改善に特化したAIモデルを使用したプロフェッショナルポートレート強化。ヘッドショット、ソーシャルメディア写真、プロフェッショナルポートレートに最適。",
       "supportedTiers": {
         "faceRestore": {
@@ -1437,15 +1394,10 @@
       "metaDescription": "Amazon、eBay、Etsy、Shopify用の商品写真から背景を除去します。マーケットプレイス要件を満たす白背景を作成します。無料AIツール。",
       "h1": "Eコマース用商品写真背景除去",
       "intro": "マーケットプレイス要件を満たすクリーンな白背景でプロフェッショナルな商品画像を作成してください。私たちのAIは複雑な背景を除去しながら商品詳細を保存します。",
-      "primaryKeyword": "product photo background removal",
-      "secondaryKeywords": [
-        "remove background product photo",
-        "ecommerce background removal",
-        "amazon white background",
-        "product image background remover"
-      ],
+      "primaryKeyword": "商品写真背景削除",
+      "secondaryKeywords": ["商品写真の背景を削除", "ECサイト背景削除", "Amazon白背景", "商品画像背景削除ツール"],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "Eコマース",
       "description": "オンラインマーケットプレイス用のプロフェッショナル商品写真準備。忙しい背景を除去し、Amazon、eBay、およびEtsy要件を満たすクリーンな白背景を作成します。",
       "challenges": [
@@ -1516,15 +1468,10 @@
       "metaDescription": "AIでポートレートやヘッドショットから背景を除去します。髪の詳細保存を備えたプロフェッショナル結果。LinkedIn、履歴書などのための無料オンラインツール。",
       "h1": "ポートレート背景除去 - プロフェッショナルヘッドショット",
       "intro": "気を散らす背景を除去することで、カジュアルな写真をプロフェッショナルなヘッドショットに変換してください。私たちのAIは複雑な髪の詳細を保存し、クリーンなカットアウトを作成します。",
-      "primaryKeyword": "portrait background removal",
-      "secondaryKeywords": [
-        "remove background portrait",
-        "headshot background remover",
-        "linkedin photo background",
-        "profile picture background removal"
-      ],
+      "primaryKeyword": "ポートレート背景削除",
+      "secondaryKeywords": ["ポートレート背景を削除", "ヘッドショット背景削除", "LinkedIn写真背景", "プロフィール写真背景削除"],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "use-cases",
+      "category": "活用事例",
       "industry": "プロフェッショナル＆個人",
       "description": "AI背景除去を備えたプロフェッショナルポートレートおよびヘッドショット準備。LinkedInプロフィール、履歴書、ID写真、プロフェッショナルブランディングに最適。",
       "challenges": [

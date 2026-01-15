@@ -8,7 +8,9 @@
 
 import type { IFAQ } from '@/lib/seo/pseo-types';
 import { analytics } from '@client/analytics/analyticsClient';
+import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { ReactElement, useState } from 'react';
+import { motion } from 'framer-motion';
 import { FAQAccordion } from '../ui/FAQAccordion';
 
 interface IFAQSectionProps {
@@ -31,9 +33,27 @@ interface IFAQSectionProps {
   slug?: string;
 }
 
-import { FadeIn, StaggerContainer, StaggerItem } from '@/app/(pseo)/_components/ui/MotionWrappers';
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
 
-// ...
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.25, 0.4, 0.25, 1] as const,
+    },
+  },
+};
 
 export function FAQSection({
   faqs,
@@ -64,27 +84,36 @@ export function FAQSection({
   }
 
   return (
-    <section className="py-12 bg-base">
-      <FadeIn>
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">{title}</h2>
-          <p className="text-xl text-text-secondary max-w-2xl mx-auto">
-            Find answers to common questions about our tool and how it works.
-          </p>
-        </div>
-      </FadeIn>
-      <StaggerContainer staggerDelay={0.05} className="max-w-3xl mx-auto space-y-6">
+    <section className="py-24 relative overflow-hidden">
+      <AmbientBackground variant="section" />
+      <motion.div
+        className="text-center mb-16 relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] as const }}
+      >
+        <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">{title}</h2>
+        <p className="text-xl text-text-secondary max-w-2xl mx-auto">
+          Find answers to common questions about our tool and how it works.
+        </p>
+      </motion.div>
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="max-w-3xl mx-auto space-y-6 relative z-10"
+      >
         {faqs.map((faq, index) => (
-          <StaggerItem key={index}>
+          <motion.div key={index} variants={itemVariants}>
             <FAQAccordion
               question={faq.question}
               answer={faq.answer}
               isOpen={openIndex === index}
               onToggle={() => handleFAQToggle(index, faq.question)}
             />
-          </StaggerItem>
+          </motion.div>
         ))}
-      </StaggerContainer>
+      </motion.div>
     </section>
   );
 }

@@ -55,14 +55,14 @@ export function ScalePageTemplate({
   const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
-    <div className="min-h-screen bg-surface relative">
+    <div className="min-h-screen bg-main relative">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
+            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
         }}
       />
 
@@ -126,21 +126,6 @@ export function ScalePageTemplate({
             </FadeIn>
           )}
 
-          {/* Before/After Slider */}
-          <FadeIn delay={0.25}>
-            <div className="py-12">
-              <div className="max-w-3xl mx-auto">
-                <BeforeAfterSlider
-                  beforeUrl="/before-after/women-before.webp"
-                  afterUrl="/before-after/women-after.webp"
-                  beforeLabel={sliderLabels.before}
-                  afterLabel={sliderLabels.after}
-                  className="shadow-2xl shadow-accent/10"
-                />
-              </div>
-            </div>
-          </FadeIn>
-
           {/* Resolution Specs */}
           {data.dimensions && (
             <FadeIn delay={0.3}>
@@ -176,7 +161,7 @@ export function ScalePageTemplate({
           {/* Use Cases */}
           {data.useCases && data.useCases.length > 0 && (
             <FadeIn delay={0.4}>
-              <section className="py-12">
+              <section className="py-16">
                 <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Perfect For</h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {data.useCases.map((useCase, idx) => (
@@ -218,7 +203,7 @@ export function ScalePageTemplate({
 
           {/* How It Works */}
           <FadeIn delay={0.55}>
-            <section className="py-12">
+            <section className="py-16">
               <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
                 How AI Upscaling to {data.resolution} Works
               </h2>
@@ -312,7 +297,7 @@ export function ScalePageTemplate({
 
           {/* Comparison with Other Resolutions */}
           <FadeIn delay={0.65}>
-            <section className="py-12">
+            <section className="py-16">
               <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
                 {data.resolution} vs Other Resolutions
               </h2>
@@ -360,7 +345,7 @@ export function ScalePageTemplate({
 
           {/* Technical Details */}
           <FadeIn delay={0.7}>
-            <section className="py-12">
+            <section className="py-16">
               <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
                 Technical Details: AI-Powered Upscaling
               </h2>
@@ -368,7 +353,7 @@ export function ScalePageTemplate({
                 Learn about the technology behind our {data.resolution} upscaling process.
               </p>
               <div className="max-w-3xl mx-auto space-y-6">
-                <div className="bg-surface-light rounded-xl p-6 border border-border">
+                <div className="glass-card-2025">
                   <h3 className="font-semibold text-lg mb-3">Neural Network Architecture</h3>
                   <p className="text-muted-foreground">
                     Our upscaling system uses deep convolutional neural networks (CNNs) trained on
@@ -378,7 +363,7 @@ export function ScalePageTemplate({
                     blurring.
                   </p>
                 </div>
-                <div className="bg-surface-light rounded-xl p-6 border border-border">
+                <div className="glass-card-2025">
                   <h3 className="font-semibold text-lg mb-3">Edge-Preserving Algorithms</h3>
                   <p className="text-muted-foreground">
                     Unlike traditional interpolation methods that blur edges, our AI detects and
@@ -387,7 +372,7 @@ export function ScalePageTemplate({
                     significant enlargement ratios.
                   </p>
                 </div>
-                <div className="bg-surface-light rounded-xl p-6 border border-border">
+                <div className="glass-card-2025">
                   <h3 className="font-semibold text-lg mb-3">Format & Color Preservation</h3>
                   <p className="text-muted-foreground">
                     Your {data.resolution} output maintains the original color profile and supports

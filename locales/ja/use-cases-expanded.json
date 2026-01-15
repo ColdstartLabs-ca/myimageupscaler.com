@@ -12,12 +12,7 @@
       "category": "use-cases",
       "intro": "プロフェッショナル real estate photography enhancement that transforms ordinary property photos into stunning, market-ready images that attract more buyers and close deals faster.",
       "primaryKeyword": "不動産写真を強化する",
-      "secondaryKeywords": [
-        "物件写真編集",
-        "不動産写真強化",
-        "掲載写真の改善",
-        "バーチャルステージング写真"
-      ],
+      "secondaryKeywords": ["物件写真編集", "不動産写真強化", "掲載写真の改善", "バーチャルステージング写真"],
       "description": "室内写真、外観写真、航空写真、バーチャルステージングを含む、不動産写真専用の包括的な強化ソリューション。AI駆動ツールは、競争の激しい市場で際立つ魅力的な物件リスティングを作成するのに不動産専門家を支援します。",
       "useCases": [
         "最適な照明と空間認識のための室内空間強化",
@@ -178,7 +173,7 @@
         "professionalTools": ["Adobe Photoshop", "Capture One", "Phase One"],
         "ecommerceTools": ["MyImageUpscaler", "Remove.bg", "Pixelcut", "Canva Pro"],
         "platformSpecific": ["Amazon製品画像", "Shopify画像エディター", "eBay写真サービス"],
-        "batchProcessing": ["Adobe Lightroom", "Bridge", "Automated Workflows"]
+        "batchProcessing": ["Adobe Lightroom", "Bridge", "自動化ワークフロー"]
       },
       "fileSizeGuidelines": {
         "webOptimized": "迅速な読み込み用に100〜300KB",
@@ -254,12 +249,7 @@
       "technicalSpecs": {
         "supportedFormats": ["DICOM", "JPEG", "TIFF", "PNG", "RAW", "BMP"],
         "maxResolution": "医療画像と科学写真の無制限",
-        "outputFormats": [
-          "TIFF（高解像度）",
-          "JPEG（プレゼンテーション）",
-          "PNG（ウェブ）",
-          "DICOM（医療）"
-        ],
+        "outputFormats": ["TIFF（高解像度）", "JPEG（プレゼンテーション）", "PNG（ウェブ）", "DICOM（医療）"],
         "batchProcessing": "研究データセット用の最大1000イメージ",
         "compliance": ["HIPAA準拠", "FDA登録", "ISO 13485認定"]
       },
@@ -334,12 +324,7 @@
       "category": "use-cases",
       "intro": "建築およびコンストラクション画像強化",
       "primaryKeyword": "建築建設写真強化",
-      "secondaryKeywords": [
-        "建築写真",
-        "建設文書",
-        "プロジェクト進行状況の追跡",
-        "ビジネス写真強化"
-      ],
+      "secondaryKeywords": ["建築写真", "建設文書", "プロジェクト進行状況の追跡", "ビジネス写真強化"],
       "description": "建築写真、建設進捗記録、および建物プロジェクト提示のための専門的な強化ソリューション。当社のAI搭載ツールは、技術的精度とプロフェッショナルな基準を維持しながら、建築画像の明確さ、照明、および詳細を改善します。",
       "useCases": [
         "ポートフォリオとマーケティングのための建築写真強化",
@@ -368,12 +353,7 @@
       "technicalSpecs": {
         "supportedFormats": ["JPEG", "TIFF", "RAW", "PNG", "DNG", "HEIC"],
         "maxResolution": "プロフェッショナルなアーキテクチャカメラ用に最大100MP",
-        "outputFormats": [
-          "JPEG（プレゼンテーション）",
-          "TIFF（印刷）",
-          "PNG（ウェブ）",
-          "PDF（ドキュメント）"
-        ],
+        "outputFormats": ["JPEG（プレゼンテーション）", "TIFF（印刷）", "PNG（ウェブ）", "PDF（ドキュメント）"],
         "batchProcessing": "バッチあたり最大500の建設進捗写真",
         "specializedFeatures": ["パースペクティブ補正", "HDR処理", "詳細強化"]
       },
@@ -447,13 +427,8 @@
       "h1": "印刷およびパブリッシング画像最適化",
       "category": "use-cases",
       "intro": "Specialized image enhancement and optimization solutions for print publishing, including books, magazines, marketing materials, and commercial printing, ensuring publication-ready 品質 at any サイズ.",
-      "primaryKeyword": "print publishing image optimization",
-      "secondaryKeywords": [
-        "print image enhancement",
-        "publishing photo optimization",
-        "commercial printing",
-        "book cover enhancement"
-      ],
+      "primaryKeyword": "印刷出版用画像最適化",
+      "secondaryKeywords": ["印刷画像の画質向上", "出版写真の最適化", "商業印刷", "ブックカバーの画質向上"],
       "description": "印刷パブリッシングワークフロー用に特別に設計された包括的な画像強化ソリューション。本の表紙、雑誌のレイアウトからマーケティング資料、商業印刷まで、当社のAI搭載ツールは、画像がプロフェッショナルな印刷基準を満たし、あらゆる印刷形式で最適に見えることを確保します。",
       "useCases": [
         "すべての印刷サイズのための本表紙強化と最適化",
@@ -482,12 +457,7 @@
       "technicalSpecs": {
         "supportedFormats": ["JPEG", "TIFF", "PNG", "RAW", "PSD", "HEIC"],
         "maxResolution": "印刷アプリケーション用に無制限",
-        "outputFormats": [
-          "TIFF（CMYK）",
-          "PDF（プリント対応）",
-          "JPEG（RGB）",
-          "PSD（レイヤー化）"
-        ],
+        "outputFormats": ["TIFF（CMYK）", "PDF（プリント対応）", "JPEG（RGB）", "PSD（レイヤー化）"],
         "colorSpaces": ["CMYK", "RGB", "グレースケール", "スポットカラー"],
         "printStandards": ["ISO 12647", "GRACoL", "SWOP", "FOGRA"]
       },
@@ -513,7 +483,7 @@
       ],
       "softwareRecommendations": {
         "professionalTools": ["Adobe InDesign", "Adobe Photoshop", "QuarkXPress"],
-        "prepressTools": ["Adobe Acrobat Pro", "Preflight Tools", "Color Management Software"],
+        "prepressTools": ["Adobe Acrobat Pro", "プリフライトツール", "カラーマネジメントソフトウェア"],
         "enhancementTools": ["MyImageUpscaler", "Topaz Labs", "ON1 Resize"],
         "colorManagement": ["X-Rite i1Profiler", "Datacolor Spyder", "Pantone Color Manager"]
       },
@@ -561,13 +531,8 @@
       "h1": "ソーシャルメディアコンテンツ作成",
       "category": "use-cases",
       "intro": "すべてのプラットフォームで視覚コンテンツを際立たせ、最大のエンゲージメントを促進するために特別に設計されたソーシャルメディアコンテンツ作成用の包括的な画像画質向上ソリューション。",
-      "primaryKeyword": "social media content creation enhancement",
-      "secondaryKeywords": [
-        "social media photo enhancement",
-        "content creator tools",
-        "Instagram optimization",
-        "viral content preparation"
-      ],
+      "primaryKeyword": "ソーシャルメディアコンテンツ制作の画質向上",
+      "secondaryKeywords": ["ソーシャルメディア写真の画質向上", "コンテンツクリエイターツール", "Instagram最適化", "バイラルコンテンツ準備"],
       "description": "ソーシャルメディアコンテンツクリエイター、インフルエンサー、デジタルマーケター向けのプロフェッショナルな画像画質向上ソリューション。当社のAI-poweredツールは、すべての主要なソーシャルプラットフォーム向けに視覚コンテンツを最適化し、エンゲージメント、リーチ、視覚的魅力を向上させながら、プラットフォーム固有の要件とベストプラクティスを維持します。",
       "useCases": [
         "最大エンゲージメント向けのInstagram投稿とストーリーの強化",
@@ -600,7 +565,7 @@
           "TikTok",
           "YouTube",
           "Facebook",
-          "Twitter",
+          "X（Twitter）",
           "LinkedIn",
           "Pinterest"
         ],
@@ -687,13 +652,8 @@
       "h1": "Webデザイン＆開発最適化",
       "category": "use-cases",
       "intro": "Comprehensive image optimization solutions specifically designed for web design and development, ensuring fast loading, high 品質, and responsive パフォーマンス across all devices and platforms.",
-      "primaryKeyword": "web design image optimization",
-      "secondaryKeywords": [
-        "website image enhancement",
-        "web development optimization",
-        "responsive image optimization",
-        "website performance"
-      ],
+      "primaryKeyword": "ウェブデザイン画像最適化",
+      "secondaryKeywords": ["ウェブサイト画像の画質向上", "ウェブ開発最適化", "レスポンシブ画像最適化", "ウェブサイトパフォーマンス"],
       "description": "Webデザイナー、開発者、デジタルエージェンシー向けのプロフェッショナルな画像画質向上と最適化ソリューション。当社のAI-poweredツールは、Webパフォーマンス、レスポンシブデザイン、ユーザーエクスペリエンス向けに画像を最適化しながら、視覚品質とブランドの一貫性を維持します。",
       "useCases": [
         "ウェブサイトのヒーロー画像とバナー最適化",
@@ -721,10 +681,10 @@
       ],
       "technicalSpecs": {
         "supportedFormats": ["JPEG", "PNG", "WebP", "AVIF", "HEIC", "GIF"],
-        "outputFormats": ["Modern WebP/AVIF", "Fallback JPEG/PNG", "Responsive srcset"],
-        "optimizationTargets": ["Core Web Vitals", "Lighthouse scores", "Mobile performance"],
-        "responsiveSupport": ["Multi-device", "Multi-resolution", "Art direction"],
-        "webStandards": ["W3C", "Google PageSpeed", "GTmetrix optimization"]
+        "outputFormats": ["最新WebP/AVIF", "フォールバックJPEG/PNG", "レスポンシブsrcset"],
+        "optimizationTargets": ["Core Web Vitals", "Lighthouseスコア", "モバイルパフォーマンス"],
+        "responsiveSupport": ["マルチデバイス", "マルチ解像度", "アートディレクション"],
+        "webStandards": ["W3C", "Google PageSpeed", "GTmetrix最適化"]
       },
       "caseStudies": [
         {
@@ -796,13 +756,8 @@
       "h1": "デジタルマーケティング資料画質向上",
       "category": "use-cases",
       "intro": "Comprehensive image enhancement solutions for digital marketing プロフェッショナルs, creating high-performing visual content that drives engagement, conversions, and brand recognition across all marketing channels.",
-      "primaryKeyword": "digital marketing materials enhancement",
-      "secondaryKeywords": [
-        "marketing image optimization",
-        "ad creative enhancement",
-        "email campaign images",
-        "digital advertising visuals"
-      ],
+      "primaryKeyword": "デジタルマーケティング資料の画質向上",
+      "secondaryKeywords": ["マーケティング画像最適化", "広告クリエイティブの画質向上", "メールキャンペーン画像", "デジタル広告ビジュアル"],
       "description": "ディスプレイ広告、ソーシャルメディアクリエイティブ、メールキャンペーン、ランディングページビジュアルを含むデジタルマーケティング資料向けのプロフェッショナルな画質向上ソリューション。当社のAI-poweredツールは、最大のパフォーマンス、ブランドの一貫性、コンバージョン最適化向けにマーケティング画像を最適化します。",
       "useCases": [
         "より高いCTR向けの表示広告クリエイティブ最適化",
@@ -830,16 +785,10 @@
       ],
       "technicalSpecs": {
         "supportedFormats": ["JPEG", "PNG", "GIF", "WebP", "HTML5"],
-        "marketingChannels": [
-          "Google Ads",
-          "Facebook Ads",
-          "LinkedIn Ads",
-          "Email Marketing",
-          "Display Networks"
-        ],
-        "adFormats": ["Banner ads", "Social ads", "Email creatives", "Landing page images"],
-        "performanceOptimization": ["CTR focus", "Conversion optimization", "Brand consistency"],
-        "testingSupport": ["A/B testing variations", "Multivariate testing support"]
+        "marketingChannels": ["Google広告", "Facebook広告", "LinkedIn広告", "メールマーケティング", "ディスプレイネットワーク"],
+        "adFormats": ["バナー広告", "ソーシャル広告", "メールクリエイティブ", "ランディングページ画像"],
+        "performanceOptimization": ["CTR重視", "コンバージョン最適化", "ブランド一貫性"],
+        "testingSupport": ["A/Bテスト変動", "多変量テスト対応"]
       },
       "caseStudies": [
         {
@@ -862,7 +811,7 @@
         "パフォーマンスメトリックを追跡し、結果に基づいて反復"
       ],
       "softwareRecommendations": {
-        "marketingPlatforms": ["Google Ads", "Facebook Ads Manager", "LinkedIn Campaign Manager"],
+        "marketingPlatforms": ["Google広告", "Facebook Ads Manager", "LinkedIn Campaign Manager"],
         "designTools": ["Canva Pro", "Adobe Creative Suite", "Figma"],
         "enhancementTools": ["MyImageUpscaler", "Adobe Stock", "Unsplash+"],
         "analyticsTools": ["Google Analytics", "Hotjar", "Crazy Egg", "Optimizely"]
@@ -911,13 +860,8 @@
       "h1": "レストレーション・保存画質向上",
       "category": "use-cases",
       "intro": "古い、損傷した、歴史的な写真向けの高度なAI-poweredレストレーションと保存ソリューション。歴史的な正確性と真正性を保ちながら、大切な思い出に新しい命を吹き込みます。",
-      "primaryKeyword": "photo restoration preservation enhancement",
-      "secondaryKeywords": [
-        "old photo restoration",
-        "damaged photo repair",
-        "historical photo enhancement",
-        "vintage photo restoration"
-      ],
+      "primaryKeyword": "写真修復・保存・画質向上",
+      "secondaryKeywords": ["古い写真の修復", "破損写真の修復", "歴史的写真の画質向上", "ヴィンテージ写真の修復"],
       "description": "古い、損傷した、色あせた、歴史的な写真向けの専門AIレストレーションソリューション。当社の高度なアルゴリズムは、貴重な写真の歴史的完全性と真正性を保ちながら、破れ、傷、色の復元、ディテールの画質向上が可能です。",
       "useCases": [
         "遺産保存のための家族写真復元",
@@ -944,22 +888,11 @@
         "アーカイブと印刷用に高解像度のレストア済み画像をダウンロード"
       ],
       "technicalSpecs": {
-        "supportedFormats": ["JPEG", "TIFF", "PNG", "BMP", "GIF", "Scanned documents"],
-        "damageTypes": [
-          "Tears",
-          "Scratches",
-          "Water damage",
-          "Fading",
-          "Color shifts",
-          "Mold damage"
-        ],
-        "outputFormats": ["TIFF (archival)", "JPEG (sharing)", "PNG (web)", "DNG (professional)"],
-        "archiveStandards": ["FADGI", "METS", "PREMIS compliance for institutional archiving"],
-        "qualityControl": [
-          "Historical accuracy",
-          "Authenticity preservation",
-          "Non-destructive processing"
-        ]
+        "supportedFormats": ["JPEG", "TIFF", "PNG", "BMP", "GIF", "スキャン文書"],
+        "damageTypes": ["破れ", "傷", "水濡れ被害", "退色", "色変化", "カビ被害"],
+        "outputFormats": ["TIFF（アーカイブ用）", "JPEG（共有用）", "PNG（ウェブ用）", "DNG（プロ用）"],
+        "archiveStandards": ["FADGI", "METS", "機関アーカイブ用PREMIS準拠"],
+        "qualityControl": ["歴史的正確性", "真正性の保存", "非破壊処理"]
       },
       "caseStudies": [
         {
@@ -984,8 +917,8 @@
       "softwareRecommendations": {
         "restorationTools": ["MyImageUpscaler", "Adobe Photoshop", "Topaz Labs", "Skylum"],
         "scanningSoftware": ["VueScan", "Epson Scan", "Canon ScanGear"],
-        "archiveTools": ["Adobe Lightroom", "DAM systems", "Digital archive software"],
-        "professionalServices": ["Professional restoration services for valuable items"]
+        "archiveTools": ["Adobe Lightroom", "DAMシステム", "デジタルアーカイブソフトウェア"],
+        "professionalServices": ["貴重品用プロの修復サービス"]
       },
       "fileSizeGuidelines": {
         "archivalQuality": "アーカイブTIFFファイル用に20-100MB",
@@ -1022,14 +955,7 @@
       "lastUpdated": "2024-12-19T10:00:00Z",
       "ctaText": "大切な写真をレストア",
       "ctaUrl": "/?signup=1",
-      "damageTypes": [
-        "Tears",
-        "Scratches",
-        "Water damage",
-        "Fading",
-        "Color shifts",
-        "Mold damage"
-      ],
+      "damageTypes": ["Tears", "Scratches", "Water damage", "Fading", "Color shifts", "Mold damage"],
       "outputFormats": ["TIFF (archival)", "JPEG (sharing)", "PNG (web)", "DNG (professional)"]
     },
     {
@@ -1040,13 +966,8 @@
       "h1": "AI生成画像最適化",
       "category": "use-cases",
       "intro": "Specialized enhancement solutions for AI-generated images from Midjourney, DALL-E, Stable Diffusion, and other AI art generators, optimizing them for プロフェッショナル use, printing, and commercial applications.",
-      "primaryKeyword": "AI-generated image optimization",
-      "secondaryKeywords": [
-        "AI art enhancement",
-        "Midjourney optimization",
-        "DALL-E upscaling",
-        "AI image printing"
-      ],
+      "primaryKeyword": "AI生成画像の最適化",
+      "secondaryKeywords": ["AIアートの画質向上", "Midjourney最適化", "DALL-Eアップスケーリング", "AI画像印刷"],
       "description": "AI生成の画像とアートワークに特別に設計されたプロフェッショナルな画質向上ソリューション。当社のAI-poweredツールは、すべての主要なジェネレーター（Midjourney、DALL-E、Stable Diffusion）からAIアートを最適化し、プロ用途、高解像度印刷、商業アプリケーション向けに芸術的意図を保ちます。",
       "useCases": [
         "プロフェッショナル印刷のためのMidjourney画像強化",
@@ -1073,22 +994,10 @@
         "高解像度、プロフェッショナルに画質向上されたAIアートワークをダウンロード"
       ],
       "technicalSpecs": {
-        "supportedGenerators": [
-          "Midjourney",
-          "DALL-E",
-          "Stable Diffusion",
-          "Midjourney",
-          "Leonardo AI"
-        ],
-        "outputResolutions": ["4K", "6K", "8K", "Custom large format"],
-        "supportedStyles": [
-          "Digital art",
-          "Photorealistic",
-          "Artistic",
-          "Abstract",
-          "Character design"
-        ],
-        "printStandards": ["Gallery quality", "Commercial printing", "Fine art reproduction"],
+        "supportedGenerators": ["Midjourney", "DALL-E", "Stable Diffusion", "Midjourney", "Leonardo AI"],
+        "outputResolutions": ["4K", "6K", "8K", "カスタム大判"],
+        "supportedStyles": ["デジタルアート", "フォトリアル", "アーティスティック", "抽象", "キャラクターデザイン"],
+        "printStandards": ["ギャラリー品質", "商業印刷", "ファインアート複製"],
         "formatSupport": ["PNG", "TIFF", "JPEG", "PSD", "WebP"]
       },
       "caseStudies": [
@@ -1114,12 +1023,8 @@
       "softwareRecommendations": {
         "aiGenerators": ["Midjourney", "DALL-E 3", "Stable Diffusion", "Leonardo AI"],
         "enhancementTools": ["MyImageUpscaler", "Topaz Gigapixel AI", "Adobe Photoshop"],
-        "printingServices": [
-          "Professional art printing",
-          "Gallery printing services",
-          "Fine art reproduction"
-        ],
-        "commercialTools": ["Adobe Creative Suite", "Professional design software"]
+        "printingServices": ["プロアート印刷", "ギャラリー印刷サービス", "ファインアート複製"],
+        "commercialTools": ["Adobe Creative Suite", "プロ用デザインソフトウェア"]
       },
       "fileSizeGuidelines": {
         "largePrint": "大型フォーマットアート印刷用に50-200MB",

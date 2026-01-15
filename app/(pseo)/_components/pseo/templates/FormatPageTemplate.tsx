@@ -66,14 +66,14 @@ export function FormatPageTemplate({
   }));
 
   return (
-    <div className="min-h-screen bg-base relative">
+    <div className="min-h-screen bg-main relative">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
+            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
         }}
       />
 
@@ -81,7 +81,7 @@ export function FormatPageTemplate({
       <div
         className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(45, 129, 255, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)',
         }}
       />
 
@@ -129,21 +129,6 @@ export function FormatPageTemplate({
               </div>
             </FadeIn>
           )}
-
-          {/* Before/After Slider */}
-          <FadeIn delay={0.25}>
-            <div className="py-12">
-              <div className="max-w-3xl mx-auto">
-                <BeforeAfterSlider
-                  beforeUrl="/before-after/women-before.webp"
-                  afterUrl="/before-after/women-after.webp"
-                  beforeLabel={sliderLabels.before}
-                  afterLabel={sliderLabels.after}
-                  className="shadow-2xl shadow-accent/10"
-                />
-              </div>
-            </div>
-          </FadeIn>
 
           {/* Format Characteristics */}
           {features && features.length > 0 && <FeaturesSection features={features} />}

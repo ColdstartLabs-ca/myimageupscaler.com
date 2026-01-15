@@ -48,14 +48,14 @@ export function AlternativePageTemplate({
   const tier = pageMapping?.tier;
 
   return (
-    <div className="min-h-screen bg-base relative">
+    <div className="min-h-screen bg-main relative">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
+            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
         }}
       />
 
@@ -63,7 +63,7 @@ export function AlternativePageTemplate({
       <div
         className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(45, 129, 255, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)',
         }}
       />
 
@@ -111,7 +111,7 @@ export function AlternativePageTemplate({
             <FadeIn delay={0.2}>
               <div className="py-8">
                 <div className="max-w-xl mx-auto grid grid-cols-2 gap-4">
-                  <div className="bg-surface-light rounded-xl p-6 border border-border-default text-center">
+                  <div className="glass-card-2025 text-center">
                     <p className="text-sm text-text-tertiary mb-2">
                       {data.competitorName || 'Competitor'}
                     </p>
@@ -131,7 +131,7 @@ export function AlternativePageTemplate({
           {/* Key Differentiators */}
           {data.keyDifferentiators && data.keyDifferentiators.length > 0 && (
             <FadeIn delay={0.3}>
-              <section className="py-12">
+              <section className="py-16">
                 <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
                   Why Choose MyImageUpscaler
                 </h2>
@@ -139,7 +139,7 @@ export function AlternativePageTemplate({
                   {data.keyDifferentiators.map((diff, index) => (
                     <div
                       key={index}
-                      className="bg-surface-light rounded-xl p-6 border border-border-default"
+                      className="glass-card-2025"
                     >
                       <h3 className="text-lg font-semibold text-text-primary mb-4">{diff.title}</h3>
                       <div className="grid md:grid-cols-2 gap-4">
@@ -166,7 +166,7 @@ export function AlternativePageTemplate({
           {/* Comparison Table */}
           {data.comparisonTable && data.comparisonTable.length > 0 && (
             <FadeIn delay={0.4}>
-              <section className="py-12">
+              <section className="py-16">
                 <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
                   Feature Comparison
                 </h2>
@@ -203,7 +203,7 @@ export function AlternativePageTemplate({
           {/* Alternatives list (from type definition) */}
           {data.alternatives && data.alternatives.length > 0 && (
             <FadeIn delay={0.4}>
-              <section className="py-12">
+              <section className="py-16">
                 <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
                   Other Alternatives
                 </h2>
@@ -211,7 +211,7 @@ export function AlternativePageTemplate({
                   {data.alternatives.map((alt, index) => (
                     <div
                       key={index}
-                      className="bg-surface-light rounded-xl p-6 border border-border-default"
+                      className="glass-card-2025"
                     >
                       <h3 className="text-lg font-semibold text-text-primary mb-2">{alt.name}</h3>
                       <p className="text-text-secondary text-sm mb-3">{alt.description}</p>

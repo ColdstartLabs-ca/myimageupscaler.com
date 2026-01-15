@@ -7,6 +7,7 @@
 'use client';
 
 import { ReactElement } from 'react';
+import { motion } from 'framer-motion';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface IFAQAccordionProps {
@@ -23,20 +24,20 @@ export function FAQAccordion({
   onToggle,
 }: IFAQAccordionProps): ReactElement {
   return (
-    <div className="glass-card hover:border-border transition-colors">
+    <div className="glass-card-2025 animated-border-violet hover:-translate-y-0.5 transition-transform duration-200">
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between p-6 text-left group"
         aria-expanded={isOpen}
       >
-        <h3 className="text-lg font-semibold text-text-primary pr-8 flex-1">{question}</h3>
+        <h3 className="text-lg font-semibold text-white pr-8 flex-1">{question}</h3>
         <div
           className={`flex-shrink-0 w-6 h-6 flex items-center justify-center transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
         >
           <svg
-            className="w-6 h-6 text-text-muted"
+            className="w-6 h-6 text-accent"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

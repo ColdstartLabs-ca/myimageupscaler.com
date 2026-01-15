@@ -13,12 +13,12 @@
       "metaDescription": "品質を損なわずにMidjourney PNG画像を4Kに拡張。透明度を持つAIアートエクスポートに最適。無料MJ PNGアップスケーラー。",
       "h1": "Midjourney PNGアップスケーラー - 透明度を持つAIアート強化",
       "intro": "ユニークなアーティスティックスタイルと透明度を保存しながら、Midjourney PNGエクスポートを素晴らしい高解像度に強化します。専用アップスケーラーはMidjourneyのPNG出力形式で完璧に動作します。",
-      "primaryKeyword": "midjourney upscaler png",
+      "primaryKeyword": "ミッドジャーニー アップスケーラー PNG",
       "secondaryKeywords": [
-        "upscale midjourney png",
-        "midjourney png enhancer",
-        "midjourney image upscaler",
-        "ai art upscaler"
+        "ミッドジャーニー PNG を高解像度化",
+        "ミッドジャーニー PNG 拡張ツール",
+        "ミッドジャーニー 画像 アップスケーラー",
+        "AI アート アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -120,8 +120,8 @@
       "secondaryKeywords": [
         "midjourneyウェブをアップスケール",
         "midjourneyウェブエンハンサー",
-        "convert midjourney to webp",
-        "ai art webp upscaler"
+        "ミッドジャーニー を WebP に変換",
+        "AI アート WebP アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -220,12 +220,12 @@
       "metaDescription": "AIでMidjourney JPG/JPEG画像を拡張。圧縮アーティファクトを修正し解像度を強化。MJアート共有に最適。無料で試す。",
       "h1": "Midjourney JPGアップスケーラー - AIアート用JPEG強化",
       "intro": "圧縮アーティファクトを低減しながらMidjourney JPEG画像を強化します。JPEG形式を好むプラットフォームでAIアートを品質向上して共有するのに最適です。",
-      "primaryKeyword": "midjourney upscaler jpg",
+      "primaryKeyword": "ミッドジャーニー アップスケーラー JPG",
       "secondaryKeywords": [
-        "upscale midjourney jpg",
-        "midjourney jpeg enhancer",
-        "midjourney jpg upscaler",
-        "enhance midjourney jpeg"
+        "ミッドジャーニー JPG を高解像度化",
+        "ミッドジャーニー JPEG 拡張ツール",
+        "ミッドジャーニー JPG アップスケーラー",
+        "ミッドジャーニー JPEG を拡張"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -324,10 +324,10 @@
       "metaDescription": "品質を損なわずにStable Diffusion PNG画像を4Kに拡張。透明度と可逆品質。AIアート印刷に最適。無料SDアップスケーラー。",
       "h1": "Stable Diffusion PNGアップスケーラー - 可逆AIアート強化",
       "intro": "Stable Diffusion PNGエクスポートを印刷品質または高解像度ディスプレイ用に強化します。SDおよびSDXL出力用の専用アップスケーラー。",
-      "primaryKeyword": "stable diffusion upscaler png",
+      "primaryKeyword": "ステーブルディフュージョン アップスケーラー PNG",
       "secondaryKeywords": [
-        "upscale stable diffusion png",
-        "sd png enhancer",
+        "ステーブルディフュージョン PNG を高解像度化",
+        "SD PNG 拡張ツール",
         "sdxl upscaler png",
         "ai art png upscaler"
       ],
@@ -739,12 +739,12 @@
       "metaDescription": "DALL-E WebP画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "DALL-E WebPアップスケーラー - AI画像強化",
       "intro": "DALL-E WebP画像を高解像度に強化します。品質を維持しながらDALL-Eアートを拡張するのに最適です。",
-      "primaryKeyword": "dalle upscaler webp",
+      "primaryKeyword": "DALL-E アップスケーラー WebP",
       "secondaryKeywords": [
-        "upscale dalle webp",
-        "dall-e webp enhancer",
-        "convert dalle to webp",
-        "dall-e 3 webp upscaler"
+        "DALL-E WebP を高解像度化",
+        "DALL-E WebP 拡張ツール",
+        "DALL-E を WebP に変換",
+        "DALL-E 3 WebP アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -843,12 +843,12 @@
       "metaDescription": "DALL-E JPEG画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "DALL-E JPEGアップスケーラー - AI画像強化",
       "intro": "DALL-E JPEG画像を高解像度に強化します。品質を維持しながらDALL-Eアートを拡張するのに最適です。",
-      "primaryKeyword": "dalle upscaler jpg",
+      "primaryKeyword": "DALL-E アップスケーラー JPG",
       "secondaryKeywords": [
-        "upscale dalle jpg",
-        "dall-e jpeg enhancer",
-        "dalle 2 jpg upscaler",
-        "dalle 3 jpg upscaler"
+        "DALL-E JPG を高解像度化",
+        "DALL-E JPEG 拡張ツール",
+        "DALL-E 2 JPG アップスケーラー",
+        "DALL-E 3 JPG アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -946,13 +946,8 @@
       "metaDescription": "Canva PNG画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Canva PNGアップスケーラー - AI画像強化",
       "intro": "Canva PNG画像を高解像度に強化します。品質を維持しながらCanvaアートを拡張するのに最適です。",
-      "primaryKeyword": "canva upscaler png",
-      "secondaryKeywords": [
-        "upscale canva png",
-        "canva png enhancer",
-        "canva design upscaler",
-        "enhance canva exports"
-      ],
+      "primaryKeyword": "Canva アップスケーラー PNG",
+      "secondaryKeywords": ["Canva PNG を高解像度化", "Canva PNG 拡張ツール", "Canva デザイン アップスケーラー", "Canva エクスポートを拡張"],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
       "platform": "Canva",
@@ -1049,13 +1044,8 @@
       "metaDescription": "Canva WebP画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Canva WebPアップスケーラー - AI画像強化",
       "intro": "Canva WebP画像を高解像度に強化します。品質を維持しながらCanvaアートを拡張するのに最適です。",
-      "primaryKeyword": "canva upscaler webp",
-      "secondaryKeywords": [
-        "upscale canva webp",
-        "canva webp enhancer",
-        "convert canva to webp",
-        "enhance canva exports"
-      ],
+      "primaryKeyword": "Canva アップスケーラー WebP",
+      "secondaryKeywords": ["Canva WebP を高解像度化", "Canva WebP 拡張ツール", "Canva を WebP に変換", "Canva エクスポートを拡張"],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
       "platform": "Canva",
@@ -1153,13 +1143,8 @@
       "metaDescription": "Canva JPEG画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Canva JPEGアップスケーラー - AI画像強化",
       "intro": "Canva JPEG画像を高解像度に強化します。品質を維持しながらCanvaアートを拡張するのに最適です。",
-      "primaryKeyword": "canva upscaler jpg",
-      "secondaryKeywords": [
-        "upscale canva jpg",
-        "canva jpeg enhancer",
-        "canva design upscaler",
-        "enhance canva jpeg"
-      ],
+      "primaryKeyword": "Canva アップスケーラー JPG",
+      "secondaryKeywords": ["Canva JPG を高解像度化", "Canva JPEG 拡張ツール", "Canva デザイン アップスケーラー", "Canva JPEG を拡張"],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
       "platform": "Canva",
@@ -1256,12 +1241,12 @@
       "metaDescription": "Photoshop PNG画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Photoshop PNGアップスケーラー - AI画像強化",
       "intro": "Photoshop PNG画像を高解像度に強化します。品質を維持しながらPhotoshopアートを拡張するのに最適です。",
-      "primaryKeyword": "photoshop upscaler png",
+      "primaryKeyword": "Photoshop アップスケーラー PNG",
       "secondaryKeywords": [
-        "upscale photoshop png",
-        "photoshop png enhancer",
-        "enhance psd png exports",
-        "photoshop image upscaler"
+        "Photoshop PNG を高解像度化",
+        "Photoshop PNG 拡張ツール",
+        "PSD PNG エクスポートを拡張",
+        "Photoshop 画像 アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1360,12 +1345,12 @@
       "metaDescription": "Photoshop WebP画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Photoshop WebPアップスケーラー - AI画像強化",
       "intro": "Photoshop WebP画像を高解像度に強化します。品質を維持しながらPhotoshopアートを拡張するのに最適です。",
-      "primaryKeyword": "photoshop upscaler webp",
+      "primaryKeyword": "Photoshop アップスケーラー WebP",
       "secondaryKeywords": [
-        "upscale photoshop webp",
-        "photoshop webp enhancer",
-        "convert psd to webp",
-        "enhance photoshop exports"
+        "Photoshop WebP を高解像度化",
+        "Photoshop WebP 拡張ツール",
+        "PSD を WebP に変換",
+        "Photoshop エクスポートを拡張"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1464,12 +1449,12 @@
       "metaDescription": "Photoshop JPEG画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Photoshop JPEGアップスケーラー - AI画像強化",
       "intro": "Photoshop JPEG画像を高解像度に強化します。品質を維持しながらPhotoshopアートを拡張するのに最適です。",
-      "primaryKeyword": "photoshop upscaler jpg",
+      "primaryKeyword": "Photoshop アップスケーラー JPG",
       "secondaryKeywords": [
-        "upscale photoshop jpg",
-        "photoshop jpeg enhancer",
-        "enhance psd jpg exports",
-        "photoshop image upscaler"
+        "Photoshop JPG を高解像度化",
+        "Photoshop JPEG 拡張ツール",
+        "PSD JPG エクスポートを拡張",
+        "Photoshop 画像 アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1567,12 +1552,12 @@
       "metaDescription": "Midjourney HEIC画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Midjourney HEICアップスケーラー - AI画像強化",
       "intro": "Midjourney HEIC画像を高解像度に強化します。品質を維持しながらMidjourneyアートを拡張するのに最適です。",
-      "primaryKeyword": "midjourney upscaler heic",
+      "primaryKeyword": "ミッドジャーニー アップスケーラー HEIC",
       "secondaryKeywords": [
-        "upscale midjourney heic",
-        "midjourney heic enhancer",
-        "convert midjourney to heic",
-        "apple format mj upscaler"
+        "ミッドジャーニー HEIC を高解像度化",
+        "ミッドジャーニー HEIC 拡張ツール",
+        "ミッドジャーニー を HEIC に変換",
+        "Apple フォーマット MJ アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1670,12 +1655,12 @@
       "metaDescription": "Midjourney TIFF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Midjourney TIFFアップスケーラー - AI画像強化",
       "intro": "Midjourney TIFF画像を高解像度に強化します。品質を維持しながらMidjourneyアートを拡張するのに最適です。",
-      "primaryKeyword": "midjourney upscaler tiff",
+      "primaryKeyword": "ミッドジャーニー アップスケーラー TIFF",
       "secondaryKeywords": [
-        "upscale midjourney tiff",
-        "midjourney tiff enhancer",
-        "midjourney print upscaler",
-        "lossless mj upscaler"
+        "ミッドジャーニー TIFF を高解像度化",
+        "ミッドジャーニー TIFF 拡張ツール",
+        "ミッドジャーニー 印刷 アップスケーラー",
+        "可逆 MJ アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1773,12 +1758,12 @@
       "metaDescription": "Stable Diffusion HEIC画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Stable Diffusion HEICアップスケーラー - AI画像強化",
       "intro": "Stable Diffusion HEIC画像を高解像度に強化します。品質を維持しながらStable Diffusionアートを拡張するのに最適です。",
-      "primaryKeyword": "stable diffusion upscaler heic",
+      "primaryKeyword": "ステーブルディフュージョン アップスケーラー HEIC",
       "secondaryKeywords": [
-        "upscale stable diffusion heic",
-        "sd heic enhancer",
-        "convert sd to heic",
-        "apple format sd upscaler"
+        "ステーブルディフュージョン HEIC を高解像度化",
+        "SD HEIC 拡張ツール",
+        "SD を HEIC に変換",
+        "Apple フォーマット SD アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1876,12 +1861,12 @@
       "metaDescription": "Stable Diffusion TIFF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Stable Diffusion TIFFアップスケーラー - AI画像強化",
       "intro": "Stable Diffusion TIFF画像を高解像度に強化します。品質を維持しながらStable Diffusionアートを拡張するのに最適です。",
-      "primaryKeyword": "stable diffusion upscaler tiff",
+      "primaryKeyword": "ステーブルディフュージョン アップスケーラー TIFF",
       "secondaryKeywords": [
-        "upscale stable diffusion tiff",
-        "sd tiff enhancer",
-        "stable diffusion print upscaler",
-        "lossless sd upscaler"
+        "ステーブルディフュージョン TIFF を高解像度化",
+        "SD TIFF 拡張ツール",
+        "ステーブルディフュージョン 印刷 アップスケーラー",
+        "可逆 SD アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1980,12 +1965,12 @@
       "metaDescription": "DALL-E HEIC画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "DALL-E HEICアップスケーラー - AI画像強化",
       "intro": "DALL-E HEIC画像を高解像度に強化します。品質を維持しながらDALL-Eアートを拡張するのに最適です。",
-      "primaryKeyword": "dalle upscaler heic",
+      "primaryKeyword": "DALL-E アップスケーラー HEIC",
       "secondaryKeywords": [
-        "upscale dalle heic",
-        "dall-e heic enhancer",
-        "convert dalle to heic",
-        "apple format dalle upscaler"
+        "DALL-E HEIC を高解像度化",
+        "DALL-E HEIC 拡張ツール",
+        "DALL-E を HEIC に変換",
+        "Apple フォーマット DALL-E アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2083,12 +2068,12 @@
       "metaDescription": "DALL-E TIFF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "DALL-E TIFFアップスケーラー - AI画像強化",
       "intro": "DALL-E TIFF画像を高解像度に強化します。品質を維持しながらDALL-Eアートを拡張するのに最適です。",
-      "primaryKeyword": "dalle upscaler tiff",
+      "primaryKeyword": "DALL-E アップスケーラー TIFF",
       "secondaryKeywords": [
-        "upscale dalle tiff",
-        "dall-e tiff enhancer",
-        "dalle print upscaler",
-        "lossless dalle upscaler"
+        "DALL-E TIFF を高解像度化",
+        "DALL-E TIFF 拡張ツール",
+        "DALL-E 印刷 アップスケーラー",
+        "可逆 DALL-E アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2186,12 +2171,12 @@
       "metaDescription": "Canva HEIC画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Canva HEICアップスケーラー - AI画像強化",
       "intro": "Canva HEIC画像を高解像度に強化します。品質を維持しながらCanvaアートを拡張するのに最適です。",
-      "primaryKeyword": "canva upscaler heic",
+      "primaryKeyword": "Canva アップスケーラー HEIC",
       "secondaryKeywords": [
-        "upscale canva heic",
-        "canva heic enhancer",
-        "convert canva to heic",
-        "apple format canva upscaler"
+        "Canva HEIC を高解像度化",
+        "Canva HEIC 拡張ツール",
+        "Canva を HEIC に変換",
+        "Apple フォーマット Canva アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2289,13 +2274,8 @@
       "metaDescription": "Canva TIFF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Canva TIFFアップスケーラー - AI画像強化",
       "intro": "Canva TIFF画像を高解像度に強化します。品質を維持しながらCanvaアートを拡張するのに最適です。",
-      "primaryKeyword": "canva upscaler tiff",
-      "secondaryKeywords": [
-        "upscale canva tiff",
-        "canva tiff enhancer",
-        "canva print upscaler",
-        "lossless canva upscaler"
-      ],
+      "primaryKeyword": "Canva アップスケーラー TIFF",
+      "secondaryKeywords": ["Canva TIFF を高解像度化", "Canva TIFF 拡張ツール", "Canva 印刷 アップスケーラー", "可逆 Canva アップスケーラー"],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
       "platform": "Canva",
@@ -2392,12 +2372,12 @@
       "metaDescription": "Photoshop HEIC画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Photoshop HEICアップスケーラー - AI画像強化",
       "intro": "Photoshop HEIC画像を高解像度に強化します。品質を維持しながらPhotoshopアートを拡張するのに最適です。",
-      "primaryKeyword": "photoshop upscaler heic",
+      "primaryKeyword": "Photoshop アップスケーラー HEIC",
       "secondaryKeywords": [
-        "upscale photoshop heic",
-        "photoshop heic enhancer",
-        "convert psd to heic",
-        "apple format photoshop upscaler"
+        "Photoshop HEIC を高解像度化",
+        "Photoshop HEIC 拡張ツール",
+        "PSD を HEIC に変換",
+        "Apple フォーマット Photoshop アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2495,12 +2475,12 @@
       "metaDescription": "Photoshop TIFF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Photoshop TIFFアップスケーラー - AI画像強化",
       "intro": "Photoshop TIFF画像を高解像度に強化します。品質を維持しながらPhotoshopアートを拡張するのに最適です。",
-      "primaryKeyword": "photoshop upscaler tiff",
+      "primaryKeyword": "Photoshop アップスケーラー TIFF",
       "secondaryKeywords": [
-        "upscale photoshop tiff",
-        "photoshop tiff enhancer",
-        "photoshop print upscaler",
-        "lossless photoshop upscaler"
+        "Photoshop TIFF を高解像度化",
+        "Photoshop TIFF 拡張ツール",
+        "Photoshop 印刷 アップスケーラー",
+        "可逆 Photoshop アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2599,12 +2579,12 @@
       "metaDescription": "Midjourney RAW画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Midjourney RAWアップスケーラー - AI画像強化",
       "intro": "Midjourney RAW画像を高解像度に強化します。品質を維持しながらMidjourneyアートを拡張するのに最適です。",
-      "primaryKeyword": "midjourney upscaler raw",
+      "primaryKeyword": "ミッドジャーニー アップスケーラー RAW",
       "secondaryKeywords": [
-        "upscale midjourney raw",
-        "midjourney raw enhancer",
-        "convert midjourney to raw",
-        "professional mj upscaler"
+        "ミッドジャーニー RAW を高解像度化",
+        "ミッドジャーニー RAW 拡張ツール",
+        "ミッドジャーニー を RAW に変換",
+        "プロフェッショナル MJ アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2702,12 +2682,12 @@
       "metaDescription": "Midjourney BMP画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Midjourney BMPアップスケーラー - AI画像強化",
       "intro": "Midjourney BMP画像を高解像度に強化します。品質を維持しながらMidjourneyアートを拡張するのに最適です。",
-      "primaryKeyword": "midjourney upscaler bmp",
+      "primaryKeyword": "ミッドジャーニー アップスケーラー BMP",
       "secondaryKeywords": [
-        "upscale midjourney bmp",
-        "midjourney bmp enhancer",
-        "convert midjourney to bmp",
-        "windows format mj upscaler"
+        "ミッドジャーニー BMP を高解像度化",
+        "ミッドジャーニー BMP 拡張ツール",
+        "ミッドジャーニー を BMP に変換",
+        "Windows フォーマット MJ アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2805,12 +2785,12 @@
       "metaDescription": "Midjourney AVIF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Midjourney AVIFアップスケーラー - AI画像強化",
       "intro": "Midjourney AVIF画像を高解像度に強化します。品質を維持しながらMidjourneyアートを拡張するのに最適です。",
-      "primaryKeyword": "midjourney upscaler avif",
+      "primaryKeyword": "ミッドジャーニー アップスケーラー AVIF",
       "secondaryKeywords": [
-        "upscale midjourney avif",
-        "midjourney avif enhancer",
-        "convert midjourney to avif",
-        "next-gen mj upscaler"
+        "ミッドジャーニー AVIF を高解像度化",
+        "ミッドジャーニー AVIF 拡張ツール",
+        "ミッドジャーニー を AVIF に変換",
+        "次世代 MJ アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2908,12 +2888,12 @@
       "metaDescription": "Stable Diffusion RAW画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Stable Diffusion RAWアップスケーラー - AI画像強化",
       "intro": "Stable Diffusion RAW画像を高解像度に強化します。品質を維持しながらStable Diffusionアートを拡張するのに最適です。",
-      "primaryKeyword": "stable diffusion upscaler raw",
+      "primaryKeyword": "ステーブルディフュージョン アップスケーラー RAW",
       "secondaryKeywords": [
-        "upscale stable diffusion raw",
-        "stable diffusion raw enhancer",
-        "convert sd to raw",
-        "professional sd upscaler"
+        "ステーブルディフュージョン RAW を高解像度化",
+        "ステーブルディフュージョン RAW 拡張ツール",
+        "SD を RAW に変換",
+        "プロフェッショナル SD アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3011,12 +2991,12 @@
       "metaDescription": "Stable Diffusion BMP画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Stable Diffusion BMPアップスケーラー - AI画像強化",
       "intro": "Stable Diffusion BMP画像を高解像度に強化します。品質を維持しながらStable Diffusionアートを拡張するのに最適です。",
-      "primaryKeyword": "stable diffusion upscaler bmp",
+      "primaryKeyword": "ステーブルディフュージョン アップスケーラー BMP",
       "secondaryKeywords": [
-        "upscale stable diffusion bmp",
-        "stable diffusion bmp enhancer",
-        "convert sd to bmp",
-        "windows format sd upscaler"
+        "ステーブルディフュージョン BMP を高解像度化",
+        "ステーブルディフュージョン BMP 拡張ツール",
+        "SD を BMP に変換",
+        "Windows フォーマット SD アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3114,12 +3094,12 @@
       "metaDescription": "Stable Diffusion AVIF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Stable Diffusion AVIFアップスケーラー - AI画像強化",
       "intro": "Stable Diffusion AVIF画像を高解像度に強化します。品質を維持しながらStable Diffusionアートを拡張するのに最適です。",
-      "primaryKeyword": "stable diffusion upscaler avif",
+      "primaryKeyword": "ステーブルディフュージョン アップスケーラー AVIF",
       "secondaryKeywords": [
-        "upscale stable diffusion avif",
-        "stable diffusion avif enhancer",
-        "convert sd to avif",
-        "next-gen sd upscaler"
+        "ステーブルディフュージョン AVIF を高解像度化",
+        "ステーブルディフュージョン AVIF 拡張ツール",
+        "SD を AVIF に変換",
+        "次世代 SD アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3217,12 +3197,12 @@
       "metaDescription": "DALL-E RAW画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "DALL-E RAWアップスケーラー - AI画像強化",
       "intro": "DALL-E RAW画像を高解像度に強化します。品質を維持しながらDALL-Eアートを拡張するのに最適です。",
-      "primaryKeyword": "dalle upscaler raw",
+      "primaryKeyword": "DALL-E アップスケーラー RAW",
       "secondaryKeywords": [
-        "upscale dalle raw",
-        "dalle raw enhancer",
-        "convert dalle to raw",
-        "professional dalle upscaler"
+        "DALL-E RAW を高解像度化",
+        "DALL-E RAW 拡張ツール",
+        "DALL-E を RAW に変換",
+        "プロフェッショナル DALL-E アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3320,12 +3300,12 @@
       "metaDescription": "DALL-E BMP画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "DALL-E BMPアップスケーラー - AI画像強化",
       "intro": "DALL-E BMP画像を高解像度に強化します。品質を維持しながらDALL-Eアートを拡張するのに最適です。",
-      "primaryKeyword": "dalle upscaler bmp",
+      "primaryKeyword": "DALL-E アップスケーラー BMP",
       "secondaryKeywords": [
-        "upscale dalle bmp",
-        "dalle bmp enhancer",
-        "convert dalle to bmp",
-        "windows format dalle upscaler"
+        "DALL-E BMP を高解像度化",
+        "DALL-E BMP 拡張ツール",
+        "DALL-E を BMP に変換",
+        "Windows フォーマット DALL-E アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3423,12 +3403,12 @@
       "metaDescription": "DALL-E AVIF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "DALL-E AVIFアップスケーラー - AI画像強化",
       "intro": "DALL-E AVIF画像を高解像度に強化します。品質を維持しながらDALL-Eアートを拡張するのに最適です。",
-      "primaryKeyword": "dalle upscaler avif",
+      "primaryKeyword": "DALL-E アップスケーラー AVIF",
       "secondaryKeywords": [
-        "upscale dalle avif",
-        "dalle avif enhancer",
-        "convert dalle to avif",
-        "next-gen dalle upscaler"
+        "DALL-E AVIF を高解像度化",
+        "DALL-E AVIF 拡張ツール",
+        "DALL-E を AVIF に変換",
+        "次世代 DALL-E アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3526,12 +3506,12 @@
       "metaDescription": "Canva RAW画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Canva RAWアップスケーラー - AI画像強化",
       "intro": "Canva RAW画像を高解像度に強化します。品質を維持しながらCanvaアートを拡張するのに最適です。",
-      "primaryKeyword": "canva upscaler raw",
+      "primaryKeyword": "Canva アップスケーラー RAW",
       "secondaryKeywords": [
-        "upscale canva raw",
-        "canva raw enhancer",
-        "convert canva to raw",
-        "professional canva upscaler"
+        "Canva RAW を高解像度化",
+        "Canva RAW 拡張ツール",
+        "Canva を RAW に変換",
+        "プロフェッショナル Canva アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3629,12 +3609,12 @@
       "metaDescription": "Canva BMP画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Canva BMPアップスケーラー - AI画像強化",
       "intro": "Canva BMP画像を高解像度に強化します。品質を維持しながらCanvaアートを拡張するのに最適です。",
-      "primaryKeyword": "canva upscaler bmp",
+      "primaryKeyword": "Canva アップスケーラー BMP",
       "secondaryKeywords": [
-        "upscale canva bmp",
-        "canva bmp enhancer",
-        "convert canva to bmp",
-        "windows format canva upscaler"
+        "Canva BMP を高解像度化",
+        "Canva BMP 拡張ツール",
+        "Canva を BMP に変換",
+        "Windows フォーマット Canva アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3732,13 +3712,8 @@
       "metaDescription": "Canva AVIF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Canva AVIFアップスケーラー - AI画像強化",
       "intro": "Canva AVIF画像を高解像度に強化します。品質を維持しながらCanvaアートを拡張するのに最適です。",
-      "primaryKeyword": "canva upscaler avif",
-      "secondaryKeywords": [
-        "upscale canva avif",
-        "canva avif enhancer",
-        "convert canva to avif",
-        "next-gen canva upscaler"
-      ],
+      "primaryKeyword": "Canva アップスケーラー AVIF",
+      "secondaryKeywords": ["Canva AVIF を高解像度化", "Canva AVIF 拡張ツール", "Canva を AVIF に変換", "次世代 Canva アップスケーラー"],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
       "platform": "Canva",
@@ -3835,12 +3810,12 @@
       "metaDescription": "Photoshop RAW画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Photoshop RAWアップスケーラー - AI画像強化",
       "intro": "Photoshop RAW画像を高解像度に強化します。品質を維持しながらPhotoshopアートを拡張するのに最適です。",
-      "primaryKeyword": "photoshop upscaler raw",
+      "primaryKeyword": "Photoshop アップスケーラー RAW",
       "secondaryKeywords": [
-        "upscale photoshop raw",
-        "photoshop raw enhancer",
-        "convert ps to raw",
-        "professional ps upscaler"
+        "Photoshop RAW を高解像度化",
+        "Photoshop RAW 拡張ツール",
+        "PS を RAW に変換",
+        "プロフェッショナル PS アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3938,12 +3913,12 @@
       "metaDescription": "Photoshop BMP画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Photoshop BMPアップスケーラー - AI画像強化",
       "intro": "Photoshop BMP画像を高解像度に強化します。品質を維持しながらPhotoshopアートを拡張するのに最適です。",
-      "primaryKeyword": "photoshop upscaler bmp",
+      "primaryKeyword": "Photoshop アップスケーラー BMP",
       "secondaryKeywords": [
-        "upscale photoshop bmp",
-        "photoshop bmp enhancer",
-        "convert ps to bmp",
-        "windows format ps upscaler"
+        "Photoshop BMP を高解像度化",
+        "Photoshop BMP 拡張ツール",
+        "PS を BMP に変換",
+        "Windows フォーマット PS アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -4041,12 +4016,12 @@
       "metaDescription": "Photoshop AVIF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Photoshop AVIFアップスケーラー - AI画像強化",
       "intro": "Photoshop AVIF画像を高解像度に強化します。品質を維持しながらPhotoshopアートを拡張するのに最適です。",
-      "primaryKeyword": "photoshop upscaler avif",
+      "primaryKeyword": "Photoshop アップスケーラー AVIF",
       "secondaryKeywords": [
-        "upscale photoshop avif",
-        "photoshop avif enhancer",
-        "convert ps to avif",
-        "next-gen ps upscaler"
+        "Photoshop AVIF を高解像度化",
+        "Photoshop AVIF 拡張ツール",
+        "PS を AVIF に変換",
+        "次世代 PS アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -4144,12 +4119,12 @@
       "metaDescription": "Lightroom RAW画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Lightroom RAWアップスケーラー - AI画像強化",
       "intro": "Lightroom RAW画像を高解像度に強化します。品質を維持しながらLightroomアートを拡張するのに最適です。",
-      "primaryKeyword": "lightroom upscaler raw",
+      "primaryKeyword": "Lightroom アップスケーラー RAW",
       "secondaryKeywords": [
-        "upscale lightroom raw",
-        "lightroom raw enhancer",
-        "enhance lightroom photos",
-        "professional photo upscaler"
+        "Lightroom RAW を高解像度化",
+        "Lightroom RAW 拡張ツール",
+        "Lightroom 写真を拡張",
+        "プロフェッショナル 写真 アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -4247,12 +4222,12 @@
       "metaDescription": "Lightroom BMP画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Lightroom BMPアップスケーラー - AI画像強化",
       "intro": "Lightroom BMP画像を高解像度に強化します。品質を維持しながらLightroomアートを拡張するのに最適です。",
-      "primaryKeyword": "lightroom upscaler bmp",
+      "primaryKeyword": "Lightroom アップスケーラー BMP",
       "secondaryKeywords": [
-        "upscale lightroom bmp",
-        "lightroom bmp enhancer",
-        "convert lightroom to bmp",
-        "windows photo upscaler"
+        "Lightroom BMP を高解像度化",
+        "Lightroom BMP 拡張ツール",
+        "Lightroom を BMP に変換",
+        "Windows 写真 アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -4350,12 +4325,12 @@
       "metaDescription": "Lightroom AVIF画像をAIでアップスケール。品質向上。無料で試す。",
       "h1": "Lightroom AVIFアップスケーラー - AI画像強化",
       "intro": "Lightroom AVIF画像を高解像度に強化します。品質を維持しながらLightroomアートを拡張するのに最適です。",
-      "primaryKeyword": "lightroom upscaler avif",
+      "primaryKeyword": "Lightroom アップスケーラー AVIF",
       "secondaryKeywords": [
-        "upscale lightroom avif",
-        "lightroom avif enhancer",
-        "convert lightroom to avif",
-        "next-gen photo upscaler"
+        "Lightroom AVIF を高解像度化",
+        "Lightroom AVIF 拡張ツール",
+        "Lightroom を AVIF に変換",
+        "次世代 写真 アップスケーラー"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",

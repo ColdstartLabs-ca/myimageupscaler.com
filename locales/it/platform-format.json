@@ -15,7 +15,7 @@
       "intro": "Migliora le tue esportazioni Midjourney PNG a stupefacente alta risoluzione preservando lo stile artistico unico e qualsiasi trasparenza. Il nostro upscaler specializzato funziona perfettamente con il formato di output PNG di Midjourney.",
       "primaryKeyword": "upscaler midjourney png",
       "secondaryKeywords": [
-        "upscale midjourney png",
+        "aumenta risoluzione midjourney png",
         "enhancer midjourney png",
         "upscaler immagine midjourney",
         "upscaler arte ai"
@@ -751,10 +751,10 @@
       "intro": "Migliora i tuoi immagini DALL-E e convertili simultaneamente nel formato efficiente WebP. Perfetto per applicazioni web.",
       "primaryKeyword": "dalle upscaler upscaler png",
       "secondaryKeywords": [
-        "upscale dalle webp",
-        "dall-e webp enhancer",
-        "convert dalle to webp",
-        "dall-e 3 webp upscaler"
+        "aumenta risoluzione dalle webp",
+        "miglioratore dall-e webp",
+        "converti dalle in webp",
+        "aumentatore risoluzione dall-e 3 webp"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -855,10 +855,10 @@
       "intro": "Migliora i tuoi JPEG DALL-E mantenendo la chiarezza del testo e la qualità. Perfetto per la condivisione su piattaforme che preferiscono JPEG.",
       "primaryKeyword": "dalle upscaler upscaler jpeg",
       "secondaryKeywords": [
-        "upscale dalle jpg",
-        "dall-e jpeg enhancer",
-        "dalle 2 jpg upscaler",
-        "dalle 3 jpg upscaler"
+        "aumenta risoluzione dalle jpg",
+        "miglioratore dall-e jpeg",
+        "aumentatore risoluzione dalle 2 jpg",
+        "aumentatore risoluzione dalle 3 jpg"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -958,10 +958,10 @@
       "intro": "Migliora i tuoi PNG Canva con il nostro upscaler specializzato che mantiene perfetta qualità aumentando la risoluzione. Perfetto per stampa e uso professionale.",
       "primaryKeyword": "canva upscaler upscaler png",
       "secondaryKeywords": [
-        "upscale canva png",
-        "canva png enhancer",
-        "canva design upscaler",
-        "enhance canva exports"
+        "aumenta risoluzione canva png",
+        "miglioratore canva png",
+        "aumentatore risoluzione design canva",
+        "migliora esportazioni canva"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1061,10 +1061,10 @@
       "intro": "Migliora i tuoi design Canva e convertili simultaneamente nel formato efficiente WebP. Perfetto per applicazioni web.",
       "primaryKeyword": "canva upscaler upscaler png",
       "secondaryKeywords": [
-        "upscale canva webp",
-        "canva webp enhancer",
-        "convert canva to webp",
-        "enhance canva exports"
+        "aumenta risoluzione canva webp",
+        "miglioratore canva webp",
+        "converti canva in webp",
+        "migliora esportazioni canva"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1165,10 +1165,10 @@
       "intro": "Migliora i tuoi JPEG Canva mantenendo la chiarezza del testo e la qualità. Perfetto per la condivisione su piattaforme che preferiscono JPEG.",
       "primaryKeyword": "canva upscaler upscaler jpeg",
       "secondaryKeywords": [
-        "upscale canva jpg",
-        "canva jpeg enhancer",
-        "canva design upscaler",
-        "enhance canva jpeg"
+        "aumenta risoluzione canva jpg",
+        "miglioratore canva jpeg",
+        "aumentatore risoluzione design canva",
+        "migliora jpeg canva"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1268,10 +1268,10 @@
       "intro": "Migliora i tuoi PNG Photoshop con il nostro upscaler specializzato che mantiene perfetta qualità aumentando la risoluzione. Perfetto per stampa e uso professionale.",
       "primaryKeyword": "photoshop upscaler upscaler png",
       "secondaryKeywords": [
-        "upscale photoshop png",
-        "photoshop png enhancer",
-        "enhance psd png exports",
-        "photoshop image upscaler"
+        "aumenta risoluzione photoshop png",
+        "miglioratore photoshop png",
+        "migliora esportazioni png psd",
+        "aumentatore risoluzione immagini photoshop"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1287,8 +1287,8 @@
         "Ensure color profile è embedded (sRGB for web, Adobe RGB for print)"
       ],
       "workflowTips": [
-        "Complete your editing work in Photoshop",
-        "Flatten layers or export individual layers as needed",
+        "Completa il lavoro di modifica in Photoshop",
+        "Appiattisci i livelli o esporta singoli livelli secondo necessità",
         "Export using File > Esporta Come - choose PNG format",
         "Carica to our Photoshop-optimized PNG upscaler",
         "Seleziona target resolution based on your output needs",
@@ -1372,10 +1372,10 @@
       "intro": "Migliora i tuoi immagini Photoshop e convertili simultaneamente nel formato efficiente WebP. Perfetto per applicazioni web.",
       "primaryKeyword": "photoshop upscaler upscaler png",
       "secondaryKeywords": [
-        "upscale photoshop webp",
-        "photoshop webp enhancer",
-        "convert psd to webp",
-        "enhance photoshop exports"
+        "aumenta risoluzione photoshop webp",
+        "miglioratore photoshop webp",
+        "converti psd in webp",
+        "migliora esportazioni photoshop"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1391,7 +1391,7 @@
         "Mantiene eccellente quality con dimensioni file più piccole"
       ],
       "workflowTips": [
-        "Complete your editing work in Photoshop",
+        "Completa il lavoro di modifica in Photoshop",
         "Export using File > Esporta Come - choose PNG or TIFF",
         "Carica to our Photoshop upscaler",
         "Seleziona WebP as the formato di output",
@@ -1432,12 +1432,12 @@
           "example": "Visualizza PS-created product immagini online"
         },
         {
-          "title": "Blog Graphics",
+          "title": "Grafiche per Blog",
           "description": "Enhance blog posts con Photoshop WebP immagini.",
           "example": "Illustrate content con PS-created grafica"
         },
         {
-          "title": "Digital Products",
+          "title": "Prodotti Digitali",
           "description": "Usa Photoshop WebP immagini in prodotti digitalei e courses.",
           "example": "Crea digitale product visuals con PS art"
         }
@@ -1476,10 +1476,10 @@
       "intro": "Migliora i tuoi JPEG Photoshop mantenendo la chiarezza del testo e la qualità. Perfetto per la condivisione su piattaforme che preferiscono JPEG.",
       "primaryKeyword": "photoshop upscaler upscaler jpeg",
       "secondaryKeywords": [
-        "upscale photoshop jpg",
-        "photoshop jpeg enhancer",
-        "enhance psd jpg exports",
-        "photoshop image upscaler"
+        "aumenta risoluzione photoshop jpg",
+        "miglioratore photoshop jpeg",
+        "migliora esportazioni jpg psd",
+        "aumentatore risoluzione immagini photoshop"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1495,7 +1495,7 @@
         "Incorpora il profilo colore (sRGB o Adobe RGB) prima dell\"esportazione"
       ],
       "workflowTips": [
-        "Complete your editing work in Photoshop",
+        "Completa il lavoro di modifica in Photoshop",
         "Per i migliori risultati, export as PNG or TIFF first (lossless)",
         "Carica to our Photoshop JPEG upscaler",
         "Il nostro strumento enhances resolution while optimizing JPEG compression",
@@ -1503,14 +1503,14 @@
       ],
       "benefits": [
         {
-          "title": "Universal Compatibility",
+          "title": "Compatibilità Universale",
           "description": "JPEG format works su tutti platforms per sharing Photoshop work.",
           "metric": "100% compatibile"
         },
         {
           "title": "Quality Migliorato",
-          "description": "Maintains Photoshop edit quality while optimizing file size.",
-          "metric": "Quality maintained"
+          "description": "Mantiene la qualità di modifica di Photoshop ottimizzando le dimensioni del file.",
+          "metric": "Qualità mantenuta"
         },
         {
           "title": "Social Pronto",
@@ -1518,8 +1518,8 @@
           "metric": "Social ottimizzato"
         },
         {
-          "title": "Manageable Size",
-          "description": "JPEG compression keeps Photoshop file sizes manageable.",
+          "title": "Dimensioni Gestibili",
+          "description": "La compressione JPEG mantiene le dimensioni dei file Photoshop gestibili.",
           "metric": "Efficient archiviazione"
         }
       ],
@@ -1540,9 +1540,9 @@
           "example": "Fornisci client deliverables that work everywhere"
         },
         {
-          "title": "Presentations",
+          "title": "Presentazioni",
           "description": "Usa enhanced Photoshop JPEGs in business presentations.",
-          "example": "Enhance PowerPoint and Keynote presentations"
+          "example": "Migliora presentazioni PowerPoint e Keynote"
         }
       ],
       "faq": [
@@ -1579,10 +1579,10 @@
       "intro": "Migliora i tuoi immagini Midjourney e convertili simultaneamente nel formato efficiente HEIC. Perfetto per dispositivi Apple.",
       "primaryKeyword": "midjourney upscaler upscaler heic",
       "secondaryKeywords": [
-        "upscale midjourney heic",
-        "midjourney heic enhancer",
-        "convert midjourney to heic",
-        "apple format mj upscaler"
+        "aumenta risoluzione midjourney heic",
+        "miglioratore midjourney heic",
+        "converti midjourney in heic",
+        "aumentatore risoluzione mj formato apple"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1598,9 +1598,9 @@
         "Mantiene eccellente quality con dimensioni file più piccole"
       ],
       "workflowTips": [
-        "Generate your image in Midjourney",
+        "Genera la tua immagine in Midjourney",
         "Usa the upscale buttons (U1-U4) for better starting quality",
-        "Export in PNG format (highest quality available)",
+        "Esporta in formato PNG (massima qualità disponibile)",
         "Carica to our upscaler and select HEIC as formato di output",
         "Scarica il tuo enhanced Midjourney image in HEIC format"
       ],
@@ -1618,10 +1618,10 @@
         {
           "title": "Modern Formato",
           "description": "HEIC is the moderno standard per Apple image storage.",
-          "metric": "Apple native"
+          "metric": "Nativo Apple"
         },
         {
-          "title": "Storage Efficient",
+          "title": "Efficiente per lo Storage",
           "description": "HEIC's efficiency significa more MJ art stored su Apple devices.",
           "metric": "Efficient archiviazione"
         }
@@ -1633,14 +1633,14 @@
           "example": "Crea large MJ art collections su Apple devices"
         },
         {
-          "title": "iCloud Photos",
+          "title": "Foto iCloud",
           "description": "Sync Midjourney art tramite iCloud Photos con HEIC efficiency.",
           "example": "Archivia MJ art in iCloud con optimized storage"
         },
         {
-          "title": "Apple Creativity Apps",
+          "title": "App Creative Apple",
           "description": "Usa Midjourney art in Apple creativity apps con HEIC format.",
-          "example": "Edit MJ art in Apple Photos and creative apps"
+          "example": "Modifica arte MJ in Foto e app creative Apple"
         }
       ],
       "faq": [
@@ -1673,10 +1673,10 @@
       "intro": "Upscala le tue immagini Midjourney in formato TIFF per archiviazione professionale. TIFF fornisce qualità senza perdita.",
       "primaryKeyword": "midjourney upscaler upscaler tiff",
       "secondaryKeywords": [
-        "upscale midjourney tiff",
-        "midjourney tiff enhancer",
-        "midjourney print upscaler",
-        "lossless mj upscaler"
+        "aumenta risoluzione midjourney tiff",
+        "miglioratore midjourney tiff",
+        "aumentatore risoluzione midjourney stampa",
+        "aumentatore risoluzione mj senza perdita"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1692,9 +1692,9 @@
         "Mantiene perfect quality for archival storage"
       ],
       "workflowTips": [
-        "Generate your image in Midjourney",
+        "Genera la tua immagine in Midjourney",
         "Usa the upscale buttons (U1-U4) for better starting quality",
-        "Export in PNG format (highest quality available)",
+        "Esporta in formato PNG (massima qualità disponibile)",
         "Carica to our upscaler and select TIFF as formato di output",
         "Scarica il tuo enhanced Midjourney image in lossless TIFF"
       ],
@@ -1707,17 +1707,17 @@
         {
           "title": "Print Pronto",
           "description": "TIFF is the professional standard per printing Midjourney art.",
-          "metric": "Print standard"
+          "metric": "Standard di stampa"
         },
         {
-          "title": "Archival Grade",
+          "title": "Qualità Archivio",
           "description": "Perfect per long-term storage of important Midjourney creations.",
           "metric": "Archival qualità"
         },
         {
-          "title": "Professional Results",
+          "title": "Risultati Professionali",
           "description": "Suitable per gtuttiery and commercial printing applications.",
-          "metric": "Professional grade"
+          "metric": "Qualità professionale"
         }
       ],
       "useCases": [
@@ -1728,11 +1728,11 @@
         },
         {
           "title": "Archival Archiviazione",
-          "description": "Preserve important Midjourney creations in lossless TIFF format.",
+          "description": "Preserva creazioni Midjourney importanti in formato TIFF senza perdita di dati.",
           "example": "Crea archival versions of favorite MJ art"
         },
         {
-          "title": "Commercial Printing",
+          "title": "Stampa Commerciale",
           "description": "Usa Midjourney TIFF per professional commercial printing.",
           "example": "Prepara MJ art per merchandise and products"
         }
@@ -1767,10 +1767,10 @@
       "intro": "Migliora i tuoi immagini Stable Diffusion e convertili simultaneamente nel formato efficiente HEIC. Perfetto per dispositivi Apple.",
       "primaryKeyword": "stable diffusion upscaler upscaler heic",
       "secondaryKeywords": [
-        "upscale stable diffusion heic",
-        "sd heic enhancer",
-        "convert sd to heic",
-        "apple format sd upscaler"
+        "aumenta risoluzione stable diffusion heic",
+        "miglioratore sd heic",
+        "converti sd in heic",
+        "aumentatore risoluzione sd formato apple"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1786,8 +1786,8 @@
         "Mantiene eccellente quality con dimensioni file più piccole"
       ],
       "workflowTips": [
-        "Generate your image in Stable Diffusion",
-        "Save the output in PNG format without compression",
+        "Genera la tua immagine in Stable Diffusion",
+        "Salva luscito in formato PNG senza compressione",
         "Carica to our SD upscaler",
         "Seleziona HEIC as the formato di output",
         "Scarica il tuo enhanced SD image in HEIC format"
@@ -1804,19 +1804,19 @@
           "metric": "Excellent qualità"
         },
         {
-          "title": "Storage Efficient",
+          "title": "Efficiente per lo Storage",
           "description": "HEIC's efficiency significa more SD art stored su Apple devices.",
           "metric": "Efficient archiviazione"
         },
         {
-          "title": "Model Characteristics",
-          "description": "Preserves unique SD checkpoint and LoRA style characteristics.",
-          "metric": "Style maintained"
+          "title": "Caratteristiche del Modello",
+          "description": "Preserva le caratteristiche uniche dello stile dei checkpoint e LoRA SD.",
+          "metric": "Stile mantenuto"
         }
       ],
       "useCases": [
         {
-          "title": "Apple Device Collections",
+          "title": "Collezioni Dispositivi Apple",
           "description": "Store Stable Diffusion art efficiently su Apple devices.",
           "example": "Crea large SD art collections su iPhone and iPad"
         },
@@ -1856,10 +1856,10 @@
       "intro": "Upscala le tue immagini Stable Diffusion in formato TIFF per archiviazione professionale. TIFF fornisce qualità senza perdita.",
       "primaryKeyword": "stable diffusion upscaler upscaler tiff",
       "secondaryKeywords": [
-        "upscale stable diffusion tiff",
-        "sd tiff enhancer",
-        "stable diffusion print upscaler",
-        "lossless sd upscaler"
+        "aumenta risoluzione stable diffusion tiff",
+        "miglioratore sd tiff",
+        "aumentatore risoluzione stable diffusion stampa",
+        "aumentatore risoluzione sd senza perdita"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1875,9 +1875,9 @@
         "Mantiene perfect quality for archival storage"
       ],
       "workflowTips": [
-        "Generate your image in Stable Diffusion",
+        "Genera la tua immagine in Stable Diffusion",
         "Usa Hi-Res Fix or higher resolution settings for better starting quality",
-        "Save the output in PNG format without compression",
+        "Salva luscito in formato PNG senza compressione",
         "Carica to our SD upscaler",
         "Seleziona TIFF as the formato di output",
         "Scarica il tuo enhanced SD image in lossless TIFF"
@@ -1891,15 +1891,15 @@
         {
           "title": "Print Pronto",
           "description": "TIFF is the professional standard per printing Stable Diffusion art.",
-          "metric": "Print standard"
+          "metric": "Standard di stampa"
         },
         {
           "title": "Model Preservato",
-          "description": "Maintains characteristics of SD checkpoints and LoRAs in TIFF format.",
-          "metric": "Style maintained"
+          "description": "Mantiene le caratteristiche dei checkpoint e LoRA SD in formato TIFF.",
+          "metric": "Stile mantenuto"
         },
         {
-          "title": "Archival Grade",
+          "title": "Qualità Archivio",
           "description": "Perfect per long-term storage of important Stable Diffusion creations.",
           "metric": "Archival qualità"
         }
@@ -1912,11 +1912,11 @@
         },
         {
           "title": "Archival Archiviazione",
-          "description": "Preserve important Stable Diffusion creations in lossless TIFF format.",
+          "description": "Preserva creazioni Stable Diffusion importanti in formato TIFF senza perdita di dati.",
           "example": "Crea archival versions of favorite SD art"
         },
         {
-          "title": "Commercial Printing",
+          "title": "Stampa Commerciale",
           "description": "Usa Stable Diffusion TIFF per professional commercial printing.",
           "example": "Prepara SD art per merchandise and products"
         }
@@ -1951,10 +1951,10 @@
       "intro": "Migliora i tuoi immagini DALL-E e convertili simultaneamente nel formato efficiente HEIC. Perfetto per dispositivi Apple.",
       "primaryKeyword": "dalle upscaler upscaler heic",
       "secondaryKeywords": [
-        "upscale dalle heic",
-        "dall-e heic enhancer",
-        "convert dalle to heic",
-        "apple format dalle upscaler"
+        "aumenta risoluzione dalle heic",
+        "miglioratore dall-e heic",
+        "converti dalle in heic",
+        "aumentatore risoluzione dalle formato apple"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -1970,7 +1970,7 @@
         "Mantiene eccellente quality con dimensioni file più piccole"
       ],
       "workflowTips": [
-        "Generate your image using DALL-E via ChatGPT",
+        "Genera la tua immagine usando DALL-E tramite ChatGPT",
         "Scarica the image in PNG format (highest available quality)",
         "Carica to our DALL-E upscaler",
         "Seleziona HEIC as the formato di output",
@@ -1988,19 +1988,19 @@
           "metric": "Excellent qualità"
         },
         {
-          "title": "Storage Efficient",
+          "title": "Efficiente per lo Storage",
           "description": "HEIC's efficiency significa more DALL-E art stored su Apple devices.",
           "metric": "Efficient archiviazione"
         },
         {
-          "title": "DALL-E 3 Support",
+          "title": "Supporto DALL-E 3",
           "description": "Ottimizzad per both DALL-E 2 and DALL-E 3 HEIC outputs.",
-          "metric": "All versions"
+          "metric": "Tutte le versioni"
         }
       ],
       "useCases": [
         {
-          "title": "Apple Device Collections",
+          "title": "Collezioni Dispositivi Apple",
           "description": "Store DALL-E art efficiently su Apple devices.",
           "example": "Crea large DALL-E collections su iPhone and iPad"
         },
@@ -2040,10 +2040,10 @@
       "intro": "Upscala le tue immagini DALL-E in formato TIFF per archiviazione professionale. TIFF fornisce qualità senza perdita.",
       "primaryKeyword": "dalle upscaler upscaler tiff",
       "secondaryKeywords": [
-        "upscale dalle tiff",
-        "dall-e tiff enhancer",
-        "dalle print upscaler",
-        "lossless dalle upscaler"
+        "aumenta risoluzione dalle tiff",
+        "miglioratore dall-e tiff",
+        "aumentatore risoluzione dalle stampa",
+        "aumentatore risoluzione dalle senza perdita"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2059,7 +2059,7 @@
         "Mantiene perfect quality for archival storage"
       ],
       "workflowTips": [
-        "Generate your image using DALL-E via ChatGPT",
+        "Genera la tua immagine usando DALL-E tramite ChatGPT",
         "Scarica the image in PNG format (highest available quality)",
         "Carica to our DALL-E upscaler",
         "Seleziona TIFF as the formato di output",
@@ -2074,15 +2074,15 @@
         {
           "title": "Print Pronto",
           "description": "TIFF is the professional standard per printing DALL-E art.",
-          "metric": "Print standard"
+          "metric": "Standard di stampa"
         },
         {
-          "title": "DALL-E 3 Support",
+          "title": "Supporto DALL-E 3",
           "description": "Ottimizzad per both DALL-E 2 and DALL-E 3 TIFF outputs.",
-          "metric": "All versions"
+          "metric": "Tutte le versioni"
         },
         {
-          "title": "Archival Grade",
+          "title": "Qualità Archivio",
           "description": "Perfect per long-term storage of important DALL-E creations.",
           "metric": "Archival qualità"
         }
@@ -2095,11 +2095,11 @@
         },
         {
           "title": "Archival Archiviazione",
-          "description": "Preserve important DALL-E creations in lossless TIFF format.",
+          "description": "Preserva creazioni DALL-E importanti in formato TIFF senza perdita di dati.",
           "example": "Crea archival versions of favorite DALL-E art"
         },
         {
-          "title": "Commercial Printing",
+          "title": "Stampa Commerciale",
           "description": "Usa DALL-E TIFF per professional commercial printing.",
           "example": "Prepara DALL-E art per merchandise and products"
         }
@@ -2134,10 +2134,10 @@
       "intro": "Migliora i tuoi design Canva e convertili simultaneamente nel formato efficiente HEIC. Perfetto per dispositivi Apple.",
       "primaryKeyword": "canva upscaler upscaler heic",
       "secondaryKeywords": [
-        "upscale canva heic",
-        "canva heic enhancer",
-        "convert canva to heic",
-        "apple format canva upscaler"
+        "aumenta risoluzione canva heic",
+        "miglioratore canva heic",
+        "converti canva in heic",
+        "aumentatore risoluzione canva formato apple"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2171,13 +2171,13 @@
           "metric": "Excellent qualità"
         },
         {
-          "title": "Storage Efficient",
+          "title": "Efficiente per lo Storage",
           "description": "HEIC's efficiency significa more Canva design stored su Apple devices.",
           "metric": "Efficient archiviazione"
         },
         {
           "title": "Text Preservato",
-          "description": "Maintains sharp Canva text in HEIC format.",
+          "description": "Mantiene il testo nitido di Canva in formato HEIC.",
           "metric": "Text nitido"
         }
       ],
@@ -2223,10 +2223,10 @@
       "intro": "Upscala le tue design Canva in formato TIFF per archiviazione professionale. TIFF fornisce qualità senza perdita.",
       "primaryKeyword": "canva upscaler upscaler tiff",
       "secondaryKeywords": [
-        "upscale canva tiff",
-        "canva tiff enhancer",
-        "canva print upscaler",
-        "lossless canva upscaler"
+        "aumenta risoluzione canva tiff",
+        "miglioratore canva tiff",
+        "aumentatore risoluzione canva stampa",
+        "aumentatore risoluzione canva senza perdita"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2257,23 +2257,23 @@
         {
           "title": "Print Pronto",
           "description": "TIFF is the professional standard per printing Canva design.",
-          "metric": "Print standard"
+          "metric": "Standard di stampa"
         },
         {
           "title": "Text Preservato",
-          "description": "Maintains sharp Canva text in TIFF format.",
+          "description": "Mantiene il testo nitido di Canva in formato TIFF.",
           "metric": "Text nitido"
         },
         {
-          "title": "Archival Grade",
+          "title": "Qualità Archivio",
           "description": "Perfect per long-term storage of important Canva design.",
           "metric": "Archival qualità"
         }
       ],
       "useCases": [
         {
-          "title": "Professional Printing",
-          "description": "Create high-quality prints from Canva TIFF files.",
+          "title": "Stampa Professionale",
+          "description": "Crea stampe di alta qualità da file TIFF Canva.",
           "example": "Print Canva design per marketing materiali"
         },
         {
@@ -2282,7 +2282,7 @@
           "example": "Crea archival versions of brand assets"
         },
         {
-          "title": "Large Format Printing",
+          "title": "Stampa in Grande Formato",
           "description": "Usa Canva TIFF per posters, banners, e large format.",
           "example": "Prepara Canva design per large format printing"
         }
@@ -2317,10 +2317,10 @@
       "intro": "Migliora i tuoi immagini Photoshop e convertili simultaneamente nel formato efficiente HEIC. Perfetto per dispositivi Apple.",
       "primaryKeyword": "photoshop upscaler upscaler heic",
       "secondaryKeywords": [
-        "upscale photoshop heic",
-        "photoshop heic enhancer",
-        "convert psd to heic",
-        "apple format photoshop upscaler"
+        "aumenta risoluzione photoshop heic",
+        "miglioratore photoshop heic",
+        "converti psd in heic",
+        "aumentatore risoluzione photoshop formato apple"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2336,7 +2336,7 @@
         "Mantiene eccellente quality con dimensioni file più piccole"
       ],
       "workflowTips": [
-        "Complete your editing work in Photoshop",
+        "Completa il lavoro di modifica in Photoshop",
         "Export using File > Esporta Come - choose PNG or TIFF",
         "Carica to our Photoshop upscaler",
         "Seleziona HEIC as the formato di output",
@@ -2354,13 +2354,13 @@
           "metric": "Excellent qualità"
         },
         {
-          "title": "Storage Efficient",
+          "title": "Efficiente per lo Storage",
           "description": "HEIC's efficiency significa more Photoshop work stored su Apple devices.",
           "metric": "Efficient archiviazione"
         },
         {
           "title": "Detail Preservato",
-          "description": "Maintains intricate Photoshop details in HEIC format.",
+          "description": "Mantiene i dettagli intricati di Photoshop in formato HEIC.",
           "metric": "Details migliorato"
         }
       ],
@@ -2406,10 +2406,10 @@
       "intro": "Upscala le tue immagini Photoshop in formato TIFF per archiviazione professionale. TIFF fornisce qualità senza perdita.",
       "primaryKeyword": "photoshop upscaler upscaler tiff",
       "secondaryKeywords": [
-        "upscale photoshop tiff",
-        "photoshop tiff enhancer",
-        "photoshop print upscaler",
-        "lossless photoshop upscaler"
+        "aumenta risoluzione photoshop tiff",
+        "miglioratore photoshop tiff",
+        "aumentatore risoluzione photoshop stampa",
+        "aumentatore risoluzione photoshop senza perdita"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2425,8 +2425,8 @@
         "Mantiene perfect quality for archival storage"
       ],
       "workflowTips": [
-        "Complete your editing work in Photoshop",
-        "Flatten layers or export individual layers as needed",
+        "Completa il lavoro di modifica in Photoshop",
+        "Appiattisci i livelli o esporta singoli livelli secondo necessità",
         "Export using File > Esporta Come - choose TIFF format",
         "Carica to our Photoshop-optimized TIFF upscaler",
         "Seleziona target resolution based on your output needs",
@@ -2441,38 +2441,38 @@
         {
           "title": "Print Pronto",
           "description": "TIFF is the professional standard per printing Photoshop work.",
-          "metric": "Print standard"
+          "metric": "Standard di stampa"
         },
         {
           "title": "Detail Preservato",
-          "description": "Maintains intricate Photoshop details in TIFF format.",
+          "description": "Mantiene i dettagli intricati di Photoshop in formato TIFF.",
           "metric": "Details migliorato"
         },
         {
-          "title": "Professional Results",
+          "title": "Risultati Professionali",
           "description": "Creates resolution suitable per professional Photoshop applications.",
-          "metric": "Professional grade"
+          "metric": "Qualità professionale"
         }
       ],
       "useCases": [
         {
-          "title": "Professional Printing",
+          "title": "Stampa Professionale",
           "description": "Upscale Photoshop artwork per large format printing e exhibitions.",
           "example": "Enhance PS artwork per gtuttiery exhibitions"
         },
         {
-          "title": "Photo Manipulation",
+          "title": "Manipolazione Fotografica",
           "description": "Enhance complex Photoshop composites e manipulations.",
           "example": "Upscale photo manipulation art per high-res display"
         },
         {
-          "title": "Digital Art",
+          "title": "Arte Digitale",
           "description": "Upscale digittuttiy painted Photoshop artwork per portfolios.",
           "example": "Enhance digitale paintings per print sales"
         },
         {
           "title": "Archival Archiviazione",
-          "description": "Preserve important Photoshop work in lossless TIFF format.",
+          "description": "Preserva il lavoro Photoshop importante in formato TIFF senza perdita di dati.",
           "example": "Crea archival versions of best PS work"
         }
       ],
@@ -2510,10 +2510,10 @@
       "intro": "Estrai i massimi dettagli dai tuoi file RAW Midjourney con il nostro upscaler specializzato che lavora direttamente con i dati raw.",
       "primaryKeyword": "midjourney upscaler upscaler raw",
       "secondaryKeywords": [
-        "upscale midjourney raw",
-        "midjourney raw enhancer",
-        "convert midjourney to raw",
-        "professional mj upscaler"
+        "aumenta risoluzione midjourney raw",
+        "miglioratore midjourney raw",
+        "converti midjourney in raw",
+        "aumentatore risoluzione mj professionale"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2529,9 +2529,9 @@
         "Ideal for photographers who want to edit Midjourney art professiontuttiy"
       ],
       "workflowTips": [
-        "Generate your image in Midjourney with detailed prompts",
+        "Genera la tua immagine in Midjourney con prompt dettagliati",
         "Usa the upscale buttons (U1-U4) for better starting quality",
-        "Export in PNG format (highest quality available)",
+        "Esporta in formato PNG (massima qualità disponibile)",
         "Carica to our upscaler and select RAW as formato di output",
         "Scarica il tuo enhanced Midjourney image in RAW for professional editing"
       ],
@@ -2539,43 +2539,43 @@
         {
           "title": "Maximum Qualità",
           "description": "RAW format preserves tutti image data da Midjourney enhancement.",
-          "metric": "Uncompressed data"
+          "metric": "Dati non compressi"
         },
         {
-          "title": "Editing Flexibility",
+          "title": "Flessibilità di Modifica",
           "description": "RAW fornisce complete control over color and exposure adjustments.",
-          "metric": "Full editing control"
+          "metric": "Controllo completo modifica"
         },
         {
-          "title": "Color Depth",
+          "title": "Profondità del Colore",
           "description": "Preserves massimo color information da Midjourney art.",
-          "metric": "16-bit depth"
+          "metric": "Profondità 16-bit"
         },
         {
-          "title": "Professional Grade",
+          "title": "Qualità Professionale",
           "description": "Creates professional-quality file da Midjourney per serious photographers.",
           "metric": "Pro qualità"
         }
       ],
       "useCases": [
         {
-          "title": "Professional Photography",
-          "description": "Edit Midjourney art alongside photos in professional RAW workflows.",
+          "title": "Fotografia Professionale",
+          "description": "Modifica arte Midjourney insieme a foto in flussi di lavoro RAW professionali.",
           "example": "Integra MJ art into professional photography workflows"
         },
         {
-          "title": "Fine Art Printing",
+          "title": "Stampa Fine Art",
           "description": "Create gtuttiery-quality prints from Midjourney con RAW precision.",
-          "example": "Produce museum-quality prints from AI art"
+          "example": "Producchi stampe di qualità museale dallarte AI"
         },
         {
-          "title": "Advanced Editing",
-          "description": "Apply professional photo editing techniques to Midjourney creations.",
+          "title": "Modifica Avanzata",
+          "description": "Applica tecniche di modifica fotografica professionale alle creazioni Midjourney.",
           "example": "Usa Lightroom/Capture One su MJ art"
         },
         {
           "title": "Archival Archiviazione",
-          "description": "Preserve Midjourney work in uncompressed RAW format.",
+          "description": "Preserva il lavoro Midjourney in formato RAW non compresso.",
           "example": "Crea archival master files of best MJ art"
         }
       ],
@@ -2609,10 +2609,10 @@
       "intro": "Converti i tuoi immagini Midjourney in formato BMP non compresso con miglioramento della risoluzione. Perfetto per applicazioni Windows.",
       "primaryKeyword": "midjourney upscaler upscaler bmp",
       "secondaryKeywords": [
-        "upscale midjourney bmp",
-        "midjourney bmp enhancer",
-        "convert midjourney to bmp",
-        "windows format mj upscaler"
+        "aumenta risoluzione midjourney bmp",
+        "miglioratore midjourney bmp",
+        "converti midjourney in bmp",
+        "aumentatore risoluzione mj formato windows"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2628,9 +2628,9 @@
         "Formato semplice con massimo compatibility in Windows"
       ],
       "workflowTips": [
-        "Generate your image in Midjourney",
+        "Genera la tua immagine in Midjourney",
         "Usa the upscale buttons (U1-U4) for better starting quality",
-        "Export in PNG format (highest quality available)",
+        "Esporta in formato PNG (massima qualità disponibile)",
         "Carica to our upscaler and select BMP as formato di output",
         "Scarica il tuo enhanced Midjourney image in BMP format"
       ],
@@ -2643,7 +2643,7 @@
         {
           "title": "Windows Nativo",
           "description": "BMP is natively supported across tutti Windows applications.",
-          "metric": "Universal Windows"
+          "metric": "Universale Windows"
         },
         {
           "title": "Simple Formato",
@@ -2674,7 +2674,7 @@
         },
         {
           "title": "Archival Archiviazione",
-          "description": "Store Midjourney work in uncompressed BMP format.",
+          "description": "Memorizza il lavoro Midjourney in formato BMP non compresso.",
           "example": "Crea simple uncompressed backups of MJ art"
         }
       ],
@@ -2708,10 +2708,10 @@
       "intro": "Migliora i tuoi immagini Midjourney con il formato AVIF all'avanguardia per compressione e qualità superiori. Perfetto per applicazioni web moderne.",
       "primaryKeyword": "midjourney upscaler upscaler avif",
       "secondaryKeywords": [
-        "upscale midjourney avif",
-        "midjourney avif enhancer",
-        "convert midjourney to avif",
-        "next-gen mj upscaler"
+        "aumenta risoluzione midjourney avif",
+        "miglioratore midjourney avif",
+        "converti midjourney in avif",
+        "aumentatore risoluzione mj nuova generazione"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2727,9 +2727,9 @@
         "Perfect for moderno browser webs supporting AVIF"
       ],
       "workflowTips": [
-        "Generate your image in Midjourney",
+        "Genera la tua immagine in Midjourney",
         "Usa the upscale buttons (U1-U4) for better starting quality",
-        "Export in PNG format (highest quality available)",
+        "Esporta in formato PNG (massima qualità disponibile)",
         "Carica to our upscaler and select AVIF as formato di output",
         "Scarica il tuo enhanced Midjourney image in di nuova generazione AVIF format"
       ],
@@ -2742,7 +2742,7 @@
         {
           "title": "Next-Gen Formato",
           "description": "AVIF è l'ultimo image format con advanced compression.",
-          "metric": "Cutting-edge tech"
+          "metric": "Tecnologia allavanguardia"
         },
         {
           "title": "Quality Preservato",
@@ -2752,12 +2752,12 @@
         {
           "title": "Modern Web Pronto",
           "description": "AVIF is supportato da tutti moderno browser web.",
-          "metric": "Future-proof"
+          "metric": "A prova di futuro"
         }
       ],
       "useCases": [
         {
-          "title": "Modern Web Portfolios",
+          "title": "Portfolio Web Moderni",
           "description": "Visualizza Midjourney art con AVIF's superior compression.",
           "example": "Crea caricamento ultra-veloce art portfolios"
         },
@@ -2772,7 +2772,7 @@
           "example": "Ottimizza product immagini con AI-generated art"
         },
         {
-          "title": "Performance Optimization",
+          "title": "Ottimizzazione Prestazioni",
           "description": "Raggiungi la massima performance con AVIF-compressed Midjourney art.",
           "example": "Crea fulminee esperienze web"
         }
@@ -2807,10 +2807,10 @@
       "intro": "Estrai i massimi dettagli dai tuoi file RAW Stable Diffusion con il nostro upscaler specializzato che lavora direttamente con i dati raw.",
       "primaryKeyword": "stable diffusion upscaler upscaler raw",
       "secondaryKeywords": [
-        "upscale stable diffusion raw",
-        "stable diffusion raw enhancer",
-        "convert sd to raw",
-        "professional sd upscaler"
+        "aumenta risoluzione stable diffusion raw",
+        "miglioratore stable diffusion raw",
+        "converti sd in raw",
+        "aumentatore risoluzione sd professionale"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2826,7 +2826,7 @@
         "Ideale per fotografi che integrano SD in flussi di lavoro professionali"
       ],
       "workflowTips": [
-        "Generate your image in Stable Diffusion with optimal settings",
+        "Genera la tua immagine in Stable Diffusion con impostazioni ottimali",
         "Usa SD's upscale extensions or high-res fix first",
         "Export in PNG format per la massima qualità input",
         "Carica to our upscaler and select RAW as formato di output",
@@ -2834,45 +2834,45 @@
       ],
       "benefits": [
         {
-          "title": "Maximum Fidelity",
+          "title": "Fedeltà Massima",
           "description": "RAW format preserves tutti image data da SD enhancement.",
-          "metric": "Uncompressed data"
+          "metric": "Dati non compressi"
         },
         {
-          "title": "Professional Workflow",
-          "description": "Integrate SD art into professional RAW photography workflows.",
-          "metric": "Pro integration"
+          "title": "Flusso di Lavoro Professionale",
+          "description": "Integra arte SD in flussi di lavoro fotografici RAW professionali.",
+          "metric": "Integrazione pro"
         },
         {
-          "title": "Color Depth",
+          "title": "Profondità del Colore",
           "description": "Preserves massimo color information da SD generations.",
-          "metric": "16-bit depth"
+          "metric": "Profondità 16-bit"
         },
         {
-          "title": "Complete Control",
-          "description": "Full editing flexibility in professional photo software.",
-          "metric": "Total control"
+          "title": "Controllo Completo",
+          "description": "Piena flessibilità di modifica in software fotografici professionali.",
+          "metric": "Controllo totale"
         }
       ],
       "useCases": [
         {
-          "title": "Professional Photography",
-          "description": "Edit Stable Diffusion art in professional RAW workflows.",
+          "title": "Fotografia Professionale",
+          "description": "Modifica arte Stable Diffusion in flussi di lavoro RAW professionali.",
           "example": "Integra SD generations into Lightroom workflows"
         },
         {
-          "title": "Fine Art Photography",
+          "title": "Fotografia Fine Art",
           "description": "Create gtuttiery-quality prints from SD con RAW precision.",
-          "example": "Produce exhibition prints from AI art"
+          "example": "Producchi stampe per mostre dallarte AI"
         },
         {
-          "title": "Advanced Post-Processing",
-          "description": "Apply professional photo techniques to SD creations.",
+          "title": "Post-Processing Avanzato",
+          "description": "Applica tecniche fotografiche professionali alle creazioni SD.",
           "example": "Usa Capture One su SD generated art"
         },
         {
-          "title": "Archival Masters",
-          "description": "Preserve best SD work in uncompressed RAW format.",
+          "title": "Master Archivi",
+          "description": "Preserva il miglior lavoro SD in formato RAW non compresso.",
           "example": "Crea archival master files of SD art"
         }
       ],
@@ -2906,10 +2906,10 @@
       "intro": "Converti i tuoi immagini Stable Diffusion in formato BMP non compresso con miglioramento della risoluzione. Perfetto per applicazioni Windows.",
       "primaryKeyword": "stable diffusion upscaler upscaler bmp",
       "secondaryKeywords": [
-        "upscale stable diffusion bmp",
-        "stable diffusion bmp enhancer",
-        "convert sd to bmp",
-        "windows format sd upscaler"
+        "aumenta risoluzione stable diffusion bmp",
+        "miglioratore stable diffusion bmp",
+        "converti sd in bmp",
+        "aumentatore risoluzione sd formato windows"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -2925,9 +2925,9 @@
         "Formato semplice con universal Windows compatibility"
       ],
       "workflowTips": [
-        "Generate your image in Stable Diffusion",
+        "Genera la tua immagine in Stable Diffusion",
         "Usa high-res fix or upscale extensions for better quality",
-        "Export in PNG format (highest quality available)",
+        "Esporta in formato PNG (massima qualità disponibile)",
         "Carica to our upscaler and select BMP as formato di output",
         "Scarica il tuo enhanced SD image in BMP format"
       ],
@@ -2939,13 +2939,13 @@
         },
         {
           "title": "Windows Compatibile",
-          "description": "BMP is natively supported across Windows applications.",
-          "metric": "Universal Windows"
+          "description": "BMP è supportato nativamente nelle applicazioni Windows.",
+          "metric": "Universale Windows"
         },
         {
-          "title": "Simple Structure",
+          "title": "Struttura Semplice",
           "description": "Uncomplicated format assicura massimo compatibility.",
-          "metric": "Simple format"
+          "metric": "Formato semplice"
         },
         {
           "title": "Maximum Dettaglio",
@@ -2955,7 +2955,7 @@
       ],
       "useCases": [
         {
-          "title": "Windows Software",
+          "title": "Software Windows",
           "description": "Usa Stable Diffusion art in Windows applications.",
           "example": "Integra SD art into Windows software"
         },
@@ -2965,13 +2965,13 @@
           "example": "Usa SD art in legacy Windows apps"
         },
         {
-          "title": "Print Workflows",
+          "title": "Flussi di Lavoro di Stampa",
           "description": "Prepare SD art per Windows printing software.",
           "example": "Crea BMP files per Windows print workflows"
         },
         {
           "title": "Simple Archiviazione",
-          "description": "Store SD work in uncompressed BMP format.",
+          "description": "Memorizza il lavoro SD in formato BMP non compresso.",
           "example": "Crea uncompressed backups of SD art"
         }
       ],
@@ -3005,10 +3005,10 @@
       "intro": "Migliora i tuoi immagini Stable Diffusion con il formato AVIF all'avanguardia per compressione e qualità superiori. Perfetto per applicazioni web moderne.",
       "primaryKeyword": "stable diffusion upscaler upscaler avif",
       "secondaryKeywords": [
-        "upscale stable diffusion avif",
-        "stable diffusion avif enhancer",
-        "convert sd to avif",
-        "next-gen sd upscaler"
+        "aumenta risoluzione stable diffusion avif",
+        "miglioratore stable diffusion avif",
+        "converti sd in avif",
+        "aumentatore risoluzione sd nuova generazione"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3024,7 +3024,7 @@
         "Perfetto per browser modernoi che supportano il formato AVIF"
       ],
       "workflowTips": [
-        "Generate your image in Stable Diffusion",
+        "Genera la tua immagine in Stable Diffusion",
         "Usa high-res fix or upscale extensions for better quality",
         "Export in PNG format per la massima qualità input",
         "Carica to our upscaler and select AVIF as formato di output",
@@ -3037,9 +3037,9 @@
           "metric": "50% più piccolo rispetto a JPEG"
         },
         {
-          "title": "Next-Generation",
+          "title": "Nuova Generazione",
           "description": "AVIF è l'ultimo tecnologia formato immagine.",
-          "metric": "Cutting-edge"
+          "metric": "Allavanguardia"
         },
         {
           "title": "Quality Preservato",
@@ -3047,14 +3047,14 @@
           "metric": "Excellent qualità"
         },
         {
-          "title": "Modern Web",
+          "title": "Web Moderno",
           "description": "AVIF supportato da tutti moderno browser web.",
-          "metric": "Future-proof"
+          "metric": "A prova di futuro"
         }
       ],
       "useCases": [
         {
-          "title": "Modern Websites",
+          "title": "Siti Web Moderni",
           "description": "Visualizza Stable Diffusion art con AVIF compression.",
           "example": "Crea caricamento ultra-veloce web gtuttieries"
         },
@@ -3064,12 +3064,12 @@
           "example": "Crea veloce web apps con SD content"
         },
         {
-          "title": "Digital Products",
+          "title": "Prodotti Digitali",
           "description": "Usa SD art in prodotti digitalei con AVIF optimization.",
           "example": "Ottimizza digitale products con AI art"
         },
         {
-          "title": "Performance",
+          "title": "Prestazioni",
           "description": "Raggiungi la massima performance con AVIF-compressed SD art.",
           "example": "Crea fulminee esperienze web"
         }
@@ -3104,10 +3104,10 @@
       "intro": "Estrai i massimi dettagli dai tuoi file RAW DALL-E con il nostro upscaler specializzato che lavora direttamente con i dati raw.",
       "primaryKeyword": "dalle upscaler upscaler raw",
       "secondaryKeywords": [
-        "upscale dalle raw",
-        "dalle raw enhancer",
-        "convert dalle to raw",
-        "professional dalle upscaler"
+        "aumenta risoluzione dalle raw",
+        "miglioratore dalle raw",
+        "converti dalle in raw",
+        "aumentatore risoluzione dalle professionale"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3123,53 +3123,53 @@
         "Ideale per flussi di lavoro fotografici professionali con arte AI"
       ],
       "workflowTips": [
-        "Generate your image in DALL-E with detailed prompts",
+        "Genera la tua immagine in DALL-E con prompt dettagliati",
         "Scarica in PNG format from DALL-E interface",
         "Carica to our upscaler and select RAW as formato di output",
         "Scarica il tuo enhanced DALL-E image in RAW format",
-        "Edit in professional software like Lightroom or Capture One"
+        "Modifica in software professionale come Lightroom o Capture One"
       ],
       "benefits": [
         {
           "title": "Maximum Qualità",
           "description": "RAW format preserves tutti image data da DALL-E enhancement.",
-          "metric": "Uncompressed"
+          "metric": "Non compresso"
         },
         {
-          "title": "Pro Integration",
-          "description": "Integrate DALL-E art into professional photo workflows.",
-          "metric": "Pro workflows"
+          "title": "Integrazione Pro",
+          "description": "Integra arte DALL-E in flussi di lavoro fotografici professionali.",
+          "metric": "Flussi pro"
         },
         {
-          "title": "Color Depth",
+          "title": "Profondità del Colore",
           "description": "Preserves massimo color information da DALL-E.",
-          "metric": "16-bit depth"
+          "metric": "Profondità 16-bit"
         },
         {
-          "title": "Editing Freedom",
-          "description": "Complete control in professional photo editing software.",
-          "metric": "Full control"
+          "title": "Libertà di Modifica",
+          "description": "Controllo completo in software di modifica fotografica professionale.",
+          "metric": "Controllo completo"
         }
       ],
       "useCases": [
         {
-          "title": "Professional Photography",
-          "description": "Edit DALL-E art in professional RAW workflows.",
+          "title": "Fotografia Professionale",
+          "description": "Modifica arte DALL-E in flussi di lavoro RAW professionali.",
           "example": "Integra DALL-E into Lightroom workflows"
         },
         {
           "title": "Fine Art",
           "description": "Create gtuttiery-quality prints from DALL-E con RAW.",
-          "example": "Produce exhibition-quality prints"
+          "example": "Producchi stampe di qualità da mostre"
         },
         {
-          "title": "Advanced Editing",
-          "description": "Apply professional photo techniques to DALL-E creations.",
+          "title": "Modifica Avanzata",
+          "description": "Applica tecniche fotografiche professionali alle creazioni DALL-E.",
           "example": "Usa Capture One su DALL-E art"
         },
         {
           "title": "Archival Archiviazione",
-          "description": "Preserve DALL-E work in uncompressed RAW format.",
+          "description": "Preserva il lavoro DALL-E in formato RAW non compresso.",
           "example": "Crea archival masters of best DALL-E art"
         }
       ],
@@ -3203,10 +3203,10 @@
       "intro": "Converti i tuoi immagini DALL-E in formato BMP non compresso con miglioramento della risoluzione. Perfetto per applicazioni Windows.",
       "primaryKeyword": "dalle upscaler upscaler bmp",
       "secondaryKeywords": [
-        "upscale dalle bmp",
-        "dalle bmp enhancer",
-        "convert dalle to bmp",
-        "windows format dalle upscaler"
+        "aumenta risoluzione dalle bmp",
+        "miglioratore dalle bmp",
+        "converti dalle in bmp",
+        "aumentatore risoluzione dalle formato windows"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3222,7 +3222,7 @@
         "Formato semplice con universal Windows compatibility"
       ],
       "workflowTips": [
-        "Generate your image in DALL-E",
+        "Genera la tua immagine in DALL-E",
         "Scarica in PNG format from the DALL-E interface",
         "Carica to our upscaler and select BMP as formato di output",
         "Scarica il tuo enhanced DALL-E image in BMP format",
@@ -3236,8 +3236,8 @@
         },
         {
           "title": "Windows Nativo",
-          "description": "BMP is natively supported across Windows applications.",
-          "metric": "Universal Windows"
+          "description": "BMP è supportato nativamente nelle applicazioni Windows.",
+          "metric": "Universale Windows"
         },
         {
           "title": "Simple Formato",
@@ -3252,7 +3252,7 @@
       ],
       "useCases": [
         {
-          "title": "Windows Software",
+          "title": "Software Windows",
           "description": "Usa DALL-E art in Windows applications.",
           "example": "Integra DALL-E art into Windows apps"
         },
@@ -3268,7 +3268,7 @@
         },
         {
           "title": "Simple Archiviazione",
-          "description": "Store DALL-E work in uncompressed BMP format.",
+          "description": "Memorizza il lavoro DALL-E in formato BMP non compresso.",
           "example": "Crea uncompressed backups of DALL-E art"
         }
       ],
@@ -3286,7 +3286,7 @@
           "answer": "Sì, BMP è uncompressed so file sono larger di PNG. This assicura massimo quality but richiede more storage space."
         },
         {
-          "question": "Can Windows programs open BMP DALL-E files?",
+          "question": "I programmi Windows possono aprire file BMP DALL-E?",
           "answer": "Sì! BMP è natively supportato da tutti versions of Windows e virtututtiy tutti Windows applications."
         }
       ],
@@ -3302,10 +3302,10 @@
       "intro": "Migliora i tuoi immagini DALL-E con il formato AVIF all'avanguardia per compressione e qualità superiori. Perfetto per applicazioni web moderne.",
       "primaryKeyword": "dalle upscaler upscaler avif",
       "secondaryKeywords": [
-        "upscale dalle avif",
-        "dalle avif enhancer",
-        "convert dalle to avif",
-        "next-gen dalle upscaler"
+        "aumenta risoluzione dalle avif",
+        "miglioratore dalle avif",
+        "converti dalle in avif",
+        "aumentatore risoluzione dalle nuova generazione"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3321,7 +3321,7 @@
         "Perfetto per browser modernoi che supportano il formato AVIF"
       ],
       "workflowTips": [
-        "Generate your image in DALL-E with detailed prompts",
+        "Genera la tua immagine in DALL-E con prompt dettagliati",
         "Scarica in PNG format from the DALL-E interface",
         "Carica to our upscaler and select AVIF as formato di output",
         "Scarica il tuo enhanced DALL-E image in di nuova generazione AVIF format",
@@ -3334,9 +3334,9 @@
           "metric": "50% più piccolo rispetto a JPEG"
         },
         {
-          "title": "Next-Generation",
+          "title": "Nuova Generazione",
           "description": "AVIF è l'ultimo tecnologia formato immagine.",
-          "metric": "Cutting-edge"
+          "metric": "Allavanguardia"
         },
         {
           "title": "Quality Preservato",
@@ -3344,14 +3344,14 @@
           "metric": "Excellent qualità"
         },
         {
-          "title": "Modern Web",
+          "title": "Web Moderno",
           "description": "AVIF supportato da tutti moderno browser web.",
-          "metric": "Future-proof"
+          "metric": "A prova di futuro"
         }
       ],
       "useCases": [
         {
-          "title": "Modern Websites",
+          "title": "Siti Web Moderni",
           "description": "Visualizza DALL-E art con AVIF compression.",
           "example": "Crea caricamento ultra-veloce web gtuttieries"
         },
@@ -3361,12 +3361,12 @@
           "example": "Crea veloce web apps con DALL-E content"
         },
         {
-          "title": "Digital Products",
+          "title": "Prodotti Digitali",
           "description": "Usa DALL-E art in prodotti digitalei con AVIF.",
           "example": "Ottimizza products con AI-generated art"
         },
         {
-          "title": "Performance",
+          "title": "Prestazioni",
           "description": "Raggiungi la massima performance con AVIF-compressed art.",
           "example": "Crea fulminee esperienze web"
         }
@@ -3401,10 +3401,10 @@
       "intro": "Estrai i massimi dettagli dai tuoi file RAW Canva con il nostro upscaler specializzato che lavora direttamente con i dati raw.",
       "primaryKeyword": "canva upscaler upscaler raw",
       "secondaryKeywords": [
-        "upscale canva raw",
-        "canva raw enhancer",
-        "convert canva to raw",
-        "professional canva upscaler"
+        "aumenta risoluzione canva raw",
+        "miglioratore canva raw",
+        "converti canva in raw",
+        "aumentatore risoluzione canva professionale"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3430,43 +3430,43 @@
         {
           "title": "Maximum Qualità",
           "description": "RAW format preserves tutti image data da Canva.",
-          "metric": "Uncompressed"
+          "metric": "Non compresso"
         },
         {
-          "title": "Pro Integration",
+          "title": "Integrazione Pro",
           "description": "Integrate Canva design into professional workflows.",
-          "metric": "Pro workflows"
+          "metric": "Flussi pro"
         },
         {
-          "title": "Color Depth",
+          "title": "Profondità del Colore",
           "description": "Preserves massimo color da Canva design.",
-          "metric": "16-bit depth"
+          "metric": "Profondità 16-bit"
         },
         {
-          "title": "Editing Freedom",
-          "description": "Complete control in professional editing software.",
-          "metric": "Full control"
+          "title": "Libertà di Modifica",
+          "description": "Controllo completo in software di modifica professionale.",
+          "metric": "Controllo completo"
         }
       ],
       "useCases": [
         {
-          "title": "Professional Design",
+          "title": "Design Professionale",
           "description": "Edit Canva design in professional RAW workflows.",
           "example": "Integra Canva into professional design workflows"
         },
         {
-          "title": "Print Design",
+          "title": "Design per la Stampa",
           "description": "Create print-ready materials from Canva con RAW.",
           "example": "Produce professional print materiali"
         },
         {
-          "title": "Advanced Editing",
+          "title": "Modifica Avanzata",
           "description": "Apply professional techniques to Canva design.",
           "example": "Usa photo software su Canva exports"
         },
         {
           "title": "Archival Archiviazione",
-          "description": "Preserve Canva work in uncompressed RAW format.",
+          "description": "Preserva il lavoro Canva in formato RAW non compresso.",
           "example": "Crea archival masters of Canva design"
         }
       ],
@@ -3500,10 +3500,10 @@
       "intro": "Converti i tuoi design Canva in formato BMP non compresso con miglioramento della risoluzione. Perfetto per applicazioni Windows.",
       "primaryKeyword": "canva upscaler upscaler bmp",
       "secondaryKeywords": [
-        "upscale canva bmp",
-        "canva bmp enhancer",
-        "convert canva to bmp",
-        "windows format canva upscaler"
+        "aumenta risoluzione canva bmp",
+        "miglioratore canva bmp",
+        "converti canva in bmp",
+        "aumentatore risoluzione canva formato windows"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3533,8 +3533,8 @@
         },
         {
           "title": "Windows Nativo",
-          "description": "BMP is natively supported across Windows apps.",
-          "metric": "Universal Windows"
+          "description": "BMP è supportato nativamente nelle app Windows.",
+          "metric": "Universale Windows"
         },
         {
           "title": "Simple Formato",
@@ -3549,7 +3549,7 @@
       ],
       "useCases": [
         {
-          "title": "Windows Software",
+          "title": "Software Windows",
           "description": "Usa Canva design in Windows applications.",
           "example": "Integra Canva design into Windows apps"
         },
@@ -3565,7 +3565,7 @@
         },
         {
           "title": "Simple Archiviazione",
-          "description": "Store Canva work in uncompressed BMP format.",
+          "description": "Memorizza il lavoro Canva in formato BMP non compresso.",
           "example": "Crea uncompressed backups of Canva design"
         }
       ],
@@ -3583,7 +3583,7 @@
           "answer": "Sì, BMP è uncompressed so file sono larger di PNG. This assicura massimo quality but richiede more storage space."
         },
         {
-          "question": "Can Windows programs open BMP Canva files?",
+          "question": "I programmi Windows possono aprire file BMP Canva?",
           "answer": "Sì! BMP è natively supportato da tutti versions of Windows e virtututtiy tutti Windows applications."
         }
       ],
@@ -3599,10 +3599,10 @@
       "intro": "Migliora i tuoi design Canva con il formato AVIF all'avanguardia per compressione e qualità superiori. Perfetto per applicazioni web moderne.",
       "primaryKeyword": "canva upscaler upscaler avif",
       "secondaryKeywords": [
-        "upscale canva avif",
-        "canva avif enhancer",
-        "convert canva to avif",
-        "next-gen canva upscaler"
+        "aumenta risoluzione canva avif",
+        "miglioratore canva avif",
+        "converti canva in avif",
+        "aumentatore risoluzione canva nuova generazione"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3631,9 +3631,9 @@
           "metric": "50% più piccolo rispetto a JPEG"
         },
         {
-          "title": "Next-Generation",
+          "title": "Nuova Generazione",
           "description": "AVIF è l'ultimo tecnologia formato immagine.",
-          "metric": "Cutting-edge"
+          "metric": "Allavanguardia"
         },
         {
           "title": "Quality Preservato",
@@ -3641,14 +3641,14 @@
           "metric": "Excellent qualità"
         },
         {
-          "title": "Modern Web",
+          "title": "Web Moderno",
           "description": "AVIF supportato da tutti moderno browser web.",
-          "metric": "Future-proof"
+          "metric": "A prova di futuro"
         }
       ],
       "useCases": [
         {
-          "title": "Modern Websites",
+          "title": "Siti Web Moderni",
           "description": "Visualizza Canva design con AVIF compression.",
           "example": "Crea caricamento ultra-veloce web grafica"
         },
@@ -3658,12 +3658,12 @@
           "example": "Crea veloce web apps con Canva content"
         },
         {
-          "title": "Digital Products",
+          "title": "Prodotti Digitali",
           "description": "Usa Canva design in prodotti digitalei con AVIF.",
           "example": "Ottimizza digitale products con Canva design"
         },
         {
-          "title": "Performance",
+          "title": "Prestazioni",
           "description": "Raggiungi la massima performance con AVIF-compressed design.",
           "example": "Crea fulminee esperienze web"
         }
@@ -3698,10 +3698,10 @@
       "intro": "Estrai i massimi dettagli dai tuoi file RAW Photoshop con il nostro upscaler specializzato che lavora direttamente con i dati raw.",
       "primaryKeyword": "photoshop upscaler upscaler raw",
       "secondaryKeywords": [
-        "upscale photoshop raw",
-        "photoshop raw enhancer",
-        "convert ps to raw",
-        "professional ps upscaler"
+        "aumenta risoluzione photoshop raw",
+        "miglioratore photoshop raw",
+        "converti ps in raw",
+        "aumentatore risoluzione ps professionale"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3717,8 +3717,8 @@
         "RAW preserves massimo color depth from PS artwork"
       ],
       "workflowTips": [
-        "Complete your artwork in Photoshop",
-        "Flatten layers or export the desired composition",
+        "Completa il tuo artwork in Photoshop",
+        "Appiattisci i livelli o esporta la composizione desiderata",
         "Usa File > Export > PNG/TIFF per l'altissima qualità",
         "Carica to our upscaler and select RAW as formato di output",
         "Scarica il tuo enhanced Photoshop artwork in RAW format"
@@ -3727,49 +3727,49 @@
         {
           "title": "Maximum Qualità",
           "description": "RAW format preserves tutti image data da Photoshop.",
-          "metric": "Uncompressed"
+          "metric": "Non compresso"
         },
         {
-          "title": "Pro Integration",
-          "description": "Integrate PS artwork into professional RAW workflows.",
-          "metric": "Pro workflows"
+          "title": "Integrazione Pro",
+          "description": "Integra artwork PS in flussi di lavoro RAW professionali.",
+          "metric": "Flussi pro"
         },
         {
-          "title": "Color Depth",
+          "title": "Profondità del Colore",
           "description": "Preserves massimo color da Photoshop artwork.",
-          "metric": "16-bit depth"
+          "metric": "Profondità 16-bit"
         },
         {
-          "title": "Editing Freedom",
-          "description": "Complete control in professional editing software.",
-          "metric": "Full control"
+          "title": "Libertà di Modifica",
+          "description": "Controllo completo in software di modifica professionale.",
+          "metric": "Controllo completo"
         }
       ],
       "useCases": [
         {
-          "title": "Professional Photography",
-          "description": "Edit Photoshop artwork in professional RAW workflows.",
+          "title": "Fotografia Professionale",
+          "description": "Modifica artwork Photoshop in flussi di lavoro RAW professionali.",
           "example": "Integra PS into professional photo workflows"
         },
         {
           "title": "Fine Art",
           "description": "Create gtuttiery-quality prints from Photoshop con RAW.",
-          "example": "Produce exhibition-quality prints"
+          "example": "Producchi stampe di qualità da mostre"
         },
         {
-          "title": "Advanced Editing",
-          "description": "Apply professional photo techniques to PS artwork.",
+          "title": "Modifica Avanzata",
+          "description": "Applica tecniche fotografiche professionali agli artwork PS.",
           "example": "Usa photo software su Photoshop exports"
         },
         {
           "title": "Archival Archiviazione",
-          "description": "Preserve Photoshop work in uncompressed RAW format.",
+          "description": "Preserva il lavoro Photoshop in formato RAW non compresso.",
           "example": "Crea archival masters of PS artwork"
         }
       ],
       "faq": [
         {
-          "question": "Why convert Photoshop artwork to RAW?",
+          "question": "Perché convertire artwork Photoshop in RAW?",
           "answer": "RAW format fornisce massimo quality e editing flexibility, tuttiowing you to apply professional photo editing techniques to your Photoshop creations."
         },
         {
@@ -3797,10 +3797,10 @@
       "intro": "Converti i tuoi immagini Photoshop in formato BMP non compresso con miglioramento della risoluzione. Perfetto per applicazioni Windows.",
       "primaryKeyword": "photoshop upscaler upscaler bmp",
       "secondaryKeywords": [
-        "upscale photoshop bmp",
-        "photoshop bmp enhancer",
-        "convert ps to bmp",
-        "windows format ps upscaler"
+        "aumenta risoluzione photoshop bmp",
+        "miglioratore photoshop bmp",
+        "converti ps in bmp",
+        "aumentatore risoluzione ps formato windows"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3816,8 +3816,8 @@
         "Formato semplice con universal Windows compatibility"
       ],
       "workflowTips": [
-        "Complete your artwork in Photoshop",
-        "Flatten layers or export the desired composition",
+        "Completa il tuo artwork in Photoshop",
+        "Appiattisci i livelli o esporta la composizione desiderata",
         "Usa File > Export > PNG per l'altissima qualità",
         "Carica to our upscaler and select BMP as formato di output",
         "Scarica il tuo enhanced Photoshop artwork in BMP format"
@@ -3830,8 +3830,8 @@
         },
         {
           "title": "Windows Nativo",
-          "description": "BMP is natively supported across Windows apps.",
-          "metric": "Universal Windows"
+          "description": "BMP è supportato nativamente nelle app Windows.",
+          "metric": "Universale Windows"
         },
         {
           "title": "Simple Formato",
@@ -3846,7 +3846,7 @@
       ],
       "useCases": [
         {
-          "title": "Windows Software",
+          "title": "Software Windows",
           "description": "Usa Photoshop artwork in Windows applications.",
           "example": "Integra PS artwork into Windows apps"
         },
@@ -3862,7 +3862,7 @@
         },
         {
           "title": "Simple Archiviazione",
-          "description": "Store Photoshop work in uncompressed BMP format.",
+          "description": "Memorizza il lavoro Photoshop in formato BMP non compresso.",
           "example": "Crea uncompressed backups of PS artwork"
         }
       ],
@@ -3880,7 +3880,7 @@
           "answer": "Sì, BMP è uncompressed so file sono larger di PNG. This assicura massimo quality but richiede more storage space."
         },
         {
-          "question": "Can Windows programs open BMP Photoshop files?",
+          "question": "I programmi Windows possono aprire file BMP Photoshop?",
           "answer": "Sì! BMP è natively supportato da tutti versions of Windows e virtututtiy tutti Windows applications."
         }
       ],
@@ -3896,10 +3896,10 @@
       "intro": "Migliora i tuoi immagini Photoshop con il formato AVIF all'avanguardia per compressione e qualità superiori. Perfetto per applicazioni web moderne.",
       "primaryKeyword": "photoshop upscaler upscaler avif",
       "secondaryKeywords": [
-        "upscale photoshop avif",
-        "photoshop avif enhancer",
-        "convert ps to avif",
-        "next-gen ps upscaler"
+        "aumenta risoluzione photoshop avif",
+        "miglioratore photoshop avif",
+        "converti ps in avif",
+        "aumentatore risoluzione ps nuova generazione"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -3915,8 +3915,8 @@
         "Perfetto per browser modernoi che supportano il formato AVIF"
       ],
       "workflowTips": [
-        "Complete your artwork in Photoshop",
-        "Flatten layers or export the desired composition",
+        "Completa il tuo artwork in Photoshop",
+        "Appiattisci i livelli o esporta la composizione desiderata",
         "Usa File > Export > PNG per l'altissima qualità",
         "Carica to our upscaler and select AVIF as formato di output",
         "Scarica il tuo enhanced Photoshop artwork in AVIF format"
@@ -3928,9 +3928,9 @@
           "metric": "50% più piccolo rispetto a JPEG"
         },
         {
-          "title": "Next-Generation",
+          "title": "Nuova Generazione",
           "description": "AVIF è l'ultimo tecnologia formato immagine.",
-          "metric": "Cutting-edge"
+          "metric": "Allavanguardia"
         },
         {
           "title": "Quality Preservato",
@@ -3938,14 +3938,14 @@
           "metric": "Excellent qualità"
         },
         {
-          "title": "Modern Web",
+          "title": "Web Moderno",
           "description": "AVIF supportato da tutti moderno browser web.",
-          "metric": "Future-proof"
+          "metric": "A prova di futuro"
         }
       ],
       "useCases": [
         {
-          "title": "Modern Websites",
+          "title": "Siti Web Moderni",
           "description": "Visualizza Photoshop artwork con AVIF compression.",
           "example": "Crea caricamento ultra-veloce web grafica"
         },
@@ -3955,12 +3955,12 @@
           "example": "Crea veloce web apps con PS content"
         },
         {
-          "title": "Digital Products",
+          "title": "Prodotti Digitali",
           "description": "Usa PS artwork in prodotti digitalei con AVIF.",
           "example": "Ottimizza digitale products con PS immagini"
         },
         {
-          "title": "Performance",
+          "title": "Prestazioni",
           "description": "Raggiungi la massima performance con AVIF-compressed artwork.",
           "example": "Crea fulminee esperienze web"
         }
@@ -3995,10 +3995,10 @@
       "intro": "Estrai i massimi dettagli dai tuoi file RAW Lightroom con il nostro upscaler specializzato che lavora direttamente con i dati raw.",
       "primaryKeyword": "lightroom upscaler upscaler raw",
       "secondaryKeywords": [
-        "upscale lightroom raw",
-        "lightroom raw enhancer",
-        "enhance lightroom photos",
-        "professional photo upscaler"
+        "aumenta risoluzione lightroom raw",
+        "miglioratore lightroom raw",
+        "migliora foto lightroom",
+        "aumentatore risoluzione foto professionale"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -4014,59 +4014,59 @@
         "Mantiene color profiles and metadata from Lightroom"
       ],
       "workflowTips": [
-        "Import and edit your RAW photos in Lightroom Classic or CC",
-        "Apply your preferred adjustments and corrections",
+        "Importa e modifica le tue foto RAW in Lightroom Classic o CC",
+        "Applica le regolazioni e le correzioni preferite",
         "Export using File > Export with Original settings or massimo quality",
         "Carica to our upscaler and select RAW as formato di output",
         "Scarica il tuo enhanced RAW photo for further Lightroom editing"
       ],
       "benefits": [
         {
-          "title": "Maximum Fidelity",
+          "title": "Fedeltà Massima",
           "description": "Preserves tutti image data da Lightroom RAW processing.",
-          "metric": "Uncompressed data"
+          "metric": "Dati non compressi"
         },
         {
-          "title": "Pro Photography",
-          "description": "Maintains professional photography workflow integrity.",
-          "metric": "Pro workflow"
+          "title": "Fotografia Professionale",
+          "description": "Mantiene lintegrità del flusso di lavoro fotografico professionale.",
+          "metric": "Flusso pro"
         },
         {
-          "title": "Color Depth",
+          "title": "Profondità del Colore",
           "description": "Preserves massimo color information da RAW file.",
-          "metric": "16-bit depth"
+          "metric": "Profondità 16-bit"
         },
         {
-          "title": "Complete Control",
-          "description": "Full editing flexibility preserved in enhanced RAW.",
-          "metric": "Total control"
+          "title": "Controllo Completo",
+          "description": "Piena flessibilità di modifica preservata nel RAW migliorato.",
+          "metric": "Controllo totale"
         }
       ],
       "useCases": [
         {
-          "title": "Professional Photography",
-          "description": "Enhance RAW photos while maintaining professional workflow.",
-          "example": "Upscale wedding photos to higher resolution RAW"
+          "title": "Fotografia Professionale",
+          "description": "Migliora foto RAW mantenendo il flusso di lavoro professionale.",
+          "example": "Aumenta risoluzione foto matrimoniali a RAW ad alta risoluzione"
         },
         {
-          "title": "Fine Art Photography",
+          "title": "Fotografia Fine Art",
           "description": "Create gtuttiery-quality prints from enhanced RAW files.",
-          "example": "Produce large-format prints from RAW photos"
+          "example": "Producchi stampe in grande formato da foto RAW"
         },
         {
-          "title": "Stock Photography",
+          "title": "Fotografia Stock",
           "description": "Upscale RAW photos per stock submission requirements.",
-          "example": "Enhance RAW files to meet stock resolution standards"
+          "example": "Migliora file RAW per soddisfare gli standard di risoluzione stock"
         },
         {
-          "title": "Photo Archival",
-          "description": "Preserve enhanced versions of important RAW photos.",
+          "title": "Archiviazione Fotografica",
+          "description": "Preserva versioni migliorate di foto RAW importanti.",
           "example": "Crea archival enhanced RAW masters"
         }
       ],
       "faq": [
         {
-          "question": "Why enhance Lightroom RAW photos?",
+          "question": "Perché migliorare foto RAW Lightroom?",
           "answer": "Enhancing RAW photos da Lightroom ti offre higher resolution preservando the complete editing flexibility e quality that RAW format provides."
         },
         {
@@ -4098,10 +4098,10 @@
       "intro": "Converti i tuoi immagini Lightroom in formato BMP non compresso con miglioramento della risoluzione. Perfetto per applicazioni Windows.",
       "primaryKeyword": "lightroom upscaler upscaler bmp",
       "secondaryKeywords": [
-        "upscale lightroom bmp",
-        "lightroom bmp enhancer",
-        "convert lightroom to bmp",
-        "windows photo upscaler"
+        "aumenta risoluzione lightroom bmp",
+        "miglioratore lightroom bmp",
+        "converti lightroom in bmp",
+        "aumentatore risoluzione foto windows"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -4117,8 +4117,8 @@
         "BMP è ideale per Windows applications requiring uncompressed photos"
       ],
       "workflowTips": [
-        "Edit your photos in Lightroom Classic or CC",
-        "Apply your preferred adjustments and color corrections",
+        "Modifica le tue foto in Lightroom Classic o CC",
+        "Applica le regolazioni e le correzioni colori preferite",
         "Export using File > Export with massimo quality settings",
         "Carica to our upscaler and select BMP as formato di output",
         "Scarica il tuo enhanced Lightroom photo in BMP format"
@@ -4131,8 +4131,8 @@
         },
         {
           "title": "Windows Compatibile",
-          "description": "BMP is natively supported across Windows applications.",
-          "metric": "Universal Windows"
+          "description": "BMP è supportato nativamente nelle applicazioni Windows.",
+          "metric": "Universale Windows"
         },
         {
           "title": "Simple Formato",
@@ -4147,7 +4147,7 @@
       ],
       "useCases": [
         {
-          "title": "Windows Software",
+          "title": "Software Windows",
           "description": "Usa Lightroom photos in Windows applications.",
           "example": "Integra photos into Windows software"
         },
@@ -4163,7 +4163,7 @@
         },
         {
           "title": "Simple Archiviazione",
-          "description": "Store photos in uncompressed BMP format.",
+          "description": "Memorizza foto in formato BMP non compresso.",
           "example": "Crea uncompressed backups of photos"
         }
       ],
@@ -4181,7 +4181,7 @@
           "answer": "Sì, BMP è uncompressed so file sono larger di PNG. This assicura massimo quality but richiede more storage space."
         },
         {
-          "question": "Can Windows programs open BMP Lightroom files?",
+          "question": "I programmi Windows possono aprire file BMP Lightroom?",
           "answer": "Sì! BMP è natively supportato da tutti versions of Windows e virtututtiy tutti Windows applications."
         },
         {
@@ -4201,10 +4201,10 @@
       "intro": "Migliora i tuoi immagini Lightroom con il formato AVIF all'avanguardia per compressione e qualità superiori. Perfetto per applicazioni web moderne.",
       "primaryKeyword": "lightroom upscaler upscaler avif",
       "secondaryKeywords": [
-        "upscale lightroom avif",
-        "lightroom avif enhancer",
-        "convert lightroom to avif",
-        "next-gen photo upscaler"
+        "aumenta risoluzione lightroom avif",
+        "miglioratore lightroom avif",
+        "converti lightroom in avif",
+        "aumentatore risoluzione foto nuova generazione"
       ],
       "lastUpdated": "2026-01-06",
       "category": "platform-format",
@@ -4220,8 +4220,8 @@
         "AVIF fornisce the best compression-to-quality ratio for web"
       ],
       "workflowTips": [
-        "Edit your photos in Lightroom Classic or CC",
-        "Apply your preferred adjustments and color grading",
+        "Modifica le tue foto in Lightroom Classic o CC",
+        "Applica le regolazioni e la gradazione colori preferite",
         "Export using File > Export with massimo quality settings",
         "Carica to our upscaler and select AVIF as formato di output",
         "Scarica il tuo enhanced Lightroom photo in di nuova generazione AVIF format"
@@ -4233,9 +4233,9 @@
           "metric": "50% più piccolo rispetto a JPEG"
         },
         {
-          "title": "Next-Generation",
+          "title": "Nuova Generazione",
           "description": "AVIF è l'ultimo tecnologia formato immagine.",
-          "metric": "Cutting-edge"
+          "metric": "Allavanguardia"
         },
         {
           "title": "Quality Preservato",
@@ -4243,19 +4243,19 @@
           "metric": "Excellent qualità"
         },
         {
-          "title": "Modern Web",
+          "title": "Web Moderno",
           "description": "AVIF supportato da tutti moderno browser web.",
-          "metric": "Future-proof"
+          "metric": "A prova di futuro"
         }
       ],
       "useCases": [
         {
-          "title": "Portfolio Websites",
+          "title": "Siti Web Portfolio",
           "description": "Visualizza Lightroom photos con AVIF compression.",
           "example": "Crea caricamento ultra-veloce photo portfolios"
         },
         {
-          "title": "Photo Blogs",
+          "title": "Blog Fotografici",
           "description": "Ottimizza Lightroom photos per blogging con AVIF.",
           "example": "Crea veloce photo blogs con AVIF immagini"
         },
@@ -4265,7 +4265,7 @@
           "example": "Ottimizza photos per social media platforms"
         },
         {
-          "title": "Web Performance",
+          "title": "Prestazioni Web",
           "description": "Raggiungi la massima performance con AVIF-compressed photos.",
           "example": "Crea fulminee photo websites"
         }

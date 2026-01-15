@@ -76,7 +76,7 @@
       ],
       "softwareRecommendations": {
         "professionalTools": ["Adobe Lightroom Classic", "Capture One", "Phase One"],
-        "aiEnhancement": ["MyImageUpscaler", "Adobe Photoshop Neural Filters", "Topaz Labs"],
+        "aiEnhancement": ["MyImageUpscaler", "Filtri Neurali Adobe Photoshop", "Topaz Labs"],
         "virtualStaging": ["BoxBrownie", "Virtual Staging Solutions", "roOomy"],
         "droneProcessing": ["DroneDeploy", "Pix4Dmapper", "DJI Terra"]
       },
@@ -272,12 +272,7 @@
       "technicalSpecs": {
         "supportedFormats": ["DICOM", "JPEG", "TIFF", "PNG", "RAW", "BMP"],
         "maxResolution": "Illimitata per l\"imaging medico e la fotografia scientifica",
-        "outputFormats": [
-          "TIFF (alta risoluzione)",
-          "JPEG (presentazione)",
-          "PNG (web)",
-          "DICOM (medico)"
-        ],
+        "outputFormats": ["TIFF (alta risoluzione)", "JPEG (presentazione)", "PNG (web)", "DICOM (medico)"],
         "batchProcessing": "Fino a 1000 immagini per dataset di ricerca",
         "compliance": ["Conforme HIPAA", "Registrato FDA", "Certificato ISO 13485"]
       },
@@ -294,32 +289,32 @@
         }
       ],
       "bestPractices": [
-        "Always maintain original image integrity for diagnostic purposes",
+        "Mantenere sempre lintegrità dellimmagine originale per scopi diagnostici",
         "Usa miglioramento as an aid, not replacement for professional analysis",
-        "Follow institutional guidelines for medical image processing",
-        "Validate enhanced results with medical professionals",
-        "Maintain patient privacy and data security (HIPAA compliance)",
+        "Seguire le linee guida istituzionali per lelaborazione delle immagini mediche",
+        "Validare i risultati potenziati con professionisti medici",
+        "Mantenere la privacy dei pazienti e la sicurezza dei dati (conformità HIPAA)",
         "Document miglioramento parameters for research reproducibility"
       ],
       "softwareRecommendations": {
         "medicalImaging": ["ImageJ", "3D Slicer", "OsiriX", "RadiAnt DICOM Viewer"],
         "microscopy": ["Fiji", "CellProfiler", "Imaris", "NIS-Elements"],
         "scientificImaging": ["MyImageUpscaler", "Adobe Photoshop", "GIMP"],
-        "researchTools": ["MATLAB", "Python (OpenCV, scikit-image)", "R (imager package)"]
+        "researchTools": ["MATLAB", "Python (OpenCV, scikit-image)", "R (pacchetto imager)"]
       },
       "fileSizeGuidelines": {
-        "medicalImaging": "Original size for diagnostic accuracy",
-        "publications": "300-600 DPI for journal requirements",
-        "presentations": "150-300 DPI for PowerPoint/presentations",
-        "educational": "72-150 DPI for web-based materials"
+        "medicalImaging": "Dimensioni originali per la precisione diagnostica",
+        "publications": "300-600 DPI per i requisiti delle riviste",
+        "presentations": "150-300 DPI per PowerPoint/presentazioni",
+        "educational": "72-150 DPI per materiali web"
       },
       "faqs": [
         {
-          "question": "Is AI-enhanced medical imaging suitable for diagnosis?",
+          "question": "Limaging medico potenziato dallIA è adatto per la diagnosi?",
           "answer": "AI miglioramento is designed to migliora visualization for trained medical professionals but should never replace professional medical diagnosis. Always consult qualified healthcare providers for medical interpretation."
         },
         {
-          "question": "How do you ensure HIPAA compliance for medical images?",
+          "question": "Come si garantisce la conformità HIPAA per le immagini mediche?",
           "answer": "We Usa encrypted connections, secure servers, and do not store medical images longer than necessary for processing. All data is processed in compliance with HIPAA regulations and medical privacy standards."
         },
         {
@@ -327,15 +322,15 @@
           "answer": "Yes, our AI can significantly migliora old medical photographs, X-rays, and documents while preserving historical accuracy. This is valuable for medical education and archival purposes."
         },
         {
-          "question": "What microscopy techniques do you support?",
+          "question": "Quali tecniche di microscopia sono supportate?",
           "answer": "We support miglioramento for light microscopy, electron microscopy, fluorescence microscopy, and confocal microscopy images. Our AI is trained to migliora contrast, reduce noise, and migliora clarity across various microscopy techniques."
         },
         {
-          "question": "Can you process DICOM files?",
+          "question": "È possibile elaborare file DICOM?",
           "answer": "Yes, we can process DICOM files and other medical imaging formats. Our miglioramento algorithms are specifically trained to work with medical imaging while preserving diagnostic information."
         },
         {
-          "question": "How do you ensure scientific integrity in enhanced images?",
+          "question": "Come si garantisce lintegrità scientifica nelle immagini potenziate?",
           "answer": "Our miglioramento maintains the original image data and only improves visualization. We provide detailed processing logs and avoid modifications that could misrepresent scientific findings."
         }
       ],
@@ -353,15 +348,15 @@
       "intro": "Comprehensive image miglioramento solutions for architects, construction professionals, and real estate developers, transforming architectural photography and construction documentation into professional, presentation-ready materials.",
       "primaryKeyword": "architecture construction photo miglioramento",
       "secondaryKeywords": [
-        "architectural photography",
-        "construction documentation",
-        "building progress photos",
-        "architectural visualization"
+        "fotografia architettonica",
+        "documentazione di costruzione",
+        "foto del progresso di costruzione",
+        "visualizzazione architettonica"
       ],
       "description": "Specialized miglioramento solutions for architectural photography, construction progress documentation, and building project presentations. Our AI-powered tools migliora clarity, lighting, and detail in architectural images while maintaining technical accuracy and professional standards.",
       "useCases": [
         "Architectural photography miglioramento for portfolio and marketing",
-        "Construction progress documentation and monitoring",
+        "Documentazione e monitoraggio del progresso di costruzione",
         "Building material and texture miglioramento for presentations",
         "Blueprint and drawing miglioramento for client presentations",
         "Fotografia di confronto prima/dopo costruzione",
@@ -386,18 +381,9 @@
       "technicalSpecs": {
         "supportedFormats": ["JPEG", "TIFF", "RAW", "PNG", "DNG", "HEIC"],
         "maxResolution": "Fino a 100MP per fotocamere architettoniche professionali",
-        "outputFormats": [
-          "JPEG (presentazione)",
-          "TIFF (stampa)",
-          "PNG (web)",
-          "PDF (documentazione)"
-        ],
+        "outputFormats": ["JPEG (presentazione)", "TIFF (stampa)", "PNG (web)", "PDF (documentazione)"],
         "batchProcessing": "Fino a 500 foto di progresso costruzione per batch",
-        "specializedFeatures": [
-          "Correzione prospettiva",
-          "Elaborazione HDR",
-          "Detail miglioramento"
-        ]
+        "specializedFeatures": ["Correzione prospettiva", "Elaborazione HDR", "Detail miglioramento"]
       },
       "caseStudies": [
         {
@@ -446,11 +432,11 @@
           "answer": "Yes, we can migliora technical drawings, blueprints, and construction documents, improving line clarity, text readability, and overall presentation quality for client materials and documentation."
         },
         {
-          "question": "What about drone photography of construction sites?",
+          "question": "Che dire della fotografia con droni dei cantieri?",
           "answer": "We can migliora aerial drone photography of construction sites, improving site overview, progress documentation, and marketing materials for real estate development projects."
         },
         {
-          "question": "How do you maintain accurate building representation?",
+          "question": "Come si mantiene una rappresentazione accurata delledificio?",
           "answer": "Our miglioramento focuses on improving clarity and lighting while maintaining the actual building appearance, materials, and colors. We avoid modifications that could misrepresent the final structure."
         },
         {
@@ -474,7 +460,7 @@
       "secondaryKeywords": [
         "print image miglioramento",
         "publishing photo ottimizzazione",
-        "commercial printing",
+        "stampa commerciale",
         "book cover miglioramento"
       ],
       "description": "Comprehensive image miglioramento solutions specifically Progettato per print publishing workflows. From book covers and magazine layouts to marketing materials and commercial printing, our AI-powered tools ensure your images meet professional printing standards and look their best in any print format.",
@@ -488,25 +474,25 @@
       ],
       "benefits": [
         "Print-ready quality at any risoluzione without source limitazioni",
-        "90% reduction in pre-press image preparation time",
+        "Riduzione del 90% nel tempo di preparazione delle immagini pre-stampa",
         "Cost-effective alternative to reshooting for low-risoluzione images",
-        "Consistent quality across all print materials and formats",
+        "Qualità costante su tutti i materiali e formati di stampa",
         "CMYK color space ottimizzazione for accurate print reproduction",
-        "Automated workflow for large publishing projects"
+        "Flusso di lavoro automatizzato per grandi progetti editoriali"
       ],
       "workflow": [
         "Upload source images (any risoluzione or format)",
-        "Select print type and specifications (size, DPI, color space)",
+        "Selezionare il tipo di stampa e le specifiche (dimensione, DPI, spazio colore)",
         "Scegli miglioramento focus: Resolution, color accuracy, or comprehensive",
         "Apply AI miglioramento Ottimizzato per print production standards",
-        "Preview in simulated print conditions with soft-proofing",
-        "Download print-ready files with proper color profiles and metadata"
+        "Anteprima in condizioni di stampa simulate con soft-proofing",
+        "Scaricare file pronti per la stampa con profili colore e metadati appropriati"
       ],
       "technicalSpecs": {
         "supportedFormats": ["JPEG", "TIFF", "PNG", "RAW", "PSD", "HEIC"],
-        "maxResolution": "Unlimited for print applications",
-        "outputFormats": ["TIFF (CMYK)", "PDF (print-ready)", "JPEG (RGB)", "PSD (layered)"],
-        "colorSpaces": ["CMYK", "RGB", "Grayscale", "Spot colors"],
+        "maxResolution": "Illimitata per applicazioni di stampa",
+        "outputFormats": ["TIFF (CMYK)", "PDF (pronto per la stampa)", "JPEG (RGB)", "PSD (con livelli)"],
+        "colorSpaces": ["CMYK", "RGB", "Scala di grigi", "Colori spot"],
         "printStandards": ["ISO 12647", "GRACoL", "SWOP", "FOGRA"]
       },
       "caseStudies": [
@@ -531,11 +517,7 @@
       ],
       "softwareRecommendations": {
         "professionalTools": ["Adobe InDesign", "Adobe Photoshop", "QuarkXPress"],
-        "prepressTools": [
-          "Adobe Acrobat Pro",
-          "Strumenti Preflight",
-          "Software di Gestione del Colore"
-        ],
+        "prepressTools": ["Adobe Acrobat Pro", "Strumenti Preflight", "Software di Gestione del Colore"],
         "enhancementTools": ["MyImageUpscaler", "Topaz Labs", "ON1 Resize"],
         "colorManagement": ["X-Rite i1Profiler", "Datacolor Spyder", "Pantone Color Manager"]
       },
@@ -627,8 +609,8 @@
           "Pinterest"
         ],
         "outputFormats": ["Platform-optimized JPEG", "PNG with transparency", "WebP for web"],
-        "batchProcessing": "Up to 100 content pieces per batch",
-        "performanceOptimization": ["Fast loading", "Mobile-first", "High engagement"]
+        "batchProcessing": "Fino a 100 contenuti per batch",
+        "performanceOptimization": ["Caricamento rapido", "Mobile-first", "Alto coinvolgimento"]
       },
       "caseStudies": [
         {
@@ -746,7 +728,7 @@
       ],
       "technicalSpecs": {
         "supportedFormats": ["JPEG", "PNG", "WebP", "AVIF", "HEIC", "GIF"],
-        "outputFormats": ["Modern WebP/AVIF", "Fallback JPEG/PNG", "Responsive srcset"],
+        "outputFormats": ["WebP/AVIF moderno", "JPEG/PNG di fallback", "srcset responsive"],
         "optimizationTargets": ["Core Web Vitals", "Punteggi Lighthouse", "Prestazioni mobile"],
         "responsiveSupport": ["Multi-dispositivo", "Multi-risoluzione", "Art direction"],
         "webStandards": ["W3C", "Google PageSpeed", "GTmetrix ottimizzazione"]
@@ -862,9 +844,14 @@
           "Email Marketing",
           "Display Networks"
         ],
-        "adFormats": ["Banner ads", "Social ads", "Email creatives", "Landing page images"],
-        "performanceOptimization": ["CTR focus", "Conversion ottimizzazione", "Brand consistency"],
-        "testingSupport": ["A/B testing variations", "Multivariate testing support"]
+        "adFormats": [
+          "Banner pubblicitari",
+          "Annunci social",
+          "Creatività email",
+          "Immagini landing page"
+        ],
+        "performanceOptimization": ["Focus su CTR", "Conversion ottimizzazione", "Coerenza del brand"],
+        "testingSupport": ["Variazioni test A/B", "Supporto test multivariato"]
       },
       "caseStudies": [
         {
@@ -940,7 +927,11 @@
         "Creatività email",
         "Immagini landing page"
       ],
-      "performanceOptimization": ["Focus CTR", null, "Coerenza brand"],
+      "performanceOptimization": [
+        "Focus CTR",
+        null,
+        "Coerenza brand"
+      ],
       "testingSupport": ["Varianti test A/B", "Supporto test multivariato"]
     },
     {
@@ -969,57 +960,57 @@
       ],
       "benefits": [
         "Ripristino professionale senza costosi servizi professionali",
-        "Preservation of historical memories for future generations",
-        "95% accuracy in damage repair and restoration",
-        "Cost-effective solution for large archive projects",
-        "Enhanced details while maintaining historical authenticity",
-        "Automated workflow for bulk restoration projects"
+        "Conservazione di ricordi storici per le generazioni future",
+        "95% di accuratezza nella riparazione e ripristino dei danni",
+        "Soluzione conveniente per grandi progetti di archiviazione",
+        "Dettagli migliorati mantenendo lautenticità storica",
+        "Flusso di lavoro automatizzato per progetti di ripristino in blocco"
       ],
       "workflow": [
-        "Scan or upload original damaged or old photographs",
-        "Select restoration type: Damage repair, color restoration, or comprehensive",
-        "Identify specific issues: tears, scratches, fading, or damage",
-        "Apply AI restoration trained on historical photo archives",
-        "Review restoration with before/after comparison tools",
+        "Scansionare o caricare le fotografie originali danneggiate o vecchie",
+        "Selezionare il tipo di ripristino: riparazione danni, ripristino colore o completo",
+        "Identificare problemi specifici: strappi, graffi, sbiadimento o danni",
+        "Applicare il ripristino AI addestrato su archivi di foto storiche",
+        "Rivedere il ripristino con strumenti di confronto prima/dopo",
         "Download high-risoluzione restored images for archiving and printing"
       ],
       "technicalSpecs": {
-        "supportedFormats": ["JPEG", "TIFF", "PNG", "BMP", "GIF", "Scanned documents"],
+        "supportedFormats": ["JPEG", "TIFF", "PNG", "BMP", "GIF", "Documenti scansionati"],
         "damageTypes": [
-          "Tears",
-          "Scratches",
-          "Water damage",
-          "Fading",
-          "Color shifts",
-          "Mold damage"
+          "Strappi",
+          "Graffi",
+          "Danni da acqua",
+          "Sbiadimento",
+          "Alterazioni cromatiche",
+          "Danni da muffa"
         ],
-        "outputFormats": ["TIFF (archival)", "JPEG (sharing)", "PNG (web)", "DNG (professional)"],
-        "archiveStandards": ["FADGI", "METS", "PREMIS compliance for institutional archiving"],
+        "outputFormats": ["TIFF (archiviazione)", "JPEG (condivisione)", "PNG (web)", "DNG (professionale)"],
+        "archiveStandards": ["FADGI", "METS", "Conformità PREMIS per larchiviazione istituzionale"],
         "qualityControl": [
-          "Historical accuracy",
-          "Authenticity preservation",
-          "Non-destructive processing"
+          "Accuratezza storica",
+          "Conservazione dellautenticità",
+          "Elaborazione non distruttiva"
         ]
       },
       "caseStudies": [
         {
-          "title": "Family Heritage Preservation Project",
-          "description": "Family restored 500+ historical family photographs spanning 100+ years, preserving family history and creating digital archives for future generations.",
-          "metrics": "Priceless family heritage preserved, 95% restoration success rate"
+          "title": "Progetto di Conservazione del Patrimonio Familiare",
+          "description": "La famiglia ha ripristinato oltre 500 fotografie storiche familiari che coprono più di 100 anni, preservando la storia familiare e creando archivi digitali per le generazioni future.",
+          "metrics": "Patrimonio familiare di valore inestimabile preservato, tasso di successo del ripristino del 95%"
         },
         {
           "title": "Historical Museum Archive miglioramento",
-          "description": "Historical museum enhanced 10,000+ historical photographs from their collection, improving accessibility for researchers and public exhibitions.",
-          "metrics": "Institutional archival standards compliance, enhanced historical research access"
+          "description": "Il museo storico ha potenziato oltre 10.000 fotografie storiche dalla propria collezione, migliorando laccessibilità per i ricercatori e le mostre pubbliche.",
+          "metrics": "Conformità agli standard di archiviazione istituzionale, accesso migliorato alla ricerca storica"
         }
       ],
       "bestPractices": [
         "Usa high-quality scanning (300+ DPI) for best restoration results",
-        "Handle original photographs carefully to prevent further damage",
-        "Document the original condition before restoration",
-        "Maintain historical accuracy - avoid over-restoration",
+        "Maneggiare con cura le fotografie originali per prevenire ulteriori danni",
+        "Documentare le condizioni originali prima del ripristino",
+        "Mantenere laccuratezza storica - evitare il ripristino eccessivo",
         "Crea backups of original files before processing",
-        "Consider professional consultation for valuable historical photos"
+        "Considerare la consultazione professionale per foto storiche di valore"
       ],
       "softwareRecommendations": {
         "restorationTools": ["MyImageUpscaler", "Adobe Photoshop", "Topaz Labs", "Skylum"],
@@ -1104,22 +1095,10 @@
         "Download high-risoluzione, professionally enhanced AI artwork"
       ],
       "technicalSpecs": {
-        "supportedGenerators": [
-          "Midjourney",
-          "DALL-E",
-          "Stable Diffusion",
-          "Midjourney",
-          "Leonardo AI"
-        ],
-        "outputResolutions": ["4K", "6K", "8K", "Custom large format"],
-        "supportedStyles": [
-          "Digital art",
-          "Photorealistic",
-          "Artistic",
-          "Abstract",
-          "Character design"
-        ],
-        "printStandards": ["Gallery quality", "Commercial printing", "Fine art reproduction"],
+        "supportedGenerators": ["Midjourney", "DALL-E", "Stable Diffusion", "Midjourney", "Leonardo AI"],
+        "outputResolutions": ["4K", "6K", "8K", "Grande formato personalizzato"],
+        "supportedStyles": ["Arte digitale", "Fotorealistico", "Artistico", "Astratto", "Design personaggi"],
+        "printStandards": ["Qualità galleria", "Stampa commerciale", "Riproduzione arte fine"],
         "formatSupport": ["PNG", "TIFF", "JPEG", "PSD", "WebP"]
       },
       "caseStudies": [
@@ -1187,21 +1166,9 @@
       "lastUpdated": "2024-12-19T10:00:00Z",
       "ctaText": "ottimizza Your AI-Generated Images",
       "ctaUrl": "/?signup=1",
-      "supportedGenerators": [
-        "Midjourney",
-        "DALL-E",
-        "Stable Diffusion",
-        "Midjourney",
-        "Leonardo AI"
-      ],
+      "supportedGenerators": ["Midjourney", "DALL-E", "Stable Diffusion", "Midjourney", "Leonardo AI"],
       "outputResolutions": ["4K", "6K", "8K", "Grande formato personalizzato"],
-      "supportedStyles": [
-        "Arte digitale",
-        "Fotorealistico",
-        "Artistico",
-        "Astratto",
-        "Design personaggi"
-      ],
+      "supportedStyles": ["Arte digitale", "Fotorealistico", "Artistico", "Astratto", "Design personaggi"],
       "printStandards": ["Qualità galleria", "Stampa commerciale", "Riproduzione belle arti"],
       "formatSupport": ["PNG", "TIFF", "JPEG", "PSD", "WebP"]
     }

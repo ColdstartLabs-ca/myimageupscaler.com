@@ -291,12 +291,7 @@
           "description": "2倍PNGは小さい印刷物に適しています。"
         }
       ],
-      "tips": [
-        "透明ロゴとグラフィックに最適",
-        "テキスト鮮明度に優れている",
-        "可逆品質を維持",
-        "Webグラフィックの最適バランス"
-      ],
+      "tips": ["透明ロゴとグラフィックに最適", "テキスト鮮明度に優れている", "可逆品質を維持", "Webグラフィックの最適バランス"],
       "faq": [
         {
           "question": "PNGを2倍に拡張すべきですか？",
@@ -1091,18 +1086,18 @@
         },
         {
           "title": "フォーマット効率",
-          "description": "Even at 8X, WebP maintains better compression than equivalent JPEGs.",
-          "metric": "Superior compression"
+          "description": "8倍でも、WebPは同等のJPEGよりも優れた圧縮率を維持します。",
+          "metric": "優れた圧縮"
         },
         {
-          "title": "Future Proof",
-          "description": "Maximum resolution ensures content remains relevant as display technology advances.",
-          "metric": "Future ready"
+          "title": "将来性",
+          "description": "最大解像度により、ディスプレイ技術の進歩に合わせてコンテンツが関連性を保ちます。",
+          "metric": "将来対応"
         }
       ],
       "bestPractices": [
         {
-          "title": "Specialized Application",
+          "title": "専門的な用途",
           "description": "8X WebP isのためにspecialized applications requiring maximum qualityを備えたweb efficiency."
         },
         {
@@ -1110,11 +1105,11 @@
           "description": "For print use, convert 8X WebPにPNG or TIFF after upscaling."
         },
         {
-          "title": "Manage Bandwidth",
-          "description": "8X WebPs are large despite compression efficiency; plan bandwidth accordingly."
+          "title": "帯域幅の管理",
+          "description": "圧縮効率が高くても8倍のWebPは大容量です。帯域幅を適切に計画してください。"
         },
         {
-          "title": "Browser Testing",
+          "title": "ブラウザーテスト",
           "description": "Test 8X WebP compatibility across target browsersとdevices."
         }
       ],
@@ -1122,7 +1117,7 @@
         "最適for premium web e倍periences requiring maximum quality",
         "Maintains WebP's compression advantages even at e倍treme resolution",
         "Consider usingのためにdigital artとphotography portfolios",
-        "File sizes will be significant despite WebP's efficiency"
+        "WebPの効率性が高くてもファイルサイズは大きくなります"
       ],
       "faq": [
         {
@@ -1167,7 +1162,7 @@
       "scaleExpectations": "16X scaling creates 256 times more pi倍els. E倍treme enlargementのためにspecialized applications only. 処理時間：2-5 minutes.",
       "useCases": [
         {
-          "title": "Specialized Web Projects",
+          "title": "専門的なWebプロジェクト",
           "description": "Create extreme resolution WebP画像for unique web applications.",
           "example": "Generate maximum resolution imagesのためにspecialized digital experiences"
         },
@@ -1542,49 +1537,49 @@
       "scaleExpectations": "2X scaling doubles RAW resolution while preserving ma倍imum image data. 処理時間：10-20 seconds.",
       "useCases": [
         {
-          "title": "Professional Photo Enhancement",
+          "title": "プロフェッショナル写真の向上",
           "description": "Double RAW photo resolutionのためにprofessional applications.",
           "example": "Enhance DSLR RAW photosにhigher resolution"
         },
         {
-          "title": "Print Preparation",
+          "title": "印刷準備",
           "description": "Moderate upscaling of RAW filesのためにstandard printing.",
           "example": "Prepare RAW photosのために8x10 prints at 2X"
         },
         {
-          "title": "Archive Enhancement",
-          "description": "Improve RAW photo archives while managing storage.",
-          "example": "Double resolution of important RAW photos"
+          "title": "アーカイブの向上",
+          "description": "ストレージを管理しながらRAW写真アーカイブを改善します。",
+          "example": "重要なRAW写真の解像度を2倍にする"
         }
       ],
       "benefits": [
         {
-          "title": "Maximum Data Preserved",
+          "title": "最大データ保持",
           "description": "Worksを備えたRAW format's complete image dataのために2X enhancement.",
-          "metric": "Full data"
+          "metric": "フルデータ"
         },
         {
           "title": "Professional 結果",
           "description": "2X RAW upscaling yields professional-quality結果.",
-          "metric": "Pro quality"
+          "metric": "プロ品質"
         },
         {
           "title": "Balanced 強化",
           "description": "2Xは提供しますnoticeable improvement without excessive processing.",
-          "metric": "Fast processing"
+          "metric": "高速処理"
         }
       ],
       "bestPractices": [
         {
-          "title": "Work with RAW",
+          "title": "RAWで作業",
           "description": "Always workを備えたRAW files before convertingにother formatsのためにbest 2X results."
         },
         {
-          "title": "Convert After Upscaling",
+          "title": "拡大後に変換",
           "description": "Perform 2X upscaling on RAW, then convertにTIFF/JPEGのためにoutput."
         },
         {
-          "title": "Batch Processing",
+          "title": "バッチ処理",
           "description": "Process multiple RAW files at onceのためにconsistent 2X enhancement."
         }
       ],
@@ -1635,34 +1630,34 @@
         {
           "title": "Large Format 印刷",
           "description": "Prepare RAW photosのためにpostersとlarge prints.",
-          "example": "Transform DSLR RAW into gallery-quality prints"
+          "example": "DSLR RAWをギャラリー品質の印刷物に変換"
         },
         {
-          "title": "Professional Exhibitions",
+          "title": "プロフェッショナル展示",
           "description": "Enhance RAW photosのためにgalleryとexhibition display.",
-          "example": "Create exhibition-quality prints from RAW"
+          "example": "RAWから展示品質の印刷物を作成"
         },
         {
-          "title": "Commercial Photography",
+          "title": "商業写真",
           "description": "を拡張RAWのためにcommercialとadvertising applications.",
           "example": "Prepare RAW photosのためにhigh-end commercial use"
         }
       ],
       "benefits": [
         {
-          "title": "Maximum RAW Data",
+          "title": "最大RAWデータ",
           "description": "Utilizes complete RAW image dataのために4X enhancement.",
-          "metric": "Full data utilized"
+          "metric": "フルデータ活用"
         },
         {
           "title": "Professional 品質",
           "description": "4X RAW upscaling yields professional-grade結果.",
-          "metric": "Gallery quality"
+          "metric": "ギャラリー品質"
         },
         {
-          "title": "Large Format Ready",
+          "title": "ラージフォーマット対応",
           "description": "Creates resolution suitableのためにlarge format printing.",
-          "metric": "Print ready"
+          "metric": "印刷対応"
         }
       ],
       "bestPractices": [
@@ -1671,18 +1666,18 @@
           "description": "Always workを備えたoriginal RAW filesのためにoptimal 4X results."
         },
         {
-          "title": "Convert to TIFF",
+          "title": "TIFFに変換",
           "description": "Convert 4X upscaled RAWにTIFFのためにprint workflow compatibility."
         },
         {
           "title": "許容 Processing Time",
-          "description": "4X RAW upscaling requires significant computation; expect 30-60 seconds."
+          "description": "4倍RAWアップスケールには大量の計算が必要です。30〜60秒程度を見込んでください。"
         }
       ],
       "tips": [
         "理想的for professional printing applications",
         "最適results from high-quality RAW sources",
-        "TIFF conversion recommended after upscaling",
+        "アップスケール後のTIFF変換推奨",
         "E倍cellentのためにgalleryとexhibition prints"
       ],
       "faq": [
@@ -2382,41 +2377,41 @@
           "example": "Enhance Windows BMP imagesのためにmodern displays"
         },
         {
-          "title": "Legacy Image Modernization",
+          "title": "レガシーイメージの近代化",
           "description": "Improve older BMP画像for modern use.",
-          "example": "Double resolution of legacy BMP graphics"
+          "example": "レガシーBMPグラフィックの解像度を2倍にする"
         },
         {
-          "title": "Simple Image Scaling",
-          "description": "Quick 2X enhancement of BMP images.",
+          "title": "シンプルな画像スケーリング",
+          "description": "BMP画像の2倍高速向上。",
           "example": "Scale BMP imagesにdouble resolution"
         }
       ],
       "benefits": [
         {
-          "title": "Simple Format",
+          "title": "シンプルな形式",
           "description": "BMP is straightforwardのために2X upscaling applications.",
-          "metric": "Easy to use"
+          "metric": "使いやすい"
         },
         {
           "title": "Fast 処理",
           "description": "Quick 2X enhancementのためにBMP images.",
-          "metric": "10-20 seconds"
+          "metric": "10〜20秒"
         },
         {
           "title": "品質 Improved",
           "description": "AI enhancement improves BMP品質 at 2X resolution.",
-          "metric": "Enhanced quality"
+          "metric": "向上した品質"
         }
       ],
       "bestPractices": [
         {
-          "title": "Format Conversion",
+          "title": "形式変換",
           "description": "Consider converting BMPにPNG or JPEG after 2X upscalingのためにbetter compatibility."
         },
         {
-          "title": "File Size Awareness",
-          "description": "BMP files are large; 2X upscaling quadruples file size."
+          "title": "ファイルサイズの意識",
+          "description": "BMPファイルは大きいです。2倍アップスケールでファイルサイズは4倍になります。"
         },
         {
           "title": "Modern 使用",
@@ -2425,7 +2420,7 @@
       ],
       "tips": [
         "Goodのためにlegacy BMP image enhancement",
-        "Consider format conversion after upscaling",
+        "アップスケール後の形式変換を検討",
         "BMP files are uncompressedとlarge",
         "2X provides good balance of qualityとfile size"
       ],
@@ -2468,17 +2463,17 @@
       "scaleExpectations": "4X scaling creates 16 times more pi倍els. Suitableのためにhigh-quality applications. 処理時間：30-60 seconds.",
       "useCases": [
         {
-          "title": "Legacy Image Enhancement",
+          "title": "レガシーイメージの向上",
           "description": "Significantly improve older BMP画像for modern use.",
-          "example": "Quadruple resolution of important BMP graphics"
+          "example": "重要なBMPグラフィックの解像度を4倍にする"
         },
         {
-          "title": "Print Preparation",
+          "title": "印刷準備",
           "description": "Enhance BMP画像to print-quality resolution.",
-          "example": "Create print-quality versions from BMP sources"
+          "example": "BMPソースから印刷品質のバージョンを作成"
         },
         {
-          "title": "Professional Display",
+          "title": "プロフェッショナル展示",
           "description": "を拡張BMPのためにhigh-resolution display applications.",
           "example": "Enhance BMPのためにprofessional presentations"
         }
@@ -2492,22 +2487,22 @@
         {
           "title": "Professional 結果",
           "description": "Suitableのためにprofessional applications requiring high品質.",
-          "metric": "Professional grade"
+          "metric": "プロフェッショナルグレード"
         },
         {
           "title": "品質 Improved",
           "description": "AI enhancement significantly improves BMP品質.",
-          "metric": "Enhanced quality"
+          "metric": "向上した品質"
         }
       ],
       "bestPractices": [
         {
-          "title": "Format Conversion",
+          "title": "形式変換",
           "description": "ConvertにPNG or TIFF after 4X upscalingのためにbetter compatibility."
         },
         {
-          "title": "File Size Management",
-          "description": "4X BMPs are very large; plan storage accordingly."
+          "title": "ファイルサイズ管理",
+          "description": "4倍のBMPは非常に大きいです。ストレージを適切に計画してください。"
         },
         {
           "title": "検討 Modern Formats",
@@ -2516,7 +2511,7 @@
       ],
       "tips": [
         "最適for significant enhancement of legacy BMP images",
-        "Format conversion recommended after upscaling",
+        "アップスケール後の形式変換推奨",
         "File sizes will be very large dueにuncompressed nature",
         "Consider PNG/TIFFのためにprint workflows"
       ],
@@ -2559,14 +2554,14 @@
       "scaleExpectations": "8X scaling creates 64 times more pi倍els. E倍treme enhancementのためにspecialized use. 処理時間：60-120 seconds.",
       "useCases": [
         {
-          "title": "Extreme Legacy Enhancement",
-          "description": "Maximum resolution enhancement of important BMP images.",
-          "example": "Transform old BMP into maximum resolution versions"
+          "title": "極限レガシー向上",
+          "description": "重要なBMP画像の最大解像度向上。",
+          "example": "古いBMPを最大解像度バージョンに変換"
         },
         {
-          "title": "Archival Projects",
+          "title": "アーカイブプロジェクト",
           "description": "Future-proof important BMP画像with maximum resolution.",
-          "example": "Create archival versions of historic BMP graphics"
+          "example": "歴史的BMPグラフィックのアーカイブバージョンを作成"
         }
       ],
       "benefits": [
@@ -2581,19 +2576,19 @@
           "metric": "Ma倍imum detail"
         },
         {
-          "title": "Specialized Use",
-          "description": "For specialized applications requiring maximum BMP resolution.",
+          "title": "専門用途",
+          "description": "最大BMP解像度が必要な専門用途向け。",
           "metric": "Ma倍imum possible"
         }
       ],
       "bestPractices": [
         {
-          "title": "Format Conversion Essential",
+          "title": "形式変換必須",
           "description": "Always convertにPNG or TIFF after 8X upscaling."
         },
         {
-          "title": "File Size Warning",
-          "description": "8X BMPs are extremely large; plan storage carefully."
+          "title": "ファイルサイズ警告",
+          "description": "8倍のBMPは極端に大きいです。ストレージを慎重に計画してください。"
         }
       ],
       "tips": [
@@ -2641,9 +2636,9 @@
       "scaleExpectations": "16X scaling creates 256 times more pi倍els. E倍treme enlargementのためにspecialized use only. 処理時間：2-5 minutes.",
       "useCases": [
         {
-          "title": "Specialized Archival",
-          "description": "Maximum resolution preservation of important BMP images.",
-          "example": "Create maximum resolution archival BMP versions"
+          "title": "専門アーカイブ",
+          "description": "重要なBMP画像の最大解像度保存。",
+          "example": "最大解像度のアーカイブBMPバージョンを作成"
         }
       ],
       "benefits": [
@@ -2654,7 +2649,7 @@
         },
         {
           "title": "Specialized 品質",
-          "description": "For highly specialized applications requiring BMP format.",
+          "description": "BMP形式が必要な高度に専門的な用途向け。",
           "metric": "Ma倍imum possible"
         }
       ],
@@ -2664,15 +2659,15 @@
           "description": "16X BMP scalingはonlyのためにhighly specialized applications."
         },
         {
-          "title": "Format Conversion",
+          "title": "形式変換",
           "description": "Convertにmodern formats after 16X upscaling."
         }
       ],
       "tips": [
         "Only use 16X when absolutely necessaryのためにspecialized BMP applications",
-        "Format conversion strongly recommended",
-        "File sizes will be massive",
-        "Consider if BMP format is actually required"
+        "形式変換を強く推奨",
+        "ファイルサイズは非常に大きくなります",
+        "BMP形式が実際に必要か検討"
       ],
       "faq": [
         {

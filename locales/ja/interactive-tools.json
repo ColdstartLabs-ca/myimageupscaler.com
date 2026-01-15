@@ -9,14 +9,7 @@
       "h1": "インタラクティブ画像ツール",
       "intro": "インタラクティブAIツールで画像処理未来体験。インストール不要、ブラウザ直接作業。",
       "primaryKeyword": "画像リサイザー",
-      "secondaryKeywords": [
-        "オンラインで画像をリサイズ",
-        "オンライン画像リサイザー",
-        "画像をリサイズ",
-        "画像リサイズツール",
-        "オンラインで写真をリサイズ",
-        "写真リサイザー"
-      ],
+      "secondaryKeywords": ["オンラインで画像をリサイズ", "オンライン画像リサイザー", "画像をリサイズ", "画像リサイズツール", "オンラインで写真をリサイズ", "写真リサイザー"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "画像リサイザー",
@@ -599,13 +592,7 @@
       "h1": "無料 Twitter/X Image Reサイズr - Perfect サイズs Instantly",
       "intro": "Reサイズ your images to perfect Twitter/X 寸法. Posts and headers optimized for maximum engagement. ブラウザで動作.",
       "primaryKeyword": "Twitter写真リサイザー",
-      "secondaryKeywords": [
-        "Twitter画像サイズ",
-        "Twitter投稿サイズ",
-        "Twitterヘッダーサイズ",
-        "Twitter用にリサイズ",
-        "X画像サイズ"
-      ],
+      "secondaryKeywords": ["Twitter画像サイズ", "Twitter投稿サイズ", "Twitterヘッダーサイズ", "Twitter用にリサイズ", "X画像サイズ"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "Twitter/X画像リサイザー",
@@ -875,14 +862,7 @@
       "h1": "無料 一括画像リサイザー - Mass Reサイズ Photos Instantly",
       "intro": "Reサイズ multiple images to the same 寸法 instantly. Our 無料 一括画像リサイザー processes up to 20 photos at once, entirely in your browser. No uploads, no signup, no wAIting.",
       "primaryKeyword": "バッチ画像リサイザー",
-      "secondaryKeywords": [
-        "一括リサイズ",
-        "大量写真リサイズ",
-        "複数画像をリサイズ",
-        "一括写真リサイザー",
-        "バッチ画像リサイズ",
-        "一括でリサイズ"
-      ],
+      "secondaryKeywords": ["一括リサイズ", "大量写真リサイズ", "複数画像をリサイズ", "一括写真リサイザー", "バッチ画像リサイズ", "一括でリサイズ"],
       "lastUpdated": "2025-12-26T00:00:00Z",
       "category": "ツール",
       "toolName": "一括画像リサイザー",
@@ -1025,14 +1005,7 @@
       "h1": "無料 オンライン Image Compressor - Reduce File サイズ Instantly",
       "intro": "Compress your images without losing 品質. Our 無料 オンライン compressor reduces file サイズ by up to 80% using advanced browser technology. Perfect for web optimization, emAIl, and storage.",
       "primaryKeyword": "画像圧縮ツール",
-      "secondaryKeywords": [
-        "オンラインで画像を圧縮",
-        "オンライン画像圧縮ツール",
-        "画像を圧縮",
-        "画像圧縮ツール",
-        "画像サイズを削減",
-        "写真圧縮ツール"
-      ],
+      "secondaryKeywords": ["オンラインで画像を圧縮", "オンライン画像圧縮ツール", "画像を圧縮", "画像圧縮ツール", "画像サイズを削減", "写真圧縮ツール"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "画像圧縮ツール",
@@ -1167,13 +1140,7 @@
       "h1": "無料 PNG to JPG Converter - Convert Images Instantly",
       "intro": "Convert PNG images to JPG フォーマット in seconds. Our 無料 オンライン converter works entirely in your browser with アップロード不要. Perfect for reducing file サイズs and ensuring compatibility.",
       "primaryKeyword": "pngからjpgへ",
-      "secondaryKeywords": [
-        "pngをjpgに変換",
-        "pngからjpegへ",
-        "pngからjpg変換",
-        "オンラインでpngからjpgへ",
-        "pngをjpegに変換"
-      ],
+      "secondaryKeywords": ["pngをjpgに変換", "pngからjpegへ", "pngからjpg変換", "オンラインでpngからjpgへ", "pngをjpegに変換"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "PNGからJPGへのコンバーター",
@@ -1197,18 +1164,18 @@
         },
         {
           "title": "瞬時変換",
-          "description": "Convert PNG to JPG in under a second. No wAIting, no queues, all processing happens in your browser."
+          "description": "1秒以内でPNGをJPGに変換。待機時間やキューはなく、すべての処理はブラウザ内で行われます。"
         },
         {
           "title": "フォーマット Inフォーマットion",
           "description": "See file サイズ changes before and after conversion. Understand the trade-offs between PNG and JPG."
         },
         {
-          "title": "Universal Compatibility",
+          "title": "ユニバーサル互換性",
           "description": "JPG フォーマット works everywhere - social media, emAIl, older software, and all devices."
         },
         {
-          "title": "Private & Secure",
+          "title": "プライベート＆セキュア",
           "description": "Images never leave your browser. Complete プライバシー with client-side processing."
         }
       ],
@@ -1216,51 +1183,51 @@
         {
           "title": "Reduce File サイズs",
           "description": "PNG files are much larger than JPG. Convert to reduce file サイズs by 70% or more.",
-          "example": "Convert a 5MB PNG screenshot to a 600KB JPG for emAIl"
+          "example": "メール用に5MBのPNGスクリーンショットを600KBのJPGに変換"
         },
         {
-          "title": "Social Media Uploads",
+          "title": "ソーシャルメディア投稿",
           "description": "Many platforms prefer JPG フォーマット for photos. Convert PNGs for faster uploads and better compatibility.",
           "example": "Convert Instagram photos from PNG to JPG for optimal サイズ"
         },
         {
-          "title": "Website Optimization",
+          "title": "ウェブサイト最適化",
           "description": "JPG files load faster than PNG for photographs, improving website パフォーマンス.",
-          "example": "Convert product photos from PNG to JPG to improve page speed"
+          "example": "ページ速度を向上させるために商品写真をPNGからJPGに変換"
         },
         {
-          "title": "Printing",
+          "title": "印刷",
           "description": "Most print services prefer JPG フォーマット. Convert graphics and photos for printing.",
-          "example": "Prepare images for photo printing at CVS, Walgreens, etc."
+          "example": "CVS、Walgreensなどでの写真印刷用に画像を準備"
         }
       ],
       "benefits": [
         {
           "title": "Massive File サイズ Reduction",
-          "description": "JPG files are typically 70-90% smaller than PNG for photographs and complex images.",
-          "metric": "Up to 90% smaller"
+          "description": "JPGファイルは、写真や複雑な画像の場合、PNGよりも70〜90%小さいサイズになります。",
+          "metric": "最大90%削減"
         },
         {
-          "title": "Better Compatibility",
-          "description": "JPG works everywhere - all devices, software, and platforms support it fully.",
-          "metric": "100% compatible"
+          "title": "より良い互換性",
+          "description": "JPGはどこでも動作します - すべてのデバイス、ソフトウェア、プラットフォームで完全にサポートされています。",
+          "metric": "100%互換"
         },
         {
-          "title": "Full Control",
+          "title": "フルコントロール",
           "description": "Choose background color for transparency and adjust 品質 for the perfect balance.",
-          "metric": "Your settings"
+          "metric": "あなたの設定"
         }
       ],
       "howItWorks": [
         {
           "step": 1,
-          "title": "Upload PNG Image",
-          "description": "Select or drag your PNG file. Supports transparent PNGs and all PNG variations."
+          "title": "PNG画像をアップロード",
+          "description": "PNGファイルを選択またはドラッグ。透明なPNGとすべてのPNGバリエーションをサポート。"
         },
         {
           "step": 2,
-          "title": "Choose Background Color",
-          "description": "If your PNG has transparency, select a background color (white, black, or custom). JPG doesn't support transparency."
+          "title": "背景色を選択",
+          "description": "PNGに透明性がある場合、背景色（白、黒、またはカスタム）を選択します。JPGは透明性をサポートしていません。"
         },
         {
           "step": 3,
@@ -1269,25 +1236,25 @@
         },
         {
           "step": 4,
-          "title": "Download JPG",
+          "title": "JPGをダウンロード",
           "description": "Convert and download your JPG file. See file サイズ 比較 before downloading."
         }
       ],
       "faq": [
         {
-          "question": "Why convert PNG to JPG?",
+          "question": "なぜPNGをJPGに変換するのですか？",
           "answer": "JPG files are much smaller than PNG for photos and complex images. PNG is 最高 for graphics with transparency or text, while JPG is better for photographs, reducing file サイズs by 70-90%."
         },
         {
-          "question": "What happens to transparent backgrounds?",
-          "answer": "JPG doesn't support transparency. Our tool lets you choose a background color (white, black, or custom) to fill transparent areas. This gives you full control over the final appearance."
+          "question": "透明な背景はどうなりますか？",
+          "answer": "JPGは透明性をサポートしていません。当ツールでは、背景色（白、黒、またはカスタム）を選択して透明な領域を埋めることができます。これにより、最終的な見た目を完全にコントロールできます。"
         },
         {
           "question": "Will I lose 品質 converting PNG to JPG?",
           "answer": "PNG is lossless, while JPG uses compression. At 85-95% 品質 settings, 品質 loss is minimal and usually imperceptible. The file サイズ savings are worth the tiny 品質 trade-off for most uses."
         },
         {
-          "question": "Can I convert JPG back to PNG?",
+          "question": "JPGをPNGに戻すことはできますか？",
           "answer": "Yes! Our フォーマット converter also handles JPG to PNG conversion. However, converting JPG to PNG won't recover transparency or improve 品質 - it just changes the フォーマット."
         },
         {
@@ -1308,13 +1275,7 @@
       "h1": "無料 JPG to PNG Converter - Convert Images Instantly",
       "intro": "Convert JPG images to PNG フォーマット in seconds. Perfect for adding transparency support or preserving 品質. Our 無料 converter works entirely in your browser.",
       "primaryKeyword": "jpgをpngに",
-      "secondaryKeywords": [
-        "jpgをpngに変換",
-        "jpegをpngに",
-        "jpgからpng変換",
-        "オンラインでjpgからpngへ",
-        "jpegをpngに変換"
-      ],
+      "secondaryKeywords": ["jpgをpngに変換", "jpegをpngに", "jpgからpng変換", "オンラインでjpgからpngへ", "jpegをpngに変換"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "JPGからPNGへのコンバーター",
@@ -1445,13 +1406,7 @@
       "h1": "無料 WebP to JPG Converter - Convert Images Instantly",
       "intro": "Convert WebP images to universally compatible JPG フォーマット. Perfect for sharing images with older software or devices that don't support WebP.",
       "primaryKeyword": "webpをjpgに",
-      "secondaryKeywords": [
-        "webpをjpgに変換",
-        "webpをjpegに",
-        "webp to jpg変換ツール",
-        "webpをjpgにオンラインで",
-        "webpをjpegに変換"
-      ],
+      "secondaryKeywords": ["webpをjpgに変換", "webpをjpegに", "webp to jpg変換ツール", "webpをjpgにオンラインで", "webpをjpegに変換"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "WebP to JPG変換ツール",
@@ -1493,33 +1448,33 @@
       "useCases": [
         {
           "title": "メール添付",
-          "description": "WebP isn't always viewable in emAIl clients - convert to JPG for compatibility.",
-          "example": "Convert downloaded web images for emAIl sharing"
+          "description": "WebPはメールクライアントで常に表示できるとは限りません - 互換性のためにJPGに変換してください。",
+          "example": "ダウンロードしたウェブ画像をメール共有用に変換"
         },
         {
-          "title": "Older Software",
+          "title": "古いソフトウェア",
           "description": "Many programs don't support WebP. Convert for compatibility with older ツール.",
-          "example": "Open WebP images in older versions of Photoshop"
+          "example": "古いバージョンのPhotoshopでWebP画像を開く"
         },
         {
-          "title": "Social Media",
-          "description": "Some platforms handle JPG better than WebP. Convert for reliable uploads.",
-          "example": "Prepare web-saved images for Facebook posting"
+          "title": "ソーシャルメディア",
+          "description": "一部のプラットフォームでは、WebPよりもJPGの方が適切に処理されます。確実なアップロードのために変換してください。",
+          "example": "ウェブから保存した画像をFacebook投稿用に準備"
         },
         {
-          "title": "Printing",
-          "description": "Print services typically prefer JPG. Convert WebP images for printing.",
-          "example": "Prepare website images for physical printing"
+          "title": "印刷",
+          "description": "印刷サービスは通常、JPGを推奨します。印刷用にWebP画像を変換してください。",
+          "example": "ウェブサイト画像を物理印刷用に準備"
         }
       ],
       "benefits": [
         {
-          "title": "Works Everywhere",
+          "title": "どこでも動作",
           "description": "JPG is the most universally supported image フォーマット across all devices.",
-          "metric": "100% compatible"
+          "metric": "100%互換"
         },
         {
-          "title": "Easy Sharing",
+          "title": "簡単な共有",
           "description": "Share converted images with anyone without フォーマット compatibility issues.",
           "metric": "普遍的なアクセス"
         },
@@ -1582,12 +1537,7 @@
       "h1": "無料 WebP to PNG Converter - Convert Images Instantly",
       "intro": "Convert WebP images to PNG フォーマット. Preserve transparency and get lossless 品質 perfect for editing. Works entirely in your browser.",
       "primaryKeyword": "webpからpngへ",
-      "secondaryKeywords": [
-        "webpをpngに変換",
-        "webpからpng変換",
-        "オンラインでwebpからpngへ",
-        "webp png変換"
-      ],
+      "secondaryKeywords": ["webpをpngに変換", "webpからpng変換", "オンラインでwebpからpngへ", "webp png変換"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "WebPからPNGへのコンバーター",
@@ -1638,29 +1588,29 @@
           "example": "編集用に透明度のあるロゴを変換"
         },
         {
-          "title": "Archival",
-          "description": "Convert to lossless PNG for long-term image storage.",
+          "title": "アーカイブ",
+          "description": "長期保存用のロスレスPNGに変換します。",
           "example": "Archive important images without 品質 loss"
         },
         {
-          "title": "Software Compatibility",
+          "title": "ソフトウェア互換性",
           "description": "Use PNG when your software doesn't support WebP フォーマット.",
-          "example": "Open WebP in older image editors"
+          "example": "古い画像エディタでWebPを開く"
         }
       ],
       "benefits": [
         {
-          "title": "Keeps Transparency",
-          "description": "Unlike JPG, PNG preserves any transparency from your WebP.",
-          "metric": "Full alpha support"
+          "title": "透明性を維持",
+          "description": "JPGとは異なり、PNGはWebPの透明性を保持します。",
+          "metric": "完全なアルファサポート"
         },
         {
           "title": "Lossless フォーマット",
-          "description": "PNG doesn't add compression artifacts to your images.",
+          "description": "PNGは画像に圧縮アーティファクトを追加しません。",
           "metric": "Zero 品質 loss"
         },
         {
-          "title": "Universal Support",
+          "title": "ユニバーサルサポート",
           "description": "PNGは事実上すべてのソフトウェアとプラットフォームで動作します。",
           "metric": "幅広い互換性"
         }
@@ -1718,13 +1668,7 @@
       "h1": "無料 JPG to WebP Converter - Optimize Images Instantly",
       "intro": "Convert JPG images to WebP フォーマット for 25-35% smaller files with equal 品質. Perfect for web optimization. Works entirely in your browser.",
       "primaryKeyword": "jpgをwebpに",
-      "secondaryKeywords": [
-        "jpgをwebpに変換",
-        "jpegをwebpに",
-        "jpg to webp変換ツール",
-        "jpgをwebpにオンラインで",
-        "jpegをwebpに変換"
-      ],
+      "secondaryKeywords": ["jpgをwebpに変換", "jpegをwebpに", "jpg to webp変換ツール", "jpgをwebpにオンラインで", "jpegをwebpに変換"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "JPGからWebPへのコンバーター",
@@ -1855,12 +1799,7 @@
       "h1": "無料 PNG to WebP Converter - Optimize Images Instantly",
       "intro": "Convert PNG images to WebP フォーマット for smaller files while preserving transparency. Perfect for web optimization. Works entirely in your browser.",
       "primaryKeyword": "pngをwebpに",
-      "secondaryKeywords": [
-        "pngをwebpに変換",
-        "png to webp変換ツール",
-        "pngをwebpにオンラインで",
-        "png webp変換ツール"
-      ],
+      "secondaryKeywords": ["pngをwebpに変換", "png to webp変換ツール", "pngをwebpにオンラインで", "png webp変換ツール"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "PNG to WebP変換ツール",
@@ -1991,13 +1930,7 @@
       "h1": "無料 一括画像圧縮ツール - Optimize Multiple Photos",
       "intro": "Compress multiple images at once without losing 品質. Our 無料 bulk compressor reduces file サイズs by up to 80% using advanced browser technology. Download as ZIP.",
       "primaryKeyword": "バッチ画像圧縮",
-      "secondaryKeywords": [
-        "バッチ画像圧縮",
-        "一括画像最適化",
-        "複数画像を圧縮",
-        "大量画像圧縮",
-        "バッチ写真圧縮"
-      ],
+      "secondaryKeywords": ["バッチ画像圧縮", "一括画像最適化", "複数画像を圧縮", "大量画像圧縮", "バッチ写真圧縮"],
       "lastUpdated": "2025-12-26T00:00:00Z",
       "category": "ツール",
       "toolName": "一括画像圧縮ツール",
@@ -2046,56 +1979,56 @@
         {
           "title": "メール添付",
           "description": "Send multiple photos via emAIl without hitting attachment サイズ limits.",
-          "example": "Compress a photo album from 20MB to 4MB for emAIl"
+          "example": "メール用に20MBのフォトアルバムを4MBに圧縮"
         },
         {
-          "title": "Cloud Storage Savings",
-          "description": "Compress photo backups before uploading to cloud storage to save space and costs.",
-          "example": "Compress 500 vacation photos from 10GB to 2GB before backup"
+          "title": "クラウドストレージの節約",
+          "description": "スペースとコストを節約するために、クラウドストレージにアップロードする前に写真バックアップを圧縮します。",
+          "example": "バックアップ前に500枚の旅行写真を10GBから2GBに圧縮"
         }
       ],
       "benefits": [
         {
-          "title": "Massive Time Savings",
-          "description": "Compress up to 20 images at once instead of processing them individually.",
-          "metric": "20x faster workflow"
+          "title": "大幅な時間節約",
+          "description": "1つずつ処理する代わりに、最大20枚の画像を一度に圧縮できます。",
+          "metric": "20倍速いワークフロー"
         },
         {
           "title": "Consistent 品質",
-          "description": "Apply the same compression settings to all images for uniform results across your project.",
+          "description": "プロジェクト全体で一貫した結果を得るために、すべての画像に同じ圧縮設定を適用します。",
           "metric": "Uniform 品質"
         },
         {
           "title": "Up to 80% サイズ Reduction",
           "description": "Reduce image file サイズs dramatically without noticeable 品質 loss using smart compression.",
-          "metric": "80% smaller files"
+          "metric": "80%小さいファイル"
         }
       ],
       "howItWorks": [
         {
           "step": 1,
-          "title": "Upload Multiple Images",
-          "description": "Select or drag up to 20 images. Supports JPEG, PNG, WebP up to 25MB each. Processing stays in your browser."
+          "title": "複数の画像をアップロード",
+          "description": "最大20枚の画像を選択またはドラッグ。各25MBまでのJPEG、PNG、WebPをサポート。処理はブラウザ内で行われます。"
         },
         {
           "step": 2,
-          "title": "Choose Compression Mode",
+          "title": "圧縮モードを選択",
           "description": "Set a 品質 level (1-100%) or enter a target file サイズ in KB. Select output フォーマット (JPEG, PNG, WebP)."
         },
         {
           "step": 3,
-          "title": "Compress All Images",
-          "description": "Click compress and watch as each image is processed. See real-time progress and compression results."
+          "title": "すべての画像を圧縮",
+          "description": "圧縮をクリックして、各画像が処理されるのを確認してください。リアルタイムの進行状況と圧縮結果が表示されます。"
         },
         {
           "step": 4,
-          "title": "Download Results",
-          "description": "Download individual images or get all compressed images as a single ZIP file. See total space saved."
+          "title": "結果をダウンロード",
+          "description": "個々の画像をダウンロードするか、すべての圧縮画像を1つのZIPファイルとして取得できます。節約された合計スペースを確認できます。"
         }
       ],
       "faq": [
         {
-          "question": "How many images can I compress at once?",
+          "question": "一度に何枚の画像を圧縮できますか？",
           "answer": "You can compress up to 20 images at once. This limit ensures optimal browser パフォーマンス while providing efficient batch processing."
         },
         {
@@ -2111,7 +2044,7 @@
           "answer": "WebP offers the 最高 compression (25-35% smaller than JPEG) with excellent 品質. JPEG is 最高 for photos and has universal browser support. PNG is lossless but creates larger files."
         },
         {
-          "question": "Are my images uploaded to your servers?",
+          "question": "画像はサーバーにアップロードされますか？",
           "answer": "No! All compression happens directly in your browser using Canvas API technology. Your images never leave your device, ensuring complete プライバシー."
         },
         {
@@ -2124,7 +2057,7 @@
         },
         {
           "question": "Is there a file サイズ limit?",
-          "answer": "Each image can be up to 25MB. This limit is based on browser memory, not server restrictions (since we don't upload to servers)."
+          "answer": "各画像は最大25MBまでです。この制限はサーバーの制限ではなく、ブラウザのメモリに基づいています（サーバーにアップロードしないため）。"
         }
       ],
       "relatedTools": ["image-compressor", "image-resizer", "jpg-to-webp"],
