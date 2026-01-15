@@ -2,12 +2,12 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
-import React from 'react';
 
 // Mock translations for stripe.cancelSubscription
 const mockTranslations = {
   title: 'Cancel Subscription',
-  description: 'Your plan will remain active until {date}.',
+  info: 'Your {planName} plan will remain active until {formattedEndDate}.',
+  keepAccess: 'You will keep access to all features until the end of your billing period.',
   helpUsImprove: 'Help us improve (optional)',
   reasons: {
     tooExpensive: 'Too expensive',
@@ -17,14 +17,13 @@ const mockTranslations = {
     technicalIssues: 'Technical issues',
     other: 'Other',
   },
-  customReasonPlaceholder: "Please tell us why you're canceling...",
+  otherPlaceholder: "Please tell us why you're canceling...",
   continue: 'Continue',
   keepSubscription: 'Keep Subscription',
   confirmationTitle: 'Are you sure?',
-  confirmationMessage:
-    'Once canceled, you will lose access to all premium features at the end of your billing period.',
+  confirmationText: 'Once canceled, you will lose access to all premium features on {formattedEndDate}.',
   goBack: 'Go Back',
-  confirmCancellation: 'Yes, Cancel Subscription',
+  yesCancel: 'Yes, Cancel Subscription',
   canceling: 'Canceling...',
 };
 
