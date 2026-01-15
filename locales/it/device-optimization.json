@@ -177,7 +177,11 @@
       "h1": "Come Ottimizzare le Immagini per iPhone in 2025",
       "intro": "Guida completa per ottimizzare immagini per iPhone. Impara i migliori formati, dimensioni e tecniche di compressione per prestazioni massime e velocità.",
       "primaryKeyword": "ottimizzazione immagini iphone",
-      "secondaryKeywords": ["formato immagine iphone", "compressione foto iphone", "gestione immagini linux"],
+      "secondaryKeywords": [
+        "formato immagine iphone",
+        "compressione foto iphone",
+        "gestione immagini linux"
+      ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "device-ottimizzazione",
       "platform": "Desktop",
@@ -243,7 +247,7 @@
           "platform": "macOS",
           "techniques": [
             {
-              "technique": "Core Image Framework",
+              "technique": "Framework Core Image",
               "description": "Usa Apple's optimized image processing",
               "implementation": "CIContext, CIFilter, accelerazione GPU"
             },
@@ -306,7 +310,11 @@
         {
           "technique": "Multi-threading",
           "description": "Elabora immagini utilizzando più core CPU",
-          "benefits": ["Elaborazione più veloce", "UI responsiva", "Migliore utilizzo delle risorse"]
+          "benefits": [
+            "Elaborazione più veloce",
+            "UI responsiva",
+            "Migliore utilizzo delle risorse"
+          ]
         },
         {
           "technique": "Accelerazione GPU",
@@ -359,7 +367,11 @@
             "Supporto Livelli",
             "Alta Precisione"
           ],
-          "specificRequirements": ["Modifica non distruttiva", "Efficienza memoria", "Accelerazione GPU"]
+          "specificRequirements": [
+            "Modifica non distruttiva",
+            "Efficienza memoria",
+            "Accelerazione GPU"
+          ]
         },
         {
           "application": "Visualizzatori Immagini",
@@ -369,7 +381,11 @@
             "Prestazioni Zoom",
             "Supporto formato file"
           ],
-          "specificRequirements": ["Gestione Cache", "Caricamento Progressivo", "Memory ottimizzazione"]
+          "specificRequirements": [
+            "Gestione Cache",
+            "Caricamento Progressivo",
+            "Memory ottimizzazione"
+          ]
         },
         {
           "application": "Strumenti di Design",
@@ -418,7 +434,11 @@
       "h1": "Come Ottimizzare le Immagini per Android in 2025",
       "intro": "Guida completa per ottimizzare immagini per Android. Impara i migliori formati, dimensioni e tecniche di compressione per prestazioni massime.",
       "primaryKeyword": "ottimizzazione immagini android",
-      "secondaryKeywords": ["4k tv ottimizzazione", "preparazione immagini HDR", "prestazioni app Smart TV"],
+      "secondaryKeywords": [
+        "4k tv ottimizzazione",
+        "preparazione immagini HDR",
+        "prestazioni app Smart TV"
+      ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "device-ottimizzazione",
       "platform": "Smart TV",
@@ -686,7 +706,11 @@
       "h1": "Come Ottimizzare le Immagini per Tablet in 2025",
       "intro": "Guida completa per ottimizzare immagini per tablet iPad e Android. Impara i migliori formati e tecniche per prestazioni massime.",
       "primaryKeyword": "ottimizzazione immagini tablet",
-      "secondaryKeywords": ["ipad image ottimizzazione", "prestazioni tablet Android", "sviluppo app tablet"],
+      "secondaryKeywords": [
+        "ipad image ottimizzazione",
+        "prestazioni tablet Android",
+        "sviluppo app tablet"
+      ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "device-ottimizzazione",
       "platform": "Tablet",
@@ -762,19 +786,19 @@
       ],
       "resolutionOptimization": [
         {
-          "tablet": "iPad Mini (7.9-8.3\")",
+          "tablet": "iPad Mini (7,9-8,3\")",
           "resolution": "2266x1488 (326 PPI)",
           "ottimizzazione": "Usa @2x and @3x assets, ottimizza for smaller tablet size",
           "optimization": "Usa asset @2x e @3x, ottimizza per dimensioni tablet più piccole"
         },
         {
-          "tablet": "iPad (10.2-10.9\")",
+          "tablet": "iPad (10,2-10,9\")",
           "resolution": "2360x1640 (264 PPI)",
           "ottimizzazione": "Balance image quality and file size for mid-range tablets",
           "optimization": "Bilancia qualità dell'immagine e dimensione del file per tablet di fascia media"
         },
         {
-          "tablet": "iPad Pro (11-12.9\")",
+          "tablet": "iPad Pro (11-12,9\")",
           "resolution": "2732x2048 (264 PPI)",
           "ottimizzazione": "High-risoluzione images for professional Usa cases",
           "optimization": "Immagini ad alta risoluzione per casi d'uso professionali"
@@ -833,17 +857,34 @@
       "tabletUseCases": [
         {
           "useCase": "App Produttività",
-          "optimizationNeeds": ["Immagini documenti", "Grafici e diagrammi", "Icone", "Elementi UI"],
-          "specificRequirements": ["Testo chiaro a qualsiasi zoom", "Aspetto professionale", "Caricamento veloce"]
+          "optimizationNeeds": [
+            "Immagini documenti",
+            "Grafici e diagrammi",
+            "Icone",
+            "Elementi UI"
+          ],
+          "specificRequirements": [
+            "Testo chiaro a qualsiasi zoom",
+            "Aspetto professionale",
+            "Caricamento veloce"
+          ]
         },
         {
           "useCase": "Applicazioni Creative",
           "optimizationNeeds": ["High-risoluzione images", "Supporto livelli", "Capacità modifica"],
-          "specificRequirements": ["Gestione precisione", "Supporto file grandi", "Accuratezza colore"]
+          "specificRequirements": [
+            "Gestione precisione",
+            "Supporto file grandi",
+            "Accuratezza colore"
+          ]
         },
         {
           "useCase": "Contenuto Educativo",
-          "optimizationNeeds": ["Diagrammi e illustrazioni", "Pagine libro testo", "Elementi interattivi"],
+          "optimizationNeeds": [
+            "Diagrammi e illustrazioni",
+            "Pagine libro testo",
+            "Elementi interattivi"
+          ],
           "specificRequirements": ["Leggibilità", "Supporto zoom", "Capacità annotazione"]
         },
         {
@@ -1136,7 +1177,11 @@
         {
           "useCase": "Tracciamento Fitness",
           "optimizationNeeds": ["Icone attività", "Badge risultati", "Immagini progresso"],
-          "specificRequirements": ["Impatto batteria basso", "Caricamento veloce", "Qualità motivazionale"]
+          "specificRequirements": [
+            "Impatto batteria basso",
+            "Caricamento veloce",
+            "Qualità motivazionale"
+          ]
         },
         {
           "useCase": "Monitoraggio Salute",
@@ -1145,13 +1190,25 @@
         },
         {
           "useCase": "Navigazione",
-          "optimizationNeeds": ["Icone mappa", "Frecce direzionali", "Immagini punti di riferimento"],
-          "specificRequirements": ["Riconoscimento rapido", "Significato chiaro", "Low bandlarghezza"]
+          "optimizationNeeds": [
+            "Icone mappa",
+            "Frecce direzionali",
+            "Immagini punti di riferimento"
+          ],
+          "specificRequirements": [
+            "Riconoscimento rapido",
+            "Significato chiaro",
+            "Low bandlarghezza"
+          ]
         },
         {
           "useCase": "Comunicazione",
           "optimizationNeeds": ["Foto contatti", "Emoji", "Allegati messaggi"],
-          "specificRequirements": ["Caricamento veloce", "Privacy", "Lettura rapida a colpo d'occhio"]
+          "specificRequirements": [
+            "Caricamento veloce",
+            "Privacy",
+            "Lettura rapida a colpo d'occhio"
+          ]
         }
       ],
       "bestPractices": [

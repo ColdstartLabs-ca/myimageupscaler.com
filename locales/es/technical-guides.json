@@ -152,7 +152,7 @@
         "estándares de calidad de imagen"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "guias-tecnicas",
       "difficulty": "Principiante",
       "technicalLevel": "Fundamental",
       "sections": [
@@ -239,8 +239,8 @@
           "answer": "Verifica las dimensiones en píxeles y compáralas con tus requisitos de salida deseados. Las calculadoras en línea pueden ayudar a determinar si es adecuado."
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "image-resolution-calculator"],
-      "relatedPages": ["print-production-guide", "digital-image-optimization"],
+      "relatedTools": ["escalador-de-imagenes-ia", "calculadora-de-resolucion-de-imagen"],
+      "relatedPages": ["guia-de-produccion-impresa", "optimizacion-de-imagenes-digitales"],
       "resolutionTable": [
         {
           "application": "Imágenes Web",
@@ -315,7 +315,7 @@
         "mejor formato de imagen"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "guias-tecnicas",
       "difficulty": "Intermedio",
       "technicalLevel": "Completo",
       "sections": [
@@ -504,8 +504,8 @@
           "answer": "La conversión de sin pérdida a sin pérdida preserva la calidad, pero convertir de con pérdida a cualquier formato no restaurará los datos perdidos."
         }
       ],
-      "relatedTools": ["image-format-converter", "image-optimizer"],
-      "relatedPages": ["image-compression-guide", "técnicas-optimización-web"]
+      "relatedTools": ["convertidor-de-formato-de-imagen", "optimizador-de-imagenes"],
+      "relatedPages": ["guia-de-compresion-de-imagenes", "técnicas-optimización-web"]
     },
     {
       "slug": "guía-procesamiento-imagen-lote",
@@ -521,7 +521,7 @@
         "automatización de flujo de trabajo de imagen"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "guias-tecnicas",
       "difficulty": "Avanzado",
       "technicalLevel": "Profesional",
       "sections": [
@@ -640,23 +640,23 @@
         },
         {
           "tool": "Adobe Bridge",
-          "type": "Desktop Application",
-          "bestFor": "Creative professionals, Adobe ecosystem users",
-          "learningCurve": "Moderate",
-          "cost": "Paid"
+          "type": "Aplicación de escritorio",
+          "bestFor": "Profesionales creativos, usuarios del ecosistema Adobe",
+          "learningCurve": "Moderada",
+          "cost": "De pago"
         },
         {
           "tool": "XnView MP",
-          "type": "Desktop Application",
-          "bestFor": "General users, extensive format support",
-          "learningCurve": "Easy",
-          "cost": "Free for personal use"
+          "type": "Aplicación de escritorio",
+          "bestFor": "Usuarios generales, amplio soporte de formatos",
+          "learningCurve": "Fácil",
+          "cost": "Gratis para uso personal"
         },
         {
           "tool": "Cloudinary API",
-          "type": "Cloud Service",
-          "bestFor": "Web applications, automated workflows",
-          "learningCurve": "Moderate",
+          "type": "Servicio en la nube",
+          "bestFor": "Aplicaciones web, flujos de trabajo automatizados",
+          "learningCurve": "Moderada",
           "cost": "Freemium"
         }
       ],
@@ -699,11 +699,14 @@
           "answer": "Implementa preprocesamiento para categorizar imágenes y aplica operaciones apropiadas para cada tipo."
         }
       ],
-      "relatedTools": ["batch-image-upscaler", "image-processor"],
-      "relatedPages": ["automation-workflows", "image-optimization-strategies"]
+      "relatedTools": ["escalador-por-lotes-de-imagenes", "procesador-de-imagenes"],
+      "relatedPages": [
+        "flujos-de-trabajo-de-automatizacion",
+        "estrategias-de-optimizacion-de-imagenes"
+      ]
     },
     {
-      "slug": "color-theory-for-image-enhancement",
+      "slug": "teoria-del-color-para-mejora-de-imagen",
       "title": "Teoría del Color para la Mejora de Imágenes",
       "metaTitle": "Teoría del Color para la Mejora de Imágenes | MyImageUpscaler",
       "metaDescription": "Domina la teoría del color para la mejora de imágenes. Aprende corrección de color, gradación de color y técnicas avanzadas de manipulación del color para obtener resultados profesionales.",
@@ -716,7 +719,7 @@
         "manipulación del color de imagen"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "guias-tecnicas",
       "difficulty": "Intermedio",
       "technicalLevel": "Avanzado",
       "sections": [
@@ -885,8 +888,8 @@
           "answer": "Usa 16 bits para edición extensiva de color para evitar bandeo, 8 bits para ajustes menores o preparación de salida final."
         }
       ],
-      "relatedTools": ["color-correction-tool", "image-enhancer"],
-      "relatedPages": ["professional-photo-editing", "color-calibration-guide"]
+      "relatedTools": ["herramienta-de-correccion-de-color", "mejorador-de-imagen"],
+      "relatedPages": ["edicion-fotografica-profesional", "guia-de-calibracion-de-color"]
     },
     {
       "metaTitle": "Compresión de imágenes: Guía técnica | MyImageUpscaler",
@@ -901,7 +904,7 @@
         "reducción de tamaño de archivo"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "guias-tecnicas",
       "difficulty": "Intermedio",
       "technicalLevel": "Técnico",
       "sections": [
@@ -1075,8 +1078,8 @@
           "answer": "La compresión sin pérdida proporciona reducción de tamaño sin pérdida de calidad, pero las relaciones son típicamente de 2:1 a 5:1 comparadas con 10:1+ para compresión con pérdida."
         }
       ],
-      "relatedTools": ["image-optimizer", "image-compressor"],
-      "relatedPages": ["web-performance-optimization", "image-format-guide"],
+      "relatedTools": ["optimizador-de-imagenes", "compresor-de-imagenes"],
+      "relatedPages": ["optimizacion-del-rendimiento-web", "guia-de-formatos-de-imagen"],
       "slug": "tecnicas-compresion-imagenes",
       "title": "Compresión de imágenes: Guía técnica"
     },
@@ -1094,7 +1097,7 @@
         "visión de aprendizaje profundo"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "guias-tecnicas",
       "difficulty": "Avanzado",
       "technicalLevel": "Experto",
       "sections": [
@@ -1227,15 +1230,15 @@
           "applications": ["Mejora con poca luz", "Imágenes médicas", "Fotografía"]
         },
         {
-          "task": "Inpainting",
+          "task": "Inpintado",
           "description": "Rellenar regiones faltantes o dañadas de imágenes",
-          "networks": ["Context Encoders", "Partial Convolutions", "CoModGAN"],
+          "networks": ["Codificadores de Contexto", "Convoluciones Parciales", "CoModGAN"],
           "applications": ["Restauración de fotos", "Eliminación de objetos", "Reparación de daños"]
         },
         {
           "task": "Transferencia de estilo",
           "description": "Aplicar estilos artísticos a imágenes",
-          "networks": ["Neural Style Transfer", "AdaIN", "CycleGAN"],
+          "networks": ["Transferencia de Estilo Neuronal", "AdaIN", "CycleGAN"],
           "applications": [
             "Generación de arte",
             "Aplicaciones de filtros",
@@ -1300,8 +1303,11 @@
           "answer": "Sí, con optimización y selección de modelo apropiadas. Las arquitecturas eficientes y la aceleración por hardware permiten procesamiento en tiempo real para muchas aplicaciones."
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "neural-network-trainer"],
-      "relatedPages": ["deep-learning-basics", "computer-vision-applications"]
+      "relatedTools": ["escalador-de-imagenes-ia", "entrenador-de-redes-neuronales"],
+      "relatedPages": [
+        "conceptos-basicos-de-aprendizaje-profundo",
+        "aplicaciones-de-vision-por-computadora"
+      ]
     },
     {
       "slug": "optimizacion-imagenes-web",
@@ -1317,7 +1323,7 @@
         "carga diferida de imágenes"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "guias-tecnicas",
       "difficulty": "Intermedio",
       "technicalLevel": "Práctico",
       "sections": [
@@ -1525,8 +1531,8 @@
           "answer": "No para imágenes encima del pliegue que deben cargar inmediatamente. Usa carga diferida para imágenes que aparecen debajo del viewport inicial."
         }
       ],
-      "relatedTools": ["image-optimizer", "web-performance-analyzer"],
-      "relatedPages": ["core-web-vitals-guide", "website-speed-optimization"]
+      "relatedTools": ["optimizador-de-imagenes", "analizador-de-rendimiento-web"],
+      "relatedPages": ["guia-de-core-web-vitals", "optimizacion-de-velocidad-del-sitio-web"]
     },
     {
       "secondaryKeywords": [
@@ -1535,7 +1541,7 @@
         "flujo de trabajo de fotografía profesional"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "guias-tecnicas",
       "difficulty": "Intermedio",
       "technicalLevel": "Profesional",
       "sections": [
@@ -1749,8 +1755,8 @@
           "answer": "Usa Lightroom para gestión de flujo y ajustes globales, Photoshop para retoque complejo y composiciones. La mayoría de profesionales usan ambos."
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "photo-editor"],
-      "relatedPages": ["color-correction-guide", "photo-retouching-techniques"],
+      "relatedTools": ["escalador-de-imagenes-ia", "editor-de-fotos"],
+      "relatedPages": ["guia-de-correccion-de-color", "tecnicas-de-retoque-fotografico"],
       "slug": "flujos-de-trabajo-edicion-fotos",
       "title": "Flujos de trabajo de edición de fotos",
       "metaTitle": "Flujos de trabajo de edición de fotos | MyImageUpscaler",
@@ -1774,7 +1780,7 @@
         "escala de imagen con IA"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "guias-tecnicas",
       "difficulty": "Avanzado",
       "technicalLevel": "Técnico",
       "sections": [
@@ -1879,7 +1885,7 @@
         {
           "concept": "Teoría de Convolución",
           "description": "Escalado como convolución con kernels de interpolación",
-          "formula": "output(x) = Σ input(i) × kernel(x-i)"
+          "formula": "salida(x) = Σ entrada(i) × kernel(x-i)"
         },
         {
           "concept": "Función Sinc",
@@ -2008,8 +2014,8 @@
           "answer": "Los métodos de IA sobresalen en ampliaciones significativas pero pueden ser excesivos para ajustes menores. También son más lentos y requieren más recursos."
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "image-rescaler"],
-      "relatedPages": ["image-resolution-guide", "interpolation-methods-comparison"]
+      "relatedTools": ["escalador-de-imagenes-ia", "reescalador-de-imagen"],
+      "relatedPages": ["guia-de-resolucion-de-imagen", "comparacion-de-metodos-de-interpolacion"]
     }
   ],
   "meta": {

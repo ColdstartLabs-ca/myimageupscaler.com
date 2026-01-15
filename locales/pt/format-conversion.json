@@ -1,8 +1,8 @@
 {
-  "category": "tools",
+  "category": "ferramentas",
   "pages": [
     {
-      "slug": "convert-jpeg-to-png",
+      "slug": "converter-jpeg-para-png",
       "title": "Converter JPEG para PNG",
       "metaTitle": "Converter JPEG para PNG | MyImageUpscaler",
       "metaDescription": "Converta arquivos JPEG para o formato PNG online gratuitamente. Conversão de JPG para PNG de alta qualidade com suporte a transparência. Perfeito para logotipos, gráficos e design.",
@@ -17,7 +17,7 @@
         "ferramenta jpeg png"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de JPEG para PNG",
       "description": "Ferramenta profissional de conversão de JPEG para PNG com otimização de qualidade e opções de transparência",
       "isInteractive": true,
@@ -92,11 +92,15 @@
           "answer": "Sim! Nosso conversor oferece níveis de compressão ajustáveis, permitindo que você equilibre o tamanho do arquivo e a qualidade de acordo com suas necessidades específicas."
         }
       ],
-      "relatedTools": ["convert-png-to-jpeg", "convert-webp-to-png", "add-transparency-to-images"],
-      "relatedGuides": ["understanding-image-formats", "when-to-use-png-vs-jpeg"]
+      "relatedTools": [
+        "converter-png-para-jpeg",
+        "converter-webp-para-png",
+        "adicionar-transparencia-a-imagens"
+      ],
+      "relatedGuides": ["entendendo-formatos-de-imagem", "quando-usar-png-ou-jpeg"]
     },
     {
-      "slug": "convert-webp-to-jpeg",
+      "slug": "converter-webp-para-jpeg",
       "title": "Converter WebP para JPEG",
       "metaTitle": "Converter WebP para JPEG | MyImageUpscaler",
       "metaDescription": "Converta imagens WebP para o formato JPEG online gratuitamente. Conversão de WebP para JPG de alta qualidade com compatibilidade universal. Perfeito para imagens web e redes sociais.",
@@ -111,7 +115,7 @@
         "ferramenta de compatibilidade webp"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de WebP para JPEG",
       "description": "Ferramenta rápida de conversão de WebP para JPEG com otimização de qualidade e compatibilidade universal",
       "isInteractive": true,
@@ -177,11 +181,11 @@
           "answer": "Sim! Nossos algoritmos avançados de conversão mantêm a qualidade máxima durante o processo. Embora possa haver diferenças mínimas de qualidade devido às características do formato, otimizamos para a melhor saída JPEG possível."
         }
       ],
-      "relatedTools": ["convert-jpeg-to-webp", "convert-png-to-webp"],
-      "relatedGuides": ["understanding-webp-format", "image-optimization-guide"]
+      "relatedTools": ["converter-jpeg-para-webp", "converter-png-para-webp"],
+      "relatedGuides": ["entendendo-formato-webp", "guia-de-otimizacao-de-imagens"]
     },
     {
-      "slug": "convert-png-to-jpeg",
+      "slug": "converter-png-para-jpeg",
       "title": "Converter PNG para JPEG",
       "metaTitle": "Converter PNG para JPEG | MyImageUpscaler",
       "metaDescription": "Converta imagens PNG para o formato JPEG online gratuitamente. Conversão de PNG para JPG de alta qualidade com otimização de tamanho de arquivo. Perfeito para fotos e imagens web.",
@@ -196,7 +200,7 @@
         "ferramenta de compressão png"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de PNG para JPEG",
       "description": "Ferramenta inteligente de conversão de PNG para JPEG com otimização de qualidade e redução de tamanho de arquivo",
       "isInteractive": true,
@@ -267,11 +271,15 @@
           "answer": "Sim! Nosso conversor oferece configurações de qualidade ajustáveis de 1 a 100, permitindo que você equilibre o tamanho do arquivo e a qualidade da imagem de acordo com suas necessidades."
         }
       ],
-      "relatedTools": ["convert-jpeg-to-png", "convert-png-to-webp", "compress-png-files"],
-      "relatedGuides": ["understanding-image-formats", "image-optimization-guide"]
+      "relatedTools": [
+        "converter-jpeg-para-png",
+        "converter-png-para-webp",
+        "comprimir-arquivos-png"
+      ],
+      "relatedGuides": ["entendendo-formatos-de-imagem", "guia-de-otimizacao-de-imagens"]
     },
     {
-      "slug": "convert-bmp-to-jpeg",
+      "slug": "converter-bmp-para-jpeg",
       "title": "Converter BMP para JPEG",
       "metaTitle": "Converter BMP para JPEG | MyImageUpscaler",
       "metaDescription": "Converta imagens BMP para o formato JPEG online gratuitamente. Reduza o tamanho dos arquivos BMP mantendo a qualidade. Perfeito para arquivos de imagem legados e usuários do Windows.",
@@ -286,7 +294,7 @@
         "conversor de formato legado"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de BMP para JPEG",
       "description": "Conversão eficiente de BMP para JPEG para otimização de imagens legadas",
       "isInteractive": true,
@@ -330,7 +338,7 @@
       }
     },
     {
-      "slug": "convert-gif-to-jpeg",
+      "slug": "converter-gif-para-jpeg",
       "title": "Converter GIF para JPEG",
       "metaTitle": "Converter GIF para JPEG | MyImageUpscaler",
       "metaDescription": "Converta imagens GIF para o formato JPEG online gratuitamente. Converta GIFs estáticos ou extraia quadros de GIFs animados. Perfeito para gráficos e imagens web.",
@@ -344,7 +352,7 @@
         "conversor de gif estático"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de GIF para JPEG",
       "description": "Conversão inteligente de GIF para JPEG para imagens estáticas e extração de quadros",
       "isInteractive": true,
@@ -388,7 +396,7 @@
       }
     },
     {
-      "slug": "convert-svg-to-jpeg",
+      "slug": "converter-svg-para-jpeg",
       "title": "Converter SVG para JPEG",
       "metaTitle": "Converter SVG para JPEG | MyImageUpscaler",
       "metaDescription": "Converta gráficos vetoriais SVG em imagens JPEG online. Conversão de SVG para JPEG de alta qualidade com controle. Perfeito para logotipos e gráficos vetoriais.",
@@ -403,7 +411,7 @@
         "conversor de formato de logotipo"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de SVG para JPEG",
       "description": "Conversão profissional de SVG para JPEG com controle de resolução e otimização de qualidade",
       "isInteractive": true,
@@ -447,7 +455,7 @@
       }
     },
     {
-      "slug": "convert-jpeg-to-webp",
+      "slug": "converter-jpeg-para-webp",
       "title": "Converter JPEG para WebP",
       "metaTitle": "Converter JPEG para WebP | MyImageUpscaler",
       "metaDescription": "Converta imagens JPEG para o formato WebP para melhor otimização web. Conversão de JPG para WebP de alta qualidade com redução de 25-35% no tamanho do arquivo. Perfeito para otimização de sites.",
@@ -462,7 +470,7 @@
         "formato de imagem moderno"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de JPEG para WebP",
       "description": "Conversão moderna de JPEG para WebP para otimização e performance web",
       "isInteractive": true,
@@ -506,7 +514,7 @@
       }
     },
     {
-      "slug": "convert-png-to-webp",
+      "slug": "converter-png-para-webp",
       "title": "Converter PNG para WebP",
       "metaTitle": "Converter PNG para WebP | MyImageUpscaler",
       "metaDescription": "Converta imagens PNG para o formato WebP com suporte a transparência. Conversão de PNG para WebP de alta qualidade para otimização web. Perfeito para logotipos e gráficos.",
@@ -521,7 +529,7 @@
         "imagens de performance web"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de PNG para WebP",
       "description": "Conversão moderna de PNG para WebP com preservação de transparência e otimização",
       "isInteractive": true,
@@ -565,7 +573,7 @@
       }
     },
     {
-      "slug": "convert-webp-to-png",
+      "slug": "converter-webp-para-png",
       "title": "Converter WebP para PNG",
       "metaTitle": "Converter WebP para PNG | MyImageUpscaler",
       "metaDescription": "Converta imagens WebP para o formato PNG online gratuitamente. Conversão de WebP para PNG de alta qualidade com preservação de transparência. Perfeito para edição de imagem sem perdas.",
@@ -580,7 +588,7 @@
         "compatibilidade webp"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de WebP para PNG",
       "description": "Conversão rápida de WebP para PNG com preservação de transparência e qualidade sem perdas",
       "isInteractive": true,
@@ -624,7 +632,7 @@
       }
     },
     {
-      "slug": "convert-svg-to-png",
+      "slug": "converter-svg-para-png",
       "title": "Converter SVG para PNG",
       "metaTitle": "Converter SVG para PNG | MyImageUpscaler",
       "metaDescription": "Converta gráficos vetoriais SVG para o formato PNG online com transparência. Conversão de SVG para PNG de alta qualidade com controle. Perfeito para logotipos e gráficos.",
@@ -639,7 +647,7 @@
         "controle de resolução svg"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Conversor de SVG para PNG",
       "description": "Conversão profissional de SVG para PNG com transparência e controle de resolução",
       "isInteractive": true,

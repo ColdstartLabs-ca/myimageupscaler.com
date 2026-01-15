@@ -31,32 +31,32 @@
           "testResults": [
             {
               "method": "Interpolación Bicúbica",
-              "avgPSNR": "28.4 dB (2x), 24.1 dB (4x)",
-              "avgSSIM": "0.89 (2x), 0.76 (4x)",
+              "avgPSNR": "28,4 dB (2x), 24,1 dB (4x)",
+              "avgSSIM": "0,89 (2x), 0,76 (4x)",
               "strengths": ["Procesamiento rápido", "Resultados predecibles", "Sin artefactos"],
               "weaknesses": ["Bordes suaves", "Pérdida de detalle", "Manejo deficiente del texto"],
               "bestFor": "Aplicaciones en tiempo real, generación de vistas previas"
             },
             {
               "method": "Remuestreo Lanczos",
-              "avgPSNR": "29.1 dB (2x), 25.3 dB (4x)",
-              "avgSSIM": "0.91 (2x), 0.79 (4x)",
+              "avgPSNR": "29,1 dB (2x), 25,3 dB (4x)",
+              "avgSSIM": "0,91 (2x), 0,79 (4x)",
               "strengths": ["Más nítido que bicúbico", "Bueno para imágenes naturales"],
               "weaknesses": ["Artefactos de anillo", "Computacionalmente más pesado"],
               "bestFor": "Fotografía, preparación para impresión"
             },
             {
               "method": "ESRGAN IA",
-              "avgPSNR": "31.2 dB (2x), 27.8 dB (4x)",
-              "avgSSIM": "0.94 (2x), 0.88 (4x)",
+              "avgPSNR": "31,2 dB (2x), 27,8 dB (4x)",
+              "avgSSIM": "0,94 (2x), 0,88 (4x)",
               "strengths": ["Excelente reconstrucción de detalles", "Maneja bien las texturas"],
               "weaknesses": ["Puede sobre-sharpen", "Procesamiento más lento"],
               "bestFor": "Fotografía, mejora artística"
             },
             {
               "method": "Real-ESRGAN",
-              "avgPSNR": "30.8 dB (2x), 27.2 dB (4x)",
-              "avgSSIM": "0.93 (2x), 0.86 (4x)",
+              "avgPSNR": "30,8 dB (2x), 27,2 dB (4x)",
+              "avgSSIM": "0,93 (2x), 0,86 (4x)",
               "strengths": ["Mejora equilibrada", "Bueno con imágenes comprimidas"],
               "weaknesses": ["Requiere ajuste cuidadoso"],
               "bestFor": "Uso general, fuentes comprimidas"
@@ -105,7 +105,7 @@
             {
               "method": "Servicio de IA en la Nube",
               "initialCost": "$0",
-              "perImageCost": "$0.05-0.50",
+              "perImageCost": "$0,05-0,50",
               "monthlyCost": "$20-200",
               "hiddenCosts": "Ancho de banda, límites de tasa de API"
             }
@@ -154,7 +154,7 @@
       ]
     },
     {
-      "slug": "online-vs-desktop-upscalers",
+      "slug": "online-vs-escritorio-upscalers",
       "title": "Escaladores de Imagen en Línea vs de Escritorio: Comparación de Privacidad, Velocidad y Características",
       "metaTitle": "Escaladores de Imagen en Línea vs de Escritorio: Comparación de Privacidad, Velocidad y Características | MyImageUpscaler",
       "metaDescription": "Compara soluciones de escalado de imágenes en línea y de escritorio. Implicaciones de privacidad, velocidades de procesamiento, análisis de costos y comparaciones de características para una toma de decisiones informada.",
@@ -392,7 +392,7 @@
       "testResults": {
         "qualityScores": {
           "freeSolutions": {
-            "averageScore": "6.5/10",
+            "averageScore": "6,5/10",
             "topPerformers": ["MyImageUpscaler Gratis", "BigJPG", "ImgUpscaler"],
             "commonLimitations": [
               "Límites de resolución (2x-4x)",
@@ -402,7 +402,7 @@
             ]
           },
           "paidSolutions": {
-            "averageScore": "8.7/10",
+            "averageScore": "8,7/10",
             "topPerformers": ["MyImageUpscaler Pro", "Topaz Gigapixel", "Adobe Super Resolution"],
             "advantages": [
               "Factores de escala superiores (8x-16x)",
@@ -414,10 +414,10 @@
         },
         "sampleQualityTest": {
           "dataset": "50 imágenes de prueba con varias resoluciones y tipos de contenido",
-          "freeTierAvgPSNR": "27.2 dB",
-          "paidTierAvgPSNR": "30.8 dB",
-          "freeTierAvgSSIM": "0.82",
-          "paidTierAvgSSIM": "0.91"
+          "freeTierAvgPSNR": "27,2 dB",
+          "paidTierAvgPSNR": "30,8 dB",
+          "freeTierAvgSSIM": "0,82",
+          "paidTierAvgSSIM": "0,91"
         }
       },
       "solutionComparison": [
@@ -623,7 +623,7 @@
         "gan upscaling comparison"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "technical",
+      "comparisonType": "técnico",
       "modelCategories": [
         {
           "category": "Modelos Basados en CNN",
@@ -681,8 +681,8 @@
               ],
               "weaknesses": ["Generación de textura limitada", "Puede ser demasiado suave"],
               "performance": {
-                "psnr": "30.8 dB (2x)",
-                "ssim": "0.90",
+                "psnr": "30,8 dB (2x)",
+                "ssim": "0,90",
                 "mos": "4.1/5.0",
                 "processingTime": "1.8s (GPU)"
               },
@@ -709,7 +709,7 @@
                 "Puntuaciones PSNR más bajas"
               ],
               "performance": {
-                "psnr": "26.8 dB (2x)",
+                "psnr": "26,8 dB (2x)",
                 "ssim": "0.78",
                 "mos": "4.0/5.0",
                 "processingTime": "2.5s (GPU)"
@@ -732,10 +732,10 @@
                 "Resultados inconsistentes"
               ],
               "performance": {
-                "psnr": "27.5 dB (2x)",
-                "ssim": "0.84",
-                "mos": "4.3/5.0",
-                "processingTime": "3.5s (GPU)"
+                "psnr": "27,5 dB (2x)",
+                "ssim": "0,84",
+                "mos": "4,3/5,0",
+                "processingTime": "3,5s (GPU)"
               },
               "bestUseCases": ["Fotografía", "Restauración de arte", "Contenido con mucha textura"]
             },
@@ -754,10 +754,10 @@
                 "Puede tener dificultades con fuentes limpias"
               ],
               "performance": {
-                "psnr": "28.2 dB (2x)",
-                "ssim": "0.86",
-                "mos": "4.2/5.0",
-                "processingTime": "2.8s (GPU)"
+                "psnr": "28,2 dB (2x)",
+                "ssim": "0,86",
+                "mos": "4,2/5,0",
+                "processingTime": "2,8s (GPU)"
               },
               "bestUseCases": ["Imágenes web", "Fotogramas de vídeo", "Fuentes comprimidas"]
             }
@@ -783,10 +783,10 @@
                 "Intensivo en memoria"
               ],
               "performance": {
-                "psnr": "31.5 dB (2x)",
-                "ssim": "0.92",
-                "mos": "4.5/5.0",
-                "processingTime": "8.2s (GPU)"
+                "psnr": "31,5 dB (2x)",
+                "ssim": "0,92",
+                "mos": "4,5/5,0",
+                "processingTime": "8,2s (GPU)"
               },
               "bestUseCases": [
                 "Fotografía profesional",
@@ -805,10 +805,10 @@
               ],
               "weaknesses": ["Arquitectura compleja", "Requiere un ajuste cuidadoso"],
               "performance": {
-                "psnr": "31.2 dB (2x)",
-                "ssim": "0.91",
-                "mos": "4.4/5.0",
-                "processingTime": "4.5s (GPU)"
+                "psnr": "31,2 dB (2x)",
+                "ssim": "0,91",
+                "mos": "4,4/5,0",
+                "processingTime": "4,5s (GPU)"
               },
               "bestUseCases": [
                 "Uso profesional general",
@@ -861,42 +861,42 @@
         "results": [
           {
             "model": "Bicubic",
-            "psnr": "24.3 dB",
-            "ssim": "0.75",
-            "time": "0.01s"
+            "psnr": "24,3 dB",
+            "ssim": "0,75",
+            "time": "0,01s"
           },
           {
             "model": "SRCNN",
-            "psnr": "26.8 dB",
-            "ssim": "0.82",
-            "time": "0.5s"
+            "psnr": "26,8 dB",
+            "ssim": "0,82",
+            "time": "0,5s"
           },
           {
             "model": "EDSR",
-            "psnr": "30.2 dB",
-            "ssim": "0.89",
-            "time": "1.2s"
+            "psnr": "30,2 dB",
+            "ssim": "0,89",
+            "time": "1,2s"
           },
           {
             "model": "ESRGAN",
-            "psnr": "27.8 dB",
-            "ssim": "0.85",
-            "mos": "4.3/5",
-            "time": "3.5s"
+            "psnr": "27,8 dB",
+            "ssim": "0,85",
+            "mos": "4,3/5",
+            "time": "3,5s"
           },
           {
             "model": "Real-ESRGAN",
-            "psnr": "28.5 dB",
-            "ssim": "0.86",
-            "mos": "4.2/5",
-            "time": "2.8s"
+            "psnr": "28,5 dB",
+            "ssim": "0,86",
+            "mos": "4,2/5",
+            "time": "2,8s"
           },
           {
             "model": "SwinIR",
-            "psnr": "31.8 dB",
-            "ssim": "0.92",
-            "mos": "4.5/5",
-            "time": "8.2s"
+            "psnr": "31,8 dB",
+            "ssim": "0,92",
+            "mos": "4,5/5",
+            "time": "8,2s"
           }
         ]
       },
@@ -955,16 +955,16 @@
       "metaDescription": "Guía completa de flujos de trabajo de potenciamiento de imagen por lotes. Comparación de automatización de escritorio, API en la nube y soluciones empresariales para procesamiento eficiente en masa.",
       "h1": "Flujos de Trabajo de Potenciamiento de Imagen por Lotes: Guía Completa de Automatización",
       "intro": "Guía de implementación de flujos de trabajo eficientes de potenciamiento por lotes. Cubre automatización de escritorio, API en la nube, soluciones empresariales y prácticas para procesar miles de imágenes.",
-      "primaryKeyword": "batch image upscaling workflow",
+      "primaryKeyword": "flujo de trabajo de aumento de escala de imágenes por lotes",
       "secondaryKeywords": [
-        "bulk image processing",
-        "image upscaling automation",
-        "api batch processing",
-        "enterprise image enhancement",
-        "workflow automation"
+        "procesamiento por lotes de imágenes",
+        "automatización de aumento de escala de imágenes",
+        "procesamiento por lotes API",
+        "mejora de imágenes empresariales",
+        "automatización de flujos de trabajo"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "workflows",
+      "comparisonType": "flujos de trabajo",
       "workflowTypes": [
         {
           "type": "Automatización de escritorio",
@@ -984,13 +984,13 @@
           ],
           "bestFor": ["Estudios de fotografía", "Imprentas", "Procesamiento de datos sensibles"],
           "setupComplexity": "Medio-Alto",
-          "costPerImage": "$0.001-0.01",
+          "costPerImage": "$0,001-0,01",
           "throughput": "100-500 imágenes/hora"
         },
         {
           "type": "Integración con API en la nube",
           "description": "Acceso programático a servicios de ampliación en la nube",
-          "tools": ["APIs REST", "SDKs", "Webhooks"],
+          "tools": ["APIs REST", "SDK", "Webhooks"],
           "pros": [
             "Procesamiento escalable",
             "Sin preocupaciones de hardware",
@@ -1009,7 +1009,7 @@
             "Integración SaaS"
           ],
           "setupComplexity": "Medio",
-          "costPerImage": "$0.05-0.50",
+          "costPerImage": "$0,05-0,50",
           "throughput": "1000-10000 imágenes/hora"
         },
         {
@@ -1034,7 +1034,7 @@
             "Cargas de trabajo variables"
           ],
           "setupComplexity": "Alto",
-          "costPerImage": "$0.02-0.30",
+          "costPerImage": "$0,02-0,30",
           "throughput": "500-5000 imágenes/hora"
         },
         {
@@ -1063,7 +1063,7 @@
             "Organizaciones de atención médica"
           ],
           "setupComplexity": "Alto",
-          "costPerImage": "$0.10-1.00",
+          "costPerImage": "$0,10-1,00",
           "throughput": "10000+ imágenes/hora"
         }
       ],
@@ -1239,7 +1239,7 @@
             "processingTime": "Reducido de 48 horas a 4 horas",
             "cost": "60% reducción vs procesamiento manual",
             "quality": "92% satisfacción del cliente",
-            "uptime": "99.9%"
+            "uptime": "99,9%"
           }
         },
         {
@@ -1440,7 +1440,7 @@
           "answer": "Mejor hardware mejora principalmente la velocidad pero permite el uso de modelos más complejos que pueden proporcionar mejor calidad. El techo es la capacidad del modelo, no el hardware."
         }
       ],
-      "slug": "speed-vs-quality-tradeoffs",
+      "slug": "compromisos-velocidad-vs-calidad",
       "title": "Velocidad vs Calidad en el Escalado con IA: Compromisos y Optimización 2025",
       "metaTitle": "Velocidad vs Calidad en el Escalado con IA: Compromisos y Optimización 2025 | MyImageUpscaler",
       "metaDescription": "Análisis exhaustivo de los compromisos entre velocidad y calidad en el escalado de imágenes con IA. Referencias, estrategias de optimización y recomendaciones para diferentes casos de uso.",
@@ -1455,7 +1455,7 @@
         "análisis de calidad vs velocidad"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "performance",
+      "comparisonType": "rendimiento",
       "performanceQuadrants": [
         {
           "quadrant": "Rápido y Baja Calidad",
@@ -1474,13 +1474,13 @@
           "examples": [
             {
               "method": "Interpolación Bicúbica",
-              "time": "0.2s",
+              "time": "0,2s",
               "quality": "2/10",
               "bestFor": "Vistas previas rápidas"
             },
             {
               "method": "CNN ligera",
-              "time": "0.8s",
+              "time": "0,8s",
               "quality": "4/10",
               "bestFor": "Aplicaciones en tiempo real"
             }
@@ -1499,13 +1499,13 @@
           "examples": [
             {
               "method": "Real-ESRGAN Lite",
-              "time": "2.5s",
+              "time": "2,5s",
               "quality": "7/10",
               "bestFor": "Optimización web"
             },
             {
               "method": "Modelos optimizados para móviles",
-              "time": "1.8s",
+              "time": "1,8s",
               "quality": "6/10",
               "bestFor": "Aplicaciones móviles"
             }
@@ -1525,13 +1525,13 @@
             {
               "method": "ESRGAN",
               "time": "12s",
-              "quality": "8.5/10",
+              "quality": "8,5/10",
               "bestFor": "Fotografía"
             },
             {
               "method": "SwinIR",
               "time": "18s",
-              "quality": "9.5/10",
+              "quality": "9,5/10",
               "bestFor": "Trabajo profesional"
             }
           ]
@@ -1554,7 +1554,7 @@
             {
               "method": "Modelos de conjunto",
               "time": "45s",
-              "quality": "9.8/10",
+              "quality": "9,8/10",
               "bestFor": "Restauración crítica"
             },
             {
@@ -1576,55 +1576,55 @@
         "results": [
           {
             "model": "Bicubic",
-            "time": "0.15s",
-            "psnr": "24.3 dB",
-            "ssim": "0.75",
-            "mos": "2.1/5",
+            "time": "0,15s",
+            "psnr": "24,3 dB",
+            "ssim": "0,75",
+            "mos": "2,1/5",
             "memory": "200MB",
-            "energy": "0.5W"
+            "energy": "0,5W"
           },
           {
             "model": "SRCNN",
-            "time": "0.8s",
-            "psnr": "26.8 dB",
-            "ssim": "0.82",
-            "mos": "3.2/5",
+            "time": "0,8s",
+            "psnr": "26,8 dB",
+            "ssim": "0,82",
+            "mos": "3,2/5",
             "memory": "500MB",
             "energy": "15W"
           },
           {
             "model": "Real-ESRGAN",
-            "time": "2.8s",
-            "psnr": "28.5 dB",
-            "ssim": "0.86",
-            "mos": "4.2/5",
+            "time": "2,8s",
+            "psnr": "28,5 dB",
+            "ssim": "0,86",
+            "mos": "4,2/5",
             "memory": "2GB",
             "energy": "45W"
           },
           {
             "model": "ESRGAN",
-            "time": "3.5s",
-            "psnr": "27.8 dB",
-            "ssim": "0.85",
-            "mos": "4.3/5",
-            "memory": "2.5GB",
+            "time": "3,5s",
+            "psnr": "27,8 dB",
+            "ssim": "0,85",
+            "mos": "4,3/5",
+            "memory": "2,5GB",
             "energy": "55W"
           },
           {
             "model": "SwinIR",
-            "time": "8.2s",
-            "psnr": "31.5 dB",
-            "ssim": "0.92",
-            "mos": "4.5/5",
+            "time": "8,2s",
+            "psnr": "31,5 dB",
+            "ssim": "0,92",
+            "mos": "4,5/5",
             "memory": "6GB",
             "energy": "120W"
           },
           {
             "model": "Ensemble (3 modelos)",
             "time": "24s",
-            "psnr": "32.1 dB",
-            "ssim": "0.93",
-            "mos": "4.6/5",
+            "psnr": "32,1 dB",
+            "ssim": "0,93",
+            "mos": "4,6/5",
             "memory": "8GB",
             "energy": "180W"
           }
@@ -1687,7 +1687,7 @@
       }
     },
     {
-      "slug": "privacy-security-upscaling",
+      "slug": "privacidad-seguridad-upscaling",
       "title": "Privacidad y Seguridad en el Escalado de Imágenes: Guía de Protección de Datos y Cumplimiento 2025",
       "metaTitle": "Privacidad y Seguridad en el Escalado de Imágenes: Guía de Protección de Datos y Cumplimiento 2025 | MyImageUpscaler",
       "metaDescription": "Guía completa de privacidad y seguridad en el escalado de imágenes con IA. Cumplimiento de GDPR, requisitos de HIPAA, protección de datos y prácticas de seguridad para imágenes sensibles.",
@@ -1702,7 +1702,7 @@
         "ia que preserva la privacidad"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "security",
+      "comparisonType": "seguridad",
       "riskCategories": [
         {
           "category": "Riesgos de Privacidad de Datos",

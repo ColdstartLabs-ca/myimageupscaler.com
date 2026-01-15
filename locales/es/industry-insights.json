@@ -677,12 +677,16 @@
         {
           "type": "Fotografía de Boda",
           "description": "Procesar fotos de boda en lote, crear ampliaciones para álbumes, optimizar para varios formatos",
-          "benefits": ["Entrega más rápida", "Mejora de álbum", "Print sales increase"]
+          "benefits": ["Entrega más rápida", "Mejora de álbum", "Aumento en ventas de impresiones"]
         },
         {
-          "type": "Commercial Photography",
+          "type": "Fotografía comercial",
           "description": "Mejorar product shots, create large format prints, optimize for client campaigns",
-          "benefits": ["Commercial clients", "Impresión de gran formato", "Optimización de campaña"]
+          "benefits": [
+            "Clientes comerciales",
+            "Impresión de gran formato",
+            "Optimización de campaña"
+          ]
         },
         {
           "type": "Fotografía de Eventos",
@@ -1018,12 +1022,12 @@
       "primaryKeyword": "travel tourism foto mejora",
       "secondaryKeywords": [
         "destination foto mejora",
-        "travel marketing visuals",
+        "visuales de marketing turístico",
         "hotel imagen optimization"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "industry-insights",
-      "industry": "Travel & Tourism",
+      "industry": "Viajes y Turismo",
       "problem": {
         "title": "The Challenge: Average Fotos Don't Inspire Travel",
         "description": "Las decisiones de viaje son muy visuales. Las fotos pobres o promedio no capturan la belleza del destino, resultando en tasas de reserva más bajas e interés reducido."
@@ -1147,12 +1151,12 @@
       "primaryKeyword": "educational content mejora",
       "secondaryKeywords": [
         "textbook imagen mejora",
-        "learning materials optimization",
+        "optimización de materiales de aprendizaje",
         "educational visual calidad"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "industry-insights",
-      "industry": "Education",
+      "industry": "Educación",
       "problem": {
         "title": "The Challenge: Poor Visual Calidad Hinders Learning",
         "description": "Low-quality educational imágenes diagrams, and illustrations reduce learning effectiveness, student engagement, and educational outcomes."
@@ -1206,12 +1210,12 @@
           "title": "En línea Learning Plataforma",
           "scenario": "Poor course visual calidad affecting completion rates",
           "solution": "IA mejora of all course materials and presentations",
-          "results": "55% improvement in course completion, 45% higher student satisfaction"
+          "results": "55% de mejora en la finalización del curso, 45% mayor satisfacción estudiantil"
         }
       ],
       "educationTypes": {
         "k12": "Mejorar age-appropriate educational materials and illustrations",
-        "higherEducation": "Improve university-level course materials and research visuals",
+        "higherEducation": "Mejorar materiales de cursos universitarios y visuales de investigación",
         "professionalTraining": "Mejorar corporate training and profesional development materials"
       },
       "techniques": [
@@ -1225,7 +1229,7 @@
         },
         {
           "name": "Text Mejora",
-          "description": "Improve readability of text-based educational materials"
+          "description": "Mejorar la legibilidad de materiales educativos basados en texto"
         },
         {
           "name": "Color Mejora",
@@ -1233,16 +1237,16 @@
         }
       ],
       "learningImpact": {
-        "comprehensionImprovement": "30-60% improvement in student comprehension",
-        "engagementIncrease": "40-80% increase in student engagement",
+        "comprehensionImprovement": "30-60% de mejora en la comprensión estudiantil",
+        "engagementIncrease": "40-80% de aumento en la participación estudiantil",
         "retentionImprovement": "25-50% mejor learning retention",
-        "accessibilityEnhancement": "Improved accessibility for diverse learners"
+        "accessibilityEnhancement": "Mejora de la accesibilidad para estudiantes diversos"
       },
       "bestPractices": [
         "Mejorar educational materials without compromising accuracy",
         "Ensure enhanced visuals soporte learning objectives",
-        "Test enhanced materials with target student populations",
-        "Maintain educational appropriateness and standards",
+        "Probar materiales mejorados con poblaciones estudiantiles objetivo",
+        "Mantener la idoneidad y estándares educativos",
         "Uso mejora to clarify, not complicate, educational content"
       ],
       "faq": [
@@ -1297,42 +1301,42 @@
           ]
         },
         {
-          "type": "Awareness Campaigns",
+          "type": "Campañas de concientización",
           "description": "Mejorar awareness materials, improve social media content, create compelling campaign visuals",
-          "benefits": ["Greater reach", "Mejor engagement", "Increased awareness"]
+          "benefits": ["Mayor alcance", "Mejor engagement", "Mayor concientización"]
         },
         {
-          "type": "Annual Reports",
+          "type": "Informes anuales",
           "description": "Mejorar report imágenes improve presentation materials, create profesional annual reports",
           "benefits": [
             "Mejor donor relations",
             "Profesional communication",
-            "Transparency improvement"
+            "Mejora de la transparencia"
           ]
         },
         {
-          "type": "Event Marketing",
+          "type": "Marketing de eventos",
           "description": "Mejorar event fotos improve promotion materials, create compelling event visuals",
-          "benefits": ["Higher attendance", "Mejor engagement", "Community building"]
+          "benefits": ["Mayor asistencia", "Mejor engagement", "Construcción comunitaria"]
         }
       ],
       "caseStudies": [
         {
-          "title": "International Charity",
+          "title": "Organización benéfica internacional",
           "scenario": "Bajo fundraising campaign performance due to poor visuals",
           "solution": "IA mejora of all campaign and donor materials",
-          "results": "80% increase in donations, 65% improvement in campaign reach"
+          "results": "80% de aumento en donaciones, 65% de mejora en el alcance de la campaña"
         },
         {
-          "title": "Local Nonprofit",
+          "title": "Organización sin fines de lucro local",
           "scenario": "Limitado budget for profesional marketing materials",
           "solution": "IA mejora for all promotional and awareness content",
-          "results": "45% increase in community engagement, 30% more volunteer signups"
+          "results": "45% de aumento en la participación comunitaria, 30% más registros de voluntarios"
         }
       ],
       "nonprofitNeeds": {
         "fundraising": "Mejorar donation-focused visuals and campaign materials",
-        "awareness": "Improve social media and public awareness content",
+        "awareness": "Mejorar contenido de redes sociales y concientización pública",
         "reporting": "Crear informes anuales profesionales y visuals de impacto"
       },
       "techniques": [
@@ -1393,15 +1397,15 @@
       "primaryKeyword": "mejora de fabricación industrial",
       "secondaryKeywords": [
         "industrial photography mejora",
-        "manufacturing marketing visuals",
-        "product photography manufacturing"
+        "visuales de marketing manufacturero",
+        "fotografía de productos manufactureros"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "industry-insights",
-      "industry": "Manufacturing",
+      "industry": "Manufactura",
       "problem": {
         "title": "The Challenge: Industrial Environments Are Hard to Fotografía",
-        "description": "Manufacturing facilities and industrial products present photography challenges including poor lighting, complex machinery, and technical details that are difficult to capture effectively."
+        "description": "Las instalaciones de manufactura y productos industriales presentan desafíos fotográficos que incluyen mala iluminación, maquinaria compleja y detalles técnicos difíciles de capturar eficazmente."
       },
       "solution": {
         "title": "IA Mejora Creates Profesional Industrial Visuals",
@@ -1409,37 +1413,33 @@
       },
       "applications": [
         {
-          "type": "Product Photography",
+          "type": "Fotografía de productos",
           "description": "Mejorar manufactured product fotos improve technical details, create profesional product catalogs",
-          "benefits": ["Mejor product presentation", "Technical clarity", "Profesional catalogs"]
+          "benefits": ["Mejor product presentation", "Claridad técnica", "Profesional catalogs"]
         },
         {
-          "type": "Facility Documentation",
+          "type": "Documentación de instalaciones",
           "description": "Mejorar factory fotos improve facility documentation, create profesional site visuals",
           "benefits": [
             "Mejor facility presentation",
             "Profesional documentation",
-            "Client confidence"
+            "Confianza del cliente"
           ]
         },
         {
-          "type": "Marketing Materials",
+          "type": "Materiales de marketing",
           "description": "Mejorar industrial marketing fotos improve trade show materials, create compelling B2B visuals",
-          "benefits": [
-            "Mejor marketing results",
-            "Profesional presentation",
-            "Competitive advantage"
-          ]
+          "benefits": ["Mejor marketing results", "Profesional presentation", "Ventaja competitiva"]
         },
         {
-          "type": "Technical Documentation",
+          "type": "Documentación técnica",
           "description": "Mejorar technical manual fotos improve assembly documentation, create mejor training materials",
-          "benefits": ["Mejor documentation", "Improved training", "Technical clarity"]
+          "benefits": ["Mejor documentation", "Capacitación mejorada", "Claridad técnica"]
         }
       ],
       "caseStudies": [
         {
-          "title": "Manufacturing Company",
+          "title": "Empresa de manufactura",
           "scenario": "Fotografía de productos deficiente que afecta ventas B2B",
           "solution": "Mejora de IA de todas las fotos de producto e instalación",
           "results": "55% aumento en consultas B2B, 40% mejora en tasa de éxito de propuesta"
@@ -1514,8 +1514,8 @@
       "primaryKeyword": "legal documentation mejora",
       "secondaryKeywords": [
         "evidence foto mejora",
-        "court presentation visuals",
-        "legal case documentation"
+        "visuales de presentación judicial",
+        "documentación de casos legales"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "industry-insights",
@@ -1531,45 +1531,45 @@
       },
       "applications": [
         {
-          "type": "Case Documentation",
+          "type": "Documentación de casos",
           "description": "Mejorar case fotos improve documentation clarity, create profesional case files",
           "benefits": [
             "Mejor case organization",
             "Profesional presentation",
-            "Improved client understanding"
+            "Comprensión mejorada del cliente"
           ]
         },
         {
-          "type": "Court Presentations",
+          "type": "Presentaciones judiciales",
           "description": "Mejorar presentation materials, improve courtroom visuals, create compelling case presentations",
           "benefits": [
             "Mejor courtroom effectiveness",
             "Profesional presentation",
-            "Improved juror comprehension"
+            "Comprensión mejorada del jurado"
           ]
         },
         {
-          "type": "Evidence Documentation",
+          "type": "Documentación de evidencias",
           "description": "Mejorar evidence fotos for documentation (not alteration), improve clarity for review",
           "benefits": [
             "Mejor evidence review",
-            "Clearer documentation",
+            "Documentación más clara",
             "Profesional record-keeping"
           ]
         },
         {
-          "type": "Client Communication",
+          "type": "Comunicación con clientes",
           "description": "Mejorar client presentation materials, improve case explanation visuals",
           "benefits": [
             "Mejor client understanding",
             "Profesional communication",
-            "Improved client satisfaction"
+            "Satisfacción mejorada del cliente"
           ]
         }
       ],
       "caseStudies": [
         {
-          "title": "Law Firm",
+          "title": "Bufete de abogados",
           "scenario": "Materiales de presentación de caso deficiente que afectan resultados",
           "solution": "Mejora de IA de todos los visuals de caso y presentación",
           "results": "35% mejora en efectividad de presentación, mejor satisfacción del cliente"
@@ -1659,48 +1659,52 @@
       },
       "applications": [
         {
-          "type": "Action Sports Photography",
+          "type": "Fotografía de deportes de acción",
           "description": "Mejorar sports action shots, improve movement clarity, create stunning athletic moments",
           "benefits": [
             "Mejor action capture",
             "Profesional sports fotos",
-            "Inspiring athletic visuals"
+            "Visuales atléticos inspiradores"
           ]
         },
         {
-          "type": "Fitness Facility Marketing",
+          "type": "Marketing de instalaciones fitness",
           "description": "Mejorar gym fotos improve facility visuals, create compelling fitness marketing",
           "benefits": [
-            "Higher membership",
+            "Mayor membresía",
             "Profesional facility presentation",
             "Mejor marketing results"
           ]
         },
         {
-          "type": "Athletic Performance Documentation",
+          "type": "Documentación del rendimiento atlético",
           "description": "Mejorar performance fotos improve training documentation, create profesional athlete portfolios",
           "benefits": [
             "Mejor athlete promotion",
             "Profesional documentation",
-            "Performance showcase"
+            "Showcase de rendimiento"
           ]
         },
         {
-          "type": "Fitness Content Creation",
+          "type": "Creación de contenido fitness",
           "description": "Mejorar workout fotos improve fitness content, create compelling exercise visuals",
-          "benefits": ["Mejor engagement", "Profesional fitness content", "Audience motivation"]
+          "benefits": [
+            "Mejor engagement",
+            "Profesional fitness content",
+            "Motivación de la audiencia"
+          ]
         }
       ],
       "caseStudies": [
         {
-          "title": "Fitness Chain",
+          "title": "Cadena de gimnasios",
           "scenario": "Poor facility fotos affecting membership sales",
           "solution": "IA mejora of all gym and marketing fotos",
-          "results": "45% increase in membership inquiries, 30% improvement in conversion rates"
+          "results": "45% de aumento en consultas de membresía, 30% de mejora en tasas de conversión"
         },
         {
           "title": "Sports Photography Servicio",
-          "scenario": "Challenging action sports photography conditions",
+          "scenario": "Condiciones desafiantes de fotografía de deportes de acción",
           "solution": "IA mejora workflow for sports photography",
           "results": "60% improvement in foto calidad higher client satisfaction"
         }
@@ -1725,14 +1729,14 @@
         },
         {
           "name": "Energy Mejora",
-          "description": "Create visually energetic and motivating fitness content"
+          "description": "Crear contenido fitness visualmente enérgico y motivador"
         }
       ],
       "engagementImpact": {
-        "membershipIncrease": "35-70% improvement in fitness membership inquiries",
-        "engagementGrowth": "50-100% higher engagement on fitness content",
+        "membershipIncrease": "35-70% de mejora en consultas de membresía fitness",
+        "engagementGrowth": "50-100% mayor participación en contenido fitness",
         "professionalQuality": "Profesional sports photography calidad from challenging conditions",
-        "motivationImpact": "Significant improvement in content motivation and inspiration"
+        "motivationImpact": "Mejora significativa en la motivación e inspiración del contenido"
       },
       "bestPractices": [
         "Mejorar fotos de acción para capturar logro atlético efectivamente",

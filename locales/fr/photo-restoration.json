@@ -427,7 +427,7 @@
           ]
         },
         {
-          "period": "1920s-1940s",
+          "period": "Années 1920-1940",
           "characteristics": [
             "Audace Art déco",
             "Contraintes économiques",
@@ -441,7 +441,7 @@
           ]
         },
         {
-          "period": "1950s-1970s",
+          "period": "Années 1950-1970",
           "characteristics": [
             "Moderne du milieu du siècle",
             "Couleurs vibrantes",
@@ -488,86 +488,104 @@
     },
     {
       "slug": "damaged-photo-repair",
-      "title": "Damaged Photo Repair Techniques",
+      "title": "Techniques de Réparation de Photos Endommagées",
       "metaTitle": "Damaged Photo Repair Guide - Fix Torn, Scratched, Faded Photos",
       "metaDescription": "Complet Guide to damaged Photo repair. Learn to fix torn, scratched, water damaged, and faded Photos using Professionnel restoration techniques and IA Outils.",
       "h1": "Damaged Photo Repair: Professionnel Guide",
       "intro": "Damaged photographs carry irreplaceable memories that deserve Professionnel restoration. This comprehensive Guide covers advanced techniques for repairing various types of Photo damage, from simple scratches to severe tears and water damage.",
-      "primaryKeyword": "damaged photo repair",
+      "primaryKeyword": "réparation de photos endommagées",
       "secondaryKeywords": [
-        "torn photo restoration",
-        "scratched photo fix",
-        "water damaged photo repair"
+        "restauration de photos déchirées",
+        "réparation de photos rayées",
+        "réparation de photos endommagées par leau"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "photo-restoration",
       "difficulty": "Expert",
       "damageTypes": [
-        "Tears & Rips",
-        "Scratches",
-        "Water Damage",
-        "Fading",
-        "Stains",
-        "Mold Damage"
+        "Déchirures",
+        "Rayures",
+        "Dégâts des eaux",
+        "Décoloration",
+        "Taches",
+        "Dégâts de moisissure"
       ],
       "repairWorkflow": [
         {
-          "phase": "Assessment",
+          "phase": "Évaluation",
           "description": "Évaluer minutieusement le type et la gravité des dommages",
-          "actions": ["Document all damage", "Prioritize repairs", "Plan restoration approach"]
+          "actions": [
+            "Documenter tous les dommages",
+            "Prioriser les réparations",
+            "Planifier lapproche de restauration"
+          ]
         },
         {
-          "phase": "Stabilization",
+          "phase": "Stabilisation",
           "description": "Stabiliser la photo et prévenir d'autres dommages",
-          "actions": ["Gentle cleaning", "Flattening", "Environmental control"]
+          "actions": ["Nettoyage doux", "Aplanissement", "Contrôle environnemental"]
         },
         {
-          "phase": "Digitization",
+          "phase": "Numérisation",
           "description": "Créer des copies numériques haute qualité pour les travaux de réparation",
-          "actions": ["High-resolution scanning", "Multiple passes", "Format selection"]
+          "actions": ["Numérisation haute résolution", "Plusieurs passages", "Sélection du format"]
         },
         {
           "phase": "Numérique Repair",
           "description": "Réparer les dommages en utilisant des outils et techniques numériques",
-          "actions": ["Structural repairs", "Color correction", "Detail restoration"]
+          "actions": [
+            "Réparations structurelles",
+            "Correction des couleurs",
+            "Restauration des détails"
+          ]
         },
         {
           "phase": "Amélioration",
-          "description": "Enhance and finalize the restored image",
-          "actions": ["Sharpening", "Color balance", "Final adjustments"]
+          "description": "Améliorer et finaliser limage restaurée",
+          "actions": ["Amélioration de la netteté", "Équilibre des couleurs", "Ajustements finaux"]
         }
       ],
       "specificRepairTechniques": [
         {
-          "damage": "Torn Photos",
+          "damage": "Photos déchirées",
           "techniques": [
             {
               "method": "Numérique Reconstruction",
               "description": "Reconstruire les zones manquantes en utilisant le contenu environnant",
-              "steps": ["Align pieces", "Clone matching areas", "Blend edges", "Rebuild details"]
-            },
-            {
-              "method": "Content-Aware Fill",
-              "description": "Utiliser l'IA pour remplir intelligemment les zones manquantes",
               "steps": [
-                "Select missing areas",
-                "Adjust fill settings",
-                "Refine results",
-                "Blend naturally"
+                "Aligner les pièces",
+                "Cloner les zones correspondantes",
+                "Fondre les bords",
+                "Reconstruire les détails"
               ]
             },
             {
-              "method": "Layered Assembly",
+              "method": "Remplissage conscient du contenu",
+              "description": "Utiliser l'IA pour remplir intelligemment les zones manquantes",
+              "steps": [
+                "Sélectionner les zones manquantes",
+                "Ajuster les paramètres de remplissage",
+                "Affiner les résultats",
+                "Fondre naturellement"
+              ]
+            },
+            {
+              "method": "Assemblage superposé",
               "description": "Assembler numériquement les pièces déchirées comme un puzzle",
-              "steps": ["Separate pieces", "Align edges", "Blend seams", "Smooth transitions"]
+              "steps": [
+                "Séparer les pièces",
+                "Aligner les bords",
+                "Fondre les joints",
+                "Lisser les transitions"
+              ]
             }
           ]
         },
         {
-          "damage": "Scratches and Abrasions",
+          "damage": "Rayures et abrasions",
           "techniques": [
             {
-              "method": "Healing Brush",
+              "method": "Tampon de correction",
               "description": "Échantillonner et mélanger les zones environnantes pour couvrir les rayures",
               "steps": [
                 "Identifier les modèles de rayures",
@@ -599,26 +617,26 @@
           ]
         },
         {
-          "damage": "Water Damage",
+          "damage": "Dégâts des eaux",
           "techniques": [
             {
-              "method": "Color Correction",
+              "method": "Correction des couleurs",
               "description": "Corriger les changements de couleur et les taches des dégâts des eaux",
               "steps": [
-                "Identify stained areas",
-                "Adjust color balance",
-                "Use selective color",
-                "Blend corrections"
+                "Identifier les zones tachées",
+                "Ajuster léquilibre des couleurs",
+                "Utiliser la couleur sélective",
+                "Fondre les corrections"
               ]
             },
             {
-              "method": "Stain Removal",
-              "description": "Remove water stains and discoloration",
+              "method": "Élimination des taches",
+              "description": "Éliminer les taches deau et la décoloration",
               "steps": [
-                "Isolate stained areas",
-                "Use healing tools",
-                "Adjust levels",
-                "Smooth transitions"
+                "Isoler les zones tachées",
+                "Utiliser les outils de correction",
+                "Ajuster les niveaux",
+                "Lisser les transitions"
               ]
             },
             {
@@ -798,15 +816,15 @@
       "metaDescription": "Complet Guide to Photo conservation. Learn proper Photo storage, preservation methods, environmental control, and archival techniques to protect photographs for future generations.",
       "h1": "Photo Conservation: Complet Preservation Guide",
       "intro": "Proper Photo conservation protects precious memories for future generations. This comprehensive Guide covers archival-Qualité storage methods, environmental control, and preservation techniques for both physical and Numérique photographs.",
-      "primaryKeyword": "photo conservation",
+      "primaryKeyword": "conservation des photos",
       "secondaryKeywords": [
-        "photo preservation methods",
-        "archival photo storage",
-        "photograph conservation"
+        "méthodes de préservation des photos",
+        "stockage de photos darchives",
+        "conservation de photographies"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "photo-restoration",
-      "focus": "Prevention and long-term preservation",
+      "focus": "Prévention et préservation à long terme",
       "conservationTypes": [
         "Conservation physique",
         "Préservation numérique",
@@ -1109,15 +1127,15 @@
       "metaDescription": "Complet Guide to family Photo preservation. Learn to organize, restore, digitize, and preserve family Photos and Photo albums for future generations.",
       "h1": "Family Photo Preservation: Complet Guide",
       "intro": "Family Photos capture irreplaceable memories and connections to our past. This comprehensive Guide helps you preserve, organize, and share your family's photographic heritage for future generations.",
-      "primaryKeyword": "family photo preservation",
+      "primaryKeyword": "préservation des photos de famille",
       "secondaryKeywords": [
-        "family photo organization",
-        "photo album preservation",
-        "family history photos"
+        "organisation des photos de famille",
+        "préservation des albums photo",
+        "photos de lhistoire familiale"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "photo-restoration",
-      "focus": "Family heritage and genealogy",
+      "focus": "Patrimoine familial et généalogie",
       "preservationStages": [
         {
           "stage": "Collecte et évaluation",
@@ -1140,30 +1158,40 @@
           ]
         },
         {
-          "stage": "Conservation and Repair",
+          "stage": "Conservation et réparation",
           "description": "Préserver les photos physiques et réparer les dommages",
           "actions": "Proper storage, gentle cleaning, Professionnel repair, environmental control"
         },
         {
-          "stage": "Digitization and Backup",
+          "stage": "Numérisation et sauvegarde",
           "description": "Créer des copies numériques et des systèmes de sauvegarde",
           "actions": [
-            "High-quality scanning",
-            "Multiple backups",
-            "Cloud storage",
-            "Family sharing"
+            "Numérisation haute qualité",
+            "Sauvegardes multiples",
+            "Stockage cloud",
+            "Partage familial"
           ]
         },
         {
-          "stage": "Sharing and Education",
+          "stage": "Partage et éducation",
           "description": "Partager les photos préservées avec les membres de la famille",
-          "actions": ["Family albums", "Digital galleries", "Story telling", "Educational context"]
+          "actions": [
+            "Albums familiaux",
+            "Galeries numériques",
+            "Raconter des histoires",
+            "Contexte éducatif"
+          ]
         }
       ],
       "photoTypes": [
         {
-          "type": "19th Century Photos",
-          "characteristics": ["Daguerreotypes", "Tintypes", "Early paper prints", "Hand coloring"],
+          "type": "Photos du XIXe siècle",
+          "characteristics": [
+            "Daguerréotypes",
+            "Ferrotypes",
+            "Premiers tirages sur papier",
+            "Coloration manuelle"
+          ],
           "challenges": [
             "Matériaux fragiles",
             "Processus uniques",
@@ -1171,13 +1199,23 @@
           ]
         },
         {
-          "type": "Early 20th Century",
-          "characteristics": ["Postcards", "Cabinet cards", "Early snapshots", "Albumen prints"],
+          "type": "Début du XXe siècle",
+          "characteristics": [
+            "Cartes postales",
+            "Cartes de cabinet",
+            "Premiers instantanés",
+            "Tirages à lalbumine"
+          ],
           "challenges": ["Papier acide", "Décoloration", "Dommages d'album", "Mauvais stockage"]
         },
         {
-          "type": "Mid-20th Century",
-          "characteristics": ["35mm snapshots", "Color photos", "Instant photos", "Photo albums"],
+          "type": "Milieu du XXe siècle",
+          "characteristics": [
+            "Instantanés 35mm",
+            "Photos couleur",
+            "Photos instantanées",
+            "Albums photo"
+          ],
           "challenges": [
             "Décoloration des couleurs",
             "Détérioration du plastique",
@@ -1187,10 +1225,10 @@
         {
           "type": "Modern Numérique Photos",
           "characteristics": [
-            "Digital files",
+            "Fichiers numériques",
             "Réseaux sociaux",
-            "Smartphone photos",
-            "Cloud storage"
+            "Photos de smartphone",
+            "Stockage cloud"
           ],
           "challenges": [
             "Obsolescence du format",
@@ -1201,8 +1239,8 @@
       ],
       "organizationMethods": [
         {
-          "method": "Chronological Organization",
-          "description": "Organize photos by date and time period",
+          "method": "Organisation chronologique",
+          "description": "Organiser les photos par date et période",
           "benefits": [
             "Contexte historique",
             "Construction facile de chronologie",
@@ -1211,42 +1249,42 @@
           "implementation": "Tri par décennie, événements majeurs, jalons familiaux"
         },
         {
-          "method": "Family Branch Organization",
+          "method": "Organisation par branche familiale",
           "description": "Organiser par lignées familiales et relations",
           "benefits": ["Suivi généalogique", "Clarté des relations", "Motifs d'héritage"],
           "implementation": "Arbres généalogiques, branches individuelles, photos de groupe"
         },
         {
-          "method": "Event-Based Organization",
+          "method": "Organisation basée sur les événements",
           "description": "Organiser par événements et occasions spécifiques",
           "benefits": ["Narration", "Histoire des événements", "Suivi des célébrations"],
           "implementation": "Mariages, vacances, naissances, remises de diplômes, voyages"
         },
         {
-          "method": "Location-Based Organization",
-          "description": "Organize by geographic locations",
+          "method": "Organisation basée sur le lieu",
+          "description": "Organiser par lieux géographiques",
           "benefits": ["Mouvements familiaux", "Géographie historique", "Histoire de la propriété"],
           "implementation": "Maisons familiales, lieux de vacances, lieux significatifs"
         }
       ],
       "documentationEssentials": [
         {
-          "element": "People Identification",
+          "element": "Identification des personnes",
           "description": "Identifier et documenter toutes les personnes sur les photos",
           "information": ["Noms complets", "Relations", "Âges approximatifs", "Dates de vie"]
         },
         {
-          "element": "Dating and Context",
+          "element": "Datation et contexte",
           "description": "Déterminer quand et où les photos ont été prises",
           "information": ["Date ou période", "Lieu", "Occasion", "Photographe"]
         },
         {
-          "element": "Stories and Memories",
+          "element": "Histoires et souvenirs",
           "description": "Enregistrer les histoires et souvenirs familiaux associés",
           "information": ["Événements", "Traditions", "Émotions", "Contexte culturel"]
         },
         {
-          "element": "Technical Details",
+          "element": "Détails techniques",
           "description": "Documenter les informations techniques et de préservation",
           "information": ["Type de photo", "État", "Besoins de conservation", "Emplacement"]
         }
@@ -1258,93 +1296,105 @@
           "reason": "Capturer les fins détails et permettre les agrandissements futurs"
         },
         {
-          "standard": "Color Depth",
+          "standard": "Profondeur des couleurs",
           "recommendation": "Couleur 48 bits pour les photos couleur, 16 bits niveaux de gris pour N&B",
           "reason": "Capture de détail maximale et flexibilité d'édition"
         },
         {
-          "standard": "File Format",
+          "standard": "Format de fichier",
           "recommendation": "TIFF pour les maîtres d'archivage, JPEG pour les copies d'accès",
           "reason": "Qualité de préservation vs utilisabilité pratique"
         },
         {
-          "standard": "Metadata",
+          "standard": "Métadonnées",
           "recommendation": "Métadonnées IPTC et EXIF complètes avec les informations familiales",
           "reason": "Préserver l'identification et le contexte dans les fichiers"
         }
       ],
       "sharingStrategies": [
         {
-          "strategy": "Family Website",
-          "description": "Create dedicated family photo website",
-          "benefits": ["Centralized access", "Story telling", "Collaborative contributions"],
-          "tools": ["Dedicated hosting", "Photo galleries", "Family forums"]
+          "strategy": "Site Web familial",
+          "description": "Créer un site Web dédié aux photos de famille",
+          "benefits": [
+            "Accès centralisé",
+            "Raconter des histoires",
+            "Contributions collaboratives"
+          ],
+          "tools": ["Hébergement dédié", "Galeries de photos", "Forums familiaux"]
         },
         {
           "strategy": "Numérique Albums",
-          "description": "Create digital photo albums for family members",
-          "benefits": ["Portable sharing", "Printed gifts", "Easy access"],
-          "tools": ["Photo book services", "Digital frames", "Tablet viewing"]
+          "description": "Créer des albums photo numériques pour les membres de la famille",
+          "benefits": ["Partage portable", "Cadeaux imprimés", "Accès facile"],
+          "tools": ["Services de livres photo", "Cadres numériques", "Visualisation sur tablette"]
         },
         {
           "strategy": "Réseaux sociaux Groups",
-          "description": "Use private social media groups for family sharing",
-          "benefits": ["Easy access", "Mobile friendly", "Interactive discussions"],
-          "tools": ["Facebook groups", "WhatsApp", "Family apps"]
+          "description": "Utiliser des groupes de réseaux sociaux privés pour le partage familial",
+          "benefits": ["Accès facile", "Compatible mobile", "Discussions interactives"],
+          "tools": ["Groupes Facebook", "WhatsApp", "Applications familiales"]
         },
         {
-          "strategy": "Cloud Sharing",
-          "description": "Share photos through cloud storage services",
-          "benefits": ["Large file support", "Access control", "Automatic backup"],
-          "tools": ["Google Photos", "Amazon Photos", "Family cloud folders"]
+          "strategy": "Partage cloud",
+          "description": "Partager des photos via des services de stockage cloud",
+          "benefits": [
+            "Support des fichiers volumineux",
+            "Contrôle daccès",
+            "Sauvegarde automatique"
+          ],
+          "tools": ["Google Photos", "Amazon Photos", "Dossiers cloud familiaux"]
         }
       ],
       "familyInvolvement": [
         {
-          "activity": "Photo Identification Parties",
-          "description": "Gather family members to identify people and stories",
-          "benefits": ["Collective memory", "Social bonding", "Story sharing"]
+          "activity": "Fêtes didentification de photos",
+          "description": "Réunir les membres de la famille pour identifier les personnes et les histoires",
+          "benefits": ["Mémoire collective", "Lien social", "Partage dhistoires"]
         },
         {
-          "activity": "Memory Interviews",
-          "description": "Interview older family members about photo context",
-          "benefits": ["Historical context", "Personal stories", "Oral history preservation"]
+          "activity": "Entretiens de mémoire",
+          "description": "Interroger les membres âgés de la famille sur le contexte des photos",
+          "benefits": [
+            "Contexte historique",
+            "Histoires personnelles",
+            "Préservation de lhistoire orale"
+          ]
         },
         {
-          "activity": "Collaborative Tagging",
-          "description": "Enable family members to add tags and information",
-          "benefits": ["Crowdsourced knowledge", "Engagement", "Shared ownership"]
+          "activity": "Étiquetage collaboratif",
+          "description": "Permettre aux membres de la famille dajouter des étiquettes et des informations",
+          "benefits": ["Connaissance participative", "Engagement", "Propriété partagée"]
         },
         {
-          "activity": "Generational Transfer",
-          "description": "Teach younger family members preservation techniques",
-          "benefits": ["Skill transfer", "Continuity", "Future preservation"]
+          "activity": "Transmission intergénérationnelle",
+          "description": "Enseigner aux membres plus jeunes de la famille les techniques de préservation",
+          "benefits": ["Transfert de compétences", "Continuité", "Préservation future"]
         }
       ],
       "preservationChallenges": [
         {
-          "challenge": "Identifying Unknown People",
+          "challenge": "Identifier les personnes inconnues",
           "solution": "Share with extended family, use genealogy resources, compare with known Photos"
         },
         {
-          "challenge": "Damaged or Faded Photos",
+          "challenge": "Photos endommagées ou décolorées",
           "solution": "Professionnel restoration services, IA Amélioration Outils, careful conservation"
         },
         {
-          "challenge": "Scattered Collections",
+          "challenge": "Collections dispersées",
           "solution": "Family outreach, Photo sharing networks, centralized Numérique repository"
         },
         {
-          "challenge": "Technology Obsolescence",
+          "challenge": "Obsolescence technologique",
           "solution": "Plusieurs Format preservation, regular Format migration, cloud storage"
         }
       ],
       "bestPractices": [
-        "Start preservation projects early before further deterioration",
-        "Involve multiple family members in identification and documentation",
-        "Create both physical and digital preservation systems",
-        "Establish clear organization systems that others can understand",
-        "Plan for long-term preservation and accessibility"
+        "Commencer tôt les projets de préservation avant nouvelle détérioration",
+        "Impliquer plusieurs membres de la famille dans lidentification et la documentation",
+        "Créer des systèmes de préservation physiques et numériques",
+        "Établir des systèmes dorganisation clairs que dautres peuvent comprendre",
+        "Planifier la préservation et laccessibilité à long terme"
       ],
       "faq": [
         {
@@ -1353,7 +1403,7 @@
         },
         {
           "question": "What's the Meilleur way to share large family Photo collections?",
-          "answer": "Use a combination of methods: cloud storage for masters, shared galleries for viewing, and printed albums for special occasions. Consider different family members' tech comfort levels."
+          "answer": "Utilisez une combinaison de méthodes : stockage cloud pour les maîtres, galeries partagées pour la visualisation, et albums imprimés pour les occasions spéciales. Considérez les niveaux de confort technologique des différents membres de la famille."
         },
         {
           "question": "How can I get younger family members interested in old Photos?",

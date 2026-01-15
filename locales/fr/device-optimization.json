@@ -287,13 +287,13 @@
       "desktopSpecificFeatures": [
         {
           "feature": "Prise en charge Multi-Moniteur",
-          "description": "Optimize images for different display configurations",
-          "implementation": "DPI awareness, resolution detection"
+          "description": "Optimiser les images pour différentes configurations d'affichage",
+          "implementation": "Prise en charge du DPI, détection de la résolution"
         },
         {
-          "feature": "High-DPI Support",
-          "description": "Support for Retina and 4K+ displays",
-          "implementation": "Vector graphics where possible, high-resolution raster images"
+          "feature": "Prise en charge haute DPI",
+          "description": "Prise en charge des écrans Retina et 4K+",
+          "implementation": "Graphiques vectoriels si possible, images raster haute résolution"
         },
         {
           "feature": "Qualité professionnelle",
@@ -427,8 +427,8 @@
           "answer": "Fournissez des ressources haute résolution (2x, 3x) et utilisez des frameworks UI conscients de la DPI. Envisagez des graphiques vectoriels lorsque cela est possible pour la scalabilité."
         },
         {
-          "question": "What's the best image format for desktop applications?",
-          "answer": "PNG for graphics and transparency, TIFF for professional work, JPEG for photographs. Consider WebP for modern applications with fallback support."
+          "question": "Quel est le meilleur format d'image pour les applications de bureau ?",
+          "answer": "PNG pour les graphismes et la transparence, TIFF pour le travail professionnel, JPEG pour les photographies. Envisagez WebP pour les applications modernes avec prise en charge de secours."
         }
       ],
       "relatedTools": ["desktop-image-processor", "gpu-accelerated-upscaler"],
@@ -436,16 +436,16 @@
     },
     {
       "slug": "smart-tv-image-optimization",
-      "title": "Smart TV Image Optimization",
-      "metaTitle": "Smart TV Image Optimization | MyImageUpscaler",
-      "metaDescription": "Complete guide to Smart TV image optimization. Learn to optimize images for 4K/8K TVs, HDR content, streaming apps, and better viewing experience.",
-      "h1": "Smart TV Image Optimization: Complete Guide",
-      "intro": "Smart TVs present unique optimization challenges with large 4K/8K displays, HDR content requirements, and streaming-focused user experiences. This guide covers comprehensive strategies for TV-optimized image content.",
-      "primaryKeyword": "smart tv image optimization",
+      "title": "Optimisation d'images pour Smart TV",
+      "metaTitle": "Optimisation d'images pour Smart TV | MyImageUpscaler",
+      "metaDescription": "Guide complet de l'optimisation d'images pour Smart TV. Apprenez à optimiser les images pour les TV 4K/8K, le contenu HDR, les applications de streaming et une meilleure expérience de visualisation.",
+      "h1": "Optimisation d'images pour Smart TV : Guide complet",
+      "intro": "Les Smart TV présentent des défis d'optimisation uniques avec leurs grands écrans 4K/8K, les exigences de contenu HDR et les expériences utilisateur axées sur le streaming. Ce guide couvre des stratégies complètes pour le contenu d'images optimisé pour la TV.",
+      "primaryKeyword": "optimisation images smart tv",
       "secondaryKeywords": [
-        "4k tv optimization",
-        "hdr image preparation",
-        "smart tv app performance"
+        "optimisation 4k tv",
+        "préparation images hdr",
+        "performance applications smart tv"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "device-optimization",
@@ -453,12 +453,12 @@
       "tvStandards": ["4K UHD", "8K UHD", "HDR10", "Dolby Vision", "HLG"],
       "uniqueChallenges": [
         {
-          "challenge": "Large Display Sizes",
-          "description": "Images must look good on 55-85+ inch displays where imperfections are more visible."
+          "challenge": "Grandes tailles d'affichage",
+          "description": "Les images doivent paraître bonnes sur des écrans de 55-85+ pouces où les imperfections sont plus visibles."
         },
         {
-          "challenge": "Viewing Distance",
-          "description": "Content is viewed from 8-15 feet away, requiring different optimization approaches."
+          "challenge": "Distance de visualisation",
+          "description": "Le contenu est visualisé à 2,5-4,5 mètres de distance, nécessitant différentes approches d'optimisation."
         },
         {
           "challenge": "Contenu HDR",
@@ -631,18 +631,18 @@
       ],
       "uiConsiderations": [
         {
-          "aspect": "Focus Management",
-          "description": "Clear visual indicators for focused elements",
-          "bestPractice": "High contrast, larger focus states"
+          "aspect": "Gestion du focus",
+          "description": "Indicateurs visuels clairs pour les éléments focalisés",
+          "bestPractice": "Contraste élevé, états de focus plus grands"
         },
         {
-          "aspect": "Text Readability",
-          "description": "Large, clear text for 10-foot viewing",
-          "bestPractice": "Minimum 24pt for body text, higher for headers"
+          "aspect": "Lisibilité du texte",
+          "description": "Texte grand et clair pour une visualisation à 3 mètres",
+          "bestPractice": "Minimum 24pt pour le corps du texte, plus pour les en-têtes"
         },
         {
-          "aspect": "Button Size",
-          "description": "Large touch targets for remote navigation",
+          "aspect": "Taille des boutons",
+          "description": "Grandes cibles tactiles pour la navigation par télécommande",
           "bestPractice": "Minimum 48x48dp pour les éléments interactifs"
         },
         {
@@ -689,11 +689,11 @@
       "metaDescription": "Guide complet de loptimisation dimages pour tablette. Apprenez à optimiser les images pour iPad et tablettes Android, améliorer les performances des applications et gérer différentes orientations.",
       "h1": "Optimisation dImages pour Tablette : Guide des Performances",
       "intro": "Les tablettes combinent des contraintes mobiles avec des écrans plus grands, créant des défis doptimisation uniques. Ce guide couvre des stratégies complètes pour optimiser les images sur iPad et tablettes Android.",
-      "primaryKeyword": "tablet image optimization",
+      "primaryKeyword": "optimisation images tablette",
       "secondaryKeywords": [
-        "ipad image optimization",
-        "android tablet performance",
-        "tablet app development"
+        "optimisation images ipad",
+        "performance tablette android",
+        "développement applications tablette"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "device-optimization",
@@ -741,19 +741,19 @@
               "implementation": "Édition dimages de haute précision, prise en charge du dessin"
             },
             {
-              "technique": "Pro Display Optimization",
-              "description": "Support for ProMotion and high refresh rates",
-              "implementation": "120Hz content optimization, smooth animations"
+              "technique": "Optimisation Pro Display",
+              "description": "Prise en charge de ProMotion et des taux de rafraîchissement élevés",
+              "implementation": "Optimisation du contenu à 120Hz, animations fluides"
             }
           ]
         },
         {
-          "platform": "Android Tablets",
+          "platform": "Tablettes Android",
           "optimizations": [
             {
-              "technique": "Density Buckets",
-              "description": "Provide multiple density variants",
-              "implementation": "ldpi, mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi resources"
+              "technique": "Niveaux de densité",
+              "description": "Fournir plusieurs variantes de densité",
+              "implementation": "Ressources ldpi, mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi"
             },
             {
               "technique": "Prise en charge multi-fenêtres",
@@ -944,24 +944,24 @@
       "deviceTypes": ["Smartwatches", "Fitness Trackers", "Smart Rings", "AR Glasses"],
       "extremeConstraints": [
         {
-          "constraint": "Tiny Displays",
-          "description": "Typically 1-2 inch displays with 240-480px resolution, requiring extremely optimized images."
+          "constraint": "Très petits écrans",
+          "description": "Généralement des écrans de 1-2 pouces avec une résolution de 240-480px, nécessitant des images extrêmement optimisées."
         },
         {
-          "constraint": "Severe Battery Limits",
-          "description": "Every byte transferred and processed impacts battery life significantly."
+          "constraint": "Limites de batterie sévères",
+          "description": "Chaque octet transféré et traité impacte considérablement l'autonomie de la batterie."
         },
         {
-          "constraint": "Minimal Processing",
-          "description": "Very limited CPU and GPU capabilities for image processing."
+          "constraint": "Traitement minimal",
+          "description": "Capacités CPU et GPU très limitées pour le traitement d'images."
         },
         {
-          "constraint": "Low Memory",
-          "description": "Extremely limited RAM for storing and processing images."
+          "constraint": "Mémoire faible",
+          "description": "RAM extrêmement limitée pour stocker et traiter les images."
         },
         {
-          "constraint": "Slow Networks",
-          "description": "Often use Bluetooth LE with very low bandwidth for data transfer."
+          "constraint": "Réseaux lents",
+          "description": "Utilisent souvent Bluetooth LE avec une bande passante très faible pour le transfert de données."
         }
       ],
       "platformSpecific": [
@@ -969,19 +969,19 @@
           "platform": "Apple Watch",
           "optimizations": [
             {
-              "technique": "WatchOS Design Guidelines",
-              "description": "Follow Apple's specific wearable design principles",
-              "implementation": "SF Symbols, dynamic type, high contrast modes"
+              "technique": "Directives de conception WatchOS",
+              "description": "Suivre les principes de conception wearable spécifiques d'Apple",
+              "implementation": "SF Symbols, type dynamique, modes à contraste élevé"
             },
             {
-              "technique": "Complication Images",
-              "description": "Optimize small images for watch face complications",
-              "implementation": "Templates, color requirements, image templates"
+              "technique": "Images de complications",
+              "description": "Optimiser les petites images pour les complications de cadrans de montre",
+              "implementation": "Modèles, exigences de couleur, modèles d'images"
             },
             {
-              "technique": "Digital Crown Interaction",
-              "description": "Design for scrolling and zoom with Digital Crown",
-              "implementation": "Smooth scrolling, zoomable images, gesture handling"
+              "technique": "Interaction Digital Crown",
+              "description": "Concevoir pour le défilement et le zoom avec la Digital Crown",
+              "implementation": "Défilement fluide, images zoomables, gestion des gestes"
             }
           ]
         },
@@ -989,19 +989,19 @@
           "platform": "Wear OS",
           "optimizations": [
             {
-              "technique": "Wear OS UI Patterns",
-              "description": "Use Google's wearable-specific UI components",
+              "technique": "Modèles UI Wear OS",
+              "description": "Utiliser les composants UI spécifiques aux wearables de Google",
               "implementation": "WearableRecyclerView, SwipeDismissFrameLayout"
             },
             {
-              "technique": "Ambient Mode",
-              "description": "Optimize for always-on display modes",
-              "implementation": "Low-power image versions, burn-in protection"
+              "technique": "Mode ambiant",
+              "description": "Optimiser pour les modes d'affichage toujours allumé",
+              "implementation": "Versions d'images basse consommation, protection contre la rémanence"
             },
             {
-              "technique": "Tiles API",
-              "description": "Optimize images for custom watch faces",
-              "implementation": "Tile constraints, resource limits, update strategies"
+              "technique": "API Tiles",
+              "description": "Optimiser les images pour les cadrans de montre personnalisés",
+              "implementation": "Contraintes de tiles, limites de ressources, stratégies de mise à jour"
             }
           ]
         }
@@ -1014,7 +1014,7 @@
             "Ultra": "49mm (410x502)",
             "SE": "44mm (368x448), 40mm (324x394)",
             "colorDepth": "Always-on Retina LTPO OLED",
-            "optimization": "Use SF Symbols where possible, minimal JPEG compression"
+            "optimization": "Utiliser SF Symbols si possible, compression JPEG minimale"
           }
         },
         {
@@ -1023,13 +1023,13 @@
             "Watch 6": "44mm (432x480), 40mm (396x432)",
             "Watch 5 Pro": "45mm (450x450)",
             "colorDepth": "Super AMOLED",
-            "optimization": "Android Wear guidelines, WebP support where available"
+            "optimization": "Directives Android Wear, prise en charge WebP si disponible"
           }
         },
         {
           "device": "Fitness Trackers",
           "specifications": {
-            "Fitbit": "Various (240x240 to 336x336)",
+            "Fitbit": "Divers (240x240 à 336x336)",
             "Garmin": "Divers (176x176 à 280x280)",
             "colorDepth": "Souvent couleur limitée ou monochrome",
             "optimization": "Compression extrême, graphiques simples, profondeur de couleur minimale"

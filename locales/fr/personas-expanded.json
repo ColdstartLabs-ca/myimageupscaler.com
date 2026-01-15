@@ -605,15 +605,15 @@
           "description": "Améliorer les arrière-plans de produits ou préparer pour la suppression d'arrière-plan"
         },
         {
-          "title": "Color Accuracy",
+          "title": "Précision des couleurs",
           "description": "Assurer une représentation des couleurs fidèle à la vie des produits"
         },
         {
-          "title": "Detail Preservation",
+          "title": "Préservation des détails",
           "description": "Améliorer les détails des produits comme les textures, les matériaux et l'artisanat"
         },
         {
-          "title": "Platform Compliance",
+          "title": "Conformité aux plateformes",
           "description": "Générer des images qui répondent aux exigences de taille et de qualité spécifiques à la plateforme"
         }
       ],
@@ -766,16 +766,16 @@
       },
       "automationWorkflows": {
         "bulkProcessing": [
-          "Batch enhancement for new product launches",
+          "Amélioration par lots pour les nouveaux lancements de produits",
           "Optimisation automatisée pour plusieurs canaux de vente",
           "Mises à jour d'amélioration planifiées pour les catalogues saisonniers",
           "Amélioration basée sur des modèles pour une présentation cohérente des produits"
         ],
         "integration": [
           "API integration with e-commerce platforms",
-          "Automated image processing during product uploads",
-          "Connection with inventory management systems",
-          "Integration with marketing automation platforms"
+          "Traitement automatisé des images lors du téléchargement des produits",
+          "Connexion avec les systèmes de gestion des stocks",
+          "Intégration avec les plateformes dautomatisation marketing"
         ]
       },
       "collaborationTips": {
@@ -786,7 +786,7 @@
           "Mettre en œuvre des processus d'examen pour les nouveaux lancements de produits"
         ],
         "vendorManagement": [
-          "Provide clear image requirements to photographers",
+          "Fournir des exigences dimage claires aux photographes",
           "Établir des normes de qualité pour la création de contenu tiers",
           "Créer des directives pour l'amélioration du contenu généré par les utilisateurs",
           "Surveiller les performances des fournisseurs et la cohérence de la qualité"
@@ -849,8 +849,8 @@
         "realty photo enhancement"
       ],
       "lastUpdated": "2025-01-19",
-      "persona": "Real Estate Agents",
-      "industry": "Real Estate",
+      "persona": "Agents immobiliers",
+      "industry": "Immobilier",
       "audience": "Agents immobiliers, courtiers, gestionnaires immobiliers, photographes",
       "painPoints": [
         "Photos de propriété sombre ou mal éclairées",
@@ -925,21 +925,21 @@
       "professionalChallenges": {
         "technical": [
           "Gérer des conditions d'éclairage difficiles dans les espaces intérieurs",
-          "Maintaining consistent quality across diverse property types",
-          "Creating appealing exterior shots in various weather conditions",
-          "Balancing enhancement with realistic property representation"
+          "Maintenir une qualité cohérente entre différents types de propriétés",
+          "Créer des vues extérieures attrayantes dans diverses conditions météorologiques",
+          "Équilibrer lamélioration avec une représentation réaliste de la propriété"
         ],
         "business": [
-          "Competing with professional real estate photographers",
-          "Meeting client expectations for high-quality marketing materials",
-          "Justifying enhancement costs in property marketing budgets",
-          "Differentiating properties in competitive markets"
+          "Concurrence avec les photographes immobiliers professionnels",
+          "Répondre aux attentes des clients pour des supports marketing de haute qualité",
+          "Justifier les coûts damélioration dans les budgets marketing immobiliers",
+          "Différencier les propriétés sur des marchés concurrentiels"
         ],
         "regulatory": [
           "Complying with MLS photo requirements and restrictions",
-          "Avoiding misrepresentation through over-enhancement",
-          "Meeting disclosure requirements for property conditions",
-          "Adhering to local real estate advertising regulations"
+          "Éviter la fausse représentation par un sur-amélioration",
+          "Respecter les exigences de divulgation concernant létat des propriétés",
+          "Se conformer aux réglementations publicitaires immobilières locales"
         ]
       },
       "softwareRecommendations": {
@@ -965,14 +965,14 @@
       },
       "industryBestPractices": {
         "photographyStandards": [
-          "Use wide-angle lenses to showcase room dimensions effectively",
-          "Maintain proper vertical lines to avoid distortion",
-          "Include both wide shots and detail images for complete property view",
-          "Time exterior photography for optimal natural lighting"
+          "Utiliser des objectifs grand-angle pour présenter efficacement les dimensions des pièces",
+          "Maintenir des lignes verticales correctes pour éviter la distorsion",
+          "Inclure à la fois des vues densemble et des images détaillées pour une vue complète de la propriété",
+          "Chronométrer la photographie extérieure pour un éclairage naturel optimal"
         ],
         "enhancementGuidelines": [
-          "Enhance without misrepresenting property condition or features",
-          "Maintain consistent lighting and color across all property photos",
+          "Améliorer sans fausser létat ou les caractéristiques de la propriété",
+          "Maintenir un éclairage et des couleurs cohérents sur toutes les photos de la propriété",
           "Concentrez-vous sur l'amélioration de la qualité technique plutôt que sur la modification de l'apparence",
           "Assurez-vous que les images améliorées représentent encore avec précision la propriété"
         ],
@@ -1103,15 +1103,15 @@
           "answer": "Oui, il fonctionne efficacement pour la photographie immobilière résidentielle, commerciale et de luxe."
         },
         {
-          "question": "Does it comply with MLS requirements?",
+          "question": "Est-ce conforme aux exigences MLS ?",
           "answer": "Absolutely, our enhanced Images meet all major MLS Photo requirements and regulations."
         },
         {
-          "question": "Can it help properties sell faster?",
-          "answer": "Studies show that professional-quality photos can reduce time on market by 30-50% and increase selling prices."
+          "question": "Peut-il aider les propriétés à se vendre plus rapidement ?",
+          "answer": "Des études montrent que des photos de qualité professionnelle peuvent réduire le temps sur le marché de 30 à 50 % et augmenter les prix de vente."
         },
         {
-          "question": "Is it suitable for agents with limited photography experience?",
+          "question": "Est-il adapté aux agents ayant une expérience photographique limitée ?",
           "answer": "Yes, our Outil is designed to help agents at all skill levels achieve Professionnel-Qualité results."
         }
       ]
@@ -1132,11 +1132,11 @@
         "brand content upscaler"
       ],
       "lastUpdated": "2025-01-19",
-      "persona": "Marketing Teams",
-      "industry": "Marketing & Advertising",
-      "audience": "Marketing managers, brand teams, advertising agencies, content creators",
+      "persona": "Équipes marketing",
+      "industry": "Marketing et publicité",
+      "audience": "Responsables marketing, équipes de marque, agences publicitaires, créateurs de contenu",
       "painPoints": [
-        "Inconsistent image quality across campaigns",
+        "Qualité dimage incohérente dune campagne à lautre",
         "Exigences de plusieurs plateformes",
         "Délais de campagne serrés",
         "Défis de cohérence de la marque",
@@ -1477,7 +1477,7 @@
           "Préparation et adaptation du contenu multi-plateforme"
         ],
         "distribution": [
-          "Platform-specific optimization for YouTube, Instagram, TikTok",
+          "Optimisation spécifique par plateforme pour YouTube, Instagram, TikTok",
           "Planification du contenu des réseaux sociaux avec des visuels améliorés",
           "Préparation de newsletter par e-mail avec imagerie améliorée",
           "Optimisation visuelle du contenu du site Web et du blog"
@@ -1568,81 +1568,81 @@
           "YouTube: 1280x720px avec rapport d'aspect 16:9",
           "Custom thumbnails: High-resolution PNG or JPEG",
           "Réseaux sociaux: tailles optimisées spécifiques à la plate-forme",
-          "Stories: 1080x1920px for vertical content"
+          "Stories : 1080x1920px pour le contenu vertical"
         ],
         "content": [
-          "MP4 - Video content with optimal compression",
+          "MP4 - Contenu vidéo avec compression optimale",
           "PNG - Graphics with transparency",
           "JPEG - Optimized photographs and screen captures",
           "GIF - Animated content and reactions"
         ],
         "branding": [
           "SVG - Scalable logos and graphics",
-          "AI - Vector graphics for print materials",
+          "AI - Graphiques vectoriels pour les supports dimpression",
           "PSD - Layered design files for editing",
           "PDF - Media kits and sponsorship materials"
         ]
       },
       "qualityStandards": {
         "thumbnails": {
-          "resolution": "Minimum 1280x720px for quality thumbnails",
+          "resolution": "Minimum 1280x720px pour des miniatures de qualité",
           "compression": "Optimized for Rapide loading without Qualité loss",
-          "color": "High contrast for visibility in small sizes",
-          "text": "Readable and complementing the visual content"
+          "color": "Contraste élevé pour une visibilité en petite taille",
+          "text": "Lisible et complétant le contenu visuel"
         },
         "content": {
-          "videoQuality": "1080p or 4K depending on content type",
-          "audioQuality": "Clear, balanced audio for professional presentation",
-          "graphics": "Crisp, readable text and graphics",
-          "consistency": "Uniform quality across all content"
+          "videoQuality": "1080p ou 4K selon le type de contenu",
+          "audioQuality": "Audio clair et équilibré pour une présentation professionnelle",
+          "graphics": "Texte et graphiques nets et lisibles",
+          "consistency": "Qualité uniforme sur tout le contenu"
         },
         "platform": {
-          "YouTube": "Optimized for both desktop and mobile viewing",
-          "Instagram": "Square and vertical formats for different post types",
+          "YouTube": "Optimisé pour la lecture sur ordinateur et mobile",
+          "Instagram": "Formats carré et vertical pour différents types de publications",
           "TikTok": "Vertical Format optimized for mobile consumption",
-          "Twitch": "Stream overlays optimized for gaming content"
+          "Twitch": "Superpositions de stream optimisées pour le contenu gaming"
         }
       },
       "automationWorkflows": {
         "batchProcessing": [
-          "Create thumbnail templates for consistent brand presentation",
-          "Batch enhance screen captures from gaming footage",
-          "Automated optimization for multiple social platforms",
-          "Scheduled content enhancement for regular posting"
+          "Créer des modèles de miniatures pour une présentation cohérente de la marque",
+          "Amélioration par lots des captures décran de séquences de jeu",
+          "Optimisation automatisée pour plusieurs plateformes sociales",
+          "Amélioration planifiée du contenu pour une publication régulière"
         ],
         "integration": [
-          "Connect with editing software for seamless workflow",
-          "Social media scheduling with enhanced content",
-          "Analytics integration for performance tracking",
-          "Content management system for organized workflow"
+          "Connexion avec des logiciels de montage pour un flux de travail transparent",
+          "Planification des réseaux sociaux avec du contenu amélioré",
+          "Intégration analytique pour le suivi des performances",
+          "Système de gestion de contenu pour un flux de travail organisé"
         ]
       },
       "collaborationTips": {
         "communityBuilding": [
-          "Share enhancement techniques with creator community",
-          "Collaborate with other creators for cross-promotion",
-          "Engage with audience feedback on visual improvements",
-          "Participate in creator forums and networks"
+          "Partager des techniques damélioration avec la communauté de créateurs",
+          "Collaborer avec dautres créateurs pour la promotion croisée",
+          "Engager avec les commentaires de laudience sur les améliorations visuelles",
+          "Participer aux forums et réseaux de créateurs"
         ],
         "professionalGrowth": [
-          "Stay updated on platform algorithm changes",
-          "Test new enhancement techniques and tools",
-          "Analyze performance data for optimization",
-          "Network with brands for sponsored content opportunities"
+          "Rester informé des changements dalgorithmes des plateformes",
+          "Tester de nouvelles techniques et outils damélioration",
+          "Analyser les données de performance pour loptimisation",
+          "Réseauter avec des marques pour des opportunités de contenu sponsorisé"
         ]
       },
       "futureTrends": {
         "technology": [
-          "AI-powered thumbnail generation and optimization",
-          "Real-time enhancement during live streaming",
-          "Interactive content with enhanced visual elements",
+          "Génération et optimisation de miniatures alimentées par lIA",
+          "Amélioration en temps réel pendant le streaming en direct",
+          "Contenu interactif avec des éléments visuels améliorés",
           "AR/VR integration in creator content"
         ],
         "industry": [
-          "Growth in short-form vertical content requiring optimization",
-          "Increased focus on authentic, relatable visual content",
-          "Integration with e-commerce through enhanced product showcases",
-          "Sustainability-focused digital content creation"
+          "Croissance du contenu vertical court nécessitant une optimisation",
+          "Focus accru sur le contenu visuel authentique et accessible",
+          "Intégration avec le-commerce grâce à des présentations de produits améliorées",
+          "Création de contenu numérique axée sur la durabilité"
         ]
       },
       "faq": [
@@ -1651,11 +1651,11 @@
           "answer": "Yes, Professionnel-Qualité thumbnails significantly improve click-through rates and viewer engagement."
         },
         {
-          "question": "Can it help build my personal brand?",
+          "question": "Peut-il aider à construire ma marque personnelle ?",
           "answer": "Absolutely, consistent, high-Qualité visuals help establish and strengthen your personal brand."
         },
         {
-          "question": "Is it suitable for different content types?",
+          "question": "Est-il adapté à différents types de contenu ?",
           "answer": "Yes, our Outil works effectively for gaming, educational, lifestyle, and all content genres."
         },
         {
@@ -1663,11 +1663,11 @@
           "answer": "Our Lot Traitement and templates can reduce Amélioration time to minutes per video, significantly improving efficiency."
         },
         {
-          "question": "Can it help with monetization?",
-          "answer": "Yes, enhanced visuals lead to higher engagement, which directly impacts monetization through ad revenue and sponsorships."
+          "question": "Peut-il aider à la monétisation ?",
+          "answer": "Oui, des visuels améliorés conduisent à un engagement plus élevé, ce qui a un impact direct sur la monétisation grâce aux revenus publicitaires et aux parrainages."
         },
         {
-          "question": "Is it suitable for new creators with limited experience?",
+          "question": "Est-il adapté aux nouveaux créateurs avec une expérience limitée ?",
           "answer": "Absolutely, our Outil is designed to help creators at all levels achieve Professionnel-Qualité results."
         }
       ]
@@ -1688,15 +1688,15 @@
         "game development tools"
       ],
       "lastUpdated": "2025-01-19",
-      "persona": "Game Developers",
-      "industry": "Game Development",
-      "audience": "Game developers, indie studios, artists, texture artists",
+      "persona": "Développeurs de jeux vidéo",
+      "industry": "Développement de jeux vidéo",
+      "audience": "Développeurs de jeux, studios indépendants, artistes, artistes de textures",
       "painPoints": [
-        "Limited resolution in game assets",
-        "Need for high-quality promotional materials",
-        "Pixel art preservation during upscaling",
-        "Multiple platform requirements",
-        "Budget constraints for asset creation"
+        "Résolution limitée des assets de jeu",
+        "Besoin de supports promotionnels de haute qualité",
+        "Préservation de lart pixel pendant le sur-échantillonnage",
+        "Exigences multiples pour les plateformes",
+        "Contraintes budgétaires pour la création dassets"
       ],
       "solutions": [
         {
@@ -1797,48 +1797,48 @@
         "developmentTools": [
           "TexturePacker - Optimisation de la feuille de sprites",
           "RenderDoc - Débogage et optimisation des graphiques",
-          "Luminar AI - AI-powered texture enhancement",
-          "Topaz Gigapixel AI - Specialized upscaling for game assets"
+          "Luminar AI - Amélioration des textures alimentée par lIA",
+          "Topaz Gigapixel AI - Sur-échantillonnage spécialisé pour les assets de jeu"
         ]
       },
       "industryBestPractices": {
         "assetOptimization": [
-          "Create assets at highest resolution first, then optimize down",
-          "Maintain consistent pixel density across related assets",
-          "Test enhanced assets on target platforms early",
-          "Use appropriate compression for different asset types"
+          "Créer des assets à la résolution la plus élevée dabord, puis optimiser à la baisse",
+          "Maintenir une densité de pixels cohérente entre les assets associés",
+          "Tester les assets améliorés sur les plateformes cibles tôt",
+          "Utiliser une compression appropriée pour différents types dassets"
         ],
         "performanceManagement": [
-          "Monitor memory usage with enhanced textures",
-          "Implement asset loading strategies for enhanced content",
-          "Test performance on minimum target specifications",
-          "Balance visual quality with frame rate requirements"
+          "Surveiller lutilisation de la mémoire avec les textures améliorées",
+          "Mettre en œuvre des stratégies de chargement dassets pour le contenu amélioré",
+          "Tester les performances sur les spécifications cibles minimales",
+          "Équilibrer la qualité visuelle avec les exigences de taux dimages"
         ],
         "artDirection": [
-          "Maintain consistent visual style across all enhanced assets",
-          "Document enhancement guidelines for team consistency",
-          "Test enhanced assets in actual game lighting conditions",
-          "Preserve game atmosphere and intended emotional impact"
+          "Maintenir un style visuel cohérent entre tous les assets améliorés",
+          "Documenter les directives damélioration pour la cohérence de léquipe",
+          "Tester les assets améliorés dans les conditions déclairage réelles du jeu",
+          "Préserver latmosphère du jeu et limpact émotionnel prévu"
         ]
       },
       "caseStudies": [
         {
-          "title": "Indie Game Visual Upgrade Success",
+          "title": "Succès de mise à niveau visuelle de jeu indépendant",
           "scenario": "Indie developer upgrading pixel art game for modern high-Résolution displays",
           "solution": "Careful Amélioration maintaining pixel art aesthetics while improving clarity",
-          "results": "4x increase in player engagement and successful port to modern gaming platforms"
+          "results": "Augmentation de 4x de lengagement des joueurs et portage réussi vers les plateformes de jeu modernes"
         },
         {
           "title": "Mobile Game Performance Optimisation",
           "scenario": "Mobile studio improving visual Qualité without performance loss",
           "solution": "Smart Amélioration with automatic Optimisation for different device specifications",
-          "results": "50% improvement in visual quality with maintained 60fps performance on target devices"
+          "results": "Amélioration de 50% de la qualité visuelle avec des performances 60fps maintenues sur les appareils cibles"
         },
         {
           "title": "Steam Store Listing Amélioration",
-          "scenario": "Indie developer improving store presence through enhanced screenshots and materials",
+          "scenario": "Développeur indépendant améliorant sa présence sur le magasin grâce à des captures décran et des documents améliorés",
           "solution": "Professionnel Amélioration of gameplay screenshots and promotional materials",
-          "results": "200% increase in wishlist additions and significantly higher conversion rates"
+          "results": "Augmentation de 200% des ajouts aux listes de souhaits et taux de conversion nettement plus élevés"
         }
       ],
       "fileFormats": {
@@ -1852,52 +1852,52 @@
           "PNG - Maintaining crisp pixel art integrity",
           "GIF - For simple animations and previews",
           "ASE - Aseprite native format for pixel art",
-          "Custom formats for specific game engines"
+          "Formats personnalisés pour des moteurs de jeu spécifiques"
         ],
         "marketing": [
           "JPEG - For screenshots and web marketing",
           "PNG - For crisp marketing graphics",
           "GIF - For animated gameplay previews",
-          "MP4 - For video trailers and gameplay footage"
+          "MP4 - Pour les bandes-annonces vidéo et les séquences de gameplay"
         ]
       },
       "qualityStandards": {
         "resolutions": {
           "pixelArt": "Maintain clean pixel boundaries at display Résolution",
-          "HD": "1920x1080 standard for modern gaming",
-          "4K": "3840x2160 for high-end gaming displays",
-          "mobile": "Optimized for various mobile device resolutions"
+          "HD": "Standard 1920x1080 pour le jeu moderne",
+          "4K": "3840x2160 pour les écrans de jeu haut de gamme",
+          "mobile": "Optimisé pour diverses résolutions dappareils mobiles"
         },
         "performance": {
-          "memoryBudgets": "Stay within platform memory limitations",
+          "memoryBudgets": "Rester dans les limites de mémoire de la plateforme",
           "loadingTimes": "Optimize for Rapide asset loading",
-          "frameRate": "Maintain consistent performance targets",
-          "scalability": "Adapt to different hardware capabilities"
+          "frameRate": "Maintenir des objectifs de performance cohérents",
+          "scalability": "Sadapter aux différentes capacités matérielles"
         },
         "visual": {
           "consistency": "Uniform Qualité across all game assets",
-          "readability": "Clear visibility of important game elements",
-          "atmosphere": "Maintain intended game mood and style",
-          "accessibility": "Clear visual communication for all players"
+          "readability": "Visibilité claire des éléments importants du jeu",
+          "atmosphere": "Maintenir lambiance et le style prévus du jeu",
+          "accessibility": "Communication visuelle claire pour tous les joueurs"
         }
       },
       "automationWorkflows": {
         "batchProcessing": [
-          "Enhance multiple similar assets with consistent settings",
-          "Automate optimization for different platform requirements",
+          "Améliorer plusieurs assets similaires avec des paramètres cohérents",
+          "Automatiser loptimisation pour différentes exigences de plateforme",
           "Batch process UI elements for consistent visual quality",
-          "Create texture atlases from enhanced individual sprites"
+          "Créer des atlas de textures à partir de sprites individuels améliorés"
         ],
         "integration": [
-          "Connect with game engine asset pipelines",
-          "Automate screenshot capture and enhancement for marketing",
-          "Integrate with build processes for asset optimization",
-          "Create automated testing for enhanced asset performance"
+          "Connexion avec les pipelines dassets de moteur de jeu",
+          "Automatiser la capture et lamélioration de captures décran pour le marketing",
+          "Intégrer avec les processus de build pour loptimisation des assets",
+          "Créer des tests automatisés pour les performances des assets améliorés"
         ]
       },
       "collaborationTips": {
         "teamCoordination": [
-          "Establish asset enhancement standards for art team",
+          "Établir des normes damélioration des assets pour léquipe artistique",
           "Créer de la documentation pour les flux de travail d'amélioration",
           "Coordonner entre artistes et programmeurs sur les exigences des actifs",
           "Maintenir le contrôle de version pour les itérations d'actifs améliorés"
@@ -2176,28 +2176,28 @@
       "collaborationTips": {
         "customerRelations": [
           "Fournir une communication claire sur les capacités d'amélioration",
-          "Offer consultation services for optimal print results",
-          "Create educational materials for image submission guidelines",
-          "Build long-term relationships through quality service"
+          "Offrir des services de consultation pour des résultats dimpression optimaux",
+          "Créer du matériel éducatif pour les directives de soumission dimages",
+          "Construire des relations à long terme grâce à un service de qualité"
         ],
         "staffTraining": [
-          "Train staff on enhancement techniques and quality standards",
-          "Create documentation for workflow consistency",
-          "Implement quality control processes across team members",
-          "Stay updated on new printing technologies and enhancement methods"
+          "Former le personnel aux techniques damélioration et aux normes de qualité",
+          "Créer une documentation pour la cohérence du flux de travail",
+          "Mettre en œuvre des processus de contrôle qualité entre les membres de léquipe",
+          "Rester informé des nouvelles technologies dimpression et des méthodes damélioration"
         ]
       },
       "futureTrends": {
         "technology": [
-          "AI-powered automated print optimization",
-          "Real-time enhancement preview for customers",
-          "Cloud-based collaboration with enhanced file sharing",
-          "Integration with 3D printing and specialty printing processes"
+          "Optimisation dimpression automatisée alimentée par lIA",
+          "Aperçu damélioration en temps réel pour les clients",
+          "Collaboration basée sur le cloud avec partage de fichiers amélioré",
+          "Intégration avec limpression 3D et les processus dimpression spécialisés"
         ],
         "industry": [
-          "Growth in personalized and on-demand printing",
-          "Increased focus on sustainable printing practices",
-          "Integration with online design platforms",
+          "Croissance de limpression personnalisée et à la demande",
+          "Focus accru sur les pratiques dimpression durables",
+          "Intégration avec les plateformes de conception en ligne",
           "Expansion sur les marchés de l'impression grand format et spécialisée"
         ]
       },
@@ -2299,22 +2299,22 @@
       ],
       "workflows": {
         "brandDevelopment": [
-          "Logo and branding material enhancement and optimization",
-          "Professional headshots and staff photos for business profiles",
-          "Product and service photography enhancement for marketing",
-          "Consistent visual style development across all business materials"
+          "Amélioration et optimisation des logos et supports de marque",
+          "Photos professionnelles du personnel et portraits pour les profils dentreprise",
+          "Amélioration de la photographie de produits et services pour le marketing",
+          "Développement dun style visuel cohérent entre tous les supports dentreprise"
         ],
         "marketingImplementation": [
-          "Social media content creation and enhancement",
-          "Website visual optimization for professional appearance",
-          "Local business listing photo enhancement",
-          "Print marketing material preparation"
+          "Création et amélioration du contenu pour les réseaux sociaux",
+          "Optimisation visuelle du site web pour une apparence professionnelle",
+          "Amélioration des photos pour les annonces dentreprises locales",
+          "Préparation des supports marketing imprimés"
         ],
         "customerEngagement": [
-          "Enhanced product photography for e-commerce",
-          "Before/after service demonstrations with professional visuals",
-          "Customer testimonial photo enhancement",
-          "Event and milestone documentation enhancement"
+          "Photographie de produits améliorée pour le commerce électronique",
+          "Démonstrations avant/après des services avec des visuels professionnels",
+          "Amélioration des photos de témoignages clients",
+          "Amélioration de la documentation des événements et jalons"
         ],
         "brandBuilding": [
           "Développement de l'identité visuelle et directives de marque",
@@ -2331,22 +2331,22 @@
       },
       "professionalChallenges": {
         "budget": [
-          "Limited marketing budgets for professional photography",
-          "Competing with larger businesses with bigger resources",
+          "Budgets marketing limités pour la photographie professionnelle",
+          "Concurrence avec des entreprises plus importantes ayant plus de ressources",
           "Justifying marketing investments with measurable ROI",
-          "Finding cost-effective solutions for professional appearance"
+          "Trouver des solutions rentables pour une apparence professionnelle"
         ],
         "technical": [
-          "Limited photography equipment and expertise",
-          "Managing multiple marketing channels with consistent quality",
-          "Creating professional content with smartphone photography",
-          "Optimizing visuals for different platform requirements"
+          "Équipement photographique et expertise limités",
+          "Gérer plusieurs canaux marketing avec une qualité cohérente",
+          "Créer du contenu professionnel avec la photographie smartphone",
+          "Optimiser les visuels pour différentes exigences de plateforme"
         ],
         "business": [
-          "Building professional brand image on limited resources",
-          "Standing out in competitive local markets",
-          "Maintaining consistent brand presentation across all touchpoints",
-          "Measuring marketing effectiveness and making data-driven decisions"
+          "Construire une image de marque professionnelle avec des ressources limitées",
+          "Se démarquer sur les marchés locaux concurrentiels",
+          "Maintenir une présentation de marque cohérente à tous les points de contact",
+          "Mesurer lefficacité marketing et prendre des décisions basées sur les données"
         ],
         "resource": [
           "Allocation de budget limité pour le marketing et la conception",
@@ -2369,16 +2369,16 @@
           "Unsplash - Images de stock gratuites de haute qualité"
         ],
         "marketing": [
-          "Mailchimp - Email marketing with professional templates",
-          "Hootsuite - Social media management and scheduling",
-          "Google Business Profile - Local business optimization",
-          "Buffer - Social media analytics and management"
+          "Mailchimp - Marketing par email avec modèles professionnels",
+          "Hootsuite - Gestion et planification des réseaux sociaux",
+          "Google Business Profile - Optimisation des entreprises locales",
+          "Buffer - Gestion et analyse des réseaux sociaux"
         ],
         "productivity": [
-          "Trello - Project management for marketing campaigns",
-          "Asana - Task management and team collaboration",
-          "Google Workspace - Business productivity suite",
-          "Dropbox Business - File sharing and collaboration"
+          "Trello - Gestion de projet pour les campagnes marketing",
+          "Asana - Gestion des tâches et collaboration déquipe",
+          "Google Workspace - Suite de productivité professionnelle",
+          "Dropbox Business - Partage de fichiers et collaboration"
         ],
         "productivityTools": [
           "Canva Pro - Outil de design accessible pour les petites entreprises",
@@ -2389,30 +2389,30 @@
       },
       "industryBestPractices": {
         "brandConsistency": [
-          "Create simple brand guidelines for consistent visual presentation",
-          "Use consistent color schemes and typography across all materials",
-          "Maintain professional quality across all customer touchpoints",
-          "Create templates for recurring marketing needs"
+          "Créer des directives de marque simples pour une présentation visuelle cohérente",
+          "Utiliser des schémas de couleurs et une typographie cohérentes sur tous les supports",
+          "Maintenir une qualité professionnelle à tous les points de contact client",
+          "Créer des modèles pour les besoins marketing récurrents"
         ],
         "costEffectiveMarketing": [
-          "Focus on high-impact, low-cost visual improvements",
-          "Repurpose enhanced content across multiple marketing channels",
-          "Use customer photos and testimonials with professional enhancement",
-          "Leverage local events and community engagement for content creation"
+          "Se concentrer sur les améliorations visuelles à fort impact et faible coût",
+          "Réutiliser le contenu amélioré sur plusieurs canaux marketing",
+          "Utiliser les photos et témoignages clients avec une amélioration professionnelle",
+          "Exploiter les événements locaux et lengagement communautaire pour la création de contenu"
         ],
         "localOptimization": [
-          "Optimize images for Google Business Profile and local search",
-          "Showcase local community involvement with enhanced photos",
-          "Create location-specific visual content for targeted marketing",
-          "Use enhanced images to build trust with local customers"
+          "Optimiser les images pour Google Business Profile et la recherche locale",
+          "Présenter limplication communautaire locale avec des photos améliorées",
+          "Créer du contenu visuel spécifique au lieu pour un marketing ciblé",
+          "Utiliser des images améliorées pour construire la confiance avec les clients locaux"
         ]
       },
       "caseStudies": [
         {
-          "title": "Local Restaurant Visual Transformation",
-          "scenario": "Family restaurant competing with chain establishments on visual presentation",
+          "title": "Transformation visuelle dun restaurant local",
+          "scenario": "Restaurant familial en compétition avec les chaînes établies sur la présentation visuelle",
           "solution": "Comprehensive Amélioration of food photography, ambiance Photos, and Marketing materials",
-          "results": "45% increase in customer inquiries and 30% improvement in local search rankings"
+          "results": "Augmentation de 45% des demandes de renseignements clients et amélioration de 30% du classement dans la recherche locale"
         },
         {
           "title": "Service Business Professionnel Image Development",

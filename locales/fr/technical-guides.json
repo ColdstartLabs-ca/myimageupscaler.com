@@ -1116,11 +1116,11 @@
               "description": "Extraction de caractéristiques et reconnaissance de formes dans les images."
             },
             {
-              "name": "Pooling Layers",
+              "name": "Couches de regroupement",
               "description": "Sous-échantillonnage et construction de hiérarchie spatiale."
             },
             {
-              "name": "Fully Connected Layers",
+              "name": "Couches entièrement connectées",
               "description": "Classification et prise de décision finale."
             }
           ]
@@ -1181,9 +1181,13 @@
           ]
         },
         {
-          "phase": "Model Architecture",
+          "phase": "Architecture du modèle",
           "description": "Conception de la structure du réseau pour des tâches spécifiques",
-          "considerations": ["Task requirements", "Computational resources", "Temps d'entraînement"]
+          "considerations": [
+            "Exigences de la tâche",
+            "Ressources informatiques",
+            "Temps d'entraînement"
+          ]
         },
         {
           "phase": "Boucle d'entraînement",
@@ -1216,7 +1220,7 @@
         {
           "task": "Restauration (Inpainting)",
           "description": "Remplissage de régions d'image manquantes ou endommagées",
-          "networks": ["Context Encoders", "Partial Convolutions", "CoModGAN"],
+          "networks": ["Encodeurs contextuels", "Convolutions partielles", "CoModGAN"],
           "applications": [
             "Restauration de photos",
             "Suppression d'objets",
@@ -1226,7 +1230,7 @@
         {
           "task": "Transfert de style",
           "description": "Application de styles artistiques aux images",
-          "networks": ["Neural Style Transfer", "AdaIN", "CycleGAN"],
+          "networks": ["Transfert de style neuronal", "AdaIN", "CycleGAN"],
           "applications": ["Génération d'art", "Applications de filtres", "Outils créatifs"]
         }
       ],
@@ -1250,15 +1254,15 @@
       ],
       "implementationChallenges": [
         {
-          "challenge": "Training Data Requirements",
+          "challenge": "Exigences en matière de données d'entraînement",
           "solution": "Utiliser l'apprentissage par transfert, l'augmentation des données et la synthèse de données"
         },
         {
-          "challenge": "Computational Resources",
+          "challenge": "Ressources informatiques",
           "solution": "Cloud training services, model Optimisation, distributed training"
         },
         {
-          "challenge": "Overfitting",
+          "challenge": "Surapprentissage",
           "solution": "Techniques de régularisation, abandon, arrêt précoce, augmentation des données"
         },
         {
@@ -1297,11 +1301,11 @@
       "metaDescription": "Complet Guide to Web Image Optimisation. Learn Compression, Format selection, lazy loading, and performance Optimisation for faster websites and better SEO.",
       "h1": "Web Image Optimisation: Technical Guide",
       "intro": "Images often account for 50-70% of web page weight. Optimizing them is crucial for performance, user experience, and SEO. This comprehensive guide covers all aspects of web image optimization.",
-      "primaryKeyword": "web image optimization",
+      "primaryKeyword": "optimisation des images web",
       "secondaryKeywords": [
-        "image seo optimization",
-        "website performance optimization",
-        "lazy loading images"
+        "optimisation SEO des images",
+        "optimisation des performances du site web",
+        "chargement différé des images"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "technical-guides",
@@ -1309,19 +1313,19 @@
       "technicalLevel": "Pratique",
       "sections": [
         {
-          "title": "Performance Impact",
+          "title": "Impact sur les performances",
           "content": "Understanding how Images affect Web performance and user experience.",
           "subsections": [
             {
-              "name": "Page Load Speed",
+              "name": "Vitesse de chargement de la page",
               "description": "Comment la taille et le format de l'image impactent les Core Web Vitals et l'expérience utilisateur."
             },
             {
-              "name": "Bandwidth Usage",
+              "name": "Utilisation de la bande passante",
               "description": "Consommation de données et implications de coûts pour les utilisateurs et l'hébergement."
             },
             {
-              "name": "SEO Impact",
+              "name": "Impact sur le SEO",
               "description": "Comment l'optimisation des images affecte les classements des moteurs de recherche."
             }
           ]
@@ -1335,7 +1339,7 @@
               "description": "Trouver le juste équilibre entre la taille du fichier et la qualité visuelle."
             },
             {
-              "name": "Format Selection",
+              "name": "Sélection du format",
               "description": "Choisir le format optimal en fonction du contenu et du cas d'usage."
             },
             {
@@ -1345,7 +1349,7 @@
           ]
         },
         {
-          "title": "Loading Strategies",
+          "title": "Stratégies de chargement",
           "content": "Advanced techniques for optimizing how and when Images load.",
           "subsections": [
             {
@@ -1461,7 +1465,7 @@
         },
         {
           "tool": "ImageOptim",
-          "type": "Desktop",
+          "type": "Bureau",
           "bestFor": "Mac users, Lot Traitement",
           "features": ["Optimisation automatique", "Glisser-déposer", "Formats multiples"]
         },
@@ -1514,11 +1518,11 @@
       "metaDescription": "Complet Guide to Professionnel Photo editing workflows. Learn step-by-step processes, non-destructive editing, and industry-standard techniques for perfect results.",
       "h1": "Professionnel Photo Editing: Complet Workflow Guide",
       "intro": "Professionnel Photo editing follows systematic workflows that ensure consistent, high-Qualité results. This Guide covers industry-standard processes from capture to final output.",
-      "primaryKeyword": "professional photo editing workflow",
+      "primaryKeyword": "flux de travail d'édition photo professionnelle",
       "secondaryKeywords": [
-        "photo editing process",
-        "non-destructive editing",
-        "professional photography workflow"
+        "processus d'édition photo",
+        "édition non destructive",
+        "flux de travail photographique professionnel"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "technical-guides",
@@ -1526,15 +1530,15 @@
       "technicalLevel": "Professionnel",
       "sections": [
         {
-          "title": "Workflow Fundamentals",
+          "title": "Fondamentaux du flux de travail",
           "content": "Understanding the principles that Guide Professionnel editing workflows.",
           "subsections": [
             {
-              "name": "Non-Destructive Editing",
+              "name": "Édition non destructive",
               "description": "Techniques d'édition sans altérer de manière permanente les pixels originaux."
             },
             {
-              "name": "Editing Strategy",
+              "name": "Stratégie d'édition",
               "description": "Planifier votre approche en fonction du contenu de l'image et de l'utilisation prévue."
             },
             {
@@ -1548,33 +1552,33 @@
           "content": "Étapes initiales avant le début de l'édition créative.",
           "subsections": [
             {
-              "name": "File Organization",
+              "name": "Organisation des fichiers",
               "description": "Nomination systématique des fichiers, structure des dossiers et stratégies de sauvegarde."
             },
             {
               "name": "RAW Traitement",
-              "description": "Converting and optimizing RAW files for editing."
+              "description": "Conversion et optimisation des fichiers RAW pour l'édition."
             },
             {
-              "name": "Initial Assessment",
+              "name": "Évaluation initiale",
               "description": "Évaluation de la qualité de l'image et identification des besoins d'édition."
             }
           ]
         },
         {
-          "title": "Core Editing Workflow",
+          "title": "Flux de travail d'édition principal",
           "content": "The systematic process of enhancing and perfecting Images.",
           "subsections": [
             {
-              "name": "Global Adjustments",
+              "name": "Ajustements globaux",
               "description": "Corrections d'image globales affectant l'ensemble de la photographie."
             },
             {
-              "name": "Selective Editing",
+              "name": "Édition sélective",
               "description": "Ajustements ciblés sur des zones spécifiques de l'image."
             },
             {
-              "name": "Retouching",
+              "name": "Retouche",
               "description": "Corrections et améliorations détaillées."
             }
           ]
@@ -1583,143 +1587,143 @@
       "workflowSteps": [
         {
           "step": 1,
-          "name": "Import and Organize",
+          "name": "Importer et organiser",
           "description": "Importer les fichiers, appliquer les métadonnées, organiser en dossiers",
           "tools": ["Lightroom", "Bridge", "Capture One"],
           "duration": "5-10 minutes per Lot"
         },
         {
           "step": 2,
-          "name": "Initial Culling",
+          "name": "Tri initial",
           "description": "Examiner et sélectionner les meilleures images, marquer les rejets",
           "tools": ["Lightroom", "Photo Mechanic"],
           "duration": "1-2 minutes per Image"
         },
         {
           "step": 3,
-          "name": "RAW Development",
+          "name": "Développement RAW",
           "description": "Exposition, balance des blancs, corrections d'objectif",
           "tools": ["Lightroom", "Capture One", "Camera Raw"],
           "duration": "2-5 minutes per Image"
         },
         {
           "step": 4,
-          "name": "Global Adjustments",
+          "name": "Ajustements globaux",
           "description": "Ajustements de tonalité, contraste, couleur, clarté",
           "tools": ["Lightroom", "Photoshop", "Capture One"],
           "duration": "3-8 minutes per Image"
         },
         {
           "step": 5,
-          "name": "Selective Editing",
+          "name": "Édition sélective",
           "description": "Masques, dégradés, ajustements locaux",
           "tools": ["Photoshop", "Lightroom", "Capture One"],
           "duration": "5-15 minutes per Image"
         },
         {
           "step": 6,
-          "name": "Retouching",
+          "name": "Retouche",
           "description": "Retouche de taches, lissage de la peau, amélioration des détails",
-          "tools": ["Photoshop", "Lightroom", "Retouching software"],
+          "tools": ["Photoshop", "Lightroom", "Logiciel de retouche"],
           "duration": "10-30 minutes per Image"
         },
         {
           "step": 7,
-          "name": "Final Output",
+          "name": "Résultat final",
           "description": "Amélioration de la netteté, paramètres d'exportation, préparation des fichiers",
-          "tools": ["Lightroom", "Photoshop", "Export software"],
+          "tools": ["Lightroom", "Photoshop", "Logiciel d'exportation"],
           "duration": "2-5 minutes per Image"
         }
       ],
       "editingTechniques": [
         {
-          "technique": "Layer Masking",
-          "description": "Non-destructive selective editing using masks",
-          "applications": ["Selective adjustments", "Composites", "Local corrections"]
+          "technique": "Masquage de calque",
+          "description": "Édition sélective non destructive à l'aide de masques",
+          "applications": ["Ajustements sélectifs", "Composites", "Corrections locales"]
         },
         {
-          "technique": "Adjustment Layers",
-          "description": "Non-destructive edits using separate adjustment layers",
-          "applications": ["Color grading", "Tone adjustments", "Special effects"]
+          "technique": "Calques de réglage",
+          "description": "Modifications non destructives utilisant des calques de réglage séparés",
+          "applications": ["Étalonnage des couleurs", "Ajustements de tonalité", "Effets spéciaux"]
         },
         {
-          "technique": "Frequency Separation",
-          "description": "Separating texture and tone for precise control",
-          "applications": ["Skin retouching", "Detail enhancement", "Noise reduction"]
+          "technique": "Séparation de fréquence",
+          "description": "Séparation de la texture et de la tonalité pour un contrôle précis",
+          "applications": ["Retouche de peau", "Amélioration des détails", "Réduction du bruit"]
         },
         {
-          "technique": "Dodge and Burn",
-          "description": "Selective lightening and darkening of image areas",
-          "applications": ["Portrait enhancement", "Landscape drama", "Local contrast"]
+          "technique": "Éclaircir et assombrir (Dodge and Burn)",
+          "description": "Éclaircissement et assombrissement sélectifs des zones d'image",
+          "applications": ["Amélioration de portrait", "Dramatisme de paysage", "Contraste local"]
         }
       ],
       "qualityControl": [
         {
-          "check": "Color Accuracy",
-          "method": "Compare to neutral references, check skin tones",
-          "tools": ["Color calibrated monitor", "Reference images"]
+          "check": "Précision des couleurs",
+          "method": "Comparer aux références neutres, vérifier les tons de peau",
+          "tools": ["Moniteur calibré en couleurs", "Images de référence"]
         },
         {
           "check": "Technical Qualité",
-          "method": "Zoom to 100%, check for artifacts and noise",
-          "tools": ["Pixel-level review", "Noise analysis"]
+          "method": "Zoomer à 100%, vérifier les artefacts et le bruit",
+          "tools": ["Examen au niveau des pixels", "Analyse du bruit"]
         },
         {
           "check": "Impression Preparation",
-          "method": "Soft proofing, test prints, color profile validation",
-          "tools": ["Soft proofing software", "Test prints"]
+          "method": "Épreuvage virtuel, tests d'impression, validation du profil colorimétrique",
+          "tools": ["Logiciel d'épreuvage virtuel", "Tests d'impression"]
         }
       ],
       "outputOptimization": [
         {
-          "format": "Web Images",
-          "resolution": "72-150 PPI",
+          "format": "Images web",
+          "resolution": "72-150 PPP",
           "colorSpace": "sRGB",
           "compression": "Optimized for Web, file size consideration"
         },
         {
           "format": "Impression Images",
-          "resolution": "300 DPI",
-          "colorSpace": "Adobe RGB or ProPhoto RGB",
+          "resolution": "300 PPP",
+          "colorSpace": "Adobe RGB ou ProPhoto RGB",
           "compression": "Sans perte ou JPEG haute qualité"
         },
         {
-          "format": "Archival Files",
+          "format": "Fichiers d'archive",
           "resolution": "Native capture Résolution",
-          "colorSpace": "ProPhoto RGB or Adobe RGB",
+          "colorSpace": "ProPhoto RGB ou Adobe RGB",
           "compression": "Sans perte (TIFF, PSD)"
         }
       ],
       "professionalTools": [
         {
-          "category": "RAW Processing",
+          "category": "Traitement RAW",
           "tools": ["Adobe Lightroom", "Capture One", "DxO PhotoLab", "RAW Power"],
-          "selection": "Based on workflow preferences, camera support, and feature needs"
+          "selection": "Basé sur les préférences de flux de travail, le support de l'appareil photo et les besoins fonctionnels"
         },
         {
-          "category": "Pixel Editing",
+          "category": "Édition de pixels",
           "tools": ["Adobe Photoshop", "Affinity Photo", "Capture One", "ON1"],
-          "selection": "Based on complexity, integration needs, and budget"
+          "selection": "Basé sur la complexité, les besoins d'intégration et le budget"
         },
         {
-          "category": "Specialized",
+          "category": "Spécialisé",
           "tools": ["DxO Nik Collection", "Topaz Labs", "Skylum", "Luminar"],
           "selection": "Based on specific retouching and Amélioration needs"
         }
       ],
       "bestPractices": [
-        "Always work on copies, never original files",
-        "Use color calibrated monitors for accurate color work",
-        "Maintain consistent editing style across image series",
-        "Regular backup of work files and original images",
-        "Develop and document personal editing workflows"
+        "Travaillez toujours sur des copies, jamais sur les fichiers originaux",
+        "Utilisez des moniteurs calibrés en couleurs pour un travail précis des couleurs",
+        "Maintenez un style d'édition cohérent sur les séries d'images",
+        "Sauvegarde régulière des fichiers de travail et des images originales",
+        "Développez et documentez vos flux de travail d'édition personnels"
       ],
       "commonMistakes": [
-        "Over-editing and creating unnatural results",
-        "Not using non-destructive editing techniques",
-        "Ignoring color management and calibration",
-        "Inconsistent editing across image sets",
-        "Not considering final output requirements"
+        "Sur-édition et création de résultats non naturels",
+        "Ne pas utiliser de techniques d'édition non destructives",
+        "Ignorer la gestion des couleurs et l'étalonnage",
+        "Édition incohérente sur les ensembles d'images",
+        "Ne pas tenir compte des exigences de sortie finales"
       ],
       "faq": [
         {
@@ -1731,7 +1735,7 @@
           "answer": "While not always required, RAW provides maximum editing flexibility and Qualité. Most professionals prefer RAW for client work."
         },
         {
-          "question": "Should I edit in Lightroom or Photoshop?",
+          "question": "Dois-je éditer dans Lightroom ou Photoshop ?",
           "answer": "Use Lightroom for workflow management and global adjustments, Photoshop for complex retouching and composites. Most professionals use both."
         }
       ],
@@ -1750,14 +1754,14 @@
       "title": "Image Scaling Algorithms: Technical Guide",
       "metaTitle": "Image Scaling Algorithms Guide 2025 - Interpolation Methods Comparison",
       "metaDescription": "Complet technical Guide to Image scaling algorithms. Compare bilinear, bicubic, Lanczos, and IA-powered scaling methods for optimal Image Qualité.",
-      "h1": "Image Scaling Algorithms: Technical Deep Dive",
+      "h1": "Algorithmes de redimensionnement d'image : plongée technique approfondie",
       "intro": "Image scaling algorithms determine how pixels are interpolated when resizing Images. Understanding these algorithms helps achieve the Meilleur Qualité for different Cas d'usage and content types.",
-      "primaryKeyword": "image scaling algorithms",
+      "primaryKeyword": "algorithmes de redimensionnement d'image",
       "secondaryKeywords": [
-        "image interpolation methods",
-        "bilinear vs bicubic",
-        "lanczos scaling",
-        "ai image upscaling"
+        "méthodes d'interpolation d'image",
+        "bilinéaire vs bicubique",
+        "redimensionnement Lanczos",
+        "mise à l'échelle d'image par IA"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "technical-guides",
@@ -1765,15 +1769,15 @@
       "technicalLevel": "Technique",
       "sections": [
         {
-          "title": "Scaling Fundamentals",
+          "title": "Fondamentaux du redimensionnement",
           "content": "Understanding the mathematics and principles behind Image scaling.",
           "subsections": [
             {
-              "name": "Interpolation Theory",
+              "name": "Théorie de l'interpolation",
               "description": "Méthodes pour augmenter la résolution des images avec une perte de qualité minimale."
             },
             {
-              "name": "Scaling Direction",
+              "name": "Direction de redimensionnement",
               "description": "Algorithmes traditionnels vs approches modernes par IA."
             },
             {
@@ -1783,105 +1787,113 @@
           ]
         },
         {
-          "title": "Traditional Interpolation Methods",
+          "title": "Méthodes d'interpolation traditionnelles",
           "content": "Classical algorithms used in most Image Traitement software.",
           "subsections": [
             {
-              "name": "Nearest Neighbor",
+              "name": "Plus proche voisin",
               "description": "Méthodes classiques d'interpolation et leurs cas d'usage."
             },
             {
-              "name": "Bilinear Interpolation",
+              "name": "Interpolation bilinéaire",
               "description": "Implémentations IA utilisant des réseaux neuronaux profonds."
             },
             {
-              "name": "Bicubic Interpolation",
+              "name": "Interpolation bicubique",
               "description": "Avantages et inconvénients des différentes approches."
             }
           ]
         },
         {
-          "title": "Advanced Algorithms",
+          "title": "Algorithmes avancés",
           "content": "Sophisticated methods for superior scaling Qualité.",
           "subsections": [
             {
-              "name": "Lanczos Resampling",
-              "description": "Windowed sinc interpolation with excellent quality."
+              "name": "Rééchantillonnage Lanczos",
+              "description": "Interpolation sinc fenêtrée avec excellente qualité."
             },
             {
-              "name": "Spline Interpolation",
-              "description": "Curve-based interpolation for smooth results."
+              "name": "Interpolation spline",
+              "description": "Interpolation basée sur les courbes pour des résultats fluides."
             },
             {
               "name": "IA-Powered Scaling",
-              "description": "Neural network approaches for intelligent detail generation."
+              "description": "Approches de réseaux neuronaux pour la génération intelligente de détails."
             }
           ]
         }
       ],
       "algorithmComparison": [
         {
-          "algorithm": "Nearest Neighbor",
+          "algorithm": "Plus proche voisin",
           "complexity": "Très faible",
           "speed": "Le plus rapide",
           "quality": "Médiocre (bloc)",
-          "bestFor": ["Pixel art", "Fast previews", "Real-time applications"],
-          "artifacts": ["Blockiness", "Aliasing"]
+          "bestFor": ["Pixel art", "Aperçus rapides", "Applications en temps réel"],
+          "artifacts": ["Effet de bloc", "Crénelage"]
         },
         {
-          "algorithm": "Bilinear",
+          "algorithm": "Bilinéaire",
           "complexity": "Faible",
           "speed": "Rapide",
           "quality": "Moyen (lisse mais flou)",
-          "bestFor": ["General use", "Real-time", "Memory-constrained"],
-          "artifacts": ["Blurring", "Loss of detail"]
+          "bestFor": ["Usage général", "Temps réel", "À mémoire limitée"],
+          "artifacts": ["Flou", "Perte de détails"]
         },
         {
-          "algorithm": "Bicubic",
+          "algorithm": "Bicubique",
           "complexity": "Moyen",
           "speed": "Moyen",
           "quality": "Bon (net avec quelques artefacts)",
-          "bestFor": ["Photographs", "General purpose", "Quality printing"],
-          "artifacts": ["Ringing", "Sharpening halos"]
+          "bestFor": ["Photographies", "Usage général", "Impression de qualité"],
+          "artifacts": ["Oscillation (ringing)", "Halo de netteté"]
         },
         {
           "algorithm": "Lanczos",
           "complexity": "Élevé",
           "speed": "Lent",
           "quality": "Excellent (net, artefacts minimaux)",
-          "bestFor": ["High-quality printing", "Professional work", "Critical applications"],
-          "artifacts": ["Minor ringing", "Slight overshoot"]
+          "bestFor": [
+            "Impression haute qualité",
+            "Travail professionnel",
+            "Applications critiques"
+          ],
+          "artifacts": ["Légère oscillation", "Léger dépassement"]
         },
         {
           "algorithm": "IA/Neural Networks",
           "complexity": "Très élevé",
           "speed": "Très lent",
           "quality": "Exceptionnel (génération intelligente de détails)",
-          "bestFor": ["Significant upscaling", "Quality-critical", "Professional enhancement"],
-          "artifacts": ["Potential unrealistic details", "Style-dependent"]
+          "bestFor": [
+            "Mise à l'échelle importante",
+            "Critique de qualité",
+            "Amélioration professionnelle"
+          ],
+          "artifacts": ["Détails potentiellement irréalistes", "Dépendant du style"]
         }
       ],
       "mathematicalFoundations": [
         {
-          "concept": "Convolution Theory",
-          "description": "Scaling as convolution with interpolation kernels",
-          "formula": "output(x) = Σ input(i) × kernel(x-i)"
+          "concept": "Théorie de la convolution",
+          "description": "Mise à l'échelle comme convolution avec noyaux d'interpolation",
+          "formula": "sortie(x) = Σ entrée(i) × noyau(x-i)"
         },
         {
-          "concept": "Sinc Function",
-          "description": "Ideal reconstruction filter for bandlimited signals",
+          "concept": "Fonction sinc",
+          "description": "Filtre de reconstruction idéal pour les signaux à bande limitée",
           "application": "Lanczos and other high-Qualité algorithms"
         },
         {
           "concept": "Splines",
-          "description": "Piecewise polynomial functions for smooth interpolation",
-          "types": ["Linear", "Cubic", "B-spline"]
+          "description": "Fonctions polynomiales par morceaux pour une interpolation fluide",
+          "types": ["Linéaire", "Cubique", "B-spline"]
         }
       ],
       "practicalApplications": [
         {
-          "useCase": "Web Image Resizing",
-          "recommended": "Bicubic or Lanczos for downsizing",
+          "useCase": "Redimensionnement d'images web",
+          "recommended": "Bicubique ou Lanczos pour la réduction",
           "reasoning": "Good balance of Qualité and speed for Web use"
         },
         {
@@ -1890,86 +1902,86 @@
           "reasoning": "Maximum Qualité for critical Impression output"
         },
         {
-          "useCase": "Real-time Applications",
-          "recommended": "Bilinear or hardware-accelerated methods",
+          "useCase": "Applications en temps réel",
+          "recommended": "Bilinéaire ou méthodes accélérées par matériel",
           "reasoning": "Speed prioritized over perfect Qualité"
         },
         {
-          "useCase": "Large Upscaling",
+          "useCase": "Mise à l'échelle importante",
           "recommended": "IA-powered methods for significant enlargement",
-          "reasoning": "Intelligent detail generation for major upscaling"
+          "reasoning": "Génération intelligente de détails pour une mise à l'échelle majeure"
         },
         {
-          "useCase": "Pixel Art",
-          "recommended": "Nearest Neighbor or specialized pixel art algorithms",
-          "reasoning": "Preserves intended blocky aesthetic"
+          "useCase": "Pixel art",
+          "recommended": "Plus proche voisin ou algorithmes spécialisés de pixel art",
+          "reasoning": "Préserve l'esthétique blocue intentionnelle"
         }
       ],
       "qualityAssessment": [
         {
-          "metric": "Peak Signal-to-Noise Ratio (PSNR)",
-          "description": "Technical measurement of reconstruction error",
+          "metric": "Rapport signal sur bruit de crête (PSNR)",
+          "description": "Mesure technique de l'erreur de reconstruction",
           "use": "Objective Qualité comparison",
-          "limitations": "Doesn't always match human perception"
+          "limitations": "Ne correspond pas toujours à la perception humaine"
         },
         {
-          "metric": "Structural Similarity (SSIM)",
-          "description": "Perceptual similarity measurement",
+          "metric": "Similarité structurelle (SSIM)",
+          "description": "Mesure de similarité perceptuelle",
           "use": "Better correlation with perceived Qualité",
-          "limitations": "Complexity in calculation"
+          "limitations": "Complexité du calcul"
         },
         {
           "metric": "LPIPS",
-          "description": "Deep learning-based perceptual metric",
-          "use": "Closest to human perception",
-          "limitations": "Computationally expensive"
+          "description": "Métrique perceptuelle basée sur l'apprentissage profond",
+          "use": "Le plus proche de la perception humaine",
+          "limitations": "Coûteux en calcul"
         }
       ],
       "implementationConsiderations": [
         {
-          "factor": "Computational Resources",
+          "factor": "Ressources informatiques",
           "considerations": [
-            "CPU vs GPU acceleration",
-            "Memory requirements",
-            "Real-time constraints"
+            "Accélération CPU vs GPU",
+            "Exigences de mémoire",
+            "Contraintes temps réel"
           ]
         },
         {
-          "factor": "Content Type",
+          "factor": "Type de contenu",
           "considerations": [
-            "Photographs vs graphics",
-            "Text vs natural images",
-            "Edge preservation needs"
+            "Photographies vs graphismes",
+            "Texte vs images naturelles",
+            "Besoins de préservation des contours"
           ]
         },
         {
-          "factor": "Scaling Factor",
+          "factor": "Facteur de mise à l'échelle",
           "considerations": [
-            "Small adjustments vs major changes",
-            "Upscaling vs downscaling",
-            "Integer vs fractional scaling"
+            "Petits ajustements vs changements majeurs",
+            "Mise à l'échelle supérieure vs inférieure",
+            "Mise à l'échelle entière vs fractionnaire"
           ]
         }
       ],
       "optimizationTechniques": [
         {
-          "technique": "Separable Filters",
-          "description": "Optimize 2D filters as sequential 1D operations",
-          "benefit": "2x performance improvement"
+          "technique": "Filtres séparables",
+          "description": "Optimiser les filtres 2D comme des opérations 1D séquentielles",
+          "benefit": "Amélioration des performances de 2x"
         },
         {
-          "technique": "Lookup Tables",
-          "description": "Pre-calculate common kernel values",
-          "benefit": "Faster repeated operations"
+          "technique": "Tables de recherche",
+          "description": "Précalculer les valeurs communes de noyau",
+          "benefit": "Opérations répétées plus rapides"
         },
         {
           "technique": "SIMD Optimisation",
-          "description": "Single instruction, multiple data operations",
-          "benefit": "4-8x speedup on modern processors"
+          "description": "Opérations à instruction unique, données multiples",
+          "benefit": "Accélération de 4-8x sur les processeurs modernes"
         },
         {
-          "technique": "GPU Acceleration",
-          "description": "Parallel processing on graphics hardware",
+          "technique": "Accélération GPU",
+          "description": "Traitement parallèle sur le matériel graphique",
           "benefit": "10-100x speedup for large Images"
         }
       ],
@@ -1978,16 +1990,16 @@
         "Utiliser des méthodes IA pour les facteurs d'augmentation importants",
         "Surveiller les artefacts et les détails irréalistes",
         "Ajuster les paramètres selon le contenu de l'image",
-        "Understand trade-offs between speed and quality"
+        "Comprendre les compromis entre vitesse et qualité"
       ],
       "faq": [
         {
-          "question": "Which algorithm should I use for general photography?",
+          "question": "Quel algorithme dois-je utiliser pour la photographie générale ?",
           "answer": "Pour des facteurs jusqu'à 2x, le bicubique est souvent suffisant. Pour 4x ou plus, les méthodes IA donnent de meilleurs résultats avec moins de perte de qualité."
         },
         {
-          "question": "Why do different scaling algorithms produce different results?",
-          "answer": "They use different mathematical approaches to predict pixel values. Some prioritize speed, others prioritize accuracy or specific visual characteristics."
+          "question": "Pourquoi différents algorithmes de redimensionnement produisent-ils des résultats différents ?",
+          "answer": "Ils utilisent différentes approches mathématiques pour prédire les valeurs des pixels. Certains privilégient la vitesse, d'autres privilégient la précision ou des caractéristiques visuelles spécifiques."
         },
         {
           "question": "Is IA upscaling always better than traditional methods?",

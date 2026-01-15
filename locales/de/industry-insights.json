@@ -557,19 +557,19 @@
         },
         {
           "title": "Serviceunternehmen",
-          "scenario": "Low brand recognition on social platforms",
-          "solution": "Enhanced professional images for consistent branding",
-          "results": "200% increase in follower growth, 80% more inbound leads"
+          "scenario": "Geringe Markenbekanntheit auf sozialen Plattformen",
+          "solution": "Verbesserte professionelle Bilder für ein konsistentes Branding",
+          "results": "200% Steigerung des Follower-Wachstums, 80% mehr eingehende Leads"
         }
       ],
       "platformOptimization": {
-        "instagram": "1080x1080 posts, 1080x1920 stories, high-quality JPEG for feed",
-        "facebook": "1200x630 shared images, 1080x1080 posts, optimize for mobile viewing",
-        "linkedin": "1200x627 posts, 1080x1080 updates, professional enhancement standards"
+        "instagram": "1080x1080 Beiträge, 1080x1920 Stories, hochwertige JPEGs für den Feed",
+        "facebook": "1200x630 geteilte Bilder, 1080x1080 Beiträge, optimiert für die mobile Anzeige",
+        "linkedin": "1200x627 Beiträge, 1080x1080 Updates, professionelle Verbesserungsstandards"
       },
       "techniques": [
         {
-          "name": "Visual Enhancement",
+          "name": "Visuelle Verbesserung",
           "description": "Verbessern Sie Farbvibranz, Kontrast und visuelle Attraktivität für Social-Media-Feeds"
         },
         {
@@ -608,8 +608,8 @@
           "answer": "KI-Verbesserung kann die Bildvorbereitung um 70-90% reduzieren, sodass Manager sich auf Strategie, Community-Engagement und Content-Planung konzentrieren können."
         },
         {
-          "question": "Can AI enhancement help with video thumbnAIls?",
-          "answer": "Absolutely. AI enhancement works great for video thumbnAIls, improving click-through rates on Instagram Reels, TikTok, YouTube, and other video platforms."
+          "question": "Kann die KI-Verbesserung bei Video-Thumbnails helfen?",
+          "answer": "Absolut. Die KI-Verbesserung funktioniert hervorragend für Video-Thumbnails und verbessert die Klickraten bei Instagram Reels, TikTok, YouTube und anderen Video-Plattformen."
         }
       ],
       "relatedTools": ["ai-image-upscaler", "batch-image-upscaler"],
@@ -960,11 +960,11 @@
       ],
       "faq": [
         {
-          "question": "What do I need for print media?",
-          "answer": "print typically requires 300 DPI. For large format printing, 150-200 DPI may be sufficient. AI enhancement can upscale to meet these requirements."
+          "question": "Was benötige ich für Printmedien?",
+          "answer": "Für den Druck sind typischerweise 300 DPI erforderlich. Für Großformatdruck können 150-200 DPI ausreichen. Die KI-Verbesserung kann hochskalieren, um diese Anforderungen zu erfüllen."
         },
         {
-          "question": "Can AI enhancement fix poorly taken photos?",
+          "question": "Kann die KI-Verbesserung schlecht aufgenommene Fotos korrigieren?",
           "answer": "KI-Verbesserung verbessert die Qualität, kann aber grundlegende Probleme wie schlechte Komposition oder Fokus nicht beheben. Es funktioniert mit angemessen komponierten Fotos, die eine Qualitätsverbesserung benötigen."
         },
         {
@@ -1063,10 +1063,10 @@
         }
       ],
       "bookingImpact": {
-        "bookingIncrease": "35-70% increase in booking rates",
-        "engagementImprovement": "50-100% higher engagement on travel content",
-        "conversionBoost": "25-50% improvement in travel-related conversions",
-        "brandPerception": "Significant improvement in brand quality perception"
+        "bookingIncrease": "35-70% Steigerung der Buchungsraten",
+        "engagementImprovement": "50-100% höheres Engagement bei Reiseinhalten",
+        "conversionBoost": "25-50% Verbesserung der reisebezogenen Conversions",
+        "brandPerception": "Deutliche Verbesserung der wahrgenommenen Markenqualität"
       },
       "bestPractices": [
         "Bleiben Sie natürlich - verbessern Sie, ohne künstlich zu wirken",
@@ -1085,8 +1085,8 @@
           "answer": "Verbesserte Fotos führen zu besseren Erwartungen und weniger Enttäuschungen, was zu höheren Bewertungen und Wiederholungsbuchungen führt."
         },
         {
-          "question": "How does enhancement impact booking sites?",
-          "answer": "Enhanced photos typically perform 40-80% better on booking sites, leading to higher visibility, more clicks, and increased booking rates."
+          "question": "Wie wirkt sich die Verbesserung auf Buchungsseiten aus?",
+          "answer": "Verbesserte Fotos schneiden auf Buchungsseiten typischerweise 40-80% besser ab, was zu höherer Sichtbarkeit, mehr Klicks und erhöhten Buchungsraten führt."
         }
       ],
       "relatedTools": ["ai-image-upscaler", "batch-image-upscaler"],
@@ -1174,9 +1174,9 @@
         }
       ],
       "educationTypes": {
-        "k12": "Enhance age-appropriate educational materials and illustrations",
-        "higherEducation": "Improve university-level course materials and research visuals",
-        "professionalTraining": "Enhance corporate training and professional development materials"
+        "k12": "Verbesserung altersgerechter Lernmaterialien und Illustrationen",
+        "higherEducation": "Verbesserung von Lehrmaterialien auf Universitätsebene und Forschungsvisualisierungen",
+        "professionalTraining": "Verbesserung von Unternehmensschulungen und Materialien zur beruflichen Weiterentwicklung"
       },
       "techniques": [
         {
@@ -1197,10 +1197,10 @@
         }
       ],
       "learningImpact": {
-        "comprehensionImprovement": "30-60% improvement in student comprehension",
-        "engagementIncrease": "40-80% increase in student engagement",
-        "retentionImprovement": "25-50% better learning retention",
-        "accessibilityEnhancement": "Improved accessibility for diverse learners"
+        "comprehensionImprovement": "30-60% Verbesserung des Schülerverständnisses",
+        "engagementIncrease": "40-80% Zunahme des Schülerengagements",
+        "retentionImprovement": "25-50% bessere Lernspeicherung",
+        "accessibilityEnhancement": "Verbesserte Barrierefreiheit für vielfältige Lernende"
       },
       "bestPractices": [
         "Zeigen Sie echte Transformationen und echte Menschen",
@@ -1430,9 +1430,9 @@
         }
       ],
       "industrialTypes": {
-        "manufacturing": "Enhance production line, machinery, and product photography",
-        "construction": "Improve construction site photos and project documentation",
-        "engineering": "Enhance technical documentation and engineering photography"
+        "manufacturing": "Verbesserung von Produktionslinien, Maschinen und Produktfotografie",
+        "construction": "Verbesserung von Baustellenfotos und Projektdokumentation",
+        "engineering": "Verbesserung technischer Dokumentation und Ingenieursfotografie"
       },
       "techniques": [
         {
@@ -1453,10 +1453,10 @@
         }
       ],
       "businessImpact": {
-        "salesImprovement": "30-60% increase in B2B sales and inquiries",
-        "documentationQuality": "Significant improvement in technical documentation",
-        "marketingEffectiveness": "40-80% improvement in marketing campaign performance",
-        "professionalPresentation": "Professional quality regardless of original photography conditions"
+        "salesImprovement": "30-60% Steigerung der B2B-Verkäufe und Anfragen",
+        "documentationQuality": "Deutliche Verbesserung der technischen Dokumentation",
+        "marketingEffectiveness": "40-80% Verbesserung der Marketingkampagnenleistung",
+        "professionalPresentation": "Professionelle Qualität unabhängig von den ursprünglichen Fotografiebedingungen"
       },
       "bestPractices": [
         "Behalte Authentizität - keine Manipulationen für Betrug",
@@ -1503,7 +1503,7 @@
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "industry-insights",
       "industry": "Innenarchitektur",
-      "disclaimer": "AI enhancement is for presentation and documentation purposes only. Never alter evidence photos in ways that could misrepresent facts or compromise legal integrity.",
+      "disclaimer": "Die KI-Verbesserung dient ausschließlich zu Präsentations- und Dokumentationszwecken. Ändern Sie niemals Beweisfotos auf eine Weise, die Fakten verfälschen oder die rechtliche Integrität gefährden könnten.",
       "problem": {
         "title": "Die Herausforderung: Schwache Designfotos verlieren Kunden",
         "description": "Innendesigner kämpfen mit mittelmäßigen Fotos, die ihre Arbeit nicht gut zeigen. Schlechte Bilder kosten Kundengewinnung und Projektangebote."
@@ -1565,9 +1565,9 @@
         }
       ],
       "legalRequirements": {
-        "evidenceIntegrity": "Never alter evidence in ways that misrepresent facts",
-        "documentationStandards": "Maintain professional legal documentation standards",
-        "courtApproval": "Ensure enhanced materials meet court requirements"
+        "evidenceIntegrity": "Ändern Sie niemals Beweise auf eine Weise, die Fakten verfälscht",
+        "documentationStandards": "Halten Sie professionelle rechtliche Dokumentationsstandards ein",
+        "courtApproval": "Stellen Sie sicher, dass verbesserte Materialien die Gerichtsanforderungen erfüllen"
       },
       "techniques": [
         {
@@ -1588,9 +1588,9 @@
         }
       ],
       "legalCompliance": {
-        "evidencePreservation": "Maintain original evidence photos unchanged",
-        "documentationAccuracy": "Ensure enhanced materials accurately represent facts",
-        "courtStandards": "Meet all court presentation and documentation standards"
+        "evidencePreservation": "Bewahren Sie ursprüngliche Beweisfotos unverändert auf",
+        "documentationAccuracy": "Stellen Sie sicher, dass verbesserte Materialien Fakten genau darstellen",
+        "courtStandards": "Erfüllen Sie alle Gerichtspräsentations- und Dokumentationsstandards"
       },
       "bestPractices": [
         "Behalte Authentizität - verbessern Sie, ohne zu täuschen",

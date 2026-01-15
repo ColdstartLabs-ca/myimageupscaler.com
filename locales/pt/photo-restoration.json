@@ -1,8 +1,8 @@
 {
-  "category": "photo-restoration",
+  "category": "restauracao-de-fotos",
   "pages": [
     {
-      "slug": "old-photo-restoration-guide",
+      "slug": "guia-restauracao-fotos-antigas",
       "title": "Restauração de Fotos Antigas: Guia Completo",
       "metaTitle": "Restauração de Fotos Antigas: Guia Completo | MyImageUpscaler",
       "metaDescription": "Guia completo para restauração de fotos antigas. Aprenda a restaurar fotos vintage danificadas, desbotadas e rasgadas com IA e técnicas tradicionais. Instruções passo a passo.",
@@ -15,7 +15,7 @@
         "restauração de fotos de família"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "photo-restoration",
+      "category": "restauracao-de-fotos",
       "difficulty": "Intermediário",
       "photoTypes": [
         "Fotos Desbotadas",
@@ -186,11 +186,11 @@
           "answer": "A colorização é opcional e depende dos seus objetivos. Pode tornar as fotos mais envolventes, mas pode perder a autenticidade histórica. Considere manter as duas versões."
         }
       ],
-      "relatedTools": ["ai-photo-restorer", "old-photo-enhancer"],
-      "relatedPages": ["vintage-photo-colorization", "family-photo-preservation"]
+      "relatedTools": ["restaurador-fotos-ia", "melhorador-fotos-antigas"],
+      "relatedPages": ["colorizacao-fotos-vintage", "preservacao-fotos-familia"]
     },
     {
-      "slug": "vintage-photo-colorization",
+      "slug": "colorizacao-fotos-vintage",
       "title": "Guia de Colorização de Fotos Vintage",
       "metaTitle": "Guia de Colorização de Fotos Vintage | MyImageUpscaler",
       "metaDescription": "Guia completo para colorização de fotos vintage. Aprenda a adicionar cores realistas a fotos em preto e branco usando ferramentas de IA e técnicas manuais para resultados autênticos.",
@@ -203,7 +203,7 @@
         "colorir fotos históricas"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "photo-restoration",
+      "category": "restauracao-de-fotos",
       "difficulty": "Avançado",
       "colorizationMethods": [
         "IA Automática",
@@ -471,11 +471,11 @@
           "answer": "Pesquise a moda da era específica, considere o status social e a ocasião, e procure fotografias de época semelhantes com cores conhecidas."
         }
       ],
-      "relatedTools": ["ai-photo-colorizer", "vintage-photo-editor"],
-      "relatedPages": ["old-photo-restoration", "historical-photo-preservation"]
+      "relatedTools": ["coloridor-fotos-ia", "editor-fotos-vintage"],
+      "relatedPages": ["restauracao-fotos-antigas", "preservacao-fotos-historicas"]
     },
     {
-      "slug": "damaged-photo-repair",
+      "slug": "reparo-fotos-danificadas",
       "title": "Técnicas de Reparo de Fotos Danificadas",
       "metaTitle": "Técnicas de Reparo de Fotos Danificadas | MyImageUpscaler",
       "metaDescription": "Guia completo para reparo de fotos danificadas. Aprenda a consertar fotos rasgadas, arranhadas, danificadas por água e desbotadas usando técnicas de restauração profissional e ferramentas de IA.",
@@ -488,7 +488,7 @@
         "reparo de fotos danificadas por água"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "photo-restoration",
+      "category": "restauracao-de-fotos",
       "difficulty": "Especialista",
       "damageTypes": [
         "Rasgos e Rupturas",
@@ -727,7 +727,7 @@
           "guidelines": [
             "Vidro com filtro UV",
             "Moldura adequada",
-            "Avoid direct sunlight",
+            "Evitar luz solar direta",
             "Climate Controle"
           ]
         }
@@ -735,10 +735,10 @@
       "professionalTips": [
         {
           "tip": "Work Nãon-Destructively",
-          "description": "Always use layers and adjustment layers for reversibility"
+          "description": "Sempre usar camadas e camadas de ajuste para reversibilidade"
         },
         {
-          "tip": "Maintain Authenticity",
+          "tip": "Manter Autenticidade",
           "description": "Preserve the Foto's original character and age indicators"
         },
         {
@@ -746,20 +746,20 @@
           "description": "Keep before/after comparisons and Documento restoration steps"
         },
         {
-          "tip": "Use Reference Images",
-          "description": "Find similar photos for reference when reconstructing damaged areas"
+          "tip": "Usar Imagens de Referência",
+          "description": "Encontrar fotos semelhantes como referência ao reconstruir áreas danificadas"
         }
       ],
       "bestPractices": [
-        "Assess damage thoroughly before beginning repairs",
+        "Avaliar danos minuciosamente antes de começar os reparos",
         "Use the gentlest Efetivo repair method",
-        "Work from large areas to small details",
-        "Regularly step back to assess overall progress",
-        "Maintain historical accuracy and authenticity"
+        "Trabalhar de áreas grandes para pequenos detalhes",
+        "Recuar regularmente para avaliar o progresso geral",
+        "Manter precisão histórica e autenticidade"
       ],
       "commonChallenges": [
         {
-          "challenge": "Large Missing Areas",
+          "challenge": "Grandes Áreas Ausentes",
           "solution": "Use Múltiplos reference sources and reconstruction techniques"
         },
         {
@@ -767,17 +767,17 @@
           "solution": "Use Conteúdo-aware tools and manual reconstruction for accuracy"
         },
         {
-          "challenge": "Color Restoration",
+          "challenge": "Restauração de Cores",
           "solution": "Combine Automático tools with manual fine-tuning for natural results"
         },
         {
-          "challenge": "Texture Matching",
-          "solution": "Use frequency separation and careful blending for texture consistency"
+          "challenge": "Correspondência de Textura",
+          "solution": "Usar separação de frequência e mistura cuidadosa para consistência de textura"
         }
       ],
       "faq": [
         {
-          "question": "Can severely damaged photos be fully restored?",
+          "question": "Fotos gravemente danificadas podem ser totalmente restauradas?",
           "answer": "While Alguns damage may be permanent, most photos can be significantly improved. Modern AI tools have expanded restoration possibilities dramatically."
         },
         {
@@ -785,15 +785,15 @@
           "answer": "Simples repairs might take 1-2 hours, while extensive restoration can take 10-30+ hours depending on damage severity and desired quality."
         },
         {
-          "question": "Should I attempt repairs myself or hire a professional?",
-          "answer": "Minor damage can often be repaired at home with practice. For valuable or severely damaged photos, consider professional restoration to avoid further damage."
+          "question": "Devo tentar reparos eu mesmo ou contratar um profissional?",
+          "answer": "Danos menores podem frequentemente ser reparados em casa com prática. Para fotos valiosas ou gravemente danificadas, considere restauração profissional para evitar mais danos."
         }
       ],
-      "relatedTools": ["photo-damage-repairer", "professional-restoration-suite"],
-      "relatedPages": ["old-photo-restoration", "photo-conservation-methods"]
+      "relatedTools": ["reparador-danos-fotos", "suite-restauracao-profissional"],
+      "relatedPages": ["restauracao-fotos-antigas", "metodos-conservacao-fotos"]
     },
     {
-      "slug": "photo-conservation-methods",
+      "slug": "metodos-conservacao-fotos",
       "title": "Conservação de Fotos: Métodos de Preservação",
       "metaTitle": "Conservação de Fotos: Métodos de Preservação | MyImageUpscaler",
       "metaDescription": "Guia completo de conservação de fotos. Aprenda sobre armazenamento adequado, métodos de preservação, controle ambiental e técnicas de arquivamento para proteger fotografias para as futuras gerações.",
@@ -806,7 +806,7 @@
         "conservação de fotografias"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "photo-restoration",
+      "category": "restauracao-de-fotos",
       "focus": "Prevenção e preservação a longo prazo",
       "conservationTypes": [
         "Conservação Física",
@@ -1043,7 +1043,7 @@
           "resource": "Organizações de Conservação",
           "examples": [
             "American Institute for Contraservation",
-            "Society of American Archivists",
+            "Sociedade de Arquivistas Americanos",
             "Photo Contraservators Group"
           ]
         },
@@ -1087,11 +1087,11 @@
           "answer": "A digitalização é essencial para a preservação digital, mas não substitui a conservação física. Use ambas as abordagens para uma proteção abrangente."
         }
       ],
-      "relatedTools": ["photo-conservation-tracker", "archival-storage-manager"],
-      "relatedPages": ["old-photo-restoration", "museum-quality-preservation"]
+      "relatedTools": ["rastreador-conservacao-fotos", "gerenciador-armazenamento-arquivistico"],
+      "relatedPages": ["restauracao-fotos-antigas", "preservacao-qualidade-museu"]
     },
     {
-      "slug": "family-photo-preservation",
+      "slug": "preservacao-fotos-familia",
       "title": "Preservação de Fotos de Família: Guia Completo",
       "metaTitle": "Preservação de Fotos de Família: Guia Completo | MyImageUpscaler",
       "metaDescription": "Guia completo para preservação de fotos de família. Aprenda a organizar, restaurar, digitalizar e preservar fotos e álbuns de família para as futuras gerações.",
@@ -1104,7 +1104,7 @@
         "fotos de história da família"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "photo-restoration",
+      "category": "restauracao-de-fotos",
       "focus": "Patrimônio familiar e genealogia",
       "preservationStages": [
         {
@@ -1321,7 +1321,7 @@
           "strategy": "Compartilhamento em Nuvem",
           "description": "Compartilhar fotos através de serviços de armazenamento em nuvem",
           "benefits": ["Suporte a arquivos grandes", "Controle de acesso", "Backup automático"],
-          "tools": ["Google Photos", "Amazon Photos", "Pastas de nuvem da família"]
+          "tools": ["Google Fotos", "Amazon Fotos", "Pastas de nuvem da família"]
         }
       ],
       "familyInvolvement": [
@@ -1385,8 +1385,8 @@
           "answer": "Conte histórias envolventes, conecte as fotos à história da família, use tecnologias com as quais eles se sintam confortáveis e mostre como essas fotos se conectam à sua própria identidade e patrimônio."
         }
       ],
-      "relatedTools": ["family-photo-organizer", "photo-digitization-service"],
-      "relatedPages": ["photo-conservation-methods", "genealogy-photo-management"]
+      "relatedTools": ["organizador-fotos-familia", "servico-digitalizacao-fotos"],
+      "relatedPages": ["metodos-conservacao-fotos", "gestao-fotos-genealogia"]
     }
   ],
   "meta": {

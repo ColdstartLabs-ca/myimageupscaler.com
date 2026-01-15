@@ -737,31 +737,31 @@
       "criteria": [
         {
           "name": "Limite Gratuito",
-          "key": "free_limit"
+          "key": "limite_gratuito"
         },
         {
           "name": "Tamanho Máximo de Arquivo",
-          "key": "max_filesize"
+          "key": "tamanho_maximo_arquivo"
         },
         {
           "name": "Velocidade de Processamento",
-          "key": "processing_speed"
+          "key": "velocidade_processamento"
         },
         {
           "name": "Qualidade",
-          "key": "quality"
+          "key": "qualidade"
         },
         {
           "name": "Suporte ao Cliente",
-          "key": "customer_support"
+          "key": "suporte_cliente"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Profissional Use",
-          "key": "professional_use"
+          "key": "uso_profissional"
         }
       ],
       "verdict": {
@@ -877,19 +877,19 @@
         },
         {
           "name": "Qualidade de Suporte",
-          "key": "support_quality"
+          "key": "qualidade_suporte"
         },
         {
           "name": "Additional Recursos",
-          "key": "additional_features"
+          "key": "recursos_adicionais"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Custo-Benefício",
-          "key": "value_for_money"
+          "key": "custo_beneficio"
         }
       ],
       "verdict": {
@@ -1152,31 +1152,31 @@
       "criteria": [
         {
           "name": "Uso Ilimitado",
-          "key": "unlimited_usage"
+          "key": "uso_ilimitado"
         },
         {
           "name": "Sem Marcas d'Água",
-          "key": "no_watermarks"
+          "key": "sem_marcas_dagua"
         },
         {
           "name": "Qualidade",
-          "key": "quality"
+          "key": "qualidade"
         },
         {
           "name": "Resolução Máxima",
-          "key": "max_resolution"
+          "key": "resolucao_maxima"
         },
         {
           "name": "Suporte ao Cliente",
-          "key": "customer_support"
+          "key": "suporte_cliente"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Versatilidade",
-          "key": "versatility"
+          "key": "versatilidade"
         }
       ],
       "verdict": {
@@ -1411,31 +1411,31 @@
       "criteria": [
         {
           "name": "IA Technology",
-          "key": "ai_technology"
+          "key": "tecnologia_ia"
         },
         {
           "name": "Facilidade de Uso",
-          "key": "ease_of_use"
+          "key": "facilidade_uso"
         },
         {
           "name": "Consistência",
-          "key": "consistency"
+          "key": "consistencia"
         },
         {
           "name": "Atualizações",
-          "key": "updates"
+          "key": "atualizacoes"
         },
         {
           "name": "Suporte ao Cliente",
-          "key": "customer_support"
+          "key": "suporte_cliente"
         },
         {
           "name": "Nível Gratuito",
-          "key": "free_tier"
+          "key": "plano_gratuito"
         },
         {
           "name": "Acessibilidade",
-          "key": "accessibility"
+          "key": "acessibilidade"
         }
       ],
       "verdict": {
@@ -1669,31 +1669,31 @@
       "criteria": [
         {
           "name": "Especialização",
-          "key": "specialization"
+          "key": "especializacao"
         },
         {
           "name": "Nível Gratuito",
-          "key": "free_tier"
+          "key": "plano_gratuito"
         },
         {
           "name": "Qualidade de Processamento",
-          "key": "processing_quality"
+          "key": "qualidade_processamento"
         },
         {
           "name": "Velocidade",
-          "key": "speed"
+          "key": "velocidade"
         },
         {
           "name": "Suporte ao Cliente",
-          "key": "customer_support"
+          "key": "suporte_cliente"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Valor para Ampliação",
-          "key": "value_for_upscaling"
+          "key": "valor_ampliacao"
         }
       ],
       "verdict": {
@@ -1798,31 +1798,31 @@
       "criteria": [
         {
           "name": "Nível Gratuito",
-          "key": "free_tier"
+          "key": "plano_gratuito"
         },
         {
           "name": "Qualidade",
-          "key": "quality"
+          "key": "qualidade"
         },
         {
           "name": "Especialização",
-          "key": "specialization"
+          "key": "especializacao"
         },
         {
           "name": "Suporte ao Cliente",
-          "key": "customer_support"
+          "key": "suporte_cliente"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Confiança na Marca",
-          "key": "brand_trust"
+          "key": "confianca_marca"
         },
         {
           "name": "Custo-Benefício",
-          "key": "value_for_money"
+          "key": "custo_beneficio"
         }
       ],
       "verdict": {
@@ -1927,31 +1927,31 @@
       "criteria": [
         {
           "name": "Uso Gratuito",
-          "key": "free_usage"
+          "key": "uso_gratuito"
         },
         {
           "name": "Qualidade da IA",
-          "key": "ai_quality"
+          "key": "qualidade_ia"
         },
         {
           "name": "Especialização",
-          "key": "specialization"
+          "key": "especializacao"
         },
         {
           "name": "Facilidade de Uso",
-          "key": "ease_of_use"
+          "key": "facilidade_uso"
         },
         {
           "name": "Processing Velocidade",
-          "key": "processing_speed"
+          "key": "velocidade_processamento"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Qualidade Profissional",
-          "key": "professional_quality"
+          "key": "qualidade_profissional"
         }
       ],
       "verdict": {
@@ -2056,31 +2056,31 @@
       "criteria": [
         {
           "name": "Nível Gratuito",
-          "key": "free_tier"
+          "key": "plano_gratuito"
         },
         {
           "name": "Qualidade da IA",
-          "key": "ai_quality"
+          "key": "qualidade_ia"
         },
         {
           "name": "Especialização",
-          "key": "specialization"
+          "key": "especializacao"
         },
         {
           "name": "Profissional Results",
-          "key": "professional_results"
+          "key": "resultados_profissionais"
         },
         {
           "name": "Batch Processaring",
-          "key": "batch_processing"
+          "key": "processamento_lote"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Custo-Benefício",
-          "key": "value_for_money"
+          "key": "custo_beneficio"
         }
       ],
       "verdict": {
@@ -2210,31 +2210,31 @@
       "criteria": [
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Nível Gratuito",
-          "key": "free_tier"
+          "key": "plano_gratuito"
         },
         {
           "name": "Qualidade",
-          "key": "quality"
+          "key": "qualidade"
         },
         {
           "name": "Velocidade",
-          "key": "speed"
+          "key": "velocidade"
         },
         {
           "name": "Suporte ao Cliente",
-          "key": "customer_support"
+          "key": "suporte_cliente"
         },
         {
           "name": "Facilidade de Uso",
-          "key": "ease_of_use"
+          "key": "facilidade_uso"
         },
         {
           "name": "Valor Geral",
-          "key": "overall_value"
+          "key": "valor_geral"
         }
       ],
       "verdict": {
@@ -2338,31 +2338,31 @@
       "criteria": [
         {
           "name": "Limite Gratuito",
-          "key": "free_limit"
+          "key": "limite_gratuito"
         },
         {
           "name": "Tamanho Máximo de Arquivo",
-          "key": "max_filesize"
+          "key": "tamanho_maximo_arquivo"
         },
         {
           "name": "Processing Velocidade",
-          "key": "processing_speed"
+          "key": "velocidade_processamento"
         },
         {
           "name": "Qualidade",
-          "key": "quality"
+          "key": "qualidade"
         },
         {
           "name": "Suporte ao Cliente",
-          "key": "customer_support"
+          "key": "suporte_cliente"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Profissional Use",
-          "key": "professional_use"
+          "key": "uso_profissional"
         }
       ],
       "verdict": {
@@ -2492,31 +2492,31 @@
       "criteria": [
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Nível Gratuito",
-          "key": "free_tier"
+          "key": "plano_gratuito"
         },
         {
           "name": "Qualidade",
-          "key": "quality"
+          "key": "qualidade"
         },
         {
           "name": "Velocidade",
-          "key": "speed"
+          "key": "velocidade"
         },
         {
           "name": "Suporte ao Cliente",
-          "key": "customer_support"
+          "key": "suporte_cliente"
         },
         {
           "name": "Facilidade de Uso",
-          "key": "ease_of_use"
+          "key": "facilidade_uso"
         },
         {
           "name": "Valor Geral",
-          "key": "overall_value"
+          "key": "valor_geral"
         }
       ],
       "verdict": {
@@ -2647,31 +2647,31 @@
       "criteria": [
         {
           "name": "Uso Ilimitado",
-          "key": "unlimited_usage"
+          "key": "uso_ilimitado"
         },
         {
           "name": "Sem Marcas d'Água",
-          "key": "no_watermarks"
+          "key": "sem_marcas_dagua"
         },
         {
           "name": "Qualidade",
-          "key": "quality"
+          "key": "qualidade"
         },
         {
           "name": "Resolução Máxima",
-          "key": "max_resolution"
+          "key": "resolucao_maxima"
         },
         {
           "name": "Suporte ao Cliente",
-          "key": "customer_support"
+          "key": "suporte_cliente"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Versatilidade",
-          "key": "versatility"
+          "key": "versatilidade"
         }
       ],
       "verdict": {
@@ -2773,31 +2773,31 @@
       "criteria": [
         {
           "name": "Nível Gratuito",
-          "key": "free_tier"
+          "key": "plano_gratuito"
         },
         {
           "name": "Tamanho Máximo de Arquivo",
-          "key": "max_filesize"
+          "key": "tamanho_maximo_arquivo"
         },
         {
           "name": "Processing Velocidade",
-          "key": "processing_speed"
+          "key": "velocidade_processamento"
         },
         {
           "name": "Qualidade",
-          "key": "quality"
+          "key": "qualidade"
         },
         {
           "name": "Limites de Lote",
-          "key": "batch_limits"
+          "key": "limites_lote"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Specialized Recursos",
-          "key": "specialized_features"
+          "key": "recursos_especializados"
         }
       ],
       "verdict": {
@@ -2900,31 +2900,31 @@
       "criteria": [
         {
           "name": "Nível Gratuito",
-          "key": "free_tier"
+          "key": "plano_gratuito"
         },
         {
           "name": "Tamanho Máximo de Arquivo",
-          "key": "max_filesize"
+          "key": "tamanho_maximo_arquivo"
         },
         {
           "name": "Processing Velocidade",
-          "key": "processing_speed"
+          "key": "velocidade_processamento"
         },
         {
           "name": "Qualidade",
-          "key": "quality"
+          "key": "qualidade"
         },
         {
           "name": "Especialização",
-          "key": "specialization"
+          "key": "especializacao"
         },
         {
           "name": "Preço",
-          "key": "price"
+          "key": "preco"
         },
         {
           "name": "Recurso Focus",
-          "key": "feature_focus"
+          "key": "foco_recursos"
         }
       ],
       "verdict": {

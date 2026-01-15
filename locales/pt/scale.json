@@ -1,5 +1,5 @@
 {
-  "category": "scale",
+  "category": "escala",
   "pages": [
     {
       "slug": "ampliar-to-4k",
@@ -16,7 +16,7 @@
         "ampliar to 4k resolução"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "4K",
       "dimensions": {
         "width": 3840,
@@ -91,7 +91,7 @@
         "full hd ampliador"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "Full HD (1080p)",
       "dimensions": {
         "width": 1920,
@@ -167,7 +167,7 @@
         "ultra hd ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "8K UHD",
       "dimensions": {
         "width": 7680,
@@ -243,7 +243,7 @@
         "1920x1080 ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "Full HD (1080p)",
       "dimensions": {
         "width": 1920,
@@ -261,7 +261,7 @@
         {
           "title": "web Standard qualidade",
           "description": "1080p is the mais widely supported resolução for web content and streaming platforms.",
-          "metric": "2.1 megapixels"
+          "metric": "2,1 megapixels"
         },
         {
           "title": "Lightning rápido",
@@ -276,15 +276,15 @@
       ],
       "technicalSpecs": {
         "pixelDimensions": "1920 x 1080",
-        "totalPixels": "2,073,600 pixels",
+        "totalPixels": "2.073.600 pixels",
         "aspectRatio": "16:9 (widetela)",
         "comparedTo720p": "2.25x the resolução",
         "printSize": "Up to 16\" x 9\" at 300 dpi",
-        "displayUses": "HD monitors, TVs, smartphones, tablets"
+        "displayUses": "Monitores HD, TVs, smartphones, tablets"
       },
       "faq": [
         {
-          "question": "Is 1080p the same as Full HD?",
+          "question": "1080p é o mesmo que Full HD?",
           "answer": "Sim! 1080p and Full HD refer to the same resolução: 1920x1080 pixels. The 'p' stands for progressive scan, meaning todos lines are drawn sequentially for smoother motion."
         },
         {
@@ -296,7 +296,7 @@
           "answer": "Sim, 1080p imagemns can be impressãoed claroly up to 16x9 inches at 300 DPI. For larger impressãos, consider ampliação to 4K for Melhor qualidade."
         },
         {
-          "question": "How does 1080p compare to 720p?",
+          "question": "Como 1080p se compara a 720p?",
           "answer": "1080p has 2.25 vezes mais pixels than 720p (1280x720), resulting in significantly nítidoer and mais detalheed imagemns, especially on larger telas."
         }
       ],
@@ -319,7 +319,7 @@
         "profissional 4k ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "4K UHD",
       "dimensions": {
         "width": 3840,
@@ -328,7 +328,7 @@
       },
       "targetUses": [
         "Fotografia Profissional",
-        "Digital art enhancement",
+        "Melhoria de arte digital",
         "E-commerce product imagemns",
         "impressão media",
         "4K telas"
@@ -337,10 +337,10 @@
         {
           "title": "profissional qualidade",
           "description": "Industry-standard 4K resolução with avançado AI enhancement algorithms.",
-          "metric": "8.3 megapixels"
+          "metric": "8,3 megapixels"
         },
         {
-          "title": "Versatile Applications",
+          "title": "Aplicações Versáteis",
           "description": "Adequado para fotos, artwork, graphics, and profissional Usar cases.",
           "metric": "todos imagem types"
         },
@@ -352,9 +352,9 @@
       ],
       "technicalSpecs": {
         "pixelDimensions": "3840 x 2160",
-        "totalPixels": "8,294,400 pixels",
+        "totalPixels": "8.294.400 pixels",
         "aspectRatio": "16:9 (widetela)",
-        "maxUpscaleFactor": "8x from source",
+        "maxUpscaleFactor": "8x da fonte",
         "printSize": "Up to 32\" x 18\" at 300 dpi",
         "supportedFormats": "JPEG, PNG, webP"
       },
@@ -395,7 +395,7 @@
         "automatic foto enhancer"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "HD (720p+)",
       "dimensions": {
         "width": 1280,
@@ -423,12 +423,12 @@
         {
           "title": "detalhe Recovery",
           "description": "Recovers lost detalhes and Aprimorar textoures for nítidoer results.",
-          "metric": "Enhanced clarity"
+          "metric": "Clareza aprimorada"
         }
       ],
       "technicalSpecs": {
         "minResolution": "Aprimorar from any resolução",
-        "targetResolution": "720p HD and above",
+        "targetResolution": "720p HD e acima",
         "enhancementTypes": [
           "Nãoise reduction",
           "nítidoening",
@@ -475,17 +475,17 @@
         "moderado ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "2X Melhorard",
       "dimensions": {
-        "width": "Variable",
-        "height": "Variable",
-        "aspectRatio": "Maintained"
+        "width": "Variável",
+        "height": "Variável",
+        "aspectRatio": "Mantido"
       },
       "targetUses": [
         "moderado qualidade improvement",
         "Preparação para Impressão",
-        "Social media enhancement",
+        "Melhoria para redes sociais",
         "Otimização web",
         "arquivo tamanho management"
       ],
@@ -508,7 +508,7 @@
       ],
       "technicalSpecs": {
         "scaleFactor": "2x both width and altura",
-        "pixelIncrease": "4x total pixels",
+        "pixelIncrease": "4x pixels totais",
         "processingTime": "10-20 segundos",
         "qualityMaintenance": "AI-based detalhe preservation",
         "supportedFormats": "JPEG, PNG, webP"
@@ -550,18 +550,18 @@
         "Qualidade Máxima ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "4X Melhorard",
       "dimensions": {
-        "width": "Variable",
-        "height": "Variable",
-        "aspectRatio": "Maintained"
+        "width": "Variável",
+        "height": "Variável",
+        "aspectRatio": "Mantido"
       },
       "targetUses": [
         "alto-qualidade impressão",
         "grande formato telas",
         "Fotografia Profissional",
-        "Artwork enhancement",
+        "Melhoria de obras de arte",
         "Excelência em E-commerce"
       ],
       "benefits": [
@@ -578,12 +578,12 @@
         {
           "title": "avançado AI Processing",
           "description": "Sophisticated algorithms add realistic detalhes and textoures.",
-          "metric": "Intelligent enhancement"
+          "metric": "Melhoria inteligente"
         }
       ],
       "technicalSpecs": {
         "scaleFactor": "4x both width and altura",
-        "pixelIncrease": "16x total pixels",
+        "pixelIncrease": "16x pixels totais",
         "processingTime": "30-60 segundos",
         "qualityEnhancement": "com tecnologia de IA detalhe generation",
         "supportedFormats": "JPEG, PNG, webP"
@@ -621,11 +621,11 @@
         "4k imagem converter",
         "imagem to 4k tool",
         "4k foto ampliador",
-        "3840x2160 converter",
+        "conversor 3840x2160",
         "profissional 4k enhancement"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "4K UHD",
       "dimensions": {
         "width": 3840,
@@ -635,7 +635,7 @@
       "targetUses": [
         "Conteúdo creation",
         "profissional portfolios",
-        "Digital art",
+        "Arte digital",
         "impressão media",
         "4K telas"
       ],
@@ -643,12 +643,12 @@
         {
           "title": "Industry Padrão",
           "description": "4K is the profissional standard for alto-qualidade content and telas.",
-          "metric": "8.3 megapixels"
+          "metric": "8,3 megapixels"
         },
         {
           "title": "Versatile formato",
           "description": "Funciona with todos imagem types and Manter profissional qualidade standards.",
-          "metric": "Universal compatibility"
+          "metric": "Compatibilidade universal"
         },
         {
           "title": "Pronto para Impressão",
@@ -658,7 +658,7 @@
       ],
       "technicalSpecs": {
         "targetResolution": "3840 x 2160 pixels",
-        "totalPixels": "8,294,400",
+        "totalPixels": "8.294.400",
         "aspectRatio": "16:9 Padrão",
         "maxPrintSize": "32\" x 18\" at 300 dpi",
         "supportedInputFormats": "JPEG, PNG, webP, TIFF, BMP"
@@ -700,7 +700,7 @@
         "alto definition ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "HD (720p)",
       "dimensions": {
         "width": 1280,
@@ -709,16 +709,16 @@
       },
       "targetUses": [
         "web content",
-        "Social media",
+        "Redes sociais",
         "Digital telas",
-        "Mobile apps",
+        "Aplicativos móveis",
         "online portfolios"
       ],
       "benefits": [
         {
           "title": "Optimized for web",
           "description": "HD resolução Fornecer Excelente Qualidade with manageable arquivo tamanhos for web Usar.",
-          "metric": "0.9 megapixels"
+          "metric": "0,9 megapixels"
         },
         {
           "title": "Universal Suporta",
@@ -733,7 +733,7 @@
       ],
       "technicalSpecs": {
         "targetResolution": "1280 x 720 pixels",
-        "totalPixels": "921,600",
+        "totalPixels": "921.600",
         "aspectRatio": "16:9 Padrão",
         "printSize": "Up to 10\" x 6\" at 300 dpi",
         "compressionOptimized": "Sim"
@@ -770,12 +770,12 @@
       "secondaryKeywords": [
         "8k imagem enhancer",
         "8k foto ampliador",
-        "7680x4320 converter",
+        "conversor 7680x4320",
         "ultra hd ampliador",
         "máximo resolução tool"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "8K UHD",
       "dimensions": {
         "width": 7680,
@@ -785,30 +785,30 @@
       "targetUses": [
         "Fotografia Profissional",
         "Impressão em Grande formatoo",
-        "Cinema production",
-        "Architectural visualization",
+        "Produção cinematográfica",
+        "Visualização arquitetônica",
         "Future-proof Conteúdo"
       ],
       "benefits": [
         {
           "title": "máximo detalhe",
           "description": "8K Fornecer the highest consumer resolução disponível with incredible detalhe.",
-          "metric": "33.2 megapixels"
+          "metric": "33,2 megapixels"
         },
         {
           "title": "profissional Grade",
           "description": "Adequado para the mais demanding profissional applications.",
-          "metric": "Industry leading"
+          "metric": "Líder da indústria"
         },
         {
-          "title": "Future-Proof",
+          "title": "Futuro-Proof",
           "description": "8K content will remain relevant as tela techNãology advances.",
           "metric": "Futuro Pronto"
         }
       ],
       "technicalSpecs": {
         "targetResolution": "7680 x 4320 pixels",
-        "totalPixels": "33,177,600",
+        "totalPixels": "33.177.600",
         "aspectRatio": "16:9 Padrão",
         "maxPrintSize": "64\" x 36\" at 300 dpi",
         "professionalGrade": "Sim"
@@ -846,16 +846,16 @@
         "imagem resolução enhancer",
         "ai resolução booster",
         "Aumentar imagem resolução",
-        "pixel enhancer",
+        "melhorador de pixels",
         "resolução ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
-      "resolution": "Variable",
+      "category": "escala",
+      "resolution": "Variável",
       "dimensions": {
         "width": "Usuário selectable",
         "height": "Usuário selectable",
-        "aspectRatio": "Maintained"
+        "aspectRatio": "Mantido"
       },
       "targetUses": [
         "Custom resolução needs",
@@ -873,7 +873,7 @@
         {
           "title": "Smart Melhoria",
           "description": "AI intelligently adds appropriate detalhes for each resolução level.",
-          "metric": "Intelligent scaling"
+          "metric": "Redimensionamento inteligente"
         },
         {
           "title": "qualidade Focused",
@@ -921,11 +921,11 @@
         "2k imagem enhancer",
         "1440p ampliador",
         "2k resolução tool",
-        "2560x1440 converter",
+        "conversor 2560x1440",
         "qhd ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "2K QHD",
       "dimensions": {
         "width": 2560,
@@ -936,14 +936,14 @@
         "profissional monitors",
         "alto-end telas",
         "impressão media",
-        "Digital design",
+        "Design digital",
         "Conteúdo creation"
       ],
       "benefits": [
         {
           "title": "qualidade Balance",
           "description": "2K Fornecer Excelente Qualidade with mais manageable arquivo tamanhos than 4K.",
-          "metric": "3.7 megapixels"
+          "metric": "3,7 megapixels"
         },
         {
           "title": "profissional Standard",
@@ -958,7 +958,7 @@
       ],
       "technicalSpecs": {
         "targetResolution": "2560 x 1440 pixels",
-        "totalPixels": "3,686,400",
+        "totalPixels": "3.686.400",
         "aspectRatio": "16:9 Padrão",
         "comparedTo1080p": "1.78x mais pixels",
         "printSize": "Up to 22\" x 12\" at 300 dpi",
@@ -995,13 +995,13 @@
       "primaryKeyword": "ultra hd ampliador",
       "secondaryKeywords": [
         "uhd imagem enhancer",
-        "ultra hd converter",
+        "conversor ultra hd",
         "4k+ ampliador",
         "premium ampliador",
         "alto-end resolução tool"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "Ultra HD",
       "dimensions": {
         "width": 3840,
@@ -1013,13 +1013,13 @@
         "profissional portfolios",
         "alto-end telas",
         "Commercial impressão",
-        "Cinema production"
+        "Produção cinematográfica"
       ],
       "benefits": [
         {
           "title": "Premium qualidade",
           "description": "Ultra HD Fornecer the highest consumer-grade resolução disponível.",
-          "metric": "8.3+ megapixels"
+          "metric": "8,3+ megapixels"
         },
         {
           "title": "profissional Standard",
@@ -1029,19 +1029,19 @@
         {
           "title": "máximo Compatibility",
           "description": "Funciona Perfeitoly with todos moderno Ultra HD telas and systems.",
-          "metric": "UHD compatible"
+          "metric": "Compatível com UHD"
         }
       ],
       "technicalSpecs": {
         "minimumResolution": "3840 x 2160 (4K)",
         "maximumResolution": "7680 x 4320 (8K)",
-        "qualityStandard": "Ultra HD specification",
+        "qualityStandard": "Especificação Ultra HD",
         "colorDepth": "Deep cor Suporta",
         "professionalFeatures": "HDR Pronto"
       },
       "faq": [
         {
-          "question": "What's the difference between Ultra HD and 4K?",
+          "question": "Qual é a diferença entre Ultra HD e 4K?",
           "answer": "Ultra HD and 4K are essentially the same resolução (3840x2160). Ultra HD is the consumer marketing term, while 4K is the profissional term. Both refer to the same alto-qualidade standard."
         },
         {
@@ -1053,7 +1053,7 @@
           "answer": "Sim! Our Ultra HD ampliador can significantly Aprimorar old fotos, increasing resolução and restoring detalhes to meet moderno qualidade standards."
         },
         {
-          "question": "How does Ultra HD compare to 8K?",
+          "question": "Como o Ultra HD se compara ao 8K?",
           "answer": "Ultra HD (4K) Fornecer Excelente Qualidade for mais profissional Usar. 8K offers 4 vezes mais pixels but is mainly needed for especializado applications like cinema or extremely grande impressãos."
         }
       ],
@@ -1069,19 +1069,19 @@
       "intro": "Boost your imagem pixels intelligently with avançado AI that Aprimorar resolução and adds realistic detalhe. The Perfeito tool for upgrading any imagem to profissional qualidade standards.",
       "primaryKeyword": "pixel boost ampliador",
       "secondaryKeywords": [
-        "pixel enhancer",
+        "melhorador de pixels",
         "pixel booster Ferramenta",
         "imagem pixel enhancer",
         "pixel resolução booster",
         "avançado pixel ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
-      "resolution": "Variable",
+      "category": "escala",
+      "resolution": "Variável",
       "dimensions": {
-        "width": "Flexível",
-        "height": "Flexível",
-        "aspectRatio": "Maintained"
+        "width": "Variável",
+        "height": "Variável",
+        "aspectRatio": "Mantido"
       },
       "targetUses": [
         "qualidade enhancement",
@@ -1092,14 +1092,14 @@
       ],
       "benefits": [
         {
-          "title": "Pixel Intelligence",
+          "title": "Inteligência de Pixels",
           "description": "avançado AI analyzes and Aprimorar pixels at the mais granular level.",
           "metric": "Pixel-Perfeito"
         },
         {
           "title": "detalhe Generation",
           "description": "Criar realistic detalhes that weren't present in the original imagem.",
-          "metric": "Smart enhancement"
+          "metric": "Melhoria inteligente"
         },
         {
           "title": "qualidade Boost",
@@ -1111,8 +1111,8 @@
         "enhancementMethod": "com tecnologia de IA pixel analysis",
         "boostLevels": ["2x", "4x", "8x", "Personalizado"],
         "detailGeneration": "Intelligent textoure creation",
-        "qualityImprovement": "Multi-factor enhancement",
-        "processingSpeed": "Optimized for speed"
+        "qualityImprovement": "Melhoria multifatorial",
+        "processingSpeed": "Otimizado para velocidade"
       },
       "faq": [
         {
@@ -1151,12 +1151,12 @@
         "extreme ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "8X Melhorard",
       "dimensions": {
-        "width": "Variable",
-        "height": "Variable",
-        "aspectRatio": "Maintained"
+        "width": "Variável",
+        "height": "Variável",
+        "aspectRatio": "Mantido"
       },
       "targetUses": [
         "Impressão em Grande formatoo",
@@ -1177,14 +1177,14 @@
           "metric": "Impressão Profissional"
         },
         {
-          "title": "Future Proof",
+          "title": "Futuro Compatível",
           "description": "máximo resolução ensures content remains relevant as techNãology advances.",
           "metric": "Qualidade Máxima"
         }
       ],
       "technicalSpecs": {
         "scaleFactor": "8x both width and altura",
-        "pixelIncrease": "64x total pixels",
+        "pixelIncrease": "64x pixels totais",
         "processingTime": "60-120 segundos",
         "qualityEnhancement": "avançado AI detalhe generation",
         "supportedFormats": "JPEG, PNG, webP"
@@ -1230,12 +1230,12 @@
         "ultra ampliador"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "escala",
       "resolution": "16X Melhorard",
       "dimensions": {
-        "width": "Variable",
-        "height": "Variable",
-        "aspectRatio": "Maintained"
+        "width": "Variável",
+        "height": "Variável",
+        "aspectRatio": "Mantido"
       },
       "targetUses": [
         "Impressão Especializada",
@@ -1258,12 +1258,12 @@
         {
           "title": "máximo detalhe",
           "description": "avançado AI generates unprecedented detalhe even at extreme magnification.",
-          "metric": "Ultra enhancement"
+          "metric": "Melhoria ultra"
         }
       ],
       "technicalSpecs": {
         "scaleFactor": "16x both width and altura",
-        "pixelIncrease": "256x total pixels",
+        "pixelIncrease": "256x pixels totais",
         "processingTime": "2-5 minutos",
         "qualityEnhancement": "State-of-the-art AI detalhe generation",
         "supportedFormats": "JPEG, PNG, webP"

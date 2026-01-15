@@ -189,10 +189,10 @@
         "convert heic"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacion",
       "description": "Guía completa del formato HEIC usado por iPhones y iPads. Entienda compresión, calidad, problemas de compatibilidad y cómo escalar fotos HEIC manteniendo la calidad de imagen de Apple.",
-      "difficulty": "beginner",
+      "difficulty": "principiante",
       "estimatedTime": "6-10 minutos",
       "steps": [
         {
@@ -274,8 +274,8 @@
         "formato raw de cámara"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacion",
       "description": "Guía comprensiva del formato de fotografía RAW. Entienda las ventajas de disparar en RAW, flujo de trabajo de procesamiento RAW, y cómo escalar imágenes RAW manteniendo calidad profesional.",
       "difficulty": "intermedio",
       "estimatedTime": "8-12 minutos",
@@ -359,8 +359,8 @@
         "formato de imagen profesional"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacion",
       "description": "Guía comprensiva del formato TIFF para imágenes profesionales. Entienda compresión sin pérdida, color de 16-bit, flujos de trabajo de impresión, y cómo escalar imágenes TIFF manteniendo máxima calidad.",
       "difficulty": "intermedio",
       "estimatedTime": "6-10 minutos",
@@ -444,10 +444,10 @@
         "convertir bmp"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacion",
       "description": "Guía del formato de mapa de bits BMP. Entienda los detalles técnicos, limitaciones, alternativas modernas, y cómo escalar imágenes BMP para mejor calidad y compatibilidad.",
-      "difficulty": "beginner",
+      "difficulty": "principiante",
       "estimatedTime": "4-6 minutos",
       "steps": [
         {
@@ -529,8 +529,8 @@
         "escalado svg"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacion",
       "description": "Guía comprensiva del formato vectorial SVG. Entienda la diferencia entre gráficos vectoriales y rasterizados, cuándo usar SVG, y cómo manejar imágenes SVG que necesitan mejora de resolución.",
       "difficulty": "intermedio",
       "estimatedTime": "6-8 minutos",
@@ -609,11 +609,11 @@
       "primaryKeyword": "formato gif",
       "secondaryKeywords": ["gif vs png", "animación gif", "escalar gif", "imágenes animadas"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacion",
       "description": "Guía del formato GIF para animaciones e imágenes estáticas. Entienda la limitación de 256 colores, cuándo usar GIF, alternativas modernas (WebP/APNG), y cómo mejorar la calidad GIF.",
-      "difficulty": "beginner",
-      "estimatedTime": "5-8 minutes",
+      "difficulty": "principiante",
+      "estimatedTime": "5-8 minutos",
       "steps": [
         {
           "step": 1,
@@ -627,23 +627,23 @@
         },
         {
           "step": 3,
-          "title": "GIF vs Modern Animation Formats",
-          "content": "Modern formats offer significant advantages over GIF.\n\n**GIF Limitations:**\n- **256 colors**: Severe color limitation\n- **1-bit alpha**: No partial transparency\n- **Large files**: Inefficient compression\n- **No audio**: Can't include sound\n- **Poor quality**: Visible dithering and banding\n\n**WebP Animation:**\n- **Millions of colors**: Full color support\n- **8-bit alpha**: Smooth transparency\n- **30-80% smaller**: Better compression\n- **Better quality**: No dithering needed\n- **Browser support**: 95%+ globally\n- **Use when**: Modern web animation\n\n**APNG (Animated PNG):**\n- **Full color**: Like PNG, millions of colors\n- **8-bit alpha**: Excellent transparency\n- **Better quality**: Lossless compression\n- **Larger than WebP**: But better than GIF\n- **Firefox/Focus**: Limited browser support\n- **Use when**: Quality matters more than size\n\n**MP4 Video:**\n- **Best quality**: Modern video codecs\n- **Smallest files**: Most efficient compression\n- **Audio support**: Can include sound\n- **Universal**: Plays everywhere\n- **Use when**: High-quality animated content\n\n**Recommendation:**\nUse WebP for web animations, MP4 for video-like content, GIF only when compatibility is critical."
+          "title": "GIF vs Formatos de Animación Modernos",
+          "content": "Los formatos modernos ofrecen ventajas significativas sobre GIF.\n\n**Limitaciones de GIF:**\n- **256 colores**: Limitación severa de color\n- **alfa de 1 bit**: Sin transparencia parcial\n- **Archivos grandes**: Compresión ineficiente\n- **Sin audio**: No puede incluir sonido\n- **Mala calidad**: Dithering y banding visibles\n\n**Animación WebP:**\n- **Millones de colores**: Soporte de color completo\n- **Alfa de 8 bits**: Transparencia suave\n- **30-80% más pequeño**: Mejor compresión\n- **Mejor calidad**: No se necesita dithering\n- **Soporte de navegador**: 95%+ globalmente\n- **Usar cuando**: Animación web moderna\n\n**APNG (PNG Animado):**\n- **Color completo**: Como PNG, millones de colores\n- **Alfa de 8 bits**: Excelente transparencia\n- **Mejor calidad**: Compresión sin pérdida\n- **Más grande que WebP**: Pero mejor que GIF\n- **Firefox/Focus**: Soporte limitado de navegador\n- **Usar cuando**: La calidad importa más que el tamaño\n\n**Video MP4:**\n- **Mejor calidad**: Códecs de video modernos\n- **Archivos más pequeños**: Compresión más eficiente\n- **Soporte de audio**: Puede incluir sonido\n- **Universal**: Se reproduce en todas partes\n- **Usar cuando**: Contenido animado de alta calidad\n\n**Recomendación:**\nUse WebP para animaciones web, MP4 para contenido tipo video, GIF solo cuando la compatibilidad sea crítica."
         },
         {
           "step": 4,
-          "title": "Enhancing GIF Quality",
-          "content": "While GIF has limitations, you can optimize quality within its constraints.\n\n**Color Palette Optimization:**\n- **Adaptive palette**: Custom colors for each frame\n- **Selective dithering**: Reduce banding in gradients\n- **Reduce frames**: Fewer frames = more colors per frame\n- **Crop unnecessary areas**: Smaller = more colors available\n\n**Creating Better GIFs:**\n1. **Start with video**: High-quality source helps\n2. **Limit duration**: 3-5 seconds maximum\n3. **Reduce dimensions**: 400-500px wide is sufficient\n4. **Limit motion**: Too much motion breaks GIF compression\n5. **Optimize palette**: Use adaptive or selective palettes\n6. **Frame skipping**: Skip every other frame if needed\n\n**Upscaling GIF Frames:**\nTo improve GIF quality:\n1. **Extract frames**: Use tools to separate GIF into frames\n2. **Upscale frames**: Use AI to upscale individual frames\n3. **Enhance quality**: Apply noise reduction and sharpening\n4. **Reassemble**: Create new GIF from upscaled frames\n5. **Consider modern format**: Re-export as WebP instead\n\n**Tools for GIF Creation:**\n- **Adobe Photoshop**: Frame-by-frame animation\n- **GIMP**: Free alternative with animation features\n- **EZGIF**: Online GIF editor and optimizer\n- **FFmpeg**: Command-line video to GIF conversion"
+          "title": "Mejorando la Calidad de GIF",
+          "content": "Aunque GIF tiene limitaciones, puede optimizar la calidad dentro de sus restricciones.\n\n**Optimización de Paleta de Colores:**\n- **Paleta adaptativa**: Colores personalizados para cada cuadro\n- **Dithering selectivo**: Reduzca el banding en gradientes\n- **Reduzca cuadros**: Menos cuadros = más colores por cuadro\n- **Recorte de áreas innecesarias**: Más pequeño = más colores disponibles\n\n**Creando Mejores GIFs:**\n1. **Comience con video**: Una fuente de alta calidad ayuda\n2. **Limite la duración**: Máximo 3-5 segundos\n3. **Reduzca dimensiones**: 400-500px de ancho es suficiente\n4. **Limite el movimiento**: Demasiado movimiento rompe la compresión GIF\n5. **Optimice la paleta**: Use paletas adaptativas o selectivas\n6. **Salto de cuadros**: Salte cada otro cuadro si es necesario\n\n**Escalando Cuadros de GIF:**\nPara mejorar la calidad de GIF:\n1. **Extraiga cuadros**: Use herramientas para separar GIF en cuadros\n2. **Escale cuadros**: Use IA para escalar cuadros individuales\n3. **Mejore la calidad**: Aplique reducción de ruido y sharpening\n4. **Reensamble**: Cree nuevo GIF desde cuadros escalados\n5. **Considere formato moderno**: Reexporte como WebP en su lugar\n\n**Herramientas para Creación de GIF:**\n- **Adobe Photoshop**: Animación cuadro por cuadro\n- **GIMP**: Alternativa gratuita con características de animación\n- **EZGIF**: Editor y optimizador de GIF en línea\n- **FFmpeg**: Conversión de video a GIF por línea de comandos"
         },
         {
           "step": 5,
-          "title": "Converting GIF to Modern Formats",
-          "content": "Convert GIF to WebP or APNG for better quality and smaller file sizes.\n\n**GIF to WebP (Recommended):**\n- **Quality**: Dramatically better (full color)\n- **File size**: 30-80% smaller\n- **Transparency**: Smooth alpha channel\n- **Animation**: Identical functionality\n- **Browser support**: 95%+ (fallback to GIF for older)\n- **Tools**: Online converters, Adobe software, FFmpeg\n\n**GIF to APNG:**\n- **Quality**: Excellent (lossless)\n- **Transparency**: Perfect alpha channel\n- **File size**: Similar or smaller than GIF\n- **Browser support**: Firefox, Safari (Chrome needs extension)\n- **Use when**: Maximum quality needed\n\n**GIF to MP4 (for video-like content):**\n- **Quality**: Best possible (modern codecs)\n- **File size**: 80-95% smaller\n- **Audio**: Can include sound\n- **Use when**: GIF is essentially a short video clip\n- **Tools**: FFmpeg, online converters\n\n**Conversion Workflow:**\n1. **Analyze your GIF**: Is it simple animation or video-like?\n2. **Choose format**: WebP for animation, MP4 for video\n3. **Convert**: Use appropriate tool\n4. **Test**: Verify appearance and file size\n5. **Implement**: Use with fallback for older browsers"
+          "title": "Convirtiendo GIF a Formatos Modernos",
+          "content": "Convierta GIF a WebP o APNG para mejor calidad y tamaños de archivo más pequeños.\n\n**GIF a WebP (Recomendado):**\n- **Calidad**: Drásticamente mejor (color completo)\n- **Tamaño de archivo**: 30-80% más pequeño\n- **Transparencia**: Canal alfa suave\n- **Animación**: Funcionalidad idéntica\n- **Soporte de navegador**: 95%+ (retroceso a GIF para antiguos)\n- **Herramientas**: Convertidores en línea, software Adobe, FFmpeg\n\n**GIF a APNG:**\n- **Calidad**: Excelente (sin pérdida)\n- **Transparencia**: Canal alfa perfecto\n- **Tamaño de archivo**: Similar o más pequeño que GIF\n- **Soporte de navegador**: Firefox, Safari (Chrome necesita extensión)\n- **Usar cuando**: Se necesita máxima calidad\n\n**GIF a MP4 (para contenido tipo video):**\n- **Calidad**: La mejor posible (códecs modernos)\n- **Tamaño de archivo**: 80-95% más pequeño\n- **Audio**: Puede incluir sonido\n- **Usar cuando**: GIF es esencialmente un clip de video corto\n- **Herramientas**: FFmpeg, convertidores en línea\n\n**Flujo de Trabajo de Conversión:**\n1. **Analice su GIF**: ¿Es animación simple o tipo video?\n2. **Elija formato**: WebP para animación, MP4 para video\n3. **Convierta**: Use la herramienta apropiada\n4. **Pruebe**: Verifique apariencia y tamaño de archivo\n5. **Implemente**: Use con retroceso para navegadores antiguos"
         },
         {
           "step": 6,
-          "title": "Best Practices for GIF Usage",
-          "content": "Use GIF strategically and know when modern formats are better.\n\n**GIF Best Practices:**\n- **Keep it short**: Under 5 seconds ideally\n- **Keep it small**: Under 500px wide\n- **Keep it simple**: Limited colors and motion\n- **Limit frames**: Fewer frames = better quality\n- **Optimize**: Run through GIF optimizer\n- **Test on mobile**: Ensure it performs well\n\n**When to Use Modern Formats Instead:**\n- **Photographic content**: Use WebP or JPEG\n- **Smooth gradients**: Use PNG or WebP\n- **Professional work**: Use WebP or MP4\n- **Large animations**: Use MP4 with modern codecs\n- **Better quality needed**: Use APNG or WebP\n\n**Implementing GIF on Web:**\n```html\n<!-- Provide WebP version first -->\n<picture>\n  <source src=\"animation.webp\" type=\"image/webp\">\n  <img src=\"animation.gif\" alt=\"Description\">\n</picture>\n```\nThis serves WebP to modern browsers with GIF fallback.\n\n**Performance Considerations:**\n- **Lazy load**: Defer loading off-screen GIFs\n- **Autoplay**: Don't autoplay more than one GIF\n- **File size**: Keep under 2MB if possible\n- **Alternative**: Consider using video instead for large animations\n\n**Accessibility:**\n- **Alt text**: Always describe the animation\n- **Reduce motion**: Respect prefers-reduced-motion\n- **Pause button**: Give users control"
+          "title": "Mejores Prácticas para Uso de GIF",
+          "content": "Use GIF estratégicamente y sepa cuando los formatos modernos son mejores.\n\n**Mejores Prácticas de GIF:**\n- **Manténgalo corto**: Idealmente menos de 5 segundos\n- **Manténgalo pequeño**: Menos de 500px de ancho\n- **Manténgalo simple**: Colores y movimiento limitados\n- **Limite cuadros**: Menos cuadros = mejor calidad\n- **Optimice**: Ejecute a través de optimizador de GIF\n- **Pruebe en móvil**: Asegúrese de que funcione bien\n\n**Cuándo Usar Formatos Modernos en su Lugar:**\n- **Contenido fotográfico**: Use WebP o JPEG\n- **Gradientes suaves**: Use PNG o WebP\n- **Trabajo profesional**: Use WebP o MP4\n- **Animaciones grandes**: Use MP4 con códecs modernos\n- **Se necesita mejor calidad**: Use APNG o WebP\n\n**Implementando GIF en la Web:**\n```html\n<!-- Proporcione versión WebP primero -->\n<picture>\n  <source src=\"animation.webp\" type=\"image/webp\">\n  <img src=\"animation.gif\" alt=\"Descripción\">\n</picture>\n```\nEsto sirve WebP a navegadores modernos con retroceso GIF.\n\n**Consideraciones de Rendimiento:**\n- **Carga diferida**: Aplique la carga de GIFs fuera de pantalla\n- **Reproducción automática**: No reproduzca automáticamente más de un GIF\n- **Tamaño de archivo**: Mantenga menos de 2MB si es posible\n- **Alternativa**: Considere usar video en su lugar para animaciones grandes\n\n**Accesibilidad:**\n- **Texto alternativo**: Siempre describa la animación\n- **Reduzca movimiento**: Respete prefers-reduced-motion\n- **Botón de pausa**: Dé a los usuarios control"
         }
       ],
       "tips": [
@@ -694,8 +694,8 @@
         "soporte de navegador avif"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacion",
       "description": "Guía comprensiva del formato de imagen de próxima generación AVIF. Entienda las ventajas técnicas sobre WebP y JPEG, estado actual de soporte de navegador, estrategias de implementación, y cómo AVIF impactará el rendimiento web.",
       "difficulty": "intermedio",
       "estimatedTime": "7-10 minutos",
@@ -722,13 +722,13 @@
         },
         {
           "step": 5,
-          "title": "AVIF for Web Performance",
-          "content": "AVIF provides significant web performance benefits.\n\n**Performance Improvements:**\n- **70% smaller files**: Faster page loads\n- **Less bandwidth**: Lower data costs and hosting\n- **Better caching**: More content fits in browser cache\n- **Faster rendering**: Smaller files decode faster\n- **Better user experience**: Especially on mobile and slow connections\n\n**Real-World Impact:**\nE-commerce site example:\n- **Before**: 50MB of product images (JPEG)\n- **After AVIF**: 15MB of product images (AVIF)\n- **Result**: 70% faster page load, 70% less bandwidth\n\n**Implementation Strategy:**\n1. **Audit current images**: Identify largest files\n2. **Convert to AVIF**: Start with high-traffic pages\n3. **Implement progressive enhancement**: AVIF → WebP → JPEG\n4. **Monitor metrics**: Track load times, bandwidth usage\n5. **Measure impact**: Compare before/after performance\n\n**CDN Considerations:**\nMany CDNs now support AVIF:\n- **Cloudinary**: Automatic format conversion\n- **CloudFront**: AVIF support added\n- **Cloudflare**: Automatic AVIF delivery\n- **Imgix**: AVIF generation on-the-fly\n\nConfigure your CDN to:\n- Serve AVIF to supported browsers\n- Provide WebP/JPEG fallbacks\n- Cache all format variants\n- Monitor format delivery statistics"
+          "title": "AVIF para Rendimiento Web",
+          "content": "AVIF proporciona beneficios significativos de rendimiento web.\n\n**Mejoras de Rendimiento:**\n- **Archivos 70% más pequeños**: Cargas de página más rápidas\n- **Menos ancho de banda**: Menores costos de datos y hosting\n- **Mejor almacenamiento en caché**: Más contenido cabe en el caché del navegador\n- **Renderizado más rápido**: Los archivos más pequeños se decodifican más rápido\n- **Mejor experiencia del usuario**: Especialmente en móvil y conexiones lentas\n\n**Impacto en el Mundo Real:**\nEjemplo de sitio de comercio electrónico:\n- **Antes**: 50MB de imágenes de productos (JPEG)\n- **Después AVIF**: 15MB de imágenes de productos (AVIF)\n- **Resultado**: 70% más rápido en carga de página, 70% menos ancho de banda\n\n**Estrategia de Implementación:**\n1. **Audite imágenes actuales**: Identifique los archivos más grandes\n2. **Convierta a AVIF**: Comience con páginas de alto tráfico\n3. **Implemente mejora progresiva**: AVIF → WebP → JPEG\n4. **Monitoree métricas**: Rastree tiempos de carga, uso de ancho de banda\n5. **Mida el impacto**: Compare el rendimiento antes/después\n\n**Consideraciones de CDN:**\nMuchos CDNs ahora soportan AVIF:\n- **Cloudinary**: Conversión automática de formato\n- **CloudFront**: Soporte AVIF agregado\n- **Cloudflare**: Entrega automática de AVIF\n- **Imgix**: Generación de AVIF al vuelo\n\nConfigure su CDN para:\n- Servir AVIF a navegadores compatibles\n- Proporcionar retrocesos WebP/JPEG\n- Almacenar en caché todas las variantes de formato\n- Monitorear estadísticas de entrega de formato"
         },
         {
           "step": 6,
-          "title": "Future of AVIF and Preparation",
-          "content": "AVIF is the future of web images. Start preparing now.\n\n**Upcoming Features:**\n- **AVIF Animation**: Animated AVIF (like animated WebP)\n- **Wider browser support**: Safari adoption coming\n- **Improved encoders**: Faster encoding, better quality\n- **Progressive AVIF**: Progressive loading support\n- **Wider tool support**: Native support in more software\n\n**Preparation Steps:**\n\n**Short-term (Now):**\n1. **Test AVIF**: Experiment on non-critical pages\n2. **Build conversion pipeline**: Automate AVIF generation\n3. **Implement fallbacks**: AVIF → WebP → JPEG\n4. **Monitor browser stats**: Track AVIF support percentage\n\n**Medium-term (6-12 months):**\n1. **Roll out AVIF**: Expand to more pages\n2. **Optimize quality settings**: Fine-tune for your content\n3. **Train team**: Educate developers and designers\n4. **Update documentation**: AVIF workflow guidelines\n\n**Long-term (12+ months):**\n1. **Default to AVIF**: Make AVIF primary format\n2. **Phase out JPEG**: Use only as fallback\n3. **Implement AVIF animation**: When support matures\n4. **Measure ROI**: Track bandwidth savings and performance\n\n**Investment Considerations:**\n- **Storage**: Keep original source files\n- **Processing**: AVIF encoding can be slow, batch during off-hours\n- **CDN costs**: May need plan upgrade for multiple formats\n- **Build tools**: Ensure your build system supports AVIF\n\n**Recommendation:**\nStart using AVIF now for new projects. The 70% file size reduction is too significant to ignore, and fallback support ensures compatibility."
+          "title": "Futuro de AVIF y Preparación",
+          "content": "AVIF es el futuro de las imágenes web. Comience a prepararse ahora.\n\n**Próximas Características:**\n- **Animación AVIF**: AVIF animado (como WebP animado)\n- **Mayor soporte de navegador**: Adopción de Safari próximamente\n- **Codificadores mejorados**: Codificación más rápida, mejor calidad\n- **AVIF progresivo**: Soporte de carga progresiva\n- **Mayor soporte de herramientas**: Soporte nativo en más software\n\n**Pasos de Preparación:**\n\n**Corto Plazo (Ahora):**\n1. **Pruebe AVIF**: Experimente en páginas no críticas\n2. **Construya canal de conversión**: Automatice la generación de AVIF\n3. **Implemente retrocesos**: AVIF → WebP → JPEG\n4. **Monitoree estadísticas de navegador**: Rastree el porcentaje de soporte AVIF\n\n**Mediano Plazo (6-12 meses):**\n1. **Implemente AVIF**: Expándase a más páginas\n2. **Optimice configuración de calidad**: Ajuste para su contenido\n3. **Capacite al equipo**: Eduque a desarrolladores y diseñadores\n4. **Actualice documentación**: Pautas de flujo de trabajo AVIF\n\n**Largo Plazo (12+ meses):**\n1. **Use AVIF por defecto**: Haga de AVIF el formato principal\n2. **Elimine JPEG gradualmente**: Use solo como retroceso\n3. **Implemente animación AVIF**: Cuando el soporte madure\n4. **Mida el ROI**: Rastree ahorros de ancho de banda y rendimiento\n\n**Consideraciones de Inversión:**\n- **Almacenamiento**: Mantenga archivos fuente originales\n- **Procesamiento**: La codificación AVIF puede ser lenta, procese por lotes fuera de horas pico\n- **Costos de CDN**: Puede necesitar actualizar el plan para múltiples formatos\n- **Herramientas de compilación**: Asegúrese de que su sistema de compilación soporte AVIF\n\n**Recomendación:**\nComience a usar AVIF ahora para nuevos proyectos. La reducción del 70% en el tamaño de archivo es demasiado significativa para ignorarla, y el soporte de retroceso garantiza la compatibilidad."
         }
       ],
       "tips": [

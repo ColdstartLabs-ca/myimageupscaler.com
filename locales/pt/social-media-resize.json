@@ -1204,7 +1204,7 @@
         "guia de dimensões de banner youtube",
         "YouTube channel art specs",
         "YouTube shorts thumbnail size",
-        "video thumbnail optimization",
+        "otimização de miniatura de vídeo",
         "YouTube watermark size",
         "YouTube end screen template"
       ],
@@ -1301,15 +1301,15 @@
             "technicalRequirements": {
               "qualityMaintenance": "Arquivos fonte em alta resolução para exibição nítida",
               "fileOptimization": "Comprima sem perda visível de qualidade",
-              "colorSpace": "sRGB for consistent color display",
+              "colorSpace": "sRGB para exibição de cores consistente",
               "testing": "Preview on Múltiplos devices before publishing"
             }
           },
           "contentTypes": {
             "educationalContent": {
-              "thumbnailStyle": "Clean, professional with clear topic indication",
+              "thumbnailStyle": "Limpo, profissional com indicação clara do tópico",
               "textUsage": "Minimal Texto focusing on learning outcome",
-              "visuals": "Screenshots, diagrams, or professional presentation",
+              "visuals": "Capturas de tela, diagramas ou apresentação profissional",
               "consistency": "Template-based approach for series Conteúdo"
             },
             "entertainmentContent": {
@@ -1674,8 +1674,8 @@
           "answer": "Projete telas finais com 1920x1080 pixels com elementos na zona segura (85% do quadro com margens de 10%). Máximo de 4 elementos, cada um com 300x300 pixels, posicionados 20-30 segundos antes do final do vídeo."
         },
         {
-          "question": "What are current YouTube thumbnAIl trends for 2025?",
-          "answer": "Current trends include minimalist impact design (clean with bold elements), authentic connection (real, unfiltered moments), digital innovation (AR effects and futuristic elements), and nostalgic modern (retro styles with contemporary twists)."
+          "question": "Quais são as tendências atuais de miniaturas do YouTube para 2025?",
+          "answer": "As tendências atuais incluem design de impacto minimalista (limpo com elementos ousados), conexão autêntica (momentos reais, não filtrados), inovação digital (efeitos de RA e elementos futuristas) e moderno nostálgico (estilos retrô com toques contemporâneos)."
         }
       ],
       "benefits": [
@@ -1812,40 +1812,40 @@
             "personalProfiles": {
               "lifeEvents": "High-Resolução photos for important life moments",
               "travelContent": "paisagem orientation for scenic travel photography",
-              "foodContent": "Vibrant, well-lit food photography",
+              "foodContent": "Fotografia de alimentos vibrante e bem iluminada",
               "achievementSharing": "Profissional photos for career accomplishments"
             },
             "eventMarketing": {
               "preEvent": "Teaser Conteúdo with event details and dates",
-              "liveCoverage": "Real-time photos during events",
-              "postEvent": "Recap galleries with attendee engagement",
-              "promotionGraphics": "Branded promotional materials with event information"
+              "liveCoverage": "Fotos em tempo real durante eventos",
+              "postEvent": "Galerias de resumo com engajamento dos participantes",
+              "promotionGraphics": "Materiais promocionais com informações do evento"
             },
             "ecommerceContent": {
-              "productCatalog": "Consistent white background product photography",
-              "lifestyleShots": "Products in real-world usage scenarios",
-              "detailPhotos": "Close-up shots showing product features",
-              "comparisonContent": "Before/after or product comparison images"
+              "productCatalog": "Fotografia de produtos consistente com fundo branco",
+              "lifestyleShots": "Produtos em cenários de uso do mundo real",
+              "detailPhotos": "Close-ups mostrando recursos do produto",
+              "comparisonContent": "Imagens de comparação antes/depois ou de produtos"
             }
           },
           "designGuidelines": {
             "brandConsistency": {
               "colorPalette": "Maintain consistent brand colors across all Conteúdo",
               "typography": "Use consistent fonts and Texto styling",
-              "logoUsage": "Consistent logo placement and sizing",
-              "visualStyle": "Maintain consistent photography style and filters"
+              "logoUsage": "Colocação e dimensionamento consistente do logotipo",
+              "visualStyle": "Mantenha o estilo de fotografia e filtros consistentes"
             },
             "compositionRules": {
-              "ruleOfThirds": "Place key elements at intersection points",
-              "negativeSpace": "Use breathing room around important elements",
+              "ruleOfThirds": "Coloque elementos principais nos pontos de intersecção",
+              "negativeSpace": "Use espaço para respirar ao redor de elementos importantes",
               "visualHierarchy": "Guide viewer's eye through Conteúdo",
-              "balance": "Balance visual elements across composition"
+              "balance": "Equilibre elementos visuais na composição"
             },
             "textOptimization": {
               "readability": "Large, high-contrast text for Mobile viewing",
               "characterLimits": "Keep Texto overlays concise and impactful",
               "fontChoice": "Clean, readable fonts (Arial, Helvetica, Aberto Sans)",
-              "placement": "Avoid bottom area where Facebook comments appear"
+              "placement": "Evite área inferior onde os comentários do Facebook aparecem"
             }
           }
         },
@@ -1949,28 +1949,28 @@
             "mobileOptimization": {
               "fileSizePriority": "Prioritize faster Carregando on mobile",
               "aboveFold": "Otimizar first image in posts for quick loading",
-              "progressiveDisplay": "Use formats that load progressively",
+              "progressiveDisplay": "Use formatos que carregam progressivamente",
               "connectionSpeed": "Consider Lento connection users"
             },
             "qualityMaintenance": {
               "highResolution": "Ensure sharp display on Alto-DPI screens",
-              "colorAccuracy": "Maintain consistent color across devices",
+              "colorAccuracy": "Mantenha cores consistentes entre dispositivos",
               "compressionBalance": "Find optimal compression without Qualidade loss",
-              "testing": "Test across various devices and connections"
+              "testing": "Teste em vários dispositivos e conexões"
             }
           },
           "accessibility": {
             "imageDescriptions": {
               "altText": "Write descriptive alt Texto for all images",
               "contextRelevance": "Include relevant information about image Conteúdo",
-              "brandElements": "Describe important brand elements in images",
+              "brandElements": "Descreva elementos importantes da marca nas imagens",
               "callToAction": "Include CTAs in Imagem descriptions when appropriate"
             },
             "colorContrast": {
               "wcagCompliance": "Maintain 4.5:1 contrast ratio for Texto",
-              "colorBlindness": "Test with color blindness simulators",
+              "colorBlindness": "Teste com simuladores de daltonismo",
               "readability": "Ensure Texto remains readable on all backgrounds",
-              "alternatives": "Use patterns and shapes in addition to color"
+              "alternatives": "Use padrões e formas além de cores"
             }
           }
         },
@@ -1979,28 +1979,28 @@
             "contentCalendars": {
               "monthlyPlanning": "Plan Conteúdo themes 2-3 months in advance",
               "seasonalContent": "Prepare seasonal and holiday Conteúdo early",
-              "campaignCoordination": "Align with marketing campaigns and promotions",
+              "campaignCoordination": "Alinhe com campanhas e promoções de marketing",
               "flexibility": "Leave room for timely Conteúdo and trends"
             },
             "batchCreation": {
               "photoshootPlanning": "Plan photoshoots for Múltiplos content types",
               "templateCreation": "Create templates for recurring Conteúdo formats",
               "consistentStyle": "Maintain consistent style across batch Conteúdo",
-              "efficiency": "Streamline workflow for maximum productivity"
+              "efficiency": "Otimize o fluxo de trabalho para máxima produtividade"
             }
           },
           "platformIntegration": {
             "crossPlatformStrategy": {
               "instagramSharing": "Otimizar for Facebook-to-Instagram sharing",
-              "twitterIntegration": "Create Twitter-friendly versions of Facebook content",
-              "linkedinAdaptation": "Adapt business content for LinkedIn professional audience",
-              "pinterestIntegration": "Create Pinterest-optimized versions of visual content"
+              "twitterIntegration": "Crie versões amigáveis do Twitter do conteúdo do Facebook",
+              "linkedinAdaptation": "Adapte conteúdo de negócios para público profissional do LinkedIn",
+              "pinterestIntegration": "Crie versões otimizadas para Pinterest do conteúdo visual"
             },
             "websiteIntegration": {
-              "socialProof": "Embed Facebook posts on website for social proof",
+              "socialProof": "Incorpore posts do Facebook no site para prova social",
               "blogIntegration": "Compartilhar blog content with optimized images",
-              "emailMarketing": "Use Facebook content in email campaigns",
-              "facebookPixel": "Track website interactions from Facebook traffic"
+              "emailMarketing": "Use conteúdo do Facebook em campanhas de e-mail",
+              "facebookPixel": "Rastreie interações do site a partir do tráfego do Facebook"
             }
           }
         },
@@ -2008,30 +2008,30 @@
           "visualStyles": {
             "aestheticMovements": [
               {
-                "trend": "Authentic Connection",
+                "trend": "Conexão Autêntica",
                 "description": "Real, unpolished moments that build genuine community connection. User-generated Conteúdo style."
               },
               {
                 "trend": "Minimalist Profissionalism",
-                "description": "Clean, professional design with ample white space and purposeful use of color."
+                "description": "Design limpo e profissional com espaço branco generoso e uso proposital de cor."
               },
               {
-                "trend": "Bold Expression",
-                "description": "Vibrant colors, bold typography, and confident visual statements for brand personality."
+                "trend": "Expressão Ousada",
+                "description": "Cores vibrantes, tipografia ousada e declarações visuais confiantes para personalidade da marca."
               },
               {
-                "trend": "Sustainable Visuals",
+                "trend": "Visuais Sustentáveis",
                 "description": "Earth tones, natural materials, eco-friendly contexts in Todos brand photography."
               }
             ],
             "colorTrends": {
               "palette1": {
-                "name": "Digital Blue",
+                "name": "Azul Digital",
                 "hex": ["#4267B2", "#1877F2", "#8B9DC3", "#DFE3EE"],
                 "usage": "Profissional content, technology, business services"
               },
               "palette2": {
-                "name": "Warm Connection",
+                "name": "Conexão Quente",
                 "hex": ["#FF6B6B", "#F7DC6F", "#82E0AA", "#85C1E2"],
                 "usage": "Construção de comunidade, estilo de vida, conteúdo focado em relacionamentos"
               }
@@ -2136,62 +2136,62 @@
         },
         {
           "title": "Business Página optimization",
-          "description": "ize Facebook presence with optimized cover photos, profile pictures, and content",
-          "example": "Service businesses establishing authority through consistent visual branding"
+          "description": "Otimize presença no Facebook com capas, fotos de perfil e conteúdo otimizados",
+          "example": "Empresas de serviços estabelecendo autoridade através de identidade visual consistente"
         },
         {
-          "title": "Facebook Marketplace success",
+          "title": "Sucesso no Facebook Marketplace",
           "description": "Criar compelling product photos that attract buyers and drive sales on Marketplace",
-          "example": "E-commerce sellers optimizing product photography for higher conversion rates"
+          "example": "Vendedores de e-commerce otimizando fotografia de produtos para maiores taxas de conversão"
         },
         {
-          "title": "Brand presence management",
-          "description": "MAIntAIn consistent visual identity while adapting content for different Facebook formats",
-          "example": "National brands coordinating visual identity across franchise and corporate pages"
+          "title": "Gestão de presença da marca",
+          "description": "Mantenha identidade visual consistente adaptando conteúdo para diferentes formatos do Facebook",
+          "example": "Marcas nacionais coordenando identidade visual em páginas de franquias e corporativas"
         },
         {
-          "title": "Facebook advertising preparation",
-          "description": "Prepare ad creatives that meet Facebook's specifications and perform well in feed",
+          "title": "Preparação de publicidade no Facebook",
+          "description": "Prepare ad creatives that meet Facebook specifications and perform well in feed",
           "example": "Digital agencies creating Facebook ad campAIgns for Múltiplos clients"
         }
       ],
       "faq": [
         {
-          "question": "What's the size for Facebook posts in 2025?",
+          "question": "What is the size for Facebook posts in 2025?",
           "answer": "Facebook posts work at 1200x630 pixels (1.91:1 ratio) for optimal display. Square posts at 1080x1080 pixels also perform well, as do portrAIt posts at 1080x1350 pixels (4:5 ratio)."
         },
         {
-          "question": "How do I optimize Facebook cover photos for all devices?",
+          "question": "Como otimizo fotos de capa do Facebook para todos os dispositivos?",
           "answer": "Upload cover photos at 2048x1152 pixels to ensure quality across devices. Important content should be in the center safe zone (100px margins from edges) as Facebook displays different portions on desk vs mobile."
         },
         {
-          "question": "What are Facebook Marketplace photo requirements?",
+          "question": "Quais são os requisitos de fotos do Facebook Marketplace?",
           "answer": "Marketplace photos should be 1200x900 pixels (4:3 ratio) with a minimum of 800x600 pixels. Use high-Qualidade, well-lit photos showing products clearly. Maximum 20 photos per listing with 10MB file size limit each."
         },
         {
-          "question": "How should I size Facebook Stories for optimal engagement?",
+          "question": "Como dimensiono Stories do Facebook para engajamento ideal?",
           "answer": "Facebook Stories should be 1080x1920 pixels (9:16 vertical format). Leave a 10% margin around edges for UI elements, use large readable text, and include interactive elements like polls and stickers."
         },
         {
-          "question": "What are current Facebook image trends for 2025?",
-          "answer": "Current trends include authentic connection (real, unpolished moments), minimalist ism (clean design with purposeful color use), bold expression (vibrant colors and typography), and sustAInable visuals (earth tones and eco-friendly contexts)."
+          "question": "Quais são as tendências atuais de imagens do Facebook para 2025?",
+          "answer": "As tendências atuais incluem conexão autêntica (momentos reais, não polidos), minimalismo (design limpo com uso proposital de cores), expressão ousada (cores vibrantes e tipografia) e visuais sustentáveis (tons terrosos e contextos ecológicos)."
         }
       ],
       "benefits": [
         {
-          "title": "2025 Facebook Compliance",
+          "title": "Conformidade com Facebook 2025",
           "description": "All specifications updated for current Facebook requirements and algorithm Preferências"
         },
         {
           "title": "Business Page Otimização",
-          "description": "Specialized tools for Facebook business pages and marketing campAIgns"
+          "description": "Ferramentas especializadas para páginas de negócios do Facebook e campanhas de marketing"
         },
         {
           "title": "Marketplace Pronto",
-          "description": "Perfect sizing and optimization for Facebook Marketplace listings"
+          "description": "Dimensionamento e otimização perfeitos para listagens do Facebook Marketplace"
         },
         {
-          "title": "Ad Compliant Templates",
+          "title": "Modelos Conformes com Anúncios",
           "description": "Facebook ad templates that meet all Plataforma specifications"
         }
       ],
@@ -2204,7 +2204,7 @@
         {
           "step": 2,
           "title": "Otimizar Design",
-          "description": "Apply engagement optimization and Facebook-specific design rules"
+          "description": "Aplique otimização de engajamento e regras de design específicas do Facebook"
         },
         {
           "step": 3,
@@ -2352,26 +2352,26 @@
         "LinkedIn optimization"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "LinkedIn Image Redimensionarr",
       "description": "Profissional LinkedIn image resizing tool for business and career networking",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "features": [
         {
-          "title": "LinkedIn Posts",
+          "title": "Posts do LinkedIn",
           "description": "Optimal 1200x627 pixels for post images"
         },
         {
-          "title": "Company Banners",
+          "title": "Banners de Empresa",
           "description": "Perfect 1584x396 company Página banners and covers"
         },
         {
           "title": "Perfil Pictures",
-          "description": "400x400 profile pictures for LinkedIn"
+          "description": "Fotos de perfil 400x400 para LinkedIn"
         },
         {
-          "title": "Article Images",
+          "title": "Imagens de Artigo",
           "description": "Otimizar images for LinkedIn articles and publications"
         }
       ],
@@ -2379,7 +2379,7 @@
         {
           "title": "Image Processaring Tool",
           "description": "Otimizar images for branding",
-          "example": "Perfect sizing for branding"
+          "example": "Dimensionamento perfeito para branding"
         },
         {
           "title": "Company Página optimization",
@@ -2387,14 +2387,14 @@
           "example": "Perfect sizing for company Página optimization"
         },
         {
-          "title": "LinkedIn marketing campAIgns",
+          "title": "Campanhas de marketing no LinkedIn",
           "description": "Otimizar images for linkedin marketing campAIgns",
           "example": "Perfect sizing for LinkedIn marketing campAIgns"
         },
         {
-          "title": "Career networking",
+          "title": "Networking profissional",
           "description": "Otimizar images for career networking",
-          "example": "Perfect sizing for career networking"
+          "example": "Dimensionamento perfeito para networking profissional"
         },
         {
           "title": "B2B Conteúdo marketing",
@@ -2404,22 +2404,22 @@
       ],
       "faq": [
         {
-          "question": "What's the size for LinkedIn posts?",
+          "question": "What is the size for LinkedIn posts?",
           "answer": "LinkedIn post images work at 1200x627 pixels for optimal display."
         },
         {
-          "question": "How should I size LinkedIn company banners?",
+          "question": "Como dimensiono banners de empresa do LinkedIn?",
           "answer": "Company banners should be 1584x396 pixels for optimal display across Todos devices."
         },
         {
-          "question": "Do LinkedIn images affect engagement?",
-          "answer": "Yes, high-quality, properly sized images significantly increase engagement on LinkedIn."
+          "question": "Imagens do LinkedIn afetam o engajamento?",
+          "answer": "Sim, imagens de alta qualidade e dimensionadas corretamente aumentam significativamente o engajamento no LinkedIn."
         }
       ],
       "benefits": [
         {
           "title": "Instantâneo Results",
-          "description": "Get perfectly sized images in seconds"
+          "description": "Obtenha imagens perfeitamente dimensionadas em segundos"
         },
         {
           "title": "Não quality Loss",
@@ -2581,17 +2581,17 @@
         "reddit post Imagem",
         "reddit avatar Tamanho",
         "reddit banner Dimensões",
-        "social media resize"
+        "redimensionamento de mídia social"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ferramentas",
       "toolName": "Reddit Image Redimensionarr",
       "description": "Specialized Reddit image resizing tool for community and Conteúdo platforms",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "features": [
         {
-          "title": "Reddit Posts",
+          "title": "Posts do Reddit",
           "description": "Optimal Imagem sizes for Reddit posts and text posts with images"
         },
         {
@@ -2599,11 +2599,11 @@
           "description": "Perfect 256x256 Perfil avatars for Reddit accounts"
         },
         {
-          "title": "Community Banners",
+          "title": "Banners da Comunidade",
           "description": "Criar 1860x540 community/subreddit banners"
         },
         {
-          "title": "ThumbnAIls",
+          "title": "Miniaturas",
           "description": "Otimizar images for Reddit thumbnAIl previews"
         }
       ],
@@ -2614,9 +2614,9 @@
           "example": "Perfect sizing for reddit Conteúdo creation"
         },
         {
-          "title": "Community moderation",
+          "title": "Moderação da comunidade",
           "description": "Otimizar images for community moderation",
-          "example": "Perfect sizing for community moderation"
+          "example": "Dimensionamento perfeito para moderação da comunidade"
         },
         {
           "title": "Perfil optimization",
@@ -2624,14 +2624,14 @@
           "example": "Perfect sizing for Perfil optimization"
         },
         {
-          "title": "Subreddit branding",
+          "title": "Branding do subreddit",
           "description": "Otimizar images for subreddit branding",
-          "example": "Perfect sizing for subreddit branding"
+          "example": "Dimensionamento perfeito para branding do subreddit"
         },
         {
-          "title": "Social media marketing",
+          "title": "Marketing em mídia social",
           "description": "Otimizar images for social media marketing",
-          "example": "Perfect sizing for social media marketing"
+          "example": "Dimensionamento perfeito para marketing em mídia social"
         }
       ],
       "faq": [
@@ -2651,7 +2651,7 @@
       "benefits": [
         {
           "title": "Instantâneo Results",
-          "description": "Get perfectly sized images in seconds"
+          "description": "Obtenha imagens perfeitamente dimensionadas em segundos"
         },
         {
           "title": "Não quality Loss",

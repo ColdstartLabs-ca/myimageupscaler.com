@@ -2,7 +2,7 @@
   "category": "casos-de-uso",
   "pages": [
     {
-      "slug": "ecommerce-product-photos",
+      "slug": "fotos-de-produtos-de-e-commerce",
       "title": "Fotos de Produtos de E-commerce",
       "metaTitle": "Requisitos de Foto de Produto de E-commerce por Plataforma | MyImageUpscaler",
       "metaDescription": "Requisitos exatos de imagem para Amazon, eBay, Etsy, Shopify. Aprenda tamanhos mínimos, proporções e como ampliar fotos de produtos para atender padrões de plataforma.",
@@ -137,7 +137,7 @@
       "relatedGuides": ["background-removal-guide"]
     },
     {
-      "slug": "real-estate-listings",
+      "slug": "listagens-imobiliarias",
       "title": "Diretrizes de Fotos de Imóveis",
       "metaTitle": "Requisitos de Foto de Imóvel por Plataforma | MLS, Zillow, Realtor.com",
       "metaDescription": "Requisitos de imagem para MLS, Zillow, Realtor.com e Redfin. Aprenda tamanhos ótimos, proporções e como preparar fotos de listagem.",
@@ -248,7 +248,7 @@
       "relatedGuides": ["interior-photography-tips"]
     },
     {
-      "slug": "social-media-images",
+      "slug": "imagens-de-redes-sociais",
       "title": "Tamanhos de Imagem de Mídia Social",
       "metaTitle": "Guia de Tamanho de Imagem de Mídia Social 2025 | Instagram, Facebook, Twitter, LinkedIn",
       "metaDescription": "Guia completo de dimensões de imagem de mídia social. Tamanhos ótimos para Instagram, Facebook, Twitter, LinkedIn, TikTok e Pinterest com dimensões exatas em pixels.",
@@ -470,7 +470,7 @@
       "relatedGuides": ["image-compression-guide"]
     },
     {
-      "slug": "print-preparation",
+      "slug": "preparacao-para-impressao",
       "title": "Guia de Tamanho de Impressão",
       "metaTitle": "Resolução de Imagem para Guia de Impressão | Calculadora DPI & Gráfico de Tamanho",
       "metaDescription": "Calcule dimensões exatas de pixel para qualquer tamanho de impressão. Requisitos de DPI, tamanhos de papel e como preparar imagens para impressão profissional.",
@@ -634,7 +634,7 @@
       "relatedGuides": []
     },
     {
-      "slug": "old-photo-restoration",
+      "slug": "restauracao-de-fotos-antigas",
       "title": "Restauração de Fotos Antigas",
       "metaTitle": "Como Restaurar Fotos Antigas | Guia de Digitalização & Melhoria",
       "metaDescription": "Guia completo para restaurar fotos antigas e danificadas. Dicas de digitalização, fluxo de trabalho de melhoria e expectativas realistas para restauração de fotos.",
@@ -784,7 +784,7 @@
       "relatedGuides": []
     },
     {
-      "slug": "amazon-product-photos",
+      "slug": "fotos-de-produtos-da-amazon",
       "title": "Ampliação de Fotos de Produtos Amazon",
       "metaTitle": "Amplie Fotos de Produtos para Listagens Amazon | MyImageUpscaler",
       "metaDescription": "Atenda ao requisito de imagem 2000x2000px da Amazon com ampliação de IA. Transforme fotos de fornecedor em imagens de produto com zoom. Ferramenta gratuita, sem marcas d'água.",
@@ -910,7 +910,7 @@
       "relatedGuides": []
     },
     {
-      "slug": "real-estate-photo-enhancement",
+      "slug": "melhoria-de-fotos-imobiliarias",
       "title": "Melhoria de Fotos de Imóveis",
       "metaTitle": "Melhore Fotos de Imóveis com IA | Imagens de Listagem de Propriedades",
       "metaDescription": "Transforme fotos de propriedades com melhoria de IA. Corrija iluminação, amplie resolução e faça listagens se destacarem. Usado por corretores e fotógrafos.",
@@ -1064,7 +1064,7 @@
       "relatedGuides": []
     },
     {
-      "slug": "anime-image-upscaler",
+      "slug": "ampliador-de-imagens-de-anime",
       "title": "Ampliador de Imagens Anime",
       "metaTitle": "Ampliador de Imagens Anime Online - Amplie Arte Anime & Manga | MyImageUpscaler",
       "metaDescription": "Amplie imagens anime, painéis manga e ilustrações sem artefatos. IA preserva linhas limpas e cores planas. Ferramenta online gratuita para fãs de anime.",
@@ -1226,7 +1226,7 @@
       "relatedGuides": []
     },
     {
-      "slug": "cartoon-image-upscaler",
+      "slug": "ampliador-de-imagens-de-desenhos-animados",
       "title": "Ampliador de Imagens de Desenho Animado",
       "metaTitle": "Ampliador de Imagens de Desenho Animado Online - Melhore Desenhos & Quadrinhos | MyImageUpscaler",
       "metaDescription": "Amplie imagens de desenho animado, quadrinhos e ilustrações com IA. Linhas limpas, cores vibrantes preservadas. Ferramenta online gratuita de ampliação de desenho.",
@@ -1324,7 +1324,7 @@
       "relatedGuides": []
     },
     {
-      "slug": "portrait-photo-upscaler",
+      "slug": "ampliador-de-fotos-de-retrato",
       "title": "Ampliador de Fotos de Retrato",
       "metaTitle": "Ampliador de Fotos de Retrato - Melhoria de Rosto de IA | MyImageUpscaler",
       "metaDescription": "Amplie fotos de retrato com melhoria de rosto de IA. Melhore detalhes faciais, textura de pele e qualidade geral. Ferramenta online gratuita de ampliação de retrato.",
@@ -1431,7 +1431,7 @@
       "relatedGuides": []
     },
     {
-      "slug": "product-photo-background-removal",
+      "slug": "remocao-de-fundo-de-fotos-de-produtos",
       "title": "Remoção de Fundo de Fotos de Produtos",
       "metaTitle": "Remova Fundos de Fotos de Produtos | Imagens de E-commerce",
       "metaDescription": "Remova fundos de fotos de produtos para Amazon, eBay, Etsy e Shopify. Crie fundos brancos que atendem requisitos de marketplace. Ferramenta de IA gratuita.",
@@ -1510,7 +1510,7 @@
       "relatedGuides": []
     },
     {
-      "slug": "portrait-background-removal",
+      "slug": "remocao-de-fundo-de-retratos",
       "title": "Remoção de Fundo de Retrato",
       "metaTitle": "Remova Fundo de Fotos de Retrato | Edição de Headshot",
       "metaDescription": "Remova fundos de retratos e headshots com IA. Resultados profissionais com preservação de detalhe de cabelo. Ferramenta online gratuita para LinkedIn, currículos e mais.",

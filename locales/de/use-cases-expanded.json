@@ -1043,7 +1043,8 @@
       "ctaUrl": "/?signup=1",
       "maxResolution": "Bis zu 100MP für archivische Qualität",
       "batchProcessing": "Bis zu 100 Fotos pro Batch",
-      "turnaroundTime": "60-120 Sekunden pro Foto"
+      "turnaroundTime": "60-120 Sekunden pro Foto",
+      "archiveStandards": ["FADGI", "METS"]
     },
     {
       "slug": "ki-generiert-optimierung",

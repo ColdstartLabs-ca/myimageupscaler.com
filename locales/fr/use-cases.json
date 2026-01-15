@@ -1,5 +1,5 @@
 {
-  "category": "use-cases",
+  "category": "cas-d-utilisation",
   "pages": [
     {
       "slug": "ecommerce-product-photos",
@@ -16,7 +16,7 @@
         "dimensions photo etsy"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Commerce électronique",
       "description": "Exigences d'image spécifiques pour les principales plateformes e-commerce avec des conseils sur comment les rencontrer.",
       "platformRequirements": [
@@ -24,7 +24,7 @@
           "platform": "Amazon",
           "minimumSize": "1000x1000px",
           "recommendedSize": "2000x2000px (pour zoom)",
-          "maxFileSize": "10MB",
+          "maxFileSize": "10 Mo",
           "aspectRatio": "1:1 préféré",
           "format": "JPEG, PNG, GIF, TIFF",
           "background": "Blanc pur (RGB 255,255,255) pour l'image principale",
@@ -34,7 +34,7 @@
           "platform": "eBay",
           "minimumSize": "500x500px",
           "recommendedSize": "1600x1600px",
-          "maxFileSize": "12MB",
+          "maxFileSize": "12 Mo",
           "aspectRatio": "1:1 préféré",
           "format": "JPEG, PNG, GIF, TIFF, BMP",
           "background": "Blanc ou gris clair préféré",
@@ -44,7 +44,7 @@
           "platform": "Etsy",
           "minimumSize": "2000px côté le plus court",
           "recommendedSize": "2700x2025px",
-          "maxFileSize": "20MB",
+          "maxFileSize": "20 Mo",
           "aspectRatio": "4:3 recommandé",
           "format": "JPEG, PNG, GIF",
           "background": "Au choix - les photos de style de vie fonctionnent bien",
@@ -54,7 +54,7 @@
           "platform": "Shopify",
           "minimumSize": "Aucun minimum",
           "recommendedSize": "2048x2048px",
-          "maxFileSize": "20MB",
+          "maxFileSize": "20 Mo",
           "aspectRatio": "1:1 pour la cohérence",
           "format": "JPEG, PNG, GIF, HEIC, WebP",
           "background": "Dépend du thème",
@@ -150,7 +150,7 @@
         "photographie immobilire"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Immobilier",
       "description": "Exigences d'image spécifiques pour les plateformes d'annonces immobilières avec des conseils pour les rencontrer.",
       "platformRequirements": [
@@ -167,7 +167,7 @@
           "platform": "Zillow",
           "minimumSize": "1024x768px",
           "recommendedSize": "2048x1536px",
-          "maxFileSize": "50MB",
+          "maxFileSize": "50 Mo",
           "aspectRatio": "4:3 préféré",
           "format": "JPEG, PNG",
           "notes": "Jusqu'à 200 photos. La première photo apparaît dans les résultats de recherche - faites-la compter."
@@ -176,7 +176,7 @@
           "platform": "Realtor.com",
           "minimumSize": "1024x768px",
           "recommendedSize": "2560x1920px",
-          "maxFileSize": "100MB",
+          "maxFileSize": "100 Mo",
           "aspectRatio": "4:3",
           "format": "JPEG",
           "notes": "Synchronise depuis MLS. Les images de plus haute résolution ont la priorité dans le classement des recherches."
@@ -185,7 +185,7 @@
           "platform": "Redfin",
           "minimumSize": "1024x768px",
           "recommendedSize": "2048x1536px ou plus",
-          "maxFileSize": "20MB",
+          "maxFileSize": "20 Mo",
           "aspectRatio": "4:3",
           "format": "JPEG",
           "notes": "Met l'accent sur la qualité photo dans les annonces. Les photos HDR fonctionnent bien."
@@ -262,7 +262,7 @@
         "dimensions image linkedin"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Réseaux Sociaux",
       "description": "Référence complète pour les dimensions d'images réseaux sociaux avec des exigences spécifiques par plateforme.",
       "platformRequirements": [
@@ -484,7 +484,7 @@
         "taille image 300 dpi"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Photographie et Impression",
       "description": "Guide complet pour préparer les images pour l'impression avec les exigences DPI et les calculs de taille.",
       "dpiExplanation": {
@@ -493,22 +493,22 @@
         "recommendations": [
           {
             "quality": "Impressions professionnelles",
-            "dpi": "300 DPI",
+            "dpi": "300 PPP",
             "use": "Photos, tirages d'art, magazines"
           },
           {
             "quality": "Impressions standard",
-            "dpi": "240-300 DPI",
+            "dpi": "240-300 PPP",
             "use": "Impression domicile, snapshots"
           },
           {
             "quality": "Grand format (distance de vision 3ft+)",
-            "dpi": "150-200 DPI",
+            "dpi": "150-200 PPP",
             "use": "Affiches, bannières"
           },
           {
             "quality": "Panneaux d'affichage (distance de vision 10ft+)",
-            "dpi": "50-100 DPI",
+            "dpi": "50-100 PPP",
             "use": "Grands affichages extérieurs"
           }
         ]
@@ -518,55 +518,55 @@
           "size": "4x6 pouces",
           "pixels300dpi": "1200x1800",
           "pixels240dpi": "960x1440",
-          "megapixels": "2.2 MP"
+          "megapixels": "2.2 Mpx"
         },
         {
           "size": "5x7 pouces",
           "pixels300dpi": "1500x2100",
           "pixels240dpi": "1200x1680",
-          "megapixels": "3.2 MP"
+          "megapixels": "3.2 Mpx"
         },
         {
           "size": "8x10 pouces",
           "pixels300dpi": "2400x3000",
           "pixels240dpi": "1920x2400",
-          "megapixels": "7.2 MP"
+          "megapixels": "7.2 Mpx"
         },
         {
           "size": "11x14 pouces",
           "pixels300dpi": "3300x4200",
           "pixels240dpi": "2640x3360",
-          "megapixels": "13.9 MP"
+          "megapixels": "13.9 Mpx"
         },
         {
           "size": "16x20 pouces",
           "pixels300dpi": "4800x6000",
           "pixels240dpi": "3840x4800",
-          "megapixels": "28.8 MP"
+          "megapixels": "28.8 Mpx"
         },
         {
           "size": "20x24 pouces",
           "pixels300dpi": "6000x7200",
           "pixels240dpi": "4800x5760",
-          "megapixels": "43.2 MP"
+          "megapixels": "43.2 Mpx"
         },
         {
           "size": "24x36 pouces",
           "pixels300dpi": "7200x10800",
           "pixels240dpi": "5760x8640",
-          "megapixels": "77.8 MP"
+          "megapixels": "77.8 Mpx"
         },
         {
           "size": "A4 (8.27x11.69 pouces)",
           "pixels300dpi": "2480x3508",
           "pixels240dpi": "1984x2806",
-          "megapixels": "8.7 MP"
+          "megapixels": "8.7 Mpx"
         },
         {
           "size": "A3 (11.69x16.54 pouces)",
           "pixels300dpi": "3508x4961",
           "pixels240dpi": "2806x3969",
-          "megapixels": "17.4 MP"
+          "megapixels": "17.4 Mpx"
         }
       ],
       "calculationFormula": {
@@ -577,7 +577,7 @@
       "upscalingForPrint": [
         {
           "scenario": "Photo de smartphone à impression 8x10",
-          "source": "4032x3024px (12MP iPhone)",
+          "source": "4032x3024px (iPhone 12MP)",
           "requirement": "2400x3000px à 300 DPI",
           "solution": "Déjà suffisant - aucun agrandissement nécessaire. Recadrez au rapport 4:5."
         },
@@ -648,7 +648,7 @@
         "amélioration photo vintage"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Restauration Photo",
       "description": "Guide étape par étape pour restaurer de vieilles photos endommagées avec des attentes réalistes.",
       "scanningGuide": {
@@ -800,7 +800,7 @@
         "photographie produits fba"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Commerce électronique",
       "description": "Guide complet pour préparer les images produits pour les annonces Amazon, incluant les exigences de taille, les standards de fond blanc, et le flux d'agrandissement IA.",
       "platformRequirements": [
@@ -808,7 +808,7 @@
           "platform": "Image Principale Amazon",
           "minimumSize": "1000x1000px",
           "recommendedSize": "2000x2000px (pour zoom)",
-          "maxFileSize": "10MB",
+          "maxFileSize": "10 Mo",
           "aspectRatio": "1:1 (carré)",
           "format": "JPEG, PNG, GIF, TIFF",
           "background": "Blanc pur (RGB 255,255,255)",
@@ -818,7 +818,7 @@
           "platform": "Images Additionnelles Amazon",
           "minimumSize": "1000x1000px",
           "recommendedSize": "2000x2000px",
-          "maxFileSize": "10MB",
+          "maxFileSize": "10 Mo",
           "aspectRatio": "1:1 préféré",
           "format": "JPEG, PNG, GIF, TIFF",
           "background": "N'importe quel (photos de style de vie autorisées)",
@@ -926,7 +926,7 @@
         "édition photographie immobilière"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Immobilier",
       "description": "Guide complet pour améliorer les photos immobilières pour MLS, Zillow et autres plateformes d'annonces de propriété utilisant des outils IA.",
       "platformRequirements": [
@@ -943,7 +943,7 @@
           "platform": "Zillow",
           "minimumSize": "1024x768px",
           "recommendedSize": "2048x1536px+",
-          "maxFileSize": "50MB",
+          "maxFileSize": "50 Mo",
           "aspectRatio": "4:3 préféré",
           "format": "JPEG, PNG",
           "notes": "La première photo est cruciale - elle apparaît dans les résultats de recherche. Les images haute résolution se classent mieux."
@@ -952,7 +952,7 @@
           "platform": "Realtor.com",
           "minimumSize": "1024x768px",
           "recommendedSize": "2560x1920px",
-          "maxFileSize": "100MB",
+          "maxFileSize": "100 Mo",
           "aspectRatio": "4:3",
           "format": "JPEG",
           "notes": "Les images de plus haute résolution reçoivent un placement prioritaire dans les résultats de recherche."
@@ -961,7 +961,7 @@
           "platform": "Redfin",
           "minimumSize": "1024x768px",
           "recommendedSize": "2048x1536px+",
-          "maxFileSize": "20MB",
+          "maxFileSize": "20 Mo",
           "aspectRatio": "4:3",
           "format": "JPEG",
           "notes": "Les photos de qualité ont un impact direct sur les vues d'annonces et les demandes d'informations."
@@ -1080,39 +1080,39 @@
         "agrandir fond d'écran anime"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Art Numérique et Divertissement",
       "description": "Guide spécialisé pour agrandir les images anime, l'art manga et les illustrations de style japonais utilisant une technologie IA optimisée pour le contenu dessiné.",
       "contentTypes": [
         {
-          "type": "Captures d'écran Anime",
-          "description": "Captures de séries et films anime",
+          "type": "Captures d'anime",
+          "description": "Captures de séries et films d'anime",
           "bestScaleFactor": "2x-4x",
-          "notes": "Fonctionne bien pour la plupart des anime modernes. Les anime plus anciens (avant 2000) peuvent montrer plus d'artefacts."
+          "notes": "Fonctionne bien pour la plupart des animes modernes. Les animes plus anciens (avant 2000) peuvent montrer plus d'artefacts."
         },
         {
-          "type": "Scans Manga",
-          "description": "Pages de manga scannées et panneaux",
+          "type": "Scans de manga",
+          "description": "Pages et panneaux de manga scannés",
           "bestScaleFactor": "2x-4x",
-          "notes": "Préserve le trait et les demi-teintes. Supprimez la poussière/les rayures avant l'agrandissement."
+          "notes": "Préserve les lignes et les demi-teintes. Retirez la poussière/les rayures avant l'agrandissement."
         },
         {
-          "type": "Art Numérique Anime",
+          "type": "Art d'anime numérique",
           "description": "Fan art, illustrations et dessins numériques",
           "bestScaleFactor": "2x-4x",
           "notes": "Résultats excellents avec l'art numérique propre. Préserve les couleurs plates et les bords nets."
         },
         {
-          "type": "Fonds d'écran Anime",
-          "description": "Fonds d'écran desktop et mobile",
+          "type": "Fonds d'écran d'anime",
+          "description": "Fonds d'écran pour bureau et mobile",
           "bestScaleFactor": "2x-4x",
-          "notes": "Agrandissez pour correspondre à la résolution de votre écran. Les moniteurs 4K nécessitent 3840px+ de largeur."
+          "notes": "Agrandissez pour correspondre à la résolution de votre écran. Les moniteurs 4K nécessitent une largeur de 3840px+."
         },
         {
-          "type": "CG de Jeux",
-          "description": "Artwork de visual novel et jeux",
+          "type": "CG de jeux",
+          "description": "Artworks de visual novels et jeux",
           "bestScaleFactor": "2x-4x",
-          "notes": "Les CG de VN plus anciens ont souvent besoin d'un agrandissement 4x. Les jeux modernes sont généralement suffisants à 2x."
+          "notes": "Les vieux CG de VN ont souvent besoin d'un agrandissement 4x. Les jeux modernes sont généralement suffisants à 2x."
         }
       ],
       "commonProblems": [
@@ -1241,7 +1241,7 @@
         "agrandisseur illustration"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "description": "Agrandissement spécialisé pour les images cartoon, bandes dessinées occidentales et contenu illustré utilisant une technologie IA optimisée pour l'artwork dessiné avec des couleurs plates et des lignes propres.",
       "imageTypes": [
         {
@@ -1339,7 +1339,7 @@
         "amélioration détail visage"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "description": "Amélioration portrait professionnelle utilisant des modèles IA spécialisés pour la reconstruction et l'amélioration des traits faciaux. Parfait pour les photos d'identité, les photos de réseaux sociaux et les portraits professionnels.",
       "supportedTiers": {
         "faceRestore": {
@@ -1445,7 +1445,7 @@
         "suppresseur d'arrière-plan image produit"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Commerce électronique",
       "description": "Préparation professionnelle des photos de produits pour les places de marché en ligne. Supprimez les fonds encombrés et créez des fonds blancs propres qui répondent aux exigences Amazon, eBay et Etsy.",
       "challenges": [
@@ -1456,18 +1456,18 @@
       ],
       "solutions": [
         {
-          "problem": "Les fonds encombrés ou désordonnés distraient des produits",
-          "solution": "L'IA supprime instantanément les fonds et remplace avec du blanc pur",
+          "problem": "Les arrière-plans encombrés distraient des produits",
+          "solution": "L'IA supprime instantanément les arrière-plans et remplace par du blanc pur",
           "tool": "ai-background-remover"
         },
         {
-          "problem": "L'édition manuelle prend beaucoup de temps pour les grands catalogues",
-          "solution": "Le traitement par lot supprime les fonds de plusieurs images à la fois",
+          "problem": "L'édition manuelle est chronophage pour les grands catalogues",
+          "solution": "Le traitement par lot supprime les arrière-plans de plusieurs images à la fois",
           "tool": "ai-background-remover"
         },
         {
-          "problem": "Les bords de produits complexes ont l'air non professionnels",
-          "solution": "L'IA préserve les fins détails et crée des bords professionnels et propres",
+          "problem": "Les bords de produits complexes semblent peu professionnels",
+          "solution": "L'IA préserve les détails fins et crée des bords propres et professionnels",
           "tool": "ai-background-remover"
         }
       ],
@@ -1524,7 +1524,7 @@
         "suppression de fond photo de profil"
       ],
       "lastUpdated": "2026-01-06T00:00:00Z",
-      "category": "use-cases",
+      "category": "cas-d-utilisation",
       "industry": "Professionnel et Personnel",
       "description": "Préparation de portrait et de photo d'identité professionnelle avec la suppression de fond IA. Parfait pour les profils LinkedIn, les CV, les photos d'identité et l'image de marque professionnelle.",
       "challenges": [

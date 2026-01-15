@@ -854,8 +854,8 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
-      "device": "Tablet",
-      "useCase": "Social Media",
+      "device": "tablet",
+      "useCase": "Social media",
       "deviceDescription": "I tablet sono eccellenti per la creazione di contenuti social media e beneficiano dell'upscaling per qualità della piattaforma.",
       "useCaseDescription": "I contenuti social media da tablet raggiungono massima qualità con miglioramento upscaling per tutte le principali piattaforme.",
       "deviceConstraints": [

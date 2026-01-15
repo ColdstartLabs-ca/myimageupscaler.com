@@ -52,7 +52,8 @@
     "i18n:batch": "tsx scripts/translation-helper.ts get-batch",
     "validate:sitemap": "tsx scripts/validate-sitemap-urls.ts",
     "validate:sitemap:full": "tsx scripts/validate-sitemap-urls.ts --full",
-    "validate:sitemap:patterns": "tsx scripts/validate-sitemap-urls.ts --patterns-only"
+    "validate:sitemap:patterns": "tsx scripts/validate-sitemap-urls.ts --patterns-only",
+    "validate:sitemap:structure": "tsx scripts/validate-sitemap-structure.ts"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.31.3",

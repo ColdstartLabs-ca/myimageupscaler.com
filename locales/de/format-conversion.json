@@ -2,7 +2,7 @@
   "category": "Tools",
   "pages": [
     {
-      "slug": "convert-jpeg-to-png",
+      "slug": "jpeg-in-png-umwandeln",
       "title": "JPEG in PNG konvertieren",
       "metaTitle": "JPEG in PNG konvertieren | MyImageUpscaler",
       "metaDescription": "JPEG-Dateien online kostenlos in PNG-Format konvertieren. Hochwertige JPG-zu-PNG-Konvertierung mit Transparenzunterstützung. Perfekt für Logos, Grafiken und mehr.",
@@ -88,11 +88,15 @@
           "answer": "Ja! Unser Konverter bietet anpassbare Komprimierungsstufen, sodass Sie Dateigröße und Qualität entsprechend Ihren spezifischen Bedürfnissen ausbalancieren können."
         }
       ],
-      "relatedTools": ["convert-png-to-jpeg", "convert-webp-to-png", "add-transparency-to-images"],
-      "relatedGuides": ["understanding-image-formats", "when-to-use-png-vs-jpeg"]
+      "relatedTools": [
+        "png-in-jpeg-umwandeln",
+        "webp-in-png-umwandeln",
+        "transparenz-zu-bildern-hinzufuegen"
+      ],
+      "relatedGuides": ["bildformate-verstehen", "wann-png-oder-jpeg-verwenden"]
     },
     {
-      "slug": "convert-webp-to-jpeg",
+      "slug": "webp-in-jpeg-umwandeln",
       "title": "WebP in JPEG konvertieren",
       "metaTitle": "WebP in JPEG konvertieren | MyImageUpscaler",
       "metaDescription": "WebP-Bilder online kostenlos in JPEG-Format konvertieren. Hochwertige WebP-zu-JPG-Konvertierung mit universeller Kompatibilität. Perfekt für Web-Bilder und soziale Medien.",
@@ -122,7 +126,7 @@
       },
       "commonUseCases": [
         {
-          "title": "Social Media Sharing",
+          "title": "Teilen in sozialen Medien",
           "description": "Konvertieren Sie WebP-Bilder in JPEG für universelle Social-Media-Plattform-Unterstützung",
           "example": "WebP-Grafiken für Instagram, Facebook und Twitter-Sharing konvertieren"
         },
@@ -173,11 +177,11 @@
           "answer": "Ja! Unsere fortschrittlichen Konvertierungsalgorithmen erhalten maximale Qualität während des Prozesses. Während es minimale Qualitätsunterschiede aufgrund von Formateigenschaften geben kann, optimieren wir für bestmögliche JPEG-Output."
         }
       ],
-      "relatedTools": ["convert-jpeg-to-webp", "convert-png-to-webp"],
-      "relatedGuides": ["understanding-webp-format", "image-optimization-guide"]
+      "relatedTools": ["jpeg-in-webp-umwandeln", "png-in-webp-umwandeln"],
+      "relatedGuides": ["webp-format-verstehen", "bildoptimierung-leitfaden"]
     },
     {
-      "slug": "convert-png-to-jpeg",
+      "slug": "png-in-jpeg-umwandeln",
       "title": "PNG in JPEG konvertieren",
       "metaTitle": "PNG in JPEG konvertieren | MyImageUpscaler",
       "metaDescription": "PNG-Bilder online kostenlos in JPEG-Format konvertieren. Hochwertige PNG-zu-JPG-Konvertierung mit Dateigrößenoptimierung. Perfekt für Fotos und Web-Bilder.",
@@ -263,11 +267,15 @@
           "answer": "Ja! Unser Konverter bietet anpassbare Qualitätseinstellungen von 1-100, sodass Sie Dateigröße und Bildqualität entsprechend Ihren Bedürfnissen ausbalancieren können."
         }
       ],
-      "relatedTools": ["convert-jpeg-to-png", "convert-png-to-webp", "compress-png-files"],
-      "relatedGuides": ["understanding-image-formats", "image-optimization-guide"]
+      "relatedTools": [
+        "jpeg-in-png-umwandeln",
+        "png-in-webp-umwandeln",
+        "png-dateien-komprimieren"
+      ],
+      "relatedGuides": ["bildformate-verstehen", "bildoptimierung-leitfaden"]
     },
     {
-      "slug": "convert-bmp-to-jpeg",
+      "slug": "bmp-in-jpeg-umwandeln",
       "title": "BMP in JPEG konvertieren",
       "metaTitle": "BMP in JPEG konvertieren | MyImageUpscaler",
       "metaDescription": "BMP-Bilder online kostenlos in JPEG-Format konvertieren. Reduzieren Sie BMP-Dateigrößen bei Qualitätserhaltung. Perfekt für Legacy-Bilddateien und Windows-Benutzer.",
@@ -326,7 +334,7 @@
       }
     },
     {
-      "slug": "convert-gif-to-jpeg",
+      "slug": "gif-in-jpeg-umwandeln",
       "title": "GIF in JPEG konvertieren",
       "metaTitle": "GIF in JPEG konvertieren | MyImageUpscaler",
       "metaDescription": "GIF-Bilder online kostenlos in JPEG-Format konvertieren. Konvertieren Sie statische GIFs oder extrahieren Sie Frames aus animierten GIFs. Perfekt für Grafiken und Web-Bilder.",
@@ -384,7 +392,7 @@
       }
     },
     {
-      "slug": "convert-svg-to-jpeg",
+      "slug": "svg-in-jpeg-umwandeln",
       "title": "SVG in JPEG konvertieren",
       "metaTitle": "SVG in JPEG konvertieren | MyImageUpscaler",
       "metaDescription": "SVG-Vektorgrafiken online in JPEG-Bilder konvertieren. Hochwertige SVG-zu-JPEG-Konvertierung mit Kontrolle. Perfekt für Logos und Vektorgrafiken.",
@@ -443,7 +451,7 @@
       }
     },
     {
-      "slug": "convert-jpeg-to-webp",
+      "slug": "jpeg-in-webp-umwandeln",
       "title": "JPEG in WebP konvertieren",
       "metaTitle": "JPEG in WebP konvertieren | MyImageUpscaler",
       "metaDescription": "JPEG-Bilder in WebP-Format für bessere Web-Leistung konvertieren. Hochwertige JPG-zu-WebP-Konvertierung mit 25-35% Dateigrößenreduzierung. Perfekt für Website-Optimierung.",
@@ -454,7 +462,7 @@
         "jpg zu webp konverter",
         "jpeg zu webp online",
         "bildoptimierung",
-        "web performance",
+        "Web-Performance",
         "modernes bildformat"
       ],
       "lastUpdated": "2025-01-19",
@@ -502,7 +510,7 @@
       }
     },
     {
-      "slug": "convert-png-to-webp",
+      "slug": "png-in-webp-umwandeln",
       "title": "PNG in WebP konvertieren",
       "metaTitle": "PNG in WebP konvertieren | MyImageUpscaler",
       "metaDescription": "PNG-Bilder in WebP-Format mit Transparenzunterstützung konvertieren. Hochwertige PNG-zu-WebP-Konvertierung für Web-Optimierung. Perfekt für Logos und Grafiken.",
@@ -561,7 +569,7 @@
       }
     },
     {
-      "slug": "convert-webp-to-png",
+      "slug": "webp-in-png-umwandeln",
       "title": "WebP in PNG konvertieren",
       "metaTitle": "WebP in PNG konvertieren | MyImageUpscaler",
       "metaDescription": "WebP-Bilder online kostenlos in PNG-Format konvertieren. Hochwertige WebP-zu-PNG-Konvertierung mit Transparenzerhaltung. Perfekt für verlustfreie Bildbearbeitung.",
@@ -620,7 +628,7 @@
       }
     },
     {
-      "slug": "convert-svg-to-png",
+      "slug": "svg-in-png-umwandeln",
       "title": "SVG in PNG konvertieren",
       "metaTitle": "SVG in PNG konvertieren | MyImageUpscaler",
       "metaDescription": "SVG-Vektorgrafiken online in PNG-Format mit Transparenz konvertieren. Hochwertige SVG-zu-PNG-Konvertierung mit Kontrolle. Perfekt für Logos und Grafiken.",

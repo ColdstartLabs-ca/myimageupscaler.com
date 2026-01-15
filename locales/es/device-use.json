@@ -631,7 +631,7 @@
       "lastUpdated": "2026-01-06",
       "category": "device-use",
       "device": "desktop",
-      "useCase": "Video Thumbnails",
+      "useCase": "Miniaturas de video",
       "deviceDescription": "Los flujos de trabajo de edición de video de escritorio requieren miniaturas de alta calidad para máximo compromiso del espectador.",
       "useCaseDescription": "Las miniaturas de video necesitan destacarse y atraer clics. El escalado de escritorio crea miniaturas profesionales y llamativas.",
       "deviceConstraints": [
@@ -869,7 +869,7 @@
       ],
       "lastUpdated": "2026-01-06",
       "category": "device-use",
-      "device": "Tablet",
+      "device": "Tableta",
       "useCase": "Redes Sociales",
       "deviceDescription": "Las tabletas son excelentes para creación de contenido de redes sociales y se benefician de escalado para calidad de plataforma.",
       "useCaseDescription": "El contenido de redes sociales de tabletas alcanza máxima calidad con mejora de escalado para todas las plataformas principales.",

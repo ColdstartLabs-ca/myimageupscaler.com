@@ -468,7 +468,7 @@
           "metric": "Ausgezeichnete Qualität"
         },
         {
-          "title": "Model Characteristics",
+          "title": "Modellmerkmale",
           "description": "Erhält Einzigartig SD checkpoint Und LoRA Stil characteristics.",
           "metric": "Stil maintained"
         },
@@ -485,17 +485,17 @@
           "example": "Erstellen Schnell-Laden SD Kunst portfolio websites"
         },
         {
-          "title": "Digital Products",
+          "title": "Digitale Produkte",
           "description": "Verkaufen Stable Diffusion creations mit Web-optimierten WebP-Bildern.",
           "example": "Erstellen Digital products mit SD Kunst"
         },
         {
-          "title": "Blog Graphics",
+          "title": "Blog-Grafiken",
           "description": "Blog-Beiträge Verbessern Mit Stable Diffusion WebP Bilder.",
           "example": "Veranschaulichen Inhalt Mit KI-Generiert SD Kunst"
         },
         {
-          "title": "Social Media",
+          "title": "Soziale Medien",
           "description": "Teilen Stable Diffusion Kunst auf Plattformen mit WebP-Effizienz.",
           "example": "Posten SD creations Mit Optimal Laden Mal"
         }
@@ -975,12 +975,12 @@
       ],
       "benefits": [
         {
-          "title": "Text Clarity Preserved",
+          "title": "Textklarheit bewahrt",
           "description": "Behält bei Scharf, Lesbar Canva Text Bei Höher resolutions.",
-          "metric": "Text preserved"
+          "metric": "Text bewahrt"
         },
         {
-          "title": "Graphics Enhanced",
+          "title": "Grafiken verbessert",
           "description": "Sharpens Canva vector-Mag graphics Qualität Während Skalierung.",
           "metric": "Graphics Scharf"
         },
@@ -1012,7 +1012,7 @@
           "example": "Erstellen Optimiert versions Für various social platforms"
         },
         {
-          "title": "Brand Materials",
+          "title": "Markenmaterialien",
           "description": "Skalieren Canva logos, Geschäft cards, Und brand assets Für various uses.",
           "example": "Verbessern Canva brand assets Für Professionell Verwenden"
         }
@@ -1116,7 +1116,7 @@
           "example": "Erstellen Optimiert marketing materials"
         },
         {
-          "title": "Social Media",
+          "title": "Soziale Medien",
           "description": "Teilen Canva designs auf Plattformen mit WebP-Effizienz.",
           "example": "Posten Canva creations Mit Optimal Laden"
         }
@@ -1189,7 +1189,7 @@
         {
           "title": "Schnelle Übertragung",
           "description": "Behält bei Scharf, Lesbar Canva Text In JPEG Format.",
-          "metric": "Text preserved"
+          "metric": "Text bewahrt"
         },
         {
           "title": "Social Bereit",
@@ -1219,7 +1219,7 @@
           "example": "Erstellen engaging E-Mail graphics"
         },
         {
-          "title": "Client Delivery",
+          "title": "Kundenlieferung",
           "description": "Deliver Canva Client Arbeiten In universally Kompatibel JPEG Format.",
           "example": "Provide Client deliverables Das Arbeiten everywhere"
         }
@@ -1293,7 +1293,7 @@
         {
           "title": "Detaillieren Preserved",
           "description": "Behält bei intricate Photoshop Details während der Skalierung.",
-          "metric": "Details enhanced"
+          "metric": "Details verbessert"
         },
         {
           "title": "Transparenzunterstützung",
@@ -1323,7 +1323,7 @@
           "example": "Verbessern Digital paintings Für Druck sales"
         },
         {
-          "title": "Retouching",
+          "title": "Retusche",
           "description": "Verbessern retouched Photoshop Fotos Für Professionell delivery.",
           "example": "Skalieren retouched Fotos Für Client delivery"
         }
@@ -1427,7 +1427,7 @@
           "example": "Veranschaulichen Inhalt Mit PS-created graphics"
         },
         {
-          "title": "Digital Products",
+          "title": "Digitale Produkte",
           "description": "Verwenden Photoshop WebP Bilder In Digital products Und courses.",
           "example": "Erstellen Digital Produkt visuals Mit PS Kunst"
         }
@@ -1530,7 +1530,7 @@
           "example": "Provide Client deliverables Das Arbeiten everywhere"
         },
         {
-          "title": "Presentations",
+          "title": "Präsentationen",
           "description": "Verwenden enhanced Photoshop JPEGs In Geschäft presentations.",
           "example": "Verbessern PowerPoint Und Keynote presentations"
         }
@@ -1608,7 +1608,7 @@
         {
           "title": "Modernes Format",
           "description": "HEIC Ist Die Modern Standard Für Apple Bild Speicher.",
-          "metric": "Apple native"
+          "metric": "Apple nativ"
         },
         {
           "title": "Speicher Effizient",
@@ -1799,7 +1799,7 @@
           "metric": "Effizient Speicher"
         },
         {
-          "title": "Model Characteristics",
+          "title": "Modellmerkmale",
           "description": "Erhält Einzigartig SD checkpoint Und LoRA Stil characteristics.",
           "metric": "Stil maintained"
         }
@@ -1887,7 +1887,7 @@
           "metric": "Druck Standard"
         },
         {
-          "title": "Model Preserved",
+          "title": "Modell bewahrt",
           "description": "Behält bei characteristics Von SD checkpoints Und LoRAs In TIFF Format.",
           "metric": "Stil maintained"
         },
@@ -2172,7 +2172,7 @@
           "metric": "Effizient Speicher"
         },
         {
-          "title": "Text Preserved",
+          "title": "Text bewahrt",
           "description": "Behält bei Scharf Canva Text In HEIC Format.",
           "metric": "Text Scharf"
         }
@@ -2259,7 +2259,7 @@
           "metric": "Druck Standard"
         },
         {
-          "title": "Text Preserved",
+          "title": "Text bewahrt",
           "description": "Behält bei Scharf Canva Text In TIFF Format.",
           "metric": "Text Scharf"
         },
@@ -2360,7 +2360,7 @@
         {
           "title": "Detaillieren Preserved",
           "description": "Behält bei intricate Photoshop Details In HEIC Format.",
-          "metric": "Details enhanced"
+          "metric": "Details verbessert"
         }
       ],
       "useCases": [
@@ -2448,7 +2448,7 @@
         {
           "title": "Detaillieren Preserved",
           "description": "Behält bei intricate Photoshop Details In TIFF Format.",
-          "metric": "Details enhanced"
+          "metric": "Details verbessert"
         },
         {
           "title": "Professionell Results",
@@ -2645,7 +2645,7 @@
         {
           "title": "Schnelle Übertragung",
           "description": "BMP Ist natively Unterstützt across Alle Windows applications.",
-          "metric": "Universal Windows"
+          "metric": "Universell Windows"
         },
         {
           "title": "Einfach Format",
@@ -2744,7 +2744,7 @@
         {
           "title": "Druck-optimiert",
           "description": "AVIF Ist Die Neueste Bild Format Mit Fortschrittlich compression.",
-          "metric": "Cutting-edge tech"
+          "metric": "Modernste Technologie"
         },
         {
           "title": "Qualität erhalten",
@@ -2843,7 +2843,7 @@
         {
           "title": "Hervorragende Qualität",
           "description": "Integrate SD Kunst In Professionell RAW Fotografie workflows.",
-          "metric": "Pro integration"
+          "metric": "Pro-Integration"
         },
         {
           "title": "Farbe Tiefe",
@@ -2873,7 +2873,7 @@
           "example": "Verwenden Capture One An SD Generiert Kunst"
         },
         {
-          "title": "Archival Masters",
+          "title": "Archiv-Master",
           "description": "Erhalten Bester SD Arbeiten In uncompressed RAW Format.",
           "example": "Erstellen archival master Dateien Von SD Kunst"
         }
@@ -2942,7 +2942,7 @@
         {
           "title": "Schnelle Ladezeiten",
           "description": "BMP Ist natively Unterstützt across Windows applications.",
-          "metric": "Universal Windows"
+          "metric": "Universell Windows"
         },
         {
           "title": "Einfach Struktur",
@@ -3041,7 +3041,7 @@
         {
           "title": "Transparenz-Unterstützung",
           "description": "AVIF Ist Die Neueste Bild Format technology.",
-          "metric": "Cutting-edge"
+          "metric": "Modernste Technik"
         },
         {
           "title": "Qualität erhalten",
@@ -3049,7 +3049,7 @@
           "metric": "Ausgezeichnete Qualität"
         },
         {
-          "title": "Modern Web",
+          "title": "Modernes Web",
           "description": "AVIF Unterstützt Von Alle Modern Web browsers.",
           "metric": "Zukunft-proof"
         }
@@ -3135,12 +3135,12 @@
         {
           "title": "Moderne Komprimierung",
           "description": "RAW Format Erhält Alle Bild Daten Von DALL-E Verbesserung.",
-          "metric": "Uncompressed"
+          "metric": "Unkomprimiert"
         },
         {
           "title": "Kleine Dateigröße",
           "description": "Integrate DALL-E Kunst In Professionell Foto workflows.",
-          "metric": "Pro workflows"
+          "metric": "Pro-Workflows"
         },
         {
           "title": "Farbe Tiefe",
@@ -3239,7 +3239,7 @@
         {
           "title": "Schnelle Übertragung",
           "description": "BMP Ist natively Unterstützt across Windows applications.",
-          "metric": "Universal Windows"
+          "metric": "Universell Windows"
         },
         {
           "title": "Einfach Format",
@@ -3338,7 +3338,7 @@
         {
           "title": "Transparenz-Unterstützung",
           "description": "AVIF Ist Die Neueste Bild Format technology.",
-          "metric": "Cutting-edge"
+          "metric": "Modernste Technik"
         },
         {
           "title": "Qualität erhalten",
@@ -3346,7 +3346,7 @@
           "metric": "Ausgezeichnete Qualität"
         },
         {
-          "title": "Modern Web",
+          "title": "Modernes Web",
           "description": "AVIF Unterstützt Von Alle Modern Web browsers.",
           "metric": "Zukunft-proof"
         }
@@ -3432,12 +3432,12 @@
         {
           "title": "Moderne Komprimierung",
           "description": "RAW Format Erhält Alle Bild Daten Von Canva.",
-          "metric": "Uncompressed"
+          "metric": "Unkomprimiert"
         },
         {
           "title": "Hervorragende Qualität",
           "description": "Integrate Canva designs In Professionell workflows.",
-          "metric": "Pro workflows"
+          "metric": "Pro-Workflows"
         },
         {
           "title": "Farbe Tiefe",
@@ -3536,7 +3536,7 @@
         {
           "title": "Schnelle Übertragung",
           "description": "BMP Ist natively Unterstützt across Windows apps.",
-          "metric": "Universal Windows"
+          "metric": "Universell Windows"
         },
         {
           "title": "Einfach Format",
@@ -3635,7 +3635,7 @@
         {
           "title": "Transparenz-Unterstützung",
           "description": "AVIF Ist Die Neueste Bild Format technology.",
-          "metric": "Cutting-edge"
+          "metric": "Modernste Technik"
         },
         {
           "title": "Qualität erhalten",
@@ -3643,7 +3643,7 @@
           "metric": "Ausgezeichnete Qualität"
         },
         {
-          "title": "Modern Web",
+          "title": "Modernes Web",
           "description": "AVIF Unterstützt Von Alle Modern Web browsers.",
           "metric": "Zukunft-proof"
         }
@@ -3729,12 +3729,12 @@
         {
           "title": "Moderne Komprimierung",
           "description": "RAW Format Erhält Alle Bild Daten Von Photoshop.",
-          "metric": "Uncompressed"
+          "metric": "Unkomprimiert"
         },
         {
           "title": "Kleine Dateigröße",
           "description": "Integrate PS artwork In Professionell RAW workflows.",
-          "metric": "Pro workflows"
+          "metric": "Pro-Workflows"
         },
         {
           "title": "Farbe Tiefe",
@@ -3833,7 +3833,7 @@
         {
           "title": "Schnelle Ladezeiten",
           "description": "BMP Ist natively Unterstützt across Windows apps.",
-          "metric": "Universal Windows"
+          "metric": "Universell Windows"
         },
         {
           "title": "Einfach Format",
@@ -3932,7 +3932,7 @@
         {
           "title": "Transparenz-Unterstützung",
           "description": "AVIF Ist Die Neueste Bild Format technology.",
-          "metric": "Cutting-edge"
+          "metric": "Modernste Technik"
         },
         {
           "title": "Qualität erhalten",
@@ -3940,7 +3940,7 @@
           "metric": "Ausgezeichnete Qualität"
         },
         {
-          "title": "Modern Web",
+          "title": "Modernes Web",
           "description": "AVIF Unterstützt Von Alle Modern Web browsers.",
           "metric": "Zukunft-proof"
         }
@@ -4134,7 +4134,7 @@
         {
           "title": "Schnelle Ladezeiten",
           "description": "BMP Ist natively Unterstützt across Windows applications.",
-          "metric": "Universal Windows"
+          "metric": "Universell Windows"
         },
         {
           "title": "Einfach Format",
@@ -4237,7 +4237,7 @@
         {
           "title": "Transparenz-Unterstützung",
           "description": "AVIF Ist Die Neueste Bild Format technology.",
-          "metric": "Cutting-edge"
+          "metric": "Modernste Technik"
         },
         {
           "title": "Qualität erhalten",
@@ -4245,7 +4245,7 @@
           "metric": "Ausgezeichnete Qualität"
         },
         {
-          "title": "Modern Web",
+          "title": "Modernes Web",
           "description": "AVIF Unterstützt Von Alle Modern Web browsers.",
           "metric": "Zukunft-proof"
         }

@@ -762,7 +762,7 @@
           "example": "Marcas creando anuncios en el feed que se mezclan perfectamente con el contenido orgánico"
         },
         {
-          "title": "Social media campAIgn assets",
+          "title": "Activos de campañas de redes sociales con IA",
           "description": "Crear activos visuales cohesivos para campañas de TikTok que mantengan la consistencia de marca",
           "example": "Agencias de marketing desarrollando campañas multiparte con identidad visual consistente"
         },
@@ -1479,18 +1479,18 @@
               "highContrast": "Usa colores brillantes y contrastantes para destacar en videos sugeridos",
               "largeText": "Texto audaz y legible (mínimo 60pt para 1280x720)",
               "facialRecognition": "Incluye rostros con emociones fuertes para 30-40% más de CTR",
-              "brandConsistency": "Maintain consistent style across channel thumbnails"
+              "brandConsistency": "Mantén un estilo consistente en las miniaturas del canal"
             },
             "colorPsychology": {
-              "red": "Increases urgency and attention, 20% higher click-through",
-              "yellow": "Creates excitement and optimism, stands out in feeds",
-              "blue": "Builds trust and authority for educational content",
-              "orange": "Combines energy of red and happiness of yellow",
-              "green": "Associated with growth, health, and financial content"
+              "red": "Aumenta la urgencia y la atención, 20% más de clics",
+              "yellow": "Crea emoción y optimismo, destaca en los feeds",
+              "blue": "Genera confianza y autoridad para contenido educativo",
+              "orange": "Combina la energía del rojo y la felicidad del amarillo",
+              "green": "Asociado con crecimiento, salud y contenido financiero"
             },
             "compositionRules": {
-              "ruleOfThirds": "Place key elements at intersection points",
-              "negativeSpace": "Use breathing room around important elements",
+              "ruleOfThirds": "Coloca elementos clave en los puntos de intersección",
+              "negativeSpace": "Usa espacio de respiración alrededor de elementos importantes",
               "visualHierarchy": "El elemento más importante debe ser el más grande y brillante",
               "emotionalAppeal": "Muestra emociones auténticas, no fotografías de stock"
             }
@@ -1597,10 +1597,10 @@
           },
           "algorithmOptimization": {
             " engagementMetrics": {
-              "clickThroughRate": "Primary factor for video recommendation",
-              "watchTime": "Thumbnail affects initial engagement and retention",
-              "sessionTime": "Thumbnails that keep viewers on platform longer",
-              "viewerSatisfaction": "Accurate thumbnails improve viewer satisfaction"
+              "clickThroughRate": "Factor principal para recomendación de videos",
+              "watchTime": "La miniatura afecta el compromiso inicial y la retención",
+              "sessionTime": "Miniaturas que mantienen a los espectadores más tiempo en la plataforma",
+              "viewerSatisfaction": "Miniaturas precisas mejoran la satisfacción del espectador"
             },
             "discoveryFactors": {
               "suggestedVideos": "Las miniaturas compiten en secciones de videos sugeridos",
@@ -1825,7 +1825,7 @@
       "metaTitle": "Redimensionar imagen para YouTube | MyImageUpscaler",
       "metaDescription": "Redimensionador de imágenes de YouTube perfecto para miniaturas, banners de canal, fotos de perfil, YouTube Shorts y marcas de agua de video. Herramienta online gratuita con especificaciones de YouTube 2025 y optimización de CTR.",
       "h1": "Redimensionador de imágenes de YouTube - Gráficos completos de YouTube para 2025",
-      "intro": "Create stunning YouTube visuals with our comprehensive image resizer. Perfect for video thumbnAIls, channel banners, profile pictures, YouTube Shorts, end screens, and video watermarks with 2025 specifications and CTR optimization.",
+      "intro": "Crea visuales impresionantes de YouTube con nuestro redimensionador de imágenes integral. Perfecto para miniaturas de video, banners de canal, fotos de perfil, YouTube Shorts, pantallas finales y marcas de agua de video con especificaciones de 2025 y optimización de CTR.",
       "primaryKeyword": "resize image for youtube",
       "secondaryKeywords": [
         "youtube thumbnail size 2025",

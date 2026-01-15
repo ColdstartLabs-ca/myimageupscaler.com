@@ -2,7 +2,7 @@
   "category": "Geräteoptimierung",
   "pages": [
     {
-      "slug": "mobile-device-image-optimization",
+      "slug": "mobile-geraete-bildoptimierung",
       "title": "Mobile Geräte-Bildoptimierung",
       "metaTitle": "Mobile Geräte-Bildoptimierung | MyImageUpscaler",
       "metaDescription": "Umfassender Leitfaden zur mobilen Bildoptimierung. Erfahren Sie, wie Sie Bilder für iOS- und Android-Geräte optimieren, die App-Performance verbessern und den Datenverbrauch reduzieren.",
@@ -170,7 +170,7 @@
       "relatedPages": ["app-performance-optimization", "mobile-development-image-handling"]
     },
     {
-      "slug": "desktop-image-optimization",
+      "slug": "desktop-bildoptimierung",
       "title": "Desktop-Bildoptimierung",
       "metaTitle": "Desktop-Bildoptimierung | MyImageUpscaler",
       "metaDescription": "Umfassender Leitfaden zur Desktop-Bildoptimierung. Erfahren Sie, wie Sie Bilder für Windows-, Mac- und Linux-Anwendungen optimieren, die Performance verbessern und die Ressourcennutzung reduzieren.",
@@ -419,7 +419,7 @@
       "relatedPages": ["professional-image-editing", "multi-platform-image-handling"]
     },
     {
-      "slug": "smart-tv-image-optimization",
+      "slug": "smart-tv-bildoptimierung",
       "title": "Smart TV-Bildoptimierung",
       "metaTitle": "Smart TV-Bildoptimierung | MyImageUpscaler",
       "metaDescription": "Umfassender Leitfaden zur Smart TV-Bildoptimierung. Erfahren Sie, wie Sie Bilder für 4K/8K-Fernseher, HDR-Inhalte, Streaming-Apps und bessere Seherlebnisse optimieren.",
@@ -667,7 +667,7 @@
       "relatedPages": ["4k-content-preparation", "smart-tv-app-development"]
     },
     {
-      "slug": "tablet-image-optimization",
+      "slug": "tablet-bildoptimierung",
       "title": "Tablet-Bildoptimierung: Leitfaden",
       "metaTitle": "Tablet-Bildoptimierung | MyImageUpscaler",
       "metaDescription": "Umfassender Leitfaden zur Tablet-Bildoptimierung. Erfahren Sie, wie Sie Bilder für iPad- und Android-Tablets optimieren, die App-Performance verbessern und verschiedene Ausrichtungen handhaben.",
@@ -906,7 +906,7 @@
       "relatedPages": ["mobile-tablet-development", "cross-platform-image-handling"]
     },
     {
-      "slug": "wearable-device-image-optimization",
+      "slug": "wearable-geraete-bildoptimierung",
       "title": "Wearable-Geräte-Bildoptimierung",
       "metaTitle": "Wearable-Geräte-Bildoptimierung | MyImageUpscaler",
       "metaDescription": "Umfassender Leitfaden zur Wearable-Bildoptimierung. Erfahren Sie, wie Sie Bilder für Smartwatches, Fitness-Tracker und andere Wearable-Geräte mit begrenzten Displays und Akku optimieren.",

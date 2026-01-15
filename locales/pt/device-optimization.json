@@ -297,7 +297,7 @@
         },
         {
           "feature": "Qualidade Profissional",
-          "description": "Support for 16-bit color and wide gamut",
+          "description": "Suporte para cores de 16 bits e amplo espectro de cores",
           "implementation": "HDR Imagem support, color management"
         },
         {
@@ -357,52 +357,52 @@
           "implementation": "APIs de área de transferência, negociação de formato"
         },
         {
-          "consideration": "Print Support",
+          "consideration": "Suporte de Impressão",
           "description": "Support high-Qualidade printing of images",
-          "implementation": "Print dialogs, color management"
+          "implementation": "Diálogos de impressão, gerenciamento de cores"
         }
       ],
       "desktopApplications": [
         {
           "application": "Image Editarors",
           "optimizationNeeds": [
-            "Real-time preview",
+            "Visualização em tempo real",
             "Desfazer/redo",
-            "Layer support",
+            "Suporte de camadas",
             "Alto precision"
           ],
           "specificRequirements": [
-            "Non-destructive editing",
-            "Memory efficiency",
-            "GPU acceleration"
+            "Edição não destrutiva",
+            "Eficiência de memória",
+            "Aceleração por GPU"
           ]
         },
         {
           "application": "Imagem Viewers",
           "optimizationNeeds": [
             "Rápido loading",
-            "Smooth scrolling",
-            "Zoom performance",
+            "Rolagem suave",
+            "Performance de zoom",
             "File Formato support"
           ],
           "specificRequirements": [
-            "Cache management",
+            "Gerenciamento de cache",
             "Progressive Carregando",
-            "Memory optimization"
+            "Otimização de memória"
           ]
         },
         {
-          "application": "Design Tools",
+          "application": "Ferramentas de Design",
           "optimizationNeeds": [
-            "Vector/raster hybrid",
+            "Híbrido vetorial/raster",
             "Alto precision",
-            "Color management",
+            "Gerenciamento de cores",
             "Exportar options"
           ],
           "specificRequirements": [
             "Profissional workflows",
             "Processamento em lote",
-            "Integration capabilities"
+            "Capacidades de integração"
           ]
         }
       ],
@@ -492,20 +492,20 @@
           "resolution": "HD (1920x1080)",
           "requirements": {
             "imageSize": "1920x1080 for HD Conteúdo",
-            "bitDepth": "8-bit sufficient",
-            "colorSpace": "sRGB or Rec.709",
+            "bitDepth": "8-bit suficiente",
+            "colorSpace": "sRGB ou Rec.709",
             "compression": "JPEG 85-95%"
           }
         }
       ],
       "contentTypes": [
         {
-          "type": "User Interface Elements",
+          "type": "Elementos de Interface do Usuário",
           "optimization": {
-            "resolution": "Design for 10-foot viewing experience",
+            "resolution": "Design para experiência de visualização a 3 metros",
             "textSize": "Larger, more readable Texto",
             "contrast": "Alto contrast for readability",
-            "format": "PNG with transparency for UI elements"
+            "format": "PNG com transparência para elementos de UI"
           }
         },
         {
@@ -513,21 +513,21 @@
           "optimization": {
             "resolution": "High-Qualidade thumbnails for preview",
             "compression": "Balance Qualidade and load speed",
-            "aspectRatio": "Maintain proper aspect ratios",
-            "format": "WebP or JPEG with optimization"
+            "aspectRatio": "Mantenha as proporções corretas",
+            "format": "WebP ou JPEG com otimização"
           }
         },
         {
           "type": "Full-Screen Conteúdo",
           "optimization": {
             "resolution": "Native Resolução for best quality",
-            "colorManagement": "Proper HDR/SDR handling",
+            "colorManagement": "Manipulação adequada de HDR/SDR",
             "compression": "High-Qualidade for presentation",
-            "format": "JPEG for photos, PNG for graphics"
+            "format": "JPEG para fotos, PNG para gráficos"
           }
         },
         {
-          "type": "Background Images",
+          "type": "Imagens de Fundo",
           "optimization": {
             "resolution": "Full Resolução, subtle compression",
             "subtlety": "Don't distract from foreground Conteúdo",
@@ -612,23 +612,23 @@
             "Use estruturas de UI do webOS TV",
             "Implemente manipulação de imagem específica do webOS",
             "Aproveite as capacidades de processamento de imagem da LG",
-            "Follow LG TV design guidelines"
+            "Siga as diretrizes de design da LG TV"
           ]
         },
         {
           "platform": "Roku",
           "optimizations": [
-            "Use Roku's SceneGraph framework",
+            "Use o framework SceneGraph da Roku",
             "Implement Roku-optimized Imagem formats",
             "Leverage Roku's Hardware capabilities",
-            "Follow Roku design guidelines"
+            "Siga as diretrizes de design da Roku"
           ]
         }
       ],
       "uiConsiderations": [
         {
-          "aspect": "Focus Management",
-          "description": "Clear visual indicators for focused elements",
+          "aspect": "Gerenciamento de Foco",
+          "description": "Indicadores visuais claros para elementos em foco",
           "bestPractice": "Alto contrast, larger focus states"
         },
         {
@@ -639,20 +639,20 @@
         {
           "aspect": "Botão Size",
           "description": "Large touch targets for remote Navegação",
-          "bestPractice": "Minimum 48x48dp for interactive elements"
+          "bestPractice": "Mínimo de 48x48dp para elementos interativos"
         },
         {
-          "aspect": "Color Contrast",
+          "aspect": "Contraste de Cores",
           "description": "Alto contrast ratios for visibility",
           "bestPractice": "WCAG AA compliance or Melhor"
         }
       ],
       "bestPractices": [
-        "Design for 10-foot viewing experience with larger UI elements",
+        "Design para experiência de visualização a 3 metros com elementos de UI maiores",
         "Provide Múltiplos image resolutions for different TV capabilities",
-        "Implement proper HDR/SDR detection and handling",
+        "Implemente detecção e manipulação adequadas de HDR/SDR",
         "Use TV-optimized Navegação patterns and focus management",
-        "Test on actual TVs, not just emulators, for accurate results"
+        "Teste em TVs reais, não apenas em emuladores, para resultados precisos"
       ],
       "commonMistakes": [
         "Using Mobile-optimized images that look blurry on large screens",
@@ -671,7 +671,7 @@
           "answer": "Create separate SDR and HDR versions of images, use proper color spaces (BT.2020), and include appropriate HDR metadata for the target Formato."
         },
         {
-          "question": "Should I use WebP for Smart TV apps?",
+          "question": "Devo usar WebP para aplicativos de Smart TV?",
           "answer": "Verifique o suporte da plataforma de TV. A maioria das Smart TVs modernas suporta WebP, mas sempre forneça fallbacks de JPEG para dispositivos mais antigos ou incompatíveis."
         }
       ],
@@ -758,7 +758,7 @@
             },
             {
               "technique": "Material Design",
-              "description": "Follow Android tablet design guidelines",
+              "description": "Siga as diretrizes de design de tablets Android",
               "implementation": "Navegação patterns, touch targets, spacing"
             }
           ]
@@ -766,30 +766,30 @@
       ],
       "resolutionOptimization": [
         {
-          "tablet": "iPad Mini (7.9-8.3\")",
+          "tablet": "iPad Mini (7,9-8,3\")",
           "resolution": "2266x1488 (326 ppi)",
-          "optimization": "Use @2x and @3x assets, optimize for smaller tablet size"
+          "optimization": "Use assets @2x e @3x, otimize para tamanhos de tablet menores"
         },
         {
-          "tablet": "iPad (10.2-10.9\")",
+          "tablet": "iPad (10,2-10,9\")",
           "resolution": "2360x1640 (264 ppi)",
           "optimization": "Balance image Qualidade and file size for mid-range tablets"
         },
         {
-          "tablet": "iPad Pro (11-12.9\")",
+          "tablet": "iPad Pro (11-12,9\")",
           "resolution": "2732x2048 (264 ppi)",
           "optimization": "High-Resolução images for professional use cases"
         },
         {
-          "tablet": "Android Tablets (7-13\")",
+          "tablet": "Tablets Android (7-13\")",
           "resolution": "1920x1200 to 2560x1600 (200-350 ppi)",
           "optimization": "Múltiplos density support, wide device range optimization"
         }
       ],
       "orientationHandling": [
         {
-          "aspect": "Layout Adaptation",
-          "description": "Design layouts that work in both orientations",
+          "aspect": "Adaptação de Layout",
+          "description": "Crie layouts que funcionem em ambas as orientações",
           "bestPractice": "Responsive grids, Flexível component sizing"
         },
         {
@@ -798,8 +798,8 @@
           "bestPractice": "Separate paisagem/portrait crops when needed"
         },
         {
-          "aspect": "UI Elements",
-          "description": "Adapt UI for different orientation constraints",
+          "aspect": "Elementos de UI",
+          "description": "Adapte a UI para diferentes restrições de orientação",
           "bestPractice": "Navegação placement, button positioning, content flow"
         },
         {
@@ -815,7 +815,7 @@
           "implementation": "RecyclerView/CollectionView lazy Carregando, pagination"
         },
         {
-          "strategy": "Memory Management",
+          "strategy": "Gerenciamento de Memória",
           "description": "Handle larger images efficiently on Tablet memory",
           "implementation": "Imagem caching, memory pools, downsampling"
         },
@@ -832,8 +832,13 @@
       ],
       "tabletUseCases": [
         {
-          "useCase": "Productivity Apps",
-          "optimizationNeeds": ["Documento images", "Charts and graphs", "Icons", "UI elements"],
+          "useCase": "Aplicativos de Produtividade",
+          "optimizationNeeds": [
+            "Documento images",
+            "Gráficos e tabelas",
+            "Ícones",
+            "Elementos de UI"
+          ],
           "specificRequirements": [
             "Clear Texto at any zoom",
             "Profissional appearance",
@@ -841,39 +846,47 @@
           ]
         },
         {
-          "useCase": "Creative Applications",
-          "optimizationNeeds": ["High-Resolução images", "Layer support", "Editing capabilities"],
-          "specificRequirements": ["Precision handling", "Large Arquivo support", "Color accuracy"]
+          "useCase": "Aplicativos Criativos",
+          "optimizationNeeds": [
+            "High-Resolução images",
+            "Suporte de camadas",
+            "Capacidades de edição"
+          ],
+          "specificRequirements": [
+            "Manipulação precisa",
+            "Large Arquivo support",
+            "Precisão de cores"
+          ]
         },
         {
           "useCase": "Educational Conteúdo",
           "optimizationNeeds": [
-            "Diagrams and illustrations",
-            "Textbook pages",
-            "Interactive elements"
+            "Diagramas e ilustrações",
+            "Páginas de livros didáticos",
+            "Elementos interativos"
           ],
-          "specificRequirements": ["Readability", "Zoom support", "Annotation capability"]
+          "specificRequirements": ["Legibilidade", "Suporte de zoom", "Capacidade de anotação"]
         },
         {
           "useCase": "Media Contrasumption",
-          "optimizationNeeds": ["Foto galleries", "Video thumbnails", "Cover art"],
-          "specificRequirements": ["Alto quality", "Smooth scrolling", "Quick Carregando"]
+          "optimizationNeeds": ["Foto galleries", "Miniaturas de vídeo", "Arte de capa"],
+          "specificRequirements": ["Alto quality", "Rolagem suave", "Quick Carregando"]
         }
       ],
       "touchOptimization": [
         {
-          "aspect": "Touch Targets",
+          "aspect": "Alvos de Toque",
           "description": "Larger touch targets appropriate for Tablet use",
-          "recommendation": "Minimum 44x44 points for touch targets"
+          "recommendation": "Mínimo de 44x44 pontos para alvos de toque"
         },
         {
-          "aspect": "Gesture Support",
+          "aspect": "Suporte a Gestos",
           "description": "Support Tablet-specific gestures and interactions",
-          "recommendation": "Pinch to zoom, swipe gestures, multi-touch support"
+          "recommendation": "Pinça para zoom, gestos de deslizar, suporte multitoque"
         },
         {
-          "aspect": "Hand Position",
-          "description": "Consider how users hold tablets when designing interactions",
+          "aspect": "Posição da Mão",
+          "description": "Considere como os usuários seguram tablets ao projetar interações",
           "recommendation": "Dois-handed use, edge accessibility, reach zones"
         }
       ],
@@ -888,7 +901,7 @@
         "Using phone-optimized images that look pixelated on larger Tablet screens",
         "Not supporting both portrait and paisagem orientations properly",
         "Ignoring Tablet-specific interaction patterns and gestures",
-        "Using inefficient memory management causing crashes with large images",
+        "Usar gerenciamento de memória ineficiente causando travamentos com imagens grandes",
         "Not optimizing for different Tablet resolutions and screen densities"
       ],
       "faq": [
@@ -902,7 +915,7 @@
         },
         {
           "question": "What's the optimal image Formato for tablets?",
-          "answer": "Use WebP where supported, with JPEG fallbacks. PNG for UI elements and transparency. HEIF on iOS devices with appropriate fallbacks."
+          "answer": "Use WebP onde suportado, com fallbacks JPEG. PNG para elementos de UI e transparência. HEIF em dispositivos iOS com fallbacks apropriados."
         }
       ],
       "relatedTools": ["tablet-image-optimizer", "responsive-image-generator"],
@@ -924,15 +937,15 @@
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "otimizacao-de-dispositivo",
       "platform": "Wearable",
-      "deviceTypes": ["Smartwatches", "Fitness Trackers", "Smart Rings", "AR Glasses"],
+      "deviceTypes": ["Smartwatches", "Fitness Trackers", "Smart Rings", "Óculos AR"],
       "extremeConstraints": [
         {
-          "constraint": "Tiny Displays",
+          "constraint": "Telas Minúsculas",
           "description": "Typically 1-2 inch displays with 240-480px Resolução, requiring extremely optimized images."
         },
         {
-          "constraint": "Severe Battery Limits",
-          "description": "Every byte transferred and processed impacts battery life significantly."
+          "constraint": "Limites Severos de Bateria",
+          "description": "Cada byte transferido e processado impacta significativamente a vida útil da bateria."
         },
         {
           "constraint": "Minimal Processaring",
@@ -952,19 +965,19 @@
           "platform": "Apple Watch",
           "optimizations": [
             {
-              "technique": "WatchOS Design Guidelines",
-              "description": "Follow Apple's specific wearable design principles",
+              "technique": "Diretrizes de Design do WatchOS",
+              "description": "Siga os princípios específicos de design wearable da Apple",
               "implementation": "SF Symbols, dynamic Tipo, high contrast modes"
             },
             {
-              "technique": "Complication Images",
+              "technique": "Imagens de Complication",
               "description": "Otimizar small images for watch face complications",
               "implementation": "Templates, color requirements, Imagem templates"
             },
             {
-              "technique": "Digital Crown Interaction",
-              "description": "Design for scrolling and zoom with Digital Crown",
-              "implementation": "Smooth scrolling, zoomable images, gesture handling"
+              "technique": "Interação com a Digital Crown",
+              "description": "Design para rolagem e zoom com Digital Crown",
+              "implementation": "Rolagem suave, imagens com zoom, manipulação de gestos"
             }
           ]
         },
@@ -972,12 +985,12 @@
           "platform": "Wear OS",
           "optimizations": [
             {
-              "technique": "Wear OS UI Patterns",
-              "description": "Use Google's wearable-specific UI components",
+              "technique": "Padrões de UI do Wear OS",
+              "description": "Use os componentes de UI específicos para wearables do Google",
               "implementation": "WearableRecyclerView, SwipeDismissFrameLayout"
             },
             {
-              "technique": "Ambient Mode",
+              "technique": "Modo Ambiente",
               "description": "Otimizar for always-on display modes",
               "implementation": "Low-power Imagem versions, burn-in protection"
             },
@@ -997,7 +1010,7 @@
             "Ultra": "49mm (410x502)",
             "SE": "44mm (368x448), 40mm (324x394)",
             "colorDepth": "Always-on Retina LTPO OLED",
-            "optimization": "Use SF Symbols where possible, minimal JPEG compression"
+            "optimization": "Use SF Symbols quando possível, compressão JPEG mínima"
           }
         },
         {
@@ -1012,64 +1025,72 @@
         {
           "device": "Fitness Trackers",
           "specifications": {
-            "Fitbit": "Various (240x240 to 336x336)",
-            "Garmin": "Various (176x176 to 280x280)",
+            "Fitbit": "Diversos (240x240 a 336x336)",
+            "Garmin": "Diversos (176x176 a 280x280)",
             "colorDepth": "Often Limitado color or monochrome",
-            "optimization": "Extreme compression, simple graphics, minimal color depth"
+            "optimization": "Compressão extrema, gráficos simples, profundidade de cor mínima"
           }
         }
       ],
       "ultraOptimization": [
         {
-          "technique": "Vector Graphics",
-          "description": "Use SVG and vector formats where possible",
-          "benefits": ["Infinitely Escalável", "Tiny Arquivo sizes", "Perfect for simple graphics"]
+          "technique": "Gráficos Vetoriais",
+          "description": "Use SVG e formatos vetoriais quando possível",
+          "benefits": [
+            "Infinitely Escalável",
+            "Tiny Arquivo sizes",
+            "Perfeito para gráficos simples"
+          ]
         },
         {
-          "technique": "Symbol Systems",
+          "technique": "Sistemas de Símbolos",
           "description": "Use Plataforma symbol systems instead of custom images",
           "implementation": "SF Symbols, Material Icons, Personalizado icon fonts"
         },
         {
           "technique": "Extreme Compressão",
           "description": "Push Imagem compression to absolute limits",
-          "targets": ["Under 1KB for icons", "Under 5KB for photos", "Lossless for simple graphics"]
+          "targets": [
+            "Menos de 1KB para ícones",
+            "Menos de 5KB para fotos",
+            "Sem perdas para gráficos simples"
+          ]
         },
         {
           "technique": "Color Otimização",
           "description": "Minimize color depth for massive Arquivo size reduction",
-          "implementation": "Indexed color, reduced palettes, monochrome where appropriate"
+          "implementation": "Cor indexada, paletas reduzidas, monocromático quando apropriado"
         }
       ],
       "contentTypes": [
         {
-          "type": "App Icons",
+          "type": "Ícones de Aplicativos",
           "optimization": {
-            "size": "40-60px for most wearables",
-            "format": "PNG with transparency or vector icons",
-            "compression": "Lossless for clarity at small sizes"
+            "size": "40-60px para a maioria dos wearables",
+            "format": "PNG com transparência ou ícones vetoriais",
+            "compression": "Sem perdas para clareza em tamanhos pequenos"
           }
         },
         {
-          "type": "Notification Images",
+          "type": "Imagens de Notificação",
           "optimization": {
             "size": "Maximum 100px largura",
-            "format": "Highly compressed JPEG or PNG",
-            "compression": "Aggressive compression acceptable"
+            "format": "JPEG ou PNG altamente comprimido",
+            "compression": "Compressão agressiva aceitável"
           }
         },
         {
-          "type": "Watch Face Elements",
+          "type": "Elementos de Watch Face",
           "optimization": {
-            "size": "Depends on watch face design",
+            "size": "Depende do design da watch face",
             "format": "Plataforma-specific requirements",
             "compression": "Follow Plataforma guidelines strictly"
           }
         },
         {
-          "type": "Activity Images",
+          "type": "Imagens de Atividade",
           "optimization": {
-            "size": "Small thumbnails for fitness activities",
+            "size": "Miniaturas pequenas para atividades de fitness",
             "format": "Compressed JPEG with low Qualidade",
             "compression": "Very Alto compression acceptable"
           }
@@ -1077,26 +1098,26 @@
       ],
       "batteryOptimization": [
         {
-          "strategy": "Minimal Transfers",
-          "description": "Transfer images only when absolutely necessary",
-          "implementation": "Caching, preloading, offline-first approach"
+          "strategy": "Transferências Mínimas",
+          "description": "Transfira imagens apenas quando absolutamente necessário",
+          "implementation": "Cache, pré-carregamento, abordagem offline-first"
         },
         {
           "strategy": "Efficient Processaring",
           "description": "Minimize image Processando to reduce CPU usage",
-          "implementation": "Pre-processed images, simple transformations"
+          "implementation": "Imagens pré-processadas, transformações simples"
         },
         {
           "strategy": "Display Otimização",
           "description": "Otimizar for low-power display modes",
-          "implementation": "Always-on modes, burn-in prevention, reduced refresh"
+          "implementation": "Modos sempre ativos, prevenção de burn-in, atualização reduzida"
         }
       ],
       "networkOptimization": [
         {
-          "technique": "Companion App Caching",
-          "description": "Cache images on phone companion app",
-          "implementation": "Phone-to-watch transfer via Bluetooth/Wi-Fi"
+          "technique": "Cache do Aplicativo Companheiro",
+          "description": "Cache de imagens no aplicativo companheiro do telefone",
+          "implementation": "Transferência telefone-relógio via Bluetooth/Wi-Fi"
         },
         {
           "technique": "Progressive Melhoria",
@@ -1105,14 +1126,18 @@
         },
         {
           "technique": "Predictive Carregando",
-          "description": "Pre-load likely images during phone charging",
-          "implementation": "Background syncing, smart prediction algorithms"
+          "description": "Pré-carregue imagens prováveis durante o carregamento do telefone",
+          "implementation": "Sincronização em segundo plano, algoritmos inteligentes de previsão"
         }
       ],
       "specializedUseCases": [
         {
-          "useCase": "Fitness Tracking",
-          "optimizationNeeds": ["Activity icons", "Achievement badges", "Progress images"],
+          "useCase": "Rastreamento de Fitness",
+          "optimizationNeeds": [
+            "Ícones de atividade",
+            "Badges de conquista",
+            "Imagens de progresso"
+          ],
           "specificRequirements": [
             "Baixo battery impact",
             "Quick Carregando",
@@ -1120,34 +1145,38 @@
           ]
         },
         {
-          "useCase": "Health Monitoring",
-          "optimizationNeeds": ["Medical icons", "Chart graphics", "Alert indicators"],
-          "specificRequirements": ["Clear at small sizes", "Alto contrast", "Reliability"]
+          "useCase": "Monitoramento de Saúde",
+          "optimizationNeeds": ["Ícones médicos", "Gráficos de tabelas", "Indicadores de alerta"],
+          "specificRequirements": ["Claro em tamanhos pequenos", "Alto contrast", "Confiabilidade"]
         },
         {
           "useCase": "Navegação",
-          "optimizationNeeds": ["Map icons", "Direction arrows", "Landmark images"],
-          "specificRequirements": ["Rápido recognition", "Clear meaning", "Baixo bandwidth"]
+          "optimizationNeeds": [
+            "Ícones de mapa",
+            "Setas de direção",
+            "Imagens de pontos de referência"
+          ],
+          "specificRequirements": ["Rápido recognition", "Significado claro", "Baixo bandwidth"]
         },
         {
-          "useCase": "Communication",
-          "optimizationNeeds": ["Contact photos", "Emoji", "Message attachments"],
-          "specificRequirements": ["Rápido loading", "Privacy", "Rápido glance reading"]
+          "useCase": "Comunicação",
+          "optimizationNeeds": ["Fotos de contatos", "Emoji", "Anexos de mensagens"],
+          "specificRequirements": ["Rápido loading", "Privacidade", "Rápido glance reading"]
         }
       ],
       "bestPractices": [
-        "Use vector graphics and symbol systems whenever possible",
+        "Use gráficos vetoriais e sistemas de símbolos sempre que possível",
         "Design for extremely small displays and Rápido glances",
         "Otimizar for battery life above all other considerations",
-        "Implement aggressive caching and offline-first strategies",
+        "Implemente estratégias agressivas de cache e offline-first",
         "Follow Plataforma-specific design guidelines strictly"
       ],
       "commonMistakes": [
         "Using full-size Mobile images that take too long to load",
-        "Not considering always-on display modes and burn-in protection",
+        "Não considerar modos de display sempre ativo e proteção contra burn-in",
         "Implementing complex image Processando that drains battery quickly",
         "Using too Muitos colors when indexed color would be sufficient",
-        "Not optimizing for Bluetooth LE bandwidth limitations"
+        "Não otimizar para limitações de largura de banda Bluetooth LE"
       ],
       "faq": [
         {
@@ -1155,7 +1184,7 @@
           "answer": "For smartwatches, keep images under 200px width. For icons, use 40-60px. Always consider the specific Dispositivo's display constraints."
         },
         {
-          "question": "Should I use JPEG or PNG for wearable images?",
+          "question": "Devo usar JPEG ou PNG para imagens de wearables?",
           "answer": "Use PNG for icons and graphics with transparency. Use heavily compressed JPEG for photos. Contrasider indexed PNG or even monochrome for maximum efficiency."
         },
         {

@@ -1,5 +1,5 @@
 {
-  "category": "guides",
+  "category": "ガイド",
   "pages": [
     {
       "slug": "webp-format-guide",
@@ -16,7 +16,7 @@
         "4kアップスケール やり方"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "guides",
+      "category": "ガイド",
       "guideType": "how-to",
       "description": "AI技術を使用した画像アップスケーリングの完全なステップバイステップガイド。品質とディテールを維持しながら画像解像度を上げるプロフェッショナルなテクニックを学びます。",
       "difficulty": "初心者",
@@ -95,7 +95,7 @@
       "primaryKeyword": "webp フォーマット",
       "secondaryKeywords": ["webp画像 アップスケール", "webp vs jpg", "webp 変換", "webp 圧縮"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
+      "category": "ガイド",
       "guideType": "explainer",
       "description": "WebP画像フォーマットについて知っておくべきすべて。その利点、圧縮技術、互換性、品質を維持しながらWebP画像をアップスケールする方法を理解しましょう。",
       "difficulty": "初心者",
@@ -180,7 +180,7 @@
         "heic 変換"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
+      "category": "ガイド",
       "guideType": "explainer",
       "description": "iPhoneとiPadで使用されるHEICフォーマットの完全ガイド。圧縮、品質、互換性の問題、Appleの画像品質を維持しながらHEIC写真をアップスケールする方法を理解しましょう。",
       "difficulty": "beginner",
@@ -260,7 +260,7 @@
       "primaryKeyword": "raw 写真",
       "secondaryKeywords": ["rawファイル 編集", "raw vs jpeg", "raw アップスケール", "raw 現像"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
+      "category": "ガイド",
       "guideType": "explainer",
       "description": "RAW画像フォーマットについての包括的なガイド。センサーデータ、編集の利点、ワークフロー、AIアップスケーリングとの組み合わせを理解しましょう。",
       "difficulty": "intermediate",
@@ -340,7 +340,7 @@
       "primaryKeyword": "tiff フォーマット",
       "secondaryKeywords": ["tiff 画像", "tiff vs jpeg", "tiff アップスケール", "tiff 印刷"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
+      "category": "ガイド",
       "guideType": "explainer",
       "description": "TIFF画像フォーマットの包括的なガイド。ロスレス品質、レイヤーサポート、プロフェッショナルワークフローでの使用方法を理解しましょう。",
       "difficulty": "intermediate",
@@ -359,22 +359,22 @@
         {
           "step": 3,
           "title": "TIFF圧縮オプション",
-          "content": "TIFF offers several compression options, all lossless.\n\n**Uncompressed TIFF:**\n- **Pros**: Maximum compatibility, fastest to open\n- **Cons**: Huge file sizes\n- **Use when**: Archival, compatibility critical\n\n**LZW Compression:**\n- **Pros**: Lossless, 2-3x smaller, widely supported\n- **Cons**: Slower to save/open\n- **Use when**: General professional use (recommended)\n\n**ZIP Compression:**\n- **Pros**: Better compression than LZW, lossless\n- **Cons**: Slower, less compatible\n- **Use when**: File size critical, modern workflow\n\n**Compression Comparison:**\n- Uncompressed 50MB image\n- LZW: ~20-25MB (50-60% reduction)\n- ZIP: ~15-20MB (60-70% reduction)\n\n**Recommendation:**\nUse LZW compression for best balance of size, speed, and compatibility."
+          "content": "TIFFには、すべて可逆の複数の圧縮オプションがあります。\n\n**非圧縮TIFF:**\n- **長所**: 最大の互換性、最速の開封\n- **短所**: 巨大なファイルサイズ\n- **使用時**: アーカイブ、互換性が重要\n\n**LZW圧縮:**\n- **長所**: 可逆、2-3倍小さい、広くサポートされている\n- **短所**: 保存/開封が遅い\n- **使用時**: 一般的なプロフェッショナル用途（推奨）\n\n**ZIP圧縮:**\n- **長所**: LZWより良い圧縮、可逆\n- **短所**: 遅い、互換性が低い\n- **使用時**: ファイルサイズが重要、最新のワークフロー\n\n**圧縮比較:**\n- 非圧縮50MBの画像\n- LZW: 約20-25MB（50-60%削減）\n- ZIP: 約15-20MB（60-70%削減）\n\n**推奨事項:**\nサイズ、速度、互換性の最適なバランスとしてLZW圧縮を使用してください。"
         },
         {
           "step": 4,
           "title": "TIFF画像のアップスケーリング",
-          "content": "TIFF's lossless quality makes it ideal for professional upscaling workflows.\n\n**Why TIFF Upscales Exceptionally Well:**\n- **No compression artifacts**: Clean source for AI processing\n- **16-bit color**: Maximum color information\n- **Professional quality**: Suitable for large format printing\n- **Lossless workflow**: No quality loss at any step\n\n**Best Practices for Upscaling TIFF:**\n1. **Use LZW or ZIP compression**: Reduces file size without quality loss\n2. **Check color depth**: 16-bit is ideal, 8-bit acceptable\n3. **Verify no layers**: Flatten before upscaling for compatibility\n4. **Consider final use**: Print needs different treatment than web\n5. **Maintain color space**: Keep ProPhoto RGB or Adobe RGB\n\n**Professional Workflow:**\n1. Start with RAW or high-quality source\n2. Process in Photoshop/Lightroom\n3. Export as 16-bit TIFF with LZW\n4. Upscale with AI (2x, 4x, or 8x)\n5. Final adjustments in Photoshop\n6. Export for print or convert to web format\n\n**Expected Results:**\n4x upscaled TIFF can produce 40x60 inch prints at 300 DPI suitable for gallery display."
+          "content": "TIFFの可逆品質により、プロフェッショナルなアップスケーリングワークフローに最適です。\n\n**TIFFが優れたアップスケーリングを提供する理由:**\n- **圧縮アーティファクトなし**: AI処理のためのクリーンなソース\n- **16ビットカラー**: 最大のカラー情報\n- **プロフェッショナル品質**: 大判印刷に適している\n- **可逆ワークフロー**: どのステップでも品質劣化なし\n\n**TIFFアップスケーリングのベストプラクティス:**\n1. **LZWまたはZIP圧縮を使用**: 品質を損なわずにファイルサイズを削減\n2. **カラービット深度を確認**: 16ビットが理想的、8ビットも許容\n3. **レイヤーがないことを確認**: 互換性のためにアップスケール前にフラット化\n4. **最終的な使用法を考慮**: プリントとウェブでは異なる処理が必要\n5. **色空間を維持**: ProPhoto RGBまたはAdobe RGBを保持\n\n**プロフェッショナルワークフロー:**\n1. RAWまたは高品質ソースから開始\n2. Photoshop/Lightroomで処理\n3. LZWで16ビットTIFFとしてエクスポート\n4. AIでアップスケール（2倍、4倍、または8倍）\n5. Photoshopで最終調整\n6. プリント用にエクスポートまたはウェブ形式に変換\n\n**期待される結果:**\n4倍にアップスケールされたTIFFは、ギャラリー展示に適した300 DPIで40x60インチのプリントを生成できます。"
         },
         {
           "step": 5,
           "title": "印刷生産用TIFF",
-          "content": "TIFF is the standard format for professional print workflows.\n\n**Print Specifications:**\n- **Resolution**: 300 DPI at final print size\n- **Color mode**: CMYK for offset printing, RGB for digital\n- **Color profile**: SWOP/GRACoL (CMYK) or sRGB/Adobe RGB (RGB)\n- **Compression**: LZW or uncompressed\n- **Layers**: Flattened for maximum compatibility\n\n**Prepress Workflow:**\n1. **Create/edit**: In Photoshop/Illustrator\n2. **Save as TIFF**: With appropriate color profile\n3. **Place in layout**: InDesign, QuarkXPress\n4. **Preflight**: Check specs before export\n5. **Export**: Press-ready PDF from layout app\n6. **Proof**: Review color-separated proof\n\n**Large Format Printing:**\n- **Resolution**: 150-200 DPI sufficient for large prints\n- **Upscaling**: 4x or 8x common for banners/posters\n- **File format**: TIFF preferred over JPEG\n- **Color management**: Critical for accurate output\n\n**Print Shop Requirements:**\nAlways confirm specs with your printer:\n- Color mode (CMYK vs RGB)\n- Resolution at size\n- Color profile\n- Compression (if any)\n- Bleed and margins"
+          "content": "TIFFはプロフェッショナルなプリントワークフローの標準形式です。\n\n**プリント仕様:**\n- **解像度**: 最終プリントサイズで300 DPI\n- **カラーモード**: オフセット印刷用CMYK、デジタル用RGB\n- **カラープロファイル**: SWOP/GRACoL（CMYK）またはsRGB/Adobe RGB（RGB）\n- **圧縮**: LZWまたは非圧縮\n- **レイヤー**: 最大の互換性のためにフラット化\n\n**プリプレスワークフロー:**\n1. **作成/編集**: Photoshop/Illustratorで\n2. **TIFFとして保存**: 適切なカラープロファイルで\n3. **レイアウトに配置**: InDesign、QuarkXPress\n4. **プリフライト**: エクスポート前に仕様を確認\n5. **エクスポート**: レイアウトアプリからプレス対応PDF\n6. **プルーフ**: 色分割プルーフを確認\n\n**大判プリント:**\n- **解像度**: 大判プリントには150-200 DPIで十分\n- **アップスケーリング**: バナー/ポスターでは4倍または8倍が一般的\n- **ファイル形式**: JPEGよりTIFFが推奨\n- **カラーマネジメント**: 正確な出力に重要\n\n**プリントショップの要件:**\nプリンターと必ず仕様を確認してください:\n- カラーモード（CMYK対RGB）\n- サイズでの解像度\n- カラープロファイル\n- 圧縮（もしあれば）\n- ブリードとマージン"
         },
         {
           "step": 6,
           "title": "TIFF vs PNG：プロフェッショナル比較",
-          "content": "Both are lossless, but TIFF offers advantages for professional workflows.\n\n**TIFF Advantages:**\n- **16-bit color**: Up to 48-bit RGB (PNG: 24-bit max)\n- **Layers**: Supported in some apps (Photoshop)\n- **Metadata**: Richer metadata support\n- **Print industry**: Standard in print production\n- **CMYK support**: Can store CMYK data\n- **Alpha channels**: Multiple alpha channels\n\n**PNG Advantages:**\n- **Web support**: Better browser support\n- **File size**: Generally smaller than TIFF\n- **Transparency**: Better web transparency support\n- **Modern format**: More actively developed\n- **Web-ready**: Can use directly online\n\n**When to Choose TIFF:**\n- Print production\n- Archival storage\n- Professional workflows\n- 16-bit color needed\n- CMYK conversion required\n\n**When to Choose PNG:**\n- Web graphics with transparency\n- Lossless web images\n- UI elements and icons\n- Screenshots and infographics\n- Smaller file size needed"
+          "content": "両方とも可逆ですが、TIFFはプロフェッショナルワークフローで利点があります。\n\n**TIFFの利点:**\n- **16ビットカラー**: 最大48ビットRGB（PNG: 最大24ビット）\n- **レイヤー**: 一部のアプリでサポート（Photoshop）\n- **メタデータ**: より豊富なメタデータサポート\n- **印刷業界**: 印刷プロダクションの標準\n- **CMYKサポート**: CMYKデータを保存可能\n- **アルファチャンネル**: 複数のアルファチャンネル\n\n**PNGの利点:**\n- **ウェブサポート**: より良いブラウザサポート\n- **ファイルサイズ**: 一般にTIFFより小さい\n- **透明度**: より良いウェブ透明度サポート\n- **最新の形式**: より活発に開発されている\n- **ウェブ対応**: そのままオンラインで使用可能\n\n**TIFFを選択する場合:**\n- 印刷プロダクション\n- アーカイブ保存\n- プロフェッショナルワークフロー\n- 16ビットカラーが必要\n- CMYK変換が必要\n\n**PNGを選択する場合:**\n- 透明度のあるウェブグラフィック\n- 可逆ウェブ画像\n- UI要素とアイコン\n- スクリーンショットとインフォグラフィック\n- より小さいファイルサイズが必要"
         }
       ],
       "tips": [
@@ -420,7 +420,7 @@
       "primaryKeyword": "bmp フォーマット",
       "secondaryKeywords": ["bmp 画像", "bmp 変換", "bitmap 形式", "bmp アップスケール"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
+      "category": "ガイド",
       "guideType": "explainer",
       "description": "BMP画像フォーマットの包括的なガイド。歴史、技術仕様、現代での使用場面、より効率的な形式への変換方法を学びましょう。",
       "difficulty": "beginner",
@@ -438,32 +438,32 @@
         },
         {
           "step": 3,
-          "title": "When You Might Encounter BMP",
-          "content": "Despite limitations, you may still encounter BMP files.\n\n**Common Sources of BMP:**\n- **Legacy software**: Old Windows applications\n- **System files**: Windows interface elements\n- **Scanners**: Some older scanners default to BMP\n- **Paint programs**: Windows Paint saves as BMP by default\n- **Embedded systems**: Simple devices use BMP for simplicity\n- **Game assets**: Retro game development (rare now)\n- **Medical imaging**: Some legacy medical systems\n- **Industrial software**: Older industrial control systems\n\n**Why Convert to Modern Format:**\n- Save storage space (80-95% reduction)\n- Faster file transfer and sharing\n- Better compatibility with modern software\n- More editing options available\n- Web-friendly formats\n- Future-proofing your assets"
+          "title": "BMPに出会う可能性のある場合",
+          "content": "制限はありますが、BMPファイルに出会うことはまだあります。\n\n**BMPの一般的なソース:**\n- **レガシーソフトウェア**: 古いWindowsアプリケーション\n- **システムファイル**: Windowsインターフェース要素\n- **スキャナー**: 一部の古いスキャナーはBMPがデフォルト\n- **ペイントプログラム**: WindowsペイントはデフォルトでBMPとして保存\n- **組み込みシステム**: シンプルなデバイスは簡便性のためBMPを使用\n- **ゲームアセット**: レトロゲーム開発（現在は稀）\n- **医用イメージング**: 一部のレガシー医用システム\n- **産業用ソフトウェア**: 古い産業用制御システム\n\n**最新形式に変換する理由:**\n- ストレージスペースの節約（80-95%削減）\n- より高速なファイル転送と共有\n- 最新ソフトウェアとのより良い互換性\n- より多くの編集オプションが利用可能\n- ウェブ対応形式\n- アセットの将来性確保"
         },
         {
           "step": 4,
-          "title": "Upscaling BMP Images",
-          "content": "AI upscaling can improve BMP images, especially for legacy content.\n\n**Challenges with BMP:**\n- **Large file size**: Slow to upload to upscaling tools\n- **Limited color depth**: Usually 24-bit, not 16-bit\n- **Potential artifacts**: May have scanning or conversion issues\n- **No enhancement info**: No EXIF to guide processing\n\n**Best Practices:**\n1. **Convert first**: Convert BMP to PNG before upscaling\n2. **File size reduction**: PNG will be much smaller to upload\n3. **Quality maintained**: PNG conversion is lossless\n4. **Upscale PNG**: Use AI on the PNG for best results\n\n**Conversion Workflow:**\n1. Open BMP in Preview/Photos\n2. Save/Export as PNG\n3. Upload PNG to MyImageUpscaler\n4. Select upscale level (2x, 4x, or 8x)\n5. Download enhanced image\n6. Export in desired format\n\n**Results:**\nUpscaled BMP images can show significant improvement, especially for low-resolution legacy content, simple graphics, and scanned documents."
+          "title": "BMP画像のアップスケーリング",
+          "content": "AIアップスケーリングは、特にレガシーコンテンツの場合、BMP画像を改善できます。\n\n**BMPの課題:**\n- **大きなファイルサイズ**: アップスケーリングツールへのアップロードが遅い\n- **限られたカラービット深度**: 通常24ビット、16ビットではない\n- **潜在的なアーティファクト**: スキャンや変換の問題がある可能性\n- **強化情報なし**: 処理をガイドするEXIFなし\n\n**ベストプラクティス:**\n1. **最初に変換**: アップスケーリング前にBMPをPNGに変換\n2. **ファイルサイズ削減**: PNGはアップロードがはるかに小さい\n3. **品質維持**: PNG変換は可逆\n4. **PNGをアップスケール**: 最高の結果ためにAIをPNGに使用\n\n**変換ワークフロー:**\n1. Preview/PhotosでBMPを開く\n2. PNGとして保存/エクスポート\n3. MyImageUpscalerにPNGをアップロード\n4. アップスケールレベルを選択（2倍、4倍、または8倍）\n5. 強化された画像をダウンロード\n6. 希望の形式でエクスポート\n\n**結果:**\nアップスケールされたBMP画像は、特に低解像度のレガシーコンテンツ、シンプルなグラフィック、スキャンされたドキュメントで大幅な改善を示すことができます。"
         },
         {
           "step": 5,
-          "title": "Converting BMP to Modern Formats",
-          "content": "Convert BMP to PNG, JPEG, or WebP for practical use.\n\n**BMP to PNG (Recommended):**\n- **Lossless**: No quality loss\n- **Transparency**: Supports alpha channel\n- **80-95% smaller**: Massive file size reduction\n- **Best for**: Graphics, logos, images with text\n- **Tools**: Preview, Photoshop, online converters\n\n**BMP to JPEG:**\n- **Lossy compression**: Some quality loss\n- **Smallest files**: Best for storage efficiency\n- **Best for**: Photos, web use, sharing\n- **Quality setting**: 85-95% recommended\n\n**BMP to WebP:**\n- **Modern format**: Best compression for web\n- **Excellent quality**: Better than JPEG at same size\n- **Best for**: Web projects, modern workflows\n- **Browser support**: 95%+ globally\n\n**Batch Conversion:**\nIf you have many BMP files:\n1. Use Adobe Photoshop (Actions)\n2. XnConvert (free, batch processing)\n3. ImageMagick (command line)\n4. Online batch converters"
+          "title": "BMPを最新形式に変換",
+          "content": "実用的な使用のためにBMPをPNG、JPEG、またはWebPに変換してください。\n\n**BMPからPNG（推奨）:**\n- **可逆**: 品質劣化なし\n- **透明度**: アルファチャンネルをサポート\n- **80-95%小さい**: 巨大なファイルサイズ削減\n- **最適**: グラフィック、ロゴ、テキスト付き画像\n- **ツール**: Preview、Photoshop、オンラインコンバーター\n\n**BMPからJPEG:**\n- **非可逆圧縮**: 一部の品質劣化\n- **最小のファイル**: ストレージ効率に最適\n- **最適**: 写真、ウェブ使用、共有\n- **品質設定**: 85-95%を推奨\n\n**BMPからWebP:**\n- **最新の形式**: ウェブに最適な圧縮\n- **優れた品質**: 同じサイズでJPEGより良い\n- **最適**: ウェブプロジェクト、最新のワークフロー\n- **ブラウザサポート**: 世界で95%以上\n\n**一括変換:**\n多くのBMPファイルがある場合:\n1. Adobe Photoshop（アクション）を使用\n2. XnConvert（無料、一括処理）\n3. ImageMagick（コマンドライン）\n4. オンライン一括コンバーター"
         },
         {
           "step": 6,
-          "title": "Working with Legacy BMP Assets",
-          "content": "Strategies for managing BMP files in legacy systems.\n\n**Immediate Actions:**\n1. **Backup originals**: Keep BMP files safe\n2. **Batch convert**: Convert all to PNG\n3. **Test compatibility**: Verify new format works\n4. **Update systems**: Migrate to modern formats\n\n**Ongoing Management:**\n- **Archive BMPs**: Store as backup but don't use actively\n- **Standardize on PNG**: Use PNG as new standard\n- **Document migration**: Keep records of conversions\n- **Educate team**: Train on modern formats\n\n**Special Considerations:**\n- **Industrial systems**: May require BMP for compatibility\n- **Embedded devices**: Check format requirements\n- **Legacy software**: May need BMP for imports\n- **Contract requirements**: Some contracts may specify BMP\n\n**Migration Planning:**\nWhen migrating from BMP:\n- Test with sample files first\n- Verify compatibility with all systems\n- Maintain BMP backups during transition\n- Document the new workflow\n- Train all stakeholders"
+          "title": "レガシーBMPアセットでの作業",
+          "content": "レガシーシステムのBMPファイル管理の戦略。\n\n**即時アクション:**\n1. **オリジナルをバックアップ**: BMPファイルを安全に保持\n2. **一括変換**: すべてをPNGに変換\n3. **互換性テスト**: 新しい形式が動作することを確認\n4. **システム更新**: 最新形式に移行\n\n**継続的な管理:**\n- **BMPをアーカイブ**: バックアップとして保存するが積極的には使用しない\n- **PNGを標準化**: 新しい標準としてPNGを使用\n- **移行を文書化**: 変換の記録を保持\n- **チームを教育**: 最新の形式についてトレーニング\n\n**特別な考慮事項:**\n- **産業システム**: 互換性のためにBMPが必要な場合がある\n- **組み込みデバイス**: 形式の要件を確認\n- **レガシーソフトウェア**: インポートにBMPが必要な場合がある\n- **契約要件**: 一部の契約でBMPが指定されている場合がある\n\n**移行計画:**\nBMPから移行する場合:\n- 最初にサンプルファイルでテスト\n- すべてのシステムとの互換性を確認\n- 移行中にBMPバックアップを維持\n- 新しいワークフローを文書化\n- すべてのステークホルダーをトレーニング"
         }
       ],
       "tips": [
         "レガシーBMPファイルを保存する場合は、まずPNGに変換してファイルサイズを削減することを検討してください。",
         "古いソフトウェアとの互換性が必要な場合のみBMPを使用してください。",
-        "Use PNG for BMP Graphics: If the BMP contains logos, icons, or UI elements, convert to PNG to preserve transparency and crisp edges.",
-        "Archive Original BMPs: Keep the original BMP files as backup after conversion, at least until you've verified the converted files work correctly.",
-        "Batch Convert for Efficiency: If you have many BMP files, use batch conversion tools like XnConvert or Adobe Photoshop Actions to convert them all at once.",
-        "Educate Your Team: If your organization still uses BMP, educate colleagues about modern alternatives and the benefits of PNG/WebP."
+        "BMPグラフィックにはPNGを使用: BMPにロゴ、アイコン、UI要素が含まれている場合、透明度とシャープなエッジを保持するためにPNGに変換してください。",
+        "オリジナルのBMPをアーカイブ: 変換後に元のBMPファイルをバックアップとして保持してください。少なくとも、変換されたファイルが正しく動作することを確認するまで。",
+        "効率のために一括変換: 多くのBMPファイルがある場合、XnConvertやAdobe Photoshopアクションなどの一括変換ツールを使用して、すべてを一度に変換してください。",
+        "チームを教育: 組織でまだBMPを使用している場合、同僚に最新の代替案とPNG/WebPの利点について教育してください。"
       ],
       "faq": [
         {
@@ -475,16 +475,16 @@
           "answer": "はい、BMPは非圧縮のため、アップスケーリングのソースとして適しています。MyImageUpscalerでBMPをアップスケールし、より効率的な形式（PNG、JPEG）でエクスポートすることをお勧めします。"
         },
         {
-          "question": "Why do my BMP files look pixelated?",
-          "answer": "BMP files may look pixelated if they're low resolution or if you're viewing them at high zoom. AI upscaling can significantly improve the quality by adding detail and smoothing pixels."
+          "question": "私のBMPファイルがピクセル化して見えるのはなぜですか？",
+          "answer": "BMPファイルは、低解像度の場合や高ズームで表示している場合、ピクセル化して見えることがあります。AIアップスケーリングは、ディテールを追加しピクセルを滑らかにすることで品質を大幅に改善できます。"
         },
         {
-          "question": "Is BMP still used today?",
-          "answer": "Rarely, and mostly in legacy systems. Modern software uses PNG, JPEG, WebP, or TIFF. BMP is considered obsolete for most practical purposes."
+          "question": "BMPはまだ今日使われていますか？",
+          "answer": "めったに使われず、主にレガシーシステムで使われています。最新のソフトウェアはPNG、JPEG、WebP、またはTIFFを使用します。BMPはほとんどの実用的な目的で時代遅れと見なされています。"
         },
         {
-          "question": "Should I use BMP for new projects?",
-          "answer": "Absolutely not. Use PNG for lossless graphics, JPEG for photos, or WebP for modern web use. BMP has no advantages over these formats."
+          "question": "新しいプロジェクトにBMPを使用すべきですか？",
+          "answer": "絶対にいけません。可逆グラフィックにはPNG、写真にはJPEG、最新のウェブ使用にはWebPを使用してください。BMPにはこれらの形式に対する利点はありません。"
         }
       ],
       "relatedGuides": ["tiff-format-guide", "webp-format-guide"],
@@ -500,7 +500,7 @@
       "primaryKeyword": "svg ベクター",
       "secondaryKeywords": ["svg グラフィックス", "ベクター 画像", "svg vs png", "svg 最適化"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
+      "category": "ガイド",
       "guideType": "explainer",
       "description": "SVGベクターグラフィックスの包括的なガイド。無限のスケーラビリティ、Web最適化、アニメーション機能を理解しましょう。",
       "difficulty": "intermediate",
@@ -518,32 +518,32 @@
         },
         {
           "step": 3,
-          "title": "When to Use SVG Format",
-          "content": "SVG excels in specific use cases where scalability is important.\n\n**Perfect Use Cases for SVG:**\n- **Logos**: Need to scale from business card to billboard\n- **Icons**: UI elements that must look sharp at all sizes\n- **Illustrations**: Simple graphics, charts, diagrams\n- **Typography**: Text-heavy graphics, infographics\n- **Web graphics**: Responsive design, retina displays\n- **Animations**: Simple animated icons and illustrations\n- **Print**: Business cards, brochures, posters\n\n**When SVG is NOT Suitable:**\n- **Photographs**: Photos are raster by nature\n- **Complex art**: Detailed paintings, realistic illustrations\n- **Filters/Effects**: Some effects don't convert well to vectors\n- **Large file complexity**: Very complex SVG can be huge\n- **Email**: Many email clients don't support SVG\n- **Social media**: Platforms convert to raster anyway\n\n**Web Design Best Practices:**\n- **Icons**: Always use SVG for icons and UI elements\n- **Logos**: Use SVG for your main logo\n- **Illustrations**: SVG for simple graphics, WebP for complex\n- **Hero images**: WebP or JPEG for photos\n- **Responsive**: SVG scales perfectly for responsive layouts"
+          "title": "SVG形式を使用する場合",
+          "content": "SVGはスケーラビリティが重要な特定の使用例で優れています。\n\n**SVGの完璧な使用例:**\n- **ロゴ**: 名刺からビルボードまでスケールする必要がある\n- **アイコン**: すべてのサイズでシャープに見える必要があるUI要素\n- **イラスト**: シンプルなグラフィック、チャート、図\n- **タイポグラフィ**: テキスト多用のグラフィック、インフォグラフィック\n- **ウェブグラフィック**: レスポンシブデザイン、Retinaディスプレイ\n- **アニメーション**: シンプルなアニメーションアイコンとイラスト\n- **プリント**: 名刺、ブローシャー、ポスター\n\n**SVGが適していない場合:**\n- **写真**: 写真は本質的にラスター\n- **複雑なアート**: 詳細な絵画、リアルなイラスト\n- **フィルター/エフェクト**: 一部のエフェクトはベクターにうまく変換されない\n- **大きなファイルの複雑さ**: 非常に複雑なSVGは巨大になる可能性がある\n- **メール**: 多くのメールクライアントはSVGをサポートしない\n- **ソーシャルメディア**: プラットフォームはとにかくラスターに変換する\n\n**ウェブデザインベストプラクティス:**\n- **アイコン**: アイコンとUI要素には常にSVGを使用\n- **ロゴ**: メインロゴにSVGを使用\n- **イラスト**: シンプルなグラフィックにはSVG、複雑なものにはWebP\n- **ヒーロー画像**: 写真にはWebPまたはJPEG\n- **レスポンシブ**: SVGはレスポンシブレイアウトに完璧にスケール"
         },
         {
           "step": 4,
-          "title": "The SVG Upscaling Misconception",
-          "content": "You cannot 'upscale' SVG because it's already infinitely scalable.\n\n**Why Upscaling Doesn't Apply:**\n- **No pixels**: SVG has no resolution to upscale\n- **Already infinite**: Can scale to any size without quality loss\n- **Different approach**: Scaling is mathematical, not AI enhancement\n\n**What People Actually Mean:**\nWhen someone says 'upscale SVG', they usually want:\n1. **Higher resolution export**: Convert SVG to raster at specific size\n2. **More detail**: Add detail to simple vector artwork\n3. **Rasterize**: Convert vector to high-resolution pixel image\n\n**What You CAN Do with SVG:**\n1. **Scale to any size**: Open in browser, zoom infinitely\n2. **Export to raster**: Convert to PNG/JPEG at desired resolution\n3. **Enhance then convert**: Manually add detail, then rasterize\n4. **Combine with raster**: Use SVG text/shapes with raster images\n\n**Workflow for 'Upscaling' SVG:**\nIf you need a high-resolution version of SVG:\n1. Open SVG in Adobe Illustrator or Inkscape\n2. Set document size to target dimensions\n3. Export as PNG/TIFF at 300-600 DPI\n4. Result: Perfect raster at any resolution"
+          "title": "SVGアップスケーリングの誤解",
+          "content": "SVGはすでに無限にスケーラブルなので、「アップスケール」することはできません。\n\n**アップスケーリングが適用されない理由:**\n- **ピクセルなし**: SVGにはアップスケールする解像度がない\n- **すでに無限**: 品質劣化なしで任意のサイズにスケール可能\n- **異なるアプローチ**: スケーリングは数学的であり、AI強化ではない\n\n**人々が実際に意味すること:**\n誰かが「SVGをアップスケール」と言うとき、通常彼らは次のものを望んでいます:\n1. **より高解像度のエクスポート**: 特定のサイズでSVGをラスターに変換\n2. **より多くのディテール**: シンプルなベクターアートワークにディテールを追加\n3. **ラスター化**: ベクターを高解像度ピクセル画像に変換\n\n**SVGでできること:**\n1. **任意のサイズにスケール**: ブラウザで開き、無限にズーム\n2. **ラスターにエクスポート**: 希望する解像度でPNG/JPEGに変換\n3. **強化して変換**: 手動でディテールを追加してからラスター化\n4. **ラスターと組み合わせる**: ラスター画像でSVGテキスト/形状を使用\n\n**「SVGをアップスケール」するワークフロー:**\nSVGの高解像度バージョンが必要な場合:\n1. Adobe IllustratorまたはInkscapeでSVGを開く\n2. ドキュメントサイズを対象寸法に設定\n3. 300-600 DPIでPNG/TIFFとしてエクスポート\n4. 結果: 選択した解像度で完璧なラスター"
         },
         {
           "step": 5,
-          "title": "Converting Between SVG and Raster",
-          "content": "Sometimes you need to convert between vector and raster formats.\n\n**SVG to Raster (Vector to Pixel):**\n- **Use case**: Print, web compatibility, sharing\n- **Export as**: PNG (quality), JPEG (size), WebP (modern web)\n- **Resolution**: Set output DPI (300 for print, 72/144 for web)\n- **Quality**: 100% for PNG, 85-95% for JPEG\n- **Tools**: Adobe Illustrator, Inkscape, online converters\n- **Result**: Perfect quality at chosen resolution\n\n**Raster to SVG (Pixel to Vector):**\n- **Use case**: Create scalable version of logo/graphic\n- **Process**: Called 'vectorization' or 'tracing'\n- **Complexity**: Automatic tools vary in quality\n- **Best results**: Manual tracing in Illustrator\n- **Limitations**: Photographs vectorize poorly\n- **Tools**: Adobe Illustrator (Image Trace), Inkscape (Trace Bitmap)\n\n**Hybrid Approach:**\nCombine vector and raster:\n- **SVG for**: Text, logos, simple shapes\n- **Raster for**: Photos, complex backgrounds\n- **Result**: Best of both worlds\n- **File format**: SVG can embed raster images"
+          "title": "SVGとラスター間の変換",
+          "content": "ベクターとラスター形式間で変換する必要がある場合があります。\n\n**SVGからラスター（ベクターからピクセル）:**\n- **使用例**: プリント、ウェブ互換性、共有\n- **エクスポート先**: PNG（品質）、JPEG（サイズ）、WebP（最新ウェブ）\n- **解像度**: 出力DPIを設定（プリント用300、ウェブ用72/144）\n- **品質**: PNG用100%、JPEG用85-95%\n- **ツール**: Adobe Illustrator、Inkscape、オンラインコンバーター\n- **結果**: 選択した解像度で完璧な品質\n\n**ラスターからSVG（ピクセルからベクター）:**\n- **使用例**: ロゴ/グラフィックのスケーラブルバージョンを作成\n- **プロセス**: 「ベクター化」または「トレース」と呼ばれる\n- **複雑さ**: 自動ツールは品質が異なる\n- **最高の結果**: Illustratorでの手動トレース\n- **制限**: 写真はベクター化が苦手\n- **ツール**: Adobe Illustrator（画像トレース）、Inkscape（ビットマップをトレース）\n\n**ハイブリッドアプローチ:**\nベクターとラスターを組み合わせる:\n- **SVG用**: テキスト、ロゴ、シンプルな形状\n- **ラスター用**: 写真、複雑な背景\n- **結果**: 両方の長所を組み合わせる\n- **ファイル形式**: SVGはラスター画像を埋め込むことができる"
         },
         {
           "step": 6,
-          "title": "Working with SVG Files",
-          "content": "Practical tips for creating and editing SVG graphics.\n\n**Creating SVG:**\n- **Adobe Illustrator**: Industry standard, professional features\n- **Inkscape**: Free, open-source, very capable\n- **Figma**: Modern, web-based, great for UI design\n- **Sketch**: Mac-only, popular for UI/UX\n- **Code**: Hand-code SVG for simple shapes\n\n**Editing SVG:**\n1. **Text editor**: Edit SVG code directly (XML)\n2. **Design software**: Visual editing interface\n3. **Online tools**: Simple edits in browser\n4. **Optimize tools**: Reduce file size (SVGO)\n\n**Optimizing SVG:**\n- **Remove unnecessary code**: Comments, metadata\n- **Simplify paths**: Reduce anchor points\n- **Combine shapes**: Merge when possible\n- **Use tools**: SVGO, SVGOMG\n- **Result**: 20-80% file size reduction\n\n**Best Practices:**\n- **Keep it simple**: Complex SVG gets large fast\n- **Use primitives**: Rectangles, circles are more efficient\n- **Avoid filters**: Blur and shadows increase file size\n- **Optimize before use**: Run through SVGO optimizer\n- **Test in browser**: Verify appearance and performance"
+          "title": "SVGファイルでの作業",
+          "content": "SVGグラフィックの作成と編集の実用的なヒント。\n\n**SVGの作成:**\n- **Adobe Illustrator**: 業界標準、プロフェッショナル機能\n- **Inkscape**: 無料、オープンソース、非常に高性能\n- **Figma**: 最新、ウェブベース、UIデザインに最適\n- **Sketch**: Macのみ、UI/UXで人気\n- **コード**: シンプルな形状の手書きSVGコード\n\n**SVGの編集:**\n1. **テキストエディタ**: SVGコードを直接編集（XML）\n2. **デザインソフトウェア**: ビジュアル編集インターフェース\n3. **オンラインツール**: ブラウザでシンプルな編集\n4. **最適化ツール**: ファイルサイズを削減（SVGO）\n\n**SVGの最適化:**\n- **不要なコードを削除**: コメント、メタデータ\n- **パスを単純化**: アンカーポイントを削減\n- **形状を結合**: 可能な場合は結合\n- **ツールを使用**: SVGO、SVGOMG\n- **結果**: 20-80%のファイルサイズ削減\n\n**ベストプラクティス:**\n- **シンプルに保つ**: 複雑なSVGはすぐに大きくなる\n- **プリミティブを使用**: 長方形、円はより効率的\n- **フィルターを避ける**: ぼかしと影はファイルサイズを増やす\n- **使用前に最適化**: SVGOオプティマイザーを通す\n- **ブラウザでテスト**: 外観とパフォーマンスを確認"
         }
       ],
       "tips": [
         "ロゴとアイコンには常にSVGを使用し、あらゆるサイズで完璧な表示を確保しましょう。",
         "複雑なSVGはSVGOなどのツールで最適化してファイルサイズを削減できます。",
         "アクセシビリティのために、SVGに適切なtitleとdescription要素を追加しましょう。",
-        "Optimize SVG for Web: Run SVG files through an optimizer like SVGO before using on websites. This can reduce file size by 50-80% with no quality loss.",
-        "Use Inkscape for Free SVG Editing: If you can't afford Adobe Illustrator, Inkscape is an excellent free alternative for creating and editing SVG files.",
-        "Test SVG on Retina Displays: Verify your SVG graphics look sharp on high-DPI displays. This is where SVG truly shines compared to raster graphics."
+        "ウェブ用にSVGを最適化: ウェブサイトで使用する前に、SVGOのようなオプティマイザーでSVGファイルを実行してください。これにより、品質を損なうことなくファイルサイズを50-80%削減できます。",
+        "無料のSVG編集にInkscapeを使用: Adobe Illustratorを購入できない場合、InkscapeはSVGファイルの作成と編集のための優れた無料の代替手段です。",
+        "RetinaディスプレイでSVGをテスト: SVGグラフィックが高DPIディスプレイでシャープに見えることを確認してください。こここそが、SVGがラスターグラフィック compared to真に輝く場所です。"
       ],
       "faq": [
         {
@@ -555,16 +555,16 @@
           "answer": "一般的には推奨されません。写真は何百万もの色とディテールを含み、ベクター形式では効率的に表現できません。写真にはJPEG、PNG、またはWebPを使用してください。"
         },
         {
-          "question": "Is SVG better quality than PNG?",
-          "answer": "It depends on the use case. SVG is infinitely scalable and perfect for simple graphics, but can't handle photographs. PNG is raster-based and better for photos and complex images."
+          "question": "SVGはPNGより品質が良いですか？",
+          "answer": "使用例によります。SVGは無限にスケーラブルでシンプルなグラフィックに最適ですが、写真を扱うことはできません。PNGはラスターベースで、写真や複雑な画像に適しています。"
         },
         {
-          "question": "Why do my SVG files look blurry?",
-          "answer": "SVG files shouldn't look blurry at any size. If yours does, it may contain embedded raster images or be exported at low resolution. Ensure the SVG is pure vector code."
+          "question": "私のSVGファイルがぼやけて見えるのはなぜですか？",
+          "answer": "SVGファイルはどのサイズでもぼやけて見えるはずではありません。ぼやけて見える場合、埋め込まれたラスター画像が含まれているか、低解像度でエクスポートされている可能性があります。SVGが純粋なベクターコードであることを確認してください。"
         },
         {
-          "question": "Can I convert PNG to SVG?",
-          "answer": "You can convert simple PNG graphics (logos, icons) to SVG using vectorization tools like Adobe Illustrator's Image Trace. However, photographs don't convert well to SVG - they're best left as raster images."
+          "question": "PNGをSVGに変換できますか？",
+          "answer": "Adobe Illustratorの画像トレースなどのベクター化ツールを使用して、シンプルなPNGグラフィック（ロゴ、アイコン）をSVGに変換できます。ただし、写真はSVGにうまく変換されません - ラスター画像のままにしておくのが最適です。"
         }
       ],
       "relatedGuides": ["webp-format-guide", "how-to-upscale-images"],
@@ -580,7 +580,7 @@
       "primaryKeyword": "gif アニメーション",
       "secondaryKeywords": ["アニメーション gif", "gif 作成", "gif 最適化", "gif アップスケール"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
+      "category": "ガイド",
       "guideType": "explainer",
       "description": "GIFアニメーションフォーマットの包括的なガイド。作成テクニック、最適化戦略、モダンな代替形式を理解しましょう。",
       "difficulty": "beginner",
@@ -599,22 +599,22 @@
         {
           "step": 3,
           "title": "GIFと最新アニメーション形式",
-          "content": "Modern formats offer significant advantages over GIF.\n\n**GIF Limitations:**\n- **256 colors**: Severe color limitation\n- **1-bit alpha**: No partial transparency\n- **Large files**: Inefficient compression\n- **No audio**: Can't include sound\n- **Poor quality**: Visible dithering and banding\n\n**WebP Animation:**\n- **Millions of colors**: Full color support\n- **8-bit alpha**: Smooth transparency\n- **30-80% smaller**: Better compression\n- **Better quality**: No dithering needed\n- **Browser support**: 95%+ globally\n- **Use when**: Modern web animation\n\n**APNG (Animated PNG):**\n- **Full color**: Like PNG, millions of colors\n- **8-bit alpha**: Excellent transparency\n- **Better quality**: Lossless compression\n- **Larger than WebP**: But better than GIF\n- **Firefox/Focus**: Limited browser support\n- **Use when**: Quality matters more than size\n\n**MP4 Video:**\n- **Best quality**: Modern video codecs\n- **Smallest files**: Most efficient compression\n- **Audio support**: Can include sound\n- **Universal**: Plays everywhere\n- **Use when**: High-quality animated content\n\n**Recommendation:**\nUse WebP for web animations, MP4 for video-like content, GIF only when compatibility is critical."
+          "content": "最新の形式はGIF compared to大幅な利点を提供します。\n\n**GIFの制限:**\n- **256色**: 厳しい色の制限\n- **1ビットアルファ**: 部分的な透明度なし\n- **大きなファイル**: 非効率な圧縮\n- **オーディオなし**: 音声を含められない\n- **品質の低下**: 目に見えるディザリングとバンディング\n\n**WebPアニメーション:**\n- **数百万の色**: フルカラーサポート\n- **8ビットアルファ**: 滑らかな透明度\n- **30-80%小さい**: より良い圧縮\n- **より良い品質**: ディザリング不要\n- **ブラウザサポート**: 世界で95%以上\n- **使用時**: 最新のウェブアニメーション\n\n**APNG（アニメーションPNG）:**\n- **フルカラー**: PNGのように、数百万の色\n- **8ビットアルファ**: 優れた透明度\n- **より良い品質**: 可逆圧縮\n- **WebPより大きい**: ただしGIFより良い\n- **Firefox/Focus**: 限られたブラウザサポート\n- **使用時**: サイズよりも品質が重要\n\n**MP4ビデオ:**\n- **最高品質**: 最新のビデオコーデック\n- **最小のファイル**: 最も効率的な圧縮\n- **オーディオサポート**: 音声を含めることができる\n- **普遍的**: どこでも再生\n- **使用時**: 高品質のアニメーションコンテンツ\n\n**推奨事項:**\nウェブアニメーションにはWebP、ビデオのようなコンテンツにはMP4、互換性が重要な場合のみGIFを使用してください。"
         },
         {
           "step": 4,
           "title": "GIF品質の向上",
-          "content": "While GIF has limitations, you can optimize quality within its constraints.\n\n**Color Palette Optimization:**\n- **Adaptive palette**: Custom colors for each frame\n- **Selective dithering**: Reduce banding in gradients\n- **Reduce frames**: Fewer frames = more colors per frame\n- **Crop unnecessary areas**: Smaller = more colors available\n\n**Creating Better GIFs:**\n1. **Start with video**: High-quality source helps\n2. **Limit duration**: 3-5 seconds maximum\n3. **Reduce dimensions**: 400-500px wide is sufficient\n4. **Limit motion**: Too much motion breaks GIF compression\n5. **Optimize palette**: Use adaptive or selective palettes\n6. **Frame skipping**: Skip every other frame if needed\n\n**Upscaling GIF Frames:**\nTo improve GIF quality:\n1. **Extract frames**: Use tools to separate GIF into frames\n2. **Upscale frames**: Use AI to upscale individual frames\n3. **Enhance quality**: Apply noise reduction and sharpening\n4. **Reassemble**: Create new GIF from upscaled frames\n5. **Consider modern format**: Re-export as WebP instead\n\n**Tools for GIF Creation:**\n- **Adobe Photoshop**: Frame-by-frame animation\n- **GIMP**: Free alternative with animation features\n- **EZGIF**: Online GIF editor and optimizer\n- **FFmpeg**: Command-line video to GIF conversion"
+          "content": "GIFには制限がありますが、制約内で品質を最適化できます。\n\n**カラーパレットの最適化:**\n- **アダプティブパレット**: 各フレームのカスタムカラー\n- **選択的ディザリング**: グラデーションのバンディングを削減\n- **フレームを削減**: フレームが少ない = フレームあたりの色が多い\n- **不必要な領域をクロップ**: 小さい = 利用可能な色が多い\n\n**より良いGIFの作成:**\n1. **ビデオから開始**: 高品質ソースが役立つ\n2. **長さを制限**: 最大3-5秒\n3. **寸法を削減**: 幅400-500pxで十分\n4. **動きを制限**: 動きが多すぎるとGIF圧縮が崩れる\n5. **パレットを最適化**: アダプティブまたは選択的パレットを使用\n6. **フレームスキッピング**: 必要に応じて1フレームおきにスキップ\n\n**GIFフレームのアップスケーリング:**\nGIF品質を改善するには:\n1. **フレームを抽出**: ツールを使用してGIFをフレームに分離\n2. **フレームをアップスケール**: AIを使用して個別のフレームをアップスケール\n3. **品質を強化**: ノイズ削減とシャープネスを適用\n4. **再組み立て**: アップスケールされたフレームから新しいGIFを作成\n5. **最新の形式を検討**: 代わりにWebPとして再エクスポート\n\n**GIF作成ツール:**\n- **Adobe Photoshop**: フレームごとのアニメーション\n- **GIMP**: アニメーション機能付きの無料の代替手段\n- **EZGIF**: オンラインGIFエディターとオプティマイザー\n- **FFmpeg**: コマンドラインビデオからGIFへの変換"
         },
         {
           "step": 5,
           "title": "GIFを最新形式に変換",
-          "content": "Convert GIF to WebP or APNG for better quality and smaller file sizes.\n\n**GIF to WebP (Recommended):**\n- **Quality**: Dramatically better (full color)\n- **File size**: 30-80% smaller\n- **Transparency**: Smooth alpha channel\n- **Animation**: Identical functionality\n- **Browser support**: 95%+ (fallback to GIF for older)\n- **Tools**: Online converters, Adobe software, FFmpeg\n\n**GIF to APNG:**\n- **Quality**: Excellent (lossless)\n- **Transparency**: Perfect alpha channel\n- **File size**: Similar or smaller than GIF\n- **Browser support**: Firefox, Safari (Chrome needs extension)\n- **Use when**: Maximum quality needed\n\n**GIF to MP4 (for video-like content):**\n- **Quality**: Best possible (modern codecs)\n- **File size**: 80-95% smaller\n- **Audio**: Can include sound\n- **Use when**: GIF is essentially a short video clip\n- **Tools**: FFmpeg, online converters\n\n**Conversion Workflow:**\n1. **Analyze your GIF**: Is it simple animation or video-like?\n2. **Choose format**: WebP for animation, MP4 for video\n3. **Convert**: Use appropriate tool\n4. **Test**: Verify appearance and file size\n5. **Implement**: Use with fallback for older browsers"
+          "content": "より良い品質と小さいファイルサイズのためにGIFをWebPまたはAPNGに変換してください。\n\n**GIFからWebP（推奨）:**\n- **品質**: 劇的に良い（フルカラー）\n- **ファイルサイズ**: 30-80%小さい\n- **透明度**: 滑らかなアルファチャンネル\n- **アニメーション**: 同じ機能\n- **ブラウザサポート**: 95%以上（古い用にGIFフォールバック）\n- **ツール**: オンラインコンバーター、Adobeソフトウェア、FFmpeg\n\n**GIFからAPNG:**\n- **品質**: 優れている（可逆）\n- **透明度**: 完璧なアルファチャンネル\n- **ファイルサイズ**: GIFと同じか小さい\n- **ブラウザサポート**: Firefox、Safari（Chromeには拡張機能が必要）\n- **使用時**: 最大の品質が必要\n\n**ビデオのようなコンテンツ用のGIFからMP4:**\n- **品質**: 最高可能（最新のコーデック）\n- **ファイルサイズ**: 80-95%小さい\n- **オーディオ**: 音声を含めることができる\n- **使用時**: GIFが本質的に短いビデオクリップ\n- **ツール**: FFmpeg、オンラインコンバーター\n\n**変換ワークフロー:**\n1. **GIFを分析**: シンプルなアニメーションかビデオのようなものか？\n2. **形式を選択**: アニメーション用WebP、ビデオ用MP4\n3. **変換**: 適切なツールを使用\n4. **テスト**: 外観とファイルサイズを確認\n5. **実装**: 古いブラウザ用にフォールバックで使用"
         },
         {
           "step": 6,
           "title": "GIF使用のベストプラクティス",
-          "content": "Use GIF strategically and know when modern formats are better.\n\n**GIF Best Practices:**\n- **Keep it short**: Under 5 seconds ideally\n- **Keep it small**: Under 500px wide\n- **Keep it simple**: Limited colors and motion\n- **Limit frames**: Fewer frames = better quality\n- **Optimize**: Run through GIF optimizer\n- **Test on mobile**: Ensure it performs well\n\n**When to Use Modern Formats Instead:**\n- **Photographic content**: Use WebP or JPEG\n- **Smooth gradients**: Use PNG or WebP\n- **Professional work**: Use WebP or MP4\n- **Large animations**: Use MP4 with modern codecs\n- **Better quality needed**: Use APNG or WebP\n\n**Implementing GIF on Web:**\n```html\n<!-- Provide WebP version first -->\n<picture>\n  <source src=\"animation.webp\" type=\"image/webp\">\n  <img src=\"animation.gif\" alt=\"Description\">\n</picture>\n```\nThis serves WebP to modern browsers with GIF fallback.\n\n**Performance Considerations:**\n- **Lazy load**: Defer loading off-screen GIFs\n- **Autoplay**: Don't autoplay more than one GIF\n- **File size**: Keep under 2MB if possible\n- **Alternative**: Consider using video instead for large animations\n\n**Accessibility:**\n- **Alt text**: Always describe the animation\n- **Reduce motion**: Respect prefers-reduced-motion\n- **Pause button**: Give users control"
+          "content": "GIFを戦略的に使用し、最新の形式がいつ良いかを知ってください。\n\n**GIFベストプラクティス:**\n- **短く保つ**: 理想的には5秒以下\n- **小さく保つ**: 幅500px以下\n- **シンプルに保つ**: 限られた色と動き\n- **フレームを制限**: フレームが少ない = より良い品質\n- **最適化**: GIFオプティマイザーを通す\n- **モバイルでテスト**: パフォーマンスが良いことを確認\n\n**代わりに最新の形式を使用する場合:**\n- **写真コンテンツ**: WebPまたはJPEGを使用\n- **滑らかなグラデーション**: PNGまたはWebPを使用\n- **プロフェッショナルな作業**: WebPまたはMP4を使用\n- **大きなアニメーション**: 最新のコーデックでMP4を使用\n- **より良い品質が必要**: APNGまたはWebPを使用\n\n**ウェブでのGIFの実装:**\n```html\n<!-- 最初にWebPバージョンを提供 -->\n<picture>\n  <source src=\"animation.webp\" type=\"image/webp\">\n  <img src=\"animation.gif\" alt=\"説明\">\n</picture>\n```\nこれにより、最新のブラウザにWebPを提供し、GIFフォールバックを提供します。\n\n**パフォーマンスの考慮事項:**\n- **遅延読み込み**: オフスクリーンGIFの読み込みを遅らせる\n- **自動再生**: 複数のGIFを自動再生しない\n- **ファイルサイズ**: 可能であれば2MB以下に保つ\n- **代替**: 大きなアニメーションについては代わりにビデオを検討\n\n**アクセシビリティ:**\n- **Altテキスト**: 常にアニメーションを説明\n- **動きを削減**: prefers-reduced-motionを尊重\n- **一時停止ボタン**: ユーザーに制御を提供"
         }
       ],
       "tips": [
@@ -660,7 +660,7 @@
       "primaryKeyword": "avif フォーマット",
       "secondaryKeywords": ["avif 画像", "avif vs webp", "avif 変換", "avif アップスケール"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
+      "category": "ガイド",
       "guideType": "explainer",
       "description": "AVIF画像フォーマットの包括的なガイド。最先端の圧縮技術、ブラウザサポート、既存ワークフローへの統合方法を理解しましょう。",
       "difficulty": "intermediate",
@@ -684,17 +684,17 @@
         {
           "step": 4,
           "title": "AVIF画像の作成",
-          "content": "Tools and techniques for generating AVIF images.\n\n**Conversion Tools:**\n\n**Command Line:**\n- **avifenc**: Official AOMedia encoder (best quality)\n- **FFmpeg**: Video to AVIF conversion\n- **ImageMagick**: Batch conversion support\n\n**GUI Applications:**\n- **Adobe Photoshop**: AVIF export via plugins\n- **GIMP**: AVIF export plugin available\n- **XnConvert**: Free batch conversion\n- **Online converters**: Quick, one-off conversions\n\n**Conversion Best Practices:**\n1. **Start from high-quality source**: PNG or RAW preferred\n2. **Adjust quality setting**: AVIF uses 0-100 scale, try 60-80\n3. **Test multiple settings**: Find sweet spot for your images\n4. **Compare with original**: Ensure quality is acceptable\n5. **Check file size**: Verify compression benefits\n\n**Quality Settings Guide:**\n- **60-70**: Most web images, photos, graphics\n- **70-80**: High-quality hero images, product photos\n- **80-90**: Critical images, archival quality\n- **50-60**: Thumbnails, non-critical images\n\n**Batch Conversion Workflow:**\n1. Organize source images (PNG, JPEG)\n2. Run batch conversion tool\n3. Verify quality on sample images\n4. Create WebP and JPEG fallbacks\n5. Implement in website/app\n6. Test across browsers and devices"
+          "content": "AVIF画像を生成するためのツールと手法。\n\n**変換ツール:**\n\n**コマンドライン:**\n- **avifenc**: 公式AOMediaエンコーダー（最高品質）\n- **FFmpeg**: ビデオからAVIFへの変換\n- **ImageMagick**: 一括変換サポート\n\n**GUIアプリケーション:**\n- **Adobe Photoshop**: プラグイン経由でAVIFエクスポート\n- **GIMP**: AVIFエクスポートプラグインが利用可能\n- **XnConvert**: 無料の一括変換\n- **オンラインコンバーター**: クイック、一回限りの変換\n\n**変換ベストプラクティス:**\n1. **高品質ソースから開始**: PNGまたはRAWが推奨\n2. **品質設定を調整**: AVIFは0-100スケールを使用、60-80を試す\n3. **複数の設定をテスト**: 画像に最適なスイートスポットを見つける\n4. **オリジナルと比較**: 品質が許容できることを確認\n5. **ファイルサイズを確認**: 圧縮の利点を確認\n\n**品質設定ガイド:**\n- **60-70**: ほとんどのウェブ画像、写真、グラフィック\n- **70-80**: 高品質のヒーロー画像、商品写真\n- **80-90**: 重要な画像、アーカイブ品質\n- **50-60**: サムネイル、重要でない画像\n\n**一括変換ワークフロー:**\n1. ソース画像を整理（PNG、JPEG）\n2. 一括変換ツールを実行\n3. サンプル画像で品質を確認\n4. WebPとJPEGフォールバックを作成\n5. ウェブサイト/アプリに実装\n6. ブラウザとデバイス間でテスト"
         },
         {
           "step": 5,
           "title": "Webパフォーマンス向けAVIF",
-          "content": "AVIF provides significant web performance benefits.\n\n**Performance Improvements:**\n- **70% smaller files**: Faster page loads\n- **Less bandwidth**: Lower data costs and hosting\n- **Better caching**: More content fits in browser cache\n- **Faster rendering**: Smaller files decode faster\n- **Better user experience**: Especially on mobile and slow connections\n\n**Real-World Impact:**\nE-commerce site example:\n- **Before**: 50MB of product images (JPEG)\n- **After AVIF**: 15MB of product images (AVIF)\n- **Result**: 70% faster page load, 70% less bandwidth\n\n**Implementation Strategy:**\n1. **Audit current images**: Identify largest files\n2. **Convert to AVIF**: Start with high-traffic pages\n3. **Implement progressive enhancement**: AVIF → WebP → JPEG\n4. **Monitor metrics**: Track load times, bandwidth usage\n5. **Measure impact**: Compare before/after performance\n\n**CDN Considerations:**\nMany CDNs now support AVIF:\n- **Cloudinary**: Automatic format conversion\n- **CloudFront**: AVIF support added\n- **Cloudflare**: Automatic AVIF delivery\n- **Imgix**: AVIF generation on-the-fly\n\nConfigure your CDN to:\n- Serve AVIF to supported browsers\n- Provide WebP/JPEG fallbacks\n- Cache all format variants\n- Monitor format delivery statistics"
+          "content": "AVIFは重要なウェブパフォーマンスの利点を提供します。\n\n**パフォーマンスの改善:**\n- **70%小さいファイル**: より高速なページ読み込み\n- **帯域幅の削減**: 低いデータコストとホスティング\n- **より良いキャッシュ**: より多くのコンテンツがブラウザキャッシュに収まる\n- **より高速なレンダリング**: 小さいファイルはより高速にデコード\n- **より良いユーザー体験**: 特にモバイルと遅い接続で\n\n**実世界への影響:**\nEコマースサイトの例:\n- **前**: 50MBの商品画像（JPEG）\n- **後AVIF**: 15MBの商品画像（AVIF）\n- **結果**: 70%高速なページ読み込み、70%削減された帯域幅\n\n**実装戦略:**\n1. **現在の画像を監査**: 最大のファイルを特定\n2. **AVIFに変換**: 高トラフィックページから開始\n3. **プログレッシブ拡張を実装**: AVIF → WebP → JPEG\n4. **メトリクスを監視**: 読み込み時間、帯域幅使用量を追跡\n5. **影響を測定**: 前後のパフォーマンスを比較\n\n**CDNの考慮事項:**\n多くのCDNが現在AVIFをサポート:\n- **Cloudinary**: 自動形式変換\n- **CloudFront**: AVIFサポートが追加されました\n- **Cloudflare**: 自動AVIF配信\n- **Imgix**: オンザフライでAVIF生成\n\nCDNを設定して:\n- サポートされているブラウザにAVIFを提供\n- WebP/JPEGフォールバックを提供\n- すべての形式バリアントをキャッシュ\n- 形式配信統計を監視"
         },
         {
           "step": 6,
           "title": "AVIFの将来と準備",
-          "content": "AVIF is the future of web images. Start preparing now.\n\n**Upcoming Features:**\n- **AVIF Animation**: Animated AVIF (like animated WebP)\n- **Wider browser support**: Safari adoption coming\n- **Improved encoders**: Faster encoding, better quality\n- **Progressive AVIF**: Progressive loading support\n- **Wider tool support**: Native support in more software\n\n**Preparation Steps:**\n\n**Short-term (Now):**\n1. **Test AVIF**: Experiment on non-critical pages\n2. **Build conversion pipeline**: Automate AVIF generation\n3. **Implement fallbacks**: AVIF → WebP → JPEG\n4. **Monitor browser stats**: Track AVIF support percentage\n\n**Medium-term (6-12 months):**\n1. **Roll out AVIF**: Expand to more pages\n2. **Optimize quality settings**: Fine-tune for your content\n3. **Train team**: Educate developers and designers\n4. **Update documentation**: AVIF workflow guidelines\n\n**Long-term (12+ months):**\n1. **Default to AVIF**: Make AVIF primary format\n2. **Phase out JPEG**: Use only as fallback\n3. **Implement AVIF animation**: When support matures\n4. **Measure ROI**: Track bandwidth savings and performance\n\n**Investment Considerations:**\n- **Storage**: Keep original source files\n- **Processing**: AVIF encoding can be slow, batch during off-hours\n- **CDN costs**: May need plan upgrade for multiple formats\n- **Build tools**: Ensure your build system supports AVIF\n\n**Recommendation:**\nStart using AVIF now for new projects. The 70% file size reduction is too significant to ignore, and fallback support ensures compatibility."
+          "content": "AVIFはウェブ画像の未来です。今すぐ準備を始めてください。\n\n**今後の機能:**\n- **AVIFアニメーション**: アニメーションAVIF（アニメーションWebPのように）\n- **より広いブラウザサポート**: Safari採用が来ています\n- **改善されたエンコーダー**: より高速なエンコーディング、より良い品質\n- **プログレッシブAVIF**: プログレッシブ読み込みサポート\n- **より広いツールサポート**: より多くのソフトウェアでのネイティブサポート\n\n**準備手順:**\n\n**短期（今）:**\n1. **AVIFをテスト**: 重要でないページで実験\n2. **変換パイプラインを構築**: AVIF生成を自動化\n3. **フォールバックを実装**: AVIF → WebP → JPEG\n4. **ブラウザ統計を監視**: AVIFサポートの割合を追跡\n\n**中期（6-12ヶ月）:**\n1. **AVIFを展開**: より多くのページに拡大\n2. **品質設定を最適化**: コンテンツに合わせて微調整\n3. **チームをトレーニング**: 開発者とデザイナーを教育\n4. **ドキュメントを更新**: AVIFワークフローガイドライン\n\n**長期（12ヶ月以上）:**\n1. **AVIFをデフォルト**: AVIFを主要な形式にする\n2. **JPEGを段階的廃止**: フォールバックとしてのみ使用\n3. **AVIFアニメーションを実装**: サポートが成熟したら\n4. **ROIを測定**: 帯域幅の節約とパフォーマンスを追跡\n\n**投資の考慮事項:**\n- **ストレージ**: オリジナルのソースファイルを保持\n- **処理**: AVIFエンコーディングは遅い可能性がある、オフピーク時に一括処理\n- **CDNコスト**: 複数の形式でプランアップグレードが必要な場合がある\n- **ビルドツール**: ビルドシステムがAVIFをサポートすることを確認\n\n**推奨事項:**\n新しいプロジェクトですぐにAVIFを使用を開始してください。70%のファイルサイズ削減は無視するにはあまりに重要であり、フォールバックサポートは互換性を保証します。"
         }
       ],
       "tips": [

@@ -246,7 +246,7 @@
       "technicalSpecs": {
         "supportedFormats": ["JPEG", "JPG", "PNG"],
         "maxFileSize": "50MB",
-        "outputOptions": ["PNG-24", "PNG-32 con Alfa", "Progressive JPEG"],
+        "outputOptions": ["PNG-24", "PNG-32 con Alfa", "JPEG progresivo"],
         "colorSpace": "sRGB, Adobe RGB soporte",
         "batchLimit": "25 archivos por conversión"
       },
@@ -380,7 +380,7 @@
       "primaryKeyword": "convertir bmp to jpeg",
       "secondaryKeywords": [
         "bmp to jpg conversor",
-        "bitmap to jpeg",
+        "bitmap a jpeg",
         "windows images converter",
         "legacy image format",
         "legacy formato conversor"
@@ -542,7 +542,7 @@
       "technicalSpecs": {
         "supportedFormats": ["SVG", "SVGZ", "JPEG", "JPG"],
         "maxFileSize": "10MB",
-        "outputOptions": ["Web JPEG", "High Calidad JPEG", "Resolución Personalizada"],
+        "outputOptions": ["JPEG web", "High Calidad JPEG", "Resolución Personalizada"],
         "colorSpace": "sRGB soporte",
         "batchLimit": "20 archivos por conversión"
       },
@@ -560,50 +560,50 @@
         "jpg to webp conversor",
         "jpeg to webp en línea",
         "imagen optimization",
-        "web performance",
+        "rendimiento web",
         "modern imagen format"
       ],
       "lastUpdated": "2025-01-19",
       "category": "herramientas",
       "toolName": "JPEG to WebP Conversor",
-      "description": "Modern JPEG to WebP conversion for web optimization and performance",
+      "description": "Conversión moderna de JPEG a WebP para optimización y rendimiento web",
       "toolComponent": "FormatConverter",
       "fromFormat": "JPEG",
       "toFormat": "WebP",
       "conversionFeatures": {
-        "fileSizeReduction": "25-35% smaller files than equivalent JPEGs",
+        "fileSizeReduction": "Archivos 25-35% más pequeños que JPEGs equivalentes",
         "qualityMaintenance": "Preserves visual calidad while reducing file size",
-        "compressionControl": "Adjustable WebP compression settings",
-        "modernBrowserSupport": "Optimized for modern web browsers and platforms"
+        "compressionControl": "Ajustes de compresión WebP configurables",
+        "modernBrowserSupport": "Optimizado para navegadores y plataformas web modernas"
       },
       "commonUseCases": [
         {
-          "title": "Website Optimization",
+          "title": "Optimización de sitios web",
           "description": "Convert JPEG imágenes to WebP for faster website loading times",
           "example": "Convert product JPEGs to WebP for e-commerce website velocidad"
         },
         {
-          "title": "SEO Improvement",
+          "title": "Mejora de SEO",
           "description": "Improve page load velocidad and SEO with WebP imagen optimization",
           "example": "Convert blog post imágenes to WebP for mejor Google PageSpeed scores"
         },
         {
-          "title": "Mobile Performance",
+          "title": "Rendimiento móvil",
           "description": "Optimizar JPEGs for mobile devices with WebP conversion",
           "example": "Convert website imágenes to WebP for mejor mobile experience"
         },
         {
-          "title": "Bandwidth Savings",
-          "description": "Reduce bandwidth costs with smaller WebP file sizes",
+          "title": "Ahorro de ancho de banda",
+          "description": "Reduce los costos de ancho de banda con tamaños de archivo WebP más pequeños",
           "example": "Convert high-traffic website imágenes to WebP for bandwidth efficiency"
         }
       ],
       "technicalSpecs": {
         "supportedFormats": ["JPEG", "JPG", "WebP"],
         "maxFileSize": "40MB",
-        "outputOptions": ["Lossless WebP", "Lossy WebP", "High Calidad WebP"],
+        "outputOptions": ["WebP sin pérdida", "WebP con pérdida", "High Calidad WebP"],
         "colorSpace": "sRGB, Adobe RGB soporte",
-        "batchLimit": "25 files per conversion"
+        "batchLimit": "25 archivos por conversión"
       },
       "isInteractive": true
     },
@@ -617,15 +617,15 @@
       "primaryKeyword": "convertir png to webp",
       "secondaryKeywords": [
         "png to webp conversor",
-        "transparent webp",
-        "graphics optimization",
-        "logo to webp",
+        "webp transparente",
+        "optimización de gráficos",
+        "logo a webp",
         "web performance imágenes"
       ],
       "lastUpdated": "2025-01-19",
       "category": "herramientas",
       "toolName": "PNG to WebP Conversor",
-      "description": "Modern PNG to WebP conversion with transparency preservation and optimization",
+      "description": "Conversión moderna de PNG a WebP con preservación de transparencia y optimización",
       "toolComponent": "FormatConverter",
       "fromFormat": "PNG",
       "toFormat": "WebP",
@@ -633,64 +633,64 @@
         "transparencyPreservation": "Maintains perfect transparency in WebP formato",
         "fileSizeReduction": "Significant size reduction while maintaining calidad",
         "losslessOption": "Lossless WebP conversion for perfect calidad preservation",
-        "compressionOptimization": "Optimized compression for graphics and text"
+        "compressionOptimization": "Compresión optimizada para gráficos y texto"
       },
       "commonUseCases": [
         {
-          "title": "Logo Optimization",
+          "title": "Optimización de logos",
           "description": "Convertir PNG logos to WebP with transparency for web performance",
-          "example": "Convert company logo PNG to WebP for faster website loading"
+          "example": "Convierte el logo de la empresa de PNG a WebP para una carga más rápida del sitio web"
         },
         {
-          "title": "Icon Conversion",
+          "title": "Conversión de iconos",
           "description": "Convert PNG icons and UI elements to WebP for mejor performance",
           "example": "Convert website icon PNGs to WebP for improved page velocidad"
         },
         {
-          "title": "Graphics Optimization",
+          "title": "Optimización de gráficos",
           "description": "Convert PNG graphics and charts to WebP for web uso",
-          "example": "Convert infographics and data visualizations to WebP format"
+          "example": "Convierte infografías y visualizaciones de datos al formato WebP"
         },
         {
-          "title": "App Development",
-          "description": "Convert PNG assets to WebP for mobile app optimization",
-          "example": "Convert app icon PNGs to WebP for smaller app size"
+          "title": "Desarrollo de aplicaciones",
+          "description": "Convierte recursos PNG a WebP para la optimización de aplicaciones móviles",
+          "example": "Convierte iconos PNG de la aplicación a WebP para un tamaño de aplicación más pequeño"
         }
       ],
       "technicalSpecs": {
         "supportedFormats": ["PNG", "WebP"],
         "maxFileSize": "30MB",
-        "outputOptions": ["Lossless WebP", "Lossy WebP", "WebP with Alpha"],
+        "outputOptions": ["WebP sin pérdida", "WebP con pérdida", "WebP con canal alfa"],
         "colorSpace": "sRGB, transparency with alpha channel soporte",
-        "batchLimit": "20 files per conversion"
+        "batchLimit": "20 archivos por conversión"
       },
       "isInteractive": true
     },
     {
       "conversionFeatures": {
-        "batchProcessing": "Convert multiple WebP files simultaneously",
-        "transparencyPreservation": "Maintains WebP transparency in PNG output",
+        "batchProcessing": "Convierte múltiples archivos WebP simultáneamente",
+        "transparencyPreservation": "Mantiene la transparencia WebP en la salida PNG",
         "losslessConversion": "Preserves full imagen calidad in PNG format",
-        "colorDepth": "Supports full color depth and alpha channels"
+        "colorDepth": "Admite profundidad de color completa y canales alfa"
       },
       "commonUseCases": [
         {
-          "title": "Design Work",
+          "title": "Trabajo de diseño",
           "description": "Convert WebP imágenes to PNG for design software compatibility",
           "example": "Convert WebP assets for uso in Adobe Photoshop and Illustrator"
         },
         {
           "title": "Calidad Preservation",
-          "description": "Convert WebP to lossless PNG for editing and archival",
+          "description": "Convierte WebP a PNG sin pérdida para editar y archivar",
           "example": "Convert WebP graphics to PNG for further editing without calidad loss"
         },
         {
-          "title": "Legacy Software",
+          "title": "Software heredado",
           "description": "Make WebP imágenes compatible with older software",
           "example": "Convert WebP imágenes for uso in applications that don't soporte WebP"
         },
         {
-          "title": "Print Preparation",
+          "title": "Preparación para impresión",
           "description": "Convertir WebP to PNG for high-quality printing",
           "example": "Convert WebP graphics to PNG for profesional printing services"
         }
@@ -698,9 +698,9 @@
       "technicalSpecs": {
         "supportedFormats": ["WebP", "PNG"],
         "maxFileSize": "30MB",
-        "outputOptions": ["Lossless PNG", "PNG with Alpha", "Optimized PNG"],
+        "outputOptions": ["PNG sin pérdida", "PNG con canal alfa", "PNG optimizado"],
         "colorSpace": "sRGB, transparency with alpha channel soporte",
-        "batchLimit": "25 files per conversion"
+        "batchLimit": "25 archivos por conversión"
       },
       "slug": "convert-webp-to-png",
       "title": "Convertir WebP to PNG",
@@ -713,8 +713,8 @@
         "webp to png conversor",
         "webp to png en línea",
         "lossless conversor",
-        "transparency preservation",
-        "webp compatibility"
+        "preservación de transparencia",
+        "compatibilidad webp"
       ],
       "lastUpdated": "2025-01-19",
       "category": "herramientas",
@@ -735,10 +735,10 @@
       "primaryKeyword": "convertir svg to png",
       "secondaryKeywords": [
         "svg to png conversor",
-        "vector to png",
+        "vectorial a png",
         "scalable graphics conversor",
-        "logo to png",
-        "svg resolution control"
+        "logo a png",
+        "control de resolución svg"
       ],
       "lastUpdated": "2025-01-19",
       "category": "herramientas",
@@ -748,29 +748,29 @@
       "fromFormat": "SVG",
       "toFormat": "PNG",
       "conversionFeatures": {
-        "resolutionControl": "Custom output resolution and dimensions",
-        "transparencyPreservation": "Maintains perfect transparency in PNG format",
+        "resolutionControl": "Resolución de salida y dimensiones personalizadas",
+        "transparencyPreservation": "Mantiene una transparencia perfecta en formato PNG",
         "scalingQuality": "Maintains calidad at any output size",
         "losslessQuality": "Creates lossless PNG files for maximum calidad"
       },
       "commonUseCases": [
         {
-          "title": "Logo Export",
+          "title": "Exportación de logos",
           "description": "Convert SVG logos to PNG with transparency for universal uso",
           "example": "Convert company logo SVG to PNG for website and document uso"
         },
         {
-          "title": "Icon Creation",
-          "description": "Convert SVG icons to PNG for apps and websites",
+          "title": "Creación de iconos",
+          "description": "Convierte iconos SVG a PNG para aplicaciones y sitios web",
           "example": "Convertir UI icon SVGs to PNG for mobile aplicación development"
         },
         {
-          "title": "High-Resolution Export",
-          "description": "Export SVG graphics as high-resolution PNG for printing",
+          "title": "Exportación de alta resolución",
+          "description": "Exporta gráficos SVG como PNG de alta resolución para impresión",
           "example": "Convertir vector artwork to high-res PNG for print publication"
         },
         {
-          "title": "Web Graphics",
+          "title": "Gráficos web",
           "description": "Convertir SVG graphics to PNG for browser compatibility",
           "example": "Convert complex SVG graphics to PNG for older browser soporte"
         }
@@ -778,9 +778,9 @@
       "technicalSpecs": {
         "supportedFormats": ["SVG", "SVGZ", "PNG"],
         "maxFileSize": "10MB",
-        "outputOptions": ["Web PNG", "Alto Resolution PNG", "Custom Dimensions"],
+        "outputOptions": ["PNG web", "Alto Resolution PNG", "Dimensiones personalizadas"],
         "colorSpace": "sRGB, transparency with alpha channel soporte",
-        "batchLimit": "25 files per conversion"
+        "batchLimit": "25 archivos por conversión"
       },
       "isInteractive": true
     }

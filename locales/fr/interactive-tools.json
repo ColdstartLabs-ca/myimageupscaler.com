@@ -2,7 +2,7 @@
   "category": "outils",
   "pages": [
     {
-      "slug": "image-resizer",
+      "slug": "redimensionneur-image",
       "title": "Redimensionneur d'image",
       "metaTitle": "Gratuit Image Resizer - Resize Images En ligne Instantly | MyImageUpscaler",
       "metaDescription": "Redimensionnez des images en ligne gratuitement. Aucun telechargement requis - tout le traitement se fait dans votre navigateur. Prend en charge JPEG, PNG, WebP et plus.",
@@ -89,7 +89,7 @@
           "metric": "< 1 second per Image"
         },
         {
-          "title": "Perfect Qualité Control",
+          "title": "Contrôle qualité parfait",
           "description": "Ajustez les paramètres de qualité de 1 à 100 % pour trouver l'équilibre parfait entre la taille du fichier et la fidélité visuelle.",
           "metric": "User-controlled Qualité"
         }
@@ -131,7 +131,7 @@
         },
         {
           "question": "Puis-je redimensionner des images pour Instagram ?",
-          "answer": "Absolutely! We have presets for Instagram Posts (1080x1080), Instagram Stories (1080x1920), and all major Réseaux sociaux platforms."
+          "answer": "Absolument ! Nous avons des préréglages pour les publications Instagram (1080x1080), les stories Instagram (1080x1920) et toutes les principales plateformes de réseaux sociaux."
         },
         {
           "question": "Le redimensionnement réduira-t-il la qualité de l'image ?",
@@ -152,15 +152,15 @@
       ],
       "relatedTools": ["agrandisseur-image-ia", "compresseur-image", "png-vers-jpg"],
       "relatedGuides": ["comment-redimensionner-images-reseaux-sociaux", "guide-resolution-image"],
-      "ctaText": "Try Gratuit Image Resizer",
-      "ctaUrl": "/tools/resize/image-resizer"
+      "ctaText": "Essayer le redimensionneur d'image gratuit",
+      "ctaUrl": "/tools/resize/redimensionneur-image"
     },
     {
-      "slug": "resize-image-for-instagram",
+      "slug": "redimensionner-image-pour-instagram",
       "title": "Redimensionneur d'image Instagram",
-      "metaTitle": "Gratuit Instagram Image Resizer - Perfect Sizes for Posts & Stories | MyImageUpscaler",
-      "metaDescription": "Resize Images for Instagram instantly. Get perfect dimensions for posts (1080x1080), stories (1080x1920), and reels. Gratuit, no Télécharger required.",
-      "h1": "Gratuit Instagram Image Resizer - Perfect Sizes Instantly",
+      "metaTitle": "Redimensionneur d'images Instagram gratuit - Tailles parfaites pour les publications et stories | MyImageUpscaler",
+      "metaDescription": "Redimensionnez instantanément les images pour Instagram. Obtenez les dimensions parfaites pour les publications (1080x1080), les stories (1080x1920) et les reels. Gratuit, aucun téléchargement requis.",
+      "h1": "Redimensionneur d'images Instagram gratuit - Tailles parfaites instantanément",
       "intro": "Redimensionnez vos images aux dimensions Instagram parfaites. Publications, stories, reels - toutes les tailles optimisées en un clic. Fonctionne dans votre navigateur.",
       "primaryKeyword": "redimensionneur de photo instagram",
       "secondaryKeywords": [
@@ -223,18 +223,18 @@
         {
           "title": "Publications carrousel",
           "description": "Préparez plusieurs images avec des dimensions cohérentes.",
-          "example": "Resize a Photo series to matching 1080x1080 squares"
+          "example": "Redimensionnez une série de photos en carrés 1080x1080 correspondants"
         },
         {
           "title": "Contenu de profil",
-          "description": "Ensure your content looks professional on any device.",
-          "example": "Optimize product Photos for Instagram shop"
+          "description": "Assurez-vous que votre contenu look professionnel sur n'importe quel appareil.",
+          "example": "Optimisez les photos de produits pour la boutique Instagram"
         }
       ],
       "benefits": [
         {
-          "title": "Perfect Dimensions",
-          "description": "Always get the exact sizes Instagram recommends for best display.",
+          "title": "Dimensions parfaites",
+          "description": "Obtenez toujours les tailles exactes recommandées par Instagram pour un meilleur affichage.",
           "metric": "Parfait au pixel près"
         },
         {
@@ -256,7 +256,7 @@
         },
         {
           "step": 2,
-          "title": "Choose Instagram Format",
+          "title": "Choisir le format Instagram",
           "description": "Sélectionnez Publication (1080x1080) ou Story (1080x1920) parmi les préréglages."
         },
         {
@@ -295,10 +295,10 @@
       ],
       "relatedGuides": ["comment-redimensionner-images-reseaux-sociaux"],
       "ctaText": "Resize for Instagram Gratuit",
-      "ctaUrl": "/tools/resize/resize-image-for-instagram"
+      "ctaUrl": "/tools/resize/redimensionner-image-pour-instagram"
     },
     {
-      "slug": "resize-image-for-youtube",
+      "slug": "redimensionner-image-pour-youtube",
       "title": "Redimensionneur de miniature YouTube",
       "metaTitle": "Gratuit YouTube Thumbnail Resizer - Perfect 1280x720 Size | MyImageUpscaler",
       "metaDescription": "Resize Images for YouTube thumbnails instantly. Get perfect 1280x720 dimensions for maximum click-through rates. Gratuit, no Télécharger required.",
@@ -430,29 +430,33 @@
           "answer": "Oui! Les miniatures 1280x720 s'adaptent parfaitement à toutes les tailles d'écran, des téléphones mobiles aux téléviseurs 4K."
         }
       ],
-      "relatedTools": ["image-resizer", "resize-image-for-instagram", "image-compressor"],
-      "relatedGuides": ["youtube-thumbnail-best-practices"],
+      "relatedTools": [
+        "redimensionneur-image",
+        "redimensionner-image-pour-instagram",
+        "compresseur-image"
+      ],
+      "relatedGuides": ["bonnes-pratiques-miniature-youtube"],
       "ctaText": "Resize for YouTube Gratuit",
-      "ctaUrl": "/tools/resize/resize-image-for-youtube"
+      "ctaUrl": "/tools/resize/redimensionner-image-pour-youtube"
     },
     {
-      "slug": "resize-image-for-facebook",
+      "slug": "redimensionner-image-pour-facebook",
       "title": "Redimensionneur d'image Facebook",
       "metaTitle": "Gratuit Facebook Image Resizer - Perfect Sizes for Posts & Covers | MyImageUpscaler",
       "metaDescription": "Resize Images for Facebook instantly. Get perfect dimensions for posts (1200x630), covers (820x312), and profile pictures. Gratuit, no Télécharger required.",
       "h1": "Gratuit Facebook Image Resizer - Perfect Sizes Instantly",
       "intro": "Redimensionnez vos images aux dimensions Facebook parfaites. Publications, couvertures, photos de profil - toutes les tailles optimisées en un clic. Fonctionne dans votre navigateur.",
-      "primaryKeyword": "facebook photo resizer",
+      "primaryKeyword": "redimensionneur photo facebook",
       "secondaryKeywords": [
-        "facebook image size",
-        "facebook post size",
-        "facebook cover size",
-        "resize for facebook",
-        "facebook photo size"
+        "taille image facebook",
+        "taille post facebook",
+        "taille couverture facebook",
+        "redimensionner pour facebook",
+        "taille photo facebook"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
-      "toolName": "Facebook Image Resizer",
+      "toolName": "Redimensionneur d'image Facebook",
       "description": "Redimensionnez instantanément les images aux dimensions recommandées de Facebook. Prend en charge les publications, les photos de couverture et les photos de profil.",
       "isInteractive": true,
       "toolComponent": "ImageResizer",
@@ -536,7 +540,7 @@
         },
         {
           "step": 2,
-          "title": "Choose Facebook Format",
+          "title": "Choisir le format Facebook",
           "description": "Sélectionnez la taille Publication (1200x630) ou Couverture (820x312)."
         },
         {
@@ -575,10 +579,10 @@
       ],
       "relatedGuides": ["comment-redimensionner-images-reseaux-sociaux"],
       "ctaText": "Resize for Facebook Gratuit",
-      "ctaUrl": "/tools/resize/resize-image-for-facebook"
+      "ctaUrl": "/tools/resize/redimensionner-image-pour-facebook"
     },
     {
-      "slug": "resize-image-for-twitter",
+      "slug": "redimensionner-image-pour-twitter",
       "title": "Redimensionneur d'image Twitter/X",
       "metaTitle": "Gratuit Twitter Image Resizer - Perfect Sizes for Posts & Headers | MyImageUpscaler",
       "metaDescription": "Resize Images for Twitter/X instantly. Get perfect dimensions for tweets (1200x675) and headers (1500x500). Gratuit, no Télécharger required.",
@@ -643,7 +647,7 @@
           "example": "Créer un en-tête de marque à 1500x500"
         },
         {
-          "title": "Twitter Cards",
+          "title": "Cartes Twitter",
           "description": "Optimiser les images pour les aperçus Twitter Card des sites web.",
           "example": "Prepare OG Images for blog post sharing"
         },
@@ -713,14 +717,14 @@
       "relatedTools": [
         "redimensionneur-image",
         "redimensionner-image-linkedin",
-        "resize-image-for-facebook"
+        "redimensionner-image-pour-facebook"
       ],
-      "relatedGuides": ["how-to-resize-images-for-social-media"],
+      "relatedGuides": ["comment-redimensionner-images-reseaux-sociaux"],
       "ctaText": "Resize for Twitter Gratuit",
-      "ctaUrl": "/tools/resize/resize-image-for-twitter"
+      "ctaUrl": "/tools/resize/redimensionner-image-pour-twitter"
     },
     {
-      "slug": "resize-image-for-linkedin",
+      "slug": "redimensionner-image-pour-linkedin",
       "title": "Redimensionneur d'image LinkedIn",
       "metaTitle": "Gratuit LinkedIn Image Resizer - Perfect Sizes for Posts & Banners | MyImageUpscaler",
       "metaDescription": "Resize Images for LinkedIn instantly. Get perfect dimensions for posts (1200x627) and banners (1584x396). Gratuit, no Télécharger required.",
@@ -852,13 +856,17 @@
           "answer": "LinkedIn compresse les images. Commencez par des images haute qualité aux dimensions exactes et exportez à 90%+ de qualité pour minimiser la compression."
         }
       ],
-      "relatedTools": ["image-resizer", "resize-image-for-facebook", "image-compressor"],
-      "relatedGuides": ["how-to-resize-images-for-social-media"],
+      "relatedTools": [
+        "redimensionneur-image",
+        "redimensionner-image-pour-facebook",
+        "compresseur-image"
+      ],
+      "relatedGuides": ["comment-redimensionner-images-reseaux-sociaux"],
       "ctaText": "Resize for LinkedIn Gratuit",
-      "ctaUrl": "/tools/resize/resize-image-for-linkedin"
+      "ctaUrl": "/tools/resize/redimensionner-image-pour-linkedin"
     },
     {
-      "slug": "bulk-image-resizer",
+      "slug": "redimensionneur-image-lot",
       "title": "Compresseur d'image",
       "metaTitle": "Gratuit Lot Image Resizer - Resize Plusieurs Photos at Once | MyImageUpscaler",
       "metaDescription": "Resize Plusieurs Images at once with our Gratuit Lot Image resizer. Mass resize Photos to any dimension. Works in your browser - no Télécharger required.",
@@ -959,7 +967,7 @@
         },
         {
           "step": 3,
-          "title": "Choose Output Format",
+          "title": "Choisir le format de sortie",
           "description": "Sélectionnez JPEG, PNG ou WebP et ajustez la qualité. Prévisualisez les dimensions avant le traitement."
         },
         {
@@ -1002,30 +1010,33 @@
           "answer": "Yes! You can remove individual Images from the Lot before or after Traitement by clicking the X button next to each Image."
         }
       ],
-      "relatedTools": ["image-resizer", "image-compressor", "ai-image-upscaler"],
-      "relatedGuides": ["how-to-resize-images-for-social-media", "image-resolution-guide"],
+      "relatedTools": ["redimensionneur-image", "compresseur-image", "agrandisseur-image-ia"],
+      "relatedGuides": [
+        "comment-redimensionner-images-reseaux-sociaux",
+        "resolution-image-expliquee"
+      ],
       "ctaText": "Try Lot Image Resizer Gratuit",
-      "ctaUrl": "/tools/resize/bulk-image-resizer"
+      "ctaUrl": "/tools/resize/redimensionneur-image-lot"
     },
     {
-      "slug": "image-compressor",
+      "slug": "compresseur-image",
       "title": "Compresseur d'image",
       "metaTitle": "Gratuit Image Compressor - Compress Images En ligne | MyImageUpscaler",
       "metaDescription": "Compress images online for free. Reduce file size up to 80% while maintaining quality. Works in your browser - no upload required. JPEG, PNG, WebP support.",
       "h1": "Gratuit En ligne Image Compressor - Reduce File Size Instantly",
       "intro": "Compress your images without losing quality. Our free online compressor reduces file size by up to 80% using advanced browser technology. Perfect for web optimization, email, and storage.",
-      "primaryKeyword": "image compressor",
+      "primaryKeyword": "compresseur d'image",
       "secondaryKeywords": [
-        "compress image online",
-        "online image compressor",
-        "compress image",
-        "image compression tool",
-        "reduce image size",
-        "photo compressor"
+        "compresser image en ligne",
+        "compresseur d'image en ligne",
+        "compresser image",
+        "outil compression image",
+        "reduire taille image",
+        "compresseur photo"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
-      "toolName": "Image Compressor",
+      "toolName": "Compresseur d'image",
       "description": "Outil professionnel de compression d'images qui fonctionne entièrement dans votre navigateur. Réduisez les tailles de fichiers jusqu'à 80 % tout en maintenant la qualité visuelle. Prend en charge les formats JPEG, PNG et WebP avec des aperçus de compression en temps réel.",
       "isInteractive": true,
       "toolComponent": "ImageCompressor",
@@ -1144,25 +1155,25 @@
           "answer": "For web use, 70-80% is optimal. For printing or professional use, 85-95%. For maximum compression (like email), 60-70% works well."
         }
       ],
-      "relatedTools": ["image-resizer", "png-to-jpg", "ai-image-upscaler"],
-      "relatedGuides": ["image-optimization-guide", "web-performance-images"],
-      "ctaText": "Try Gratuit Image Compressor",
-      "ctaUrl": "/tools/compress/image-compressor"
+      "relatedTools": ["redimensionneur-image", "png-en-jpg", "agrandisseur-image-ia"],
+      "relatedGuides": ["techniques-compression-image", "web-optimization-images"],
+      "ctaText": "Essayer le compresseur d'image gratuit",
+      "ctaUrl": "/tools/compress/compresseur-image"
     },
     {
-      "slug": "png-to-jpg",
+      "slug": "png-en-jpg",
       "title": "Convertisseur PNG en JPG",
       "metaTitle": "Free PNG to JPG Converter - Convert PNG to JPEG Online | MyImageUpscaler",
       "metaDescription": "Convert PNG to JPG online for free. Fast, secure conversion in your browser. No upload required. Handle transparency with custom background colors.",
       "h1": "Convertisseur PNG en JPG gratuit - Convertissez les images instantanément",
       "intro": "Convert PNG images to JPG format in seconds. Our free online converter works entirely in your browser with no upload required. Perfect for reducing file sizes and ensuring compatibility.",
-      "primaryKeyword": "png to jpg",
+      "primaryKeyword": "png en jpg",
       "secondaryKeywords": [
-        "convert png to jpg",
-        "png to jpeg",
-        "png to jpg converter",
-        "png to jpg online",
-        "convert png to jpeg"
+        "convertir png en jpg",
+        "png en jpeg",
+        "convertisseur png en jpg",
+        "png en jpg en ligne",
+        "convertir png en jpeg"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
@@ -1285,25 +1296,25 @@
           "answer": "Pour le web et les réseaux sociaux, 80-85 % est parfait. Pour l'impression ou un usage professionnel, 90-95 %. Pour une réduction maximale de la taille du fichier, 70-75 % est encore bon."
         }
       ],
-      "relatedTools": ["image-compressor", "image-resizer", "jpg-to-png"],
-      "relatedGuides": ["png-vs-jpg-guide", "when-to-use-jpg"],
+      "relatedTools": ["compresseur-image", "redimensionneur-image", "jpg-en-png"],
+      "relatedGuides": ["comparaison-formats-image", "quand-utiliser-jpg"],
       "ctaText": "Convertir PNG en JPG gratuitement",
-      "ctaUrl": "/tools/convert/png-to-jpg"
+      "ctaUrl": "/tools/convert/png-en-jpg"
     },
     {
-      "slug": "jpg-to-png",
+      "slug": "jpg-en-png",
       "title": "Convertisseur JPG en PNG",
       "metaTitle": "Free JPG to PNG Converter - Convert JPEG to PNG Online | MyImageUpscaler",
       "metaDescription": "Convert JPG to PNG online for free. Add transparency support, get lossless quality. Fast browser-based conversion with no upload required.",
       "h1": "Convertisseur gratuit JPG en PNG - Convertissez les images instantanément",
       "intro": "Convert JPG images to PNG format in seconds. Perfect for adding transparency support or preserving quality. Our free converter works entirely in your browser.",
-      "primaryKeyword": "jpg to png",
+      "primaryKeyword": "jpg en png",
       "secondaryKeywords": [
         "convertir jpg en png",
-        "jpeg to png",
+        "jpeg en png",
         "convertisseur jpg en png",
         "jpg en png en ligne",
-        "convert jpeg to png"
+        "convertir jpeg en png"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
@@ -1422,25 +1433,25 @@
           "answer": "Oui ! Une fois au format PNG, vous pouvez utiliser un logiciel d'édition d'images pour supprimer les arrière-plans et ajouter de la transparence. Le JPG ne prend pas en charge la transparence."
         }
       ],
-      "relatedTools": ["png-to-jpg", "image-compressor", "webp-to-png"],
-      "relatedGuides": ["png-vs-jpg-guide"],
+      "relatedTools": ["png-en-jpg", "compresseur-image", "webp-en-png"],
+      "relatedGuides": ["comparaison-formats-image"],
       "ctaText": "Convertir JPG en PNG gratuitement",
-      "ctaUrl": "/tools/convert/jpg-to-png"
+      "ctaUrl": "/tools/convert/jpg-en-png"
     },
     {
-      "slug": "webp-to-jpg",
+      "slug": "webp-en-jpg",
       "title": "Convertisseur WebP en JPG",
       "metaTitle": "Convertisseur gratuit WebP en JPG - Convertissez WebP en JPEG en ligne | MyImageUpscaler",
       "metaDescription": "Convertissez WebP en JPG en ligne gratuitement. Compatibilité universelle pour tous les appareils. Conversion rapide basée sur le navigateur sans téléchargement requis.",
       "h1": "Convertisseur gratuit WebP en JPG - Convertissez les images instantanément",
       "intro": "Convertissez les images WebP au format JPG universellement compatible. Parfait pour partager des images avec des logiciels plus anciens ou des appareils qui ne prennent pas en charge WebP.",
-      "primaryKeyword": "webp to jpg",
+      "primaryKeyword": "webp en jpg",
       "secondaryKeywords": [
-        "convert webp to jpg",
-        "webp to jpeg",
-        "webp to jpg converter",
-        "webp to jpg online",
-        "convert webp to jpeg"
+        "convertir webp en jpg",
+        "webp en jpeg",
+        "convertisseur webp en jpg",
+        "webp en jpg en ligne",
+        "convertir webp en jpeg"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
@@ -1559,22 +1570,22 @@
           "answer": "La conversion de WebP animés capturera la première image comme un JPG statique. Pour les images animées, envisagez plutôt le format GIF."
         }
       ],
-      "relatedTools": ["webp-to-png", "jpg-to-webp", "image-compressor"],
-      "relatedGuides": ["webp-format-guide"],
+      "relatedTools": ["webp-en-png", "jpg-en-webp", "compresseur-image"],
+      "relatedGuides": ["guide-format-webp"],
       "ctaText": "Convertir WebP en JPG gratuitement",
-      "ctaUrl": "/tools/convert/webp-to-jpg"
+      "ctaUrl": "/tools/convert/webp-en-jpg"
     },
     {
-      "slug": "webp-to-png",
+      "slug": "webp-en-png",
       "title": "Convertisseur WebP en PNG",
       "metaTitle": "Convertisseur gratuit WebP en PNG - Convertissez WebP en PNG en ligne | MyImageUpscaler",
       "metaDescription": "Convertissez WebP en PNG en ligne gratuitement. Préservez la transparence, obtenez une qualité sans perte. Conversion rapide basée sur le navigateur sans téléchargement requis.",
       "h1": "Convertisseur gratuit WebP en PNG - Convertissez les images instantanément",
       "intro": "Convertissez les images WebP au format PNG. Préservez la transparence et obtenez une qualité sans perte parfaite pour l'édition. Fonctionne entièrement dans votre navigateur.",
-      "primaryKeyword": "webp to png",
+      "primaryKeyword": "webp en png",
       "secondaryKeywords": [
-        "convert webp to png",
-        "webp to png converter",
+        "convertir webp en png",
+        "convertisseur webp en png",
         "webp en png en ligne",
         "convertisseur webp png"
       ],
@@ -1695,13 +1706,13 @@
           "answer": "Utilisez PNG si vous avez besoin de transparence ou de qualité sans perte pour l'édition. Utilisez JPG pour des fichiers plus petits et une compatibilité universelle lorsque la transparence n'est pas nécessaire."
         }
       ],
-      "relatedTools": ["webp-to-jpg", "png-to-webp", "image-compressor"],
-      "relatedGuides": ["webp-format-guide"],
+      "relatedTools": ["webp-en-jpg", "png-en-webp", "compresseur-image"],
+      "relatedGuides": ["guide-format-webp"],
       "ctaText": "Convertir WebP en PNG gratuitement",
-      "ctaUrl": "/tools/convert/webp-to-png"
+      "ctaUrl": "/tools/convert/webp-en-png"
     },
     {
-      "slug": "jpg-to-webp",
+      "slug": "jpg-en-webp",
       "title": "Convertisseur JPG en WebP",
       "metaTitle": "Convertisseur gratuit JPG en WebP - Convertissez JPEG en WebP en ligne | MyImageUpscaler",
       "metaDescription": "Convertissez JPG en WebP en ligne gratuitement. Obtenez des fichiers 25 à 35 % plus petits avec une compression moderne. Conversion rapide basée sur le navigateur sans téléchargement requis.",
@@ -1832,13 +1843,13 @@
           "answer": "Pour une utilisation web, oui ! WebP est idéal pour les sites web. Pour les e-mails, l'impression ou les logiciels plus anciens, JPG peut être plus compatible."
         }
       ],
-      "relatedTools": ["png-to-webp", "webp-to-jpg", "image-compressor"],
-      "relatedGuides": ["webp-format-guide", "web-performance-images"],
+      "relatedTools": ["png-en-webp", "webp-en-jpg", "compresseur-image"],
+      "relatedGuides": ["guide-format-webp", "web-optimization-images"],
       "ctaText": "Convertir JPG en WebP gratuitement",
-      "ctaUrl": "/tools/convert/jpg-to-webp"
+      "ctaUrl": "/tools/convert/jpg-en-webp"
     },
     {
-      "slug": "png-to-webp",
+      "slug": "png-en-webp",
       "title": "Convertisseur PNG en WebP",
       "metaTitle": "Convertisseur gratuit PNG en WebP - Convertissez PNG en WebP en ligne | MyImageUpscaler",
       "metaDescription": "Convertissez PNG en WebP en ligne gratuitement. Obtenez des fichiers 26 % plus petits tout en gardant la transparence. Conversion rapide basée sur le navigateur sans téléchargement requis.",
@@ -1968,25 +1979,25 @@
           "answer": "Oui ! Utilisez notre convertisseur WebP en PNG si vous avez besoin du format PNG pour la compatibilité ou l'édition dans des logiciels qui ne prennent pas en charge WebP."
         }
       ],
-      "relatedTools": ["jpg-to-webp", "webp-to-png", "image-compressor"],
-      "relatedGuides": ["webp-format-guide", "web-performance-images"],
+      "relatedTools": ["jpg-en-webp", "webp-en-png", "compresseur-image"],
+      "relatedGuides": ["guide-format-webp", "web-optimization-images"],
       "ctaText": "Convertir PNG en WebP gratuitement",
-      "ctaUrl": "/tools/convert/png-to-webp"
+      "ctaUrl": "/tools/convert/png-en-webp"
     },
     {
-      "slug": "bulk-image-compressor",
-      "title": "Lot Image Compressor",
+      "slug": "compresseur-image-lot",
+      "title": "Compresseur d'images par lot",
       "metaTitle": "Gratuit Lot Image Compressor - Compress Plusieurs Images | MyImageUpscaler",
       "metaDescription": "Compress multiple images at once with our free bulk image compressor. Reduce file sizes by up to 80% with quality control. Browser-based, no upload required.",
       "h1": "Gratuit Lot Image Compressor - Optimize Plusieurs Photos",
       "intro": "Compress multiple images at once without losing quality. Our free bulk compressor reduces file sizes by up to 80% using advanced browser technology. Download as ZIP.",
-      "primaryKeyword": "batch image compressor",
+      "primaryKeyword": "compresseur image lot",
       "secondaryKeywords": [
-        "batch image compressor",
-        "bulk image optimization",
-        "compress multiple images",
-        "mass image compression",
-        "batch compress photos"
+        "compresseur image lot",
+        "optimisation image lot",
+        "compresser plusieurs images",
+        "compression images masse",
+        "compresser photos lot"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
       "category": "tools",
@@ -2117,10 +2128,10 @@
           "answer": "Chaque image peut faire jusqu'à 25Mo. Cette limite est basée sur la mémoire du navigateur, et non sur les restrictions du serveur (puisque nous ne téléchargeons pas sur des serveurs)."
         }
       ],
-      "relatedTools": ["image-compressor", "image-resizer", "jpg-to-webp"],
-      "relatedGuides": ["image-optimization-guide", "web-performance-images"],
-      "ctaText": "Try Gratuit Lot Compressor",
-      "ctaUrl": "/tools/compress/bulk-image-compressor"
+      "relatedTools": ["compresseur-image", "redimensionneur-image", "jpg-en-webp"],
+      "relatedGuides": ["techniques-compression-image", "web-optimization-images"],
+      "ctaText": "Essayer le compresseur par lot gratuit",
+      "ctaUrl": "/tools/compress/compresseur-image-lot"
     }
   ],
   "meta": {

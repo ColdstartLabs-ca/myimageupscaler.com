@@ -1,8 +1,8 @@
 {
-  "category": "comparisons",
+  "category": "vergleiche",
   "pages": [
     {
-      "slug": "ai-vs-traditional-upscaling",
+      "slug": "ai-vs-traditionelles-upscaling",
       "title": "KI-Upscaling vs. herkömmliche Interpolation: Vollständiger technischer Vergleich",
       "metaTitle": "KI-Upscaling vs. herkömmliche Interpolation: Vollständiger technischer Vergleich | MyImageUpscaler",
       "metaDescription": "Umfassender Vergleich von KI-Upscaling und herkömmlichen Interpolationsmethoden (Bicubic, Lanczos). Echte Tests, Qualitätsmetriken und Kostenanalyse.",
@@ -17,7 +17,7 @@
         "neuronales netzwerk upscaling"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "technical",
+      "comparisonType": "technisch",
       "methodology": {
         "testDataset": "100 verschiedene Bilder (Fotos, Text, Grafiken, medizinische Bildgebung)",
         "scaleFactors": ["2x", "4x", "8x"],
@@ -154,7 +154,7 @@
       ]
     },
     {
-      "slug": "online-vs-desktop-upscalers",
+      "slug": "online-vs-desktop-upscaler",
       "title": "Online vs. Desktop-Bild-Upscaler: Datenschutz, Geschwindigkeit & Feature-Vergleich",
       "metaTitle": "Online vs. Desktop-Bild-Upscaler: Datenschutz, Geschwindigkeit & Feature-Vergleich | MyImageUpscaler",
       "metaDescription": "Vergleich von Online- und Desktop-Bild-Upscaling-Lösungen. Datenschutzimplikationen, Verarbeitungszeiten, Kostenanalyse und Feature-Vergleiche für fundierte Entscheidungen.",
@@ -169,7 +169,7 @@
         "stapel upscaling lösungen"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "platform",
+      "comparisonType": "plattform",
       "comparisonMatrix": [
         {
           "category": "Datenschutz & Sicherheit",
@@ -305,7 +305,7 @@
         },
         {
           "industry": "Professionelle Fotografie",
-          "recommended": "Hybrid",
+          "recommended": "Hybride",
           "reason": "Desktop für Kundenarbeit (Datenschutz), Online für persönliche/soziale Inhalte",
           "specificNeeds": "RAW-Support, Farbgenauigkeit, Stapelverarbeitung"
         },
@@ -365,7 +365,7 @@
       ]
     },
     {
-      "slug": "free-vs-paid-upscaling-solutions",
+      "slug": "kostenlose-vs-gezahlte-upscaling-loesungen",
       "title": "Kostenlose vs. kostenpflichtige KI-Upscaler: Qualität, Limits & Wert-Analyse 2025",
       "metaTitle": "Kostenlose vs. kostenpflichtige KI-Upscaler: Qualität, Limits & Wert-Analyse 2025 | MyImageUpscaler",
       "metaDescription": "Detaillierter Vergleich von kostenlosen und kostenpflichtigen KI-Bild-Upscaling-Lösungen. Qualitätsbenchmarks, Feature-Einschränkungen und Kosten-Nutzen-Analyse für verschiedene Benutzerbedürfnisse.",
@@ -380,7 +380,7 @@
         "bild upscaler preise"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "value",
+      "comparisonType": "wert",
       "testResults": {
         "qualityScores": {
           "freeSolutions": {
@@ -596,7 +596,7 @@
       ]
     },
     {
-      "slug": "ai-models-comparison",
+      "slug": "ki-modelle-vergleich",
       "title": "KI-Upscaling-Modelle-Vergleich: ESRGAN, Real-ESRGAN, SRCNN, EDVR & mehr",
       "metaTitle": "KI-Upscaling-Modelle-Vergleich: ESRGAN, Real-ESRGAN, SRCNN, EDVR & mehr | MyImageUpscaler",
       "metaDescription": "Technischer Vergleich von KI-Upscaling-Modellen. Benchmarks, Anwendungsfälle und Empfehlungen für ESRGAN, Real-ESRGAN, SRCNN, EDVR und andere neuronale Netze.",
@@ -611,7 +611,7 @@
         "ki bildverbesserungsmodelle"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "technical-models",
+      "comparisonType": "technische-modelle",
       "modelCategories": [
         {
           "category": "CNN-basierte Modelle",
@@ -1080,7 +1080,7 @@
             "budget": "10.000 €/Monat"
           },
           "solution": {
-            "type": "Hybrid + Enterprise",
+            "type": "Hybride + Enterprise",
             "architecture": "Edge-Verarbeitung + Cloud-Validierung + Archiv-Speicherung",
             "cost": "9.500 €/Monat",
             "implementation": "6 Monate",
@@ -1239,7 +1239,7 @@
       ]
     },
     {
-      "slug": "speed-vs-quality-tradeoffs",
+      "slug": "geschwindigkeit-vs-qualitaets-kompromisse",
       "title": "Geschwindigkeit vs. Qualität beim KI-Upscaling: Kompromisse & Optimierung 2025",
       "metaTitle": "Geschwindigkeit vs. Qualität beim KI-Upscaling: Kompromisse & Optimierung 2025 | MyImageUpscaler",
       "metaDescription": "Umfassende Analyse der Geschwindigkeit-Qualitäts-Kompromisse beim KI-Bild-Upscaling. Benchmarks, Optimierungsstrategien und Empfehlungen für verschiedene Anwendungsfälle.",
@@ -1254,7 +1254,7 @@
         "qualität vs geschwindigkeit analyse"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "performance",
+      "comparisonType": "leistung",
       "performanceQuadrants": [
         {
           "quadrant": "Schnell & Niedrige Qualität",
@@ -1648,7 +1648,7 @@
       ]
     },
     {
-      "slug": "privacy-security-upscaling",
+      "slug": "datenschutz-sicherheit-upscaling",
       "title": "Datenschutz & Sicherheit beim Bild-Upscaling: Datenschutz & Konformitäts-Leitfaden 2025",
       "metaTitle": "Datenschutz & Sicherheit beim Bild-Upscaling: Datenschutz & Konformitäts-Leitfaden 2025 | MyImageUpscaler",
       "metaDescription": "Vollständiger Leitfaden für Datenschutz und Sicherheit beim KI-Bild-Upscaling. GDPR-Konformität, HIPAA-Anforderungen, Datenschutz und Sicherheitspraktiken für sensible Bilder.",
@@ -1663,7 +1663,7 @@
         "datenschutz-schonende ki"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "comparisonType": "security",
+      "comparisonType": "sicherheit",
       "riskCategories": [
         {
           "category": "Datenschutz-Risiken",

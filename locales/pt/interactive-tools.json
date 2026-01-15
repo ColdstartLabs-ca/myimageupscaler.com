@@ -694,19 +694,19 @@
       "faq": [
         {
           "question": "Qual deve ser o tamanho das imagens do Twitter?",
-          "answer": "Twitter recommends 1200x675 pixels (16:9 ratio) for single images in tweets. This size displays without cropping on most devices."
+          "answer": "O Twitter recomenda 1200x675 pixels (proporção 16:9) para imagens únicas em tweets. Este tamanho é exibido sem recortes na maioria dos dispositivos."
         },
         {
-          "question": "What size is a Twitter header?",
+          "question": "Qual é o tamanho de um cabeçalho do Twitter?",
           "answer": "Twitter headers should be 1500x500 pixels. Nãote that parts of the header may be covered by your profile picture."
         },
         {
-          "question": "Does Twitter compress images?",
+          "question": "O Twitter comprime imagens?",
           "answer": "Yes, Twitter compresses images. Use high-quality exports (90%+) and exact Dimensões to minimize compression artifacts."
         },
         {
-          "question": "What's the maximum image size on Twitter?",
-          "answer": "Twitter allows images up to 5MB for photos. GIFs can be up to 15MB. Our tool helps you stay within these limits."
+          "question": "Qual é o tamanho máximo de imagem no Twitter?",
+          "answer": "O Twitter permite imagens até 5MB para fotos. GIFs podem ter até 15MB. Nossa ferramenta ajuda você a manter-se dentro desses limites."
         }
       ],
       "relatedTools": ["image-resizer", "resize-image-for-linkedin", "resize-image-for-facebook"],
@@ -1208,17 +1208,17 @@
           "example": "Converter a 5MB PNG screenshot to a 600KB JPG for emAIl"
         },
         {
-          "title": "Social Media Uploads",
+          "title": "Uploads em Redes Sociais",
           "description": "Many platforms prefer JPG format for photos. Converter PNGs for faster uploads and better compatibility.",
           "example": "Converter Instagram photos from PNG to JPG for optimal size"
         },
         {
           "title": "Website Otimização",
-          "description": "JPG files load faster than PNG for photographs, improving website .",
+          "description": "Arquivos JPG carregam mais rápido que PNG para fotografias, melhorando o desempenho do site.",
           "example": "Converter product photos from PNG to JPG to improve page speed"
         },
         {
-          "title": "Printing",
+          "title": "Impressão",
           "description": "Most print services prefer JPG format. Converter graphics and photos for printing.",
           "example": "Prepare images for Foto printing at CVS, Walgreens, etc."
         }
@@ -1227,7 +1227,7 @@
         {
           "title": "Massive Tamanho de arquivo Reduction",
           "description": "JPG files are typically 70-90% smaller than PNG for photographs and Complexo images.",
-          "metric": "Up to 90% smaller"
+          "metric": "Até 90% menor"
         },
         {
           "title": "Melhor Compatibilidade",
@@ -1467,7 +1467,7 @@
           "description": "Converter WebP to JPG in under a second with browser-based processing."
         },
         {
-          "title": "Transparency Handling",
+          "title": "Tratamento de Transparência",
           "description": "Escolher background color for WebP images with transparency."
         },
         {
@@ -1515,7 +1515,7 @@
         {
           "title": "Pronto para Impressão",
           "description": "JPG é aceito por todos os serviços de impressão e laboratórios fotográficos.",
-          "metric": "Print compatible"
+          "metric": "Compatível com impressão"
         }
       ],
       "howItWorks": [
@@ -1526,7 +1526,7 @@
         },
         {
           "step": 2,
-          "title": "Set Background Color",
+          "title": "Definir Cor de Fundo",
           "description": "If your WebP has transparency, Escolher a background color for the JPG."
         },
         {
@@ -1546,7 +1546,7 @@
           "answer": "WebP is a modern format not supported everywhere. JPG works on all devices, in all emAIl clients, and with all software - it's the universal Padrão."
         },
         {
-          "question": "What happens to WebP transparency?",
+          "question": "O que acontece com a transparência do WebP?",
           "answer": "JPG doesn't support transparency. Our tool lets you Escolher a background color (white, black, or custom) to fill transparent areas."
         },
         {
@@ -1607,7 +1607,7 @@
           "description": "Converta em menos de um segundo com processamento baseado em navegador."
         },
         {
-          "title": "Software Compatibility",
+          "title": "Compatibilidade de Software",
           "description": "PNG works with older Software that doesn't support WebP."
         },
         {
@@ -1617,31 +1617,31 @@
       ],
       "useCases": [
         {
-          "title": "Design Work",
+          "title": "Trabalho de Design",
           "description": "Converter WebP images for use in design software that prefers PNG.",
           "example": "Aberto web-saved images in Adobe Illustrator"
         },
         {
-          "title": "Preserve Transparency",
-          "description": "Keep transparent backgrounds when converting from WebP.",
+          "title": "Preservar Transparência",
+          "description": "Mantenha fundos transparentes ao converter de WebP.",
           "example": "Converter logo with transparency for editing"
         },
         {
-          "title": "Archival",
+          "title": "Arquivo",
           "description": "Converter to lossless PNG for long-term image storage.",
           "example": "Archive important images without Qualidade loss"
         },
         {
-          "title": "Software Compatibility",
+          "title": "Compatibilidade de Software",
           "description": "Use PNG when your Software doesn't support WebP format.",
           "example": "Open WebP in older Imagem editors"
         }
       ],
       "benefits": [
         {
-          "title": "Keeps Transparency",
-          "description": "Unlike JPG, PNG preserves any transparency from your WebP.",
-          "metric": "Full alpha support"
+          "title": "Mantém Transparência",
+          "description": "Ao contrário do JPG, o PNG preserva qualquer transparência do seu WebP.",
+          "metric": "Suporte alfa completo"
         },
         {
           "title": "Lossless Formato",
@@ -1819,15 +1819,15 @@
           "answer": "WebP offers 25-35% smaller files than JPG at the same visual Qualidade. This means faster website loading, lower bandwidth costs, and better user experience."
         },
         {
-          "question": "Is WebP supported everywhere?",
-          "answer": "WebP is supported by all modern browsers (Chrome, Firefox, Safari, Edge) covering over 95% of users. For older browsers, consider serving JPG as a fallback."
+          "question": "O WebP é suportado em todos os lugares?",
+          "answer": "O WebP é suportado por todos os navegadores modernos (Chrome, Firefox, Safari, Edge) cobrindo mais de 95% dos usuários. Para navegadores mais antigos, considere servir JPG como fallback."
         },
         {
-          "question": "How much smaller will my files be?",
+          "question": "Quanto menores meus arquivos ficarão?",
           "answer": "Typically, WebP files are 25-35% smaller than equivalent JPG files. A 1MB JPG might become 650-750KB as WebP with identical visual Qualidade."
         },
         {
-          "question": "Should I use WebP for all my images?",
+          "question": "Devo usar WebP para todas as minhas imagens?",
           "answer": "For web use, yes! WebP is ideal for websites. For emAIl, printing, or older Software, JPG may be more compatible."
         }
       ],
@@ -2100,7 +2100,7 @@
           "answer": "WebP offers the compression (25-35% smaller than JPEG) with Excelente quality. JPEG is for photos and has universal browser support. PNG is lossless but creates larger files."
         },
         {
-          "question": "Are my images uploaded to your servers?",
+          "question": "Minhas imagens são enviadas para os seus servidores?",
           "answer": "No! All compression happens directly in your browser using Canvas API technology. Your images never leave your device, ensuring Completar privacy."
         },
         {

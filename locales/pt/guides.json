@@ -1,5 +1,5 @@
 {
-  "category": "guides",
+  "category": "guias",
   "pages": [
     {
       "slug": "how-to-upscale-images",
@@ -16,10 +16,10 @@
         "tutorial de ampliação para 4k"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "guides",
+      "category": "guias",
       "guideType": "how-to",
       "description": "Guia passo a passo completo para ampliar imagens usando tecnologia de IA. Aprenda técnicas profissionais para aumentar resolução de imagem preservando qualidade e detalhes.",
-      "difficulty": "beginner",
+      "difficulty": "principiante",
       "estimatedTime": "5-10 minutos",
       "steps": [
         {
@@ -100,10 +100,10 @@
         "compressão webp"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacao",
       "description": "Tudo o que você precisa saber sobre o formato de imagem WebP. Entenda suas vantagens, técnicas de compressão, compatibilidade e como ampliar imagens WebP mantendo qualidade.",
-      "difficulty": "beginner",
+      "difficulty": "principiante",
       "estimatedTime": "5-8 minutos",
       "steps": [
         {
@@ -185,10 +185,10 @@
         "converter heic"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacao",
       "description": "Guia completo para o formato HEIC usado por iPhones e iPads. Entenda compressão, qualidade, problemas de compatibilidade e como ampliar fotos HEIC mantendo a qualidade de imagem da Apple.",
-      "difficulty": "beginner",
+      "difficulty": "principiante",
       "estimatedTime": "6-10 minutos",
       "steps": [
         {
@@ -270,10 +270,10 @@
         "formato raw de câmera"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacao",
       "description": "Guia abrangente para o formato de fotografia RAW. Entenda as vantagens de fotografar em RAW, fluxo de trabalho de processamento RAW e como ampliar imagens RAW mantendo qualidade profissional.",
-      "difficulty": "intermediate",
+      "difficulty": "intermediario",
       "estimatedTime": "8-12 minutos",
       "steps": [
         {
@@ -355,10 +355,10 @@
         "formato de imagem profissional"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacao",
       "description": "Guia abrangente para formato TIFF para imagem profissional. Entenda compressão sem perda, cor de 16 bits, fluxos de trabalho de impressão e como ampliar imagens TIFF mantendo qualidade máxima.",
-      "difficulty": "intermediate",
+      "difficulty": "intermediario",
       "estimatedTime": "6-10 minutos",
       "steps": [
         {
@@ -440,10 +440,10 @@
         "converter bmp"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacao",
       "description": "Guia para formato bitmap BMP. Entenda os detalhes técnicos, limitações, alternativas modernas e como ampliar imagens BMP para melhor qualidade e compatibilidade.",
-      "difficulty": "beginner",
+      "difficulty": "principiante",
       "estimatedTime": "4-6 minutos",
       "steps": [
         {
@@ -525,10 +525,10 @@
         "ampliação svg"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacao",
       "description": "Guia abrangente para formato de vetor SVG. Entenda a diferença entre gráficos vetoriais e raster, quando usar SVG e como lidar com imagens SVG que precisam de aprimoramento de resolução.",
-      "difficulty": "intermediate",
+      "difficulty": "intermediario",
       "estimatedTime": "6-8 minutos",
       "steps": [
         {
@@ -605,10 +605,10 @@
       "primaryKeyword": "formato gif",
       "secondaryKeywords": ["gif vs PNG", "animação gif", "ampliar gif", "imagens animadas"],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacao",
       "description": "Guia para formato GIF para animações e imagens estáticas. Entenda a limitação de 256 cores, quando usar GIF, alternativas modernas (WebP/APNG) e como aprimorar qualidade GIF.",
-      "difficulty": "beginner",
+      "difficulty": "principiante",
       "estimatedTime": "5-8 minutos",
       "steps": [
         {
@@ -690,10 +690,10 @@
         "suporte de navegador avif"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "guides",
-      "guideType": "explainer",
+      "category": "guias",
+      "guideType": "explicacao",
       "description": "Guia abrangente para formato de imagem de próxima geração AVIF. Entenda as vantagens técnicas sobre WebP e JPEG, status atual de suporte de navegador, estratégias de implementação e como AVIF impactará a performance web.",
-      "difficulty": "intermediate",
+      "difficulty": "intermediario",
       "estimatedTime": "7-10 minutos",
       "steps": [
         {

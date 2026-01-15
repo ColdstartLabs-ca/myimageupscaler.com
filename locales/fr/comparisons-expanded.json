@@ -11,7 +11,7 @@
       "primaryKeyword": "upscaling ia vs traditionnel",
       "secondaryKeywords": [
         "comparaison upscaling ia",
-        "bicubic vs lanczos",
+        "bicubique vs lanczos",
         "methodes interpolation image",
         "comparaison qualite upscaling",
         "upscaling reseau neuronal"
@@ -1294,34 +1294,34 @@
           "characteristics": {
             "processingTime": "0.1-1 second per Image",
             "quality": "Basic Amélioration only",
-            "useCases": ["Real-time video", "Preview generation", "Rapid prototyping"],
-            "hardware": "CPU sufficient",
+            "useCases": ["Vidéo temps réel", "Génération daperçus", "Prototypage rapide"],
+            "hardware": "CPU suffisant",
             "cost": "Minimal"
           },
           "examples": [
             {
-              "method": "Bicubic Interpolation",
+              "method": "Interpolation Bicubique",
               "time": "0.2s",
               "quality": "2/10",
-              "bestFor": "Quick previews"
+              "bestFor": "Aperçus rapides"
             },
             {
-              "method": "Lightweight CNN",
+              "method": "CNN léger",
               "time": "0.8s",
               "quality": "4/10",
-              "bestFor": "Real-time applications"
+              "bestFor": "Applications temps réel"
             }
           ]
         },
         {
           "quadrant": "Rapide & Good Qualité",
-          "methods": ["Real-ESRGAN Lite", "EDSR Mobile", "Optimized CNN"],
+          "methods": ["Real-ESRGAN Lite", "EDSR Mobile", "CNN optimisé"],
           "characteristics": {
             "processingTime": "1-5 seconds per Image",
-            "quality": "Noticeable improvement",
-            "useCases": ["Web content", "Social media", "E-commerce"],
-            "hardware": "GPU recommended",
-            "cost": "Low-Moderate"
+            "quality": "Amélioration notable",
+            "useCases": ["Contenu web", "Réseaux sociaux", "E-commerce"],
+            "hardware": "GPU recommandé",
+            "cost": "Faible-Moderé"
           },
           "examples": [
             {
@@ -1331,10 +1331,10 @@
               "bestFor": "Web Optimisation"
             },
             {
-              "method": "Mobile-optimized models",
+              "method": "Modèles optimisés mobile",
               "time": "1.8s",
               "quality": "6/10",
-              "bestFor": "Mobile applications"
+              "bestFor": "Applications mobiles"
             }
           ]
         },
@@ -1443,7 +1443,7 @@
             "energy": "120W"
           },
           {
-            "model": "Ensemble (3 models)",
+            "model": "Ensemble (3 modèles)",
             "time": "24s",
             "psnr": "32.1 dB",
             "ssim": "0.93",

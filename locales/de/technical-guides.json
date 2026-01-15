@@ -15,7 +15,7 @@
         "KI-Hochskalierungsalgorithmen"
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Mittel",
       "technicalLevel": "Umfassend",
       "prerequisites": [
@@ -154,7 +154,7 @@
         "bild skalieren"
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Anfänger",
       "technicalLevel": "Grundlegend",
       "sections": [
@@ -307,7 +307,7 @@
       "primaryKeyword": "bildauflösung",
       "secondaryKeywords": ["dpi erklärt", "ppi erklärt", "pixelgröße", "auflösung für druck"],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Mittelstufe",
       "technicalLevel": "Umfassend",
       "sections": [
@@ -516,7 +516,7 @@
         "web optimierung"
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Fortgeschritten",
       "technicalLevel": "Professionell",
       "sections": [
@@ -714,7 +714,7 @@
         "farbkorrektur"
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Mittelstufe",
       "technicalLevel": "Fortgeschritten",
       "sections": [
@@ -903,7 +903,7 @@
         "Dateigrößenreduzierung"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Mittelstufe",
       "technicalLevel": "Technisch",
       "sections": [
@@ -1120,7 +1120,7 @@
         "bildformat ändern"
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Fortgeschritten",
       "technicalLevel": "Experte",
       "sections": [
@@ -1370,7 +1370,7 @@
         "ladezeit optimieren"
       ],
       "lastUpdated": "2024-12-19T10:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Mittel",
       "technicalLevel": "Praktisch",
       "sections": [
@@ -1589,7 +1589,7 @@
         "Professioneller Fotografie-Workflow"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Fortgeschritten",
       "technicalLevel": "Professionell",
       "sections": [
@@ -1716,7 +1716,7 @@
           "applications": ["Hautretusche", "Detailverbesserung", "Rauschreduzierung"]
         },
         {
-          "technique": "Dodge and Burn",
+          "technique": "Abwedern und Nachbelichten",
           "description": "Selektives Aufhellen und Abdunkeln von Bildbereichen",
           "applications": ["Porträtverbesserung", "Landschaftsdramatik", "Lokaler Kontrast"]
         }
@@ -1821,7 +1821,7 @@
         "ai image upscaling"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "technical-guides",
+      "category": "Technische Leitfäden",
       "difficulty": "Fortgeschritten",
       "technicalLevel": "Technisch",
       "sections": [

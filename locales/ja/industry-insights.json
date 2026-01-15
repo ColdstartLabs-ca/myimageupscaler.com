@@ -109,7 +109,7 @@
       "relatedPages": ["interior-design-photo-enhancement", "architecture-photo-upscaling"]
     },
     {
-      "slug": "ecommerce-product-photo-enhancement",
+      "slug": "eコマース商品写真の強化",
       "title": "ECサイト商品写真強化",
       "metaTitle": "ECサイト商品写真強化 | MyImageUpscaler",
       "metaDescription": "Transform product photos with AI upscaling. Increase conversion rates, reduce returns, and create プロフェッショナル product images that drive sales.",
@@ -230,7 +230,7 @@
       "relatedPages": ["product-photography-guide", "amazon-listing-optimization"]
     },
     {
-      "slug": "medical-imaging-enhancement",
+      "slug": "医療画像の強化",
       "title": "AIを使用した医療画像強化",
       "metaTitle": "AIを使用した医療画像強化 | MyImageUpscaler",
       "metaDescription": "Enhance medical imaging 品質 with AI upscaling. Improve diagnostic accuracy, telemedicine capabilities, and medical record documentation.",
@@ -239,7 +239,7 @@
       "primaryKeyword": "医療画像強化",
       "secondaryKeywords": ["医療画像アップスケーリング", "診断画像強化", "遠隔医療画像品質"],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "industry-insights",
+      "category": "業界インサイト",
       "industry": "ヘルスケア",
       "disclaimer": "AI強化は医療記録文書化、遠隔医療、教育目的のためです。専門的な医療画像機器またはプロフェッショナルな医療分析に置き換わるべきではありません。",
       "problem": {
@@ -334,7 +334,7 @@
       "relatedPages": ["telemedicine-optimization", "medical-documentation-standards"]
     },
     {
-      "slug": "graphic-design-workflow-enhancement",
+      "slug": "グラフィックデザインワークフローの強化",
       "title": "グラフィックデザインワークフロー強化",
       "metaTitle": "グラフィックデザインワークフロー強化 | MyImageUpscaler",
       "metaDescription": "Streamline graphic design workflow with AI image enhancement. Save time, improve 品質, and deliver プロフェッショナル designs faster with AI upscaling.",
@@ -451,7 +451,7 @@
       "relatedPages": ["logo-design-enhancement", "marketing-material-optimization"]
     },
     {
-      "slug": "social-media-marketing-enhancement",
+      "slug": "ソーシャルメディアマーケティングの強化",
       "title": "ソーシャルメディアマーケティング画像強化",
       "metaTitle": "ソーシャルメディアマーケティング画像強化 | MyImageUpscaler",
       "metaDescription": "AI強化画像でソーシャルメディアエンゲージメントをアップさせます。Instagram、Facebook、LinkedInなどの素晴らしいビジュアルを作成し、いいね、シェア、コンバージョンを促進します。",
@@ -576,7 +576,7 @@
       ]
     },
     {
-      "slug": "photography-business-enhancement",
+      "slug": "写真ビジネスの強化",
       "title": "写真ビジネスの強化",
       "metaTitle": "写真ビジネスの強化 | MyImageUpscaler",
       "metaDescription": "AI強化で写真サービスを拡大します。プレミアム画像アップスケーリングを提供し、クライアント満足度を向上させ、AI対応サービスで収益を成長させます。",
@@ -696,7 +696,7 @@
       "relatedPages": ["professional-photography-guide", "photography-pricing-strategies"]
     },
     {
-      "slug": "architecture-visualization-enhancement",
+      "slug": "建築可視化の強化",
       "title": "建築視覚化強化",
       "metaTitle": "建築視覚化強化 | MyImageUpscaler",
       "metaDescription": "AI アップスケーリングで建築視覚化とレンダリングを強化します。素晴らしい建築プレゼンテーションを作成し、クライアントコミュニケーションを改善し、より多くのプロジェクトに勝ちます。",
@@ -709,7 +709,7 @@
         "建築プレゼンテーション画像"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "industry-insights",
+      "category": "業界インサイト",
       "industry": "建築",
       "problem": {
         "title": "課題：プレゼンテーション品質がプロジェクト承認に影響します",
@@ -808,7 +808,7 @@
       "relatedPages": ["3d-rendering-optimization", "architectural-presentation-standards"]
     },
     {
-      "slug": "print-media-enhancement",
+      "slug": "印刷メディアの強化",
       "title": "AIを使用した印刷メディア強化",
       "metaTitle": "AIを使用した印刷メディア強化 | MyImageUpscaler",
       "metaDescription": "Enhance print media 品質 with AI upscaling. Improve newspaper photos, magazine images, and book illustrations for プロフェッショナル print production.",
@@ -817,7 +817,7 @@
       "primaryKeyword": "印刷メディア強化",
       "secondaryKeywords": ["新聞写真強化", "雑誌画像アップスケーリング", "書籍イラスト強化"],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "industry-insights",
+      "category": "業界インサイト",
       "industry": "印刷メディア",
       "problem": {
         "title": "課題：低解像度画像は印刷品質を制限します",
@@ -1029,16 +1029,16 @@
       "relatedPages": ["hotel-marketing-optimization", "tourism-photography-guide"]
     },
     {
-      "slug": "education-content-enhancement",
+      "slug": "教育コンテンツの強化",
       "title": "教育コンテンツの画質向上",
       "metaTitle": "教育コンテンツの画質向上 | MyImageUpscaler",
       "metaDescription": "Enhance educational content with AI upscaling. Create better learning materials, improve textbook 品質, and develop engaging educational visuals for students.",
       "h1": "教育コンテンツ向けAI画質向上",
       "intro": "Visual 品質 significantly impacts learning effectiveness and student engagement. AI enhancement helps educators and publishers create プロフェッショナル educational materials that enhance the learning experience.",
-      "primaryKeyword": "educational content enhancement",
-      "secondaryKeywords": ["textbook image enhancement", "学習教材の最適化", "教育ビジュアル品質"],
+      "primaryKeyword": "教育コンテンツの強化",
+      "secondaryKeywords": ["教科書画像の強化", "学習教材の最適化", "教育ビジュアル品質"],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "industry-insights",
+      "category": "業界インサイト",
       "industry": "教育",
       "problem": {
         "title": "課題：低い視覚品質が学習を阻害",
@@ -1138,7 +1138,7 @@
       "relatedPages": ["educational-publishing-standards", "online-learning-optimization"]
     },
     {
-      "slug": "nonprofit-visual-enhancement",
+      "slug": "非営利団体のビジュアル強化",
       "title": "非営利団体視覚強化",
       "metaTitle": "非営利団体視覚強化 | MyImageUpscaler",
       "metaDescription": "Enhance nonprofit visuals with AI upscaling. Improve fundrAIsing campAIgns, create compelling awareness materials, and amplify social impact with プロフェッショナル imagery.",
@@ -1255,20 +1255,16 @@
       "relatedPages": ["nonprofit-marketing-guide", "fundraising-visual-strategy"]
     },
     {
-      "slug": "manufacturing-industrial-enhancement",
+      "slug": "製造業の強化",
       "title": "製造およびインダストリアル強化",
       "metaTitle": "製造・産業向け画質向上 | MyImageUpscaler",
       "metaDescription": "AIアップスケーリングで製造およびインダストリアル写真を強化します。製品写真、マーケティング資料、ドキュメント化を改善して、より良いビジネス結果を実現します。",
       "h1": "製造およびインダストリアルのためのAI強化",
       "intro": "Manufacturing and industrial companies need プロフェッショナル visuals for marketing, documentation, and client communication. AI enhancement creates high-品質 images that showcase products and capabilities effectively.",
-      "primaryKeyword": "manufacturing industrial enhancement",
-      "secondaryKeywords": [
-        "industrial photography enhancement",
-        "manufacturing marketing visuals",
-        "product photography manufacturing"
-      ],
+      "primaryKeyword": "製造業の強化",
+      "secondaryKeywords": ["産業写真の強化", "製造業マーケティングビジュアル", "製造業の商品写真"],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "industry-insights",
+      "category": "業界インサイト",
       "industry": "製造",
       "problem": {
         "title": "チャレンジ：インダストリアル環境は写真撮影が難しい",
@@ -1372,20 +1368,20 @@
       "relatedPages": ["industrial-photography-guide", "manufacturing-marketing-optimization"]
     },
     {
-      "slug": "legal-documentation-enhancement",
+      "slug": "法的文書の強化",
       "title": "法的文書強化",
       "metaTitle": "法的文書の画質向上 | MyImageUpscaler",
       "metaDescription": "AIアップスケーリングで法的ドキュメント写真を強化します。証拠写真、法廷プレゼンテーション、法的ケースドキュメント化を改善してより良い法的結果を実現します。",
       "h1": "法的ドキュメント化のためのAI強化",
       "intro": "Legal プロフェッショナルs need high-品質 visual documentation for evidence, case preparation, and court presentations. AI enhancement improves clarity and プロフェッショナルism of legal visual materials.",
-      "primaryKeyword": "legal documentation enhancement",
+      "primaryKeyword": "法的文書の強化",
       "secondaryKeywords": [
-        "evidence photo enhancement",
-        "court presentation visuals",
-        "legal case documentation"
+        "証拠写真の強化",
+        "裁判プレゼンテーションビジュアル",
+        "法的案件の文書化"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "industry-insights",
+      "category": "業界インサイト",
       "industry": "法律",
       "disclaimer": "AI強化は、プレゼンテーションおよびドキュメント化の目的のみです。事実を虚偽表示したり、法的整合性を損なう可能性のある方法で証拠写真を変更しないでください。",
       "problem": {
@@ -1501,20 +1497,20 @@
       "relatedPages": ["legal-documentation-standards", "court-presentation-guidelines"]
     },
     {
-      "slug": "sports-fitness-enhancement",
+      "slug": "スポーツフィットネスの強化",
       "title": "スポーツとフィットネスのビジュアル強化",
       "metaTitle": "スポーツ・フィットネス向けビジュアル画質向上 | MyImageUpscaler",
       "metaDescription": "AIアップスケーリングでスポーツとフィットネスのビジュアルを強化します。運動選手の写真、ジムマーケティング資料、フィットネスコンテンツを改善して、より良いエンゲージメントと結果を実現します。",
       "h1": "スポーツとフィットネスのビジュアルのためのAI強化",
       "intro": "スポーツおよびフィットネス業界は、アスリートを動機付け、顧客を引き付けるために刺激的なビジュアルに依存しています。AI強化は、エンゲージメントとメンバーシップを促進する素晴らしいアクションショット、施設写真、マーケティング資料を作成します。",
-      "primaryKeyword": "sports fitness enhancement",
+      "primaryKeyword": "スポーツフィットネスの強化",
       "secondaryKeywords": [
-        "athletic photography enhancement",
-        "gym marketing photos",
-        "fitness content optimization"
+        "アスリート写真の強化",
+        "ジムマーケティング写真",
+        "フィットネスコンテンツの最適化"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "industry-insights",
+      "category": "業界インサイト",
       "industry": "スポーツ・フィットネス",
       "problem": {
         "title": "チャレンジ：アクション写真撮影をキャプチャするのは難しい",

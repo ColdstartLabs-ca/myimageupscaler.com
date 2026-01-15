@@ -1,5 +1,5 @@
 {
-  "category": "format-scale",
+  "category": "format-échelle",
   "meta": {
     "totalPages": 60,
     "lastUpdated": "2026-01-08",
@@ -468,17 +468,17 @@
         {
           "title": "Parfait Transparency",
           "description": "Alpha channel transparency is Préserverd exactly during 2X upscaling.",
-          "metric": "100% transparent"
+          "metric": "100 % transparent"
         },
         {
-          "title": "Sharp Edges",
+          "title": "Bords nets",
           "description": "MIAntIAns crisp edges on text, logos, and graphics after doubling.",
           "metric": "Edge Préserverd"
         },
         {
           "title": "Fast Traitement",
           "description": "Quick 2X scaling avec PNG transparency handling.",
-          "metric": "10-20 seconds"
+          "metric": "10-20 secondes"
         }
       ],
       "bestPractices": [
@@ -496,7 +496,7 @@
         },
         {
           "title": "MIAntIAn Aspect Ratio",
-          "description": "Keep original proportions to avoid distortion of graphics and text."
+          "description": "Conservez les proportions dʼorigine pour éviter la distorsion des graphiques et du texte."
         }
       ],
       "tips": [
@@ -804,10 +804,10 @@
         },
         {
           "title": "Gérer Taille de fichiers",
-          "description": "16X PNGs are extremely large; carefully plan storage and transfer."
+          "description": "Les PNG 16X sont extrêmement volumineux ; planifiez soigneusement le stockage et le transfert."
         },
         {
-          "title": "Consider Alternatives",
+          "title": "Envisager des alternatives",
           "description": "If you have vector originals, reCréer at larger size rather than 16X upscaling."
         }
       ],
@@ -827,7 +827,7 @@
           "answer": "16X PNG upscaling is only pour specialized applications requiring extreme enlargement de very small sources Quand no alternatives exist. Use only Quand absolutely necessary."
         },
         {
-          "question": "Is 16X PNG upscaling practical?",
+          "question": "Lʼagrandissement PNG 16X est-il pratique ?",
           "answer": "pour most practical purposes, no. 16X PNGs are extremely large and should only be Utilisé pour specialized applications Comme archival projects or pourensic Améliorerment."
         },
         {
@@ -860,12 +860,12 @@
       "scaleExpectations": "2X scaling Double Résolution Tout en mIAntIAning WebP's Compression advantages. Web-optimized output avec Meilleur Qualité. Traitement time: 10-20 seconds.",
       "useCases": [
         {
-          "title": "Web Optimization",
+          "title": "Optimisation web",
           "description": "Double WebP Image Résolution Tout en mIAntIAning Web-friendly Taille de fichiers.",
           "example": "Améliorer hero Images pour retina displays avecout increasing load time"
         },
         {
-          "title": "Responsive Images",
+          "title": "Images responsives",
           "description": "Créer 2X WebP versions pour responsive Image srcset attributes.",
           "example": "Generate 2x versions pour high-DPI device targeting"
         },
@@ -882,9 +882,9 @@
       ],
       "benefits": [
         {
-          "title": "WebP Efficiency",
+          "title": "Efficacité WebP",
           "description": "2X scaling mIAntIAns WebP's Compression Avantages Tout en increasing Résolution.",
-          "metric": "Web optimized"
+          "metric": "Optimisé pour le web"
         },
         {
           "title": "Fast Traitement",
@@ -1078,12 +1078,12 @@
           "example": "SCommentcase Numérique art at 8K Qualité avec optimized loading"
         },
         {
-          "title": "Archival Web Content",
+          "title": "Contenu web dʼarchives",
           "description": "Future-proof Web Images avec Maximum Résolution WebP versions.",
           "example": "Créer archival-Qualité versions of important Web graphics"
         },
         {
-          "title": "Specialized Displays",
+          "title": "Écrans spécialisés",
           "description": "Prepare WebP Images pour 8K displays and ultra-high-Résolution Web applications.",
           "example": "Optimize pour Numérique signage and trade sComment Web displays"
         }
@@ -1100,18 +1100,18 @@
           "metric": "Superior Compression"
         },
         {
-          "title": "Future Proof",
+          "title": "Preuve pour lʼavenir",
           "description": "Maximum Résolution ensures content remIAns relevant as display technology advances.",
           "metric": "Future Prêt"
         }
       ],
       "bestPractices": [
         {
-          "title": "Specialized Application",
+          "title": "Application spécialisée",
           "description": "8X WebP is pour specialized applications requiring Maximum Qualité avec Web efficiency."
         },
         {
-          "title": "Consider Conversion",
+          "title": "Envisager la conversion",
           "description": "pour Impression use, convert 8X WebP to PNG or TIFF after upscaling."
         },
         {
@@ -1119,8 +1119,8 @@
           "description": "8X WebPs are large despite Compression efficiency; plan bandwidth accordingly."
         },
         {
-          "title": "Browser Testing",
-          "description": "Test 8X WebP compatibility across target browsers and devices."
+          "title": "Tests de navigateur",
+          "description": "Testez la compatibilité WebP 8X sur les navigateurs et appareils cibles."
         }
       ],
       "tips": [
@@ -1172,7 +1172,7 @@
       "scaleExpectations": "16X scaling Créers 256 times Plus pixels. Extreme enlargement pour specialized applications only. Traitement time: 2-5 minutes.",
       "useCases": [
         {
-          "title": "Specialized Web Projects",
+          "title": "Projets web spécialisés",
           "description": "Créer extreme Résolution WebP Images pour unique Web applications.",
           "example": "Generate Maximum Résolution Images pour specialized Numérique experiences"
         },
@@ -1182,7 +1182,7 @@
           "example": "Créer archival-Qualité versions of Numérique artwork"
         },
         {
-          "title": "Research Applications",
+          "title": "Applications de recherche",
           "description": "Specialized applications requiring extreme WebP Résolution.",
           "example": "Améliorer research graphics requiring Maximum possible detIAl"
         }
@@ -1199,33 +1199,33 @@
           "metric": "pourmat efficiency"
         },
         {
-          "title": "Specialized Use",
+          "title": "Usage spécialisé",
           "description": "pour specialized applications requiring Maximum WebP Résolution.",
           "metric": "Maximum possible"
         }
       ],
       "bestPractices": [
         {
-          "title": "Specialized Only",
+          "title": "Usage spécialisé uniquement",
           "description": "16X WebP scaling is only pour highly specialized applications."
         },
         {
-          "title": "Consider Alternatives",
+          "title": "Envisager des alternatives",
           "description": "pour most practical uses, lower scaling factors or lossless pourmats are Meilleur."
         },
         {
-          "title": "Testing Required",
+          "title": "Tests requis",
           "description": "Thoroughly test 16X WebP compatibility and perpourmance bepoure deployment."
         },
         {
           "title": "Taille de fichier Warning",
-          "description": "16X WebPs will be extremely large; carefully consider storage and bandwidth."
+          "description": "Les WebP 16X seront extrêmement volumineux ; considérez soigneusement le stockage et la bande passante."
         }
       ],
       "tips": [
         "Only use 16X Quand absolutely necessary pour specialized applications",
         "Consider if the extreme Résolution justifies the Taille de fichier",
-        "Test thoroughly across all target browsers and devices",
+        "Testez soigneusement sur tous les navigateurs et appareils cibles",
         "May want to consider lossless pourmats pour 16X scaling instead"
       ],
       "faq": [
@@ -1276,12 +1276,12 @@
           "example": "Améliorer iPhone photos to 2x pour retina displays"
         },
         {
-          "title": "Apple Device Photos",
+          "title": "Photos dʼappareils Apple",
           "description": "Improve iPad and Mac photo Résolution avec 2X scaling.",
           "example": "Double iPad photos pour Meilleur Qualité"
         },
         {
-          "title": "Web Preparation",
+          "title": "Préparation web",
           "description": "Convert and Agrandir HEIC to Web-friendly pourmats at 2X.",
           "example": "Améliorer HEIC photos pour Web use"
         }
@@ -1290,12 +1290,12 @@
         {
           "title": "Apple pourmat Optimized",
           "description": "Specialized handling pour HEIC pourmat de Apple devices.",
-          "metric": "Apple native"
+          "metric": "Natif Apple"
         },
         {
           "title": "Fast Traitement",
           "description": "Quick 2X Améliorerment pour HEIC photos.",
-          "metric": "10-20 seconds"
+          "metric": "10-20 secondes"
         },
         {
           "title": "Qualité Préserverd",
@@ -1305,7 +1305,7 @@
       ],
       "bestPractices": [
         {
-          "title": "iPhone Photos",
+          "title": "Photos iPhone",
           "description": "HEIC de iPhone cameras Agrandir beautifully avec 2X scaling."
         },
         {
@@ -1333,7 +1333,7 @@
           "answer": "Yes! Our IA mIAntIAns HEIC Qualité Tout en doubling Résolution, resulting in Améliorerd iPhone photos avec natural appearance."
         },
         {
-          "question": "Can I convert HEIC after 2X upscaling?",
+          "question": "Puis-je convertir HEIC après lʼagrandissement 2X ?",
           "answer": "Yes! After 2X upscaling, you can download your Améliorerd HEIC photos in JPEG, PNG, or other pourmats pour Meilleur compatibility."
         },
         {
@@ -1383,7 +1383,7 @@
       ],
       "benefits": [
         {
-          "title": "Dramatic Improvement",
+          "title": "Amélioration spectaculaire",
           "description": "4X scaling Fournit substantial Résolution Augmenter pour HEIC photos.",
           "metric": "16x Plus pixels"
         },
@@ -1393,9 +1393,9 @@
           "metric": "Impression Prêt"
         },
         {
-          "title": "Apple Optimized",
+          "title": "Optimisé Apple",
           "description": "Specialized Traitement pour HEIC pourmat de Apple devices.",
-          "metric": "Apple native"
+          "metric": "Natif Apple"
         }
       ],
       "bestPractices": [
@@ -1421,7 +1421,7 @@
       "faq": [
         {
           "question": "Quoi Résolution will my HEIC photo be after 4X upscaling?",
-          "answer": "If your HEIC photo is 3000x4000 pixels (typical iPhone), it will become 12000x16000 pixels after 4X upscaling."
+          "answer": "Si votre photo HEIC mesure 3000x4000 pixels (iPhone typique), elle deviendra 12000x16000 pixels après lʼagrandissement 4X."
         },
         {
           "question": "Is 4X upscaling good pour iPhone photos?",
@@ -1451,7 +1451,7 @@
         "8x heic Agrandisseur",
         "Maximum heic Résolution",
         "heic 8x Améliorerr",
-        "extreme heic upscaling"
+        "agrandissement heic extrême"
       ],
       "lastUpdated": "2026-01-06",
       "category": "pourmat-scale",
@@ -1461,7 +1461,7 @@
       "scaleExpectations": "8X scaling Créers 64 times Plus pixels. Permettres extreme enlargement de HEIC sources. Traitement time: 60-120 seconds.",
       "useCases": [
         {
-          "title": "Extreme iPhone Photo Enlargement",
+          "title": "Agrandissement extrême de photos iPhone",
           "description": "Créer massive Impressions de iPhone HEIC photos.",
           "example": "Transpourm iPhone photos into poster-Qualité Impressions"
         },
@@ -1483,9 +1483,9 @@
           "metric": "Professionnel Impressioning"
         },
         {
-          "title": "Apple Optimized",
+          "title": "Optimisé Apple",
           "description": "Specialized Traitement pour Apple HEIC pourmat.",
-          "metric": "Apple native"
+          "metric": "Natif Apple"
         }
       ],
       "bestPractices": [
@@ -1499,7 +1499,7 @@
         },
         {
           "title": "Allow Traitement Time",
-          "description": "8X upscaling requires significant computation; expect 60-120 seconds."
+          "description": "Lʼagrandissement 8X nécessite un calcul important ; prévoyez 60-120 secondes."
         }
       ],
       "tips": [
@@ -1566,7 +1566,7 @@
         {
           "title": "Maximum Data Préserverd",
           "description": "Works avec RAW pourmat's complete Image data pour 2X Améliorerment.",
-          "metric": "Full data"
+          "metric": "Données complètes"
         },
         {
           "title": "Professionnel Résultats",
@@ -1585,7 +1585,7 @@
           "description": "Toujours work avec RAW files bepoure converting to other pourmats pour Meilleur 2X Résultats."
         },
         {
-          "title": "Convert After Upscaling",
+          "title": "Convertir après agrandissement",
           "description": "Perpourm 2X upscaling on RAW, then convert to TIFF/JPEG pour output."
         },
         {
@@ -1648,16 +1648,16 @@
           "example": "Créer exhibition-Qualité Impressions de RAW"
         },
         {
-          "title": "Commercial Photography",
+          "title": "Photographie commerciale",
           "description": "Agrandir RAW pour commercial and advertising applications.",
           "example": "Prepare RAW photos pour high-end commercial use"
         }
       ],
       "benefits": [
         {
-          "title": "Maximum RAW Data",
+          "title": "Données RAW maximales",
           "description": "Utilizes complete RAW Image data pour 4X Améliorerment.",
-          "metric": "Full data utilized"
+          "metric": "Données complètes utilisées"
         },
         {
           "title": "Professionnel Qualité",
@@ -1676,12 +1676,12 @@
           "description": "Toujours work avec original RAW files pour Optimal 4X Résultats."
         },
         {
-          "title": "Convert to TIFF",
+          "title": "Convertir en TIFF",
           "description": "Convert 4X Agrandird RAW to TIFF pour Impression workflow compatibility."
         },
         {
           "title": "Allow Traitement Time",
-          "description": "4X RAW upscaling requires significant computation; expect 30-60 seconds."
+          "description": "Lʼagrandissement RAW 4X nécessite un calcul important ; prévoyez 30-60 secondes."
         }
       ],
       "tips": [
@@ -1693,7 +1693,7 @@
       "faq": [
         {
           "question": "Quoi Résolution will my RAW photo be after 4X upscaling?",
-          "answer": "If your RAW photo is 6000x4000 pixels (24MP), it will become 24000x16000 pixels after 4X upscaling."
+          "answer": "Si votre photo RAW mesure 6000x4000 pixels (24MP), elle deviendra 24000x16000 pixels après lʼagrandissement 4X."
         },
         {
           "question": "Is 4X upscaling good pour RAW photos?",
@@ -1719,7 +1719,7 @@
         "8x raw Agrandisseur",
         "Maximum raw Résolution",
         "raw 8x Améliorerr",
-        "extreme raw upscaling"
+        "agrandissement raw extrême"
       ],
       "lastUpdated": "2026-01-06",
       "category": "pourmat-scale",
@@ -1757,8 +1757,8 @@
         },
         {
           "title": "Data Préserverd",
-          "description": "Utilizes complete RAW data even at extreme 8X magnification.",
-          "metric": "Full data"
+          "description": "Utilise les données RAW complètes même à un agrandissement extrême de 8X.",
+          "metric": "Données complètes"
         }
       ],
       "bestPractices": [
@@ -1767,12 +1767,12 @@
           "description": "Use the absolute Meilleur RAW files pour 8X scaling Résultats."
         },
         {
-          "title": "Convert to TIFF",
+          "title": "Convertir en TIFF",
           "description": "Toujours convert 8X Agrandird RAW to TIFF pour Impression workflows."
         },
         {
-          "title": "Allow Maximum Time",
-          "description": "8X RAW upscaling requires extensive computation; expect 60-120 seconds."
+          "title": "Prévoir le temps maximum",
+          "description": "Lʼagrandissement RAW 8X nécessite un calcul étendu ; prévoyez 60-120 secondes."
         }
       ],
       "tips": [
@@ -1809,7 +1809,7 @@
       "secondaryKeywords": [
         "16x raw Agrandisseur",
         "extreme raw Améliorerment",
-        "raw 16x upscaling",
+        "agrandissement raw 16x",
         "Maximum raw Résolution"
       ],
       "lastUpdated": "2026-01-06",
@@ -1830,7 +1830,7 @@
           "example": "Créer gallery-sized Impressions de smaller RAW"
         },
         {
-          "title": "Archival Projects",
+          "title": "Projets dʼarchives",
           "description": "Maximum Résolution preservation of important RAW photographs.",
           "example": "Créer archival versions of historic RAW Images"
         }
@@ -1842,8 +1842,8 @@
           "metric": "256x Plus pixels"
         },
         {
-          "title": "Complete Data Utilization",
-          "description": "Uses every bit of RAW data even at extreme magnification.",
+          "title": "Utilisation complète des données",
+          "description": "Utilise chaque bit des données RAW même à un agrandissement extrême.",
           "metric": "Full data Utilisé"
         },
         {
@@ -1854,7 +1854,7 @@
       ],
       "bestPractices": [
         {
-          "title": "Specialized Use Only",
+          "title": "Usage spécialisé uniquement",
           "description": "16X RAW scaling is only pour highly specialized applications."
         },
         {
@@ -1862,7 +1862,7 @@
           "description": "Must use the absolute highest Qualité RAW avIAlable."
         },
         {
-          "title": "Convert to TIFF",
+          "title": "Convertir en TIFF",
           "description": "Convert to TIFF after 16X upscaling pour Impression workflows."
         }
       ],
@@ -1900,7 +1900,7 @@
       "secondaryKeywords": [
         "16x heic Agrandisseur",
         "extreme heic Améliorerment",
-        "heic 16x upscaling",
+        "agrandissement heic 16x",
         "Maximum heic Résolution"
       ],
       "lastUpdated": "2026-01-06",
@@ -1911,12 +1911,12 @@
       "scaleExpectations": "16X scaling Créers 256 times Plus pixels. Extreme enlargement pour specialized use cases only. Traitement time: 2-5 minutes.",
       "useCases": [
         {
-          "title": "Specialized iPhone Photo Projects",
+          "title": "Projets spécialisés de photos iPhone",
           "description": "Créer extreme Résolution versions of iPhone photos pour unique applications.",
           "example": "Transpourm iPhone photos into massive Résolution pour specialized Impressioning"
         },
         {
-          "title": "Archival Mobile Photography",
+          "title": "Photographie mobile dʼarchives",
           "description": "Maximum Résolution preservation of important iPhone HEIC photos.",
           "example": "Créer archival versions of significant mobile photos"
         }
@@ -1928,19 +1928,19 @@
           "metric": "256x Plus pixels"
         },
         {
-          "title": "Apple Optimized",
+          "title": "Optimisé Apple",
           "description": "Specialized Traitement pour Apple HEIC pourmat.",
-          "metric": "Apple native"
+          "metric": "Natif Apple"
         },
         {
-          "title": "Specialized Use",
+          "title": "Usage spécialisé",
           "description": "pour specialized applications requiring Maximum HEIC Résolution.",
           "metric": "Maximum possible"
         }
       ],
       "bestPractices": [
         {
-          "title": "Specialized Use Only",
+          "title": "Usage spécialisé uniquement",
           "description": "16X HEIC scaling is only pour highly specialized applications."
         },
         {
@@ -2002,17 +2002,17 @@
           "example": "Améliorer TIFF files pour Professionnel Impressioning"
         },
         {
-          "title": "Archival Improvement",
+          "title": "Amélioration dʼarchives",
           "description": "Augmenter Résolution of archival TIFF Images.",
           "example": "Double Résolution of important archival TIFFs"
         },
         {
           "title": "Professionnel Graphics",
           "description": "Améliorer TIFF graphics pour Professionnel use.",
-          "example": "Scale TIFF logos and graphics to 2X"
+          "example": "Mettre à lʼéchelle les logos et graphiques TIFF à 2X"
         },
         {
-          "title": "Prepress Preparation",
+          "title": "Préparation prépresse",
           "description": "Prepare TIFF Images pour Impression production at 2X Résolution.",
           "example": "Améliorer TIFF pour prepress workflows"
         }
@@ -2021,7 +2021,7 @@
         {
           "title": "Lossless Qualité",
           "description": "2X scaling mIAntIAns TIFF's lossless characteristics Parfaitly.",
-          "metric": "100% lossless"
+          "metric": "100 % sans perte"
         },
         {
           "title": "Impression Standard",
@@ -2031,7 +2031,7 @@
         {
           "title": "Fast Traitement",
           "description": "Quick 2X Améliorerment avec Professionnel Qualité output.",
-          "metric": "10-20 seconds"
+          "metric": "10-20 secondes"
         }
       ],
       "bestPractices": [
@@ -2116,7 +2116,7 @@
           "example": "Améliorer TIFF pour high-end commercial Impressioning"
         },
         {
-          "title": "Fine Art Production",
+          "title": "Production dʼart",
           "description": "Créer fine art Impressions de 4X Agrandird TIFF Images.",
           "example": "Produce museum-Qualité Impressions de TIFF"
         }
@@ -2125,7 +2125,7 @@
         {
           "title": "Lossless Qualité",
           "description": "4X scaling mIAntIAns Parfait lossless TIFF Qualité.",
-          "metric": "100% lossless"
+          "metric": "100 % sans perte"
         },
         {
           "title": "Professionnel Standard",
@@ -2153,7 +2153,7 @@
         },
         {
           "title": "Taille de fichier Planning",
-          "description": "4X TIFFs are very large; plan storage and transfer accordingly."
+          "description": "Les TIFF 4X sont très volumineux ; prévoyez le stockage et le transfert en conséquence."
         }
       ],
       "tips": [
@@ -2195,7 +2195,7 @@
         "8x tiff Agrandisseur",
         "Maximum tiff Résolution",
         "tiff 8x Améliorerr",
-        "extreme tiff upscaling"
+        "agrandissement tiff extrême"
       ],
       "lastUpdated": "2026-01-06",
       "category": "pourmat-scale",
@@ -2224,7 +2224,7 @@
         {
           "title": "Maximum Lossless Qualité",
           "description": "8X scaling mIAntIAns Parfait lossless TIFF Qualité.",
-          "metric": "100% lossless"
+          "metric": "100 % sans perte"
         },
         {
           "title": "Professionnel Grade",
@@ -2243,12 +2243,12 @@
           "description": "Our IA Préservers TIFF's lossless nature during 8X upscaling."
         },
         {
-          "title": "Specialized Application",
+          "title": "Application spécialisée",
           "description": "8X TIFF is pour specialized applications requiring Maximum Résolution."
         },
         {
           "title": "Taille de fichier Gérerment",
-          "description": "8X TIFFs are extremely large; plan storage and transfer carefully."
+          "description": "Les TIFF 8X sont extrêmement volumineux ; planifiez soigneusement le stockage et le transfert."
         }
       ],
       "tips": [
@@ -2285,7 +2285,7 @@
       "secondaryKeywords": [
         "16x tiff Agrandisseur",
         "extreme tiff Améliorerment",
-        "tiff 16x upscaling",
+        "agrandissement tiff 16x",
         "Maximum tiff Résolution"
       ],
       "lastUpdated": "2026-01-06",
@@ -2301,7 +2301,7 @@
           "example": "Generate building-sized graphics de TIFF"
         },
         {
-          "title": "Archival Projects",
+          "title": "Projets dʼarchives",
           "description": "Maximum Résolution preservation of important TIFF Images.",
           "example": "Créer archival versions of historic TIFF Images"
         }
@@ -2310,7 +2310,7 @@
         {
           "title": "Extreme Lossless Qualité",
           "description": "16X scaling mIAntIAns Parfait lossless TIFF Qualité.",
-          "metric": "100% lossless"
+          "metric": "100 % sans perte"
         },
         {
           "title": "Maximum Résolution",
@@ -2318,14 +2318,14 @@
           "metric": "Maximum possible"
         },
         {
-          "title": "Specialized Grade",
+          "title": "Niveau spécialisé",
           "description": "pour highly specialized Professionnel applications.",
-          "metric": "Specialized use"
+          "metric": "Usage spécialisé"
         }
       ],
       "bestPractices": [
         {
-          "title": "Specialized Use Only",
+          "title": "Usage spécialisé uniquement",
           "description": "16X TIFF scaling is only pour highly specialized applications."
         },
         {
@@ -2334,7 +2334,7 @@
         },
         {
           "title": "Taille de fichier Warning",
-          "description": "16X TIFFs are extremely large; carefully plan storage."
+          "description": "Les TIFF 16X sont extrêmement volumineux ; planifiez soigneusement le stockage."
         }
       ],
       "tips": [
@@ -2387,12 +2387,12 @@
           "example": "Améliorer Windows BMP Images pour modern displays"
         },
         {
-          "title": "Legacy Image Modernization",
+          "title": "Modernisation dʼimages héritées",
           "description": "Improve older BMP Images pour modern use.",
           "example": "Double Résolution of legacy BMP graphics"
         },
         {
-          "title": "Simple Image Scaling",
+          "title": "Mise à lʼéchelle simple dʼimages",
           "description": "Quick 2X Améliorerment of BMP Images.",
           "example": "Scale BMP Images to Double Résolution"
         }
@@ -2401,12 +2401,12 @@
         {
           "title": "Simple pourmat",
           "description": "BMP is strIAghtpourward pour 2X upscaling applications.",
-          "metric": "Easy to use"
+          "metric": "Facile à utiliser"
         },
         {
           "title": "Fast Traitement",
           "description": "Quick 2X Améliorerment pour BMP Images.",
-          "metric": "10-20 seconds"
+          "metric": "10-20 secondes"
         },
         {
           "title": "Qualité Improved",
@@ -2424,14 +2424,14 @@
           "description": "BMP files are large; 2X upscaling Quadruples Taille de fichier."
         },
         {
-          "title": "Modern Use",
+          "title": "Usage moderne",
           "description": "BMP is less Commun today; consider modern pourmats."
         }
       ],
       "tips": [
         "Good pour legacy BMP Image Améliorerment",
         "Consider pourmat conversion after upscaling",
-        "BMP files are uncompressed and large",
+        "Les fichiers BMP sont non compressés et volumineux",
         "2X Fournit good balance of Qualité and Taille de fichier"
       ],
       "faq": [
@@ -2440,12 +2440,12 @@
           "answer": "Use 2X pour moderate Améliorerment of BMP Images Quand you need Meilleur Résolution pour modern displays or applications."
         },
         {
-          "question": "Should I convert BMP after 2X upscaling?",
+          "question": "Dois-je convertir BMP après lʼagrandissement 2X ?",
           "answer": "Yes! Consider converting to PNG or JPEG after 2X upscaling pour Meilleur compatibility and smaller Taille de fichiers."
         },
         {
           "question": "Comment big will 2X BMP files be?",
-          "answer": "BMP files will be approximately 4 times larger after 2X upscaling since BMP is uncompressed."
+          "answer": "Les fichiers BMP seront environ 4 fois plus volumineux après lʼagrandissement 2X car BMP est non compressé."
         }
       ],
       "relatedFormats": ["Agrandir-bmp-Images", "Agrandir-png-Images"],
@@ -2512,7 +2512,7 @@
         },
         {
           "title": "Taille de fichier Gérerment",
-          "description": "4X BMPs are very large; plan storage accordingly."
+          "description": "Les BMP 4X sont très volumineux ; prévoyez le stockage en conséquence."
         },
         {
           "title": "Consider Modern pourmats",
@@ -2528,10 +2528,10 @@
       "faq": [
         {
           "question": "Quoi Résolution will my BMP be after 4X upscaling?",
-          "answer": "If your BMP is 1000x1000 pixels, it will become 4000x4000 pixels after 4X upscaling."
+          "answer": "Si votre BMP mesure 1000x1000 pixels, il deviendra 4000x4000 pixels après lʼagrandissement 4X."
         },
         {
-          "question": "Should I convert BMP after 4X upscaling?",
+          "question": "Dois-je convertir BMP après lʼagrandissement 4X ?",
           "answer": "Yes! Converting to PNG or TIFF after 4X upscaling Fournit Meilleur compatibility and Plus Efficace storage."
         },
         {
@@ -2554,7 +2554,7 @@
         "8x bmp Agrandisseur",
         "Maximum bmp Résolution",
         "bmp 8x Améliorerr",
-        "extreme bmp upscaling"
+        "agrandissement bmp extrême"
       ],
       "lastUpdated": "2026-01-06",
       "category": "pourmat-scale",
@@ -2569,7 +2569,7 @@
           "example": "Transpourm old BMP into Maximum Résolution versions"
         },
         {
-          "title": "Archival Projects",
+          "title": "Projets dʼarchives",
           "description": "Future-proof important BMP Images avec Maximum Résolution.",
           "example": "Créer archival versions of historic BMP graphics"
         }
@@ -2586,7 +2586,7 @@
           "metric": "Maximum detIAl"
         },
         {
-          "title": "Specialized Use",
+          "title": "Usage spécialisé",
           "description": "pour specialized applications requiring Maximum BMP Résolution.",
           "metric": "Maximum possible"
         }
@@ -2598,7 +2598,7 @@
         },
         {
           "title": "Taille de fichier Warning",
-          "description": "8X BMPs are extremely large; plan storage carefully."
+          "description": "Les BMP 8X sont extrêmement volumineux ; planifiez soigneusement le stockage."
         }
       ],
       "tips": [
@@ -2617,7 +2617,7 @@
           "answer": "Use 8X BMP pour specialized applications requiring Maximum Résolution Améliorerment of important bitmap Images."
         },
         {
-          "question": "Should I convert BMP after 8X upscaling?",
+          "question": "Dois-je convertir BMP après lʼagrandissement 8X ?",
           "answer": "Absolutely! Toujours convert to PNG or TIFF after 8X upscaling pour Meilleur compatibility and storage efficiency."
         }
       ],
@@ -2635,7 +2635,7 @@
       "secondaryKeywords": [
         "16x bmp Agrandisseur",
         "extreme bmp Améliorerment",
-        "bmp 16x upscaling",
+        "agrandissement bmp 16x",
         "Maximum bmp Résolution"
       ],
       "lastUpdated": "2026-01-06",
@@ -2646,7 +2646,7 @@
       "scaleExpectations": "16X scaling Créers 256 times Plus pixels. Extreme enlargement pour specialized use only. Traitement time: 2-5 minutes.",
       "useCases": [
         {
-          "title": "Specialized Archival",
+          "title": "Archivage spécialisé",
           "description": "Maximum Résolution preservation of important BMP Images.",
           "example": "Créer Maximum Résolution archival BMP versions"
         }
@@ -2665,7 +2665,7 @@
       ],
       "bestPractices": [
         {
-          "title": "Specialized Use Only",
+          "title": "Usage spécialisé uniquement",
           "description": "16X BMP scaling is only pour highly specialized applications."
         },
         {
@@ -2724,7 +2724,7 @@
           "example": "Generate 2x AVIF pour next-gen Web experiences"
         },
         {
-          "title": "Future-Proof Content",
+          "title": "Contenu futur-proof",
           "description": "Améliorer AVIF Images pour future Web Standards.",
           "example": "Prepare AVIF content pour next-generation displays"
         }
@@ -2743,16 +2743,16 @@
         {
           "title": "Fast Traitement",
           "description": "Quick 2X Améliorerment avec AVIF pourmat.",
-          "metric": "10-20 seconds"
+          "metric": "10-20 secondes"
         }
       ],
       "bestPractices": [
         {
-          "title": "Browser Support Check",
+          "title": "Vérification de la compatibilité navigateur",
           "description": "Ensure target browsers Support AVIF bepoure using exclusively."
         },
         {
-          "title": "Provide Fallbacks",
+          "title": "Fournir des alternatives",
           "description": "Offer WebP/JPEG fallbacks pour older browsers."
         },
         {
@@ -2805,7 +2805,7 @@
       "scaleExpectations": "4X scaling Créers 16 times Plus pixels. High-Qualité next-gen Améliorerment. Traitement time: 30-60 seconds.",
       "useCases": [
         {
-          "title": "Premium Web Experiences",
+          "title": "Expériences web premium",
           "description": "Créer ultra-high-Résolution AVIF Images pour luxury Websites.",
           "example": "Generate 4X AVIF pour premium brand Websites"
         },
@@ -2815,7 +2815,7 @@
           "example": "Display artwork at Maximum Qualité avec Optimal Compression"
         },
         {
-          "title": "Next-Gen E-commerce",
+          "title": "E-commerce nouvelle génération",
           "description": "Quadruple product Image Résolution pour premium shopping experiences.",
           "example": "Permettre extreme product zoom avec AVIF efficiency"
         }
@@ -2824,26 +2824,26 @@
         {
           "title": "Superior Qualité × Efficiency",
           "description": "4X AVIF Fournit excellent Qualité avec superior Compression.",
-          "metric": "Optimized balance"
+          "metric": "Équilibre optimisé"
         },
         {
-          "title": "Next-Gen Standard",
+          "title": "Standard nouvelle génération",
           "description": "AVIF represents the future of Web Image pourmats.",
           "metric": "Future Prêt"
         },
         {
           "title": "Professionnel Résultats",
           "description": "Suitable pour premium Web applications.",
-          "metric": "Premium grade"
+          "metric": "Niveau premium"
         }
       ],
       "bestPractices": [
         {
-          "title": "Browser Compatibility",
+          "title": "Compatibilité navigateur",
           "description": "AVIF has growing Support in modern browsers."
         },
         {
-          "title": "Fallback Strategy",
+          "title": "Stratégie de repli",
           "description": "Provide WebP/JPEG fallbacks pour broader compatibility."
         },
         {
@@ -2886,7 +2886,7 @@
         "8x avif Agrandisseur",
         "Maximum avif Résolution",
         "avif 8x Améliorerr",
-        "extreme avif upscaling"
+        "agrandissement avif extrême"
       ],
       "lastUpdated": "2026-01-06",
       "category": "pourmat-scale",
@@ -2896,7 +2896,7 @@
       "scaleExpectations": "8X scaling Créers 64 times Plus pixels. Extreme Améliorerment pour specialized applications. Traitement time: 60-120 seconds.",
       "useCases": [
         {
-          "title": "Ultra-Premium Web",
+          "title": "Web ultra-premium",
           "description": "Créer Maximum Résolution AVIF pour luxury Web experiences.",
           "example": "Generate 8X AVIF pour ultra-premium Websites"
         },
@@ -2925,11 +2925,11 @@
       ],
       "bestPractices": [
         {
-          "title": "Specialized Application",
+          "title": "Application spécialisée",
           "description": "8X AVIF is pour specialized premium applications."
         },
         {
-          "title": "Bandwidth Planning",
+          "title": "Planification de la bande passante",
           "description": "8X AVIFs are large despite Compression efficiency."
         }
       ],
@@ -2963,7 +2963,7 @@
       "secondaryKeywords": [
         "16x avif Agrandisseur",
         "extreme avif Améliorerment",
-        "avif 16x upscaling",
+        "agrandissement avif 16x",
         "Maximum avif Résolution"
       ],
       "lastUpdated": "2026-01-06",
@@ -2993,14 +2993,14 @@
       ],
       "bestPractices": [
         {
-          "title": "Specialized Only",
+          "title": "Spécialisé uniquement",
           "description": "16X AVIF scaling is only pour highly specialized applications."
         }
       ],
       "tips": [
         "Only use 16X Quand absolutely necessary pour specialized AVIF applications",
         "Consider if extreme Résolution justifies Taille de fichier",
-        "Test browser compatibility thoroughly"
+        "Testez soigneusement la compatibilité des navigateurs"
       ],
       "faq": [
         {
@@ -3042,12 +3042,12 @@
           "example": "Améliorer GIF logos and graphics pour modern displays"
         },
         {
-          "title": "Simple Image Scaling",
+          "title": "Mise à lʼéchelle simple dʼimages",
           "description": "Improve simple GIF Images avec 2X Améliorerment.",
           "example": "Double Résolution of icons and simple graphics"
         },
         {
-          "title": "Legacy Graphics Modernization",
+          "title": "Modernisation de graphiques hérités",
           "description": "Update older GIF graphics pour modern use.",
           "example": "Modernize vintage GIF graphics to 2X Résolution"
         }
@@ -3056,12 +3056,12 @@
         {
           "title": "Simple pourmat",
           "description": "GIF is strIAghtpourward pour graphics and simple Images.",
-          "metric": "Easy to use"
+          "metric": "Facile à utiliser"
         },
         {
           "title": "Fast Traitement",
           "description": "Quick 2X Améliorerment pour GIF Images.",
-          "metric": "10-20 seconds"
+          "metric": "10-20 secondes"
         },
         {
           "title": "Qualité Improved",
@@ -3079,14 +3079,14 @@
           "description": "Consider converting to PNG pour Meilleur Qualité after 2X upscaling."
         },
         {
-          "title": "Color Limitations",
+          "title": "Limitations de couleur",
           "description": "GIF is limited to 256 colors; consider PNG pour Meilleur Qualité."
         }
       ],
       "tips": [
         "Good pour simple graphics and logos",
         "Consider PNG conversion pour Meilleur Qualité",
-        "GIF limited to 256 colors",
+        "GIF limité à 256 couleurs",
         "2X Fournit good balance pour simple graphics"
       ],
       "faq": [
@@ -3095,7 +3095,7 @@
           "answer": "Use 2X pour moderate Améliorerment of GIF graphics, logos, and simple Images Quand you need Meilleur Résolution."
         },
         {
-          "question": "Should I convert GIF to PNG after 2X upscaling?",
+          "question": "Dois-je convertir GIF en PNG après lʼagrandissement 2X ?",
           "answer": "Yes! Converting to PNG after 2X upscaling Typiquement Fournit Meilleur Qualité and Plus colors pour graphics."
         },
         {
@@ -3133,7 +3133,7 @@
           "example": "Quadruple Résolution of brand logos and icons"
         },
         {
-          "title": "Graphics Scaling",
+          "title": "Mise à lʼéchelle de graphiques",
           "description": "Améliorer GIF graphics to high Résolution.",
           "example": "Créer high-res versions of simple GIF graphics"
         },
@@ -3150,7 +3150,7 @@
           "metric": "16x Plus pixels"
         },
         {
-          "title": "Graphics Optimized",
+          "title": "Optimisé pour les graphiques",
           "description": "Idéal pour graphics, logos, and simple Images.",
           "metric": "Graphics focUtilisé"
         },
@@ -3166,7 +3166,7 @@
           "description": "Convert to PNG or TIFF after 4X upscaling pour Meilleur Qualité."
         },
         {
-          "title": "Color Considerations",
+          "title": "Considérations de couleur",
           "description": "GIF's 256-color limit affects Qualité; PNG Fournit Meilleur Résultats."
         },
         {
@@ -3183,10 +3183,10 @@
       "faq": [
         {
           "question": "Quoi Résolution will my GIF be after 4X upscaling?",
-          "answer": "If your GIF is 500x500 pixels, it will become 2000x2000 pixels after 4X upscaling."
+          "answer": "Si votre GIF mesure 500x500 pixels, il deviendra 2000x2000 pixels après lʼagrandissement 4X."
         },
         {
-          "question": "Should I convert GIF after 4X upscaling?",
+          "question": "Dois-je convertir GIF après lʼagrandissement 4X ?",
           "answer": "Yes! Converting to PNG after 4X upscaling Fournit Meilleur Qualité, Plus colors, and Meilleur Taille de fichier efficiency."
         },
         {
@@ -3209,7 +3209,7 @@
         "8x gif Agrandisseur",
         "Maximum gif Résolution",
         "gif 8x Améliorerr",
-        "extreme gif upscaling"
+        "agrandissement gif extrême"
       ],
       "lastUpdated": "2026-01-06",
       "category": "pourmat-scale",
@@ -3224,7 +3224,7 @@
           "example": "Transpourm small logos into Maximum Résolution versions"
         },
         {
-          "title": "Archival Graphics",
+          "title": "Graphiques dʼarchives",
           "description": "Future-proof important GIF graphics avec Maximum Résolution.",
           "example": "Créer archival versions of vintage GIF graphics"
         }
@@ -3247,7 +3247,7 @@
           "description": "Toujours convert to PNG after 8X upscaling pour Meilleur Qualité."
         },
         {
-          "title": "Color Limitations",
+          "title": "Limitations de couleur",
           "description": "GIF's 256-color limit is significant at 8X; PNG is Meilleur."
         }
       ],
@@ -3267,7 +3267,7 @@
           "answer": "Use 8X GIF pour specialized applications requiring Maximum Résolution Améliorerment of important graphics or logos."
         },
         {
-          "question": "Should I convert GIF after 8X upscaling?",
+          "question": "Dois-je convertir GIF après lʼagrandissement 8X ?",
           "answer": "Absolutely! Toujours convert to PNG after 8X upscaling pour much Meilleur Qualité, Plus colors, and improved Taille de fichier efficiency."
         }
       ],
@@ -3285,7 +3285,7 @@
       "secondaryKeywords": [
         "16x gif Agrandisseur",
         "extreme gif Améliorerment",
-        "gif 16x upscaling",
+        "agrandissement gif 16x",
         "Maximum gif Résolution"
       ],
       "lastUpdated": "2026-01-06",
@@ -3296,7 +3296,7 @@
       "scaleExpectations": "16X scaling Créers 256 times Plus pixels. Extreme enlargement pour specialized use only. Traitement time: 2-5 minutes.",
       "useCases": [
         {
-          "title": "Specialized Archival",
+          "title": "Archivage spécialisé",
           "description": "Maximum Résolution preservation of important GIF graphics.",
           "example": "Créer Maximum Résolution archival GIF versions"
         }
@@ -3315,7 +3315,7 @@
       ],
       "bestPractices": [
         {
-          "title": "Specialized Use Only",
+          "title": "Usage spécialisé uniquement",
           "description": "16X GIF scaling is only pour highly specialized applications."
         },
         {
@@ -3326,7 +3326,7 @@
       "tips": [
         "Only use 16X Quand absolutely necessary pour specialized GIF applications",
         "pourmat conversion strongly Recommandé",
-        "Color limitations extremely significant at 16X",
+        "Les limitations de couleur sont extrêmement significatives à 16X",
         "Consider if GIF pourmat is actually required"
       ],
       "faq": [

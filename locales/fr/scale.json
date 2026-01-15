@@ -320,7 +320,7 @@
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "echelle",
-      "resolution": "UHD 4K",
+      "resolution": "4K UHD",
       "dimensions": {
         "width": 3840,
         "height": 2160,
@@ -395,7 +395,7 @@
         "améliorateur photo automatique"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "échelle",
       "resolution": "HD (720p+)",
       "dimensions": {
         "width": 1280,
@@ -475,8 +475,8 @@
         "agrandisseur modéré"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
-      "resolution": "Amélioré 2X",
+      "category": "échelle",
+      "resolution": "2X Enhanced",
       "dimensions": {
         "width": "Variable",
         "height": "Variable",
@@ -550,8 +550,8 @@
         "agrandisseur qualité maximum"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
-      "resolution": "Amélioré 4X",
+      "category": "échelle",
+      "resolution": "4X Enhanced",
       "dimensions": {
         "width": "Variable",
         "height": "Variable",
@@ -625,8 +625,8 @@
         "amélioration 4k professionnelle"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
-      "resolution": "UHD 4K",
+      "category": "échelle",
+      "resolution": "4K UHD",
       "dimensions": {
         "width": 3840,
         "height": 2160,
@@ -700,7 +700,7 @@
         "agrandisseur haute définition"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "échelle",
       "resolution": "HD (720p)",
       "dimensions": {
         "width": 1280,
@@ -775,8 +775,8 @@
         "outil résolution maximum"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
-      "resolution": "UHD 8K",
+      "category": "échelle",
+      "resolution": "8K UHD",
       "dimensions": {
         "width": 7680,
         "height": 4320,
@@ -850,7 +850,7 @@
         "agrandisseur résolution"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "échelle",
       "resolution": "Variable",
       "dimensions": {
         "width": "Sélectionnable par l'utilisateur",
@@ -925,8 +925,8 @@
         "agrandisseur qhd"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
-      "resolution": "QHD 2K",
+      "category": "échelle",
+      "resolution": "2K QHD",
       "dimensions": {
         "width": 2560,
         "height": 1440,
@@ -1001,7 +1001,7 @@
         "outil résolution haut de gamme"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "échelle",
       "resolution": "Ultra HD",
       "dimensions": {
         "width": 3840,
@@ -1076,7 +1076,7 @@
         "agrandisseur pixel avancé"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "échelle",
       "resolution": "Variable",
       "dimensions": {
         "width": "Flexible",
@@ -1151,7 +1151,7 @@
         "agrandisseur extrême"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "échelle",
       "resolution": "Amélioré 8X",
       "dimensions": {
         "width": "Variable",
@@ -1230,7 +1230,7 @@
         "agrandisseur ultra"
       ],
       "lastUpdated": "2025-12-19T00:00:00Z",
-      "category": "scale",
+      "category": "échelle",
       "resolution": "Amélioré 16X",
       "dimensions": {
         "width": "Variable",

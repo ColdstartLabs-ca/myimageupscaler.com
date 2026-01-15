@@ -766,33 +766,33 @@
         {
           "title": "Banners de perfil",
           "description": "Diseña banners que representen tu marca.",
-          "example": "Create a personal brand banner at 1584x396"
+          "example": "Crear un banner de marca personal a 1584x396"
         },
         {
-          "title": "Company Pages",
-          "description": "MAIntAIn consistent imagery across company content.",
-          "example": "Resize team photos for company updates"
+          "title": "Páginas de empresa",
+          "description": "Mantenga imágenes consistentes en todo el contenido de la empresa.",
+          "example": "Redimensionar fotos del equipo para actualizaciones de la empresa"
         },
         {
-          "title": "Article features",
-          "description": "Create compelling featured images for LinkedIn articles.",
-          "example": "Design article headers at optimal dimensions"
+          "title": "Artículos destacados",
+          "description": "Cree imágenes destacadas atractivas para artículos de LinkedIn.",
+          "example": "Diseñe encabezados de artículo en dimensiones óptimas"
         }
       ],
       "benefits": [
         {
-          "title": "Image Processing Tool",
-          "description": "Properly sized images convey ism.",
-          "metric": "First impressions"
+          "title": "Herramienta de procesamiento de imágenes",
+          "description": "Las imágenes del tamaño adecuado transmiten profesionalismo.",
+          "metric": "Primera impresión"
         },
         {
-          "title": "Maximum Visibility",
-          "description": "Images display fully without cropping in the feed.",
-          "metric": "Full display"
+          "title": "Máxima visibilidad",
+          "description": "Las imágenes se muestran completamente sin recortar en el feed.",
+          "metric": "Visualización completa"
         },
         {
-          "title": "Brand Consistency",
-          "description": "Consistent sizing across all LinkedIn content.",
+          "title": "Consistencia de marca",
+          "description": "Tamaño consistente en todo el contenido de LinkedIn.",
           "metric": "Marca unificada"
         }
       ],
@@ -1284,19 +1284,19 @@
       "slug": "jpg-to-png",
       "title": "Convertidor JPG a PNG",
       "metaTitle": "Convertidor JPG a PNG | MyImageUpscaler",
-      "metaDescription": "Convert JPG to PNG online for Free. Add transparency support, get lossless quality. Fast browser-based conversion with No upload required.",
-      "h1": "Free JPG to PNG Converter - Convert Images Instantly",
-      "intro": "Convert JPG images to PNG format in seconds. Perfect for adding transparency support or preserving quality. Our Free converter works entirely in your browser.",
-      "primaryKeyword": "jpg to png",
+      "metaDescription": "Convierta JPG a PNG en línea gratis. Añada soporte de transparencia, obtenga calidad sin pérdida. Conversión rápida basada en el navegador sin necesidad de carga.",
+      "h1": "Convertidor gratuito de JPG a PNG - Convierta imágenes al instante",
+      "intro": "Convierta imágenes JPG al formato PNG en segundos. Perfecto para añadir soporte de transparencia o preservar la calidad. Nuestro convertidor gratuito funciona completamente en su navegador.",
+      "primaryKeyword": "jpg a png",
       "secondaryKeywords": [
-        "convert jpg to png",
-        "jpeg to png",
-        "jpg to png converter",
-        "jpg to png online",
+        "convertir jpg a png",
+        "jpeg a png",
+        "convertidor jpg a png",
+        "jpg a png en línea",
         "convertir jpeg a png"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "toolName": "Convertidor de JPG a PNG",
       "description": "Convierte imagenes JPG/JPEG al formato PNG para calidad sin perdidas y soporte de transparencia. Ideal para graficos, logotipos e imagenes que necesitan edicion.",
       "isInteractive": true,
@@ -1433,7 +1433,7 @@
         "convertir webp a jpeg"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "toolName": "Convertidor de WebP a JPG",
       "description": "Convierte imágenes WebP al formato JPG para compatibilidad universal. Funciona en tu navegador sin carga requerida.",
       "isInteractive": true,
@@ -1569,7 +1569,7 @@
         "optimizar png para web"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "toolName": "Convertidor de PNG a WebP",
       "description": "Convierte imágenes PNG al formato WebP moderno para optimización web. Funciona en tu navegador sin carga requerida.",
       "isInteractive": true,
@@ -1706,7 +1706,7 @@
         "convertir jpeg a webp"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
+      "category": "herramientas",
       "toolName": "Convertidor de JPG a WebP",
       "description": "Convierte fotos JPG al formato WebP moderno para optimización web. Funciona en tu navegador sin carga requerida.",
       "isInteractive": true,
@@ -1997,65 +1997,65 @@
         },
         {
           "title": "Seguimiento de Progreso en Tiempo Real",
-          "description": "See individual progress bars, file sizes before and after, and compression ratios for each image as it processes."
+          "description": "Vea barras de progreso individuales, tamaños de archivo antes y después, y relaciones de compresión para cada imagen a medida que se procesa."
         },
         {
-          "title": "Download as ZIP",
-          "description": "Download all compressed images at once as a convenient ZIP file. Each file is named with '-compressed' suffix."
+          "title": "Descargar como ZIP",
+          "description": "Descargue todas las imágenes comprimidas a la vez como un archivo ZIP conveniente. Cada archivo tiene el sufijo -compressed"
         },
         {
-          "title": "format Conversion",
-          "description": "Convert images to JPEG, PNG, or WebP during compression. WebP offers the compression ratio."
+          "title": "Conversión de formato",
+          "description": "Convierta imágenes a JPEG, PNG o WebP durante la compresión. WebP ofrece la mejor relación de compresión."
         },
         {
-          "title": "100% Private",
-          "description": "All compression happens locally in your browser. Images never leave your device - complete privacy guaranteed."
+          "title": "100% Privado",
+          "description": "Toda la compresión se realiza localmente en su navegador. Las imágenes nunca salen de su dispositivo. Privacidad completa garantizada."
         }
       ],
       "useCases": [
         {
-          "title": "Website Speed Optimization",
-          "description": "Compress entire image libraries for websites. Reduce page load times significantly with bulk processing.",
-          "example": "Compress 100 product photos from 50MB to 10MB for e-commerce site"
+          "title": "Optimización de velocidad del sitio web",
+          "description": "Comprima bibliotecas de imágenes completas para sitios web. Reduzca significativamente los tiempos de carga de página con procesamiento por lotes.",
+          "example": "Comprimir 100 fotos de productos de 50 MB a 10 MB para sitio de comercio electrónico"
         },
         {
-          "title": "Social Media Content",
-          "description": "Prepare multiple photos for Instagram, Facebook, or other platforms with faster upload times.",
-          "example": "Batch compress vacation photos for social media sharing"
+          "title": "Contenido de redes sociales",
+          "description": "Prepare múltiples fotos para Instagram, Facebook u otras plataformas con tiempos de carga más rápidos.",
+          "example": "Comprimir por lotes fotos de vacaciones para compartir en redes sociales"
         },
         {
-          "title": "EmAIl Attachments",
-          "description": "Send multiple photos via emAIl without hitting attachment size limits.",
-          "example": "Compress a photo album from 20MB to 4MB for emAIl"
+          "title": "Adjuntos de correo electrónico",
+          "description": "Envíe múltiples fotos por correo electrónico sin alcanzar los límites de tamaño de adjuntos.",
+          "example": "Comprimir un álbum de fotos de 20 MB a 4 MB para correo electrónico"
         },
         {
-          "title": "Cloud Storage Savings",
-          "description": "Compress photo backups before uploading to cloud storage to save space and costs.",
-          "example": "Compress 500 vacation photos from 10GB to 2GB before backup"
+          "title": "Ahorro de almacenamiento en la nube",
+          "description": "Comprima copias de seguridad de fotos antes de subirlas al almacenamiento en la nube para ahorrar espacio y costes.",
+          "example": "Comprimir 500 fotos de vacaciones de 10 GB a 2 GB antes de la copia de seguridad"
         }
       ],
       "benefits": [
         {
-          "title": "Massive Time Savings",
-          "description": "Compress up to 20 images at once instead of processing them individually.",
-          "metric": "20x faster workflow"
+          "title": "Ahorro masivo de tiempo",
+          "description": "Comprima hasta 20 imágenes a la vez en lugar de procesarlas individualmente.",
+          "metric": "Flujo de trabajo 20x más rápido"
         },
         {
-          "title": "Consistent quality",
-          "description": "Apply the same compression settings to all images for uniform results across your project.",
-          "metric": "Uniform quality"
+          "title": "Calidad consistente",
+          "description": "Aplique la misma configuración de compresión a todas las imágenes para resultados uniformes en todo su proyecto.",
+          "metric": "Calidad uniforme"
         },
         {
-          "title": "Up to 80% size Reduction",
-          "description": "Reduce image file sizes dramatically without noticeable quality loss using smart compression.",
-          "metric": "80% smaller files"
+          "title": "Reducción de tamaño de hasta el 80%",
+          "description": "Reduzca dramáticamente los tamaños de archivo de imagen sin pérdida notable de calidad utilizando compresión inteligente.",
+          "metric": "Archivos 80% más pequeños"
         }
       ],
       "howItWorks": [
         {
           "step": 1,
-          "title": "Upload Multiple Images",
-          "description": "Select or drag up to 20 images. Supports JPEG, PNG, WebP up to 25MB each. Processing stays in your browser."
+          "title": "Cargar múltiples imágenes",
+          "description": "Seleccione o arrastre hasta 20 imágenes. Admite JPEG, PNG, WebP de hasta 25 MB cada uno. El procesamiento se mantiene en su navegador."
         },
         {
           "step": 2,

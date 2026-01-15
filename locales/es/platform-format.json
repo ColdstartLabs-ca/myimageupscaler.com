@@ -119,7 +119,7 @@
         "escalador de arte ia webp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Midjourney",
       "format": "WebP",
       "platformDescription": "Midjourney crea arte IA impresionante.",
@@ -223,7 +223,7 @@
         "escalador de arte ia jpeg"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Midjourney",
       "format": "JPEG",
       "platformDescription": "Midjourney crea arte IA impresionante.",
@@ -327,7 +327,7 @@
         "escalador de arte ia png"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Stable Diffusion",
       "format": "PNG",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
@@ -431,7 +431,7 @@
         "escalador de arte ia webp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Stable Diffusion",
       "format": "WebP",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
@@ -535,7 +535,7 @@
         "escalador de arte ia jpeg"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Stable Diffusion",
       "format": "JPEG",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
@@ -639,7 +639,7 @@
         "escalador de arte ia png"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "DALL-E",
       "format": "PNG",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
@@ -742,7 +742,7 @@
         "escalador de arte ia webp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "DALL-E",
       "format": "WebP",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
@@ -846,7 +846,7 @@
         "escalador de arte ia jpeg"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "DALL-E",
       "format": "JPEG",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
@@ -1052,7 +1052,7 @@
         "escalador de arte ia webp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Canva",
       "format": "WebP",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
@@ -1156,7 +1156,7 @@
         "escalador de arte ia jpeg"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Canva",
       "format": "JPEG",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
@@ -1259,7 +1259,7 @@
         "escalador de arte ia png"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Photoshop",
       "format": "PNG",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
@@ -1363,7 +1363,7 @@
         "escalador de arte ia webp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Photoshop",
       "format": "WebP",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
@@ -1467,7 +1467,7 @@
         "escalador de arte ia jpeg"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Photoshop",
       "format": "JPEG",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
@@ -1570,7 +1570,7 @@
         "escalador de arte ia heic"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Midjourney",
       "format": "HEIC",
       "platformDescription": "Midjourney crea arte IA impresionante.",
@@ -1673,7 +1673,7 @@
         "escalador de arte ia tiff"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Midjourney",
       "format": "TIFF",
       "platformDescription": "Midjourney crea arte IA impresionante.",
@@ -1776,7 +1776,7 @@
         "escalador de arte ia heic"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Stable Diffusion",
       "format": "HEIC",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
@@ -1879,7 +1879,7 @@
         "escalador de arte ia tiff"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Stable Diffusion",
       "format": "TIFF",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
@@ -1983,7 +1983,7 @@
         "escalador de arte ia heic"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "DALL-E",
       "format": "HEIC",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
@@ -2086,7 +2086,7 @@
         "escalador de arte ia tiff"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "DALL-E",
       "format": "TIFF",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
@@ -2189,7 +2189,7 @@
         "escalador de arte ia heic"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Canva",
       "format": "HEIC",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
@@ -2292,7 +2292,7 @@
         "escalador de arte ia tiff"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Canva",
       "format": "TIFF",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
@@ -2395,7 +2395,7 @@
         "escalador de arte ia heic"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Photoshop",
       "format": "HEIC",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
@@ -2498,7 +2498,7 @@
         "escalador de arte ia tiff"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Photoshop",
       "format": "TIFF",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
@@ -2602,7 +2602,7 @@
         "escalador de arte ia raw"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Figma",
       "format": "PNG",
       "platformDescription": "Midjourney crea arte IA impresionante.",
@@ -2705,7 +2705,7 @@
         "escalador de arte ia bmp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Figma",
       "format": "WebP",
       "platformDescription": "Midjourney crea arte IA impresionante.",
@@ -2808,7 +2808,7 @@
         "escalador de arte ia avif"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Figma",
       "format": "JPEG",
       "platformDescription": "Midjourney crea arte IA impresionante.",
@@ -2911,7 +2911,7 @@
         "escalador de arte ia raw"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Lightroom",
       "format": "PNG",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
@@ -3014,7 +3014,7 @@
         "escalador de arte ia bmp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Lightroom",
       "format": "WebP",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
@@ -3117,7 +3117,7 @@
         "escalador de arte ia avif"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Lightroom",
       "format": "JPEG",
       "platformDescription": "Stable Diffusion es un generador de imágenes IA potente.",
@@ -3220,7 +3220,7 @@
         "escalador de arte ia raw"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Lightroom",
       "format": "HEIC",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
@@ -3323,7 +3323,7 @@
         "escalador de arte ia bmp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Lightroom",
       "format": "TIFF",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
@@ -3426,7 +3426,7 @@
         "escalador de arte ia avif"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "GIMP",
       "format": "PNG",
       "platformDescription": "DALL-E genera imágenes creativas de alta calidad.",
@@ -3529,7 +3529,7 @@
         "escalador de arte ia raw"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "GIMP",
       "format": "WebP",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
@@ -3632,7 +3632,7 @@
         "escalador de arte ia bmp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "GIMP",
       "format": "JPEG",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
@@ -3735,7 +3735,7 @@
         "escalador de arte ia avif"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "GIMP",
       "format": "HEIC",
       "platformDescription": "Canva es una plataforma de diseño gráfico popular.",
@@ -3838,7 +3838,7 @@
         "escalador de arte ia raw"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "GIMP",
       "format": "TIFF",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
@@ -3941,7 +3941,7 @@
         "escalador de arte ia bmp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Affinity Photo",
       "format": "PNG",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
@@ -4044,7 +4044,7 @@
         "escalador de arte ia avif"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Affinity Photo",
       "format": "WebP",
       "platformDescription": "Photoshop es el líder en edición de imágenes.",
@@ -4147,7 +4147,7 @@
         "escalador de arte ia raw"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Affinity Photo",
       "format": "JPEG",
       "platformDescription": "Lightroom es especializado en fotografía y edición de color.",
@@ -4250,7 +4250,7 @@
         "escalador de arte ia bmp"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Affinity Photo",
       "format": "HEIC",
       "platformDescription": "Lightroom es especializado en fotografía y edición de color.",
@@ -4353,7 +4353,7 @@
         "escalador de arte ia avif"
       ],
       "lastUpdated": "2026-01-06",
-      "category": "platform-format",
+      "category": "formato-plataforma",
       "platform": "Affinity Photo",
       "format": "TIFF",
       "platformDescription": "Lightroom es especializado en fotografía y edición de color.",

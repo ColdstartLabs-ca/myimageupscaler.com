@@ -1800,9 +1800,9 @@
           "example": "Cree impresiones de calidad de exposición a partir de RAW"
         },
         {
-          "title": "Commercial Photography",
-          "description": "Upscale RAW for commercial and advertising applications.",
-          "example": "Prepare RAW photos for high-end commercial use"
+          "title": "Fotografía Comercial",
+          "description": "Amplía archivos RAW para aplicaciones comerciales y publicitarias.",
+          "example": "Prepara fotos RAW para uso comercial de alta gama"
         }
       ],
       "benefits": [
@@ -1889,15 +1889,15 @@
       "scaleFactor": "8X",
       "secondaryKeywords": [
         "8x raw escalador",
-        "maximum raw resolution",
+        "resolución RAW máxima",
         "raw potenciador 8x",
-        "extreme raw upscaling"
+        "ampliación RAW extrema"
       ],
-      "formatDescription": "RAW format achieves maximum quality enhancement with 8X scaling, pushing the boundaries of professional photography.",
+      "formatDescription": "El formato RAW logra una mejora de calidad máxima con una ampliación de 8X, llevando los límites de la fotografía profesional.",
       "scaleExpectations": "El escalado 8X multiplica tanto el ancho como la altura, resultando en 64 veces más píxeles. Proporciona una mejora extrema sin un aumento excesivo del tamaño del archivo. Tiempo de procesamiento: 40-60 segundos.",
       "useCases": [
         {
-          "title": "Extreme Print Enlargement",
+          "title": "Ampliación Extrema para Impresión",
           "description": "Cree impresiones masivas desde fotos RAW para aplicaciones especializadas.",
           "example": "Transforme RAW de DSLR en impresiones de calidad de valla publicitaria"
         },
