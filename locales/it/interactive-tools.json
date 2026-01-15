@@ -155,7 +155,7 @@
       "ctaUrl": "/?signup=1"
     },
     {
-      "slug": "resize-image-for-instagram",
+      "slug": "ridimensiona-immagine-per-instagram",
       "title": "Ridimensionatore Immagini Instagram",
       "metaTitle": "Ridimensionatore Immagini Instagram Gratuito - Dimensioni Perfette per Post e Storie | MyImageUpscaler",
       "metaDescription": "Ridimensiona immagini per Instagram istantaneamente. Ottieni dimensioni perfette per post (1080x1080), storie (1080x1920) e reel. Gratuito, nessun caricamento richiesto.",
@@ -297,7 +297,7 @@
       "ctaUrl": "/tools/resize/ridimensionare-immagine-per-instagram"
     },
     {
-      "slug": "resize-image-for-youtube",
+      "slug": "ridimensiona-immagine-per-youtube",
       "title": "Ridimensionatore Miniature YouTube",
       "metaTitle": "Ridimensionatore Miniature YouTube Gratuito - Dimensione Perfetta 1280x720 | MyImageUpscaler",
       "metaDescription": "Ridimensiona immagini per miniature YouTube istantaneamente. Ottieni dimensioni perfette 1280x720 per massimizzare i tassi di clic. Gratuito, nessun caricamento richiesto.",
@@ -439,7 +439,7 @@
       "ctaUrl": "/tools/resize/ridimensionare-immagine-per-youtube"
     },
     {
-      "slug": "resize-image-for-facebook",
+      "slug": "ridimensiona-immagine-per-facebook",
       "title": "Ridimensionatore Immagini Facebook",
       "metaTitle": "Ridimensionatore Immagini Facebook Gratuito - Dimensioni Perfette per Post e Copertine | MyImageUpscaler",
       "metaDescription": "Ridimensiona immagini per Facebook istantaneamente. Ottieni dimensioni perfette per post (1200x630), copertine (820x312) e foto profilo. Gratuito, nessun caricamento richiesto.",
@@ -581,7 +581,7 @@
       "ctaUrl": "/tools/resize/ridimensionare-immagine-per-facebook"
     },
     {
-      "slug": "resize-image-for-twitter",
+      "slug": "ridimensiona-immagine-per-twitter",
       "title": "Ridimensionatore immagini per Twitter/X",
       "metaTitle": "Ridimensionatore immagini per Twitter/X | MyImageUpscaler",
       "metaDescription": "Ridimensiona le immagini per Twitter/X istantaneamente. Ottieni dimensioni perfette per i tweet (1200x675) e le intestazioni (1500x500). Gratuito, non richiede caricamento.",
@@ -593,10 +593,10 @@
         "dimensione post twitter",
         "dimensione intestazione twitter",
         "ridimensiona per twitter",
-        "x image size"
+        "dimensione immagine x"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
+      "category": "strumenti",
       "toolName": "Ridimensionatore Immagini Twitter/X",
       "description": "Ridimensiona istantaneamente le immagini alle dimensioni consigliate di Twitter/X. Supporta tweet (1200x675) e immagini header (1500x500).",
       "toolComponent": "ImageResizer",
@@ -711,30 +711,34 @@
           "answer": "Twitter permette immagini fino a 5MB per le foto. I GIF possono essere fino a 15MB. Il nostro strumento ti aiuta a rimanere entro questi limiti."
         }
       ],
-      "relatedTools": ["image-resizer", "resize-image-for-linkedin", "resize-image-for-facebook"],
-      "relatedGuides": ["how-to-resize-images-for-social-media"],
+      "relatedTools": [
+        "image-resizer",
+        "ridimensiona-immagine-per-linkedin",
+        "ridimensiona-immagine-per-facebook"
+      ],
+      "relatedGuides": ["come-ridimensionare-immagini-per-social-media"],
       "ctaText": "Ridimensiona per Twitter gratuitamente",
-      "ctaUrl": "/tools/resize/resize-image-for-twitter",
+      "ctaUrl": "/tools/resize/ridimensiona-immagine-per-twitter",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "resize-image-for-linkedin",
+      "slug": "ridimensiona-immagine-per-linkedin",
       "title": "Ridimensionatore immagini per LinkedIn",
       "metaTitle": "Ridimensionatore immagini per LinkedIn | MyImageUpscaler",
       "metaDescription": "Ridimensiona le immagini per LinkedIn istantaneamente. Ottieni dimensioni perfette per i post (1200x627) e i banner (1584x396). Gratuito, non richiede caricamento.",
       "h1": "Ridimensionatore Immagini LinkedIn Gratuito - Dimensioni Perfette Istantaneamente",
       "intro": "Ridimensiona le tue immagini alle dimensioni perfette per LinkedIn. Post e banner ottimizzati per l\"engagement. Funziona nel tuo browser.",
-      "primaryKeyword": "linkedin photo resizer",
+      "primaryKeyword": "ridimensionatore foto linkedin",
       "secondaryKeywords": [
-        "linkedin image size",
-        "linkedin post size",
-        "linkedin banner size",
-        "resize for linkedin",
-        "linkedin photo size"
+        "dimensione immagine linkedin",
+        "dimensione post linkedin",
+        "dimensione banner linkedin",
+        "ridimensiona per linkedin",
+        "dimensione foto linkedin"
       ],
       "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
+      "category": "strumenti",
       "toolName": "Ridimensionatore Immagini LinkedIn",
       "description": "Ridimensiona istantaneamente le immagini alle dimensioni consigliate di LinkedIn. Supporta post (1200x627) e immagini banner (1584x396).",
       "toolComponent": "ImageResizer",
@@ -849,31 +853,35 @@
           "answer": "LinkedIn comprime le immagini. Inizia con immagini di alta qualità alle dimensioni esatte ed esporta con qualità 90%+ per ridurre al minimo la compressione."
         }
       ],
-      "relatedTools": ["image-resizer", "resize-image-for-twitter", "resize-image-for-facebook"],
-      "relatedGuides": ["how-to-resize-images-for-social-media"],
+      "relatedTools": [
+        "image-resizer",
+        "ridimensiona-immagine-per-twitter",
+        "ridimensiona-immagine-per-facebook"
+      ],
+      "relatedGuides": ["come-ridimensionare-immagini-per-social-media"],
       "ctaText": "Ridimensiona per LinkedIn gratuitamente",
-      "ctaUrl": "/tools/resize/resize-image-for-linkedin",
+      "ctaUrl": "/tools/resize/ridimensiona-immagine-per-linkedin",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "bulk-image-resizer",
+      "slug": "ridimensiona-immagine-in-blocco",
       "title": "Ridimensionatore Immagini in Blocco",
       "metaTitle": "Ridimensionatore Immagini in Blocco | MyImageUpscaler",
       "metaDescription": "Ridimensiona più immagini contemporaneamente con il nostro Ridimensionatore Immagini in Blocco Gratuito. Ridimensiona massivamente foto a qualsiasi dimensione. Funziona nel tuo browser - Nessun upload richiesto.",
       "h1": "Ridimensionatore Immagini in Blocco Gratuito - Ridimensiona Massivamente Foto Istantaneamente",
       "intro": "Ridimensiona più immagini alle stesse dimensioni istantaneamente. Il nostro Ridimensionatore Immagini in Blocco Gratuito elabora fino a 20 foto contemporaneamente, interamente nel tuo browser. Nessun upload, nessuna registrazione, nessuna attesa.",
-      "primaryKeyword": "batch image resizer",
+      "primaryKeyword": "ridimensionatore immagini in blocco",
       "secondaryKeywords": [
-        "bulk resize",
-        "mass resize photos",
-        "resize multiple images",
-        "bulk picture resizer",
-        "batch resize images",
-        "resize in bulk"
+        "ridimensiona in blocco",
+        "ridimensiona foto in massa",
+        "ridimensiona immagini multiple",
+        "ridimensionatore immagini in blocco",
+        "ridimensiona immagini in blocco",
+        "ridimensiona in blocco"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "tools",
+      "category": "strumenti",
       "toolName": "Ridimensionatore immagini in blocco",
       "description": "Strumento professionale di ridimensionamento immagini in blocco che funziona interamente nel tuo browser. Ridimensiona fino a 20 immagini contemporaneamente a dimensioni esatte, con opzioni per mantenere le proporzioni o riempire i limiti. Scarica tutte le immagini ridimensionate come comodo file ZIP.",
       "toolComponent": "BulkImageResizer",
@@ -999,15 +1007,18 @@
           "answer": "Sì! Puoi rimuovere immagini individuali dal lotto prima o dopo lelaborazione facendo clic sul pulsante X accanto a ogni immagine."
         }
       ],
-      "relatedTools": ["image-resizer", "image-compressor", "ai-image-upscaler"],
-      "relatedGuides": ["how-to-resize-images-for-social-media", "image-resolution-guide"],
+      "relatedTools": ["image-resizer", "compressore-immagini", "ampliamento-immagine-ai"],
+      "relatedGuides": [
+        "come-ridimensionare-immagini-per-social-media",
+        "guida-risoluzione-immagini"
+      ],
       "ctaText": "Prova Ridimensionatore Immagini in Blocco Gratis",
-      "ctaUrl": "/tools/resize/bulk-image-resizer",
+      "ctaUrl": "/tools/resize/ridimensiona-immagine-in-blocco",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "image-compressor",
+      "slug": "compressore-immagini",
       "title": "Compressore Immagini",
       "metaTitle": "Compressore Immagini | MyImageUpscaler",
       "metaDescription": "Comprimi immagini online gratuitamente. Riduci le dimensioni del file fino all\"80% mantenendo la qualità. Funziona nel tuo browser - Nessun upload richiesto. Supporto JPEG, PNG, WebP.",
@@ -1141,15 +1152,15 @@
           "answer": "Per uso web, 70-80% è ottimale. Per stampa o uso professionale, 85-95%. Per massima compressione (come email), 60-70% funziona bene."
         }
       ],
-      "relatedTools": ["image-resizer", "png-to-jpg", "ai-image-upscaler"],
-      "relatedGuides": ["image-optimization-guide", "web-performance-images"],
+      "relatedTools": ["image-resizer", "png-in-jpg", "ampliamento-immagine-ai"],
+      "relatedGuides": ["guida-ottimizzazione-immagini", "prestazioni-web-immagini"],
       "ctaText": "Prova Compressore Immagini Gratis",
-      "ctaUrl": "/tools/compress/image-compressor",
+      "ctaUrl": "/tools/compress/compressore-immagini",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "png-to-jpg",
+      "slug": "png-in-jpg",
       "title": "Convertitore da PNG a JPG",
       "metaTitle": "Convertitore da PNG a JPG | MyImageUpscaler",
       "metaDescription": "Converti PNG in JPG online gratuitamente. Conversione veloce e sicura nel tuo browser. Non richiede caricamento. Gestisci la trasparenza con colori di sfondo personalizzati.",
@@ -1282,15 +1293,15 @@
           "answer": "Per web e social media, 80-85% è perfetto. Per stampa o uso professionale, 90-95%. Per massima riduzione delle dimensioni file, 70-75% appare ancora buono."
         }
       ],
-      "relatedTools": ["image-compressor", "image-resizer", "jpg-to-png"],
-      "relatedGuides": ["png-vs-jpg-guide", "when-to-use-jpg"],
+      "relatedTools": ["compressore-immagini", "image-resizer", "jpg-in-png"],
+      "relatedGuides": ["guida-png-vs-jpg", "quando-usare-jpg"],
       "ctaText": "Converti PNG in JPG gratuitamente",
-      "ctaUrl": "/tools/convert/png-to-jpg",
+      "ctaUrl": "/tools/convert/png-in-jpg",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "jpg-to-png",
+      "slug": "jpg-in-png",
       "title": "Convertitore da JPG a PNG",
       "metaTitle": "Convertitore da JPG a PNG | MyImageUpscaler",
       "metaDescription": "Converti JPG in PNG online gratuitamente. Aggiungi supporto trasparenza, ottieni qualità senza perdita. Conversione veloce basata sul browser senza caricamento richiesto.",
@@ -1419,15 +1430,15 @@
           "answer": "Sì! Usa il nostro convertitore WebP in PNG se hai bisogno del formato PNG per compatibilità o modifica in software che non supporta WebP."
         }
       ],
-      "relatedTools": ["png-to-jpg", "image-compressor", "webp-to-png"],
-      "relatedGuides": ["png-vs-jpg-guide"],
+      "relatedTools": ["png-in-jpg", "compressore-immagini", "webp-in-png"],
+      "relatedGuides": ["guida-png-vs-jpg"],
       "ctaText": "Converti JPG in PNG gratuitamente",
-      "ctaUrl": "/tools/convert/jpg-to-png",
+      "ctaUrl": "/tools/convert/jpg-in-png",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "webp-to-jpg",
+      "slug": "webp-in-jpg",
       "title": "Convertitore da WebP a JPG",
       "metaTitle": "Convertitore da WebP a JPG | MyImageUpscaler",
       "metaDescription": "Converti WebP in JPG online gratuitamente. Compatibilità universale per qualsiasi dispositivo. Conversione veloce basata sul browser senza caricamento richiesto.",
@@ -1556,15 +1567,15 @@
           "answer": "Convertire WebP animati catturerà il primo fotogramma come JPG statico. Per immagini animate, considera invece il formato GIF."
         }
       ],
-      "relatedTools": ["webp-to-png", "jpg-to-webp", "image-compressor"],
-      "relatedGuides": ["webp-format-guide"],
+      "relatedTools": ["webp-in-png", "jpg-in-webp", "compressore-immagini"],
+      "relatedGuides": ["guida-formato-webp"],
       "ctaText": "Converti WebP in JPG gratuitamente",
-      "ctaUrl": "/tools/convert/webp-to-jpg",
+      "ctaUrl": "/tools/convert/webp-in-jpg",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "webp-to-png",
+      "slug": "webp-in-png",
       "title": "Convertitore da WebP a PNG",
       "metaTitle": "Convertitore da WebP a PNG | MyImageUpscaler",
       "metaDescription": "Converti WebP in PNG online gratuitamente. Preserva trasparenza, ottieni qualità senza perdita. Conversione veloce basata sul browser senza caricamento richiesto.",
@@ -1692,15 +1703,15 @@
           "answer": "Usa PNG se hai bisogno di trasparenza o qualità lossless per editing. Usa JPG per file più piccoli e compatibilità universale quando la trasparenza non è necessaria."
         }
       ],
-      "relatedTools": ["webp-to-jpg", "png-to-webp", "image-compressor"],
-      "relatedGuides": ["webp-format-guide"],
+      "relatedTools": ["webp-in-jpg", "png-in-webp", "compressore-immagini"],
+      "relatedGuides": ["guida-formato-webp"],
       "ctaText": "Converti WebP in PNG gratuitamente",
-      "ctaUrl": "/tools/convert/webp-to-png",
+      "ctaUrl": "/tools/convert/webp-in-png",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "jpg-to-webp",
+      "slug": "jpg-in-webp",
       "title": "Convertitore da JPG a WebP",
       "metaTitle": "Convertitore da JPG a WebP | MyImageUpscaler",
       "metaDescription": "Converti JPG in WebP online gratuitamente. Ottieni file più piccoli del 25-35% con compressione moderna. Conversione veloce basata sul browser senza caricamento richiesto.",
@@ -1829,15 +1840,15 @@
           "answer": "Per uso web, sì! WebP è ideale per siti web. Per email, stampa, o vecchi software, JPG potrebbe essere più compatibile."
         }
       ],
-      "relatedTools": ["png-to-webp", "webp-to-jpg", "image-compressor"],
-      "relatedGuides": ["webp-format-guide", "web-performance-images"],
+      "relatedTools": ["png-in-webp", "webp-in-jpg", "compressore-immagini"],
+      "relatedGuides": ["guida-formato-webp", "prestazioni-web-immagini"],
       "ctaText": "Converti JPG in WebP gratuitamente",
-      "ctaUrl": "/tools/convert/jpg-to-webp",
+      "ctaUrl": "/tools/convert/jpg-in-webp",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "png-to-webp",
+      "slug": "png-in-webp",
       "title": "Convertitore da PNG a WebP",
       "metaTitle": "Convertitore da PNG a WebP | MyImageUpscaler",
       "metaDescription": "Converti PNG in WebP online gratuitamente. Ottieni file più piccoli del 26% mantenendo la trasparenza. Conversione veloce basata sul browser senza caricamento richiesto.",
@@ -1965,15 +1976,15 @@
           "answer": "Sì! Usa il nostro convertitore WebP in PNG se hai bisogno del formato PNG per compatibilità o modifica in software che non supporta WebP."
         }
       ],
-      "relatedTools": ["jpg-to-webp", "webp-to-png", "image-compressor"],
-      "relatedGuides": ["webp-format-guide", "web-performance-images"],
+      "relatedTools": ["jpg-in-webp", "webp-in-png", "compressore-immagini"],
+      "relatedGuides": ["guida-formato-webp", "prestazioni-web-immagini"],
       "ctaText": "Converti PNG in WebP gratuitamente",
-      "ctaUrl": "/tools/convert/png-to-webp",
+      "ctaUrl": "/tools/convert/png-in-webp",
       "isInteractive": true,
       "maxFileSizeMB": 25
     },
     {
-      "slug": "bulk-image-compressor",
+      "slug": "compressore-immagini-in-blocco",
       "title": "Compressore immagini in blocco",
       "metaTitle": "Compressore immagini in blocco | MyImageUpscaler",
       "metaDescription": "Comprimi più immagini contemporaneamente con il nostro Compressore immagini in blocco gratuito. Riduci le dimensioni dei file fino all'80% con controllo qualità. Basato sul browser, non richiede caricamento.",
@@ -1988,7 +1999,7 @@
         "comprimi foto in blocco"
       ],
       "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "tools",
+      "category": "strumenti",
       "toolName": "Compressore Immagini in Blocco",
       "description": "Strumento professionale di compressione immagini in blocco che funziona interamente nel tuo browser. Comprimi fino a 20 immagini contemporaneamente fino all80% mantenendo la qualità visiva. Supporta formati JPEG, PNG e WebP con anteprime reali e download ZIP.",
       "toolComponent": "BulkImageCompressor",
@@ -2114,10 +2125,10 @@
           "answer": "Ogni immagine può essere fino a 25MB. Questo limite è basato sulla memoria del browser, non restrizioni del server (poiché non carichiamo sui server)."
         }
       ],
-      "relatedTools": ["image-compressor", "image-resizer", "jpg-to-webp"],
-      "relatedGuides": ["image-optimization-guide", "web-performance-images"],
+      "relatedTools": ["compressore-immagini", "image-resizer", "jpg-in-webp"],
+      "relatedGuides": ["guida-ottimizzazione-immagini", "prestazioni-web-immagini"],
       "ctaText": "Prova compressore in blocco gratuito",
-      "ctaUrl": "/tools/compress/bulk-image-compressor",
+      "ctaUrl": "/tools/compress/compressore-immagini-in-blocco",
       "isInteractive": true,
       "maxFileSizeMB": 25
     }

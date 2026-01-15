@@ -77,17 +77,20 @@ export function HeroSection({
   const subtitle = h1Parts[1];
 
   return (
-    <section className="pt-12 pb-16 md:pt-16 md:pb-20 relative overflow-hidden hero-gradient-2025">
+    <section className="pt-12 pb-16 md:pt-16 md:pb-20 relative hero-gradient-2025">
       <AmbientBackground variant="hero" />
 
       <motion.div
-        className="text-center max-w-4xl mx-auto relative z-10"
+        className="text-center max-w-6xl mx-auto relative z-10 px-4"
         initial="hidden"
         animate="visible"
         variants={heroContainerVariants}
       >
         {/* Badge */}
-        <motion.div variants={heroItemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-muted-foreground font-medium text-sm mb-8 hover:shadow-xl hover:shadow-accent/20 transition-all duration-300 cursor-default group">
+        <motion.div
+          variants={heroItemVariants}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-muted-foreground font-medium text-sm mb-8 hover:shadow-xl hover:shadow-accent/20 transition-all duration-300 cursor-default group"
+        >
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
@@ -101,11 +104,7 @@ export function HeroSection({
           className="text-6xl sm:text-6xl md:text-8xl font-black mb-8 tracking-tight text-white leading-[1.05]"
         >
           {mainTitle}
-          {subtitle && (
-            <span className="block mt-4 gradient-text-primary">
-              {subtitle}
-            </span>
-          )}
+          {subtitle && <span className="block mt-4 gradient-text-primary">{subtitle}</span>}
         </motion.h1>
 
         {/* Intro Text */}

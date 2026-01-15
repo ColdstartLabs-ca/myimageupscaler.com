@@ -2,7 +2,7 @@
   "category": "ツール",
   "pages": [
     {
-      "slug": "convert-jpeg-to-png",
+      "slug": "jpegをpngに変換",
       "title": "JPEGをPNGに変換",
       "metaTitle": "JPEGをPNGに変換 | MyImageUpscaler",
       "metaDescription": "Convert JPEG files to PNG フォーマット オンライン for 無料. High-品質 JPG to PNG conversion with transparency support. Perfect for logos, graphics, and プロフェッショナル use.",
@@ -88,8 +88,8 @@
           "answer": "Yes! Our converter offers adjustable compression levels, allowing you to balance file サイズ and 品質 according to your specific needs."
         }
       ],
-      "relatedTools": ["convert-png-to-jpeg", "convert-webp-to-png", "add-transparency-to-images"],
-      "relatedGuides": ["understanding-image-formats", "when-to-use-png-vs-jpeg"],
+      "relatedTools": ["pngをjpegに変換", "webpをpngに変換", "画像に透明性を追加"],
+      "relatedGuides": ["画像フォーマットの理解", "pngとjpegの使い分け"],
       "outputFormats": ["PNG"]
     },
     {
@@ -174,12 +174,12 @@
           "answer": "Yes! Our advanced conversion algorithms mAIntAIn maximum 品質 during the process. While there may be minimal 品質 differences due to フォーマット characteristics, we optimize for the 最高 possible JPEG output."
         }
       ],
-      "relatedTools": ["convert-jpeg-to-webp", "convert-png-to-webp"],
-      "relatedGuides": ["understanding-webp-format", "image-optimization-guide"],
+      "relatedTools": ["jpegをwebpに変換", "pngをwebpに変換"],
+      "relatedGuides": ["webpフォーマットの理解", "画像最適化ガイド"],
       "outputFormats": ["JPEG"]
     },
     {
-      "slug": "convert-png-to-jpeg",
+      "slug": "pngをjpegに変換",
       "title": "PNGをJPEGに変換",
       "metaTitle": "PNGをJPEGに変換 | MyImageUpscaler",
       "metaDescription": "Convert PNG images to JPEG フォーマット オンライン for 無料. High-品質 PNG to JPG conversion with file サイズ optimization. Perfect for photos and web images.",
@@ -188,13 +188,13 @@
       "primaryKeyword": "pngをjpegに変換",
       "secondaryKeywords": [
         "pngからjpg変換",
-        "png to jpeg online",
-        "image optimizer",
-        "file size reducer",
-        "png compression tool"
+        "pngをjpegにオンライン変換",
+        "画像オプティマイザー",
+        "ファイルサイズ削減",
+        "png圧縮ツール"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ツール",
       "toolName": "PNGからJPEG変換ツール",
       "description": "品質最適化とファイルサイズ削減機能を備えたインテリジェントなPNGからJPEG変換ツール",
       "isInteractive": true,
@@ -233,8 +233,8 @@
         "supportedFormats": ["PNG", "JPEG", "JPG"],
         "maxFileSize": "50MB",
         "outputOptions": ["高品質JPEG", "Web最適化JPEG", "バランス型品質/サイズ"],
-        "colorSpace": "sRGB, Adobe RGB, Grayscale support",
-        "batchLimit": "20 files per conversion"
+        "colorSpace": "sRGB、Adobe RGB、グレースケール対応",
+        "batchLimit": "変換あたり20ファイル"
       },
       "advantages": [
         "大幅なファイルサイズ削減（最大80%）",
@@ -261,11 +261,11 @@
           "answer": "Yes! Our converter offers adjustable 品質 settings from 1-100, allowing you to balance file サイズ and image 品質 according to your needs."
         }
       ],
-      "relatedTools": ["convert-jpeg-to-png", "convert-png-to-webp", "compress-png-files"],
-      "relatedGuides": ["understanding-image-formats", "image-optimization-guide"]
+      "relatedTools": ["jpegをpngに変換", "pngをwebpに変換", "pngファイルを圧縮"],
+      "relatedGuides": ["画像フォーマットの理解", "画像最適化ガイド"]
     },
     {
-      "slug": "convert-bmp-to-jpeg",
+      "slug": "bmpをjpegに変換",
       "title": "BMPからJPEGへの変換",
       "metaTitle": "BMPからJPEGへの変換 | MyImageUpscaler",
       "metaDescription": "Convert BMP images to JPEG フォーマット オンライン for 無料. Reduce BMP file サイズs while mAIntAIning 品質. Perfect for legacy image files and Windows users.",
@@ -280,7 +280,7 @@
         "レガシーフォーマットコンバーター"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ツール",
       "toolName": "BMPからJPEGへのコンバーター",
       "description": "レガシー画像最適化のための効率的なBMPからJPEGへの変換",
       "isInteractive": true,
@@ -324,7 +324,7 @@
       }
     },
     {
-      "slug": "convert-gif-to-jpeg",
+      "slug": "gifをjpegに変換",
       "title": "GIFからJPEGへの変換",
       "metaTitle": "GIFからJPEGへの変換 | MyImageUpscaler",
       "metaDescription": "Convert GIF images to JPEG フォーマット オンライン for 無料. Convert static GIFs or extract frames from animated GIFs. Perfect for graphics and web images.",
@@ -338,7 +338,7 @@
         "静的gifコンバーター"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ツール",
       "toolName": "GIFからJPEGへのコンバーター",
       "description": "静止画像とフレーム抽出のためのインテリジェントなGIFからJPEGへの変換",
       "isInteractive": true,
@@ -382,7 +382,7 @@
       }
     },
     {
-      "slug": "convert-svg-to-jpeg",
+      "slug": "svgをjpegに変換",
       "title": "SVGからJPEGへの変換",
       "metaTitle": "SVGからJPEGへの変換 | MyImageUpscaler",
       "metaDescription": "Convert SVG vector graphics to JPEG images オンライン. High-品質 SVG to JPEG conversion with 解像度 control. Perfect for logos and vector graphics.",
@@ -397,7 +397,7 @@
         "ロゴフォーマットコンバーター"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ツール",
       "toolName": "SVGからJPEGへのコンバーター",
       "description": "解像度制御と品質最適化を備えたプロフェッショナルなSVGからJPEGへの変換",
       "isInteractive": true,
@@ -435,29 +435,29 @@
       "technicalSpecs": {
         "supportedFormats": ["SVG", "SVGZ", "JPEG", "JPG"],
         "maxFileSize": "10MB",
-        "outputOptions": ["Web JPEG", "高品質JPEG", "カスタム解像度"],
+        "outputOptions": ["ウェブJPEG", "高品質JPEG", "カスタム解像度"],
         "colorSpace": "sRGBサポート",
         "batchLimit": "変換あたり20ファイル"
       }
     },
     {
-      "slug": "convert-jpeg-to-webp",
+      "slug": "jpegをwebpに変換",
       "title": "JPEGをWebPに変換",
       "metaTitle": "JPEGをWebPに変換 | MyImageUpscaler",
       "metaDescription": "Convert JPEG images to WebP フォーマット for better web パフォーマンス. High-品質 JPG to WebP conversion with 25-35% file サイズ reduction. Perfect for website optimization.",
       "h1": "JPEGをWebPに変換 - モダンなWeb画像最適化",
       "intro": "Convert your JPEG images to modern WebP フォーマット for superior web パフォーマンス and compression. Achieve 25-35% smaller file サイズs while mAIntAIning equivalent visual 品質 for faster website loading.",
-      "primaryKeyword": "convert jpeg to webp",
+      "primaryKeyword": "jpegをwebpに変換",
       "secondaryKeywords": [
-        "jpg to webp converter",
-        "jpeg to webp online",
-        "image optimization",
-        "web performance",
-        "modern image format"
+        "jpgからwebpへのコンバーター",
+        "jpegをwebpにオンライン変換",
+        "画像最適化",
+        "ウェブパフォーマンス",
+        "モダン画像フォーマット"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
-      "toolName": "JPEG to WebP Converter",
+      "category": "ツール",
+      "toolName": "JPEGからWebPへのコンバーター",
       "description": "Web最適化とパフォーマンスのためのモダンなJPEGからWebPへの変換",
       "isInteractive": true,
       "toolComponent": "FormatConverter",
@@ -500,7 +500,7 @@
       }
     },
     {
-      "slug": "convert-png-to-webp",
+      "slug": "pngをwebpに変換",
       "title": "PNGをWebPに変換",
       "metaTitle": "PNGをWebPに変換 | MyImageUpscaler",
       "metaDescription": "Convert PNG images to WebP フォーマット with transparency support. High-品質 PNG to WebP conversion for web optimization. Perfect for logos and graphics.",
@@ -515,7 +515,7 @@
         "Webパフォーマンス画像"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ツール",
       "toolName": "PNGからWebPへのコンバーター",
       "description": "透明性の保持と最適化を備えた最新のPNGからWebPへの変換",
       "isInteractive": true,
@@ -559,7 +559,7 @@
       }
     },
     {
-      "slug": "convert-webp-to-png",
+      "slug": "webpをpngに変換",
       "title": "WebPからPNGへの変換",
       "metaTitle": "WebPからPNGへの変換 | MyImageUpscaler",
       "metaDescription": "Convert WebP images to PNG フォーマット オンライン for 無料. High-品質 WebP to PNG conversion with transparency preservation. Perfect for lossless image editing.",
@@ -574,7 +574,7 @@
         "webp互換性"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ツール",
       "toolName": "WebPからPNGへのコンバーター",
       "description": "透明性の保持と可逆品質を備えた高速なWebPからPNGへの変換",
       "isInteractive": true,
@@ -618,7 +618,7 @@
       }
     },
     {
-      "slug": "convert-svg-to-png",
+      "slug": "svgをpngに変換",
       "title": "SVGからPNGへの変換",
       "metaTitle": "SVGからPNGへの変換 | MyImageUpscaler",
       "metaDescription": "Convert SVG vector graphics to PNG フォーマット オンライン with transparency. High-品質 SVG to PNG conversion with 解像度 control. Perfect for logos and graphics.",
@@ -633,7 +633,7 @@
         "svg解像度制御"
       ],
       "lastUpdated": "2025-01-19",
-      "category": "tools",
+      "category": "ツール",
       "toolName": "SVGからPNGへのコンバーター",
       "description": "透明性と解像度制御を備えたプロフェッショナルなSVGからPNGへの変換",
       "isInteractive": true,
@@ -671,9 +671,9 @@
       "technicalSpecs": {
         "supportedFormats": ["SVG", "SVGZ", "PNG"],
         "maxFileSize": "10MB",
-        "outputOptions": ["Web PNG", "高解像度PNG", "カスタム寸法"],
+        "outputOptions": ["ウェブPNG", "高解像度PNG", "カスタム寸法"],
         "colorSpace": "sRGB、アルファチャンネルサポート付き透明度",
-        "batchLimit": "25 files per conversion"
+        "batchLimit": "変換あたり25ファイル"
       }
     }
   ]
