@@ -363,7 +363,8 @@ export const getAllPlatformSlugs = cache(async (): Promise<string[]> => {
 
 export const getPlatformData = cache(async (slug: string): Promise<IPlatformPage | null> => {
   const platform = platformsData.pages.find(page => page.slug === slug);
-  return platform || null;
+  if (!platform) return null;
+  return { ...platform, category: 'platforms' as const };
 });
 
 export const getAllPlatforms = cache(async (): Promise<IPlatformPage[]> => {
@@ -392,7 +393,9 @@ export const getContentData = cache(async (slug: string): Promise<IContentTypePa
   try {
     const data = await import('@/app/seo/data/content.json');
     const contentData = data as unknown as IPSEODataFile<IContentTypePage>;
-    return contentData.pages.find(page => page.slug === slug) || null;
+    const page = contentData.pages.find(page => page.slug === slug);
+    if (!page) return null;
+    return { ...page, category: 'content' as const };
   } catch {
     return null;
   }
@@ -424,7 +427,9 @@ export const getAIFeatureData = cache(async (slug: string): Promise<IAIFeaturePa
   try {
     const data = await import('@/app/seo/data/ai-features.json');
     const aiFeatureData = data as unknown as IPSEODataFile<IAIFeaturePage>;
-    return aiFeatureData.pages.find(page => page.slug === slug) || null;
+    const page = aiFeatureData.pages.find(page => page.slug === slug);
+    if (!page) return null;
+    return { ...page, category: 'ai-features' as const };
   } catch {
     return null;
   }
@@ -510,7 +515,9 @@ export const getPhotoRestorationData = cache(
     try {
       const data = await import('@/app/seo/data/photo-restoration.json');
       const photoRestorationData = data as unknown as IPSEODataFile<IPhotoRestorationPage>;
-      return photoRestorationData.pages.find(page => page.slug === slug) || null;
+      const page = photoRestorationData.pages.find(page => page.slug === slug);
+      if (!page) return null;
+      return { ...page, category: 'photo-restoration' as const };
     } catch {
       return null;
     }
@@ -543,7 +550,9 @@ export const getCameraRawData = cache(async (slug: string): Promise<ICameraRawPa
   try {
     const data = await import('@/app/seo/data/camera-raw.json');
     const cameraRawData = data as unknown as IPSEODataFile<ICameraRawPage>;
-    return cameraRawData.pages.find(page => page.slug === slug) || null;
+    const page = cameraRawData.pages.find(page => page.slug === slug);
+    if (!page) return null;
+    return { ...page, category: 'camera-raw' as const };
   } catch {
     return null;
   }
@@ -576,7 +585,9 @@ export const getIndustryInsightsData = cache(
     try {
       const data = await import('@/app/seo/data/industry-insights.json');
       const industryInsightsData = data as unknown as IPSEODataFile<IIndustryInsightPage>;
-      return industryInsightsData.pages.find(page => page.slug === slug) || null;
+      const page = industryInsightsData.pages.find(page => page.slug === slug);
+      if (!page) return null;
+      return { ...page, category: 'industry-insights' as const };
     } catch {
       return null;
     }
@@ -610,7 +621,9 @@ export const getDeviceOptimizationData = cache(
     try {
       const data = await import('@/app/seo/data/device-optimization.json');
       const deviceOptimizationData = data as unknown as IPSEODataFile<IDeviceOptimizationPage>;
-      return deviceOptimizationData.pages.find(page => page.slug === slug) || null;
+      const page = deviceOptimizationData.pages.find(page => page.slug === slug);
+      if (!page) return null;
+      return { ...page, category: 'device-optimization' as const };
     } catch {
       return null;
     }
@@ -643,7 +656,9 @@ export const getBulkToolsData = cache(async (slug: string): Promise<IBulkToolPag
   try {
     const data = await import('@/app/seo/data/bulk-tools.json');
     const bulkToolsData = data as unknown as IPSEODataFile<IBulkToolPage>;
-    return bulkToolsData.pages.find(page => page.slug === slug) || null;
+    const page = bulkToolsData.pages.find(page => page.slug === slug);
+    if (!page) return null;
+    return { ...page, category: 'bulk-tools' as const };
   } catch {
     return null;
   }

@@ -42,8 +42,14 @@ export function GenericPSEOPageTemplate({
     'features' in data && Array.isArray(data.features) && data.features.length > 0;
   const hasBenefits =
     'benefits' in data && Array.isArray(data.benefits) && data.benefits.length > 0;
+  // Check if useCases are proper IUseCase objects (with title property), not just strings
   const hasUseCases =
-    'useCases' in data && Array.isArray(data.useCases) && data.useCases.length > 0;
+    'useCases' in data &&
+    Array.isArray(data.useCases) &&
+    data.useCases.length > 0 &&
+    typeof data.useCases[0] === 'object' &&
+    data.useCases[0] !== null &&
+    'title' in data.useCases[0];
   const hasHowItWorks =
     'howItWorks' in data && Array.isArray(data.howItWorks) && data.howItWorks.length > 0;
   const hasFAQ = 'faq' in data && Array.isArray(data.faq) && data.faq.length > 0;
