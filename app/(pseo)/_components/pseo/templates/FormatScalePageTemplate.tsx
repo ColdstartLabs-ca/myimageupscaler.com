@@ -114,7 +114,7 @@ export function FormatScalePageTemplate({
             h1={data.h1}
             intro={data.intro}
             ctaText="Try Free"
-            ctaUrl="/upscaler"
+            ctaUrl="/"
             pageType="format-scale"
             slug={data.slug}
           />
@@ -228,7 +228,7 @@ export function FormatScalePageTemplate({
                 title={`Ready to upscale your ${data.format} images ${data.scaleFactor}?`}
                 description="Start enhancing images with AI today. No credit card required."
                 ctaText="Try Free"
-                ctaUrl="/upscaler"
+                ctaUrl="/"
                 pageType="format-scale"
                 slug={data.slug}
               />

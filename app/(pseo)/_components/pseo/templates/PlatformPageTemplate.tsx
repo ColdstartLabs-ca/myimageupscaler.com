@@ -27,7 +27,11 @@ interface IPlatformPageTemplateProps {
   relatedPages?: IRelatedPage[];
 }
 
-export function PlatformPageTemplate({ data, locale, relatedPages = [] }: IPlatformPageTemplateProps): ReactElement {
+export function PlatformPageTemplate({
+  data,
+  locale,
+  relatedPages = [],
+}: IPlatformPageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/platforms/${data.slug}`);
   const tier = pageMapping?.tier;
@@ -97,7 +101,7 @@ export function PlatformPageTemplate({ data, locale, relatedPages = [] }: IPlatf
             h1={data.h1}
             intro={data.intro}
             ctaText="Try Free"
-            ctaUrl="/upscaler"
+            ctaUrl="/"
             pageType="platform"
             slug={data.slug}
           />
@@ -275,7 +279,7 @@ export function PlatformPageTemplate({ data, locale, relatedPages = [] }: IPlatf
                 title={`Ready to enhance your ${data.platformName || 'AI'} images?`}
                 description="Start enhancing images with AI today. No credit card required."
                 ctaText="Try Free"
-                ctaUrl="/upscaler"
+                ctaUrl="/"
                 pageType="platform"
                 slug={data.slug}
               />

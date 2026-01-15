@@ -97,7 +97,7 @@ export function AlternativePageTemplate({
             h1={data.h1}
             intro={data.intro}
             ctaText="Try Free"
-            ctaUrl="/upscaler"
+            ctaUrl="/"
             pageType="alternative"
             slug={data.slug}
           />
@@ -234,7 +234,7 @@ export function AlternativePageTemplate({
                 title={`Ready to try a better alternative?`}
                 description="Start enhancing images with AI today. No credit card required."
                 ctaText="Try Free"
-                ctaUrl="/upscaler"
+                ctaUrl="/"
                 pageType="alternative"
                 slug={data.slug}
               />

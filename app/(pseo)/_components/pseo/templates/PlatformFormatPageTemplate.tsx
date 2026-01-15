@@ -106,7 +106,7 @@ export function PlatformFormatPageTemplate({
             h1={data.h1}
             intro={data.intro}
             ctaText="Try Free"
-            ctaUrl="/upscaler"
+            ctaUrl="/"
             pageType="platform-format"
             slug={data.slug}
           />
@@ -233,7 +233,7 @@ export function PlatformFormatPageTemplate({
                 title={`Ready to upscale your ${data.platform} ${data.format} images?`}
                 description="Start enhancing images with AI today. No credit card required."
                 ctaText="Try Free"
-                ctaUrl="/upscaler"
+                ctaUrl="/"
                 pageType="platform-format"
                 slug={data.slug}
               />

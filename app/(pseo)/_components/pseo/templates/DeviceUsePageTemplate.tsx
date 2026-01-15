@@ -25,7 +25,11 @@ interface IDeviceUsePageTemplateProps {
   relatedPages?: IRelatedPage[];
 }
 
-export function DeviceUsePageTemplate({ data, locale, relatedPages = [] }: IDeviceUsePageTemplateProps): ReactElement {
+export function DeviceUsePageTemplate({
+  data,
+  locale,
+  relatedPages = [],
+}: IDeviceUsePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/device-use/${data.slug}`);
   const tier = pageMapping?.tier;
@@ -109,7 +113,7 @@ export function DeviceUsePageTemplate({ data, locale, relatedPages = [] }: IDevi
             h1={data.h1}
             intro={data.intro}
             ctaText="Try Free"
-            ctaUrl="/upscaler"
+            ctaUrl="/"
             pageType="device-use"
             slug={data.slug}
           />
@@ -234,7 +238,7 @@ export function DeviceUsePageTemplate({ data, locale, relatedPages = [] }: IDevi
                 title={`Ready to optimize images for ${data.useCase.toLowerCase()} on ${data.device}?`}
                 description="Start enhancing images with AI today. No credit card required."
                 ctaText="Try Free"
-                ctaUrl="/upscaler"
+                ctaUrl="/"
                 pageType="device-use"
                 slug={data.slug}
               />

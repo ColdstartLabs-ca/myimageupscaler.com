@@ -28,7 +28,11 @@ interface IFormatPageTemplateProps {
   relatedPages?: IRelatedPage[];
 }
 
-export function FormatPageTemplate({ data, locale, relatedPages = [] }: IFormatPageTemplateProps): ReactElement {
+export function FormatPageTemplate({
+  data,
+  locale,
+  relatedPages = [],
+}: IFormatPageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/formats/${data.slug}`);
   const tier = pageMapping?.tier;
@@ -110,7 +114,7 @@ export function FormatPageTemplate({ data, locale, relatedPages = [] }: IFormatP
             h1={data.h1}
             intro={data.intro}
             ctaText="Try Free"
-            ctaUrl="/upscaler"
+            ctaUrl="/"
             pageType="format"
             slug={data.slug}
           />
@@ -167,7 +171,7 @@ export function FormatPageTemplate({ data, locale, relatedPages = [] }: IFormatP
                 title={`Ready to upscale your ${data.formatName || 'images'}?`}
                 description="Start enhancing images with AI today. No credit card required."
                 ctaText="Try Free"
-                ctaUrl="/upscaler"
+                ctaUrl="/"
                 pageType="format"
                 slug={data.slug}
               />

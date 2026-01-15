@@ -95,7 +95,7 @@ export function UseCasePageTemplate({ data, locale }: IUseCasePageTemplateProps)
             h1={data.h1}
             intro={data.intro}
             ctaText="Try Free"
-            ctaUrl="/upscaler"
+            ctaUrl="/"
             pageType="use-case"
             slug={data.slug}
           />
@@ -250,7 +250,7 @@ export function UseCasePageTemplate({ data, locale }: IUseCasePageTemplateProps)
                 title={`Ready to optimize your ${data.industry || 'images'}?`}
                 description="Start enhancing images with AI today. No credit card required."
                 ctaText="Try Free"
-                ctaUrl="/upscaler"
+                ctaUrl="/"
                 pageType="use-case"
                 slug={data.slug}
               />
