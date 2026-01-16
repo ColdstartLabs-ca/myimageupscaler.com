@@ -12,6 +12,8 @@ export interface ICreditCalculationInput {
   previousTierCredits: number;
   /** Credits per cycle for the NEW tier */
   newTierCredits: number;
+  /** Maximum rollover cap for the NEW tier (optional) */
+  maxRollover?: number;
 }
 
 export interface ICreditCalculationResult {
@@ -29,15 +31,15 @@ export class SubscriptionCreditsService {
   /**
    * Calculate how many credits to add on a subscription upgrade
    *
-   * Simplified Logic:
-   * 1. Always award the difference in tier credits on upgrade, regardless of current balance
-   * 2. This preserves legitimate rollover/purchases without penalizing high-balance users
+   * Logic:
+   * 1. Award the difference in tier credits on upgrade
+   * 2. MEDIUM-23 FIX: Apply maxRollover cap to prevent balance exceeding tier limit
    *
    * @param input - Current balance and tier credit amounts
    * @returns Calculation result with credits to add and reason
    */
   static calculateUpgradeCredits(input: ICreditCalculationInput): ICreditCalculationResult {
-    const { currentBalance, previousTierCredits, newTierCredits } = input;
+    const { currentBalance, previousTierCredits, newTierCredits, maxRollover } = input;
 
     // Validate inputs
     if (currentBalance < 0 || previousTierCredits < 0 || newTierCredits < 0) {
@@ -50,14 +52,36 @@ export class SubscriptionCreditsService {
       );
     }
 
-    // Always add the tier difference on upgrade
-    const creditsToAdd = newTierCredits - previousTierCredits;
+    // Calculate base tier difference
+    const tierDifference = newTierCredits - previousTierCredits;
+
+    // MEDIUM-23 FIX: Apply maxRollover cap if provided
+    // Reduce creditsToAdd so that currentBalance + creditsToAdd does not exceed maxRollover
+    let creditsToAdd = tierDifference;
+    let reason: ICreditCalculationResult['reason'] = 'top_up_to_minimum';
+
+    if (maxRollover !== undefined && maxRollover > 0) {
+      const potentialNewBalance = currentBalance + tierDifference;
+
+      if (potentialNewBalance > maxRollover) {
+        // Cap the credits to not exceed maxRollover
+        creditsToAdd = Math.max(0, maxRollover - currentBalance);
+        reason = 'preserve_legitimate_excess'; // Using existing reason for capped scenario
+
+        if (creditsToAdd < tierDifference) {
+          console.log(
+            `[UPGRADE_CAP] Reduced credits from ${tierDifference} to ${creditsToAdd} ` +
+              `due to maxRollover cap of ${maxRollover} (current: ${currentBalance})`
+          );
+        }
+      }
+    }
 
     return {
       creditsToAdd,
-      reason: 'top_up_to_minimum', // Simplified - always top up
-      maxReasonableBalance: 0, // Not used anymore
-      isLegitimate: true, // Always legitimate with simplified logic
+      reason,
+      maxReasonableBalance: maxRollover ?? 0,
+      isLegitimate: true,
     };
   }
 

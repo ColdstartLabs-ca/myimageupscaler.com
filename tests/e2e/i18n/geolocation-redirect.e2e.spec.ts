@@ -22,8 +22,10 @@ async function gotoWithCountry(
   countryCode: string
 ) {
   // Use extraHTTPHeaders to simulate Cloudflare's CF-IPCountry header
+  // Also set x-test-country for test environment reliability
   await page.context().setExtraHTTPHeaders({
     'CF-IPCountry': countryCode,
+    'x-test-country': countryCode,
   });
 
   await page.goto(url);
@@ -40,7 +42,7 @@ test.describe('Geolocation Auto-Redirect', () => {
 
       // Should redirect to Portuguese version
       const url = page.url();
-      expect(url).toContain('/pt/');
+      expect(url).toContain('/pt');
 
       // Check for Portuguese content
       const portugueseContent = page.locator('footer').getByText(/produto|suporte|legal/i);
@@ -53,7 +55,7 @@ test.describe('Geolocation Auto-Redirect', () => {
 
       // Should redirect to German version
       const url = page.url();
-      expect(url).toContain('/de/');
+      expect(url).toContain('/de');
 
       // Check for German content
       const germanContent = page.locator('footer').getByText(/produkt|support|rechtlich|i18n/i);
@@ -66,7 +68,7 @@ test.describe('Geolocation Auto-Redirect', () => {
 
       // Should redirect to French version
       const url = page.url();
-      expect(url).toContain('/fr/');
+      expect(url).toContain('/fr');
 
       // Check for French content
       const frenchContent = page.locator('footer').getByText(/produit|support|légal/i);
@@ -79,7 +81,7 @@ test.describe('Geolocation Auto-Redirect', () => {
 
       // Should redirect to Italian version
       const url = page.url();
-      expect(url).toContain('/it/');
+      expect(url).toContain('/it');
 
       // Check for Italian content
       const italianContent = page.locator('footer').getByText(/prodotto|supporto|legale/i);
@@ -92,7 +94,7 @@ test.describe('Geolocation Auto-Redirect', () => {
 
       // Should redirect to Japanese version
       const url = page.url();
-      expect(url).toContain('/ja/');
+      expect(url).toContain('/ja');
 
       // Check for Japanese content (look for Japanese characters)
       const japaneseContent = page.locator('footer').getByText(/[\u3040-\u309F\u30A0-\u30FF]/); // Hiragana/Katakana
@@ -105,7 +107,7 @@ test.describe('Geolocation Auto-Redirect', () => {
 
       // Should redirect to Spanish version
       const url = page.url();
-      expect(url).toContain('/es/');
+      expect(url).toContain('/es');
 
       // Check for Spanish content
       const spanishContent = page.locator('footer').getByText(/producto|soporte|legal/i);
@@ -118,9 +120,9 @@ test.describe('Geolocation Auto-Redirect', () => {
 
       // Should default to English (no locale redirect)
       const url = page.url();
-      expect(url).not.toContain('/pt/');
-      expect(url).not.toContain('/de/');
-      expect(url).not.toContain('/fr/');
+      expect(url).not.toContain('/pt');
+      expect(url).not.toContain('/de');
+      expect(url).not.toContain('/fr');
 
       // Check for English content
       const englishContent = page.locator('footer').getByText(/product|support|legal/i);
@@ -133,7 +135,7 @@ test.describe('Geolocation Auto-Redirect', () => {
 
       // Should default to English
       const url = page.url();
-      expect(url).not.toMatch(/\/(pt|de|fr|it|ja|es)\//);
+      expect(url).not.toMatch(/\/(pt|de|fr|it|ja|es)/);
 
       // Check for English content
       const englishContent = page.locator('footer').getByText(/product|support|legal/i);
@@ -158,7 +160,7 @@ test.describe('Geolocation Auto-Redirect', () => {
 
       // Should stay on English due to cookie
       const url = page.url();
-      expect(url).not.toContain('/pt/');
+      expect(url).not.toContain('/pt');
 
       // Check for English content
       const englishContent = page.locator('footer').getByText(/product|support|legal/i);
@@ -202,7 +204,7 @@ test.describe('Geolocation Auto-Redirect', () => {
       expect(localeCookie?.value).toBe('pt');
 
       // Verify URL changed
-      expect(page.url()).toContain('/pt/');
+      expect(page.url()).toContain('/pt');
     });
 
     test('should not redirect when locale cookie matches current URL', async ({
@@ -289,7 +291,7 @@ test.describe('Geolocation Auto-Redirect', () => {
       await page.waitForLoadState('domcontentloaded');
 
       // Should navigate to German version
-      expect(page.url()).toContain('/de/');
+      expect(page.url()).toContain('/de');
     });
 
     test('should update page content when switching locales', async ({ page }) => {

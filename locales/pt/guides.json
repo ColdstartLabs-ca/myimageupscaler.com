@@ -82,7 +82,7 @@
           "answer": "Sim, significativamente melhor. A ampliação de IA usa redes neurais para gerar inteligentemente novos detalhes, enquanto a interpolação bicúbica apenas suava entre pixels existentes. A IA produz resultados mais nítidos e detalhados com menos artefatos."
         }
       ],
-      "relatedGuides": ["how-to-upsize-images", "webp-format-guide", "heic-format-guide"],
+      "relatedGuides": ["how-to-upscale-images", "webp-format-guide", "heic-format-guide"],
       "relatedTools": ["ai-image-upscaler"]
     },
     {

@@ -12,23 +12,22 @@ export interface IAdminCheckResult {
  * Middleware to verify the requesting user has admin role
  * @param req - Next.js request object
  * @returns Admin check result with error response if not authorized
+ *
+ * SECURITY: Always verifies JWT token directly. Does NOT trust X-User-Id header
+ * as it could be forged by attackers bypassing middleware.
  */
 export async function requireAdmin(req: NextRequest): Promise<IAdminCheckResult> {
-  // Try to get user ID from middleware header first (if middleware is enabled)
-  let userId = req.headers.get('X-User-Id');
-
-  // If no header, extract user from JWT token directly
-  if (!userId) {
-    const authResult = await verifyApiAuth(req);
-    if ('error' in authResult) {
-      return {
-        isAdmin: false,
-        userId: null,
-        error: authResult.error,
-      };
-    }
-    userId = authResult.user.id;
+  // SECURITY FIX: Always verify JWT token directly
+  // Never trust X-User-Id header alone as it could be forged
+  const authResult = await verifyApiAuth(req);
+  if ('error' in authResult) {
+    return {
+      isAdmin: false,
+      userId: null,
+      error: authResult.error,
+    };
   }
+  const userId = authResult.user.id;
 
   if (!userId) {
     return {

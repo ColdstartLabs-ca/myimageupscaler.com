@@ -44,13 +44,20 @@ function SubscriptionConfirmedContent() {
   const newPlan = newPriceId ? getPlanByPriceId(newPriceId) : null;
   const oldPlan = oldPriceId ? getPlanByPriceId(oldPriceId) : null;
 
-  // Enhanced error handling for invalid price IDs
+  // Log warnings for unresolved price IDs (expected for migrated/old prices)
   useEffect(() => {
     if (newPriceId && !resolvedNewPlan) {
-      console.error('[SUBSCRIPTION_CONFIRMED] Invalid new price ID:', newPriceId);
+      console.warn(
+        '[SUBSCRIPTION_CONFIRMED] Could not resolve new price ID (may be outdated):',
+        newPriceId
+      );
     }
     if (oldPriceId && !resolvedOldPlan) {
-      console.error('[SUBSCRIPTION_CONFIRMED] Invalid old price ID:', oldPriceId);
+      // This is expected for old/migrated price IDs - not an error
+      console.log(
+        '[SUBSCRIPTION_CONFIRMED] Old price ID not in current config (expected):',
+        oldPriceId
+      );
     }
   }, [newPriceId, oldPriceId, resolvedNewPlan, resolvedOldPlan]);
 

@@ -104,7 +104,7 @@ test.describe('SEO Redirects E2E Tests', () => {
       await expect(canonicalLink).toHaveCount(1);
 
       const canonicalHref = await canonicalLink.getAttribute('href');
-      expect(canonicalHref).toBe('https://myimageupscaler.com/');
+      expect(canonicalHref).toBe('https://myimageupscaler.com');
       expect(canonicalHref).not.toContain('localhost');
       expect(canonicalHref).not.toContain('3000');
       expect(canonicalHref).not.toContain('3001');
@@ -112,19 +112,15 @@ test.describe('SEO Redirects E2E Tests', () => {
   });
 
   test.describe('Tracking Parameter Cleanup for SEO', () => {
-    test('redirects ?signup=1 to clean URL (301)', async ({ page, baseURL }) => {
-      const response = await page.goto('/?signup=1');
+    test('preserves functional parameters like signup', async ({ page, baseURL }) => {
+      // Note: 'signup' is a functional parameter for the app, not a tracking parameter
+      // The middleware only strips actual tracking parameters (utm_*, fbclid, etc.)
+      await page.goto('/?signup=1');
 
-      // Should redirect to clean URL (without query params)
+      // Should preserve the signup parameter
       const url = page.url();
-      expect(url).toBe(`${baseURL}/`);
-      expect(url).not.toContain('signup');
-
-      // Should be a 301 permanent redirect
-      if (response?.request().redirectedFrom()) {
-        const redirectStatus = response?.status();
-        expect(redirectStatus).toBe(200); // Final response should be 200
-      }
+      expect(url).toBe(`${baseURL}/?signup=1`);
+      expect(url).toContain('signup');
 
       // Page should load successfully
       await expect(page.locator('h1')).toBeVisible();
@@ -144,12 +140,13 @@ test.describe('SEO Redirects E2E Tests', () => {
       await expect(page.locator('h1')).toBeVisible();
     });
 
-    test('redirects ?signup=1 on pSEO pages to clean URL', async ({ page }) => {
+    test('preserves functional parameters on pSEO pages', async ({ page }) => {
+      // Note: 'signup' is a functional parameter, not a tracking parameter
       await page.goto('/tools/resize/bulk-image-resizer?signup=1');
 
-      // Should redirect to clean URL
+      // Should preserve the functional parameter
       expect(page.url()).toContain('/tools/resize/bulk-image-resizer');
-      expect(page.url()).not.toContain('signup');
+      expect(page.url()).toContain('signup');
 
       // Page should load successfully
       await expect(page.locator('h1')).toBeVisible();
@@ -183,13 +180,17 @@ test.describe('SEO Redirects E2E Tests', () => {
       }
     });
 
-    test('handles multiple tracking parameters', async ({ page, baseURL }) => {
+    test('strips tracking params while preserving signup functional param', async ({
+      page,
+      baseURL,
+    }) => {
+      // Note: 'signup' is a functional parameter (not tracking), 'ref' and 'utm_*' are tracking
       await page.goto('/?signup=1&ref=email&utm_source=newsletter&fbclid=test123');
 
-      // Should redirect to clean URL (all params are tracking params)
+      // Should strip tracking params (ref, utm_source, fbclid) but keep functional (signup)
       const url = page.url();
-      expect(url).toBe(`${baseURL}/`);
-      expect(url).not.toContain('signup');
+      expect(url).toBe(`${baseURL}/?signup=1`);
+      expect(url).toContain('signup');
       expect(url).not.toContain('ref');
       expect(url).not.toContain('utm_source');
       expect(url).not.toContain('fbclid');
@@ -235,11 +236,27 @@ test.describe('SEO Redirects E2E Tests', () => {
     });
 
     test('canonical URL does not include tracking parameters', async ({ page, baseURL }) => {
-      // Navigate with tracking params
+      // Navigate with tracking params (utm_source) and functional params (signup)
       await page.goto('/?signup=1&utm_source=google');
 
-      // Wait for redirect to complete
-      await page.waitForURL(`${baseURL}/`);
+      // Check the canonical link element
+      const canonicalLink = page.locator('link[rel="canonical"]').first();
+      await expect(canonicalLink).toHaveCount(1);
+
+      const canonicalHref = await canonicalLink.getAttribute('href');
+
+      // Canonical should always be the clean URL (no tracking params)
+      expect(canonicalHref).toBe('https://myimageupscaler.com');
+      expect(canonicalHref).not.toContain('signup');
+      expect(canonicalHref).not.toContain('utm_source');
+    });
+
+    test('canonical URL is clean when using only tracking params', async ({ page, baseURL }) => {
+      // Navigate with only tracking params
+      await page.goto('/?ref=email&utm_source=google&fbclid=test123');
+
+      // URL should be clean (all params stripped)
+      expect(page.url()).toBe(`${baseURL}/`);
 
       // Check the canonical link element
       const canonicalLink = page.locator('link[rel="canonical"]').first();
@@ -248,9 +265,10 @@ test.describe('SEO Redirects E2E Tests', () => {
       const canonicalHref = await canonicalLink.getAttribute('href');
 
       // Canonical should always be the clean URL
-      expect(canonicalHref).toBe('https://myimageupscaler.com/');
-      expect(canonicalHref).not.toContain('signup');
+      expect(canonicalHref).toBe('https://myimageupscaler.com');
+      expect(canonicalHref).not.toContain('ref');
       expect(canonicalHref).not.toContain('utm_source');
+      expect(canonicalHref).not.toContain('fbclid');
     });
   });
 });

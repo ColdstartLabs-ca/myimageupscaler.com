@@ -193,7 +193,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_starter_${Date.now()}`,
-        priceId: 'price_1Q4HMKALMLhQocpfhK9XKp4a', // Starter plan
+        priceId: 'price_1Sq14eALMLhQocpf5CXIwYSv', // Starter plan
       });
 
       expect([200, 202]).toContain(response.status);
@@ -209,7 +209,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_${Date.now()}`,
-        priceId: 'price_1Q4HMKALMLhQocpfhK9XKp4a', // Starter
+        priceId: 'price_1Sq14eALMLhQocpf5CXIwYSv', // Starter
       });
 
       // Upgrade to Pro
@@ -239,7 +239,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_${Date.now()}`,
-        priceId: 'price_1Q4HMKALMLhQocpfhK9XKp4a', // Starter
+        priceId: 'price_1Sq14eALMLhQocpf5CXIwYSv', // Starter
       });
 
       expect([200, 202]).toContain(response.status);

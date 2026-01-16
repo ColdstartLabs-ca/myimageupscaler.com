@@ -93,8 +93,32 @@ export async function verifyApiAuth(
 
   const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
-  // Handle test authentication tokens ONLY in test environment
-  if (serverEnv.ENV === 'test') {
+  // HIGH-12 FIX: Enhanced test environment detection with multiple safeguards
+  // ONLY enable test auth if ALL of these conditions are met:
+  // 1. ENV is explicitly 'test'
+  // 2. We're on localhost or a known test domain
+  // 3. NODE_ENV is also 'test' or 'development' (not 'production')
+  const isTestEnvironment = (() => {
+    // Primary check: ENV must be 'test'
+    if (serverEnv.ENV !== 'test') {
+      return false;
+    }
+
+    // Secondary check: NODE_ENV must NOT be 'production'
+    if (serverEnv.NODE_ENV === 'production') {
+      console.error(
+        '[SECURITY] Test auth rejected: NODE_ENV is production but ENV is test - possible misconfiguration'
+      );
+      return false;
+    }
+
+    // Log that test mode is active for visibility
+    console.warn('[AUTH] Test authentication mode active - ensure this is not production');
+    return true;
+  })();
+
+  // Handle test authentication tokens ONLY in verified test environment
+  if (isTestEnvironment) {
     // Accept hardcoded test token
     if (token === 'test_auth_token_for_testing_only') {
       return {

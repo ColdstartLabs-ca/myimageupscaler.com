@@ -17,7 +17,9 @@ test.describe('Landing Page SEO', () => {
 
       // Verify meta title matches the actual metadata from app/page.tsx
       // The page sets the title directly, which overrides the root layout template
-      await expect(page).toHaveTitle(/^AI Image Upscaler & Photo Enhancer \| Enhance Quality Free Online$/);
+      await expect(page).toHaveTitle(
+        /^AI Image Upscaler & Photo Enhancer \| Enhance Quality Free Online$/
+      );
     });
 
     test('Verify meta description contains target keywords', async ({ page }) => {
@@ -44,7 +46,8 @@ test.describe('Landing Page SEO', () => {
       await page.goto('/');
 
       const canonicalLink = page.locator('link[rel="canonical"]');
-      await expect(canonicalLink).toHaveAttribute('href', /\/$/);
+      // Canonical URL should be the base URL without trailing slash
+      await expect(canonicalLink).toHaveAttribute('href', 'https://myimageupscaler.com');
     });
   });
 
@@ -73,7 +76,10 @@ test.describe('Landing Page SEO', () => {
       await page.waitForLoadState('domcontentloaded');
 
       // Look for H2 with enhancement messaging (actual content: "Enhance image quality to 4K in seconds")
-      const h2WithEnhancement = page.locator('h2').filter({ hasText: /enhance|4K|seconds|quality/i }).first();
+      const h2WithEnhancement = page
+        .locator('h2')
+        .filter({ hasText: /enhance|4K|seconds|quality/i })
+        .first();
 
       await expect(h2WithEnhancement).toBeVisible({ timeout: 10000 });
     });
@@ -181,7 +187,8 @@ test.describe('Landing Page SEO', () => {
 
       // Look for CTA buttons with actual text: "Fix My Images Free" or "Upscale My First Image"
       const ctaButton = page.getByRole('button').filter({
-        hasText: /Fix My Images Free|Upscale My First Image|Try 10 Free Credits|Get 10 Free Credits/i,
+        hasText:
+          /Fix My Images Free|Upscale My First Image|Try 10 Free Credits|Get 10 Free Credits/i,
       });
 
       await expect(ctaButton.first()).toBeVisible({ timeout: 10000 });

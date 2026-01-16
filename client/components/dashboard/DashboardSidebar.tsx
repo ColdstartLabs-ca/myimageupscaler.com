@@ -169,7 +169,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
                 ) : error ? (
                   t('planUnavailable')
                 ) : (
-                  `${planDisplayName} ${t('plan')}`
+                  planDisplayName
                 )}
               </span>
             </div>

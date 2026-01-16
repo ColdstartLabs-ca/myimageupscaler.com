@@ -82,7 +82,7 @@
           "answer": "Ja, erheblich besser. KI-Upscaling verwendet neuronale Netzwerke, um intelligent neue Details zu generieren, während bikubische Interpolation nur zwischen vorhandenen Pixeln glättet. KI produziert schärfere Kanten und detailliertere Ergebnisse mit weniger Artefakten."
         }
       ],
-      "relatedGuides": ["how-to-upsize-images", "webp-format-guide", "heic-format-guide"],
+      "relatedGuides": ["how-to-upscale-images", "webp-format-guide", "heic-format-guide"],
       "relatedTools": ["ai-image-upscaler"]
     },
     {

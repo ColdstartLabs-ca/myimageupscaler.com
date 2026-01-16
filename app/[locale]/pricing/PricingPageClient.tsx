@@ -24,41 +24,31 @@ export default function PricingPageClient() {
   const pricesConfigured = isStripePricesConfigured();
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [subscription, setSubscription] = useState<ISubscription | null>(null);
-  const [loading, setLoading] = useState(false); // Temporarily set to false for E2E testing
+  const [loading, setLoading] = useState(true);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelingSchedule, setCancelingSchedule] = useState(false);
   const [buttonLoadingStates, setButtonLoadingStates] = useState<Record<string, boolean>>({});
   const handlePlanSelect = (priceId: string) => {
-    // Block if trying to select the already scheduled plan
-    if (subscription?.scheduled_price_id === priceId) {
+    // Block if trying to select the current plan or already scheduled plan
+    if (subscription?.price_id === priceId || subscription?.scheduled_price_id === priceId) {
       return;
     }
     setSelectedPlanId(priceId);
     setIsModalOpen(true);
   };
 
-  const handleSubscribeClick = (priceId: string, selectHandler?: () => void) => {
-    if (selectHandler) {
-      // For authenticated users with existing subscriptions
-      setButtonLoadingStates(prev => ({ ...prev, [priceId]: true }));
-      // Add a small delay to show loading state, then reset after calling handler
-      setTimeout(() => {
-        selectHandler();
-        // Reset loading state in case the modal doesn't immediately navigate
-        setTimeout(() => {
-          setButtonLoadingStates(prev => ({ ...prev, [priceId]: false }));
-        }, 500);
-      }, 100);
-      return;
-    }
-
-    // For unauthenticated users or direct checkout
+  const handleSubscribeClick = (priceId: string, selectHandler: () => void) => {
+    // For authenticated users with existing subscriptions - show plan change modal
     setButtonLoadingStates(prev => ({ ...prev, [priceId]: true }));
-    // Set a timeout to clear loading state in case navigation fails
+    // Add a small delay to show loading state, then reset after calling handler
     setTimeout(() => {
-      setButtonLoadingStates(prev => ({ ...prev, [priceId]: false }));
-    }, 5000); // Clear after 5 seconds if no navigation occurs
+      selectHandler();
+      // Reset loading state in case the modal doesn't immediately navigate
+      setTimeout(() => {
+        setButtonLoadingStates(prev => ({ ...prev, [priceId]: false }));
+      }, 500);
+    }, 100);
   };
 
   const handleCancelScheduledChange = async () => {
@@ -105,11 +95,19 @@ export default function PricingPageClient() {
         ]);
 
         const [profileData, subData] = await Promise.race([dataPromise, timeoutPromise]);
+
+        // Debug logging
+        console.log('[PricingPage] Data loaded:', {
+          subscription_tier: profileData?.subscription_tier,
+          subscription_status: profileData?.subscription_status,
+          subscription_price_id: subData?.price_id,
+        });
+
         setProfile(profileData);
         setSubscription(subData);
       } catch (error) {
         // User not authenticated or timeout - that's fine
-        console.log('User not authenticated or timeout:', error);
+        console.log('[PricingPage] User not authenticated or timeout:', error);
         // Ensure profile and subscription are null for unauthenticated users
         setProfile(null);
         setSubscription(null);
@@ -293,7 +291,7 @@ export default function PricingPageClient() {
                       features={starterPlan.features}
                       priceId={starterPriceId}
                       disabled={
-                        subscription?.price_id === starterPriceId ||
+                        profile?.subscription_tier === 'starter' ||
                         subscription?.scheduled_price_id === starterPriceId
                       }
                       scheduled={subscription?.scheduled_price_id === starterPriceId}
@@ -303,11 +301,13 @@ export default function PricingPageClient() {
                           : undefined
                       }
                       cancelingScheduled={cancelingSchedule}
-                      onSelect={() =>
-                        handleSubscribeClick(
-                          starterPriceId,
-                          subscription ? () => handlePlanSelect(starterPriceId) : undefined
-                        )
+                      onSelect={
+                        subscription
+                          ? () =>
+                              handleSubscribeClick(starterPriceId, () =>
+                                handlePlanSelect(starterPriceId)
+                              )
+                          : undefined
                       }
                       currentSubscriptionPrice={currentSubscriptionPrice}
                       loading={buttonLoadingStates[starterPriceId] || false}
@@ -323,7 +323,7 @@ export default function PricingPageClient() {
                   features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
                   priceId={STRIPE_PRICES.HOBBY_MONTHLY}
                   disabled={
-                    subscription?.price_id === STRIPE_PRICES.HOBBY_MONTHLY ||
+                    profile?.subscription_tier === 'hobby' ||
                     subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY
                   }
                   scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY}
@@ -333,11 +333,13 @@ export default function PricingPageClient() {
                       : undefined
                   }
                   cancelingScheduled={cancelingSchedule}
-                  onSelect={() =>
-                    handleSubscribeClick(
-                      STRIPE_PRICES.HOBBY_MONTHLY,
-                      subscription ? () => handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY) : undefined
-                    )
+                  onSelect={
+                    subscription
+                      ? () =>
+                          handleSubscribeClick(STRIPE_PRICES.HOBBY_MONTHLY, () =>
+                            handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY)
+                          )
+                      : undefined
                   }
                   currentSubscriptionPrice={currentSubscriptionPrice}
                   loading={buttonLoadingStates[STRIPE_PRICES.HOBBY_MONTHLY] || false}
@@ -352,7 +354,7 @@ export default function PricingPageClient() {
                   priceId={STRIPE_PRICES.PRO_MONTHLY}
                   recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
                   disabled={
-                    subscription?.price_id === STRIPE_PRICES.PRO_MONTHLY ||
+                    profile?.subscription_tier === 'pro' ||
                     subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY
                   }
                   scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY}
@@ -362,11 +364,13 @@ export default function PricingPageClient() {
                       : undefined
                   }
                   cancelingScheduled={cancelingSchedule}
-                  onSelect={() =>
-                    handleSubscribeClick(
-                      STRIPE_PRICES.PRO_MONTHLY,
-                      subscription ? () => handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY) : undefined
-                    )
+                  onSelect={
+                    subscription
+                      ? () =>
+                          handleSubscribeClick(STRIPE_PRICES.PRO_MONTHLY, () =>
+                            handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY)
+                          )
+                      : undefined
                   }
                   currentSubscriptionPrice={currentSubscriptionPrice}
                   loading={buttonLoadingStates[STRIPE_PRICES.PRO_MONTHLY] || false}
@@ -380,7 +384,7 @@ export default function PricingPageClient() {
                   features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
                   priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
                   disabled={
-                    subscription?.price_id === STRIPE_PRICES.BUSINESS_MONTHLY ||
+                    profile?.subscription_tier === 'business' ||
                     subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY
                   }
                   scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
@@ -390,13 +394,13 @@ export default function PricingPageClient() {
                       : undefined
                   }
                   cancelingScheduled={cancelingSchedule}
-                  onSelect={() =>
-                    handleSubscribeClick(
-                      STRIPE_PRICES.BUSINESS_MONTHLY,
-                      subscription
-                        ? () => handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY)
-                        : undefined
-                    )
+                  onSelect={
+                    subscription
+                      ? () =>
+                          handleSubscribeClick(STRIPE_PRICES.BUSINESS_MONTHLY, () =>
+                            handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY)
+                          )
+                      : undefined
                   }
                   currentSubscriptionPrice={currentSubscriptionPrice}
                   loading={buttonLoadingStates[STRIPE_PRICES.BUSINESS_MONTHLY] || false}

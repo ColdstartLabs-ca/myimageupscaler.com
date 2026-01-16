@@ -213,7 +213,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const userTier = isPaidUser ? normalizePaidTier(profile?.subscription_tier) : null;
 
     // 4. Check batch limit (after rate limit, before processing)
-    const batchCheck = batchLimitCheck.check(userId, userTier);
+    // HIGH-8/9 FIX: Use atomic checkAndIncrement to prevent race conditions
+    const batchCheck = await batchLimitCheck.checkAndIncrement(userId, userTier);
     if (!batchCheck.allowed) {
       logger.warn('Batch limit exceeded', {
         userId,
@@ -620,18 +621,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       },
     };
 
-    // Increment batch counter after successful processing
-    batchLimitCheck.increment(userId);
-
+    // HIGH-8/9 FIX: increment is no longer needed - checkAndIncrement handles it atomically
     // Get updated batch usage to include in response headers
-    const batchUsage = batchLimitCheck.getUsage(userId, userTier);
+    const batchUsage = await batchLimitCheck.getUsage(userId, userTier);
 
     // 12. Return successful response with enhanced information and batch headers
     return NextResponse.json(response, {
       headers: {
         'X-Batch-Limit': batchUsage.limit.toString(),
         'X-Batch-Current': batchUsage.current.toString(),
-        'X-Batch-Reset': batchCheck.resetAt.toISOString(),
+        'X-Batch-Reset': batchUsage.resetAt.toISOString(),
       },
     });
   } catch (error) {

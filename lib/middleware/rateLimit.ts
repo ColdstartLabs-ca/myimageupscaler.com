@@ -48,18 +48,21 @@ export function createRateLimitHeaders(
 
 /**
  * Check if rate limiting should be skipped (test environment)
- * Uses dedicated ENV variable for clarity and security
+ * MEDIUM-21 FIX: Only use explicit test flags, not inferred from service keys
+ * This prevents staging environments with test Stripe keys from having no rate limiting
  */
 export function isTestEnvironment(): boolean {
-  return serverEnv.ENV === 'test' ||
-         serverEnv.NODE_ENV === 'test' ||
-         // Check for Playwright test environment
-         serverEnv.PLAYWRIGHT_TEST === '1' ||
-         // Check for test database URL pattern (Supabase test project)
-         (!!(serverEnv.NEXT_PUBLIC_SUPABASE_URL && serverEnv.NEXT_PUBLIC_SUPABASE_URL.includes('test'))) ||
-         // Check for test API keys
-         (!!(serverEnv.AMPLITUDE_API_KEY && serverEnv.AMPLITUDE_API_KEY.includes('test'))) ||
-         (!!(serverEnv.STRIPE_SECRET_KEY && serverEnv.STRIPE_SECRET_KEY.startsWith('sk_test_')));
+  // Only use explicit test environment indicators
+  // DO NOT infer test mode from service keys like STRIPE_SECRET_KEY
+  return (
+    serverEnv.ENV === 'test' ||
+    serverEnv.NODE_ENV === 'test' ||
+    // Check for Playwright test environment marker
+    serverEnv.PLAYWRIGHT_TEST === '1'
+  );
+  // REMOVED: Stripe key check - staging environments use test keys but need rate limiting
+  // REMOVED: Supabase URL check - not reliable indicator of test environment
+  // REMOVED: Amplitude key check - not reliable indicator of test environment
 }
 
 /**

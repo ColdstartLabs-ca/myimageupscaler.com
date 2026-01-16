@@ -217,7 +217,7 @@ export const CREDITS = {
  * Price ID constants from subscription config
  */
 export const PRICE_IDS = {
-  STARTER: 'price_1Q4HMKALMLhQocpfhK9XKp4a',
+  STARTER: 'price_1Sq14eALMLhQocpf5CXIwYSv',
   HOBBY: 'price_1SZmVyALMLhQocpf0H7n5ls8',
   PRO: 'price_1SZmVzALMLhQocpfPyRX2W8D',
   BUSINESS: 'price_1SZmVzALMLhQocpfqPk9spg4',

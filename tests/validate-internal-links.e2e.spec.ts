@@ -3,21 +3,18 @@
  * Internal Link Validator for pSEO Pages
  *
  * Uses Playwright to validate internal links across pSEO pages:
- * - Checks that related* arrays reference existing pages
+ * - Checks that all tool and guide pages are accessible
  * - Verifies links don't return 404
  * - Tests navigation between related pages
  *
  * Usage:
- *   npx tsx scripts/validate-internal-links.spec.ts
- *   BASE_URL=https://myimageupscaler.com npx tsx scripts/validate-internal-links.spec.ts
+ *   npx playwright test tests/validate-internal-links.e2e.spec.ts
  */
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-
-// Valid slugs from each category
-const VALID_TOOLS = [
+// Valid slugs from tools.json (static tools at /tools/[slug])
+const VALID_STATIC_TOOLS = [
   'ai-background-remover',
   'ai-image-upscaler',
   'ai-photo-enhancer',
@@ -26,6 +23,26 @@ const VALID_TOOLS = [
   'transparent-background-maker',
 ];
 
+// Valid interactive tools from interactive-tools.json (with their correct paths)
+const VALID_INTERACTIVE_TOOLS = [
+  { slug: 'image-resizer', path: '/tools/resize/image-resizer' },
+  { slug: 'resize-image-for-instagram', path: '/tools/resize/resize-image-for-instagram' },
+  { slug: 'resize-image-for-youtube', path: '/tools/resize/resize-image-for-youtube' },
+  { slug: 'resize-image-for-facebook', path: '/tools/resize/resize-image-for-facebook' },
+  { slug: 'resize-image-for-twitter', path: '/tools/resize/resize-image-for-twitter' },
+  { slug: 'resize-image-for-linkedin', path: '/tools/resize/resize-image-for-linkedin' },
+  { slug: 'bulk-image-resizer', path: '/tools/resize/bulk-image-resizer' },
+  { slug: 'png-to-jpg', path: '/tools/convert/png-to-jpg' },
+  { slug: 'jpg-to-png', path: '/tools/convert/jpg-to-png' },
+  { slug: 'webp-to-jpg', path: '/tools/convert/webp-to-jpg' },
+  { slug: 'webp-to-png', path: '/tools/convert/webp-to-png' },
+  { slug: 'jpg-to-webp', path: '/tools/convert/jpg-to-webp' },
+  { slug: 'png-to-webp', path: '/tools/convert/png-to-webp' },
+  { slug: 'image-compressor', path: '/tools/compress/image-compressor' },
+  { slug: 'bulk-image-compressor', path: '/tools/compress/bulk-image-compressor' },
+];
+
+// Valid guides from guides.json
 const VALID_GUIDES = [
   'avif-next-gen-format',
   'bmp-format-guide',
@@ -36,54 +53,6 @@ const VALID_GUIDES = [
   'svg-vector-guide',
   'tiff-format-guide',
   'webp-format-guide',
-];
-
-// Broken references that should be removed
-const BROKEN_GUIDES = [
-  'print-size-guide',
-  'ecommerce-image-requirements',
-  'web-performance-images',
-  'image-resolution-guide',
-  'youtube-thumbnail-best-practices',
-  'when-to-use-jpg',
-  'print-preparation-guide',
-  'format-selection-guide',
-  'vector-to-raster-guide',
-  'understanding-image-formats',
-  'understanding-webp-format',
-  'when-to-use-png-vs-jpeg',
-  'background-removal-guide',
-  'interior-photography-tips',
-  'image-compression-guide',
-];
-
-const BROKEN_TOOLS = [
-  'photo-restoration',
-  'bulk-image-upscaler',
-  'social-media-scheduler',
-  'video-thumbnail-generator',
-  'instagram-grid-planner',
-  'facebook-ad-creator',
-  'image-resizer',
-  'resize-image-for-facebook',
-  'resize-image-for-instagram',
-  'resize-image-for-twitter',
-  'resize-image-for-linkedin',
-  'png-to-jpg',
-  'jpg-to-png',
-  'webp-to-png',
-  'png-to-webp',
-  'webp-to-jpg',
-  'jpg-to-webp',
-  'convert-png-to-jpeg',
-  'convert-webp-to-png',
-  'add-transparency-to-images',
-  'convert-jpeg-to-webp',
-  'convert-png-to-webp',
-  'convert-jpeg-to-png',
-  'compress-png-files',
-  'photo-enhancer',
-  'background-remover',
 ];
 
 interface ILinkValidationResult {
@@ -97,14 +66,10 @@ interface ILinkValidationResult {
 const results: ILinkValidationResult[] = [];
 
 test.describe('Internal Link Validation', () => {
-  test.beforeAll(async () => {
-    console.log(`\n🔍 Starting internal link validation for: ${BASE_URL}\n`);
-  });
-
-  // Test valid tool pages exist
-  test('Valid tool pages should be accessible', async ({ page }) => {
-    for (const slug of VALID_TOOLS) {
-      const url = `${BASE_URL}/tools/${slug}`;
+  // Test static tool pages exist
+  test('Static tool pages should be accessible', async ({ page }) => {
+    for (const slug of VALID_STATIC_TOOLS) {
+      const url = `/tools/${slug}`;
       const response = await page.goto(url);
 
       results.push({
@@ -115,14 +80,32 @@ test.describe('Internal Link Validation', () => {
         issue: response?.ok() ? undefined : `HTTP ${response?.status()}`,
       });
 
-      expect(response?.ok(), `Tool page /tools/${slug} should be accessible`).toBe(true);
+      expect(response?.ok(), `Static tool page /tools/${slug} should be accessible`).toBe(true);
+    }
+  });
+
+  // Test interactive tool pages exist at correct paths
+  test('Interactive tool pages should be accessible at correct paths', async ({ page }) => {
+    for (const tool of VALID_INTERACTIVE_TOOLS) {
+      const url = tool.path;
+      const response = await page.goto(url);
+
+      results.push({
+        url,
+        linkType: 'tool',
+        status: response?.status() || 0,
+        isValid: response?.ok() || false,
+        issue: response?.ok() ? undefined : `HTTP ${response?.status()}`,
+      });
+
+      expect(response?.ok(), `Interactive tool page ${tool.path} should be accessible`).toBe(true);
     }
   });
 
   // Test valid guide pages exist
   test('Valid guide pages should be accessible', async ({ page }) => {
     for (const slug of VALID_GUIDES) {
-      const url = `${BASE_URL}/guides/${slug}`;
+      const url = `/guides/${slug}`;
       const response = await page.goto(url);
 
       results.push({
@@ -137,57 +120,9 @@ test.describe('Internal Link Validation', () => {
     }
   });
 
-  // Test that broken guide references return 404
-  test('Broken guide references should return 404', async ({ page }) => {
-    for (const slug of BROKEN_GUIDES) {
-      const url = `${BASE_URL}/guides/${slug}`;
-      const response = await page.goto(url);
-
-      const isNotFound = response?.status() === 404;
-      const pageContent = await page.content();
-      const hasNotFoundContent = pageContent.toLowerCase().includes('not found');
-
-      results.push({
-        url,
-        linkType: 'guide',
-        status: response?.status() || 0,
-        isValid: false, // These are broken references
-        issue: isNotFound ? 'Confirmed broken (404)' : 'Unexpected status',
-      });
-
-      expect(isNotFound || hasNotFoundContent, `Broken guide /guides/${slug} should return 404`).toBe(
-        true
-      );
-    }
-  });
-
-  // Test that broken tool references return 404
-  test('Broken tool references should return 404', async ({ page }) => {
-    for (const slug of BROKEN_TOOLS) {
-      const url = `${BASE_URL}/tools/${slug}`;
-      const response = await page.goto(url);
-
-      const isNotFound = response?.status() === 404;
-      const pageContent = await page.content();
-      const hasNotFoundContent = pageContent.toLowerCase().includes('not found');
-
-      results.push({
-        url,
-        linkType: 'tool',
-        status: response?.status() || 0,
-        isValid: false, // These are broken references
-        issue: isNotFound ? 'Confirmed broken (404)' : 'Unexpected status',
-      });
-
-      expect(isNotFound || hasNotFoundContent, `Broken tool /tools/${slug} should return 404`).toBe(
-        true
-      );
-    }
-  });
-
   // Test related pages section on a sample page
   test('Related pages should contain valid links', async ({ page }) => {
-    const url = `${BASE_URL}/tools/ai-image-upscaler`;
+    const url = '/tools/ai-image-upscaler';
     await page.goto(url);
 
     // Find all links in the related pages section
@@ -201,24 +136,24 @@ test.describe('Internal Link Validation', () => {
       const href = await link.getAttribute('href');
 
       if (href) {
-        const fullUrl = href.startsWith('http') ? href : `${BASE_URL}${href}`;
-        const slug = fullUrl.split('/').pop();
-
-        // Check if it's a valid reference
-        const isValid = [...VALID_TOOLS, ...VALID_GUIDES].includes(slug || '');
-        const isBroken = [...BROKEN_TOOLS, ...BROKEN_GUIDES].includes(slug || '');
+        // Navigate to each related link and verify it's accessible
+        const linkUrl = href.startsWith('http') ? href : href;
+        const response = await page.goto(linkUrl);
 
         results.push({
-          url: fullUrl,
-          linkType: fullUrl.includes('/tools/') ? 'tool' : 'guide',
-          status: 0,
-          isValid: isValid || !isBroken,
-          issue: isBroken ? 'Broken link found in page' : undefined,
+          url: linkUrl,
+          linkType: linkUrl.includes('/tools/') ? 'tool' : 'guide',
+          status: response?.status() || 0,
+          isValid: response?.ok() || false,
+          issue: response?.ok() ? undefined : `HTTP ${response?.status()}`,
         });
 
-        if (isBroken) {
-          console.log(`  ❌ Broken link found: ${href}`);
+        if (!response?.ok()) {
+          console.log(`  ❌ Broken link found: ${href} (HTTP ${response?.status()})`);
         }
+
+        // Navigate back to continue checking
+        await page.goto(url);
       }
     }
   });
@@ -246,7 +181,7 @@ test.describe('Internal Link Validation', () => {
     console.log('='.repeat(70) + '\n');
 
     if (brokenLinks.length > 0) {
-      console.log('⚠️  Action required: Remove broken references from data files\n');
+      console.log('⚠️  Action required: Fix broken references in data files\n');
     } else {
       console.log('🎉 All internal links validated successfully!\n');
     }

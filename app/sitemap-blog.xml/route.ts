@@ -43,7 +43,7 @@ ${posts
       post.image
         ? `
     <image:image>
-      <image:loc>${post.image.startsWith('http') ? post.image : `${BASE_URL}${post.image}`}</image:loc>
+      <image:loc>${escapeXml(post.image.startsWith('http') ? post.image : `${BASE_URL}${post.image}`)}</image:loc>
       <image:title>${escapeXml(post.title)}</image:title>
     </image:image>`
         : ''

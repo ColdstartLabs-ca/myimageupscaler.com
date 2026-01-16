@@ -61,10 +61,8 @@ export class BulkImageCompressorPage extends BasePage {
     this.toolContainer = page.locator('.max-w-5xl').first();
 
     // Page header - target the main H1 in the template (text-4xl in hero section)
-    this.pageTitle = page
-      .locator('h1.text-4xl, h1.text-5xl')
-      .filter({ hasText: /bulk image compressor/i })
-      .first();
+    // Use getByText for more reliable text matching regardless of exact CSS classes
+    this.pageTitle = page.getByRole('heading', { level: 1, name: /bulk image compressor/i });
 
     // Page description - target ONLY the hero intro paragraph (py-8 section, text-xl)
     // Using first() to handle multiple matches

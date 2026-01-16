@@ -7,7 +7,6 @@
 
 import { analytics } from '@client/analytics/analyticsClient';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
-import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
 import { motion } from 'framer-motion';
 import { ReactElement } from 'react';
 
@@ -177,16 +176,6 @@ export function HeroSection({
             </div>
           </motion.div>
         )}
-
-        {/* Hero Before/After Slider */}
-        <motion.div
-          className="mt-12"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.7, ease: [0.25, 0.4, 0.25, 1] as const }}
-        >
-          <HeroBeforeAfter />
-        </motion.div>
       </motion.div>
     </section>
   );

@@ -32,9 +32,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get pagination parameters from query string
+    // SECURITY FIX: Bound limit to prevent DoS via large queries
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '50', 10);
-    const offset = parseInt(searchParams.get('offset') || '0', 10);
+    const MAX_LIMIT = 100;
+    const requestedLimit = parseInt(searchParams.get('limit') || '50', 10);
+    const limit = Math.min(Math.max(1, requestedLimit), MAX_LIMIT); // Clamp between 1 and MAX_LIMIT
+    const offset = Math.max(0, parseInt(searchParams.get('offset') || '0', 10)); // Ensure non-negative
 
     // Fetch credit transactions for the user
     const { data: transactions, error: fetchError } = await supabaseAdmin

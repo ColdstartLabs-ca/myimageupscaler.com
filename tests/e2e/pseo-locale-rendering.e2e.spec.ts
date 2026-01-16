@@ -95,7 +95,7 @@ test('German format-scale page renders correctly', async ({ page }) => {
 
 test('French use-cases page renders correctly', async ({ page }) => {
   // Test use-cases category
-  const url = '/fr/use-cases/e-commerce-product-photos';
+  const url = '/fr/use-cases/ecommerce-product-photos';
   await page.goto(url);
 
   await page.waitForLoadState('networkidle');

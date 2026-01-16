@@ -97,7 +97,8 @@ describe('Authentication Middleware', () => {
         supabaseResponse: NextResponse.next(),
       });
 
-      const request = new NextRequest('http://localhost/?signup=1', {
+      // Use ref param which is still a tracking param
+      const request = new NextRequest('http://localhost/?ref=email', {
         method: 'GET',
       });
 
@@ -107,6 +108,46 @@ describe('Authentication Middleware', () => {
       // Note: Next.js redirects include the full URL
       expect(response.status).toBe(301);
       expect(response.headers.get('location')).toBe('http://localhost/');
+    });
+
+    test('should preserve login and next query params (auth flow params)', async () => {
+      const { middleware } = await import('../../middleware');
+
+      // Mock updateSession to return a response
+      const { updateSession } = await import('@shared/utils/supabase/middleware');
+      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
+        user: null,
+        supabaseResponse: NextResponse.next(),
+      });
+
+      const request = new NextRequest('http://localhost/?login=1&next=/dashboard', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      // Should NOT redirect - login and next are functional params, not tracking
+      expect(response.status).not.toBe(301);
+    });
+
+    test('should preserve signup query param (functional param)', async () => {
+      const { middleware } = await import('../../middleware');
+
+      // Mock updateSession to return a response
+      const { updateSession } = await import('@shared/utils/supabase/middleware');
+      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
+        user: null,
+        supabaseResponse: NextResponse.next(),
+      });
+
+      const request = new NextRequest('http://localhost/?signup=1', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      // Should NOT redirect - signup is a functional param, not tracking
+      expect(response.status).not.toBe(301);
     });
 
     test('should redirect URLs with UTM parameters to clean URL', async () => {
@@ -205,7 +246,8 @@ describe('Authentication Middleware', () => {
         supabaseResponse: NextResponse.next(),
       });
 
-      const request = new NextRequest('http://localhost/?page=2&utm_source=google&signup=1', {
+      // signup is now a functional param, use ref and utm_source as tracking params
+      const request = new NextRequest('http://localhost/?page=2&utm_source=google&ref=email', {
         method: 'GET',
       });
 
@@ -226,7 +268,7 @@ describe('Authentication Middleware', () => {
         supabaseResponse: NextResponse.next(),
       });
 
-      const request = new NextRequest('http://localhost/?page=2&signup=1', {
+      const request = new NextRequest('http://localhost/?page=2&ref=newsletter', {
         method: 'GET',
       });
 
@@ -236,7 +278,7 @@ describe('Authentication Middleware', () => {
       expect(response.status).toBe(301);
 
       // Original tracking param should be in headers
-      expect(response.headers.get('x-original-signup')).toBe('1');
+      expect(response.headers.get('x-original-ref')).toBe('newsletter');
     });
 
     test('should handle multiple tracking parameters together', async () => {
@@ -249,8 +291,9 @@ describe('Authentication Middleware', () => {
         supabaseResponse: NextResponse.next(),
       });
 
+      // Only use actual tracking params (ref, utm_*, fbclid, gclid, msclkid)
       const request = new NextRequest(
-        'http://localhost/?signup=1&ref=email&utm_source=newsletter&fbclid=test',
+        'http://localhost/?ref=email&utm_source=newsletter&fbclid=test',
         {
           method: 'GET',
         }
@@ -273,7 +316,7 @@ describe('Authentication Middleware', () => {
         supabaseResponse: NextResponse.next(),
       });
 
-      const request = new NextRequest('http://localhost/tools/ai-upscaler?signup=1', {
+      const request = new NextRequest('http://localhost/tools/ai-upscaler?utm_source=google', {
         method: 'GET',
       });
 
@@ -284,7 +327,7 @@ describe('Authentication Middleware', () => {
       // Note: The trailingSlash config will add the trailing slash
       const location = response.headers.get('location') || '';
       expect(location).toContain('/tools/ai-upscaler');
-      expect(location).not.toContain('signup');
+      expect(location).not.toContain('utm_source');
     });
 
     test('should handle tracking params on localized pages', async () => {
@@ -297,7 +340,7 @@ describe('Authentication Middleware', () => {
         supabaseResponse: NextResponse.next(),
       });
 
-      const request = new NextRequest('http://localhost/es/tools/ai-upscaler?signup=1', {
+      const request = new NextRequest('http://localhost/es/tools/ai-upscaler?utm_source=google', {
         method: 'GET',
       });
 
@@ -308,7 +351,82 @@ describe('Authentication Middleware', () => {
       // Note: The trailingSlash config will add the trailing slash
       const location = response.headers.get('location') || '';
       expect(location).toContain('/es/tools/ai-upscaler');
-      expect(location).not.toContain('signup');
+      expect(location).not.toContain('utm_source');
+    });
+  });
+
+  describe('Locale-aware dashboard auth', () => {
+    test('should allow authenticated user to access /pt/dashboard', async () => {
+      const { middleware } = await import('../../middleware');
+
+      // Mock updateSession to return an authenticated user
+      const { updateSession } = await import('@shared/utils/supabase/middleware');
+      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
+        user: { id: 'user-123', email: 'test@example.com' },
+        supabaseResponse: NextResponse.next(),
+      });
+
+      const request = new NextRequest('http://localhost/pt/dashboard', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      // Should not redirect - allow access (test env skips auth redirect)
+      expect(response.status).toBe(200);
+    });
+
+    test('should set locale cookie for locale-prefixed dashboard paths', async () => {
+      const { middleware } = await import('../../middleware');
+
+      // Mock updateSession to return an authenticated user
+      const { updateSession } = await import('@shared/utils/supabase/middleware');
+      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
+        user: { id: 'user-123', email: 'test@example.com' },
+        supabaseResponse: NextResponse.next(),
+      });
+
+      const request = new NextRequest('http://localhost/pt/dashboard', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      // Should have locale cookie set
+      const cookies = response.headers.getSetCookie();
+      const localeCookie = cookies.find(c => c.startsWith('locale='));
+      expect(localeCookie).toContain('locale=pt');
+    });
+
+    test('should detect dashboard paths with locale prefix correctly', async () => {
+      // Import the helper functions are tested implicitly through middleware behavior
+      const { middleware } = await import('../../middleware');
+
+      // Mock updateSession to return an authenticated user
+      const { updateSession } = await import('@shared/utils/supabase/middleware');
+      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
+        user: { id: 'user-123', email: 'test@example.com' },
+        supabaseResponse: NextResponse.next(),
+      });
+
+      // Test various locale-prefixed dashboard paths
+      const testPaths = [
+        '/pt/dashboard',
+        '/es/dashboard',
+        '/de/dashboard/settings',
+        '/fr/dashboard/billing',
+      ];
+
+      for (const path of testPaths) {
+        const request = new NextRequest(`http://localhost${path}`, {
+          method: 'GET',
+        });
+
+        const response = await middleware(request);
+
+        // Should return 200 for authenticated users on dashboard paths
+        expect(response.status).toBe(200);
+      }
     });
   });
 });

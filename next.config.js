@@ -9,8 +9,9 @@ const nextConfig = {
     // Keep TypeScript checking enabled
     ignoreBuildErrors: false,
   },
-  // Always use trailing slashes for proper SEO
-  trailingSlash: true,
+  // IMPORTANT: Disabled trailingSlash to prevent 308 redirects on API routes (especially webhooks)
+  // trailingSlash: true causes Stripe webhooks to fail with 308 redirects
+  // SEO trailing slashes are handled via explicit redirects below instead
   // Skip static generation for OpenNext migration
   ...(process.env.OPENNEXT && {
     output: 'export',
@@ -50,10 +51,7 @@ const nextConfig = {
     ],
   },
   // External packages that shouldn't be bundled into the server
-  serverExternalPackages: [
-    '@imgly/background-removal',
-    'onnxruntime-web',
-  ],
+  serverExternalPackages: ['@imgly/background-removal', 'onnxruntime-web'],
   // Webpack configuration for bundle size optimization
   webpack: (config, { isServer }) => {
     if (isServer) {

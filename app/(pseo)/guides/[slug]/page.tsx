@@ -5,7 +5,6 @@ import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-fac
 import { generateGuideSchema } from '@/lib/seo/schema-generator';
 import { GuidePageTemplate } from '@/app/(pseo)/_components/pseo/templates/GuidePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 interface IGuidePageProps {
@@ -43,8 +42,6 @@ export default async function GuidePage({ params }: IGuidePageProps) {
     <>
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale="en" />
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} />
       <SchemaMarkup schema={schema} />
       <GuidePageTemplate data={guide} />
     </>

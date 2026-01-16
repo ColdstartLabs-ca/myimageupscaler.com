@@ -1,12 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { requireAdmin } from '@/server/middleware/requireAdmin';
 import { supabaseAdmin } from '@/server/supabase/supabaseAdmin';
+
+// SECURITY FIX: Validate userId is a valid UUID
+const userIdSchema = z.string().uuid('Invalid user ID format');
+
+// SECURITY FIX: Validate PATCH body with proper types
+const updateProfileSchema = z.object({
+  role: z.enum(['user', 'admin']).optional(),
+  subscription_tier: z.enum(['hobby', 'pro', 'business']).optional(),
+  subscription_status: z
+    .enum(['active', 'canceled', 'trialing', 'past_due', 'incomplete'])
+    .optional(),
+});
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   const { isAdmin, error } = await requireAdmin(req);
   if (!isAdmin) return error;
 
-  const { userId } = await params;
+  const { userId: rawUserId } = await params;
+
+  // SECURITY FIX: Validate userId is a valid UUID
+  const userIdResult = userIdSchema.safeParse(rawUserId);
+  if (!userIdResult.success) {
+    return NextResponse.json(
+      { error: 'Invalid user ID format', details: userIdResult.error.errors },
+      { status: 400 }
+    );
+  }
+  const userId = userIdResult.data;
 
   try {
     // Fetch user profile with subscription and recent transactions
@@ -49,18 +72,31 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ us
   const { isAdmin, error } = await requireAdmin(req);
   if (!isAdmin) return error;
 
-  const { userId } = await params;
+  const { userId: rawUserId } = await params;
+
+  // SECURITY FIX: Validate userId is a valid UUID
+  const userIdResult = userIdSchema.safeParse(rawUserId);
+  if (!userIdResult.success) {
+    return NextResponse.json(
+      { error: 'Invalid user ID format', details: userIdResult.error.errors },
+      { status: 400 }
+    );
+  }
+  const userId = userIdResult.data;
 
   try {
     const body = await req.json();
-    const allowedFields = ['role', 'subscription_tier', 'subscription_status'];
 
-    const updates: Record<string, unknown> = {};
-    for (const field of allowedFields) {
-      if (body[field] !== undefined) {
-        updates[field] = body[field];
-      }
+    // SECURITY FIX: Validate body with Zod schema (validates types, not just field names)
+    const bodyResult = updateProfileSchema.safeParse(body);
+    if (!bodyResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: bodyResult.error.errors },
+        { status: 400 }
+      );
     }
+
+    const updates: Record<string, unknown> = { ...bodyResult.data };
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
@@ -97,7 +133,17 @@ export async function DELETE(
   const { isAdmin, error } = await requireAdmin(req);
   if (!isAdmin) return error;
 
-  const { userId } = await params;
+  const { userId: rawUserId } = await params;
+
+  // SECURITY FIX: Validate userId is a valid UUID
+  const userIdResult = userIdSchema.safeParse(rawUserId);
+  if (!userIdResult.success) {
+    return NextResponse.json(
+      { error: 'Invalid user ID format', details: userIdResult.error.errors },
+      { status: 400 }
+    );
+  }
+  const userId = userIdResult.data;
 
   try {
     // Delete in order: credit_transactions, subscriptions, profiles, then auth user

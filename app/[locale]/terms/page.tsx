@@ -5,10 +5,11 @@ import { getTranslations } from 'next-intl/server';
 import { clientEnv } from '@shared/config/env';
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'terms' });
 
   return {
@@ -21,10 +22,11 @@ export async function generateMetadata({
 }
 
 export default async function TermsOfServicePage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }): Promise<JSX.Element> {
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'terms' });
   const lastUpdated = clientEnv.LAST_UPDATED_DATE;
 

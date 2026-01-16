@@ -104,7 +104,7 @@ export default defineConfig({
   webServer: {
     command: `TEST_PORT=${TEST_PORT} TEST_WRANGLER_PORT=${TEST_WRANGLER_PORT} yarn dev:test`,
     url: `http://localhost:${TEST_PORT}`,
-    reuseExistingServer: !isCI,
+    reuseExistingServer: false, // Always start fresh test server - don't interfere with dev server
     timeout: 120000, // 2 minutes to start server
     stdout: 'ignore',
     stderr: 'ignore',

@@ -60,7 +60,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
     {
       key: 'starter',
       name: 'Starter',
-      stripePriceId: 'price_1Q4HMKALMLhQocpfhK9XKp4a',
+      stripePriceId: 'price_1Sq14eALMLhQocpf5CXIwYSv',
       priceInCents: 900, // $9.00
       currency: 'usd',
       interval: 'month',

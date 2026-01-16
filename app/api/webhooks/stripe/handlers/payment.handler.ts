@@ -156,16 +156,53 @@ export class PaymentHandler {
 
   /**
    * Handle one-time credit pack purchase
+   * MEDIUM-14 FIX: Verify credits from price config, not session metadata
    */
   private static async handleCreditPackPurchase(
     session: Stripe.Checkout.Session,
     userId: string
   ): Promise<void> {
-    const credits = parseInt(session.metadata?.credits || '0', 10);
     const packKey = session.metadata?.pack_key;
+    const priceIdFromMetadata = session.metadata?.price_id;
+
+    // Get price ID from line items (authoritative source)
+    let priceId = priceIdFromMetadata;
+    if (session.line_items?.data?.[0]?.price?.id) {
+      priceId = session.line_items.data[0].price.id;
+    }
+
+    // MEDIUM-14 FIX: Verify credits from price config, not trusted from metadata
+    let credits: number;
+    if (priceId) {
+      try {
+        const resolved = resolvePlanOrPack(priceId);
+        if (resolved && resolved.type === 'pack' && resolved.credits) {
+          credits = resolved.credits;
+          console.log(
+            `[CREDIT_PACK] Verified credits from price config: ${credits} (price_id: ${priceId})`
+          );
+        } else {
+          // Fall back to metadata but log a warning
+          credits = parseInt(session.metadata?.credits || '0', 10);
+          console.warn(
+            `[CREDIT_PACK] Could not verify credits from price config, using metadata: ${credits}`
+          );
+        }
+      } catch {
+        // Fall back to metadata but log a warning
+        credits = parseInt(session.metadata?.credits || '0', 10);
+        console.warn(
+          `[CREDIT_PACK] Price ID ${priceId} not found in config, using metadata: ${credits}`
+        );
+      }
+    } else {
+      // Fall back to metadata if no price ID available
+      credits = parseInt(session.metadata?.credits || '0', 10);
+      console.warn(`[CREDIT_PACK] No price ID available, using metadata credits: ${credits}`);
+    }
 
     if (!credits || credits <= 0) {
-      console.error(`Invalid credits in session metadata: ${session.metadata?.credits}`);
+      console.error(`Invalid credits for credit pack purchase: ${credits}`);
       return;
     }
 

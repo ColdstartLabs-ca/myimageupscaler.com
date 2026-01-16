@@ -17,6 +17,7 @@ const RESIZE_SLUGS = [
   'resize-image-for-facebook',
   'resize-image-for-twitter',
   'resize-image-for-linkedin',
+  'bulk-image-resizer',
 ];
 
 interface IPageProps {

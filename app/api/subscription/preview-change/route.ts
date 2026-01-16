@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
@@ -7,9 +8,12 @@ import { getPlanByPriceId } from '@shared/config/subscription.utils';
 import dayjs from 'dayjs';
 import type Stripe from 'stripe';
 
-interface IPreviewChangeRequest {
-  targetPriceId: string;
-}
+// SECURITY FIX: Zod schema for request body validation
+const previewChangeSchema = z.object({
+  targetPriceId: z.string().min(1, 'targetPriceId is required'),
+});
+
+type IPreviewChangeRequest = z.infer<typeof previewChangeSchema>;
 
 interface IPreviewChangeResponse {
   proration: {
@@ -31,45 +35,6 @@ interface IPreviewChangeResponse {
   effective_immediately: boolean;
   effective_date?: string; // For scheduled downgrades
   is_downgrade: boolean;
-}
-
-/**
- * Check if this is a downgrade (fewer credits in new plan)
- * Uses unified resolver for consistent credit calculations
- */
-function isDowngrade(currentPriceId: string | null, targetPriceId: string): boolean {
-  if (!currentPriceId) return false;
-
-  try {
-    // Use unified resolver for consistent credit calculations
-    const currentResolved = assertKnownPriceId(currentPriceId);
-    const targetResolved = assertKnownPriceId(targetPriceId);
-
-    // Both should be plans for subscription changes
-    if (currentResolved.type !== 'plan' || targetResolved.type !== 'plan') {
-      console.warn('[PREVIEW_CHANGE] Non-plan price IDs in subscription preview:', {
-        currentPriceId,
-        currentType: currentResolved.type,
-        targetPriceId,
-        targetType: targetResolved.type,
-      });
-      return false;
-    }
-
-    // Compare credits directly from unified resolver
-    return targetResolved.credits < currentResolved.credits;
-  } catch (error) {
-    console.error('[PREVIEW_CHANGE] Error resolving price IDs for downgrade check:', {
-      error: error instanceof Error ? error.message : error,
-      currentPriceId,
-      targetPriceId,
-    });
-    // Fallback to legacy method if unified resolver fails
-    const currentPlan = getPlanForPriceId(currentPriceId);
-    const targetPlan = getPlanForPriceId(targetPriceId);
-    if (!currentPlan || !targetPlan) return false;
-    return targetPlan.creditsPerMonth < currentPlan.creditsPerMonth;
-  }
 }
 
 export async function POST(request: NextRequest) {
@@ -108,11 +73,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Parse and validate request body
+    // 2. Parse and validate request body with Zod schema
     let body: IPreviewChangeRequest;
     try {
       const text = await request.text();
-      body = JSON.parse(text) as IPreviewChangeRequest;
+      const parsed = JSON.parse(text);
+      // SECURITY FIX: Validate with Zod schema
+      const validationResult = previewChangeSchema.safeParse(parsed);
+      if (!validationResult.success) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'VALIDATION_ERROR',
+              message: 'Invalid request body',
+              details: validationResult.error.errors,
+            },
+          },
+          { status: 400 }
+        );
+      }
+      body = validationResult.data;
     } catch {
       return NextResponse.json(
         {
@@ -120,19 +101,6 @@ export async function POST(request: NextRequest) {
           error: {
             code: 'INVALID_JSON',
             message: 'Invalid JSON in request body',
-          },
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!body.targetPriceId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'MISSING_PRICE_ID',
-            message: 'targetPriceId is required',
           },
         },
         { status: 400 }
@@ -241,10 +209,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 6. Get user's Stripe customer ID
+    // 6. Get user's Stripe customer ID and subscription tier
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
-      .select('stripe_customer_id')
+      .select('stripe_customer_id, subscription_tier')
       .eq('id', user.id)
       .single();
 
@@ -261,8 +229,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 7. Check if this is a downgrade
-    const isDowngradeChange = isDowngrade(currentPriceId, body.targetPriceId);
+    // 7. Check if this is a downgrade using subscription_tier (more reliable than price_id)
+    const tierCreditsMap: Record<string, number> = {
+      starter: 100,
+      hobby: 200,
+      pro: 1000,
+      business: 5000,
+    };
+    const currentTierCredits = tierCreditsMap[profile.subscription_tier || ''] || 0;
+    const targetCredits = targetPlan.creditsPerMonth;
+    const isDowngradeChange = currentTierCredits > targetCredits;
+
+    console.log('[PREVIEW_CHANGE] Downgrade check:', {
+      currentTier: profile.subscription_tier,
+      currentTierCredits,
+      targetPlan: targetPlan.name,
+      targetCredits,
+      isDowngrade: isDowngradeChange,
+    });
     let effectiveDate: string | undefined;
 
     // 8. Calculate proration (only for upgrades)
@@ -430,14 +414,23 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 9. Build response
+    // 9. Build response - use subscription_tier for current plan info if price lookup fails
+    const tierNameMap: Record<string, string> = {
+      starter: 'Starter',
+      hobby: 'Hobby',
+      pro: 'Professional',
+      business: 'Business',
+    };
+    const currentTierName =
+      tierNameMap[profile.subscription_tier || ''] || profile.subscription_tier || 'Unknown';
+
     const response: IPreviewChangeResponse = {
       proration: prorationResult,
-      current_plan: currentPlan
+      current_plan: profile.subscription_tier
         ? {
-            name: currentPlan.name,
-            price_id: currentPriceId!,
-            credits_per_month: currentPlan.creditsPerMonth,
+            name: currentPlan?.name || currentTierName,
+            price_id: currentPriceId || '',
+            credits_per_month: currentPlan?.creditsPerMonth || currentTierCredits,
           }
         : null,
       new_plan: {

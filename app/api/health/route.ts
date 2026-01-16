@@ -28,7 +28,7 @@ export async function GET(): Promise<NextResponse<IHealthCheckResult>> {
   // Check 1: Database connectivity
   try {
     const dbStart = Date.now();
-    const { error } = await supabaseAdmin.from('users').select('id').limit(1);
+    const { error } = await supabaseAdmin.from('profiles').select('id').limit(1);
     const dbDuration = Date.now() - dbStart;
 
     if (error) {

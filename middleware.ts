@@ -20,9 +20,6 @@ import { getLocaleFromCountry } from '@lib/i18n/country-locale-map';
  * These params don't affect page content and should be removed for SEO
  */
 const TRACKING_QUERY_PARAMS = [
-  'signup',
-  'login',
-  'next',
   'ref',
   'source',
   'utm_source',
@@ -34,6 +31,49 @@ const TRACKING_QUERY_PARAMS = [
   'gclid',
   'msclkid',
 ];
+
+/**
+ * Check if pathname is a dashboard route (with or without locale prefix)
+ * Matches: /dashboard, /dashboard/*, /en/dashboard, /pt/dashboard/settings, etc.
+ */
+function isDashboardPath(pathname: string): boolean {
+  const segments = pathname.split('/').filter(Boolean);
+
+  // /dashboard or /dashboard/*
+  if (segments[0] === 'dashboard') {
+    return true;
+  }
+
+  // /{locale}/dashboard or /{locale}/dashboard/*
+  if (segments.length >= 2 && isValidLocale(segments[0]) && segments[1] === 'dashboard') {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Extract the path without locale prefix for consistent handling
+ * /pt/dashboard -> /dashboard, /dashboard -> /dashboard
+ */
+function getPathWithoutLocale(pathname: string): string {
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments.length > 0 && isValidLocale(segments[0])) {
+    return '/' + segments.slice(1).join('/');
+  }
+  return pathname;
+}
+
+/**
+ * Extract locale from pathname if present
+ */
+function getLocaleFromPath(pathname: string): Locale | null {
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments.length > 0 && isValidLocale(segments[0])) {
+    return segments[0] as Locale;
+  }
+  return null;
+}
 
 /**
  * Strip tracking query parameters from URL for canonical URL generation
@@ -152,7 +192,11 @@ function detectLocale(req: NextRequest): Locale {
 
   // 3. Check CF-IPCountry header (Cloudflare geolocation - auto-redirect)
   // Cloudflare adds this header automatically on all requests
-  const country = req.headers.get('CF-IPCountry');
+  // In test environment, also check for x-test-country header for testing
+  const country =
+    req.headers.get('CF-IPCountry') ||
+    req.headers.get('cf-ipcountry') ||
+    (serverEnv.ENV === 'test' ? req.headers.get('x-test-country') : null);
   if (country) {
     const geoLocale = getLocaleFromCountry(country);
     // Only use geo-detected locale if it's supported
@@ -235,7 +279,14 @@ function handleLocaleRouting(req: NextRequest): NextResponse | null {
     pathname.startsWith('/use-cases/') ||
     pathname.startsWith('/device-use/') ||
     pathname.startsWith('/format-scale/') ||
-    pathname.startsWith('/platform-format/');
+    pathname.startsWith('/platform-format/') ||
+    // New category hub pages
+    pathname.startsWith('/photo-restoration') ||
+    pathname.startsWith('/camera-raw') ||
+    pathname.startsWith('/industry-insights') ||
+    pathname.startsWith('/device-optimization') ||
+    pathname.startsWith('/bulk-tools') ||
+    pathname.startsWith('/content');
 
   // Only skip locale routing for pSEO paths that DON'T have a locale prefix
   if (isPSEOPath && !hasLocalePrefix) {
@@ -275,6 +326,14 @@ function handleLocaleRouting(req: NextRequest): NextResponse | null {
   // Path has locale prefix, ensure cookie is set
   const pathLocale = segments[0] as Locale;
   if (isValidLocale(pathLocale)) {
+    // For dashboard paths, DON'T return early - let handlePageRoute handle auth
+    // This ensures locale-prefixed dashboard routes get proper auth checks
+    if (isDashboardPath(pathname)) {
+      // Just update the locale cookie if needed, but don't return response
+      // The main middleware will call handlePageRoute next
+      return null;
+    }
+
     const response = NextResponse.next();
 
     // Apply security headers
@@ -428,15 +487,33 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
   const hasTestHeader =
     req.headers.get('x-test-env') === 'true' || req.headers.get('x-playwright-test') === 'true';
 
+  // Extract locale info for locale-aware redirects
+  const pathLocale = getLocaleFromPath(pathname);
+  const pathWithoutLocale = getPathWithoutLocale(pathname);
+
+  // For locale-prefixed dashboard paths, ensure locale cookie is set
+  // (handleLocaleRouting skips early return for dashboard to allow auth checks)
+  if (pathLocale && isDashboardPath(pathname)) {
+    if (req.cookies.get(LOCALE_COOKIE)?.value !== pathLocale) {
+      response.cookies.set(LOCALE_COOKIE, pathLocale, {
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        sameSite: 'lax',
+      });
+    }
+  }
+
   // Authenticated user on root domain -> redirect to dashboard
-  if (user && pathname === '/' && !isTestEnv && !hasTestHeader) {
+  // Check for both / and /{locale} (e.g., /pt)
+  const isRootPath = pathname === '/' || (pathLocale && pathWithoutLocale === '/');
+  if (user && isRootPath && !isTestEnv && !hasTestHeader) {
     // Check if there are any query parameters that suggest other intent (like login prompts)
     const loginRequired = req.nextUrl.searchParams.get('login');
 
     // Only redirect if there's no login prompt to avoid conflicts with existing flow
     if (!loginRequired) {
       const url = req.nextUrl.clone();
-      url.pathname = '/dashboard';
+      // Preserve locale in redirect: / -> /dashboard, /pt -> /pt/dashboard
+      url.pathname = pathLocale ? `/${pathLocale}/dashboard` : '/dashboard';
       // Clear any existing search params for clean redirect
       url.searchParams.delete('login');
       url.searchParams.delete('next');
@@ -446,9 +523,11 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
 
   // Unauthenticated user on protected dashboard routes -> redirect to landing with login prompt
   // Skip this check in test environment or when test headers are present
-  if (!user && pathname.startsWith('/dashboard') && !isTestEnv && !hasTestHeader) {
+  // Use isDashboardPath to match both /dashboard and /{locale}/dashboard
+  if (!user && isDashboardPath(pathname) && !isTestEnv && !hasTestHeader) {
     const url = req.nextUrl.clone();
-    url.pathname = '/';
+    // Preserve locale in redirect: /dashboard -> /, /pt/dashboard -> /pt
+    url.pathname = pathLocale ? `/${pathLocale}` : '/';
 
     // Add query parameters to indicate login is needed and where to return after
     url.searchParams.set('login', '1');

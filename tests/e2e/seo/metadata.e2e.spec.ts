@@ -9,7 +9,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('SEO Metadata', () => {
   test('should have correct SEO metadata on English tool page', async ({ page }) => {
-    await page.goto('/tools/ai-image-upscaler/');
+    await page.goto('/tools/ai-image-upscaler');
 
     // Hreflang links
     const enLink = page.locator('link[rel="alternate"][hrefLang="en"]');
@@ -33,7 +33,7 @@ test.describe('SEO Metadata', () => {
     // Canonical
     const canonicalLink = page.locator('head link[rel="canonical"]');
     expect(await canonicalLink.getAttribute('href')).toBe(
-      'https://myimageupscaler.com/tools/ai-image-upscaler/'
+      'https://myimageupscaler.com/tools/ai-image-upscaler'
     );
 
     // OpenGraph locale
@@ -42,7 +42,7 @@ test.describe('SEO Metadata', () => {
   });
 
   test('should have correct SEO metadata on Spanish tool page', async ({ page }) => {
-    await page.goto('/es/tools/ai-image-upscaler/');
+    await page.goto('/es/tools/ai-image-upscaler');
 
     // Hreflang links
     const enLink = page.locator('link[rel="alternate"][hrefLang="en"]');
@@ -56,7 +56,7 @@ test.describe('SEO Metadata', () => {
     // Canonical should point to English version (primary language)
     const canonicalLink = page.locator('head link[rel="canonical"]');
     expect(await canonicalLink.getAttribute('href')).toBe(
-      'https://myimageupscaler.com/tools/ai-image-upscaler/'
+      'https://myimageupscaler.com/tools/ai-image-upscaler'
     );
 
     // OpenGraph locale should be Spanish
@@ -75,7 +75,10 @@ test.describe('SEO Metadata', () => {
     await expect(esLink).toHaveCount(1);
     await expect(xDefaultLink).toHaveCount(1);
 
-    expect(await esLink.getAttribute('href')).toBe('https://myimageupscaler.com/es/tools/');
+    // Metadata API generates URLs without trailing slashes
+    expect(await enLink.getAttribute('href')).toBe('https://myimageupscaler.com/tools');
+    expect(await esLink.getAttribute('href')).toBe('https://myimageupscaler.com/es/tools');
+    expect(await xDefaultLink.getAttribute('href')).toBe('https://myimageupscaler.com/tools');
   });
 
   test('should have correct hreflang on homepage', async ({ page }) => {
@@ -85,13 +88,15 @@ test.describe('SEO Metadata', () => {
     const esLink = page.locator('link[rel="alternate"][hrefLang="es"]');
     const xDefaultLink = page.locator('link[rel="alternate"][hrefLang="x-default"]');
 
-    expect(await enLink.getAttribute('href')).toBe('https://myimageupscaler.com/');
+    // Homepage uses Metadata API - root path generates URLs without trailing slash for English
+    // but non-default locales get trailing slash (e.g., /es/)
+    expect(await enLink.getAttribute('href')).toBe('https://myimageupscaler.com');
     expect(await esLink.getAttribute('href')).toBe('https://myimageupscaler.com/es/');
-    expect(await xDefaultLink.getAttribute('href')).toBe('https://myimageupscaler.com/');
+    expect(await xDefaultLink.getAttribute('href')).toBe('https://myimageupscaler.com');
   });
 
   test('should have correct JSON-LD inLanguage on English tool page', async ({ page }) => {
-    await page.goto('/tools/ai-image-upscaler/');
+    await page.goto('/tools/ai-image-upscaler');
 
     const schemaScripts = page.locator('script[type="application/ld+json"]');
     const count = await schemaScripts.count();
@@ -120,7 +125,7 @@ test.describe('SEO Metadata', () => {
   });
 
   test('should have correct JSON-LD inLanguage on Spanish tool page', async ({ page }) => {
-    await page.goto('/es/tools/ai-image-upscaler/');
+    await page.goto('/es/tools/ai-image-upscaler');
 
     const schemaScripts = page.locator('script[type="application/ld+json"]');
     const count = await schemaScripts.count();

@@ -9,7 +9,11 @@ import { Metadata } from 'next';
 import type { PSEOPage } from './pseo-types';
 import type { PSEOCategory } from './url-utils';
 import { clientEnv } from '@shared/config/env';
-import { getCanonicalUrl, getOpenGraphLocale } from './hreflang-generator';
+import {
+  getCanonicalUrl,
+  getOpenGraphLocale,
+  generateHreflangAlternates,
+} from './hreflang-generator';
 import type { Locale } from '../../i18n/config';
 
 const BASE_URL = clientEnv.BASE_URL;
@@ -33,6 +37,7 @@ export function generateMetadata(
 ): Metadata {
   const path = `/${category}/${page.slug}`;
   const canonicalUrl = getCanonicalUrl(path);
+  const hreflangAlternates = generateHreflangAlternates(path);
   // Note: og:locale is rendered via SeoMetaTags component to avoid duplicates
 
   // Default og:image for all pSEO pages if not provided
@@ -70,10 +75,10 @@ export function generateMetadata(
       creator: `@${TWITTER_HANDLE}`,
     },
 
-    // Canonical only - hreflang links are rendered via HreflangLinks component
-    // which hoists them to <head> more reliably than the metadata API
+    // Canonical + hreflang alternates for multi-language SEO
     alternates: {
       canonical: canonicalUrl,
+      languages: hreflangAlternates,
     },
 
     // Robots
@@ -107,7 +112,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
   const path = `/${category}`;
   const canonicalUrl = getCanonicalUrl(path);
   const ogLocale = getOpenGraphLocale(locale);
-  // Note: hreflang links are rendered via HreflangLinks component to avoid duplicates
+  const hreflangAlternates = generateHreflangAlternates(path);
 
   // Default og:image for category pages
   const defaultOgImage = '/og-image.png';
@@ -195,9 +200,10 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
       creator: `@${TWITTER_HANDLE}`,
     },
 
-    // Canonical only - hreflang links are rendered via HreflangLinks component
+    // Canonical + hreflang alternates for multi-language SEO
     alternates: {
       canonical: canonicalUrl,
+      languages: hreflangAlternates,
     },
 
     robots: {

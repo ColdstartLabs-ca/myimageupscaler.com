@@ -1,5 +1,4 @@
 import { IUpscaleConfig, ProcessingStage } from '@/shared/types/coreflow.types';
-import { serverEnv } from '@shared/config/env';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { createClient } from '@shared/utils/supabase/client';
 
@@ -185,17 +184,10 @@ export const processImage = async (
     // Get auth token for the API request
     const accessToken = await getAccessToken();
 
-    // Check if we're in a test environment and bypass auth for mocked tests
-    const isTestEnvironment =
-      (typeof window !== 'undefined' &&
-        window.location.hostname === 'localhost' &&
-        serverEnv.ENV === 'test') ||
-      // Check for Playwright test marker
-      window.playwrightTest === true ||
-      // Check for test environment variable (injected by Playwright)
-      window.__TEST_ENV__ === true;
-
-    if (!accessToken && !isTestEnvironment) {
+    // MEDIUM-20 FIX: Remove client-side test bypass - server enforces auth properly
+    // Client-side test bypass is a security risk as window variables can be manipulated
+    // Authentication is enforced on the server side, which is the proper security boundary
+    if (!accessToken) {
       throw new Error('You must be logged in to process images');
     }
 

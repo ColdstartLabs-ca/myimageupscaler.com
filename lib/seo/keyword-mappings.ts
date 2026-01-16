@@ -506,7 +506,7 @@ export const keywordPageMappings: IKeywordPageMapping[] = [
   {
     primaryKeyword: 'how to upsize images',
     secondaryKeywords: ['upsize an image', 'upsize image', 'image upsizing guide'],
-    canonicalUrl: '/guides/how-to-upsize-images',
+    canonicalUrl: '/guides/how-to-upscale-images', // Fixed: points to existing guide
     intent: 'Informational',
     tier: 1,
     priority: 'P0',

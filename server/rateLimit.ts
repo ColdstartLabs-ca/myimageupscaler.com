@@ -8,6 +8,17 @@
  * using Cloudflare KV or Durable Objects.
  */
 
+import { serverEnv } from '@shared/config/env';
+
+/**
+ * Check if rate limiting should be skipped (test environment)
+ */
+function isTestEnvironment(): boolean {
+  return (
+    serverEnv.ENV === 'test' || serverEnv.NODE_ENV === 'test' || serverEnv.PLAYWRIGHT_TEST === '1'
+  );
+}
+
 interface IRateLimitEntry {
   timestamps: number[];
 }
@@ -105,7 +116,19 @@ export const publicRateLimit = {
 /**
  * Rate limiter for image processing (upscale) routes
  * 5 requests per 60 seconds (stricter to prevent abuse)
+ * Skips rate limiting in test environment
  */
 export const upscaleRateLimit = {
-  limit: createRateLimiter(5, 60 * 1000),
+  limit: async (identifier: string): Promise<IRateLimitResult> => {
+    // Skip rate limiting in test environment
+    if (isTestEnvironment()) {
+      return {
+        success: true,
+        remaining: 5,
+        reset: Date.now() + 60000,
+      };
+    }
+    // Apply rate limiting in production/staging
+    return createRateLimiter(5, 60 * 1000)(identifier);
+  },
 };

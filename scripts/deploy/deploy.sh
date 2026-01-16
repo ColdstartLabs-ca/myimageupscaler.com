@@ -78,6 +78,17 @@ else
     echo ""
 fi
 
+# Validate SEO data integrity (static validation - no server required)
+echo -e "${CYAN}▸ Validating SEO data...${NC}"
+cd "$PROJECT_ROOT"
+if ! yarn validate:seo:all; then
+    echo -e "${RED}✗ SEO validation failed. Deployment blocked.${NC}"
+    echo -e "${YELLOW}  Run 'yarn validate:seo:all' to see details${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ SEO data valid${NC}"
+echo ""
+
 source "$SCRIPT_DIR/steps/01-preflight.sh" && step_preflight
 source "$SCRIPT_DIR/steps/02-build.sh" && step_build
 source "$SCRIPT_DIR/steps/03-deploy.sh" && step_deploy

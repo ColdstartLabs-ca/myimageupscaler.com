@@ -12,12 +12,86 @@ This audit identified **6 Critical**, **6 High**, **12 Medium**, and several Low
 
 ### Severity Distribution
 
-| Severity | Count | Status |
-|----------|-------|--------|
-| Critical | 6 | Requires immediate fix |
-| High | 6 | Fix within 1 week |
-| Medium | 12 | Fix within 2 weeks |
-| Low | 8 | Address when possible |
+| Severity | Count | Status                 |
+| -------- | ----- | ---------------------- |
+| Critical | 6     | Requires immediate fix |
+| High     | 6     | Fix within 1 week      |
+| Medium   | 12    | Fix within 2 weeks     |
+| Low      | 8     | Address when possible  |
+
+---
+
+## Fix Implementation Status
+
+_Last updated: 2026-01-15_
+
+| #     | Issue                          | Fix Status           | Test Status              | Manual Validation     |
+| ----- | ------------------------------ | -------------------- | ------------------------ | --------------------- |
+| 1     | consume_credits_v2 permission  | ✅ Fixed (migration) | ✅ Supabase MCP verified | ✅ ACL confirmed      |
+| 2     | admin_adjust_credits broken    | ❌ Not fixed         | -                        | -                     |
+| 3     | X-User-Id header trust         | ✅ Fixed             | ✅ Playwright (2/2 pass) | ✅ Curl validated     |
+| 4     | Admin UUID validation          | ✅ Fixed             | ✅ Playwright (6/6 pass) | ✅ Non-admin rejected |
+| 5     | Admin PATCH validation         | ✅ Fixed             | ✅ Playwright (6/6 pass) | ✅ Non-admin rejected |
+| 6     | Subscription change validation | ✅ Fixed             | ✅ Playwright (3/3 pass) | ✅ Auth gate works    |
+| 7     | Double credits risk            | ❌ Not fixed         | -                        | -                     |
+| 8     | Batch limit race condition     | ❌ Not fixed         | -                        | -                     |
+| 9     | In-memory batch limits         | ❌ Not fixed         | -                        | -                     |
+| 10    | Unbounded pagination           | ✅ Fixed             | ✅ Playwright (2/2 pass) | ✅ Auth gate works    |
+| 11    | Unbounded listUsers            | ❌ Not fixed         | -                        | -                     |
+| 12    | Test auth risk                 | ❌ Not fixed         | -                        | -                     |
+| 13    | clawback_credits_v2 validation | ✅ Fixed (migration) | ✅ Supabase MCP verified | ✅ Negative rejected  |
+| 14-16 | Various medium                 | ❌ Not fixed         | -                        | -                     |
+| 17    | XSS via JSON-LD                | ✅ Fixed             | ✅ Vitest (7/7 pass)     | ✅ Passed             |
+| 18    | SSR Markdown sanitization      | ❌ Not fixed         | -                        | -                     |
+| 19    | Insecure locale cookie         | ✅ Fixed             | ⏳ Manual check in prod  | ⏳ Prod only          |
+| 20-24 | Various medium                 | ❌ Not fixed         | -                        | -                     |
+
+### Validation Details
+
+**Critical #1 - consume_credits_v2 Permission (via Supabase MCP):**
+
+```sql
+-- Before fix:
+proacl: {=X/postgres,postgres=X/postgres,anon=X/postgres,service_role=X/postgres}
+-- PUBLIC (=X) could execute!
+
+-- After fix:
+proacl: {postgres=X/postgres,service_role=X/postgres}
+-- Only postgres and service_role can execute ✅
+```
+
+**Critical #3 - X-User-Id Header Bypass:**
+
+```bash
+$ curl -sL -X GET "http://localhost:3000/api/admin/users" \
+  -H "X-User-Id: admin-user-id-forged"
+# Result: HTTP 401 {"success":false,"error":{"code":"UNAUTHORIZED","message":"Valid authentication token required"}}
+```
+
+**Critical #4-6 and High #10 - API Security Tests:**
+
+```
+$ yarn playwright test tests/api/security-fixes.api.spec.ts --project=api
+Running 13 tests using 1 worker
+✓ 13 passed (12.1s)
+```
+
+**Medium #13 - clawback_credits_v2 Validation (via Supabase MCP):**
+
+```sql
+-- Test: clawback_credits_v2(..., -100, ...)
+-- Result: ERROR "Clawback amount must be positive: -100" ✅
+```
+
+**Medium #17 - JSON-LD XSS Escaping:**
+
+```
+$ yarn vitest run client/components/seo/__tests__/JsonLd.test.tsx
+✓ 7 tests passed
+```
+
+- Tests verify `</script>` is escaped to `<\/script`
+- Tests verify `<!--` is escaped to `<\!--`
 
 ---
 
@@ -42,6 +116,7 @@ GRANT EXECUTE ON FUNCTION consume_credits_v2(UUID, INTEGER, TEXT, TEXT) TO servi
 **Impact:** Cross-user credit manipulation, financial loss
 
 **Recommended Fix:**
+
 ```sql
 REVOKE EXECUTE ON FUNCTION public.consume_credits_v2(UUID, INTEGER, TEXT, TEXT) FROM authenticated;
 ```
@@ -115,6 +190,7 @@ const { userId } = await params;
 **Impact:** IDOR (Insecure Direct Object Reference) - potential access/modification of unintended records.
 
 **Recommended Fix:**
+
 ```typescript
 import { z } from 'zod';
 const userIdSchema = z.string().uuid();
@@ -134,7 +210,7 @@ const allowedFields = ['role', 'subscription_tier', 'subscription_status'];
 
 for (const field of allowedFields) {
   if (body[field] !== undefined) {
-    updates[field] = body[field];  // Could be any type!
+    updates[field] = body[field]; // Could be any type!
   }
 }
 ```
@@ -146,6 +222,7 @@ for (const field of allowedFields) {
 **Impact:** Injection of unexpected values (objects, arrays, SQL payloads) into profile fields.
 
 **Recommended Fix:**
+
 ```typescript
 const updateSchema = z.object({
   role: z.enum(['user', 'admin']).optional(),
@@ -177,6 +254,7 @@ body = JSON.parse(text) as ISubscriptionChangeRequest;
 **Impact:** Malformed payloads could bypass type safety, causing unexpected behavior or information leakage.
 
 **Recommended Fix:**
+
 ```typescript
 const subscriptionChangeSchema = z.object({
   targetPriceId: z.string().startsWith('price_').min(10),
@@ -197,6 +275,7 @@ const validatedBody = subscriptionChangeSchema.parse(JSON.parse(text));
 **Lines:** 229-234
 
 **Issue:** When a user completes checkout for a subscription:
+
 1. `checkout.session.completed` adds initial credits with `ref_id: session_*`
 2. `invoice.payment_succeeded` also adds credits with `ref_id: invoice_*`
 
@@ -207,6 +286,7 @@ Both use different `ref_id` formats, so idempotency by transaction reference won
 **Impact:** Users could receive double credits on initial subscription.
 
 **Recommended Fix:**
+
 - Add check in invoice handler to skip first invoice if checkout session already granted credits
 - Or remove credit allocation from `checkout.session.completed` entirely
 
@@ -268,6 +348,7 @@ const offset = parseInt(searchParams.get('offset') || '0', 10);
 **Impact:** DoS through `?limit=999999999` causing database/memory exhaustion.
 
 **Recommended Fix:**
+
 ```typescript
 const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
 const offset = Math.max(parseInt(searchParams.get('offset') || '0', 10), 0);
@@ -330,6 +411,7 @@ if (serverEnv.ENV === 'test') {
 **Validation:** ✅ Valid — no guard for non-positive `p_amount` in `clawback_credits_v2`.
 
 **Recommended Fix:**
+
 ```sql
 IF p_amount <= 0 THEN
     RAISE EXCEPTION 'Clawback amount must be positive: %', p_amount;
@@ -380,6 +462,7 @@ const credits = parseInt(session.metadata?.credits || '0', 10);
 **Validation:** ✅ Valid — protocol and XSS patterns are checked, but no allowlist for domains/hosts.
 
 **Recommended Fix:**
+
 ```typescript
 const allowedDomains = [clientEnv.BASE_URL, 'localhost:3000'];
 if (!allowedDomains.some(d => url.hostname.includes(d))) {
@@ -403,8 +486,9 @@ if (!allowedDomains.some(d => url.hostname.includes(d))) {
 **Validation:** ✅ Valid — `dangerouslySetInnerHTML` uses raw `JSON.stringify` output without escaping `</script>`.
 
 **Recommended Fix:**
+
 ```typescript
-JSON.stringify(data).replace(/<\/script/gi, '<\\/script')
+JSON.stringify(data).replace(/<\/script/gi, '<\\/script');
 ```
 
 ---
@@ -452,8 +536,7 @@ response.cookies.set(LOCALE_COOKIE, detectedLocale, {
 **Lines:** 188-200
 
 ```typescript
-const isTestEnvironment =
-  window.__TEST_ENV__ === true || window.playwrightTest === true;
+const isTestEnvironment = window.__TEST_ENV__ === true || window.playwrightTest === true;
 
 if (!accessToken && !isTestEnvironment) {
   throw new Error('You must be logged in to process images');
@@ -475,8 +558,7 @@ if (!accessToken && !isTestEnvironment) {
 
 ```typescript
 export function isTestEnvironment(): boolean {
-  return serverEnv.ENV === 'test' ||
-         serverEnv.STRIPE_SECRET_KEY?.startsWith('sk_test_');
+  return serverEnv.ENV === 'test' || serverEnv.STRIPE_SECRET_KEY?.startsWith('sk_test_');
 }
 ```
 
@@ -634,8 +716,7 @@ GRANT EXECUTE ON FUNCTION public.is_admin(UUID) TO authenticated;
 
 **Validation:** ⚠️ Partial — no explicit anti-abuse controls found; this is a product/abuse risk rather than a concrete code defect.
 
-**Recommended Fix:** Add signup abuse controls (rate limits per IP/device, CAPTCHA, email verification before credit grant, and/or per-device credit caps).
----
+## **Recommended Fix:** Add signup abuse controls (rate limits per IP/device, CAPTCHA, email verification before credit grant, and/or per-device credit caps).
 
 ## Positive Security Findings
 
@@ -660,23 +741,23 @@ The codebase demonstrates several good security practices:
 
 After fixes are implemented, manually verify the following systems to confirm risk is eliminated:
 
-| System | Manual Check | Expected Result |
-|--------|--------------|-----------------|
-| Credit RPC permissions | Attempt `consume_credits_v2` as `authenticated` user | Request denied; only `service_role` can execute |
-| Admin auth middleware | Send request with forged `X-User-Id` without valid JWT | Request rejected (401/403) |
-| Admin user endpoints | Provide non-UUID `userId` and invalid PATCH body values | 400 with validation errors |
-| Subscription change endpoints | Send malformed JSON and invalid `targetPriceId` | 400 with schema validation errors |
-| Stripe checkout + invoice | Simulate subscription checkout + first invoice | Credits added exactly once |
-| Refund clawback | Trigger refunds for pack and subscription | Credits claw back from correct pool |
-| Batch limits | Fire concurrent upscale requests for free tier | Only 1 request allowed |
-| Rate limiting | Use `sk_test_` in staging and exceed limits | Rate limiting still enforced |
-| Portal returnUrl | Supply external domain return URL | 400 invalid return URL |
-| JSON-LD + Markdown rendering | Inject `</script>` or unsafe markdown content | Output is escaped/sanitized |
-| Locale cookie | Inspect cookie in production | `Secure` flag present |
-| Admin discovery | Call `is_admin` for another user | Not possible unless caller is admin |
-| listUsers pagination | Large user set and search | Server paginates; search done server-side |
-| Subscription upgrade rollover | Upgrade with high balance | New balance capped to `maxRollover` |
-| dispute_events logging | Create dispute and insert record | Record is persisted; failures trigger retry/alert |
+| System                        | Manual Check                                            | Expected Result                                   |
+| ----------------------------- | ------------------------------------------------------- | ------------------------------------------------- |
+| Credit RPC permissions        | Attempt `consume_credits_v2` as `authenticated` user    | Request denied; only `service_role` can execute   |
+| Admin auth middleware         | Send request with forged `X-User-Id` without valid JWT  | Request rejected (401/403)                        |
+| Admin user endpoints          | Provide non-UUID `userId` and invalid PATCH body values | 400 with validation errors                        |
+| Subscription change endpoints | Send malformed JSON and invalid `targetPriceId`         | 400 with schema validation errors                 |
+| Stripe checkout + invoice     | Simulate subscription checkout + first invoice          | Credits added exactly once                        |
+| Refund clawback               | Trigger refunds for pack and subscription               | Credits claw back from correct pool               |
+| Batch limits                  | Fire concurrent upscale requests for free tier          | Only 1 request allowed                            |
+| Rate limiting                 | Use `sk_test_` in staging and exceed limits             | Rate limiting still enforced                      |
+| Portal returnUrl              | Supply external domain return URL                       | 400 invalid return URL                            |
+| JSON-LD + Markdown rendering  | Inject `</script>` or unsafe markdown content           | Output is escaped/sanitized                       |
+| Locale cookie                 | Inspect cookie in production                            | `Secure` flag present                             |
+| Admin discovery               | Call `is_admin` for another user                        | Not possible unless caller is admin               |
+| listUsers pagination          | Large user set and search                               | Server paginates; search done server-side         |
+| Subscription upgrade rollover | Upgrade with high balance                               | New balance capped to `maxRollover`               |
+| dispute_events logging        | Create dispute and insert record                        | Record is persisted; failures trigger retry/alert |
 
 ---
 
@@ -684,24 +765,24 @@ After fixes are implemented, manually verify the following systems to confirm ri
 
 Automated tests to confirm fixes and prevent regressions:
 
-| Area | Test Type | Scenario | Expected Result |
-|------|-----------|----------|-----------------|
-| Admin auth | Unit | `requireAdmin` with `X-User-Id` but missing/invalid JWT | 401/403; header alone is insufficient |
-| Admin users | API | GET/PATCH with non-UUID `userId` | 400 with validation error |
-| Admin PATCH | API | PATCH with invalid types (arrays/objects) | 400 with schema error |
-| Subscription change | API | Invalid JSON payload | 400 `INVALID_JSON` |
-| Subscription change | API | Valid JSON but unknown price ID | 400 `INVALID_PRICE_ID` |
-| Checkout vs invoice | Integration | Simulate checkout + first invoice | Credits added once; no duplicate transaction |
-| Refund pool | Integration | Refund pack vs subscription | Clawback/refund applies correct pool and reference ID |
-| Batch limits | API | Concurrent upscale requests for free tier | Only first allowed; others 429 |
-| Rate limit | Unit | `isTestEnvironment()` with `sk_test_` in non-test env | Returns false; limits enforced |
-| Portal returnUrl | API | External domain return URL | 400 invalid return URL |
-| JSON-LD | Unit | Data contains `</script>` | Output escaped; no script break-out |
-| Markdown SSR | Unit | Unsafe markdown content | Sanitized output on SSR |
-| Locale cookie | Integration | Production env request with locale redirect | Cookie has `Secure` flag |
-| is_admin | DB policy | Call `is_admin` for another user | Rejected or returns only for `auth.uid()` |
-| listUsers | API | Large user set + search | Server paginates and search is server-side |
-| Rollover cap | Unit | Upgrade with high balance | `creditsToAdd` capped by `maxRollover` |
+| Area                | Test Type   | Scenario                                                | Expected Result                                       |
+| ------------------- | ----------- | ------------------------------------------------------- | ----------------------------------------------------- |
+| Admin auth          | Unit        | `requireAdmin` with `X-User-Id` but missing/invalid JWT | 401/403; header alone is insufficient                 |
+| Admin users         | API         | GET/PATCH with non-UUID `userId`                        | 400 with validation error                             |
+| Admin PATCH         | API         | PATCH with invalid types (arrays/objects)               | 400 with schema error                                 |
+| Subscription change | API         | Invalid JSON payload                                    | 400 `INVALID_JSON`                                    |
+| Subscription change | API         | Valid JSON but unknown price ID                         | 400 `INVALID_PRICE_ID`                                |
+| Checkout vs invoice | Integration | Simulate checkout + first invoice                       | Credits added once; no duplicate transaction          |
+| Refund pool         | Integration | Refund pack vs subscription                             | Clawback/refund applies correct pool and reference ID |
+| Batch limits        | API         | Concurrent upscale requests for free tier               | Only first allowed; others 429                        |
+| Rate limit          | Unit        | `isTestEnvironment()` with `sk_test_` in non-test env   | Returns false; limits enforced                        |
+| Portal returnUrl    | API         | External domain return URL                              | 400 invalid return URL                                |
+| JSON-LD             | Unit        | Data contains `</script>`                               | Output escaped; no script break-out                   |
+| Markdown SSR        | Unit        | Unsafe markdown content                                 | Sanitized output on SSR                               |
+| Locale cookie       | Integration | Production env request with locale redirect             | Cookie has `Secure` flag                              |
+| is_admin            | DB policy   | Call `is_admin` for another user                        | Rejected or returns only for `auth.uid()`             |
+| listUsers           | API         | Large user set + search                                 | Server paginates and search is server-side            |
+| Rollover cap        | Unit        | Upgrade with high balance                               | `creditsToAdd` capped by `maxRollover`                |
 
 ---
 
@@ -709,30 +790,30 @@ Automated tests to confirm fixes and prevent regressions:
 
 ### P0 - Fix Immediately (Critical)
 
-| # | Issue | File | Action |
-|---|-------|------|--------|
-| 1 | consume_credits_v2 permission | migrations | Revoke from authenticated |
-| 2 | admin_adjust_credits broken | migrations | Update for dual-pool |
-| 3 | X-User-Id header trust | requireAdmin.ts | Always verify JWT |
-| 4 | Admin UUID validation | admin/users/[userId] | Add Zod UUID schema |
-| 5 | Admin PATCH validation | admin/users/[userId] | Add Zod body schema |
-| 6 | Subscription change validation | subscription/change | Add Zod schema |
+| #   | Issue                          | File                 | Action                    |
+| --- | ------------------------------ | -------------------- | ------------------------- |
+| 1   | consume_credits_v2 permission  | migrations           | Revoke from authenticated |
+| 2   | admin_adjust_credits broken    | migrations           | Update for dual-pool      |
+| 3   | X-User-Id header trust         | requireAdmin.ts      | Always verify JWT         |
+| 4   | Admin UUID validation          | admin/users/[userId] | Add Zod UUID schema       |
+| 5   | Admin PATCH validation         | admin/users/[userId] | Add Zod body schema       |
+| 6   | Subscription change validation | subscription/change  | Add Zod schema            |
 
 ### P1 - Fix Within 1 Week (High)
 
-| # | Issue | File | Action |
-|---|-------|------|--------|
-| 7 | Double credits risk | payment/invoice handlers | Dedupe checkout vs invoice |
-| 8 | Batch limit race condition | batch-limit.service.ts | Make atomic |
-| 9 | In-memory batch limits | batch-limit.service.ts | Use persistent storage |
-| 10 | Unbounded pagination | credits/history | Add max limit |
-| 11 | Unbounded listUsers | admin/users | Add pagination |
-| 12 | Test auth risk | auth.ts | Add multiple safeguards |
+| #   | Issue                      | File                     | Action                     |
+| --- | -------------------------- | ------------------------ | -------------------------- |
+| 7   | Double credits risk        | payment/invoice handlers | Dedupe checkout vs invoice |
+| 8   | Batch limit race condition | batch-limit.service.ts   | Make atomic                |
+| 9   | In-memory batch limits     | batch-limit.service.ts   | Use persistent storage     |
+| 10  | Unbounded pagination       | credits/history          | Add max limit              |
+| 11  | Unbounded listUsers        | admin/users              | Add pagination             |
+| 12  | Test auth risk             | auth.ts                  | Add multiple safeguards    |
 
 ### P2 - Fix Within 2 Weeks (Medium)
 
-| # | Issue | File | Action |
-|---|-------|------|--------|
+| #     | Issue                 | File     | Action            |
+| ----- | --------------------- | -------- | ----------------- |
 | 13-24 | Various medium issues | Multiple | See details above |
 
 ---
@@ -740,12 +821,14 @@ Automated tests to confirm fixes and prevent regressions:
 ## Appendix: Files Audited
 
 ### Authentication & Authorization
+
 - `server/middleware/requireAdmin.ts`
 - `lib/middleware/auth.ts`
 - `middleware.ts`
 - `supabase/migrations/20250203_fix_admin_policy_recursion.sql`
 
 ### Payment & Billing
+
 - `app/api/webhooks/stripe/handlers/*.ts`
 - `app/api/webhooks/stripe/services/*.ts`
 - `app/api/checkout/route.ts`
@@ -753,28 +836,32 @@ Automated tests to confirm fixes and prevent regressions:
 - `app/api/subscription/**/*.ts`
 
 ### API Endpoints
+
 - `app/api/admin/**/*.ts`
 - `app/api/credits/**/*.ts`
 - `app/api/upscale/route.ts`
 - `app/api/proxy-image/route.ts`
 
 ### Credit System
+
 - `supabase/migrations/*credit*.sql`
 - `server/services/batch-limit.service.ts`
 - `server/services/SubscriptionCredits.ts`
 - `server/services/replicate.service.ts`
 
 ### Client-Side
+
 - `client/utils/api-client.ts`
 - `client/components/seo/JsonLd.tsx`
 - `client/services/stripeService.ts`
 - `app/(pseo)/_components/pseo/ui/MarkdownRenderer.tsx`
 
 ### File Upload & Processing
+
 - `shared/validation/upscale.schema.ts`
 - `client/utils/file-validation.ts`
 - `client/components/tools/shared/MultiFileDropzone.tsx`
 
 ---
 
-*Report generated by automated security audit agents. Manual review recommended for all critical findings before implementing fixes.*
+_Report generated by automated security audit agents. Manual review recommended for all critical findings before implementing fixes._

@@ -1,11 +1,8 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import { useUserStore } from '@client/store/userStore';
-import { useModalStore } from '@client/store/modalStore';
-import { useToastStore } from '@client/store/toastStore';
-import { StripeService } from '@client/services/stripeService';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { CheckoutModal } from './CheckoutModal';
+import { useCheckoutFlow } from '@client/hooks/useCheckoutFlow';
 
 interface IPricingCardProps {
   name: string;
@@ -34,6 +31,115 @@ interface IPricingCardProps {
   /** Whether the subscribe button is in loading state */
   loading?: boolean;
 }
+
+// --- Helper Functions (SRP: separate logic from rendering) ---
+
+interface IBadgeConfig {
+  show: boolean;
+  text: string;
+  colorClass: string;
+}
+
+function getBadgeConfig(
+  disabled: boolean,
+  scheduled: boolean,
+  recommended: boolean,
+  disabledReason: string,
+  trial?: { enabled: boolean; durationDays: number }
+): IBadgeConfig {
+  const isCurrentPlan = disabled && !scheduled;
+
+  if (scheduled) {
+    return { show: true, text: 'Scheduled', colorClass: 'bg-warning' };
+  }
+  if (isCurrentPlan) {
+    return { show: true, text: disabledReason, colorClass: 'bg-success' };
+  }
+  if (trial?.enabled) {
+    return { show: true, text: `${trial.durationDays}-day free trial`, colorClass: 'bg-success' };
+  }
+  if (recommended) {
+    return { show: true, text: 'Recommended', colorClass: 'bg-accent' };
+  }
+  return { show: false, text: '', colorClass: '' };
+}
+
+function getButtonText(
+  isProcessing: boolean,
+  loading: boolean,
+  hasError: boolean,
+  retryCount: number,
+  scheduled: boolean,
+  isCurrentPlan: boolean,
+  trial?: { enabled: boolean; durationDays: number },
+  onSelect?: () => void,
+  currentSubscriptionPrice?: number | null,
+  price?: number
+): string | JSX.Element {
+  if (isProcessing || loading) {
+    return (
+      <>
+        <Loader2 size={16} className="animate-spin" />
+        {'Processing...'}
+      </>
+    );
+  }
+  if (hasError) {
+    if (retryCount >= 3) return 'Maximum Attempts Reached';
+    if (retryCount === 2) return 'Retry (2/3)';
+    return 'Try Again';
+  }
+  if (scheduled) return 'Scheduled';
+  if (isCurrentPlan) return 'Current Plan';
+  if (trial?.enabled) return `Start ${trial.durationDays}-Day Trial`;
+  if (onSelect && currentSubscriptionPrice != null && price != null) {
+    return price > currentSubscriptionPrice ? 'Upgrade' : 'Downgrade';
+  }
+  return 'Get Started';
+}
+
+function getCardBorderClasses(
+  scheduled: boolean,
+  isCurrentPlan: boolean,
+  recommended: boolean
+): string {
+  if (scheduled) {
+    return 'border-warning ring-2 ring-warning ring-opacity-20 opacity-90';
+  }
+  if (isCurrentPlan) {
+    return 'border-success ring-2 ring-success ring-opacity-20 opacity-90';
+  }
+  if (recommended) {
+    return 'border-accent ring-2 ring-accent ring-opacity-20';
+  }
+  return 'border-surface-light';
+}
+
+function getButtonClasses(
+  scheduled: boolean,
+  isCurrentPlan: boolean,
+  hasError: boolean,
+  isProcessing: boolean,
+  loading: boolean
+): string {
+  const baseClasses = 'w-full py-3 px-6 rounded-lg font-medium transition-all duration-200';
+
+  if (scheduled) {
+    return `${baseClasses} bg-warning/20 text-warning cursor-not-allowed`;
+  }
+  if (isCurrentPlan) {
+    return `${baseClasses} bg-surface-light text-text-muted cursor-not-allowed`;
+  }
+  if (hasError) {
+    return `${baseClasses} bg-error/80 hover:bg-error/90 text-white`;
+  }
+  if (isProcessing || loading) {
+    return `${baseClasses} bg-surface-light text-text-muted cursor-not-allowed`;
+  }
+  return `${baseClasses} bg-accent hover:bg-accent-hover text-white shadow-md hover:shadow-lg`;
+}
+
+// --- Component ---
 
 /**
  * Pricing card component for displaying subscription plans only
@@ -70,184 +176,48 @@ export function PricingCard({
   currentSubscriptionPrice,
   loading = false,
 }: IPricingCardProps): JSX.Element {
-  const { isAuthenticated } = useUserStore();
-  const { openAuthModal } = useModalStore();
-  const { showToast } = useToastStore();
-
-  // Local state for error handling and debouncing
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
-  const [lastClickTime, setLastClickTime] = useState(0);
-  const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Enhanced handleSubscribe with proper error handling and debouncing
-  const handleSubscribe = useCallback(async () => {
-    // Prevent rapid clicking
-    if (disabled || isProcessing) return;
-
-    // Debounce rapid clicks - only allow one click per 500ms
-    const now = Date.now();
-    if (now - lastClickTime < 500) {
-      return;
-    }
-    setLastClickTime(now);
-
-    // Clear any existing timeout
-    if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current);
-    }
-
-    setIsProcessing(true);
-    setHasError(false);
-
-    try {
-      if (onSelect) {
-        // Small delay to show loading state, then call onSelect and reset
-        await new Promise(resolve => setTimeout(resolve, 100));
-        onSelect();
-        setIsProcessing(false);
-        return;
-      }
-
-      // Get current URLs for success/cancel
-      const successUrl = `${window.location.origin}/success`;
-      const cancelUrl = window.location.href;
-
-      // If not authenticated, handle auth error as expected by tests
-      if (!isAuthenticated) {
-        // Update URL to show checkout attempt
-        window.history.replaceState({}, '', `${cancelUrl}?checkout_price=${priceId}`);
-        openAuthModal('login');
-        showToast({
-          message: 'Please sign in to complete your purchase',
-          type: 'info',
-        });
-        return;
-      }
-
-      // User is authenticated, use StripeService to redirect to checkout
-      await StripeService.redirectToCheckout(priceId, {
-        successUrl,
-        cancelUrl,
-      });
-
-      // Reset processing state after successful checkout (for tests)
-      setIsProcessing(false);
-    } catch (error) {
-      console.error('Error during subscription process:', error);
-      setHasError(true);
-      setRetryCount(prev => {
-        const newCount = prev + 1;
-        // Limit retries to 3 attempts
-        if (newCount >= 3) {
-          showToast({
-            message: 'Multiple failed attempts. Please refresh the page and try again.',
-            type: 'error',
-          });
-        }
-        return newCount;
-      });
-
-      // Handle authentication errors by opening auth modal
-      if (
-        error instanceof Error &&
-        (error.message.includes('User not authenticated') ||
-          error.message.includes('Missing authorization header') ||
-          error.message.includes('Invalid authentication token'))
-      ) {
-        window.history.replaceState({}, '', `${window.location.href}?checkout_price=${priceId}`);
-        openAuthModal('login');
-        setIsProcessing(false);
-        return;
-      }
-
-      // Enhanced error handling for different error types
-      if (error instanceof Error) {
-        if (error.message.includes('fetch') || error.message.includes('network')) {
-          showToast({
-            message: 'Network error. Please check your connection and try again.',
-            type: 'error',
-          });
-        } else if (error.message.includes('Failed to fetch')) {
-          showToast({
-            message: 'Unable to connect to server. Please try again later.',
-            type: 'error',
-          });
-        } else {
-          showToast({
-            message: error.message || 'Failed to initiate checkout',
-            type: 'error',
-          });
-        }
-      } else {
-        showToast({
-          message: 'Failed to initiate checkout',
-          type: 'error',
-        });
-      }
-
-      // Reset processing state after error (longer delay for visibility)
-      setTimeout(() => {
-        setIsProcessing(false);
-      }, 2000);
-    }
-  }, [
-    disabled,
+  const {
+    handleCheckout,
     isProcessing,
-    onSelect,
+    hasError,
+    retryCount,
+    showCheckoutModal,
+    closeCheckoutModal,
+    handleCheckoutSuccess,
+  } = useCheckoutFlow({
     priceId,
-    isAuthenticated,
-    openAuthModal,
-    showToast,
-    lastClickTime,
-  ]);
+    onSelect,
+    disabled,
+  });
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    const currentTimeout = clickTimeoutRef.current;
-    return () => {
-      if (currentTimeout) {
-        clearTimeout(currentTimeout);
-      }
-    };
-  }, []);
-
-  // Determine if this is the current plan (disabled but not scheduled)
   const isCurrentPlan = disabled && !scheduled;
+  const badge = getBadgeConfig(disabled, scheduled, recommended, disabledReason, trial);
+  const buttonText = getButtonText(
+    isProcessing,
+    loading,
+    hasError,
+    retryCount,
+    scheduled,
+    isCurrentPlan,
+    trial,
+    onSelect,
+    currentSubscriptionPrice,
+    price
+  );
 
   return (
     <div
-      className={`relative bg-surface rounded-2xl shadow-lg border-2 ${
-        scheduled
-          ? 'border-warning ring-2 ring-warning ring-opacity-20 opacity-90'
-          : isCurrentPlan
-            ? 'border-success ring-2 ring-success ring-opacity-20 opacity-90'
-            : recommended
-              ? 'border-accent ring-2 ring-accent ring-opacity-20'
-              : 'border-surface-light'
-      }`}
+      className={`relative bg-surface rounded-2xl shadow-lg border-2 ${getCardBorderClasses(scheduled, isCurrentPlan, recommended)}`}
     >
-      {scheduled && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-warning text-white px-4 py-1 rounded-full text-sm font-medium">
-          Scheduled
+      {/* Badge */}
+      {badge.show && (
+        <div
+          className={`absolute -top-3 left-1/2 -translate-x-1/2 ${badge.colorClass} text-white px-4 py-1 rounded-full text-sm font-medium`}
+        >
+          {badge.text}
         </div>
       )}
-      {isCurrentPlan && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-success text-white px-4 py-1 rounded-full text-sm font-medium">
-          {disabledReason}
-        </div>
-      )}
-      {!disabled && !scheduled && recommended && !trial?.enabled && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-white px-4 py-1 rounded-full text-sm font-medium">
-          Recommended
-        </div>
-      )}
-      {!disabled && !scheduled && trial?.enabled && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-success text-white px-4 py-1 rounded-full text-sm font-medium">
-          {trial.durationDays}-day free trial
-        </div>
-      )}
+
       <div className="p-8">
         <h2 className="text-2xl font-bold text-center text-text-primary mb-2">{name}</h2>
         {description && (
@@ -289,48 +259,11 @@ export function PricingCard({
 
         <div className="mt-auto space-y-2">
           <button
-            onClick={handleSubscribe}
+            onClick={handleCheckout}
             disabled={disabled || isProcessing || loading || retryCount >= 3}
-            className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
-              scheduled
-                ? 'bg-warning/20 text-warning cursor-not-allowed'
-                : isCurrentPlan
-                  ? 'bg-surface-light text-text-muted cursor-not-allowed'
-                  : hasError
-                    ? 'bg-error/80 hover:bg-error/90 text-white'
-                    : isProcessing || loading
-                      ? 'bg-surface-light text-text-muted cursor-not-allowed'
-                      : 'bg-accent hover:bg-accent-hover text-white shadow-md hover:shadow-lg'
-            }`}
+            className={getButtonClasses(scheduled, isCurrentPlan, hasError, isProcessing, loading)}
           >
-            {isProcessing || loading ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                {hasError ? 'Retrying...' : 'Processing...'}
-              </>
-            ) : hasError ? (
-              retryCount >= 3 ? (
-                'Maximum Attempts Reached'
-              ) : retryCount > 0 ? (
-                `Retry (${retryCount}/3)`
-              ) : (
-                'Try Again'
-              )
-            ) : scheduled ? (
-              'Scheduled'
-            ) : isCurrentPlan ? (
-              'Current Plan'
-            ) : trial?.enabled ? (
-              `Start ${trial.durationDays}-Day Trial`
-            ) : onSelect && currentSubscriptionPrice != null ? (
-              price > currentSubscriptionPrice ? (
-                'Upgrade'
-              ) : (
-                'Downgrade'
-              )
-            ) : (
-              'Get Started'
-            )}
+            {buttonText}
           </button>
           {scheduled && onCancelScheduled && (
             <button
@@ -343,6 +276,15 @@ export function PricingCard({
           )}
         </div>
       </div>
+
+      {/* Checkout Modal */}
+      {showCheckoutModal && (
+        <CheckoutModal
+          priceId={priceId}
+          onClose={closeCheckoutModal}
+          onSuccess={handleCheckoutSuccess}
+        />
+      )}
     </div>
   );
 }

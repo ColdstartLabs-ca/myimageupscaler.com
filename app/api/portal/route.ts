@@ -102,6 +102,32 @@ export async function POST(request: NextRequest) {
           );
         }
 
+        // MEDIUM-16 FIX: Domain allowlist to prevent open redirect
+        const baseUrlHostname = new URL(clientEnv.BASE_URL).hostname;
+        const allowedDomains = [baseUrlHostname, 'localhost', '127.0.0.1'];
+
+        // Check if the hostname matches any allowed domain
+        const isAllowedDomain = allowedDomains.some(domain => {
+          // Exact match or subdomain match
+          return url.hostname === domain || url.hostname.endsWith(`.${domain}`);
+        });
+
+        if (!isAllowedDomain) {
+          console.warn(
+            `[PORTAL] Blocked redirect to unauthorized domain: ${url.hostname} (allowed: ${allowedDomains.join(', ')})`
+          );
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: 'INVALID_RETURN_URL',
+                message: 'Return URL domain not allowed',
+              },
+            },
+            { status: 400 }
+          );
+        }
+
         // Additional XSS prevention - check for dangerous patterns
         const dangerousPatterns = [
           /javascript:/i,

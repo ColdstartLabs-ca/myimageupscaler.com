@@ -1,51 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { getPlanForPriceId, assertKnownPriceId } from '@shared/config/stripe';
 
-interface ISubscriptionChangeRequest {
-  targetPriceId: string;
-}
+// SECURITY FIX: Zod schema for request body validation
+const subscriptionChangeSchema = z.object({
+  targetPriceId: z.string().min(1, 'targetPriceId is required'),
+});
 
-/**
- * Check if this is a downgrade (fewer credits in new plan)
- * Uses unified resolver to ensure consistent credit calculations
- */
-function isDowngrade(currentPriceId: string | null, targetPriceId: string): boolean {
-  if (!currentPriceId) return false;
-
-  try {
-    // Use unified resolver for consistent credit calculations
-    const currentResolved = assertKnownPriceId(currentPriceId);
-    const targetResolved = assertKnownPriceId(targetPriceId);
-
-    // Both should be plans for subscription changes
-    if (currentResolved.type !== 'plan' || targetResolved.type !== 'plan') {
-      console.warn('[PLAN_CHANGE] Non-plan price IDs in subscription change:', {
-        currentPriceId,
-        currentType: currentResolved.type,
-        targetPriceId,
-        targetType: targetResolved.type,
-      });
-      return false;
-    }
-
-    // Compare credits directly from unified resolver
-    return targetResolved.credits < currentResolved.credits;
-  } catch (error) {
-    console.error('[PLAN_CHANGE] Error resolving price IDs for downgrade check:', {
-      error: error instanceof Error ? error.message : error,
-      currentPriceId,
-      targetPriceId,
-    });
-    // Fallback to legacy method if unified resolver fails
-    const currentPlan = getPlanForPriceId(currentPriceId);
-    const targetPlan = getPlanForPriceId(targetPriceId);
-    if (!currentPlan || !targetPlan) return false;
-    return targetPlan.creditsPerMonth < currentPlan.creditsPerMonth;
-  }
-}
+type ISubscriptionChangeRequest = z.infer<typeof subscriptionChangeSchema>;
 
 export async function POST(request: NextRequest) {
   try {
@@ -83,11 +48,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Parse and validate request body
+    // 2. Parse and validate request body with Zod schema
     let body: ISubscriptionChangeRequest;
     try {
       const text = await request.text();
-      body = JSON.parse(text) as ISubscriptionChangeRequest;
+      const parsed = JSON.parse(text);
+      // SECURITY FIX: Validate with Zod schema
+      const validationResult = subscriptionChangeSchema.safeParse(parsed);
+      if (!validationResult.success) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'VALIDATION_ERROR',
+              message: 'Invalid request body',
+              details: validationResult.error.errors,
+            },
+          },
+          { status: 400 }
+        );
+      }
+      body = validationResult.data;
     } catch {
       return NextResponse.json(
         {
@@ -95,19 +76,6 @@ export async function POST(request: NextRequest) {
           error: {
             code: 'INVALID_JSON',
             message: 'Invalid JSON in request body',
-          },
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!body.targetPriceId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'MISSING_PRICE_ID',
-            message: 'targetPriceId is required',
           },
         },
         { status: 400 }
@@ -176,10 +144,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 6. Get user's Stripe customer ID
+    // 6. Get user's Stripe customer ID and subscription tier
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
-      .select('stripe_customer_id')
+      .select('stripe_customer_id, subscription_tier')
       .eq('id', user.id)
       .single();
 
@@ -305,27 +273,38 @@ export async function POST(request: NextRequest) {
         rawSubscription: JSON.stringify(latestSubscription).slice(0, 500),
       });
 
-      // Validate the subscription hasn't changed since we started processing
+      // Sync database with Stripe if price_id is out of sync
       const latestPriceId = latestSubscription.items.data[0]?.price.id;
       if (latestPriceId !== currentSubscription.price_id) {
-        console.warn(
-          `Subscription ${currentSubscription.id} was modified during processing. Expected price: ${currentSubscription.price_id}, Found: ${latestPriceId}`
+        console.log(
+          `[PLAN_CHANGE] Syncing price_id - DB had: ${currentSubscription.price_id}, Stripe has: ${latestPriceId}`
         );
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'SUBSCRIPTION_MODIFIED',
-              message:
-                'Your subscription was modified elsewhere. Please refresh the page and try again.',
-            },
-          },
-          { status: 409 }
-        );
+        // Update database to match Stripe (source of truth)
+        await supabaseAdmin
+          .from('subscriptions')
+          .update({ price_id: latestPriceId })
+          .eq('id', currentSubscription.id);
+        // Use the correct price_id going forward
+        currentSubscription.price_id = latestPriceId;
       }
 
-      // Check if this is a downgrade
-      const isDowngradeChange = isDowngrade(currentSubscription.price_id, body.targetPriceId);
+      // Check if this is a downgrade using subscription_tier (more reliable than price_id)
+      const tierCreditsMap: Record<string, number> = {
+        starter: 100,
+        hobby: 200,
+        pro: 1000,
+        business: 5000,
+      };
+      const currentTierCredits = tierCreditsMap[profile.subscription_tier || ''] || 0;
+      const isDowngradeChange = currentTierCredits > targetPlan.creditsPerMonth;
+
+      console.log('[PLAN_CHANGE] Downgrade check:', {
+        currentTier: profile.subscription_tier,
+        currentTierCredits,
+        targetPlan: targetPlan.name,
+        targetCredits: targetPlan.creditsPerMonth,
+        isDowngrade: isDowngradeChange,
+      });
 
       console.log('[PLAN_CHANGE_STRIPE_UPDATE]', {
         subscriptionId: currentSubscription.id,
@@ -404,26 +383,67 @@ export async function POST(request: NextRequest) {
         const existingScheduleId = latestSubscription.schedule;
 
         if (existingScheduleId && typeof existingScheduleId === 'string') {
-          // Use existing schedule
-          console.log('[PLAN_CHANGE_USING_EXISTING_SCHEDULE]', { scheduleId: existingScheduleId });
-          schedule = await stripe.subscriptionSchedules.retrieve(existingScheduleId);
-        } else {
-          // Create a new schedule from the existing subscription
-          schedule = await stripe.subscriptionSchedules.create({
-            from_subscription: currentSubscription.id,
+          // Release existing schedule first to avoid "phase already ended" errors
+          // This converts the schedule back to a regular subscription
+          console.log('[PLAN_CHANGE_RELEASING_EXISTING_SCHEDULE]', {
+            scheduleId: existingScheduleId,
           });
+          try {
+            await stripe.subscriptionSchedules.release(existingScheduleId);
+            console.log('[PLAN_CHANGE_SCHEDULE_RELEASED]', { scheduleId: existingScheduleId });
+          } catch (releaseError) {
+            // Schedule may already be released or in a state where release fails
+            // Log and continue - we'll create a new schedule
+            console.warn('[PLAN_CHANGE_SCHEDULE_RELEASE_FAILED]', {
+              scheduleId: existingScheduleId,
+              error: releaseError instanceof Error ? releaseError.message : releaseError,
+            });
+          }
         }
+
+        // Create a fresh schedule from the current subscription
+        schedule = await stripe.subscriptionSchedules.create({
+          from_subscription: currentSubscription.id,
+        });
+
+        // CRITICAL: Extract the existing phase's start_date - we MUST use this exact value
+        // to avoid "cannot modify start_date of current phase" error while also satisfying
+        // the "must have at least one phase with start_date to anchor end dates" requirement
+        const existingPhaseStartDate = schedule.phases[0]?.start_date;
+        if (!existingPhaseStartDate) {
+          console.error('[PLAN_CHANGE_ERROR] Schedule created without phase start_date', {
+            scheduleId: schedule.id,
+            phases: schedule.phases,
+          });
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: 'SCHEDULE_ERROR',
+                message: 'Could not determine schedule phase start date',
+              },
+            },
+            { status: 500 }
+          );
+        }
+
+        console.log('[PLAN_CHANGE_NEW_SCHEDULE_CREATED]', {
+          scheduleId: schedule.id,
+          existingPhaseStartDate,
+          existingPhaseEndDate: schedule.phases[0]?.end_date,
+          targetPeriodEnd: periodEnd,
+        });
 
         // Update the schedule with two phases:
         // 1. Current phase: keep current plan until period end
         // 2. Next phase: switch to new (lower) plan
-        // Note: When created from_subscription, Stripe sets current_phase start automatically
+        // CRITICAL: Use the EXACT same start_date from the existing phase
         schedule = await stripe.subscriptionSchedules.update(schedule.id, {
           end_behavior: 'release', // Release back to regular subscription after schedule completes
           phases: [
             {
               items: [{ price: currentSubscription.price_id!, quantity: 1 }],
-              start_date: periodStart || 'now',
+              start_date: existingPhaseStartDate, // MUST use exact value from existing phase
               end_date: periodEnd,
               proration_behavior: 'none',
             },

@@ -22,6 +22,7 @@ import {
   buildSubscriptionPriceMap,
 } from './subscription.utils';
 import { getSubscriptionConfig } from './subscription.config';
+import { BILLING_COPY } from '../constants/billing';
 
 /**
  * Stripe subscription plan metadata interface
@@ -381,20 +382,25 @@ export function getPlanDisplayName(
   if (typeof input === 'string') {
     switch (input.toLowerCase()) {
       case 'starter':
-      case 'STARTER_MONTHLY':
-        return SUBSCRIPTION_PLANS.STARTER_MONTHLY.name;
+      case 'starter_monthly':
+        return `${SUBSCRIPTION_PLANS.STARTER_MONTHLY.name} Plan`;
       case 'hobby':
-      case 'HOBBY_MONTHLY':
-        return SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name;
+      case 'hobby_monthly':
+        return `${SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name} Plan`;
       case 'pro':
       case 'professional':
-      case 'PRO_MONTHLY':
-        return SUBSCRIPTION_PLANS.PRO_MONTHLY.name;
+      case 'pro_monthly':
+        return `${SUBSCRIPTION_PLANS.PRO_MONTHLY.name} Plan`;
       case 'business':
-      case 'BUSINESS_MONTHLY':
-        return SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name;
+      case 'business_monthly':
+        return `${SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name} Plan`;
       default:
-        return input;
+        // If input already contains "plan" (case insensitive), return as-is
+        if (input.toLowerCase().includes('plan')) {
+          return input;
+        }
+        // Otherwise add Plan suffix
+        return `${input} Plan`;
     }
   }
 
@@ -402,28 +408,29 @@ export function getPlanDisplayName(
   const { subscriptionTier, priceId, planKey } = input;
 
   // First try subscriptionTier - normalize to proper display name
-  if (subscriptionTier) {
-    switch (subscriptionTier.toLowerCase()) {
-      case 'starter':
-        return SUBSCRIPTION_PLANS.STARTER_MONTHLY.name;
-      case 'hobby':
-        return SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name;
-      case 'pro':
-      case 'professional':
-        return SUBSCRIPTION_PLANS.PRO_MONTHLY.name;
-      case 'business':
-        return SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name;
-      default:
-        // Capitalize first letter as fallback
-        return subscriptionTier.charAt(0).toUpperCase() + subscriptionTier.slice(1);
-    }
+  // Null/undefined subscription_tier means Free Plan
+  if (!subscriptionTier) {
+    return BILLING_COPY.freePlan;
   }
 
-  // Then try priceId lookup
+  // Return plan name with " Plan" suffix for consistency with "Free Plan"
+  switch (subscriptionTier.toLowerCase()) {
+    case 'starter':
+      return `${SUBSCRIPTION_PLANS.STARTER_MONTHLY.name} Plan`;
+    case 'hobby':
+      return `${SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name} Plan`;
+    case 'pro':
+    case 'professional':
+      return `${SUBSCRIPTION_PLANS.PRO_MONTHLY.name} Plan`;
+    case 'business':
+      return `${SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name} Plan`;
+  }
+
+  // If subscriptionTier didn't match known plans, try priceId lookup
   if (priceId) {
     const plan = getPlanForPriceId(priceId);
     if (plan) {
-      return plan.name;
+      return `${plan.name} Plan`;
     }
   }
 
@@ -431,12 +438,12 @@ export function getPlanDisplayName(
   if (planKey) {
     const plan = getPlanByKey(planKey);
     if (plan) {
-      return plan.name;
+      return `${plan.name} Plan`;
     }
   }
 
-  // Final fallback
-  return 'Unknown Plan';
+  // Capitalize first letter of subscriptionTier as final fallback and add Plan suffix
+  return subscriptionTier.charAt(0).toUpperCase() + subscriptionTier.slice(1) + ' Plan';
 }
 
 // =============================================================================

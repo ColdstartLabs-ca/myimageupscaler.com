@@ -82,7 +82,7 @@
           "answer": "Yes, significantly better. AI upscaling uses neural networks to intelligently generate new details, while bicubic interpolation just smooths between existing pixels. AI produces sharper, more detailed results with fewer artifacts."
         }
       ],
-      "relatedGuides": ["how-to-upsize-images", "webp-format-guide", "heic-format-guide"],
+      "relatedGuides": ["how-to-upscale-images", "webp-format-guide", "heic-format-guide"],
       "relatedTools": ["ai-image-upscaler"]
     },
     {

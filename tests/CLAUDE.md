@@ -1,6 +1,7 @@
 # Tests Directory
 
 ## Overview
+
 All testing-related files including unit tests, integration tests, E2E tests, and test utilities.
 
 **📋 Note:** This test suite has been refactored to use enhanced abstractions and consistent patterns. See the "New Testing Infrastructure" section below for details.
@@ -8,44 +9,52 @@ All testing-related files including unit tests, integration tests, E2E tests, an
 ## Structure
 
 ### Unit Tests (`tests/unit/`)
+
 - Individual function and component testing
 - Pure function tests with Vitest
 - Component unit tests with React Testing Library
 - Utility function tests
 
 ### Integration Tests (`tests/integration/`)
+
 - API endpoint testing with new TestContext and ApiClient patterns
 - Database integration tests
 - Service layer testing
 - Multi-component integration
 
 ### E2E Tests (`tests/e2e/`)
+
 - **✅ Refactored** - End-to-end user journey tests using enhanced Page Objects
 - Browser automation with Playwright
 - Critical path testing with TestContext for user management
 - Cross-browser compatibility with accessibility checks
 
 ### API Tests (`tests/api/`)
+
 - **✅ Refactored** - API route testing using ApiClient with fluent assertions
 - Request/response validation with typed responses
 - Error handling testing with structured error matching
 - Webhook testing using WebhookClient
 
 ### Pages (`tests/pages/`)
+
 - **✅ Enhanced** - Page object models extending BasePage with common UI patterns
 - Page-specific test utilities with accessibility support
 - Component page tests with proper waiting strategies
 
 ### Fixtures (`tests/fixtures/`)
+
 - Mock data for testing
 - Test database seeds
 - Sample files for upload testing
 - API response mocks
 
 ### Helpers (`tests/helpers/`)
+
 **New Enhanced Testing Infrastructure:**
 
 #### Core Abstractions
+
 - **`TestContext`** - Centralized test resource management with automatic cleanup
 - **`ApiClient`** - Fluent API client with typed responses and assertion chaining
 - **`AuthenticatedApiClient`** - Pre-configured API client for authenticated requests
@@ -53,6 +62,7 @@ All testing-related files including unit tests, integration tests, E2E tests, an
 - **`UserFactory`** & **`UserBuilder`** - Builder pattern for test user creation
 
 #### Enhanced Page Objects
+
 - **`BasePage`** - Rich base class with common UI patterns:
   - Navigation utilities (`goto`, `waitForURL`, `reload`)
   - Modal handling (`waitForModal`, `closeModal`, `clickModalButton`)
@@ -64,6 +74,7 @@ All testing-related files including unit tests, integration tests, E2E tests, an
   - Screenshot and debugging helpers
 
 #### Legacy Helpers (Maintained for Compatibility)
+
 - `TestDataManager` - Direct database operations (use TestContext when possible)
 - `IntegrationTestHelpers` - Legacy integration test patterns
 - `StripeWebhookMockFactory` - Webhook event generation (use WebhookClient)
@@ -72,6 +83,7 @@ All testing-related files including unit tests, integration tests, E2E tests, an
 ## New Testing Infrastructure Usage
 
 ### TestContext Pattern
+
 ```typescript
 import { TestContext } from '../helpers';
 
@@ -89,7 +101,7 @@ test('creates user with subscription', async () => {
   const user = await ctx.createUser({
     subscription: 'active',
     tier: 'pro',
-    credits: 500
+    credits: 500,
   });
 
   // Test with user...
@@ -98,6 +110,7 @@ test('creates user with subscription', async () => {
 ```
 
 ### ApiClient with Fluent Assertions
+
 ```typescript
 import { ApiClient } from '../helpers';
 
@@ -113,6 +126,7 @@ test('API endpoint with authentication', async ({ request }) => {
 ```
 
 ### Enhanced Page Objects
+
 ```typescript
 import { LoginPage } from '../pages/LoginPage';
 
@@ -130,6 +144,7 @@ test('login flow with enhanced page object', async ({ page }) => {
 ```
 
 ## Testing Stack
+
 - **Unit Tests**: Vitest + React Testing Library
 - **E2E Tests**: Playwright with enhanced Page Objects
 - **API Tests**: Playwright API testing with ApiClient
@@ -138,6 +153,7 @@ test('login flow with enhanced page object', async ({ page }) => {
 - **Coverage**: Vitest coverage reports
 
 ## Key Files
+
 - `vitest.config.ts` - Unit test configuration
 - `playwright.config.ts` - E2E test configuration
 - `tests/setup.ts` - Global test setup
@@ -146,6 +162,7 @@ test('login flow with enhanced page object', async ({ page }) => {
 - `tests/pages/BasePage.ts` - Enhanced base page with common UI patterns
 
 ## Updated Testing Standards
+
 - ✅ **Use TestContext** for all user lifecycle management and cleanup
 - ✅ **Use ApiClient** for API testing with fluent assertions
 - ✅ **Extend BasePage** for all page objects to get common UI patterns
@@ -154,6 +171,7 @@ test('login flow with enhanced page object', async ({ page }) => {
 - ✅ **Test both happy path and error scenarios** with structured assertions
 - ✅ **Use UserFactory builder pattern** for complex user setup
 - ✅ **Handle cleanup automatically** through TestContext
+- ⚠️ **Avoid mid-file dynamic imports** in tests - prefer top-level imports or `beforeAll` setup
 - Aim for high code coverage (80%+)
 - Use descriptive test names that explain the behavior
 - Mock external dependencies in unit tests
@@ -162,6 +180,7 @@ test('login flow with enhanced page object', async ({ page }) => {
 ## Migration Patterns
 
 ### Before (Old Pattern)
+
 ```typescript
 let dataManager: TestDataManager;
 let testUser: { id: string; email: string; token: string };
@@ -187,6 +206,7 @@ test('should reject unauthenticated requests', async ({ request }) => {
 ```
 
 ### After (New Pattern)
+
 ```typescript
 let ctx: TestContext;
 
@@ -208,6 +228,7 @@ test('should reject unauthenticated requests', async ({ request }) => {
 ```
 
 ## Commands
+
 - `yarn test` - Run unit tests
 - `yarn test:e2e` - Run E2E tests
 - `yarn test:api` - Run API tests

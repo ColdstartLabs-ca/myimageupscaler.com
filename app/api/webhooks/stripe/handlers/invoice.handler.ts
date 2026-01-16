@@ -25,6 +25,7 @@ export class InvoiceHandler {
   static async handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {
     const invoiceWithSub = invoice as Stripe.Invoice & {
       subscription?: string | Stripe.Subscription | null;
+      billing_reason?: string | null;
       lines?: {
         data: Array<{
           price?: { id: string };
@@ -42,6 +43,17 @@ export class InvoiceHandler {
 
     if (!subscriptionId) {
       return; // Not a subscription invoice
+    }
+
+    // HIGH-7 FIX: Skip first invoice - credits already added by checkout.session.completed
+    // This prevents double credit allocation when both checkout and first invoice fire
+    const billingReason = invoiceWithSub.billing_reason;
+    if (billingReason === 'subscription_create') {
+      console.log(
+        `[INVOICE_SKIP] Skipping first invoice ${invoice.id} (billing_reason: subscription_create) - ` +
+          `credits already added by checkout.session.completed`
+      );
+      return;
     }
 
     const customerId = invoice.customer as string;

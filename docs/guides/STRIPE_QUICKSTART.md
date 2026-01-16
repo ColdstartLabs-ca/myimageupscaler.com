@@ -32,9 +32,10 @@ This guide will get you up and running with Stripe integration quickly.
 
 1. **Get your Stripe API keys**
    - Go to https://dashboard.stripe.com/test/apikeys
-   - Copy your **Secret key** (sk_test_...)
+   - Copy your **Secret key** (sk*test*...)
 
 2. **Create a test product**
+
    ```bash
    # In Stripe Dashboard: Products → Add Product
    # Name: "100 Credits Pack"
@@ -69,18 +70,21 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ## Step 4: Test Locally (5 minutes)
 
 1. **Start your dev server**
+
    ```bash
    yarn dev
    ```
 
 2. **Set up Stripe webhook forwarding**
+
    ```bash
    # In a new terminal
    stripe login
    stripe listen --forward-to localhost:3000/api/webhooks/stripe
    ```
 
-   Copy the webhook secret (whsec_...) and update `.env.local`:
+   Copy the webhook secret (whsec\_...) and update `.env.local`:
+
    ```bash
    STRIPE_WEBHOOK_SECRET=whsec_xxxxx
    ```
@@ -106,11 +110,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
          <div>
            <h2 className="text-xl mb-4">Buy Credits:</h2>
-           <BuyCreditsButton
-             priceId="price_YOUR_PRICE_ID"
-             creditsAmount={100}
-             price={9.99}
-           />
+           <BuyCreditsButton priceId="price_YOUR_PRICE_ID" creditsAmount={100} price={9.99} />
          </div>
        </div>
      );
@@ -157,7 +157,7 @@ export default function PricingPage() {
         <PricingCard
           name="Starter"
           price={9.99}
-          features={["100 credits", "Basic support"]}
+          features={['100 credits', 'Basic support']}
           priceId="price_starter"
           creditsAmount={100}
         />
@@ -166,7 +166,7 @@ export default function PricingPage() {
           name="Pro"
           price={29}
           interval="month"
-          features={["1000 credits/month", "Priority support", "Advanced features"]}
+          features={['1000 credits/month', 'Priority support', 'Advanced features']}
           priceId="price_pro"
           recommended
         />
@@ -175,7 +175,7 @@ export default function PricingPage() {
           name="Enterprise"
           price={99}
           interval="month"
-          features={["Unlimited credits", "24/7 support", "Custom integration"]}
+          features={['Unlimited credits', '24/7 support', 'Custom integration']}
           priceId="price_enterprise"
         />
       </div>
@@ -193,7 +193,7 @@ import { CreditsDisplay, SubscriptionStatus } from '@/components/stripe';
 <div className="flex flex-col gap-4">
   <CreditsDisplay />
   <SubscriptionStatus />
-</div>
+</div>;
 ```
 
 ### Use Credits in Your App
@@ -234,26 +234,31 @@ See [STRIPE_SETUP.md](./STRIPE_SETUP.md) for complete deployment guide.
 ## Troubleshooting
 
 ### "Missing STRIPE_SECRET_KEY"
+
 - Ensure `.env.local` exists and has `STRIPE_SECRET_KEY`
 - Restart dev server after adding env vars
 
 ### "Webhook signature verification failed"
+
 - Check `STRIPE_WEBHOOK_SECRET` is set correctly
 - Ensure `stripe listen` is running
 - Copy the signing secret from the `stripe listen` output
 
 ### "Credits not updating"
+
 - Check webhook logs in terminal
 - Ensure `credits_amount` metadata is set in checkout
 - Verify RPC function with: `SELECT * FROM pg_proc WHERE proname = 'increment_credits';`
 
 ### "User not authenticated"
+
 - Ensure user is logged in with Supabase Auth
 - Check Authorization header is being sent
 
 ## Support
 
 Need help? Check:
+
 - [Full Setup Guide](./STRIPE_SETUP.md)
 - [Stripe Docs](https://stripe.com/docs)
 - [Supabase Docs](https://supabase.com/docs)
