@@ -106,7 +106,8 @@ const nextConfig = {
     return [
       {
         // Apply security and CORS headers to all API routes
-        source: '/api/:path*',
+        // Note: Using (.*) syntax for OpenNext/Cloudflare compatibility (path-to-regexp v7+)
+        source: '/api/(.*)',
         headers: [
           // Security headers
           {
@@ -151,14 +152,39 @@ const nextConfig = {
         ],
       },
       {
-        // Cache static assets
-        source: '/:all*(svg|jpg|png|webp|avif|woff|woff2)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
+        // Cache SVG files
+        source: '/(.*).svg',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        // Cache image files
+        source: '/(.*).jpg',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        // Cache PNG files
+        source: '/(.*).png',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        // Cache WebP files
+        source: '/(.*).webp',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        // Cache AVIF files
+        source: '/(.*).avif',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        // Cache font files
+        source: '/(.*).woff',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        // Cache font files
+        source: '/(.*).woff2',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
     ];
   },
