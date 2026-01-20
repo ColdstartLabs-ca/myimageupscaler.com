@@ -497,8 +497,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // Validate that the requested scale is supported by the selected model
-    // Enhancement-only models (flux-2-pro, qwen-image-edit) have empty supportedScales
-    if (!selectedModel.supportedScales.includes(config.scale)) {
+    // Enhancement-only models (flux-2-pro, qwen-image-edit, seedream)
+    // have empty supportedScales - skip validation for these models (scale is ignored)
+    const hasNoSupportedScales = selectedModel.supportedScales.length === 0;
+    if (!hasNoSupportedScales && !selectedModel.supportedScales.includes(config.scale)) {
       logger.warn('Scale not supported by model', {
         userId,
         tier: resolvedTier,
@@ -507,15 +509,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         supportedScales: selectedModel.supportedScales,
       });
 
-      // Build helpful error message suggesting HD Upscale for 8x
       const is8xRequest = config.scale === 8;
       const supports8x = selectedModel.supportedScales.includes(8);
 
       let errorMessage = `Scale ${config.scale}x is not available for ${resolvedTier} tier.`;
       if (is8xRequest && !supports8x) {
         errorMessage += ' Use HD Upscale tier for 8x upscaling.';
-      } else if (selectedModel.supportedScales.length === 0) {
-        errorMessage += ' This tier is enhancement-only and does not change image dimensions.';
       } else {
         errorMessage += ` Supported scales: ${selectedModel.supportedScales.join('x, ')}x.`;
       }
@@ -638,8 +637,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Calculate output dimensions for dimension reporting
     // For enhancement-only models (flux-2-pro, qwen-image-edit), dimensions don't change
     // For true upscaling models, output = input * requested scale
-    const isEnhancementOnly = !modelConfig?.capabilities.includes('upscale');
-    const actualScale = isEnhancementOnly ? 1 : config.scale;
+    const supportsUpscale = modelConfig?.capabilities.includes('upscale') ?? false;
+    const actualScale = supportsUpscale ? config.scale : 1;
 
     const dimensions = inputDimensions
       ? {

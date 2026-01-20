@@ -31,6 +31,9 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'flux-2-pro': 'black-forest-labs/flux-2-pro',
   'nano-banana-pro': 'google/nano-banana-pro',
   'qwen-image-edit': 'qwen/qwen-image-edit-2511',
+  seedream: 'bytedance/seedream-4.5',
+  'realesrgan-anime':
+    'xinntao/realesrgan:1b976a4d456ed9e4d1a846597b7614e79eadad3032e9124fa63859db0fd59b56',
 };
 
 /**
@@ -44,6 +47,8 @@ const MODEL_COSTS: Record<string, number> = {
   'flux-2-pro': CONFIG_MODEL_COSTS.FLUX_2_PRO_COST,
   'nano-banana-pro': CONFIG_MODEL_COSTS.NANO_BANANA_PRO_COST,
   'qwen-image-edit': CONFIG_MODEL_COSTS.QWEN_IMAGE_EDIT_COST,
+  seedream: CONFIG_MODEL_COSTS.SEEDREAM_COST,
+  'realesrgan-anime': CONFIG_MODEL_COSTS.REALESRGAN_ANIME_COST,
 };
 
 /**
@@ -57,6 +62,8 @@ const MODEL_CREDIT_MULTIPLIERS: Record<string, number> = {
   'flux-2-pro': CREDIT_COSTS.FLUX_2_PRO_MULTIPLIER,
   'nano-banana-pro': CREDIT_COSTS.NANO_BANANA_PRO_MULTIPLIER,
   'qwen-image-edit': CREDIT_COSTS.QWEN_IMAGE_EDIT_MULTIPLIER,
+  seedream: CREDIT_COSTS.SEEDREAM_MULTIPLIER,
+  'realesrgan-anime': CREDIT_COSTS.REALESRGAN_ANIME_MULTIPLIER,
 };
 
 /**
@@ -104,6 +111,8 @@ export class ModelRegistry {
       'flux-2-pro': serverEnv.MODEL_VERSION_FLUX_2_PRO,
       'nano-banana-pro': serverEnv.MODEL_VERSION_NANO_BANANA_PRO,
       'qwen-image-edit': serverEnv.MODEL_VERSION_QWEN_IMAGE_EDIT,
+      seedream: serverEnv.MODEL_VERSION_SEEDREAM,
+      'realesrgan-anime': serverEnv.MODEL_VERSION_REALESRGAN_ANIME,
     };
     return overrides[modelId] || DEFAULT_MODEL_VERSIONS[modelId];
   }
@@ -247,6 +256,42 @@ export class ModelRegistry {
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [], // Enhancement-only, no scale support
+        isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+        tierRestriction: 'hobby',
+      },
+      // Seedream 4.5 (Advanced Image Editing - Premium)
+      // Enhancement-only model with strong spatial understanding
+      {
+        id: 'seedream',
+        displayName: 'Seedream Edit',
+        provider: 'replicate',
+        modelVersion: this.getModelVersion('seedream'),
+        capabilities: ['enhance', 'denoise', 'damage-repair'],
+        costPerRun: MODEL_COSTS['seedream'],
+        creditMultiplier: MODEL_CREDIT_MULTIPLIERS['seedream'],
+        qualityScore: 9.3,
+        processingTimeMs: TIMEOUTS.CLARITY_UPSCALER_PROCESSING_TIME, // ~4-5 seconds
+        maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+        supportedScales: [], // Enhancement-only, no scale support
+        isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+        tierRestriction: 'hobby',
+      },
+      // Real-ESRGAN Anime (Anime Upscaling - Premium)
+      // Specialized upscaler for anime and illustrations
+      {
+        id: 'realesrgan-anime',
+        displayName: 'Anime Upscale',
+        provider: 'replicate',
+        modelVersion: this.getModelVersion('realesrgan-anime'),
+        capabilities: ['upscale', 'denoise'],
+        costPerRun: MODEL_COSTS['realesrgan-anime'],
+        creditMultiplier: MODEL_CREDIT_MULTIPLIERS['realesrgan-anime'],
+        qualityScore: 8.5,
+        processingTimeMs: TIMEOUTS.REAL_ESRGAN_PROCESSING_TIME,
+        maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+        supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD], // Supports 2x and 4x
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
         tierRestriction: 'hobby',
       },

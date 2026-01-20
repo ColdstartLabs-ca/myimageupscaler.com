@@ -122,6 +122,42 @@ interface IQwenImageEditInput {
 }
 
 /**
+ * Replicate API input for Seedream 4.5 (ByteDance)
+ * Advanced image editing with strong spatial understanding
+ */
+interface ISeedreamInput {
+  prompt: string;
+  image_input: string[]; // Array of image URIs (required for image editing)
+  size?: '2K' | '4K'; // 2048px or 4096px (default 2K)
+  width?: number; // Output width in pixels
+  height?: number; // Output height in pixels
+  aspect_ratio?:
+    | 'match_input_image'
+    | '1:1'
+    | '4:3'
+    | '3:4'
+    | '16:9'
+    | '9:16'
+    | '3:2'
+    | '2:3'
+    | '21:9';
+  sequential_image_generation?: 'disabled' | 'auto';
+  max_images?: number; // 1-4 (default 1)
+}
+
+/**
+ * Replicate API input for Real-ESRGAN (xinntao)
+ * Anime-specialized upscaling
+ */
+interface IRealEsrganAnimeInput {
+  img: string; // Image URI
+  scale?: number; // Upscaling multiplier (default 2)
+  version?: 'General - RealESRGANplus' | 'General - v3' | 'Anime - anime6B' | 'AnimeVideo - v3';
+  face_enhance?: boolean; // GFPGAN face enhancement
+  tile?: number; // Tile size for memory management (default 0)
+}
+
+/**
  * Generate enhancement instructions from the enhancement settings.
  * This mirrors the client-side logic in prompt-utils.ts to ensure consistency.
  */
@@ -293,7 +329,9 @@ export class ReplicateService implements IImageProcessor {
     | IClarityUpscalerInput
     | IFlux2ProInput
     | INanoBananaProInput
-    | IQwenImageEditInput {
+    | IQwenImageEditInput
+    | ISeedreamInput
+    | IRealEsrganAnimeInput {
     const scale = input.config.scale;
     const customPrompt = input.config.additionalOptions.customInstructions;
     const { enhance, enhanceFaces, preserveText } = input.config.additionalOptions;
@@ -426,13 +464,13 @@ export class ReplicateService implements IImageProcessor {
       }
 
       case 'qwen-image-edit': {
-        // Qwen Image Edit - budget alternative to nano-banana-pro
+        // Qwen Image Edit - budget alternative for enhancement (no upscaling support)
         let effectivePrompt = customPrompt;
 
         if (!effectivePrompt) {
           effectivePrompt = enhance
-            ? `Upscale and enhance this image to ${scale}x resolution with improved clarity and detail.`
-            : `Upscale this image to ${scale}x resolution maintaining quality and sharpness.`;
+            ? 'Enhance this image with improved clarity, detail, and quality.'
+            : 'Improve this image while maintaining its original quality and sharpness.';
 
           if (enhancementInstructions) {
             effectivePrompt += ` ${enhancementInstructions}`;
@@ -454,6 +492,45 @@ export class ReplicateService implements IImageProcessor {
           output_format: 'png',
           output_quality: 95,
           go_fast: true,
+        };
+      }
+
+      case 'seedream': {
+        // Seedream 4.5 - Advanced image editing with spatial understanding
+        let effectivePrompt = customPrompt;
+
+        if (!effectivePrompt) {
+          effectivePrompt = enhance
+            ? `Enhance this image with improved clarity and detail.`
+            : `Improve this image quality while maintaining its original appearance.`;
+
+          if (enhancementInstructions) {
+            effectivePrompt += ` ${enhancementInstructions}`;
+          }
+
+          if (enhanceFaces) {
+            effectivePrompt += ' Enhance facial features naturally without altering identity.';
+          }
+
+          if (preserveText) {
+            effectivePrompt += ' Preserve and sharpen any text or logos in the image.';
+          }
+        }
+
+        return {
+          prompt: effectivePrompt,
+          image_input: [imageDataUrl], // Seedream uses image_input, not image
+          size: '4K', // Default to 4K for best quality
+        };
+      }
+
+      case 'realesrgan-anime': {
+        // Anime-specialized upscaling
+        return {
+          img: imageDataUrl, // Note: uses 'img' not 'image'
+          scale: scale <= 4 ? scale : 4, // Max scale is 4
+          version: 'Anime - anime6B', // Best for anime/illustrations
+          face_enhance: enhanceFaces || false,
         };
       }
 

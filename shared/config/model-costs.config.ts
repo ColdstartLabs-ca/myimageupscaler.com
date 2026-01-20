@@ -12,6 +12,8 @@ export const MODEL_COSTS = {
   FLUX_2_PRO_COST: 0.05, // black-forest-labs/flux-2-pro - premium face restoration
   NANO_BANANA_PRO_COST: 0.13,
   QWEN_IMAGE_EDIT_COST: 0.03, // qwen/qwen-image-edit-2511 - budget image editing
+  SEEDREAM_COST: 0.04, // bytedance/seedream-4.5 - image editing
+  REALESRGAN_ANIME_COST: 0.0022, // xinntao/realesrgan - anime upscaling
 
   // Cost calculation thresholds
   COST_CENT_MULTIPLIER: 100, // Convert dollars to cents
@@ -44,6 +46,8 @@ export const MODEL_COSTS = {
     'flux-2-pro',
     'nano-banana-pro',
     'qwen-image-edit',
+    'seedream',
+    'realesrgan-anime',
   ], // All models accessible with hobby tier
   PRO_MODELS: [
     'real-esrgan',
@@ -53,6 +57,8 @@ export const MODEL_COSTS = {
     'flux-2-pro',
     'nano-banana-pro',
     'qwen-image-edit',
+    'seedream',
+    'realesrgan-anime',
   ], // All models accessible with pro tier
   BUSINESS_MODELS: [
     'real-esrgan',
@@ -62,10 +68,20 @@ export const MODEL_COSTS = {
     'flux-2-pro',
     'nano-banana-pro',
     'qwen-image-edit',
+    'seedream',
+    'realesrgan-anime',
   ], // All models accessible with business tier
 
   // Quality tiers requiring paid subscription (free users blocked)
-  PREMIUM_QUALITY_TIERS: ['auto', 'budget-edit', 'hd-upscale', 'face-pro', 'ultra'] as const,
+  PREMIUM_QUALITY_TIERS: [
+    'auto',
+    'budget-edit',
+    'seedream-edit',
+    'anime-upscale',
+    'hd-upscale',
+    'face-pro',
+    'ultra',
+  ] as const,
   // Quality tiers available to free users
   FREE_QUALITY_TIERS: ['quick', 'face-restore'] as const,
   // Smart AI Analysis requires paid subscription
@@ -190,6 +206,26 @@ export const MODEL_CONFIG = {
     maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
     supportedScales: [], // Enhancement-only, no scale support
+    tierRestriction: 'hobby',
+  },
+  seedream: {
+    cost: MODEL_COSTS.SEEDREAM_COST,
+    multiplier: 4,
+    qualityScore: 9.3,
+    processingTime: MODEL_COSTS.PROCESSING_TIME_MEDIUM,
+    maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
+    maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+    supportedScales: [], // Enhancement-only, no scale support
+    tierRestriction: 'hobby',
+  },
+  'realesrgan-anime': {
+    cost: MODEL_COSTS.REALESRGAN_ANIME_COST,
+    multiplier: 1,
+    qualityScore: 8.5,
+    processingTime: MODEL_COSTS.PROCESSING_TIME_FAST,
+    maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
+    maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+    supportedScales: [MODEL_COSTS.DEFAULT_SCALE, MODEL_COSTS.MAX_SCALE_STANDARD], // Supports 2x and 4x
     tierRestriction: 'hobby',
   },
 } as const;

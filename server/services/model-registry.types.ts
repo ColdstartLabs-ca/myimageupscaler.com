@@ -31,7 +31,9 @@ export type ModelId =
   | 'nano-banana'
   | 'nano-banana-pro'
   | 'clarity-upscaler'
-  | 'qwen-image-edit';
+  | 'qwen-image-edit'
+  | 'seedream'
+  | 'realesrgan-anime';
 
 /**
  * Model configuration interface as defined in the PRD

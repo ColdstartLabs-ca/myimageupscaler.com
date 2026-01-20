@@ -18,6 +18,8 @@ export type QualityTier =
   | 'quick'
   | 'face-restore'
   | 'budget-edit'
+  | 'seedream-edit'
+  | 'anime-upscale'
   | 'hd-upscale'
   | 'face-pro'
   | 'ultra';
@@ -66,6 +68,22 @@ export const QUALITY_TIER_CONFIG: Record<
     bestFor: 'General enhancement, budget-friendly',
     smartAnalysisAlwaysOn: false,
   },
+  'seedream-edit': {
+    label: 'Seedream Edit',
+    credits: 4,
+    modelId: 'seedream',
+    description: 'Advanced AI image editing',
+    bestFor: 'Complex edits, high quality output',
+    smartAnalysisAlwaysOn: false,
+  },
+  'anime-upscale': {
+    label: 'Anime Upscale',
+    credits: 1,
+    modelId: 'realesrgan-anime',
+    description: 'Upscale anime and illustrations',
+    bestFor: 'Anime art, manga, illustrations',
+    smartAnalysisAlwaysOn: false,
+  },
   'hd-upscale': {
     label: 'HD Upscale',
     credits: 4,
@@ -107,6 +125,8 @@ export const QUALITY_TIER_SCALES: Record<QualityTier, (2 | 4 | 8)[]> = {
   quick: [2, 4], // real-esrgan only supports 2x and 4x
   'face-restore': [2, 4], // gfpgan only supports 2x and 4x
   'budget-edit': [], // qwen-image-edit is enhancement-only (no upscale)
+  'seedream-edit': [], // seedream is enhancement-only (no upscale)
+  'anime-upscale': [2, 4], // realesrgan-anime supports 2x and 4x
   'hd-upscale': [2, 4, 8], // clarity-upscaler supports up to 16x natively
   'face-pro': [], // flux-2-pro is enhancement-only (no upscale)
   ultra: [2, 4], // nano-banana-pro is resolution-based (1K/2K/4K), not true 8x scale
@@ -171,7 +191,9 @@ export type ModelId =
   | 'nano-banana-pro'
   | 'clarity-upscaler'
   | 'flux-2-pro'
-  | 'qwen-image-edit';
+  | 'qwen-image-edit'
+  | 'seedream'
+  | 'realesrgan-anime';
 
 export type ModelCapability =
   | 'upscale'
