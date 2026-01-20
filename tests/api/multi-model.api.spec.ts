@@ -47,6 +47,7 @@ test.describe('API: Multi-Model Architecture', () => {
         credits: 10,
       });
 
+      // Use valid base64 test data (uniform pattern detected by mock analysis)
       const mockImageData = Buffer.alloc(1024, 'A').toString('base64');
 
       const response = await api.withAuth(user.token).post('/api/analyze-image', {

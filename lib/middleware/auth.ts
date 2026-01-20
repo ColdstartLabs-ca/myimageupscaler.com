@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createServerClient } from '@supabase/ssr';
 import { clientEnv, serverEnv } from '@shared/config/env';
 import { updateSession } from '@shared/utils/supabase/middleware';
 
@@ -169,11 +169,17 @@ export async function verifyApiAuth(
   }
 
   // Create Supabase client for API auth (uses Authorization header)
-  const supabase = createClient(clientEnv.SUPABASE_URL, clientEnv.SUPABASE_ANON_KEY, {
+  // Using @supabase/ssr for Edge Runtime compatibility
+  const supabase = createServerClient(clientEnv.SUPABASE_URL, clientEnv.SUPABASE_ANON_KEY, {
     global: {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    },
+    // No-op cookies since we're using Authorization header for API routes
+    cookies: {
+      getAll: () => [],
+      setAll: () => {},
     },
   });
 

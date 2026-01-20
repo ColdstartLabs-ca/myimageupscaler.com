@@ -86,8 +86,15 @@ function createMockAnalysis(
   eligibleModels: Array<{ id: string; creditMultiplier: number }>,
   modelRegistry: ModelRegistry
 ) {
-  // Check if base64 appears to be test data (very small or uniform pattern)
-  const isLikelyTestData = base64Data.length < 100 || /^[A-Za-z]{1,4}=*$/.test(base64Data);
+  // Check if base64 appears to be test data:
+  // 1. Very small data (< 100 chars)
+  // 2. Repeating short pattern at the start (like "QUFB" from Buffer.alloc with single byte value)
+  const stripped = base64Data.replace(/=+$/, '');
+  // Check first 100+ chars for repeating pattern (Buffer.alloc produces uniform base64)
+  const first100 = stripped.substring(0, 100);
+  const isLikelyTestData =
+    base64Data.length < 100 ||
+    /^(.{1,4})\1{24,}$/.test(first100); // Repeating 1-4 char pattern in first 100 chars
 
   if (!isLikelyTestData) {
     return null;
