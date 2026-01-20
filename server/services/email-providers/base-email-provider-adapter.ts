@@ -265,7 +265,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'low-credits': 'Running low on credits',
       'password-reset': 'Reset your password',
       'support-request': d =>
-        `[SUPPORT] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,
+        `[Support] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,
     };
 
     const subject = subjects[template];
