@@ -57,8 +57,9 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
     const { to, template, data, type = 'transactional', userId } = params;
 
     // Skip actual email sending in development or test - log payload instead
-    // Check this BEFORE template loading to allow tests to work without API keys
-    const isTestMode = isDevelopment() || isTest();
+    // Unless ALLOW_TRANSACTIONAL_EMAILS_IN_DEV is true (for testing real email flow)
+    const allowDevEmails = serverEnv.ALLOW_TRANSACTIONAL_EMAILS_IN_DEV;
+    const isTestMode = isTest() || (isDevelopment() && !allowDevEmails);
 
     try {
       // Check preferences for marketing emails
@@ -264,7 +265,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'low-credits': 'Running low on credits',
       'password-reset': 'Reset your password',
       'support-request': d =>
-        `[${String(d.category || 'SUPPORT').toUpperCase()}] ${d.subject || 'Support Request'}`,
+        `[SUPPORT] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,
     };
 
     const subject = subjects[template];

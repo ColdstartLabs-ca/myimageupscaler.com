@@ -34,16 +34,17 @@ const RESEND_CONFIG: IEmailProviderConfig = {
  * Adapter for Resend email provider
  */
 export class ResendProviderAdapter extends BaseEmailProviderAdapter {
-  private resend: Resend;
+  private resend: Resend | null = null;
+  private apiKey: string;
 
   constructor() {
     super(RESEND_CONFIG);
-    const apiKey = serverEnv.RESEND_API_KEY;
-    // In test mode, allow construction without API key
-    if (!apiKey && !isTest()) {
-      throw new Error('RESEND_API_KEY is not configured');
+    this.apiKey = serverEnv.RESEND_API_KEY || '';
+    if (!this.apiKey) {
+      console.warn('RESEND_API_KEY not configured, Resend will not be available');
+    } else {
+      this.resend = new Resend(this.apiKey);
     }
-    this.resend = new Resend(apiKey || 'test-key');
   }
 
   /**
@@ -54,6 +55,10 @@ export class ResendProviderAdapter extends BaseEmailProviderAdapter {
     subject: string,
     reactElement: ReactElement
   ): Promise<{ messageId: string; [key: string]: unknown }> {
+    if (!this.resend) {
+      throw new Error('RESEND_API_KEY is not configured');
+    }
+
     const result = await this.resend.emails.send({
       from: this.fromAddress,
       to,
@@ -74,7 +79,7 @@ export class ResendProviderAdapter extends BaseEmailProviderAdapter {
   }
 
   /**
-   * Check if Resend is available (within limits)
+   * Check if Resend is available (API key configured and within limits)
    * In test mode, always return true to allow tests to work without API keys
    */
   override async isAvailable(): Promise<boolean> {
@@ -83,7 +88,7 @@ export class ResendProviderAdapter extends BaseEmailProviderAdapter {
       return true;
     }
 
-    if (!this.config.enabled) {
+    if (!this.apiKey || !this.config.enabled) {
       return false;
     }
 
