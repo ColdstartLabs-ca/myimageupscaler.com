@@ -90,13 +90,13 @@ flowchart LR
 
 ### 2.3 Key Technical Decisions
 
-| Decision                      | Rationale                                                               |
-| ----------------------------- | ----------------------------------------------------------------------- |
-| **Resend over SendGrid**      | Better DX, React Email native support, simpler API                      |
-| **React Email for templates** | Type-safe, component reuse, hot reload preview, Tailwind support        |
-| **Server-side only**          | Email credentials must never reach client; all sends via API routes     |
-| **Supabase for preferences**  | Leverage existing RLS policies, avoid separate notification service     |
-| **Use serverEnv**             | Follow project pattern - never use `process.env` directly               |
+| Decision                      | Rationale                                                           |
+| ----------------------------- | ------------------------------------------------------------------- |
+| **Resend over SendGrid**      | Better DX, React Email native support, simpler API                  |
+| **React Email for templates** | Type-safe, component reuse, hot reload preview, Tailwind support    |
+| **Server-side only**          | Email credentials must never reach client; all sends via API routes |
+| **Supabase for preferences**  | Leverage existing RLS policies, avoid separate notification service |
+| **Use serverEnv**             | Follow project pattern - never use `process.env` directly           |
 
 ### 2.4 Data Model Changes
 
@@ -305,7 +305,7 @@ export class EmailService {
   private async getTemplate(templateName: string) {
     // Dynamic import for templates
     const templates: Record<string, () => Promise<{ default: React.FC<any> }>> = {
-      'welcome': () => import('@/emails/templates/WelcomeEmail'),
+      welcome: () => import('@/emails/templates/WelcomeEmail'),
       'payment-success': () => import('@/emails/templates/PaymentSuccessEmail'),
       'subscription-update': () => import('@/emails/templates/SubscriptionUpdateEmail'),
       'low-credits': () => import('@/emails/templates/LowCreditsEmail'),
@@ -323,15 +323,17 @@ export class EmailService {
 
   private getSubject(template: string, data: Record<string, unknown>): string {
     const subjects: Record<string, string | ((data: Record<string, unknown>) => string)> = {
-      'welcome': 'Welcome to MyImageUpscaler!',
-      'payment-success': (d) => `Payment confirmed - ${d.amount || 'Receipt'}`,
+      welcome: 'Welcome to MyImageUpscaler!',
+      'payment-success': d => `Payment confirmed - ${d.amount || 'Receipt'}`,
       'subscription-update': 'Your subscription has been updated',
       'low-credits': 'Running low on credits',
       'password-reset': 'Reset your password',
     };
 
     const subject = subjects[template];
-    return typeof subject === 'function' ? subject(data) : subject || 'MyImageUpscaler Notification';
+    return typeof subject === 'function'
+      ? subject(data)
+      : subject || 'MyImageUpscaler Notification';
   }
 
   private async logEmail(params: {
@@ -451,17 +453,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof EmailError) {
-      return NextResponse.json(
-        { error: error.message, code: error.code },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: error.message, code: error.code }, { status: 500 });
     }
 
     console.error('Email send error:', error);
-    return NextResponse.json(
-      { error: 'Failed to send email' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
   }
 }
 ```
@@ -498,11 +494,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Return defaults if no preferences exist
-    return NextResponse.json(data || {
-      marketing_emails: true,
-      product_updates: true,
-      low_credit_alerts: true,
-    });
+    return NextResponse.json(
+      data || {
+        marketing_emails: true,
+        product_updates: true,
+        low_credit_alerts: true,
+      }
+    );
   } catch (error) {
     console.error('Get preferences error:', error);
     return NextResponse.json({ error: 'Failed to get preferences' }, { status: 500 });
@@ -809,6 +807,7 @@ try {
 ### Phase 1: Infrastructure Setup
 
 **Files (5):**
+
 - `package.json` - Add dependencies
 - `shared/config/env.ts` - Add env vars
 - `server/services/email.service.ts` - Create service
@@ -816,6 +815,7 @@ try {
 - `.env.api` - Add RESEND_API_KEY
 
 **Implementation:**
+
 - [ ] Install: `yarn add resend @react-email/components`
 - [ ] Add `RESEND_API_KEY` and `EMAIL_FROM_ADDRESS` to serverEnv schema
 - [ ] Create EmailService class following project patterns
@@ -828,6 +828,7 @@ try {
 | `tests/unit/server/email.service.unit.spec.ts` | `should skip marketing when opted out` | `expect(result.skipped).toBe(true)` |
 
 **User Verification:**
+
 - Action: Run `yarn verify`
 - Expected: Build succeeds, no TypeScript errors
 
@@ -836,9 +837,11 @@ try {
 ### Phase 2: Database Schema
 
 **Files (1):**
+
 - `supabase/migrations/20260115_create_email_tables.sql`
 
 **Implementation:**
+
 - [ ] Create migration with email_preferences and email_logs tables
 - [ ] Add RLS policies
 - [ ] Add trigger for auto-creating preferences
@@ -849,6 +852,7 @@ try {
 | `tests/api/email-preferences.api.spec.ts` | `should create preferences on profile insert` | `expect(prefs).toBeDefined()` |
 
 **User Verification:**
+
 - Action: Run `supabase db push` or apply migration
 - Expected: Tables created with proper policies
 
@@ -857,10 +861,12 @@ try {
 ### Phase 3: API Endpoints
 
 **Files (2):**
+
 - `app/api/email/send/route.ts`
 - `app/api/email/preferences/route.ts`
 
 **Implementation:**
+
 - [ ] Create send endpoint (admin only)
 - [ ] Create preferences CRUD endpoint
 
@@ -871,6 +877,7 @@ try {
 | `tests/api/email-preferences.api.spec.ts` | `should update preferences` | `expect(data.marketing_emails).toBe(false)` |
 
 **User Verification:**
+
 - Action: Call `PATCH /api/email/preferences` with auth
 - Expected: Returns updated preferences
 
@@ -879,6 +886,7 @@ try {
 ### Phase 4: Email Templates
 
 **Files (5):**
+
 - `emails/templates/WelcomeEmail.tsx`
 - `emails/templates/PaymentSuccessEmail.tsx`
 - `emails/templates/SubscriptionUpdateEmail.tsx`
@@ -886,6 +894,7 @@ try {
 - `emails/templates/PasswordResetEmail.tsx`
 
 **Implementation:**
+
 - [ ] Create emails directory at project root
 - [ ] Build React Email templates with project branding
 - [ ] Set up preview server: `npx email dev`
@@ -896,6 +905,7 @@ try {
 | `tests/unit/emails/templates.unit.spec.ts` | `should render PaymentSuccessEmail` | Snapshot test |
 
 **User Verification:**
+
 - Action: Run `npx email dev`
 - Expected: Preview server shows templates correctly
 
@@ -904,10 +914,12 @@ try {
 ### Phase 5: Webhook Integration
 
 **Files (2):**
+
 - `app/api/webhooks/stripe/handlers/payment.handler.ts` (update)
 - `app/api/webhooks/stripe/handlers/subscription.handler.ts` (update)
 
 **Implementation:**
+
 - [ ] Add email sending to payment success handler
 - [ ] Add email sending to subscription update handler
 - [ ] Handle email errors gracefully (log but don't fail webhook)
@@ -918,6 +930,7 @@ try {
 | `tests/unit/api/stripe-webhooks.unit.spec.ts` | `should send email on successful payment` | `expect(emailService.send).toHaveBeenCalled()` |
 
 **User Verification:**
+
 - Action: Process test Stripe payment
 - Expected: Payment email sent to customer
 
@@ -928,11 +941,13 @@ try {
 ### Unit Tests
 
 **Functions to cover:**
+
 - `EmailService.send()` - Mock Resend API
 - `EmailService.checkShouldSkipMarketing()` - Verify preference checks
 - Template render functions - Snapshot tests
 
 **Error scenarios:**
+
 - Resend API returns 500 error
 - Invalid template name provided
 - User email preferences missing
@@ -941,18 +956,19 @@ try {
 ### Integration Tests
 
 **End-to-end flows:**
+
 1. **New user signup** → email_preferences row created
 2. **Successful payment** → PaymentSuccessEmail sent
 3. **Opt-out flow** → Marketing emails skipped
 
 ### Edge Cases
 
-| Scenario | Expected Behavior |
-| -------- | ----------------- |
-| Missing `RESEND_API_KEY` | Throw startup error |
-| User deletes account | email_logs retain with user_id=NULL |
-| Invalid email address | Resend returns error, logged as 'failed' |
-| Rate limit exceeded | Return error, can retry |
+| Scenario                 | Expected Behavior                        |
+| ------------------------ | ---------------------------------------- |
+| Missing `RESEND_API_KEY` | Throw startup error                      |
+| User deletes account     | email_logs retain with user_id=NULL      |
+| Invalid email address    | Resend returns error, logged as 'failed' |
+| Rate limit exceeded      | Return error, can retry                  |
 
 ---
 
@@ -974,6 +990,7 @@ try {
 ### Success Criteria
 
 **Metrics:**
+
 - Email delivery rate > 98% (monitor via Resend dashboard)
 - Log ingestion latency < 100ms
 
