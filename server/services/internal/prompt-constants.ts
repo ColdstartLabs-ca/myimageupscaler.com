@@ -122,4 +122,25 @@ export const PROMPT_TEMPLATES = {
 - Be specific about what to fix based on the actual image content
 - Mention specific areas if relevant: "Remove artifacts in upper left, restore faded colors"
 - Keep natural: "Enhance while preserving natural textures" not "make perfect"`,
+
+  // Enhancement-only mode (when user has already selected a tier)
+  enhancementOnlyRules: `ANALYSIS RULES (Enhancement Only Mode):
+1. Detect content type: Is this a photo, portrait (faces), document/text, anime/illustration, vintage photo, or product shot?
+2. Identify quality issues: blur, noise, compression artifacts, physical damage, low resolution
+3. DO NOT recommend a model - the user has already selected one.
+4. Focus on what enhancements would help this specific image.
+5. Provide detailed enhancement instructions based on the actual issues detected.`,
+
+  enhancementOnlyResponseFormat: `Respond with ONLY valid JSON:
+{
+  "issues": [
+    {"type": "blur", "severity": "medium", "description": "Soft focus throughout image"},
+    {"type": "noise", "severity": "low", "description": "Minor grain visible in shadows"}
+  ],
+  "contentType": "photo|portrait|document|vintage|product|artwork|anime",
+  "confidence": 0.85,
+  "enhancementPrompt": "Detailed enhancement instructions for this specific image"
+}
+
+NOTE: Do NOT include recommendedModel, reasoning, or alternatives fields - the user has already selected their model.`,
 } as const;

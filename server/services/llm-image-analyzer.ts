@@ -13,16 +13,24 @@ export class LLMImageAnalyzer {
     this.openRouter = new OpenRouterService();
   }
 
+  /**
+   * Analyze an image and optionally recommend a model
+   * @param base64Image - Base64 encoded image data
+   * @param mimeType - MIME type of the image
+   * @param eligibleModels - List of models the user can use
+   * @param suggestTier - When true (default), AI recommends a model. When false, AI only provides enhancement suggestions.
+   */
   async analyze(
     base64Image: string,
     mimeType: string,
-    eligibleModels: ModelId[]
+    eligibleModels: ModelId[],
+    suggestTier: boolean = true
   ): Promise<ILLMAnalysisResult> {
     const startTime = Date.now();
     const dataUrl = this.formatDataUrl(base64Image, mimeType);
 
     try {
-      const result = await this.analyzeWithOpenRouter(dataUrl, eligibleModels);
+      const result = await this.analyzeWithOpenRouter(dataUrl, eligibleModels, suggestTier);
       return {
         ...result,
         provider: 'openrouter',
@@ -31,7 +39,7 @@ export class LLMImageAnalyzer {
     } catch {
       console.error('OpenRouter analysis failed, using default fallback');
       return {
-        ...this.getDefaultResult(eligibleModels),
+        ...this.getDefaultResult(eligibleModels, suggestTier),
         provider: 'fallback',
         processingTimeMs: Date.now() - startTime,
       };
@@ -44,31 +52,48 @@ export class LLMImageAnalyzer {
 
   private async analyzeWithOpenRouter(
     imageDataUrl: string,
-    eligibleModels: ModelId[]
+    eligibleModels: ModelId[],
+    suggestTier: boolean
   ): Promise<Omit<ILLMAnalysisResult, 'provider' | 'processingTimeMs'>> {
-    const prompt = buildAnalysisPrompt(eligibleModels);
-    console.log('[LLM Analyzer] OpenRouter prompt:', prompt);
+    const prompt = buildAnalysisPrompt(eligibleModels, suggestTier);
+    console.log('[LLM Analyzer] OpenRouter prompt (suggestTier=%s):', suggestTier, prompt);
 
     const responseText = await this.openRouter.analyzeImage(imageDataUrl, prompt);
     console.log('[LLM Analyzer] OpenRouter response:', responseText);
 
-    const result = this.parseJsonResponse(responseText);
-    return this.validateAndAdjustResult(result, eligibleModels);
+    const result = this.parseJsonResponse(responseText, suggestTier);
+    return this.validateAndAdjustResult(result, eligibleModels, suggestTier);
   }
 
-  private parseJsonResponse(responseText: string): ILLMAnalysisResult {
+  private parseJsonResponse(responseText: string, suggestTier: boolean): ILLMAnalysisResult {
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error('No JSON found in OpenRouter response');
     }
-    return JSON.parse(jsonMatch[0]);
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    // When suggestTier is false, the AI response won't include model recommendation fields
+    // Set placeholder values that won't be used
+    if (!suggestTier) {
+      return {
+        ...parsed,
+        // Use placeholder values - these won't be used when suggestTier is false
+        recommendedModel: 'real-esrgan' as ModelId,
+        reasoning: 'Enhancement-only analysis (user selected their own model)',
+        alternatives: [],
+      };
+    }
+
+    return parsed;
   }
 
   private validateAndAdjustResult(
     result: ILLMAnalysisResult,
-    eligibleModels: ModelId[]
+    eligibleModels: ModelId[],
+    suggestTier: boolean
   ): ILLMAnalysisResult {
-    if (!eligibleModels.includes(result.recommendedModel)) {
+    // Only validate/adjust model recommendation when we're suggesting a tier
+    if (suggestTier && !eligibleModels.includes(result.recommendedModel)) {
       result.recommendedModel = this.findBestEligibleModel(result, eligibleModels);
       result.reasoning += ' (Adjusted for your subscription tier)';
     }
@@ -93,15 +118,19 @@ export class LLMImageAnalyzer {
   }
 
   private getDefaultResult(
-    eligible: ModelId[]
+    eligible: ModelId[],
+    suggestTier: boolean
   ): Omit<ILLMAnalysisResult, 'provider' | 'processingTimeMs'> {
     return {
       issues: [],
       contentType: 'photo',
-      recommendedModel: eligible[0] ?? 'real-esrgan',
-      reasoning: 'Standard upscaling selected (analysis unavailable).',
+      // Use placeholder when not suggesting tier - this value won't be used
+      recommendedModel: suggestTier ? (eligible[0] ?? 'real-esrgan') : 'real-esrgan',
+      reasoning: suggestTier
+        ? 'Standard upscaling selected (analysis unavailable).'
+        : 'Enhancement-only analysis (user selected their own model)',
       confidence: 0.5,
-      alternatives: eligible.slice(1, 3),
+      alternatives: suggestTier ? eligible.slice(1, 3) : [],
       enhancementPrompt: DEFAULT_ENHANCEMENT_PROMPT,
     };
   }

@@ -626,3 +626,192 @@ describe('validateAndAdjustResult edge cases (via LLMImageAnalyzer)', () => {
     expect(result.reasoning).toContain('Adjusted for your subscription tier');
   });
 });
+
+// =======================================
+// Tests for suggestTier parameter (BUG FIX)
+// When suggestTier=false, AI should NOT recommend a model
+// =======================================
+describe('suggestTier parameter', () => {
+  const eligibleModels: ModelId[] = ['real-esrgan', 'gfpgan', 'nano-banana'];
+
+  describe('buildAnalysisPrompt with suggestTier', () => {
+    it('should include model recommendation in prompt when suggestTier is true (default)', () => {
+      const prompt = buildAnalysisPrompt(eligibleModels, true);
+
+      // Should include model sections
+      expect(prompt).toContain('UPSCALING MODELS');
+      expect(prompt).toContain('VALID MODELS');
+      // Should ask for recommendedModel in response format
+      expect(prompt).toContain('"recommendedModel"');
+      expect(prompt).toContain('"reasoning"');
+      expect(prompt).toContain('"alternatives"');
+    });
+
+    it('should NOT include model recommendation in prompt when suggestTier is false', () => {
+      const prompt = buildAnalysisPrompt(eligibleModels, false);
+
+      // Should NOT include model sections
+      expect(prompt).not.toContain('UPSCALING MODELS');
+      expect(prompt).not.toContain('ENHANCEMENT-ONLY MODELS');
+      expect(prompt).not.toContain('VALID MODELS');
+      // Should NOT ask for recommendedModel in response format
+      expect(prompt).not.toContain('"recommendedModel"');
+      expect(prompt).not.toContain('"reasoning"');
+      expect(prompt).not.toContain('"alternatives"');
+      // Should indicate user selected their own model
+      expect(prompt).toContain('DO NOT recommend a model');
+      expect(prompt).toContain('user has already selected');
+    });
+
+    it('should still include enhancement analysis in prompt when suggestTier is false', () => {
+      const prompt = buildAnalysisPrompt(eligibleModels, false);
+
+      // Should still include issue detection and enhancement prompt
+      expect(prompt).toContain('"issues"');
+      expect(prompt).toContain('"contentType"');
+      expect(prompt).toContain('"confidence"');
+      expect(prompt).toContain('"enhancementPrompt"');
+      expect(prompt).toContain('ISSUE TYPES');
+    });
+  });
+
+  describe('LLMImageAnalyzer.analyze with suggestTier', () => {
+    it('should use full model recommendation when suggestTier is true (default)', async () => {
+      const mockResponse = JSON.stringify({
+        issues: [{ type: 'faces', severity: 'high', description: 'Faces detected' }],
+        contentType: 'portrait',
+        recommendedModel: 'gfpgan',
+        reasoning: 'Portrait with faces needs face restoration',
+        confidence: 0.9,
+        alternatives: ['real-esrgan'],
+        enhancementPrompt: 'Restore facial details',
+      });
+      mockAnalyzeImage.mockResolvedValue(mockResponse);
+
+      const result = await new LLMImageAnalyzer().analyze(
+        'base64',
+        'image/jpeg',
+        eligibleModels,
+        true // suggestTier=true
+      );
+
+      // Should return AI's model recommendation
+      expect(result.recommendedModel).toBe('gfpgan');
+      expect(result.reasoning).toBe('Portrait with faces needs face restoration');
+      expect(result.alternatives).toEqual(['real-esrgan']);
+    });
+
+    it('should NOT use AI model recommendation when suggestTier is false', async () => {
+      // AI response without model recommendation (enhancement-only format)
+      const mockResponse = JSON.stringify({
+        issues: [{ type: 'faces', severity: 'high', description: 'Faces detected' }],
+        contentType: 'portrait',
+        confidence: 0.9,
+        enhancementPrompt: 'Restore facial details and improve clarity',
+      });
+      mockAnalyzeImage.mockResolvedValue(mockResponse);
+
+      const result = await new LLMImageAnalyzer().analyze(
+        'base64',
+        'image/jpeg',
+        eligibleModels,
+        false // suggestTier=false
+      );
+
+      // Should have placeholder values for model recommendation (won't be used)
+      expect(result.recommendedModel).toBe('real-esrgan'); // Placeholder
+      expect(result.reasoning).toContain('Enhancement-only analysis');
+      expect(result.alternatives).toEqual([]);
+      // Should preserve enhancement data
+      expect(result.issues).toHaveLength(1);
+      expect(result.contentType).toBe('portrait');
+      expect(result.enhancementPrompt).toBe('Restore facial details and improve clarity');
+    });
+
+    it('should still detect issues when suggestTier is false', async () => {
+      const mockResponse = JSON.stringify({
+        issues: [
+          { type: 'blur', severity: 'high', description: 'Image is blurry' },
+          { type: 'noise', severity: 'medium', description: 'Some noise detected' },
+        ],
+        contentType: 'photo',
+        confidence: 0.85,
+        enhancementPrompt: 'Sharpen and reduce noise',
+      });
+      mockAnalyzeImage.mockResolvedValue(mockResponse);
+
+      const result = await new LLMImageAnalyzer().analyze(
+        'base64',
+        'image/jpeg',
+        eligibleModels,
+        false
+      );
+
+      // Issues should be preserved for enhancement suggestions
+      expect(result.issues).toHaveLength(2);
+      expect(result.issues[0].type).toBe('blur');
+      expect(result.issues[1].type).toBe('noise');
+      expect(result.enhancementPrompt).toBe('Sharpen and reduce noise');
+    });
+
+    it('should fallback correctly when suggestTier is false and API fails', async () => {
+      mockAnalyzeImage.mockRejectedValue(new Error('API error'));
+
+      const result = await new LLMImageAnalyzer().analyze(
+        'base64',
+        'image/jpeg',
+        eligibleModels,
+        false
+      );
+
+      expect(result.provider).toBe('fallback');
+      // Fallback should have placeholder values for recommendation
+      expect(result.recommendedModel).toBe('real-esrgan');
+      expect(result.reasoning).toContain('Enhancement-only analysis');
+      expect(result.alternatives).toEqual([]);
+    });
+  });
+
+  describe('regression: explicit tier with smart analysis should NOT recommend different model', () => {
+    /**
+     * BUG FIX TEST: When user selects "Budget Edit" tier with Smart Analysis ON:
+     * - The AI should NOT recommend a different model (like "Seedream Edit")
+     * - The system should use the user's selected model
+     * - The AI should only provide enhancement suggestions
+     */
+    it('should use enhancement-only prompt when suggestTier is false', async () => {
+      // Mock an AI response that would have recommended seedream if asked
+      const mockResponse = JSON.stringify({
+        issues: [{ type: 'damage', severity: 'high', description: 'Image has artifacts' }],
+        contentType: 'photo',
+        confidence: 0.9,
+        enhancementPrompt: 'Remove artifacts and enhance details',
+        // Note: AI response does NOT include recommendedModel when suggestTier=false
+      });
+      mockAnalyzeImage.mockResolvedValue(mockResponse);
+
+      const result = await new LLMImageAnalyzer().analyze(
+        'base64',
+        'image/jpeg',
+        eligibleModels,
+        false // User already selected their tier, don't suggest
+      );
+
+      // The prompt should NOT ask for recommendedModel as a JSON field
+      // (it's ok if it mentions it in a NOTE saying "don't include")
+      const promptArg = mockAnalyzeImage.mock.calls[0][1];
+      expect(promptArg).toContain('Enhancement Only Mode');
+      expect(promptArg).toContain('DO NOT recommend a model');
+      // The JSON response format should NOT have recommendedModel as a required field
+      expect(promptArg).not.toContain('"recommendedModel": "model-id-here"');
+      // Should NOT include VALID MODELS list (model selection is not needed)
+      expect(promptArg).not.toContain('VALID MODELS:');
+
+      // Result should have placeholder recommendation (won't be used by caller)
+      expect(result.recommendedModel).toBe('real-esrgan'); // Placeholder
+      // But enhancement data should be preserved
+      expect(result.enhancementPrompt).toBe('Remove artifacts and enhance details');
+      expect(result.issues[0].type).toBe('damage');
+    });
+  });
+});

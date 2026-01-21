@@ -67,24 +67,36 @@ function buildModelSection(upscalers: string[], enhancers: string[]): string {
 
 /**
  * Build the analysis prompt dynamically based on eligible models
+ * @param eligibleModelIds - List of models the user can use
+ * @param suggestTier - When true, AI recommends a model. When false, AI only analyzes for enhancements.
  */
-export function buildAnalysisPrompt(eligibleModelIds: ModelId[]): string {
+export function buildAnalysisPrompt(
+  eligibleModelIds: ModelId[],
+  suggestTier: boolean = true
+): string {
   const { upscalers, enhancers } = categorizeModels(eligibleModelIds);
   const modelSection = buildModelSection(upscalers, enhancers);
   const modelIdList = eligibleModelIds.join(', ');
 
+  // When suggestTier is false, use enhancement-only prompt (no model recommendation)
+  const responseFormat = suggestTier
+    ? PROMPT_TEMPLATES.responseFormat
+    : PROMPT_TEMPLATES.enhancementOnlyResponseFormat;
+
+  const rules = suggestTier ? PROMPT_TEMPLATES.rules : PROMPT_TEMPLATES.enhancementOnlyRules;
+
   return [
     PROMPT_TEMPLATES.preamble,
-    modelSection,
+    // Only include model section when suggesting tier
+    ...(suggestTier ? [modelSection, ''] : []),
+    rules,
     '',
-    PROMPT_TEMPLATES.rules,
-    '',
-    PROMPT_TEMPLATES.responseFormat,
+    responseFormat,
     '',
     PROMPT_TEMPLATES.issueTypes,
     '',
-    `VALID MODELS: ${modelIdList}`,
-    '',
+    // Only include valid models when suggesting tier
+    ...(suggestTier ? [`VALID MODELS: ${modelIdList}`, ''] : []),
     PROMPT_TEMPLATES.guidelines,
   ]
     .filter(Boolean)

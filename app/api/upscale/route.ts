@@ -92,8 +92,14 @@ async function analyzeImageForProcessing(
     const mimeType = options.mimeType || 'image/jpeg';
 
     // Call LLM analyzer directly
+    // When suggestTier is false, the AI only provides enhancement suggestions (no model recommendation)
     const llmAnalyzer = new LLMImageAnalyzer();
-    const analysisResult = await llmAnalyzer.analyze(base64Data, mimeType, eligibleModelIds);
+    const analysisResult = await llmAnalyzer.analyze(
+      base64Data,
+      mimeType,
+      eligibleModelIds,
+      options.suggestTier
+    );
 
     // Map analysis to tier if suggestTier is true
     const recommendedTier = options.suggestTier
@@ -410,13 +416,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         enhancements: resolvedEnhancements,
       });
     } else if (config.additionalOptions.smartAnalysis) {
-      // Branch B: Explicit tier + Smart Analysis - AI suggests enhancements only
-      logger.info('Explicit tier with Smart Analysis', {
+      // Branch B: Explicit tier + Smart Analysis - AI suggests enhancements only (NOT model)
+      // User selected their model explicitly, AI only helps with enhancement suggestions
+      logger.info('Explicit tier with Smart Analysis - using user-selected model', {
         userId,
-        tier: config.qualityTier,
+        userSelectedTier: config.qualityTier,
       });
       const analysis = await analyzeImageForProcessing(validatedInput.imageData, {
-        suggestTier: false,
+        suggestTier: false, // Important: Don't ask AI for model recommendation
         userTier: userTier || 'free',
         mimeType: validatedInput.mimeType,
       });
@@ -434,11 +441,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           analysis.enhancementPrompt || config.additionalOptions.customInstructions,
       };
       didRunAIAnalysis = true;
-      logger.info('AI analysis completed for enhancements', {
+      // Log clearly that we're using the user's selected model, not AI's recommendation
+      logger.info('AI enhancement analysis completed - using user-selected model', {
         userId,
-        tier: resolvedTier,
-        resolvedModelId,
-        enhancements: resolvedEnhancements,
+        userSelectedTier: resolvedTier,
+        modelBeingUsed: resolvedModelId,
+        aiEnhancements: resolvedEnhancements,
+        note: 'Model was selected by user, AI only suggested enhancements',
       });
     } else {
       // Branch C: Explicit tier, no Smart Analysis - Use user's exact settings
