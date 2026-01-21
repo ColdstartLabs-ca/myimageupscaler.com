@@ -1,10 +1,10 @@
 'use client';
 
-import React, { JSX } from 'react';
-import { usePathname } from 'next/navigation';
 import { LoadingBackdrop } from '@client/components/common/LoadingBackdrop';
-import { NavBar } from '@client/components/navigation/NavBar';
 import { Footer } from '@client/components/layout/Footer';
+import { NavBar } from '@client/components/navigation/NavBar';
+import { usePathname } from 'next/navigation';
+import React, { JSX } from 'react';
 
 interface ILayoutProps {
   children: React.ReactNode;
@@ -27,12 +27,10 @@ export const Layout = ({ children }: ILayoutProps): JSX.Element => {
   }
 
   return (
-    <div className="min-h-screen bg-main flex flex-col">
+    <div className="min-h-screen bg-main flex flex-col overflow-x-hidden">
       <LoadingBackdrop />
-      <div className="max-w-[1600px] mx-auto w-full flex-1 flex flex-col">
-        <NavBar />
-        <main className="flex-1">{children}</main>
-      </div>
+      <NavBar />
+      <main className="flex-1 w-full">{children}</main>
       <Footer />
     </div>
   );

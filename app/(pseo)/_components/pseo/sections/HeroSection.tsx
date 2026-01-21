@@ -40,19 +40,19 @@ interface IHeroSectionProps {
   ctaText?: string;
   ctaUrl?: string;
   pageType?:
-    | 'tool'
-    | 'comparison'
-    | 'guide'
-    | 'useCase'
-    | 'use-case'
-    | 'alternative'
-    | 'format'
-    | 'scale'
-    | 'free'
-    | 'platform'
-    | 'format-scale'
-    | 'platform-format'
-    | 'device-use';
+  | 'tool'
+  | 'comparison'
+  | 'guide'
+  | 'useCase'
+  | 'use-case'
+  | 'alternative'
+  | 'format'
+  | 'scale'
+  | 'free'
+  | 'platform'
+  | 'format-scale'
+  | 'platform-format'
+  | 'device-use';
   slug?: string;
 }
 
@@ -81,7 +81,7 @@ export function HeroSection({
   const subtitle = h1Parts[1];
 
   return (
-    <section className="pt-12 pb-16 md:pt-16 md:pb-20 relative hero-gradient-2025">
+    <section className="pt-12 pb-16 md:pt-16 md:pb-20 relative hero-gradient-2025 z-20">
       <AmbientBackground variant="hero" />
 
       <motion.div

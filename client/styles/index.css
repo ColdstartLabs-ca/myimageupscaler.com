@@ -65,6 +65,7 @@
     color-scheme: dark;
     background-color: rgb(var(--color-bg-base));
     color: rgb(var(--color-text-primary));
+    overflow-x: hidden;
   }
 
   /* Custom scrollbar for dark theme */
@@ -110,6 +111,7 @@
 }
 
 @layer components {
+
   /* Image comparison checkerboard background pattern */
   .bg-checkerboard {
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjNmNGY2Ii8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNmM2Y0ZjYiLz48L3N2Zz4=');
@@ -170,11 +172,9 @@
   /* === GRADIENT CTA BUTTON === */
   /* Updated to match logo colors: blue to teal/cyan */
   .gradient-cta {
-    background: linear-gradient(
-      135deg,
-      rgb(var(--color-accent)) 0%,
-      rgb(var(--color-tertiary)) 100%
-    );
+    background: linear-gradient(135deg,
+        rgb(var(--color-accent)) 0%,
+        rgb(var(--color-tertiary)) 100%);
     box-shadow:
       0 4px 20px rgba(59, 130, 246, 0.3),
       0 4px 20px rgba(20, 184, 166, 0.2);
@@ -195,22 +195,18 @@
 
   /* === GRADIENT TEXT === */
   .gradient-text-primary {
-    background: linear-gradient(
-      135deg,
-      rgb(var(--color-accent-light)) 0%,
-      rgb(var(--color-tertiary)) 100%
-    );
+    background: linear-gradient(135deg,
+        rgb(var(--color-accent-light)) 0%,
+        rgb(var(--color-tertiary)) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   .gradient-text-secondary {
-    background: linear-gradient(
-      135deg,
-      rgb(var(--color-accent)) 0%,
-      rgb(var(--color-secondary)) 100%
-    );
+    background: linear-gradient(135deg,
+        rgb(var(--color-accent)) 0%,
+        rgb(var(--color-secondary)) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -240,7 +236,10 @@
 
   /* === HERO GRADIENT 2025 === */
   .hero-gradient-2025 {
-    background: rgb(var(--color-bg-base));
+    background:
+      radial-gradient(circle at 20% 0%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 0%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+      rgb(var(--color-bg-base));
     position: relative;
   }
 
@@ -264,16 +263,15 @@
     transform: translateX(-50%);
     width: 60%;
     height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(139, 92, 246, 0.5) 50%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(139, 92, 246, 0.5) 50%,
+        transparent 100%);
   }
 }
 
 @layer utilities {
+
   /* === FADE IN ANIMATIONS === */
   @keyframes fade-in {
     from {
@@ -307,6 +305,7 @@
 
   /* === ORB FLOATING ANIMATIONS === */
   @keyframes float-orb-1 {
+
     0%,
     100% {
       transform: translate(0, 0) scale(1);
@@ -326,6 +325,7 @@
   }
 
   @keyframes float-orb-2 {
+
     0%,
     100% {
       transform: translate(0, 0) scale(1);
@@ -341,6 +341,7 @@
   }
 
   @keyframes float-orb-3 {
+
     0%,
     100% {
       transform: translate(0, 0) scale(1);

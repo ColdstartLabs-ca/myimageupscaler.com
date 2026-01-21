@@ -70,17 +70,18 @@ test.describe('Localized Dashboard', () => {
     await expect(page.getByText('Correo Electrónico')).toBeVisible();
   });
 
-  test('should show Spanish support page', async ({ page }) => {
-    // Navigate to Spanish support page
+  test('should redirect Spanish support page to help', async ({ page }) => {
+    // Navigate to Spanish support page (should redirect to /help)
     await page.goto('/es/dashboard/support');
 
-    // Wait for page to load
+    // Wait for redirect to complete
     await page.waitForLoadState('networkidle');
 
-    // Check for Spanish support page elements
-    await expect(page.getByText('Ayuda y Soporte')).toBeVisible();
-    await expect(page.getByText('Documentación')).toBeVisible();
-    await expect(page.getByText('Preguntas Frecuentes')).toBeVisible();
+    // Should be redirected to /help page
+    await expect(page).toHaveURL(/\/es\/help/);
+
+    // Check for Spanish help page elements
+    await expect(page.getByText('Ayuda y Preguntas Frecuentes')).toBeVisible();
     await expect(page.getByText('Contactar Soporte')).toBeVisible();
   });
 });

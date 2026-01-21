@@ -9,7 +9,7 @@ interface IAmbientBackgroundProps {
 export const AmbientBackground: React.FC<IAmbientBackgroundProps> = ({ variant = 'hero' }) => {
   if (variant === 'hero') {
     return (
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-x-0 top-0 bottom-[-20%] pointer-events-none [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)]">
         {/* Violet orb - top right */}
         <div
           className="ambient-orb ambient-orb-violet animate-orb-1 w-[800px] h-[800px]"
@@ -23,7 +23,7 @@ export const AmbientBackground: React.FC<IAmbientBackgroundProps> = ({ variant =
         {/* Teal orb - bottom */}
         <div
           className="ambient-orb ambient-orb-teal animate-orb-3 w-[700px] h-[700px]"
-          style={{ bottom: '-20%', right: '10%' }}
+          style={{ bottom: '-10%', right: '10%' }}
         />
       </div>
     );
@@ -31,7 +31,7 @@ export const AmbientBackground: React.FC<IAmbientBackgroundProps> = ({ variant =
 
   if (variant === 'section') {
     return (
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-x-0 top-0 bottom-[-20%] pointer-events-none [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)]">
         <div
           className="ambient-orb ambient-orb-violet animate-orb-2 w-[500px] h-[500px] opacity-30"
           style={{ top: '10%', right: '10%' }}

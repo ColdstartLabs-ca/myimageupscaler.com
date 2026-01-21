@@ -65,7 +65,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
   }
 
   const bottomMenuItems: ISidebarItem[] = [
-    { label: t('helpSupport'), href: '/dashboard/support', icon: HelpCircle },
+    { label: t('helpSupport'), href: '/help', icon: HelpCircle },
   ];
 
   const isActive = (href: string) => {

@@ -442,7 +442,7 @@ export function HelpClient() {
   return (
     <main className="flex-1 bg-main selection:bg-accent/20 selection:text-white">
       {/* Hero Section */}
-      <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025 overflow-hidden">
+      <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025 z-20">
         <AmbientBackground variant="hero" />
 
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8 relative z-10">
@@ -459,9 +459,27 @@ export function HelpClient() {
             <h1 className="text-5xl font-black tracking-tight text-white mb-6 leading-tight">
               {t('page.title')}
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-xl text-text-secondary leading-relaxed font-light mb-12">
+            <p className="mx-auto mt-6 max-w-2xl text-xl text-text-secondary leading-relaxed font-light mb-8">
               {t('page.subtitle', { appName: clientEnv.APP_NAME })}
             </p>
+
+            {/* Primary Contact Support CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center mb-8"
+            >
+              <motion.button
+                onClick={() => setIsSupportModalOpen(true)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-accent hover:bg-accent-hover text-white font-bold rounded-2xl transition-all duration-300 shadow-xl shadow-accent/40 hover:shadow-accent/60 gradient-cta shine-effect"
+              >
+                <MessageCircle size={22} />
+                <span className="text-lg">{t('cta.contactSupport')}</span>
+              </motion.button>
+            </motion.div>
           </FadeIn>
 
           {/* Search Bar & Quick Links - Outside FadeIn for stability during typing */}
@@ -469,9 +487,8 @@ export function HelpClient() {
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                 <Search
-                  className={`w-5 h-5 transition-colors duration-300 ${
-                    searchQuery ? 'text-accent' : 'text-text-muted group-focus-within:text-accent'
-                  }`}
+                  className={`w-5 h-5 transition-colors duration-300 ${searchQuery ? 'text-accent' : 'text-text-muted group-focus-within:text-accent'
+                    }`}
                 />
               </div>
               <input
@@ -512,20 +529,13 @@ export function HelpClient() {
                   <span>{category.title}</span>
                 </button>
               ))}
-              <button
-                onClick={() => setIsSupportModalOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-accent/10 hover:bg-accent/20 border border-accent/20 hover:border-accent/40 text-accent transition-all duration-300 text-sm font-medium"
-              >
-                <MessageCircle size={16} />
-                <span>{t('cta.contactSupport')}</span>
-              </button>
             </div>
           </div>
         </div>
       </section>
 
       {/* FAQ Sections */}
-      <section className="py-16 md:py-24 relative overflow-hidden min-h-[600px]">
+      <section className="py-16 md:py-24 relative min-h-[600px]">
         <AmbientBackground variant="section" />
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
           <AnimatePresence>

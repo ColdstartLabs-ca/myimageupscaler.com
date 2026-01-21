@@ -3,8 +3,8 @@
 import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/MotionWrappers';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Cpu, Image as ImageIcon, Lock, Sparkles, Type, Zap } from 'lucide-react';
-import React from 'react';
 import { useTranslations } from 'next-intl';
+import React from 'react';
 
 const Features: React.FC = () => {
   const t = useTranslations('features');
@@ -44,7 +44,7 @@ const Features: React.FC = () => {
   ];
 
   return (
-    <section id="features" className="py-32 bg-main relative overflow-hidden">
+    <section id="features" className="py-32 bg-main relative">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="mx-auto max-w-2xl lg:text-center mb-16">
           <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
