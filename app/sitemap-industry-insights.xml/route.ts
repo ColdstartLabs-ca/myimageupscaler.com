@@ -30,7 +30,7 @@ ${pages
       page.ogImage
         ? `
     <image:image>
-      <image:loc>${page.ogImage}</image:loc>
+      <image:loc>${page.ogImage.startsWith('http') ? page.ogImage : `${BASE_URL}${page.ogImage}`}</image:loc>
       <image:title>${page.title}</image:title>
     </image:image>`
         : ''

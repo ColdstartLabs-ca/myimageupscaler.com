@@ -25,7 +25,7 @@ ${aiFeatures
       feature.ogImage
         ? `
     <image:image>
-      <image:loc>${feature.ogImage}</image:loc>
+      <image:loc>${feature.ogImage.startsWith('http') ? feature.ogImage : `${BASE_URL}${feature.ogImage}`}</image:loc>
       <image:title>${feature.title}</image:title>
     </image:image>`
         : ''

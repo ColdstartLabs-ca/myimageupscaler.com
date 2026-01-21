@@ -64,7 +64,7 @@ ${hreflangLinks}${
       tool.ogImage
         ? `
     <image:image>
-      <image:loc>${tool.ogImage}</image:loc>
+      <image:loc>${tool.ogImage.startsWith('http') ? tool.ogImage : `${BASE_URL}${tool.ogImage}`}</image:loc>
       <image:title>${tool.title}</image:title>
     </image:image>`
         : ''
@@ -85,7 +85,7 @@ ${hreflangLinks}${
       tool.ogImage
         ? `
     <image:image>
-      <image:loc>${tool.ogImage}</image:loc>
+      <image:loc>${tool.ogImage.startsWith('http') ? tool.ogImage : `${BASE_URL}${tool.ogImage}`}</image:loc>
       <image:title>${tool.title}</image:title>
     </image:image>`
         : ''

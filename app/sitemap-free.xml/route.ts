@@ -40,7 +40,7 @@ ${hreflangLinks}${
       freeTool.ogImage
         ? `
     <image:image>
-      <image:loc>${freeTool.ogImage}</image:loc>
+      <image:loc>${freeTool.ogImage.startsWith('http') ? freeTool.ogImage : `${BASE_URL}${freeTool.ogImage}`}</image:loc>
       <image:title>${freeTool.title}</image:title>
     </image:image>`
         : ''

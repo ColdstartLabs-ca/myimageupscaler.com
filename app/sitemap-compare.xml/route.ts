@@ -31,7 +31,7 @@ ${comparisons
       comparison.ogImage
         ? `
     <image:image>
-      <image:loc>${comparison.ogImage}</image:loc>
+      <image:loc>${comparison.ogImage.startsWith('http') ? comparison.ogImage : `${BASE_URL}${comparison.ogImage}`}</image:loc>
       <image:title>${comparison.title}</image:title>
     </image:image>`
         : ''

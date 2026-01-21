@@ -40,7 +40,7 @@ ${hreflangLinks}${
       guide.ogImage
         ? `
     <image:image>
-      <image:loc>${guide.ogImage}</image:loc>
+      <image:loc>${guide.ogImage.startsWith('http') ? guide.ogImage : `${BASE_URL}${guide.ogImage}`}</image:loc>
       <image:title>${guide.title}</image:title>
     </image:image>`
         : ''

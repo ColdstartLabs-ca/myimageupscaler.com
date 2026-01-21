@@ -27,7 +27,7 @@ export async function GET() {
       pageUrl: `${BASE_URL}/${page.category}/${page.slug}`,
       images: [
         {
-          loc: page.ogImage!,
+          loc: page.ogImage!.startsWith('http') ? page.ogImage! : `${BASE_URL}${page.ogImage!}`,
           title: page.title,
         },
       ],

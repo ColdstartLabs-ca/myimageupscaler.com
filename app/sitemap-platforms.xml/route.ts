@@ -31,7 +31,7 @@ ${platforms
       platform.ogImage
         ? `
     <image:image>
-      <image:loc>${platform.ogImage}</image:loc>
+      <image:loc>${platform.ogImage.startsWith('http') ? platform.ogImage : `${BASE_URL}${platform.ogImage}`}</image:loc>
       <image:title>${platform.title}</image:title>
     </image:image>`
         : ''

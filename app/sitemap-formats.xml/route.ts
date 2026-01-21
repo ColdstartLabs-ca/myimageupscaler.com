@@ -40,7 +40,7 @@ ${hreflangLinks}${
       format.ogImage
         ? `
     <image:image>
-      <image:loc>${format.ogImage}</image:loc>
+      <image:loc>${format.ogImage.startsWith('http') ? format.ogImage : `${BASE_URL}${format.ogImage}`}</image:loc>
       <image:title>${format.title}</image:title>
     </image:image>`
         : ''
