@@ -185,11 +185,15 @@ const serverEnvSchema = z.object({
       'nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa'
     ),
   // Qwen VL for LLM-based image analysis
+  /** @deprecated Use OPENROUTER_API_KEY and OPENROUTER_VL_MODEL instead */
   QWEN_VL_MODEL_VERSION: z
     .string()
     .default(
       'lucataco/qwen3-vl-8b-instruct:39e893666996acf464cff75688ad49ac95ef54e9f1c688fbc677330acc478e11'
     ),
+  // OpenRouter for VL analysis (replaces Qwen VL on Replicate)
+  OPENROUTER_API_KEY: z.string().default(''),
+  OPENROUTER_VL_MODEL: z.string().default('bytedance-seed/seed-1.6-flash'),
   // Baselime monitoring (server-side)
   BASELIME_API_KEY: z.string().default(''),
   // Analytics (server-side HTTP API)
@@ -296,6 +300,9 @@ function loadServerEnv(): IServerEnv {
     QWEN_VL_MODEL_VERSION:
       process.env.QWEN_VL_MODEL_VERSION ||
       'lucataco/qwen3-vl-8b-instruct:39e893666996acf464cff75688ad49ac95ef54e9f1c688fbc677330acc478e11',
+    // OpenRouter for VL analysis
+    OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY || '',
+    OPENROUTER_VL_MODEL: process.env.OPENROUTER_VL_MODEL || 'bytedance-seed/seed-1.6-flash',
     // Baselime monitoring
     BASELIME_API_KEY: process.env.BASELIME_API_KEY || '',
     // Analytics (server-side HTTP API)

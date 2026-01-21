@@ -52,9 +52,9 @@ const Workspace: React.FC = () => {
   // Mobile tab state
   const [mobileTab, setMobileTab] = useState<MobileTab>('upload');
 
-  // Config State
+  // Config State - default to 'quick' for all users (free and paid)
   const [config, setConfig] = useState<IUpscaleConfig>({
-    qualityTier: 'auto',
+    qualityTier: 'quick',
     scale: 2,
     additionalOptions: {
       smartAnalysis: false, // Hidden when qualityTier='auto'

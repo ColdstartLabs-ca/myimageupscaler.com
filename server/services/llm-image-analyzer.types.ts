@@ -10,7 +10,7 @@ export type IssueType =
   | 'text';
 export type IssueSeverity = 'low' | 'medium' | 'high';
 export type ContentType = 'photo' | 'portrait' | 'document' | 'vintage' | 'product' | 'artwork';
-export type AnalysisProvider = 'replicate' | 'gemini' | 'fallback';
+export type AnalysisProvider = 'openrouter' | 'replicate' | 'gemini' | 'fallback';
 
 export interface IDetectedIssue {
   type: IssueType;

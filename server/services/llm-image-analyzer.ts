@@ -1,9 +1,7 @@
 import type { ModelId } from '@/shared/types/coreflow.types';
-import { isRateLimitError, withRetry } from '@server/utils/retry';
-import { serverEnv } from '@shared/config/env';
-import Replicate from 'replicate';
 import type { ILLMAnalysisResult } from './llm-image-analyzer.types';
 import { ModelRegistry } from './model-registry';
+import { OpenRouterService } from './openrouter.service';
 
 /**
  * Build the analysis prompt dynamically based on eligible models
@@ -66,10 +64,10 @@ IMPORTANT: Only recommend models from the available list above.`;
 }
 
 export class LLMImageAnalyzer {
-  private replicate: Replicate;
+  private openRouter: OpenRouterService;
 
   constructor() {
-    this.replicate = new Replicate({ auth: serverEnv.REPLICATE_API_TOKEN });
+    this.openRouter = new OpenRouterService();
   }
 
   async analyze(
@@ -83,16 +81,16 @@ export class LLMImageAnalyzer {
       ? base64Image
       : `data:${mimeType};base64,${base64Image}`;
 
-    // Try Replicate (Qwen3-VL)
+    // Try OpenRouter (Seed VL)
     try {
-      const result = await this.analyzeWithReplicate(dataUrl, eligibleModels);
+      const result = await this.analyzeWithOpenRouter(dataUrl, eligibleModels);
       return {
         ...result,
-        provider: 'replicate',
+        provider: 'openrouter',
         processingTimeMs: Date.now() - startTime,
       };
-    } catch (replicateError) {
-      console.error('Replicate analysis failed, using default fallback:', replicateError);
+    } catch (openRouterError) {
+      console.error('OpenRouter analysis failed, using default fallback:', openRouterError);
       return {
         ...this.getDefaultResult(eligibleModels),
         provider: 'fallback',
@@ -101,43 +99,23 @@ export class LLMImageAnalyzer {
     }
   }
 
-  private async analyzeWithReplicate(
+  private async analyzeWithOpenRouter(
     imageDataUrl: string,
     eligibleModels: ModelId[]
   ): Promise<Omit<ILLMAnalysisResult, 'provider' | 'processingTimeMs'>> {
     // Build prompt dynamically based on eligible models
     const prompt = buildAnalysisPrompt(eligibleModels);
 
-    console.log('[LLM Analyzer] Replicate prompt:', prompt);
+    console.log('[LLM Analyzer] OpenRouter prompt:', prompt);
 
-    // Run with retry for rate limits
-    const output = await withRetry(
-      () =>
-        this.replicate.run(serverEnv.QWEN_VL_MODEL_VERSION as `${string}/${string}:${string}`, {
-          input: {
-            image: imageDataUrl,
-            prompt,
-            max_tokens: 1024,
-            temperature: 0.2,
-          },
-        }),
-      {
-        shouldRetry: err => isRateLimitError(err.message),
-        onRetry: (attempt, delayMs) => {
-          console.log(
-            `[LLM Analyzer] Rate limited, retrying in ${delayMs}ms (attempt ${attempt}/3)`
-          );
-        },
-      }
-    );
+    // Call OpenRouter service
+    const responseText = await this.openRouter.analyzeImage(imageDataUrl, prompt);
+    console.log('[LLM Analyzer] OpenRouter response:', responseText);
 
-    // Qwen returns text, parse JSON from response
-    const responseText = Array.isArray(output) ? output.join('') : String(output);
-    console.log('[LLM Analyzer] Replicate response:', responseText);
-
+    // Parse JSON from response
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error('No JSON found in Replicate response');
+      throw new Error('No JSON found in OpenRouter response');
     }
 
     const result = JSON.parse(jsonMatch[0]) as ILLMAnalysisResult;

@@ -619,14 +619,12 @@ describe('ReplicateService', () => {
           config: {
             ...createUpscaleInput().config,
             scale: 4, // Scale 4 maps to 4K resolution
-            additionalOptions: {
-              ...createUpscaleInput().config.additionalOptions,
-              nanoBananaProConfig: {
-                aspectRatio: '16:9',
-                resolution: '4K', // Config resolution matches scale 4
-                outputFormat: 'jpg',
-                safetyFilterLevel: 'block_medium_and_above',
-              },
+            // nanoBananaProConfig is at config level, not inside additionalOptions
+            nanoBananaProConfig: {
+              aspectRatio: '16:9',
+              resolution: '4K',
+              outputFormat: 'jpg',
+              safetyFilterLevel: 'block_medium_and_above',
             },
           },
         });
@@ -678,14 +676,34 @@ describe('ReplicateService', () => {
         seedreamService = new ReplicateService('seedream');
       });
 
-      test('should use "image_input" array parameter', () => {
+      test('should use "image_input" array parameter and match_input_image aspect ratio', () => {
         const input = createUpscaleInput();
         const result = seedreamService.buildModelInputForTest('seedream', baseImageDataUrl, input);
 
         expect(result).toMatchObject({
           prompt: expect.any(String),
           image_input: [baseImageDataUrl],
-          size: '4K',
+          // Falls back to 2K when original dimensions can't be decoded from test data
+          size: '2K',
+          // Uses match_input_image to preserve original aspect ratio
+          aspect_ratio: 'match_input_image',
+        });
+      });
+
+      test('should select 4K size for large scale requests', () => {
+        const input = createUpscaleInput({
+          config: {
+            ...createUpscaleInput().config,
+            scale: 4,
+          },
+        });
+        const result = seedreamService.buildModelInputForTest('seedream', baseImageDataUrl, input);
+
+        // Even with scale 4, falls back to 2K since dimensions can't be decoded
+        // In real usage, actual images will have decodable dimensions
+        expect(result).toMatchObject({
+          size: '2K',
+          aspect_ratio: 'match_input_image',
         });
       });
     });

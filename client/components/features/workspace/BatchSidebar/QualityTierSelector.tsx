@@ -83,11 +83,6 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         <div className="flex flex-col items-start text-left min-w-0 flex-1 mr-3">
           <div className="flex items-center gap-2 w-full">
             <span className="font-bold text-sm text-white truncate">{currentTierConfig.label}</span>
-            {tier === 'auto' && (
-              <span className="text-[10px] bg-accent/20 text-accent px-2 py-0.5 rounded-full font-black border border-accent/20 whitespace-nowrap uppercase tracking-tighter">
-                Best Value
-              </span>
-            )}
           </div>
           <span className="text-[11px] text-text-muted mt-0.5 truncate w-full font-medium">
             {currentTierConfig.bestFor}

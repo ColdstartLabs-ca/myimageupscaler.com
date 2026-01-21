@@ -233,8 +233,9 @@ function detectLocale(req: NextRequest): Locale {
  * - Redirects root to locale-prefixed path if needed
  * - Sets locale cookie for persistence
  * - Skips API routes, static files, and other special routes
+ * - For root path, checks auth and redirects authenticated users to dashboard
  */
-function handleLocaleRouting(req: NextRequest): NextResponse | null {
+async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | null> {
   const pathname = req.nextUrl.pathname;
 
   // Skip API routes
@@ -294,6 +295,34 @@ function handleLocaleRouting(req: NextRequest): NextResponse | null {
   }
 
   const detectedLocale = detectLocale(req);
+
+  // For root path, check if user is authenticated and redirect to dashboard
+  // This is done here because returning early from handleLocaleRouting would skip handlePageRoute
+  const isRootPath = pathname === '/';
+  if (isRootPath) {
+    // Check test environment and test headers
+    const isTestEnv = serverEnv.ENV === 'test';
+    const hasTestHeader =
+      req.headers.get('x-test-env') === 'true' || req.headers.get('x-playwright-test') === 'true';
+
+    // Only check auth and redirect if not in test environment
+    if (!isTestEnv && !hasTestHeader) {
+      const { user } = await handlePageAuth(req);
+      if (user) {
+        // Check if there's a login prompt query param
+        const loginRequired = req.nextUrl.searchParams.get('login');
+        if (!loginRequired) {
+          const url = req.nextUrl.clone();
+          // Redirect to dashboard (handlePageRoute will handle locale-prefixed root paths)
+          url.pathname = '/dashboard';
+          // Clear any existing search params for clean redirect
+          url.searchParams.delete('login');
+          url.searchParams.delete('next');
+          return NextResponse.redirect(url);
+        }
+      }
+    }
+  }
 
   // If path has no locale prefix, handle locale routing
   if (segments.length === 0 || !isValidLocale(segments[0])) {
@@ -587,7 +616,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   }
 
   // Handle locale routing for page routes
-  const localeRouting = handleLocaleRouting(req);
+  const localeRouting = await handleLocaleRouting(req);
   if (localeRouting) {
     return localeRouting;
   }
