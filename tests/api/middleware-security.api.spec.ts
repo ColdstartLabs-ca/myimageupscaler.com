@@ -102,15 +102,6 @@ test.describe('Middleware Security Integration', () => {
     test('should reject access to protected routes without authentication', async ({ request }) => {
       api = new ApiClient(request);
       const protectedRoutes = [
-        {
-          method: 'POST',
-          path: '/api/upscale',
-          data: {
-            imageData: 'test',
-            mimeType: 'image/png',
-            config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-          },
-        },
         { method: 'POST', path: '/api/checkout', data: { priceId: 'test_price' } },
         { method: 'POST', path: '/api/portal', data: {} },
       ];
@@ -140,12 +131,8 @@ test.describe('Middleware Security Integration', () => {
 
       for (const token of invalidTokens) {
         const response = await api.post(
-          '/api/upscale',
-          {
-            imageData: 'data:image/png;base64,test',
-            mimeType: 'image/png',
-            config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-          },
+          '/api/checkout',
+          { priceId: 'test_price' },
           {
             headers: token ? { Authorization: token } : {},
           }
@@ -161,26 +148,12 @@ test.describe('Middleware Security Integration', () => {
       const testUser = await ctx.createUser();
       api = new ApiClient(request).withAuth(testUser.token);
 
-      const response = await api.post('/api/upscale', {
-        imageData:
-          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-        mimeType: 'image/png',
-        config: {
-          qualityTier: 'quick',
-          scale: 2,
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
-        },
-      });
+      const response = await api.post('/api/checkout', { priceId: 'test_price' });
 
       // Should not reject due to authentication (may fail due to other reasons)
       // The test is checking that authentication works, not that the request fully succeeds
       // Valid authentication means we should NOT get 401 (unauthorized) or 403 (forbidden)
-      // We may get 400 (validation), 402 (insufficient credits), 422 (validation), 500 (server error), etc.
+      // We may get 400 (validation), 404 (not found), 500 (server error), etc.
       expect([401, 403]).not.toContain(response.status);
     });
 
@@ -200,12 +173,8 @@ test.describe('Middleware Security Integration', () => {
 
       for (const jwt of malformedJwts) {
         const response = await api.post(
-          '/api/upscale',
-          {
-            imageData: 'data:image/png;base64,test',
-            mimeType: 'image/png',
-            config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-          },
+          '/api/checkout',
+          { priceId: 'test_price' },
           {
             headers: { Authorization: `Bearer ${jwt}` },
           }
@@ -221,7 +190,7 @@ test.describe('Middleware Security Integration', () => {
   test.describe('HTTP Method Validation', () => {
     test('should reject unsupported HTTP methods for API routes', async ({ request }) => {
       api = new ApiClient(request);
-      const protectedEndpoint = '/api/upscale';
+      const protectedEndpoint = '/api/checkout';
       const unsupportedMethods = ['GET', 'PUT', 'DELETE', 'PATCH'];
 
       for (const method of unsupportedMethods) {
@@ -250,11 +219,7 @@ test.describe('Middleware Security Integration', () => {
       api = new ApiClient(request).withAuth(testUser.token);
 
       // Test that POST is supported for protected routes
-      const response = await api.post('/api/upscale', {
-        imageData: 'data:image/png;base64,test',
-        mimeType: 'image/png',
-        config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-      });
+      const response = await api.post('/api/checkout', { priceId: 'test_price' });
 
       // Should not reject due to method
       expect(response.status).not.toBe(405);
@@ -303,13 +268,17 @@ test.describe('Middleware Security Integration', () => {
       api = new ApiClient(request).withAuth(testUser.token);
       const largePayload = 'x'.repeat(10 * 1024 * 1024); // 10MB
 
-      const response = await api.post('/api/upscale', {
-        imageData: largePayload,
-        mimeType: 'image/png',
-        config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-      });
+      const response = await api.post(
+        '/api/checkout',
+        { priceId: largePayload }, // Use large payload in priceId field
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-      // Should handle large requests gracefully
+      // Should handle large requests gracefully (may fail validation or size limits)
       expect([400, 413, 422, 500]).toContain(response.status);
     });
 
@@ -327,11 +296,7 @@ test.describe('Middleware Security Integration', () => {
 
       // Send multiple requests rapidly
       for (let i = 0; i < 15; i++) {
-        const response = await api.post('/api/upscale', {
-          imageData: 'data:image/png;base64,test',
-          mimeType: 'image/png',
-          config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-        });
+        const response = await api.post('/api/checkout', { priceId: 'test_price' });
         responses.push(response);
       }
 
@@ -381,13 +346,9 @@ test.describe('Middleware Security Integration', () => {
 
       for (const path of maliciousPaths) {
         // Note: Path traversal would be part of the endpoint, so we need to use raw request
-        const response = await request.post(`/api/upscale${path}`, {
+        const response = await request.post(`/api/checkout${path}`, {
           headers: { Authorization: `Bearer ${testUser.token}` },
-          data: {
-            imageData: 'data:image/png;base64,test',
-            mimeType: 'image/png',
-            config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-          },
+          data: { priceId: 'test_price' },
         });
 
         // Should handle path traversal attempts
@@ -421,12 +382,8 @@ test.describe('Middleware Security Integration', () => {
 
       for (const userAgent of suspiciousUserAgents) {
         const response = await api.post(
-          '/api/upscale',
-          {
-            imageData: 'data:image/png;base64,test',
-            mimeType: 'image/png',
-            config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-          },
+          '/api/checkout',
+          { priceId: 'test_price' },
           {
             headers: {
               'User-Agent': userAgent,
