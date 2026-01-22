@@ -17,9 +17,14 @@ export NEXT_TEST_DIR=".next-test"
 
 # Clean up any stale lock files that might prevent server startup
 # This fixes flaky tests caused by leftover locks from crashed/killed dev servers
+# Clean up both test directory and main .next directory
 if [ -f "$NEXT_TEST_DIR/dev/lock" ]; then
-  echo "Removing stale Next.js lock file..."
+  echo "Removing stale Next.js lock file from test directory..."
   rm -f "$NEXT_TEST_DIR/dev/lock"
+fi
+if [ -f ".next/dev/lock" ]; then
+  echo "Removing stale Next.js lock file from main directory..."
+  rm -f ".next/dev/lock"
 fi
 
 # Clear test Next.js cache - this doesn't affect the main dev server

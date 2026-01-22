@@ -61,7 +61,7 @@ export class AdminController extends BaseController {
    * Verify admin access
    * Returns admin check result with error response if not authorized
    */
-  private async requireAdmin(req: NextRequest): Promise<IAdminCheckResult> {
+  private async checkAdminAccess(req: NextRequest): Promise<IAdminCheckResult> {
     return requireAdmin(req);
   }
 
@@ -105,7 +105,7 @@ export class AdminController extends BaseController {
    * Get admin statistics (total users, active subscriptions, credits issued/used)
    */
   private async getStats(req: NextRequest): Promise<NextResponse> {
-    const { isAdmin, error } = await this.requireAdmin(req);
+    const { isAdmin, error } = await this.checkAdminAccess(req);
     if (!isAdmin) return error || this.error('UNAUTHORIZED', 'Unauthorized', 401);
 
     const [usersResult, subscriptionsResult, creditsResult] = await Promise.all([
@@ -140,7 +140,7 @@ export class AdminController extends BaseController {
    * Adjust user credits to a new balance
    */
   private async adjustCredits(req: NextRequest): Promise<NextResponse> {
-    const { isAdmin, userId: adminId, error } = await this.requireAdmin(req);
+    const { isAdmin, userId: adminId, error } = await this.checkAdminAccess(req);
     if (!isAdmin) return error || this.error('UNAUTHORIZED', 'Unauthorized', 401);
 
     const body = await this.getBody<ISetCreditsRequest>(req);
@@ -192,7 +192,7 @@ export class AdminController extends BaseController {
    * List users with pagination and optional search
    */
   private async listUsers(req: NextRequest): Promise<NextResponse> {
-    const { isAdmin, error } = await this.requireAdmin(req);
+    const { isAdmin, error } = await this.checkAdminAccess(req);
     if (!isAdmin) return error || this.error('UNAUTHORIZED', 'Unauthorized', 401);
 
     const MAX_LIMIT = 100;
@@ -271,7 +271,7 @@ export class AdminController extends BaseController {
    * Get detailed user information including subscription and recent transactions
    */
   private async getUserById(req: NextRequest): Promise<NextResponse> {
-    const { isAdmin, error } = await this.requireAdmin(req);
+    const { isAdmin, error } = await this.checkAdminAccess(req);
     if (!isAdmin) return error || this.error('UNAUTHORIZED', 'Unauthorized', 401);
 
     // Extract userId from path
@@ -317,7 +317,7 @@ export class AdminController extends BaseController {
    * Update user profile (role, subscription_tier, subscription_status)
    */
   private async updateUser(req: NextRequest): Promise<NextResponse> {
-    const { isAdmin, error } = await this.requireAdmin(req);
+    const { isAdmin, error } = await this.checkAdminAccess(req);
     if (!isAdmin) return error || this.error('UNAUTHORIZED', 'Unauthorized', 401);
 
     // Extract userId from path
@@ -377,7 +377,7 @@ export class AdminController extends BaseController {
    * Delete a user and all their data
    */
   private async deleteUser(req: NextRequest): Promise<NextResponse> {
-    const { isAdmin, error } = await this.requireAdmin(req);
+    const { isAdmin, error } = await this.checkAdminAccess(req);
     if (!isAdmin) return error || this.error('UNAUTHORIZED', 'Unauthorized', 401);
 
     // Extract userId from path
@@ -432,7 +432,7 @@ export class AdminController extends BaseController {
    * Get subscription details from Stripe and database
    */
   private async getSubscription(req: NextRequest): Promise<NextResponse> {
-    const { isAdmin, error } = await this.requireAdmin(req);
+    const { isAdmin, error } = await this.checkAdminAccess(req);
     if (!isAdmin) return error || this.error('UNAUTHORIZED', 'Unauthorized', 401);
 
     const userId = this.getRequiredQueryParam(req, 'userId');
@@ -482,7 +482,7 @@ export class AdminController extends BaseController {
    * Update or cancel a user's subscription
    */
   private async updateSubscription(req: NextRequest): Promise<NextResponse> {
-    const { isAdmin, error } = await this.requireAdmin(req);
+    const { isAdmin, error } = await this.checkAdminAccess(req);
     if (!isAdmin) return error || this.error('UNAUTHORIZED', 'Unauthorized', 401);
 
     const body = await this.getBody<IUpdateSubscriptionRequest>(req);

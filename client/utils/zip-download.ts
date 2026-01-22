@@ -104,7 +104,7 @@ export async function downloadAsZip(
         compression: 'DEFLATE',
         compressionOptions: { level: compressionLevel },
       },
-      metadata => {
+      (metadata: { percent: number }) => {
         // Update progress during ZIP generation (50-100%)
         if (onProgress) {
           const progress = Math.round(50 + metadata.percent * 0.5);

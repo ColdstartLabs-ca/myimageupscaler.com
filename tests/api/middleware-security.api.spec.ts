@@ -41,7 +41,7 @@ test.describe('Middleware Security Integration', () => {
     }) => {
       api = new ApiClient(request);
       const response = await api.post('/api/analytics/event', {
-        eventName: 'image_download',
+        eventName: 'content_downloaded',
         sessionId: 'test_session_123',
       });
 

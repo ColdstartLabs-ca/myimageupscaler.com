@@ -346,8 +346,8 @@ test.describe('Billing E2E Tests', () => {
       await expect(starterCard).toContainText('100 credits per month');
       await expect(starterCard).toContainText('Credits roll over (up to 300)');
       await expect(starterCard).toContainText('Email support');
-      await expect(starterCard).toContainText('All AI models included');
-      await expect(starterCard).toContainText('Batch upload up to 5 images');
+      await expect(starterCard).toContainText('All API features included');
+      await expect(starterCard).toContainText('Batch up to 5 requests');
 
       // Check for "Get Started" button
       const starterGetStarted = starterCard.getByRole('button', { name: 'Get Started' }).first();

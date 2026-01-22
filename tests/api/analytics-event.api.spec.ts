@@ -26,11 +26,12 @@ test.describe('API: Analytics Event Integration', () => {
   test('should accept valid event payloads', async ({ request }) => {
     api = new ApiClient(request);
     const response = await api.post('/api/analytics/event', {
-      eventName: 'image_download',
+      eventName: 'api_call_completed',
       properties: {
-        scaleFactor: 2,
-        mode: 'standard',
-        processingTime: 1500,
+        endpoint: '/api/test',
+        method: 'POST',
+        durationMs: 1500,
+        success: true,
       },
       sessionId: 'session_test_123',
     });
@@ -83,8 +84,8 @@ test.describe('API: Analytics Event Integration', () => {
     const user = await ctx.createUser();
     api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/analytics/event', {
-      eventName: 'image_download',
-      properties: { authenticated: true },
+      eventName: 'api_call_completed',
+      properties: { endpoint: '/api/test', method: 'GET', durationMs: 100, success: true },
       sessionId: 'authenticated_session',
     });
 
@@ -129,8 +130,8 @@ test.describe('API: Analytics Event Integration', () => {
     const concurrentEvents = Array(10)
       .fill(null)
       .map((_, index) => ({
-        eventName: 'image_download',
-        properties: { batchIndex: index },
+        eventName: 'api_call_completed',
+        properties: { endpoint: '/api/test', method: 'POST', durationMs: 100, success: true },
         sessionId: `concurrent_test_${index}`,
       }));
 
