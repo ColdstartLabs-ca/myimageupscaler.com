@@ -29,9 +29,9 @@ const ALLOWED_EVENTS = [
   'credits_deducted',
   'credits_refunded',
 
-  // Image processing events
-  'image_upscaled',
-  'image_download',
+  // Generic API operation events
+  'api_call_completed',
+  'content_downloaded',
 
   // Checkout events
   'checkout_started',
@@ -47,13 +47,6 @@ const ALLOWED_EVENTS = [
   'batch_limit_upgrade_clicked',
   'batch_limit_partial_add_clicked',
   'batch_limit_modal_closed',
-
-  // pSEO-specific events
-  'pseo_page_view',
-  'pseo_cta_clicked',
-  'pseo_scroll_depth',
-  'pseo_faq_expanded',
-  'pseo_internal_link_clicked',
 ] as const;
 
 // Enhanced security validation for event names

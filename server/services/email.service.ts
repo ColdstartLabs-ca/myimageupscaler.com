@@ -1,5 +1,6 @@
 import { getEmailProviderManager } from './email-providers/email-provider-manager';
 import type { ISendEmailParams, ISendEmailResult } from '@shared/types/provider-adapter.types';
+import type { IEmailService } from '../interfaces/IEmailService';
 
 export type EmailType = 'transactional' | 'marketing';
 
@@ -30,7 +31,7 @@ export class EmailError extends Error {
  * - Development mode (logging instead of sending)
  * - Email logging to database
  */
-export class EmailService {
+export class EmailService implements IEmailService {
   /**
    * Send an email using the provider manager.
    * All template loading, preference checking, dev-mode handling, and logging

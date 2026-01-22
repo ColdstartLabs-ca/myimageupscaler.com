@@ -17,5 +17,5 @@ export type {
   ISignupProperties,
   ISubscriptionProperties,
   ICreditPackProperties,
-  IImageUpscaledProperties,
+  IApiCallProperties,
 } from '@server/analytics/types';

@@ -7,6 +7,9 @@
 import { describe, it, expect } from 'vitest';
 import { SubscriptionCreditsService } from '../SubscriptionCredits';
 
+// Create service instance for tests
+const service = new SubscriptionCreditsService();
+
 describe('SubscriptionCreditsService', () => {
   describe('calculateUpgradeCredits', () => {
     // ========================================================================
@@ -14,7 +17,7 @@ describe('SubscriptionCreditsService', () => {
     // ========================================================================
     describe('when user has less than new tier amount', () => {
       it('should add tier difference to preserve user balance', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 210,
           previousTierCredits: 200, // Hobby
           newTierCredits: 1000, // Pro
@@ -26,7 +29,7 @@ describe('SubscriptionCreditsService', () => {
       });
 
       it('should work for free user upgrading to hobby', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 10, // Free tier initial credits
           previousTierCredits: 10, // Free tier (10 one-time credits)
           newTierCredits: 200, // Hobby
@@ -38,7 +41,7 @@ describe('SubscriptionCreditsService', () => {
       });
 
       it('should work for hobby to business upgrade', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 150,
           previousTierCredits: 200, // Hobby
           newTierCredits: 5000, // Business
@@ -54,7 +57,7 @@ describe('SubscriptionCreditsService', () => {
     // ========================================================================
     describe('when user has reasonable excess credits', () => {
       it('should preserve rollover credits by adding tier difference', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 300, // 200 + 100 rollover/purchases
           previousTierCredits: 200, // Hobby (max reasonable = 300)
           newTierCredits: 1000, // Pro
@@ -68,7 +71,7 @@ describe('SubscriptionCreditsService', () => {
       });
 
       it('should handle Pro user with rollover upgrading to Business', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 1400, // 1000 + 400 rollover
           previousTierCredits: 1000, // Pro (max reasonable = 1500)
           newTierCredits: 5000, // Business
@@ -87,7 +90,7 @@ describe('SubscriptionCreditsService', () => {
     // ========================================================================
     describe('when user has high existing balance', () => {
       it('should still add tier difference for high-balance users (PRD fix)', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 5000, // User downgraded from Business to Hobby, now upgrading back
           previousTierCredits: 200, // Hobby
           newTierCredits: 5000, // Business
@@ -101,7 +104,7 @@ describe('SubscriptionCreditsService', () => {
       });
 
       it('should add credits for Hobby user with 1000 credits upgrading to Pro', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 1000, // High balance from previous usage
           previousTierCredits: 200, // Hobby
           newTierCredits: 1000, // Pro
@@ -114,7 +117,7 @@ describe('SubscriptionCreditsService', () => {
       });
 
       it('should handle extreme rollover scenarios', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 10000, // Very high balance from purchases and rollover
           previousTierCredits: 1000, // Pro
           newTierCredits: 5000, // Business
@@ -132,7 +135,7 @@ describe('SubscriptionCreditsService', () => {
     // ========================================================================
     describe('edge cases', () => {
       it('should handle exact tier match (currentBalance === newTierCredits)', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 1000,
           previousTierCredits: 200,
           newTierCredits: 1000,
@@ -145,7 +148,7 @@ describe('SubscriptionCreditsService', () => {
       });
 
       it('should handle user with zero balance upgrading', () => {
-        const result = SubscriptionCreditsService.calculateUpgradeCredits({
+        const result = service.calculateUpgradeCredits({
           currentBalance: 0,
           previousTierCredits: 200,
           newTierCredits: 1000,
@@ -164,7 +167,7 @@ describe('SubscriptionCreditsService', () => {
     describe('input validation', () => {
       it('should reject negative current balance', () => {
         expect(() => {
-          SubscriptionCreditsService.calculateUpgradeCredits({
+          service.calculateUpgradeCredits({
             currentBalance: -100,
             previousTierCredits: 200,
             newTierCredits: 1000,
@@ -174,7 +177,7 @@ describe('SubscriptionCreditsService', () => {
 
       it('should reject negative previous tier credits', () => {
         expect(() => {
-          SubscriptionCreditsService.calculateUpgradeCredits({
+          service.calculateUpgradeCredits({
             currentBalance: 100,
             previousTierCredits: -200,
             newTierCredits: 1000,
@@ -184,7 +187,7 @@ describe('SubscriptionCreditsService', () => {
 
       it('should reject negative new tier credits', () => {
         expect(() => {
-          SubscriptionCreditsService.calculateUpgradeCredits({
+          service.calculateUpgradeCredits({
             currentBalance: 100,
             previousTierCredits: 200,
             newTierCredits: -1000,
@@ -194,7 +197,7 @@ describe('SubscriptionCreditsService', () => {
 
       it('should reject downgrade (newTier < previousTier)', () => {
         expect(() => {
-          SubscriptionCreditsService.calculateUpgradeCredits({
+          service.calculateUpgradeCredits({
             currentBalance: 100,
             previousTierCredits: 1000, // Pro
             newTierCredits: 200, // Hobby (downgrade)
@@ -204,7 +207,7 @@ describe('SubscriptionCreditsService', () => {
 
       it('should reject same tier (newTier === previousTier)', () => {
         expect(() => {
-          SubscriptionCreditsService.calculateUpgradeCredits({
+          service.calculateUpgradeCredits({
             currentBalance: 100,
             previousTierCredits: 1000,
             newTierCredits: 1000,
@@ -219,7 +222,7 @@ describe('SubscriptionCreditsService', () => {
   // ========================================================================
   describe('calculateDowngradeCredits', () => {
     it('should always return 0 credits for downgrade (user keeps credits)', () => {
-      const result = SubscriptionCreditsService.calculateDowngradeCredits();
+      const result = service.calculateDowngradeCredits();
 
       expect(result.creditsToAdd).toBe(0);
       expect(result.reason).toBe('preserve_legitimate_excess');
@@ -232,13 +235,13 @@ describe('SubscriptionCreditsService', () => {
   // ========================================================================
   describe('getExplanation', () => {
     it('should explain top-up scenario', () => {
-      const result = SubscriptionCreditsService.calculateUpgradeCredits({
+      const result = service.calculateUpgradeCredits({
         currentBalance: 210,
         previousTierCredits: 200,
         newTierCredits: 1000,
       });
 
-      const explanation = SubscriptionCreditsService.getExplanation(result, {
+      const explanation = service.getExplanation(result, {
         currentBalance: 210,
         previousTierCredits: 200,
         newTierCredits: 1000,
@@ -251,13 +254,13 @@ describe('SubscriptionCreditsService', () => {
     });
 
     it('should explain top up with reasonable excess scenario', () => {
-      const result = SubscriptionCreditsService.calculateUpgradeCredits({
+      const result = service.calculateUpgradeCredits({
         currentBalance: 1100, // Reasonable excess (within 1000 * 1.5 = 1500)
         previousTierCredits: 1000,
         newTierCredits: 5000,
       });
 
-      const explanation = SubscriptionCreditsService.getExplanation(result, {
+      const explanation = service.getExplanation(result, {
         currentBalance: 1100,
         previousTierCredits: 1000,
         newTierCredits: 5000,
@@ -270,13 +273,13 @@ describe('SubscriptionCreditsService', () => {
     });
 
     it('should explain high balance scenario (PRD fix)', () => {
-      const result = SubscriptionCreditsService.calculateUpgradeCredits({
+      const result = service.calculateUpgradeCredits({
         currentBalance: 5000, // High balance user
         previousTierCredits: 200,
         newTierCredits: 5000,
       });
 
-      const explanation = SubscriptionCreditsService.getExplanation(result, {
+      const explanation = service.getExplanation(result, {
         currentBalance: 5000,
         previousTierCredits: 200,
         newTierCredits: 5000,
@@ -290,9 +293,9 @@ describe('SubscriptionCreditsService', () => {
     });
 
     it('should explain downgrade scenario', () => {
-      const result = SubscriptionCreditsService.calculateDowngradeCredits();
+      const result = service.calculateDowngradeCredits();
 
-      const explanation = SubscriptionCreditsService.getExplanation(result, {
+      const explanation = service.getExplanation(result, {
         currentBalance: 1000,
         previousTierCredits: 1000,
         newTierCredits: 200,

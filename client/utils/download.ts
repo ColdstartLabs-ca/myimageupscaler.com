@@ -119,8 +119,8 @@ export const downloadSingle = async (
     document.body.removeChild(link);
     URL.revokeObjectURL(blobUrl);
 
-    // Track image download event
-    analytics.track('image_download', {
+    // Track content download event
+    analytics.track('content_downloaded', {
       mode,
       filename: downloadFilename,
       count: 1,
@@ -174,8 +174,8 @@ export const downloadBatch = async (queue: IBatchItem[], mode: string): Promise<
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 
-  // Track batch image download event
-  analytics.track('image_download', {
+  // Track batch content download event
+  analytics.track('content_downloaded', {
     mode,
     filename: `${clientEnv.BATCH_FOLDER_NAME}.zip`,
     count: completedItems.length,

@@ -1,4 +1,18 @@
-# MyImageUpscaler - Claude Instructions
+# SaaS Boilerplate - Claude Instructions
+
+## About This Boilerplate
+
+This is a production-ready Next.js 15 SaaS boilerplate extracted from a real application. It provides core infrastructure for building credits-based API SaaS products.
+
+**Included Features:**
+- Authentication (Supabase - Google, Azure, Email/Password)
+- Payments (Stripe - subscriptions + one-time purchases)
+- Credit System (subscription credits + purchased credits with rollover)
+- User Management (profiles, admin roles)
+- Blog System (MDX-based with SEO)
+- Transactional Email (Brevo primary, Resend fallback)
+- Rate Limiting & Error Handling
+- Monitoring (Baselime + Analytics)
 
 ## Before Starting
 
@@ -41,6 +55,18 @@ Check `.claude/skills/` for relevant patterns.
 ## Stack
 
 Next.js 15 (App Router), Supabase, Stripe, Cloudflare Pages, Baselime, Zod, Zustand
+
+## Customization Checklist
+
+When starting a new project from this boilerplate:
+
+1. **Branding**: Update `NEXT_PUBLIC_APP_NAME` in `.env.client`
+2. **Stripe**: Update Price IDs in `shared/config/stripe.ts`
+3. **Email**: Customize templates in `emails/templates/`
+4. **Translations**: Modify `locales/en/*.json` for your domain
+5. **Pages**: Update landing page in `app/[locale]/page.tsx`
+6. **Blog**: Replace example posts in `content/blog/`
+7. **Credits**: Define your credit costs in `shared/config/credits.config.ts`
 
 ## API Routes
 

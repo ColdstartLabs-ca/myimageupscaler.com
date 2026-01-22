@@ -1,1 +1,22 @@
-{}
+{
+  "title": "Features",
+  "subtitle": "Everything you need to create stunning images",
+  "sections": {
+    "upscaling": {
+      "title": "AI Upscaling",
+      "description": "Upscale your images up to 4x resolution while maintaining quality"
+    },
+    "enhancement": {
+      "title": "Image Enhancement",
+      "description": "Automatically enhance and restore details in your photos"
+    },
+    "batch": {
+      "title": "Batch Processing",
+      "description": "Process multiple images at once to save time"
+    },
+    "formats": {
+      "title": "Multiple Formats",
+      "description": "Support for JPG, PNG, WebP and other popular formats"
+    }
+  }
+}

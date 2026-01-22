@@ -1,10 +1,11 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { trackServerEvent } from '@server/analytics';
+import { getService } from '@server/di/container';
+import type { ISubscriptionCredits } from '@server/interfaces';
 import { stripe } from '@server/stripe';
 import { serverEnv } from '@shared/config/env';
 import { getPlanForPriceId, resolvePlanOrPack, assertKnownPriceId } from '@shared/config/stripe';
 import { getTrialConfig } from '@shared/config/subscription.config';
-import { SubscriptionCreditsService } from '@server/services/SubscriptionCredits';
 import { getEmailService } from '@server/services/email.service';
 import { isTest } from '@shared/config/env';
 import Stripe from 'stripe';
@@ -412,13 +413,14 @@ export class SubscriptionHandler {
             (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
 
           // Use SubscriptionCreditsService for consistent credit calculation
-          const calculation = SubscriptionCreditsService.calculateUpgradeCredits({
+          const creditsService = getService<ISubscriptionCredits>('ISubscriptionCredits');
+          const calculation = creditsService.calculateUpgradeCredits({
             currentBalance,
             previousTierCredits: previousCredits,
             newTierCredits: newCredits,
           });
 
-          const explanation = SubscriptionCreditsService.getExplanation(calculation, {
+          const explanation = creditsService.getExplanation(calculation, {
             currentBalance,
             previousTierCredits: previousCredits,
             newTierCredits: newCredits,

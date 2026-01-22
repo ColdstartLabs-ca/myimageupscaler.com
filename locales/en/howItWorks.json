@@ -1,16 +1,18 @@
 {
   "title": "How It Works",
-  "subtitle": "Get started in minutes",
-  "step1": {
-    "title": "Step 1",
-    "description": "Sign up for an account"
-  },
-  "step2": {
-    "title": "Step 2",
-    "description": "Configure your settings"
-  },
-  "step3": {
-    "title": "Step 3",
-    "description": "Start using the service"
+  "subtitle": "Three simple steps to stunning images",
+  "steps": {
+    "upload": {
+      "title": "1. Upload",
+      "description": "Upload your image to our secure platform"
+    },
+    "process": {
+      "title": "2. Process",
+      "description": "Our AI enhances and upscales your image automatically"
+    },
+    "download": {
+      "title": "3. Download",
+      "description": "Download your high-resolution image in seconds"
+    }
   }
 }

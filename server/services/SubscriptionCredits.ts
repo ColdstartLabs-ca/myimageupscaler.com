@@ -5,6 +5,8 @@
  * This service is pure business logic - no database calls, just calculations.
  */
 
+import type { ISubscriptionCredits } from '../interfaces/ISubscriptionCredits';
+
 export interface ICreditCalculationInput {
   /** Current user credit balance */
   currentBalance: number;
@@ -27,7 +29,7 @@ export interface ICreditCalculationResult {
   isLegitimate: boolean;
 }
 
-export class SubscriptionCreditsService {
+export class SubscriptionCreditsService implements ISubscriptionCredits {
   /**
    * Calculate how many credits to add on a subscription upgrade
    *
@@ -38,7 +40,7 @@ export class SubscriptionCreditsService {
    * @param input - Current balance and tier credit amounts
    * @returns Calculation result with credits to add and reason
    */
-  static calculateUpgradeCredits(input: ICreditCalculationInput): ICreditCalculationResult {
+  calculateUpgradeCredits(input: ICreditCalculationInput): ICreditCalculationResult {
     const { currentBalance, previousTierCredits, newTierCredits, maxRollover } = input;
 
     // Validate inputs
@@ -93,7 +95,7 @@ export class SubscriptionCreditsService {
    *
    * @returns Always returns 0 for downgrades (no clawback)
    */
-  static calculateDowngradeCredits(): ICreditCalculationResult {
+  calculateDowngradeCredits(): ICreditCalculationResult {
     return {
       creditsToAdd: 0,
       reason: 'preserve_legitimate_excess', // User keeps credits on downgrade
@@ -105,7 +107,7 @@ export class SubscriptionCreditsService {
   /**
    * Get a human-readable explanation of the credit calculation
    */
-  static getExplanation(result: ICreditCalculationResult, input: ICreditCalculationInput): string {
+  getExplanation(result: ICreditCalculationResult, input: ICreditCalculationInput): string {
     const { currentBalance, previousTierCredits, newTierCredits } = input;
 
     switch (result.reason) {

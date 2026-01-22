@@ -23,9 +23,9 @@ const ALLOWED_EVENTS = [
   'credits_deducted',
   'credits_refunded',
 
-  // Image processing events
-  'image_upscaled',
-  'image_download',
+  // Generic API operation events
+  'api_call_completed',
+  'content_downloaded',
 
   // Checkout events
   'checkout_started',
@@ -87,21 +87,22 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
       }
     });
 
-    test('should include image_upscaled event (previously missing)', () => {
-      // This was a bug - image_upscaled was tracked but not in the whitelist
+    test('should include api_call_completed event', () => {
+      // Generic API operation event for boilerplate
       const result = eventSchema.safeParse({
-        eventName: 'image_upscaled',
+        eventName: 'api_call_completed',
         properties: {
-          scaleFactor: 4,
-          mode: 'creative',
+          endpoint: '/api/your-endpoint',
+          method: 'POST',
           durationMs: 3500,
+          success: true,
         },
       });
       expect(result.success).toBe(true);
     });
 
-    test('should include image_download event', () => {
-      const result = eventSchema.safeParse({ eventName: 'image_download' });
+    test('should include content_downloaded event', () => {
+      const result = eventSchema.safeParse({ eventName: 'content_downloaded' });
       expect(result.success).toBe(true);
     });
 
@@ -142,7 +143,7 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
 
   describe('Total event count', () => {
     test('should have at least 19 event types (matching IAnalyticsEventName)', () => {
-      // IAnalyticsEventName has 19 event types after bug fix
+      // IAnalyticsEventName has event types for boilerplate
       expect(ALLOWED_EVENTS.length).toBeGreaterThanOrEqual(19);
     });
 
@@ -160,8 +161,8 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
         'credit_pack_purchased',
         'credits_deducted',
         'credits_refunded',
-        'image_upscaled',
-        'image_download',
+        'api_call_completed',
+        'content_downloaded',
         'checkout_started',
         'checkout_completed',
         'checkout_abandoned',

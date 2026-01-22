@@ -4,10 +4,9 @@ import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
 import { useClickOutside } from '@client/hooks/useClickOutside';
 import { useModalStore } from '@client/store/modalStore';
 import { useUserStore } from '@client/store/userStore';
-import { cn } from '@client/utils/cn';
 import { clientEnv } from '@shared/config/env';
 import { DEFAULT_LOCALE } from '@/i18n/config';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
@@ -18,12 +17,8 @@ export const NavBar = (): JSX.Element => {
   const { openAuthModal } = useModalStore();
   const { isAuthenticated, isLoading, user, signOut } = useUserStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
-  const [isResourcesDropdownOpen, setIsResourcesDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const toolsDropdownRef = useRef<HTMLDivElement>(null);
-  const resourcesDropdownRef = useRef<HTMLDivElement>(null);
 
   // Helper to generate localized URLs
   const localizedPath = (path: string) => {
@@ -31,8 +26,6 @@ export const NavBar = (): JSX.Element => {
   };
 
   useClickOutside(dropdownRef, () => setIsDropdownOpen(false));
-  useClickOutside(toolsDropdownRef, () => setIsToolsDropdownOpen(false));
-  useClickOutside(resourcesDropdownRef, () => setIsResourcesDropdownOpen(false));
 
   const handleAuthClick = () => {
     if (!isAuthenticated) {
@@ -90,93 +83,12 @@ export const NavBar = (): JSX.Element => {
             {t('features')}
           </a>
 
-          <div className="relative" ref={resourcesDropdownRef}>
-            <button
-              onClick={() => setIsResourcesDropdownOpen(!isResourcesDropdownOpen)}
-              className="flex items-center gap-1.5 text-sm font-bold text-text-muted hover:text-white transition-all group"
-            >
-              {t('resources')}
-              <ChevronDown
-                size={14}
-                className={cn(
-                  'text-text-muted transition-transform group-hover:text-white',
-                  isResourcesDropdownOpen && 'rotate-180'
-                )}
-              />
-            </button>
-            {isResourcesDropdownOpen && (
-              <div className="absolute top-full left-0 mt-4 w-56 glass-dropdown rounded-2xl py-3 z-50 animate-in fade-in zoom-in-95 duration-200">
-                <a
-                  href={localizedPath('/how-it-works')}
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
-                >
-                  {t('howItWorks')}
-                </a>
-                <a
-                  href={localizedPath('/blog')}
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
-                >
-                  {t('blog')}
-                </a>
-              </div>
-            )}
-          </div>
-
-          <div className="relative" ref={toolsDropdownRef}>
-            <button
-              onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-              className="flex items-center gap-1.5 text-sm font-bold text-text-muted hover:text-white transition-all group"
-            >
-              {t('tools')}
-              <ChevronDown
-                size={14}
-                className={cn(
-                  'text-text-muted transition-transform group-hover:text-white',
-                  isToolsDropdownOpen && 'rotate-180'
-                )}
-              />
-            </button>
-            {isToolsDropdownOpen && (
-              <div className="absolute top-full left-0 mt-4 w-56 glass-dropdown rounded-2xl py-3 z-50 animate-in fade-in zoom-in-95 duration-200">
-                <a
-                  href={localizedPath('/tools/compress/image-compressor')}
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
-                >
-                  {t('imageCompressor')}
-                </a>
-                <a
-                  href={localizedPath('/tools/compress/bulk-image-compressor')}
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
-                >
-                  {t('bulkCompressor')}
-                </a>
-                <a
-                  href={localizedPath('/tools/convert/png-to-jpg')}
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
-                >
-                  {t('formatConverter')}
-                </a>
-                <a
-                  href={localizedPath('/tools/resize/image-resizer')}
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
-                >
-                  {t('imageResizer')}
-                </a>
-                <a
-                  href={localizedPath('/tools/resize/bulk-image-resizer')}
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
-                >
-                  {t('bulkResizer')}
-                </a>
-                <a
-                  href={localizedPath('/tools/ai-background-remover')}
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
-                >
-                  {t('backgroundRemover')}
-                </a>
-              </div>
-            )}
-          </div>
+          <a
+            href={localizedPath('/blog')}
+            className="text-sm font-bold text-text-muted hover:text-white transition-colors"
+          >
+            {t('blog')}
+          </a>
 
           <a
             href={localizedPath('/pricing')}
@@ -351,70 +263,18 @@ export const NavBar = (): JSX.Element => {
             >
               {t('features')}
             </a>
-            <div className="py-2">
-              <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                {t('resources')}
-              </p>
-              <a
-                href={localizedPath('/how-it-works')}
-                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-              >
-                {t('howItWorks')}
-              </a>
-              <a
-                href={localizedPath('/blog')}
-                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-              >
-                {t('blog')}
-              </a>
-            </div>
+            <a
+              href={localizedPath('/blog')}
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+            >
+              {t('blog')}
+            </a>
             <a
               href={localizedPath('/pricing')}
               className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
             >
               {t('pricing')}
             </a>
-            <div className="py-2">
-              <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                {t('tools')}
-              </p>
-              <a
-                href={localizedPath('/tools/compress/image-compressor')}
-                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-              >
-                {t('imageCompressor')}
-              </a>
-              <a
-                href={localizedPath('/tools/compress/bulk-image-compressor')}
-                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-              >
-                {t('bulkCompressor')}
-              </a>
-              <a
-                href={localizedPath('/tools/convert/png-to-jpg')}
-                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-              >
-                {t('formatConverter')}
-              </a>
-              <a
-                href={localizedPath('/tools/resize/image-resizer')}
-                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-              >
-                {t('imageResizer')}
-              </a>
-              <a
-                href={localizedPath('/tools/resize/bulk-image-resizer')}
-                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-              >
-                {t('bulkResizer')}
-              </a>
-              <a
-                href={localizedPath('/tools/ai-background-remover')}
-                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-              >
-                {t('backgroundRemover')}
-              </a>
-            </div>
             <a
               href={localizedPath('/help')}
               className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"

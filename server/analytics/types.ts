@@ -38,76 +38,17 @@ export interface ICreditPackProperties {
   currency?: string;
 }
 
-export interface IImageUpscaledProperties {
-  inputWidth: number;
-  inputHeight: number;
-  outputWidth: number;
-  outputHeight: number;
-  scaleFactor: number;
-  modelVersion?: string;
+// Generic API operation event properties for boilerplate
+export interface IApiCallProperties {
+  endpoint: string;
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   durationMs: number;
+  success: boolean;
+  creditsCost?: number;
 }
 
-// pSEO-specific event properties
-export interface IPSEOPageViewProperties extends IPageViewProperties {
-  pageType:
-    | 'tool'
-    | 'comparison'
-    | 'guide'
-    | 'useCase'
-    | 'use-case'
-    | 'alternative'
-    | 'format'
-    | 'scale'
-    | 'free'
-    | 'platform'
-    | 'format-scale'
-    | 'platform-format'
-    | 'device-use';
-  slug: string;
-  primaryKeyword?: string;
-  tier?: number;
-}
-
-export interface IPSEOInteractionProperties {
-  pageType:
-    | 'tool'
-    | 'comparison'
-    | 'guide'
-    | 'useCase'
-    | 'use-case'
-    | 'alternative'
-    | 'format'
-    | 'scale'
-    | 'free'
-    | 'platform'
-    | 'format-scale'
-    | 'platform-format'
-    | 'device-use';
-  slug: string;
-  elementType: 'cta' | 'faq' | 'feature' | 'benefit' | 'usecase' | 'internal_link';
-  elementId?: string;
-}
-
-export interface IPSEOScrollProperties {
-  pageType:
-    | 'tool'
-    | 'comparison'
-    | 'guide'
-    | 'useCase'
-    | 'use-case'
-    | 'alternative'
-    | 'format'
-    | 'scale'
-    | 'free'
-    | 'platform'
-    | 'format-scale'
-    | 'platform-format'
-    | 'device-use';
-  slug: string;
-  depth: 25 | 50 | 75 | 100;
-  timeToDepthMs: number;
-}
+// TODO: Add your own event properties specific to your SaaS product
+// Example: export interface IYourOperationProperties { ... }
 
 // =============================================================================
 // Event Types
@@ -130,9 +71,9 @@ export type IAnalyticsEventName =
   | 'credit_pack_purchased'
   | 'credits_deducted'
   | 'credits_refunded'
-  // Image processing events
-  | 'image_upscaled'
-  | 'image_download'
+  // Generic API operation events (replace with your specific events)
+  | 'api_call_completed'
+  | 'content_downloaded'
   // Checkout events
   | 'checkout_started'
   | 'checkout_completed'
@@ -140,17 +81,11 @@ export type IAnalyticsEventName =
   // Error/limit events (server-side only)
   | 'rate_limit_exceeded'
   | 'processing_failed'
-  // Batch limit events
+  // Batch/limit events
   | 'batch_limit_modal_shown'
   | 'batch_limit_upgrade_clicked'
   | 'batch_limit_partial_add_clicked'
-  | 'batch_limit_modal_closed'
-  // pSEO-specific events
-  | 'pseo_page_view'
-  | 'pseo_cta_clicked'
-  | 'pseo_scroll_depth'
-  | 'pseo_faq_expanded'
-  | 'pseo_internal_link_clicked';
+  | 'batch_limit_modal_closed';
 
 export interface IAnalyticsEvent {
   name: IAnalyticsEventName;

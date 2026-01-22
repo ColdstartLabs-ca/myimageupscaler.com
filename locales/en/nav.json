@@ -1,12 +1,9 @@
 {
   "dashboard": "Dashboard",
   "features": "Features",
-  "resources": "Resources",
-  "tools": "Tools",
   "pricing": "Pricing",
-  "support": "Support",
-  "howItWorks": "How It Works",
   "blog": "Blog",
+  "support": "Support",
   "freeCredits": "10 Free Credits",
   "signIn": "Sign In",
   "getStartedFree": "Get Started Free",
@@ -17,11 +14,5 @@
   "viewPlans": "View Plans",
   "changePassword": "Change Password",
   "signOut": "Sign Out",
-  "toggleMenu": "Toggle menu",
-  "imageCompressor": "Image Compressor",
-  "bulkCompressor": "Bulk Image Compressor",
-  "formatConverter": "Format Converter",
-  "imageResizer": "Image Resizer",
-  "bulkResizer": "Bulk Image Resizer",
-  "backgroundRemover": "Background Remover"
+  "toggleMenu": "Toggle menu"
 }

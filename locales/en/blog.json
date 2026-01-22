@@ -16,5 +16,8 @@
   "allTags": "All Tags",
   "tag": "Tag: {tag}",
   "featured": "Featured",
-  "latest": "Latest"
+  "latest": "Latest",
+  "search": {
+    "placeholder": "Search articles..."
+  }
 }
