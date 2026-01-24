@@ -398,6 +398,45 @@ describe('Authentication Middleware', () => {
       expect(localeCookie).toContain('locale=pt');
     });
 
+    test('should default to English for Canada even with fr-CA Accept-Language', async () => {
+      const { middleware } = await import('../../middleware');
+
+      const request = new NextRequest('http://localhost/', {
+        method: 'GET',
+        headers: {
+          'CF-IPCountry': 'CA',
+          'Accept-Language': 'fr-CA,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+        },
+      });
+
+      const response = await middleware(request);
+
+      // Should redirect to English, not French
+      const location =
+        response.headers.get('Location') || response.headers.get('x-middleware-rewrite') || '';
+      expect(location).not.toContain('/fr');
+    });
+
+    test('should not fall through to Accept-Language when country is detected but unmapped', async () => {
+      const { middleware } = await import('../../middleware');
+
+      // User in India with German Accept-Language
+      const request = new NextRequest('http://localhost/', {
+        method: 'GET',
+        headers: {
+          'CF-IPCountry': 'IN',
+          'Accept-Language': 'de-DE,de;q=0.9,en;q=0.8',
+        },
+      });
+
+      const response = await middleware(request);
+
+      // Should default to English, not German
+      const location =
+        response.headers.get('Location') || response.headers.get('x-middleware-rewrite') || '';
+      expect(location).not.toContain('/de');
+    });
+
     test('should detect dashboard paths with locale prefix correctly', async () => {
       // Import the helper functions are tested implicitly through middleware behavior
       const { middleware } = await import('../../middleware');

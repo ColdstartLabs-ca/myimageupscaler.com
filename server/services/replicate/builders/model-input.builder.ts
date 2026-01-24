@@ -13,6 +13,7 @@ import {
   SeedreamBuilder,
   RealEsrganAnimeBuilder,
   PImageEditBuilder,
+  FluxKontextFastBuilder,
 } from './models';
 
 /**
@@ -43,6 +44,7 @@ export class ModelInputBuilderOrchestrator {
     this.register(new SeedreamBuilder());
     this.register(new RealEsrganAnimeBuilder());
     this.register(new PImageEditBuilder());
+    this.register(new FluxKontextFastBuilder());
   }
 
   /**

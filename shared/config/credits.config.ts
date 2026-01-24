@@ -21,6 +21,7 @@ export const CREDIT_COSTS = {
   SEEDREAM_MULTIPLIER: 4, // bytedance/seedream-4.5 - image editing
   REALESRGAN_ANIME_MULTIPLIER: 1, // xinntao/realesrgan - anime upscaling
   P_IMAGE_EDIT_MULTIPLIER: 2, // prunaai/p-image-edit - fast budget image editing
+  FLUX_KONTEXT_FAST_MULTIPLIER: 2, // prunaai/flux-kontext-fast - fast flux kontext image editing (free tier)
 
   // Free tier default credits
   DEFAULT_FREE_CREDITS: 10,
@@ -103,6 +104,12 @@ export const MODEL_CREDIT_COSTS = {
     enhance: CREDIT_COSTS.BASE_ENHANCE_COST * CREDIT_COSTS.P_IMAGE_EDIT_MULTIPLIER,
     both: CREDIT_COSTS.BASE_BOTH_COST * CREDIT_COSTS.P_IMAGE_EDIT_MULTIPLIER,
     custom: CREDIT_COSTS.BASE_CUSTOM_COST * CREDIT_COSTS.P_IMAGE_EDIT_MULTIPLIER,
+  },
+  'flux-kontext-fast': {
+    upscale: CREDIT_COSTS.BASE_UPSCALE_COST * CREDIT_COSTS.FLUX_KONTEXT_FAST_MULTIPLIER,
+    enhance: CREDIT_COSTS.BASE_ENHANCE_COST * CREDIT_COSTS.FLUX_KONTEXT_FAST_MULTIPLIER,
+    both: CREDIT_COSTS.BASE_BOTH_COST * CREDIT_COSTS.FLUX_KONTEXT_FAST_MULTIPLIER,
+    custom: CREDIT_COSTS.BASE_CUSTOM_COST * CREDIT_COSTS.FLUX_KONTEXT_FAST_MULTIPLIER,
   },
 } as const;
 

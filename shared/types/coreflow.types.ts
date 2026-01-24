@@ -204,7 +204,8 @@ export type ModelId =
   | 'qwen-image-edit'
   | 'seedream'
   | 'realesrgan-anime'
-  | 'p-image-edit';
+  | 'p-image-edit'
+  | 'flux-kontext-fast';
 
 export type ModelCapability =
   | 'upscale'

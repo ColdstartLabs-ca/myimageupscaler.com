@@ -34,7 +34,8 @@ export type ModelId =
   | 'qwen-image-edit'
   | 'seedream'
   | 'realesrgan-anime'
-  | 'p-image-edit';
+  | 'p-image-edit'
+  | 'flux-kontext-fast';
 
 /**
  * Model configuration interface as defined in the PRD

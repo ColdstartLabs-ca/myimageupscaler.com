@@ -57,7 +57,8 @@ export type IModelInput =
   | IQwenImageEditInput
   | ISeedreamInput
   | IRealEsrganAnimeInput
-  | IPImageEditInput;
+  | IPImageEditInput
+  | IFluxKontextFastInput;
 
 /**
  * Real-ESRGAN input
@@ -168,6 +169,23 @@ export interface IPImageEditInput {
   images: string[];
   aspect_ratio: string;
   turbo: boolean;
+}
+
+/**
+ * Flux-Kontext-Fast input
+ * Ultra fast flux kontext endpoint for image editing
+ * Based on Replicate API schema for prunaai/flux-kontext-fast
+ */
+export interface IFluxKontextFastInput {
+  prompt: string;
+  img_cond_path: string;
+  guidance?: number;
+  speed_mode?: string;
+  image_size?: number;
+  aspect_ratio?: string;
+  output_format?: string;
+  output_quality?: number;
+  num_inference_steps?: number;
 }
 
 /**

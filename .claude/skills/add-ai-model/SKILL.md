@@ -13,14 +13,65 @@ When adding a new AI model to the image upscaler, follow these steps in order. E
 ## Important: Scale Support Accuracy
 
 **DO NOT claim scales that the model doesn't natively support:**
+
 - If the model has no scale parameter → `supportedScales: []` and remove 'upscale' capability
 - If the model caps at 4x → `supportedScales: [2, 4]` (NOT [2, 4, 8])
 - Only models with native 8x+ support should include 8 in `supportedScales`
 
 **Common mistakes to avoid:**
+
 - ❌ Setting `supportedScales: [2, 4, 8]` when the model only supports 2x and 4x
 - ❌ Including 'upscale' capability for enhancement-only models
 - ❌ Using "two-pass hacks" to simulate unsupported scales
+
+## Edge Case: Free Tier Models (Direct Access Only)
+
+Some models should be available to **free users** without creating a quality tier. Examples include `p-image-edit` and `flux-kontext-fast`.
+
+**For free tier models:**
+
+1. **DO NOT add a quality tier** - Skip steps 4 (QualityTier, QUALITY_TIER_CONFIG, QUALITY_TIER_SCALES) and 5 (validation schema)
+2. **Set `tierRestriction: null`** in MODEL_CONFIG (not `'hobby'`, `'pro'`, etc.)
+3. **Add to FREE_MODELS array** in addition to HOBBY_MODELS, PRO_MODELS, BUSINESS_MODELS
+
+```typescript
+// shared/config/model-costs.config.ts
+FREE_MODELS: ['real-esrgan', 'gfpgan', 'nano-banana', 'p-image-edit', 'flux-kontext-fast'],
+
+// In MODEL_CONFIG - note tierRestriction is null (not a string)
+'flux-kontext-fast': {
+  cost: MODEL_COSTS.FLUX_KONTEXT_FAST_COST,
+  multiplier: 2, // Use lower multiplier for free tier (1-2x)
+  qualityScore: 9.1,
+  processingTime: MODEL_COSTS.PROCESSING_TIME_MEDIUM,
+  maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
+  maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+  supportedScales: [], // Enhancement-only
+  tierRestriction: null, // null = free tier, not 'hobby'/'pro'/'business'
+},
+```
+
+4. **In model-registry.ts** - use `tierRestriction: undefined` (not a string):
+
+```typescript
+{
+  id: 'flux-kontext-fast',
+  displayName: 'Flux Kontext',
+  // ...
+  isEnabled: true, // Always enabled for free tier
+  tierRestriction: undefined, // undefined = free tier
+}
+```
+
+**Free tier vs Paid tier models:**
+
+| Aspect            | Free Tier                     | Paid Tier (hobby/pro/business)       |
+| ----------------- | ----------------------------- | ------------------------------------ |
+| Quality Tier      | NO - direct model access only | YES - added to PREMIUM_QUALITY_TIERS |
+| tierRestriction   | `null` or `undefined`         | `'hobby'`, `'pro'`, or `'business'`  |
+| FREE_MODELS array | ✅ Included                   | ❌ Not included                      |
+| isEnabled         | `true`                        | `serverEnv.ENABLE_PREMIUM_MODELS`    |
+| Credit multiplier | 1-2x                          | 3-8x                                 |
 
 ## Required Files (in order)
 

@@ -256,6 +256,7 @@ const serverEnvSchema = z.object({
   MODEL_VERSION_SEEDREAM: z.string().optional(),
   MODEL_VERSION_REALESRGAN_ANIME: z.string().optional(),
   MODEL_VERSION_P_IMAGE_EDIT: z.string().optional(),
+  MODEL_VERSION_FLUX_KONTEXT_FAST: z.string().optional(),
 });
 
 export type IServerEnv = z.infer<typeof serverEnvSchema>;
@@ -355,6 +356,7 @@ function loadServerEnv(): IServerEnv {
     MODEL_VERSION_SEEDREAM: process.env.MODEL_VERSION_SEEDREAM,
     MODEL_VERSION_REALESRGAN_ANIME: process.env.MODEL_VERSION_REALESRGAN_ANIME,
     MODEL_VERSION_P_IMAGE_EDIT: process.env.MODEL_VERSION_P_IMAGE_EDIT,
+    MODEL_VERSION_FLUX_KONTEXT_FAST: process.env.MODEL_VERSION_FLUX_KONTEXT_FAST,
   };
 
   return serverEnvSchema.parse(env);

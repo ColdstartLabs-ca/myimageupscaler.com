@@ -35,6 +35,7 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'realesrgan-anime':
     'xinntao/realesrgan:1b976a4d456ed9e4d1a846597b7614e79eadad3032e9124fa63859db0fd59b56',
   'p-image-edit': 'prunaai/p-image-edit',
+  'flux-kontext-fast': 'prunaai/flux-kontext-fast',
 };
 
 /**
@@ -51,6 +52,7 @@ const MODEL_COSTS: Record<string, number> = {
   seedream: CONFIG_MODEL_COSTS.SEEDREAM_COST,
   'realesrgan-anime': CONFIG_MODEL_COSTS.REALESRGAN_ANIME_COST,
   'p-image-edit': CONFIG_MODEL_COSTS.P_IMAGE_EDIT_COST,
+  'flux-kontext-fast': CONFIG_MODEL_COSTS.FLUX_KONTEXT_FAST_COST,
 };
 
 /**
@@ -67,6 +69,7 @@ const MODEL_CREDIT_MULTIPLIERS: Record<string, number> = {
   seedream: CREDIT_COSTS.SEEDREAM_MULTIPLIER,
   'realesrgan-anime': CREDIT_COSTS.REALESRGAN_ANIME_MULTIPLIER,
   'p-image-edit': CREDIT_COSTS.P_IMAGE_EDIT_MULTIPLIER,
+  'flux-kontext-fast': CREDIT_COSTS.FLUX_KONTEXT_FAST_MULTIPLIER,
 };
 
 /**
@@ -117,6 +120,7 @@ export class ModelRegistry {
       seedream: serverEnv.MODEL_VERSION_SEEDREAM,
       'realesrgan-anime': serverEnv.MODEL_VERSION_REALESRGAN_ANIME,
       'p-image-edit': serverEnv.MODEL_VERSION_P_IMAGE_EDIT,
+      'flux-kontext-fast': serverEnv.MODEL_VERSION_FLUX_KONTEXT_FAST,
     };
     return overrides[modelId] || DEFAULT_MODEL_VERSIONS[modelId];
   }
@@ -316,6 +320,24 @@ export class ModelRegistry {
         supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD], // Supports 2x and 4x
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
         tierRestriction: 'hobby',
+      },
+      // Flux-Kontext-Fast (Fast Flux Kontext Image Editing - Free)
+      // Enhancement-only model for fast creative edits using Flux
+      {
+        id: 'flux-kontext-fast',
+        displayName: 'Flux Kontext',
+        provider: 'replicate',
+        modelVersion: this.getModelVersion('flux-kontext-fast'),
+        capabilities: ['enhance', 'denoise', 'damage-repair'],
+        costPerRun: MODEL_COSTS['flux-kontext-fast'],
+        creditMultiplier: MODEL_CREDIT_MULTIPLIERS['flux-kontext-fast'],
+        qualityScore: 9.1,
+        processingTimeMs: TIMEOUTS.REAL_ESRGAN_PROCESSING_TIME, // Fast processing
+        maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+        supportedScales: [], // Enhancement-only, no scale support
+        isEnabled: true,
+        tierRestriction: undefined, // Free tier
       },
     ];
 

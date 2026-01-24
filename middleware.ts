@@ -199,10 +199,12 @@ function detectLocale(req: NextRequest): Locale {
     (serverEnv.ENV === 'test' ? req.headers.get('x-test-country') : null);
   if (country) {
     const geoLocale = getLocaleFromCountry(country);
-    // Only use geo-detected locale if it's supported
     if (geoLocale && isValidLocale(geoLocale)) {
       return geoLocale;
     }
+    // Country detected but not mapped → default to English per policy
+    // (prevents Accept-Language from overriding, e.g. fr-CA users in Canada)
+    return DEFAULT_LOCALE;
   }
 
   // 4. Check Accept-Language header (browser preference)

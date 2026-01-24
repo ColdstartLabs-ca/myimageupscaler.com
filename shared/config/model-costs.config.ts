@@ -15,6 +15,7 @@ export const MODEL_COSTS = {
   SEEDREAM_COST: 0.04, // bytedance/seedream-4.5 - image editing
   REALESRGAN_ANIME_COST: 0.0022, // xinntao/realesrgan - anime upscaling
   P_IMAGE_EDIT_COST: 0.01, // prunaai/p-image-edit - fast budget image editing
+  FLUX_KONTEXT_FAST_COST: 0.01, // prunaai/flux-kontext-fast - fast flux kontext image editing
 
   // Cost calculation thresholds
   COST_CENT_MULTIPLIER: 100, // Convert dollars to cents
@@ -38,7 +39,7 @@ export const MODEL_COSTS = {
 
   // Model tier restrictions
   // Note: These are informational constants for UI/reference. Actual enforcement is handled via tierRestriction in MODEL_CONFIG.
-  FREE_MODELS: ['real-esrgan', 'gfpgan', 'nano-banana', 'p-image-edit'], // All models with tierRestriction: null
+  FREE_MODELS: ['real-esrgan', 'gfpgan', 'nano-banana', 'p-image-edit', 'flux-kontext-fast'], // All models with tierRestriction: null
   HOBBY_MODELS: [
     'real-esrgan',
     'gfpgan',
@@ -50,6 +51,7 @@ export const MODEL_COSTS = {
     'seedream',
     'realesrgan-anime',
     'p-image-edit',
+    'flux-kontext-fast',
   ], // All models accessible with hobby tier
   PRO_MODELS: [
     'real-esrgan',
@@ -62,6 +64,7 @@ export const MODEL_COSTS = {
     'seedream',
     'realesrgan-anime',
     'p-image-edit',
+    'flux-kontext-fast',
   ], // All models accessible with pro tier
   BUSINESS_MODELS: [
     'real-esrgan',
@@ -74,6 +77,7 @@ export const MODEL_COSTS = {
     'seedream',
     'realesrgan-anime',
     'p-image-edit',
+    'flux-kontext-fast',
   ], // All models accessible with business tier
 
   // Quality tiers requiring paid subscription (free users blocked)
@@ -241,6 +245,16 @@ export const MODEL_CONFIG = {
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
     supportedScales: [], // Enhancement-only, no scale support
     tierRestriction: null,
+  },
+  'flux-kontext-fast': {
+    cost: MODEL_COSTS.FLUX_KONTEXT_FAST_COST,
+    multiplier: 2,
+    qualityScore: 9.1,
+    processingTime: MODEL_COSTS.PROCESSING_TIME_MEDIUM,
+    maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
+    maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+    supportedScales: [], // Enhancement-only, no scale support
+    tierRestriction: null, // Free tier
   },
 } as const;
 
