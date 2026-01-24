@@ -12,20 +12,17 @@ export $(grep -v '^#' .env.test | grep -v '^$' | xargs)
 TEST_PORT=${TEST_PORT:-3100}
 TEST_WRANGLER_PORT=${TEST_WRANGLER_PORT:-8800}
 
-# Use separate .next directory for tests to avoid corrupting dev server cache
-export NEXT_TEST_DIR=".next-test"
-
 # Clean up any stale lock files that might prevent server startup
 # This fixes flaky tests caused by leftover locks from crashed/killed dev servers
-if [ -f "$NEXT_TEST_DIR/dev/lock" ]; then
+# Note: Next.js always uses .next/ regardless of NEXT_TEST_DIR env var
+if [ -f ".next/dev/lock" ]; then
   echo "Removing stale Next.js lock file..."
-  rm -f "$NEXT_TEST_DIR/dev/lock"
+  rm -f ".next/dev/lock"
 fi
 
-# Clear test Next.js cache - this doesn't affect the main dev server
-# because we use a separate .next-test directory
-echo "Clearing test Next.js cache for clean test environment..."
-rm -rf "$NEXT_TEST_DIR/cache"
+# Clear Next.js cache for clean test environment
+echo "Clearing Next.js cache for clean test environment..."
+rm -rf .next/cache
 
 # Check if port is already in use and kill the process if needed
 # This prevents "port already in use" errors when restarting tests
@@ -35,8 +32,6 @@ if lsof -i :$TEST_PORT -t > /dev/null 2>&1; then
   sleep 1
 fi
 
-echo "Starting test server on port $TEST_PORT (using $NEXT_TEST_DIR)"
+echo "Starting test server on port $TEST_PORT"
 
-# Run the dev server with separate output directory to avoid conflicts
-# Note: -c flag is not valid for Next.js, use env var instead
-NEXT_TEST_DIR="$NEXT_TEST_DIR" npx next dev --port $TEST_PORT
+npx next dev --port $TEST_PORT
