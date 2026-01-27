@@ -71,6 +71,7 @@
     "@imgly/background-removal": "^1.7.0",
     "@mdx-js/react": "^3.1.0",
     "@react-email/components": "^1.0.4",
+    "@react-email/render": "^2.0.4",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.5.3",
     "@supabase/ssr": "^0.7.0",
