@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getAllPosts } from '@server/blog';
+import { getAllPublishedPosts } from '@server/services/blog.service';
 import { Calendar, Clock, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { clientEnv } from '@shared/config/env';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
@@ -39,7 +39,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
   setRequestLocale(locale);
   const searchQueryParams = await searchParams;
   const t = await getTranslations('blog');
-  const allPosts = getAllPosts();
+  const allPosts = await getAllPublishedPosts();
   const searchQuery = searchQueryParams.q?.toLowerCase().trim();
 
   // Filter posts by search query

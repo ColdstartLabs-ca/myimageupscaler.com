@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { getPostBySlug, getAllPosts } from '@server/blog';
+import { getPublishedPostBySlug, getAllPublishedPosts, getAllPublishedSlugs } from '@server/services/blog.service';
 import {
   Clock,
   ArrowLeft,
@@ -32,13 +32,13 @@ interface IPageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = getAllPosts();
-  return posts.map(post => ({ slug: post.slug }));
+  const slugs = await getAllPublishedSlugs();
+  return slugs.map(slug => ({ slug }));
 }
 
 export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPublishedPostBySlug(slug);
 
   if (!post) {
     return {
@@ -48,6 +48,8 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
 
   const canonicalUrl = `${clientEnv.BASE_URL}/blog/${slug}`;
   const defaultOgImage = '/og-image.png';
+
+  const postDate = post.published_at || post.created_at;
 
   return {
     title: post.title,
@@ -61,7 +63,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
       description: post.description,
       type: 'article',
       url: canonicalUrl,
-      publishedTime: post.date,
+      publishedTime: postDate,
       authors: [post.author],
       images: post.image
         ? [{ url: post.image, width: 1200, height: 630, alt: post.title }]
@@ -78,16 +80,18 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
 
 export default async function BlogPostPage({ params }: IPageProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPublishedPostBySlug(slug);
 
   if (!post) {
     notFound();
   }
 
-  const allPosts = getAllPosts();
+  const allPosts = await getAllPublishedPosts();
   const relatedPosts = allPosts
     .filter(p => p.slug !== slug && p.category === post.category)
     .slice(0, 3);
+
+  const postDate = post.published_at || post.created_at;
 
   // Article JSON-LD
   const articleJsonLd = {
@@ -99,8 +103,8 @@ export default async function BlogPostPage({ params }: IPageProps) {
       '@type': 'Person',
       name: post.author,
     },
-    datePublished: post.date,
-    dateModified: post.date,
+    datePublished: postDate,
+    dateModified: postDate,
     publisher: {
       '@type': 'Organization',
       name: `${clientEnv.APP_NAME} AI`,
@@ -165,7 +169,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
             {/* Author & Date */}
             <p className="text-sm text-text-secondary">
               {clientEnv.APP_NAME} Team &middot;{' '}
-              {new Date(post.date).toLocaleDateString('en-US', {
+              {new Date(postDate).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',

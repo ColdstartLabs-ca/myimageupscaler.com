@@ -16,3 +16,4 @@ export {
   applyUserRateLimit,
 } from './rateLimit';
 export { verifyApiAuth, addUserContextHeaders, handlePageAuth } from './auth';
+export { verifyBlogApiAuth, blogApiErrorResponse } from './blogApiAuth';
