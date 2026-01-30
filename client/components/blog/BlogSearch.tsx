@@ -34,6 +34,7 @@ export function BlogSearch(): JSX.Element {
         value={query}
         onChange={e => setQuery(e.target.value)}
         placeholder={t('placeholder')}
+        aria-label={t('placeholder')}
         className="w-full pl-10 pr-10 py-2.5 bg-surface/50 border border-border/50 rounded-full text-sm text-white placeholder:text-text-secondary focus:outline-none focus:border-accent/50 focus:bg-surface transition-all"
       />
       {query && (

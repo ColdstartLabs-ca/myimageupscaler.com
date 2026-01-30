@@ -811,8 +811,8 @@
       "toolName": "Smart AI Enhancement",
       "description": "Traditional upscalers apply the same settings to every image. Smart AI Enhancement is different - it analyzes your image to understand content type, existing quality, and fine details, then automatically selects the optimal processing approach for superior results.",
       "beforeAfterImages": {
-        "before": "/before-after/smart-ai/budget-edit-with-WITHOUT-smart-AI.png",
-        "after": "/before-after/smart-ai/budget-edit-with-smart-AI.png",
+        "before": "/before-after/smart-ai/budget-edit-with-WITHOUT-smart-AI.webp",
+        "after": "/before-after/smart-ai/budget-edit-with-smart-AI.webp",
         "beforeLabel": "Standard",
         "afterLabel": "Smart AI"
       },
