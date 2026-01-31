@@ -109,7 +109,7 @@ export default async function ScalePage({ params }: IScalePageProps) {
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale="en" />
       {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="scale" locale="en" />
       <SchemaMarkup schema={schema} />
       <ScalePageTemplate data={scale} relatedPages={relatedPages} />
     </>

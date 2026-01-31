@@ -113,4 +113,5 @@ export const PUBLIC_API_ROUTES = [
   '/api/proxy-image', // Download proxy for CORS bypass (validates allowed domains internally)
   '/api/support/*', // Support contact form (public, uses validation and rate limiting)
   '/api/blog/*', // Blog API routes use x-api-key header auth, not JWT
+  '/api/migrate-blog', // Temporary migration endpoint (uses x-migration-token header auth)
 ] as const;

@@ -52,7 +52,7 @@ export default async function AlternativePage({ params }: IAlternativePageProps)
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale={locale} />
       {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="alternatives" locale={locale} />
       <SchemaMarkup schema={schema} />
       <AlternativePageTemplate data={result.data} locale={locale} />
     </>

@@ -56,7 +56,7 @@ export default async function FormatScalePage({ params }: IFormatScalePageProps)
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale={locale} />
       {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="format-scale" locale={locale} />
       <SchemaMarkup schema={schema} />
       <FormatScalePageTemplate data={result.data} locale={locale} relatedPages={relatedPages} />
     </>

@@ -319,3 +319,59 @@ or check out [TensorFlow's image processing capabilities](https://www.tensorflow
 
 ## Next Audit Date
 **Target:** 2026-02-06 (1 week after Phase 2 completion)
+
+---
+
+## Phase 2 Updates - 2026-01-30
+
+### Completed Tasks ✅
+
+#### Task 2.1: Fix Non-Canonical Pages in Sitemap (978 pages) ✅
+**Status:** COMPLETED
+
+**Root Cause:** The `HreflangLinks` component was generating hreflang links for ALL supported locales (en, es, pt, de, fr, it, ja) even for English-only categories like `content`, `platforms`, `compare`. It was also adding trailing slashes which caused 308 redirects.
+
+**Fix Applied:**
+1. Updated `HreflangLinks` component to:
+   - Check if a category is localized before generating hreflang links
+   - Remove trailing slashes (which were causing 308 redirects)
+   - Only generate locale-specific hreflang links for localized categories
+
+2. Updated all category pages to pass the `category` prop to `HreflangLinks`
+
+**Files Modified:**
+- `client/components/seo/HreflangLinks.tsx` - Core fix
+- `app/(pseo)/content/[slug]/page.tsx` - English-only category
+- `app/(pseo)/platforms/[slug]/page.tsx` - English-only category
+- All localized category pages (tools, formats, scale, alternatives, use-cases, format-scale, platform-format, device-use)
+
+#### Task 2.2: Fix 404 Errors (336 pages) ✅
+**Status:** COMPLETED
+
+**Root Cause:** Same as Task 2.1 - hreflang links pointing to non-existent locale-specific pages for English-only categories.
+
+**Fix:** By fixing `HreflangLinks` component in Task 2.1, these 404s are now prevented at the source. The hreflang links for English-only categories will only include `x-default`, not links to non-existent locale variants.
+
+#### Task 2.3: Fix Hreflang Issues (609 total errors) ✅
+**Status:** COMPLETED
+
+**Root Cause:** Same as Task 2.1 - trailing slash redirects and hreflang links pointing to non-existent pages.
+
+**Fix:** The `HreflangLinks` component now:
+- Removes trailing slashes from all hreflang URLs
+- Only generates hreflang links for categories that are actually localized
+- Prevents generation of hreflang links to 404 pages
+
+### Remaining Tasks
+
+Some 404s may still exist from:
+- Old external links pointing to removed pages
+- Hardcoded internal links that need updating
+- Locale-specific pages that genuinely don't exist
+
+These can be addressed as needed by monitoring Ahrefs audits after the main fixes propagate.
+
+### Next Steps
+1. Run Ahrefs audit in 1-2 weeks to verify the fixes
+2. Monitor Google Search Console for indexing improvements
+3. Continue with content strategy (external links, internal linking)
