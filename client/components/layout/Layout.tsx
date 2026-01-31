@@ -29,8 +29,14 @@ export const Layout = ({ children }: ILayoutProps): JSX.Element => {
   return (
     <div className="min-h-screen bg-main flex flex-col overflow-x-hidden">
       <LoadingBackdrop />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:shadow-lg focus:text-black"
+      >
+        Skip to main content
+      </a>
       <NavBar />
-      <main className="flex-1 w-full">{children}</main>
+      <main id="main-content" className="flex-1 w-full">{children}</main>
       <Footer />
     </div>
   );

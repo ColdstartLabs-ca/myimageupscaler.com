@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllPublishedPosts } from '@server/services/blog.service';
@@ -7,23 +7,32 @@ import { clientEnv } from '@shared/config/env';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { BlogSearch } from '@client/components/blog/BlogSearch';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-
-export const metadata: Metadata = {
-  title: 'Blog - Image Enhancement Tips & Guides',
-  description: `Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography. Expert guides from ${clientEnv.APP_NAME}.`,
-  openGraph: {
-    title: `Blog - Image Enhancement Tips & Guides | ${clientEnv.APP_NAME}`,
-    description:
-      'Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography.',
-  },
-};
-
-const POSTS_PER_PAGE = 6;
+import { getCanonicalUrl } from '@lib/seo/hreflang-generator';
+import type { Locale } from '@/i18n/config';
 
 interface IBlogPageProps {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<{ page?: string; q?: string }>;
 }
+
+export async function generateMetadata({ params }: IBlogPageProps): Promise<Metadata> {
+  const { locale } = await params;
+
+  return {
+    title: 'Blog - Image Enhancement Tips & Guides',
+    description: `Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography. Expert guides from ${clientEnv.APP_NAME}.`,
+    openGraph: {
+      title: `Blog - Image Enhancement Tips & Guides | ${clientEnv.APP_NAME}`,
+      description:
+        'Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography.',
+    },
+    alternates: {
+      canonical: getCanonicalUrl('/blog'),
+    },
+  };
+}
+
+const POSTS_PER_PAGE = 6;
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];

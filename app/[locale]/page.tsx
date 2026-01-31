@@ -64,8 +64,6 @@ export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
   return (
     <>
       <JsonLd data={homepageSchema} />
-      {/* Hidden H1 for SEO - crawlers see this in initial HTML */}
-      <h1 className="sr-only">AI Image Upscaler - Enlarge Images Without Quality Loss</h1>
       <Suspense
         fallback={
           <div className="min-h-screen flex items-center justify-center bg-background">

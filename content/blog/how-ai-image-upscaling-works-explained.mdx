@@ -8,7 +8,7 @@ tags: ["ai upscaling", "neural networks", "image enhancement", "deep learning", 
 image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=630&fit=crop&q=80"
 ---
 
-AI image upscaling seems almost magical: feed in a blurry, low-resolution photo and get back a sharp, detailed version. But there's no magic involved—just sophisticated neural networks that have learned to predict what high-resolution details should look like.
+AI image upscaling seems almost magical: feed in a blurry, low-resolution photo and get back a sharp, detailed version. But there's no magic involved—just sophisticated [neural networks](https://en.wikipedia.org/wiki/Artificial_neural_network) that have learned to predict what high-resolution details should look like.
 
 Here's how it actually works.
 
@@ -20,7 +20,7 @@ Traditional upscaling (bicubic, bilinear interpolation) simply stretches existin
 
 The fundamental problem is that a 500x500 image contains 250,000 pixels of information. A 2000x2000 image contains 4,000,000 pixels—16 times more data. Traditional methods can only redistribute existing information, not create new information.
 
-AI changes this equation. Instead of creating information from nothing, it makes educated predictions based on learned patterns.
+AI changes this equation. Instead of creating information from nothing, it makes educated predictions based on learned patterns from [deep learning](https://en.wikipedia.org/wiki/Deep_learning) research.
 
 ## How Neural Networks Learn to Upscale
 
@@ -35,7 +35,7 @@ After seeing millions of examples, the neural network learns patterns:
 - The typical structure of leaves, fabric, and other textures
 - How edges and boundaries should sharpen
 
-When you upload a new low-resolution image, the network applies these learned patterns to generate plausible high-resolution details.
+When you upload a new low-resolution image, the network applies these learned patterns to generate plausible high-resolution details. This approach is based on [super-resolution](https://en.wikipedia.org/wiki/Super-resolution) research in computer vision.
 
 > [!CTA_TRY]
 
@@ -45,7 +45,7 @@ Most modern AI upscalers use one of several neural network architectures:
 
 ### Generative Adversarial Networks (GANs)
 
-GANs use two competing networks:
+[GANs](https://en.wikipedia.org/wiki/Generative_adversarial_network) use two competing networks:
 
 | Network | Role | Goal |
 |---------|------|------|
@@ -54,22 +54,24 @@ GANs use two competing networks:
 
 The generator improves by trying to fool the discriminator. The discriminator improves by getting better at spotting fakes. This competitive process produces increasingly realistic results.
 
-Popular GAN-based upscalers include ESRGAN, Real-ESRGAN, and their derivatives.
+Popular GAN-based upscalers include ESRGAN, Real-ESRGAN, and their derivatives. The technique was pioneered by Ian Goodfellow and has revolutionized image generation.
 
 ### Diffusion Models
 
-Newer upscalers use diffusion-based approaches:
+Newer upscalers use [diffusion models](https://en.wikipedia.org/wiki/Diffusion_model):
 
 1. Start with the low-resolution image
 2. Add controlled noise
 3. Iteratively denoise while adding high-frequency detail
 4. Repeat until reaching target resolution
 
-Diffusion models often produce more stable results with fewer artifacts, though they're typically slower than GANs.
+Diffusion models often produce more stable results with fewer artifacts, though they're typically slower than GANs. This approach has been popularized by models like Stable Diffusion and DALL-E.
 
 ### Transformer Models
 
-Some cutting-edge upscalers adapt transformer architectures (similar to those used in ChatGPT) for image processing. These models excel at understanding global image context, not just local pixel patterns.
+Some cutting-edge upscalers adapt [transformer architectures](https://en.wikipedia.org/wiki/Transformer_(machine_learning_model)) (similar to those used in ChatGPT) for image processing. These models excel at understanding global image context, not just local pixel patterns.
+
+Vision Transformers (ViT) have shown remarkable results in image understanding and generation tasks.
 
 ![Computer code and programming on screen](https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80)
 
@@ -92,7 +94,7 @@ When you upload an image, the neural network doesn't see a photo the way you do.
 - Context understanding
 - Semantic meaning
 
-This hierarchical understanding allows the model to make appropriate decisions at each scale level.
+This hierarchical understanding, inspired by the [visual cortex](https://en.wikipedia.org/wiki/Visual_cortex), allows the model to make appropriate decisions at each scale level.
 
 > [!CTA_DEMO]
 
@@ -118,7 +120,7 @@ An AI upscaler can only produce what it has learned. This creates predictable st
 - Artistic styles the model hasn't seen
 
 <Callout type="info">
-This is why specialized upscalers exist for anime, documents, and e-commerce. They're trained on data relevant to those use cases.
+This is why specialized upscalers exist for anime, documents, and e-commerce. They're trained on data relevant to those use cases, similar to how [ImageNet](https://www.image-net.org/) revolutionized image classification.
 </Callout>
 
 ## The Limits of AI Upscaling
@@ -131,7 +133,7 @@ The AI guesses what high-resolution details should look like. It cannot recover 
 
 ### 2. Hallucination Is a Feature
 
-When the AI adds realistic-looking texture to skin or fabric, it's technically "hallucinating" detail that wasn't in the original. Usually this looks natural, but occasionally the AI invents incorrect details.
+When the AI adds realistic-looking texture to skin or fabric, it's technically "hallucinating" detail that wasn't in the original. Usually this looks natural, but occasionally the AI invents incorrect details. This is a known challenge in AI image generation.
 
 ### 3. Diminishing Returns
 
@@ -182,7 +184,7 @@ The technology continues advancing rapidly:
 - 3D-consistent upscaling for video
 - Edge-device processing (on-phone, on-camera)
 
-What took research labs a decade ago now runs in seconds on consumer hardware. The underlying technology is mature and improving steadily.
+Research continues at institutions like [OpenAI](https://openai.com/), [Google DeepMind](https://www.deepmind.com/), and academic labs worldwide. What took research labs a decade ago now runs in seconds on consumer hardware.
 
 ## Summary
 
@@ -191,3 +193,10 @@ AI image upscaling works by applying learned patterns from millions of training 
 The key to good results: start with the best source possible, choose an upscaler trained for your content type, and keep upscaling ratios reasonable (2-4x).
 
 Ready to try AI upscaling? [Try myimageupscaler.com free](/pricing) — see the technology in action with 10 free credits.
+
+---
+
+**Further Reading:**
+- [Learn about computer vision fundamentals](https://en.wikipedia.org/wiki/Computer_vision)
+- [Understanding convolutional neural networks](https://en.wikipedia.org/wiki/Convolutional_neural_network)
+- [Super-resolution research papers](https://arxiv.org/list/cs.CV/recent)

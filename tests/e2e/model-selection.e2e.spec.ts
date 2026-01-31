@@ -83,8 +83,7 @@ test.describe('E2E: Model Selection UI', () => {
     await currentTierButton.click();
 
     // Check that tier options exist in the dropdown
-    // Note: Auto-Optimize is the full label for auto tier
-    await expect(page.getByText('Auto-Optimize').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Auto').first()).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Quick').first()).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Face Restore').first()).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('HD Upscale').first()).toBeVisible({ timeout: 5000 });

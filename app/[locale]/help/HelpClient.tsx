@@ -1,9 +1,9 @@
 'use client';
 
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
-import { SupportModal } from '@client/components/modal/support/SupportModal';
+import { ContactSupportCTA } from '@client/components/cta/ContactSupportCTA';
 import { FAQ } from '@client/components/ui/FAQ';
-import { FadeIn, ScaleIn } from '@client/components/ui/MotionWrappers';
+import { FadeIn } from '@client/components/ui/MotionWrappers';
 import { clientEnv } from '@shared/config/env';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -464,22 +464,15 @@ export function HelpClient() {
             </p>
 
             {/* Primary Contact Support CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex justify-center mb-8"
-            >
-              <motion.button
-                onClick={() => setIsSupportModalOpen(true)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-3 px-8 py-4 bg-accent hover:bg-accent-hover text-white font-bold rounded-2xl transition-all duration-300 shadow-xl shadow-accent/40 hover:shadow-accent/60 gradient-cta shine-effect"
-              >
-                <MessageCircle size={22} />
-                <span className="text-lg">{t('cta.contactSupport')}</span>
-              </motion.button>
-            </motion.div>
+            <div className="mb-8">
+              <ContactSupportCTA
+                variant="compact"
+                isOpen={isSupportModalOpen}
+                onOpen={() => setIsSupportModalOpen(true)}
+                onClose={() => setIsSupportModalOpen(false)}
+                renderModal={false}
+              />
+            </div>
           </FadeIn>
 
           {/* Search Bar & Quick Links - Outside FadeIn for stability during typing */}
@@ -596,44 +589,12 @@ export function HelpClient() {
       </section>
 
       {/* Support CTA */}
-      <section className="py-16 relative">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <ScaleIn>
-            <div className="relative p-1 md:p-px rounded-3xl overflow-hidden group">
-              {/* Gradient Border */}
-              <div className="absolute inset-0 bg-gradient-to-r from-accent via-secondary to-accent opacity-20 group-hover:opacity-40 transition-opacity duration-500 animate-gradient-x"></div>
-
-              <div className="relative bg-surface-dark/90 backdrop-blur-xl p-8 md:p-12 rounded-[22px] flex flex-col md:flex-row items-center gap-10">
-                <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-3xl font-black text-white mb-4 tracking-tight">
-                    {t('cta.title')}
-                  </h2>
-                  <p className="text-lg text-text-secondary font-light">{t('cta.description')}</p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-                  <motion.button
-                    onClick={() => setIsSupportModalOpen(true)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-white font-bold rounded-xl transition-all duration-300 gradient-cta shine-effect shadow-lg shadow-accent/20"
-                  >
-                    <MessageCircle size={20} />
-                    {t('cta.emailSupport')}
-                  </motion.button>
-                  <Link
-                    href="/pricing"
-                    className="inline-flex items-center justify-center gap-2 px-8 py-4 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-300"
-                  >
-                    {t('cta.viewPricing')}
-                    <ArrowRight size={18} />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </ScaleIn>
-        </div>
-      </section>
+      <ContactSupportCTA
+        isOpen={isSupportModalOpen}
+        onOpen={() => setIsSupportModalOpen(true)}
+        onClose={() => setIsSupportModalOpen(false)}
+        renderModal={false}
+      />
 
       {/* Footer Links */}
       <section className="pb-20">

@@ -82,6 +82,12 @@ export const getSecurityHeaders = (): Record<string, string> => ({
     ? 'no-referrer-when-downgrade'
     : 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  // HSTS header for HTTPS enforcement (only in production with HTTPS)
+  ...(isDevelopment()
+    ? {}
+    : {
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      }),
 });
 
 /**

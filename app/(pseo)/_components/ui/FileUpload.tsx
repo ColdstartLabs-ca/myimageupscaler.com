@@ -79,7 +79,11 @@ export function FileUpload({
 
   return (
     <>
+      <label htmlFor="file-upload" className="sr-only">
+        Upload Image
+      </label>
       <input
+        id="file-upload"
         ref={inputRef}
         type="file"
         accept={acceptedFormats.join(',')}
