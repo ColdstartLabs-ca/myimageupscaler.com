@@ -2,6 +2,7 @@
 
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { ContactSupportCTA } from '@client/components/cta/ContactSupportCTA';
+import { SupportModal } from '@client/components/modal/support/SupportModal';
 import { FAQ } from '@client/components/ui/FAQ';
 import { FadeIn } from '@client/components/ui/MotionWrappers';
 import { clientEnv } from '@shared/config/env';

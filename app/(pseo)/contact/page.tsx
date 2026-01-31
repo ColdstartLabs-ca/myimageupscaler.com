@@ -3,13 +3,15 @@ import { setRequestLocale } from 'next-intl/server';
 import { clientEnv } from '@shared/config/env';
 import { getCanonicalUrl, generateHreflangAlternates } from '@lib/seo/hreflang-generator';
 import type { Locale } from '@/i18n/config';
+import { ContactOptions } from '@client/components/cta/ContactOptions';
+import { ContactSupportCTA } from '@client/components/cta/ContactSupportCTA';
 
 interface IContactPageProps {
   params: Promise<{ locale: Locale }>;
 }
 
 export async function generateMetadata({ params }: IContactPageProps): Promise<Metadata> {
-  const { locale } = await params;
+  await params;
   const canonicalUrl = getCanonicalUrl('/contact');
   const hreflangAlternates = generateHreflangAlternates('/contact');
 
@@ -51,7 +53,7 @@ export default async function ContactPage({ params }: IContactPageProps) {
             Contact Us
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Have questions or feedback? We'd love to hear from you.
+            Have questions or feedback? We&apos;d love to hear from you.
           </p>
         </div>
       </section>
@@ -59,62 +61,7 @@ export default async function ContactPage({ params }: IContactPageProps) {
       {/* Contact Options */}
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Email Support */}
-            <div className="bg-surface p-8 rounded-2xl border border-border">
-              <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mb-4">
-                <svg
-                  className="w-6 h-6 text-accent"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Email Support</h2>
-              <p className="text-muted-foreground mb-4">
-                Send us an email and we'll get back to you within 24 hours.
-              </p>
-              <a
-                href={`mailto:${clientEnv.SUPPORT_EMAIL}`}
-                className="text-accent hover:underline font-semibold"
-              >
-                {clientEnv.SUPPORT_EMAIL}
-              </a>
-            </div>
-
-            {/* Help Center */}
-            <div className="bg-surface p-8 rounded-2xl border border-border">
-              <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mb-4">
-                <svg
-                  className="w-6 h-6 text-accent"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Help Center</h2>
-              <p className="text-muted-foreground mb-4">
-                Browse our documentation for answers to common questions.
-              </p>
-              <a href="/help" className="text-accent hover:underline font-semibold">
-                Visit Help Center →
-              </a>
-            </div>
-          </div>
+          <ContactOptions />
 
           {/* Social Media */}
           <div className="mt-8 bg-surface p-8 rounded-2xl border border-border">
@@ -143,6 +90,9 @@ export default async function ContactPage({ params }: IContactPageProps) {
           </div>
         </div>
       </section>
+
+      {/* Support CTA - same pattern as help page */}
+      <ContactSupportCTA showPricingLink={false} theme="light" />
 
       {/* FAQ Section */}
       <section className="py-16 bg-surface">

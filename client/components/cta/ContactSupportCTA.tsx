@@ -11,6 +11,7 @@ import { SupportModal } from '@client/components/modal/support/SupportModal';
 interface IContactSupportCTAProps {
   showPricingLink?: boolean;
   variant?: 'default' | 'compact';
+  theme?: 'dark' | 'light';
   // External control for FAQ inline buttons
   isOpen?: boolean;
   onOpen?: () => void;
@@ -22,11 +23,12 @@ interface IContactSupportCTAProps {
 export function ContactSupportCTA({
   showPricingLink = true,
   variant = 'default',
+  theme = 'dark',
   isOpen: externalIsOpen,
   onOpen,
   onClose,
   renderModal = true,
-}: IContactSupportCTAProps) {
+}: IContactSupportCTAProps): JSX.Element {
   const t = useTranslations('help');
   const [internalIsOpen, setInternalIsOpen] = useState(false);
 
@@ -49,6 +51,19 @@ export function ContactSupportCTA({
     }
   };
 
+  // Theme-specific classes
+  const isDark = theme === 'dark';
+  const sectionBg = isDark ? '' : 'bg-base';
+  const cardBg = isDark ? 'bg-surface-dark/90 backdrop-blur-xl' : 'bg-surface border border-border';
+  const titleClass = isDark ? 'text-white' : 'text-foreground';
+  const descClass = isDark ? 'text-text-secondary' : 'text-muted-foreground';
+  const pricingLinkClass = isDark
+    ? 'glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-300'
+    : 'px-8 py-4 bg-surface border border-border text-foreground font-semibold rounded-xl hover:bg-accent/10 transition-all duration-300';
+  const gradientBorder = isDark
+    ? 'absolute inset-0 bg-gradient-to-r from-accent via-secondary to-accent opacity-20 group-hover:opacity-40 transition-opacity duration-500 animate-gradient-x'
+    : 'absolute inset-0 bg-gradient-to-r from-accent/20 via-secondary/20 to-accent/20 opacity-40 group-hover:opacity-60 transition-opacity duration-500';
+
   if (variant === 'compact') {
     return (
       <>
@@ -68,16 +83,18 @@ export function ContactSupportCTA({
 
   return (
     <>
-      <section className="py-16 relative">
+      <section className={`py-16 relative ${sectionBg}`}>
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <ScaleIn>
             <div className="relative p-1 md:p-px rounded-3xl overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-r from-accent via-secondary to-accent opacity-20 group-hover:opacity-40 transition-opacity duration-500 animate-gradient-x"></div>
+              <div className={gradientBorder}></div>
 
-              <div className="relative bg-surface-dark/90 backdrop-blur-xl p-8 md:p-12 rounded-[22px] flex flex-col md:flex-row items-center gap-10">
+              <div className={`relative ${cardBg} p-8 md:p-12 rounded-[22px] flex flex-col md:flex-row items-center gap-10`}>
                 <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-3xl font-black text-white mb-4 tracking-tight">{t('cta.title')}</h2>
-                  <p className="text-lg text-text-secondary font-light">{t('cta.description')}</p>
+                  <h2 className={`text-3xl font-black mb-4 tracking-tight ${titleClass}`}>
+                    {t('cta.title')}
+                  </h2>
+                  <p className={`text-lg font-light ${descClass}`}>{t('cta.description')}</p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 shrink-0">
@@ -89,10 +106,7 @@ export function ContactSupportCTA({
                     {t('cta.emailSupport')}
                   </button>
                   {showPricingLink && (
-                    <Link
-                      href="/pricing"
-                      className="inline-flex items-center justify-center gap-2 px-8 py-4 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-300"
-                    >
+                    <Link href="/pricing" className={pricingLinkClass}>
                       {t('cta.viewPricing')}
                       <ArrowRight size={18} />
                     </Link>
