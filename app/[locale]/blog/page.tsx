@@ -8,22 +8,27 @@ import { AmbientBackground } from '@client/components/landing/AmbientBackground'
 import { BlogSearch } from '@client/components/blog/BlogSearch';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Blog - Image Enhancement Tips & Guides',
-  description: `Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography. Expert guides from ${clientEnv.APP_NAME}.`,
-  openGraph: {
-    title: `Blog - Image Enhancement Tips & Guides | ${clientEnv.APP_NAME}`,
-    description:
-      'Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography.',
-  },
-};
-
-const POSTS_PER_PAGE = 6;
-
 interface IBlogPageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ page?: string; q?: string }>;
 }
+
+export async function generateMetadata({ params }: IBlogPageProps): Promise<Metadata> {
+  await params;
+  const title = 'Blog - Image Enhancement Tips & Guides';
+  const description = `Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography. Expert guides from ${clientEnv.APP_NAME}.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} | ${clientEnv.APP_NAME}`,
+      description,
+    },
+  };
+}
+
+const POSTS_PER_PAGE = 6;
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
