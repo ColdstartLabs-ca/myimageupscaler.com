@@ -13,7 +13,7 @@ import { SUPPORTED_LOCALES, isValidLocale } from '@/i18n/config';
 import { serverEnv } from '@shared/config/env';
 import '@client/styles/index.css';
 
-const APP_NAME = clientEnv.APP_NAME;
+const APP_NAME = serverEnv.APP_NAME;
 
 const inter = Inter({
   subsets: ['latin'],
@@ -100,8 +100,11 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: APP_NAME,
-    url: clientEnv.BASE_URL,
-    logo: `${serverEnv.BASE_URL}/logo/horizontal-logo-full.png`,
+    url: serverEnv.BASE_URL,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${serverEnv.BASE_URL}/logo/horizontal-logo-full.png`,
+    },
     description: 'AI-powered image upscaling and enhancement platform',
   };
 

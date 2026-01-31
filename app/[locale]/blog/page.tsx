@@ -7,8 +7,7 @@ import { clientEnv } from '@shared/config/env';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { BlogSearch } from '@client/components/blog/BlogSearch';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { getCanonicalUrl } from '@lib/seo/hreflang-generator';
-import type { Locale } from '@/i18n/config';
+import { Locale } from '@/i18n/config';
 
 interface IBlogPageProps {
   params: Promise<{ locale: Locale }>;
@@ -16,18 +15,16 @@ interface IBlogPageProps {
 }
 
 export async function generateMetadata({ params }: IBlogPageProps): Promise<Metadata> {
-  const { locale } = await params;
+  await params;
+  const title = 'Blog - Image Enhancement Tips & Guides';
+  const description = `Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography. Expert guides from ${clientEnv.APP_NAME}.`;
 
   return {
-    title: 'Blog - Image Enhancement Tips & Guides',
-    description: `Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography. Expert guides from ${clientEnv.APP_NAME}.`,
+    title,
+    description,
     openGraph: {
-      title: `Blog - Image Enhancement Tips & Guides | ${clientEnv.APP_NAME}`,
-      description:
-        'Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography.',
-    },
-    alternates: {
-      canonical: getCanonicalUrl('/blog'),
+      title: `${title} | ${clientEnv.APP_NAME}`,
+      description,
     },
   };
 }
