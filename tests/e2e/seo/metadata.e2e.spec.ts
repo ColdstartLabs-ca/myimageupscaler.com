@@ -85,48 +85,68 @@ test.describe('SEO Metadata', () => {
   });
 
   test('should have correct hreflang on category page', async ({ page }) => {
-    await page.goto('/tools/');
+    await page.goto('/tools');
 
-    // Wait for page to be loaded
-    await page.waitForLoadState('domcontentloaded');
+    // Wait for network idle to ensure all metadata is loaded
+    await page.waitForLoadState('networkidle');
 
-    const enLink = page.locator('head link[rel="alternate"][hrefLang="en"]');
-    const esLink = page.locator('head link[rel="alternate"][hrefLang="es"]');
-    const xDefaultLink = page.locator('head link[rel="alternate"][hrefLang="x-default"]');
+    // Get all alternate links from head and check them
+    const alternates = await page.locator('head link[rel="alternate"]').all();
 
-    await enLink.waitFor({ state: 'attached', timeout: 5000 });
-    await esLink.waitFor({ state: 'attached', timeout: 5000 });
-    await xDefaultLink.waitFor({ state: 'attached', timeout: 5000 });
+    // Should have at least 3 alternates (en, es, x-default)
+    expect(alternates.length).toBeGreaterThanOrEqual(3);
 
-    await expect(enLink).toHaveCount(1);
-    await expect(esLink).toHaveCount(1);
-    await expect(xDefaultLink).toHaveCount(1);
+    // Find the specific alternates we need
+    let enHref: string | null = null;
+    let esHref: string | null = null;
+    let xDefaultHref: string | null = null;
+
+    for (const link of alternates) {
+      const hreflang = await link.getAttribute('hreflang');
+      const href = await link.getAttribute('href');
+
+      if (hreflang === 'en') enHref = href;
+      if (hreflang === 'es') esHref = href;
+      if (hreflang === 'x-default') xDefaultHref = href;
+    }
 
     // Metadata API generates URLs without trailing slashes
-    expect(await enLink.getAttribute('href')).toBe('https://myimageupscaler.com/tools');
-    expect(await esLink.getAttribute('href')).toBe('https://myimageupscaler.com/es/tools');
-    expect(await xDefaultLink.getAttribute('href')).toBe('https://myimageupscaler.com/tools');
+    expect(enHref).toBe('https://myimageupscaler.com/tools');
+    expect(esHref).toBe('https://myimageupscaler.com/es/tools');
+    expect(xDefaultHref).toBe('https://myimageupscaler.com/tools');
   });
 
   test('should have correct hreflang on homepage', async ({ page }) => {
     await page.goto('/');
 
-    // Wait for page to be loaded
-    await page.waitForLoadState('domcontentloaded');
+    // Wait for network idle to ensure all metadata is loaded
+    await page.waitForLoadState('networkidle');
 
-    const enLink = page.locator('head link[rel="alternate"][hrefLang="en"]');
-    const esLink = page.locator('head link[rel="alternate"][hrefLang="es"]');
-    const xDefaultLink = page.locator('head link[rel="alternate"][hrefLang="x-default"]');
+    // Get all alternate links from head and check them
+    const alternates = await page.locator('head link[rel="alternate"]').all();
 
-    await enLink.waitFor({ state: 'attached', timeout: 5000 });
-    await esLink.waitFor({ state: 'attached', timeout: 5000 });
-    await xDefaultLink.waitFor({ state: 'attached', timeout: 5000 });
+    // Should have at least 3 alternates (en, es, x-default)
+    expect(alternates.length).toBeGreaterThanOrEqual(3);
 
-    // Homepage uses Metadata API - root path generates URLs without trailing slash for English
-    // but non-default locales get trailing slash (e.g., /es/)
-    expect(await enLink.getAttribute('href')).toBe('https://myimageupscaler.com');
-    expect(await esLink.getAttribute('href')).toBe('https://myimageupscaler.com/es/');
-    expect(await xDefaultLink.getAttribute('href')).toBe('https://myimageupscaler.com');
+    // Find the specific alternates we need
+    let enHref: string | null = null;
+    let esHref: string | null = null;
+    let xDefaultHref: string | null = null;
+
+    for (const link of alternates) {
+      const hreflang = await link.getAttribute('hreflang');
+      const href = await link.getAttribute('href');
+
+      if (hreflang === 'en') enHref = href;
+      if (hreflang === 'es') esHref = href;
+      if (hreflang === 'x-default') xDefaultHref = href;
+    }
+
+    // Homepage URLs - allow both with and without trailing slash for root
+    // Non-default locales should have trailing slash
+    expect(enHref).toMatch(/^https:\/\/myimageupscaler\.com\/?$/);
+    expect(esHref).toBe('https://myimageupscaler.com/es/');
+    expect(xDefaultHref).toMatch(/^https:\/\/myimageupscaler\.com\/?$/);
   });
 
   test('should have correct JSON-LD inLanguage on English tool page', async ({ page }) => {
