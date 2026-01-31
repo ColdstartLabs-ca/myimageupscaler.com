@@ -30,18 +30,20 @@ import type { PSEOCategory } from './url-utils';
 export function generateHreflangAlternates(path: string): Record<string, string> {
   const alternates: Record<string, string> = {};
 
-  // Ensure path does NOT have trailing slash for consistency (except root)
-  const normalizedPath = path === '/' ? '/' : path.replace(/\/$/, '');
+  // Remove trailing slash for consistency (including root for homepage)
+  const normalizedPath = path.replace(/\/$/, '');
 
   // Generate URL for each supported locale
   for (const locale of SUPPORTED_LOCALES) {
-    const localePath = getLocalizedPath(normalizedPath, locale);
+    const localePath = getLocalizedPath(normalizedPath || '/', locale);
     alternates[locale] = `${clientEnv.BASE_URL}${localePath}`;
   }
 
   // Add x-default pointing to the default locale (English)
   // This tells search engines to use the English version for unsupported languages
-  alternates['x-default'] = `${clientEnv.BASE_URL}${normalizedPath}`;
+  // For root path, use BASE_URL without trailing slash
+  alternates['x-default'] =
+    normalizedPath === '' ? clientEnv.BASE_URL : `${clientEnv.BASE_URL}${normalizedPath}`;
 
   return alternates;
 }
@@ -75,12 +77,19 @@ export function generatePSEOHreflangAlternates(
  * ```ts
  * getLocalizedPath('/tools/ai-upscaler', 'en'); // '/tools/ai-upscaler'
  * getLocalizedPath('/tools/ai-upscaler', 'es'); // '/es/tools/ai-upscaler'
+ * getLocalizedPath('/', 'en'); // ''
+ * getLocalizedPath('/', 'es'); // '/es'
  * ```
  */
 export function getLocalizedPath(path: string, locale: Locale): string {
-  // For default locale (English), no prefix
+  // For default locale (English), return path as-is
   if (locale === DEFAULT_LOCALE) {
     return path;
+  }
+
+  // Handle root path specially - return just the locale prefix
+  if (path === '' || path === '/') {
+    return `/${locale}`;
   }
 
   // Remove leading slash before adding locale prefix to avoid double slashes
@@ -142,9 +151,13 @@ export function getCanonicalUrl(path: string): string {
     return acc;
   }, path);
 
-  // Remove trailing slash for consistency (except root)
-  const normalizedPath =
-    pathWithoutLocale === '/' ? '/' : pathWithoutLocale.replace(/\/$/, '');
+  // Remove trailing slash for consistency (including root for homepage)
+  const normalizedPath = pathWithoutLocale.replace(/\/$/, '');
+
+  // If normalizedPath is empty (was root), return BASE_URL without trailing slash
+  if (normalizedPath === '') {
+    return clientEnv.BASE_URL;
+  }
 
   return `${clientEnv.BASE_URL}${normalizedPath}`;
 }

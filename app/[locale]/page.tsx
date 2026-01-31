@@ -3,7 +3,6 @@ import { Suspense } from 'react';
 import { HomePageClient } from '@client/components/pages/HomePageClient';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import { generateHomepageSchema } from '@lib/seo/schema-generator';
 import {
   getCanonicalUrl,
@@ -65,8 +64,6 @@ export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
 
   return (
     <>
-      {/* SEO meta tags for canonical URL and og:locale */}
-      <SeoMetaTags path="/" locale={locale} />
       {/* Hreflang links for multi-language SEO */}
       <HreflangLinks path="/" locale={locale} />
       <JsonLd data={homepageSchema} />

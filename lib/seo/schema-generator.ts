@@ -62,12 +62,7 @@ const ORGANIZATION_SCHEMA = {
   '@type': 'Organization',
   name: APP_NAME,
   url: BASE_URL,
-  logo: {
-    '@type': 'ImageObject',
-    url: `${BASE_URL}/logo/vertical-logo-compact.png`,
-    width: 201,
-    height: 133,
-  },
+  logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
   sameAs: [
     `https://twitter.com/${TWITTER_HANDLE}`,
     `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
@@ -143,6 +138,7 @@ export function generateToolSchema(tool: IToolPage, locale: Locale = 'en'): obje
           '@type': 'Offer',
           price: 0,
           priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
           description: 'Free tier with 10 credits',
         },
         aggregateRating: {
@@ -602,6 +598,7 @@ export function generateHomepageSchema(locale: Locale = 'en'): Record<string, un
           '@type': 'Offer',
           price: 0,
           priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
           description: 'Free tier with 10 credits',
         },
         aggregateRating: {

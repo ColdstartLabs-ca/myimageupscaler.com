@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowLeftRight } from 'lucide-react';
+import Image from 'next/image';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface IBeforeAfterSliderProps {
@@ -80,13 +81,14 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
       onTouchStart={handleMouseDown}
     >
       {/* After Image (Background) */}
-      <img
+      <Image
         src={afterUrl}
         alt={afterLabel}
-        className="w-full h-full object-cover select-none"
+        fill
+        sizes="(max-width: 768px) 100vw, 50vw"
+        className="object-cover select-none"
         draggable={false}
-        loading="eager"
-        fetchPriority="high"
+        priority
       />
 
       {/* Before Image (Foreground - Clipped) */}
@@ -94,13 +96,14 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
         className="absolute top-0 left-0 w-full h-full select-none overflow-hidden"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       >
-        <img
+        <Image
           src={beforeUrl}
           alt={beforeLabel}
-          className="w-full h-full object-cover"
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover"
           draggable={false}
-          loading="eager"
-          fetchPriority="high"
+          priority
         />
       </div>
 

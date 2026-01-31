@@ -24,7 +24,7 @@
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
     "tsc": "tsc --noEmit",
     "prepare": "husky",
-    "verify": "npm run tsc && npm run lint && npm run i18n:icu",
+    "verify": "npm run tsc && npm run lint && npm run i18n:icu && npm run validate:seo:schema",
     "verify:full": "npm run verify && npm run test:unit && npm run test:e2e:full",
     "test:e2e": "playwright test --project=chromium",
     "test:e2e:full": "playwright test",
@@ -60,7 +60,8 @@
     "validate:seo:pseo:verbose": "tsx scripts/validate-pseo-data.ts --verbose",
     "validate:seo:pseo:http": "tsx scripts/validate-pseo-data.ts --curl",
     "validate:seo:pseo:http:verbose": "tsx scripts/validate-pseo-data.ts --curl --verbose",
-    "validate:seo:all": "yarn validate:seo:pseo && yarn validate:seo:internal-links"
+    "validate:seo:all": "yarn validate:seo:pseo && yarn validate:seo:internal-links",
+    "validate:seo:schema": "tsx scripts/validate-schema.ts"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.31.3",

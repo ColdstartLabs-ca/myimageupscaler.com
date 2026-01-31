@@ -16,6 +16,21 @@ export async function generateMetadata({ params }: IFeaturesPageProps): Promise<
   return {
     title: `Features | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
     description: `Discover powerful features of ${clientEnv.APP_NAME}: Text preservation, batch processing, ethical AI, lightning fast upscaling, and more.`,
+    openGraph: {
+      title: `Features | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
+      description: `Discover powerful features of ${clientEnv.APP_NAME}: Text preservation, batch processing, ethical AI, lightning fast upscaling, and more.`,
+      type: 'website',
+      url: getCanonicalUrl('/features'),
+      siteName: clientEnv.APP_NAME,
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: `${clientEnv.APP_NAME} Features`,
+        },
+      ],
+    },
     alternates: {
       canonical: getCanonicalUrl('/features'),
     },

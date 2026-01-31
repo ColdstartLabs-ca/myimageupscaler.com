@@ -25,6 +25,17 @@ export async function generateMetadata({ params }: IBlogPageProps): Promise<Meta
     openGraph: {
       title: `${title} | ${clientEnv.APP_NAME}`,
       description,
+      type: 'website',
+      url: `${clientEnv.BASE_URL}/blog`,
+      siteName: clientEnv.APP_NAME,
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
   };
 }
