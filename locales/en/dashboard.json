@@ -66,6 +66,21 @@
     },
     "success": {
       "subscriptionCanceled": "Subscription canceled successfully. Access continues until period end."
+    },
+    "creditHistory": {
+      "title": "Credit History",
+      "subtitle": "View your credit transactions",
+      "type": {
+        "purchase": "Purchase",
+        "subscription": "Subscription",
+        "usage": "Usage",
+        "refund": "Refund",
+        "bonus": "Bonus"
+      },
+      "noTransactions": "No credit transactions yet",
+      "loading": "Loading credit history...",
+      "error": "Failed to load credit history",
+      "loadMore": "Load More"
     }
   },
   "settings": {

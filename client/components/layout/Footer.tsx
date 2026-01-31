@@ -43,6 +43,14 @@ export const Footer = (): JSX.Element => {
             </h4>
             <ul className="space-y-4 text-sm font-medium">
               <li>
+                <Link
+                  href={localizedPath('/about')}
+                  className="hover:text-accent transition-colors"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
                 <Link href="/pricing" className="hover:text-accent transition-colors">
                   {t('pricingPlans')}
                 </Link>
@@ -61,6 +69,14 @@ export const Footer = (): JSX.Element => {
               {t('support')}
             </h4>
             <ul className="space-y-4 text-sm font-medium">
+              <li>
+                <Link
+                  href={localizedPath('/contact')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Contact Us
+                </Link>
+              </li>
               <li>
                 <Link href="/help" className="hover:text-accent transition-colors">
                   {t('helpCenter')}

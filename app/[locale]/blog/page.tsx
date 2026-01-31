@@ -1,15 +1,16 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getAllPosts } from '@server/blog';
+import { getAllPublishedPosts } from '@server/services/blog.service';
 import { Calendar, Clock, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { clientEnv } from '@shared/config/env';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { BlogSearch } from '@client/components/blog/BlogSearch';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { Locale } from '@/i18n/config';
 
 interface IBlogPageProps {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<{ page?: string; q?: string }>;
 }
 
@@ -30,21 +31,12 @@ export async function generateMetadata({ params }: IBlogPageProps): Promise<Meta
 
 const POSTS_PER_PAGE = 6;
 
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
 export default async function BlogPage({ params, searchParams }: IBlogPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const searchQueryParams = await searchParams;
   const t = await getTranslations('blog');
-  const allPosts = getAllPosts();
+  const allPosts = await getAllPublishedPosts();
   const searchQuery = searchQueryParams.q?.toLowerCase().trim();
 
   // Filter posts by search query
@@ -60,15 +52,12 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
 
   const [featuredPost, ...otherPosts] = filteredPosts;
 
-  // Shuffle the other posts (only when not searching)
-  const shuffledPosts = searchQuery ? otherPosts : shuffleArray(otherPosts);
-
   // Calculate pagination
   const currentPage = Number(searchQueryParams.page) || 1;
-  const totalPages = Math.ceil(shuffledPosts.length / POSTS_PER_PAGE);
+  const totalPages = Math.ceil(otherPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
-  const displayedPosts = shuffledPosts.slice(startIndex, endIndex);
+  const displayedPosts = otherPosts.slice(startIndex, endIndex);
 
   return (
     <div className="min-h-screen bg-main">
@@ -110,7 +99,6 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 768px) 100vw, 40vw"
-                        unoptimized
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-secondary/10 to-tertiary/20 flex items-center justify-center">
@@ -166,12 +154,12 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
       {/* Blog Posts Grid */}
       <section className="pb-24">
         <div className="container mx-auto px-4 max-w-6xl">
-          {shuffledPosts.length === 0 && !featuredPost ? (
+          {otherPosts.length === 0 && !featuredPost ? (
             <div className="text-center py-20 bg-surface rounded-3xl border border-border">
               <Sparkles className="w-12 h-12 text-accent/50 mx-auto mb-4" />
               <p className="text-text-secondary text-lg">{t('listing.noPosts')}</p>
             </div>
-          ) : shuffledPosts.length > 0 ? (
+          ) : otherPosts.length > 0 ? (
             <>
               <h2 className="font-display text-2xl font-bold text-white mb-8">
                 {t('listing.moreArticles')}
@@ -197,7 +185,6 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            unoptimized
                           />
                         ) : (
                           <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-secondary/5 to-surface-light flex items-center justify-center">

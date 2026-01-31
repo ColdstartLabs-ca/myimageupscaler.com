@@ -43,8 +43,8 @@ export default async function PlatformPage({ params }: IPlatformPageProps) {
     <>
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale="en" />
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} />
+      {/* Hreflang links - platforms is English-only, no locale variants */}
+      <HreflangLinks path={path} category="platforms" locale="en" />
       <SchemaMarkup schema={schema} />
       <PlatformPageTemplate data={platform} locale="en" />
     </>

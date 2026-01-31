@@ -82,6 +82,12 @@ export const getSecurityHeaders = (): Record<string, string> => ({
     ? 'no-referrer-when-downgrade'
     : 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  // HSTS header for HTTPS enforcement (only in production with HTTPS)
+  ...(isDevelopment()
+    ? {}
+    : {
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      }),
 });
 
 /**
@@ -106,4 +112,6 @@ export const PUBLIC_API_ROUTES = [
   '/api/cron/*', // Cron routes use x-cron-secret header auth, not JWT
   '/api/proxy-image', // Download proxy for CORS bypass (validates allowed domains internally)
   '/api/support/*', // Support contact form (public, uses validation and rate limiting)
+  '/api/blog/*', // Blog API routes use x-api-key header auth, not JWT
+  '/api/migrate-blog', // Temporary migration endpoint (uses x-migration-token header auth)
 ] as const;

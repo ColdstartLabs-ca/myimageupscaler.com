@@ -91,9 +91,9 @@ export function generateReviewSchemas(products: IProduct[]): object[] {
     },
     reviewRating: {
       '@type': 'Rating',
-      ratingValue: product.rating?.toString() || '4.8',
-      bestRating: '5',
-      worstRating: '1',
+      ratingValue: product.rating || 4.8,
+      bestRating: 5,
+      worstRating: 1,
     },
     author: {
       '@type': 'Organization',
@@ -141,16 +141,16 @@ export function generateToolSchema(tool: IToolPage, locale: Locale = 'en'): obje
         inLanguage: language,
         offers: {
           '@type': 'Offer',
-          price: '0',
+          price: 0,
           priceCurrency: 'USD',
           description: 'Free tier with 10 credits',
         },
         aggregateRating: {
           '@type': 'AggregateRating',
-          ratingValue: '4.8',
-          ratingCount: '1250',
-          bestRating: '5',
-          worstRating: '1',
+          ratingValue: 4.8,
+          ratingCount: 1250,
+          bestRating: 5,
+          worstRating: 1,
         },
         author: ORGANIZATION_SCHEMA,
         publisher: ORGANIZATION_SCHEMA,
@@ -600,16 +600,16 @@ export function generateHomepageSchema(locale: Locale = 'en'): Record<string, un
         inLanguage: language,
         offers: {
           '@type': 'Offer',
-          price: '0',
+          price: 0,
           priceCurrency: 'USD',
           description: 'Free tier with 10 credits',
         },
         aggregateRating: {
           '@type': 'AggregateRating',
-          ratingValue: '4.8',
-          reviewCount: '1250',
-          bestRating: '5',
-          worstRating: '1',
+          ratingValue: 4.8,
+          reviewCount: 1250,
+          bestRating: 5,
+          worstRating: 1,
         },
         author: ORGANIZATION_SCHEMA,
         publisher: ORGANIZATION_SCHEMA,
@@ -681,15 +681,15 @@ export function generatePricingSchema(): object {
           name: 'Subscription Plans',
           description: 'Multiple subscription tiers with different credit allowances and features',
           priceCurrency: 'USD',
-          lowPrice: '9.00',
-          highPrice: '149.00',
-          offerCount: '4',
+          lowPrice: 9.0,
+          highPrice: 149.0,
+          offerCount: 4,
           offers: [
             {
               '@type': 'Offer',
               name: 'Starter Plan',
               description: 'Perfect for getting started with 100 credits per month',
-              price: '9.00',
+              price: 9.0,
               priceCurrency: 'USD',
               priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
                 .toISOString()
@@ -701,7 +701,7 @@ export function generatePricingSchema(): object {
               '@type': 'Offer',
               name: 'Hobby Plan',
               description: 'For personal projects with 200 credits per month',
-              price: '19.00',
+              price: 19.0,
               priceCurrency: 'USD',
               priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
                 .toISOString()
@@ -713,7 +713,7 @@ export function generatePricingSchema(): object {
               '@type': 'Offer',
               name: 'Pro Plan',
               description: 'For professionals with 1000 credits per month',
-              price: '49.00',
+              price: 49.0,
               priceCurrency: 'USD',
               priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
                 .toISOString()
@@ -726,7 +726,7 @@ export function generatePricingSchema(): object {
               '@type': 'Offer',
               name: 'Business Plan',
               description: 'For teams and agencies with 5000 credits per month',
-              price: '149.00',
+              price: 149.0,
               priceCurrency: 'USD',
               priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
                 .toISOString()
@@ -738,10 +738,10 @@ export function generatePricingSchema(): object {
         },
         aggregateRating: {
           '@type': 'AggregateRating',
-          ratingValue: '4.8',
-          ratingCount: '1250',
-          bestRating: '5',
-          worstRating: '1',
+          ratingValue: 4.8,
+          ratingCount: 1250,
+          bestRating: 5,
+          worstRating: 1,
         },
       },
       {

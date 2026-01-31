@@ -1,16 +1,25 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Features from '@client/components/features/landing/Features';
 import { CTASection } from '@client/components/features/landing/CTASection';
 import { clientEnv } from '@shared/config/env';
-
-export const metadata: Metadata = {
-  title: `Features | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
-  description: `Discover powerful features of ${clientEnv.APP_NAME}: Text preservation, batch processing, ethical AI, lightning fast upscaling, and more.`,
-};
+import { getCanonicalUrl } from '@lib/seo/hreflang-generator';
+import type { Locale } from '@/i18n/config';
 
 interface IFeaturesPageProps {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
+}
+
+export async function generateMetadata({ params }: IFeaturesPageProps): Promise<Metadata> {
+  await params;
+
+  return {
+    title: `Features | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
+    description: `Discover powerful features of ${clientEnv.APP_NAME}: Text preservation, batch processing, ethical AI, lightning fast upscaling, and more.`,
+    alternates: {
+      canonical: getCanonicalUrl('/features'),
+    },
+  };
 }
 
 export default async function FeaturesPage({ params }: IFeaturesPageProps) {

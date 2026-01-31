@@ -6,10 +6,11 @@ export interface IInputFieldProps extends React.InputHTMLAttributes<HTMLInputEle
   className?: string;
   error?: string;
   success?: boolean;
+  ariaLabel?: string;
 }
 
 export const InputField = forwardRef<HTMLInputElement, IInputFieldProps>(
-  ({ type, placeholder, className, error, success, ...props }, ref) => {
+  ({ type, placeholder, className, error, success, ariaLabel, ...props }, ref) => {
     const getBorderClasses = () => {
       if (error) {
         return 'border-red-500 ring-2 ring-red-500/20 focus:border-red-500 focus:ring-red-500/20';
@@ -26,6 +27,7 @@ export const InputField = forwardRef<HTMLInputElement, IInputFieldProps>(
           ref={ref}
           type={type}
           placeholder={placeholder}
+          aria-label={ariaLabel || placeholder}
           className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-surface ${getBorderClasses()} ${className || ''} text-foreground placeholder:text-muted-foreground`}
           {...props}
         />

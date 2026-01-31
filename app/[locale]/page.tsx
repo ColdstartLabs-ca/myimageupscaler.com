@@ -8,7 +8,7 @@ import {
   getOpenGraphLocale,
   generateHreflangAlternates,
 } from '@/lib/seo/hreflang-generator';
-import { clientEnv } from '@shared/config/env';
+import { serverEnv } from '@shared/config/env';
 import type { Locale } from '@/i18n/config';
 
 interface ILocaleHomePageProps {
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: ILocaleHomePageProps): Promis
       type: 'website',
       url: '/',
       locale: ogLocale,
-      siteName: clientEnv.APP_NAME,
+      siteName: serverEnv.APP_NAME,
       images: [
         {
           url: '/og-image.png',

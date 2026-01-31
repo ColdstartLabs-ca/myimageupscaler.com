@@ -13,6 +13,7 @@ import {
   Calendar,
   CreditCard,
   ExternalLink,
+  History,
   Loader2,
   Package,
   Plus,
@@ -26,6 +27,15 @@ import { useEffect, useState } from 'react';
 // Extend dayjs with relativeTime plugin
 dayjs.extend(relativeTime);
 
+interface ICreditTransaction {
+  id: string;
+  amount: number;
+  type: 'purchase' | 'subscription' | 'usage' | 'refund' | 'bonus';
+  reference_id: string | null;
+  description: string | null;
+  created_at: string;
+}
+
 export default function BillingPage() {
   const router = useRouter();
   const { showToast } = useToastStore();
@@ -37,9 +47,39 @@ export default function BillingPage() {
   const [error, setError] = useState<string | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
+  // Credit history state
+  const [creditTransactions, setCreditTransactions] = useState<ICreditTransaction[]>([]);
+  const [creditHistoryLoading, setCreditHistoryLoading] = useState(true);
+  const [creditHistoryError, setCreditHistoryError] = useState<string | null>(null);
+  const [hasMoreTransactions, setHasMoreTransactions] = useState(false);
+
   useEffect(() => {
     loadBillingData();
+    loadCreditHistory();
   }, []);
+
+  const loadCreditHistory = async (append: boolean = false) => {
+    try {
+      setCreditHistoryLoading(true);
+      setCreditHistoryError(null);
+
+      const offset = append ? creditTransactions.length : 0;
+      const result = await StripeService.getCreditHistory(50, offset);
+
+      if (append) {
+        setCreditTransactions(prev => [...prev, ...result.transactions]);
+      } else {
+        setCreditTransactions(result.transactions);
+      }
+
+      setHasMoreTransactions(result.pagination.total > offset + result.transactions.length);
+    } catch (err) {
+      console.error('Error loading credit history:', err);
+      setCreditHistoryError('Failed to load credit history');
+    } finally {
+      setCreditHistoryLoading(false);
+    }
+  };
 
   const loadBillingData = async () => {
     try {
@@ -167,7 +207,10 @@ export default function BillingPage() {
           <p className="text-muted-foreground mt-1">{t('subtitle')}</p>
         </div>
         <button
-          onClick={loadBillingData}
+          onClick={() => {
+            loadBillingData();
+            loadCreditHistory();
+          }}
           className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-white hover:bg-surface/10 rounded-lg transition-colors"
           title={t('refresh')}
         >
@@ -301,7 +344,10 @@ export default function BillingPage() {
 
         <CreditPackSelector
           onPurchaseStart={() => {}}
-          onPurchaseComplete={() => loadBillingData()}
+          onPurchaseComplete={() => {
+            loadBillingData();
+            loadCreditHistory();
+          }}
           onError={error =>
             showToast({
               message: error.message,
@@ -316,6 +362,93 @@ export default function BillingPage() {
             {subscription ? t('subscriptionBetterValue') : t('subscribeBetterValue')}
           </p>
         </div>
+      </div>
+
+      {/* Credit History */}
+      <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
+            <History size={20} className="text-muted-foreground" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-white">{t('creditHistory.title')}</h2>
+            <p className="text-sm text-muted-foreground">{t('creditHistory.subtitle')}</p>
+          </div>
+        </div>
+
+        {creditHistoryLoading && creditTransactions.length === 0 ? (
+          <div className="text-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">{t('creditHistory.loading')}</p>
+          </div>
+        ) : creditHistoryError ? (
+          <div className="bg-error/10 border border-error/20 rounded-lg p-4 text-center">
+            <p className="text-sm text-error">{creditHistoryError}</p>
+          </div>
+        ) : creditTransactions.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <p>{t('creditHistory.noTransactions')}</p>
+          </div>
+        ) : (
+          <>
+            <div className="space-y-2">
+              {creditTransactions.map(transaction => (
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between p-3 bg-surface-light rounded-lg"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-white">
+                        {t(`creditHistory.type.${transaction.type}`)}
+                      </span>
+                      <span className="text-xs px-2 py-0.5 rounded bg-surface text-muted-foreground">
+                        {transaction.type}
+                      </span>
+                    </div>
+                    {transaction.description && (
+                      <p className="text-xs text-muted-foreground mt-1 truncate">
+                        {transaction.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p
+                        className={`text-sm font-medium ${
+                          transaction.amount >= 0 ? 'text-green-400' : 'text-red-400'
+                        }`}
+                      >
+                        {transaction.amount >= 0 ? '+' : ''}
+                        {transaction.amount}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(transaction.created_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {hasMoreTransactions && (
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => loadCreditHistory(true)}
+                  disabled={creditHistoryLoading}
+                  className="px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors disabled:opacity-50 inline-flex items-center gap-2"
+                >
+                  {creditHistoryLoading ? <Loader2 size={14} className="animate-spin" /> : null}
+                  {t('creditHistory.loadMore')}
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Payment Methods / Manage Subscription */}

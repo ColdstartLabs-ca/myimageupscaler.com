@@ -1,1 +1,1 @@
-yarn tsc
+yarn verify && yarn format && yarn test

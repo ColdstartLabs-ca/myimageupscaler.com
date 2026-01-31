@@ -9,6 +9,7 @@ export interface IBeforeAfterSliderProps {
   beforeLabel?: string;
   afterLabel?: string;
   className?: string;
+  aspectRatio?: string;
 }
 
 export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
@@ -17,6 +18,7 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
   beforeLabel = 'Before',
   afterLabel = 'After',
   className = '',
+  aspectRatio = '16/9',
 }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -73,6 +75,7 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
     <div
       ref={containerRef}
       className={`relative w-full overflow-hidden cursor-col-resize select-none rounded-lg ${className}`}
+      style={{ aspectRatio }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleMouseDown}
     >

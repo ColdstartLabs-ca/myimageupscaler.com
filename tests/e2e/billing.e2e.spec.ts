@@ -48,28 +48,28 @@ test.describe('Billing E2E Tests', () => {
       // Click Get Started button (first one)
       await getStartedButtons.first().click();
 
-      // Wait a moment for the modal/toast to appear (avoid networkIdle due to Supabase connection)
-      await page.waitForTimeout(1000);
+      // Wait for modal to appear with a reasonable timeout
+      // The modal uses id="authenticationModal" and has role="dialog"
+      const authModal = page.locator('#authenticationModal[role="dialog"]');
 
-      // Check that auth modal is shown - now opens register modal for new users
-      const authModal = page
-        .locator('#authenticationModal')
-        .or(page.locator('div[role="dialog"]').filter({ hasText: /create account|register|email/i }));
+      // Wait for either the modal or a toast notification to appear
+      // Use Promise.race to wait for either condition
+      const modalPromise = authModal
+        .isVisible({ timeout: 5000 })
+        .then(visible => ({ type: 'modal', visible }))
+        .catch(() => ({ type: 'modal', visible: false }));
 
-      // Also check for toast notification
-      const toast = page
-        .locator('[role="status"]')
-        .or(page.locator('.toast'))
-        .or(page.locator('text=/Please create an account/i'));
+      const toast = page.locator('[role="alert"], [data-sonner-toast], .toast');
+      const toastPromise = toast
+        .filter({ hasText: /account|create|register/i })
+        .isVisible({ timeout: 5000 })
+        .then(visible => ({ type: 'toast', visible }))
+        .catch(() => ({ type: 'toast', visible: false }));
 
-      // Wait a moment for the modal/toast to appear
-      await page.waitForTimeout(500);
-
-      const isModalVisible = await authModal.isVisible().catch(() => false);
-      const isToastVisible = await toast.isVisible().catch(() => false);
+      const [modalResult, toastResult] = await Promise.all([modalPromise, toastPromise]);
 
       // At least one of these should be visible
-      expect(isModalVisible || isToastVisible).toBe(true);
+      expect(modalResult.visible || toastResult.visible).toBe(true);
 
       // Should still be on pricing page
       expect(page.url()).toContain('/pricing');
@@ -415,23 +415,25 @@ test.describe('Billing E2E Tests', () => {
       await expect(pricingPage.pageTitle).toBeVisible();
 
       // Check for auth modal or toast notification
-      const authModal = page
-        .locator('#authenticationModal')
-        .or(page.locator('div[role="dialog"]').filter({ hasText: /create account|register|email/i }));
+      // Wait for either the modal or a toast notification to appear
+      const authModal = page.locator('#authenticationModal[role="dialog"]');
 
-      const toast = page
-        .locator('[role="status"]')
-        .or(page.locator('.toast'))
-        .or(page.locator('text=/Please create an account/i'));
+      const modalPromise = authModal
+        .isVisible({ timeout: 5000 })
+        .then(visible => ({ type: 'modal', visible }))
+        .catch(() => ({ type: 'modal', visible: false }));
 
-      // Wait a moment for the modal/toast to appear
-      await page.waitForTimeout(500);
+      const toast = page.locator('[role="alert"], [data-sonner-toast], .toast');
+      const toastPromise = toast
+        .filter({ hasText: /account|create|register/i })
+        .isVisible({ timeout: 5000 })
+        .then(visible => ({ type: 'toast', visible }))
+        .catch(() => ({ type: 'toast', visible: false }));
 
-      const isModalVisible = await authModal.isVisible().catch(() => false);
-      const isToastVisible = await toast.isVisible().catch(() => false);
+      const [modalResult, toastResult] = await Promise.all([modalPromise, toastPromise]);
 
       // At least one of these should be visible for unauthenticated users
-      expect(isModalVisible || isToastVisible).toBe(true);
+      expect(modalResult.visible || toastResult.visible).toBe(true);
 
       // Screenshot after action
       await pricingPage.screenshot('pro-get-started-click');

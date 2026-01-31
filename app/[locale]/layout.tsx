@@ -10,10 +10,10 @@ import { GoogleAnalytics } from '@client/components/analytics/GoogleAnalytics';
 import { Layout } from '@client/components/layout/Layout';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { SUPPORTED_LOCALES, isValidLocale } from '@/i18n/config';
-import { clientEnv } from '@shared/config/env';
+import { serverEnv } from '@shared/config/env';
 import '@client/styles/index.css';
 
-const APP_NAME = clientEnv.APP_NAME;
+const APP_NAME = serverEnv.APP_NAME;
 
 const inter = Inter({
   subsets: ['latin'],
@@ -42,7 +42,7 @@ export async function generateMetadata({
   await params;
 
   return {
-    metadataBase: new URL(clientEnv.BASE_URL),
+    metadataBase: new URL(serverEnv.BASE_URL),
     title: {
       default: `${APP_NAME} - Image Upscaling & Enhancement`,
       template: `%s | ${APP_NAME}`,
@@ -90,7 +90,7 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: APP_NAME,
-    url: clientEnv.BASE_URL,
+    url: serverEnv.BASE_URL,
     inLanguage: locale,
     description:
       'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
@@ -100,8 +100,11 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: APP_NAME,
-    url: clientEnv.BASE_URL,
-    logo: `${clientEnv.BASE_URL}/logo/horizontal-logo-full.png`,
+    url: serverEnv.BASE_URL,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${serverEnv.BASE_URL}/logo/horizontal-logo-full.png`,
+    },
     description: 'AI-powered image upscaling and enhancement platform',
   };
 
@@ -112,6 +115,8 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://analytics.ahrefs.com" />

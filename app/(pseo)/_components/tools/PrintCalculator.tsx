@@ -65,11 +65,11 @@ export function PrintCalculator(): React.ReactElement {
       recommendation = 'Your image has plenty of resolution for this print size.';
     } else if (currentDPI >= 240) {
       quality = 'good';
-      recommendation = "Good quality print. Most people won't notice it's not 300 DPI.";
+      recommendation = 'Good quality print. Most people won&apos;t notice it&apos;s not 300 DPI.';
     } else if (currentDPI >= 150) {
       quality = 'acceptable';
       recommendation =
-        "Acceptable for viewing at arm's length. Consider upscaling for close-up viewing.";
+        'Acceptable for viewing at arm&apos;s length. Consider upscaling for close-up viewing.';
     } else {
       quality = 'poor';
       canPrint = false;

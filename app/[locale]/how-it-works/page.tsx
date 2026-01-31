@@ -1,16 +1,25 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import HowItWorks from '@client/components/features/landing/HowItWorks';
 import { CTASection } from '@client/components/features/landing/CTASection';
 import { clientEnv } from '@shared/config/env';
-
-export const metadata: Metadata = {
-  title: `How it Works | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
-  description: `Learn how ${clientEnv.APP_NAME} transforms your images in three simple steps: Upload, Process, and Download. Get professional results in seconds.`,
-};
+import { getCanonicalUrl } from '@lib/seo/hreflang-generator';
+import type { Locale } from '@/i18n/config';
 
 interface IHowItWorksPageProps {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
+}
+
+export async function generateMetadata({ params }: IHowItWorksPageProps): Promise<Metadata> {
+  await params;
+
+  return {
+    title: `How it Works | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
+    description: `Learn how ${clientEnv.APP_NAME} transforms your images in three simple steps: Upload, Process, and Download. Get professional results in seconds.`,
+    alternates: {
+      canonical: getCanonicalUrl('/how-it-works'),
+    },
+  };
 }
 
 export default async function HowItWorksPage({ params }: IHowItWorksPageProps) {

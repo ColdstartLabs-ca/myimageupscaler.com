@@ -56,7 +56,7 @@ export default async function PlatformFormatPage({ params }: IPlatformFormatPage
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale={locale} />
       {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="platform-format" locale={locale} />
       <SchemaMarkup schema={schema} />
       <PlatformFormatPageTemplate data={result.data} locale={locale} relatedPages={relatedPages} />
     </>

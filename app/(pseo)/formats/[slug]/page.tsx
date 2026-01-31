@@ -109,7 +109,7 @@ export default async function FormatPage({ params }: IFormatPageProps) {
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale="en" />
       {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="formats" locale="en" />
       <SchemaMarkup schema={schema} />
       <FormatPageTemplate data={format} locale="en" relatedPages={relatedPages} />
     </>

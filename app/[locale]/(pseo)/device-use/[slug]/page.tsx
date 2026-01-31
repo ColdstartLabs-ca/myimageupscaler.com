@@ -56,7 +56,7 @@ export default async function DeviceUsePage({ params }: IDeviceUsePageProps) {
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale={locale} />
       {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="device-use" locale={locale} />
       <SchemaMarkup schema={schema} />
       <DeviceUsePageTemplate data={result.data} locale={locale} relatedPages={relatedPages} />
     </>

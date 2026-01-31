@@ -50,18 +50,10 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
         "maxUpscale": "8x",
         "processingTime": "30-60 seconds typical",
-        "outputFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "outputFormats": ["JPEG", "PNG", "WebP"],
         "qualitySettings": "Adjustable JPEG quality 1-100%"
       },
       "useCases": [
@@ -160,13 +152,8 @@
           "answer": "Yes, you retain full rights to your upscaled images. Use them for any purpose - personal, commercial, print, or web."
         }
       ],
-      "relatedTools": [
-        "ai-photo-enhancer"
-      ],
-      "relatedGuides": [
-        "tiff-format-guide",
-        "how-to-upscale-images"
-      ],
+      "relatedTools": ["ai-photo-enhancer"],
+      "relatedGuides": ["tiff-format-guide", "how-to-upscale-images"],
       "ctaText": "Upscale Image Free",
       "ctaUrl": "/?signup=1"
     },
@@ -219,17 +206,9 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
         "processingTime": "20-45 seconds typical",
-        "outputFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "outputFormats": ["JPEG", "PNG", "WebP"],
         "preservesExif": "Optional - keep or strip metadata"
       },
       "useCases": [
@@ -328,13 +307,8 @@
           "answer": "Absolutely. Phone photos often have noise from small sensors and can benefit significantly from enhancement."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
-      "relatedGuides": [
-        "tiff-format-guide",
-        "raw-photography-guide"
-      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["tiff-format-guide", "raw-photography-guide"],
       "ctaText": "Enhance Photo Free",
       "ctaUrl": "/?signup=1"
     },
@@ -359,11 +333,7 @@
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "toolName": "AI Background Remover",
       "description": "Transform any image with professional background removal. Our AI uses advanced segmentation to detect subjects with pixel-perfect precision, handling complex edges like hair and fur that traditional tools struggle with.",
       "features": [
@@ -470,10 +440,7 @@
           "answer": "Since processing happens in your browser, the limit depends on your device's memory. Most devices handle images up to 4096x4096 pixels smoothly."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "relatedGuides": [],
       "ctaText": "Remove Background Free",
       "ctaUrl": "/tools/ai-background-remover"
@@ -498,11 +465,7 @@
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "toolName": "Remove BG Tool",
       "description": "The fastest way to remove BG from any image. Upload your photo and get a transparent background in seconds. Perfect for quick edits and batch processing.",
       "features": [
@@ -574,10 +537,7 @@
           "answer": "JPEG, PNG, and WebP images up to 10MB."
         }
       ],
-      "relatedTools": [
-        "ai-background-remover",
-        "ai-image-upscaler"
-      ],
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
       "relatedGuides": [],
       "ctaText": "Remove BG Now",
       "ctaUrl": "/tools/remove-bg"
@@ -602,11 +562,7 @@
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "toolName": "Transparent Background Maker",
       "description": "Turn any image into a transparent PNG. Our AI removes the background and creates clean transparent images ready for use in designs, websites, and presentations.",
       "features": [
@@ -678,10 +634,7 @@
           "answer": "Yes, the AI handles complex shapes, hair, and fine details while creating clean transparent edges."
         }
       ],
-      "relatedTools": [
-        "ai-background-remover",
-        "remove-bg"
-      ],
+      "relatedTools": ["ai-background-remover", "remove-bg"],
       "relatedGuides": [],
       "ctaText": "Make Transparent",
       "ctaUrl": "/tools/transparent-background-maker"
@@ -706,11 +659,7 @@
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "toolName": "Image Cutout Tool",
       "description": "Professional image cutouts without Photoshop. AI-powered tool that precisely cuts out subjects from photos, handling complex edges like hair and fur automatically.",
       "features": [
@@ -782,10 +731,7 @@
           "answer": "For most cutout tasks, our AI produces results comparable to manual Photoshop work but in seconds instead of minutes or hours."
         }
       ],
-      "relatedTools": [
-        "ai-background-remover",
-        "transparent-background-maker"
-      ],
+      "relatedTools": ["ai-background-remover", "transparent-background-maker"],
       "relatedGuides": [],
       "ctaText": "Cut Out Now",
       "ctaUrl": "/tools/image-cutout-tool"
@@ -811,8 +757,8 @@
       "toolName": "Smart AI Enhancement",
       "description": "Traditional upscalers apply the same settings to every image. Smart AI Enhancement is different - it analyzes your image to understand content type, existing quality, and fine details, then automatically selects the optimal processing approach for superior results.",
       "beforeAfterImages": {
-        "before": "/before-after/smart-ai/budget-edit-with-WITHOUT-smart-AI.png",
-        "after": "/before-after/smart-ai/budget-edit-with-smart-AI.png",
+        "before": "/before-after/smart-ai/budget-edit-with-WITHOUT-smart-AI.webp",
+        "after": "/before-after/smart-ai/budget-edit-with-smart-AI.webp",
         "beforeLabel": "Standard",
         "afterLabel": "Smart AI"
       },
@@ -844,17 +790,9 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
         "processingTime": "30-90 seconds depending on complexity",
-        "outputFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "outputFormats": ["JPEG", "PNG", "WebP"],
         "analysisFactors": "Content type, quality level, detail density, noise level"
       },
       "useCases": [
@@ -954,13 +892,8 @@
           "answer": "The AI uses advanced neural networks trained on millions of images to recognize faces, text, products, landscapes, artwork, and other content types within your image."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
-      "relatedGuides": [
-        "how-to-upscale-images"
-      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["how-to-upscale-images"],
       "ctaText": "Try Smart AI Enhancement",
       "ctaUrl": "/?signup=1"
     }

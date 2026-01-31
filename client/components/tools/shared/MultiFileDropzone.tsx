@@ -225,6 +225,7 @@ export const MultiFileDropzone: React.FC<IMultiFileDropzoneProps> = ({
           accept={getAcceptAttribute}
           multiple
           disabled={disabled}
+          aria-label={t('clickOrDrag')}
         />
 
         <div className="flex flex-col items-center justify-center text-center space-y-4 pointer-events-none select-none">

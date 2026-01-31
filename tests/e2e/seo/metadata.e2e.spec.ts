@@ -11,43 +11,61 @@ test.describe('SEO Metadata', () => {
   test('should have correct SEO metadata on English tool page', async ({ page }) => {
     await page.goto('/tools/ai-image-upscaler');
 
-    // Hreflang links
-    const enLink = page.locator('link[rel="alternate"][hrefLang="en"]');
-    const esLink = page.locator('link[rel="alternate"][hrefLang="es"]');
-    const xDefaultLink = page.locator('link[rel="alternate"][hrefLang="x-default"]');
+    // Wait for page to be loaded and metadata to be present
+    await page.waitForLoadState('domcontentloaded');
+
+    // Hreflang links - wait for them to be present in DOM
+    const enLink = page.locator('head link[rel="alternate"][hrefLang="en"]');
+    const esLink = page.locator('head link[rel="alternate"][hrefLang="es"]');
+    const xDefaultLink = page.locator('head link[rel="alternate"][hrefLang="x-default"]');
+
+    // Wait for elements to exist in DOM before checking counts
+    await enLink.waitFor({ state: 'attached', timeout: 5000 });
+    await esLink.waitFor({ state: 'attached', timeout: 5000 });
+    await xDefaultLink.waitFor({ state: 'attached', timeout: 5000 });
 
     await expect(enLink).toHaveCount(1);
     await expect(esLink).toHaveCount(1);
     await expect(xDefaultLink).toHaveCount(1);
 
+    // Note: hreflang URLs are generated without trailing slashes
     expect(await enLink.getAttribute('href')).toBe(
-      'https://myimageupscaler.com/tools/ai-image-upscaler/'
+      'https://myimageupscaler.com/tools/ai-image-upscaler'
     );
     expect(await esLink.getAttribute('href')).toBe(
-      'https://myimageupscaler.com/es/tools/ai-image-upscaler/'
+      'https://myimageupscaler.com/es/tools/ai-image-upscaler'
     );
     expect(await xDefaultLink.getAttribute('href')).toBe(
-      'https://myimageupscaler.com/tools/ai-image-upscaler/'
+      'https://myimageupscaler.com/tools/ai-image-upscaler'
     );
 
     // Canonical
     const canonicalLink = page.locator('head link[rel="canonical"]');
+    await canonicalLink.waitFor({ state: 'attached', timeout: 5000 });
     expect(await canonicalLink.getAttribute('href')).toBe(
       'https://myimageupscaler.com/tools/ai-image-upscaler'
     );
 
     // OpenGraph locale
     const ogLocale = page.locator('head meta[property="og:locale"]');
+    await ogLocale.waitFor({ state: 'attached', timeout: 5000 });
     expect(await ogLocale.getAttribute('content')).toBe('en_US');
   });
 
   test('should have correct SEO metadata on Spanish tool page', async ({ page }) => {
     await page.goto('/es/tools/ai-image-upscaler');
 
-    // Hreflang links
-    const enLink = page.locator('link[rel="alternate"][hrefLang="en"]');
-    const esLink = page.locator('link[rel="alternate"][hrefLang="es"]');
-    const xDefaultLink = page.locator('link[rel="alternate"][hrefLang="x-default"]');
+    // Wait for page to be loaded
+    await page.waitForLoadState('domcontentloaded');
+
+    // Hreflang links - wait for them to be present in DOM
+    const enLink = page.locator('head link[rel="alternate"][hrefLang="en"]');
+    const esLink = page.locator('head link[rel="alternate"][hrefLang="es"]');
+    const xDefaultLink = page.locator('head link[rel="alternate"][hrefLang="x-default"]');
+
+    await enLink.waitFor({ state: 'attached', timeout: 5000 });
+    await esLink.waitFor({ state: 'attached', timeout: 5000 });
+    await xDefaultLink.waitFor({ state: 'attached', timeout: 5000 });
 
     await expect(enLink).toHaveCount(1);
     await expect(esLink).toHaveCount(1);
@@ -55,21 +73,30 @@ test.describe('SEO Metadata', () => {
 
     // Canonical should point to English version (primary language)
     const canonicalLink = page.locator('head link[rel="canonical"]');
+    await canonicalLink.waitFor({ state: 'attached', timeout: 5000 });
     expect(await canonicalLink.getAttribute('href')).toBe(
       'https://myimageupscaler.com/tools/ai-image-upscaler'
     );
 
     // OpenGraph locale should be Spanish
     const ogLocale = page.locator('head meta[property="og:locale"]');
+    await ogLocale.waitFor({ state: 'attached', timeout: 5000 });
     expect(await ogLocale.getAttribute('content')).toBe('es_ES');
   });
 
   test('should have correct hreflang on category page', async ({ page }) => {
     await page.goto('/tools/');
 
-    const enLink = page.locator('link[rel="alternate"][hrefLang="en"]');
-    const esLink = page.locator('link[rel="alternate"][hrefLang="es"]');
-    const xDefaultLink = page.locator('link[rel="alternate"][hrefLang="x-default"]');
+    // Wait for page to be loaded
+    await page.waitForLoadState('domcontentloaded');
+
+    const enLink = page.locator('head link[rel="alternate"][hrefLang="en"]');
+    const esLink = page.locator('head link[rel="alternate"][hrefLang="es"]');
+    const xDefaultLink = page.locator('head link[rel="alternate"][hrefLang="x-default"]');
+
+    await enLink.waitFor({ state: 'attached', timeout: 5000 });
+    await esLink.waitFor({ state: 'attached', timeout: 5000 });
+    await xDefaultLink.waitFor({ state: 'attached', timeout: 5000 });
 
     await expect(enLink).toHaveCount(1);
     await expect(esLink).toHaveCount(1);
@@ -84,9 +111,16 @@ test.describe('SEO Metadata', () => {
   test('should have correct hreflang on homepage', async ({ page }) => {
     await page.goto('/');
 
-    const enLink = page.locator('link[rel="alternate"][hrefLang="en"]');
-    const esLink = page.locator('link[rel="alternate"][hrefLang="es"]');
-    const xDefaultLink = page.locator('link[rel="alternate"][hrefLang="x-default"]');
+    // Wait for page to be loaded
+    await page.waitForLoadState('domcontentloaded');
+
+    const enLink = page.locator('head link[rel="alternate"][hrefLang="en"]');
+    const esLink = page.locator('head link[rel="alternate"][hrefLang="es"]');
+    const xDefaultLink = page.locator('head link[rel="alternate"][hrefLang="x-default"]');
+
+    await enLink.waitFor({ state: 'attached', timeout: 5000 });
+    await esLink.waitFor({ state: 'attached', timeout: 5000 });
+    await xDefaultLink.waitFor({ state: 'attached', timeout: 5000 });
 
     // Homepage uses Metadata API - root path generates URLs without trailing slash for English
     // but non-default locales get trailing slash (e.g., /es/)
@@ -98,7 +132,13 @@ test.describe('SEO Metadata', () => {
   test('should have correct JSON-LD inLanguage on English tool page', async ({ page }) => {
     await page.goto('/tools/ai-image-upscaler');
 
+    // Wait for page to be loaded and scripts to be present
+    await page.waitForLoadState('domcontentloaded');
+
     const schemaScripts = page.locator('script[type="application/ld+json"]');
+    // Wait for at least one script to be present
+    await schemaScripts.first().waitFor({ state: 'attached', timeout: 5000 });
+
     const count = await schemaScripts.count();
     expect(count).toBeGreaterThan(0);
 
@@ -127,7 +167,13 @@ test.describe('SEO Metadata', () => {
   test('should have correct JSON-LD inLanguage on Spanish tool page', async ({ page }) => {
     await page.goto('/es/tools/ai-image-upscaler');
 
+    // Wait for page to be loaded and scripts to be present
+    await page.waitForLoadState('domcontentloaded');
+
     const schemaScripts = page.locator('script[type="application/ld+json"]');
+    // Wait for at least one script to be present
+    await schemaScripts.first().waitFor({ state: 'attached', timeout: 5000 });
+
     const count = await schemaScripts.count();
     expect(count).toBeGreaterThan(0);
 

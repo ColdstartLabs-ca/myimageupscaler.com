@@ -26,7 +26,7 @@ const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number]) => ({
   },
   offers: {
     '@type': 'Offer',
-    price: tier.priceValue.toFixed(2),
+    price: tier.priceValue,
     priceCurrency: 'USD',
     availability: 'https://schema.org/InStock',
     priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1))

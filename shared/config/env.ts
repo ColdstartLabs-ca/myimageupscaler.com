@@ -242,6 +242,11 @@ const serverEnvSchema = z.object({
   ALLOW_TRANSACTIONAL_EMAILS_IN_DEV: z.coerce.boolean().default(false),
 
   // ==========================================
+  // BLOG API
+  // ==========================================
+  BLOG_API_KEY: z.string().default(''),
+
+  // ==========================================
   // MODEL VERSION OVERRIDES (optional)
   // Only set these if you need non-default versions
   // Defaults are defined in model-registry.ts
@@ -344,6 +349,9 @@ function loadServerEnv(): IServerEnv {
       'support@myimageupscaler.com',
     BASE_URL: process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
     ALLOW_TRANSACTIONAL_EMAILS_IN_DEV: process.env.ALLOW_TRANSACTIONAL_EMAILS_IN_DEV ?? 'false',
+
+    // Blog API
+    BLOG_API_KEY: process.env.BLOG_API_KEY || '',
 
     // Model Version Overrides (optional)
     MODEL_VERSION_REAL_ESRGAN: process.env.MODEL_VERSION_REAL_ESRGAN,

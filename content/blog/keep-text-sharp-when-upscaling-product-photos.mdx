@@ -10,11 +10,11 @@ image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&h=63
 
 You've found the perfect product image, but it's too small. You upscale it, and suddenly the brand name looks like it was written in fog. The ingredient list? Forget about it. Sound familiar?
 
-Text preservation is the Achilles heel of most image upscalers. But with the right approach, you can maintain readable text even when significantly enlarging your images.
+Text preservation is the [Achilles' heel](https://en.wikipedia.org/wiki/Achilles'_heel) of most image upscalers. But with the right approach, you can maintain readable text even when significantly enlarging your images.
 
 ## Why Text Is So Hard to Upscale
 
-Understanding the problem helps solve it. Here's why standard upscalers struggle with text:
+Understanding the problem helps solve it. Here's why standard upscalers struggle with text. This challenge is related to [optical character recognition (OCR)](https://en.wikipedia.org/wiki/Optical_character_recognition) and text detection in computer vision.
 
 ### The AI Training Problem
 
@@ -30,7 +30,7 @@ But text is fundamentally different:
 - Precise geometric shapes
 - No tolerance for interpretation
 
-When an AI trained on photos encounters text, it treats it like any other high-contrast area—and often smooths it out.
+When an AI trained on photos encounters text, it treats it like any other high-contrast area—and often smooths it out. This is fundamentally different from [natural image processing](https://en.wikipedia.org/wiki/Image_processing).
 
 ### The Rendering Challenge
 
@@ -66,7 +66,7 @@ Standard upscaler approach:
 3. Generate new pixels based on photo training
 
 Text-aware approach:
-1. Detect regions containing text
+1. Detect regions containing text ([text detection](https://en.wikipedia.org/wiki/Text_detection))
 2. Apply specialized text enhancement
 3. Maintain sharp edges and contrast
 4. Preserve character shapes precisely
@@ -90,7 +90,7 @@ Better input = better output. Before upscaling:
 
 ### Check Image Compression
 
-JPEG compression creates artifacts around text that get amplified during upscaling.
+[JPEG compression artifacts](https://en.wikipedia.org/wiki/JPEG#Compression_artifacts) create artifacts around text that get amplified during upscaling.
 
 **Before upscaling, convert if possible:**
 - JPEG → PNG (won't improve quality, but prevents further degradation)
@@ -124,7 +124,7 @@ For critical images where text must be perfect, consider this workflow:
 
 ### Step 1: Isolate Text Regions
 
-Using Photoshop, GIMP, or similar:
+Using [photo editing software](https://en.wikipedia.org/wiki/Raster_graphics_editor) like Photoshop, GIMP, or similar:
 1. Select areas containing text
 2. Copy to a new layer
 3. Keep a version with text regions masked out
@@ -167,9 +167,9 @@ After AI upscaling, you can enhance text further:
 
 ### Selective Sharpening
 
-In Photoshop or similar:
+In photo editing software:
 1. Select text regions (use color range or quick selection)
-2. Apply Unsharp Mask:
+2. Apply [Unsharp Mask](https://en.wikipedia.org/wiki/Unsharp_masking):
    - Amount: 80-120%
    - Radius: 0.5-1.0 pixels
    - Threshold: 0-5 levels
@@ -225,7 +225,7 @@ The image is 800×600 and needs to be 2400×1800 for your store's zoom feature.
 2. Mask the background in version A
 3. Mask everything except text in version B
 4. Upscale both with appropriate settings
-5. Composite in Photoshop
+5. Composite in photo editing software
 6. Final adjustments and export
 
 ### Quality Check
@@ -280,7 +280,7 @@ Sometimes the honest answer is that upscaling can't achieve your goals:
 ### Alternative Approaches:
 
 1. **Request better source files** from suppliers
-2. **Recreate text** by typing over in Photoshop
+2. **Recreate text** by typing over in photo editing software
 3. **Accept limitations** and use smaller display size
 4. **Professional retouching** for high-value images
 
@@ -308,6 +308,13 @@ For most e-commerce sellers, the simplest solution is using a text-aware AI upsc
 For critical applications where text absolutely must be perfect, the two-pass method (separating text and background) provides maximum control at the cost of additional time.
 
 Remember: the best results start with the best source. Whenever possible, obtain the highest quality original images before beginning any enhancement workflow.
+
+---
+
+**Further Reading:**
+- [Understanding typography and fonts](https://en.wikipedia.org/wiki/Typography)
+- [Learn about product photography best practices](https://en.wikipedia.org/wiki/Product_photography)
+- [Guide to image compression and quality](https://en.wikipedia.org/wiki/Image_compression)
 
 ---
 

@@ -169,6 +169,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
         accept="image/jpeg, image/png, image/webp"
         multiple
         disabled={disabled}
+        aria-label={t('dropzone.clickOrDragImages')}
       />
 
       {children ? (
