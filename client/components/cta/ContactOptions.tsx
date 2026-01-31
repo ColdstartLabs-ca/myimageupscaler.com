@@ -1,8 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { clientEnv } from '@shared/config/env';
 import { SupportModal } from '@client/components/modal/support/SupportModal';
 
 export function ContactOptions(): JSX.Element {
@@ -36,12 +34,7 @@ export function ContactOptions(): JSX.Element {
             onClick={() => setIsSupportModalOpen(true)}
             className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-white font-bold rounded-xl transition-all duration-300 gradient-cta shine-effect shadow-lg shadow-accent/20"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

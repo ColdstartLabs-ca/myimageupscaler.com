@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
     // Connection string for Supabase transaction mode pooler
     const connectionString = `postgresql://postgres.${projectRef}:${serverEnv.SUPABASE_SERVICE_ROLE_KEY}@aws-0-us-east-1.pooler.supabase.com:6543/postgres`;
 
+    // Dynamic import to avoid including pg in production bundle (this is a dev-only migration route)
+    // eslint-disable-next-line no-restricted-syntax
     const { Client } = await import('pg');
     const client = new Client({ connectionString });
 
@@ -98,21 +100,23 @@ CREATE TRIGGER on_blog_posts_updated
     return NextResponse.json({
       success: true,
       message: 'Migration applied successfully',
-      table: 'blog_posts'
+      table: 'blog_posts',
     });
-
   } catch (error) {
     console.error('Migration error:', error);
-    return NextResponse.json({
-      error: 'Migration failed',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Migration failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
 // Allow GET to check status
 export async function GET() {
   return NextResponse.json({
-    message: 'POST to this endpoint to apply the blog_posts migration'
+    message: 'POST to this endpoint to apply the blog_posts migration',
   });
 }

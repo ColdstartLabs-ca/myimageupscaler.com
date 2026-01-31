@@ -10,7 +10,8 @@
  * Search engines (Google, Bing) and browsers handle both forms correctly.
  */
 
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n/config';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
+import type { Locale } from '@/i18n/config';
 import { clientEnv } from '@shared/config/env';
 import { getLocalizedPath } from '@/lib/seo/hreflang-generator';
 import { isCategoryLocalized } from '@/lib/seo/localization-config';
@@ -38,7 +39,7 @@ export function HreflangLinks({ path, category, locale = 'en' }: IHreflangLinksP
 
   // Determine if this category is localized for all supported locales
   // If no category is provided, assume it's localized (backwards compatible)
-  const isLocalized = category === undefined || isCategoryLocalized(category, locale as any);
+  const isLocalized = category === undefined || isCategoryLocalized(category, locale as Locale);
 
   // If category is not localized, only add x-default (no hreflang links needed)
   if (!isLocalized) {

@@ -9,7 +9,7 @@ interface IAboutPageProps {
 }
 
 export async function generateMetadata({ params }: IAboutPageProps): Promise<Metadata> {
-  const { locale } = await params;
+  await params;
   const canonicalUrl = getCanonicalUrl('/about');
   const hreflangAlternates = generateHreflangAlternates('/about');
 
@@ -61,14 +61,17 @@ export default async function AboutPage({ params }: IAboutPageProps) {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-foreground mb-6">Our Mission</h2>
           <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-            {clientEnv.APP_NAME} was founded with a simple goal: to democratize professional-quality image
-            enhancement. We believe that everyone deserves access to powerful AI tools that can transform
-            their images without requiring expensive software or technical expertise.
+            {clientEnv.APP_NAME} was founded with a simple goal: to democratize professional-quality
+            image enhancement. We believe that everyone deserves access to powerful AI tools that
+            can transform their images without requiring expensive software or technical expertise.
+            We&apos;re committed to making professional-quality image enhancement accessible to
+            everyone.
           </p>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Our cutting-edge AI technology upcales images, enhances quality, and restores details while
-            preserving the natural look of your photos. Whether you're a photographer, e-commerce seller,
-            or just someone who wants to improve their personal photos, we're here to help.
+            Our cutting-edge AI technology upscales images, enhances quality, and restores details
+            while preserving the natural look of your photos. Whether you&apos;re a photographer,
+            e-commerce seller, or just someone who wants to improve their personal photos,
+            we&apos;re here to help.
           </p>
         </div>
       </section>
@@ -81,22 +84,22 @@ export default async function AboutPage({ params }: IAboutPageProps) {
             <div>
               <h3 className="text-xl font-semibold text-foreground mb-3">AI Image Upscaling</h3>
               <p className="text-muted-foreground">
-                Enlarge images up to 4x without losing quality. Our AI intelligently reconstructs details
-                for sharp, professional results.
+                Enlarge images up to 4x without losing quality. Our AI intelligently reconstructs
+                details for sharp, professional results.
               </p>
             </div>
             <div>
               <h3 className="text-xl font-semibold text-foreground mb-3">Photo Enhancement</h3>
               <p className="text-muted-foreground">
-                Automatically improve image quality by adjusting brightness, contrast, and clarity while
-                maintaining a natural look.
+                Automatically improve image quality by adjusting brightness, contrast, and clarity
+                while maintaining a natural look.
               </p>
             </div>
             <div>
               <h3 className="text-xl font-semibold text-foreground mb-3">Background Removal</h3>
               <p className="text-muted-foreground">
-                Remove backgrounds from images instantly. Perfect for product photography, portraits, and
-                graphic design.
+                Remove backgrounds from images instantly. Perfect for product photography,
+                portraits, and graphic design.
               </p>
             </div>
             <div>
@@ -120,8 +123,8 @@ export default async function AboutPage({ params }: IAboutPageProps) {
               <div>
                 <strong className="text-foreground">Privacy-First:</strong>{' '}
                 <span className="text-muted-foreground">
-                  All processing happens in your browser. Your images never leave your device unless you
-                  choose to save them.
+                  All processing happens in your browser. Your images never leave your device unless
+                  you choose to save them. We don&apos;t store your images.
                 </span>
               </div>
             </li>
@@ -130,7 +133,8 @@ export default async function AboutPage({ params }: IAboutPageProps) {
               <div>
                 <strong className="text-foreground">No Installation:</strong>{' '}
                 <span className="text-muted-foreground">
-                  Works entirely in your web browser. No software to download, no compatibility issues.
+                  Works entirely in your web browser. No software to download, no compatibility
+                  issues.
                 </span>
               </div>
             </li>
@@ -161,7 +165,7 @@ export default async function AboutPage({ params }: IAboutPageProps) {
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-foreground mb-4">Get in Touch</h2>
           <p className="text-muted-foreground mb-8">
-            Have questions or feedback? We'd love to hear from you.
+            Have questions or feedback? We&apos;d love to hear from you.
           </p>
           <a
             href={`mailto:${clientEnv.SUPPORT_EMAIL}`}

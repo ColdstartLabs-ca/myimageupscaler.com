@@ -11,7 +11,7 @@ interface IFeaturesPageProps {
 }
 
 export async function generateMetadata({ params }: IFeaturesPageProps): Promise<Metadata> {
-  const { locale } = await params;
+  await params;
 
   return {
     title: `Features | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,

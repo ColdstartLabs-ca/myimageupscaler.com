@@ -11,7 +11,7 @@ interface IHowItWorksPageProps {
 }
 
 export async function generateMetadata({ params }: IHowItWorksPageProps): Promise<Metadata> {
-  const { locale } = await params;
+  await params;
 
   return {
     title: `How it Works | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,

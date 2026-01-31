@@ -7,16 +7,7 @@ import { FAQ } from '@client/components/ui/FAQ';
 import { FadeIn } from '@client/components/ui/MotionWrappers';
 import { clientEnv } from '@shared/config/env';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  ArrowRight,
-  Book,
-  CreditCard,
-  LifeBuoy,
-  MessageCircle,
-  Search,
-  Settings,
-  X,
-} from 'lucide-react';
+import { Book, CreditCard, LifeBuoy, Search, Settings, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
@@ -481,8 +472,9 @@ export function HelpClient() {
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                 <Search
-                  className={`w-5 h-5 transition-colors duration-300 ${searchQuery ? 'text-accent' : 'text-text-muted group-focus-within:text-accent'
-                    }`}
+                  className={`w-5 h-5 transition-colors duration-300 ${
+                    searchQuery ? 'text-accent' : 'text-text-muted group-focus-within:text-accent'
+                  }`}
                 />
               </div>
               <input

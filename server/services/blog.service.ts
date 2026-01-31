@@ -112,7 +112,9 @@ async function getPostsFromDatabase(): Promise<IBlogPostMeta[]> {
   try {
     const { data, error } = await supabaseAdmin
       .from('blog_posts')
-      .select('slug, title, description, published_at, created_at, author, category, tags, featured_image_url, reading_time')
+      .select(
+        'slug, title, description, published_at, created_at, author, category, tags, featured_image_url, reading_time'
+      )
       .eq('status', 'published')
       .order('published_at', { ascending: false });
 
@@ -193,8 +195,12 @@ async function getDatabaseSlugs(): Promise<string[]> {
 
 /**
  * Add frontend-compatible computed properties to a blog post
+ * @deprecated Currently unused but kept for potential future use
  */
-function addComputedProperties<T extends Record<string, unknown>>(post: T): T & {
+
+export function _addComputedProperties<T extends Record<string, unknown>>(
+  post: T
+): T & {
   date?: string;
   image?: string;
   readingTime?: string;
@@ -246,7 +252,10 @@ export async function createBlogPost(input: ICreateBlogPostInput): Promise<IBlog
 /**
  * Update an existing blog post
  */
-export async function updateBlogPost(slug: string, input: IUpdateBlogPostInput): Promise<IBlogPost> {
+export async function updateBlogPost(
+  slug: string,
+  input: IUpdateBlogPostInput
+): Promise<IBlogPost> {
   const updateData: Record<string, unknown> = { ...input };
 
   if (input.content) {
@@ -298,9 +307,7 @@ export async function listBlogPosts(query: IListBlogPostsQuery): Promise<{
   total: number;
   hasMore: boolean;
 }> {
-  let dbQuery = supabaseAdmin
-    .from('blog_posts')
-    .select('*', { count: 'exact' });
+  let dbQuery = supabaseAdmin.from('blog_posts').select('*', { count: 'exact' });
 
   if (query.status) {
     dbQuery = dbQuery.eq('status', query.status);
@@ -394,10 +401,7 @@ export async function unpublishBlogPost(slug: string): Promise<IBlogPost> {
  * MDX posts take precedence over database posts with the same slug
  */
 export async function getAllPublishedPosts(): Promise<IBlogPostMeta[]> {
-  const [mdxPosts, dbPosts] = await Promise.all([
-    getPostsFromMDX(),
-    getPostsFromDatabase(),
-  ]);
+  const [mdxPosts, dbPosts] = await Promise.all([getPostsFromMDX(), getPostsFromDatabase()]);
 
   // Deduplicate by slug (MDX takes precedence)
   const postsMap = new Map<string, IBlogPostMeta>();
@@ -440,10 +444,7 @@ export async function getPublishedPostBySlug(slug: string): Promise<IBlogPost | 
  * Combines slugs from both MDX files and database
  */
 export async function getAllPublishedSlugs(): Promise<string[]> {
-  const [mdxSlugs, dbSlugs] = await Promise.all([
-    getMDXSlugs(),
-    getDatabaseSlugs(),
-  ]);
+  const [mdxSlugs, dbSlugs] = await Promise.all([getMDXSlugs(), getDatabaseSlugs()]);
 
   // Combine and deduplicate
   const allSlugs = new Set([...mdxSlugs, ...dbSlugs]);

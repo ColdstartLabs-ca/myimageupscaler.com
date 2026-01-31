@@ -104,8 +104,8 @@ export default async function ContactPage({ params }: IContactPageProps) {
                 How do I get started with {clientEnv.APP_NAME}?
               </h3>
               <p className="text-muted-foreground">
-                Simply sign up for a free account to get started. You'll receive free credits to try our
-                AI image upscaling and enhancement tools. No credit card required.
+                Simply sign up for a free account to get started. You&apos;ll receive free credits
+                to try our AI image upscaling and enhancement tools. No credit card required.
               </p>
             </div>
             <div className="border-b border-border pb-6">
@@ -113,17 +113,15 @@ export default async function ContactPage({ params }: IContactPageProps) {
                 Is my data secure when using {clientEnv.APP_NAME}?
               </h3>
               <p className="text-muted-foreground">
-                Yes! All image processing happens in your browser using our privacy-first approach. Your
-                images are never uploaded to our servers unless you choose to save them.
+                Yes! All image processing happens in your browser using our privacy-first approach.
+                Your images are never uploaded to our servers unless you choose to save them.
               </p>
             </div>
             <div className="border-b border-border pb-6">
-              <h3 className="text-xl font-semibold text-foreground mb-2">
-                Do you offer refunds?
-              </h3>
+              <h3 className="text-xl font-semibold text-foreground mb-2">Do you offer refunds?</h3>
               <p className="text-muted-foreground">
-                We offer a satisfaction guarantee. If you're not happy with our service, please contact our
-                support team and we'll work with you to make it right.
+                We offer a satisfaction guarantee. If you&apos;re not happy with our service, please
+                contact our support team and we&apos;ll work with you to make it right.
               </p>
             </div>
             <div className="border-b border-border pb-6">
@@ -131,8 +129,8 @@ export default async function ContactPage({ params }: IContactPageProps) {
                 Can I use {clientEnv.APP_NAME} for commercial purposes?
               </h3>
               <p className="text-muted-foreground">
-                Yes! You can use our service for both personal and commercial projects. Check our pricing
-                page for plans that best fit your needs.
+                Yes! You can use our service for both personal and commercial projects. Check our
+                pricing page for plans that best fit your needs.
               </p>
             </div>
           </div>
