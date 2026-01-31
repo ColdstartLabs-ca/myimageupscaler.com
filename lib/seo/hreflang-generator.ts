@@ -35,7 +35,7 @@ export function generateHreflangAlternates(path: string): Record<string, string>
 
   // Generate URL for each supported locale
   for (const locale of SUPPORTED_LOCALES) {
-    const localePath = getLocalizedPath(normalizedPath || '/', locale);
+    const localePath = getLocalizedPath(normalizedPath, locale);
     alternates[locale] = `${clientEnv.BASE_URL}${localePath}`;
   }
 

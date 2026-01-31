@@ -142,11 +142,10 @@ test.describe('SEO Metadata', () => {
       if (hreflang === 'x-default') xDefaultHref = href;
     }
 
-    // Homepage URLs - allow both with and without trailing slash for root
-    // Non-default locales should have trailing slash
-    expect(enHref).toMatch(/^https:\/\/myimageupscaler\.com\/?$/);
-    expect(esHref).toBe('https://myimageupscaler.com/es/');
-    expect(xDefaultHref).toMatch(/^https:\/\/myimageupscaler\.com\/?$/);
+    // Homepage URLs - HreflangLinks component adds / for root path
+    expect(enHref).toBe('https://myimageupscaler.com/');
+    expect(esHref).toBe('https://myimageupscaler.com/es');
+    expect(xDefaultHref).toBe('https://myimageupscaler.com/');
   });
 
   test('should have correct JSON-LD inLanguage on English tool page', async ({ page }) => {

@@ -124,14 +124,17 @@ function handleWWWRedirect(req: NextRequest): NextResponse | null {
  * This function redirects to a clean URL without tracking parameters for SEO purposes.
  * The original tracking params are preserved in headers for application use if needed.
  *
- * Tracking params removed: signup, login, next, ref, source, utm_*, fbclid, gclid, msclkid
+ * NOTE: Functional parameters like 'signup', 'login', 'next' are NOT stripped.
+ * Only tracking parameters (ref, source, utm_*, fbclid, gclid, msclkid) are removed.
+ *
+ * Tracking params removed: ref, source, utm_*, fbclid, gclid, msclkid
  *
  * @param req - The Next.js request object
  * @returns NextResponse with cleaned URL, or null if no tracking params present
  *
  * @example
  * // Request: /?signup=1&utm_source=google
- * // Response: Redirects to / (params stripped, page can still access original via headers)
+ * // Response: Redirects to /?signup=1 (only tracking params stripped, signup preserved)
  */
 function handleTrackingParams(req: NextRequest): NextResponse | null {
   const originalSearchParams = req.nextUrl.searchParams;
@@ -591,7 +594,8 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
  * 1. Locale detection and routing (must be first for page routes)
  * 2. WWW to non-WWW redirect for SEO
  * 3. Legacy URL redirects for SEO (must come before locale routing to catch old URLs)
- * 4. Tracking parameter cleanup for SEO (strip UTM, signup, etc. params)
+ * 4. Tracking parameter cleanup for SEO (strip UTM and other tracking params)
+ *    NOTE: Functional params like 'signup', 'login', 'next' are preserved
  * 5. Page routes: Session refresh via cookies, auth-based redirects
  * 6. API routes: JWT verification via Authorization header, rate limiting
  * 7. Security headers on all responses

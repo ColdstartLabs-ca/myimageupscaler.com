@@ -43,9 +43,9 @@ describe('Hreflang Generator', () => {
       const path = '/';
       const alternates = generateHreflangAlternates(path);
 
-      expect(alternates.en).toBe('https://myimageupscaler.com/');
-      expect(alternates.es).toBe('https://myimageupscaler.com/es/');
-      expect(alternates['x-default']).toBe('https://myimageupscaler.com/');
+      expect(alternates.en).toBe('https://myimageupscaler.com');
+      expect(alternates.es).toBe('https://myimageupscaler.com/es');
+      expect(alternates['x-default']).toBe('https://myimageupscaler.com');
     });
 
     it('should include all supported locales', () => {
@@ -118,7 +118,7 @@ describe('Hreflang Generator', () => {
       const esPath = getLocalizedPath(path, 'es');
 
       expect(enPath).toBe('/');
-      expect(esPath).toBe('/es/');
+      expect(esPath).toBe('/es');
     });
   });
 
@@ -147,7 +147,7 @@ describe('Hreflang Generator', () => {
     it('should handle root path', () => {
       const canonical = getCanonicalUrl('/');
 
-      expect(canonical).toBe('https://myimageupscaler.com/');
+      expect(canonical).toBe('https://myimageupscaler.com');
     });
 
     it('should always return English version as canonical', () => {
