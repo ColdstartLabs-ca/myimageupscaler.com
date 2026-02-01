@@ -2,7 +2,7 @@
   "category": "otimização-de-dispositivos",
   "pages": [
     {
-      "slug": "otimização-de-imagens-em-dispositivos-móveis",
+      "slug": "mobile-device-image-optimization",
       "title": "Otimização de Imagens para Dispositivos Móveis",
       "metaTitle": "Otimização de Imagens para Dispositivos Móveis | MyImageUpscaler",
       "metaDescription": "Guia completo de otimização de imagens para dispositivos móveis. Aprenda a otimizar imagens para dispositivos iOS e Android, melhorar o desempenho de aplicativos e reduzir o uso de dados.",
@@ -431,7 +431,7 @@
       "relatedPages": ["edição-profissional-de-imagens", "manipulação-de-imagens-multiplataforma"]
     },
     {
-      "slug": "otimização-de-imagens-smart-tv",
+      "slug": "smart-tv-image-optimization",
       "title": "Otimização de Imagens para Smart TV",
       "metaTitle": "Otimização de Imagens para Smart TV | MyImageUpscaler",
       "metaDescription": "Guia completo de otimização de imagens para Smart TV. Aprenda a otimizar imagens para TVs 4K/8K, conteúdo HDR, aplicativos de streaming e melhor experiência de visualização.",
@@ -679,7 +679,7 @@
       "relatedPages": ["preparação-de-conteúdo-4k", "desenvolvimento-de-aplicativo-smart-tv"]
     },
     {
-      "slug": "otimização-de-imagens-tablet",
+      "slug": "tablet-image-optimization",
       "title": "Guia de Otimização de Imagens para Tablet",
       "metaTitle": "Guia de Otimização de Imagens para Tablet | MyImageUpscaler",
       "metaDescription": "Guia completo de otimização de imagens para tablet. Aprenda a otimizar imagens para iPad e tablets Android, melhorar desempenho do aplicativo e lidar com diferentes orientações.",

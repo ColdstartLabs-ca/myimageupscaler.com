@@ -2,7 +2,7 @@
   "category": "outils-en-lot",
   "pages": [
     {
-      "slug": "redimensionneur-d-images-en-lot",
+      "slug": "bulk-image-resizer",
       "title": "Lot Image Resizer",
       "metaTitle": "Gratuit Lot Image Resizer - Resize Plusieurs Photos at Once | MyImageUpscaler",
       "metaDescription": "Resize Plusieurs Images at once with our Gratuit Lot Image resizer. Mass resize Photos to any dimension. Works in your browser - no Télécharger required.",
@@ -144,7 +144,7 @@
       "ctaUrl": "/bulk-tools/bulk-image-resizer"
     },
     {
-      "slug": "compresseur-d-images-en-lot",
+      "slug": "bulk-image-compressor",
       "title": "Lot Image Compressor",
       "metaTitle": "Gratuit Lot Image Compressor - Compress Plusieurs Images | MyImageUpscaler",
       "metaDescription": "Compress multiple images at once. Reduce file sizes by up to 80% with our free bulk image compressor. Browser-based, no upload required.",

@@ -2,7 +2,7 @@
   "category": "optimisation-appareil",
   "pages": [
     {
-      "slug": "optimisation-image-appareil-mobile",
+      "slug": "mobile-device-image-optimization",
       "title": "Optimisation d'images pour appareils mobiles",
       "metaTitle": "Optimisation d'images pour appareils mobiles | MyImageUpscaler",
       "metaDescription": "Guide complet de l'optimisation d'images mobiles. Apprenez à optimiser les images pour les appareils iOS et Android, améliorer les performances des applications et réduire l'utilisation des données.",
@@ -170,7 +170,7 @@
       "relatedPages": ["optimisation-performances-app", "gestion-images-developpement-mobile"]
     },
     {
-      "slug": "optimisation-image-bureau",
+      "slug": "desktop-image-optimization",
       "title": "Optimisation d'images de bureau",
       "metaTitle": "Optimisation d'images de bureau | MyImageUpscaler",
       "metaDescription": "Guide complet de l'optimisation d'images de bureau. Apprenez à optimiser les images pour les applications Windows, Mac et Linux, améliorer les performances et réduire l'utilisation des ressources.",
@@ -926,7 +926,7 @@
       "relatedPages": ["developpement-mobile-tablette", "gestion-images-multiplateforme"]
     },
     {
-      "slug": "optimisation-image-appareil-portable",
+      "slug": "wearable-device-image-optimization",
       "title": "Optimisation dImages pour Appareils Portables",
       "metaTitle": "Optimisation dImages pour Appareils Portables | MyImageUpscaler",
       "metaDescription": "Guide complet de loptimisation dimages pour appareils portables. Apprenez à optimiser les images pour montres intelligentes, trackers de fitness et autres appareils portables avec des écrans et une batterie limités.",

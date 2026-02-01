@@ -2,7 +2,7 @@
   "category": "device-ottimizzazione",
   "pages": [
     {
-      "slug": "mobile-device-image-ottimizzazione",
+      "slug": "mobile-device-image-optimization",
       "title": "Ottimizzazione Immagini Dispositivi Mobili",
       "metaTitle": "Ottimizzazione Immagini Dispositivi Mobili | MyImageUpscaler",
       "metaDescription": "Guida Completa to mobile image ottimizzazione. Impara a ottimizza images for iOS and Android devices, migliora app performance, and reduce data usage.",
@@ -699,7 +699,7 @@
       "relatedPages": ["4k-content-preparation", "smart-tv-app-development"]
     },
     {
-      "slug": "ottimizzazione-tablet",
+      "slug": "tablet-image-optimization",
       "title": "Ottimizzazione Immagini per Tablet - Guida Completa 2025",
       "metaTitle": "Ottimizzazione Immagini per Tablet - Guida Completa 2025 | MyImageUpscaler",
       "metaDescription": "Guida Completa to tablet image ottimizzazione. Impara a ottimizza images for iPad and Android tablets, migliora app performance, and handle different orientations.",
@@ -942,7 +942,7 @@
       "relatedPages": ["mobile-tablet-development", "cross-platform-image-handling"]
     },
     {
-      "slug": "ottimizzazione-windows",
+      "slug": "desktop-image-optimization",
       "title": "Ottimizzazione Immagini per Windows - Guida Completa 2025",
       "metaTitle": "Ottimizzazione Immagini per Windows - Guida Completa 2025 | MyImageUpscaler",
       "metaDescription": "Guida Completa to wearable image ottimizzazione. Impara a ottimizza images for smartwatches, fitness trackers, and other wearable devices with limited displays and battery.",
@@ -1250,7 +1250,7 @@
       "intro": "Guida completa per ottimizzare immagini per Mac e macOS. Impara i migliori formati e tecniche di compressione."
     },
     {
-      "slug": "ottimizzazione-tv",
+      "slug": "smart-tv-image-optimization",
       "title": "Ottimizzazione Immagini per Smart TV - Guida Completa 2025",
       "metaTitle": "Ottimizzazione Immagini per Smart TV - Guida Completa 2025 | MyImageUpscaler",
       "h1": "Come Ottimizzare le Immagini per Smart TV in 2025",
@@ -1258,7 +1258,7 @@
       "primaryKeyword": "ottimizzazione immagini smart tv"
     },
     {
-      "slug": "ottimizzazione-indossabili",
+      "slug": "wearable-device-image-optimization",
       "title": "Ottimizzazione Immagini per Indossabili - Smartwatch e Fitness Tracker 2025",
       "metaTitle": "Ottimizzazione Immagini per Indossabili - Smartwatch e Fitness Tracker 2025 | MyImageUpscaler",
       "h1": "Come Ottimizzare le Immagini per Indossabili in 2025",

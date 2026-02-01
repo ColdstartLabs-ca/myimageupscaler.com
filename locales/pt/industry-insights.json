@@ -2,7 +2,7 @@
   "category": "informações-do-setor",
   "pages": [
     {
-      "slug": "melhoria-fotográfica-imobiliária",
+      "slug": "real-estate-photo-enhancement",
       "title": "Melhoria Fotográfica Imobiliária com IA",
       "metaTitle": "Melhoria Fotográfica Imobiliária com IA | MyImageUpscaler",
       "metaDescription": "Transforme fotos imobiliárias com upscale de IA. Torne propriedades estonteantes, atrai mais compradores e venda mais rápido com melhoria de imagem.",
@@ -125,7 +125,7 @@
       "relatedPages": ["interior-design-photo-enhancement", "architecture-photo-upscaling"]
     },
     {
-      "slug": "melhoria-de-fotos-de-produtos-ecommerce",
+      "slug": "ecommerce-product-photo-enhancement",
       "title": "Melhoria de Fotos de Produtos para E-commerce",
       "metaTitle": "Melhoria de Fotos de Produtos para E-commerce | MyImageUpscaler",
       "metaDescription": "Transforme fotos de produtos com upscaling de IA. Aumente taxas de conversão, reduza devoluções e crie imagens de produtos que impulsionam vendas.",
@@ -254,7 +254,7 @@
       "relatedPages": ["product-photography-guide", "amazon-listing-optimization"]
     },
     {
-      "slug": "aprimoramento-de-imagens-medicas-com-ia",
+      "slug": "medical-imaging-enhancement",
       "title": "Aprimoramento de Imagens Médicas com IA",
       "metaTitle": "Aprimoramento de Imagem Médica com AI | MyImageUpscaler",
       "metaDescription": "Aprimorar a qualidade de imagem médica com ampliação de AI. Melhorar precisão diagnóstica, capacidades de telemedicina e documentação de registros médicos.",
@@ -419,7 +419,11 @@
         {
           "type": "Design Web",
           "description": "Otimize imagens de herói, aprimorize fotos de produtos, melhore visuais do site",
-          "benefits": ["Melhor experiência do usuário", "Carregamento mais rápido", "Maior engajamento"]
+          "benefits": [
+            "Melhor experiência do usuário",
+            "Carregamento mais rápido",
+            "Maior engajamento"
+          ]
         },
         {
           "type": "Ativos de Marca",
@@ -540,7 +544,11 @@
         {
           "type": "Conteúdo do LinkedIn",
           "description": "Melhorar professional images, improve company page visuals, optimize post images",
-          "benefits": ["Melhor professional branding", "Maior engajamento", "Resultados B2B melhorados"]
+          "benefits": [
+            "Melhor professional branding",
+            "Maior engajamento",
+            "Resultados B2B melhorados"
+          ]
         },
         {
           "type": "Multi-Plataforma Campaigns",
@@ -616,7 +624,7 @@
       "relatedPages": ["social-media-image-sizes", "content-marketing-optimization"]
     },
     {
-      "slug": "aprimoramento-de-negocio-fotografia",
+      "slug": "photography-business-enhancement",
       "title": "Aprimoramento de Negócio de Fotografia",
       "metaTitle": "Aprimoramento de Negócio de Fotografia | MyImageUpscaler",
       "metaDescription": "Expanda serviços de fotografia com aprimoramento de AI. Ofereça ampliação de imagem premium, aumente satisfação do cliente e aumente receita com serviços alimentados por IA.",
@@ -744,7 +752,7 @@
       "relatedPages": ["professional-photography-guide", "photography-pricing-strategies"]
     },
     {
-      "slug": "aprimoramento-visualizacao-arquitetonico",
+      "slug": "architecture-visualization-enhancement",
       "title": "Aprimoramento de Visualização Arquitetônica",
       "metaTitle": "Aprimoramento de Visualização Arquitetônica | MyImageUpscaler",
       "metaDescription": "Aprimore visualizações arquitetônicas e renderizações com upscaling de IA. Crie apresentações arquitetônicas impressionantes, melhore comunicação com clientes e ganhe mais projetos.",
@@ -980,7 +988,7 @@
       "relatedPages": ["print-production-standards", "publishing-image-requirements"]
     },
     {
-      "slug": "aprimoramento-fotos-viagem-turismo",
+      "slug": "travel-tourism-enhancement",
       "title": "Aprimoramento de Fotos de Viagem e Turismo",
       "metaTitle": "Aprimoramento de Fotos de Viagem e Turismo | MyImageUpscaler",
       "metaDescription": "Aprimore fotos de viagem e turismo com upscaling de IA. Atraia mais visitantes com fotos de destino impressionantes, melhore taxas de reserva e crie conteúdo de viagem atraente.",
@@ -1351,7 +1359,7 @@
       "relatedPages": ["nonprofit-marketing-guide", "fundraising-visual-strategy"]
     },
     {
-      "slug": "aprimoramento-manufatura-industria",
+      "slug": "manufacturing-industrial-enhancement",
       "title": "Aprimoramento de Manufatura e Industrial",
       "metaTitle": "Aprimoramento de Manufatura e Industrial | MyImageUpscaler",
       "metaDescription": "Aprimore fotos de manufatura e industrial com upscaling de IA. Melhore fotografia de produtos, materiais de marketing e documentação para melhores resultados de negócios.",
@@ -1378,7 +1386,11 @@
         {
           "type": "Fotografia de Produto",
           "description": "Aprimore fotos de produtos manufaturados, melhore detalhes técnicos, crie catálogos de produtos profissionais",
-          "benefits": ["Melhor apresentação de produto", "Clareza técnica", "Catálogos profissionais"]
+          "benefits": [
+            "Melhor apresentação de produto",
+            "Clareza técnica",
+            "Catálogos profissionais"
+          ]
         },
         {
           "type": "Documentação de Instalação",
@@ -1601,7 +1613,7 @@
       "relatedPages": ["legal-documentation-standards", "court-presentation-guidelines"]
     },
     {
-      "slug": "aprimoramento-visual-esportes-fitness",
+      "slug": "sports-fitness-enhancement",
       "title": "Aprimoramento Visual de Esportes e Fitness",
       "metaTitle": "Aprimoramento Visual de Esportes e Fitness | MyImageUpscaler",
       "metaDescription": "Aprimore visuais de esportes e fitness com upscaling de IA. Melhore fotografia atlética, materiais de marketing de ginásio e conteúdo de fitness para melhor engajamento e resultados.",
@@ -1655,7 +1667,11 @@
         {
           "type": "Criação de Conteúdo de Fitness",
           "description": "Aprimore fotos de treino, melhore conteúdo de fitness, crie visuais de exercício atraentes",
-          "benefits": ["Melhor engajamento", "Conteúdo de fitness profissional", "Motivação de público"]
+          "benefits": [
+            "Melhor engajamento",
+            "Conteúdo de fitness profissional",
+            "Motivação de público"
+          ]
         }
       ],
       "caseStudies": [

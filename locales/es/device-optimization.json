@@ -2,7 +2,7 @@
   "category": "optimizacion-dispositivos",
   "pages": [
     {
-      "slug": "mobile-image-optimization",
+      "slug": "mobile-device-image-optimization",
       "title": "Optimización de Imágenes para Móviles: Guía Completa",
       "metaTitle": "Optimización de Imágenes Móviles 2025 | iOS y Android",
       "metaDescription": "Guía completa de optimización de imágenes para dispositivos móviles. Aprende formatos, tamaños, y técnicas para iOS, Android, y web móvil.",
@@ -234,7 +234,7 @@
       ]
     },
     {
-      "slug": "optimización-de-imágenes-de-escritorio",
+      "slug": "desktop-image-optimization",
       "title": "Optimización de Imágenes de Escritorio",
       "metaTitle": "Optimización de Imágenes de Escritorio | MyImageUpscaler",
       "metaDescription": "Guía completa para optimizar imágenes de escritorio. Aprende a optimizar imágenes para aplicaciones Windows, Mac y Linux, mejora el rendimiento y reduce el uso de recursos.",
@@ -491,7 +491,7 @@
       "relatedPages": ["edicion-de-imagenes-profesional", "manejo-de-imagenes-multiplataforma"]
     },
     {
-      "slug": "optimizacion-imagen-smart-tv",
+      "slug": "smart-tv-image-optimization",
       "title": "Optimización de Imagen para Smart TV",
       "metaTitle": "Optimización de Imagen para Smart TV | MyImageUpscaler",
       "metaDescription": "Guía completa de optimización de imágenes para Smart TV. Aprende a optimizar imágenes para TV 4K/8K, contenido HDR, aplicaciones de streaming y mejor experiencia de visualización.",
@@ -1253,7 +1253,7 @@
       ],
       "relatedTools": ["wearable-image-optimizer", "icon-compressor"],
       "relatedPages": ["wearable-app-development", "low-power-display-optimization"],
-      "slug": "optimizacion-imagen-dispositivo-ponible",
+      "slug": "wearable-device-image-optimization",
       "title": "Optimización de Imagen para Dispositivo Ponible",
       "metaTitle": "Optimización de Imagen para Dispositivo Ponible | MyImageUpscaler",
       "metaDescription": "Guía completa de optimización de imagen ponible. Aprende a optimizar imágenes para relojes inteligentes, monitores de fitness y otros dispositivos ponibles con pantallas y batería limitadas.",

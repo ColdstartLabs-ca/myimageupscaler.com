@@ -1828,8 +1828,8 @@
       "ctaUrl": "/tools/convert/jpg-to-webp"
     },
     {
-      "slug": "image-compressor",
-      "title": "Convertidor de PNG a WebP",
+      "slug": "webp-to-png",
+      "title": "Conversor de WebP a PNG",
       "metaTitle": "Convertidor de PNG a WebP | MyImageUpscaler",
       "metaDescription": "Convierte PNG a WebP en linea gratis. Obtene archivos un 26% mas pequenos manteniendo la transparencia. Conversion rapida basada en navegador sin necesidad de subir archivos.",
       "h1": "Convertidor gratis de PNG a WebP - Optimiza imagenes al instante",

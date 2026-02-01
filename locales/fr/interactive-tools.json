@@ -2,7 +2,7 @@
   "category": "outils",
   "pages": [
     {
-      "slug": "redimensionneur-image",
+      "slug": "image-resizer",
       "title": "Redimensionneur d'image",
       "metaTitle": "Gratuit Image Resizer - Resize Images En ligne Instantly | MyImageUpscaler",
       "metaDescription": "Redimensionnez des images en ligne gratuitement. Aucun telechargement requis - tout le traitement se fait dans votre navigateur. Prend en charge JPEG, PNG, WebP et plus.",
@@ -156,7 +156,7 @@
       "ctaUrl": "/tools/resize/redimensionneur-image"
     },
     {
-      "slug": "redimensionner-image-pour-instagram",
+      "slug": "resize-image-for-instagram",
       "title": "Redimensionneur d'image Instagram",
       "metaTitle": "Redimensionneur d'images Instagram gratuit - Tailles parfaites pour les publications et stories | MyImageUpscaler",
       "metaDescription": "Redimensionnez instantanément les images pour Instagram. Obtenez les dimensions parfaites pour les publications (1080x1080), les stories (1080x1920) et les reels. Gratuit, aucun téléchargement requis.",
@@ -288,13 +288,17 @@
           "answer": "Oui ! Les Instagram Reels utilisent les mêmes dimensions 1080x1920 (9:16) que les Stories."
         }
       ],
-      "relatedTools": ["redimensionneur-image", "redimensionner-image-facebook", "compresseur-image"],
+      "relatedTools": [
+        "redimensionneur-image",
+        "redimensionner-image-facebook",
+        "compresseur-image"
+      ],
       "relatedGuides": ["comment-redimensionner-images-reseaux-sociaux"],
       "ctaText": "Resize for Instagram Gratuit",
       "ctaUrl": "/tools/resize/redimensionner-image-pour-instagram"
     },
     {
-      "slug": "redimensionner-image-pour-youtube",
+      "slug": "resize-image-for-youtube",
       "title": "Redimensionneur de miniature YouTube",
       "metaTitle": "Gratuit YouTube Thumbnail Resizer - Perfect 1280x720 Size | MyImageUpscaler",
       "metaDescription": "Redimensionnez les images pour les vignettes YouTube instantanément. Obtenez des dimensions parfaites de 1280x720. Gratuit, sans téléchargement.",
@@ -436,7 +440,7 @@
       "ctaUrl": "/tools/resize/redimensionner-image-pour-youtube"
     },
     {
-      "slug": "redimensionner-image-pour-facebook",
+      "slug": "resize-image-for-facebook",
       "title": "Redimensionneur d'image Facebook",
       "metaTitle": "Gratuit Facebook Image Resizer - Perfect Sizes for Posts & Covers | MyImageUpscaler",
       "metaDescription": "Redimensionnez les images pour Facebook instantanément. Publications, couvertures, photos de profil - dimensions parfaites. Gratuit, sans téléchargement.",
@@ -578,7 +582,7 @@
       "ctaUrl": "/tools/resize/redimensionner-image-pour-facebook"
     },
     {
-      "slug": "redimensionner-image-pour-twitter",
+      "slug": "resize-image-for-twitter",
       "title": "Redimensionneur d'image Twitter/X",
       "metaTitle": "Gratuit Twitter Image Resizer - Perfect Sizes for Posts & Headers | MyImageUpscaler",
       "metaDescription": "Redimensionnez les images pour Twitter instantanément. Publications, en-têtes, photos de profil - dimensions parfaites. Gratuit, sans téléchargement.",
@@ -720,7 +724,7 @@
       "ctaUrl": "/tools/resize/redimensionner-image-pour-twitter"
     },
     {
-      "slug": "redimensionner-image-pour-linkedin",
+      "slug": "resize-image-for-linkedin",
       "title": "Redimensionneur d'image LinkedIn",
       "metaTitle": "Gratuit LinkedIn Image Resizer - Perfect Sizes for Posts & Banners | MyImageUpscaler",
       "metaDescription": "Redimensionnez les images pour LinkedIn instantanément. Publications, bannières, photos de profil - dimensions parfaites. Gratuit, sans téléchargement.",
@@ -862,7 +866,7 @@
       "ctaUrl": "/tools/resize/redimensionner-image-pour-linkedin"
     },
     {
-      "slug": "redimensionneur-image-lot",
+      "slug": "bulk-image-resizer",
       "title": "Compresseur d'image",
       "metaTitle": "Gratuit Lot Image Resizer - Resize Plusieurs Photos at Once | MyImageUpscaler",
       "metaDescription": "Redimensionnez plusieurs images à la fois. Traitement par lot, tailles cohérentes, traitement rapide. Gratuit, sans téléchargement.",
@@ -1007,12 +1011,15 @@
         }
       ],
       "relatedTools": ["redimensionneur-image", "compresseur-image", "agrandisseur-image-ia"],
-      "relatedGuides": ["comment-redimensionner-images-reseaux-sociaux", "resolution-image-expliquee"],
+      "relatedGuides": [
+        "comment-redimensionner-images-reseaux-sociaux",
+        "resolution-image-expliquee"
+      ],
       "ctaText": "Try Lot Image Resizer Gratuit",
       "ctaUrl": "/tools/resize/redimensionneur-image-lot"
     },
     {
-      "slug": "compresseur-image",
+      "slug": "image-compressor",
       "title": "Compresseur d'image",
       "metaTitle": "Gratuit Image Compressor - Compress Images En ligne | MyImageUpscaler",
       "metaDescription": "Compressez les images en ligne gratuitement. Pas de téléchargement requis - tout le traitement se fait dans votre navigateur. Prend en charge JPEG, PNG, WebP. Parfait pour le web, les e-mails et le stockage.",
@@ -1154,7 +1161,156 @@
       "ctaUrl": "/tools/compress/compresseur-image"
     },
     {
-      "slug": "png-en-jpg",
+      "slug": "bulk-image-compressor",
+      "title": "Compresseur d'images en lot",
+      "metaTitle": "Compresseur d'images en lot | MyImageUpscaler",
+      "metaDescription": "Compressez plusieurs images à la fois avec notre compresseur d'images en lot gratuit. Réduisez la taille des fichiers jusqu'à 80% avec contrôle de qualité. Basé sur le navigateur, aucun téléchargement requis.",
+      "h1": "Compresseur d'images en lot gratuit - Optimisez plusieurs photos",
+      "intro": "Compressez plusieurs images à la fois sans perdre de qualité. Notre compresseur en lot gratuit réduit la taille des fichiers jusqu'à 80% grâce à une technologie de navigateur avancée. Téléchargez en ZIP.",
+      "primaryKeyword": "compresseur d'images en lot",
+      "secondaryKeywords": [
+        "compresseur d'images en lot",
+        "optimisation d'images en lot",
+        "compresser plusieurs images",
+        "compression d'images en masse",
+        "compresser des photos en lot"
+      ],
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "outils",
+      "toolName": "Compresseur d'images en lot",
+      "description": "Outil professionnel de compression d'images en lot qui fonctionne entièrement dans votre navigateur. Compressez jusqu'à 20 images à la fois jusqu'à 80% tout en maintenant la qualité visuelle. Prend en charge les formats JPEG, PNG et WebP avec aperçus de compression en temps réel et téléchargement ZIP.",
+      "isInteractive": true,
+      "toolComponent": "BulkImageCompressor",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "features": [
+        {
+          "title": "Compressez jusqu'à 20 images",
+          "description": "Téléchargez et compressez plusieurs images à la fois. Parfait pour les lots de photos, les assets de sites web ou le contenu des réseaux sociaux."
+        },
+        {
+          "title": "Mode qualité ou taille cible",
+          "description": "Choisissez la compression basée sur la qualité (1-100%) ou définissez une taille de fichier cible en KB. L'outil trouve automatiquement les paramètres optimaux."
+        },
+        {
+          "title": "Suivi de progression en temps réel",
+          "description": "Voyez les barres de progression individuelles, les tailles de fichiers avant et après, et les ratios de compression pour chaque image pendant le traitement."
+        },
+        {
+          "title": "Téléchargez en ZIP",
+          "description": "Téléchargez toutes les images compressées à la fois dans un fichier ZIP pratique. Chaque fichier est nommé avec le suffixe '-compressed'."
+        },
+        {
+          "title": "Conversion de format",
+          "description": "Convertissez les images en JPEG, PNG ou WebP pendant la compression. WebP offre le meilleur ratio de compression."
+        },
+        {
+          "title": "100% privé",
+          "description": "Toute la compression se produit localement dans votre navigateur. Les images ne quittent jamais votre appareil - confidentialité totale garantie."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Optimisation de la vitesse du site web",
+          "description": "Compressez des bibliothèques d'images entières pour les sites web. Réduisez considérablement les temps de chargement des pages avec le traitement en lot.",
+          "example": "Compressez 100 photos de produits de 50MB à 10MB pour un site e-commerce"
+        },
+        {
+          "title": "Contenu pour les réseaux sociaux",
+          "description": "Préparez plusieurs photos pour Instagram, Facebook ou d'autres plateformes avec des temps de téléchargement plus rapides.",
+          "example": "Compressez en lot des photos de vacances pour le partage sur les réseaux sociaux"
+        },
+        {
+          "title": "Pièces jointes email",
+          "description": "Envoyez plusieurs photos par email sans atteindre les limites de taille des pièces jointes.",
+          "example": "Compressez un album photo de 20MB à 4MB pour email"
+        },
+        {
+          "title": "Économies de stockage cloud",
+          "description": "Compressez les sauvegardes de photos avant de les télécharger sur le stockage cloud pour économiser de l'espace et des coûts.",
+          "example": "Compressez 500 photos de vacances de 10GB à 2GB avant la sauvegarde"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Gain de temps massif",
+          "description": "Compressez jusqu'à 20 images à la fois au lieu de les traiter individuellement.",
+          "metric": "Workflow 20x plus rapide"
+        },
+        {
+          "title": "Qualité constante",
+          "description": "Appliquez les mêmes paramètres de compression à toutes les images pour des résultats uniformes dans tout votre projet.",
+          "metric": "Qualité uniforme"
+        },
+        {
+          "title": "Jusqu'à 80% de réduction",
+          "description": "Réduisez considérablement la taille des fichiers d'images sans perte de qualité perceptible grâce à une compression intelligente.",
+          "metric": "Fichiers 80% plus petits"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Téléchargez plusieurs images",
+          "description": "Sélectionnez ou faites glisser jusqu'à 20 images. Prend en charge JPEG, PNG, WebP jusqu'à 25MB chacun. Le traitement reste dans votre navigateur."
+        },
+        {
+          "step": 2,
+          "title": "Choisissez le mode de compression",
+          "description": "Définissez un niveau de qualité (1-100%) ou entrez une taille de fichier cible en KB. Sélectionnez le format de sortie (JPEG, PNG, WebP)."
+        },
+        {
+          "step": 3,
+          "title": "Compressez toutes les images",
+          "description": "Cliquez sur compresser et regardez chaque image être traitée. Voyez la progression en temps réel et les résultats de compression."
+        },
+        {
+          "step": 4,
+          "title": "Téléchargez les résultats",
+          "description": "Téléchargez des images individuelles ou obtenez toutes les images compressées dans un seul fichier ZIP. Voyez l'espace total économisé."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Combien d'images puis-je compresser à la fois ?",
+          "answer": "Vous pouvez compresser jusqu'à 20 images à la fois. Cette limite assure des performances optimales du navigateur tout en fournissant un traitement en lot efficace."
+        },
+        {
+          "question": "Quelle est la différence entre les modes qualité et taille cible ?",
+          "answer": "Le mode qualité (1-100%) vous donne un contrôle direct sur le niveau de compression. Le mode taille cible trouve automatiquement la qualité pour atteindre une taille de fichier spécifique en KB. Utilisez la taille cible lorsque vous avez besoin de fichiers sous une certaine limite."
+        },
+        {
+          "question": "La compression réduira-t-elle la qualité de l'image ?",
+          "answer": "La compression implique un compromis entre la taille du fichier et la qualité. À 70-80% de qualité, la plupart des gens ne voient pas la différence. Le mode taille cible trouve automatiquement la qualité pour votre exigence de taille."
+        },
+        {
+          "question": "Quel est le meilleur format pour la compression ?",
+          "answer": "WebP offre la meilleure compression (25-35% plus petit que JPEG) avec une excellente qualité. JPEG est idéal pour les photos et bénéficie d'un support universel des navigateurs. PNG est sans perte mais crée des fichiers plus volumineux."
+        },
+        {
+          "question": "Mes images sont-elles téléchargées sur vos serveurs ?",
+          "answer": "Non ! Toute la compression se produit directement dans votre navigateur en utilisant la technologie Canvas API. Vos images ne quittent jamais votre appareil, garantissant une confidentialité complète."
+        },
+        {
+          "question": "Comment fonctionne le mode taille cible ?",
+          "answer": "Le mode taille cible utilise une recherche binaire pour trouver automatiquement le paramètre de qualité le plus élevé qui atteint votre taille de fichier cible. Il teste plusieurs niveaux de qualité jusqu'à trouver l'équilibre optimal."
+        },
+        {
+          "question": "Puis-je mélanger différents formats d'image ?",
+          "answer": "Oui ! Vous pouvez télécharger des images JPEG, PNG et WebP ensemble. Elles seront toutes converties au format de sortie choisi pendant la compression."
+        },
+        {
+          "question": "Y a-t-il une limite de taille de fichier ?",
+          "answer": "Chaque image peut faire jusqu'à 25MB. Cette limite est basée sur la mémoire du navigateur, pas sur les restrictions du serveur (puisque nous ne téléchargeons pas sur des serveurs)."
+        }
+      ],
+      "relatedTools": ["compresseur-image", "redimensionneur-image", "jpg-en-webp"],
+      "relatedGuides": ["techniques-compression-image", "web-optimization-images"],
+      "ctaText": "Essayer le compresseur en lot gratuit",
+      "ctaUrl": "/tools/compress/bulk-image-compressor"
+    },
+    {
+      "slug": "png-to-jpg",
       "title": "Convertisseur PNG en JPG",
       "metaTitle": "Free PNG to JPG Converter - Convert PNG to JPEG Online | MyImageUpscaler",
       "metaDescription": "Convertissez PNG en JPG instantanément. Gratuit, sans téléchargement. Conversion de haute qualité, prise en charge du traitement par lot.",
@@ -1295,7 +1451,7 @@
       "ctaUrl": "/tools/convert/png-en-jpg"
     },
     {
-      "slug": "jpg-en-png",
+      "slug": "jpg-to-png",
       "title": "Convertisseur JPG en PNG",
       "metaTitle": "Free JPG to PNG Converter - Convert JPEG to PNG Online | MyImageUpscaler",
       "metaDescription": "Convertissez JPG en PNG instantanément. Gratuit, sans téléchargement. Prise en charge de la transparence, haute qualité.",
@@ -1432,7 +1588,7 @@
       "ctaUrl": "/tools/convert/jpg-en-png"
     },
     {
-      "slug": "webp-en-jpg",
+      "slug": "webp-to-jpg",
       "title": "Convertisseur WebP en JPG",
       "metaTitle": "Convertisseur gratuit WebP en JPG - Convertissez WebP en JPEG en ligne | MyImageUpscaler",
       "metaDescription": "Convertissez WebP en JPG instantanément. Gratuit, sans téléchargement. Conversion de haute qualité.",
@@ -1569,7 +1725,7 @@
       "ctaUrl": "/tools/convert/webp-en-jpg"
     },
     {
-      "slug": "webp-en-png",
+      "slug": "webp-to-png",
       "title": "Convertisseur WebP en PNG",
       "metaTitle": "Convertisseur gratuit WebP en PNG - Convertissez WebP en PNG en ligne | MyImageUpscaler",
       "metaDescription": "Convertissez WebP en PNG instantanément. Gratuit, sans téléchargement. Prise en charge de la transparence.",
@@ -1705,7 +1861,7 @@
       "ctaUrl": "/tools/convert/webp-en-png"
     },
     {
-      "slug": "jpg-en-webp",
+      "slug": "jpg-to-webp",
       "title": "Convertisseur JPG en WebP",
       "metaTitle": "Convertisseur gratuit JPG en WebP - Convertissez JPEG en WebP en ligne | MyImageUpscaler",
       "metaDescription": "Convertissez JPG en WebP en ligne gratuitement. Obtenez des fichiers 25 à 35 % plus petits avec une compression moderne. Conversion rapide basée sur le navigateur sans téléchargement requis.",
@@ -1842,7 +1998,7 @@
       "ctaUrl": "/tools/convert/jpg-en-webp"
     },
     {
-      "slug": "png-en-webp",
+      "slug": "png-to-webp",
       "title": "Convertisseur PNG en WebP",
       "metaTitle": "Convertisseur gratuit PNG en WebP - Convertissez PNG en WebP en ligne | MyImageUpscaler",
       "metaDescription": "Convertissez PNG en WebP en ligne gratuitement. Obtenez des fichiers 26 % plus petits tout en gardant la transparence. Conversion rapide basée sur le navigateur sans téléchargement requis.",
@@ -1978,7 +2134,7 @@
       "ctaUrl": "/tools/convert/png-en-webp"
     },
     {
-      "slug": "compresseur-image-lot",
+      "slug": "bulk-image-compressor",
       "title": "Compresseur d'images par lot",
       "metaTitle": "Gratuit Lot Image Compressor - Compress Plusieurs Images | MyImageUpscaler",
       "metaDescription": "Compress multiple images at once with our free bulk image compressor. Reduce file sizes by up to 80% with quality control. Browser-based, no upload required.",

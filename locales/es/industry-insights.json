@@ -2,7 +2,7 @@
   "category": "insustrias",
   "pages": [
     {
-      "slug": "mejora-fotos-inmobiliarias",
+      "slug": "real-estate-photo-enhancement",
       "title": "Mejora de Fotos Inmobiliarias con IA",
       "metaTitle": "Mejora de Fotos Inmobiliarias con IA | MyImageUpscaler",
       "metaDescription": "Transforma fotos inmobiliarias con escalado por IA. Haz que las propiedades se vean impresionantes, atrae más compradores y vende más rápido con mejora de imágenes.",
@@ -125,7 +125,7 @@
       "relatedPages": ["mejora-de-fotos-de-diseño-interior", "ampliación-de-fotos-de-arquitectura"]
     },
     {
-      "slug": "mejora-de-fotos-de-productos-de-comercio-electrónico",
+      "slug": "ecommerce-product-photo-enhancement",
       "title": "Mejora de Fotos de Productos de Comercio Electrónico",
       "metaTitle": "Mejora de Fotos de Productos de Comercio Electrónico | MyImageUpscaler",
       "metaDescription": "Transforma fotos de productos con ampliación de IA. Aumenta tasas de conversión, reduce devoluciones y crea imágenes de productos que impulsan ventas.",
@@ -257,7 +257,7 @@
       }
     },
     {
-      "slug": "mejora-de-imagenes-medicas",
+      "slug": "medical-imaging-enhancement",
       "title": "Mejora de Imágenes Médicas para Documentación Clínica",
       "metaTitle": "Mejora de Imágenes Médicas | Herramienta de Upscaling de IA para Registros Médicos",
       "metaDescription": "Mejora la claridad de imágenes médicas con IA. Ideal para documentación clínica, telemedicina y propósitos educativos.",
@@ -388,7 +388,7 @@
       }
     },
     {
-      "slug": "marketing-digital-imagenes-redes-sociales",
+      "slug": "graphic-design-workflow-enhancement",
       "title": "Mejora de Imágenes de Marketing Digital para Redes Sociales",
       "metaTitle": "Mejora de Imágenes de Marketing Digital | Upscaler de IA para Redes Sociales",
       "metaDescription": "Crea imágenes de marketing impactantes con ampliación de IA. Perfecto para Instagram, Facebook, LinkedIn y campañas de marketing en redes sociales.",
@@ -424,7 +424,11 @@
         {
           "type": "Publicidad de Facebook",
           "description": "Crear imágenes impactantes para anuncios de Facebook, optimizar para cada formato de anuncio",
-          "benefits": ["Menores costos de adquisición", "Mejor tasa de clics", "Campañas más rentables"]
+          "benefits": [
+            "Menores costos de adquisición",
+            "Mejor tasa de clics",
+            "Campañas más rentables"
+          ]
         },
         {
           "type": "Contenido de LinkedIn",
@@ -516,7 +520,7 @@
       }
     },
     {
-      "slug": "mejora-imagenes-marketing-redes-sociales",
+      "slug": "social-media-marketing-enhancement",
       "title": "Mejora de Imágenes para Marketing en Redes Sociales",
       "metaTitle": "Mejora de Imágenes para Marketing en Redes Sociales | MyImageUpscaler",
       "metaDescription": "Aumenta engagement en redes sociales con imágenes mejoradas por IA. Crea visuales impresionantes para Instagram, Facebook, LinkedIn y más que generan likes, compartidos y conversiones.",
@@ -543,7 +547,11 @@
         {
           "type": "Marketing en Instagram",
           "description": "Mejora publicaciones de Instagram, historias, miniaturas de reels, mejora la estética del feed",
-          "benefits": ["Tasas de participación más altas", "Mejor estética de marca", "Más seguidores"]
+          "benefits": [
+            "Tasas de participación más altas",
+            "Mejor estética de marca",
+            "Más seguidores"
+          ]
         },
         {
           "type": "Publicidad en Facebook",
@@ -633,7 +641,7 @@
       "relatedPages": ["tamaños-imagen-redes-sociales", "optimización-marketing-contenido"]
     },
     {
-      "slug": "mejora-negocio-fotografía",
+      "slug": "photography-business-enhancement",
       "title": "Mejora del Negocio de Fotografía",
       "metaTitle": "Mejora del Negocio de Fotografía | MyImageUpscaler",
       "metaDescription": "Amplía los servicios de fotografía con mejora con IA. Ofrece escalado de imágenes premium, aumenta la satisfacción del cliente y crece los ingresos con servicios impulsados por IA.",
@@ -674,7 +682,11 @@
         {
           "type": "Fotografía comercial",
           "description": "Mejorar product shots, create large format prints, optimize for client campaigns",
-          "benefits": ["Clientes comerciales", "Impresión de gran formato", "Optimización de campaña"]
+          "benefits": [
+            "Clientes comerciales",
+            "Impresión de gran formato",
+            "Optimización de campaña"
+          ]
         },
         {
           "type": "Fotografía de Eventos",
@@ -757,7 +769,7 @@
       "relatedPages": ["guia-fotografia-profesional", "estrategias-precios-fotografia"]
     },
     {
-      "slug": "mejora-visualizacion-arquitectura",
+      "slug": "architecture-visualization-enhancement",
       "title": "Mejora de Visualización Arquitectónica",
       "metaTitle": "Mejora de Visualización Arquitectónica | MyImageUpscaler",
       "metaDescription": "Mejora visualizaciones y renderizados arquitectónicos con escalado por IA. Crea presentaciones arquitectónicas impresionantes, mejora comunicación con clientes y gana más proyectos.",
@@ -881,7 +893,7 @@
       "relatedPages": ["optimizacion-renderizado-3d", "estandares-presentacion-arquitectonica"]
     },
     {
-      "slug": "mejora-medios-impresos",
+      "slug": "print-media-enhancement",
       "title": "Mejora de Medios Impresos con IA",
       "metaTitle": "Mejora de Medios Impresos con IA | MyImageUpscaler",
       "metaDescription": "Mejora calidad de medios impresos con escalado por IA. Mejora fotos de periódicos, imágenes de revistas e ilustraciones de libros para producción impresa.",
@@ -908,7 +920,11 @@
         {
           "type": "Producción de Periódicos",
           "description": "Mejora fotos de noticias, mejora calidad de imagen para impresión, optimiza para formatos de periódico",
-          "benefits": ["Mejor calidad de impresión", "Apariencia profesional", "Engagement de lectores"]
+          "benefits": [
+            "Mejor calidad de impresión",
+            "Apariencia profesional",
+            "Engagement de lectores"
+          ]
         },
         {
           "type": "Publicación de Revistas",
@@ -918,7 +934,11 @@
         {
           "type": "Publicación de Libros",
           "description": "Mejora portadas de libros, mejora ilustraciones, optimiza imágenes interiores",
-          "benefits": ["Mejores ventas de libros", "Apariencia profesional", "Satisfacción de autores"]
+          "benefits": [
+            "Mejores ventas de libros",
+            "Apariencia profesional",
+            "Satisfacción de autores"
+          ]
         },
         {
           "type": "Materiales de Marketing",
@@ -993,7 +1013,7 @@
       "relatedPages": ["estandares-produccion-impresion", "requisitos-imagen-publicacion"]
     },
     {
-      "slug": "mejora-turismo-viajes",
+      "slug": "travel-tourism-enhancement",
       "title": "Mejora de Fotos de Viajes y Turismo",
       "metaTitle": "Mejora de Fotos de Viajes y Turismo | MyImageUpscaler",
       "metaDescription": "Mejora fotos de viajes y turismo con escalado por IA. Atrae más visitantes con fotos de destinos impresionantes, mejora tasas de reserva y crea contenido de viajes convincente.",
@@ -1047,7 +1067,11 @@
         {
           "type": "Marketing de Restaurantes y Gastronomía",
           "description": "Mejora fotografía de alimentos, mejora imágenes de ambiente de restaurante, crea visuales de comida atractivos",
-          "benefits": ["Más reservaciones", "Mejor apelación al apetito", "Promoción de restaurante"]
+          "benefits": [
+            "Más reservaciones",
+            "Mejor apelación al apetito",
+            "Promoción de restaurante"
+          ]
         }
       ],
       "caseStudies": [
@@ -1243,7 +1267,7 @@
       "relatedPages": ["educational-publishing-standards", "online-learning-optimization"]
     },
     {
-      "slug": "mejora-visual-organizaciones-sin-fines-de-lucro",
+      "slug": "nonprofit-visual-enhancement",
       "title": "Mejora Visual para Organizaciones Sin Fines de Lucro",
       "metaTitle": "Mejora Visual para Organizaciones Sin Fines de Lucro | MyImageUpscaler",
       "metaDescription": "Mejora visuals de organizaciones sin fines de lucro con ampliación de IA. Mejora campañas de recaudación de fondos, crea materiales de conciencia convincentes y amplía el impacto social con imágenes.",
@@ -1364,7 +1388,7 @@
       "relatedPages": ["nonprofit-marketing-guide", "fundraising-visual-strategy"]
     },
     {
-      "slug": "mejora-fabricacion-industrial",
+      "slug": "manufacturing-industrial-enhancement",
       "title": "Mejora de Fabricación e Industrial",
       "metaTitle": "Mejora de Fabricación e Industrial | MyImageUpscaler",
       "metaDescription": "Mejora fotos de fabricación e industrial con ampliación de IA. Mejora fotografía de productos, materiales de marketing y documentación para mejores resultados empresariales.",
@@ -1481,7 +1505,7 @@
       "relatedPages": ["industrial-photography-guide", "manufacturing-marketing-optimization"]
     },
     {
-      "slug": "mejora-documentacion-legal",
+      "slug": "legal-documentation-enhancement",
       "title": "Mejora de Documentación Legal",
       "metaTitle": "Mejora de Documentación Legal | MyImageUpscaler",
       "metaDescription": "Mejorar legal documentation fotos with IA ampliación Improve evidence fotos court presentations, and legal case documentation for mejor legal outcomes.",
@@ -1527,7 +1551,11 @@
         {
           "type": "Documentación de evidencias",
           "description": "Mejorar evidence fotos for documentation (not alteration), improve clarity for review",
-          "benefits": ["Mejor evidence review", "Documentación más clara", "Profesional record-keeping"]
+          "benefits": [
+            "Mejor evidence review",
+            "Documentación más clara",
+            "Profesional record-keeping"
+          ]
         },
         {
           "type": "Comunicación con clientes",
@@ -1606,7 +1634,7 @@
       "relatedPages": ["legal-documentation-standards", "court-presentation-guidelines"]
     },
     {
-      "slug": "mejora-visual-deporte-fitness",
+      "slug": "sports-fitness-enhancement",
       "title": "Mejora Visual de Deporte y Fitness",
       "metaTitle": "Mejora Visual de Deporte y Fitness | MyImageUpscaler",
       "metaDescription": "Mejora visuals de deporte y fitness con ampliación de IA. Mejora fotografía atlética, materiales de marketing de gimnasio y contenido fitness para mayor engagement y resultados.",
@@ -1660,7 +1688,11 @@
         {
           "type": "Creación de contenido fitness",
           "description": "Mejorar workout fotos improve fitness content, create compelling exercise visuals",
-          "benefits": ["Mejor engagement", "Profesional fitness content", "Motivación de la audiencia"]
+          "benefits": [
+            "Mejor engagement",
+            "Profesional fitness content",
+            "Motivación de la audiencia"
+          ]
         }
       ],
       "caseStudies": [

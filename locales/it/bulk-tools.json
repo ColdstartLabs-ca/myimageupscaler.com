@@ -2,7 +2,7 @@
   "category": "strumenti-batch",
   "pages": [
     {
-      "slug": "ridimensionatore-immagini-batch",
+      "slug": "bulk-image-resizer",
       "title": "Ridimensionatore Immagini in Bulk",
       "metaTitle": "Ridimensionatore Immagini in Bulk Gratuito - Ridimensiona Più Foto contemporaneamente | MyImageUpscaler",
       "metaDescription": "Ridimensiona più immagini contemporaneamente con il nostro ridimensionatore di immagini in bulk gratuito. Ridimensiona foto in massa a qualsiasi dimensione. Funziona nel browser - non richiede upload.",
@@ -144,7 +144,7 @@
       "ctaUrl": "/strumenti-batch/ridimensionatore-immagini-batch"
     },
     {
-      "slug": "compressore-immagini-batch",
+      "slug": "bulk-image-compressor",
       "title": "Compressore Immagini in Bulk",
       "metaTitle": "Compressore Immagini in Bulk Gratuito - Comprimi Più Immagini | MyImageUpscaler",
       "metaDescription": "Comprimi più immagini contemporaneamente. Riduci le dimensioni dei file fino all'80% con il nostro compressore di immagini in bulk gratuito. Basato su browser, non richiede upload.",

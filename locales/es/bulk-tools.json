@@ -2,7 +2,7 @@
   "category": "herramientas-bulk",
   "pages": [
     {
-      "slug": "redimensionador-de-imágenes-en-lote",
+      "slug": "bulk-image-resizer",
       "title": "Redimensionador de Imágenes por Lotes",
       "metaTitle": "Redimensionador de Imágenes por Lotes Gratis - Redimensiona Múltiples Fotos a la Vez | MyImageUpscaler",
       "metaDescription": "Redimensiona múltiples imágenes a la vez con nuestro redimensionador de imágenes por lotes gratuito. Redimensiona fotos masivamente a cualquier dimensión. Funciona en tu navegador - no se requiere carga.",
@@ -147,7 +147,7 @@
       "ctaUrl": "/bulk-tools/bulk-image-resizer"
     },
     {
-      "slug": "compresion-por-lotes-imagenes",
+      "slug": "bulk-image-compressor",
       "title": "Compresor de Imágenes por Lotes",
       "metaTitle": "Compresor de Imágenes por Lotes Gratis - Comprime Múltiples Imágenes | MyImageUpscaler",
       "metaDescription": "Comprime múltiples imágenes a la vez. Reduce los tamaños de archivo hasta en un 80% con nuestro compresor de imágenes por lotes gratuito. Basado en navegador, no se requiere carga.",

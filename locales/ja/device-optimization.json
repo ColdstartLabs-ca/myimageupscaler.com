@@ -1130,6 +1130,39 @@
     },
     {
       "slug": "progressive-image-loading"
+    },
+    {
+      "slug": "desktop-image-optimization",
+      "title": "Desktop Image Optimization",
+      "metaTitle": "Desktop Image Optimization | MyImageUpscaler",
+      "metaDescription": "Complete guide to desktop image optimization. Learn to optimize images for Windows, Mac, and Linux applications.",
+      "h1": "Desktop Image Optimization: Performance Guide",
+      "intro": "Desktop applications have more resources than mobile but still require optimization for smooth performance.",
+      "primaryKeyword": "desktop image optimization",
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "device-optimization"
+    },
+    {
+      "slug": "smart-tv-image-optimization",
+      "title": "Smart TV Image Optimization",
+      "metaTitle": "Smart TV Image Optimization | MyImageUpscaler",
+      "metaDescription": "Complete guide to Smart TV image optimization. Learn to optimize images for 4K/8K TVs and HDR content.",
+      "h1": "Smart TV Image Optimization: Complete Guide",
+      "intro": "Smart TVs present unique optimization challenges with large 4K/8K displays and HDR content requirements.",
+      "primaryKeyword": "smart tv image optimization",
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "device-optimization"
+    },
+    {
+      "slug": "wearable-device-image-optimization",
+      "title": "Wearable Device Image Optimization",
+      "metaTitle": "Wearable Device Image Optimization | MyImageUpscaler",
+      "metaDescription": "Complete guide to wearable image optimization. Learn to optimize images for smartwatches and fitness trackers.",
+      "h1": "Wearable Image Optimization: Complete Guide",
+      "intro": "Wearable devices present extreme optimization challenges with tiny displays and limited battery.",
+      "primaryKeyword": "wearable image optimization",
+      "lastUpdated": "2025-12-19T00:00:00Z",
+      "category": "device-optimization"
     }
   ],
   "meta": {

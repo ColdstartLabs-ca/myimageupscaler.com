@@ -9,7 +9,14 @@
       "h1": "インタラクティブ画像ツール",
       "intro": "インタラクティブAIツールで画像処理未来体験。インストール不要、ブラウザ直接作業。",
       "primaryKeyword": "画像リサイザー",
-      "secondaryKeywords": ["オンラインで画像をリサイズ", "オンライン画像リサイザー", "画像をリサイズ", "画像リサイズツール", "オンラインで写真をリサイズ", "写真リサイザー"],
+      "secondaryKeywords": [
+        "オンラインで画像をリサイズ",
+        "オンライン画像リサイザー",
+        "画像をリサイズ",
+        "画像リサイズツール",
+        "オンラインで写真をリサイズ",
+        "写真リサイザー"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "画像リサイザー",
@@ -592,7 +599,13 @@
       "h1": "無料Twitter画像リサイザー - 完璧なサイズを即座に取得",
       "intro": "Twitter投稿、ヘッダー、プロフィール写真用の画像を即座にリサイズ。完璧なサイズを取得。無料、アップロード不要。",
       "primaryKeyword": "Twitter写真リサイザー",
-      "secondaryKeywords": ["Twitter画像サイズ", "Twitter投稿サイズ", "Twitterヘッダーサイズ", "Twitter用にリサイズ", "X画像サイズ"],
+      "secondaryKeywords": [
+        "Twitter画像サイズ",
+        "Twitter投稿サイズ",
+        "Twitterヘッダーサイズ",
+        "Twitter用にリサイズ",
+        "X画像サイズ"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "Twitter/X画像リサイザー",
@@ -862,7 +875,14 @@
       "h1": "無料一括画像リサイザー - 複数の画像を一度にリサイズ",
       "intro": "複数の画像を一度にリサイズ。一括処理、一貫したサイズ、高速処理。無料、アップロード不要。",
       "primaryKeyword": "バッチ画像リサイザー",
-      "secondaryKeywords": ["一括リサイズ", "大量写真リサイズ", "複数画像をリサイズ", "一括写真リサイザー", "バッチ画像リサイズ", "一括でリサイズ"],
+      "secondaryKeywords": [
+        "一括リサイズ",
+        "大量写真リサイズ",
+        "複数画像をリサイズ",
+        "一括写真リサイザー",
+        "バッチ画像リサイズ",
+        "一括でリサイズ"
+      ],
       "lastUpdated": "2025-12-26T00:00:00Z",
       "category": "ツール",
       "toolName": "一括画像リサイザー",
@@ -1005,7 +1025,14 @@
       "h1": "無料オンライン画像圧縮ツール - 画像を即座に圧縮",
       "intro": "数秒で画像ファイルサイズを削減。無料オンライン画像圧縮ツールは完全にブラウザで動作します - アップロードなし、サインアップなし、透かしなし。ウェブ、メール、ストレージの節約に最適。",
       "primaryKeyword": "画像圧縮ツール",
-      "secondaryKeywords": ["オンラインで画像を圧縮", "オンライン画像圧縮ツール", "画像を圧縮", "画像圧縮ツール", "画像サイズを削減", "写真圧縮ツール"],
+      "secondaryKeywords": [
+        "オンラインで画像を圧縮",
+        "オンライン画像圧縮ツール",
+        "画像を圧縮",
+        "画像圧縮ツール",
+        "画像サイズを削減",
+        "写真圧縮ツール"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "画像圧縮ツール",
@@ -1140,7 +1167,13 @@
       "h1": "無料PNG to JPGコンバーター - 即座に変換",
       "intro": "PNG画像をJPGに即座に変換。無料、アップロード不要、バッチ処理対応。",
       "primaryKeyword": "pngからjpgへ",
-      "secondaryKeywords": ["pngをjpgに変換", "pngからjpegへ", "pngからjpg変換", "オンラインでpngからjpgへ", "pngをjpegに変換"],
+      "secondaryKeywords": [
+        "pngをjpgに変換",
+        "pngからjpegへ",
+        "pngからjpg変換",
+        "オンラインでpngからjpgへ",
+        "pngをjpegに変換"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "PNG to JPGコンバーター",
@@ -1275,7 +1308,13 @@
       "h1": "無料JPG to PNGコンバーター - 即座に変換",
       "intro": "JPG画像をPNGに即座に変換。無料、アップロード不要、透明度サポート。",
       "primaryKeyword": "jpgをpngに",
-      "secondaryKeywords": ["jpgをpngに変換", "jpegをpngに", "jpgからpng変換", "オンラインでjpgからpngへ", "jpegをpngに変換"],
+      "secondaryKeywords": [
+        "jpgをpngに変換",
+        "jpegをpngに",
+        "jpgからpng変換",
+        "オンラインでjpgからpngへ",
+        "jpegをpngに変換"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "JPG to PNGコンバーター",
@@ -1406,7 +1445,13 @@
       "h1": "無料WebP to JPGコンバーター - 即座に変換",
       "intro": "WebP画像をJPGに即座に変換。無料、アップロード不要。",
       "primaryKeyword": "webpをjpgに",
-      "secondaryKeywords": ["webpをjpgに変換", "webpをjpegに", "webp to jpg変換ツール", "webpをjpgにオンラインで", "webpをjpegに変換"],
+      "secondaryKeywords": [
+        "webpをjpgに変換",
+        "webpをjpegに",
+        "webp to jpg変換ツール",
+        "webpをjpgにオンラインで",
+        "webpをjpegに変換"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "WebP to JPGコンバーター",
@@ -1537,7 +1582,12 @@
       "h1": "無料WebP to PNGコンバーター - 即座に変換",
       "intro": "WebP画像をPNGに即座に変換。無料、アップロード不要。",
       "primaryKeyword": "webpからpngへ",
-      "secondaryKeywords": ["webpをpngに変換", "webpからpng変換", "オンラインでwebpからpngへ", "webp png変換"],
+      "secondaryKeywords": [
+        "webpをpngに変換",
+        "webpからpng変換",
+        "オンラインでwebpからpngへ",
+        "webp png変換"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "ツール",
       "toolName": "WebP to PNGコンバーター",
@@ -1668,7 +1718,13 @@
       "h1": "無料JPG to WebPコンバーター - 即座に変換",
       "intro": "JPG画像をWebPに即座に変換。無料、アップロード不要。",
       "primaryKeyword": "jpgをwebpに",
-      "secondaryKeywords": ["jpgをwebpに変換", "jpegをwebpに", "jpg to webp変換ツール", "jpgをwebpにオンラインで", "jpegをwebpに変換"],
+      "secondaryKeywords": [
+        "jpgをwebpに変換",
+        "jpegをwebpに",
+        "jpg to webp変換ツール",
+        "jpgをwebpにオンラインで",
+        "jpegをwebpに変換"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "JPG to WebPコンバーター",
@@ -1799,7 +1855,12 @@
       "h1": "無料PNG to WebPコンバーター - 即座に変換",
       "intro": "PNG画像をWebPに即座に変換。無料、アップロード不要。",
       "primaryKeyword": "pngをwebpに",
-      "secondaryKeywords": ["pngをwebpに変換", "png to webp変換ツール", "pngをwebpにオンラインで", "png webp変換ツール"],
+      "secondaryKeywords": [
+        "pngをwebpに変換",
+        "png to webp変換ツール",
+        "pngをwebpにオンラインで",
+        "png webp変換ツール"
+      ],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "tools",
       "toolName": "PNG to WebPコンバーター",
@@ -1930,7 +1991,13 @@
       "h1": "無料一括画像圧縮 - 複数の画像を一度に圧縮",
       "intro": "複数の画像を一度に圧縮。一括処理、一貫した品質、高速処理。無料、アップロード不要。",
       "primaryKeyword": "バッチ画像圧縮",
-      "secondaryKeywords": ["バッチ画像圧縮", "一括画像最適化", "複数画像を圧縮", "大量画像圧縮", "バッチ写真圧縮"],
+      "secondaryKeywords": [
+        "バッチ画像圧縮",
+        "一括画像最適化",
+        "複数画像を圧縮",
+        "大量画像圧縮",
+        "バッチ写真圧縮"
+      ],
       "lastUpdated": "2025-12-26T00:00:00Z",
       "category": "ツール",
       "toolName": "一括画像圧縮",
@@ -2064,6 +2131,66 @@
       "relatedGuides": ["image-optimization-guide", "web-performance-images"],
       "ctaText": "今すぐ圧縮",
       "ctaUrl": "/tools/compress/bulk-image-compressor"
+    },
+    {
+      "slug": "resize-image-for-instagram",
+      "title": "Instagram画像リサイズ",
+      "metaTitle": "Instagram用画像サイズ変更ツール | MyImageUpscaler",
+      "h1": "Instagram画像リサイズ - 最適なサイズに変更",
+      "intro": "Instagram用の画像を最適なサイズにリサイズします",
+      "primaryKeyword": "instagram 画像リサイズ",
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "ツール"
+    },
+    {
+      "slug": "resize-image-for-youtube",
+      "title": "YouTube画像リサイズ",
+      "metaTitle": "YouTube用画像サイズ変更ツール | MyImageUpscaler",
+      "h1": "YouTube画像リサイズ - サムネイル用に変更",
+      "intro": "YouTube用の画像を最適なサイズにリサイズします",
+      "primaryKeyword": "youtube 画像リサイズ",
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "ツール"
+    },
+    {
+      "slug": "resize-image-for-facebook",
+      "title": "Facebook画像リサイズ",
+      "metaTitle": "Facebook用画像サイズ変更ツール | MyImageUpscaler",
+      "h1": "Facebook画像リサイズ - プロフィール用に変更",
+      "intro": "Facebook用の画像を最適なサイズにリサイズします",
+      "primaryKeyword": "facebook 画像リサイズ",
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "ツール"
+    },
+    {
+      "slug": "resize-image-for-twitter",
+      "title": "Twitter画像リサイズ",
+      "metaTitle": "Twitter用画像サイズ変更ツール | MyImageUpscaler",
+      "h1": "Twitter画像リサイズ - ツイート用に変更",
+      "intro": "Twitter用の画像を最適なサイズにリサイズします",
+      "primaryKeyword": "twitter 画像リサイズ",
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "ツール"
+    },
+    {
+      "slug": "resize-image-for-linkedin",
+      "title": "LinkedIn画像リサイズ",
+      "metaTitle": "LinkedIn用画像サイズ変更ツール | MyImageUpscaler",
+      "h1": "LinkedIn画像リサイズ - プロフィール用に変更",
+      "intro": "LinkedIn用の画像を最適なサイズにリサイズします",
+      "primaryKeyword": "linkedin 画像リサイズ",
+      "lastUpdated": "2025-12-26T00:00:00Z",
+      "category": "ツール"
+    },
+    {
+      "slug": "bulk-image-resizer",
+      "title": "一括画像リサイズ",
+      "metaTitle": "一括リサイザー - 複数の画像を一度にリサイズ | MyImageUpscaler",
+      "h1": "一括画像リサイズ - 20枚まで同時に処理",
+      "intro": "複数の画像を一括でリサイズします",
+      "primaryKeyword": "一括画像リサイズ",
+      "lastUpdated": "2025-12-26T00:00:00:00Z",
+      "category": "ツール"
     }
   ],
   "meta": {

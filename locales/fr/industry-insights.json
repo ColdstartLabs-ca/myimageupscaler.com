@@ -2,7 +2,7 @@
   "category": "industry-insights",
   "pages": [
     {
-      "slug": "amélioration-photos-immobilier",
+      "slug": "real-estate-photo-enhancement",
       "title": "Real Estate Photo Amélioration with IA",
       "metaTitle": "Real Estate Photo Amélioration - Boost Property Appeal with IA Upscaling",
       "metaDescription": "Transform real estate Photos with IA upscaling. Make properties look stunning, attract more buyers, and sell faster with Professionnel Image Amélioration.",
@@ -125,7 +125,7 @@
       "relatedPages": ["amélioration-photos-design-interieur", "mise-échelle-photos-architecture"]
     },
     {
-      "slug": "amélioration-photos-produits-e-commerce",
+      "slug": "ecommerce-product-photo-enhancement",
       "title": "E-commerce Product Photo Amélioration",
       "metaTitle": "E-commerce Product Photo Amélioration - Boost Sales with IA Image Upscaling",
       "metaDescription": "Transform product Photos with IA upscaling. Increase conversion rates, reduce returns, and create Professionnel product Images that drive sales.",
@@ -254,7 +254,7 @@
       "relatedPages": ["guide-photographie-produits", "optimisation-listing-amazon"]
     },
     {
-      "slug": "amélioration-imagerie-medicale",
+      "slug": "medical-imaging-enhancement",
       "title": "Medical Imaging Amélioration with IA",
       "metaTitle": "Medical Imaging Amélioration - IA-Powered Diagnostic Image Qualité",
       "metaDescription": "Enhance medical imaging Qualité with IA upscaling. Improve diagnostic accuracy, telemedicine capabilities, and medical record documentation.",
@@ -300,7 +300,11 @@
         {
           "type": "Enseignement médical",
           "description": "Améliorez les matériels pédagogiques, améliorez les images de manuel, créez de meilleures ressources de formation",
-          "benefits": ["Meilleure éducation", "Démonstrations plus claires", "Apprentissage amélioré"]
+          "benefits": [
+            "Meilleure éducation",
+            "Démonstrations plus claires",
+            "Apprentissage amélioré"
+          ]
         },
         {
           "type": "Communication avec les patients",
@@ -374,7 +378,7 @@
       "relatedPages": ["optimisation-télémédecine", "normes-documentation-médicale"]
     },
     {
-      "slug": "amélioration-flux-travail-graphiste",
+      "slug": "graphic-design-workflow-enhancement",
       "title": "Graphic Design Workflow Amélioration",
       "metaTitle": "Graphic Design Workflow - IA Image Amélioration for Designers",
       "metaDescription": "Streamline graphic Design workflow with IA Image Amélioration. Save time, improve Qualité, and deliver Professionnel designs faster with IA upscaling.",
@@ -499,7 +503,7 @@
       "relatedPages": ["amélioration-logo-design", "optimisation-matériel-marketing"]
     },
     {
-      "slug": "amélioration-marketing-réseaux-sociaux",
+      "slug": "social-media-marketing-enhancement",
       "title": "Réseaux sociaux Marketing Image Amélioration",
       "metaTitle": "Réseaux sociaux Marketing - IA Image Amélioration for Better Engagement",
       "metaDescription": "Boost Réseaux sociaux engagement with IA-enhanced Images. Create stunning visuals for Instagram, Facebook, LinkedIn, and more that drive likes, shares, and conversions.",
@@ -628,7 +632,7 @@
       "relatedPages": ["tailles-images-réseaux-sociaux", "optimisation-marketing-contenu"]
     },
     {
-      "slug": "amélioration-entreprise-photographie",
+      "slug": "photography-business-enhancement",
       "title": "Photography Business Amélioration",
       "metaTitle": "Photography Business Growth - IA Image Amélioration Services",
       "metaDescription": "Expand photography services with IA Amélioration. Offer premium Image upscaling, increase client satisfaction, and grow revenue with IA-powered services.",
@@ -756,7 +760,7 @@
       "relatedPages": ["guide-photographie-professionnelle", "stratégies-tarification-photographie"]
     },
     {
-      "slug": "amélioration-visualisation-architecture",
+      "slug": "architecture-visualization-enhancement",
       "title": "Architecture Visualization Amélioration",
       "metaTitle": "Architecture Visualization - IA Amélioration for Architectural Renderings",
       "metaDescription": "Enhance architectural visualizations and renderings with IA upscaling. Create stunning architectural presentations, improve client communication, and win more projects.",
@@ -880,7 +884,7 @@
       "relatedPages": ["optimisation-rendu-3d", "normes-présentation-architecture"]
     },
     {
-      "slug": "amélioration-medias-imprimés",
+      "slug": "print-media-enhancement",
       "title": "Impression Media Amélioration with IA",
       "metaTitle": "Impression Media Amélioration - IA Upscaling for Magazines, Newspapers, Books",
       "metaDescription": "Enhance Impression media Qualité with IA upscaling. Improve newspaper Photos, magazine Images, and book illustrations for Professionnel Impression production.",
@@ -1004,7 +1008,7 @@
       "relatedPages": ["normes-production-impression", "exigences-images-édition"]
     },
     {
-      "slug": "amélioration-tourisme-voyage",
+      "slug": "travel-tourism-enhancement",
       "title": "Travel & Tourism Photo Amélioration",
       "metaTitle": "Travel Tourism Photo Amélioration - IA for Travel Industry Marketing",
       "metaDescription": "Enhance travel and tourism Photos with IA upscaling. Attract more visitors with stunning destination Photos, improve booking rates, and create compelling travel content.",
@@ -1129,7 +1133,7 @@
       "relatedPages": ["optimisation-marketing-hotelier", "guide-photographie-tourisme"]
     },
     {
-      "slug": "amélioration-contenu-éducatif",
+      "slug": "education-content-enhancement",
       "title": "Educational Content Amélioration",
       "metaTitle": "Educational Content Amélioration - IA for Better Learning Materials",
       "metaDescription": "Enhance educational content with IA upscaling. Create better learning materials, improve textbook Qualité, and develop engaging educational visuals for students.",
@@ -1183,7 +1187,11 @@
         {
           "type": "Marketing éducatif",
           "description": "Améliorer les matériels promotionnels, améliorer les visuels marketing éducatifs",
-          "benefits": ["Meilleure inscription", "Marketing professionnel", "Promotion de linstitution"]
+          "benefits": [
+            "Meilleure inscription",
+            "Marketing professionnel",
+            "Promotion de linstitution"
+          ]
         }
       ],
       "caseStudies": [
@@ -1254,7 +1262,7 @@
       "relatedPages": ["normes-édition-éducative", "optimisation-apprentissage-en-ligne"]
     },
     {
-      "slug": "amélioration-visuelle-à-but-non-lucratif",
+      "slug": "nonprofit-visual-enhancement",
       "title": "Nonprofit Visual Amélioration",
       "metaTitle": "Nonprofit Visual Amélioration - IA for Better Fundraising & Awareness",
       "metaDescription": "Enhance nonprofit visuals with IA upscaling. Improve fundraising campaigns, create compelling awareness materials, and amplify social impact with Professionnel imagery.",
@@ -1304,7 +1312,11 @@
         {
           "type": "Marketing dévénements",
           "description": "Améliorer les photos dévénements, améliorer les matériels promotionnels, créer des visuels dévénements convaincants",
-          "benefits": ["Assistance plus élevée", "Meilleur engagement", "Construction communautaire"]
+          "benefits": [
+            "Assistance plus élevée",
+            "Meilleur engagement",
+            "Construction communautaire"
+          ]
         }
       ],
       "caseStudies": [
@@ -1375,7 +1387,7 @@
       "relatedPages": ["guide-marketing-à-but-non-lucratif", "stratégie-visuelle-collecte-de-fonds"]
     },
     {
-      "slug": "amélioration-industrie-manufacturière",
+      "slug": "manufacturing-industrial-enhancement",
       "title": "Manufacturing & Industrial Amélioration",
       "metaTitle": "Manufacturing Industrial Amélioration - IA for Product & Marketing Photos",
       "metaDescription": "Enhance manufacturing and industrial Photos with IA upscaling. Improve product photography, Marketing materials, and documentation for better business results.",
@@ -1500,7 +1512,7 @@
       "relatedPages": ["guide-photographie-industrielle", "optimisation-marketing-fabrication"]
     },
     {
-      "slug": "amélioration-documentation-juridique",
+      "slug": "legal-documentation-enhancement",
       "title": "Legal Documentation Amélioration",
       "metaTitle": "Legal Documentation Amélioration - IA for Better Legal Photography",
       "metaDescription": "Enhance legal documentation Photos with IA upscaling. Improve evidence Photos, court presentations, and legal case documentation for better legal outcomes.",
@@ -1629,7 +1641,7 @@
       "relatedPages": ["normes-documentation-juridique", "lignes directrices présentation tribunal"]
     },
     {
-      "slug": "amélioration-sports-fitness",
+      "slug": "sports-fitness-enhancement",
       "title": "Sports & Fitness Visual Amélioration",
       "metaTitle": "Sports Fitness Amélioration - IA for Athletic Photography & Marketing",
       "metaDescription": "Enhance sports and fitness visuals with IA upscaling. Improve athletic photography, gym Marketing materials, and fitness content for better engagement and results.",
@@ -1683,7 +1695,11 @@
         {
           "type": "Création contenu fitness",
           "description": "Améliorer les photos dentraînement, améliorer le contenu fitness, créer des visuels dexercice convaincants",
-          "benefits": ["Meilleur engagement", "Contenu fitness professionnel", "Motivation du public"]
+          "benefits": [
+            "Meilleur engagement",
+            "Contenu fitness professionnel",
+            "Motivation du public"
+          ]
         }
       ],
       "caseStudies": [
