@@ -24,11 +24,7 @@
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "features": [
         {
           "title": "Instant Browser-Based Resizing",
@@ -150,10 +146,7 @@
           "answer": "Currently, you can resize one image at a time. For batch processing and advanced AI enhancement, check out our premium AI Image Upscaler."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "image-compressor"
-      ],
+      "relatedTools": ["ai-image-upscaler", "image-compressor"],
       "ctaText": "Try Free Image Resizer",
       "ctaUrl": "/tools/resize/image-resizer"
     },
@@ -184,11 +177,7 @@
         "presetFilter": "instagram"
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "features": [
         {
           "title": "Instagram Post (1080x1080)",
@@ -294,10 +283,7 @@
           "answer": "Yes! Instagram Reels use the same 1080x1920 (9:16) dimensions as Stories."
         }
       ],
-      "relatedTools": [
-        "image-resizer",
-        "image-compressor"
-      ],
+      "relatedTools": ["image-resizer", "image-compressor"],
       "ctaText": "Resize for Instagram Free",
       "ctaUrl": "/tools/resize/resize-image-for-instagram"
     },
@@ -328,11 +314,7 @@
         "presetFilter": "youtube"
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "features": [
         {
           "title": "Perfect 1280x720",
@@ -438,10 +420,7 @@
           "answer": "Yes! 1280x720 thumbnails scale perfectly to all screen sizes, from mobile phones to 4K TVs."
         }
       ],
-      "relatedTools": [
-        "image-resizer",
-        "image-compressor"
-      ],
+      "relatedTools": ["image-resizer", "image-compressor"],
       "ctaText": "Resize for YouTube Free",
       "ctaUrl": "/tools/resize/resize-image-for-youtube"
     },
@@ -472,11 +451,7 @@
         "presetFilter": "facebook"
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "features": [
         {
           "title": "Facebook Post (1200x630)",
@@ -582,9 +557,7 @@
           "answer": "Facebook compresses uploaded images. Use our tool to resize to exact dimensions and export at high quality to minimize compression artifacts."
         }
       ],
-      "relatedTools": [
-        "image-resizer"
-      ],
+      "relatedTools": ["image-resizer"],
       "ctaText": "Resize for Facebook Free",
       "ctaUrl": "/tools/resize/resize-image-for-facebook"
     },
@@ -615,11 +588,7 @@
         "presetFilter": "twitter"
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "features": [
         {
           "title": "Twitter Post (1200x675)",
@@ -725,9 +694,7 @@
           "answer": "Twitter allows images up to 5MB for photos. GIFs can be up to 15MB. Our tool helps you stay within these limits."
         }
       ],
-      "relatedTools": [
-        "image-resizer"
-      ],
+      "relatedTools": ["image-resizer"],
       "ctaText": "Resize for Twitter Free",
       "ctaUrl": "/tools/resize/resize-image-for-twitter"
     },
@@ -758,11 +725,7 @@
         "presetFilter": "linkedin"
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "features": [
         {
           "title": "LinkedIn Post (1200x627)",
@@ -868,9 +831,7 @@
           "answer": "LinkedIn compresses images. Start with high-quality images at exact dimensions and export at 90%+ quality to minimize compression."
         }
       ],
-      "relatedTools": [
-        "image-resizer"
-      ],
+      "relatedTools": ["image-resizer"],
       "ctaText": "Resize for LinkedIn Free",
       "ctaUrl": "/tools/resize/resize-image-for-linkedin"
     },
@@ -897,11 +858,7 @@
       "isInteractive": true,
       "toolComponent": "BulkImageResizer",
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "features": [
         {
           "title": "Process Up to 20 Images",
@@ -1023,11 +980,7 @@
           "answer": "Yes! You can remove individual images from the batch before or after processing by clicking the X button next to each image."
         }
       ],
-      "relatedTools": [
-        "image-resizer",
-        "image-compressor",
-        "ai-image-upscaler"
-      ],
+      "relatedTools": ["image-resizer", "image-compressor", "ai-image-upscaler"],
       "ctaText": "Try Bulk Image Resizer Free",
       "ctaUrl": "/tools/resize/bulk-image-resizer"
     },
@@ -1054,11 +1007,7 @@
       "isInteractive": true,
       "toolComponent": "ImageCompressor",
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "features": [
         {
           "title": "Smart Compression Algorithm",
@@ -1172,10 +1121,7 @@
           "answer": "For web use, 70-80% is optimal. For printing or professional use, 85-95%. For maximum compression (like email), 60-70% works well."
         }
       ],
-      "relatedTools": [
-        "image-resizer",
-        "ai-image-upscaler"
-      ],
+      "relatedTools": ["image-resizer", "ai-image-upscaler"],
       "ctaText": "Try Free Image Compressor",
       "ctaUrl": "/tools/compress/image-compressor"
     },
@@ -1202,14 +1148,10 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "jpeg",
-        "acceptedInputFormats": [
-          "image/png"
-        ]
+        "acceptedInputFormats": ["image/png"]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/png"
-      ],
+      "acceptedFormats": ["image/png"],
       "features": [
         {
           "title": "Transparency Handling",
@@ -1319,10 +1261,7 @@
           "answer": "For web and social media, 80-85% is perfect. For printing or professional use, 90-95%. For maximum file size reduction, 70-75% still looks good."
         }
       ],
-      "relatedTools": [
-        "image-compressor",
-        "image-resizer"
-      ],
+      "relatedTools": ["image-compressor", "image-resizer"],
       "ctaText": "Convert PNG to JPG Free",
       "ctaUrl": "/tools/convert/png-to-jpg"
     },
@@ -1349,14 +1288,10 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "png",
-        "acceptedInputFormats": [
-          "image/jpeg"
-        ]
+        "acceptedInputFormats": ["image/jpeg"]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg"
-      ],
+      "acceptedFormats": ["image/jpeg"],
       "features": [
         {
           "title": "Lossless Conversion",
@@ -1462,9 +1397,7 @@
           "answer": "Yes! Once in PNG format, you can use image editing software to remove backgrounds and add transparency. JPG doesn't support transparency."
         }
       ],
-      "relatedTools": [
-        "image-compressor"
-      ],
+      "relatedTools": ["image-compressor"],
       "ctaText": "Convert JPG to PNG Free",
       "ctaUrl": "/tools/convert/jpg-to-png"
     },
@@ -1491,14 +1424,10 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "jpeg",
-        "acceptedInputFormats": [
-          "image/webp"
-        ]
+        "acceptedInputFormats": ["image/webp"]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/webp"],
       "features": [
         {
           "title": "Universal Compatibility",
@@ -1604,13 +1533,8 @@
           "answer": "Converting animated WebP will capture the first frame as a static JPG. For animated images, consider GIF format instead."
         }
       ],
-      "relatedTools": [
-        "jpg-to-webp",
-        "image-compressor"
-      ],
-      "relatedGuides": [
-        "webp-format-guide"
-      ],
+      "relatedTools": ["jpg-to-webp", "image-compressor"],
+      "relatedGuides": ["webp-format-guide"],
       "ctaText": "Convert WebP to JPG Free",
       "ctaUrl": "/tools/convert/webp-to-jpg"
     },
@@ -1636,14 +1560,10 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "png",
-        "acceptedInputFormats": [
-          "image/webp"
-        ]
+        "acceptedInputFormats": ["image/webp"]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/webp"],
       "features": [
         {
           "title": "Preserve Transparency",
@@ -1749,12 +1669,8 @@
           "answer": "Use PNG if you need transparency or lossless quality for editing. Use JPG for smaller files and universal compatibility when transparency isn't needed."
         }
       ],
-      "relatedTools": [
-        "image-compressor"
-      ],
-      "relatedGuides": [
-        "webp-format-guide"
-      ],
+      "relatedTools": ["image-compressor"],
+      "relatedGuides": ["webp-format-guide"],
       "ctaText": "Convert WebP to PNG Free",
       "ctaUrl": "/tools/convert/webp-to-png"
     },
@@ -1781,14 +1697,10 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "webp",
-        "acceptedInputFormats": [
-          "image/jpeg"
-        ]
+        "acceptedInputFormats": ["image/jpeg"]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg"
-      ],
+      "acceptedFormats": ["image/jpeg"],
       "features": [
         {
           "title": "Superior Compression",
@@ -1894,12 +1806,8 @@
           "answer": "For web use, yes! WebP is ideal for websites. For email, printing, or older software, JPG may be more compatible."
         }
       ],
-      "relatedTools": [
-        "image-compressor"
-      ],
-      "relatedGuides": [
-        "webp-format-guide"
-      ],
+      "relatedTools": ["image-compressor"],
+      "relatedGuides": ["webp-format-guide"],
       "ctaText": "Convert JPG to WebP Free",
       "ctaUrl": "/tools/convert/jpg-to-webp"
     },
@@ -1925,14 +1833,10 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "webp",
-        "acceptedInputFormats": [
-          "image/png"
-        ]
+        "acceptedInputFormats": ["image/png"]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/png"
-      ],
+      "acceptedFormats": ["image/png"],
       "features": [
         {
           "title": "Preserve Transparency",
@@ -2038,13 +1942,8 @@
           "answer": "Yes! Use our WebP to PNG converter if you need the PNG format for compatibility or editing in software that doesn't support WebP."
         }
       ],
-      "relatedTools": [
-        "jpg-to-webp",
-        "image-compressor"
-      ],
-      "relatedGuides": [
-        "webp-format-guide"
-      ],
+      "relatedTools": ["jpg-to-webp", "image-compressor"],
+      "relatedGuides": ["webp-format-guide"],
       "ctaText": "Convert PNG to WebP Free",
       "ctaUrl": "/tools/convert/png-to-webp"
     },
@@ -2070,11 +1969,7 @@
       "isInteractive": true,
       "toolComponent": "BulkImageCompressor",
       "maxFileSizeMB": 25,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "features": [
         {
           "title": "Compress Up to 20 Images",
@@ -2196,17 +2091,129 @@
           "answer": "Each image can be up to 25MB. This limit is based on browser memory, not server restrictions (since we don't upload to servers)."
         }
       ],
-      "relatedTools": [
-        "image-compressor",
-        "image-resizer",
-        "jpg-to-webp"
-      ],
+      "relatedTools": ["image-compressor", "image-resizer", "jpg-to-webp"],
       "ctaText": "Try Free Bulk Compressor",
       "ctaUrl": "/tools/compress/bulk-image-compressor"
+    },
+    {
+      "slug": "free-ai-upscaler",
+      "title": "Free AI Upscaler",
+      "metaTitle": "Free AI Image Upscaler - Enlarge Images Online No Sign Up | MyImageUpscaler",
+      "metaDescription": "Upscale images 2x free with AI. No account required. Try our image upscaler instantly - just upload and download. Quick, easy, no watermarks.",
+      "h1": "Free AI Image Upscaler",
+      "intro": "Upscale your images 2x with AI - no account required. Just upload an image to see the quality difference instantly.",
+      "primaryKeyword": "free ai upscaler",
+      "secondaryKeywords": [
+        "free image upscaler",
+        "upscale image free",
+        "image upscaler no sign up",
+        "free photo enlarger",
+        "enlarge image free online",
+        "ai image upscaler free"
+      ],
+      "lastUpdated": "2026-02-01T00:00:00Z",
+      "category": "tools",
+      "isInteractive": true,
+      "toolComponent": "GuestUpscaler",
+      "maxFileSizeMB": 2,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolName": "Free AI Upscaler",
+      "description": "Experience AI-powered image upscaling without creating an account. Upload any image to instantly enlarge it 2x while preserving quality. See the difference AI makes, then unlock the full power with a free account.",
+      "features": [
+        {
+          "title": "Instant 2x Upscaling",
+          "description": "Upload any image and get it upscaled 2x in seconds. No signup, no email, no hassle."
+        },
+        {
+          "title": "AI-Powered Quality",
+          "description": "Uses the same Real-ESRGAN AI model as our full service. Real detail enhancement, not just pixel stretching."
+        },
+        {
+          "title": "No Watermarks",
+          "description": "Your upscaled images are completely clean. Download and use them anywhere."
+        },
+        {
+          "title": "Privacy First",
+          "description": "Images are processed and automatically deleted within 1 hour. We do not store or share your photos."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Quick Product Photo Test",
+          "description": "See if AI upscaling works for your product images before committing.",
+          "example": "Test a supplier photo to see how it looks upscaled before listing on Amazon."
+        },
+        {
+          "title": "Social Media Preview",
+          "description": "Check how an old photo looks upscaled before posting.",
+          "example": "Preview a throwback photo at higher resolution before Instagram."
+        },
+        {
+          "title": "Quality Evaluation",
+          "description": "Compare AI upscaling vs regular resize to see the difference.",
+          "example": "See how text and edges are preserved compared to Photoshop resize."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Zero Friction",
+          "description": "No account creation, no email verification, no credit card. Just upload and go.",
+          "metric": "3 free upscales per day"
+        },
+        {
+          "title": "Same AI Quality",
+          "description": "Uses Real-ESRGAN, the same model powering professional image restoration.",
+          "metric": "Industry-standard neural network"
+        },
+        {
+          "title": "Fast Results",
+          "description": "Most images process in 5-10 seconds on our cloud infrastructure.",
+          "metric": "GPU-accelerated processing"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Drag and drop or click to browse. Supports JPEG, PNG, WebP up to 2MB."
+        },
+        {
+          "step": 2,
+          "title": "AI Processes",
+          "description": "Our Real-ESRGAN model analyzes and upscales your image 2x with AI detail enhancement."
+        },
+        {
+          "step": 3,
+          "title": "Download Free",
+          "description": "Preview the result and download. No watermarks, no signup required."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is this really free with no catch?",
+          "answer": "Yes! You get 3 free upscales per day at 2x. The only limits are file size (2MB) and scale factor. For 4x/8x upscaling and larger files, you can create a free account."
+        },
+        {
+          "question": "What is the difference vs the full upscaler?",
+          "answer": "The free guest version uses the same AI model but is limited to 2x scaling and 2MB files. Creating a free account unlocks 8x scaling, 64MB files, batch processing, and 10 credits monthly."
+        },
+        {
+          "question": "Do you store my images?",
+          "answer": "Images are processed on secure cloud servers and automatically deleted within 1 hour. We never use your images for training or share them."
+        },
+        {
+          "question": "Why do I need to sign up for more?",
+          "answer": "Running AI models costs real money (GPU compute). The free tier lets you evaluate the quality, while accounts let us provide sustainable service with fair usage limits."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": [],
+      "ctaText": "Try Free Upscaler",
+      "ctaUrl": "/tools/free-ai-upscaler"
     }
   ],
   "meta": {
-    "totalPages": 15,
+    "totalPages": 16,
     "lastUpdated": "2026-01-20T00:00:00Z"
   }
 }
