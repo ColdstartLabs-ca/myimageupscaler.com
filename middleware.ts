@@ -286,7 +286,6 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
     pathname.startsWith('/device-use/') ||
     pathname.startsWith('/format-scale/') ||
     pathname.startsWith('/platform-format/') ||
-    pathname.startsWith('/blog/') || // Blog posts are English-only, skip locale routing
     // New category hub pages
     pathname.startsWith('/photo-restoration') ||
     pathname.startsWith('/camera-raw') ||
