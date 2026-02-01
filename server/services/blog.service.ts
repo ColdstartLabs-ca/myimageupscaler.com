@@ -1,7 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-import { glob } from 'glob';
-import matter from 'gray-matter';
 import { supabaseAdmin } from '../supabase/supabaseAdmin';
 import type {
   IBlogPost,
@@ -11,94 +7,75 @@ import type {
   IListBlogPostsQuery,
 } from '@shared/validation/blog.schema';
 
-const CONTENT_DIR = path.join(process.cwd(), 'content/blog');
+// Import pre-compiled blog data for edge compatibility
+// This JSON is generated at build time from MDX files
+import blogDataRaw from '@/content/blog-data.json';
+
+interface IStaticBlogPost {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  author: string;
+  category: string;
+  tags: string[];
+  image?: string;
+  readingTime: string;
+  content: string;
+}
+
+const blogData = blogDataRaw as { posts: IStaticBlogPost[] };
 
 // =============================================================================
-// MDX FILE READING FUNCTIONS
+// STATIC JSON READING FUNCTIONS (Edge-compatible)
 // =============================================================================
 
 /**
- * Read all blog posts from MDX files in content/blog directory
+ * Get all blog posts from pre-compiled JSON
+ * Edge-compatible - no filesystem access
  */
-async function getPostsFromMDX(): Promise<IBlogPostMeta[]> {
-  try {
-    const files = await glob('**/*.mdx', { cwd: CONTENT_DIR });
-
-    const posts: IBlogPostMeta[] = [];
-
-    for (const file of files) {
-      const filePath = path.join(CONTENT_DIR, file);
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      const { data } = matter(fileContent);
-
-      const slug = file.replace(/\.mdx$/, '');
-
-      posts.push({
-        slug,
-        title: data.title || '',
-        description: data.description || '',
-        date: data.date || data.publishedAt || new Date().toISOString(),
-        author: data.author || 'MyImageUpscaler Team',
-        category: data.category || 'Guides',
-        tags: data.tags || [],
-        image: data.image || data.featuredImage,
-        readingTime: data.readingTime || '5 min read',
-      });
-    }
-
-    return posts.sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      return dateB - dateA;
-    });
-  } catch (error) {
-    console.error('Error reading MDX files:', error);
-    return [];
-  }
+function getPostsFromStaticData(): IBlogPostMeta[] {
+  return blogData.posts.map(post => ({
+    slug: post.slug,
+    title: post.title,
+    description: post.description,
+    date: post.date,
+    author: post.author,
+    category: post.category,
+    tags: post.tags,
+    image: post.image,
+    readingTime: post.readingTime,
+  }));
 }
 
 /**
- * Read a single blog post from MDX file
+ * Get a single blog post from pre-compiled JSON
+ * Edge-compatible - no filesystem access
  */
-async function getPostFromMDX(slug: string): Promise<IBlogPostMeta | null> {
-  try {
-    const filePath = path.join(CONTENT_DIR, `${slug}.mdx`);
+function getPostFromStaticData(slug: string): (IBlogPostMeta & { content: string }) | null {
+  const post = blogData.posts.find(p => p.slug === slug);
+  if (!post) return null;
 
-    if (!fs.existsSync(filePath)) {
-      return null;
-    }
-
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const { data, content } = matter(fileContent);
-
-    return {
-      slug,
-      title: data.title || '',
-      description: data.description || '',
-      date: data.date || data.publishedAt || new Date().toISOString(),
-      author: data.author || 'MyImageUpscaler Team',
-      category: data.category || 'Guides',
-      tags: data.tags || [],
-      image: data.image || data.featuredImage,
-      readingTime: data.readingTime || '5 min read',
-      content,
-    } as IBlogPostMeta;
-  } catch (error) {
-    console.error(`Error reading MDX file for slug ${slug}:`, error);
-    return null;
-  }
+  return {
+    slug: post.slug,
+    title: post.title,
+    description: post.description,
+    date: post.date,
+    author: post.author,
+    category: post.category,
+    tags: post.tags,
+    image: post.image,
+    readingTime: post.readingTime,
+    content: post.content,
+  };
 }
 
 /**
- * Get all MDX slugs
+ * Get all slugs from pre-compiled JSON
+ * Edge-compatible - no filesystem access
  */
-async function getMDXSlugs(): Promise<string[]> {
-  try {
-    const files = await glob('**/*.mdx', { cwd: CONTENT_DIR });
-    return files.map(f => f.replace(/\.mdx$/, ''));
-  } catch {
-    return [];
-  }
+function getStaticDataSlugs(): string[] {
+  return blogData.posts.map(p => p.slug);
 }
 
 // =============================================================================
@@ -400,20 +377,23 @@ export async function unpublishBlogPost(slug: string): Promise<IBlogPost> {
 }
 
 // =============================================================================
-// PUBLIC-FACING FUNCTIONS (Hybrid: MDX + Database)
+// PUBLIC-FACING FUNCTIONS (Hybrid: Static JSON + Database)
 // =============================================================================
 
 /**
- * Get all published posts from both MDX files and database
- * MDX posts take precedence over database posts with the same slug
+ * Get all published posts from both static data and database
+ * Static posts (from blog-data.json) take precedence over database posts with the same slug
  */
 export async function getAllPublishedPosts(): Promise<IBlogPostMeta[]> {
-  const [mdxPosts, dbPosts] = await Promise.all([getPostsFromMDX(), getPostsFromDatabase()]);
+  const [staticPosts, dbPosts] = await Promise.all([
+    Promise.resolve(getPostsFromStaticData()),
+    getPostsFromDatabase(),
+  ]);
 
-  // Deduplicate by slug (MDX takes precedence)
+  // Deduplicate by slug (static posts take precedence)
   const postsMap = new Map<string, IBlogPostMeta>();
 
-  for (const post of mdxPosts) {
+  for (const post of staticPosts) {
     postsMap.set(post.slug, post);
   }
 
@@ -433,13 +413,13 @@ export async function getAllPublishedPosts(): Promise<IBlogPostMeta[]> {
 
 /**
  * Get single published post by slug
- * Checks MDX files first, then database
+ * Checks static data first, then database
  */
 export async function getPublishedPostBySlug(slug: string): Promise<IBlogPost | null> {
-  // Check MDX first
-  const mdxPost = await getPostFromMDX(slug);
-  if (mdxPost) {
-    return mdxPost as IBlogPost;
+  // Check static data first
+  const staticPost = getPostFromStaticData(slug);
+  if (staticPost) {
+    return staticPost as IBlogPost;
   }
 
   // Check database
@@ -448,13 +428,16 @@ export async function getPublishedPostBySlug(slug: string): Promise<IBlogPost | 
 
 /**
  * Get all published slugs for static generation
- * Combines slugs from both MDX files and database
+ * Combines slugs from both static data and database
  */
 export async function getAllPublishedSlugs(): Promise<string[]> {
-  const [mdxSlugs, dbSlugs] = await Promise.all([getMDXSlugs(), getDatabaseSlugs()]);
+  const [staticSlugs, dbSlugs] = await Promise.all([
+    Promise.resolve(getStaticDataSlugs()),
+    getDatabaseSlugs(),
+  ]);
 
   // Combine and deduplicate
-  const allSlugs = new Set([...mdxSlugs, ...dbSlugs]);
+  const allSlugs = new Set([...staticSlugs, ...dbSlugs]);
   return Array.from(allSlugs);
 }
 
@@ -519,12 +502,12 @@ export function calculateReadingTime(content: string): string {
 }
 
 /**
- * Check if a slug exists (in MDX or database)
+ * Check if a slug exists (in static data or database)
  */
 export async function slugExists(slug: string): Promise<boolean> {
-  // Check MDX files
-  const mdxSlugs = await getMDXSlugs();
-  if (mdxSlugs.includes(slug)) {
+  // Check static data
+  const staticSlugs = getStaticDataSlugs();
+  if (staticSlugs.includes(slug)) {
     return true;
   }
 
