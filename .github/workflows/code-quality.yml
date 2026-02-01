@@ -31,3 +31,4 @@ jobs:
 
       - name: Run TypeScript Compiler
         run: yarn tsc
+# CI test
