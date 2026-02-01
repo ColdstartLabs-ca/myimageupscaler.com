@@ -158,12 +158,12 @@ export function formatHreflangForMetadata(
 
 /**
  * Generate canonical URL for a page
- * IMPORTANT: All localized pages canonicalize to the English version
- * This is the SEO best practice for multi-language sites
+ * Each localized page has its own canonical URL (self-referencing)
+ * This is required when using hreflang to avoid "hreflang to non-canonical pages" SEO issue
  *
  * @param path - The page path without locale prefix (e.g., '/tools/ai-upscaler')
- * @param locale - The locale of the page (default: 'en') - NOT used for canonical URL
- * @returns Full canonical URL (always English version)
+ * @param locale - The locale of the page (default: 'en')
+ * @returns Full canonical URL for the specified locale
  *
  * @example
  * ```ts
@@ -171,26 +171,25 @@ export function formatHreflangForMetadata(
  * // Returns: 'https://myimageupscaler.com/tools/ai-upscaler'
  *
  * getCanonicalUrl('/tools/ai-upscaler', 'es');
- * // Returns: 'https://myimageupscaler.com/tools/ai-upscaler' (same!)
+ * // Returns: 'https://myimageupscaler.com/es/tools/ai-upscaler'
  *
  * getCanonicalUrl('/', 'es');
- * // Returns: 'https://myimageupscaler.com'
+ * // Returns: 'https://myimageupscaler.com/es'
  * ```
  */
-export function getCanonicalUrl(path: string, _locale: Locale = DEFAULT_LOCALE): string {
+export function getCanonicalUrl(path: string, locale: Locale = DEFAULT_LOCALE): string {
   // Remove trailing slash for consistency
   const normalizedPath = path.replace(/\/$/, '') || '/';
 
-  // Always use the English version for canonical URL
-  // This ensures all localized variations point to the same canonical
-  const englishPath = getLocalizedPath(normalizedPath, DEFAULT_LOCALE);
+  // Get the localized path (includes locale prefix for non-English)
+  const localizedPath = getLocalizedPath(normalizedPath, locale);
 
-  // For root path, return BASE_URL without trailing slash
-  if (englishPath === '/' || englishPath === '') {
+  // For root path with default locale, return BASE_URL without trailing slash
+  if (localizedPath === '/' || localizedPath === '') {
     return clientEnv.BASE_URL;
   }
 
-  return `${clientEnv.BASE_URL}${englishPath}`;
+  return `${clientEnv.BASE_URL}${localizedPath}`;
 }
 
 /**
