@@ -2,7 +2,7 @@
 
 import React, { Component, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import { serverEnv } from '@shared/config/env';
+import { clientEnv } from '@shared/config/env';
 import { useTranslations } from 'next-intl';
 
 // Extend Window interface for baselime monitoring
@@ -97,7 +97,7 @@ class ErrorBoundaryInner extends Component<
               </h1>
               <p className="mt-2 text-text-secondary">{this.props.t('errors.boundary.message')}</p>
 
-              {serverEnv.ENV === 'development' && this.state.error && (
+              {clientEnv.ENV === 'development' && this.state.error && (
                 <details className="mt-4 text-left">
                   <summary className="cursor-pointer text-sm text-text-secondary hover:text-text-muted">
                     {this.props.t('errors.boundary.detailsLabel')}
