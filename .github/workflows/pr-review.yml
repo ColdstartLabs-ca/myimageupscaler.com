@@ -21,6 +21,8 @@ jobs:
           model_id: "openai/gpt-5.2-codex"
           reasoning_effort: "xhigh"
           max_tokens: "4096"
+          max_pr_reviews: "2"
+          cooldown_period: "5"
           custom_prompt: |
             ### **AI PR Review Instructions**
 
