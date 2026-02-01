@@ -115,4 +115,5 @@ export const PUBLIC_API_ROUTES = [
   '/api/blog/*', // Blog API routes use x-api-key header auth, not JWT
   '/api/migrate-blog', // Temporary migration endpoint (uses x-migration-token header auth)
   '/api/seo/*', // SEO routes use x-cron-secret header auth, not JWT
+  '/api/upscale/guest', // Guest upscale (uses fingerprint + IP rate limiting)
 ] as const;
