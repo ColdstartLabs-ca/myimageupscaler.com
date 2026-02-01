@@ -140,6 +140,9 @@ export type IAnalyticsEventName =
   // Error/limit events (server-side only)
   | 'rate_limit_exceeded'
   | 'processing_failed'
+  // Guest upscaler events (server-side only)
+  | 'guest_limit_reached'
+  | 'guest_upscale_completed'
   // Batch limit events
   | 'batch_limit_modal_shown'
   | 'batch_limit_upgrade_clicked'

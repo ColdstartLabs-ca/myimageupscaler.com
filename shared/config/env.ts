@@ -253,6 +253,13 @@ const serverEnvSchema = z.object({
   BLOG_API_KEY: z.string().default(''),
 
   // ==========================================
+  // GUEST UPSCALER (Upstash Redis)
+  // ==========================================
+  UPSTASH_REDIS_REST_URL: z.string().default(''),
+  UPSTASH_REDIS_REST_TOKEN: z.string().default(''),
+  IP_HASH_SALT: z.string().default(''),
+
+  // ==========================================
   // MODEL VERSION OVERRIDES (optional)
   // Only set these if you need non-default versions
   // Defaults are defined in model-registry.ts
@@ -361,6 +368,11 @@ function loadServerEnv(): IServerEnv {
 
     // Blog API
     BLOG_API_KEY: process.env.BLOG_API_KEY || '',
+
+    // Guest Upscaler (Upstash Redis)
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL || '',
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN || '',
+    IP_HASH_SALT: process.env.IP_HASH_SALT || '',
 
     // Model Version Overrides (optional)
     MODEL_VERSION_REAL_ESRGAN: process.env.MODEL_VERSION_REAL_ESRGAN,
