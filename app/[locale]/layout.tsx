@@ -52,8 +52,16 @@ export async function generateMetadata({
     openGraph: {
       type: 'website',
       // Note: locale is handled by SeoMetaTags component in pages to avoid duplicates
-      url: '/',
+      // url is derived from metadataBase automatically for each page
       siteName: APP_NAME,
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: APP_NAME,
+        },
+      ],
     },
     // Note: alternates are NOT set here to avoid overriding page-level metadata
     // Each page sets its own alternates with proper hreflang links

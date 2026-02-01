@@ -4,8 +4,15 @@ import { getTranslations } from 'next-intl/server';
 import { generateToolSchema } from '@/lib/seo/schema-generator';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { clientEnv } from '@shared/config/env';
-import type { IFeature, IUseCase, IBenefit, IHowItWorksStep, IFAQ, IToolPage } from '@/lib/seo/pseo-types';
+import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
+import type {
+  IFeature,
+  IUseCase,
+  IBenefit,
+  IHowItWorksStep,
+  IFAQ,
+  IToolPage,
+} from '@/lib/seo/pseo-types';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
 
@@ -21,7 +28,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const t = await getTranslations('interactive-tools');
 
   // Get the pages array and find the tool by slug
@@ -41,6 +48,8 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
     features: Array.isArray(toolData.features) ? (toolData.features as IFeature[]) : [],
   };
 
+  const canonicalUrl = getCanonicalUrl(`/tools/compress/${slug}`, locale);
+
   return {
     title: tool.metaTitle,
     description: tool.metaDescription,
@@ -49,7 +58,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
       title: tool.metaTitle,
       description: tool.metaDescription,
       type: 'website',
-      url: `${clientEnv.BASE_URL}/tools/compress/${slug}`,
+      url: canonicalUrl,
     },
     twitter: {
       card: 'summary_large_image',
@@ -57,7 +66,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
       description: tool.metaDescription,
     },
     alternates: {
-      canonical: `${clientEnv.BASE_URL}/tools/compress/${slug}`,
+      canonical: canonicalUrl,
     },
   };
 }
@@ -97,10 +106,14 @@ export default async function CompressToolPage({ params }: IPageProps) {
     features: Array.isArray(toolData.features) ? (toolData.features as IFeature[]) : [],
     useCases: Array.isArray(toolData.useCases) ? (toolData.useCases as IUseCase[]) : [],
     benefits: Array.isArray(toolData.benefits) ? (toolData.benefits as IBenefit[]) : [],
-    howItWorks: Array.isArray(toolData.howItWorks) ? (toolData.howItWorks as IHowItWorksStep[]) : [],
+    howItWorks: Array.isArray(toolData.howItWorks)
+      ? (toolData.howItWorks as IHowItWorksStep[])
+      : [],
     faq: Array.isArray(toolData.faq) ? (toolData.faq as IFAQ[]) : [],
     relatedTools: Array.isArray(toolData.relatedTools) ? (toolData.relatedTools as string[]) : [],
-    relatedGuides: Array.isArray(toolData.relatedGuides) ? (toolData.relatedGuides as string[]) : [],
+    relatedGuides: Array.isArray(toolData.relatedGuides)
+      ? (toolData.relatedGuides as string[])
+      : [],
     ctaText: toolData.ctaText as string,
     ctaUrl: toolData.ctaUrl as string,
     // Optional interactive tool fields

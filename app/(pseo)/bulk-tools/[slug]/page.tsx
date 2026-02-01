@@ -42,7 +42,7 @@ export default async function BulkToolsPage({ params }: IBulkToolsPageProps) {
   return (
     <>
       <SeoMetaTags path={path} locale="en" />
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="bulk-tools" locale="en" />
       <SchemaMarkup schema={schema} />
       <GenericPSEOPageTemplate data={page} />
     </>

@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { generateToolSchema } from '@/lib/seo/schema-generator';
-import { clientEnv } from '@shared/config/env';
+import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
 import type { IFeature, IUseCase, IBenefit, IHowItWorksStep, IFAQ } from '@/lib/seo/pseo-types';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
@@ -28,7 +28,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const t = await getTranslations('interactive-tools');
 
   // Get the pages array and find the tool by slug
@@ -48,6 +48,8 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
     features: Array.isArray(toolData.features) ? (toolData.features as IFeature[]) : [],
   };
 
+  const canonicalUrl = getCanonicalUrl(`/tools/resize/${slug}`, locale);
+
   return {
     title: tool.metaTitle,
     description: tool.metaDescription,
@@ -56,7 +58,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
       title: tool.metaTitle,
       description: tool.metaDescription,
       type: 'website',
-      url: `${clientEnv.BASE_URL}/tools/resize/${slug}`,
+      url: canonicalUrl,
     },
     twitter: {
       card: 'summary_large_image',
@@ -64,7 +66,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
       description: tool.metaDescription,
     },
     alternates: {
-      canonical: `${clientEnv.BASE_URL}/tools/resize/${slug}`,
+      canonical: canonicalUrl,
     },
   };
 }

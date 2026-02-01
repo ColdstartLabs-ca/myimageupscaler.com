@@ -10,7 +10,7 @@ import { Locale } from '@/i18n/config';
 
 /**
  * Categories that have full translations for all supported locales
- * Updated: 2025-01-15 - Added categories that have been translated
+ * Updated: 2026-01-31 - Categories with complete translations for all 7 languages
  */
 export const LOCALIZED_CATEGORIES: PSEOCategory[] = [
   'tools',
@@ -27,15 +27,25 @@ export const LOCALIZED_CATEGORIES: PSEOCategory[] = [
 
 /**
  * Categories that are English-only (no translations available)
- * Note: compare, platforms remain English-only due to limited translations
+ * Updated: 2026-01-31 - Added categories that don't have localized versions
+ * These categories only exist in English and should not generate hreflang links
  */
 export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
   'compare',
   'platforms',
+  'bulk-tools',
+  'content',
+  'photo-restoration',
+  'camera-raw',
+  'industry-insights',
+  'device-optimization',
+  'ai-features',
 ];
 
 /**
  * All pSEO categories
+ * Note: Not all categories are currently included in LOCALIZED_CATEGORIES or ENGLISH_ONLY_CATEGORIES
+ * This is a transitional state during localization work
  */
 export const ALL_CATEGORIES: PSEOCategory[] = [...LOCALIZED_CATEGORIES, ...ENGLISH_ONLY_CATEGORIES];
 
@@ -131,7 +141,7 @@ const ALL_SUPPORTED_LOCALES: Locale[] = ['en', 'es', 'pt', 'de', 'fr', 'it', 'ja
 
 /**
  * Configuration for each category's localization status
- * Updated: 2025-01-15 - Reflected completed translation work
+ * Updated: 2026-01-31 - Added English-only categories for proper hreflang handling
  */
 export const LOCALIZATION_STATUS = {
   tools: {
@@ -177,7 +187,8 @@ export const LOCALIZATION_STATUS = {
   'platform-format': {
     localized: true,
     supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Platform-format multiplier pages fully localized for all 7 languages (updated 2025-01-15)',
+    notes:
+      'Platform-format multiplier pages fully localized for all 7 languages (updated 2025-01-15)',
   },
   'device-use': {
     localized: true,
@@ -193,5 +204,40 @@ export const LOCALIZATION_STATUS = {
     localized: false,
     supportedLocales: ['en'] as Locale[],
     notes: 'Platform pages are English-only',
+  },
+  'bulk-tools': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Bulk tools pages are English-only (2026-01-31)',
+  },
+  content: {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Content category pages are English-only (2026-01-31)',
+  },
+  'photo-restoration': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Photo restoration pages are English-only (2026-01-31)',
+  },
+  'camera-raw': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Camera RAW pages are English-only (2026-01-31)',
+  },
+  'industry-insights': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Industry insights pages are English-only (2026-01-31)',
+  },
+  'device-optimization': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Device optimization pages are English-only (2026-01-31)',
+  },
+  'ai-features': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'AI features pages are English-only (2026-01-31)',
   },
 } as const;

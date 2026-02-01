@@ -3,6 +3,7 @@
  * Based on PRD-PSEO-04 Section 1.3: Category Sitemap Implementation
  * Phase 4: Added hreflang links for all 7 languages
  * Includes both static tools and interactive tools (resize, convert, compress)
+ * Localized category
  */
 
 import { NextResponse } from 'next/server';
@@ -15,12 +16,15 @@ import {
 import interactiveToolsData from '@/app/seo/data/interactive-tools.json';
 import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
 
+const CATEGORY = 'tools' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
 // Interactive tool URL mappings (slug -> path)
+// Maps redirect URLs to their destination URLs for sitemap
 const INTERACTIVE_TOOL_PATHS: Record<string, string> = {
   // Resize tools
   'image-resizer': '/tools/resize/image-resizer',
+  'bulk-image-resizer': '/tools/resize/bulk-image-resizer', // 301 redirect destination
   'resize-image-for-instagram': '/tools/resize/resize-image-for-instagram',
   'resize-image-for-youtube': '/tools/resize/resize-image-for-youtube',
   'resize-image-for-facebook': '/tools/resize/resize-image-for-facebook',
@@ -35,6 +39,7 @@ const INTERACTIVE_TOOL_PATHS: Record<string, string> = {
   'png-to-webp': '/tools/convert/png-to-webp',
   // Compress tools
   'image-compressor': '/tools/compress/image-compressor',
+  'bulk-image-compressor': '/tools/compress/bulk-image-compressor', // 301 redirect destination
 };
 
 export async function GET() {
@@ -50,11 +55,11 @@ export async function GET() {
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-${generateSitemapHreflangLinks('/tools').join('\n')}
+${generateSitemapHreflangLinks('/tools', CATEGORY).join('\n')}
   </url>
 ${staticTools
   .map(tool => {
-    const hreflangLinks = generateSitemapHreflangLinks(`/tools/${tool.slug}`).join('\n');
+    const hreflangLinks = generateSitemapHreflangLinks(`/tools/${tool.slug}`, CATEGORY).join('\n');
     return `  <url>
     <loc>${BASE_URL}/tools/${tool.slug}</loc>
     <lastmod>${tool.lastUpdated}</lastmod>
@@ -75,7 +80,7 @@ ${hreflangLinks}${
 ${interactiveTools
   .map(tool => {
     const path = INTERACTIVE_TOOL_PATHS[tool.slug] || `/tools/${tool.slug}`;
-    const hreflangLinks = generateSitemapHreflangLinks(path).join('\n');
+    const hreflangLinks = generateSitemapHreflangLinks(path, CATEGORY).join('\n');
     return `  <url>
     <loc>${BASE_URL}${path}</loc>
     <lastmod>${tool.lastUpdated}</lastmod>

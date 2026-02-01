@@ -32,7 +32,7 @@ function preprocessContent(content: string): string {
 }
 
 interface IPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateStaticParams() {
@@ -50,6 +50,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
     };
   }
 
+  // Blog posts are English-only content, so canonical should always point to English version
   const canonicalUrl = `${clientEnv.BASE_URL}/blog/${slug}`;
   const defaultOgImage = '/og-image.png';
 
@@ -160,7 +161,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
               </span>
             </div>
 
-            {/* Title */}
+            {/* Title - H1 tag */}
             <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-[1.15] tracking-tight">
               {post.title}
             </h1>
@@ -316,6 +317,9 @@ export default async function BlogPostPage({ params }: IPageProps) {
                       </blockquote>
                     );
                   },
+                  h1: ({ children }) => (
+                    <h2 className="text-3xl font-bold text-white mt-12 mb-4">{children}</h2>
+                  ),
                   table: ({ children }) => (
                     <div className="overflow-x-auto my-6">
                       <table className="min-w-full border-collapse">{children}</table>

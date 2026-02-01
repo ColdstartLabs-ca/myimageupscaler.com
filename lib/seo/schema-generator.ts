@@ -58,70 +58,72 @@ function getLanguageCode(locale: Locale): string {
   return languageMap[locale] || 'en';
 }
 
-const ORGANIZATION_SCHEMA = {
-  '@type': 'Organization',
-  name: APP_NAME,
-  url: BASE_URL,
-  logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
-  sameAs: [
-    `https://twitter.com/${TWITTER_HANDLE}`,
-    `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
-  ],
-};
-
 /**
  * Generate Review schema for comparison pages
  * Creates Review schemas for each product being compared
  */
 export function generateReviewSchemas(products: IProduct[]): object[] {
-  return products.map((product, index) => ({
-    '@type': 'Review',
-    '@id': `${BASE_URL}/compare#review-${index + 1}`,
-    itemReviewed: {
-      '@type': 'SoftwareApplication',
-      name: product.name,
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Web Browser',
-      ...(product.description && { description: product.description }),
-    },
-    reviewRating: {
-      '@type': 'Rating',
-      ratingValue: product.rating || 4.8,
-      bestRating: 5,
-      worstRating: 1,
-    },
-    author: {
-      '@type': 'Organization',
-      name: `${APP_NAME} Team`,
-      url: BASE_URL,
-    },
-    publisher: ORGANIZATION_SCHEMA,
-    datePublished: new Date().toISOString().split('T')[0],
-    reviewBody: `${product.name} is ${
-      product.isRecommended ? 'recommended' : 'an alternative option'
-    } for AI image upscaling. ${
-      product.pros && product.pros.length > 0
-        ? `Key strengths include: ${product.pros.slice(0, 3).join(', ')}.`
-        : ''
-    }${
-      product.cons && product.cons.length > 0
-        ? ` Considerations: ${product.cons.slice(0, 2).join(', ')}.`
-        : ''
-    }`,
-  }));
+  return products.map((product, index) => {
+    const reviewedItemId = `${BASE_URL}/compare#product-${index + 1}`;
+    return {
+      '@type': 'Review',
+      '@id': `${BASE_URL}/compare#review-${index + 1}`,
+      itemReviewed: {
+        '@id': reviewedItemId,
+        '@type': 'SoftwareApplication',
+        name: product.name,
+        applicationCategory: 'MultimediaApplication',
+        operatingSystem: 'Web Browser',
+        ...(product.description && { description: product.description }),
+      },
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: product.rating || 4.8,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      author: {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}#organization`,
+        name: `${APP_NAME} Team`,
+        url: BASE_URL,
+      },
+      publisher: {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}#organization`,
+        name: APP_NAME,
+        url: BASE_URL,
+      },
+      datePublished: new Date().toISOString().split('T')[0],
+      reviewBody: `${product.name} is ${
+        product.isRecommended ? 'recommended' : 'an alternative option'
+      } for AI image upscaling. ${
+        product.pros && product.pros.length > 0
+          ? `Key strengths include: ${product.pros.slice(0, 3).join(', ')}.`
+          : ''
+      }${
+        product.cons && product.cons.length > 0
+          ? ` Considerations: ${product.cons.slice(0, 2).join(', ')}.`
+          : ''
+      }`,
+    };
+  });
 }
 
 /**
  * Generate schema for Tool pages
  * Combines SoftwareApplication + FAQPage + BreadcrumbList
- * Phase 5: Added inLanguage property
+ * Phase 5: Added inLanguage property and locale-aware canonical URLs
  *
  * @param tool - The tool page data
  * @param locale - The locale for this page instance (default: 'en')
  */
 export function generateToolSchema(tool: IToolPage, locale: Locale = 'en'): object {
-  const canonicalUrl = `${BASE_URL}/tools/${tool.slug}`;
+  // Build locale-aware canonical URL
+  const canonicalUrl =
+    locale === 'en' ? `${BASE_URL}/tools/${tool.slug}` : `${BASE_URL}/${locale}/tools/${tool.slug}`;
   const language = getLanguageCode(locale);
+  const organizationRef = { '@id': `${BASE_URL}#organization` };
 
   return {
     '@context': 'https://schema.org',
@@ -148,8 +150,19 @@ export function generateToolSchema(tool: IToolPage, locale: Locale = 'en'): obje
           bestRating: 5,
           worstRating: 1,
         },
-        author: ORGANIZATION_SCHEMA,
-        publisher: ORGANIZATION_SCHEMA,
+        author: organizationRef,
+        publisher: organizationRef,
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}#organization`,
+        name: APP_NAME,
+        url: BASE_URL,
+        logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
+        sameAs: [
+          `https://twitter.com/${TWITTER_HANDLE}`,
+          `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
+        ],
       },
       ...(tool.faq && tool.faq.length > 0
         ? [
@@ -199,6 +212,7 @@ export function generateToolSchema(tool: IToolPage, locale: Locale = 'en'): obje
  */
 export function generateComparisonSchema(comparison: IComparisonPage): object {
   const canonicalUrl = `${BASE_URL}/compare/${comparison.slug}`;
+  const organizationRef = { '@id': `${BASE_URL}#organization` };
 
   const graphItems = [
     {
@@ -209,12 +223,23 @@ export function generateComparisonSchema(comparison: IComparisonPage): object {
       ...(comparison.ogImage && { image: comparison.ogImage }),
       datePublished: comparison.lastUpdated,
       dateModified: comparison.lastUpdated,
-      author: ORGANIZATION_SCHEMA,
-      publisher: ORGANIZATION_SCHEMA,
+      author: organizationRef,
+      publisher: organizationRef,
       mainEntityOfPage: {
         '@type': 'WebPage',
         '@id': canonicalUrl,
       },
+    },
+    {
+      '@type': 'Organization',
+      '@id': `${BASE_URL}#organization`,
+      name: APP_NAME,
+      url: BASE_URL,
+      logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
+      sameAs: [
+        `https://twitter.com/${TWITTER_HANDLE}`,
+        `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
+      ],
     },
     ...(comparison.products && comparison.products.length > 0
       ? generateReviewSchemas(comparison.products)
@@ -271,6 +296,7 @@ export function generateComparisonSchema(comparison: IComparisonPage): object {
  */
 export function generateGuideSchema(guide: IGuidePage): object {
   const canonicalUrl = `${BASE_URL}/guides/${guide.slug}`;
+  const organizationRef = { '@id': `${BASE_URL}#organization` };
 
   return {
     '@context': 'https://schema.org',
@@ -289,8 +315,8 @@ export function generateGuideSchema(guide: IGuidePage): object {
                 text: step.content,
                 url: `${canonicalUrl}#step-${index + 1}`,
               })),
-              author: ORGANIZATION_SCHEMA,
-              publisher: ORGANIZATION_SCHEMA,
+              author: organizationRef,
+              publisher: organizationRef,
             },
           ]
         : []),
@@ -302,9 +328,20 @@ export function generateGuideSchema(guide: IGuidePage): object {
         ...(guide.ogImage && { image: guide.ogImage }),
         datePublished: guide.lastUpdated,
         dateModified: guide.lastUpdated,
-        author: ORGANIZATION_SCHEMA,
-        publisher: ORGANIZATION_SCHEMA,
+        author: organizationRef,
+        publisher: organizationRef,
         articleSection: 'Guides',
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}#organization`,
+        name: APP_NAME,
+        url: BASE_URL,
+        logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
+        sameAs: [
+          `https://twitter.com/${TWITTER_HANDLE}`,
+          `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
+        ],
       },
       ...(guide.faq && guide.faq.length > 0
         ? [
@@ -354,6 +391,7 @@ export function generateGuideSchema(guide: IGuidePage): object {
  */
 export function generateUseCaseSchema(useCase: IUseCasePage): object {
   const canonicalUrl = `${BASE_URL}/use-cases/${useCase.slug}`;
+  const organizationRef = { '@id': `${BASE_URL}#organization` };
 
   return {
     '@context': 'https://schema.org',
@@ -366,12 +404,23 @@ export function generateUseCaseSchema(useCase: IUseCasePage): object {
         ...(useCase.ogImage && { image: useCase.ogImage }),
         datePublished: useCase.lastUpdated,
         dateModified: useCase.lastUpdated,
-        author: ORGANIZATION_SCHEMA,
-        publisher: ORGANIZATION_SCHEMA,
+        author: organizationRef,
+        publisher: organizationRef,
         about: {
           '@type': 'Thing',
           name: useCase.industry,
         },
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}#organization`,
+        name: APP_NAME,
+        url: BASE_URL,
+        logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
+        sameAs: [
+          `https://twitter.com/${TWITTER_HANDLE}`,
+          `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
+        ],
       },
       ...(useCase.faq && useCase.faq.length > 0
         ? [
@@ -494,6 +543,7 @@ export function generateFormatSchema(format: IFormatPage, locale: Locale = 'en')
  */
 export function generateAlternativeSchema(alternative: IAlternativePage): object {
   const canonicalUrl = `${BASE_URL}/alternatives/${alternative.slug}`;
+  const organizationRef = { '@id': `${BASE_URL}#organization` };
 
   return {
     '@context': 'https://schema.org',
@@ -526,8 +576,19 @@ export function generateAlternativeSchema(alternative: IAlternativePage): object
         description: alternative.metaDescription,
         datePublished: alternative.lastUpdated,
         dateModified: alternative.lastUpdated,
-        author: ORGANIZATION_SCHEMA,
-        publisher: ORGANIZATION_SCHEMA,
+        author: organizationRef,
+        publisher: organizationRef,
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}#organization`,
+        name: APP_NAME,
+        url: BASE_URL,
+        logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
+        sameAs: [
+          `https://twitter.com/${TWITTER_HANDLE}`,
+          `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
+        ],
       },
       ...(alternative.faq && alternative.faq.length > 0
         ? [
@@ -581,6 +642,7 @@ export function generateAlternativeSchema(alternative: IAlternativePage): object
 export function generateHomepageSchema(locale: Locale = 'en'): Record<string, unknown> {
   const canonicalUrl = BASE_URL;
   const language = getLanguageCode(locale);
+  const organizationRef = { '@id': `${BASE_URL}#organization` };
 
   return {
     '@context': 'https://schema.org',
@@ -608,8 +670,19 @@ export function generateHomepageSchema(locale: Locale = 'en'): Record<string, un
           bestRating: 5,
           worstRating: 1,
         },
-        author: ORGANIZATION_SCHEMA,
-        publisher: ORGANIZATION_SCHEMA,
+        author: organizationRef,
+        publisher: organizationRef,
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}#organization`,
+        name: APP_NAME,
+        url: BASE_URL,
+        logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
+        sameAs: [
+          `https://twitter.com/${TWITTER_HANDLE}`,
+          `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
+        ],
       },
       {
         '@type': 'FAQPage',
@@ -658,6 +731,7 @@ export function generateHomepageSchema(locale: Locale = 'en'): Record<string, un
  */
 export function generatePricingSchema(): object {
   const canonicalUrl = `${BASE_URL}/pricing`;
+  const organizationRef = { '@id': `${BASE_URL}#organization` };
 
   return {
     '@context': 'https://schema.org',
@@ -668,11 +742,12 @@ export function generatePricingSchema(): object {
         name: `${APP_NAME} Subscription Plans`,
         description:
           'Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover for AI image upscaling and enhancement.',
+        image: `${BASE_URL}/og-image-pricing.png`,
         category: 'Software',
         applicationCategory: 'MultimediaApplication',
         operatingSystem: 'Web Browser',
         url: canonicalUrl,
-        brand: ORGANIZATION_SCHEMA,
+        brand: organizationRef,
         offers: {
           '@type': 'AggregateOffer',
           name: 'Subscription Plans',
@@ -692,7 +767,7 @@ export function generatePricingSchema(): object {
                 .toISOString()
                 .split('T')[0],
               availability: 'https://schema.org/InStock',
-              seller: ORGANIZATION_SCHEMA,
+              seller: organizationRef,
             },
             {
               '@type': 'Offer',
@@ -704,7 +779,7 @@ export function generatePricingSchema(): object {
                 .toISOString()
                 .split('T')[0],
               availability: 'https://schema.org/InStock',
-              seller: ORGANIZATION_SCHEMA,
+              seller: organizationRef,
             },
             {
               '@type': 'Offer',
@@ -716,7 +791,7 @@ export function generatePricingSchema(): object {
                 .toISOString()
                 .split('T')[0],
               availability: 'https://schema.org/InStock',
-              seller: ORGANIZATION_SCHEMA,
+              seller: organizationRef,
               recommended: true,
             },
             {
@@ -729,7 +804,7 @@ export function generatePricingSchema(): object {
                 .toISOString()
                 .split('T')[0],
               availability: 'https://schema.org/InStock',
-              seller: ORGANIZATION_SCHEMA,
+              seller: organizationRef,
             },
           ],
         },
@@ -740,6 +815,17 @@ export function generatePricingSchema(): object {
           bestRating: 5,
           worstRating: 1,
         },
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}#organization`,
+        name: APP_NAME,
+        url: BASE_URL,
+        logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
+        sameAs: [
+          `https://twitter.com/${TWITTER_HANDLE}`,
+          `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
+        ],
       },
       {
         '@type': 'FAQPage',

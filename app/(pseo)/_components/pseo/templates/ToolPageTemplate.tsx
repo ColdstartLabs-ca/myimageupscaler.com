@@ -32,7 +32,11 @@ interface IToolPageTemplateProps {
   relatedPages?: IRelatedPage[];
 }
 
-export function ToolPageTemplate({ data, locale, relatedPages = [] }: IToolPageTemplateProps): ReactElement {
+export function ToolPageTemplate({
+  data,
+  locale,
+  relatedPages = [],
+}: IToolPageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/tools/${data.slug}`);
   const tier = pageMapping?.tier;
@@ -150,7 +154,7 @@ export function ToolPageTemplate({ data, locale, relatedPages = [] }: IToolPageT
 
           {/* Related Blog Posts */}
           {data.relatedBlogPosts && data.relatedBlogPosts.length > 0 && (
-            <RelatedBlogPostsSection blogPostSlugs={data.relatedBlogPosts} />
+            <RelatedBlogPostsSection blogPostSlugs={data.relatedBlogPosts} locale={locale} />
           )}
 
           {/* FAQ */}

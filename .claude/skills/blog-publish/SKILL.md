@@ -534,6 +534,7 @@ curl -s http://localhost:3000/blog/ai-image-upscaling-guide | grep -o "<title>.*
 - Supabase Storage for featured images (auto-compressed to WebP)
 - Reading time is auto-calculated from content
 - `updated_at` is auto-updated on any change
+- **IndexNow Integration**: Published posts are automatically submitted to IndexNow for faster search engine indexing
 
 ## Image Storage Details
 

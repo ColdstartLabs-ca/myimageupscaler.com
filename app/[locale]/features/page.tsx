@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Features from '@client/components/features/landing/Features';
 import { CTASection } from '@client/components/features/landing/CTASection';
 import { clientEnv } from '@shared/config/env';
-import { getCanonicalUrl } from '@lib/seo/hreflang-generator';
+import { getCanonicalUrl, getOpenGraphMetadata } from '@lib/seo/hreflang-generator';
 import type { Locale } from '@/i18n/config';
 
 interface IFeaturesPageProps {
@@ -11,28 +11,17 @@ interface IFeaturesPageProps {
 }
 
 export async function generateMetadata({ params }: IFeaturesPageProps): Promise<Metadata> {
-  await params;
+  const { locale } = await params;
+  const title = `Features | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`;
+  const description = `Discover powerful features of ${clientEnv.APP_NAME}: Text preservation, batch processing, ethical AI, lightning fast upscaling, and more.`;
+  const openGraph = getOpenGraphMetadata('/features', title, description, locale);
 
   return {
-    title: `Features | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
-    description: `Discover powerful features of ${clientEnv.APP_NAME}: Text preservation, batch processing, ethical AI, lightning fast upscaling, and more.`,
-    openGraph: {
-      title: `Features | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
-      description: `Discover powerful features of ${clientEnv.APP_NAME}: Text preservation, batch processing, ethical AI, lightning fast upscaling, and more.`,
-      type: 'website',
-      url: getCanonicalUrl('/features'),
-      siteName: clientEnv.APP_NAME,
-      images: [
-        {
-          url: '/og-image.png',
-          width: 1200,
-          height: 630,
-          alt: `${clientEnv.APP_NAME} Features`,
-        },
-      ],
-    },
+    title,
+    description,
+    openGraph,
     alternates: {
-      canonical: getCanonicalUrl('/features'),
+      canonical: getCanonicalUrl('/features', locale),
     },
   };
 }

@@ -134,6 +134,7 @@ export {
   getCanonicalUrl as getHreflangCanonicalUrl,
   validateHreflangAlternates,
   getOpenGraphLocale,
+  getOpenGraphMetadata,
 } from './hreflang-generator';
 
 // Localization Config (Phase 5)
@@ -149,6 +150,21 @@ export {
   getEnglishPath,
   LOCALIZATION_STATUS,
 } from './localization-config';
+
+// IndexNow (Task 26 - SEO Audit)
+export {
+  submitUrl,
+  submitBatch,
+  submitFromCSV,
+  getSubmissionStatus,
+  generateIndexNowKey,
+  validateIndexNowKey,
+  getKeyFileContent,
+  type IIndexNowPayload,
+} from './indexnow';
+
+// Re-export types from indexnow
+export type { IIndexNowResult, IIndexNowStatus, IIndexNowBatchOptions } from './indexnow';
 
 // Localized Data Loaders (Phase 5)
 export type { ILocalizedDataResult } from './data-loader';

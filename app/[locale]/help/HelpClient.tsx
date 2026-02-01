@@ -8,14 +8,28 @@ import { FadeIn } from '@client/components/ui/MotionWrappers';
 import { clientEnv } from '@shared/config/env';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Book, CreditCard, LifeBuoy, Search, Settings, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import { useMemo, useState } from 'react';
 
 export function HelpClient() {
   const t = useTranslations('help');
+  const locale = useLocale();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+
+  // Helper to generate localized URLs
+  const localizedPath = (path: string) => {
+    if (locale === DEFAULT_LOCALE) {
+      return path;
+    }
+    // Handle root path specially to avoid trailing slash redirect
+    if (path === '' || path === '/') {
+      return `/${locale}`;
+    }
+    return `/${locale}${path}`;
+  };
 
   // FAQ Categories and Items
   const faqCategories = useMemo(
@@ -181,7 +195,7 @@ export function HelpClient() {
               <div className="space-y-4">
                 <p>
                   {t('creditsBilling.faqs.purchaseCredits.answerIntro')}{' '}
-                  <Link href="/pricing" className="text-accent hover:underline">
+                  <Link href={localizedPath('/pricing')} className="text-accent hover:underline">
                     {t('creditsBilling.faqs.purchaseCredits.pricingPage')}
                   </Link>{' '}
                   {t('creditsBilling.faqs.purchaseCredits.answerMid')}

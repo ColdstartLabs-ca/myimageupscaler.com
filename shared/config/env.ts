@@ -170,6 +170,10 @@ const serverEnvSchema = z.object({
   SERPER_API_URL: z.string().default('https://google.serper.dev/search'),
   SERPER_RATE_LIMIT_MS: z.string().default('1000'),
   PAGESPEED_API_KEY: z.string().default(''),
+  // IndexNow API for faster search engine indexing
+  // Generate with: openssl rand -hex 16 (or use lib/seo/indexnow.ts generateIndexNowKey())
+  // See: https://www.indexnow.org/documentation.html
+  INDEXNOW_KEY: z.string().default(''),
   // Stripe Price IDs
   STRIPE_STARTER_MONTHLYLY_PRICE_ID: z.string().default('price_1Sq14eALMLhQocpf5CXIwYSv'),
   STRIPE_HOBBY_MONTHLYLY_PRICE_ID: z.string().default('price_1SZmVyALMLhQocpf0H7n5ls8'),
@@ -288,6 +292,7 @@ function loadServerEnv(): IServerEnv {
     SERPER_API_URL: process.env.SERPER_API_URL || 'https://google.serper.dev/search',
     SERPER_RATE_LIMIT_MS: process.env.SERPER_RATE_LIMIT_MS || '1000',
     PAGESPEED_API_KEY: process.env.PAGESPEED_API_KEY || '',
+    INDEXNOW_KEY: process.env.INDEXNOW_KEY || '',
     // Stripe Price IDs
     STRIPE_STARTER_MONTHLYLY_PRICE_ID:
       process.env.STRIPE_STARTER_MONTHLYLY_PRICE_ID || 'price_1Sq14eALMLhQocpf5CXIwYSv',

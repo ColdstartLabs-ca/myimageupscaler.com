@@ -32,12 +32,12 @@ const TWITTER_HANDLE = clientEnv.TWITTER_HANDLE;
 export function generateMetadata(
   page: PSEOPage,
   category: PSEOCategory,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   locale: Locale = 'en'
 ): Metadata {
   const path = `/${category}/${page.slug}`;
-  const canonicalUrl = getCanonicalUrl(path);
-  const hreflangAlternates = generateHreflangAlternates(path);
+  const canonicalUrl = getCanonicalUrl(path, locale);
+  const hreflangAlternates = generateHreflangAlternates(path, category);
   // Note: og:locale is rendered via SeoMetaTags component to avoid duplicates
 
   // Default og:image for all pSEO pages if not provided
@@ -56,6 +56,7 @@ export function generateMetadata(
       type: 'website',
       url: canonicalUrl,
       siteName: APP_NAME,
+      locale: getOpenGraphLocale(locale),
       images: [
         {
           url: ogImageUrl,
@@ -110,9 +111,9 @@ export function generateMetadata(
  */
 export function generateCategoryMetadata(category: PSEOCategory, locale: Locale = 'en'): Metadata {
   const path = `/${category}`;
-  const canonicalUrl = getCanonicalUrl(path);
+  const canonicalUrl = getCanonicalUrl(path, locale);
   const ogLocale = getOpenGraphLocale(locale);
-  const hreflangAlternates = generateHreflangAlternates(path);
+  const hreflangAlternates = generateHreflangAlternates(path, category);
 
   // Default og:image for category pages
   const defaultOgImage = '/og-image.png';
@@ -164,7 +165,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     'format-scale':
       'Combined format and scale enhancement. Resize images to specific dimensions while converting formats.',
     'platform-format':
-      'Platform and format combinations. Export from AI platforms in your preferred image format.',
+      'Platform and format combinations. Export from AI platforms like Midjourney and Stable Diffusion in your preferred image format with optimized quality.',
     'photo-restoration': `Professional AI-powered photo restoration services. Bring old and damaged photos back to life with our advanced technology.`,
     'camera-raw': `Camera RAW image processing and enhancement for professional photographers. Support for all major camera brands.`,
     'industry-insights': `Industry-specific insights and solutions for image enhancement. See how AI is transforming different industries.`,

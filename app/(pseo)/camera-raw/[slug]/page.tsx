@@ -42,7 +42,7 @@ export default async function CameraRawPage({ params }: ICameraRawPageProps) {
   return (
     <>
       <SeoMetaTags path={path} locale="en" />
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="camera-raw" locale="en" />
       <SchemaMarkup schema={schema} />
       <GenericPSEOPageTemplate data={page} />
     </>

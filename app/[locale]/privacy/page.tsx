@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { JSX } from 'react';
 import { getTranslations } from 'next-intl/server';
 import { clientEnv } from '@shared/config/env';
+import { getOpenGraphMetadata, getCanonicalUrl } from '@/lib/seo/hreflang-generator';
+import type { Locale } from '@/i18n/config';
 
 export async function generateMetadata({
   params,
@@ -12,11 +14,17 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'privacy' });
 
+  const title = t('meta.title');
+  const description = t('meta.description', { APP_NAME: 'MyImageUpscaler' });
+  const openGraph = getOpenGraphMetadata('/privacy', title, description, locale as Locale);
+  const canonicalUrl = getCanonicalUrl('/privacy', locale as Locale);
+
   return {
-    title: t('meta.title'),
-    description: t('meta.description', { APP_NAME: clientEnv.APP_NAME }),
+    title,
+    description,
+    openGraph,
     alternates: {
-      canonical: '/privacy',
+      canonical: canonicalUrl,
     },
   };
 }

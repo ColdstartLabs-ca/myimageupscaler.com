@@ -4,10 +4,25 @@ import { useModalStore } from '@client/store/modalStore';
 import { clientEnv } from '@shared/config/env';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 
 export const CTASection = (): JSX.Element => {
   const { openAuthModal } = useModalStore();
   const t = useTranslations('blog.cta');
+  const locale = useLocale();
+
+  // Helper to generate localized URLs
+  const localizedPath = (path: string) => {
+    if (locale === DEFAULT_LOCALE) {
+      return path;
+    }
+    // Handle root path specially to avoid trailing slash redirect
+    if (path === '' || path === '/') {
+      return `/${locale}`;
+    }
+    return `/${locale}${path}`;
+  };
 
   return (
     <section className="relative py-32 overflow-hidden section-glow-top">
@@ -30,7 +45,7 @@ export const CTASection = (): JSX.Element => {
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </button>
           <a
-            href="/pricing"
+            href={localizedPath('/pricing')}
             className="inline-flex items-center gap-3 px-10 py-5 glass-strong hover:bg-white/5 text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]"
           >
             {t('secondaryButton')}

@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import HowItWorks from '@client/components/features/landing/HowItWorks';
 import { CTASection } from '@client/components/features/landing/CTASection';
 import { clientEnv } from '@shared/config/env';
-import { getCanonicalUrl } from '@lib/seo/hreflang-generator';
+import { getCanonicalUrl, getOpenGraphMetadata } from '@lib/seo/hreflang-generator';
 import type { Locale } from '@/i18n/config';
 
 interface IHowItWorksPageProps {
@@ -11,28 +11,17 @@ interface IHowItWorksPageProps {
 }
 
 export async function generateMetadata({ params }: IHowItWorksPageProps): Promise<Metadata> {
-  await params;
+  const { locale } = await params;
+  const title = `How it Works | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`;
+  const description = `Learn how ${clientEnv.APP_NAME} transforms your images in three simple steps: Upload, Process, and Download. Get professional results in seconds.`;
+  const openGraph = getOpenGraphMetadata('/how-it-works', title, description, locale);
 
   return {
-    title: `How it Works | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
-    description: `Learn how ${clientEnv.APP_NAME} transforms your images in three simple steps: Upload, Process, and Download. Get professional results in seconds.`,
-    openGraph: {
-      title: `How it Works | ${clientEnv.APP_NAME} - Image Upscaling & Enhancement`,
-      description: `Learn how ${clientEnv.APP_NAME} transforms your images in three simple steps: Upload, Process, and Download. Get professional results in seconds.`,
-      type: 'website',
-      url: getCanonicalUrl('/how-it-works'),
-      siteName: clientEnv.APP_NAME,
-      images: [
-        {
-          url: '/og-image.png',
-          width: 1200,
-          height: 630,
-          alt: `${clientEnv.APP_NAME} How it Works`,
-        },
-      ],
-    },
+    title,
+    description,
+    openGraph,
     alternates: {
-      canonical: getCanonicalUrl('/how-it-works'),
+      canonical: getCanonicalUrl('/how-it-works', locale),
     },
   };
 }

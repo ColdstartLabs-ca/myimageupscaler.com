@@ -55,8 +55,19 @@ describe('Sitemap Index Localization', () => {
       expect(ENGLISH_ONLY_CATEGORIES).toContain('platforms');
     });
 
-    it('should have only 2 English-only categories', () => {
-      expect(ENGLISH_ONLY_CATEGORIES).toHaveLength(2);
+    it('should include SEO-fixed English-only categories', () => {
+      // Added during SEO audit fix to prevent invalid hreflang links
+      expect(ENGLISH_ONLY_CATEGORIES).toContain('bulk-tools');
+      expect(ENGLISH_ONLY_CATEGORIES).toContain('content');
+      expect(ENGLISH_ONLY_CATEGORIES).toContain('photo-restoration');
+      expect(ENGLISH_ONLY_CATEGORIES).toContain('camera-raw');
+      expect(ENGLISH_ONLY_CATEGORIES).toContain('industry-insights');
+      expect(ENGLISH_ONLY_CATEGORIES).toContain('device-optimization');
+      expect(ENGLISH_ONLY_CATEGORIES).toContain('ai-features');
+    });
+
+    it('should have 9 English-only categories', () => {
+      expect(ENGLISH_ONLY_CATEGORIES).toHaveLength(9);
     });
   });
 

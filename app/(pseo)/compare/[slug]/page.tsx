@@ -5,6 +5,8 @@ import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-fac
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { ComparePageTemplate } from '@/app/(pseo)/_components/pseo/templates/ComparePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
+import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
+import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { generateComparisonSchema } from '@/lib/seo/schema-generator';
 
 interface IComparisonPageProps {
@@ -38,8 +40,12 @@ export default async function ComparisonPage({ params }: IComparisonPageProps) {
 
   const schema = generateComparisonSchema(comparison);
 
+  const path = `/compare/${slug}`;
+
   return (
     <>
+      <SeoMetaTags path={path} locale="en" />
+      <HreflangLinks path={path} category="compare" locale="en" />
       <SchemaMarkup schema={schema} />
       <ComparePageTemplate data={comparison} relatedPages={relatedPages} />
     </>

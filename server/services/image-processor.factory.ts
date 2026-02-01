@@ -150,7 +150,7 @@ export class ImageProcessorFactory {
    * @returns An image processor instance
    * @throws Error if no suitable provider is available
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   static createProcessor(_mode: ProcessingMode): IImageProcessor {
     // Try to use model registry with default model
     const registry = this.getModelRegistry();
@@ -176,7 +176,7 @@ export class ImageProcessorFactory {
    * @returns An image processor instance (no fallback - Gemini removed)
    * @deprecated Use createProcessor instead
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   static createProcessorWithFallback(_mode: ProcessingMode): {
     primary: IImageProcessor;
     fallback: IImageProcessor | null;

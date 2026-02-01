@@ -2,6 +2,7 @@
  * Formats Sitemap Route - English (en)
  * Based on PRD-PSEO-04 Section 1.3: Category Sitemap Implementation
  * Phase 4: Added hreflang links for all 7 languages
+ * Localized category
  */
 
 import { NextResponse } from 'next/server';
@@ -12,6 +13,7 @@ import {
   getSitemapResponseHeaders,
 } from '@/lib/seo/sitemap-generator';
 
+const CATEGORY = 'formats' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
 export async function GET() {
@@ -26,11 +28,13 @@ export async function GET() {
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-${generateSitemapHreflangLinks('/formats').join('\n')}
+${generateSitemapHreflangLinks('/formats', CATEGORY).join('\n')}
   </url>
 ${formats
   .map(format => {
-    const hreflangLinks = generateSitemapHreflangLinks(`/formats/${format.slug}`).join('\n');
+    const hreflangLinks = generateSitemapHreflangLinks(`/formats/${format.slug}`, CATEGORY).join(
+      '\n'
+    );
     return `  <url>
     <loc>${BASE_URL}/formats/${format.slug}</loc>
     <lastmod>${format.lastUpdated}</lastmod>

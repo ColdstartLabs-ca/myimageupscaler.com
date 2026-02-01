@@ -71,11 +71,12 @@ test.describe('SEO Metadata', () => {
     await expect(esLink).toHaveCount(1);
     await expect(xDefaultLink).toHaveCount(1);
 
-    // Canonical should point to English version (primary language)
+    // Canonical should point to Spanish version (locale-specific canonicals)
+    // This was changed to fix "hreflang to non-canonical pages" SEO issue
     const canonicalLink = page.locator('head link[rel="canonical"]');
     await canonicalLink.waitFor({ state: 'attached', timeout: 5000 });
     expect(await canonicalLink.getAttribute('href')).toBe(
-      'https://myimageupscaler.com/tools/ai-image-upscaler'
+      'https://myimageupscaler.com/es/tools/ai-image-upscaler'
     );
 
     // OpenGraph locale should be Spanish

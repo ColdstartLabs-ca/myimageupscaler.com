@@ -13,7 +13,14 @@ export const Footer = (): JSX.Element => {
 
   // Helper to generate localized URLs
   const localizedPath = (path: string) => {
-    return locale === DEFAULT_LOCALE ? path : `/${locale}${path}`;
+    if (locale === DEFAULT_LOCALE) {
+      return path;
+    }
+    // Handle root path specially to avoid trailing slash redirect
+    if (path === '' || path === '/') {
+      return `/${locale}`;
+    }
+    return `/${locale}${path}`;
   };
 
   return (
@@ -51,7 +58,10 @@ export const Footer = (): JSX.Element => {
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="hover:text-accent transition-colors">
+                <Link
+                  href={localizedPath('/pricing')}
+                  className="hover:text-accent transition-colors"
+                >
                   {t('pricingPlans')}
                 </Link>
               </li>
@@ -78,7 +88,7 @@ export const Footer = (): JSX.Element => {
                 </Link>
               </li>
               <li>
-                <Link href="/help" className="hover:text-accent transition-colors">
+                <Link href={localizedPath('/help')} className="hover:text-accent transition-colors">
                   {t('helpCenter')}
                 </Link>
               </li>
@@ -100,12 +110,18 @@ export const Footer = (): JSX.Element => {
             </h4>
             <ul className="space-y-4 text-sm font-medium">
               <li>
-                <Link href="/privacy" className="hover:text-accent transition-colors">
+                <Link
+                  href={localizedPath('/privacy')}
+                  className="hover:text-accent transition-colors"
+                >
                   {t('privacyPolicy')}
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-accent transition-colors">
+                <Link
+                  href={localizedPath('/terms')}
+                  className="hover:text-accent transition-colors"
+                >
                   {t('termsOfService')}
                 </Link>
               </li>
@@ -121,13 +137,13 @@ export const Footer = (): JSX.Element => {
           <div className="flex items-center gap-6">
             <LocaleSwitcher />
             <div className="flex gap-8 text-xs font-black uppercase tracking-widest">
-              <Link href="/privacy" className="hover:text-white transition-colors">
+              <Link href={localizedPath('/privacy')} className="hover:text-white transition-colors">
                 {t('privacy')}
               </Link>
-              <Link href="/terms" className="hover:text-white transition-colors">
+              <Link href={localizedPath('/terms')} className="hover:text-white transition-colors">
                 {t('terms')}
               </Link>
-              <Link href="/help" className="hover:text-white transition-colors">
+              <Link href={localizedPath('/help')} className="hover:text-white transition-colors">
                 {t('help')}
               </Link>
             </div>

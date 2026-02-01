@@ -11,8 +11,8 @@ interface IContactPageProps {
 }
 
 export async function generateMetadata({ params }: IContactPageProps): Promise<Metadata> {
-  await params;
-  const canonicalUrl = getCanonicalUrl('/contact');
+  const { locale } = await params;
+  const canonicalUrl = getCanonicalUrl('/contact', locale);
   const hreflangAlternates = generateHreflangAlternates('/contact');
 
   return {

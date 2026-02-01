@@ -114,4 +114,5 @@ export const PUBLIC_API_ROUTES = [
   '/api/support/*', // Support contact form (public, uses validation and rate limiting)
   '/api/blog/*', // Blog API routes use x-api-key header auth, not JWT
   '/api/migrate-blog', // Temporary migration endpoint (uses x-migration-token header auth)
+  '/api/seo/*', // SEO routes use x-cron-secret header auth, not JWT
 ] as const;

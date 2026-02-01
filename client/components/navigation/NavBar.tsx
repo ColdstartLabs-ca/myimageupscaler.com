@@ -27,7 +27,14 @@ export const NavBar = (): JSX.Element => {
 
   // Helper to generate localized URLs
   const localizedPath = (path: string) => {
-    return locale === DEFAULT_LOCALE ? path : `/${locale}${path}`;
+    if (locale === DEFAULT_LOCALE) {
+      return path;
+    }
+    // Handle root path specially to avoid trailing slash redirect
+    if (path === '' || path === '/') {
+      return `/${locale}`;
+    }
+    return `/${locale}${path}`;
   };
 
   useClickOutside(dropdownRef, () => setIsDropdownOpen(false));

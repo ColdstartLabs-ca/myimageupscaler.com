@@ -22,7 +22,7 @@ export async function GET() {
   const pages = await getAllPSEOPages();
 
   const imageEntries: IImageEntry[] = pages
-    .filter(page => page.ogImage)
+    .filter(page => page.ogImage && page.category !== 'platforms')
     .map(page => ({
       pageUrl: `${BASE_URL}/${page.category}/${page.slug}`,
       images: [

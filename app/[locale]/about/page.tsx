@@ -9,13 +9,13 @@ interface IAboutPageProps {
 }
 
 export async function generateMetadata({ params }: IAboutPageProps): Promise<Metadata> {
-  await params;
-  const canonicalUrl = getCanonicalUrl('/about');
+  const { locale } = await params;
+  const canonicalUrl = getCanonicalUrl('/about', locale);
   const hreflangAlternates = generateHreflangAlternates('/about');
 
   return {
     title: `About ${clientEnv.APP_NAME} - AI Image Upscaling & Enhancement`,
-    description: `Learn about ${clientEnv.APP_NAME}, the AI-powered image upscaling and enhancement platform. Our mission is to make professional-quality image enhancement accessible to everyone.`,
+    description: `Discover ${clientEnv.APP_NAME}, an AI-powered image upscaling platform. Our mission: make professional image enhancement accessible to everyone.`,
     openGraph: {
       title: `About ${clientEnv.APP_NAME}`,
       description: `AI-powered image upscaling and enhancement platform. Professional quality, accessible to everyone.`,

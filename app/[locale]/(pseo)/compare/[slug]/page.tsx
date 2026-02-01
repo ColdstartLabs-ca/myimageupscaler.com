@@ -2,8 +2,11 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getComparisonDataWithLocale, getAllComparisonSlugs } from '@/lib/seo/data-loader';
 import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { getRelatedPages } from '@/lib/seo/related-pages';
 import { ComparePageTemplate } from '@/app/(pseo)/_components/pseo/templates/ComparePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
+import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
+import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { generateComparisonSchema } from '@/lib/seo/schema-generator';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
@@ -42,10 +45,17 @@ export default async function ComparisonPage({ params }: IComparisonPageProps) {
 
   const schema = generateComparisonSchema(result.data);
 
+  // Fetch related pages for internal linking
+  const relatedPages = await getRelatedPages('compare', slug, locale);
+
+  const path = `/compare/${slug}`;
+
   return (
     <>
+      <SeoMetaTags path={path} locale={locale} />
+      <HreflangLinks path={path} category="compare" locale={locale} />
       <SchemaMarkup schema={schema} />
-      <ComparePageTemplate data={result.data} />
+      <ComparePageTemplate data={result.data} relatedPages={relatedPages} />
     </>
   );
 }

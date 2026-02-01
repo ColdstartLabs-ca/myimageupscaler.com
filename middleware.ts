@@ -286,6 +286,7 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
     pathname.startsWith('/device-use/') ||
     pathname.startsWith('/format-scale/') ||
     pathname.startsWith('/platform-format/') ||
+    pathname.startsWith('/blog/') || // Blog posts are English-only, skip locale routing
     // New category hub pages
     pathname.startsWith('/photo-restoration') ||
     pathname.startsWith('/camera-raw') ||
@@ -410,10 +411,11 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     pathWithoutLocale = '/' + segments.slice(1).join('/');
   }
 
-  // Define redirects without locale prefix (trailing slashes will be added by Next.js)
+  // Define redirects without locale prefix
+  // Note: No trailing slashes to avoid redirect chains (/{locale}/path/ -> /{locale}/path)
   const redirectMap: Record<string, string> = {
-    '/tools/bulk-image-resizer': '/tools/resize/bulk-image-resizer/',
-    '/tools/bulk-image-compressor': '/tools/compress/bulk-image-compressor/',
+    '/tools/bulk-image-resizer': '/tools/resize/bulk-image-resizer',
+    '/tools/bulk-image-compressor': '/tools/compress/bulk-image-compressor',
   };
 
   // Check if path (without locale) matches a redirect

@@ -23,6 +23,8 @@ import { BenefitsSection } from '../sections/BenefitsSection';
 import { UseCasesSection } from '../sections/UseCasesSection';
 import { HowItWorksSection } from '../sections/HowItWorksSection';
 import { clientEnv } from '@shared/config/env';
+import { RelatedPagesSection } from '../sections/RelatedPagesSection';
+import type { IRelatedPage } from '@/lib/seo/related-pages';
 
 interface IBreadcrumbItem {
   label: string;
@@ -31,12 +33,16 @@ interface IBreadcrumbItem {
 
 interface IGenericPSEOPageTemplateProps {
   data: PSEOPage;
+  relatedPages?: IRelatedPage[];
+  locale?: string;
 }
 
 const BASE_URL = clientEnv.BASE_URL;
 
 export function GenericPSEOPageTemplate({
   data,
+  relatedPages = [],
+  locale: _locale = 'en',
 }: IGenericPSEOPageTemplateProps): React.ReactElement {
   const hasFeatures =
     'features' in data && Array.isArray(data.features) && data.features.length > 0;
@@ -103,6 +109,8 @@ export function GenericPSEOPageTemplate({
           ctaUrl={(data as { ctaUrl: string }).ctaUrl}
         />
       )}
+
+      {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
     </main>
   );
 }

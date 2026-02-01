@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: ILocaleHomePageProps): Promis
   const description =
     'Professional AI image enhancer that upscales photos to 4K with stunning quality. Enhance image quality, remove blur, and restore details in seconds.';
 
-  const canonicalUrl = getCanonicalUrl('/');
+  const canonicalUrl = getCanonicalUrl('/', locale);
   const ogLocale = getOpenGraphLocale(locale);
   const hreflangAlternates = generateHreflangAlternates('/');
 

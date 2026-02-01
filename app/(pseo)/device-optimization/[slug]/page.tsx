@@ -44,7 +44,7 @@ export default async function DeviceOptimizationPage({ params }: IDeviceOptimiza
   return (
     <>
       <SeoMetaTags path={path} locale="en" />
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="device-optimization" locale="en" />
       <SchemaMarkup schema={schema} />
       <GenericPSEOPageTemplate data={page} />
     </>

@@ -1,6 +1,9 @@
 /**
  * Related Blog Posts Section Component
  * Displays blog posts related to the current tool page
+ *
+ * NOTE: Blog posts are English-only. For non-English locales, links point to
+ * the English version of the blog post to avoid 404 errors.
  */
 
 import { FadeIn, StaggerContainer, StaggerItem } from '@/app/(pseo)/_components/ui/MotionWrappers';
@@ -14,13 +17,16 @@ interface IRelatedBlogPostsSectionProps {
   title?: string;
   subtitle?: string;
   maxPosts?: number;
+  locale?: string; // Current page locale
 }
 
+/* eslint-disable @typescript-eslint/no-unused-vars -- locale accepted for API consistency */
 export function RelatedBlogPostsSection({
   blogPostSlugs,
   title = 'Learn More',
   subtitle = 'Explore our guides and tutorials for tips and best practices',
   maxPosts = 3,
+  locale, // Blog posts are English-only, locale not used
 }: IRelatedBlogPostsSectionProps): ReactElement {
   if (!blogPostSlugs || blogPostSlugs.length === 0) {
     return <></>;
@@ -31,6 +37,10 @@ export function RelatedBlogPostsSection({
   if (posts.length === 0) {
     return <></>;
   }
+
+  // Blog posts are English-only, always link to /blog/{slug} (no locale prefix)
+  // This prevents 404 errors when viewing from localized tool pages
+  const getBlogHref = (slug: string) => `/blog/${slug}`;
 
   return (
     <section className="py-20">
@@ -48,7 +58,7 @@ export function RelatedBlogPostsSection({
       <StaggerContainer staggerDelay={0.1} className="grid md:grid-cols-3 gap-6">
         {posts.map(post => (
           <StaggerItem key={post.slug}>
-            <BlogPostCard post={post} />
+            <BlogPostCard post={post} getBlogHref={getBlogHref} />
           </StaggerItem>
         ))}
       </StaggerContainer>
@@ -56,10 +66,16 @@ export function RelatedBlogPostsSection({
   );
 }
 
-function BlogPostCard({ post }: { post: IBlogPostMeta }): ReactElement {
+function BlogPostCard({
+  post,
+  getBlogHref,
+}: {
+  post: IBlogPostMeta;
+  getBlogHref: (slug: string) => string;
+}): ReactElement {
   return (
     <Link
-      href={`/blog/${post.slug}`}
+      href={getBlogHref(post.slug)}
       className="group block bg-surface rounded-2xl p-6 border border-border hover:border-accent/50 hover:-translate-y-1 transition-all duration-300"
     >
       <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent mb-4">

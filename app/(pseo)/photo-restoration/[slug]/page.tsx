@@ -42,7 +42,7 @@ export default async function PhotoRestorationPage({ params }: IPhotoRestoration
   return (
     <>
       <SeoMetaTags path={path} locale="en" />
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="photo-restoration" locale="en" />
       <SchemaMarkup schema={schema} />
       <GenericPSEOPageTemplate data={page} />
     </>

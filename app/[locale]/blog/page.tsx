@@ -8,6 +8,11 @@ import { AmbientBackground } from '@client/components/landing/AmbientBackground'
 import { BlogSearch } from '@client/components/blog/BlogSearch';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Locale } from '@/i18n/config';
+import {
+  getOpenGraphMetadata,
+  getCanonicalUrl,
+  generateHreflangAlternates,
+} from '@lib/seo/hreflang-generator';
 
 interface IBlogPageProps {
   params: Promise<{ locale: Locale }>;
@@ -15,27 +20,25 @@ interface IBlogPageProps {
 }
 
 export async function generateMetadata({ params }: IBlogPageProps): Promise<Metadata> {
-  await params;
+  const { locale } = await params;
   const title = 'Blog - Image Enhancement Tips & Guides';
   const description = `Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography. Expert guides from ${clientEnv.APP_NAME}.`;
+  const openGraph = getOpenGraphMetadata(
+    '/blog',
+    `${title} | ${clientEnv.APP_NAME}`,
+    description,
+    locale
+  );
+  const canonicalUrl = getCanonicalUrl('/blog', locale);
+  const hreflangAlternates = generateHreflangAlternates('/blog');
 
   return {
     title,
     description,
-    openGraph: {
-      title: `${title} | ${clientEnv.APP_NAME}`,
-      description,
-      type: 'website',
-      url: `${clientEnv.BASE_URL}/blog`,
-      siteName: clientEnv.APP_NAME,
-      images: [
-        {
-          url: '/og-image.png',
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
+    openGraph,
+    alternates: {
+      canonical: canonicalUrl,
+      languages: hreflangAlternates,
     },
   };
 }

@@ -42,7 +42,7 @@ export default async function IndustryInsightsPage({ params }: IIndustryInsights
   return (
     <>
       <SeoMetaTags path={path} locale="en" />
-      <HreflangLinks path={path} />
+      <HreflangLinks path={path} category="industry-insights" locale="en" />
       <SchemaMarkup schema={schema} />
       <GenericPSEOPageTemplate data={page} />
     </>

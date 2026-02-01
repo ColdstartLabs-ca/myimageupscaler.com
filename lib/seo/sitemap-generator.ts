@@ -35,6 +35,7 @@ export interface ISitemapUrlEntry extends Omit<ISitemapEntry, 'url'> {
   url?: string; // Optional - derived from path + locale if not provided
   path: string; // Path without locale or base URL
   locale?: Locale; // Locale for this specific entry
+  category?: PSEOCategory; // pSEO category for hreflang filtering
   includeHreflang?: boolean; // Whether to include hreflang links
 }
 
@@ -51,6 +52,9 @@ export interface ILocalizedSitemapConfig {
 /**
  * Generate a single URL entry for sitemap with optional hreflang
  *
+ * IMPORTANT: Sitemaps should only include canonical URLs (English versions)
+ * Localized variations are indicated via hreflang links, not separate sitemap entries
+ *
  * @param entry - Sitemap entry configuration
  * @returns XML string for a single URL entry
  *
@@ -58,7 +62,7 @@ export interface ILocalizedSitemapConfig {
  * ```ts
  * const entry = generateSitemapUrlEntry({
  *   path: '/tools/ai-image-upscaler',
- *   locale: 'pt',
+ *   category: 'tools',
  *   lastModified: '2026-01-07',
  *   includeHreflang: true
  * });
@@ -67,18 +71,22 @@ export interface ILocalizedSitemapConfig {
 export function generateSitemapUrlEntry(entry: ISitemapUrlEntry): string {
   const {
     path,
-    locale = DEFAULT_LOCALE,
+    category,
     lastModified = new Date().toISOString(),
     changeFrequency = 'weekly',
     priority = 0.8,
     includeHreflang = false,
   } = entry;
 
-  // Build full URL with locale prefix
-  const fullUrl = locale === DEFAULT_LOCALE ? `${BASE_URL}${path}` : `${BASE_URL}/${locale}${path}`;
+  // IMPORTANT: Always use the canonical (English) URL in sitemaps
+  // The locale parameter is now ignored for URL generation
+  const fullUrl = `${BASE_URL}${path}`;
 
   // Generate hreflang links if requested
-  const hreflangLinks = includeHreflang ? generateSitemapHreflangLinks(path).join('\n') : '';
+  // Pass category to filter locales to only those where the page exists
+  const hreflangLinks = includeHreflang
+    ? generateSitemapHreflangLinks(path, category).join('\n')
+    : '';
 
   return `  <url>
     <loc>${fullUrl}</loc>

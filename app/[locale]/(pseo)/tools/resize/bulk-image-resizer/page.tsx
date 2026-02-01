@@ -3,7 +3,7 @@ import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import type { Locale } from '@/i18n/config';
 import type { IBenefit, IFAQ, IFeature, IHowItWorksStep, IUseCase } from '@/lib/seo/pseo-types';
 import { generateToolSchema } from '@/lib/seo/schema-generator';
-import { clientEnv } from '@shared/config/env';
+import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -15,7 +15,8 @@ interface IPageProps {
   params: Promise<{ locale: Locale }>;
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations('interactive-tools');
 
   // Get the pages array and find the tool by slug
@@ -35,6 +36,8 @@ export async function generateMetadata(): Promise<Metadata> {
     features: Array.isArray(toolData.features) ? (toolData.features as unknown as IFeature[]) : [],
   };
 
+  const canonicalUrl = getCanonicalUrl('/tools/resize/bulk-image-resizer', locale);
+
   return {
     title: tool.metaTitle,
     description: tool.metaDescription,
@@ -43,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: tool.metaTitle,
       description: tool.metaDescription,
       type: 'website',
-      url: `${clientEnv.BASE_URL}/tools/resize/bulk-image-resizer`,
+      url: canonicalUrl,
     },
     twitter: {
       card: 'summary_large_image',
@@ -51,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: tool.metaDescription,
     },
     alternates: {
-      canonical: `${clientEnv.BASE_URL}/tools/resize/bulk-image-resizer`,
+      canonical: canonicalUrl,
     },
   };
 }

@@ -25,7 +25,7 @@ interface ISeoMetaTagsProps {
  * ```
  */
 export function SeoMetaTags({ path, locale = 'en' }: ISeoMetaTagsProps): JSX.Element {
-  const canonicalUrl = getCanonicalUrl(path);
+  const canonicalUrl = getCanonicalUrl(path, locale);
   const ogLocale = getOpenGraphLocale(locale);
 
   return (

@@ -63,6 +63,12 @@ function RelatedPageCard({ page, index }: { page: IRelatedPage; index: number })
       'platform-format': 'Platform Format',
       'device-use': 'Device & Use',
       tools: 'Tool',
+      content: 'Content Type',
+      'camera-raw': 'Camera RAW',
+      'bulk-tools': 'Bulk Tool',
+      'device-optimization': 'Device Optimization',
+      'industry-insights': 'Industry Insight',
+      'photo-restoration': 'Photo Restoration',
     };
     return labels[category] || category;
   };
@@ -76,6 +82,14 @@ function RelatedPageCard({ page, index }: { page: IRelatedPage; index: number })
       'platform-format': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
       'device-use': 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400',
       tools: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',
+      content: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
+      'camera-raw': 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+      'bulk-tools': 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+      'device-optimization': 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+      'industry-insights':
+        'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400',
+      'photo-restoration':
+        'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/30 dark:text-fuchsia-400',
     };
     return colors[category] || 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
   };

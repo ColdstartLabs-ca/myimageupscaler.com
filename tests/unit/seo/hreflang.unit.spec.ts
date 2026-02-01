@@ -150,12 +150,15 @@ describe('Hreflang Generator', () => {
       expect(canonical).toBe('https://myimageupscaler.com');
     });
 
-    it('should always return English version as canonical', () => {
-      const path = '/es/tools/upscaler';
-      const canonical = getCanonicalUrl(path);
+    it('should return locale-specific canonical URL when locale is provided', () => {
+      const path = '/tools/upscaler';
+      const enCanonical = getCanonicalUrl(path, 'en');
+      const esCanonical = getCanonicalUrl(path, 'es');
 
-      // Canonical should always use the base URL without locale prefix
-      expect(canonical).not.toContain('/es/');
+      // English canonical should not have locale prefix
+      expect(enCanonical).toBe('https://myimageupscaler.com/tools/upscaler');
+      // Spanish canonical should have locale prefix
+      expect(esCanonical).toBe('https://myimageupscaler.com/es/tools/upscaler');
     });
   });
 
@@ -189,14 +192,20 @@ describe('Hreflang Generator', () => {
       expect(validateHreflangAlternates(alternates)).toBe(false);
     });
 
-    it('should return false when a locale is missing', () => {
+    it('should return true when some locales are missing (valid for English-only categories)', () => {
       const alternates = {
-        en: 'https://myimageupscaler.com/tools/upscaler',
+        en: 'https://myimageupscaler.com/compare/best-ai-upscalers',
+        'x-default': 'https://myimageupscaler.com/compare/best-ai-upscalers',
+      };
+
+      // Should pass because English-only categories only need en + x-default
+      expect(validateHreflangAlternates(alternates)).toBe(true);
+    });
+
+    it('should return false when English locale is missing', () => {
+      const alternates = {
         es: 'https://myimageupscaler.com/es/tools/upscaler',
         pt: 'https://myimageupscaler.com/pt/tools/upscaler',
-        de: 'https://myimageupscaler.com/de/tools/upscaler',
-        fr: 'https://myimageupscaler.com/fr/tools/upscaler',
-        it: 'https://myimageupscaler.com/it/tools/upscaler',
         'x-default': 'https://myimageupscaler.com/tools/upscaler',
       };
 
@@ -266,6 +275,28 @@ describe('Hreflang Generator', () => {
 
       expect(alternates.en).toBe('https://myimageupscaler.com/tools/resize/bulk-image-resizer');
       expect(alternates.es).toBe('https://myimageupscaler.com/es/tools/resize/bulk-image-resizer');
+    });
+
+    it('should only include English for English-only categories (compare)', () => {
+      const category: PSEOCategory = 'compare';
+      const slug = 'best-ai-upscalers';
+      const alternates = generatePSEOHreflangAlternates(category, slug);
+
+      // Should only have en and x-default for compare category (English-only)
+      expect(Object.keys(alternates)).toEqual(['en', 'x-default']);
+      expect(alternates.en).toBe('https://myimageupscaler.com/compare/best-ai-upscalers');
+      expect(alternates['x-default']).toBe('https://myimageupscaler.com/compare/best-ai-upscalers');
+    });
+
+    it('should only include English for English-only categories (platforms)', () => {
+      const category: PSEOCategory = 'platforms';
+      const slug = 'midjourney';
+      const alternates = generatePSEOHreflangAlternates(category, slug);
+
+      // Should only have en and x-default for platforms category (English-only)
+      expect(Object.keys(alternates)).toEqual(['en', 'x-default']);
+      expect(alternates.en).toBe('https://myimageupscaler.com/platforms/midjourney');
+      expect(alternates['x-default']).toBe('https://myimageupscaler.com/platforms/midjourney');
     });
   });
 });

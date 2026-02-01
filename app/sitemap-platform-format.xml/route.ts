@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server';
 import { getAllPlatformFormat } from '@/lib/seo/data-loader';
 import { generateSitemapUrlEntry, getSitemapResponseHeaders } from '@/lib/seo/sitemap-generator';
 import type { Locale } from '@/i18n/config';
+const CATEGORY = 'platform-format' as const;
 
 const LOCALE: Locale = 'en';
 
@@ -20,6 +21,7 @@ export async function GET() {
     locale: LOCALE,
     changeFrequency: 'weekly',
     priority: 0.8,
+    category: CATEGORY,
     includeHreflang: true,
   });
 
