@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
-import { clientEnv, serverEnv } from '@shared/config/env';
+import { serverEnv } from '@shared/config/env';
 import { updateSession } from '@shared/utils/supabase/middleware';
 
 /**
@@ -42,7 +42,7 @@ function isValidJwtFormat(token: string): boolean {
 export async function verifyApiAuth(
   req: NextRequest
 ): Promise<{ user: { id: string; email?: string } } | { error: NextResponse }> {
-  if (!clientEnv.SUPABASE_URL || !clientEnv.SUPABASE_ANON_KEY) {
+  if (!serverEnv.SUPABASE_URL || !serverEnv.SUPABASE_ANON_KEY) {
     console.error('Missing Supabase environment variables');
     return {
       error: NextResponse.json(
@@ -170,7 +170,7 @@ export async function verifyApiAuth(
 
   // Create Supabase client for API auth (uses Authorization header)
   // Using @supabase/ssr for Edge Runtime compatibility
-  const supabase = createServerClient(clientEnv.SUPABASE_URL, clientEnv.SUPABASE_ANON_KEY, {
+  const supabase = createServerClient(serverEnv.SUPABASE_URL, serverEnv.SUPABASE_ANON_KEY, {
     global: {
       headers: {
         Authorization: `Bearer ${token}`,
