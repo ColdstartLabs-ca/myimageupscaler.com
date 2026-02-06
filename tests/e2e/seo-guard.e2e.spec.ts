@@ -335,7 +335,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       // Check x-default
       const xDefaultLink = page.locator('link[rel="alternate"][hreflang="x-default"]').first();
       await expect(xDefaultLink).toBeAttached();
-      expect(await xDefaultLink.getAttribute('href')).toBe(`${PRODUCTION_BASE_URL}/`);
+      expect(await xDefaultLink.getAttribute('href')).toBe(PRODUCTION_BASE_URL);
     });
 
     test('locale homepage hreflang URLs are correct', async ({ page }) => {

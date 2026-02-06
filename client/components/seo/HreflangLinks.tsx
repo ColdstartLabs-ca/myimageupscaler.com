@@ -43,13 +43,12 @@ export function HreflangLinks({ path, category, locale = 'en' }: IHreflangLinksP
 
   // If category is not localized, only add x-default (no hreflang links needed)
   if (!isLocalized) {
+    // For root path, use BASE_URL without trailing slash
+    const xDefaultHref =
+      normalizedPath === '/' ? clientEnv.BASE_URL : `${clientEnv.BASE_URL}${normalizedPath}`;
     return (
       <>
-        <link
-          rel="alternate"
-          hrefLang="x-default"
-          href={`${clientEnv.BASE_URL}${normalizedPath}`}
-        />
+        <link rel="alternate" hrefLang="x-default" href={xDefaultHref} />
       </>
     );
   }
@@ -62,13 +61,12 @@ export function HreflangLinks({ path, category, locale = 'en' }: IHreflangLinksP
   });
 
   // Add x-default pointing to the default locale (English)
+  // For root path, use BASE_URL without trailing slash (matches generateHreflangAlternates)
+  const xDefaultHref =
+    normalizedPath === '/' ? clientEnv.BASE_URL : `${clientEnv.BASE_URL}${normalizedPath}`;
+
   links.push(
-    <link
-      key="x-default"
-      rel="alternate"
-      hrefLang="x-default"
-      href={`${clientEnv.BASE_URL}${normalizedPath}`}
-    />
+    <link key="x-default" rel="alternate" hrefLang="x-default" href={xDefaultHref} />
   );
 
   // Return fragment with all link tags
