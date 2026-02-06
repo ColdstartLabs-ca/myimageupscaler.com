@@ -97,11 +97,8 @@ test.describe('Upscaler E2E Tests', () => {
       await upscalerPage.goto();
       await upscalerPage.waitForLoad();
 
-      // Verify page elements - check for heading with "Dashboard" text
-      await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({
-        timeout: 15000,
-      });
-      await expect(page.getByText('Upload and enhance your images')).toBeVisible();
+      // Verify page elements - check for workspace container and dropzone
+      await expect(upscalerPage.pageTitle).toBeVisible({ timeout: 15000 });
       await expect(upscalerPage.dropzone).toBeVisible();
       await expect(page.getByText('Click or drag images')).toBeVisible();
     });

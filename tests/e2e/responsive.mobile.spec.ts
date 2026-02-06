@@ -146,8 +146,8 @@ test.describe('Mobile Responsive - Landing Page', () => {
 // Define upscaler page elements to validate
 const upscalerPageElements = [
   {
-    name: 'page-title',
-    selector: 'h1, .page-title',
+    name: 'workspace-container',
+    selector: '.bg-surface.rounded-2xl, .bg-main.rounded-3xl',
     elementGetter: (page: UpscalerPage) => page.pageTitle,
   },
   {

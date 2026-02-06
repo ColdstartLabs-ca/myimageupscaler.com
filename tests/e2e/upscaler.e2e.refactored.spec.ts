@@ -28,7 +28,6 @@ test.describe('Upscaler E2E Tests - Refactored', () => {
 
       // Verify page elements using semantic waits
       await expect(upscalerPage.pageTitle).toBeVisible();
-      await expect(upscalerPage.pageDescription).toBeVisible();
       await expect(upscalerPage.dropzone).toBeVisible();
       await expect(upscalerPage.dropzoneTitle).toBeVisible();
     });

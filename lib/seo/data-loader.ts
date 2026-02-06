@@ -5,12 +5,9 @@
  */
 
 import { cache } from 'react';
-import { keywordPageMappings } from './keyword-mappings';
-import { clientEnv, serverEnv } from '@shared/config/env';
+import { serverEnv } from '@shared/config/env';
 import { Locale } from '@/i18n/config';
 import { isCategoryLocalized } from './localization-config';
-
-const APP_NAME = clientEnv.APP_NAME;
 
 import toolsDataFile from '@/app/seo/data/tools.json';
 import freeDataFile from '@/app/seo/data/free.json';

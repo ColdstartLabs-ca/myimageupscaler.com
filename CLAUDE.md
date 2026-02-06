@@ -20,6 +20,7 @@ Check `.claude/skills/` for relevant patterns.
 - Write tests for your changes
 - Run `yarn test` on affected areas
 - Run `yarn verify` (required before completing any task)
+- **SEO changes MUST have tests**: Any change to sitemaps, metadata, hreflang, structured data, canonical URLs, robots directives, or SEO-related routes must be covered by unit tests in `tests/unit/seo/`. SEO regressions are silent and costly — tests are the only safety net.
 
 ## After Finishing
 

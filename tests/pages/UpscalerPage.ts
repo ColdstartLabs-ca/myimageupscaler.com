@@ -6,7 +6,6 @@ export type UpscaleMode = 'upscale' | 'enhance' | 'both';
 export class UpscalerPage extends BasePage {
   // Page elements
   readonly pageTitle: Locator;
-  readonly pageDescription: Locator;
 
   // Workspace - Empty state (Dropzone)
   readonly dropzone: Locator;
@@ -37,11 +36,10 @@ export class UpscalerPage extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    // Page header - Dashboard page has "Dashboard" heading
-    this.pageTitle = page.getByRole('heading', { name: 'Dashboard' });
-    this.pageDescription = page.getByText(
-      'Upload and enhance your images with AI-powered upscaling'
-    );
+    // Page header - Dashboard workspace container
+    // The dashboard no longer has an h1 heading, so we use the workspace container
+    // Use a more specific selector that will match either state
+    this.pageTitle = page.locator('.shadow-2xl.rounded-2xl, .shadow-2xl.rounded-3xl').first();
 
     // Dropzone (empty state)
     this.dropzone = page.locator('.border-dashed');
@@ -89,12 +87,16 @@ export class UpscalerPage extends BasePage {
    * Wait for the page to load
    */
   async waitForLoad(): Promise<void> {
-    // Wait for the heading first with a longer timeout
-    await this.page.waitForSelector('h1', { timeout: 15000 });
+    // Wait for the workspace container to be visible (the dashboard no longer has an h1)
+    // Try both empty state and active state selectors
+    const emptyStateWorkspace = this.page.locator('.bg-surface.rounded-2xl.shadow-2xl');
+    const activeStateWorkspace = this.page.locator('.bg-main.rounded-3xl.shadow-2xl');
 
-    // Wait for the workspace container to be visible
-    const workspaceSelector = this.page.locator('.bg-surface.rounded-2xl, .bg-main.rounded-3xl');
-    await expect(workspaceSelector.first()).toBeVisible({ timeout: 15000 });
+    // Wait for either state to be visible
+    await Promise.race([
+      expect(emptyStateWorkspace).toBeVisible({ timeout: 15000 }),
+      expect(activeStateWorkspace).toBeVisible({ timeout: 15000 }),
+    ]);
   }
 
   /**
