@@ -18,8 +18,8 @@ app/blog/
 public/before-after/       # Before/after comparison images
 ├── girl-before.webp
 ├── girl-after.webp
-├── women-before.webp
-└── women-after.webp
+├── bird-before.webp
+└── bird-after.webp
 ```
 
 ## Blog Post Format
@@ -111,7 +111,7 @@ For before/after comparisons:
 ```markdown
 | Before                                               | After                                              |
 | ---------------------------------------------------- | -------------------------------------------------- |
-| ![Before upscaling](/before-after/women-before.webp) | ![After upscaling](/before-after/women-after.webp) |
+| ![Before upscaling](/before-after/bird-before.webp) | ![After upscaling](/before-after/bird-after.webp) |
 ```
 
 ## Sourcing Images from Public APIs

@@ -140,8 +140,8 @@ export function PlatformFormatPageTemplate({
             <div className="py-12">
               <div className="max-w-3xl mx-auto">
                 <BeforeAfterSlider
-                  beforeUrl="/before-after/women-before.webp"
-                  afterUrl="/before-after/women-after.webp"
+                  beforeUrl="/before-after/bird-before.webp"
+                  afterUrl="/before-after/bird-after.webp"
                   beforeLabel={sliderLabels.before}
                   afterLabel={sliderLabels.after}
                   className="shadow-2xl shadow-accent/10"

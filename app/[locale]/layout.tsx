@@ -134,14 +134,14 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
 
         <link
           rel="preload"
-          href="/before-after/women-after.webp"
+          href="/before-after/bird-after.webp"
           as="image"
           type="image/webp"
           fetchPriority="high"
         />
         <link
           rel="preload"
-          href="/before-after/women-before.webp"
+          href="/before-after/bird-before.webp"
           as="image"
           type="image/webp"
           fetchPriority="high"

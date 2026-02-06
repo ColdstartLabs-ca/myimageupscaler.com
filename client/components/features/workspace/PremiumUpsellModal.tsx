@@ -13,8 +13,8 @@ export interface IPremiumUpsellModalProps {
 
 const COMPARISON_IMAGES = [
   {
-    before: '/before-after/women-before.webp',
-    after: '/before-after/women-after.webp',
+    before: '/before-after/bird-before.webp',
+    after: '/before-after/bird-after.webp',
   },
   {
     before: '/before-after/girl-before.webp',
