@@ -237,13 +237,19 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       );
       const sitemapUrls = Array.from(sitemapMatches).map(m => m[1]);
 
+      // Fetch all sitemaps in parallel to avoid timeout
+      const sitemapContents = await Promise.all(
+        sitemapUrls.map(async (sitemapUrl) => {
+          const sitemapResponse = await request.get(sitemapUrl.replace(PRODUCTION_BASE_URL, ''));
+          const sitemapText = await sitemapResponse.text();
+          return { sitemapUrl, sitemapText };
+        })
+      );
+
       // Track which sitemaps contain the blog URL
       const foundIn: string[] = [];
 
-      for (const sitemapUrl of sitemapUrls) {
-        const sitemapResponse = await request.get(sitemapUrl.replace(PRODUCTION_BASE_URL, ''));
-        const sitemapText = await sitemapResponse.text();
-
+      for (const { sitemapUrl, sitemapText } of sitemapContents) {
         if (sitemapText.includes(`<loc>${pageUrl}</loc>`)) {
           foundIn.push(sitemapUrl);
         }
@@ -828,13 +834,18 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       );
       const sitemapUrls = Array.from(sitemapMatches).map(m => m[1]);
 
+      // Fetch all sitemaps in parallel to avoid timeout
+      const sitemapContents = await Promise.all(
+        sitemapUrls.map(async (sitemapUrl) => {
+          const sitemapResponse = await request.get(sitemapUrl.replace(PRODUCTION_BASE_URL, ''));
+          return await sitemapResponse.text();
+        })
+      );
+
       // Check no sitemap contains private routes
       const privateRoutes = ['/dashboard/', '/api/', '/admin/', '/private/'];
 
-      for (const sitemapUrl of sitemapUrls) {
-        const sitemapResponse = await request.get(sitemapUrl.replace(PRODUCTION_BASE_URL, ''));
-        const sitemapText = await sitemapResponse.text();
-
+      for (const sitemapText of sitemapContents) {
         for (const privateRoute of privateRoutes) {
           expect(sitemapText).not.toContain(`<loc>${PRODUCTION_BASE_URL}${privateRoute}`);
         }
