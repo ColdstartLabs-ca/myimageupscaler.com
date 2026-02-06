@@ -28,6 +28,49 @@ export interface ISitemapEntry {
 }
 
 /**
+ * Page with lastUpdated date for sitemap generation
+ */
+export interface IPageWithLastUpdated {
+  lastUpdated: string;
+}
+
+/**
+ * Get the most recent lastUpdated date from an array of pages
+ * Used for category hub pages to reflect when any page in the category was updated
+ *
+ * @param pages - Array of pages with lastUpdated dates
+ * @param fallbackDate - Optional fallback date if no pages exist (default: now)
+ * @returns ISO string of the most recent lastUpdated date
+ *
+ * @example
+ * ```ts
+ * const tools = await getAllTools();
+ * const lastmod = getMostRecentLastUpdated(tools);
+ * // Returns: "2026-01-15T10:30:00Z" (most recent update)
+ * ```
+ */
+export function getMostRecentLastUpdated(
+  pages: IPageWithLastUpdated[],
+  fallbackDate: Date = new Date()
+): string {
+  if (!pages || pages.length === 0) {
+    return fallbackDate.toISOString();
+  }
+
+  const mostRecent = pages.reduce((latest, page) => {
+    const pageDate = new Date(page.lastUpdated);
+    return pageDate > latest ? pageDate : latest;
+  }, new Date(0));
+
+  // If all dates are invalid (epoch 0), use fallback
+  if (mostRecent.getTime() === 0) {
+    return fallbackDate.toISOString();
+  }
+
+  return mostRecent.toISOString();
+}
+
+/**
  * Sitemap URL with optional hreflang alternates
  * Note: url is optional here as it's derived from path + locale
  */

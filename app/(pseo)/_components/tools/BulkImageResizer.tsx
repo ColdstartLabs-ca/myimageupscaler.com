@@ -569,6 +569,7 @@ export function BulkImageResizer({
           multiple
           accept="image/jpeg,image/png,image/webp"
           onChange={handleFileInput}
+          aria-label="Upload images for bulk resizing"
           className="hidden"
         />
 

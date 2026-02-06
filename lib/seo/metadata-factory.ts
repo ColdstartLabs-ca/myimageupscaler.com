@@ -14,6 +14,7 @@ import {
   getOpenGraphLocale,
   generateHreflangAlternates,
 } from './hreflang-generator';
+import { enforceMetaLengths } from './meta-generator';
 import type { Locale } from '../../i18n/config';
 
 const BASE_URL = clientEnv.BASE_URL;
@@ -40,19 +41,25 @@ export function generateMetadata(
   const hreflangAlternates = generateHreflangAlternates(path, category);
   // Note: og:locale is rendered via SeoMetaTags component to avoid duplicates
 
+  // Enforce SEO best practice length limits
+  const { title: truncatedTitle, description: truncatedDescription } = enforceMetaLengths(
+    page.metaTitle,
+    page.metaDescription
+  );
+
   // Default og:image for all pSEO pages if not provided
   const defaultOgImage = '/og-image.png';
   const ogImageUrl = page.ogImage || defaultOgImage;
 
   return {
-    title: page.metaTitle,
-    description: page.metaDescription,
+    title: truncatedTitle,
+    description: truncatedDescription,
 
     // Open Graph
     // Note: locale is handled by SeoMetaTags component to avoid duplicates
     openGraph: {
-      title: page.metaTitle,
-      description: page.metaDescription,
+      title: truncatedTitle,
+      description: truncatedDescription,
       type: 'website',
       url: canonicalUrl,
       siteName: APP_NAME,
@@ -70,8 +77,8 @@ export function generateMetadata(
     // Twitter
     twitter: {
       card: 'summary_large_image',
-      title: page.metaTitle,
-      description: page.metaDescription,
+      title: truncatedTitle,
+      description: truncatedDescription,
       images: [ogImageUrl],
       creator: `@${TWITTER_HANDLE}`,
     },

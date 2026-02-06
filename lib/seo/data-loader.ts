@@ -85,55 +85,6 @@ async function loadLocalizedPSEOData<T extends PSEOPage>(
   }
 }
 
-/**
- * Generate fallback page data from keyword mappings
- * Used when JSON data file doesn't exist yet
- */
-function generatePageFromMapping(mapping: (typeof keywordPageMappings)[number]): Partial<PSEOPage> {
-  const category = mapping.canonicalUrl.split('/')[1] as PSEOPage['category'];
-  const slug = mapping.canonicalUrl.split('/')[2];
-
-  // Default FAQ to prevent empty schema
-  const defaultFAQ = [
-    {
-      question: `What is ${mapping.primaryKeyword}?`,
-      answer: `${mapping.primaryKeyword.charAt(0).toUpperCase() + mapping.primaryKeyword.slice(1)} is an AI-powered image enhancement tool that helps you improve image quality, resolution, and clarity instantly.`,
-    },
-    {
-      question: 'Is it free to use?',
-      answer: `Yes! ${APP_NAME} offers 10 free credits to get started. Each image enhancement uses 1 credit. For unlimited access, check our affordable premium plans.`,
-    },
-    {
-      question: 'How long does processing take?',
-      answer:
-        'Most images are processed in 30-60 seconds. Processing time may vary based on image size and enhancement level.',
-    },
-  ];
-
-  return {
-    slug,
-    title: mapping.primaryKeyword
-      .split(' ')
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' '),
-    metaTitle: `${mapping.primaryKeyword
-      .split(' ')
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ')} | ${APP_NAME}`,
-    metaDescription: `Professional ${mapping.primaryKeyword}. ${mapping.intent} solution with AI-powered technology. Try free.`,
-    h1: mapping.primaryKeyword
-      .split(' ')
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' '),
-    intro: `Transform your images with our ${mapping.primaryKeyword} tool.`,
-    primaryKeyword: mapping.primaryKeyword,
-    secondaryKeywords: mapping.secondaryKeywords,
-    lastUpdated: new Date().toISOString(),
-    category,
-    faq: defaultFAQ,
-  };
-}
-
 // Tool Pages
 export const getAllToolSlugs = cache(async (): Promise<string[]> => {
   return toolsData.pages.map(page => page.slug);
@@ -170,32 +121,17 @@ export const getAllFormats = cache(async (): Promise<IFormatPage[]> => {
 
 // Comparison Pages
 export const getAllComparisonSlugs = cache(async (): Promise<string[]> => {
-  const comparisons = keywordPageMappings.filter(m => m.canonicalUrl.startsWith('/compare/'));
-  return comparisons.map(c => c.canonicalUrl.split('/')[2]);
+  const comparisonData = comparisonDataFile as unknown as IPSEODataFile<IComparisonPage>;
+  // Only return slugs that have actual JSON data - no fallback generation
+  return comparisonData.pages.map(page => page.slug);
 });
 
 export const getComparisonData = cache(async (slug: string): Promise<IComparisonPage | null> => {
   const comparisonData = comparisonDataFile as unknown as IPSEODataFile<IComparisonPage>;
   const page = comparisonData.pages.find(p => p.slug === slug);
 
-  if (page) {
-    return page;
-  }
-
-  // Fallback to mapping-based generation if not in JSON
-  const mapping = keywordPageMappings.find(m => m.canonicalUrl === `/compare/${slug}`);
-  if (!mapping) return null;
-
-  const base = generatePageFromMapping(mapping);
-  return {
-    ...base,
-    category: 'compare',
-    comparisonType: slug.includes('vs') ? 'vs' : 'best-of',
-    products: [],
-    criteria: [],
-    faq: [],
-    relatedComparisons: [],
-  } as IComparisonPage;
+  // Return null for pages without JSON data - will result in 404
+  return page || null;
 });
 
 export const getAllComparisons = cache(async (): Promise<IComparisonPage[]> => {
@@ -223,35 +159,17 @@ export const getAllUseCases = cache(async (): Promise<IUseCasePage[]> => {
 
 // Guide Pages
 export const getAllGuideSlugs = cache(async (): Promise<string[]> => {
-  const guides = keywordPageMappings.filter(m => m.canonicalUrl.startsWith('/guides/'));
-  return guides.map(g => g.canonicalUrl.split('/')[2]);
+  const guidesData = guidesDataFile as unknown as IPSEODataFile<IGuidePage>;
+  // Only return slugs that have actual JSON data - no fallback generation
+  return guidesData.pages.map(page => page.slug);
 });
 
 export const getGuideData = cache(async (slug: string): Promise<IGuidePage | null> => {
   const guidesData = guidesDataFile as unknown as IPSEODataFile<IGuidePage>;
   const page = guidesData.pages.find(p => p.slug === slug);
 
-  if (page) {
-    return page;
-  }
-
-  // Fallback to mapping-based generation if not in JSON
-  const mapping = keywordPageMappings.find(m => m.canonicalUrl === `/guides/${slug}`);
-  if (!mapping) return null;
-
-  const base = generatePageFromMapping(mapping);
-  return {
-    ...base,
-    category: 'guides',
-    guideType: slug.startsWith('how-to') ? 'how-to' : 'explainer',
-    description: base.intro!,
-    difficulty: 'beginner',
-    steps: [],
-    tips: [],
-    faq: [],
-    relatedGuides: [],
-    relatedTools: [],
-  } as IGuidePage;
+  // Return null for pages without JSON data - will result in 404
+  return page || null;
 });
 
 export const getAllGuides = cache(async (): Promise<IGuidePage[]> => {
@@ -279,34 +197,17 @@ export const getAllAlternatives = cache(async (): Promise<IAlternativePage[]> =>
 
 // Scale Pages
 export const getAllScaleSlugs = cache(async (): Promise<string[]> => {
-  const scales = keywordPageMappings.filter(m => m.canonicalUrl.startsWith('/scale/'));
-  return scales.map(s => s.canonicalUrl.split('/')[2]);
+  const scaleData = scaleDataFile as unknown as IPSEODataFile<IScalePage>;
+  // Only return slugs that have actual JSON data - no fallback generation
+  return scaleData.pages.map(page => page.slug);
 });
 
 export const getScaleData = cache(async (slug: string): Promise<IScalePage | null> => {
   const scaleData = scaleDataFile as unknown as IPSEODataFile<IScalePage>;
   const page = scaleData.pages.find(p => p.slug === slug);
 
-  if (page) {
-    return page;
-  }
-
-  // Fallback to mapping-based generation if not in JSON
-  const mapping = keywordPageMappings.find(m => m.canonicalUrl === `/scale/${slug}`);
-  if (!mapping) return null;
-
-  const base = generatePageFromMapping(mapping);
-  return {
-    ...base,
-    category: 'scale',
-    resolution: slug.replace('upscale-', '').replace('-to-', ' '),
-    description: base.intro!,
-    useCases: [],
-    benefits: [],
-    faq: [],
-    relatedScales: [],
-    relatedGuides: [],
-  } as IScalePage;
+  // Return null for pages without JSON data - will result in 404
+  return page || null;
 });
 
 export const getAllScales = cache(async (): Promise<IScalePage[]> => {
@@ -317,35 +218,17 @@ export const getAllScales = cache(async (): Promise<IScalePage[]> => {
 
 // Free Tool Pages
 export const getAllFreeSlugs = cache(async (): Promise<string[]> => {
-  const freeTools = keywordPageMappings.filter(m => m.canonicalUrl.startsWith('/free/'));
-  return freeTools.map(f => f.canonicalUrl.split('/')[2]);
+  const freeData = freeDataFile as unknown as IPSEODataFile<IFreePage>;
+  // Only return slugs that have actual JSON data - no fallback generation
+  return freeData.pages.map(page => page.slug);
 });
 
 export const getFreeData = cache(async (slug: string): Promise<IFreePage | null> => {
   const freeData = freeDataFile as unknown as IPSEODataFile<IFreePage>;
   const page = freeData.pages.find(p => p.slug === slug);
 
-  if (page) {
-    return page;
-  }
-
-  // Fallback to mapping-based generation if not in JSON
-  const mapping = keywordPageMappings.find(m => m.canonicalUrl === `/free/${slug}`);
-  if (!mapping) return null;
-
-  const base = generatePageFromMapping(mapping);
-  return {
-    ...base,
-    category: 'free',
-    toolName: base.title!,
-    description: base.intro!,
-    features: [],
-    limitations: [],
-    upgradePoints: [],
-    faq: [],
-    relatedFree: [],
-    upgradePath: '/pricing',
-  } as IFreePage;
+  // Return null for pages without JSON data - will result in 404
+  return page || null;
 });
 
 export const getAllFreeTools = cache(async (): Promise<IFreePage[]> => {

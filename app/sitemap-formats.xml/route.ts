@@ -11,6 +11,7 @@ import { clientEnv } from '@shared/config/env';
 import {
   generateSitemapHreflangLinks,
   getSitemapResponseHeaders,
+  getMostRecentLastUpdated,
 } from '@/lib/seo/sitemap-generator';
 
 const CATEGORY = 'formats' as const;
@@ -19,13 +20,16 @@ const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 export async function GET() {
   const formats = await getAllFormats();
 
+  // Get the most recent lastUpdated date from all formats for the category page
+  const categoryLastmod = getMostRecentLastUpdated(formats);
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>${BASE_URL}/formats</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
+    <lastmod>${categoryLastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
 ${generateSitemapHreflangLinks('/formats', CATEGORY).join('\n')}

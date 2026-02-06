@@ -12,6 +12,7 @@ import { clientEnv } from '@shared/config/env';
 import {
   generateSitemapHreflangLinks,
   getSitemapResponseHeaders,
+  getMostRecentLastUpdated,
 } from '@/lib/seo/sitemap-generator';
 import interactiveToolsData from '@/app/seo/data/interactive-tools.json';
 import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
@@ -46,13 +47,17 @@ export async function GET() {
   const staticTools = await getAllTools();
   const interactiveTools = (interactiveToolsData as IPSEODataFile<IToolPage>).pages;
 
+  // Get the most recent lastUpdated date from all tools for the category page
+  const allTools = [...staticTools, ...interactiveTools];
+  const categoryLastmod = getMostRecentLastUpdated(allTools);
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>${BASE_URL}/tools</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
+    <lastmod>${categoryLastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
 ${generateSitemapHreflangLinks('/tools', CATEGORY).join('\n')}

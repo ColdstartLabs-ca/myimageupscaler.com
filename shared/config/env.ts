@@ -30,6 +30,8 @@ const clientEnvSchema = z.object({
   AMPLITUDE_API_KEY: z.string().default(''),
   GA_MEASUREMENT_ID: z.string().default(''),
   AHREFS_ANALYTICS_KEY: z.string().default(''),
+  // SEO
+  GSC_VERIFICATION: z.string().default(''),
   // OAuth Provider Toggles
   ENABLE_GOOGLE_OAUTH: z.string().default('true'),
   ENABLE_AZURE_OAUTH: z.string().default('false'),
@@ -80,6 +82,8 @@ function loadClientEnv(): IClientEnv {
     AMPLITUDE_API_KEY: process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY || '',
     GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '',
     AHREFS_ANALYTICS_KEY: process.env.NEXT_PUBLIC_AHREFS_ANALYTICS_KEY || '',
+    // SEO
+    GSC_VERIFICATION: process.env.NEXT_PUBLIC_GSC_VERIFICATION || '',
     // OAuth Provider Toggles
     ENABLE_GOOGLE_OAUTH: process.env.NEXT_PUBLIC_ENABLE_GOOGLE_OAUTH || 'true',
     ENABLE_AZURE_OAUTH: process.env.NEXT_PUBLIC_ENABLE_AZURE_OAUTH || 'false',

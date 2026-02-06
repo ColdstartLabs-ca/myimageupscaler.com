@@ -162,6 +162,42 @@ export const META_PATTERNS: Record<PSEOCategory, IMetaPattern> = {
 };
 
 /**
+ * Truncate text to max length with ellipsis
+ * Preserves word boundaries when possible
+ */
+export function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  // Try to truncate at word boundary
+  const truncated = text.substring(0, maxLength - 3);
+  const lastSpaceIndex = truncated.lastIndexOf(' ');
+
+  if (lastSpaceIndex > maxLength * 0.7) {
+    // If we found a space in the last 30% of the string, truncate there
+    return truncated.substring(0, lastSpaceIndex) + '...';
+  }
+
+  // Otherwise truncate at exact length
+  return truncated + '...';
+}
+
+/**
+ * Enforce meta title and description length limits
+ * Truncates if necessary to stay within SEO best practices
+ */
+export function enforceMetaLengths(
+  title: string,
+  description: string
+): { title: string; description: string } {
+  return {
+    title: truncateText(title, 60),
+    description: truncateText(description, 160),
+  };
+}
+
+/**
  * Validate meta title and description
  * Returns validation result with issues if any
  */

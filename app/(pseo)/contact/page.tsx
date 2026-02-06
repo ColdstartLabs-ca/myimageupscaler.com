@@ -79,7 +79,7 @@ export default async function ContactPage({ params }: IContactPageProps) {
                 Twitter
               </a>
               <a
-                href={`https://linkedin.com/company/${clientEnv.TWITTER_HANDLE.toLowerCase()}`}
+                href="https://www.linkedin.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3 bg-surface border border-border text-foreground font-semibold rounded-xl hover:bg-accent/10 transition-colors"

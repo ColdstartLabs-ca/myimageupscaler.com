@@ -319,6 +319,7 @@ export function BulkImageCompressor(): React.ReactElement {
           accept="image/jpeg,image/png,image/webp"
           multiple
           onChange={e => handleFileSelect(e.target.files)}
+          aria-label="Upload images for bulk compression"
         />
 
         {/* Upload Area */}

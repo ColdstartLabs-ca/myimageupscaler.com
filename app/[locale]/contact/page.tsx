@@ -76,15 +76,15 @@ export default async function ContactPage({ params }: IContactPageProps) {
           </p>
           <div className="grid md:grid-cols-3 gap-6 text-left">
             <div>
-              <h4 className="font-semibold text-foreground mb-2">General Inquiries</h4>
+              <h3 className="font-semibold text-foreground mb-2">General Inquiries</h3>
               <p className="text-sm text-muted-foreground">Response within 24-48 hours</p>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Technical Support</h4>
+              <h3 className="font-semibold text-foreground mb-2">Technical Support</h3>
               <p className="text-sm text-muted-foreground">Response within 24-48 hours</p>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Business Inquiries</h4>
+              <h3 className="font-semibold text-foreground mb-2">Business Inquiries</h3>
               <p className="text-sm text-muted-foreground">Response within 48-72 hours</p>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default async function ContactPage({ params }: IContactPageProps) {
               Twitter
             </a>
             <a
-              href={'https://linkedin.com/company/' + clientEnv.TWITTER_HANDLE.toLowerCase()}
+              href="https://www.linkedin.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 bg-surface border border-border rounded-xl hover:border-accent/50 hover:bg-accent/5 transition-all"

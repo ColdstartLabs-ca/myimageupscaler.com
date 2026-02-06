@@ -1,6 +1,15 @@
 /**
  * Robots.txt Configuration
  * Based on PRD-PSEO-04 Section 5.1: Robots.txt Implementation
+ *
+ * AI Crawler Policy: ALLOWED
+ * - GPTBot, ChatGPT-User: Allowed (enables OpenAI inclusion in ChatGPT search)
+ * - Google-Extended: Allowed (enables inclusion in Google SGE, AI Overviews, Gemini)
+ *
+ * Benefits:
+ * - Content available for AI-powered search features
+ * - Better visibility in ChatGPT, Google SGE, AI Overviews
+ * - Increased organic traffic from AI search platforms
  */
 
 import { MetadataRoute } from 'next';
@@ -24,18 +33,6 @@ export default function robots(): MetadataRoute.Robots {
           '/success',
           '/canceled',
         ],
-      },
-      {
-        userAgent: 'GPTBot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'ChatGPT-User',
-        disallow: '/',
-      },
-      {
-        userAgent: 'Google-Extended',
-        disallow: '/',
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,

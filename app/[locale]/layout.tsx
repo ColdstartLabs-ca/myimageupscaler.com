@@ -10,7 +10,7 @@ import { GoogleAnalytics } from '@client/components/analytics/GoogleAnalytics';
 import { Layout } from '@client/components/layout/Layout';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { SUPPORTED_LOCALES, isValidLocale } from '@/i18n/config';
-import { serverEnv } from '@shared/config/env';
+import { serverEnv, clientEnv } from '@shared/config/env';
 import '@client/styles/index.css';
 
 const APP_NAME = serverEnv.APP_NAME;
