@@ -62,6 +62,18 @@ else
     echo ""
 fi
 
+# SEO Guard - ALWAYS runs (cannot be skipped)
+echo -e "${CYAN}▸ Running SEO guard...${NC}"
+cd "$PROJECT_ROOT"
+if ! yarn test:seo-guard; then
+    echo -e "${RED}✗ SEO guard failed. Deployment blocked.${NC}"
+    echo -e "${YELLOW}  SEO regressions detected. Fix issues before deploying.${NC}"
+    echo -e "${YELLOW}  Run 'yarn test:seo-guard' locally to debug.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ SEO guard passed${NC}"
+echo ""
+
 # Check translations
 if [ "$SKIP_I18N" = "false" ]; then
     echo -e "${CYAN}▸ Checking translations...${NC}"

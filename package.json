@@ -40,6 +40,7 @@
     "test:unit": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:seo-guard": "playwright test tests/e2e/seo-guard.e2e.spec.ts --project=chromium",
     "stripe:listen": "bash -c 'source ./scripts/load-env.sh && stripe listen --api-key $STRIPE_SECRET_KEY --forward-to localhost:3000/api/webhooks/stripe'",
     "stripe:setup": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts'",
     "stripe:setup:test": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts --test'",
