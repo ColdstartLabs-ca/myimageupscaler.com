@@ -3,31 +3,24 @@
  * Based on PRD-PSEO-04 Section 1.2: Sitemap Index Implementation
  *
  * Generates a sitemap index with one sitemap per category.
- * Each sitemap contains canonical URLs with hreflang links for multi-language support.
+ * Localized categories have additional per-locale sitemaps for explicit URL submission.
+ * Each sitemap contains URLs with hreflang links for multi-language support.
  */
 
 import { NextResponse } from 'next/server';
 import { clientEnv } from '@shared/config/env';
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n/config';
+import { LOCALIZED_CATEGORIES } from '@/lib/seo/localization-config';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
-// Categories that should have sitemaps
-const CATEGORIES = [
+// English-only categories (no locale-specific sitemaps)
+const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
   'static',
   'blog',
-  'tools',
-  'formats',
-  'scale',
-  'use-cases',
   'compare',
-  'alternatives',
-  'guides',
-  'free',
   'platforms',
   'images',
-  'format-scale',
-  'platform-format',
-  'device-use',
   'ai-features',
   'content',
   'photo-restoration',
@@ -38,18 +31,31 @@ const CATEGORIES = [
 ];
 
 /**
- * Generate sitemap index with one sitemap per category
- * Each sitemap contains hreflang links for all available locales
+ * Generate sitemap index with:
+ * - One sitemap per English-only category
+ * - One English sitemap per localized category
+ * - One locale-specific sitemap per localized category × non-English locale
  */
 export async function GET() {
   const sitemapEntries: Array<{ name: string; lastmod: string }> = [];
+  const lastmod = new Date().toISOString();
 
-  // Generate one sitemap per category
-  for (const category of CATEGORIES) {
-    sitemapEntries.push({
-      name: `sitemap-${category}.xml`,
-      lastmod: new Date().toISOString(),
-    });
+  // English-only categories: single sitemap each
+  for (const category of ENGLISH_ONLY_SITEMAP_CATEGORIES) {
+    sitemapEntries.push({ name: `sitemap-${category}.xml`, lastmod });
+  }
+
+  // Localized categories: English + per-locale sitemaps
+  for (const category of LOCALIZED_CATEGORIES) {
+    // English (canonical) sitemap
+    sitemapEntries.push({ name: `sitemap-${category}.xml`, lastmod });
+
+    // Locale-specific sitemaps for non-English locales
+    for (const locale of SUPPORTED_LOCALES) {
+      if (locale !== DEFAULT_LOCALE) {
+        sitemapEntries.push({ name: `sitemap-${category}-${locale}.xml`, lastmod });
+      }
+    }
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
