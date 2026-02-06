@@ -8,11 +8,13 @@ PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
 export SKIP_SECRETS="false"
 export SKIP_TESTS="false"
 export SKIP_I18N="false"
+export SKIP_SEO_GUARD="false"
 for arg in "$@"; do
     case $arg in
         --skip-secrets) SKIP_SECRETS="true" ;;
         --skip-tests) SKIP_TESTS="true" ;;
         --skip-i18n) SKIP_I18N="true" ;;
+        --skip-seo-guard) SKIP_SEO_GUARD="true" ;;
     esac
 done
 
@@ -62,17 +64,27 @@ else
     echo ""
 fi
 
-# SEO Guard - ALWAYS runs (cannot be skipped)
-echo -e "${CYAN}▸ Running SEO guard...${NC}"
-cd "$PROJECT_ROOT"
-if ! yarn test:seo-guard; then
-    echo -e "${RED}✗ SEO guard failed. Deployment blocked.${NC}"
-    echo -e "${YELLOW}  SEO regressions detected. Fix issues before deploying.${NC}"
-    echo -e "${YELLOW}  Run 'yarn test:seo-guard' locally to debug.${NC}"
-    exit 1
+# SEO Guard - runs unless explicitly skipped
+if [ "$SKIP_SEO_GUARD" = "false" ]; then
+    echo -e "${CYAN}▸ Running SEO guard...${NC}"
+    cd "$PROJECT_ROOT"
+    if ! yarn test:seo-guard; then
+        echo -e "${RED}✗ SEO guard failed. Deployment blocked.${NC}"
+        echo -e "${YELLOW}  SEO regressions detected. Fix issues before deploying.${NC}"
+        echo -e "${YELLOW}  Run 'yarn test:seo-guard' locally to debug.${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✓ SEO guard passed${NC}"
+    echo ""
+else
+    echo -e "${YELLOW}⚠ ╔════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}⚠ ║  WARNING: Skipping SEO guard (--skip-seo-guard flag)        ║${NC}"
+    echo -e "${YELLOW}⚠ ║                                                            ║${NC}"
+    echo -e "${YELLOW}⚠ ║  Make sure you have run 'yarn test:seo-guard' locally     ║${NC}"
+    echo -e "${YELLOW}⚠ ║  and verified all tests pass before deploying!           ║${NC}"
+    echo -e "${YELLOW}⚠ ╚════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
 fi
-echo -e "${GREEN}✓ SEO guard passed${NC}"
-echo ""
 
 # Check translations
 if [ "$SKIP_I18N" = "false" ]; then

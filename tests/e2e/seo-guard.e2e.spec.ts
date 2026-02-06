@@ -381,7 +381,10 @@ test.describe('SEO Guard - Deploy Blocker', () => {
   test.describe('pSEO Tool Page SEO - English', () => {
     test('English tool page has correct meta tags and schema', async ({ page }) => {
       await page.goto('/tools/ai-image-upscaler');
-      await page.waitForLoadState('domcontentloaded');
+      // Wait for page to fully load and hydrate before checking schema
+      await page.waitForLoadState('load');
+      // Also wait for schema script to be present with content
+      await page.waitForSelector('script[type="application/ld+json"]', { state: 'attached' });
 
       // Canonical should point to production URL
       const canonicalLink = page.locator('link[rel="canonical"]');
@@ -449,7 +452,8 @@ test.describe('SEO Guard - Deploy Blocker', () => {
   test.describe('pSEO Tool Page SEO - Locale', () => {
     test('Spanish tool page has locale-specific canonical and hreflang', async ({ page }) => {
       await page.goto('/es/tools/ai-image-upscaler');
-      await page.waitForLoadState('domcontentloaded');
+      // Wait for page to fully load before querying meta elements
+      await page.waitForLoadState('load');
 
       // Canonical should point to Spanish version
       const canonicalLink = page.locator('link[rel="canonical"]').first();
@@ -471,7 +475,10 @@ test.describe('SEO Guard - Deploy Blocker', () => {
 
     test('locale tool page SoftwareApplication has correct inLanguage', async ({ page }) => {
       await page.goto('/es/tools/ai-image-upscaler');
-      await page.waitForLoadState('domcontentloaded');
+      // Wait for page to fully load and hydrate before checking schema
+      await page.waitForLoadState('load');
+      // Also wait for schema script to be present with content
+      await page.waitForSelector('script[type="application/ld+json"]', { state: 'attached' });
 
       const schemaScripts = await page.locator('script[type="application/ld+json"]').all();
       let foundCorrectLang = false;
@@ -685,7 +692,10 @@ test.describe('SEO Guard - Deploy Blocker', () => {
   test.describe('Structured Data (JSON-LD)', () => {
     test('homepage has WebSite schema', async ({ page }) => {
       await page.goto('/');
-      await page.waitForLoadState('domcontentloaded');
+      // Wait for page to fully load and hydrate before checking schema
+      await page.waitForLoadState('load');
+      // Also wait for schema script to be present with content
+      await page.waitForSelector('script[type="application/ld+json"]', { state: 'attached' });
 
       const schemaScripts = await page.locator('script[type="application/ld+json"]').all();
       let foundWebSite = false;
@@ -722,7 +732,10 @@ test.describe('SEO Guard - Deploy Blocker', () => {
 
     test('homepage has Organization schema', async ({ page }) => {
       await page.goto('/');
-      await page.waitForLoadState('domcontentloaded');
+      // Wait for page to fully load and hydrate before checking schema
+      await page.waitForLoadState('load');
+      // Also wait for schema script to be present with content
+      await page.waitForSelector('script[type="application/ld+json"]', { state: 'attached' });
 
       const schemaScripts = await page.locator('script[type="application/ld+json"]').all();
       let foundOrganization = false;
@@ -759,7 +772,10 @@ test.describe('SEO Guard - Deploy Blocker', () => {
 
     test('tool page has SoftwareApplication schema', async ({ page }) => {
       await page.goto('/tools/ai-image-upscaler');
-      await page.waitForLoadState('domcontentloaded');
+      // Wait for page to fully load and hydrate before checking schema
+      await page.waitForLoadState('load');
+      // Also wait for schema script to be present with content
+      await page.waitForSelector('script[type="application/ld+json"]', { state: 'attached' });
 
       const schemaScripts = await page.locator('script[type="application/ld+json"]').all();
       let foundSoftwareApp = false;
