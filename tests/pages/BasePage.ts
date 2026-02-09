@@ -238,7 +238,11 @@ export class BasePage {
     const spinner = this.page.locator(
       '[data-loading], .animate-spin, [aria-busy="true"], .loading'
     );
-    await spinner.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {});
+    // Check if spinner exists first to avoid unnecessary wait
+    const isVisible = await spinner.isVisible().catch(() => false);
+    if (isVisible) {
+      await spinner.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+    }
   }
 
   /**
@@ -257,18 +261,21 @@ export class BasePage {
         // Wait for skeleton to disappear
         await skeletonLoaders
           .first()
-          .waitFor({ state: 'hidden', timeout: 10000 })
+          .waitFor({ state: 'hidden', timeout: 5000 })
           .catch(() => {});
       }
 
       // Wait for auth buttons to be visible (sign in or user avatar)
-      const authButtons = this.page.locator(
-        'button:has-text("Sign In"), [data-testid="user-menu"], [aria-label="User menu"]'
-      );
-      await authButtons
-        .first()
-        .waitFor({ state: 'visible', timeout: 5000 })
-        .catch(() => {});
+      // Only wait if skeleton was visible (loading was happening)
+      if (isVisible) {
+        const authButtons = this.page.locator(
+          'button:has-text("Sign In"), [data-testid="user-menu"], [aria-label="User menu"]'
+        );
+        await authButtons
+          .first()
+          .waitFor({ state: 'visible', timeout: 3000 })
+          .catch(() => {});
+      }
     } catch {
       // If waiting fails, just continue - the auth state might already be settled
     }

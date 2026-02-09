@@ -85,8 +85,11 @@ export default function PricingPageClient() {
     const loadUserData = async () => {
       try {
         // Add timeout to prevent hanging forever on auth checks
+        // Use shorter timeout in test mode for faster test execution
+        const isTestMode = clientEnv.ENV === 'test';
+        const timeoutMs = isTestMode ? 500 : 2000;
         const timeoutPromise = new Promise<never>((_, reject) => {
-          setTimeout(() => reject(new Error('Auth timeout after 2s')), 2000);
+          setTimeout(() => reject(new Error(`Auth timeout after ${timeoutMs}ms`)), timeoutMs);
         });
 
         const dataPromise = Promise.all([

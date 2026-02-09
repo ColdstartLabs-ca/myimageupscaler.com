@@ -115,8 +115,16 @@ export class PricingPage extends BasePage {
     await this.waitForPageLoad();
 
     // Wait for the page title to be visible (it should be visible immediately)
-    // Increase timeout for parallel test execution
-    await expect(this.pageTitle).toBeVisible({ timeout: 15000 });
+    await expect(this.pageTitle).toBeVisible({ timeout: 10000 });
+
+    // Wait for skeleton cards to disappear first (the loading state)
+    // Skeleton cards are shown while fetching subscription data
+    const skeletonCards = this.pricingGrid.locator('[data-testid="pricing-card-skeleton"], .animate-pulse').first();
+    try {
+      await skeletonCards.waitFor({ state: 'hidden', timeout: 5000 });
+    } catch {
+      // Skeleton might not be present or already gone - that's fine
+    }
 
     // Wait for skeleton cards to be replaced with actual pricing cards
     // Use exact text matching and scope to pricing grid to avoid conflicts with FAQ headings
@@ -128,16 +136,18 @@ export class PricingPage extends BasePage {
       exact: true,
     });
 
-    // Wait for each plan heading to be visible within the pricing grid
-    // Increase timeout for parallel test execution
-    await expect(starterHeading).toBeVisible({ timeout: 15000 });
-    await expect(hobbyHeading).toBeVisible({ timeout: 15000 });
-    await expect(proHeading).toBeVisible({ timeout: 15000 });
-    await expect(businessHeading).toBeVisible({ timeout: 15000 });
+    // Wait for all plan headings to be visible within the pricing grid
+    // Use Promise.all for parallel waiting and reduce timeout to 8 seconds
+    await Promise.all([
+      expect(starterHeading).toBeVisible({ timeout: 8000 }),
+      expect(hobbyHeading).toBeVisible({ timeout: 8000 }),
+      expect(proHeading).toBeVisible({ timeout: 8000 }),
+      expect(businessHeading).toBeVisible({ timeout: 8000 }),
+    ]);
 
     // Wait for Get Started buttons to be visible (not loading)
     const getStartedButtons = this.pricingGrid.getByRole('button', { name: 'Get Started' });
-    await expect(getStartedButtons.first()).toBeVisible({ timeout: 10000 });
+    await expect(getStartedButtons.first()).toBeVisible({ timeout: 5000 });
 
     // Ensure subscriptions section is visible
     await expect(this.subscriptionsSection).toBeVisible();

@@ -15,6 +15,7 @@ export function PricingCardSkeleton({
 }: IPricingCardSkeletonProps): JSX.Element {
   return (
     <div
+      data-testid="pricing-card-skeleton"
       className={`relative bg-surface rounded-2xl shadow-lg border-2 animate-pulse ${
         recommended ? 'border-accent/30' : 'border-border'
       }`}
