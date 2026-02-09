@@ -319,10 +319,12 @@ describe('Bug Fix: Double credit grant when scheduled downgrade completes', () =
 
     // Verify: add_subscription_credits RPC is NOT called with actual credits
     // (it was previously called with amount: 0 for logging, now it should not be called at all)
-    const rpcCalls = (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mock.calls;
+    const rpcCalls = (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mock.calls as Array<
+      [string, Record<string, unknown>]
+    >;
     const creditAddCalls = rpcCalls.filter(
-      ([name, args]: [string, { amount?: number }]) =>
-        name === 'add_subscription_credits' && args?.amount > 0
+      ([name, args]) =>
+        name === 'add_subscription_credits' && typeof args?.amount === 'number' && args.amount > 0
     );
     expect(creditAddCalls).toHaveLength(0);
   });
@@ -439,9 +441,10 @@ describe('Bug Fix: Double credit grant when scheduled downgrade completes', () =
     });
 
     // Verify: credits are added exactly ONCE
-    const addCreditCalls = (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mock.calls.filter(
-      ([name]: [string]) => name === 'add_subscription_credits'
-    );
+    const allRpcCalls = (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mock.calls as Array<
+      [string, Record<string, unknown>]
+    >;
+    const addCreditCalls = allRpcCalls.filter(([name]) => name === 'add_subscription_credits');
     expect(addCreditCalls).toHaveLength(1);
   });
 });
