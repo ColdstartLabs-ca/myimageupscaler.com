@@ -39,7 +39,7 @@ export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
   'camera-raw',
   'industry-insights',
   'device-optimization',
-  'ai-features',
+  // 'ai-features' excluded: 0 pages, no route handler (zombie category)
 ];
 
 /**
@@ -235,9 +235,5 @@ export const LOCALIZATION_STATUS = {
     supportedLocales: ['en'] as Locale[],
     notes: 'Device optimization pages are English-only (2026-01-31)',
   },
-  'ai-features': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'AI features pages are English-only (2026-01-31)',
-  },
+  // 'ai-features' excluded: 0 pages, no route handler (zombie category)
 } as const;

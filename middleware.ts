@@ -15,6 +15,11 @@ import {
 import { DEFAULT_LOCALE, isValidLocale, LOCALE_COOKIE, type Locale } from '@/i18n/config';
 import { getLocaleFromCountry } from '@lib/i18n/country-locale-map';
 
+// Debug: log when middleware is loaded
+if (serverEnv.ENV === 'test') {
+  console.log('[middleware.ts] Module loaded with handleTrailingSlash');
+}
+
 /**
  * Tracking and analytics query parameters that should be stripped from canonical URLs
  * These params don't affect page content and should be removed for SEO
@@ -110,6 +115,62 @@ function handleWWWRedirect(req: NextRequest): NextResponse | null {
     url.protocol = req.nextUrl.protocol;
     url.hostname = hostname.slice(4); // Remove 'www.' prefix
     const response = NextResponse.redirect(url, 301); // Permanent redirect for SEO
+    applySecurityHeaders(response);
+    return response;
+  }
+
+  return null;
+}
+
+/**
+ * Handle trailing slash normalization for SEO
+ * Redirects URLs with trailing slashes (except root /) to no-slash versions
+ * Prevents duplicate content issues from /path/ vs /path
+ *
+ * @param req - The Next.js request object
+ * @returns NextResponse with 301 redirect to no-slash version, or null if no redirect needed
+ */
+function handleTrailingSlash(req: NextRequest): NextResponse | null {
+  const pathname = req.nextUrl.pathname;
+
+  // Always log for debugging in test environment
+  if (serverEnv.ENV === 'test') {
+    console.log(`[handleTrailingSlash] Checking pathname: ${pathname}`);
+  }
+
+  // Skip root path - it should keep its trailing slash
+  if (pathname === '/') {
+    return null;
+  }
+
+  // Skip API routes - they don't need trailing slash handling
+  if (pathname.startsWith('/api/')) {
+    return null;
+  }
+
+  // Skip static files and Next.js internals
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/static/') ||
+    pathname.includes('.') // Files with extensions like .jpg, .png, .svg, etc.
+  ) {
+    return null;
+  }
+
+  // If pathname ends with trailing slash, redirect to no-slash version
+  if (pathname.endsWith('/')) {
+    const newPathname = pathname.slice(0, -1); // Remove trailing slash
+
+    // Build the redirect URL as a string to ensure pathname is used correctly
+    // Include hash (if present) for anchor links
+    const hash = req.nextUrl.hash || '';
+    const redirectUrl = `${req.nextUrl.origin}${newPathname}${req.nextUrl.search}${hash}`;
+
+    if (serverEnv.ENV === 'test') {
+      console.log(`[handleTrailingSlash] Redirecting ${pathname} -> ${newPathname} (${redirectUrl})`);
+    }
+
+    const response = NextResponse.redirect(redirectUrl, 301); // Permanent redirect for SEO
     applySecurityHeaders(response);
     return response;
   }
@@ -608,6 +669,13 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   const wwwRedirect = handleWWWRedirect(req);
   if (wwwRedirect) {
     return wwwRedirect;
+  }
+
+  // Handle trailing slash normalization for SEO (before legacy redirects)
+  // This prevents legacy redirects from needing to handle both slash variants
+  const trailingSlashRedirect = handleTrailingSlash(req);
+  if (trailingSlashRedirect) {
+    return trailingSlashRedirect;
   }
 
   // Handle legacy redirects for SEO (before locale routing to catch old URLs)

@@ -63,11 +63,11 @@ describe('Sitemap Index Localization', () => {
       expect(ENGLISH_ONLY_CATEGORIES).toContain('camera-raw');
       expect(ENGLISH_ONLY_CATEGORIES).toContain('industry-insights');
       expect(ENGLISH_ONLY_CATEGORIES).toContain('device-optimization');
-      expect(ENGLISH_ONLY_CATEGORIES).toContain('ai-features');
+      // ai-features excluded: 0 pages, no route handler (zombie category)
     });
 
-    it('should have 9 English-only categories', () => {
-      expect(ENGLISH_ONLY_CATEGORIES).toHaveLength(9);
+    it('should have 8 English-only categories', () => {
+      expect(ENGLISH_ONLY_CATEGORIES).toHaveLength(8);
     });
   });
 
@@ -92,8 +92,8 @@ describe('Sitemap Index Localization', () => {
       const totalSitemaps =
         englishOnlySitemapCount + localizedEnglishCount + localeSpecificCount;
 
-      // 12 + 10 + 60 = 82
-      expect(totalSitemaps).toBe(82);
+      // 11 + 10 + 60 = 81 (ai-features excluded: zombie category with 0 pages)
+      expect(totalSitemaps).toBe(81);
     });
 
     it('should have correct locale count', () => {

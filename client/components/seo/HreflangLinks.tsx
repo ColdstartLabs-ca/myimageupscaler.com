@@ -34,8 +34,8 @@ interface IHreflangLinksProps {
  * ```
  */
 export function HreflangLinks({ path, category, locale = 'en' }: IHreflangLinksProps): JSX.Element {
-  // Remove trailing slash to avoid 308 redirects
-  const normalizedPath = path.replace(/\/$/, '') || '/';
+  // Remove trailing slash for consistency (matches generateHreflangAlternates normalization)
+  const normalizedPath = path.replace(/\/$/, '');
 
   // Determine if this category is localized for all supported locales
   // If no category is provided, assume it's localized (backwards compatible)
@@ -43,9 +43,9 @@ export function HreflangLinks({ path, category, locale = 'en' }: IHreflangLinksP
 
   // If category is not localized, only add x-default (no hreflang links needed)
   if (!isLocalized) {
-    // For root path, add trailing slash to match canonical URL
+    // For root path, use BASE_URL without trailing slash (canonical pattern: no trailing slash)
     const xDefaultHref =
-      normalizedPath === '/' ? `${clientEnv.BASE_URL}/` : `${clientEnv.BASE_URL}${normalizedPath}`;
+      normalizedPath === '' ? clientEnv.BASE_URL : `${clientEnv.BASE_URL}${normalizedPath}`;
     return (
       <>
         <link rel="alternate" hrefLang="x-default" href={xDefaultHref} />
@@ -56,14 +56,15 @@ export function HreflangLinks({ path, category, locale = 'en' }: IHreflangLinksP
   // Generate hreflang links for all supported locales
   const links = SUPPORTED_LOCALES.map(loc => {
     const localizedPath = getLocalizedPath(normalizedPath, loc);
-    const url = `${clientEnv.BASE_URL}${localizedPath}`;
+    // For root path with English locale, localizedPath is '' — use BASE_URL directly
+    const url = localizedPath === '' ? clientEnv.BASE_URL : `${clientEnv.BASE_URL}${localizedPath}`;
     return <link key={loc} rel="alternate" hrefLang={loc} href={url} />;
   });
 
   // Add x-default pointing to the default locale (English)
-  // For root path, add trailing slash to match the en hreflang URL
+  // For root path, use BASE_URL without trailing slash (canonical pattern: no trailing slash)
   const xDefaultHref =
-    normalizedPath === '/' ? `${clientEnv.BASE_URL}/` : `${clientEnv.BASE_URL}${normalizedPath}`;
+    normalizedPath === '' ? clientEnv.BASE_URL : `${clientEnv.BASE_URL}${normalizedPath}`;
 
   links.push(
     <link key="x-default" rel="alternate" hrefLang="x-default" href={xDefaultHref} />

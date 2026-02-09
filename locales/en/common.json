@@ -93,6 +93,12 @@
     "ja": "日本語",
     "switchLanguage": "Switch Language"
   },
+  "meta": {
+    "homepage": {
+      "title": "AI Image Upscaler & Photo Enhancer | Enhance Quality Free Online",
+      "description": "Professional AI image enhancer that upscales photos to 4K with stunning quality. Enhance image quality, remove blur, and restore details in seconds."
+    }
+  },
   "common": {
     "loading": "Loading...",
     "error": "Error",

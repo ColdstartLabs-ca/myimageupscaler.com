@@ -93,6 +93,12 @@
     "ja": "Japanisch",
     "switchLanguage": "Sprache wechseln"
   },
+  "meta": {
+    "homepage": {
+      "title": "Bild vergrößern & Bildqualität verbessern | KI Bildauflösung erhöhen",
+      "description": "Professioneller KI-Bildverbesserer für 4K Upscaling. Bildqualität verbessern, Unschärfe entfernen und Details wiederherstellen. Kostenlos online."
+    }
+  },
   "common": {
     "loading": "Laden...",
     "error": "Fehler",

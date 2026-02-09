@@ -11,6 +11,25 @@ import {
 } from '@/lib/seo/hreflang-generator';
 import { serverEnv } from '@shared/config/env';
 import type { Locale } from '@/i18n/config';
+import commonTranslations from '@/locales/en/common.json';
+
+/**
+ * Helper function to load locale-specific translations for metadata
+ * Since metadata generation runs server-side at build time, we need to
+ * directly import the locale files based on the locale parameter
+ */
+async function getLocaleCommonTranslations(locale: Locale) {
+  try {
+    // eslint-disable-next-line no-restricted-syntax -- Dynamic import required for locale-specific metadata
+    const translations = (await import(`@/locales/${locale}/common.json`)) as {
+      default: { meta?: { homepage?: { title: string; description: string } } };
+    };
+    return translations.default;
+  } catch {
+    // Fallback to English if locale file not found
+    return commonTranslations;
+  }
+}
 
 interface ILocaleHomePageProps {
   params: Promise<{ locale: Locale }>;
@@ -18,8 +37,12 @@ interface ILocaleHomePageProps {
 
 export async function generateMetadata({ params }: ILocaleHomePageProps): Promise<Metadata> {
   const { locale } = await params;
-  const title = 'AI Image Upscaler & Photo Enhancer | Enhance Quality Free Online';
+  const common = await getLocaleCommonTranslations(locale);
+
+  // Use locale-specific metadata from translations, fallback to English defaults
+  const title = common.meta?.homepage?.title ?? 'AI Image Upscaler & Photo Enhancer | Enhance Quality Free Online';
   const description =
+    common.meta?.homepage?.description ??
     'Professional AI image enhancer that upscales photos to 4K with stunning quality. Enhance image quality, remove blur, and restore details in seconds.';
 
   const canonicalUrl = getCanonicalUrl('/', locale);
