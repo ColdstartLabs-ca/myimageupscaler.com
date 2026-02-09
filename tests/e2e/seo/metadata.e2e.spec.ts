@@ -143,10 +143,10 @@ test.describe('SEO Metadata', () => {
       if (hreflang === 'x-default') xDefaultHref = href;
     }
 
-    // Homepage URLs - HreflangLinks component adds / for root path
-    expect(enHref).toBe('https://myimageupscaler.com/');
+    // Homepage URLs - metadata API generates URLs without trailing slashes
+    expect(enHref).toBe('https://myimageupscaler.com');
     expect(esHref).toBe('https://myimageupscaler.com/es');
-    expect(xDefaultHref).toBe('https://myimageupscaler.com/');
+    expect(xDefaultHref).toBe('https://myimageupscaler.com');
   });
 
   test('should have correct JSON-LD inLanguage on English tool page', async ({ page }) => {

@@ -242,6 +242,36 @@ describe('Subscription Change Fixes', () => {
     });
   });
 
+  describe('Upgrade Proration Behavior', () => {
+    /**
+     * CRITICAL: Upgrades must use 'always_invoice' to charge the prorated difference immediately.
+     * Using 'create_prorations' defers the charge to the next billing cycle, creating an abuse vector
+     * where users can upgrade, receive credits immediately, and cancel before paying the difference.
+     */
+    it('should use always_invoice for upgrades to charge immediately', () => {
+       
+      const fs = require('fs');
+      const routeSource = fs.readFileSync('app/api/subscription/change/route.ts', 'utf-8');
+
+      // Verify the upgrade path uses 'always_invoice', NOT 'create_prorations'
+      // The upgrade section follows the comment "// UPGRADE: Apply immediately with proration"
+      const upgradeSection = routeSource.split('// UPGRADE: Apply immediately with proration')[1];
+      expect(upgradeSection).toBeDefined();
+      expect(upgradeSection).toContain("proration_behavior: 'always_invoice'");
+      expect(upgradeSection).not.toContain("proration_behavior: 'create_prorations'");
+    });
+
+    it('should use error_if_incomplete to fail on payment failure', () => {
+       
+      const fs = require('fs');
+      const routeSource = fs.readFileSync('app/api/subscription/change/route.ts', 'utf-8');
+
+      const upgradeSection = routeSource.split('// UPGRADE: Apply immediately with proration')[1];
+      expect(upgradeSection).toBeDefined();
+      expect(upgradeSection).toContain("payment_behavior: 'error_if_incomplete'");
+    });
+  });
+
   describe('Preview Change Response Structure', () => {
     it('should return correct structure for upgrade', () => {
       const response = {
