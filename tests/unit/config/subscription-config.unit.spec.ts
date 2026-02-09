@@ -60,7 +60,7 @@ describe('Subscription Configuration', () => {
 
   describe('Plan Lookup Functions', () => {
     test('getPlanByPriceId returns correct plan', () => {
-      const plan = getPlanByPriceId('price_1SZmVzALMLhQocpfPyRX2W8D');
+      const plan = getPlanByPriceId('price_1Sz0fOL1vUl00LlZ7bbM2cDs');
       expect(plan).toBeDefined();
       expect(plan?.key).toBe('pro');
       expect(plan?.name).toBe('Professional');
@@ -74,7 +74,7 @@ describe('Subscription Configuration', () => {
     test('getPlanByKey returns correct plan', () => {
       const plan = getPlanByKey('hobby');
       expect(plan).toBeDefined();
-      expect(plan?.stripePriceId).toBe('price_1SZmVyALMLhQocpf0H7n5ls8');
+      expect(plan?.stripePriceId).toBe('price_1Sz0fNL1vUl00LlZT6MMTxAg');
       expect(plan?.creditsPerCycle).toBe(200);
     });
 
@@ -205,7 +205,7 @@ describe('Subscription Configuration', () => {
 
   describe('Credits Expiration Functions', () => {
     test('getExpirationConfig returns config for valid price ID', () => {
-      const config = getExpirationConfig('price_1SZmVzALMLhQocpfPyRX2W8D');
+      const config = getExpirationConfig('price_1Sz0fOL1vUl00LlZ7bbM2cDs');
       expect(config).toBeDefined();
       expect(config?.mode).toBeDefined();
       expect(['never', 'end_of_cycle', 'rolling_window']).toContain(config?.mode);
@@ -217,7 +217,7 @@ describe('Subscription Configuration', () => {
     });
 
     test('creditsExpireForPlan returns correct value based on mode', () => {
-      const expires = creditsExpireForPlan('price_1SZmVzALMLhQocpfPyRX2W8D');
+      const expires = creditsExpireForPlan('price_1Sz0fOL1vUl00LlZ7bbM2cDs');
       expect(typeof expires).toBe('boolean');
     });
 
@@ -282,9 +282,9 @@ describe('Subscription Configuration', () => {
     });
 
     test('shouldSendExpirationWarning returns correct value based on config', () => {
-      const plan = getPlanByPriceId('price_1SZmVzALMLhQocpfPyRX2W8D');
+      const plan = getPlanByPriceId('price_1Sz0fOL1vUl00LlZ7bbM2cDs');
       const should = shouldSendExpirationWarning({
-        priceId: 'price_1SZmVzALMLhQocpfPyRX2W8D',
+        priceId: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
         daysUntilExpiration: 3,
       });
 
@@ -307,18 +307,18 @@ describe('Subscription Configuration', () => {
     });
 
     test('shouldSendExpirationWarning checks warning configuration', () => {
-      const plan = getPlanByPriceId('price_1SZmVzALMLhQocpfPyRX2W8D');
+      const plan = getPlanByPriceId('price_1Sz0fOL1vUl00LlZ7bbM2cDs');
       const warningDays = plan?.creditsExpiration.warningDaysBefore || 0;
 
       // Test within warning window
       const shouldWarn = shouldSendExpirationWarning({
-        priceId: 'price_1SZmVzALMLhQocpfPyRX2W8D',
+        priceId: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
         daysUntilExpiration: warningDays - 1,
       });
 
       // Test outside warning window
       const shouldNotWarn = shouldSendExpirationWarning({
-        priceId: 'price_1SZmVzALMLhQocpfPyRX2W8D',
+        priceId: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
         daysUntilExpiration: warningDays + 1,
       });
 

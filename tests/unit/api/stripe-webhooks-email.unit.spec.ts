@@ -21,6 +21,9 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
               error: null,
             })
           ),
+          limit: vi.fn(() => ({
+            maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+          })),
         })),
       })),
     })),
@@ -150,7 +153,7 @@ describe('Stripe Webhooks - Email Integration', () => {
       );
     });
 
-    it('should handle missing customer_email gracefully', async () => {
+    it('should fall back to customer_details.email when customer_email is missing', async () => {
       const session: Stripe.Checkout.Session = {
         id: 'cs_test',
         mode: 'subscription',
@@ -162,6 +165,7 @@ describe('Stripe Webhooks - Email Integration', () => {
         },
         amount_total: 4900,
         subscription: 'sub_1234567890',
+        invoice: 'in_test_123',
         metadata: {
           user_id: 'user-123',
         },
@@ -171,9 +175,36 @@ describe('Stripe Webhooks - Email Integration', () => {
 
       expect(mockSend).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: '',
+          to: 'customer@example.com',
         })
       );
+    });
+
+    it('should skip email when no email is available at all', async () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const session: Stripe.Checkout.Session = {
+        id: 'cs_test',
+        mode: 'subscription',
+        customer: 'cus_test',
+        // no customer_email, no customer_details.email
+        customer_details: {
+          name: 'John Doe',
+        },
+        amount_total: 4900,
+        subscription: 'sub_1234567890',
+        invoice: 'in_test_123',
+        metadata: {
+          user_id: 'user-123',
+        },
+      } as unknown as Stripe.Checkout.Session;
+
+      await PaymentHandler.handleCheckoutSessionCompleted(session);
+
+      expect(mockSend).not.toHaveBeenCalled();
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'No customer email available for subscription payment email'
+      );
+      consoleWarnSpy.mockRestore();
     });
 
     it('should not fail webhook when email sending fails', async () => {

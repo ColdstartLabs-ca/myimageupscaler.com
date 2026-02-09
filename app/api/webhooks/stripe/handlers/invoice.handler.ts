@@ -45,15 +45,32 @@ export class InvoiceHandler {
       return; // Not a subscription invoice
     }
 
-    // HIGH-7 FIX: Skip first invoice - credits already added by checkout.session.completed
-    // This prevents double credit allocation when both checkout and first invoice fire
+    // Check if this is the first invoice for a new subscription
+    // Previously we blindly skipped these, assuming checkout.session.completed already added credits.
+    // But if checkout was rate-limited (429) or failed, credits were never allocated.
+    // Now we check credit_transactions to decide: skip if credits exist, fallback-add if not.
     const billingReason = invoiceWithSub.billing_reason;
     if (billingReason === 'subscription_create') {
+      const refId = `invoice_${invoice.id}`;
+      const { data: existingCredit } = await supabaseAdmin
+        .from('credit_transactions')
+        .select('id')
+        .eq('reference_id', refId)
+        .limit(1)
+        .maybeSingle();
+
+      if (existingCredit) {
+        console.log(
+          `[INVOICE_SKIP] Credits already added for invoice ${invoice.id} by checkout.session.completed`
+        );
+        return;
+      }
+
       console.log(
-        `[INVOICE_SKIP] Skipping first invoice ${invoice.id} (billing_reason: subscription_create) - ` +
-          `credits already added by checkout.session.completed`
+        `[INVOICE_FALLBACK] No credits found for invoice ${invoice.id} - ` +
+          `checkout.session.completed may have failed. Adding credits as fallback.`
       );
-      return;
+      // Fall through to normal credit addition logic
     }
 
     const customerId = invoice.customer as string;

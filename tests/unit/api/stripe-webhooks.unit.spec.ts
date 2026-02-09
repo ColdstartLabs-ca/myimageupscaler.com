@@ -142,9 +142,10 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 }));
 
 // Use a factory function to allow test-specific overrides
-let mockEnv = {
+let mockEnv: Record<string, string> = {
   STRIPE_SECRET_KEY: 'sk_test_dummy_key',
   ENV: 'test',
+  STRIPE_PRICE_PRO: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
 };
 
 vi.mock('@shared/config/env', () => ({
@@ -153,7 +154,22 @@ vi.mock('@shared/config/env', () => ({
       return mockEnv[prop as keyof typeof mockEnv];
     },
   }),
+  clientEnv: new Proxy({} as Record<string, string>, {
+    get(_, prop) {
+      const defaults: Record<string, string> = {
+        NEXT_PUBLIC_STRIPE_PRICE_STARTER: 'price_test_starter',
+        NEXT_PUBLIC_STRIPE_PRICE_HOBBY: 'price_test_hobby',
+        NEXT_PUBLIC_STRIPE_PRICE_PRO: 'price_test_pro',
+        NEXT_PUBLIC_STRIPE_PRICE_BUSINESS: 'price_test_business',
+        NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL: 'price_test_credits_small',
+        NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM: 'price_test_credits_medium',
+        NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE: 'price_test_credits_large',
+      };
+      return defaults[prop as string] ?? '';
+    },
+  }),
   isTest: vi.fn(() => true),
+  isDevelopment: vi.fn(() => false),
 }));
 
 describe('Stripe Webhook Handler', () => {
@@ -165,6 +181,7 @@ describe('Stripe Webhook Handler', () => {
     mockEnv = {
       STRIPE_SECRET_KEY: 'sk_test_dummy_key',
       ENV: 'test',
+      STRIPE_PRICE_PRO: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
     };
     mockWebhookSecret = 'whsec_test_secret';
     consoleSpy = {
@@ -480,13 +497,85 @@ describe('Stripe Webhook Handler', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      expect(getPlanForPriceId).toHaveBeenCalledWith('price_1SZmVzALMLhQocpfPyRX2W8D');
+      expect(getPlanForPriceId).toHaveBeenCalledWith('price_1Sz0fOL1vUl00LlZ7bbM2cDs');
       expect(supabaseAdmin.rpc).toHaveBeenCalledWith('add_subscription_credits', {
         target_user_id: 'user_456',
         amount: 1000,
         ref_id: 'cs_test_sub_123',
         description: 'Test subscription credits - Professional plan - 1000 credits',
       });
+    });
+
+    test('should skip credit addition when credits already exist for checkout session', async () => {
+      // This tests the dedup in checkout handler: invoice.payment_succeeded already added
+      // credits (as fallback), and now Stripe retries checkout.session.completed
+      const mockPlan = {
+        key: 'pro',
+        name: 'Professional',
+        creditsPerMonth: 1000,
+        maxRollover: 6000,
+      };
+
+      vi.mocked(getPlanForPriceId).mockReturnValue(mockPlan);
+
+      vi.mocked(stripe.subscriptions.retrieve).mockResolvedValue({
+        items: {
+          data: [{ price: { id: 'price_test_pro' } }],
+        },
+      } as never);
+
+      const sessionWithInvoice = {
+        id: 'cs_test_retry_123',
+        mode: 'subscription' as const,
+        metadata: { user_id: 'user_retry_123' },
+        subscription: 'sub_real_456',
+        invoice: 'in_existing_123',
+        payment_status: 'paid',
+        status: 'complete',
+      };
+
+      const event = {
+        type: 'checkout.session.completed',
+        data: { object: sessionWithInvoice },
+      };
+
+      const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+        method: 'POST',
+        body: JSON.stringify(event),
+        headers: {
+          'stripe-signature': 'test_signature',
+          'content-type': 'application/json',
+        },
+      });
+
+      // Mock: existing credit_transaction found (invoice handler already added credits)
+      const mockCreditTransactionsSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          limit: vi.fn(() => ({
+            maybeSingle: vi.fn(() =>
+              Promise.resolve({ data: { id: 'existing_txn_456' } })
+            ),
+          })),
+        })),
+      }));
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') return getWebhookEventsMock();
+        if (table === 'credit_transactions') return { select: mockCreditTransactionsSelect };
+        return {};
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      // Should NOT call add_subscription_credits - credits already exist
+      expect(supabaseAdmin.rpc).not.toHaveBeenCalledWith(
+        'add_subscription_credits',
+        expect.anything()
+      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        expect.stringContaining('[CHECKOUT_SKIP]')
+      );
     });
 
     test('should handle missing user_id in metadata', async () => {
@@ -1072,6 +1161,170 @@ describe('Stripe Webhook Handler', () => {
           invoiceId: 'in_test_failed_123',
           customerId: 'cus_missing_123',
         })
+      );
+    });
+
+    test('should add credits as fallback when billing_reason is subscription_create and checkout missed', async () => {
+      // This tests the fallback path: checkout.session.completed was rate-limited (429)
+      // so invoice.payment_succeeded should add credits instead of blindly skipping
+      const { resolvePlanOrPack, assertKnownPriceId } =
+        await import('@shared/config/subscription.utils');
+      vi.mocked(getPlanForPriceId).mockReturnValue({
+        key: 'pro',
+        name: 'Professional',
+        creditsPerMonth: 1000,
+        maxRollover: 6000,
+      });
+      vi.mocked(getPlanByPriceId).mockReturnValue({ creditsExpiration: { mode: 'never' } });
+      vi.mocked(calculateBalanceWithExpiration).mockReturnValue({
+        newBalance: 1010,
+        expiredAmount: 0,
+      });
+      vi.mocked(resolvePlanOrPack).mockReturnValue({
+        type: 'plan',
+        key: 'pro',
+        name: 'Professional',
+        creditsPerCycle: 1000,
+        maxRollover: 6000,
+      });
+      vi.mocked(assertKnownPriceId).mockReturnValue({
+        type: 'plan',
+        key: 'pro',
+        name: 'Professional',
+        stripePriceId: 'price_test_pro',
+        priceInCents: 4900,
+        currency: 'usd',
+        credits: 1000,
+        maxRollover: 6000,
+      });
+
+      const invoiceData = {
+        id: 'in_test_first_123',
+        customer: 'cus_test_first',
+        subscription: 'sub_test_first',
+        billing_reason: 'subscription_create',
+        paid: true,
+        status: 'paid',
+        lines: {
+          data: [{ price: { id: 'price_test_pro' } }],
+        },
+      };
+
+      const event = {
+        type: 'invoice.payment_succeeded',
+        data: { object: invoiceData },
+      };
+
+      const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+        method: 'POST',
+        body: JSON.stringify(event),
+        headers: {
+          'stripe-signature': 'test_signature',
+          'content-type': 'application/json',
+        },
+      });
+
+      // Mock: no existing credit_transaction for this invoice (checkout missed)
+      const mockCreditTransactionsSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          limit: vi.fn(() => ({
+            maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+          })),
+        })),
+      }));
+
+      const mockProfileSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() =>
+            Promise.resolve({
+              data: {
+                id: 'user_first_123',
+                subscription_credits_balance: 10,
+                purchased_credits_balance: 0,
+              },
+            })
+          ),
+        })),
+      }));
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') return getWebhookEventsMock();
+        if (table === 'credit_transactions') return { select: mockCreditTransactionsSelect };
+        if (table === 'profiles') return { select: mockProfileSelect };
+        return {};
+      });
+
+      vi.mocked(supabaseAdmin.rpc).mockResolvedValue({ error: null } as never);
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      // Should fall through and add credits since no existing transaction found
+      expect(supabaseAdmin.rpc).toHaveBeenCalledWith(
+        'add_subscription_credits',
+        expect.objectContaining({
+          target_user_id: 'user_first_123',
+          ref_id: 'invoice_in_test_first_123',
+        })
+      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        expect.stringContaining('[INVOICE_FALLBACK]')
+      );
+    });
+
+    test('should skip invoice.payment_succeeded when checkout already added credits', async () => {
+      // This tests the dedup path: checkout.session.completed already added credits
+      // and invoice.payment_succeeded should detect and skip
+      const invoiceData = {
+        id: 'in_test_dedup_123',
+        customer: 'cus_test_dedup',
+        subscription: 'sub_test_dedup',
+        billing_reason: 'subscription_create',
+        paid: true,
+        status: 'paid',
+        lines: {
+          data: [{ price: { id: 'price_test_pro' } }],
+        },
+      };
+
+      const event = {
+        type: 'invoice.payment_succeeded',
+        data: { object: invoiceData },
+      };
+
+      const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+        method: 'POST',
+        body: JSON.stringify(event),
+        headers: {
+          'stripe-signature': 'test_signature',
+          'content-type': 'application/json',
+        },
+      });
+
+      // Mock: existing credit_transaction found (checkout already added credits)
+      const mockCreditTransactionsSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          limit: vi.fn(() => ({
+            maybeSingle: vi.fn(() =>
+              Promise.resolve({ data: { id: 'existing_txn_123' } })
+            ),
+          })),
+        })),
+      }));
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') return getWebhookEventsMock();
+        if (table === 'credit_transactions') return { select: mockCreditTransactionsSelect };
+        return {};
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      // Should NOT add credits - they already exist
+      expect(supabaseAdmin.rpc).not.toHaveBeenCalled();
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        expect.stringContaining('[INVOICE_SKIP] Credits already added for invoice in_test_dedup_123')
       );
     });
 

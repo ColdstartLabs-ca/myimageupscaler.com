@@ -54,6 +54,18 @@ interface ICreatedProduct {
 // Product definitions matching subscription.config.ts
 const SUBSCRIPTION_PRODUCTS: IProductDefinition[] = [
   {
+    key: 'starter',
+    name: 'Starter',
+    description: '100 credits per month - For getting started',
+    priceInCents: 900, // $9.00
+    type: 'subscription',
+    metadata: {
+      tier: 'starter',
+      credits_per_cycle: '100',
+      product_type: 'subscription',
+    },
+  },
+  {
     key: 'hobby',
     name: 'Hobby',
     description: '200 credits per month - For personal projects',

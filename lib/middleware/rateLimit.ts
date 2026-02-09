@@ -78,6 +78,13 @@ export async function applyPublicRateLimit(
     return null;
   }
 
+  // Skip rate limiting for webhook routes - they authenticate via signature verification
+  // and Stripe can fire 6-8+ events in rapid succession during checkout
+  const pathname = req.nextUrl.pathname;
+  if (pathname.startsWith('/api/webhooks/')) {
+    return null;
+  }
+
   const ip = getClientIp(req);
   const { success, remaining, reset } = await publicRateLimit.limit(ip);
   const rateLimitHeaders = createRateLimitHeaders(PUBLIC_RATE_LIMIT, remaining, reset);

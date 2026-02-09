@@ -42,7 +42,8 @@ export class PaymentHandler {
             console.log('Test subscription detected, using mock data');
 
             // For test subscriptions, add credits based on session metadata or a default
-            const testPriceId = 'price_1SZmVzALMLhQocpfPyRX2W8D'; // Default to PRO_MONTHLY for testing
+            const testPriceId =
+              serverEnv.STRIPE_PRICE_PRO; // Default to PRO_MONTHLY for testing
             let plan;
             try {
               const resolved = assertKnownPriceId(testPriceId);
@@ -107,27 +108,47 @@ export class PaymentHandler {
               if (plan) {
                 // Add initial credits for the first month
                 // Use invoice ID as ref_id for refund correlation
-                const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
-                  target_user_id: userId,
-                  amount: plan.creditsPerMonth,
-                  ref_id: invoiceId ? `invoice_${invoiceId}` : `session_${session.id}`,
-                  description: `Initial subscription credits - ${plan.name} plan - ${plan.creditsPerMonth} credits`,
-                });
+                const refId = invoiceId ? `invoice_${invoiceId}` : `session_${session.id}`;
 
-                if (error) {
-                  console.error('Error adding initial subscription credits:', error);
-                } else {
+                // Check if credits were already added (e.g., by invoice.payment_succeeded fallback)
+                // This prevents double-crediting if Stripe retries this event after invoice handler ran
+                const { data: existingCredit } = await supabaseAdmin
+                  .from('credit_transactions')
+                  .select('id')
+                  .eq('reference_id', refId)
+                  .limit(1)
+                  .maybeSingle();
+
+                if (existingCredit) {
                   console.log(
-                    `Added ${plan.creditsPerMonth} initial subscription credits to user ${userId} for ${plan.name} plan`
+                    `[CHECKOUT_SKIP] Credits already added for ref ${refId} - skipping to prevent double allocation`
                   );
+                } else {
+                  const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
+                    target_user_id: userId,
+                    amount: plan.creditsPerMonth,
+                    ref_id: refId,
+                    description: `Initial subscription credits - ${plan.name} plan - ${plan.creditsPerMonth} credits`,
+                  });
+
+                  if (error) {
+                    console.error('Error adding initial subscription credits:', error);
+                  } else {
+                    console.log(
+                      `Added ${plan.creditsPerMonth} initial subscription credits to user ${userId} for ${plan.name} plan`
+                    );
+                  }
                 }
               }
 
               // Send payment success email for subscription
-              try {
+              const subEmail = session.customer_email || session.customer_details?.email;
+              if (!subEmail) {
+                console.warn('No customer email available for subscription payment email');
+              } else try {
                 const emailService = getEmailService();
                 await emailService.send({
-                  to: session.customer_email || '',
+                  to: subEmail,
                   template: 'payment-success',
                   data: {
                     userName: session.customer_details?.name || 'there',
@@ -260,10 +281,13 @@ export class PaymentHandler {
     }
 
     // Send payment success email for credit pack
-    try {
+    const packEmail = session.customer_email || session.customer_details?.email;
+    if (!packEmail) {
+      console.warn('No customer email available for credit pack payment email');
+    } else try {
       const emailService = getEmailService();
       await emailService.send({
-        to: session.customer_email || '',
+        to: packEmail,
         template: 'payment-success',
         data: {
           userName: session.customer_details?.name || 'there',

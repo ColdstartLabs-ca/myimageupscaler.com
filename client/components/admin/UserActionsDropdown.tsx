@@ -1,5 +1,6 @@
 'use client';
 
+import { clientEnv } from '@shared/config/env';
 import { useClickOutside } from '@/client/hooks/useClickOutside';
 import { adminFetch } from '@/client/utils/admin-api-client';
 import { IAdminUserProfile } from '@/shared/types/admin.types';
@@ -208,9 +209,21 @@ function CreditAdjustmentModal({ user, onClose, onSuccess }: IModalProps) {
 
 const PLANS = [
   { id: '', name: 'Free', price: '$0/mo' },
-  { id: 'price_1SZmVyALMLhQocpf0H7n5ls8', name: 'Hobby', price: '$19/mo' },
-  { id: 'price_1SZmVzALMLhQocpfPyRX2W8D', name: 'Professional', price: '$49/mo' },
-  { id: 'price_1SZmVzALMLhQocpfqPk9spg4', name: 'Business', price: '$149/mo' },
+  {
+    id: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_HOBBY,
+    name: 'Hobby',
+    price: '$19/mo',
+  },
+  {
+    id: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_PRO,
+    name: 'Professional',
+    price: '$49/mo',
+  },
+  {
+    id: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS,
+    name: 'Business',
+    price: '$149/mo',
+  },
 ];
 
 interface IStripeSubData {

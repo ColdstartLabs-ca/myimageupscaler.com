@@ -35,8 +35,8 @@ test.describe('Billing Workflow Integration', () => {
 
   test.describe('Subscription Webhook Processing', () => {
     // Use actual price IDs from configuration to avoid assertKnownPriceId() errors
-    const PRO_PRICE_ID = 'price_1SZmVzALMLhQocpfPyRX2W8D';
-    const BUSINESS_PRICE_ID = 'price_1SZmVzALMLhQocpfqPk9spg4';
+    const PRO_PRICE_ID = 'price_1Sz0fOL1vUl00LlZ7bbM2cDs';
+    const BUSINESS_PRICE_ID = 'price_1Sz0fOL1vUl00LlZP3y5zdFx';
 
     test('should handle subscription creation webhook', async () => {
       // Set up Stripe customer ID for webhook lookup
@@ -167,7 +167,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_pro_${Date.now()}`,
-        priceId: 'price_1SZmVzALMLhQocpfPyRX2W8D', // Pro plan
+        priceId: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs', // Pro plan
       });
 
       expect([200, 202]).toContain(response.status);
@@ -180,7 +180,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_business_${Date.now()}`,
-        priceId: 'price_1SZmVzALMLhQocpfqPk9spg4', // Business plan
+        priceId: 'price_1Sz0fOL1vUl00LlZP3y5zdFx', // Business plan
       });
 
       expect([200, 202]).toContain(response.status);
@@ -193,7 +193,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_starter_${Date.now()}`,
-        priceId: 'price_1Sq14eALMLhQocpf5CXIwYSv', // Starter plan
+        priceId: 'price_1Sz0fNL1vUl00LlZX1XClz95', // Starter plan
       });
 
       expect([200, 202]).toContain(response.status);
@@ -209,7 +209,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_${Date.now()}`,
-        priceId: 'price_1Sq14eALMLhQocpf5CXIwYSv', // Starter
+        priceId: 'price_1Sz0fNL1vUl00LlZX1XClz95', // Starter
       });
 
       // Upgrade to Pro
@@ -217,7 +217,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_${Date.now()}`,
-        priceId: 'price_1SZmVzALMLhQocpfPyRX2W8D', // Pro
+        priceId: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs', // Pro
       });
 
       expect([200, 202]).toContain(response.status);
@@ -231,7 +231,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_${Date.now()}`,
-        priceId: 'price_1SZmVzALMLhQocpfPyRX2W8D', // Pro
+        priceId: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs', // Pro
       });
 
       // Downgrade to Starter
@@ -239,7 +239,7 @@ test.describe('Billing Workflow Integration', () => {
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
         subscriptionId: `sub_${Date.now()}`,
-        priceId: 'price_1Sq14eALMLhQocpf5CXIwYSv', // Starter
+        priceId: 'price_1Sz0fNL1vUl00LlZX1XClz95', // Starter
       });
 
       expect([200, 202]).toContain(response.status);
@@ -251,7 +251,7 @@ test.describe('Billing Workflow Integration', () => {
       await ctx.setupStripeCustomer(testUser.id, `cus_${testUser.id}`);
 
       const eventId = `evt_duplicate_${Date.now()}`;
-      const PRO_PRICE_ID = 'price_1SZmVzALMLhQocpfPyRX2W8D';
+      const PRO_PRICE_ID = 'price_1Sz0fOL1vUl00LlZ7bbM2cDs';
 
       const event = {
         id: eventId,

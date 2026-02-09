@@ -63,7 +63,7 @@ fi
 
 # Verify Price IDs in config
 echo -e "\n${BLUE}🔧 Verifying Price IDs in Config...${NC}"
-if grep -q "price_1SZmVzALMLhQocpfPyRX2W8D" shared/config/stripe.ts; then
+if grep -q "price_1Sz0f" shared/config/stripe.ts; then
     echo -e "${GREEN}✅ Real Price IDs found in config${NC}"
 else
     echo -e "${YELLOW}⚠️  Price IDs may be placeholders${NC}"

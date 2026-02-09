@@ -278,10 +278,10 @@ test.describe('API: Stripe Webhooks - Subscription Price Validation', () => {
 
     // Known valid price IDs from the subscription.config.ts
     const validPriceIds = [
-      'price_1Sq14eALMLhQocpf5CXIwYSv', // STARTER_MONTHLY
-      'price_1SZmVyALMLhQocpf0H7n5ls8', // HOBBY_MONTHLY
-      'price_1SZmVzALMLhQocpfPyRX2W8D', // PRO_MONTHLY
-      'price_1SZmVzALMLhQocpfqPk9spg4', // BUSINESS_MONTHLY
+      'price_1Sz0fNL1vUl00LlZX1XClz95', // STARTER_MONTHLY
+      'price_1Sz0fNL1vUl00LlZT6MMTxAg', // HOBBY_MONTHLY
+      'price_1Sz0fOL1vUl00LlZ7bbM2cDs', // PRO_MONTHLY
+      'price_1Sz0fOL1vUl00LlZP3y5zdFx', // BUSINESS_MONTHLY
     ];
 
     // Test a valid subscription price ID

@@ -6,6 +6,7 @@
  * configuration values are defined. All other files should import from here.
  */
 
+import { clientEnv } from './env';
 import { CREDIT_COSTS } from './credits.config';
 import type { ISubscriptionConfig } from './subscription.types';
 import { TIMEOUTS } from './timeouts.config';
@@ -61,7 +62,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
     {
       key: 'starter',
       name: 'Starter',
-      stripePriceId: 'price_1Sq14eALMLhQocpf5CXIwYSv',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_STARTER,
       priceInCents: 900, // $9.00
       currency: 'usd',
       interval: 'month',
@@ -99,7 +100,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
     {
       key: 'hobby',
       name: 'Hobby',
-      stripePriceId: 'price_1SZmVyALMLhQocpf0H7n5ls8',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_HOBBY,
       priceInCents: 1900, // $19.00
       currency: 'usd',
       interval: 'month',
@@ -137,7 +138,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
     {
       key: 'pro',
       name: 'Professional',
-      stripePriceId: 'price_1SZmVzALMLhQocpfPyRX2W8D',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_PRO,
       priceInCents: 4900, // $49.00
       currency: 'usd',
       interval: 'month',
@@ -176,7 +177,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
     {
       key: 'business',
       name: 'Business',
-      stripePriceId: 'price_1SZmVzALMLhQocpfqPk9spg4',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS,
       priceInCents: 14900, // $149.00
       currency: 'usd',
       interval: 'month',
@@ -222,7 +223,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       credits: CREDIT_COSTS.SMALL_PACK_CREDITS,
       priceInCents: 499, // $4.99
       currency: 'usd',
-      stripePriceId: 'price_1SbAASALMLhQocpfGUg3wLXM',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL,
       description: '50 credits',
       popular: false,
       enabled: true,
@@ -233,7 +234,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       credits: CREDIT_COSTS.MEDIUM_PACK_CREDITS,
       priceInCents: 1499, // $14.99
       currency: 'usd',
-      stripePriceId: 'price_1SbAASALMLhQocpf7nw3wRj7',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM,
       description: '200 credits - Best value',
       popular: true,
       enabled: true,
@@ -244,7 +245,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       credits: CREDIT_COSTS.LARGE_PACK_CREDITS,
       priceInCents: 3999, // $39.99
       currency: 'usd',
-      stripePriceId: 'price_1SbAASALMLhQocpfCrD7P7TW',
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE,
       description: '600 credits',
       popular: false,
       enabled: true,

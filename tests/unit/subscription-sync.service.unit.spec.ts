@@ -104,7 +104,7 @@ describe('Subscription Sync Service', () => {
           data: [
             {
               price: {
-                id: 'price_1SZmVzALMLhQocpfPyRX2W8D',
+                id: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
               },
             },
           ],
