@@ -801,7 +801,9 @@ export class SubscriptionHandler {
       return;
     }
 
-    // If this was a scheduled downgrade, reset credits to the new tier
+    // If this was a scheduled downgrade, update the profile tier
+    // NOTE: Credit allocation is handled exclusively by handleInvoicePaymentSucceeded
+    // to avoid double-granting credits (the schedule completion triggers a new invoice)
     if (scheduledPriceId) {
       const newPlan = getPlanForPriceId(scheduledPriceId);
 
@@ -815,30 +817,9 @@ export class SubscriptionHandler {
           })
           .eq('id', subscription.user_id);
 
-        // Reset credits to the new tier amount
-        // This is the key difference from immediate downgrades - at renewal, credits reset
-        const { error: creditError } = await supabaseAdmin
-          .from('profiles')
-          .update({
-            subscription_credits_balance: newPlan.creditsPerMonth,
-          })
-          .eq('id', subscription.user_id);
-
-        if (creditError) {
-          console.error(`Error resetting credits for user ${subscription.user_id}:`, creditError);
-        } else {
-          console.log(
-            `[SCHEDULE_DOWNGRADE_CREDITS_RESET] User ${subscription.user_id} subscription credits reset to ${newPlan.creditsPerMonth} for ${newPlan.name} plan`
-          );
-        }
-
-        // Log the credit transaction (using add_subscription_credits with 0 amount just for logging)
-        await supabaseAdmin.rpc('add_subscription_credits', {
-          target_user_id: subscription.user_id,
-          amount: 0, // Amount doesn't matter - we're just logging
-          ref_id: `schedule_${schedule.id}`,
-          description: `Scheduled downgrade completed - subscription credits reset to ${newPlan.creditsPerMonth} for ${newPlan.name} plan`,
-        });
+        console.log(
+          `[SCHEDULE_DOWNGRADE_TIER_UPDATED] User ${subscription.user_id} tier updated to ${newPlan.key} for ${newPlan.name} plan. Credits will be allocated by invoice handler.`
+        );
       }
     }
 

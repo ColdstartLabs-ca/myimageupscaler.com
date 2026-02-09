@@ -489,6 +489,29 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      // UPGRADE: Release any existing Stripe schedule before upgrading
+      // Without this, a previously scheduled downgrade would fire at period end
+      // and override the upgrade back to the lower plan
+      const existingScheduleId = latestSubscription.schedule;
+      if (existingScheduleId && typeof existingScheduleId === 'string') {
+        console.log('[PLAN_CHANGE_UPGRADE_RELEASING_SCHEDULE]', {
+          scheduleId: existingScheduleId,
+          reason: 'Releasing scheduled downgrade before applying upgrade',
+        });
+        try {
+          await stripe.subscriptionSchedules.release(existingScheduleId);
+          console.log('[PLAN_CHANGE_UPGRADE_SCHEDULE_RELEASED]', {
+            scheduleId: existingScheduleId,
+          });
+        } catch (releaseError) {
+          // Schedule may already be released or completed
+          console.warn('[PLAN_CHANGE_UPGRADE_SCHEDULE_RELEASE_FAILED]', {
+            scheduleId: existingScheduleId,
+            error: releaseError instanceof Error ? releaseError.message : releaseError,
+          });
+        }
+      }
+
       // UPGRADE: Apply immediately with proration
       const updatedSubscription = await stripe.subscriptions.update(currentSubscription.id, {
         items: [
