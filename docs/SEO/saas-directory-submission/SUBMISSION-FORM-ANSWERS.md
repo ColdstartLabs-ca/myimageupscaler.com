@@ -27,18 +27,18 @@
 ### Short Description (150 chars max)
 
 ```
-AI-powered image upscaler that enhances & upscales photos in seconds. Text preservation mode keeps labels sharp. Free tier available.
+AI-powered image upscaler that enhances & upscales photos in seconds with crisp detail retention. Free tier available.
 ```
 
-Character count: 138
+Character count: 106
 
 ### Long Description (1000 chars max)
 
 ```
-MyImageUpscaler is an AI-powered image enhancement and upscaling platform built for businesses and content creators. Our technology upscales images 2x-4x while preserving sharpness, enhancing details, and uniquely—keeping text and logos legible.
+MyImageUpscaler is an AI-powered image enhancement and upscaling platform built for businesses and content creators. Our technology upscales images 2x-4x while preserving sharpness and enhancing fine details.
 
 Key Features:
-- Text & Logo Preservation Mode (industry first)
+- Advanced detail preservation for crisp results
 - Process images in under 10 seconds
 - 2x and 4x upscaling options
 - Batch processing for up to 500 images
@@ -46,30 +46,30 @@ Key Features:
 - No watermarks on free tier
 - Auto-delete after 7-30 days depending on plan
 
-Perfect for e-commerce sellers who need product labels to remain readable, content creators resizing for social platforms, real estate agents preparing MLS listings, and photographers processing large batches. Our free tier includes 10 credits with no credit card required. Paid plans start at just $9/month.
+Perfect for e-commerce sellers, content creators resizing for social platforms, real estate agents preparing MLS listings, and photographers processing large batches. Our free tier includes 10 credits with no credit card required. Paid plans start at just $9/month.
 
-Unlike competitors that blur text during enhancement, our specialized mode protects text regions—making it the only choice for product images, documents, and branded content.
+Our AI enhancement maintains quality where it matters most—making it a smart choice for product images, marketing materials, and branded content.
 
-Stop settling for blurry logos and illegible labels. Upscale smarter.
+Upscale smarter, not harder.
 ```
 
-Character count: 998
+Character count: 882
 
 ### Product Tagline (90 chars max)
 
 ```
-AI image upscaling that keeps text & logos sharp. Process in seconds, not minutes.
+AI image upscaling with crisp detail retention. Process in seconds, not minutes.
 ```
 
-Character count: 79
+Character count: 72
 
 ### Product Slogan (50 chars max)
 
 ```
-Upscale sharper. Text stays crisp.
+Upscale sharper. Details stay crisp.
 ```
 
-Character count: 38
+Character count: 37
 
 ### Categories (comma-separated)
 
@@ -80,7 +80,7 @@ Productivity, SaaS, AI Tools, Image Editing, Design Tools, E-commerce Tools, Pho
 ### Tags (comma-separated)
 
 ```
-image upscaler, AI image enhancement, image enlarger, photo enhancer, upscale images, text preservation, batch processing, e-commerce images, product photos, image resolution, 4x upscaling, AI tools, image processing, photo editing, automatic enhancement, logo preservation, platform presets, bulk image processing
+image upscaler, AI image enhancement, image enlarger, photo enhancer, upscale images, batch processing, e-commerce images, product photos, image resolution, 4x upscaling, AI tools, image processing, photo editing, automatic enhancement, detail preservation, platform presets, bulk image processing
 ```
 
 ### Is this AI-powered SaaS?
@@ -148,15 +148,15 @@ image upscaler, AI image enhancement, image enlarger, photo enhancer, upscale im
 
 ### Short Description (ready to paste)
 
-AI-powered image upscaler that enhances & upscales photos in seconds. Text preservation mode keeps labels sharp. Free tier available.
+AI-powered image upscaler that enhances & upscales photos in seconds with crisp detail retention. Free tier available.
 
 ### Long Description (ready to paste)
 
-MyImageUpscaler is an AI-powered image enhancement and upscaling platform built for businesses and content creators. Our technology upscales images 2x-4x while preserving sharpness, enhancing details, and uniquely—keeping text and logos legible.
+MyImageUpscaler is an AI-powered image enhancement and upscaling platform built for businesses and content creators. Our technology upscales images 2x-4x while preserving sharpness and enhancing fine details.
 
 Key Features:
 
-- Text & Logo Preservation Mode (industry first)
+- Advanced detail preservation for crisp results
 - Process images in under 10 seconds
 - 2x and 4x upscaling options
 - Batch processing for up to 500 images
@@ -164,19 +164,19 @@ Key Features:
 - No watermarks on free tier
 - Auto-delete after 7-30 days depending on plan
 
-Perfect for e-commerce sellers who need product labels to remain readable, content creators resizing for social platforms, real estate agents preparing MLS listings, and photographers processing large batches. Our free tier includes 10 credits with no credit card required. Paid plans start at just $9/month.
+Perfect for e-commerce sellers, content creators resizing for social platforms, real estate agents preparing MLS listings, and photographers processing large batches. Our free tier includes 10 credits with no credit card required. Paid plans start at just $9/month.
 
-Unlike competitors that blur text during enhancement, our specialized mode protects text regions—making it the only choice for product images, documents, and branded content.
+Our AI enhancement maintains quality where it matters most—making it a smart choice for product images, marketing materials, and branded content.
 
-Stop settling for blurry logos and illegible labels. Upscale smarter.
+Upscale smarter, not harder.
 
 ### Tagline (ready to paste)
 
-AI image upscaling that keeps text & logos sharp. Process in seconds, not minutes.
+AI image upscaling with crisp detail retention. Process in seconds, not minutes.
 
 ### Slogan (ready to paste)
 
-Upscale sharper. Text stays crisp.
+Upscale sharper. Details stay crisp.
 
 ### Categories (ready to paste)
 
@@ -184,4 +184,4 @@ Productivity, SaaS, AI Tools, Image Editing, Design Tools, E-commerce Tools, Pho
 
 ### Tags (ready to paste)
 
-image upscaler, AI image enhancement, image enlarger, photo enhancer, upscale images, text preservation, batch processing, e-commerce images, product photos, image resolution, 4x upscaling, AI tools, image processing, photo editing, automatic enhancement, logo preservation, platform presets, bulk image processing
+image upscaler, AI image enhancement, image enlarger, photo enhancer, upscale images, batch processing, e-commerce images, product photos, image resolution, 4x upscaling, AI tools, image processing, photo editing, automatic enhancement, detail preservation, platform presets, bulk image processing
