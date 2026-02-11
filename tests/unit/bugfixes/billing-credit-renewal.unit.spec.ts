@@ -67,6 +67,12 @@ vi.mock('@shared/config/env', () => ({
     STRIPE_SECRET_KEY: 'sk_test_dummy_key',
     ENV: 'test',
   },
+  clientEnv: {
+    NEXT_PUBLIC_STRIPE_PRICE_STARTER: 'price_starter_monthly',
+    NEXT_PUBLIC_STRIPE_PRICE_HOBBY: 'price_hobby_monthly',
+    NEXT_PUBLIC_STRIPE_PRICE_PRO: 'price_pro_monthly',
+    NEXT_PUBLIC_STRIPE_PRICE_BUSINESS: 'price_business_monthly',
+  },
   isTest: vi.fn(() => true),
 }));
 
