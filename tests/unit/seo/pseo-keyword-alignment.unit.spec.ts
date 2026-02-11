@@ -144,17 +144,54 @@ describe('pSEO Keyword Alignment', () => {
     });
   });
 
-  describe('ai-features (zombie category)', () => {
+  describe('ai-features', () => {
     const data = loadCategory('ai-features');
 
-    it('should have 0 pages', () => {
-      expect(data.pages).toHaveLength(0);
+    it('should have 12 pages', () => {
+      expect(data.pages).toHaveLength(12);
     });
 
-    it('should not be included in ENGLISH_ONLY_CATEGORIES', async () => {
-      // ai-features is excluded from ENGLISH_ONLY_CATEGORIES because it has 0 pages
+    it('all pages should have "upscale" in primaryKeyword', () => {
+      data.pages.forEach(page => {
+        expect(page.primaryKeyword.toLowerCase()).toContain('upscale');
+      });
+    });
+
+    it('all pages should have "upscale" in metaTitle', () => {
+      data.pages.forEach(page => {
+        expect(page.metaTitle.toLowerCase()).toContain('upscale');
+      });
+    });
+
+    it('all pages should have "upscale" in at least one secondaryKeyword', () => {
+      data.pages.forEach(page => {
+        const hasUpscale = page.secondaryKeywords.some(kw => kw.toLowerCase().includes('upscale'));
+        expect(hasUpscale).toBe(true);
+      });
+    });
+
+    it('should be included in ENGLISH_ONLY_CATEGORIES', async () => {
+      // ai-features should be included in ENGLISH_ONLY_CATEGORIES
       const { ENGLISH_ONLY_CATEGORIES } = await import('@/lib/seo/localization-config');
-      expect(ENGLISH_ONLY_CATEGORIES).not.toContain('ai-features');
+      expect(ENGLISH_ONLY_CATEGORIES).toContain('ai-features');
+    });
+
+    it('ai-features data quality: metaTitle under 70 chars', () => {
+      data.pages.forEach(page => {
+        expect(page.metaTitle.length).toBeLessThanOrEqual(70);
+      });
+    });
+
+    it('ai-features data quality: metaDescription under 160 chars', () => {
+      data.pages.forEach(page => {
+        expect(page.metaDescription.length).toBeLessThanOrEqual(160);
+      });
+    });
+
+    it('ai-features data quality: unique slugs', () => {
+      const slugs = data.pages.map(p => p.slug);
+      const uniqueSlugs = new Set(slugs);
+      expect(uniqueSlugs.size).toBe(slugs.length);
     });
   });
 });

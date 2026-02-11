@@ -50,11 +50,11 @@ const ENGLISH_ONLY_CATEGORIES = [
   'camera-raw',
   'industry-insights',
   'device-optimization',
+  'ai-features',
 ] as const;
 
-// Total sitemaps: 11 English-only + (10 localized × 7 locales) = 11 + 70 = 81
-// ai-features excluded: 0 pages, no route handler (zombie category)
-const TOTAL_SITEMAP_COUNT = 81;
+// Total sitemaps: 12 English-only + (10 localized × 7 locales) = 12 + 70 = 82
+const TOTAL_SITEMAP_COUNT = 82;
 
 // Base URL for production checks (canonical URLs should always use this)
 const PRODUCTION_BASE_URL = 'https://myimageupscaler.com';

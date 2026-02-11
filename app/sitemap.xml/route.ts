@@ -21,7 +21,7 @@ const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
   'compare',
   'platforms',
   'images',
-  // 'ai-features' excluded: 0 pages, no route handler (zombie category)
+  'ai-features',
   'content',
   'photo-restoration',
   'camera-raw',

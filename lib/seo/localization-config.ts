@@ -2,9 +2,8 @@
  * pSEO Localization Configuration
  *
  * Defines which categories are localized and which are English-only.
- * Used to determine when to show the English-only banner.
+ * Used to determine when to show English-only banner.
  */
-
 import type { PSEOCategory } from './url-utils';
 import { Locale } from '@/i18n/config';
 
@@ -27,7 +26,7 @@ export const LOCALIZED_CATEGORIES: PSEOCategory[] = [
 
 /**
  * Categories that are English-only (no translations available)
- * Updated: 2026-01-31 - Added categories that don't have localized versions
+ * Updated: 2026-02-11 - Added ai-features as English-only category
  * These categories only exist in English and should not generate hreflang links
  */
 export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
@@ -39,7 +38,7 @@ export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
   'camera-raw',
   'industry-insights',
   'device-optimization',
-  // 'ai-features' excluded: 0 pages, no route handler (zombie category)
+  'ai-features',
 ];
 
 /**
@@ -53,7 +52,7 @@ export const ALL_CATEGORIES: PSEOCategory[] = [...LOCALIZED_CATEGORIES, ...ENGLI
  * Check if a category is localized for a given locale
  * @param category - The pSEO category to check
  * @param locale - The locale to check against
- * @returns true if the category is localized for the locale
+ * @returns true if category is localized for locale
  */
 export function isCategoryLocalized(category: PSEOCategory, locale: Locale): boolean {
   // English is always supported
@@ -61,21 +60,21 @@ export function isCategoryLocalized(category: PSEOCategory, locale: Locale): boo
     return true;
   }
 
-  // Check if category is in the localized list
+  // Check if category is in localized list
   return LOCALIZED_CATEGORIES.includes(category);
 }
 
 /**
  * Check if a category is English-only
  * @param category - The pSEO category to check
- * @returns true if the category is English-only
+ * @returns true if category is English-only
  */
 export function isCategoryEnglishOnly(category: PSEOCategory): boolean {
   return ENGLISH_ONLY_CATEGORIES.includes(category);
 }
 
 /**
- * Get the English-only categories list
+ * Get English-only categories list
  * @returns Array of English-only category names
  */
 export function getEnglishOnlyCategories(): PSEOCategory[] {
@@ -83,7 +82,7 @@ export function getEnglishOnlyCategories(): PSEOCategory[] {
 }
 
 /**
- * Get the localized categories list
+ * Get localized categories list
  * @returns Array of localized category names
  */
 export function getLocalizedCategories(): PSEOCategory[] {
@@ -91,11 +90,11 @@ export function getLocalizedCategories(): PSEOCategory[] {
 }
 
 /**
- * Check if a page should show the English-only banner
+ * Check if a page should show English-only banner
  * @param category - The pSEO category
  * @param locale - The current locale
- * @param hasTranslation - Whether a translation exists for the specific page
- * @returns true if the banner should be shown
+ * @param hasTranslation - Whether a translation exists for specific page
+ * @returns true if banner should be shown
  */
 export function shouldShowEnglishOnlyBanner(
   category: PSEOCategory,
@@ -121,7 +120,7 @@ export function shouldShowEnglishOnlyBanner(
 }
 
 /**
- * Get the English version path for a page
+ * Get English version path for a page
  * @param currentPath - The current localized path
  * @returns The English version path
  */
@@ -141,7 +140,7 @@ const ALL_SUPPORTED_LOCALES: Locale[] = ['en', 'es', 'pt', 'de', 'fr', 'it', 'ja
 
 /**
  * Configuration for each category's localization status
- * Updated: 2026-01-31 - Added English-only categories for proper hreflang handling
+ * Updated: 2026-02-11 - Added ai-features as English-only category
  */
 export const LOCALIZATION_STATUS = {
   tools: {
@@ -187,8 +186,7 @@ export const LOCALIZATION_STATUS = {
   'platform-format': {
     localized: true,
     supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes:
-      'Platform-format multiplier pages fully localized for all 7 languages (updated 2025-01-15)',
+    notes: 'Platform-format multiplier pages fully localized for all 7 languages (updated 2025-01-15)',
   },
   'device-use': {
     localized: true,
@@ -235,5 +233,9 @@ export const LOCALIZATION_STATUS = {
     supportedLocales: ['en'] as Locale[],
     notes: 'Device optimization pages are English-only (2026-01-31)',
   },
-  // 'ai-features' excluded: 0 pages, no route handler (zombie category)
+  'ai-features': {
+    localized: false,
+    supportedLocales: ALL_SUPPORTED_LOCALES,
+    notes: 'AI enhancement features pages (updated 2026-02-11)',
+  },
 } as const;

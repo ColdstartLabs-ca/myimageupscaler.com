@@ -353,7 +353,8 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
     pathname.startsWith('/industry-insights') ||
     pathname.startsWith('/device-optimization') ||
     pathname.startsWith('/bulk-tools') ||
-    pathname.startsWith('/content');
+    pathname.startsWith('/content') ||
+    pathname.startsWith('/ai-features');
 
   // Only skip locale routing for pSEO paths that DON'T have a locale prefix
   if (isPSEOPath && !hasLocalePrefix) {

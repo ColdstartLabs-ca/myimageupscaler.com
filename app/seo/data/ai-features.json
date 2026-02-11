@@ -1,8 +1,1905 @@
 {
   "category": "ai-features",
-  "pages": [],
+  "pages": [
+    {
+      "slug": "ai-noise-reduction-upscaler",
+      "title": "AI Noise Reduction Upscaler",
+      "metaTitle": "AI Noise Reduction Upscaler - Remove Image Noise & Upscale",
+      "metaDescription": "Remove digital noise and grain from photos while upscaling. AI-powered noise reduction enhances clarity for crisp, professional results. Try free!",
+      "h1": "AI Noise Reduction Upscaler",
+      "intro": "Transform grainy, noisy photos into crystal-clear high-resolution images. Our AI noise reduction technology identifies and eliminates visual noise while intelligently upscaling your images to preserve and enhance important details.",
+      "primaryKeyword": "ai noise reduction upscaler",
+      "secondaryKeywords": [
+        "denoise and upscale image",
+        "remove grain from photos",
+        "ai noise reduction",
+        "reduce image noise",
+        "clean up blurry photos"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Noise Reduction",
+      "featureType": "correction",
+      "technology": "Deep neural networks trained on millions of noisy image patterns to distinguish between noise and image detail",
+      "description": "Our AI noise reduction technology automatically identifies and removes digital noise, grain, and artifacts from your photos while upscaling them to higher resolutions. Perfect for low-light photos, high-ISO images, and scans that need cleaning and enhancement.",
+      "capabilities": [
+        "Automatically detects and removes luminance and color noise",
+        "Preserves fine details while eliminating grain",
+        "Enhances image clarity during upscaling process",
+        "Handles high-ISO noise from smartphone and camera photos",
+        "Improves scans from physical photos and documents"
+      ],
+      "features": [
+        {
+          "title": "Smart Noise Detection",
+          "description": "AI analyzes image content to distinguish between noise and actual detail"
+        },
+        {
+          "title": "Multi-Stage Denoising",
+          "description": "Applies targeted noise reduction at different processing stages"
+        },
+        {
+          "title": "Detail Preservation",
+          "description": "Maintains sharp edges and textures while removing grain"
+        },
+        {
+          "title": "High-ISO Recovery",
+          "description": "Specialized handling for photos taken in low-light conditions"
+        },
+        {
+          "title": "Scan Enhancement",
+          "description": "Removes scanning artifacts and dust from digitized prints"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Low-Light Photography",
+          "description": "Enhance photos taken at night or indoors where high ISO settings introduce noise"
+        },
+        {
+          "title": "Old Photo Scans",
+          "description": "Clean up digitized prints that have accumulated dust and scratches"
+        },
+        {
+          "title": "Smartphone Photos",
+          "description": "Improve mobile photos taken in challenging lighting conditions"
+        },
+        {
+          "title": "Product Photography",
+          "description": "Create clean, professional product shots from amateur source photos"
+        },
+        {
+          "title": "Astronomy Photos",
+          "description": "Reduce noise in long-exposure night sky and astrophotography images"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Crystal Clear Results",
+          "description": "Remove distracting grain while enhancing overall image sharpness",
+          "metric": "Up to 90% noise reduction"
+        },
+        {
+          "title": "Print Ready",
+          "description": "Create clean images suitable for large format printing without visible noise",
+          "metric": "Print quality at 8x upscale"
+        },
+        {
+          "title": "Professional Appearance",
+          "description": "Transform amateur noisy shots into professional-looking photographs",
+          "metric": "Studio-quality clarity"
+        },
+        {
+          "title": "Batch Processing",
+          "description": "Process multiple noisy images at once for efficient workflows",
+          "metric": "Process 10+ images simultaneously"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Noisy Image",
+          "description": "Upload your photo with visible noise, grain, or ISO artifacts"
+        },
+        {
+          "step": 2,
+          "title": "AI Analysis",
+          "description": "Our neural network analyzes noise patterns across the image"
+        },
+        {
+          "step": 3,
+          "title": "Smart Denoising",
+          "description": "AI removes noise while preserving genuine details and textures"
+        },
+        {
+          "step": 4,
+          "title": "Upscale & Download",
+          "description": "Receive your clean, high-resolution image ready for any use"
+        }
+      ],
+      "limitations": [
+        "Extremely noisy photos may have limited detail recovery potential",
+        "Heavy JPEG compression artifacts combined with noise may require multiple processing passes",
+        "Motion blur from camera shake is separate from noise and has different limitations"
+      ],
+      "faq": [
+        {
+          "question": "What's the difference between noise and blur?",
+          "answer": "Noise appears as random grain or speckles across the image, while blur is a lack of sharpness. Our AI noise reduction targets grain and ISO artifacts. For motion blur, consider our sharpness enhancement feature."
+        },
+        {
+          "question": "Can it remove noise from very old smartphone photos?",
+          "answer": "Yes! Our AI handles noise patterns from older phone sensors excellently, cleaning up grainy low-light photos while upscaling them to modern resolutions."
+        },
+        {
+          "question": "Will I lose texture detail when denoising?",
+          "answer": "Our AI is designed to distinguish between noise and important texture like fabric grain or natural surfaces. It preserves genuine textures while removing unwanted digital noise."
+        },
+        {
+          "question": "What causes noise in photos?",
+          "answer": "Common causes include high ISO settings in low light, long exposures, smaller sensor sizes, and older camera technology. Our AI specifically targets these noise patterns."
+        },
+        {
+          "question": "Can I use this for scanned photos?",
+          "answer": "Absolutely. It's excellent for removing dust specks, scanning noise, and grain from scanned physical photos while enhancing the scan quality."
+        },
+        {
+          "question": "Should I denoise before or after upscaling?",
+          "answer": "Our tool handles both simultaneously, which often produces better results as the AI can use clean image data to inform the upscaling process."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-sharpness-enhancement-upscaler",
+        "ai-clarity-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Remove Noise & Upscale Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-face-enhancement-upscaler",
+      "title": "AI Face Enhancement Upscaler",
+      "metaTitle": "AI Face Enhancement Upscaler - Enhance & Upscale Portraits",
+      "metaDescription": "AI face enhancement upscaler for portraits. Automatically improve facial features, skin quality, and clarity while upscaling. Free online tool.",
+      "h1": "AI Face Enhancement Upscaler",
+      "intro": "Enhance facial features and skin quality with our specialized AI face enhancement upscaler. Perfect for portraits, headshots, and social media photos, this technology brings out natural beauty while upscaling to higher resolutions.",
+      "primaryKeyword": "ai face enhancement upscaler",
+      "secondaryKeywords": [
+        "face enhancement upscale",
+        "ai face enhancer",
+        "improve facial features",
+        "portrait upscaler",
+        "enhance face photo"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Face Enhancement",
+      "featureType": "enhancement",
+      "technology": "Specialized neural networks trained on thousands of diverse faces to understand facial anatomy and aesthetics",
+      "description": "Our AI face enhancement technology focuses specifically on facial features, improving skin quality, eye clarity, and overall portrait appeal. The system recognizes faces and applies intelligent enhancement while upscaling to your desired resolution.",
+      "capabilities": [
+        "Automatic face detection and focused enhancement",
+        "Natural skin smoothing without plastic appearance",
+        "Eye brightening and detail enhancement",
+        "Hair detail and texture improvement",
+        "Balanced lighting adjustment for portraits"
+      ],
+      "features": [
+        {
+          "title": "Facial Feature Detection",
+          "description": "Identifies eyes, skin, lips, and hair for targeted enhancement"
+        },
+        {
+          "title": "Natural Skin Enhancement",
+          "description": "Improves skin quality while maintaining realistic texture"
+        },
+        {
+          "title": "Eye Brightening",
+          "description": "Enhances eye clarity and brightness for captivating portraits"
+        },
+        {
+          "title": "Hair Detail Recovery",
+          "description": "Adds definition and shine to hair for polished appearance"
+        },
+        {
+          "title": "Portrait-Specific Upscaling",
+          "description": "Optimized algorithms for facial feature preservation at larger sizes"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Social Media Photos",
+          "description": "Enhance selfies and portraits for Instagram, Facebook, and dating apps"
+        },
+        {
+          "title": "Professional Headshots",
+          "description": "Improve LinkedIn and business portrait quality"
+        },
+        {
+          "title": "Model Portfolios",
+          "description": "Enhance facial features in modeling and fashion photography"
+        },
+        {
+          "title": "Wedding Photography",
+          "description": "Perfect bride and groom portraits for albums and prints"
+        },
+        {
+          "title": "Family Photos",
+          "description": "Enhance group portraits where individual faces matter"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Natural Results",
+          "description": "Enhancement that looks like you, just better",
+          "metric": "Authentic appearance"
+        },
+        {
+          "title": "Confidence Boost",
+          "description": "Portraits that make you look your best",
+          "metric": "Professional quality"
+        },
+        {
+          "title": "Quick Enhancement",
+          "description": "Get perfect portraits in seconds",
+          "metric": "Under 10 seconds"
+        },
+        {
+          "title": "Print Ready",
+          "description": "High-resolution output suitable for large portrait prints",
+          "metric": "Up to 8x enlargement"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Portrait",
+          "description": "Upload your photo containing one or more faces"
+        },
+        {
+          "step": 2,
+          "title": "Face Detection",
+          "description": "AI automatically locates all faces in the image"
+        },
+        {
+          "step": 3,
+          "title": "Enhancement & Upscaling",
+          "description": "Facial features are enhanced and image is upscaled"
+        },
+        {
+          "step": 4,
+          "title": "Download Result",
+          "description": "Get your enhanced portrait in high resolution"
+        }
+      ],
+      "limitations": [
+        "Best results with frontal or near-frontal face views",
+        "Multiple small faces in group photos may have less individual enhancement",
+        "Heavy makeup or face covering may reduce enhancement effectiveness"
+      ],
+      "faq": [
+        {
+          "question": "Will this make me look fake or plastic?",
+          "answer": "No! Our AI is designed for natural enhancement. It improves skin quality and clarity while maintaining realistic texture and your authentic appearance."
+        },
+        {
+          "question": "Can it enhance old photos of people?",
+          "answer": "Yes! Face enhancement works on vintage portraits while preserving the character and authenticity of the original photo."
+        },
+        {
+          "question": "Does it work on group photos?",
+          "answer": "Yes, the AI detects and enhances all faces in a photo, making it great for group portraits and event photos."
+        },
+        {
+          "question": "Can I use this for professional headshots?",
+          "answer": "Absolutely. Many professionals use our face enhancement to polish headshots for LinkedIn, portfolios, and business profiles."
+        },
+        {
+          "question": "What if my photo has multiple people?",
+          "answer": "Our AI detects all faces in the image and applies enhancement to each one individually for consistent results."
+        },
+        {
+          "question": "Is this suitable for wedding photos?",
+          "answer": "Yes! It's perfect for enhancing bride and groom portraits, as well as family wedding photos, while maintaining natural beauty."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-portrait-enhancement-upscaler",
+        "ai-detail-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Enhance Faces Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-color-correction-upscaler",
+      "title": "AI Color Correction Upscaler",
+      "metaTitle": "AI Color Correction Upscaler - Fix Colors & Upscale",
+      "metaDescription": "Fix color casts, exposure, and white balance with AI. Color correction upscaler for vibrant, accurate photos. Try free!",
+      "h1": "AI Color Correction Upscaler",
+      "intro": "Transform photos with poor colors into vibrant, accurate images with our AI color correction upscaler. Automatically fix white balance, remove color casts, and enhance saturation while upscaling to print-ready resolutions.",
+      "primaryKeyword": "ai color correction upscaler",
+      "secondaryKeywords": [
+        "color correction upscale",
+        "fix photo colors",
+        "ai color correction",
+        "auto white balance",
+        "fix washed out photos"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Color Correction",
+      "featureType": "correction",
+      "technology": "Advanced color science algorithms combined with machine learning to identify and correct color imbalances",
+      "description": "Our AI color correction technology automatically detects and fixes color issues like white balance problems, color casts, faded colors, and incorrect exposure. Perfect for scans, old photos, and images shot in poor lighting conditions.",
+      "capabilities": [
+        "Automatic white balance correction",
+        "Color cast removal for natural tones",
+        "Exposure and brightness adjustment",
+        "Saturation and vibrance enhancement",
+        "Faded color restoration for old photos"
+      ],
+      "features": [
+        {
+          "title": "White Balance Detection",
+          "description": "Identifies color temperature issues and corrects automatically"
+        },
+        {
+          "title": "Color Cast Removal",
+          "description": "Eliminates unwanted yellow, blue, or green tints"
+        },
+        {
+          "title": "Exposure Correction",
+          "description": "Fixes underexposed and overexposed areas intelligently"
+        },
+        {
+          "title": "Vibrance Enhancement",
+          "description": "Boosts color richness without oversaturation"
+        },
+        {
+          "title": "Memory Color Recovery",
+          "description": "Restores natural skin tones and sky colors"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Indoor Photography",
+          "description": "Fix yellow color casts from artificial indoor lighting"
+        },
+        {
+          "title": "Scanned Photos",
+          "description": "Correct faded colors in digitized prints and slides"
+        },
+        {
+          "title": "Underwater Photos",
+          "description": "Remove blue color cast from underwater photography"
+        },
+        {
+          "title": "Mixed Lighting",
+          "description": "Balance colors from scenes with multiple light sources"
+        },
+        {
+          "title": "Product Photography",
+          "description": "Achieve accurate product colors for e-commerce"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Accurate Colors",
+          "description": "Get true-to-life colors that represent the original scene",
+          "metric": "90% color accuracy"
+        },
+        {
+          "title": "Professional Results",
+          "description": "Transform amateur photos with color issues into professional-looking images",
+          "metric": "Studio-grade correction"
+        },
+        {
+          "title": "Time Saving",
+          "description": "Skip manual color grading with AI-powered automatic correction",
+          "metric": "Seconds vs hours"
+        },
+        {
+          "title": "Print Ready",
+          "description": "Color-correct images suitable for professional printing",
+          "metric": "CMYK safe output"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Image",
+          "description": "Upload any photo with color or exposure issues"
+        },
+        {
+          "step": 2,
+          "title": "Color Analysis",
+          "description": "AI analyzes white balance, exposure, and color distribution"
+        },
+        {
+          "step": 3,
+          "title": "Intelligent Correction",
+          "description": "Color issues are corrected and upscaled simultaneously"
+        },
+        {
+          "step": 4,
+          "title": "Download Enhanced Photo",
+          "description": "Receive your color-corrected, high-resolution image"
+        }
+      ],
+      "limitations": [
+        "Severely overexposed areas may have limited detail recovery",
+        "Color style preferences (warm vs cool) are subjective and not automated",
+        "Artistic color choices may be altered if they deviate significantly from norms"
+      ],
+      "faq": [
+        {
+          "question": "Can it fix yellow indoor photos?",
+          "answer": "Yes! Our AI is excellent at removing the yellow color cast from indoor tungsten lighting and restoring natural-looking colors."
+        },
+        {
+          "question": "What if I prefer warm or cool tones?",
+          "answer": "The AI aims for accurate neutral colors. After processing, you can apply your preferred warm or cool tone adjustments in any photo editor."
+        },
+        {
+          "question": "Can it restore faded colors in old photos?",
+          "answer": "Absolutely! Our color correction includes faded color restoration, bringing life back to vintage and aged photographs."
+        },
+        {
+          "question": "Does it work on underwater photos?",
+          "answer": "Yes! It effectively removes the blue color cast typical of underwater photography, revealing true fish and coral colors."
+        },
+        {
+          "question": "Will it change my skin tones?",
+          "answer": "Our AI preserves natural skin tones while correcting overall color balance. Results look realistic and flattering."
+        },
+        {
+          "question": "Can I use this for product photos?",
+          "answer": "Yes! Accurate product colors are crucial for e-commerce. Our tool ensures colors look true to reality."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-clarity-enhancement-upscaler",
+        "ai-old-photo-restoration-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Correct Colors Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-sharpness-enhancement-upscaler",
+      "title": "AI Sharpness Enhancement Upscaler",
+      "metaTitle": "AI Sharpness Upscaler - Sharpen & Upscale Blurry Images",
+      "metaDescription": "Sharpen blurry photos while upscaling with AI. Fix focus issues and enhance edges for crisp, clear images. Free online tool.",
+      "h1": "AI Sharpness Enhancement Upscaler",
+      "intro": "Rescue blurry, out-of-focus photos with our AI sharpness enhancement upscaler. Intelligent edge detection and detail reconstruction bring clarity to soft images while scaling them to higher resolutions.",
+      "primaryKeyword": "ai sharpness enhancement upscaler",
+      "secondaryKeywords": [
+        "sharpen blurry photos",
+        "ai image sharpening",
+        "fix out of focus photos",
+        "edge enhancement upscaler",
+        "unblur image upscale"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Sharpness Enhancement",
+      "featureType": "enhancement",
+      "technology": "Convolutional neural networks trained to detect and reconstruct sharp edges and fine details",
+      "description": "Our AI sharpness enhancement technology tackles blurry photos through intelligent edge detection and detail reconstruction. It distinguishes between genuine blur and soft focus, applying targeted sharpening while upscaling your image to crystal-clear quality.",
+      "capabilities": [
+        "Detects and sharpens soft edges",
+        "Reconstructs fine details in blurry areas",
+        "Enhances overall image clarity without halos",
+        "Handles motion blur and focus issues",
+        "Maintains natural appearance while sharpening"
+      ],
+      "features": [
+        {
+          "title": "Smart Edge Detection",
+          "description": "Identifies important edges and boundaries for selective sharpening"
+        },
+        {
+          "title": "Detail Reconstruction",
+          "description": "Recreates lost fine details based on learned patterns"
+        },
+        {
+          "title": "Adaptive Sharpening",
+          "description": "Applies different sharpening levels based on image content"
+        },
+        {
+          "title": "Halo Prevention",
+          "description": "Sharpens edges without unsightly halos or artifacts"
+        },
+        {
+          "title": "Multi-Scale Clarity",
+          "description": "Enhances sharpness at each upscaling stage for maximum clarity"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Rescued Blurry Shots",
+          "description": "Save slightly out-of-focus or motion-blurred photos"
+        },
+        {
+          "title": "Smartphone Photography",
+          "description": "Sharpen mobile photos that suffer from soft focus"
+        },
+        {
+          "title": "Scanned Documents",
+          "description": "Make text and edges crisp in scanned documents"
+        },
+        {
+          "title": "Action Shots",
+          "description": "Improve clarity in sports and movement photography"
+        },
+        {
+          "title": "Macro Photography",
+          "description": "Enhance fine details in close-up shots"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Crisp Results",
+          "description": "Transform soft images into sharp, professional photos",
+          "metric": "Edge enhancement 300%"
+        },
+        {
+          "title": "Detail Recovery",
+          "description": "Bring out fine details that were lost to blur",
+          "metric": "Micro-detail restoration"
+        },
+        {
+          "title": "Professional Quality",
+          "description": "Achieve sharpness that rivals professional photography",
+          "metric": "Pro-level clarity"
+        },
+        {
+          "title": "Print Ready",
+          "description": "Create sharp images suitable for large format printing",
+          "metric": "300 DPI quality"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Blurry Image",
+          "description": "Upload any photo that lacks sharpness or focus"
+        },
+        {
+          "step": 2,
+          "title": "Blur Analysis",
+          "description": "AI determines blur type and amount across the image"
+        },
+        {
+          "step": 3,
+          "title": "Intelligent Sharpening",
+          "description": "Edges and details are enhanced while upscaling"
+        },
+        {
+          "step": 4,
+          "title": "Download Sharp Photo",
+          "description": "Receive your crisp, high-resolution result"
+        }
+      ],
+      "limitations": [
+        "Severely blurred photos may not achieve perfect sharpness",
+        "Motion blur from significant camera shake has limitations in correction",
+        "Extremely out-of-focus areas may remain somewhat soft"
+      ],
+      "faq": [
+        {
+          "question": "Can it fix completely out-of-focus photos?",
+          "answer": "Our AI can significantly improve soft or mildly out-of-focus photos, but severely out-of-focus images have physical limits to detail recovery. Results vary based on blur severity."
+        },
+        {
+          "question": "Will this add halos around edges?",
+          "answer": "No! Our sharpening is designed to enhance edges without creating the white halos that plague traditional sharpening filters."
+        },
+        {
+          "question": "Can it fix motion blur?",
+          "answer": "Yes, our AI handles motion blur, though results are best when the blur is moderate. Severe motion blur has physical limitations."
+        },
+        {
+          "question": "Is this suitable for text and documents?",
+          "description": "Absolutely! It's excellent for sharpening scanned documents and making text more readable."
+        },
+        {
+          "question": "Will it make my photo look over-processed?",
+          "answer": "Our AI aims for natural sharpness. It enhances clarity without the harsh, over-processed look of cheap sharpening filters."
+        },
+        {
+          "question": "Can I use this for macro photos?",
+          "answer": "Yes! Macro photography benefits greatly from sharpness enhancement, revealing fine details that were lost to soft focus."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-detail-enhancement-upscaler",
+        "ai-clarity-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Sharpen Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-artifact-removal-upscaler",
+      "title": "AI Artifact Removal Upscaler",
+      "metaTitle": "AI Artifact Removal Upscaler - Remove Compression Artifacts",
+      "metaDescription": "Remove JPEG artifacts, banding, and blocking with AI. Artifact removal upscaler restores quality while enlarging. Free online tool.",
+      "h1": "AI Artifact Removal Upscaler",
+      "intro": "Eliminate compression artifacts, banding, and blocking from your images with our AI artifact removal upscaler. Perfect for heavily compressed JPEGs and web images, restoring smooth quality while upscaling to higher resolutions.",
+      "primaryKeyword": "ai artifact removal upscaler",
+      "secondaryKeywords": [
+        "remove jpeg artifacts",
+        "fix compression artifacts",
+        "artifact removal upscale",
+        "eliminate blocking artifacts",
+        "smooth banding photos"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Artifact Removal",
+      "featureType": "correction",
+      "technology": "Deep learning models trained to recognize and remove various compression artifact patterns",
+      "description": "Our AI artifact removal technology identifies and eliminates visual defects caused by lossy compression, including JPEG blocks, color banding, and ringing artifacts. Restores smooth gradients and clean edges while upscaling your image.",
+      "capabilities": [
+        "JPEG artifact and block removal",
+        "Color banding elimination",
+        "Ringing artifact reduction",
+        "Smooth gradient restoration",
+        "Edge quality reconstruction"
+      ],
+      "features": [
+        {
+          "title": "Artifact Detection",
+          "description": "Identifies compression artifacts at multiple quality levels"
+        },
+        {
+          "title": "Block Removal",
+          "description": "Smooths out JPEG 8x8 block boundaries"
+        },
+        {
+          "title": "Banding Elimination",
+          "description": "Creates smooth gradients in skies and solid colors"
+        },
+        {
+          "title": "Edge Reconstruction",
+          "description": "Rebuilds clean edges free from compression artifacts"
+        },
+        {
+          "title": "Quality Enhancement",
+          "description": "Improves overall image quality during artifact removal"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Web Images",
+          "description": "Enhance images downloaded from websites with heavy compression"
+        },
+        {
+          "title": "Screenshots",
+          "description": "Clean up compression artifacts in screenshot images"
+        },
+        {
+          "title": "Social Media Downloads",
+          "description": "Improve quality of images saved from social platforms"
+        },
+        {
+          "title": "Memes and Shared Images",
+          "description": "Restore quality to heavily compressed viral images"
+        },
+        {
+          "title": "Digital Artwork",
+          "description": "Clean up compression artifacts in downloaded art and graphics"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Clean Images",
+          "description": "Remove distracting artifacts for professional appearance",
+          "metric": "100% artifact removal"
+        },
+        {
+          "title": "Smooth Gradients",
+          "description": "Eliminate visible color banding in skies and backgrounds",
+          "metric": "Gradient restoration"
+        },
+        {
+          "title": "Print Quality",
+          "description": "Create artifact-free images suitable for printing",
+          "metric": "Print-ready output"
+        },
+        {
+          "title": "Professional Results",
+          "description": "Transform low-quality web images into high-quality assets",
+          "metric": "Studio-grade restoration"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Compressed Image",
+          "description": "Upload any image with visible compression artifacts"
+        },
+        {
+          "step": 2,
+          "title": "Artifact Analysis",
+          "description": "AI identifies compression artifact patterns and locations"
+        },
+        {
+          "step": 3,
+          "title": "Removal & Upscaling",
+          "description": "Artifacts are removed while upscaling to high resolution"
+        },
+        {
+          "step": 4,
+          "title": "Download Clean Image",
+          "description": "Receive your artifact-free, high-quality result"
+        }
+      ],
+      "limitations": [
+        "Heavily compressed images may have some permanent quality loss",
+        "Very low-resolution sources have limited detail reconstruction potential",
+        "Multiple generations of compression can compound artifact issues"
+      ],
+      "faq": [
+        {
+          "question": "Can it remove all JPEG artifacts?",
+          "answer": "Our AI handles most common JPEG artifacts including blocking, banding, and ringing. Severe compression may leave some residual artifacts, but results are dramatically improved."
+        },
+        {
+          "question": "What's color banding?",
+          "answer": "Color banding is visible stepping in smooth gradients, common in compressed JPEGs. Our AI eliminates these visible steps for smooth, natural transitions."
+        },
+        {
+          "question": "Does it work on downloaded memes?",
+          "answer": "Yes! Memes and viral images are often heavily compressed. Our artifact removal cleans them up significantly while upscaling."
+        },
+        {
+          "question": "Will it blur my image to remove artifacts?",
+          "answer": "No! Our approach reconstructs clean details rather than blurring. You get sharp, artifact-free results."
+        },
+        {
+          "question": "Can I use this for screenshots?",
+          "answer": "Absolutely! Screenshots often have compression artifacts, especially from mobile apps. Our tool cleans and enhances them perfectly."
+        },
+        {
+          "question": "What if my image was compressed multiple times?",
+          "answer": "Multiple compression rounds compound artifacts, but our AI can still significantly improve quality. Results vary based on cumulative damage."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-compression-repair-upscaler",
+        "ai-clarity-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "image-compressor"
+      ],
+      "ctaText": "Remove Artifacts Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-portrait-enhancement-upscaler",
+      "title": "AI Portrait Enhancement Upscaler",
+      "metaTitle": "AI Portrait Enhancement Upscaler - Enhance Portraits & Upscale",
+      "metaDescription": "AI portrait enhancement upscaler for professional-quality results. Enhance people photos, group portraits, and headshots. Free online tool.",
+      "h1": "AI Portrait Enhancement Upscaler",
+      "intro": "Transform your portrait photos into stunning, high-resolution images with our AI portrait enhancement upscaler. Designed specifically for photographs of people, this technology enhances facial features, improves lighting, and maintains natural appearance while upscaling.",
+      "primaryKeyword": "ai portrait enhancement upscaler",
+      "secondaryKeywords": [
+        "portrait enhancement upscale",
+        "enhance people photos",
+        "ai portrait enhancer",
+        "group photo upscaler",
+        "professional portrait quality"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Portrait Enhancement",
+      "featureType": "enhancement",
+      "technology": "Portrait-specialized neural networks trained on diverse human faces and body features",
+      "description": "Our AI portrait enhancement technology focuses on making people look their best in photos. It handles single subjects and groups, improving skin quality, facial features, and overall composition while upscaling to professional resolutions.",
+      "capabilities": [
+        "Multi-person portrait detection and enhancement",
+        "Lighting optimization for people photography",
+        "Skin quality improvement without plastic look",
+        "Background enhancement for context",
+        "Composition-aware processing"
+      ],
+      "features": [
+        {
+          "title": "Person Detection",
+          "description": "Identifies all people in the photo for targeted enhancement"
+        },
+        {
+          "title": "Lighting Balance",
+          "description": "Optimizes exposure for faces and skin tones"
+        },
+        {
+          "title": "Skin Enhancement",
+          "description": "Improves skin quality while maintaining natural texture"
+        },
+        {
+          "title": "Composition Awareness",
+          "description": "Enhances subjects while complementing the background"
+        },
+        {
+          "title": "Group Processing",
+          "description": "Handles multiple people with consistent, flattering enhancement"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Professional Headshots",
+          "description": "Enhance business portraits and LinkedIn photos"
+        },
+        {
+          "title": "Wedding Photography",
+          "description": "Perfect bride, groom, and wedding party photos"
+        },
+        {
+          "title": "Family Portraits",
+          "description": "Improve group photos and family pictures"
+        },
+        {
+          "title": "Social Media",
+          "description": "Enhance Instagram, Facebook, and dating profile photos"
+        },
+        {
+          "title": "Event Photography",
+          "description": "Improve party, conference, and celebration photos"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Professional Quality",
+          "description": "Transform casual photos into professional-looking portraits",
+          "metric": "Studio-grade enhancement"
+        },
+        {
+          "title": "Group Friendly",
+          "description": "Enhances all people in group shots consistently",
+          "metric": "Multi-person optimization"
+        },
+        {
+          "title": "Natural Results",
+          "description": "Improves photos while maintaining authentic appearance",
+          "metric": "Realistic enhancement"
+        },
+        {
+          "title": "Print Ready",
+          "description": "Create large-format portrait prints",
+          "metric": "Up to 8x enlargement"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Portrait",
+          "description": "Upload any photo with one or more people"
+        },
+        {
+          "step": 2,
+          "title": "Person Detection",
+          "description": "AI identifies all people and composition elements"
+        },
+        {
+          "step": 3,
+          "title": "Smart Enhancement",
+          "description": "Portraits are enhanced while upscaling to high resolution"
+        },
+        {
+          "step": 4,
+          "title": "Download Result",
+          "description": "Get your professional-quality portrait photo"
+        }
+      ],
+      "limitations": [
+        "Back-facing views provide limited enhancement potential",
+        "Very small faces in large groups may have less detailed enhancement",
+        "Heavy filters or makeup may affect enhancement accuracy"
+      ],
+      "faq": [
+        {
+          "question": "Does it work on group photos?",
+          "answer": "Yes! Our AI detects and enhances all people in group photos, making it perfect for family portraits, event photos, and team pictures."
+        },
+        {
+          "question": "Can I use this for wedding photos?",
+          "answer": "Absolutely! Wedding photos benefit greatly from portrait enhancement, bringing out the best in bride, groom, and wedding party images."
+        },
+        {
+          "question": "Will this look natural?",
+          "answer": "Yes! Our enhancement is designed to look like a better version of reality, not artificial or over-processed."
+        },
+        {
+          "question": "What about profile photos for LinkedIn?",
+          "answer": "Perfect use case. Our portrait enhancement creates professional-looking headshots suitable for business profiles and LinkedIn."
+        },
+        {
+          "question": "Can it handle different skin tones?",
+          "answer": "Yes! Our AI is trained on diverse skin tones and enhances all people beautifully and naturally."
+        },
+        {
+          "question": "Is this suitable for modeling portfolios?",
+          "answer": "Yes! Many models use our enhancement to polish portfolio photos while maintaining realistic appearance."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-face-enhancement-upscaler",
+        "ai-detail-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Enhance Portraits Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-detail-enhancement-upscaler",
+      "title": "AI Detail Enhancement Upscaler",
+      "metaTitle": "AI Detail Enhancement Upscaler - Enrich Fine Details",
+      "metaDescription": "Enhance fine details and textures while upscaling. AI detail enhancement brings out clarity in every pixel. Free online tool.",
+      "h1": "AI Detail Enhancement Upscaler",
+      "intro": "Bring out the finest details in your photos with our AI detail enhancement upscaler. Perfect for textures, intricate patterns, and images where every detail matters, this technology enriches micro-features while scaling to higher resolutions.",
+      "primaryKeyword": "ai detail enhancement upscaler",
+      "secondaryKeywords": [
+        "enhance image details",
+        "texture enhancement upscale",
+        "fine detail upscaler",
+        "micro-detail enhancement",
+        "sharpen details upscale"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Detail Enhancement",
+      "featureType": "enhancement",
+      "technology": "High-resolution neural networks trained to recognize and reconstruct fine detail patterns",
+      "description": "Our AI detail enhancement technology focuses on bringing out the finest elements in your images. From fabric textures to intricate patterns, it enriches micro-details that are often lost during upscaling, creating images that reveal more at closer inspection.",
+      "capabilities": [
+        "Micro-detail reconstruction",
+        "Texture enhancement and preservation",
+        "Pattern recognition and enhancement",
+        "Fine edge definition",
+        "Subtle feature amplification"
+      ],
+      "features": [
+        {
+          "title": "Micro-Detail Detection",
+          "description": "Identifies fine details that add richness to images"
+        },
+        {
+          "title": "Texture Enhancement",
+          "description": "Brings out surface textures for tactile quality"
+        },
+        {
+          "title": "Pattern Recognition",
+          "description": "Enhances intricate patterns and repeating details"
+        },
+        {
+          "title": "Edge Refinement",
+          "description": "Defines fine edges without harsh sharpening"
+        },
+        {
+          "title": "Close-Up Optimization",
+          "description": "Specialized processing for macro and detail photography"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Product Photography",
+          "description": "Showcase product textures and materials in detail"
+        },
+        {
+          "title": "Macro Photography",
+          "description": "Enhance fine details in close-up shots"
+        },
+        {
+          "title": "Textile and Fashion",
+          "description": "Reveal fabric weaves and clothing textures"
+        },
+        {
+          "title": "Nature Photography",
+          "description": "Bring out details in leaves, bark, and natural textures"
+        },
+        {
+          "title": "Architecture",
+          "description": "Enhance building materials and architectural details"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Revealed Details",
+          "description": "See details that were subtle or lost in original",
+          "metric": "Micro-detail recovery"
+        },
+        {
+          "title": "Tactile Quality",
+          "description": "Images show texture that viewers can almost feel",
+          "metric": "Enhanced textures"
+        },
+        {
+          "title": "Professional Results",
+          "description": "Create high-quality images suitable for commercial use",
+          "metric": "Print-ready quality"
+        },
+        {
+          "title": "Zoom Ready",
+          "description": "Details remain crisp even when users zoom in",
+          "metric": "Close-up clarity"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Image",
+          "description": "Upload any photo where fine details matter"
+        },
+        {
+          "step": 2,
+          "title": "Detail Analysis",
+          "description": "AI identifies textures, patterns, and fine elements"
+        },
+        {
+          "step": 3,
+          "title": "Enhancement & Upscaling",
+          "description": "Micro-details are enriched while increasing resolution"
+        },
+        {
+          "step": 4,
+          "title": "Download Result",
+          "description": "Receive your detail-rich, high-resolution image"
+        }
+      ],
+      "limitations": [
+        "Very low-resolution sources have inherent detail limitations",
+        "Extremely smooth surfaces may not benefit significantly",
+        "Over-enhancement of noise can occur in very grainy images"
+      ],
+      "faq": [
+        {
+          "question": "Will this add artificial textures?",
+          "answer": "No! Our AI enhances existing textures and details rather than adding artificial ones. Results look authentic to the original subject."
+        },
+        {
+          "question": "Is this good for product photos?",
+          "answer": "Excellent! Product photography benefits greatly from detail enhancement, showcasing materials and textures that help customers make purchasing decisions."
+        },
+        {
+          "question": "Can it enhance macro photography?",
+          "answer": "Yes! Macro shots are perfect candidates for detail enhancement, revealing even more fine characteristics of your subject."
+        },
+        {
+          "question": "What about fabric and clothing?",
+          "answer": "Our AI handles fabric textures beautifully, enhancing weave patterns and material details in fashion and textile photography."
+        },
+        {
+          "question": "Will it work on nature photos?",
+          "answer": "Absolutely! Nature photography is full of fine details from leaves to bark that benefit from our detail enhancement."
+        },
+        {
+          "question": "Can I use this for architecture photos?",
+          "answer": "Yes! Architectural details from brick patterns to building materials show enhanced texture and clarity."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-sharpness-enhancement-upscaler",
+        "ai-clarity-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Enhance Details Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-clarity-enhancement-upscaler",
+      "title": "AI Clarity Enhancement Upscaler",
+      "metaTitle": "AI Clarity Upscaler - Boost Image Clarity & Sharpness",
+      "metaDescription": "Boost overall image clarity and definition with AI. Clarity enhancement upscaler for crisp, clear photos. Try free!",
+      "h1": "AI Clarity Enhancement Upscaler",
+      "intro": "Transform hazy, soft, or unclear photos into crisp, defined images with our AI clarity enhancement upscaler. By analyzing local contrast and edge definition, it brings overall clarity and impact to your photos while upscaling to higher resolutions.",
+      "primaryKeyword": "ai clarity enhancement upscaler",
+      "secondaryKeywords": [
+        "image clarity upscale",
+        "boost photo clarity",
+        "ai clarity enhancer",
+        "improve image definition",
+        "clear up hazy photos"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Clarity Enhancement",
+      "featureType": "enhancement",
+      "technology": "Local contrast enhancement combined with edge-preserving algorithms",
+      "description": "Our AI clarity enhancement technology improves overall image definition by optimizing local contrast and sharpening important edges. It removes haze and softness while maintaining natural appearance, perfect for atmospheric or low-contrast scenes.",
+      "capabilities": [
+        "Local contrast optimization",
+        "Haze and fog reduction",
+        "Overall clarity improvement",
+        "Edge-preserving enhancement",
+        "Tone mapping for depth"
+      ],
+      "features": [
+        {
+          "title": "Haze Reduction",
+          "description": "Clears atmospheric haze and fog for sharper scenes"
+        },
+        {
+          "title": "Local Contrast",
+          "description": "Enhances detail visibility in shadows and highlights"
+        },
+        {
+          "title": "Definition Boost",
+          "description": "Improves overall image clarity and pop"
+        },
+        {
+          "title": "Natural Balance",
+          "description": "Enhances clarity without over-processing"
+        },
+        {
+          "title": "Depth Enhancement",
+          "description": "Adds three-dimensional definition to flat images"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Landscape Photography",
+          "description": "Clear hazy landscapes and distant mountains"
+        },
+        {
+          "title": "Architectural Photos",
+          "description": "Add definition and clarity to building shots"
+        },
+        {
+          "title": "Real Estate",
+          "description": "Improve property photo clarity for listings"
+        },
+        {
+          "title": "Travel Photos",
+          "description": "Enhance scenic shots from vacations and trips"
+        },
+        {
+          "title": "Product Photography",
+          "description": "Add clarity and definition to product images"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Clearer Images",
+          "description": "Transform soft photos into crisp, clear results",
+          "metric": "Clarity boost 200%"
+        },
+        {
+          "title": "Professional Impact",
+          "description": "Photos look more professional and compelling",
+          "metric": "Enhanced definition"
+        },
+        {
+          "title": "Haze Removal",
+          "description": "Remove atmospheric interference for sharper landscapes",
+          "metric": "Clear results"
+        },
+        {
+          "title": "Print Quality",
+          "description": "Create images suitable for large format printing",
+          "metric": "300 DPI output"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Image",
+          "description": "Upload any photo that lacks clarity or definition"
+        },
+        {
+          "step": 2,
+          "title": "Clarity Analysis",
+          "description": "AI assesses haze, contrast, and clarity levels"
+        },
+        {
+          "step": 3,
+          "title": "Enhancement Processing",
+          "description": "Local contrast and definition are optimized while upscaling"
+        },
+        {
+          "step": 4,
+          "title": "Download Clear Photo",
+          "description": "Receive your crisp, high-resolution result"
+        }
+      ],
+      "limitations": [
+        "Extreme atmospheric haze may have some permanent visibility limits",
+        "Very flat lighting conditions may have less dramatic improvement",
+        "Over-enhancement can introduce noise in smooth areas"
+      ],
+      "faq": [
+        {
+          "question": "Can this remove fog from photos?",
+          "answer": "Yes! Our AI excels at reducing atmospheric haze and fog, clearing up landscape and scenic photographs for better clarity."
+        },
+        {
+          "question": "Is this different from sharpening?",
+          "answer": "Yes! While sharpening focuses on edges, clarity enhancement optimizes local contrast and overall definition for more natural results."
+        },
+        {
+          "question": "Will it make my photo look over-processed?",
+          "answer": "No! Our clarity enhancement is designed for natural-looking results that improve definition without the harsh look of heavy processing."
+        },
+        {
+          "question": "Can I use this for real estate photos?",
+          "answer": "Absolutely! Real estate photos benefit greatly from clarity enhancement, making properties look more appealing in listings."
+        },
+        {
+          "question": "What about landscape photography?",
+          "answer": "Landscape photos are perfect for clarity enhancement, especially when dealing with atmospheric haze or distant subjects."
+        },
+        {
+          "question": "Will it work on product photos?",
+          "answer": "Yes! Product images gain clarity and definition that helps customers see details and make purchase decisions."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-sharpness-enhancement-upscaler",
+        "ai-detail-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Boost Clarity Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-texture-enhancement-upscaler",
+      "title": "AI Texture Enhancement Upscaler",
+      "metaTitle": "AI Texture Enhancement Upscaler - Enhance Image Textures",
+      "metaDescription": "Enhance and upscale image textures with AI. Bring out fabric, wood, metal textures in high resolution. Free online tool.",
+      "h1": "AI Texture Enhancement Upscaler",
+      "intro": "Reveal the rich textures in your photos with our AI texture enhancement upscaler. Designed to bring out surface details from fabrics to natural materials, this technology amplifies tactile quality while upscaling your images to higher resolutions.",
+      "primaryKeyword": "ai texture enhancement upscaler",
+      "secondaryKeywords": [
+        "texture enhancement upscale",
+        "enhance image textures",
+        "fabric texture upscaler",
+        "material detail enhancement",
+        "surface texture upscale"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Texture Enhancement",
+      "featureType": "enhancement",
+      "technology": "Specialized networks trained to recognize and enhance surface textures and material properties",
+      "description": "Our AI texture enhancement technology focuses on bringing out the surface qualities of your subjects. From fabric weaves to wood grain, metal reflections to stone surfaces, it enriches textures that make images more realistic and engaging while upscaling.",
+      "capabilities": [
+        "Surface texture detection and enhancement",
+        "Material-specific processing",
+        "Fine detail amplification",
+        "Natural pattern enhancement",
+        "Tactile quality improvement"
+      ],
+      "features": [
+        {
+          "title": "Texture Detection",
+          "description": "Identifies different material types in your image"
+        },
+        {
+          "title": "Surface Enhancement",
+          "description": "Brings out tactile qualities of surfaces"
+        },
+        {
+          "title": "Pattern Recovery",
+          "description": "Enhances repeating textures like fabric weaves"
+        },
+        {
+          "title": "Material Recognition",
+          "description": "Optimizes enhancement for specific material types"
+        },
+        {
+          "title": "Reflection Handling",
+          "description": "Enhances glossy surfaces without losing realism"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Product Photography",
+          "description": "Showcase materials and textures in product images"
+        },
+        {
+          "title": "Fashion Photography",
+          "description": "Enhance fabric textures and clothing details"
+        },
+        {
+          "title": "Interior Design",
+          "description": "Bring out textures in furniture and decor photos"
+        },
+        {
+          "title": "Food Photography",
+          "description": "Enhance food textures for appetizing results"
+        },
+        {
+          "title": "Nature Photography",
+          "description": "Reveal bark, rock, and leaf textures"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Tactile Quality",
+          "description": "Viewers can almost feel the textures in your photos",
+          "metric": "Enhanced realism"
+        },
+        {
+          "title": "Material Showcase",
+          "description": "Product materials look accurate and appealing",
+          "metric": "Texture detail 300%"
+        },
+        {
+          "title": "Professional Results",
+          "description": "Commercial-quality texture enhancement",
+          "metric": "Print-ready output"
+        },
+        {
+          "title": "Engaging Images",
+          "description": "Rich textures create more compelling visual content",
+          "metric": "Increased engagement"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Image",
+          "description": "Upload any photo with texture details"
+        },
+        {
+          "step": 2,
+          "title": "Texture Analysis",
+          "description": "AI identifies surface textures and material types"
+        },
+        {
+          "step": 3,
+          "title": "Enhancement Processing",
+          "description": "Textures are enriched while upscaling to high resolution"
+        },
+        {
+          "step": 4,
+          "title": "Download Result",
+          "description": "Receive your texture-enhanced, high-resolution image"
+        }
+      ],
+      "limitations": [
+        "Very smooth surfaces may not benefit significantly from texture enhancement",
+        "Over-enhancement can introduce artificial texture in flat areas",
+        "Extremely blurred images may have limited texture recovery"
+      ],
+      "faq": [
+        {
+          "question": "Will this add fake texture?",
+          "answer": "No! Our AI enhances existing textures in your photo rather than creating artificial ones. Results remain realistic to the original subject."
+        },
+        {
+          "question": "Is this good for product photos?",
+          "answer": "Excellent! Product photography benefits greatly from texture enhancement, helping customers see and understand materials."
+        },
+        {
+          "question": "Can it enhance fabric and clothing?",
+          "answer": "Yes! Fabric textures are one of our specialties. Weaves, knits, and textile patterns all show enhanced detail."
+        },
+        {
+          "question": "What about food photography?",
+          "answer": "Food looks more appetizing with enhanced textures. Our AI brings out crispy, creamy, and other food textures beautifully."
+        },
+        {
+          "question": "Will it work on interior design photos?",
+          "answer": "Yes! Interior photos benefit when furniture textures, wood grains, and fabric details are enhanced and visible."
+        },
+        {
+          "question": "Can I use this for nature photos?",
+          "answer": "Absolutely! Nature is full of interesting textures from bark to leaves that our enhancement reveals beautifully."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-detail-enhancement-upscaler",
+        "ai-clarity-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Enhance Textures Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-low-light-enhancement-upscaler",
+      "title": "AI Low Light Enhancement Upscaler",
+      "metaTitle": "AI Low Light Upscaler - Fix Dark & Underexposed Photos",
+      "metaDescription": "Fix dark, underexposed photos while upscaling. AI low light enhancement brings out hidden details. Try free!",
+      "h1": "AI Low Light Enhancement Upscaler",
+      "intro": "Rescue dark and underexposed photos with our AI low light enhancement upscaler. Intelligently brightens shadows and reveals hidden details in low-light photography while scaling your images to higher resolutions.",
+      "primaryKeyword": "ai low light enhancement upscaler",
+      "secondaryKeywords": [
+        "low light photo upscale",
+        "fix dark photos",
+        "brighten underexposed images",
+        "night photo enhancement",
+        "low light upscaler"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Low Light Enhancement",
+      "featureType": "correction",
+      "technology": "Low-light optimization algorithms trained on night photography and underexposed scenes",
+      "description": "Our AI low light enhancement technology tackles the challenges of dark photography by intelligently brightening shadows, reducing noise, and revealing details hidden in darkness. Perfect for night shots, indoor photos, and any image taken in poor lighting conditions.",
+      "capabilities": [
+        "Shadow detail recovery",
+        "Intelligent brightening without washing out",
+        "Noise reduction in dark areas",
+        "Exposure correction",
+        "Natural lighting restoration"
+      ],
+      "features": [
+        {
+          "title": "Shadow Recovery",
+          "description": "Reveals details hidden in dark shadows"
+        },
+        {
+          "title": "Smart Brightening",
+          "description": "Brightens dark areas without overexposing highlights"
+        },
+        {
+          "title": "Night Mode Optimization",
+          "description": "Specialized handling for low-light photography"
+        },
+        {
+          "title": "Noise Control",
+          "description": "Reduces high-ISO noise common in dark scenes"
+        },
+        {
+          "title": "Natural Balance",
+          "description": "Maintains realistic lighting while improving visibility"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Night Photography",
+          "description": "Enhance photos taken at night or in low light"
+        },
+        {
+          "title": "Indoor Events",
+          "description": "Improve photos from parties and gatherings indoors"
+        },
+        {
+          "title": "Concert Photography",
+          "description": "Recover details from dark performance venues"
+        },
+        {
+          "title": "Real Estate",
+          "description": "Brighten dark interior photos for listings"
+        },
+        {
+          "title": "Travel Photos",
+          "description": "Enhance evening and night shots from vacations"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Revealed Details",
+          "description": "See details that were lost in darkness",
+          "metric": "Shadow recovery 80%"
+        },
+        {
+          "title": "Natural Results",
+          "description": "Brightens photos without artificial-looking processing",
+          "metric": "Realistic enhancement"
+        },
+        {
+          "title": "Quick Fix",
+          "description": "Save dark photos in seconds without complex editing",
+          "metric": "One-click enhancement"
+        },
+        {
+          "title": "Print Ready",
+          "description": "Create high-quality prints from dark photos",
+          "metric": "300 DPI output"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Dark Photo",
+          "description": "Upload any underexposed or low-light photo"
+        },
+        {
+          "step": 2,
+          "title": "Lighting Analysis",
+          "description": "AI assesses exposure and shadow detail levels"
+        },
+        {
+          "step": 3,
+          "title": "Enhancement Processing",
+          "description": "Dark areas are brightened while upscaling to high resolution"
+        },
+        {
+          "step": 4,
+          "title": "Download Bright Photo",
+          "description": "Receive your enhanced, properly exposed image"
+        }
+      ],
+      "limitations": [
+        "Completely black areas have no detail to recover",
+        "Extreme underexposure may have limited recovery potential",
+        "Motion blur from low-light shutter speeds has separate limitations"
+      ],
+      "faq": [
+        {
+          "question": "Can it fix completely black photos?",
+          "answer": "If areas are completely black (no data), there's no detail to recover. However, our AI can often reveal details in shadows that appear black."
+        },
+        {
+          "question": "Will this make my photo look grainy?",
+          "answer": "No! Our low light enhancement includes noise reduction, brightening your photo while actually improving quality, not adding grain."
+        },
+        {
+          "question": "Is this suitable for night photography?",
+          "answer": "Absolutely! Night photography is one of our best use cases. We recover shadow detail and reduce high-ISO noise effectively."
+        },
+        {
+          "question": "Can I use this for indoor photos?",
+          "answer": "Yes! Indoor photos often suffer from poor lighting. Our enhancement brightens and clarifies these images beautifully."
+        },
+        {
+          "question": "What about concert photos?",
+          "answer": "Concert photos are challenging with dark venues and changing lights. Our AI handles these conditions well, recovering amazing detail."
+        },
+        {
+          "question": "Will it overexpose bright areas?",
+          "answer": "No! Our AI brightens shadows while preserving highlights, maintaining balanced exposure throughout the image."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-noise-reduction-upscaler",
+        "ai-clarity-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Brighten Dark Photos Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-compression-repair-upscaler",
+      "title": "AI Compression Repair Upscaler",
+      "metaTitle": "AI Compression Repair Upscaler - Fix Compressed Images",
+      "metaDescription": "Repair compression damage while upscaling. Fix JPEG compression artifacts, blocking, and quality loss. Free online tool.",
+      "h1": "AI Compression Repair Upscaler",
+      "intro": "Reverse the damage done by image compression with our AI compression repair upscaler. Whether from social media, messaging apps, or web downloads, restore quality to heavily compressed JPEGs while scaling them to higher resolutions.",
+      "primaryKeyword": "ai compression repair upscaler",
+      "secondaryKeywords": [
+        "fix compressed images",
+        "compression artifact removal",
+        "repair jpeg damage",
+        "restore compressed photos",
+        "upscale compressed images"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Compression Repair",
+      "featureType": "restoration",
+      "technology": "Reconstruction networks trained to reverse compression artifact patterns",
+      "description": "Our AI compression repair technology specifically targets damage caused by lossy compression algorithms. It removes JPEG blocks, eliminates color banding, and reconstructs smooth gradients and clean edges while upscaling your image to restore original quality.",
+      "capabilities": [
+        "JPEG artifact reconstruction",
+        "Block elimination and smoothing",
+        "Quality recovery for multiple compression levels",
+        "Gradient and edge restoration",
+        "Web-quality enhancement"
+      ],
+      "features": [
+        {
+          "title": "Artifact Detection",
+          "description": "Identifies compression damage across the image"
+        },
+        {
+          "title": "Block Removal",
+          "description": "Eliminates JPEG 8x8 block boundaries"
+        },
+        {
+          "title": "Quality Reconstruction",
+          "description": "Estimates and restores pre-compressed image quality"
+        },
+        {
+          "title": "Edge Restoration",
+          "description": "Rebuilds clean edges free from compression artifacts"
+        },
+        {
+          "title": "Gradient Smoothing",
+          "description": "Creates smooth transitions in compressed gradients"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Social Media Downloads",
+          "description": "Restore quality from Instagram, Facebook, Twitter images"
+        },
+        {
+          "title": "Messaging App Photos",
+          "description": "Fix heavily compressed images from WhatsApp, Telegram"
+        },
+        {
+          "title": "Web Images",
+          "description": "Enhance images downloaded from websites and blogs"
+        },
+        {
+          "title": "Meme Recovery",
+          "description": "Restore quality to compressed viral images and memes"
+        },
+        {
+          "title": "Archive Recovery",
+          "description": "Improve quality of compressed digital archives"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Quality Restoration",
+          "description": "Reverse compression damage for cleaner images",
+          "metric": "Quality recovery 85%"
+        },
+        {
+          "title": "Smooth Results",
+          "description": "Eliminate blocking and banding artifacts",
+          "metric": "Clean gradients"
+        },
+        {
+          "title": "Print Ready",
+          "description": "Create print-worthy images from compressed sources",
+          "metric": "300 DPI output"
+        },
+        {
+          "title": "Professional Quality",
+          "description": "Transform low-quality web images into usable assets",
+          "metric": "Stock-photo quality"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Compressed Image",
+          "description": "Upload any JPEG with visible compression artifacts"
+        },
+        {
+          "step": 2,
+          "title": "Damage Assessment",
+          "description": "AI analyzes compression level and artifact patterns"
+        },
+        {
+          "step": 3,
+          "title": "Repair & Upscale",
+          "description": "Compression damage is repaired while increasing resolution"
+        },
+        {
+          "step": 4,
+          "title": "Download Restored Photo",
+          "description": "Receive your quality-restored, high-resolution image"
+        }
+      ],
+      "limitations": [
+        "Multiple compression rounds compound damage and limit recovery",
+        "Extremely low bitrates may have permanent quality loss",
+        "Original uncompressed quality cannot be perfectly determined"
+      ],
+      "faq": [
+        {
+          "question": "Can it fix heavily compressed memes?",
+          "answer": "Yes! Our compression repair handles heavily compressed images well, significantly improving meme and viral image quality while upscaling."
+        },
+        {
+          "question": "What's the difference from artifact removal?",
+          "answer": "Compression repair is specifically trained on JPEG algorithm damage, while artifact removal is more general. For JPEG issues, use compression repair."
+        },
+        {
+          "question": "Can I use this for WhatsApp images?",
+          "answer": "Absolutely! Messaging apps heavily compress images. Our tool restores quality while upscaling for better viewing and sharing."
+        },
+        {
+          "question": "Will it work on social media downloads?",
+          "answer": "Yes! Images saved from Facebook, Instagram, and other platforms often have compression. Our repair fixes these issues beautifully."
+        },
+        {
+          "question": "Can it restore original quality?",
+          "answer": "We reconstruct quality based on the compressed image. Results are dramatically improved, but exact original quality depends on compression severity."
+        },
+        {
+          "question": "Is this suitable for printing web images?",
+          "answer": "Yes! One of the best uses is taking web-quality compressed images and making them suitable for printing at larger sizes."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-artifact-removal-upscaler",
+        "ai-old-photo-restoration-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "image-compressor"
+      ],
+      "ctaText": "Repair Compression Free",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ai-old-photo-restoration-upscaler",
+      "title": "AI Old Photo Restoration Upscaler",
+      "metaTitle": "AI Old Photo Restoration Upscaler - Restore Vintage Photos",
+      "metaDescription": "Restore and upscale old photos with AI. Fix scratches, fading, and damage in vintage photos. Free restoration tool.",
+      "h1": "AI Old Photo Restoration Upscaler",
+      "intro": "Bring your precious old photographs back to life with our AI old photo restoration upscaler. Combining restoration techniques with upscaling technology, it repairs damage, enhances faded details, and creates high-resolution versions suitable for archival and printing.",
+      "primaryKeyword": "ai old photo restoration upscaler",
+      "secondaryKeywords": [
+        "restore old photos",
+        "vintage photo upscale",
+        "old photo restoration",
+        "fix damaged photos",
+        "enhance vintage photos"
+      ],
+      "lastUpdated": "2026-02-11T00:00:00Z",
+      "category": "ai-features",
+      "featureName": "AI Old Photo Restoration",
+      "featureType": "restoration",
+      "technology": "Specialized restoration networks trained on historical photographs and damage patterns",
+      "description": "Our AI old photo restoration technology addresses the specific challenges of vintage photographs. It repairs scratches and tears, reduces fading, removes dust and spots, and enhances detail while upscaling to create modern high-resolution versions of your treasured memories.",
+      "capabilities": [
+        "Scratch and tear detection and repair",
+        "Faded color and contrast restoration",
+        "Dust and spot removal",
+        "Detail enhancement in damaged areas",
+        "Period-authentic processing"
+      ],
+      "features": [
+        {
+          "title": "Damage Repair",
+          "description": "Reduces appearance of scratches, tears, and creases"
+        },
+        {
+          "title": "Fading Correction",
+          "description": "Restores contrast and color to faded photographs"
+        },
+        {
+          "title": "Dust Removal",
+          "description": "Eliminates dust spots and scanning artifacts"
+        },
+        {
+          "title": "Detail Recovery",
+          "description": "Enhances details lost to age and damage"
+        },
+        {
+          "title": "Period Preservation",
+          "description": "Maintains vintage aesthetic while improving quality"
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Family Archives",
+          "description": "Restore and digitize family photo collections"
+        },
+        {
+          "title": "Genealogy Projects",
+          "description": "Enhance old photos for family trees and research"
+        },
+        {
+          "title": "Memorial Displays",
+          "description": "Create quality prints for memorial services and displays"
+        },
+        {
+          "title": "Museum Archives",
+          "description": "Digitally restore historical photographs for institutions"
+        },
+        {
+          "title": "Gift Reproduction",
+          "description": "Create restored copies for family members"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Preserve History",
+          "description": "Save precious memories before further degradation",
+          "metric": "Archival quality"
+        },
+        {
+          "title": "Damage Repair",
+          "description": "Reduce visible damage from aging and storage",
+          "metric": "Scratch reduction 90%"
+        },
+        {
+          "title": "High Resolution",
+          "description": "Create large format prints from small originals",
+          "metric": "Up to 8x enlargement"
+        },
+        {
+          "title": "Authentic Results",
+          "description": "Maintain vintage character while improving quality",
+          "metric": "Period-correct processing"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Old Photo",
+          "description": "Scan or photograph your vintage image and upload it"
+        },
+        {
+          "step": 2,
+          "title": "Damage Analysis",
+          "description": "AI identifies scratches, fading, dust, and quality issues"
+        },
+        {
+          "step": 3,
+          "title": "Restoration & Upscaling",
+          "description": "Photo is restored and upscaled to high resolution"
+        },
+        {
+          "step": 4,
+          "title": "Download Restored Photo",
+          "description": "Receive your enhanced, archival-quality image"
+        }
+      ],
+      "limitations": [
+        "Severely torn or missing areas cannot be fully reconstructed",
+        "Extremely faded photos may have limited color recovery",
+        "Hand-tinted photos require special handling for color preservation"
+      ],
+      "faq": [
+        {
+          "question": "Can it restore torn photos?",
+          "answer": "Our AI can reduce the appearance of tears and creases significantly. For severe physical damage, professional conservation may be needed first."
+        },
+        {
+          "question": "Will this change the vintage look?",
+          "answer": "No! Our restoration is designed to maintain the authentic vintage aesthetic while improving clarity and reducing damage."
+        },
+        {
+          "question": "What about severely faded photos?",
+          "answer": "We can improve contrast and clarity in faded photos, though severely faded images may have limits to full color recovery."
+        },
+        {
+          "question": "Can I restore color from black and white?",
+          "answer": "Our restoration focuses on improving the existing photo. Black and white photos will be enhanced in quality and resolution, not colorized."
+        },
+        {
+          "question": "Is this suitable for museum archives?",
+          "answer": "Yes! Our restoration produces high-quality results suitable for museum digitization and archival projects."
+        },
+        {
+          "question": "Should I restore the original scan?",
+          "answer": "Always work on the highest quality scan available and keep the original scan safe. Our enhancement is non-destructive to your files."
+        }
+      ],
+      "relatedFeatures": [
+        "ai-compression-repair-upscaler",
+        "ai-clarity-enhancement-upscaler"
+      ],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
+      "ctaText": "Restore Old Photos Free",
+      "ctaUrl": "/?signup=1"
+    }
+  ],
   "meta": {
-    "totalPages": 0,
-    "lastUpdated": "2025-12-26T00:00:00Z"
+    "totalPages": 12,
+    "lastUpdated": "2026-02-11T00:00:00Z"
   }
 }

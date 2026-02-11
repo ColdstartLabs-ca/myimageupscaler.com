@@ -39,6 +39,15 @@ Check `.claude/skills/` for relevant patterns.
 - Roadmap: `docs/management/ROADMAP.md`
 - Env: `.env.client` (public) | `.env.api` (secrets)
 
+## pSEO Categories
+
+When adding a new pSEO category:
+
+1. **Middleware**: Add the path to `isPSEOPath` in `middleware.ts` (~line 337). Without this, the middleware applies locale routing to the new path, causing 404s because there's no `app/[locale]/{category}/` route.
+2. **Localization config**: Add to `ENGLISH_ONLY_CATEGORIES` or `LOCALIZED_CATEGORIES` in `lib/seo/localization-config.ts`
+3. **Sitemap**: Create `app/sitemap-{category}.xml/route.ts` and register in `app/sitemap.xml/route.ts`
+4. **Schema**: Pass the actual category name (not `'article'`) to `generatePSEOSchema(page, 'category-name')`
+
 ## Stack
 
 Next.js 15 (App Router), Supabase, Stripe, Cloudflare Pages, Baselime, Zod, Zustand

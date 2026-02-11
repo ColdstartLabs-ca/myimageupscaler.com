@@ -23,6 +23,7 @@ import type {
   IContentTypePage,
   IIndustryInsightPage,
   IDeviceOptimizationPage,
+  IAIFeaturePage,
 } from './pseo-types';
 import { clientEnv } from '@shared/config/env';
 import type { Locale } from '../../i18n/config';
@@ -905,7 +906,8 @@ export function generatePSEOSchema(
     | ICameraRawPage
     | IContentTypePage
     | IIndustryInsightPage
-    | IDeviceOptimizationPage,
+    | IDeviceOptimizationPage
+    | IAIFeaturePage,
   category: string,
   locale: Locale = 'en'
 ): object {
