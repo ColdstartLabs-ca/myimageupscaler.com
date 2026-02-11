@@ -119,6 +119,7 @@ function getTargetCategories(fileName: string, field: string): string[] {
     relatedUseCasesExpanded: ['use-cases-expanded'],
     relatedPersonas: ['personas-expanded'],
     relatedCameraRaw: ['camera-raw'],
+    relatedFeatures: ['ai-features'],
   };
 
   // Check if this field has explicit category mappings (regardless of source file)
