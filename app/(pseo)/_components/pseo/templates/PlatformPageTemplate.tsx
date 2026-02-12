@@ -49,7 +49,7 @@ export function PlatformPageTemplate({
     return labels[locale || 'en'] || labels.en;
   };
 
-  const sliderLabels = getBeforeAfterLabels(locale);
+  const _sliderLabels = getBeforeAfterLabels(locale);
 
   return (
     <div className="min-h-screen bg-main relative overflow-x-hidden">

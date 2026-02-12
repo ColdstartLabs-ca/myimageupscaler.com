@@ -29,13 +29,13 @@ interface IGuidePageTemplateProps {
   relatedPages?: IRelatedPage[];
 }
 
-export function GuidePageTemplate({ data, locale, relatedPages = [] }: IGuidePageTemplateProps): ReactElement {
+export function GuidePageTemplate({ data, locale: _locale, relatedPages = [] }: IGuidePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/guides/${data.slug}`);
   const tier = pageMapping?.tier;
 
   // Difficulty badge styling
-  const difficultyStyles = {
+  const _difficultyStyles = {
     beginner: 'bg-surface-light text-success',
     intermediate: 'bg-warning/20 text-warning',
     advanced: 'bg-error/20 text-error',

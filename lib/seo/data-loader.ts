@@ -21,10 +21,6 @@ import platformsDataFile from '@/app/seo/data/platforms.json';
 import formatScaleDataFile from '@/app/seo/data/format-scale.json';
 import platformFormatDataFile from '@/app/seo/data/platform-format.json';
 import deviceUseDataFile from '@/app/seo/data/device-use.json';
-import comparisonsExpandedDataFile from '@/app/seo/data/comparisons-expanded.json';
-import personasExpandedDataFile from '@/app/seo/data/personas-expanded.json';
-import technicalGuidesDataFile from '@/app/seo/data/technical-guides.json';
-import useCasesExpandedDataFile from '@/app/seo/data/use-cases-expanded.json';
 import type {
   IToolPage,
   IFormatPage,
@@ -45,10 +41,6 @@ import type {
   ICameraRawPage,
   IIndustryInsightPage,
   IDeviceOptimizationPage,
-  IComparisonsExpandedPage,
-  IPersonasExpandedPage,
-  IUseCasesExpandedPage,
-  ITechnicalGuidePage,
   PSEOPage,
   IPSEODataFile,
 } from './pseo-types';
@@ -586,10 +578,6 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     industryInsightsPages,
     deviceOptimizationPages,
     bulkToolsPages,
-    comparisonsExpandedPages,
-    personasExpandedPages,
-    technicalGuidesPages,
-    useCasesExpandedPages,
   ] = await Promise.all([
     getAllTools(),
     getAllFormats(),
@@ -610,10 +598,6 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     getAllIndustryInsightsPages(),
     getAllDeviceOptimizationPages(),
     getAllBulkToolsPages(),
-    getAllComparisonsExpanded(),
-    getAllPersonasExpanded(),
-    getAllTechnicalGuides(),
-    getAllUseCasesExpanded(),
   ]);
 
   return [
@@ -636,10 +620,6 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     ...industryInsightsPages,
     ...deviceOptimizationPages,
     ...bulkToolsPages,
-    ...comparisonsExpandedPages,
-    ...personasExpandedPages,
-    ...technicalGuidesPages,
-    ...useCasesExpandedPages,
   ];
 });
 
@@ -1010,88 +990,3 @@ export const getDeviceUseDataWithLocale = cache(
 );
 // ============================================================================
 // NEW EXPANDED CATEGORIES - Data Loaders
-// ============================================================================
-
-// Comparisons Expanded Pages
-export const getAllComparisonsExpandedSlugs = cache(async (): Promise<string[]> => {
-  const comparisonsExpandedData = comparisonsExpandedDataFile as unknown as IPSEODataFile<IComparisonsExpandedPage>;
-  // Only return slugs that have actual JSON data - no fallback generation
-  return comparisonsExpandedData.pages.map(page => page.slug);
-});
-
-export const getComparisonsExpandedData = cache(async (slug: string): Promise<IComparisonsExpandedPage | null> => {
-  const comparisonsExpandedData = comparisonsExpandedDataFile as unknown as IPSEODataFile<IComparisonsExpandedPage>;
-  const page = comparisonsExpandedData.pages.find(p => p.slug === slug);
-
-  // Return null for pages without JSON data - will result in 404
-  return page || null;
-});
-
-export const getAllComparisonsExpanded = cache(async (): Promise<IComparisonsExpandedPage[]> => {
-  const slugs = await getAllComparisonsExpandedSlugs();
-  const comparisons = await Promise.all(slugs.map(slug => getComparisonsExpandedData(slug)));
-  return comparisons.filter((c): c is IComparisonsExpandedPage => c !== null);
-});
-
-// Personas Expanded Pages
-export const getAllPersonasExpandedSlugs = cache(async (): Promise<string[]> => {
-  const personasExpandedData = personasExpandedDataFile as unknown as IPSEODataFile<IPersonasExpandedPage>;
-  // Only return slugs that have actual JSON data - no fallback generation
-  return personasExpandedData.pages.map(page => page.slug);
-});
-
-export const getPersonasExpandedData = cache(async (slug: string): Promise<IPersonasExpandedPage | null> => {
-  const personasExpandedData = personasExpandedDataFile as unknown as IPSEODataFile<IPersonasExpandedPage>;
-  const page = personasExpandedData.pages.find(p => p.slug === slug);
-
-  // Return null for pages without JSON data - will result in 404
-  return page || null;
-});
-
-export const getAllPersonasExpanded = cache(async (): Promise<IPersonasExpandedPage[]> => {
-  const slugs = await getAllPersonasExpandedSlugs();
-  const personas = await Promise.all(slugs.map(slug => getPersonasExpandedData(slug)));
-  return personas.filter((p): p is IPersonasExpandedPage => p !== null);
-});
-
-// Technical Guides Pages
-export const getAllTechnicalGuidesSlugs = cache(async (): Promise<string[]> => {
-  const technicalGuidesData = technicalGuidesDataFile as unknown as IPSEODataFile<ITechnicalGuidePage>;
-  // Only return slugs that have actual JSON data - no fallback generation
-  return technicalGuidesData.pages.map(page => page.slug);
-});
-
-export const getTechnicalGuideData = cache(async (slug: string): Promise<ITechnicalGuidePage | null> => {
-  const technicalGuidesData = technicalGuidesDataFile as unknown as IPSEODataFile<ITechnicalGuidePage>;
-  const page = technicalGuidesData.pages.find(p => p.slug === slug);
-
-  // Return null for pages without JSON data - will result in 404
-  return page || null;
-});
-
-export const getAllTechnicalGuides = cache(async (): Promise<ITechnicalGuidePage[]> => {
-  const slugs = await getAllTechnicalGuidesSlugs();
-  const guides = await Promise.all(slugs.map(slug => getTechnicalGuideData(slug)));
-  return guides.filter((g): g is ITechnicalGuidePage => g !== null);
-});
-
-// Use Cases Expanded Pages
-export const getAllUseCasesExpandedSlugs = cache(async (): Promise<string[]> => {
-  const useCasesExpandedData = useCasesExpandedDataFile as unknown as IPSEODataFile<IUseCasesExpandedPage>;
-  // Only return slugs that have actual JSON data - no fallback generation
-  return useCasesExpandedData.pages.map(page => page.slug);
-});
-
-export const getUseCasesExpandedData = cache(async (slug: string): Promise<IUseCasesExpandedPage | null> => {
-  const useCasesExpandedData = useCasesExpandedDataFile as unknown as IPSEODataFile<IUseCasesExpandedPage>;
-  const page = useCasesExpandedData.pages.find(p => p.slug === slug);
-
-  // Return null for pages without JSON data - will result in 404
-  return page || null;
-});
-
-export const getAllUseCasesExpanded = cache(async (): Promise<IUseCasesExpandedPage[]> => {
-  const slugs = await getAllUseCasesExpandedSlugs();
-  const useCases = await Promise.all(slugs.map(slug => getUseCasesExpandedData(slug)));
-  return useCases.filter((u): u is IUseCasesExpandedPage => u !== null);
-});

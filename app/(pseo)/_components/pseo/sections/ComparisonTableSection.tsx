@@ -37,7 +37,7 @@ export function ComparisonTableSection({
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/5">
-                    {headers.map((header, idx) => (
+                    {headers.map((header: string, idx: number) => (
                       <th
                         key={idx}
                         className="py-4 px-4 md:py-6 md:px-8 text-sm md:text-lg font-bold text-white"
@@ -48,7 +48,7 @@ export function ComparisonTableSection({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">
-                  {rows.map((row, rowIdx) => (
+                  {rows.map((row: Record<string, string | number | boolean>, rowIdx: number) => (
                     <tr
                       key={rowIdx}
                       className={`hover:bg-white/5 transition-colors ${

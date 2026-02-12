@@ -77,11 +77,11 @@ export function GenericPSEOPageTemplate({
   return (
     <main className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
-        pageType={category as any}
+        pageType={category as unknown as Parameters<typeof PSEOPageTracker>[0]['pageType']}
         slug={data.slug}
         primaryKeyword={data.primaryKeyword}
       />
-      <ScrollTracker pageType={category as any} slug={data.slug} />
+      <ScrollTracker pageType={category as unknown as Parameters<typeof ScrollTracker>[0]['pageType']} slug={data.slug} />
 
       {/* Full Width Hero Area */}
       <div className="relative">
@@ -93,9 +93,9 @@ export function GenericPSEOPageTemplate({
           <HeroSection
             h1={data.h1}
             intro={data.intro}
-            ctaText={(data as any).ctaText || "Get Started Free"}
-            ctaUrl={(data as any).ctaUrl || "/?signup=1"}
-            pageType={category as any}
+            ctaText={('ctaText' in data ? data.ctaText as string : undefined) || "Get Started Free"}
+            ctaUrl={('ctaUrl' in data ? data.ctaUrl as string : undefined) || "/?signup=1"}
+            pageType={category as unknown as Parameters<typeof HeroSection>[0]['pageType']}
             slug={data.slug}
           />
         </div>
@@ -129,7 +129,7 @@ export function GenericPSEOPageTemplate({
 
           {hasFAQ && (
             <div className="py-12">
-              <FAQSection faqs={(data as { faq: IFAQ[] }).faq} pageType={category as any} slug={data.slug} />
+              <FAQSection faqs={(data as { faq: IFAQ[] }).faq} pageType={category as unknown as Parameters<typeof FAQSection>[0]['pageType']} slug={data.slug} />
             </div>
           )}
 
@@ -143,11 +143,11 @@ export function GenericPSEOPageTemplate({
 
       {hasCTA && (
         <CTASection
-          title={(data as any).description}
-          description={(data as any).description}
-          ctaText={(data as any).ctaText}
-          ctaUrl={(data as any).ctaUrl}
-          pageType={category as any}
+          title={('description' in data ? data.description as string : undefined) || data.h1}
+          description={('description' in data ? data.description as string : undefined) || data.intro}
+          ctaText={('ctaText' in data ? data.ctaText as string : undefined) || "Get Started Free"}
+          ctaUrl={('ctaUrl' in data ? data.ctaUrl as string : undefined) || "/?signup=1"}
+          pageType={category as unknown as Parameters<typeof CTASection>[0]['pageType']}
           slug={data.slug}
         />
       )}

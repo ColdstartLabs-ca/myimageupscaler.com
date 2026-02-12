@@ -3,8 +3,12 @@
  * Phase 2: Content Uniqueness Implementation
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Templates for unique content generation
 const TOOLS_TEMPLATES = {
@@ -116,7 +120,6 @@ function processJsonFile(filePath, pageTemplates) {
     return updatedPage;
   });
 
-  data.pages = modified;
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 
   console.log(`  Added ${modifiedCount} unique content fields to ${data.pages.length} pages`);

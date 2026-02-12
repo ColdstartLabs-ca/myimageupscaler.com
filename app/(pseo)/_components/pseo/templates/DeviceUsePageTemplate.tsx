@@ -47,7 +47,7 @@ export function DeviceUsePageTemplate({
     return labels[locale || 'en'] || labels.en;
   };
 
-  const sliderLabels = getBeforeAfterLabels(locale);
+  const _sliderLabels = getBeforeAfterLabels(locale);
 
   // Get device icon
   const getDeviceIcon = (device: string) => {

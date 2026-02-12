@@ -236,7 +236,7 @@ export function HomePageClient(): JSX.Element {
                   subtitle: 'Process multiple images at once with bulk tools. Save time on large projects.',
                   icon: <Layers className="text-secondary" size={20} />,
                 },
-              ].map((feature, index) => (
+              ].map((feature) => (
                 <StaggerItem key={feature.title}>
                   <motion.div
                     className="group glass-card-2025 p-8 text-left h-full flex flex-col items-start gap-4 animated-border-violet"
