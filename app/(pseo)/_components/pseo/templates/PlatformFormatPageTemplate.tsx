@@ -9,7 +9,6 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IPlatformFormatPage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
-import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -53,25 +52,7 @@ export function PlatformFormatPageTemplate({
   const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
-    <div className="min-h-screen bg-base relative">
-      {/* Subtle background pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }}
-      />
-
-      {/* Background blurs */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(45, 129, 255, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
+    <div className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
         pageType="platform-format"
         slug={data.slug}
@@ -80,9 +61,9 @@ export function PlatformFormatPageTemplate({
       />
       <ScrollTracker pageType="platform-format" slug={data.slug} />
 
-      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Breadcrumb */}
-        <div className="pt-6 pb-4">
+      {/* Full Width Hero Area */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
               { label: 'Home', href: locale ? `/${locale}` : '/' },
@@ -100,8 +81,7 @@ export function PlatformFormatPageTemplate({
           />
         </div>
 
-        <article>
-          {/* Hero Section */}
+        <div className="relative h-full">
           <HeroSection
             h1={data.h1}
             intro={data.intro}
@@ -110,78 +90,71 @@ export function PlatformFormatPageTemplate({
             pageType="platform-format"
             slug={data.slug}
           />
+        </div>
+      </div>
 
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        <article>
           {/* Platform & Format Info */}
           <FadeIn delay={0.2}>
             <div className="py-8">
-              <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-6">
+              <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
                 {data.platformDescription && (
-                  <div className="bg-surface-light rounded-xl p-6 border border-border-default">
-                    <h3 className="text-lg font-semibold text-text-primary mb-3">
+                  <div className="glass-card-2025 p-8 border-white/10">
+                    <h3 className="text-xl font-bold text-white mb-4">
                       About {data.platform}
                     </h3>
-                    <p className="text-text-secondary text-sm">{data.platformDescription}</p>
+                    <p className="text-text-secondary text-base leading-relaxed">{data.platformDescription}</p>
                   </div>
                 )}
                 {data.formatDescription && (
-                  <div className="bg-surface-light rounded-xl p-6 border border-border-default">
-                    <h3 className="text-lg font-semibold text-text-primary mb-3">
+                  <div className="glass-card-2025 p-8 border-accent/20">
+                    <h3 className="text-xl font-bold text-white mb-4">
                       {data.format} Format
                     </h3>
-                    <p className="text-text-secondary text-sm">{data.formatDescription}</p>
+                    <p className="text-text-secondary text-base leading-relaxed">{data.formatDescription}</p>
                   </div>
                 )}
               </div>
             </div>
           </FadeIn>
 
-          {/* Before/After Slider */}
-          <FadeIn delay={0.25}>
-            <div className="py-12">
-              <div className="max-w-3xl mx-auto">
-                <BeforeAfterSlider
-                  beforeUrl="/before-after/bird-before.webp"
-                  afterUrl="/before-after/bird-after.webp"
-                  beforeLabel={sliderLabels.before}
-                  afterLabel={sliderLabels.after}
-                  className="shadow-2xl shadow-accent/10"
-                />
-              </div>
-            </div>
-          </FadeIn>
+          {/* Before/After Slider Removed (Bird Image) */}
 
           {/* Platform Settings */}
           {data.platformSettings && (
             <FadeIn delay={0.25}>
               <div className="py-6">
-                <div className="max-w-3xl mx-auto bg-accent-primary/5 rounded-xl p-6 border border-accent-primary/20">
-                  <h3 className="text-lg font-semibold text-text-primary mb-3">
+                <div className="max-w-3xl mx-auto glass-card-2025 p-12 border-accent/30 bg-accent/5">
+                  <h3 className="text-2xl font-bold text-white text-center mb-6">
                     Recommended Settings
                   </h3>
-                  <p className="text-text-secondary">{data.platformSettings}</p>
+                  <p className="text-text-secondary text-lg text-center leading-relaxed font-light">{data.platformSettings}</p>
                 </div>
               </div>
             </FadeIn>
           )}
 
           {/* Benefits */}
-          {data.benefits && data.benefits.length > 0 && (
-            <BenefitsSection benefits={data.benefits} />
-          )}
+          <div className="py-12">
+            {data.benefits && data.benefits.length > 0 && (
+              <BenefitsSection benefits={data.benefits} />
+            )}
+          </div>
 
           {/* Export Tips */}
           {data.exportTips && data.exportTips.length > 0 && (
             <FadeIn delay={0.3}>
               <section className="py-12">
-                <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
+                <h2 className="text-2xl font-bold text-white text-center mb-12">
                   Export Tips
                 </h2>
-                <div className="max-w-3xl mx-auto bg-surface-light rounded-xl p-6 border border-border-default">
-                  <ul className="space-y-3">
+                <div className="max-w-3xl mx-auto glass-card-2025 p-8 border-white/10">
+                  <ul className="space-y-4">
                     {data.exportTips.map((tip, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <span className="text-accent-success mt-1">✓</span>
-                        <span className="text-text-secondary">{tip}</span>
+                      <li key={index} className="flex items-start gap-4">
+                        <span className="text-success mt-1 shrink-0">✓</span>
+                        <span className="text-text-secondary text-lg leading-relaxed">{tip}</span>
                       </li>
                     ))}
                   </ul>
@@ -194,17 +167,17 @@ export function PlatformFormatPageTemplate({
           {data.workflowTips && data.workflowTips.length > 0 && (
             <FadeIn delay={0.4}>
               <section className="py-12">
-                <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
+                <h2 className="text-3xl font-bold text-white text-center mb-12">
                   Workflow
                 </h2>
-                <div className="max-w-3xl mx-auto space-y-4">
+                <div className="max-w-3xl mx-auto space-y-8">
                   {data.workflowTips.map((tip, index) => (
-                    <div key={index} className="flex gap-4 items-start">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent-primary text-white flex items-center justify-center text-sm font-semibold">
+                    <div key={index} className="flex gap-6 items-start">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center text-lg font-bold shadow-lg shadow-accent/20">
                         {index + 1}
                       </div>
-                      <div className="flex-1 pb-4 border-b border-border-default last:border-0 pt-1">
-                        <p className="text-text-secondary">{tip}</p>
+                      <div className="flex-1 pb-6 border-b border-white/10 last:border-0 pt-1">
+                        <p className="text-text-secondary text-lg leading-relaxed">{tip}</p>
                       </div>
                     </div>
                   ))}
@@ -214,33 +187,39 @@ export function PlatformFormatPageTemplate({
           )}
 
           {/* Use Cases */}
-          {data.useCases && data.useCases.length > 0 && (
-            <UseCasesSection useCases={data.useCases} />
-          )}
+          <div className="py-12">
+            {data.useCases && data.useCases.length > 0 && (
+              <UseCasesSection useCases={data.useCases} />
+            )}
+          </div>
 
           {/* Related Pages */}
-          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
+          {relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
+          )}
 
           {/* FAQ */}
           {data.faq && data.faq.length > 0 && (
-            <FAQSection faqs={data.faq} pageType="platform-format" slug={data.slug} />
+            <div className="py-12">
+              <FAQSection faqs={data.faq} pageType="platform-format" slug={data.slug} />
+            </div>
           )}
-
-          {/* Final CTA */}
-          <div className="py-8">
-            <FadeIn>
-              <CTASection
-                title={`Ready to upscale your ${data.platform} ${data.format} images?`}
-                description="Start enhancing images with AI today. No credit card required."
-                ctaText="Try Free"
-                ctaUrl="/"
-                pageType="platform-format"
-                slug={data.slug}
-              />
-            </FadeIn>
-          </div>
         </article>
+      </div>
 
+      {/* Final CTA Full Width */}
+      <CTASection
+        title={`Ready to upscale your ${data.platform} ${data.format} images?`}
+        description="Start enhancing images with AI today. No credit card required."
+        ctaText="Try Free"
+        ctaUrl="/"
+        pageType="platform-format"
+        slug={data.slug}
+      />
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Footer spacing */}
         <div className="pb-16" />
       </div>

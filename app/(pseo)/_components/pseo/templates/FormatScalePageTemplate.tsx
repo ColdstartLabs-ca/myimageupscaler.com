@@ -9,7 +9,6 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IFormatScalePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
-import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -61,25 +60,7 @@ export function FormatScalePageTemplate({
   const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
-    <div className="min-h-screen bg-base relative">
-      {/* Subtle background pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }}
-      />
-
-      {/* Background blurs */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(45, 129, 255, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
+    <div className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
         pageType="format-scale"
         slug={data.slug}
@@ -88,9 +69,9 @@ export function FormatScalePageTemplate({
       />
       <ScrollTracker pageType="format-scale" slug={data.slug} />
 
-      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Breadcrumb */}
-        <div className="pt-6 pb-4">
+      {/* Full Width Hero Area */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
               { label: 'Home', href: locale ? `/${locale}` : '/' },
@@ -108,8 +89,7 @@ export function FormatScalePageTemplate({
           />
         </div>
 
-        <article>
-          {/* Hero Section */}
+        <div className="relative h-full">
           <HeroSection
             h1={data.h1}
             intro={data.intro}
@@ -118,72 +98,67 @@ export function FormatScalePageTemplate({
             pageType="format-scale"
             slug={data.slug}
           />
+        </div>
+      </div>
 
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        <article>
           {/* Format & Scale Info */}
           <FadeIn delay={0.2}>
             <div className="py-8">
-              <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-6">
+              <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
                 {data.formatDescription && (
-                  <div className="bg-surface-light rounded-xl p-6 border border-border-default">
-                    <h3 className="text-lg font-semibold text-text-primary mb-3">
+                  <div className="glass-card-2025 p-8 border-white/10">
+                    <h3 className="text-xl font-bold text-white mb-4">
                       About {data.format}
                     </h3>
-                    <p className="text-text-secondary text-sm">{data.formatDescription}</p>
+                    <p className="text-text-secondary text-base leading-relaxed">{data.formatDescription}</p>
                   </div>
                 )}
                 {data.scaleExpectations && (
-                  <div className="bg-surface-light rounded-xl p-6 border border-border-default">
-                    <h3 className="text-lg font-semibold text-text-primary mb-3">
+                  <div className="glass-card-2025 p-8 border-accent/20">
+                    <h3 className="text-xl font-bold text-white mb-4">
                       {data.scaleFactor} Scaling
                     </h3>
-                    <p className="text-text-secondary text-sm">{data.scaleExpectations}</p>
+                    <p className="text-text-secondary text-base leading-relaxed">{data.scaleExpectations}</p>
                   </div>
                 )}
               </div>
             </div>
           </FadeIn>
 
-          {/* Before/After Slider */}
-          <FadeIn delay={0.25}>
-            <div className="py-12">
-              <div className="max-w-3xl mx-auto">
-                <BeforeAfterSlider
-                  beforeUrl="/before-after/bird-before.webp"
-                  afterUrl="/before-after/bird-after.webp"
-                  beforeLabel={sliderLabels.before}
-                  afterLabel={sliderLabels.after}
-                  className="shadow-2xl shadow-accent/10"
-                />
-              </div>
-            </div>
-          </FadeIn>
+          {/* Before/After Slider Removed (Bird Image) */}
 
           {/* Benefits */}
-          {data.benefits && data.benefits.length > 0 && (
-            <BenefitsSection benefits={data.benefits} />
-          )}
+          <div className="py-12">
+            {data.benefits && data.benefits.length > 0 && (
+              <BenefitsSection benefits={data.benefits} />
+            )}
+          </div>
 
           {/* Use Cases */}
-          {data.useCases && data.useCases.length > 0 && (
-            <UseCasesSection useCases={data.useCases} />
-          )}
+          <div className="py-12">
+            {data.useCases && data.useCases.length > 0 && (
+              <UseCasesSection useCases={data.useCases} />
+            )}
+          </div>
 
           {/* Best Practices */}
           {normalizedBestPractices && normalizedBestPractices.length > 0 && (
             <FadeIn delay={0.4}>
               <section className="py-12">
-                <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
+                <h2 className="text-2xl font-bold text-white text-center mb-12">
                   Best Practices
                 </h2>
-                <div className="max-w-3xl mx-auto grid gap-4 md:grid-cols-2">
+                <div className="max-w-3xl mx-auto grid gap-6 md:grid-cols-2">
                   {normalizedBestPractices.map((practice, index) => (
                     <div
                       key={index}
-                      className="bg-surface-light rounded-xl p-5 border border-border-default"
+                      className="glass-card-2025 p-6"
                     >
-                      <h3 className="font-semibold text-text-primary mb-2">{practice.title}</h3>
+                      <h3 className="font-bold text-white text-lg mb-3">{practice.title}</h3>
                       {practice.description && (
-                        <p className="text-text-secondary text-sm">{practice.description}</p>
+                        <p className="text-text-secondary text-base leading-relaxed">{practice.description}</p>
                       )}
                     </div>
                   ))}
@@ -196,15 +171,15 @@ export function FormatScalePageTemplate({
           {data.tips && data.tips.length > 0 && (
             <FadeIn delay={0.5}>
               <section className="py-12">
-                <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
+                <h2 className="text-2xl font-bold text-white text-center mb-12">
                   Pro Tips
                 </h2>
-                <div className="max-w-3xl mx-auto bg-accent-primary/5 rounded-xl p-6 border border-accent-primary/20">
-                  <ul className="space-y-3">
+                <div className="max-w-3xl mx-auto glass-card-2025 p-8 border-accent/20">
+                  <ul className="space-y-4">
                     {data.tips.map((tip, index) => (
                       <li key={index} className="flex items-start gap-3">
-                        <span className="text-accent-primary mt-1">💡</span>
-                        <span className="text-text-secondary">{tip}</span>
+                        <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                        <span className="text-text-secondary text-lg font-light leading-relaxed">{tip}</span>
                       </li>
                     ))}
                   </ul>
@@ -214,28 +189,32 @@ export function FormatScalePageTemplate({
           )}
 
           {/* Related Pages */}
-          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
+          {relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
+          )}
 
           {/* FAQ */}
           {data.faq && data.faq.length > 0 && (
-            <FAQSection faqs={data.faq} pageType="format-scale" slug={data.slug} />
+            <div className="py-12">
+              <FAQSection faqs={data.faq} pageType="format-scale" slug={data.slug} />
+            </div>
           )}
-
-          {/* Final CTA */}
-          <div className="py-8">
-            <FadeIn>
-              <CTASection
-                title={`Ready to upscale your ${data.format} images ${data.scaleFactor}?`}
-                description="Start enhancing images with AI today. No credit card required."
-                ctaText="Try Free"
-                ctaUrl="/"
-                pageType="format-scale"
-                slug={data.slug}
-              />
-            </FadeIn>
-          </div>
         </article>
+      </div>
 
+      {/* Final CTA Full Width */}
+      <CTASection
+        title={`Ready to upscale your ${data.format} images ${data.scaleFactor}?`}
+        description="Start enhancing images with AI today. No credit card required."
+        ctaText="Try Free"
+        ctaUrl="/"
+        pageType="format-scale"
+        slug={data.slug}
+      />
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Footer spacing */}
         <div className="pb-16" />
       </div>

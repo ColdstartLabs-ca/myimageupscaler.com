@@ -4,23 +4,37 @@
 **Based on:** SEO Audit Report (seo-report-2026-02-11.md)
 **Status:** Excluding DR/Backlink items (already being handled separately)
 
+**🎯 PRIMARY FOCUS: Thin Content / Doorway Page Pattern**
+
+Root cause: Only 25% unique content per page (~200-300 unique words out of ~1,000 total). Google detects this as doorway pages and won't index them.
+
 ---
 
 ## Legend
 
 - ✅ Completed
 - 🟡 In Progress
-- ⬜ Not Started
 - 📋 Planned
 
 ---
 
-## Critical Priority (This Week)
+## 🎯 PRIMARY FOCUS: Content Uniqueness (Fix Thin/Doorway Pattern)
+
+| # | Task | Files Affected | Est. Time | Status | Impact |
+|---|-------|--------------|-----------|--------|-------|
+| CU-1 | Rewrite pSEO intro/description for uniqueness | `app/seo/data/tools.json`, `scale.json` + 18 other data files | 3-5 days | 📋 | Target: 1,000+ unique words/page (from ~200-300) |
+| CU-2 | Replace shared before/after images | All pSEO templates that use `bird-before.webp`/`bird-after.webp` | 1-2 days | 📋 | Unique visuals per page strengthen content differentiation |
+| CU-3 | Rewrite "How It Works" sections | `ScalePageTemplate.tsx`, `ToolPageTemplate.tsx` (lines 220-400) | 1 day | 📋 | Eliminate largest block of identical cross-page content |
+| CU-4 | Customize comparison tables | Templates with generic resolution comparison tables | 2 days | 📋 | Remove boilerplate signaling templated content |
+
+---
+
+## Other Critical Priority
 
 | # | Task | Est. Time | Status | Notes |
 |---|-------|-----------|--------|-------|
-| 1 | Execute SaaS directory submissions | 4 hours | ⬜ | Materials ready in `docs/SEO/saas-directory-submission/` |
-| 2 | Fix ai-features zombie category | 2 hours | ⬜ | 12 pages in sitemap that 404 - either create route or remove |
+| 1 | Execute SaaS directory submissions | 4 hours | 📋 | Materials ready in `docs/SEO/saas-directory-submission/`. **Enables AI crawler discovery** |
+| 2 | ✅ Fix ai-features zombie category | 2 hours | ✅ DONE | Route already exists, page live HTTP 200 |
 
 ---
 
