@@ -388,15 +388,12 @@ export function HomePageClient(): JSX.Element {
                 <a
                   href="https://launchigniter.com/product/myimageupscaler?ref=badge-myimageupscaler"
                   target="_blank"
-                  rel="noopener noreferrer"
-                  className="glass-strong hover:bg-white/10 px-6 py-4 rounded-xl transition-all duration-300 group"
                 >
                   <img
                     src="https://launchigniter.com/api/badge/myimageupscaler?theme=light"
                     alt="Featured on LaunchIgniter"
                     width={212}
                     height={55}
-                    className="h-auto w-auto group-hover:scale-105 transition-transform"
                   />
                 </a>
                 <a
