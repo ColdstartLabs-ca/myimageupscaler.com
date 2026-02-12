@@ -1,7 +1,7 @@
 {
   "homepage": {
     "badge": "Potenziamento con AI",
-    "badgeVersion": "v2.0 Edizione 2025",
+    "badgeVersion": "v2.0 Edizione {year}",
     "heroTitle": "Strumento di Ridimensionamento AI &",
     "heroTitleHighlight": "Miglioratore Foto",
     "heroSubtitle": "Migliora la qualità delle immagini a 4K in pochi secondi.",
@@ -40,7 +40,7 @@
     "toastLoginRequired": "Accedi per accedere alla dashboard"
   },
   "footer": {
-    "description": "Aumento della risoluzione e miglioramento delle immagini con AI per professionisti e creatori. Progettato con precisione per il 2025.",
+    "description": "Aumento della risoluzione e miglioramento delle immagini con AI per professionisti e creatori. Progettato con precisione per il {year}.",
     "copyright": "Precisione realizzata per i creatori.",
     "allRightsReserved": "Tutti i diritti riservati.",
     "product": "Prodotto",

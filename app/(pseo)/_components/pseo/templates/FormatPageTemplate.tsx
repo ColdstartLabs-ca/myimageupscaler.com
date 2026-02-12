@@ -9,6 +9,7 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IFormatPage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -114,7 +115,22 @@ export function FormatPageTemplate({
             </FadeIn>
           )}
 
-          {/* Before/After Slider Removed (Bird Image) */}
+          {/* Before/After Slider - Page-specific images when available */}
+          {data.beforeAfterImages && (
+            <FadeIn delay={0.25}>
+              <div className="py-12">
+                <div className="max-w-3xl mx-auto">
+                  <BeforeAfterSlider
+                    beforeUrl={data.beforeAfterImages.before}
+                    afterUrl={data.beforeAfterImages.after}
+                    beforeLabel={data.beforeAfterImages.beforeLabel ?? sliderLabels.before}
+                    afterLabel={data.beforeAfterImages.afterLabel ?? sliderLabels.after}
+                    className="shadow-2xl shadow-accent/10"
+                  />
+                </div>
+              </div>
+            </FadeIn>
+          )}
 
           {/* Format Characteristics */}
           {features && features.length > 0 && (

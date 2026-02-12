@@ -9,6 +9,7 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IUseCasePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -50,6 +51,22 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/use-cases/${data.slug}`);
   const tier = pageMapping?.tier;
+
+  // Get locale-aware labels for before/after slider
+  const getBeforeAfterLabels = (locale?: string) => {
+    const labels: Record<string, { before: string; after: string }> = {
+      en: { before: 'Before', after: 'After' },
+      es: { before: 'Antes', after: 'Después' },
+      pt: { before: 'Antes', after: 'Depois' },
+      de: { before: 'Vorher', after: 'Nachher' },
+      fr: { before: 'Avant', after: 'Après' },
+      it: { before: 'Prima', after: 'Dopo' },
+      ja: { before: '前', after: '後' },
+    };
+    return labels[locale || 'en'] || labels.en;
+  };
+
+  const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
     <div className="min-h-screen bg-main relative overflow-x-hidden">
@@ -97,6 +114,23 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
                 <p className="text-lg text-text-secondary leading-relaxed text-center font-light">
                   {data.description}
                 </p>
+              </div>
+            </FadeIn>
+          )}
+
+          {/* Before/After Slider - Page-specific images when available */}
+          {data.beforeAfterImages && (
+            <FadeIn delay={0.25}>
+              <div className="py-12">
+                <div className="max-w-3xl mx-auto">
+                  <BeforeAfterSlider
+                    beforeUrl={data.beforeAfterImages.before}
+                    afterUrl={data.beforeAfterImages.after}
+                    beforeLabel={data.beforeAfterImages.beforeLabel ?? sliderLabels.before}
+                    afterLabel={data.beforeAfterImages.afterLabel ?? sliderLabels.after}
+                    className="shadow-2xl shadow-accent/10"
+                  />
+                </div>
               </div>
             </FadeIn>
           )}

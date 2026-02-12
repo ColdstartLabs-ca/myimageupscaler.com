@@ -2,14 +2,14 @@
 
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
-import { FadeIn } from '@client/components/ui/MotionWrappers';
+import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/MotionWrappers';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { clientEnv } from '@shared/config/env';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Layers, Maximize2, Sparkles, User, Wand2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, lazy, useEffect } from 'react';
@@ -115,7 +115,7 @@ export function HomePageClient(): JSX.Element {
             <span className="group-hover:scale-105 transition-transform">{t('badge')}</span>
             <span className="w-px h-3 bg-white/10 mx-1"></span>
             <span className="text-muted-foreground group-hover:text-white transition-colors">
-              {t('badgeVersion')}
+              {t('badgeVersion', { year: new Date().getFullYear() })}
             </span>
           </motion.div>
 
@@ -174,72 +174,89 @@ export function HomePageClient(): JSX.Element {
             </motion.button>
           </motion.div>
 
-          <motion.p variants={heroItemVariants} className="mt-4 text-sm text-text-muted">
-            {t('ctaSubtext')}
-          </motion.p>
-
-          
           <motion.p variants={heroItemVariants} className="mt-4 text-sm text-text-muted-aa">
             {t('ctaSubtext')}
           </motion.p>
-          {/* Definition Section - Extractable for Featured Snippets */}
+          {/* Hero Before/After Slider */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.7, ease: [0.25, 0.4, 0.25, 1] as const }}
-            className="mt-12 max-w-4xl mx-auto px-4"
-          >
-            <div className="bg-surface-light/50 rounded-2xl p-8 border border-border">
-              <h2 className="text-2xl font-bold text-text-primary mb-4">
-                What is {clientEnv.APP_NAME}?
-              </h2>
-              <p className="text-lg text-text-secondary leading-relaxed mb-6">
-                {clientEnv.APP_NAME} is a professional AI-powered image upscaling and enhancement platform that transforms low-resolution images into stunning high-quality visuals. Using advanced neural networks and machine learning algorithms, it intelligently enlarges photos while preserving sharpness, details, and natural appearance.
-              </p>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-2">
-                    Image Upscaling
-                  </h3>
-                  <p className="text-base text-text-muted-aa">
-                    Increase image resolution up to 4x while maintaining quality. Perfect for printing, web display, and professional use.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-2">
-                    Photo Enhancement
-                  </h3>
-                  <p className="text-base text-text-muted-aa">
-                    Automatically improve photo quality with AI. Fix blur, adjust colors, and restore details in seconds.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-2">
-                    Face Restoration
-                  </h3>
-                  <p className="text-base text-text-muted-aa">
-                    Bring old or damaged photos back to life with AI-powered restoration technology.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-2">
-                    Batch Processing
-                  </h3>
-                  <p className="text-base text-text-muted-aa">
-                    Process multiple images at once with bulk tools. Save time on large projects.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-{/* Hero Before/After Slider */}
-          <motion.div
-            className="mt-12"
+            className="mt-16"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.7, ease: [0.25, 0.4, 0.25, 1] as const }}
           >
             <HeroBeforeAfter />
+          </motion.div>
+
+          {/* Definition Section - Extractable for Featured Snippets */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.4, 0.25, 1] as const }}
+            className="mt-24 max-w-5xl mx-auto px-4"
+          >
+            <div className="text-center mb-12">
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="text-3xl sm:text-4xl font-black text-white mb-4"
+              >
+                What is <span className="gradient-text-primary">{clientEnv.APP_NAME}</span>?
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="text-lg sm:text-xl text-text-secondary leading-relaxed max-w-3xl mx-auto font-light"
+              >
+                Professional AI image enhancement that preserves real detail. No blur, no artifacts—just crisp, high-quality results.
+              </motion.p>
+            </div>
+
+            {/* Features List - Premium Cards */}
+            <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {[
+                {
+                  title: 'Image Upscaling',
+                  subtitle: 'Increase resolution up to 4x while maintaining quality. Perfect for printing, web display, and professional use.',
+                  icon: <Maximize2 className="text-accent" size={20} />,
+                },
+                {
+                  title: 'Photo Enhancement',
+                  subtitle: 'Automatically improve photo quality with AI. Fix blur, adjust colors, and restore details in seconds.',
+                  icon: <Wand2 className="text-secondary" size={20} />,
+                },
+                {
+                  title: 'Face Restoration',
+                  subtitle: 'Bring old or damaged photos back to life with AI-powered restoration technology.',
+                  icon: <User className="text-accent" size={20} />,
+                },
+                {
+                  title: 'Batch Processing',
+                  subtitle: 'Process multiple images at once with bulk tools. Save time on large projects.',
+                  icon: <Layers className="text-secondary" size={20} />,
+                },
+              ].map((feature, index) => (
+                <StaggerItem key={feature.title}>
+                  <motion.div
+                    className="group glass-card-2025 p-8 text-left h-full flex flex-col items-start gap-4 animated-border-violet"
+                    whileHover={{ y: -4 }}
+                  >
+                    <div className="p-3 bg-white/5 rounded-xl group-hover:bg-accent/10 transition-colors">
+                      {feature.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-accent transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-text-secondary leading-relaxed font-light">
+                        {feature.subtitle}
+                      </p>
+                    </div>
+                  </motion.div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
           </motion.div>
         </motion.div>
       </section>
@@ -324,10 +341,10 @@ export function HomePageClient(): JSX.Element {
 
       {/* Final CTA Section */}
       <FadeIn>
-        <section className="relative py-32 section-glow-top">
+        <section className="relative py-32 section-glow-top overflow-hidden">
           {/* Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-main to-accent/10"></div>
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
+          <AmbientBackground variant="section" />
 
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl sm:text-6xl font-black text-white mb-6">

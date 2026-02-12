@@ -1,7 +1,7 @@
 {
   "homepage": {
     "badge": "Aprimoramento com IA",
-    "badgeVersion": "v2.0 Edição 2025",
+    "badgeVersion": "v2.0 Edição {year}",
     "heroTitle": "Ampliador de Imagens com IA &",
     "heroTitleHighlight": "Melhorador de Fotos",
     "heroSubtitle": "Aprimore a qualidade da imagem para 4K em segundos.",
@@ -40,7 +40,7 @@
     "toastLoginRequired": "Por favor, entre para acessar o painel"
   },
   "footer": {
-    "description": "Ampliação e aprimoramento de imagens com IA para profissionais e criadores. Precisão projetada para 2025.",
+    "description": "Ampliação e aprimoramento de imagens com IA para profissionais e criadores. Precisão projetada para {year}.",
     "copyright": "Precisão feita para criadores.",
     "allRightsReserved": "Todos os direitos reservados.",
     "product": "Produto",

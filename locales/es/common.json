@@ -1,7 +1,7 @@
 {
   "homepage": {
     "badge": "Mejora con IA",
-    "badgeVersion": "v2.0 Edición 2025",
+    "badgeVersion": "v2.0 Edición {year}",
     "heroTitle": "Escalador de Imágenes IA y",
     "heroTitleHighlight": "Mejorador de Fotos",
     "heroSubtitle": "Mejora la calidad de imagen a 4K en segundos.",
@@ -40,7 +40,7 @@
     "toastLoginRequired": "Por favor inicia sesión para acceder al panel"
   },
   "footer": {
-    "description": "Mejora de imágenes con IA para profesionales y creadores. Diseñado con precisión para 2025.",
+    "description": "Mejora de imágenes con IA para profesionales y creadores. Diseñado con precisión para {year}.",
     "copyright": "Precisión hecha para creadores.",
     "allRightsReserved": "Todos los derechos reservados.",
     "product": "Producto",

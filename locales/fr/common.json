@@ -1,7 +1,7 @@
 {
   "homepage": {
     "badge": "Amélioration propulsée par l'IA",
-    "badgeVersion": "v2.0 Édition 2025",
+    "badgeVersion": "v2.0 Édition {year}",
     "heroTitle": "Agrandisseur d'images IA et",
     "heroTitleHighlight": "Améliorateur de qualité d'image",
     "heroSubtitle": "Améliorez la qualité des images en 4K en quelques secondes.",
@@ -79,7 +79,7 @@
     "legal": "Mentions légales",
     "privacy": "Confidentialité",
     "terms": "Conditions",
-    "copyright": "© 2025 MyImageUpscaler. Tous droits réservés.",
+    "copyright": "Précision faite pour les créateurs.",
     "allRightsReserved": "Tous droits réservés.",
     "pricingPlans": "Forfaits tarifaires",
     "latestUpdates": "Dernières mises à jour",

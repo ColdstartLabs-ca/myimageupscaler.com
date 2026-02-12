@@ -11,14 +11,17 @@ import type { Locale } from '@/i18n/config';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IScalePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { ArrowRight, Maximize2, Monitor, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
+import { ComparisonTableSection } from '../sections/ComparisonTableSection';
 import { CTASection } from '../sections/CTASection';
 import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
+import { HowItWorksSection } from '../sections/HowItWorksSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 
@@ -143,7 +146,22 @@ export function ScalePageTemplate({
             </FadeIn>
           )}
 
-          {/* Before/After Slider Removed (Bird Image) */}
+          {/* Before/After Slider - Page-specific images when available */}
+          {data.beforeAfterImages && (
+            <FadeIn delay={0.4}>
+              <div className="py-12">
+                <div className="max-w-3xl mx-auto">
+                  <BeforeAfterSlider
+                    beforeUrl={data.beforeAfterImages.before}
+                    afterUrl={data.beforeAfterImages.after}
+                    beforeLabel={data.beforeAfterImages.beforeLabel ?? sliderLabels.before}
+                    afterLabel={data.beforeAfterImages.afterLabel ?? sliderLabels.after}
+                    className="shadow-2xl shadow-accent/10"
+                  />
+                </div>
+              </div>
+            </FadeIn>
+          )}
 
           {/* Resolution Specs */}
           {data.dimensions && (
@@ -221,60 +239,72 @@ export function ScalePageTemplate({
             </FadeIn>
           )}
 
-          {/* How It Works */}
-          <FadeIn delay={0.55}>
-            <section className="py-12">
-              <h2 className="text-3xl font-bold text-white text-center mb-6">
-                How AI Upscaling to {data.resolution} Works
-              </h2>
-              <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
-                Our advanced AI technology analyzes your image and intelligently adds detail,
-                resulting in crystal clear {data.resolution} output.
-              </p>
-              <div className="max-w-3xl mx-auto space-y-12">
-                <div className="flex gap-6">
-                  <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg shadow-accent/20">
-                    1
-                  </div>
-                  <div className="flex-1 pb-6 border-b border-white/10">
-                    <h3 className="font-bold text-white text-xl mb-2">Upload Your Image</h3>
-                    <p className="text-text-secondary text-lg">
-                      Simply drag and drop or select any image from your device. Our system supports
-                      all common formats including JPEG, PNG, WebP, and more.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-6">
-                  <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg shadow-accent/20">
-                    2
-                  </div>
-                  <div className="flex-1 pb-6 border-b border-white/10">
-                    <h3 className="font-bold text-white text-xl mb-2">AI Analysis & Enhancement</h3>
-                    <p className="text-text-secondary text-lg">
-                      Our neural network analyzes your image at the pixel level, identifying edges,
-                      textures, and patterns. It then intelligently generates new pixels to enlarge
-                      your image to {data.resolution} while maintaining sharpness and clarity.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-6">
-                  <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg shadow-accent/20">
-                    3
-                  </div>
-                  <div className="flex-1 pb-6 last:border-0">
-                    <h3 className="font-bold text-white text-xl mb-2">
-                      Download {data.resolution} Result
-                    </h3>
-                    <p className="text-text-secondary text-lg">
-                      Within seconds, your upscaled image is ready. Download it in full{' '}
-                      {data.resolution} quality, perfect for printing, professional use, or
-                      high-resolution displays.
-                    </p>
-                  </div>
-                </div>
+          {/* How It Works - use data.howItWorks if available, otherwise show generic steps */}
+          {data.howItWorks && data.howItWorks.length > 0 ? (
+            <FadeIn delay={0.55}>
+              <div className="py-12">
+                <HowItWorksSection
+                  title={`How AI Upscaling to ${data.resolution} Works`}
+                  subtitle={`Our advanced AI technology analyzes your image and intelligently adds detail, resulting in crystal clear ${data.resolution} output.`}
+                  steps={data.howItWorks}
+                />
               </div>
-            </section>
-          </FadeIn>
+            </FadeIn>
+          ) : (
+            <FadeIn delay={0.55}>
+              <section className="py-12">
+                <h2 className="text-3xl font-bold text-white text-center mb-6">
+                  How AI Upscaling to {data.resolution} Works
+                </h2>
+                <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
+                  Our advanced AI technology analyzes your image and intelligently adds detail,
+                  resulting in crystal clear {data.resolution} output.
+                </p>
+                <div className="max-w-3xl mx-auto space-y-12">
+                  <div className="flex gap-6">
+                    <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg shadow-accent/20">
+                      1
+                    </div>
+                    <div className="flex-1 pb-6 border-b border-white/10">
+                      <h3 className="font-bold text-white text-xl mb-2">Upload Your Image</h3>
+                      <p className="text-text-secondary text-lg">
+                        Simply drag and drop or select any image from your device. Our system supports
+                        all common formats including JPEG, PNG, WebP, and more.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-6">
+                    <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg shadow-accent/20">
+                      2
+                    </div>
+                    <div className="flex-1 pb-6 border-b border-white/10">
+                      <h3 className="font-bold text-white text-xl mb-2">AI Analysis & Enhancement</h3>
+                      <p className="text-text-secondary text-lg">
+                        Our neural network analyzes your image at the pixel level, identifying edges,
+                        textures, and patterns. It then intelligently generates new pixels to enlarge
+                        your image to {data.resolution} while maintaining sharpness and clarity.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-6">
+                    <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg shadow-accent/20">
+                      3
+                    </div>
+                    <div className="flex-1 pb-6 last:border-0">
+                      <h3 className="font-bold text-white text-xl mb-2">
+                        Download {data.resolution} Result
+                      </h3>
+                      <p className="text-text-secondary text-lg">
+                        Within seconds, your upscaled image is ready. Download it in full{' '}
+                        {data.resolution} quality, perfect for printing, professional use, or
+                        high-resolution displays.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </FadeIn>
+          )}
 
           {/* When to Use This Resolution */}
           <FadeIn delay={0.6}>
@@ -316,96 +346,143 @@ export function ScalePageTemplate({
           </FadeIn>
 
           {/* Comparison with Other Resolutions */}
-          <FadeIn delay={0.65}>
-            <section className="py-12">
-              <h2 className="text-3xl font-bold text-white text-center mb-6">
-                {data.resolution} vs Other Resolutions
-              </h2>
-              <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
-                Compare {data.resolution} with common image resolutions to understand the difference
-                in quality and use cases.
-              </p>
-              <div className="max-w-4xl mx-auto overflow-hidden rounded-2xl glass-card-2025 border-white/10">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="border-b border-white/10 bg-white/5">
-                        <th className="py-6 px-8 text-lg font-bold text-white">Resolution</th>
-                        <th className="py-6 px-8 text-lg font-bold text-white">Dimensions</th>
-                        <th className="py-6 px-8 text-lg font-bold text-white">Best For</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/10">
-                      <tr>
-                        <td className="py-5 px-8 font-bold text-white">720p (HD)</td>
-                        <td className="py-5 px-8 text-text-secondary font-mono">1280 × 720</td>
-                        <td className="py-5 px-8 text-text-secondary">Web sharing, social media</td>
-                      </tr>
-                      <tr>
-                        <td className="py-5 px-8 font-bold text-white">1080p (Full HD)</td>
-                        <td className="py-5 px-8 text-text-secondary font-mono">1920 × 1080</td>
-                        <td className="py-5 px-8 text-text-secondary">YouTube, presentations</td>
-                      </tr>
-                      <tr className="bg-accent/10">
-                        <td className="py-5 px-8 font-extrabold text-accent">{data.resolution}</td>
-                        <td className="py-5 px-8 text-accent font-mono">
-                          {data.dimensions?.width || '—'} × {data.dimensions?.height || '—'}
-                        </td>
-                        <td className="py-5 px-8 text-accent font-bold">Professional print, 4K displays</td>
-                      </tr>
-                      <tr>
-                        <td className="py-5 px-8 font-bold text-white">8K (UHD)</td>
-                        <td className="py-5 px-8 text-text-secondary font-mono">7680 × 4320</td>
-                        <td className="py-5 px-8 text-text-secondary">Large format printing, cinema</td>
-                      </tr>
-                    </tbody>
-                  </table>
+          {data.comparisonTable ? (
+            <ComparisonTableSection comparisonTable={data.comparisonTable} />
+          ) : (
+            <FadeIn delay={0.65}>
+              <section className="py-12">
+                <h2 className="text-3xl font-bold text-white text-center mb-6">
+                  {data.resolution} vs Other Resolutions
+                </h2>
+                <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
+                  Compare {data.resolution} with common image resolutions to understand the
+                  difference in quality and use cases.
+                </p>
+                <div className="max-w-4xl mx-auto overflow-hidden rounded-2xl glass-card-2025 border-white/10">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="border-b border-white/10 bg-white/5">
+                          <th className="py-6 px-8 text-lg font-bold text-white">
+                            Resolution
+                          </th>
+                          <th className="py-6 px-8 text-lg font-bold text-white">
+                            Dimensions
+                          </th>
+                          <th className="py-6 px-8 text-lg font-bold text-white">Best For</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/10">
+                        <tr>
+                          <td className="py-5 px-8 font-bold text-white">720p (HD)</td>
+                          <td className="py-5 px-8 text-text-secondary font-mono">
+                            1280 × 720
+                          </td>
+                          <td className="py-5 px-8 text-text-secondary">
+                            Web sharing, social media
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-5 px-8 font-bold text-white">
+                            1080p (Full HD)
+                          </td>
+                          <td className="py-5 px-8 text-text-secondary font-mono">
+                            1920 × 1080
+                          </td>
+                          <td className="py-5 px-8 text-text-secondary">
+                            YouTube, presentations
+                          </td>
+                        </tr>
+                        <tr className="bg-accent/10">
+                          <td className="py-5 px-8 font-extrabold text-accent">
+                            {data.resolution}
+                          </td>
+                          <td className="py-5 px-8 text-accent font-mono">
+                            {data.dimensions?.width || '—'} × {data.dimensions?.height || '—'}
+                          </td>
+                          <td className="py-5 px-8 text-accent font-bold">
+                            Professional print, 4K displays
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-5 px-8 font-bold text-white">8K (UHD)</td>
+                          <td className="py-5 px-8 text-text-secondary font-mono">
+                            7680 × 4320
+                          </td>
+                          <td className="py-5 px-8 text-text-secondary">
+                            Large format printing, cinema
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-            </section>
-          </FadeIn>
+              </section>
+            </FadeIn>
+          )}
 
-          {/* Technical Details */}
-          <FadeIn delay={0.7}>
-            <section className="py-12">
-              <h2 className="text-3xl font-bold text-white text-center mb-6">
-                Technical Details: AI-Powered Upscaling
-              </h2>
-              <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
-                Learn about the technology behind our {data.resolution} upscaling process.
-              </p>
-              <div className="max-w-4xl mx-auto space-y-8">
-                <div className="glass-card-2025 p-8">
-                  <h3 className="font-bold text-white text-xl mb-4">Neural Network Architecture</h3>
-                  <p className="text-text-secondary text-lg leading-relaxed">
-                    Our upscaling system uses deep convolutional neural networks (CNNs) trained on
-                    millions of high-resolution image pairs. The network learns to intelligently
-                    predict and generate missing pixel information when enlarging images to{' '}
-                    {data.resolution}, resulting in natural-looking details without artifacts or
-                    blurring.
-                  </p>
+          {/* Technical Details - use data.technicalDetails if available */}
+          {data.technicalDetails && data.technicalDetails.length > 0 ? (
+            <FadeIn delay={0.7}>
+              <section className="py-12">
+                <h2 className="text-3xl font-bold text-white text-center mb-6">
+                  Technical Details: {data.resolution} AI Upscaling
+                </h2>
+                <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
+                  Learn about the technology behind our {data.resolution} upscaling process.
+                </p>
+                <div className="max-w-4xl mx-auto space-y-8">
+                  {data.technicalDetails.map((detail, idx) => (
+                    <div key={idx} className="glass-card-2025 p-8">
+                      <h3 className="font-bold text-white text-xl mb-4">{detail.title}</h3>
+                      <p className="text-text-secondary text-lg leading-relaxed">{detail.description}</p>
+                    </div>
+                  ))}
                 </div>
-                <div className="glass-card-2025 p-8">
-                  <h3 className="font-bold text-white text-xl mb-4">Edge-Preserving Algorithms</h3>
-                  <p className="text-text-secondary text-lg leading-relaxed">
-                    Unlike traditional interpolation methods that blur edges, our AI detects and
-                    preserves important edges and fine details. When upscaling to {data.resolution},
-                    lines remain sharp, textures look natural, and text stays readable even at
-                    significant enlargement ratios.
-                  </p>
+              </section>
+            </FadeIn>
+          ) : (
+            <FadeIn delay={0.7}>
+              <section className="py-12">
+                <h2 className="text-3xl font-bold text-white text-center mb-6">
+                  Technical Details: AI-Powered Upscaling
+                </h2>
+                <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
+                  Learn about the technology behind our {data.resolution} upscaling process.
+                </p>
+                <div className="max-w-4xl mx-auto space-y-8">
+                  <div className="glass-card-2025 p-8">
+                    <h3 className="font-bold text-white text-xl mb-4">Neural Network Architecture</h3>
+                    <p className="text-text-secondary text-lg leading-relaxed">
+                      Our upscaling system uses deep convolutional neural networks (CNNs) trained on
+                      millions of high-resolution image pairs. The network learns to intelligently
+                      predict and generate missing pixel information when enlarging images to{' '}
+                      {data.resolution}, resulting in natural-looking details without artifacts or
+                      blurring.
+                    </p>
+                  </div>
+                  <div className="glass-card-2025 p-8">
+                    <h3 className="font-bold text-white text-xl mb-4">Edge-Preserving Algorithms</h3>
+                    <p className="text-text-secondary text-lg leading-relaxed">
+                      Unlike traditional interpolation methods that blur edges, our AI detects and
+                      preserves important edges and fine details. When upscaling to {data.resolution},
+                      lines remain sharp, textures look natural, and text stays readable even at
+                      significant enlargement ratios.
+                    </p>
+                  </div>
+                  <div className="glass-card-2025 p-8">
+                    <h3 className="font-bold text-white text-xl mb-4">Format & Color Preservation</h3>
+                    <p className="text-text-secondary text-lg leading-relaxed">
+                      Your {data.resolution} output maintains the original color profile and supports
+                      the same format as your input. Whether you&apos;re working with sRGB for web or
+                      Adobe RGB for print, color accuracy is preserved throughout the upscaling
+                      process.
+                    </p>
+                  </div>
                 </div>
-                <div className="glass-card-2025 p-8">
-                  <h3 className="font-bold text-white text-xl mb-4">Format & Color Preservation</h3>
-                  <p className="text-text-secondary text-lg leading-relaxed">
-                    Your {data.resolution} output maintains the original color profile and supports
-                    the same format as your input. Whether you&apos;re working with sRGB for web or
-                    Adobe RGB for print, color accuracy is preserved throughout the upscaling
-                    process.
-                  </p>
-                </div>
-              </div>
-            </section>
-          </FadeIn>
+              </section>
+            </FadeIn>
+          )}
 
           {/* Related Pages */}
           {relatedPages.length > 0 && (

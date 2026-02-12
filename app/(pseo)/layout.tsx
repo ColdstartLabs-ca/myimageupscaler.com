@@ -80,6 +80,14 @@ export default async function PSEOLayout({ children }: IPSEOLayoutProps) {
     inLanguage: DEFAULT_LOCALE,
     description:
       'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${BASE_URL}/blog?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   };
 
   const organizationJsonLd = {

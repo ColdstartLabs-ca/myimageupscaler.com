@@ -10,6 +10,7 @@ import type { Locale } from '@/i18n/config';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IGuidePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { ArrowRight, BarChart3, BookOpen, CheckCircle2, Clock, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 import { ReactElement } from 'react';
@@ -128,7 +129,22 @@ export function GuidePageTemplate({ data, locale, relatedPages = [] }: IGuidePag
             </FadeIn>
           )}
 
-          {/* Before/After Slider Removed (Bird Image) */}
+          {/* Before/After Slider - Page-specific images when available */}
+          {data.beforeAfterImages && (
+            <FadeIn delay={0.35}>
+              <div className="py-12">
+                <div className="max-w-3xl mx-auto">
+                  <BeforeAfterSlider
+                    beforeUrl={data.beforeAfterImages.before}
+                    afterUrl={data.beforeAfterImages.after}
+                    beforeLabel={data.beforeAfterImages.beforeLabel ?? 'Before'}
+                    afterLabel={data.beforeAfterImages.afterLabel ?? 'After'}
+                    className="shadow-2xl shadow-accent/10"
+                  />
+                </div>
+              </div>
+            </FadeIn>
+          )}
 
           {/* Step-by-Step Instructions */}
           {data.steps && data.steps.length > 0 && (

@@ -1,7 +1,7 @@
 {
   "homepage": {
     "badge": "AI搭載高画質化",
-    "badgeVersion": "v2.0 2025年版",
+    "badgeVersion": "v2.0 {year}年版",
     "heroTitle": "AI画像アップスケーラー＆",
     "heroTitleHighlight": "写真向上ツール",
     "heroSubtitle": "数秒で画像の画質を4Kに向上。",
@@ -40,7 +40,7 @@
     "toastLoginRequired": "ダッシュボードにアクセスするにはサインインしてください"
   },
   "footer": {
-    "description": "プロフェッショナルとクリエイター向けのAI搭載画像アップスケーリングと向上ツール。2025年に向けて精密に設計されています。",
+    "description": "プロフェッショナルとクリエイター向けのAI搭載画像アップスケーリングと向上ツール。{year}年に向けて精密に設計されています。",
     "copyright": "クリエイターのために精密に作られています。",
     "allRightsReserved": "すべての権利を保有。",
     "product": "製品",

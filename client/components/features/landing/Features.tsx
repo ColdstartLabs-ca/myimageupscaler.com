@@ -47,13 +47,13 @@ const Features: React.FC = () => {
     <section id="features" className="py-32 bg-main relative">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="mx-auto max-w-2xl lg:text-center mb-16">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
             {t('section.badge')}
-          </h2>
-          <p className="text-4xl font-black tracking-tight text-white sm:text-5xl">
+          </h3>
+          <h2 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
             {t('section.title')}{' '}
             <span className="gradient-text-primary">{t('section.titleHighlight')}</span>
-          </p>
+          </h2>
           <p className="mt-6 text-xl text-text-secondary leading-8 font-light">
             {t('section.description')}
           </p>
@@ -84,31 +84,27 @@ const Features: React.FC = () => {
           ))}
         </StaggerContainer>
 
-        {/* Secondary Feature Strip */}
-        <FadeIn delay={0.3} className="mt-24 border-t border-border pt-16">
-          <StaggerContainer
-            staggerDelay={0.1}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
-          >
+        {/* Secondary Feature Strip - Improved Alignment */}
+        <FadeIn delay={0.3} className="mt-24 border-t border-white/5 pt-16">
+          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-10 md:gap-x-20">
             {secondaryFeatures.map(feature => (
-              <StaggerItem key={feature.name}>
-                <motion.div
-                  className="flex flex-col items-center gap-3 group"
-                  whileHover={{ y: -4 }}
-                >
-                  <div className="p-3 bg-surface rounded-full text-text-muted transition-all duration-300 group-hover:bg-accent/20 group-hover:text-accent">
-                    <feature.icon size={20} />
-                  </div>
-                  <span className="font-bold text-white group-hover:text-accent transition-colors tracking-wide">
-                    {feature.name}
-                  </span>
-                </motion.div>
-              </StaggerItem>
+              <motion.div
+                key={feature.name}
+                className="flex flex-col items-center gap-4 group"
+                whileHover={{ y: -4 }}
+              >
+                <div className="p-3 bg-white/5 rounded-full text-text-muted transition-all duration-300 group-hover:bg-accent/20 group-hover:text-accent group-hover:scale-110">
+                  <feature.icon size={20} />
+                </div>
+                <span className="text-sm font-bold text-text-secondary group-hover:text-white transition-colors tracking-wide whitespace-nowrap">
+                  {feature.name}
+                </span>
+              </motion.div>
             ))}
-          </StaggerContainer>
+          </div>
         </FadeIn>
       </div>
-    </section>
+    </section >
   );
 };
 

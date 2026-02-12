@@ -1,7 +1,7 @@
 {
   "homepage": {
     "badge": "AI-Powered Enhancement",
-    "badgeVersion": "v2.0 2025 Edition",
+    "badgeVersion": "v2.0 {year} Edition",
     "heroTitle": "AI Image Upscaler &",
     "heroTitleHighlight": "Photo Enhancer",
     "heroSubtitle": "Enhance image quality to 4K in seconds.",
@@ -42,7 +42,7 @@
     "featuredOnDescription": "Trusted by developers and featured across the web"
   },
   "footer": {
-    "description": "AI-powered image upscaling and enhancement for professionals and creators. Precision-engineered for 2025.",
+    "description": "AI-powered image upscaling and enhancement for professionals and creators. Precision-engineered for {year}.",
     "copyright": "Precision made for creators.",
     "allRightsReserved": "All rights reserved.",
     "product": "Product",

@@ -1,7 +1,7 @@
 {
   "homepage": {
     "badge": "KI-gestützte Verbesserung",
-    "badgeVersion": "v2.0 2025 Ausgabe",
+    "badgeVersion": "v2.0 {year} Ausgabe",
     "heroTitle": "KI-Bild-Upscaler &",
     "heroTitleHighlight": "Foto-Verbesserer",
     "heroSubtitle": "Verbessern Sie die Bildqualität bis zu 4K in Sekunden.",
@@ -40,7 +40,7 @@
     "toastLoginRequired": "Bitte melden Sie sich an, um auf das Dashboard zuzugreifen"
   },
   "footer": {
-    "description": "KI-gestütztes Bild-Upscaling und -Verbesserung für Profis und Kreative. Präzisionstechnik für 2025.",
+    "description": "KI-gestütztes Bild-Upscaling und -Verbesserung für Profis und Kreative. Präzisionstechnik für {year}.",
     "copyright": "Präzision gemacht für Kreative.",
     "allRightsReserved": "Alle Rechte vorbehalten.",
     "product": "Produkt",

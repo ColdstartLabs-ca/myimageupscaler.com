@@ -3,8 +3,8 @@
 import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/MotionWrappers';
 import { motion } from 'framer-motion';
 import { ArrowRight, Download, UploadCloud, Wand2 } from 'lucide-react';
-import React from 'react';
 import { useTranslations } from 'next-intl';
+import React from 'react';
 
 const HowItWorks: React.FC = () => {
   const t = useTranslations('howItWorks');
@@ -37,13 +37,13 @@ const HowItWorks: React.FC = () => {
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="text-center mb-24">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
             {t('section.badge')}
-          </h2>
-          <p className="text-4xl font-black tracking-tight text-white sm:text-5xl mb-6">
+          </h3>
+          <h2 className="text-4xl font-black tracking-tight text-white sm:text-5xl mb-6">
             {t('section.title')}{' '}
             <span className="gradient-text-primary">{t('section.titleHighlight')}</span>
-          </p>
+          </h2>
           <p className="text-xl text-text-secondary max-w-2xl mx-auto font-light">
             {t('section.description')}
           </p>
@@ -112,20 +112,6 @@ const HowItWorks: React.FC = () => {
           </StaggerContainer>
         </div>
 
-        {/* Call to Action Area */}
-        <FadeIn delay={0.5} className="mt-24 text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl glass-strong shadow-sm group cursor-help">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-            </span>
-            <span className="text-sm font-bold text-text-secondary tracking-widest uppercase">
-              {t('status.systemOperational')}
-            </span>
-            <span className="text-white/10 mx-2">|</span>
-            <span className="text-xs text-text-muted font-medium">{t('status.nodesActive')}</span>
-          </div>
-        </FadeIn>
       </div>
     </section>
   );

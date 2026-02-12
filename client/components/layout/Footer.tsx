@@ -1,10 +1,10 @@
-import { clientEnv } from '@shared/config/env';
 import { DEFAULT_LOCALE } from '@/i18n/config';
+import { LocaleSwitcher } from '@client/components/i18n/LocaleSwitcher';
+import { clientEnv } from '@shared/config/env';
+import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { JSX } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
-import { LocaleSwitcher } from '@client/components/i18n/LocaleSwitcher';
 
 export const Footer = (): JSX.Element => {
   const t = useTranslations('footer');
@@ -38,8 +38,8 @@ export const Footer = (): JSX.Element => {
                 className="h-10 w-auto"
               />
             </Link>
-          <p className="text-sm font-medium leading-relaxed max-w-xs">
-              {t('description')}
+            <p className="text-sm font-medium leading-relaxed max-w-xs">
+              {t('description', { year: currentYear })}
             </p>
           </div>
 

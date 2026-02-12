@@ -14,7 +14,7 @@
 ### Overall SEO Health Score: 56/100 (updated 2026-02-12 from 54/100)
 
 **Progress:**
-- ✅ Trailing slash canonicalization fixed (middleware.ts)
+- ✅ Trailing slash canonicalization fixed
 - ✅ force-static added to all pSEO pages (23 files)
 - ✅ GTM loading deferred (`lazyOnload` strategy)
 - ✅ llms.txt created and live
@@ -39,7 +39,7 @@
 
 1. **[CRITICAL] 0/1,471 sitemap pages indexed by Google** - Root cause identified: pSEO pages have ~25% unique content ratio (doorway page pattern), DR 0 starves crawl budget. No `noindex` or blocking found — the problem is content quality + authority. `force-static` now added to prevent SSR timeouts. (See Section 1b)
 2. **[CRITICAL] Domain authority is zero (DR 0)** - Only 8 referring domains vs competitors with 5,000+. Google won't invest crawl budget in 1,471 URLs from an untrusted domain. (Ahrefs: 0 organic traffic value)
-3. ~~**[CRITICAL] AI bots blocked in production**~~ ✅ **RESOLVED** - robots.ts correctly deployed, AI bots now allowed (GPTBot, ClaudeBot, Google-Extended verified live 2026-02-12). (DONE)
+3. ✅ **[CRITICAL] AI bots blocked in production** - robots.ts correctly deployed, AI bots now allowed (GPTBot, ClaudeBot, Google-Extended verified live 2026-02-12). (DONE)
 4. **[HIGH] Mobile LCP 7.8s** - Critically slow mobile performance driven by 440KB unused JavaScript. Google CWV assessment: FAIL. (PageSpeed mobile: 56/100)
 5. **[HIGH] pSEO content uniqueness** - Only ~25% unique content per page. `force-static` added, but Google still detects doorway page pattern. Requires content investment.
 

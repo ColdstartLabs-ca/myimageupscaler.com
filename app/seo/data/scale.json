@@ -30,6 +30,12 @@
         "Professional presentations",
         "Digital signage"
       ],
+      "beforeAfterImages": {
+        "before": "/before-after/girl-before.webp",
+        "after": "/before-after/girl-after.webp",
+        "beforeLabel": "Before (1080p)",
+        "afterLabel": "After (4K)"
+      },
       "benefits": [
         {
           "title": "Cinema-Quality Resolution",
