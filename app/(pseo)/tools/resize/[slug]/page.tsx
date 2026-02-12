@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import interactiveToolsData from '@/app/seo/data/interactive-tools.json';
 import bulkToolsData from '@/app/seo/data/bulk-tools.json';
+import socialMediaResizeData from '@/app/seo/data/social-media-resize.json';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { generateToolSchema } from '@/lib/seo/schema-generator';
@@ -10,6 +11,7 @@ import type { IToolPage, IBulkToolPage, IPSEODataFile } from '@/lib/seo/pseo-typ
 
 const toolsData = interactiveToolsData as IPSEODataFile<IToolPage>;
 const bulkData = bulkToolsData as unknown as IPSEODataFile<IBulkToolPage>;
+const socialData = socialMediaResizeData as unknown as IPSEODataFile<IToolPage>;
 
 // Resize tool slugs from interactive-tools.json and bulk-tools.json
 const RESIZE_SLUGS = [
@@ -27,6 +29,8 @@ function findToolBySlug(slug: string): IToolPage | null {
   if (tool) return tool;
   const bulkTool = bulkData.pages.find(p => p.slug === slug);
   if (bulkTool) return { ...bulkTool, category: 'tools' as const } as unknown as IToolPage;
+  const socialTool = socialData.pages.find(p => p.slug === slug);
+  if (socialTool) return socialTool;
   return null;
 }
 

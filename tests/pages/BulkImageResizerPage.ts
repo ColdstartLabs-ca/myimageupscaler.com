@@ -53,14 +53,11 @@ export class BulkImageResizerPage extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    // Page header - target the main H1 in the template (text-4xl in hero section)
-    this.pageTitle = page
-      .locator('h1.text-4xl, h1.text-5xl')
-      .filter({ hasText: /bulk image resizer/i })
-      .first();
+    // Page header - use role-based selector for resilience against class changes
+    this.pageTitle = page.getByRole('heading', { level: 1, name: /bulk image resizer/i });
 
-    // Page description - target ONLY the hero intro paragraph (py-8 section, text-xl)
-    this.pageDescription = page.locator('.py-8 p.text-xl').first();
+    // Page description - target the hero intro paragraph (text-xl inside hero section)
+    this.pageDescription = page.locator('section p.text-xl').first();
 
     // Settings panel - use global ID selectors (IDs are unique per page)
     this.widthInput = page.locator('input#width');

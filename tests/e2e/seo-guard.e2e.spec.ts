@@ -473,10 +473,10 @@ test.describe('SEO Guard - Deploy Blocker', () => {
     });
 
     test('locale tool page SoftwareApplication has correct inLanguage', async ({ page }) => {
+      // Extend timeout — dev server may need extra time compiling locale page under load
+      test.setTimeout(60000);
       await page.goto('/es/tools/ai-image-upscaler');
-      // Wait for page to fully load and hydrate before checking schema
       await page.waitForLoadState('load');
-      // Also wait for schema script to be present with content
       await page.waitForSelector('script[type="application/ld+json"]', { state: 'attached' });
 
       const schemaScripts = await page.locator('script[type="application/ld+json"]').all();

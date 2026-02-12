@@ -64,9 +64,8 @@ export class BulkImageCompressorPage extends BasePage {
     // Use getByText for more reliable text matching regardless of exact CSS classes
     this.pageTitle = page.getByRole('heading', { level: 1, name: /bulk image compressor/i });
 
-    // Page description - target ONLY the hero intro paragraph (py-8 section, text-xl)
-    // Using first() to handle multiple matches
-    this.pageDescription = page.locator('.py-8 p.text-xl').first();
+    // Page description - target the hero intro paragraph (text-xl inside hero section)
+    this.pageDescription = page.locator('section p.text-xl').first();
 
     // Settings panel - use global ID selectors (IDs are unique per page)
     this.qualitySlider = page.locator('input#quality');
