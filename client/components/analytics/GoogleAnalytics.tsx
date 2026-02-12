@@ -81,15 +81,15 @@ export function GoogleAnalytics(): ReactElement | null {
 
   return (
     <>
-      {/* Load gtag.js */}
+      {/* Load gtag.js with lazyOnload to defer blocking */}
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
       {/* Initialize gtag */}
       <Script
         id="google-analytics-init"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];

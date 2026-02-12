@@ -85,14 +85,14 @@ export const NavBar = (): JSX.Element => {
           {isAuthenticated && (
             <a
               href={localizedPath('/dashboard')}
-              className="text-sm font-bold text-text-muted hover:text-white transition-colors"
+              className="text-sm font-bold text-text-muted-aa hover:text-white transition-colors"
             >
               {t('dashboard')}
             </a>
           )}
           <a
             href={localizedPath('/features')}
-            className="text-sm font-bold text-text-muted hover:text-white transition-colors"
+            className="text-sm font-bold text-text-muted-aa hover:text-white transition-colors"
           >
             {t('features')}
           </a>
@@ -100,19 +100,19 @@ export const NavBar = (): JSX.Element => {
           <div className="relative" ref={resourcesDropdownRef}>
             <button
               onClick={() => setIsResourcesDropdownOpen(!isResourcesDropdownOpen)}
-              className="flex items-center gap-1.5 text-sm font-bold text-text-muted hover:text-white transition-all group"
+              className="flex items-center gap-1.5 text-sm font-bold text-text-muted-aa hover:text-white transition-all group"
             >
               {t('resources')}
               <ChevronDown
                 size={14}
                 className={cn(
-                  'text-text-muted transition-transform group-hover:text-white',
+                  'text-text-muted-aa transition-transform group-hover:text-white',
                   isResourcesDropdownOpen && 'rotate-180'
                 )}
               />
             </button>
             {isResourcesDropdownOpen && (
-              <div className="absolute top-full left-0 mt-4 w-56 glass-dropdown rounded-2xl py-3 z-50 animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute top-full left-0 mt-4 w-64 glass-dropdown rounded-2xl py-3 z-50 animate-in fade-in zoom-in-95 duration-200">
                 <a
                   href={localizedPath('/how-it-works')}
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
@@ -125,6 +125,41 @@ export const NavBar = (): JSX.Element => {
                 >
                   {t('blog')}
                 </a>
+                <div className="border-t border-border my-2 pt-2">
+                  <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                    Guides & Resources
+                  </p>
+                  <a
+                    href={localizedPath('/guides')}
+                    className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
+                  >
+                    Guides
+                  </a>
+                  <a
+                    href={localizedPath('/formats')}
+                    className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
+                  >
+                    Format Guides
+                  </a>
+                  <a
+                    href={localizedPath('/compare')}
+                    className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
+                  >
+                    Comparisons
+                  </a>
+                  <a
+                    href={localizedPath('/use-cases')}
+                    className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
+                  >
+                    Use Cases
+                  </a>
+                  <a
+                    href={localizedPath('/scale')}
+                    className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
+                  >
+                    Scale & Upscale
+                  </a>
+                </div>
               </div>
             )}
           </div>
@@ -132,13 +167,13 @@ export const NavBar = (): JSX.Element => {
           <div className="relative" ref={toolsDropdownRef}>
             <button
               onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-              className="flex items-center gap-1.5 text-sm font-bold text-text-muted hover:text-white transition-all group"
+              className="flex items-center gap-1.5 text-sm font-bold text-text-muted-aa hover:text-white transition-all group"
             >
               {t('tools')}
               <ChevronDown
                 size={14}
                 className={cn(
-                  'text-text-muted transition-transform group-hover:text-white',
+                  'text-text-muted-aa transition-transform group-hover:text-white',
                   isToolsDropdownOpen && 'rotate-180'
                 )}
               />
@@ -187,14 +222,14 @@ export const NavBar = (): JSX.Element => {
 
           <a
             href={localizedPath('/pricing')}
-            className="text-sm font-bold text-text-muted hover:text-white transition-colors"
+            className="text-sm font-bold text-text-muted-aa hover:text-white transition-colors"
           >
             {t('pricing')}
           </a>
 
           <a
             href={localizedPath('/help')}
-            className="text-sm font-bold text-text-muted hover:text-white transition-colors"
+            className="text-sm font-bold text-text-muted-aa hover:text-white transition-colors"
           >
             {t('support')}
           </a>
@@ -217,7 +252,7 @@ export const NavBar = (): JSX.Element => {
               </div>
               <button
                 onClick={handleAuthClick}
-                className="hidden xl:inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-text-muted hover:text-white hover:bg-white/5 h-10 px-3 py-2"
+                className="hidden xl:inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-text-muted-aa hover:text-white hover:bg-white/5 h-10 px-3 py-2"
               >
                 {t('signIn')}
               </button>
@@ -373,6 +408,36 @@ export const NavBar = (): JSX.Element => {
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
                 {t('blog')}
+              </a>
+              <a
+                href={localizedPath('/guides')}
+                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+              >
+                Guides
+              </a>
+              <a
+                href={localizedPath('/formats')}
+                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+              >
+                Format Guides
+              </a>
+              <a
+                href={localizedPath('/compare')}
+                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+              >
+                Comparisons
+              </a>
+              <a
+                href={localizedPath('/use-cases')}
+                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+              >
+                Use Cases
+              </a>
+              <a
+                href={localizedPath('/scale')}
+                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+              >
+                Scale & Upscale
               </a>
             </div>
             <a

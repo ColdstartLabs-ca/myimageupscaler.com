@@ -60,6 +60,7 @@ export default {
         'text-primary': 'rgb(var(--color-text-primary) / <alpha-value>)',
         'text-secondary': 'rgb(var(--color-text-secondary) / <alpha-value>)',
         'text-muted': 'rgb(var(--color-text-muted) / <alpha-value>)',
+        'text-muted-aa': 'rgb(var(--color-text-muted-aa) / <alpha-value>)',
         // Keep existing semantic colors
         border: 'rgb(var(--color-border))',
         error: 'rgb(var(--color-error))',

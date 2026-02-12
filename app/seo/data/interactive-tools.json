@@ -24,7 +24,11 @@
       "isInteractive": true,
       "toolComponent": "ImageResizer",
       "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "acceptedFormats": [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ],
       "features": [
         {
           "title": "Instant Browser-Based Resizing",
@@ -146,843 +150,12 @@
           "answer": "Currently, you can resize one image at a time. For batch processing and advanced AI enhancement, check out our premium AI Image Upscaler."
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "image-compressor"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "image-compressor"
+      ],
       "ctaText": "Try Free Image Resizer",
       "ctaUrl": "/tools/resize/image-resizer"
-    },
-    {
-      "slug": "resize-image-for-instagram",
-      "title": "Instagram Image Resizer",
-      "metaTitle": "Free Instagram Resizer: Perfect Post & Story Sizes",
-      "metaDescription": "Resize images for Instagram instantly. Get perfect dimensions for posts (1080x1080), stories (1080x1920), and reels. Free, no upload required.. Try free today!",
-      "h1": "Free Instagram Image Resizer - Perfect Sizes Instantly",
-      "intro": "Resize your images to perfect Instagram dimensions. Posts, stories, reels - all optimized sizes in one click. Works in your browser.",
-      "primaryKeyword": "instagram photo resizer",
-      "secondaryKeywords": [
-        "instagram image size",
-        "instagram post size",
-        "instagram story size",
-        "resize for instagram",
-        "instagram photo size"
-      ],
-      "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
-      "toolName": "Instagram Image Resizer",
-      "description": "Instantly resize images to Instagram's recommended dimensions. Supports posts (1080x1080), stories (1080x1920), and all Instagram formats.",
-      "isInteractive": true,
-      "toolComponent": "ImageResizer",
-      "toolConfig": {
-        "defaultWidth": 1080,
-        "defaultHeight": 1080,
-        "presetFilter": "instagram"
-      },
-      "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
-      "features": [
-        {
-          "title": "Instagram Post (1080x1080)",
-          "description": "Square format perfect for feed posts with maximum engagement."
-        },
-        {
-          "title": "Instagram Story (1080x1920)",
-          "description": "Vertical format for stories that fills the entire screen."
-        },
-        {
-          "title": "One-Click Presets",
-          "description": "Select Instagram dimensions instantly without manual calculations."
-        },
-        {
-          "title": "Quality Preservation",
-          "description": "Resize without losing image quality using advanced algorithms."
-        },
-        {
-          "title": "Multiple Formats",
-          "description": "Export as JPEG, PNG, or WebP depending on your needs."
-        },
-        {
-          "title": "Browser-Based",
-          "description": "No upload required - your images stay private on your device."
-        }
-      ],
-      "useCases": [
-        {
-          "title": "Feed Posts",
-          "description": "Create perfect square images for your Instagram feed.",
-          "example": "Resize landscape photos to 1080x1080 square format"
-        },
-        {
-          "title": "Stories",
-          "description": "Optimize images for Instagram Stories full-screen display.",
-          "example": "Convert horizontal photos to vertical 1080x1920"
-        },
-        {
-          "title": "Carousel Posts",
-          "description": "Prepare multiple images with consistent dimensions.",
-          "example": "Resize a photo series to matching 1080x1080 squares"
-        },
-        {
-          "title": "Profile Content",
-          "description": "Ensure your content looks professional on any device.",
-          "example": "Optimize product photos for Instagram shop"
-        }
-      ],
-      "benefits": [
-        {
-          "title": "Perfect Dimensions",
-          "description": "Always get the exact sizes Instagram recommends for best display.",
-          "metric": "Pixel-perfect"
-        },
-        {
-          "title": "No Cropping Surprises",
-          "description": "Preview exactly how your image will appear before posting.",
-          "metric": "WYSIWYG"
-        },
-        {
-          "title": "Fast Workflow",
-          "description": "Resize multiple images quickly with preset dimensions.",
-          "metric": "< 1 second"
-        }
-      ],
-      "howItWorks": [
-        {
-          "step": 1,
-          "title": "Upload Your Image",
-          "description": "Drag and drop or select your image file."
-        },
-        {
-          "step": 2,
-          "title": "Choose Instagram Format",
-          "description": "Select Post (1080x1080) or Story (1080x1920) from presets."
-        },
-        {
-          "step": 3,
-          "title": "Adjust if Needed",
-          "description": "Fine-tune quality and format settings."
-        },
-        {
-          "step": 4,
-          "title": "Download",
-          "description": "Get your Instagram-ready image instantly."
-        }
-      ],
-      "faq": [
-        {
-          "question": "What size should Instagram posts be?",
-          "answer": "Instagram posts are best at 1080x1080 pixels (square), 1080x1350 (portrait), or 1080x566 (landscape). Square posts at 1080x1080 get the most consistent display."
-        },
-        {
-          "question": "What size are Instagram Stories?",
-          "answer": "Instagram Stories should be 1080x1920 pixels (9:16 aspect ratio) to fill the entire screen without cropping."
-        },
-        {
-          "question": "Will resizing reduce my image quality?",
-          "answer": "Our tool uses high-quality algorithms to minimize quality loss. For best results, start with images larger than your target size."
-        },
-        {
-          "question": "Can I resize for Instagram Reels?",
-          "answer": "Yes! Instagram Reels use the same 1080x1920 (9:16) dimensions as Stories."
-        }
-      ],
-      "relatedTools": ["image-resizer", "image-compressor"],
-      "ctaText": "Resize for Instagram Free",
-      "ctaUrl": "/tools/resize/resize-image-for-instagram"
-    },
-    {
-      "slug": "resize-image-for-youtube",
-      "title": "YouTube Thumbnail Resizer",
-      "metaTitle": "Free YouTube Thumbnail Resizer - Perfect 1280x720 Size",
-      "metaDescription": "Resize images for YouTube thumbnails instantly. Get perfect 1280x720 dimensions for maximum click-through rates. No signup, batch processing, instant optimiz...",
-      "h1": "Free YouTube Thumbnail Resizer - Perfect Size Instantly",
-      "intro": "Create perfect YouTube thumbnails at 1280x720 pixels. The ideal size for maximum visibility and click-through rates. Works in your browser.",
-      "primaryKeyword": "youtube thumbnail size",
-      "secondaryKeywords": [
-        "youtube thumbnail resizer",
-        "resize for youtube",
-        "youtube image size",
-        "youtube thumbnail dimensions",
-        "1280x720 resizer"
-      ],
-      "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
-      "toolName": "YouTube Thumbnail Resizer",
-      "description": "Resize images to YouTube's recommended 1280x720 thumbnail size for maximum visibility and engagement.",
-      "isInteractive": true,
-      "toolComponent": "ImageResizer",
-      "toolConfig": {
-        "defaultWidth": 1280,
-        "defaultHeight": 720,
-        "presetFilter": "youtube"
-      },
-      "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
-      "features": [
-        {
-          "title": "Perfect 1280x720",
-          "description": "YouTube's recommended thumbnail size for all devices."
-        },
-        {
-          "title": "16:9 Aspect Ratio",
-          "description": "Matches YouTube's player aspect ratio perfectly."
-        },
-        {
-          "title": "High Quality Output",
-          "description": "Export at maximum quality for crisp thumbnails."
-        },
-        {
-          "title": "JPEG Optimization",
-          "description": "YouTube recommends JPEG - we optimize for it."
-        },
-        {
-          "title": "Under 2MB Guaranteed",
-          "description": "Automatically optimize to meet YouTube's file size limit."
-        },
-        {
-          "title": "Instant Processing",
-          "description": "Resize thumbnails in under a second."
-        }
-      ],
-      "useCases": [
-        {
-          "title": "Video Thumbnails",
-          "description": "Create eye-catching thumbnails that drive clicks.",
-          "example": "Resize a 4K screenshot to perfect 1280x720"
-        },
-        {
-          "title": "Channel Branding",
-          "description": "Maintain consistent thumbnail sizes across all videos.",
-          "example": "Batch resize thumbnails for a video series"
-        },
-        {
-          "title": "A/B Testing",
-          "description": "Quickly create multiple thumbnail versions to test.",
-          "example": "Resize different images to compare performance"
-        },
-        {
-          "title": "Thumbnail Updates",
-          "description": "Update old video thumbnails with properly sized images.",
-          "example": "Re-export thumbnails at correct dimensions"
-        }
-      ],
-      "benefits": [
-        {
-          "title": "Higher CTR",
-          "description": "Properly sized thumbnails display better and get more clicks.",
-          "metric": "Up to 30% more clicks"
-        },
-        {
-          "title": "All Devices",
-          "description": "1280x720 displays perfectly on desktop, mobile, and TV.",
-          "metric": "Universal compatibility"
-        },
-        {
-          "title": "YouTube Compliant",
-          "description": "Meets all YouTube thumbnail requirements automatically.",
-          "metric": "100% compliant"
-        }
-      ],
-      "howItWorks": [
-        {
-          "step": 1,
-          "title": "Upload Your Image",
-          "description": "Select any image you want as a thumbnail."
-        },
-        {
-          "step": 2,
-          "title": "Auto-Resize to 1280x720",
-          "description": "Image is automatically set to YouTube dimensions."
-        },
-        {
-          "step": 3,
-          "title": "Adjust Quality",
-          "description": "Set JPEG quality to balance size and clarity."
-        },
-        {
-          "step": 4,
-          "title": "Download Thumbnail",
-          "description": "Get your YouTube-ready thumbnail instantly."
-        }
-      ],
-      "faq": [
-        {
-          "question": "What size should YouTube thumbnails be?",
-          "answer": "YouTube recommends 1280x720 pixels with a 16:9 aspect ratio. Minimum width is 640 pixels, and the file must be under 2MB."
-        },
-        {
-          "question": "What format is best for YouTube thumbnails?",
-          "answer": "YouTube accepts JPG, GIF, and PNG. JPEG is recommended for photos as it provides good quality at smaller file sizes."
-        },
-        {
-          "question": "Why is 1280x720 the recommended size?",
-          "answer": "1280x720 is the minimum resolution that displays well across all devices while matching YouTube's 16:9 player aspect ratio."
-        },
-        {
-          "question": "Will my thumbnail look good on all devices?",
-          "answer": "Yes! 1280x720 thumbnails scale perfectly to all screen sizes, from mobile phones to 4K TVs."
-        }
-      ],
-      "relatedTools": ["image-resizer", "image-compressor"],
-      "ctaText": "Resize for YouTube Free",
-      "ctaUrl": "/tools/resize/resize-image-for-youtube"
-    },
-    {
-      "slug": "resize-image-for-facebook",
-      "title": "Facebook Image Resizer",
-      "metaTitle": "Free Facebook Resizer: Perfect Post Sizes",
-      "metaDescription": "Resize images for Facebook instantly. Get perfect dimensions for posts (1200x630), covers (820x312), and profile pictures. Free, no upload required. Start now!",
-      "h1": "Free Facebook Image Resizer - Perfect Sizes Instantly",
-      "intro": "Resize your images to perfect Facebook dimensions. Posts, covers, profile pictures - all optimized sizes in one click. Works in your browser.",
-      "primaryKeyword": "facebook photo resizer",
-      "secondaryKeywords": [
-        "facebook image size",
-        "facebook post size",
-        "facebook cover size",
-        "resize for facebook",
-        "facebook photo size"
-      ],
-      "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
-      "toolName": "Facebook Image Resizer",
-      "description": "Instantly resize images to Facebook's recommended dimensions. Supports posts, cover photos, and profile pictures.",
-      "isInteractive": true,
-      "toolComponent": "ImageResizer",
-      "toolConfig": {
-        "defaultWidth": 1200,
-        "defaultHeight": 630,
-        "presetFilter": "facebook"
-      },
-      "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
-      "features": [
-        {
-          "title": "Facebook Post (1200x630)",
-          "description": "Optimal size for link previews and shared images."
-        },
-        {
-          "title": "Cover Photo (820x312)",
-          "description": "Perfect dimensions for your page or profile cover."
-        },
-        {
-          "title": "Link Preview Optimized",
-          "description": "Images sized for maximum impact in the news feed."
-        },
-        {
-          "title": "OG Image Ready",
-          "description": "Perfect for Open Graph meta images on your website."
-        },
-        {
-          "title": "High Resolution",
-          "description": "Export at 2x for retina displays if needed."
-        },
-        {
-          "title": "Privacy First",
-          "description": "All processing happens locally - images never uploaded."
-        }
-      ],
-      "useCases": [
-        {
-          "title": "Social Sharing",
-          "description": "Create perfectly sized images for Facebook posts.",
-          "example": "Resize blog images for Facebook sharing"
-        },
-        {
-          "title": "Cover Photos",
-          "description": "Design cover photos that display correctly on all devices.",
-          "example": "Create a Facebook page cover at 820x312"
-        },
-        {
-          "title": "Ad Creative",
-          "description": "Prepare images for Facebook advertising campaigns.",
-          "example": "Resize product photos for Facebook ads"
-        },
-        {
-          "title": "Event Images",
-          "description": "Create event cover images at the right dimensions.",
-          "example": "Design an event banner that fits perfectly"
-        }
-      ],
-      "benefits": [
-        {
-          "title": "No Cropping",
-          "description": "Images display exactly as intended without auto-cropping.",
-          "metric": "Pixel-perfect"
-        },
-        {
-          "title": "Better Engagement",
-          "description": "Properly sized images get more likes and shares.",
-          "metric": "Higher engagement"
-        },
-        {
-          "title": "Professional Look",
-          "description": "Consistent sizing makes your page look polished.",
-          "metric": "Brand consistency"
-        }
-      ],
-      "howItWorks": [
-        {
-          "step": 1,
-          "title": "Upload Your Image",
-          "description": "Select the image you want to resize for Facebook."
-        },
-        {
-          "step": 2,
-          "title": "Choose Facebook Format",
-          "description": "Select Post (1200x630) or Cover (820x312) size."
-        },
-        {
-          "step": 3,
-          "title": "Adjust Settings",
-          "description": "Fine-tune quality and output format."
-        },
-        {
-          "step": 4,
-          "title": "Download",
-          "description": "Get your Facebook-optimized image instantly."
-        }
-      ],
-      "faq": [
-        {
-          "question": "What size should Facebook posts be?",
-          "answer": "Facebook recommends 1200x630 pixels for shared images and link previews. This size displays well in the news feed across all devices."
-        },
-        {
-          "question": "What size is a Facebook cover photo?",
-          "answer": "Facebook cover photos should be 820x312 pixels for pages, or 851x315 for personal profiles. Mobile displays may crop slightly differently."
-        },
-        {
-          "question": "What's the best format for Facebook images?",
-          "answer": "JPEG is best for photos, PNG for graphics with text or transparency. Facebook compresses images, so start with high quality."
-        },
-        {
-          "question": "Why do my images look blurry on Facebook?",
-          "answer": "Facebook compresses uploaded images. Use our tool to resize to exact dimensions and export at high quality to minimize compression artifacts."
-        }
-      ],
-      "relatedTools": ["image-resizer"],
-      "ctaText": "Resize for Facebook Free",
-      "ctaUrl": "/tools/resize/resize-image-for-facebook"
-    },
-    {
-      "slug": "resize-image-for-twitter",
-      "title": "Twitter/X Image Resizer",
-      "metaTitle": "Free Twitter Resizer: Perfect Tweet Sizes",
-      "metaDescription": "Perfect Twitter image resizer for tweets, headers, profile pictures, and Twitter cards. Free online tool with instant optimization, no signup. Try free!",
-      "h1": "Free Twitter/X Image Resizer - Perfect Sizes Instantly",
-      "intro": "Resize your images to perfect Twitter/X dimensions. Posts and headers optimized for maximum engagement. Works in your browser.",
-      "primaryKeyword": "twitter photo resizer",
-      "secondaryKeywords": [
-        "twitter image size",
-        "twitter post size",
-        "twitter header size",
-        "resize for twitter",
-        "x image size"
-      ],
-      "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
-      "toolName": "Twitter/X Image Resizer",
-      "description": "Instantly resize images to Twitter/X's recommended dimensions. Supports tweets (1200x675) and header images (1500x500).",
-      "isInteractive": true,
-      "toolComponent": "ImageResizer",
-      "toolConfig": {
-        "defaultWidth": 1200,
-        "defaultHeight": 675,
-        "presetFilter": "twitter"
-      },
-      "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
-      "features": [
-        {
-          "title": "Twitter Post (1200x675)",
-          "description": "16:9 aspect ratio for maximum feed visibility."
-        },
-        {
-          "title": "Header Image (1500x500)",
-          "description": "Perfect dimensions for your profile header."
-        },
-        {
-          "title": "Card Optimized",
-          "description": "Ideal for Twitter Card meta images on websites."
-        },
-        {
-          "title": "No Cropping",
-          "description": "Images display exactly as you intend them."
-        },
-        {
-          "title": "Fast Export",
-          "description": "Resize and download in under a second."
-        },
-        {
-          "title": "Quality Control",
-          "description": "Adjust compression to balance quality and file size."
-        }
-      ],
-      "useCases": [
-        {
-          "title": "Tweet Images",
-          "description": "Create engaging images that display perfectly in tweets.",
-          "example": "Resize photos to 1200x675 for Twitter posts"
-        },
-        {
-          "title": "Profile Headers",
-          "description": "Design headers that look great on all screen sizes.",
-          "example": "Create a branded header at 1500x500"
-        },
-        {
-          "title": "Twitter Cards",
-          "description": "Optimize images for website Twitter Card previews.",
-          "example": "Prepare OG images for blog post sharing"
-        },
-        {
-          "title": "Thread Images",
-          "description": "Consistent sizing for multi-image threads.",
-          "example": "Resize a series of images for a Twitter thread"
-        }
-      ],
-      "benefits": [
-        {
-          "title": "Full Display",
-          "description": "Images show completely without being cropped in the feed.",
-          "metric": "No cropping"
-        },
-        {
-          "title": "More Engagement",
-          "description": "Properly sized images get more retweets and likes.",
-          "metric": "Higher engagement"
-        },
-        {
-          "title": "Professional Brand",
-          "description": "Consistent image sizes strengthen your brand presence.",
-          "metric": "Brand consistency"
-        }
-      ],
-      "howItWorks": [
-        {
-          "step": 1,
-          "title": "Upload Your Image",
-          "description": "Select the image you want to resize for Twitter."
-        },
-        {
-          "step": 2,
-          "title": "Choose Format",
-          "description": "Select Tweet (1200x675) or Header (1500x500)."
-        },
-        {
-          "step": 3,
-          "title": "Adjust Quality",
-          "description": "Set output quality and format preferences."
-        },
-        {
-          "step": 4,
-          "title": "Download",
-          "description": "Get your Twitter-ready image instantly."
-        }
-      ],
-      "faq": [
-        {
-          "question": "What size should Twitter images be?",
-          "answer": "Twitter recommends 1200x675 pixels (16:9 ratio) for single images in tweets. This size displays without cropping on most devices."
-        },
-        {
-          "question": "What size is a Twitter header?",
-          "answer": "Twitter headers should be 1500x500 pixels. Note that parts of the header may be covered by your profile picture."
-        },
-        {
-          "question": "Does Twitter compress images?",
-          "answer": "Yes, Twitter compresses images. Use high-quality exports (90%+) and exact dimensions to minimize compression artifacts."
-        },
-        {
-          "question": "What's the maximum image size on Twitter?",
-          "answer": "Twitter allows images up to 5MB for photos. GIFs can be up to 15MB. Our tool helps you stay within these limits."
-        }
-      ],
-      "relatedTools": ["image-resizer"],
-      "ctaText": "Resize for Twitter Free",
-      "ctaUrl": "/tools/resize/resize-image-for-twitter"
-    },
-    {
-      "slug": "resize-image-for-linkedin",
-      "title": "LinkedIn Image Resizer",
-      "metaTitle": "Free LinkedIn Resizer: Perfect Post Sizes",
-      "metaDescription": "Perfect LinkedIn image resizer for posts, banners, profile pictures, and company pages. Free online tool with instant optimization, no signup. Try free!",
-      "h1": "Free LinkedIn Image Resizer - Perfect Sizes Instantly",
-      "intro": "Resize your images to perfect LinkedIn dimensions. Posts and banners optimized for professional engagement. Works in your browser.",
-      "primaryKeyword": "linkedin photo resizer",
-      "secondaryKeywords": [
-        "linkedin image size",
-        "linkedin post size",
-        "linkedin banner size",
-        "resize for linkedin",
-        "linkedin photo size"
-      ],
-      "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "tools",
-      "toolName": "LinkedIn Image Resizer",
-      "description": "Instantly resize images to LinkedIn's recommended dimensions. Supports posts (1200x627) and banner images (1584x396).",
-      "isInteractive": true,
-      "toolComponent": "ImageResizer",
-      "toolConfig": {
-        "defaultWidth": 1200,
-        "defaultHeight": 627,
-        "presetFilter": "linkedin"
-      },
-      "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
-      "features": [
-        {
-          "title": "LinkedIn Post (1200x627)",
-          "description": "Optimal dimensions for feed posts and articles."
-        },
-        {
-          "title": "Banner Image (1584x396)",
-          "description": "Perfect size for profile and company page banners."
-        },
-        {
-          "title": "Professional Quality",
-          "description": "High-resolution output for professional appearance."
-        },
-        {
-          "title": "Article Images",
-          "description": "Sized for LinkedIn article featured images."
-        },
-        {
-          "title": "Company Page Ready",
-          "description": "Perfect for company page cover images."
-        },
-        {
-          "title": "Privacy Focused",
-          "description": "All processing happens locally on your device."
-        }
-      ],
-      "useCases": [
-        {
-          "title": "Post Images",
-          "description": "Create professional images for LinkedIn posts.",
-          "example": "Resize infographics to 1200x627 for posts"
-        },
-        {
-          "title": "Profile Banners",
-          "description": "Design banners that represent your professional brand.",
-          "example": "Create a personal brand banner at 1584x396"
-        },
-        {
-          "title": "Company Pages",
-          "description": "Maintain consistent imagery across company content.",
-          "example": "Resize team photos for company updates"
-        },
-        {
-          "title": "Article Features",
-          "description": "Create compelling featured images for LinkedIn articles.",
-          "example": "Design article headers at optimal dimensions"
-        }
-      ],
-      "benefits": [
-        {
-          "title": "Professional Look",
-          "description": "Properly sized images convey professionalism.",
-          "metric": "First impressions"
-        },
-        {
-          "title": "Maximum Visibility",
-          "description": "Images display fully without cropping in the feed.",
-          "metric": "Full display"
-        },
-        {
-          "title": "Brand Consistency",
-          "description": "Consistent sizing across all LinkedIn content.",
-          "metric": "Unified brand"
-        }
-      ],
-      "howItWorks": [
-        {
-          "step": 1,
-          "title": "Upload Your Image",
-          "description": "Select the image you want to resize for LinkedIn."
-        },
-        {
-          "step": 2,
-          "title": "Choose Format",
-          "description": "Select Post (1200x627) or Banner (1584x396)."
-        },
-        {
-          "step": 3,
-          "title": "Adjust Settings",
-          "description": "Fine-tune quality for professional output."
-        },
-        {
-          "step": 4,
-          "title": "Download",
-          "description": "Get your LinkedIn-ready image instantly."
-        }
-      ],
-      "faq": [
-        {
-          "question": "What size should LinkedIn posts be?",
-          "answer": "LinkedIn recommends 1200x627 pixels for shared images. This size displays well in the feed and maintains quality across devices."
-        },
-        {
-          "question": "What size is a LinkedIn banner?",
-          "answer": "LinkedIn profile banners should be 1584x396 pixels. Company page banners are the same size."
-        },
-        {
-          "question": "What format is best for LinkedIn?",
-          "answer": "PNG or JPEG both work well. Use PNG for graphics with text, JPEG for photographs. LinkedIn accepts files up to 8MB."
-        },
-        {
-          "question": "Why do my LinkedIn images look blurry?",
-          "answer": "LinkedIn compresses images. Start with high-quality images at exact dimensions and export at 90%+ quality to minimize compression."
-        }
-      ],
-      "relatedTools": ["image-resizer"],
-      "ctaText": "Resize for LinkedIn Free",
-      "ctaUrl": "/tools/resize/resize-image-for-linkedin"
-    },
-    {
-      "slug": "bulk-image-resizer",
-      "title": "Bulk Image Resizer",
-      "metaTitle": "Free Bulk Image Resizer - Resize Multiple Photos at Once",
-      "metaDescription": "Resize multiple images at once with our free bulk image resizer. Mass resize photos to any dimension. Works in your browser - no upload required. Try it free!",
-      "h1": "Free Bulk Image Resizer - Mass Resize Photos Instantly",
-      "intro": "Resize multiple images to the same dimensions instantly. Our free bulk image resizer processes up to 20 photos at once, entirely in your browser. No uploads, no signup, no waiting.",
-      "primaryKeyword": "batch image resizer",
-      "secondaryKeywords": [
-        "bulk resize",
-        "mass resize photos",
-        "resize multiple images",
-        "bulk picture resizer",
-        "batch resize images",
-        "resize in bulk"
-      ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "tools",
-      "toolName": "Bulk Image Resizer",
-      "description": "Professional batch image resizing tool that works entirely in your browser. Resize up to 20 images at once to exact dimensions, with options to maintain aspect ratio or fill the bounds. Download all resized images as a convenient ZIP file.",
-      "isInteractive": true,
-      "toolComponent": "BulkImageResizer",
-      "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
-      "features": [
-        {
-          "title": "Process Up to 20 Images",
-          "description": "Resize multiple photos in a single batch. No need to process images one at a time - save hours of work."
-        },
-        {
-          "title": "Apply Same Dimensions to All",
-          "description": "Set your target width and height once, and all images are resized consistently. Perfect for gallery uniformity."
-        },
-        {
-          "title": "Maintain Aspect Ratio",
-          "description": "Option to preserve proportions for each image, or fill exact dimensions with smart cropping."
-        },
-        {
-          "title": "Download as ZIP File",
-          "description": "Get all resized images in a single ZIP download. Keeps your files organized and saves download time."
-        },
-        {
-          "title": "Multiple Output Formats",
-          "description": "Export batch as JPEG, PNG, or WebP with adjustable quality settings. Perfect for any use case."
-        },
-        {
-          "title": "100% Browser-Based",
-          "description": "All processing happens locally using Canvas API. Your photos never leave your device - complete privacy."
-        }
-      ],
-      "useCases": [
-        {
-          "title": "E-commerce Product Photos",
-          "description": "Resize all product images to consistent dimensions for your online store.",
-          "example": "Resize 100 product photos to 1000x1000 for Amazon listings"
-        },
-        {
-          "title": "Social Media Galleries",
-          "description": "Prepare multiple images for consistent social media posting across platforms.",
-          "example": "Batch resize 20 travel photos for Instagram feed"
-        },
-        {
-          "title": "Website Image Optimization",
-          "description": "Resize multiple images to standard dimensions for your website or blog.",
-          "example": "Resize 50 blog headers to 1920x600 for consistent layout"
-        },
-        {
-          "title": "Portfolio Preparation",
-          "description": "Create uniform thumbnail sizes from a collection of portfolio images.",
-          "example": "Resize 30 portfolio pieces to 400x300 for gallery thumbnails"
-        }
-      ],
-      "benefits": [
-        {
-          "title": "Massive Time Savings",
-          "description": "Process 20 images in the time it takes to do one manually. No more repetitive resizing work.",
-          "metric": "20x faster than manual"
-        },
-        {
-          "title": "Consistent Results",
-          "description": "All images get the exact same treatment, ensuring professional uniformity across galleries.",
-          "metric": "Pixel-perfect consistency"
-        },
-        {
-          "title": "Complete Privacy",
-          "description": "Images never leave your browser. No server uploads, no cloud storage, no privacy concerns.",
-          "metric": "100% local processing"
-        }
-      ],
-      "howItWorks": [
-        {
-          "step": 1,
-          "title": "Upload Multiple Images",
-          "description": "Drag and drop or select up to 20 images at once. Supports JPEG, PNG, and WebP formats."
-        },
-        {
-          "step": 2,
-          "title": "Set Target Dimensions",
-          "description": "Enter your desired width and height. Choose to maintain aspect ratio or fill exact bounds."
-        },
-        {
-          "step": 3,
-          "title": "Choose Output Format",
-          "description": "Select JPEG, PNG, or WebP and adjust quality. Preview dimensions before processing."
-        },
-        {
-          "step": 4,
-          "title": "Process & Download",
-          "description": "Click 'Process All' and download all resized images as a single ZIP file."
-        }
-      ],
-      "faq": [
-        {
-          "question": "How many images can I resize at once?",
-          "answer": "You can process up to 20 images in a single batch. This limit ensures optimal browser performance while still providing significant time savings."
-        },
-        {
-          "question": "Is the bulk image resizer really free?",
-          "answer": "Yes! Our bulk image resizer is 100% free with unlimited batches. No watermarks, no signup required, no hidden fees."
-        },
-        {
-          "question": "Are my images uploaded to your servers?",
-          "answer": "No! All image processing happens directly in your browser using the Canvas API. Your images never leave your device, ensuring complete privacy."
-        },
-        {
-          "question": "What's the difference between 'fit' and 'fill' modes?",
-          "answer": "Fit mode resizes images to fit within your dimensions while preserving aspect ratio (images may be smaller than target). Fill mode crops images to fill exact dimensions, which may remove some content from the edges."
-        },
-        {
-          "question": "Will all my images look the same size?",
-          "answer": "When 'Maintain aspect ratio' is enabled with 'fit' mode, images will be proportional but may have different final dimensions. For exact uniform sizing, use 'fill' mode or uncheck aspect ratio."
-        },
-        {
-          "question": "Can I download images individually?",
-          "answer": "Yes! After processing, you can download each image individually or download all at once as a ZIP file for convenience."
-        },
-        {
-          "question": "What formats can I convert to?",
-          "answer": "You can output resized images as JPEG (best for photos), PNG (best for graphics), or WebP (best for web optimization)."
-        },
-        {
-          "question": "Can I remove an image from the batch?",
-          "answer": "Yes! You can remove individual images from the batch before or after processing by clicking the X button next to each image."
-        }
-      ],
-      "relatedTools": ["image-resizer", "image-compressor", "ai-image-upscaler"],
-      "ctaText": "Try Bulk Image Resizer Free",
-      "ctaUrl": "/tools/resize/bulk-image-resizer"
     },
     {
       "slug": "image-compressor",
@@ -1007,7 +180,11 @@
       "isInteractive": true,
       "toolComponent": "ImageCompressor",
       "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "acceptedFormats": [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ],
       "features": [
         {
           "title": "Smart Compression Algorithm",
@@ -1121,7 +298,10 @@
           "answer": "For web use, 70-80% is optimal. For printing or professional use, 85-95%. For maximum compression (like email), 60-70% works well."
         }
       ],
-      "relatedTools": ["image-resizer", "ai-image-upscaler"],
+      "relatedTools": [
+        "image-resizer",
+        "ai-image-upscaler"
+      ],
       "ctaText": "Try Free Image Compressor",
       "ctaUrl": "/tools/compress/image-compressor"
     },
@@ -1148,10 +328,14 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "jpeg",
-        "acceptedInputFormats": ["image/png"]
+        "acceptedInputFormats": [
+          "image/png"
+        ]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/png"],
+      "acceptedFormats": [
+        "image/png"
+      ],
       "features": [
         {
           "title": "Transparency Handling",
@@ -1261,7 +445,10 @@
           "answer": "For web and social media, 80-85% is perfect. For printing or professional use, 90-95%. For maximum file size reduction, 70-75% still looks good."
         }
       ],
-      "relatedTools": ["image-compressor", "image-resizer"],
+      "relatedTools": [
+        "image-compressor",
+        "image-resizer"
+      ],
       "ctaText": "Convert PNG to JPG Free",
       "ctaUrl": "/tools/convert/png-to-jpg"
     },
@@ -1288,10 +475,14 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "png",
-        "acceptedInputFormats": ["image/jpeg"]
+        "acceptedInputFormats": [
+          "image/jpeg"
+        ]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg"],
+      "acceptedFormats": [
+        "image/jpeg"
+      ],
       "features": [
         {
           "title": "Lossless Conversion",
@@ -1397,7 +588,9 @@
           "answer": "Yes! Once in PNG format, you can use image editing software to remove backgrounds and add transparency. JPG doesn't support transparency."
         }
       ],
-      "relatedTools": ["image-compressor"],
+      "relatedTools": [
+        "image-compressor"
+      ],
       "ctaText": "Convert JPG to PNG Free",
       "ctaUrl": "/tools/convert/jpg-to-png"
     },
@@ -1424,10 +617,14 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "jpeg",
-        "acceptedInputFormats": ["image/webp"]
+        "acceptedInputFormats": [
+          "image/webp"
+        ]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/webp"],
+      "acceptedFormats": [
+        "image/webp"
+      ],
       "features": [
         {
           "title": "Universal Compatibility",
@@ -1533,8 +730,13 @@
           "answer": "Converting animated WebP will capture the first frame as a static JPG. For animated images, consider GIF format instead."
         }
       ],
-      "relatedTools": ["jpg-to-webp", "image-compressor"],
-      "relatedGuides": ["webp-format-guide"],
+      "relatedTools": [
+        "jpg-to-webp",
+        "image-compressor"
+      ],
+      "relatedGuides": [
+        "webp-format-guide"
+      ],
       "ctaText": "Convert WebP to JPG Free",
       "ctaUrl": "/tools/convert/webp-to-jpg"
     },
@@ -1560,10 +762,14 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "png",
-        "acceptedInputFormats": ["image/webp"]
+        "acceptedInputFormats": [
+          "image/webp"
+        ]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/webp"],
+      "acceptedFormats": [
+        "image/webp"
+      ],
       "features": [
         {
           "title": "Preserve Transparency",
@@ -1669,8 +875,12 @@
           "answer": "Use PNG if you need transparency or lossless quality for editing. Use JPG for smaller files and universal compatibility when transparency isn't needed."
         }
       ],
-      "relatedTools": ["image-compressor"],
-      "relatedGuides": ["webp-format-guide"],
+      "relatedTools": [
+        "image-compressor"
+      ],
+      "relatedGuides": [
+        "webp-format-guide"
+      ],
       "ctaText": "Convert WebP to PNG Free",
       "ctaUrl": "/tools/convert/webp-to-png"
     },
@@ -1697,10 +907,14 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "webp",
-        "acceptedInputFormats": ["image/jpeg"]
+        "acceptedInputFormats": [
+          "image/jpeg"
+        ]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg"],
+      "acceptedFormats": [
+        "image/jpeg"
+      ],
       "features": [
         {
           "title": "Superior Compression",
@@ -1806,8 +1020,12 @@
           "answer": "For web use, yes! WebP is ideal for websites. For email, printing, or older software, JPG may be more compatible."
         }
       ],
-      "relatedTools": ["image-compressor"],
-      "relatedGuides": ["webp-format-guide"],
+      "relatedTools": [
+        "image-compressor"
+      ],
+      "relatedGuides": [
+        "webp-format-guide"
+      ],
       "ctaText": "Convert JPG to WebP Free",
       "ctaUrl": "/tools/convert/jpg-to-webp"
     },
@@ -1833,10 +1051,14 @@
       "toolComponent": "FormatConverter",
       "toolConfig": {
         "defaultTargetFormat": "webp",
-        "acceptedInputFormats": ["image/png"]
+        "acceptedInputFormats": [
+          "image/png"
+        ]
       },
       "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/png"],
+      "acceptedFormats": [
+        "image/png"
+      ],
       "features": [
         {
           "title": "Preserve Transparency",
@@ -1942,278 +1164,19 @@
           "answer": "Yes! Use our WebP to PNG converter if you need the PNG format for compatibility or editing in software that doesn't support WebP."
         }
       ],
-      "relatedTools": ["jpg-to-webp", "image-compressor"],
-      "relatedGuides": ["webp-format-guide"],
+      "relatedTools": [
+        "jpg-to-webp",
+        "image-compressor"
+      ],
+      "relatedGuides": [
+        "webp-format-guide"
+      ],
       "ctaText": "Convert PNG to WebP Free",
       "ctaUrl": "/tools/convert/png-to-webp"
-    },
-    {
-      "slug": "bulk-image-compressor",
-      "title": "Bulk Image Compressor",
-      "metaTitle": "Free Bulk Image Compressor - Compress Multiple Images",
-      "metaDescription": "Compress multiple images at once. Reduce file sizes by up to 80% with free bulk compression. Fast browser-based processing, no signup required. Try free!",
-      "h1": "Free Bulk Image Compressor - Optimize Multiple Photos",
-      "intro": "Compress multiple images at once without losing quality. Our free bulk compressor reduces file sizes by up to 80% using advanced browser technology. Download as ZIP.",
-      "primaryKeyword": "batch image compressor",
-      "secondaryKeywords": [
-        "batch image compressor",
-        "bulk image optimization",
-        "compress multiple images",
-        "mass image compression",
-        "batch compress photos"
-      ],
-      "lastUpdated": "2025-12-26T00:00:00Z",
-      "category": "tools",
-      "toolName": "Bulk Image Compressor",
-      "description": "Professional bulk image compression tool that works entirely in your browser. Compress up to 20 images at once by up to 80% while maintaining visual quality. Supports JPEG, PNG, and WebP formats with real-time compression previews and ZIP download.",
-      "isInteractive": true,
-      "toolComponent": "BulkImageCompressor",
-      "maxFileSizeMB": 25,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
-      "features": [
-        {
-          "title": "Compress Up to 20 Images",
-          "description": "Upload and compress multiple images at once. Perfect for photo batches, website assets, or social media content."
-        },
-        {
-          "title": "Quality or Target Size Mode",
-          "description": "Choose quality-based compression (1-100%) or set a target file size in KB. The tool automatically finds optimal settings."
-        },
-        {
-          "title": "Real-Time Progress Tracking",
-          "description": "See individual progress bars, file sizes before and after, and compression ratios for each image as it processes."
-        },
-        {
-          "title": "Download as ZIP",
-          "description": "Download all compressed images at once as a convenient ZIP file. Each file is named with '-compressed' suffix."
-        },
-        {
-          "title": "Format Conversion",
-          "description": "Convert images to JPEG, PNG, or WebP during compression. WebP offers the best compression ratio."
-        },
-        {
-          "title": "100% Private",
-          "description": "All compression happens locally in your browser. Images never leave your device - complete privacy guaranteed."
-        }
-      ],
-      "useCases": [
-        {
-          "title": "Website Speed Optimization",
-          "description": "Compress entire image libraries for websites. Reduce page load times significantly with bulk processing.",
-          "example": "Compress 100 product photos from 50MB to 10MB for e-commerce site"
-        },
-        {
-          "title": "Social Media Content",
-          "description": "Prepare multiple photos for Instagram, Facebook, or other platforms with faster upload times.",
-          "example": "Batch compress vacation photos for social media sharing"
-        },
-        {
-          "title": "Email Attachments",
-          "description": "Send multiple photos via email without hitting attachment size limits.",
-          "example": "Compress a photo album from 20MB to 4MB for email"
-        },
-        {
-          "title": "Cloud Storage Savings",
-          "description": "Compress photo backups before uploading to cloud storage to save space and costs.",
-          "example": "Compress 500 vacation photos from 10GB to 2GB before backup"
-        }
-      ],
-      "benefits": [
-        {
-          "title": "Massive Time Savings",
-          "description": "Compress up to 20 images at once instead of processing them individually.",
-          "metric": "20x faster workflow"
-        },
-        {
-          "title": "Consistent Quality",
-          "description": "Apply the same compression settings to all images for uniform results across your project.",
-          "metric": "Uniform quality"
-        },
-        {
-          "title": "Up to 80% Size Reduction",
-          "description": "Reduce image file sizes dramatically without noticeable quality loss using smart compression.",
-          "metric": "80% smaller files"
-        }
-      ],
-      "howItWorks": [
-        {
-          "step": 1,
-          "title": "Upload Multiple Images",
-          "description": "Select or drag up to 20 images. Supports JPEG, PNG, WebP up to 25MB each. Processing stays in your browser."
-        },
-        {
-          "step": 2,
-          "title": "Choose Compression Mode",
-          "description": "Set a quality level (1-100%) or enter a target file size in KB. Select output format (JPEG, PNG, WebP)."
-        },
-        {
-          "step": 3,
-          "title": "Compress All Images",
-          "description": "Click compress and watch as each image is processed. See real-time progress and compression results."
-        },
-        {
-          "step": 4,
-          "title": "Download Results",
-          "description": "Download individual images or get all compressed images as a single ZIP file. See total space saved."
-        }
-      ],
-      "faq": [
-        {
-          "question": "How many images can I compress at once?",
-          "answer": "You can compress up to 20 images at once. This limit ensures optimal browser performance while providing efficient batch processing."
-        },
-        {
-          "question": "What's the difference between quality and target size modes?",
-          "answer": "Quality mode (1-100%) gives you direct control over compression level. Target size mode automatically finds the best quality to achieve a specific file size in KB. Use target size when you need files under a certain limit."
-        },
-        {
-          "question": "Will compression reduce image quality?",
-          "answer": "Compression involves a trade-off between file size and quality. At 70-80% quality, most people cannot see the difference. Target size mode automatically finds the best quality for your size requirement."
-        },
-        {
-          "question": "What's the best format for compression?",
-          "answer": "WebP offers the best compression (25-35% smaller than JPEG) with excellent quality. JPEG is best for photos and has universal browser support. PNG is lossless but creates larger files."
-        },
-        {
-          "question": "Are my images uploaded to your servers?",
-          "answer": "No! All compression happens directly in your browser using Canvas API technology. Your images never leave your device, ensuring complete privacy."
-        },
-        {
-          "question": "How does the target size mode work?",
-          "answer": "Target size mode uses binary search to automatically find the highest quality setting that achieves your target file size. It tests multiple quality levels until it finds the optimal balance."
-        },
-        {
-          "question": "Can I mix different image formats?",
-          "answer": "Yes! You can upload JPEG, PNG, and WebP images together. They'll all be converted to your chosen output format during compression."
-        },
-        {
-          "question": "Is there a file size limit?",
-          "answer": "Each image can be up to 25MB. This limit is based on browser memory, not server restrictions (since we don't upload to servers)."
-        }
-      ],
-      "relatedTools": ["image-compressor", "image-resizer", "jpg-to-webp"],
-      "ctaText": "Try Free Bulk Compressor",
-      "ctaUrl": "/tools/compress/bulk-image-compressor"
-    },
-    {
-      "slug": "free-ai-upscaler",
-      "title": "Free AI Upscaler",
-      "metaTitle": "Free AI Image Upscaler - Enlarge Images Online No Sign Up | MyImageUpscaler",
-      "metaDescription": "Upscale images 2x free with AI. No account required. Try our image upscaler instantly - just upload and download. Quick, easy, no watermarks.",
-      "h1": "Free AI Image Upscaler",
-      "intro": "Upscale your images 2x with AI - no account required. Just upload an image to see the quality difference instantly.",
-      "primaryKeyword": "free ai upscaler",
-      "secondaryKeywords": [
-        "free image upscaler",
-        "upscale image free",
-        "image upscaler no sign up",
-        "free photo enlarger",
-        "enlarge image free online",
-        "ai image upscaler free"
-      ],
-      "lastUpdated": "2026-02-01T00:00:00Z",
-      "category": "tools",
-      "isInteractive": true,
-      "toolComponent": "GuestUpscaler",
-      "maxFileSizeMB": 2,
-      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
-      "toolName": "Free AI Upscaler",
-      "description": "Experience AI-powered image upscaling without creating an account. Upload any image to instantly enlarge it 2x while preserving quality. See the difference AI makes, then unlock the full power with a free account.",
-      "features": [
-        {
-          "title": "Instant 2x Upscaling",
-          "description": "Upload any image and get it upscaled 2x in seconds. No signup, no email, no hassle."
-        },
-        {
-          "title": "AI-Powered Quality",
-          "description": "Uses the same Real-ESRGAN AI model as our full service. Real detail enhancement, not just pixel stretching."
-        },
-        {
-          "title": "No Watermarks",
-          "description": "Your upscaled images are completely clean. Download and use them anywhere."
-        },
-        {
-          "title": "Privacy First",
-          "description": "Images are processed and automatically deleted within 1 hour. We do not store or share your photos."
-        }
-      ],
-      "useCases": [
-        {
-          "title": "Quick Product Photo Test",
-          "description": "See if AI upscaling works for your product images before committing.",
-          "example": "Test a supplier photo to see how it looks upscaled before listing on Amazon."
-        },
-        {
-          "title": "Social Media Preview",
-          "description": "Check how an old photo looks upscaled before posting.",
-          "example": "Preview a throwback photo at higher resolution before Instagram."
-        },
-        {
-          "title": "Quality Evaluation",
-          "description": "Compare AI upscaling vs regular resize to see the difference.",
-          "example": "See how text and edges are preserved compared to Photoshop resize."
-        }
-      ],
-      "benefits": [
-        {
-          "title": "Zero Friction",
-          "description": "No account creation, no email verification, no credit card. Just upload and go.",
-          "metric": "3 free upscales per day"
-        },
-        {
-          "title": "Same AI Quality",
-          "description": "Uses Real-ESRGAN, the same model powering professional image restoration.",
-          "metric": "Industry-standard neural network"
-        },
-        {
-          "title": "Fast Results",
-          "description": "Most images process in 5-10 seconds on our cloud infrastructure.",
-          "metric": "GPU-accelerated processing"
-        }
-      ],
-      "howItWorks": [
-        {
-          "step": 1,
-          "title": "Upload Your Image",
-          "description": "Drag and drop or click to browse. Supports JPEG, PNG, WebP up to 2MB."
-        },
-        {
-          "step": 2,
-          "title": "AI Processes",
-          "description": "Our Real-ESRGAN model analyzes and upscales your image 2x with AI detail enhancement."
-        },
-        {
-          "step": 3,
-          "title": "Download Free",
-          "description": "Preview the result and download. No watermarks, no signup required."
-        }
-      ],
-      "faq": [
-        {
-          "question": "Is this really free with no catch?",
-          "answer": "Yes! You get 3 free upscales per day at 2x. The only limits are file size (2MB) and scale factor. For 4x/8x upscaling and larger files, you can create a free account."
-        },
-        {
-          "question": "What is the difference vs the full upscaler?",
-          "answer": "The free guest version uses the same AI model but is limited to 2x scaling and 2MB files. Creating a free account unlocks 8x scaling, 64MB files, batch processing, and 10 credits monthly."
-        },
-        {
-          "question": "Do you store my images?",
-          "answer": "Images are processed on secure cloud servers and automatically deleted within 1 hour. We never use your images for training or share them."
-        },
-        {
-          "question": "Why do I need to sign up for more?",
-          "answer": "Running AI models costs real money (GPU compute). The free tier lets you evaluate the quality, while accounts let us provide sustainable service with fair usage limits."
-        }
-      ],
-      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
-      "relatedGuides": [],
-      "ctaText": "Try Free Upscaler",
-      "ctaUrl": "/tools/free-ai-upscaler"
     }
   ],
   "meta": {
-    "totalPages": 16,
+    "totalPages": 8,
     "lastUpdated": "2026-01-20T00:00:00Z"
   }
 }

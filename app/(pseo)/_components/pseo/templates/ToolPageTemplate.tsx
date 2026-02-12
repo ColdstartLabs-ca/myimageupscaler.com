@@ -111,19 +111,42 @@ export function ToolPageTemplate({
             slug={data.slug}
           />
 
-          {/* Description */}
-          {data.description && (
-            <FadeIn delay={0.2}>
+          {/* Unique Intro (for content uniqueness) */}
+          {data.uniqueIntro && (
+            <FadeIn delay={0.25}>
               <div className="max-w-3xl mx-auto py-8">
-                <p className="text-lg text-text-secondary leading-relaxed text-center">
-                  {data.description}
+                <p className="text-lg text-muted-foreground leading-relaxed text-center">
+                  {data.uniqueIntro}
+                </p>
+              </div>
+            </FadeIn>
+          )}
+
+          {/* Expanded Description */}
+          {data.expandedDescription && (
+            <FadeIn delay={0.3}>
+              <div className="max-w-4xl mx-auto py-8">
+                <p className="text-base text-muted-foreground leading-relaxed">
+                  {data.expandedDescription}
+                </p>
+              </div>
+            </FadeIn>
+          )}
+
+          {/* Page Specific Details */}
+          {data.pageSpecificDetails && (
+            <FadeIn delay={0.35}>
+              <div className="max-w-4xl mx-auto py-8 px-6 bg-surface-light rounded-xl border border-border">
+                <h3 className="text-xl font-bold mb-4 text-center">Key Details & Use Cases</h3>
+                <p className="text-base text-muted-foreground leading-relaxed">
+                  {data.pageSpecificDetails}
                 </p>
               </div>
             </FadeIn>
           )}
 
           {/* Before/After Slider */}
-          <FadeIn delay={0.3}>
+          <FadeIn delay={0.4}>
             <div className="py-12">
               <div className="max-w-3xl mx-auto">
                 <BeforeAfterSlider

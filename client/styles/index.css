@@ -39,6 +39,8 @@
     --color-text-primary: 255 255 255;
     --color-text-secondary: 160 160 192;
     --color-text-muted: 107 107 141;
+    /* WCAG AA compliant muted color - 163 163 164 for 4.5:1 contrast on dark backgrounds */
+    --color-text-muted-aa: 163 163 164;
 
     /* === SEMANTIC === */
     --color-success: 16 185 129;

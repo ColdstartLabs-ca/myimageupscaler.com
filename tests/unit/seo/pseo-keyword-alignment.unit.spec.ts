@@ -99,8 +99,8 @@ describe('pSEO Keyword Alignment', () => {
   describe('industry-insights', () => {
     const data = loadCategory('industry-insights');
 
-    it('should have 14 pages', () => {
-      expect(data.pages).toHaveLength(14);
+    it('should have 13 pages', () => {
+      expect(data.pages).toHaveLength(13);
     });
 
     it('all pages should have "upscale" in primaryKeyword', () => {

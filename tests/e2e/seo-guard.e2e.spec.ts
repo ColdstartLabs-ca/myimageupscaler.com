@@ -769,6 +769,53 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       expect(foundOrganization).toBe(true);
     });
 
+    test('homepage has SearchAction schema', async ({ page }) => {
+      await page.goto('/');
+      // Wait for page to fully load and hydrate before checking schema
+      await page.waitForLoadState('load');
+      // Also wait for schema script to be present with content
+      await page.waitForSelector('script[type="application/ld+json"]', { state: 'attached' });
+
+      const schemaScripts = await page.locator('script[type="application/ld+json"]').all();
+      let foundSearchAction = false;
+
+      for (const script of schemaScripts) {
+        const content = await script.textContent();
+        if (content) {
+          const schema = JSON.parse(content);
+          const checkForSearchAction = (obj: unknown): boolean => {
+            if (typeof obj !== 'object' || obj === null) return false;
+            if ('@type' in obj) {
+              const type = (obj as { '@type': string | string[] })['@type'];
+              const typeStr = Array.isArray(type) ? type.join(' ') : type;
+              if (typeStr.includes('SearchAction')) return true;
+            }
+            if ('@graph' in obj) {
+              return (obj as { '@graph': unknown[] })['@graph'].some(checkForSearchAction);
+            }
+            // Check nested potentialAction property
+            if ('potentialAction' in obj) {
+              const action = (obj as { potentialAction: unknown })['potentialAction'];
+              if (typeof action === 'object' && action !== null) {
+                return checkForSearchAction(action);
+              }
+            }
+            for (const v of Object.values(obj as Record<string, unknown>)) {
+              if (typeof v === 'object' && checkForSearchAction(v)) return true;
+            }
+            return false;
+          };
+
+          if (checkForSearchAction(schema)) {
+            foundSearchAction = true;
+            break;
+          }
+        }
+      }
+
+      expect(foundSearchAction).toBe(true);
+    });
+
     test('tool page has SoftwareApplication schema', async ({ page }) => {
       await page.goto('/tools/ai-image-upscaler');
       // Wait for page to fully load and hydrate before checking schema

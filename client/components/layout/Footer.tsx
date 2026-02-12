@@ -24,7 +24,7 @@ export const Footer = (): JSX.Element => {
   };
 
   return (
-    <footer className="bg-main text-text-muted mt-auto border-t border-border">
+    <footer className="bg-main text-text-muted-aa mt-auto border-t border-border">
       <div className="max-w-[1600px] mx-auto px-6 py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           {/* Company Info */}
@@ -38,7 +38,7 @@ export const Footer = (): JSX.Element => {
                 className="h-10 w-auto"
               />
             </Link>
-            <p className="text-sm text-text-muted font-medium leading-relaxed max-w-xs">
+          <p className="text-sm font-medium leading-relaxed max-w-xs">
               {t('description')}
             </p>
           </div>
@@ -73,6 +73,63 @@ export const Footer = (): JSX.Element => {
             </ul>
           </div>
 
+          {/* Tools & Resources */}
+          <div>
+            <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">
+              Tools & Guides
+            </h4>
+            <ul className="space-y-4 text-sm font-medium">
+              <li>
+                <Link
+                  href={localizedPath('/tools')}
+                  className="hover:text-accent transition-colors"
+                >
+                  All Tools
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/guides')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Guides
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/formats')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Format Guides
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/scale')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Scale & Upscale
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/compare')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Comparisons
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/use-cases')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Use Cases
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* Support */}
           <div>
             <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">
@@ -99,6 +156,31 @@ export const Footer = (): JSX.Element => {
                 >
                   {t('contactSupport')}
                 </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">
+              {t('legal')}
+            </h4>
+            <ul className="space-y-4 text-sm font-medium">
+              <li>
+                <Link
+                  href={localizedPath('/privacy')}
+                  className="hover:text-accent transition-colors"
+                >
+                  {t('privacyPolicy')}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/terms')}
+                  className="hover:text-accent transition-colors"
+                >
+                  {t('termsOfService')}
+                </Link>
               </li>
             </ul>
           </div>

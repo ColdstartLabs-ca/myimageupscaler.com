@@ -82,3 +82,8 @@ template
 
 # Google Cloud
 cloud/keys/
+
+
+# Lighthouse temp data (WSL/Windows artifact)
+lighthouse.*
+C\:*

@@ -30,7 +30,7 @@ export function AhrefsAnalytics(): JSX.Element | null {
     <Script
       src="https://analytics.ahrefs.com/analytics.js"
       data-key={analyticsKey}
-      strategy="afterInteractive"
+      strategy="lazyOnload"
     />
   );
 }

@@ -51,6 +51,10 @@ export interface IToolPage extends IBasePSEOPage {
     beforeLabel?: string;
     afterLabel?: string;
   };
+  // Phase 8: Content expansion fields
+  uniqueIntro?: string;
+  expandedDescription?: string;
+  pageSpecificDetails?: string;
 }
 
 /**
@@ -113,6 +117,10 @@ export interface IScalePage extends IBasePSEOPage {
   faq: IFAQ[];
   relatedScales: string[];
   relatedGuides: string[];
+  // Phase 8: Content expansion fields
+  uniqueIntro?: string;
+  expandedDescription?: string;
+  pageSpecificDetails?: string;
 }
 
 /**

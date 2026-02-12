@@ -52,7 +52,10 @@ export function AnalyticsProvider({ children }: IAnalyticsProviderProps): ReactN
     }
 
     // Initialize Amplitude (respects stored consent internally)
-    analytics.init(apiKey);
+    // Note: init is now async due to dynamic import
+    analytics.init(apiKey).catch(err => {
+      console.warn('Analytics initialization failed:', err);
+    });
 
     // Set consent to granted by default (can be changed via consent UI)
     // In production, you'd want to check for a cookie consent banner first

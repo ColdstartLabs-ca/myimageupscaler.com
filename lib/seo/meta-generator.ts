@@ -159,6 +159,33 @@ export const META_PATTERNS: Record<PSEOCategory, IMetaPattern> = {
     titleMaxLength: 60,
     descriptionMaxLength: 160,
   },
+  'comparisons-expanded': {
+    title: `${APP_NAME} vs {Competitor}: Detailed Comparison | ${APP_NAME}`,
+    description: `Detailed comparison of ${APP_NAME} and {Competitor} for {UseCase}. Features, pricing, pros & cons, performance benchmarks.`,
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
+  'technical-guides': {
+    title: `{Topic} - Complete Technical Guide | ${APP_NAME}`,
+    description:
+      'Comprehensive technical guide covering {Topic}. {Description}. Expert tips, best practices, and free tools included.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
+  'personas-expanded': {
+    title: `{Persona} Image Enhancement Solutions | ${APP_NAME}`,
+    description:
+      'AI-powered image enhancement tailored for {Persona}. {Description}. Free tools and features designed for your workflow.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
+  'use-cases-expanded': {
+    title: `{UseCase} - Professional Image Enhancement | ${APP_NAME}`,
+    description:
+      'Enhance images for {UseCase} with AI. {Description}. Perfect for {Industry}. Free to try with professional results.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
 };
 
 /**

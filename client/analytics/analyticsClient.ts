@@ -24,8 +24,10 @@
  * ```
  */
 
-import * as amplitude from '@amplitude/analytics-browser';
 import type { IAnalyticsEvent, IUserIdentity, IConsentStatus } from '@server/analytics/types';
+
+// Dynamically import Amplitude to code-split this heavy library (~40KB)
+let amplitudeModule: typeof import('@amplitude/analytics-browser') | null = null;
 
 // =============================================================================
 // Constants
@@ -113,10 +115,10 @@ async function hashEmail(email: string): Promise<string> {
 
 export const analytics = {
   /**
-   * Initialize the analytics service.
+   * Initialize analytics service.
    * Should be called once when the app loads.
    */
-  init(apiKey: string): void {
+  async init(apiKey: string): Promise<void> {
     if (typeof window === 'undefined') {
       console.warn('[Analytics] Cannot initialize in server environment');
       return;
@@ -131,7 +133,12 @@ export const analytics = {
       return;
     }
 
-    amplitude.init(apiKey, {
+    // Dynamic import to code-split Amplitude (~40KB)
+    if (!amplitudeModule) {
+      amplitudeModule = await import('@amplitude/analytics-browser');
+    }
+
+    amplitudeModule.init(apiKey, {
       autocapture: {
         elementInteractions: false,
         pageViews: false, // We handle this manually for SPA
@@ -155,7 +162,7 @@ export const analytics = {
   /**
    * Update consent status and re-initialize if needed.
    */
-  setConsent(status: IConsentStatus, apiKey?: string): void {
+  async setConsent(status: IConsentStatus, apiKey?: string): Promise<void> {
     consentStatus = status;
 
     try {
@@ -171,10 +178,10 @@ export const analytics = {
     }
 
     if (status === 'granted' && apiKey && !isInitialized) {
-      this.init(apiKey);
-    } else if (status === 'denied' && isInitialized) {
+      await this.init(apiKey);
+    } else if (status === 'denied' && isInitialized && amplitudeModule) {
       // Reset Amplitude on consent withdrawal
-      amplitude.reset();
+      amplitudeModule.reset();
       isInitialized = false;
     }
   },
@@ -190,11 +197,11 @@ export const analytics = {
    * Identify a user. Call after login/signup.
    */
   async identify(identity: IUserIdentity & { email?: string }): Promise<void> {
-    if (!this.isEnabled()) return;
+    if (!this.isEnabled() || !amplitudeModule) return;
 
-    amplitude.setUserId(identity.userId);
+    amplitudeModule.setUserId(identity.userId);
 
-    const identifyEvent = new amplitude.Identify();
+    const identifyEvent = new amplitudeModule.Identify();
 
     // Hash email if provided, otherwise use pre-computed hash
     if (identity.email) {
@@ -210,22 +217,22 @@ export const analytics = {
       identifyEvent.set('subscription_tier', identity.subscriptionTier);
     }
 
-    amplitude.identify(identifyEvent);
+    amplitudeModule.identify(identifyEvent);
   },
 
   /**
    * Clear user identity on logout.
    */
   reset(): void {
-    if (!isInitialized) return;
-    amplitude.reset();
+    if (!isInitialized || !amplitudeModule) return;
+    amplitudeModule.reset();
   },
 
   /**
    * Track an analytics event.
    */
   track(name: IAnalyticsEvent['name'], properties?: Record<string, unknown>): void {
-    if (!this.isEnabled()) return;
+    if (!this.isEnabled() || !amplitudeModule) return;
 
     const eventProperties = {
       ...properties,
@@ -233,14 +240,14 @@ export const analytics = {
       timestamp: Date.now(),
     };
 
-    amplitude.track(name, eventProperties);
+    amplitudeModule.track(name, eventProperties);
   },
 
   /**
    * Track a page view event.
    */
   trackPageView(path: string, properties?: Record<string, unknown>): void {
-    if (!this.isEnabled()) return;
+    if (!this.isEnabled() || !amplitudeModule) return;
 
     const url = new URL(window.location.href);
     const utmParams = {

@@ -11,6 +11,11 @@ const toolsData = interactiveToolsData as IPSEODataFile<IToolPage>;
 // Compress tool slugs from interactive-tools.json
 const COMPRESS_SLUGS = ['image-compressor', 'bulk-image-compressor'];
 
+// Force static rendering for Cloudflare Workers 10ms CPU limit
+// Prevents SSR timeouts on Googlebot requests
+export const dynamic = 'force-static';
+export const revalidate = 86400; // 24 hours
+
 interface IPageProps {
   params: Promise<{ slug: string }>;
 }

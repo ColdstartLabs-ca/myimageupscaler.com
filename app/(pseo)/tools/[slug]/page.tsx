@@ -10,6 +10,11 @@ import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
 import { clientEnv } from '@shared/config/env';
 
+// Force static rendering for Cloudflare Workers 10ms CPU limit
+// Prevents SSR timeouts on Googlebot requests
+export const dynamic = 'force-static';
+export const revalidate = 86400; // 24 hours
+
 interface IToolPageProps {
   params: Promise<{ slug: string }>;
 }

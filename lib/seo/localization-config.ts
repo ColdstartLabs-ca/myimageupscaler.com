@@ -26,11 +26,12 @@ export const LOCALIZED_CATEGORIES: PSEOCategory[] = [
 
 /**
  * Categories that are English-only (no translations available)
- * Updated: 2026-02-11 - Added ai-features as English-only category
+ * Updated: 2026-02-11 - Added ai-features, comparisons-expanded, personas-expanded, technical-guides, use-cases-expanded as English-only categories
  * These categories only exist in English and should not generate hreflang links
  */
 export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
   'compare',
+  'comparisons-expanded',
   'platforms',
   'bulk-tools',
   'content',
@@ -39,6 +40,9 @@ export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
   'industry-insights',
   'device-optimization',
   'ai-features',
+  'technical-guides',
+  'personas-expanded',
+  'use-cases-expanded',
 ];
 
 /**
@@ -235,7 +239,27 @@ export const LOCALIZATION_STATUS = {
   },
   'ai-features': {
     localized: false,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'AI enhancement features pages (updated 2026-02-11)',
+    supportedLocales: ['en'] as Locale[],
+    notes: 'AI enhancement features pages are English-only (updated 2026-02-11)',
+  },
+  'comparisons-expanded': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Expanded comparison pages are English-only (7 pages, added 2026-02-11)',
+  },
+  'technical-guides': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Technical guides are English-only (10 pages, added 2026-02-11)',
+  },
+  'personas-expanded': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Expanded persona pages are English-only (10 pages, added 2026-02-11)',
+  },
+  'use-cases-expanded': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'Expanded use case pages are English-only (10 pages, added 2026-02-11)',
   },
 } as const;

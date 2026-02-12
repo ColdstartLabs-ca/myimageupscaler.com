@@ -37,7 +37,9 @@
     "ctaStartUpscaling": "Start Upscaling Free",
     "ctaComparePlans": "Compare Plans",
     "finalCtaSubtext": "10 free credits • No credit card • See results before you pay",
-    "toastLoginRequired": "Please sign in to access the dashboard"
+    "toastLoginRequired": "Please sign in to access the dashboard",
+    "featuredOnTitle": "Featured On",
+    "featuredOnDescription": "Trusted by developers and featured across the web"
   },
   "footer": {
     "description": "AI-powered image upscaling and enhancement for professionals and creators. Precision-engineered for 2025.",

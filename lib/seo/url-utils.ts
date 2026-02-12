@@ -54,8 +54,10 @@ export const PSEO_CATEGORIES = [
   'scale',
   'use-cases',
   'compare',
+  'comparisons-expanded',
   'alternatives',
   'guides',
+  'technical-guides',
   'free',
   'bulk-tools',
   'platforms',
@@ -68,6 +70,8 @@ export const PSEO_CATEGORIES = [
   'camera-raw',
   'industry-insights',
   'device-optimization',
+  'personas-expanded',
+  'use-cases-expanded',
 ] as const;
 
 export type PSEOCategory = (typeof PSEO_CATEGORIES)[number];
@@ -89,8 +93,10 @@ export function getCategoryDisplayName(category: PSEOCategory): string {
     scale: 'Scale & Resolution',
     'use-cases': 'Use Cases',
     compare: 'Comparisons',
+    'comparisons-expanded': 'Detailed Comparisons',
     alternatives: 'Alternatives',
     guides: 'Guides',
+    'technical-guides': 'Technical Guides',
     free: 'Free Tools',
     'bulk-tools': 'Bulk Tools',
     platforms: 'Platform Integration',
@@ -103,6 +109,8 @@ export function getCategoryDisplayName(category: PSEOCategory): string {
     'camera-raw': 'Camera RAW',
     'industry-insights': 'Industry Insights',
     'device-optimization': 'Device Optimization',
+    'personas-expanded': 'User Personas',
+    'use-cases-expanded': 'Expanded Use Cases',
   };
   return names[category];
 }
@@ -117,8 +125,10 @@ export function getCategoryDescription(category: PSEOCategory): string {
     scale: 'Resolution and scale-specific upscaling options',
     'use-cases': 'Industry-specific image enhancement solutions',
     compare: `Compare ${APP_NAME} with other image upscaling tools`,
+    'comparisons-expanded': `Detailed comparisons of ${APP_NAME} with other image upscaling tools`,
     alternatives: 'Find the best alternatives to popular upscaling tools',
     guides: 'Learn how to get the most out of your images',
+    'technical-guides': 'In-depth technical guides for image processing and optimization',
     free: 'Free AI image tools - no credit card required',
     'bulk-tools': 'Batch process multiple images at once - resize, compress, and optimize',
     platforms: `Enhance images from your favorite platforms - Midjourney, Stable Diffusion, DALL-E, and more`,
@@ -135,6 +145,8 @@ export function getCategoryDescription(category: PSEOCategory): string {
     'industry-insights': 'Industry-specific image enhancement solutions for professional workflows',
     'device-optimization':
       'Optimize images for specific devices and platforms for best performance',
+    'personas-expanded': 'Image enhancement solutions tailored for different user types and professions',
+    'use-cases-expanded': 'Expanded use cases for image enhancement across various scenarios',
   };
   return descriptions[category];
 }

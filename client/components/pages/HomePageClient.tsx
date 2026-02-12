@@ -6,6 +6,7 @@ import { FadeIn } from '@client/components/ui/MotionWrappers';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
+import { clientEnv } from '@shared/config/env';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
@@ -177,7 +178,61 @@ export function HomePageClient(): JSX.Element {
             {t('ctaSubtext')}
           </motion.p>
 
-          {/* Hero Before/After Slider */}
+          
+          <motion.p variants={heroItemVariants} className="mt-4 text-sm text-text-muted-aa">
+            {t('ctaSubtext')}
+          </motion.p>
+          {/* Definition Section - Extractable for Featured Snippets */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.7, ease: [0.25, 0.4, 0.25, 1] as const }}
+            className="mt-12 max-w-4xl mx-auto px-4"
+          >
+            <div className="bg-surface-light/50 rounded-2xl p-8 border border-border">
+              <h2 className="text-2xl font-bold text-text-primary mb-4">
+                What is {clientEnv.APP_NAME}?
+              </h2>
+              <p className="text-lg text-text-secondary leading-relaxed mb-6">
+                {clientEnv.APP_NAME} is a professional AI-powered image upscaling and enhancement platform that transforms low-resolution images into stunning high-quality visuals. Using advanced neural networks and machine learning algorithms, it intelligently enlarges photos while preserving sharpness, details, and natural appearance.
+              </p>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary mb-2">
+                    Image Upscaling
+                  </h3>
+                  <p className="text-base text-text-muted-aa">
+                    Increase image resolution up to 4x while maintaining quality. Perfect for printing, web display, and professional use.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary mb-2">
+                    Photo Enhancement
+                  </h3>
+                  <p className="text-base text-text-muted-aa">
+                    Automatically improve photo quality with AI. Fix blur, adjust colors, and restore details in seconds.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary mb-2">
+                    Face Restoration
+                  </h3>
+                  <p className="text-base text-text-muted-aa">
+                    Bring old or damaged photos back to life with AI-powered restoration technology.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary mb-2">
+                    Batch Processing
+                  </h3>
+                  <p className="text-base text-text-muted-aa">
+                    Process multiple images at once with bulk tools. Save time on large projects.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+{/* Hero Before/After Slider */}
           <motion.div
             className="mt-12"
             initial={{ opacity: 0, y: 40 }}
@@ -304,6 +359,62 @@ export function HomePageClient(): JSX.Element {
               </motion.a>
             </div>
             <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext')}</p>
+          </div>
+        </section>
+      </FadeIn>
+
+      {/* Featured On Section */}
+      <FadeIn>
+        <section className="py-24 relative">
+          <AmbientBackground variant="section" />
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] as const }}
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                {t('featuredOnTitle')}
+              </h2>
+              <p className="text-lg text-text-secondary mb-12 max-w-2xl mx-auto font-light">
+                {t('featuredOnDescription')}
+              </p>
+              <motion.div
+                className="flex flex-wrap items-center justify-center gap-8 sm:gap-12"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+              >
+                <a
+                  href="https://launchigniter.com/product/myimageupscaler?ref=badge-myimageupscaler"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass-strong hover:bg-white/10 px-6 py-4 rounded-xl transition-all duration-300 group"
+                >
+                  <img
+                    src="https://launchigniter.com/api/badge/myimageupscaler?theme=light"
+                    alt="Featured on LaunchIgniter"
+                    width={212}
+                    height={55}
+                    className="h-auto w-auto group-hover:scale-105 transition-transform"
+                  />
+                </a>
+                <a
+                  href="https://curlship.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass-strong hover:bg-white/10 px-6 py-4 rounded-xl transition-all duration-300 group"
+                >
+                  <img
+                    src="https://curlship.com/badge"
+                    alt="CurlShip listed"
+                    width={120}
+                    height={20}
+                    className="h-5 w-auto group-hover:scale-105 transition-transform"
+                  />
+                </a>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
       </FadeIn>

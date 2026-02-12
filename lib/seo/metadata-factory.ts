@@ -131,8 +131,10 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     scale: `Image Resolution Enhancement | ${APP_NAME}`,
     'use-cases': `Industry Solutions | ${APP_NAME}`,
     compare: `Compare Image Upscaling Tools | ${APP_NAME}`,
+    'comparisons-expanded': `Detailed Tool Comparisons | ${APP_NAME}`,
     alternatives: `Best Upscaler Alternatives | ${APP_NAME}`,
     guides: `Image Enhancement Guides | ${APP_NAME}`,
+    'technical-guides': `Technical Image Enhancement Guides | ${APP_NAME}`,
     free: `Free AI Image Tools | ${APP_NAME}`,
     'bulk-tools': `Bulk Image Tools | ${APP_NAME}`,
     platforms: `Platform-Specific Enhancement | ${APP_NAME}`,
@@ -145,6 +147,8 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     'camera-raw': `Camera RAW Enhancement | ${APP_NAME}`,
     'industry-insights': `Industry Insights | ${APP_NAME}`,
     'device-optimization': `Device Optimization Tools | ${APP_NAME}`,
+    'personas-expanded': `User Persona Solutions | ${APP_NAME}`,
+    'use-cases-expanded': `Expanded Use Cases | ${APP_NAME}`,
   };
 
   const categoryDescriptions: Record<PSEOCategory, string> = {
@@ -156,10 +160,12 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
       'Resolution and scale-specific upscaling options. Enhance images to 4K, 8K, or custom resolutions with AI technology.',
     'use-cases': `Industry-specific image enhancement solutions for e-commerce, real estate, photography, and more. See how ${APP_NAME} fits your workflow.`,
     compare: `Compare ${APP_NAME} with other image upscaling tools. See features, pricing, and performance side-by-side.`,
+    'comparisons-expanded': `Detailed comparisons of ${APP_NAME} with leading image upscaling tools. In-depth analysis of features, performance, pricing, and use cases.`,
     alternatives:
       'Find the best alternatives to popular upscaling tools. Compare features, pricing, and capabilities to make the right choice.',
     guides:
       'Learn how to get the most out of your images with step-by-step guides and tutorials. Expert tips and best practices included.',
+    'technical-guides': 'Comprehensive technical guides for image processing, optimization, and enhancement. Expert-level insights and best practices.',
     free: 'Free AI image tools with no credit card or sign-up required. Professional quality enhancement at no cost.',
     'bulk-tools':
       'Batch process multiple images at once. Bulk resize, compress, and optimize images with our free browser-based tools.',
@@ -177,6 +183,8 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     'camera-raw': `Camera RAW image processing and enhancement for professional photographers. Support for all major camera brands.`,
     'industry-insights': `Industry-specific insights and solutions for image enhancement. See how AI is transforming different industries.`,
     'device-optimization': `Device optimization tools for better image performance. Optimize images for mobile, desktop, and various platforms.`,
+    'personas-expanded': `Image enhancement solutions tailored for different user types. Find the perfect tools and workflows for your specific role and needs.`,
+    'use-cases-expanded': `Expanded use cases for image enhancement across various scenarios and industries. Discover how ${APP_NAME} can help.`,
   };
 
   return {

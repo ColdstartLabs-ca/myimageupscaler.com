@@ -3,10 +3,10 @@
     "badge": "Amélioration propulsée par l'IA",
     "badgeVersion": "v2.0 Édition 2025",
     "heroTitle": "Agrandisseur d'images IA et",
-    "heroTitleHighlight": "Améliorateur de photos",
+    "heroTitleHighlight": "Améliorateur de qualité d'image",
     "heroSubtitle": "Améliorez la qualité des images en 4K en quelques secondes.",
     "heroSubtitleHighlight": "Pas de flou. Pas d'artefacts.",
-    "heroDescription": "Améliorateur de photos IA gratuit qui",
+    "heroDescription": "Améliorateur de qualité d'image IA gratuit qui",
     "heroDescriptionHighlight": "reconstruit de vrais détails",
     "heroDescriptionMiddle": "—pas l'aspect plastique et trop lissé. Le seul améliorateur de qualité d'image qui",
     "heroDescriptionTextSharp": "garde le texte net",
@@ -158,8 +158,8 @@
     "ogSiteName": "MyImageUpscaler",
     "twitterCard": "summary_large_image",
     "homepage": {
-      "title": "Enhance Image Quality Free Online | AI Photo Quality Enhancer",
-      "description": "Professional AI image quality enhancer that upscales photos to 4K. Enhance quality, remove blur, and restore details in seconds. Free online tool."
+      "title": "Améliorateur de qualité d'image par IA gratuit | Augmenter vos photos en ligne",
+      "description": "Améliorez la qualité de vos images jusqu'à 4K avec notre IA. Augmentez la résolution, réduisez le flou et restaurez les détails en quelques secondes. Outil en ligne gratuit."
     }
   },
   "errors": {

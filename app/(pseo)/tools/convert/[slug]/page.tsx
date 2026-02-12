@@ -19,6 +19,11 @@ const CONVERSION_SLUGS = [
   'png-to-webp',
 ];
 
+// Force static rendering for Cloudflare Workers 10ms CPU limit
+// Prevents SSR timeouts on Googlebot requests
+export const dynamic = 'force-static';
+export const revalidate = 86400; // 24 hours
+
 interface IPageProps {
   params: Promise<{ slug: string }>;
 }

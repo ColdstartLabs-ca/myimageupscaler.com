@@ -5,10 +5,11 @@
  * Server-side rate limiting provides the actual security.
  */
 
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
-
 const STORAGE_KEY = 'miu_guest_usage';
 const DAILY_LIMIT = 3;
+
+// Dynamically import FingerprintJS to code-split this heavy library (~45KB)
+let FingerprintJS: typeof import('@fingerprintjs/fingerprintjs') | null = null;
 
 export interface IGuestUsage {
   fingerprint: string;
@@ -28,6 +29,10 @@ export async function getVisitorId(): Promise<string> {
   if (!fingerprintPromise) {
     fingerprintPromise = (async () => {
       try {
+        // Dynamic import to code-split FingerprintJS (~45KB)
+        if (!FingerprintJS) {
+          FingerprintJS = await import('@fingerprintjs/fingerprintjs');
+        }
         const fp = await FingerprintJS.load();
         const result = await fp.get();
         return result.visitorId;

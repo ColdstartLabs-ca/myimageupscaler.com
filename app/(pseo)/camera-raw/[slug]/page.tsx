@@ -8,6 +8,11 @@ import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
+// Force static rendering for Cloudflare Workers 10ms CPU limit
+// Prevents SSR timeouts on Googlebot requests
+export const dynamic = 'force-static';
+export const revalidate = 86400; // 24 hours
+
 interface ICameraRawPageProps {
   params: Promise<{ slug: string }>;
 }
