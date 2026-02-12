@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import { AuthProvider } from '@/shared/types/authProviders.types';
 import { LocaleSwitcher } from '@client/components/i18n/LocaleSwitcher';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
@@ -6,7 +7,6 @@ import { useModalStore } from '@client/store/modalStore';
 import { useUserStore } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { clientEnv } from '@shared/config/env';
-import { DEFAULT_LOCALE } from '@/i18n/config';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
@@ -97,6 +97,13 @@ export const NavBar = (): JSX.Element => {
             {t('features')}
           </a>
 
+          <a
+            href={localizedPath('/blog')}
+            className="text-sm font-bold text-text-muted-aa hover:text-white transition-colors"
+          >
+            {t('blog')}
+          </a>
+
           <div className="relative" ref={resourcesDropdownRef}>
             <button
               onClick={() => setIsResourcesDropdownOpen(!isResourcesDropdownOpen)}
@@ -118,12 +125,6 @@ export const NavBar = (): JSX.Element => {
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
                   {t('howItWorks')}
-                </a>
-                <a
-                  href={localizedPath('/blog')}
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
-                >
-                  {t('blog')}
                 </a>
                 <div className="border-t border-border my-2 pt-2">
                   <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
@@ -393,6 +394,12 @@ export const NavBar = (): JSX.Element => {
             >
               {t('features')}
             </a>
+            <a
+              href={localizedPath('/blog')}
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+            >
+              {t('blog')}
+            </a>
             <div className="py-2">
               <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
                 {t('resources')}
@@ -402,12 +409,6 @@ export const NavBar = (): JSX.Element => {
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
                 {t('howItWorks')}
-              </a>
-              <a
-                href={localizedPath('/blog')}
-                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-              >
-                {t('blog')}
               </a>
               <a
                 href={localizedPath('/guides')}

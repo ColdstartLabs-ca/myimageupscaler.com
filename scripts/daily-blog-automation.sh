@@ -63,36 +63,21 @@ log "GSC data saved ($(wc -c < "$GSC_OUTPUT") bytes)"
 log "Step 2: Fetching existing blog posts..."
 EXISTING_POSTS="$WORK_DIR/existing-posts.json"
 
-# Load blog API key from .env.api
-API_KEY=$(grep BLOG_API_KEY "$PROJECT_DIR/.env.api" | cut -d'=' -f2)
+# Extract existing blog post slugs from sitemap (no auth needed)
+SITEMAP_XML=$(curl -sf "$API_URL/sitemap-blog.xml" 2>>"$LOG_FILE") || true
 
-if [ -z "$API_KEY" ]; then
-    log "ERROR: BLOG_API_KEY not found in .env.api"
-    exit 1
+if [ -n "$SITEMAP_XML" ]; then
+    # Extract slugs from <loc> tags, filter for /blog/ paths
+    ALL_POSTS=$(echo "$SITEMAP_XML" | grep -oP '<loc>[^<]+/blog/[^<]+</loc>' | \
+        sed 's|<loc>.*/blog/||;s|</loc>||' | \
+        jq -R -s 'split("\n") | map(select(length > 0)) | map({slug: .})')
+else
+    ALL_POSTS="[]"
 fi
-
-# Fetch all published posts
-ALL_POSTS="[]"
-PAGE=1
-while true; do
-    BATCH=$(curl -sf "$API_URL/api/blog/posts?status=published&limit=100&page=$PAGE" \
-        -H "x-api-key: $API_KEY" 2>>"$LOG_FILE") || break
-
-    POSTS_IN_BATCH=$(echo "$BATCH" | jq '.data | length' 2>/dev/null) || break
-    if [ "$POSTS_IN_BATCH" -eq 0 ]; then break; fi
-
-    ALL_POSTS=$(echo "$ALL_POSTS" "$BATCH" | jq -s '.[0] + (.[1].data | map({title, slug}))' 2>/dev/null) || break
-
-    HAS_NEXT=$(echo "$BATCH" | jq -r '.pagination.hasNext' 2>/dev/null)
-    if [ "$HAS_NEXT" != "true" ]; then break; fi
-
-    PAGE=$((PAGE + 1))
-    if [ "$PAGE" -gt 20 ]; then break; fi
-done
 
 echo "$ALL_POSTS" > "$EXISTING_POSTS"
 TOTAL_EXISTING=$(echo "$ALL_POSTS" | jq 'length' 2>/dev/null || echo "0")
-log "Found $TOTAL_EXISTING existing blog posts"
+log "Found $TOTAL_EXISTING existing blog posts (from sitemap)"
 
 # ─── Step 3: Build Claude Prompt ─────────────────────────────────────────────
 log "Step 3: Preparing Claude CLI prompt..."
@@ -103,7 +88,7 @@ GSC_SUMMARY=$(jq '{
     topQueries: [.topQueries[:20][] | {query, clicks, impressions, position}]
 }' "$GSC_OUTPUT" 2>/dev/null || echo '{}')
 
-EXISTING_LIST=$(jq '[.[] | .title]' "$EXISTING_POSTS" 2>/dev/null || echo '[]')
+EXISTING_LIST=$(jq '[.[] | .slug]' "$EXISTING_POSTS" 2>/dev/null || echo '[]')
 
 # Write compact prompt to file (avoids shell arg length limits)
 cat > "$WORK_DIR/prompt.txt" << PROMPT_EOF
@@ -111,7 +96,7 @@ Publish 1 SEO-optimized blog post for myimageupscaler.com using the /blog-publis
 
 Pick a high-value topic related to image upscaling, AI image enhancement, or photo editing based on the GSC keyword data below. The post should drive traffic to our AI image upscaler tool.
 
-EXISTING POSTS (do NOT duplicate any of these topics):
+EXISTING POST SLUGS (do NOT duplicate any of these topics):
 $EXISTING_LIST
 
 GSC KEYWORDS (last 28 days):

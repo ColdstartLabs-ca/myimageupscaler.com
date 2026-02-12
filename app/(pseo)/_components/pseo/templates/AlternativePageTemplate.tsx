@@ -3,8 +3,9 @@
  * Template for competitor comparison landing pages (vs Topaz, vs Bigjpg, etc.)
  */
 
-import type { IAlternativePage } from '@/lib/seo/pseo-types';
+import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
+import type { IAlternativePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
@@ -14,7 +15,6 @@ import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
-import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 
 interface IAlternativePageTemplateProps {
   data: IAlternativePage & {
@@ -48,25 +48,7 @@ export function AlternativePageTemplate({
   const tier = pageMapping?.tier;
 
   return (
-    <div className="min-h-screen bg-main relative">
-      {/* Subtle background pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      {/* Background blurs */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
+    <div className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
         pageType="alternative"
         slug={data.slug}
@@ -75,9 +57,9 @@ export function AlternativePageTemplate({
       />
       <ScrollTracker pageType="alternative" slug={data.slug} />
 
-      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Breadcrumb */}
-        <div className="pt-6 pb-4">
+      {/* Full Width Hero Area */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
               { label: 'Home', href: locale ? `/${locale}` : '/' },
@@ -95,8 +77,14 @@ export function AlternativePageTemplate({
           />
         </div>
 
-        <article>
-          {/* Hero Section */}
+        <div className="relative h-full">
+          {/* Badge Area - Centered above Hero */}
+          <div className="absolute top-8 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-500/10 text-purple-400 text-sm font-semibold rounded-full glass-strong border border-purple-500/20">
+              Alternative
+            </span>
+          </div>
+
           <HeroSection
             h1={data.h1}
             intro={data.intro}
@@ -104,8 +92,13 @@ export function AlternativePageTemplate({
             ctaUrl="/"
             pageType="alternative"
             slug={data.slug}
+            hideBadge={true}
           />
+        </div>
+      </div>
 
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        <article>
           {/* Pricing Comparison */}
           {data.competitorPricing && data.ourPricing && (
             <FadeIn delay={0.2}>
@@ -227,28 +220,32 @@ export function AlternativePageTemplate({
           )}
 
           {/* Related Pages */}
-          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
+          {relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
+          )}
 
           {/* FAQ */}
           {data.faq && data.faq.length > 0 && (
-            <FAQSection faqs={data.faq} pageType="alternative" slug={data.slug} />
+            <div className="py-12">
+              <FAQSection faqs={data.faq} pageType="alternative" slug={data.slug} />
+            </div>
           )}
-
-          {/* Final CTA */}
-          <div className="py-8">
-            <FadeIn>
-              <CTASection
-                title={`Ready to try a better alternative?`}
-                description="Start enhancing images with AI today. No credit card required."
-                ctaText="Try Free"
-                ctaUrl="/"
-                pageType="alternative"
-                slug={data.slug}
-              />
-            </FadeIn>
-          </div>
         </article>
+      </div>
 
+      {/* Final CTA */}
+      <CTASection
+        title={`Ready to try a better alternative?`}
+        description="Start enhancing images with AI today. No credit card required."
+        ctaText="Try Free"
+        ctaUrl="/"
+        pageType="alternative"
+        slug={data.slug}
+      />
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Footer spacing */}
         <div className="pb-16" />
       </div>

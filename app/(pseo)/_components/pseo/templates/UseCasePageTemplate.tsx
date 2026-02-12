@@ -3,8 +3,11 @@
  * Template for industry-specific use case landing pages
  */
 
-import type { IUseCasePage } from '@/lib/seo/pseo-types';
+'use client';
+
+import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
+import type { IUseCasePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
@@ -14,7 +17,6 @@ import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
-import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 
 interface IUseCasePageTemplateProps {
   data: IUseCasePage & {
@@ -50,25 +52,7 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
   const tier = pageMapping?.tier;
 
   return (
-    <div className="min-h-screen bg-base relative">
-      {/* Subtle background pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }}
-      />
-
-      {/* Background blurs */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(45, 129, 255, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
+    <div className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
         pageType="use-case"
         slug={data.slug}
@@ -77,9 +61,9 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
       />
       <ScrollTracker pageType="use-case" slug={data.slug} />
 
-      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Breadcrumb */}
-        <div className="pt-6 pb-4">
+      {/* Full Width Hero Area */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
               { label: 'Home', href: locale ? `/${locale}` : '/' },
@@ -92,8 +76,7 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
           />
         </div>
 
-        <article>
-          {/* Hero Section */}
+        <div className="relative h-full">
           <HeroSection
             h1={data.h1}
             intro={data.intro}
@@ -102,12 +85,16 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
             pageType="use-case"
             slug={data.slug}
           />
+        </div>
+      </div>
 
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        <article>
           {/* Description */}
           {data.description && (
             <FadeIn delay={0.2}>
               <div className="max-w-3xl mx-auto py-8">
-                <p className="text-lg text-text-secondary leading-relaxed text-center">
+                <p className="text-lg text-text-secondary leading-relaxed text-center font-light">
                   {data.description}
                 </p>
               </div>
@@ -118,16 +105,16 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
           {data.platformRequirements && data.platformRequirements.length > 0 && (
             <FadeIn delay={0.3}>
               <section className="py-12">
-                <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
+                <h2 className="text-2xl font-bold text-white text-center mb-8">
                   Platform Requirements
                 </h2>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {data.platformRequirements.map((req, index) => (
                     <div
                       key={index}
-                      className="bg-surface-light rounded-xl p-6 border border-border-default"
+                      className="glass-card-2025 p-6"
                     >
-                      <h3 className="text-lg font-semibold text-text-primary mb-4">
+                      <h3 className="text-lg font-bold text-white mb-4">
                         {req.platform}
                       </h3>
                       <div className="space-y-2 text-sm text-text-secondary">
@@ -155,7 +142,7 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
                         </div>
                       </div>
                       {req.notes && (
-                        <p className="mt-4 text-xs text-text-tertiary border-t border-border-default pt-3">
+                        <p className="mt-4 text-xs text-text-tertiary border-t border-white/10 pt-3">
                           {req.notes}
                         </p>
                       )}
@@ -170,22 +157,22 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
           {data.commonProblems && data.commonProblems.length > 0 && (
             <FadeIn delay={0.4}>
               <section className="py-12">
-                <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
+                <h2 className="text-2xl font-bold text-white text-center mb-8">
                   Common Problems & Solutions
                 </h2>
                 <div className="space-y-6">
                   {data.commonProblems.map((item, index) => (
                     <div
                       key={index}
-                      className="bg-surface-light rounded-xl p-6 border border-border-default"
+                      className="glass-card-2025 p-6"
                     >
-                      <h3 className="text-lg font-semibold text-text-primary mb-2">
+                      <h3 className="text-lg font-bold text-white mb-2">
                         {item.problem}
                       </h3>
                       <p className="text-text-secondary mb-3">{item.solution}</p>
                       {item.howTo && (
-                        <div className="bg-surface-dark rounded-lg p-4 text-sm">
-                          <span className="font-medium text-accent-primary">How to: </span>
+                        <div className="bg-white/5 rounded-lg p-4 text-sm border border-white/10">
+                          <span className="font-medium text-accent">How to: </span>
                           <span className="text-text-secondary">{item.howTo}</span>
                         </div>
                       )}
@@ -200,18 +187,18 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
           {data.workflow && data.workflow.length > 0 && (
             <FadeIn delay={0.5}>
               <section className="py-12">
-                <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
+                <h2 className="text-2xl font-bold text-white text-center mb-8">
                   Step-by-Step Workflow
                 </h2>
                 <div className="max-w-3xl mx-auto space-y-4">
                   {data.workflow.map((step, index) => (
-                    <div key={index} className="flex gap-4 items-start">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent-primary text-white flex items-center justify-center text-sm font-semibold">
+                    <div key={index} className="flex gap-6 items-start">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center text-lg font-bold shadow-lg shadow-accent/20">
                         {step.step}
                       </div>
-                      <div className="flex-1 pb-4 border-b border-border-default last:border-0">
-                        <h3 className="font-semibold text-text-primary mb-1">{step.title}</h3>
-                        <p className="text-text-secondary text-sm">{step.description}</p>
+                      <div className="flex-1 pb-6 border-b border-white/10 last:border-0">
+                        <h3 className="font-bold text-white text-lg mb-1">{step.title}</h3>
+                        <p className="text-text-secondary text-base">{step.description}</p>
                       </div>
                     </div>
                   ))}
@@ -224,46 +211,52 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
           {data.challenges && data.challenges.length > 0 && (
             <FadeIn delay={0.4}>
               <section className="py-12">
-                <h2 className="text-2xl font-semibold text-text-primary text-center mb-8">
+                <h2 className="text-2xl font-bold text-white text-center mb-8">
                   Key Challenges
                 </h2>
                 <div className="max-w-3xl mx-auto">
-                  <ul className="space-y-3">
-                    {data.challenges.map((challenge, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <span className="text-accent-primary mt-1">•</span>
-                        <span className="text-text-secondary">{challenge}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="glass-card-2025 p-8">
+                    <ul className="space-y-4">
+                      {data.challenges.map((challenge, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                          <span className="text-text-secondary text-lg">{challenge}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </section>
             </FadeIn>
           )}
 
           {/* Related Pages */}
-          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
+          {relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
+          )}
 
           {/* FAQ */}
           {data.faq && data.faq.length > 0 && (
-            <FAQSection faqs={data.faq} pageType="use-case" slug={data.slug} />
+            <div className="py-12">
+              <FAQSection faqs={data.faq} pageType="use-case" slug={data.slug} />
+            </div>
           )}
-
-          {/* Final CTA */}
-          <div className="py-8">
-            <FadeIn>
-              <CTASection
-                title={`Ready to optimize your ${data.industry || 'images'}?`}
-                description="Start enhancing images with AI today. No credit card required."
-                ctaText="Try Free"
-                ctaUrl="/"
-                pageType="use-case"
-                slug={data.slug}
-              />
-            </FadeIn>
-          </div>
         </article>
+      </div>
 
+      {/* Final CTA Full Width */}
+      <CTASection
+        title={`Ready to optimize your ${data.industry || 'images'}?`}
+        description="Start enhancing images with AI today. No credit card required."
+        ctaText="Try Free"
+        ctaUrl="/"
+        pageType="use-case"
+        slug={data.slug}
+      />
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Footer spacing */}
         <div className="pb-16" />
       </div>

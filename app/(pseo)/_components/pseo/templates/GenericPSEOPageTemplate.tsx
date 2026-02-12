@@ -5,26 +5,28 @@
  */
 
 import type {
-  PSEOPage,
-  IFeature,
   IBenefit,
+  IFAQ,
+  IFeature,
   IHowItWorksStep,
   IUseCase,
-  IFAQ,
+  PSEOPage,
 } from '@/lib/seo/pseo-types';
-import type { PSEOCategory } from '@/lib/seo/url-utils';
-import React from 'react';
-import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
-import { BreadcrumbNav } from '../ui/BreadcrumbNav';
-import { FAQSection } from '../sections/FAQSection';
-import { CTASection } from '../sections/CTASection';
-import { FeaturesSection } from '../sections/FeaturesSection';
-import { BenefitsSection } from '../sections/BenefitsSection';
-import { UseCasesSection } from '../sections/UseCasesSection';
-import { HowItWorksSection } from '../sections/HowItWorksSection';
-import { clientEnv } from '@shared/config/env';
-import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import type { PSEOCategory } from '@/lib/seo/url-utils';
+import { clientEnv } from '@shared/config/env';
+import React from 'react';
+import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
+import { ScrollTracker } from '../analytics/ScrollTracker';
+import { BenefitsSection } from '../sections/BenefitsSection';
+import { CTASection } from '../sections/CTASection';
+import { FAQSection } from '../sections/FAQSection';
+import { FeaturesSection } from '../sections/FeaturesSection';
+import { HeroSection } from '../sections/HeroSection';
+import { HowItWorksSection } from '../sections/HowItWorksSection';
+import { RelatedPagesSection } from '../sections/RelatedPagesSection';
+import { UseCasesSection } from '../sections/UseCasesSection';
+import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 
 interface IBreadcrumbItem {
   label: string;
@@ -73,44 +75,87 @@ export function GenericPSEOPageTemplate({
   ];
 
   return (
-    <main className="min-h-screen">
-      <BreadcrumbNav items={breadcrumbItems} />
+    <main className="min-h-screen bg-main relative overflow-x-hidden">
+      <PSEOPageTracker
+        pageType={category as any}
+        slug={data.slug}
+        primaryKeyword={data.primaryKeyword}
+      />
+      <ScrollTracker pageType={category as any} slug={data.slug} />
 
-      <section className="py-12 md:py-20">
-        <div className="container mx-auto px-4">
-          <FadeIn>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-center">
-              {data.h1}
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
-              {data.intro}
-            </p>
-          </FadeIn>
+      {/* Full Width Hero Area */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
+          <BreadcrumbNav items={breadcrumbItems} />
         </div>
-      </section>
 
-      {hasFeatures && <FeaturesSection features={(data as { features: IFeature[] }).features} />}
+        <div className="relative h-full">
+          <HeroSection
+            h1={data.h1}
+            intro={data.intro}
+            ctaText={(data as any).ctaText || "Get Started Free"}
+            ctaUrl={(data as any).ctaUrl || "/?signup=1"}
+            pageType={category as any}
+            slug={data.slug}
+          />
+        </div>
+      </div>
 
-      {hasBenefits && <BenefitsSection benefits={(data as { benefits: IBenefit[] }).benefits} />}
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        <article>
+          {hasFeatures && (
+            <div className="py-12">
+              <FeaturesSection features={(data as { features: IFeature[] }).features} />
+            </div>
+          )}
 
-      {hasHowItWorks && (
-        <HowItWorksSection steps={(data as { howItWorks: IHowItWorksStep[] }).howItWorks} />
-      )}
+          {hasBenefits && (
+            <div className="py-12">
+              <BenefitsSection benefits={(data as { benefits: IBenefit[] }).benefits} />
+            </div>
+          )}
 
-      {hasUseCases && <UseCasesSection useCases={(data as { useCases: IUseCase[] }).useCases} />}
+          {hasHowItWorks && (
+            <div className="py-12">
+              <HowItWorksSection steps={(data as { howItWorks: IHowItWorksStep[] }).howItWorks} />
+            </div>
+          )}
 
-      {hasFAQ && <FAQSection faqs={(data as { faq: IFAQ[] }).faq} />}
+          {hasUseCases && (
+            <div className="py-12">
+              <UseCasesSection useCases={(data as { useCases: IUseCase[] }).useCases} />
+            </div>
+          )}
+
+          {hasFAQ && (
+            <div className="py-12">
+              <FAQSection faqs={(data as { faq: IFAQ[] }).faq} pageType={category as any} slug={data.slug} />
+            </div>
+          )}
+
+          {relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
+          )}
+        </article>
+      </div>
 
       {hasCTA && (
         <CTASection
-          title={(data as { description: string }).description}
-          description={(data as { description: string }).description}
-          ctaText={(data as { ctaText: string }).ctaText}
-          ctaUrl={(data as { ctaUrl: string }).ctaUrl}
+          title={(data as any).description}
+          description={(data as any).description}
+          ctaText={(data as any).ctaText}
+          ctaUrl={(data as any).ctaUrl}
+          pageType={category as any}
+          slug={data.slug}
         />
       )}
 
-      {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        {/* Footer spacing */}
+        <div className="pb-16" />
+      </div>
     </main>
   );
 }

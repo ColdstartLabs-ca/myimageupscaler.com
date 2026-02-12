@@ -3,8 +3,11 @@
  * Template for interactive tool landing pages with embedded functionality
  */
 
-import type { IToolPage, IToolConfig } from '@/lib/seo/pseo-types';
+'use client';
+
+import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
+import type { IToolConfig, IToolPage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
 import React, { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
@@ -13,19 +16,19 @@ import { BenefitsSection } from '../sections/BenefitsSection';
 import { CTASection } from '../sections/CTASection';
 import { FAQSection } from '../sections/FAQSection';
 import { FeaturesSection } from '../sections/FeaturesSection';
+import { HeroSection } from '../sections/HeroSection';
 import { HowItWorksSection } from '../sections/HowItWorksSection';
-import { UseCasesSection } from '../sections/UseCasesSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
+import { UseCasesSection } from '../sections/UseCasesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
-import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 
 // Import interactive tools
-import { ImageResizer } from '@/app/(pseo)/_components/tools/ImageResizer';
-import { ImageCompressor } from '@/app/(pseo)/_components/tools/ImageCompressor';
-import { FormatConverter } from '@/app/(pseo)/_components/tools/FormatConverter';
+import { BackgroundRemover } from '@/app/(pseo)/_components/tools/BackgroundRemover';
 import { BulkImageCompressor } from '@/app/(pseo)/_components/tools/BulkImageCompressor';
 import { BulkImageResizer } from '@/app/(pseo)/_components/tools/BulkImageResizer';
-import { BackgroundRemover } from '@/app/(pseo)/_components/tools/BackgroundRemover';
+import { FormatConverter } from '@/app/(pseo)/_components/tools/FormatConverter';
+import { ImageCompressor } from '@/app/(pseo)/_components/tools/ImageCompressor';
+import { ImageResizer } from '@/app/(pseo)/_components/tools/ImageResizer';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -83,25 +86,7 @@ export function InteractiveToolPageTemplate({
   const ToolComponent = data.toolComponent ? TOOL_COMPONENTS[data.toolComponent] : null;
 
   return (
-    <div className="min-h-screen bg-base relative">
-      {/* Subtle background pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }}
-      />
-
-      {/* Background blurs */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(45, 129, 255, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
+    <div className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
         pageType="tool"
         slug={data.slug}
@@ -110,9 +95,9 @@ export function InteractiveToolPageTemplate({
       />
       <ScrollTracker pageType="tool" slug={data.slug} />
 
-      <div className="relative max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Breadcrumb */}
-        <div className="pt-6 pb-4">
+      {/* Full Width Hero Area */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
               { label: 'Home', href: locale ? `/${locale}` : '/' },
@@ -122,19 +107,24 @@ export function InteractiveToolPageTemplate({
           />
         </div>
 
-        <article>
-          {/* Hero Section with Title */}
-          <FadeIn>
-            <div className="text-center py-8 max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">{data.h1}</h1>
-              <p className="text-xl text-text-secondary leading-relaxed">{data.intro}</p>
-            </div>
-          </FadeIn>
+        <div className="relative h-full">
+          <HeroSection
+            h1={data.h1}
+            intro={data.intro}
+            ctaText={data.ctaText}
+            ctaUrl={data.ctaUrl}
+            pageType="tool"
+            slug={data.slug}
+          />
+        </div>
+      </div>
 
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        <article>
           {/* Interactive Tool Component */}
           {ToolComponent && (
             <FadeIn delay={0.1}>
-              <div className="py-8">
+              <div className="py-12">
                 <ToolComponent {...getToolProps(data.toolComponent!, data.toolConfig)} />
               </div>
             </FadeIn>
@@ -144,7 +134,7 @@ export function InteractiveToolPageTemplate({
           {data.description && (
             <FadeIn delay={0.2}>
               <div className="max-w-3xl mx-auto py-8">
-                <p className="text-lg text-text-secondary leading-relaxed text-center">
+                <p className="text-lg text-text-secondary leading-relaxed text-center font-light">
                   {data.description}
                 </p>
               </div>
@@ -152,38 +142,50 @@ export function InteractiveToolPageTemplate({
           )}
 
           {/* Features */}
-          <FeaturesSection features={data.features} />
+          <div className="py-12">
+            <FeaturesSection features={data.features} />
+          </div>
 
           {/* How It Works */}
-          <HowItWorksSection steps={data.howItWorks} />
+          <div className="py-12">
+            <HowItWorksSection steps={data.howItWorks} />
+          </div>
 
           {/* Use Cases */}
-          <UseCasesSection useCases={data.useCases} />
+          <div className="py-12">
+            <UseCasesSection useCases={data.useCases} />
+          </div>
 
           {/* Benefits */}
-          <BenefitsSection benefits={data.benefits} />
-
-          {/* FAQ */}
-          <FAQSection faqs={data.faq} pageType="tool" slug={data.slug} />
+          <div className="py-12">
+            <BenefitsSection benefits={data.benefits} />
+          </div>
 
           {/* Related Pages */}
-          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
+          {relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
+          )}
 
-          {/* Upgrade CTA */}
-          <div className="py-8">
-            <FadeIn>
-              <CTASection
-                title="Need AI-Powered Enhancement?"
-                description="For advanced upscaling with AI quality enhancement, try our flagship tool."
-                ctaText="Try AI Image Upscaler"
-                ctaUrl="/?signup=1"
-                pageType="tool"
-                slug={data.slug}
-              />
-            </FadeIn>
+          {/* FAQ */}
+          <div className="py-12">
+            <FAQSection faqs={data.faq} pageType="tool" slug={data.slug} />
           </div>
         </article>
+      </div>
 
+      {/* Final CTA Full Width */}
+      <CTASection
+        title="Need AI-Powered Enhancement?"
+        description="For advanced upscaling with AI quality enhancement, try our flagship tool. No credit card required."
+        ctaText="Try AI Image Upscaler"
+        ctaUrl="/?signup=1"
+        pageType="tool"
+        slug={data.slug}
+      />
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Footer spacing */}
         <div className="pb-16" />
       </div>

@@ -5,21 +5,21 @@
 
 'use client';
 
-import type { IPlatformFormatPage } from '@/lib/seo/pseo-types';
+import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
+import type { IPlatformFormatPage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
-import { ReactElement } from 'react';
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
+import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { BenefitsSection } from '../sections/BenefitsSection';
 import { CTASection } from '../sections/CTASection';
 import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
-import { UseCasesSection } from '../sections/UseCasesSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
+import { UseCasesSection } from '../sections/UseCasesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
-import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 
 interface IPlatformFormatPageTemplateProps {
   data: IPlatformFormatPage;

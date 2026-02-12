@@ -6,11 +6,14 @@
 
 'use client';
 
-import type { IFreePage } from '@/lib/seo/pseo-types';
+import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
+import type { Locale } from '@/i18n/config';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
+import type { IFreePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { ArrowRight, Check, Sparkles, X } from 'lucide-react';
+import Link from 'next/link';
 import { ReactElement } from 'react';
-import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { CTASection } from '../sections/CTASection';
@@ -19,10 +22,6 @@ import { FeaturesSection } from '../sections/FeaturesSection';
 import { HeroSection } from '../sections/HeroSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
-import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
-import { Check, X, ArrowRight, Sparkles } from 'lucide-react';
-import Link from 'next/link';
-import type { Locale } from '@/i18n/config';
 
 interface IFreePageTemplateProps {
   data: IFreePage;
@@ -52,25 +51,7 @@ export function FreePageTemplate({ data, locale, relatedPages = [] }: IFreePageT
   const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
-    <div className="min-h-screen bg-surface relative">
-      {/* Subtle background pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }}
-      />
-
-      {/* Background blurs */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(34, 197, 94, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
+    <div className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
         pageType="free"
         slug={data.slug}
@@ -79,9 +60,9 @@ export function FreePageTemplate({ data, locale, relatedPages = [] }: IFreePageT
       />
       <ScrollTracker pageType="free" slug={data.slug} />
 
-      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Breadcrumb */}
-        <div className="pt-6 pb-4">
+      {/* Full Width Hero Area */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
               { label: 'Home', href: '/' },
@@ -91,56 +72,47 @@ export function FreePageTemplate({ data, locale, relatedPages = [] }: IFreePageT
           />
         </div>
 
-        <article>
-          {/* Hero Section with Free Badge */}
-          <div className="relative">
-            <div className="absolute -top-4 left-0">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-light text-success text-sm font-semibold rounded-full">
-                <Sparkles className="w-4 h-4" />
-                Free Plan Available
-              </span>
-            </div>
-            <div className="pt-8">
-              <HeroSection
-                h1={data.h1}
-                intro={data.intro}
-                ctaText="Start Free"
-                ctaUrl={data.upgradePath || '/?signup=1'}
-                pageType="free"
-                slug={data.slug}
-              />
-            </div>
+        <div className="relative h-full">
+          {/* Badge Area - Centered above Hero */}
+          <div className="absolute top-8 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500/10 text-emerald-500 text-sm font-semibold rounded-full glass-strong border border-emerald-500/20">
+              <Sparkles className="w-4 h-4" />
+              Free Tool
+            </span>
           </div>
 
+          <HeroSection
+            h1={data.h1}
+            intro={data.intro}
+            ctaText="Start Free"
+            ctaUrl={data.upgradePath || '/?signup=1'}
+            pageType="free"
+            slug={data.slug}
+            hideBadge={true}
+          />
+        </div>
+      </div>
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        <article>
           {/* Description */}
           {data.description && (
             <FadeIn delay={0.2}>
               <div className="max-w-3xl mx-auto py-8">
-                <p className="text-lg text-muted-foreground leading-relaxed text-center">
+                <p className="text-lg text-text-secondary leading-relaxed text-center font-light">
                   {data.description}
                 </p>
               </div>
             </FadeIn>
           )}
 
-          {/* Before/After Slider */}
-          <FadeIn delay={0.25}>
-            <div className="py-12">
-              <div className="max-w-3xl mx-auto">
-                <BeforeAfterSlider
-                  beforeUrl="/before-after/bird-before.webp"
-                  afterUrl="/before-after/bird-after.webp"
-                  beforeLabel={sliderLabels.before}
-                  afterLabel={sliderLabels.after}
-                  className="shadow-2xl shadow-accent/10"
-                />
-              </div>
-            </div>
-          </FadeIn>
+          {/* Before/After Slider Removed (Bird Image) */}
 
           {/* Free Features */}
           {data.features && data.features.length > 0 && (
-            <FeaturesSection features={data.features} />
+            <div className="py-12">
+              <FeaturesSection features={data.features} />
+            </div>
           )}
 
           {/* Free vs Premium Comparison */}
@@ -148,67 +120,67 @@ export function FreePageTemplate({ data, locale, relatedPages = [] }: IFreePageT
             <FadeIn delay={0.4}>
               <section className="py-12">
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
+                  <h2 className="text-2xl md:text-3xl font-bold text-center mb-4 text-white">
                     Free vs Premium
                   </h2>
-                  <p className="text-muted-foreground text-center mb-8">
+                  <p className="text-text-secondary text-center mb-12">
                     Start free, upgrade when you need more power
                   </p>
 
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid md:grid-cols-2 gap-8">
                     {/* Free Tier */}
-                    <div className="bg-surface border-2 border-border rounded-xl p-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <Sparkles className="w-5 h-5 text-success" />
-                        <h3 className="text-xl font-bold">Free Plan</h3>
+                    <div className="glass-card-2025 p-8 border-white/10">
+                      <div className="flex items-center gap-2 mb-6">
+                        <Sparkles className="w-6 h-6 text-emerald-500" />
+                        <h3 className="text-xl font-bold text-white">Free Plan</h3>
                       </div>
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {data.features.slice(0, 3).map((feature, idx) => (
-                          <div key={idx} className="flex items-start gap-2">
-                            <Check className="w-5 h-5 text-success shrink-0 mt-0.5" />
-                            <span className="text-sm text-muted-foreground">{feature.title}</span>
+                          <div key={idx} className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                            <span className="text-base text-text-secondary">{feature.title}</span>
                           </div>
                         ))}
                         {data.limitations.map((limitation, idx) => (
-                          <div key={idx} className="flex items-start gap-2">
-                            <X className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
-                            <span className="text-sm text-muted-foreground">{limitation}</span>
+                          <div key={idx} className="flex items-start gap-3 opacity-50">
+                            <X className="w-5 h-5 text-text-tertiary shrink-0 mt-0.5" />
+                            <span className="text-base text-text-tertiary">{limitation}</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     {/* Premium Tier */}
-                    <div className="bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/20 rounded-xl p-6 relative">
+                    <div className="glass-card-2025 p-8 border-accent/30 bg-accent/5 relative">
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                        <span className="inline-block px-3 py-1 bg-accent text-white text-xs font-bold rounded-full">
+                        <span className="inline-block px-3 py-1 bg-accent text-white text-xs font-bold rounded-full shadow-lg shadow-accent/20">
                           RECOMMENDED
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 mb-4 pt-2">
-                        <h3 className="text-xl font-bold">Premium Plan</h3>
+                      <div className="flex items-center gap-2 mb-6 pt-2">
+                        <h3 className="text-xl font-bold text-white">Premium Plan</h3>
                       </div>
-                      <div className="space-y-3 mb-6">
+                      <div className="space-y-4 mb-8">
                         {data.features.map((feature, idx) => (
-                          <div key={idx} className="flex items-start gap-2">
+                          <div key={idx} className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                            <span className="text-sm text-muted-foreground">{feature.title}</span>
+                            <span className="text-base text-text-secondary">{feature.title}</span>
                           </div>
                         ))}
                         {data.upgradePoints &&
                           data.upgradePoints.map((point, idx) => (
-                            <div key={idx} className="flex items-start gap-2">
+                            <div key={idx} className="flex items-start gap-3">
                               <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                              <span className="text-sm font-medium text-text-primary">{point}</span>
+                              <span className="text-base font-bold text-white">{point}</span>
                             </div>
                           ))}
                       </div>
                       <Link
                         href={data.upgradePath || '/pricing'}
-                        className="block w-full py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg text-center transition-colors"
+                        className="block w-full py-4 bg-accent hover:bg-accent-hover text-white font-bold rounded-xl text-center transition-all shadow-lg shadow-accent/20 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         Upgrade to Premium
-                        <ArrowRight className="inline-block w-4 h-4 ml-1" />
+                        <ArrowRight className="inline-block w-5 h-5 ml-2" />
                       </Link>
                     </div>
                   </div>
@@ -217,51 +189,57 @@ export function FreePageTemplate({ data, locale, relatedPages = [] }: IFreePageT
             </FadeIn>
           )}
 
+          {/* Related Pages */}
+          {relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
+          )}
+
           {/* FAQ */}
           {data.faq && data.faq.length > 0 && (
-            <FAQSection faqs={data.faq} pageType="free" slug={data.slug} />
-          )}
-
-          {/* Related Pages */}
-          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
-
-          {/* Upgrade CTA */}
-          <div className="py-8">
-            <FadeIn>
-              <CTASection
-                title="Ready for unlimited access?"
-                description="Upgrade to Premium for unlimited credits, faster processing, and priority support. No watermarks, ever."
-                ctaText="View Premium Plans"
-                ctaUrl={data.upgradePath || '/pricing'}
-                pageType="free"
-                slug={data.slug}
-              />
-            </FadeIn>
-          </div>
-
-          {/* Related Free Tools */}
-          {data.relatedFree && data.relatedFree.length > 0 && (
-            <FadeIn delay={0.6}>
-              <section className="py-8 border-t border-border">
-                <h2 className="text-2xl font-bold mb-6">More Free Tools</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {data.relatedFree.map((slug, idx) => (
-                    <Link
-                      key={idx}
-                      href={`/free/${slug}`}
-                      className="p-4 border border-border rounded-lg hover:border-success hover:shadow-md transition-all"
-                    >
-                      <span className="text-sm font-medium text-primary capitalize">
-                        {slug.replace(/-/g, ' ')}
-                      </span>
-                      <ArrowRight className="inline-block w-4 h-4 ml-1 text-muted-foreground" />
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            </FadeIn>
+            <div className="py-12">
+              <FAQSection faqs={data.faq} pageType="free" slug={data.slug} />
+            </div>
           )}
         </article>
+      </div>
+
+      {/* Final CTA Full Width */}
+      <CTASection
+        title="Ready for unlimited access?"
+        description="Upgrade to Premium for unlimited credits, faster processing, and priority support. No watermarks, ever."
+        ctaText="View Premium Plans"
+        ctaUrl={data.upgradePath || '/pricing'}
+        pageType="free"
+        slug={data.slug}
+      />
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        {/* Related Free Tools */}
+        {data.relatedFree && data.relatedFree.length > 0 && (
+          <FadeIn delay={0.6}>
+            <section className="py-12 border-t border-white/10 mt-12">
+              <h2 className="text-2xl font-bold mb-8 text-white">More Free Tools</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {data.relatedFree.map((slug, idx) => (
+                  <Link
+                    key={idx}
+                    href={`/free/${slug}`}
+                    className="p-6 glass-card-2025 hover:border-accent transition-all group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-white capitalize">
+                        {slug.replace(/-/g, ' ')}
+                      </span>
+                      <ArrowRight className="w-5 h-5 text-text-tertiary group-hover:text-accent group-hover:translate-x-1 transition-all" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          </FadeIn>
+        )}
 
         {/* Footer spacing */}
         <div className="pb-16" />

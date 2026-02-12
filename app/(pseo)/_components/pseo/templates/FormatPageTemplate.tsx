@@ -5,11 +5,11 @@
 
 'use client';
 
-import type { IFormatPage } from '@/lib/seo/pseo-types';
+import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
+import type { IFormatPage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
 import { ReactElement } from 'react';
-import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { BenefitsSection } from '../sections/BenefitsSection';
@@ -20,7 +20,6 @@ import { HeroSection } from '../sections/HeroSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { UseCasesSection } from '../sections/UseCasesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
-import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 
 interface IFormatPageTemplateProps {
   data: IFormatPage;
@@ -66,25 +65,7 @@ export function FormatPageTemplate({
   }));
 
   return (
-    <div className="min-h-screen bg-main relative">
-      {/* Subtle background pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      {/* Background blurs */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
+    <div className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
         pageType="format"
         slug={data.slug}
@@ -93,9 +74,9 @@ export function FormatPageTemplate({
       />
       <ScrollTracker pageType="format" slug={data.slug} />
 
-      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Breadcrumb */}
-        <div className="pt-6 pb-4">
+      {/* Full Width Hero Area */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
               { label: 'Home', href: locale ? `/${locale}` : '/' },
@@ -108,8 +89,7 @@ export function FormatPageTemplate({
           />
         </div>
 
-        <article>
-          {/* Hero Section */}
+        <div className="relative h-full">
           <HeroSection
             h1={data.h1}
             intro={data.intro}
@@ -118,67 +98,72 @@ export function FormatPageTemplate({
             pageType="format"
             slug={data.slug}
           />
+        </div>
+      </div>
 
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        <article>
           {/* Description */}
           {data.description && (
             <FadeIn delay={0.2}>
               <div className="max-w-3xl mx-auto py-8">
-                <p className="text-lg text-text-secondary leading-relaxed text-center">
+                <p className="text-lg text-text-secondary leading-relaxed text-center font-light">
                   {data.description}
                 </p>
               </div>
             </FadeIn>
           )}
 
-          {/* Before/After Slider */}
-          <FadeIn delay={0.25}>
-            <div className="py-12">
-              <div className="max-w-3xl mx-auto">
-                <BeforeAfterSlider
-                  beforeUrl="/before-after/bird-before.webp"
-                  afterUrl="/before-after/bird-after.webp"
-                  beforeLabel={sliderLabels.before}
-                  afterLabel={sliderLabels.after}
-                  className="shadow-2xl shadow-accent/10"
-                />
-              </div>
-            </div>
-          </FadeIn>
+          {/* Before/After Slider Removed (Bird Image) */}
 
           {/* Format Characteristics */}
-          {features && features.length > 0 && <FeaturesSection features={features} />}
+          {features && features.length > 0 && (
+            <div className="py-12">
+              <FeaturesSection features={features} />
+            </div>
+          )}
 
           {/* Use Cases */}
           {data.useCases && data.useCases.length > 0 && (
-            <UseCasesSection useCases={data.useCases} />
+            <div className="py-12">
+              <UseCasesSection useCases={data.useCases} />
+            </div>
           )}
 
           {/* Best Practices */}
-          {benefits && benefits.length > 0 && <BenefitsSection benefits={benefits} />}
+          {benefits && benefits.length > 0 && (
+            <div className="py-12">
+              <BenefitsSection benefits={benefits} />
+            </div>
+          )}
 
           {/* Related Pages */}
-          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
+          {relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
+          )}
 
           {/* FAQ */}
           {data.faq && data.faq.length > 0 && (
-            <FAQSection faqs={data.faq} pageType="format" slug={data.slug} />
+            <div className="py-12">
+              <FAQSection faqs={data.faq} pageType="format" slug={data.slug} />
+            </div>
           )}
-
-          {/* Final CTA */}
-          <div className="py-8">
-            <FadeIn>
-              <CTASection
-                title={`Ready to upscale your ${data.formatName || 'images'}?`}
-                description="Start enhancing images with AI today. No credit card required."
-                ctaText="Try Free"
-                ctaUrl="/"
-                pageType="format"
-                slug={data.slug}
-              />
-            </FadeIn>
-          </div>
         </article>
+      </div>
 
+      {/* Final CTA Full Width */}
+      <CTASection
+        title={`Ready to upscale your ${data.formatName || 'images'}?`}
+        description="Start enhancing images with AI today. No credit card required."
+        ctaText="Try Free"
+        ctaUrl="/"
+        pageType="format"
+        slug={data.slug}
+      />
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Footer spacing */}
         <div className="pb-16" />
       </div>

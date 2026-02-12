@@ -39,6 +39,7 @@ interface IHeroSectionProps {
   intro: string;
   ctaText?: string;
   ctaUrl?: string;
+  hideBadge?: boolean;
   pageType?:
   | 'tool'
   | 'comparison'
@@ -61,6 +62,7 @@ export function HeroSection({
   intro,
   ctaText,
   ctaUrl,
+  hideBadge,
   pageType,
   slug,
 }: IHeroSectionProps): ReactElement {
@@ -91,16 +93,18 @@ export function HeroSection({
         variants={heroContainerVariants}
       >
         {/* Badge */}
-        <motion.div
-          variants={heroItemVariants}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-muted-foreground font-medium text-sm mb-8 hover:shadow-xl hover:shadow-accent/20 transition-all duration-300 cursor-default group"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
-          </span>
-          AI-Powered Tool
-        </motion.div>
+        {!hideBadge && (
+          <motion.div
+            variants={heroItemVariants}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-muted-foreground font-medium text-sm mb-8 hover:shadow-xl hover:shadow-accent/20 transition-all duration-300 cursor-default group"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
+            </span>
+            AI-Powered Tool
+          </motion.div>
+        )}
 
         {/* Main Headline */}
         <motion.h1

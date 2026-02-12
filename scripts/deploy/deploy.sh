@@ -9,12 +9,14 @@ export SKIP_SECRETS="false"
 export SKIP_TESTS="false"
 export SKIP_I18N="false"
 export SKIP_SEO_GUARD="false"
+export PURGE_CACHE="false"
 for arg in "$@"; do
     case $arg in
         --skip-secrets) SKIP_SECRETS="true" ;;
         --skip-tests) SKIP_TESTS="true" ;;
         --skip-i18n) SKIP_I18N="true" ;;
         --skip-seo-guard) SKIP_SEO_GUARD="true" ;;
+        --purge) PURGE_CACHE="true" ;;
     esac
 done
 
@@ -116,6 +118,19 @@ echo ""
 source "$SCRIPT_DIR/steps/01-preflight.sh" && step_preflight
 source "$SCRIPT_DIR/steps/02-build.sh" && step_build
 source "$SCRIPT_DIR/steps/03-deploy.sh" && step_deploy
+
+# Purge Cloudflare cache if requested
+if [ "$PURGE_CACHE" = "true" ]; then
+    echo -e "${CYAN}▸ Purging Cloudflare cache...${NC}"
+    purge_result=$(cf_api POST "/zones/$CLOUDFLARE_ZONE_ID/purge_cache" '{"purge_everything":true}')
+    if echo "$purge_result" | grep -q '"success":true'; then
+        echo -e "  ${GREEN}✓${NC} Cache purged"
+    else
+        echo -e "  ${YELLOW}⚠${NC} Cache purge failed (non-blocking)"
+    fi
+    echo ""
+fi
+
 source "$SCRIPT_DIR/steps/04-configure.sh" && step_configure
 source "$SCRIPT_DIR/steps/05-secrets.sh" && step_secrets
 source "$SCRIPT_DIR/steps/06-verify.sh" && step_verify

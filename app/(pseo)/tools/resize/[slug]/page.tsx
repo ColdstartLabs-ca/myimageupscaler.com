@@ -1,15 +1,17 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import interactiveToolsData from '@/app/seo/data/interactive-tools.json';
+import bulkToolsData from '@/app/seo/data/bulk-tools.json';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { generateToolSchema } from '@/lib/seo/schema-generator';
 import { clientEnv } from '@shared/config/env';
-import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
+import type { IToolPage, IBulkToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
 
 const toolsData = interactiveToolsData as IPSEODataFile<IToolPage>;
+const bulkData = bulkToolsData as unknown as IPSEODataFile<IBulkToolPage>;
 
-// Resize tool slugs from interactive-tools.json
+// Resize tool slugs from interactive-tools.json and bulk-tools.json
 const RESIZE_SLUGS = [
   'image-resizer',
   'resize-image-for-instagram',
@@ -19,6 +21,14 @@ const RESIZE_SLUGS = [
   'resize-image-for-linkedin',
   'bulk-image-resizer',
 ];
+
+function findToolBySlug(slug: string): IToolPage | null {
+  const tool = toolsData.pages.find(p => p.slug === slug);
+  if (tool) return tool;
+  const bulkTool = bulkData.pages.find(p => p.slug === slug);
+  if (bulkTool) return { ...bulkTool, category: 'tools' as const } as unknown as IToolPage;
+  return null;
+}
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
@@ -35,7 +45,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const tool = toolsData.pages.find(p => p.slug === slug);
+  const tool = findToolBySlug(slug);
 
   if (!tool) return {};
 
@@ -68,7 +78,7 @@ export default async function ResizeToolPage({ params }: IPageProps) {
     notFound();
   }
 
-  const tool = toolsData.pages.find(p => p.slug === slug);
+  const tool = findToolBySlug(slug);
 
   if (!tool) {
     notFound();

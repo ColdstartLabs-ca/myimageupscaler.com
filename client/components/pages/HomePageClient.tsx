@@ -363,58 +363,6 @@ export function HomePageClient(): JSX.Element {
         </section>
       </FadeIn>
 
-      {/* Featured On Section */}
-      <FadeIn>
-        <section className="py-24 relative">
-          <AmbientBackground variant="section" />
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] as const }}
-            >
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                {t('featuredOnTitle')}
-              </h2>
-              <p className="text-lg text-text-secondary mb-12 max-w-2xl mx-auto font-light">
-                {t('featuredOnDescription')}
-              </p>
-              <motion.div
-                className="flex flex-wrap items-center justify-center gap-8 sm:gap-12"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-              >
-                <a
-                  href="https://launchigniter.com/product/myimageupscaler?ref=badge-myimageupscaler"
-                  target="_blank"
-                >
-                  <img
-                    src="https://launchigniter.com/api/badge/myimageupscaler?theme=light"
-                    alt="Featured on LaunchIgniter"
-                    width={212}
-                    height={55}
-                  />
-                </a>
-                <a
-                  href="https://curlship.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="glass-strong hover:bg-white/10 px-6 py-4 rounded-xl transition-all duration-300 group"
-                >
-                  <img
-                    src="https://curlship.com/badge"
-                    alt="CurlShip listed"
-                    width={120}
-                    height={20}
-                    className="h-5 w-auto group-hover:scale-105 transition-transform"
-                  />
-                </a>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
-      </FadeIn>
     </div>
   );
 }

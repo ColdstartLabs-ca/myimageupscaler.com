@@ -1,12 +1,13 @@
 import { Metadata } from 'next';
-import interactiveToolsData from '@/app/seo/data/interactive-tools.json';
+import { notFound } from 'next/navigation';
+import bulkToolsData from '@/app/seo/data/bulk-tools.json';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { generateToolSchema } from '@/lib/seo/schema-generator';
 import { clientEnv } from '@shared/config/env';
-import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
+import type { IToolPage, IBulkToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
 
-const toolsData = interactiveToolsData as IPSEODataFile<IToolPage>;
+const bulkData = bulkToolsData as unknown as IPSEODataFile<IBulkToolPage>;
 
 // Bulk Image Resizer slug
 const BULK_RESIZER_SLUG = 'bulk-image-resizer';
@@ -16,8 +17,12 @@ const BULK_RESIZER_SLUG = 'bulk-image-resizer';
 export const dynamic = 'force-static';
 export const revalidate = 86400; // 24 hours
 
+function getToolData(): IBulkToolPage | undefined {
+  return bulkData.pages.find(p => p.slug === BULK_RESIZER_SLUG);
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  const tool = toolsData.pages.find(p => p.slug === BULK_RESIZER_SLUG);
+  const tool = getToolData();
 
   if (!tool) return {};
 
@@ -43,26 +48,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function BulkImageResizerPage() {
-  const tool = toolsData.pages.find(p => p.slug === BULK_RESIZER_SLUG);
+  const tool = getToolData();
 
   if (!tool) {
-    // Return a not found page if tool data doesn't exist yet
-    return (
-      <div className="min-h-screen bg-base flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-text-primary mb-2">Page Not Found</h1>
-          <p className="text-text-secondary">The bulk image resizer page data is not configured.</p>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
-  const schema = generateToolSchema(tool);
+  // Cast to IToolPage for the template - IBulkToolPage has all required fields
+  const toolAsPage = { ...tool, category: 'tools' as const } as unknown as IToolPage;
+  const schema = generateToolSchema(toolAsPage);
 
   return (
     <>
       <SchemaMarkup schema={schema} />
-      <InteractiveToolPageTemplate data={tool} />
+      <InteractiveToolPageTemplate data={toolAsPage} />
     </>
   );
 }

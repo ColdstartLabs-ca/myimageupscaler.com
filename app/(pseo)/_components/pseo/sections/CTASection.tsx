@@ -16,19 +16,19 @@ interface ICTASectionProps {
   ctaText: string;
   ctaUrl: string;
   pageType?:
-    | 'tool'
-    | 'comparison'
-    | 'guide'
-    | 'useCase'
-    | 'use-case'
-    | 'alternative'
-    | 'format'
-    | 'scale'
-    | 'free'
-    | 'platform'
-    | 'format-scale'
-    | 'platform-format'
-    | 'device-use';
+  | 'tool'
+  | 'comparison'
+  | 'guide'
+  | 'useCase'
+  | 'use-case'
+  | 'alternative'
+  | 'format'
+  | 'scale'
+  | 'free'
+  | 'platform'
+  | 'format-scale'
+  | 'platform-format'
+  | 'device-use';
   slug?: string;
 }
 

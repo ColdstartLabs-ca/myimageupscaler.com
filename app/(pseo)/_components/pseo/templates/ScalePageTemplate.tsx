@@ -6,11 +6,14 @@
 
 'use client';
 
-import type { IScalePage } from '@/lib/seo/pseo-types';
+import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
+import type { Locale } from '@/i18n/config';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
+import type { IScalePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { ArrowRight, Maximize2, Monitor, Zap } from 'lucide-react';
+import Link from 'next/link';
 import { ReactElement } from 'react';
-import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { CTASection } from '../sections/CTASection';
@@ -18,10 +21,6 @@ import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
-import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
-import { Monitor, Maximize2, Zap, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import type { Locale } from '@/i18n/config';
 
 interface IScalePageTemplateProps {
   data: IScalePage;
@@ -55,25 +54,7 @@ export function ScalePageTemplate({
   const sliderLabels = getBeforeAfterLabels(locale);
 
   return (
-    <div className="min-h-screen bg-main relative">
-      {/* Subtle background pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      {/* Background blurs */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 w-[600px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
+    <div className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
         pageType="scale"
         slug={data.slug}
@@ -82,9 +63,9 @@ export function ScalePageTemplate({
       />
       <ScrollTracker pageType="scale" slug={data.slug} />
 
-      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Breadcrumb */}
-        <div className="pt-6 pb-4">
+      {/* Full Width Hero Area */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
               { label: 'Home', href: '/' },
@@ -94,44 +75,46 @@ export function ScalePageTemplate({
           />
         </div>
 
-        <article>
-          {/* Hero Section with Resolution Badge */}
-          <div className="relative">
-            <div className="absolute -top-4 left-0">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-light text-accent text-sm font-semibold rounded-full">
-                <Monitor className="w-4 h-4" />
-                {data.resolution}
-              </span>
-            </div>
-            <div className="pt-8">
-              <HeroSection
-                h1={data.h1}
-                intro={data.intro}
-                ctaText={`Upscale to ${data.resolution}`}
-                ctaUrl="/?signup=1"
-                pageType="scale"
-                slug={data.slug}
-              />
-            </div>
+        <div className="relative h-full">
+          {/* Centered Badge */}
+          <div className="absolute top-8 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent/10 text-accent text-sm font-bold rounded-full border border-accent/20 glass-strong">
+              <Monitor className="w-4 h-4" />
+              {data.resolution}
+            </span>
           </div>
 
+          <HeroSection
+            h1={data.h1}
+            intro={data.intro}
+            ctaText={`Upscale to ${data.resolution}`}
+            ctaUrl="/?signup=1"
+            pageType="scale"
+            slug={data.slug}
+            hideBadge={true}
+          />
+        </div>
+      </div>
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        <article>
           {/* Description */}
           {data.description && (
             <FadeIn delay={0.2}>
               <div className="max-w-3xl mx-auto py-8">
-                <p className="text-lg text-muted-foreground leading-relaxed text-center">
+                <p className="text-lg text-text-secondary leading-relaxed text-center font-light">
                   {data.description}
                 </p>
               </div>
             </FadeIn>
           )}
 
-          {/* Unique Intro (for content uniqueness) */}
+          {/* Unique Intro */}
           {data.uniqueIntro && (
             <FadeIn delay={0.25}>
               <div className="max-w-3xl mx-auto py-8">
-                <p className="text-lg text-muted-foreground leading-relaxed text-center">
-                  {data.uniqueIntro}
+                <p className="text-lg text-text-secondary leading-relaxed text-center font-light italic">
+                  &ldquo;{data.uniqueIntro}&rdquo;
                 </p>
               </div>
             </FadeIn>
@@ -141,7 +124,7 @@ export function ScalePageTemplate({
           {data.expandedDescription && (
             <FadeIn delay={0.3}>
               <div className="max-w-4xl mx-auto py-8">
-                <p className="text-base text-muted-foreground leading-relaxed">
+                <p className="text-lg text-text-secondary leading-relaxed">
                   {data.expandedDescription}
                 </p>
               </div>
@@ -151,53 +134,40 @@ export function ScalePageTemplate({
           {/* Page Specific Details */}
           {data.pageSpecificDetails && (
             <FadeIn delay={0.35}>
-              <div className="max-w-4xl mx-auto py-8 px-6 bg-surface-light rounded-xl border border-border">
-                <h3 className="text-xl font-bold mb-4 text-center">Key Details & Use Cases</h3>
-                <p className="text-base text-muted-foreground leading-relaxed">
+              <div className="max-w-4xl mx-auto py-12 px-8 glass-card-2025">
+                <h3 className="text-2xl font-bold mb-6 text-white text-center">Key Details & Use Cases</h3>
+                <p className="text-lg text-text-secondary leading-relaxed">
                   {data.pageSpecificDetails}
                 </p>
               </div>
             </FadeIn>
           )}
 
-          {/* Before/After Slider */}
-          <FadeIn delay={0.25}>
-            <div className="py-12">
-              <div className="max-w-3xl mx-auto">
-                <BeforeAfterSlider
-                  beforeUrl="/before-after/bird-before.webp"
-                  afterUrl="/before-after/bird-after.webp"
-                  beforeLabel={sliderLabels.before}
-                  afterLabel={sliderLabels.after}
-                  className="shadow-2xl shadow-accent/10"
-                />
-              </div>
-            </div>
-          </FadeIn>
+          {/* Before/After Slider Removed (Bird Image) */}
 
           {/* Resolution Specs */}
           {data.dimensions && (
             <FadeIn delay={0.3}>
-              <section className="py-8">
-                <div className="max-w-2xl mx-auto bg-gradient-to-br from-surface-light to-surface-light/50 rounded-xl p-8 border border-border">
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <Maximize2 className="w-6 h-6 text-accent" />
-                    <h2 className="text-2xl font-bold">{data.resolution} Specifications</h2>
+              <section className="py-12">
+                <div className="max-w-2xl mx-auto glass-card-2025 p-8 border-accent/20">
+                  <div className="flex items-center justify-center gap-3 mb-8">
+                    <Maximize2 className="w-8 h-8 text-accent" />
+                    <h2 className="text-3xl font-bold text-white">{data.resolution} Specifications</h2>
                   </div>
-                  <div className="grid grid-cols-2 gap-6 text-center">
+                  <div className="grid grid-cols-2 gap-8 text-center">
                     <div>
-                      <div className="text-3xl font-bold text-accent">{data.dimensions.width}</div>
-                      <div className="text-sm text-muted-foreground mt-1">Width (pixels)</div>
+                      <div className="text-4xl font-black text-accent">{data.dimensions.width}</div>
+                      <div className="text-base text-text-tertiary mt-2 uppercase tracking-widest">Width (px)</div>
                     </div>
                     <div>
-                      <div className="text-3xl font-bold text-accent">{data.dimensions.height}</div>
-                      <div className="text-sm text-muted-foreground mt-1">Height (pixels)</div>
+                      <div className="text-4xl font-black text-accent">{data.dimensions.height}</div>
+                      <div className="text-base text-text-tertiary mt-2 uppercase tracking-widest">Height (px)</div>
                     </div>
                   </div>
                   {data.dimensions.aspectRatio && (
-                    <div className="mt-6 pt-6 border-t border-border text-center">
-                      <div className="text-sm text-muted-foreground">Aspect Ratio</div>
-                      <div className="text-xl font-semibold text-primary mt-1">
+                    <div className="mt-8 pt-8 border-t border-white/10 text-center">
+                      <div className="text-base text-text-tertiary uppercase tracking-widest">Target Aspect Ratio</div>
+                      <div className="text-2xl font-bold text-white mt-1">
                         {data.dimensions.aspectRatio}
                       </div>
                     </div>
@@ -210,17 +180,17 @@ export function ScalePageTemplate({
           {/* Use Cases */}
           {data.useCases && data.useCases.length > 0 && (
             <FadeIn delay={0.4}>
-              <section className="py-16">
-                <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Perfect For</h2>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <section className="py-12">
+                <h2 className="text-3xl font-bold text-white text-center mb-12">Perfect For</h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {data.useCases.map((useCase, idx) => (
                     <div
                       key={idx}
-                      className="bg-surface border border-border rounded-xl p-6 hover:border-accent hover:shadow-lg transition-all"
+                      className="glass-card-2025 p-8 transition-all hover:border-accent group"
                     >
-                      <Zap className="w-8 h-8 text-accent mb-3" />
-                      <h3 className="font-semibold text-lg mb-2">{useCase.title}</h3>
-                      <p className="text-sm text-muted-foreground">{useCase.description}</p>
+                      <Zap className="w-10 h-10 text-accent mb-6 group-hover:scale-110 transition-transform" />
+                      <h3 className="font-bold text-white text-xl mb-3">{useCase.title}</h3>
+                      <p className="text-base text-text-secondary leading-relaxed">{useCase.description}</p>
                     </div>
                   ))}
                 </div>
@@ -231,18 +201,19 @@ export function ScalePageTemplate({
           {/* Benefits */}
           {data.benefits && data.benefits.length > 0 && (
             <FadeIn delay={0.5}>
-              <section className="py-12 bg-gradient-to-br from-accent/10 to-accent/5 rounded-2xl px-8">
-                <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+              <section className="py-12 glass-card-2025 p-12 bg-accent/5 overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-[80px] -mr-32 -mt-32" />
+                <h2 className="text-3xl font-bold text-white text-center mb-12 relative z-10">
                   Why Upscale to {data.resolution}?
                 </h2>
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-3 gap-12 relative z-10">
                   {data.benefits.map((benefit, idx) => (
                     <div key={idx} className="text-center">
-                      <div className="text-3xl font-bold text-accent mb-2">
+                      <div className="text-4xl font-black text-accent mb-4">
                         {benefit.metric || '✓'}
                       </div>
-                      <h3 className="font-semibold mb-2">{benefit.title}</h3>
-                      <p className="text-sm text-muted-foreground">{benefit.description}</p>
+                      <h3 className="font-bold text-white text-lg mb-2">{benefit.title}</h3>
+                      <p className="text-base text-text-secondary leading-relaxed">{benefit.description}</p>
                     </div>
                   ))}
                 </div>
@@ -252,49 +223,49 @@ export function ScalePageTemplate({
 
           {/* How It Works */}
           <FadeIn delay={0.55}>
-            <section className="py-16">
-              <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
+            <section className="py-12">
+              <h2 className="text-3xl font-bold text-white text-center mb-6">
                 How AI Upscaling to {data.resolution} Works
               </h2>
-              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+              <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
                 Our advanced AI technology analyzes your image and intelligently adds detail,
                 resulting in crystal clear {data.resolution} output.
               </p>
-              <div className="max-w-3xl mx-auto space-y-6">
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center font-bold">
+              <div className="max-w-3xl mx-auto space-y-12">
+                <div className="flex gap-6">
+                  <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg shadow-accent/20">
                     1
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-1">Upload Your Image</h3>
-                    <p className="text-muted-foreground">
+                  <div className="flex-1 pb-6 border-b border-white/10">
+                    <h3 className="font-bold text-white text-xl mb-2">Upload Your Image</h3>
+                    <p className="text-text-secondary text-lg">
                       Simply drag and drop or select any image from your device. Our system supports
                       all common formats including JPEG, PNG, WebP, and more.
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center font-bold">
+                <div className="flex gap-6">
+                  <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg shadow-accent/20">
                     2
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-1">AI Analysis & Enhancement</h3>
-                    <p className="text-muted-foreground">
+                  <div className="flex-1 pb-6 border-b border-white/10">
+                    <h3 className="font-bold text-white text-xl mb-2">AI Analysis & Enhancement</h3>
+                    <p className="text-text-secondary text-lg">
                       Our neural network analyzes your image at the pixel level, identifying edges,
                       textures, and patterns. It then intelligently generates new pixels to enlarge
                       your image to {data.resolution} while maintaining sharpness and clarity.
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center font-bold">
+                <div className="flex gap-6">
+                  <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg shadow-accent/20">
                     3
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-1">
+                  <div className="flex-1 pb-6 last:border-0">
+                    <h3 className="font-bold text-white text-xl mb-2">
                       Download {data.resolution} Result
                     </h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-text-secondary text-lg">
                       Within seconds, your upscaled image is ready. Download it in full{' '}
                       {data.resolution} quality, perfect for printing, professional use, or
                       high-resolution displays.
@@ -307,37 +278,37 @@ export function ScalePageTemplate({
 
           {/* When to Use This Resolution */}
           <FadeIn delay={0.6}>
-            <section className="py-12 bg-surface-light rounded-2xl px-8 border border-border">
-              <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
+            <section className="py-12 glass-card-2025 p-12">
+              <h2 className="text-3xl font-bold text-white text-center mb-6">
                 When to Use {data.resolution}
               </h2>
-              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+              <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
                 Understanding the right resolution for your needs ensures optimal quality and file
                 size.
               </p>
-              <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-6">
+              <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
                 <div>
-                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                  <h3 className="font-bold text-white text-xl mb-6 flex items-center gap-3">
                     <span className="text-accent">✓</span> Ideal For
                   </h3>
-                  <ul className="space-y-2 text-muted-foreground">
-                    <li>• High-quality photo printing and posters</li>
-                    <li>• Professional photography portfolios</li>
-                    <li>• Retina and 4K display backgrounds</li>
-                    <li>• Marketing materials and brochures</li>
-                    <li>• Social media cover photos and banners</li>
+                  <ul className="space-y-4 text-text-secondary text-lg">
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>High-quality photo printing and posters</span></li>
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Professional photography portfolios</span></li>
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Retina and 4K display backgrounds</span></li>
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Marketing materials and brochures</span></li>
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Social media cover photos and banners</span></li>
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                  <h3 className="font-bold text-white text-xl mb-6 flex items-center gap-3">
                     <span className="text-accent">✓</span> Technical Benefits
                   </h3>
-                  <ul className="space-y-2 text-muted-foreground">
-                    <li>• Crisp details on large format prints</li>
-                    <li>• Future-proof for higher resolution displays</li>
-                    <li>• Professional editing headroom</li>
-                    <li>• Consistent quality across all devices</li>
-                    <li>• Meets industry standard requirements</li>
+                  <ul className="space-y-4 text-text-secondary text-lg">
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Crisp details on large format prints</span></li>
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Future-proof for higher resolution displays</span></li>
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Professional editing headroom</span></li>
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Consistent quality across all devices</span></li>
+                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Meets industry standard requirements</span></li>
                   </ul>
                 </div>
               </div>
@@ -346,65 +317,67 @@ export function ScalePageTemplate({
 
           {/* Comparison with Other Resolutions */}
           <FadeIn delay={0.65}>
-            <section className="py-16">
-              <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
+            <section className="py-12">
+              <h2 className="text-3xl font-bold text-white text-center mb-6">
                 {data.resolution} vs Other Resolutions
               </h2>
-              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+              <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
                 Compare {data.resolution} with common image resolutions to understand the difference
                 in quality and use cases.
               </p>
-              <div className="max-w-3xl mx-auto overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
-                  <thead>
-                    <tr className="border-b-2 border-border">
-                      <th className="text-left py-3 px-4 font-semibold">Resolution</th>
-                      <th className="text-left py-3 px-4 font-semibold">Dimensions</th>
-                      <th className="text-left py-3 px-4 font-semibold">Best For</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-border">
-                      <td className="py-3 px-4 font-medium">720p (HD)</td>
-                      <td className="py-3 px-4">1280 × 720</td>
-                      <td className="py-3 px-4">Web sharing, social media</td>
-                    </tr>
-                    <tr className="border-b border-border">
-                      <td className="py-3 px-4 font-medium">1080p (Full HD)</td>
-                      <td className="py-3 px-4">1920 × 1080</td>
-                      <td className="py-3 px-4">YouTube, presentations</td>
-                    </tr>
-                    <tr className="border-b border-border bg-accent/5">
-                      <td className="py-3 px-4 font-medium text-accent">{data.resolution}</td>
-                      <td className="py-3 px-4">
-                        {data.dimensions?.width || '—'} × {data.dimensions?.height || '—'}
-                      </td>
-                      <td className="py-3 px-4">Professional print, 4K displays</td>
-                    </tr>
-                    <tr className="border-b border-border">
-                      <td className="py-3 px-4 font-medium">8K (UHD)</td>
-                      <td className="py-3 px-4">7680 × 4320</td>
-                      <td className="py-3 px-4">Large format printing, cinema</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div className="max-w-4xl mx-auto overflow-hidden rounded-2xl glass-card-2025 border-white/10">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="border-b border-white/10 bg-white/5">
+                        <th className="py-6 px-8 text-lg font-bold text-white">Resolution</th>
+                        <th className="py-6 px-8 text-lg font-bold text-white">Dimensions</th>
+                        <th className="py-6 px-8 text-lg font-bold text-white">Best For</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      <tr>
+                        <td className="py-5 px-8 font-bold text-white">720p (HD)</td>
+                        <td className="py-5 px-8 text-text-secondary font-mono">1280 × 720</td>
+                        <td className="py-5 px-8 text-text-secondary">Web sharing, social media</td>
+                      </tr>
+                      <tr>
+                        <td className="py-5 px-8 font-bold text-white">1080p (Full HD)</td>
+                        <td className="py-5 px-8 text-text-secondary font-mono">1920 × 1080</td>
+                        <td className="py-5 px-8 text-text-secondary">YouTube, presentations</td>
+                      </tr>
+                      <tr className="bg-accent/10">
+                        <td className="py-5 px-8 font-extrabold text-accent">{data.resolution}</td>
+                        <td className="py-5 px-8 text-accent font-mono">
+                          {data.dimensions?.width || '—'} × {data.dimensions?.height || '—'}
+                        </td>
+                        <td className="py-5 px-8 text-accent font-bold">Professional print, 4K displays</td>
+                      </tr>
+                      <tr>
+                        <td className="py-5 px-8 font-bold text-white">8K (UHD)</td>
+                        <td className="py-5 px-8 text-text-secondary font-mono">7680 × 4320</td>
+                        <td className="py-5 px-8 text-text-secondary">Large format printing, cinema</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </section>
           </FadeIn>
 
           {/* Technical Details */}
           <FadeIn delay={0.7}>
-            <section className="py-16">
-              <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
+            <section className="py-12">
+              <h2 className="text-3xl font-bold text-white text-center mb-6">
                 Technical Details: AI-Powered Upscaling
               </h2>
-              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+              <p className="text-center text-text-secondary mb-12 max-w-2xl mx-auto text-lg font-light">
                 Learn about the technology behind our {data.resolution} upscaling process.
               </p>
-              <div className="max-w-3xl mx-auto space-y-6">
-                <div className="glass-card-2025">
-                  <h3 className="font-semibold text-lg mb-3">Neural Network Architecture</h3>
-                  <p className="text-muted-foreground">
+              <div className="max-w-4xl mx-auto space-y-8">
+                <div className="glass-card-2025 p-8">
+                  <h3 className="font-bold text-white text-xl mb-4">Neural Network Architecture</h3>
+                  <p className="text-text-secondary text-lg leading-relaxed">
                     Our upscaling system uses deep convolutional neural networks (CNNs) trained on
                     millions of high-resolution image pairs. The network learns to intelligently
                     predict and generate missing pixel information when enlarging images to{' '}
@@ -412,18 +385,18 @@ export function ScalePageTemplate({
                     blurring.
                   </p>
                 </div>
-                <div className="glass-card-2025">
-                  <h3 className="font-semibold text-lg mb-3">Edge-Preserving Algorithms</h3>
-                  <p className="text-muted-foreground">
+                <div className="glass-card-2025 p-8">
+                  <h3 className="font-bold text-white text-xl mb-4">Edge-Preserving Algorithms</h3>
+                  <p className="text-text-secondary text-lg leading-relaxed">
                     Unlike traditional interpolation methods that blur edges, our AI detects and
                     preserves important edges and fine details. When upscaling to {data.resolution},
                     lines remain sharp, textures look natural, and text stays readable even at
                     significant enlargement ratios.
                   </p>
                 </div>
-                <div className="glass-card-2025">
-                  <h3 className="font-semibold text-lg mb-3">Format & Color Preservation</h3>
-                  <p className="text-muted-foreground">
+                <div className="glass-card-2025 p-8">
+                  <h3 className="font-bold text-white text-xl mb-4">Format & Color Preservation</h3>
+                  <p className="text-text-secondary text-lg leading-relaxed">
                     Your {data.resolution} output maintains the original color profile and supports
                     the same format as your input. Whether you&apos;re working with sRGB for web or
                     Adobe RGB for print, color accuracy is preserved throughout the upscaling
@@ -434,74 +407,82 @@ export function ScalePageTemplate({
             </section>
           </FadeIn>
 
+          {/* Related Pages */}
+          {relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
+          )}
+
           {/* FAQ */}
           {data.faq && data.faq.length > 0 && (
-            <FAQSection faqs={data.faq} pageType="scale" slug={data.slug} />
-          )}
-
-          {/* Related Pages */}
-          {relatedPages.length > 0 && <RelatedPagesSection relatedPages={relatedPages} />}
-
-          {/* CTA */}
-          <div className="py-8">
-            <FadeIn>
-              <CTASection
-                title={`Ready to upscale to ${data.resolution}?`}
-                description="Transform your images to stunning high resolution with AI-powered upscaling. Start free today."
-                ctaText={`Start Upscaling to ${data.resolution}`}
-                ctaUrl="/?signup=1"
-                pageType="scale"
-                slug={data.slug}
-              />
-            </FadeIn>
-          </div>
-
-          {/* Related Resolutions */}
-          {data.relatedScales && data.relatedScales.length > 0 && (
-            <FadeIn delay={0.6}>
-              <section className="py-8 border-t border-border">
-                <h2 className="text-2xl font-bold mb-6">Other Resolutions</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {data.relatedScales.map((slug, idx) => (
-                    <Link
-                      key={idx}
-                      href={`/scale/${slug}`}
-                      className="p-4 border border-border rounded-lg hover:border-accent hover:shadow-md transition-all group"
-                    >
-                      <span className="text-sm font-medium text-primary capitalize">
-                        {slug.replace(/-/g, ' ').replace('upscale to ', '')}
-                      </span>
-                      <ArrowRight className="inline-block w-4 h-4 ml-1 text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all" />
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            </FadeIn>
-          )}
-
-          {/* Related Guides */}
-          {data.relatedGuides && data.relatedGuides.length > 0 && (
-            <FadeIn delay={0.7}>
-              <section className="py-8">
-                <h2 className="text-2xl font-bold mb-6">Related Guides</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {data.relatedGuides.map((slug, idx) => (
-                    <Link
-                      key={idx}
-                      href={`/guides/${slug}`}
-                      className="p-4 bg-surface rounded-lg hover:bg-surface-light hover:border-accent border border-transparent transition-all"
-                    >
-                      <span className="text-sm font-medium text-primary capitalize">
-                        {slug.replace(/-/g, ' ')}
-                      </span>
-                      <ArrowRight className="inline-block w-4 h-4 ml-1 text-muted-foreground" />
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            </FadeIn>
+            <div className="py-12">
+              <FAQSection faqs={data.faq} pageType="scale" slug={data.slug} />
+            </div>
           )}
         </article>
+      </div>
+
+      {/* Final CTA Full Width */}
+      <CTASection
+        title={`Ready to upscale to ${data.resolution}?`}
+        description="Transform your images to stunning high resolution with AI-powered upscaling. Start free today."
+        ctaText={`Start Upscaling to ${data.resolution}`}
+        ctaUrl="/?signup=1"
+        pageType="scale"
+        slug={data.slug}
+      />
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+        {/* Related Resolutions */}
+        {data.relatedScales && data.relatedScales.length > 0 && (
+          <FadeIn delay={0.6}>
+            <section className="py-12 border-t border-white/10 mt-12">
+              <h2 className="text-2xl font-bold mb-8 text-white">Other Resolutions</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {data.relatedScales.map((slug, idx) => (
+                  <Link
+                    key={idx}
+                    href={`/scale/${slug}`}
+                    className="p-6 glass-card-2025 hover:border-accent transition-all group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-white capitalize">
+                        {slug.replace(/-/g, ' ').replace('upscale to ', '')}
+                      </span>
+                      <ArrowRight className="w-5 h-5 text-text-tertiary group-hover:text-accent group-hover:translate-x-1 transition-all" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          </FadeIn>
+        )}
+
+        {/* Related Guides */}
+        {data.relatedGuides && data.relatedGuides.length > 0 && (
+          <FadeIn delay={0.7}>
+            <section className="py-12">
+              <h2 className="text-2xl font-bold mb-8 text-white">Related Guides</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {data.relatedGuides.map((slug, idx) => (
+                  <Link
+                    key={idx}
+                    href={`/guides/${slug}`}
+                    className="p-6 glass-card-2025 hover:border-accent transition-all group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-white capitalize">
+                        {slug.replace(/-/g, ' ')}
+                      </span>
+                      <ArrowRight className="w-5 h-5 text-text-tertiary group-hover:text-accent group-hover:translate-x-1 transition-all" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          </FadeIn>
+        )}
 
         {/* Footer spacing */}
         <div className="pb-16" />
