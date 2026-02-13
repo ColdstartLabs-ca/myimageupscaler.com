@@ -104,8 +104,8 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
                 ...config,
               }));
 
-              const freeTiers = allTiers.filter((t) => !PREMIUM_TIERS.includes(t.id));
-              const paidTiers = allTiers.filter((t) => PREMIUM_TIERS.includes(t.id));
+              const freeTiers = allTiers.filter(t => !PREMIUM_TIERS.includes(t.id));
+              const paidTiers = allTiers.filter(t => PREMIUM_TIERS.includes(t.id));
 
               const renderTier = (t: (typeof allTiers)[0]) => {
                 const isSelected = tier === t.id;
@@ -119,11 +119,12 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
                     title={isLocked ? 'Paid plans only' : undefined}
                     className={`
                       w-full flex items-start p-3.5 rounded-xl transition-all text-left group relative overflow-hidden border
-                      ${isSelected
-                        ? isAuto
-                          ? 'bg-secondary/20 text-secondary border-secondary/40 shadow-sm shadow-secondary/10'
-                          : 'bg-accent/20 text-accent border-accent/40 shadow-sm shadow-accent/10'
-                        : 'bg-white/[0.04] hover:bg-white/[0.08] text-white border-white/[0.05] hover:border-white/10'
+                      ${
+                        isSelected
+                          ? isAuto
+                            ? 'bg-secondary/20 text-secondary border-secondary/40 shadow-sm shadow-secondary/10'
+                            : 'bg-accent/20 text-accent border-accent/40 shadow-sm shadow-accent/10'
+                          : 'bg-white/[0.04] hover:bg-white/[0.08] text-white border-white/[0.05] hover:border-white/10'
                       }
                       ${isLocked ? 'opacity-40 grayscale-[0.8] cursor-not-allowed bg-black/10' : 'opacity-100'}
                     `}
@@ -131,12 +132,9 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span
-                          className={`font-bold text-[13px] tracking-tight transition-colors ${isSelected
-                            ? isAuto
-                              ? 'text-secondary'
-                              : 'text-accent'
-                            : 'text-white'
-                            }`}
+                          className={`font-bold text-[13px] tracking-tight transition-colors ${
+                            isSelected ? (isAuto ? 'text-secondary' : 'text-accent') : 'text-white'
+                          }`}
                         >
                           {t.label}
                         </span>
@@ -147,7 +145,9 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
                         )}
                         {isLocked && <Lock className="h-3 w-3 text-white/40" />}
                       </div>
-                      <div className={`text-[11px] mt-0.5 font-medium truncate pr-2 ${isSelected ? 'text-white/80' : 'text-text-secondary'}`}>
+                      <div
+                        className={`text-[11px] mt-0.5 font-medium truncate pr-2 ${isSelected ? 'text-white/80' : 'text-text-secondary'}`}
+                      >
                         {t.bestFor}
                       </div>
                     </div>
@@ -159,12 +159,13 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
                         />
                       )}
                       <div
-                        className={`text-[9px] font-black tracking-widest uppercase px-2 py-1 rounded-lg border ${isSelected
-                          ? isAuto
-                            ? 'text-secondary bg-black/20 border-secondary/30'
-                            : 'text-accent bg-black/20 border-accent/30'
-                          : 'text-text-muted bg-black/20 border-white/10'
-                          }`}
+                        className={`text-[9px] font-black tracking-widest uppercase px-2 py-1 rounded-lg border ${
+                          isSelected
+                            ? isAuto
+                              ? 'text-secondary bg-black/20 border-secondary/30'
+                              : 'text-accent bg-black/20 border-accent/30'
+                            : 'text-text-muted bg-black/20 border-white/10'
+                        }`}
                       >
                         {formatCredits(t.credits)
                           .replace(' credits', ' CR')
@@ -180,21 +181,19 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
                   <div className="px-3 pb-1.5 pt-1 text-[10px] font-black text-accent uppercase tracking-widest">
                     Available
                   </div>
-                  <div className="space-y-1.5">
-                    {freeTiers.map(renderTier)}
-                  </div>
+                  <div className="space-y-1.5">{freeTiers.map(renderTier)}</div>
 
                   <div className="flex items-center gap-3 my-4">
                     <div className="h-px bg-white/10 flex-1"></div>
-                    <div className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${isFreeUser ? 'text-white/30' : 'text-secondary'}`}>
+                    <div
+                      className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${isFreeUser ? 'text-white/30' : 'text-secondary'}`}
+                    >
                       Professional Tiers <Lock className="h-2.5 w-2.5" />
                     </div>
                     <div className="h-px bg-white/10 flex-1"></div>
                   </div>
 
-                  <div className="space-y-1.5">
-                    {paidTiers.map(renderTier)}
-                  </div>
+                  <div className="space-y-1.5">{paidTiers.map(renderTier)}</div>
                 </>
               );
             })()}

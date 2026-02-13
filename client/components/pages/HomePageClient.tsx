@@ -209,34 +209,42 @@ export function HomePageClient(): JSX.Element {
                 transition={{ delay: 0.6 }}
                 className="text-lg sm:text-xl text-text-secondary leading-relaxed max-w-3xl mx-auto font-light"
               >
-                Professional AI image enhancement that preserves real detail. No blur, no artifacts—just crisp, high-quality results.
+                Professional AI image enhancement that preserves real detail. No blur, no
+                artifacts—just crisp, high-quality results.
               </motion.p>
             </div>
 
             {/* Features List - Premium Cards */}
-            <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <StaggerContainer
+              staggerDelay={0.1}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto"
+            >
               {[
                 {
                   title: 'Image Upscaling',
-                  subtitle: 'Increase resolution up to 4x while maintaining quality. Perfect for printing, web display, and professional use.',
+                  subtitle:
+                    'Increase resolution up to 4x while maintaining quality. Perfect for printing, web display, and professional use.',
                   icon: <Maximize2 className="text-accent" size={20} />,
                 },
                 {
                   title: 'Photo Enhancement',
-                  subtitle: 'Automatically improve photo quality with AI. Fix blur, adjust colors, and restore details in seconds.',
+                  subtitle:
+                    'Automatically improve photo quality with AI. Fix blur, adjust colors, and restore details in seconds.',
                   icon: <Wand2 className="text-secondary" size={20} />,
                 },
                 {
                   title: 'Face Restoration',
-                  subtitle: 'Bring old or damaged photos back to life with AI-powered restoration technology.',
+                  subtitle:
+                    'Bring old or damaged photos back to life with AI-powered restoration technology.',
                   icon: <User className="text-accent" size={20} />,
                 },
                 {
                   title: 'Batch Processing',
-                  subtitle: 'Process multiple images at once with bulk tools. Save time on large projects.',
+                  subtitle:
+                    'Process multiple images at once with bulk tools. Save time on large projects.',
                   icon: <Layers className="text-secondary" size={20} />,
                 },
-              ].map((feature) => (
+              ].map(feature => (
                 <StaggerItem key={feature.title}>
                   <motion.div
                     className="group glass-card-2025 p-8 text-left h-full flex flex-col items-start gap-4 animated-border-violet"
@@ -379,7 +387,6 @@ export function HomePageClient(): JSX.Element {
           </div>
         </section>
       </FadeIn>
-
     </div>
   );
 }

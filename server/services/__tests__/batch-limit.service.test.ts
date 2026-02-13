@@ -191,7 +191,7 @@ describe('batch-limit.service', () => {
       );
 
       // All should be allowed in test environment
-      results.forEach((result) => {
+      results.forEach(result => {
         expect(result.allowed).toBe(true);
         expect(result.current).toBe(0);
       });

@@ -40,7 +40,9 @@ export async function generateMetadata({ params }: ILocaleHomePageProps): Promis
   const common = await getLocaleCommonTranslations(locale);
 
   // Use locale-specific metadata from translations, fallback to English defaults
-  const title = common.meta?.homepage?.title ?? 'AI Image Upscaler & Photo Enhancer | Enhance Quality Free Online';
+  const title =
+    common.meta?.homepage?.title ??
+    'AI Image Upscaler & Photo Enhancer | Enhance Quality Free Online';
   const description =
     common.meta?.homepage?.description ??
     'Professional AI image enhancer that upscales photos to 4K with stunning quality. Enhance image quality, remove blur, and restore details in seconds.';

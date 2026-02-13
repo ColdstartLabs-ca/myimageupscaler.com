@@ -18,7 +18,10 @@ interface IRelatedPostsProps {
   relatedPosts: IBlogPost[];
 }
 
-export function RelatedPosts({ currentPost: _currentPost, relatedPosts }: IRelatedPostsProps): JSX.Element | null {
+export function RelatedPosts({
+  currentPost: _currentPost,
+  relatedPosts,
+}: IRelatedPostsProps): JSX.Element | null {
   if (relatedPosts.length === 0) {
     return null;
   }

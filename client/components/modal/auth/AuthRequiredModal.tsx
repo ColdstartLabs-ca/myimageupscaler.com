@@ -50,20 +50,50 @@ export const AuthRequiredModal: React.FC = () => {
           <p className="text-sm font-medium text-text-primary">{t('benefits.title')}</p>
           <ul className="text-sm text-text-secondary space-y-1.5">
             <li className="flex items-start gap-2">
-              <svg className="w-4 h-4 text-success mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-4 h-4 text-success mt-0.5 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
               <span>{t('benefits.trackCredits')}</span>
             </li>
             <li className="flex items-start gap-2">
-              <svg className="w-4 h-4 text-success mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-4 h-4 text-success mt-0.5 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
               <span>{t('benefits.manageSubscription')}</span>
             </li>
             <li className="flex items-start gap-2">
-              <svg className="w-4 h-4 text-success mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-4 h-4 text-success mt-0.5 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
               <span>{t('benefits.support')}</span>
             </li>
@@ -87,9 +117,7 @@ export const AuthRequiredModal: React.FC = () => {
         </div>
 
         {/* Help Text */}
-        <p className="text-xs text-center text-text-muted">
-          {t('securePayment')}
-        </p>
+        <p className="text-xs text-center text-text-muted">{t('securePayment')}</p>
       </div>
     </Modal>
   );

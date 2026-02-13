@@ -81,7 +81,10 @@ export function GenericPSEOPageTemplate({
         slug={data.slug}
         primaryKeyword={data.primaryKeyword}
       />
-      <ScrollTracker pageType={category as unknown as Parameters<typeof ScrollTracker>[0]['pageType']} slug={data.slug} />
+      <ScrollTracker
+        pageType={category as unknown as Parameters<typeof ScrollTracker>[0]['pageType']}
+        slug={data.slug}
+      />
 
       {/* Full Width Hero Area */}
       <div className="relative">
@@ -93,8 +96,10 @@ export function GenericPSEOPageTemplate({
           <HeroSection
             h1={data.h1}
             intro={data.intro}
-            ctaText={('ctaText' in data ? data.ctaText as string : undefined) || "Get Started Free"}
-            ctaUrl={('ctaUrl' in data ? data.ctaUrl as string : undefined) || "/?signup=1"}
+            ctaText={
+              ('ctaText' in data ? (data.ctaText as string) : undefined) || 'Get Started Free'
+            }
+            ctaUrl={('ctaUrl' in data ? (data.ctaUrl as string) : undefined) || '/?signup=1'}
             pageType={category as unknown as Parameters<typeof HeroSection>[0]['pageType']}
             slug={data.slug}
           />
@@ -129,7 +134,11 @@ export function GenericPSEOPageTemplate({
 
           {hasFAQ && (
             <div className="py-12">
-              <FAQSection faqs={(data as { faq: IFAQ[] }).faq} pageType={category as unknown as Parameters<typeof FAQSection>[0]['pageType']} slug={data.slug} />
+              <FAQSection
+                faqs={(data as { faq: IFAQ[] }).faq}
+                pageType={category as unknown as Parameters<typeof FAQSection>[0]['pageType']}
+                slug={data.slug}
+              />
             </div>
           )}
 
@@ -143,10 +152,12 @@ export function GenericPSEOPageTemplate({
 
       {hasCTA && (
         <CTASection
-          title={('description' in data ? data.description as string : undefined) || data.h1}
-          description={('description' in data ? data.description as string : undefined) || data.intro}
-          ctaText={('ctaText' in data ? data.ctaText as string : undefined) || "Get Started Free"}
-          ctaUrl={('ctaUrl' in data ? data.ctaUrl as string : undefined) || "/?signup=1"}
+          title={('description' in data ? (data.description as string) : undefined) || data.h1}
+          description={
+            ('description' in data ? (data.description as string) : undefined) || data.intro
+          }
+          ctaText={('ctaText' in data ? (data.ctaText as string) : undefined) || 'Get Started Free'}
+          ctaUrl={('ctaUrl' in data ? (data.ctaUrl as string) : undefined) || '/?signup=1'}
           pageType={category as unknown as Parameters<typeof CTASection>[0]['pageType']}
           slug={data.slug}
         />

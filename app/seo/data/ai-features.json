@@ -148,14 +148,8 @@
           "answer": "Our tool handles both simultaneously, which often produces better results as the AI can use clean image data to inform the upscaling process."
         }
       ],
-      "relatedFeatures": [
-        "ai-sharpness-enhancement-upscaler",
-        "ai-clarity-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-sharpness-enhancement-upscaler", "ai-clarity-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Remove Noise & Upscale Free",
       "ctaUrl": "/?signup=1"
     },
@@ -306,14 +300,8 @@
           "answer": "Yes! It's perfect for enhancing bride and groom portraits, as well as family wedding photos, while maintaining natural beauty."
         }
       ],
-      "relatedFeatures": [
-        "ai-portrait-enhancement-upscaler",
-        "ai-detail-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-portrait-enhancement-upscaler", "ai-detail-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Enhance Faces Free",
       "ctaUrl": "/?signup=1"
     },
@@ -464,14 +452,8 @@
           "answer": "Yes! Accurate product colors are crucial for e-commerce. Our tool ensures colors look true to reality."
         }
       ],
-      "relatedFeatures": [
-        "ai-clarity-enhancement-upscaler",
-        "ai-old-photo-restoration-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-clarity-enhancement-upscaler", "ai-old-photo-restoration-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Correct Colors Free",
       "ctaUrl": "/?signup=1"
     },
@@ -622,14 +604,8 @@
           "answer": "Yes! Macro photography benefits greatly from sharpness enhancement, revealing fine details that were lost to soft focus."
         }
       ],
-      "relatedFeatures": [
-        "ai-detail-enhancement-upscaler",
-        "ai-clarity-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-detail-enhancement-upscaler", "ai-clarity-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Sharpen Free",
       "ctaUrl": "/?signup=1"
     },
@@ -780,14 +756,8 @@
           "answer": "Multiple compression rounds compound artifacts, but our AI can still significantly improve quality. Results vary based on cumulative damage."
         }
       ],
-      "relatedFeatures": [
-        "ai-compression-repair-upscaler",
-        "ai-clarity-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "image-compressor"
-      ],
+      "relatedFeatures": ["ai-compression-repair-upscaler", "ai-clarity-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "image-compressor"],
       "ctaText": "Remove Artifacts Free",
       "ctaUrl": "/?signup=1"
     },
@@ -938,14 +908,8 @@
           "answer": "Yes! Many models use our enhancement to polish portfolio photos while maintaining realistic appearance."
         }
       ],
-      "relatedFeatures": [
-        "ai-face-enhancement-upscaler",
-        "ai-detail-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-face-enhancement-upscaler", "ai-detail-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Enhance Portraits Free",
       "ctaUrl": "/?signup=1"
     },
@@ -1096,14 +1060,8 @@
           "answer": "Yes! Architectural details from brick patterns to building materials show enhanced texture and clarity."
         }
       ],
-      "relatedFeatures": [
-        "ai-sharpness-enhancement-upscaler",
-        "ai-clarity-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-sharpness-enhancement-upscaler", "ai-clarity-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Enhance Details Free",
       "ctaUrl": "/?signup=1"
     },
@@ -1254,14 +1212,8 @@
           "answer": "Yes! Product images gain clarity and definition that helps customers see details and make purchase decisions."
         }
       ],
-      "relatedFeatures": [
-        "ai-sharpness-enhancement-upscaler",
-        "ai-detail-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-sharpness-enhancement-upscaler", "ai-detail-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Boost Clarity Free",
       "ctaUrl": "/?signup=1"
     },
@@ -1412,14 +1364,8 @@
           "answer": "Absolutely! Nature is full of interesting textures from bark to leaves that our enhancement reveals beautifully."
         }
       ],
-      "relatedFeatures": [
-        "ai-detail-enhancement-upscaler",
-        "ai-clarity-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-detail-enhancement-upscaler", "ai-clarity-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Enhance Textures Free",
       "ctaUrl": "/?signup=1"
     },
@@ -1570,14 +1516,8 @@
           "answer": "No! Our AI brightens shadows while preserving highlights, maintaining balanced exposure throughout the image."
         }
       ],
-      "relatedFeatures": [
-        "ai-noise-reduction-upscaler",
-        "ai-clarity-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-noise-reduction-upscaler", "ai-clarity-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Brighten Dark Photos Free",
       "ctaUrl": "/?signup=1"
     },
@@ -1728,14 +1668,8 @@
           "answer": "Yes! One of the best uses is taking web-quality compressed images and making them suitable for printing at larger sizes."
         }
       ],
-      "relatedFeatures": [
-        "ai-artifact-removal-upscaler",
-        "ai-old-photo-restoration-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "image-compressor"
-      ],
+      "relatedFeatures": ["ai-artifact-removal-upscaler", "ai-old-photo-restoration-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "image-compressor"],
       "ctaText": "Repair Compression Free",
       "ctaUrl": "/?signup=1"
     },
@@ -1886,14 +1820,8 @@
           "answer": "Always work on the highest quality scan available and keep the original scan safe. Our enhancement is non-destructive to your files."
         }
       ],
-      "relatedFeatures": [
-        "ai-compression-repair-upscaler",
-        "ai-clarity-enhancement-upscaler"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedFeatures": ["ai-compression-repair-upscaler", "ai-clarity-enhancement-upscaler"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Restore Old Photos Free",
       "ctaUrl": "/?signup=1"
     }

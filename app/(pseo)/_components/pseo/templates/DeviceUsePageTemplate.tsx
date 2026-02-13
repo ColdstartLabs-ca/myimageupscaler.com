@@ -119,9 +119,7 @@ export function DeviceUsePageTemplate({
                 )}
                 {data.useCaseDescription && (
                   <div className="glass-card-2025 p-6">
-                    <h3 className="text-lg font-bold text-white mb-3">
-                      {data.useCase} Use Case
-                    </h3>
+                    <h3 className="text-lg font-bold text-white mb-3">{data.useCase} Use Case</h3>
                     <p className="text-text-secondary text-sm">{data.useCaseDescription}</p>
                   </div>
                 )}
@@ -201,7 +199,9 @@ export function DeviceUsePageTemplate({
                     2
                   </div>
                   <div className="flex-1 pb-6 border-b border-white/10">
-                    <h3 className="font-bold text-white text-xl mb-2">Automatic Device Optimization</h3>
+                    <h3 className="font-bold text-white text-xl mb-2">
+                      Automatic Device Optimization
+                    </h3>
                     <p className="text-text-secondary text-lg">
                       Our AI automatically detects optimal settings for {data.device} displays and{' '}
                       {data.useCase.toLowerCase()} requirements, ensuring perfect output every time.
@@ -240,11 +240,21 @@ export function DeviceUsePageTemplate({
                     <span className="text-accent">✓</span> Image Preparation
                   </h3>
                   <ul className="space-y-3 text-text-secondary text-base">
-                    <li className="flex items-start gap-2">• <span>Start with the highest quality source available</span></li>
-                    <li className="flex items-start gap-2">• <span>Use proper lighting for product photos</span></li>
-                    <li className="flex items-start gap-2">• <span>Ensure correct orientation before upload</span></li>
-                    <li className="flex items-start gap-2">• <span>Remove any compression artifacts first</span></li>
-                    <li className="flex items-start gap-2">• <span>Check color accuracy before upscaling</span></li>
+                    <li className="flex items-start gap-2">
+                      • <span>Start with the highest quality source available</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      • <span>Use proper lighting for product photos</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      • <span>Ensure correct orientation before upload</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      • <span>Remove any compression artifacts first</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      • <span>Check color accuracy before upscaling</span>
+                    </li>
                   </ul>
                 </div>
                 <div>
@@ -252,11 +262,21 @@ export function DeviceUsePageTemplate({
                     <span className="text-accent">✓</span> Output Settings
                   </h3>
                   <ul className="space-y-3 text-text-secondary text-base">
-                    <li className="flex items-start gap-2">• <span>Match {data.device} display resolution</span></li>
-                    <li className="flex items-start gap-2">• <span>Consider file size for mobile data usage</span></li>
-                    <li className="flex items-start gap-2">• <span>Use appropriate format for the platform</span></li>
-                    <li className="flex items-start gap-2">• <span>Test on actual {data.device} devices</span></li>
-                    <li className="flex items-start gap-2">• <span>Keep backups of original images</span></li>
+                    <li className="flex items-start gap-2">
+                      • <span>Match {data.device} display resolution</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      • <span>Consider file size for mobile data usage</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      • <span>Use appropriate format for the platform</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      • <span>Test on actual {data.device} devices</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      • <span>Keep backups of original images</span>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -318,7 +338,9 @@ export function DeviceUsePageTemplate({
               </p>
               <div className="max-w-3xl mx-auto space-y-6">
                 <div className="glass-card-2025 p-8">
-                  <h3 className="font-bold text-white text-lg mb-4">Display Resolution Considerations</h3>
+                  <h3 className="font-bold text-white text-lg mb-4">
+                    Display Resolution Considerations
+                  </h3>
                   <p className="text-text-secondary text-base leading-relaxed">
                     {data.device === 'mobile' && (
                       <>
@@ -374,9 +396,7 @@ export function DeviceUsePageTemplate({
           {data.tips && data.tips.length > 0 && (
             <FadeIn delay={0.65}>
               <section className="py-12">
-                <h2 className="text-2xl font-bold text-white text-center mb-8">
-                  Pro Tips
-                </h2>
+                <h2 className="text-2xl font-bold text-white text-center mb-8">Pro Tips</h2>
                 <div className="max-w-3xl mx-auto glass-card-2025 p-8 border-accent/20">
                   <ul className="space-y-4">
                     {data.tips.map((tip, index) => (

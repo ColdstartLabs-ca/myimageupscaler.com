@@ -92,9 +92,7 @@ function createMockAnalysis(
   const stripped = base64Data.replace(/=+$/, '');
   // Check first 100+ chars for repeating pattern (Buffer.alloc produces uniform base64)
   const first100 = stripped.substring(0, 100);
-  const isLikelyTestData =
-    base64Data.length < 100 ||
-    /^(.{1,4})\1{24,}$/.test(first100); // Repeating 1-4 char pattern in first 100 chars
+  const isLikelyTestData = base64Data.length < 100 || /^(.{1,4})\1{24,}$/.test(first100); // Repeating 1-4 char pattern in first 100 chars
 
   if (!isLikelyTestData) {
     return null;

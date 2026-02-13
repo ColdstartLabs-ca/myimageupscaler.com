@@ -104,10 +104,7 @@
           "answer": "Yes, our AI can work with heavily compressed JPEGs, though results vary based on the level of compression. Generally, you'll see significant improvement even with poor quality originals."
         }
       ],
-      "relatedFormats": [
-        "upscale-png-images",
-        "upscale-webp-images"
-      ]
+      "relatedFormats": ["upscale-png-images", "upscale-webp-images"]
     },
     {
       "slug": "upscale-png-images",
@@ -208,10 +205,7 @@
           "answer": "Yes! Our AI is specifically trained to handle text and graphics in PNGs, maintaining sharp, readable text even at high magnification."
         }
       ],
-      "relatedFormats": [
-        "upscale-jpeg-images",
-        "upscale-webp-images"
-      ]
+      "relatedFormats": ["upscale-jpeg-images", "upscale-webp-images"]
     },
     {
       "slug": "upscale-webp-images",
@@ -312,10 +306,7 @@
           "answer": "WebP's advanced compression actually helps maintain quality during upscaling. Our AI can work effectively with both lossy and lossless WebP images."
         }
       ],
-      "relatedFormats": [
-        "upscale-jpeg-images",
-        "upscale-png-images"
-      ]
+      "relatedFormats": ["upscale-jpeg-images", "upscale-png-images"]
     },
     {
       "slug": "upscale-heic-images",
@@ -421,10 +412,7 @@
           "answer": "Our AI focuses on enhancing the primary image. For best results with Live Photos, the enhanced image maintains excellent quality for the still photo component."
         }
       ],
-      "relatedFormats": [
-        "upscale-jpeg-images",
-        "upscale-png-images"
-      ]
+      "relatedFormats": ["upscale-jpeg-images", "upscale-png-images"]
     },
     {
       "slug": "upscale-raw-images",
@@ -526,10 +514,7 @@
           "answer": "Absolutely. The additional data in RAW files combined with our AI upscaling produces exceptional print quality, especially for large format prints."
         }
       ],
-      "relatedFormats": [
-        "upscale-jpeg-images",
-        "upscale-tiff-images"
-      ]
+      "relatedFormats": ["upscale-jpeg-images", "upscale-tiff-images"]
     },
     {
       "slug": "upscale-tiff-images",
@@ -631,10 +616,7 @@
           "answer": "While possible, TIFF files are typically too large for web use. We recommend converting to JPEG or PNG after upscaling for web deployment."
         }
       ],
-      "relatedFormats": [
-        "upscale-raw-images",
-        "upscale-png-images"
-      ]
+      "relatedFormats": ["upscale-raw-images", "upscale-png-images"]
     },
     {
       "slug": "upscale-bmp-images",
@@ -735,10 +717,7 @@
           "answer": "Yes. Since BMP is uncompressed, our AI can work with all the original image data, potentially producing excellent upscaled results."
         }
       ],
-      "relatedFormats": [
-        "upscale-png-images",
-        "upscale-jpeg-images"
-      ]
+      "relatedFormats": ["upscale-png-images", "upscale-jpeg-images"]
     },
     {
       "slug": "upscale-svg-images",
@@ -839,10 +818,7 @@
           "answer": "PNG for transparency support, JPEG for photographs, or WebP for web optimization. Choose based on your content and use case."
         }
       ],
-      "relatedFormats": [
-        "upscale-png-images",
-        "upscale-jpeg-images"
-      ]
+      "relatedFormats": ["upscale-png-images", "upscale-jpeg-images"]
     },
     {
       "slug": "upscale-gif-images",
@@ -943,10 +919,7 @@
           "answer": "GIF format is limited to 256 colors by design. Our AI works within this constraint to produce the best possible quality within those limitations."
         }
       ],
-      "relatedFormats": [
-        "upscale-png-images",
-        "upscale-webp-images"
-      ]
+      "relatedFormats": ["upscale-png-images", "upscale-webp-images"]
     },
     {
       "slug": "upscale-avif-images",
@@ -1047,10 +1020,7 @@
           "answer": "Yes, with proper fallbacks. AVIF is production-ready for modern web applications, especially when paired with JPEG or WebP fallbacks for older browsers."
         }
       ],
-      "relatedFormats": [
-        "upscale-webp-images",
-        "upscale-jpeg-images"
-      ]
+      "relatedFormats": ["upscale-webp-images", "upscale-jpeg-images"]
     }
   ]
 }

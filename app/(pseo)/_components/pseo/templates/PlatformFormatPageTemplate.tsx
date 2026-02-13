@@ -101,18 +101,18 @@ export function PlatformFormatPageTemplate({
               <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
                 {data.platformDescription && (
                   <div className="glass-card-2025 p-8 border-white/10">
-                    <h3 className="text-xl font-bold text-white mb-4">
-                      About {data.platform}
-                    </h3>
-                    <p className="text-text-secondary text-base leading-relaxed">{data.platformDescription}</p>
+                    <h3 className="text-xl font-bold text-white mb-4">About {data.platform}</h3>
+                    <p className="text-text-secondary text-base leading-relaxed">
+                      {data.platformDescription}
+                    </p>
                   </div>
                 )}
                 {data.formatDescription && (
                   <div className="glass-card-2025 p-8 border-accent/20">
-                    <h3 className="text-xl font-bold text-white mb-4">
-                      {data.format} Format
-                    </h3>
-                    <p className="text-text-secondary text-base leading-relaxed">{data.formatDescription}</p>
+                    <h3 className="text-xl font-bold text-white mb-4">{data.format} Format</h3>
+                    <p className="text-text-secondary text-base leading-relaxed">
+                      {data.formatDescription}
+                    </p>
                   </div>
                 )}
               </div>
@@ -129,7 +129,9 @@ export function PlatformFormatPageTemplate({
                   <h3 className="text-2xl font-bold text-white text-center mb-6">
                     Recommended Settings
                   </h3>
-                  <p className="text-text-secondary text-lg text-center leading-relaxed font-light">{data.platformSettings}</p>
+                  <p className="text-text-secondary text-lg text-center leading-relaxed font-light">
+                    {data.platformSettings}
+                  </p>
                 </div>
               </div>
             </FadeIn>
@@ -146,9 +148,7 @@ export function PlatformFormatPageTemplate({
           {data.exportTips && data.exportTips.length > 0 && (
             <FadeIn delay={0.3}>
               <section className="py-12">
-                <h2 className="text-2xl font-bold text-white text-center mb-12">
-                  Export Tips
-                </h2>
+                <h2 className="text-2xl font-bold text-white text-center mb-12">Export Tips</h2>
                 <div className="max-w-3xl mx-auto glass-card-2025 p-8 border-white/10">
                   <ul className="space-y-4">
                     {data.exportTips.map((tip, index) => (
@@ -167,9 +167,7 @@ export function PlatformFormatPageTemplate({
           {data.workflowTips && data.workflowTips.length > 0 && (
             <FadeIn delay={0.4}>
               <section className="py-12">
-                <h2 className="text-3xl font-bold text-white text-center mb-12">
-                  Workflow
-                </h2>
+                <h2 className="text-3xl font-bold text-white text-center mb-12">Workflow</h2>
                 <div className="max-w-3xl mx-auto space-y-8">
                   {data.workflowTips.map((tip, index) => (
                     <div key={index} className="flex gap-6 items-start">

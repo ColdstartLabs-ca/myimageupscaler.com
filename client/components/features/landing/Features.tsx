@@ -104,7 +104,7 @@ const Features: React.FC = () => {
           </div>
         </FadeIn>
       </div>
-    </section >
+    </section>
   );
 };
 

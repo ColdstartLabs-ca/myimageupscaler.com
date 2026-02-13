@@ -133,9 +133,7 @@
           "answer": "Most platforms prefer 1:1 (square). If your product is rectangular, either add white space to make it square, or crop to fit. Amazon's main image must be square."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "real-estate-listings",
@@ -245,10 +243,7 @@
           "answer": "Yes, but quality depends on the source. iPhone 6 era photos (2-3MP) can upscale reasonably to 4-6MP. Very old photos have limits."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ]
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"]
     },
     {
       "slug": "social-media-images",
@@ -469,9 +464,7 @@
           "answer": "JPEG for photos (smaller file, good enough quality). PNG for graphics with text or transparency. All platforms accept both."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "print-preparation",
@@ -634,9 +627,7 @@
           "answer": "Divide pixel dimensions by 300 for max size at full quality. A 3000x2000px image prints at 10x6.7 inches at 300 DPI, or 20x13.3 inches at 150 DPI."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "old-photo-restoration",
@@ -785,10 +776,7 @@
           "answer": "Moderately damaged photos see significant improvement. Severely damaged photos will look better but won't become perfect. Very old photos (pre-1900) have inherent limitations."
         }
       ],
-      "relatedTools": [
-        "ai-photo-enhancer",
-        "ai-image-upscaler"
-      ]
+      "relatedTools": ["ai-photo-enhancer", "ai-image-upscaler"]
     },
     {
       "slug": "amazon-product-photos",
@@ -913,9 +901,7 @@
           "answer": "JPEG is preferred for most product photos due to smaller file sizes. Use 85-95% quality setting. PNG is better only if you need transparency (though Amazon main images require white backgrounds anyway)."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "real-estate-photo-enhancement",
@@ -1068,10 +1054,7 @@
           "answer": "25-50 photos is optimal for most properties. Include exterior, all main rooms, key features (kitchen, bathrooms, closets), and any unique selling points. Quality matters more than quantity - 25 great photos beat 50 mediocre ones."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ]
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"]
     },
     {
       "slug": "anime-image-upscaler",
@@ -1232,9 +1215,7 @@
           "answer": "Yes, our AI upscaler handles anime images for free with no watermarks. You can upscale anime screenshots, manga panels, and digital art up to 4x without paying. Premium plans offer batch processing and higher file size limits."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "cartoon-image-upscaler",
@@ -1331,9 +1312,7 @@
           "answer": "Yes! Our AI upscaler handles cartoon and comic images with a free tier. You can upscale cartoons, comics, and illustrations without watermarks. Premium plans offer batch processing for entire collections."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "portrait-photo-upscaler",
@@ -1439,10 +1418,7 @@
           "answer": "Batch processing is available on paid tiers (Starter: 5 images, Hobby: 10 images, Pro: 50 images, Business: 500 images per batch). Free tier processes single images only."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ]
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"]
     },
     {
       "slug": "product-photo-background-removal",
@@ -1520,10 +1496,7 @@
           "answer": "The AI removes background completely, including shadows. For product photos with natural shadows, you may want to add a subtle drop shadow after removal for a polished look."
         }
       ],
-      "relatedTools": [
-        "ai-background-remover",
-        "ai-image-upscaler"
-      ]
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"]
     },
     {
       "slug": "portrait-background-removal",
@@ -1601,10 +1574,7 @@
           "answer": "Yes, you can remove backgrounds and add compliant white or blue backgrounds. Note that official ID photos may have specific lighting and composition requirements beyond background color."
         }
       ],
-      "relatedTools": [
-        "ai-background-remover",
-        "ai-photo-enhancer"
-      ]
+      "relatedTools": ["ai-background-remover", "ai-photo-enhancer"]
     }
   ],
   "meta": {

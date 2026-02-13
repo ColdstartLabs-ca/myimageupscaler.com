@@ -2614,13 +2614,7 @@
         }
       ],
       "technicalSpecs": {
-        "outputFormats": [
-          "WebP",
-          "AVIF",
-          "JPEG",
-          "PNG",
-          "GIF"
-        ],
+        "outputFormats": ["WebP", "AVIF", "JPEG", "PNG", "GIF"],
         "optimization": {
           "compression": "Advanced compression algorithms for web optimization",
           "resizing": "Smart resizing with content-aware cropping",

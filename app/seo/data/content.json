@@ -151,14 +151,8 @@
           "answer": "Free users get 10 credits to start. Each upscale uses 1 credit. For large family photo restoration projects, our premium plans offer unlimited processing."
         }
       ],
-      "relatedContent": [
-        "upscale-portraits",
-        "upscale-vintage-photos"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedContent": ["upscale-portraits", "upscale-vintage-photos"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Restore Your Family Photos Free",
       "ctaUrl": "/upscaler"
     },
@@ -312,14 +306,8 @@
           "answer": "PNG provides the best quality as it's lossless. Avoid heavily compressed JPEGs as compression artifacts can be amplified during upscaling."
         }
       ],
-      "relatedContent": [
-        "upscale-anime",
-        "upscale-logos"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedContent": ["upscale-anime", "upscale-logos"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Upscale Your Art Free",
       "ctaUrl": "/upscaler"
     },
@@ -473,14 +461,8 @@
           "answer": "Yes! Upload your logo as a PNG with transparency, and the output will maintain the transparent background."
         }
       ],
-      "relatedContent": [
-        "upscale-product-photos",
-        "upscale-digital-art"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-background-remover"
-      ],
+      "relatedContent": ["upscale-product-photos", "upscale-digital-art"],
+      "relatedTools": ["ai-image-upscaler", "ai-background-remover"],
       "ctaText": "Upscale Your Logo Free",
       "ctaUrl": "/upscaler"
     },
@@ -634,13 +616,8 @@
           "answer": "For your own original artwork, yes. For copyrighted anime screenshots, respect the original copyright holder's rights."
         }
       ],
-      "relatedContent": [
-        "upscale-digital-art",
-        "upscale-screenshots"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
+      "relatedContent": ["upscale-digital-art", "upscale-screenshots"],
+      "relatedTools": ["ai-image-upscaler"],
       "ctaText": "Upscale Anime Free",
       "ctaUrl": "/upscaler"
     },
@@ -794,13 +771,8 @@
           "answer": "LinkedIn recommends 400x400 pixels minimum. Our 4x upscaling can create an excellent LinkedIn photo from most smartphone selfies."
         }
       ],
-      "relatedContent": [
-        "upscale-old-family-photos",
-        "upscale-product-photos"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
+      "relatedContent": ["upscale-old-family-photos", "upscale-product-photos"],
+      "relatedTools": ["ai-image-upscaler"],
       "ctaText": "Enhance Your Portrait Free",
       "ctaUrl": "/upscaler"
     },
@@ -954,13 +926,8 @@
           "answer": "Upscale first for best results. The AI works better with the full image context, including the background."
         }
       ],
-      "relatedContent": [
-        "upscale-logos",
-        "upscale-portraits"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
+      "relatedContent": ["upscale-logos", "upscale-portraits"],
+      "relatedTools": ["ai-image-upscaler"],
       "ctaText": "Enhance Product Photos Free",
       "ctaUrl": "/upscaler"
     },
@@ -1114,14 +1081,8 @@
           "answer": "PNG is best for screenshots as it's lossless and preserves text and UI element clarity."
         }
       ],
-      "relatedContent": [
-        "upscale-digital-art",
-        "upscale-product-photos"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "image-compressor"
-      ],
+      "relatedContent": ["upscale-digital-art", "upscale-product-photos"],
+      "relatedTools": ["ai-image-upscaler", "image-compressor"],
       "ctaText": "Upscale Screenshot Free",
       "ctaUrl": "/upscaler"
     },
@@ -1275,14 +1236,8 @@
           "answer": "Scan at minimum 600 DPI, ideally 1200 DPI or higher for best upscaling results. Higher source resolution means better AI enhancement."
         }
       ],
-      "relatedContent": [
-        "upscale-old-family-photos",
-        "upscale-portraits"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedContent": ["upscale-old-family-photos", "upscale-portraits"],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "ctaText": "Restore Vintage Photos Free",
       "ctaUrl": "/upscaler"
     }

@@ -79,12 +79,8 @@
           "answer": "Typically 45-90 seconds depending on the source image size. Larger source images take slightly longer to process to 4K resolution."
         }
       ],
-      "relatedScale": [
-        "upscale-to-hd"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-hd"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "upscale-to-hd",
@@ -94,12 +90,7 @@
       "h1": "Upscale Images to HD 1080p - Full HD Quality",
       "intro": "Enhance your images to Full HD resolution (1920x1080 pixels) with AI. Perfect for websites, social media, YouTube, and standard HD displays.",
       "primaryKeyword": "upscale to hd",
-      "secondaryKeywords": [
-        "hd upscaling",
-        "1080p upscale",
-        "convert to hd",
-        "full hd upscaler"
-      ],
+      "secondaryKeywords": ["hd upscaling", "1080p upscale", "convert to hd", "full hd upscaler"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "scale",
       "resolution": "Full HD (1080p)",
@@ -158,12 +149,8 @@
           "answer": "Yes! 1080p provides enough resolution for prints up to approximately 16x9 inches at high quality (300 DPI). For larger prints, consider upscaling to 4K instead."
         }
       ],
-      "relatedScale": [
-        "upscale-to-4k"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "upscale-to-8k",
@@ -238,12 +225,8 @@
           "answer": "Yes! 8K images will be automatically downscaled to fit any display while maintaining excellent quality. Having higher resolution source content always provides better results when displayed on smaller screens."
         }
       ],
-      "relatedScale": [
-        "upscale-to-4k"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "upscale-to-1080p",
@@ -318,13 +301,8 @@
           "answer": "1080p has 2.25 times more pixels than 720p (1280x720), resulting in significantly sharper and more detailed images, especially on larger screens."
         }
       ],
-      "relatedScale": [
-        "upscale-to-4k",
-        "upscale-to-hd"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-4k", "upscale-to-hd"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "4k-image-upscaler",
@@ -399,12 +377,8 @@
           "answer": "Our AI-powered 4K upscaler preserves fine details, text, and textures better than traditional bicubic or nearest-neighbor upscaling methods, providing more natural-looking results."
         }
       ],
-      "relatedScale": [
-        "upscale-to-4k"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "photo-enhancer-hd",
@@ -483,12 +457,8 @@
           "answer": "Currently, our HD enhancer automatically applies all improvements for best results. This ensures optimal quality without requiring technical knowledge from users."
         }
       ],
-      "relatedScale": [
-        "upscale-to-hd"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-hd"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "ai-upscaler-2x",
@@ -562,12 +532,8 @@
           "answer": "2X upscaling is excellent for preparing images for moderate print sizes. It provides enough resolution increase for quality prints at standard sizes."
         }
       ],
-      "relatedScale": [
-        "ai-upscaler-4x"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["ai-upscaler-4x"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "ai-upscaler-4x",
@@ -641,13 +607,8 @@
           "answer": "Typically 30-60 seconds depending on your image size and content. The AI needs time to intelligently generate new details for the larger resolution."
         }
       ],
-      "relatedScale": [
-        "ai-upscaler-2x",
-        "upscale-to-4k"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["ai-upscaler-2x", "upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "image-upscaler-4k",
@@ -721,12 +682,8 @@
           "answer": "Choose 4K if you're targeting 4K displays, large prints, professional portfolios, or want maximum quality. For web-only content, HD (1080p) might be sufficient."
         }
       ],
-      "relatedScale": [
-        "upscale-to-4k"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "hd-upscaler",
@@ -800,13 +757,8 @@
           "answer": "HD creates images that are large enough for quality but small enough for efficient web use, providing an excellent balance between quality and file size."
         }
       ],
-      "relatedScale": [
-        "upscale-to-hd",
-        "upscale-to-1080p"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-hd", "upscale-to-1080p"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "image-upscaler-8k",
@@ -880,12 +832,8 @@
           "answer": "Yes! 8K images will be automatically downscaled to fit your display while maintaining excellent quality. Having 8K source ensures your images look great on any device."
         }
       ],
-      "relatedScale": [
-        "upscale-to-8k"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-8k"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "resolution-enhancer",
@@ -935,14 +883,7 @@
         }
       ],
       "technicalSpecs": {
-        "resolutionOptions": [
-          "HD",
-          "Full HD",
-          "2K",
-          "4K",
-          "8K",
-          "Custom"
-        ],
+        "resolutionOptions": ["HD", "Full HD", "2K", "4K", "8K", "Custom"],
         "maxUpscaling": "Up to 8x original resolution",
         "qualityEnhancement": "AI-based detail generation",
         "flexibility": "User-selectable output resolution",
@@ -966,13 +907,8 @@
           "answer": "Choose based on your use case: HD (720p) for web, Full HD (1080p) for standard use, 4K for professional work, and 8K for maximum quality or large prints."
         }
       ],
-      "relatedScale": [
-        "ai-upscaler-2x",
-        "ai-upscaler-4x"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["ai-upscaler-2x", "ai-upscaler-4x"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "2k-upscaler",
@@ -1047,13 +983,8 @@
           "answer": "Yes! 2K resolution provides excellent print quality up to 22x12 inches at 300 DPI, making it suitable for most professional printing needs."
         }
       ],
-      "relatedScale": [
-        "upscale-to-hd",
-        "upscale-to-4k"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-hd", "upscale-to-4k"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "ultra-hd-upscaler",
@@ -1127,13 +1058,8 @@
           "answer": "Ultra HD (4K) provides excellent quality for most professional uses. 8K offers 4 times more pixels but is mainly needed for specialized applications like cinema or extremely large prints."
         }
       ],
-      "relatedScale": [
-        "upscale-to-4k",
-        "upscale-to-8k"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-to-4k", "upscale-to-8k"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "pixel-boost-upscaler",
@@ -1184,12 +1110,7 @@
       ],
       "technicalSpecs": {
         "enhancementMethod": "AI-powered pixel analysis",
-        "boostLevels": [
-          "2x",
-          "4x",
-          "8x",
-          "Custom"
-        ],
+        "boostLevels": ["2x", "4x", "8x", "Custom"],
         "detailGeneration": "Intelligent texture creation",
         "qualityImprovement": "Multi-factor enhancement",
         "processingSpeed": "Optimized for speed"
@@ -1212,13 +1133,8 @@
           "answer": "Pixel boosting can improve resolution up to 8x while significantly enhancing image quality, clarity, and detail. The exact improvement depends on your source image quality."
         }
       ],
-      "relatedScale": [
-        "resolution-enhancer",
-        "ai-upscaler-4x"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["resolution-enhancer", "ai-upscaler-4x"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "upscale-8x",
@@ -1296,13 +1212,8 @@
           "answer": "Absolutely! 8X upscaling is excellent for large format printing. Even small photos can be enlarged to poster or banner size while maintaining professional quality."
         }
       ],
-      "relatedScale": [
-        "upscale-16x",
-        "ai-upscaler-4x"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-16x", "ai-upscaler-4x"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "upscale-16x",
@@ -1380,13 +1291,8 @@
           "answer": "Our AI is optimized for extreme upscaling, but results depend on source quality. For best results with 16X, start with the highest quality source image available."
         }
       ],
-      "relatedScale": [
-        "upscale-8x",
-        "ai-upscaler-4x"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedScale": ["upscale-8x", "ai-upscaler-4x"],
+      "relatedTools": ["ai-image-upscaler"]
     }
   ],
   "meta": {

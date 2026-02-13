@@ -53,17 +53,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "JPG",
-          "PNG"
-        ],
+        "supportedFormats": ["JPEG", "JPG", "PNG"],
         "maxFileSize": "40MB",
-        "outputOptions": [
-          "24-bit PNG",
-          "32-bit PNG with transparency",
-          "8-bit PNG optimized"
-        ],
+        "outputOptions": ["24-bit PNG", "32-bit PNG with transparency", "8-bit PNG optimized"],
         "colorSpace": "sRGB, Adobe RGB, Grayscale support",
         "batchLimit": "15 files per conversion"
       },
@@ -149,17 +141,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "WebP",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["WebP", "JPEG", "JPG"],
         "maxFileSize": "30MB",
-        "outputOptions": [
-          "High Quality JPEG",
-          "Web Optimized JPEG",
-          "Progressive JPEG"
-        ],
+        "outputOptions": ["High Quality JPEG", "Web Optimized JPEG", "Progressive JPEG"],
         "colorSpace": "sRGB, Adobe RGB support",
         "batchLimit": "25 files per conversion"
       },
@@ -240,17 +224,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "PNG",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["PNG", "JPEG", "JPG"],
         "maxFileSize": "50MB",
-        "outputOptions": [
-          "High Quality JPEG",
-          "Web Optimized JPEG",
-          "Balanced Quality/Size"
-        ],
+        "outputOptions": ["High Quality JPEG", "Web Optimized JPEG", "Balanced Quality/Size"],
         "colorSpace": "sRGB, Adobe RGB, Grayscale support",
         "batchLimit": "20 files per conversion"
       },
@@ -332,18 +308,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "BMP",
-          "DIB",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["BMP", "DIB", "JPEG", "JPG"],
         "maxFileSize": "100MB",
-        "outputOptions": [
-          "Standard JPEG",
-          "High Quality JPEG",
-          "Web Optimized"
-        ],
+        "outputOptions": ["Standard JPEG", "High Quality JPEG", "Web Optimized"],
         "colorSpace": "sRGB, Grayscale, 256-color support",
         "batchLimit": "15 files per conversion"
       },
@@ -421,17 +388,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "GIF",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["GIF", "JPEG", "JPG"],
         "maxFileSize": "50MB",
-        "outputOptions": [
-          "High Quality JPEG",
-          "Web Optimized",
-          "Standard JPEG"
-        ],
+        "outputOptions": ["High Quality JPEG", "Web Optimized", "Standard JPEG"],
         "colorSpace": "sRGB, Enhanced color from GIF 256-color limitation",
         "batchLimit": "15 files per conversion"
       },
@@ -510,18 +469,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "SVG",
-          "SVGZ",
-          "JPEG",
-          "JPG"
-        ],
+        "supportedFormats": ["SVG", "SVGZ", "JPEG", "JPG"],
         "maxFileSize": "10MB",
-        "outputOptions": [
-          "Web JPEG",
-          "High Quality JPEG",
-          "Custom Resolution"
-        ],
+        "outputOptions": ["Web JPEG", "High Quality JPEG", "Custom Resolution"],
         "colorSpace": "sRGB support",
         "batchLimit": "20 files per conversion"
       },
@@ -600,17 +550,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "JPG",
-          "WebP"
-        ],
+        "supportedFormats": ["JPEG", "JPG", "WebP"],
         "maxFileSize": "40MB",
-        "outputOptions": [
-          "Lossless WebP",
-          "Lossy WebP",
-          "High Quality WebP"
-        ],
+        "outputOptions": ["Lossless WebP", "Lossy WebP", "High Quality WebP"],
         "colorSpace": "sRGB, Adobe RGB support",
         "batchLimit": "25 files per conversion"
       },
@@ -689,16 +631,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "PNG",
-          "WebP"
-        ],
+        "supportedFormats": ["PNG", "WebP"],
         "maxFileSize": "30MB",
-        "outputOptions": [
-          "Lossless WebP",
-          "Lossy WebP",
-          "WebP with Alpha"
-        ],
+        "outputOptions": ["Lossless WebP", "Lossy WebP", "WebP with Alpha"],
         "colorSpace": "sRGB, transparency with alpha channel support",
         "batchLimit": "20 files per conversion"
       },
@@ -777,16 +712,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "WebP",
-          "PNG"
-        ],
+        "supportedFormats": ["WebP", "PNG"],
         "maxFileSize": "30MB",
-        "outputOptions": [
-          "Lossless PNG",
-          "PNG with Alpha",
-          "Optimized PNG"
-        ],
+        "outputOptions": ["Lossless PNG", "PNG with Alpha", "Optimized PNG"],
         "colorSpace": "sRGB, transparency with alpha channel support",
         "batchLimit": "25 files per conversion"
       },
@@ -865,17 +793,9 @@
         }
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "SVG",
-          "SVGZ",
-          "PNG"
-        ],
+        "supportedFormats": ["SVG", "SVGZ", "PNG"],
         "maxFileSize": "10MB",
-        "outputOptions": [
-          "Web PNG",
-          "High Resolution PNG",
-          "Custom Dimensions"
-        ],
+        "outputOptions": ["Web PNG", "High Resolution PNG", "Custom Dimensions"],
         "colorSpace": "sRGB, transparency with alpha channel support",
         "batchLimit": "25 files per conversion"
       },

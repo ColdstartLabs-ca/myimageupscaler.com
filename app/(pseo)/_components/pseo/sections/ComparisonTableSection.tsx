@@ -78,8 +78,8 @@ export function ComparisonTableSection({
 
           {description && (
             <p className="mt-4 text-sm text-text-tertiary text-center">
-              * Benchmarks based on typical image processing. Actual results may vary based on
-              image complexity and size.
+              * Benchmarks based on typical image processing. Actual results may vary based on image
+              complexity and size.
             </p>
           )}
         </div>

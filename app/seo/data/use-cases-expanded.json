@@ -45,20 +45,9 @@
         "Optional: Apply brand watermark and metadata for MLS compliance"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "TIFF",
-          "RAW",
-          "HEIC",
-          "DNG"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "TIFF", "RAW", "HEIC", "DNG"],
         "maxResolution": "Up to 100MP for professional real estate cameras",
-        "outputFormats": [
-          "JPEG (web-optimized)",
-          "PNG (print-ready)",
-          "TIFF (high-res)"
-        ],
+        "outputFormats": ["JPEG (web-optimized)", "PNG (print-ready)", "TIFF (high-res)"],
         "batchProcessing": "Up to 500 property photos per batch",
         "turnaroundTime": "30-60 seconds per image"
       },
@@ -83,26 +72,10 @@
         "Ensure MLS compliance with enhancement and disclosure requirements"
       ],
       "softwareRecommendations": {
-        "professionalTools": [
-          "Adobe Lightroom Classic",
-          "Capture One",
-          "Phase One"
-        ],
-        "aiEnhancement": [
-          "MyImageUpscaler",
-          "Adobe Photoshop Neural Filters",
-          "Topaz Labs"
-        ],
-        "virtualStaging": [
-          "BoxBrownie",
-          "Virtual Staging Solutions",
-          "roOomy"
-        ],
-        "droneProcessing": [
-          "DroneDeploy",
-          "Pix4Dmapper",
-          "DJI Terra"
-        ]
+        "professionalTools": ["Adobe Lightroom Classic", "Capture One", "Phase One"],
+        "aiEnhancement": ["MyImageUpscaler", "Adobe Photoshop Neural Filters", "Topaz Labs"],
+        "virtualStaging": ["BoxBrownie", "Virtual Staging Solutions", "roOomy"],
+        "droneProcessing": ["DroneDeploy", "Pix4Dmapper", "DJI Terra"]
       },
       "fileSizeGuidelines": {
         "webListings": "Under 500KB for fast loading",
@@ -181,28 +154,11 @@
         "Download platform-ready images with proper metadata and naming"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "TIFF",
-          "RAW",
-          "HEIC"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "TIFF", "RAW", "HEIC"],
         "maxResolution": "Up to 50MP for professional product photography",
-        "outputFormats": [
-          "JPEG (web-optimized)",
-          "PNG (transparent)",
-          "TIFF (print)"
-        ],
+        "outputFormats": ["JPEG (web-optimized)", "PNG (transparent)", "TIFF (print)"],
         "batchProcessing": "Up to 1000 product images per batch",
-        "platformSupport": [
-          "Amazon",
-          "Shopify",
-          "eBay",
-          "Etsy",
-          "Walmart",
-          "Social Media"
-        ]
+        "platformSupport": ["Amazon", "Shopify", "eBay", "Etsy", "Walmart", "Social Media"]
       },
       "caseStudies": [
         {
@@ -225,27 +181,14 @@
         "Test enhanced images across different devices and platforms"
       ],
       "softwareRecommendations": {
-        "professionalTools": [
-          "Adobe Photoshop",
-          "Capture One",
-          "Phase One"
-        ],
-        "ecommerceTools": [
-          "MyImageUpscaler",
-          "Remove.bg",
-          "Pixelcut",
-          "Canva Pro"
-        ],
+        "professionalTools": ["Adobe Photoshop", "Capture One", "Phase One"],
+        "ecommerceTools": ["MyImageUpscaler", "Remove.bg", "Pixelcut", "Canva Pro"],
         "platformSpecific": [
           "Amazon Product Imaging",
           "Shopify Image Editor",
           "eBay Photo Services"
         ],
-        "batchProcessing": [
-          "Adobe Lightroom",
-          "Bridge",
-          "Automated Workflows"
-        ]
+        "batchProcessing": ["Adobe Lightroom", "Bridge", "Automated Workflows"]
       },
       "fileSizeGuidelines": {
         "webOptimized": "100-300KB for fast loading",
@@ -324,27 +267,11 @@
         "Export in appropriate formats for publications, presentations, or analysis"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "DICOM",
-          "JPEG",
-          "TIFF",
-          "PNG",
-          "RAW",
-          "BMP"
-        ],
+        "supportedFormats": ["DICOM", "JPEG", "TIFF", "PNG", "RAW", "BMP"],
         "maxResolution": "Unlimited for medical imaging and scientific photography",
-        "outputFormats": [
-          "TIFF (high-res)",
-          "JPEG (presentation)",
-          "PNG (web)",
-          "DICOM (medical)"
-        ],
+        "outputFormats": ["TIFF (high-res)", "JPEG (presentation)", "PNG (web)", "DICOM (medical)"],
         "batchProcessing": "Up to 1000 images for research datasets",
-        "compliance": [
-          "HIPAA compliant",
-          "FDA registered",
-          "ISO 13485 certified"
-        ]
+        "compliance": ["HIPAA compliant", "FDA registered", "ISO 13485 certified"]
       },
       "caseStudies": [
         {
@@ -367,28 +294,10 @@
         "Document enhancement parameters for research reproducibility"
       ],
       "softwareRecommendations": {
-        "medicalImaging": [
-          "ImageJ",
-          "3D Slicer",
-          "OsiriX",
-          "RadiAnt DICOM Viewer"
-        ],
-        "microscopy": [
-          "Fiji",
-          "CellProfiler",
-          "Imaris",
-          "NIS-Elements"
-        ],
-        "scientificImaging": [
-          "MyImageUpscaler",
-          "Adobe Photoshop",
-          "GIMP"
-        ],
-        "researchTools": [
-          "MATLAB",
-          "Python (OpenCV, scikit-image)",
-          "R (imager package)"
-        ]
+        "medicalImaging": ["ImageJ", "3D Slicer", "OsiriX", "RadiAnt DICOM Viewer"],
+        "microscopy": ["Fiji", "CellProfiler", "Imaris", "NIS-Elements"],
+        "scientificImaging": ["MyImageUpscaler", "Adobe Photoshop", "GIMP"],
+        "researchTools": ["MATLAB", "Python (OpenCV, scikit-image)", "R (imager package)"]
       },
       "fileSizeGuidelines": {
         "medicalImaging": "Original size for diagnostic accuracy",
@@ -467,14 +376,7 @@
         "Download presentation-ready images with proper scaling and metadata"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "TIFF",
-          "RAW",
-          "PNG",
-          "DNG",
-          "HEIC"
-        ],
+        "supportedFormats": ["JPEG", "TIFF", "RAW", "PNG", "DNG", "HEIC"],
         "maxResolution": "Up to 100MP for professional architectural cameras",
         "outputFormats": [
           "JPEG (presentation)",
@@ -483,11 +385,7 @@
           "PDF (documentation)"
         ],
         "batchProcessing": "Up to 500 construction progress photos per batch",
-        "specializedFeatures": [
-          "Perspective correction",
-          "HDR processing",
-          "Detail enhancement"
-        ]
+        "specializedFeatures": ["Perspective correction", "HDR processing", "Detail enhancement"]
       },
       "caseStudies": [
         {
@@ -510,28 +408,10 @@
         "Ensure accurate color representation for materials and finishes"
       ],
       "softwareRecommendations": {
-        "architecturalTools": [
-          "AutoCAD",
-          "Revit",
-          "SketchUp",
-          "Lumion"
-        ],
-        "photography": [
-          "Adobe Lightroom",
-          "Capture One",
-          "Phase One"
-        ],
-        "enhancement": [
-          "MyImageUpscaler",
-          "Adobe Photoshop",
-          "Topaz Labs"
-        ],
-        "projectManagement": [
-          "Procore",
-          "PlanGrid",
-          "BIM 360",
-          "CoConstruct"
-        ]
+        "architecturalTools": ["AutoCAD", "Revit", "SketchUp", "Lumion"],
+        "photography": ["Adobe Lightroom", "Capture One", "Phase One"],
+        "enhancement": ["MyImageUpscaler", "Adobe Photoshop", "Topaz Labs"],
+        "projectManagement": ["Procore", "PlanGrid", "BIM 360", "CoConstruct"]
       },
       "fileSizeGuidelines": {
         "portfolioPrint": "10-20MB for high-quality portfolio printing",
@@ -610,33 +490,11 @@
         "Download print-ready files with proper color profiles and metadata"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "TIFF",
-          "PNG",
-          "RAW",
-          "PSD",
-          "HEIC"
-        ],
+        "supportedFormats": ["JPEG", "TIFF", "PNG", "RAW", "PSD", "HEIC"],
         "maxResolution": "Unlimited for print applications",
-        "outputFormats": [
-          "TIFF (CMYK)",
-          "PDF (print-ready)",
-          "JPEG (RGB)",
-          "PSD (layered)"
-        ],
-        "colorSpaces": [
-          "CMYK",
-          "RGB",
-          "Grayscale",
-          "Spot colors"
-        ],
-        "printStandards": [
-          "ISO 12647",
-          "GRACoL",
-          "SWOP",
-          "FOGRA"
-        ]
+        "outputFormats": ["TIFF (CMYK)", "PDF (print-ready)", "JPEG (RGB)", "PSD (layered)"],
+        "colorSpaces": ["CMYK", "RGB", "Grayscale", "Spot colors"],
+        "printStandards": ["ISO 12647", "GRACoL", "SWOP", "FOGRA"]
       },
       "caseStudies": [
         {
@@ -659,26 +517,10 @@
         "Consider paper type and printing method in enhancement decisions"
       ],
       "softwareRecommendations": {
-        "professionalTools": [
-          "Adobe InDesign",
-          "Adobe Photoshop",
-          "QuarkXPress"
-        ],
-        "prepressTools": [
-          "Adobe Acrobat Pro",
-          "Preflight Tools",
-          "Color Management Software"
-        ],
-        "enhancementTools": [
-          "MyImageUpscaler",
-          "Topaz Labs",
-          "ON1 Resize"
-        ],
-        "colorManagement": [
-          "X-Rite i1Profiler",
-          "Datacolor Spyder",
-          "Pantone Color Manager"
-        ]
+        "professionalTools": ["Adobe InDesign", "Adobe Photoshop", "QuarkXPress"],
+        "prepressTools": ["Adobe Acrobat Pro", "Preflight Tools", "Color Management Software"],
+        "enhancementTools": ["MyImageUpscaler", "Topaz Labs", "ON1 Resize"],
+        "colorManagement": ["X-Rite i1Profiler", "Datacolor Spyder", "Pantone Color Manager"]
       },
       "fileSizeGuidelines": {
         "standardPrint": "10-50MB for high-quality print reproduction",
@@ -757,13 +599,7 @@
         "Download platform-ready files with proper specifications"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "HEIC",
-          "WebP",
-          "AVIF"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "HEIC", "WebP", "AVIF"],
         "platformSupport": [
           "Instagram",
           "TikTok",
@@ -773,17 +609,9 @@
           "LinkedIn",
           "Pinterest"
         ],
-        "outputFormats": [
-          "Platform-optimized JPEG",
-          "PNG with transparency",
-          "WebP for web"
-        ],
+        "outputFormats": ["Platform-optimized JPEG", "PNG with transparency", "WebP for web"],
         "batchProcessing": "Up to 100 content pieces per batch",
-        "performanceOptimization": [
-          "Fast loading",
-          "Mobile-first",
-          "High engagement"
-        ]
+        "performanceOptimization": ["Fast loading", "Mobile-first", "High engagement"]
       },
       "caseStudies": [
         {
@@ -806,27 +634,10 @@
         "Stay current with platform trends and algorithm preferences"
       ],
       "softwareRecommendations": {
-        "contentCreation": [
-          "Canva Pro",
-          "Adobe Creative Suite",
-          "Figma"
-        ],
-        "enhancementTools": [
-          "MyImageUpscaler",
-          "VSCO",
-          "Adobe Lightroom Mobile"
-        ],
-        "videoEditing": [
-          "CapCut",
-          "Adobe Premiere Pro",
-          "Final Cut Pro"
-        ],
-        "socialManagement": [
-          "Buffer",
-          "Hootsuite",
-          "Later",
-          "Planoly"
-        ]
+        "contentCreation": ["Canva Pro", "Adobe Creative Suite", "Figma"],
+        "enhancementTools": ["MyImageUpscaler", "VSCO", "Adobe Lightroom Mobile"],
+        "videoEditing": ["CapCut", "Adobe Premiere Pro", "Final Cut Pro"],
+        "socialManagement": ["Buffer", "Hootsuite", "Later", "Planoly"]
       },
       "fileSizeGuidelines": {
         "instagramFeed": "500KB-2MB for optimal loading and quality",
@@ -905,34 +716,11 @@
         "Download optimized images with responsive variants and metadata"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "WebP",
-          "AVIF",
-          "HEIC",
-          "GIF"
-        ],
-        "outputFormats": [
-          "Modern WebP/AVIF",
-          "Fallback JPEG/PNG",
-          "Responsive srcset"
-        ],
-        "optimizationTargets": [
-          "Core Web Vitals",
-          "Lighthouse scores",
-          "Mobile performance"
-        ],
-        "responsiveSupport": [
-          "Multi-device",
-          "Multi-resolution",
-          "Art direction"
-        ],
-        "webStandards": [
-          "W3C",
-          "Google PageSpeed",
-          "GTmetrix optimization"
-        ]
+        "supportedFormats": ["JPEG", "PNG", "WebP", "AVIF", "HEIC", "GIF"],
+        "outputFormats": ["Modern WebP/AVIF", "Fallback JPEG/PNG", "Responsive srcset"],
+        "optimizationTargets": ["Core Web Vitals", "Lighthouse scores", "Mobile performance"],
+        "responsiveSupport": ["Multi-device", "Multi-resolution", "Art direction"],
+        "webStandards": ["W3C", "Google PageSpeed", "GTmetrix optimization"]
       },
       "caseStudies": [
         {
@@ -955,28 +743,10 @@
         "Test performance across different devices and network conditions"
       ],
       "softwareRecommendations": {
-        "designTools": [
-          "Figma",
-          "Sketch",
-          "Adobe XD",
-          "Framer"
-        ],
-        "developmentTools": [
-          "VS Code",
-          "Sublime Text",
-          "WebStorm"
-        ],
-        "optimizationTools": [
-          "MyImageUpscaler",
-          "ImageOptim",
-          "TinyPNG",
-          "Cloudinary"
-        ],
-        "performanceTools": [
-          "Google PageSpeed Insights",
-          "GTmetrix",
-          "WebPageTest"
-        ]
+        "designTools": ["Figma", "Sketch", "Adobe XD", "Framer"],
+        "developmentTools": ["VS Code", "Sublime Text", "WebStorm"],
+        "optimizationTools": ["MyImageUpscaler", "ImageOptim", "TinyPNG", "Cloudinary"],
+        "performanceTools": ["Google PageSpeed Insights", "GTmetrix", "WebPageTest"]
       },
       "fileSizeGuidelines": {
         "heroImages": "500KB-2MB for high-quality hero sections",
@@ -1055,13 +825,7 @@
         "Download platform-ready creatives with proper specifications"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "GIF",
-          "WebP",
-          "HTML5"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "GIF", "WebP", "HTML5"],
         "marketingChannels": [
           "Google Ads",
           "Facebook Ads",
@@ -1069,21 +833,9 @@
           "Email Marketing",
           "Display Networks"
         ],
-        "adFormats": [
-          "Banner ads",
-          "Social ads",
-          "Email creatives",
-          "Landing page images"
-        ],
-        "performanceOptimization": [
-          "CTR focus",
-          "Conversion optimization",
-          "Brand consistency"
-        ],
-        "testingSupport": [
-          "A/B testing variations",
-          "Multivariate testing support"
-        ]
+        "adFormats": ["Banner ads", "Social ads", "Email creatives", "Landing page images"],
+        "performanceOptimization": ["CTR focus", "Conversion optimization", "Brand consistency"],
+        "testingSupport": ["A/B testing variations", "Multivariate testing support"]
       },
       "caseStudies": [
         {
@@ -1106,27 +858,10 @@
         "Track performance metrics and iterate based on results"
       ],
       "softwareRecommendations": {
-        "marketingPlatforms": [
-          "Google Ads",
-          "Facebook Ads Manager",
-          "LinkedIn Campaign Manager"
-        ],
-        "designTools": [
-          "Canva Pro",
-          "Adobe Creative Suite",
-          "Figma"
-        ],
-        "enhancementTools": [
-          "MyImageUpscaler",
-          "Adobe Stock",
-          "Unsplash+"
-        ],
-        "analyticsTools": [
-          "Google Analytics",
-          "Hotjar",
-          "Crazy Egg",
-          "Optimizely"
-        ]
+        "marketingPlatforms": ["Google Ads", "Facebook Ads Manager", "LinkedIn Campaign Manager"],
+        "designTools": ["Canva Pro", "Adobe Creative Suite", "Figma"],
+        "enhancementTools": ["MyImageUpscaler", "Adobe Stock", "Unsplash+"],
+        "analyticsTools": ["Google Analytics", "Hotjar", "Crazy Egg", "Optimizely"]
       },
       "fileSizeGuidelines": {
         "displayAds": "150KB-500KB for fast loading display ads",
@@ -1205,14 +940,7 @@
         "Download high-resolution restored images for archiving and printing"
       ],
       "technicalSpecs": {
-        "supportedFormats": [
-          "JPEG",
-          "TIFF",
-          "PNG",
-          "BMP",
-          "GIF",
-          "Scanned documents"
-        ],
+        "supportedFormats": ["JPEG", "TIFF", "PNG", "BMP", "GIF", "Scanned documents"],
         "damageTypes": [
           "Tears",
           "Scratches",
@@ -1221,17 +949,8 @@
           "Color shifts",
           "Mold damage"
         ],
-        "outputFormats": [
-          "TIFF (archival)",
-          "JPEG (sharing)",
-          "PNG (web)",
-          "DNG (professional)"
-        ],
-        "archiveStandards": [
-          "FADGI",
-          "METS",
-          "PREMIS compliance for institutional archiving"
-        ],
+        "outputFormats": ["TIFF (archival)", "JPEG (sharing)", "PNG (web)", "DNG (professional)"],
+        "archiveStandards": ["FADGI", "METS", "PREMIS compliance for institutional archiving"],
         "qualityControl": [
           "Historical accuracy",
           "Authenticity preservation",
@@ -1259,25 +978,10 @@
         "Consider professional consultation for valuable historical photos"
       ],
       "softwareRecommendations": {
-        "restorationTools": [
-          "MyImageUpscaler",
-          "Adobe Photoshop",
-          "Topaz Labs",
-          "Skylum"
-        ],
-        "scanningSoftware": [
-          "VueScan",
-          "Epson Scan",
-          "Canon ScanGear"
-        ],
-        "archiveTools": [
-          "Adobe Lightroom",
-          "DAM systems",
-          "Digital archive software"
-        ],
-        "professionalServices": [
-          "Professional restoration services for valuable items"
-        ]
+        "restorationTools": ["MyImageUpscaler", "Adobe Photoshop", "Topaz Labs", "Skylum"],
+        "scanningSoftware": ["VueScan", "Epson Scan", "Canon ScanGear"],
+        "archiveTools": ["Adobe Lightroom", "DAM systems", "Digital archive software"],
+        "professionalServices": ["Professional restoration services for valuable items"]
       },
       "fileSizeGuidelines": {
         "archivalQuality": "20-100MB for archival TIFF files",
@@ -1363,12 +1067,7 @@
           "Midjourney",
           "Leonardo AI"
         ],
-        "outputResolutions": [
-          "4K",
-          "6K",
-          "8K",
-          "Custom large format"
-        ],
+        "outputResolutions": ["4K", "6K", "8K", "Custom large format"],
         "supportedStyles": [
           "Digital art",
           "Photorealistic",
@@ -1376,18 +1075,8 @@
           "Abstract",
           "Character design"
         ],
-        "printStandards": [
-          "Gallery quality",
-          "Commercial printing",
-          "Fine art reproduction"
-        ],
-        "formatSupport": [
-          "PNG",
-          "TIFF",
-          "JPEG",
-          "PSD",
-          "WebP"
-        ]
+        "printStandards": ["Gallery quality", "Commercial printing", "Fine art reproduction"],
+        "formatSupport": ["PNG", "TIFF", "JPEG", "PSD", "WebP"]
       },
       "caseStudies": [
         {
@@ -1410,26 +1099,14 @@
         "Consider copyright and licensing for commercial use"
       ],
       "softwareRecommendations": {
-        "aiGenerators": [
-          "Midjourney",
-          "DALL-E 3",
-          "Stable Diffusion",
-          "Leonardo AI"
-        ],
-        "enhancementTools": [
-          "MyImageUpscaler",
-          "Topaz Gigapixel AI",
-          "Adobe Photoshop"
-        ],
+        "aiGenerators": ["Midjourney", "DALL-E 3", "Stable Diffusion", "Leonardo AI"],
+        "enhancementTools": ["MyImageUpscaler", "Topaz Gigapixel AI", "Adobe Photoshop"],
         "printingServices": [
           "Professional art printing",
           "Gallery printing services",
           "Fine art reproduction"
         ],
-        "commercialTools": [
-          "Adobe Creative Suite",
-          "Professional design software"
-        ]
+        "commercialTools": ["Adobe Creative Suite", "Professional design software"]
       },
       "fileSizeGuidelines": {
         "largePrint": "50-200MB for large format art prints",

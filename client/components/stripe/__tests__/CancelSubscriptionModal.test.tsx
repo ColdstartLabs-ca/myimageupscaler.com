@@ -22,7 +22,8 @@ const mockTranslations = {
   continue: 'Continue',
   keepSubscription: 'Keep Subscription',
   confirmationTitle: 'Are you sure?',
-  confirmationText: 'Once canceled, you will lose access to all premium features on {formattedEndDate}.',
+  confirmationText:
+    'Once canceled, you will lose access to all premium features on {formattedEndDate}.',
   goBack: 'Go Back',
   yesCancel: 'Yes, Cancel Subscription',
   canceling: 'Canceling...',

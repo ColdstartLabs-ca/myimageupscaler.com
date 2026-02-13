@@ -121,7 +121,9 @@ export function ToolPageTemplate({
           {data.pageSpecificDetails && (
             <FadeIn delay={0.35}>
               <div className="max-w-4xl mx-auto py-8 px-8 glass-card-2025">
-                <h3 className="text-xl font-bold mb-4 text-center text-white">Key Details & Use Cases</h3>
+                <h3 className="text-xl font-bold mb-4 text-center text-white">
+                  Key Details & Use Cases
+                </h3>
                 <p className="text-base text-text-secondary leading-relaxed">
                   {data.pageSpecificDetails}
                 </p>

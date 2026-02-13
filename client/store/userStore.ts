@@ -353,8 +353,8 @@ if (typeof window !== 'undefined') {
         name: session.user.user_metadata?.name,
         provider: session.user.app_metadata?.provider ?? 'email',
         role: isSameUser ? (currentUser?.role ?? 'user') : 'user',
-        profile: isSameUser ? currentUser?.profile ?? null : null,
-        subscription: isSameUser ? currentUser?.subscription ?? null : null,
+        profile: isSameUser ? (currentUser?.profile ?? null) : null,
+        subscription: isSameUser ? (currentUser?.subscription ?? null) : null,
       };
 
       // NON-BLOCKING: Show UI immediately with user data

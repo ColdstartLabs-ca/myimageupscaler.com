@@ -109,10 +109,10 @@ export function FormatScalePageTemplate({
               <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
                 {data.formatDescription && (
                   <div className="glass-card-2025 p-8 border-white/10">
-                    <h3 className="text-xl font-bold text-white mb-4">
-                      About {data.format}
-                    </h3>
-                    <p className="text-text-secondary text-base leading-relaxed">{data.formatDescription}</p>
+                    <h3 className="text-xl font-bold text-white mb-4">About {data.format}</h3>
+                    <p className="text-text-secondary text-base leading-relaxed">
+                      {data.formatDescription}
+                    </p>
                   </div>
                 )}
                 {data.scaleExpectations && (
@@ -120,7 +120,9 @@ export function FormatScalePageTemplate({
                     <h3 className="text-xl font-bold text-white mb-4">
                       {data.scaleFactor} Scaling
                     </h3>
-                    <p className="text-text-secondary text-base leading-relaxed">{data.scaleExpectations}</p>
+                    <p className="text-text-secondary text-base leading-relaxed">
+                      {data.scaleExpectations}
+                    </p>
                   </div>
                 )}
               </div>
@@ -147,18 +149,15 @@ export function FormatScalePageTemplate({
           {normalizedBestPractices && normalizedBestPractices.length > 0 && (
             <FadeIn delay={0.4}>
               <section className="py-12">
-                <h2 className="text-2xl font-bold text-white text-center mb-12">
-                  Best Practices
-                </h2>
+                <h2 className="text-2xl font-bold text-white text-center mb-12">Best Practices</h2>
                 <div className="max-w-3xl mx-auto grid gap-6 md:grid-cols-2">
                   {normalizedBestPractices.map((practice, index) => (
-                    <div
-                      key={index}
-                      className="glass-card-2025 p-6"
-                    >
+                    <div key={index} className="glass-card-2025 p-6">
                       <h3 className="font-bold text-white text-lg mb-3">{practice.title}</h3>
                       {practice.description && (
-                        <p className="text-text-secondary text-base leading-relaxed">{practice.description}</p>
+                        <p className="text-text-secondary text-base leading-relaxed">
+                          {practice.description}
+                        </p>
                       )}
                     </div>
                   ))}
@@ -171,15 +170,15 @@ export function FormatScalePageTemplate({
           {data.tips && data.tips.length > 0 && (
             <FadeIn delay={0.5}>
               <section className="py-12">
-                <h2 className="text-2xl font-bold text-white text-center mb-12">
-                  Pro Tips
-                </h2>
+                <h2 className="text-2xl font-bold text-white text-center mb-12">Pro Tips</h2>
                 <div className="max-w-3xl mx-auto glass-card-2025 p-8 border-accent/20">
                   <ul className="space-y-4">
                     {data.tips.map((tip, index) => (
                       <li key={index} className="flex items-start gap-3">
                         <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-                        <span className="text-text-secondary text-lg font-light leading-relaxed">{tip}</span>
+                        <span className="text-text-secondary text-lg font-light leading-relaxed">
+                          {tip}
+                        </span>
                       </li>
                     ))}
                   </ul>

@@ -22,7 +22,9 @@ export default async function AIFeaturesHubPage() {
           >
             <h2 className="text-xl font-semibold mb-2">{page.title}</h2>
             <p className="text-gray-600 text-sm">{page.intro?.substring(0, 150)}...</p>
-            <span className="inline-block mt-4 text-accent text-sm font-medium">Learn more &rarr;</span>
+            <span className="inline-block mt-4 text-accent text-sm font-medium">
+              Learn more &rarr;
+            </span>
           </Link>
         ))}
       </div>

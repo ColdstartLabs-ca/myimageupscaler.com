@@ -47,7 +47,11 @@ interface IUseCasePageTemplateProps {
   relatedPages?: IRelatedPage[];
 }
 
-export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCasePageTemplateProps): ReactElement {
+export function UseCasePageTemplate({
+  data,
+  locale,
+  relatedPages = [],
+}: IUseCasePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/use-cases/${data.slug}`);
   const tier = pageMapping?.tier;
@@ -144,13 +148,8 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
                 </h2>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {data.platformRequirements.map((req, index) => (
-                    <div
-                      key={index}
-                      className="glass-card-2025 p-6"
-                    >
-                      <h3 className="text-lg font-bold text-white mb-4">
-                        {req.platform}
-                      </h3>
+                    <div key={index} className="glass-card-2025 p-6">
+                      <h3 className="text-lg font-bold text-white mb-4">{req.platform}</h3>
                       <div className="space-y-2 text-sm text-text-secondary">
                         <div className="flex justify-between">
                           <span>Minimum:</span>
@@ -196,13 +195,8 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
                 </h2>
                 <div className="space-y-6">
                   {data.commonProblems.map((item, index) => (
-                    <div
-                      key={index}
-                      className="glass-card-2025 p-6"
-                    >
-                      <h3 className="text-lg font-bold text-white mb-2">
-                        {item.problem}
-                      </h3>
+                    <div key={index} className="glass-card-2025 p-6">
+                      <h3 className="text-lg font-bold text-white mb-2">{item.problem}</h3>
                       <p className="text-text-secondary mb-3">{item.solution}</p>
                       {item.howTo && (
                         <div className="bg-white/5 rounded-lg p-4 text-sm border border-white/10">
@@ -245,9 +239,7 @@ export function UseCasePageTemplate({ data, locale, relatedPages = [] }: IUseCas
           {data.challenges && data.challenges.length > 0 && (
             <FadeIn delay={0.4}>
               <section className="py-12">
-                <h2 className="text-2xl font-bold text-white text-center mb-8">
-                  Key Challenges
-                </h2>
+                <h2 className="text-2xl font-bold text-white text-center mb-8">Key Challenges</h2>
                 <div className="max-w-3xl mx-auto">
                   <div className="glass-card-2025 p-8">
                     <ul className="space-y-4">

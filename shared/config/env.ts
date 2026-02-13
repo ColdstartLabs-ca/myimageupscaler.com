@@ -323,14 +323,10 @@ function loadServerEnv(): IServerEnv {
     PAGESPEED_API_KEY: process.env.PAGESPEED_API_KEY || '',
     INDEXNOW_KEY: process.env.INDEXNOW_KEY || '',
     // Stripe Price IDs
-    STRIPE_PRICE_STARTER:
-      process.env.STRIPE_PRICE_STARTER || 'price_1Sz0fNL1vUl00LlZX1XClz95',
-    STRIPE_PRICE_HOBBY:
-      process.env.STRIPE_PRICE_HOBBY || 'price_1Sz0fNL1vUl00LlZT6MMTxAg',
-    STRIPE_PRICE_PRO:
-      process.env.STRIPE_PRICE_PRO || 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
-    STRIPE_PRICE_BUSINESS:
-      process.env.STRIPE_PRICE_BUSINESS || 'price_1Sz0fOL1vUl00LlZP3y5zdFx',
+    STRIPE_PRICE_STARTER: process.env.STRIPE_PRICE_STARTER || 'price_1Sz0fNL1vUl00LlZX1XClz95',
+    STRIPE_PRICE_HOBBY: process.env.STRIPE_PRICE_HOBBY || 'price_1Sz0fNL1vUl00LlZT6MMTxAg',
+    STRIPE_PRICE_PRO: process.env.STRIPE_PRICE_PRO || 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
+    STRIPE_PRICE_BUSINESS: process.env.STRIPE_PRICE_BUSINESS || 'price_1Sz0fOL1vUl00LlZP3y5zdFx',
     // Gemini AI
     GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
     // Replicate AI

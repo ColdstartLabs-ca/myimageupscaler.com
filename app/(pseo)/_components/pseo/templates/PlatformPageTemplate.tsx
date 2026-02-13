@@ -170,9 +170,7 @@ export function PlatformPageTemplate({
           {data.bestPractices && data.bestPractices.length > 0 && (
             <FadeIn delay={0.34}>
               <section className="py-12">
-                <h2 className="text-2xl font-bold text-white text-center mb-8">
-                  Best Practices
-                </h2>
+                <h2 className="text-2xl font-bold text-white text-center mb-8">Best Practices</h2>
                 <div className="max-w-4xl mx-auto">
                   <div className="glass-card-2025 p-8 border-white/10">
                     <ul className="space-y-4">
@@ -220,9 +218,7 @@ export function PlatformPageTemplate({
           {data.workflowSteps && data.workflowSteps.length > 0 && (
             <FadeIn delay={0.5}>
               <section className="py-12">
-                <h2 className="text-2xl font-bold text-white text-center mb-8">
-                  How to Use
-                </h2>
+                <h2 className="text-2xl font-bold text-white text-center mb-8">How to Use</h2>
                 <div className="max-w-3xl mx-auto space-y-8">
                   {data.workflowSteps.map((step, index) => (
                     <div key={index} className="flex gap-6 items-start">

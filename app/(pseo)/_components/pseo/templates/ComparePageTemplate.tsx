@@ -24,7 +24,10 @@ interface IComparePageTemplateProps {
   relatedPages?: IRelatedPage[];
 }
 
-export function ComparePageTemplate({ data, relatedPages = [] }: IComparePageTemplateProps): ReactElement {
+export function ComparePageTemplate({
+  data,
+  relatedPages = [],
+}: IComparePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/compare/${data.slug}`);
   const tier = pageMapping?.tier;
@@ -91,10 +94,11 @@ export function ComparePageTemplate({ data, relatedPages = [] }: IComparePageTem
                         {data.products.map((product, idx) => (
                           <th
                             key={idx}
-                            className={`px-6 py-4 text-center text-sm font-semibold ${product.isRecommended
-                              ? 'bg-white/10 text-text-primary'
-                              : 'text-text-primary'
-                              }`}
+                            className={`px-6 py-4 text-center text-sm font-semibold ${
+                              product.isRecommended
+                                ? 'bg-white/10 text-text-primary'
+                                : 'text-text-primary'
+                            }`}
                           >
                             {product.isRecommended && (
                               <div className="inline-flex items-center gap-1 px-2 py-1 bg-accent text-white text-xs font-bold rounded-full mb-2">
@@ -118,8 +122,9 @@ export function ComparePageTemplate({ data, relatedPages = [] }: IComparePageTem
                             return (
                               <td
                                 key={pIdx}
-                                className={`px-6 py-4 text-center ${product.isRecommended ? 'bg-white/5' : ''
-                                  }`}
+                                className={`px-6 py-4 text-center ${
+                                  product.isRecommended ? 'bg-white/5' : ''
+                                }`}
                               >
                                 {typeof value === 'boolean' ? (
                                   value ? (
@@ -160,9 +165,7 @@ export function ComparePageTemplate({ data, relatedPages = [] }: IComparePageTem
                         <div className="font-semibold text-text-primary mb-1 text-sm">Winner:</div>
                         <div className="text-xl font-bold text-accent">{data.verdict.winner}</div>
                         {data.verdict.reason && (
-                          <p className="text-sm text-text-secondary mt-2">
-                            {data.verdict.reason}
-                          </p>
+                          <p className="text-sm text-text-secondary mt-2">{data.verdict.reason}</p>
                         )}
                       </div>
                     )}
@@ -183,14 +186,15 @@ export function ComparePageTemplate({ data, relatedPages = [] }: IComparePageTem
                   {data.products.map((product, idx) => (
                     <div
                       key={idx}
-                      className={`glass-card-2025 p-6 ${product.isRecommended
-                        ? 'border-accent/40 bg-accent/5'
-                        : ''
-                        }`}
+                      className={`glass-card-2025 p-6 ${
+                        product.isRecommended ? 'border-accent/40 bg-accent/5' : ''
+                      }`}
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="text-xl font-bold mb-1 text-text-primary">{product.name}</h3>
+                          <h3 className="text-xl font-bold mb-1 text-text-primary">
+                            {product.name}
+                          </h3>
                           {product.tagline && (
                             <p className="text-sm text-text-secondary">{product.tagline}</p>
                           )}
@@ -198,7 +202,9 @@ export function ComparePageTemplate({ data, relatedPages = [] }: IComparePageTem
                         {product.rating && (
                           <div className="flex items-center gap-1">
                             <Star className="w-5 h-5 text-orange-400 fill-orange-400" />
-                            <span className="font-bold text-lg text-text-primary">{product.rating}</span>
+                            <span className="font-bold text-lg text-text-primary">
+                              {product.rating}
+                            </span>
                             <span className="text-sm text-text-secondary">/5</span>
                           </div>
                         )}
@@ -211,7 +217,10 @@ export function ComparePageTemplate({ data, relatedPages = [] }: IComparePageTem
                           <h4 className="font-semibold text-sm text-success/90 mb-2">Pros:</h4>
                           <ul className="space-y-1">
                             {product.pros.map((pro, pIdx) => (
-                              <li key={pIdx} className="flex items-start gap-2 text-sm text-text-secondary">
+                              <li
+                                key={pIdx}
+                                className="flex items-start gap-2 text-sm text-text-secondary"
+                              >
                                 <Check className="w-4 h-4 text-success shrink-0 mt-0.5" />
                                 <span>{pro}</span>
                               </li>
@@ -224,7 +233,10 @@ export function ComparePageTemplate({ data, relatedPages = [] }: IComparePageTem
                           <h4 className="font-semibold text-sm text-error/90 mb-2">Cons:</h4>
                           <ul className="space-y-1">
                             {product.cons.map((con, cIdx) => (
-                              <li key={cIdx} className="flex items-start gap-2 text-sm text-text-secondary">
+                              <li
+                                key={cIdx}
+                                className="flex items-start gap-2 text-sm text-text-secondary"
+                              >
                                 <X className="w-4 h-4 text-error shrink-0 mt-0.5" />
                                 <span>{con}</span>
                               </li>

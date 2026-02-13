@@ -29,7 +29,11 @@ interface IGuidePageTemplateProps {
   relatedPages?: IRelatedPage[];
 }
 
-export function GuidePageTemplate({ data, locale: _locale, relatedPages = [] }: IGuidePageTemplateProps): ReactElement {
+export function GuidePageTemplate({
+  data,
+  locale: _locale,
+  relatedPages = [],
+}: IGuidePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/guides/${data.slug}`);
   const tier = pageMapping?.tier;
@@ -72,12 +76,13 @@ export function GuidePageTemplate({ data, locale: _locale, relatedPages = [] }: 
             </span>
             {data.difficulty && (
               <span
-                className={`inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-full capitalize glass-strong border ${data.difficulty === 'beginner'
-                  ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                  : data.difficulty === 'intermediate'
-                    ? 'bg-orange-500/10 text-orange-500 border-orange-500/20'
-                    : 'bg-red-500/10 text-red-500 border-red-500/20'
-                  }`}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-full capitalize glass-strong border ${
+                  data.difficulty === 'beginner'
+                    ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                    : data.difficulty === 'intermediate'
+                      ? 'bg-orange-500/10 text-orange-500 border-orange-500/20'
+                      : 'bg-red-500/10 text-red-500 border-red-500/20'
+                }`}
               >
                 <BarChart3 className="w-4 h-4" />
                 {data.difficulty}

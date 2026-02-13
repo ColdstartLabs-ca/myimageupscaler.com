@@ -66,9 +66,7 @@ export function HreflangLinks({ path, category, locale = 'en' }: IHreflangLinksP
   const xDefaultHref =
     normalizedPath === '' ? clientEnv.BASE_URL : `${clientEnv.BASE_URL}${normalizedPath}`;
 
-  links.push(
-    <link key="x-default" rel="alternate" hrefLang="x-default" href={xDefaultHref} />
-  );
+  links.push(<link key="x-default" rel="alternate" hrefLang="x-default" href={xDefaultHref} />);
 
   // Return fragment with all link tags
   // Next.js will hoist these to the head section automatically

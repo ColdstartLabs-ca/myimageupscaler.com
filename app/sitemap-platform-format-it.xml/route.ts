@@ -8,5 +8,11 @@ import { generateLocaleCategorySitemapResponse } from '@/lib/seo/locale-sitemap-
 
 export async function GET() {
   const pages = await getAllPlatformFormat();
-  return generateLocaleCategorySitemapResponse('it', 'platform-format', 'platform-format', pages, 0.8);
+  return generateLocaleCategorySitemapResponse(
+    'it',
+    'platform-format',
+    'platform-format',
+    pages,
+    0.8
+  );
 }

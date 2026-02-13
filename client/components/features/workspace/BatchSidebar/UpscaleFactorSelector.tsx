@@ -23,7 +23,9 @@ export const UpscaleFactorSelector: React.FC<IUpscaleFactorSelectorProps> = ({
 }) => {
   // Filter scale options based on availableScales prop
   const scaleOptions = availableScales
-    ? ALL_SCALE_OPTIONS.filter(option => availableScales.includes(parseInt(option.value, 10) as 2 | 4 | 8))
+    ? ALL_SCALE_OPTIONS.filter(option =>
+        availableScales.includes(parseInt(option.value, 10) as 2 | 4 | 8)
+      )
     : ALL_SCALE_OPTIONS;
 
   // Auto-reset scale if current value is not in available scales

@@ -130,10 +130,7 @@ export function AlternativePageTemplate({
                 </h2>
                 <div className="space-y-6">
                   {data.keyDifferentiators.map((diff, index) => (
-                    <div
-                      key={index}
-                      className="glass-card-2025"
-                    >
+                    <div key={index} className="glass-card-2025">
                       <h3 className="text-lg font-semibold text-text-primary mb-4">{diff.title}</h3>
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="bg-accent-success/10 rounded-lg p-4">
@@ -202,10 +199,7 @@ export function AlternativePageTemplate({
                 </h2>
                 <div className="grid gap-4 md:grid-cols-2">
                   {data.alternatives.map((alt, index) => (
-                    <div
-                      key={index}
-                      className="glass-card-2025"
-                    >
+                    <div key={index} className="glass-card-2025">
                       <h3 className="text-lg font-semibold text-text-primary mb-2">{alt.name}</h3>
                       <p className="text-text-secondary text-sm mb-3">{alt.description}</p>
                       <div className="flex justify-between text-sm">

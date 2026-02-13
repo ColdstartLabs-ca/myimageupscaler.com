@@ -59,51 +59,27 @@
       "commonDamageTypes": [
         {
           "damage": "Fading and Color Loss",
-          "causes": [
-            "UV exposure",
-            "Age",
-            "Chemical degradation",
-            "Poor storage"
-          ],
+          "causes": ["UV exposure", "Age", "Chemical degradation", "Poor storage"],
           "restoration": "Color correction, levels adjustment, contrast enhancement"
         },
         {
           "damage": "Physical Tears and Rips",
-          "causes": [
-            "Handling",
-            "Age",
-            "Accidents",
-            "Poor storage"
-          ],
+          "causes": ["Handling", "Age", "Accidents", "Poor storage"],
           "restoration": "Content-aware fill, cloning, manual reconstruction"
         },
         {
           "damage": "Scratches and Abrasions",
-          "causes": [
-            "Dirt",
-            "Cleaning attempts",
-            "Handling",
-            "Storage"
-          ],
+          "causes": ["Dirt", "Cleaning attempts", "Handling", "Storage"],
           "restoration": "Healing brushes, scratch removal filters, careful cloning"
         },
         {
           "damage": "Water Stains",
-          "causes": [
-            "Floods",
-            "Humidity",
-            "Spills",
-            "Water damage"
-          ],
+          "causes": ["Floods", "Humidity", "Spills", "Water damage"],
           "restoration": "Color correction, stain removal, selective editing"
         },
         {
           "damage": "Mold and Mildew",
-          "causes": [
-            "High humidity",
-            "Poor ventilation",
-            "Water damage"
-          ],
+          "causes": ["High humidity", "Poor ventilation", "Water damage"],
           "restoration": "Careful cleaning, color correction, damage reconstruction"
         }
       ],
@@ -121,29 +97,17 @@
         {
           "tool": "Neural Network Restoration",
           "description": "Deep learning models trained on vintage photo restoration",
-          "features": [
-            "Intelligent reconstruction",
-            "Pattern recognition",
-            "Context-aware repair"
-          ]
+          "features": ["Intelligent reconstruction", "Pattern recognition", "Context-aware repair"]
         },
         {
           "tool": "AI Colorization",
           "description": "Add realistic colors to black and white photographs",
-          "features": [
-            "Historical accuracy",
-            "Natural color palettes",
-            "User control"
-          ]
+          "features": ["Historical accuracy", "Natural color palettes", "User control"]
         },
         {
           "tool": "Automated Damage Detection",
           "description": "AI identifies and categorizes different types of damage",
-          "features": [
-            "Damage classification",
-            "Repair suggestions",
-            "Priority assessment"
-          ]
+          "features": ["Damage classification", "Repair suggestions", "Priority assessment"]
         }
       ],
       "traditionalTechniques": [
@@ -176,11 +140,7 @@
         },
         {
           "equipment": "Photo Editing Software",
-          "options": [
-            "Adobe Photoshop",
-            "Affinity Photo",
-            "GIMP (free)"
-          ],
+          "options": ["Adobe Photoshop", "Affinity Photo", "GIMP (free)"],
           "purpose": "Digital restoration work and editing"
         },
         {
@@ -222,10 +182,7 @@
           "answer": "Colorization is optional and depends on your goals. It can make photos more engaging but may lose historical authenticity. Consider keeping both versions."
         }
       ],
-      "relatedPages": [
-        "vintage-photo-colorization",
-        "family-photo-preservation"
-      ]
+      "relatedPages": ["vintage-photo-colorization", "family-photo-preservation"]
     },
     {
       "slug": "vintage-photo-colorization",
@@ -272,11 +229,7 @@
         {
           "consideration": "Natural vs. Artificial Lighting",
           "description": "Account for lighting conditions when applying colors",
-          "effects": [
-            "Warm indoor lighting",
-            "Cool daylight",
-            "Mixed lighting conditions"
-          ]
+          "effects": ["Warm indoor lighting", "Cool daylight", "Mixed lighting conditions"]
         }
       ],
       "aiColorizationTools": [
@@ -288,39 +241,19 @@
             "Natural color palettes",
             "Historical learning"
           ],
-          "bestFor": [
-            "Quick results",
-            "Natural scenes",
-            "General colorization"
-          ]
+          "bestFor": ["Quick results", "Natural scenes", "General colorization"]
         },
         {
           "tool": "GAN-Based Colorization",
           "description": "Generative adversarial networks for realistic color generation",
-          "features": [
-            "Highly realistic results",
-            "Texture awareness",
-            "Context understanding"
-          ],
-          "bestFor": [
-            "Professional results",
-            "Complex scenes",
-            "High-quality output"
-          ]
+          "features": ["Highly realistic results", "Texture awareness", "Context understanding"],
+          "bestFor": ["Professional results", "Complex scenes", "High-quality output"]
         },
         {
           "tool": "Reference-Based Colorization",
           "description": "Use reference images to guide color choices",
-          "features": [
-            "User control",
-            "Reference matching",
-            "Color consistency"
-          ],
-          "bestFor": [
-            "Historical accuracy",
-            "Specific requirements",
-            "Artistic control"
-          ]
+          "features": ["User control", "Reference matching", "Color consistency"],
+          "bestFor": ["Historical accuracy", "Specific requirements", "Artistic control"]
         }
       ],
       "manualColorizationProcess": [
@@ -328,11 +261,7 @@
           "step": 1,
           "name": "Research and Planning",
           "description": "Research historical colors and plan color scheme",
-          "actions": [
-            "Study era-appropriate colors",
-            "Find reference images",
-            "Plan color palette"
-          ]
+          "actions": ["Study era-appropriate colors", "Find reference images", "Plan color palette"]
         },
         {
           "step": 2,
@@ -368,21 +297,13 @@
           "step": 5,
           "name": "Environmental Colors",
           "description": "Colorize background and environmental elements",
-          "actions": [
-            "Natural elements",
-            "Architecture",
-            "Lighting effects"
-          ]
+          "actions": ["Natural elements", "Architecture", "Lighting effects"]
         },
         {
           "step": 6,
           "name": "Integration and Blending",
           "description": "Blend colors naturally and adjust overall harmony",
-          "actions": [
-            "Adjust color harmony",
-            "Add lighting effects",
-            "Fine-tune saturation"
-          ]
+          "actions": ["Adjust color harmony", "Add lighting effects", "Fine-tune saturation"]
         }
       ],
       "colorizationChallenges": [
@@ -394,11 +315,7 @@
             "Age effects",
             "Ethnic accuracy"
           ],
-          "solutions": [
-            "Reference photos",
-            "Multiple color layers",
-            "Subtle variations"
-          ]
+          "solutions": ["Reference photos", "Multiple color layers", "Subtle variations"]
         },
         {
           "challenge": "Clothing Colors",
@@ -408,11 +325,7 @@
             "Fabric materials",
             "Social status indicators"
           ],
-          "solutions": [
-            "Historical research",
-            "Reference fashion",
-            "Probable color choices"
-          ]
+          "solutions": ["Historical research", "Reference fashion", "Probable color choices"]
         },
         {
           "challenge": "Environmental Colors",
@@ -422,66 +335,36 @@
             "Unknown locations",
             "Lighting effects"
           ],
-          "solutions": [
-            "Location research",
-            "Natural color palettes",
-            "Lighting consistency"
-          ]
+          "solutions": ["Location research", "Natural color palettes", "Lighting consistency"]
         }
       ],
       "technicalTechniques": [
         {
           "technique": "Color Fill Layers",
           "description": "Use separate layers for each color category",
-          "benefits": [
-            "Easy adjustments",
-            "Non-destructive editing",
-            "Fine control"
-          ]
+          "benefits": ["Easy adjustments", "Non-destructive editing", "Fine control"]
         },
         {
           "technique": "Gradient Mapping",
           "description": "Map grayscale values to color gradients",
-          "benefits": [
-            "Natural transitions",
-            "Consistent colors",
-            "Quick results"
-          ]
+          "benefits": ["Natural transitions", "Consistent colors", "Quick results"]
         },
         {
           "technique": "Blending Modes",
           "description": "Use various blending modes for natural color integration",
-          "benefits": [
-            "Realistic mixing",
-            "Texture preservation",
-            "Subtle effects"
-          ]
+          "benefits": ["Realistic mixing", "Texture preservation", "Subtle effects"]
         },
         {
           "technique": "Masking Techniques",
           "description": "Precisely control where colors are applied",
-          "benefits": [
-            "Sharp edges",
-            "Selective coloring",
-            "Detailed control"
-          ]
+          "benefits": ["Sharp edges", "Selective coloring", "Detailed control"]
         }
       ],
       "historicalPeriods": [
         {
           "period": "Victorian Era (1837-1901)",
-          "characteristics": [
-            "Sepia tones",
-            "Formal clothing",
-            "Dark rich colors",
-            "Natural dyes"
-          ],
-          "commonColors": [
-            "Browns",
-            "Dark reds",
-            "Deep blues",
-            "Earthy tones"
-          ]
+          "characteristics": ["Sepia tones", "Formal clothing", "Dark rich colors", "Natural dyes"],
+          "commonColors": ["Browns", "Dark reds", "Deep blues", "Earthy tones"]
         },
         {
           "period": "Early 20th Century (1900-1920)",
@@ -499,11 +382,7 @@
         },
         {
           "period": "1920s-1940s",
-          "characteristics": [
-            "Art deco boldness",
-            "Economic constraints",
-            "Hollywood influence"
-          ],
+          "characteristics": ["Art deco boldness", "Economic constraints", "Hollywood influence"],
           "commonColors": [
             "Bold contrasts",
             "Monochrome elegance",
@@ -513,11 +392,7 @@
         },
         {
           "period": "1950s-1970s",
-          "characteristics": [
-            "Mid-century modern",
-            "Vibrant colors",
-            "Pop culture influence"
-          ],
+          "characteristics": ["Mid-century modern", "Vibrant colors", "Pop culture influence"],
           "commonColors": [
             "Bright primaries",
             "Pastel trends",
@@ -583,47 +458,27 @@
         {
           "phase": "Assessment",
           "description": "Thoroughly evaluate damage type and severity",
-          "actions": [
-            "Document all damage",
-            "Prioritize repairs",
-            "Plan restoration approach"
-          ]
+          "actions": ["Document all damage", "Prioritize repairs", "Plan restoration approach"]
         },
         {
           "phase": "Stabilization",
           "description": "Stabilize the photo and prevent further damage",
-          "actions": [
-            "Gentle cleaning",
-            "Flattening",
-            "Environmental control"
-          ]
+          "actions": ["Gentle cleaning", "Flattening", "Environmental control"]
         },
         {
           "phase": "Digitization",
           "description": "Create high-quality digital copies for repair work",
-          "actions": [
-            "High-resolution scanning",
-            "Multiple passes",
-            "Format selection"
-          ]
+          "actions": ["High-resolution scanning", "Multiple passes", "Format selection"]
         },
         {
           "phase": "Digital Repair",
           "description": "Repair damage using digital tools and techniques",
-          "actions": [
-            "Structural repairs",
-            "Color correction",
-            "Detail restoration"
-          ]
+          "actions": ["Structural repairs", "Color correction", "Detail restoration"]
         },
         {
           "phase": "Enhancement",
           "description": "Enhance and finalize the restored image",
-          "actions": [
-            "Sharpening",
-            "Color balance",
-            "Final adjustments"
-          ]
+          "actions": ["Sharpening", "Color balance", "Final adjustments"]
         }
       ],
       "specificRepairTechniques": [
@@ -633,12 +488,7 @@
             {
               "method": "Digital Reconstruction",
               "description": "Reconstruct missing areas using surrounding content",
-              "steps": [
-                "Align pieces",
-                "Clone matching areas",
-                "Blend edges",
-                "Rebuild details"
-              ]
+              "steps": ["Align pieces", "Clone matching areas", "Blend edges", "Rebuild details"]
             },
             {
               "method": "Content-Aware Fill",
@@ -653,12 +503,7 @@
             {
               "method": "Layered Assembly",
               "description": "Digitally assemble torn pieces like a puzzle",
-              "steps": [
-                "Separate pieces",
-                "Align edges",
-                "Blend seams",
-                "Smooth transitions"
-              ]
+              "steps": ["Separate pieces", "Align edges", "Blend seams", "Smooth transitions"]
             }
           ]
         },
@@ -771,17 +616,8 @@
       "advancedRepairTools": [
         {
           "tool": "Photoshop Restoration Tools",
-          "features": [
-            "Content-Aware Fill",
-            "Healing Brushes",
-            "Clone Stamp",
-            "Patch Tool"
-          ],
-          "bestFor": [
-            "Professional restoration",
-            "Complex damage",
-            "Precise control"
-          ]
+          "features": ["Content-Aware Fill", "Healing Brushes", "Clone Stamp", "Patch Tool"],
+          "bestFor": ["Professional restoration", "Complex damage", "Precise control"]
         },
         {
           "tool": "AI-Powered Repair",
@@ -790,24 +626,12 @@
             "Intelligent reconstruction",
             "Pattern recognition"
           ],
-          "bestFor": [
-            "Quick repairs",
-            "Complex patterns",
-            "Large damaged areas"
-          ]
+          "bestFor": ["Quick repairs", "Complex patterns", "Large damaged areas"]
         },
         {
           "tool": "Specialized Restoration Software",
-          "features": [
-            "Dedicated repair tools",
-            "Historical presets",
-            "Batch processing"
-          ],
-          "bestFor": [
-            "Vintage photos",
-            "Consistent results",
-            "Workflow efficiency"
-          ]
+          "features": ["Dedicated repair tools", "Historical presets", "Batch processing"],
+          "bestFor": ["Vintage photos", "Consistent results", "Workflow efficiency"]
         }
       ],
       "preventionMethods": [
@@ -824,12 +648,7 @@
         {
           "method": "Handling Procedures",
           "description": "Handle photos carefully to prevent new damage",
-          "guidelines": [
-            "Clean hands",
-            "Support backing",
-            "Avoid bending",
-            "Use cotton gloves"
-          ]
+          "guidelines": ["Clean hands", "Support backing", "Avoid bending", "Use cotton gloves"]
         },
         {
           "method": "Display Protection",
@@ -899,9 +718,7 @@
           "answer": "Minor damage can often be repaired at home with practice. For valuable or severely damaged photos, consider professional restoration to avoid further damage."
         }
       ],
-      "relatedPages": [
-        "photo-conservation-methods"
-      ]
+      "relatedPages": ["photo-conservation-methods"]
     },
     {
       "slug": "photo-conservation-methods",
@@ -950,12 +767,7 @@
             "light": "No direct sunlight, minimal UV exposure",
             "airQuality": "Clean, filtered air, no pollutants"
           },
-          "monitoring": [
-            "Hygrometers",
-            "Thermometers",
-            "Light meters",
-            "Regular inspections"
-          ]
+          "monitoring": ["Hygrometers", "Thermometers", "Light meters", "Regular inspections"]
         },
         {
           "aspect": "Display Considerations",
@@ -1021,46 +833,18 @@
       "conservationSupplies": [
         {
           "supply": "Archival Sleeves",
-          "types": [
-            "Polypropylene",
-            "Polyester",
-            "Polyethylene"
-          ],
-          "features": [
-            "Acid-free",
-            "No PVC",
-            "Static-free",
-            "Chemically stable"
-          ]
+          "types": ["Polypropylene", "Polyester", "Polyethylene"],
+          "features": ["Acid-free", "No PVC", "Static-free", "Chemically stable"]
         },
         {
           "supply": "Storage Boxes",
-          "types": [
-            "Conservation boxes",
-            "Archival corrugated",
-            "Metal enclosures"
-          ],
-          "features": [
-            "Acid-free",
-            "pH-neutral",
-            "Light-tight",
-            "Moisture resistant"
-          ]
+          "types": ["Conservation boxes", "Archival corrugated", "Metal enclosures"],
+          "features": ["Acid-free", "pH-neutral", "Light-tight", "Moisture resistant"]
         },
         {
           "supply": "Monitoring Equipment",
-          "types": [
-            "Hygrometers",
-            "Thermometers",
-            "Light meters",
-            "pH testing strips"
-          ],
-          "features": [
-            "Calibrated accuracy",
-            "Data logging",
-            "Alarm functions",
-            "Portability"
-          ]
+          "types": ["Hygrometers", "Thermometers", "Light meters", "pH testing strips"],
+          "features": ["Calibrated accuracy", "Data logging", "Alarm functions", "Portability"]
         }
       ],
       "conservationLevels": [
@@ -1098,26 +882,12 @@
       "threatAssessment": [
         {
           "threat": "Environmental",
-          "risks": [
-            "Temperature fluctuations",
-            "High humidity",
-            "Light exposure",
-            "Air pollution"
-          ],
-          "mitigation": [
-            "Climate control",
-            "UV protection",
-            "Air filtration",
-            "Regular monitoring"
-          ]
+          "risks": ["Temperature fluctuations", "High humidity", "Light exposure", "Air pollution"],
+          "mitigation": ["Climate control", "UV protection", "Air filtration", "Regular monitoring"]
         },
         {
           "threat": "Biological",
-          "risks": [
-            "Mold growth",
-            "Insect damage",
-            "Bacterial growth"
-          ],
+          "risks": ["Mold growth", "Insect damage", "Bacterial growth"],
           "mitigation": [
             "Humidity control",
             "Regular inspection",
@@ -1127,12 +897,7 @@
         },
         {
           "threat": "Mechanical",
-          "risks": [
-            "Physical damage",
-            "Handling stress",
-            "Improper storage",
-            "Accidents"
-          ],
+          "risks": ["Physical damage", "Handling stress", "Improper storage", "Accidents"],
           "mitigation": [
             "Proper handling",
             "Supportive storage",
@@ -1142,12 +907,7 @@
         },
         {
           "threat": "Chemical",
-          "risks": [
-            "Acid migration",
-            "Pollutants",
-            "Improper materials",
-            "Deterioration"
-          ],
+          "risks": ["Acid migration", "Pollutants", "Improper materials", "Deterioration"],
           "mitigation": [
             "Archival materials",
             "Isolation from pollutants",
@@ -1159,26 +919,15 @@
       "conservationSchedule": [
         {
           "frequency": "Daily",
-          "tasks": [
-            "Monitor environmental conditions",
-            "Check for immediate threats"
-          ]
+          "tasks": ["Monitor environmental conditions", "Check for immediate threats"]
         },
         {
           "frequency": "Monthly",
-          "tasks": [
-            "Visual inspection",
-            "Environmental data review",
-            "Clean storage areas"
-          ]
+          "tasks": ["Visual inspection", "Environmental data review", "Clean storage areas"]
         },
         {
           "frequency": "Quarterly",
-          "tasks": [
-            "Detailed photo inspection",
-            "Backup verification",
-            "Supply condition check"
-          ]
+          "tasks": ["Detailed photo inspection", "Backup verification", "Supply condition check"]
         },
         {
           "frequency": "Annually",
@@ -1269,12 +1018,7 @@
         {
           "stage": "Organization and Documentation",
           "description": "Systematically organize and document the collection",
-          "actions": [
-            "Create inventory",
-            "Label photos",
-            "Record stories",
-            "Family input"
-          ]
+          "actions": ["Create inventory", "Label photos", "Record stories", "Family input"]
         },
         {
           "stage": "Conservation and Repair",
@@ -1294,57 +1038,24 @@
         {
           "stage": "Sharing and Education",
           "description": "Share preserved photos with family members",
-          "actions": [
-            "Family albums",
-            "Digital galleries",
-            "Story telling",
-            "Educational context"
-          ]
+          "actions": ["Family albums", "Digital galleries", "Story telling", "Educational context"]
         }
       ],
       "photoTypes": [
         {
           "type": "19th Century Photos",
-          "characteristics": [
-            "Daguerreotypes",
-            "Tintypes",
-            "Early paper prints",
-            "Hand coloring"
-          ],
-          "challenges": [
-            "Fragile materials",
-            "Unique processes",
-            "Specialized conservation needs"
-          ]
+          "characteristics": ["Daguerreotypes", "Tintypes", "Early paper prints", "Hand coloring"],
+          "challenges": ["Fragile materials", "Unique processes", "Specialized conservation needs"]
         },
         {
           "type": "Early 20th Century",
-          "characteristics": [
-            "Postcards",
-            "Cabinet cards",
-            "Early snapshots",
-            "Albumen prints"
-          ],
-          "challenges": [
-            "Acidic paper",
-            "Fading",
-            "Album damage",
-            "Poor storage"
-          ]
+          "characteristics": ["Postcards", "Cabinet cards", "Early snapshots", "Albumen prints"],
+          "challenges": ["Acidic paper", "Fading", "Album damage", "Poor storage"]
         },
         {
           "type": "Mid-20th Century",
-          "characteristics": [
-            "35mm snapshots",
-            "Color photos",
-            "Instant photos",
-            "Photo albums"
-          ],
-          "challenges": [
-            "Color fading",
-            "Plastic deterioration",
-            "Magnetic album damage"
-          ]
+          "characteristics": ["35mm snapshots", "Color photos", "Instant photos", "Photo albums"],
+          "challenges": ["Color fading", "Plastic deterioration", "Magnetic album damage"]
         },
         {
           "type": "Modern Digital Photos",
@@ -1354,52 +1065,32 @@
             "Smartphone photos",
             "Cloud storage"
           ],
-          "challenges": [
-            "Format obsolescence",
-            "Data loss",
-            "Metadata preservation"
-          ]
+          "challenges": ["Format obsolescence", "Data loss", "Metadata preservation"]
         }
       ],
       "organizationMethods": [
         {
           "method": "Chronological Organization",
           "description": "Organize photos by date and time period",
-          "benefits": [
-            "Historical context",
-            "Easy timeline building",
-            "Generation tracking"
-          ],
+          "benefits": ["Historical context", "Easy timeline building", "Generation tracking"],
           "implementation": "Decade-based sorting, major events, family milestones"
         },
         {
           "method": "Family Branch Organization",
           "description": "Organize by family lines and relationships",
-          "benefits": [
-            "Genealogy tracking",
-            "Relationship clarity",
-            "Inheritance patterns"
-          ],
+          "benefits": ["Genealogy tracking", "Relationship clarity", "Inheritance patterns"],
           "implementation": "Family trees, individual branches, group photos"
         },
         {
           "method": "Event-Based Organization",
           "description": "Organize by specific events and occasions",
-          "benefits": [
-            "Story telling",
-            "Event history",
-            "Celebration tracking"
-          ],
+          "benefits": ["Story telling", "Event history", "Celebration tracking"],
           "implementation": "Weddings, holidays, births, graduations, travels"
         },
         {
           "method": "Location-Based Organization",
           "description": "Organize by geographic locations",
-          "benefits": [
-            "Family movements",
-            "Historical geography",
-            "Property history"
-          ],
+          "benefits": ["Family movements", "Historical geography", "Property history"],
           "implementation": "Family homes, vacation spots, significant locations"
         }
       ],
@@ -1407,42 +1098,22 @@
         {
           "element": "People Identification",
           "description": "Identify and document all individuals in photos",
-          "information": [
-            "Full names",
-            "Relationships",
-            "Approximate ages",
-            "Life dates"
-          ]
+          "information": ["Full names", "Relationships", "Approximate ages", "Life dates"]
         },
         {
           "element": "Dating and Context",
           "description": "Determine when and where photos were taken",
-          "information": [
-            "Date or period",
-            "Location",
-            "Occasion",
-            "Photographer"
-          ]
+          "information": ["Date or period", "Location", "Occasion", "Photographer"]
         },
         {
           "element": "Stories and Memories",
           "description": "Record associated stories and family memories",
-          "information": [
-            "Events",
-            "Traditions",
-            "Emotions",
-            "Cultural context"
-          ]
+          "information": ["Events", "Traditions", "Emotions", "Cultural context"]
         },
         {
           "element": "Technical Details",
           "description": "Document technical and preservation information",
-          "information": [
-            "Photo type",
-            "Condition",
-            "Conservation needs",
-            "Location"
-          ]
+          "information": ["Photo type", "Condition", "Conservation needs", "Location"]
         }
       ],
       "digitizationStandards": [
@@ -1471,96 +1142,48 @@
         {
           "strategy": "Family Website",
           "description": "Create dedicated family photo website",
-          "benefits": [
-            "Centralized access",
-            "Story telling",
-            "Collaborative contributions"
-          ],
-          "tools": [
-            "Dedicated hosting",
-            "Photo galleries",
-            "Family forums"
-          ]
+          "benefits": ["Centralized access", "Story telling", "Collaborative contributions"],
+          "tools": ["Dedicated hosting", "Photo galleries", "Family forums"]
         },
         {
           "strategy": "Digital Albums",
           "description": "Create digital photo albums for family members",
-          "benefits": [
-            "Portable sharing",
-            "Printed gifts",
-            "Easy access"
-          ],
-          "tools": [
-            "Photo book services",
-            "Digital frames",
-            "Tablet viewing"
-          ]
+          "benefits": ["Portable sharing", "Printed gifts", "Easy access"],
+          "tools": ["Photo book services", "Digital frames", "Tablet viewing"]
         },
         {
           "strategy": "Social Media Groups",
           "description": "Use private social media groups for family sharing",
-          "benefits": [
-            "Easy access",
-            "Mobile friendly",
-            "Interactive discussions"
-          ],
-          "tools": [
-            "Facebook groups",
-            "WhatsApp",
-            "Family apps"
-          ]
+          "benefits": ["Easy access", "Mobile friendly", "Interactive discussions"],
+          "tools": ["Facebook groups", "WhatsApp", "Family apps"]
         },
         {
           "strategy": "Cloud Sharing",
           "description": "Share photos through cloud storage services",
-          "benefits": [
-            "Large file support",
-            "Access control",
-            "Automatic backup"
-          ],
-          "tools": [
-            "Google Photos",
-            "Amazon Photos",
-            "Family cloud folders"
-          ]
+          "benefits": ["Large file support", "Access control", "Automatic backup"],
+          "tools": ["Google Photos", "Amazon Photos", "Family cloud folders"]
         }
       ],
       "familyInvolvement": [
         {
           "activity": "Photo Identification Parties",
           "description": "Gather family members to identify people and stories",
-          "benefits": [
-            "Collective memory",
-            "Social bonding",
-            "Story sharing"
-          ]
+          "benefits": ["Collective memory", "Social bonding", "Story sharing"]
         },
         {
           "activity": "Memory Interviews",
           "description": "Interview older family members about photo context",
-          "benefits": [
-            "Historical context",
-            "Personal stories",
-            "Oral history preservation"
-          ]
+          "benefits": ["Historical context", "Personal stories", "Oral history preservation"]
         },
         {
           "activity": "Collaborative Tagging",
           "description": "Enable family members to add tags and information",
-          "benefits": [
-            "Crowdsourced knowledge",
-            "Engagement",
-            "Shared ownership"
-          ]
+          "benefits": ["Crowdsourced knowledge", "Engagement", "Shared ownership"]
         },
         {
           "activity": "Generational Transfer",
           "description": "Teach younger family members preservation techniques",
-          "benefits": [
-            "Skill transfer",
-            "Continuity",
-            "Future preservation"
-          ]
+          "benefits": ["Skill transfer", "Continuity", "Future preservation"]
         }
       ],
       "preservationChallenges": [
@@ -1602,9 +1225,7 @@
           "answer": "Tell compelling stories, connect photos to family history, use technology they're comfortable with, and show how these photos connect to their own identity and heritage."
         }
       ],
-      "relatedPages": [
-        "photo-conservation-methods"
-      ]
+      "relatedPages": ["photo-conservation-methods"]
     }
   ],
   "meta": {

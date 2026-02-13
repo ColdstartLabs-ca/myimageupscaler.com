@@ -53,18 +53,10 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
         "maxUpscale": "8x",
         "processingTime": "30-60 seconds typical",
-        "outputFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "outputFormats": ["JPEG", "PNG", "WebP"],
         "qualitySettings": "Adjustable JPEG quality 1-100%"
       },
       "useCases": [
@@ -163,13 +155,8 @@
           "answer": "Yes, you retain full rights to your upscaled images. Use them for any purpose - personal, commercial, print, or web."
         }
       ],
-      "relatedTools": [
-        "ai-photo-enhancer"
-      ],
-      "relatedGuides": [
-        "tiff-format-guide",
-        "how-to-upscale-images"
-      ],
+      "relatedTools": ["ai-photo-enhancer"],
+      "relatedGuides": ["tiff-format-guide", "how-to-upscale-images"],
       "ctaText": "Upscale Image Free",
       "ctaUrl": "/?signup=1",
       "beforeAfterImages": {
@@ -231,17 +218,9 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
         "processingTime": "20-45 seconds typical",
-        "outputFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "outputFormats": ["JPEG", "PNG", "WebP"],
         "preservesExif": "Optional - keep or strip metadata"
       },
       "useCases": [
@@ -340,13 +319,8 @@
           "answer": "Absolutely. Phone photos often have noise from small sensors and can benefit significantly from enhancement."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
-      "relatedGuides": [
-        "tiff-format-guide",
-        "raw-photography-guide"
-      ],
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedGuides": ["tiff-format-guide", "raw-photography-guide"],
       "ctaText": "Enhance Photo Free",
       "ctaUrl": "/?signup=1",
       "beforeAfterImages": {
@@ -377,11 +351,7 @@
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "toolName": "AI Background Remover",
       "description": "Transform any image with professional background removal. Our AI uses advanced segmentation to detect subjects with pixel-perfect precision, handling complex edges like hair and fur that traditional tools struggle with.",
       "uniqueIntro": "Background removal used to require hours of painstaking manual work in Photoshop—carefully tracing around subjects with the lasso tool, zooming in to refine edges, and hoping you didn't miss any stray pixels. Our AI Background Remover completely revolutionizes this process by leveraging deep learning models trained on millions of professionally annotated images. The system understands semantic segmentation at a pixel level, meaning it can distinguish between a subject and background even when they share similar colors or when the background has complex patterns like foliage, crowds, or urban scenes. What sets our technology apart is the ability to handle traditionally difficult cases: fine hair strands blowing in the wind, semi-transparent materials like glass or sheer fabrics, and intricate details like tree branches or architectural elements that need precise preservation.",
@@ -491,10 +461,7 @@
           "answer": "Since processing happens in your browser, the limit depends on your device's memory. Most devices handle images up to 4096x4096 pixels smoothly."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "relatedGuides": [],
       "ctaText": "Remove Background Free",
       "ctaUrl": "/tools/ai-background-remover",
@@ -520,11 +487,7 @@
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "toolName": "Remove BG Tool",
       "description": "The fastest way to remove BG from any image. Upload your photo and get a transparent background in seconds. Perfect for quick edits and batch processing.",
       "uniqueIntro": "Quick background removal is essential for modern digital workflows. Whether you're a social media manager needing transparent profile pictures, an e-commerce seller preparing product listings, or a designer creating composite images—removing backgrounds cleanly and quickly is a fundamental requirement. The 'remove BG' search term specifically targets users looking for fast, efficient background removal without complex options or learning curves. Our tool delivers exactly this experience with a streamlined interface that prioritizes speed without sacrificing the accuracy that professional results demand.",
@@ -599,10 +562,7 @@
           "answer": "JPEG, PNG, and WebP images up to 10MB."
         }
       ],
-      "relatedTools": [
-        "ai-background-remover",
-        "ai-image-upscaler"
-      ],
+      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
       "relatedGuides": [],
       "ctaText": "Remove BG Now",
       "ctaUrl": "/tools/remove-bg",
@@ -628,11 +588,7 @@
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "toolName": "Transparent Background Maker",
       "description": "Turn any image into a transparent PNG. Our AI removes the background and creates clean transparent images ready for use in designs, websites, and presentations.",
       "uniqueIntro": "Transparent backgrounds are essential for modern design work. Whether you're creating a logo that needs to work on any colored background, designing a website with overlay elements, or preparing product photos for an e-commerce platform—having a transparent PNG version of your image opens up countless possibilities. Unlike raster formats that lock you into solid backgrounds, transparent PNGs with proper alpha channels let your graphics composite seamlessly into any design environment. The 'transparent background maker' search specifically targets users who need to convert existing images into transparency-enabled assets for design workflows.",
@@ -707,10 +663,7 @@
           "answer": "Yes, the AI handles complex shapes, hair, and fine details while creating clean transparent edges."
         }
       ],
-      "relatedTools": [
-        "ai-background-remover",
-        "remove-bg"
-      ],
+      "relatedTools": ["ai-background-remover", "remove-bg"],
       "relatedGuides": [],
       "ctaText": "Make Transparent",
       "ctaUrl": "/tools/transparent-background-maker",
@@ -736,11 +689,7 @@
       "isInteractive": true,
       "toolComponent": "BackgroundRemover",
       "maxFileSizeMB": 10,
-      "acceptedFormats": [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ],
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
       "toolName": "Image Cutout Tool",
       "description": "Professional image cutouts without Photoshop. AI-powered tool that precisely cuts out subjects from photos, handling complex edges like hair and fur automatically.",
       "uniqueIntro": "Cutting out subjects from photos is a fundamental image editing task that traditionally required expensive software like Adobe Photoshop and hours of skilled manual work. Our AI Image Cutout Tool completely democratizes this capability by using deep learning models trained on millions of professionally annotated cutouts. The system understands not just the obvious foreground-background distinction but also handles complex scenarios: subjects with similar coloring to their background (like a white dog on snow), semi-transparent elements that need selective extraction (like glass or veil), and fine details that traditional tools either miss or mangle. What makes our tool exceptional is its ability to handle the most difficult cutouts—individual hair strands, animal fur with varying textures, and intricate plant foliage—while maintaining clean edges that don't require manual refinement.",
@@ -815,10 +764,7 @@
           "answer": "For most cutout tasks, our AI produces results comparable to manual Photoshop work but in seconds instead of minutes or hours."
         }
       ],
-      "relatedTools": [
-        "ai-background-remover",
-        "transparent-background-maker"
-      ],
+      "relatedTools": ["ai-background-remover", "transparent-background-maker"],
       "relatedGuides": [],
       "ctaText": "Cut Out Now",
       "ctaUrl": "/tools/image-cutout-tool",
@@ -881,17 +827,9 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "supportedFormats": ["JPEG", "PNG", "WebP"],
         "processingTime": "30-90 seconds depending on complexity",
-        "outputFormats": [
-          "JPEG",
-          "PNG",
-          "WebP"
-        ],
+        "outputFormats": ["JPEG", "PNG", "WebP"],
         "analysisFactors": "Content type, quality level, detail density, noise level"
       },
       "useCases": [
@@ -991,13 +929,8 @@
           "answer": "The AI uses advanced neural networks trained on millions of images to recognize faces, text, products, landscapes, artwork, and other content types within your image."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler",
-        "ai-photo-enhancer"
-      ],
-      "relatedGuides": [
-        "how-to-upscale-images"
-      ],
+      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedGuides": ["how-to-upscale-images"],
       "ctaText": "Try Smart AI Enhancement",
       "ctaUrl": "/?signup=1",
       "uniqueIntro": "Traditional image upscaling applies the same settings to every image regardless of content, creating inconsistent results. Our Smart AI Enhancement solves this problem by analyzing each image individually and applying optimal processing based on its specific characteristics."

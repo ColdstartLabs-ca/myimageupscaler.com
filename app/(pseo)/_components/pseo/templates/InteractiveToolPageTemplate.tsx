@@ -102,7 +102,10 @@ export function InteractiveToolPageTemplate({
             items={[
               { label: 'Home', href: locale ? `/${locale}` : '/' },
               { label: 'Tools', href: locale ? `/${locale}/tools` : '/tools' },
-              { label: data.title, href: locale ? `/${locale}/tools/${data.slug}` : `/tools/${data.slug}` },
+              {
+                label: data.title,
+                href: locale ? `/${locale}/tools/${data.slug}` : `/tools/${data.slug}`,
+              },
             ]}
           />
         </div>

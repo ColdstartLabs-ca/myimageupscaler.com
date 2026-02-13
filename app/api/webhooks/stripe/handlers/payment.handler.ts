@@ -42,8 +42,7 @@ export class PaymentHandler {
             console.log('Test subscription detected, using mock data');
 
             // For test subscriptions, add credits based on session metadata or a default
-            const testPriceId =
-              serverEnv.STRIPE_PRICE_PRO; // Default to PRO_MONTHLY for testing
+            const testPriceId = serverEnv.STRIPE_PRICE_PRO; // Default to PRO_MONTHLY for testing
             let plan;
             try {
               const resolved = assertKnownPriceId(testPriceId);
@@ -145,23 +144,24 @@ export class PaymentHandler {
               const subEmail = session.customer_email || session.customer_details?.email;
               if (!subEmail) {
                 console.warn('No customer email available for subscription payment email');
-              } else try {
-                const emailService = getEmailService();
-                await emailService.send({
-                  to: subEmail,
-                  template: 'payment-success',
-                  data: {
-                    userName: session.customer_details?.name || 'there',
-                    amount: `$${(session.amount_total || 0) / 100}`,
-                    planName: planKey,
-                    receiptUrl: (session as unknown as { receipt_url?: string }).receipt_url,
-                  },
-                  userId,
-                });
-              } catch (emailError) {
-                // Log but don't fail the webhook
-                console.error('Failed to send subscription payment email:', emailError);
-              }
+              } else
+                try {
+                  const emailService = getEmailService();
+                  await emailService.send({
+                    to: subEmail,
+                    template: 'payment-success',
+                    data: {
+                      userName: session.customer_details?.name || 'there',
+                      amount: `$${(session.amount_total || 0) / 100}`,
+                      planName: planKey,
+                      receiptUrl: (session as unknown as { receipt_url?: string }).receipt_url,
+                    },
+                    userId,
+                  });
+                } catch (emailError) {
+                  // Log but don't fail the webhook
+                  console.error('Failed to send subscription payment email:', emailError);
+                }
             }
           }
         } catch (error) {
@@ -284,23 +284,24 @@ export class PaymentHandler {
     const packEmail = session.customer_email || session.customer_details?.email;
     if (!packEmail) {
       console.warn('No customer email available for credit pack payment email');
-    } else try {
-      const emailService = getEmailService();
-      await emailService.send({
-        to: packEmail,
-        template: 'payment-success',
-        data: {
-          userName: session.customer_details?.name || 'there',
-          amount: `$${(session.amount_total || 0) / 100}`,
-          credits,
-          receiptUrl: (session as unknown as { receipt_url?: string }).receipt_url,
-        },
-        userId,
-      });
-    } catch (emailError) {
-      // Log but don't fail the webhook
-      console.error('Failed to send credit pack payment email:', emailError);
-    }
+    } else
+      try {
+        const emailService = getEmailService();
+        await emailService.send({
+          to: packEmail,
+          template: 'payment-success',
+          data: {
+            userName: session.customer_details?.name || 'there',
+            amount: `$${(session.amount_total || 0) / 100}`,
+            credits,
+            receiptUrl: (session as unknown as { receipt_url?: string }).receipt_url,
+          },
+          userId,
+        });
+      } catch (emailError) {
+        // Log but don't fail the webhook
+        console.error('Failed to send credit pack payment email:', emailError);
+      }
   }
 
   /**

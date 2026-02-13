@@ -111,7 +111,6 @@ const HowItWorks: React.FC = () => {
             ))}
           </StaggerContainer>
         </div>
-
       </div>
     </section>
   );

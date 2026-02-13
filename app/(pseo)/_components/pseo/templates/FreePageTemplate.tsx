@@ -29,7 +29,11 @@ interface IFreePageTemplateProps {
   relatedPages?: IRelatedPage[];
 }
 
-export function FreePageTemplate({ data, locale, relatedPages = [] }: IFreePageTemplateProps): ReactElement {
+export function FreePageTemplate({
+  data,
+  locale,
+  relatedPages = [],
+}: IFreePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/free/${data.slug}`);
   const tier = pageMapping?.tier;

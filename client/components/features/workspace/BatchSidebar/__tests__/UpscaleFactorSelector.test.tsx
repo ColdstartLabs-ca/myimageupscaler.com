@@ -14,11 +14,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
     describe('When all scales are available', () => {
       it('should show all scale options (2x, 4x, 8x)', () => {
         render(
-          <UpscaleFactorSelector
-            scale={2}
-            onChange={mockOnChange}
-            availableScales={[2, 4, 8]}
-          />
+          <UpscaleFactorSelector scale={2} onChange={mockOnChange} availableScales={[2, 4, 8]} />
         );
 
         expect(screen.getByText('2x')).toBeInTheDocument();
@@ -28,11 +24,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
 
       it('should have 3 columns for all scale options', () => {
         const { container } = render(
-          <UpscaleFactorSelector
-            scale={2}
-            onChange={mockOnChange}
-            availableScales={[2, 4, 8]}
-          />
+          <UpscaleFactorSelector scale={2} onChange={mockOnChange} availableScales={[2, 4, 8]} />
         );
 
         // Check grid columns class
@@ -44,11 +36,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
     describe('Quick/Face Restore/Ultra Tiers (2x, 4x only)', () => {
       it('should only show 2x and 4x options', () => {
         render(
-          <UpscaleFactorSelector
-            scale={2}
-            onChange={mockOnChange}
-            availableScales={[2, 4]}
-          />
+          <UpscaleFactorSelector scale={2} onChange={mockOnChange} availableScales={[2, 4]} />
         );
 
         expect(screen.getByText('2x')).toBeInTheDocument();
@@ -58,11 +46,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
 
       it('should have 2 columns for 2 scale options', () => {
         const { container } = render(
-          <UpscaleFactorSelector
-            scale={2}
-            onChange={mockOnChange}
-            availableScales={[2, 4]}
-          />
+          <UpscaleFactorSelector scale={2} onChange={mockOnChange} availableScales={[2, 4]} />
         );
 
         const grid = container.querySelector('.grid');
@@ -72,13 +56,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
 
     describe('Enhancement-Only Tiers (no scale support)', () => {
       it('should show enhancement-only message instead of buttons', () => {
-        render(
-          <UpscaleFactorSelector
-            scale={4}
-            onChange={mockOnChange}
-            availableScales={[]}
-          />
-        );
+        render(<UpscaleFactorSelector scale={4} onChange={mockOnChange} availableScales={[]} />);
 
         expect(screen.queryByText('2x')).not.toBeInTheDocument();
         expect(screen.queryByText('4x')).not.toBeInTheDocument();
@@ -89,13 +67,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
       });
 
       it('should display label when enhancement-only', () => {
-        render(
-          <UpscaleFactorSelector
-            scale={4}
-            onChange={mockOnChange}
-            availableScales={[]}
-          />
-        );
+        render(<UpscaleFactorSelector scale={4} onChange={mockOnChange} availableScales={[]} />);
 
         expect(screen.getByText('Upscale Factor')).toBeInTheDocument();
       });
@@ -103,13 +75,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
 
     describe('Single Scale Available', () => {
       it('should show only one scale option', () => {
-        render(
-          <UpscaleFactorSelector
-            scale={2}
-            onChange={mockOnChange}
-            availableScales={[2]}
-          />
-        );
+        render(<UpscaleFactorSelector scale={2} onChange={mockOnChange} availableScales={[2]} />);
 
         expect(screen.getByText('2x')).toBeInTheDocument();
         expect(screen.queryByText('4x')).not.toBeInTheDocument();
@@ -118,11 +84,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
 
       it('should use 2 columns even for single option', () => {
         const { container } = render(
-          <UpscaleFactorSelector
-            scale={2}
-            onChange={mockOnChange}
-            availableScales={[2]}
-          />
+          <UpscaleFactorSelector scale={2} onChange={mockOnChange} availableScales={[2]} />
         );
 
         const grid = container.querySelector('.grid');
@@ -134,11 +96,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
   describe('Auto-Reset When Scale Becomes Unavailable', () => {
     it('should auto-reset to first available scale when current scale is unavailable', () => {
       const { rerender } = render(
-        <UpscaleFactorSelector
-          scale={8}
-          onChange={mockOnChange}
-          availableScales={[2, 4, 8]}
-        />
+        <UpscaleFactorSelector scale={8} onChange={mockOnChange} availableScales={[2, 4, 8]} />
       );
 
       // Initially, all scales are available
@@ -164,21 +122,13 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
 
     it('should prefer 4x when auto-resetting (if available)', () => {
       const { rerender } = render(
-        <UpscaleFactorSelector
-          scale={8}
-          onChange={mockOnChange}
-          availableScales={[2, 4]}
-        />
+        <UpscaleFactorSelector scale={8} onChange={mockOnChange} availableScales={[2, 4]} />
       );
 
       mockOnChange.mockClear();
 
       rerender(
-        <UpscaleFactorSelector
-          scale={8}
-          onChange={mockOnChange}
-          availableScales={[2, 4]}
-        />
+        <UpscaleFactorSelector scale={8} onChange={mockOnChange} availableScales={[2, 4]} />
       );
 
       expect(mockOnChange).toHaveBeenCalledWith(4);
@@ -186,44 +136,26 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
 
     it('should fall back to 2x when 4x is not available', () => {
       const { rerender } = render(
-        <UpscaleFactorSelector
-          scale={4}
-          onChange={mockOnChange}
-          availableScales={[2]}
-        />
+        <UpscaleFactorSelector scale={4} onChange={mockOnChange} availableScales={[2]} />
       );
 
       mockOnChange.mockClear();
 
-      rerender(
-        <UpscaleFactorSelector
-          scale={4}
-          onChange={mockOnChange}
-          availableScales={[2]}
-        />
-      );
+      rerender(<UpscaleFactorSelector scale={4} onChange={mockOnChange} availableScales={[2]} />);
 
       expect(mockOnChange).toHaveBeenCalledWith(2);
     });
 
     it('should not auto-reset when current scale is still available', () => {
       const { rerender } = render(
-        <UpscaleFactorSelector
-          scale={4}
-          onChange={mockOnChange}
-          availableScales={[2, 4]}
-        />
+        <UpscaleFactorSelector scale={4} onChange={mockOnChange} availableScales={[2, 4]} />
       );
 
       mockOnChange.mockClear();
 
       // Update props but 4x is still available
       rerender(
-        <UpscaleFactorSelector
-          scale={4}
-          onChange={mockOnChange}
-          availableScales={[2, 4]}
-        />
+        <UpscaleFactorSelector scale={4} onChange={mockOnChange} availableScales={[2, 4]} />
       );
 
       expect(mockOnChange).not.toHaveBeenCalled();
@@ -233,11 +165,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
   describe('Scale Selection Interaction', () => {
     it('should call onChange when scale is clicked', () => {
       render(
-        <UpscaleFactorSelector
-          scale={2}
-          onChange={mockOnChange}
-          availableScales={[2, 4, 8]}
-        />
+        <UpscaleFactorSelector scale={2} onChange={mockOnChange} availableScales={[2, 4, 8]} />
       );
 
       const fourXButton = screen.getByText('4x');
@@ -262,11 +190,7 @@ describe('UpscaleFactorSelector - PRD: True Image Upscaling', () => {
 
     it('should not be disabled by default', () => {
       render(
-        <UpscaleFactorSelector
-          scale={2}
-          onChange={mockOnChange}
-          availableScales={[2, 4, 8]}
-        />
+        <UpscaleFactorSelector scale={2} onChange={mockOnChange} availableScales={[2, 4, 8]} />
       );
 
       const twoXButton = screen.getByRole('button', { name: '2x' });

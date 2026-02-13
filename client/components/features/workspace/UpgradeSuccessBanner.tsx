@@ -59,7 +59,11 @@ export const UpgradeSuccessBanner = ({
             Great work! {processedCount} {processedCount === 1 ? 'image' : 'images'} enhanced
           </h3>
           <p className="mt-1 text-xs text-white/80 leading-relaxed max-w-md font-medium">
-            Unlock <span className="text-white font-bold italic underline decoration-accent/50 underline-offset-2">Professional Mode</span> for 1,000 credits/month and save over 50% on high-quality upscales.
+            Unlock{' '}
+            <span className="text-white font-bold italic underline decoration-accent/50 underline-offset-2">
+              Professional Mode
+            </span>{' '}
+            for 1,000 credits/month and save over 50% on high-quality upscales.
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center sm:justify-start gap-5">
             <Link

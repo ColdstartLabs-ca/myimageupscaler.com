@@ -94,7 +94,8 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
                   'Upgrade to let AI detect content type and optimize settings automatically.'
                 ) : (
                   <>
-                    AI automatically detects image content and optimizes parameters for best results.{' '}
+                    AI automatically detects image content and optimizes parameters for best
+                    results.{' '}
                     <Link
                       href="/tools/smart-ai-enhancement"
                       className="inline-flex items-center gap-0.5 text-accent hover:text-accent/80 transition-colors"

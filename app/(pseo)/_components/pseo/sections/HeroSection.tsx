@@ -41,19 +41,19 @@ interface IHeroSectionProps {
   ctaUrl?: string;
   hideBadge?: boolean;
   pageType?:
-  | 'tool'
-  | 'comparison'
-  | 'guide'
-  | 'useCase'
-  | 'use-case'
-  | 'alternative'
-  | 'format'
-  | 'scale'
-  | 'free'
-  | 'platform'
-  | 'format-scale'
-  | 'platform-format'
-  | 'device-use';
+    | 'tool'
+    | 'comparison'
+    | 'guide'
+    | 'useCase'
+    | 'use-case'
+    | 'alternative'
+    | 'format'
+    | 'scale'
+    | 'free'
+    | 'platform'
+    | 'format-scale'
+    | 'platform-format'
+    | 'device-use';
   slug?: string;
 }
 

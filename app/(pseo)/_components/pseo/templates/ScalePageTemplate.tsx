@@ -138,7 +138,9 @@ export function ScalePageTemplate({
           {data.pageSpecificDetails && (
             <FadeIn delay={0.35}>
               <div className="max-w-4xl mx-auto py-12 px-8 glass-card-2025">
-                <h3 className="text-2xl font-bold mb-6 text-white text-center">Key Details & Use Cases</h3>
+                <h3 className="text-2xl font-bold mb-6 text-white text-center">
+                  Key Details & Use Cases
+                </h3>
                 <p className="text-lg text-text-secondary leading-relaxed">
                   {data.pageSpecificDetails}
                 </p>
@@ -170,21 +172,31 @@ export function ScalePageTemplate({
                 <div className="max-w-2xl mx-auto glass-card-2025 p-8 border-accent/20">
                   <div className="flex items-center justify-center gap-3 mb-8">
                     <Maximize2 className="w-8 h-8 text-accent" />
-                    <h2 className="text-3xl font-bold text-white">{data.resolution} Specifications</h2>
+                    <h2 className="text-3xl font-bold text-white">
+                      {data.resolution} Specifications
+                    </h2>
                   </div>
                   <div className="grid grid-cols-2 gap-8 text-center">
                     <div>
                       <div className="text-4xl font-black text-accent">{data.dimensions.width}</div>
-                      <div className="text-base text-text-tertiary mt-2 uppercase tracking-widest">Width (px)</div>
+                      <div className="text-base text-text-tertiary mt-2 uppercase tracking-widest">
+                        Width (px)
+                      </div>
                     </div>
                     <div>
-                      <div className="text-4xl font-black text-accent">{data.dimensions.height}</div>
-                      <div className="text-base text-text-tertiary mt-2 uppercase tracking-widest">Height (px)</div>
+                      <div className="text-4xl font-black text-accent">
+                        {data.dimensions.height}
+                      </div>
+                      <div className="text-base text-text-tertiary mt-2 uppercase tracking-widest">
+                        Height (px)
+                      </div>
                     </div>
                   </div>
                   {data.dimensions.aspectRatio && (
                     <div className="mt-8 pt-8 border-t border-white/10 text-center">
-                      <div className="text-base text-text-tertiary uppercase tracking-widest">Target Aspect Ratio</div>
+                      <div className="text-base text-text-tertiary uppercase tracking-widest">
+                        Target Aspect Ratio
+                      </div>
                       <div className="text-2xl font-bold text-white mt-1">
                         {data.dimensions.aspectRatio}
                       </div>
@@ -208,7 +220,9 @@ export function ScalePageTemplate({
                     >
                       <Zap className="w-10 h-10 text-accent mb-6 group-hover:scale-110 transition-transform" />
                       <h3 className="font-bold text-white text-xl mb-3">{useCase.title}</h3>
-                      <p className="text-base text-text-secondary leading-relaxed">{useCase.description}</p>
+                      <p className="text-base text-text-secondary leading-relaxed">
+                        {useCase.description}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -231,7 +245,9 @@ export function ScalePageTemplate({
                         {benefit.metric || '✓'}
                       </div>
                       <h3 className="font-bold text-white text-lg mb-2">{benefit.title}</h3>
-                      <p className="text-base text-text-secondary leading-relaxed">{benefit.description}</p>
+                      <p className="text-base text-text-secondary leading-relaxed">
+                        {benefit.description}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -268,8 +284,8 @@ export function ScalePageTemplate({
                     <div className="flex-1 pb-6 border-b border-white/10">
                       <h3 className="font-bold text-white text-xl mb-2">Upload Your Image</h3>
                       <p className="text-text-secondary text-lg">
-                        Simply drag and drop or select any image from your device. Our system supports
-                        all common formats including JPEG, PNG, WebP, and more.
+                        Simply drag and drop or select any image from your device. Our system
+                        supports all common formats including JPEG, PNG, WebP, and more.
                       </p>
                     </div>
                   </div>
@@ -278,11 +294,14 @@ export function ScalePageTemplate({
                       2
                     </div>
                     <div className="flex-1 pb-6 border-b border-white/10">
-                      <h3 className="font-bold text-white text-xl mb-2">AI Analysis & Enhancement</h3>
+                      <h3 className="font-bold text-white text-xl mb-2">
+                        AI Analysis & Enhancement
+                      </h3>
                       <p className="text-text-secondary text-lg">
-                        Our neural network analyzes your image at the pixel level, identifying edges,
-                        textures, and patterns. It then intelligently generates new pixels to enlarge
-                        your image to {data.resolution} while maintaining sharpness and clarity.
+                        Our neural network analyzes your image at the pixel level, identifying
+                        edges, textures, and patterns. It then intelligently generates new pixels to
+                        enlarge your image to {data.resolution} while maintaining sharpness and
+                        clarity.
                       </p>
                     </div>
                   </div>
@@ -322,11 +341,26 @@ export function ScalePageTemplate({
                     <span className="text-accent">✓</span> Ideal For
                   </h3>
                   <ul className="space-y-4 text-text-secondary text-lg">
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>High-quality photo printing and posters</span></li>
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Professional photography portfolios</span></li>
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Retina and 4K display backgrounds</span></li>
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Marketing materials and brochures</span></li>
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Social media cover photos and banners</span></li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>High-quality photo printing and posters</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>Professional photography portfolios</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>Retina and 4K display backgrounds</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>Marketing materials and brochures</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>Social media cover photos and banners</span>
+                    </li>
                   </ul>
                 </div>
                 <div>
@@ -334,11 +368,26 @@ export function ScalePageTemplate({
                     <span className="text-accent">✓</span> Technical Benefits
                   </h3>
                   <ul className="space-y-4 text-text-secondary text-lg">
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Crisp details on large format prints</span></li>
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Future-proof for higher resolution displays</span></li>
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Professional editing headroom</span></li>
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Consistent quality across all devices</span></li>
-                    <li className="flex items-start gap-3"><span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" /> <span>Meets industry standard requirements</span></li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>Crisp details on large format prints</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>Future-proof for higher resolution displays</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>Professional editing headroom</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>Consistent quality across all devices</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />{' '}
+                      <span>Meets industry standard requirements</span>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -363,35 +412,23 @@ export function ScalePageTemplate({
                     <table className="w-full text-left">
                       <thead>
                         <tr className="border-b border-white/10 bg-white/5">
-                          <th className="py-6 px-8 text-lg font-bold text-white">
-                            Resolution
-                          </th>
-                          <th className="py-6 px-8 text-lg font-bold text-white">
-                            Dimensions
-                          </th>
+                          <th className="py-6 px-8 text-lg font-bold text-white">Resolution</th>
+                          <th className="py-6 px-8 text-lg font-bold text-white">Dimensions</th>
                           <th className="py-6 px-8 text-lg font-bold text-white">Best For</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/10">
                         <tr>
                           <td className="py-5 px-8 font-bold text-white">720p (HD)</td>
-                          <td className="py-5 px-8 text-text-secondary font-mono">
-                            1280 × 720
-                          </td>
+                          <td className="py-5 px-8 text-text-secondary font-mono">1280 × 720</td>
                           <td className="py-5 px-8 text-text-secondary">
                             Web sharing, social media
                           </td>
                         </tr>
                         <tr>
-                          <td className="py-5 px-8 font-bold text-white">
-                            1080p (Full HD)
-                          </td>
-                          <td className="py-5 px-8 text-text-secondary font-mono">
-                            1920 × 1080
-                          </td>
-                          <td className="py-5 px-8 text-text-secondary">
-                            YouTube, presentations
-                          </td>
+                          <td className="py-5 px-8 font-bold text-white">1080p (Full HD)</td>
+                          <td className="py-5 px-8 text-text-secondary font-mono">1920 × 1080</td>
+                          <td className="py-5 px-8 text-text-secondary">YouTube, presentations</td>
                         </tr>
                         <tr className="bg-accent/10">
                           <td className="py-5 px-8 font-extrabold text-accent">
@@ -406,9 +443,7 @@ export function ScalePageTemplate({
                         </tr>
                         <tr>
                           <td className="py-5 px-8 font-bold text-white">8K (UHD)</td>
-                          <td className="py-5 px-8 text-text-secondary font-mono">
-                            7680 × 4320
-                          </td>
+                          <td className="py-5 px-8 text-text-secondary font-mono">7680 × 4320</td>
                           <td className="py-5 px-8 text-text-secondary">
                             Large format printing, cinema
                           </td>
@@ -435,7 +470,9 @@ export function ScalePageTemplate({
                   {data.technicalDetails.map((detail, idx) => (
                     <div key={idx} className="glass-card-2025 p-8">
                       <h3 className="font-bold text-white text-xl mb-4">{detail.title}</h3>
-                      <p className="text-text-secondary text-lg leading-relaxed">{detail.description}</p>
+                      <p className="text-text-secondary text-lg leading-relaxed">
+                        {detail.description}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -452,7 +489,9 @@ export function ScalePageTemplate({
                 </p>
                 <div className="max-w-4xl mx-auto space-y-8">
                   <div className="glass-card-2025 p-8">
-                    <h3 className="font-bold text-white text-xl mb-4">Neural Network Architecture</h3>
+                    <h3 className="font-bold text-white text-xl mb-4">
+                      Neural Network Architecture
+                    </h3>
                     <p className="text-text-secondary text-lg leading-relaxed">
                       Our upscaling system uses deep convolutional neural networks (CNNs) trained on
                       millions of high-resolution image pairs. The network learns to intelligently
@@ -462,21 +501,25 @@ export function ScalePageTemplate({
                     </p>
                   </div>
                   <div className="glass-card-2025 p-8">
-                    <h3 className="font-bold text-white text-xl mb-4">Edge-Preserving Algorithms</h3>
+                    <h3 className="font-bold text-white text-xl mb-4">
+                      Edge-Preserving Algorithms
+                    </h3>
                     <p className="text-text-secondary text-lg leading-relaxed">
                       Unlike traditional interpolation methods that blur edges, our AI detects and
-                      preserves important edges and fine details. When upscaling to {data.resolution},
-                      lines remain sharp, textures look natural, and text stays readable even at
-                      significant enlargement ratios.
+                      preserves important edges and fine details. When upscaling to{' '}
+                      {data.resolution}, lines remain sharp, textures look natural, and text stays
+                      readable even at significant enlargement ratios.
                     </p>
                   </div>
                   <div className="glass-card-2025 p-8">
-                    <h3 className="font-bold text-white text-xl mb-4">Format & Color Preservation</h3>
+                    <h3 className="font-bold text-white text-xl mb-4">
+                      Format & Color Preservation
+                    </h3>
                     <p className="text-text-secondary text-lg leading-relaxed">
-                      Your {data.resolution} output maintains the original color profile and supports
-                      the same format as your input. Whether you&apos;re working with sRGB for web or
-                      Adobe RGB for print, color accuracy is preserved throughout the upscaling
-                      process.
+                      Your {data.resolution} output maintains the original color profile and
+                      supports the same format as your input. Whether you&apos;re working with sRGB
+                      for web or Adobe RGB for print, color accuracy is preserved throughout the
+                      upscaling process.
                     </p>
                   </div>
                 </div>

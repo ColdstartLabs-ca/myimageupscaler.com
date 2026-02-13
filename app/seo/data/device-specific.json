@@ -130,12 +130,8 @@
           "answer": "Your image is too low resolution. iPhone displays are very sharp (460 PPI on Pro models). Upscale your image to match the dimensions above."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
-      "relatedPages": [
-        "android-wallpaper-sizes"
-      ]
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedPages": ["android-wallpaper-sizes"]
     },
     {
       "slug": "android-wallpaper-sizes",
@@ -280,12 +276,8 @@
           "answer": "Tablets vary widely. Check your tablet's display resolution in Settings > About Phone > Display. Common sizes are 2560x1600 and 2800x1752."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
-      "relatedPages": [
-        "iphone-wallpaper-sizes"
-      ]
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedPages": ["iphone-wallpaper-sizes"]
     },
     {
       "slug": "desktop-wallpaper-sizes",
@@ -434,13 +426,8 @@
           "answer": "Use the actual resolution, not the 'looks like' resolution. A 27\" iMac at 'looks like 2560x1440' actually uses 5120x2880 for wallpapers."
         }
       ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
-      "relatedPages": [
-        "iphone-wallpaper-sizes",
-        "android-wallpaper-sizes"
-      ]
+      "relatedTools": ["ai-image-upscaler"],
+      "relatedPages": ["iphone-wallpaper-sizes", "android-wallpaper-sizes"]
     }
   ],
   "meta": {
