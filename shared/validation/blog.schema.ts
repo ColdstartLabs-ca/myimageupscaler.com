@@ -79,7 +79,15 @@ export const listBlogPostsSchema = z.object({
 export type IListBlogPostsQuery = z.infer<typeof listBlogPostsSchema>;
 
 /**
- * Schema for image upload
+ * Blog image type enum (defined early for use in upload schemas)
+ */
+export const blogImageTypeSchema = z.enum(['featured', 'inline']);
+
+export type IBlogImageType = z.infer<typeof blogImageTypeSchema>;
+
+/**
+ * Schema for image upload with optional metadata
+ * All metadata fields are optional for backwards compatibility
  */
 export const imageUploadSchema = z.object({
   imageData: z.string().startsWith('data:image/', 'Image data must be a base64 data URI'),
@@ -88,9 +96,32 @@ export const imageUploadSchema = z.object({
     .min(1, 'Filename is required')
     .max(255, 'Filename must be at most 255 characters'),
   alt_text: z.string().max(200, 'Alt text must be at most 200 characters').optional(),
+  // Optional metadata fields for blog image reuse system
+  tags: z.array(z.string().min(1).max(50)).max(20, 'Maximum 20 tags allowed').optional(),
+  description: z.string().max(500, 'Description must be at most 500 characters').optional(),
+  image_type: blogImageTypeSchema.optional(),
+  width: z.number().int().positive('Width must be a positive integer').optional(),
+  height: z.number().int().positive('Height must be a positive integer').optional(),
+  prompt: z.string().max(2000, 'Prompt must be at most 2000 characters').optional(),
 });
 
 export type IImageUploadInput = z.infer<typeof imageUploadSchema>;
+
+/**
+ * Schema for multipart form upload metadata
+ * Tags are passed as comma-separated string in form field
+ */
+export const imageUploadMetadataSchema = z.object({
+  alt_text: z.string().max(200, 'Alt text must be at most 200 characters').optional(),
+  tags: z.string().max(1000, 'Tags string must be at most 1000 characters').optional(),
+  description: z.string().max(500, 'Description must be at most 500 characters').optional(),
+  image_type: blogImageTypeSchema.optional(),
+  width: z.number().int().positive('Width must be a positive integer').optional(),
+  height: z.number().int().positive('Height must be a positive integer').optional(),
+  prompt: z.string().max(2000, 'Prompt must be at most 2000 characters').optional(),
+});
+
+export type IImageUploadMetadataInput = z.infer<typeof imageUploadMetadataSchema>;
 
 /**
  * Schema for publish/unpublish actions
@@ -159,6 +190,8 @@ export interface IImageUploadResponse {
   url: string;
   key: string;
   filename: string;
+  /** Metadata record ID if metadata was provided and saved */
+  metadata_id?: string;
 }
 
 /**
@@ -194,3 +227,68 @@ export interface IErrorResponse {
     details?: unknown;
   };
 }
+
+// =============================================================================
+// Blog Image Metadata Validation Schemas
+// =============================================================================
+
+/**
+ * Schema for blog image metadata
+ */
+export const blogImageMetadataSchema = z.object({
+  url: z.string().url('Image URL must be a valid URL'),
+  storage_path: z.string().min(1, 'Storage path is required'),
+  alt_text: z.string().max(200, 'Alt text must be at most 200 characters'),
+  tags: z.array(z.string().min(1).max(50)).max(20, 'Maximum 20 tags allowed').default([]),
+  description: z.string().max(500, 'Description must be at most 500 characters'),
+  image_type: blogImageTypeSchema,
+  width: z.number().int().positive('Width must be a positive integer'),
+  height: z.number().int().positive('Height must be a positive integer'),
+  prompt: z.string().max(2000, 'Prompt must be at most 2000 characters').optional(),
+  used_in_posts: z.array(z.string().min(1).max(100)).default([]),
+});
+
+export type IBlogImageMetadata = z.infer<typeof blogImageMetadataSchema>;
+
+/**
+ * Schema for blog image metadata with database fields (includes id and created_at)
+ */
+export const blogImageMetadataWithDbSchema = blogImageMetadataSchema.extend({
+  id: z.string().uuid(),
+  created_at: z.string(),
+});
+
+export type IBlogImageMetadataWithDb = z.infer<typeof blogImageMetadataWithDbSchema>;
+
+/**
+ * Schema for searching blog images
+ */
+export const searchBlogImagesSchema = z.object({
+  tags: z.array(z.string().min(1)).optional(),
+  image_type: blogImageTypeSchema.optional(),
+  limit: z.coerce
+    .number()
+    .min(1, 'Limit must be at least 1')
+    .max(100, 'Limit must be at most 100')
+    .default(10),
+  offset: z.coerce.number().min(0, 'Offset must be non-negative').default(0),
+});
+
+export type ISearchBlogImagesQuery = z.infer<typeof searchBlogImagesSchema>;
+
+/**
+ * Schema for saving blog image metadata (input to service function)
+ */
+export const saveBlogImageMetadataSchema = z.object({
+  url: z.string().url('Image URL must be a valid URL'),
+  storage_path: z.string().min(1, 'Storage path is required'),
+  alt_text: z.string().max(200, 'Alt text must be at most 200 characters'),
+  tags: z.array(z.string().min(1).max(50)).max(20, 'Maximum 20 tags allowed').default([]),
+  description: z.string().max(500, 'Description must be at most 500 characters'),
+  image_type: blogImageTypeSchema,
+  width: z.number().int().positive('Width must be a positive integer'),
+  height: z.number().int().positive('Height must be a positive integer'),
+  prompt: z.string().max(2000, 'Prompt must be at most 2000 characters').optional(),
+});
+
+export type ISaveBlogImageMetadataInput = z.infer<typeof saveBlogImageMetadataSchema>;

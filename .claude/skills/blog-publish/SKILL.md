@@ -11,12 +11,13 @@ Create SEO-optimized blog posts about image upscaling, AI photo enhancement, and
 
 ## Quick Reference
 
-| Endpoint                              | Purpose               |
-| ------------------------------------- | --------------------- |
-| `POST /api/blog/posts`                | Create draft post     |
-| `POST /api/blog/posts/[slug]/publish` | Publish post          |
-| `POST /api/blog/images/upload`        | Upload featured image |
-| `GET /api/blog/posts`                 | List posts            |
+| Endpoint                              | Purpose                |
+| ------------------------------------- | ---------------------- |
+| `GET /api/blog/images`                | Search existing images |
+| `POST /api/blog/posts`                | Create draft post      |
+| `POST /api/blog/posts/[slug]/publish` | Publish post           |
+| `POST /api/blog/images/upload`        | Upload featured image  |
+| `GET /api/blog/posts`                 | List posts             |
 
 **Authentication**: Use `x-api-key` header with `BLOG_API_KEY` from `.env.api`
 
@@ -25,8 +26,9 @@ Create SEO-optimized blog posts about image upscaling, AI photo enhancement, and
 ## Workflow
 
 ```
-1. GENERATE IMAGES → Generate 1 featured + 2-3 inline images with AI
-2. UPLOAD IMAGES   → POST /api/blog/images/upload (get Supabase URLs)
+0. SEARCH IMAGES   → GET /api/blog/images (check for reusable images first)
+1. GENERATE IMAGES → Generate ONLY if no suitable images found (1 featured + 2-3 inline)
+2. UPLOAD IMAGES   → POST /api/blog/images/upload (with metadata: tags, description, prompt)
 3. CREATE POST     → POST /api/blog/posts (include inline image URLs in markdown content)
 4. UPDATE          → PATCH /api/blog/posts/[slug] (add featured image URL)
 5. PUBLISH         → POST /api/blog/posts/[slug]/publish
@@ -35,7 +37,100 @@ Create SEO-optimized blog posts about image upscaling, AI photo enhancement, and
 
 ---
 
-## Step 1: Generate All Images with AI
+## Step 0: Search Existing Images (ALWAYS FIRST)
+
+**CRITICAL**: Before generating any new images, search for existing reusable images. This saves ~$0.05-0.12 and ~60-120s per image.
+
+### Tag Vocabulary Reference
+
+Use these standardized tags when searching and uploading. Each image should have 3-6 tags.
+
+| Category          | Tags                                                                                                                                                        |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Theme**         | `before-after`, `ai-processing`, `workflow`, `print-result`, `comparison`, `workspace`, `tutorial`, `ecommerce`, `social-media`, `restoration`, `upscaling` |
+| **Subject**       | `laptop`, `phone`, `printer`, `photo`, `screenshot`, `artwork`, `product-photo`, `infographic`, `diagram`                                                   |
+| **Style**         | `photorealistic`, `clean`, `professional`, `split-screen`, `side-by-side`, `step-by-step`                                                                   |
+| **Blog Category** | `guides`, `tips`, `comparisons`, `news`, `technical`                                                                                                        |
+| **Image Type**    | `featured`, `inline`                                                                                                                                        |
+
+### Search Commands
+
+```bash
+# Load environment
+source scripts/load-env.sh
+API_KEY=$(grep BLOG_API_KEY .env.api | cut -d'=' -f2)
+
+# Search for featured images with before-after comparison theme
+curl -s "http://localhost:3000/api/blog/images?tags=before-after,upscaling&image_type=featured&limit=5" \
+  -H "x-api-key: $API_KEY" | jq '.data[] | {url, alt_text, tags, prompt}'
+
+# Search for inline images showing AI processing
+curl -s "http://localhost:3000/api/blog/images?tags=ai-processing,workflow&image_type=inline&limit=5" \
+  -H "x-api-key: $API_KEY" | jq '.data[] | {url, alt_text, tags, prompt}'
+
+# Search for print-related images
+curl -s "http://localhost:3000/api/blog/images?tags=print-result,printer&limit=5" \
+  -H "x-api-key: $API_KEY" | jq '.data[] | {url, alt_text, tags, prompt}'
+
+# Search for ecommerce/product images
+curl -s "http://localhost:3000/api/blog/images?tags=ecommerce,product-photo&limit=5" \
+  -H "x-api-key: $API_KEY" | jq '.data[] | {url, alt_text, tags, prompt}'
+
+# Browse all available images
+curl -s "http://localhost:3000/api/blog/images?limit=20" \
+  -H "x-api-key: $API_KEY" | jq '.data[] | {url, alt_text, tags, image_type}'
+```
+
+### Decision Logic
+
+**When to reuse:**
+
+- Image matches 2+ of your desired tags
+- Image theme matches your post topic (e.g., `before-after` for comparison posts)
+- Image type matches need (featured vs inline)
+
+**When to generate new:**
+
+- No images match your tags
+- Existing images don't fit the specific context
+- You need a unique visual for the post
+
+### Example: Search-First Workflow
+
+```bash
+# 1. Search for a featured image for an upscaling guide
+FEATURED_SEARCH=$(curl -s "http://localhost:3000/api/blog/images?tags=before-after,upscaling&image_type=featured&limit=3" \
+  -H "x-api-key: $API_KEY")
+FEATURED_COUNT=$(echo "$FEATURED_SEARCH" | jq '.data | length')
+
+if [ "$FEATURED_COUNT" -gt 0 ]; then
+  # Reuse the first matching image
+  FEATURED_URL=$(echo "$FEATURED_SEARCH" | jq -r '.data[0].url')
+  echo "Reusing existing featured image: $FEATURED_URL"
+else
+  echo "No suitable featured image found, will generate new one"
+  # Continue to Step 1 to generate
+fi
+
+# 2. Search for inline images
+INLINE_SEARCH=$(curl -s "http://localhost:3000/api/blog/images?tags=ai-processing,comparison&image_type=inline&limit=5" \
+  -H "x-api-key: $API_KEY")
+INLINE_COUNT=$(echo "$INLINE_SEARCH" | jq '.data | length')
+
+if [ "$INLINE_COUNT" -ge 2 ]; then
+  # Reuse existing inline images
+  INLINE1_URL=$(echo "$INLINE_SEARCH" | jq -r '.data[0].url')
+  INLINE2_URL=$(echo "$INLINE_SEARCH" | jq -r '.data[1].url')
+  echo "Reusing inline images: $INLINE1_URL, $INLINE2_URL"
+else
+  echo "Not enough inline images found, will generate new ones"
+  # Continue to Step 1 to generate
+fi
+```
+
+---
+
+## Step 1: Generate All Images with AI (ONLY IF NO SUITABLE MATCHES)
 
 **CRITICAL**: Every blog post needs **1 featured image + 2-3 inline images** embedded in the markdown content.
 
@@ -73,35 +168,53 @@ See `/ai-image-generation` skill for prompt templates and best practices.
 
 ---
 
-## Step 2: Upload All Images
+## Step 2: Upload All Images with Metadata
 
-Upload each image and save the URLs for use in the post.
+**CRITICAL**: Always include metadata when uploading images so they can be found and reused later.
 
 ```bash
-# Upload featured image
+# Upload featured image WITH METADATA
 FEATURED=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
   -H "x-api-key: $API_KEY" \
   -F "file=@./featured.png" \
-  -F "alt_text=AI image upscaling before and after comparison")
+  -F "alt_text=AI image upscaling before and after comparison" \
+  -F "tags=before-after,upscaling,ai-processing,featured,laptop" \
+  -F "image_type=featured" \
+  -F "description=Featured image showing AI upscaling interface with before after comparison" \
+  -F "prompt=Modern laptop showing AI image upscaling interface, before and after comparison, professional setup, blue lighting, photorealistic")
 FEATURED_URL=$(echo "$FEATURED" | jq -r '.data.url')
 
-# Upload inline images
+# Upload inline image 1 WITH METADATA
 INLINE1=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
   -H "x-api-key: $API_KEY" \
   -F "file=@./inline-1.png" \
-  -F "alt_text=Before and after image quality comparison")
+  -F "alt_text=Before and after image quality comparison" \
+  -F "tags=before-after,comparison,split-screen,inline,photo" \
+  -F "image_type=inline" \
+  -F "description=Split screen comparison of pixelated blurry photo versus crystal clear enhanced photo" \
+  -F "prompt=Split screen comparison: pixelated blurry photo on left, crystal clear enhanced photo on right, dramatic before after")
 INLINE1_URL=$(echo "$INLINE1" | jq -r '.data.url')
 
+# Upload inline image 2 WITH METADATA
 INLINE2=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
   -H "x-api-key: $API_KEY" \
   -F "file=@./inline-2.png" \
-  -F "alt_text=AI upscaling process workflow diagram")
+  -F "alt_text=AI upscaling process workflow diagram" \
+  -F "tags=ai-processing,workflow,step-by-step,inline,infographic" \
+  -F "image_type=inline" \
+  -F "description=Step-by-step visual showing image upload to AI processing to enhanced output" \
+  -F "prompt=Step-by-step visual showing image upload to AI processing to enhanced output, clean infographic style")
 INLINE2_URL=$(echo "$INLINE2" | jq -r '.data.url')
 
+# Upload inline image 3 WITH METADATA
 INLINE3=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
   -H "x-api-key: $API_KEY" \
   -F "file=@./inline-3.png" \
-  -F "alt_text=High quality print from upscaled image")
+  -F "alt_text=High quality print from upscaled image" \
+  -F "tags=print-result,printer,professional,inline,photo" \
+  -F "image_type=inline" \
+  -F "description=Photo printer producing sharp print from upscaled image in professional studio" \
+  -F "prompt=Photo printer producing sharp print from upscaled image, professional photography studio, warm lighting")
 INLINE3_URL=$(echo "$INLINE3" | jq -r '.data.url')
 
 echo "Featured: $FEATURED_URL"
@@ -109,6 +222,17 @@ echo "Inline 1: $INLINE1_URL"
 echo "Inline 2: $INLINE2_URL"
 echo "Inline 3: $INLINE3_URL"
 ```
+
+### Metadata Fields Reference
+
+| Field         | Required    | Description                                     |
+| ------------- | ----------- | ----------------------------------------------- |
+| `file`        | Yes         | Image file (PNG, JPG, WebP)                     |
+| `alt_text`    | Recommended | Alt text for accessibility and SEO              |
+| `tags`        | Recommended | Comma-separated tags from vocabulary (3-6 tags) |
+| `image_type`  | Recommended | `featured` or `inline`                          |
+| `description` | Optional    | Brief description of image content              |
+| `prompt`      | Optional    | Original AI prompt used to generate             |
 
 **Response format:**
 
@@ -118,7 +242,8 @@ echo "Inline 3: $INLINE3_URL"
   "data": {
     "url": "https://xxx.supabase.co/storage/v1/object/public/blog-images/2026/01/timestamp-filename.webp",
     "key": "2026/01/timestamp-filename.webp",
-    "filename": "2026/01/timestamp-filename.webp"
+    "filename": "2026/01/timestamp-filename.webp",
+    "metadata_id": "uuid-of-metadata-record"
   }
 }
 ```
@@ -459,40 +584,87 @@ Only **published** posts appear. Drafts are only accessible via direct slug URL.
 
 ---
 
-## Example: Complete Post Creation
+## Example: Complete Post Creation (Search-First Workflow)
 
 ```bash
 # 0. Load environment
 source scripts/load-env.sh
 API_KEY=$(grep BLOG_API_KEY .env.api | cut -d'=' -f2)
 
-# 1. Generate all images
-yarn tsx .claude/skills/ai-image-generation/scripts/generate-ai-image.ts \
-  "Modern laptop showing AI photo upscaling, before after comparison, blue lighting" \
-  ./featured.png 1200 630
+# =========================================
+# STEP 0: SEARCH FOR EXISTING IMAGES FIRST
+# =========================================
 
-yarn tsx .claude/skills/ai-image-generation/scripts/generate-ai-image.ts \
-  "Split screen: pixelated photo left, crystal clear photo right, dramatic comparison" \
-  ./inline-1.png 800 600
+# Search for featured image (before-after theme)
+FEATURED_SEARCH=$(curl -s "http://localhost:3000/api/blog/images?tags=before-after,upscaling&image_type=featured&limit=3" \
+  -H "x-api-key: $API_KEY")
+FEATURED_COUNT=$(echo "$FEATURED_SEARCH" | jq '.data | length')
 
-yarn tsx .claude/skills/ai-image-generation/scripts/generate-ai-image.ts \
-  "AI neural network processing image, visualization of enhancement process" \
-  ./inline-2.png 800 600
+# Search for inline images (ai-processing theme)
+INLINE_SEARCH=$(curl -s "http://localhost:3000/api/blog/images?tags=ai-processing,comparison&image_type=inline&limit=5" \
+  -H "x-api-key: $API_KEY")
+INLINE_COUNT=$(echo "$INLINE_SEARCH" | jq '.data | length')
 
-# 2. Upload all images
-FEATURED_URL=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
-  -H "x-api-key: $API_KEY" -F "file=@./featured.png" \
-  -F "alt_text=AI upscaling comparison" | jq -r '.data.url')
+# Decision: Reuse or generate
+if [ "$FEATURED_COUNT" -gt 0 ] && [ "$INLINE_COUNT" -ge 2 ]; then
+  echo "Found suitable existing images - reusing them"
+  FEATURED_URL=$(echo "$FEATURED_SEARCH" | jq -r '.data[0].url')
+  INLINE1_URL=$(echo "$INLINE_SEARCH" | jq -r '.data[0].url')
+  INLINE2_URL=$(echo "$INLINE_SEARCH" | jq -r '.data[1].url')
+else
+  echo "No suitable images found - generating new ones"
 
-INLINE1_URL=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
-  -H "x-api-key: $API_KEY" -F "file=@./inline-1.png" \
-  -F "alt_text=Before after comparison" | jq -r '.data.url')
+  # =========================================
+  # STEP 1: GENERATE IMAGES (only if needed)
+  # =========================================
+  yarn tsx .claude/skills/ai-image-generation/scripts/generate-ai-image.ts \
+    "Modern laptop showing AI photo upscaling, before after comparison, blue lighting" \
+    ./featured.png 1200 630
 
-INLINE2_URL=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
-  -H "x-api-key: $API_KEY" -F "file=@./inline-2.png" \
-  -F "alt_text=AI processing visualization" | jq -r '.data.url')
+  yarn tsx .claude/skills/ai-image-generation/scripts/generate-ai-image.ts \
+    "Split screen: pixelated photo left, crystal clear photo right, dramatic comparison" \
+    ./inline-1.png 800 600
 
-# 3. Create draft with inline images in content
+  yarn tsx .claude/skills/ai-image-generation/scripts/generate-ai-image.ts \
+    "AI neural network processing image, visualization of enhancement process" \
+    ./inline-2.png 800 600
+
+  # =========================================
+  # STEP 2: UPLOAD WITH METADATA
+  # =========================================
+  FEATURED_URL=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
+    -H "x-api-key: $API_KEY" \
+    -F "file=@./featured.png" \
+    -F "alt_text=AI upscaling comparison" \
+    -F "tags=before-after,upscaling,ai-processing,featured,laptop" \
+    -F "image_type=featured" \
+    -F "prompt=Modern laptop showing AI photo upscaling, before after comparison, blue lighting" | jq -r '.data.url')
+
+  INLINE1_URL=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
+    -H "x-api-key: $API_KEY" \
+    -F "file=@./inline-1.png" \
+    -F "alt_text=Before after comparison" \
+    -F "tags=before-after,comparison,split-screen,inline,photo" \
+    -F "image_type=inline" \
+    -F "prompt=Split screen: pixelated photo left, crystal clear photo right, dramatic comparison" | jq -r '.data.url')
+
+  INLINE2_URL=$(curl -s -X POST http://localhost:3000/api/blog/images/upload \
+    -H "x-api-key: $API_KEY" \
+    -F "file=@./inline-2.png" \
+    -F "alt_text=AI processing visualization" \
+    -F "tags=ai-processing,workflow,step-by-step,inline,infographic" \
+    -F "image_type=inline" \
+    -F "prompt=AI neural network processing image, visualization of enhancement process" | jq -r '.data.url')
+fi
+
+echo "Using images:"
+echo "  Featured: $FEATURED_URL"
+echo "  Inline 1: $INLINE1_URL"
+echo "  Inline 2: $INLINE2_URL"
+
+# =========================================
+# STEP 3: CREATE DRAFT WITH INLINE IMAGES
+# =========================================
 curl -s -X POST http://localhost:3000/api/blog/posts \
   -H "x-api-key: $API_KEY" \
   -H "Content-Type: application/json" \
@@ -508,7 +680,9 @@ curl -s -X POST http://localhost:3000/api/blog/posts \
     "seo_description": "Transform low-res photos into print-quality images with AI upscaling. Free online tool - instant results, no signup required."
   }' | jq .
 
-# 4. Add featured image
+# =========================================
+# STEP 4: ADD FEATURED IMAGE
+# =========================================
 curl -s -X PATCH http://localhost:3000/api/blog/posts/ai-image-upscaling-guide \
   -H "x-api-key: $API_KEY" \
   -H "Content-Type: application/json" \
@@ -517,11 +691,15 @@ curl -s -X PATCH http://localhost:3000/api/blog/posts/ai-image-upscaling-guide \
     "featured_image_alt": "AI image upscaling before and after comparison"
   }' | jq .
 
-# 5. Publish
+# =========================================
+# STEP 5: PUBLISH
+# =========================================
 curl -s -X POST http://localhost:3000/api/blog/posts/ai-image-upscaling-guide/publish \
   -H "x-api-key: $API_KEY" | jq .
 
-# 6. Verify
+# =========================================
+# STEP 6: VERIFY
+# =========================================
 curl -s http://localhost:3000/blog/ai-image-upscaling-guide | grep -o "<title>.*</title>"
 ```
 
