@@ -18,7 +18,7 @@ const nextConfig = {
   transpilePackages: ['react-markdown', 'remark-gfm', 'unified', 'bail'],
   // Performance optimizations
   images: {
-    unoptimized: process.env.OPENNEXT ? true : false,
+    unoptimized: true,
     // Allow external images from dicebear for avatars
     remotePatterns: [
       {
