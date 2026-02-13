@@ -1,11 +1,13 @@
 'use client';
 
-import { AlertCircle, FileUp, UploadCloud } from 'lucide-react';
+import { AlertCircle, FileUp, UploadCloud, Loader2 } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useUserData } from '@client/store/userStore';
-import { processFiles } from '@client/utils/file-validation';
-import { OversizedImageModal } from './OversizedImageModal';
+import { useToastStore } from '@client/store/toastStore';
+import { processFilesAsync, IDimensionInfo } from '@client/utils/file-validation';
+import { compressImage } from '@client/utils/image-compression';
+import { OversizedImageModal, isAutoResizeEnabled } from './OversizedImageModal';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 
 interface IDropzoneProps {
@@ -16,6 +18,13 @@ interface IDropzoneProps {
   className?: string;
 }
 
+// Union type for oversized files that can be either byte-size or dimension oversized
+interface IOversizedFileEntry {
+  file: File;
+  dimensions?: IDimensionInfo; // Present only for dimension-oversized files
+  reason: 'size' | 'dimensions';
+}
+
 export const Dropzone: React.FC<IDropzoneProps> = ({
   onFilesSelected,
   disabled,
@@ -24,10 +33,12 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
   className = '',
 }) => {
   const t = useTranslations('workspace');
+  const { showToast } = useToastStore();
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
   const [showOversizedModal, setShowOversizedModal] = useState(false);
-  const [oversizedFiles, setOversizedFiles] = useState<File[]>([]);
+  const [oversizedFiles, setOversizedFiles] = useState<IOversizedFileEntry[]>([]);
   const [currentOversizedIndex, setCurrentOversizedIndex] = useState(0);
   // Store valid files to add after all oversized files are handled
   const [pendingValidFiles, setPendingValidFiles] = useState<File[]>([]);
@@ -52,35 +63,128 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
   }, []);
 
   const handleFilesReceived = useCallback(
-    (files: File[]) => {
-      const {
-        validFiles,
-        oversizedFiles: oversized,
-        errorMessage,
-      } = processFiles(files, isPaidUser);
+    async (files: File[]) => {
+      setIsValidating(true);
+      setError(null);
 
-      if (oversized.length > 0) {
-        // Store all oversized files and show modal for the first one
-        // Hold valid files until oversized files are handled (prevents Dropzone unmounting)
-        setOversizedFiles(oversized);
-        setCurrentOversizedIndex(0);
-        setPendingValidFiles(validFiles);
-        setResizedFiles([]);
-        setShowOversizedModal(true);
-        setError(null);
-      } else {
-        // No oversized files, add valid files immediately
-        if (errorMessage) {
-          setError(errorMessage);
-        } else {
+      try {
+        const {
+          validFiles,
+          oversizedFiles: oversizedBySize,
+          oversizedDimensionFiles,
+          invalidTypeFiles,
+        } = await processFilesAsync(files, isPaidUser);
+
+        // Check if auto-resize is enabled
+        const autoResize = isAutoResizeEnabled();
+
+        // Auto-resize dimension-oversized files
+        let autoResizedFiles: File[] = [];
+        let dimensionFilesNeedingModal = oversizedDimensionFiles;
+
+        if (autoResize && oversizedDimensionFiles.length > 0) {
+          const resizePromises = oversizedDimensionFiles.map(async ({ file }) => {
+            try {
+              const result = await compressImage(file, {
+                maxPixels: IMAGE_VALIDATION.MAX_PIXELS,
+                format: 'jpeg',
+                maintainAspectRatio: true,
+              });
+              return new File([result.blob], file.name.replace(/\.\w+$/, '.jpg'), {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+            } catch {
+              return null;
+            }
+          });
+
+          const resizeResults = await Promise.all(resizePromises);
+          autoResizedFiles = resizeResults.filter((f): f is File => f !== null);
+          dimensionFilesNeedingModal = oversizedDimensionFiles.filter(
+            (_, index) => resizeResults[index] === null
+          );
+        }
+
+        // Auto-compress size-oversized files
+        let sizeFilesNeedingModal = oversizedBySize;
+
+        if (autoResize && oversizedBySize.length > 0) {
+          const compressPromises = oversizedBySize.map(async file => {
+            try {
+              const result = await compressImage(file, {
+                targetSizeBytes: Math.floor(currentLimit * 0.9),
+                format: 'jpeg',
+                maintainAspectRatio: true,
+              });
+              return new File([result.blob], file.name.replace(/\.\w+$/, '.jpg'), {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+            } catch {
+              return null;
+            }
+          });
+
+          const compressResults = await Promise.all(compressPromises);
+          const autoCompressedFiles = compressResults.filter((f): f is File => f !== null);
+          autoResizedFiles = [...autoResizedFiles, ...autoCompressedFiles];
+          sizeFilesNeedingModal = oversizedBySize.filter(
+            (_, index) => compressResults[index] === null
+          );
+        }
+
+        // Show toast if any files were auto-resized
+        if (autoResize && autoResizedFiles.length > 0) {
+          showToast({
+            message: t('oversizedImage.autoResizeToast'),
+            type: 'info',
+            duration: 3000,
+          });
+        }
+
+        // Combine remaining oversized files into a unified list for the modal
+        const oversizedEntries: IOversizedFileEntry[] = [
+          ...sizeFilesNeedingModal.map(file => ({ file, reason: 'size' as const })),
+          ...dimensionFilesNeedingModal.map(({ file, dimensions }) => ({
+            file,
+            dimensions,
+            reason: 'dimensions' as const,
+          })),
+        ];
+
+        if (oversizedEntries.length > 0) {
+          // Store all oversized files and show modal for the first one
+          // Hold valid files until oversized files are handled (prevents Dropzone unmounting)
+          setOversizedFiles(oversizedEntries);
+          setCurrentOversizedIndex(0);
+          setPendingValidFiles([...validFiles, ...autoResizedFiles]);
+          setResizedFiles([]);
+          setShowOversizedModal(true);
           setError(null);
+        } else {
+          // No oversized files, add valid files immediately (including auto-resized)
+          const allValidFiles = [...validFiles, ...autoResizedFiles];
+          // Only show error for files that are still rejected (invalid type).
+          // Don't use errorMessage from processFilesAsync since auto-resize may have
+          // resolved dimension/size issues that were counted as rejections.
+          if (invalidTypeFiles.length > 0) {
+            setError('Some files were rejected. Only JPG, PNG, WEBP are allowed.');
+          } else {
+            setError(null);
+          }
+          if (allValidFiles.length > 0) {
+            onFilesSelected(allValidFiles);
+          }
         }
-        if (validFiles.length > 0) {
-          onFilesSelected(validFiles);
-        }
+      } catch (err) {
+        console.error('Error processing files:', err);
+        setError('Failed to process files. Please try again.');
+      } finally {
+        setIsValidating(false);
       }
     },
-    [isPaidUser, onFilesSelected]
+    [isPaidUser, currentLimit, onFilesSelected, showToast, t]
   );
 
   const finishOversizedHandling = useCallback(
@@ -184,14 +288,16 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           ${compact ? 'w-12 h-12' : 'w-20 h-20'}
         `}
           >
-            {isDragging ? (
+            {isValidating ? (
+              <Loader2 size={compact ? 24 : 40} className="animate-spin" />
+            ) : isDragging ? (
               <FileUp size={compact ? 24 : 40} className="animate-bounce" />
             ) : (
               <UploadCloud size={compact ? 24 : 40} strokeWidth={1.5} />
             )}
 
             {/* Decorative background blob behind icon */}
-            {!isDragging && !compact && (
+            {!isDragging && !isValidating && !compact && (
               <div className="absolute -inset-4 bg-accent/10 rounded-full blur-xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
             )}
           </div>
@@ -226,13 +332,14 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
       {/* Oversized Image Modal */}
       {oversizedFiles.length > 0 && oversizedFiles[currentOversizedIndex] && (
         <OversizedImageModal
-          file={oversizedFiles[currentOversizedIndex]}
+          file={oversizedFiles[currentOversizedIndex].file}
           isOpen={showOversizedModal}
           onClose={handleSkipOversized}
           onResizeAndContinue={handleResizeAndContinue}
           currentLimit={currentLimit}
           currentIndex={currentOversizedIndex}
           totalCount={oversizedFiles.length}
+          dimensions={oversizedFiles[currentOversizedIndex].dimensions}
         />
       )}
     </div>

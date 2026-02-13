@@ -1,29 +1,28 @@
 'use client';
 
-import { Lock, User, Mail } from 'lucide-react';
+import { Lock, User, Mail, Sliders } from 'lucide-react';
 import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { useTranslations } from 'next-intl';
 import { useEmailPreferences } from '@client/hooks/useEmailPreferences';
+import {
+  isAutoResizeEnabled,
+  setAutoResizePreference,
+} from '@client/components/features/image-processing/OversizedImageModal';
+import { InternalTabs, ITabItem } from '@client/components/ui/InternalTabs';
+import { useState, useCallback } from 'react';
 
-export default function SettingsPage() {
+// --- Tab content components ---
+
+function ProfileTab() {
   const { user } = useUserStore();
   const { openAuthModal } = useModalStore();
   const t = useTranslations('dashboard.settings');
-  const { preferences, isLoading, isUpdating, toggle } = useEmailPreferences();
-
-  // Check if user is authenticated through email/password (not OAuth)
   const isPasswordUser = user?.provider === 'email';
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-primary">{t('title')}</h1>
-        <p className="text-muted-foreground mt-1">{t('subtitle')}</p>
-      </div>
-
-      {/* Profile Settings */}
+      {/* Profile */}
       <div className="bg-surface rounded-xl border border-border p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
@@ -58,7 +57,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Security Settings */}
+      {/* Security */}
       {isPasswordUser && (
         <div className="bg-surface rounded-xl border border-border p-6">
           <div className="flex items-center gap-3 mb-6">
@@ -85,87 +84,149 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
 
-      {/* Notification Settings */}
-      <div className="bg-surface rounded-xl border border-border p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
-            <Mail size={20} className="text-muted-foreground" />
-          </div>
-          <div>
-            <h2 className="font-semibold text-white">{t('notifications')}</h2>
-            <p className="text-sm text-muted-foreground">{t('notificationsSubtitle')}</p>
-          </div>
+function NotificationsTab() {
+  const t = useTranslations('dashboard.settings');
+  const { preferences, isLoading, isUpdating, toggle } = useEmailPreferences();
+
+  return (
+    <div className="bg-surface rounded-xl border border-border p-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
+          <Mail size={20} className="text-muted-foreground" />
         </div>
-
-        {isLoading ? (
-          <div className="text-center py-8 text-muted-foreground">Loading preferences...</div>
-        ) : (
-          <div className="space-y-4">
-            <label className="flex items-center justify-between cursor-pointer group">
-              <div className="flex-1">
-                <p className="font-medium text-white">{t('productUpdates')}</p>
-                <p className="text-sm text-muted-foreground">{t('productUpdatesDescription')}</p>
-              </div>
-              <button
-                onClick={() => !isUpdating && toggle('product_updates')}
-                disabled={isUpdating}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  preferences?.product_updates ? 'bg-accent' : 'bg-surface-light'
-                } ${isUpdating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    preferences?.product_updates ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </label>
-
-            <label className="flex items-center justify-between cursor-pointer group">
-              <div className="flex-1">
-                <p className="font-medium text-white">{t('marketingEmails')}</p>
-                <p className="text-sm text-muted-foreground">{t('marketingEmailsDescription')}</p>
-              </div>
-              <button
-                onClick={() => !isUpdating && toggle('marketing_emails')}
-                disabled={isUpdating}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  preferences?.marketing_emails ? 'bg-accent' : 'bg-surface-light'
-                } ${isUpdating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    preferences?.marketing_emails ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </label>
-
-            <label className="flex items-center justify-between cursor-pointer group">
-              <div className="flex-1">
-                <p className="font-medium text-white">Low Credit Alerts</p>
-                <p className="text-sm text-muted-foreground">
-                  Get notified when your credits are running low
-                </p>
-              </div>
-              <button
-                onClick={() => !isUpdating && toggle('low_credit_alerts')}
-                disabled={isUpdating}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  preferences?.low_credit_alerts ? 'bg-accent' : 'bg-surface-light'
-                } ${isUpdating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    preferences?.low_credit_alerts ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </label>
-          </div>
-        )}
+        <div>
+          <h2 className="font-semibold text-white">{t('notifications')}</h2>
+          <p className="text-sm text-muted-foreground">{t('notificationsSubtitle')}</p>
+        </div>
       </div>
+
+      {isLoading ? (
+        <div className="text-center py-8 text-muted-foreground">Loading preferences...</div>
+      ) : (
+        <div className="space-y-4">
+          <ToggleRow
+            label={t('productUpdates')}
+            description={t('productUpdatesDescription')}
+            checked={!!preferences?.product_updates}
+            disabled={isUpdating}
+            onToggle={() => toggle('product_updates')}
+          />
+          <ToggleRow
+            label={t('marketingEmails')}
+            description={t('marketingEmailsDescription')}
+            checked={!!preferences?.marketing_emails}
+            disabled={isUpdating}
+            onToggle={() => toggle('marketing_emails')}
+          />
+          <ToggleRow
+            label="Low Credit Alerts"
+            description="Get notified when your credits are running low"
+            checked={!!preferences?.low_credit_alerts}
+            disabled={isUpdating}
+            onToggle={() => toggle('low_credit_alerts')}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProcessingTab() {
+  const [autoResize, setAutoResize] = useState(() => isAutoResizeEnabled());
+  const handleAutoResizeToggle = useCallback(() => {
+    const newValue = !autoResize;
+    setAutoResize(newValue);
+    setAutoResizePreference(newValue);
+  }, [autoResize]);
+
+  return (
+    <div className="bg-surface rounded-xl border border-border p-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
+          <Sliders size={20} className="text-muted-foreground" />
+        </div>
+        <div>
+          <h2 className="font-semibold text-white">Processing</h2>
+          <p className="text-sm text-muted-foreground">Image processing preferences</p>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <ToggleRow
+          label="Auto-Resize Oversized Images"
+          description="Automatically resize images that exceed the pixel or file size limit instead of showing a confirmation dialog"
+          checked={autoResize}
+          onToggle={handleAutoResizeToggle}
+        />
+      </div>
+    </div>
+  );
+}
+
+// --- Shared toggle row ---
+
+function ToggleRow({
+  label,
+  description,
+  checked,
+  disabled,
+  onToggle,
+}: {
+  label: string;
+  description: string;
+  checked: boolean;
+  disabled?: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <label className="flex items-center justify-between cursor-pointer group">
+      <div className="flex-1">
+        <p className="font-medium text-white">{label}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      <button
+        onClick={e => {
+          e.preventDefault();
+          if (!disabled) onToggle();
+        }}
+        disabled={disabled}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+          checked ? 'bg-accent' : 'bg-surface-light'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+      >
+        <span
+          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+            checked ? 'translate-x-6' : 'translate-x-1'
+          }`}
+        />
+      </button>
+    </label>
+  );
+}
+
+// --- Main page ---
+
+export default function SettingsPage() {
+  const t = useTranslations('dashboard.settings');
+
+  const tabs: ITabItem[] = [
+    { id: 'profile', label: 'Profile', icon: User, content: <ProfileTab /> },
+    { id: 'notifications', label: 'Notifications', icon: Mail, content: <NotificationsTab /> },
+    { id: 'processing', label: 'Processing', icon: Sliders, content: <ProcessingTab /> },
+  ];
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-primary">{t('title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('subtitle')}</p>
+      </div>
+
+      <InternalTabs tabs={tabs} defaultTab="profile" />
     </div>
   );
 }

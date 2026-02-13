@@ -6,9 +6,22 @@ import {
   IEnhancementSettings,
   QualityTier,
 } from '@/shared/types/coreflow.types';
-import { Brain, ChevronDown, Edit3, ExternalLink, Sparkles, Type, UserSquare2 } from 'lucide-react';
+import {
+  isAutoResizeEnabled,
+  setAutoResizePreference,
+} from '@client/components/features/image-processing/OversizedImageModal';
+import {
+  Brain,
+  ChevronDown,
+  Edit3,
+  ExternalLink,
+  Minimize2,
+  Sparkles,
+  Type,
+  UserSquare2,
+} from 'lucide-react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 export interface IEnhancementOptionsProps {
   options: IAdditionalOptions;
@@ -28,6 +41,12 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
   isFreeUser = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [autoResize, setAutoResize] = useState(() => isAutoResizeEnabled());
+
+  const handleAutoResizeToggle = useCallback((checked: boolean) => {
+    setAutoResize(checked);
+    setAutoResizePreference(checked);
+  }, []);
 
   // Smart AI Analysis is hidden when Auto tier is selected (always on implicitly)
   const showSmartAnalysis = selectedTier !== 'auto';
@@ -261,6 +280,21 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
                 ({options.customInstructions.length} chars)
               </span>
             )}
+          </label>
+        </div>
+
+        {/* Auto-Resize Oversized Images */}
+        <div className="flex items-center gap-2 pl-1">
+          <input
+            type="checkbox"
+            id="auto-resize"
+            checked={autoResize}
+            onChange={e => handleAutoResizeToggle(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent"
+          />
+          <label htmlFor="auto-resize" className="flex items-center gap-2 cursor-pointer">
+            <Minimize2 className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-sm text-white">Auto-Resize Oversized</span>
           </label>
         </div>
       </div>

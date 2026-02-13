@@ -61,7 +61,11 @@
     "imageCompressed": "Image is compressed to fit under the size limit",
     "qualityOptimized": "Quality is automatically optimized for best results",
     "processingInstantly": "Processing happens instantly in your browser",
-    "aspectRatioMaintained": "Original aspect ratio is maintained"
+    "aspectRatioMaintained": "Original aspect ratio is maintained",
+    "dimensionWarning": "Your image ({width}x{height} = {pixels}) exceeds the maximum ({maxPixels}). Resize to continue.",
+    "autoResizeToggle": "Always auto-resize images for me",
+    "autoResizeToast": "Image automatically resized to fit processing limits",
+    "autoResizeToPixelLimit": "Automatically resize to fit within {maxPixels}MP pixel limit."
   },
   "previewArea": {
     "stages": {

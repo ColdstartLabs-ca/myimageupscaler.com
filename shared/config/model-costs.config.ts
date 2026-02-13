@@ -3,6 +3,24 @@
  * Centralized constants for all model cost-related magic numbers (in USD)
  */
 
+/**
+ * Per-model maximum input pixels
+ * Used to prevent GPU memory errors and cost overruns for large images
+ */
+export const MODEL_MAX_INPUT_PIXELS: Record<string, number> = {
+  'real-esrgan': 1_500_000, // 1.5M pixels - GPU memory limit (2M OOMs with enhancements)
+  gfpgan: 1_500_000, // 1.5M pixels - GPU memory limit
+  'realesrgan-anime': 1_500_000, // 1.5M pixels - GPU memory limit
+  'clarity-upscaler': 4_000_000, // 4M pixels - more capable model
+  'nano-banana': 4_000_000, // 4M pixels - Gemini handles larger inputs
+  'nano-banana-pro': 4_000_000, // 4M pixels - premium model
+  'flux-2-pro': 4_000_000, // 4M pixels - premium model
+  'qwen-image-edit': 2_560_000, // 2.56M pixels (1600x1600)
+  seedream: 4_000_000, // 4M pixels - capable model
+  'p-image-edit': 2_073_600, // 2.0736M pixels (1440x1440)
+  'flux-kontext-fast': 1_048_576, // 1.048576M pixels (1024x1024)
+} as const;
+
 export const MODEL_COSTS = {
   // Cost per run for each model (USD)
   REAL_ESRGAN_COST: 0.0017,

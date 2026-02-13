@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AlertCircle, Sparkles, Zap, ArrowRight, Loader2 } from 'lucide-react';
@@ -9,16 +9,58 @@ import { useTranslations } from 'next-intl';
 import { compressImage, formatBytes } from '@client/utils/image-compression';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 
+/** LocalStorage key for auto-resize preference */
+export const AUTO_RESIZE_STORAGE_KEY = 'image-upscaler-auto-resize';
+
+/** Check if auto-resize preference is enabled (defaults to true) */
+export function isAutoResizeEnabled(): boolean {
+  if (typeof window === 'undefined') return false;
+  const stored = localStorage.getItem(AUTO_RESIZE_STORAGE_KEY);
+  return stored === null ? true : stored === 'true';
+}
+
+/** Set auto-resize preference */
+export function setAutoResizePreference(enabled: boolean): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(AUTO_RESIZE_STORAGE_KEY, String(enabled));
+}
+
 // Extracted Components
-const WarningBanner: React.FC<{ fileSize: number; currentLimit: number; isPaidLimit: boolean }> = ({
-  fileSize,
-  currentLimit,
-  isPaidLimit,
-}) => {
+const WarningBanner: React.FC<{
+  fileSize: number;
+  currentLimit: number;
+  isPaidLimit: boolean;
+  dimensions?: { width: number; height: number; pixels: number };
+}> = ({ fileSize, currentLimit, isPaidLimit, dimensions }) => {
   const t = useTranslations('workspace');
   const limitMB = currentLimit / (1024 * 1024);
   const fileSizeMB = fileSize / (1024 * 1024);
   const excessMB = fileSizeMB - limitMB;
+
+  // If we have dimension info, show pixel-based warning instead
+  if (dimensions) {
+    const maxPixelsMP = (IMAGE_VALIDATION.MAX_PIXELS / 1_000_000).toFixed(0);
+    const imagePixelsMP = (dimensions.pixels / 1_000_000).toFixed(1);
+    const excessPixels = dimensions.pixels - IMAGE_VALIDATION.MAX_PIXELS;
+    const excessPixelsMP = (excessPixels / 1_000_000).toFixed(1);
+
+    return (
+      <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+        <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+        <div className="flex-1">
+          <p className="text-sm font-medium text-amber-900">
+            {t('oversizedImage.yourImageIs')}{' '}
+            <span className="font-bold">
+              {dimensions.width}x{dimensions.height}
+            </span>{' '}
+            ({imagePixelsMP}MP), {t('oversizedImage.whichExceeds')}{' '}
+            <span className="font-bold">{maxPixelsMP}MP</span> {t('oversizedImage.limitBy')}{' '}
+            <span className="font-bold">{excessPixelsMP}MP</span>.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
@@ -82,8 +124,21 @@ const ResizeButton: React.FC<{
   isCompressing: boolean;
   currentLimit: number;
   progress: number;
-}> = ({ onClick, isCompressing, currentLimit, progress }) => {
+  dimensions?: { width: number; height: number; pixels: number };
+}> = ({ onClick, isCompressing, currentLimit, progress, dimensions }) => {
   const t = useTranslations('workspace');
+
+  const getDescription = () => {
+    if (isCompressing) {
+      return t('oversizedImage.optimizingQuality');
+    }
+    if (dimensions) {
+      const maxPixelsMP = (IMAGE_VALIDATION.MAX_PIXELS / 1_000_000).toFixed(0);
+      return t('oversizedImage.autoResizeToPixelLimit', { maxPixels: maxPixelsMP });
+    }
+    return `${t('oversizedImage.automaticallyCompress')}${formatBytes(currentLimit)}${t('oversizedImage.limitBy')}`;
+  };
+
   return (
     <button
       onClick={onClick}
@@ -106,11 +161,7 @@ const ResizeButton: React.FC<{
                 t('oversizedImage.resizeAndContinue')
               )}
             </p>
-            <p className="text-sm text-muted-foreground">
-              {isCompressing
-                ? t('oversizedImage.optimizingQuality')
-                : `${t('oversizedImage.automaticallyCompress')}${formatBytes(currentLimit)}${t('oversizedImage.limitBy')}`}
-            </p>
+            <p className="text-sm text-muted-foreground">{getDescription()}</p>
           </div>
         </div>
         {!isCompressing && (
@@ -164,6 +215,43 @@ const UpgradeOption: React.FC<{ isPaidLimit: boolean }> = ({ isPaidLimit }) => {
   );
 };
 
+const AutoResizeToggle: React.FC<{
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}> = ({ checked, onChange }) => {
+  const t = useTranslations('workspace');
+
+  return (
+    <label className="flex items-center gap-3 cursor-pointer group">
+      <div className="relative">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={e => onChange(e.target.checked)}
+          className="sr-only peer"
+          aria-label={t('oversizedImage.autoResizeToggle')}
+        />
+        <div className="w-5 h-5 border-2 border-border rounded bg-surface-light peer-checked:bg-accent peer-checked:border-accent transition-colors flex items-center justify-center">
+          {checked && (
+            <svg
+              className="w-3 h-3 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={3}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </div>
+      </div>
+      <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+        {t('oversizedImage.autoResizeToggle')}
+      </span>
+    </label>
+  );
+};
+
 export interface IOversizedImageModalProps {
   file: File;
   isOpen: boolean;
@@ -172,6 +260,8 @@ export interface IOversizedImageModalProps {
   currentLimit: number;
   currentIndex?: number;
   totalCount?: number;
+  /** Optional dimension info for pixel-oversized images */
+  dimensions?: { width: number; height: number; pixels: number };
 }
 
 export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
@@ -182,13 +272,22 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
   currentLimit,
   currentIndex = 0,
   totalCount = 1,
+  dimensions,
 }) => {
   const t = useTranslations('workspace');
   const [isCompressing, setIsCompressing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [autoResizeChecked, setAutoResizeChecked] = useState(false);
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const progressRef = useRef(progress);
+
+  // Load auto-resize preference on mount
+  useEffect(() => {
+    if (isOpen) {
+      setAutoResizeChecked(isAutoResizeEnabled());
+    }
+  }, [isOpen]);
 
   // Keep ref in sync with state
   useEffect(() => {
@@ -239,11 +338,11 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
     setError(null);
 
     try {
-      // Target 90% of the limit to ensure we're safely under
-      const targetSize = Math.floor(currentLimit * 0.9);
-
+      // For dimension-oversized images, resize to fit within pixel limit
+      // For byte-size oversized images, compress to fit within byte limit
       const result = await compressImage(file, {
-        targetSizeBytes: targetSize,
+        targetSizeBytes: dimensions ? undefined : Math.floor(currentLimit * 0.9),
+        maxPixels: dimensions ? IMAGE_VALIDATION.MAX_PIXELS : undefined,
         format: 'jpeg', // JPEG typically gives best compression for photos
         maintainAspectRatio: true,
       });
@@ -264,6 +363,11 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
     }
   };
 
+  const handleAutoResizeToggle = useCallback((checked: boolean) => {
+    setAutoResizeChecked(checked);
+    setAutoResizePreference(checked);
+  }, []);
+
   const isPaidLimit = currentLimit === IMAGE_VALIDATION.MAX_SIZE_PAID;
 
   const showMultipleIndicator = totalCount > 1;
@@ -275,13 +379,21 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} size="lg" title={modalTitle}>
       <div className="space-y-6">
         {/* Warning Banner */}
-        <WarningBanner fileSize={file.size} currentLimit={currentLimit} isPaidLimit={isPaidLimit} />
+        <WarningBanner
+          fileSize={file.size}
+          currentLimit={currentLimit}
+          isPaidLimit={isPaidLimit}
+          dimensions={dimensions}
+        />
 
         {/* Image Preview */}
         {previewUrl && <ImagePreview file={file} previewUrl={previewUrl} />}
 
         {/* Error Message */}
         <ErrorMessage error={error} />
+
+        {/* Auto-Resize Toggle */}
+        <AutoResizeToggle checked={autoResizeChecked} onChange={handleAutoResizeToggle} />
 
         {/* Options */}
         <div className="space-y-3">
@@ -291,10 +403,11 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
             isCompressing={isCompressing}
             currentLimit={currentLimit}
             progress={progress}
+            dimensions={dimensions}
           />
 
-          {/* Option 2: Upgrade to Pro (only if not already on paid plan) */}
-          <UpgradeOption isPaidLimit={isPaidLimit} />
+          {/* Option 2: Upgrade to Pro (only if not already on paid plan and not dimension-based) */}
+          {!dimensions && <UpgradeOption isPaidLimit={isPaidLimit} />}
 
           {/* Option 3: Skip/Cancel */}
           <button

@@ -59,8 +59,10 @@ export interface IModelConfig {
   qualityScore: number;
   /** Average processing time in milliseconds */
   processingTimeMs: number;
-  /** Max input pixels */
+  /** Max input resolution (pixels) */
   maxInputResolution: number;
+  /** Max input pixels for this specific model */
+  maxInputPixels: number;
   /** Max output pixels */
   maxOutputResolution: number;
   /** Supported scale factors [2, 4, 8] */

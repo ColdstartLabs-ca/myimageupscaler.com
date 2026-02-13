@@ -57,15 +57,35 @@ export async function compressImage(
   }
 
   // Otherwise, compress once with the specified quality
+  const img = await loadImage(file);
+
+  // Calculate pixel-constrained dimensions if maxPixels is set
+  let constrainedMaxWidth = maxWidth;
+  let constrainedMaxHeight = maxHeight;
+  const maxPixels = options.maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS;
+  const originalPixels = img.width * img.height;
+
+  if (originalPixels > maxPixels) {
+    const scaleFactor = Math.sqrt(maxPixels / originalPixels);
+    const pixelWidth = Math.floor(img.width * scaleFactor);
+    const pixelHeight = Math.floor(img.height * scaleFactor);
+    constrainedMaxWidth = Math.min(pixelWidth, constrainedMaxWidth ?? pixelWidth);
+    constrainedMaxHeight = Math.min(pixelHeight, constrainedMaxHeight ?? pixelHeight);
+  }
+
   const blob = await compressOnce(file, {
     quality,
-    maxWidth,
-    maxHeight,
+    maxWidth: constrainedMaxWidth,
+    maxHeight: constrainedMaxHeight,
     format: outputFormat,
     maintainAspectRatio,
   });
 
-  const img = await loadImage(file);
+  // Get actual output dimensions from canvas (may differ from input if resized)
+  const outWidth =
+    constrainedMaxWidth && constrainedMaxWidth < img.width ? constrainedMaxWidth : img.width;
+  const outHeight =
+    constrainedMaxHeight && constrainedMaxHeight < img.height ? constrainedMaxHeight : img.height;
   const reductionPercent = Math.round(((originalSize - blob.size) / originalSize) * 100);
 
   return {
@@ -73,7 +93,7 @@ export async function compressImage(
     originalSize,
     compressedSize: blob.size,
     reductionPercent,
-    dimensions: { width: img.width, height: img.height },
+    dimensions: { width: outWidth, height: outHeight },
   };
 }
 

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
+
 // Enhancement settings schema (reusable)
 const enhancementSettingsSchema = z.object({
   clarity: z.boolean().default(true),
@@ -44,7 +46,7 @@ export const IMAGE_VALIDATION = {
   ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'] as const,
   MIN_DIMENSION: 64,
   MAX_DIMENSION: 8192,
-  MAX_PIXELS: 2_000_000, // ~1414x1414 max - GPU memory limit for upscaling
+  MAX_PIXELS: 1_500_000, // ~1225x1225 max - GPU memory limit for upscaling (matches real-esrgan)
 };
 
 /**
@@ -121,6 +123,21 @@ export function validateImageDimensions(width: number, height: number): IImageVa
   }
 
   return { valid: true };
+}
+
+/**
+ * Get the maximum input pixels for a specific model
+ * Returns the model-specific limit if defined, otherwise falls back to the global default
+ *
+ * @param modelId - The model identifier (e.g., 'real-esrgan', 'gfpgan')
+ * @returns Maximum number of pixels allowed for the model
+ */
+export function getMaxPixelsForModel(modelId: string): number {
+  if (modelId in MODEL_MAX_INPUT_PIXELS) {
+    return MODEL_MAX_INPUT_PIXELS[modelId];
+  }
+  // Fallback to global default (most conservative)
+  return IMAGE_VALIDATION.MAX_PIXELS;
 }
 
 /**

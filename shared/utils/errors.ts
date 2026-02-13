@@ -12,6 +12,7 @@ export const ErrorCodes = {
   INVALID_REQUEST: 'INVALID_REQUEST',
   INVALID_FILE: 'INVALID_FILE',
   FILE_TOO_LARGE: 'FILE_TOO_LARGE',
+  IMAGE_TOO_LARGE: 'IMAGE_TOO_LARGE',
   INVALID_DIMENSIONS: 'INVALID_DIMENSIONS',
   UNAUTHORIZED: 'UNAUTHORIZED',
   FORBIDDEN: 'FORBIDDEN',
@@ -125,6 +126,10 @@ export const ErrorStatusMap: Record<ErrorCode, { status: number; defaultMessage:
   [ErrorCodes.FILE_TOO_LARGE]: {
     status: 400,
     defaultMessage: 'The uploaded file exceeds the size limit.',
+  },
+  [ErrorCodes.IMAGE_TOO_LARGE]: {
+    status: 422,
+    defaultMessage: 'Image dimensions exceed the processing limit.',
   },
   [ErrorCodes.INVALID_DIMENSIONS]: {
     status: 400,

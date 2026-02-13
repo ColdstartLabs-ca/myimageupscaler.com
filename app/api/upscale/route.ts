@@ -536,6 +536,45 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
+    // 10a. Validate per-model pixel limits (defense in depth)
+    // Even if client-side validation is bypassed, server should reject oversized images
+    if (inputDimensions) {
+      const pixels = inputDimensions.width * inputDimensions.height;
+      const maxPixels = modelRegistry.getMaxInputPixels(resolvedModelId);
+
+      if (pixels > maxPixels) {
+        logger.warn('Image exceeds model pixel limit', {
+          userId,
+          width: inputDimensions.width,
+          height: inputDimensions.height,
+          pixels,
+          modelId: resolvedModelId,
+          maxPixels,
+        });
+
+        // Format pixel count for display (e.g., 2.6M)
+        const formatPixels = (p: number): string => {
+          if (p >= 1_000_000) {
+            return `${(p / 1_000_000).toFixed(1)}M`;
+          }
+          return p.toLocaleString();
+        };
+
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.IMAGE_TOO_LARGE,
+          `Image dimensions (${inputDimensions.width}×${inputDimensions.height} = ${formatPixels(pixels)} pixels) exceed the maximum for this processing mode (${formatPixels(maxPixels)} pixels)`,
+          422,
+          {
+            width: inputDimensions.width,
+            height: inputDimensions.height,
+            pixels,
+            maxPixels,
+          }
+        );
+        return NextResponse.json(errorBody, { status });
+      }
+    }
+
     // Calculate credit cost using new quality tier system
     const baseCost = getCreditsForTier(resolvedTier);
 

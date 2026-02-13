@@ -76,15 +76,19 @@ const Workspace: React.FC = () => {
   // Success banner state
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
+  const wasProcessingRef = React.useRef(false);
 
   // Global error state for showing ErrorAlert components
   const [globalErrors, setGlobalErrors] = useState<
     Array<{ id: string; message: string; title?: string }>
   >([]);
 
-  // Show success banner after first successful batch completion
+  // Show success banner only when batch processing finishes (transitions from processing to done)
   useEffect(() => {
-    if (completedCount > 0 && !isProcessingBatch) {
+    if (isProcessingBatch) {
+      wasProcessingRef.current = true;
+    } else if (wasProcessingRef.current && completedCount > 0) {
+      wasProcessingRef.current = false;
       setShowSuccessBanner(true);
     }
   }, [completedCount, isProcessingBatch]);
@@ -225,7 +229,7 @@ const Workspace: React.FC = () => {
           )}
         >
           {/* Success Banner */}
-          {showSuccessBanner && (
+          {showSuccessBanner && completedCount > 0 && (
             <div className="p-4">
               <UpgradeSuccessBanner
                 processedCount={completedCount}

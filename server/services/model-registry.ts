@@ -1,7 +1,11 @@
 import { serverEnv } from '@shared/config/env';
 import { CREDIT_COSTS } from '@shared/config/credits.config';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
-import { MODEL_COSTS as CONFIG_MODEL_COSTS } from '@shared/config/model-costs.config';
+import {
+  MODEL_COSTS as CONFIG_MODEL_COSTS,
+  MODEL_MAX_INPUT_PIXELS,
+} from '@shared/config/model-costs.config';
+import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 import type {
   IModelConfig,
   ModelCapability,
@@ -144,6 +148,7 @@ export class ModelRegistry {
         qualityScore: 8.5,
         processingTimeMs: TIMEOUTS.REAL_ESRGAN_PROCESSING_TIME,
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['real-esrgan'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD], // Real-ESRGAN only supports 2x and 4x
         isEnabled: true, // Always enabled as fallback
@@ -160,6 +165,7 @@ export class ModelRegistry {
         qualityScore: 9.0,
         processingTimeMs: TIMEOUTS.GFPGAN_PROCESSING_TIME,
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['gfpgan'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD], // GFPGAN max scale is 4
         isEnabled: true,
@@ -176,6 +182,7 @@ export class ModelRegistry {
         qualityScore: 8.0,
         processingTimeMs: TIMEOUTS.NANO_BANANA_PROCESSING_TIME,
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['nano-banana'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [
           CONFIG_MODEL_COSTS.DEFAULT_SCALE,
@@ -196,6 +203,7 @@ export class ModelRegistry {
         qualityScore: 9.5,
         processingTimeMs: TIMEOUTS.CLARITY_UPSCALER_PROCESSING_TIME,
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['clarity-upscaler'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [
           CONFIG_MODEL_COSTS.DEFAULT_SCALE,
@@ -217,6 +225,7 @@ export class ModelRegistry {
         qualityScore: 9.6,
         processingTimeMs: TIMEOUTS.CLARITY_UPSCALER_PROCESSING_TIME, // Similar processing time
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['flux-2-pro'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [], // Enhancement-only, no scale support
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
@@ -244,6 +253,7 @@ export class ModelRegistry {
         qualityScore: 9.8,
         processingTimeMs: TIMEOUTS.NANO_BANANA_PRO_PROCESSING_TIME,
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['nano-banana-pro'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION_ULTRA,
         supportedScales: [2, 4], // Resolution-based, not true 8x scale
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
@@ -262,6 +272,7 @@ export class ModelRegistry {
         qualityScore: 9.2,
         processingTimeMs: TIMEOUTS.CLARITY_UPSCALER_PROCESSING_TIME, // ~4-5 seconds
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['qwen-image-edit'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [], // Enhancement-only, no scale support
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
@@ -280,6 +291,7 @@ export class ModelRegistry {
         qualityScore: 9.3,
         processingTimeMs: TIMEOUTS.CLARITY_UPSCALER_PROCESSING_TIME, // ~4-5 seconds
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['seedream'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [], // Enhancement-only, no scale support
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
@@ -298,6 +310,7 @@ export class ModelRegistry {
         qualityScore: 8.8,
         processingTimeMs: TIMEOUTS.REAL_ESRGAN_PROCESSING_TIME, // Sub-second
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['p-image-edit'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [], // Enhancement-only, no scale support
         isEnabled: true,
@@ -316,6 +329,7 @@ export class ModelRegistry {
         qualityScore: 8.5,
         processingTimeMs: TIMEOUTS.REAL_ESRGAN_PROCESSING_TIME,
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['realesrgan-anime'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD], // Supports 2x and 4x
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
@@ -334,6 +348,7 @@ export class ModelRegistry {
         qualityScore: 9.1,
         processingTimeMs: TIMEOUTS.REAL_ESRGAN_PROCESSING_TIME, // Fast processing
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['flux-kontext-fast'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [], // Enhancement-only, no scale support
         isEnabled: true,
@@ -606,5 +621,21 @@ export class ModelRegistry {
    */
   getUseCaseAssignments(): Record<string, string> {
     return { ...this.useCaseAssignments };
+  }
+
+  /**
+   * Get maximum input pixels for a specific model
+   * Returns the model-specific limit if defined, otherwise falls back to the global default
+   *
+   * @param modelId - The model identifier (e.g., 'real-esrgan', 'gfpgan')
+   * @returns Maximum number of pixels allowed for the model
+   */
+  getMaxInputPixels(modelId: string): number {
+    const model = this.getModel(modelId);
+    if (model?.maxInputPixels) {
+      return model.maxInputPixels;
+    }
+    // Fallback to global default (most conservative)
+    return IMAGE_VALIDATION.MAX_PIXELS;
   }
 }
