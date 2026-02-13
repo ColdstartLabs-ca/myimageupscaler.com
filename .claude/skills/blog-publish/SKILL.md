@@ -26,14 +26,107 @@ Create SEO-optimized blog posts about image upscaling, AI photo enhancement, and
 ## Workflow
 
 ```
-0. SEARCH IMAGES   → GET /api/blog/images (check for reusable images first)
-1. GENERATE IMAGES → Generate ONLY if no suitable images found (1 featured + 2-3 inline)
-2. UPLOAD IMAGES   → POST /api/blog/images/upload (with metadata: tags, description, prompt)
-3. CREATE POST     → POST /api/blog/posts (include inline image URLs in markdown content)
-4. UPDATE          → PATCH /api/blog/posts/[slug] (add featured image URL)
-5. PUBLISH         → POST /api/blog/posts/[slug]/publish
-6. VERIFY          → Check at /blog/[slug]
+0. ROADMAP CHECK   → Read keyword-strategy-roadmap-*.md for prioritized topics
+1. TRACKING        → Check topics-covered.md to avoid duplication
+2. SELECT TOPIC    → Choose from roadmap Segment A/B (highest priority)
+3. SEARCH IMAGES   → GET /api/blog/images (check for reusable images first)
+4. GENERATE IMAGES → Generate ONLY if no suitable images found (1 featured + 2-3 inline)
+5. UPLOAD IMAGES   → POST /api/blog/images/upload (with metadata: tags, description, prompt)
+6. CREATE POST     → POST /api/blog/posts (include inline image URLs in markdown content)
+7. UPDATE          → PATCH /api/blog/posts/[slug] (add featured image URL)
+8. PUBLISH         → POST /api/blog/posts/[slug]/publish
+9. VERIFY          → Check at /blog/[slug]
+10. TRACK          → Update topics-covered.md with completed topic
 ```
+
+**IMPORTANT Changes:**
+- ✅ **Always check roadmap first** - pre-analyzed keyword opportunities
+- ✅ **Track topics covered** - prevent keyword cannibalization
+- ✅ **Update tracking after publish** - keep checklist current
+
+---
+
+## Step -1: Research Keywords & Content Roadmap
+
+### Check Keyword Strategy Roadmap FIRST
+
+**CRITICAL**: Before researching keywords manually, check if a keyword strategy roadmap exists.
+
+```bash
+# Find most recent keyword strategy roadmap
+ROADMAP=$(ls -t docs/SEO/keyword-strategy-roadmap-*.md 2>/dev/null | head -1)
+
+if [ -n "$ROADMAP" ]; then
+  echo "✅ Found keyword roadmap: $ROADMAP"
+
+  # Show quick wins and content gaps
+  echo "=== QUICK WINS (Optimize Existing or Write New) ==="
+  grep -A 20 "### Segment A: Quick Wins" "$ROADMAP" | head -25
+
+  echo "=== CONTENT GAPS (New Blog Posts Needed) ==="
+  grep -A 20 "### Segment B: Content Gaps" "$ROADMAP" | head -25
+else
+  echo "⚠️  No keyword roadmap found - generating one now..."
+  echo "Run: /keyword-research-strategy --focus=easy-wins --limit=20"
+  exit 1
+fi
+```
+
+### Track What's Been Written (Prevent Duplication)
+
+```bash
+# Create content tracking directory
+mkdir -p docs/SEO/blog-content-tracking
+
+# Create tracking file if it doesn't exist
+if [ ! -f "docs/SEO/blog-content-tracking/topics-covered.md" ]; then
+  cat > docs/SEO/blog-content-tracking/topics-covered.md << 'EOF'
+# Blog Content Tracking - MyImageUpscaler
+
+**Last Updated**: $(date +%Y-%m-%d)
+
+## Topics Covered (Blog Posts Published)
+
+| Date | Keyword/Topic | Blog Slug | Roadmap Segment | Status |
+|------|---------------|-----------|-----------------|--------|
+| YYYY-MM-DD | Example keyword | example-slug | Segment A | ✅ Published |
+
+## Topics In Progress
+
+| Started | Keyword/Topic | Target Slug | Roadmap Segment | Assignee |
+|---------|---------------|-------------|-----------------|----------|
+| YYYY-MM-DD | Example keyword | example-slug | Segment B | Claude |
+
+## Topics Planned (From Roadmap)
+
+| Priority | Keyword/Topic | Search Vol | Competition | Roadmap Segment | Est. Impact |
+|----------|---------------|------------|-------------|-----------------|-------------|
+| P1 | ... | 500 | Low | Segment A | +50 clicks/mo |
+EOF
+fi
+
+# Display tracking status
+cat docs/SEO/blog-content-tracking/topics-covered.md
+
+# Check for conflicts
+echo "=== DUPLICATION CHECK ==="
+read -p "Enter your target keyword: " TARGET_KEYWORD
+grep -i "$TARGET_KEYWORD" docs/SEO/blog-content-tracking/topics-covered.md && \
+  echo "⚠️  WARNING: Similar topic may already be covered!" || \
+  echo "✅ No conflicts found - safe to proceed"
+```
+
+### Select Topic from Roadmap
+
+**Decision Matrix:**
+
+| Source | Priority | When to Use |
+|--------|----------|-------------|
+| **Roadmap Segment A** | P1 | Existing page ranks 4-20 - write supporting blog post |
+| **Roadmap Segment B** | P1 | Content gap identified - create informational blog post |
+| **Roadmap Segment C** | P2 | Long-tail cluster - write comprehensive guide |
+| **Roadmap Segment D** | P2 | Intent mismatch - blog post may fix CTR issue |
+| **GSC Manual** | P3 | Only if roadmap doesn't exist yet |
 
 ---
 
@@ -318,6 +411,45 @@ curl -s http://localhost:3000/api/blog/posts/how-to-upscale-images-4x \
 
 # Check frontend
 curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/blog/how-to-upscale-images-4x
+```
+
+---
+
+## Step 7: Update Content Tracking (REQUIRED)
+
+**CRITICAL**: After publishing, update the tracking file to prevent future duplication.
+
+```bash
+# Variables from your published post
+PUBLISHED_DATE=$(date +%Y-%m-%d)
+KEYWORD="your target keyword"  # e.g., "upscale image 4x"
+BLOG_SLUG="your-blog-slug"     # e.g., "how-to-upscale-images-4x"
+ROADMAP_SEGMENT="Segment B"    # From Step -1
+ESTIMATED_IMPACT="+30 clicks/mo" # From roadmap
+
+# Add to "Topics Covered" section
+cat >> docs/SEO/blog-content-tracking/topics-covered.md << EOF
+
+| $PUBLISHED_DATE | $KEYWORD | $BLOG_SLUG | $ROADMAP_SEGMENT | ✅ Published |
+EOF
+
+echo "✅ Tracking file updated!"
+echo "File: docs/SEO/blog-content-tracking/topics-covered.md"
+```
+
+### Tracking File Maintenance
+
+**Weekly**: Review and update the "Topics Planned" section from the latest keyword roadmap:
+
+```bash
+# Get latest roadmap
+LATEST_ROADMAP=$(ls -t docs/SEO/keyword-strategy-roadmap-*.md | head -1)
+
+# Extract top 10 uncovered opportunities
+echo "Updating planned topics from roadmap..."
+
+# Manual step: Copy Segment A and B opportunities from roadmap
+# Add them to "Topics Planned" table if not already covered
 ```
 
 ---

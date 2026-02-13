@@ -7,7 +7,7 @@ argument_description: "[--competitor=<domain>] [--url=<url>] [--skip=<skill1,ski
 
 # SEO Manager Orchestrator
 
-You are the **SEO Manager** for myimageupscaler.com. Your job: orchestrate all SEO audit skills in parallel waves, collect results, and produce a unified health report grounded in real GSC data.
+You are the **SEO Manager** for convertbanktoexcel.com. Your job: orchestrate all SEO audit skills in parallel waves, collect results, and produce a unified health report grounded in real GSC data.
 
 When this skill activates: `SEO Manager: Initializing audit orchestration...`
 
@@ -15,7 +15,7 @@ When this skill activates: `SEO Manager: Initializing audit orchestration...`
 
 ## Principles
 
-1. **GSC is ground truth** - All recommendations must reference real search data. If no GSC report exists, STOP.
+1. **GSC is ground truth** - All recommendations must reference real search data. If GSC fetch fails, STOP.
 2. **Audit only** - NEVER invoke action skills (blog-edit, blog-publish, ai-image-generation). Report findings, don't fix them.
 3. **Maximize parallelism** - Launch independent tasks in the SAME message using multiple Task tool calls.
 4. **Each skill = unique angle** - No redundant re-checks across skills.
@@ -27,11 +27,12 @@ When this skill activates: `SEO Manager: Initializing audit orchestration...`
 
 Parse optional arguments from user input:
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--competitor=<domain>` | _(not run)_ | Enable competitor sitemap analysis for this domain |
-| `--url=<url>` | `https://myimageupscaler.com` | URL for PageSpeed and external audits |
-| `--skip=<skills>` | _(none)_ | Comma-separated skills to skip (e.g., `blog-audit,backlink-analyzer`) |
+| Argument                | Default                          | Description                                                           |
+| ----------------------- | -------------------------------- | --------------------------------------------------------------------- |
+| `--competitor=<domain>` | _(not run)_                      | Enable competitor sitemap analysis for this domain                    |
+| `--url=<url>`           | `https://convertbanktoexcel.com` | URL for PageSpeed and SquirrelScan audits                             |
+| `--skip=<skills>`       | _(none)_                         | Comma-separated skills to skip (e.g., `blog-audit,backlink-analyzer`) |
+| `--include-strategy`    | _(not run)_                      | Include keyword research & content strategy analysis                  |
 
 ---
 
@@ -40,10 +41,9 @@ Parse optional arguments from user input:
 ### Step 1: Initialize
 
 1. Parse arguments
-2. Read the most recent GSC report: `ls -t docs/SEO/GCS/gsc-report-*.md | head -1` - this is our ground truth data
-3. Check for prior SEO reports: `ls -t docs/SEO/audits/seo-report-*.md | head -1` - read for trend comparison
-4. Create the output directory if needed: `mkdir -p docs/SEO/audits`
-5. Display the execution plan to the user:
+2. Check for prior reports: `ls docs/SEO/reports/seo-report-*.md` - read the most recent one for trend comparison
+3. Create the output directory if needed: `mkdir -p docs/SEO/reports`
+4. Display the execution plan to the user:
 
 ```
 SEO Manager: Audit Plan
@@ -51,16 +51,16 @@ SEO Manager: Audit Plan
 Target: <url>
 Competitor: <domain or "skipped">
 Skipping: <skills or "none">
-GSC Report: <filename and date>
+Strategy: <"included" if --include-strategy, otherwise "skipped">
 
-Wave 1 (Data Collection):  GSC analysis, PageSpeed, pSEO health
-Wave 2 (Analysis):         SEO review, Blog audit, Schema, AI Search, Internal Linking, Backlinks [, Competitor]
+Wave 1 (Data Collection):  GSC fetch, PageSpeed, SquirrelScan
+Wave 2 (Analysis):         SEO review, Blog audit, Schema, AI Search, Internal Linking, Backlinks [, Competitor] [, Keyword Strategy]
 Wave 3 (Synthesis):        Score, merge, write report
 
-Estimated time: 10-20 minutes
+Estimated time: 10-20 minutes (add +5min if --include-strategy)
 ```
 
-6. Use TaskCreate to create tracking tasks for each wave.
+5. Use TaskCreate to create tracking tasks for each wave.
 
 ---
 
@@ -68,27 +68,28 @@ Estimated time: 10-20 minutes
 
 Launch **3 parallel Task tool calls in a single message** (skip any in `--skip` list):
 
-#### Task 1: GSC Data Analysis
+#### Task 1: GSC Data Fetch
 
 ```
 subagent_type: general-purpose
 prompt: |
-  Analyze the Google Search Console report for myimageupscaler.com.
+  Fetch Google Search Console data for convertbanktoexcel.com.
 
-  Read the most recent GSC report from docs/SEO/GCS/ (find it with: ls -t docs/SEO/GCS/gsc-report-*.md | head -1).
+  Run this command:
+  npx tsx scripts/gsc-direct-fetch.ts
 
-  Parse and return a structured summary with EXACTLY these sections:
-  - Performance summary: total clicks, total impressions, avg CTR, avg position
+  Then read the output JSON from docs/SEO/gsc-exports/ (most recent file).
+
+  Return a structured summary with EXACTLY these sections:
+  - Indexing: submitted count, indexed count, index rate percentage
+  - Performance (90d): total clicks, total impressions, avg CTR, avg position
   - Top 20 queries: query, position, impressions, clicks, CTR (as a table)
-  - Low-hanging fruit: keywords with position 4-20 and impressions > 5
-  - Top 10 pages by clicks/impressions
-  - Weekly trend analysis (is traffic growing or declining?)
-  - Device breakdown (if available)
-  - Country breakdown (if available)
+  - Low-hanging fruit: keywords with position 4-20 and impressions > 10
+  - Top 10 pages by clicks
+  - Device breakdown
+  - Country breakdown (top 5)
 
-  Also check docs/SEO/top_keywords.csv and docs/SEO/keywords.csv for additional keyword data.
-
-  If no GSC report exists, report this as a CRITICAL failure.
+  If the script fails, report the exact error message.
 ```
 
 #### Task 2: PageSpeed Audit
@@ -110,35 +111,24 @@ prompt: |
   Save the full report to docs/SEO/audits/pagespeed-report-YYYY-MM-DD.md
 ```
 
-#### Task 3: pSEO Health Check
+#### Task 3: SquirrelScan Audit
 
 ```
 subagent_type: general-purpose
 prompt: |
-  Audit the pSEO (programmatic SEO) health for myimageupscaler.com.
+  Run a SquirrelScan website audit on <URL>.
 
-  Step 1: Read all pSEO data files from app/seo/data/ directory
-  Step 2: Read the localization config from lib/seo/localization-config.ts
-  Step 3: Check sitemap configuration from lib/seo/sitemap-generator.ts
+  Execute:
+  squirrel audit <URL> --format llm -C surface
 
-  For each pSEO category, check:
-  - Total page count
-  - All pages have "upscale" in primaryKeyword (domain relevance requirement)
-  - metaTitle length <= 70 chars
-  - metaDescription length <= 160 chars
-  - No duplicate slugs across categories
-  - No empty or placeholder content
-  - Proper locale coverage (localized vs english-only)
+  Return a structured summary with:
+  - Overall health score (0-100)
+  - Issues by severity: critical count, high count, medium count, low count
+  - Top issues by category (SEO, technical, content, security, schema, links)
+  - Broken links found (if any)
+  - Schema markup findings
 
-  Step 4: Run tests if possible: yarn vitest run tests/unit/seo/pseo-keyword-alignment.unit.spec.ts
-
-  Return a structured summary:
-  - Categories audited (table: category, page count, locale status, issues found)
-  - Total pSEO pages across all categories
-  - Issues by severity: critical, high, medium, low
-  - Keyword alignment compliance percentage
-  - Schema compliance check
-  - Score: 0-100 for pSEO health
+  If squirrel is not installed, report this and skip.
 ```
 
 ---
@@ -147,18 +137,18 @@ prompt: |
 
 After all Wave 1 tasks return:
 
-1. **Check GSC result** - If no GSC report was found, STOP and tell the user:
-   - They need to create a GSC report in `docs/SEO/GCS/gsc-report-myimageupscaler-YYYY-MM-DD.md`
-   - The report should include performance metrics, top queries, and page data
+1. **Check GSC result** - If GSC failed, STOP and display the error. Help the user troubleshoot:
+   - Check credentials: `ls -la ./cloud/keys/coldstart-labs-service-account-key.json`
+   - Check script: `npx tsx scripts/gsc-direct-fetch.ts --help`
    - Do NOT proceed without GSC data.
 
 2. **Parse GSC data** - Extract the key metrics to inject into Wave 2 prompts:
-   - `GSC_SUMMARY`: performance summary + weekly trends (5-8 lines)
+   - `GSC_SUMMARY`: indexing status + performance summary (5-8 lines)
    - `GSC_TOP_QUERIES`: top 20 queries table
    - `GSC_LOW_HANGING_FRUIT`: low-hanging fruit keywords
-   - `GSC_TOP_PAGES`: top 10 pages by impressions/clicks
+   - `GSC_TOP_PAGES`: top 10 pages by clicks
 
-3. **Note PageSpeed/pSEO status** - If either failed, mark as "N/A" but continue.
+3. **Note PageSpeed/SquirrelScan status** - If either failed, mark as "N/A" but continue.
 
 4. Update task statuses.
 
@@ -183,18 +173,19 @@ Every Wave 2 prompt MUST include the GSC context block:
 ```
 subagent_type: seo-auditor
 prompt: |
-  You are an SEO expert reviewing myimageupscaler.com (AI-powered image upscaling SaaS tool).
+  You are an SEO expert reviewing convertbanktoexcel.com (SaaS tool for converting bank statements to Excel/CSV).
 
   <GSC context block>
 
+  <SquirrelScan summary if available, otherwise "SquirrelScan: N/A">
+
   Your job: Review on-page SEO and content quality for the TOP 10 PAGES from GSC data.
-  Focus on:
-  - Content depth and search intent match for image upscaling queries
+  Focus ONLY on what SquirrelScan does NOT cover:
+  - Content depth and search intent match
   - E-E-A-T signals (expertise, experience, authority, trust)
   - Keyword targeting effectiveness (are titles/H1s aligned with GSC queries?)
   - Content gaps (GSC shows impressions but poor CTR - why?)
   - User experience signals
-  - Image-specific SEO (alt tags, image sitemaps, WebP usage)
 
   For each page reviewed, reference its GSC metrics (position, impressions, CTR).
 
@@ -211,36 +202,43 @@ prompt: |
 ```
 subagent_type: general-purpose
 prompt: |
-  Audit all blog content on myimageupscaler.com for quality and SEO compliance.
-  This is REPORT-ONLY mode - do NOT fix anything, do NOT invoke blog-edit or blog-publish.
+  Audit all published blog posts on convertbanktoexcel.com for quality and SEO compliance.
+  This is REPORT-ONLY mode - do NOT fix anything, do NOT invoke blog-edit.
 
   <GSC context block>
 
-  Step 1: Find all blog posts
-  Look in the app directory for blog routes and content.
-  Check app/[locale]/blog/ or similar paths for blog content.
-  Also fetch https://myimageupscaler.com/blog to see published posts.
+  Step 1: Authenticate
+  PASSWORD=$(gcloud secrets versions access latest --secret=convertbanktoexcel-blog-admin-password --project=coldstartlabs-auth)
+  TOKEN=$(curl -s -X POST "https://api.convertbanktoexcel.com/auth/login" \
+    -H "Content-Type: application/json" \
+    -d "{\"email\":\"motherai@opus.com\",\"password\":\"$PASSWORD\"}" \
+    | jq -r '.session.access_token')
 
-  Step 2: For each post, check:
+  Step 2: Fetch all posts
+  ALL_POSTS=$(curl -s "https://api.convertbanktoexcel.com/blog/admin/posts?limit=200" \
+    -H "Authorization: Bearer $TOKEN")
+
+  Step 3: For each post, check:
   - Thin content (< 300 words = CRITICAL)
   - Title length (30-60 chars required)
-  - Meta description presence and length (100-160 chars)
+  - Excerpt length (100-160 chars required)
   - H1 count (exactly 1 required)
-  - CTA presence (must have hyperlinked CTAs to https://myimageupscaler.com)
-  - AI vocabulary detection (delve, tapestry, nuanced, multifaceted, pivotal, landscape, testament, myriad)
+  - CTA presence (must have hyperlinked CTAs to https://convertbanktoexcel.com)
+  - AI vocabulary (delve, tapestry, nuanced, multifaceted, pivotal, landscape, testament, myriad)
   - Keyword cannibalization across posts
-  - Image upscaling relevance (does content relate to our core product?)
 
-  Step 3: Cross-reference with GSC low-hanging fruit - are blog posts targeting these keywords?
+  Step 4: Cross-reference with GSC low-hanging fruit - are blog posts targeting these keywords?
 
   Return a structured summary:
   - Total posts audited
   - Issues by severity: critical, high, medium, low (counts)
-  - Top issues found (table: slug, word count, issues found, severity)
+  - Top 10 worst posts (table: slug, word count, issues found, severity)
   - Cannibalization pairs (if any)
   - AI writing detection results
   - Blog posts targeting GSC low-hanging fruit keywords (or gaps)
   - Score: 0-100 for blog health
+
+  If authentication fails, report the error and return score as "N/A".
 ```
 
 #### Task C: Schema Markup Review
@@ -248,20 +246,18 @@ prompt: |
 ```
 subagent_type: general-purpose
 prompt: |
-  Review structured data / schema markup on myimageupscaler.com.
+  Review structured data / schema markup on convertbanktoexcel.com.
 
   <GSC context block>
 
-  Check the following pages for JSON-LD schema:
-  1. Homepage (https://myimageupscaler.com) - expect: Organization, SoftwareApplication, WebSite
-  2. Pricing page (/pricing) - expect: Product or Offer
-  3. Blog posts (check 2 posts) - expect: Article, BreadcrumbList
-  4. pSEO tool pages (check 2 from GSC top pages) - expect: SoftwareApplication, FAQPage, BreadcrumbList
-  5. pSEO format pages (check 2) - expect: HowTo or FAQPage
+  <SquirrelScan schema findings if available>
 
-  Also check the codebase for schema generation:
-  - Look in lib/seo/ for schema-related utilities
-  - Check app/ routes for generateMetadata and JSON-LD script tags
+  Check the following pages for JSON-LD schema:
+  1. Homepage (https://convertbanktoexcel.com) - expect: Organization, SoftwareApplication, WebSite
+  2. Pricing page (/pricing) - expect: Product or Offer
+  3. Blog posts (check 3 posts) - expect: Article, BreadcrumbList
+  4. Bank-specific pages (check 2 from GSC top pages) - expect: FAQPage, BreadcrumbList, SoftwareApplication
+  5. Format pages (check 2) - expect: HowTo or FAQPage
 
   For each page, use WebFetch to check the HTML source for JSON-LD scripts.
 
@@ -279,19 +275,19 @@ prompt: |
 ```
 subagent_type: general-purpose
 prompt: |
-  Review myimageupscaler.com for AI search engine visibility (AEO/GEO).
+  Review convertbanktoexcel.com for AI search engine visibility (AEO/GEO).
 
   <GSC context block>
 
   Check the following:
 
-  1. robots.txt AI bot access - fetch https://myimageupscaler.com/robots.txt
+  1. robots.txt AI bot access - fetch https://convertbanktoexcel.com/robots.txt
      - Is GPTBot blocked or allowed?
      - Is ClaudeBot blocked or allowed?
      - Is PerplexityBot blocked or allowed?
      - Is Google-Extended blocked or allowed?
 
-  2. llms.txt presence - check https://myimageupscaler.com/llms.txt and /llms-full.txt
+  2. llms.txt presence - check https://convertbanktoexcel.com/llms.txt and /llms-full.txt
      - Does it exist?
      - Is it well-structured?
 
@@ -320,30 +316,27 @@ prompt: |
 ```
 subagent_type: general-purpose
 prompt: |
-  Analyze internal linking structure of myimageupscaler.com.
+  Analyze internal linking structure of convertbanktoexcel.com.
 
   <GSC context block>
 
-  Step 1: Understand sitemap structure
-  Read lib/seo/localization-config.ts to understand all page categories.
-  Read lib/seo/sitemap-generator.ts for sitemap utilities.
-  The site has 81 sitemaps covering 10 localized categories x 7 locales + 11 English-only categories.
+  Step 1: Fetch the sitemap
+  Use WebFetch to get https://convertbanktoexcel.com/sitemap.xml
+  Parse the URL list.
 
-  Step 2: Fetch the main sitemap
-  Use WebFetch to get https://myimageupscaler.com/sitemap.xml
-  Identify key page categories.
+  Step 2: Categorize pages by type:
+  - Homepage, Tool/App pages, Bank-specific pSEO pages, Format pSEO pages, Blog posts, Static pages
 
   Step 3: Check 5 high-value pages from GSC top pages:
-  - How many internal links point TO this page? (check from homepage, nav, footer, pSEO pages)
+  - How many internal links point TO this page? (check from homepage, nav, footer, blog posts)
   - How many internal links does this page have going OUT?
   - Is the anchor text descriptive and keyword-relevant?
 
   Step 4: Check for orphan pages:
   - Are there sitemap URLs that might have zero or minimal internal links?
-  - Do pSEO pages link to each other? (e.g., tool pages to format pages and vice versa)
 
   Step 5: Topic cluster assessment:
-  - Do tool pages link to related format pages and vice versa?
+  - Do bank pages link to related format pages and vice versa?
   - Do blog posts link to relevant tool/pSEO pages?
   - Is there a hub-and-spoke linking pattern?
 
@@ -354,7 +347,7 @@ prompt: |
   - Orphan page candidates
   - Topic cluster gaps
   - Anchor text quality assessment
-  - Priority linking opportunities (with GSC data citations)
+  - Priority linking opportunities (with GSC data: "Link to /banks/chase from blog - it has 450 impressions at position 12")
   - Score: 0-100 for internal linking health
 ```
 
@@ -363,16 +356,15 @@ prompt: |
 ```
 subagent_type: general-purpose
 prompt: |
-  Analyze the backlink profile of myimageupscaler.com.
+  Analyze the backlink profile of convertbanktoexcel.com.
 
   <GSC context block>
 
   Since we may not have Ahrefs/Semrush API access, use available data:
 
-  1. Check if docs/SEO/ contains any backlink export files (CSV/JSON) or link-building data
-  2. Check docs/SEO/link-building/ directory for any link data
+  1. Check if docs/SEO/ contains any Ahrefs or backlink export files (CSV/JSON)
+  2. Use WebFetch to check common backlink checker tools if available
   3. Reference any domain authority metrics from prior reports in docs/SEO/audits/
-  4. Check docs/SEO/COMPETITOR_INTELLIGENCE_REPORT.md for competitive context
 
   Based on available data, assess:
   - Total known backlinks and referring domains
@@ -390,14 +382,14 @@ prompt: |
   - Link quality assessment
   - Competitor link gap (if prior competitor reports exist in docs/SEO/)
   - High-priority pages needing backlinks (from GSC low-hanging fruit)
-  - Link building opportunity types relevant to image upscaling niche
+  - Link building opportunity types
   - Score: 0-100 for backlink profile health (or "N/A - Limited data" if no backlink data found)
 ```
 
 #### Task G: Competitor Sitemap Spy (ONLY if --competitor provided)
 
 ```
-subagent_type: seo-competitor-analyst
+subagent_type: seo-competitor-analyzer
 prompt: |
   Analyze competitor <COMPETITOR_DOMAIN> SEO strategy via their sitemap.
 
@@ -413,6 +405,41 @@ prompt: |
   - Our advantages (we have, they don't)
   - Top 5 quick-win opportunities
   - Score: 0-100 for competitive position
+```
+
+#### Task H: Keyword Research & Strategy (ONLY if --include-strategy provided)
+
+```
+subagent_type: general-purpose
+prompt: |
+  Generate a keyword research strategy and content roadmap for convertbanktoexcel.com.
+
+  <GSC context block>
+
+  Invoke the /keyword-research-strategy skill with focus on easy wins:
+  /keyword-research-strategy --focus=easy-wins --competition=low --limit=15
+
+  The skill will:
+  1. Analyze GSC data + Ahrefs snapshots (if available)
+  2. Classify search intent for all keywords
+  3. Map keywords to existing/proposed pages
+  4. Identify content gaps and intent mismatches
+  5. Generate prioritized content roadmap
+
+  Return a structured summary with EXACTLY these sections:
+  - Total keywords analyzed
+  - Opportunity breakdown by segment:
+    - Quick Wins (position 4-20, easy push)
+    - Content Gaps (high potential, no page)
+    - Long-Tail Clusters (group related keywords)
+    - Intent Mismatches (wrong page ranks)
+  - Top 5 immediate priorities (keyword, segment, impact, effort)
+  - Total potential monthly clicks if roadmap implemented
+  - Link to full roadmap file in docs/SEO/keyword-strategy-roadmap-YYYY-MM-DD.md
+
+  Cross-reference with GSC low-hanging fruit to ensure alignment.
+
+  If the skill fails or no Ahrefs data found, note limitation but include GSC-only analysis.
 ```
 
 ---
@@ -435,27 +462,27 @@ This runs in the main thread (no subagents).
 
 Extract the score from each skill's summary. Calculate weighted overall score:
 
-| Dimension | Weight | Source |
-|-----------|--------|--------|
-| Technical SEO / pSEO | 20% | pSEO health check score |
-| Core Web Vitals | 15% | PageSpeed performance score (mobile 60% + desktop 40%) |
-| On-Page SEO | 15% | SEO expert review score |
-| Content / Blog | 10% | Blog audit score |
-| Schema / Structured Data | 5% | Schema markup review score |
-| Internal Linking | 10% | Internal linking analysis score |
-| Backlinks | 10% | Backlink analysis score |
-| AI Search Readiness | 5% | AI search optimization score |
-| GSC Performance | 10% | Composite: (normalized_position * 0.4) + (normalized_ctr * 0.3) + (trend_score * 0.3) |
+| Dimension                | Weight | Source                                                                                |
+| ------------------------ | ------ | ------------------------------------------------------------------------------------- |
+| Technical SEO            | 20%    | SquirrelScan health score                                                             |
+| Core Web Vitals          | 15%    | PageSpeed performance score (mobile 60% + desktop 40%)                                |
+| On-Page SEO              | 15%    | SEO expert review score                                                               |
+| Content / Blog           | 10%    | Blog audit score                                                                      |
+| Schema / Structured Data | 5%     | Schema markup review score                                                            |
+| Internal Linking         | 10%    | Internal linking analysis score                                                       |
+| Backlinks                | 10%    | Backlink analysis score                                                               |
+| AI Search Readiness      | 5%     | AI search optimization score                                                          |
+| GSC Performance          | 10%    | Composite: (index_rate _ 0.3) + (normalized_position _ 0.4) + (normalized_ctr \* 0.3) |
 
 For N/A dimensions: redistribute their weight proportionally across available dimensions.
 
 Position normalization: `score = max(0, 100 - (avg_position - 1) * 1.5)`
 CTR normalization: `score = min(100, avg_ctr * 1000)`
-Trend score: +10 if growing week-over-week, 0 if stable, -10 if declining
 
 #### 6b: Trend Comparison
 
-If a prior report exists in `docs/SEO/audits/`:
+If a prior report exists in `docs/SEO/reports/`:
+
 - Compare overall score: up/down/stable
 - Compare each dimension score
 - Note significant changes (> 5 point swing)
@@ -464,10 +491,10 @@ Use arrows: `[+5]` for improvement, `[-3]` for decline, `[=]` for stable
 
 #### 6c: Assemble Report
 
-Write the unified report to `docs/SEO/audits/seo-report-YYYY-MM-DD.md` using this template:
+Write the unified report to `docs/SEO/reports/seo-report-YYYY-MM-DD.md` using this template:
 
 ```markdown
-# SEO Health Report - myimageupscaler.com
+# SEO Health Report - convertbanktoexcel.com
 
 **Date:** YYYY-MM-DD
 **Auditor:** SEO Manager Orchestrator
@@ -482,17 +509,17 @@ Write the unified report to `docs/SEO/audits/seo-report-YYYY-MM-DD.md` using thi
 
 ### Overall SEO Health Score: XX/100 [trend]
 
-| Dimension | Score | Weight | Trend | Key Finding |
-|-----------|-------|--------|-------|-------------|
-| Technical SEO / pSEO | XX/100 | 20% | [trend] | ... |
-| Core Web Vitals | XX/100 | 15% | [trend] | ... |
-| On-Page SEO | XX/100 | 15% | [trend] | ... |
-| Content / Blog | XX/100 | 10% | [trend] | ... |
-| Schema | XX/100 | 5% | [trend] | ... |
-| Internal Linking | XX/100 | 10% | [trend] | ... |
-| Backlinks | XX/100 | 10% | [trend] | ... |
-| AI Search Readiness | XX/100 | 5% | [trend] | ... |
-| GSC Performance | XX/100 | 10% | [trend] | ... |
+| Dimension           | Score  | Weight | Trend   | Key Finding |
+| ------------------- | ------ | ------ | ------- | ----------- |
+| Technical SEO       | XX/100 | 20%    | [trend] | ...         |
+| Core Web Vitals     | XX/100 | 15%    | [trend] | ...         |
+| On-Page SEO         | XX/100 | 15%    | [trend] | ...         |
+| Content / Blog      | XX/100 | 10%    | [trend] | ...         |
+| Schema              | XX/100 | 5%     | [trend] | ...         |
+| Internal Linking    | XX/100 | 10%    | [trend] | ...         |
+| Backlinks           | XX/100 | 10%    | [trend] | ...         |
+| AI Search Readiness | XX/100 | 5%     | [trend] | ...         |
+| GSC Performance     | XX/100 | 10%    | [trend] | ...         |
 
 ### Top 5 Priority Issues
 
@@ -522,9 +549,9 @@ Write the unified report to `docs/SEO/audits/seo-report-YYYY-MM-DD.md` using thi
 
 ---
 
-## 3. Technical SEO / pSEO Health
+## 3. Technical SEO
 
-[Paste pSEO health check from Wave 1]
+[Paste SquirrelScan summary from Wave 1, or "N/A"]
 
 ---
 
@@ -570,26 +597,38 @@ Write the unified report to `docs/SEO/audits/seo-report-YYYY-MM-DD.md` using thi
 
 ---
 
+## 11. Keyword Research & Content Strategy
+
+[Paste keyword strategy summary from Wave 2, or "Skipped - run with --include-strategy to include"]
+
+**Note:** For full keyword roadmap with detailed action plans, see: `docs/SEO/keyword-strategy-roadmap-YYYY-MM-DD.md`
+
+---
+
 ## Prioritized Action Plan
 
 ### Critical - This Week
+
 [Items referencing GSC data for each recommendation]
 
 ### High Impact - This Month
+
 [Items referencing GSC data]
 
 ### Medium - This Quarter
+
 [Items]
 
 ### Ongoing Maintenance
+
 [Items]
 
 ---
 
 ## Methodology
 
-- **Data collection:** GSC report analysis, Lighthouse (local), pSEO data audit
-- **Analysis:** Expert review, blog content audit, schema validation, AI search checks, link analysis, backlink assessment
+- **Data collection:** GSC API, Lighthouse (local), SquirrelScan CLI
+- **Analysis:** Expert review, blog API audit, schema validation, AI search checks, link analysis, backlink assessment
 - **Scoring:** Weighted average across 9 dimensions (weights reflect impact on organic growth)
 - **GSC grounding:** All recommendations cite specific keywords, pages, and metrics from Google Search Console
 ```
@@ -606,34 +645,34 @@ SEO Manager: Audit Complete
 Overall Health Score: XX/100 [trend]
 
 Dimension Scores:
-  Technical SEO / pSEO: XX/100
-  Core Web Vitals:      XX/100
-  On-Page SEO:          XX/100
-  Blog Health:          XX/100
-  Schema:               XX/100
-  Internal Linking:     XX/100
-  Backlinks:            XX/100
-  AI Search:            XX/100
-  GSC Performance:      XX/100
+  Technical SEO:      XX/100
+  Core Web Vitals:    XX/100
+  On-Page SEO:        XX/100
+  Blog Health:        XX/100
+  Schema:             XX/100
+  Internal Linking:   XX/100
+  Backlinks:          XX/100
+  AI Search:          XX/100
+  GSC Performance:    XX/100
 
 Top 3 Issues:
   1. [CRITICAL] ...
   2. [HIGH] ...
   3. [HIGH] ...
 
-Report saved to: docs/SEO/audits/seo-report-YYYY-MM-DD.md
+Report saved to: docs/SEO/reports/seo-report-YYYY-MM-DD.md
 ```
 
 ---
 
 ## Error Handling
 
-| Error | Action |
-|-------|--------|
-| No GSC report in docs/SEO/GCS/ | **HARD STOP** - Tell user to create a GSC report first |
-| PageSpeed fails (Chrome not found) | Mark as N/A, note in report, continue |
-| pSEO data files missing | Mark as N/A, note in report, continue |
-| Blog content not accessible | Mark as N/A, note in report, continue |
-| Any Wave 2 task fails | Mark dimension as N/A, redistribute weight, continue |
-| No prior report for trends | Skip trend comparison, note "First report" |
-| Competitor domain invalid | Skip competitor analysis, note in report |
+| Error                              | Action                                                              |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| GSC script fails                   | **HARD STOP** - Display error, help troubleshoot credentials/script |
+| PageSpeed fails (Chrome not found) | Mark as N/A, note in report, continue                               |
+| SquirrelScan not installed         | Mark as N/A, note in report, continue                               |
+| Blog audit auth fails              | Mark as N/A, note in report, continue                               |
+| Any Wave 2 task fails              | Mark dimension as N/A, redistribute weight, continue                |
+| No prior report for trends         | Skip trend comparison, note "First report"                          |
+| Competitor domain invalid          | Skip competitor analysis, note in report                            |
