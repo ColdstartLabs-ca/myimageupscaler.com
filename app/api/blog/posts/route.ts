@@ -54,6 +54,11 @@ export async function POST(request: NextRequest) {
       return blogApiErrorResponse('DUPLICATE_SLUG', 'A post with this slug already exists', 409);
     }
 
+    // Handle duplicate featured image error
+    if (error instanceof Error && error.message.startsWith('DUPLICATE_IMAGE')) {
+      return blogApiErrorResponse('DUPLICATE_IMAGE', error.message.replace('DUPLICATE_IMAGE: ', ''), 409);
+    }
+
     // Handle other errors
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Failed to create blog post', { message: errorMessage });

@@ -197,10 +197,41 @@ export function _addComputedProperties<T extends Record<string, unknown>>(
 }
 
 /**
+ * Check if a featured image URL is already used by another blog post.
+ * Throws if duplicate found (excluding the post being updated via excludeSlug).
+ */
+async function assertUniqueFeaturedImage(
+  imageUrl: string | undefined | null,
+  excludeSlug?: string
+): Promise<void> {
+  if (!imageUrl) return;
+
+  let query = supabaseAdmin
+    .from('blog_posts')
+    .select('slug')
+    .eq('featured_image_url', imageUrl)
+    .limit(1);
+
+  if (excludeSlug) {
+    query = query.neq('slug', excludeSlug);
+  }
+
+  const { data } = await query;
+
+  if (data && data.length > 0) {
+    throw new Error(
+      `DUPLICATE_IMAGE: This featured image is already used by post "${data[0].slug}". Each post must have a unique featured image.`
+    );
+  }
+}
+
+/**
  * Create a new blog post
  */
 export async function createBlogPost(input: ICreateBlogPostInput): Promise<IBlogPost> {
   const readingTime = calculateReadingTime(input.content);
+
+  await assertUniqueFeaturedImage(input.featured_image_url);
 
   const { data, error } = await supabaseAdmin
     .from('blog_posts')
@@ -239,6 +270,8 @@ export async function updateBlogPost(
   slug: string,
   input: IUpdateBlogPostInput
 ): Promise<IBlogPost> {
+  await assertUniqueFeaturedImage(input.featured_image_url, slug);
+
   const updateData: Record<string, unknown> = { ...input };
 
   if (input.content) {

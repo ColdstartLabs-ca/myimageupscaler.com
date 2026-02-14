@@ -104,6 +104,11 @@ export async function PATCH(
       return blogApiErrorResponse('NOT_FOUND', 'Blog post not found', 404);
     }
 
+    // Handle duplicate featured image error
+    if (error instanceof Error && error.message.startsWith('DUPLICATE_IMAGE')) {
+      return blogApiErrorResponse('DUPLICATE_IMAGE', error.message.replace('DUPLICATE_IMAGE: ', ''), 409);
+    }
+
     // Handle other errors
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Failed to update blog post', { message: errorMessage });
