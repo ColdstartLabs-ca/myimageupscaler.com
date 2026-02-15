@@ -29,7 +29,8 @@
       "items": [
         "Process your images using AI technology to enhance or upscale them",
         "Do not permanently store your original or processed images on our servers after processing is complete",
-        "Do not use your images to train AI models or for any purpose other than providing the requested service"
+        "Do not use your images to train AI models or for any purpose other than providing the requested service",
+        "May scan uploaded images for prohibited content (see our Terms of Service for prohibited categories) to comply with legal obligations and protect our community"
       ]
     },
     "payment": {
@@ -94,13 +95,25 @@
     ],
     "disclaimer": "While we strive to protect your information, no method of transmission over the Internet is 100% secure. We cannot guarantee absolute security."
   },
+  "contentSafety": {
+    "title": "6. Content Safety and Legal Compliance",
+    "intro": "To maintain a safe and lawful platform, we have strict content policies:",
+    "policies": [
+      "All uploaded images may be subject to automated content moderation to detect prohibited material",
+      "We maintain a zero-tolerance policy for child sexual abuse material (CSAM) and illegal content",
+      "We cooperate fully with law enforcement agencies in investigations of illegal activity",
+      "Accounts found uploading prohibited content are permanently terminated without refund"
+    ],
+    "prohibitedContent": "Prohibited content includes but is not limited to: child exploitation material, pornography, graphic violence, illegal activity documentation, hate speech, harassment, and non-consensual intimate content. See our Terms of Service for the complete list.",
+    "noWarning": "We do not provide warnings for illegal content violations. Users are expected to review and comply with our content policies before using the service."
+  },
   "retention": {
-    "title": "6. Data Retention",
+    "title": "7. Data Retention",
     "paragraph1": "We retain your account information for as long as your account is active. You may request deletion of your account and associated data at any time.",
     "paragraph2": "Uploaded images are processed in real-time and are not permanently stored. Transaction records are retained for legal and accounting purposes."
   },
   "rights": {
-    "title": "7. Your Rights",
+    "title": "8. Your Rights",
     "intro": "Depending on your location, you may have the following rights:",
     "rightsList": [
       {
@@ -128,7 +141,7 @@
     "email": "{PRIVACY_EMAIL}"
   },
   "cookies": {
-    "title": "8. Cookies and Tracking",
+    "title": "9. Cookies and Tracking",
     "intro": "We use cookies and similar technologies to:",
     "uses": [
       "Maintain your session and authentication",
@@ -139,19 +152,19 @@
     "control": "You can control cookies through your browser settings, but disabling them may affect service functionality."
   },
   "children": {
-    "title": "9. Children's Privacy",
+    "title": "10. Children's Privacy",
     "description": "Our service is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately."
   },
   "international": {
-    "title": "10. International Data Transfers",
+    "title": "11. International Data Transfers",
     "description": "Your information may be transferred to and processed in countries other than your country of residence. These countries may have different data protection laws. By using our service, you consent to such transfers. We ensure appropriate safeguards are in place to protect your data."
   },
   "changes": {
-    "title": "11. Changes to This Policy",
+    "title": "12. Changes to This Policy",
     "description": "We may update this Privacy Policy from time to time. We will notify you of significant changes by posting the new policy on this page and updating the \"Last updated\" date. Your continued use of the service after changes constitutes acceptance of the updated policy."
   },
   "contact": {
-    "title": "12. Contact Us",
+    "title": "13. Contact Us",
     "intro": "If you have questions about this Privacy Policy or our data practices, please contact us:",
     "emailLabel": "Email:",
     "email": "{PRIVACY_EMAIL}"

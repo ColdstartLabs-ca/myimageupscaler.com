@@ -29,7 +29,8 @@
       "items": [
         "Traitons vos images en utilisant la technologie IA pour les améliorer ou les mettre à l'échelle",
         "Ne stockons pas de manière permanente vos images originales ou traitées sur nos serveurs après l'achèvement du traitement",
-        "N'utilisons pas vos images pour entraîner des modèles IA ou pour tout autre objet que la fourniture du service demandé"
+        "N'utilisons pas vos images pour entraîner des modèles IA ou pour tout autre objet que la fourniture du service demandé",
+        "Peut scanner les images téléchargées pour détecter tout contenu interdit (voir nos Conditions dutilisation pour les catégories interdites) afin de respecter nos obligations légales et de protéger notre communauté"
       ]
     },
     "payment": {
@@ -155,5 +156,17 @@
     "intro": "Si vous avez des questions sur cette Politique de Confidentialité ou nos pratiques de données, veuillez nous contacter :",
     "emailLabel": "Email :",
     "email": "{PRIVACY_EMAIL}"
+  },
+  "contentSafety": {
+    "title": "6. Sécurité du contenu et conformité légale",
+    "intro": "Pour maintenir une plateforme sûre et légale, nous avons des politiques de contenu strictes :",
+    "policies": [
+      "Toutes les images téléchargées peuvent être soumises à une modération automatisée du contenu pour détecter tout matériel interdit",
+      "Nous maintenons une politique de tolérance zéro envers les matériels dabus sexuel sur mineurs (CSAM) et les contenus illégaux",
+      "Nous coopérons pleinement avec les autorités dans les enquêtes sur les activités illégales",
+      "Les comptes surpris à télécharger du contenu interdit seront définitivement fermés sans remboursement"
+    ],
+    "prohibitedContent": "Le contenu interdit comprend, sans sy limiter : les matériels dexploitation denfants, la pornographie, la violence graphique, la documentation dactivités illégales, les discours de haine, le harcèlement et les contenus intimes sans consentement. Consultez nos Conditions dutilisation pour la liste complète.",
+    "noWarning": "Nous némettons pas davertissements pour les violations de contenu illégal. Les utilisateurs sont tenus de consulter et de respecter nos politiques de contenu avant dutiliser le service."
   }
 }

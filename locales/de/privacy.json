@@ -29,7 +29,8 @@
       "items": [
         "Verarbeiten Ihre Bilder mit KI-Technologie, um sie zu verbessern oder zu skalieren",
         "Speichern Ihre Original- oder verarbeiteten Bilder nicht dauerhaft auf unseren Servern, nachdem die Verarbeitung abgeschlossen ist",
-        "Verwenden Ihre Bilder nicht, um KI-Modelle zu trainieren oder für andere Zwecke als die Erbringung der angeforderten Dienstleistung"
+        "Verwenden Ihre Bilder nicht, um KI-Modelle zu trainieren oder für andere Zwecke als die Erbringung der angeforderten Dienstleistung",
+        "Kann hochgeladene Bilder auf verbotene Inhalte scannen (siehe unsere Nutzungsbedingungen für verbotene Kategorien), um rechtlichen Verpflichtungen nachzukommen und unsere Community zu schützen"
       ]
     },
     "payment": {
@@ -158,5 +159,17 @@
   },
   "nav": {
     "blog": "Blog"
+  },
+  "contentSafety": {
+    "title": "6. Inhaltssicherheit und rechtliche Konformität",
+    "intro": "Um eine sichere und gesetzeskonforme Plattform zu gewährleisten, haben wir strikte Inhaltsrichtlinien:",
+    "policies": [
+      "Alle hochgeladenen Bilder können einer automatisierten Inhaltsmoderation unterzogen werden, um verbotenes Material zu erkennen",
+      "Wir verfolgen eine Nulltoleranzpolitik gegenüber missbräuchlichen Darstellungen von Kindern (CSAM) und illegalem Inhalt",
+      "Wir kooperieren vollständig mit Strafverfolgungsbehörden bei Ermittlungen gegen illegale Aktivitäten",
+      "Konten, die beim Hochladen verbotener Inhalte erwischt werden, werden dauerhaft gesperrt ohne Rückerstattung"
+    ],
+    "prohibitedContent": "Zu den verbotenen Inhalten gehören, aber sind nicht beschränkt auf: missbräuchliches Material mit Kindern, Pornografie, grafische Gewaltdarstellungen, Dokumentation illegaler Aktivitäten, Hassrede, Belästigung und intime Inhalte ohne Zustimmung. Die vollständige Liste finden Sie in unseren Nutzungsbedingungen.",
+    "noWarning": "Wir geben keine Warnungen bei Verstößen gegen illegale Inhalte heraus. Benutzer sollen unsere Inhaltsrichtlinien vor der Nutzung des Dienstes überprüfen und einhalten."
   }
 }

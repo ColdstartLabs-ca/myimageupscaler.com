@@ -29,7 +29,8 @@
       "items": [
         "Procesamos sus imágenes usando tecnología de IA para mejorar o aumentar su escala",
         "No almacenamos permanentemente sus imágenes originales o procesadas en nuestros servidores después de que se complete el procesamiento",
-        "No usamos sus imágenes para entrenar modelos de IA o para ningún propósito diferente a proporcionar el servicio solicitado"
+        "No usamos sus imágenes para entrenar modelos de IA o para ningún propósito diferente a proporcionar el servicio solicitado",
+        "Puede escanear las imágenes cargadas en busca de contenido prohibido (consulte nuestros Términos de Servicio para las categorías prohibidas) para cumplir con las obligaciones legales y proteger nuestra comunidad"
       ]
     },
     "payment": {
@@ -155,5 +156,17 @@
     "intro": "Si tiene preguntas sobre esta Política de Privacidad o nuestras prácticas de datos, por favor contáctenos:",
     "emailLabel": "Correo electrónico:",
     "email": "{PRIVACY_EMAIL}"
+  },
+  "contentSafety": {
+    "title": "6. Seguridad del contenido y cumplimiento legal",
+    "intro": "Para mantener una plataforma segura y legal, tenemos políticas estrictas de contenido:",
+    "policies": [
+      "Todas las imágenes cargadas pueden estar sujetas a moderación automatizada de contenido para detectar material prohibido",
+      "Mantenemos una política de tolerancia cero hacia el material de abuso sexual infantil (CSAM) y contenido ilegal",
+      "Cooperamos plenamente con las autoridades en investigaciones de actividad ilegal",
+      "Las cuentas que carguen contenido prohibido serán terminadas permanentemente sin reembolso"
+    ],
+    "prohibitedContent": "El contenido prohibido incluye pero no se limita a: material de explotación infantil, pornografía, violencia gráfica, documentación de actividades ilegales, discurso de odio, acoso y contenido íntimo sin consentimiento. Consulte nuestros Términos de Servicio para la lista completa.",
+    "noWarning": "No emitimos advertencias por violaciones de contenido ilegal. Se espera que los usuarios revisen y cumplan con nuestras políticas de contenido antes de usar el servicio."
   }
 }

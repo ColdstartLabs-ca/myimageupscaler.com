@@ -77,6 +77,7 @@ export default async function PrivacyPolicyPage({
               <li>{t('collection.images.items.0')}</li>
               <li>{t('collection.images.items.1')}</li>
               <li>{t('collection.images.items.2')}</li>
+              <li>{t('collection.images.items.3')}</li>
             </ul>
 
             <h3 className="text-xl font-medium text-primary mb-3">
@@ -152,6 +153,19 @@ export default async function PrivacyPolicyPage({
               <li>{t('security.measures.4')}</li>
             </ul>
             <p className="text-muted-foreground">{t('security.disclaimer')}</p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-primary mb-4">{t('contentSafety.title')}</h2>
+            <p className="text-muted-foreground mb-4">{t('contentSafety.intro')}</p>
+            <ul className="list-disc pl-6 mb-4 text-muted-foreground">
+              <li>{t('contentSafety.policies.0')}</li>
+              <li>{t('contentSafety.policies.1')}</li>
+              <li>{t('contentSafety.policies.2')}</li>
+              <li>{t('contentSafety.policies.3')}</li>
+            </ul>
+            <p className="text-muted-foreground mb-4">{t('contentSafety.prohibitedContent')}</p>
+            <p className="text-muted-foreground">{t('contentSafety.noWarning')}</p>
           </section>
 
           <section className="mb-8">

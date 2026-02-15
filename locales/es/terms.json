@@ -74,7 +74,7 @@
     ]
   },
   "acceptableUse": {
-    "title": "6. Uso Aceptable",
+    "title": "6. Uso aceptable y política de contenido",
     "intro": "Acepta NO usar el Servicio para:",
     "prohibitions": [
       "Procesar contenido ilegal, dañino u ofensivo",
@@ -161,5 +161,46 @@
     "intro": "Para preguntas sobre estos Términos:",
     "emailLabel": "Correo electrónico:",
     "email": "{LEGAL_EMAIL}"
+  },
+  "contentPolicy": {
+    "title": "6.1 Contenido prohibido",
+    "intro": "Las siguientes categorías de contenido están ESTRICTAMENTE PROHIBIDAS. Cargar o procesar dicho contenido resultará en la terminación inmediata de la cuenta y puede ser reportado a las autoridades pertinentes:",
+    "categories": [
+      {
+        "label": "Material de abuso sexual infantil (CSAM):",
+        "description": "Cualquier contenido que represente o sexualice a menores de cualquier manera. Las violaciones resultarán en una prohibición permanente inmediata y pueden ser reportadas a las autoridades pertinentes."
+      },
+      {
+        "label": "Pornografía y contenido sexualmente explícito:",
+        "description": "Nudez, actos sexuales, contenido erótico o cualquier material pornográfico de cualquier tipo."
+      },
+      {
+        "label": "Violencia y gore:",
+        "description": "Violencia gráfica, muerte, desmembramiento, tortura o sangre/gore excesivo."
+      },
+      {
+        "label": "Actividades ilegales:",
+        "description": "Contenido que represente o promueva actos ilegales incluyendo pero no limitado a: fabricación/uso de drogas, tráfico de armas, fraude, robo, terrorismo o crimen organizado."
+      },
+      {
+        "label": "Discurso de odio y discriminación:",
+        "description": "Contenido que promueva odio, discriminación o violencia contra individuos o grupos basándose en raza, etnia, religión, género, orientación sexual, discapacidad o cualquier otra característica protegida."
+      },
+      {
+        "label": "Acoso y bullying:",
+        "description": "Contenido creado para acosar, amenazar, intimidar o hacer bullying a individuos."
+      },
+      {
+        "label": "Contenido íntimo sin consentimiento:",
+        "description": "Cualquier imagen íntima de individuos sin su consentimiento explícito, incluyendo \"porno vengativo\" o contenido sexual deepfake."
+      },
+      {
+        "label": "Contenido extremo o impactante:",
+        "description": "Contenido diseñado para impactar, disgusto o causar angustia severa a los espectadores."
+      }
+    ],
+    "monitoring": "Empleamos sistemas automatizados de moderación de contenido para detectar y prevenir el procesamiento de contenido prohibido. Nuestros sistemas pueden analizar las imágenes cargadas para verificar el cumplimiento de las políticas antes del procesamiento.",
+    "reporting": "Tolerancia cero para contenido ilegal. Cualquier violación detectada resultará en prohibición permanente, pérdida de créditos y remisión a las autoridades apropiadas. Para reportar sospechas de violaciones, contacte a",
+    "reportEmail": "{LEGAL_EMAIL}"
   }
 }

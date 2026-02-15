@@ -139,6 +139,55 @@ export default async function TermsOfServicePage({
               <li>{t('acceptableUse.prohibitions.8')}</li>
             </ul>
             <p className="text-muted-foreground">{t('acceptableUse.consequence')}</p>
+
+            <h3 className="text-xl font-medium text-primary mb-3 mt-6">
+              {t('contentPolicy.title')}
+            </h3>
+            <p className="text-muted-foreground mb-4 font-medium text-red-400">
+              {t('contentPolicy.intro')}
+            </p>
+            <ul className="list-disc pl-6 mb-4 text-muted-foreground space-y-3">
+              <li>
+                <strong className="text-foreground">{t('contentPolicy.categories.0.label')}</strong>{' '}
+                {t('contentPolicy.categories.0.description')}
+              </li>
+              <li>
+                <strong className="text-foreground">{t('contentPolicy.categories.1.label')}</strong>{' '}
+                {t('contentPolicy.categories.1.description')}
+              </li>
+              <li>
+                <strong className="text-foreground">{t('contentPolicy.categories.2.label')}</strong>{' '}
+                {t('contentPolicy.categories.2.description')}
+              </li>
+              <li>
+                <strong className="text-foreground">{t('contentPolicy.categories.3.label')}</strong>{' '}
+                {t('contentPolicy.categories.3.description')}
+              </li>
+              <li>
+                <strong className="text-foreground">{t('contentPolicy.categories.4.label')}</strong>{' '}
+                {t('contentPolicy.categories.4.description')}
+              </li>
+              <li>
+                <strong className="text-foreground">{t('contentPolicy.categories.5.label')}</strong>{' '}
+                {t('contentPolicy.categories.5.description')}
+              </li>
+              <li>
+                <strong className="text-foreground">{t('contentPolicy.categories.6.label')}</strong>{' '}
+                {t('contentPolicy.categories.6.description')}
+              </li>
+              <li>
+                <strong className="text-foreground">{t('contentPolicy.categories.7.label')}</strong>{' '}
+                {t('contentPolicy.categories.7.description')}
+              </li>
+            </ul>
+            <p className="text-muted-foreground mb-4">{t('contentPolicy.monitoring')}</p>
+            <p className="text-muted-foreground">
+              {t('contentPolicy.reporting')}{' '}
+              <a href={`mailto:${clientEnv.LEGAL_EMAIL}`} className="text-accent hover:underline">
+                {clientEnv.LEGAL_EMAIL}
+              </a>
+              .
+            </p>
           </section>
 
           <section className="mb-8">

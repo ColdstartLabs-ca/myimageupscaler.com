@@ -74,7 +74,7 @@
     ]
   },
   "acceptableUse": {
-    "title": "6. Uso Accettabile",
+    "title": "6. Uso accettabile e politica sui contenuti",
     "intro": "Accetti di NON utilizzare il Servizio per:",
     "prohibitions": [
       "Elaborare contenuti illegali, dannosi o offensivi",
@@ -164,5 +164,46 @@
   },
   "nav": {
     "blog": "Blog"
+  },
+  "contentPolicy": {
+    "title": "6.1 Contenuti vietati",
+    "intro": "Le seguenti categorie di contenuti sono STRETTAMENTE VIETATE. Il caricamento o lelaborazione di tali contenuti comporterà la chiusura immediata dellaccount e potrà essere segnalato alle autorità competenti:",
+    "categories": [
+      {
+        "label": "Materiale di abuso sessuale su minori (CSAM):",
+        "description": "Qualsiasi contenuto che rappresenti o sexualizzi minori in qualsiasi modo. Le violazioni comporteranno un divieto permanente immediato e potranno essere segnalate alle autorità competenti."
+      },
+      {
+        "label": "Pornografia e contenuto sessualmente esplicito:",
+        "description": "Nudità, atti sessuali, contenuto erotico o qualsiasi materiale pornografico di qualsiasi tipo."
+      },
+      {
+        "label": "Violenza e gore:",
+        "description": "Violenza grafica, morte, smembramento, tortura o sangue/gore eccessivo."
+      },
+      {
+        "label": "Attività illegali:",
+        "description": "Contenuti che rappresentano o promuovono atti illegali, inclusi ma non limitati a: fabbricazione/uso di droga, traffico darmi, frode, furto, terrorismo o crimine organizzato."
+      },
+      {
+        "label": "Discorsi d odio e discriminazione:",
+        "description": "Contenuti che promuovono odio, discriminazione o violenza contro individui o gruppi in base a razza, etnia, religione, genere, orientamento sessuale, disabilità o qualsiasi altra caratteristica protetta."
+      },
+      {
+        "label": "Molestie e bullismo:",
+        "description": "Contenuti creati per molestare, minacciare, intimidire o fare bullismo a individui."
+      },
+      {
+        "label": "Contenuti intimi senza consenso:",
+        "description": "Qualsiasi immagine intima di individui senza il loro esplicito consenso, inclusa la \"pornografia di vendetta\" o contenuto sessuale deepfake."
+      },
+      {
+        "label": "Contenuti estremi o scioccanti:",
+        "description": "Contenuti progettati per scioccare, disgustare o causare grave angoscia agli spettatori."
+      }
+    ],
+    "monitoring": "Utilizziamo sistemi automatizzati di moderazione dei contenuti per rilevare e prevenire lelaborazione di contenuti vietati. I nostri sistemi possono analizzare le immagini caricate per verificare la conformità alle politiche prima dellelaborazione.",
+    "reporting": "Tolleranza zero per i contenuti illegali. Qualsiasi violazione rilevata comporterà il divieto permanente, la perdita dei crediti e la segnalazione alle autorità appropriate. Per segnalare sospette violazioni, contattare",
+    "reportEmail": "{LEGAL_EMAIL}"
   }
 }

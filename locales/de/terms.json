@@ -74,7 +74,7 @@
     ]
   },
   "acceptableUse": {
-    "title": "6. Zulässige Nutzung",
+    "title": "6. Nutzungsbedingungen und Inhaltsrichtlinien",
     "intro": "Sie verpflichten sich, den Service NICHT zu nutzen, um:",
     "prohibitions": [
       "Illegale, schädliche oder anstößige Inhalte zu verarbeiten",
@@ -164,5 +164,46 @@
   },
   "nav": {
     "blog": "Blog"
+  },
+  "contentPolicy": {
+    "title": "6.1 Verbotene Inhalte",
+    "intro": "Die folgenden Inhaltskategorien sind STRENG VERBOTEN. Das Hochladen oder Verarbeiten solcher Inhalte führt zur sofortigen Kontosperrung und kann den zuständigen Behörden gemeldet werden:",
+    "categories": [
+      {
+        "label": "Missbräuchliche Darstellungen von Kindern (CSAM):",
+        "description": "Jeder Inhalt, der Minderjährige irgendwie darstellt oder sexualisiert. Verstöße führen zu einer sofortigen dauerhaften Sperrung und können den Strafverfolgungsbehörden gemeldet werden."
+      },
+      {
+        "label": "Pornografie und sexuell explizite Inhalte:",
+        "description": "Nacktheit, sexuelle Handlungen, erotischer Inhalt oder jegliches pornografische Material."
+      },
+      {
+        "label": "Gewalt und Blutrünstigkeit:",
+        "description": "Grafische Gewalt, Tod, Verstümmelung, Folter oder übermäßiges Blut/Gore."
+      },
+      {
+        "label": "Illegale Aktivitäten:",
+        "description": "Inhalte, die illegale Handlungen darstellen oder fördern, einschließlich aber nicht beschränkt auf: Drogenherstellung/-konsum, Waffenhandel, Betrug, Diebstahl, Terrorismus oder organisiertes Verbrechen."
+      },
+      {
+        "label": "Hassrede und Diskriminierung:",
+        "description": "Inhalte, die Hass, Diskriminierung oder Gewalt gegen Einzelpersonen oder Gruppen aufgrund von Rasse, ethnischer Herkunft, Religion, Geschlecht, sexueller Orientierung, Behinderung oder anderen geschützten Merkmalen fördern."
+      },
+      {
+        "label": "Belästigung und Mobbing:",
+        "description": "Inhalte, die erstellt wurden, um Einzelpersonen zu belästigen, zu bedrohen, einzuschüchtern oder zu mobben."
+      },
+      {
+        "label": "Intime Inhalte ohne Zustimmung:",
+        "description": "Jegliche intimen Bilder von Personen ohne deren ausdrückliche Zustimmung, einschließlich „Rache-Pornografie\" oder sexualisierter Deepfake-Inhalte."
+      },
+      {
+        "label": "Extreme oder schockierende Inhalte:",
+        "description": "Inhalte, die darauf ausgelegt sind, Zuschauer zu schockieren, abzustoßen oder schweres Unbehagen zu verursachen."
+      }
+    ],
+    "monitoring": "Wir setzen automatisierte Inhaltsmoderationssysteme ein, um die Verarbeitung verbotener Inhalte zu erkennen und zu verhindern. Unsere Systeme können hochgeladene Bilder vor der Verarbeitung auf Richtlinienkonformität analysieren.",
+    "reporting": "Wir haben Nulltoleranz gegenüber illegalen Inhalten. Jede erkannte Verstöße führen zu dauerhafter Sperrung, Verfall von Guthaben und Meldung an die entsprechenden Behörden. Um Verdachtsfälle zu melden, kontaktieren Sie",
+    "reportEmail": "{LEGAL_EMAIL}"
   }
 }

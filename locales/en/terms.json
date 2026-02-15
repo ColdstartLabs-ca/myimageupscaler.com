@@ -74,7 +74,7 @@
     ]
   },
   "acceptableUse": {
-    "title": "6. Acceptable Use",
+    "title": "6. Acceptable Use and Content Policy",
     "intro": "You agree NOT to use the Service to:",
     "prohibitions": [
       "Process illegal, harmful, or offensive content",
@@ -88,6 +88,47 @@
       "Resell or redistribute the Service without authorization"
     ],
     "consequence": "Violation of these terms may result in immediate account termination without refund."
+  },
+  "contentPolicy": {
+    "title": "6.1 Prohibited Content",
+    "intro": "The following content categories are STRICTLY PROHIBITED. Uploading or processing such content will result in immediate account termination and may be reported to relevant authorities:",
+    "categories": [
+      {
+        "label": "Child Sexual Abuse Material (CSAM):",
+        "description": "Any content depicting or sexualizing minors in any way. Violations will result in immediate permanent ban and may be reported to law enforcement authorities."
+      },
+      {
+        "label": "Pornography and Sexually Explicit Content:",
+        "description": "Nudity, sexual acts, erotic content, or any pornographic material of any kind."
+      },
+      {
+        "label": "Violence and Gore:",
+        "description": "Graphic violence, death, dismemberment, torture, or excessive blood/gore."
+      },
+      {
+        "label": "Illegal Activities:",
+        "description": "Content depicting or promoting illegal acts including but not limited to: drug manufacturing/use, weapons trafficking, fraud, theft, terrorism, or organized crime."
+      },
+      {
+        "label": "Hate Speech and Discrimination:",
+        "description": "Content that promotes hatred, discrimination, or violence against individuals or groups based on race, ethnicity, religion, gender, sexual orientation, disability, or any other protected characteristic."
+      },
+      {
+        "label": "Harassment and Bullying:",
+        "description": "Content created to harass, threaten, intimidate, or bully individuals."
+      },
+      {
+        "label": "Non-Consensual Intimate Content:",
+        "description": "Any intimate images of individuals without their explicit consent, including \"revenge porn\" or deepfake sexual content."
+      },
+      {
+        "label": "Extreme or Shocking Content:",
+        "description": "Content designed to shock, disgust, or cause severe distress to viewers."
+      }
+    ],
+    "monitoring": "We employ automated content moderation systems to detect and prevent the processing of prohibited content. Our systems may analyze uploaded images for policy compliance before processing.",
+    "reporting": "We have zero tolerance for illegal content. Any detected violations will result in permanent ban, forfeiture of credits, and referral to appropriate authorities. To report suspected violations, contact",
+    "reportEmail": "{LEGAL_EMAIL}"
   },
   "intellectualProperty": {
     "title": "7. Intellectual Property",

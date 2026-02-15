@@ -74,7 +74,7 @@
     ]
   },
   "acceptableUse": {
-    "title": "6. Usage Acceptable",
+    "title": "6. Utilisation acceptable et politique de contenu",
     "intro": "Vous acceptez de NE PAS utiliser le Service pour :",
     "prohibitions": [
       "Traiter du contenu illégal, nuisible ou offensant",
@@ -161,5 +161,46 @@
     "intro": "Pour des questions sur ces Conditions :",
     "emailLabel": "Email :",
     "email": "{LEGAL_EMAIL}"
+  },
+  "contentPolicy": {
+    "title": "6.1 Contenu interdit",
+    "intro": "Les catégories de contenu suivantes sont STRICTEMENT INTERDITES. Le téléchargement ou le traitement de tel contenu entraînera la fermeture immédiate du compte et pourra être signalé aux autorités compétentes :",
+    "categories": [
+      {
+        "label": "Matériel dabus sexuel sur mineurs (CSAM) :",
+        "description": "Tout contenu représentant ou sexualisant des mineurs de quelque manière que ce soit. Les violations entraîneront un bannissement permanent immédiat et pourront être signalées aux autorités compétentes."
+      },
+      {
+        "label": "Pornographie et contenu sexuellement explicite :",
+        "description": "Nudité, actes sexuels, contenu érotique ou tout matériel pornographique de quelque nature que ce soit."
+      },
+      {
+        "label": "Violence et gore :",
+        "description": "Violence graphique, mort, démembrement, torture ou sang/gore excessif."
+      },
+      {
+        "label": "Activités illégales :",
+        "description": "Contenu représentant ou promouvant des actes illégaux, y compris mais sans sy limiter : fabrication/utilisation de drogues, trafic darmes, fraude, vol, terrorisme ou crime organisé."
+      },
+      {
+        "label": "Discours de haine et discrimination :",
+        "description": "Contenu qui promeut la haine, la discrimination ou la violence envers des individus ou des groupes en fonction de la race, de lethnie, de la religion, du genre, de lorientation sexuelle, du handicap ou de toute autre caractéristique protégée."
+      },
+      {
+        "label": "Harcèlement et intimidation :",
+        "description": "Contenu créé pour harceler, menacer, intimider ou brimer des individus."
+      },
+      {
+        "label": "Contenu intime sans consentement :",
+        "description": "Toute image intime dindividus sans leur consentement explicite, y compris la « pornographie vengeresse » ou le contenu sexuel deepfake."
+      },
+      {
+        "label": "Contenu extrême ou choquant :",
+        "description": "Contenu conçu pour choquer, dégoûter ou causer une détresse grave aux spectateurs."
+      }
+    ],
+    "monitoring": "Nous employons des systèmes automatisés de modération de contenu pour détecter et empêcher le traitement de contenu interdit. Nos systèmes peuvent analyser les images téléchargées pour vérifier la conformité aux politiques avant le traitement.",
+    "reporting": "Tolérance zéro pour les contenus illégaux. Toute violation détectée entraînera un bannissement permanent, la perte des crédits et un signalement aux autorités appropriées. Pour signaler des violations suspectées, contactez",
+    "reportEmail": "{LEGAL_EMAIL}"
   }
 }

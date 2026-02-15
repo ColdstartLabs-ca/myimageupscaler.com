@@ -29,7 +29,8 @@
       "items": [
         "Elaboriamo le tue immagini utilizzando la tecnologia IA per migliorarle o upscalarle",
         "Non memorizziamo permanentemente le tue immagini originali o elaborate sui nostri server dopo il completamento dell'elaborazione",
-        "Non utilizziamo le tue immagini per addestrare modelli IA o per scopi diversi dalla fornitura del servizio richiesto"
+        "Non utilizziamo le tue immagini per addestrare modelli IA o per scopi diversi dalla fornitura del servizio richiesto",
+        "Può scansionare le immagini caricate per rilevare contenuti vietati (vedere i nostri Termini di Servizio per le categorie vietate) per rispettare gli obblighi legali e proteggere la nostra comunità"
       ]
     },
     "payment": {
@@ -158,5 +159,17 @@
   },
   "nav": {
     "blog": "Blog"
+  },
+  "contentSafety": {
+    "title": "6. Sicurezza dei contenuti e conformità legale",
+    "intro": "Per mantenere una piattaforma sicura e legale, abbiamo politiche sui contenuti rigorose:",
+    "policies": [
+      "Tutte le immagini caricate possono essere sottoposte a moderazione automatica dei contenuti per rilevare materiale vietato",
+      "Manteniamo una politica di tolleranza zero verso il materiale di abuso sessuale su minori (CSAM) e i contenuti illegali",
+      "Cooperiamo pienamente con le forze dellordine nelle indagini su attività illegali",
+      "Gli account che caricano contenuti vietati saranno definitivamente chiusi senza rimborso"
+    ],
+    "prohibitedContent": "I contenuti vietati includono ma non sono limitati a: materiale di sfruttamento minorile, pornografia, violenza grafica, documentazione di attività illegali, discorsi d odio, molestie e contenuti intimi senza consenso. Consultare i nostri Termini di Servizio per lelenco completo.",
+    "noWarning": "Non emettiamo avvisi per violazioni di contenuti illegali. Gli utenti sono tenuti a rivedere e rispettare le nostre politiche sui contenuti prima di utilizzare il servizio."
   }
 }
