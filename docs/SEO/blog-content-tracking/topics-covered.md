@@ -21,3 +21,4 @@
 | 2026-02-12 | ai vs traditional upscaling | ai-vs-traditional-image-upscaling | Technical | Published |
 | 2026-02-12 | upscale images without losing quality | how-to-upscale-images-without-losing-quality | Guides | Published |
 | 2026-02-12 | upscale images for instagram | how-to-upscale-images-for-instagram | Guides | Published |
+| 2026-02-14 | avif upscale, enhance tiff image, bitmap formats | how-to-upscale-avif-tiff-bmp-image-formats | Guides | Published |
