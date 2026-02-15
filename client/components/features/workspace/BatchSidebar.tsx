@@ -69,11 +69,6 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
     const { qualityTier, scale, additionalOptions } = config;
     const { creditCosts } = getSubscriptionConfig();
 
-    // BG Removal is free (0 credits) - browser-based processing
-    if (qualityTier === 'bg-removal') {
-      return 0;
-    }
-
     // Smart analysis cost (1 credit when enabled and not in auto mode)
     // Auto mode always uses smart analysis, so it's included in the base cost
     const smartAnalysisCost = qualityTier !== 'auto' && additionalOptions?.smartAnalysis ? 1 : 0;

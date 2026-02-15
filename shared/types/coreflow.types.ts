@@ -120,7 +120,7 @@ export const QUALITY_TIER_CONFIG: Record<
   },
   'bg-removal': {
     label: 'Background Removal',
-    credits: 0,
+    credits: 1,
     modelId: null,
     description: 'Remove image backgrounds',
     bestFor: 'Product photos, profile pics',

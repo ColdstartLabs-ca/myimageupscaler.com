@@ -47,5 +47,5 @@ export async function processBackgroundRemoval(
   const url = URL.createObjectURL(result);
   onProgress(100, ProcessingStage.FINALIZING);
 
-  return { imageUrl: url, creditsUsed: 0 };
+  return { imageUrl: url, creditsUsed: 1 };
 }

@@ -44,7 +44,7 @@ describe('bg-removal', () => {
       expect(typeof processFn).toBe('function');
     });
 
-    it('should return creditsUsed: 0', async () => {
+    it('should return creditsUsed: 1', async () => {
       const mockBlob = new Blob(['mock-png-data'], { type: 'image/png' });
       mockRemoveBackground.mockResolvedValue(mockBlob);
 
@@ -56,7 +56,7 @@ describe('bg-removal', () => {
 
       const result = await processFn(file, onProgress);
 
-      expect(result.creditsUsed).toBe(0);
+      expect(result.creditsUsed).toBe(1);
     });
 
     it('should return blob URL as imageUrl', async () => {

@@ -313,8 +313,8 @@ export class ModelRegistry {
         maxInputPixels: MODEL_MAX_INPUT_PIXELS['p-image-edit'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [], // Enhancement-only, no scale support
-        isEnabled: true,
-        tierRestriction: undefined,
+        isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+        tierRestriction: 'hobby',
       },
       // Real-ESRGAN Anime (Anime Upscaling - Premium)
       // Specialized upscaler for anime and illustrations

@@ -14,8 +14,8 @@ describe('Quality Tier Configuration', () => {
       expect(QUALITY_TIER_CONFIG['bg-removal']).toBeDefined();
     });
 
-    it('should have 0 credits for bg-removal', () => {
-      expect(QUALITY_TIER_CONFIG['bg-removal'].credits).toBe(0);
+    it('should have 1 credit for bg-removal', () => {
+      expect(QUALITY_TIER_CONFIG['bg-removal'].credits).toBe(1);
     });
 
     it('should have null modelId for bg-removal (browser-based)', () => {

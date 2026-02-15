@@ -166,8 +166,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         stage: undefined, // Clear stage on completion
       });
 
-      // Only update credits if server-side processing was used (creditsUsed > 0)
-      // bg-removal is client-side and returns creditsUsed: 0
+      // Update credits when processing used credits (creditsUsed > 0)
       if (result.creditsUsed > 0) {
         useUserStore.getState().updateCreditsFromProcessing(result.creditsRemaining);
       }

@@ -157,15 +157,35 @@ export const processImage = async (
   onProgress: ProgressCallback
 ): Promise<IProcessImageResult> => {
   try {
-    // Client-side processing for bg-removal (no API call)
+    // Client-side processing for bg-removal
+    // Processing runs in-browser, but we deduct 1 credit server-side
     if (config.qualityTier === 'bg-removal') {
+      // Pre-deduct credit before processing
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        throw new Error('Authentication required for background removal');
+      }
+
+      const deductRes = await fetch('/api/bg-removal/deduct', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      if (!deductRes.ok) {
+        const errorData = await deductRes.json().catch(() => null);
+        const message = errorData?.error?.message || 'Failed to deduct credits for background removal';
+        throw new Error(message);
+      }
+
+      const deductData = await deductRes.json();
+
       const { processBackgroundRemoval } = await import('@/client/utils/bg-removal');
       const result = await processBackgroundRemoval(file, onProgress);
       return {
         imageUrl: result.imageUrl,
         imageData: undefined,
-        creditsRemaining: -1, // Signal: don't update credits
-        creditsUsed: 0,
+        creditsRemaining: deductData.creditsRemaining,
+        creditsUsed: deductData.creditsUsed,
       };
     }
 

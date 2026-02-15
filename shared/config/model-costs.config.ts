@@ -101,6 +101,7 @@ export const MODEL_COSTS = {
   // Quality tiers requiring paid subscription (free users blocked)
   PREMIUM_QUALITY_TIERS: [
     'auto',
+    'fast-edit',
     'budget-edit',
     'seedream-edit',
     'anime-upscale',
