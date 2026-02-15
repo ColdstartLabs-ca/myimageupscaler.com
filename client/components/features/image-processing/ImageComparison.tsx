@@ -6,17 +6,24 @@ interface IImageComparisonProps {
   beforeUrl: string;
   afterUrl: string;
   onDownload: () => void;
+  /** Whether the after image has transparency (e.g., from bg-removal). Auto-detected from blob: URLs if not provided. */
+  hasTransparency?: boolean;
 }
 
 export const ImageComparison: React.FC<IImageComparisonProps> = ({
   beforeUrl,
   afterUrl,
   onDownload,
+  hasTransparency,
 }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [zoom, setZoom] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-detect transparency from blob URL if not explicitly provided
+  // Blob URLs indicate client-side processing (e.g., bg-removal) which produces transparent PNGs
+  const showTransparency = hasTransparency ?? afterUrl.startsWith('blob:');
 
   const handleMouseDown = useCallback(() => {
     setIsDragging(true);
@@ -94,23 +101,27 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
       >
         {/* Images container with zoom support */}
         <div
-          className="relative w-full h-full transition-transform duration-300 ease-in-out origin-center flex items-center justify-center bg-surface-light"
+          className={`relative w-full h-full transition-transform duration-300 ease-in-out origin-center flex items-center justify-center ${showTransparency ? 'bg-checkerboard' : 'bg-surface-light'}`}
           style={{ transform: `scale(${zoom})` }}
         >
-          {/* After Image (Background) */}
-          <img
-            src={afterUrl}
-            alt="Enhanced image result"
-            className="absolute top-0 left-0 w-full h-full object-contain object-center select-none"
-            draggable={false}
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-          />
+          {/* After Image (Background) - with checkerboard if transparent */}
+          <div
+            className={`absolute top-0 left-0 w-full h-full ${showTransparency ? 'bg-checkerboard' : ''}`}
+          >
+            <img
+              src={afterUrl}
+              alt="Enhanced image result"
+              className="absolute top-0 left-0 w-full h-full object-contain object-center select-none"
+              draggable={false}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+            />
+          </div>
 
           {/* Before Image (Foreground - Clipped) */}
           <div
-            className="absolute top-0 left-0 w-full h-full select-none overflow-hidden"
+            className="absolute top-0 left-0 w-full h-full select-none overflow-hidden bg-surface-light"
             style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
           >
             <img

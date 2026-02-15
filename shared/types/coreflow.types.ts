@@ -23,7 +23,8 @@ export type QualityTier =
   | 'anime-upscale'
   | 'hd-upscale'
   | 'face-pro'
-  | 'ultra';
+  | 'ultra'
+  | 'bg-removal';
 
 // Quality tier metadata for UI display
 export const QUALITY_TIER_CONFIG: Record<
@@ -117,6 +118,14 @@ export const QUALITY_TIER_CONFIG: Record<
     bestFor: 'Large prints, archival',
     smartAnalysisAlwaysOn: false,
   },
+  'bg-removal': {
+    label: 'Background Removal',
+    credits: 0,
+    modelId: null,
+    description: 'Remove image backgrounds',
+    bestFor: 'Product photos, profile pics',
+    smartAnalysisAlwaysOn: false,
+  },
 };
 
 // Convenience accessors (backward compat)
@@ -140,6 +149,7 @@ export const QUALITY_TIER_SCALES: Record<QualityTier, (2 | 4 | 8)[]> = {
   'hd-upscale': [2, 4, 8], // clarity-upscaler supports up to 16x natively
   'face-pro': [], // flux-2-pro is enhancement-only (no upscale)
   ultra: [2, 4], // nano-banana-pro is resolution-based (1K/2K/4K), not true 8x scale
+  'bg-removal': [], // bg-removal is not an upscale operation (no scale)
 };
 
 // Additional options (replaces mode + toggles)

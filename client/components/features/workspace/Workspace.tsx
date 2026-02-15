@@ -51,7 +51,10 @@ const Workspace: React.FC = () => {
   } = useBatchQueue();
 
   const { subscription, profile } = useUserData();
+  const subscriptionTier = profile?.subscription_tier?.toLowerCase() ?? null;
+  const hasPaidTier = !!subscriptionTier && subscriptionTier !== 'free';
   const hasSubscription =
+    hasPaidTier ||
     !!subscription?.price_id ||
     (!!profile?.subscription_status &&
       profile.subscription_status !== 'canceled' &&

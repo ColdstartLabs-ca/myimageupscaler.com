@@ -166,8 +166,11 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         stage: undefined, // Clear stage on completion
       });
 
-      // Update credits immediately after successful processing
-      useUserStore.getState().updateCreditsFromProcessing(result.creditsRemaining);
+      // Only update credits if server-side processing was used (creditsUsed > 0)
+      // bg-removal is client-side and returns creditsUsed: 0
+      if (result.creditsUsed > 0) {
+        useUserStore.getState().updateCreditsFromProcessing(result.creditsRemaining);
+      }
     } catch (error: unknown) {
       const errorMessage = serializeError(error);
 
@@ -256,8 +259,8 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       await processSingleItem(item, config);
 
       // Add delay between requests to avoid rate limits
-      // Skip delay after the last item
-      if (i < itemsToProcess.length - 1) {
+      // Skip delay after the last item or for client-side processing (no API rate limits)
+      if (config.qualityTier !== 'bg-removal' && i < itemsToProcess.length - 1) {
         await new Promise(resolve => setTimeout(resolve, TIMEOUTS.BATCH_REQUEST_DELAY));
       }
     }

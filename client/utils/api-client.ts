@@ -157,6 +157,18 @@ export const processImage = async (
   onProgress: ProgressCallback
 ): Promise<IProcessImageResult> => {
   try {
+    // Client-side processing for bg-removal (no API call)
+    if (config.qualityTier === 'bg-removal') {
+      const { processBackgroundRemoval } = await import('@/client/utils/bg-removal');
+      const result = await processBackgroundRemoval(file, onProgress);
+      return {
+        imageUrl: result.imageUrl,
+        imageData: undefined,
+        creditsRemaining: -1, // Signal: don't update credits
+        creditsUsed: 0,
+      };
+    }
+
     // Stage 1: Preparing
     onProgress(10, ProcessingStage.PREPARING);
     const base64Data = await fileToBase64(file);

@@ -162,6 +162,7 @@ const MODEL_PROCESSING_TIMES: Record<string, number> = {
   'nano-banana': 25,
   'clarity-upscaler': 30,
   'nano-banana-pro': 45,
+  'bg-removal': 10, // ~10 seconds for browser-based processing
   auto: 35, // Average
 };
 

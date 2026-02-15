@@ -156,6 +156,7 @@ describe('Model Registry: Accurate Scale Support (PRD: True Image Upscaling)', (
     it('should have consistent scales between QUALITY_TIER_SCALES and model supportedScales', () => {
       Object.entries(QUALITY_TIER_CONFIG).forEach(([tier, config]) => {
         if (tier === 'auto') return; // Auto tier is special
+        if (!config.modelId) return; // Skip tiers without a model (bg-removal)
 
         const modelId = config.modelId;
         const model = registry.getModel(modelId);

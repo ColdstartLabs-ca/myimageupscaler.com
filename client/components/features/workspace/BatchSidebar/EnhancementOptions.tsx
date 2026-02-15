@@ -15,6 +15,7 @@ import {
   ChevronDown,
   Edit3,
   ExternalLink,
+  ImageIcon,
   Minimize2,
   Sparkles,
   Type,
@@ -71,50 +72,98 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
 
   return (
     <div className="space-y-3">
-      {/* Smart AI Analysis - Prominent Card */}
-      {showSmartAnalysis && (
-        <div
-          className={`rounded-lg border overflow-hidden ${
-            isFreeUser
-              ? 'border-border bg-surface-light/50 opacity-60'
-              : 'border-accent/20 bg-accent/10'
-          }`}
-          title={isFreeUser ? 'Paid plans only' : undefined}
-        >
-          <div className="p-3 flex items-start gap-3">
-            <div
-              className={`p-1.5 rounded-md shrink-0 ${isFreeUser ? 'bg-surface-light' : 'bg-accent/20'}`}
-            >
-              <Brain
-                className={`h-4 w-4 ${isFreeUser ? 'text-muted-foreground' : 'text-accent'}`}
-              />
+      {/* BG Removal tier: show minimal info card, no enhancement options apply */}
+      {selectedTier === 'bg-removal' && (
+        <div className="rounded-lg border border-accent/20 bg-accent/10 p-3">
+          <div className="flex items-start gap-3">
+            <div className="p-1.5 bg-accent/20 rounded-md shrink-0">
+              <ImageIcon className="h-4 w-4 text-accent" />
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="smart-analysis"
-                  className={`font-medium text-sm ${isFreeUser ? 'text-muted-foreground cursor-not-allowed' : 'text-white cursor-pointer'}`}
+            <div>
+              <div className="font-medium text-sm text-white">Background Removal</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Removes the background from images using browser-based AI. No enhancement options
+                apply to this operation.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Show regular options only when NOT bg-removal */}
+      {selectedTier !== 'bg-removal' && (
+        <>
+          {/* Smart AI Analysis - Prominent Card */}
+          {showSmartAnalysis && (
+            <div
+              className={`rounded-lg border overflow-hidden ${
+                isFreeUser
+                  ? 'border-border bg-surface-light/50 opacity-60'
+                  : 'border-accent/20 bg-accent/10'
+              }`}
+              title={isFreeUser ? 'Paid plans only' : undefined}
+            >
+              <div className="p-3 flex items-start gap-3">
+                <div
+                  className={`p-1.5 rounded-md shrink-0 ${isFreeUser ? 'bg-surface-light' : 'bg-accent/20'}`}
                 >
-                  Smart AI Analysis
-                </label>
-                <input
-                  type="checkbox"
-                  id="smart-analysis"
-                  checked={isFreeUser ? false : options.smartAnalysis}
-                  onChange={e => handleToggle('smartAnalysis', e.target.checked)}
-                  disabled={disabled || isFreeUser}
-                  className="h-4 w-4 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
-                />
+                  <Brain
+                    className={`h-4 w-4 ${isFreeUser ? 'text-muted-foreground' : 'text-accent'}`}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="smart-analysis"
+                      className={`font-medium text-sm ${isFreeUser ? 'text-muted-foreground cursor-not-allowed' : 'text-white cursor-pointer'}`}
+                    >
+                      Smart AI Analysis
+                    </label>
+                    <input
+                      type="checkbox"
+                      id="smart-analysis"
+                      checked={isFreeUser ? false : options.smartAnalysis}
+                      onChange={e => handleToggle('smartAnalysis', e.target.checked)}
+                      disabled={disabled || isFreeUser}
+                      className="h-4 w-4 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
+                    />
+                  </div>
+                  <p
+                    className={`text-xs mt-1 ${isFreeUser ? 'text-muted-foreground' : 'text-muted-foreground'}`}
+                  >
+                    {isFreeUser ? (
+                      'Upgrade to let AI detect content type and optimize settings automatically.'
+                    ) : (
+                      <>
+                        AI automatically detects image content and optimizes parameters for best
+                        results.{' '}
+                        <Link
+                          href="/tools/smart-ai-enhancement"
+                          className="inline-flex items-center gap-0.5 text-accent hover:text-accent/80 transition-colors"
+                          target="_blank"
+                        >
+                          Learn more
+                          <ExternalLink className="h-2.5 w-2.5" />
+                        </Link>
+                      </>
+                    )}
+                  </p>
+                </div>
               </div>
-              <p
-                className={`text-xs mt-1 ${isFreeUser ? 'text-muted-foreground' : 'text-muted-foreground'}`}
-              >
-                {isFreeUser ? (
-                  'Upgrade to let AI detect content type and optimize settings automatically.'
-                ) : (
-                  <>
-                    AI automatically detects image content and optimizes parameters for best
-                    results.{' '}
+            </div>
+          )}
+
+          {/* Auto tier indicator (prominent) */}
+          {selectedTier === 'auto' && (
+            <div className="rounded-lg border border-accent/20 bg-accent/10 p-3">
+              <div className="flex items-start gap-3">
+                <div className="p-1.5 bg-accent/20 rounded-md shrink-0">
+                  <Brain className="h-4 w-4 text-accent" />
+                </div>
+                <div>
+                  <div className="font-medium text-sm text-white">Smart Analysis Active</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    AI will automatically select the best enhancements for your image.{' '}
                     <Link
                       href="/tools/smart-ai-enhancement"
                       className="inline-flex items-center gap-0.5 text-accent hover:text-accent/80 transition-colors"
@@ -123,181 +172,164 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
                       Learn more
                       <ExternalLink className="h-2.5 w-2.5" />
                     </Link>
-                  </>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Auto tier indicator (prominent) */}
-      {selectedTier === 'auto' && (
-        <div className="rounded-lg border border-accent/20 bg-accent/10 p-3">
-          <div className="flex items-start gap-3">
-            <div className="p-1.5 bg-accent/20 rounded-md shrink-0">
-              <Brain className="h-4 w-4 text-accent" />
-            </div>
-            <div>
-              <div className="font-medium text-sm text-white">Smart Analysis Active</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                AI will automatically select the best enhancements for your image.{' '}
-                <Link
-                  href="/tools/smart-ai-enhancement"
-                  className="inline-flex items-center gap-0.5 text-accent hover:text-accent/80 transition-colors"
-                  target="_blank"
-                >
-                  Learn more
-                  <ExternalLink className="h-2.5 w-2.5" />
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Collapsible Options Header */}
-      <button
-        type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between py-2 text-sm font-medium text-white group hover:text-accent transition-colors"
-      >
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
-          <span>Additional Enhancements</span>
-        </div>
-        <ChevronDown
-          className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-        />
-      </button>
-
-      {/* Collapsible Content */}
-      <div
-        className={`space-y-3 overflow-hidden transition-all duration-300 ease-in-out ${
-          isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        {/* Enhance Image */}
-        <div className="flex flex-col gap-1 pl-1">
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="enhance-image"
-              checked={options.enhance}
-              onChange={e => handleToggle('enhance', e.target.checked)}
-              disabled={disabled}
-              className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
-            />
-            <label htmlFor="enhance-image" className="flex items-center gap-2 cursor-pointer">
-              <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-sm text-white">Enhance Image</span>
-            </label>
-          </div>
-
-          {/* Enhancement sub-options */}
-          {options.enhance && options.enhancement && (
-            <div className="ml-5.5 mt-1 p-2 bg-surface-light rounded border border-border">
-              <div className="grid grid-cols-2 gap-x-2 gap-y-1">
-                {[
-                  { key: 'clarity', label: 'Clarity' },
-                  { key: 'color', label: 'Color' },
-                  { key: 'lighting', label: 'Lighting' },
-                  { key: 'denoise', label: 'Denoise' },
-                  { key: 'artifacts', label: 'Artifacts' },
-                  { key: 'details', label: 'Details' },
-                ].map(({ key, label }) => (
-                  <label key={key} className="flex items-center gap-1.5 cursor-pointer text-xs">
-                    <input
-                      type="checkbox"
-                      checked={options.enhancement?.[key as keyof IEnhancementSettings] || false}
-                      onChange={e =>
-                        handleEnhancementToggle(key as keyof IEnhancementSettings, e.target.checked)
-                      }
-                      disabled={disabled}
-                      className="h-3 w-3 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
-                    />
-                    <span className="text-muted-foreground">{label}</span>
-                  </label>
-                ))}
+                  </p>
+                </div>
               </div>
             </div>
           )}
-        </div>
 
-        {/* Enhance Faces */}
-        <div className="flex items-center gap-2 pl-1">
-          <input
-            type="checkbox"
-            id="enhance-faces"
-            checked={options.enhanceFaces}
-            onChange={e => handleToggle('enhanceFaces', e.target.checked)}
-            disabled={disabled}
-            className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
-          />
-          <label htmlFor="enhance-faces" className="flex items-center gap-2 cursor-pointer">
-            <UserSquare2 className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-sm text-white">Enhance Faces</span>
-          </label>
-        </div>
+          {/* Collapsible Options Header */}
+          <button
+            type="button"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full flex items-center justify-between py-2 text-sm font-medium text-white group hover:text-accent transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
+              <span>Additional Enhancements</span>
+            </div>
+            <ChevronDown
+              className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+            />
+          </button>
 
-        {/* Preserve Text */}
-        <div className="flex items-center gap-2 pl-1">
-          <input
-            type="checkbox"
-            id="preserve-text"
-            checked={options.preserveText}
-            onChange={e => handleToggle('preserveText', e.target.checked)}
-            disabled={disabled}
-            className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
-          />
-          <label htmlFor="preserve-text" className="flex items-center gap-2 cursor-pointer">
-            <Type className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-sm text-white">Preserve Text</span>
-          </label>
-        </div>
+          {/* Collapsible Content */}
+          <div
+            className={`space-y-3 overflow-hidden transition-all duration-300 ease-in-out ${
+              isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            {/* Enhance Image */}
+            <div className="flex flex-col gap-1 pl-1">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="enhance-image"
+                  checked={options.enhance}
+                  onChange={e => handleToggle('enhance', e.target.checked)}
+                  disabled={disabled}
+                  className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
+                />
+                <label htmlFor="enhance-image" className="flex items-center gap-2 cursor-pointer">
+                  <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-sm text-white">Enhance Image</span>
+                </label>
+              </div>
 
-        {/* Custom Instructions */}
-        <div className="flex items-center gap-2 pl-1">
-          <input
-            type="checkbox"
-            id="custom-instructions"
-            checked={!!options.customInstructions}
-            onChange={e => {
-              if (e.target.checked) {
-                onOpenCustomInstructions();
-              } else {
-                handleToggle('customInstructions', '');
-              }
-            }}
-            disabled={disabled}
-            className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
-          />
-          <label htmlFor="custom-instructions" className="flex items-center gap-2 cursor-pointer">
-            <Edit3 className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-sm text-white">Custom Instructions</span>
-            {options.customInstructions && (
-              <span className="text-xs text-accent ml-1">
-                ({options.customInstructions.length} chars)
-              </span>
-            )}
-          </label>
-        </div>
+              {/* Enhancement sub-options */}
+              {options.enhance && options.enhancement && (
+                <div className="ml-5.5 mt-1 p-2 bg-surface-light rounded border border-border">
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+                    {[
+                      { key: 'clarity', label: 'Clarity' },
+                      { key: 'color', label: 'Color' },
+                      { key: 'lighting', label: 'Lighting' },
+                      { key: 'denoise', label: 'Denoise' },
+                      { key: 'artifacts', label: 'Artifacts' },
+                      { key: 'details', label: 'Details' },
+                    ].map(({ key, label }) => (
+                      <label key={key} className="flex items-center gap-1.5 cursor-pointer text-xs">
+                        <input
+                          type="checkbox"
+                          checked={
+                            options.enhancement?.[key as keyof IEnhancementSettings] || false
+                          }
+                          onChange={e =>
+                            handleEnhancementToggle(
+                              key as keyof IEnhancementSettings,
+                              e.target.checked
+                            )
+                          }
+                          disabled={disabled}
+                          className="h-3 w-3 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
+                        />
+                        <span className="text-muted-foreground">{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
-        {/* Auto-Resize Oversized Images */}
-        <div className="flex items-center gap-2 pl-1">
-          <input
-            type="checkbox"
-            id="auto-resize"
-            checked={autoResize}
-            onChange={e => handleAutoResizeToggle(e.target.checked)}
-            className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent"
-          />
-          <label htmlFor="auto-resize" className="flex items-center gap-2 cursor-pointer">
-            <Minimize2 className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-sm text-white">Auto-Resize Oversized</span>
-          </label>
-        </div>
-      </div>
+            {/* Enhance Faces */}
+            <div className="flex items-center gap-2 pl-1">
+              <input
+                type="checkbox"
+                id="enhance-faces"
+                checked={options.enhanceFaces}
+                onChange={e => handleToggle('enhanceFaces', e.target.checked)}
+                disabled={disabled}
+                className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
+              />
+              <label htmlFor="enhance-faces" className="flex items-center gap-2 cursor-pointer">
+                <UserSquare2 className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-sm text-white">Enhance Faces</span>
+              </label>
+            </div>
+
+            {/* Preserve Text */}
+            <div className="flex items-center gap-2 pl-1">
+              <input
+                type="checkbox"
+                id="preserve-text"
+                checked={options.preserveText}
+                onChange={e => handleToggle('preserveText', e.target.checked)}
+                disabled={disabled}
+                className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
+              />
+              <label htmlFor="preserve-text" className="flex items-center gap-2 cursor-pointer">
+                <Type className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-sm text-white">Preserve Text</span>
+              </label>
+            </div>
+
+            {/* Custom Instructions */}
+            <div className="flex items-center gap-2 pl-1">
+              <input
+                type="checkbox"
+                id="custom-instructions"
+                checked={!!options.customInstructions}
+                onChange={e => {
+                  if (e.target.checked) {
+                    onOpenCustomInstructions();
+                  } else {
+                    handleToggle('customInstructions', '');
+                  }
+                }}
+                disabled={disabled}
+                className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
+              />
+              <label
+                htmlFor="custom-instructions"
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <Edit3 className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-sm text-white">Custom Instructions</span>
+                {options.customInstructions && (
+                  <span className="text-xs text-accent ml-1">
+                    ({options.customInstructions.length} chars)
+                  </span>
+                )}
+              </label>
+            </div>
+
+            {/* Auto-Resize Oversized Images */}
+            <div className="flex items-center gap-2 pl-1">
+              <input
+                type="checkbox"
+                id="auto-resize"
+                checked={autoResize}
+                onChange={e => handleAutoResizeToggle(e.target.checked)}
+                className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent"
+              />
+              <label htmlFor="auto-resize" className="flex items-center gap-2 cursor-pointer">
+                <Minimize2 className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-sm text-white">Auto-Resize Oversized</span>
+              </label>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
