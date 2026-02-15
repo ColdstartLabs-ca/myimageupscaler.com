@@ -77,7 +77,7 @@ vi.mock('../model-registry', () => ({
             id: 'gfpgan',
             displayName: 'Face Restore',
             provider: 'replicate',
-            modelVersion: 'tencentarc/gfpgan:test-version',
+            modelVersion: 'xinntao/gfpgan:test-version',
             capabilities: ['upscale', 'face-restoration'],
             costPerRun: 0.003,
             creditMultiplier: 1.5,
@@ -1408,7 +1408,7 @@ describe('ReplicateService', () => {
         }
       ).getModelVersionForId('gfpgan');
 
-      expect(version).toBe('tencentarc/gfpgan:test-version');
+      expect(version).toBe('xinntao/gfpgan:test-version');
     });
 
     test('should fallback to instance modelVersion for unknown models', () => {

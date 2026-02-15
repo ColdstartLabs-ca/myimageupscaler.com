@@ -7,17 +7,11 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
 import React from 'react';
-import { PlatformPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformPageTemplate';
-import { FormatScalePageTemplate } from '@/app/(pseo)/_components/pseo/templates/FormatScalePageTemplate';
-import { DeviceUsePageTemplate } from '@/app/(pseo)/_components/pseo/templates/DeviceUsePageTemplate';
-import { PlatformFormatPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformFormatPageTemplate';
+import { ToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/ToolPageTemplate';
+import { FormatPageTemplate } from '@/app/(pseo)/_components/pseo/templates/FormatPageTemplate';
+import { ScalePageTemplate } from '@/app/(pseo)/_components/pseo/templates/ScalePageTemplate';
 import { RelatedPagesSection } from '@/app/(pseo)/_components/pseo/sections/RelatedPagesSection';
-import type {
-  IPlatformPage,
-  IFormatScalePage,
-  IDeviceUseCasePage,
-  IPlatformFormatPage,
-} from '@/lib/seo/pseo-types';
+import type { IToolPage, IFormatPage, IScalePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
 
 // Mock lucide-react icons
@@ -35,6 +29,58 @@ vi.mock('lucide-react', () => ({
   Link2: ({ className }: { className?: string }) => (
     <svg data-testid="link-icon" className={className}>
       <circle cx="12" cy="12" r="10" />
+    </svg>
+  ),
+  Monitor: ({ className }: { className?: string }) => (
+    <svg data-testid="monitor-icon" className={className}>
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+    </svg>
+  ),
+  Zap: ({ className }: { className?: string }) => (
+    <svg data-testid="zap-icon" className={className}>
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  ),
+  Check: ({ className }: { className?: string }) => (
+    <svg data-testid="check-icon" className={className}>
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+  Image: ({ className }: { className?: string }) => (
+    <svg data-testid="image-icon" className={className}>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+    </svg>
+  ),
+  FileImage: ({ className }: { className?: string }) => (
+    <svg data-testid="file-image-icon" className={className}>
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+    </svg>
+  ),
+  Sparkles: ({ className }: { className?: string }) => (
+    <svg data-testid="sparkles-icon" className={className}>
+      <path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3z" />
+    </svg>
+  ),
+  Target: ({ className }: { className?: string }) => (
+    <svg data-testid="target-icon" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="12" r="2" />
+    </svg>
+  ),
+  Layers: ({ className }: { className?: string }) => (
+    <svg data-testid="layers-icon" className={className}>
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </svg>
+  ),
+  Maximize2: ({ className }: { className?: string }) => (
+    <svg data-testid="maximize2-icon" className={className}>
+      <polyline points="15 3 21 3 21 9" />
+      <polyline points="9 21 3 21 3 15" />
+      <line x1="21" y1="3" x2="14" y2="10" />
+      <line x1="3" y1="21" x2="10" y2="14" />
     </svg>
   ),
 }));
@@ -123,172 +169,179 @@ vi.mock('@/lib/seo/related-pages', () => ({
 }));
 
 describe('pSEO Templates - Phase 5: Before/After Slider', () => {
-  const mockPlatformData: IPlatformPage = {
-    slug: 'midjourney-upscaler',
-    platformName: 'Midjourney',
-    title: 'Midjourney Upscaler',
-    h1: 'Upscale Midjourney Images',
-    intro: 'Enhance your AI art',
-    description: 'Professional upscaling for Midjourney images',
-    primaryKeyword: 'midjourney upscaler',
+  const mockToolData: IToolPage = {
+    slug: 'image-upscaler',
+    category: 'tools',
+    toolName: 'Image Upscaler',
+    title: 'Image Upscaler',
+    metaTitle: 'AI Image Upscaler - Upscale Images Online',
+    metaDescription: 'Upscale your images with AI',
+    h1: 'Upscale Images with AI',
+    intro: 'Enhance your images with our AI-powered upscaler',
+    primaryKeyword: 'image upscaler',
+    secondaryKeywords: ['upscale', 'ai upscaler'],
+    description: 'Professional AI-powered image upscaling tool',
+    features: [
+      { title: 'AI Enhancement', description: 'Advanced AI algorithms' },
+      { title: 'Multiple formats', description: 'Support for JPEG, PNG, WebP' },
+    ],
+    useCases: [{ title: 'Print', description: 'High quality prints' }],
     benefits: [
       { title: 'Better quality', description: 'Higher resolution output' },
       { title: 'Faster processing', description: 'Quick upscaling' },
     ],
-    integration: ['Easy export', 'Batch processing'],
-    useCases: [{ title: 'Print', description: 'High quality prints' }],
-    workflowSteps: ['Upload', 'Select scale', 'Download'],
+    howItWorks: [
+      { step: 1, title: 'Upload', description: 'Upload your image' },
+      { step: 2, title: 'Select', description: 'Choose scale factor' },
+      { step: 3, title: 'Download', description: 'Download result' },
+    ],
     faq: [{ question: 'How to use?', answer: 'Just upload' }],
+    relatedTools: [],
+    relatedGuides: [],
+    ctaText: 'Try Now',
+    ctaUrl: '/',
+    lastUpdated: '2024-01-01',
+    beforeAfterImages: {
+      before: '/images/before.jpg',
+      after: '/images/after.jpg',
+    },
   };
 
-  const mockFormatScaleData: IFormatScalePage = {
-    slug: 'jpeg-2x',
-    format: 'JPEG',
-    scaleFactor: '2x',
-    title: 'JPEG 2x Upscaler',
-    h1: 'Upscale JPEG Images 2x',
+  const mockFormatData: IFormatPage = {
+    slug: 'jpeg-upscaler',
+    category: 'formats',
+    formatName: 'JPEG',
+    extension: '.jpg',
+    title: 'JPEG Upscaler',
+    metaTitle: 'JPEG Upscaler - Upscale JPEG Images Online',
+    metaDescription: 'Upscale your JPEG images',
+    h1: 'Upscale JPEG Images',
     intro: 'Double your JPEG resolution',
-    primaryKeyword: 'jpeg 2x upscaler',
-    formatDescription: 'JPEG is a popular image format',
-    scaleExpectations: '2x scaling provides good quality',
-    benefits: [
-      { title: 'Maintains quality', description: 'High quality upscaling' },
-      { title: 'Fast processing', description: 'Quick results' },
+    primaryKeyword: 'jpeg upscaler',
+    secondaryKeywords: ['jpg upscaler', 'jpeg upscale'],
+    description: 'JPEG is a popular image format',
+    characteristics: [
+      { title: 'Lossy compression', description: 'Smaller file sizes' },
     ],
     useCases: [{ title: 'Web', description: 'Better web images' }],
-    bestPractices: ['Use high quality source', 'Check artifacts'],
-    tips: ['Enable enhancement', 'Check output'],
-    faq: [{ question: 'Quality loss?', answer: 'Minimal loss' }],
-  };
-
-  const mockDeviceUseData: IDeviceUseCasePage = {
-    slug: 'mobile-social-media',
-    device: 'mobile',
-    useCase: 'social media',
-    title: 'Mobile Social Media Upscaler',
-    h1: 'Optimize for Mobile Social Media',
-    intro: 'Perfect for Instagram, TikTok',
-    primaryKeyword: 'mobile social media upscaler',
-    deviceDescription: 'Mobile devices need optimized images',
-    useCaseDescription: 'Social media platforms have specific requirements',
-    deviceConstraints: ['Limited bandwidth', 'Small screens'],
-    useCaseBenefits: ['Faster uploads', 'Better engagement'],
-    tips: ['Use square format', 'Compress first'],
-    faq: [{ question: 'Best format?', answer: 'JPEG or WebP' }],
-  };
-
-  const mockPlatformFormatData: IPlatformFormatPage = {
-    slug: 'midjourney-png',
-    platform: 'Midjourney',
-    format: 'PNG',
-    title: 'Midjourney PNG Upscaler',
-    h1: 'Upscale Midjourney PNG Images',
-    intro: 'Enhance PNG exports from Midjourney',
-    primaryKeyword: 'midjourney png upscaler',
-    platformDescription: 'Midjourney creates stunning AI art',
-    formatDescription: 'PNG supports transparency',
-    platformSettings: 'Use PNG for images with transparency',
-    benefits: [
-      { title: 'Lossless quality', description: 'No quality loss' },
-      { title: 'Transparency support', description: 'Keeps transparency' },
+    bestPractices: [
+      { title: 'Use high quality source', description: 'Avoid artifacts' },
     ],
-    exportTips: ['Enable PNG export', 'Use high resolution'],
-    workflowTips: ['Generate', 'Upscale', 'Download'],
-    useCases: [{ title: 'Design', description: 'Professional design work' }],
-    faq: [{ question: 'PNG vs JPEG?', answer: 'PNG for transparency' }],
+    faq: [{ question: 'Quality loss?', answer: 'Minimal loss' }],
+    relatedFormats: [],
+    relatedGuides: [],
+    lastUpdated: '2024-01-01',
+    beforeAfterImages: {
+      before: '/images/before.jpg',
+      after: '/images/after.jpg',
+    },
   };
 
-  describe('PlatformPageTemplate', () => {
-    it('should render BeforeAfterSlider in PlatformPageTemplate', () => {
-      render(<PlatformPageTemplate data={mockPlatformData} locale="en" />);
+  const mockScaleData: IScalePage = {
+    slug: '2x-upscaler',
+    category: 'scale',
+    resolution: '2x',
+    title: '2x Upscaler',
+    metaTitle: '2x Image Upscaler - Double Your Image Size',
+    metaDescription: 'Upscale images by 2x',
+    h1: 'Upscale Images 2x',
+    intro: 'Double your image resolution',
+    primaryKeyword: '2x upscaler',
+    secondaryKeywords: ['2x upscale', 'double size'],
+    description: '2x scaling provides good quality',
+    dimensions: { width: 2048, height: 2048 },
+    useCases: [{ title: 'Print', description: 'Large prints' }],
+    benefits: [
+      { title: 'Maintains quality', description: 'High quality upscaling' },
+    ],
+    faq: [{ question: 'Is 2x good?', answer: 'Yes, very sharp' }],
+    relatedScales: [],
+    relatedGuides: [],
+    lastUpdated: '2024-01-01',
+    beforeAfterImages: {
+      before: '/images/before.jpg',
+      after: '/images/after.jpg',
+    },
+  };
+
+  describe('ToolPageTemplate', () => {
+    it('should render BeforeAfterSlider in ToolPageTemplate', () => {
+      render(<ToolPageTemplate data={mockToolData} locale="en" />);
       expect(screen.getByTestId('before-after-slider')).toBeInTheDocument();
     });
 
     it('should use English labels by default', () => {
-      render(<PlatformPageTemplate data={mockPlatformData} locale="en" />);
+      render(<ToolPageTemplate data={mockToolData} locale="en" />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('Before');
       expect(screen.getByTestId('after-label')).toHaveTextContent('After');
     });
 
     it('should use Spanish labels for es locale', () => {
-      render(<PlatformPageTemplate data={mockPlatformData} locale="es" />);
+      render(<ToolPageTemplate data={mockToolData} locale="es" />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('Antes');
       expect(screen.getByTestId('after-label')).toHaveTextContent('Después');
     });
 
     it('should use Portuguese labels for pt locale', () => {
-      render(<PlatformPageTemplate data={mockPlatformData} locale="pt" />);
+      render(<ToolPageTemplate data={mockToolData} locale="pt" />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('Antes');
       expect(screen.getByTestId('after-label')).toHaveTextContent('Depois');
     });
 
     it('should use German labels for de locale', () => {
-      render(<PlatformPageTemplate data={mockPlatformData} locale="de" />);
+      render(<ToolPageTemplate data={mockToolData} locale="de" />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('Vorher');
       expect(screen.getByTestId('after-label')).toHaveTextContent('Nachher');
     });
 
     it('should use French labels for fr locale', () => {
-      render(<PlatformPageTemplate data={mockPlatformData} locale="fr" />);
+      render(<ToolPageTemplate data={mockToolData} locale="fr" />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('Avant');
       expect(screen.getByTestId('after-label')).toHaveTextContent('Après');
     });
 
     it('should use Italian labels for it locale', () => {
-      render(<PlatformPageTemplate data={mockPlatformData} locale="it" />);
+      render(<ToolPageTemplate data={mockToolData} locale="it" />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('Prima');
       expect(screen.getByTestId('after-label')).toHaveTextContent('Dopo');
     });
 
     it('should use Japanese labels for ja locale', () => {
-      render(<PlatformPageTemplate data={mockPlatformData} locale="ja" />);
+      render(<ToolPageTemplate data={mockToolData} locale="ja" />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('前');
       expect(screen.getByTestId('after-label')).toHaveTextContent('後');
     });
 
     it('should fallback to English for undefined locale', () => {
-      render(<PlatformPageTemplate data={mockPlatformData} />);
+      render(<ToolPageTemplate data={mockToolData} />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('Before');
       expect(screen.getByTestId('after-label')).toHaveTextContent('After');
     });
   });
 
-  describe('FormatScalePageTemplate', () => {
-    it('should render BeforeAfterSlider in FormatScalePageTemplate', () => {
-      render(<FormatScalePageTemplate data={mockFormatScaleData} locale="en" />);
+  describe('FormatPageTemplate', () => {
+    it('should render BeforeAfterSlider in FormatPageTemplate', () => {
+      render(<FormatPageTemplate data={mockFormatData} locale="en" />);
       expect(screen.getByTestId('before-after-slider')).toBeInTheDocument();
     });
 
     it('should use locale-aware labels', () => {
-      render(<FormatScalePageTemplate data={mockFormatScaleData} locale="es" />);
+      render(<FormatPageTemplate data={mockFormatData} locale="es" />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('Antes');
       expect(screen.getByTestId('after-label')).toHaveTextContent('Después');
     });
   });
 
-  describe('DeviceUsePageTemplate', () => {
-    it('should render BeforeAfterSlider in DeviceUsePageTemplate', () => {
-      render(<DeviceUsePageTemplate data={mockDeviceUseData} locale="en" />);
+  describe('ScalePageTemplate', () => {
+    it('should render BeforeAfterSlider in ScalePageTemplate', () => {
+      render(<ScalePageTemplate data={mockScaleData} locale="en" />);
       expect(screen.getByTestId('before-after-slider')).toBeInTheDocument();
     });
 
     it('should use locale-aware labels', () => {
-      render(<DeviceUsePageTemplate data={mockDeviceUseData} locale="pt" />);
+      render(<ScalePageTemplate data={mockScaleData} locale="pt" />);
       expect(screen.getByTestId('before-label')).toHaveTextContent('Antes');
       expect(screen.getByTestId('after-label')).toHaveTextContent('Depois');
-    });
-  });
-
-  describe('PlatformFormatPageTemplate', () => {
-    it('should render BeforeAfterSlider in PlatformFormatPageTemplate', () => {
-      render(<PlatformFormatPageTemplate data={mockPlatformFormatData} locale="en" />);
-      expect(screen.getByTestId('before-after-slider')).toBeInTheDocument();
-    });
-
-    it('should use locale-aware labels', () => {
-      render(<PlatformFormatPageTemplate data={mockPlatformFormatData} locale="de" />);
-      expect(screen.getByTestId('before-label')).toHaveTextContent('Vorher');
-      expect(screen.getByTestId('after-label')).toHaveTextContent('Nachher');
     });
   });
 });

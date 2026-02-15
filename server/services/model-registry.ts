@@ -28,7 +28,7 @@ import type {
  */
 const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'real-esrgan': 'nightmareai/real-esrgan',
-  gfpgan: 'tencentarc/gfpgan:0fbacf7afc6c144e5be9767cff80f25aff23e52b0708f17e20f9879b2f21516c',
+  gfpgan: 'xinntao/gfpgan:6129309904ce4debfde78de5c209bce0022af40e197e132f08be8ccce3050393',
   'nano-banana': 'gemini-2.5-flash-image',
   'clarity-upscaler':
     'philz1337x/clarity-upscaler:dfad41707589d68ecdccd1dfa600d55a208f9310748e44bfe35b4a6291453d5e',

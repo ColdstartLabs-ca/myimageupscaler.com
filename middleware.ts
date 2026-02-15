@@ -540,7 +540,11 @@ async function handleApiRoute(req: NextRequest, pathname: string): Promise<NextR
   // Handle public routes - they don't require authentication
   // But optionally add user context if user is authenticated
   if (isPublic) {
-    let res = NextResponse.next();
+    // SECURITY: Strip any client-supplied X-User-Id header to prevent forgery
+    // on public routes (where we don't always set it ourselves)
+    const strippedHeaders = new Headers(req.headers);
+    strippedHeaders.delete('X-User-Id');
+    let res = NextResponse.next({ request: { headers: strippedHeaders } });
     applySecurityHeaders(res);
     applyCorsHeaders(res, req.headers.get('origin') || undefined);
 

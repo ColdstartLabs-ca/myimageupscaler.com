@@ -2,6 +2,7 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { UserRepository } from '@shared/repositories';
 import { NextRequest } from 'next/server';
 import { CREDIT_COSTS } from '@shared/config/credits.config';
+import { serverEnv } from '@shared/config/env';
 
 /**
  * Extract authenticated user from middleware-set headers
@@ -31,8 +32,8 @@ export async function getAuthenticatedUser(req: NextRequest): Promise<IUserProfi
     return null;
   }
 
-  // Handle test user
-  if (userId === 'test-user-id-12345') {
+  // Handle test user - ONLY in test environment
+  if (userId === 'test-user-id-12345' && serverEnv.ENV === 'test' && serverEnv.NODE_ENV !== 'production') {
     return {
       id: 'test-user-id-12345',
       email: 'test@example.com',

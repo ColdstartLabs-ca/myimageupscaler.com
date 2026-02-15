@@ -115,7 +115,7 @@ Why this matters:
 | 1 | Move signup behind server endpoint (`/api/auth/register`) and require challenge (Turnstile/hCaptcha) + risk scoring | M | Very High | P0 |
 | 2 | Grant free credits only after verified email (`auth.users.email_confirmed_at IS NOT NULL`) or first paid-intent signal | M | Very High | P0 |
 | 3 | Add anti-abuse identity graph: hashed IP, device fingerprint hash, email domain risk, ASN, velocity windows | M-L | Very High | P0 |
-| 4 | Fix profile RLS to prevent role mutation by users (separate admin-only role update path) | S | Critical | P0 |
+| 4 | ~~Fix profile RLS to prevent role mutation by users (separate admin-only role update path)~~ | S | Critical | **DONE** |
 | 5 | Add DB constraints/triggers for credit grant idempotency per abuse identity (e.g., one signup bonus per device/IP window) | M | High | P1 |
 | 6 | Replace in-memory rate limits with Redis/KV/DO-backed distributed limits for auth routes | M | High | P1 |
 | 7 | Harden guest endpoint: signed visitor token from server, stronger bot signals, VPN/datacenter scoring | M | Medium-High | P1 |
@@ -123,7 +123,7 @@ Why this matters:
 | 9 | Add anomaly monitoring + auto-action (suspend, require phone, reduce limits) | M | High | P1 |
 
 ## Recommended Immediate Actions (next 72 hours)
-1. Patch RLS/admin escalation path first (`profiles.role` immutability for non-admin users).
+1. ~~Patch RLS/admin escalation path first (`profiles.role` immutability for non-admin users).~~ **DONE 2026-02-14** — Migration `20260214_fix_profile_role_immutability.sql` adds BEFORE UPDATE trigger + RLS WITH CHECK. Test: `tests/unit/security/role-immutability.unit.spec.ts`.
 2. Stop unconditional signup bonus issuance; gate bonus on verified email.
 3. Introduce server-side signup endpoint with Turnstile and per-IP/per-device velocity limits.
 4. Add temporary emergency throttles:
@@ -132,7 +132,7 @@ Why this matters:
 5. Instrument abuse telemetry dashboard (signup success rate, bonus grant rate, conversion lag, suspicious clusters).
 
 ## Validation Tests To Add
-- Cannot update own `profiles.role` from authenticated client token.
+- ~~Cannot update own `profiles.role` from authenticated client token.~~ **DONE** — `tests/unit/security/role-immutability.unit.spec.ts`
 - Signup without verified email does not receive bonus credits.
 - Signup route rejects failed captcha / high-risk fingerprints.
 - Repeated signups from same IP/device/email-domain pattern are throttled or blocked.

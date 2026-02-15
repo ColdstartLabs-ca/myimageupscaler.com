@@ -50,8 +50,12 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-  const { subscription } = useUserData();
-  const hasSubscription = !!subscription?.price_id;
+  const { subscription, profile } = useUserData();
+  const hasSubscription =
+    !!subscription?.price_id ||
+    (!!profile?.subscription_status &&
+      profile.subscription_status !== 'canceled' &&
+      profile.subscription_status !== 'unpaid');
   const isFreeUser = !hasSubscription;
   const router = useRouter();
   const premiumTiers = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
