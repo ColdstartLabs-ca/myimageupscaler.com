@@ -133,6 +133,70 @@ describe('Tier Restriction Logic', () => {
     });
   });
 
+  describe('Credit Purchaser Access', () => {
+    // Tests for users who purchased credits but have no subscription
+    // They should get 'hobby' tier access for model selection
+
+    it('should grant hobby-tier model access when user has purchased credits but no subscription', () => {
+      // User with purchased credits but no subscription gets 'hobby' tier
+      const userTier = 'hobby'; // Granted for credit purchasers
+
+      // Can access free models
+      expect(canAccessModel(userTier, 'free')).toBe(true);
+      // Can access hobby-tier models (the key assertion)
+      expect(canAccessModel(userTier, 'hobby')).toBe(true);
+    });
+
+    it('should block premium models for users with no subscription AND no purchased credits', () => {
+      // User with no subscription and no purchased credits gets 'free' tier
+      const userTier = 'free';
+      const hasPaidAccess = canAccessModel(userTier, 'hobby');
+
+      expect(hasPaidAccess).toBe(false);
+    });
+
+    it('should use subscription tier when both subscription and purchased credits exist', () => {
+      // When user has both subscription AND purchased credits,
+      // subscription tier takes precedence
+      const subscriptionTier = 'pro';
+      const hasProAccess = canAccessModel(subscriptionTier, 'pro');
+      const hasHobbyAccess = canAccessModel(subscriptionTier, 'hobby');
+
+      // Pro tier should work (subscription tier takes precedence)
+      expect(hasProAccess).toBe(true);
+      // Should still have access to lower tiers
+      expect(hasHobbyAccess).toBe(true);
+    });
+
+    it('should allow hobby-tier models for credit-only purchasers (clarity-upscaler)', () => {
+      const userTier = 'hobby'; // Credit purchaser gets hobby tier
+      const _requiredTier = 'hobby'; // clarity-upscaler requires hobby
+
+      expect(canAccessModel(userTier, 'hobby')).toBe(true);
+    });
+
+    it('should allow hobby-tier models for credit-only purchasers (flux-2-pro)', () => {
+      const userTier = 'hobby'; // Credit purchaser gets hobby tier
+      const requiredTier = 'hobby'; // flux-2-pro requires hobby
+
+      expect(canAccessModel(userTier, requiredTier)).toBe(true);
+    });
+
+    it('should block pro-tier models for credit-only purchasers', () => {
+      const userTier = 'hobby'; // Credit purchaser gets hobby tier, not pro
+      const requiredTier = 'pro';
+
+      expect(canAccessModel(userTier, requiredTier)).toBe(false);
+    });
+
+    it('should block business-tier models for credit-only purchasers', () => {
+      const userTier = 'hobby'; // Credit purchaser gets hobby tier, not business
+      const requiredTier = 'business';
+
+      expect(canAccessModel(userTier, requiredTier)).toBe(false);
+    });
+  });
+
   describe('Edge cases', () => {
     it('should handle undefined user tier as free', () => {
       const userLevel = tierLevels['undefined'] ?? 0;

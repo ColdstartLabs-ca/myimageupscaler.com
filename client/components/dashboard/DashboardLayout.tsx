@@ -55,7 +55,7 @@ export const DashboardLayout: React.FC<IDashboardLayoutProps> = ({ children }) =
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto pt-14 md:pt-0">
-        <div className="p-4 md:p-8">{children}</div>
+        <div className="p-2 md:p-8">{children}</div>
       </main>
     </div>
   );

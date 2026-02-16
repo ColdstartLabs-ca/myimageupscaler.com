@@ -257,7 +257,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
 
   if (activeItem.status === ProcessingStatus.COMPLETED && activeItem.processedUrl) {
     return (
-      <div className="w-full h-[65vh] min-h-[400px] flex flex-col">
+      <div className="w-full h-full md:h-[65vh] md:min-h-[400px] flex flex-col">
         <div className="mb-4 flex justify-between items-center shrink-0">
           <div>
             <h3 className="text-sm font-medium text-white">{activeItem.file.name}</h3>
@@ -349,7 +349,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   const isEnhancing = activeItem.stage === ProcessingStage.ENHANCING;
 
   return (
-    <div className="relative w-full h-[65vh] min-h-[400px] max-w-5xl mx-auto bg-surface-light rounded-xl border border-border overflow-hidden flex items-center justify-center">
+    <div className="relative w-full h-full md:h-[65vh] md:min-h-[400px] max-w-5xl mx-auto bg-surface-light rounded-xl border border-border overflow-hidden flex items-center justify-center">
       <img
         src={activeItem.previewUrl}
         alt={`Preview of ${activeItem.file.name}`}

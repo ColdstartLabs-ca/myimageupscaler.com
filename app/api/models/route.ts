@@ -50,9 +50,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       }
     } else {
       // Get user's subscription tier from database
+      // Also check purchased_credits_balance to grant paid model access to credit purchasers
       const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
-        .select('subscription_status, subscription_tier')
+        .select('subscription_status, subscription_tier, purchased_credits_balance')
         .eq('id', userId)
         .single();
 
@@ -66,9 +67,20 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json(body, { status });
       }
 
-      // Determine user tier
-      if (profile.subscription_status === 'active' && profile.subscription_tier) {
+      // Check if user has active subscription
+      const hasActiveSubscription =
+        profile.subscription_status === 'active' || profile.subscription_status === 'trialing';
+
+      // Check if user has purchased credits
+      const hasPurchasedCredits = (profile.purchased_credits_balance ?? 0) > 0;
+
+      // Determine user tier:
+      // - If subscription is active, use subscription tier
+      // - If no subscription but has purchased credits, grant 'hobby' tier for model access
+      if (hasActiveSubscription && profile.subscription_tier) {
         userTier = profile.subscription_tier as SubscriptionTier;
+      } else if (hasPurchasedCredits) {
+        userTier = 'hobby';
       }
     }
 

@@ -50,12 +50,9 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   onClear,
 }) => {
   const router = useRouter();
-  const { totalCredits, profile } = useUserData();
+  const { totalCredits, isFreeUser } = useUserData();
   const [showInsufficientModal, setShowInsufficientModal] = useState(false);
   const [showCustomInstructionsModal, setShowCustomInstructionsModal] = useState(false);
-
-  // Determine if user is on free tier (no subscription or subscription_tier is null)
-  const isFreeUser = !profile?.subscription_tier;
 
   const handleDownloadAll = () => {
     downloadBatch(queue, config.qualityTier);

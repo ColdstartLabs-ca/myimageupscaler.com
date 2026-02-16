@@ -3,6 +3,7 @@ import { trackServerEvent } from '@server/analytics';
 import { GoogleGenAI } from '@google/genai';
 import { serverEnv } from '@shared/config/env';
 import type { IUpscaleInput, IUpscaleConfig } from '@shared/validation/upscale.schema';
+import { QUALITY_TIER_CONFIG } from '@shared/types/coreflow.types';
 import { getCreditsForTier } from '@shared/config/subscription.utils';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import type {
@@ -321,13 +322,22 @@ export class ImageGenerationService implements IImageProcessor {
    * Generate the prompt based on configuration
    */
   private generatePrompt(config: IUpscaleConfig): string {
-    // Use custom instructions if provided
+    // Use custom instructions if provided (highest priority)
     if (
       config.additionalOptions.customInstructions &&
       config.additionalOptions.customInstructions.trim().length > 0
     ) {
       return config.additionalOptions.customInstructions;
     }
+
+    // Use tier-specific custom prompt if defined
+    const tierConfig = QUALITY_TIER_CONFIG[config.qualityTier];
+    if (tierConfig?.customPrompt && tierConfig.genericPromptOverride) {
+      // Full override — return as-is, skip generic prompt building
+      return tierConfig.customPrompt;
+    }
+    // Note: when customPrompt exists without genericPromptOverride,
+    // it gets used as the base in buildQualityPromptSegment below
 
     // Build prompt using new quality tier system
     let prompt =

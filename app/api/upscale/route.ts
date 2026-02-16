@@ -211,15 +211,26 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     logger.info('Processing upscale request', { userId });
 
     // 3. Get user's subscription status and tier to determine limits
+    // Also check purchased_credits_balance to grant paid model access to credit purchasers
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('subscription_status, subscription_tier')
+      .select('subscription_status, subscription_tier, purchased_credits_balance')
       .eq('id', userId)
       .single();
 
     const subscriptionStatus = profile?.subscription_status ?? null;
-    const isPaidUser = isPaidSubscriptionStatus(subscriptionStatus);
-    const userTier = isPaidUser ? normalizePaidTier(profile?.subscription_tier) : null;
+    const hasActiveSubscription = isPaidSubscriptionStatus(subscriptionStatus);
+    const hasPurchasedCredits = (profile?.purchased_credits_balance ?? 0) > 0;
+
+    // User is considered "paid" if they have an active subscription OR purchased credits
+    const isPaidUser = hasActiveSubscription || hasPurchasedCredits;
+
+    // Determine tier: subscription tier takes precedence, otherwise 'hobby' for credit purchasers
+    const userTier = hasActiveSubscription
+      ? normalizePaidTier(profile?.subscription_tier)
+      : hasPurchasedCredits
+        ? 'hobby'
+        : null;
 
     // 4. Check batch limit (after rate limit, before processing)
     // HIGH-8/9 FIX: Use atomic checkAndIncrement to prevent race conditions

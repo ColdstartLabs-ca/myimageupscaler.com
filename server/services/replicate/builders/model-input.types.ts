@@ -1,7 +1,7 @@
 import type { IUpscaleInput } from '@shared/validation/upscale.schema';
 import { decodeImageDimensions } from '@shared/validation/upscale.schema';
 import type { INanoBananaProConfig, IEnhancementSettings } from '@shared/types/coreflow.types';
-import { DEFAULT_ENHANCEMENT_SETTINGS } from '@shared/types/coreflow.types';
+import { DEFAULT_ENHANCEMENT_SETTINGS, QUALITY_TIER_CONFIG } from '@shared/types/coreflow.types';
 
 /**
  * Default enhancement settings for when none are provided
@@ -19,6 +19,8 @@ export interface IModelInputContext {
   preserveText: boolean;
   enhancementSettings: IEnhancementSettings;
   customPrompt?: string;
+  tierPrompt?: string;
+  tierPromptOverride?: boolean;
   nanoBananaProConfig?: INanoBananaProConfig;
   /** Original image width in pixels (decoded from image data) */
   originalWidth?: number;
@@ -206,6 +208,11 @@ export function createModelInputContext(input: IUpscaleInput): IModelInputContex
   // Decode original image dimensions for models that need them
   const dimensions = decodeImageDimensions(imageDataUrl);
 
+  // Look up tier-specific custom prompt (intermediate priority between user instructions and model default)
+  const tierConfig = QUALITY_TIER_CONFIG[config.qualityTier];
+  const tierPrompt = tierConfig?.customPrompt;
+  const tierPromptOverride = tierConfig?.genericPromptOverride;
+
   return {
     imageDataUrl,
     scale,
@@ -214,6 +221,8 @@ export function createModelInputContext(input: IUpscaleInput): IModelInputContex
     preserveText: preserveText ?? false,
     enhancementSettings: enhancement ?? DEFAULT_ENHANCEMENT,
     customPrompt: customInstructions,
+    tierPrompt,
+    tierPromptOverride,
     nanoBananaProConfig,
     originalWidth: dimensions?.width,
     originalHeight: dimensions?.height,

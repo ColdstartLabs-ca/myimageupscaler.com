@@ -69,12 +69,16 @@ describe('Quality Tier Configuration', () => {
         'face-restore',
         'fast-edit',
         'budget-edit',
+        'budget-old-photo',
         'seedream-edit',
         'anime-upscale',
         'hd-upscale',
         'face-pro',
         'ultra',
         'bg-removal',
+        'lighting-fix',
+        'resume-photo',
+        'photo-repair',
       ];
 
       for (const tier of expectedTiers) {
@@ -89,12 +93,16 @@ describe('Quality Tier Configuration', () => {
         'face-restore',
         'fast-edit',
         'budget-edit',
+        'budget-old-photo',
         'seedream-edit',
         'anime-upscale',
         'hd-upscale',
         'face-pro',
         'ultra',
         'bg-removal',
+        'lighting-fix',
+        'resume-photo',
+        'photo-repair',
       ];
 
       for (const tier of expectedTiers) {
@@ -110,9 +118,13 @@ describe('Quality Tier Configuration', () => {
       const enhancementOnlyTiers = [
         'fast-edit',
         'budget-edit',
+        'budget-old-photo',
         'seedream-edit',
         'face-pro',
         'bg-removal',
+        'lighting-fix',
+        'resume-photo',
+        'photo-repair',
       ];
 
       for (const tier of enhancementOnlyTiers) {
@@ -120,6 +132,88 @@ describe('Quality Tier Configuration', () => {
           QUALITY_TIER_SCALES[tier],
           `Tier ${tier} should have empty scales (enhancement-only)`
         ).toEqual([]);
+      }
+    });
+  });
+
+  describe('Model gallery fields (useCases and previewImages)', () => {
+    const allTiers = Object.keys(QUALITY_TIER_CONFIG) as (keyof typeof QUALITY_TIER_CONFIG)[];
+
+    it('should have useCases array for every tier', () => {
+      for (const tier of allTiers) {
+        const config = QUALITY_TIER_CONFIG[tier];
+        expect(config.useCases, `Tier ${tier} should have useCases array defined`).toBeDefined();
+        expect(Array.isArray(config.useCases), `Tier ${tier} useCases should be an array`).toBe(
+          true
+        );
+        expect(config.useCases.length, `Tier ${tier} useCases should not be empty`).toBeGreaterThan(
+          0
+        );
+      }
+    });
+
+    it('should have previewImages field for every tier', () => {
+      for (const tier of allTiers) {
+        const config = QUALITY_TIER_CONFIG[tier];
+        expect('previewImages' in config, `Tier ${tier} should have previewImages field`).toBe(
+          true
+        );
+
+        // previewImages should be either null or a valid object with before/after
+        if (config.previewImages !== null) {
+          expect(
+            typeof config.previewImages,
+            `Tier ${tier} previewImages should be an object when not null`
+          ).toBe('object');
+          expect(
+            config.previewImages,
+            `Tier ${tier} previewImages should have before property`
+          ).toHaveProperty('before');
+          expect(
+            config.previewImages,
+            `Tier ${tier} previewImages should have after property`
+          ).toHaveProperty('after');
+          expect(
+            typeof config.previewImages!.before,
+            `Tier ${tier} previewImages.before should be a string`
+          ).toBe('string');
+          expect(
+            typeof config.previewImages!.after,
+            `Tier ${tier} previewImages.after should be a string`
+          ).toBe('string');
+        }
+      }
+    });
+
+    it('useCases should be lowercase searchable strings', () => {
+      for (const tier of allTiers) {
+        const config = QUALITY_TIER_CONFIG[tier];
+        for (const useCase of config.useCases) {
+          expect(typeof useCase, `Tier ${tier} useCase "${useCase}" should be a string`).toBe(
+            'string'
+          );
+          expect(useCase, `Tier ${tier} useCase "${useCase}" should be lowercase`).toBe(
+            useCase.toLowerCase()
+          );
+          expect(
+            useCase.length,
+            `Tier ${tier} useCase "${useCase}" should not be empty`
+          ).toBeGreaterThan(0);
+        }
+      }
+    });
+
+    it('should have 3-6 use cases per tier for good searchability', () => {
+      for (const tier of allTiers) {
+        const config = QUALITY_TIER_CONFIG[tier];
+        expect(
+          config.useCases.length,
+          `Tier ${tier} should have 3-6 use cases (got ${config.useCases.length})`
+        ).toBeGreaterThanOrEqual(3);
+        expect(
+          config.useCases.length,
+          `Tier ${tier} should have 3-6 use cases (got ${config.useCases.length})`
+        ).toBeLessThanOrEqual(6);
       }
     });
   });

@@ -7,9 +7,7 @@ import {
   IUpscaleConfig,
   ProcessingStatus,
   QUALITY_TIER_CONFIG,
-  QualityTier,
 } from '@/shared/types/coreflow.types';
-import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { Dropzone } from '@client/components/features/image-processing/Dropzone';
 import { BatchSidebar } from '@client/components/features/workspace/BatchSidebar';
 import { PreviewArea } from '@client/components/features/workspace/PreviewArea';
@@ -20,11 +18,11 @@ import { TabButton } from '@client/components/ui/TabButton';
 import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { downloadSingle } from '@client/utils/download';
-import { CheckCircle2, Image, Layers, List, Lock, Loader2, Settings, Wand2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { CheckCircle2, Image, Layers, List, Loader2, Settings, Wand2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { BatchLimitModal } from './BatchLimitModal';
+import { ModelGalleryModal } from './ModelGalleryModal';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
@@ -50,21 +48,14 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-  const { subscription, profile } = useUserData();
-  const subscriptionTier = profile?.subscription_tier?.toLowerCase() ?? null;
-  const hasPaidTier = !!subscriptionTier && subscriptionTier !== 'free';
-  const hasSubscription =
-    hasPaidTier ||
-    !!subscription?.price_id ||
-    (!!profile?.subscription_status &&
-      profile.subscription_status !== 'canceled' &&
-      profile.subscription_status !== 'unpaid');
-  const isFreeUser = !hasSubscription;
-  const router = useRouter();
-  const premiumTiers = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
+  const { isFreeUser } = useUserData();
+  const hasSubscription = !isFreeUser;
 
   // Mobile tab state
   const [mobileTab, setMobileTab] = useState<MobileTab>('upload');
+
+  // Mobile gallery modal state
+  const [mobileGalleryOpen, setMobileGalleryOpen] = useState(false);
 
   // Config State - default to 'quick' for all users (free and paid)
   const [config, setConfig] = useState<IUpscaleConfig>({
@@ -204,15 +195,15 @@ const Workspace: React.FC = () => {
 
   // Active Workspace State
   return (
-    <div className="bg-main rounded-3xl shadow-2xl border border-border overflow-hidden flex flex-col min-h-[600px] md:min-h-[600px] h-[calc(100vh-12rem)] md:h-auto">
+    <div className="bg-main rounded-3xl shadow-2xl border border-border overflow-hidden flex flex-col md:min-h-[600px] h-[calc(100dvh-5rem)] md:h-auto">
       {/* Desktop: Three columns, Mobile: Single panel */}
-      <div className="flex flex-col md:flex-row flex-1 md:flex-grow overflow-hidden">
+      <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
         {/* Upload/Batch Sidebar */}
         <div
           className={cn(
             'w-full md:w-80 border-b md:border-b-0 md:border-r bg-surface border-border',
             // Mobile: full height when active, Desktop: fixed width sidebar
-            mobileTab === 'upload' ? 'flex-1 md:flex-none' : 'hidden md:block'
+            mobileTab === 'upload' ? 'flex-1 min-h-0 md:flex-none' : 'hidden md:block'
           )}
         >
           <BatchSidebar
@@ -230,9 +221,9 @@ const Workspace: React.FC = () => {
         {/* Right Area: Main View + Queue Strip */}
         <div
           className={cn(
-            'flex flex-col bg-main overflow-y-auto md:overflow-hidden relative',
+            'flex flex-col bg-main overflow-hidden relative',
             // Mobile: full height when active, Desktop: flex-grow
-            mobileTab === 'preview' ? 'flex-1 md:flex-grow' : 'hidden md:flex md:flex-grow'
+            mobileTab === 'preview' ? 'flex-1 min-h-0 md:flex-grow' : 'hidden md:flex md:flex-grow'
           )}
         >
           {/* Success Banner */}
@@ -281,7 +272,7 @@ const Workspace: React.FC = () => {
           )}
 
           {/* Main Preview Area */}
-          <div className="flex-1 md:flex-grow p-6 flex items-center justify-center overflow-hidden relative">
+          <div className="flex-1 min-h-0 md:flex-grow p-3 md:p-6 flex items-center justify-center overflow-hidden relative">
             <PreviewArea
               activeItem={activeItem}
               onDownload={handleDownloadSingle}
@@ -305,11 +296,29 @@ const Workspace: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Mobile Queue View */}
+        {mobileTab === 'queue' && (
+          <div className="flex-1 min-h-0 overflow-auto md:hidden bg-main">
+            <QueueStrip
+              queue={queue}
+              activeId={activeId}
+              isProcessing={isProcessingBatch}
+              onSelect={id => {
+                setActiveId(id);
+                setMobileTab('preview');
+              }}
+              onRemove={removeItem}
+              onAddFiles={addFiles}
+              batchLimit={batchLimit}
+            />
+          </div>
+        )}
       </div>
 
       {/* Mobile Floating Action Button - Process CTA */}
       {mobileTab !== 'upload' && queue.length > 0 && (
-        <div className="md:hidden px-4 py-3 bg-surface border-t border-border">
+        <div className="md:hidden px-4 py-3 bg-surface border-t border-border shrink-0">
           <button
             onClick={() => processBatch(config)}
             disabled={
@@ -351,46 +360,40 @@ const Workspace: React.FC = () => {
         </div>
       )}
 
-      {/* Mobile Quality Tier Selector Strip */}
-      <div className="md:hidden border-t border-border bg-surface/80 px-3 py-2">
-        <div className="flex gap-2 overflow-x-auto no-scrollbar">
-          {(Object.keys(QUALITY_TIER_CONFIG) as QualityTier[]).map(tierKey => {
-            const tierConfig = QUALITY_TIER_CONFIG[tierKey];
-            const isPremium = premiumTiers.includes(tierKey);
-            const isLocked = isFreeUser && isPremium;
-            const isSelected = config.qualityTier === tierKey;
-
-            return (
-              <button
-                key={tierKey}
-                onClick={() => {
-                  if (isLocked) {
-                    router.push('/pricing');
-                    return;
-                  }
-                  setConfig(prev => ({ ...prev, qualityTier: tierKey }));
-                }}
-                disabled={isProcessingBatch}
-                className={cn(
-                  'flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-all',
-                  isSelected
-                    ? 'bg-accent text-white shadow-sm shadow-accent/30'
-                    : isLocked
-                      ? 'bg-white/5 text-text-muted'
-                      : 'bg-white/10 text-white/80 hover:bg-white/15',
-                  isProcessingBatch && 'opacity-50 cursor-not-allowed'
-                )}
-              >
-                {isLocked && <Lock className="h-3 w-3" />}
-                {tierConfig.label}
-              </button>
-            );
-          })}
-        </div>
+      {/* Mobile Quality Tier Selector */}
+      <div className="md:hidden border-t border-border bg-surface/80 px-3 py-2 shrink-0">
+        <button
+          onClick={() => setMobileGalleryOpen(true)}
+          disabled={isProcessingBatch}
+          className={cn(
+            'w-full flex items-center justify-between px-4 py-2 rounded-xl text-sm font-medium transition-all',
+            'bg-white/10 text-white hover:bg-white/15 border border-border',
+            isProcessingBatch && 'opacity-50 cursor-not-allowed'
+          )}
+        >
+          <span>
+            Quality:{' '}
+            <span className="font-bold">{QUALITY_TIER_CONFIG[config.qualityTier].label}</span>
+          </span>
+          <span className="text-[10px] font-black tracking-widest uppercase text-text-muted bg-black/20 border border-white/10 px-2 py-0.5 rounded-lg">
+            {(() => {
+              const credits = QUALITY_TIER_CONFIG[config.qualityTier].credits;
+              if (credits === 'variable') return '1-4 CR';
+              return `${credits} CR`;
+            })()}
+          </span>
+        </button>
       </div>
+      <ModelGalleryModal
+        isOpen={mobileGalleryOpen}
+        onClose={() => setMobileGalleryOpen(false)}
+        currentTier={config.qualityTier}
+        isFreeUser={isFreeUser}
+        onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
+      />
 
       {/* Mobile Tab Bar */}
-      <nav className="md:hidden flex border-t border-border bg-surface">
+      <nav className="md:hidden flex border-t border-border bg-surface shrink-0">
         <TabButton
           active={mobileTab === 'upload'}
           onClick={() => setMobileTab('upload')}
@@ -409,24 +412,6 @@ const Workspace: React.FC = () => {
           Queue
         </TabButton>
       </nav>
-
-      {/* Mobile Queue View (Hidden on desktop) */}
-      {mobileTab === 'queue' && (
-        <div className="flex-1 overflow-hidden md:hidden bg-main">
-          <QueueStrip
-            queue={queue}
-            activeId={activeId}
-            isProcessing={isProcessingBatch}
-            onSelect={id => {
-              setActiveId(id);
-              setMobileTab('preview');
-            }}
-            onRemove={removeItem}
-            onAddFiles={addFiles}
-            batchLimit={batchLimit}
-          />
-        </div>
-      )}
 
       {/* Batch Limit Modal */}
       <BatchLimitModal

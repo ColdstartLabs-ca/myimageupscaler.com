@@ -154,7 +154,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
 
             {/* Features hint */}
             <p className="text-center text-xs text-muted-foreground mt-4">
-              Premium includes HD Upscale, Face Pro, and Ultra quality tiers
+              Premium includes HD Upscale, Portrait Pro, and Ultra Upscale quality tiers
             </p>
           </div>
         </div>

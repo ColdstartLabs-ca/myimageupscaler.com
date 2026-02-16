@@ -282,7 +282,7 @@ export class ModelRegistry {
       // Enhancement-only model with strong spatial understanding
       {
         id: 'seedream',
-        displayName: 'Seedream Edit',
+        displayName: 'Creative Edit',
         provider: 'replicate',
         modelVersion: this.getModelVersion('seedream'),
         capabilities: ['enhance', 'denoise', 'damage-repair'],
@@ -301,7 +301,7 @@ export class ModelRegistry {
       // Sub-second enhancement-only model, cheaper alternative to qwen-image-edit
       {
         id: 'p-image-edit',
-        displayName: 'Fast Edit',
+        displayName: 'Quick Enhance',
         provider: 'replicate',
         modelVersion: this.getModelVersion('p-image-edit'),
         capabilities: ['enhance', 'denoise', 'damage-repair'],
@@ -370,6 +370,7 @@ export class ModelRegistry {
       generalUpscale: serverEnv.MODEL_FOR_GENERAL_UPSCALE,
       portraits: serverEnv.MODEL_FOR_PORTRAITS,
       damagedPhotos: serverEnv.MODEL_FOR_DAMAGED_PHOTOS,
+      budgetOldPhotos: serverEnv.MODEL_FOR_BUDGET_OLD_PHOTOS,
       textLogos: serverEnv.MODEL_FOR_TEXT_LOGOS,
       maxQuality: serverEnv.MODEL_FOR_MAX_QUALITY,
     };
@@ -379,7 +380,13 @@ export class ModelRegistry {
    * Get model for a specific use case
    */
   getModelForUseCase(
-    useCase: 'generalUpscale' | 'portraits' | 'damagedPhotos' | 'textLogos' | 'maxQuality'
+    useCase:
+      | 'generalUpscale'
+      | 'portraits'
+      | 'damagedPhotos'
+      | 'budgetOldPhotos'
+      | 'textLogos'
+      | 'maxQuality'
   ): IModelConfig | null {
     const modelId = this.useCaseAssignments[useCase];
     return this.getModel(modelId);

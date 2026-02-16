@@ -242,6 +242,7 @@ const serverEnvSchema = z.object({
   MODEL_FOR_GENERAL_UPSCALE: z.string().default('real-esrgan'),
   MODEL_FOR_PORTRAITS: z.string().default('gfpgan'),
   MODEL_FOR_DAMAGED_PHOTOS: z.string().default('nano-banana-pro'),
+  MODEL_FOR_BUDGET_OLD_PHOTOS: z.string().default('p-image-edit'),
   MODEL_FOR_TEXT_LOGOS: z.string().default('nano-banana'),
   MODEL_FOR_MAX_QUALITY: z.string().default('clarity-upscaler'),
 
@@ -362,6 +363,7 @@ function loadServerEnv(): IServerEnv {
     MODEL_FOR_GENERAL_UPSCALE: process.env.MODEL_FOR_GENERAL_UPSCALE || 'real-esrgan',
     MODEL_FOR_PORTRAITS: process.env.MODEL_FOR_PORTRAITS || 'gfpgan',
     MODEL_FOR_DAMAGED_PHOTOS: process.env.MODEL_FOR_DAMAGED_PHOTOS || 'nano-banana-pro',
+    MODEL_FOR_BUDGET_OLD_PHOTOS: process.env.MODEL_FOR_BUDGET_OLD_PHOTOS || 'p-image-edit',
     MODEL_FOR_TEXT_LOGOS: process.env.MODEL_FOR_TEXT_LOGOS || 'nano-banana',
     MODEL_FOR_MAX_QUALITY: process.env.MODEL_FOR_MAX_QUALITY || 'clarity-upscaler',
 

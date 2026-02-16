@@ -20,6 +20,10 @@
   "billing": {
     "title": "Billing",
     "subtitle": "Manage your subscription and payment methods",
+    "tabs": {
+      "subscription": "Subscription",
+      "credits": "Credits"
+    },
     "refresh": "Refresh",
     "currentPlan": "Current Plan",
     "freePlan": "Free Plan",

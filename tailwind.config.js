@@ -96,6 +96,10 @@ export default {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
         },
+        'slide-up': {
+          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.2s ease-out',
@@ -103,6 +107,7 @@ export default {
         'fade-in-up': 'fade-in-up 0.3s ease-out',
         'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
         'gradient-shift': 'gradient-shift 8s ease infinite',
+        'slide-up': 'slide-up 0.3s ease-out',
       },
       typography: {
         DEFAULT: {

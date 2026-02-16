@@ -1,4 +1,8 @@
-import { DEFAULT_ENHANCEMENT_SETTINGS, IUpscaleConfig } from '@/shared/types/coreflow.types';
+import {
+  DEFAULT_ENHANCEMENT_SETTINGS,
+  IUpscaleConfig,
+  QUALITY_TIER_CONFIG,
+} from '@/shared/types/coreflow.types';
 
 /**
  * Generates enhancement prompt based on selected aspects.
@@ -41,13 +45,22 @@ const generateEnhancePrompt = (config: IUpscaleConfig): string => {
 };
 
 export const generatePrompt = (config: IUpscaleConfig): string => {
-  // Use custom prompt if provided
+  // Use custom prompt if provided (highest priority)
   if (
     config.additionalOptions.customInstructions &&
     config.additionalOptions.customInstructions.trim().length > 0
   ) {
     return config.additionalOptions.customInstructions;
   }
+
+  // Use tier-specific custom prompt if defined
+  const tierConfig = QUALITY_TIER_CONFIG[config.qualityTier];
+  if (tierConfig?.customPrompt && tierConfig.genericPromptOverride) {
+    // Full override — return as-is, skip generic prompt building
+    return tierConfig.customPrompt;
+  }
+  // Note: when customPrompt exists without genericPromptOverride,
+  // it falls through to the generic prompt builder below
 
   // Refined Prompt to avoid IMAGE_RECITATION
   // We frame this as a "Generation" and "Reconstruction" task rather than just "Restoration"

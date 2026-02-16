@@ -19,12 +19,24 @@ export type QualityTier =
   | 'face-restore'
   | 'fast-edit'
   | 'budget-edit'
+  | 'budget-old-photo'
   | 'seedream-edit'
   | 'anime-upscale'
   | 'hd-upscale'
   | 'face-pro'
   | 'ultra'
-  | 'bg-removal';
+  | 'bg-removal'
+  | 'lighting-fix'
+  | 'resume-photo'
+  | 'photo-repair';
+
+// Preview images for model gallery (before/after comparison)
+export interface IPreviewImages {
+  before: string;
+  after: string;
+  objectPosition?: string; // CSS object-position for crop focus (e.g., 'top', 'center 30%')
+  displayMode?: 'slider' | 'flip' | 'static'; // 'slider' (default): drag comparison; 'flip': show after, reveal before on hover; 'static': single image, no interaction
+}
 
 // Quality tier metadata for UI display
 export const QUALITY_TIER_CONFIG: Record<
@@ -36,6 +48,10 @@ export const QUALITY_TIER_CONFIG: Record<
     description: string;
     bestFor: string;
     smartAnalysisAlwaysOn: boolean; // True for 'auto' tier
+    useCases: string[]; // Searchable tags for model gallery filtering
+    previewImages: IPreviewImages | null; // Before/after thumbnails for gallery
+    customPrompt?: string; // Optional tier-specific prompt (overrides model default, but user customInstructions still win)
+    genericPromptOverride?: boolean; // When true, customPrompt replaces the entire prompt (no generic modifiers appended). When false/unset, customPrompt is used as base and merged with generic modifiers.
   }
 > = {
   auto: {
@@ -45,46 +61,108 @@ export const QUALITY_TIER_CONFIG: Record<
     description: 'AI picks the best option',
     bestFor: 'Optimal results without choosing',
     smartAnalysisAlwaysOn: true,
+    useCases: ['smart', 'automatic', 'ai pick', 'easy', 'beginner'],
+    previewImages: {
+      before: '/before-after/auto/preview.webp',
+      after: '/before-after/auto/preview.webp',
+      displayMode: 'static',
+    },
   },
   quick: {
-    label: 'Quick',
+    label: 'Light Blur Fix',
     credits: 1,
     modelId: 'real-esrgan',
-    description: 'Fast general upscale',
-    bestFor: 'Social media, previews',
+    description: 'Sharpen slightly blurry images',
+    bestFor: 'Low-res screenshots, light blur',
     smartAnalysisAlwaysOn: false,
+    useCases: ['social media', 'web', 'fast', 'general', 'preview'],
+    previewImages: {
+      before: '/before-after/quick/before.webp',
+      after: '/before-after/quick/after.webp',
+    },
+  },
+  'budget-edit': {
+    label: 'Standard Enhance',
+    credits: 3,
+    modelId: 'qwen-image-edit',
+    description: 'Balanced quality AI enhancement',
+    bestFor: 'General enhancement, good results',
+    smartAnalysisAlwaysOn: false,
+    useCases: ['general enhancement', 'versatile', 'all-purpose', 'balanced'],
+    previewImages: {
+      before: '/before-after/budget-edit/before.webp',
+      after: '/before-after/budget-edit/after.webp',
+      objectPosition: 'center 20%',
+    },
+  },
+  'face-pro': {
+    label: 'Portrait Pro',
+    credits: 6,
+    modelId: 'flux-2-pro',
+    description: 'Premium portrait enhancement',
+    bestFor: 'Professional headshots, skin detail',
+    smartAnalysisAlwaysOn: false,
+    useCases: ['portrait', 'headshot', 'professional', 'face', 'skin'],
+    previewImages: {
+      before: '/before-after/face-pro/before.webp',
+      after: '/before-after/face-pro/after.webp',
+      objectPosition: 'center 25%',
+    },
+  },
+  'seedream-edit': {
+    label: 'Creative Edit',
+    credits: 4,
+    modelId: 'seedream',
+    description: 'High-quality AI-powered editing',
+    bestFor: 'Complex edits, creative rework',
+    smartAnalysisAlwaysOn: false,
+    useCases: ['complex edit', 'advanced', 'high quality', 'creative'],
+    previewImages: {
+      before: '/before-after/seedream-edit/before.webp',
+      after: '/before-after/seedream-edit/after.webp',
+    },
   },
   'face-restore': {
     label: 'Face Restore',
     credits: 2,
     modelId: 'gfpgan',
-    description: 'Restore faces in old/damaged photos',
+    description: 'Fix faces in old or damaged photos',
     bestFor: 'Old photos, AI-generated faces',
     smartAnalysisAlwaysOn: false,
+    useCases: ['old photos', 'damaged', 'damaged photos', 'faces', 'restoration', 'vintage'],
+    previewImages: {
+      before: '/before-after/face-restore/before.webp',
+      after: '/before-after/face-restore/after.webp',
+    },
   },
   'fast-edit': {
-    label: 'Fast Edit',
+    label: 'Quick Enhance',
     credits: 2,
     modelId: 'p-image-edit',
-    description: 'Sub-second AI image editing',
-    bestFor: 'Quick edits, fast turnaround',
+    description: 'Fast general-purpose enhancement',
+    bestFor: 'Simple touch-ups, quick fixes',
     smartAnalysisAlwaysOn: false,
+    useCases: ['quick edit', 'fast', 'simple', 'touch up'],
+    previewImages: {
+      before: '/before-after/fast-edit/before.webp',
+      after: '/before-after/fast-edit/after.webp',
+    },
   },
-  'budget-edit': {
-    label: 'Budget Edit',
-    credits: 3,
-    modelId: 'qwen-image-edit',
-    description: 'AI-powered image editing',
-    bestFor: 'General enhancement, budget-friendly',
+  'budget-old-photo': {
+    label: 'Old Photo Fix',
+    credits: 2,
+    modelId: 'p-image-edit',
+    description: 'Restore old or damaged photos',
+    bestFor: 'Faded photos, minor damage, vintage pics',
     smartAnalysisAlwaysOn: false,
-  },
-  'seedream-edit': {
-    label: 'Seedream Edit',
-    credits: 4,
-    modelId: 'seedream',
-    description: 'Advanced AI image editing',
-    bestFor: 'Complex edits, high quality output',
-    smartAnalysisAlwaysOn: false,
+    useCases: ['old photo', 'damaged', 'damaged photos', 'vintage', 'faded', 'scratched'],
+    previewImages: {
+      before: '/before-after/budget-old-photo/before.webp',
+      after: '/before-after/budget-old-photo/after.webp',
+    },
+    customPrompt:
+      'Restore this old or damaged photo. Fix fading, color degradation, and minor scratches or blemishes. Recover natural skin tones and colors while preserving the original composition and character of the photograph.',
+    genericPromptOverride: true,
   },
   'anime-upscale': {
     label: 'Anime Upscale',
@@ -93,6 +171,11 @@ export const QUALITY_TIER_CONFIG: Record<
     description: 'Upscale anime and illustrations',
     bestFor: 'Anime art, manga, illustrations',
     smartAnalysisAlwaysOn: false,
+    useCases: ['anime', 'manga', 'illustration', 'art', 'cartoon'],
+    previewImages: {
+      before: '/before-after/anime-upscale/before.webp',
+      after: '/before-after/anime-upscale/after.webp',
+    },
   },
   'hd-upscale': {
     label: 'HD Upscale',
@@ -101,22 +184,24 @@ export const QUALITY_TIER_CONFIG: Record<
     description: 'High detail preservation',
     bestFor: 'Textures, print-ready images',
     smartAnalysisAlwaysOn: false,
-  },
-  'face-pro': {
-    label: 'Face Pro',
-    credits: 6,
-    modelId: 'flux-2-pro',
-    description: 'Premium face enhancement',
-    bestFor: 'Professional portraits',
-    smartAnalysisAlwaysOn: false,
+    useCases: ['print', 'textures', 'high detail', 'professional', '4k'],
+    previewImages: {
+      before: '/before-after/hd-upscale/before.webp',
+      after: '/before-after/hd-upscale/after.webp',
+    },
   },
   ultra: {
-    label: 'Ultra',
+    label: 'Ultra Upscale',
     credits: 8,
     modelId: 'nano-banana-pro',
-    description: 'Maximum quality, 4K/8K output',
-    bestFor: 'Large prints, archival',
+    description: 'Maximum quality 4K output',
+    bestFor: 'Large prints, archival, posters',
     smartAnalysisAlwaysOn: false,
+    useCases: ['8k', 'large print', 'archival', 'maximum quality', 'poster'],
+    previewImages: {
+      before: '/before-after/ultra/before.webp',
+      after: '/before-after/ultra/after.webp',
+    },
   },
   'bg-removal': {
     label: 'Background Removal',
@@ -125,6 +210,66 @@ export const QUALITY_TIER_CONFIG: Record<
     description: 'Remove image backgrounds',
     bestFor: 'Product photos, profile pics',
     smartAnalysisAlwaysOn: false,
+    useCases: ['product photo', 'profile picture', 'transparent', 'e-commerce', 'cutout'],
+    previewImages: {
+      before: '/before-after/bg-removal/before.webp',
+      after: '/before-after/bg-removal/after.webp',
+    },
+  },
+  'lighting-fix': {
+    label: 'Lighting Fix',
+    credits: 4,
+    modelId: 'seedream',
+    description: 'Correct lighting and exposure',
+    bestFor: 'Underexposed, overexposed, harsh shadows',
+    smartAnalysisAlwaysOn: false,
+    useCases: ['lighting', 'exposure', 'shadows', 'brightness', 'dark photo'],
+    previewImages: {
+      before: '/before-after/lighting-fix/before.webp',
+      after: '/before-after/lighting-fix/after.webp',
+    },
+    customPrompt:
+      'Fix the lighting in this image. Correct underexposure or overexposure, balance shadows and highlights, and normalize the overall luminance so the subject is clearly visible. Preserve the original colors and composition exactly — only adjust lighting, exposure and artifacts.',
+    genericPromptOverride: true,
+  },
+  'resume-photo': {
+    label: 'Resume Photo',
+    credits: 4,
+    modelId: 'seedream',
+    description: 'Professional headshot for resumes',
+    bestFor: 'LinkedIn, resumes, corporate bios',
+    smartAnalysisAlwaysOn: false,
+    useCases: ['resume', 'headshot', 'linkedin', 'professional photo', 'corporate'],
+    previewImages: {
+      before: '/before-after/resume-photo/before.webp',
+      after: '/before-after/resume-photo/after.webp',
+      displayMode: 'flip',
+    },
+    customPrompt:
+      'Transform this photo into a professional corporate headshot suitable for a resume or LinkedIn profile. Replace clothes with a suite. Remove any background and place the subject against a solid white background. Ensure even, flattering lighting on the face. Smooth minor skin blemishes while keeping the person looking natural and recognizable. Maintain a sharp focus on the face and upper body. The result should look like a studio-quality professional portrait.',
+    genericPromptOverride: true,
+  },
+  'photo-repair': {
+    label: 'Photo Repair',
+    credits: 4,
+    modelId: 'qwen-image-edit',
+    description: 'Repair physically damaged photos',
+    bestFor: 'Torn, scratched, or missing pieces',
+    smartAnalysisAlwaysOn: false,
+    useCases: [
+      'damaged photos',
+      'torn photo',
+      'missing pieces',
+      'water damage',
+      'physical damage',
+      'repair',
+    ],
+    previewImages: {
+      before: '/before-after/photo-repair/before.webp',
+      after: '/before-after/photo-repair/after.webp',
+    },
+    customPrompt:
+      'Repair this physically damaged photograph. Preserve original structure and dimensions. Reconstruct any torn, missing, or destroyed areas by intelligently filling in the gaps based on surrounding context. Remove scratches, cracks, water stains, and other physical damage marks. Restore the image to look as if it was never damaged. Preserve the original content, colors, and composition exactly — only repair the physical damage.',
   },
 };
 
@@ -144,12 +289,16 @@ export const QUALITY_TIER_SCALES: Record<QualityTier, (2 | 4 | 8)[]> = {
   'face-restore': [2, 4], // gfpgan only supports 2x and 4x
   'fast-edit': [], // p-image-edit is enhancement-only (no upscale)
   'budget-edit': [], // qwen-image-edit is enhancement-only (no upscale)
+  'budget-old-photo': [], // p-image-edit is enhancement-only (no upscale)
   'seedream-edit': [], // seedream is enhancement-only (no upscale)
   'anime-upscale': [2, 4], // realesrgan-anime supports 2x and 4x
   'hd-upscale': [2, 4, 8], // clarity-upscaler supports up to 16x natively
   'face-pro': [], // flux-2-pro is enhancement-only (no upscale)
   ultra: [2, 4], // nano-banana-pro is resolution-based (1K/2K/4K), not true 8x scale
   'bg-removal': [], // bg-removal is not an upscale operation (no scale)
+  'lighting-fix': [], // seedream is enhancement-only (no upscale)
+  'resume-photo': [], // seedream is enhancement-only (no upscale)
+  'photo-repair': [], // seedream is enhancement-only (no upscale)
 };
 
 // Additional options (replaces mode + toggles)

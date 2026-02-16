@@ -419,14 +419,29 @@ export const useUserData = (): {
   profile: IUserProfile | null;
   subscription: ISubscription | null;
   isAuthenticated: boolean;
+  isFreeUser: boolean;
 } =>
   useUserStore(
-    useShallow(state => ({
-      totalCredits:
-        (state.user?.profile?.subscription_credits_balance ?? 0) +
-        (state.user?.profile?.purchased_credits_balance ?? 0),
-      profile: state.user?.profile ?? null,
-      subscription: state.user?.subscription ?? null,
-      isAuthenticated: state.isAuthenticated,
-    }))
+    useShallow(state => {
+      const profile = state.user?.profile ?? null;
+      const subscription = state.user?.subscription ?? null;
+      const subscriptionTier = profile?.subscription_tier?.toLowerCase() ?? null;
+      const hasPaidTier = !!subscriptionTier && subscriptionTier !== 'free';
+      const hasSubscription =
+        hasPaidTier ||
+        !!subscription?.price_id ||
+        (!!profile?.subscription_status &&
+          profile.subscription_status !== 'canceled' &&
+          profile.subscription_status !== 'unpaid');
+      const hasPurchasedCredits = (profile?.purchased_credits_balance ?? 0) > 0;
+
+      return {
+        totalCredits:
+          (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0),
+        profile,
+        subscription,
+        isAuthenticated: state.isAuthenticated,
+        isFreeUser: !hasSubscription && !hasPurchasedCredits,
+      };
+    })
   );

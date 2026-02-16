@@ -69,29 +69,33 @@ test.describe('E2E: Model Selection UI', () => {
       { timeout: 10000 }
     );
 
-    // Look for the quality tier selector
+    // Look for the quality tier selector label
     await expect(page.getByText('Quality Tier')).toBeVisible({ timeout: 10000 });
 
-    // Look for the current tier selection button (shows "Quick" by default)
-    const currentTierButton = page
-      .locator('button')
-      .filter({ hasText: /Quick|Auto|Face Restore|HD Upscale|Face Pro|Ultra/ })
-      .first();
-    await expect(currentTierButton).toBeVisible();
+    // The quality tier selector button shows the current tier (e.g., "Quick")
+    // Click it to open the model gallery modal
+    // Find the button after the "Quality Tier" label
+    const qualityTierLabel = page.getByText('Quality Tier');
+    await expect(qualityTierLabel).toBeVisible();
 
-    // Open the dropdown to check options
-    await currentTierButton.click();
+    // Get the button element that follows the label (it's the next button sibling)
+    const tierSelectorButton = qualityTierLabel.locator('..').locator('button').first();
+    await expect(tierSelectorButton).toBeVisible();
 
-    // Check that tier options exist in the dropdown
+    // Click the button to open the modal
+    await tierSelectorButton.click();
+
+    // Wait for the modal to open and show the model cards
+    // Check that tier options exist in the modal (as ModelCard buttons)
     await expect(page.getByText('Auto').first()).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Quick').first()).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Face Restore').first()).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('HD Upscale').first()).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Face Pro').first()).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Ultra').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Portrait Pro').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Ultra Upscale').first()).toBeVisible({ timeout: 5000 });
 
-    // Note: The "Best Value" badge may not be visible in all UI states
-    // We've already verified all the tier options are visible above
+    // Close the modal by clicking outside or pressing Escape
+    await page.keyboard.press('Escape');
   });
 
   test('should show operation mode buttons', async ({ page }) => {

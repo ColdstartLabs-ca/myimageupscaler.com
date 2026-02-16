@@ -10,6 +10,8 @@ interface IPromptBuildContext {
   enhancementSettings: IEnhancementSettings;
   scale: number;
   customPrompt?: string;
+  tierPrompt?: string;
+  tierPromptOverride?: boolean;
 }
 
 /**
@@ -101,13 +103,23 @@ export class PromptBuilder {
   ): string {
     const { customPrompt, enhance, enhanceFaces, preserveText, enhancementSettings } = context;
 
-    // Use custom prompt if provided
+    // Use custom prompt if provided (user instructions = full override)
     if (customPrompt) {
       return customPrompt;
     }
 
-    // Get base prompt for model
-    const basePrompt = options.basePrompt ?? this.getDefaultPrompt(modelId, context);
+    // Use tier-specific prompt if defined
+    if (!options.basePrompt && context.tierPrompt) {
+      // genericPromptOverride: return as-is (no modifiers appended)
+      if (context.tierPromptOverride) {
+        return context.tierPrompt;
+      }
+      // Otherwise, use tier prompt as base and merge with generic modifiers below
+    }
+
+    // Get base prompt: explicit override > tier prompt > model default
+    const basePrompt =
+      options.basePrompt ?? context.tierPrompt ?? this.getDefaultPrompt(modelId, context);
 
     // Build the prompt with optional modifiers
     return this.buildWithModifiers(basePrompt, {
