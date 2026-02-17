@@ -9,10 +9,44 @@ import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { clientEnv } from '@shared/config/env';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { motion } from 'framer-motion';
-import { ArrowRight, Layers, Maximize2, Sparkles, User, Wand2 } from 'lucide-react';
+import { ArrowRight, ChevronRight, Layers, Maximize2, Sparkles, User, Wand2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, lazy, useEffect } from 'react';
+
+export const POPULAR_TOOLS = [
+  {
+    href: '/tools/ai-image-upscaler',
+    label: 'AI Image Upscaler',
+    desc: 'Enlarge to 4K without quality loss',
+  },
+  {
+    href: '/tools/ai-photo-enhancer',
+    label: 'Image Quality Enhancer',
+    desc: 'Fix blur, noise & restore photos free',
+  },
+  {
+    href: '/tools/transparent-background-maker',
+    label: 'Transparent Background Maker',
+    desc: 'Remove backgrounds, create PNG',
+  },
+  {
+    href: '/formats/upscale-avif-images',
+    label: 'AVIF Upscaler',
+    desc: 'Upscale next-gen AVIF format images',
+  },
+  {
+    href: '/free',
+    label: 'Free Tools',
+    desc: 'Start with 10 free credits — no credit card needed',
+  },
+  {
+    href: '/tools/ai-background-remover',
+    label: 'AI Background Remover',
+    desc: 'Remove image backgrounds instantly',
+  },
+] as const;
 
 // Lazy load below-the-fold sections to reduce initial JS bundle
 // These sections will only load when user scrolls near them
@@ -268,6 +302,45 @@ export function HomePageClient(): JSX.Element {
           </motion.div>
         </motion.div>
       </section>
+
+      {/* Popular Tools Section — Internal linking for link equity distribution */}
+      <FadeIn>
+        <section className="py-20 relative">
+          <AmbientBackground variant="section" />
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
+                Start Enhancing — <span className="gradient-text-primary">Pick a Tool</span>
+              </h2>
+              <p className="text-lg text-text-secondary max-w-2xl mx-auto font-light">
+                Professional AI tools for every image task. Try free with 10 credits.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {POPULAR_TOOLS.map(tool => (
+                <Link
+                  key={tool.href}
+                  href={tool.href}
+                  className="group glass-card-2025 p-6 flex items-start gap-4 hover:border-accent/40 transition-all duration-300 animated-border-violet"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-base font-bold text-white group-hover:text-accent transition-colors truncate">
+                      {tool.label}
+                    </p>
+                    <p className="text-sm text-text-secondary mt-1 font-light leading-snug">
+                      {tool.desc}
+                    </p>
+                  </div>
+                  <ChevronRight
+                    size={18}
+                    className="text-text-muted shrink-0 mt-0.5 group-hover:text-accent group-hover:translate-x-1 transition-all duration-200"
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      </FadeIn>
 
       {/* Landing Page Sections - Lazy loaded for performance */}
       <Suspense fallback={<div className="h-screen" />}>

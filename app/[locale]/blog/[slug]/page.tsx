@@ -31,6 +31,84 @@ function preprocessContent(content: string): string {
   );
 }
 
+/**
+ * Extract FAQ Q&A pairs from markdown content.
+ * Looks for H3 headings under any H2 section containing "faq", "fragen", "questions", or "häufig".
+ * Returns null if no FAQ section is found.
+ */
+function extractFaqSchema(
+  content: string
+): { '@context': string; '@type': string; mainEntity: object[] } | null {
+  const lines = content.split('\n');
+  const faqs: { question: string; answer: string }[] = [];
+
+  let inFaqSection = false;
+  let currentQuestion: string | null = null;
+  let currentAnswerLines: string[] = [];
+
+  const FAQ_SECTION_RE = /^##\s+.*(faq|fragen|questions|häufig|frequently)/i;
+  const H2_RE = /^##\s+/;
+  const H3_RE = /^###\s+(.+)/;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (H2_RE.test(line)) {
+      // Flush pending Q&A when entering a new H2 section
+      if (inFaqSection && currentQuestion && currentAnswerLines.length > 0) {
+        faqs.push({ question: currentQuestion, answer: currentAnswerLines.join(' ').trim() });
+        currentQuestion = null;
+        currentAnswerLines = [];
+      }
+      inFaqSection = FAQ_SECTION_RE.test(line);
+      continue;
+    }
+
+    if (!inFaqSection) continue;
+
+    const h3Match = line.match(H3_RE);
+    if (h3Match) {
+      // Save previous Q&A
+      if (currentQuestion && currentAnswerLines.length > 0) {
+        faqs.push({ question: currentQuestion, answer: currentAnswerLines.join(' ').trim() });
+      }
+      currentQuestion = h3Match[1].trim();
+      currentAnswerLines = [];
+      continue;
+    }
+
+    if (currentQuestion && line.trim()) {
+      // Strip markdown links and formatting for clean answer text
+      const cleanLine = line
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        .replace(/\*\*/g, '')
+        .replace(/\*/g, '')
+        .trim();
+      if (cleanLine) currentAnswerLines.push(cleanLine);
+    }
+  }
+
+  // Flush last Q&A
+  if (inFaqSection && currentQuestion && currentAnswerLines.length > 0) {
+    faqs.push({ question: currentQuestion, answer: currentAnswerLines.join(' ').trim() });
+  }
+
+  if (faqs.length === 0) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(faq => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
+}
+
 interface IPageProps {
   params: Promise<{ slug: string; locale: string }>;
 }
@@ -98,6 +176,9 @@ export default async function BlogPostPage({ params }: IPageProps) {
 
   const postDate = post.published_at || post.created_at;
 
+  // FAQ JSON-LD (auto-extracted from content if FAQ section exists)
+  const faqJsonLd = extractFaqSchema(post.content);
+
   // Article JSON-LD
   const articleJsonLd = {
     '@context': 'https://schema.org',
@@ -131,6 +212,12 @@ export default async function BlogPostPage({ params }: IPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       <ReadingProgress />
 

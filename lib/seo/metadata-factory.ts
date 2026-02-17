@@ -135,7 +135,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     alternatives: `Best Upscaler Alternatives | ${APP_NAME}`,
     guides: `Image Enhancement Guides | ${APP_NAME}`,
     'technical-guides': `Technical Image Enhancement Guides | ${APP_NAME}`,
-    free: `Free AI Image Tools | ${APP_NAME}`,
+    free: `Free AI Image Upscaler — 10 Free Credits | ${APP_NAME}`,
     'bulk-tools': `Bulk Image Tools | ${APP_NAME}`,
     platforms: `Platform-Specific Enhancement | ${APP_NAME}`,
     content: `Image Content & Assets | ${APP_NAME}`,
@@ -165,8 +165,9 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
       'Find the best alternatives to popular upscaling tools. Compare features, pricing, and capabilities to make the right choice.',
     guides:
       'Learn how to get the most out of your images with step-by-step guides and tutorials. Expert tips and best practices included.',
-    'technical-guides': 'Comprehensive technical guides for image processing, optimization, and enhancement. Expert-level insights and best practices.',
-    free: 'Free AI image tools with no credit card or sign-up required. Professional quality enhancement at no cost.',
+    'technical-guides':
+      'Comprehensive technical guides for image processing, optimization, and enhancement. Expert-level insights and best practices.',
+    free: 'Free AI image upscaler and enhancer. Start with 10 free credits — no credit card required. Upscale, enhance, and remove backgrounds instantly.',
     'bulk-tools':
       'Batch process multiple images at once. Bulk resize, compress, and optimize images with our free browser-based tools.',
     platforms:
