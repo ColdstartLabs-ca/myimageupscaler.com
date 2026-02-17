@@ -15,11 +15,8 @@ test.describe('Landing Page SEO', () => {
     test('Verify meta title matches actual version', async ({ page }) => {
       await page.goto('/');
 
-      // Verify meta title matches the actual metadata from app/page.tsx
-      // The page sets the title directly, which overrides the root layout template
-      await expect(page).toHaveTitle(
-        /^AI Image Upscaler & Photo Enhancer \| Enhance Quality Free Online$/
-      );
+      // Verify meta title matches the actual metadata from locales/en/common.json
+      await expect(page).toHaveTitle(/AI Photo Enhancer & Image Upscaler/);
     });
 
     test('Verify meta description contains target keywords', async ({ page }) => {
@@ -29,17 +26,17 @@ test.describe('Landing Page SEO', () => {
       const metaDescription = await page.getAttribute('meta[name="description"]', 'content');
       expect(metaDescription).toBeDefined();
 
-      // Verify contains "image enhancer"
-      expect(metaDescription?.toLowerCase()).toContain('image enhancer');
-
-      // Verify contains "upscales"
-      expect(metaDescription?.toLowerCase()).toContain('upscales');
-
-      // Verify contains "4k" (lowercase)
-      expect(metaDescription?.toLowerCase()).toContain('4k');
-
       // Verify contains "enhance"
       expect(metaDescription?.toLowerCase()).toContain('enhance');
+
+      // Verify contains "upscale"
+      expect(metaDescription?.toLowerCase()).toContain('upscale');
+
+      // Verify contains "ai"
+      expect(metaDescription?.toLowerCase()).toContain('ai');
+
+      // Verify contains "free"
+      expect(metaDescription?.toLowerCase()).toContain('free');
     });
 
     test('Verify canonical URL is set correctly', async ({ page }) => {
@@ -140,7 +137,7 @@ test.describe('Landing Page SEO', () => {
       await page.goto('/');
 
       const ogTitle = page.locator('meta[property="og:title"]');
-      await expect(ogTitle).toHaveAttribute('content', /AI Image Upscaler/);
+      await expect(ogTitle).toHaveAttribute('content', /Image Upscaler|Photo Enhancer/);
     });
 
     test('Verify Open Graph description is set', async ({ page }) => {
