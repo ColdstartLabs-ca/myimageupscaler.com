@@ -1,12 +1,11 @@
 /**
  * Blog Sitemap Route
- * Contains all blog posts from content/blog directory
+ * Contains all published blog posts from both static JSON and Supabase database
  */
 
 import { NextResponse } from 'next/server';
-import { getAllPosts } from '@server/blog';
+import { getAllPublishedPosts } from '@server/services/blog.service';
 import { clientEnv } from '@shared/config/env';
-import { generateSitemapHreflangLinks } from '@/lib/seo/sitemap-generator';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
@@ -47,22 +46,17 @@ function escapeXml(unsafe: string): string {
 }
 
 export async function GET() {
-  const allPosts = getAllPosts();
+  const allPosts = await getAllPublishedPosts();
   const posts = allPosts.filter(post => !BLOCKED_BLOG_SLUGS.has(post.slug));
-
-  // Generate hreflang links for /blog page
-  const blogHreflangLinks = generateSitemapHreflangLinks('/blog').join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>${BASE_URL}/blog</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
-${blogHreflangLinks}
   </url>
 ${posts
   .map(

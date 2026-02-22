@@ -435,7 +435,104 @@ describe('SEO Safeguards — Page Metadata', () => {
 });
 
 // ============================================================================
-// G) Schema Markup Guards
+// G) Blog SEO Guards
+// ============================================================================
+
+describe('SEO Safeguards — Blog', () => {
+  const appDir = path.resolve(__dirname, '../../../app');
+
+  describe('Blog sitemap', () => {
+    it('must use getAllPublishedPosts (hybrid source) not getAllPosts (static-only)', () => {
+      const sitemapPath = path.join(appDir, 'sitemap-blog.xml', 'route.ts');
+      const source = fs.readFileSync(sitemapPath, 'utf-8');
+
+      expect(source).toMatch(/from\s+['"]@server\/services\/blog\.service['"]/);
+      expect(source).toMatch(/getAllPublishedPosts/);
+      expect(source).not.toMatch(/from\s+['"]@server\/blog['"]/);
+    });
+
+    it('must have an async GET handler (required for DB call)', () => {
+      const sitemapPath = path.join(appDir, 'sitemap-blog.xml', 'route.ts');
+      const source = fs.readFileSync(sitemapPath, 'utf-8');
+
+      expect(source).toMatch(/export\s+async\s+function\s+GET/);
+    });
+
+    it('must list blog URLs without locale prefix', () => {
+      const sitemapPath = path.join(appDir, 'sitemap-blog.xml', 'route.ts');
+      const source = fs.readFileSync(sitemapPath, 'utf-8');
+
+      // URL template must use /blog/${post.slug} not /en/blog/
+      expect(source).toMatch(/\/blog\/\$\{.*slug/);
+      expect(source).not.toMatch(/\/en\/blog\//);
+    });
+
+    it('must include the /blog listing page', () => {
+      const sitemapPath = path.join(appDir, 'sitemap-blog.xml', 'route.ts');
+      const source = fs.readFileSync(sitemapPath, 'utf-8');
+
+      expect(source).toMatch(/\/blog`|\/blog</);
+    });
+  });
+
+  describe('Blog post page', () => {
+    it('must use BlogPosting schema type (not Article)', () => {
+      const slugPagePath = path.join(appDir, '[locale]', 'blog', '[slug]', 'page.tsx');
+      const source = fs.readFileSync(slugPagePath, 'utf-8');
+
+      expect(source).toContain("'@type': 'BlogPosting'");
+      expect(source).not.toContain("'@type': 'Article'");
+    });
+
+    it('must set explicit robots index:true directive', () => {
+      const slugPagePath = path.join(appDir, '[locale]', 'blog', '[slug]', 'page.tsx');
+      const source = fs.readFileSync(slugPagePath, 'utf-8');
+
+      expect(source).toMatch(/robots\s*:\s*\{[\s\S]*?index\s*:\s*true/);
+    });
+
+    it('must set canonical to /blog/{slug} without locale prefix', () => {
+      const slugPagePath = path.join(appDir, '[locale]', 'blog', '[slug]', 'page.tsx');
+      const source = fs.readFileSync(slugPagePath, 'utf-8');
+
+      expect(source).toMatch(/BASE_URL.*\/blog\/\$\{.*slug/);
+    });
+
+    it('publisher name must not append extra suffix beyond APP_NAME', () => {
+      const slugPagePath = path.join(appDir, '[locale]', 'blog', '[slug]', 'page.tsx');
+      const source = fs.readFileSync(slugPagePath, 'utf-8');
+
+      expect(source).not.toContain('`${clientEnv.APP_NAME} AI`');
+    });
+  });
+
+  describe('Blog listing page', () => {
+    it('must set explicit robots index:true directive', () => {
+      const listingPagePath = path.join(appDir, '[locale]', 'blog', 'page.tsx');
+      const source = fs.readFileSync(listingPagePath, 'utf-8');
+
+      expect(source).toMatch(/robots\s*:\s*\{[\s\S]*?index\s*:\s*true/);
+    });
+
+    it('must set canonical URL', () => {
+      const listingPagePath = path.join(appDir, '[locale]', 'blog', 'page.tsx');
+      const source = fs.readFileSync(listingPagePath, 'utf-8');
+
+      expect(source).toMatch(/canonical\s*:\s*canonicalUrl/);
+    });
+
+    it('must NOT declare hreflang alternates — blog is English-only content', () => {
+      const listingPagePath = path.join(appDir, '[locale]', 'blog', 'page.tsx');
+      const source = fs.readFileSync(listingPagePath, 'utf-8');
+
+      expect(source).not.toMatch(/generateHreflangAlternates/);
+      expect(source).not.toMatch(/languages\s*:\s*hreflangAlternates/);
+    });
+  });
+});
+
+// ============================================================================
+// H) Schema Markup Guards
 // ============================================================================
 
 describe('SEO Safeguards — Schema Markup', () => {

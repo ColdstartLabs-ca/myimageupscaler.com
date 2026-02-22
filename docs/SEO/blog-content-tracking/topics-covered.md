@@ -1,6 +1,6 @@
 # Blog Content Tracking - MyImageUpscaler
 
-**Last Updated**: 2026-02-17
+**Last Updated**: 2026-02-18
 
 ## Topics Covered (Blog Posts Published)
 
@@ -37,3 +37,7 @@
 | 2026-02-17 | avif vs webp comparison, avif vs webp vs jpeg, which format upscales best (FAQ schema) | avif-vs-webp-vs-jpeg-which-upscales-best           | Comparisons | Published |
 | 2026-02-17 | transparenter hintergrund, png hintergrund transparent machen (German, FAQ schema)     | png-hintergrund-transparent-machen-kostenlos       | Guides (de) | Published |
 | 2026-02-17 | free upscaler no sign up (FAQ schema, 7 questions)                                     | free-upscaler-no-sign-up                           | Guides      | Published |
+| 2026-02-18 | 4k upscaler ai, upscale photo to 4K, 4K AI image upscaler                              | 4k-ai-image-upscaler-guide                         | Guides      | Published |
+| 2026-02-19 | improve photo resolution free, free image quality, photo resolution online              | how-to-improve-photo-resolution-free               | Guides      | Published |
+| 2026-02-20 | 4k to 8k upscaling, 8k image size, 4k upscaler ai (8K angle)                          | how-to-upscale-4k-to-8k-images-with-ai            | Guides      | Published |
+| 2026-02-21 | convert png to 4k, 4k upscaler ai (PNG angle), ai image upscaler                       | how-to-convert-png-to-4k                          | Guides      | Published |

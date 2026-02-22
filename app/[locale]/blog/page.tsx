@@ -8,11 +8,7 @@ import { AmbientBackground } from '@client/components/landing/AmbientBackground'
 import { BlogSearch } from '@client/components/blog/BlogSearch';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Locale } from '@/i18n/config';
-import {
-  getOpenGraphMetadata,
-  getCanonicalUrl,
-  generateHreflangAlternates,
-} from '@lib/seo/hreflang-generator';
+import { getOpenGraphMetadata, getCanonicalUrl } from '@lib/seo/hreflang-generator';
 
 interface IBlogPageProps {
   params: Promise<{ locale: Locale }>;
@@ -30,15 +26,17 @@ export async function generateMetadata({ params }: IBlogPageProps): Promise<Meta
     locale
   );
   const canonicalUrl = getCanonicalUrl('/blog', locale);
-  const hreflangAlternates = generateHreflangAlternates('/blog');
 
   return {
     title,
     description,
+    robots: {
+      index: true,
+      follow: true,
+    },
     openGraph,
     alternates: {
       canonical: canonicalUrl,
-      languages: hreflangAlternates,
     },
   };
 }

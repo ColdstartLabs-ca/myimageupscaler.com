@@ -138,6 +138,10 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
     title: post.title,
     description: post.description,
     authors: [{ name: post.author }],
+    robots: {
+      index: true,
+      follow: true,
+    },
     alternates: {
       canonical: canonicalUrl,
     },
@@ -182,7 +186,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
   // Article JSON-LD
   const articleJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
     author: {
@@ -193,7 +197,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
     dateModified: postDate,
     publisher: {
       '@type': 'Organization',
-      name: `${clientEnv.APP_NAME} AI`,
+      name: clientEnv.APP_NAME,
       logo: {
         '@type': 'ImageObject',
         url: `${clientEnv.BASE_URL}/og-image.png`,
