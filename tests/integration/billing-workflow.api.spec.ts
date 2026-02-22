@@ -135,12 +135,13 @@ test.describe('Billing Workflow Integration', () => {
 
     test('should handle invoice payment failed webhook', async () => {
       await ctx.setupStripeCustomer(testUser.id, `cus_${testUser.id}`);
+      const subscriptionId = `sub_failed_${Date.now()}`;
 
       // Set up subscription
       await webhookClient.sendSubscriptionCreated({
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
-        subscriptionId: `sub_failed_${Date.now()}`,
+        subscriptionId,
         priceId: PRO_PRICE_ID,
       });
 
@@ -148,7 +149,7 @@ test.describe('Billing Workflow Integration', () => {
       const failedResponse = await webhookClient.sendInvoicePaymentFailed({
         userId: testUser.id,
         customerId: `cus_${testUser.id}`,
-        subscriptionId: `sub_failed_${Date.now()}`,
+        subscriptionId,
       });
 
       expect([200, 202]).toContain(failedResponse.status);
