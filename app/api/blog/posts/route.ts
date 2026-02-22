@@ -56,7 +56,11 @@ export async function POST(request: NextRequest) {
 
     // Handle duplicate featured image error
     if (error instanceof Error && error.message.startsWith('DUPLICATE_IMAGE')) {
-      return blogApiErrorResponse('DUPLICATE_IMAGE', error.message.replace('DUPLICATE_IMAGE: ', ''), 409);
+      return blogApiErrorResponse(
+        'DUPLICATE_IMAGE',
+        error.message.replace('DUPLICATE_IMAGE: ', ''),
+        409
+      );
     }
 
     // Handle other errors

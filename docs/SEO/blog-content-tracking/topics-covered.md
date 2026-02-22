@@ -1,6 +1,6 @@
 # Blog Content Tracking - MyImageUpscaler
 
-**Last Updated**: 2026-02-18
+**Last Updated**: 2026-02-22
 
 ## Topics Covered (Blog Posts Published)
 
@@ -41,3 +41,4 @@
 | 2026-02-19 | improve photo resolution free, free image quality, photo resolution online              | how-to-improve-photo-resolution-free               | Guides      | Published |
 | 2026-02-20 | 4k to 8k upscaling, 8k image size, 4k upscaler ai (8K angle)                          | how-to-upscale-4k-to-8k-images-with-ai            | Guides      | Published |
 | 2026-02-21 | convert png to 4k, 4k upscaler ai (PNG angle), ai image upscaler                       | how-to-convert-png-to-4k                          | Guides      | Published |
+| 2026-02-22 | upscale image online free, image upscaler free, upscale image online                    | upscale-image-online-free                          | Guides      | Published |

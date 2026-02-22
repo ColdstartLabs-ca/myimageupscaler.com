@@ -33,7 +33,11 @@ export async function getAuthenticatedUser(req: NextRequest): Promise<IUserProfi
   }
 
   // Handle test user - ONLY in test environment
-  if (userId === 'test-user-id-12345' && serverEnv.ENV === 'test' && serverEnv.NODE_ENV !== 'production') {
+  if (
+    userId === 'test-user-id-12345' &&
+    serverEnv.ENV === 'test' &&
+    serverEnv.NODE_ENV !== 'production'
+  ) {
     return {
       id: 'test-user-id-12345',
       email: 'test@example.com',

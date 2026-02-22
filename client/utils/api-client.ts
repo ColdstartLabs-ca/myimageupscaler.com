@@ -173,7 +173,8 @@ export const processImage = async (
 
       if (!deductRes.ok) {
         const errorData = await deductRes.json().catch(() => null);
-        const message = errorData?.error?.message || 'Failed to deduct credits for background removal';
+        const message =
+          errorData?.error?.message || 'Failed to deduct credits for background removal';
         throw new Error(message);
       }
 
