@@ -66,12 +66,8 @@ export async function generateMetadata({
     // Note: alternates are NOT set here to avoid overriding page-level metadata
     // Each page sets its own alternates with proper hreflang links
     icons: {
-      icon: [
-        { url: '/favicon.ico' },
-        { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-        { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      ],
-      apple: [{ url: '/apple-touch-icon.png' }],
+      icon: [{ url: '/favicon.ico' }],
+      apple: [{ url: '/apple-icon.png' }],
     },
   };
 }
@@ -131,25 +127,22 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
       suppressHydrationWarning
     >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://analytics.ahrefs.com" />
         <link rel="dns-prefetch" href="https://analytics.ahrefs.com" />
-        <link rel="preconnect" href="https://js.stripe.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
 
         <link
           rel="preload"
-          href="/before-after/bird-after.webp"
+          href="/before-after/bird-after-v2.webp"
           as="image"
           type="image/webp"
           fetchPriority="high"
         />
         <link
           rel="preload"
-          href="/before-after/bird-before.webp"
+          href="/before-after/bird-before-v2.webp"
           as="image"
           type="image/webp"
           fetchPriority="high"

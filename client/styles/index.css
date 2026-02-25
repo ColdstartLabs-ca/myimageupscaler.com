@@ -38,7 +38,7 @@
     /* === TEXT COLORS === */
     --color-text-primary: 255 255 255;
     --color-text-secondary: 160 160 192;
-    --color-text-muted: 107 107 141;
+    --color-text-muted: 128 128 163;
     /* WCAG AA compliant muted color - 163 163 164 for 4.5:1 contrast on dark backgrounds */
     --color-text-muted-aa: 163 163 164;
 
@@ -492,6 +492,23 @@
 
   .shine-effect:hover::after {
     left: 100%;
+  }
+
+  /* === HERO FADE IN (CSS-only, no JS required for LCP content) === */
+  @keyframes heroFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-hero-fade-in {
+    animation: heroFadeIn 0.6s ease-out forwards;
   }
 
   /* Animation delays */

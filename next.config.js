@@ -5,6 +5,8 @@ const withNextIntl = createNextIntlPlugin('./i18n.config.ts');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  // Disable Next.js DevTools overlay in production — it adds a 223KB chunk with 100% unused JS
+  devIndicators: false,
   typescript: {
     // Keep TypeScript checking enabled
     ignoreBuildErrors: false,

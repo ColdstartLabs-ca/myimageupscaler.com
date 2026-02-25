@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { HomePageClient } from '@client/components/pages/HomePageClient';
+import { HeroSection } from '@client/components/landing/HeroSection';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { RelatedBlogPostsSection } from '@/app/(pseo)/_components/pseo/sections/RelatedBlogPostsSection';
@@ -100,18 +101,14 @@ export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
       {/* Hreflang links for multi-language SEO */}
       <HreflangLinks path="/" locale={locale} />
       <JsonLd data={homepageSchema} />
-      <Suspense
-        fallback={
-          <div className="min-h-screen flex items-center justify-center bg-background">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading...</p>
-            </div>
-          </div>
-        }
-      >
-        <HomePageClient />
-      </Suspense>
+      <div className="flex-grow bg-main font-sans selection:bg-accent/20 selection:text-white">
+        {/* Hero section — server-rendered for fast LCP */}
+        <HeroSection />
+        {/* Below-fold interactive content */}
+        <Suspense fallback={<div className="h-screen" />}>
+          <HomePageClient />
+        </Suspense>
+      </div>
       <div className="bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RelatedBlogPostsSection

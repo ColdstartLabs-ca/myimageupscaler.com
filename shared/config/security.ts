@@ -20,6 +20,8 @@ export const CSP_POLICY = {
     'https://*.googletagmanager.com',
     'https://js.stripe.com',
     'https://accounts.google.com',
+    'https://analytics.ahrefs.com',
+    'https://static.cloudflareinsights.com',
   ],
   'style-src': ["'self'", "'unsafe-inline'", 'https://accounts.google.com'],
   'img-src': ["'self'", 'blob:', 'data:', 'https:'],
