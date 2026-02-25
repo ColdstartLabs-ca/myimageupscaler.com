@@ -62,7 +62,7 @@ const nextConfig = {
   // External packages that shouldn't be bundled into the server
   serverExternalPackages: ['@imgly/background-removal', 'onnxruntime-web'],
   // Webpack configuration for bundle size optimization
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     if (isServer) {
       // Enable server-side minification
       config.optimization = {
@@ -70,6 +70,19 @@ const nextConfig = {
         minimize: true,
       };
     }
+
+    // In production client builds, replace the 800KB DevTools bundle with a ~3KB shim.
+    // Next.js 16 ships the full DevTools to all client builds, but it's only needed
+    // in development. The shim exports the same API surface (dispatcher, render fns)
+    // but as stubs — they're never called in production since HMR events don't fire.
+    if (!dev && !isServer) {
+      const path = require('path');
+      config.resolve.alias['next/dist/compiled/next-devtools'] = path.resolve(
+        __dirname,
+        'node_modules/next/dist/next-devtools/dev-overlay.shim.js',
+      );
+    }
+
     return config;
   },
   async redirects() {

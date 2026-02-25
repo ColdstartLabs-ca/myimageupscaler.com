@@ -241,6 +241,17 @@ describe('Homepage Performance — Post-Audit Fixes', () => {
       expect(scriptSrcMatch![0]).toContain('analytics.ahrefs.com');
     });
 
+    it('should allow analytics.ahrefs.com in connect-src (for API event calls)', () => {
+      const cspPath = join(ROOT, 'shared/config/security.ts');
+      const source = readFileSync(cspPath, 'utf-8');
+
+      // Ahrefs analytics sends POST requests to analytics.ahrefs.com/api/event
+      // which requires connect-src permission in addition to script-src
+      const connectSrcMatch = source.match(/'connect-src':\s*\[[\s\S]*?\]/);
+      expect(connectSrcMatch).not.toBeNull();
+      expect(connectSrcMatch![0]).toContain('analytics.ahrefs.com');
+    });
+
     it('should allow static.cloudflareinsights.com in script-src', () => {
       const cspPath = join(ROOT, 'shared/config/security.ts');
       const source = readFileSync(cspPath, 'utf-8');
@@ -291,6 +302,18 @@ describe('Homepage Performance — Post-Audit Fixes', () => {
       const source = readFileSync(configPath, 'utf-8');
 
       expect(source).toContain('devIndicators: false');
+    });
+
+    it('should use webpack alias to replace next-devtools with shim in production', () => {
+      const configPath = join(ROOT, 'next.config.js');
+      const source = readFileSync(configPath, 'utf-8');
+
+      // Must use webpack to alias the full DevTools bundle (800KB source) to the shim (~3KB)
+      // in production client builds. devIndicators: false alone doesn't prevent bundling.
+      expect(source).toContain('next/dist/compiled/next-devtools');
+      expect(source).toContain('dev-overlay.shim.js');
+      // Must only apply in non-dev, non-server builds
+      expect(source).toContain('!dev && !isServer');
     });
   });
 });
