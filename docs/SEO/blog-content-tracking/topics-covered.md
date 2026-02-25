@@ -1,6 +1,6 @@
 # Blog Content Tracking - MyImageUpscaler
 
-**Last Updated**: 2026-02-24
+**Last Updated**: 2026-02-25
 
 ## Topics Covered (Blog Posts Published)
 
@@ -44,3 +44,4 @@
 | 2026-02-22 | upscale image online free, image upscaler free, upscale image online                   | upscale-image-online-free                          | Guides      | Published |
 | 2026-02-23 | 8k image size, 8k ai upscaling, what is 8k resolution (resolution guide angle)         | what-is-8k-image-resolution                        | Guides      | Published |
 | 2026-02-24 | convert image to HD, convert in hd images, convert image in pixel                      | how-to-convert-images-to-hd                        | Guides      | Published |
+| 2026-02-25 | why photos blurry when printed, blurry prints, photo resolution for print, 300 dpi print | why-photos-blurry-when-printed                     | Guides      | Published |

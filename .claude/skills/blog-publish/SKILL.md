@@ -33,10 +33,11 @@ Create SEO-optimized blog posts about image upscaling, AI photo enhancement, and
 4. GENERATE IMAGES → Generate ONLY if no suitable images found (1 featured + 2-3 inline)
 5. UPLOAD IMAGES   → POST /api/blog/images/upload (with metadata: tags, description, prompt)
 6. CREATE POST     → POST /api/blog/posts (include inline image URLs in markdown content)
-7. UPDATE          → PATCH /api/blog/posts/[slug] (add featured image URL)
-8. PUBLISH         → POST /api/blog/posts/[slug]/publish
-9. VERIFY          → Check at /blog/[slug]
-10. TRACK          → Update topics-covered.md with completed topic
+7. INTERNAL LINKS  → Scan pSEO sitemaps for relevant pages; embed 2-3 contextual links in content
+8. UPDATE          → PATCH /api/blog/posts/[slug] (add featured image URL + updated content)
+9. PUBLISH         → POST /api/blog/posts/[slug]/publish
+10. VERIFY         → Check at /blog/[slug]
+11. TRACK          → Update topics-covered.md with completed topic
 ```
 
 **IMPORTANT Changes:**
@@ -376,6 +377,121 @@ curl -s -X POST http://localhost:3000/api/blog/posts \
 - Place images **after** the section they illustrate
 - Space images evenly throughout content (every 2-3 sections)
 - Always include descriptive alt text for SEO and accessibility
+
+---
+
+## Step 3.5: Add pSEO Internal Links (REQUIRED)
+
+**CRITICAL**: Every blog post must contain 2-3 contextual internal links to relevant pSEO category pages. This distributes link equity from the blog to the pSEO ecosystem.
+
+### Discover Relevant pSEO Pages
+
+Scan the pSEO data files to find pages that match the blog post topic. Available categories:
+
+```bash
+# List all available pSEO categories
+ls app/seo/data/*.json
+
+# Search for pages relevant to your topic keyword
+# Replace KEYWORD with your topic (e.g., "background", "4k", "jpeg", "ecommerce")
+node -e "
+const fs = require('fs');
+const files = ['tools','free','formats','scale','use-cases','guides','alternatives','compare'];
+const keyword = 'KEYWORD';
+files.forEach(f => {
+  try {
+    const data = JSON.parse(fs.readFileSync(\`app/seo/data/\${f}.json\`,'utf-8'));
+    const matches = data.pages.filter(p =>
+      p.slug.includes(keyword) ||
+      (p.primaryKeyword && p.primaryKeyword.toLowerCase().includes(keyword)) ||
+      (p.metaTitle && p.metaTitle.toLowerCase().includes(keyword))
+    );
+    if (matches.length) console.log(\`[\${f}]\`, matches.map(p => \`/\${f}/\${p.slug}\`).join(', '));
+  } catch(e) {}
+});
+"
+```
+
+### Category → URL Pattern
+
+| Category file       | URL prefix        | Good for posts about...                        |
+| ------------------- | ----------------- | ---------------------------------------------- |
+| `scale.json`        | `/scale/`         | Resolution, 4K, upscaling, print size          |
+| `free.json`         | `/free/`          | Free tools, no signup, trial, credits          |
+| `formats.json`      | `/formats/`       | JPEG, PNG, WebP, AVIF, HEIC, file formats      |
+| `use-cases.json`    | `/use-cases/`     | E-commerce, real estate, portraits, anime      |
+| `tools.json`        | `/tools/`         | Specific AI tools (enhancer, upscaler, bg)     |
+| `alternatives.json` | `/alternatives/`  | Tool comparisons, vs, alternatives             |
+| `compare.json`      | `/compare/`       | Comparisons, head-to-head                      |
+| `guides.json`       | `/guides/`        | How-to guides, tutorials                       |
+
+### High-Value pSEO Pages to Link (Most Common)
+
+| URL                                             | Target anchor text ideas                     |
+| ----------------------------------------------- | -------------------------------------------- |
+| `/scale/upscale-to-4k`                          | "4K resolution", "upscale to 4K"             |
+| `/scale/upscale-image-to-1920x1080`             | "1920x1080", "HD resolution", "1080p"        |
+| `/free/ai-image-upscaler`                       | "free image upscaler", "free upscaling"      |
+| `/free/free-background-remover`                 | "free background remover"                    |
+| `/free`                                         | "free tools", "free credits"                 |
+| `/formats/upscale-jpeg-images`                  | "JPEG images", "upscale JPG"                 |
+| `/formats/upscale-png-images`                   | "PNG images"                                 |
+| `/formats/upscale-webp-images`                  | "WebP images"                                |
+| `/formats/upscale-avif-images`                  | "AVIF images"                                |
+| `/use-cases/ecommerce-product-photos`           | "product photos", "e-commerce photos"        |
+| `/use-cases/photo-restoration`                  | "photo restoration", "restore old photos"    |
+| `/use-cases/real-estate-photo-enhancement`      | "real estate photos"                         |
+| `/use-cases/anime-illustration-upscaling`       | "anime upscaling", "illustration upscaling"  |
+| `/tools/ai-background-remover`                  | "remove backgrounds", "background removal"   |
+| `/tools/ai-photo-enhancer`                      | "photo enhancer", "enhance photo quality"    |
+| `/alternatives`                                 | "tool alternatives", "comparing tools"       |
+
+### Rules for Adding Links
+
+1. **Read the draft post content first** — understand what's in each paragraph
+2. **Find 2-3 natural anchor opportunities** — where a pSEO page URL genuinely adds value
+3. **Embed links in existing sentences** — never add a "Related Links" section
+4. **Use descriptive anchor text** — the linked text should be a natural keyword phrase
+5. **No zombie categories** — never link to `/ai-features/`
+6. **Canonical BG removal links** — always link to `/tools/ai-background-remover` (not `/tools/remove-bg`)
+
+### Example Link Insertions
+
+```markdown
+<!-- Original -->
+AI upscalers can enlarge images to 4K resolution.
+<!-- With link -->
+AI upscalers can enlarge images to [4K resolution](/scale/upscale-to-4k).
+
+<!-- Original -->
+JPEG files can still be upscaled without losing quality.
+<!-- With link -->
+[JPEG files](/formats/upscale-jpeg-images) can still be upscaled without losing quality.
+
+<!-- Original -->
+For e-commerce sellers, product photo quality matters.
+<!-- With link -->
+For e-commerce sellers, [product photo quality](/use-cases/ecommerce-product-photos) matters.
+
+<!-- Original -->
+Start with our free tools if you're new.
+<!-- With link -->
+Start with our [free upscaling tools](/free) if you're new.
+```
+
+### Update the Post Content with Links
+
+After identifying insertion points, PATCH the post with the updated content:
+
+```bash
+# After updating the markdown content with internal links, PATCH the post
+curl -s -X PATCH http://localhost:3000/api/blog/posts/YOUR-SLUG \
+  -H "x-api-key: $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "...updated content with internal pSEO links..."
+  }' | jq .
+```
 
 ---
 
@@ -862,3 +978,16 @@ curl -s http://localhost:3000/blog/ai-image-upscaling-guide | grep -o "<title>.*
 
 - `/ai-image-generation` - Generate featured and inline images with AI
 - `/blog-edit` - Edit existing blog posts
+- `/internal-linking-optimizer` - Analyze and optimize internal link structure site-wide
+
+## pSEO Sitemap Reference
+
+To browse all available pSEO pages for linking, check the data files:
+- `app/seo/data/tools.json` → `/tools/*` pages
+- `app/seo/data/free.json` → `/free/*` pages
+- `app/seo/data/formats.json` → `/formats/*` pages
+- `app/seo/data/scale.json` → `/scale/*` pages
+- `app/seo/data/use-cases.json` → `/use-cases/*` pages
+- `app/seo/data/alternatives.json` → `/alternatives/*` pages
+- `app/seo/data/compare.json` → `/compare/*` pages
+- `app/seo/data/guides.json` → `/guides/*` pages

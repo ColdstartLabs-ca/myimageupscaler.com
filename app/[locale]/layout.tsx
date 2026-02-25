@@ -131,18 +131,21 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
         <link rel="dns-prefetch" href="https://analytics.ahrefs.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
 
+        {/* Preload LCP element: logo is the largest visible element on all pages.
+            xs breakpoint = 475px (tailwind.config.js). Use media queries to avoid
+            downloading the wrong variant — each device only fetches what it renders. */}
         <link
           rel="preload"
-          href="/before-after/bird-after-v2.webp"
+          href="/logo/horizontal-logo-compact.png"
           as="image"
-          type="image/webp"
+          media="(max-width: 474px)"
           fetchPriority="high"
         />
         <link
           rel="preload"
-          href="/before-after/bird-before-v2.webp"
+          href="/logo/horizontal-logo-full.png"
           as="image"
-          type="image/webp"
+          media="(min-width: 475px)"
           fetchPriority="high"
         />
 

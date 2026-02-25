@@ -127,6 +127,22 @@ export const Footer = (): JSX.Element => {
                   Use Cases
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={localizedPath('/free')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Free Tools
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/alternatives')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Tool Alternatives
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -156,31 +172,6 @@ export const Footer = (): JSX.Element => {
                 >
                   {t('contactSupport')}
                 </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">
-              {t('legal')}
-            </h4>
-            <ul className="space-y-4 text-sm font-medium">
-              <li>
-                <Link
-                  href={localizedPath('/privacy')}
-                  className="hover:text-accent transition-colors"
-                >
-                  {t('privacyPolicy')}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={localizedPath('/terms')}
-                  className="hover:text-accent transition-colors"
-                >
-                  {t('termsOfService')}
-                </Link>
               </li>
             </ul>
           </div>

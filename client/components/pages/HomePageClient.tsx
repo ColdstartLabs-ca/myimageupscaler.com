@@ -23,6 +23,15 @@ const AmbientBackground = dynamic(
   { ssr: false },
 );
 
+export const LOCALE_LINKS: ReadonlyArray<{ href: string; label: string; flag: string }> = [
+  { href: '/de', label: 'Deutsch', flag: '🇩🇪' },
+  { href: '/es', label: 'Español', flag: '🇪🇸' },
+  { href: '/fr', label: 'Français', flag: '🇫🇷' },
+  { href: '/it', label: 'Italiano', flag: '🇮🇹' },
+  { href: '/ja', label: '日本語', flag: '🇯🇵' },
+  { href: '/pt', label: 'Português', flag: '🇧🇷' },
+] as const;
+
 export const POPULAR_TOOLS: ReadonlyArray<{ href: string; label: string; desc: string }> = [
   {
     href: '/tools/ai-image-upscaler',
@@ -271,6 +280,22 @@ export function HomePageClient(): JSX.Element {
           </div>
         </section>
       </FadeIn>
+
+      {/* Locale links — crawlable equity distribution */}
+      <section className="py-8 text-center">
+        <p className="text-text-muted text-sm mb-3">Available in your language:</p>
+        <div className="flex flex-wrap justify-center gap-4">
+          {LOCALE_LINKS.map(({ href, label, flag }) => (
+            <Link
+              key={href}
+              href={href}
+              className="text-sm text-text-muted-aa hover:text-accent transition-colors"
+            >
+              {flag} {label}
+            </Link>
+          ))}
+        </div>
+      </section>
     </>
   );
 }
