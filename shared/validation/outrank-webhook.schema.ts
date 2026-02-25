@@ -71,7 +71,7 @@ function stripHtml(html: string): string {
  */
 export function mapOutrankArticleToBlogInput(article: IOutrankArticle): ICreateBlogPostInput {
   const slug = sanitizeSlug(article.slug);
-  const content = article.content_html || article.content_markdown || '';
+  const content = article.content_markdown || article.content_html || '';
   const strippedContent = stripHtml(content);
 
   // Generate description from meta_description or first 150 chars of content

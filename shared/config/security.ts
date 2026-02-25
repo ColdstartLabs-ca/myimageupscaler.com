@@ -40,7 +40,7 @@ export const CSP_POLICY = {
     'https://staticimgly.com', // @imgly/background-removal WASM model
     'https://analytics.ahrefs.com', // Ahrefs analytics API events
   ],
-  'frame-src': ['https://js.stripe.com', 'https://accounts.google.com'],
+  'frame-src': ['https://js.stripe.com', 'https://accounts.google.com', 'https://www.youtube.com', 'https://www.youtube-nocookie.com'],
   'worker-src': ["'self'", 'blob:'], // Web Workers for @imgly/background-removal
   'object-src': ["'none'"],
   'base-uri': ["'self'"],

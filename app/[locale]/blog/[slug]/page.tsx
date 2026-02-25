@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import {
   getPublishedPostBySlug,
   getAllPublishedPosts,
@@ -25,10 +26,15 @@ import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 
 // Convert MDX Callout components to blockquotes with type markers
 function preprocessContent(content: string): string {
-  return content.replace(
-    /<Callout type="(\w+)">\n?([\s\S]*?)\n?<\/Callout>/g,
-    (_, type, text) => `> [!${type.toUpperCase()}]\n> ${text.trim().replace(/\n/g, '\n> ')}`
-  );
+  return content
+    .replace(
+      /<Callout type="(\w+)">\n?([\s\S]*?)\n?<\/Callout>/g,
+      (_, type, text) => `> [!${type.toUpperCase()}]\n> ${text.trim().replace(/\n/g, '\n> ')}`
+    )
+    // <iframe> is not in CommonMark's block-level HTML tag list, so remark-parse
+    // treats it as inline HTML and escapes it. Wrapping in <div> (which IS in the
+    // block list) ensures remark treats it as a raw HTML block that rehype-raw can render.
+    .replace(/(<iframe\b[^>]*>[\s\S]*?<\/iframe>)/gi, '\n\n<div>$1</div>\n\n');
 }
 
 /**
@@ -308,6 +314,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
             <div className="prose prose-lg prose-invert max-w-none prose-headings:font-display prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-p:leading-relaxed prose-li:leading-relaxed prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-strong:text-primary prose-img:rounded-2xl prose-img:shadow-lg">
               <Markdown
                 remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
                 components={{
                   img: ({ src, alt }) => (
                     <span className="block my-8">
@@ -422,6 +429,16 @@ export default async function BlogPostPage({ params }: IPageProps) {
                     <td className="border border-border px-4 py-2 text-muted-foreground">
                       {children}
                     </td>
+                  ),
+                  iframe: ({ src, ...props }) => (
+                    <span className="block my-8 rounded-xl overflow-hidden">
+                      <iframe
+                        src={src}
+                        {...props}
+                        className="w-full"
+                        style={{ aspectRatio: '16 / 9' }}
+                      />
+                    </span>
                   ),
                 }}
               >

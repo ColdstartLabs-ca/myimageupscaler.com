@@ -158,10 +158,22 @@ describe('mapOutrankArticleToBlogInput — SEO field truncation', () => {
 // ---------------------------------------------------------------------------
 
 describe('mapOutrankArticleToBlogInput — content selection', () => {
-  it('should use content_html over content_markdown when both are present', () => {
+  it('should use content_markdown over content_html when both are present', () => {
+    const markdownContent = '# Markdown version\n\nThis is the preferred content format.';
     const article = makeArticle({
       content_html: VALID_CONTENT_HTML,
-      content_markdown: '# Markdown version that should not be used',
+      content_markdown: markdownContent,
+    });
+    const result = mapOutrankArticleToBlogInput(
+      article as Parameters<typeof mapOutrankArticleToBlogInput>[0]
+    );
+    expect(result.content).toBe(markdownContent);
+  });
+
+  it('should fall back to content_html when content_markdown is absent', () => {
+    const article = makeArticle({
+      content_html: VALID_CONTENT_HTML,
+      content_markdown: undefined,
     });
     const result = mapOutrankArticleToBlogInput(
       article as Parameters<typeof mapOutrankArticleToBlogInput>[0]
