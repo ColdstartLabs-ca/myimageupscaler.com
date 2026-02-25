@@ -102,7 +102,7 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${serverEnv.BASE_URL}/search?q={search_term_string}`,
+        urlTemplate: `${serverEnv.BASE_URL}/blog?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
@@ -111,12 +111,10 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': `${serverEnv.BASE_URL}#organization`,
     name: APP_NAME,
     url: serverEnv.BASE_URL,
-    logo: {
-      '@type': 'ImageObject',
-      url: `${serverEnv.BASE_URL}/logo/horizontal-logo-full.png`,
-    },
+    logo: `${serverEnv.BASE_URL}/logo/horizontal-logo-full.png`,
     description: 'AI-powered image upscaling and enhancement platform',
   };
 

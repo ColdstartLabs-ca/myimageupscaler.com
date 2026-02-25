@@ -30,7 +30,10 @@ describe('WebSite Schema - SearchAction', () => {
       expect(expectedSearchAction).toHaveProperty('target');
       expect(expectedSearchAction.target).toHaveProperty('@type', 'EntryPoint');
       expect(expectedSearchAction.target).toHaveProperty('urlTemplate');
-      expect(expectedSearchAction).toHaveProperty('query-input', 'required name=search_term_string');
+      expect(expectedSearchAction).toHaveProperty(
+        'query-input',
+        'required name=search_term_string'
+      );
     });
 
     it('should use blog search URL in urlTemplate', () => {
@@ -50,7 +53,7 @@ describe('WebSite Schema - SearchAction', () => {
   });
 
   describe('Locale Layout WebSite Schema', () => {
-    it('should include SearchAction with search URL', () => {
+    it('should include SearchAction with blog search URL', () => {
       // This test validates the SearchAction schema structure
       // that should be present in app/[locale]/layout.tsx
 
@@ -58,7 +61,7 @@ describe('WebSite Schema - SearchAction', () => {
         '@type': 'SearchAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: `${BASE_URL}/search?q={search_term_string}`,
+          urlTemplate: `${BASE_URL}/blog?q={search_term_string}`,
         },
         'query-input': 'required name=search_term_string',
       };
@@ -68,7 +71,12 @@ describe('WebSite Schema - SearchAction', () => {
       expect(expectedSearchAction).toHaveProperty('target');
       expect(expectedSearchAction.target).toHaveProperty('@type', 'EntryPoint');
       expect(expectedSearchAction.target).toHaveProperty('urlTemplate');
-      expect(expectedSearchAction).toHaveProperty('query-input', 'required name=search_term_string');
+      expect(expectedSearchAction.target.urlTemplate).toContain('/blog?q=');
+      expect(expectedSearchAction.target.urlTemplate).not.toContain('/search?q=');
+      expect(expectedSearchAction).toHaveProperty(
+        'query-input',
+        'required name=search_term_string'
+      );
     });
   });
 
@@ -79,12 +87,12 @@ describe('WebSite Schema - SearchAction', () => {
 
       const webSiteSchema = {
         '@type': 'WebSite',
-        'url': BASE_URL,
-        'potentialAction': {
+        url: BASE_URL,
+        potentialAction: {
           '@type': 'SearchAction',
-          'target': {
+          target: {
             '@type': 'EntryPoint',
-            'urlTemplate': `${BASE_URL}/blog?q={search_term_string}`,
+            urlTemplate: `${BASE_URL}/blog?q={search_term_string}`,
           },
           'query-input': 'required name=search_term_string',
         },

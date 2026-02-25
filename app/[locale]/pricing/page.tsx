@@ -42,9 +42,6 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
     alternates: {
       canonical: canonicalUrl,
     },
-    other: {
-      'application/ld+json': JSON.stringify(generatePricingSchema()),
-    },
   };
 }
 

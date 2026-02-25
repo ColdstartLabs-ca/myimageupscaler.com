@@ -198,10 +198,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
     publisher: {
       '@type': 'Organization',
       name: clientEnv.APP_NAME,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${clientEnv.BASE_URL}/og-image.png`,
-      },
+      logo: `${clientEnv.BASE_URL}/logo/horizontal-logo-full.png`,
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
