@@ -14,28 +14,44 @@ const ROOT = join(process.cwd());
 
 describe('Homepage Performance — Phase 1', () => {
   describe('Image preloads', () => {
-    it('should preload bird-after-v2.webp (not the non-v2 filename)', () => {
+    // The logo is the LCP element on all pages — it appears in the sticky navbar above the fold.
+    // On mobile (375px), the hero bird image is pushed below the fold by the h1/h2/CTA content,
+    // so the logo is what Chrome measures as LCP. We preload it with media queries matching the
+    // xs: 475px breakpoint in tailwind.config.js so each device downloads only what it renders.
+
+    it('should preload the compact logo for mobile viewports (<475px)', () => {
       const layoutPath = join(ROOT, 'app/[locale]/layout.tsx');
       const source = readFileSync(layoutPath, 'utf-8');
 
-      expect(source).toContain('bird-after-v2.webp');
-      expect(source).not.toMatch(/href="\/before-after\/bird-after\.webp"/);
+      expect(source).toContain('horizontal-logo-compact.png');
+      expect(source).toContain('max-width: 474px');
     });
 
-    it('should preload bird-before-v2.webp (not the non-v2 filename)', () => {
+    it('should preload the full logo for desktop viewports (>=475px)', () => {
       const layoutPath = join(ROOT, 'app/[locale]/layout.tsx');
       const source = readFileSync(layoutPath, 'utf-8');
 
-      expect(source).toContain('bird-before-v2.webp');
-      expect(source).not.toMatch(/href="\/before-after\/bird-before\.webp"/);
+      expect(source).toContain('horizontal-logo-full.png');
+      expect(source).toContain('min-width: 475px');
     });
 
-    it('should have fetchPriority="high" on both preload links', () => {
+    it('should have fetchPriority="high" on both logo preload links', () => {
       const layoutPath = join(ROOT, 'app/[locale]/layout.tsx');
       const source = readFileSync(layoutPath, 'utf-8');
 
       const preloadMatches = source.match(/rel="preload"[\s\S]*?fetchPriority="high"/g) ?? [];
       expect(preloadMatches.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('should NOT preload bird images in global layout (they are below the fold on mobile and compete with LCP)', () => {
+      const layoutPath = join(ROOT, 'app/[locale]/layout.tsx');
+      const source = readFileSync(layoutPath, 'utf-8');
+
+      // Bird images were previously preloaded here but this hurt LCP by stealing
+      // fetchPriority="high" bandwidth from the actual LCP element (the logo).
+      // The HeroSection already server-renders <img fetchpriority="high"> for LCP.
+      expect(source).not.toMatch(/rel="preload"[^>]*bird-after-v2\.webp/);
+      expect(source).not.toMatch(/rel="preload"[^>]*bird-before-v2\.webp/);
     });
   });
 
@@ -44,7 +60,7 @@ describe('Homepage Performance — Phase 1', () => {
       const pagePath = join(ROOT, 'app/[locale]/page.tsx');
       const source = readFileSync(pagePath, 'utf-8');
 
-      expect(source).toContain("import { HeroSection }");
+      expect(source).toContain('import { HeroSection }');
       expect(source).toContain('<HeroSection />');
     });
 
@@ -228,6 +244,54 @@ describe('Homepage Performance — Phase 5', () => {
   });
 });
 
+describe('Homepage Performance — Phase 6 (Render-Blocking CSS)', () => {
+  describe('pSEO layout — Google Fonts preconnects', () => {
+    it('should not have preconnect to fonts.googleapis.com (fonts are self-hosted via next/font)', () => {
+      const layoutPath = join(ROOT, 'app/(pseo)/layout.tsx');
+      const source = readFileSync(layoutPath, 'utf-8');
+
+      // next/font self-hosts Inter and DM_Sans — preconnecting to Google Fonts
+      // opens an unnecessary TCP connection and signals to the browser that fonts
+      // will come from Google, causing render-blocking behaviour.
+      expect(source).not.toMatch(/preconnect[^>]*fonts\.googleapis\.com/);
+      expect(source).not.toMatch(/fonts\.googleapis\.com[^>]*preconnect/);
+    });
+
+    it('should not have preconnect to fonts.gstatic.com (fonts are self-hosted via next/font)', () => {
+      const layoutPath = join(ROOT, 'app/(pseo)/layout.tsx');
+      const source = readFileSync(layoutPath, 'utf-8');
+
+      expect(source).not.toMatch(/preconnect[^>]*fonts\.gstatic\.com/);
+      expect(source).not.toMatch(/fonts\.gstatic\.com[^>]*preconnect/);
+    });
+
+    it('should still use next/font for Inter and DM_Sans (self-hosted)', () => {
+      const layoutPath = join(ROOT, 'app/(pseo)/layout.tsx');
+      const source = readFileSync(layoutPath, 'utf-8');
+
+      expect(source).toContain("from 'next/font/google'");
+      expect(source).toContain('Inter');
+      expect(source).toContain('DM_Sans');
+    });
+  });
+
+  describe('pSEO layout — Stripe resource hints', () => {
+    it('should not have preconnect to stripe on pSEO layout (only dns-prefetch)', () => {
+      const layoutPath = join(ROOT, 'app/(pseo)/layout.tsx');
+      const source = readFileSync(layoutPath, 'utf-8');
+
+      // Must NOT have preconnect to stripe — preconnect opens a TCP socket immediately
+      // on every page load even if the user never visits checkout, wasting resources.
+      expect(source).not.toMatch(/rel="preconnect"[^>]*stripe/);
+      expect(source).not.toMatch(/href="https:\/\/js\.stripe\.com"[^>]*rel="preconnect"/);
+
+      // dns-prefetch is acceptable — it resolves DNS lazily without opening a socket
+      expect(source).toContain('rel="dns-prefetch"');
+      expect(source).toContain('https://js.stripe.com');
+    });
+  });
+});
+
 describe('Homepage Performance — Post-Audit Fixes', () => {
   describe('CSP allows analytics scripts', () => {
     it('should allow analytics.ahrefs.com in script-src', () => {
@@ -326,7 +390,7 @@ describe('Homepage Performance — Phase 2', () => {
 
       // Must use next/dynamic, not a static import
       expect(source).not.toMatch(
-        /^import\s*\{[^}]*AmbientBackground[^}]*\}\s*from\s*['"]@client\/components\/landing\/AmbientBackground['"]/m,
+        /^import\s*\{[^}]*AmbientBackground[^}]*\}\s*from\s*['"]@client\/components\/landing\/AmbientBackground['"]/m
       );
       expect(source).toContain("import dynamic from 'next/dynamic'");
       expect(source).toContain('AmbientBackground');
