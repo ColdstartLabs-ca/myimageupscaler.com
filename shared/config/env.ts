@@ -272,6 +272,11 @@ const serverEnvSchema = z.object({
   BLOG_API_KEY: z.string().default(''),
 
   // ==========================================
+  // OUTRANK.SO WEBHOOK
+  // ==========================================
+  OUTRANK_WEBHOOK_SECRET: z.string().default(''),
+
+  // ==========================================
   // GUEST UPSCALER (Upstash Redis)
   // ==========================================
   UPSTASH_REDIS_REST_URL: z.string().default(''),
@@ -384,6 +389,9 @@ function loadServerEnv(): IServerEnv {
 
     // Blog API
     BLOG_API_KEY: process.env.BLOG_API_KEY || '',
+
+    // Outrank.so Webhook
+    OUTRANK_WEBHOOK_SECRET: process.env.OUTRANK_WEBHOOK_SECRET || '',
 
     // Guest Upscaler (Upstash Redis)
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL || '',
