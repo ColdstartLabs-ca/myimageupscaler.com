@@ -14,6 +14,7 @@ import {
 } from '@lib/middleware';
 import { DEFAULT_LOCALE, isValidLocale, LOCALE_COOKIE, type Locale } from '@/i18n/config';
 import { getLocaleFromCountry } from '@lib/i18n/country-locale-map';
+import { ENGLISH_ONLY_CATEGORIES } from '@/lib/seo/localization-config';
 
 // Debug: log when middleware is loaded
 if (serverEnv.ENV === 'test') {
@@ -492,6 +493,20 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     // Preserve locale prefix in the redirect
     url.pathname = `${localePrefix}${newRedirectPath}`;
     return NextResponse.redirect(url, 301); // Permanent redirect for SEO
+  }
+
+  // Redirect English-only pSEO categories accessed with a non-English locale prefix
+  // e.g., /fr/photo-restoration → /photo-restoration (no localized route exists)
+  if (localePrefix && localePrefix !== '/en') {
+    const isEnglishOnlyPath = ENGLISH_ONLY_CATEGORIES.some(
+      cat => pathWithoutLocale === `/${cat}` || pathWithoutLocale.startsWith(`/${cat}/`)
+    );
+
+    if (isEnglishOnlyPath) {
+      const url = req.nextUrl.clone();
+      url.pathname = pathWithoutLocale;
+      return NextResponse.redirect(url, 301);
+    }
   }
 
   return null;

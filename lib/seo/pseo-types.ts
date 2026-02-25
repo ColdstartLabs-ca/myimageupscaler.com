@@ -195,6 +195,7 @@ export interface IGuidePage extends IBasePSEOPage {
   faq: IFAQ[];
   relatedGuides: string[];
   relatedTools: string[];
+  relatedBlogPosts?: string[];
   beforeAfterImages?: IBeforeAfterImages;
 }
 

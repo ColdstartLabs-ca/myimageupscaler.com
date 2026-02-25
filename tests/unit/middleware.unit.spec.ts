@@ -468,4 +468,111 @@ describe('Authentication Middleware', () => {
       }
     });
   });
+
+  describe('English-only pSEO category redirects', () => {
+    test('should redirect /fr/photo-restoration to /photo-restoration', async () => {
+      const { middleware } = await import('../../middleware');
+
+      const request = new NextRequest('http://localhost/fr/photo-restoration', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      expect(response.status).toBe(301);
+      const location = response.headers.get('Location') || '';
+      expect(location).toContain('/photo-restoration');
+      expect(location).not.toContain('/fr/');
+    });
+
+    test('should redirect /de/photo-restoration to /photo-restoration', async () => {
+      const { middleware } = await import('../../middleware');
+
+      const request = new NextRequest('http://localhost/de/photo-restoration', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      expect(response.status).toBe(301);
+      const location = response.headers.get('Location') || '';
+      expect(location).toContain('/photo-restoration');
+      expect(location).not.toContain('/de/');
+    });
+
+    test('should redirect /it/photo-restoration/slug to /photo-restoration/slug', async () => {
+      const { middleware } = await import('../../middleware');
+
+      const request = new NextRequest('http://localhost/it/photo-restoration/restore-old-photos', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      expect(response.status).toBe(301);
+      const location = response.headers.get('Location') || '';
+      expect(location).toContain('/photo-restoration/restore-old-photos');
+      expect(location).not.toContain('/it/');
+    });
+
+    test('should NOT redirect /photo-restoration (no locale prefix)', async () => {
+      const { middleware } = await import('../../middleware');
+
+      const request = new NextRequest('http://localhost/photo-restoration', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      // pSEO path without locale passes through (not a redirect)
+      expect(response.status).not.toBe(301);
+    });
+
+    test('should NOT redirect /en/photo-restoration (English locale)', async () => {
+      const { middleware } = await import('../../middleware');
+
+      const request = new NextRequest('http://localhost/en/photo-restoration', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      expect(response.status).not.toBe(301);
+    });
+
+    test('should NOT redirect /fr/tools/image-upscaler (localized category)', async () => {
+      const { middleware } = await import('../../middleware');
+
+      const request = new NextRequest('http://localhost/fr/tools/image-upscaler', {
+        method: 'GET',
+      });
+
+      const response = await middleware(request);
+
+      // Localized pSEO category should pass through, not redirect
+      expect(response.status).not.toBe(301);
+    });
+
+    test('should redirect other English-only categories with any non-English locale', async () => {
+      const { middleware } = await import('../../middleware');
+
+      const testCases = [
+        { path: '/es/camera-raw', expectedPath: '/camera-raw' },
+        { path: '/de/industry-insights', expectedPath: '/industry-insights' },
+        { path: '/fr/compare/vs-competitor', expectedPath: '/compare/vs-competitor' },
+      ];
+
+      for (const { path, expectedPath } of testCases) {
+        const request = new NextRequest(`http://localhost${path}`, {
+          method: 'GET',
+        });
+
+        const response = await middleware(request);
+
+        expect(response.status).toBe(301);
+        const location = response.headers.get('Location') || '';
+        expect(location).toContain(expectedPath);
+      }
+    });
+  });
 });

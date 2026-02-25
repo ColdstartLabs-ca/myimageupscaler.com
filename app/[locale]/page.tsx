@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { HomePageClient } from '@client/components/pages/HomePageClient';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
+import { RelatedBlogPostsSection } from '@/app/(pseo)/_components/pseo/sections/RelatedBlogPostsSection';
 import { generateHomepageSchema } from '@lib/seo/schema-generator';
 import {
   getCanonicalUrl,
@@ -83,6 +84,13 @@ export async function generateMetadata({ params }: ILocaleHomePageProps): Promis
   };
 }
 
+const HOMEPAGE_BLOG_SLUGS = [
+  'how-to-upscale-images-without-losing-quality',
+  'fix-blurry-photos-ai-methods-guide',
+  'restore-old-photos-ai-enhancement-guide',
+  'image-resolution-for-printing-complete-guide',
+];
+
 export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
   const { locale } = await params;
   const homepageSchema = generateHomepageSchema(locale);
@@ -104,6 +112,17 @@ export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
       >
         <HomePageClient />
       </Suspense>
+      <div className="bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <RelatedBlogPostsSection
+            blogPostSlugs={HOMEPAGE_BLOG_SLUGS}
+            title="From the Blog"
+            subtitle="Guides and tutorials to get the most from AI image tools"
+            maxPosts={4}
+            locale={locale}
+          />
+        </div>
+      </div>
     </>
   );
 }

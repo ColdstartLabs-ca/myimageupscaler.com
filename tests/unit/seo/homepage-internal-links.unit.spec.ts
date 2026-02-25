@@ -12,6 +12,15 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 
+const ROOT = path.resolve(__dirname, '../../..');
+const BLOG_DIR = path.join(ROOT, 'content/blog');
+const validBlogSlugs = new Set(
+  fs
+    .readdirSync(BLOG_DIR)
+    .filter(f => f.endsWith('.mdx'))
+    .map(f => f.replace('.mdx', ''))
+);
+
 // Import the exported constant directly — avoids React rendering complexity
 // while still verifying the actual runtime data used by the component.
 import { POPULAR_TOOLS } from '../../../client/components/pages/HomePageClient';
@@ -115,5 +124,43 @@ describe('Homepage Internal Links — component structure', () => {
     expect(popularSection).not.toMatch(/#[0-9a-fA-F]{3,6}\b/);
     expect(popularSection).not.toMatch(/rgb\(/);
     expect(popularSection).not.toMatch(/rgba\(/);
+  });
+});
+
+// ============================================================================
+// D) Homepage "From the Blog" section
+// ============================================================================
+
+describe('Homepage "From the Blog" section', () => {
+  const homePagePath = path.resolve(ROOT, 'app/[locale]/page.tsx');
+  const homePageSource = fs.readFileSync(homePagePath, 'utf-8');
+
+  it('imports RelatedBlogPostsSection', () => {
+    expect(homePageSource).toContain('RelatedBlogPostsSection');
+    expect(homePageSource).toMatch(/import.*RelatedBlogPostsSection.*from/);
+  });
+
+  it('defines HOMEPAGE_BLOG_SLUGS constant', () => {
+    expect(homePageSource).toContain('HOMEPAGE_BLOG_SLUGS');
+  });
+
+  it('renders RelatedBlogPostsSection with "From the Blog" title', () => {
+    expect(homePageSource).toContain('<RelatedBlogPostsSection');
+    expect(homePageSource).toContain('"From the Blog"');
+  });
+
+  it('all HOMEPAGE_BLOG_SLUGS are valid blog post files', () => {
+    // Extract slugs from the HOMEPAGE_BLOG_SLUGS array in the source
+    const match = homePageSource.match(/HOMEPAGE_BLOG_SLUGS\s*=\s*\[([\s\S]*?)\]/);
+    expect(match).toBeTruthy();
+    const slugsBlock = match![1];
+    const slugs = [...slugsBlock.matchAll(/['"]([^'"]+)['"]/g)].map(m => m[1]);
+    expect(slugs.length).toBeGreaterThanOrEqual(3);
+    for (const slug of slugs) {
+      expect(
+        validBlogSlugs.has(slug),
+        `HOMEPAGE_BLOG_SLUGS contains "${slug}" which has no matching content/blog/*.mdx file`
+      ).toBe(true);
+    }
   });
 });

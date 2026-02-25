@@ -157,6 +157,7 @@
       ],
       "relatedTools": ["ai-photo-enhancer"],
       "relatedGuides": ["tiff-format-guide", "how-to-upscale-images"],
+      "relatedBlogPosts": ["how-to-upscale-images-without-losing-quality", "ai-image-enhancement-ecommerce-guide", "image-resolution-for-printing-complete-guide"],
       "ctaText": "Upscale Image Free",
       "ctaUrl": "/?signup=1",
       "beforeAfterImages": {
@@ -326,6 +327,7 @@
       ],
       "relatedTools": ["ai-image-upscaler"],
       "relatedGuides": ["tiff-format-guide", "raw-photography-guide"],
+      "relatedBlogPosts": ["restore-old-photos-ai-enhancement-guide", "how-to-upscale-images-without-losing-quality", "keep-text-sharp-when-upscaling-product-photos"],
       "ctaText": "Enhance Photo Free",
       "ctaUrl": "/?signup=1",
       "beforeAfterImages": {

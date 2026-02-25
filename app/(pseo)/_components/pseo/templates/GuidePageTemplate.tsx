@@ -19,6 +19,7 @@ import { ScrollTracker } from '../analytics/ScrollTracker';
 import { CTASection } from '../sections/CTASection';
 import { FAQSection } from '../sections/FAQSection';
 import { HeroSection } from '../sections/HeroSection';
+import { RelatedBlogPostsSection } from '../sections/RelatedBlogPostsSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 import { MarkdownRenderer } from '../ui/MarkdownRenderer';
@@ -31,7 +32,7 @@ interface IGuidePageTemplateProps {
 
 export function GuidePageTemplate({
   data,
-  locale: _locale,
+  locale,
   relatedPages = [],
 }: IGuidePageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
@@ -306,6 +307,13 @@ export function GuidePageTemplate({
               </div>
             </section>
           </FadeIn>
+        )}
+
+        {/* Related Blog Posts */}
+        {data.relatedBlogPosts && data.relatedBlogPosts.length > 0 && (
+          <div className="py-12">
+            <RelatedBlogPostsSection blogPostSlugs={data.relatedBlogPosts} locale={locale} />
+          </div>
         )}
 
         {/* Footer spacing */}

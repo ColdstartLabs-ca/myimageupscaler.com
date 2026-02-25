@@ -150,6 +150,26 @@ describe('Sitemap Index Localization', () => {
   });
 });
 
+describe('Sitemap Index Route', () => {
+  it('should NOT include ai-features in the sitemap index (zombie category)', async () => {
+    const { GET } = await import('@/app/sitemap.xml/route');
+    const response = await GET();
+    const xml = await response.text();
+
+    expect(xml).not.toContain('sitemap-ai-features.xml');
+  });
+
+  it('should include 81 total sitemaps (11 English-only + 10×7 localized)', async () => {
+    const { GET } = await import('@/app/sitemap.xml/route');
+    const response = await GET();
+    const xml = await response.text();
+
+    const matches = xml.match(/<sitemap>/g);
+    // 11 English-only + (10 localized × 7 locales) = 11 + 70 = 81
+    expect(matches).toHaveLength(81);
+  });
+});
+
 describe('Sitemap Generator Integration', () => {
   it('should use localized categories from config', async () => {
     // Import the actual module to test integration

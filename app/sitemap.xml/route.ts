@@ -21,7 +21,6 @@ const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
   'compare',
   'platforms',
   'images',
-  'ai-features',
   'content',
   'photo-restoration',
   'camera-raw',
