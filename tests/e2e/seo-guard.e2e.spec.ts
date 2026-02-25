@@ -54,7 +54,7 @@ const ENGLISH_ONLY_CATEGORIES = [
 ] as const;
 
 // Total sitemaps: 12 English-only + (10 localized × 7 locales) = 12 + 70 = 82
-const TOTAL_SITEMAP_COUNT = 82;
+const TOTAL_SITEMAP_COUNT = 81;
 
 // Base URL for production checks (canonical URLs should always use this)
 const PRODUCTION_BASE_URL = 'https://myimageupscaler.com';
