@@ -619,11 +619,7 @@
       ],
       "relatedGuides": [],
       "ctaText": "Remove BG Now",
-      "ctaUrl": "/tools/remove-bg",
-      "relatedPages": [
-        "ai-background-remover",
-        "transparent-background-maker"
-      ]
+      "ctaUrl": "/tools/remove-bg"
     },
     {
       "slug": "transparent-background-maker",
@@ -837,10 +833,7 @@
       ],
       "relatedGuides": [],
       "ctaText": "Cut Out Now",
-      "ctaUrl": "/tools/image-cutout-tool",
-      "relatedPages": [
-        "ai-background-remover"
-      ]
+      "ctaUrl": "/tools/image-cutout-tool"
     },
     {
       "slug": "smart-ai-enhancement",
