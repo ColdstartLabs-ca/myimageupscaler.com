@@ -13,6 +13,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const DATA_DIR = join(process.cwd(), 'app/seo/data');
+const BLOG_DIR = join(process.cwd(), 'content/blog');
 
 interface IValidationResult {
   file: string;
@@ -39,6 +40,14 @@ interface IDataFile {
 // Collect all valid slugs from each category
 function getAllSlugs() {
   const slugs: Record<string, string[]> = {};
+
+  // Collect blog post slugs from MDX files
+  try {
+    const blogFiles = readdirSync(BLOG_DIR).filter(f => f.endsWith('.mdx'));
+    slugs['blogposts'] = blogFiles.map(f => f.replace('.mdx', ''));
+  } catch (error) {
+    console.warn(`  ⚠️  Could not read blog directory: ${error}`);
+  }
 
   const files = readdirSync(DATA_DIR).filter(f => f.endsWith('.json'));
 
@@ -120,6 +129,7 @@ function getTargetCategories(fileName: string, field: string): string[] {
     relatedPersonas: ['personas-expanded'],
     relatedCameraRaw: ['camera-raw'],
     relatedFeatures: ['ai-features'],
+    relatedBlogPosts: ['blogposts'],
   };
 
   // Check if this field has explicit category mappings (regardless of source file)
