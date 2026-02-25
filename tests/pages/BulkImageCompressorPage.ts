@@ -177,8 +177,8 @@ export class BulkImageCompressorPage extends BasePage {
   async setQuality(quality: number): Promise<void> {
     // Use Playwright's fill method for range inputs, which handles React properly
     await this.qualitySlider.fill(quality.toString());
-    // Wait for the value to be set
-    await expect(this.qualitySlider).toHaveValue(quality.toString());
+    // Wait for the quality display to update (confirms React state updated, not just DOM value)
+    await expect(this.qualityDisplay).toContainText(`${quality}%`);
   }
 
   /**
