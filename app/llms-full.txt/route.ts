@@ -63,11 +63,8 @@ Key Benefits:
 - ${BASE_URL}/tools/resize/bulk-image-resizer - Bulk image resizer
 
 ## Special Features
-- ${BASE_URL}/ai-features - AI enhancement features
-- ${BASE_URL}/ai-features/ai-noise-reduction-upscaler - Noise reduction
-- ${BASE_URL}/ai-features/ai-sharpness-enhancement-upscaler - Sharpness enhancement
-- ${BASE_URL}/ai-features/ai-face-enhancement-upscaler - Face enhancement
-- ${BASE_URL}/tools/ai-background-remover - Background removal
+- ${BASE_URL}/tools/ai-background-remover - AI background removal
+- ${BASE_URL}/tools/transparent-background-maker - Create transparent PNGs
 
 ## Free Tools
 - ${BASE_URL}/free - All free tools
@@ -101,7 +98,7 @@ Topics covered include:
 
 # API Information
 REST API: ${BASE_URL}/api
-Authentication: API key required for production use
+Authentication: Free tier available, no API key required for basic use
 Rate Limits: Varies by plan
 Documentation: ${BASE_URL}/how-it-works
 

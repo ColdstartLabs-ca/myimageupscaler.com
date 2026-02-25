@@ -2,14 +2,12 @@
  * Robots.txt Configuration
  * Based on PRD-PSEO-04 Section 5.1: Robots.txt Implementation
  *
- * AI Crawler Policy: ALLOWED
- * - GPTBot, ChatGPT-User: Allowed (enables OpenAI inclusion in ChatGPT search)
- * - Google-Extended: Allowed (enables inclusion in Google SGE, AI Overviews, Gemini)
- *
- * Benefits:
- * - Content available for AI-powered search features
- * - Better visibility in ChatGPT, Google SGE, AI Overviews
- * - Increased organic traffic from AI search platforms
+ * AI Crawler Policy: EXPLICITLY ALLOWED
+ * Named AI bot rules ensure unambiguous permission signals for AEO/GEO visibility.
+ * - GPTBot, ChatGPT-User: OpenAI / ChatGPT search
+ * - Google-Extended: Google SGE, AI Overviews, Gemini
+ * - ClaudeBot, anthropic-ai: Anthropic / Claude
+ * - PerplexityBot: Perplexity AI search
  */
 
 import { MetadataRoute } from 'next';
@@ -33,6 +31,37 @@ export default function robots(): MetadataRoute.Robots {
           '/success',
           '/canceled',
         ],
+      },
+      // AI Search Engine Bots — explicitly allowed for AEO/GEO visibility
+      {
+        userAgent: 'GPTBot',
+        allow: '/',
+        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+      },
+      {
+        userAgent: 'ChatGPT-User',
+        allow: '/',
+        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+      },
+      {
+        userAgent: 'Google-Extended',
+        allow: '/',
+        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+      },
+      {
+        userAgent: 'ClaudeBot',
+        allow: '/',
+        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+      },
+      {
+        userAgent: 'PerplexityBot',
+        allow: '/',
+        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+      },
+      {
+        userAgent: 'anthropic-ai',
+        allow: '/',
+        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,

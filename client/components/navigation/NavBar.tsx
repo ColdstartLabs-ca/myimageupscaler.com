@@ -182,6 +182,13 @@ export const NavBar = (): JSX.Element => {
             {isToolsDropdownOpen && (
               <div className="absolute top-full left-0 mt-4 w-56 glass-dropdown rounded-2xl py-3 z-50 animate-in fade-in zoom-in-95 duration-200">
                 <a
+                  href={localizedPath('/tools')}
+                  className="block px-4 py-2 text-sm font-semibold text-white hover:bg-surface/10 transition-colors"
+                >
+                  {t('allTools')}
+                </a>
+                <div className="border-t border-border my-2"></div>
+                <a
                   href={localizedPath('/tools/compress/image-compressor')}
                   className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
                 >
@@ -451,6 +458,12 @@ export const NavBar = (): JSX.Element => {
               <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
                 {t('tools')}
               </p>
+              <a
+                href={localizedPath('/tools')}
+                className="block px-4 py-2 text-sm font-semibold text-white hover:bg-surface/10 rounded-lg transition-colors"
+              >
+                {t('allTools')}
+              </a>
               <a
                 href={localizedPath('/tools/compress/image-compressor')}
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"

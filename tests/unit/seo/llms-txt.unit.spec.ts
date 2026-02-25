@@ -122,14 +122,38 @@ describe('llms.txt Route', () => {
       expect(content).toContain('/free');
     });
 
-    it('should include AI features links', async () => {
+    it('should include special features links', async () => {
       const { GET } = await import('@/app/llms-full.txt/route');
       const response = await GET();
       const content = await response.text();
 
-      expect(content).toContain('/ai-features');
-      expect(content).toContain('ai-noise-reduction-upscaler');
-      expect(content).toContain('ai-sharpness-enhancement-upscaler');
+      expect(content).toContain('/tools/ai-background-remover');
+      expect(content).toContain('/tools/transparent-background-maker');
+    });
+
+    it('should not reference ai-features URLs', async () => {
+      const { GET } = await import('@/app/llms-full.txt/route');
+      const response = await GET();
+      const content = await response.text();
+
+      expect(content).not.toContain('/ai-features');
+      expect(content).not.toContain('ai-noise-reduction-upscaler');
+      expect(content).not.toContain('ai-sharpness-enhancement-upscaler');
+      expect(content).not.toContain('ai-face-enhancement-upscaler');
+    });
+
+    it('should have consistent API auth info with llms.txt', async () => {
+      const { GET: GETFull } = await import('@/app/llms-full.txt/route');
+      const { GET: GETBasic } = await import('@/app/llms.txt/route');
+
+      const fullResponse = await GETFull();
+      const basicResponse = await GETBasic();
+      const fullContent = await fullResponse.text();
+      const basicContent = await basicResponse.text();
+
+      // Both should indicate free tier is available without API key
+      expect(basicContent).toContain('no API key required');
+      expect(fullContent).toContain('no API key required');
     });
 
     it('should include API information', async () => {

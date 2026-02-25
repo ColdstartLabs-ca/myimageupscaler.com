@@ -64,6 +64,7 @@
     "blog": "Blog",
     "resources": "Ressourcen",
     "tools": "Werkzeuge",
+    "allTools": "Alle Werkzeuge",
     "imageCompressor": "Bildkompressor",
     "bulkCompressor": "Massenkompressor",
     "formatConverter": "Formatkonverter",
