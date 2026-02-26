@@ -125,28 +125,9 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
       suppressHydrationWarning
     >
       <head>
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://analytics.ahrefs.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
-
-        {/* Preload LCP element: logo is the largest visible element on all pages.
-            xs breakpoint = 475px (tailwind.config.js). Use media queries to avoid
-            downloading the wrong variant — each device only fetches what it renders. */}
-        <link
-          rel="preload"
-          href="/logo/horizontal-logo-compact.png"
-          as="image"
-          media="(max-width: 474px)"
-          fetchPriority="high"
-        />
-        <link
-          rel="preload"
-          href="/logo/horizontal-logo-full.png"
-          as="image"
-          media="(min-width: 475px)"
-          fetchPriority="high"
-        />
 
         <JsonLd data={websiteJsonLd} />
         <JsonLd data={organizationJsonLd} />
