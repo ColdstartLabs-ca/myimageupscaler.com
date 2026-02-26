@@ -49,29 +49,60 @@ Create SEO-optimized blog posts about image upscaling, AI photo enhancement, and
 
 ## Step -1: Research Keywords & Content Roadmap
 
-### Check Keyword Strategy Roadmap FIRST
+### Check Long-Tail Keyword Roadmap FIRST
 
-**CRITICAL**: Before researching keywords manually, check if a keyword strategy roadmap exists.
+**CRITICAL**: Before researching keywords manually, read the long-tail keyword roadmap. This contains pre-analyzed keywords that our DR 18 can realistically rank for.
 
 ```bash
-# Find most recent keyword strategy roadmap
-ROADMAP=$(ls -t docs/SEO/keyword-strategy-roadmap-*.md 2>/dev/null | head -1)
+# Read the long-tail keyword roadmap
+ROADMAP="docs/SEO/long-tail-keyword-roadmap.md"
 
-if [ -n "$ROADMAP" ]; then
-  echo "✅ Found keyword roadmap: $ROADMAP"
+if [ -f "$ROADMAP" ]; then
+  echo "✅ Found long-tail keyword roadmap: $ROADMAP"
 
-  # Show quick wins and content gaps
-  echo "=== QUICK WINS (Optimize Existing or Write New) ==="
-  grep -A 20 "### Segment A: Quick Wins" "$ROADMAP" | head -25
+  # Show priority topics
+  echo "=== PRIORITY 1: Platform-Specific (Immediate) ==="
+  grep -A 10 "## Priority 1: Platform-Specific" "$ROADMAP" | head -15
 
-  echo "=== CONTENT GAPS (New Blog Posts Needed) ==="
-  grep -A 20 "### Segment B: Content Gaps" "$ROADMAP" | head -25
+  echo "=== PRIORITY 2: Format-Specific (Immediate) ==="
+  grep -A 10 "## Priority 2: Format-Specific" "$ROADMAP" | head -15
+
+  echo "=== PRIORITY 3: Use-Case Specific (This Month) ==="
+  grep -A 10 "## Priority 3: Use-Case Specific" "$ROADMAP" | head -15
+
+  echo "=== ALREADY COVERED (Don't Duplicate) ==="
+  grep -A 30 "## Topics Already Covered" "$ROADMAP" | head -35
 else
-  echo "⚠️  No keyword roadmap found - generating one now..."
-  echo "Run: /keyword-research-strategy --focus=easy-wins --limit=20"
+  echo "⚠️  No keyword roadmap found at $ROADMAP"
+  echo "Please ensure the file exists before proceeding."
   exit 1
 fi
 ```
+
+### Keyword Priority Tiers (DR 18 Optimized)
+
+**IMPORTANT**: We have DR 18 with 75 referring domains. We CANNOT rank for high-volume head terms (500K+ searches). Focus on:
+
+| Tier | Volume Range | Competition | Can We Rank? | Priority |
+|------|--------------|-------------|--------------|----------|
+| **Long-tail** | 300-2,000 | Low | **YES** (DR 15-25 needed) | **P1** |
+| **Mid-tail** | 2,000-10,000 | Low-Med | **MAYBE** (DR 25-35 needed) | **P2** |
+| **Head terms** | 50,000+ | High | **NO** (DR 50+ needed) | **AVOID** |
+
+### Keyword Selection Rules
+
+1. **DO target:**
+   - Platform-specific: "midjourney upscaler", "stable diffusion upscaler"
+   - Format-specific: "upscale heic", "upscale tiff", "avif upscale"
+   - Use-case-specific: "youtube thumbnail upscaler", "etsy image upscaler"
+   - Scale-specific: "upscale 8x", "upscale to 8k"
+   - Question-based: "how to upscale without losing quality"
+
+2. **DON'T target (yet):**
+   - "image upscaler" (500K, DR 50+ needed)
+   - "ai image enhancer" (500K, DR 50+ needed)
+   - "photo quality enhancer" (500K, DR 50+ needed)
+   - Any keyword with 50K+ volume until we reach DR 35+
 
 ### Track What's Been Written (Prevent Duplication)
 
@@ -123,11 +154,23 @@ grep -i "$TARGET_KEYWORD" docs/SEO/blog-content-tracking/topics-covered.md && \
 
 | Source | Priority | When to Use |
 |--------|----------|-------------|
-| **Roadmap Segment A** | P1 | Existing page ranks 4-20 - write supporting blog post |
-| **Roadmap Segment B** | P1 | Content gap identified - create informational blog post |
-| **Roadmap Segment C** | P2 | Long-tail cluster - write comprehensive guide |
-| **Roadmap Segment D** | P2 | Intent mismatch - blog post may fix CTR issue |
-| **GSC Manual** | P3 | Only if roadmap doesn't exist yet |
+| **Priority 1: Platform-Specific** | P1 | Platform upscaler pages need blog support |
+| **Priority 2: Format-Specific** | P1 | Format pages (HEIC, TIFF, WebP) need content |
+| **Priority 3: Use-Case Specific** | P1 | Use case pages (logo, real estate, NFT) |
+| **Priority 4: Scale-Specific** | P2 | Scale pages (8x, 16x, 4x sweet spot) |
+| **Priority 5: Free + Long-Tail** | P2 | Free modifier keywords |
+| **Priority 6: Question-Based** | P2 | Featured snippet opportunities |
+| **Priority 7: Comparison** | P3 | Alternative/comparison posts |
+| **Topics Already Covered** | AVOID | Check topics-covered.md to prevent duplication |
+
+### Topic Selection Workflow
+
+1. **Read** `docs/SEO/long-tail-keyword-roadmap.md`
+2. **Check** `docs/SEO/blog-content-tracking/topics-covered.md` for duplicates
+3. **Select** highest priority keyword NOT yet covered
+4. **Verify** volume is 300-5,000 (our DR 18 range)
+5. **Confirm** competition is "Low"
+6. **Proceed** with blog post creation
 
 ---
 
