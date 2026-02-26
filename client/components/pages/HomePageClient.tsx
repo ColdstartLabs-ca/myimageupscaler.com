@@ -1,11 +1,9 @@
 'use client';
 
-import { FadeIn } from '@client/components/ui/MotionWrappers';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
-import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { DEFAULT_LOCALE } from '@/i18n/config';
@@ -128,8 +126,7 @@ export function HomePageClient(): JSX.Element {
   return (
     <>
       {/* Popular Tools Section — Internal linking for link equity distribution */}
-      <FadeIn>
-        <section className="py-20 relative">
+      <section className="py-20 relative">
           <AmbientBackground variant="section" />
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-12">
@@ -164,7 +161,6 @@ export function HomePageClient(): JSX.Element {
             </div>
           </div>
         </section>
-      </FadeIn>
 
       {/* Landing Page Sections - Lazy loaded for performance */}
       <Suspense fallback={<div className="h-screen" />}>
@@ -174,116 +170,102 @@ export function HomePageClient(): JSX.Element {
         <HowItWorks />
       </Suspense>
 
-      {/* FAQ Section - Lazy loaded for performance */}
-      <FadeIn>
-        <section id="faq" className="py-24 relative">
-          <AmbientBackground variant="section" />
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">{t('faqTitle')}</h2>
-              <p className="text-lg text-text-secondary">{t('faqSubtitle')}</p>
-            </div>
-            <Suspense fallback={<div className="animate-pulse h-64 bg-white/5 rounded-xl" />}>
-              <FAQ
-                items={[
-                  {
-                    question: t('faq1Question'),
-                    answer: t('faq1Answer'),
-                  },
-                  {
-                    question: t('faq2Question'),
-                    answer: t('faq2Answer'),
-                  },
-                  {
-                    question: t('faq3Question'),
-                    answer: t('faq3Answer'),
-                  },
-                  {
-                    question: t('faq4Question'),
-                    answer: t('faq4Answer'),
-                  },
-                ]}
-              />
-            </Suspense>
+      {/* FAQ Section */}
+      <section id="faq" className="py-24 relative">
+        <AmbientBackground variant="section" />
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">{t('faqTitle')}</h2>
+            <p className="text-lg text-text-secondary">{t('faqSubtitle')}</p>
           </div>
-        </section>
-      </FadeIn>
+          <Suspense fallback={<div className="animate-pulse h-64 bg-white/5 rounded-xl" />}>
+            <FAQ
+              items={[
+                {
+                  question: t('faq1Question'),
+                  answer: t('faq1Answer'),
+                },
+                {
+                  question: t('faq2Question'),
+                  answer: t('faq2Answer'),
+                },
+                {
+                  question: t('faq3Question'),
+                  answer: t('faq3Answer'),
+                },
+                {
+                  question: t('faq4Question'),
+                  answer: t('faq4Answer'),
+                },
+              ]}
+            />
+          </Suspense>
+        </div>
+      </section>
 
       {/* Pricing CTA Section */}
-      <FadeIn>
-        <section className="py-24 relative">
-          <AmbientBackground variant="section" />
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">
-              {t('pricingCtaTitle')}
-            </h2>
-            <p className="text-lg sm:text-xl text-text-secondary mb-10 max-w-2xl mx-auto font-light">
-              {t('pricingCtaDescription')}
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <motion.a
-                href="/pricing"
-                className="group inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-xl transition-all duration-300 gradient-cta shine-effect"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {t('ctaSeeWhatItCosts')}
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </motion.a>
-              <motion.button
-                onClick={() => openAuthModal('register')}
-                className="inline-flex items-center gap-2 px-8 py-4 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {hasTrialEnabled ? t('ctaTryFreeCredits') : t('ctaGetFreeCredits')}
-              </motion.button>
-            </div>
-            <p className="mt-6 text-sm text-text-muted">{t('pricingCtaSubtext')}</p>
+      <section className="py-24 relative">
+        <AmbientBackground variant="section" />
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">
+            {t('pricingCtaTitle')}
+          </h2>
+          <p className="text-lg sm:text-xl text-text-secondary mb-10 max-w-2xl mx-auto font-light">
+            {t('pricingCtaDescription')}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <a
+              href="/pricing"
+              className="group inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-xl transition-all duration-200 gradient-cta shine-effect hover:scale-[1.02] active:scale-[0.98]"
+            >
+              {t('ctaSeeWhatItCosts')}
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+            <button
+              onClick={() => openAuthModal('register')}
+              className="inline-flex items-center gap-2 px-8 py-4 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              {hasTrialEnabled ? t('ctaTryFreeCredits') : t('ctaGetFreeCredits')}
+            </button>
           </div>
-        </section>
-      </FadeIn>
+          <p className="mt-6 text-sm text-text-muted">{t('pricingCtaSubtext')}</p>
+        </div>
+      </section>
 
       {/* Final CTA Section */}
-      <FadeIn>
-        <section className="relative py-32 section-glow-top overflow-hidden">
-          {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-main to-accent/10"></div>
-          <AmbientBackground variant="section" />
+      <section className="relative py-32 section-glow-top overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-main to-accent/10"></div>
+        <AmbientBackground variant="section" />
 
-          <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-4xl sm:text-6xl font-black text-white mb-6">
-              {t('finalCtaTitle')}
-              <br />
-              <span className="gradient-text-primary">{t('finalCtaTitleHighlight')}</span>
-            </h2>
-            <p className="text-xl text-text-secondary mb-12 max-w-2xl mx-auto font-light">
-              {t('finalCtaDescription')}
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <motion.button
-                onClick={() => openAuthModal('register')}
-                className="group inline-flex items-center gap-2 px-10 py-5 text-white font-bold rounded-xl transition-all duration-300 gradient-cta shine-effect text-lg shadow-xl shadow-accent/20"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Sparkles size={22} className="group-hover:rotate-12 transition-transform" />
-                {hasTrialEnabled ? t('ctaFixImagesNow') : t('ctaStartUpscaling')}
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </motion.button>
-              <motion.a
-                href="/pricing"
-                className="inline-flex items-center gap-2 px-10 py-5 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-300 text-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {t('ctaComparePlans')}
-              </motion.a>
-            </div>
-            <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext')}</p>
+        <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl sm:text-6xl font-black text-white mb-6">
+            {t('finalCtaTitle')}
+            <br />
+            <span className="gradient-text-primary">{t('finalCtaTitleHighlight')}</span>
+          </h2>
+          <p className="text-xl text-text-secondary mb-12 max-w-2xl mx-auto font-light">
+            {t('finalCtaDescription')}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <button
+              onClick={() => openAuthModal('register')}
+              className="group inline-flex items-center gap-2 px-10 py-5 text-white font-bold rounded-xl transition-all duration-200 gradient-cta shine-effect text-lg shadow-xl shadow-accent/20 hover:scale-[1.05] active:scale-[0.95]"
+            >
+              <Sparkles size={22} className="group-hover:rotate-12 transition-transform" />
+              {hasTrialEnabled ? t('ctaFixImagesNow') : t('ctaStartUpscaling')}
+              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+            <a
+              href="/pricing"
+              className="inline-flex items-center gap-2 px-10 py-5 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-200 text-lg hover:scale-[1.05] active:scale-[0.95]"
+            >
+              {t('ctaComparePlans')}
+            </a>
           </div>
-        </section>
-      </FadeIn>
+          <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext')}</p>
+        </div>
+      </section>
 
       {/* Locale links — crawlable equity distribution */}
       <section className="py-8 text-center">

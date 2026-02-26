@@ -1,183 +1,115 @@
 # PageSpeed Insights Report — myimageupscaler.com
 
 **Date:** 2026-02-25
-**Tool:** Lighthouse 13.0.3 (local run via Chrome 138.0.7204.183)
+**Tool:** Lighthouse 13.0.3 (local run via Chrome)
 **URL tested:** https://myimageupscaler.com
 
 ---
 
 ## Overall Scores
 
-| Category        | Mobile | Desktop |
-| --------------- | :----: | :-----: |
-| Performance     | **63** | 92      |
-| Accessibility   | 96     | 96      |
-| Best Practices  | 92     | **88**  |
-| SEO             | 100    | 100     |
-
-> Mobile performance at **63** is the critical concern. Desktop is healthy at **92**.
+| Category       | Mobile | Desktop |
+| -------------- | ------ | ------- |
+| Performance    | **48** | 99      |
+| Accessibility  | 100    | 100     |
+| Best Practices | 96     | 92      |
+| SEO            | 100    | 100     |
 
 ---
 
 ## Lab Data
 
-| Metric                         | Mobile       | Desktop  |
-| ------------------------------ | :----------: | :------: |
-| First Contentful Paint (FCP)   | 1.4 s        | 0.5 s    |
-| **Largest Contentful Paint (LCP)** | **7.7 s** ❌ | 1.8 s ⚠️ |
-| **Total Blocking Time (TBT)**  | **410 ms** ⚠️| 20 ms    |
-| Cumulative Layout Shift (CLS)  | 0.003 ✅     | 0.003 ✅  |
-| Speed Index                    | 4.4 s ⚠️    | 1.0 s    |
-| **Time to Interactive (TTI)**  | **7.8 s** ❌ | 1.8 s    |
-| Server Response Time (TTFB)    | **1,180 ms** ❌ | 140 ms |
+| Metric                         | Mobile     | Desktop |
+| ------------------------------ | ---------- | ------- |
+| First Contentful Paint (FCP)   | **3.2 s**  | 0.4 s   |
+| Largest Contentful Paint (LCP) | **7.6 s**  | 1.0 s   |
+| Total Blocking Time (TBT)      | **670 ms** | 30 ms   |
+| Cumulative Layout Shift (CLS)  | 0          | 0.003   |
+| Speed Index                    | **6.0 s**  | 0.7 s   |
+| Time to Interactive (TTI)      | **7.6 s**  | 1.0 s   |
+| Server Response Time (TTFB)    | 320 ms     | 110 ms  |
 
-> CLS is excellent. Everything else on mobile needs work — particularly LCP (7.7s) and TTFB (1.18s).
+---
+
+## Root Cause: LCP Breakdown
+
+| LCP Subpart              | Duration     |
+| ------------------------ | ------------ |
+| Time to First Byte       | 346 ms       |
+| **Element render delay** | **2,310 ms** |
+
+The LCP image (`fetchPriority="high"`) is in the HTML immediately, but the browser waits
+**2.3 full seconds** before it can paint it. This is because JavaScript blocks the main
+thread for that entire duration.
+
+### Main Thread Work (Mobile)
+
+| Category                     | Duration     |
+| ---------------------------- | ------------ |
+| **Script Evaluation**        | **1,167 ms** |
+| Style & Layout               | 542 ms       |
+| Other                        | 421 ms       |
+| Script Parsing & Compilation | 209 ms       |
+| Parse HTML & CSS             | 42 ms        |
+| Rendering                    | 35 ms        |
+
+**Total: ~2,416 ms** — matches the element render delay almost exactly.
 
 ---
 
 ## Performance Opportunities
 
-### 1. Reduce Unused JavaScript — **Est. savings: 2,250 ms / 441 KiB** (Mobile) ❌
-
-The biggest single fix. ~441 KiB of JS is loaded but never executed on the homepage.
-
-**Top offenders:**
+### 1. Reduce Unused JavaScript — Est. 1,280 ms savings (224 KiB)
 
 | Script | Wasted | Total |
-| ------ | ------: | -----: |
-| `ed9f2dc4-914a70998901afd4.js` | 228 KiB | 228 KiB (100% wasted!) |
-| `gtag/js` (Google Analytics) | 71 KiB | 154 KiB |
-| `5459-c03c1f5573ceab96.js` | 44 KiB | 76 KiB |
-| `7716-59e71b0f32322ac9.js` | 39 KiB | 48 KiB |
-| `7929.0ab49de1af4c7dd7.js` | 26 KiB | 47 KiB |
-| `2488-6689e2fe6514ac29.js` | 22 KiB | 42 KiB |
-| `4bd1b696-6b5c0c72b0eadc5f.js` | 21 KiB | 64 KiB |
+| ------ | ------ | ----- |
+| `googletagmanager.com/gtag/js` | 69 KB | 150 KB |
+| `3794-1dbfe9bacde4d3ca.js` | 43 KB | 74 KB |
+| `7716-59e71b0f32322ac9.js` | 37 KB | 46 KB |
+| `2488-6689e2fe6514ac29.js` | 27 KB | 41 KB |
+| `7929.0ab49de1af4c7dd7.js` | 25 KB | 45 KB |
+| `4bd1b696-6b5c0c72b0eadc5f.js` | 20 KB | 62 KB |
 
-**Actions:**
-- The `ed9f2dc4` chunk (228 KiB, 100% wasted) is entirely unused — investigate if it can be split or lazy-loaded
-- Use `next/dynamic` with `{ ssr: false }` for heavy UI components not needed on first paint
-- Defer Google Analytics with `strategy="lazyOnload"` via `next/script`
-- Audit each large chunk in Next.js bundle analyzer (`ANALYZE=true yarn build`)
+### 2. Reduce Unused CSS — Est. 190 ms savings (17 KiB)
 
-### 2. Reduce Initial Server Response Time — **Est. savings: 1,080 ms** (Mobile) ❌
+### 3. JS Execution Time by Chunk
 
-TTFB is **1,180 ms on mobile** vs **140 ms on desktop**. This gap suggests a cold-start or geolocation issue, not a code problem per se.
+| Script | Execution Time |
+| ------ | -------------- |
+| `4bd1b696-6b5c0c72b0eadc5f.js` | **494 ms** |
+| `myimageupscaler.com/` (page)  | 420 ms |
+| `3794-1dbfe9bacde4d3ca.js`     | **397 ms** |
+| Unattributable                 | 350 ms |
+| `2488-6689e2fe6514ac29.js`     | 251 ms |
+| `googletagmanager.com/gtag/js` | 198 ms |
 
-**Actions:**
-- Check Cloudflare Pages cache hit rate for the homepage
-- Ensure SSG/ISR is used for the homepage — avoid SSR if not needed
-- Confirm the Cloudflare edge function (if any) isn't adding latency on cold starts
-
-### 3. Reduce Unused CSS — **Est. savings: 150 ms / 17 KiB** (Mobile)
-
-17 KiB of CSS is unused on the homepage.
-
-**Actions:**
-- Run PurgeCSS / Tailwind's content scanning to ensure unused utility classes are tree-shaken
-- Confirm `tailwind.config.js` content paths are correct and not too broad
-
-### 4. Render Blocking Requests — **Est. savings: 260 ms** (Mobile)
-
-Some resources are blocking the initial render.
-
-**Actions:**
-- Audit `<link rel="stylesheet">` and `<script>` tags in `<head>` for blocking resources
-- Use `rel="preload"` for critical fonts/CSS
-- Move non-critical scripts to use `defer` or `async`
+The `4bd1b696` chunk (494 ms execution, 62 KB) is framer-motion.
 
 ---
 
-## Main Thread Work (Mobile — 2.1 s total)
+## Root Cause Analysis
 
-| Category               | Duration |
-| ---------------------- | -------: |
-| Script Evaluation      | 858 ms   |
-| Other                  | 464 ms   |
-| Style & Layout         | 356 ms   |
-| Script Parsing & Compilation | 223 ms |
-| Rendering              | 150 ms   |
-| Parse HTML & CSS       | 25 ms    |
+### framer-motion is in the critical JS path
 
-> Script Evaluation (858 ms) dominates. Reducing unused JS will directly cut this.
+Three components eagerly import framer-motion on every page load:
 
-**JS Execution Hotspots (Mobile):**
+1. **`client/components/landing/HeroActions.tsx`** — `import { motion } from 'framer-motion'`
+   rendered inside the hero section (above the fold, hard critical path)
+2. **`client/components/pages/HomePageClient.tsx`** — direct `motion.a` / `motion.button` usage
+3. **`HomePageClient.tsx`** — imports `FadeIn` from `MotionWrappers.tsx` which also imports framer-motion
 
-| Script | Execution Time |
-| ------ | -------------: |
-| Main document (inline) | 465 ms |
-| `5459-c03c1f5573ceab96.js` | 337 ms |
-| `2488-6689e2fe6514ac29.js` | 313 ms |
-| `ed9f2dc4-914a70998901afd4.js` | 279 ms |
-| Unattributable | 232 ms |
-| Google Tag Manager | 147 ms |
+Because all three are in the initial bundle, **framer-motion executes on the main thread
+before any pixel is painted**, causing 494 ms of JS execution plus cascading Style/Layout
+work → LCP 7.6 s on mobile (vs 1.0 s on desktop where there's no CPU throttle).
 
 ---
 
 ## Best Practices Issues
 
-### Browser Console Errors (Mobile + Desktop) ❌
-
-Errors are being logged to the browser console. These need investigation.
-
-**Actions:**
-- Open DevTools Console on the live site and identify the specific errors
-- Common causes: failed API calls, missing resources, third-party script errors
-- Fix or suppress expected errors (e.g., 404s for optional resources)
-
-### Chrome DevTools Issues Panel (Mobile + Desktop) ❌
-
-Issues logged to the Issues panel — likely related to cookies, security headers, or deprecated APIs.
-
-**Actions:**
-- Open DevTools → Issues tab on the live site
-- Common: SameSite cookie warnings, mixed content, deprecated features
-
-### Image Aspect Ratio Mismatch (Desktop only) ❌
-
-One or more images are displayed at a different aspect ratio than their natural dimensions.
-
-**Actions:**
-- Inspect images with `object-fit: contain/cover` or explicit `width`/`height` attributes
-- Use Next.js `<Image>` component with correct `width` and `height` props
-
-### Missing Source Maps for Large JS (Mobile + Desktop)
-
-First-party JS bundles lack source maps, making debugging harder. Not a user-facing issue but a DX concern.
-
-### Back/Forward Cache (bfcache) Failure (Mobile + Desktop)
-
-The page cannot be restored from bfcache (1 failure reason).
-
-**Actions:**
-- Check for `unload` event listeners — replace with `pagehide`
-- Avoid `cache-control: no-store` on main document if possible
-
-### Legacy JavaScript (Mobile + Desktop) — Est. savings: 20 KiB
-
-Transpiling modern JS syntax unnecessarily for old browsers wastes ~20 KiB.
-
-**Actions:**
-- Update `browserslist` in `package.json` to target modern browsers only
-- Check `next.config.js` for any overly broad transpilation targets
-
----
-
-## SEO Issues
-
-None. Score: **100/100** on both mobile and desktop. ✅
-
----
-
-## Accessibility Issues
-
-### Color Contrast (Mobile + Desktop) ⚠️
-
-Some text/background color combinations don't meet WCAG AA contrast ratio (4.5:1 for normal text).
-
-**Actions:**
-- Run axe DevTools or use Chrome Accessibility Inspector to identify the specific elements
-- Likely candidates: placeholder text, secondary/muted text, disabled states
-- Increase contrast of affected text to at least 4.5:1
+| Issue | Details |
+| ----- | ------- |
+| Browser errors in console | Manifest icon error: `favicon.ico` "Resource size is not correct" |
+| Incorrect aspect ratio (desktop) | One image displayed at wrong aspect ratio |
 
 ---
 
@@ -185,34 +117,39 @@ Some text/background color combinations don't meet WCAG AA contrast ratio (4.5:1
 
 ### High Priority
 
-1. **Fix mobile LCP (7.7s → target <2.5s)** — The LCP element (likely the hero image) loads too late. Investigate: preload the LCP image, ensure it's not lazy-loaded, use `priority` on the Next.js `<Image>`. This is the single most impactful metric for Core Web Vitals.
+1. **Remove framer-motion from the critical path** — Replace `motion.button`/`motion.a` in
+   `HeroActions.tsx` and `HomePageClient.tsx` with plain elements + CSS transitions
+   (`hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200`).
+   Replace `<FadeIn>` wrappers with plain divs or a CSS-only fade class. Expected LCP
+   improvement: 7.6 s → ~3–4 s.
 
-2. **Reduce unused JS (441 KiB → <100 KiB)** — The `ed9f2dc4` chunk is 228 KiB and 100% wasted. Run `ANALYZE=true yarn build` to identify it and lazy-load it. Defer GTM (`strategy="lazyOnload"`). Estimated 2.25s savings on mobile TBT/TTI.
+2. **Fix favicon manifest error** — The PWA manifest `icons` array references `favicon.ico`
+   with an incorrect declared size. Replace with properly sized PNG icons.
 
-3. **Investigate TTFB spike on mobile (1,180ms vs 140ms desktop)** — This 8x gap between mobile and desktop TTFB is abnormal. Could be Cloudflare cold start, SSR overhead, or geolocation-based routing. Check Cloudflare cache analytics for `/` hit rate.
+3. **Lazy-load GTM** — Google Tag Manager loads 150 KB with 69 KB wasted on initial load.
+   Defer via `requestIdleCallback` or load after first user interaction.
 
 ### Medium Priority
 
-4. **Fix browser console errors** — Unknown errors affect best practices score and could indicate broken functionality for users. Open DevTools console on prod and fix/suppress them.
+4. **Audit the `3794` chunk** (43 KB wasted, 397 ms execution) — identify this dependency
+   via `npx next build && npx next-bundle-analyzer` and split/lazy-load it.
 
-5. **Fix image aspect ratio mismatch (desktop)** — Ensure all `<Image>` components have correct `width`/`height` matching the natural image dimensions.
-
-6. **Fix color contrast** — At least one element fails WCAG AA. Use axe to identify it and darken the text or lighten the background accordingly.
+5. **Reduce unused CSS (17 KiB)** — purge unused Tailwind classes or split per-route.
 
 ### Low Priority
 
-7. **Eliminate render-blocking resources** — Saves ~260ms on mobile. Defer non-critical CSS/JS.
+6. **Fix image aspect ratio warning** (desktop Best Practices: 92).
 
-8. **Fix bfcache** — Remove `unload` listeners, enable back/forward cache for better perceived navigation speed.
-
-9. **Reduce unused CSS (17 KiB)** — Verify Tailwind content scanning covers all active files. Minor savings.
+7. **Enable bfcache** — investigate the 1 failure reason blocking back/forward cache.
 
 ---
 
 ## Summary
 
-Desktop performance is solid (92/100), but **mobile performance is a concern at 63/100**, driven almost entirely by a catastrophic LCP of 7.7s and high TTI of 7.8s. The root causes are clear: a 228 KiB JavaScript chunk that is 100% unused on the homepage, and an abnormally high TTFB of 1,180ms on mobile (vs 140ms desktop). SEO is perfect (100/100) and accessibility is near-perfect (96/100). The single most impactful improvement would be investigating and fixing the LCP element loading latency, combined with aggressive JS splitting of the `ed9f2dc4` bundle.
-
----
-
-*Generated by Lighthouse 13.0.3 — local run, simulated mobile throttling (slow 4G, 4× CPU slowdown)*
+Desktop is excellent at 99/100 (LCP 1.0 s). Mobile fails at 48/100 with LCP 7.6 s, driven
+by a 2,310 ms element render delay. The browser finds the LCP image immediately in HTML
+(due to the `fetchPriority="high"` static img tag) but cannot paint it until all JavaScript
+finishes executing. The root cause is **framer-motion loaded eagerly in three components**
+in the hero section's critical path, consuming ~500 ms of CPU on throttled mobile and
+triggering ~1.9 s of cascading main-thread work. Removing framer-motion from the initial
+bundle is the single highest-leverage fix available.
