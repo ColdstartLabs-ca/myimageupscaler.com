@@ -33,6 +33,15 @@ export interface IBeforeAfterImages {
 }
 
 /**
+ * External source for E-E-A-T outbound linking
+ */
+export interface IExternalSource {
+  title: string;
+  url: string;
+  description?: string;
+}
+
+/**
  * Tool page data structure
  */
 export interface IToolPage extends IBasePSEOPage {
@@ -47,6 +56,7 @@ export interface IToolPage extends IBasePSEOPage {
   relatedTools: string[];
   relatedGuides: string[];
   relatedBlogPosts?: string[];
+  externalSources?: IExternalSource[];
   ctaText: string;
   ctaUrl: string;
   // Interactive tool fields (optional)

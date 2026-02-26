@@ -12,7 +12,7 @@ export async function HeroSection(): Promise<JSX.Element> {
     <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025 z-20">
       <AmbientBackground variant="hero" />
 
-      <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8 relative z-10 animate-hero-fade-in">
+      <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8 relative z-10">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-xs font-semibold text-accent mb-8 cursor-default group">
           <Sparkles size={14} className="text-secondary animate-pulse" />

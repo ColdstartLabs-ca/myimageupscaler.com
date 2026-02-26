@@ -47,6 +47,37 @@
       "hero": {
         "subtitle": "Vollständige Anleitungen und Tutorials"
       }
+    },
+    "tool": {
+      "features": {
+        "title": "Leistungsstarke Funktionen",
+        "subtitle": "Alles, was Sie brauchen, um Ihre Bilder in professioneller Qualität zu transformieren"
+      },
+      "howItWorks": {
+        "title": "So funktioniert es",
+        "subtitle": "Erhalten Sie professionelle Ergebnisse in wenigen einfachen Schritten"
+      },
+      "useCases": {
+        "title": "Perfekt für",
+        "subtitle": "Entdecken Sie, wie Profis unser Tool für beeindruckende Ergebnisse nutzen"
+      },
+      "benefits": {
+        "title": "Warum wir?",
+        "subtitle": "Erleben Sie den Unterschied, den unsere KI-Technologie für Ihre Bilder macht"
+      },
+      "relatedPages": {
+        "title": "Verwandte Seiten"
+      },
+      "relatedGuides": {
+        "title": "Verwandte Anleitungen"
+      },
+      "cta": {
+        "title": "KI-Bildverbesserung benötigt?",
+        "description": "Für fortschrittliche Hochskalierung mit KI-Qualitätsverbesserung – probieren Sie unser Flaggschiff-Tool. Keine Kreditkarte erforderlich.",
+        "ctaText": "KI-Bildverbesserung ausprobieren",
+        "readyTitle": "Bereit, Ihre Bilder zu verbessern?",
+        "readyDescription": "Starten Sie noch heute mit der KI-gestützten Hochskalierung. Keine Kreditkarte erforderlich."
+      }
     }
   },
   "common": {

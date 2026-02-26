@@ -127,7 +127,6 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://analytics.ahrefs.com" />
         <link rel="dns-prefetch" href="https://analytics.ahrefs.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
 

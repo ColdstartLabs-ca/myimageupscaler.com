@@ -47,6 +47,37 @@
       "hero": {
         "subtitle": "Complete guides and tutorials"
       }
+    },
+    "tool": {
+      "features": {
+        "title": "Powerful Features",
+        "subtitle": "Everything you need to transform your images with professional-quality results"
+      },
+      "howItWorks": {
+        "title": "How It Works",
+        "subtitle": "Get professional results in just a few simple steps"
+      },
+      "useCases": {
+        "title": "Perfect For",
+        "subtitle": "Discover how professionals use our tool to achieve stunning results"
+      },
+      "benefits": {
+        "title": "Why Choose Us",
+        "subtitle": "See the difference our AI-powered technology makes for your images"
+      },
+      "relatedPages": {
+        "title": "Related Resources"
+      },
+      "relatedGuides": {
+        "title": "Related Guides"
+      },
+      "cta": {
+        "title": "Need AI-Powered Enhancement?",
+        "description": "For advanced upscaling with AI quality enhancement, try our flagship tool. No credit card required.",
+        "ctaText": "Try AI Image Upscaler",
+        "readyTitle": "Ready to enhance your images?",
+        "readyDescription": "Start upscaling images with AI today. No credit card required."
+      }
     }
   },
   "common": {

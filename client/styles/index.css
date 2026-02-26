@@ -425,11 +425,13 @@
     opacity: 0;
     transition: opacity 0.3s ease;
     animation: borderFlow 3s linear infinite;
+    animation-play-state: paused;
     pointer-events: none;
   }
 
   .animated-border-violet:hover::before {
     opacity: 1;
+    animation-play-state: running;
   }
 
   /* Standard animated border (same effect, always visible with reduced opacity) */

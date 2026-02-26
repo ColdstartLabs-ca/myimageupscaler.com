@@ -7,7 +7,8 @@ import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -76,6 +77,9 @@ export function HomePageClient(): JSX.Element {
   const { showToast } = useToastStore();
   const searchParams = useSearchParams();
   const t = useTranslations('homepage');
+  const locale = useLocale();
+  const localizeHref = (href: string) =>
+    locale === DEFAULT_LOCALE ? href : `/${locale}${href}`;
 
   // Check if any plan has trial enabled
   const config = getSubscriptionConfig();
@@ -140,7 +144,7 @@ export function HomePageClient(): JSX.Element {
               {POPULAR_TOOLS.map(tool => (
                 <Link
                   key={tool.href}
-                  href={tool.href}
+                  href={localizeHref(tool.href)}
                   className="group glass-card-2025 p-6 flex items-start gap-4 hover:border-accent/40 transition-all duration-300 animated-border-violet"
                 >
                   <div className="flex-1 min-w-0">

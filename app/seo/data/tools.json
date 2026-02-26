@@ -175,6 +175,18 @@
         "ai-image-enhancement-ecommerce-guide",
         "image-resolution-for-printing-complete-guide"
       ],
+      "externalSources": [
+        {
+          "title": "Image Scaling (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Image_scaling",
+          "description": "Overview of image scaling algorithms including bilinear, bicubic, and AI-based super-resolution methods."
+        },
+        {
+          "title": "Super-Resolution Imaging (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Super-resolution_imaging",
+          "description": "How machine learning models can reconstruct high-resolution images from low-resolution inputs."
+        }
+      ],
       "ctaText": "Upscale Image Free",
       "ctaUrl": "/?signup=1",
       "beforeAfterImages": {
@@ -362,6 +374,18 @@
         "how-to-upscale-images-without-losing-quality",
         "keep-text-sharp-when-upscaling-product-photos"
       ],
+      "externalSources": [
+        {
+          "title": "Image Restoration (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Image_restoration",
+          "description": "Techniques for recovering original image quality from degraded, noisy, or damaged photographs."
+        },
+        {
+          "title": "Noise Reduction in Photography (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Noise_reduction",
+          "description": "Methods for reducing unwanted grain and noise artifacts in digital photographs."
+        }
+      ],
       "ctaText": "Enhance Photo Free",
       "ctaUrl": "/?signup=1",
       "beforeAfterImages": {
@@ -511,6 +535,22 @@
         "ai-photo-enhancer"
       ],
       "relatedGuides": [],
+      "relatedBlogPosts": [
+        "upscale-product-photos-amazon-etsy-guide",
+        "ai-image-enhancement-ecommerce-guide"
+      ],
+      "externalSources": [
+        {
+          "title": "PNG Specification (W3C)",
+          "url": "https://www.w3.org/TR/PNG/",
+          "description": "The official W3C specification for the Portable Network Graphics format, including alpha channel transparency support."
+        },
+        {
+          "title": "Alpha Compositing (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Alpha_compositing",
+          "description": "How alpha channels and transparency work when combining images with different backgrounds."
+        }
+      ],
       "ctaText": "Remove Background Free",
       "ctaUrl": "/tools/ai-background-remover"
     },
@@ -618,6 +658,10 @@
         "ai-image-upscaler"
       ],
       "relatedGuides": [],
+      "relatedBlogPosts": [
+        "upscale-product-photos-amazon-etsy-guide",
+        "ai-image-enhancement-ecommerce-guide"
+      ],
       "ctaText": "Remove BG Now",
       "ctaUrl": "/tools/remove-bg"
     },
@@ -725,6 +769,22 @@
         "remove-bg"
       ],
       "relatedGuides": [],
+      "relatedBlogPosts": [
+        "upscale-product-photos-amazon-etsy-guide",
+        "ai-image-enhancement-ecommerce-guide"
+      ],
+      "externalSources": [
+        {
+          "title": "PNG Specification (W3C)",
+          "url": "https://www.w3.org/TR/PNG/",
+          "description": "The official W3C specification for the Portable Network Graphics format, including the alpha channel transparency model used to create transparent images."
+        },
+        {
+          "title": "Alpha Compositing (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Alpha_compositing",
+          "description": "Technical explanation of how transparent PNG images blend with backgrounds using alpha channel compositing."
+        }
+      ],
       "ctaText": "Make Transparent",
       "ctaUrl": "/tools/transparent-background-maker"
     },
@@ -832,6 +892,10 @@
         "transparent-background-maker"
       ],
       "relatedGuides": [],
+      "relatedBlogPosts": [
+        "upscale-product-photos-amazon-etsy-guide",
+        "ai-image-enhancement-ecommerce-guide"
+      ],
       "ctaText": "Cut Out Now",
       "ctaUrl": "/tools/image-cutout-tool"
     },
@@ -1008,6 +1072,23 @@
       ],
       "relatedGuides": [
         "how-to-upscale-images"
+      ],
+      "relatedBlogPosts": [
+        "how-to-upscale-images-without-losing-quality",
+        "fix-blurry-photos-ai-methods-guide",
+        "ai-image-enhancement-ecommerce-guide"
+      ],
+      "externalSources": [
+        {
+          "title": "Image Scaling (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Image_scaling",
+          "description": "Overview of image scaling algorithms including bilinear, bicubic, and AI-based super-resolution methods."
+        },
+        {
+          "title": "Super-Resolution Imaging (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Super-resolution_imaging",
+          "description": "Technical background on how machine learning models generate higher-resolution images from lower-resolution inputs."
+        }
       ],
       "ctaText": "Try Smart AI Enhancement",
       "ctaUrl": "/?signup=1"

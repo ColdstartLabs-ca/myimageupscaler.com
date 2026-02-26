@@ -9,11 +9,13 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IToolConfig, IToolPage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { useTranslations } from 'next-intl';
 import React, { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
 import { BenefitsSection } from '../sections/BenefitsSection';
 import { CTASection } from '../sections/CTASection';
+import { ExternalSourcesSection } from '../sections/ExternalSourcesSection';
 import { FAQSection } from '../sections/FAQSection';
 import { FeaturesSection } from '../sections/FeaturesSection';
 import { HeroSection } from '../sections/HeroSection';
@@ -82,6 +84,7 @@ export function InteractiveToolPageTemplate({
 }: IInteractiveToolPageTemplateProps): ReactElement {
   const pageMapping = getPageMappingByUrl(`/tools/${data.slug}`);
   const tier = pageMapping?.tier;
+  const t = useTranslations('pseo');
 
   const ToolComponent = data.toolComponent ? TOOL_COMPONENTS[data.toolComponent] : null;
 
@@ -146,28 +149,47 @@ export function InteractiveToolPageTemplate({
 
           {/* Features */}
           <div className="py-12">
-            <FeaturesSection features={data.features} />
+            <FeaturesSection
+              features={data.features}
+              title={t('templates.tool.features.title')}
+              subtitle={t('templates.tool.features.subtitle')}
+            />
           </div>
 
           {/* How It Works */}
           <div className="py-12">
-            <HowItWorksSection steps={data.howItWorks} />
+            <HowItWorksSection
+              steps={data.howItWorks}
+              title={t('templates.tool.howItWorks.title')}
+              subtitle={t('templates.tool.howItWorks.subtitle')}
+            />
           </div>
 
           {/* Use Cases */}
           <div className="py-12">
-            <UseCasesSection useCases={data.useCases} />
+            <UseCasesSection
+              useCases={data.useCases}
+              title={t('templates.tool.useCases.title')}
+              subtitle={t('templates.tool.useCases.subtitle')}
+            />
           </div>
 
           {/* Benefits */}
           <div className="py-12">
-            <BenefitsSection benefits={data.benefits} />
+            <BenefitsSection
+              benefits={data.benefits}
+              title={t('templates.tool.benefits.title')}
+              subtitle={t('templates.tool.benefits.subtitle')}
+            />
           </div>
 
           {/* Related Pages */}
           {relatedPages.length > 0 && (
             <div className="py-12">
-              <RelatedPagesSection relatedPages={relatedPages} />
+              <RelatedPagesSection
+                relatedPages={relatedPages}
+                title={t('templates.tool.relatedPages.title')}
+              />
             </div>
           )}
 
@@ -175,14 +197,21 @@ export function InteractiveToolPageTemplate({
           <div className="py-12">
             <FAQSection faqs={data.faq} pageType="tool" slug={data.slug} />
           </div>
+
+          {/* External Sources */}
+          {data.externalSources && data.externalSources.length > 0 && (
+            <div className="py-4">
+              <ExternalSourcesSection sources={data.externalSources} />
+            </div>
+          )}
         </article>
       </div>
 
       {/* Final CTA Full Width */}
       <CTASection
-        title="Need AI-Powered Enhancement?"
-        description="For advanced upscaling with AI quality enhancement, try our flagship tool. No credit card required."
-        ctaText="Try AI Image Upscaler"
+        title={t('templates.tool.cta.title')}
+        description={t('templates.tool.cta.description')}
+        ctaText={t('templates.tool.cta.ctaText')}
         ctaUrl="/?signup=1"
         pageType="tool"
         slug={data.slug}
