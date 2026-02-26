@@ -236,6 +236,7 @@
     opacity: 0.6;
     pointer-events: none;
     will-change: transform;
+    contain: layout paint style;
   }
 
   .ambient-orb-violet {

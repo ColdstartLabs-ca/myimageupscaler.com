@@ -9,7 +9,7 @@ export async function HeroSection(): Promise<JSX.Element> {
   const t = await getTranslations('homepage');
 
   return (
-    <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025 z-20">
+    <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025 z-20 animate-hero-fade-in">
       <AmbientBackground variant="hero" />
 
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8 relative z-10">

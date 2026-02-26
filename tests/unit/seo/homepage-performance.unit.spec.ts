@@ -416,3 +416,37 @@ describe('Homepage Performance — Phase 2', () => {
     });
   });
 });
+
+describe('Homepage Performance — CLS Prevention', () => {
+  describe('Ambient orb containment', () => {
+    it('should have CSS containment on .ambient-orb to prevent layout shifts', () => {
+      const cssPath = join(ROOT, 'client/styles/index.css');
+      const source = readFileSync(cssPath, 'utf-8');
+
+      // .ambient-orb must include contain: layout paint style to prevent
+      // the 120px blur filter from affecting CLS calculations
+      expect(source).toMatch(/\.ambient-orb\s*\{[^}]*contain:\s*layout\s+paint\s+style/);
+    });
+
+    it('should have overflow-hidden on AmbientBackground hero container', () => {
+      const bgPath = join(ROOT, 'client/components/landing/AmbientBackground.tsx');
+      const source = readFileSync(bgPath, 'utf-8');
+
+      // All AmbientBackground container divs must clip overflow
+      // to prevent blurred orbs from contributing to CLS
+      expect(source).toContain('overflow-hidden');
+    });
+  });
+
+  describe('Footer logo dimensions', () => {
+    it('should have footer logo dimensions matching CSS h-10 (40px height)', () => {
+      const footerPath = join(ROOT, 'client/components/layout/Footer.tsx');
+      const source = readFileSync(footerPath, 'utf-8');
+
+      // Footer logo uses h-10 (40px) CSS class, so the width/height attributes
+      // must produce a 40px height to prevent aspect-ratio placeholder mismatch
+      expect(source).toMatch(/horizontal-logo-full\.png/);
+      expect(source).toMatch(/height=\{40\}/);
+    });
+  });
+});

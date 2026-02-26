@@ -92,6 +92,11 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+// Mock next-intl so ToolPageTemplate can call useTranslations without a provider
+vi.mock('next-intl', () => ({
+  useTranslations: (namespace?: string) => (key: string) => `${namespace}.${key}`,
+}));
+
 // Mock MotionWrappers
 vi.mock('@/app/(pseo)/_components/ui/MotionWrappers', () => ({
   FadeIn: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,

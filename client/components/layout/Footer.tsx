@@ -33,8 +33,8 @@ export const Footer = (): JSX.Element => {
               <Image
                 src="/logo/horizontal-logo-full.png"
                 alt={clientEnv.APP_NAME}
-                width={180}
-                height={45}
+                width={160}
+                height={40}
                 className="h-10 w-auto"
               />
             </Link>
