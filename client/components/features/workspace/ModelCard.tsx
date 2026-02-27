@@ -84,9 +84,11 @@ export const ModelCard: React.FC<IModelCardProps> = ({
 
         {/* Locked badge - top-left corner */}
         {isLocked && (
-          <div className="absolute top-1.5 left-1.5 flex items-center gap-1 px-1.5 py-0.5 bg-black/60 backdrop-blur-sm rounded-full pointer-events-none z-10">
-            <Lock className="w-2.5 h-2.5 text-amber-400" />
-            <span className="text-[8px] font-bold text-amber-300 uppercase tracking-wide">Pro</span>
+          <div className="absolute top-1.5 left-1.5 flex items-center gap-1 px-1.5 py-0.5 bg-black/70 backdrop-blur-sm rounded-full pointer-events-none z-10">
+            <Lock className="w-2.5 h-2.5 text-secondary" />
+            <span className="text-[8px] font-bold text-secondary uppercase tracking-wide">
+              Pro only
+            </span>
           </div>
         )}
       </div>

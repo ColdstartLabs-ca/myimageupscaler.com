@@ -21,6 +21,7 @@ import { downloadSingle } from '@client/utils/download';
 import { CheckCircle2, Image, Layers, List, Loader2, Settings, Wand2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { ModelGalleryModal } from './ModelGalleryModal';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
@@ -237,6 +238,13 @@ const Workspace: React.FC = () => {
             </div>
           )}
 
+          {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
+          {isFreeUser && (
+            <div className="px-4 pb-0">
+              <AfterUpscaleBanner completedCount={completedCount} isFreeUser={isFreeUser} />
+            </div>
+          )}
+
           {/* Global Error Alerts */}
           {globalErrors.map(error => (
             <div key={error.id} className="p-4">
@@ -280,6 +288,7 @@ const Workspace: React.FC = () => {
               selectedModel={config.qualityTier}
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
+              isFreeUser={isFreeUser}
             />
           </div>
 

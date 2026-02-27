@@ -2,13 +2,15 @@
 
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Search } from 'lucide-react';
+import { Lock, Search, Sparkles } from 'lucide-react';
 import { QualityTier, QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { BottomSheet } from '@client/components/ui/BottomSheet';
 import { ModelCard } from './ModelCard';
 import { ModelGallerySearch } from './ModelGallerySearch';
 import { analytics } from '@client/analytics/analyticsClient';
+
+const MODEL_GATE_SESSION_KEY = 'upgrade_prompt_shown_model_gate';
 
 export interface IModelGalleryModalProps {
   isOpen: boolean;
@@ -40,13 +42,24 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   const galleryOpenedAtRef = useRef<number>(0);
   const originalTierRef = useRef<QualityTier>(currentTier);
 
-  // Reset tracking state when modal opens
+  // Reset tracking state when modal opens; fire model_gate prompt for free users (once per session)
   useEffect(() => {
     if (isOpen) {
       galleryOpenedAtRef.current = Date.now();
       originalTierRef.current = currentTier;
+
+      if (isFreeUser && typeof window !== 'undefined') {
+        const alreadyShown = sessionStorage.getItem(MODEL_GATE_SESSION_KEY);
+        if (!alreadyShown) {
+          sessionStorage.setItem(MODEL_GATE_SESSION_KEY, 'true');
+          analytics.track('upgrade_prompt_shown', {
+            trigger: 'model_gate',
+            currentPlan: 'free',
+          });
+        }
+      }
     }
-  }, [isOpen, currentTier]);
+  }, [isOpen, currentTier, isFreeUser]);
 
   // All tier entries with their configs
   const allTiers = useMemo(() => {
@@ -105,9 +118,14 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
     [onSelect, onClose, isFreeUser]
   );
 
-  // Handle locked tier click - navigate to pricing
+  // Handle locked tier click - navigate to billing
   const handleLockedClick = useCallback(() => {
-    router.push('/pricing');
+    analytics.track('upgrade_prompt_clicked', {
+      trigger: 'model_gate',
+      destination: '/dashboard/billing',
+      currentPlan: 'free',
+    });
+    router.push('/dashboard/billing');
     onClose();
   }, [router, onClose]);
 
@@ -156,12 +174,12 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
           >
             <div className="flex items-center gap-3">
               <div className="p-2 bg-secondary/20 rounded-xl group-hover:scale-110 transition-transform">
-                <Lock className="w-4 h-4 text-secondary" />
+                <Sparkles className="w-4 h-4 text-secondary" />
               </div>
               <div className="flex flex-col items-start">
                 <span className="font-bold text-white text-sm">Unlock Premium Models</span>
                 <span className="text-[11px] font-medium text-text-muted">
-                  Get access to all professional tiers
+                  Available on Pro — 10× sharper results
                 </span>
               </div>
             </div>

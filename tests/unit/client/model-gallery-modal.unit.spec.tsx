@@ -21,7 +21,16 @@ vi.mock('lucide-react', () => ({
   Lock: () => <span data-testid="lock-icon">Lock</span>,
   Image: () => <span data-testid="image-icon">Image</span>,
   Search: () => <span data-testid="search-icon">Search</span>,
+  Sparkles: () => <span data-testid="sparkles-icon">Sparkles</span>,
   X: () => <span data-testid="x-icon">X</span>,
+}));
+
+// Mock analytics
+vi.mock('@client/analytics/analyticsClient', () => ({
+  analytics: {
+    track: vi.fn(),
+    isEnabled: () => true,
+  },
 }));
 
 // Mock cn utility
@@ -206,7 +215,7 @@ describe('ModelGalleryModal', () => {
       expect(lockBadge).toBeNull();
     });
 
-    it('should navigate to /pricing when locked tier clicked', async () => {
+    it('should navigate to /dashboard/billing when locked tier clicked', async () => {
       render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
       // Find a premium tier (Ultra) card and click it
@@ -215,7 +224,7 @@ describe('ModelGalleryModal', () => {
       fireEvent.click(ultraCard!);
 
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith('/pricing');
+        expect(mockPush).toHaveBeenCalledWith('/dashboard/billing');
       });
     });
 

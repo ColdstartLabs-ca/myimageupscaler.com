@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { CreditPackSelector } from './CreditPackSelector';
 import { AlertCircle, X } from 'lucide-react';
+import { analytics } from '@client/analytics';
 
 interface IOutOfCreditsModalProps {
   isOpen: boolean;
@@ -18,6 +19,15 @@ export function OutOfCreditsModal({
 }: IOutOfCreditsModalProps): JSX.Element | null {
   const [showSubscriptionCTA, setShowSubscriptionCTA] = useState(false);
   const t = useTranslations('stripe.outOfCredits');
+
+  useEffect(() => {
+    if (isOpen) {
+      analytics.track('upgrade_prompt_shown', {
+        trigger: 'out_of_credits',
+        currentPlan: 'free',
+      });
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -75,7 +85,13 @@ export function OutOfCreditsModal({
           {!showSubscriptionCTA ? (
             <>
               <CreditPackSelector
-                onPurchaseStart={() => {}}
+                onPurchaseStart={() => {
+                  analytics.track('upgrade_prompt_clicked', {
+                    trigger: 'out_of_credits',
+                    destination: 'credits',
+                    currentPlan: 'free',
+                  });
+                }}
                 onPurchaseComplete={() => {
                   onPurchaseComplete();
                   onClose();

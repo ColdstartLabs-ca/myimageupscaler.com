@@ -4,8 +4,8 @@
     "subtitle": "Choisissez le plan d'abonnement qui correspond à vos besoins. Obtenez des crédits mensuels avec report automatique."
   },
   "subscription": {
-    "title": "Choisissez votre plan",
-    "subtitle": "Obtenez des crédits chaque mois avec nos plans d'abonnement. Annulez à tout moment."
+    "title": "Upscaling régulier ? Économisez avec un plan",
+    "subtitle": "Les utilisateurs réguliers économisent jusqu'à 58 % par rapport aux packs individuels. Annulez à tout moment."
   },
   "currentBalance": {
     "title": "Votre solde actuel",
@@ -56,5 +56,10 @@
     "title": "Besoin d'un plan personnalisé ?",
     "description": "Contactez-nous pour les tarifs entreprise, les remises en gros ou les besoins d'intégration personnalisée.",
     "contactSales": "Contacter les ventes"
+  },
+  "trustSignals": {
+    "securedByStripe": "Paiements sécurisés par Stripe",
+    "cancelAnytime": "Annulez à tout moment — sans engagement",
+    "creditsNeverExpire": "Les crédits achetés n'expirent jamais"
   }
 }

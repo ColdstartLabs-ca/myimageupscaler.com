@@ -59,12 +59,16 @@ export function CreditPackSelector({
             key={pack.key}
             className={`relative glass border rounded-xl p-6 transition-all cursor-pointer hover:border-accent/50 hover:shadow-md ${
               selectedPack === pack.key ? 'border-accent ring-2 ring-accent' : 'border-border'
-            } ${pack.popular ? 'border-accent/30' : ''}`}
+            } ${pack.badge ? 'border-accent/30' : ''}`}
             onClick={() => handlePurchase(pack)}
           >
-            {pack.popular && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-accent text-white text-xs font-semibold rounded-full">
-                Best Value
+            {pack.badge && (
+              <div
+                className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-white text-xs font-semibold rounded-full ${
+                  pack.badge === 'Best Value' ? 'bg-emerald-600' : 'bg-accent'
+                }`}
+              >
+                {pack.badge}
               </div>
             )}
 
@@ -99,7 +103,7 @@ export function CreditPackSelector({
 
               <button
                 className={`w-full px-4 py-3 rounded-lg font-medium transition-colors mt-4 ${
-                  pack.popular
+                  pack.badge
                     ? 'bg-accent hover:bg-accent-hover text-white shadow-[0_0_20px_rgba(var(--color-accent),0.3)]'
                     : 'glass hover:bg-surface/10 text-white'
                 }`}

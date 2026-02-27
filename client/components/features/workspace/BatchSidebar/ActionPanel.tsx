@@ -71,7 +71,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
 
   const handleViewPlans = () => {
     setShowPremiumUpsellModal(false);
-    router.push('/pricing');
+    router.push('/dashboard/billing');
   };
 
   return (

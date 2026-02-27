@@ -4,8 +4,8 @@
     "subtitle": "Escolha o plano de assinatura que se adapta às suas necessidades. Obtenha créditos mensais com rollover automático."
   },
   "subscription": {
-    "title": "Escolha Seu Plano",
-    "subtitle": "Obtenha créditos todo mês com nossos planos de assinatura. Cancele a qualquer momento."
+    "title": "Usa com frequência? Economize com um plano",
+    "subtitle": "Usuários frequentes economizam até 58% comparado aos pacotes avulsos. Cancele a qualquer momento."
   },
   "currentBalance": {
     "title": "Seu saldo atual",
@@ -56,5 +56,10 @@
     "title": "Precisa de um plano personalizado?",
     "description": "Entre em contato conosco para preços empresariais, descontos em volume ou requisitos de integração personalizada.",
     "contactSales": "Contatar Vendas"
+  },
+  "trustSignals": {
+    "securedByStripe": "Pagamentos seguros pelo Stripe",
+    "cancelAnytime": "Cancele quando quiser — sem fidelidade",
+    "creditsNeverExpire": "Créditos comprados não expiram"
   }
 }

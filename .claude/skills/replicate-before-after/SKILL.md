@@ -49,7 +49,7 @@ Reference: `server/services/model-registry.ts` for model versions, `shared/types
 | anime-upscale | realesrgan-anime | `https://replicate.com/xinntao/realesrgan`           | replicate |
 | hd-upscale    | clarity-upscaler | `https://replicate.com/philz1337x/clarity-upscaler`  | replicate |
 | face-pro      | flux-2-pro       | `https://replicate.com/black-forest-labs/flux-2-pro` | replicate |
-| ultra         | nano-banana-pro  | `https://replicate.com/google/nano-banana-pro`       | replicate |
+| ultra         | nano-banana-pro  | `https://replicate.com/google/nano-banana-2`         | replicate |
 | bg-removal    | (browser-based)  | N/A                                                  | -         |
 
 **Not on Replicate:** `auto` (no specific model), `bg-removal` (uses browser-based model).
@@ -96,7 +96,7 @@ npx tsx .claude/skills/replicate-before-after/scripts/scrape-replicate-examples.
 npx tsx .claude/skills/replicate-before-after/scripts/scrape-replicate-examples.ts https://replicate.com/xinntao/realesrgan anime-upscale
 npx tsx .claude/skills/replicate-before-after/scripts/scrape-replicate-examples.ts https://replicate.com/philz1337x/clarity-upscaler hd-upscale
 npx tsx .claude/skills/replicate-before-after/scripts/scrape-replicate-examples.ts https://replicate.com/black-forest-labs/flux-2-pro face-pro
-npx tsx .claude/skills/replicate-before-after/scripts/scrape-replicate-examples.ts https://replicate.com/google/nano-banana-pro ultra
+npx tsx .claude/skills/replicate-before-after/scripts/scrape-replicate-examples.ts https://replicate.com/google/nano-banana-2 ultra
 ```
 
 ## How It Works (Technical)

@@ -4,8 +4,8 @@
     "subtitle": "Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover."
   },
   "subscription": {
-    "title": "Choose Your Plan",
-    "subtitle": "Get credits every month with our subscription plans. Cancel anytime."
+    "title": "Upscale Regularly? Save With a Plan",
+    "subtitle": "Upscale regularly? A plan saves you money — get credits every month at up to 58% less than pack pricing. Cancel anytime."
   },
   "currentBalance": {
     "title": "Your current balance",
@@ -56,5 +56,10 @@
     "title": "Need a custom plan?",
     "description": "Contact us for enterprise pricing, bulk discounts, or custom integration requirements.",
     "contactSales": "Contact Sales"
+  },
+  "trustSignals": {
+    "securedByStripe": "Secured by Stripe",
+    "cancelAnytime": "Cancel anytime — no lock-in",
+    "creditsNeverExpire": "Purchased credits never expire"
   }
 }

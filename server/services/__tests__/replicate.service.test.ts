@@ -138,7 +138,7 @@ vi.mock('../model-registry', () => ({
             id: 'nano-banana-pro',
             displayName: 'Nano Banana Pro',
             provider: 'replicate',
-            modelVersion: 'google/nano-banana-pro:test-version',
+            modelVersion: 'google/nano-banana-2:test-version',
             capabilities: ['upscale', 'enhance', 'face-restoration'],
             costPerRun: 0.02,
             creditMultiplier: 10,

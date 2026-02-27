@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
+import { analytics } from '@client/analytics/analyticsClient';
 
 export interface IPremiumUpsellModalProps {
   isOpen: boolean;
@@ -11,14 +12,22 @@ export interface IPremiumUpsellModalProps {
   onViewPlans: () => void;
 }
 
-const COMPARISON_IMAGES = [
+interface IComparisonImage {
+  before: string;
+  after: string;
+  label: string;
+}
+
+const COMPARISON_IMAGES: IComparisonImage[] = [
   {
-    before: '/before-after/bird-before.webp',
-    after: '/before-after/bird-after.webp',
+    before: '/before-after/face-pro/before.webp',
+    after: '/before-after/face-pro/after.webp',
+    label: 'face-pro',
   },
   {
-    before: '/before-after/girl-before.webp',
-    after: '/before-after/girl-after.webp',
+    before: '/before-after/budget-edit/before.webp',
+    after: '/before-after/budget-edit/after.webp',
+    label: 'budget-edit',
   },
 ];
 
@@ -44,6 +53,18 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
     }
   }, [isOpen]);
 
+  // Track modal shown when it opens
+  useEffect(() => {
+    if (isOpen) {
+      analytics.track('upgrade_prompt_shown', {
+        trigger: 'premium_upsell',
+        imageVariant: COMPARISON_IMAGES[currentImageIndex].label,
+        currentPlan: 'free',
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const currentImages = COMPARISON_IMAGES[currentImageIndex];
@@ -56,17 +77,45 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
     setCurrentImageIndex(prev => (prev - 1 + COMPARISON_IMAGES.length) % COMPARISON_IMAGES.length);
   };
 
+  const handleClose = () => {
+    analytics.track('upgrade_prompt_dismissed', {
+      trigger: 'premium_upsell',
+      imageVariant: currentImages.label,
+      currentPlan: 'free',
+    });
+    onClose();
+  };
+
+  const handleProceed = () => {
+    analytics.track('upgrade_prompt_dismissed', {
+      trigger: 'premium_upsell',
+      imageVariant: currentImages.label,
+      currentPlan: 'free',
+    });
+    onProceed();
+  };
+
+  const handleViewPlans = () => {
+    analytics.track('upgrade_prompt_clicked', {
+      trigger: 'premium_upsell',
+      imageVariant: currentImages.label,
+      destination: 'billing',
+      currentPlan: 'free',
+    });
+    onViewPlans();
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/60 transition-opacity" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/60 transition-opacity" onClick={handleClose} />
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div className="relative w-full max-w-2xl rounded-2xl bg-surface shadow-2xl overflow-hidden">
           {/* Close button */}
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute right-4 top-4 z-10 p-1 rounded-full bg-surface/80 text-muted-foreground transition-colors hover:text-muted-foreground hover:bg-surface"
           >
             <X size={20} />
@@ -138,13 +187,13 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={onProceed}
+                onClick={handleProceed}
                 className="flex-1 px-5 py-3 rounded-xl border border-border text-muted-foreground font-medium hover:bg-surface transition-colors"
               >
                 Continue with Free
               </button>
               <button
-                onClick={onViewPlans}
+                onClick={handleViewPlans}
                 className="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-200"
               >
                 View Premium Plans

@@ -17,6 +17,7 @@ export interface IPreviewAreaProps {
   selectedModel?: string;
   batchProgress?: IBatchProgress | null;
   isProcessingBatch?: boolean;
+  isFreeUser?: boolean;
 }
 
 // Extracted Components
@@ -173,6 +174,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   selectedModel = 'auto',
   batchProgress,
   isProcessingBatch = false,
+  isFreeUser = false,
 }) => {
   const t = useTranslations('workspace');
 
@@ -271,6 +273,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
             beforeUrl={activeItem.previewUrl}
             afterUrl={activeItem.processedUrl}
             onDownload={() => onDownload(activeItem.processedUrl!, activeItem.file.name)}
+            showUpgradeNudge={isFreeUser}
           />
 
           {/* Waiting for next batch item overlay */}

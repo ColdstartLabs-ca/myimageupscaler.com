@@ -4,8 +4,8 @@
     "subtitle": "Wählen Sie den Abonnementplan, der zu Ihren Bedürfnissen passt. Erhalten Sie monatliche Guthaben mit automatischer Übertragung."
   },
   "subscription": {
-    "title": "Wählen Sie Ihren Plan",
-    "subtitle": "Erhalten Sie jeden Monat Guthaben mit unseren Abonnementplänen. Jederzeit kündbar."
+    "title": "Regelmäßig Upscaling? Sparen Sie mit einem Plan",
+    "subtitle": "Regelmäßige Nutzer sparen bis zu 58% gegenüber Einzelpaketen. Jederzeit kündbar."
   },
   "currentBalance": {
     "title": "Ihr aktuelles Guthaben",
@@ -56,5 +56,10 @@
     "title": "Benötigen Sie einen benutzerdefinierten Plan?",
     "description": "Kontaktieren Sie uns für Enterprise-Preise, Mengenrabatte oder benutzerdefinierte Integrationsanforderungen.",
     "contactSales": "Vertrieb kontaktieren"
+  },
+  "trustSignals": {
+    "securedByStripe": "Gesichert durch Stripe",
+    "cancelAnytime": "Jederzeit kündbar — keine Bindung",
+    "creditsNeverExpire": "Gekaufte Credits verfallen nicht"
   }
 }

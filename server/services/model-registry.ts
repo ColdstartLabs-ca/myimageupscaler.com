@@ -33,7 +33,7 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'clarity-upscaler':
     'philz1337x/clarity-upscaler:dfad41707589d68ecdccd1dfa600d55a208f9310748e44bfe35b4a6291453d5e',
   'flux-2-pro': 'black-forest-labs/flux-2-pro',
-  'nano-banana-pro': 'google/nano-banana-pro',
+  'nano-banana-pro': 'google/nano-banana-2',
   'qwen-image-edit': 'qwen/qwen-image-edit-2511',
   seedream: 'bytedance/seedream-4.5',
   'realesrgan-anime':

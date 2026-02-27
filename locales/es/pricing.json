@@ -4,8 +4,8 @@
     "subtitle": "Elige el plan de suscripción que se ajuste a tus necesidades. Obtén créditos mensuales con acumulación automática."
   },
   "subscription": {
-    "title": "Elige Tu Plan",
-    "subtitle": "Obtén créditos cada mes con nuestros planes de suscripción. Cancela en cualquier momento."
+    "title": "¿Upscaling frecuente? Ahorra con un plan",
+    "subtitle": "Los usuarios frecuentes ahorran hasta un 58% frente a los paquetes individuales. Cancela en cualquier momento."
   },
   "currentBalance": {
     "title": "Tu saldo actual",
@@ -56,5 +56,10 @@
     "title": "¿Necesitas un plan personalizado?",
     "description": "Contáctanos para precios empresariales, descuentos por volumen o requisitos de integración personalizados.",
     "contactSales": "Contactar Ventas"
+  },
+  "trustSignals": {
+    "securedByStripe": "Pagos seguros con Stripe",
+    "cancelAnytime": "Cancela cuando quieras — sin compromisos",
+    "creditsNeverExpire": "Los créditos comprados no caducan"
   }
 }

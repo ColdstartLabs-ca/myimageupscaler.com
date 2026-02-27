@@ -235,8 +235,9 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       priceInCents: 1499, // $14.99
       currency: 'usd',
       stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM,
-      description: '200 credits - Best value',
+      description: '200 credits',
       popular: true,
+      badge: 'Most Popular',
       enabled: true,
     },
     {
@@ -248,6 +249,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE,
       description: '600 credits',
       popular: false,
+      badge: 'Best Value',
       enabled: true,
     },
   ],

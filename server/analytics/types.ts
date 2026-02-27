@@ -71,6 +71,42 @@ export interface ICheckoutAbandonedProperties {
   plan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
 }
 
+export type IUpgradePromptTrigger =
+  | 'premium_upsell'
+  | 'out_of_credits'
+  | 'model_gate'
+  | 'after_upscale'
+  | 'after_comparison';
+
+export interface IUpgradePromptShownProperties {
+  trigger: IUpgradePromptTrigger;
+  imageVariant?: string;
+  currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+}
+
+export interface IUpgradePromptClickedProperties {
+  trigger: IUpgradePromptTrigger;
+  imageVariant?: string;
+  destination: string;
+  currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+}
+
+export interface IUpgradePromptDismissedProperties {
+  trigger: IUpgradePromptTrigger;
+  imageVariant?: string;
+  currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+}
+
+export interface ICheckoutLoadedProperties {
+  loadTimeMs: number;
+  priceId: string;
+}
+
+export interface IPricingPlanViewedProperties {
+  planName: string;
+  priceId: string;
+}
+
 // pSEO-specific event properties
 export interface IPSEOPageViewProperties extends IPageViewProperties {
   pageType:
@@ -172,6 +208,13 @@ export type IAnalyticsEventName =
   // Guest upscaler events (server-side only)
   | 'guest_limit_reached'
   | 'guest_upscale_completed'
+  // Upgrade prompt events
+  | 'upgrade_prompt_shown'
+  | 'upgrade_prompt_clicked'
+  | 'upgrade_prompt_dismissed'
+  // Checkout flow events
+  | 'checkout_loaded'
+  | 'pricing_plan_viewed'
   // Batch limit events
   | 'batch_limit_modal_shown'
   | 'batch_limit_upgrade_clicked'

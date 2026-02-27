@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { ArrowLeftRight, Download, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowLeftRight, Download, Sparkles, ZoomIn, ZoomOut } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@client/components/ui/Button';
+import { analytics } from '@client/analytics/analyticsClient';
+
+const AFTER_COMPARISON_SESSION_KEY = 'upgrade_prompt_shown_after_comparison';
 
 interface IImageComparisonProps {
   beforeUrl: string;
@@ -8,6 +12,8 @@ interface IImageComparisonProps {
   onDownload: () => void;
   /** Whether the after image has transparency (e.g., from bg-removal). Auto-detected from blob: URLs if not provided. */
   hasTransparency?: boolean;
+  /** When true, shows an upgrade nudge below the slider after the user drags it. */
+  showUpgradeNudge?: boolean;
 }
 
 export const ImageComparison: React.FC<IImageComparisonProps> = ({
@@ -15,10 +21,13 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   afterUrl,
   onDownload,
   hasTransparency,
+  showUpgradeNudge = false,
 }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [nudgeVisible, setNudgeVisible] = useState(false);
+  const hasInteractedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Auto-detect transparency from blob URL if not explicitly provided
@@ -27,7 +36,21 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
 
   const handleMouseDown = useCallback(() => {
     setIsDragging(true);
-  }, []);
+
+    // Show upgrade nudge on first slider interaction (once per session)
+    if (showUpgradeNudge && !hasInteractedRef.current && typeof window !== 'undefined') {
+      hasInteractedRef.current = true;
+      const alreadyShown = sessionStorage.getItem(AFTER_COMPARISON_SESSION_KEY);
+      if (!alreadyShown) {
+        sessionStorage.setItem(AFTER_COMPARISON_SESSION_KEY, 'true');
+        setNudgeVisible(true);
+        analytics.track('upgrade_prompt_shown', {
+          trigger: 'after_comparison',
+          currentPlan: 'free',
+        });
+      }
+    }
+  }, [showUpgradeNudge]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -154,6 +177,29 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
           Enhanced
         </div>
       </div>
+
+      {/* After-comparison upgrade nudge — shown once per session after first slider drag */}
+      {nudgeVisible && (
+        <div className="px-4 py-2.5 border-t border-border flex items-center justify-center gap-2 bg-surface/60">
+          <Sparkles className="w-3.5 h-3.5 text-secondary shrink-0" />
+          <p className="text-xs text-text-muted text-center">
+            Love the result?{' '}
+            <Link
+              href="/dashboard/billing"
+              className="font-semibold text-secondary hover:text-secondary/80 underline underline-offset-2 transition-colors"
+              onClick={() => {
+                analytics.track('upgrade_prompt_clicked', {
+                  trigger: 'after_comparison',
+                  destination: '/dashboard/billing',
+                  currentPlan: 'free',
+                });
+              }}
+            >
+              Unlock premium quality.
+            </Link>
+          </p>
+        </div>
+      )}
     </div>
   );
 };

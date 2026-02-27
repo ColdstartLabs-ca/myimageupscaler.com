@@ -178,6 +178,8 @@ export interface ICreditPack {
   description: string;
   /** Whether this pack is highlighted as "popular" or "best value" */
   popular?: boolean;
+  /** Badge label to display on this pack (e.g., 'Most Popular', 'Best Value') */
+  badge?: string;
   /** Whether this pack is currently available for purchase */
   enabled: boolean;
 }

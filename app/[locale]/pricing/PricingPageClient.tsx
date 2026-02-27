@@ -19,7 +19,29 @@ import { ArrowRight, Calendar, Loader2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { analytics } from '@client/analytics';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useSearchParams } from 'next/navigation';
+
+const SUBSCRIPTION_VALUE_COUNTRIES = new Set([
+  'US',
+  'CA',
+  'GB',
+  'IE',
+  'AU',
+  'NZ',
+  'DE',
+  'FR',
+  'NL',
+  'BE',
+  'CH',
+  'AT',
+  'SE',
+  'NO',
+  'DK',
+  'FI',
+]);
+
+const CREDIT_PACK_COUNTRIES = new Set(['PH', 'IN']);
 
 export default function PricingPageClient() {
   const t = useTranslations('pricing');
@@ -32,6 +54,14 @@ export default function PricingPageClient() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelingSchedule, setCancelingSchedule] = useState(false);
   const [buttonLoadingStates, setButtonLoadingStates] = useState<Record<string, boolean>>({});
+
+  const { tier: regionTier, country: regionCountry } = useRegionTier();
+
+  const showCreditPackNote =
+    regionCountry !== null &&
+    (CREDIT_PACK_COUNTRIES.has(regionCountry) || regionTier === 'restricted');
+  const showSubscriptionNote =
+    regionCountry !== null && SUBSCRIPTION_VALUE_COUNTRIES.has(regionCountry);
 
   // Track pricing_page_viewed event once on mount
   const hasTrackedPageView = useRef(false);
@@ -329,12 +359,120 @@ export default function PricingPageClient() {
           <p className="text-lg text-text-secondary max-w-2xl mx-auto">{t('page.subtitle')}</p>
         </div>
 
+        {/* Credit Packs Section */}
+        <div className="mb-16" data-testid="credit-packs-section">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-text-primary mb-4">{t('creditPacks.title')}</h2>
+            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+              {t('creditPacks.subtitle')}
+            </p>
+
+            {showCreditPackNote && (
+              <p
+                className="mt-4 text-sm text-success font-medium"
+                data-testid="geo-credit-pack-note"
+              >
+                No subscription needed — buy only what you use
+              </p>
+            )}
+          </div>
+
+          <div className="max-w-5xl mx-auto">
+            <CreditPackSelector
+              onPurchaseStart={() => {}}
+              onPurchaseComplete={() => window.location.reload()}
+              onError={error => console.error(error)}
+            />
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-sm text-text-muted mb-2">
+              <strong>{t('creditPacks.valueComparison')}</strong>{' '}
+              {t('creditPacks.valueComparisonText')}
+            </p>
+            <a
+              href="#subscriptions"
+              className="text-sm text-accent hover:text-accent-hover underline"
+            >
+              {t('creditPacks.comparePlans')}
+            </a>
+          </div>
+
+          {/* Trust signals */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-text-secondary">
+            <span className="flex items-center gap-1.5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-success flex-shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              {t('trustSignals.securedByStripe')}
+            </span>
+            <span className="text-text-muted hidden sm:inline" aria-hidden="true">
+              |
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-success flex-shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              {t('trustSignals.cancelAnytime')}
+            </span>
+            <span className="text-text-muted hidden sm:inline" aria-hidden="true">
+              |
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-success flex-shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              {t('trustSignals.creditsNeverExpire')}
+            </span>
+          </div>
+        </div>
+
         {/* Subscription Plans Section */}
-        <div className="mb-16" data-testid="subscription-plans-section">
-          <h2 className="text-3xl font-bold text-center text-text-primary mb-8">
+        <div
+          className="border-t border-border pt-16 mb-16"
+          id="subscriptions"
+          data-testid="subscription-plans-section"
+        >
+          <h2 className="text-3xl font-bold text-center text-text-primary mb-4">
             {t('subscription.title')}
           </h2>
-          <p className="text-center text-text-secondary mb-8">{t('subscription.subtitle')}</p>
+          <p className="text-center text-text-secondary mb-8 max-w-2xl mx-auto">
+            {t('subscription.subtitle')}
+          </p>
+
+          {showSubscriptionNote && (
+            <p className="text-center text-sm text-accent mb-6" data-testid="geo-subscription-note">
+              Most users in your region save 40% with a monthly plan vs. buying credits
+            </p>
+          )}
 
           <div
             className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto"
@@ -491,37 +629,6 @@ export default function PricingPageClient() {
                 />
               </>
             )}
-          </div>
-        </div>
-
-        {/* Credit Packs Section */}
-        <div className="mt-16 border-t border-border pt-16">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-text-primary mb-4">{t('creditPacks.title')}</h2>
-            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-              {t('creditPacks.subtitle')}
-            </p>
-          </div>
-
-          <div className="max-w-5xl mx-auto">
-            <CreditPackSelector
-              onPurchaseStart={() => {}}
-              onPurchaseComplete={() => window.location.reload()}
-              onError={error => console.error(error)}
-            />
-          </div>
-
-          <div className="mt-8 text-center">
-            <p className="text-sm text-text-muted mb-2">
-              <strong>{t('creditPacks.valueComparison')}</strong>{' '}
-              {t('creditPacks.valueComparisonText')}
-            </p>
-            <a
-              href="#subscriptions"
-              className="text-sm text-accent hover:text-accent-hover underline"
-            >
-              {t('creditPacks.comparePlans')}
-            </a>
           </div>
         </div>
 

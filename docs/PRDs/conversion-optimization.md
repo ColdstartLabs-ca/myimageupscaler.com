@@ -5,221 +5,234 @@
 **Current conversion funnel (Feb 2026):**
 
 - 2,020 total users → 6 paying = **0.30% overall conversion**
-- US: 1.18% conversion (5/424) — best geo
-- UK: 1.56% conversion (1/64) — small sample
+- US: 1.18% (5/424) — strongest geo
+- UK: 1.56% (1/64) — small sample, encouraging
 - Philippines: 0% (617 users, 37% download rate) — high engagement, zero revenue
 - India: 0% (161 users, 28% download rate) — same pattern
+
+**What Stripe data tells us (Feb 2026):**
+
+> **Most paying users buy the $5 credit pack — not subscriptions.**
+
+This is the single most important signal in the dataset. Users prefer a low-commitment, pay-as-you-go purchase over a recurring subscription. Implications:
+
+- The `OutOfCreditsModal` already defaults to the **Buy Credits** tab — this is correct, keep it.
+- The `PremiumUpsellModal` sends users to `/pricing` (subscription-first) — this may be the wrong destination. Consider sending to `/dashboard/billing` (credit-first) or showing an inline credit purchase.
+- Pricing page messaging should lead with credits, surface subscriptions as "save more when you use us regularly."
 
 **Paywall performance:**
 
 - ~6% of active users hit the batch limit
-- 12% of limit-hitters click upgrade
-- Unclear how many view pricing → start checkout → complete
+- 12% of limit-hitters click "Upgrade"
+- Drop-off after that: unknown (Phase 1 now answered this)
 
-**Key insight:** The users who paid likely converted via direct paths (pSEO CTA, pricing page), not the paywall modal. The modal copy/design may be underperforming.
+**Key insight:** Users who paid likely converted via direct paths (pSEO CTA, pricing page), not the paywall modal. The modal copy and destination need work.
 
-**Dependency:** PRD 1 (Analytics) must ship first or in parallel. We need `pricing_page_viewed`, `checkout_abandoned`, and revenue tracking to measure optimization impact.
+---
 
 ## Problem Statement
 
 Three conversion bottlenecks:
 
-1. **Paywall modal underperforms**: 12% click-through from batch limit, but unclear conversion after click
-2. **No visibility into the pricing → checkout → payment funnel**: Can't optimize what we can't measure
-3. **High-engagement low-income geos dominate traffic**: PH/IN users engage heavily but don't convert, diluting metrics
+1. **PremiumUpsellModal underperforms** — fires randomly for free users mid-session, shows the same 2 images every time, no tracking of which variant drives action
+2. **Modal sends users to the wrong place** — `/pricing` is subscription-first; most buyers want credits
+3. **No measurement** — can't improve what we can't see
+
+---
 
 ## Goals
 
-1. Increase overall paid conversion from 0.30% to 1.0%+ within 12 weeks
-2. Increase paywall → checkout click-through from 12% to 25%+
-3. Understand and optimize the full pricing → payment funnel
-4. Test whether geo-targeted approaches improve conversion
+1. Increase overall paid conversion from 0.30% → 1.0%+ within 12 weeks
+2. Increase modal → purchase click-through from ~12% → 25%+
+3. Learn which before/after image variant drives the most upgrades
+4. Redirect high-intent modal clicks toward the credit purchase path
+
+---
 
 ## Non-Goals
 
-- Changing pricing tiers or amounts (separate decision)
-- PPP (Purchasing Power Parity) pricing (complexity vs. revenue at this scale)
-- Enterprise sales or B2B outreach
-- Free trial changes (already exists, separate PRD)
+- Changing pricing tiers or amounts
+- PPP pricing
+- Enterprise sales or B2B
+- Free trial changes (separate PRD)
+
+---
 
 ## Implementation Spec
 
-### Phase 1: Funnel Visibility (Ships with PRD 1)
+### ✅ Phase 1: Funnel Visibility (DONE — Analytics PRD shipped)
 
-Before optimizing anything, we need to see the full funnel. This ships as part of Analytics Instrumentation V2:
+The full funnel is now instrumented:
 
 ```
-batch_limit_modal_shown (tracked)
-  → batch_limit_upgrade_clicked (tracked)
-    → pricing_page_viewed (NEW - PRD 1)
-      → checkout_started (tracked)
-        → checkout_completed (tracked) OR checkout_abandoned (NEW - PRD 1)
+batch_limit_modal_shown
+  → batch_limit_upgrade_clicked
+    → pricing_page_viewed (entryPoint tracked)
+      → checkout_started
+        → checkout_completed OR checkout_abandoned (timeSpentMs, step)
 ```
 
-**Action items from PRD 1:**
+**What to do now:** Pull 1–2 weeks of Amplitude data. Find the biggest drop-off step and focus Phase 2–3 there.
 
-- `pricing_page_viewed` event with `entryPoint` property
-- `checkout_abandoned` event with `timeSpentMs` and `step`
+---
 
-After 1-2 weeks of data, identify the biggest drop-off point and focus there.
+### Phase 2: PremiumUpsellModal — Before/After A/B Test
 
-### Phase 2: Paywall Modal Optimization
+**File:** `client/components/features/workspace/PremiumUpsellModal.tsx`
 
-The BatchLimitModal currently fires when users hit their batch limit. Current flow:
+**Current state:** Modal shows one of 2 static images (bird, girl) at random. No tracking. Sends users to `/pricing`.
 
-1. User adds too many images → modal shows
-2. Modal says "upgrade to process more" → 12% click "Upgrade"
-3. User lands on... pricing page? Direct checkout? (unclear)
+**What to change:**
 
-#### 2A. Audit & Improve Modal Copy
+#### 2A. Expand Image Variants
 
-**File:** `client/components/features/workspace/BatchLimitModal.tsx`
+Add two new before/after image sets. Each variant gets a stable `label` used as the Amplitude property:
 
-Current problems to investigate:
+| Variant       | Before                                  | After                                  | Label         |
+| ------------- | --------------------------------------- | -------------------------------------- | ------------- |
+| `bird`        | `/before-after/bird-before.webp`        | `/before-after/bird-after.webp`        | `bird`        |
+| `girl`        | `/before-after/girl-before.webp`        | `/before-after/girl-after.webp`        | `girl`        |
+| `face-pro`    | `/before-after/face-pro/before.webp`    | `/before-after/face-pro/after.webp`    | `face-pro`    |
+| `budget-edit` | `/before-after/budget-edit/before.webp` | `/before-after/budget-edit/after.webp` | `budget-edit` |
 
-- Is the value proposition clear? ("Process unlimited images" vs. "Add more to your batch")
-- Is the CTA action clear? (Where does "Upgrade" take them?)
-- Is there urgency or social proof?
+The starting variant is chosen randomly each time the modal opens. This gives us a ~25% split per variant.
 
-**Proposed improvements:**
+#### 2B. Add Amplitude Tracking
 
-- Show what the user gets: "Upgrade to Pro: 500 images/month, premium models, priority processing"
-- Add social proof: "Join 1,000+ photographers who upgraded" (when we have the numbers)
-- Show the price inline: "$9/month" so they know before clicking
-- Add a "Try free trial" option if available
-- Track which copy variant performs better (A/B via simple flag)
+Track three events from the modal, always including `imageVariant`:
 
-#### 2B. Out of Credits Modal Optimization
+| Event                      | When                              | Properties                                  |
+| -------------------------- | --------------------------------- | ------------------------------------------- |
+| `upgrade_prompt_shown`     | Modal opens                       | `imageVariant`, `trigger: 'premium_upsell'` |
+| `upgrade_prompt_clicked`   | "View Premium Plans" clicked      | `imageVariant`, `trigger`, `destination`    |
+| `upgrade_prompt_dismissed` | "Continue with Free" or X clicked | `imageVariant`, `trigger`                   |
+
+In Amplitude, filter by `upgrade_prompt_shown` → `upgrade_prompt_clicked` per `imageVariant` to get conversion rate per variant. After ~200 modal views, we'll have directional signal.
+
+Add these three event names to `server/analytics/types.ts`:
+
+- `upgrade_prompt_shown`
+- `upgrade_prompt_clicked`
+- `upgrade_prompt_dismissed`
+
+#### 2C. Fix the Destination
+
+"View Premium Plans" currently goes to `/pricing`. Based on Stripe data (users buy credits, not subscriptions), change destination to `/dashboard/billing` — the billing page shows the credit pack selector inline.
+
+Track `destination: 'billing'` on the `upgrade_prompt_clicked` event so we can revert if it hurts conversion.
+
+---
+
+### Phase 3: OutOfCreditsModal Optimization
 
 **File:** `client/components/stripe/OutOfCreditsModal.tsx`
 
-This modal fires when users run out of credits (different from batch limit). Same optimization principles:
+**Current state:** Already defaults to "Buy Credits" tab — correct. Subscription option is secondary.
 
-- Show credit pack options inline
-- "Buy 50 credits for $5" vs. "Upgrade your plan"
-- Quick-buy option without leaving the page
+**What to improve:**
 
-#### 2C. Contextual Upgrade Prompts
+- Show the most popular pack with a "Most Popular" badge (the $5 pack, per Stripe data)
+- Add inline quick-buy without leaving the page (already done via `CreditPackSelector`)
+- Track `upgrade_prompt_shown` / `upgrade_prompt_clicked` here too, with `trigger: 'out_of_credits'`
 
-Add upgrade prompts at high-intent moments (not just limits):
+---
 
-1. **Premium model gate**: When a free user views a premium model in the gallery → "This model is available on Pro. Try it free for 7 days."
-2. **After 3rd free upscale**: Subtle banner → "You've upscaled 3 images today. Upgrade for unlimited access."
-3. **After comparison view** (from PRD 2): "Love the result? Upgrade for premium quality models."
+### Phase 4: Pricing Page — Credits First
 
-**New events:**
+**File:** Pricing page component (`app/(pages)/pricing/` or similar)
 
-- `upgrade_prompt_shown` with `trigger` (batch_limit, out_of_credits, premium_model, usage_threshold, post_comparison)
-- `upgrade_prompt_clicked` with same `trigger`
-- `upgrade_prompt_dismissed` with same `trigger`
+Stripe data says credits convert better than subscriptions. Reorder the page:
 
-### Phase 3: Pricing Page Optimization
+1. **Credits section first** — "Need just a few upscales? Buy credits, no commitment."
+2. **Subscription section second** — "Upscale regularly? A plan saves you money."
+3. Highlight the $5 pack with "Most Popular" (it's what people actually buy)
+4. Add trust signals: Stripe badge, "cancel anytime," money-back note
 
-#### 3A. Entry Point Tracking
+---
 
-With `pricing_page_viewed` tracking `entryPoint`, we can see which paths lead to the pricing page:
+### Phase 5: Contextual Upgrade Prompts
 
-- Direct (SEO/bookmark)
-- Navbar click
-- BatchLimitModal → Upgrade
-- OutOfCreditsModal → Upgrade
-- pSEO CTA
-- Post-comparison prompt
+Add upgrade prompts at high-intent moments beyond the batch limit:
 
-Optimize the highest-traffic entry points first.
+1. **Premium model gate** — free user hovers a premium model in gallery → "Available on Pro. Try it free."
+2. **After 3rd free upscale** — subtle banner → "You've upscaled 3 images. Upgrade for unlimited."
+3. **After comparison view** — "Love the result? Unlock premium quality."
 
-#### 3B. Pricing Page Improvements
+All three fire `upgrade_prompt_shown` with the appropriate `trigger` value.
 
-**File:** Pricing page component (find via `app/(pages)/pricing/` or similar)
+---
 
-Improvements to test:
+### Phase 6: Geographic Targeting (Priority: MEDIUM)
 
-1. **Highlight the most popular plan** with a "Most Popular" badge
-2. **Show savings for annual billing** prominently ("Save 20%")
-3. **Add testimonials or social proof** from existing paying users
-4. **Feature comparison table** showing free vs. paid clearly
-5. **FAQ section** addressing common objections (refund policy, cancel anytime, etc.)
-6. **Trust signals**: Stripe badge, money-back guarantee, cancel anytime
+Once analytics is running for 2+ weeks, segment by country:
 
-#### 3C. Reduce Checkout Friction
-
-**File:** `client/components/stripe/CheckoutModal.tsx`
-
-Currently uses Stripe Embedded Checkout. Potential improvements:
-
-- Show a loading skeleton while Stripe loads (reduce perceived wait)
-- Add a "secure checkout" trust indicator
-- If checkout abandoned, follow up with email if captured (from PRD 2)
-- Track `checkout_loaded` event (time from open to Stripe iframe ready)
-
-### Phase 4: Geographic Targeting (Priority: MEDIUM)
-
-#### 4A. Understand Geo Conversion Patterns
-
-Once analytics is running, segment by country:
-
-- Which countries have highest download rate but 0% conversion?
-- Which have the highest pricing page view → checkout rate?
+- Which geos convert pricing page views → checkout at highest rates?
 - Are PH/IN users hitting the paywall at similar rates to US/UK?
 
-#### 4B. Geo-Aware Messaging (Not Pricing)
+**Messaging approach (not pricing):**
 
-Instead of PPP pricing (complex), test messaging changes:
+- High-engagement/low-income geos: Lead with credit packs, downplay subscriptions
+- US/UK/EU: Lead with quality difference, business use cases, subscription value
 
-- For high-engagement/low-income geos: Emphasize free tier value, credit packs (lower commitment than subscriptions)
-- For US/UK/EU: Emphasize premium features, quality difference, business use cases
-- For returning users from paying geos who haven't upgraded: More aggressive prompts
+Implementation: Client-side using `country` from Amplitude user properties. No server changes.
 
-**Implementation:** Use the `country` from Amplitude user properties (already available via IP geolocation) to determine messaging variant. Simple client-side logic, no server changes.
+---
 
-## Analytics Events (New)
+## Analytics Events
 
-| Event                      | Properties               | Location                |
-| -------------------------- | ------------------------ | ----------------------- |
-| `upgrade_prompt_shown`     | `trigger`, `currentPlan` | Various components      |
-| `upgrade_prompt_clicked`   | `trigger`, `currentPlan` | Various components      |
-| `upgrade_prompt_dismissed` | `trigger`, `currentPlan` | Various components      |
-| `checkout_loaded`          | `loadTimeMs`, `priceId`  | CheckoutModal           |
-| `pricing_plan_viewed`      | `planName`, `priceId`    | PricingCard hover/focus |
+| Event                      | Properties                                              | Location                                                  |
+| -------------------------- | ------------------------------------------------------- | --------------------------------------------------------- |
+| `upgrade_prompt_shown`     | `trigger`, `imageVariant`, `currentPlan`                | PremiumUpsellModal, OutOfCreditsModal, contextual prompts |
+| `upgrade_prompt_clicked`   | `trigger`, `imageVariant`, `destination`, `currentPlan` | Same                                                      |
+| `upgrade_prompt_dismissed` | `trigger`, `imageVariant`, `currentPlan`                | Same                                                      |
+| `checkout_loaded`          | `loadTimeMs`, `priceId`                                 | CheckoutModal                                             |
+| `pricing_plan_viewed`      | `planName`, `priceId`                                   | PricingCard hover/focus                                   |
+
+---
 
 ## Implementation Priority
 
-| Phase | What                          | Effort                     | Expected Impact                       |
-| ----- | ----------------------------- | -------------------------- | ------------------------------------- |
-| **1** | Funnel visibility (via PRD 1) | 0 days (included in PRD 1) | See where users drop off              |
-| **2** | Paywall modal improvements    | 2-3 days                   | 12% → 20%+ click-through              |
-| **3** | Pricing page optimization     | 2-3 days                   | Improve pricing → checkout conversion |
-| **4** | Contextual upgrade prompts    | 2-3 days                   | Surface upgrade opportunities earlier |
-| **5** | Geo-aware messaging           | 1-2 days                   | Better targeting for paying geos      |
+| Phase | What                                                         | Effort   | Expected Impact                          |
+| ----- | ------------------------------------------------------------ | -------- | ---------------------------------------- |
+| **1** | ~~Funnel visibility~~                                        | ✅ Done  | Baseline established                     |
+| **2** | PremiumUpsellModal — A/B images + tracking + destination fix | 1 day    | Learn what converts; fix credits routing |
+| **3** | OutOfCreditsModal — badge + tracking                         | 0.5 days | Directional signal on credits path       |
+| **4** | Pricing page — credits first                                 | 1 day    | Align page to buying behavior            |
+| **5** | Contextual upgrade prompts                                   | 2 days   | Surface upgrade opportunities earlier    |
+| **6** | Geo-aware messaging                                          | 1 day    | Better targeting for paying geos         |
+
+---
 
 ## Validation Criteria
 
 ### Key Metrics
 
 - **Overall conversion**: 0.30% → 1.0% (target)
-- **Paywall click-through**: 12% → 25% (target)
-- **Pricing page → checkout**: Baseline unknown → measure then improve
-- **Checkout completion rate**: Baseline unknown → measure then improve
-- **Revenue per user**: Track via Amplitude Revenue (from PRD 1)
+- **Modal click-through**: 12% → 25%+ (target)
+- **Best-performing image variant**: Identified after 200+ modal views
+- **Credits vs. subscription revenue split**: Track monthly via Stripe dashboard
 
 ### Success Criteria
 
 - Overall paid conversion > 0.75% within 8 weeks
-- Paywall modal click-through > 20% within 4 weeks
-- At least 50% of checkout sessions complete (once measured)
-- Revenue growth: at least 2x current MRR within 12 weeks
+- PremiumUpsellModal click-through > 20% within 4 weeks
+- Image variant with highest conversion identified within 3 weeks
+- Revenue 2x current MRR within 12 weeks
+
+---
 
 ## Testing
 
-- Unit tests for upgrade prompt display logic (when to show, when not to)
-- Unit tests for geo-targeting logic
-- E2E test: batch limit → modal → upgrade click → pricing page → checkout
-- E2E test: out of credits → modal → credit pack purchase
-- A/B test framework for modal copy variants (simple localStorage flag)
+- Unit tests for `upgrade_prompt_shown` trigger logic (when modal fires, frequency cap)
+- Unit tests for image variant selection (random, all 4 variants accessible)
+- E2E: batch limit → PremiumUpsellModal → "View Plans" → billing page → credit purchase
+- E2E: out of credits → modal → credit pack purchase
+
+---
 
 ## Risks
 
-- **Over-prompting**: Too many upgrade prompts will annoy users and hurt retention. Limit to max 1 prompt per session per trigger type.
-- **Geo-targeting accuracy**: IP geolocation isn't perfect. Use Amplitude's built-in geo, don't roll our own.
-- **Small sample sizes**: With 6 paying users, statistical significance takes time. Focus on directional improvements, not p-values.
-- **Checkout abandonment follow-up**: Requires email capture (PRD 2) to be effective. Ships independently but works better together.
+- **Over-prompting**: Cap to 1 prompt per session per trigger type. `hasSeenPremiumUpsell` already prevents repeat within a session.
+- **Wrong destination**: If billing page hurts conversion vs. pricing, revert via `destination` tracking.
+- **Small sample sizes**: With ~6 paying users baseline, significance takes time. Optimize for directional signal, not p-values.
+- **Checkout abandonment follow-up**: Requires email capture (separate PRD) to be effective.

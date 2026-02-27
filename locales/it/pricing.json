@@ -4,8 +4,8 @@
     "subtitle": "Scegli piano abbonamento adatto alle tue esigenze. Ottieni crediti mensili con rollover automatico."
   },
   "subscription": {
-    "title": "Scegli Tuo Piano",
-    "subtitle": "Ottieni crediti ogni mese con nostri piani abbonamento. Cancella in qualsiasi momento."
+    "title": "Upscaling frequente? Risparmia con un piano",
+    "subtitle": "Gli utenti frequenti risparmiano fino al 58% rispetto ai pacchetti singoli. Cancella in qualsiasi momento."
   },
   "currentBalance": {
     "title": "Tuo saldo attuale",
@@ -56,5 +56,10 @@
     "title": "Ti serve un piano personalizzato?",
     "description": "Contattaci per pricing enterprise, sconti bulk o requisiti integrazione personalizzata.",
     "contactSales": "Contatta Vendite"
+  },
+  "trustSignals": {
+    "securedByStripe": "Pagamenti sicuri con Stripe",
+    "cancelAnytime": "Cancella quando vuoi — nessun vincolo",
+    "creditsNeverExpire": "I crediti acquistati non scadono mai"
   }
 }

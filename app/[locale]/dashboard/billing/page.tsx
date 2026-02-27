@@ -516,19 +516,19 @@ export default function BillingPage() {
     </div>
   );
 
-  // Tab configuration
+  // Tab configuration — credits first (most users buy credits, not subscriptions)
   const tabs: ITabItem[] = [
-    {
-      id: 'subscription',
-      label: t('tabs.subscription'),
-      icon: CreditCard,
-      content: <SubscriptionTab />,
-    },
     {
       id: 'credits',
       label: t('tabs.credits'),
       icon: Plus,
       content: <CreditsTab />,
+    },
+    {
+      id: 'subscription',
+      label: t('tabs.subscription'),
+      icon: CreditCard,
+      content: <SubscriptionTab />,
     },
   ];
 
@@ -581,7 +581,7 @@ export default function BillingPage() {
       </div>
 
       {/* Tabs Section */}
-      <InternalTabs tabs={tabs} defaultTab="subscription" />
+      <InternalTabs tabs={tabs} defaultTab="credits" />
 
       {/* Payment Methods / Manage Subscription - Shared section below tabs */}
       <div className="bg-surface rounded-xl border border-border p-6">
