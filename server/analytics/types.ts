@@ -48,6 +48,29 @@ export interface IImageUpscaledProperties {
   durationMs: number;
 }
 
+export interface IImageUploadedProperties {
+  fileSize: number;
+  fileType: string;
+  inputWidth?: number;
+  inputHeight?: number;
+  source: 'drag_drop' | 'file_picker' | 'paste' | 'url';
+  isGuest: boolean;
+  batchPosition: number;
+}
+
+export interface IPricingPageViewedProperties {
+  entryPoint: 'navbar' | 'batch_limit_modal' | 'out_of_credits_modal' | 'pseo_cta' | 'direct';
+  currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+  referrer?: string;
+}
+
+export interface ICheckoutAbandonedProperties {
+  priceId: string;
+  step: 'plan_selection' | 'stripe_embed';
+  timeSpentMs: number;
+  plan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+}
+
 // pSEO-specific event properties
 export interface IPSEOPageViewProperties extends IPageViewProperties {
   pageType:
@@ -123,16 +146,22 @@ export type IAnalyticsEventName =
   | 'logout'
   // Subscription events
   | 'subscription_created'
+  | 'subscription_updated'
   | 'subscription_canceled'
   | 'subscription_renewed'
   | 'upgrade_started'
+  // Revenue events (server-side only)
+  | 'revenue_received'
   // Credit events
   | 'credit_pack_purchased'
   | 'credits_deducted'
   | 'credits_refunded'
   // Image processing events
+  | 'image_uploaded'
   | 'image_upscaled'
   | 'image_download'
+  // Pricing page events
+  | 'pricing_page_viewed'
   // Checkout events
   | 'checkout_started'
   | 'checkout_completed'
@@ -148,12 +177,18 @@ export type IAnalyticsEventName =
   | 'batch_limit_upgrade_clicked'
   | 'batch_limit_partial_add_clicked'
   | 'batch_limit_modal_closed'
+  // Model selection events
+  | 'model_gallery_opened'
+  | 'model_selection_changed'
+  | 'model_gallery_closed'
   // pSEO-specific events
   | 'pseo_page_view'
   | 'pseo_cta_clicked'
   | 'pseo_scroll_depth'
   | 'pseo_faq_expanded'
-  | 'pseo_internal_link_clicked';
+  | 'pseo_internal_link_clicked'
+  // Amplitude identity events (server-side only)
+  | '$identify';
 
 export interface IAnalyticsEvent {
   name: IAnalyticsEventName;

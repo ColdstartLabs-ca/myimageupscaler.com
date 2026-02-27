@@ -27,7 +27,8 @@ if (serverEnv.ENV === 'test') {
  */
 const TRACKING_QUERY_PARAMS = [
   'ref',
-  'source',
+  // 'source' intentionally excluded — it's an internal app parameter (e.g. ?source=batch_limit)
+  // used by PricingPageClient to determine entry point; stripping it would break analytics
   'utm_source',
   'utm_medium',
   'utm_campaign',
@@ -37,6 +38,13 @@ const TRACKING_QUERY_PARAMS = [
   'gclid',
   'msclkid',
 ];
+
+/**
+ * First-touch attribution cookie.
+ * Set from middleware before redirect strips tracking params so client analytics
+ * can persist the original UTM values.
+ */
+const FIRST_TOUCH_UTM_COOKIE = 'miu_first_touch_utm';
 
 /**
  * Check if pathname is a dashboard route (with or without locale prefix)
@@ -168,7 +176,9 @@ function handleTrailingSlash(req: NextRequest): NextResponse | null {
     const redirectUrl = `${req.nextUrl.origin}${newPathname}${req.nextUrl.search}${hash}`;
 
     if (serverEnv.ENV === 'test') {
-      console.log(`[handleTrailingSlash] Redirecting ${pathname} -> ${newPathname} (${redirectUrl})`);
+      console.log(
+        `[handleTrailingSlash] Redirecting ${pathname} -> ${newPathname} (${redirectUrl})`
+      );
     }
 
     const response = NextResponse.redirect(redirectUrl, 301); // Permanent redirect for SEO
@@ -218,6 +228,39 @@ function handleTrackingParams(req: NextRequest): NextResponse | null {
 
   // Apply security headers
   applySecurityHeaders(response);
+
+  // Preserve first-touch UTM attribution in a cookie before redirect removes query params
+  const hasFirstTouchCookie = !!req.cookies.get(FIRST_TOUCH_UTM_COOKIE)?.value;
+  if (!hasFirstTouchCookie) {
+    const firstTouchData = {
+      utmSource: originalSearchParams.get('utm_source') || undefined,
+      utmMedium: originalSearchParams.get('utm_medium') || undefined,
+      utmCampaign: originalSearchParams.get('utm_campaign') || undefined,
+      utmTerm: originalSearchParams.get('utm_term') || undefined,
+      utmContent: originalSearchParams.get('utm_content') || undefined,
+      landingPage: req.nextUrl.pathname,
+      timestamp: Date.now(),
+    };
+
+    const hasAnyUtm =
+      !!firstTouchData.utmSource ||
+      !!firstTouchData.utmMedium ||
+      !!firstTouchData.utmCampaign ||
+      !!firstTouchData.utmTerm ||
+      !!firstTouchData.utmContent;
+
+    if (hasAnyUtm) {
+      response.cookies.set(
+        FIRST_TOUCH_UTM_COOKIE,
+        encodeURIComponent(JSON.stringify(firstTouchData)),
+        {
+          path: '/',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 365, // 1 year
+        }
+      );
+    }
+  }
 
   // Preserve original tracking params in headers for app logic if needed
   for (const param of TRACKING_QUERY_PARAMS) {

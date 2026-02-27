@@ -5,8 +5,10 @@ import { StripeService } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import { analytics } from '@client/analytics';
+import { STRIPE_PRICES } from '@shared/config/stripe';
 
 interface ICheckoutModalProps {
   priceId: string;
@@ -37,6 +39,18 @@ const getStripePromise = () => {
 const stripePromise = getStripePromise();
 
 /**
+ * Determine the plan name from a price ID
+ */
+function determinePlanFromPriceId(priceId: string): 'starter' | 'hobby' | 'pro' | 'business' {
+  if (priceId === STRIPE_PRICES.STARTER_MONTHLY) return 'starter';
+  if (priceId === STRIPE_PRICES.HOBBY_MONTHLY) return 'hobby';
+  if (priceId === STRIPE_PRICES.PRO_MONTHLY) return 'pro';
+  if (priceId === STRIPE_PRICES.BUSINESS_MONTHLY) return 'business';
+  // Default to hobby for unknown price IDs
+  return 'hobby';
+}
+
+/**
  * CheckoutModal component for embedded Stripe Checkout
  *
  * Usage:
@@ -51,6 +65,11 @@ const stripePromise = getStripePromise();
 export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalProps): JSX.Element {
   const t = useTranslations('stripe.checkout');
 
+  // Track when modal was opened to calculate time spent
+  const modalOpenedAtRef = useRef(Date.now());
+  // Track if checkout was completed (to avoid tracking abandoned on successful close)
+  const checkoutCompletedRef = useRef(false);
+
   // Check if Stripe is properly configured
   useEffect(() => {
     if (!stripePromise) {
@@ -62,6 +81,23 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { showToast } = useToastStore();
+
+  // Handle close with checkout_abandoned tracking
+  const handleClose = useCallback(() => {
+    // Only track abandoned if checkout wasn't completed
+    if (!checkoutCompletedRef.current) {
+      const timeSpentMs = Date.now() - modalOpenedAtRef.current;
+      const step = clientSecret ? 'stripe_embed' : 'plan_selection';
+
+      analytics.track('checkout_abandoned', {
+        priceId,
+        step,
+        timeSpentMs,
+        plan: determinePlanFromPriceId(priceId),
+      });
+    }
+    onClose();
+  }, [priceId, clientSecret, onClose]);
 
   useEffect(() => {
     const createCheckoutSession = async () => {
@@ -103,6 +139,9 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const options: StripeEmbeddedCheckoutOptions = {
     clientSecret: clientSecret || '',
     onComplete: () => {
+      // Mark checkout as completed to avoid tracking abandoned
+      checkoutCompletedRef.current = true;
+
       // Called when the checkout is complete
       if (onSuccess) {
         onSuccess();
@@ -117,7 +156,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         className="relative bg-surface rounded-lg shadow-xl w-full max-w-3xl max-h-[95vh] overflow-hidden flex flex-col"
@@ -125,7 +164,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       >
         {/* Close button */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 z-10 p-2 text-muted-foreground hover:text-muted-foreground transition-colors bg-surface rounded-full shadow-md"
           aria-label={t('close')}
         >
@@ -162,7 +201,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
                 <h3 className="text-error font-semibold mb-2">{t('error')}</h3>
                 <p className="text-error/80">{error}</p>
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="mt-4 px-4 py-2 bg-error text-white rounded-lg hover:bg-error/80 transition-colors"
                 >
                   {t('close')}

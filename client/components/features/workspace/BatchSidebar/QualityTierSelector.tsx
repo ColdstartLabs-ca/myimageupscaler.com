@@ -5,9 +5,11 @@ import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { LayoutGrid } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { ModelGalleryModal } from '../ModelGalleryModal';
+import { analytics } from '@client/analytics/analyticsClient';
 
 // Use centralized config for premium tier checks
 const PREMIUM_TIERS = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
+const FREE_TIERS = MODEL_COSTS.FREE_QUALITY_TIERS as readonly QualityTier[];
 
 export interface IQualityTierSelectorProps {
   tier: QualityTier;
@@ -40,6 +42,19 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
     return `${credits} credit${credits === 1 ? '' : 's'}`;
   };
 
+  const handleOpenGallery = () => {
+    if (disabled) return;
+
+    // Track gallery opened event
+    analytics.track('model_gallery_opened', {
+      currentTier: tier,
+      isDefault: FREE_TIERS.includes(tier) && tier === 'quick',
+      isFreeUser,
+    });
+
+    setIsGalleryOpen(true);
+  };
+
   return (
     <div className="relative">
       <label className="text-sm font-medium text-white mb-2 block">Quality Tier</label>
@@ -47,7 +62,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
       {/* Trigger Button - opens gallery modal */}
       <button
         type="button"
-        onClick={() => !disabled && setIsGalleryOpen(true)}
+        onClick={handleOpenGallery}
         disabled={disabled}
         className={`
           w-full flex items-center justify-between p-3.5 rounded-xl border bg-surface

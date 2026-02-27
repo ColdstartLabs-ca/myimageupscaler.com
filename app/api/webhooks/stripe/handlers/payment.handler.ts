@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { trackServerEvent } from '@server/analytics';
+import { trackServerEvent, trackRevenue } from '@server/analytics';
 import { stripe } from '@server/stripe';
 import { serverEnv } from '@shared/config/env';
 import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@shared/config/stripe';
@@ -189,6 +189,50 @@ export class PaymentHandler {
           pack: packKey,
           amountCents,
           sessionId: session.id,
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+
+      // Update user properties in Amplitude for subscription purchases
+      // Note: subscription.handler.ts handles the primary $identify for subscriptions,
+      // but we also add one here to capture the checkout completion moment
+      if (purchaseType === 'subscription' && planKey) {
+        const billingInterval =
+          session.mode === 'subscription'
+            ? (
+                session as {
+                  subscription?: {
+                    items?: { data?: { price?: { recurring?: { interval?: string } } }[] };
+                  };
+                }
+              ).subscription?.items?.data?.[0]?.price?.recurring?.interval || 'month'
+            : 'month';
+
+        await trackServerEvent(
+          '$identify',
+          {
+            $set: {
+              plan: planKey,
+              subscription_status: 'active',
+              subscription_started_at: new Date().toISOString(),
+              billing_interval: billingInterval === 'month' ? 'monthly' : billingInterval,
+            },
+          },
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        );
+      }
+
+      // Track revenue in Amplitude for LTV/ARPU dashboards
+      await trackRevenue(
+        {
+          userId,
+          amountCents,
+          productId:
+            purchaseType === 'subscription'
+              ? `subscription_${planKey ?? 'unknown'}_monthly`
+              : `credit_pack_${packKey ?? 'unknown'}`,
+          purchaseType,
+          currency: session.currency ?? 'usd',
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );

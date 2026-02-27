@@ -35,6 +35,10 @@ export function createSignInWithEmail(
       analytics.track('login', { method: 'email' });
 
       if (data.user) {
+        // Identify user in analytics after successful login (non-blocking)
+        analytics
+          .identify({ userId: data.user.id, email: data.user.email || undefined })
+          .catch(() => {});
         const user: IAuthUser = {
           email: data.user.email || '',
           name: data.user.user_metadata?.name,

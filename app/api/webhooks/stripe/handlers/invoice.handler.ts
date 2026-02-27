@@ -1,6 +1,7 @@
 import { stripe, STRIPE_WEBHOOK_SECRET } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isTest } from '@shared/config/env';
+import { trackServerEvent, trackRevenue } from '@server/analytics';
 import {
   assertKnownPriceId,
   calculateBalanceWithExpiration,
@@ -272,6 +273,31 @@ export class InvoiceHandler {
     } else if (expiredAmount === 0) {
       console.log(
         `Skipped adding credits for user ${userId}: already at max rollover (${currentBalance}/${maxRollover})`
+      );
+    }
+
+    // Track subscription renewal analytics (only for recurring billing cycles, not first invoice)
+    if (billingReason === 'subscription_cycle') {
+      await trackServerEvent(
+        'subscription_renewed',
+        {
+          plan: planDetails.key,
+          amountCents: invoice.amount_paid || 0,
+          subscriptionId,
+          creditsAdded: actualCreditsToAdd,
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+
+      await trackRevenue(
+        {
+          userId,
+          amountCents: invoice.amount_paid || 0,
+          productId: `subscription_${planDetails.key}_monthly`,
+          purchaseType: 'subscription',
+          currency: invoice.currency ?? 'usd',
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );
     }
   }

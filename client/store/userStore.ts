@@ -6,6 +6,7 @@ import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 import { handlePostAuthRedirect } from './auth/postAuthRedirect';
+import { analytics } from '@client/analytics';
 
 // Cache keys
 const USER_CACHE_KEY = `${clientEnv.CACHE_USER_KEY_PREFIX}_user_cache`;
@@ -166,6 +167,15 @@ export const useUserStore = create<IUserState>((set, get) => ({
               error: null,
             });
             saveUserCache(updatedUser);
+
+            // Identify user in analytics with latest profile data (non-blocking)
+            analytics
+              .identify({
+                userId: updatedUser.id,
+                email: updatedUser.email || undefined,
+                subscriptionTier: data?.profile?.subscription_tier ?? undefined,
+              })
+              .catch(() => {});
           }
           return; // Success, exit retry loop
         } catch (err) {

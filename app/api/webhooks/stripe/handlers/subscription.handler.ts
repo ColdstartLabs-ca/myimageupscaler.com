@@ -538,16 +538,33 @@ export class SubscriptionHandler {
         timestamp: new Date().toISOString(),
       });
 
-      // Track subscription created event for new active/trialing subscriptions
+      // Track subscription created/updated event for active/trialing subscriptions
+      // existingSubscription === null means this is a brand-new subscription (INSERT), not an UPDATE
       if (subscription.status === 'active' || subscription.status === 'trialing') {
+        const isNewSubscription = existingSubscription === null;
         await trackServerEvent(
-          'subscription_created',
+          isNewSubscription ? 'subscription_created' : 'subscription_updated',
           {
             plan: planMetadata.key,
             amountCents: subscription.items.data[0]?.price.unit_amount || 0,
             billingInterval: subscription.items.data[0]?.price.recurring?.interval || 'month',
             status: subscription.status,
             subscriptionId: subscription.id,
+          },
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        );
+
+        // Update user properties in Amplitude via $identify
+        const billingInterval = subscription.items.data[0]?.price.recurring?.interval || 'month';
+        await trackServerEvent(
+          '$identify',
+          {
+            $set: {
+              plan: planMetadata.key,
+              subscription_status: subscription.status,
+              subscription_started_at: new Date().toISOString(),
+              billing_interval: billingInterval === 'month' ? 'monthly' : billingInterval,
+            },
           },
           { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
         );
@@ -636,6 +653,19 @@ export class SubscriptionHandler {
         {
           plan: planKey,
           subscriptionId: subscription.id,
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+
+      // Update user properties in Amplitude - set plan to 'free'
+      await trackServerEvent(
+        '$identify',
+        {
+          $set: {
+            plan: 'free',
+            subscription_status: 'canceled',
+            subscription_canceled_at: new Date().toISOString(),
+          },
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );

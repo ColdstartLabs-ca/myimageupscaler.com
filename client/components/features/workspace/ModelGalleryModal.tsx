@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock, Search } from 'lucide-react';
 import { QualityTier, QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
@@ -8,6 +8,7 @@ import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { BottomSheet } from '@client/components/ui/BottomSheet';
 import { ModelCard } from './ModelCard';
 import { ModelGallerySearch } from './ModelGallerySearch';
+import { analytics } from '@client/analytics/analyticsClient';
 
 export interface IModelGalleryModalProps {
   isOpen: boolean;
@@ -34,6 +35,18 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
 }) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Track gallery session for analytics
+  const galleryOpenedAtRef = useRef<number>(0);
+  const originalTierRef = useRef<QualityTier>(currentTier);
+
+  // Reset tracking state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      galleryOpenedAtRef.current = Date.now();
+      originalTierRef.current = currentTier;
+    }
+  }, [isOpen, currentTier]);
 
   // All tier entries with their configs
   const allTiers = useMemo(() => {
@@ -73,10 +86,23 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   // Handle tier selection
   const handleSelect = useCallback(
     (tier: QualityTier) => {
+      const previousTier = originalTierRef.current;
+
+      // Track model selection change
+      if (tier !== previousTier) {
+        analytics.track('model_selection_changed', {
+          fromTier: previousTier,
+          toTier: tier,
+          isFreeUser,
+          isPremiumTier: PREMIUM_TIERS.includes(tier),
+          timeInGalleryMs: Date.now() - galleryOpenedAtRef.current,
+        });
+      }
+
       onSelect(tier);
       onClose();
     },
-    [onSelect, onClose]
+    [onSelect, onClose, isFreeUser]
   );
 
   // Handle locked tier click - navigate to pricing
@@ -87,9 +113,28 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
 
   // Clear search when modal closes
   const handleClose = useCallback(() => {
+    // Track gallery closed event
+    const selectedTier = currentTier;
+    const originalTier = originalTierRef.current;
+
+    // Track which tiers were visible in the results
+    const visibleFreeTierIds = freeTiers.map(t => t.id);
+    const visiblePremiumTierIds = premiumTiers.map(t => t.id);
+    const allVisibleTiers = [...visibleFreeTierIds, ...visiblePremiumTierIds];
+
+    analytics.track('model_gallery_closed', {
+      changed: selectedTier !== originalTier,
+      visibleTiers: allVisibleTiers,
+      visibleFreeTiersCount: visibleFreeTierIds.length,
+      visiblePremiumTiersCount: visiblePremiumTierIds.length,
+      timeInGalleryMs: Date.now() - galleryOpenedAtRef.current,
+      isFreeUser,
+      hadSearchQuery: searchQuery.length > 0,
+    });
+
     setSearchQuery('');
     onClose();
-  }, [onClose]);
+  }, [onClose, currentTier, isFreeUser, freeTiers, premiumTiers, searchQuery]);
 
   const hasResults = freeTiers.length > 0 || premiumTiers.length > 0;
 

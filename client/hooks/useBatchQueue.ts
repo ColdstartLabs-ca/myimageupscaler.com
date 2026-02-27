@@ -11,6 +11,8 @@ import { getBatchLimit } from '@shared/config/subscription.utils';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { serializeError } from '@shared/utils/errors';
 import { useCallback, useEffect, useState } from 'react';
+import { analytics } from '@client/analytics';
+import { loadImageDimensions } from '@client/utils/file-validation';
 
 interface IBatchProgress {
   current: number;
@@ -27,7 +29,7 @@ interface IUseBatchQueueReturn {
   batchLimit: number;
   batchLimitExceeded: { attempted: number; limit: number; serverEnforced?: boolean } | null;
   setActiveId: (id: string) => void;
-  addFiles: (files: File[]) => void;
+  addFiles: (files: File[], source?: 'drag_drop' | 'file_picker' | 'paste' | 'url') => void;
   removeItem: (id: string) => void;
   clearQueue: () => void;
   processBatch: (config: IUpscaleConfig) => Promise<void>;
@@ -63,7 +65,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   const completedCount = queue.filter(i => i.status === ProcessingStatus.COMPLETED).length;
 
   const addFiles = useCallback(
-    (files: File[]) => {
+    (files: File[], source: 'drag_drop' | 'file_picker' | 'paste' | 'url' = 'file_picker') => {
       const currentCount = queue.length;
       const availableSlots = Math.max(0, batchLimit - currentCount);
 
@@ -97,6 +99,28 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         return updated;
       });
 
+      // Track image_uploaded event for each file added
+      // Load dimensions asynchronously and track events
+      const isGuest = !profile?.id;
+      filesToAdd.forEach(async (file, index) => {
+        let dimensions: { width: number; height: number } | null = null;
+        try {
+          dimensions = await loadImageDimensions(file);
+        } catch {
+          // If we can't load dimensions, still track the event without them
+        }
+
+        analytics.track('image_uploaded', {
+          fileSize: file.size,
+          fileType: file.type,
+          inputWidth: dimensions?.width,
+          inputHeight: dimensions?.height,
+          source,
+          isGuest,
+          batchPosition: currentCount + index,
+        });
+      });
+
       // Show modal if some files were rejected due to limit
       if (rejectedCount > 0) {
         setBatchLimitExceeded({
@@ -105,7 +129,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         });
       }
     },
-    [activeId, queue.length, batchLimit]
+    [activeId, queue.length, batchLimit, profile?.id]
   );
 
   const removeItem = useCallback(

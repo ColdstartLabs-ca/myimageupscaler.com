@@ -5,9 +5,10 @@ import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serializeError } from '@shared/utils/errors';
-import type { IAnalyticsEventName } from '@server/analytics/types';
 
 // Allowed event names for security - matches IAnalyticsEventName type
+// Note: $identify is excluded because it's a server-side only event
+// that should only be called from webhook handlers, not from client API
 const ALLOWED_EVENTS = [
   // Page and session events
   'page_view',
@@ -30,8 +31,12 @@ const ALLOWED_EVENTS = [
   'credits_refunded',
 
   // Image processing events
+  'image_uploaded',
   'image_upscaled',
   'image_download',
+
+  // Pricing page events
+  'pricing_page_viewed',
 
   // Checkout events
   'checkout_started',
@@ -52,6 +57,11 @@ const ALLOWED_EVENTS = [
   'batch_limit_partial_add_clicked',
   'batch_limit_modal_closed',
 
+  // Model selection events
+  'model_gallery_opened',
+  'model_selection_changed',
+  'model_gallery_closed',
+
   // pSEO-specific events
   'pseo_page_view',
   'pseo_cta_clicked',
@@ -59,6 +69,9 @@ const ALLOWED_EVENTS = [
   'pseo_faq_expanded',
   'pseo_internal_link_clicked',
 ] as const;
+
+// Type for allowed events (excludes $identify which is server-side only)
+type IAllowedEventName = (typeof ALLOWED_EVENTS)[number];
 
 // Enhanced security validation for event names
 const validateEventNameSecurity = (eventName: string): { valid: boolean; reason?: string } => {
@@ -125,7 +138,7 @@ const validateEventNameSecurity = (eventName: string): { valid: boolean; reason?
   // Check for quotes (malicious usage)
   if (
     (eventName.includes("'") || eventName.includes('"')) &&
-    !ALLOWED_EVENTS.includes(eventName as IAnalyticsEventName)
+    !ALLOWED_EVENTS.includes(eventName as IAllowedEventName)
   ) {
     return {
       valid: false,

@@ -33,6 +33,7 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 
 vi.mock('@server/analytics', () => ({
   trackServerEvent: vi.fn(() => Promise.resolve()),
+  trackRevenue: vi.fn(() => Promise.resolve()),
 }));
 
 vi.mock('@shared/config/env', () => ({

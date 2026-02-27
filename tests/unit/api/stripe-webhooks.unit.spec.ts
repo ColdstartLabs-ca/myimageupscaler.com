@@ -102,6 +102,11 @@ vi.mock('@server/services/SubscriptionCredits', () => ({
   },
 }));
 
+vi.mock('@server/analytics', () => ({
+  trackServerEvent: vi.fn(() => Promise.resolve(true)),
+  trackRevenue: vi.fn(() => Promise.resolve(true)),
+}));
+
 // Helper to create a webhook_events mock that allows events through (for idempotency)
 const getWebhookEventsMock = () => ({
   select: vi.fn(() => ({
@@ -552,9 +557,7 @@ describe('Stripe Webhook Handler', () => {
       const mockCreditTransactionsSelect = vi.fn(() => ({
         eq: vi.fn(() => ({
           limit: vi.fn(() => ({
-            maybeSingle: vi.fn(() =>
-              Promise.resolve({ data: { id: 'existing_txn_456' } })
-            ),
+            maybeSingle: vi.fn(() => Promise.resolve({ data: { id: 'existing_txn_456' } })),
           })),
         })),
       }));
@@ -573,9 +576,7 @@ describe('Stripe Webhook Handler', () => {
         'add_subscription_credits',
         expect.anything()
       );
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('[CHECKOUT_SKIP]')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('[CHECKOUT_SKIP]'));
     });
 
     test('should handle missing user_id in metadata', async () => {
@@ -1267,9 +1268,7 @@ describe('Stripe Webhook Handler', () => {
           ref_id: 'invoice_in_test_first_123',
         })
       );
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('[INVOICE_FALLBACK]')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('[INVOICE_FALLBACK]'));
     });
 
     test('should skip invoice.payment_succeeded when checkout already added credits', async () => {
@@ -1305,9 +1304,7 @@ describe('Stripe Webhook Handler', () => {
       const mockCreditTransactionsSelect = vi.fn(() => ({
         eq: vi.fn(() => ({
           limit: vi.fn(() => ({
-            maybeSingle: vi.fn(() =>
-              Promise.resolve({ data: { id: 'existing_txn_123' } })
-            ),
+            maybeSingle: vi.fn(() => Promise.resolve({ data: { id: 'existing_txn_123' } })),
           })),
         })),
       }));
@@ -1324,7 +1321,9 @@ describe('Stripe Webhook Handler', () => {
       // Should NOT add credits - they already exist
       expect(supabaseAdmin.rpc).not.toHaveBeenCalled();
       expect(consoleSpy.log).toHaveBeenCalledWith(
-        expect.stringContaining('[INVOICE_SKIP] Credits already added for invoice in_test_dedup_123')
+        expect.stringContaining(
+          '[INVOICE_SKIP] Credits already added for invoice in_test_dedup_123'
+        )
       );
     });
 

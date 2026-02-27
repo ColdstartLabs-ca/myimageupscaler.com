@@ -17,10 +17,13 @@ import {
 } from '@shared/config/stripe';
 import { ArrowRight, Calendar, Loader2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import { analytics } from '@client/analytics';
+import { useSearchParams } from 'next/navigation';
 
 export default function PricingPageClient() {
   const t = useTranslations('pricing');
+  const searchParams = useSearchParams();
   const pricesConfigured = isStripePricesConfigured();
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [subscription, setSubscription] = useState<ISubscription | null>(null);
@@ -29,11 +32,89 @@ export default function PricingPageClient() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelingSchedule, setCancelingSchedule] = useState(false);
   const [buttonLoadingStates, setButtonLoadingStates] = useState<Record<string, boolean>>({});
+
+  // Track pricing_page_viewed event once on mount
+  const hasTrackedPageView = useRef(false);
+  const hasCheckoutStartedRef = useRef(false);
+  const pricingPageOpenedAtRef = useRef(Date.now());
+  const currentPlanRef = useRef<'free' | 'starter' | 'hobby' | 'pro' | 'business'>('free');
+
+  const resolveCurrentPlan = (): 'free' | 'starter' | 'hobby' | 'pro' | 'business' => {
+    const tier = profile?.subscription_tier?.toLowerCase();
+    if (tier === 'starter') return 'starter';
+    if (tier === 'hobby') return 'hobby';
+    if (tier === 'pro' || tier === 'professional') return 'pro';
+    if (tier === 'business') return 'business';
+    return 'free';
+  };
+
+  useEffect(() => {
+    currentPlanRef.current = resolveCurrentPlan();
+  }, [profile?.subscription_tier]);
+
+  useEffect(() => {
+    if (loading) return; // Wait until profile data has loaded so currentPlan reflects paid tiers
+    if (hasTrackedPageView.current) return;
+    hasTrackedPageView.current = true;
+
+    // Determine entry point from query param or referrer
+    const entrySource = searchParams.get('source');
+    let entryPoint:
+      | 'navbar'
+      | 'batch_limit_modal'
+      | 'out_of_credits_modal'
+      | 'pseo_cta'
+      | 'direct' = 'direct';
+
+    if (entrySource === 'navbar') {
+      entryPoint = 'navbar';
+    } else if (entrySource === 'batch_limit') {
+      entryPoint = 'batch_limit_modal';
+    } else if (entrySource === 'credits') {
+      entryPoint = 'out_of_credits_modal';
+    } else if (entrySource === 'pseo') {
+      entryPoint = 'pseo_cta';
+    } else if (document.referrer) {
+      // Try to infer from referrer
+      const referrer = document.referrer.toLowerCase();
+      if (referrer.includes('/workspace') || referrer.includes('/upscaler')) {
+        entryPoint = 'batch_limit_modal';
+      } else if (referrer.includes('/blog') || referrer.includes('/guides')) {
+        entryPoint = 'pseo_cta';
+      }
+    }
+
+    // Determine current plan from profile (will be null initially for unauthenticated users)
+    const currentPlan = currentPlanRef.current;
+
+    analytics.track('pricing_page_viewed', {
+      entryPoint,
+      currentPlan,
+      referrer: document.referrer || undefined,
+    });
+  }, [searchParams, profile?.subscription_tier, loading]);
+
+  useEffect(() => {
+    return () => {
+      if (!hasTrackedPageView.current) return;
+      if (hasCheckoutStartedRef.current) return;
+
+      analytics.track('checkout_abandoned', {
+        priceId: 'none',
+        step: 'plan_selection',
+        timeSpentMs: Date.now() - pricingPageOpenedAtRef.current,
+        plan: currentPlanRef.current,
+        context: 'pricing_page_exit_without_checkout',
+      });
+    };
+  }, []);
+
   const handlePlanSelect = (priceId: string) => {
     // Block if trying to select the current plan or already scheduled plan
     if (subscription?.price_id === priceId || subscription?.scheduled_price_id === priceId) {
       return;
     }
+    hasCheckoutStartedRef.current = true;
     setSelectedPlanId(priceId);
     setIsModalOpen(true);
   };

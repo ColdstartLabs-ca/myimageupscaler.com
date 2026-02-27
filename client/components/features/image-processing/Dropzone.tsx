@@ -11,7 +11,7 @@ import { OversizedImageModal, isAutoResizeEnabled } from './OversizedImageModal'
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 
 interface IDropzoneProps {
-  onFilesSelected: (files: File[]) => void;
+  onFilesSelected: (files: File[], source?: 'drag_drop' | 'file_picker') => void;
   disabled?: boolean;
   compact?: boolean; // Prop to render a smaller version if needed
   children?: React.ReactNode;
@@ -44,6 +44,8 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
   const [pendingValidFiles, setPendingValidFiles] = useState<File[]>([]);
   // Store resized files as they are processed
   const [resizedFiles, setResizedFiles] = useState<File[]>([]);
+  // Store the upload source for the current batch (drag_drop or file_picker)
+  const [pendingSource, setPendingSource] = useState<'drag_drop' | 'file_picker'>('file_picker');
   const { subscription } = useUserData();
   const isPaidUser = !!subscription?.price_id;
   const currentLimit = isPaidUser ? IMAGE_VALIDATION.MAX_SIZE_PAID : IMAGE_VALIDATION.MAX_SIZE_FREE;
@@ -63,7 +65,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
   }, []);
 
   const handleFilesReceived = useCallback(
-    async (files: File[]) => {
+    async (files: File[], source: 'drag_drop' | 'file_picker' = 'file_picker') => {
       setIsValidating(true);
       setError(null);
 
@@ -159,6 +161,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           setOversizedFiles(oversizedEntries);
           setCurrentOversizedIndex(0);
           setPendingValidFiles([...validFiles, ...autoResizedFiles]);
+          setPendingSource(source);
           setResizedFiles([]);
           setShowOversizedModal(true);
           setError(null);
@@ -174,7 +177,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
             setError(null);
           }
           if (allValidFiles.length > 0) {
-            onFilesSelected(allValidFiles);
+            onFilesSelected(allValidFiles, source);
           }
         }
       } catch (err) {
@@ -192,7 +195,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
       // Combine pending valid files with all resized files and submit together
       const allFiles = [...pendingValidFiles, ...finalResizedFiles];
       if (allFiles.length > 0) {
-        onFilesSelected(allFiles);
+        onFilesSelected(allFiles, pendingSource);
       }
       // Reset all state
       setShowOversizedModal(false);
@@ -201,7 +204,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
       setPendingValidFiles([]);
       setResizedFiles([]);
     },
-    [onFilesSelected, pendingValidFiles]
+    [onFilesSelected, pendingValidFiles, pendingSource]
   );
 
   const handleResizeAndContinue = useCallback(
@@ -235,14 +238,14 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
       e.preventDefault();
       setIsDragging(false);
       if (disabled) return;
-      handleFilesReceived(Array.from(e.dataTransfer.files));
+      handleFilesReceived(Array.from(e.dataTransfer.files), 'drag_drop');
     },
     [disabled, handleFilesReceived]
   );
 
   const handleFileInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleFilesReceived(Array.from(e.target.files || []));
+      handleFilesReceived(Array.from(e.target.files || []), 'file_picker');
     },
     [handleFilesReceived]
   );
