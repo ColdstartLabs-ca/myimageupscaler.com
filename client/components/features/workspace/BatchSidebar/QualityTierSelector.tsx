@@ -65,26 +65,28 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         onClick={handleOpenGallery}
         disabled={disabled}
         className={`
-          w-full flex items-center justify-between p-3.5 rounded-xl border bg-surface
-          transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent/20
-          border-border hover:border-border
+          w-full flex items-center justify-between p-3.5 rounded-xl
+          bg-gradient-to-r from-accent/15 via-accent/10 to-tertiary/15
+          border border-accent/25 hover:border-accent/40
+          shine-effect transition-all duration-300
+          focus:outline-none focus:ring-2 focus:ring-accent/20
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         `}
       >
-        <div className="flex flex-col items-start text-left min-w-0 flex-1 mr-3">
-          <div className="flex items-center gap-2 w-full">
-            <span className="font-bold text-sm text-white truncate">{currentTierConfig.label}</span>
-            <span className="text-[9px] font-black tracking-widest uppercase text-text-muted bg-black/20 border border-white/10 px-2 py-0.5 rounded-lg">
-              {formatCredits(currentTierConfig.credits)
-                .replace(' credits', ' CR')
-                .replace(' credit', ' CR')}
-            </span>
-          </div>
+        <div className="flex flex-col items-start text-left min-w-0 flex-1 relative z-10">
+          <span className="font-bold text-sm text-white truncate w-full">{currentTierConfig.label}</span>
           <span className="text-[11px] text-white/60 mt-0.5 truncate w-full font-medium">
             {currentTierConfig.bestFor}
           </span>
         </div>
-        <LayoutGrid className="h-4 w-4 text-text-muted shrink-0" />
+        <div className="flex items-center gap-2 shrink-0 relative z-10 ml-2">
+          <span className="text-[9px] font-black tracking-widest uppercase text-white/60 bg-black/20 border border-white/10 px-2 py-0.5 rounded-lg">
+            {formatCredits(currentTierConfig.credits)
+              .replace(' credits', ' CR')
+              .replace(' credit', ' CR')}
+          </span>
+          <LayoutGrid className="h-4 w-4 text-accent" />
+        </div>
       </button>
 
       {/* Gallery Modal */}
