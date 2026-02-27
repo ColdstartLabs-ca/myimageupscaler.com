@@ -25,6 +25,7 @@ export const CREDIT_COSTS = {
 
   // Free tier default credits
   DEFAULT_FREE_CREDITS: 10,
+  RESTRICTED_FREE_CREDITS: 3,
   DEFAULT_TRIAL_CREDITS: 0,
 
   // Credit pack amounts

@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { createLogger } from '@server/monitoring/logger';
 import { getRegionTier } from '@/lib/anti-freeloader/region-classifier';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 import { serverEnv } from '@shared/config/env';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     : false;
 
   if (tier === 'restricted' && profile?.subscription_tier === 'free' && isNewUser) {
-    updatePayload.subscription_credits_balance = 3;
+    updatePayload.subscription_credits_balance = CREDIT_COSTS.RESTRICTED_FREE_CREDITS;
   }
 
   const { error: updateError } = await supabaseAdmin

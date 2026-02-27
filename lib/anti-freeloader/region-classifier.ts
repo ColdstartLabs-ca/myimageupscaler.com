@@ -72,3 +72,8 @@ export function getRegionTier(countryCode: string): RegionTier {
   // Cloudflare may return "T1" (Tor) or "XX" (unknown) — treat as restricted
   return HIGH_PURCHASING_POWER_COUNTRIES.has(countryCode.toUpperCase()) ? 'standard' : 'restricted';
 }
+
+/** Free credits shown on landing page and granted at signup, based on region tier */
+export function getFreeCreditsForTier(tier: RegionTier): number {
+  return tier === 'restricted' ? 3 : 10;
+}

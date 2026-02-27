@@ -1,8 +1,10 @@
 'use client';
 
+import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
+import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -55,7 +57,7 @@ export const POPULAR_TOOLS: ReadonlyArray<{ href: string; label: string; desc: s
   {
     href: '/free',
     label: 'Free Tools',
-    desc: 'Start with 10 free credits — no credit card needed',
+    desc: 'Start with free credits — no credit card needed',
   },
   {
     href: '/tools/ai-background-remover',
@@ -76,6 +78,8 @@ export function HomePageClient(): JSX.Element {
   const searchParams = useSearchParams();
   const t = useTranslations('homepage');
   const locale = useLocale();
+  const { tier } = useRegionTier();
+  const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
   const localizeHref = (href: string) =>
     locale === DEFAULT_LOCALE ? href : `/${locale}${href}`;
 
@@ -134,7 +138,7 @@ export function HomePageClient(): JSX.Element {
                 Start Enhancing — <span className="gradient-text-primary">Pick a Tool</span>
               </h2>
               <p className="text-lg text-text-secondary max-w-2xl mx-auto font-light">
-                Professional AI tools for every image task. Try free with 10 credits.
+                Professional AI tools for every image task. Try free with {freeCredits} credits.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -228,7 +232,7 @@ export function HomePageClient(): JSX.Element {
               {hasTrialEnabled ? t('ctaTryFreeCredits') : t('ctaGetFreeCredits')}
             </button>
           </div>
-          <p className="mt-6 text-sm text-text-muted">{t('pricingCtaSubtext')}</p>
+          <p className="mt-6 text-sm text-text-muted">{t('pricingCtaSubtext', { freeCredits })}</p>
         </div>
       </section>
 
@@ -263,7 +267,7 @@ export function HomePageClient(): JSX.Element {
               {t('ctaComparePlans')}
             </a>
           </div>
-          <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext')}</p>
+          <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext', { freeCredits })}</p>
         </div>
       </section>
 

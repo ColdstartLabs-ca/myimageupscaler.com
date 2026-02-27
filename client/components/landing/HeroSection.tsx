@@ -1,12 +1,17 @@
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { HeroActions } from '@client/components/landing/HeroActions';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
+import { getFreeCreditsForTier, getRegionTier } from '@/lib/anti-freeloader/region-classifier';
 import { clientEnv } from '@shared/config/env';
 import { Layers, Maximize2, Sparkles, User, Wand2 } from 'lucide-react';
+import { headers } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 
 export async function HeroSection(): Promise<JSX.Element> {
   const t = await getTranslations('homepage');
+  const headersList = await headers();
+  const country = headersList.get('CF-IPCountry') ?? headersList.get('cf-ipcountry') ?? '';
+  const freeCredits = getFreeCreditsForTier(getRegionTier(country));
 
   return (
     <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025 z-20 animate-hero-fade-in">
@@ -47,7 +52,7 @@ export async function HeroSection(): Promise<JSX.Element> {
         {/* CTA Buttons — client boundary */}
         <HeroActions />
 
-        <p className="mt-4 text-sm text-text-muted-aa">{t('ctaSubtext')}</p>
+        <p className="mt-4 text-sm text-text-muted-aa">{t('ctaSubtext', { freeCredits })}</p>
 
         {/* Before/After Slider — LCP-optimized loading */}
         <div className="mt-16">
