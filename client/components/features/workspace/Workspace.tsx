@@ -229,7 +229,7 @@ const Workspace: React.FC = () => {
         >
           {/* Success Banner */}
           {showSuccessBanner && completedCount > 0 && (
-            <div className="p-4">
+            <div className="px-3 pt-3 md:p-4">
               <UpgradeSuccessBanner
                 processedCount={completedCount}
                 onDismiss={() => setShowSuccessBanner(false)}
@@ -240,7 +240,7 @@ const Workspace: React.FC = () => {
 
           {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
           {isFreeUser && (
-            <div className="px-4 pb-0">
+            <div className="px-3 md:px-4 pb-0">
               <AfterUpscaleBanner completedCount={completedCount} isFreeUser={isFreeUser} />
             </div>
           )}
@@ -280,7 +280,7 @@ const Workspace: React.FC = () => {
           )}
 
           {/* Main Preview Area */}
-          <div className="flex-1 min-h-0 md:flex-grow p-3 md:p-6 flex items-center justify-center overflow-hidden relative">
+          <div className="flex-1 min-h-0 md:flex-grow p-2 md:p-6 flex items-center justify-center overflow-hidden relative">
             <PreviewArea
               activeItem={activeItem}
               onDownload={handleDownloadSingle}
@@ -325,49 +325,44 @@ const Workspace: React.FC = () => {
         )}
       </div>
 
-      {/* Mobile Floating Action Button - Process CTA */}
-      {mobileTab !== 'upload' && queue.length > 0 && (
-        <div className="md:hidden px-4 py-3 bg-surface border-t border-border shrink-0">
-          <button
-            onClick={() => processBatch(config)}
-            disabled={
-              isProcessingBatch || queue.every(i => i.status === ProcessingStatus.COMPLETED)
-            }
-            className={cn(
-              'w-full py-3 px-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all relative overflow-hidden',
-              isProcessingBatch || queue.every(i => i.status === ProcessingStatus.COMPLETED)
-                ? 'bg-white/5 text-text-muted cursor-not-allowed'
-                : 'gradient-cta shine-effect active:scale-[0.98] shadow-lg shadow-accent/20'
-            )}
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              {isProcessingBatch ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  <span>
-                    {batchProgress
-                      ? `Processing ${batchProgress.current}/${batchProgress.total}...`
-                      : 'Processing...'}
-                  </span>
-                </>
-              ) : queue.every(i => i.status === ProcessingStatus.COMPLETED) ? (
-                <>
-                  <CheckCircle2 className="h-5 w-5" />
-                  <span>All Processed</span>
-                </>
-              ) : (
-                <>
-                  <Wand2 className="h-5 w-5" />
-                  <span>
-                    Process All ({queue.filter(i => i.status !== ProcessingStatus.COMPLETED).length}
-                    )
-                  </span>
-                </>
+      {/* Mobile Floating Action Button - Process CTA (hidden when all done) */}
+      {mobileTab !== 'upload' &&
+        queue.length > 0 &&
+        !queue.every(i => i.status === ProcessingStatus.COMPLETED) && (
+          <div className="md:hidden px-4 py-2 bg-surface border-t border-border shrink-0">
+            <button
+              onClick={() => processBatch(config)}
+              disabled={isProcessingBatch}
+              className={cn(
+                'w-full py-3 px-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all relative overflow-hidden',
+                isProcessingBatch
+                  ? 'bg-white/5 text-text-muted cursor-not-allowed'
+                  : 'gradient-cta shine-effect active:scale-[0.98] shadow-lg shadow-accent/20'
               )}
-            </span>
-          </button>
-        </div>
-      )}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                {isProcessingBatch ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span>
+                      {batchProgress
+                        ? `Processing ${batchProgress.current}/${batchProgress.total}...`
+                        : 'Processing...'}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="h-5 w-5" />
+                    <span>
+                      Process All (
+                      {queue.filter(i => i.status !== ProcessingStatus.COMPLETED).length})
+                    </span>
+                  </>
+                )}
+              </span>
+            </button>
+          </div>
+        )}
 
       {/* Mobile Quality Tier Selector */}
       <div className="md:hidden border-t border-border bg-surface/80 px-3 py-2 shrink-0">
@@ -375,22 +370,32 @@ const Workspace: React.FC = () => {
           onClick={() => setMobileGalleryOpen(true)}
           disabled={isProcessingBatch}
           className={cn(
-            'w-full flex items-center justify-between px-4 py-2 rounded-xl text-sm font-medium transition-all',
-            'bg-white/10 text-white hover:bg-white/15 border border-border',
+            'w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium',
+            'bg-gradient-to-r from-accent/20 via-accent/10 to-tertiary/20',
+            'border border-accent/25 text-white',
+            'shine-effect transition-all hover:border-accent/40',
             isProcessingBatch && 'opacity-50 cursor-not-allowed'
           )}
         >
-          <span>
-            Quality:{' '}
-            <span className="font-bold">{QUALITY_TIER_CONFIG[config.qualityTier].label}</span>
-          </span>
-          <span className="text-[10px] font-black tracking-widest uppercase text-text-muted bg-black/20 border border-white/10 px-2 py-0.5 rounded-lg">
-            {(() => {
-              const credits = QUALITY_TIER_CONFIG[config.qualityTier].credits;
-              if (credits === 'variable') return '1-4 CR';
-              return `${credits} CR`;
-            })()}
-          </span>
+          <div className="flex items-center gap-2 relative z-10">
+            <Layers size={16} className="text-accent shrink-0" />
+            <span>
+              Quality:{' '}
+              <span className="font-bold">{QUALITY_TIER_CONFIG[config.qualityTier].label}</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-2 relative z-10">
+            <span className="text-[10px] font-black tracking-widest uppercase text-white/60 bg-black/20 border border-white/10 px-2 py-0.5 rounded-lg">
+              {(() => {
+                const credits = QUALITY_TIER_CONFIG[config.qualityTier].credits;
+                if (credits === 'variable') return '1-4 CR';
+                return `${credits} CR`;
+              })()}
+            </span>
+            <span className="text-[10px] font-bold uppercase tracking-wide text-accent">
+              Change
+            </span>
+          </div>
         </button>
       </div>
       <ModelGalleryModal

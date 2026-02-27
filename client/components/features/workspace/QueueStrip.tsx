@@ -111,8 +111,8 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
             src={item.previewUrl}
             alt={`Thumbnail of queued image`}
             className={cn(
-              // Mobile: small thumbnail on left, Desktop: full square
-              'w-12 h-12 md:w-full md:h-full object-cover rounded-lg md:rounded-none'
+              // Mobile: thumbnail fits within container padding, Desktop: full square
+              'w-10 h-10 md:w-full md:h-full object-cover rounded-lg md:rounded-none shrink-0'
             )}
             loading="lazy"
             decoding="async"

@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, FileUp, UploadCloud, Loader2 } from 'lucide-react';
+import { AlertCircle, FileUp, UploadCloud, Loader2, Sparkles } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useUserData } from '@client/store/userStore';
@@ -46,7 +46,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
   const [resizedFiles, setResizedFiles] = useState<File[]>([]);
   // Store the upload source for the current batch (drag_drop or file_picker)
   const [pendingSource, setPendingSource] = useState<'drag_drop' | 'file_picker'>('file_picker');
-  const { subscription } = useUserData();
+  const { subscription, isFreeUser } = useUserData();
   const isPaidUser = !!subscription?.price_id;
   const currentLimit = isPaidUser ? IMAGE_VALIDATION.MAX_SIZE_PAID : IMAGE_VALIDATION.MAX_SIZE_FREE;
 
@@ -318,6 +318,16 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
                   {isPaidUser ? t('dropzone.paidLimitText') : t('dropzone.freeLimitText')}
                 </span>
               </p>
+              {isFreeUser && (
+                <a
+                  href="/pricing"
+                  onClick={e => e.stopPropagation()}
+                  className="relative z-20 inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-accent/80 transition-colors pointer-events-auto"
+                >
+                  <Sparkles size={12} />
+                  Upgrade for HD quality &amp; larger files
+                </a>
+              )}
             </div>
           )}
         </div>

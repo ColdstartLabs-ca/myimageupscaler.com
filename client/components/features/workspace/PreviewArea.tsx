@@ -260,11 +260,11 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   if (activeItem.status === ProcessingStatus.COMPLETED && activeItem.processedUrl) {
     return (
       <div className="w-full h-full md:h-[65vh] md:min-h-[400px] flex flex-col">
-        <div className="mb-4 flex justify-between items-center shrink-0">
-          <div>
-            <h3 className="text-sm font-medium text-white">{activeItem.file.name}</h3>
-            <span className="text-xs text-green-400 flex items-center gap-1">
-              <Check size={12} /> {t('previewArea.completed.title')}
+        <div className="mb-1 md:mb-4 flex justify-between items-center shrink-0">
+          <div className="flex items-center gap-2 md:flex-col md:items-start md:gap-0">
+            <h3 className="text-xs md:text-sm font-medium text-white truncate max-w-[180px] md:max-w-none">{activeItem.file.name}</h3>
+            <span className="text-[10px] md:text-xs text-green-400 flex items-center gap-1 shrink-0">
+              <Check size={10} className="md:w-3 md:h-3" /> {t('previewArea.completed.title')}
             </span>
           </div>
         </div>
