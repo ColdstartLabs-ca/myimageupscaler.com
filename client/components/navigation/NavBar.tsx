@@ -4,8 +4,10 @@ import { LocaleSwitcher } from '@client/components/i18n/LocaleSwitcher';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
 import { useClickOutside } from '@client/hooks/useClickOutside';
 import { useModalStore } from '@client/store/modalStore';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useUserStore } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
+import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
 import { clientEnv } from '@shared/config/env';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -17,6 +19,8 @@ export const NavBar = (): JSX.Element => {
   const locale = useLocale();
   const { openAuthModal } = useModalStore();
   const { isAuthenticated, isLoading, user, signOut } = useUserStore();
+  const { tier } = useRegionTier();
+  const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
   const [isResourcesDropdownOpen, setIsResourcesDropdownOpen] = useState(false);
@@ -255,7 +259,7 @@ export const NavBar = (): JSX.Element => {
               <div className="hidden xl:flex items-center gap-1.5 glass-strong px-2.5 py-1.5 rounded-full border-border">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></span>
                 <span className="text-[10px] font-black text-white/80 uppercase tracking-tighter whitespace-nowrap">
-                  {t('freeCredits')}
+                  {t('freeCredits', { freeCredits })}
                 </span>
               </div>
               <button

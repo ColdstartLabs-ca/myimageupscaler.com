@@ -195,7 +195,7 @@ export function HomePageClient(): JSX.Element {
                 },
                 {
                   question: t('faq3Question'),
-                  answer: t('faq3Answer'),
+                  answer: t('faq3Answer', { freeCredits }),
                 },
                 {
                   question: t('faq4Question'),
@@ -229,7 +229,9 @@ export function HomePageClient(): JSX.Element {
               onClick={() => openAuthModal('register')}
               className="inline-flex items-center gap-2 px-8 py-4 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
-              {hasTrialEnabled ? t('ctaTryFreeCredits') : t('ctaGetFreeCredits')}
+              {hasTrialEnabled
+                ? t('ctaTryFreeCredits', { freeCredits })
+                : t('ctaGetFreeCredits', { freeCredits })}
             </button>
           </div>
           <p className="mt-6 text-sm text-text-muted">{t('pricingCtaSubtext', { freeCredits })}</p>
