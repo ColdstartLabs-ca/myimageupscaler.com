@@ -88,4 +88,5 @@ cloud/keys/
 lighthouse.*
 C\:*
 
-supabase
+supabase/*
+!supabase/migrations/

@@ -17,6 +17,7 @@ import { serverEnv } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { getCreditsForTier, getModelForTier } from '@shared/config/subscription.utils';
+import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
 import {
   decodeImageDimensions,
@@ -214,9 +215,26 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Also check purchased_credits_balance to grant paid model access to credit purchasers
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('subscription_status, subscription_tier, purchased_credits_balance')
+      .select(
+        'subscription_status, subscription_tier, purchased_credits_balance, is_flagged_freeloader'
+      )
       .eq('id', userId)
       .single();
+
+    // 3a. Block flagged free-tier users before any credit-consuming work
+    if (isFreeleaderBlocked(profile)) {
+      logger.warn('Blocked flagged freeloader', { userId });
+      return NextResponse.json(
+        {
+          error: {
+            code: 'ACCOUNT_RESTRICTED',
+            message:
+              'Multiple accounts detected on your device. Upgrade to a paid plan to continue.',
+          },
+        },
+        { status: 403 }
+      );
+    }
 
     const subscriptionStatus = profile?.subscription_status ?? null;
     const hasActiveSubscription = isPaidSubscriptionStatus(subscriptionStatus);

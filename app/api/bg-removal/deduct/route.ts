@@ -1,7 +1,9 @@
+import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { createLogger } from '@server/monitoring/logger';
 import { upscaleRateLimit } from '@server/rateLimit';
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { InsufficientCreditsError } from '@server/services/image-generation.service';
+import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { trackServerEvent } from '@server/analytics';
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
@@ -28,6 +30,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         401
       );
       return NextResponse.json(body, { status });
+    }
+
+    // Block flagged freeloaders before any credit-consuming work
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('is_flagged_freeloader, subscription_tier, purchased_credits_balance')
+      .eq('id', userId)
+      .single();
+
+    if (isFreeleaderBlocked(profile)) {
+      logger.warn('Blocked flagged freeloader', { userId });
+      return NextResponse.json(
+        {
+          error: {
+            code: 'ACCOUNT_RESTRICTED',
+            message:
+              'Multiple accounts detected on your device. Upgrade to a paid plan to continue.',
+          },
+        },
+        { status: 403 }
+      );
     }
 
     // Rate limit (shares the upscale rate limiter)

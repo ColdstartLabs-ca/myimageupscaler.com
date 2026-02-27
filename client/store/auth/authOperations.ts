@@ -52,8 +52,8 @@ export function createSignInWithEmail(
  */
 export function createSignUpWithEmail(
   supabase: SupabaseClient
-): (email: string, password: string) => Promise<ISignUpResult> {
-  return async (email: string, password: string) => {
+): (email: string, password: string, fingerprintHash?: string | null) => Promise<ISignUpResult> {
+  return async (email: string, password: string, fingerprintHash?: string | null) => {
     return await withLoading(async () => {
       // Track signup started
       analytics.track('signup_started', { method: 'email' });
@@ -77,6 +77,18 @@ export function createSignUpWithEmail(
 
       // Track signup completed (user created, even if email confirmation pending)
       analytics.track('signup_completed', { method: 'email' });
+
+      // Fire-and-forget setup call when we have a session (immediate signup without email confirmation)
+      if (data.session?.access_token) {
+        fetch('/api/users/setup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${data.session.access_token}`,
+          },
+          body: JSON.stringify({ fingerprintHash: fingerprintHash ?? null }),
+        }).catch(() => {});
+      }
 
       return { emailConfirmationRequired };
     });

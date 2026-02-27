@@ -40,7 +40,12 @@ export const CSP_POLICY = {
     'https://staticimgly.com', // @imgly/background-removal WASM model
     'https://analytics.ahrefs.com', // Ahrefs analytics API events
   ],
-  'frame-src': ['https://js.stripe.com', 'https://accounts.google.com', 'https://www.youtube.com', 'https://www.youtube-nocookie.com'],
+  'frame-src': [
+    'https://js.stripe.com',
+    'https://accounts.google.com',
+    'https://www.youtube.com',
+    'https://www.youtube-nocookie.com',
+  ],
   'worker-src': ["'self'", 'blob:'], // Web Workers for @imgly/background-removal
   'object-src': ["'none'"],
   'base-uri': ["'self'"],
@@ -119,4 +124,5 @@ export const PUBLIC_API_ROUTES = [
   '/api/migrate-blog', // Temporary migration endpoint (uses x-migration-token header auth)
   '/api/seo/*', // SEO routes use x-cron-secret header auth, not JWT
   '/api/upscale/guest', // Guest upscale (uses fingerprint + IP rate limiting)
+  '/api/geo', // Geo-location endpoint for region classification (anti-freeloader)
 ] as const;

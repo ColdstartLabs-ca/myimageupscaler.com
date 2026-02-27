@@ -5,6 +5,41 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@shared/utils/supabase/client';
 import { handleAuthRedirect, setAuthIntent } from '@client/utils/authRedirectManager';
 
+/**
+ * Load FingerprintJS and return the visitor hash.
+ * Best-effort — returns null on any failure.
+ */
+async function getFingerprint(): Promise<string | null> {
+  try {
+    // eslint-disable-next-line no-restricted-syntax -- FingerprintJS is lazy-loaded intentionally
+    const FingerprintJS = await import('@fingerprintjs/fingerprintjs');
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    return result.visitorId;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Call /api/users/setup with fingerprint hash. Awaited so it completes before redirect.
+ */
+async function callSetup(accessToken: string): Promise<void> {
+  try {
+    const fingerprintHash = await getFingerprint();
+    await fetch('/api/users/setup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ fingerprintHash }),
+    });
+  } catch {
+    // Best effort — don't block redirect on setup failure
+  }
+}
+
 function AuthCallbackContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const searchParams = useSearchParams();
@@ -24,15 +59,16 @@ function AuthCallbackContent() {
       }
 
       // Function to handle successful auth and redirect
-      const handleSuccess = async () => {
+      const handleSuccess = async (session?: { access_token?: string } | null) => {
         if (hasRedirected.current) return;
         hasRedirected.current = true;
         setStatus('success');
 
-        // Skip getUser() call - we already have the session from onAuthStateChange
-        // The extra call was causing timeouts during PKCE exchange
-        // Give cookies time to propagate before navigation
-        await new Promise(resolve => setTimeout(resolve, 200));
+        // Await setup call for region tier + fingerprint registration
+        if (session?.access_token) {
+          await callSetup(session.access_token);
+        }
+
         await handleAuthRedirect();
       };
 
@@ -41,7 +77,7 @@ function AuthCallbackContent() {
         data: { subscription },
       } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          await handleSuccess();
+          await handleSuccess(session);
         } else if (event === 'SIGNED_OUT') {
           setStatus('error');
         }
@@ -54,7 +90,7 @@ function AuthCallbackContent() {
       } = await supabase.auth.getSession();
 
       if (session) {
-        await handleSuccess();
+        await handleSuccess(session);
       } else if (error) {
         setStatus('error');
       }

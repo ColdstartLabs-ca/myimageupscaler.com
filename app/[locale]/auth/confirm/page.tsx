@@ -6,6 +6,41 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { handleAuthRedirect, setAuthIntent } from '@client/utils/authRedirectManager';
 import { useTranslations } from 'next-intl';
 
+/**
+ * Load FingerprintJS and return the visitor hash.
+ * Best-effort — returns null on any failure.
+ */
+async function getFingerprint(): Promise<string | null> {
+  try {
+    // eslint-disable-next-line no-restricted-syntax -- FingerprintJS is lazy-loaded intentionally
+    const FingerprintJS = await import('@fingerprintjs/fingerprintjs');
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    return result.visitorId;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Call /api/users/setup with fingerprint. Best-effort, doesn't throw.
+ */
+async function callSetup(accessToken: string): Promise<void> {
+  try {
+    const fingerprintHash = await getFingerprint();
+    await fetch('/api/users/setup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ fingerprintHash }),
+    });
+  } catch {
+    // Best effort
+  }
+}
+
 function AuthConfirmContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'verified_please_login'>('loading');
   const [message, setMessage] = useState('Confirming your email...');
@@ -36,19 +71,14 @@ function AuthConfirmContent() {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state change:', event, session?.user?.email);
 
-      if (event === 'SIGNED_IN' && session) {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
         setStatus('success');
         setMessage(t('emailConfirmed'));
-        // Use the unified redirect handler
+        // Run setup (region tier + fingerprint) then redirect
+        await callSetup(session.access_token);
         setTimeout(async () => {
           await handleAuthRedirect();
-        }, 1500);
-      } else if (event === 'TOKEN_REFRESHED' && session) {
-        setStatus('success');
-        setMessage(t('emailConfirmed'));
-        setTimeout(async () => {
-          await handleAuthRedirect();
-        }, 1500);
+        }, 1000);
       }
     });
 
@@ -69,12 +99,13 @@ function AuthConfirmContent() {
       console.log('[Auth Confirm] Current session:', session ? 'exists' : 'none', sessionError);
 
       if (session) {
-        console.log('[Auth Confirm] Already authenticated, redirecting...');
+        console.log('[Auth Confirm] Already authenticated, running setup...');
         setStatus('success');
         setMessage(t('emailConfirmed'));
+        await callSetup(session.access_token);
         setTimeout(async () => {
           await handleAuthRedirect();
-        }, 1500);
+        }, 1000);
         return;
       }
 
@@ -90,12 +121,13 @@ function AuthConfirmContent() {
           });
 
           if (data.session) {
-            console.log('[Auth Confirm] Code exchange succeeded!');
+            console.log('[Auth Confirm] Code exchange succeeded, running setup...');
             setStatus('success');
             setMessage(t('emailConfirmed'));
+            await callSetup(data.session.access_token);
             setTimeout(async () => {
               await handleAuthRedirect();
-            }, 1500);
+            }, 1000);
             return;
           }
 

@@ -16,6 +16,8 @@ import { ForgotPasswordForm } from '@client/components/modal/auth/ForgotPassword
 import { ForgotPasswordSetNewPasswordForm } from '@client/components/modal/auth/ForgotPasswordSetNewPasswordForm';
 import { ILoginForm, LoginForm } from '@client/components/modal/auth/LoginForm';
 import { IRegisterForm, RegisterForm } from '@client/components/modal/auth/RegisterForm';
+import { useRegionTier } from '@client/hooks/useRegionTier';
+import { useFingerprint } from '@client/hooks/useFingerprint';
 
 const MODAL_ID = 'authenticationModal';
 
@@ -47,6 +49,8 @@ export const AuthenticationModal: React.FC = () => {
   const { signInWithEmail, signUpWithEmail, changePassword, resetPassword } = useUserStore();
   const { showToast } = useToastStore();
   const t = useTranslations('auth');
+  const { isRestricted, isLoading: isGeoLoading } = useRegionTier();
+  const fingerprintHash = useFingerprint();
 
   const {
     register: loginRegister,
@@ -95,7 +99,7 @@ export const AuthenticationModal: React.FC = () => {
 
   const onRegisterSubmit = async (data: IRegisterForm) => {
     try {
-      const result = await signUpWithEmail(data.email, data.password);
+      const result = await signUpWithEmail(data.email, data.password, fingerprintHash);
 
       if (result.emailConfirmationRequired) {
         showToast({
@@ -172,6 +176,19 @@ export const AuthenticationModal: React.FC = () => {
         );
 
       case 'register':
+        if (isGeoLoading) {
+          return <div className="animate-pulse h-32 bg-muted rounded" />;
+        }
+        if (isRestricted) {
+          return (
+            <>
+              <p className="text-sm text-muted-foreground text-center mb-4">
+                {'Social sign-in is required in your region.'}
+              </p>
+              <SocialLoginButton />
+            </>
+          );
+        }
         return (
           <>
             <RegisterForm
@@ -195,6 +212,19 @@ export const AuthenticationModal: React.FC = () => {
 
       case 'login':
       default:
+        if (isGeoLoading) {
+          return <div className="animate-pulse h-32 bg-muted rounded" />;
+        }
+        if (isRestricted) {
+          return (
+            <>
+              <p className="text-sm text-muted-foreground text-center mb-4">
+                {'Social sign-in is required in your region.'}
+              </p>
+              <SocialLoginButton />
+            </>
+          );
+        }
         return (
           <>
             <LoginForm

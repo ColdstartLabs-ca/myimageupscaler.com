@@ -47,7 +47,8 @@ export interface IUserState {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (
     email: string,
-    password: string
+    password: string,
+    fingerprintHash?: string | null
   ) => Promise<{ emailConfirmationRequired: boolean }>;
   signOut: () => Promise<void>;
 
@@ -245,7 +246,7 @@ export const useUserStore = create<IUserState>((set, get) => ({
     if (error) throw error;
   },
 
-  signUpWithEmail: async (email, password) => {
+  signUpWithEmail: async (email, password, fingerprintHash) => {
     enablePostAuthRedirect();
     const { data, error } = await getSupabase().auth.signUp({
       email,
@@ -253,6 +254,17 @@ export const useUserStore = create<IUserState>((set, get) => ({
       options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
     });
     if (error) throw error;
+    // Fire-and-forget setup call when we have a session (immediate signup without email confirmation)
+    if (data.session?.access_token) {
+      fetch('/api/users/setup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${data.session.access_token}`,
+        },
+        body: JSON.stringify({ fingerprintHash: fingerprintHash ?? null }),
+      }).catch(() => {});
+    }
     return { emailConfirmationRequired: !!data.user && !data.session };
   },
 
