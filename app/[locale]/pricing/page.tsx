@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import PricingPageClient from './PricingPageClient';
 import { generatePricingSchema } from '@lib/seo/schema-generator';
 import { clientEnv } from '@shared/config/env';
@@ -54,7 +55,9 @@ export default function PricingPage() {
           __html: JSON.stringify(generatePricingSchema()),
         }}
       />
-      <PricingPageClient />
+      <Suspense>
+        <PricingPageClient />
+      </Suspense>
     </>
   );
 }
