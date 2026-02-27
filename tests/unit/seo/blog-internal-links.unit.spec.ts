@@ -86,7 +86,7 @@ describe('Blog → pSEO internal linking', () => {
       },
       {
         file: 'how-to-upscale-images-without-losing-quality.mdx',
-        expectedPath: '/free/ai-image-upscaler',
+        expectedPath: '/free/free-image-upscaler',
         description: 'links to free upscaler page',
       },
       {
@@ -96,7 +96,7 @@ describe('Blog → pSEO internal linking', () => {
       },
       {
         file: 'restore-old-photos-ai-enhancement-guide.mdx',
-        expectedPath: '/use-cases/photo-restoration',
+        expectedPath: '/use-cases/old-photo-restoration',
         description: 'links to photo restoration use case',
       },
       {
@@ -106,7 +106,7 @@ describe('Blog → pSEO internal linking', () => {
       },
       {
         file: 'anime-upscaling-4k-art-guide.mdx',
-        expectedPath: '/use-cases/anime-illustration-upscaling',
+        expectedPath: '/use-cases/anime-image-upscaler',
         description: 'links to anime illustration use case',
       },
       {
@@ -116,7 +116,7 @@ describe('Blog → pSEO internal linking', () => {
       },
       {
         file: 'image-resolution-for-printing-complete-guide.mdx',
-        expectedPath: '/scale/upscale-image-to-1920x1080',
+        expectedPath: '/scale/upscale-to-1080p',
         description: 'links to 1920x1080 upscale page',
       },
       {
@@ -126,7 +126,7 @@ describe('Blog → pSEO internal linking', () => {
       },
       {
         file: 'fix-blurry-photos-ai-methods-guide.mdx',
-        expectedPath: '/use-cases/photo-restoration',
+        expectedPath: '/use-cases/old-photo-restoration',
         description: 'links to photo restoration use case',
       },
       {

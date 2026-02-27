@@ -473,8 +473,8 @@ files.forEach(f => {
 | URL                                             | Target anchor text ideas                     |
 | ----------------------------------------------- | -------------------------------------------- |
 | `/scale/upscale-to-4k`                          | "4K resolution", "upscale to 4K"             |
-| `/scale/upscale-image-to-1920x1080`             | "1920x1080", "HD resolution", "1080p"        |
-| `/free/ai-image-upscaler`                       | "free image upscaler", "free upscaling"      |
+| `/scale/upscale-to-1080p`                       | "1920x1080", "HD resolution", "1080p"        |
+| `/free/free-image-upscaler`                     | "free image upscaler", "free upscaling"      |
 | `/free/free-background-remover`                 | "free background remover"                    |
 | `/free`                                         | "free tools", "free credits"                 |
 | `/formats/upscale-jpeg-images`                  | "JPEG images", "upscale JPG"                 |
@@ -482,9 +482,9 @@ files.forEach(f => {
 | `/formats/upscale-webp-images`                  | "WebP images"                                |
 | `/formats/upscale-avif-images`                  | "AVIF images"                                |
 | `/use-cases/ecommerce-product-photos`           | "product photos", "e-commerce photos"        |
-| `/use-cases/photo-restoration`                  | "photo restoration", "restore old photos"    |
+| `/use-cases/old-photo-restoration`              | "photo restoration", "restore old photos"    |
 | `/use-cases/real-estate-photo-enhancement`      | "real estate photos"                         |
-| `/use-cases/anime-illustration-upscaling`       | "anime upscaling", "illustration upscaling"  |
+| `/use-cases/anime-image-upscaler`               | "anime upscaling", "illustration upscaling"  |
 | `/tools/ai-background-remover`                  | "remove backgrounds", "background removal"   |
 | `/tools/ai-photo-enhancer`                      | "photo enhancer", "enhance photo quality"    |
 | `/alternatives`                                 | "tool alternatives", "comparing tools"       |

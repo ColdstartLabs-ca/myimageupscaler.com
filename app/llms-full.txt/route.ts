@@ -68,7 +68,7 @@ Key Benefits:
 
 ## Free Tools
 - ${BASE_URL}/free - All free tools
-- ${BASE_URL}/free/ai-image-upscaler - Free AI upscaler
+- ${BASE_URL}/free/free-image-upscaler - Free AI upscaler
 - ${BASE_URL}/free/image-compressor - Free compressor
 
 ## Comparison Tools
