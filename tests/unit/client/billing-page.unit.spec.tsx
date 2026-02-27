@@ -15,6 +15,7 @@ vi.mock('lucide-react', () => ({
   Plus: () => <span data-testid="plus-icon" />,
   Receipt: () => <span data-testid="receipt-icon" />,
   RefreshCw: () => <span data-testid="refresh-icon" />,
+  Wallet: () => <span data-testid="wallet-icon" />,
 }));
 
 // Mock translations for dashboard.billing
@@ -68,6 +69,7 @@ const mockTranslations = {
   tabs: {
     subscription: 'Subscription',
     credits: 'Credits',
+    invoices: 'Invoices & Payment',
   },
   creditHistory: {
     title: 'Credit History',
@@ -314,7 +316,7 @@ describe('BillingPage', () => {
       expect(creditsTab).toHaveClass('text-accent');
     });
 
-    it('should render both tabs', async () => {
+    it('should render all three tabs', async () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
@@ -329,6 +331,7 @@ describe('BillingPage', () => {
 
       expect(tabLabels).toContain('Subscription');
       expect(tabLabels).toContain('Credits');
+      expect(tabLabels).toContain('Invoices & Payment');
     });
 
     it('should render Credits tab content by default', async () => {
@@ -612,11 +615,25 @@ describe('BillingPage', () => {
     });
   });
 
-  describe('Shared Sections', () => {
+  describe('Invoices & Payment Tab', () => {
+    async function switchToInvoicesTab() {
+      const user = userEvent.setup();
+      await waitFor(() => {
+        expect(screen.getByText('Billing')).toBeInTheDocument();
+      });
+      const tabButtons = document.querySelectorAll('.flex.gap-1 button');
+      const invoicesTab = Array.from(tabButtons).find(
+        btn => btn.textContent === 'Invoices & Payment'
+      ) as HTMLElement;
+      await user.click(invoicesTab);
+    }
+
     it('should display payment methods section', async () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
+
+      await switchToInvoicesTab();
 
       await waitFor(() => {
         expect(screen.getByText('Payment Methods')).toBeInTheDocument();
@@ -629,6 +646,8 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
+
+      await switchToInvoicesTab();
 
       await waitFor(() => {
         expect(screen.getByText('Billing History')).toBeInTheDocument();
@@ -644,6 +663,8 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
+
+      await switchToInvoicesTab();
 
       await waitFor(() => {
         expect(screen.getByText('Manage Subscription')).toBeInTheDocument();
@@ -759,6 +780,7 @@ describe('BillingPage', () => {
     });
 
     it('should show no payment methods message for free users without stripe customer id', async () => {
+      const user = userEvent.setup();
       mockStripeService.getActiveSubscription.mockResolvedValue(null as never);
       mockStripeService.getUserProfile.mockResolvedValue({
         id: 'user-123',
@@ -773,6 +795,17 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
+
+      await waitFor(() => {
+        expect(screen.getByText('Billing')).toBeInTheDocument();
+      });
+
+      // Navigate to Invoices & Payment tab
+      const tabButtons = document.querySelectorAll('.flex.gap-1 button');
+      const invoicesTab = Array.from(tabButtons).find(
+        btn => btn.textContent === 'Invoices & Payment'
+      ) as HTMLElement;
+      await user.click(invoicesTab);
 
       await waitFor(() => {
         expect(screen.getByText('No payment methods added yet')).toBeInTheDocument();

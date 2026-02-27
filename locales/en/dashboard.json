@@ -22,7 +22,8 @@
     "subtitle": "Manage your subscription and payment methods",
     "tabs": {
       "subscription": "Subscription",
-      "credits": "Credits"
+      "credits": "Credits",
+      "invoices": "Invoices & Payment"
     },
     "refresh": "Refresh",
     "currentPlan": "Current Plan",

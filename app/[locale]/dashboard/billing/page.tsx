@@ -26,6 +26,7 @@ import {
   Plus,
   Receipt,
   RefreshCw,
+  Wallet,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -516,6 +517,86 @@ export default function BillingPage() {
     </div>
   );
 
+  // Invoices & Payment Tab Content
+  const InvoicesTab = () => (
+    <div className="space-y-6">
+      {/* Payment Methods */}
+      <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
+            <Wallet size={20} className="text-muted-foreground" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-white">{t('paymentMethods')}</h2>
+            <p className="text-sm text-muted-foreground">{t('paymentMethodsSubtitle')}</p>
+          </div>
+        </div>
+
+        {profile?.stripe_customer_id ? (
+          <div className="flex items-center justify-between p-4 bg-surface-light rounded-lg">
+            <div>
+              <p className="text-sm text-muted-foreground">{t('managePortal')}</p>
+            </div>
+            <button
+              onClick={handleManageSubscription}
+              disabled={portalLoading}
+              className="flex items-center gap-2 px-4 py-2 bg-surface text-base rounded-lg text-sm font-medium hover:bg-surface/90 transition-colors disabled:opacity-50"
+            >
+              {portalLoading ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <ExternalLink size={16} />
+              )}
+              {portalLoading ? t('opening') : t('manageSubscription')}
+            </button>
+          </div>
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            <p>{t('noPaymentMethods')}</p>
+            <p className="text-sm mt-2">{t('choosePlanToSetup')}</p>
+            <button
+              onClick={handleUpgrade}
+              className="mt-4 px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors"
+            >
+              {t('viewPricing')}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Billing History */}
+      <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
+            <Receipt size={20} className="text-muted-foreground" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-white">{t('billingHistory')}</h2>
+            <p className="text-sm text-muted-foreground">{t('billingHistorySubtitle')}</p>
+          </div>
+        </div>
+
+        {profile?.stripe_customer_id ? (
+          <div className="text-center py-6">
+            <p className="text-muted-foreground text-sm mb-4">{t('viewInvoicesPortal')}</p>
+            <button
+              onClick={handleManageSubscription}
+              disabled={portalLoading}
+              className="px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors inline-flex items-center gap-2"
+            >
+              <Receipt size={16} />
+              {t('viewInvoices')}
+            </button>
+          </div>
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            <p>{t('noBillingHistory')}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   // Tab configuration — credits first (most users buy credits, not subscriptions)
   const tabs: ITabItem[] = [
     {
@@ -529,6 +610,12 @@ export default function BillingPage() {
       label: t('tabs.subscription'),
       icon: CreditCard,
       content: <SubscriptionTab />,
+    },
+    {
+      id: 'invoices',
+      label: t('tabs.invoices'),
+      icon: Receipt,
+      content: <InvoicesTab />,
     },
   ];
 
@@ -582,81 +669,6 @@ export default function BillingPage() {
 
       {/* Tabs Section */}
       <InternalTabs tabs={tabs} defaultTab="credits" />
-
-      {/* Payment Methods / Manage Subscription - Shared section below tabs */}
-      <div className="bg-surface rounded-xl border border-border p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
-            <CreditCard size={20} className="text-muted-foreground" />
-          </div>
-          <div>
-            <h2 className="font-semibold text-white">{t('paymentMethods')}</h2>
-            <p className="text-sm text-muted-foreground">{t('paymentMethodsSubtitle')}</p>
-          </div>
-        </div>
-
-        {profile?.stripe_customer_id ? (
-          <div className="flex items-center justify-between p-4 bg-surface-light rounded-lg">
-            <div>
-              <p className="text-sm text-muted-foreground">{t('managePortal')}</p>
-            </div>
-            <button
-              onClick={handleManageSubscription}
-              disabled={portalLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-surface text-base rounded-lg text-sm font-medium hover:bg-surface/90 transition-colors disabled:opacity-50"
-            >
-              {portalLoading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <ExternalLink size={16} />
-              )}
-              {portalLoading ? t('opening') : t('manageSubscription')}
-            </button>
-          </div>
-        ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>{t('noPaymentMethods')}</p>
-            <p className="text-sm mt-2">{t('choosePlanToSetup')}</p>
-            <button
-              onClick={handleUpgrade}
-              className="mt-4 px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors"
-            >
-              {t('viewPricing')}
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Billing History - Shared section below tabs */}
-      <div className="bg-surface rounded-xl border border-border p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
-            <Receipt size={20} className="text-muted-foreground" />
-          </div>
-          <div>
-            <h2 className="font-semibold text-white">{t('billingHistory')}</h2>
-            <p className="text-sm text-muted-foreground">{t('billingHistorySubtitle')}</p>
-          </div>
-        </div>
-
-        {profile?.stripe_customer_id ? (
-          <div className="text-center py-6">
-            <p className="text-muted-foreground text-sm mb-4">{t('viewInvoicesPortal')}</p>
-            <button
-              onClick={handleManageSubscription}
-              disabled={portalLoading}
-              className="px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors inline-flex items-center gap-2"
-            >
-              <Receipt size={16} />
-              {t('viewInvoices')}
-            </button>
-          </div>
-        ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>{t('noBillingHistory')}</p>
-          </div>
-        )}
-      </div>
 
       {/* Cancel Subscription Modal */}
       {subscription && (
