@@ -27,6 +27,7 @@ const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
   'industry-insights',
   'device-optimization',
   'bulk-tools',
+  'ai-features',
 ];
 
 /**

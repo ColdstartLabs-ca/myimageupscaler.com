@@ -603,6 +603,7 @@
     },
     {
       "slug": "midjourney-vs-stable-diffusion",
+      "noindex": true,
       "title": "Midjourney vs Stable Diffusion",
       "metaTitle": "Midjourney vs Stable Diffusion - AI Image Comparison",
       "metaDescription": "Comprehensive comparison of Midjourney and Stable Diffusion for AI image generation and upscaling. Compare features, pricing, quality, and use cases. Start now!",

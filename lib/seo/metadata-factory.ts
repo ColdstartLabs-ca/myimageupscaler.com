@@ -22,6 +22,19 @@ const APP_NAME = clientEnv.APP_NAME;
 const TWITTER_HANDLE = clientEnv.TWITTER_HANDLE;
 
 /**
+ * Categories that are currently unproven / not submitted to Google.
+ * Pages in these categories start with robots noindex.
+ * Remove a category here once it achieves 70%+ indexation rate.
+ */
+export const NOINDEX_CATEGORIES: string[] = [
+  // Orphan data files — no routes yet; leaving noindex as safety net if routes are added without review
+  // 'technical-guides',
+  // 'personas-expanded',
+  // 'use-cases-expanded',
+  // Currently empty — use this to gate new unproven categories at launch
+];
+
+/**
  * Generate complete Next.js Metadata object for pSEO pages
  * Includes all recommended meta tags, OpenGraph, Twitter, and robots config
  * Phase 5: Added hreflang alternates for multi-language SEO
@@ -50,6 +63,8 @@ export function generateMetadata(
   // Default og:image for all pSEO pages if not provided
   const defaultOgImage = '/og-image.png';
   const ogImageUrl = page.ogImage || defaultOgImage;
+
+  const shouldNoindex = page.noindex === true || NOINDEX_CATEGORIES.includes(category);
 
   return {
     title: truncatedTitle,
@@ -91,7 +106,7 @@ export function generateMetadata(
 
     // Robots
     robots: {
-      index: true,
+      index: shouldNoindex ? false : true,
       follow: true,
       'max-image-preview': 'large',
       'max-snippet': -1,

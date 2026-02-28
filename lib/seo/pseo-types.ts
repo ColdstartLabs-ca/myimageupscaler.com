@@ -19,6 +19,7 @@ export interface IBasePSEOPage {
   secondaryKeywords: string[];
   ogImage?: string;
   lastUpdated: string;
+  noindex?: boolean;
 }
 
 /**

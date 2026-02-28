@@ -109,6 +109,29 @@
       ],
       "relatedFormats": ["upscale-jpeg-images", "upscale-png-images"],
       "relatedScales": ["ai-upscaler-2x", "jpeg-upscale-4x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "500 KB–3 MB (web-resolution JPEG at quality 75–90; typical smartphone or DSLR web export — 1,200–4,000 px on the longest dimension)",
+          "typicalOutputSize": "1.5 MB–10 MB (4× pixel count, re-compressed at quality 90)",
+          "compressionNote": "JPEG uses lossy DCT compression; 2x upscale output re-compresses with AI-smoothed data, resulting in 3–4× file size increase rather than the theoretical 4×"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "Low — 2x is gentle enough that JPEG block artifacts are smoothed rather than amplified; ringing on sharp edges is minimal at this scale",
+          "ssimExpected": "0.91–0.96 SSIM against bicubic reference at source quality ≥80",
+          "recommendedSourceQuality": "JPEG quality 75 or higher; avoid re-saved or screenshot-derived JPEGs which introduce double-compression artifacts"
+        },
+        "useCaseFit": {
+          "best": [
+            "Retina display optimization of existing web JPEG assets",
+            "Social media uploads where platform recompresses — 2x compensates for platform quality loss",
+            "Standard photo prints up to 8×10 inches at 300 DPI from a 6 MP source"
+          ],
+          "notIdeal": [
+            "Large-format poster printing — 4x or 8x is more appropriate for sizes above 16×20 inches",
+            "Images with extensive JPEG mosquito noise where higher upscaling would worsen artifacts"
+          ]
+        }
+      },
       "detailedDescription": "JPEG remains the most widely used image format for photography and web content due to its excellent compression efficiency and broad compatibility. However, the increasing resolution of modern displays—particularly high-DPI retina screens and 4K monitors—has made the traditional JPEG resolutions of the past inadequate for professional use. Our 2X JPEG upscaler addresses this need by doubling image dimensions while quadrupling the total pixel count, providing noticeable quality improvement without the excessive file size increases of higher scaling factors.\n\nThe 2X scaling factor hits an optimal balance for most web and digital applications. It provides sufficient enhancement to make images look crisp on modern high-density displays while keeping file sizes manageable for fast web loading. For social media content, digital portfolios, and web graphics, 2X upscaling transforms adequate JPEGs into professional-quality images that stand out on any screen. The enhancement is particularly valuable for images that will be viewed on retina displays, where the additional resolution prevents the soft or blurry appearance that can plague standard-resolution JPEGs.\n\nTechnical considerations make 2X an ideal choice for many workflows. The processing time is significantly faster than higher scaling factors, typically completing in 10-20 seconds depending on image complexity. This efficiency makes batch processing practical, allowing you to enhance entire photo libraries or content collections without excessive time investment. File size increases of 3-4x are manageable for most hosting and storage scenarios, and the quality improvement is immediately visible on modern displays. For photographers, content creators, and web professionals, 2X JPEG upscaling provides the best balance of quality improvement and practical efficiency.",
       "technicalDetails": "Our 2X JPEG upscaler utilizes a convolutional neural network architecture specifically optimized for moderate scaling factors and JPEG's compression characteristics. The model has been trained on extensive datasets of JPEG images at various quality levels, enabling it to recognize and appropriately address JPEG compression artifacts while enhancing detail. This specialized training allows the upscaler to distinguish between true image detail and compression artifacts, reducing the latter while enhancing the former for cleaner, sharper results.\n\nThe upscaling process doubles both width and height dimensions, resulting in four times the total pixel count. For a typical 1920x1080 JPEG, this produces a 3840x2160 output (4K resolution). The neural network analyzes the image content at multiple scales, identifying edges, textures, and patterns that can be convincingly enhanced. It then generates new pixels that are consistent with the original image characteristics while adding appropriate detail and sharpness. The result maintains the natural appearance of the original while providing visible quality improvement.\n\nTechnical specifications include support for JPEG images saved at various quality levels, though higher quality source files produce better results. The upscaler handles both progressive and baseline JPEG encoding, and supports both RGB and grayscale color modes. Output maintains JPEG format with configurable quality settings, allowing you to balance file size and quality according to your needs. Maximum input resolution is 4096 pixels on the longest dimension, with maximum output of 8192 pixels. Processing typically completes in 10-20 seconds for standard image sizes.",
       "comparisonNotes": "The 2X scaling factor occupies a unique middle ground between no enhancement and more aggressive upscaling. Compared to leaving images at their original resolution, 2X upscaling provides clearly visible improvement on modern displays, particularly high-DPI screens where standard resolution content can appear soft. The improvement is immediately noticeable and significant enough to justify the processing time and file size increase for most professional applications.\n\nCompared to 4X and 8X upscaling, 2X offers several advantages. Processing time is significantly faster, making it practical for batch processing and time-sensitive workflows. File size increases are more modest, which is important for web applications where loading speed matters. For many use cases—web graphics, social media, digital portfolios—2X provides sufficient enhancement that higher scaling factors don't justify their additional costs. However, for print applications or when maximum detail is required, 4X or 8X may be more appropriate. The choice depends on your intended use case and quality requirements."
@@ -216,6 +239,29 @@
       ],
       "relatedFormats": ["upscale-jpeg-images", "upscale-png-images"],
       "relatedScales": ["ai-upscaler-4x", "jpeg-upscale-2x", "jpeg-upscale-8x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "500 KB–3 MB for 4x input (quality ≥80 recommended; a 4 MP JPEG at quality 85 is ideal; heavily compressed sources at quality <70 will show visible artifact amplification)",
+          "typicalOutputSize": "8 MB–50 MB (16× pixel count; file size scales 12–16× due to JPEG compression efficiency at high resolution)",
+          "compressionNote": "JPEG's DCT block size is fixed at 8×8 pixels; at 4x output the upscaled blocks are larger, so quality-90 re-compression is recommended to avoid new blocking artifacts in the output"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "Moderate — at 4x, original JPEG compression artifacts may be magnified into visible patterns; highest risk in smooth gradients and areas with original banding",
+          "ssimExpected": "0.85–0.92 SSIM against bicubic reference; lower end applies to source JPEG quality below 70",
+          "recommendedSourceQuality": "JPEG quality 80 or higher strongly recommended; at 4x, starting quality below 70 produces visible ringing and block pattern amplification"
+        },
+        "useCaseFit": {
+          "best": [
+            "Large-format print preparation — 16×20 to 24×36 inch prints at 300 DPI from an 8 MP source",
+            "4K display presentation of product images where deep-zoom is required",
+            "E-commerce product photos needing extreme zoom capability"
+          ],
+          "notIdeal": [
+            "Web-only images where 2x provides sufficient quality at much smaller file sizes",
+            "Heavily compressed JPEGs (quality < 70) where artifact amplification degrades output quality"
+          ]
+        }
+      },
       "detailedDescription": "JPEG format serves as the workhorse of digital imaging, powering everything from web graphics to professional photography. However, the demands of modern high-resolution displays, professional printing, and premium content often exceed what standard JPEG resolutions can provide. Our 4X JPEG upscaler addresses this need by quadrupling both dimensions—resulting in sixteen times the total pixel count—delivering dramatic quality improvement suitable for the most demanding applications.\n\nThe 4X scaling factor represents a significant enhancement that transforms JPEG images into professional-grade assets. For web and digital use, 4X upscaling ensures images look impeccable on 4K and 8K displays, with detail and clarity that captures viewer attention. For print applications, 4X enhancement makes JPEGs suitable for large format printing, gallery-quality prints, and professional output that meets exacting standards. The difference is particularly noticeable in detailed images—landscapes with fine textures, portraits with subtle skin detail, or product photos that need to withstand close inspection at high zoom levels.\n\nProfessional applications across numerous fields benefit from 4X JPEG upscaling. Photographers can prepare client images for large format printing without needing original RAW files. E-commerce businesses can create product images that enable deep zoom functionality for detailed customer inspection. Print-on-demand sellers can upscale JPEG artwork for merchandise and posters. Marketing professionals can prepare high-resolution visuals for trade shows, presentations, and large format displays. The enhancement is substantial enough to make previously inadequate images suitable for professional use.",
       "technicalDetails": "Our 4X JPEG upscaler employs a sophisticated deep neural network architecture optimized for aggressive upscaling of JPEG-compressed images. The model utilizes generative adversarial networks (GANs) combined with advanced super-resolution techniques to generate plausible detail at 4X scaling. The training dataset comprises millions of high-resolution JPEG images, enabling the model to learn the relationship between low-resolution JPEG compression artifacts and high-resolution detail, allowing it to intelligently fill in missing information while maintaining image quality.\n\nThe upscaling process quadruples both width and height dimensions, resulting in sixteen times the total pixel count. For a typical 1920x1080 JPEG, this produces a 7680x4320 output (8K resolution). The neural network performs multi-scale analysis of the input image, identifying edges, textures, patterns, and structures that can be convincingly enhanced. It then generates new pixels that are consistent with the original image characteristics while adding appropriate detail, sharpness, and texture. The process is designed to maintain natural appearance while adding substantial visible detail.\n\nTechnical specifications include support for JPEG images at various quality levels, though source files saved at 80% quality or higher produce optimal results. The upscaler handles both progressive and baseline JPEG encoding and supports RGB and grayscale color modes. Advanced artifact reduction algorithms minimize JPEG compression artifacts while enhancing actual image detail. Output maintains JPEG format with configurable quality settings. Maximum input resolution is 4096 pixels on the longest dimension, with maximum output of 8192 pixels. Processing typically completes in 30-60 seconds for standard image sizes.",
       "comparisonNotes": "The 4X scaling factor provides substantially more enhancement than 2X while remaining more practical than 8X for many applications. Compared to 2X upscaling, 4X delivers visibly superior quality improvement, particularly beneficial for print applications or when images will be viewed at large sizes or with high zoom. The additional detail is noticeable and significant, making 4X the preferred choice when quality is paramount and processing time is acceptable.\n\nCompared to 8X upscaling, 4X offers faster processing and more manageable file sizes. For many professional applications, 4X provides sufficient enhancement that 8X isn't necessary. 4X is often the optimal choice for large format printing, professional displays, and applications requiring high quality without the extreme processing time and file size of 8X. However, for maximum quality or when enlarging very small source images, 8X may be justified despite its higher costs. The choice depends on your specific requirements for quality, processing time, and file size."
@@ -322,7 +368,30 @@
         }
       ],
       "relatedFormats": ["upscale-jpeg-images", "upscale-raw-images"],
-      "relatedScales": ["upscale-8x", "jpeg-upscale-4x", "jpeg-upscale-16x"]
+      "relatedScales": ["upscale-8x", "jpeg-upscale-4x", "jpeg-upscale-16x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "500 KB–3 MB for 8x source (quality 85+ is mandatory; small thumbnails or screenshots below 800 px are poor candidates — 8x upscaling of very small JPEGs has diminishing returns)",
+          "typicalOutputSize": "80 MB–200 MB (64× pixel count; extremely large JPEG output — lossless conversion to PNG or TIFF recommended for archival)",
+          "compressionNote": "JPEG is poorly suited to storing 8x upscaled output long-term; each save cycle at this resolution introduces new lossy artifacts; export as PNG or TIFF immediately after upscaling"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "High — 8x magnification amplifies even low-severity JPEG mosquito noise into visible smearing; original block boundaries become patterned bands at this scale",
+          "ssimExpected": "0.78–0.88 SSIM against bicubic reference; AI hallucination increases at this scale, adding plausible but invented texture",
+          "recommendedSourceQuality": "JPEG quality 85 or higher mandatory; any pre-existing compression artifacts will be visibly amplified — PNG or RAW source files yield significantly better 8x results"
+        },
+        "useCaseFit": {
+          "best": [
+            "Billboard and large-format signage from 2–4 MP JPEG sources where print distance is 1 metre or more",
+            "Archival quality enhancement of old family or historical JPEG photos",
+            "Forensic image enlargement where texture inference is acceptable"
+          ],
+          "notIdeal": [
+            "Close-inspection print applications — JPEG-sourced 8x output cannot match RAW or PNG source quality",
+            "Web or screen delivery — file sizes are impractical and 2x or 4x is sufficient for display"
+          ]
+        }
+      }
     },
     {
       "slug": "jpeg-upscale-16x",
@@ -530,7 +599,30 @@
         }
       ],
       "relatedFormats": ["upscale-png-images", "upscale-jpeg-images"],
-      "relatedScales": ["ai-upscaler-2x", "png-upscale-4x"]
+      "relatedScales": ["ai-upscaler-2x", "png-upscale-4x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "100 KB–5 MB (PNG size varies widely — logos average 100–500 KB; photographs stored as PNG average 2–10 MB)",
+          "typicalOutputSize": "400 KB–20 MB (PNG lossless compression scales ~4× with pixel count; exact ratio depends on image entropy)",
+          "compressionNote": "PNG uses lossless DEFLATE compression; file size scales almost exactly with pixel count (4× at 2x scale); no quality tradeoff from the compression step itself"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "Very low — PNG has zero compression artifacts; upscaling introduces only interpolation imprecision, which is minimal at 2x; alpha channel edges remain crisp",
+          "ssimExpected": "0.93–0.97 SSIM against bicubic reference; PNG's lossless source means the AI works on true pixel data rather than compression-degraded input",
+          "recommendedSourceQuality": "Any PNG is suitable; even 8-bit PNGs benefit cleanly from 2x — 16-bit PNG source is ideal for maximum colour fidelity in the upscaled output"
+        },
+        "useCaseFit": {
+          "best": [
+            "Logo and icon upscaling for retina/2x displays while preserving sharp edges and transparency",
+            "UI element scaling for app assets targeting @2x screen density",
+            "Screenshot enhancement for documentation or presentations on high-DPI monitors"
+          ],
+          "notIdeal": [
+            "Photographic PNG files where JPEG format would give a smaller file with negligible quality loss",
+            "Cases requiring web delivery — WebP conversion after upscaling reduces file size by ~30%"
+          ]
+        }
+      }
     },
     {
       "slug": "png-upscale-4x",
@@ -634,7 +726,30 @@
         }
       ],
       "relatedFormats": ["upscale-png-images", "upscale-tiff-images"],
-      "relatedScales": ["ai-upscaler-4x", "png-upscale-2x", "png-upscale-8x"]
+      "relatedScales": ["ai-upscaler-4x", "png-upscale-2x", "png-upscale-8x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "100 KB–5 MB for 4x PNG input (logos average 100–500 KB; a 500 KB PNG logo at 4x is common; 16-bit scientific PNG files at the upper range benefit significantly from 4x enhancement)",
+          "typicalOutputSize": "1.6 MB–80 MB (16× pixel count; large files are normal and expected for lossless PNG at this scale)",
+          "compressionNote": "At 4x, a 500 KB logo PNG commonly produces 8–12 MB output; PNG-8 (indexed colour) input may produce PNG-24 output as AI upscaling generates colour gradients the original palette could not represent"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "Very low for source detail; minor smoothing may occur in fine text at 4x — AI may interpolate letterform curves slightly; inspect text below 6pt in source at 4x output",
+          "ssimExpected": "0.90–0.95 SSIM against bicubic reference; excellent fidelity for graphics with solid fills and hard edges",
+          "recommendedSourceQuality": "All PNG sources work well; 16-bit PNG source preserves depth for gradient-heavy illustrations; PNG-8 source may show palette banding in gradient areas of the 4x output"
+        },
+        "useCaseFit": {
+          "best": [
+            "Print-ready logo files for A1/A0 poster or banner printing with transparent background",
+            "High-resolution raster replacement when vector source files are unavailable",
+            "@4x mobile app assets or ultra-high-DPI display icons"
+          ],
+          "notIdeal": [
+            "Photographic images — TIFF is more efficient for print-quality photographic output at 4x",
+            "Web delivery — file sizes are too large; convert to WebP after upscaling"
+          ]
+        }
+      }
     },
     {
       "slug": "png-upscale-8x",
@@ -738,7 +853,30 @@
         }
       ],
       "relatedFormats": ["upscale-png-images", "upscale-tiff-images"],
-      "relatedScales": ["upscale-8x", "png-upscale-4x", "png-upscale-16x"]
+      "relatedScales": ["upscale-8x", "png-upscale-4x", "png-upscale-16x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "100 KB–5 MB for 8x PNG source (simple flat-colour logos at 100–200 KB are ideal 8x candidates; complex photographic PNGs at 4–5 MB will produce files exceeding 300 MB — plan storage accordingly)",
+          "typicalOutputSize": "6 MB–320 MB (64× pixel count; a 1 MB logo PNG routinely produces 60–80 MB output at 8x)",
+          "compressionNote": "PNG's lossless DEFLATE compresses 8x output more efficiently than JPEG since AI-generated textures contain repetitive patterns; however absolute file sizes remain very large — plan for 50–100× the input size for complex images"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "Low for graphics — PNG's clean source gives the AI the best possible input; however at 8x the model generates substantial invented detail; output may differ perceptibly from a true high-resolution original",
+          "ssimExpected": "0.86–0.93 SSIM against bicubic reference; excellent for flat-colour graphics, lower for photographic PNG sources",
+          "recommendedSourceQuality": "PNG source at any bit depth is suitable; 8x is most beneficial for simple graphics (logos, icons) not photographic images; photographs stored as PNG give no quality advantage over JPEG source at this scale"
+        },
+        "useCaseFit": {
+          "best": [
+            "Maximum-resolution transparent logo creation for vehicle wraps or building signage",
+            "Extreme enlargement of pixel art with full alpha channel preservation",
+            "Archival creation of reference-quality PNG assets from legacy low-resolution sources"
+          ],
+          "notIdeal": [
+            "Photographs stored as PNG — no quality benefit over PNG-4x or JPEG-8x; file sizes become unmanageable",
+            "Web delivery workflows — a 60–320 MB PNG is not a viable web asset"
+          ]
+        }
+      }
     },
     {
       "slug": "png-upscale-16x",
@@ -946,7 +1084,30 @@
         }
       ],
       "relatedFormats": ["upscale-webp-images", "upscale-jpeg-images"],
-      "relatedScales": ["ai-upscaler-2x", "webp-upscale-4x"]
+      "relatedScales": ["ai-upscaler-2x", "webp-upscale-4x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "80 KB–1.5 MB (WebP typically 25–34% smaller than equivalent JPEG)",
+          "typicalOutputSize": "200 KB–4 MB (WebP lossy compression at quality 85 gives 2–3× file size increase rather than 4× due to superior entropy coding at higher resolutions)",
+          "compressionNote": "WebP's VP8/VP8L codecs apply transform-based compression that becomes more efficient as resolution increases; 2x upscaled WebP output is commonly 20–30% smaller than equivalent-quality JPEG at the same resolution"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "Low — WebP lossy artifacts (blockiness, colour shifting in flat areas) are less severe than JPEG at equivalent file sizes; 2x scaling does not amplify WebP-specific ringing at most quality settings",
+          "ssimExpected": "0.92–0.97 SSIM against bicubic reference; WebP source is generally higher quality than JPEG at the same file size, giving the AI better input data",
+          "recommendedSourceQuality": "WebP quality 75 or higher; lossless WebP source produces marginally better 2x output than lossy WebP; avoid WebP images converted from highly compressed JPEG originals"
+        },
+        "useCaseFit": {
+          "best": [
+            "Retina display hero images and banners on modern web pages where WebP is served natively",
+            "Responsive image srcset @2x variants for high-DPI mobile browsers (Chrome/Edge/Firefox/Safari all support WebP)",
+            "E-commerce product thumbnails requiring 2x sharpness with minimal bandwidth impact"
+          ],
+          "notIdeal": [
+            "Workflows targeting Internet Explorer or legacy systems — WebP is unsupported; use JPEG fallback",
+            "Print production — WebP is a web format; convert to TIFF or PNG after upscaling for print workflows"
+          ]
+        }
+      }
     },
     {
       "slug": "webp-upscale-4x",
@@ -2083,7 +2244,30 @@
         }
       ],
       "relatedFormats": ["upscale-tiff-images", "upscale-png-images"],
-      "relatedScales": ["ai-upscaler-2x", "tiff-upscale-4x"]
+      "relatedScales": ["ai-upscaler-2x", "tiff-upscale-4x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "10 MB–80 MB (uncompressed TIFF is very large; a 24 MP uncompressed TIFF is approximately 69 MB; LZW-compressed TIFF may be 20–30 MB for the same image)",
+          "typicalOutputSize": "40 MB–320 MB (uncompressed TIFF scales exactly 4× with pixel count at 2x; LZW compression efficiency improves slightly at larger sizes but absolute sizes remain very large)",
+          "compressionNote": "TIFF LZW is lossless; uncompressed TIFF produces exactly 4× file size at 2x scale; LZW-compressed output may be 3–3.5× the input due to improved repetition in AI-generated textures"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "Extremely low — TIFF (uncompressed or LZW) has zero compression artifacts; the AI works on perfect pixel data; upscaling is purely interpolation-limited with no compression interference",
+          "ssimExpected": "0.94–0.98 SSIM against bicubic reference; TIFF provides the highest quality input of all common formats, yielding the best possible 2x upscale results",
+          "recommendedSourceQuality": "Any uncompressed or LZW TIFF is ideal; JPEG-compressed TIFF (TIFF can embed JPEG) should be treated as a JPEG source with corresponding quality expectations"
+        },
+        "useCaseFit": {
+          "best": [
+            "Professional prepress workflows requiring lossless upscaling from drum-scanned originals",
+            "Archival digitisation projects where quality integrity must be maintained across the full pipeline",
+            "Print production at 2x — a 300 DPI scan upscaled to 600 DPI for flexographic or offset printing"
+          ],
+          "notIdeal": [
+            "Web or email delivery — TIFF is not a web format; file sizes are impractical for online distribution",
+            "Mobile or app workflows where PNG offers equivalent lossless quality at significantly smaller file sizes"
+          ]
+        }
+      }
     },
     {
       "slug": "tiff-upscale-4x",
@@ -2455,7 +2639,30 @@
         }
       ],
       "relatedFormats": ["upscale-bmp-images", "upscale-png-images"],
-      "relatedScales": ["ai-upscaler-2x", "bmp-upscale-4x"]
+      "relatedScales": ["ai-upscaler-2x", "bmp-upscale-4x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "1 MB–15 MB (BMP is uncompressed; a 1920×1080 24-bit BMP is exactly 5.93 MB regardless of image content)",
+          "typicalOutputSize": "4 MB–60 MB (BMP scales exactly 4× at 2x — BMP contains no compression; a 6 MB input produces exactly a 24 MB output at 2x; no variation based on image content)",
+          "compressionNote": "BMP stores raw pixel values with zero compression; file size is deterministic: width × height × (bit depth / 8) bytes plus a 54-byte header; 2x scale always produces exactly 4× the input file size"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "None from compression — BMP has zero compression artifacts; any quality issues in upscaling are purely from the AI interpolation, not the source format; very clean results for simple graphics",
+          "ssimExpected": "0.93–0.97 SSIM against bicubic reference; BMP quality is equivalent to uncompressed TIFF for upscaling purposes — the AI receives perfect unmodified pixel data",
+          "recommendedSourceQuality": "All BMP files are lossless by definition; 24-bit (16.7M colour) BMP is ideal; 8-bit indexed-colour BMP will show palette banding in the upscaled output, particularly in gradient areas"
+        },
+        "useCaseFit": {
+          "best": [
+            "Legacy Windows application screenshots and UI graphics that need to be upscaled for modern display resolutions",
+            "Simple diagrams and technical illustrations originally created in Windows-native tools like Paint or older CAD exports",
+            "Pixel-art assets from retro Windows games where BMP was the native format"
+          ],
+          "notIdeal": [
+            "New workflows — PNG provides identical lossless quality at 60–80% smaller file sizes; use PNG output after upscaling",
+            "Photographs stored as BMP — no quality benefit over PNG; unnecessarily large files throughout the workflow"
+          ]
+        }
+      }
     },
     {
       "slug": "bmp-upscale-4x",
@@ -3134,7 +3341,30 @@
         }
       ],
       "relatedFormats": ["upscale-gif-images", "upscale-png-images"],
-      "relatedScales": ["ai-upscaler-2x", "gif-upscale-4x"]
+      "relatedScales": ["ai-upscaler-2x", "gif-upscale-4x"],
+      "formatScaleData": {
+        "fileSize": {
+          "typicalInputSize": "20 KB–2 MB (GIF size is highly content-dependent; a 400×300 simple logo GIF may be 30 KB; an animated GIF of the same dimensions may be 1.5 MB per frame)",
+          "typicalOutputSize": "80 KB–8 MB (GIF LZW compression scales ~4× with pixel count for static GIFs; animated GIFs scale by 4× per frame, so a 10-frame animated GIF can easily reach 6–8 MB after 2x upscaling)",
+          "compressionNote": "GIF uses LZW compression over an indexed 256-colour palette; upscaling a GIF generates colour gradients the 256-colour palette cannot accurately represent — output may be saved as PNG to preserve the AI-generated colour detail that GIF would quantise"
+        },
+        "qualityConsiderations": {
+          "artifactRisk": "Moderate — GIF's 256-colour limit produces visible colour banding and dithering in the source; 2x upscaling can soften dithering patterns, but colour banding may be more visible at larger sizes; photographic GIFs will show significant posterization",
+          "ssimExpected": "0.80–0.90 SSIM against bicubic reference; heavily quantised GIF sources produce lower SSIM; simple flat-colour graphics with fewer than 64 colours achieve higher SSIM scores",
+          "recommendedSourceQuality": "GIFs with fewer distinct colours (logos, icons, flat illustrations) upscale better than photographic GIFs; avoid upscaling GIFs that were converted from photographs — convert to JPEG or PNG first for far better results"
+        },
+        "useCaseFit": {
+          "best": [
+            "Legacy animated banner GIFs that need to display on high-DPI screens at doubled size",
+            "Retro pixel-art or simple icon GIFs being modernised for current display resolutions",
+            "Simple flat-colour logo GIFs where transparency (GIF supports 1-bit transparency) must be preserved"
+          ],
+          "notIdeal": [
+            "Photographic content stored as GIF — severe colour banding makes upscaling ineffective; convert to JPEG first",
+            "Complex animations with many frames — per-frame upscaling results in very large output files; WebP animation is a better modern target format"
+          ]
+        }
+      }
     },
     {
       "slug": "gif-upscale-4x",

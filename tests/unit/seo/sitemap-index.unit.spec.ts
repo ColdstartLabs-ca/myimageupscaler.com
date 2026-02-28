@@ -151,22 +151,22 @@ describe('Sitemap Index Localization', () => {
 });
 
 describe('Sitemap Index Route', () => {
-  it('should NOT include ai-features in the sitemap index (zombie category)', async () => {
+  it('should include ai-features in the sitemap index', async () => {
     const { GET } = await import('@/app/sitemap.xml/route');
     const response = await GET();
     const xml = await response.text();
 
-    expect(xml).not.toContain('sitemap-ai-features.xml');
+    expect(xml).toContain('sitemap-ai-features.xml');
   });
 
-  it('should include 81 total sitemaps (11 English-only + 10×7 localized)', async () => {
+  it('should include 82 total sitemaps (12 English-only + 10×7 localized)', async () => {
     const { GET } = await import('@/app/sitemap.xml/route');
     const response = await GET();
     const xml = await response.text();
 
     const matches = xml.match(/<sitemap>/g);
-    // 11 English-only + (10 localized × 7 locales) = 11 + 70 = 81
-    expect(matches).toHaveLength(81);
+    // 12 English-only + (10 localized × 7 locales) = 12 + 70 = 82
+    expect(matches).toHaveLength(82);
   });
 });
 
