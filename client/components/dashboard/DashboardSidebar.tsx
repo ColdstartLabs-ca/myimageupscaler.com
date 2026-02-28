@@ -17,6 +17,7 @@ import {
 import { useUserStore, useIsAdmin, useSubscription } from '@client/store/userStore';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
 import { getPlanDisplayName } from '@shared/config/stripe';
+import { BILLING_COPY } from '@shared/constants/billing';
 import { useLogger } from '@client/utils/logger';
 import { cn } from '@client/utils/cn';
 import { clientEnv } from '@shared/config/env';
@@ -47,10 +48,14 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
   const isProfileLoading = isLoading || (user && !user.profile && !error);
 
   // Resolve subscription to plan name - prioritize profile's subscription_tier
-  const planDisplayName = getPlanDisplayName({
-    subscriptionTier: user?.profile?.subscription_tier,
-    priceId: subscription?.price_id,
-  });
+  // Defensive check: if subscription is canceled, always show Free Plan regardless of stale tier data
+  const isCanceled = user?.profile?.subscription_status === 'canceled';
+  const planDisplayName = isCanceled
+    ? BILLING_COPY.freePlan
+    : getPlanDisplayName({
+        subscriptionTier: user?.profile?.subscription_tier,
+        priceId: subscription?.price_id,
+      });
 
   // Build menu items dynamically based on user role
   const menuItems: ISidebarItem[] = [

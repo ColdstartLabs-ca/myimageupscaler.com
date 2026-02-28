@@ -639,6 +639,7 @@ export class SubscriptionHandler {
       .from('profiles')
       .update({
         subscription_status: 'canceled',
+        subscription_tier: null,
       })
       .eq('id', userId);
 
