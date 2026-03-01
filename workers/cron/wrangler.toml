@@ -26,5 +26,8 @@ API_BASE_URL = "https://myimageupscaler.com"
 [env.development]
 vars = { API_BASE_URL = "http://localhost:3000" }
 
+[observability]
+enabled = true
+
 # Secrets (set these via: wrangler secret put <SECRET_NAME>)
 # - CRON_SECRET: Authentication secret for cron endpoints (generate with: openssl rand -hex 32)

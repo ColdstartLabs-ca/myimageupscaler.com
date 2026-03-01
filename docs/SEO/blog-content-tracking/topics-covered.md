@@ -1,6 +1,6 @@
 # Blog Content Tracking - MyImageUpscaler
 
-**Last Updated**: 2026-02-25
+**Last Updated**: 2026-02-28
 
 ## Topics Covered (Blog Posts Published)
 
@@ -47,3 +47,4 @@
 | 2026-02-25 | why photos blurry when printed, blurry prints, photo resolution for print, 300 dpi print    | why-photos-blurry-when-printed                     | Guides      | Published |
 | 2026-02-26 | midjourney upscaler, midjourney print, upscale AI art for print (Priority 1 roadmap)        | how-to-upscale-midjourney-images-for-print         | Guides      | Published |
 | 2026-02-27 | stable diffusion upscaler, sdxl upscaler, upscale stable diffusion art (Priority 1 roadmap) | stable-diffusion-upscaler                          | Guides      | Published |
+| 2026-02-28 | anime image upscaler, how to upscale anime images with ai (Priority 3 use-case roadmap)     | how-to-upscale-anime-images-with-ai                | Guides      | Published |
