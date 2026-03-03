@@ -1,9 +1,9 @@
 'use client';
 
 import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
+import { PlanChangeModal, PricingCard } from '@client/components/stripe';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
 import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
-import { PlanChangeModal, PricingCard } from '@client/components/stripe';
 import { InternalTabs, type ITabItem } from '@client/components/ui/InternalTabs';
 import { StripeService } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
@@ -15,6 +15,7 @@ import {
 } from '@shared/config/stripe';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { motion } from 'framer-motion';
 import {
   ArrowRight,
   Calendar,
@@ -27,9 +28,10 @@ import {
   Receipt,
   RefreshCw,
   Wallet,
+  Zap,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 // Extend dayjs with relativeTime plugin
@@ -193,9 +195,9 @@ export default function BillingPage() {
 
   const planName = subscription
     ? getPlanDisplayName({
-        priceId: subscription.price_id,
-        subscriptionTier: profile?.subscription_tier,
-      })
+      priceId: subscription.price_id,
+      subscriptionTier: profile?.subscription_tier,
+    })
     : 'Free Plan';
 
   // Subscription Tab Content
@@ -204,33 +206,6 @@ export default function BillingPage() {
     if (!subscription) {
       return (
         <div className="space-y-6">
-          {/* Free Plan Summary */}
-          <div className="bg-surface rounded-xl border border-border p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
-                <Package size={20} className="text-muted-foreground" />
-              </div>
-              <div className="flex-1">
-                <h2 className="font-semibold text-white">{t('currentPlan')}</h2>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm text-muted-foreground">{planName}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-surface-light rounded-lg p-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('creditsBalance')}</p>
-                  <p className="text-2xl font-bold text-white">
-                    {(profile?.subscription_credits_balance ?? 0) +
-                      (profile?.purchased_credits_balance ?? 0)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Plan Cards Grid */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">{t('choosePlan')}</h3>
@@ -392,130 +367,159 @@ export default function BillingPage() {
   };
 
   // Credits Tab Content
-  const CreditsTab = () => (
-    <div className="space-y-6">
-      {/* Credit Top-Up Section */}
-      <div className="bg-surface rounded-xl border border-border p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
-            <Plus size={20} className="text-accent" />
-          </div>
-          <div>
-            <h2 className="font-semibold text-white">{t('buyCredits')}</h2>
-            <p className="text-sm text-muted-foreground">{t('buyCreditsSubtitle')}</p>
-          </div>
-        </div>
+  const CreditsTab = () => {
+    const handleTipClick = () => {
+      // Find the subscription tab trigger and click it
+      const tabs = document.querySelectorAll('[role="tab"]');
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].textContent?.includes(t('tabs.subscription'))) {
+          (tabs[i] as HTMLElement).click();
+          break;
+        }
+      }
+    };
 
-        <CreditPackSelector
-          onPurchaseStart={() => {}}
-          onPurchaseComplete={() => {
-            loadBillingData();
-            loadCreditHistory();
-          }}
-          onError={error =>
-            showToast({
-              message: error.message,
-              type: 'error',
-            })
-          }
-        />
-
-        <div className="mt-4 p-3 bg-accent/10 border border-accent/20 rounded-lg">
-          <p className="text-sm text-accent/80">
-            <strong>{t('tip')}</strong>{' '}
-            {subscription ? t('subscriptionBetterValue') : t('subscribeBetterValue')}
-          </p>
-        </div>
-      </div>
-
-      {/* Credit History */}
-      <div className="bg-surface rounded-xl border border-border p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
-            <History size={20} className="text-muted-foreground" />
-          </div>
-          <div>
-            <h2 className="font-semibold text-white">{t('creditHistory.title')}</h2>
-            <p className="text-sm text-muted-foreground">{t('creditHistory.subtitle')}</p>
-          </div>
-        </div>
-
-        {creditHistoryLoading && creditTransactions.length === 0 ? (
-          <div className="text-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">{t('creditHistory.loading')}</p>
-          </div>
-        ) : creditHistoryError ? (
-          <div className="bg-error/10 border border-error/20 rounded-lg p-4 text-center">
-            <p className="text-sm text-error">{creditHistoryError}</p>
-          </div>
-        ) : creditTransactions.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>{t('creditHistory.noTransactions')}</p>
-          </div>
-        ) : (
-          <>
-            <div className="space-y-2">
-              {creditTransactions.map(transaction => (
-                <div
-                  key={transaction.id}
-                  className="flex items-center justify-between p-3 bg-surface-light rounded-lg"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-white">
-                        {t(`creditHistory.type.${transaction.type}`)}
-                      </span>
-                      <span className="text-xs px-2 py-0.5 rounded bg-surface text-muted-foreground">
-                        {transaction.type}
-                      </span>
-                    </div>
-                    {transaction.description && (
-                      <p className="text-xs text-muted-foreground mt-1 truncate">
-                        {transaction.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <p
-                        className={`text-sm font-medium ${
-                          transaction.amount >= 0 ? 'text-green-400' : 'text-red-400'
-                        }`}
-                      >
-                        {transaction.amount >= 0 ? '+' : ''}
-                        {transaction.amount}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(transaction.created_at).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+    return (
+      <div className="space-y-6">
+        {/* Credit Top-Up Section */}
+        <div className="bg-surface rounded-xl border border-border p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
+              <Plus size={20} className="text-accent" />
             </div>
+            <div>
+              <h2 className="font-semibold text-white">{t('buyCredits')}</h2>
+              <p className="text-sm text-muted-foreground">{t('buyCreditsSubtitle')}</p>
+            </div>
+          </div>
 
-            {hasMoreTransactions && (
-              <div className="mt-4 text-center">
-                <button
-                  onClick={() => loadCreditHistory(true)}
-                  disabled={creditHistoryLoading}
-                  className="px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors disabled:opacity-50 inline-flex items-center gap-2"
-                >
-                  {creditHistoryLoading ? <Loader2 size={14} className="animate-spin" /> : null}
-                  {t('creditHistory.loadMore')}
-                </button>
+          <motion.div
+            onClick={handleTipClick}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            className="mb-6 p-4 cursor-pointer bg-gradient-to-r from-accent/20 to-accent/5 border-l-4 border-accent rounded-r-lg shadow-lg shadow-accent/5 transition-colors hover:from-accent/30 hover:to-accent/10"
+          >
+            <div className="flex items-start gap-3">
+              <motion.div
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="mt-0.5 text-accent"
+              >
+                <Zap size={18} />
+              </motion.div>
+              <div>
+                <p className="text-sm text-white font-medium">
+                  <strong>{t('tip')}</strong>{' '}
+                  {subscription ? t('subscriptionBetterValue') : t('subscribeBetterValue')}
+                  <ArrowRight size={14} className="inline ml-2 -mt-0.5 text-accent" />
+                </p>
               </div>
-            )}
-          </>
-        )}
+            </div>
+          </motion.div>
+
+          <CreditPackSelector
+            onPurchaseStart={() => { }}
+            onPurchaseComplete={() => {
+              loadBillingData();
+              loadCreditHistory();
+            }}
+            onError={error =>
+              showToast({
+                message: error.message,
+                type: 'error',
+              })
+            }
+          />
+        </div>
+
+        {/* Credit History */}
+        <div className="bg-surface rounded-xl border border-border p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-surface-light flex items-center justify-center">
+              <History size={20} className="text-muted-foreground" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-white">{t('creditHistory.title')}</h2>
+              <p className="text-sm text-muted-foreground">{t('creditHistory.subtitle')}</p>
+            </div>
+          </div>
+
+          {creditHistoryLoading && creditTransactions.length === 0 ? (
+            <div className="text-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">{t('creditHistory.loading')}</p>
+            </div>
+          ) : creditHistoryError ? (
+            <div className="bg-error/10 border border-error/20 rounded-lg p-4 text-center">
+              <p className="text-sm text-error">{creditHistoryError}</p>
+            </div>
+          ) : creditTransactions.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <p>{t('creditHistory.noTransactions')}</p>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-2">
+                {creditTransactions.map(transaction => (
+                  <div
+                    key={transaction.id}
+                    className="flex items-center justify-between p-3 bg-surface-light rounded-lg"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-white">
+                          {t(`creditHistory.type.${transaction.type}`)}
+                        </span>
+                        <span className="text-xs px-2 py-0.5 rounded bg-surface text-muted-foreground">
+                          {transaction.type}
+                        </span>
+                      </div>
+                      {transaction.description && (
+                        <p className="text-xs text-muted-foreground mt-1 truncate">
+                          {transaction.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <p
+                          className={`text-sm font-medium ${transaction.amount >= 0 ? 'text-green-400' : 'text-red-400'
+                            }`}
+                        >
+                          {transaction.amount >= 0 ? '+' : ''}
+                          {transaction.amount}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(transaction.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {hasMoreTransactions && (
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={() => loadCreditHistory(true)}
+                    disabled={creditHistoryLoading}
+                    className="px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors disabled:opacity-50 inline-flex items-center gap-2"
+                  >
+                    {creditHistoryLoading ? <Loader2 size={14} className="animate-spin" /> : null}
+                    {t('creditHistory.loadMore')}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Invoices & Payment Tab Content
   const InvoicesTab = () => (

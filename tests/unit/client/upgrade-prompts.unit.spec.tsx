@@ -579,30 +579,16 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
 // ---------------------------------------------------------------------------
 
 describe('Phase 1: after_download — PostDownloadPrompt', () => {
-  let store: Map<string, string>;
-
   beforeEach(() => {
     vi.clearAllMocks();
-    sessionStorage.clear();
-    store = new Map();
-    vi.stubGlobal('localStorage', {
-      getItem: (key: string) => store.get(key) ?? null,
-      setItem: (key: string, value: string) => store.set(key, value),
-      removeItem: (key: string) => store.delete(key),
-      clear: () => store.clear(),
-      get length() {
-        return store.size;
-      },
-      key: (index: number) => Array.from(store.keys())[index] ?? null,
-    });
   });
 
   afterEach(() => {
-    sessionStorage.clear();
-    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
-  it('should show PostDownloadPrompt after first download for free user', async () => {
+  it('should show PostDownloadPrompt when random is under 50% for free user', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
     render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
 
     await waitFor(() => {
@@ -611,23 +597,37 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   });
 
   it('should NOT show PostDownloadPrompt for paid users', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
     const { container } = render(<PostDownloadPrompt isFreeUser={false} downloadCount={1} />);
 
     await new Promise(r => setTimeout(r, 10));
     expect(container.firstChild).toBeNull();
   });
 
-  it('should respect 72h localStorage cooldown', async () => {
-    // Simulate prompt was shown recently by marking it shown
-    markPromptShown({ key: 'prompt_freq_after_download', cooldownMs: 72 * 60 * 60 * 1000 });
-
+  it('should NOT show PostDownloadPrompt when random is 50% or above', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.9);
     const { container } = render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
 
     await new Promise(r => setTimeout(r, 10));
     expect(container.firstChild).toBeNull();
   });
 
+  it('should re-evaluate probability on each new download event', async () => {
+    vi.spyOn(Math, 'random').mockReturnValueOnce(0.9).mockReturnValueOnce(0.1);
+    const { rerender } = render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(screen.queryByText(/Love the result\?/i)).not.toBeInTheDocument();
+
+    rerender(<PostDownloadPrompt isFreeUser={true} downloadCount={2} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Love the result\?/i)).toBeInTheDocument();
+    });
+  });
+
   it('should fire upgrade_prompt_shown with trigger after_download', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
     render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
 
     await waitFor(() => {
@@ -639,6 +639,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   });
 
   it('should fire upgrade_prompt_dismissed on X click', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
     render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
 
     await waitFor(() => {
@@ -658,6 +659,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   });
 
   it('should navigate to /dashboard/billing on CTA click', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
     render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
 
     await waitFor(() => {
@@ -738,6 +740,8 @@ vi.mock('next-intl', () => ({
         'You tried to add {attempted} images but your plan allows a maximum of {limit}.',
       'workspace.batchLimit.freeUserMessage':
         "You're on the free tier (1 image at a time). Upgrade to process up to 50 images in batch — starting at $5.",
+      'workspace.batchLimit.remainingSlotsMessage':
+        'You have {availableSlots} of {limit} slots remaining in your queue.',
       'workspace.batchLimit.securityMessage':
         'This is a security measure to prevent abuse. The limit will reset in approximately 1 hour.',
       'workspace.batchLimit.upgradeButton': 'Upgrade Plan',
@@ -747,10 +751,24 @@ vi.mock('next-intl', () => ({
       'common.cancel': 'Cancel',
     };
 
-    const t = (key: string, _params?: Record<string, unknown>) =>
-      translations[`${ns}.${key}`] ?? key;
-    t.rich = (key: string, _params?: Record<string, unknown>) =>
-      translations[`${ns}.${key}`] ?? key;
+    const t = (key: string, params?: Record<string, unknown>) => {
+      let result = translations[`${ns}.${key}`] ?? key;
+      if (params) {
+        Object.entries(params).forEach(([k, v]) => {
+          result = result.replace(`{${k}}`, String(v));
+        });
+      }
+      return result;
+    };
+    t.rich = (key: string, params?: Record<string, unknown>) => {
+      let result = translations[`${ns}.${key}`] ?? key;
+      if (params) {
+        Object.entries(params).forEach(([k, v]) => {
+          result = result.replace(`{${k}}`, String(v));
+        });
+      }
+      return result;
+    };
     return t;
   },
 }));
@@ -805,6 +823,51 @@ describe('Phase 3: BatchLimitModal improvements', () => {
       )
     ).toBeInTheDocument();
   });
+
+  it('should show remaining slots message for paid users with partial queue', () => {
+    render(
+      <BatchLimitModal
+        {...defaultProps}
+        limit={10}
+        currentCount={7}
+        attempted={5}
+      />
+    );
+
+    expect(
+      screen.getByText('You have 3 of 10 slots remaining in your queue.')
+    ).toBeInTheDocument();
+  });
+
+  it('should NOT show remaining slots message when queue is empty', () => {
+    render(
+      <BatchLimitModal
+        {...defaultProps}
+        limit={10}
+        currentCount={0}
+        attempted={15}
+      />
+    );
+
+    expect(
+      screen.queryByText(/slots remaining in your queue/)
+    ).not.toBeInTheDocument();
+  });
+
+  it('should NOT show remaining slots message when queue is full', () => {
+    render(
+      <BatchLimitModal
+        {...defaultProps}
+        limit={10}
+        currentCount={10}
+        attempted={5}
+      />
+    );
+
+    expect(
+      screen.queryByText(/slots remaining in your queue/)
+    ).not.toBeInTheDocument();
+  });
 });
 
 describe('Phase 3: UpgradeSuccessBanner fixes', () => {
@@ -837,5 +900,37 @@ describe('Phase 3: UpgradeSuccessBanner fixes', () => {
         currentPlan: 'free',
       });
     });
+  });
+
+  it('UpgradeSuccessBanner should fire upgrade_prompt_clicked on CTA click', async () => {
+    const onDismiss = vi.fn();
+    render(
+      <UpgradeSuccessBanner processedCount={3} onDismiss={onDismiss} hasSubscription={false} />
+    );
+
+    const link = screen.getByRole('link', { name: /See Plans/i });
+    fireEvent.click(link);
+
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
+      trigger: 'after_batch',
+      destination: '/dashboard/billing',
+      currentPlan: 'free',
+    });
+  });
+
+  it('UpgradeSuccessBanner should fire upgrade_prompt_dismissed on dismiss', async () => {
+    const onDismiss = vi.fn();
+    render(
+      <UpgradeSuccessBanner processedCount={3} onDismiss={onDismiss} hasSubscription={false} />
+    );
+
+    const dismissButton = screen.getByRole('button', { name: /Maybe later/i });
+    fireEvent.click(dismissButton);
+
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_dismissed', {
+      trigger: 'after_batch',
+      currentPlan: 'free',
+    });
+    expect(onDismiss).toHaveBeenCalled();
   });
 });

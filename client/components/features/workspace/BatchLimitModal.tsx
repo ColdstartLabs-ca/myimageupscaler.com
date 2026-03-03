@@ -124,6 +124,15 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
         </div>
       )}
 
+      {/* Remaining Slots Context (for paid users with partial queue) */}
+      {limit > 1 && availableSlots > 0 && availableSlots < limit && (
+        <div className="bg-surface rounded-lg p-4 mb-6 border border-border">
+          <p className="text-sm text-muted-foreground">
+            {t('remainingSlotsMessage', { availableSlots, limit })}
+          </p>
+        </div>
+      )}
+
       {/* Server-enforced messaging */}
       {serverEnforced && (
         <div className="bg-amber-50 rounded-lg p-4 mb-6 border border-amber-200">

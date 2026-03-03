@@ -19,18 +19,21 @@ import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { downloadSingle } from '@client/utils/download';
 import { CheckCircle2, Image, Layers, List, Loader2, Settings, Wand2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { ModelGalleryModal } from './ModelGalleryModal';
-import { PostDownloadPrompt } from './PostDownloadPrompt';
+import { PremiumUpsellModal } from './PremiumUpsellModal';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
+const FREE_DOWNLOAD_UPSELL_PROBABILITY = 0.5;
 
 const Workspace: React.FC = () => {
   const t = useTranslations('workspace');
+  const router = useRouter();
   // Hook managing all queue state
   const {
     queue,
@@ -76,7 +79,10 @@ const Workspace: React.FC = () => {
   // Success banner state
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
-  const [downloadCount, setDownloadCount] = useState(0);
+  const [showPremiumUpsell, setShowPremiumUpsell] = useState(false);
+  const [pendingDownload, setPendingDownload] = useState<{ url: string; filename: string } | null>(
+    null
+  );
   const wasProcessingRef = React.useRef(false);
 
   // Global error state for showing ErrorAlert components
@@ -142,17 +148,46 @@ const Workspace: React.FC = () => {
   }, [queue.length, mobileTab]);
 
   // Handlers
-  const handleDownloadSingle = async (url: string, filename: string) => {
+  const executeDownload = async (url: string, filename: string) => {
     try {
       setDownloadError(null);
       await downloadSingle(url, filename, config.qualityTier);
-      setDownloadCount(c => c + 1);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('workspace.downloadError.title');
       setDownloadError(errorMessage);
       console.error('Download error:', error);
     }
+  };
+
+  const handleDownloadSingle = async (url: string, filename: string) => {
+    // Free users: intercept 50% of download attempts with premium upsell modal.
+    if (isFreeUser && Math.random() < FREE_DOWNLOAD_UPSELL_PROBABILITY) {
+      setPendingDownload({ url, filename });
+      setShowPremiumUpsell(true);
+      return;
+    }
+
+    await executeDownload(url, filename);
+  };
+
+  const handlePremiumUpsellClose = () => {
+    setShowPremiumUpsell(false);
+    setPendingDownload(null);
+  };
+
+  const handlePremiumUpsellProceed = async () => {
+    setShowPremiumUpsell(false);
+    const queuedDownload = pendingDownload;
+    setPendingDownload(null);
+    if (!queuedDownload) return;
+    await executeDownload(queuedDownload.url, queuedDownload.filename);
+  };
+
+  const handlePremiumUpsellViewPlans = () => {
+    setShowPremiumUpsell(false);
+    setPendingDownload(null);
+    router.push('/dashboard/billing');
   };
 
   // Handler for partial add from modal
@@ -294,13 +329,6 @@ const Workspace: React.FC = () => {
               isFreeUser={isFreeUser}
             />
           </div>
-
-          {/* Post-download upgrade nudge (free users only, once per session / 72h cooldown) */}
-          {!showSuccessBanner && (
-            <div className="px-3 md:px-4 pb-2">
-              <PostDownloadPrompt isFreeUser={isFreeUser} downloadCount={downloadCount} />
-            </div>
-          )}
 
           {/* Queue Strip at bottom */}
           <div className="hidden md:block">
@@ -446,6 +474,15 @@ const Workspace: React.FC = () => {
         currentCount={queue.length}
         onAddPartial={handleAddPartial}
         serverEnforced={batchLimitExceeded?.serverEnforced}
+      />
+
+      <PremiumUpsellModal
+        isOpen={showPremiumUpsell}
+        onClose={handlePremiumUpsellClose}
+        onProceed={() => {
+          void handlePremiumUpsellProceed();
+        }}
+        onViewPlans={handlePremiumUpsellViewPlans}
       />
     </div>
   );

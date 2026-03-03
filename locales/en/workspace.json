@@ -5,6 +5,7 @@
     "serverEnforcedMessage": "You've reached the processing limit for your plan. You processed <currentCount>{currentCountValue}</currentCount> images, but your plan allows a maximum of <limit>{limitValue}</limit> images per hour.",
     "clientEnforcedMessage": "You tried to add {attempted} image{plural, plural, one {} other {s}}, but your plan allows a maximum of {limit} image{limitPlural, plural, one {} other {s}} in the queue.",
     "freeUserMessage": "You're on the free tier (1 image at a time). Upgrade to process up to 50 images in batch — starting at $5.",
+    "remainingSlotsMessage": "You have {availableSlots} of {limit} slots remaining in your queue.",
     "securityMessage": "This is a security measure to prevent abuse. The limit will reset in approximately 1 hour. Upgrade your plan for higher limits.",
     "upgradeButton": "Upgrade Plan",
     "upgradeButtonBatch": "Unlock Batch Processing",

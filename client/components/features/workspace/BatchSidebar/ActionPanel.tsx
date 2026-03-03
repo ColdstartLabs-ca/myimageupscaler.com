@@ -1,42 +1,9 @@
 import { IBatchItem, ProcessingStatus } from '@/shared/types/coreflow.types';
-import { PremiumUpsellModal } from '@client/components/features/workspace/PremiumUpsellModal';
 import { InsufficientCreditsModal } from '@client/components/stripe/InsufficientCreditsModal';
 import { Button } from '@client/components/ui/Button';
 import { Download, Loader2, Trash2, Wand2 } from 'lucide-react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import React from 'react';
-
-const UPGRADE_MODAL_DAILY_KEY = 'upgrade_modal_daily';
-const UPGRADE_MODAL_DAILY_LIMIT = 3;
-
-function shouldShowUpgradeModal(): boolean {
-  try {
-    const raw = localStorage.getItem(UPGRADE_MODAL_DAILY_KEY);
-    const today = new Date().toISOString().slice(0, 10);
-    if (raw) {
-      const data = JSON.parse(raw) as { date: string; count: number };
-      if (data.date === today && data.count >= UPGRADE_MODAL_DAILY_LIMIT) return false;
-    }
-    return true;
-  } catch {
-    return true;
-  }
-}
-
-function recordUpgradeModalShown(): void {
-  try {
-    const today = new Date().toISOString().slice(0, 10);
-    const raw = localStorage.getItem(UPGRADE_MODAL_DAILY_KEY);
-    let count = 0;
-    if (raw) {
-      const data = JSON.parse(raw) as { date: string; count: number };
-      if (data.date === today) count = data.count;
-    }
-    localStorage.setItem(UPGRADE_MODAL_DAILY_KEY, JSON.stringify({ date: today, count: count + 1 }));
-  } catch {
-    // ignore storage errors
-  }
-}
 
 interface IBatchProgress {
   current: number;
@@ -56,7 +23,6 @@ export interface IActionPanelProps {
   showInsufficientModal: boolean;
   setShowInsufficientModal: (show: boolean) => void;
   router: AppRouterInstance;
-  isFreeUser: boolean;
 }
 
 export const ActionPanel: React.FC<IActionPanelProps> = ({
@@ -72,10 +38,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
   showInsufficientModal,
   setShowInsufficientModal,
   router,
-  isFreeUser,
 }) => {
-  const [showPremiumUpsellModal, setShowPremiumUpsellModal] = React.useState(false);
-
   const pendingQueue = queue.filter(i => i.status !== ProcessingStatus.COMPLETED);
   const hasEnoughCredits = currentBalance >= totalCost;
 
@@ -85,24 +48,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
       return;
     }
 
-    // Show premium upsell modal for free users up to 3 times per day
-    if (isFreeUser && pendingQueue.length > 0 && shouldShowUpgradeModal()) {
-      recordUpgradeModalShown();
-      setShowPremiumUpsellModal(true);
-      return;
-    }
-
     onProcess();
-  };
-
-  const handleProceedWithFree = () => {
-    setShowPremiumUpsellModal(false);
-    onProcess();
-  };
-
-  const handleViewPlans = () => {
-    setShowPremiumUpsellModal(false);
-    router.push('/dashboard/billing');
   };
 
   return (
@@ -209,14 +155,6 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
         currentBalance={currentBalance}
         onBuyCredits={() => router.push('/dashboard/billing')}
         onViewPlans={() => router.push('/pricing')}
-      />
-
-      {/* Premium Upsell Modal for Free Users */}
-      <PremiumUpsellModal
-        isOpen={showPremiumUpsellModal}
-        onClose={() => setShowPremiumUpsellModal(false)}
-        onProceed={handleProceedWithFree}
-        onViewPlans={handleViewPlans}
       />
     </div>
   );

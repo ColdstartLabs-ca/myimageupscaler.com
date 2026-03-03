@@ -1,28 +1,29 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import {
-  LayoutDashboard,
-  CreditCard,
-  Settings,
-  HelpCircle,
-  LogOut,
-  Shield,
-  X,
-  Loader2,
-} from 'lucide-react';
-import { useUserStore, useIsAdmin, useSubscription } from '@client/store/userStore';
+import { LocaleSwitcher } from '@client/components/i18n/LocaleSwitcher';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
+import { useIsAdmin, useSubscription, useUserData, useUserStore } from '@client/store/userStore';
+import { cn } from '@client/utils/cn';
+import { useLogger } from '@client/utils/logger';
+import { clientEnv } from '@shared/config/env';
 import { getPlanDisplayName } from '@shared/config/stripe';
 import { BILLING_COPY } from '@shared/constants/billing';
-import { useLogger } from '@client/utils/logger';
-import { cn } from '@client/utils/cn';
-import { clientEnv } from '@shared/config/env';
+import {
+  CreditCard,
+  HelpCircle,
+  LayoutDashboard,
+  Loader2,
+  LogOut,
+  Settings,
+  Shield,
+  X,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { LocaleSwitcher } from '@client/components/i18n/LocaleSwitcher';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import React from 'react';
+import { UpgradeCard } from './UpgradeCard';
 
 interface ISidebarItem {
   label: string;
@@ -41,6 +42,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
   const { signOut, user, isLoading, error } = useUserStore();
   const isAdmin = useIsAdmin();
   const subscription = useSubscription();
+  const { isFreeUser } = useUserData();
   const logger = useLogger('DashboardSidebar');
   const t = useTranslations('dashboard.sidebar');
 
@@ -53,9 +55,9 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
   const planDisplayName = isCanceled
     ? BILLING_COPY.freePlan
     : getPlanDisplayName({
-        subscriptionTier: user?.profile?.subscription_tier,
-        priceId: subscription?.price_id,
-      });
+      subscriptionTier: user?.profile?.subscription_tier,
+      priceId: subscription?.price_id,
+    });
 
   // Build menu items dynamically based on user role
   const menuItems: ISidebarItem[] = [
@@ -197,11 +199,10 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
                 onClick={() => handleNavigation(item.href)}
                 className={`
                 flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 w-full text-left
-                ${
-                  active
+                ${active
                     ? 'bg-accent/10 text-accent'
                     : 'text-muted-foreground hover:bg-surface-light hover:text-white'
-                }
+                  }
               `}
               >
                 <Icon
@@ -212,6 +213,9 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
               </button>
             );
           })}
+
+          {/* Upgrade Prompt */}
+          {isFreeUser && <UpgradeCard />}
         </nav>
 
         {/* Bottom Navigation */}
@@ -226,11 +230,10 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
                 onClick={() => handleNavigation(item.href)}
                 className={`
                 flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 w-full text-left
-                ${
-                  active
+                ${active
                     ? 'bg-accent/10 text-accent'
                     : 'text-muted-foreground hover:bg-surface-light hover:text-white'
-                }
+                  }
               `}
               >
                 <Icon

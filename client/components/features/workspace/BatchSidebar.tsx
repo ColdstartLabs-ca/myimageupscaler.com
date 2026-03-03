@@ -149,7 +149,6 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           showInsufficientModal={showInsufficientModal}
           setShowInsufficientModal={setShowInsufficientModal}
           router={router}
-          isFreeUser={isFreeUser}
         />
       </div>
 

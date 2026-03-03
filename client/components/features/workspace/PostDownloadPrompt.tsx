@@ -2,13 +2,11 @@
 
 import { Sparkles, X } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
-import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
+import { Modal } from '@client/components/ui/Modal';
 
-const POST_DOWNLOAD_SESSION_KEY = 'upgrade_prompt_shown_after_download';
-const POST_DOWNLOAD_LS_KEY = 'prompt_freq_after_download';
-const POST_DOWNLOAD_COOLDOWN_MS = 72 * 60 * 60 * 1000; // 72 hours
+const POST_DOWNLOAD_SHOW_PROBABILITY = 0.5;
 
 export interface IPostDownloadPromptProps {
   isFreeUser: boolean;
@@ -16,8 +14,8 @@ export interface IPostDownloadPromptProps {
 }
 
 /**
- * A dismissible slide-in banner shown to free users after their first download.
- * Uses both sessionStorage (once per session) and localStorage (72h cross-session) throttling.
+ * A dismissible modal shown to free users after download clicks.
+ * Evaluates a simple 50% chance on each new download event.
  * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'after_download'.
  */
 export const PostDownloadPrompt = ({
@@ -25,22 +23,16 @@ export const PostDownloadPrompt = ({
   downloadCount,
 }: IPostDownloadPromptProps): JSX.Element | null => {
   const [visible, setVisible] = useState(false);
+  const lastEvaluatedDownloadCountRef = useRef(0);
 
   useEffect(() => {
     if (!isFreeUser) return;
     if (downloadCount < 1) return;
-    if (typeof window === 'undefined') return;
+    if (downloadCount === lastEvaluatedDownloadCountRef.current) return;
+    lastEvaluatedDownloadCountRef.current = downloadCount;
 
-    // Cross-session 72h cooldown
-    if (!canShowPrompt({ key: POST_DOWNLOAD_LS_KEY, cooldownMs: POST_DOWNLOAD_COOLDOWN_MS }))
-      return;
+    if (Math.random() >= POST_DOWNLOAD_SHOW_PROBABILITY) return;
 
-    // Once per session
-    const alreadyShown = sessionStorage.getItem(POST_DOWNLOAD_SESSION_KEY);
-    if (alreadyShown) return;
-
-    sessionStorage.setItem(POST_DOWNLOAD_SESSION_KEY, 'true');
-    markPromptShown({ key: POST_DOWNLOAD_LS_KEY, cooldownMs: POST_DOWNLOAD_COOLDOWN_MS });
     setVisible(true);
 
     analytics.track('upgrade_prompt_shown', {
@@ -65,28 +57,55 @@ export const PostDownloadPrompt = ({
       destination: '/dashboard/billing',
       currentPlan: 'free',
     });
+    setVisible(false);
   };
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-secondary/30 bg-secondary/10 px-4 py-3 flex items-center gap-3 animate-slide-up">
-      <Sparkles className="w-4 h-4 text-secondary shrink-0" />
-      <p className="text-sm text-white flex-1">
-        Love the result?{' '}
-        <Link
-          href="/dashboard/billing"
-          className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
-          onClick={handleUpgradeClick}
+    <Modal isOpen={visible} onClose={handleDismiss} size="sm" showCloseButton={false}>
+      <div className="relative">
+        <button
+          onClick={handleDismiss}
+          className="absolute top-0 right-0 text-text-muted hover:text-white transition-colors p-1 rounded-full hover:bg-white/5"
+          aria-label="Dismiss upgrade prompt"
         >
-          Get 10x sharper with Premium models.
-        </Link>
-      </p>
-      <button
-        onClick={handleDismiss}
-        className="text-text-muted hover:text-white transition-colors p-1 rounded-full hover:bg-white/5 shrink-0"
-        aria-label="Dismiss upgrade prompt"
-      >
-        <X className="w-3.5 h-3.5" />
-      </button>
-    </div>
+          <X className="w-3.5 h-3.5" />
+        </button>
+
+        <div className="pr-8">
+          <div className="mb-3 inline-flex items-center justify-center rounded-full bg-secondary/20 p-2">
+            <Sparkles className="w-4 h-4 text-secondary shrink-0" />
+          </div>
+
+          <h3 className="text-lg font-semibold text-white mb-2">Want sharper, cleaner output?</h3>
+          <p className="text-sm text-text-muted mb-5">
+            Love the result?{' '}
+            <Link
+              href="/dashboard/billing"
+              className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
+              onClick={handleUpgradeClick}
+            >
+              Get 10x sharper with Premium models.
+            </Link>
+          </p>
+
+          <div className="flex items-center gap-2">
+            <Link
+              href="/dashboard/billing"
+              className="inline-flex items-center justify-center rounded-lg bg-secondary text-black font-semibold px-4 py-2 hover:bg-secondary/90 transition-colors"
+              onClick={handleUpgradeClick}
+            >
+              Upgrade Now
+            </Link>
+            <button
+              type="button"
+              onClick={handleDismiss}
+              className="inline-flex items-center justify-center rounded-lg border border-border px-4 py-2 text-sm text-text-muted hover:text-white hover:border-white/20 transition-colors"
+            >
+              Continue Free
+            </button>
+          </div>
+        </div>
+      </div>
+    </Modal>
   );
 };
