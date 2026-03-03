@@ -89,6 +89,20 @@ export const ModelCard: React.FC<IModelCardProps> = ({
             <span className="text-[8px] font-bold text-amber-300 uppercase tracking-wide">Pro</span>
           </div>
         )}
+
+        {/* Popularity/recommendation badge */}
+        {config.badge && (
+          <div
+            className={cn(
+              'absolute top-1.5 right-1.5 z-10 px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wide',
+              config.badge === 'popular'
+                ? 'bg-amber-500/90 text-white'
+                : 'bg-emerald-500/90 text-white'
+            )}
+          >
+            {config.badge === 'popular' ? 'Popular' : 'Recommended'}
+          </div>
+        )}
       </div>
 
       {/* Card Content Section */}

@@ -23,6 +23,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { BatchLimitModal } from './BatchLimitModal';
 import { ModelGalleryModal } from './ModelGalleryModal';
+import { PostDownloadPrompt } from './PostDownloadPrompt';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
@@ -70,6 +71,9 @@ const Workspace: React.FC = () => {
       enhancement: DEFAULT_ENHANCEMENT_SETTINGS,
     },
   });
+
+  // Download count state for post-download upgrade prompt
+  const [downloadCount, setDownloadCount] = useState(0);
 
   // Success banner state
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
@@ -143,6 +147,7 @@ const Workspace: React.FC = () => {
     try {
       setDownloadError(null);
       await downloadSingle(url, filename, config.qualityTier);
+      setDownloadCount(prev => prev + 1);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('workspace.downloadError.title');
@@ -282,6 +287,13 @@ const Workspace: React.FC = () => {
               isProcessingBatch={isProcessingBatch}
             />
           </div>
+
+          {/* Post-download upgrade prompt */}
+          {!showSuccessBanner && (
+            <div className="px-3 pb-2">
+              <PostDownloadPrompt isFreeUser={isFreeUser} downloadCount={downloadCount} />
+            </div>
+          )}
 
           {/* Queue Strip at bottom */}
           <div className="hidden md:block">

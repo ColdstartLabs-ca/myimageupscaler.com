@@ -7,6 +7,7 @@
     "freeUserMessage": "Free users can process 1 image at a time. Upgrade to unlock higher batch limits and process multiple images.",
     "securityMessage": "This is a security measure to prevent abuse. The limit will reset in approximately 1 hour. Upgrade your plan for higher limits.",
     "upgradeButton": "Upgrade Plan",
+    "unlockBatchButton": "Unlock Batch Processing",
     "addPartialButton": "Add {availableSlots} {count, plural, one {image} other {images}}",
     "cancelButton": "Cancel"
   },

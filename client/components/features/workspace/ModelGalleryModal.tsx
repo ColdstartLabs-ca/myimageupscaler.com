@@ -63,10 +63,14 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
     });
   }, [allTiers, searchQuery]);
 
-  // Separate into free and premium tiers
+  // Separate into free and premium tiers, sorted by popularity (descending)
   const { freeTiers, premiumTiers } = useMemo(() => {
-    const free = filteredTiers.filter(t => FREE_TIERS.includes(t.id));
-    const premium = filteredTiers.filter(t => PREMIUM_TIERS.includes(t.id));
+    const free = filteredTiers
+      .filter(t => FREE_TIERS.includes(t.id))
+      .sort((a, b) => (b.popularity ?? 50) - (a.popularity ?? 50));
+    const premium = filteredTiers
+      .filter(t => PREMIUM_TIERS.includes(t.id))
+      .sort((a, b) => (b.popularity ?? 50) - (a.popularity ?? 50));
     return { freeTiers: free, premiumTiers: premium };
   }, [filteredTiers]);
 

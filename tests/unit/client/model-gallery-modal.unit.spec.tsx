@@ -333,6 +333,93 @@ describe('ModelCard', () => {
   });
 });
 
+describe('badges and sorting', () => {
+  const mockOnSelect = vi.fn();
+  const mockOnLockedClick = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should render Popular badge on quick tier', () => {
+    render(
+      <ModelCard
+        tier="quick"
+        config={QUALITY_TIER_CONFIG['quick']}
+        isSelected={false}
+        isLocked={false}
+        onSelect={mockOnSelect}
+        onLockedClick={mockOnLockedClick}
+      />
+    );
+
+    expect(screen.getByText('Popular')).toBeInTheDocument();
+  });
+
+  it('should render Recommended badge on face-restore tier', () => {
+    render(
+      <ModelCard
+        tier="face-restore"
+        config={QUALITY_TIER_CONFIG['face-restore']}
+        isSelected={false}
+        isLocked={false}
+        onSelect={mockOnSelect}
+        onLockedClick={mockOnLockedClick}
+      />
+    );
+
+    expect(screen.getByText('Recommended')).toBeInTheDocument();
+  });
+
+  it('should sort tiers by popularity within sections', () => {
+    const mockOnClose = vi.fn();
+
+    render(
+      <ModelGalleryModal
+        isOpen={true}
+        onClose={mockOnClose}
+        currentTier="auto"
+        isFreeUser={false}
+        onSelect={mockOnSelect}
+      />
+    );
+
+    // Find all bold label spans in the free section (Available section)
+    // quick tier (Light Blur Fix, popularity 90) should appear before face-restore (80)
+    // which should appear before bg-removal (50)
+    const allLabels = document.querySelectorAll('span.font-bold.text-xs');
+    const labelTexts = Array.from(allLabels).map(el => el.textContent);
+
+    const lightBlurFixIndex = labelTexts.indexOf('Light Blur Fix');
+    const faceRestoreIndex = labelTexts.indexOf('Face Restore');
+    const bgRemovalIndex = labelTexts.indexOf('Background Removal');
+
+    // Light Blur Fix (quick, popularity 90) should be first in free tiers
+    expect(lightBlurFixIndex).toBeGreaterThanOrEqual(0);
+    expect(faceRestoreIndex).toBeGreaterThanOrEqual(0);
+    expect(bgRemovalIndex).toBeGreaterThanOrEqual(0);
+    expect(lightBlurFixIndex).toBeLessThan(faceRestoreIndex);
+    expect(faceRestoreIndex).toBeLessThan(bgRemovalIndex);
+  });
+
+  it('should not render badge when badge is null/undefined', () => {
+    render(
+      <ModelCard
+        tier="auto"
+        config={QUALITY_TIER_CONFIG['auto']}
+        isSelected={false}
+        isLocked={false}
+        onSelect={mockOnSelect}
+        onLockedClick={mockOnLockedClick}
+      />
+    );
+
+    // The auto tier has no badge, so neither "Popular" nor "Recommended" should appear
+    expect(screen.queryByText('Popular')).not.toBeInTheDocument();
+    expect(screen.queryByText('Recommended')).not.toBeInTheDocument();
+  });
+});
+
 describe('ModelGallerySearch', () => {
   const mockOnChange = vi.fn();
   const defaultSearchProps = {

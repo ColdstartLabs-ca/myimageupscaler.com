@@ -2,7 +2,15 @@
 
 import { Sparkles, X } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { analytics } from '@client/analytics/analyticsClient';
+import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
+import type { IPromptFrequencyConfig } from '@client/utils/promptFrequency';
+
+const AFTER_BATCH_FREQ_CONFIG: IPromptFrequencyConfig = {
+  key: 'prompt_freq_after_batch',
+  cooldownMs: 24 * 60 * 60 * 1000,
+};
 
 export interface IUpgradeSuccessBannerProps {
   processedCount: number;
@@ -22,16 +30,32 @@ export const UpgradeSuccessBanner = ({
     return false;
   });
 
+  useEffect(() => {
+    if (!dismissed && !hasSubscription && canShowPrompt(AFTER_BATCH_FREQ_CONFIG)) {
+      analytics.track('upgrade_prompt_shown', { trigger: 'after_batch' });
+      markPromptShown(AFTER_BATCH_FREQ_CONFIG);
+    }
+  }, [dismissed, hasSubscription]);
+
   if (dismissed || hasSubscription) {
     return null;
   }
 
+  if (!canShowPrompt(AFTER_BATCH_FREQ_CONFIG)) {
+    return null;
+  }
+
   const handleDismiss = () => {
+    analytics.track('upgrade_prompt_dismissed', { trigger: 'after_batch' });
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('upgrade-banner-dismissed', 'true');
     }
     setDismissed(true);
     onDismiss();
+  };
+
+  const handleSeePlansClick = () => {
+    analytics.track('upgrade_prompt_clicked', { trigger: 'after_batch' });
   };
 
   return (
@@ -67,7 +91,8 @@ export const UpgradeSuccessBanner = ({
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center sm:justify-start gap-5">
             <Link
-              href="/pricing"
+              href="/dashboard/billing"
+              onClick={handleSeePlansClick}
               className="gradient-cta shine-effect px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-white shadow-lg active:scale-95 transition-transform"
             >
               See Plans

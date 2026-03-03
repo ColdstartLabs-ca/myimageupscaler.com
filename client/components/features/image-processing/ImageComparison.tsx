@@ -1,6 +1,15 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ArrowLeftRight, Download, ZoomIn, ZoomOut } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@client/components/ui/Button';
+import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
+import type { IPromptFrequencyConfig } from '@client/utils/promptFrequency';
+import { analytics } from '@client/analytics/analyticsClient';
+
+const AFTER_COMPARISON_FREQ_CONFIG: IPromptFrequencyConfig = {
+  key: 'prompt_freq_after_comparison',
+  cooldownMs: 48 * 60 * 60 * 1000,
+};
 
 interface IImageComparisonProps {
   beforeUrl: string;
@@ -19,11 +28,24 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [showComparisonNudge, setShowComparisonNudge] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Auto-detect transparency from blob URL if not explicitly provided
   // Blob URLs indicate client-side processing (e.g., bg-removal) which produces transparent PNGs
   const showTransparency = hasTransparency ?? afterUrl.startsWith('blob:');
+
+  // Show upgrade nudge once after the user has moved the comparison slider,
+  // subject to cross-session frequency capping (48-hour cooldown).
+  useEffect(() => {
+    if (!isDragging && sliderPosition !== 50) {
+      if (canShowPrompt(AFTER_COMPARISON_FREQ_CONFIG)) {
+        setShowComparisonNudge(true);
+        markPromptShown(AFTER_COMPARISON_FREQ_CONFIG);
+        analytics.track('upgrade_prompt_shown', { trigger: 'after_comparison' });
+      }
+    }
+  }, [isDragging, sliderPosition]);
 
   const handleMouseDown = useCallback(() => {
     setIsDragging(true);
@@ -154,6 +176,15 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
           Enhanced
         </div>
       </div>
+
+      {showComparisonNudge && (
+        <div className="px-4 py-2 border-t border-border text-center text-xs text-text-muted">
+          Unlock premium models for even sharper results.{' '}
+          <Link href="/dashboard/billing" className="text-accent hover:underline font-medium">
+            Upgrade now
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

@@ -55,7 +55,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       userType: limit <= 5 ? 'free' : 'paid',
       source: 'batch_limit_modal',
     });
-    router.push('/pricing');
+    router.push('/dashboard/billing');
   };
 
   const handleAddPartial = () => {
@@ -134,7 +134,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       {/* Action Buttons */}
       <div className="space-y-3">
         <Button variant="primary" className="w-full" onClick={handleUpgradeClick}>
-          {t('upgradeButton')}
+          {t('unlockBatchButton')}
         </Button>
 
         {!serverEnforced && availableSlots > 0 && (

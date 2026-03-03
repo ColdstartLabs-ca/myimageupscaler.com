@@ -52,6 +52,11 @@ const ALLOWED_EVENTS = [
   'batch_limit_partial_add_clicked',
   'batch_limit_modal_closed',
 
+  // Upgrade prompt events
+  'upgrade_prompt_shown',
+  'upgrade_prompt_clicked',
+  'upgrade_prompt_dismissed',
+
   // pSEO-specific events
   'pseo_page_view',
   'pseo_cta_clicked',
