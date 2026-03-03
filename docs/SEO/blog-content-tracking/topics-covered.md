@@ -1,6 +1,6 @@
 # Blog Content Tracking - MyImageUpscaler
 
-**Last Updated**: 2026-02-28
+**Last Updated**: 2026-03-01
 
 ## Topics Covered (Blog Posts Published)
 
@@ -48,3 +48,5 @@
 | 2026-02-26 | midjourney upscaler, midjourney print, upscale AI art for print (Priority 1 roadmap)        | how-to-upscale-midjourney-images-for-print         | Guides      | Published |
 | 2026-02-27 | stable diffusion upscaler, sdxl upscaler, upscale stable diffusion art (Priority 1 roadmap) | stable-diffusion-upscaler                          | Guides      | Published |
 | 2026-02-28 | anime image upscaler, how to upscale anime images with ai (Priority 3 use-case roadmap)     | how-to-upscale-anime-images-with-ai                | Guides      | Published |
+| 2026-03-01 | ai image upscaling vs sharpening explained (GSC: 26 imp, pos ~8, 0 clicks)                  | ai-image-upscaling-vs-sharpening-explained         | Technical   | Published |
+| 2026-03-02 | logo upscaler, upscale logo without losing quality (Priority 3 roadmap, ~1,300/mo)          | how-to-upscale-a-logo-without-losing-quality       | Guides      | Published |

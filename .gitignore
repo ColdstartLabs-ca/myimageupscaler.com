@@ -90,3 +90,8 @@ C\:*
 
 supabase/*
 !supabase/migrations/
+
+# Night Watch
+/logs/
+night-watch.config.json
+*.claim
