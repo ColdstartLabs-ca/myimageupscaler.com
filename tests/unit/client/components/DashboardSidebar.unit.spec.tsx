@@ -22,12 +22,21 @@ vi.mock('lucide-react', () => ({
   Shield: () => null,
   X: () => null,
   Loader2: () => null,
+  Zap: () => null,
 }));
 
 vi.mock('@client/store/userStore', () => ({
   useUserStore: vi.fn(),
   useIsAdmin: vi.fn(() => false),
   useSubscription: vi.fn(() => null),
+  useUserData: vi.fn(() => ({
+    totalCredits: 100,
+    profile: null,
+    subscription: null,
+    isAuthenticated: true,
+    isFreeUser: true,
+  })),
+  useProfile: vi.fn(() => null),
 }));
 
 vi.mock('@client/components/stripe/CreditsDisplay', () => ({
@@ -36,6 +45,10 @@ vi.mock('@client/components/stripe/CreditsDisplay', () => ({
 
 vi.mock('@client/components/i18n/LocaleSwitcher', () => ({
   LocaleSwitcher: () => React.createElement('div', { 'data-testid': 'locale-switcher' }),
+}));
+
+vi.mock('@client/components/dashboard/UpgradeCard', () => ({
+  UpgradeCard: () => React.createElement('div', { 'data-testid': 'upgrade-card' }),
 }));
 
 vi.mock('@client/utils/logger', () => ({

@@ -784,6 +784,7 @@ describe('Stripe Webhook Handler', () => {
       });
       expect(mockProfileUpdate).toHaveBeenCalledWith({
         subscription_status: 'canceled',
+        subscription_tier: null,
       });
     });
 

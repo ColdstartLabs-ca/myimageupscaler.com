@@ -16,6 +16,7 @@ vi.mock('lucide-react', () => ({
   Receipt: () => <span data-testid="receipt-icon" />,
   RefreshCw: () => <span data-testid="refresh-icon" />,
   Wallet: () => <span data-testid="wallet-icon" />,
+  Zap: () => <span data-testid="zap-icon" />,
 }));
 
 // Mock translations for dashboard.billing
