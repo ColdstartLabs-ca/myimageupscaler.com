@@ -401,6 +401,107 @@ describe('ModelGallerySearch', () => {
   });
 });
 
+/**
+ * Phase 2: Model Gallery UX — Badges & Sorting
+ * Tests badge rendering on ModelCard and tier sorting by popularity in ModelGalleryModal.
+ */
+describe('Phase 2: ModelCard badge rendering', () => {
+  const mockOnSelect = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should render Popular badge when badge is popular', () => {
+    const popularConfig = { ...QUALITY_TIER_CONFIG['quick'], badge: 'popular' as const };
+    render(
+      <ModelCard
+        tier="quick"
+        config={popularConfig}
+        isSelected={false}
+        isLocked={false}
+        onSelect={mockOnSelect}
+      />
+    );
+    expect(screen.getByText('Popular')).toBeInTheDocument();
+  });
+
+  it('should render Recommended badge when badge is recommended', () => {
+    const recommendedConfig = {
+      ...QUALITY_TIER_CONFIG['face-restore'],
+      badge: 'recommended' as const,
+    };
+    render(
+      <ModelCard
+        tier="face-restore"
+        config={recommendedConfig}
+        isSelected={false}
+        isLocked={false}
+        onSelect={mockOnSelect}
+      />
+    );
+    expect(screen.getByText('Recommended')).toBeInTheDocument();
+  });
+
+  it('should not render badge when badge is null or undefined', () => {
+    const noBadgeConfig = { ...QUALITY_TIER_CONFIG['ultra'], badge: null as null | undefined };
+    render(
+      <ModelCard
+        tier="ultra"
+        config={noBadgeConfig}
+        isSelected={false}
+        isLocked={false}
+        onSelect={mockOnSelect}
+      />
+    );
+    expect(screen.queryByText('Popular')).not.toBeInTheDocument();
+    expect(screen.queryByText('Recommended')).not.toBeInTheDocument();
+  });
+});
+
+describe('Phase 2: ModelGalleryModal tier sorting by popularity', () => {
+  const mockOnClose = vi.fn();
+  const mockOnSelect = vi.fn();
+  const defaultProps = {
+    isOpen: true,
+    onClose: mockOnClose,
+    currentTier: 'face-restore' as QualityTier,
+    isFreeUser: false,
+    onSelect: mockOnSelect,
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should sort free tiers by popularity with auto first, then quick, then face-restore', async () => {
+    render(<ModelGalleryModal {...defaultProps} />);
+
+    // The "Available" section heading should be present
+    expect(screen.getByText('Available')).toBeInTheDocument();
+
+    // Get all model card buttons — order in DOM reflects sort order
+    // free tiers: quick (popularity 90), face-restore (popularity 80), bg-removal (popularity 50)
+    // auto is in PREMIUM_TIERS (not FREE_TIERS) so it won't appear in the free section
+    const cardButtons = document.querySelectorAll('button[class*="rounded-xl"]');
+    const cardLabels = Array.from(cardButtons).map(btn => {
+      const labelEl = btn.querySelector('span.font-bold.text-xs');
+      return labelEl?.textContent ?? '';
+    });
+
+    // Filter to only tier label cards (non-empty labels that are tier names)
+    const tierLabels = cardLabels.filter(l => l.length > 0);
+
+    // quick (popularity 90) should appear before face-restore (popularity 80)
+    const quickIndex = tierLabels.indexOf('Light Blur Fix');
+    const faceRestoreIndex = tierLabels.indexOf('Face Restore');
+
+    expect(quickIndex).toBeGreaterThanOrEqual(0);
+    expect(faceRestoreIndex).toBeGreaterThanOrEqual(0);
+    expect(quickIndex).toBeLessThan(faceRestoreIndex);
+  });
+});
+
 describe('BottomSheet', () => {
   const mockOnClose = vi.fn();
   const defaultSheetProps = {

@@ -15,13 +15,13 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
   const canonicalUrl = getCanonicalUrl('/pricing', locale);
 
   return {
-    title: 'Simple, Transparent Pricing - AI Image Upscaler',
+    title: 'AI Image Upscaler Pricing — Free Plan + Paid Credits',
     description:
-      'Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover. Free tier available, plans from $9 to $149 monthly.',
+      'Start free with 10 monthly credits. Upgrade for more credits, batch processing, and priority support. No credit card needed to get started.',
     openGraph: {
-      title: 'Simple, Transparent Pricing - AI Image Upscaler',
+      title: 'AI Image Upscaler Pricing — Free Plan + Paid Credits',
       description:
-        'Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover for AI image upscaling and enhancement.',
+        'Start free with 10 monthly credits. Upgrade for more credits, batch processing, and priority support. No credit card needed to get started.',
       url: canonicalUrl,
       type: 'website',
       images: [
@@ -35,9 +35,9 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Simple, Transparent Pricing - AI Image Upscaler',
+      title: 'AI Image Upscaler Pricing — Free Plan + Paid Credits',
       description:
-        'Choose the subscription plan that fits your needs. Free tier available, paid plans from $19 to $149 per month with monthly credits.',
+        'Start free with 10 monthly credits. Upgrade for more credits, batch processing, and priority support. No credit card needed to get started.',
       images: [`${clientEnv.BASE_URL}/og-image-pricing.png`],
     },
     alternates: {

@@ -37,7 +37,7 @@ Client-side React components, hooks, and utilities that run in the browser.
 
 - All TypeScript files (`.ts`, `.tsx`)
 - Use functional components with hooks
-- Components should be small and focused
+- Components should be small and focused — **extract complex JSX blocks into named subcomponents** instead of using inline comment blocks (e.g., `{/* Badge */}`). Subcomponents promote SRP and DRY.
 - Use composition over inheritance
 - Implement proper error boundaries
 - Use React Query for server state management

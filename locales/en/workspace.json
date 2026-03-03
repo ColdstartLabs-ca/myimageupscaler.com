@@ -4,9 +4,10 @@
     "clientEnforcedTitle": "Batch Limit Reached",
     "serverEnforcedMessage": "You've reached the processing limit for your plan. You processed <currentCount>{currentCountValue}</currentCount> images, but your plan allows a maximum of <limit>{limitValue}</limit> images per hour.",
     "clientEnforcedMessage": "You tried to add {attempted} image{plural, plural, one {} other {s}}, but your plan allows a maximum of {limit} image{limitPlural, plural, one {} other {s}} in the queue.",
-    "freeUserMessage": "Free users can process 1 image at a time. Upgrade to unlock higher batch limits and process multiple images.",
+    "freeUserMessage": "You're on the free tier (1 image at a time). Upgrade to process up to 50 images in batch — starting at $5.",
     "securityMessage": "This is a security measure to prevent abuse. The limit will reset in approximately 1 hour. Upgrade your plan for higher limits.",
     "upgradeButton": "Upgrade Plan",
+    "upgradeButtonBatch": "Unlock Batch Processing",
     "addPartialButton": "Add {availableSlots} {count, plural, one {image} other {images}}",
     "cancelButton": "Cancel"
   },
@@ -156,6 +157,11 @@
     "download": "Download",
     "original": "Original",
     "enhancedLabel": "Enhanced"
+  },
+  "postDownloadPrompt": {
+    "message": "Love the result?",
+    "ctaLink": "Get 10x sharper with Premium models.",
+    "dismiss": "Dismiss upgrade prompt"
   },
   "upgradeSuccessBanner": {
     "title": "Great work!",

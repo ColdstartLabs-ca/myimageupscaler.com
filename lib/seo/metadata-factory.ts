@@ -145,10 +145,10 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     formats: `Image Format Upscaling | ${APP_NAME}`,
     scale: `Image Resolution Enhancement | ${APP_NAME}`,
     'use-cases': `Industry Solutions | ${APP_NAME}`,
-    compare: `Compare Image Upscaling Tools | ${APP_NAME}`,
+    compare: `AI Image Upscaler Comparisons 2026 | See Who Wins`,
     'comparisons-expanded': `Detailed Tool Comparisons | ${APP_NAME}`,
     alternatives: `Best Upscaler Alternatives | ${APP_NAME}`,
-    guides: `Image Enhancement Guides | ${APP_NAME}`,
+    guides: `Image Upscaling Guides & Tutorials | ${APP_NAME}`,
     'technical-guides': `Technical Image Enhancement Guides | ${APP_NAME}`,
     free: `Free AI Image Upscaler — 10 Free Credits | ${APP_NAME}`,
     'bulk-tools': `Bulk Image Tools | ${APP_NAME}`,
@@ -158,7 +158,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     'device-use': `Device-Specific Enhancement | ${APP_NAME}`,
     'format-scale': `Format & Scale Tools | ${APP_NAME}`,
     'platform-format': `Platform & Format Tools | ${APP_NAME}`,
-    'photo-restoration': `Photo Restoration Services | ${APP_NAME}`,
+    'photo-restoration': `Free AI Photo Restoration — Restore Old & Damaged Photos`,
     'camera-raw': `Camera RAW Enhancement | ${APP_NAME}`,
     'industry-insights': `Industry Insights | ${APP_NAME}`,
     'device-optimization': `Device Optimization Tools | ${APP_NAME}`,
@@ -174,12 +174,12 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     scale:
       'Resolution and scale-specific upscaling options. Enhance images to 4K, 8K, or custom resolutions with AI technology.',
     'use-cases': `Industry-specific image enhancement solutions for e-commerce, real estate, photography, and more. See how ${APP_NAME} fits your workflow.`,
-    compare: `Compare ${APP_NAME} with other image upscaling tools. See features, pricing, and performance side-by-side.`,
+    compare: `Side-by-side comparisons of top AI upscalers. See how ${APP_NAME} stacks up against Topaz, Remini, Let's Enhance, and more. Try free.`,
     'comparisons-expanded': `Detailed comparisons of ${APP_NAME} with leading image upscaling tools. In-depth analysis of features, performance, pricing, and use cases.`,
     alternatives:
       'Find the best alternatives to popular upscaling tools. Compare features, pricing, and capabilities to make the right choice.',
     guides:
-      'Learn how to get the most out of your images with step-by-step guides and tutorials. Expert tips and best practices included.',
+      'Step-by-step guides on AI upscaling, format conversion, and image enhancement. Tutorials for photographers, designers, and creators.',
     'technical-guides':
       'Comprehensive technical guides for image processing, optimization, and enhancement. Expert-level insights and best practices.',
     free: 'Free AI image upscaler and enhancer. Start with 10 free credits — no credit card required. Upscale, enhance, and remove backgrounds instantly.',
@@ -195,7 +195,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
       'Combined format and scale enhancement. Resize images to specific dimensions while converting formats.',
     'platform-format':
       'Platform and format combinations. Export from AI platforms like Midjourney and Stable Diffusion in your preferred image format with optimized quality.',
-    'photo-restoration': `Professional AI-powered photo restoration services. Bring old and damaged photos back to life with our advanced technology.`,
+    'photo-restoration': `Repair scratches, fading, and damage in old photos with AI. Free photo restoration online — no software, no signup needed. Bring memories back.`,
     'camera-raw': `Camera RAW image processing and enhancement for professional photographers. Support for all major camera brands.`,
     'industry-insights': `Industry-specific insights and solutions for image enhancement. See how AI is transforming different industries.`,
     'device-optimization': `Device optimization tools for better image performance. Optimize images for mobile, desktop, and various platforms.`,

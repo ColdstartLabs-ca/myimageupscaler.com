@@ -24,6 +24,7 @@ import { useTranslations } from 'next-intl';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { ModelGalleryModal } from './ModelGalleryModal';
+import { PostDownloadPrompt } from './PostDownloadPrompt';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
@@ -75,6 +76,7 @@ const Workspace: React.FC = () => {
   // Success banner state
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [downloadCount, setDownloadCount] = useState(0);
   const wasProcessingRef = React.useRef(false);
 
   // Global error state for showing ErrorAlert components
@@ -144,6 +146,7 @@ const Workspace: React.FC = () => {
     try {
       setDownloadError(null);
       await downloadSingle(url, filename, config.qualityTier);
+      setDownloadCount(c => c + 1);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('workspace.downloadError.title');
@@ -291,6 +294,13 @@ const Workspace: React.FC = () => {
               isFreeUser={isFreeUser}
             />
           </div>
+
+          {/* Post-download upgrade nudge (free users only, once per session / 72h cooldown) */}
+          {!showSuccessBanner && (
+            <div className="px-3 md:px-4 pb-2">
+              <PostDownloadPrompt isFreeUser={isFreeUser} downloadCount={downloadCount} />
+            </div>
+          )}
 
           {/* Queue Strip at bottom */}
           <div className="hidden md:block">

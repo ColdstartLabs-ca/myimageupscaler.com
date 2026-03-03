@@ -76,7 +76,9 @@ export type IUpgradePromptTrigger =
   | 'out_of_credits'
   | 'model_gate'
   | 'after_upscale'
-  | 'after_comparison';
+  | 'after_comparison'
+  | 'after_download'
+  | 'after_batch';
 
 export interface IUpgradePromptShownProperties {
   trigger: IUpgradePromptTrigger;

@@ -52,6 +52,8 @@ export const QUALITY_TIER_CONFIG: Record<
     previewImages: IPreviewImages | null; // Before/after thumbnails for gallery
     customPrompt?: string; // Optional tier-specific prompt (overrides model default, but user customInstructions still win)
     genericPromptOverride?: boolean; // When true, customPrompt replaces the entire prompt (no generic modifiers appended). When false/unset, customPrompt is used as base and merged with generic modifiers.
+    badge?: 'popular' | 'recommended' | null; // Optional badge displayed on model card (top-right corner)
+    popularity?: number; // 1-100 for sorting within sections, higher = more popular
   }
 > = {
   auto: {
@@ -67,6 +69,7 @@ export const QUALITY_TIER_CONFIG: Record<
       after: '/before-after/auto/preview.webp',
       displayMode: 'static',
     },
+    popularity: 50,
   },
   quick: {
     label: 'Light Blur Fix',
@@ -80,6 +83,8 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/quick/before.webp',
       after: '/before-after/quick/after.webp',
     },
+    badge: 'popular',
+    popularity: 90,
   },
   'budget-edit': {
     label: 'Standard Enhance',
@@ -94,6 +99,7 @@ export const QUALITY_TIER_CONFIG: Record<
       after: '/before-after/budget-edit/after.webp',
       objectPosition: 'center 20%',
     },
+    popularity: 70,
   },
   'face-pro': {
     label: 'Portrait Pro',
@@ -108,6 +114,7 @@ export const QUALITY_TIER_CONFIG: Record<
       after: '/before-after/face-pro/after.webp',
       objectPosition: 'center 25%',
     },
+    popularity: 50,
   },
   'seedream-edit': {
     label: 'Creative Edit',
@@ -121,6 +128,7 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/seedream-edit/before.webp',
       after: '/before-after/seedream-edit/after.webp',
     },
+    popularity: 50,
   },
   'face-restore': {
     label: 'Face Restore',
@@ -134,6 +142,8 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/face-restore/before.webp',
       after: '/before-after/face-restore/after.webp',
     },
+    badge: 'recommended',
+    popularity: 80,
   },
   'fast-edit': {
     label: 'Quick Enhance',
@@ -147,6 +157,7 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/fast-edit/before.webp',
       after: '/before-after/fast-edit/after.webp',
     },
+    popularity: 50,
   },
   'budget-old-photo': {
     label: 'Old Photo Fix',
@@ -160,6 +171,7 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/budget-old-photo/before.webp',
       after: '/before-after/budget-old-photo/after.webp',
     },
+    popularity: 50,
     customPrompt:
       'Restore this old or damaged photo. Fix fading, color degradation, and minor scratches or blemishes. Recover natural skin tones and colors while preserving the original composition and character of the photograph.',
     genericPromptOverride: true,
@@ -176,6 +188,7 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/anime-upscale/before.webp',
       after: '/before-after/anime-upscale/after.webp',
     },
+    popularity: 50,
   },
   'hd-upscale': {
     label: 'HD Upscale',
@@ -189,6 +202,8 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/hd-upscale/before.webp',
       after: '/before-after/hd-upscale/after.webp',
     },
+    badge: 'popular',
+    popularity: 75,
   },
   ultra: {
     label: 'Ultra Upscale',
@@ -202,6 +217,7 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/ultra/before.webp',
       after: '/before-after/ultra/after.webp',
     },
+    popularity: 50,
   },
   'bg-removal': {
     label: 'Background Removal',
@@ -215,6 +231,7 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/bg-removal/before.webp',
       after: '/before-after/bg-removal/after.webp',
     },
+    popularity: 50,
   },
   'lighting-fix': {
     label: 'Lighting Fix',
@@ -228,6 +245,7 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/lighting-fix/before.webp',
       after: '/before-after/lighting-fix/after.webp',
     },
+    popularity: 50,
     customPrompt:
       'Fix the lighting in this image. Correct underexposure or overexposure, balance shadows and highlights, and normalize the overall luminance so the subject is clearly visible. Preserve the original colors and composition exactly — only adjust lighting, exposure and artifacts.',
     genericPromptOverride: true,
@@ -245,6 +263,7 @@ export const QUALITY_TIER_CONFIG: Record<
       after: '/before-after/resume-photo/after.webp',
       displayMode: 'flip',
     },
+    popularity: 50,
     customPrompt:
       'Transform this photo into a professional corporate headshot suitable for a resume or LinkedIn profile. Replace clothes with a suite. Remove any background and place the subject against a solid white background. Ensure even, flattering lighting on the face. Smooth minor skin blemishes while keeping the person looking natural and recognizable. Maintain a sharp focus on the face and upper body. The result should look like a studio-quality professional portrait.',
     genericPromptOverride: true,
@@ -268,6 +287,7 @@ export const QUALITY_TIER_CONFIG: Record<
       before: '/before-after/photo-repair/before.webp',
       after: '/before-after/photo-repair/after.webp',
     },
+    popularity: 50,
     customPrompt:
       'Repair this physically damaged photograph. Preserve original structure and dimensions. Reconstruct any torn, missing, or destroyed areas by intelligently filling in the gaps based on surrounding context. Remove scratches, cracks, water stains, and other physical damage marks. Restore the image to look as if it was never damaged. Preserve the original content, colors, and composition exactly — only repair the physical damage.',
   },

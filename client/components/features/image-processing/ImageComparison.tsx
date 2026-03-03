@@ -3,8 +3,10 @@ import { ArrowLeftRight, Download, Sparkles, ZoomIn, ZoomOut } from 'lucide-reac
 import Link from 'next/link';
 import { Button } from '@client/components/ui/Button';
 import { analytics } from '@client/analytics/analyticsClient';
+import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 
 const AFTER_COMPARISON_SESSION_KEY = 'upgrade_prompt_shown_after_comparison';
+const AFTER_COMPARISON_LS_KEY = 'prompt_freq_after_comparison';
 
 interface IImageComparisonProps {
   beforeUrl: string;
@@ -40,9 +42,11 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
     // Show upgrade nudge on first slider interaction (once per session)
     if (showUpgradeNudge && !hasInteractedRef.current && typeof window !== 'undefined') {
       hasInteractedRef.current = true;
+      if (!canShowPrompt({ key: AFTER_COMPARISON_LS_KEY, cooldownMs: 48 * 60 * 60 * 1000 })) return;
       const alreadyShown = sessionStorage.getItem(AFTER_COMPARISON_SESSION_KEY);
       if (!alreadyShown) {
         sessionStorage.setItem(AFTER_COMPARISON_SESSION_KEY, 'true');
+        markPromptShown({ key: AFTER_COMPARISON_LS_KEY, cooldownMs: 48 * 60 * 60 * 1000 });
         setNudgeVisible(true);
         analytics.track('upgrade_prompt_shown', {
           trigger: 'after_comparison',

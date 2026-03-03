@@ -168,7 +168,9 @@ vi.mock('@client/components/features/workspace/ModelGallerySearch', () => ({
 
 import { ModelGalleryModal } from '@/client/components/features/workspace/ModelGalleryModal';
 import { AfterUpscaleBanner } from '@/client/components/features/workspace/AfterUpscaleBanner';
+import { PostDownloadPrompt } from '@/client/components/features/workspace/PostDownloadPrompt';
 import { QualityTier } from '@/shared/types/coreflow.types';
+import { canShowPrompt, markPromptShown } from '@/client/utils/promptFrequency';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -568,6 +570,272 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
       trigger: 'after_comparison',
       destination: '/dashboard/billing',
       currentPlan: 'free',
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Phase 1: after_download — PostDownloadPrompt
+// ---------------------------------------------------------------------------
+
+describe('Phase 1: after_download — PostDownloadPrompt', () => {
+  let store: Map<string, string>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    sessionStorage.clear();
+    store = new Map();
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+      removeItem: (key: string) => store.delete(key),
+      clear: () => store.clear(),
+      get length() {
+        return store.size;
+      },
+      key: (index: number) => Array.from(store.keys())[index] ?? null,
+    });
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+    vi.unstubAllGlobals();
+  });
+
+  it('should show PostDownloadPrompt after first download for free user', async () => {
+    render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Love the result\?/i)).toBeInTheDocument();
+    });
+  });
+
+  it('should NOT show PostDownloadPrompt for paid users', async () => {
+    const { container } = render(<PostDownloadPrompt isFreeUser={false} downloadCount={1} />);
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('should respect 72h localStorage cooldown', async () => {
+    // Simulate prompt was shown recently by marking it shown
+    markPromptShown({ key: 'prompt_freq_after_download', cooldownMs: 72 * 60 * 60 * 1000 });
+
+    const { container } = render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('should fire upgrade_prompt_shown with trigger after_download', async () => {
+    render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+
+    await waitFor(() => {
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
+        trigger: 'after_download',
+        currentPlan: 'free',
+      });
+    });
+  });
+
+  it('should fire upgrade_prompt_dismissed on X click', async () => {
+    render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Dismiss upgrade prompt')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByLabelText('Dismiss upgrade prompt'));
+
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_dismissed', {
+      trigger: 'after_download',
+      currentPlan: 'free',
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Love the result\?/i)).not.toBeInTheDocument();
+    });
+  });
+
+  it('should navigate to /dashboard/billing on CTA click', async () => {
+    render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+
+    await waitFor(() => {
+      const link = screen.getByRole('link', { name: /Get 10x sharper with Premium models\./i });
+      expect(link).toHaveAttribute('href', '/dashboard/billing');
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Phase 4: promptFrequency utility
+// ---------------------------------------------------------------------------
+
+describe('Phase 4: promptFrequency utility', () => {
+  // Use a real in-memory localStorage implementation so get/set/clear work correctly.
+  // The global setup mocks localStorage with vi.fn() stubs that don't persist state,
+  // so we install a working store for this describe block.
+  let store: Map<string, string>;
+
+  beforeEach(() => {
+    store = new Map();
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+      removeItem: (key: string) => store.delete(key),
+      clear: () => store.clear(),
+      get length() {
+        return store.size;
+      },
+      key: (index: number) => Array.from(store.keys())[index] ?? null,
+    });
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('promptFrequency: should allow prompt when no previous show', () => {
+    const result = canShowPrompt({ key: 'test_prompt', cooldownMs: 24 * 60 * 60 * 1000 });
+    expect(result).toBe(true);
+  });
+
+  it('promptFrequency: should block prompt within cooldown period', () => {
+    markPromptShown({ key: 'test_prompt', cooldownMs: 24 * 60 * 60 * 1000 });
+    const result = canShowPrompt({ key: 'test_prompt', cooldownMs: 24 * 60 * 60 * 1000 });
+    expect(result).toBe(false);
+  });
+
+  it('promptFrequency: should allow prompt after cooldown expires', () => {
+    const pastTimestamp = Date.now() - 25 * 60 * 60 * 1000; // 25 hours ago
+    localStorage.setItem('test_prompt_last_shown', String(pastTimestamp));
+    const result = canShowPrompt({ key: 'test_prompt', cooldownMs: 24 * 60 * 60 * 1000 });
+    expect(result).toBe(true);
+  });
+
+  it('AfterUpscaleBanner should respect 24h cross-session cooldown', async () => {
+    // Simulate banner was shown recently by writing the timestamp directly
+    localStorage.setItem('prompt_freq_after_upscale_last_shown', String(Date.now()));
+
+    const { container } = render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(container.firstChild).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Phase 3: Batch Limit Modal & UpgradeSuccessBanner
+// ---------------------------------------------------------------------------
+
+vi.mock('next-intl', () => ({
+  useTranslations: (ns: string) => {
+    const translations: Record<string, string> = {
+      'workspace.batchLimit.serverEnforcedTitle': 'Batch Processing Limit Reached',
+      'workspace.batchLimit.clientEnforcedTitle': 'Batch Limit Reached',
+      'workspace.batchLimit.clientEnforcedMessage':
+        'You tried to add {attempted} images but your plan allows a maximum of {limit}.',
+      'workspace.batchLimit.freeUserMessage':
+        "You're on the free tier (1 image at a time). Upgrade to process up to 50 images in batch — starting at $5.",
+      'workspace.batchLimit.securityMessage':
+        'This is a security measure to prevent abuse. The limit will reset in approximately 1 hour.',
+      'workspace.batchLimit.upgradeButton': 'Upgrade Plan',
+      'workspace.batchLimit.upgradeButtonBatch': 'Unlock Batch Processing',
+      'workspace.batchLimit.addPartialButton': 'Add images',
+      'workspace.batchLimit.cancelButton': 'Cancel',
+      'common.cancel': 'Cancel',
+    };
+
+    const t = (key: string, _params?: Record<string, unknown>) =>
+      translations[`${ns}.${key}`] ?? key;
+    t.rich = (key: string, _params?: Record<string, unknown>) =>
+      translations[`${ns}.${key}`] ?? key;
+    return t;
+  },
+}));
+
+vi.mock('@client/components/ui/Modal', () => ({
+  Modal: ({
+    isOpen,
+    children,
+  }: {
+    isOpen: boolean;
+    children: React.ReactNode;
+    onClose?: () => void;
+    size?: string;
+  }) => (isOpen ? <div data-testid="modal">{children}</div> : null),
+}));
+
+import { BatchLimitModal } from '@/client/components/features/workspace/BatchLimitModal';
+import { UpgradeSuccessBanner } from '@/client/components/features/workspace/UpgradeSuccessBanner';
+
+describe('Phase 3: BatchLimitModal improvements', () => {
+  const defaultProps = {
+    isOpen: true,
+    onClose: vi.fn(),
+    limit: 1,
+    attempted: 3,
+    currentCount: 1,
+    onAddPartial: vi.fn(),
+    serverEnforced: false,
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
+  it('should show "Unlock Batch Processing" button text in BatchLimitModal', () => {
+    render(<BatchLimitModal {...defaultProps} />);
+
+    expect(screen.getByText('Unlock Batch Processing')).toBeInTheDocument();
+  });
+
+  it('should show free user specific copy when limit is 1', () => {
+    render(<BatchLimitModal {...defaultProps} limit={1} />);
+
+    expect(
+      screen.getByText(
+        "You're on the free tier (1 image at a time). Upgrade to process up to 50 images in batch — starting at $5."
+      )
+    ).toBeInTheDocument();
+  });
+});
+
+describe('Phase 3: UpgradeSuccessBanner fixes', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
+  it('UpgradeSuccessBanner should link to /dashboard/billing', () => {
+    render(
+      <UpgradeSuccessBanner processedCount={3} onDismiss={vi.fn()} hasSubscription={false} />
+    );
+
+    const link = screen.getByRole('link', { name: /See Plans/i });
+    expect(link).toHaveAttribute('href', '/dashboard/billing');
+  });
+
+  it('UpgradeSuccessBanner should fire upgrade_prompt_shown on render', async () => {
+    render(
+      <UpgradeSuccessBanner processedCount={3} onDismiss={vi.fn()} hasSubscription={false} />
+    );
+
+    await waitFor(() => {
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
+        trigger: 'after_batch',
+        currentPlan: 'free',
+      });
     });
   });
 });

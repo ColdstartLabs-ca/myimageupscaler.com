@@ -82,6 +82,8 @@ export const ModelCard: React.FC<IModelCardProps> = ({
           </div>
         )}
 
+        <TierBadge badge={config.badge} />
+
         {/* Locked badge - top-left corner */}
         {isLocked && (
           <div className="absolute top-1.5 left-1.5 flex items-center gap-1 px-1.5 py-0.5 bg-black/70 backdrop-blur-sm rounded-full pointer-events-none z-10">
@@ -423,6 +425,26 @@ const StaticThumbnail: React.FC<{ previewImages: IPreviewImages; tierLabel: stri
         onLoad={() => setIsLoaded(true)}
         onError={() => setHasError(true)}
       />
+    </div>
+  );
+};
+
+/**
+ * Small pill badge displayed in the top-right corner of a model card preview.
+ * Shows "Popular" (amber) or "Recommended" (green) based on the badge type.
+ */
+const TierBadge: React.FC<{ badge: 'popular' | 'recommended' | null | undefined }> = ({
+  badge,
+}) => {
+  if (!badge) return null;
+  return (
+    <div
+      className={cn(
+        'absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wide pointer-events-none z-10',
+        badge === 'popular' ? 'bg-amber-500/90 text-white' : 'bg-emerald-500/90 text-white'
+      )}
+    >
+      {badge === 'popular' ? 'Popular' : 'Recommended'}
     </div>
   );
 };

@@ -2,7 +2,8 @@
 
 import { Sparkles, X } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { analytics } from '@client/analytics/analyticsClient';
 
 export interface IUpgradeSuccessBannerProps {
   processedCount: number;
@@ -22,11 +23,18 @@ export const UpgradeSuccessBanner = ({
     return false;
   });
 
+  useEffect(() => {
+    if (!dismissed && !hasSubscription) {
+      analytics.track('upgrade_prompt_shown', { trigger: 'after_batch', currentPlan: 'free' });
+    }
+  }, [dismissed, hasSubscription]);
+
   if (dismissed || hasSubscription) {
     return null;
   }
 
   const handleDismiss = () => {
+    analytics.track('upgrade_prompt_dismissed', { trigger: 'after_batch', currentPlan: 'free' });
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('upgrade-banner-dismissed', 'true');
     }
@@ -67,7 +75,14 @@ export const UpgradeSuccessBanner = ({
           </p>
           <div className="mt-1.5 sm:mt-4 flex flex-wrap items-center gap-3 sm:gap-5">
             <Link
-              href="/pricing"
+              href="/dashboard/billing"
+              onClick={() =>
+                analytics.track('upgrade_prompt_clicked', {
+                  trigger: 'after_batch',
+                  destination: '/dashboard/billing',
+                  currentPlan: 'free',
+                })
+              }
               className="gradient-cta shine-effect px-3.5 sm:px-6 py-1 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white shadow-lg active:scale-95 transition-transform"
             >
               See Plans
