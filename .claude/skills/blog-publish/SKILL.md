@@ -41,6 +41,7 @@ Create SEO-optimized blog posts about image upscaling, AI photo enhancement, and
 ```
 
 **IMPORTANT Changes:**
+
 - ✅ **Always check roadmap first** - pre-analyzed keyword opportunities
 - ✅ **Track topics covered** - prevent keyword cannibalization
 - ✅ **Update tracking after publish** - keep checklist current
@@ -83,11 +84,11 @@ fi
 
 **IMPORTANT**: We have DR 18 with 75 referring domains. We CANNOT rank for high-volume head terms (500K+ searches). Focus on:
 
-| Tier | Volume Range | Competition | Can We Rank? | Priority |
-|------|--------------|-------------|--------------|----------|
-| **Long-tail** | 300-2,000 | Low | **YES** (DR 15-25 needed) | **P1** |
-| **Mid-tail** | 2,000-10,000 | Low-Med | **MAYBE** (DR 25-35 needed) | **P2** |
-| **Head terms** | 50,000+ | High | **NO** (DR 50+ needed) | **AVOID** |
+| Tier           | Volume Range | Competition | Can We Rank?                | Priority  |
+| -------------- | ------------ | ----------- | --------------------------- | --------- |
+| **Long-tail**  | 300-2,000    | Low         | **YES** (DR 15-25 needed)   | **P1**    |
+| **Mid-tail**   | 2,000-10,000 | Low-Med     | **MAYBE** (DR 25-35 needed) | **P2**    |
+| **Head terms** | 50,000+      | High        | **NO** (DR 50+ needed)      | **AVOID** |
 
 ### Keyword Selection Rules
 
@@ -152,16 +153,16 @@ grep -i "$TARGET_KEYWORD" docs/SEO/blog-content-tracking/topics-covered.md && \
 
 **Decision Matrix:**
 
-| Source | Priority | When to Use |
-|--------|----------|-------------|
-| **Priority 1: Platform-Specific** | P1 | Platform upscaler pages need blog support |
-| **Priority 2: Format-Specific** | P1 | Format pages (HEIC, TIFF, WebP) need content |
-| **Priority 3: Use-Case Specific** | P1 | Use case pages (logo, real estate, NFT) |
-| **Priority 4: Scale-Specific** | P2 | Scale pages (8x, 16x, 4x sweet spot) |
-| **Priority 5: Free + Long-Tail** | P2 | Free modifier keywords |
-| **Priority 6: Question-Based** | P2 | Featured snippet opportunities |
-| **Priority 7: Comparison** | P3 | Alternative/comparison posts |
-| **Topics Already Covered** | AVOID | Check topics-covered.md to prevent duplication |
+| Source                            | Priority | When to Use                                    |
+| --------------------------------- | -------- | ---------------------------------------------- |
+| **Priority 1: Platform-Specific** | P1       | Platform upscaler pages need blog support      |
+| **Priority 2: Format-Specific**   | P1       | Format pages (HEIC, TIFF, WebP) need content   |
+| **Priority 3: Use-Case Specific** | P1       | Use case pages (logo, real estate, NFT)        |
+| **Priority 4: Scale-Specific**    | P2       | Scale pages (8x, 16x, 4x sweet spot)           |
+| **Priority 5: Free + Long-Tail**  | P2       | Free modifier keywords                         |
+| **Priority 6: Question-Based**    | P2       | Featured snippet opportunities                 |
+| **Priority 7: Comparison**        | P3       | Alternative/comparison posts                   |
+| **Topics Already Covered**        | AVOID    | Check topics-covered.md to prevent duplication |
 
 ### Topic Selection Workflow
 
@@ -423,13 +424,31 @@ curl -s -X POST http://localhost:3000/api/blog/posts \
 
 ---
 
-## Step 3.5: Add pSEO Internal Links (REQUIRED)
+## Step 3.5: Add Internal Links (REQUIRED)
 
-**CRITICAL**: Every blog post must contain 2-3 contextual internal links to relevant pSEO category pages. This distributes link equity from the blog to the pSEO ecosystem.
+**CRITICAL**: Every blog post must contain 2-3 contextual internal links. Prioritize pages that are already getting GSC impressions but need more clicks — internal links from the blog push them up.
 
-### Discover Relevant pSEO Pages
+### Step A: Check GSC for High-Value Pages to Support
 
-Scan the pSEO data files to find pages that match the blog post topic. Available categories:
+Before picking pages to link to, check which existing pages have impressions but low CTR. These are the highest-leverage internal link targets.
+
+```bash
+# Run GSC analysis to find pages worth supporting
+# Use the /gsc-analysis skill or check the latest report:
+cat docs/SEO/reports/gsc-*.md 2>/dev/null | grep -A3 "impression" | head -40
+```
+
+**Target pages with:**
+
+- 50+ impressions / month
+- CTR < 5%
+- Position 8-30 (close to page 1 — a link boost can push them over)
+
+These benefit most from internal link juice. Prefer linking to them over arbitrary pSEO pages.
+
+### Step B: Discover Relevant pSEO Pages to Link
+
+Scan the pSEO data files to find pages that match the blog post topic, then cross-reference with the GSC high-impression pages above. Pages that appear in both lists are the highest-priority link targets. Available categories:
 
 ```bash
 # List all available pSEO categories
@@ -457,68 +476,81 @@ files.forEach(f => {
 
 ### Category → URL Pattern
 
-| Category file       | URL prefix        | Good for posts about...                        |
-| ------------------- | ----------------- | ---------------------------------------------- |
-| `scale.json`        | `/scale/`         | Resolution, 4K, upscaling, print size          |
-| `free.json`         | `/free/`          | Free tools, no signup, trial, credits          |
-| `formats.json`      | `/formats/`       | JPEG, PNG, WebP, AVIF, HEIC, file formats      |
-| `use-cases.json`    | `/use-cases/`     | E-commerce, real estate, portraits, anime      |
-| `tools.json`        | `/tools/`         | Specific AI tools (enhancer, upscaler, bg)     |
-| `alternatives.json` | `/alternatives/`  | Tool comparisons, vs, alternatives             |
-| `compare.json`      | `/compare/`       | Comparisons, head-to-head                      |
-| `guides.json`       | `/guides/`        | How-to guides, tutorials                       |
+| Category file       | URL prefix       | Good for posts about...                    |
+| ------------------- | ---------------- | ------------------------------------------ |
+| `scale.json`        | `/scale/`        | Resolution, 4K, upscaling, print size      |
+| `free.json`         | `/free/`         | Free tools, no signup, trial, credits      |
+| `formats.json`      | `/formats/`      | JPEG, PNG, WebP, AVIF, HEIC, file formats  |
+| `use-cases.json`    | `/use-cases/`    | E-commerce, real estate, portraits, anime  |
+| `tools.json`        | `/tools/`        | Specific AI tools (enhancer, upscaler, bg) |
+| `alternatives.json` | `/alternatives/` | Tool comparisons, vs, alternatives         |
+| `compare.json`      | `/compare/`      | Comparisons, head-to-head                  |
+| `guides.json`       | `/guides/`       | How-to guides, tutorials                   |
 
 ### High-Value pSEO Pages to Link (Most Common)
 
-| URL                                             | Target anchor text ideas                     |
-| ----------------------------------------------- | -------------------------------------------- |
-| `/scale/upscale-to-4k`                          | "4K resolution", "upscale to 4K"             |
-| `/scale/upscale-to-1080p`                       | "1920x1080", "HD resolution", "1080p"        |
-| `/free/free-image-upscaler`                     | "free image upscaler", "free upscaling"      |
-| `/free/free-background-remover`                 | "free background remover"                    |
-| `/free`                                         | "free tools", "free credits"                 |
-| `/formats/upscale-jpeg-images`                  | "JPEG images", "upscale JPG"                 |
-| `/formats/upscale-png-images`                   | "PNG images"                                 |
-| `/formats/upscale-webp-images`                  | "WebP images"                                |
-| `/formats/upscale-avif-images`                  | "AVIF images"                                |
-| `/use-cases/ecommerce-product-photos`           | "product photos", "e-commerce photos"        |
-| `/use-cases/old-photo-restoration`              | "photo restoration", "restore old photos"    |
-| `/use-cases/real-estate-photo-enhancement`      | "real estate photos"                         |
-| `/use-cases/anime-image-upscaler`               | "anime upscaling", "illustration upscaling"  |
-| `/tools/ai-background-remover`                  | "remove backgrounds", "background removal"   |
-| `/tools/ai-photo-enhancer`                      | "photo enhancer", "enhance photo quality"    |
-| `/alternatives`                                 | "tool alternatives", "comparing tools"       |
+| URL                                        | Target anchor text ideas                    |
+| ------------------------------------------ | ------------------------------------------- |
+| `/scale/upscale-to-4k`                     | "4K resolution", "upscale to 4K"            |
+| `/scale/upscale-to-1080p`                  | "1920x1080", "HD resolution", "1080p"       |
+| `/free/free-image-upscaler`                | "free image upscaler", "free upscaling"     |
+| `/free/free-background-remover`            | "free background remover"                   |
+| `/free`                                    | "free tools", "free credits"                |
+| `/formats/upscale-jpeg-images`             | "JPEG images", "upscale JPG"                |
+| `/formats/upscale-png-images`              | "PNG images"                                |
+| `/formats/upscale-webp-images`             | "WebP images"                               |
+| `/formats/upscale-avif-images`             | "AVIF images"                               |
+| `/use-cases/ecommerce-product-photos`      | "product photos", "e-commerce photos"       |
+| `/use-cases/old-photo-restoration`         | "photo restoration", "restore old photos"   |
+| `/use-cases/real-estate-photo-enhancement` | "real estate photos"                        |
+| `/use-cases/anime-image-upscaler`          | "anime upscaling", "illustration upscaling" |
+| `/tools/ai-background-remover`             | "remove backgrounds", "background removal"  |
+| `/tools/ai-photo-enhancer`                 | "photo enhancer", "enhance photo quality"   |
+| `/alternatives`                            | "tool alternatives", "comparing tools"      |
 
 ### Rules for Adding Links
 
-1. **Read the draft post content first** — understand what's in each paragraph
-2. **Find 2-3 natural anchor opportunities** — where a pSEO page URL genuinely adds value
-3. **Embed links in existing sentences** — never add a "Related Links" section
-4. **Use descriptive anchor text** — the linked text should be a natural keyword phrase
-5. **No zombie categories** — never link to `/ai-features/`
-6. **Canonical BG removal links** — always link to `/tools/ai-background-remover` (not `/tools/remove-bg`)
+1. **GSC first** — prefer linking to pages with 50+ impressions and CTR < 5% (they need the boost most)
+2. **Read the draft post content first** — understand what's in each paragraph
+3. **Find 2-3 natural anchor opportunities** — where the linked page URL genuinely adds value for the reader
+4. **Embed links in existing sentences** — never add a "Related Links" section or "See also" block
+5. **Use descriptive anchor text** — the linked text should be a natural keyword phrase, not "click here"
+6. **No zombie categories** — never link to `/ai-features/`
+7. **Canonical BG removal links** — always link to `/tools/ai-background-remover` (not `/tools/remove-bg`)
 
 ### Example Link Insertions
 
 ```markdown
 <!-- Original -->
+
 AI upscalers can enlarge images to 4K resolution.
+
 <!-- With link -->
+
 AI upscalers can enlarge images to [4K resolution](/scale/upscale-to-4k).
 
 <!-- Original -->
+
 JPEG files can still be upscaled without losing quality.
+
 <!-- With link -->
+
 [JPEG files](/formats/upscale-jpeg-images) can still be upscaled without losing quality.
 
 <!-- Original -->
+
 For e-commerce sellers, product photo quality matters.
+
 <!-- With link -->
+
 For e-commerce sellers, [product photo quality](/use-cases/ecommerce-product-photos) matters.
 
 <!-- Original -->
+
 Start with our free tools if you're new.
+
 <!-- With link -->
+
 Start with our [free upscaling tools](/free) if you're new.
 ```
 
@@ -640,46 +672,135 @@ echo "Updating planned topics from roadmap..."
 
 ## CTA (Call-to-Action) Requirements
 
-**CRITICAL**: Every blog post MUST have hyperlinked CTAs to drive users to the upscaler tool.
+> **🚨 HARD REQUIREMENT — DO NOT PUBLISH WITHOUT CTAs**
+>
+> Every blog post MUST have at least **2 BlogCTA component markers** embedded in the content.
+> A post without CTAs gets impressions but zero clicks. This is the #1 reason posts fail to convert.
 
-**Required CTA Placements:**
+### The BlogCTA System (PRIMARY METHOD)
 
-- [ ] **Primary CTA in conclusion** - Linked to https://myimageupscaler.com
-- [ ] **1-2 contextual CTAs** within content body
-- [ ] **Description CTA** - Meta description should end with action
+The blog renderer converts blockquote markers into fully-styled CTA components automatically. Use these markers in your markdown content:
 
-**CTA Templates (must use markdown links):**
+| Marker               | Renders As                                 | When to Use                                           |
+| -------------------- | ------------------------------------------ | ----------------------------------------------------- |
+| `> [!CTA_TRY]`       | Inline banner with "Try Free" button       | After explaining a benefit or completing a section    |
+| `> [!CTA_DEMO]`      | Feature highlights card with demo CTA      | Before FAQ or Conclusion — high-intent position       |
+| `> [!CTA_PRICING]`   | Pricing-focused CTA                        | When discussing plans or paid features                |
+| `> [!CTA_TOOL:slug]` | Tool-specific CTA (links to `/tools/slug`) | Posts about a specific tool (e.g. background remover) |
+
+**How to write them in markdown:**
 
 ```markdown
-<!-- Primary Conclusion CTA -->
+## After this section I want a CTA
 
-[Start upscaling your images now](https://myimageupscaler.com) - free, no signup required.
+Some content explaining value...
 
-<!-- Contextual CTA after explaining problem -->
+> [!CTA_TRY]
 
-[Try our AI upscaler](https://myimageupscaler.com) and see the difference instantly.
-
-<!-- Benefit-focused CTA -->
-
-[Upload your photo](https://myimageupscaler.com) - 4x enhancement in seconds.
-
-<!-- Quality CTA -->
-
-Professional quality results with our [free image upscaler](https://myimageupscaler.com).
-
-<!-- Try it now CTA -->
-
-[Get started now](https://myimageupscaler.com) - no credit card required.
+## Next section continues here
 ```
 
-**CTA Best Practices:**
+```markdown
+<!-- Tool-specific: links to /tools/transparent-background-maker -->
 
-- ✅ ALWAYS use markdown link syntax: `[text](https://myimageupscaler.com)`
-- ✅ Place CTAs after explaining value/benefits
-- ✅ Use action-oriented text: "Start upscaling", "Upload your photo"
-- ✅ Emphasize it's free (reduces friction)
-- ❌ NEVER use plain text without hyperlink
-- ❌ NEVER use arrow alone: "Try it free →"
+> [!CTA_TOOL:transparent-background-maker]
+
+<!-- Tool-specific: links to /tools/ai-image-upscaler -->
+
+> [!CTA_TOOL:ai-image-upscaler]
+```
+
+### Required CTA Placements (MANDATORY)
+
+Every post MUST have ALL THREE of the following:
+
+- [ ] **Mid-article CTA** — `> [!CTA_TRY]` after the first major value section (before the halfway point)
+- [ ] **Pre-conclusion CTA** — `> [!CTA_DEMO]` immediately before `## Conclusion` or `## FAQ`
+- [ ] **Description CTA** — Meta description must end with an action word ("try now", "try free", "instant results")
+
+### Content Structure with CTAs (REQUIRED TEMPLATE)
+
+```markdown
+# H1 Title
+
+Introduction paragraph...
+
+## Section 1 — Explain the problem
+
+Content...
+
+## Section 2 — Show the value
+
+Content...
+
+> [!CTA_TRY]
+
+## Section 3 — How it works / Step-by-step
+
+Content...
+
+![Inline image](url)
+
+## Section 4 — Use cases / Tips
+
+Content...
+
+> [!CTA_DEMO]
+
+## Conclusion
+
+Summary sentence.
+
+[Start upscaling your images for free](https://myimageupscaler.com) — no signup required.
+
+---
+
+## Frequently Asked Questions
+```
+
+### Tool-Specific Posts
+
+If the post is about a specific tool (background remover, face restore, etc.), use `CTA_TOOL` instead of `CTA_TRY` for the mid-article CTA:
+
+```markdown
+> [!CTA_TOOL:transparent-background-maker]
+> [!CTA_TOOL:ai-image-upscaler]
+> [!CTA_TOOL:ai-face-restorer]
+```
+
+### Secondary: Inline Contextual Links
+
+In addition to the component CTAs, embed 1-2 natural inline links in the body:
+
+```markdown
+[Try our AI upscaler](https://myimageupscaler.com) and see the difference instantly.
+[Upload your photo free](https://myimageupscaler.com) — 4x enhancement in seconds.
+[Start upscaling now](https://myimageupscaler.com) — no credit card required.
+```
+
+### Accurate Claims — DO NOT LIE
+
+The free plan has limits. Always be accurate:
+
+- ✅ "Try free — no account required" (guest access works)
+- ✅ "Get 10 free credits on signup — no credit card"
+- ✅ "No watermarks, no signup to try"
+- ❌ "Unlimited free upscaling" — FALSE (10 credits on signup, no monthly refresh)
+- ❌ "Free forever, no limits" — FALSE
+- ❌ "Unlimited uploads" — FALSE
+
+### Pre-Publish CTA Checklist
+
+Before calling the publish endpoint, verify:
+
+```bash
+# Check that CTA markers exist in the content
+echo "$POST_CONTENT" | grep -c "\[!CTA_" && echo "✅ CTA markers found" || echo "❌ BLOCKED: No CTA markers — do not publish"
+
+# Should return at least 2
+CTA_COUNT=$(echo "$POST_CONTENT" | grep -c "\[!CTA_")
+[ "$CTA_COUNT" -ge 2 ] || { echo "❌ Need at least 2 CTAs, found $CTA_COUNT"; exit 1; }
+```
 
 ---
 
@@ -1026,6 +1147,7 @@ curl -s http://localhost:3000/blog/ai-image-upscaling-guide | grep -o "<title>.*
 ## pSEO Sitemap Reference
 
 To browse all available pSEO pages for linking, check the data files:
+
 - `app/seo/data/tools.json` → `/tools/*` pages
 - `app/seo/data/free.json` → `/free/*` pages
 - `app/seo/data/formats.json` → `/formats/*` pages
