@@ -51,6 +51,11 @@ const nextConfig = {
   },
   // Enable experimental features for better performance
   experimental: {
+    // Fix standalone output path when a package.json exists in a parent directory.
+    // Without this, Next.js detects the parent as the monorepo root and nests the
+    // standalone output at .next/standalone/projects/myimageupscaler.com/, which
+    // @opennextjs/aws doesn't expect (it looks at .next/standalone/ directly).
+    outputFileTracingRoot: __dirname,
     // Optimize package imports for smaller bundles
     optimizePackageImports: [
       'lucide-react',
