@@ -1,6 +1,6 @@
 # Blog Content Tracking - MyImageUpscaler
 
-**Last Updated**: 2026-03-03
+**Last Updated**: 2026-03-05
 
 ## Topics Covered (Blog Posts Published)
 
@@ -51,3 +51,16 @@
 | 2026-03-01 | ai image upscaling vs sharpening explained (GSC: 26 imp, pos ~8, 0 clicks)                  | ai-image-upscaling-vs-sharpening-explained         | Technical   | Published |
 | 2026-03-02 | logo upscaler, upscale logo without losing quality (Priority 3 roadmap, ~1,300/mo)          | how-to-upscale-a-logo-without-losing-quality       | Guides      | Published |
 | 2026-03-03 | real estate photo upscaler, upscale real estate photos (Priority 3 roadmap, ~500/mo)         | how-to-upscale-real-estate-photos-with-ai          | Guides      | Published |
+| 2026-03-04 | upscale image for canva | how-to-upscale-images-for-canva | Guides | Published |
+
+## GSC CTR Fixes (2026-03-05)
+
+Post metadata updated to improve CTR based on GSC data (report period: last 3 months):
+
+| Slug | Issue | Change |
+| ---- | ----- | ------ |
+| best-free-ai-image-upscaler-2026-tested-compared | SEO desc only 109c; generic copy | Title → "…Tested & Ranked [7 Tools]"; SEO desc expanded to 146c |
+| photo-enhancement-upscaling-vs-quality | Competing with sharpening post; unclear topic | Redirected to broader topic: Upscaling vs Sharpening vs Noise Reduction |
+| upscale-image-for-print-300-dpi-guide | SEO desc only 130c | SEO desc expanded to 147c with size calculator mention |
+| best-free-ai-image-upscaler-tools-2026 | Cannibalizing post above; weak CTR | Title → "7 Best…That Actually Work [2026]"; SEO desc sharpened |
+| ai-image-upscaling-vs-sharpening-explained | 72c title truncated in SERPs; 0 clicks at pos 7.1 | Title shortened to 59c; SEO desc to 155c with clearer value prop |
