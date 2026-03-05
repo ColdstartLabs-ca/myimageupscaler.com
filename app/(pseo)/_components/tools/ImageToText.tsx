@@ -6,7 +6,7 @@
  * Target keywords: image to text, extract text from image, OCR online
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   Upload,
   Loader2,
@@ -62,6 +62,19 @@ export function ImageToText(): React.ReactElement {
   const [currentFile, setCurrentFile] = useState<File | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewUrlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    previewUrlRef.current = previewUrl;
+  }, [previewUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    };
+  }, []);
 
   const runOcr = useCallback(async (file: File, lang: TesseractLang) => {
     setStatus('loading');
@@ -109,14 +122,17 @@ export function ImageToText(): React.ReactElement {
         return;
       }
 
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
       const url = URL.createObjectURL(file);
+      previewUrlRef.current = url;
       setPreviewUrl(url);
       setCurrentFile(file);
       setError(null);
       void runOcr(file, selectedLang);
     },
-    [previewUrl, runOcr, selectedLang]
+    [runOcr, selectedLang]
   );
 
   const handleFileInput = useCallback(
@@ -157,7 +173,10 @@ export function ImageToText(): React.ReactElement {
   }, [currentFile, runOcr, selectedLang]);
 
   const handleReset = useCallback(() => {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
     setPreviewUrl(null);
     setCurrentFile(null);
     setStatus('idle');
@@ -165,7 +184,7 @@ export function ImageToText(): React.ReactElement {
     setExtractedText('');
     setError(null);
     setCopied(false);
-  }, [previewUrl]);
+  }, []);
 
   const handleCopy = useCallback(async () => {
     if (!extractedText) return;

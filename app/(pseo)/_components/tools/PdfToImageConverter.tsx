@@ -6,7 +6,7 @@
  * Target keywords: pdf to image converter, convert pdf to jpg, pdf to png online
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   Upload,
   Download,
@@ -44,12 +44,15 @@ export function PdfToImageConverter({
   defaultOutputFormat = 'jpeg',
   defaultDpi = 150,
 }: IPdfToImageConverterProps): React.ReactElement {
+  const initialOutputFormat: OutputFormat = defaultOutputFormat === 'png' ? 'png' : 'jpeg';
+  const initialDpi: DpiOption = defaultDpi === 72 || defaultDpi === 300 ? defaultDpi : 150;
+
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState<number>(0);
   const [pageFrom, setPageFrom] = useState<number>(1);
   const [pageTo, setPageTo] = useState<number>(1);
-  const [outputFormat, setOutputFormat] = useState<OutputFormat>(defaultOutputFormat);
-  const [dpi, setDpi] = useState<DpiOption>(defaultDpi);
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>(initialOutputFormat);
+  const [dpi, setDpi] = useState<DpiOption>(initialDpi);
   const [isLoading, setIsLoading] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
   const [convertProgress, setConvertProgress] = useState<{ current: number; total: number } | null>(
@@ -61,39 +64,59 @@ export function PdfToImageConverter({
   const [previewPage, setPreviewPage] = useState<number>(0);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const convertedPagesRef = useRef<IConvertedPage[]>([]);
 
-  const loadPdf = useCallback(async (file: File) => {
-    setError(null);
-    setIsLoading(true);
-    // Revoke existing preview URLs before clearing to prevent memory leaks
-    setConvertedPages(prev => {
-      prev.forEach(p => URL.revokeObjectURL(p.previewUrl));
-      return [];
-    });
-    setConvertProgress(null);
-
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      // eslint-disable-next-line no-restricted-syntax -- Dynamic import required for lazy-loading pdfjs-dist (~400KB)
-      const pdfjsLib = await import('pdfjs-dist');
-      // Use webpack-bundled worker (served from same origin) to satisfy CSP worker-src 'self' blob:
-      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-        'pdfjs-dist/build/pdf.worker.min.mjs',
-        import.meta.url
-      ).toString();
-
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const count = pdf.numPages;
-
-      setPageCount(count);
-      setPageFrom(1);
-      setPageTo(count);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load PDF. Please try another file.');
-    } finally {
-      setIsLoading(false);
-    }
+  const revokePreviewUrls = useCallback((pages: IConvertedPage[]) => {
+    pages.forEach(page => URL.revokeObjectURL(page.previewUrl));
   }, []);
+
+  useEffect(() => {
+    convertedPagesRef.current = convertedPages;
+  }, [convertedPages]);
+
+  useEffect(() => {
+    return () => {
+      revokePreviewUrls(convertedPagesRef.current);
+    };
+  }, [revokePreviewUrls]);
+
+  const loadPdf = useCallback(
+    async (file: File) => {
+      setError(null);
+      setIsLoading(true);
+      // Revoke existing preview URLs before clearing to prevent memory leaks
+      setConvertedPages(prev => {
+        revokePreviewUrls(prev);
+        return [];
+      });
+      setConvertProgress(null);
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        // eslint-disable-next-line no-restricted-syntax -- Dynamic import required for lazy-loading pdfjs-dist (~400KB)
+        const pdfjsLib = await import('pdfjs-dist');
+        // Use webpack-bundled worker (served from same origin) to satisfy CSP worker-src 'self' blob:
+        pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+          'pdfjs-dist/build/pdf.worker.min.mjs',
+          import.meta.url
+        ).toString();
+
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const count = pdf.numPages;
+
+        setPageCount(count);
+        setPageFrom(1);
+        setPageTo(count);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to load PDF. Please try another file.'
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [revokePreviewUrls]
+  );
 
   const handleFileSelect = useCallback(
     (file: File) => {
@@ -149,7 +172,7 @@ export function PdfToImageConverter({
     setIsConverting(true);
     // Revoke existing preview URLs before clearing to prevent memory leaks
     setConvertedPages(prev => {
-      prev.forEach(p => URL.revokeObjectURL(p.previewUrl));
+      revokePreviewUrls(prev);
       return [];
     });
     setPreviewPage(0);
@@ -215,7 +238,7 @@ export function PdfToImageConverter({
       setIsConverting(false);
       setConvertProgress(null);
     }
-  }, [pdfFile, pageCount, pageFrom, pageTo, dpi, outputFormat]);
+  }, [pdfFile, pageCount, pageFrom, pageTo, dpi, outputFormat, revokePreviewUrls]);
 
   const downloadSingle = useCallback(
     (page: IConvertedPage) => {
@@ -263,7 +286,7 @@ export function PdfToImageConverter({
   }, [convertedPages, downloadSingle, outputFormat, pdfFile]);
 
   const handleReset = useCallback(() => {
-    convertedPages.forEach(p => URL.revokeObjectURL(p.previewUrl));
+    revokePreviewUrls(convertedPages);
     setPdfFile(null);
     setPageCount(0);
     setPageFrom(1);
@@ -272,7 +295,7 @@ export function PdfToImageConverter({
     setError(null);
     setConvertProgress(null);
     setPreviewPage(0);
-  }, [convertedPages]);
+  }, [convertedPages, revokePreviewUrls]);
 
   const clampPageFrom = useCallback(
     (val: number) => {

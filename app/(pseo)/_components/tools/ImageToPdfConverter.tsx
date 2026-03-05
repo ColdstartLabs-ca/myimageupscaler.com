@@ -6,7 +6,7 @@
  * Target keywords: image to pdf converter, jpg to pdf, png to pdf online
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   Upload,
   Download,
@@ -54,17 +54,25 @@ const PAGE_DIMENSIONS: Record<Exclude<PageSize, 'fit'>, [number, number]> = {
   letter: [612, 792],
 };
 
-const DEFAULT_ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const DEFAULT_ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 const MAX_IMAGES = 30;
 const MAX_FILE_MB = 20;
 
 interface IImageToPdfConverterProps {
-  acceptedInputFormats?: string[];
+  acceptedInputFormats?: readonly string[];
 }
 
 export function ImageToPdfConverter({
-  acceptedInputFormats = DEFAULT_ACCEPTED_TYPES,
+  acceptedInputFormats = Array.from(DEFAULT_ACCEPTED_TYPES),
 }: IImageToPdfConverterProps): React.ReactElement {
+  const normalizedAcceptedFormats = acceptedInputFormats.filter(
+    format => format === 'image/jpeg' || format === 'image/png' || format === 'image/webp'
+  );
+  const acceptedFormats: string[] =
+    normalizedAcceptedFormats.length > 0
+      ? normalizedAcceptedFormats
+      : Array.from(DEFAULT_ACCEPTED_TYPES);
+
   const [images, setImages] = useState<IImageEntry[]>([]);
   const [options, setOptions] = useState<IConvertOptions>({
     pageSize: 'a4',
@@ -76,8 +84,19 @@ export function ImageToPdfConverter({
   const [isDragging, setIsDragging] = useState(false);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const dragSrcId = useRef<string | null>(null);
+  const imagesRef = useRef<IImageEntry[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    imagesRef.current = images;
+  }, [images]);
+
+  useEffect(() => {
+    return () => {
+      imagesRef.current.forEach(entry => URL.revokeObjectURL(entry.previewUrl));
+    };
+  }, []);
 
   const addFiles = useCallback(
     (files: FileList | null) => {
@@ -90,7 +109,7 @@ export function ImageToPdfConverter({
       const skipped: string[] = [];
 
       for (const file of Array.from(files)) {
-        if (!acceptedInputFormats.includes(file.type)) {
+        if (!acceptedFormats.includes(file.type)) {
           skipped.push(file.name);
           continue;
         }
@@ -121,7 +140,7 @@ export function ImageToPdfConverter({
         );
       }
     },
-    [acceptedInputFormats]
+    [acceptedFormats]
   );
 
   const handleDrop = useCallback(
@@ -357,7 +376,7 @@ export function ImageToPdfConverter({
         <input
           ref={fileInputRef}
           type="file"
-          accept={acceptedInputFormats.join(',')}
+          accept={acceptedFormats.join(',')}
           multiple
           onChange={handleInputChange}
           className="hidden"

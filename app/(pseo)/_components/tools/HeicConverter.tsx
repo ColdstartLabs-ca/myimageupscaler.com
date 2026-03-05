@@ -6,7 +6,7 @@
  * Target keywords: heic to jpg converter, heic to png, convert heic online
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { InteractiveTool } from './InteractiveTool';
 import Image from 'next/image';
 
@@ -25,13 +25,23 @@ interface IHeicConverterProps {
 export function HeicConverter({
   defaultOutputFormat = 'jpeg',
 }: IHeicConverterProps): React.ReactElement {
-  const [outputFormat, setOutputFormat] = useState<OutputFormat>(defaultOutputFormat);
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>(
+    defaultOutputFormat === 'png' ? 'png' : 'jpeg'
+  );
   const [quality, setQuality] = useState<number>(90);
   const [originalSize, setOriginalSize] = useState<number>(0);
   const [convertedSize, setConvertedSize] = useState<number>(0);
   const [isConverting, setIsConverting] = useState<boolean>(false);
   const [convertedPreviewUrl, setConvertedPreviewUrl] = useState<string | null>(null);
   const convertedPreviewUrlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (convertedPreviewUrlRef.current) {
+        URL.revokeObjectURL(convertedPreviewUrlRef.current);
+      }
+    };
+  }, []);
 
   const handleConvert = useCallback(
     async (file: File): Promise<Blob> => {

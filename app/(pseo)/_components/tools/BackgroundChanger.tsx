@@ -108,35 +108,42 @@ export function BackgroundChanger(): React.ReactElement {
   const removeBackgroundRef = useRef<
     typeof import('@imgly/background-removal').removeBackground | null
   >(null);
+  const originalUrlRef = useRef<string | null>(null);
+  const previewUrlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    originalUrlRef.current = originalUrl;
+  }, [originalUrl]);
+
+  useEffect(() => {
+    previewUrlRef.current = previewUrl;
+  }, [previewUrl]);
 
   // Cleanup URLs on unmount
   useEffect(() => {
     return () => {
-      if (originalUrl) URL.revokeObjectURL(originalUrl);
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      if (originalUrlRef.current) URL.revokeObjectURL(originalUrlRef.current);
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const regeneratePreview = useCallback(
-    async (blob: Blob, opts: IBgOptions) => {
-      try {
-        setStage('applying-bg');
-        if (previewUrl) URL.revokeObjectURL(previewUrl);
-        const resultBlob = await applyBackgroundToCanvas(blob, opts);
-        const url = URL.createObjectURL(resultBlob);
-        setPreviewUrl(url);
-        setFinalBlob(resultBlob);
-        setStage('done');
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to apply background');
-        setStage('error');
+  const regeneratePreview = useCallback(async (blob: Blob, opts: IBgOptions) => {
+    try {
+      setStage('applying-bg');
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
       }
-    },
-    // previewUrl intentionally not included — we revoke and replace it
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+      const resultBlob = await applyBackgroundToCanvas(blob, opts);
+      const url = URL.createObjectURL(resultBlob);
+      previewUrlRef.current = url;
+      setPreviewUrl(url);
+      setFinalBlob(resultBlob);
+      setStage('done');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to apply background');
+      setStage('error');
+    }
+  }, []);
 
   const processFile = useCallback(
     async (file: File) => {
@@ -153,12 +160,19 @@ export function BackgroundChanger(): React.ReactElement {
       setError(null);
       setFinalBlob(null);
       setRemovedBgBlob(null);
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+        previewUrlRef.current = null;
+      }
       setPreviewUrl(null);
-      if (originalUrl) URL.revokeObjectURL(originalUrl);
+      if (originalUrlRef.current) {
+        URL.revokeObjectURL(originalUrlRef.current);
+        originalUrlRef.current = null;
+      }
 
       setOriginalFile(file);
       const origUrl = URL.createObjectURL(file);
+      originalUrlRef.current = origUrl;
       setOriginalUrl(origUrl);
 
       try {
@@ -196,8 +210,6 @@ export function BackgroundChanger(): React.ReactElement {
         setStage('error');
       }
     },
-    // bgOptions, previewUrl, originalUrl intentionally kept as snapshot
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [bgOptions, regeneratePreview]
   );
 
@@ -256,8 +268,14 @@ export function BackgroundChanger(): React.ReactElement {
   }, [finalBlob, originalFile]);
 
   const handleReset = useCallback(() => {
-    if (originalUrl) URL.revokeObjectURL(originalUrl);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    if (originalUrlRef.current) {
+      URL.revokeObjectURL(originalUrlRef.current);
+      originalUrlRef.current = null;
+    }
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
     setOriginalFile(null);
     setOriginalUrl(null);
     setRemovedBgBlob(null);
@@ -266,7 +284,7 @@ export function BackgroundChanger(): React.ReactElement {
     setStage('idle');
     setError(null);
     setProgress(0);
-  }, [originalUrl, previewUrl]);
+  }, []);
 
   const isProcessing =
     stage === 'loading-model' || stage === 'removing-bg' || stage === 'applying-bg';
