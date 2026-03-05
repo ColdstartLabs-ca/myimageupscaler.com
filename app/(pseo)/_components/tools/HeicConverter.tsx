@@ -18,8 +18,14 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(2)}MB`;
 }
 
-export function HeicConverter(): React.ReactElement {
-  const [outputFormat, setOutputFormat] = useState<OutputFormat>('jpeg');
+interface IHeicConverterProps {
+  defaultOutputFormat?: OutputFormat;
+}
+
+export function HeicConverter({
+  defaultOutputFormat = 'jpeg',
+}: IHeicConverterProps): React.ReactElement {
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>(defaultOutputFormat);
   const [quality, setQuality] = useState<number>(90);
   const [originalSize, setOriginalSize] = useState<number>(0);
   const [convertedSize, setConvertedSize] = useState<number>(0);

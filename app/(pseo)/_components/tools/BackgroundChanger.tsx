@@ -32,7 +32,10 @@ interface IBgOptions {
 function applyBackgroundToCanvas(removedBgBlob: Blob, options: IBgOptions): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new window.Image();
+    const blobUrl = URL.createObjectURL(removedBgBlob);
     img.onload = () => {
+      // Revoke the temporary blob URL as soon as the image is loaded into memory
+      URL.revokeObjectURL(blobUrl);
       const canvas = document.createElement('canvas');
       canvas.width = img.width;
       canvas.height = img.height;
@@ -73,8 +76,11 @@ function applyBackgroundToCanvas(removedBgBlob: Blob, options: IBgOptions): Prom
         }
       }, 'image/png');
     };
-    img.onerror = () => reject(new Error('Failed to load processed image'));
-    img.src = URL.createObjectURL(removedBgBlob);
+    img.onerror = () => {
+      URL.revokeObjectURL(blobUrl);
+      reject(new Error('Failed to load processed image'));
+    };
+    img.src = blobUrl;
   });
 }
 

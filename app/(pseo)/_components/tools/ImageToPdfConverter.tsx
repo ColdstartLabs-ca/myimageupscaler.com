@@ -54,11 +54,17 @@ const PAGE_DIMENSIONS: Record<Exclude<PageSize, 'fit'>, [number, number]> = {
   letter: [612, 792],
 };
 
-const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const DEFAULT_ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_IMAGES = 30;
 const MAX_FILE_MB = 20;
 
-export function ImageToPdfConverter(): React.ReactElement {
+interface IImageToPdfConverterProps {
+  acceptedInputFormats?: string[];
+}
+
+export function ImageToPdfConverter({
+  acceptedInputFormats = DEFAULT_ACCEPTED_TYPES,
+}: IImageToPdfConverterProps): React.ReactElement {
   const [images, setImages] = useState<IImageEntry[]>([]);
   const [options, setOptions] = useState<IConvertOptions>({
     pageSize: 'a4',
@@ -73,47 +79,50 @@ export function ImageToPdfConverter(): React.ReactElement {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const addFiles = useCallback((files: FileList | null) => {
-    if (!files || files.length === 0) return;
+  const addFiles = useCallback(
+    (files: FileList | null) => {
+      if (!files || files.length === 0) return;
 
-    setError(null);
-    setPdfBlob(null);
+      setError(null);
+      setPdfBlob(null);
 
-    const newEntries: IImageEntry[] = [];
-    const skipped: string[] = [];
+      const newEntries: IImageEntry[] = [];
+      const skipped: string[] = [];
 
-    for (const file of Array.from(files)) {
-      if (!ACCEPTED_TYPES.includes(file.type)) {
-        skipped.push(file.name);
-        continue;
+      for (const file of Array.from(files)) {
+        if (!acceptedInputFormats.includes(file.type)) {
+          skipped.push(file.name);
+          continue;
+        }
+        if (file.size > MAX_FILE_MB * 1024 * 1024) {
+          skipped.push(`${file.name} (too large)`);
+          continue;
+        }
+        newEntries.push({
+          id: `${file.name}-${Date.now()}-${Math.random()}`,
+          file,
+          previewUrl: URL.createObjectURL(file),
+          sizeBytes: file.size,
+        });
       }
-      if (file.size > MAX_FILE_MB * 1024 * 1024) {
-        skipped.push(`${file.name} (too large)`);
-        continue;
-      }
-      newEntries.push({
-        id: `${file.name}-${Date.now()}-${Math.random()}`,
-        file,
-        previewUrl: URL.createObjectURL(file),
-        sizeBytes: file.size,
+
+      setImages(prev => {
+        const combined = [...prev, ...newEntries];
+        if (combined.length > MAX_IMAGES) {
+          combined.slice(MAX_IMAGES).forEach(e => URL.revokeObjectURL(e.previewUrl));
+          return combined.slice(0, MAX_IMAGES);
+        }
+        return combined;
       });
-    }
 
-    setImages(prev => {
-      const combined = [...prev, ...newEntries];
-      if (combined.length > MAX_IMAGES) {
-        combined.slice(MAX_IMAGES).forEach(e => URL.revokeObjectURL(e.previewUrl));
-        return combined.slice(0, MAX_IMAGES);
+      if (skipped.length > 0) {
+        setError(
+          `Skipped ${skipped.length} file(s): unsupported format or too large. Accepted formats up to ${MAX_FILE_MB}MB.`
+        );
       }
-      return combined;
-    });
-
-    if (skipped.length > 0) {
-      setError(
-        `Skipped ${skipped.length} file(s): unsupported format or too large. Accepted: JPEG, PNG, WebP up to ${MAX_FILE_MB}MB.`
-      );
-    }
-  }, []);
+    },
+    [acceptedInputFormats]
+  );
 
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -348,7 +357,7 @@ export function ImageToPdfConverter(): React.ReactElement {
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept={acceptedInputFormats.join(',')}
           multiple
           onChange={handleInputChange}
           className="hidden"

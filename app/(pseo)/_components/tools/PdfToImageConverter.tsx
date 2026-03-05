@@ -35,13 +35,21 @@ const DPI_LABELS: Record<DpiOption, string> = {
   300: '300 DPI (Print)',
 };
 
-export function PdfToImageConverter(): React.ReactElement {
+interface IPdfToImageConverterProps {
+  defaultOutputFormat?: OutputFormat;
+  defaultDpi?: DpiOption;
+}
+
+export function PdfToImageConverter({
+  defaultOutputFormat = 'jpeg',
+  defaultDpi = 150,
+}: IPdfToImageConverterProps): React.ReactElement {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState<number>(0);
   const [pageFrom, setPageFrom] = useState<number>(1);
   const [pageTo, setPageTo] = useState<number>(1);
-  const [outputFormat, setOutputFormat] = useState<OutputFormat>('jpeg');
-  const [dpi, setDpi] = useState<DpiOption>(150);
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>(defaultOutputFormat);
+  const [dpi, setDpi] = useState<DpiOption>(defaultDpi);
   const [isLoading, setIsLoading] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
   const [convertProgress, setConvertProgress] = useState<{ current: number; total: number } | null>(
@@ -57,14 +65,22 @@ export function PdfToImageConverter(): React.ReactElement {
   const loadPdf = useCallback(async (file: File) => {
     setError(null);
     setIsLoading(true);
-    setConvertedPages([]);
+    // Revoke existing preview URLs before clearing to prevent memory leaks
+    setConvertedPages(prev => {
+      prev.forEach(p => URL.revokeObjectURL(p.previewUrl));
+      return [];
+    });
     setConvertProgress(null);
 
     try {
       const arrayBuffer = await file.arrayBuffer();
       // eslint-disable-next-line no-restricted-syntax -- Dynamic import required for lazy-loading pdfjs-dist (~400KB)
       const pdfjsLib = await import('pdfjs-dist');
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+      // Use webpack-bundled worker (served from same origin) to satisfy CSP worker-src 'self' blob:
+      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+        'pdfjs-dist/build/pdf.worker.min.mjs',
+        import.meta.url
+      ).toString();
 
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       const count = pdf.numPages;
@@ -131,7 +147,11 @@ export function PdfToImageConverter(): React.ReactElement {
 
     setError(null);
     setIsConverting(true);
-    setConvertedPages([]);
+    // Revoke existing preview URLs before clearing to prevent memory leaks
+    setConvertedPages(prev => {
+      prev.forEach(p => URL.revokeObjectURL(p.previewUrl));
+      return [];
+    });
     setPreviewPage(0);
 
     const from = Math.max(1, Math.min(pageFrom, pageCount));
@@ -143,7 +163,11 @@ export function PdfToImageConverter(): React.ReactElement {
       const arrayBuffer = await pdfFile.arrayBuffer();
       // eslint-disable-next-line no-restricted-syntax -- Dynamic import required for lazy-loading pdfjs-dist (~400KB)
       const pdfjsLib = await import('pdfjs-dist');
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+      // Use webpack-bundled worker (served from same origin) to satisfy CSP worker-src 'self' blob:
+      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+        'pdfjs-dist/build/pdf.worker.min.mjs',
+        import.meta.url
+      ).toString();
 
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       const results: IConvertedPage[] = [];
