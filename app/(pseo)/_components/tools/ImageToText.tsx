@@ -70,7 +70,6 @@ export function ImageToText(): React.ReactElement {
     setError(null);
 
     try {
-      // @ts-expect-error -- tesseract.js is an optional runtime dependency; types not in package.json
       // eslint-disable-next-line no-restricted-syntax -- Dynamic import required for lazy-loading tesseract.js (~5MB WASM)
       const Tesseract = (await import('tesseract.js')) as ITesseractModule;
       setStatus('recognizing');

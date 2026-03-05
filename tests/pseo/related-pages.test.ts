@@ -114,6 +114,19 @@ vi.mock('@/lib/seo/data-loader', () => ({
       },
     ])
   ),
+  getAllInteractiveTools: vi.fn(() =>
+    Promise.resolve([
+      {
+        slug: 'image-to-text',
+        toolName: 'Image to Text',
+        description: 'Extract text from images using OCR',
+        category: 'tools',
+        isInteractive: true,
+        relatedTools: ['ocr-online'],
+      },
+    ])
+  ),
+  getInteractiveToolData: vi.fn(() => Promise.resolve(null)),
   getAllContentPages: vi.fn(() =>
     Promise.resolve([
       {
