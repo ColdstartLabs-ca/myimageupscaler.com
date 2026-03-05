@@ -128,10 +128,7 @@ export const Footer = (): JSX.Element => {
                 </Link>
               </li>
               <li>
-                <Link
-                  href={localizedPath('/free')}
-                  className="hover:text-accent transition-colors"
-                >
+                <Link href={localizedPath('/free')} className="hover:text-accent transition-colors">
                   Free Tools
                 </Link>
               </li>

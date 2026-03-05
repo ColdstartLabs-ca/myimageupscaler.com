@@ -29,8 +29,7 @@ export async function HeroSection(): Promise<JSX.Element> {
         </div>
 
         <h1 className="text-6xl font-black tracking-tight text-white sm:text-7xl md:text-8xl mb-6 max-w-5xl mx-auto leading-[1.05]">
-          {t('heroTitle')}{' '}
-          <span className="gradient-text-primary">{t('heroTitleHighlight')}</span>
+          {t('heroTitle')} <span className="gradient-text-primary">{t('heroTitleHighlight')}</span>
         </h1>
 
         <h2 className="mx-auto mt-6 max-w-2xl text-2xl sm:text-3xl text-text-secondary leading-relaxed font-semibold">
@@ -127,7 +126,9 @@ export async function HeroSection(): Promise<JSX.Element> {
                 <div className="p-3 bg-white/5 rounded-xl">{feature.icon}</div>
                 <div>
                   <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-                  <p className="text-text-secondary leading-relaxed font-light">{feature.subtitle}</p>
+                  <p className="text-text-secondary leading-relaxed font-light">
+                    {feature.subtitle}
+                  </p>
                 </div>
               </div>
             ))}

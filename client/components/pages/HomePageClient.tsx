@@ -17,11 +17,8 @@ import { Suspense, lazy, useEffect } from 'react';
 // AmbientBackground is purely decorative (animated orbs) — no SSR value.
 // Lazy-loading it removes it from the critical JS path and reduces TBT.
 const AmbientBackground = dynamic(
-  () =>
-    import('@client/components/landing/AmbientBackground').then(
-      m => m.AmbientBackground,
-    ),
-  { ssr: false },
+  () => import('@client/components/landing/AmbientBackground').then(m => m.AmbientBackground),
+  { ssr: false }
 );
 
 export const LOCALE_LINKS: ReadonlyArray<{ href: string; label: string; flag: string }> = [
@@ -80,8 +77,7 @@ export function HomePageClient(): JSX.Element {
   const locale = useLocale();
   const { tier } = useRegionTier();
   const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
-  const localizeHref = (href: string) =>
-    locale === DEFAULT_LOCALE ? href : `/${locale}${href}`;
+  const localizeHref = (href: string) => (locale === DEFAULT_LOCALE ? href : `/${locale}${href}`);
 
   // Check if any plan has trial enabled
   const config = getSubscriptionConfig();
@@ -131,40 +127,40 @@ export function HomePageClient(): JSX.Element {
     <>
       {/* Popular Tools Section — Internal linking for link equity distribution */}
       <section className="py-20 relative">
-          <AmbientBackground variant="section" />
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-                Start Enhancing — <span className="gradient-text-primary">Pick a Tool</span>
-              </h2>
-              <p className="text-lg text-text-secondary max-w-2xl mx-auto font-light">
-                Professional AI tools for every image task. Try free with {freeCredits} credits.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {POPULAR_TOOLS.map(tool => (
-                <Link
-                  key={tool.href}
-                  href={localizeHref(tool.href)}
-                  className="group glass-card-2025 p-6 flex items-start gap-4 hover:border-accent/40 transition-all duration-300 animated-border-violet"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-base font-bold text-white group-hover:text-accent transition-colors truncate">
-                      {tool.label}
-                    </p>
-                    <p className="text-sm text-text-secondary mt-1 font-light leading-snug">
-                      {tool.desc}
-                    </p>
-                  </div>
-                  <ChevronRight
-                    size={18}
-                    className="text-text-muted shrink-0 mt-0.5 group-hover:text-accent group-hover:translate-x-1 transition-all duration-200"
-                  />
-                </Link>
-              ))}
-            </div>
+        <AmbientBackground variant="section" />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
+              Start Enhancing — <span className="gradient-text-primary">Pick a Tool</span>
+            </h2>
+            <p className="text-lg text-text-secondary max-w-2xl mx-auto font-light">
+              Professional AI tools for every image task. Try free with {freeCredits} credits.
+            </p>
           </div>
-        </section>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {POPULAR_TOOLS.map(tool => (
+              <Link
+                key={tool.href}
+                href={localizeHref(tool.href)}
+                className="group glass-card-2025 p-6 flex items-start gap-4 hover:border-accent/40 transition-all duration-300 animated-border-violet"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-base font-bold text-white group-hover:text-accent transition-colors truncate">
+                    {tool.label}
+                  </p>
+                  <p className="text-sm text-text-secondary mt-1 font-light leading-snug">
+                    {tool.desc}
+                  </p>
+                </div>
+                <ChevronRight
+                  size={18}
+                  className="text-text-muted shrink-0 mt-0.5 group-hover:text-accent group-hover:translate-x-1 transition-all duration-200"
+                />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Landing Page Sections - Lazy loaded for performance */}
       <Suspense fallback={<div className="h-screen" />}>
@@ -211,9 +207,7 @@ export function HomePageClient(): JSX.Element {
       <section className="py-24 relative">
         <AmbientBackground variant="section" />
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">
-            {t('pricingCtaTitle')}
-          </h2>
+          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">{t('pricingCtaTitle')}</h2>
           <p className="text-lg sm:text-xl text-text-secondary mb-10 max-w-2xl mx-auto font-light">
             {t('pricingCtaDescription')}
           </p>

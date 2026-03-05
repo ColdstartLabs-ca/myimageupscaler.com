@@ -127,8 +127,20 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
       <head>
         {/* Logo preloads — the logo is the LCP element on mobile (above the fold in sticky nav).
             Media queries match the xs: 475px Tailwind breakpoint so each device only fetches its logo. */}
-        <link rel="preload" as="image" href="/logo/horizontal-logo-compact.png" media="(max-width: 474px)" fetchPriority="high" />
-        <link rel="preload" as="image" href="/logo/horizontal-logo-full.png" media="(min-width: 475px)" fetchPriority="high" />
+        <link
+          rel="preload"
+          as="image"
+          href="/logo/horizontal-logo-compact.png"
+          media="(max-width: 474px)"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/logo/horizontal-logo-full.png"
+          media="(min-width: 475px)"
+          fetchPriority="high"
+        />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://analytics.ahrefs.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />

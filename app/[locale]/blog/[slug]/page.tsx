@@ -26,15 +26,17 @@ import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 
 // Convert MDX Callout components to blockquotes with type markers
 function preprocessContent(content: string): string {
-  return content
-    .replace(
-      /<Callout type="(\w+)">\n?([\s\S]*?)\n?<\/Callout>/g,
-      (_, type, text) => `> [!${type.toUpperCase()}]\n> ${text.trim().replace(/\n/g, '\n> ')}`
-    )
-    // <iframe> is not in CommonMark's block-level HTML tag list, so remark-parse
-    // treats it as inline HTML and escapes it. Wrapping in <div> (which IS in the
-    // block list) ensures remark treats it as a raw HTML block that rehype-raw can render.
-    .replace(/(<iframe\b[^>]*>[\s\S]*?<\/iframe>)/gi, '\n\n<div>$1</div>\n\n');
+  return (
+    content
+      .replace(
+        /<Callout type="(\w+)">\n?([\s\S]*?)\n?<\/Callout>/g,
+        (_, type, text) => `> [!${type.toUpperCase()}]\n> ${text.trim().replace(/\n/g, '\n> ')}`
+      )
+      // <iframe> is not in CommonMark's block-level HTML tag list, so remark-parse
+      // treats it as inline HTML and escapes it. Wrapping in <div> (which IS in the
+      // block list) ensures remark treats it as a raw HTML block that rehype-raw can render.
+      .replace(/(<iframe\b[^>]*>[\s\S]*?<\/iframe>)/gi, '\n\n<div>$1</div>\n\n')
+  );
 }
 
 /**

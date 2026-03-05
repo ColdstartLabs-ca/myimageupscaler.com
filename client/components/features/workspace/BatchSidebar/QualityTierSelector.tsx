@@ -74,7 +74,9 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         `}
       >
         <div className="flex flex-col items-start text-left min-w-0 flex-1 relative z-10">
-          <span className="font-bold text-sm text-white truncate w-full">{currentTierConfig.label}</span>
+          <span className="font-bold text-sm text-white truncate w-full">
+            {currentTierConfig.label}
+          </span>
           <span className="text-[11px] text-white/60 mt-0.5 truncate w-full font-medium">
             {currentTierConfig.bestFor}
           </span>

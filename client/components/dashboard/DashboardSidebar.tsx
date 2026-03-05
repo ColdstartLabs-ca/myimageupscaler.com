@@ -55,9 +55,9 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
   const planDisplayName = isCanceled
     ? BILLING_COPY.freePlan
     : getPlanDisplayName({
-      subscriptionTier: user?.profile?.subscription_tier,
-      priceId: subscription?.price_id,
-    });
+        subscriptionTier: user?.profile?.subscription_tier,
+        priceId: subscription?.price_id,
+      });
 
   // Build menu items dynamically based on user role
   const menuItems: ISidebarItem[] = [
@@ -199,10 +199,11 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
                 onClick={() => handleNavigation(item.href)}
                 className={`
                 flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 w-full text-left
-                ${active
+                ${
+                  active
                     ? 'bg-accent/10 text-accent'
                     : 'text-muted-foreground hover:bg-surface-light hover:text-white'
-                  }
+                }
               `}
               >
                 <Icon
@@ -230,10 +231,11 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
                 onClick={() => handleNavigation(item.href)}
                 className={`
                 flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 w-full text-left
-                ${active
+                ${
+                  active
                     ? 'bg-accent/10 text-accent'
                     : 'text-muted-foreground hover:bg-surface-light hover:text-white'
-                  }
+                }
               `}
               >
                 <Icon

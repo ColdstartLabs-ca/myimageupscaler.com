@@ -195,9 +195,9 @@ export default function BillingPage() {
 
   const planName = subscription
     ? getPlanDisplayName({
-      priceId: subscription.price_id,
-      subscriptionTier: profile?.subscription_tier,
-    })
+        priceId: subscription.price_id,
+        subscriptionTier: profile?.subscription_tier,
+      })
     : 'Free Plan';
 
   // Subscription Tab Content
@@ -402,7 +402,7 @@ export default function BillingPage() {
             <div className="flex items-start gap-3">
               <motion.div
                 animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                 className="mt-0.5 text-accent"
               >
                 <Zap size={18} />
@@ -418,7 +418,7 @@ export default function BillingPage() {
           </motion.div>
 
           <CreditPackSelector
-            onPurchaseStart={() => { }}
+            onPurchaseStart={() => {}}
             onPurchaseComplete={() => {
               loadBillingData();
               loadCreditHistory();
@@ -483,8 +483,9 @@ export default function BillingPage() {
                     <div className="flex items-center gap-4">
                       <div className="text-right">
                         <p
-                          className={`text-sm font-medium ${transaction.amount >= 0 ? 'text-green-400' : 'text-red-400'
-                            }`}
+                          className={`text-sm font-medium ${
+                            transaction.amount >= 0 ? 'text-green-400' : 'text-red-400'
+                          }`}
                         >
                           {transaction.amount >= 0 ? '+' : ''}
                           {transaction.amount}

@@ -82,13 +82,8 @@
           "answer": "Yes, significantly better. AI upscaling uses neural networks to intelligently generate new details, while bicubic interpolation just smooths between existing pixels. AI produces sharper, more detailed results with fewer artifacts."
         }
       ],
-      "relatedGuides": [
-        "webp-format-guide",
-        "heic-format-guide"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
+      "relatedGuides": ["webp-format-guide", "heic-format-guide"],
+      "relatedTools": ["ai-image-upscaler"],
       "relatedBlogPosts": [
         "how-to-upscale-images-without-losing-quality",
         "image-resolution-for-printing-complete-guide",
@@ -177,13 +172,8 @@
           "answer": "For web use, mostly yes. Convert JPEG and PNG images to WebP for better performance. However, keep originals as backup, and don't convert RAW files or images destined for print."
         }
       ],
-      "relatedGuides": [
-        "avif-next-gen-format",
-        "heic-format-guide"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedGuides": ["avif-next-gen-format", "heic-format-guide"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "heic-format-guide",
@@ -267,13 +257,8 @@
           "answer": "Converting HEIC to PNG is lossless and preserves full quality. Converting to JPEG introduces some quality loss (especially in 16-bit to 8-bit conversion), but using 90-95% quality minimizes visible differences."
         }
       ],
-      "relatedGuides": [
-        "raw-photography-guide",
-        "tiff-format-guide"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedGuides": ["raw-photography-guide", "tiff-format-guide"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "raw-photography-guide",
@@ -357,13 +342,8 @@
           "answer": "Not necessarily. Adobe Lightroom is the industry standard, but free options like RawTherapee or camera manufacturer software work well. Choose based on your needs and budget."
         }
       ],
-      "relatedGuides": [
-        "tiff-format-guide",
-        "heic-format-guide"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
+      "relatedGuides": ["tiff-format-guide", "heic-format-guide"],
+      "relatedTools": ["ai-image-upscaler"],
       "relatedBlogPosts": [
         "how-to-upscale-images-without-losing-quality",
         "restore-old-photos-ai-enhancement-guide"
@@ -451,12 +431,8 @@
           "answer": "Most print shops prefer TIFF, but many now accept high-quality JPEG or native files from InDesign/Illustrator. Always check with your printer for their preferred format and specifications."
         }
       ],
-      "relatedGuides": [
-        "raw-photography-guide"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ],
+      "relatedGuides": ["raw-photography-guide"],
+      "relatedTools": ["ai-image-upscaler"],
       "relatedBlogPosts": [
         "how-to-upscale-images-without-losing-quality",
         "image-resolution-for-printing-complete-guide"
@@ -544,13 +520,8 @@
           "answer": "Absolutely not. Use PNG for lossless graphics, JPEG for photos, or WebP for modern web use. BMP has no advantages over these formats."
         }
       ],
-      "relatedGuides": [
-        "svg-vector-guide",
-        "tiff-format-guide"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedGuides": ["svg-vector-guide", "tiff-format-guide"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "svg-vector-guide",
@@ -560,12 +531,7 @@
       "h1": "SVG Format Explained: Vector Images vs Raster Graphics",
       "intro": "SVG (Scalable Vector Graphics) is fundamentally different from raster formats like JPEG and PNG. Learn how SVG works, when to use it, and why traditional upscaling doesn't apply to vector graphics.",
       "primaryKeyword": "svg format",
-      "secondaryKeywords": [
-        "svg vs png",
-        "vector graphics",
-        "scalable images",
-        "svg upscaling"
-      ],
+      "secondaryKeywords": ["svg vs png", "vector graphics", "scalable images", "svg upscaling"],
       "lastUpdated": "2025-12-26T00:00:00Z",
       "category": "guides",
       "guideType": "explainer",
@@ -634,13 +600,8 @@
           "answer": "You can convert simple PNG graphics (logos, icons) to SVG using vectorization tools like Adobe Illustrator's Image Trace. However, photographs don't convert well to SVG - they're best left as raster images."
         }
       ],
-      "relatedGuides": [
-        "webp-format-guide",
-        "bmp-format-guide"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedGuides": ["webp-format-guide", "bmp-format-guide"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "gif-animation-guide",
@@ -650,12 +611,7 @@
       "h1": "GIF Format Explained: Understanding Graphics and Animations",
       "intro": "GIF (Graphics Interchange Format) is best known for animations but has limitations for static images. Learn when GIF is appropriate, modern alternatives, and how to work with GIF files effectively.",
       "primaryKeyword": "gif format",
-      "secondaryKeywords": [
-        "gif vs png",
-        "gif animation",
-        "upscale gif",
-        "animated images"
-      ],
+      "secondaryKeywords": ["gif vs png", "gif animation", "upscale gif", "animated images"],
       "lastUpdated": "2025-12-26T00:00:00Z",
       "category": "guides",
       "guideType": "explainer",
@@ -724,13 +680,8 @@
           "answer": "Not dead, but outdated. GIF is still used for simple animations and universal compatibility. However, WebP and MP4 are superior for most use cases. Use GIF only when you specifically need its broad compatibility."
         }
       ],
-      "relatedGuides": [
-        "webp-format-guide",
-        "avif-next-gen-format"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedGuides": ["webp-format-guide", "avif-next-gen-format"],
+      "relatedTools": ["ai-image-upscaler"]
     },
     {
       "slug": "avif-next-gen-format",
@@ -815,13 +766,8 @@
           "answer": "Yes, AVIF supports 8-bit alpha transparency, just like PNG and WebP. This makes it suitable for logos, icons, and graphics that need transparent backgrounds."
         }
       ],
-      "relatedGuides": [
-        "webp-format-guide",
-        "gif-animation-guide"
-      ],
-      "relatedTools": [
-        "ai-image-upscaler"
-      ]
+      "relatedGuides": ["webp-format-guide", "gif-animation-guide"],
+      "relatedTools": ["ai-image-upscaler"]
     }
   ],
   "meta": {
