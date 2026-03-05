@@ -6,7 +6,7 @@
  * Target keywords: image compressor, compress image online (300K+ searches)
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { InteractiveTool } from './InteractiveTool';
 import Image from 'next/image';
 
@@ -16,6 +16,75 @@ interface ICompressOptions {
   maxHeight: number;
   format: 'jpeg' | 'png' | 'webp';
   maintainAspectRatio: boolean;
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes}B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)}KB`;
+  return `${(bytes / 1024 / 1024).toFixed(2)}MB`;
+}
+
+function compressImageBlob(file: File, options: ICompressOptions): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = document.createElement('img');
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+      reject(new Error('Canvas not supported'));
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+
+      let targetWidth = img.width;
+      let targetHeight = img.height;
+
+      if (options.maintainAspectRatio) {
+        const aspectRatio = img.width / img.height;
+        if (img.width > options.maxWidth || img.height > options.maxHeight) {
+          if (options.maxWidth / options.maxHeight > aspectRatio) {
+            targetHeight = options.maxHeight;
+            targetWidth = Math.round(options.maxHeight * aspectRatio);
+          } else {
+            targetWidth = options.maxWidth;
+            targetHeight = Math.round(options.maxWidth / aspectRatio);
+          }
+        }
+      } else {
+        targetWidth = Math.min(img.width, options.maxWidth);
+        targetHeight = Math.min(img.height, options.maxHeight);
+      }
+
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+      canvas.toBlob(
+        blob => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to compress image'));
+          }
+        },
+        `image/${options.format}`,
+        options.quality / 100
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Failed to load image'));
+    };
+    img.src = objectUrl;
+  });
 }
 
 export function ImageCompressor(): React.ReactElement {
@@ -33,75 +102,82 @@ export function ImageCompressor(): React.ReactElement {
     width: number;
     height: number;
   } | null>(null);
+  const [compressedPreviewUrl, setCompressedPreviewUrl] = useState<string | null>(null);
+
+  // Ref to track the current file for debounced preview updates
+  const currentFileRef = useRef<File | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currentPreviewUrlRef = useRef<string | null>(null);
+
+  // Debounced live preview: recompresses whenever file or options change
+  useEffect(() => {
+    const file = currentFileRef.current;
+    if (!file) return;
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(async () => {
+      try {
+        const blob = await compressImageBlob(file, options);
+        setCompressedSize(blob.size);
+
+        // Revoke previous preview URL to avoid memory leaks
+        if (currentPreviewUrlRef.current) {
+          URL.revokeObjectURL(currentPreviewUrlRef.current);
+        }
+
+        const url = URL.createObjectURL(blob);
+        currentPreviewUrlRef.current = url;
+        setCompressedPreviewUrl(url);
+      } catch {
+        // Silently ignore preview errors (user may still be adjusting settings)
+      }
+    }, 300);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [options]);
 
   const handleCompress = useCallback(
     async (file: File): Promise<Blob> => {
       setOriginalSize(file.size);
+      currentFileRef.current = file;
 
-      return new Promise((resolve, reject) => {
+      // Measure original image dimensions
+      await new Promise<void>(resolve => {
         const img = document.createElement('img');
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
-        if (!ctx) {
-          reject(new Error('Canvas not supported'));
-          return;
-        }
-
+        const objectUrl = URL.createObjectURL(file);
         img.onload = () => {
-          // Store original dimensions
-          if (!originalDimensions) {
-            setOriginalDimensions({ width: img.width, height: img.height });
-          }
-
-          let targetWidth = img.width;
-          let targetHeight = img.height;
-
-          // Resize if image exceeds max dimensions
-          if (options.maintainAspectRatio) {
-            const aspectRatio = img.width / img.height;
-
-            if (img.width > options.maxWidth || img.height > options.maxHeight) {
-              if (options.maxWidth / options.maxHeight > aspectRatio) {
-                targetHeight = options.maxHeight;
-                targetWidth = Math.round(options.maxHeight * aspectRatio);
-              } else {
-                targetWidth = options.maxWidth;
-                targetHeight = Math.round(options.maxWidth / aspectRatio);
-              }
-            }
-          } else {
-            targetWidth = Math.min(img.width, options.maxWidth);
-            targetHeight = Math.min(img.height, options.maxHeight);
-          }
-
-          canvas.width = targetWidth;
-          canvas.height = targetHeight;
-
-          // High-quality rendering
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
-          ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-
-          canvas.toBlob(
-            blob => {
-              if (blob) {
-                setCompressedSize(blob.size);
-                resolve(blob);
-              } else {
-                reject(new Error('Failed to compress image'));
-              }
-            },
-            `image/${options.format}`,
-            options.quality / 100
-          );
+          setOriginalDimensions({ width: img.width, height: img.height });
+          URL.revokeObjectURL(objectUrl);
+          resolve();
         };
-
-        img.onerror = () => reject(new Error('Failed to load image'));
-        img.src = URL.createObjectURL(file);
+        img.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          resolve();
+        };
+        img.src = objectUrl;
       });
+
+      const blob = await compressImageBlob(file, options);
+      setCompressedSize(blob.size);
+
+      // Set initial compressed preview
+      if (currentPreviewUrlRef.current) {
+        URL.revokeObjectURL(currentPreviewUrlRef.current);
+      }
+      const url = URL.createObjectURL(blob);
+      currentPreviewUrlRef.current = url;
+      setCompressedPreviewUrl(url);
+
+      return blob;
     },
-    [options, originalDimensions]
+    [options]
   );
 
   const compressionRatio =
@@ -117,9 +193,10 @@ export function ImageCompressor(): React.ReactElement {
     >
       {({ file, previewUrl, processedBlob }) => (
         <div className="space-y-6">
-          {/* Preview */}
+          {/* Preview panels */}
           {previewUrl && (
             <div className="grid md:grid-cols-2 gap-4">
+              {/* Original */}
               <div>
                 <label className="text-sm font-medium mb-2 block text-muted-foreground">
                   Original Image
@@ -133,6 +210,13 @@ export function ImageCompressor(): React.ReactElement {
                     className="w-full h-auto"
                     unoptimized
                   />
+                  {/* Size badge */}
+                  {originalSize > 0 && (
+                    <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded font-mono">
+                      {formatFileSize(originalSize)}
+                    </div>
+                  )}
+                  {/* Dimension badge */}
                   {originalDimensions && (
                     <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                       {originalDimensions.width} × {originalDimensions.height}
@@ -140,26 +224,43 @@ export function ImageCompressor(): React.ReactElement {
                   )}
                 </div>
               </div>
+
+              {/* Compressed preview */}
               <div>
                 <label className="text-sm font-medium mb-2 block text-muted-foreground">
-                  Compression Preview
+                  Compressed Preview
                 </label>
-                <div className="border rounded-lg p-6 bg-surface-light flex items-center justify-center min-h-[200px]">
-                  <div className="text-center">
-                    <p className="text-4xl font-bold text-accent">{options.quality}%</p>
-                    <p className="text-sm text-muted-foreground mt-2">Quality Setting</p>
-                    {processedBlob && (
-                      <div className="mt-4 space-y-1">
-                        <p className="text-lg font-semibold text-success">
-                          {compressionRatio}% smaller
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {(originalSize / 1024 / 1024).toFixed(2)}MB →{' '}
-                          {(compressedSize / 1024 / 1024).toFixed(2)}MB
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                <div className="relative border rounded-lg overflow-hidden bg-surface-light min-h-[200px]">
+                  {compressedPreviewUrl ? (
+                    <>
+                      <Image
+                        src={compressedPreviewUrl}
+                        alt="Compressed preview"
+                        width={400}
+                        height={300}
+                        className="w-full h-auto"
+                        unoptimized
+                      />
+                      {/* Compressed size badge */}
+                      {compressedSize > 0 && (
+                        <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded font-mono">
+                          {formatFileSize(compressedSize)}
+                        </div>
+                      )}
+                      {/* Reduction badge */}
+                      {compressionRatio > 0 && (
+                        <div className="absolute bottom-2 right-2 bg-success/90 text-white text-xs px-2 py-1 rounded font-medium">
+                          -{compressionRatio}% smaller
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-center min-h-[200px]">
+                      <p className="text-sm text-muted-foreground">
+                        Click &ldquo;Process Image&rdquo; to compress
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -282,9 +383,7 @@ export function ImageCompressor(): React.ReactElement {
             <div className="bg-surface-light rounded-lg p-4 border border-border">
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <p className="text-2xl font-bold text-primary">
-                    {(originalSize / 1024).toFixed(0)}KB
-                  </p>
+                  <p className="text-2xl font-bold text-primary">{formatFileSize(originalSize)}</p>
                   <p className="text-xs text-muted-foreground">Original Size</p>
                 </div>
                 <div>
@@ -292,9 +391,7 @@ export function ImageCompressor(): React.ReactElement {
                   <p className="text-xs text-muted-foreground">Reduction</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-accent">
-                    {(compressedSize / 1024).toFixed(0)}KB
-                  </p>
+                  <p className="text-2xl font-bold text-accent">{formatFileSize(compressedSize)}</p>
                   <p className="text-xs text-muted-foreground">Compressed Size</p>
                 </div>
               </div>
@@ -303,7 +400,7 @@ export function ImageCompressor(): React.ReactElement {
 
           {/* Tips */}
           <div className="bg-surface rounded-lg p-4 text-sm text-muted-foreground">
-            <p className="font-medium mb-2">💡 Compression Tips:</p>
+            <p className="font-medium mb-2">Compression Tips:</p>
             <ul className="space-y-1 ml-4 list-disc">
               <li>For web use, 70-80% quality is usually optimal</li>
               <li>WebP format offers best compression with great quality</li>

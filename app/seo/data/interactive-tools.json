@@ -1112,6 +1112,1795 @@
       "relatedGuides": ["webp-format-guide"],
       "ctaText": "Convert PNG to WebP Free",
       "ctaUrl": "/tools/convert/png-to-webp"
+    },
+    {
+      "slug": "bmp-to-jpg",
+      "title": "BMP to JPG Converter",
+      "metaTitle": "Free BMP to JPG Converter - Convert BMP Images Online",
+      "metaDescription": "Convert BMP to JPG online free. Fast browser-based BMP to JPEG conversion. No upload needed, no watermark. Reduce file size by up to 90%.",
+      "h1": "Free BMP to JPG Converter - Convert BMP Images Online",
+      "intro": "Convert BMP files to JPG format instantly in your browser. BMP files are large and uncompressed \u2014 converting to JPG shrinks them by up to 90% with minimal quality loss. No upload, no signup.",
+      "primaryKeyword": "bmp to jpg",
+      "secondaryKeywords": [
+        "bmp to jpeg",
+        "convert bmp to jpg",
+        "bmp converter",
+        "bmp to jpg online",
+        "bmp file converter"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "BMP to JPG Converter",
+      "description": "Convert BMP (Bitmap) images to JPG format using your browser's built-in canvas engine. Works entirely offline \u2014 your images stay on your device.",
+      "isInteractive": true,
+      "toolComponent": "FormatConverter",
+      "maxFileSizeMB": 50,
+      "acceptedFormats": ["image/bmp"],
+      "toolConfig": {
+        "defaultTargetFormat": "jpeg",
+        "acceptedInputFormats": ["image/bmp"],
+        "availableOutputFormats": ["jpeg", "png", "webp"]
+      },
+      "features": [
+        {
+          "title": "Instant BMP Conversion",
+          "description": "Convert BMP files to JPG, PNG, or WebP in seconds. No waiting for server uploads."
+        },
+        {
+          "title": "Massive File Size Reduction",
+          "description": "BMP files are uncompressed. Converting to JPG typically reduces size by 85-95%."
+        },
+        {
+          "title": "100% Private",
+          "description": "All conversion happens locally in your browser. BMP files never leave your device."
+        },
+        {
+          "title": "Quality Control",
+          "description": "Adjust output quality from 1-100% to balance file size and visual fidelity."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Windows Screenshot Conversion",
+          "description": "Convert Windows BMP screenshots to web-friendly JPG format.",
+          "example": "Turn a 5MB BMP screenshot into a 200KB JPG"
+        },
+        {
+          "title": "Legacy Image Archives",
+          "description": "Convert old BMP files from legacy software to modern formats.",
+          "example": "Batch convert scanned BMP documents to JPG"
+        },
+        {
+          "title": "Email Attachments",
+          "description": "Shrink BMP files enough to send via email without size limit issues.",
+          "example": "Convert 10MB BMP to 500KB JPG for email"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "90% Smaller Files",
+          "description": "JPG compression dramatically reduces BMP file sizes for sharing and storage.",
+          "metric": "Up to 95% reduction"
+        },
+        {
+          "title": "Universal Compatibility",
+          "description": "JPG files open in every browser, OS, and device without special software.",
+          "metric": "100% compatible"
+        },
+        {
+          "title": "No Software Required",
+          "description": "Convert BMP to JPG directly in Chrome, Firefox, Safari, or Edge.",
+          "metric": "Zero install"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your BMP File",
+          "description": "Drag and drop your BMP file or click to browse. Files up to 50MB supported."
+        },
+        {
+          "step": 2,
+          "title": "Choose Output Format",
+          "description": "Select JPG, PNG, or WebP and adjust quality settings to your needs."
+        },
+        {
+          "step": 3,
+          "title": "Convert & Download",
+          "description": "Click Convert and download your JPG instantly. The original BMP is never uploaded."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is BMP to JPG conversion free?",
+          "answer": "Yes, completely free. No signup, no watermarks, no limits on conversions."
+        },
+        {
+          "question": "Does converting BMP to JPG lose quality?",
+          "answer": "At 85-90% quality setting, the difference is imperceptible to most viewers while reducing file size by 85%."
+        },
+        {
+          "question": "Can I convert multiple BMP files at once?",
+          "answer": "This tool converts one file at a time. For bulk conversion, try our Bulk Image Converter."
+        },
+        {
+          "question": "Is my BMP file safe?",
+          "answer": "Completely. All processing happens in your browser \u2014 your files never touch our servers."
+        }
+      ],
+      "relatedTools": ["png-to-jpg", "image-compressor", "format-converter"],
+      "relatedGuides": [],
+      "ctaText": "Try AI Image Upscaler",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "gif-to-jpg",
+      "title": "GIF to JPG Converter",
+      "metaTitle": "Free GIF to JPG Converter - Convert GIF to JPEG Online",
+      "metaDescription": "Convert GIF to JPG online free. Extract the first frame of animated GIFs or convert static GIFs to JPEG instantly. No upload required.",
+      "h1": "Free GIF to JPG Converter - Convert GIF Images Online",
+      "intro": "Convert GIF images to JPG format in your browser. Perfect for converting static GIFs to smaller JPEG files, or extracting a frame from an animated GIF. Zero upload needed.",
+      "primaryKeyword": "gif to jpg",
+      "secondaryKeywords": [
+        "gif to jpeg",
+        "convert gif to jpg",
+        "gif converter",
+        "gif to jpg online",
+        "animated gif to jpg"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "GIF to JPG Converter",
+      "description": "Convert GIF images to JPG, PNG, or WebP format using browser canvas technology. For animated GIFs, converts the first frame.",
+      "isInteractive": true,
+      "toolComponent": "FormatConverter",
+      "maxFileSizeMB": 20,
+      "acceptedFormats": ["image/gif"],
+      "toolConfig": {
+        "defaultTargetFormat": "jpeg",
+        "acceptedInputFormats": ["image/gif"],
+        "availableOutputFormats": ["jpeg", "png", "webp"]
+      },
+      "features": [
+        {
+          "title": "GIF Frame Extraction",
+          "description": "Convert the first frame of animated GIFs to a still JPG image."
+        },
+        {
+          "title": "Transparent GIF Support",
+          "description": "GIFs with transparency can be converted to PNG to preserve it, or JPG with white background."
+        },
+        {
+          "title": "Format Flexibility",
+          "description": "Convert GIF to JPG for photos, PNG for graphics, or WebP for web optimization."
+        },
+        {
+          "title": "Instant & Private",
+          "description": "Conversion happens instantly in your browser. No files uploaded to any server."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Static Image Conversion",
+          "description": "Convert non-animated GIFs to JPG for smaller file sizes and wider compatibility.",
+          "example": "Convert a 2MB GIF logo to a 50KB JPG"
+        },
+        {
+          "title": "Thumbnail Creation",
+          "description": "Extract a still frame from an animated GIF to use as a thumbnail or preview.",
+          "example": "Get the first frame of a product animation as JPG"
+        },
+        {
+          "title": "Web Optimization",
+          "description": "Replace GIF images with JPG or WebP for faster page loading.",
+          "example": "Replace a 1MB GIF with a 100KB WebP"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Smaller File Sizes",
+          "description": "JPG is much smaller than GIF for photographic content.",
+          "metric": "Up to 80% smaller"
+        },
+        {
+          "title": "Better Quality",
+          "description": "JPG supports millions of colors vs GIF's 256 color limit.",
+          "metric": "True color output"
+        },
+        {
+          "title": "Universal Support",
+          "description": "JPG works everywhere while GIF support varies.",
+          "metric": "100% compatible"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your GIF",
+          "description": "Drag and drop a GIF file or click to browse. Supports animated and static GIFs."
+        },
+        {
+          "step": 2,
+          "title": "Select Output Format",
+          "description": "Choose JPG for photos, PNG for transparency, or WebP for best web performance."
+        },
+        {
+          "step": 3,
+          "title": "Download Your Image",
+          "description": "Click Convert and download the converted image file immediately."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Does it convert animated GIFs?",
+          "answer": "Yes, but only the first frame is converted to a still image. Full animated GIF to video conversion is not supported."
+        },
+        {
+          "question": "Will I lose quality converting GIF to JPG?",
+          "answer": "GIF only supports 256 colors, so converting to JPG often actually improves apparent quality for photographic content."
+        },
+        {
+          "question": "Can I keep transparency from a GIF?",
+          "answer": "Choose PNG output format to preserve GIF transparency. JPG doesn't support transparency."
+        },
+        {
+          "question": "Is it free to use?",
+          "answer": "Yes, completely free with no limits and no watermarks."
+        }
+      ],
+      "relatedTools": ["png-to-jpg", "image-compressor", "bmp-to-jpg"],
+      "relatedGuides": [],
+      "ctaText": "Try AI Image Upscaler",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "svg-to-jpg",
+      "title": "SVG to JPG Converter",
+      "metaTitle": "Free SVG to JPG Converter - Convert SVG to JPEG Online",
+      "metaDescription": "Convert SVG to JPG online free. Transform vector SVG graphics to raster JPEG images instantly in your browser. Choose output size and quality.",
+      "h1": "Free SVG to JPG Converter - Convert Vector to Image Online",
+      "intro": "Convert SVG vector graphics to JPG raster images instantly. Perfect for sharing SVG artwork as photos, using vector logos in image editors, or converting SVG icons to JPG for email.",
+      "primaryKeyword": "svg to jpg",
+      "secondaryKeywords": [
+        "svg to jpeg",
+        "convert svg to jpg",
+        "svg to image",
+        "svg converter",
+        "vector to jpg"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "SVG to JPG Converter",
+      "description": "Convert SVG (Scalable Vector Graphics) files to JPG, PNG, or WebP raster images using browser canvas technology. All processing is local \u2014 your files stay private.",
+      "isInteractive": true,
+      "toolComponent": "FormatConverter",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/svg+xml"],
+      "toolConfig": {
+        "defaultTargetFormat": "jpeg",
+        "acceptedInputFormats": ["image/svg+xml"],
+        "availableOutputFormats": ["jpeg", "png", "webp"]
+      },
+      "features": [
+        {
+          "title": "Vector to Raster Conversion",
+          "description": "Convert resolution-independent SVG graphics to fixed-resolution JPG images at any quality."
+        },
+        {
+          "title": "Transparency Handling",
+          "description": "SVG transparency is preserved when converting to PNG, or filled with white background for JPG."
+        },
+        {
+          "title": "High Quality Output",
+          "description": "Browser canvas renders SVG at full quality for crisp, sharp raster output."
+        },
+        {
+          "title": "Private & Instant",
+          "description": "Conversion runs entirely in your browser. No SVG files uploaded to servers."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Logo Sharing",
+          "description": "Convert SVG logos to JPG for email signatures, social media, and platforms that don't support SVG.",
+          "example": "Export your SVG brand logo as JPG for LinkedIn"
+        },
+        {
+          "title": "Image Editor Import",
+          "description": "Import SVG artwork into Photoshop, GIMP, or Canva by converting to JPG first.",
+          "example": "Convert an SVG illustration to PNG for Canva"
+        },
+        {
+          "title": "Web Performance",
+          "description": "Convert complex SVG animations or logos to WebP for faster loading on browsers.",
+          "example": "Replace animated SVG with a WebP screenshot"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Universal Compatibility",
+          "description": "JPG opens in every app, email client, and device \u2014 SVG requires special software.",
+          "metric": "100% compatible"
+        },
+        {
+          "title": "Precise Control",
+          "description": "Set output quality and ensure your SVG renders at the exact pixel dimensions needed.",
+          "metric": "Pixel-perfect output"
+        },
+        {
+          "title": "Free & Private",
+          "description": "No subscription needed. SVG files never leave your browser.",
+          "metric": "Zero cost"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload SVG File",
+          "description": "Drag your SVG file into the upload zone or click to select from your computer."
+        },
+        {
+          "step": 2,
+          "title": "Choose Format & Quality",
+          "description": "Select JPG for photos, PNG for transparency, or WebP for web. Adjust quality if needed."
+        },
+        {
+          "step": 3,
+          "title": "Convert & Download",
+          "description": "Click Convert and download your raster image immediately."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Does SVG to JPG conversion maintain quality?",
+          "answer": "Yes, SVG is vector so it renders at any resolution without pixelation. The output JPG will be as sharp as the canvas size allows."
+        },
+        {
+          "question": "Can I set the output dimensions?",
+          "answer": "The output dimensions match the SVG's natural size. For large outputs, use an SVG with large viewport dimensions."
+        },
+        {
+          "question": "Does it preserve SVG animations?",
+          "answer": "No, only the first/static state of the SVG is captured. Animated SVGs will be converted as a still frame."
+        },
+        {
+          "question": "What about external SVG assets?",
+          "answer": "SVGs with externally referenced images or fonts may not render correctly if those assets aren't embedded."
+        }
+      ],
+      "relatedTools": ["png-to-jpg", "image-compressor", "bmp-to-jpg"],
+      "relatedGuides": [],
+      "ctaText": "Try AI Image Upscaler",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "avif-to-jpg",
+      "title": "AVIF to JPG Converter",
+      "metaTitle": "Free AVIF to JPG Converter - Convert AVIF Images Online",
+      "metaDescription": "Convert AVIF to JPG online free. Transform modern AVIF images to universally compatible JPEG format instantly in your browser.",
+      "h1": "Free AVIF to JPG Converter - Convert AVIF Images Online",
+      "intro": "Convert AVIF images to JPG format instantly. AVIF is a newer format not supported everywhere \u2014 convert to JPG for universal compatibility with all apps, devices, and platforms.",
+      "primaryKeyword": "avif to jpg",
+      "secondaryKeywords": [
+        "avif to jpeg",
+        "convert avif to jpg",
+        "avif converter",
+        "avif to png",
+        "avif image converter"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "AVIF to JPG Converter",
+      "description": "Convert AVIF (AV1 Image File Format) to JPG, PNG, or WebP using browser canvas. AVIF is supported in modern browsers, enabling local conversion without server uploads.",
+      "isInteractive": true,
+      "toolComponent": "FormatConverter",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/avif"],
+      "toolConfig": {
+        "defaultTargetFormat": "jpeg",
+        "acceptedInputFormats": ["image/avif"],
+        "availableOutputFormats": ["jpeg", "png", "webp"]
+      },
+      "features": [
+        {
+          "title": "Modern Format Support",
+          "description": "AVIF is supported in Chrome, Firefox, and Safari \u2014 enabling browser-based conversion without plugins."
+        },
+        {
+          "title": "High Quality Conversion",
+          "description": "AVIF stores images with excellent quality. Converting to JPG preserves visual fidelity."
+        },
+        {
+          "title": "Multiple Output Formats",
+          "description": "Convert AVIF to JPG for compatibility, PNG for transparency, or WebP for web optimization."
+        },
+        {
+          "title": "Completely Private",
+          "description": "AVIF files are decoded and converted entirely in your browser. No server uploads."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Cross-Platform Sharing",
+          "description": "Convert AVIF photos to JPG for sharing with Windows users and legacy apps.",
+          "example": "Convert iPhone AVIF photos to JPG for Windows Photos app"
+        },
+        {
+          "title": "Email Attachments",
+          "description": "Convert AVIF to JPG so email recipients with older software can view them.",
+          "example": "Send AVIF product photos as JPG in email"
+        },
+        {
+          "title": "Social Media Upload",
+          "description": "Some platforms still prefer JPG \u2014 convert AVIF for guaranteed compatibility.",
+          "example": "Convert AVIF screenshots to JPG for posting"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Universal Compatibility",
+          "description": "JPG is supported by every device, app, and platform \u2014 AVIF is still gaining adoption.",
+          "metric": "100% compatible"
+        },
+        {
+          "title": "Instant Conversion",
+          "description": "No waiting for server processing. AVIF decoding happens instantly in modern browsers.",
+          "metric": "Seconds, not minutes"
+        },
+        {
+          "title": "Free Forever",
+          "description": "No subscription, no limits, no watermarks. Convert as many AVIF files as you need.",
+          "metric": "Zero cost"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload AVIF Image",
+          "description": "Drag your AVIF file into the upload area or click to browse. Requires Chrome 85+, Firefox 93+, or Safari 16+."
+        },
+        {
+          "step": 2,
+          "title": "Select Output Format",
+          "description": "Choose JPG for compatibility, PNG for transparency, or WebP for modern web use."
+        },
+        {
+          "step": 3,
+          "title": "Convert & Download",
+          "description": "Click Convert and instantly download your converted image."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Why can't I upload my AVIF file?",
+          "answer": "AVIF support requires a modern browser: Chrome 85+, Firefox 93+, or Safari 16+. Older browsers don't support AVIF decoding."
+        },
+        {
+          "question": "Is AVIF better than JPG quality?",
+          "answer": "AVIF typically achieves the same visual quality at 40-50% smaller file sizes compared to JPG."
+        },
+        {
+          "question": "Can I convert AVIF to PNG?",
+          "answer": "Yes! Select PNG as the output format to preserve any transparency in the AVIF image."
+        },
+        {
+          "question": "Is this tool free?",
+          "answer": "Yes, completely free with no account required."
+        }
+      ],
+      "relatedTools": ["jpg-to-webp", "png-to-jpg", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Try AI Image Upscaler",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "heic-to-jpg",
+      "title": "HEIC to JPG Converter",
+      "metaTitle": "Free HEIC to JPG Converter - Convert iPhone Photos Online",
+      "metaDescription": "Convert HEIC to JPG free online. Convert iPhone HEIC photos to JPEG instantly in your browser. No software install needed, no file uploads.",
+      "h1": "Free HEIC to JPG Converter - Convert iPhone Photos Online",
+      "intro": "Convert iPhone HEIC photos to JPG instantly. HEIC files from iPhone don't open on most Windows PCs and older software \u2014 convert them to JPG for universal compatibility. Runs in your browser, zero uploads.",
+      "primaryKeyword": "heic to jpg",
+      "secondaryKeywords": [
+        "heic to jpeg",
+        "heic converter",
+        "iphone photo converter",
+        "heic to jpg online",
+        "convert heic",
+        "heif to jpg"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "HEIC to JPG Converter",
+      "description": "Convert HEIC/HEIF photos (iPhone default format) to universally compatible JPG. Uses browser-based decoding \u2014 your photos never leave your device.",
+      "isInteractive": true,
+      "toolComponent": "HeicConverter",
+      "maxFileSizeMB": 50,
+      "acceptedFormats": ["image/heic", "image/heif"],
+      "toolConfig": {
+        "defaultOutputFormat": "jpeg"
+      },
+      "features": [
+        {
+          "title": "iPhone Photo Compatibility",
+          "description": "Open and convert HEIC photos from iPhone, iPad, and Mac on any device or platform."
+        },
+        {
+          "title": "Browser-Based Decoding",
+          "description": "Decodes HEIC files using a lightweight JavaScript library \u2014 no app download or plugin needed."
+        },
+        {
+          "title": "High Quality Output",
+          "description": "Converts at 90% quality by default to preserve photo detail while significantly reducing file size."
+        },
+        {
+          "title": "Completely Private",
+          "description": "HEIC photos are decoded locally in your browser. No photos uploaded to any server."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Share iPhone Photos on Windows",
+          "description": "Convert HEIC photos so Windows PC users can open them without special software.",
+          "example": "Convert vacation HEIC photos for sharing via email or USB"
+        },
+        {
+          "title": "Social Media Upload",
+          "description": "Some platforms reject HEIC \u2014 convert to JPG first for guaranteed uploads.",
+          "example": "Convert iPhone portraits to JPG before uploading to Facebook"
+        },
+        {
+          "title": "Print Services",
+          "description": "Print services and photo labs typically accept JPG but not HEIC.",
+          "example": "Convert HEIC wedding photos to JPG for print ordering"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Universal Compatibility",
+          "description": "JPG opens on every Windows PC, Android phone, camera, and printer \u2014 HEIC needs Apple ecosystem.",
+          "metric": "100% compatible"
+        },
+        {
+          "title": "Preserves Photo Quality",
+          "description": "Our HEIC to JPG conversion preserves photo quality with adjustable compression settings.",
+          "metric": "90% quality default"
+        },
+        {
+          "title": "No Software Install",
+          "description": "Convert directly in Chrome, Firefox, Edge, or Safari \u2014 no app download needed.",
+          "metric": "Zero install"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload HEIC Photo",
+          "description": "Drag your HEIC file from iPhone, AirDrop, or iCloud. Or click to browse your computer."
+        },
+        {
+          "step": 2,
+          "title": "Choose Quality & Format",
+          "description": "Select JPG (smaller) or PNG (larger, lossless) and adjust quality with the slider."
+        },
+        {
+          "step": 3,
+          "title": "Download JPG",
+          "description": "Click Convert and download your JPG photo instantly. Share anywhere."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Why do iPhones use HEIC instead of JPG?",
+          "answer": "HEIC (High Efficiency Image Container) uses HEIF compression which is 40-50% more efficient than JPG, saving storage while maintaining quality."
+        },
+        {
+          "question": "Will the JPG look the same as the HEIC?",
+          "answer": "At 85-90% quality setting, the difference is imperceptible. HEIC stores slightly more detail but JPG at high quality is visually identical."
+        },
+        {
+          "question": "Can I change iPhone to save as JPG instead?",
+          "answer": "Yes \u2014 go to Settings \u2192 Camera \u2192 Formats \u2192 Most Compatible. This saves photos as JPG instead of HEIC going forward."
+        },
+        {
+          "question": "Does this work on iPhone itself?",
+          "answer": "Yes, you can convert HEIC photos to JPG on iPhone using Safari browser on this page."
+        },
+        {
+          "question": "Is there a file size limit?",
+          "answer": "Up to 50MB per file. Most iPhone HEIC photos are 3-8MB, well within this limit."
+        }
+      ],
+      "relatedTools": ["heic-to-png", "jpg-to-png", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Upscale iPhone Photos with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "heic-to-png",
+      "title": "HEIC to PNG Converter",
+      "metaTitle": "Free HEIC to PNG Converter - Convert iPhone Photos to PNG",
+      "metaDescription": "Convert HEIC to PNG free online. Preserve transparency and get lossless quality from iPhone HEIC photos. Browser-based, no upload needed.",
+      "h1": "Free HEIC to PNG Converter - Convert iPhone Photos to PNG",
+      "intro": "Convert iPhone HEIC photos to PNG format with lossless quality. PNG preserves every detail from your HEIC photo and supports transparency. Convert directly in your browser \u2014 no upload required.",
+      "primaryKeyword": "heic to png",
+      "secondaryKeywords": [
+        "heic to png converter",
+        "heif to png",
+        "iphone heic png",
+        "convert heic to png",
+        "heic lossless converter"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "HEIC to PNG Converter",
+      "description": "Convert HEIC/HEIF photos to PNG format for lossless quality and transparency support. All conversion happens in your browser using secure local processing.",
+      "isInteractive": true,
+      "toolComponent": "HeicConverter",
+      "maxFileSizeMB": 50,
+      "acceptedFormats": ["image/heic", "image/heif"],
+      "toolConfig": {
+        "defaultOutputFormat": "png"
+      },
+      "features": [
+        {
+          "title": "Lossless PNG Output",
+          "description": "Convert HEIC to PNG for pixel-perfect lossless quality \u2014 ideal for professional use."
+        },
+        {
+          "title": "Transparency Support",
+          "description": "PNG preserves any transparency that HEIC may contain, unlike JPG which fills transparent areas."
+        },
+        {
+          "title": "Browser-Based",
+          "description": "No software installation. Convert HEIC photos to PNG directly in any modern web browser."
+        },
+        {
+          "title": "Privacy First",
+          "description": "iPhone photos decoded locally \u2014 never uploaded to servers."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Professional Photo Editing",
+          "description": "Convert HEIC to PNG for import into Photoshop, GIMP, or Affinity Photo without quality loss.",
+          "example": "Convert RAW-quality iPhone portraits to PNG for retouching"
+        },
+        {
+          "title": "Graphic Design Assets",
+          "description": "Use iPhone photos as design assets in Figma, Canva, or Sketch by converting to PNG.",
+          "example": "Convert iPhone product shots to PNG for Figma mockups"
+        },
+        {
+          "title": "Archive Quality Photos",
+          "description": "Archive iPhone photos as PNG for long-term storage without lossy compression.",
+          "example": "Convert important event photos to PNG for archival"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Zero Quality Loss",
+          "description": "PNG is lossless \u2014 every pixel from your HEIC photo is preserved exactly.",
+          "metric": "100% lossless"
+        },
+        {
+          "title": "Wider Software Support",
+          "description": "PNG is universally supported in all design tools, image editors, and platforms.",
+          "metric": "Universal support"
+        },
+        {
+          "title": "Instant Conversion",
+          "description": "HEIC to PNG conversion completes in seconds directly in your browser.",
+          "metric": "Seconds"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Select HEIC Photo",
+          "description": "Drag your HEIC photo from iPhone or computer into the upload area."
+        },
+        {
+          "step": 2,
+          "title": "PNG Selected Automatically",
+          "description": "PNG output is pre-selected for lossless quality. Adjust if you prefer JPG."
+        },
+        {
+          "step": 3,
+          "title": "Convert & Download PNG",
+          "description": "Click Convert and download your lossless PNG immediately."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is PNG better than JPG for HEIC conversion?",
+          "answer": "PNG is lossless (no quality loss) while JPG introduces slight compression. Choose PNG for editing, JPG for sharing."
+        },
+        {
+          "question": "Will PNG files be much larger than HEIC?",
+          "answer": "Yes, PNG is significantly larger than HEIC. A 5MB HEIC photo may become 15-25MB as PNG. Use JPG for sharing."
+        },
+        {
+          "question": "Can I convert multiple HEIC photos at once?",
+          "answer": "Currently one photo at a time. For batch conversion, process each photo individually."
+        },
+        {
+          "question": "Is this free?",
+          "answer": "Yes, completely free with no account required."
+        }
+      ],
+      "relatedTools": ["heic-to-jpg", "png-to-jpg", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Upscale iPhone Photos with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "photo-quality-enhancer",
+      "title": "Photo Quality Enhancer",
+      "metaTitle": "Free Photo Quality Enhancer - Improve Image Quality Online",
+      "metaDescription": "Enhance photo quality online free. Improve sharpness, reduce noise, and restore detail with AI-powered photo enhancement. No signup required.",
+      "h1": "Free Photo Quality Enhancer - Improve Image Quality Online",
+      "intro": "Enhance photo quality instantly using AI. Fix blurry photos, improve low-light images, restore detail, and make any photo look professionally taken. Free to use, no download needed.",
+      "primaryKeyword": "photo quality enhancer",
+      "secondaryKeywords": [
+        "image quality enhancer",
+        "improve photo quality",
+        "enhance photo quality online",
+        "photo enhancer free",
+        "picture quality enhancer"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "Photo Quality Enhancer",
+      "description": "AI-powered photo quality enhancement that sharpens details, reduces noise, and improves overall image quality. Powered by advanced machine learning trained on millions of photos.",
+      "isInteractive": false,
+      "features": [
+        {
+          "title": "AI Sharpening",
+          "description": "Advanced AI detects and sharpens blurry edges, restoring detail that compression and camera shake removed."
+        },
+        {
+          "title": "Noise Reduction",
+          "description": "Intelligently removes digital noise from low-light and high-ISO photos while preserving fine details."
+        },
+        {
+          "title": "Color Enhancement",
+          "description": "Corrects exposure, improves color balance, and brings out the natural vibrancy of your photos."
+        },
+        {
+          "title": "4x Resolution Upscaling",
+          "description": "Increase photo resolution up to 4x using AI upscaling \u2014 making small photos print-ready."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Old Photo Restoration",
+          "description": "Enhance old, degraded photos to recover lost details and bring them back to life.",
+          "example": "Restore a 1970s family photo to modern quality"
+        },
+        {
+          "title": "Low-Light Photography",
+          "description": "Fix dark, grainy, or noisy photos taken in poor lighting conditions.",
+          "example": "Enhance a blurry concert photo taken in low light"
+        },
+        {
+          "title": "Social Media Content",
+          "description": "Make every photo look professional before posting to Instagram, LinkedIn, or TikTok.",
+          "example": "Polish product photos for an Instagram shop"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Professional Quality Results",
+          "description": "AI enhancement produces results comparable to professional photo editing software.",
+          "metric": "Studio-quality output"
+        },
+        {
+          "title": "Instant Processing",
+          "description": "Photos enhanced in seconds, not hours of manual editing in Photoshop.",
+          "metric": "Seconds per photo"
+        },
+        {
+          "title": "No Editing Skills Needed",
+          "description": "AI does the work automatically \u2014 no sliders, no presets, no learning curve.",
+          "metric": "One click"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Photo",
+          "description": "Upload any photo \u2014 JPEG, PNG, or WebP. Works with photos from any camera or phone."
+        },
+        {
+          "step": 2,
+          "title": "AI Analyzes & Enhances",
+          "description": "Our AI examines your photo and applies targeted improvements to sharpness, noise, color, and detail."
+        },
+        {
+          "step": 3,
+          "title": "Download Enhanced Photo",
+          "description": "Download your enhanced photo in full resolution, ready for print or sharing."
+        }
+      ],
+      "faq": [
+        {
+          "question": "How does AI photo enhancement work?",
+          "answer": "Our AI was trained on millions of photo pairs to learn how to restore detail, reduce noise, and improve quality automatically."
+        },
+        {
+          "question": "Can it fix very blurry photos?",
+          "answer": "AI sharpening works best on mildly blurry photos. Severely out-of-focus images may see limited improvement."
+        },
+        {
+          "question": "What formats are supported?",
+          "answer": "Upload JPEG, PNG, or WebP photos up to 25MB."
+        },
+        {
+          "question": "Is the enhanced photo higher resolution?",
+          "answer": "Yes! Our AI upscaling increases resolution up to 4x, making small photos suitable for print."
+        }
+      ],
+      "relatedTools": ["image-compressor", "image-resizer", "transparent-background-maker"],
+      "relatedGuides": [],
+      "ctaText": "Enhance Photo Quality with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "make-image-transparent",
+      "title": "Make Image Transparent",
+      "metaTitle": "Make Image Transparent Online - Free Background Remover",
+      "metaDescription": "Make image background transparent online free. Remove any background and save as PNG with transparency. No signup, works in your browser instantly.",
+      "h1": "Make Image Transparent - Remove Background Online Free",
+      "intro": "Make any image background transparent in one click. Perfect for product photos, logos, and profile pictures. Our AI precisely cuts out the subject and saves a transparent PNG \u2014 free, instant, private.",
+      "primaryKeyword": "make image transparent",
+      "secondaryKeywords": [
+        "remove background free",
+        "transparent background maker",
+        "image to transparent",
+        "make background transparent",
+        "png transparent background"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "Make Image Transparent",
+      "description": "Remove image backgrounds and make them transparent using AI. Saves as PNG with full transparency. Works on people, products, logos, and objects.",
+      "isInteractive": true,
+      "toolComponent": "BackgroundRemover",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "features": [
+        {
+          "title": "AI Precision Cutout",
+          "description": "Advanced AI model precisely separates the subject from the background, preserving fine edges like hair and fur."
+        },
+        {
+          "title": "Transparent PNG Output",
+          "description": "Downloads as PNG with true alpha transparency \u2014 paste onto any background in any editor."
+        },
+        {
+          "title": "Works on Any Subject",
+          "description": "Removes backgrounds from people, pets, products, logos, and objects with equal precision."
+        },
+        {
+          "title": "100% Browser-Based",
+          "description": "Background removal runs locally using WebAssembly AI \u2014 your images never leave your device."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Product Photography",
+          "description": "Remove backgrounds from product photos for Amazon, Shopify, and e-commerce listings.",
+          "example": "Create clean white-background product images for online stores"
+        },
+        {
+          "title": "Profile Pictures",
+          "description": "Remove distracting backgrounds from LinkedIn, Twitter, or Zoom profile photos.",
+          "example": "Cut out your portrait for a professional headshot"
+        },
+        {
+          "title": "Logo & Brand Assets",
+          "description": "Make logo backgrounds transparent for use on any colored website or presentation.",
+          "example": "Create a transparent logo PNG for your website header"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Professional Cutouts",
+          "description": "AI precision rivals expensive professional photo editing services and tools like Photoshop.",
+          "metric": "Sub-pixel accuracy"
+        },
+        {
+          "title": "Free Forever",
+          "description": "Make as many backgrounds transparent as you need \u2014 no credits, no limits, no payment.",
+          "metric": "Unlimited free"
+        },
+        {
+          "title": "Instant Results",
+          "description": "Background removal completes in under 3 seconds on most images.",
+          "metric": "Under 3 seconds"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Drag and drop or click to upload your JPEG, PNG, or WebP image (up to 25MB)."
+        },
+        {
+          "step": 2,
+          "title": "AI Removes Background",
+          "description": "Our AI model analyzes and removes the background, preserving the subject with precise edges."
+        },
+        {
+          "step": 3,
+          "title": "Download Transparent PNG",
+          "description": "Download your image as a transparent PNG, ready to use on any background."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What formats does the transparent image come in?",
+          "answer": "Always PNG with transparency. JPG doesn't support transparency, so we save as PNG."
+        },
+        {
+          "question": "Can it handle complex backgrounds?",
+          "answer": "Yes, the AI handles complex backgrounds including outdoor scenes, busy patterns, and gradients."
+        },
+        {
+          "question": "Does it work on logos?",
+          "answer": "Yes, logos with clean edges work extremely well. Complex logos with many colors also work with high accuracy."
+        },
+        {
+          "question": "Is there a size limit?",
+          "answer": "Images up to 25MB are supported. Larger images may take slightly longer to process."
+        }
+      ],
+      "relatedTools": [
+        "transparent-background-maker",
+        "image-compressor",
+        "photo-quality-enhancer"
+      ],
+      "relatedGuides": [],
+      "ctaText": "Upscale Your Transparent Image with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "pdf-to-jpg",
+      "title": "PDF to JPG Converter",
+      "metaTitle": "Free PDF to JPG Converter - Convert PDF to Image Online",
+      "metaDescription": "Convert PDF to JPG online free. Extract PDF pages as high-quality JPEG images. Browser-based, no upload, no signup. Download individual pages or all at once.",
+      "h1": "Free PDF to JPG Converter - Extract PDF Pages as Images",
+      "intro": "Convert PDF pages to JPG images instantly in your browser. Extract one page or all pages as high-quality JPEG files. Perfect for sharing PDF content as images, creating thumbnails, or editing PDF content. No upload required.",
+      "primaryKeyword": "pdf to jpg",
+      "secondaryKeywords": [
+        "pdf to jpeg",
+        "convert pdf to jpg",
+        "pdf to image",
+        "extract pdf pages",
+        "pdf converter"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "PDF to JPG Converter",
+      "description": "Extract PDF pages as high-quality JPG images. Powered by PDF.js running in your browser \u2014 PDFs are never uploaded to servers. Choose DPI, page range, and quality.",
+      "isInteractive": true,
+      "toolComponent": "PdfToImageConverter",
+      "maxFileSizeMB": 50,
+      "acceptedFormats": ["application/pdf"],
+      "toolConfig": {
+        "defaultOutputFormat": "jpeg",
+        "defaultDpi": 150
+      },
+      "features": [
+        {
+          "title": "High-Quality PDF Rendering",
+          "description": "Uses PDF.js to render PDF pages at up to 300 DPI \u2014 print-quality output from any PDF."
+        },
+        {
+          "title": "Selective Page Extraction",
+          "description": "Convert specific pages, page ranges, or all pages from a PDF document."
+        },
+        {
+          "title": "Multiple DPI Options",
+          "description": "Choose 72 DPI for screen, 150 DPI for standard quality, or 300 DPI for print-ready images."
+        },
+        {
+          "title": "Browser-Based Privacy",
+          "description": "PDF files are processed entirely in your browser using PDF.js. No document uploads."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Share PDF Content as Images",
+          "description": "Extract key pages from PDF reports or presentations to share as images.",
+          "example": "Share a single chart from a 50-page PDF report as JPG"
+        },
+        {
+          "title": "Create PDF Thumbnails",
+          "description": "Convert first pages of PDFs to JPG thumbnail previews.",
+          "example": "Generate cover page thumbnails for a PDF library"
+        },
+        {
+          "title": "Edit PDF Content",
+          "description": "Convert PDF pages to images to edit in Photoshop, GIMP, or Canva.",
+          "example": "Extract a diagram from PDF and modify it in an image editor"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "High Resolution Output",
+          "description": "300 DPI output suitable for printing, presentations, and professional use.",
+          "metric": "Up to 300 DPI"
+        },
+        {
+          "title": "Bulk Page Extraction",
+          "description": "Extract all pages at once and download as a ZIP file.",
+          "metric": "All pages at once"
+        },
+        {
+          "title": "Confidential PDFs Stay Private",
+          "description": "Legal, medical, and financial PDFs processed locally \u2014 never uploaded.",
+          "metric": "Zero cloud upload"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload PDF File",
+          "description": "Drag your PDF into the upload area or click to browse. Supports PDFs up to 50MB."
+        },
+        {
+          "step": 2,
+          "title": "Select Pages & Quality",
+          "description": "Choose which pages to convert and select DPI quality (72 screen, 150 standard, 300 print)."
+        },
+        {
+          "step": 3,
+          "title": "Download JPG Images",
+          "description": "Download individual page images or all pages as a ZIP file."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is there a page limit?",
+          "answer": "No page limit \u2014 convert PDFs with hundreds of pages. Large PDFs may take longer to process."
+        },
+        {
+          "question": "What resolution should I choose?",
+          "answer": "72 DPI for web/screen use, 150 DPI for standard quality, 300 DPI for print-ready output."
+        },
+        {
+          "question": "Can I convert a specific page only?",
+          "answer": "Yes, select a page number or range (e.g., pages 2-5) to extract only those pages."
+        },
+        {
+          "question": "Are my PDF files private?",
+          "answer": "Absolutely. PDFs are processed by PDF.js entirely in your browser \u2014 never uploaded to servers."
+        },
+        {
+          "question": "Can I convert password-protected PDFs?",
+          "answer": "Protected PDFs require entering the password before conversion. PDFs without passwords convert automatically."
+        }
+      ],
+      "relatedTools": ["pdf-to-png", "image-to-pdf", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Upscale PDF Images with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "pdf-to-png",
+      "title": "PDF to PNG Converter",
+      "metaTitle": "Free PDF to PNG Converter - Convert PDF Pages to PNG Images",
+      "metaDescription": "Convert PDF to PNG online free. Extract PDF pages as lossless PNG images. Browser-based conversion, no file upload, no signup required.",
+      "h1": "Free PDF to PNG Converter - Extract PDF Pages as PNG",
+      "intro": "Convert PDF pages to lossless PNG images in your browser. PNG preserves perfect quality for text and graphics \u2014 ideal for documents with text, diagrams, and crisp lines. No upload, no signup.",
+      "primaryKeyword": "pdf to png",
+      "secondaryKeywords": [
+        "pdf to png converter",
+        "convert pdf to png",
+        "pdf pages to png",
+        "pdf to transparent png",
+        "extract pdf as png"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "PDF to PNG Converter",
+      "description": "Extract PDF pages as high-quality PNG images. PNG's lossless compression is ideal for documents with text and sharp graphics. All processing in browser \u2014 no uploads.",
+      "isInteractive": true,
+      "toolComponent": "PdfToImageConverter",
+      "maxFileSizeMB": 50,
+      "acceptedFormats": ["application/pdf"],
+      "toolConfig": {
+        "defaultOutputFormat": "png",
+        "defaultDpi": 150
+      },
+      "features": [
+        {
+          "title": "Lossless PNG Quality",
+          "description": "PNG preserves every pixel from your PDF pages without compression artifacts \u2014 perfect for text and diagrams."
+        },
+        {
+          "title": "Sharp Text Rendering",
+          "description": "PDF text renders crisply as PNG at any DPI \u2014 no blurry characters or jagged edges."
+        },
+        {
+          "title": "Multi-Page Support",
+          "description": "Extract all pages from multi-page PDFs and download as a ZIP archive."
+        },
+        {
+          "title": "No Upload Required",
+          "description": "PDFs are processed locally by PDF.js \u2014 confidential documents never leave your device."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Document Screenshots",
+          "description": "Convert PDF pages to PNG for sharing document content in emails or chat.",
+          "example": "Share a contract clause as a PNG screenshot"
+        },
+        {
+          "title": "Presentation Import",
+          "description": "Import PDF slides into PowerPoint or Google Slides as high-quality PNG images.",
+          "example": "Convert PDF presentation to PNG slides for PowerPoint"
+        },
+        {
+          "title": "OCR Preparation",
+          "description": "Convert PDF pages to PNG before running OCR to extract text from scanned documents.",
+          "example": "Prepare scanned PDF for our Image to Text tool"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Perfect Text Quality",
+          "description": "Lossless PNG ensures text in converted PDF pages is perfectly sharp at any size.",
+          "metric": "Pixel-perfect text"
+        },
+        {
+          "title": "Transparent Background Option",
+          "description": "PNG supports transparency \u2014 useful for overlaying PDF content on other designs.",
+          "metric": "Transparency support"
+        },
+        {
+          "title": "Archive Quality",
+          "description": "PNG's lossless format is ideal for archiving PDF pages without quality degradation.",
+          "metric": "Lossless archival"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload PDF",
+          "description": "Drag your PDF file into the upload zone or click to select it. PDFs up to 50MB supported."
+        },
+        {
+          "step": 2,
+          "title": "Choose PNG & DPI",
+          "description": "PNG is selected automatically. Choose DPI: 150 for standard quality, 300 for high-resolution output."
+        },
+        {
+          "step": 3,
+          "title": "Download PNG Files",
+          "description": "Download individual page PNGs or all pages as a ZIP file."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Why choose PNG over JPG for PDF conversion?",
+          "answer": "PNG is lossless, making it better for PDFs with text, lines, and diagrams. JPG introduces compression artifacts on sharp edges."
+        },
+        {
+          "question": "Will the PNG files be very large?",
+          "answer": "PNG files are larger than JPG. A PDF page at 150 DPI typically becomes 2-5MB as PNG. Use JPG for photo-heavy PDFs."
+        },
+        {
+          "question": "Can I get transparent PDF pages?",
+          "answer": "Most PDFs have white backgrounds. PNG transparency is available but depends on the PDF's background."
+        },
+        {
+          "question": "Is there a page limit?",
+          "answer": "No limit \u2014 convert any number of pages. Processing speed depends on PDF complexity and your device."
+        }
+      ],
+      "relatedTools": ["pdf-to-jpg", "image-to-pdf", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Upscale PDF Images with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "image-to-pdf",
+      "title": "Image to PDF Converter",
+      "metaTitle": "Free Image to PDF Converter - Convert Images to PDF Online",
+      "metaDescription": "Convert images to PDF online free. Combine multiple JPG, PNG, or WebP images into a single PDF. Browser-based, no upload, instant download.",
+      "h1": "Free Image to PDF Converter - Combine Photos into PDF",
+      "intro": "Convert one or multiple images to PDF instantly. Combine JPG, PNG, and WebP photos into a single PDF document. Choose page size, arrange image order, and download your PDF \u2014 all in your browser with no upload.",
+      "primaryKeyword": "image to pdf",
+      "secondaryKeywords": [
+        "images to pdf",
+        "convert image to pdf",
+        "photos to pdf",
+        "jpg to pdf online",
+        "png to pdf"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "Image to PDF Converter",
+      "description": "Combine multiple images into a single PDF document. Supports JPG, PNG, WebP. Choose page size and arrange order. Built with pdf-lib running in your browser.",
+      "isInteractive": true,
+      "toolComponent": "ImageToPdfConverter",
+      "maxFileSizeMB": 100,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "features": [
+        {
+          "title": "Combine Multiple Images",
+          "description": "Add up to 20 images and combine them into a single PDF document with one image per page."
+        },
+        {
+          "title": "Reorder Before Converting",
+          "description": "Drag images into the desired order before creating your PDF."
+        },
+        {
+          "title": "Page Size Options",
+          "description": "Choose A4, Letter, or 'fit to image' page sizing for your PDF."
+        },
+        {
+          "title": "Private & Browser-Based",
+          "description": "PDF is created locally using pdf-lib \u2014 your images never leave your device."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Document Scanning",
+          "description": "Combine photos of scanned documents into a single organized PDF for email or storage.",
+          "example": "Combine 10 photos of a signed contract into one PDF"
+        },
+        {
+          "title": "Photo Portfolio",
+          "description": "Create a PDF portfolio from a collection of JPG photos for clients or applications.",
+          "example": "Compile product photos into a PDF catalog"
+        },
+        {
+          "title": "Receipt Collection",
+          "description": "Combine photos of receipts into a single PDF for expense reporting.",
+          "example": "Merge 20 receipt photos into a PDF for accounting"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "One PDF from Many Images",
+          "description": "Replace scattered image files with a single organized PDF that's easy to share.",
+          "metric": "Unlimited images"
+        },
+        {
+          "title": "Universal Format",
+          "description": "PDF opens on every device and platform without needing special image viewer software.",
+          "metric": "100% compatible"
+        },
+        {
+          "title": "No Server Upload",
+          "description": "All PDF creation happens locally \u2014 photos of sensitive documents stay private.",
+          "metric": "100% private"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Images",
+          "description": "Drag and drop multiple images or click to browse. Supports JPG, PNG, WebP up to 100MB total."
+        },
+        {
+          "step": 2,
+          "title": "Arrange & Configure",
+          "description": "Reorder images by dragging. Choose page size (A4, Letter, or fit to image)."
+        },
+        {
+          "step": 3,
+          "title": "Create & Download PDF",
+          "description": "Click Create PDF and download your multi-page PDF instantly."
+        }
+      ],
+      "faq": [
+        {
+          "question": "How many images can I combine?",
+          "answer": "Up to 20 images per PDF. For larger collections, create multiple PDFs and merge them."
+        },
+        {
+          "question": "What image formats are supported?",
+          "answer": "JPG, PNG, and WebP images are supported. HEIC photos should be converted to JPG first using our HEIC converter."
+        },
+        {
+          "question": "Can I set the PDF page size?",
+          "answer": "Yes \u2014 choose A4 (210\u00d7297mm), US Letter (216\u00d7279mm), or 'fit to image' which creates a page matching each image's dimensions."
+        },
+        {
+          "question": "Are my photos private?",
+          "answer": "Completely. PDF creation uses pdf-lib locally in your browser \u2014 photos are never uploaded to any server."
+        }
+      ],
+      "relatedTools": ["jpg-to-pdf", "pdf-to-jpg", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Upscale Images Before Making PDF",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "jpg-to-pdf",
+      "title": "JPG to PDF Converter",
+      "metaTitle": "Free JPG to PDF Converter - Convert JPEG Images to PDF Online",
+      "metaDescription": "Convert JPG to PDF free online. Turn JPEG photos into PDF documents instantly. Combine multiple JPGs into one PDF. Browser-based, no upload required.",
+      "h1": "Free JPG to PDF Converter - Turn Photos into PDF",
+      "intro": "Convert JPG photos to PDF documents in seconds. Add one or multiple JPEG images and create a professionally formatted PDF \u2014 all in your browser with zero upload and no signup.",
+      "primaryKeyword": "jpg to pdf",
+      "secondaryKeywords": [
+        "jpeg to pdf",
+        "convert jpg to pdf",
+        "jpg to pdf online",
+        "photo to pdf",
+        "multiple jpg to pdf"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "JPG to PDF Converter",
+      "description": "Convert single or multiple JPG photos to PDF format. Create one PDF from many JPGs for easy sharing and organization. Works locally in your browser.",
+      "isInteractive": true,
+      "toolComponent": "ImageToPdfConverter",
+      "maxFileSizeMB": 100,
+      "acceptedFormats": ["image/jpeg"],
+      "toolConfig": {
+        "acceptedInputFormats": ["image/jpeg"]
+      },
+      "features": [
+        {
+          "title": "Single or Multiple JPG to PDF",
+          "description": "Convert one JPG or combine up to 20 JPG photos into a single PDF document."
+        },
+        {
+          "title": "Photo Quality Preserved",
+          "description": "JPG photos are embedded in the PDF at full resolution \u2014 no quality loss during conversion."
+        },
+        {
+          "title": "Flexible Page Sizing",
+          "description": "Choose A4, Letter, or fit each photo to its own page size."
+        },
+        {
+          "title": "No Upload Needed",
+          "description": "PDF creation happens entirely in your browser using pdf-lib \u2014 photos stay private."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Send Photos as PDF",
+          "description": "Convert JPG photos to PDF for email attachment \u2014 one organized file instead of many JPGs.",
+          "example": "Send 15 event photos as a single PDF attachment"
+        },
+        {
+          "title": "Print from PDF",
+          "description": "Create a PDF from JPG photos for professional printing with consistent page sizing.",
+          "example": "Prepare JPG product photos as a PDF for print shop"
+        },
+        {
+          "title": "Compress for Submission",
+          "description": "Many applications accept PDFs but not raw JPG files. Convert photos to PDF for official submissions.",
+          "example": "Submit ID photos as PDF for application forms"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Professional Presentation",
+          "description": "PDFs look more professional than loose JPG attachments for business and official use.",
+          "metric": "Document-quality output"
+        },
+        {
+          "title": "Smaller Email Attachments",
+          "description": "A PDF of multiple JPGs can be smaller than attaching each photo individually.",
+          "metric": "Better sharing"
+        },
+        {
+          "title": "Instant & Free",
+          "description": "No account, no cost, no wait \u2014 JPG to PDF conversion in seconds.",
+          "metric": "Zero cost"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload JPG Photos",
+          "description": "Drag and drop your JPG files or click to select them. Upload up to 20 photos at once."
+        },
+        {
+          "step": 2,
+          "title": "Arrange Order & Size",
+          "description": "Reorder photos by dragging. Choose page size: A4, Letter, or fit to photo dimensions."
+        },
+        {
+          "step": 3,
+          "title": "Create PDF & Download",
+          "description": "Click Create PDF and download your JPG-based PDF document immediately."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Does JPG to PDF lose quality?",
+          "answer": "No \u2014 JPG images are embedded directly in the PDF at their original resolution. No re-encoding occurs."
+        },
+        {
+          "question": "What's the maximum number of JPGs?",
+          "answer": "Up to 20 JPG files per PDF. Total size limit is 100MB."
+        },
+        {
+          "question": "Can I add different image types (not just JPG)?",
+          "answer": "The JPG to PDF tool is optimized for JPEG. For mixed formats, use our Image to PDF converter which accepts JPG, PNG, and WebP."
+        },
+        {
+          "question": "Is my data private?",
+          "answer": "Yes. PDF creation uses pdf-lib running locally \u2014 your JPG photos never leave your browser."
+        }
+      ],
+      "relatedTools": ["image-to-pdf", "pdf-to-jpg", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Upscale Photos Before PDF Creation",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "background-changer",
+      "title": "Background Changer",
+      "metaTitle": "Free Background Changer - Change Image Background Online",
+      "metaDescription": "Change image background online free. Remove background and replace with solid color, gradient, or custom image. AI-powered, browser-based, no signup.",
+      "h1": "Free Background Changer - Replace Image Background Online",
+      "intro": "Change any image background instantly using AI. Remove the original background and replace it with a solid color, gradient, or your own custom background image. Works entirely in your browser \u2014 free and private.",
+      "primaryKeyword": "background changer",
+      "secondaryKeywords": [
+        "change image background",
+        "background remover and changer",
+        "swap background online",
+        "change photo background free",
+        "image background changer"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "Background Changer",
+      "description": "Remove and replace image backgrounds with AI precision. Choose from solid colors, gradients, or upload your own background. Browser-based with no uploads.",
+      "isInteractive": true,
+      "toolComponent": "BackgroundChanger",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "features": [
+        {
+          "title": "AI Background Removal",
+          "description": "Precisely removes the original background using AI \u2014 works on people, products, and objects."
+        },
+        {
+          "title": "Solid Color Backgrounds",
+          "description": "Choose any color from a color picker to set as the new background."
+        },
+        {
+          "title": "Gradient Backgrounds",
+          "description": "Apply beautiful left-to-right or radial gradients using two chosen colors."
+        },
+        {
+          "title": "Keep Transparent",
+          "description": "Download as transparent PNG if you want to apply the background yourself."
+        },
+        {
+          "title": "Browser-Based AI",
+          "description": "Background removal runs locally using WebAssembly \u2014 images never leave your device."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Product Photography",
+          "description": "Replace cluttered backgrounds with clean white or brand-colored backgrounds for e-commerce.",
+          "example": "Put your product on a pure white background for Amazon"
+        },
+        {
+          "title": "Profile Pictures",
+          "description": "Replace distracting backgrounds with a professional solid color or LinkedIn blue.",
+          "example": "Add a professional gray background to your headshot"
+        },
+        {
+          "title": "Social Media Content",
+          "description": "Create eye-catching posts with branded gradient backgrounds behind your photos.",
+          "example": "Apply brand gradient behind a product photo for Instagram"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "AI Precision",
+          "description": "Preserves fine edges including hair, fur, and complex outlines \u2014 not just rectangular crops.",
+          "metric": "Pixel-perfect cutout"
+        },
+        {
+          "title": "Instant Preview",
+          "description": "See background options applied in real-time before downloading.",
+          "metric": "Live preview"
+        },
+        {
+          "title": "Free & Private",
+          "description": "Background removal and replacement happens locally \u2014 no images sent to servers.",
+          "metric": "100% private"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Upload a JPG, PNG, or WebP image. AI will remove the background automatically."
+        },
+        {
+          "step": 2,
+          "title": "Choose New Background",
+          "description": "Pick a solid color, gradient, or transparent background. Preview updates instantly."
+        },
+        {
+          "step": 3,
+          "title": "Download Result",
+          "description": "Download your image with the new background as a high-quality PNG file."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What format is the output?",
+          "answer": "PNG format, which supports both solid backgrounds and transparency."
+        },
+        {
+          "question": "Can I use my own photo as a background?",
+          "answer": "Currently supports solid colors and gradients. Custom photo backgrounds coming soon."
+        },
+        {
+          "question": "Does it work on complex hair/fur?",
+          "answer": "Yes \u2014 our AI is specifically trained to handle fine details like hair, fur, and translucent objects."
+        },
+        {
+          "question": "Is there a difference between this and the background remover?",
+          "answer": "The background remover outputs transparent PNG. The background changer also lets you replace the background with a new color or gradient."
+        }
+      ],
+      "relatedTools": [
+        "transparent-background-maker",
+        "make-image-transparent",
+        "photo-quality-enhancer"
+      ],
+      "relatedGuides": [],
+      "ctaText": "Upscale Your Image with AI First",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "image-to-text",
+      "title": "Image to Text Converter (OCR)",
+      "metaTitle": "Free Image to Text Converter - Extract Text from Images Online",
+      "metaDescription": "Extract text from images free. Convert photos, screenshots, and scanned documents to text using OCR. Copy or download extracted text. No signup needed.",
+      "h1": "Free Image to Text Converter - Extract Text from Images (OCR)",
+      "intro": "Extract text from any image, screenshot, or scanned document instantly. Our free OCR tool recognizes printed text in photos, PDFs screenshots, and handwritten notes. Copy or download the extracted text \u2014 all in your browser.",
+      "primaryKeyword": "image to text",
+      "secondaryKeywords": [
+        "extract text from image",
+        "image to text converter",
+        "ocr online",
+        "photo to text",
+        "scan to text",
+        "optical character recognition"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "Image to Text (OCR)",
+      "description": "Extract text from images using Tesseract OCR running in your browser. Works on screenshots, scanned documents, photos of text, and printed materials.",
+      "isInteractive": true,
+      "toolComponent": "ImageToText",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp", "image/gif", "image/bmp"],
+      "features": [
+        {
+          "title": "Tesseract OCR Engine",
+          "description": "Uses Google's Tesseract OCR engine \u2014 the industry standard for text recognition, running locally in your browser."
+        },
+        {
+          "title": "Multi-Language Support",
+          "description": "Recognizes text in English, Spanish, French, German, and more. Select language for best accuracy."
+        },
+        {
+          "title": "Copy to Clipboard",
+          "description": "One-click copy of extracted text to clipboard for immediate use in any app."
+        },
+        {
+          "title": "Download as TXT",
+          "description": "Download extracted text as a .txt file for saving or further processing."
+        },
+        {
+          "title": "Private Processing",
+          "description": "OCR runs entirely in your browser using WebAssembly. Your images and text stay private."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Screenshot Text Extraction",
+          "description": "Extract text from website screenshots, error messages, or UI screenshots.",
+          "example": "Copy text from a software error screenshot"
+        },
+        {
+          "title": "Scanned Document Digitization",
+          "description": "Convert scanned PDFs and paper photos into editable text.",
+          "example": "Extract text from a scanned contract page"
+        },
+        {
+          "title": "Business Card Scanning",
+          "description": "Extract contact information from photos of business cards.",
+          "example": "Get name, email, and phone from a business card photo"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Instant Text Extraction",
+          "description": "OCR completes in seconds \u2014 no waiting for server processing.",
+          "metric": "Seconds"
+        },
+        {
+          "title": "High Accuracy",
+          "description": "Tesseract achieves 95%+ accuracy on clear, printed text.",
+          "metric": "95%+ accuracy"
+        },
+        {
+          "title": "Completely Private",
+          "description": "OCR processing happens locally. Images and extracted text never leave your device.",
+          "metric": "100% private"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Image with Text",
+          "description": "Upload a screenshot, photo, or scan containing text. Clear images give the best results."
+        },
+        {
+          "step": 2,
+          "title": "OCR Engine Processes",
+          "description": "Tesseract OCR analyzes the image and extracts all recognized text. Takes 5-15 seconds."
+        },
+        {
+          "step": 3,
+          "title": "Copy or Download Text",
+          "description": "Review the extracted text, copy it to clipboard, or download as a .txt file."
+        }
+      ],
+      "faq": [
+        {
+          "question": "How accurate is the OCR?",
+          "answer": "Tesseract achieves 95%+ accuracy on clear, printed text with good contrast. Handwriting, stylized fonts, or poor image quality reduces accuracy."
+        },
+        {
+          "question": "Does it work on handwriting?",
+          "answer": "Tesseract has limited handwriting support. For best results, use it on printed text. Neat, clear handwriting may work with lower accuracy."
+        },
+        {
+          "question": "What image quality gives best results?",
+          "answer": "High contrast between text and background, minimal blur, and upright text orientation give the best OCR accuracy. Try our image upscaler first for better results on blurry images."
+        },
+        {
+          "question": "What languages does it support?",
+          "answer": "English, Spanish, French, German, Italian, Portuguese, and many more. Select your language for best accuracy."
+        },
+        {
+          "question": "Is there a file size limit?",
+          "answer": "Up to 25MB images. The OCR engine loads ~5MB of WebAssembly data on first use, which may take a moment."
+        }
+      ],
+      "relatedTools": ["image-compressor", "pdf-to-jpg", "photo-quality-enhancer"],
+      "relatedGuides": [],
+      "ctaText": "Upscale Image for Better OCR Results",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "ocr-online",
+      "title": "OCR Online - Extract Text from Images",
+      "metaTitle": "Free OCR Online - Extract Text from Images & PDFs",
+      "metaDescription": "Free OCR online tool. Extract text from images, screenshots, and scanned PDFs. Supports 100+ languages. Browser-based, no signup, no upload limits.",
+      "h1": "Free OCR Online - Extract Text from Any Image",
+      "intro": "Powerful OCR tool that extracts text from images, screenshots, and scanned documents online. Supports 100+ languages, runs in your browser, and keeps your documents private. No account needed.",
+      "primaryKeyword": "ocr online",
+      "secondaryKeywords": [
+        "optical character recognition online",
+        "free ocr",
+        "online ocr tool",
+        "ocr scanner online",
+        "ocr text recognition"
+      ],
+      "lastUpdated": "2026-03-04T00:00:00Z",
+      "category": "tools",
+      "toolName": "OCR Online",
+      "description": "Online Optical Character Recognition (OCR) tool powered by Tesseract. Extract text from any image format in 100+ languages. Private browser-based processing.",
+      "isInteractive": true,
+      "toolComponent": "ImageToText",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp", "image/gif", "image/bmp"],
+      "features": [
+        {
+          "title": "100+ Language Support",
+          "description": "Tesseract supports over 100 languages including English, Spanish, French, German, Chinese, Japanese, Arabic, and more."
+        },
+        {
+          "title": "Multiple Image Formats",
+          "description": "Process JPEG, PNG, WebP, GIF, and BMP images with equal accuracy."
+        },
+        {
+          "title": "Structured Text Output",
+          "description": "OCR preserves line breaks and paragraph structure from the original document."
+        },
+        {
+          "title": "Browser-Based OCR",
+          "description": "Full Tesseract OCR engine runs in WebAssembly \u2014 no data leaves your browser."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Document Digitization",
+          "description": "Convert scanned paper documents and PDFs to searchable digital text.",
+          "example": "Digitize a printed invoice by photographing it"
+        },
+        {
+          "title": "Research & Note Taking",
+          "description": "Extract quotes from book pages, research papers, or printed materials.",
+          "example": "Extract a paragraph from a textbook photo"
+        },
+        {
+          "title": "Accessibility",
+          "description": "Extract text from images for screen readers or accessibility tools.",
+          "example": "Get text from an image-only PDF for a screen reader"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Free & No Limits",
+          "description": "Extract text from as many images as you need \u2014 no daily limits, no paid tiers.",
+          "metric": "Unlimited free"
+        },
+        {
+          "title": "Works Offline",
+          "description": "After initial load, OCR works completely offline \u2014 no internet required.",
+          "metric": "Offline capable"
+        },
+        {
+          "title": "Fast Processing",
+          "description": "Tesseract OCR typically completes in 5-15 seconds for standard document pages.",
+          "metric": "5-15 seconds"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Image",
+          "description": "Drop any image containing text \u2014 photos, screenshots, or scans."
+        },
+        {
+          "step": 2,
+          "title": "Select Language",
+          "description": "Choose the text language for better accuracy. Default is English."
+        },
+        {
+          "step": 3,
+          "title": "Get Extracted Text",
+          "description": "Copy the recognized text or download as a .txt file."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What does OCR stand for?",
+          "answer": "OCR stands for Optical Character Recognition \u2014 the technology that reads text from images."
+        },
+        {
+          "question": "Is this free OCR tool accurate?",
+          "answer": "Our Tesseract-powered OCR achieves 95%+ accuracy on clear printed text. Image quality significantly impacts results."
+        },
+        {
+          "question": "Can it read text in images with backgrounds?",
+          "answer": "Yes, Tesseract can handle text on complex backgrounds, though high contrast gives better results."
+        },
+        {
+          "question": "Does it work on PDFs?",
+          "answer": "This tool processes images. To OCR a PDF, first convert it to images using our PDF to JPG tool, then run OCR."
+        }
+      ],
+      "relatedTools": ["image-to-text", "pdf-to-jpg", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Upscale Images for Better OCR Accuracy",
+      "ctaUrl": "/?signup=1"
     }
   ],
   "meta": {

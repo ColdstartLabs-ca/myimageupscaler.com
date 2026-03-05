@@ -10,6 +10,7 @@ import { Locale } from '@/i18n/config';
 import { isCategoryLocalized } from './localization-config';
 
 import toolsDataFile from '@/app/seo/data/tools.json';
+import interactiveToolsDataFile from '@/app/seo/data/interactive-tools.json';
 import freeDataFile from '@/app/seo/data/free.json';
 import scaleDataFile from '@/app/seo/data/scale.json';
 import comparisonDataFile from '@/app/seo/data/comparison.json';
@@ -47,6 +48,29 @@ import type {
 
 // Type-safe data imports (English fallback)
 const toolsData = toolsDataFile as IPSEODataFile<IToolPage>;
+const interactiveToolsData = interactiveToolsDataFile as unknown as IPSEODataFile<IToolPage>;
+
+/**
+ * Slugs that have dedicated sub-routes (e.g., /tools/resize/image-resizer).
+ * These should NOT appear in /tools/[slug] static params.
+ */
+const DEDICATED_ROUTE_SLUGS = new Set([
+  'image-resizer',
+  'bulk-image-resizer',
+  'resize-image-for-instagram',
+  'resize-image-for-youtube',
+  'resize-image-for-facebook',
+  'resize-image-for-twitter',
+  'resize-image-for-linkedin',
+  'png-to-jpg',
+  'jpg-to-png',
+  'webp-to-jpg',
+  'webp-to-png',
+  'jpg-to-webp',
+  'png-to-webp',
+  'image-compressor',
+  'bulk-image-compressor',
+]);
 const formatsData = formatsDataFile as unknown as IPSEODataFile<IFormatPage>;
 const useCasesData = useCasesDataFile as unknown as IPSEODataFile<IUseCasePage>;
 const alternativesData = alternativesDataFile as unknown as IPSEODataFile<IAlternativePage>;
@@ -84,12 +108,19 @@ async function loadLocalizedPSEOData<T extends PSEOPage>(
 
 // Tool Pages
 export const getAllToolSlugs = cache(async (): Promise<string[]> => {
-  return toolsData.pages.map(page => page.slug);
+  const staticSlugs = toolsData.pages.map(page => page.slug);
+  // Include new interactive tools that need /tools/[slug] routes (not the ones with dedicated sub-routes)
+  const interactiveSlugs = interactiveToolsData.pages
+    .filter(p => !DEDICATED_ROUTE_SLUGS.has(p.slug))
+    .map(p => p.slug);
+  return [...staticSlugs, ...interactiveSlugs];
 });
 
 export const getToolData = cache(async (slug: string): Promise<IToolPage | null> => {
-  const tool = toolsData.pages.find(page => page.slug === slug);
-  return tool || null;
+  const staticTool = toolsData.pages.find(page => page.slug === slug);
+  if (staticTool) return staticTool;
+  const interactiveTool = interactiveToolsData.pages.find(page => page.slug === slug);
+  return interactiveTool || null;
 });
 
 export const getAllTools = cache(async (): Promise<IToolPage[]> => {
@@ -97,6 +128,19 @@ export const getAllTools = cache(async (): Promise<IToolPage[]> => {
     ...page,
     category: 'tools' as const,
   }));
+});
+
+// Interactive Tool Pages (utility tools: converters, compressors, etc.)
+export const getAllInteractiveTools = cache(async (): Promise<IToolPage[]> => {
+  return interactiveToolsData.pages.map(page => ({
+    ...page,
+    category: 'tools' as const,
+  }));
+});
+
+export const getInteractiveToolData = cache(async (slug: string): Promise<IToolPage | null> => {
+  const page = interactiveToolsData.pages.find(p => p.slug === slug);
+  return page || null;
 });
 
 // Format Pages

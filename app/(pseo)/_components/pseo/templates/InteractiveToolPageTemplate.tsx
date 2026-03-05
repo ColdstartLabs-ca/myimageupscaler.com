@@ -25,12 +25,17 @@ import { UseCasesSection } from '../sections/UseCasesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 
 // Import interactive tools
+import { BackgroundChanger } from '@/app/(pseo)/_components/tools/BackgroundChanger';
 import { BackgroundRemover } from '@/app/(pseo)/_components/tools/BackgroundRemover';
 import { BulkImageCompressor } from '@/app/(pseo)/_components/tools/BulkImageCompressor';
 import { BulkImageResizer } from '@/app/(pseo)/_components/tools/BulkImageResizer';
 import { FormatConverter } from '@/app/(pseo)/_components/tools/FormatConverter';
+import { HeicConverter } from '@/app/(pseo)/_components/tools/HeicConverter';
 import { ImageCompressor } from '@/app/(pseo)/_components/tools/ImageCompressor';
 import { ImageResizer } from '@/app/(pseo)/_components/tools/ImageResizer';
+import { ImageToPdfConverter } from '@/app/(pseo)/_components/tools/ImageToPdfConverter';
+import { ImageToText } from '@/app/(pseo)/_components/tools/ImageToText';
+import { PdfToImageConverter } from '@/app/(pseo)/_components/tools/PdfToImageConverter';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -40,6 +45,11 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   BulkImageCompressor,
   BulkImageResizer,
   BackgroundRemover,
+  BackgroundChanger,
+  HeicConverter,
+  PdfToImageConverter,
+  ImageToPdfConverter,
+  ImageToText,
 };
 
 /**
@@ -66,9 +76,49 @@ function getToolProps(componentName: string, config?: IToolConfig): Record<strin
       return {
         defaultQuality: config.defaultQuality,
       };
+    case 'HeicConverter':
+      return {
+        defaultOutputFormat: config.defaultOutputFormat,
+      };
+    case 'PdfToImageConverter':
+      return {
+        defaultOutputFormat: config.defaultOutputFormat,
+        defaultDpi: config.defaultDpi,
+      };
+    case 'ImageToPdfConverter':
+      return {
+        acceptedInputFormats: config.acceptedInputFormats,
+      };
     default:
       return {};
   }
+}
+
+/**
+ * Cross-sell CTA shown after the interactive tool widget
+ * Phase 9: Post-tool cross-sell for AI upscaling
+ */
+function PostToolCTA({ slug }: { slug: string }): ReactElement | null {
+  // Skip for pages that already are about AI enhancement
+  const aiPages = ['ai-photo-enhancer', 'photo-restoration', 'photo-quality-enhancer'];
+  if (aiPages.includes(slug)) return null;
+
+  return (
+    <div className="mt-8 p-5 bg-surface-light border border-border rounded-xl flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <div className="flex-1">
+        <p className="text-sm font-semibold text-primary">Want sharper, larger images?</p>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          After processing, upscale your image 2–4× with AI for print-quality results.
+        </p>
+      </div>
+      <a
+        href="/?signup=1"
+        className="shrink-0 inline-flex items-center gap-2 px-4 py-2 bg-accent text-white text-sm font-medium rounded-lg hover:bg-accent/90 transition-colors"
+      >
+        Try AI Upscaler Free →
+      </a>
+    </div>
+  );
 }
 
 interface IInteractiveToolPageTemplateProps {
@@ -132,6 +182,8 @@ export function InteractiveToolPageTemplate({
             <FadeIn delay={0.1}>
               <div className="py-12">
                 <ToolComponent {...getToolProps(data.toolComponent!, data.toolConfig)} />
+                {/* Phase 9: Post-tool cross-sell CTA */}
+                <PostToolCTA slug={data.slug} />
               </div>
             </FadeIn>
           )}

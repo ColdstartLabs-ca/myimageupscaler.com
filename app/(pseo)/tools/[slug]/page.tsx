@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getToolData, getAllToolSlugs } from '@/lib/seo';
+import { getRelatedPages } from '@/lib/seo/related-pages';
 import { ToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/ToolPageTemplate';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
@@ -86,6 +87,8 @@ export default async function ToolPage({ params }: IToolPageProps) {
   const schema = generateToolSchema(tool, 'en');
   const path = `/tools/${slug}`;
 
+  const [relatedPages] = await Promise.all([getRelatedPages('tools', slug, 'en')]);
+
   // Use InteractiveToolPageTemplate for tools with embedded functionality
   const Template = tool.isInteractive ? InteractiveToolPageTemplate : ToolPageTemplate;
 
@@ -96,7 +99,7 @@ export default async function ToolPage({ params }: IToolPageProps) {
       {/* Hreflang links for multi-language SEO */}
       <HreflangLinks path={path} category="tools" locale="en" />
       <SchemaMarkup schema={schema} />
-      <Template data={tool} />
+      <Template data={tool} relatedPages={relatedPages} />
     </>
   );
 }
