@@ -89,6 +89,10 @@ export interface IToolConfig {
   presetFilter?: string;
   // ImageCompressor config
   defaultQuality?: number;
+  // HeicConverter config
+  defaultOutputFormat?: 'jpeg' | 'png';
+  // PdfToImageConverter config
+  defaultDpi?: number;
 }
 
 /**

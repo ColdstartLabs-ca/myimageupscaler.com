@@ -60,6 +60,7 @@
     "imageResizer": "Redimensionneur d'images",
     "bulkResizer": "Redimensionneur en lot",
     "backgroundRemover": "Supprimeur d'arrière-plan",
+    "imageToText": "Image en Texte (OCR)",
     "support": "Support",
     "signIn": "Se connecter",
     "getStarted": "Commencer",

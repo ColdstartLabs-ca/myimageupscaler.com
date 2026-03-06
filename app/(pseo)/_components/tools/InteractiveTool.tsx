@@ -24,6 +24,7 @@ export interface IToolChildProps {
   processedBlob: Blob | null;
   isProcessing: boolean;
   error: string | null;
+  markResultStale: () => void;
 }
 
 export function InteractiveTool({
@@ -39,6 +40,7 @@ export function InteractiveTool({
   const [processedBlob, setProcessedBlob] = useState<Blob | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isResultStale, setIsResultStale] = useState(false);
 
   const handleFileSelect = useCallback(
     (selectedFile: File) => {
@@ -60,6 +62,7 @@ export function InteractiveTool({
 
       setFile(selectedFile);
       setProcessedBlob(null);
+      setIsResultStale(false);
 
       // Create preview URL
       const url = URL.createObjectURL(selectedFile);
@@ -77,12 +80,19 @@ export function InteractiveTool({
     try {
       const result = await onProcess(file);
       setProcessedBlob(result);
+      setIsResultStale(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Processing failed');
     } finally {
       setIsProcessing(false);
     }
   }, [file, onProcess]);
+
+  const markResultStale = useCallback(() => {
+    if (processedBlob) {
+      setIsResultStale(true);
+    }
+  }, [processedBlob]);
 
   const handleDownload = useCallback(() => {
     if (!processedBlob || !file) return;
@@ -115,6 +125,7 @@ export function InteractiveTool({
     setFile(null);
     setPreviewUrl(null);
     setProcessedBlob(null);
+    setIsResultStale(false);
     setError(null);
   }, [previewUrl]);
 
@@ -153,11 +164,12 @@ export function InteractiveTool({
               processedBlob,
               isProcessing,
               error,
+              markResultStale,
             })}
 
             {/* Action Buttons */}
             <div className="flex gap-3 mt-6">
-              {onProcess && !processedBlob && (
+              {onProcess && (
                 <button
                   onClick={handleProcess}
                   disabled={isProcessing}
@@ -168,6 +180,8 @@ export function InteractiveTool({
                       <RefreshCw className="w-4 h-4 animate-spin" />
                       Processing...
                     </>
+                  ) : processedBlob ? (
+                    'Reprocess Image'
                   ) : (
                     'Process Image'
                   )}
@@ -177,10 +191,11 @@ export function InteractiveTool({
               {processedBlob && (
                 <button
                   onClick={handleDownload}
-                  className="flex-1 px-6 py-3 bg-success text-white font-medium rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
+                  disabled={isResultStale}
+                  className="flex-1 px-6 py-3 bg-success text-white font-medium rounded-lg hover:bg-success/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  Download Result
+                  {isResultStale ? 'Reprocess to Download' : 'Download Result'}
                 </button>
               )}
 
@@ -192,6 +207,13 @@ export function InteractiveTool({
                 Start Over
               </button>
             </div>
+
+            {processedBlob && isResultStale && (
+              <p className="mt-2 text-xs text-warning">
+                Settings changed after processing. Reprocess before downloading to match the
+                preview.
+              </p>
+            )}
           </>
         )}
       </div>

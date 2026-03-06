@@ -27,6 +27,7 @@ export default [
       'next-env.d.ts',
       'next.config.js', // Next.js config file
       'open-next.config.ts', // OpenNext config file
+      '.claude/worktrees/**', // Isolated agent worktrees - not part of main codebase
     ],
   },
   {

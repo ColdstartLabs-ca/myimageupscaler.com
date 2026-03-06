@@ -12,6 +12,8 @@ import {
   getAllPlatformFormat,
   getAllDeviceUse,
   getAllTools,
+  getAllInteractiveTools,
+  getInteractiveToolData,
   getAllContentPages,
   getAllCameraRawPages,
   getAllBulkToolsPages,
@@ -660,6 +662,57 @@ export const getRelatedPages = cache(
         break;
       }
 
+      case 'tools': {
+        // Use the relatedTools field from the page's JSON data
+        const currentPage = await getInteractiveToolData(slug);
+        const relatedToolSlugs = currentPage?.relatedTools ?? [];
+
+        if (relatedToolSlugs.length > 0) {
+          // Resolve slugs from both tool pools
+          const [allInteractive, allStatic] = await Promise.all([
+            getAllInteractiveTools(),
+            getAllTools(),
+          ]);
+          const allToolsPool = [...allInteractive, ...allStatic];
+
+          for (const relatedSlug of relatedToolSlugs) {
+            if (relatedSlug === slug) continue;
+            const found = allToolsPool.find(t => t.slug === relatedSlug);
+            if (found) {
+              relatedPages.push({
+                slug: found.slug,
+                title: found.toolName || found.title,
+                description: found.description,
+                category: found.category,
+                url: buildUrl('tools', found.slug),
+                locale,
+              });
+            }
+            if (relatedPages.length >= 6) break;
+          }
+        }
+
+        // Fill remaining slots with other interactive tools
+        if (relatedPages.length < 4) {
+          const interactiveTools = await getAllInteractiveTools();
+          const existing = new Set(relatedPages.map(p => p.slug));
+          const extras = interactiveTools
+            .filter(t => t.slug !== slug && !existing.has(t.slug))
+            .slice(0, 4 - relatedPages.length)
+            .map(t => ({
+              slug: t.slug,
+              title: t.toolName || t.title,
+              description: t.description,
+              category: t.category,
+              url: buildUrl('tools', t.slug),
+              locale,
+            }));
+          relatedPages.push(...extras);
+        }
+
+        break;
+      }
+
       default: {
         // For other categories, return generic related pages
         const tools = await getAllTools();
@@ -826,8 +879,12 @@ export const getRelatedPagesByCategory = cache(
       }
 
       case 'tools': {
-        const tools = await getAllTools();
-        return tools
+        const [staticTools, interactiveTools] = await Promise.all([
+          getAllTools(),
+          getAllInteractiveTools(),
+        ]);
+        const combined = [...staticTools, ...interactiveTools];
+        return combined
           .filter(t => t.slug !== excludeSlug)
           .slice(0, limit)
           .map(t => ({

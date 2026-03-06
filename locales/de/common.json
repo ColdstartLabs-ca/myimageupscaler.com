@@ -71,6 +71,7 @@
     "imageResizer": "Bildgrößenänderer",
     "bulkResizer": "Massen-Größenänderer",
     "backgroundRemover": "Hintergrundentferner",
+    "imageToText": "Bild zu Text (OCR)",
     "support": "Unterstützung",
     "signIn": "Anmelden",
     "getStarted": "Loslegen",
