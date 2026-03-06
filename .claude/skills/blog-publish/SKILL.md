@@ -390,6 +390,28 @@ echo "Inline 3: $INLINE3_URL"
 
 ## Step 3: Create Blog Post with Inline Images
 
+### Three Kings Rule (MANDATORY — apply before writing any content)
+
+Every post must inject the **exact target keyword** into the Three Kings before publishing. This is how new posts rank from day one instead of needing a refresh later.
+
+| King | Field | Rule |
+|------|-------|------|
+| **King 1 — Title Tag** | `seo_title` | Keyword must appear, front-loaded. Max 60 chars. |
+| **King 2 — H1** | First `#` heading in `content` | Keyword in the heading. Can be slightly reworded but must contain the core phrase. |
+| **King 3 — First Paragraph** | First `<p>` after the H1 | Keyword in the **first sentence** naturally. Not stuffed. |
+
+**Optional but high-impact:** slug and `seo_description` also contain the keyword.
+
+Self-check before submitting the POST request:
+- [ ] `seo_title` contains exact target keyword
+- [ ] First `# Heading` in content contains target keyword
+- [ ] First sentence after the H1 contains target keyword
+- [ ] `seo_description` contains keyword + CTA (under 155 chars)
+
+**Reference:** seo-content-3-kings-technique skill — for existing pages that missed this, run `/seo-content-3-kings-technique [domain]` to identify and fix them.
+
+---
+
 Include the inline image URLs directly in the markdown content using standard markdown syntax.
 
 ```bash
