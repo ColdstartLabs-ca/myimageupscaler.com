@@ -24,9 +24,45 @@ vi.mock('@shared/config/env', () => ({
   },
 }));
 
-const SLUG = 'transparent-background-maker';
 const CATEGORY: PSEOCategory = 'tools';
 const BASE_URL = 'https://myimageupscaler.com';
+
+// New tools added in PR #13
+const NEW_TOOL_SLUGS = [
+  'background-changer',
+  'heic-to-jpg',
+  'heic-to-png',
+  'pdf-to-jpg',
+  'pdf-to-png',
+  'image-to-pdf',
+  'jpg-to-pdf',
+  'image-to-text',
+];
+
+describe('Hreflang for new interactive tools (PR #13)', () => {
+  it.each(NEW_TOOL_SLUGS)('%s has all 7 locale alternates', slug => {
+    const alternates = generatePSEOHreflangAlternates(CATEGORY, slug);
+    const locales = ['en', 'es', 'pt', 'de', 'fr', 'it', 'ja'];
+    locales.forEach(locale => {
+      expect(alternates[locale]).toBeDefined();
+      expect(alternates[locale]).toMatch(/^https?:\/\//);
+    });
+    expect(alternates['x-default']).toBeDefined();
+  });
+
+  it.each(NEW_TOOL_SLUGS)('%s x-default is canonical English URL (no locale prefix)', slug => {
+    const alternates = generatePSEOHreflangAlternates(CATEGORY, slug);
+    expect(alternates['x-default']).toBe(`${BASE_URL}/tools/${slug}`);
+    expect(alternates['x-default']).not.toMatch(/\/[a-z]{2}\/tools\//);
+  });
+
+  it.each(NEW_TOOL_SLUGS)('%s de alternate has correct locale path', slug => {
+    const alternates = generatePSEOHreflangAlternates(CATEGORY, slug);
+    expect(alternates.de).toContain(`/de/tools/${slug}`);
+  });
+});
+
+const SLUG = 'transparent-background-maker';
 
 describe('Hreflang for interactive tools', () => {
   describe('transparent-background-maker locale alternates', () => {

@@ -164,14 +164,7 @@ export function InteractiveToolPageTemplate({
         </div>
 
         <div className="relative h-full">
-          <HeroSection
-            h1={data.h1}
-            intro={data.intro}
-            ctaText={data.ctaText}
-            ctaUrl={data.ctaUrl}
-            pageType="tool"
-            slug={data.slug}
-          />
+          <HeroSection h1={data.h1} intro={data.intro} pageType="tool" slug={data.slug} />
         </div>
       </div>
 

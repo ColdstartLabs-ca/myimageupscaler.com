@@ -13,14 +13,7 @@ import { cn } from '@/lib/utils';
 
 type BgType = 'transparent' | 'solid' | 'gradient-linear' | 'gradient-radial';
 
-type ToolStage =
-  | 'idle'
-  | 'removing-bg'
-  | 'loading-model'
-  | 'bg-removed'
-  | 'applying-bg'
-  | 'done'
-  | 'error';
+type ToolStage = 'idle' | 'removing-bg' | 'loading-model' | 'bg-removed' | 'done' | 'error';
 
 interface IBgOptions {
   type: BgType;
@@ -86,6 +79,7 @@ function applyBackgroundToCanvas(removedBgBlob: Blob, options: IBgOptions): Prom
 
 export function BackgroundChanger(): React.ReactElement {
   const [stage, setStage] = useState<ToolStage>('idle');
+  const [isApplyingBg, setIsApplyingBg] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -129,7 +123,7 @@ export function BackgroundChanger(): React.ReactElement {
 
   const regeneratePreview = useCallback(async (blob: Blob, opts: IBgOptions) => {
     try {
-      setStage('applying-bg');
+      setIsApplyingBg(true);
       if (previewUrlRef.current) {
         URL.revokeObjectURL(previewUrlRef.current);
       }
@@ -142,6 +136,8 @@ export function BackgroundChanger(): React.ReactElement {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to apply background');
       setStage('error');
+    } finally {
+      setIsApplyingBg(false);
     }
   }, []);
 
@@ -282,13 +278,13 @@ export function BackgroundChanger(): React.ReactElement {
     setPreviewUrl(null);
     setFinalBlob(null);
     setStage('idle');
+    setIsApplyingBg(false);
     setError(null);
     setProgress(0);
   }, []);
 
-  const isProcessing =
-    stage === 'loading-model' || stage === 'removing-bg' || stage === 'applying-bg';
-  const showControls = stage === 'bg-removed' || stage === 'applying-bg' || stage === 'done';
+  const isProcessing = stage === 'loading-model' || stage === 'removing-bg';
+  const showControls = stage === 'bg-removed' || stage === 'done';
 
   return (
     <div className="w-full max-w-5xl mx-auto">
@@ -370,9 +366,7 @@ export function BackgroundChanger(): React.ReactElement {
               <span className="text-sm font-medium text-primary">
                 {stage === 'loading-model'
                   ? 'Loading AI model (first time only)...'
-                  : stage === 'removing-bg'
-                    ? 'Removing background...'
-                    : 'Applying background...'}
+                  : 'Removing background...'}
               </span>
             </div>
             {(stage === 'loading-model' || stage === 'removing-bg') && (
@@ -579,13 +573,20 @@ export function BackgroundChanger(): React.ReactElement {
                   }
                 >
                   {previewUrl && showControls ? (
-                    <Image
-                      src={previewUrl}
-                      alt="Image with new background"
-                      fill
-                      className="object-contain"
-                      unoptimized
-                    />
+                    <>
+                      <Image
+                        src={previewUrl}
+                        alt="Image with new background"
+                        fill
+                        className="object-contain"
+                        unoptimized
+                      />
+                      {isApplyingBg && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
+                          <Loader2 className="w-6 h-6 animate-spin text-white" />
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm text-center px-4">
                       {isProcessing ? (
