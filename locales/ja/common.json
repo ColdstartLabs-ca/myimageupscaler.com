@@ -71,6 +71,7 @@
     "imageResizer": "画像リサイザー",
     "bulkResizer": "一括リサイザー",
     "backgroundRemover": "背景削除ツール",
+    "imageToText": "画像からテキスト (OCR)",
     "support": "サポート",
     "signIn": "サインイン",
     "getStarted": "開始する",

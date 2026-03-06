@@ -71,6 +71,7 @@
     "imageResizer": "Redimensionador de Imágenes",
     "bulkResizer": "Redimensionador por Lotes",
     "backgroundRemover": "Eliminador de Fondo",
+    "imageToText": "Imagen a Texto (OCR)",
     "support": "Soporte",
     "signIn": "Iniciar Sesión",
     "getStarted": "Comenzar",

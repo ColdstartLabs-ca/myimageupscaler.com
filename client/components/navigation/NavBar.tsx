@@ -228,6 +228,12 @@ export const NavBar = (): JSX.Element => {
                 >
                   {t('backgroundRemover')}
                 </a>
+                <a
+                  href={localizedPath('/tools/image-to-text')}
+                  className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white transition-colors"
+                >
+                  {t('imageToText')}
+                </a>
               </div>
             )}
           </div>
@@ -503,6 +509,12 @@ export const NavBar = (): JSX.Element => {
                 className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
               >
                 {t('backgroundRemover')}
+              </a>
+              <a
+                href={localizedPath('/tools/image-to-text')}
+                className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+              >
+                {t('imageToText')}
               </a>
             </div>
             <a
