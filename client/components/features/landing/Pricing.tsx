@@ -6,16 +6,31 @@ import { Button } from '@client/components/ui/Button';
 import { useCheckoutStore } from '@client/store/checkoutStore';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useUserStore } from '@client/store/userStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { clientEnv } from '@shared/config/env';
 import { HOMEPAGE_TIERS, isStripePricesConfigured } from '@shared/config/stripe';
 import { Check } from 'lucide-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AmbientBackground } from '../../landing/AmbientBackground';
 
+/** Calculate discounted price for a tier, rounding to 2 decimal places. */
+export function calculateDiscountedPrice(priceValue: number, discountPercent: number): number {
+  if (discountPercent <= 0 || priceValue === 0) return priceValue;
+  return Math.round(priceValue * (1 - discountPercent / 100) * 100) / 100;
+}
+
+/** Format a numeric price as a USD string (e.g., 17.15 -> "$17.15"). */
+function formatPrice(value: number): string {
+  if (value === 0) return '$0';
+  // Use Number to strip trailing zeros: 7.60 → "7.6", but keep "$7.60" via toFixed
+  const formatted = value.toFixed(2).replace(/\.?0+$/, '');
+  return `$${formatted}`;
+}
+
 // Generate Product structured data for SEO
-const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number]) => ({
+const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number], overridePrice?: number) => ({
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: `${clientEnv.APP_NAME} ${tier.name}`,
@@ -26,7 +41,7 @@ const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number]) => ({
   },
   offers: {
     '@type': 'Offer',
-    price: tier.priceValue,
+    price: overridePrice ?? tier.priceValue,
     priceCurrency: 'USD',
     availability: 'https://schema.org/InStock',
     priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
@@ -41,6 +56,21 @@ export const Pricing: React.FC = () => {
   const { user } = useUserStore();
   const { isCheckoutModalOpen, activePriceId, openCheckoutModal, closeCheckoutModal } =
     useCheckoutStore();
+  const { discountPercent } = useRegionTier();
+
+  // Pre-compute regional prices for all homepage tiers
+  const regionalTiers = useMemo(
+    () =>
+      HOMEPAGE_TIERS.map(tier => {
+        const regionalPrice = calculateDiscountedPrice(tier.priceValue, discountPercent);
+        return {
+          ...tier,
+          displayPrice: formatPrice(regionalPrice),
+          displayPriceValue: regionalPrice,
+        };
+      }),
+    [discountPercent]
+  );
 
   const handlePricingClick = (tier: (typeof HOMEPAGE_TIERS)[number]) => {
     // Free tier - just open registration
@@ -93,9 +123,14 @@ export const Pricing: React.FC = () => {
     <section id="pricing" className="py-32 bg-main relative overflow-hidden">
       <AmbientBackground variant="section" />
       {/* Product structured data for SEO */}
-      {HOMEPAGE_TIERS.filter(tier => tier.priceValue > 0).map(tier => (
-        <JsonLd key={`jsonld-${tier.name}`} data={generateProductJsonLd(tier)} />
-      ))}
+      {regionalTiers
+        .filter(tier => tier.priceValue > 0)
+        .map(tier => (
+          <JsonLd
+            key={`jsonld-${tier.name}`}
+            data={generateProductJsonLd(tier, tier.displayPriceValue)}
+          />
+        ))}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-24">
@@ -111,7 +146,7 @@ export const Pricing: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3 items-center">
-          {HOMEPAGE_TIERS.map(tier => (
+          {regionalTiers.map(tier => (
             <div
               key={tier.name}
               className={`
@@ -136,7 +171,9 @@ export const Pricing: React.FC = () => {
               </div>
 
               <div className="mb-8 flex items-baseline gap-1">
-                <span className="text-5xl font-black text-white tracking-tight">{tier.price}</span>
+                <span className="text-5xl font-black text-white tracking-tight">
+                  {tier.displayPrice}
+                </span>
                 <span className="text-text-muted font-medium">{tier.period}</span>
               </div>
 

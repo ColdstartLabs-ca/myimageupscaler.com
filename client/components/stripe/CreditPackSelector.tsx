@@ -10,11 +10,14 @@ interface ICreditPackSelectorProps {
   onPurchaseStart?: () => void;
   onPurchaseComplete?: () => void;
   onError?: (error: Error) => void;
+  /** Regional discount percentage (0-100). When > 0, displays adjusted prices. */
+  discountPercent?: number;
 }
 
 export function CreditPackSelector({
   onPurchaseStart,
   onPurchaseComplete,
+  discountPercent = 0,
 }: ICreditPackSelectorProps): JSX.Element {
   const [selectedPack, setSelectedPack] = useState<string | null>(null);
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
@@ -40,15 +43,20 @@ export function CreditPackSelector({
     handleCheckoutClose();
   };
 
+  const applyDiscount = (cents: number): number => {
+    if (discountPercent <= 0) return cents;
+    return Math.round(cents * (1 - discountPercent / 100));
+  };
+
   const formatPrice = (cents: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-    }).format(cents / 100);
+    }).format(applyDiscount(cents) / 100);
   };
 
   const getPricePerCredit = (pack: ICreditPack) => {
-    return (pack.priceInCents / pack.credits / 100).toFixed(3);
+    return (applyDiscount(pack.priceInCents) / pack.credits / 100).toFixed(3);
   };
 
   return (

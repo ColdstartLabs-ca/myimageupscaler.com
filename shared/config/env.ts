@@ -299,6 +299,36 @@ const serverEnvSchema = z.object({
   MODEL_VERSION_REALESRGAN_ANIME: z.string().optional(),
   MODEL_VERSION_P_IMAGE_EDIT: z.string().optional(),
   MODEL_VERSION_FLUX_KONTEXT_FAST: z.string().optional(),
+
+  // ==========================================
+  // REGIONAL PRICING (Stripe Price IDs)
+  // Leave empty to fallback to standard price
+  // ==========================================
+  // South Asia (65% off)
+  STRIPE_PRICE_STARTER_SOUTH_ASIA: z.string().default(''),
+  STRIPE_PRICE_HOBBY_SOUTH_ASIA: z.string().default(''),
+  STRIPE_PRICE_PRO_SOUTH_ASIA: z.string().default(''),
+  STRIPE_PRICE_BUSINESS_SOUTH_ASIA: z.string().default(''),
+  // Southeast Asia (60% off)
+  STRIPE_PRICE_STARTER_SOUTHEAST_ASIA: z.string().default(''),
+  STRIPE_PRICE_HOBBY_SOUTHEAST_ASIA: z.string().default(''),
+  STRIPE_PRICE_PRO_SOUTHEAST_ASIA: z.string().default(''),
+  STRIPE_PRICE_BUSINESS_SOUTHEAST_ASIA: z.string().default(''),
+  // LatAm (50% off)
+  STRIPE_PRICE_STARTER_LATAM: z.string().default(''),
+  STRIPE_PRICE_HOBBY_LATAM: z.string().default(''),
+  STRIPE_PRICE_PRO_LATAM: z.string().default(''),
+  STRIPE_PRICE_BUSINESS_LATAM: z.string().default(''),
+  // Eastern Europe (40% off)
+  STRIPE_PRICE_STARTER_EASTERN_EUROPE: z.string().default(''),
+  STRIPE_PRICE_HOBBY_EASTERN_EUROPE: z.string().default(''),
+  STRIPE_PRICE_PRO_EASTERN_EUROPE: z.string().default(''),
+  STRIPE_PRICE_BUSINESS_EASTERN_EUROPE: z.string().default(''),
+  // Africa (65% off)
+  STRIPE_PRICE_STARTER_AFRICA: z.string().default(''),
+  STRIPE_PRICE_HOBBY_AFRICA: z.string().default(''),
+  STRIPE_PRICE_PRO_AFRICA: z.string().default(''),
+  STRIPE_PRICE_BUSINESS_AFRICA: z.string().default(''),
 });
 
 export type IServerEnv = z.infer<typeof serverEnvSchema>;
@@ -410,6 +440,28 @@ function loadServerEnv(): IServerEnv {
     MODEL_VERSION_REALESRGAN_ANIME: process.env.MODEL_VERSION_REALESRGAN_ANIME,
     MODEL_VERSION_P_IMAGE_EDIT: process.env.MODEL_VERSION_P_IMAGE_EDIT,
     MODEL_VERSION_FLUX_KONTEXT_FAST: process.env.MODEL_VERSION_FLUX_KONTEXT_FAST,
+
+    // Regional Pricing
+    STRIPE_PRICE_STARTER_SOUTH_ASIA: process.env.STRIPE_PRICE_STARTER_SOUTH_ASIA || '',
+    STRIPE_PRICE_HOBBY_SOUTH_ASIA: process.env.STRIPE_PRICE_HOBBY_SOUTH_ASIA || '',
+    STRIPE_PRICE_PRO_SOUTH_ASIA: process.env.STRIPE_PRICE_PRO_SOUTH_ASIA || '',
+    STRIPE_PRICE_BUSINESS_SOUTH_ASIA: process.env.STRIPE_PRICE_BUSINESS_SOUTH_ASIA || '',
+    STRIPE_PRICE_STARTER_SOUTHEAST_ASIA: process.env.STRIPE_PRICE_STARTER_SOUTHEAST_ASIA || '',
+    STRIPE_PRICE_HOBBY_SOUTHEAST_ASIA: process.env.STRIPE_PRICE_HOBBY_SOUTHEAST_ASIA || '',
+    STRIPE_PRICE_PRO_SOUTHEAST_ASIA: process.env.STRIPE_PRICE_PRO_SOUTHEAST_ASIA || '',
+    STRIPE_PRICE_BUSINESS_SOUTHEAST_ASIA: process.env.STRIPE_PRICE_BUSINESS_SOUTHEAST_ASIA || '',
+    STRIPE_PRICE_STARTER_LATAM: process.env.STRIPE_PRICE_STARTER_LATAM || '',
+    STRIPE_PRICE_HOBBY_LATAM: process.env.STRIPE_PRICE_HOBBY_LATAM || '',
+    STRIPE_PRICE_PRO_LATAM: process.env.STRIPE_PRICE_PRO_LATAM || '',
+    STRIPE_PRICE_BUSINESS_LATAM: process.env.STRIPE_PRICE_BUSINESS_LATAM || '',
+    STRIPE_PRICE_STARTER_EASTERN_EUROPE: process.env.STRIPE_PRICE_STARTER_EASTERN_EUROPE || '',
+    STRIPE_PRICE_HOBBY_EASTERN_EUROPE: process.env.STRIPE_PRICE_HOBBY_EASTERN_EUROPE || '',
+    STRIPE_PRICE_PRO_EASTERN_EUROPE: process.env.STRIPE_PRICE_PRO_EASTERN_EUROPE || '',
+    STRIPE_PRICE_BUSINESS_EASTERN_EUROPE: process.env.STRIPE_PRICE_BUSINESS_EASTERN_EUROPE || '',
+    STRIPE_PRICE_STARTER_AFRICA: process.env.STRIPE_PRICE_STARTER_AFRICA || '',
+    STRIPE_PRICE_HOBBY_AFRICA: process.env.STRIPE_PRICE_HOBBY_AFRICA || '',
+    STRIPE_PRICE_PRO_AFRICA: process.env.STRIPE_PRICE_PRO_AFRICA || '',
+    STRIPE_PRICE_BUSINESS_AFRICA: process.env.STRIPE_PRICE_BUSINESS_AFRICA || '',
   };
 
   return serverEnvSchema.parse(env);

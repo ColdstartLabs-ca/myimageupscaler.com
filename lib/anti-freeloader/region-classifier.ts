@@ -1,3 +1,7 @@
+// Re-export pricing region utilities for colocation with geo classification
+export { getPricingRegion, getDiscountPercent } from '@shared/config/pricing-regions';
+export type { PricingRegion, IPricingRegionConfig } from '@shared/config/pricing-regions';
+
 export type RegionTier = 'standard' | 'restricted';
 
 /**
