@@ -1,11 +1,12 @@
 'use client';
 
-import { Suspense, useEffect, useState, useCallback } from 'react';
+import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { StripeService } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
+import { analytics } from '@client/analytics/analyticsClient';
 
 const MAX_POLL_ATTEMPTS = 10;
 const POLL_INTERVAL_MS = 1000;
@@ -19,6 +20,21 @@ function SuccessContent(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [credits, setCredits] = useState<number | null>(null);
   const [pollTimedOut, setPollTimedOut] = useState(false);
+  const hasTrackedPurchase = useRef(false);
+
+  // Track purchase_confirmed event once when page loads
+  useEffect(() => {
+    if (hasTrackedPurchase.current) return;
+    hasTrackedPurchase.current = true;
+
+    // Track client-side purchase confirmation for funnel analysis
+    // This complements server-side checkout_completed (webhook) for attribution
+    analytics.track('purchase_confirmed', {
+      purchaseType: isCredits ? 'credit_pack' : 'subscription',
+      sessionId,
+      // No revenue amount here - server-side is the source of truth for revenue
+    });
+  }, [isCredits, sessionId]);
 
   const pollForCredits = useCallback(async () => {
     let attempts = 0;

@@ -14,6 +14,7 @@ export type {
   IConsentStatus,
   IAnalyticsConsent,
   IPageViewProperties,
+  IReturnVisitProperties,
   ISignupProperties,
   ISubscriptionProperties,
   ICreditPackProperties,

@@ -37,6 +37,7 @@ const CONSENT_STORAGE_KEY = 'pp_analytics_consent';
 const SESSION_ID_KEY = 'pp_session_id';
 const FIRST_TOUCH_UTM_STORAGE_KEY = 'miu_first_touch_utm';
 const FIRST_TOUCH_UTM_COOKIE_KEY = 'miu_first_touch_utm';
+const LAST_VISIT_KEY = 'miu_last_visit';
 
 interface IFirstTouchUtm {
   utmSource?: string;
@@ -96,6 +97,36 @@ function getStoredFirstTouchUtm(): IFirstTouchUtm | null {
     return parsed;
   } catch {
     return null;
+  }
+}
+
+function getLastVisit(): { timestamp: number; sessionId: string } | null {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const stored = localStorage.getItem(LAST_VISIT_KEY);
+    if (!stored) return null;
+    const parsed = JSON.parse(stored) as { timestamp: number; sessionId: string };
+    if (typeof parsed !== 'object' || !parsed) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function setLastVisit(): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(
+      LAST_VISIT_KEY,
+      JSON.stringify({
+        timestamp: Date.now(),
+        sessionId: getSessionId(),
+      })
+    );
+  } catch {
+    // Ignore storage errors
   }
 }
 
@@ -309,6 +340,27 @@ export const analytics = {
    */
   trackPageView(path: string, properties?: Record<string, unknown>): void {
     if (!this.isEnabled() || !amplitudeModule) return;
+
+    // Track return visit on first page view
+    const lastVisit = getLastVisit();
+    const currentSessionId = getSessionId();
+    if (lastVisit && lastVisit.sessionId !== currentSessionId) {
+      // Calculate days since last visit
+      const daysSinceLastVisit = Math.floor((Date.now() - lastVisit.timestamp) / (1000 * 60 * 60 * 24));
+
+      // Only track return visits for users who visited more than 1 day ago
+      // to avoid same-day session counting as return visits
+      if (daysSinceLastVisit >= 1) {
+        this.track('return_visit', {
+          daysSinceLastVisit,
+          previousSessionId: lastVisit.sessionId,
+          entryPage: path,
+        });
+      }
+    }
+
+    // Update last visit timestamp
+    setLastVisit();
 
     const url = new URL(window.location.href);
     const utmParams = {

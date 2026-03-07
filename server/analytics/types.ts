@@ -20,6 +20,12 @@ export interface IPageViewProperties {
   utmContent?: string;
 }
 
+export interface IReturnVisitProperties {
+  daysSinceLastVisit: number;
+  previousSessionId?: string;
+  entryPage: string;
+}
+
 export interface ISignupProperties {
   method: 'email' | 'google' | 'facebook' | 'azure';
 }
@@ -109,6 +115,24 @@ export interface IPricingPlanViewedProperties {
   priceId: string;
 }
 
+export interface ICheckoutStartedProperties {
+  priceId: string;
+  purchaseType: 'subscription' | 'credit_pack';
+  sessionId?: string;
+  plan?: string;
+  pack?: string;
+}
+
+export interface ICheckoutCompletedProperties {
+  purchaseType: 'subscription' | 'credit_pack';
+  planTier?: string;
+  pack?: string;
+  amount: number;
+  paymentMethod: string;
+  sessionId: string;
+  currency?: string;
+}
+
 // pSEO-specific event properties
 export interface IPSEOPageViewProperties extends IPageViewProperties {
   pageType:
@@ -170,6 +194,36 @@ export interface IPSEOScrollProperties {
   timeToDepthMs: number;
 }
 
+// Error tracking properties
+export interface IErrorOccurredProperties {
+  errorType: 'upload_failed' | 'upscale_failed' | 'download_failed' | 'validation_failed' | 'timeout' | 'rate_limited' | 'insufficient_credits' | 'unknown';
+  errorMessage: string; // Sanitized error message
+  context?: Record<string, unknown>; // Additional context like file size, resolution, etc.
+}
+
+// Upscale quality selection properties
+export interface IUpscaleQualitySelectedProperties {
+  qualityLevel: '2x' | '4x' | '8x';
+  modelVariant: string; // Quality tier (quick, standard, premium, ultra, auto)
+}
+
+// Upscale completion tracking properties
+export interface IImageUpscaleStartedProperties {
+  inputWidth?: number;
+  inputHeight?: number;
+  scaleFactor?: number;
+  modelUsed?: string;
+}
+
+export interface IUpscaleCompletedProperties {
+  durationMs: number;
+  modelUsed?: string;
+  inputResolution?: string;
+  outputResolution?: string;
+  success: boolean;
+  errorType?: string;
+}
+
 // =============================================================================
 // Event Types
 // =============================================================================
@@ -177,6 +231,7 @@ export interface IPSEOScrollProperties {
 export type IAnalyticsEventName =
   // Page and session events
   | 'page_view'
+  | 'return_visit'
   // Authentication events
   | 'signup_started'
   | 'signup_completed'
@@ -196,7 +251,9 @@ export type IAnalyticsEventName =
   | 'credits_refunded'
   // Image processing events
   | 'image_uploaded'
+  | 'image_upscale_started'
   | 'image_upscaled'
+  | 'upscale_completed'
   | 'image_download'
   // Pricing page events
   | 'pricing_page_viewed'
@@ -204,9 +261,12 @@ export type IAnalyticsEventName =
   | 'checkout_started'
   | 'checkout_completed'
   | 'checkout_abandoned'
+  | 'purchase_confirmed' // Client-side confirmation when user sees success page
   // Error/limit events (server-side only)
   | 'rate_limit_exceeded'
   | 'processing_failed'
+  // Error tracking events (client and server-side)
+  | 'error_occurred'
   // Guest upscaler events (server-side only)
   | 'guest_limit_reached'
   | 'guest_upscale_completed'
@@ -226,6 +286,8 @@ export type IAnalyticsEventName =
   | 'model_gallery_opened'
   | 'model_selection_changed'
   | 'model_gallery_closed'
+  // Upscale quality selection events
+  | 'upscale_quality_selected'
   // pSEO-specific events
   | 'pseo_page_view'
   | 'pseo_cta_clicked'

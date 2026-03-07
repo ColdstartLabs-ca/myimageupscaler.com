@@ -176,6 +176,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onChange={handleScaleChange}
           disabled={isProcessing}
           availableScales={QUALITY_TIER_SCALES[config.qualityTier]}
+          qualityTier={config.qualityTier}
         />
 
         {/* 3. Enhancement Options (always visible) */}

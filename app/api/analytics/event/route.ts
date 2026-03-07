@@ -12,6 +12,7 @@ import { serializeError } from '@shared/utils/errors';
 const ALLOWED_EVENTS = [
   // Page and session events
   'page_view',
+  'return_visit',
 
   // Authentication events
   'signup_started',
@@ -32,7 +33,9 @@ const ALLOWED_EVENTS = [
 
   // Image processing events
   'image_uploaded',
+  'image_upscale_started',
   'image_upscaled',
+  'upscale_completed',
   'image_download',
 
   // Pricing page events
@@ -42,10 +45,14 @@ const ALLOWED_EVENTS = [
   'checkout_started',
   'checkout_completed',
   'checkout_abandoned',
+  'purchase_confirmed', // Client-side confirmation when user sees success page
 
   // Error/limit events (server-side only)
   'rate_limit_exceeded',
   'processing_failed',
+
+  // Error tracking events (client and server-side)
+  'error_occurred',
 
   // Guest upscaler events (server-side only)
   'guest_limit_reached',
@@ -61,6 +68,8 @@ const ALLOWED_EVENTS = [
   'model_gallery_opened',
   'model_selection_changed',
   'model_gallery_closed',
+  // Upscale quality selection events
+  'upscale_quality_selected',
 
   // pSEO-specific events
   'pseo_page_view',

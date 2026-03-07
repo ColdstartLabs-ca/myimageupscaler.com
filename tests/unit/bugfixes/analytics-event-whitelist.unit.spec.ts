@@ -6,6 +6,7 @@ import { z } from 'zod';
 const ALLOWED_EVENTS = [
   // Page and session events
   'page_view',
+  'return_visit',
 
   // Authentication events
   'signup_started',
@@ -26,7 +27,9 @@ const ALLOWED_EVENTS = [
 
   // Image processing events
   'image_uploaded',
+  'image_upscale_started',
   'image_upscaled',
+  'upscale_completed',
   'image_download',
 
   // Pricing page events
@@ -36,10 +39,14 @@ const ALLOWED_EVENTS = [
   'checkout_started',
   'checkout_completed',
   'checkout_abandoned',
+  'purchase_confirmed', // Client-side confirmation when user sees success page
 
   // Error/limit events (server-side only)
   'rate_limit_exceeded',
   'processing_failed',
+
+  // Error tracking events (client and server-side)
+  'error_occurred',
 
   // Guest upscaler events (server-side only)
   'guest_limit_reached',
@@ -55,6 +62,9 @@ const ALLOWED_EVENTS = [
   'model_gallery_opened',
   'model_selection_changed',
   'model_gallery_closed',
+
+  // Upscale quality selection events
+  'upscale_quality_selected',
 
   // pSEO-specific events
   'pseo_page_view',
@@ -74,6 +84,19 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
   describe('Event whitelist completeness', () => {
     test('should include page_view event', () => {
       const result = eventSchema.safeParse({ eventName: 'page_view' });
+      expect(result.success).toBe(true);
+    });
+
+    test('should include return_visit event for user identity tracking', () => {
+      // Track when existing users come back to the site
+      const result = eventSchema.safeParse({
+        eventName: 'return_visit',
+        properties: {
+          daysSinceLastVisit: 7,
+          previousSessionId: 'prev_session_123',
+          entryPage: '/dashboard',
+        },
+      });
       expect(result.success).toBe(true);
     });
 
@@ -121,6 +144,22 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
       }
     });
 
+    test('should include error_occurred event (error tracking)', () => {
+      // error_occurred tracks all error types with sanitized error messages
+      const result = eventSchema.safeParse({
+        eventName: 'error_occurred',
+        properties: {
+          errorType: 'upload_failed',
+          errorMessage: 'File size exceeds limit',
+          context: {
+            fileSize: 10485760,
+            maxSize: 5242880,
+          },
+        },
+      });
+      expect(result.success).toBe(true);
+    });
+
     test('should include image_upscaled event (previously missing)', () => {
       // This was a bug - image_upscaled was tracked but not in the whitelist
       const result = eventSchema.safeParse({
@@ -150,6 +189,46 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
 
     test('should include image_download event', () => {
       const result = eventSchema.safeParse({ eventName: 'image_download' });
+      expect(result.success).toBe(true);
+    });
+
+    test('should include image_upscale_started event (new funnel event)', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'image_upscale_started',
+        properties: {
+          inputWidth: 1920,
+          inputHeight: 1080,
+          scaleFactor: 2,
+          modelUsed: 'quick',
+        },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    test('should include upscale_completed event (new funnel event)', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'upscale_completed',
+        properties: {
+          durationMs: 5000,
+          modelUsed: 'standard',
+          inputResolution: '1920x1080',
+          outputResolution: '3840x2160',
+          success: true,
+        },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    test('should include upscale_completed event with failure', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'upscale_completed',
+        properties: {
+          durationMs: 30000,
+          modelUsed: 'auto',
+          success: false,
+          errorType: 'timeout',
+        },
+      });
       expect(result.success).toBe(true);
     });
 
@@ -203,6 +282,18 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
         const result = eventSchema.safeParse({ eventName });
         expect(result.success).toBe(true);
       }
+    });
+
+    test('should include upscale_quality_selected event', () => {
+      // Track quality scale selection (2x, 4x, 8x) with model variant
+      const result = eventSchema.safeParse({
+        eventName: 'upscale_quality_selected',
+        properties: {
+          qualityLevel: '4x',
+          modelVariant: 'standard',
+        },
+      });
+      expect(result.success).toBe(true);
     });
 
     test('should include pSEO events', () => {
@@ -306,6 +397,7 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
     test('should match IAnalyticsEventName types', () => {
       const expectedEvents = [
         'page_view',
+        'return_visit',
         'signup_started',
         'signup_completed',
         'login',
@@ -318,7 +410,9 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
         'credits_deducted',
         'credits_refunded',
         'image_uploaded',
+        'image_upscale_started',
         'image_upscaled',
+        'upscale_completed',
         'image_download',
         'pricing_page_viewed',
         'checkout_started',
@@ -326,6 +420,7 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
         'checkout_abandoned',
         'rate_limit_exceeded',
         'processing_failed',
+        'error_occurred',
         'guest_limit_reached',
         'guest_upscale_completed',
         'batch_limit_modal_shown',
@@ -335,6 +430,7 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
         'model_gallery_opened',
         'model_selection_changed',
         'model_gallery_closed',
+        'upscale_quality_selected',
         'pseo_page_view',
         'pseo_cta_clicked',
         'pseo_scroll_depth',

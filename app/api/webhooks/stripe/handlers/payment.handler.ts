@@ -181,14 +181,21 @@ export class PaymentHandler {
 
     // Track checkout completed event
     if (purchaseType) {
+      // Get payment method from session (Stripe Checkout uses 'card' by default)
+      // Payment method details are in session.payment_method_types
+      const paymentMethodType = session.payment_method_types?.[0] || 'card';
+      const paymentMethod = paymentMethodType === 'card' ? 'stripe_card' : paymentMethodType;
+
       await trackServerEvent(
         'checkout_completed',
         {
           purchaseType,
-          plan: planKey,
+          planTier: planKey,
           pack: packKey,
-          amountCents,
+          amount: amountCents,
+          paymentMethod,
           sessionId: session.id,
+          currency: session.currency ?? 'usd',
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );

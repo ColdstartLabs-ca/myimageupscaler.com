@@ -88,15 +88,12 @@ export class UpscalerPage extends BasePage {
    */
   async waitForLoad(): Promise<void> {
     // Wait for the workspace container to be visible (the dashboard no longer has an h1)
-    // Try both empty state and active state selectors
+    // Try both empty state and active state selectors using Playwright's or() for proper race handling
     const emptyStateWorkspace = this.page.locator('.bg-surface.rounded-2xl.shadow-2xl');
     const activeStateWorkspace = this.page.locator('.bg-main.rounded-3xl.shadow-2xl');
 
-    // Wait for either state to be visible
-    await Promise.race([
-      expect(emptyStateWorkspace).toBeVisible({ timeout: 15000 }),
-      expect(activeStateWorkspace).toBeVisible({ timeout: 15000 }),
-    ]);
+    // Use locator.or() for proper "either element" waiting
+    await emptyStateWorkspace.or(activeStateWorkspace).waitFor({ state: 'visible', timeout: 15000 });
   }
 
   /**

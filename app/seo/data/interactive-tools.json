@@ -1228,7 +1228,7 @@
           "answer": "Completely. All processing happens in your browser \u2014 your files never touch our servers."
         }
       ],
-      "relatedTools": ["png-to-jpg", "image-compressor", "format-converter"],
+      "relatedTools": ["png-to-jpg", "image-compressor"],
       "relatedGuides": [],
       "ctaText": "Try AI Image Upscaler",
       "ctaUrl": "/?signup=1"

@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ToggleButtonGroup, IToggleOption } from '@client/components/ui/ToggleButtonGroup';
+import { QualityTier } from '@/shared/types/coreflow.types';
+import { analytics } from '@client/analytics/analyticsClient';
 
 export interface IUpscaleFactorSelectorProps {
   scale: 2 | 4 | 8;
@@ -7,6 +9,8 @@ export interface IUpscaleFactorSelectorProps {
   disabled?: boolean;
   /** Available scales for the selected quality tier (filters the options shown) */
   availableScales?: (2 | 4 | 8)[];
+  /** Current quality tier for analytics */
+  qualityTier?: QualityTier;
 }
 
 const ALL_SCALE_OPTIONS: IToggleOption<string>[] = [
@@ -20,7 +24,12 @@ export const UpscaleFactorSelector: React.FC<IUpscaleFactorSelectorProps> = ({
   onChange,
   disabled,
   availableScales,
+  qualityTier = 'auto',
 }) => {
+  // Track previous scale for analytics
+  const previousScaleRef = useRef<2 | 4 | 8>(scale);
+
+  // Filter scale options based on availableScales prop
   // Filter scale options based on availableScales prop
   const scaleOptions = availableScales
     ? ALL_SCALE_OPTIONS.filter(option =>
@@ -57,6 +66,21 @@ export const UpscaleFactorSelector: React.FC<IUpscaleFactorSelectorProps> = ({
 
   const handleChange = (value: string) => {
     const scaleValue = parseInt(value, 10) as 2 | 4 | 8;
+
+    // Track quality selection when scale changes (but not on auto-reset from tier changes)
+    const isAutoReset =
+      availableScales &&
+      availableScales.length > 0 &&
+      !availableScales.includes(previousScaleRef.current);
+
+    if (!isAutoReset && scaleValue !== previousScaleRef.current) {
+      analytics.track('upscale_quality_selected', {
+        qualityLevel: `${scaleValue}x` as '2x' | '4x' | '8x',
+        modelVariant: qualityTier,
+      });
+    }
+
+    previousScaleRef.current = scaleValue;
     onChange(scaleValue);
   };
 

@@ -15,11 +15,10 @@ export class UpscalerWaitHelper {
    * Wait for file to be processed and appear in queue
    */
   async waitForFileInQueue(timeout = 5000): Promise<void> {
-    const queueStrip = this.page.locator(
-      '.border-t.border-slate-200 img, .h-32.bg-white.border-t img'
-    );
+    // Use data-testid for reliable queue item detection
+    const queueItem = this.page.locator('[data-testid="queue-item"] img');
 
-    await queueStrip
+    await queueItem
       .first()
       .waitFor({
         state: 'visible',
@@ -37,10 +36,9 @@ export class UpscalerWaitHelper {
     const startTime = Date.now();
 
     while (Date.now() - startTime < timeout) {
-      const queueStrip = this.page.locator(
-        '.border-t.border-slate-200 img, .h-32.bg-white.border-t img'
-      );
-      const count = await queueStrip.count();
+      // Use data-testid for reliable queue item counting
+      const queueItems = this.page.locator('[data-testid="queue-item"]');
+      const count = await queueItems.count();
 
       if (count >= expectedCount) {
         return;

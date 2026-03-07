@@ -128,6 +128,17 @@ export const downloadSingle = async (
   } catch (error) {
     console.error('Download failed:', error);
     const errorMessage = error instanceof Error ? error.message : 'Failed to download image';
+
+    // Track download error
+    analytics.track('error_occurred', {
+      errorType: 'download_failed',
+      errorMessage: errorMessage.substring(0, 500),
+      context: {
+        filename: downloadFilename,
+        url: url?.substring(0, 200), // Truncate URL for privacy
+      },
+    });
+
     throw new Error(`Download failed: ${errorMessage}`);
   }
 };
@@ -156,6 +167,17 @@ export const downloadBatch = async (queue: IBatchItem[], mode: string): Promise<
         folder.file(filename, blob);
       } catch (error) {
         console.error(`Failed to add ${item.file.name} to zip:`, error);
+
+        // Track download error for individual file in batch
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        analytics.track('error_occurred', {
+          errorType: 'download_failed',
+          errorMessage: errorMessage.substring(0, 500),
+          context: {
+            filename: item.file.name,
+            isBatch: true,
+          },
+        });
       }
     }
   });

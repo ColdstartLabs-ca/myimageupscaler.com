@@ -173,6 +173,28 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       error: undefined,
     });
 
+    // Track upscale started event
+    let inputWidth: number | undefined;
+    let inputHeight: number | undefined;
+    try {
+      const dimensions = await loadImageDimensions(item.file);
+      inputWidth = dimensions.width;
+      inputHeight = dimensions.height;
+    } catch {
+      // Dimensions not available, continue without them
+    }
+
+    analytics.track('image_upscale_started', {
+      inputWidth,
+      inputHeight,
+      scaleFactor: config.scale,
+      modelUsed: config.qualityTier,
+    });
+
+    const startTime = Date.now();
+    let success = false;
+    let errorType: string | undefined;
+
     try {
       const result = await processImage(item.file, config, (p, stage) => {
         updateItemStatus(item.id, {
@@ -194,11 +216,27 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       if (result.creditsUsed > 0) {
         useUserStore.getState().updateCreditsFromProcessing(result.creditsRemaining);
       }
+
+      success = true;
     } catch (error: unknown) {
       const errorMessage = serializeError(error);
 
-      // Handle batch limit exceeded from API
+      // Determine error type for analytics
       if (error instanceof BatchLimitError) {
+        errorType = 'batch_limit_exceeded';
+
+        // Track error_occurred event for batch limit
+        analytics.track('error_occurred', {
+          errorType: 'rate_limited',
+          errorMessage: 'Batch limit exceeded',
+          context: {
+            limit: error.limit,
+            attempted: queue.filter(i => i.status === ProcessingStatus.IDLE).length,
+            fileName: item.file.name,
+            fileSize: item.file.size,
+          },
+        });
+
         // Stop batch processing, show upgrade modal
         setIsProcessingBatch(false);
         setBatchLimitExceeded({
@@ -207,10 +245,19 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
           serverEnforced: true,
         });
         return;
-      }
+      } else if (error instanceof Error && error.message.includes('insufficient credits')) {
+        errorType = 'insufficient_credits';
 
-      // Handle insufficient credits error specifically
-      if (error instanceof Error && error.message.includes('insufficient credits')) {
+        // Track error_occurred event for insufficient credits
+        analytics.track('error_occurred', {
+          errorType: 'insufficient_credits',
+          errorMessage: 'Insufficient credits for operation',
+          context: {
+            fileName: item.file.name,
+            fileSize: item.file.size,
+          },
+        });
+
         // Show a specific error message for insufficient credits
         const creditsError =
           'You have insufficient credits for this operation. Please purchase more credits or upgrade your subscription.';
@@ -228,10 +275,19 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
           duration: TIMEOUTS.TOAST_LONG_AUTO_CLOSE_DELAY,
         });
         return;
-      }
+      } else if (error instanceof Error && error.message.includes('timeout')) {
+        errorType = 'timeout';
 
-      // Handle timeout errors specifically
-      if (error instanceof Error && error.message.includes('timeout')) {
+        // Track error_occurred event for timeout
+        analytics.track('error_occurred', {
+          errorType: 'timeout',
+          errorMessage: 'Request timeout during processing',
+          context: {
+            fileName: item.file.name,
+            fileSize: item.file.size,
+          },
+        });
+
         // Show a specific error message for timeout
         const timeoutError =
           'Request timeout: The image processing request timed out. Please try again.';
@@ -248,6 +304,19 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
           duration: TIMEOUTS.TOAST_LONG_AUTO_CLOSE_DELAY,
         });
         return;
+      } else {
+        errorType = 'unknown';
+
+        // Track error_occurred event for unknown errors
+        analytics.track('error_occurred', {
+          errorType: 'upscale_failed',
+          errorMessage: errorMessage.substring(0, 500), // Limit error message length
+          context: {
+            fileName: item.file.name,
+            fileSize: item.file.size,
+            fileType: item.file.type,
+          },
+        });
       }
 
       updateItemStatus(item.id, {
@@ -261,6 +330,22 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         message: `Failed to process ${item.file.name}: ${errorMessage}`,
         type: 'error',
         duration: TIMEOUTS.TOAST_LONG_AUTO_CLOSE_DELAY,
+      });
+    } finally {
+      const durationMs = Date.now() - startTime;
+
+      // Calculate resolutions
+      const inputResolution = inputWidth && inputHeight ? `${inputWidth}x${inputHeight}` : undefined;
+      const outputResolution = inputWidth && inputHeight ? `${inputWidth * config.scale}x${inputHeight * config.scale}` : undefined;
+
+      // Track upscale completed event
+      analytics.track('upscale_completed', {
+        durationMs,
+        modelUsed: config.qualityTier,
+        inputResolution,
+        outputResolution,
+        success,
+        errorType: success ? undefined : errorType,
       });
     }
   };
