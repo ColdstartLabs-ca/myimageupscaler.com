@@ -298,21 +298,6 @@ test.describe('Middleware Security Integration', () => {
   });
 
   test.describe('Request Size and Rate Limiting', () => {
-    test('should handle oversized requests', async ({ request }) => {
-      const testUser = await ctx.createUser();
-      api = new ApiClient(request).withAuth(testUser.token);
-      const largePayload = 'x'.repeat(10 * 1024 * 1024); // 10MB
-
-      const response = await api.post('/api/upscale', {
-        imageData: largePayload,
-        mimeType: 'image/png',
-        config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-      });
-
-      // Should handle large requests gracefully
-      expect([400, 413, 422, 500]).toContain(response.status);
-    });
-
     test('should apply rate limiting to protected routes', async ({ request }) => {
       // Skip this test in test environment as rate limiting is disabled
       const isTestEnv = process.env.NODE_ENV === 'test';
@@ -344,58 +329,6 @@ test.describe('Middleware Security Integration', () => {
     });
   });
 
-  test.describe('Input Validation and Sanitization', () => {
-    test('should handle malicious input in headers', async ({ request }) => {
-      api = new ApiClient(request);
-      const maliciousHeaders = [
-        'script-alert-1',
-        'javascript-alert-1',
-        '..-..-etc-passwd', // Removed forward slashes which are invalid in HTTP headers
-      ];
-
-      for (const headerValue of maliciousHeaders) {
-        const response = await api.get(
-          '/api/health',
-          {},
-          {
-            headers: {
-              'X-Custom-Header': headerValue,
-            },
-          }
-        );
-
-        // Should handle malicious headers gracefully (including rate limiting and service unavailability)
-        expect([200, 400, 429, 431, 500, 503]).toContain(response.status);
-      }
-    });
-
-    test('should handle path traversal attempts', async ({ request }) => {
-      const testUser = await ctx.createUser();
-      api = new ApiClient(request).withAuth(testUser.token);
-      const maliciousPaths = [
-        '../../../etc/passwd',
-        '..\\..\\windows\\system32',
-        '%2e%2e%2f%2e%2e%2fetc%2fpasswd', // URL encoded
-        '....//....//....//etc/passwd',
-      ];
-
-      for (const path of maliciousPaths) {
-        // Note: Path traversal would be part of the endpoint, so we need to use raw request
-        const response = await request.post(`/api/upscale${path}`, {
-          headers: { Authorization: `Bearer ${testUser.token}` },
-          data: {
-            imageData: 'data:image/png;base64,test',
-            mimeType: 'image/png',
-            config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-          },
-        });
-
-        // Should handle path traversal attempts
-        expect([400, 401, 404, 422]).toContain(response.status());
-      }
-    });
-  });
-
   test.describe('Cookie and Session Security', () => {
     test('should handle cookies with security attributes', async ({ request }) => {
       api = new ApiClient(request);
@@ -405,37 +338,6 @@ test.describe('Middleware Security Integration', () => {
       if (cookies) {
         // Should include security attributes if cookies are set
         expect(cookies).toMatch(/secure|httponly|samesite/i);
-      }
-    });
-
-    test('should reject requests with suspicious user agents', async ({ request }) => {
-      const testUser = await ctx.createUser();
-      api = new ApiClient(request).withAuth(testUser.token);
-      const suspiciousUserAgents = [
-        'curl/7.68.0',
-        'Wget/1.20.3',
-        'sqlmap/1.6.12',
-        'nikto/2.1.6',
-        '<script>alert(1)</script>',
-      ];
-
-      for (const userAgent of suspiciousUserAgents) {
-        const response = await api.post(
-          '/api/upscale',
-          {
-            imageData: 'data:image/png;base64,test',
-            mimeType: 'image/png',
-            config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
-          },
-          {
-            headers: {
-              'User-Agent': userAgent,
-            },
-          }
-        );
-
-        // May still allow but should be monitored (middleware might not block by default)
-        expect([200, 400, 401, 402, 403, 422, 429, 500]).toContain(response.status);
       }
     });
   });

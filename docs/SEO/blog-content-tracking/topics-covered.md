@@ -53,6 +53,7 @@
 | 2026-03-03 | real estate photo upscaler, upscale real estate photos (Priority 3 roadmap, ~500/mo)         | how-to-upscale-real-estate-photos-with-ai          | Guides      | Published |
 | 2026-03-04 | upscale image for canva | how-to-upscale-images-for-canva | Guides | Published |
 | 2026-03-05 | photoshop upscaler, photoshop super resolution vs ai upscaler (Priority 1 roadmap, ~1,000/mo) | photoshop-upscaler-vs-ai-tools | Comparisons | Published |
+| 2026-03-06 | upscale webp, webp upscaling, upscale webp images (Priority 2 roadmap, ~720/mo)               | how-to-upscale-webp-images                         | Guides      | Published |
 
 ## GSC CTR Fixes (2026-03-05)
 

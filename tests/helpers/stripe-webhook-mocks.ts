@@ -634,3 +634,22 @@ export class StripeWebhookMockFactory {
     return `t=${Date.now()},v1=${Buffer.from(`${secret}${payload}`).toString('base64').slice(0, 64)}`;
   }
 }
+
+/**
+ * Convenience object for creating webhook mocks with simpler API
+ * Maps test-friendly method names to factory methods
+ */
+export const stripeWebhookMocks = {
+  checkoutCompleted: (options: IWebhookTestOptions & { tier?: string; amount?: number }) => {
+    return StripeWebhookMockFactory.createCheckoutSessionCompletedForSubscription(options);
+  },
+  invoicePaymentSucceeded: (options: IWebhookTestOptions) => {
+    return StripeWebhookMockFactory.createInvoicePaymentSucceeded(options);
+  },
+  subscriptionUpdated: (options: IWebhookTestOptions & { status?: string }) => {
+    return StripeWebhookMockFactory.createSubscriptionUpdated(options);
+  },
+  subscriptionDeleted: (options: IWebhookTestOptions) => {
+    return StripeWebhookMockFactory.createSubscriptionDeleted(options);
+  },
+};
