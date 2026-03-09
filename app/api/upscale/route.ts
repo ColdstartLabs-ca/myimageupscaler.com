@@ -640,6 +640,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       creditCost,
     });
 
+    // Track upscale started event (before processing begins)
+    await trackServerEvent(
+      'image_upscale_started',
+      {
+        inputWidth: inputDimensions?.width,
+        inputHeight: inputDimensions?.height,
+        scaleFactor: config.scale,
+        qualityTier: resolvedTier,
+        modelUsed: resolvedModelId,
+      },
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+    );
+
     // Add delay between AI analysis and image processing to avoid Replicate rate limits
     // Both the analysis (Qwen VL) and processing (upscale models) use Replicate API
     if (didRunAIAnalysis) {
@@ -680,7 +693,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const durationMs = Date.now() - startTime;
 
-    // Track successful upscale event
+    // Track upscale completion event (separate from image_upscaled for funnel analysis)
+    await trackServerEvent(
+      'upscale_completed',
+      {
+        durationMs,
+        modelUsed: resolvedModelId,
+        inputResolution: inputDimensions ? `${inputDimensions.width}x${inputDimensions.height}` : undefined,
+        outputResolution: inputDimensions ? `${inputDimensions.width * config.scale}x${inputDimensions.height * config.scale}` : undefined,
+        success: true,
+      },
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+    );
+
+    // Track successful upscale event (legacy event with credit info)
     await trackServerEvent(
       'image_upscaled',
       {
@@ -804,6 +830,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
       // Track processing failed event for Replicate errors
       if (userId) {
+        const durationMs = Date.now() - startTime;
+        await trackServerEvent(
+          'upscale_completed',
+          {
+            durationMs,
+            success: false,
+            errorType: `replicate_${error.code}`,
+          },
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        );
         await trackServerEvent(
           'processing_failed',
           {
@@ -832,6 +868,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
       // Track processing failed event for AI generation errors
       if (userId) {
+        const durationMs = Date.now() - startTime;
+        await trackServerEvent(
+          'upscale_completed',
+          {
+            durationMs,
+            success: false,
+            errorType: `ai_generation_${error.finishReason}`,
+          },
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        );
         await trackServerEvent(
           'processing_failed',
           {

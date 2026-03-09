@@ -37,6 +37,7 @@ const ALLOWED_EVENTS = [
   'image_upscaled',
   'upscale_completed',
   'image_download',
+  'image_preview_viewed',
 
   // Pricing page events
   'pricing_page_viewed',

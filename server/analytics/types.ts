@@ -64,6 +64,16 @@ export interface IImageUploadedProperties {
   batchPosition: number;
 }
 
+export interface IImageDownloadProperties {
+  mode: string; // Quality tier used (e.g., 'quick', 'standard', 'premium', etc.)
+  filename: string;
+  count: number; // 1 for single download, N for batch zip
+  fileSize?: number; // Downloaded file size in bytes
+  outputWidth?: number; // Output image width (if available)
+  outputHeight?: number; // Output image height (if available)
+  modelUsed?: string; // Model/variant that generated the image
+}
+
 export interface IPricingPageViewedProperties {
   entryPoint: 'navbar' | 'batch_limit_modal' | 'out_of_credits_modal' | 'pseo_cta' | 'direct';
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
@@ -224,6 +234,12 @@ export interface IUpscaleCompletedProperties {
   errorType?: string;
 }
 
+// Image preview tracking properties
+export interface IImagePreviewViewedProperties {
+  hasTransparency?: boolean; // Whether result has transparency (e.g., from bg-removal)
+  showUpgradeNudge?: boolean; // Whether upgrade nudge was shown
+}
+
 // =============================================================================
 // Event Types
 // =============================================================================
@@ -255,6 +271,7 @@ export type IAnalyticsEventName =
   | 'image_upscaled'
   | 'upscale_completed'
   | 'image_download'
+  | 'image_preview_viewed'
   // Pricing page events
   | 'pricing_page_viewed'
   // Checkout events

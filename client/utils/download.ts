@@ -124,6 +124,7 @@ export const downloadSingle = async (
       mode,
       filename: downloadFilename,
       count: 1,
+      fileSize: blob.size,
     });
   } catch (error) {
     console.error('Download failed:', error);
@@ -201,5 +202,6 @@ export const downloadBatch = async (queue: IBatchItem[], mode: string): Promise<
     mode,
     filename: `${clientEnv.BATCH_FOLDER_NAME}.zip`,
     count: completedItems.length,
+    fileSize: content.size,
   });
 };

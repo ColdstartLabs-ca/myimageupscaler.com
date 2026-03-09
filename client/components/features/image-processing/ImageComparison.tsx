@@ -31,10 +31,24 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   const [nudgeVisible, setNudgeVisible] = useState(false);
   const hasInteractedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const previewTrackedRef = useRef(false);
 
   // Auto-detect transparency from blob URL if not explicitly provided
   // Blob URLs indicate client-side processing (e.g., bg-removal) which produces transparent PNGs
   const showTransparency = hasTransparency ?? afterUrl.startsWith('blob:');
+
+  // Track preview view once when component first loads with a result
+  useEffect(() => {
+    if (!previewTrackedRef.current) {
+      previewTrackedRef.current = true;
+      analytics.track('image_preview_viewed', {
+        hasTransparency: showTransparency,
+        showUpgradeNudge,
+      });
+    }
+    // Only run on mount - empty deps intentional
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleMouseDown = useCallback(() => {
     setIsDragging(true);

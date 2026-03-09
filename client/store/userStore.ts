@@ -355,6 +355,8 @@ if (typeof window !== 'undefined') {
     const store = useUserStore.getState();
 
     if (event === 'SIGNED_OUT' || !session) {
+      // Clear user identity in analytics on sign out
+      analytics.reset();
       store.reset();
       // Redirect to home page after sign out (skip in test mode to avoid flaky tests)
       if (typeof window !== 'undefined' && event === 'SIGNED_OUT' && clientEnv.ENV !== 'test') {
@@ -385,6 +387,20 @@ if (typeof window !== 'undefined') {
         isAuthenticated: true,
         isLoading: false,
       });
+
+      // Identify user in analytics for all auth methods (email, OAuth, etc.)
+      // For new logins or when user data changes
+      if (!isSameUser || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        analytics
+          .identify({
+            userId: session.user.id,
+            email: session.user.email || undefined,
+            subscriptionTier: basicUser.profile?.subscription_tier || undefined,
+          })
+          .catch(() => {
+            // Silently fail - don't block UI for analytics errors
+          });
+      }
 
       // Only fetch fresh data for new logins, not for visibility-triggered session recoveries
       // Credits are refreshed explicitly: on dashboard visit and after processing

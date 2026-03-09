@@ -1,6 +1,6 @@
 # Blog Content Tracking - MyImageUpscaler
 
-**Last Updated**: 2026-03-05
+**Last Updated**: 2026-03-09
 
 ## Topics Covered (Blog Posts Published)
 
@@ -54,6 +54,9 @@
 | 2026-03-04 | upscale image for canva | how-to-upscale-images-for-canva | Guides | Published |
 | 2026-03-05 | photoshop upscaler, photoshop super resolution vs ai upscaler (Priority 1 roadmap, ~1,000/mo) | photoshop-upscaler-vs-ai-tools | Comparisons | Published |
 | 2026-03-06 | upscale webp, webp upscaling, upscale webp images (Priority 2 roadmap, ~720/mo)               | how-to-upscale-webp-images                         | Guides      | Published |
+| 2026-03-07 | upscale heic, heic upscale, upscale iphone photos (Priority 2 roadmap, ~390/mo)               | how-to-upscale-heic-images-iphone                  | Guides      | Published |
+| 2026-03-08 | how to increase dpi of image, increase dpi, change image dpi (Priority 6 roadmap, ~1,900/mo)   | how-to-increase-dpi-of-image                       | Guides      | Published |
+| 2026-03-09 | how to make low resolution photos high resolution (Priority 6 roadmap, ~1,000/mo)              | how-to-make-low-resolution-photo-high-resolution   | Guides      | Published |
 
 ## GSC CTR Fixes (2026-03-05)
 

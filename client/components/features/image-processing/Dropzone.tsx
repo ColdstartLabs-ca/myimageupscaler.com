@@ -5,6 +5,7 @@ import React, { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useUserData } from '@client/store/userStore';
 import { useToastStore } from '@client/store/toastStore';
+import { analytics } from '@client/analytics';
 import { processFilesAsync, IDimensionInfo } from '@client/utils/file-validation';
 import { compressImage } from '@client/utils/image-compression';
 import { OversizedImageModal, isAutoResizeEnabled } from './OversizedImageModal';
@@ -165,6 +166,26 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           setResizedFiles([]);
           setShowOversizedModal(true);
           setError(null);
+
+          // Track validation errors for oversized files
+          oversizedEntries.forEach(entry => {
+            analytics.track('error_occurred', {
+              errorType: 'validation_failed',
+              errorMessage: entry.reason === 'size'
+                ? 'File size exceeds limit'
+                : `Image dimensions exceed ${IMAGE_VALIDATION.MAX_PIXELS / 1_000_000}MP limit`,
+              context: {
+                fileName: entry.file.name,
+                fileSize: entry.file.size,
+                rejectionReason: entry.reason === 'size' ? 'file_size_limit' : 'dimension_limit',
+                ...(entry.dimensions ? {
+                  width: entry.dimensions.width,
+                  height: entry.dimensions.height,
+                  pixels: entry.dimensions.pixels,
+                } : {}),
+              },
+            });
+          });
         } else {
           // No oversized files, add valid files immediately (including auto-resized)
           const allValidFiles = [...validFiles, ...autoResizedFiles];
@@ -173,6 +194,20 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           // resolved dimension/size issues that were counted as rejections.
           if (invalidTypeFiles.length > 0) {
             setError('Some files were rejected. Only JPG, PNG, WEBP are allowed.');
+
+            // Track validation errors for analytics
+            invalidTypeFiles.forEach(file => {
+              analytics.track('error_occurred', {
+                errorType: 'validation_failed',
+                errorMessage: 'Invalid file type - only JPG, PNG, WEBP allowed',
+                context: {
+                  fileName: file.name,
+                  fileSize: file.size,
+                  fileType: file.type,
+                  rejectionReason: 'invalid_type',
+                },
+              });
+            });
           } else {
             setError(null);
           }
