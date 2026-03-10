@@ -7,6 +7,11 @@ export class BillingPage extends BasePage {
   readonly pageDescription: Locator;
   readonly refreshButton: Locator;
 
+  // Tab navigation
+  readonly creditsTab: Locator;
+  readonly subscriptionTab: Locator;
+  readonly invoicesTab: Locator;
+
   // Current Plan section
   readonly currentPlanSection: Locator;
   readonly currentPlanIcon: Locator;
@@ -47,6 +52,11 @@ export class BillingPage extends BasePage {
     this.pageTitle = page.getByRole('heading', { name: 'Billing' });
     this.pageDescription = page.getByText('Manage your subscription and payment methods');
     this.refreshButton = page.getByRole('button', { name: /Refresh/i }).first();
+
+    // Tab navigation - use more flexible selectors that match the translation
+    this.creditsTab = page.getByRole('tab', { name: /Credits/i }).or(page.locator('[role="tab"]').filter({ hasText: /Credits/i }));
+    this.subscriptionTab = page.getByRole('tab', { name: /Subscription/i }).or(page.locator('[role="tab"]').filter({ hasText: /Subscription/i }));
+    this.invoicesTab = page.getByRole('tab', { name: /Invoices/i }).or(page.locator('[role="tab"]').filter({ hasText: /Invoices/i }));
 
     // Current Plan section
     this.currentPlanSection = page.locator('div').filter({ hasText: 'Current Plan' }).first();
@@ -105,13 +115,58 @@ export class BillingPage extends BasePage {
 
   /**
    * Wait for the page to load completely
+   * Note: The billing page has tabs - elements are in different tabs
    */
   async waitForLoad(): Promise<void> {
     await this.waitForPageLoad();
     await expect(this.pageTitle).toBeVisible();
-    await expect(this.currentPlanSection).toBeVisible();
-    await expect(this.paymentMethodsSection).toBeVisible();
-    await expect(this.billingHistorySection).toBeVisible();
+    // Wait for the default tab (Credits) to be visible
+    await expect(this.creditsTab).toBeVisible();
+  }
+
+  /**
+   * Switch to the Credits tab
+   */
+  async switchToCreditsTab(): Promise<void> {
+    await this.creditsTab.click();
+    await this.page.waitForTimeout(300); // Wait for tab animation
+  }
+
+  /**
+   * Switch to the Subscription tab (contains Current Plan section)
+   */
+  async switchToSubscriptionTab(): Promise<void> {
+    await this.subscriptionTab.click();
+    await this.page.waitForTimeout(300); // Wait for tab animation
+  }
+
+  /**
+   * Switch to the Invoices tab (contains Payment Methods and Billing History)
+   */
+  async switchToInvoicesTab(): Promise<void> {
+    await this.invoicesTab.click();
+    await this.page.waitForTimeout(300); // Wait for tab animation
+  }
+
+  /**
+   * Navigate to billing and switch to subscription tab
+   * Handles both subscribed (shows "Current Plan") and non-subscribed (shows "Choose Plan") users
+   */
+  async gotoSubscriptionTab(): Promise<void> {
+    await this.goto();
+    await this.switchToSubscriptionTab();
+    // Wait for either "Current Plan" (subscribed users) or "Choose Plan" (non-subscribed users)
+    const subscriptionContent = this.currentPlanSection.or(this.page.getByRole('heading', { name: 'Choose Plan' }));
+    await expect(subscriptionContent.first()).toBeVisible({ timeout: 5000 });
+  }
+
+  /**
+   * Navigate to billing and switch to invoices tab
+   */
+  async gotoInvoicesTab(): Promise<void> {
+    await this.goto();
+    await this.switchToInvoicesTab();
+    await expect(this.paymentMethodsSection).toBeVisible({ timeout: 5000 });
   }
 
   /**

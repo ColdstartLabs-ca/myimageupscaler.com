@@ -28,8 +28,25 @@ export {
   getCreditTransactions,
   CREDITS,
   PRICE_IDS,
+  assertSingleCreditAllocation,
   type ICreditAssertionOptions,
 } from './credit-assertions';
+
+// Subscription proof assertion helpers for stateful integration tests
+export {
+  assertSubscriptionState,
+  assertSingleCreditAllocation as assertSubscriptionCreditAllocation,
+  assertNoDuplicateAllocations,
+  type ISubscriptionStateAssertion,
+} from './subscription-proof-assertions';
+
+// Webhook sequencer for testing webhook event ordering
+export {
+  WebhookSequencer,
+  type WebhookEventGenerator,
+  type ISequencerResult,
+  type ISequencerOptions,
+} from './webhook-sequencer';
 
 // Auth helpers for E2E tests
 export {

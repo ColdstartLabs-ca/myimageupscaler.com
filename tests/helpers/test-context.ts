@@ -29,7 +29,7 @@ export class TestContext {
    */
   async createUser(options?: {
     subscription?: 'free' | 'active' | 'trialing' | 'past_due' | 'canceled';
-    tier?: 'starter' | 'pro' | 'business';
+    tier?: 'starter' | 'hobby' | 'pro' | 'business';
     credits?: number;
   }): Promise<ITestUser> {
     const { subscription = 'free', tier, credits = 10 } = options || {};
@@ -76,7 +76,7 @@ export class TestContext {
     count: number,
     options?: {
       subscription?: 'free' | 'active' | 'trialing' | 'past_due' | 'canceled';
-      tier?: 'starter' | 'pro' | 'business';
+      tier?: 'starter' | 'hobby' | 'pro' | 'business';
       credits?: number;
     }
   ): Promise<ITestUser[]> {

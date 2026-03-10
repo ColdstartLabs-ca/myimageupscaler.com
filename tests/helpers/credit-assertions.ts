@@ -222,3 +222,71 @@ export const PRICE_IDS = {
   PRO: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
   BUSINESS: 'price_1Sz0fOL1vUl00LlZP3y5zdFx',
 } as const;
+
+/**
+ * Asserts exactly one credit allocation exists for a reference
+ *
+ * More detailed version that checks the full transaction and ensures
+ * exactly one credit allocation was created for a given reference ID.
+ * This is critical for detecting double-allocation bugs where webhook
+ * events might be processed multiple times.
+ *
+ * @param supabase - Supabase client instance
+ * @param userId - User ID to check
+ * @param referenceId - Reference ID (e.g., Stripe subscription or invoice ID)
+ * @param expectedAmount - Expected credit amount
+ * @param type - Transaction type ('subscription' | 'purchase' | 'renewal')
+ * @throws Error if zero or multiple transactions found, or if amount mismatch
+ *
+ * @example
+ * ```typescript
+ * // After sending invoice.payment_succeeded webhook
+ * await assertSingleCreditAllocation(
+ *   supabase,
+ *   userId,
+ *   'sub_1234567890',
+ *   1000,
+ *   'subscription'
+ * );
+ * ```
+ */
+export async function assertSingleCreditAllocation(
+  supabase: SupabaseClient,
+  userId: string,
+  referenceId: string,
+  expectedAmount: number,
+  type: 'subscription' | 'purchase' | 'renewal' = 'subscription'
+): Promise<void> {
+  const { data, error } = await supabase
+    .from('credit_transactions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('ref_id', referenceId)
+    .eq('type', type);
+
+  if (error) {
+    throw new Error(
+      `Failed to query credit_transactions for user ${userId}, ref_id ${referenceId}: ${error.message}`
+    );
+  }
+
+  if (!data || data.length === 0) {
+    throw new Error(
+      `Expected 1 transaction for ref_id=${referenceId}, type=${type}, found 0. Credit allocation may not have occurred.`
+    );
+  }
+
+  if (data.length > 1) {
+    throw new Error(
+      `Expected 1 transaction for ref_id=${referenceId}, type=${type}, found ${data.length}. Double allocation bug detected!`
+    );
+  }
+
+  const transaction = data[0];
+
+  if (transaction.amount !== expectedAmount) {
+    throw new Error(
+      `Expected amount ${expectedAmount} for ref_id=${referenceId}, type=${type}, got ${transaction.amount}. Credit amount mismatch.`
+    );
+  }
+}

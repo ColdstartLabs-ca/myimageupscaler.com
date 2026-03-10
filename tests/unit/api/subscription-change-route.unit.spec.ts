@@ -34,6 +34,10 @@ vi.mock('@shared/config/env', () => ({
   },
 }));
 
+vi.mock('@shared/config/pricing-regions', () => ({
+  getBasePriceIdByPlanKey: vi.fn(() => null),
+}));
+
 vi.mock('@shared/config/stripe', () => ({
   assertKnownPriceId: vi.fn((priceId: string) => ({
     type: 'plan',
@@ -63,6 +67,7 @@ vi.mock('@shared/config/stripe', () => ({
 import { POST } from '../../../app/api/subscription/change/route';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 
 describe('POST /api/subscription/change', () => {
   const userId = 'user_upgrade_123';
@@ -294,6 +299,108 @@ describe('POST /api/subscription/change', () => {
       ref_id: 'planchg_sub_upgrade_123_price_hobby_price_pro_2026-03-10T03_01_42_000Z',
       description: expect.stringContaining('Professional - 800 credits'),
     });
+  });
+
+  test('rejects immediately when target price ID matches current price ID', async () => {
+    // currentSubscription.price_id is 'price_hobby' — same as the target
+    const request = new NextRequest('http://localhost/api/subscription/change', {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer test_token',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ targetPriceId: 'price_hobby' }),
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.success).toBe(false);
+    expect(data.error.code).toBe('SAME_PLAN');
+    // Stripe should never be called when the plan hasn't changed
+    expect(stripe.subscriptions.retrieve).not.toHaveBeenCalled();
+    expect(stripe.subscriptions.update).not.toHaveBeenCalled();
+  });
+
+  test('rejects after canonicalization reveals target matches canonical current plan', async () => {
+    // Simulate a subscription created with price_data (Stripe auto-generates a throwaway ID).
+    // getPlanForPriceId returns null for it, so the route falls back to getBasePriceIdByPlanKey.
+    // If the canonical ID matches the target, we must still reject with SAME_PLAN.
+    const regionalSubscription = {
+      ...currentSubscription,
+      price_id: 'price_regional_generated_123',
+    };
+
+    vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+      if (table === 'subscriptions') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              in: vi.fn(() => ({
+                order: vi.fn(() => ({
+                  limit: vi.fn(() => ({
+                    single: vi.fn(() =>
+                      Promise.resolve({ data: { ...regionalSubscription }, error: null })
+                    ),
+                  })),
+                })),
+              })),
+            })),
+          })),
+          update: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({ error: null })),
+          })),
+        };
+      }
+
+      if (table === 'profiles') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() => Promise.resolve({ data: { ...profile }, error: null })),
+            })),
+          })),
+          update: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({ error: null })),
+          })),
+        };
+      }
+
+      if (table === 'credit_transactions') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              limit: vi.fn(() => ({
+                maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+              })),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table in test: ${table}`);
+    });
+
+    // getBasePriceIdByPlanKey('hobby') resolves the throwaway price to the canonical hobby ID
+    vi.mocked(getBasePriceIdByPlanKey).mockReturnValueOnce('price_hobby');
+
+    const request = new NextRequest('http://localhost/api/subscription/change', {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer test_token',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ targetPriceId: 'price_hobby' }),
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.success).toBe(false);
+    expect(data.error.code).toBe('SAME_PLAN');
+    expect(stripe.subscriptions.update).not.toHaveBeenCalled();
   });
 
   test('returns 500 instead of swallowing local subscription update failures', async () => {

@@ -1,8 +1,16 @@
 # Subscription System Architecture
 
-**Version:** 2.0 (Subscription-Only Model)
-**Last Updated:** December 2, 2025
+**Version:** 3.0 (Subscriptions + Credit Packs + Regional Pricing)
+**Last Updated:** March 9, 2025
 **Status:** Production
+
+> **Recent Updates (Q1 2025):**
+> - **Regional Dynamic Pricing** — 40-65% discounts for 5 emerging market regions
+> - **Credit Pack Purchases** — One-time purchases via unified checkout
+> - **Proration Preview API** — Preview cost before plan change
+> - **Dispute Handling** — Full lifecycle webhook handlers
+> - **Credit History API** — Paginated transaction history endpoint
+> - **Sync System** — Webhook recovery, expiration detection, daily reconciliation
 
 ---
 
@@ -22,6 +30,7 @@
 12. [Deployment](#12-deployment)
 13. [Troubleshooting](#13-troubleshooting)
 14. [Future Roadmap](#14-future-roadmap)
+15. [Appendix: File Index](#appendix-file-index)
 
 ---
 
@@ -42,18 +51,42 @@ myimageupscaler.com uses a **subscription-only payment model** where users pay m
 
 | Plan         | Price   | Credits/Month | Max Rollover | Target User       |
 | ------------ | ------- | ------------- | ------------ | ----------------- |
-| Free         | $0      | 10 (once)     | N/A          | Testing           |
+| Free         | $0      | 10 (once)     | 60           | Testing           |
+| Starter      | $9/mo   | 100           | 300          | Light usage       |
 | Hobby        | $19/mo  | 200           | 1,200        | Personal projects |
 | Professional | $49/mo  | 1,000         | 6,000        | Professionals     |
-| Business     | $149/mo | 5,000         | 30,000       | Teams/Agencies    |
+| Business     | $149/mo | 5,000         | 0 (no rollover) | Teams/Agencies |
 
-### 1.3 Technology Stack
+### 1.3 Credit Packs (One-Time Purchases)
+
+| Pack   | Price   | Credits | Badge         |
+| ------ | ------- | ------- | ------------- |
+| Small  | $4.99   | 50      | —             |
+| Medium | $14.99  | 200     | Most Popular  |
+| Large  | $39.99  | 600     | Best Value    |
+
+### 1.4 Regional Dynamic Pricing
+
+Discounted pricing for emerging markets based on Cloudflare's `CF-IPCountry` header:
+
+| Region          | Discount | Countries                              |
+| --------------- | -------- | -------------------------------------- |
+| South Asia      | 65%      | IN, PK, BD, LK, NP                     |
+| Southeast Asia  | 60%      | PH, ID, VN, TH, MM, KH, LA             |
+| Latin America   | 50%      | BR, MX, CO, AR, PE, CL, EC, VE, BO, PY, UY |
+| Eastern Europe  | 40%      | UA, RO, BG, RS, HR, BA, MK, AL, MD, GE |
+| Africa          | 65%      | NG, KE, ZA, GH, ET, TZ, UG, RW, SN, CI |
+
+Regional pricing uses Stripe's `price_data` inline at checkout — no separate Stripe Price objects per region.
+
+### 1.5 Technology Stack
 
 - **Payment Provider:** Stripe (Checkout, Customer Portal, Webhooks)
 - **Database:** Supabase (PostgreSQL)
 - **Backend:** Next.js 15 Edge Runtime
 - **Frontend:** React 18 with Stripe.js
 - **Hosting:** Cloudflare Pages
+- **Scheduled Jobs:** Cloudflare Cron Triggers
 
 ---
 
@@ -64,81 +97,107 @@ myimageupscaler.com uses a **subscription-only payment model** where users pay m
 | Feature                        | Status              | Notes                                                               |
 | ------------------------------ | ------------------- | ------------------------------------------------------------------- |
 | New subscription purchase      | Implemented         | Embedded & hosted checkout                                          |
+| Credit pack purchase           | Implemented         | One-time payments via `/api/checkout`                               |
 | Monthly credit allocation      | Implemented         | With rollover cap                                                   |
 | Subscription cancellation      | Implemented         | Via API + Stripe Portal                                             |
 | Billing page                   | Implemented         | Shows plan & credits                                                |
-| Pricing page                   | Implemented         | 3 subscription tiers                                                |
+| Pricing page                   | Implemented         | 4 subscription tiers + 3 credit packs                               |
 | Success/cancel pages           | Implemented         | Post-checkout flow                                                  |
 | Webhook signature verification | Implemented         | Production-ready                                                    |
 | Credit transaction logging     | Implemented         | Full audit trail                                                    |
 | Upgrade/downgrade flow         | Implemented         | `/api/subscription/change` with proration                           |
+| **Proration preview**          | **Implemented**     | ✅ `/api/subscription/preview-change`                                |
+| **Credit usage history API**   | **Implemented**     | ✅ `/api/credits/history` (pagination supported)                     |
 | Webhook idempotency            | Implemented         | `webhook_events` table with atomic claims                           |
 | **Scheduled Stripe sync**      | **Implemented**     | ✅ Cron jobs for webhook recovery, expiration check, reconciliation |
 | **Webhook recovery**           | **Implemented**     | ✅ Automatic retry of failed webhooks (every 15 min)                |
 | **Expiration detection**       | **Implemented**     | ✅ Hourly check for expired subscriptions                           |
 | **Full reconciliation**        | **Implemented**     | ✅ Daily sync with Stripe (3 AM UTC)                                |
-| **Credit usage history UI**    | **NOT IMPLEMENTED** | Data exists, no UI                                                  |
+| **Regional dynamic pricing**   | **Implemented**     | ✅ Discounted pricing for emerging markets (40-65% off)             |
+| **Dispute handling**           | **Implemented**     | ✅ Created/Updated/Closed webhook handlers                          |
+| **Credit usage history UI**    | **NOT IMPLEMENTED** | API exists, no frontend component                                   |
 | **Low credit warning**         | **NOT IMPLEMENTED** | No notifications                                                    |
 | **Trial period support**       | **NOT IMPLEMENTED** | Schema ready, no UI                                                 |
 | **Annual billing**             | **NOT IMPLEMENTED** | Monthly only                                                        |
-| **Proration preview**          | **NOT IMPLEMENTED** | No in-app preview                                                   |
-| **Refund webhook handling**    | **PARTIAL**         | Logged, no credit clawback                                          |
+| **Refund credit clawback**     | **PARTIAL**         | Logged, no automatic clawback                                       |
 | **Subscription pause**         | **NOT IMPLEMENTED** | Not supported                                                       |
 
 ### 2.2 API Coverage
 
 ```mermaid
 graph LR
-    subgraph "Implemented"
+    subgraph "Checkout & Portal"
         A[POST /api/checkout]
         B[POST /api/portal]
-        C[POST /api/webhooks/stripe]
-        D[POST /api/subscription/change]
-        E[POST /api/subscriptions/cancel]
-        F[POST /api/admin/subscription]
     end
 
-    subgraph "NOT IMPLEMENTED"
-        G[GET /api/credits/history]
-        H[POST /api/subscription/preview-change]
-        I[GET /api/health/stripe]
-        J[POST /api/cron/check-expirations]
-        K[POST /api/cron/recover-webhooks]
-        L[POST /api/cron/reconcile]
+    subgraph "Subscription Management"
+        C[POST /api/subscription/change]
+        D[POST /api/subscription/preview-change]
+        E[POST /api/subscription/cancel-scheduled]
+        F[POST /api/subscriptions/cancel]
     end
 
-    style G fill:#ff9999
-    style H fill:#ff9999
-    style I fill:#ff9999
-    style J fill:#ff9999
-    style K fill:#ff9999
-    style L fill:#ff9999
+    subgraph "Webhooks & Sync"
+        G[POST /api/webhooks/stripe]
+        H[POST /api/cron/recover-webhooks]
+        I[POST /api/cron/check-expirations]
+        J[POST /api/cron/reconcile]
+    end
+
+    subgraph "Credits"
+        K[GET /api/credits/history]
+    end
+
+    subgraph "Admin"
+        L[POST /api/admin/subscription]
+        M[POST /api/admin/credits/adjust]
+    end
+
+    style A fill:#90EE90
+    style B fill:#90EE90
+    style C fill:#90EE90
+    style D fill:#90EE90
+    style E fill:#90EE90
+    style F fill:#90EE90
+    style G fill:#90EE90
+    style H fill:#90EE90
+    style I fill:#90EE90
+    style J fill:#90EE90
+    style K fill:#90EE90
+    style L fill:#90EE90
+    style M fill:#90EE90
 ```
 
 ### 2.3 Webhook Coverage
 
-| Webhook Event                   | Status              | Handler                                |
-| ------------------------------- | ------------------- | -------------------------------------- |
-| `checkout.session.completed`    | Implemented         | Adds initial credits                   |
-| `customer.subscription.created` | Implemented         | Creates subscription record            |
-| `customer.subscription.updated` | Implemented         | Updates status, period, tier           |
-| `customer.subscription.deleted` | Implemented         | Marks canceled                         |
-| `invoice.payment_succeeded`     | Implemented         | Adds monthly credits with rollover cap |
-| `invoice.payment_failed`        | Implemented         | Sets `past_due` status                 |
-| `charge.refunded`               | **PARTIAL**         | Logged, no credit clawback (TODO)      |
-| `charge.dispute.created`        | **PARTIAL**         | Logged, no action (TODO)               |
-| `invoice.payment_refunded`      | **PARTIAL**         | Logged, no action (TODO)               |
-| `customer.subscription.paused`  | **NOT IMPLEMENTED** | No handling                            |
-| `customer.subscription.resumed` | **NOT IMPLEMENTED** | No handling                            |
+| Webhook Event                        | Status        | Handler                                     |
+| ------------------------------------ | ------------- | ------------------------------------------- |
+| `checkout.session.completed`         | Implemented   | Adds credits (subscription or pack)         |
+| `customer.created`                   | Implemented   | Logs new Stripe customer                    |
+| `customer.subscription.created`      | Implemented   | Creates subscription record                 |
+| `customer.subscription.updated`      | Implemented   | Updates status, period, tier                |
+| `customer.subscription.deleted`      | Implemented   | Marks canceled                              |
+| `customer.subscription.trial_will_end` | Implemented | Logs warning (3 days before trial ends)     |
+| `subscription_schedule.completed`    | Implemented   | Handles scheduled downgrade completion      |
+| `invoice.payment_succeeded`          | Implemented   | Adds monthly credits with rollover cap      |
+| `invoice.payment_failed`             | Implemented   | Sets `past_due` status                      |
+| `charge.refunded`                    | Partial       | Logged, no automatic credit clawback        |
+| `charge.dispute.created`             | Implemented   | Logs dispute, updates subscription status   |
+| `charge.dispute.updated`             | Implemented   | Updates dispute status                      |
+| `charge.dispute.closed`              | Implemented   | Finalizes dispute (won/lost)                |
+| `invoice.payment_refunded`           | Partial       | Logged, no automatic credit clawback        |
+| `customer.subscription.paused`       | NOT IMPLEMENTED | No handling                              |
+| `customer.subscription.resumed`      | NOT IMPLEMENTED | No handling                              |
 
 ### 2.4 Known Gaps & Risks
 
-| Gap                       | Risk Level | Mitigation                                        |
-| ------------------------- | ---------- | ------------------------------------------------- |
-| No scheduled sync         | **HIGH**   | If webhooks fail, DB drifts from Stripe. See PRD. |
-| No expiration detection   | **MEDIUM** | Users may keep active status after period ends    |
-| No refund credit clawback | **LOW**    | Manual admin intervention required                |
-| No dispute handling       | **LOW**    | Rare, handle via support ticket                   |
+| Gap                          | Risk Level | Mitigation                                               |
+| ---------------------------- | ---------- | -------------------------------------------------------- |
+| No credit usage history UI   | LOW        | API exists (`/api/credits/history`), frontend needed    |
+| No refund credit clawback    | LOW        | Manual admin intervention required                        |
+| No low credit warnings      | LOW        | Thresholds configured, notification system not implemented |
+| Subscription pause/resume   | LOW        | Stripe supports it, but no UI or handling                  |
 
 ---
 
@@ -407,6 +466,48 @@ graph LR
     end
 ```
 
+### 4.4 Sync System Tables
+
+#### sync_runs
+
+Tracks execution history of scheduled sync jobs for observability.
+
+```sql
+CREATE TABLE sync_runs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_type TEXT CHECK (job_type IN ('expiration_check', 'webhook_recovery', 'full_reconciliation')),
+  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  completed_at TIMESTAMPTZ,
+  status TEXT NOT NULL DEFAULT 'running' CHECK (status IN ('running', 'completed', 'failed')),
+  records_processed INTEGER DEFAULT 0,
+  records_fixed INTEGER DEFAULT 0,
+  discrepancies_found INTEGER DEFAULT 0,
+  error_message TEXT,
+  metadata JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+#### webhook_events Enhancements
+
+The `webhook_events` table includes retry tracking columns for the recovery system:
+
+```sql
+-- Additional columns for webhook recovery
+ALTER TABLE webhook_events
+ADD COLUMN retry_count INTEGER DEFAULT 0,
+ADD COLUMN last_retry_at TIMESTAMPTZ,
+ADD COLUMN recoverable BOOLEAN DEFAULT TRUE;
+```
+
+**Retryable Events Query:**
+```sql
+-- Index for finding retryable failed events
+CREATE INDEX idx_webhook_events_retryable
+ON webhook_events(status, recoverable, retry_count)
+WHERE status = 'failed' AND recoverable = TRUE;
+```
+
 ---
 
 ## 5. API Endpoints
@@ -415,7 +516,7 @@ graph LR
 
 #### POST /api/checkout
 
-Creates a Stripe Checkout Session for subscription purchase.
+Creates a Stripe Checkout Session for subscription or credit pack purchase. Supports both subscription plans and one-time credit pack purchases through unified interface.
 
 **Request:**
 
@@ -473,6 +574,103 @@ interface IPortalResponse {
 
 ---
 
+#### POST /api/subscription/preview-change
+
+Previews the proration and cost impact of a subscription plan change.
+
+**Request:**
+```typescript
+interface IPreviewChangeRequest {
+  targetPriceId: string; // Required: Stripe price ID of target plan
+}
+```
+
+**Response:**
+```typescript
+interface IPreviewChangeResponse {
+  proration: {
+    amount_due: number; // In cents, negative = credit, positive = charge
+    currency: string;
+    period_start: string;
+    period_end: string;
+  };
+  current_plan: {
+    name: string;
+    price_id: string;
+    credits_per_month: number;
+  } | null;
+  new_plan: {
+    name: string;
+    price_id: string;
+    credits_per_month: number;
+  };
+  effective_immediately: boolean; // True for upgrades, false for downgrades
+  effective_date?: string; // ISO date for scheduled downgrades
+  is_downgrade: boolean;
+}
+```
+
+**Notes:**
+- Downgrades are scheduled for end of billing period (no proration charge)
+- Upgrades are immediate with proration charge/credit
+
+**Location:** `app/api/subscription/preview-change/route.ts`
+
+---
+
+#### POST /api/subscription/cancel-scheduled
+
+Cancels a scheduled subscription downgrade that was previously set to take effect at end of billing period.
+
+**Response:**
+```typescript
+interface ICancelScheduledResponse {
+  success: boolean;
+  data: {
+    subscription_id: string;
+    canceled_schedule: boolean;
+  };
+}
+```
+
+**Location:** `app/api/subscription/cancel-scheduled/route.ts`
+
+---
+
+#### GET /api/credits/history
+
+Returns paginated credit transaction history for the authenticated user.
+
+**Query Parameters:**
+- `limit` (optional): Number of transactions to return (default: 50, max: 100)
+- `offset` (optional): Pagination offset (default: 0)
+
+**Response:**
+```typescript
+interface ICreditHistoryResponse {
+  success: true;
+  data: {
+    transactions: Array<{
+      id: string;
+      amount: number;
+      type: 'purchase' | 'subscription' | 'usage' | 'refund' | 'bonus';
+      reference_id: string | null;
+      description: string | null;
+      created_at: string;
+    }>;
+    pagination: {
+      limit: number;
+      offset: number;
+      total: number;
+    };
+  };
+}
+```
+
+**Location:** `app/api/credits/history/route.ts`
+
+---
+
 #### POST /api/webhooks/stripe
 
 Handles Stripe webhook events. See [Section 6](#6-webhook-processing) for details.
@@ -481,22 +679,27 @@ Handles Stripe webhook events. See [Section 6](#6-webhook-processing) for detail
 
 ---
 
-### 5.2 NOT IMPLEMENTED Endpoints
+### 5.2 Credit Pack Endpoints
 
-```mermaid
-graph TD
-    subgraph "Missing API Endpoints"
-        A["GET /api/credits/history<br/>Returns paginated credit transactions"]
-        B["POST /api/subscription/preview-change<br/>Shows proration for plan change"]
-        C["POST /api/subscription/change<br/>Changes plan with confirmation"]
-        D["GET /api/health/stripe<br/>Validates Stripe configuration"]
-    end
+Credit packs are purchased through the same `/api/checkout` endpoint with a credit pack's `stripePriceId`. The checkout system automatically detects the purchase type and creates the appropriate Stripe session (`payment` mode for packs, `subscription` mode for plans).
 
-    style A fill:#ffcccc
-    style B fill:#ffcccc
-    style C fill:#ffcccc
-    style D fill:#ffcccc
+### 5.3 Admin Endpoints
+
+#### POST /api/admin/credits/adjust
+
+Admin-only endpoint for manually adjusting user credits (bonuses, refunds, corrections).
+
+**Request:**
+```typescript
+interface IAdminCreditAdjustRequest {
+  userId: string;
+  amount: number;      // Positive = add, negative = subtract
+  type: 'bonus' | 'refund' | 'correction';
+  description: string;
+}
 ```
+
+**Authorization:** Requires service role key via `x-service-role-key` header.
 
 ---
 
@@ -568,7 +771,7 @@ Month 7: Balance = 6000
 
 ---
 
-## 6.5 Stripe-Database Synchronization System
+## 6.4 Stripe-Database Synchronization System
 
 ### Overview
 
@@ -965,24 +1168,118 @@ graph LR
 
 ```typescript
 export const STRIPE_PRICES = {
+  STARTER_MONTHLY: 'price_xxx',
   HOBBY_MONTHLY: 'price_xxx',
   PRO_MONTHLY: 'price_yyy',
   BUSINESS_MONTHLY: 'price_zzz',
+  CREDITS_SMALL: 'price_xxx',   // 50 credits
+  CREDITS_MEDIUM: 'price_xxx',  // 200 credits
+  CREDITS_LARGE: 'price_xxx',   // 600 credits
 } as const;
 
 export const SUBSCRIPTION_PRICE_MAP = {
+  [STRIPE_PRICES.STARTER_MONTHLY]: {
+    key: 'starter',
+    name: 'Starter',
+    creditsPerMonth: 100,
+    maxRollover: 300,       // 3x multiplier
+    features: [...],
+  },
   [STRIPE_PRICES.HOBBY_MONTHLY]: {
     key: 'hobby',
     name: 'Hobby',
     creditsPerMonth: 200,
-    maxRollover: 1200,
+    maxRollover: 1200,      // 6x multiplier
     features: [...],
   },
-  // ...
+  [STRIPE_PRICES.PRO_MONTHLY]: {
+    key: 'pro',
+    name: 'Professional',
+    creditsPerMonth: 1000,
+    maxRollover: 6000,      // 6x multiplier
+    features: [...],
+  },
+  [STRIPE_PRICES.BUSINESS_MONTHLY]: {
+    key: 'business',
+    name: 'Business',
+    creditsPerMonth: 5000,
+    maxRollover: 0,         // No rollover - use it or lose it
+    features: [...],
+  },
 };
 ```
 
 > **NOT IMPLEMENTED:** Annual billing prices and trial period configuration.
+
+### 9.3 Credit Pack Configuration
+
+**Location:** `shared/config/subscription.config.ts`
+
+```typescript
+export const SUBSCRIPTION_CONFIG = {
+  creditPacks: [
+    {
+      key: 'small',
+      name: 'Small Pack',
+      credits: 50,
+      priceInCents: 499, // $4.99
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL,
+      popular: false,
+      enabled: true,
+    },
+    {
+      key: 'medium',
+      name: 'Medium Pack',
+      credits: 200,
+      priceInCents: 1499, // $14.99
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM,
+      popular: true,
+      badge: 'Most Popular',
+      enabled: true,
+    },
+    {
+      key: 'large',
+      name: 'Large Pack',
+      credits: 600,
+      priceInCents: 3999, // $39.99
+      stripePriceId: clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE,
+      popular: false,
+      badge: 'Best Value',
+      enabled: true,
+    },
+  ],
+  // ...
+};
+```
+
+### 9.4 Regional Pricing Configuration
+
+**Location:** `shared/config/pricing-regions.ts`
+
+Maps countries to discount regions for PPP (Purchasing Power Parity) pricing:
+
+```typescript
+const PRICING_REGION_CONFIGS = [
+  {
+    region: 'south_asia',
+    discountPercent: 65,
+    countries: ['IN', 'PK', 'BD', 'LK', 'NP'],
+  },
+  {
+    region: 'southeast_asia',
+    discountPercent: 60,
+    countries: ['PH', 'ID', 'VN', 'TH', 'MM', 'KH', 'LA'],
+  },
+  {
+    region: 'latam',
+    discountPercent: 50,
+    countries: ['BR', 'MX', 'CO', 'AR', 'PE', 'CL', 'EC', 'VE', 'BO', 'PY', 'UY'],
+  },
+  // ...
+];
+```
+
+Uses Stripe `price_data` with inline amounts at checkout — no separate Stripe Price objects per region needed.
 
 ---
 
@@ -1139,39 +1436,45 @@ stripe events list --limit 10
 gantt
     title Subscription System Roadmap
     dateFormat  YYYY-MM-DD
-    section High Priority
-    Stripe DB Sync (Cron Jobs)   :a1, 2025-01-01, 14d
-    Expiration Detection         :a2, after a1, 7d
-    Refund Credit Clawback       :a3, after a2, 7d
+    section Completed Q1 2025
+    Regional Dynamic Pricing    :done1, 2025-02-01, 21d
+    Proration Preview          :done2, 2025-01-15, 7d
+    Credit History API         :done3, 2025-01-20, 5d
+    Dispute Handling           :done4, 2025-02-10, 7d
     section Medium Priority
-    Credit History UI            :b1, after a3, 10d
-    Low Credit Warnings          :b2, after b1, 7d
-    Proration Preview            :b3, after b2, 5d
+    Credit History UI          :b1, 2025-03-01, 10d
+    Low Credit Warnings        :b2, after b1, 7d
+    Refund Credit Clawback     :b3, after b2, 5d
     section Low Priority
-    Annual Billing               :c1, after b3, 14d
-    Trial Period UI              :c2, after c1, 7d
-    Subscription Pause/Resume    :c3, after c2, 5d
+    Annual Billing             :c1, after b3, 14d
+    Trial Period UI            :c2, after c1, 7d
+    Subscription Pause/Resume  :c3, after c2, 5d
 ```
 
 ### 14.2 Feature Details
 
-| Feature                | Description                                 | Complexity | PRD                               |
-| ---------------------- | ------------------------------------------- | ---------- | --------------------------------- |
-| Stripe DB Sync         | Scheduled sync to catch missed webhooks     | High       | `docs/PRDs/stripe-db-sync-prd.md` |
-| Expiration Detection   | Hourly cron to check `current_period_end`   | Medium     | Part of sync PRD                  |
-| Refund Credit Clawback | Deduct credits when charges are refunded    | Medium     | -                                 |
-| Credit History UI      | Display `credit_transactions` to users      | Low        | -                                 |
-| Low Credit Warnings    | Email/in-app notifications when credits low | Medium     | -                                 |
-| Proration Preview      | Show cost before plan change                | Low        | -                                 |
-| Annual Billing         | Yearly plans with discount                  | Medium     | -                                 |
+| Feature                  | Description                                   | Status        | PRD                                         |
+| ------------------------ | --------------------------------------------- | ------------- | ------------------------------------------- |
+| Regional Dynamic Pricing | 40-65% discounts for emerging markets         | **Implemented** | `docs/PRDs/regional-dynamic-pricing.md`     |
+| Proration Preview        | Show cost before plan change                  | **Implemented** | -                                           |
+| Credit History API       | GET /api/credits/history endpoint             | **Implemented** | -                                           |
+| Dispute Handling         | charge.dispute.* webhook handlers             | **Implemented** | -                                           |
+| Credit History UI        | Frontend component for transaction history    | Pending       | -                                           |
+| Low Credit Warnings      | Email/in-app notifications when credits low   | Pending       | -                                           |
+| Refund Credit Clawback   | Automatic credit deduction on refund          | Pending       | -                                           |
+| Annual Billing           | Yearly plans with discount                    | Pending       | -                                           |
 
 ### 14.3 Completed Features (Recently)
 
-| Feature                       | Completed | Notes                                     |
-| ----------------------------- | --------- | ----------------------------------------- |
-| Upgrade/Downgrade Flow        | Dec 2025  | `/api/subscription/change` with proration |
-| Webhook Idempotency           | Dec 2025  | `webhook_events` table with atomic claims |
-| Admin Subscription Management | Dec 2025  | `/api/admin/subscription` endpoint        |
+| Feature                       | Completed   | Notes                                             |
+| ----------------------------- | ----------- | ------------------------------------------------- |
+| Regional Dynamic Pricing      | Mar 2025    | 5 regions with 40-65% discounts                   |
+| Credit Pack Purchases         | Feb 2025    | One-time purchases via unified checkout           |
+| Proration Preview             | Jan 2025    | `/api/subscription/preview-change` endpoint       |
+| Credit History API            | Jan 2025    | `/api/credits/history` with pagination            |
+| Dispute Handling              | Feb 2025    | Created/Updated/Closed webhook handlers           |
+| Scheduled Cancellation        | Jan 2025    | Downgrades scheduled at period end                |
+| Cancel Scheduled Change       | Jan 2025    | `/api/subscription/cancel-scheduled` endpoint     |
 
 ---
 
@@ -1179,19 +1482,26 @@ gantt
 
 ### API Routes
 
-- `app/api/checkout/route.ts` - Creates Stripe Checkout Session
+- `app/api/checkout/route.ts` - Creates Stripe Checkout Session (subscriptions & credit packs)
 - `app/api/portal/route.ts` - Creates Stripe Customer Portal session
-- `app/api/webhooks/stripe/route.ts` - Main webhook handler (612 lines)
+- `app/api/webhooks/stripe/route.ts` - Main webhook handler
 - `app/api/subscription/change/route.ts` - Plan upgrade/downgrade with proration
+- `app/api/subscription/preview-change/route.ts` - Proration preview before plan change
+- `app/api/subscription/cancel-scheduled/route.ts` - Cancel scheduled downgrade
 - `app/api/subscriptions/cancel/route.ts` - Cancel subscription at period end
+- `app/api/credits/history/route.ts` - Paginated credit transaction history
 - `app/api/admin/subscription/route.ts` - Admin subscription management
+- `app/api/admin/credits/adjust/route.ts` - Admin credit adjustments
+- `app/api/cron/recover-webhooks/route.ts` - Webhook recovery cron (every 15 min)
+- `app/api/cron/check-expirations/route.ts` - Expiration check cron (hourly)
+- `app/api/cron/reconcile/route.ts` - Full reconciliation cron (daily 3 AM UTC)
 
 ### Pages
 
-- `app/pricing/page.tsx`
-- `app/dashboard/billing/page.tsx`
-- `app/success/page.tsx`
-- `app/canceled/page.tsx`
+- `app/pricing/page.tsx` - Pricing page with 4 plans + 3 credit packs
+- `app/dashboard/billing/page.tsx` - Billing management
+- `app/success/page.tsx` - Post-checkout success
+- `app/canceled/page.tsx` - Checkout canceled
 
 ### Components
 
@@ -1205,16 +1515,22 @@ gantt
 - `server/stripe/stripeService.ts`
 - `server/stripe/config.ts`
 - `server/stripe/types.ts`
+- `server/services/subscription-sync.service.ts` - Shared sync helper functions
 
 ### Configuration
 
-- `shared/config/stripe.ts`
-- `shared/config/env.ts`
-- `shared/constants/billing.ts`
+- `shared/config/subscription.config.ts` - Plans, credit packs, free tier, warnings
+- `shared/config/subscription.types.ts` - TypeScript interfaces
+- `shared/config/subscription.utils.ts` - Helper functions
+- `shared/config/credits.config.ts` - Credit costs per model/mode
+- `shared/config/pricing-regions.ts` - Regional discount mapping
+- `shared/config/stripe.ts` - Stripe Price ID mapping
 
-### Database
+### Database Migrations
 
 - `supabase/migrations/20250120_create_profiles_table.sql`
 - `supabase/migrations/20250120_create_subscriptions_table.sql`
 - `supabase/migrations/20250121_create_credit_transactions_table.sql`
 - `supabase/migrations/20250120_create_rpc_functions.sql`
+- `supabase/migrations/20250302_add_sync_tables.sql` - sync_runs table
+- `supabase/migrations/20251205_add_trial_end_to_subscriptions.sql`

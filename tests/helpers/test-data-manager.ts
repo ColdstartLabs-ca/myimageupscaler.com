@@ -331,7 +331,7 @@ export class TestDataManager {
   async setSubscriptionStatus(
     userId: string,
     status: 'free' | 'active' | 'trialing' | 'past_due' | 'canceled',
-    tier?: 'starter' | 'pro' | 'business',
+    tier?: 'starter' | 'hobby' | 'pro' | 'business',
     subscriptionId?: string
   ): Promise<void> {
     // Skip all database operations in test mode
@@ -635,7 +635,7 @@ export class TestDataManager {
    */
   async createTestUserWithSubscription(
     status: 'free' | 'active' | 'trialing' | 'past_due' | 'canceled',
-    tier?: 'starter' | 'pro' | 'business',
+    tier?: 'starter' | 'hobby' | 'pro' | 'business',
     initialCredits: number = 10
   ): Promise<ITestUser> {
     // For test environment, create a user with subscription info encoded in token

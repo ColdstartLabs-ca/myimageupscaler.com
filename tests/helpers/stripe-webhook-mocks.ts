@@ -625,6 +625,238 @@ export class StripeWebhookMockFactory {
   }
 
   /**
+   * Create a mock invoice.payment_succeeded event for a specific plan tier
+   *
+   * Uses real price IDs from the subscription config for accurate testing.
+   * Credit amounts match the subscription tier's monthly credit allocation.
+   *
+   * @param planKey - Subscription tier key (starter | hobby | pro | business)
+   * @param options - Webhook test options
+   * @returns Mock invoice.payment_succeeded event with plan-specific details
+   *
+   * @example
+   * ```typescript
+   * const event = StripeWebhookMockFactory.createInvoicePaymentSucceededForPlan(
+   *   'pro',
+   *   { userId: 'user123' }
+   * );
+   * ```
+   */
+  static createInvoicePaymentSucceededForPlan(
+    planKey: 'starter' | 'hobby' | 'pro' | 'business',
+    options: IWebhookTestOptions
+  ): IStripeEventMock {
+    const { PRICE_IDS, CREDITS } = this.getPlanConstants();
+
+    const priceId = PRICE_IDS[planKey.toUpperCase() as keyof typeof PRICE_IDS];
+    const creditsAmount = CREDITS[`${planKey.toUpperCase()}_MONTHLY` as keyof typeof CREDITS];
+
+    const baseEvent = this.createInvoicePaymentSucceeded({
+      ...options,
+      priceId,
+    });
+
+    // Update the line item with the correct price and description
+    if (baseEvent.data.object.lines && baseEvent.data.object.lines.data) {
+      const lineItem = baseEvent.data.object.lines.data[0];
+      if (lineItem) {
+        lineItem.price.id = priceId;
+        lineItem.plan.id = priceId;
+        lineItem.description = `${planKey.charAt(0).toUpperCase() + planKey.slice(1)} Plan Monthly`;
+      }
+    }
+
+    // Add metadata with credit amount for verification
+    baseEvent.data.object.metadata = {
+      ...baseEvent.data.object.metadata,
+      credits_amount: creditsAmount.toString(),
+      plan_key: planKey,
+    };
+
+    return baseEvent;
+  }
+
+  /**
+   * Create a mock checkout.session.completed event for regional subscription
+   *
+   * Simulates a subscription checkout with regional pricing discount.
+   * The event includes the discounted price information and region metadata.
+   *
+   * @param options - Webhook test options with country code and discount percent
+   * @returns Mock checkout.session.completed event with regional pricing
+   *
+   * @example
+   * ```typescript
+   * const event = StripeWebhookMockFactory.createCheckoutSessionCompletedForRegionalSubscription({
+   *   userId: 'user123',
+   *   countryCode: 'IN',
+   *   discountPercent: 65,
+   * });
+   * ```
+   */
+  static createCheckoutSessionCompletedForRegionalSubscription(
+    options: IWebhookTestOptions & {
+      countryCode: string;
+      discountPercent: number;
+    }
+  ): IStripeEventMock {
+    const { userId, countryCode, discountPercent, priceId = 'price_test_regional' } = options;
+    const customerId = options.customerId || `cus_test_${userId}`;
+    const sessionId = options.sessionId || `cs_test_${userId}`;
+    const subscriptionId = options.subscriptionId || `sub_test_${userId}`;
+
+    // Calculate regional price (assuming base price is $29 for Pro)
+    const basePrice = 2900; // $29.00 in cents
+    const regionalPrice = Math.round(basePrice * ((100 - discountPercent) / 100));
+
+    return {
+      id: `evt_test_${Date.now()}`,
+      object: 'event',
+      api_version: '2023-10-16',
+      created: Math.floor(Date.now() / 1000),
+      data: {
+        object: {
+          id: sessionId,
+          object: 'checkout.session',
+          after_expiration: null,
+          allow_promotion_codes: null,
+          amount_subtotal: regionalPrice,
+          amount_total: regionalPrice,
+          automatic_tax: {
+            enabled: false,
+            liability: null,
+            status: null,
+          },
+          billing_address_collection: null,
+          cancel_url: 'https://example.com/canceled',
+          client_reference_id: null,
+          collection_method: 'charge_automatically',
+          created: Math.floor(Date.now() / 1000),
+          currency: 'usd',
+          customer: customerId,
+          customer_creation: 'if_required',
+          customer_details: {
+            address: null,
+            email: `test-${userId}@example.com`,
+            name: 'Test User',
+            phone: null,
+            tax_exempt: 'none',
+            tax_ids: [],
+          },
+          customer_email: null,
+          expires_at: Math.floor(Date.now() / 1000) + 1800,
+          invoice: `in_test_${Date.now()}`,
+          invoice_creation: null,
+          livemode: false,
+          locale: null,
+          metadata: {
+            user_id: userId,
+            country_code: countryCode,
+            discount_percent: discountPercent.toString(),
+            base_region: 'standard',
+            pricing_region: this.getRegionForCountry(countryCode),
+          },
+          mode: 'subscription',
+          payment_intent: null,
+          payment_link: null,
+          payment_method_collection: 'if_required',
+          payment_method_options: {},
+          payment_method_types: ['card'],
+          payment_status: 'paid',
+          paused: null,
+          recovered_from: null,
+          setup_intent: null,
+          shipping_address_collection: null,
+          shipping_cost: null,
+          shipping_details: null,
+          shipping_options: [],
+          status: 'complete',
+          submit_type: null,
+          subscription: subscriptionId,
+          success_url: 'https://example.com/success',
+          total_details: {
+            amount_discount: basePrice - regionalPrice,
+            amount_shipping: 0,
+            amount_tax: 0,
+          },
+          url: null,
+        },
+      },
+      livemode: false,
+      pending_webhooks: 1,
+      request: null,
+      type: 'checkout.session.completed',
+    };
+  }
+
+  /**
+   * Get plan constants (price IDs and credit amounts)
+   *
+   * These match the real values from the subscription and credits config.
+   * @private
+   */
+  private static getPlanConstants() {
+    return {
+      PRICE_IDS: {
+        STARTER: 'price_1Sz0fNL1vUl00LlZX1XClz95',
+        HOBBY: 'price_1Sz0fNL1vUl00LlZT6MMTxAg',
+        PRO: 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
+        BUSINESS: 'price_1Sz0fOL1vUl00LlZP3y5zdFx',
+      },
+      CREDITS: {
+        STARTER_MONTHLY: 100,
+        HOBBY_MONTHLY: 200,
+        PRO_MONTHLY: 1000,
+        BUSINESS_MONTHLY: 5000,
+      },
+    };
+  }
+
+  /**
+   * Get pricing region for a country code
+   *
+   * Maps country codes to their pricing regions.
+   * @private
+   */
+  private static getRegionForCountry(countryCode: string): string {
+    const regionMap: Record<string, string> = {
+      // South Asia
+      IN: 'south_asia',
+      BD: 'south_asia',
+      PK: 'south_asia',
+      NP: 'south_asia',
+      LK: 'south_asia',
+      // Southeast Asia
+      TH: 'southeast_asia',
+      VN: 'southeast_asia',
+      ID: 'southeast_asia',
+      PH: 'southeast_asia',
+      MY: 'southeast_asia',
+      // Latin America
+      BR: 'latam',
+      AR: 'latam',
+      MX: 'latam',
+      CO: 'latam',
+      CL: 'latam',
+      PE: 'latam',
+      // Eastern Europe
+      UA: 'eastern_europe',
+      RO: 'eastern_europe',
+      BG: 'eastern_europe',
+      HU: 'eastern_europe',
+      PL: 'eastern_europe',
+      // Africa
+      ZA: 'africa',
+      NG: 'africa',
+      KE: 'africa',
+      EG: 'africa',
+      MA: 'africa',
+    };
+
+    return regionMap[countryCode.toUpperCase()] || 'standard';
+  }
+
+  /**
    * Create a mock signature for webhook testing
    * Note: In real tests, you'd need to either bypass signature verification or use test secrets
    */
