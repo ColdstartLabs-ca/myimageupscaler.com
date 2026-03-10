@@ -52,11 +52,22 @@ export {
 export {
   createTestUser,
   setupAuthenticatedState,
+  setupAuthenticatedStateWithSupabase,
   createUserWithCredits,
   createAdminUser,
   getTestHeaders,
   type ITestUserData,
 } from './auth-helpers';
+
+// Supabase mocking helpers for E2E tests
+export {
+  mockSupabaseBillingData,
+  mockSupabaseRpc,
+  mockSupabaseAuth,
+  mockCreditHistory,
+  mockSupabaseForUser,
+  mockStripeSubscriptionEndpoints,
+} from './supabase-mock';
 
 // Import for internal use in utility functions
 import { TestContext as TestContextClass } from './test-context';

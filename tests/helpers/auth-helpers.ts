@@ -109,11 +109,15 @@ export function getTestHeaders(): Record<string, string> {
 /**
  * Initialize authenticated state for a page
  * Call this before navigating to any protected route
+ *
+ * @deprecated Use setupAuthenticatedStateWithSupabase instead for proper Supabase mocking
+ * This function has a known issue where auth endpoints return hardcoded 'test-user-id'
  */
 export async function setupAuthenticatedState(
   page: import('@playwright/test').Page,
   userData?: Partial<ITestUserData>
 ): Promise<void> {
+  const user = createTestUser(userData);
   const testHeaders = getTestHeaders();
 
   // Add the init script to inject auth state before page loads
@@ -126,6 +130,7 @@ export async function setupAuthenticatedState(
   });
 
   // Also set up route handlers for any API calls that might be made
+  // Use the actual user ID from userData, not hardcoded
   await page.route('**/auth/v1/session', async route => {
     await route.fulfill({
       status: 200,
@@ -133,7 +138,7 @@ export async function setupAuthenticatedState(
       body: JSON.stringify({
         session: {
           access_token: 'fake-test-token',
-          user: { id: 'test-user-id', email: 'test@example.com' },
+          user: { id: user.id, email: user.email, aud: 'authenticated' },
         },
       }),
     });
@@ -144,12 +149,53 @@ export async function setupAuthenticatedState(
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        id: 'test-user-id',
-        email: 'test@example.com',
+        id: user.id,
+        email: user.email,
         aud: 'authenticated',
       }),
     });
   });
+}
+
+/**
+ * Initialize authenticated state with proper Supabase mocking
+ * This is the recommended function for tests that need billing/subscription data
+ *
+ * Sets up:
+ * - Auth session with correct user ID
+ * - Supabase REST calls (profiles, subscriptions)
+ * - Supabase RPC calls (get_user_data)
+ * - Credit history API
+ */
+export async function setupAuthenticatedStateWithSupabase(
+  page: import('@playwright/test').Page,
+  userData?: Partial<ITestUserData>
+): Promise<void> {
+  const user = createTestUser(userData);
+  const testHeaders = getTestHeaders();
+
+  // Add the init script to inject auth state before page loads
+  await page.addInitScript(getAuthInitScript(userData));
+
+  // Add test headers to all requests
+  await page.route('**/*', async route => {
+    const headers = { ...route.request().headers(), ...testHeaders };
+    await route.continue({ headers });
+  });
+
+  // Import and use the Supabase mock helpers
+  const {
+    mockSupabaseAuth,
+    mockSupabaseBillingData,
+    mockSupabaseRpc,
+    mockCreditHistory,
+  } = await import('./supabase-mock');
+
+  // Mock all Supabase-related calls
+  await mockSupabaseAuth(page, user);
+  await mockSupabaseBillingData(page, user);
+  await mockSupabaseRpc(page, user);
+  await mockCreditHistory(page, []);
 }
 
 /**

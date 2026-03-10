@@ -1,8 +1,9 @@
 import { test, expect } from '../test-fixtures';
 import { BillingPage } from '../pages/BillingPage';
 import { BasePage } from '../pages/BasePage';
-import { setupAuthenticatedState, createTestUser, type ITestUserData } from '../helpers/auth-helpers';
+import { setupAuthenticatedStateWithSupabase, createTestUser, type ITestUserData } from '../helpers/auth-helpers';
 import { CheckoutMock } from '../helpers/checkout-mock';
+import { mockSupabaseForUser } from '../helpers/supabase-mock';
 
 /**
  * Subscription Signup Proof E2E Tests
@@ -120,27 +121,12 @@ test.describe('Subscription Signup Proof Tests', () => {
   test.describe('Success Page After Signup', () => {
     test('Success page shows correct plan after signup', async ({ page }) => {
       // Set up authenticated user with Hobby subscription
-      await setupAuthenticatedState(page, createHobbySubscriber());
+      await setupAuthenticatedStateWithSupabase(page, createHobbySubscriber());
 
       // Mock checkout success to redirect to success page
       checkoutMock = new CheckoutMock(page);
       await checkoutMock.mockCheckoutSuccess({
         successUrl: '/success?session_id=test_session_hobby_123&type=subscription',
-      });
-
-      // Mock the profile API to return Hobby subscriber data
-      await page.route('**/api/stripe/profile', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            subscription_credits_balance: 200,
-            purchased_credits_balance: 0,
-            subscription_tier: 'hobby',
-            subscription_status: 'active',
-            stripe_customer_id: 'cus_test_hobby',
-          }),
-        });
       });
 
       // Navigate to success page (simulating post-checkout redirect)
@@ -177,22 +163,7 @@ test.describe('Subscription Signup Proof Tests', () => {
         },
         subscription: null,
       };
-      await setupAuthenticatedState(page, creditPackUser);
-
-      // Mock the profile API
-      await page.route('**/api/stripe/profile', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            subscription_credits_balance: 10,
-            purchased_credits_balance: 200,
-            subscription_tier: null,
-            subscription_status: null,
-            stripe_customer_id: 'cus_test_credit_pack',
-          }),
-        });
-      });
+      await setupAuthenticatedStateWithSupabase(page, creditPackUser);
 
       // Navigate to success page for credit pack purchase
       await page.goto('/success?session_id=test_session_credits_123&type=credits&credits=200');
@@ -213,49 +184,7 @@ test.describe('Subscription Signup Proof Tests', () => {
   test.describe('Billing Page After Signup', () => {
     test('Billing page shows active subscription after signup', async ({ page }) => {
       // Set up authenticated user with Hobby subscription
-      await setupAuthenticatedState(page, createHobbySubscriber());
-
-      // Mock the profile API
-      await page.route('**/api/stripe/profile', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            subscription_credits_balance: 200,
-            purchased_credits_balance: 0,
-            subscription_tier: 'hobby',
-            subscription_status: 'active',
-            stripe_customer_id: 'cus_test_hobby',
-          }),
-        });
-      });
-
-      // Mock the subscription API
-      await page.route('**/api/stripe/subscription', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            id: 'sub_test_hobby',
-            status: 'active',
-            price_id: 'price_hobby_monthly',
-            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            cancel_at_period_end: false,
-          }),
-        });
-      });
-
-      // Mock credit history API
-      await page.route('**/api/stripe/credit-history*', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            transactions: [],
-            pagination: { total: 0 },
-          }),
-        });
-      });
+      await setupAuthenticatedStateWithSupabase(page, createHobbySubscriber());
 
       // Initialize billing page
       billingPage = new BillingPage(page);
@@ -275,7 +204,9 @@ test.describe('Subscription Signup Proof Tests', () => {
       // Assert: Change Plan button is visible
       await expect(page.getByTestId('change-plan-button')).toBeVisible();
 
-      // Assert: Manage Subscription button is visible (has stripe_customer_id)
+      // Note: manageSubscriptionButton is in the Invoices tab, not Subscription tab
+      // We need to switch to Invoices tab to verify it's visible
+      await billingPage.switchToInvoicesTab();
       await expect(billingPage.manageSubscriptionButton).toBeVisible();
     });
 
@@ -298,49 +229,7 @@ test.describe('Subscription Signup Proof Tests', () => {
           price_id: 'price_pro_monthly',
         },
       } as unknown as Partial<ITestUserData>;
-      await setupAuthenticatedState(page, proSubscriber);
-
-      // Mock the profile API
-      await page.route('**/api/stripe/profile', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            subscription_credits_balance: 1000,
-            purchased_credits_balance: 0,
-            subscription_tier: 'pro',
-            subscription_status: 'active',
-            stripe_customer_id: 'cus_test_pro',
-          }),
-        });
-      });
-
-      // Mock the subscription API
-      await page.route('**/api/stripe/subscription', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            id: 'sub_test_pro',
-            status: 'active',
-            price_id: 'price_pro_monthly',
-            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            cancel_at_period_end: false,
-          }),
-        });
-      });
-
-      // Mock credit history API
-      await page.route('**/api/stripe/credit-history*', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            transactions: [],
-            pagination: { total: 0 },
-          }),
-        });
-      });
+      await setupAuthenticatedStateWithSupabase(page, proSubscriber);
 
       // Initialize billing page
       billingPage = new BillingPage(page);
@@ -373,43 +262,7 @@ test.describe('Subscription Signup Proof Tests', () => {
         },
         subscription: null,
       };
-      await setupAuthenticatedState(page, freeUser);
-
-      // Mock the profile API
-      await page.route('**/api/stripe/profile', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            subscription_credits_balance: 10,
-            purchased_credits_balance: 0,
-            subscription_tier: null,
-            subscription_status: null,
-            stripe_customer_id: null,
-          }),
-        });
-      });
-
-      // Mock the subscription API (no subscription)
-      await page.route('**/api/stripe/subscription', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(null),
-        });
-      });
-
-      // Mock credit history API
-      await page.route('**/api/stripe/credit-history*', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            transactions: [],
-            pagination: { total: 0 },
-          }),
-        });
-      });
+      await setupAuthenticatedStateWithSupabase(page, freeUser);
 
       // Initialize billing page
       billingPage = new BillingPage(page);
@@ -427,30 +280,18 @@ test.describe('Subscription Signup Proof Tests', () => {
       await expect(page.getByRole('heading', { name: 'Hobby', exact: true })).toBeVisible();
       await expect(page.getByRole('heading', { name: 'Professional', exact: true })).toBeVisible();
 
-      // Verify free user state using page object method
-      await billingPage.verifyFreeUserState();
+      // Note: verifyFreeUserState checks manageSubscriptionButton is NOT visible
+      // This button is in the Invoices tab, so we need to switch there to verify
+      await billingPage.switchToInvoicesTab();
+      // Free users should NOT see "Manage Subscription" button (no stripe_customer_id)
+      await expect(billingPage.manageSubscriptionButton).not.toBeVisible();
     });
   });
 
   test.describe('Dashboard Sidebar After Signup', () => {
     test('Dashboard sidebar shows updated tier after signup', async ({ page }) => {
       // Set up authenticated user with Hobby subscription
-      await setupAuthenticatedState(page, createHobbySubscriber());
-
-      // Mock the profile API
-      await page.route('**/api/stripe/profile', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            subscription_credits_balance: 200,
-            purchased_credits_balance: 0,
-            subscription_tier: 'hobby',
-            subscription_status: 'active',
-            stripe_customer_id: 'cus_test_hobby',
-          }),
-        });
-      });
+      await setupAuthenticatedStateWithSupabase(page, createHobbySubscriber());
 
       // Navigate to dashboard
       const dashboardPage = new BasePage(page);
