@@ -22,39 +22,44 @@ export async function mockSupabaseBillingData(
   const profile = userData.profile;
   const subscription = userData.subscription;
 
-  // Mock profiles REST call: /rest/v1/profiles?id=eq.{userId}
-  await page.route(`**/rest/v1/profiles?id=eq.${userId}&*`, async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(profile ? [profile] : []),
-    });
-  });
-
-  // Also handle profiles call without filters (some code patterns)
+  // Mock profiles REST call - handle various URL patterns that Supabase generates
   await page.route(`**/rest/v1/profiles**`, async route => {
     const url = route.request().url();
     // Only handle requests for this specific user
-    if (url.includes(`id=eq.${userId}`)) {
+    if (url.includes(`id=eq.${userId}`) || url.includes(`id=eq."${userId}"`) || url.includes(`id=eq.'${userId}'`)) {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify(profile ? [profile] : []),
+      });
+    } else if (!url.includes('id=eq.')) {
+      // If no id filter is present, return empty array (avoid hitting real API)
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
       });
     } else {
       await route.continue();
     }
   });
 
-  // Mock subscriptions REST call: /rest/v1/subscriptions?user_id=eq.{userId}&status=in.(active,trialing)&order=created_at.desc&limit=1
+  // Mock subscriptions REST call - handle various URL patterns
   await page.route(`**/rest/v1/subscriptions**`, async route => {
     const url = route.request().url();
     // Only handle requests for this specific user
-    if (url.includes(`user_id=eq.${userId}`)) {
+    if (url.includes(`user_id=eq.${userId}`) || url.includes(`user_id=eq."${userId}"`) || url.includes(`user_id=eq.'${userId}'`)) {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify(subscription ? [subscription] : []),
+      });
+    } else if (!url.includes('user_id=eq.')) {
+      // If no user_id filter is present, return empty array
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
       });
     } else {
       await route.continue();
@@ -74,11 +79,16 @@ export async function mockSupabaseRpc(
   const profile = userData.profile;
   const subscription = userData.subscription;
 
-  // Mock RPC call: /rest/v1/rpc/get_user_data?target_user_id={userId}
+  // Mock RPC call: /rest/v1/rpc/get_user_data with various parameter formats
   await page.route(`**/rest/v1/rpc/get_user_data**`, async route => {
     const url = route.request().url();
-    // Only handle requests for this specific user
-    if (url.includes(`target_user_id=${userId}`) || url.includes(`target_user_id="${userId}"`)) {
+    // Only handle requests for this specific user - try various parameter formats
+    if (
+      url.includes(`target_user_id=${userId}`) ||
+      url.includes(`target_user_id="${userId}"`) ||
+      url.includes(`target_user_id='%22${userId}%22'`) ||
+      url.includes(`target_user_id='%7B${userId}`)
+    ) {
       const rpcResponse = {
         profile: profile || null,
         subscription: subscription || null,
