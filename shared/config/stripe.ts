@@ -407,7 +407,23 @@ export function getPlanDisplayName(
   // Handle object input with multiple possible fields
   const { subscriptionTier, priceId, planKey } = input;
 
-  // First try subscriptionTier - normalize to proper display name
+  // Prefer an explicit known price ID when available. This lets the UI show the
+  // plan Stripe is actually billing for, even if the profile tier is briefly stale.
+  if (priceId) {
+    const plan = getPlanForPriceId(priceId);
+    if (plan) {
+      return `${plan.name} Plan`;
+    }
+  }
+
+  // Then try planKey lookup
+  if (planKey) {
+    const plan = getPlanByKey(planKey);
+    if (plan) {
+      return `${plan.name} Plan`;
+    }
+  }
+
   // Null/undefined subscription_tier means Free Plan
   if (!subscriptionTier) {
     return BILLING_COPY.freePlan;
@@ -424,22 +440,6 @@ export function getPlanDisplayName(
       return `${SUBSCRIPTION_PLANS.PRO_MONTHLY.name} Plan`;
     case 'business':
       return `${SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name} Plan`;
-  }
-
-  // If subscriptionTier didn't match known plans, try priceId lookup
-  if (priceId) {
-    const plan = getPlanForPriceId(priceId);
-    if (plan) {
-      return `${plan.name} Plan`;
-    }
-  }
-
-  // Then try planKey lookup
-  if (planKey) {
-    const plan = getPlanByKey(planKey);
-    if (plan) {
-      return `${plan.name} Plan`;
-    }
   }
 
   // Capitalize first letter of subscriptionTier as final fallback and add Plan suffix

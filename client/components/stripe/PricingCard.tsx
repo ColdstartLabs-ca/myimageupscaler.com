@@ -30,6 +30,8 @@ interface IPricingCardProps {
   currentSubscriptionPrice?: number | null;
   /** Whether the subscribe button is in loading state */
   loading?: boolean;
+  /** Regional discount percentage (0-100). When > 0, displays adjusted price. */
+  discountPercent?: number;
 }
 
 // --- Helper Functions (SRP: separate logic from rendering) ---
@@ -175,6 +177,7 @@ export function PricingCard({
   trial,
   currentSubscriptionPrice,
   loading = false,
+  discountPercent = 0,
 }: IPricingCardProps): JSX.Element {
   const {
     handleCheckout,
@@ -190,6 +193,10 @@ export function PricingCard({
     disabled,
   });
 
+  // Calculate regional display price (clean — user sees only their price)
+  const displayPrice =
+    discountPercent > 0 ? Math.round(price * (1 - discountPercent / 100) * 100) / 100 : price;
+
   const isCurrentPlan = disabled && !scheduled;
   const badge = getBadgeConfig(disabled, scheduled, recommended, disabledReason, trial);
   const buttonText = getButtonText(
@@ -202,7 +209,7 @@ export function PricingCard({
     trial,
     onSelect,
     currentSubscriptionPrice,
-    price
+    displayPrice
   );
 
   return (
@@ -225,9 +232,9 @@ export function PricingCard({
         )}
 
         <div className="text-center my-6">
-          <div className="text-4xl font-bold text-text-primary">
+          <div className="text-4xl font-bold text-text-primary" data-testid="pricing-card-price">
             {currency === 'USD' ? '$' : currency}
-            {price}
+            {displayPrice}
           </div>
           {interval && <div className="text-sm text-text-secondary mt-1">per {interval}</div>}
         </div>

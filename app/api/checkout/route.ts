@@ -5,6 +5,7 @@ import { trackServerEvent } from '@server/analytics';
 import { clientEnv, serverEnv } from '@shared/config/env';
 import { assertKnownPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getTrialConfig } from '@shared/config/subscription.config';
+import { getPricingRegion, getDiscountedPriceInCents } from '@shared/config/pricing-regions';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -333,6 +334,41 @@ export async function POST(request: NextRequest) {
     // 6. Get or create Stripe customer
     const customerId = await getOrCreateCustomerId(user, token);
 
+    // 6.5. Detect country and resolve regional pricing
+    const country =
+      request.headers.get('CF-IPCountry') ||
+      request.headers.get('cf-ipcountry') ||
+      (serverEnv.ENV === 'test' ? request.headers.get('x-test-country') : null);
+    const pricingConfig = getPricingRegion(country || '');
+
+    // 6.6. Log region mismatch for monitoring (non-blocking, does not affect checkout)
+    if (country && !isTestMode) {
+      try {
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('signup_country')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.signup_country && profile.signup_country !== country) {
+          const signupRegion = getPricingRegion(profile.signup_country);
+          await trackServerEvent(
+            'pricing_region_mismatch',
+            {
+              signupCountry: profile.signup_country,
+              signupRegion: signupRegion.region,
+              checkoutCountry: country,
+              checkoutRegion: pricingConfig.region,
+              discountPercent: pricingConfig.discountPercent,
+            },
+            { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: user.id }
+          );
+        }
+      } catch {
+        // Mismatch logging is best-effort — never block checkout
+      }
+    }
+
     // 7. Verify price type matches expected (double-check with Stripe in production)
     if (!isTestMode && resolvedPrice) {
       const price = await stripe.prices.retrieve(validatedPriceId);
@@ -362,25 +398,47 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 7. Create Stripe Checkout Session (supports both subscription and payment modes)
+    // 8. Create Stripe Checkout Session (supports both subscription and payment modes)
     const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
     const checkoutMode = resolvedPrice?.type === 'pack' ? 'payment' : 'subscription';
 
     // Use unified metadata format for consistent webhook processing
     const unifiedMetadata = resolvePlanOrPack(validatedPriceId);
 
+    // Build line_items: use price_data with inline discounted amount for all regional purchases,
+    // so no Stripe Price objects need to be created per region.
+    let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+    if (pricingConfig.discountPercent > 0) {
+      const originalPrice = await stripe.prices.retrieve(validatedPriceId);
+      const productId =
+        typeof originalPrice.product === 'string'
+          ? originalPrice.product
+          : originalPrice.product.id;
+      const priceData: Stripe.Checkout.SessionCreateParams.LineItem.PriceData = {
+        currency: 'usd',
+        product: productId,
+        unit_amount: getDiscountedPriceInCents(
+          originalPrice.unit_amount!,
+          pricingConfig.discountPercent
+        ),
+      };
+      if (resolvedPrice?.type === 'plan') {
+        priceData.recurring = { interval: 'month' };
+      }
+      lineItems = [{ price_data: priceData, quantity: 1 }];
+    } else {
+      lineItems = [{ price: validatedPriceId, quantity: 1 }];
+    }
+
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
-      line_items: [
-        {
-          price: validatedPriceId,
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: checkoutMode,
       ui_mode: uiMode,
       metadata: {
         user_id: user.id,
+        pricing_region: pricingConfig.region,
+        discount_percent: pricingConfig.discountPercent.toString(),
         ...(unifiedMetadata
           ? {
               type: unifiedMetadata.type,
@@ -440,7 +498,30 @@ export async function POST(request: NextRequest) {
         `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}&type=${purchaseType}${creditsParam}`;
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await stripe.checkout.sessions.create(sessionParams);
+    } catch (sessionError) {
+      // If the stored customer ID is stale (deleted in Stripe), create a fresh one and retry once
+      if (
+        sessionError instanceof Stripe.errors.StripeInvalidRequestError &&
+        sessionError.code === 'resource_missing' &&
+        sessionError.param === 'customer'
+      ) {
+        const freshCustomer = await stripe.customers.create({
+          email: user.email,
+          metadata: { supabase_user_id: user.id },
+        });
+        await supabaseAdmin
+          .from('profiles')
+          .update({ stripe_customer_id: freshCustomer.id })
+          .eq('id', user.id);
+        sessionParams.customer = freshCustomer.id;
+        session = await stripe.checkout.sessions.create(sessionParams);
+      } else {
+        throw sessionError;
+      }
+    }
 
     // Track checkout started event
     await trackServerEvent(
@@ -451,6 +532,8 @@ export async function POST(request: NextRequest) {
         sessionId: session.id,
         plan: unifiedMetadata?.type === 'plan' ? unifiedMetadata.key : undefined,
         pack: unifiedMetadata?.type === 'pack' ? unifiedMetadata.key : undefined,
+        pricingRegion: pricingConfig.region,
+        discountPercent: pricingConfig.discountPercent,
       },
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: user.id }
     );

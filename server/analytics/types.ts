@@ -78,6 +78,8 @@ export interface IPricingPageViewedProperties {
   entryPoint: 'navbar' | 'batch_limit_modal' | 'out_of_credits_modal' | 'pseo_cta' | 'direct';
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   referrer?: string;
+  pricingRegion?: string;
+  discountPercent?: number;
 }
 
 export interface ICheckoutAbandonedProperties {
@@ -85,6 +87,7 @@ export interface ICheckoutAbandonedProperties {
   step: 'plan_selection' | 'stripe_embed';
   timeSpentMs: number;
   plan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+  pricingRegion?: string;
 }
 
 export type IUpgradePromptTrigger =
@@ -131,6 +134,8 @@ export interface ICheckoutStartedProperties {
   sessionId?: string;
   plan?: string;
   pack?: string;
+  pricingRegion?: string;
+  discountPercent?: number;
 }
 
 export interface ICheckoutCompletedProperties {
@@ -141,6 +146,8 @@ export interface ICheckoutCompletedProperties {
   paymentMethod: string;
   sessionId: string;
   currency?: string;
+  priceId?: string;
+  pricingRegion?: string;
 }
 
 // pSEO-specific event properties
@@ -206,7 +213,15 @@ export interface IPSEOScrollProperties {
 
 // Error tracking properties
 export interface IErrorOccurredProperties {
-  errorType: 'upload_failed' | 'upscale_failed' | 'download_failed' | 'validation_failed' | 'timeout' | 'rate_limited' | 'insufficient_credits' | 'unknown';
+  errorType:
+    | 'upload_failed'
+    | 'upscale_failed'
+    | 'download_failed'
+    | 'validation_failed'
+    | 'timeout'
+    | 'rate_limited'
+    | 'insufficient_credits'
+    | 'unknown';
   errorMessage: string; // Sanitized error message
   context?: Record<string, unknown>; // Additional context like file size, resolution, etc.
 }
@@ -311,6 +326,8 @@ export type IAnalyticsEventName =
   | 'pseo_scroll_depth'
   | 'pseo_faq_expanded'
   | 'pseo_internal_link_clicked'
+  // Regional pricing monitoring events (server-side only)
+  | 'pricing_region_mismatch'
   // Amplitude identity events (server-side only)
   | '$identify';
 

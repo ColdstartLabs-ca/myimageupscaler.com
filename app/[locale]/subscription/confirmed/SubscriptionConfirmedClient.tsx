@@ -6,6 +6,7 @@ import { CheckCircle, Calendar, CreditCard, ArrowRight, Sparkles } from 'lucide-
 import Link from 'next/link';
 import { getPlanByPriceId } from '@shared/config/subscription.utils';
 import { resolvePlanOrPack } from '@shared/config/stripe';
+import { useUserStore } from '@client/store/userStore';
 import { useTranslations } from 'next-intl';
 
 function formatDate(dateString: string): string {
@@ -29,6 +30,8 @@ function SubscriptionConfirmedContent() {
   const t = useTranslations('subscription');
   const searchParams = useSearchParams();
   const router = useRouter();
+  const userId = useUserStore(state => state.user?.id);
+  const fetchUserData = useUserStore(state => state.fetchUserData);
 
   const type = searchParams.get('type'); // 'upgrade' | 'downgrade'
   const newPriceId = searchParams.get('new_price_id');
@@ -69,6 +72,13 @@ function SubscriptionConfirmedContent() {
       router.push('/pricing');
     }
   }, [type, newPriceId, router]);
+
+  useEffect(() => {
+    if (!userId) return;
+    fetchUserData(userId).catch(error => {
+      console.error('[SUBSCRIPTION_CONFIRMED] Failed to refresh user data:', error);
+    });
+  }, [fetchUserData, userId]);
 
   if (!newPlan) {
     return null;

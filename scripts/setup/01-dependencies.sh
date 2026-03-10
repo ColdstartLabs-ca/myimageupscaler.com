@@ -42,6 +42,15 @@ check_dependencies() {
     fi
     log_success "Dependencies installed"
 
+    # Install Playwright browsers if missing
+    local playwright_cache="$HOME/.cache/ms-playwright"
+    if [[ ! -d "$playwright_cache" ]] || [[ -z "$(ls -A "$playwright_cache" 2>/dev/null)" ]]; then
+        log_info "Installing Playwright browsers..."
+        cd "$PROJECT_ROOT" && yarn playwright install chromium
+    else
+        log_success "Playwright browsers installed"
+    fi
+
     # Check optional tools
     if command_exists supabase; then
         log_success "Supabase CLI $(supabase --version 2>/dev/null || echo 'installed')"

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { TrendingUp, TrendingDown, Calendar, Info } from 'lucide-react';
 import { StripeService } from '@client/services/stripeService';
+import { useUserStore } from '@client/store/userStore';
 import { getPlanForPriceId } from '@shared/config/stripe';
 import { ModalHeader } from './ModalHeader';
 import { PlanComparisonCard } from './PlanComparisonCard';
@@ -67,6 +68,8 @@ export function PlanChangeModal({
   const [loading, setLoading] = useState(false);
   const [changing, setChanging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const userId = useUserStore(state => state.user?.id);
+  const fetchUserData = useUserStore(state => state.fetchUserData);
 
   const targetPlan = getPlanForPriceId(targetPriceId);
   const currentPlan = currentPriceId ? getPlanForPriceId(currentPriceId) : null;
@@ -98,6 +101,9 @@ export function PlanChangeModal({
       setError(null);
 
       await StripeService.changeSubscription(targetPriceId);
+      if (userId) {
+        await fetchUserData(userId);
+      }
 
       // Build confirmation URL with details
       const params = new URLSearchParams({

@@ -23,6 +23,21 @@ export const test = base.extend({
 
       // Store test marker for middleware to check
       localStorage.setItem('__test_mode__', 'true');
+
+      // Hide Next.js dev overlay portal which blocks clicks during tests
+      // This is the React Error Overlay / DevTools that creates <nextjs-portal>
+      (function() {
+        const style = document.createElement('style');
+        style.textContent = 'nextjs-portal { display: none !important; pointer-events: none !important; }';
+        // Add to document as soon as it's available
+        if (document.head) {
+          document.head.appendChild(style);
+        } else {
+          document.addEventListener('DOMContentLoaded', () => {
+            document.head.appendChild(style);
+          });
+        }
+      })();
     `);
 
     // Add test headers to all requests to bypass auth redirects in middleware

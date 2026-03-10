@@ -22,27 +22,6 @@ import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useSearchParams } from 'next/navigation';
 
-const SUBSCRIPTION_VALUE_COUNTRIES = new Set([
-  'US',
-  'CA',
-  'GB',
-  'IE',
-  'AU',
-  'NZ',
-  'DE',
-  'FR',
-  'NL',
-  'BE',
-  'CH',
-  'AT',
-  'SE',
-  'NO',
-  'DK',
-  'FI',
-]);
-
-const CREDIT_PACK_COUNTRIES = new Set(['PH', 'IN']);
-
 export default function PricingPageClient() {
   const t = useTranslations('pricing');
   const searchParams = useSearchParams();
@@ -55,13 +34,10 @@ export default function PricingPageClient() {
   const [cancelingSchedule, setCancelingSchedule] = useState(false);
   const [buttonLoadingStates, setButtonLoadingStates] = useState<Record<string, boolean>>({});
 
-  const { tier: regionTier, country: regionCountry } = useRegionTier();
+  const { discountPercent, pricingRegion } = useRegionTier();
 
-  const showCreditPackNote =
-    regionCountry !== null &&
-    (CREDIT_PACK_COUNTRIES.has(regionCountry) || regionTier === 'restricted');
-  const showSubscriptionNote =
-    regionCountry !== null && SUBSCRIPTION_VALUE_COUNTRIES.has(regionCountry);
+  const showCreditPackNote = discountPercent > 0;
+  const showSubscriptionNote = discountPercent > 0;
 
   // Track pricing_page_viewed event once on mount
   const hasTrackedPageView = useRef(false);
@@ -121,6 +97,8 @@ export default function PricingPageClient() {
       entryPoint,
       currentPlan,
       referrer: document.referrer || undefined,
+      pricingRegion: pricingRegion || 'standard',
+      discountPercent: discountPercent || 0,
     });
   }, [searchParams, profile?.subscription_tier, loading]);
 
@@ -359,6 +337,16 @@ export default function PricingPageClient() {
           <p className="text-lg text-text-secondary max-w-2xl mx-auto">{t('page.subtitle')}</p>
         </div>
 
+        {/* Regional Pricing Banner */}
+        {discountPercent > 0 && (
+          <div
+            className="bg-success/10 border border-success/20 rounded-lg p-4 mb-8 max-w-3xl mx-auto text-center"
+            data-testid="regional-pricing-banner"
+          >
+            <p className="text-sm text-success font-medium">Special pricing for your region</p>
+          </div>
+        )}
+
         {/* Credit Packs Section */}
         <div className="mb-16" data-testid="credit-packs-section">
           <div className="text-center mb-8">
@@ -372,7 +360,7 @@ export default function PricingPageClient() {
                 className="mt-4 text-sm text-success font-medium"
                 data-testid="geo-credit-pack-note"
               >
-                No subscription needed — buy only what you use
+                Regional pricing applied — credit packs adjusted for your region
               </p>
             )}
           </div>
@@ -382,6 +370,7 @@ export default function PricingPageClient() {
               onPurchaseStart={() => {}}
               onPurchaseComplete={() => window.location.reload()}
               onError={error => console.error(error)}
+              discountPercent={discountPercent}
             />
           </div>
 
@@ -470,7 +459,7 @@ export default function PricingPageClient() {
 
           {showSubscriptionNote && (
             <p className="text-center text-sm text-accent mb-6" data-testid="geo-subscription-note">
-              Most users in your region save 40% with a monthly plan vs. buying credits
+              Subscription plans adjusted for your region — get the best value with a monthly plan
             </p>
           )}
 
@@ -533,6 +522,7 @@ export default function PricingPageClient() {
                       }
                       currentSubscriptionPrice={currentSubscriptionPrice}
                       loading={buttonLoadingStates[starterPriceId] || false}
+                      discountPercent={discountPercent}
                     />
                   ) : null;
                 })()}
@@ -565,6 +555,7 @@ export default function PricingPageClient() {
                   }
                   currentSubscriptionPrice={currentSubscriptionPrice}
                   loading={buttonLoadingStates[STRIPE_PRICES.HOBBY_MONTHLY] || false}
+                  discountPercent={discountPercent}
                 />
 
                 <PricingCard
@@ -596,6 +587,7 @@ export default function PricingPageClient() {
                   }
                   currentSubscriptionPrice={currentSubscriptionPrice}
                   loading={buttonLoadingStates[STRIPE_PRICES.PRO_MONTHLY] || false}
+                  discountPercent={discountPercent}
                 />
 
                 <PricingCard
@@ -626,6 +618,7 @@ export default function PricingPageClient() {
                   }
                   currentSubscriptionPrice={currentSubscriptionPrice}
                   loading={buttonLoadingStates[STRIPE_PRICES.BUSINESS_MONTHLY] || false}
+                  discountPercent={discountPercent}
                 />
               </>
             )}

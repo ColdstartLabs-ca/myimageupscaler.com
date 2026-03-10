@@ -5,9 +5,11 @@ import { trackServerEvent, trackRevenue } from '@server/analytics';
 import {
   assertKnownPriceId,
   calculateBalanceWithExpiration,
+  getPlanByKey,
   getPlanByPriceId,
   resolvePlanOrPack,
 } from '@shared/config/subscription.utils';
+import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import Stripe from 'stripe';
 
 // Invoice line item interface for accessing runtime properties
@@ -79,7 +81,7 @@ export class InvoiceHandler {
     // Get the user ID from the customer
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('id, subscription_credits_balance, purchased_credits_balance')
+      .select('id, subscription_tier, subscription_credits_balance, purchased_credits_balance')
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
 
@@ -146,12 +148,45 @@ export class InvoiceHandler {
       getPriceId(anyPricedLine?.price, anyPricedLine?.plan) ||
       '';
 
+    // Resolve base price ID: for price_data subscriptions Stripe generates a throwaway price ID,
+    // so fall back to plan_key from subscription metadata.
+    let basePriceId = priceId;
+    const envPlanKey =
+      (['starter', 'hobby', 'pro', 'business'] as const).find(
+        candidate => getBasePriceIdByPlanKey(candidate) === priceId
+      ) || '';
+    const fallbackPlanKey = envPlanKey || profile.subscription_tier || '';
+
+    if (fallbackPlanKey) {
+      const planConfig = getPlanByKey(fallbackPlanKey);
+      if (planConfig?.stripePriceId) {
+        basePriceId = planConfig.stripePriceId;
+      }
+    }
+
+    if (priceId) {
+      try {
+        assertKnownPriceId(priceId); // Known price ID — use as-is
+      } catch {
+        // Throwaway price ID from price_data — resolve via subscription metadata
+        try {
+          const sub = await stripe.subscriptions.retrieve(subscriptionId);
+          const subPlanKey = sub.metadata?.plan_key || fallbackPlanKey;
+          if (subPlanKey) basePriceId = getBasePriceIdByPlanKey(subPlanKey) ?? priceId;
+        } catch {
+          // Leave basePriceId as priceId — assertKnownPriceId will throw below
+        }
+      }
+    }
+
     // Use unified resolver to get plan details
     let planMetadata;
     try {
-      planMetadata = assertKnownPriceId(priceId);
+      planMetadata = assertKnownPriceId(basePriceId);
       if (planMetadata.type !== 'plan') {
-        throw new Error(`Price ID ${priceId} resolved to a credit pack, not a subscription plan`);
+        throw new Error(
+          `Price ID ${basePriceId} resolved to a credit pack, not a subscription plan`
+        );
       }
     } catch (error) {
       console.error(`[WEBHOOK_ERROR] Unknown price ID in invoice payment: ${priceId}`, {
@@ -183,12 +218,12 @@ export class InvoiceHandler {
     }
 
     // Get plan details from unified resolver
-    const planDetails = resolvePlanOrPack(priceId);
+    const planDetails = resolvePlanOrPack(basePriceId);
     if (!planDetails || planDetails.type !== 'plan') {
       const error = new Error(
-        `Price ID ${priceId} did not resolve to a valid plan for invoice payment`
+        `Price ID ${basePriceId} did not resolve to a valid plan for invoice payment`
       );
-      console.error(`[WEBHOOK_ERROR] Invalid plan resolution for invoice: ${priceId}`, {
+      console.error(`[WEBHOOK_ERROR] Invalid plan resolution for invoice: ${basePriceId}`, {
         error: error.message,
         subscriptionId,
         timestamp: new Date().toISOString(),
@@ -204,7 +239,7 @@ export class InvoiceHandler {
 
     // Calculate new balance considering expiration mode
     // Get expiration mode from plan config (defaults to 'never' for rollover)
-    const planConfig = getPlanByPriceId(priceId);
+    const planConfig = getPlanByPriceId(basePriceId);
     const expirationMode = planConfig?.creditsExpiration?.mode ?? 'never';
     const { newBalance, expiredAmount } = calculateBalanceWithExpiration({
       currentBalance,

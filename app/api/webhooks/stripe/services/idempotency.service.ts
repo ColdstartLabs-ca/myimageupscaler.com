@@ -74,8 +74,10 @@ export class IdempotencyService {
       .from('webhook_events')
       .update({
         status: 'failed',
+        recoverable: true,
         error_message: errorMessage,
         completed_at: new Date().toISOString(),
+        last_retry_at: null,
       })
       .eq('event_id', eventId);
 

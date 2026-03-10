@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { StripeService } from '@client/services/stripeService';
+import { useUserStore } from '@client/store/userStore';
 import { clientEnv } from '@shared/config/env';
 import { analytics } from '@client/analytics/analyticsClient';
 
@@ -21,6 +22,8 @@ function SuccessContent(): JSX.Element {
   const [credits, setCredits] = useState<number | null>(null);
   const [pollTimedOut, setPollTimedOut] = useState(false);
   const hasTrackedPurchase = useRef(false);
+  const userId = useUserStore(state => state.user?.id);
+  const fetchUserData = useUserStore(state => state.fetchUserData);
 
   // Track purchase_confirmed event once when page loads
   useEffect(() => {
@@ -39,8 +42,14 @@ function SuccessContent(): JSX.Element {
   const pollForCredits = useCallback(async () => {
     let attempts = 0;
     let initialCredits: number | null = null;
+    const syncUserStore = async (): Promise<void> => {
+      if (!userId) return;
+      await fetchUserData(userId);
+    };
 
     try {
+      await syncUserStore();
+
       // Get initial credits (sum of both pools)
       const initialProfile = await StripeService.getUserProfile();
       initialCredits =
@@ -60,6 +69,7 @@ function SuccessContent(): JSX.Element {
           if (currentCredits > initialCredits!) {
             setCredits(currentCredits);
             setLoading(false);
+            await syncUserStore();
             return;
           }
 
@@ -68,6 +78,7 @@ function SuccessContent(): JSX.Element {
             setCredits(currentCredits);
             setPollTimedOut(true);
             setLoading(false);
+            await syncUserStore();
             return;
           }
 
@@ -82,6 +93,7 @@ function SuccessContent(): JSX.Element {
           );
           setPollTimedOut(true);
           setLoading(false);
+          await syncUserStore();
         }
       };
 
@@ -89,8 +101,9 @@ function SuccessContent(): JSX.Element {
     } catch (error) {
       console.error('Error initializing credit poll:', error);
       setLoading(false);
+      await syncUserStore();
     }
-  }, []);
+  }, [fetchUserData, userId]);
 
   useEffect(() => {
     pollForCredits();

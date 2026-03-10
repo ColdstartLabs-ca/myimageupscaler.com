@@ -398,10 +398,12 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     clearSessionStorage();
+    localStorage.clear(); // canShowPrompt reads localStorage; must reset between tests
   });
 
   afterEach(() => {
     clearSessionStorage();
+    localStorage.clear();
   });
 
   it('does not show nudge before slider interaction', async () => {
@@ -506,10 +508,14 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
 
     const sliderContainer = container.querySelector('[class*="cursor-col-resize"]');
 
-    // First drag
+    // First drag — upgrade_prompt_shown should fire (image_preview_viewed also fires on
+    // mount, so we assert the specific event rather than a total call count)
     fireEvent.mouseDown(sliderContainer!);
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledTimes(1);
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
+        trigger: 'after_comparison',
+        currentPlan: 'free',
+      });
     });
 
     vi.clearAllMocks();
@@ -825,48 +831,21 @@ describe('Phase 3: BatchLimitModal improvements', () => {
   });
 
   it('should show remaining slots message for paid users with partial queue', () => {
-    render(
-      <BatchLimitModal
-        {...defaultProps}
-        limit={10}
-        currentCount={7}
-        attempted={5}
-      />
-    );
+    render(<BatchLimitModal {...defaultProps} limit={10} currentCount={7} attempted={5} />);
 
-    expect(
-      screen.getByText('You have 3 of 10 slots remaining in your queue.')
-    ).toBeInTheDocument();
+    expect(screen.getByText('You have 3 of 10 slots remaining in your queue.')).toBeInTheDocument();
   });
 
   it('should NOT show remaining slots message when queue is empty', () => {
-    render(
-      <BatchLimitModal
-        {...defaultProps}
-        limit={10}
-        currentCount={0}
-        attempted={15}
-      />
-    );
+    render(<BatchLimitModal {...defaultProps} limit={10} currentCount={0} attempted={15} />);
 
-    expect(
-      screen.queryByText(/slots remaining in your queue/)
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/slots remaining in your queue/)).not.toBeInTheDocument();
   });
 
   it('should NOT show remaining slots message when queue is full', () => {
-    render(
-      <BatchLimitModal
-        {...defaultProps}
-        limit={10}
-        currentCount={10}
-        attempted={5}
-      />
-    );
+    render(<BatchLimitModal {...defaultProps} limit={10} currentCount={10} attempted={5} />);
 
-    expect(
-      screen.queryByText(/slots remaining in your queue/)
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/slots remaining in your queue/)).not.toBeInTheDocument();
   });
 });
 
@@ -881,18 +860,14 @@ describe('Phase 3: UpgradeSuccessBanner fixes', () => {
   });
 
   it('UpgradeSuccessBanner should link to /dashboard/billing', () => {
-    render(
-      <UpgradeSuccessBanner processedCount={3} onDismiss={vi.fn()} hasSubscription={false} />
-    );
+    render(<UpgradeSuccessBanner processedCount={3} onDismiss={vi.fn()} hasSubscription={false} />);
 
     const link = screen.getByRole('link', { name: /See Plans/i });
     expect(link).toHaveAttribute('href', '/dashboard/billing');
   });
 
   it('UpgradeSuccessBanner should fire upgrade_prompt_shown on render', async () => {
-    render(
-      <UpgradeSuccessBanner processedCount={3} onDismiss={vi.fn()} hasSubscription={false} />
-    );
+    render(<UpgradeSuccessBanner processedCount={3} onDismiss={vi.fn()} hasSubscription={false} />);
 
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {

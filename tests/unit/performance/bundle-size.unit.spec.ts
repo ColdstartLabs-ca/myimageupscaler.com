@@ -18,8 +18,8 @@
  * skip gracefully so CI pipelines that run tests before building are not broken.
  */
 
-import { readdirSync, statSync, existsSync } from 'fs';
-import { join } from 'path';
+import { readdirSync, statSync, existsSync, readFileSync } from 'fs';
+import { join, basename } from 'path';
 import { describe, it, expect } from 'vitest';
 
 const ROOT = process.cwd();
@@ -45,6 +45,29 @@ function readChunkSizes(): { name: string; bytes: number }[] | null {
     name,
     bytes: statSync(join(CHUNKS_DIR, name)).size,
   }));
+}
+
+/**
+ * Returns the set of chunk filenames that are loaded via React.lazy / dynamic import.
+ * These chunks are only downloaded when the user triggers the feature (e.g. HeicConverter
+ * loading heic2any), so they should not be held to the same eager-load size limit.
+ * Large lazy chunks have their own separate size guard.
+ */
+function getLazyChunkNames(): Set<string> {
+  const manifestPath = join(ROOT, '.next', 'react-loadable-manifest.json');
+  if (!existsSync(manifestPath)) return new Set();
+
+  const manifest: Record<string, { files: string[] }> = JSON.parse(
+    readFileSync(manifestPath, 'utf8')
+  );
+
+  const names = new Set<string>();
+  for (const entry of Object.values(manifest)) {
+    for (const file of entry.files ?? []) {
+      names.add(basename(file));
+    }
+  }
+  return names;
 }
 
 describe('Homepage JS payload — Phase 2 bundle size regression', () => {
@@ -83,7 +106,7 @@ describe('Homepage JS payload — Phase 2 bundle size regression', () => {
     );
   });
 
-  it('no single chunk should exceed 450 KB uncompressed (guards against DevTools re-introduction)', () => {
+  it('no eagerly-loaded chunk should exceed 450 KB uncompressed (guards against DevTools re-introduction)', () => {
     const chunks = readChunkSizes();
 
     if (chunks === null) {
@@ -91,25 +114,60 @@ describe('Homepage JS payload — Phase 2 bundle size regression', () => {
       return;
     }
 
+    // Lazy chunks (React.lazy / next/dynamic) are excluded: they are only downloaded
+    // when the user triggers the specific feature. heic2any (1.35 MB) is a known
+    // example — it is only loaded by HeicConverter and has its own size guard below.
+    const lazyChunks = getLazyChunkNames();
+
     const oversizedChunks = chunks
-      .filter(c => c.bytes > MAX_SINGLE_CHUNK_BYTES)
+      .filter(c => c.bytes > MAX_SINGLE_CHUNK_BYTES && !lazyChunks.has(c.name))
       .map(c => `  ${c.name}: ${(c.bytes / 1024).toFixed(1)} KB`)
       .sort();
 
     if (oversizedChunks.length > 0) {
-      console.error('[bundle-size] Oversized chunks detected:');
+      console.error('[bundle-size] Oversized eager chunks detected:');
       oversizedChunks.forEach(line => console.error(line));
     }
 
     expect(oversizedChunks).toHaveLength(
       0,
-      `Found ${oversizedChunks.length} chunk(s) exceeding 450 KB:\n` +
+      `Found ${oversizedChunks.length} eagerly-loaded chunk(s) exceeding 450 KB:\n` +
         `${oversizedChunks.join('\n')}\n\n` +
         `The Next.js DevTools bundle (next/dist/compiled/next-devtools) weighs ~800 KB ` +
         `uncompressed. If that chunk has returned, verify that:\n` +
         `  1. next.config.js has devIndicators: false\n` +
         `  2. webpack alias for next/dist/compiled/next-devtools → dev-overlay.shim.js is in place\n` +
         `  3. The alias applies to !dev && !isServer builds`
+    );
+  });
+
+  it('no lazy-loaded chunk should exceed 2 MB uncompressed (guards against unbounded lazy bundles)', () => {
+    const chunks = readChunkSizes();
+
+    if (chunks === null) {
+      console.info('[bundle-size] No build found — skipping lazy-chunk size check');
+      return;
+    }
+
+    const MAX_LAZY_CHUNK_BYTES = 2 * 1024 * 1024; // 2 MB
+    const lazyChunks = getLazyChunkNames();
+
+    const oversizedLazyChunks = chunks
+      .filter(c => c.bytes > MAX_LAZY_CHUNK_BYTES && lazyChunks.has(c.name))
+      .map(c => `  ${c.name}: ${(c.bytes / 1024).toFixed(1)} KB`)
+      .sort();
+
+    if (oversizedLazyChunks.length > 0) {
+      console.error('[bundle-size] Oversized lazy chunks detected:');
+      oversizedLazyChunks.forEach(line => console.error(line));
+    }
+
+    expect(oversizedLazyChunks).toHaveLength(
+      0,
+      `Found ${oversizedLazyChunks.length} lazy chunk(s) exceeding 2 MB:\n` +
+        `${oversizedLazyChunks.join('\n')}\n\n` +
+        `heic2any is the known-large lazy chunk (~1.35 MB). If a new chunk appears ` +
+        `here, investigate what dependency was added.`
     );
   });
 

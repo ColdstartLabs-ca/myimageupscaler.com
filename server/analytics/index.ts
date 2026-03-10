@@ -19,4 +19,5 @@ export type {
   ISubscriptionProperties,
   ICreditPackProperties,
   IImageUpscaledProperties,
+  ICheckoutStartedProperties,
 } from '@server/analytics/types';

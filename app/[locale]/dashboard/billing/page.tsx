@@ -4,6 +4,7 @@ import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
 import { PlanChangeModal, PricingCard } from '@client/components/stripe';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
 import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
+import { ModalHeader } from '@client/components/stripe/ModalHeader';
 import { InternalTabs, type ITabItem } from '@client/components/ui/InternalTabs';
 import { StripeService } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
@@ -32,7 +33,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 // Extend dayjs with relativeTime plugin
 dayjs.extend(relativeTime);
@@ -50,14 +51,14 @@ export default function BillingPage() {
   const router = useRouter();
   const { showToast } = useToastStore();
   const t = useTranslations('dashboard.billing');
+  const [activeTab, setActiveTab] = useState('credits');
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [subscription, setSubscription] = useState<ISubscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
-
-  // Plan selection state (for users without subscription)
+  const [showPlanOptionsModal, setShowPlanOptionsModal] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
 
@@ -130,10 +131,11 @@ export default function BillingPage() {
   };
 
   const handleUpgrade = () => {
-    router.push('/pricing');
+    setShowPlanOptionsModal(true);
   };
 
   const handlePlanSelect = (priceId: string) => {
+    setShowPlanOptionsModal(false);
     setSelectedPlanId(priceId);
     setIsPlanModalOpen(true);
   };
@@ -200,6 +202,20 @@ export default function BillingPage() {
       })
     : 'Free Plan';
 
+  const currentSubscriptionPrice = useMemo(() => {
+    if (!subscription?.price_id) return null;
+    if (subscription.price_id === STRIPE_PRICES.HOBBY_MONTHLY) {
+      return SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price;
+    }
+    if (subscription.price_id === STRIPE_PRICES.PRO_MONTHLY) {
+      return SUBSCRIPTION_PLANS.PRO_MONTHLY.price;
+    }
+    if (subscription.price_id === STRIPE_PRICES.BUSINESS_MONTHLY) {
+      return SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.price;
+    }
+    return null;
+  }, [subscription?.price_id]);
+
   // Subscription Tab Content
   const SubscriptionTab = () => {
     // If no subscription, show plan cards for quick subscribe
@@ -217,7 +233,6 @@ export default function BillingPage() {
                 interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
                 features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
                 priceId={STRIPE_PRICES.HOBBY_MONTHLY}
-                onSelect={() => handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY)}
               />
 
               <PricingCard
@@ -228,7 +243,6 @@ export default function BillingPage() {
                 features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
                 priceId={STRIPE_PRICES.PRO_MONTHLY}
                 recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
-                onSelect={() => handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY)}
               />
 
               <PricingCard
@@ -238,7 +252,6 @@ export default function BillingPage() {
                 interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
                 features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
                 priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
-                onSelect={() => handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY)}
               />
             </div>
           </div>
@@ -350,7 +363,7 @@ export default function BillingPage() {
                         {t('keepBenefitsUntil', { plan: planName })}
                       </p>
                       <button
-                        onClick={() => router.push('/pricing')}
+                        onClick={() => router.push('/pricing#subscriptions')}
                         className="mt-2 text-sm text-warning hover:text-warning/80 font-medium"
                       >
                         {t('changeOrCancel')}
@@ -369,14 +382,7 @@ export default function BillingPage() {
   // Credits Tab Content
   const CreditsTab = () => {
     const handleTipClick = () => {
-      // Find the subscription tab trigger and click it
-      const tabs = document.querySelectorAll('[role="tab"]');
-      for (let i = 0; i < tabs.length; i++) {
-        if (tabs[i].textContent?.includes(t('tabs.subscription'))) {
-          (tabs[i] as HTMLElement).click();
-          break;
-        }
-      }
+      setActiveTab('subscription');
     };
 
     return (
@@ -673,7 +679,7 @@ export default function BillingPage() {
       </div>
 
       {/* Tabs Section */}
-      <InternalTabs tabs={tabs} defaultTab="credits" />
+      <InternalTabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Cancel Subscription Modal */}
       {subscription && (
@@ -686,13 +692,73 @@ export default function BillingPage() {
         />
       )}
 
-      {/* Plan Change Modal (for users without subscription) */}
-      {selectedPlanId && (
+      {showPlanOptionsModal && subscription && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/55 p-0 sm:items-center sm:p-4">
+          <div className="w-full max-w-5xl overflow-hidden rounded-t-3xl border border-border bg-surface shadow-2xl sm:rounded-3xl">
+            <ModalHeader
+              title={t('choosePlan')}
+              icon={CreditCard}
+              iconClassName="text-accent"
+              onClose={() => setShowPlanOptionsModal(false)}
+            />
+
+            <div className="max-h-[80vh] overflow-y-auto px-4 pb-6 pt-4 sm:px-6 sm:pb-8">
+              <div className="mb-5 rounded-2xl border border-accent/20 bg-gradient-to-r from-accent/12 via-accent/5 to-transparent p-4">
+                <p className="text-sm font-medium text-white">{t('subscriptionBetterValue')}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Compare plans and confirm the change without leaving billing.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <PricingCard
+                  name={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name}
+                  description={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.description}
+                  price={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}
+                  interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
+                  features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
+                  priceId={STRIPE_PRICES.HOBBY_MONTHLY}
+                  disabled={subscription.price_id === STRIPE_PRICES.HOBBY_MONTHLY}
+                  onSelect={() => handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY)}
+                  currentSubscriptionPrice={currentSubscriptionPrice}
+                />
+
+                <PricingCard
+                  name={SUBSCRIPTION_PLANS.PRO_MONTHLY.name}
+                  description={SUBSCRIPTION_PLANS.PRO_MONTHLY.description}
+                  price={SUBSCRIPTION_PLANS.PRO_MONTHLY.price}
+                  interval={SUBSCRIPTION_PLANS.PRO_MONTHLY.interval}
+                  features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
+                  priceId={STRIPE_PRICES.PRO_MONTHLY}
+                  recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
+                  disabled={subscription.price_id === STRIPE_PRICES.PRO_MONTHLY}
+                  onSelect={() => handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY)}
+                  currentSubscriptionPrice={currentSubscriptionPrice}
+                />
+
+                <PricingCard
+                  name={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name}
+                  description={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.description}
+                  price={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.price}
+                  interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
+                  features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
+                  priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
+                  disabled={subscription.price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
+                  onSelect={() => handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY)}
+                  currentSubscriptionPrice={currentSubscriptionPrice}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedPlanId && subscription && (
         <PlanChangeModal
           isOpen={isPlanModalOpen}
           onClose={handlePlanModalClose}
           targetPriceId={selectedPlanId}
-          currentPriceId={subscription?.price_id}
+          currentPriceId={subscription.price_id}
           onComplete={handlePlanModalComplete}
         />
       )}

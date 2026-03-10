@@ -34,9 +34,25 @@ export async function syncSubscriptionFromStripe(
     current_period_end?: number;
     canceled_at?: number | null;
   };
-  const currentPeriodStart = subscriptionWithPeriod.current_period_start;
-  const currentPeriodEnd = subscriptionWithPeriod.current_period_end;
+  let currentPeriodStart = subscriptionWithPeriod.current_period_start;
+  let currentPeriodEnd = subscriptionWithPeriod.current_period_end;
   const canceledAt = subscriptionWithPeriod.canceled_at;
+
+  if (!currentPeriodStart || !currentPeriodEnd) {
+    console.warn('Period timestamps missing in sync helper, fetching fresh subscription data...', {
+      subscriptionId: subscription.id,
+      userId,
+    });
+
+    const freshSubscription = await stripe.subscriptions.retrieve(subscription.id);
+    const freshWithPeriod = freshSubscription as Stripe.Subscription & {
+      current_period_start?: number;
+      current_period_end?: number;
+    };
+
+    currentPeriodStart = freshWithPeriod.current_period_start;
+    currentPeriodEnd = freshWithPeriod.current_period_end;
+  }
 
   // Validate required timestamp fields
   if (!currentPeriodStart || !currentPeriodEnd) {

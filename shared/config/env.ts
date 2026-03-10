@@ -118,20 +118,34 @@ function loadClientEnv(): IClientEnv {
     STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
     // Stripe Subscription Price IDs
     NEXT_PUBLIC_STRIPE_PRICE_STARTER:
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER || 'price_1Sz0fNL1vUl00LlZX1XClz95',
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER ||
+      process.env.STRIPE_PRICE_STARTER ||
+      'price_1Sz0fNL1vUl00LlZX1XClz95',
     NEXT_PUBLIC_STRIPE_PRICE_HOBBY:
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_HOBBY || 'price_1Sz0fNL1vUl00LlZT6MMTxAg',
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_HOBBY ||
+      process.env.STRIPE_PRICE_HOBBY ||
+      'price_1Sz0fNL1vUl00LlZT6MMTxAg',
     NEXT_PUBLIC_STRIPE_PRICE_PRO:
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO ||
+      process.env.STRIPE_PRICE_PRO ||
+      'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
     NEXT_PUBLIC_STRIPE_PRICE_BUSINESS:
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS || 'price_1Sz0fOL1vUl00LlZP3y5zdFx',
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS ||
+      process.env.STRIPE_PRICE_BUSINESS ||
+      'price_1Sz0fOL1vUl00LlZP3y5zdFx',
     // Stripe Credit Pack Price IDs
     NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL:
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL || 'price_1Sz0fcL1vUl00LlZ32PBKv8G',
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL ||
+      process.env.STRIPE_PRICE_CREDITS_SMALL ||
+      'price_1Sz0fcL1vUl00LlZ32PBKv8G',
     NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM:
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM || 'price_1Sz0fcL1vUl00LlZ0Y1RGOJW',
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM ||
+      process.env.STRIPE_PRICE_CREDITS_MEDIUM ||
+      'price_1Sz0fcL1vUl00LlZ0Y1RGOJW',
     NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE:
-      process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE || 'price_1Sz0fcL1vUl00LlZqnULxXBe',
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE ||
+      process.env.STRIPE_PRICE_CREDITS_LARGE ||
+      'price_1Sz0fcL1vUl00LlZqnULxXBe',
   };
 
   return clientEnvSchema.parse(env);

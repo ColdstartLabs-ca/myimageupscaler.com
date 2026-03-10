@@ -16,6 +16,7 @@ vi.mock('lucide-react', () => ({
   Receipt: () => <span data-testid="receipt-icon" />,
   RefreshCw: () => <span data-testid="refresh-icon" />,
   Wallet: () => <span data-testid="wallet-icon" />,
+  X: () => <span data-testid="close-icon" />,
   Zap: () => <span data-testid="zap-icon" />,
 }));
 
@@ -191,16 +192,13 @@ vi.mock('@client/components/stripe/PricingCard', () => ({
   }) => (
     <div data-testid={`pricing-card-${priceId}`} data-recommended={recommended ? 'true' : 'false'}>
       <span data-testid="plan-name">{name}</span>
-      {onSelect && (
-        <button data-testid={`select-plan-${priceId}`} onClick={onSelect}>
-          Get Started
-        </button>
-      )}
+      <button data-testid={`select-plan-${priceId}`} onClick={onSelect}>
+        Get Started
+      </button>
     </div>
   ),
 }));
 
-// Mock PlanChangeModal
 vi.mock('@client/components/stripe/PlanChangeModal', () => ({
   PlanChangeModal: ({
     isOpen,
@@ -400,7 +398,7 @@ describe('BillingPage', () => {
       expect(screen.getByText('Change Plan')).toBeInTheDocument();
     });
 
-    it('should navigate to pricing when change plan button clicked', async () => {
+    it('should show plan options modal when change plan button clicked', async () => {
       const user = userEvent.setup();
 
       await act(async () => {
@@ -424,7 +422,51 @@ describe('BillingPage', () => {
       const changePlanButton = screen.getByTestId('change-plan-button');
       await user.click(changePlanButton);
 
-      expect(mockPush).toHaveBeenCalledWith('/pricing');
+      await waitFor(() => {
+        expect(screen.getByText('Choose Plan')).toBeInTheDocument();
+        expect(screen.getByTestId('pricing-card-price_hobby_123')).toBeInTheDocument();
+        expect(screen.getByTestId('pricing-card-price_pro_123')).toBeInTheDocument();
+        expect(screen.getByTestId('pricing-card-price_business_123')).toBeInTheDocument();
+      });
+
+      expect(mockPush).not.toHaveBeenCalled();
+    });
+
+    it('should open plan change modal from inline plan options', async () => {
+      const user = userEvent.setup();
+
+      await act(async () => {
+        renderWithTranslations(<BillingPage />);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Billing')).toBeInTheDocument();
+      });
+
+      const tabButtons = document.querySelectorAll('.flex.gap-1 button');
+      const subscriptionTab = Array.from(tabButtons).find(
+        btn => btn.textContent === 'Subscription'
+      ) as HTMLElement;
+      await user.click(subscriptionTab);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('change-plan-button')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByTestId('change-plan-button'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Choose Plan')).toBeInTheDocument();
+        expect(screen.getByTestId('select-plan-price_pro_123')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByTestId('select-plan-price_pro_123'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('plan-change-modal')).toBeInTheDocument();
+      });
+
+      expect(screen.getByTestId('target-price-id')).toHaveTextContent('price_pro_123');
     });
   });
 
@@ -558,6 +600,24 @@ describe('BillingPage', () => {
         expect(screen.getByText('Buy Credits')).toBeInTheDocument();
       });
       expect(screen.getByText('One-time credit packs that never expire')).toBeInTheDocument();
+    });
+
+    it('should switch to the subscription tab when the better-value tip is clicked', async () => {
+      const user = userEvent.setup();
+
+      await act(async () => {
+        renderWithTranslations(<BillingPage />);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Subscriptions offer better value')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByText('Subscriptions offer better value'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Current Plan')).toBeInTheDocument();
+      });
     });
 
     it('should display credit history section', async () => {
@@ -741,8 +801,7 @@ describe('BillingPage', () => {
       });
     });
 
-    it('should open plan change modal when plan card clicked for free users', async () => {
-      const user = userEvent.setup();
+    it('should show checkout CTA for free users without using plan change modal', async () => {
       mockStripeService.getActiveSubscription.mockResolvedValue(null as never);
       mockGetPlanDisplayName.mockReturnValue('Free Plan');
 
@@ -755,14 +814,7 @@ describe('BillingPage', () => {
       await waitFor(() => {
         expect(screen.getByTestId('select-plan-price_pro_123')).toBeInTheDocument();
       });
-
-      const selectButton = screen.getByTestId('select-plan-price_pro_123');
-      await user.click(selectButton);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('plan-change-modal')).toBeInTheDocument();
-        expect(screen.getByTestId('target-price-id')).toHaveTextContent('price_pro_123');
-      });
+      expect(screen.queryByTestId('plan-change-modal')).not.toBeInTheDocument();
     });
 
     it('should not show plan cards when user has active subscription', async () => {

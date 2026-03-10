@@ -3,6 +3,7 @@ import { trackServerEvent, trackRevenue } from '@server/analytics';
 import { stripe } from '@server/stripe';
 import { serverEnv } from '@shared/config/env';
 import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@shared/config/stripe';
+import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { getEmailService } from '@server/services/email.service';
 import Stripe from 'stripe';
 
@@ -12,6 +13,83 @@ interface IStripeChargeExtended extends Stripe.Charge {
 }
 
 export class PaymentHandler {
+  private static async syncSubscriptionStateFromCheckout(params: {
+    userId: string;
+    customerId: string | null;
+    subscription: Stripe.Subscription;
+    priceId: string;
+    planKey: string;
+  }): Promise<void> {
+    const { userId, customerId, subscription, priceId, planKey } = params;
+    const subscriptionWithPeriods = subscription as Stripe.Subscription & {
+      current_period_start?: number;
+      current_period_end?: number;
+    };
+
+    const profileUpdate: {
+      stripe_customer_id?: string;
+      subscription_status: string;
+      subscription_tier: string;
+    } = {
+      subscription_status: subscription.status,
+      subscription_tier: planKey,
+    };
+
+    if (customerId) {
+      profileUpdate.stripe_customer_id = customerId;
+    }
+
+    const { error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .update(profileUpdate)
+      .eq('id', userId);
+
+    if (profileError) {
+      console.error('[CHECKOUT_SYNC_PROFILE_ERROR]', {
+        userId,
+        customerId,
+        subscriptionId: subscription.id,
+        error: profileError,
+      });
+    }
+
+    const currentPeriodStart = subscriptionWithPeriods.current_period_start;
+    const currentPeriodEnd = subscriptionWithPeriods.current_period_end;
+
+    if (!currentPeriodStart || !currentPeriodEnd) {
+      console.warn('[CHECKOUT_SYNC_SUBSCRIPTION_SKIPPED]', {
+        userId,
+        subscriptionId: subscription.id,
+        reason: 'Missing current period timestamps on subscription payload',
+      });
+      return;
+    }
+
+    const { error: subscriptionError } = await supabaseAdmin.from('subscriptions').upsert({
+      id: subscription.id,
+      user_id: userId,
+      status: subscription.status,
+      price_id: priceId,
+      current_period_start: new Date(currentPeriodStart * 1000).toISOString(),
+      current_period_end: new Date(currentPeriodEnd * 1000).toISOString(),
+      cancel_at_period_end: subscription.cancel_at_period_end,
+      trial_end: subscription.trial_end
+        ? new Date(subscription.trial_end * 1000).toISOString()
+        : null,
+      canceled_at: subscription.canceled_at
+        ? new Date(subscription.canceled_at * 1000).toISOString()
+        : null,
+    });
+
+    if (subscriptionError) {
+      console.error('[CHECKOUT_SYNC_SUBSCRIPTION_ERROR]', {
+        userId,
+        subscriptionId: subscription.id,
+        error: subscriptionError,
+      });
+    }
+  }
+
   /**
    * Handle successful checkout session
    */
@@ -75,21 +153,31 @@ export class PaymentHandler {
             // MEDIUM-5 FIX: Real subscription - get details from Stripe
             const subscription = await stripe.subscriptions.retrieve(subscriptionId);
             const priceId = subscription.items.data[0]?.price.id;
+            const customerId =
+              typeof session.customer === 'string'
+                ? session.customer
+                : session.customer?.id || null;
 
             // Get the invoice ID from the session for proper reference tracking
             const invoiceId = session.invoice as string | null;
 
             if (priceId) {
+              // For price_data subscriptions, Stripe generates a throwaway price ID;
+              // fall back to plan_key from subscription metadata to resolve the base price.
+              const subPlanKey = subscription.metadata?.plan_key || '';
+              const basePriceId = subPlanKey
+                ? (getBasePriceIdByPlanKey(subPlanKey) ?? priceId)
+                : priceId;
               let plan;
               try {
-                const resolved = assertKnownPriceId(priceId);
+                const resolved = assertKnownPriceId(basePriceId);
                 if (resolved.type !== 'plan') {
                   throw new Error(
                     `Price ID ${priceId} in checkout session is not a subscription plan`
                   );
                 }
-                plan = getPlanForPriceId(priceId); // Still use this for the legacy format
-                const planMetadata = resolvePlanOrPack(priceId);
+                plan = getPlanForPriceId(basePriceId);
+                const planMetadata = resolvePlanOrPack(basePriceId);
                 planKey = planMetadata?.type === 'plan' ? planMetadata.key : undefined;
               } catch (error) {
                 console.error(
@@ -105,6 +193,14 @@ export class PaymentHandler {
                 return;
               }
               if (plan) {
+                await this.syncSubscriptionStateFromCheckout({
+                  userId,
+                  customerId,
+                  subscription,
+                  priceId: basePriceId,
+                  planKey: planKey ?? plan.key,
+                });
+
                 // Add initial credits for the first month
                 // Use invoice ID as ref_id for refund correlation
                 const refId = invoiceId ? `invoice_${invoiceId}` : `session_${session.id}`;

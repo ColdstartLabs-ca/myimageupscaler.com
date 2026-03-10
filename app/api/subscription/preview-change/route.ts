@@ -4,6 +4,7 @@ import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { getPlanForPriceId, assertKnownPriceId } from '@shared/config/stripe';
+import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { getPlanByPriceId } from '@shared/config/subscription.utils';
 import dayjs from 'dayjs';
 import type Stripe from 'stripe';
@@ -169,7 +170,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const currentPriceId = currentSubscription.price_id;
+    let currentPriceId = currentSubscription.price_id;
 
     // Get current plan metadata using unified resolver
     let currentPlan = null;
@@ -223,6 +224,56 @@ export async function POST(request: NextRequest) {
           error: {
             code: 'STRIPE_CUSTOMER_NOT_FOUND',
             message: 'User has no Stripe customer ID',
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    if ((!currentPlan || resolvedCurrent?.type !== 'plan') && profile.subscription_tier) {
+      const canonicalCurrentPriceId = getBasePriceIdByPlanKey(profile.subscription_tier);
+
+      if (canonicalCurrentPriceId) {
+        const existingPriceId = currentPriceId;
+        currentPriceId = canonicalCurrentPriceId;
+        currentPlan = getPlanForPriceId(canonicalCurrentPriceId);
+
+        const { error: canonicalizeError } = await supabaseAdmin
+          .from('subscriptions')
+          .update({
+            price_id: canonicalCurrentPriceId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', currentSubscription.id);
+
+        if (canonicalizeError) {
+          console.error('[PREVIEW_CHANGE_CANONICALIZE_PRICE_ERROR]', {
+            subscriptionId: currentSubscription.id,
+            userId: user.id,
+            existingPriceId,
+            canonicalCurrentPriceId,
+            error: canonicalizeError,
+          });
+        } else {
+          console.log('[PREVIEW_CHANGE_CANONICALIZE_PRICE]', {
+            subscriptionId: currentSubscription.id,
+            userId: user.id,
+            existingPriceId,
+            canonicalCurrentPriceId,
+            subscriptionTier: profile.subscription_tier,
+          });
+        }
+      }
+    }
+
+    // 6.5. Re-check same-plan guard after canonicalizing any throwaway DB price ID
+    if (currentPriceId === body.targetPriceId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'SAME_PLAN',
+            message: 'Target plan is the same as current plan',
           },
         },
         { status: 400 }

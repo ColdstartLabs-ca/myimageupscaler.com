@@ -4,6 +4,8 @@ import { stripe } from '@server/stripe';
 import { serverEnv } from '@shared/config/env';
 import { getPlanForPriceId, resolvePlanOrPack, assertKnownPriceId } from '@shared/config/stripe';
 import { getTrialConfig } from '@shared/config/subscription.config';
+import { getPlanByKey } from '@shared/config/subscription.utils';
+import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { SubscriptionCreditsService } from '@server/services/SubscriptionCredits';
 import { getEmailService } from '@server/services/email.service';
 import { isTest } from '@shared/config/env';
@@ -15,6 +17,7 @@ type IStripeSubscriptionExtended = Stripe.Subscription & {
   current_period_start?: number;
   current_period_end?: number;
   canceled_at?: number | null | undefined;
+  latest_invoice?: string | Stripe.Invoice | null | undefined;
 };
 
 function isSchemaMissingError(
@@ -29,6 +32,17 @@ function isSchemaMissingError(
   );
 }
 
+function extractLatestInvoiceId(subscription: Stripe.Subscription): string | null {
+  const latestInvoice = (subscription as IStripeSubscriptionExtended).latest_invoice;
+  if (typeof latestInvoice === 'string') {
+    return latestInvoice;
+  }
+  if (latestInvoice && typeof latestInvoice === 'object' && 'id' in latestInvoice) {
+    return typeof latestInvoice.id === 'string' ? latestInvoice.id : null;
+  }
+  return null;
+}
+
 export class SubscriptionHandler {
   /**
    * Handle customer creation
@@ -37,7 +51,7 @@ export class SubscriptionHandler {
     console.log(`Customer created: ${customer.id}`);
 
     // If customer has metadata with user_id, update the profile with stripe_customer_id
-    const userId = customer.metadata?.user_id;
+    const userId = customer.metadata?.user_id || customer.metadata?.supabase_user_id;
 
     if (userId) {
       try {
@@ -85,7 +99,9 @@ export class SubscriptionHandler {
     // Get the user ID from the customer and current subscription details
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('id, subscription_status, subscription_credits_balance, purchased_credits_balance')
+      .select(
+        'id, subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance'
+      )
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
 
@@ -144,35 +160,90 @@ export class SubscriptionHandler {
       });
     }
 
-    // Get price ID and resolve using unified resolver
-    const priceId = subscription.items.data[0]?.price.id || '';
+    // Prefer the subscription item's current Stripe price over metadata. Route-driven
+    // plan changes can leave subscription.metadata.plan_key stale for a short time,
+    // and trusting that stale metadata rolls the user back to the old tier.
+    const rawPriceId = subscription.items.data[0]?.price.id || '';
+    const metadataPlanKey = subscription.metadata?.plan_key || '';
+    const fallbackPlanKey = profile.subscription_tier || '';
+
+    let basePriceId = rawPriceId;
+    let planMetadata = null as ReturnType<typeof resolvePlanOrPack>;
+    let resolvedPlanKey = '';
+
+    const rawPlanMetadata = rawPriceId ? resolvePlanOrPack(rawPriceId) : null;
+    if (rawPlanMetadata?.type === 'plan') {
+      resolvedPlanKey = rawPlanMetadata.key;
+      basePriceId = getBasePriceIdByPlanKey(rawPlanMetadata.key) ?? rawPriceId;
+      planMetadata = rawPlanMetadata;
+
+      if (metadataPlanKey && metadataPlanKey !== rawPlanMetadata.key) {
+        console.warn('[WEBHOOK_STALE_PLAN_METADATA]', {
+          subscriptionId: subscription.id,
+          customerId,
+          rawPriceId,
+          rawPlanKey: rawPlanMetadata.key,
+          metadataPlanKey,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }
+
+    if (!planMetadata) {
+      const envPlanKey =
+        (['starter', 'hobby', 'pro', 'business'] as const).find(
+          candidate => getBasePriceIdByPlanKey(candidate) === rawPriceId
+        ) || '';
+      resolvedPlanKey = metadataPlanKey || envPlanKey || fallbackPlanKey;
+
+      if (resolvedPlanKey) {
+        const planConfig = getPlanByKey(resolvedPlanKey);
+        if (planConfig) {
+          basePriceId =
+            getBasePriceIdByPlanKey(resolvedPlanKey) ?? planConfig.stripePriceId ?? rawPriceId;
+          planMetadata = {
+            type: 'plan',
+            key: planConfig.key,
+            name: planConfig.name,
+            creditsPerCycle: planConfig.creditsPerCycle,
+            maxRollover:
+              planConfig.maxRollover ?? planConfig.creditsPerCycle * planConfig.rolloverMultiplier,
+          };
+        }
+      }
+    }
 
     // Use unified resolver - this will throw if price ID is unknown, causing webhook to fail loudly
     // This ensures Stripe will retry instead of silently dropping the event
     let resolvedPlan;
-    try {
-      resolvedPlan = assertKnownPriceId(priceId);
-      if (resolvedPlan.type !== 'plan') {
-        throw new Error(`Price ID ${priceId} resolved to a credit pack, not a subscription plan`);
+    if (!planMetadata) {
+      try {
+        resolvedPlan = assertKnownPriceId(basePriceId);
+        if (resolvedPlan.type !== 'plan') {
+          throw new Error(
+            `Price ID ${rawPriceId} resolved to a credit pack, not a subscription plan`
+          );
+        }
+        planMetadata = resolvePlanOrPack(basePriceId);
+      } catch (error) {
+        console.error(`[WEBHOOK_ERROR] Unknown price ID in subscription update: ${rawPriceId}`, {
+          error: error instanceof Error ? error.message : error,
+          subscriptionId: subscription.id,
+          customerId,
+          resolvedPlanKey,
+          timestamp: new Date().toISOString(),
+        });
+        // Throw the error so webhook fails and Stripe retries
+        throw error;
       }
-    } catch (error) {
-      console.error(`[WEBHOOK_ERROR] Unknown price ID in subscription update: ${priceId}`, {
-        error: error instanceof Error ? error.message : error,
-        subscriptionId: subscription.id,
-        customerId,
-        timestamp: new Date().toISOString(),
-      });
-      // Throw the error so webhook fails and Stripe retries
-      throw error;
     }
 
-    // Get trial configuration and unified plan data
-    const trialConfig = getTrialConfig(priceId);
-    const planMetadata = resolvePlanOrPack(priceId);
+    // Get trial configuration and unified plan data (use basePriceId for all plan lookups)
+    const trialConfig = getTrialConfig(basePriceId);
 
     if (!planMetadata || planMetadata.type !== 'plan') {
-      const error = new Error(`Price ID ${priceId} did not resolve to a valid plan`);
-      console.error(`[WEBHOOK_ERROR] Invalid plan resolution: ${priceId}`, {
+      const error = new Error(`Price ID ${rawPriceId} did not resolve to a valid plan`);
+      console.error(`[WEBHOOK_ERROR] Invalid plan resolution: ${rawPriceId}`, {
         error: error.message,
         subscriptionId: subscription.id,
         customerId,
@@ -180,6 +251,8 @@ export class SubscriptionHandler {
       });
       throw error;
     }
+
+    let latestInvoiceId = extractLatestInvoiceId(subscription);
 
     // Access period timestamps - these are standard Stripe subscription fields (Unix timestamps in seconds)
     let currentPeriodStart = (subscription as IStripeSubscriptionExtended).current_period_start as
@@ -203,6 +276,7 @@ export class SubscriptionHandler {
       try {
         const freshSubscription = await stripe.subscriptions.retrieve(subscription.id);
         // Access the subscription data
+        latestInvoiceId = latestInvoiceId ?? extractLatestInvoiceId(freshSubscription);
         currentPeriodStart = (freshSubscription as IStripeSubscriptionExtended)
           .current_period_start;
         currentPeriodEnd = (freshSubscription as IStripeSubscriptionExtended).current_period_end;
@@ -246,7 +320,7 @@ export class SubscriptionHandler {
       id: subscription.id,
       user_id: userId,
       status: subscription.status,
-      price_id: priceId,
+      price_id: basePriceId,
       current_period_start: currentPeriodStartISO,
       current_period_end: currentPeriodEndISO,
       trial_end: trialEndISO,
@@ -266,7 +340,7 @@ export class SubscriptionHandler {
           id: subscription.id,
           user_id: userId,
           status: subscription.status,
-          price_id: priceId,
+          price_id: basePriceId,
           current_period_start: currentPeriodStartISO,
           current_period_end: currentPeriodEndISO,
           cancel_at_period_end: subscription.cancel_at_period_end,
@@ -280,6 +354,48 @@ export class SubscriptionHandler {
           console.error('Fallback subscription upsert failed:', fallbackError);
         } else {
           console.log('Fallback subscription upsert succeeded without optional columns.');
+        }
+      }
+    }
+
+    const isNewActiveSubscription =
+      existingSubscription === null &&
+      subscription.status === 'active' &&
+      previousStatus !== 'trialing';
+
+    if (isNewActiveSubscription && latestInvoiceId) {
+      const initialCreditRefId = `invoice_${latestInvoiceId}`;
+
+      const { data: existingInitialCredit } = await supabaseAdmin
+        .from('credit_transactions')
+        .select('id')
+        .eq('reference_id', initialCreditRefId)
+        .limit(1)
+        .maybeSingle();
+
+      if (existingInitialCredit) {
+        console.log(
+          `[SUBSCRIPTION_INITIAL_CREDITS_SKIP] Credits already exist for ${initialCreditRefId}`
+        );
+      } else {
+        const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
+          target_user_id: userId,
+          amount: planMetadata.creditsPerCycle!,
+          ref_id: initialCreditRefId,
+          description: `Initial subscription credits fallback - ${planMetadata.name} plan - ${planMetadata.creditsPerCycle} credits`,
+        });
+
+        if (error) {
+          console.error('[SUBSCRIPTION_INITIAL_CREDITS_ERROR]', {
+            userId,
+            subscriptionId: subscription.id,
+            refId: initialCreditRefId,
+            error,
+          });
+        } else {
+          console.log(
+            `[SUBSCRIPTION_INITIAL_CREDITS_ADDED] Added ${planMetadata.creditsPerCycle} credits to user ${userId} for ${planMetadata.name} plan`
+          );
         }
       }
     }
@@ -347,19 +463,20 @@ export class SubscriptionHandler {
     console.log('[WEBHOOK_PLAN_CHANGE_DETECTION]', {
       subscriptionId: subscription.id,
       userId,
-      currentPriceId: priceId,
+      currentPriceId: basePriceId,
+      rawPriceId,
       previousPriceId: effectivePreviousPriceId,
       optionsPreviousPriceId: options?.previousPriceId,
       existingSubscriptionPriceId: existingSubscription?.price_id,
       subscriptionStatus: subscription.status,
-      isPlanChange: effectivePreviousPriceId && effectivePreviousPriceId !== priceId,
+      isPlanChange: effectivePreviousPriceId && effectivePreviousPriceId !== basePriceId,
       currentCreditsBalance:
         (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0),
     });
 
     if (
       effectivePreviousPriceId &&
-      effectivePreviousPriceId !== priceId &&
+      effectivePreviousPriceId !== basePriceId &&
       subscription.status === 'active'
     ) {
       // Resolve previous plan using unified resolver
@@ -410,6 +527,12 @@ export class SubscriptionHandler {
         if (creditDifference > 0) {
           const currentBalance =
             (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
+          const creditRefId = SubscriptionCreditsService.buildPlanChangeCreditRefId({
+            subscriptionId: subscription.id,
+            previousPriceId: effectivePreviousPriceId,
+            newPriceId: basePriceId,
+            periodStart: currentPeriodStartISO,
+          });
 
           // Use SubscriptionCreditsService for consistent credit calculation
           const calculation = SubscriptionCreditsService.calculateUpgradeCredits({
@@ -437,26 +560,44 @@ export class SubscriptionHandler {
           });
 
           if (calculation.creditsToAdd > 0) {
-            const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
-              target_user_id: userId,
-              amount: calculation.creditsToAdd,
-              ref_id: subscription.id,
-              description: `Plan upgrade - ${previousPlanMetadata.name} → ${planMetadata.name} - ${calculation.creditsToAdd} credits (tier difference)`,
-            });
+            const { data: existingUpgradeCredit } = await supabaseAdmin
+              .from('credit_transactions')
+              .select('id')
+              .eq('reference_id', creditRefId)
+              .limit(1)
+              .maybeSingle();
 
-            if (error) {
-              console.error('[WEBHOOK_CREDITS_UPGRADE_ERROR]', {
+            if (existingUpgradeCredit) {
+              console.log('[WEBHOOK_CREDITS_UPGRADE_SKIP]', {
                 userId,
-                error,
-                creditsToAdd: calculation.creditsToAdd,
+                subscriptionId: subscription.id,
+                creditRefId,
+                reason: 'Credits already applied for this plan change',
               });
             } else {
-              console.log('[WEBHOOK_CREDITS_UPGRADE_SUCCESS]', {
-                userId,
-                creditsAdded: calculation.creditsToAdd,
-                previousBalance: currentBalance,
-                newBalance: currentBalance + calculation.creditsToAdd,
+              const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
+                target_user_id: userId,
+                amount: calculation.creditsToAdd,
+                ref_id: creditRefId,
+                description: `Plan upgrade - ${previousPlanMetadata.name} → ${planMetadata.name} - ${calculation.creditsToAdd} credits (tier difference)`,
               });
+
+              if (error) {
+                console.error('[WEBHOOK_CREDITS_UPGRADE_ERROR]', {
+                  userId,
+                  error,
+                  creditsToAdd: calculation.creditsToAdd,
+                  creditRefId,
+                });
+              } else {
+                console.log('[WEBHOOK_CREDITS_UPGRADE_SUCCESS]', {
+                  userId,
+                  creditsAdded: calculation.creditsToAdd,
+                  previousBalance: currentBalance,
+                  newBalance: currentBalance + calculation.creditsToAdd,
+                  creditRefId,
+                });
+              }
             }
           } else {
             console.log('[WEBHOOK_CREDITS_UPGRADE_BLOCKED]', {
@@ -609,17 +750,7 @@ export class SubscriptionHandler {
 
     const userId = profile.id;
 
-    // Get the price ID for tracking before updating
-    const priceId = subscription.items.data[0]?.price.id;
-    let planKey: string | undefined;
-    if (priceId) {
-      try {
-        const planMetadata = resolvePlanOrPack(priceId);
-        planKey = planMetadata?.type === 'plan' ? planMetadata.key : undefined;
-      } catch {
-        // Ignore resolution errors for tracking
-      }
-    }
+    const planKey = subscription.metadata?.plan_key || undefined;
 
     // Update subscription status
     const { error: subError } = await supabaseAdmin

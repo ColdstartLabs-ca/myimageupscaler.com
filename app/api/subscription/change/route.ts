@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { SubscriptionCreditsService } from '@server/services/SubscriptionCredits';
 import { serverEnv } from '@shared/config/env';
 import { getPlanForPriceId, assertKnownPriceId } from '@shared/config/stripe';
+import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 
 // SECURITY FIX: Zod schema for request body validation
 const subscriptionChangeSchema = z.object({
@@ -147,7 +149,9 @@ export async function POST(request: NextRequest) {
     // 6. Get user's Stripe customer ID and subscription tier
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
-      .select('stripe_customer_id, subscription_tier')
+      .select(
+        'stripe_customer_id, subscription_tier, subscription_credits_balance, purchased_credits_balance'
+      )
       .eq('id', user.id)
       .single();
 
@@ -202,6 +206,55 @@ export async function POST(request: NextRequest) {
           priceId: currentSubscription.price_id,
         });
       }
+    }
+
+    if ((!currentPlan || resolvedCurrent?.type !== 'plan') && profile.subscription_tier) {
+      const canonicalCurrentPriceId = getBasePriceIdByPlanKey(profile.subscription_tier);
+
+      if (canonicalCurrentPriceId) {
+        const existingPriceId = currentSubscription.price_id;
+        currentPlan = getPlanForPriceId(canonicalCurrentPriceId);
+        currentSubscription.price_id = canonicalCurrentPriceId;
+
+        const { error: canonicalizeError } = await supabaseAdmin
+          .from('subscriptions')
+          .update({
+            price_id: canonicalCurrentPriceId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', currentSubscription.id);
+
+        if (canonicalizeError) {
+          console.error('[PLAN_CHANGE_CANONICALIZE_PRICE_ERROR]', {
+            subscriptionId: currentSubscription.id,
+            userId: user.id,
+            existingPriceId,
+            canonicalCurrentPriceId,
+            error: canonicalizeError,
+          });
+        } else {
+          console.log('[PLAN_CHANGE_CANONICALIZE_PRICE]', {
+            subscriptionId: currentSubscription.id,
+            userId: user.id,
+            existingPriceId,
+            canonicalCurrentPriceId,
+            subscriptionTier: profile.subscription_tier,
+          });
+        }
+      }
+    }
+
+    if (currentSubscription.price_id === body.targetPriceId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'SAME_PLAN',
+            message: 'Target plan is the same as current plan',
+          },
+        },
+        { status: 400 }
+      );
     }
 
     console.log('[PLAN_CHANGE_START]', {
@@ -520,6 +573,10 @@ export async function POST(request: NextRequest) {
             price: body.targetPriceId,
           },
         ],
+        metadata: {
+          ...(latestSubscription.metadata ?? {}),
+          plan_key: targetPlan.key,
+        },
         proration_behavior: 'always_invoice',
         payment_behavior: 'error_if_incomplete',
       });
@@ -531,6 +588,12 @@ export async function POST(request: NextRequest) {
       };
       const updatedPeriodStart = updatedSubUnknown.current_period_start;
       const updatedPeriodEnd = updatedSubUnknown.current_period_end;
+      const previousPriceIdForCredits =
+        latestSubscription.items.data[0]?.price.id || currentSubscription.price_id || '';
+      const effectivePeriodStart =
+        (updatedPeriodStart && new Date(updatedPeriodStart * 1000).toISOString()) ||
+        currentSubscription.current_period_start ||
+        null;
 
       // Update local database with new price ID
       const updateData: {
@@ -554,20 +617,93 @@ export async function POST(request: NextRequest) {
         updateData.current_period_end = new Date(updatedPeriodEnd * 1000).toISOString();
       }
 
-      await supabaseAdmin.from('subscriptions').update(updateData).eq('id', currentSubscription.id);
+      const { error: subscriptionUpdateError } = await supabaseAdmin
+        .from('subscriptions')
+        .update(updateData)
+        .eq('id', currentSubscription.id);
+
+      if (subscriptionUpdateError) {
+        throw new Error(
+          `Failed to update local subscription record: ${subscriptionUpdateError.message}`
+        );
+      }
 
       // Update profile subscription tier
       // IMPORTANT: Use plan.key (e.g., 'pro') not plan.name (e.g., 'Professional')
-      await supabaseAdmin
+      const { error: profileUpdateError } = await supabaseAdmin
         .from('profiles')
         .update({
           subscription_tier: targetPlan.key,
         })
         .eq('id', user.id);
 
-      // Note: Credit adjustment for plan changes now happens in the webhook handler
-      // when customer.subscription.updated event is received from Stripe.
-      // This prevents race conditions and ensures a single source of truth.
+      if (profileUpdateError) {
+        throw new Error(
+          `Failed to update profile subscription tier: ${profileUpdateError.message}`
+        );
+      }
+
+      const previousTierCredits = currentPlan?.creditsPerMonth ?? currentTierCredits;
+
+      if (previousTierCredits > 0 && targetPlan.creditsPerMonth > previousTierCredits) {
+        const currentBalance =
+          (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0);
+        const calculation = SubscriptionCreditsService.calculateUpgradeCredits({
+          currentBalance,
+          previousTierCredits,
+          newTierCredits: targetPlan.creditsPerMonth,
+        });
+        const creditRefId = SubscriptionCreditsService.buildPlanChangeCreditRefId({
+          subscriptionId: currentSubscription.id,
+          previousPriceId: previousPriceIdForCredits,
+          newPriceId: body.targetPriceId,
+          periodStart: effectivePeriodStart,
+        });
+
+        if (calculation.creditsToAdd > 0) {
+          const { data: existingCredit } = await supabaseAdmin
+            .from('credit_transactions')
+            .select('id')
+            .eq('reference_id', creditRefId)
+            .limit(1)
+            .maybeSingle();
+
+          if (existingCredit) {
+            console.log('[PLAN_CHANGE_CREDITS_SKIP]', {
+              userId: user.id,
+              subscriptionId: currentSubscription.id,
+              creditRefId,
+              reason: 'Credits already applied for this plan change',
+            });
+          } else {
+            const { error: creditError } = await supabaseAdmin.rpc('add_subscription_credits', {
+              target_user_id: user.id,
+              amount: calculation.creditsToAdd,
+              ref_id: creditRefId,
+              description: `Plan upgrade - ${currentPlan?.name || profile.subscription_tier || 'current'} -> ${targetPlan.name} - ${calculation.creditsToAdd} credits`,
+            });
+
+            if (creditError) {
+              throw new Error(
+                `Failed to apply immediate upgrade credits: ${creditError.message || 'unknown error'}`
+              );
+            }
+
+            console.log('[PLAN_CHANGE_CREDITS_APPLIED]', {
+              userId: user.id,
+              subscriptionId: currentSubscription.id,
+              previousPriceId: previousPriceIdForCredits,
+              newPriceId: body.targetPriceId,
+              creditsAdded: calculation.creditsToAdd,
+              creditRefId,
+            });
+          }
+        }
+      }
+
+      // Apply the critical state locally so the user sees the upgrade immediately.
+      // The webhook path now acts as an idempotent fallback instead of being the only
+      // place where upgrade credits can converge.
 
       return NextResponse.json({
         success: true,

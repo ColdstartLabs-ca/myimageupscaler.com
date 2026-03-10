@@ -6,7 +6,7 @@ import { NextRequest } from 'next/server';
 import { POST } from '../../../app/api/webhooks/stripe/route';
 import { supabaseAdmin } from '../../../server/supabase/supabaseAdmin';
 import { stripe } from '../../../server/stripe';
-import { getPlanForPriceId } from '@shared/config/stripe';
+import { getPlanForPriceId, resolvePlanOrPack, assertKnownPriceId } from '@shared/config/stripe';
 import { getPlanConfig, getTrialConfig } from '@shared/config/subscription.config';
 import {
   getPlanByPriceId,
@@ -99,6 +99,7 @@ vi.mock('@server/services/SubscriptionCredits', () => ({
       isLegitimate: true,
     })),
     getExplanation: vi.fn(() => 'Mock explanation'),
+    buildPlanChangeCreditRefId: vi.fn(() => 'planchg_test_ref_123'),
   },
 }));
 
@@ -194,6 +195,39 @@ describe('Stripe Webhook Handler', () => {
       error: vi.spyOn(console, 'error').mockImplementation(() => {}),
       warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
     };
+
+    vi.mocked(getPlanForPriceId).mockImplementation(priceId => ({
+      key: 'hobby',
+      name: 'Hobby',
+      stripePriceId: priceId,
+      priceInCents: 1900,
+      currency: 'usd',
+      creditsPerMonth: 200,
+      creditsPerCycle: 200,
+      maxRollover: 1200,
+    }));
+    vi.mocked(resolvePlanOrPack).mockImplementation(priceId => ({
+      type: 'plan',
+      key: 'hobby',
+      name: 'Hobby',
+      stripePriceId: priceId,
+      priceInCents: 1900,
+      currency: 'usd',
+      creditsPerCycle: 200,
+      maxRollover: 1200,
+    }));
+    vi.mocked(assertKnownPriceId).mockImplementation(priceId => ({
+      type: 'plan',
+      key: 'hobby',
+      name: 'Hobby',
+      stripePriceId: priceId,
+      priceInCents: 1900,
+      currency: 'usd',
+      credits: 200,
+      maxRollover: 1200,
+      creditsPerMonth: 200,
+      creditsPerCycle: 200,
+    }));
   });
 
   afterEach(() => {
@@ -565,6 +599,18 @@ describe('Stripe Webhook Handler', () => {
       vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
         if (table === 'webhook_events') return getWebhookEventsMock();
         if (table === 'credit_transactions') return { select: mockCreditTransactionsSelect };
+        if (table === 'profiles') {
+          return {
+            update: vi.fn(() => ({
+              eq: vi.fn(() => ({ error: null })),
+            })),
+          };
+        }
+        if (table === 'subscriptions') {
+          return {
+            upsert: vi.fn(() => ({ error: null })),
+          };
+        }
         return {};
       });
 
@@ -702,9 +748,21 @@ describe('Stripe Webhook Handler', () => {
               })),
             })),
           };
+        } else if (table === 'credit_transactions') {
+          return {
+            select: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                limit: vi.fn(() => ({
+                  maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+                })),
+              })),
+            })),
+          };
         }
         return {};
       });
+
+      vi.mocked(supabaseAdmin.rpc).mockResolvedValue({ error: null } as never);
 
       // Act
       const response = await POST(request);
@@ -712,7 +770,7 @@ describe('Stripe Webhook Handler', () => {
       // Assert
       expect(response.status).toBe(200);
       expect(mockSelect).toHaveBeenCalledWith(
-        'id, subscription_status, subscription_credits_balance, purchased_credits_balance'
+        'id, subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance'
       );
       expect(mockUpsert).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -722,6 +780,281 @@ describe('Stripe Webhook Handler', () => {
           price_id: 'price_pro_monthly',
           cancel_at_period_end: false,
           canceled_at: null,
+        })
+      );
+    });
+
+    test('should allocate initial credits on customer.subscription.created when checkout missed them', async () => {
+      const event = {
+        type: 'customer.subscription.created',
+        data: {
+          object: {
+            ...subscriptionData,
+            id: 'sub_initial_credits_123',
+            latest_invoice: 'in_initial_credits_123',
+            items: {
+              data: [
+                {
+                  price: { id: 'price_1Sz0fNL1vUl00LlZT6MMTxAg' },
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+        method: 'POST',
+        body: JSON.stringify(event),
+        headers: {
+          'stripe-signature': 'test_signature',
+          'content-type': 'application/json',
+        },
+      });
+
+      const mockProfileSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              id: 'user_credits_123',
+              subscription_status: null,
+              subscription_tier: null,
+              subscription_credits_balance: 10,
+              purchased_credits_balance: 0,
+            },
+          })),
+        })),
+      }));
+
+      const mockSubscriptionSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({ data: null })),
+        })),
+      }));
+
+      const mockCreditTransactionsSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          limit: vi.fn(() => ({
+            maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+          })),
+        })),
+      }));
+
+      const mockUpsert = vi.fn(() => ({ error: null }));
+      const mockProfileUpdate = vi.fn(() => ({
+        eq: vi.fn(() => ({ error: null })),
+      }));
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') {
+          return getWebhookEventsMock();
+        }
+        if (table === 'profiles') {
+          return { select: mockProfileSelect, update: mockProfileUpdate };
+        }
+        if (table === 'subscriptions') {
+          return {
+            select: mockSubscriptionSelect,
+            upsert: mockUpsert,
+          };
+        }
+        if (table === 'credit_transactions') {
+          return { select: mockCreditTransactionsSelect };
+        }
+        return {};
+      });
+
+      vi.mocked(supabaseAdmin.rpc).mockResolvedValue({ error: null } as never);
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      expect(supabaseAdmin.rpc).toHaveBeenCalledWith('add_subscription_credits', {
+        target_user_id: 'user_credits_123',
+        amount: 200,
+        ref_id: 'invoice_in_initial_credits_123',
+        description: 'Initial subscription credits fallback - Hobby plan - 200 credits',
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        expect.stringContaining('[SUBSCRIPTION_INITIAL_CREDITS_ADDED]')
+      );
+    });
+
+    test('should prefer current Stripe price over stale subscription metadata on customer.subscription.updated', async () => {
+      const hobbyPriceId = 'price_1Sz0fNL1vUl00LlZT6MMTxAg';
+      const proPriceId = 'price_1Sz0fOL1vUl00LlZ7bbM2cDs';
+
+      vi.mocked(getTrialConfig).mockReturnValue({
+        enabled: false,
+        trialCredits: null,
+      });
+
+      vi.mocked(getPlanForPriceId).mockImplementation(priceId => {
+        if (priceId === proPriceId) {
+          return {
+            key: 'pro',
+            name: 'Professional',
+            creditsPerMonth: 1000,
+            maxRollover: 6000,
+          };
+        }
+
+        if (priceId === hobbyPriceId) {
+          return {
+            key: 'hobby',
+            name: 'Hobby',
+            creditsPerMonth: 200,
+            maxRollover: 1200,
+          };
+        }
+
+        return null;
+      });
+
+      vi.mocked(resolvePlanOrPack).mockImplementation(priceId => {
+        if (priceId === proPriceId) {
+          return {
+            type: 'plan',
+            key: 'pro',
+            name: 'Professional',
+            stripePriceId: proPriceId,
+            creditsPerCycle: 1000,
+            maxRollover: 6000,
+          };
+        }
+
+        if (priceId === hobbyPriceId) {
+          return {
+            type: 'plan',
+            key: 'hobby',
+            name: 'Hobby',
+            stripePriceId: hobbyPriceId,
+            creditsPerCycle: 200,
+            maxRollover: 1200,
+          };
+        }
+
+        return null;
+      });
+
+      const mockProfileUpdate = vi.fn(() => ({
+        eq: vi.fn(() => ({ error: null })),
+      }));
+      const mockSubscriptionUpsert = vi.fn(() => ({ error: null }));
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') {
+          return getWebhookEventsMock();
+        }
+        if (table === 'profiles') {
+          return {
+            select: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                maybeSingle: vi.fn(() => ({
+                  data: {
+                    id: 'user_upgrade_123',
+                    subscription_status: 'active',
+                    subscription_tier: 'hobby',
+                    subscription_credits_balance: 210,
+                    purchased_credits_balance: 0,
+                  },
+                })),
+              })),
+            })),
+            update: mockProfileUpdate,
+          };
+        }
+        if (table === 'subscriptions') {
+          return {
+            select: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                maybeSingle: vi.fn(() => ({
+                  data: {
+                    price_id: hobbyPriceId,
+                    updated_at: '2026-03-10T03:25:59.000Z',
+                  },
+                })),
+              })),
+            })),
+            upsert: mockSubscriptionUpsert,
+          };
+        }
+        if (table === 'credit_transactions') {
+          return {
+            select: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                limit: vi.fn(() => ({
+                  maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+                })),
+              })),
+            })),
+          };
+        }
+        return {};
+      });
+
+      vi.mocked(supabaseAdmin.rpc).mockResolvedValue({ error: null } as never);
+
+      const event = {
+        type: 'customer.subscription.updated',
+        data: {
+          object: {
+            ...subscriptionData,
+            id: 'sub_upgrade_123',
+            latest_invoice: 'in_upgrade_123',
+            metadata: {
+              plan_key: 'hobby',
+            },
+            items: {
+              data: [
+                {
+                  id: 'si_upgrade_123',
+                  price: { id: proPriceId },
+                },
+              ],
+            },
+          },
+          previous_attributes: {
+            items: {
+              data: [
+                {
+                  price: { id: hobbyPriceId },
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+        method: 'POST',
+        body: JSON.stringify(event),
+        headers: {
+          'stripe-signature': 'test_signature',
+          'content-type': 'application/json',
+        },
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      expect(mockSubscriptionUpsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'sub_upgrade_123',
+          price_id: proPriceId,
+        })
+      );
+      expect(mockProfileUpdate).toHaveBeenCalledWith({
+        subscription_status: 'active',
+        subscription_tier: 'pro',
+      });
+      expect(consoleSpy.warn).toHaveBeenCalledWith(
+        '[WEBHOOK_STALE_PLAN_METADATA]',
+        expect.objectContaining({
+          subscriptionId: 'sub_upgrade_123',
+          rawPriceId: proPriceId,
+          rawPlanKey: 'pro',
+          metadataPlanKey: 'hobby',
         })
       );
     });

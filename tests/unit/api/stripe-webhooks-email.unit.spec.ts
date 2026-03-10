@@ -3,30 +3,69 @@ import { PaymentHandler } from '@/app/api/webhooks/stripe/handlers/payment.handl
 import Stripe from 'stripe';
 import { getEmailService } from '@server/services/email.service';
 
+const mockProfilesUpdateEq = vi.fn(() => Promise.resolve({ error: null }));
+const mockProfilesUpdate = vi.fn(() => ({
+  eq: mockProfilesUpdateEq,
+}));
+const mockSubscriptionsUpsert = vi.fn(() => Promise.resolve({ error: null }));
+
 // Mock dependencies
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
-    from: vi.fn(() => ({
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          single: vi.fn(() =>
-            Promise.resolve({
-              data: null,
-              error: { code: 'PGRST116' },
-            })
-          ),
-          maybeSingle: vi.fn(() =>
-            Promise.resolve({
-              data: { id: 'user-123', stripe_customer_id: 'cus_test' },
-              error: null,
-            })
-          ),
-          limit: vi.fn(() => ({
-            maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+    from: vi.fn((table: string) => {
+      if (table === 'profiles') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() =>
+                Promise.resolve({
+                  data: null,
+                  error: { code: 'PGRST116' },
+                })
+              ),
+              maybeSingle: vi.fn(() =>
+                Promise.resolve({
+                  data: { id: 'user-123', stripe_customer_id: 'cus_test' },
+                  error: null,
+                })
+              ),
+              limit: vi.fn(() => ({
+                maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+              })),
+            })),
+          })),
+          update: mockProfilesUpdate,
+        };
+      }
+
+      if (table === 'subscriptions') {
+        return {
+          upsert: mockSubscriptionsUpsert,
+        };
+      }
+
+      return {
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() =>
+              Promise.resolve({
+                data: null,
+                error: { code: 'PGRST116' },
+              })
+            ),
+            maybeSingle: vi.fn(() =>
+              Promise.resolve({
+                data: { id: 'user-123', stripe_customer_id: 'cus_test' },
+                error: null,
+              })
+            ),
+            limit: vi.fn(() => ({
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+            })),
           })),
         })),
-      })),
-    })),
+      };
+    }),
     rpc: vi.fn(() => Promise.resolve({ error: null })),
   },
 }));
@@ -53,6 +92,13 @@ vi.mock('@server/stripe', () => ({
     subscriptions: {
       retrieve: vi.fn(() =>
         Promise.resolve({
+          id: 'sub_1234567890',
+          status: 'active',
+          cancel_at_period_end: false,
+          trial_end: null,
+          canceled_at: null,
+          current_period_start: 1_700_000_000,
+          current_period_end: 1_700_086_400,
           items: { data: [{ price: { id: 'price_test' } }] },
         })
       ),
@@ -77,6 +123,9 @@ describe('Stripe Webhooks - Email Integration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockProfilesUpdateEq.mockClear();
+    mockProfilesUpdate.mockClear();
+    mockSubscriptionsUpsert.mockClear();
 
     // Reset email service mock
     (getEmailService as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -123,6 +172,20 @@ describe('Stripe Webhooks - Email Integration', () => {
         }),
         userId: 'user-123',
       });
+
+      expect(mockProfilesUpdate).toHaveBeenCalledWith({
+        stripe_customer_id: 'cus_test',
+        subscription_status: 'active',
+        subscription_tier: 'pro_monthly',
+      });
+      expect(mockSubscriptionsUpsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'sub_1234567890',
+          user_id: 'user-123',
+          status: 'active',
+          price_id: 'price_test',
+        })
+      );
     });
 
     it('should use "there" as fallback when customer name is missing', async () => {

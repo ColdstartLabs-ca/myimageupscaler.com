@@ -27,7 +27,32 @@ export interface ICreditCalculationResult {
   isLegitimate: boolean;
 }
 
+export interface IPlanChangeCreditRefInput {
+  subscriptionId: string;
+  previousPriceId: string;
+  newPriceId: string;
+  periodStart?: string | null;
+}
+
 export class SubscriptionCreditsService {
+  private static sanitizeRefSegment(value: string | null | undefined): string {
+    return (value ?? 'unknown').replace(/[^a-zA-Z0-9_-]/g, '_');
+  }
+
+  /**
+   * Build a deterministic reference ID for a specific plan change.
+   * Route and webhook handlers share this so either path can apply the
+   * same credit top-up without drifting across retries.
+   */
+  static buildPlanChangeCreditRefId(input: IPlanChangeCreditRefInput): string {
+    const subscriptionId = this.sanitizeRefSegment(input.subscriptionId);
+    const previousPriceId = this.sanitizeRefSegment(input.previousPriceId);
+    const newPriceId = this.sanitizeRefSegment(input.newPriceId);
+    const periodStart = this.sanitizeRefSegment(input.periodStart ?? 'no_period');
+
+    return `planchg_${subscriptionId}_${previousPriceId}_${newPriceId}_${periodStart}`;
+  }
+
   /**
    * Calculate how many credits to add on a subscription upgrade
    *
