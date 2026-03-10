@@ -69,3 +69,4 @@ Post metadata updated to improve CTR based on GSC data (report period: last 3 mo
 | upscale-image-for-print-300-dpi-guide | SEO desc only 130c | SEO desc expanded to 147c with size calculator mention |
 | best-free-ai-image-upscaler-tools-2026 | Cannibalizing post above; weak CTR | Title → "7 Best…That Actually Work [2026]"; SEO desc sharpened |
 | ai-image-upscaling-vs-sharpening-explained | 72c title truncated in SERPs; 0 clicks at pos 7.1 | Title shortened to 59c; SEO desc to 155c with clearer value prop |
+| 2026-03-10 | gif upscaler, upscale gif | gif-upscaler | ✅ Published |

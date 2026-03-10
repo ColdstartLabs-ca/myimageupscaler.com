@@ -7,3 +7,4 @@ export { PricingCardSkeleton } from '@client/components/stripe/PricingCardSkelet
 export { SubscriptionStatus } from '@client/components/stripe/SubscriptionStatus';
 export { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
 export { OutOfCreditsModal } from '@client/components/stripe/OutOfCreditsModal';
+export { SubscriptionPlanGrid } from '@client/components/stripe/SubscriptionPlanGrid';

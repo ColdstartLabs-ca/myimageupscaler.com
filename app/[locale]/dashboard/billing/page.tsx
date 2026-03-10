@@ -1,7 +1,7 @@
 'use client';
 
 import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
-import { PlanChangeModal, PricingCard } from '@client/components/stripe';
+import { PlanChangeModal, SubscriptionPlanGrid } from '@client/components/stripe';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
 import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
 import { ModalHeader } from '@client/components/stripe/ModalHeader';
@@ -31,6 +31,7 @@ import {
   Wallet,
   Zap,
 } from 'lucide-react';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -51,6 +52,7 @@ export default function BillingPage() {
   const router = useRouter();
   const { showToast } = useToastStore();
   const t = useTranslations('dashboard.billing');
+  const { discountPercent } = useRegionTier();
   const [activeTab, setActiveTab] = useState('credits');
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [subscription, setSubscription] = useState<ISubscription | null>(null);
@@ -225,35 +227,7 @@ export default function BillingPage() {
           {/* Plan Cards Grid */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">{t('choosePlan')}</h3>
-            <div className="grid md:grid-cols-3 gap-4">
-              <PricingCard
-                name={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name}
-                description={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.description}
-                price={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}
-                interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
-                features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
-                priceId={STRIPE_PRICES.HOBBY_MONTHLY}
-              />
-
-              <PricingCard
-                name={SUBSCRIPTION_PLANS.PRO_MONTHLY.name}
-                description={SUBSCRIPTION_PLANS.PRO_MONTHLY.description}
-                price={SUBSCRIPTION_PLANS.PRO_MONTHLY.price}
-                interval={SUBSCRIPTION_PLANS.PRO_MONTHLY.interval}
-                features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
-                priceId={STRIPE_PRICES.PRO_MONTHLY}
-                recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
-              />
-
-              <PricingCard
-                name={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name}
-                description={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.description}
-                price={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.price}
-                interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
-                features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
-                priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
-              />
-            </div>
+            <SubscriptionPlanGrid discountPercent={discountPercent} />
           </div>
         </div>
       );
@@ -435,6 +409,7 @@ export default function BillingPage() {
                 type: 'error',
               })
             }
+            discountPercent={discountPercent}
           />
         </div>
 
@@ -710,44 +685,13 @@ export default function BillingPage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                <PricingCard
-                  name={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name}
-                  description={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.description}
-                  price={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}
-                  interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
-                  features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
-                  priceId={STRIPE_PRICES.HOBBY_MONTHLY}
-                  disabled={subscription.price_id === STRIPE_PRICES.HOBBY_MONTHLY}
-                  onSelect={() => handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY)}
-                  currentSubscriptionPrice={currentSubscriptionPrice}
-                />
-
-                <PricingCard
-                  name={SUBSCRIPTION_PLANS.PRO_MONTHLY.name}
-                  description={SUBSCRIPTION_PLANS.PRO_MONTHLY.description}
-                  price={SUBSCRIPTION_PLANS.PRO_MONTHLY.price}
-                  interval={SUBSCRIPTION_PLANS.PRO_MONTHLY.interval}
-                  features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
-                  priceId={STRIPE_PRICES.PRO_MONTHLY}
-                  recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
-                  disabled={subscription.price_id === STRIPE_PRICES.PRO_MONTHLY}
-                  onSelect={() => handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY)}
-                  currentSubscriptionPrice={currentSubscriptionPrice}
-                />
-
-                <PricingCard
-                  name={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name}
-                  description={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.description}
-                  price={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.price}
-                  interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
-                  features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
-                  priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
-                  disabled={subscription.price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
-                  onSelect={() => handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY)}
-                  currentSubscriptionPrice={currentSubscriptionPrice}
-                />
-              </div>
+              <SubscriptionPlanGrid
+                discountPercent={discountPercent}
+                currentSubscriptionPrice={currentSubscriptionPrice}
+                currentPriceId={subscription.price_id}
+                onSelect={handlePlanSelect}
+                className="grid grid-cols-1 gap-4 lg:grid-cols-3"
+              />
             </div>
           </div>
         </div>
