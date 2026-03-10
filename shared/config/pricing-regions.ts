@@ -31,27 +31,50 @@ const PRICING_REGION_CONFIGS: readonly IPricingRegionConfig[] = [
   {
     region: 'south_asia',
     discountPercent: 65,
-    countries: ['IN', 'PK', 'BD', 'LK', 'NP'],
+    countries: ['IN', 'PK', 'BD', 'LK', 'NP', 'AF', 'BT'],
   },
   {
     region: 'southeast_asia',
     discountPercent: 60,
-    countries: ['PH', 'ID', 'VN', 'TH', 'MM', 'KH', 'LA'],
+    countries: ['PH', 'ID', 'VN', 'TH', 'MM', 'KH', 'LA', 'MY', 'TL'],
   },
   {
     region: 'latam',
     discountPercent: 50,
-    countries: ['BR', 'MX', 'CO', 'AR', 'PE', 'CL', 'EC', 'VE', 'BO', 'PY', 'UY'],
+    // South America + Central America + Caribbean
+    countries: [
+      'BR', 'MX', 'CO', 'AR', 'PE', 'CL', 'EC', 'VE', 'BO', 'PY', 'UY', 'GY', 'SR',
+      'GT', 'HN', 'SV', 'NI', 'CR', 'PA', 'BZ',
+      'DO', 'HT', 'JM', 'CU', 'TT',
+    ],
   },
   {
     region: 'eastern_europe',
     discountPercent: 40,
-    countries: ['UA', 'RO', 'BG', 'RS', 'HR', 'BA', 'MK', 'AL', 'MD', 'GE'],
+    // Balkans + former Soviet + Turkey + Central Asia
+    countries: [
+      'UA', 'RO', 'BG', 'RS', 'HR', 'BA', 'MK', 'AL', 'MD', 'GE', 'ME', 'XK',
+      'RU', 'BY', 'AM', 'AZ',
+      'KZ', 'UZ', 'KG', 'TJ', 'TM',
+      'TR', 'CN',
+      'IR', 'IQ', 'JO', 'LB',
+    ],
   },
   {
     region: 'africa',
     discountPercent: 65,
-    countries: ['NG', 'KE', 'ZA', 'GH', 'ET', 'TZ', 'UG', 'RW', 'SN', 'CI'],
+    countries: [
+      // North Africa
+      'EG', 'MA', 'TN', 'DZ', 'LY', 'SD',
+      // West Africa
+      'NG', 'GH', 'SN', 'CI', 'ML', 'BF', 'NE', 'TD', 'GN', 'SL', 'LR', 'TG', 'BJ', 'MR', 'GM', 'GW', 'CV', 'ST',
+      // Central Africa
+      'CM', 'CD', 'CF', 'CG', 'GA', 'GQ', 'AO',
+      // East Africa
+      'ET', 'KE', 'TZ', 'UG', 'RW', 'BI', 'MZ', 'MG', 'DJ', 'ER', 'SO', 'SS', 'KM',
+      // Southern Africa
+      'ZA', 'ZM', 'ZW', 'MW', 'BW', 'NA', 'LS', 'SZ',
+    ],
   },
 ] as const;
 
