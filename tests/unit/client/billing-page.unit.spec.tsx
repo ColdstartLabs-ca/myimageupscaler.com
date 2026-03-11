@@ -217,6 +217,17 @@ vi.mock('@client/components/stripe/PlanChangeModal', () => ({
     ) : null,
 }));
 
+vi.mock('@client/hooks/useRegionTier', () => ({
+  useRegionTier: vi.fn(() => ({
+    tier: 'standard',
+    country: 'US',
+    isLoading: false,
+    isRestricted: false,
+    pricingRegion: 'standard',
+    discountPercent: 0,
+  })),
+}));
+
 import { StripeService } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
 import { getPlanDisplayName } from '@shared/config/stripe';
