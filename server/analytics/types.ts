@@ -516,6 +516,84 @@ export interface IPaywallHitProperties {
 }
 
 // =============================================================================
+// Checkout Recovery Event Properties
+// =============================================================================
+
+export interface IPreCheckoutEmailShownProperties {
+  source: 'pricing_page' | 'upgrade_prompt' | 'out_of_credits' | 'premium_upsell';
+  hasPlanId: boolean;
+}
+
+export interface IPreCheckoutEmailCapturedProperties {
+  source: string;
+  consent: boolean;
+}
+
+export interface IPreCheckoutEmailDismissedProperties {
+  source: string;
+}
+
+export interface IRecoveryBannerShownProperties {
+  planKey?: string;
+  packKey?: string;
+  hasDiscountCode: boolean;
+}
+
+export interface IRecoveryBannerClickedProperties {
+  planKey?: string;
+  packKey?: string;
+  hasDiscountCode: boolean;
+}
+
+export interface IRecoveryBannerDismissedProperties {
+  planKey?: string;
+  packKey?: string;
+  hasDiscountCode: boolean;
+}
+
+export interface IRecoveryEmailSentProperties {
+  emailNumber: 1 | 2 | 3;
+  checkoutId: string;
+  hasDiscount: boolean;
+}
+
+export interface IRecoveryEmailOpenedProperties {
+  emailNumber: 1 | 2 | 3;
+  checkoutId: string;
+}
+
+export interface IRecoveryEmailClickedProperties {
+  emailNumber: 1 | 2 | 3;
+  checkoutId: string;
+  hasDiscount: boolean;
+}
+
+export interface IRecoveryLinkClickedProperties {
+  checkoutId: string;
+  hasDiscount: boolean;
+}
+
+export interface ICheckoutRecoveredProperties {
+  checkoutId: string;
+  hasDiscount: boolean;
+  isValid: boolean;
+}
+
+export interface IRecoveryCronExecutedProperties {
+  dryRun: boolean;
+  email1hrTotal: number;
+  email24hrTotal: number;
+  email72hrTotal: number;
+  totalSent: number;
+  totalFailed: number;
+}
+
+export interface IRecoveryCronErrorProperties {
+  error: string;
+  dryRun: boolean;
+}
+
+// =============================================================================
 // Event Types
 // =============================================================================
 
@@ -641,6 +719,20 @@ export type IAnalyticsEventName =
   | 'email_captured'
   // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
   | 'comparison_viewed'
+  // Checkout recovery events
+  | 'pre_checkout_email_shown'
+  | 'pre_checkout_email_captured'
+  | 'pre_checkout_email_dismissed'
+  | 'recovery_banner_shown'
+  | 'recovery_banner_clicked'
+  | 'recovery_banner_dismissed'
+  | 'recovery_email_sent'
+  | 'recovery_email_opened'
+  | 'recovery_email_clicked'
+  | 'recovery_link_clicked'
+  | 'checkout_recovered'
+  | 'recovery_cron_executed'
+  | 'recovery_cron_error'
   // Amplitude identity events (server-side only)
   | '$identify';
 
