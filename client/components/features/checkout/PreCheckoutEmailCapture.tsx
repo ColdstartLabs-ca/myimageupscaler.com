@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Mail } from 'lucide-react';
 import { analytics } from '@client/analytics/analyticsClient';
 
@@ -59,6 +59,7 @@ export function PreCheckoutEmailCapture({
   onDismiss,
   onShown,
 }: IPreCheckoutEmailCaptureProps): JSX.Element | null {
+  const hasTrackedShownRef = useRef(false);
   const [state, setState] = useState<IPreCheckoutEmailCaptureState>({
     email: '',
     consent: false,
@@ -67,14 +68,18 @@ export function PreCheckoutEmailCapture({
     error: undefined,
   });
 
-  // Track shown event on mount
-  useState(() => {
+  useEffect(() => {
+    if (hasTrackedShownRef.current) {
+      return;
+    }
+
+    hasTrackedShownRef.current = true;
     analytics.track('pre_checkout_email_shown', {
       source,
       hasPlanId: Boolean(planId),
     });
     onShown?.();
-  });
+  }, [source, planId, onShown]);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
