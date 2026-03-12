@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 
 /**
@@ -15,6 +15,33 @@ interface IPreCheckoutEmailData {
   email: string;
   consent: boolean;
   timestamp: number;
+}
+
+function getStorage(): Storage | undefined {
+  if (typeof globalThis === 'undefined') {
+    return undefined;
+  }
+
+  return globalThis.localStorage;
+}
+
+function readStoredEmail(): string | undefined {
+  const storage = getStorage();
+  if (!storage) {
+    return undefined;
+  }
+
+  try {
+    const stored = storage.getItem(PRE_CHECKOUT_EMAIL_KEY);
+    if (!stored) {
+      return undefined;
+    }
+
+    const data: IPreCheckoutEmailData = JSON.parse(stored);
+    return data.email;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -47,33 +74,18 @@ export function usePreCheckoutEmail(): {
   clearEmail: () => void;
   trackDismiss: (source: string) => void;
 } {
-  const [email, setEmailState] = useState<string | undefined>(undefined);
+  const [email, setEmailState] = useState<string | undefined>(() => readStoredEmail());
 
-  /**
-   * Load email from localStorage on mount
-   * Note: This could be called in a useEffect if needed
-   */
-  const _loadEmail = useCallback(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    try {
-      const stored = localStorage.getItem(PRE_CHECKOUT_EMAIL_KEY);
-      if (stored) {
-        const data: IPreCheckoutEmailData = JSON.parse(stored);
-        setEmailState(data.email);
-      }
-    } catch (_error) {
-      console.error('Failed to load pre-checkout email:', _error);
-    }
+  useEffect(() => {
+    setEmailState(readStoredEmail());
   }, []);
 
   /**
    * Save email to localStorage
    */
   const saveEmail = useCallback((email: string, consent: boolean = false) => {
-    if (typeof window === 'undefined') {
+    const storage = getStorage();
+    if (!storage) {
       return;
     }
 
@@ -84,7 +96,7 @@ export function usePreCheckoutEmail(): {
         timestamp: Date.now(),
       };
 
-      localStorage.setItem(PRE_CHECKOUT_EMAIL_KEY, JSON.stringify(data));
+      storage.setItem(PRE_CHECKOUT_EMAIL_KEY, JSON.stringify(data));
       setEmailState(email);
 
       // Track analytics
@@ -100,20 +112,7 @@ export function usePreCheckoutEmail(): {
    * Get the stored email
    */
   const getEmail = useCallback((): string | undefined => {
-    if (typeof window === 'undefined') {
-      return undefined;
-    }
-
-    try {
-      const stored = localStorage.getItem(PRE_CHECKOUT_EMAIL_KEY);
-      if (stored) {
-        const data: IPreCheckoutEmailData = JSON.parse(stored);
-        return data.email;
-      }
-    } catch {
-      return undefined;
-    }
-    return undefined;
+    return readStoredEmail();
   }, []);
 
   /**
@@ -125,12 +124,13 @@ export function usePreCheckoutEmail(): {
    * Clear email from localStorage
    */
   const clearEmail = useCallback(() => {
-    if (typeof window === 'undefined') {
+    const storage = getStorage();
+    if (!storage) {
       return;
     }
 
     try {
-      localStorage.removeItem(PRE_CHECKOUT_EMAIL_KEY);
+      storage.removeItem(PRE_CHECKOUT_EMAIL_KEY);
       setEmailState(undefined);
     } catch (_error) {
       console.error('Failed to clear pre-checkout email:', _error);

@@ -158,22 +158,10 @@ export function getRecoveryEmailTemplate(emailType: IRecoveryEmailType): string 
  * @param emailType - The email type that was sent
  */
 async function markEmailSent(checkoutId: string, emailType: IRecoveryEmailType): Promise<void> {
-  const timestampField =
-    emailType === '1hr'
-      ? 'first_email_sent_at'
-      : emailType === '24hr'
-        ? 'second_email_sent_at'
-        : 'third_email_sent_at';
-
-  // Update emails_sent JSON and timestamp field
-  const { error } = await supabaseAdmin
-    .from('abandoned_checkouts')
-    .update({
-      emails_sent: { [`email_${emailType}`]: true },
-      [timestampField]: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', checkoutId);
+  const { error } = await supabaseAdmin.rpc('mark_email_sent', {
+    checkout_uuid: checkoutId,
+    email_type: `email_${emailType}`,
+  });
 
   if (error) {
     console.error(`Failed to mark email ${emailType} as sent for checkout ${checkoutId}:`, error);
@@ -321,14 +309,16 @@ export const sendRecoveryEmail: ISendRecoveryEmailFn = async (
  * console.log(`Sent: ${result.sent}, Failed: ${result.failed}`);
  */
 export async function sendDueRecoveryEmails(
-  emailType: IRecoveryEmailType
+  emailType: IRecoveryEmailType,
+  options: { dryRun?: boolean } = {}
 ): Promise<{ sent: number; failed: number; total: number }> {
   const config = RECOVERY_EMAIL_CONFIGS[emailType];
   const emailField = `email_${emailType}` as const;
+  const { dryRun = false } = options;
 
   // Calculate the time window for this email type
-  const minAge = dayjs().subtract(config.hoursAfterAbandonment, 'hour').toISOString();
-  const maxAge = dayjs()
+  const oldestEligibleAt = dayjs().subtract(config.hoursAfterAbandonment, 'hour').toISOString();
+  const newestEligibleAt = dayjs()
     .subtract(config.hoursAfterAbandonment - 1, 'hour')
     .toISOString();
 
@@ -340,8 +330,10 @@ export async function sendDueRecoveryEmails(
     .from('abandoned_checkouts')
     .select('*')
     .eq('status', 'pending')
-    .gte('created_at', maxAge)
-    .lte('created_at', minAge)
+    .not('email', 'is', null)
+    .neq('email', '')
+    .gte('created_at', oldestEligibleAt)
+    .lte('created_at', newestEligibleAt)
     .eq(`emails_sent->>${emailField}`, 'false');
 
   if (error) {
@@ -351,6 +343,10 @@ export async function sendDueRecoveryEmails(
 
   if (!checkouts || checkouts.length === 0) {
     return { sent: 0, failed: 0, total: 0 };
+  }
+
+  if (dryRun) {
+    return { sent: 0, failed: 0, total: checkouts.length };
   }
 
   let sent = 0;
