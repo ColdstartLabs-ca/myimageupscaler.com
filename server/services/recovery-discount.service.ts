@@ -274,31 +274,39 @@ export async function getPromoCodeByCheckoutId(
   checkoutId: string
 ): Promise<IRecoveryDiscountCode | null> {
   try {
-    const promotionCodes = await stripe.promotionCodes.list({
-      limit: 10,
-    });
+    let startingAfter: string | undefined;
 
-    // Filter by metadata.checkout_id (Stripe doesn't support metadata filtering in list)
-    const promoCode = promotionCodes.data.find(
-      pc =>
-        pc.metadata?.checkout_id === checkoutId &&
-        pc.metadata?.type === 'abandoned_checkout_recovery'
-    );
+    while (true) {
+      const promotionCodes = await stripe.promotionCodes.list({
+        limit: 100,
+        starting_after: startingAfter,
+      });
 
-    if (!promoCode) {
-      return null;
+      const promoCode = promotionCodes.data.find(
+        pc =>
+          pc.metadata?.checkout_id === checkoutId &&
+          pc.metadata?.type === 'abandoned_checkout_recovery'
+      );
+
+      if (promoCode) {
+        return {
+          code: promoCode.code || '',
+          promotionCodeId: promoCode.id,
+          couponId:
+            (typeof promoCode.promotion.coupon === 'string'
+              ? promoCode.promotion.coupon
+              : promoCode.promotion.coupon?.id) || '',
+          checkoutId: checkoutId,
+          expiresAt: promoCode.expires_at ? new Date(promoCode.expires_at * 1000) : new Date(),
+        };
+      }
+
+      if (!promotionCodes.has_more || promotionCodes.data.length === 0) {
+        return null;
+      }
+
+      startingAfter = promotionCodes.data[promotionCodes.data.length - 1]?.id;
     }
-
-    return {
-      code: promoCode.code || '',
-      promotionCodeId: promoCode.id,
-      couponId:
-        (typeof promoCode.promotion.coupon === 'string'
-          ? promoCode.promotion.coupon
-          : promoCode.promotion.coupon?.id) || '',
-      checkoutId: checkoutId,
-      expiresAt: promoCode.expires_at ? new Date(promoCode.expires_at * 1000) : new Date(),
-    };
   } catch (error) {
     console.error('Error getting promo code by checkout ID:', error);
     return null;

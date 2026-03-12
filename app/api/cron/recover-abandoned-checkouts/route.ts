@@ -29,7 +29,7 @@ function validateCronAuth(request: NextRequest): boolean {
     console.warn('[cron/recover-abandoned-checkouts] Invalid cron secret');
   }
 
-  return true;
+  return isValid;
 }
 
 /**
@@ -65,9 +65,9 @@ export async function GET(request: NextRequest) {
   try {
     // Send all three types of recovery emails in parallel
     const [email1hr, email24hr, email72hr] = await Promise.all([
-      sendDueRecoveryEmails('1hr'),
-      sendDueRecoveryEmails('24hr'),
-      sendDueRecoveryEmails('72hr'),
+      sendDueRecoveryEmails('1hr', { dryRun }),
+      sendDueRecoveryEmails('24hr', { dryRun }),
+      sendDueRecoveryEmails('72hr', { dryRun }),
     ]);
 
     const response = {
