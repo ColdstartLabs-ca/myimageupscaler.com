@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 const AFTER_UPSCALE_SESSION_KEY = 'upgrade_prompt_shown_after_upscale';
 const AFTER_UPSCALE_THRESHOLD = 3;
@@ -24,6 +25,7 @@ export const AfterUpscaleBanner = ({
   isFreeUser,
 }: IAfterUpscaleBannerProps): JSX.Element | null => {
   const [visible, setVisible] = useState(false);
+  const { pricingRegion } = useRegionTier();
 
   useEffect(() => {
     if (!isFreeUser) return;
@@ -38,12 +40,12 @@ export const AfterUpscaleBanner = ({
     sessionStorage.setItem(AFTER_UPSCALE_SESSION_KEY, 'true');
     markPromptShown({ key: AFTER_UPSCALE_LS_KEY, cooldownMs: 24 * 60 * 60 * 1000 });
     setVisible(true);
-
     analytics.track('upgrade_prompt_shown', {
       trigger: 'after_upscale',
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
-  }, [completedCount, isFreeUser]);
+  }, [completedCount, isFreeUser, pricingRegion]);
 
   if (!visible) return null;
 
@@ -51,6 +53,7 @@ export const AfterUpscaleBanner = ({
     analytics.track('upgrade_prompt_dismissed', {
       trigger: 'after_upscale',
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
     setVisible(false);
   };
@@ -60,6 +63,7 @@ export const AfterUpscaleBanner = ({
       trigger: 'after_upscale',
       destination: '/dashboard/billing',
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
   };
 

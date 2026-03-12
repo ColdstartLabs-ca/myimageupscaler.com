@@ -335,8 +335,12 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       const durationMs = Date.now() - startTime;
 
       // Calculate resolutions
-      const inputResolution = inputWidth && inputHeight ? `${inputWidth}x${inputHeight}` : undefined;
-      const outputResolution = inputWidth && inputHeight ? `${inputWidth * config.scale}x${inputHeight * config.scale}` : undefined;
+      const inputResolution =
+        inputWidth && inputHeight ? `${inputWidth}x${inputHeight}` : undefined;
+      const outputResolution =
+        inputWidth && inputHeight
+          ? `${inputWidth * config.scale}x${inputHeight * config.scale}`
+          : undefined;
 
       // Track upscale completed event
       analytics.track('upscale_completed', {

@@ -5,7 +5,11 @@
  * For client-side analytics, use @client/analytics instead.
  */
 
-export { trackServerEvent, trackRevenue } from '@server/analytics/analyticsService';
+export {
+  trackServerEvent,
+  trackRevenue,
+  setPricingRegionUserProperty,
+} from '@server/analytics/analyticsService';
 export type { IServerTrackOptions } from '@server/analytics/analyticsService';
 export type {
   IAnalyticsEvent,

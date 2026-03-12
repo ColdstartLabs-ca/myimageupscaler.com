@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { Modal } from '@client/components/ui/Modal';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 const POST_DOWNLOAD_SHOW_PROBABILITY = 0.5;
 
@@ -24,6 +25,7 @@ export const PostDownloadPrompt = ({
 }: IPostDownloadPromptProps): JSX.Element | null => {
   const [visible, setVisible] = useState(false);
   const lastEvaluatedDownloadCountRef = useRef(0);
+  const { pricingRegion } = useRegionTier();
 
   useEffect(() => {
     if (!isFreeUser) return;
@@ -34,12 +36,12 @@ export const PostDownloadPrompt = ({
     if (Math.random() >= POST_DOWNLOAD_SHOW_PROBABILITY) return;
 
     setVisible(true);
-
     analytics.track('upgrade_prompt_shown', {
       trigger: 'after_download',
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
-  }, [isFreeUser, downloadCount]);
+  }, [isFreeUser, downloadCount, pricingRegion]);
 
   if (!visible) return null;
 
@@ -47,6 +49,7 @@ export const PostDownloadPrompt = ({
     analytics.track('upgrade_prompt_dismissed', {
       trigger: 'after_download',
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
     setVisible(false);
   };
@@ -56,6 +59,7 @@ export const PostDownloadPrompt = ({
       trigger: 'after_download',
       destination: '/dashboard/billing',
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
     setVisible(false);
   };
