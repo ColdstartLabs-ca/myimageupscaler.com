@@ -1,6 +1,7 @@
 {
   "checkout": {
     "loading": "Loading checkout...",
+    "slowLoading": "Taking longer than usual...",
     "error": "Error",
     "close": "Close",
     "notConfigured": "Stripe is not properly configured. Please contact support."
@@ -8,7 +9,9 @@
   "trustBadges": {
     "sslEncrypted": "SSL Encrypted",
     "gdprCompliant": "GDPR Compliant",
-    "stripeSecure": "Secure payment powered by Stripe"
+    "securePayment": "Secure Payment",
+    "sslEncryption": "256-bit SSL",
+    "stripeSecure": "Powered by Stripe"
   },
   "outOfCredits": {
     "title": "You're Out of Credits",
@@ -82,5 +85,21 @@
       "days": " (in {days} days)"
     },
     "startUpscaling": "Start upscaling now"
+  },
+  "exitSurvey": {
+    "title": "Quick question",
+    "question": "What stopped you from completing your purchase?",
+    "options": {
+      "price_too_high": "Price was higher than expected",
+      "payment_method_not_accepted": "Payment method not accepted",
+      "not_sure_needed": "Not sure I need this right now",
+      "technical_issue": "Technical issue / page wasn't working",
+      "just_browsing": "Just browsing, not ready to buy",
+      "other": "Other"
+    },
+    "otherPlaceholder": "Tell us more...",
+    "submit": "Submit",
+    "skip": "Skip",
+    "thanks": "Thanks for your feedback!"
   }
 }

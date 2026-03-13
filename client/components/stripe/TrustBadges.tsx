@@ -1,5 +1,6 @@
 'use client';
 
+import type React from 'react';
 import { useTranslations } from 'next-intl';
 import { BadgeCheck, Lock, Shield } from 'lucide-react';
 
@@ -48,7 +49,9 @@ export function TrustBadges({
   }
 
   return (
-    <div className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-2 py-3 px-4 bg-surface-light/50 rounded-lg ${className}`}>
+    <div
+      className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-2 py-3 px-4 bg-surface-light/50 rounded-lg ${className}`}
+    >
       <SecurityBadge icon={Lock} label={t('securePayment')} />
       <SecurityBadge icon={Shield} label={t('sslEncryption')} />
       <SecurityBadge icon={BadgeCheck} label={t('stripeSecure')} />
@@ -57,7 +60,7 @@ export function TrustBadges({
 }
 
 interface ISecurityBadgeProps {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   label: string;
 }
 

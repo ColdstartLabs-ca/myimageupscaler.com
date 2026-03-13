@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { getEnabledCreditPacks } from '@shared/config/subscription.utils';
 import type { ICreditPack } from '@shared/config/subscription.types';
 import { CreditCard, Check } from 'lucide-react';
 import { CheckoutModal } from './CheckoutModal';
+import { analytics } from '@client/analytics';
+import { useCheckoutVariant } from '@client/hooks/useCheckoutVariant';
+import { useRouter } from 'next/navigation';
 
 interface ICreditPackSelectorProps {
   onPurchaseStart?: () => void;
@@ -19,23 +22,91 @@ export function CreditPackSelector({
   onPurchaseComplete,
   discountPercent = 0,
 }: ICreditPackSelectorProps): JSX.Element {
+  const router = useRouter();
+  const { variant } = useCheckoutVariant();
+
   const [selectedPack, setSelectedPack] = useState<string | null>(null);
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
+  // Track initial vs final pack selection
+  const initialPackRef = useRef<string | null>(null);
+  const packSelectionStartTimeRef = useRef<number>(Date.now());
+  const packSwitchCountRef = useRef<number>(0);
+  const lastTrackedPackRef = useRef<string | null>(null);
+
   const packs = getEnabledCreditPacks();
 
+  // Track pack selection time on mount
+  useEffect(() => {
+    packSelectionStartTimeRef.current = Date.now();
+
+    return () => {
+      // Track abandonment if no purchase was made
+      if (!selectedPack) {
+        const timeSpentMs = Date.now() - packSelectionStartTimeRef.current;
+        analytics.track('checkout_step_time', {
+          step: 'plan_selection',
+          timeSpentMs,
+          priceId: 'credit_pack_selector',
+          cumulativeTimeMs: timeSpentMs,
+        });
+      }
+    };
+  }, [selectedPack]);
+
   const handlePurchase = (pack: ICreditPack) => {
+    // Track initial vs final selection
+    if (initialPackRef.current === null) {
+      initialPackRef.current = pack.key;
+    } else if (lastTrackedPackRef.current !== pack.key) {
+      // Track pack switch (comparison behavior)
+      packSwitchCountRef.current += 1;
+      analytics.track('pricing_plan_viewed', {
+        planName: pack.key,
+        priceId: pack.stripePriceId,
+      });
+    }
+    lastTrackedPackRef.current = pack.key;
+
+    // Track time spent on pack selection
+    const selectionTimeMs = Date.now() - packSelectionStartTimeRef.current;
+    analytics.track('checkout_step_time', {
+      step: 'plan_selection',
+      timeSpentMs: selectionTimeMs,
+      priceId: pack.stripePriceId,
+      cumulativeTimeMs: selectionTimeMs,
+    });
+
     setSelectedPack(pack.key);
     setSelectedPriceId(pack.stripePriceId);
-    setShowCheckoutModal(true);
     onPurchaseStart?.();
+
+    // A/B test: redirect to page vs show modal
+    if (variant === 'page' && pack.stripePriceId) {
+      // Track checkout_variant event before redirect
+      analytics.track('checkout_variant', {
+        variant: 'page',
+        priceId: pack.stripePriceId,
+        checkout_type: 'credits',
+      });
+      // Redirect to dedicated checkout page
+      router.push(`/checkout/${pack.stripePriceId}?type=credits`);
+    } else {
+      // Show modal for 'modal' variant or while loading
+      setShowCheckoutModal(true);
+    }
   };
 
   const handleCheckoutClose = () => {
     setShowCheckoutModal(false);
     setSelectedPack(null);
     setSelectedPriceId(null);
+    // Reset tracking refs for next interaction
+    initialPackRef.current = null;
+    packSelectionStartTimeRef.current = Date.now();
+    packSwitchCountRef.current = 0;
+    lastTrackedPackRef.current = null;
   };
 
   const handleCheckoutSuccess = () => {

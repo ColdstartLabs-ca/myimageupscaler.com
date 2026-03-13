@@ -6,7 +6,7 @@ import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscri
 import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
 import { ModalHeader } from '@client/components/stripe/ModalHeader';
 import { InternalTabs, type ITabItem } from '@client/components/ui/InternalTabs';
-import { StripeService } from '@client/services/stripeService';
+import { StripeService, preloadStripe } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
 import {
   STRIPE_PRICES,
@@ -71,6 +71,8 @@ export default function BillingPage() {
   const [hasMoreTransactions, setHasMoreTransactions] = useState(false);
 
   useEffect(() => {
+    // Preload Stripe.js to reduce checkout embed load time (Phase 3A optimization)
+    preloadStripe();
     loadBillingData();
     loadCreditHistory();
   }, []);
@@ -262,7 +264,7 @@ export default function BillingPage() {
               </div>
               <button
                 onClick={handleUpgrade}
-                className="px-4 py-2 bg-accent text-white rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors"
+                className="w-full sm:w-auto px-4 py-2 bg-accent text-white rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors"
                 data-testid="change-plan-button"
               >
                 {t('changePlan')}
@@ -494,7 +496,7 @@ export default function BillingPage() {
                   <button
                     onClick={() => loadCreditHistory(true)}
                     disabled={creditHistoryLoading}
-                    className="px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors disabled:opacity-50 inline-flex items-center gap-2"
+                    className="w-full sm:w-auto px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
                   >
                     {creditHistoryLoading ? <Loader2 size={14} className="animate-spin" /> : null}
                     {t('creditHistory.loadMore')}
@@ -531,7 +533,7 @@ export default function BillingPage() {
             <button
               onClick={handleManageSubscription}
               disabled={portalLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-surface text-base rounded-lg text-sm font-medium hover:bg-surface/90 transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-surface text-base rounded-lg text-sm font-medium hover:bg-surface/90 transition-colors disabled:opacity-50"
             >
               {portalLoading ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -547,7 +549,7 @@ export default function BillingPage() {
             <p className="text-sm mt-2">{t('choosePlanToSetup')}</p>
             <button
               onClick={handleUpgrade}
-              className="mt-4 px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors"
+              className="mt-4 w-full sm:w-auto px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors"
             >
               {t('viewPricing')}
             </button>
@@ -573,7 +575,7 @@ export default function BillingPage() {
             <button
               onClick={handleManageSubscription}
               disabled={portalLoading}
-              className="px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors inline-flex items-center gap-2"
+              className="w-full sm:w-auto px-4 py-2 border border-border text-white rounded-lg text-sm font-medium hover:bg-surface/10 transition-colors inline-flex items-center justify-center gap-2"
             >
               <Receipt size={16} />
               {t('viewInvoices')}
