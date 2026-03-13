@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { IAbandonedCheckout } from '@/shared/types/abandoned-checkout.types';
+import dayjs from 'dayjs';
 
 const { mockSend, mockTrackServerEvent, mockGenerateRecoveryPromoCode, mockRpc, mockFrom } =
   vi.hoisted(() => ({
@@ -109,8 +110,8 @@ describe('recovery-email.service', () => {
         recovery_discount_id: null,
         emails_sent: { email_1hr: false, email_24hr: false, email_72hr: false },
         status: 'pending',
-        created_at: '2026-03-12T11:15:00.000Z',
-        updated_at: '2026-03-12T11:15:00.000Z',
+        created_at: '2026-03-12T11:16:00.000Z',
+        updated_at: '2026-03-12T11:16:00.000Z',
         recovered_at: null,
         first_email_sent_at: null,
         second_email_sent_at: null,
@@ -145,7 +146,7 @@ describe('recovery-email.service', () => {
       eq: vi.fn(),
       not: vi.fn(),
       neq: vi.fn(),
-      gte: vi.fn(),
+      gt: vi.fn(),
       lte: vi.fn(),
     };
 
@@ -159,17 +160,56 @@ describe('recovery-email.service', () => {
     });
     query.not.mockReturnValue(query);
     query.neq.mockReturnValue(query);
-    query.gte.mockReturnValue(query);
+    query.gt.mockReturnValue(query);
     query.lte.mockReturnValue(query);
     mockFrom.mockReturnValue(query);
 
     const result = await sendDueRecoveryEmails('1hr', { dryRun: true });
+    const expectedNewestEligibleAt = dayjs().subtract(1, 'hour').toISOString();
+    const expectedOldestEligibleAt = dayjs(expectedNewestEligibleAt)
+      .subtract(15, 'minute')
+      .toISOString();
 
     expect(result).toEqual({ sent: 0, failed: 0, total: 2 });
     expect(query.not).toHaveBeenCalledWith('email', 'is', null);
     expect(query.neq).toHaveBeenCalledWith('email', '');
-    expect(query.gte).toHaveBeenCalledWith('created_at', expect.any(String));
-    expect(query.lte).toHaveBeenCalledWith('created_at', expect.any(String));
+    expect(query.gt).toHaveBeenCalledWith('created_at', expectedOldestEligibleAt);
+    expect(query.lte).toHaveBeenCalledWith('created_at', expectedNewestEligibleAt);
+    expect(mockSend).not.toHaveBeenCalled();
+  });
+
+  it('targets the cron-sized due window instead of sending reminder emails early', async () => {
+    const query = {
+      select: vi.fn(),
+      eq: vi.fn(),
+      not: vi.fn(),
+      neq: vi.fn(),
+      gt: vi.fn(),
+      lte: vi.fn(),
+    };
+
+    query.select.mockReturnValue(query);
+    query.eq.mockImplementation((field: string) => {
+      if (field === 'status') {
+        return query;
+      }
+
+      return Promise.resolve({ data: [], error: null });
+    });
+    query.not.mockReturnValue(query);
+    query.neq.mockReturnValue(query);
+    query.gt.mockReturnValue(query);
+    query.lte.mockReturnValue(query);
+    mockFrom.mockReturnValue(query);
+
+    await sendDueRecoveryEmails('24hr', { dryRun: true });
+    const expectedNewestEligibleAt = dayjs().subtract(24, 'hour').toISOString();
+    const expectedOldestEligibleAt = dayjs(expectedNewestEligibleAt)
+      .subtract(15, 'minute')
+      .toISOString();
+
+    expect(query.gt).toHaveBeenCalledWith('created_at', expectedOldestEligibleAt);
+    expect(query.lte).toHaveBeenCalledWith('created_at', expectedNewestEligibleAt);
     expect(mockSend).not.toHaveBeenCalled();
   });
 
