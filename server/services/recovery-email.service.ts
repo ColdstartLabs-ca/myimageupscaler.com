@@ -26,6 +26,8 @@ import { trackServerEvent } from '@server/analytics';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import dayjs from 'dayjs';
 
+const RECOVERY_EMAIL_CRON_INTERVAL_MINUTES = 15;
+
 /**
  * Generate the recovery URL for an abandoned checkout.
  *
@@ -316,10 +318,11 @@ export async function sendDueRecoveryEmails(
   const emailField = `email_${emailType}` as const;
   const { dryRun = false } = options;
 
-  // Calculate the time window for this email type
-  const oldestEligibleAt = dayjs().subtract(config.hoursAfterAbandonment, 'hour').toISOString();
-  const newestEligibleAt = dayjs()
-    .subtract(config.hoursAfterAbandonment - 1, 'hour')
+  // The recovery cron runs every 15 minutes, so only process the slice that
+  // just became due to avoid sending reminders early or reprocessing the same window.
+  const newestEligibleAt = dayjs().subtract(config.hoursAfterAbandonment, 'hour').toISOString();
+  const oldestEligibleAt = dayjs(newestEligibleAt)
+    .subtract(RECOVERY_EMAIL_CRON_INTERVAL_MINUTES, 'minute')
     .toISOString();
 
   // Query for checkouts that:
@@ -332,7 +335,7 @@ export async function sendDueRecoveryEmails(
     .eq('status', 'pending')
     .not('email', 'is', null)
     .neq('email', '')
-    .gte('created_at', oldestEligibleAt)
+    .gt('created_at', oldestEligibleAt)
     .lte('created_at', newestEligibleAt)
     .eq(`emails_sent->>${emailField}`, 'false');
 
