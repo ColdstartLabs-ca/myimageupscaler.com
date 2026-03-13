@@ -178,5 +178,59 @@
     "supportForFormats": "Support for JPG, PNG, and WEBP",
     "freeLimitText": "Up to 5MB per file • 1 image at a time • Upgrade for batch processing",
     "paidLimitText": "Up to 10MB per file • Batch processing available"
+  },
+  "sampleImages": {
+    "title": "Try with a sample image",
+    "subtitle": "No image handy? Try one of these to see the upscaler in action.",
+    "types": {
+      "photo": {
+        "title": "Photo",
+        "description": "Portrait and general photos"
+      },
+      "illustration": {
+        "title": "Illustration",
+        "description": "Digital art and vectors"
+      },
+      "old_photo": {
+        "title": "Old Photo",
+        "description": "Restoration of vintage photos"
+      }
+    },
+    "tryThis": "Try this",
+    "scaleFactor": "{scale}x upscale"
+  },
+  "progressSteps": {
+    "step1": "Upload",
+    "step2": "Configure",
+    "step3": "Download",
+    "ariaLabel": "Upscaling progress steps"
+  },
+  "progressCelebration": {
+    "title": "First upscale complete!",
+    "subtitle": "You just upscaled your first image! Ready to see what else our AI can do?",
+    "uploadAnother": "Upload Another",
+    "seePlans": "See Premium Plans",
+    "skipText": "Unlock unlimited upscales with Premium",
+    "dismiss": "Dismiss celebration"
+  },
+  "onboardingTour": {
+    "uploadZone": {
+      "title": "Upload Zone",
+      "content": "Drag and drop any image here, or click to browse"
+    },
+    "qualitySelector": {
+      "title": "Quality Tier",
+      "content": "Choose your quality tier. Higher quality = better results"
+    },
+    "downloadButton": {
+      "title": "Download",
+      "content": "Click to download your upscaled image"
+    },
+    "next": "Next",
+    "previous": "Previous",
+    "skip": "Skip tour",
+    "finish": "Finish",
+    "stepOf": "Step {current} of {total}",
+    "showTour": "Show me how"
   }
 }
