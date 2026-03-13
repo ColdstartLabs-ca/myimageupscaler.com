@@ -236,11 +236,7 @@ export interface IUpscaleQualitySelectedProperties {
 // Checkout Funnel Events (Phase 1 - Checkout Friction Investigation)
 // =============================================================================
 
-export type TCheckoutStep =
-  | 'plan_selection'
-  | 'stripe_embed'
-  | 'payment_details'
-  | 'confirmation';
+export type TCheckoutStep = 'plan_selection' | 'stripe_embed' | 'payment_details' | 'confirmation';
 
 export type TCheckoutErrorType =
   | 'card_declined'
@@ -250,11 +246,7 @@ export type TCheckoutErrorType =
   | 'session_expired'
   | 'other';
 
-export type TCheckoutExitMethod =
-  | 'close_button'
-  | 'escape_key'
-  | 'click_outside'
-  | 'navigate_away';
+export type TCheckoutExitMethod = 'close_button' | 'escape_key' | 'click_outside' | 'navigate_away';
 
 export type TDeviceType = 'mobile' | 'desktop' | 'tablet';
 

@@ -699,8 +699,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       {
         durationMs,
         modelUsed: resolvedModelId,
-        inputResolution: inputDimensions ? `${inputDimensions.width}x${inputDimensions.height}` : undefined,
-        outputResolution: inputDimensions ? `${inputDimensions.width * config.scale}x${inputDimensions.height * config.scale}` : undefined,
+        inputResolution: inputDimensions
+          ? `${inputDimensions.width}x${inputDimensions.height}`
+          : undefined,
+        outputResolution: inputDimensions
+          ? `${inputDimensions.width * config.scale}x${inputDimensions.height * config.scale}`
+          : undefined,
         success: true,
       },
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
