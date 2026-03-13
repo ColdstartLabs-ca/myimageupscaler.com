@@ -5,6 +5,11 @@
     "close": "Close",
     "notConfigured": "Stripe is not properly configured. Please contact support."
   },
+  "trustBadges": {
+    "sslEncrypted": "SSL Encrypted",
+    "gdprCompliant": "GDPR Compliant",
+    "stripeSecure": "Secure payment powered by Stripe"
+  },
   "outOfCredits": {
     "title": "You're Out of Credits",
     "description": "Purchase credits to continue processing images, or subscribe for better value.",

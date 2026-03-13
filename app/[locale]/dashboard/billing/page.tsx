@@ -1,7 +1,7 @@
 'use client';
 
 import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
-import { PlanChangeModal, SubscriptionPlanGrid } from '@client/components/stripe';
+import { PlanChangeModal, SubscriptionPlanGrid, TrustBadges } from '@client/components/stripe';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
 import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
 import { ModalHeader } from '@client/components/stripe/ModalHeader';
@@ -411,6 +411,11 @@ export default function BillingPage() {
             }
             discountPercent={discountPercent}
           />
+
+          {/* Security badges */}
+          <div className="mt-4 pt-4 border-t border-border">
+            <TrustBadges variant="compact" />
+          </div>
         </div>
 
         {/* Credit History */}

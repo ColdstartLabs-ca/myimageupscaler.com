@@ -232,6 +232,84 @@ export interface IUpscaleQualitySelectedProperties {
   modelVariant: string; // Quality tier (quick, standard, premium, ultra, auto)
 }
 
+// =============================================================================
+// Checkout Funnel Events (Phase 1 - Checkout Friction Investigation)
+// =============================================================================
+
+export type TCheckoutStep =
+  | 'plan_selection'
+  | 'stripe_embed'
+  | 'payment_details'
+  | 'confirmation';
+
+export type TCheckoutErrorType =
+  | 'card_declined'
+  | '3ds_failed'
+  | 'network_error'
+  | 'invalid_card'
+  | 'session_expired'
+  | 'other';
+
+export type TCheckoutExitMethod =
+  | 'close_button'
+  | 'escape_key'
+  | 'click_outside'
+  | 'navigate_away';
+
+export type TDeviceType = 'mobile' | 'desktop' | 'tablet';
+
+export type TCheckoutSurveyReason =
+  | 'price_too_high'
+  | 'payment_method_not_accepted'
+  | 'not_sure_needed'
+  | 'technical_issue'
+  | 'just_browsing'
+  | 'other';
+
+export type TCheckoutVariant = 'modal' | 'page';
+
+export interface ICheckoutStepViewedProperties {
+  step: TCheckoutStep;
+  loadTimeMs?: number;
+  priceId: string;
+  purchaseType: 'subscription' | 'credit_pack';
+  deviceType: TDeviceType;
+}
+
+export interface ICheckoutStepTimeProperties {
+  step: TCheckoutStep;
+  timeSpentMs: number;
+  priceId: string;
+  cumulativeTimeMs?: number;
+}
+
+export interface ICheckoutErrorProperties {
+  errorType: TCheckoutErrorType;
+  /** Sanitized error message - no sensitive card data */
+  errorMessage: string;
+  step: TCheckoutStep;
+  priceId: string;
+}
+
+export interface ICheckoutExitIntentProperties {
+  step: TCheckoutStep;
+  timeSpentMs: number;
+  priceId: string;
+  method: TCheckoutExitMethod;
+}
+
+export interface ICheckoutExitSurveyResponseProperties {
+  reason: TCheckoutSurveyReason;
+  otherReason?: string;
+  priceId: string;
+  timeSpentMs: number;
+}
+
+export interface ICheckoutVariantProperties {
+  variant: TCheckoutVariant;
+  priceId: string;
+}
+
 // Upscale completion tracking properties
 export interface IImageUpscaleStartedProperties {
   inputWidth?: number;
@@ -328,6 +406,13 @@ export type IAnalyticsEventName =
   | 'pseo_internal_link_clicked'
   // Regional pricing monitoring events (server-side only)
   | 'pricing_region_mismatch'
+  // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
+  | 'checkout_step_viewed'
+  | 'checkout_step_time'
+  | 'checkout_error'
+  | 'checkout_exit_intent'
+  | 'checkout_exit_survey_response'
+  | 'checkout_variant'
   // Amplitude identity events (server-side only)
   | '$identify';
 
