@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { CreditPackSelector } from './CreditPackSelector';
 import { AlertCircle, X } from 'lucide-react';
 import { analytics } from '@client/analytics';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 interface IOutOfCreditsModalProps {
   isOpen: boolean;
@@ -19,15 +20,17 @@ export function OutOfCreditsModal({
 }: IOutOfCreditsModalProps): JSX.Element | null {
   const [showSubscriptionCTA, setShowSubscriptionCTA] = useState(false);
   const t = useTranslations('stripe.outOfCredits');
+  const { pricingRegion } = useRegionTier();
 
   useEffect(() => {
     if (isOpen) {
       analytics.track('upgrade_prompt_shown', {
         trigger: 'out_of_credits',
         currentPlan: 'free',
+        pricingRegion: pricingRegion || 'standard',
       });
     }
-  }, [isOpen]);
+  }, [isOpen, pricingRegion]);
 
   if (!isOpen) return null;
 
@@ -90,6 +93,7 @@ export function OutOfCreditsModal({
                     trigger: 'out_of_credits',
                     destination: 'credits',
                     currentPlan: 'free',
+                    pricingRegion: pricingRegion || 'standard',
                   });
                 }}
                 onPurchaseComplete={() => {

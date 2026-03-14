@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { analytics } from '@client/analytics/analyticsClient';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 export interface IPremiumUpsellModalProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
   onProceed,
   onViewPlans,
 }) => {
+  const { pricingRegion } = useRegionTier();
   const [currentImageIndex, setCurrentImageIndex] = useState(() =>
     Math.floor(Math.random() * COMPARISON_IMAGES.length)
   );
@@ -60,6 +62,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
         trigger: 'premium_upsell',
         imageVariant: COMPARISON_IMAGES[currentImageIndex].label,
         currentPlan: 'free',
+        pricingRegion: pricingRegion || 'standard',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,6 +85,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
       trigger: 'premium_upsell',
       imageVariant: currentImages.label,
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
     onClose();
   };
@@ -91,6 +95,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
       trigger: 'premium_upsell',
       imageVariant: currentImages.label,
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
     onProceed();
   };
@@ -101,6 +106,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
       imageVariant: currentImages.label,
       destination: 'billing',
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
     onViewPlans();
   };

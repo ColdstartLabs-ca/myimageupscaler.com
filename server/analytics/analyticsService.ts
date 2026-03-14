@@ -179,5 +179,34 @@ export async function trackRevenue(
   );
 }
 
+/**
+ * Set pricing_region as a user property via $identify.
+ * This enables regional cohort analysis even if individual events are missing data.
+ * Uses $setOnce to only set once per user (doesn't overwrite if already set).
+ *
+ * @example
+ * ```ts
+ * // After detecting user's pricing region
+ * await setPricingRegionUserProperty(
+ *   'user_123',
+ *   'south_asia',
+ *   { apiKey: serverEnv.AMPLITUDE_API_KEY }
+ * );
+ * ```
+ */
+export async function setPricingRegionUserProperty(
+  userId: string,
+  pricingRegion: string,
+  options: IServerTrackOptions
+): Promise<boolean> {
+  return trackServerEvent(
+    '$identify',
+    {
+      $setOnce: { pricing_region: pricingRegion },
+    },
+    { ...options, userId }
+  );
+}
+
 // Re-export hashEmail for backwards compatibility
 export { hashEmail } from '@shared/utils/crypto';

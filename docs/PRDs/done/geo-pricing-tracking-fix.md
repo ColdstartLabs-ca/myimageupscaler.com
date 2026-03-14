@@ -2,7 +2,7 @@
 
 **Complexity: 5 -> MEDIUM mode**
 **Date:** 2026-03-11
-**Status:** Draft
+**Status:** Complete
 **Related:** `docs/PRDs/regional-dynamic-pricing.md`
 
 ---
@@ -159,10 +159,10 @@ flowchart LR
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/analytics/analytics-types.unit.spec.ts` | `should require pricingRegion on pricing events` | TypeScript compilation fails if missing |
-| same | `should require pricingRegion on upgrade prompt events` | TypeScript compilation fails if missing |
+| Test File                                           | Test Name                                               | Assertion                               |
+| --------------------------------------------------- | ------------------------------------------------------- | --------------------------------------- |
+| `tests/unit/analytics/analytics-types.unit.spec.ts` | `should require pricingRegion on pricing events`        | TypeScript compilation fails if missing |
+| same                                                | `should require pricingRegion on upgrade prompt events` | TypeScript compilation fails if missing |
 
 **Verification Plan:**
 
@@ -214,12 +214,12 @@ analytics.track('upgrade_prompt_shown', {
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/client/upgrade-prompts-with-region.unit.spec.ts` | `should include pricingRegion in upgrade_prompt_shown` | Property present in event |
-| same | `should include pricingRegion in upgrade_prompt_clicked` | Property present in event |
-| same | `should fallback to standard when pricingRegion is undefined` | Uses `'standard'` |
-| same | `should not fire upgrade_prompt_shown for paid users` | Existing behavior preserved |
+| Test File                                                    | Test Name                                                     | Assertion                   |
+| ------------------------------------------------------------ | ------------------------------------------------------------- | --------------------------- |
+| `tests/unit/client/upgrade-prompts-with-region.unit.spec.ts` | `should include pricingRegion in upgrade_prompt_shown`        | Property present in event   |
+| same                                                         | `should include pricingRegion in upgrade_prompt_clicked`      | Property present in event   |
+| same                                                         | `should fallback to standard when pricingRegion is undefined` | Uses `'standard'`           |
+| same                                                         | `should not fire upgrade_prompt_shown for paid users`         | Existing behavior preserved |
 
 **Verification Plan:**
 
@@ -267,12 +267,12 @@ useEffect(() => {
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/pricing/pricing-page-tracking.unit.spec.ts` | `should wait for pricingRegion before tracking` | Event not fired until region loaded |
-| same | `should include pricingRegion in pricing_page_viewed` | Property present |
-| same | `should fallback to standard after timeout` | Uses `'standard'` after 3s |
-| same | `should only track once per session` | Existing behavior preserved |
+| Test File                                               | Test Name                                             | Assertion                           |
+| ------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------- |
+| `tests/unit/pricing/pricing-page-tracking.unit.spec.ts` | `should wait for pricingRegion before tracking`       | Event not fired until region loaded |
+| same                                                    | `should include pricingRegion in pricing_page_viewed` | Property present                    |
+| same                                                    | `should fallback to standard after timeout`           | Uses `'standard'` after 3s          |
+| same                                                    | `should only track once per session`                  | Existing behavior preserved         |
 
 **Verification Plan:**
 
@@ -311,11 +311,11 @@ useEffect(() => {
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/api/analytics-validation.unit.spec.ts` | `should warn when pricingRegion missing on pricing events` | Warning logged |
-| same | `should default to standard when pricingRegion missing` | Event accepted with default |
-| same | `should reject invalid pricingRegion values` | Returns 400 for invalid region |
+| Test File                                          | Test Name                                                  | Assertion                      |
+| -------------------------------------------------- | ---------------------------------------------------------- | ------------------------------ |
+| `tests/unit/api/analytics-validation.unit.spec.ts` | `should warn when pricingRegion missing on pricing events` | Warning logged                 |
+| same                                               | `should default to standard when pricingRegion missing`    | Event accepted with default    |
+| same                                               | `should reject invalid pricingRegion values`               | Returns 400 for invalid region |
 
 **Verification Plan:**
 
@@ -361,20 +361,20 @@ useEffect(() => {
 
 **Dashboard Specification:**
 
-| Chart Type | Query | Purpose |
-|------------|-------|---------|
-| Funnel | `pricing_page_viewed` -> `checkout_completed` segmented by `pricing_region` | Compare conversion rates |
-- | Revenue per user by `pricing_region` | ARPU comparison |
-- | Revenue per user by `pricing_region` | LTV comparison |
-- | Cohort analysis by `pricing_region` | Retention comparison |
-- | Alert | Conversion rate deviation >20% | Anomaly detection |
+| Chart Type | Query                                                                       | Purpose                        |
+| ---------- | --------------------------------------------------------------------------- | ------------------------------ | ----------------- |
+| Funnel     | `pricing_page_viewed` -> `checkout_completed` segmented by `pricing_region` | Compare conversion rates       |
+| -          | Revenue per user by `pricing_region`                                        | ARPU comparison                |
+| -          | Revenue per user by `pricing_region`                                        | LTV comparison                 |
+| -          | Cohort analysis by `pricing_region`                                         | Retention comparison           |
+| -          | Alert                                                                       | Conversion rate deviation >20% | Anomaly detection |
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
+| Test File                                           | Test Name                                               | Assertion              |
+| --------------------------------------------------- | ------------------------------------------------------- | ---------------------- |
 | `tests/unit/analytics/user-properties.unit.spec.ts` | `should set pricing_region user property via $identify` | Property set correctly |
-| same | `should only set once per user` | `$setOnce` used |
+| same                                                | `should only set once per user`                         | `$setOnce` used        |
 
 **Verification Plan:**
 
@@ -403,11 +403,11 @@ useEffect(() => {
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/api/checkout-region-tracking.unit.spec.ts` | `should include pricingRegion in checkout_started` | Property present |
-| same | `should derive pricingRegion from CF-IPCountry` | Correct region mapped |
-| same | `should include pricingRegion in session metadata` | Metadata includes region |
+| Test File                                              | Test Name                                          | Assertion                |
+| ------------------------------------------------------ | -------------------------------------------------- | ------------------------ |
+| `tests/unit/api/checkout-region-tracking.unit.spec.ts` | `should include pricingRegion in checkout_started` | Property present         |
+| same                                                   | `should derive pricingRegion from CF-IPCountry`    | Correct region mapped    |
+| same                                                   | `should include pricingRegion in session metadata` | Metadata includes region |
 
 **Verification Plan:**
 
@@ -420,12 +420,12 @@ useEffect(() => {
 
 **4 weeks after full implementation:**
 
-| Scenario | Action |
-|----------|--------|
-| Discounted regions convert **2x+ better** than standard | Keep pricing, consider expanding to more countries |
-| Discounted regions convert **1.2x-2x better** than standard | Keep pricing, monitor for optimization |
-| Discounted regions convert **same or worse** than standard | Investigate UX issues or adjust discounts |
-| **No data** (coverage <95%) | Investigate tracking implementation |
+| Scenario                                                    | Action                                             |
+| ----------------------------------------------------------- | -------------------------------------------------- |
+| Discounted regions convert **2x+ better** than standard     | Keep pricing, consider expanding to more countries |
+| Discounted regions convert **1.2x-2x better** than standard | Keep pricing, monitor for optimization             |
+| Discounted regions convert **same or worse** than standard  | Investigate UX issues or adjust discounts          |
+| **No data** (coverage <95%)                                 | Investigate tracking implementation                |
 
 **ROI Calculation:**
 
@@ -494,16 +494,16 @@ If ROI < 1: We're losing money vs. standard pricing
 
 ## 10. Timeline Estimate
 
-| Phase | Duration | Dependencies |
-|-------|----------|--------------|
-| Phase 1: Analytics Types | 2 hours | None |
-| Phase 2: Upgrade Prompts | 4 hours | Phase 1 |
-| Phase 3: Pricing Page Fix | 3 hours | Phase 1 |
-| Phase 4: Server Validation | 2 hours | Phase 1 |
-| Phase 5: User Property & Dashboard | 4 hours | Phase 1 |
-| Phase 6: Checkout Events | 2 hours | None |
-| **Total Implementation** | **17 hours** | ~2-3 days |
-| Data Collection | 4 weeks | After implementation |
-| Analysis & Decision | 1 week | After data collection |
+| Phase                              | Duration     | Dependencies          |
+| ---------------------------------- | ------------ | --------------------- |
+| Phase 1: Analytics Types           | 2 hours      | None                  |
+| Phase 2: Upgrade Prompts           | 4 hours      | Phase 1               |
+| Phase 3: Pricing Page Fix          | 3 hours      | Phase 1               |
+| Phase 4: Server Validation         | 2 hours      | Phase 1               |
+| Phase 5: User Property & Dashboard | 4 hours      | Phase 1               |
+| Phase 6: Checkout Events           | 2 hours      | None                  |
+| **Total Implementation**           | **17 hours** | ~2-3 days             |
+| Data Collection                    | 4 weeks      | After implementation  |
+| Analysis & Decision                | 1 week       | After data collection |
 
 **Total: ~5-6 weeks from start to decision**

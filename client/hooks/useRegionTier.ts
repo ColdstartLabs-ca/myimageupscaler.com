@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { RegionTier } from '@/lib/anti-freeloader/region-classifier';
+import { analytics } from '@client/analytics';
 
 interface IGeoCache {
   tier: RegionTier;
@@ -12,6 +13,8 @@ interface IGeoCache {
 
 // Module-level cache — persists for the browser session
 let cachedGeo: IGeoCache | null = null;
+// Track whether we've identified pricing_region for this session
+let hasIdentifiedPricingRegion = false;
 
 export function useRegionTier(): {
   tier: RegionTier | null;
@@ -28,6 +31,8 @@ export function useRegionTier(): {
   );
   const [discountPercent, setDiscountPercent] = useState<number>(cachedGeo?.discountPercent ?? 0);
   const [isLoading, setIsLoading] = useState(cachedGeo === null);
+  // Ref to ensure we only identify once per hook instance
+  const hasIdentifiedRef = useRef(false);
 
   useEffect(() => {
     if (cachedGeo !== null) return;
@@ -50,6 +55,25 @@ export function useRegionTier(): {
           setCountry(cachedGeo.country);
           setPricingRegion(cachedGeo.pricingRegion);
           setDiscountPercent(cachedGeo.discountPercent);
+
+          // Set pricing_region as a user property via $identify
+          // Uses $setOnce so it only sets once per user (doesn't overwrite if already set)
+          // This enables regional cohort analysis even if individual events are missing data
+          if (
+            !hasIdentifiedRef.current &&
+            !hasIdentifiedPricingRegion &&
+            cachedGeo.pricingRegion &&
+            analytics.isEnabled()
+          ) {
+            hasIdentifiedRef.current = true;
+            hasIdentifiedPricingRegion = true;
+            // Track $identify with pricing_region user property
+            // The analytics.track method is used here with $identify event type
+            // which the Amplitude SDK recognizes as a user property update
+            analytics.track('$identify', {
+              $setOnce: { pricing_region: cachedGeo.pricingRegion },
+            });
+          }
         }
       )
       .catch(() => {

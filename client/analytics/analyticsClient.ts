@@ -346,7 +346,9 @@ export const analytics = {
     const currentSessionId = getSessionId();
     if (lastVisit && lastVisit.sessionId !== currentSessionId) {
       // Calculate days since last visit
-      const daysSinceLastVisit = Math.floor((Date.now() - lastVisit.timestamp) / (1000 * 60 * 60 * 24));
+      const daysSinceLastVisit = Math.floor(
+        (Date.now() - lastVisit.timestamp) / (1000 * 60 * 60 * 24)
+      );
 
       // Only track return visits for users who visited more than 1 day ago
       // to avoid same-day session counting as return visits

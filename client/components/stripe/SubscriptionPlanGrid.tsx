@@ -24,9 +24,21 @@ interface ISubscriptionPlanGridProps {
 }
 
 const PLANS = [
-  { key: 'hobby' as const, config: SUBSCRIPTION_PLANS.HOBBY_MONTHLY, priceId: STRIPE_PRICES.HOBBY_MONTHLY },
-  { key: 'pro' as const, config: SUBSCRIPTION_PLANS.PRO_MONTHLY, priceId: STRIPE_PRICES.PRO_MONTHLY },
-  { key: 'business' as const, config: SUBSCRIPTION_PLANS.BUSINESS_MONTHLY, priceId: STRIPE_PRICES.BUSINESS_MONTHLY },
+  {
+    key: 'hobby' as const,
+    config: SUBSCRIPTION_PLANS.HOBBY_MONTHLY,
+    priceId: STRIPE_PRICES.HOBBY_MONTHLY,
+  },
+  {
+    key: 'pro' as const,
+    config: SUBSCRIPTION_PLANS.PRO_MONTHLY,
+    priceId: STRIPE_PRICES.PRO_MONTHLY,
+  },
+  {
+    key: 'business' as const,
+    config: SUBSCRIPTION_PLANS.BUSINESS_MONTHLY,
+    priceId: STRIPE_PRICES.BUSINESS_MONTHLY,
+  },
 ] as const;
 
 export function SubscriptionPlanGrid({
@@ -51,7 +63,11 @@ export function SubscriptionPlanGrid({
             interval={config.interval as 'month' | 'year'}
             features={config.features}
             priceId={priceId}
-            recommended={'recommended' in config ? (config as { recommended?: boolean }).recommended : undefined}
+            recommended={
+              'recommended' in config
+                ? (config as { recommended?: boolean }).recommended
+                : undefined
+            }
             discountPercent={discountPercent}
             currentSubscriptionPrice={currentSubscriptionPrice}
             disabled={overrides.disabled ?? isCurrentPlan}

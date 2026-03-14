@@ -171,18 +171,21 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           oversizedEntries.forEach(entry => {
             analytics.track('error_occurred', {
               errorType: 'validation_failed',
-              errorMessage: entry.reason === 'size'
-                ? 'File size exceeds limit'
-                : `Image dimensions exceed ${IMAGE_VALIDATION.MAX_PIXELS / 1_000_000}MP limit`,
+              errorMessage:
+                entry.reason === 'size'
+                  ? 'File size exceeds limit'
+                  : `Image dimensions exceed ${IMAGE_VALIDATION.MAX_PIXELS / 1_000_000}MP limit`,
               context: {
                 fileName: entry.file.name,
                 fileSize: entry.file.size,
                 rejectionReason: entry.reason === 'size' ? 'file_size_limit' : 'dimension_limit',
-                ...(entry.dimensions ? {
-                  width: entry.dimensions.width,
-                  height: entry.dimensions.height,
-                  pixels: entry.dimensions.pixels,
-                } : {}),
+                ...(entry.dimensions
+                  ? {
+                      width: entry.dimensions.width,
+                      height: entry.dimensions.height,
+                      pixels: entry.dimensions.pixels,
+                    }
+                  : {}),
               },
             });
           });

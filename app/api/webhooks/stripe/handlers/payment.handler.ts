@@ -282,6 +282,10 @@ export class PaymentHandler {
       const paymentMethodType = session.payment_method_types?.[0] || 'card';
       const paymentMethod = paymentMethodType === 'card' ? 'stripe_card' : paymentMethodType;
 
+      // Extract pricing region and discount from session metadata
+      const pricingRegion = session.metadata?.pricing_region || 'standard';
+      const discountPercent = parseInt(session.metadata?.discount_percent || '0', 10);
+
       await trackServerEvent(
         'checkout_completed',
         {
@@ -292,6 +296,8 @@ export class PaymentHandler {
           paymentMethod,
           sessionId: session.id,
           currency: session.currency ?? 'usd',
+          pricingRegion,
+          discountPercent,
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );
