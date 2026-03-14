@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 // Load test environment variables (quiet: true suppresses dotenv tips)
 dotenv.config({ path: '.env.test', quiet: true });
 
+// Set test environment to use mock authentication (avoid Supabase connections)
+process.env.ENV = 'test';
+
 const isCI = !!process.env.CI;
 
 // Generate random ports for each test run to avoid conflicts with dev server
