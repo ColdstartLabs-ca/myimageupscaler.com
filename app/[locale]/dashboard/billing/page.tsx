@@ -53,7 +53,7 @@ export default function BillingPage() {
   const { showToast } = useToastStore();
   const t = useTranslations('dashboard.billing');
   const { discountPercent } = useRegionTier();
-  const [activeTab, setActiveTab] = useState('credits');
+  const [activeTab, setActiveTab] = useState('subscription');
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [subscription, setSubscription] = useState<ISubscription | null>(null);
   const [loading, setLoading] = useState(true);

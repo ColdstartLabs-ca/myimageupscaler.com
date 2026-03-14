@@ -310,7 +310,7 @@ describe('BillingPage', () => {
   });
 
   describe('Tab Layout', () => {
-    it('should render Credits tab as default', async () => {
+    it('should render Subscription tab as default', async () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
@@ -319,11 +319,13 @@ describe('BillingPage', () => {
         expect(screen.getByText('Billing')).toBeInTheDocument();
       });
 
-      // Check that credits tab is active (has text-accent class)
+      // Check that subscription tab is active (has text-accent class)
       const tabButtons = document.querySelectorAll('.flex.gap-1 button');
-      const creditsTab = Array.from(tabButtons).find(btn => btn.textContent === 'Credits');
-      expect(creditsTab).toBeDefined();
-      expect(creditsTab).toHaveClass('text-accent');
+      const subscriptionTab = Array.from(tabButtons).find(
+        btn => btn.textContent === 'Subscription'
+      );
+      expect(subscriptionTab).toBeDefined();
+      expect(subscriptionTab).toHaveClass('text-accent');
     });
 
     it('should render all three tabs', async () => {
@@ -344,7 +346,7 @@ describe('BillingPage', () => {
       expect(tabLabels).toContain('Invoices & Payment');
     });
 
-    it('should render Credits tab content by default', async () => {
+    it('should render Subscription tab content by default', async () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
@@ -353,15 +355,13 @@ describe('BillingPage', () => {
         expect(screen.getByText('Billing')).toBeInTheDocument();
       });
 
-      // Credits tab is default — CreditPackSelector should be visible without clicking
+      // Subscription tab is default — Current Plan should be visible without clicking
       await waitFor(() => {
-        expect(screen.getByTestId('credit-pack-selector')).toBeInTheDocument();
+        expect(screen.getByText('Current Plan')).toBeInTheDocument();
       });
     });
 
     it('should show subscription plan info in Subscription tab', async () => {
-      const user = userEvent.setup();
-
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
@@ -370,13 +370,7 @@ describe('BillingPage', () => {
         expect(screen.getByText('Billing')).toBeInTheDocument();
       });
 
-      // Click on Subscription tab (credits is default now)
-      const tabButtons = document.querySelectorAll('.flex.gap-1 button');
-      const subscriptionTab = Array.from(tabButtons).find(
-        btn => btn.textContent === 'Subscription'
-      ) as HTMLElement;
-      await user.click(subscriptionTab);
-
+      // Subscription tab is default — no click needed
       await waitFor(() => {
         expect(screen.getByText('Current Plan')).toBeInTheDocument();
       });
@@ -386,8 +380,6 @@ describe('BillingPage', () => {
     });
 
     it('should show change plan button', async () => {
-      const user = userEvent.setup();
-
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
@@ -396,12 +388,7 @@ describe('BillingPage', () => {
         expect(screen.getByText('Billing')).toBeInTheDocument();
       });
 
-      const tabButtons = document.querySelectorAll('.flex.gap-1 button');
-      const subscriptionTab = Array.from(tabButtons).find(
-        btn => btn.textContent === 'Subscription'
-      ) as HTMLElement;
-      await user.click(subscriptionTab);
-
+      // Subscription tab is default — no click needed
       await waitFor(() => {
         expect(screen.getByTestId('change-plan-button')).toBeInTheDocument();
       });
@@ -420,12 +407,7 @@ describe('BillingPage', () => {
         expect(screen.getByText('Billing')).toBeInTheDocument();
       });
 
-      const tabButtons = document.querySelectorAll('.flex.gap-1 button');
-      const subscriptionTab = Array.from(tabButtons).find(
-        btn => btn.textContent === 'Subscription'
-      ) as HTMLElement;
-      await user.click(subscriptionTab);
-
+      // Subscription tab is default — no click needed
       await waitFor(() => {
         expect(screen.getByTestId('change-plan-button')).toBeInTheDocument();
       });
@@ -482,25 +464,14 @@ describe('BillingPage', () => {
   });
 
   describe('Subscription Tab Content', () => {
-    async function switchToSubscriptionTab() {
-      const user = userEvent.setup();
-      await waitFor(() => {
-        expect(screen.getByText('Billing')).toBeInTheDocument();
-      });
-      const tabButtons = document.querySelectorAll('.flex.gap-1 button');
-      const subscriptionTab = Array.from(tabButtons).find(
-        btn => btn.textContent === 'Subscription'
-      ) as HTMLElement;
-      await user.click(subscriptionTab);
-    }
+    // Subscription tab is now the default — no tab switching needed
 
     it('should display current plan card', async () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
 
-      await switchToSubscriptionTab();
-
+      // Subscription tab is default
       await waitFor(() => {
         expect(screen.getByText('Current Plan')).toBeInTheDocument();
       });
@@ -512,8 +483,6 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
-
-      await switchToSubscriptionTab();
 
       await waitFor(() => {
         expect(screen.getByText('Credits balance')).toBeInTheDocument();
@@ -528,8 +497,6 @@ describe('BillingPage', () => {
         renderWithTranslations(<BillingPage />);
       });
 
-      await switchToSubscriptionTab();
-
       await waitFor(() => {
         expect(screen.getByText('Active')).toBeInTheDocument();
       });
@@ -539,8 +506,6 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
-
-      await switchToSubscriptionTab();
 
       await waitFor(() => {
         expect(screen.getByText('Cancel Subscription')).toBeInTheDocument();
@@ -559,8 +524,6 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
-
-      await switchToSubscriptionTab();
 
       await waitFor(() => {
         expect(screen.getByText(/Your subscription will be canceled/)).toBeInTheDocument();
@@ -591,12 +554,25 @@ describe('BillingPage', () => {
   });
 
   describe('Credits Tab Content', () => {
+    async function switchToCreditsTab() {
+      const user = userEvent.setup();
+      await waitFor(() => {
+        expect(screen.getByText('Billing')).toBeInTheDocument();
+      });
+      const tabButtons = document.querySelectorAll('.flex.gap-1 button');
+      const creditsTab = Array.from(tabButtons).find(
+        btn => btn.textContent === 'Credits'
+      ) as HTMLElement;
+      await user.click(creditsTab);
+    }
+
     it('should display credit pack selector', async () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
 
-      // Credits tab is default — no click needed
+      await switchToCreditsTab();
+
       await waitFor(() => {
         expect(screen.getByTestId('credit-pack-selector')).toBeInTheDocument();
       });
@@ -606,6 +582,8 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
+
+      await switchToCreditsTab();
 
       await waitFor(() => {
         expect(screen.getByText('Buy Credits')).toBeInTheDocument();
@@ -619,6 +597,9 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
+
+      // Switch to credits tab first to see the tip
+      await switchToCreditsTab();
 
       await waitFor(() => {
         expect(screen.getByText('Subscriptions offer better value')).toBeInTheDocument();
@@ -636,6 +617,8 @@ describe('BillingPage', () => {
         renderWithTranslations(<BillingPage />);
       });
 
+      await switchToCreditsTab();
+
       await waitFor(() => {
         expect(screen.getByText('Credit History')).toBeInTheDocument();
       });
@@ -645,6 +628,8 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
+
+      await switchToCreditsTab();
 
       await waitFor(() => {
         expect(screen.getByText('No credit transactions yet')).toBeInTheDocument();
@@ -677,6 +662,8 @@ describe('BillingPage', () => {
       await act(async () => {
         renderWithTranslations(<BillingPage />);
       });
+
+      await switchToCreditsTab();
 
       await waitFor(() => {
         expect(screen.getByText('Credit pack purchase')).toBeInTheDocument();
