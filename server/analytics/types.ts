@@ -78,7 +78,7 @@ export interface IPricingPageViewedProperties {
   entryPoint: 'navbar' | 'batch_limit_modal' | 'out_of_credits_modal' | 'pseo_cta' | 'direct';
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   referrer?: string;
-  pricingRegion?: string;
+  pricingRegion: string;
   discountPercent?: number;
 }
 
@@ -87,7 +87,7 @@ export interface ICheckoutAbandonedProperties {
   step: 'plan_selection' | 'stripe_embed';
   timeSpentMs: number;
   plan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
-  pricingRegion?: string;
+  pricingRegion: string;
 }
 
 export type IUpgradePromptTrigger =
@@ -103,6 +103,7 @@ export interface IUpgradePromptShownProperties {
   trigger: IUpgradePromptTrigger;
   imageVariant?: string;
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+  pricingRegion: string;
 }
 
 export interface IUpgradePromptClickedProperties {
@@ -110,12 +111,14 @@ export interface IUpgradePromptClickedProperties {
   imageVariant?: string;
   destination: string;
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+  pricingRegion: string;
 }
 
 export interface IUpgradePromptDismissedProperties {
   trigger: IUpgradePromptTrigger;
   imageVariant?: string;
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+  pricingRegion: string;
 }
 
 export interface ICheckoutLoadedProperties {
@@ -134,7 +137,7 @@ export interface ICheckoutStartedProperties {
   sessionId?: string;
   plan?: string;
   pack?: string;
-  pricingRegion?: string;
+  pricingRegion: string;
   discountPercent?: number;
 }
 
@@ -147,7 +150,7 @@ export interface ICheckoutCompletedProperties {
   sessionId: string;
   currency?: string;
   priceId?: string;
-  pricingRegion?: string;
+  pricingRegion: string;
 }
 
 // pSEO-specific event properties

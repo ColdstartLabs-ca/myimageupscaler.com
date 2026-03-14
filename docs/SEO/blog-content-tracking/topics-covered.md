@@ -71,3 +71,5 @@ Post metadata updated to improve CTR based on GSC data (report period: last 3 mo
 | ai-image-upscaling-vs-sharpening-explained       | 72c title truncated in SERPs; 0 clicks at pos 7.1                                      | Title shortened to 59c; SEO desc to 155c with clearer value prop        |
 | 2026-03-10                                       | gif upscaler, upscale gif                                                              | gif-upscaler                                                            | ✅ Published |
 | 2026-03-11                                       | dalle upscaler, upscale dall-e images, dall-e 3 upscaler (Priority 1 roadmap, ~320/mo) | how-to-upscale-dalle-images                                             | Guides       | ✅ Published |
+| 2026-03-12 | image upscaler 8x, upscale 8x, enlarge image 8 times (GSC: pos 60, Priority 4 scale-specific) | image-upscaler-8x | Guides | ✅ Published |
+| 2026-03-13 | passport photo upscaler, upscale passport photo, passport photo resolution (Priority 3 roadmap, ~390/mo) | how-to-upscale-passport-photos-with-ai | Guides | ✅ Published |

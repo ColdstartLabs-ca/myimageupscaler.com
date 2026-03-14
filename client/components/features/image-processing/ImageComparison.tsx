@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@client/components/ui/Button';
 import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 const AFTER_COMPARISON_SESSION_KEY = 'upgrade_prompt_shown_after_comparison';
 const AFTER_COMPARISON_LS_KEY = 'prompt_freq_after_comparison';
@@ -32,6 +33,7 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   const hasInteractedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const previewTrackedRef = useRef(false);
+  const { pricingRegion } = useRegionTier();
 
   // Auto-detect transparency from blob URL if not explicitly provided
   // Blob URLs indicate client-side processing (e.g., bg-removal) which produces transparent PNGs
@@ -65,6 +67,7 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
         analytics.track('upgrade_prompt_shown', {
           trigger: 'after_comparison',
           currentPlan: 'free',
+          pricingRegion: pricingRegion || 'standard',
         });
       }
     }
@@ -210,6 +213,7 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
                   trigger: 'after_comparison',
                   destination: '/dashboard/billing',
                   currentPlan: 'free',
+                  pricingRegion: pricingRegion || 'standard',
                 });
               }}
             >

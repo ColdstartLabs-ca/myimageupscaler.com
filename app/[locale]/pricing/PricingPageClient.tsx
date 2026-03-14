@@ -34,7 +34,7 @@ export default function PricingPageClient() {
   const [cancelingSchedule, setCancelingSchedule] = useState(false);
   const [buttonLoadingStates, setButtonLoadingStates] = useState<Record<string, boolean>>({});
 
-  const { discountPercent, pricingRegion } = useRegionTier();
+  const { discountPercent, pricingRegion, isLoading: regionLoading } = useRegionTier();
 
   const showCreditPackNote = discountPercent > 0;
   const showSubscriptionNote = discountPercent > 0;
@@ -60,6 +60,7 @@ export default function PricingPageClient() {
 
   useEffect(() => {
     if (loading) return; // Wait until profile data has loaded so currentPlan reflects paid tiers
+    if (regionLoading) return; // Wait until pricingRegion has loaded
     if (hasTrackedPageView.current) return;
     hasTrackedPageView.current = true;
 
@@ -100,7 +101,14 @@ export default function PricingPageClient() {
       pricingRegion: pricingRegion || 'standard',
       discountPercent: discountPercent || 0,
     });
-  }, [searchParams, profile?.subscription_tier, loading]);
+  }, [
+    searchParams,
+    profile?.subscription_tier,
+    loading,
+    regionLoading,
+    pricingRegion,
+    discountPercent,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -113,6 +121,8 @@ export default function PricingPageClient() {
         timeSpentMs: Date.now() - pricingPageOpenedAtRef.current,
         plan: currentPlanRef.current,
         context: 'pricing_page_exit_without_checkout',
+        pricingRegion: pricingRegion || 'standard',
+        discountPercent: discountPercent || 0,
       });
     };
   }, []);

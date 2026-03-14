@@ -42,6 +42,11 @@ const ALLOWED_EVENTS = [
   // Pricing page events
   'pricing_page_viewed',
 
+  // Upgrade prompt events
+  'upgrade_prompt_shown',
+  'upgrade_prompt_clicked',
+  'upgrade_prompt_dismissed',
+
   // Checkout events
   'checkout_started',
   'checkout_completed',
@@ -228,6 +233,32 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     const { eventName, properties = {}, sessionId } = validated.data;
+
+    // 4.5. Validate pricingRegion for pricing-related events
+    const PRICING_EVENTS_REQUIRING_REGION = [
+      'pricing_page_viewed',
+      'upgrade_prompt_shown',
+      'upgrade_prompt_clicked',
+      'upgrade_prompt_dismissed',
+      'checkout_started',
+      'checkout_completed',
+      'checkout_abandoned',
+    ] as const;
+
+    if (
+      PRICING_EVENTS_REQUIRING_REGION.includes(
+        eventName as (typeof PRICING_EVENTS_REQUIRING_REGION)[number]
+      )
+    ) {
+      if (!properties.pricingRegion) {
+        logger.warn('pricingRegion missing on pricing event', {
+          eventName,
+          sessionId,
+        });
+        // Set default but don't reject - we still want to track the event
+        properties.pricingRegion = 'standard';
+      }
+    }
 
     // 5. Check for authenticated user (optional)
     let userId: string | undefined;

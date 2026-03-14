@@ -9,6 +9,7 @@ import { BottomSheet } from '@client/components/ui/BottomSheet';
 import { ModelCard } from './ModelCard';
 import { ModelGallerySearch } from './ModelGallerySearch';
 import { analytics } from '@client/analytics/analyticsClient';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 const MODEL_GATE_SESSION_KEY = 'upgrade_prompt_shown_model_gate';
 
@@ -37,6 +38,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
 }) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const { pricingRegion } = useRegionTier();
 
   // Track gallery session for analytics
   const galleryOpenedAtRef = useRef<number>(0);
@@ -55,6 +57,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
           analytics.track('upgrade_prompt_shown', {
             trigger: 'model_gate',
             currentPlan: 'free',
+            pricingRegion: pricingRegion || 'standard',
           });
         }
       }
@@ -133,10 +136,11 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
       trigger: 'model_gate',
       destination: '/dashboard/billing',
       currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
     });
     router.push('/dashboard/billing');
     onClose();
-  }, [router, onClose]);
+  }, [router, onClose, pricingRegion]);
 
   // Clear search when modal closes
   const handleClose = useCallback(() => {

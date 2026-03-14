@@ -2,46 +2,46 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Blog Page', () => {
   test('should load without crashing', async ({ page }) => {
-    await page.goto('/blog');
+    await page.goto('/blog', { waitUntil: 'domcontentloaded' });
 
-    // Wait for the page to load
-    await page.waitForLoadState('networkidle');
+    // Wait for the H1 to be visible (indicates page is loaded)
+    const title = page.locator('h1:has-text("Image Enhancement")');
+    await expect(title).toBeVisible({ timeout: 10000 });
 
     // Check for error elements that might indicate a crash
     const errorElements = await page.locator('text=Something went wrong').count();
     expect(errorElements).toBe(0);
-
-    // Check if the page title is visible (blog page h1 contains "Image Enhancement")
-    const title = page.locator('h1:has-text("Image Enhancement")');
-    await expect(title).toBeVisible();
   });
 
   test('should show empty state when no posts exist', async ({ page }) => {
-    await page.goto('/blog');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/blog', { waitUntil: 'domcontentloaded' });
+
+    // Wait for the page H1 to be loaded
+    const blogContent = page.locator('h1:has-text("Image Enhancement")');
+    await expect(blogContent).toBeVisible({ timeout: 10000 });
 
     // When the blog_posts table doesn't exist or is empty,
     // the page should show gracefully without crashing
     // The page should not show the error boundary
     const errorBoundary = page.locator('text=Something went wrong');
     await expect(errorBoundary).not.toBeVisible();
-
-    // Check that the blog page content is present (even if empty)
-    const blogContent = page.locator('h1:has-text("Image Enhancement")');
-    await expect(blogContent).toBeVisible();
   });
 
   test('should have proper page title and metadata', async ({ page }) => {
-    await page.goto('/blog');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/blog', { waitUntil: 'domcontentloaded' });
+
+    // Wait for page to be ready
+    await page.locator('h1').waitFor({ state: 'attached', timeout: 10000 });
 
     // Check page title
     await expect(page).toHaveTitle(/Blog/);
   });
 
   test('should handle search functionality gracefully', async ({ page }) => {
-    await page.goto('/blog');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/blog', { waitUntil: 'domcontentloaded' });
+
+    // Wait for page H1 to be loaded
+    await page.locator('h1').waitFor({ state: 'attached', timeout: 10000 });
 
     // Check that search input exists (even if no posts)
     const searchInput = page
@@ -57,8 +57,10 @@ test.describe('Blog Page', () => {
   test.describe('Blog Post H1 Tag', () => {
     test('should have exactly one H1 tag on blog post pages', async ({ page }) => {
       // Navigate to a blog post URL
-      await page.goto('/blog/ai-vs-traditional-image-upscaling');
-      await page.waitForLoadState('networkidle');
+      await page.goto('/blog/ai-vs-traditional-image-upscaling', { waitUntil: 'domcontentloaded' });
+
+      // Wait for H1 to be present
+      await page.locator('h1').waitFor({ state: 'attached', timeout: 10000 });
 
       // Check if we got a 404 page (no blog data in test env)
       const is404 = (await page.locator('h1:has-text("404")').count()) > 0;
@@ -79,8 +81,10 @@ test.describe('Blog Page', () => {
     });
 
     test('should convert markdown H1s to H2s to maintain heading hierarchy', async ({ page }) => {
-      await page.goto('/blog/ai-vs-traditional-image-upscaling');
-      await page.waitForLoadState('networkidle');
+      await page.goto('/blog/ai-vs-traditional-image-upscaling', { waitUntil: 'domcontentloaded' });
+
+      // Wait for H1 to be present
+      await page.locator('h1').waitFor({ state: 'attached', timeout: 10000 });
 
       // Check if we got a 404 page (no blog data in test env)
       const is404 = (await page.locator('h1:has-text("404")').count()) > 0;
@@ -89,14 +93,16 @@ test.describe('Blog Page', () => {
         // The first heading in content after the H1 should be H2
         // (markdown H1s are converted to H2s)
         const firstContentH2 = page.locator('article h2').first();
-        await expect(firstContentH2).toBeVisible();
+        await expect(firstContentH2).toBeVisible({ timeout: 5000 });
       }
       // If 404, skip the test (no blog data in test env)
     });
 
     test('blog listing page should have H1 tag', async ({ page }) => {
-      await page.goto('/blog');
-      await page.waitForLoadState('networkidle');
+      await page.goto('/blog', { waitUntil: 'domcontentloaded' });
+
+      // Wait for H1 to be present
+      await page.locator('h1').waitFor({ state: 'attached', timeout: 10000 });
 
       // Should have exactly one H1 tag
       const h1Count = await page.locator('h1').count();
