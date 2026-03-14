@@ -222,6 +222,20 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'low-credits': 'LowCreditsEmail',
       'password-reset': 'PasswordResetEmail',
       'support-request': 'SupportRequestEmail',
+      // Non-converter campaign templates
+      'result-ready': 'ResultReadyEmail',
+      'premium-trial': 'PremiumTrialEmail',
+      'feature-showcase': 'FeatureShowcaseEmail',
+      'win-back': 'WinBackEmail',
+      // Non-uploader campaign templates
+      'getting-started': 'GettingStartedEmail',
+      'possibility-showcase': 'PossibilityShowcaseEmail',
+      'one-click-try': 'OneClickTryEmail',
+      // Trial user campaign templates
+      'trial-progress': 'TrialProgressEmail',
+      'trial-reminder': 'TrialReminderEmail',
+      'trial-ending': 'TrialEndingEmail',
+      'trial-expired': 'TrialExpiredEmail',
     };
 
     const exportName = templateExportNames[templateName];
@@ -238,6 +252,20 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'low-credits': () => import('@/emails/templates/LowCreditsEmail'),
       'password-reset': () => import('@/emails/templates/PasswordResetEmail'),
       'support-request': () => import('@/emails/templates/SupportRequestEmail'),
+      // Non-converter campaign templates
+      'result-ready': () => import('@/emails/templates/ResultReadyEmail'),
+      'premium-trial': () => import('@/emails/templates/PremiumTrialEmail'),
+      'feature-showcase': () => import('@/emails/templates/FeatureShowcaseEmail'),
+      'win-back': () => import('@/emails/templates/WinBackEmail'),
+      // Non-uploader campaign templates
+      'getting-started': () => import('@/emails/templates/GettingStartedEmail'),
+      'possibility-showcase': () => import('@/emails/templates/PossibilityShowcaseEmail'),
+      'one-click-try': () => import('@/emails/templates/OneClickTryEmail'),
+      // Trial user campaign templates
+      'trial-progress': () => import('@/emails/templates/TrialProgressEmail'),
+      'trial-reminder': () => import('@/emails/templates/TrialReminderEmail'),
+      'trial-ending': () => import('@/emails/templates/TrialEndingEmail'),
+      'trial-expired': () => import('@/emails/templates/TrialExpiredEmail'),
     };
     /* eslint-enable no-restricted-syntax */
 
@@ -266,6 +294,20 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'password-reset': 'Reset your password',
       'support-request': d =>
         `[Support] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,
+      // Non-converter campaign subjects
+      'result-ready': 'Your upscaled image is ready',
+      'premium-trial': 'Try our premium models free',
+      'feature-showcase': "See what you're missing",
+      'win-back': d => `We miss you - ${d.creditOffer || 5} free credits inside`,
+      // Non-uploader campaign subjects
+      'getting-started': 'Getting started with AI upscaling',
+      'possibility-showcase': "See what's possible with AI upscaling",
+      'one-click-try': 'Try it with one click',
+      // Trial user campaign subjects
+      'trial-progress': '3 days into your trial',
+      'trial-reminder': 'Your trial is halfway through',
+      'trial-ending': 'Your trial ends tomorrow',
+      'trial-expired': 'Your trial expired - continue with discount',
     };
 
     const subject = subjects[template];
