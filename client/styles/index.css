@@ -499,6 +499,20 @@
     left: 100%;
   }
 
+  @keyframes shinePulse {
+    0% {
+      left: -100%;
+    }
+    60%,
+    100% {
+      left: 100%;
+    }
+  }
+
+  .shine-pulse::after {
+    animation: shinePulse 2.4s ease infinite;
+  }
+
   /* === HERO FADE IN (CSS-only, no JS required for LCP content) === */
   @keyframes heroFadeIn {
     from {

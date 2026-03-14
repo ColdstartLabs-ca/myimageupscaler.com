@@ -78,7 +78,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
             isProcessing || queue.every(i => i.status === ProcessingStatus.COMPLETED)
               ? 'bg-white/5 text-text-muted'
               : hasEnoughCredits
-                ? 'gradient-cta shine-effect active:scale-[0.98] shadow-lg shadow-accent/20'
+                ? 'gradient-cta shine-effect shine-pulse active:scale-[0.98] shadow-lg shadow-accent/20'
                 : 'bg-gradient-to-r from-amber-500 to-orange-500 active:scale-[0.98] shadow-lg shadow-amber-500/20'
           }
         `}

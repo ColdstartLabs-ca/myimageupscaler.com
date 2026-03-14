@@ -19,6 +19,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 export const TOUR_PHASE1_KEY = 'miu_onboarding_tour_phase1_done';
+export const TOUR_PHASE3_KEY = 'miu_onboarding_tour_phase3_done';
 export const TOUR_COMPLETED_KEY = 'miu_onboarding_tour_completed';
 export const TOUR_SKIPPED_KEY = 'miu_onboarding_tour_skipped';
 
@@ -62,12 +63,14 @@ const DRIVER_BASE_CONFIG = {
 export function useOnboardingDriver(): {
   startTourPhase1: () => Promise<void>;
   startTour: () => Promise<void>;
+  startTourPhase3: () => Promise<void>;
   hasSeenTour: () => boolean;
 } {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const driverRef = useRef<any>(null);
   const phase1StartedRef = useRef(false);
   const phase2StartedRef = useRef(false);
+  const phase3StartedRef = useRef(false);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -148,15 +151,6 @@ export function useOnboardingDriver(): {
             align: 'center',
           },
         },
-        {
-          element: '[data-driver="download-button"]',
-          popover: {
-            title: 'Download Your Result',
-            description: 'Once processing is done, click here to save your upscaled image.',
-            side: 'bottom',
-            align: 'end',
-          },
-        },
       ],
       onDestroyed: () => {
         markSeen(TOUR_COMPLETED_KEY);
@@ -168,5 +162,43 @@ export function useOnboardingDriver(): {
     }, 400);
   }, []);
 
-  return { startTourPhase1, startTour, hasSeenTour };
+  /** Phase 3: download button tip, triggered after first processing result */
+  const startTourPhase3 = useCallback(async () => {
+    if (phase3StartedRef.current || localStorage.getItem(TOUR_PHASE3_KEY) === 'true') return;
+    phase3StartedRef.current = true;
+
+    driverRef.current?.destroy();
+
+    const { driver } = await import('driver.js');
+
+    driverRef.current = driver({
+      ...DRIVER_BASE_CONFIG,
+      showProgress: false,
+      onDestroyStarted: () => {
+        markSeen(TOUR_PHASE3_KEY);
+        driverRef.current?.destroy();
+      },
+      steps: [
+        {
+          element: '[data-driver="download-button"]',
+          popover: {
+            title: 'Download Your Result',
+            description: 'Your image is ready! Click here to save it.',
+            side: 'bottom',
+            align: 'end',
+          },
+        },
+      ],
+      onDestroyed: () => {
+        markSeen(TOUR_PHASE3_KEY);
+        markSeen(TOUR_COMPLETED_KEY);
+      },
+    });
+
+    setTimeout(() => {
+      driverRef.current?.drive();
+    }, 400);
+  }, []);
+
+  return { startTourPhase1, startTour, startTourPhase3, hasSeenTour };
 }

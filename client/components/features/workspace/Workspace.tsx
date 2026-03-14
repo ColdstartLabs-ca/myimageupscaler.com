@@ -75,7 +75,7 @@ const Workspace: React.FC = () => {
   // First-time user onboarding state
   const [isFirstTimeUser] = useState(() => checkIsFirstTimeUser());
   const [showSamplesModal, setShowSamplesModal] = useState(false);
-  const { startTourPhase1, startTour } = useOnboardingDriver();
+  const { startTourPhase1, startTour, startTourPhase3 } = useOnboardingDriver();
 
   // Current progress step derived from queue state
   const progressStep = useMemo((): 1 | 2 | 3 => {
@@ -134,6 +134,15 @@ const Workspace: React.FC = () => {
       void startTour();
     }
   }, [queue.length, startTour]);
+
+  // Auto-start phase 3 tour (download button) when first result is ready
+  const tourPhase3StartedRef = React.useRef(false);
+  useEffect(() => {
+    if (completedCount > 0 && !tourPhase3StartedRef.current) {
+      tourPhase3StartedRef.current = true;
+      void startTourPhase3();
+    }
+  }, [completedCount, startTourPhase3]);
 
   // Show success banner only when batch processing finishes (transitions from processing to done)
   useEffect(() => {
