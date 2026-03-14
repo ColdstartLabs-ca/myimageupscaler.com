@@ -510,6 +510,8 @@
   }
 
   .shine-pulse::after {
+    width: 60%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
     animation: shinePulse 2.4s ease infinite;
   }
 
