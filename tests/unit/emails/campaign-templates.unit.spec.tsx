@@ -104,7 +104,8 @@ describe('Campaign Email Templates', () => {
     describe('PossibilityShowcaseEmail', () => {
       it('should render with default props', async () => {
         const html = await render(<PossibilityShowcaseEmail {...defaultProps} />);
-        expect(html).toContain("See What's Possible");
+        // HTML encodes apostrophe as &#x27;
+        expect(html).toContain('See What&#x27;s Possible');
         expect(html).toMatchSnapshot();
       });
 
