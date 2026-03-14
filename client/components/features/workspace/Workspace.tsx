@@ -199,15 +199,18 @@ const Workspace: React.FC = () => {
     try {
       setDownloadError(null);
 
-      // First-time user: show celebration before triggering the OS save dialog
-      // so confetti appears first rather than both appearing simultaneously
-      if (isFirstTimeUser && shouldShowCelebration()) {
-        markFirstUploadCompleted('upload', 0);
-        setShowCelebration(true);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
+      const showConfetti = isFirstTimeUser && shouldShowCelebration();
 
-      await downloadSingle(url, filename, config.qualityTier);
+      await downloadSingle(url, filename, config.qualityTier, {
+        // Show celebration right after blob is ready, just before link.click()
+        // so confetti appears at the same moment the OS dialog opens
+        onBeforeClick: showConfetti
+          ? () => {
+              markFirstUploadCompleted('upload', 0);
+              setShowCelebration(true);
+            }
+          : undefined,
+      });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('workspace.downloadError.title');

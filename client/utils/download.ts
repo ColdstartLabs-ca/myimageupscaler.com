@@ -99,7 +99,11 @@ const fetchImageBlob = async (url: string): Promise<Blob> => {
 export const downloadSingle = async (
   url: string | null,
   filename: string,
-  mode: string
+  mode: string,
+  options?: {
+    /** Called synchronously after blob is ready, right before link.click() */
+    onBeforeClick?: () => void;
+  }
 ): Promise<void> => {
   if (!url) {
     throw new Error('No URL provided for download');
@@ -110,6 +114,8 @@ export const downloadSingle = async (
   try {
     const blob = await fetchImageBlob(url);
     const blobUrl = URL.createObjectURL(blob);
+
+    options?.onBeforeClick?.();
 
     const link = document.createElement('a');
     link.href = blobUrl;
