@@ -38,6 +38,17 @@ vi.mock('@client/utils/cn', () => ({
   cn: (...args: (string | undefined | null | false)[]) => args.filter(Boolean).join(' '),
 }));
 
+// Mock useRegionTier to prevent fetch('/api/geo') in tests
+vi.mock('@client/hooks/useRegionTier', () => ({
+  useRegionTier: () => ({
+    tier: 'standard',
+    pricingRegion: 'standard',
+    discountPercent: 0,
+    isRestricted: false,
+    isLoading: false,
+  }),
+}));
+
 // Import components after mocks
 import { ModelGalleryModal } from '@/client/components/features/workspace/ModelGalleryModal';
 import { ModelCard } from '@/client/components/features/workspace/ModelCard';

@@ -58,6 +58,17 @@ vi.mock('@client/utils/cn', () => ({
   cn: (...args: (string | undefined | null | false)[]) => args.filter(Boolean).join(' '),
 }));
 
+// Mock useRegionTier to prevent fetch('/api/geo') in tests
+vi.mock('@client/hooks/useRegionTier', () => ({
+  useRegionTier: () => ({
+    tier: 'standard',
+    pricingRegion: 'standard',
+    discountPercent: 0,
+    isRestricted: false,
+    isLoading: false,
+  }),
+}));
+
 // Mock lucide-react icons as simple spans
 vi.mock('lucide-react', async importOriginal => {
   const actual = (await importOriginal()) as Record<string, unknown>;
@@ -209,6 +220,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'model_gate',
         currentPlan: 'free',
+        pricingRegion: 'standard',
       });
     });
   });
@@ -230,6 +242,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'model_gate',
         currentPlan: 'free',
+        pricingRegion: 'standard',
       });
     });
 
@@ -262,6 +275,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
         trigger: 'model_gate',
         destination: '/dashboard/billing',
         currentPlan: 'free',
+        pricingRegion: 'standard',
       });
     });
   });
@@ -318,6 +332,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'after_upscale',
         currentPlan: 'free',
+        pricingRegion: 'standard',
       });
     });
   });
@@ -366,6 +381,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
       trigger: 'after_upscale',
       destination: '/dashboard/billing',
       currentPlan: 'free',
+      pricingRegion: 'standard',
     });
   });
 
@@ -381,6 +397,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_dismissed', {
       trigger: 'after_upscale',
       currentPlan: 'free',
+      pricingRegion: 'standard',
     });
 
     // Banner should be gone
@@ -465,6 +482,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'after_comparison',
         currentPlan: 'free',
+        pricingRegion: 'standard',
       });
     });
   });
@@ -515,6 +533,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'after_comparison',
         currentPlan: 'free',
+        pricingRegion: 'standard',
       });
     });
 
@@ -576,6 +595,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
       trigger: 'after_comparison',
       destination: '/dashboard/billing',
       currentPlan: 'free',
+      pricingRegion: 'standard',
     });
   });
 });
@@ -640,6 +660,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'after_download',
         currentPlan: 'free',
+        pricingRegion: 'standard',
       });
     });
   });
@@ -657,6 +678,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_dismissed', {
       trigger: 'after_download',
       currentPlan: 'free',
+      pricingRegion: 'standard',
     });
 
     await waitFor(() => {
