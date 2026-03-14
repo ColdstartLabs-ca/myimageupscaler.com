@@ -404,6 +404,7 @@ export type IAnalyticsEventName =
   | 'sample_image_selector_viewed'
   | 'sample_image_selected'
   | 'sample_image_processed'
+  | 'sample_help_button_clicked'
   | 'first_upload_completed'
   // Regional pricing monitoring events (server-side only)
   | 'pricing_region_mismatch'

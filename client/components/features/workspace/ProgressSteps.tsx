@@ -83,11 +83,6 @@ export const ProgressSteps = ({
     }
   }, [currentStep, isFirstUpload]);
 
-  // Don't show to returning users
-  if (!isFirstUpload) {
-    return null;
-  }
-
   const steps = [
     { number: 1, label: t('step1'), key: 'upload' },
     { number: 2, label: t('step2'), key: 'configure' },
@@ -98,7 +93,7 @@ export const ProgressSteps = ({
     <div
       className={cn(
         'flex items-center justify-center gap-2 sm:gap-4 py-3 px-4',
-        'bg-surface/50 rounded-xl border border-border/50',
+        'bg-surface/50 rounded-xl',
         className
       )}
       role="navigation"
@@ -119,7 +114,7 @@ export const ProgressSteps = ({
                   'flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300',
                   isActive && 'bg-accent text-white shadow-lg shadow-accent/25',
                   isCompleted && 'bg-secondary text-white',
-                  isPending && 'border-2 border-border text-text-muted bg-transparent'
+                  isPending && 'border-2 border-border/40 text-text-muted bg-transparent'
                 )}
                 aria-current={isActive ? 'step' : undefined}
               >

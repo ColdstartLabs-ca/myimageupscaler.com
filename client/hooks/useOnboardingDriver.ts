@@ -3,15 +3,33 @@
 /**
  * useOnboardingDriver
  *
- * Manages the first-time user onboarding tour using Driver.js.
- * Auto-starts once when the user has a completed result for the first time.
- * State is persisted in localStorage so the tour never shows twice.
+ * Two-phase onboarding tour using Driver.js.
+ *
+ * Phase 1 (empty state / page load):
+ *   - Single step pointing at the upload dropzone
+ *   - Auto-starts on first visit
+ *
+ * Phase 2 (active state / after first result):
+ *   - Two steps: quality tier + download button
+ *   - Triggered after first download/celebration
+ *
+ * State is persisted in localStorage so each phase never shows twice.
  */
 
 import { useCallback, useEffect, useRef } from 'react';
 
+export const TOUR_PHASE1_KEY = 'miu_onboarding_tour_phase1_done';
 export const TOUR_COMPLETED_KEY = 'miu_onboarding_tour_completed';
 export const TOUR_SKIPPED_KEY = 'miu_onboarding_tour_skipped';
+
+function hasSeenPhase1(): boolean {
+  if (typeof window === 'undefined') return true;
+  try {
+    return localStorage.getItem(TOUR_PHASE1_KEY) === 'true';
+  } catch {
+    return true;
+  }
+}
 
 function hasSeenTour(): boolean {
   if (typeof window === 'undefined') return true;
@@ -25,7 +43,7 @@ function hasSeenTour(): boolean {
   }
 }
 
-function markTourSeen(key: typeof TOUR_COMPLETED_KEY | typeof TOUR_SKIPPED_KEY): void {
+function markSeen(key: string): void {
   try {
     localStorage.setItem(key, 'true');
   } catch {
@@ -33,13 +51,23 @@ function markTourSeen(key: typeof TOUR_COMPLETED_KEY | typeof TOUR_SKIPPED_KEY):
   }
 }
 
+const DRIVER_BASE_CONFIG = {
+  animate: true,
+  overlayOpacity: 0.6,
+  stagePadding: 6,
+  stageRadius: 8,
+  allowClose: true,
+};
+
 export function useOnboardingDriver(): {
+  startTourPhase1: () => Promise<void>;
   startTour: () => Promise<void>;
   hasSeenTour: () => boolean;
 } {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const driverRef = useRef<any>(null);
-  const startedRef = useRef(false);
+  const phase1StartedRef = useRef(false);
+  const phase2StartedRef = useRef(false);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -48,22 +76,18 @@ export function useOnboardingDriver(): {
     };
   }, []);
 
-  const startTour = useCallback(async () => {
-    if (startedRef.current || hasSeenTour()) return;
-    startedRef.current = true;
+  /** Phase 1: single dropzone tip, auto-starts on empty state mount */
+  const startTourPhase1 = useCallback(async () => {
+    if (phase1StartedRef.current || hasSeenPhase1()) return;
+    phase1StartedRef.current = true;
 
-    // Lazy-load driver.js (avoids SSR issues and keeps bundle lean)
     const { driver } = await import('driver.js');
 
     driverRef.current = driver({
-      showProgress: true,
-      animate: true,
-      overlayOpacity: 0.6,
-      stagePadding: 6,
-      stageRadius: 8,
-      allowClose: true,
+      ...DRIVER_BASE_CONFIG,
+      showProgress: false,
       onDestroyStarted: () => {
-        markTourSeen(TOUR_SKIPPED_KEY);
+        markSeen(TOUR_PHASE1_KEY);
         driverRef.current?.destroy();
       },
       steps: [
@@ -76,6 +100,35 @@ export function useOnboardingDriver(): {
             align: 'center',
           },
         },
+      ],
+      onDestroyed: () => {
+        markSeen(TOUR_PHASE1_KEY);
+      },
+    });
+
+    setTimeout(() => {
+      driverRef.current?.drive();
+    }, 600);
+  }, []);
+
+  /** Phase 2: quality tier + download, triggered after first result */
+  const startTour = useCallback(async () => {
+    if (phase2StartedRef.current || hasSeenTour()) return;
+    phase2StartedRef.current = true;
+
+    // Destroy any lingering phase 1 tour
+    driverRef.current?.destroy();
+
+    const { driver } = await import('driver.js');
+
+    driverRef.current = driver({
+      ...DRIVER_BASE_CONFIG,
+      showProgress: true,
+      onDestroyStarted: () => {
+        markSeen(TOUR_SKIPPED_KEY);
+        driverRef.current?.destroy();
+      },
+      steps: [
         {
           element: '[data-driver="quality-selector"]',
           popover: {
@@ -97,15 +150,14 @@ export function useOnboardingDriver(): {
         },
       ],
       onDestroyed: () => {
-        markTourSeen(TOUR_COMPLETED_KEY);
+        markSeen(TOUR_COMPLETED_KEY);
       },
     });
 
-    // Small delay so the DOM is settled before driver.js measures elements
     setTimeout(() => {
       driverRef.current?.drive();
     }, 400);
   }, []);
 
-  return { startTour, hasSeenTour };
+  return { startTourPhase1, startTour, hasSeenTour };
 }
