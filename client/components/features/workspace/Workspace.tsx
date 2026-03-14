@@ -15,17 +15,22 @@ import { QueueStrip } from '@client/components/features/workspace/QueueStrip';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { ErrorAlert } from '@client/components/stripe/ErrorAlert';
 import { TabButton } from '@client/components/ui/TabButton';
+import { useOnboardingDriver } from '@client/hooks/useOnboardingDriver';
 import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { downloadSingle } from '@client/utils/download';
 import { CheckCircle2, Image, Layers, List, Loader2, Settings, Wand2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
+import { FirstDownloadCelebration, shouldShowCelebration } from './FirstDownloadCelebration';
 import { ModelGalleryModal } from './ModelGalleryModal';
 import { PremiumUpsellModal } from './PremiumUpsellModal';
+import { ProgressSteps, checkIsFirstTimeUser, markFirstUploadCompleted } from './ProgressSteps';
+import { SampleImageSelector } from './SampleImageSelector';
+import { ISampleImage } from '@shared/config/sample-images.config';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
@@ -46,6 +51,7 @@ const Workspace: React.FC = () => {
     batchLimitExceeded,
     setActiveId,
     addFiles,
+    addSampleItem,
     removeItem,
     clearQueue,
     processBatch,
@@ -55,6 +61,18 @@ const Workspace: React.FC = () => {
 
   const { isFreeUser } = useUserData();
   const hasSubscription = !isFreeUser;
+
+  // First-time user onboarding state
+  const [isFirstTimeUser] = useState(() => checkIsFirstTimeUser());
+  const [showCelebration, setShowCelebration] = useState(false);
+  const { startTour } = useOnboardingDriver();
+
+  // Current progress step derived from queue state
+  const progressStep = useMemo((): 1 | 2 | 3 => {
+    if (queue.length === 0) return 1;
+    if (queue.some(i => i.status === ProcessingStatus.COMPLETED)) return 3;
+    return 2;
+  }, [queue]);
 
   // Mobile tab state
   const [mobileTab, setMobileTab] = useState<MobileTab>('upload');
@@ -152,6 +170,14 @@ const Workspace: React.FC = () => {
     try {
       setDownloadError(null);
       await downloadSingle(url, filename, config.qualityTier);
+
+      // First-time user flow: mark completion, show celebration, then start tour
+      if (isFirstTimeUser) {
+        markFirstUploadCompleted('upload', 0);
+        if (shouldShowCelebration()) {
+          setShowCelebration(true);
+        }
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('workspace.downloadError.title');
@@ -202,10 +228,25 @@ const Workspace: React.FC = () => {
     setGlobalErrors(prev => prev.filter(error => error.id !== errorId));
   };
 
+  const handleSampleSelect = (sample: ISampleImage) => {
+    void addSampleItem(sample.beforeSrc, sample.afterSrc, sample.title);
+  };
+
+  const handleCelebrationDismiss = () => {
+    setShowCelebration(false);
+    // Start the tour after the user closes the celebration
+    void startTour();
+  };
+
   // Empty State
   if (queue.length === 0) {
     return (
       <div className="bg-surface rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col min-h-[600px]">
+        {isFirstTimeUser && (
+          <div className="px-8 pt-6">
+            <ProgressSteps currentStep={1} isFirstUpload={true} />
+          </div>
+        )}
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center relative">
           <AmbientBackground variant="section" />
           <div className="relative z-10">
@@ -226,6 +267,11 @@ const Workspace: React.FC = () => {
                   : t('workspace.features.upToImages', { count: batchLimit })}
               </div>
             </div>
+            {isFirstTimeUser && (
+              <div className="mt-10">
+                <SampleImageSelector isVisible={true} onSampleSelect={handleSampleSelect} />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -265,6 +311,13 @@ const Workspace: React.FC = () => {
             mobileTab === 'preview' ? 'flex-1 min-h-0 md:flex-grow' : 'hidden md:flex md:flex-grow'
           )}
         >
+          {/* First-time user progress steps */}
+          {isFirstTimeUser && (
+            <div className="px-3 pt-3 md:px-4 md:pt-4">
+              <ProgressSteps currentStep={progressStep} isFirstUpload={true} />
+            </div>
+          )}
+
           {/* Success Banner */}
           {showSuccessBanner && completedCount > 0 && (
             <div className="px-3 pt-3 md:p-4">
@@ -484,6 +537,19 @@ const Workspace: React.FC = () => {
         }}
         onViewPlans={handlePremiumUpsellViewPlans}
       />
+
+      {/* First-time user celebration modal — shown once after first download */}
+      {showCelebration && (
+        <FirstDownloadCelebration
+          isFreeUser={isFreeUser}
+          source="upload"
+          onUploadAnother={() => {
+            setShowCelebration(false);
+            clearQueue();
+          }}
+          onDismiss={handleCelebrationDismiss}
+        />
+      )}
     </div>
   );
 };

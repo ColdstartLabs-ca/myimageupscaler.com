@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@client/utils/cn';
 import { analytics } from '@client/analytics';
@@ -59,11 +59,41 @@ export const FirstDownloadCelebration = ({
     return !localStorage.getItem(CELEBRATION_SHOWN_KEY);
   };
 
+  // Track onboarding completion — defined before hooks so it's in scope
+  const trackCompletion = () => {
+    const onboardingStartTime = parseInt(
+      localStorage.getItem(ONBOARDING_STARTED_KEY) || Date.now().toString(),
+      10
+    );
+    const totalDurationMs = Date.now() - onboardingStartTime;
+
+    analytics.track('onboarding_completed', {
+      totalDurationMs,
+      source,
+    });
+
+    // Mark celebration as shown
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(CELEBRATION_SHOWN_KEY, Date.now().toString());
+    }
+  };
+
+  // Track completion + mark shown once on mount (must be before any early return)
+   
+  useEffect(() => {
+    trackCompletion();
+  }, []);
+
   if (!shouldShow() || !isVisible) {
     return null;
   }
 
   const handleDismiss = () => {
+    try {
+      localStorage.setItem(CELEBRATION_SHOWN_KEY, Date.now().toString());
+    } catch {
+      // ignore
+    }
     setIsVisible(false);
     onDismiss?.();
   };
@@ -89,35 +119,15 @@ export const FirstDownloadCelebration = ({
     router.push('/dashboard/billing');
   };
 
-  // Track onboarding completion
-  const trackCompletion = () => {
-    const onboardingStartTime = parseInt(
-      localStorage.getItem(ONBOARDING_STARTED_KEY) || Date.now().toString(),
-      10
-    );
-    const totalDurationMs = Date.now() - onboardingStartTime;
-
-    analytics.track('onboarding_completed', {
-      totalDurationMs,
-      source,
-    });
-
-    // Mark celebration as shown
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(CELEBRATION_SHOWN_KEY, Date.now().toString());
-    }
-  };
-
-  // Call track completion once on mount
-  trackCompletion();
-
   // Generate confetti pieces
   const confettiPieces: IConfettiPiece[] = Array.from({ length: 50 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
     rotation: Math.random() * 360,
-    color: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'][Math.floor(Math.random() * 6)],
+    color: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'][
+      Math.floor(Math.random() * 6)
+    ],
     size: 6 + Math.random() * 8,
     delay: Math.random() * 0.5,
   }));
@@ -134,10 +144,7 @@ export const FirstDownloadCelebration = ({
         {confettiPieces.map(piece => (
           <div
             key={piece.id}
-            className={cn(
-              'absolute rounded-sm animate-confetti-fall',
-              'left-0 top-0'
-            )}
+            className={cn('absolute rounded-sm animate-confetti-fall', 'left-0 top-0')}
             style={{
               left: `${piece.x}%`,
               top: `-${piece.size}px`,
@@ -175,10 +182,7 @@ export const FirstDownloadCelebration = ({
         </div>
 
         {/* Title */}
-        <h2
-          id="celebration-title"
-          className="text-xl sm:text-2xl font-bold text-text mb-2"
-        >
+        <h2 id="celebration-title" className="text-xl sm:text-2xl font-bold text-text mb-2">
           {t('title')}
         </h2>
 
@@ -218,11 +222,7 @@ export const FirstDownloadCelebration = ({
         </div>
 
         {/* Skip text for free users */}
-        {isFreeUser && (
-          <p className="mt-4 text-sm text-text-muted">
-            {t('skipText')}
-          </p>
-        )}
+        {isFreeUser && <p className="mt-4 text-sm text-text-muted">{t('skipText')}</p>}
       </div>
     </div>
   );
@@ -244,7 +244,9 @@ export const triggerCelebration = (source: 'sample' | 'upload' = 'upload'): void
 
   // This would be called by the parent component when download completes
   analytics.track('onboarding_completed', {
-    totalDurationMs: Date.now() - parseInt(localStorage.getItem(ONBOARDING_STARTED_KEY) || Date.now().toString(), 10),
+    totalDurationMs:
+      Date.now() -
+      parseInt(localStorage.getItem(ONBOARDING_STARTED_KEY) || Date.now().toString(), 10),
     source,
   });
 

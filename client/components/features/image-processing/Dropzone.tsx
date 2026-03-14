@@ -291,6 +291,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
   return (
     <div
       data-testid="dropzone"
+      data-driver="upload-zone"
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
