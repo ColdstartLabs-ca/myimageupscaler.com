@@ -198,15 +198,16 @@ const Workspace: React.FC = () => {
   const executeDownload = async (url: string, filename: string) => {
     try {
       setDownloadError(null);
-      await downloadSingle(url, filename, config.qualityTier);
 
-      // First-time user flow: mark completion, show celebration, then start tour
-      if (isFirstTimeUser) {
+      // First-time user: show celebration before triggering the OS save dialog
+      // so confetti appears first rather than both appearing simultaneously
+      if (isFirstTimeUser && shouldShowCelebration()) {
         markFirstUploadCompleted('upload', 0);
-        if (shouldShowCelebration()) {
-          setShowCelebration(true);
-        }
+        setShowCelebration(true);
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
+
+      await downloadSingle(url, filename, config.qualityTier);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('workspace.downloadError.title');
