@@ -128,6 +128,15 @@ const Workspace: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Auto-start phase 2 tour (quality + process) when first image is uploaded
+  const tourPhase2StartedRef = React.useRef(false);
+  useEffect(() => {
+    if (queue.length > 0 && !tourPhase2StartedRef.current) {
+      tourPhase2StartedRef.current = true;
+      void startTour();
+    }
+  }, [queue.length, startTour]);
+
   // Show success banner only when batch processing finishes (transitions from processing to done)
   useEffect(() => {
     if (isProcessingBatch) {
@@ -260,8 +269,6 @@ const Workspace: React.FC = () => {
 
   const handleCelebrationDismiss = () => {
     setShowCelebration(false);
-    // Start the tour after the user closes the celebration
-    void startTour();
   };
 
   // Empty State

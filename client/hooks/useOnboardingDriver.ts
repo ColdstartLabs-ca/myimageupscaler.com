@@ -140,12 +140,12 @@ export function useOnboardingDriver(): {
           },
         },
         {
-          element: '[data-driver="download-button"]',
+          element: '[data-driver="process-button"]',
           popover: {
-            title: 'Download Your Result',
-            description: 'Once processing is done, click here to save your upscaled image.',
-            side: 'bottom',
-            align: 'end',
+            title: 'Process Your Image',
+            description: 'Happy with the settings? Hit this to start upscaling.',
+            side: 'top',
+            align: 'center',
           },
         },
       ],

@@ -65,6 +65,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
 
       {/* Primary Process Button with Cost Badge */}
       <button
+        data-driver="process-button"
         onClick={handleProcessClick}
         disabled={isProcessing || queue.every(i => i.status === ProcessingStatus.COMPLETED)}
         className={`
