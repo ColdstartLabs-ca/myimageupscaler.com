@@ -36,10 +36,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
-import { FirstDownloadCelebration, shouldShowCelebration } from './FirstDownloadCelebration';
 import { ModelGalleryModal } from './ModelGalleryModal';
 import { PremiumUpsellModal } from './PremiumUpsellModal';
-import { ProgressSteps, checkIsFirstTimeUser, markFirstUploadCompleted } from './ProgressSteps';
+import { ProgressSteps, checkIsFirstTimeUser } from './ProgressSteps';
 import { SampleImageSelector } from './SampleImageSelector';
 import { ISampleImage } from '@shared/config/sample-images.config';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
@@ -75,7 +74,6 @@ const Workspace: React.FC = () => {
 
   // First-time user onboarding state
   const [isFirstTimeUser] = useState(() => checkIsFirstTimeUser());
-  const [showCelebration, setShowCelebration] = useState(false);
   const [showSamplesModal, setShowSamplesModal] = useState(false);
   const { startTourPhase1, startTour } = useOnboardingDriver();
 
@@ -199,18 +197,7 @@ const Workspace: React.FC = () => {
     try {
       setDownloadError(null);
 
-      const showConfetti = isFirstTimeUser && shouldShowCelebration();
-
-      await downloadSingle(url, filename, config.qualityTier, {
-        // Show celebration right after blob is ready, just before link.click()
-        // so confetti appears at the same moment the OS dialog opens
-        onBeforeClick: showConfetti
-          ? () => {
-              markFirstUploadCompleted('upload', 0);
-              setShowCelebration(true);
-            }
-          : undefined,
-      });
+      await downloadSingle(url, filename, config.qualityTier);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('workspace.downloadError.title');
@@ -269,10 +256,6 @@ const Workspace: React.FC = () => {
   const handleHelpClick = () => {
     analytics.track('sample_help_button_clicked', { queueLength: queue.length });
     setShowSamplesModal(true);
-  };
-
-  const handleCelebrationDismiss = () => {
-    setShowCelebration(false);
   };
 
   // Empty State
@@ -623,19 +606,6 @@ const Workspace: React.FC = () => {
             <SampleImageSelector isVisible={true} onSampleSelect={handleSampleSelect} />
           </div>
         </div>
-      )}
-
-      {/* First-time user celebration modal — shown once after first download */}
-      {showCelebration && (
-        <FirstDownloadCelebration
-          isFreeUser={isFreeUser}
-          source="upload"
-          onUploadAnother={() => {
-            setShowCelebration(false);
-            clearQueue();
-          }}
-          onDismiss={handleCelebrationDismiss}
-        />
       )}
     </div>
   );

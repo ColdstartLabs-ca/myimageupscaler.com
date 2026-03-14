@@ -148,6 +148,15 @@ export function useOnboardingDriver(): {
             align: 'center',
           },
         },
+        {
+          element: '[data-driver="download-button"]',
+          popover: {
+            title: 'Download Your Result',
+            description: 'Once processing is done, click here to save your upscaled image.',
+            side: 'bottom',
+            align: 'end',
+          },
+        },
       ],
       onDestroyed: () => {
         markSeen(TOUR_COMPLETED_KEY);
