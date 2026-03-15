@@ -24,6 +24,11 @@ export const test = base.extend({
       // Store test marker for middleware to check
       localStorage.setItem('__test_mode__', 'true');
 
+      // Disable onboarding tour so it never overlays elements during E2E tests
+      localStorage.setItem('miu_onboarding_tour_phase1_done', 'true');
+      localStorage.setItem('miu_onboarding_tour_phase3_done', 'true');
+      localStorage.setItem('miu_onboarding_tour_completed', 'true');
+
       // Hide Next.js dev overlay portal which blocks clicks during tests
       // This is the React Error Overlay / DevTools that creates <nextjs-portal>
       (function() {
