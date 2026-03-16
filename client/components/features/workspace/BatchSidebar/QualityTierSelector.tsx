@@ -56,7 +56,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative" data-driver="quality-selector">
       <label className="text-sm font-medium text-white mb-2 block">Quality Tier</label>
 
       {/* Trigger Button - opens gallery modal */}

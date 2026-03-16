@@ -235,6 +235,7 @@ vi.mock('lucide-react', async () => {
     Filter: createMockIcon('Filter'),
     Folder: createMockIcon('Folder'),
     Heart: createMockIcon('Heart'),
+    HelpCircle: createMockIcon('HelpCircle'),
     Home: createMockIcon('Home'),
     Image: createMockIcon('Image'),
     Info: createMockIcon('Info'),

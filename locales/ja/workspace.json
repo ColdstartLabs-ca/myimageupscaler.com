@@ -167,5 +167,68 @@
     "supportForFormats": "JPG、PNG、WEBPをサポート",
     "freeLimitText": "ファイルあたり最大5MB • 一度に1枚 • バッチ処理のためにアップグレード",
     "paidLimitText": "ファイルあたり最大10MB • バッチ処理利用可能"
+  },
+  "postDownloadPrompt": {
+    "message": "結果はいかがですか？",
+    "ctaLink": "Premiumモデルで10倍鮮明に。",
+    "dismiss": "アップグレードの提案を閉じる"
+  },
+  "sampleImages": {
+    "title": "サンプル画像で試してみる",
+    "subtitle": "画像がない？これらのサンプルでアップスケーラーを体験してください。",
+    "types": {
+      "photo": {
+        "title": "写真",
+        "description": "ポートレートと一般的な写真"
+      },
+      "illustration": {
+        "title": "イラスト",
+        "description": "デジタルアートとベクター"
+      },
+      "old_photo": {
+        "title": "古い写真",
+        "description": "ビンテージ写真の復元"
+      }
+    },
+    "tryThis": "試してみる",
+    "scaleFactor": "{scale}x拡大"
+  },
+  "progressSteps": {
+    "step1": "アップロード",
+    "step2": "設定",
+    "step3": "ダウンロード",
+    "ariaLabel": "アップスケール進行ステップ"
+  },
+  "progressCelebration": {
+    "title": "初めての拡大が完了しました！",
+    "subtitle": "最初の画像を拡大しました！私たちのAIが他に何ができるか見てみましょう。",
+    "uploadAnother": "別の画像をアップロード",
+    "seePlans": "Premiumプランを見る",
+    "skipText": "Premiumで無制限の拡大をアンロック",
+    "dismiss": "お祝いを閉じる"
+  },
+  "onboardingTour": {
+    "uploadZone": {
+      "title": "画像をアップロード",
+      "content": "JPG、PNG、WEBPをここにドラッグ＆ドロップ — またはクリックして参照。"
+    },
+    "qualitySelector": {
+      "title": "品質レベルを選択",
+      "content": "画像に合ったAIモデルを選んでください。<em>クイック</em>は無料 — Premiumレベルはより鮮明な詳細を解放します。"
+    },
+    "processButton": {
+      "title": "画像を処理",
+      "content": "設定に満足しましたか？ここをクリックしてアップスケールを開始します。"
+    },
+    "downloadButton": {
+      "title": "結果をダウンロード",
+      "content": "画像の準備ができました！ここをクリックして保存します。"
+    },
+    "next": "次へ",
+    "previous": "前へ",
+    "skip": "ツアーをスキップ",
+    "finish": "完了",
+    "stepOf": "{current}/{total}ステップ",
+    "showTour": "使い方を見る"
   }
 }

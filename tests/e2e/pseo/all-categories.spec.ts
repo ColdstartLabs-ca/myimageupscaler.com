@@ -45,7 +45,7 @@ test.describe('Spanish pSEO Categories', () => {
         await page.goto(`/es/${category}/${slug}`);
 
         // Wait for page to load
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Check that the page has Spanish content
         const h1 = page.locator('h1');
@@ -59,7 +59,7 @@ test.describe('Spanish pSEO Categories', () => {
 
       test(`should have correct meta tags for ${category} page`, async ({ page }) => {
         await page.goto(`/es/${category}/${slug}`);
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Check meta description exists and contains Spanish
         const metaDescription = await page.getAttribute('meta[name="description"]', 'content');
@@ -75,7 +75,7 @@ test.describe('Spanish pSEO Categories', () => {
         });
 
         await page.goto(`/es/${category}/${slug}`);
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Check for no console errors
         expect(errors).toHaveLength(0);
@@ -83,7 +83,7 @@ test.describe('Spanish pSEO Categories', () => {
 
       test(`should have responsive layout for ${category} page`, async ({ page }) => {
         await page.goto(`/es/${category}/${slug}`);
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('domcontentloaded');
 
         // Test mobile viewport
         await page.setViewportSize({ width: 375, height: 667 });
@@ -101,14 +101,14 @@ test.describe('Spanish pSEO Categories', () => {
     test('should navigate between sample pages from different categories', async ({ page }) => {
       // Start with tools category
       await page.goto(`/es/tools/${SAMPLE_SLUGS.tools}`);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const h1 = page.locator('h1');
       await expect(h1).toContainText(/Escalador|IA/i);
 
       // Navigate to formats category
       await page.goto(`/es/formats/${SAMPLE_SLUGS.formats}`);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const h1Formats = page.locator('h1');
       await expect(h1Formats).toContainText(/Escalar|JPEG/i);
@@ -118,7 +118,7 @@ test.describe('Spanish pSEO Categories', () => {
   test.describe('SEO Elements', () => {
     test('should have proper Spanish hreflang tags', async ({ page }) => {
       await page.goto(`/es/tools/${SAMPLE_SLUGS.tools}`);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check for Spanish hreflang
       const hreflangEs = await page.locator('link[rel="alternate"][hreflang="es"]').count();
@@ -127,7 +127,7 @@ test.describe('Spanish pSEO Categories', () => {
 
     test('should have canonical URL', async ({ page }) => {
       await page.goto(`/es/formats/${SAMPLE_SLUGS.formats}`);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const canonical = await page.locator('link[rel="canonical"]').getAttribute('href');
       expect(canonical).toBeTruthy();
@@ -138,7 +138,7 @@ test.describe('Spanish pSEO Categories', () => {
   test.describe('Core Content Requirements', () => {
     test('should render H1 title', async ({ page }) => {
       await page.goto(`/es/tools/${SAMPLE_SLUGS.tools}`);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const h1 = page.locator('h1');
       await expect(h1).toBeVisible();
@@ -148,7 +148,7 @@ test.describe('Spanish pSEO Categories', () => {
 
     test('should render intro/description content', async ({ page }) => {
       await page.goto(`/es/platforms/${SAMPLE_SLUGS.platforms}`);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check for meaningful content (should have paragraphs with text)
       const paragraphs = page.locator('p');
@@ -158,7 +158,7 @@ test.describe('Spanish pSEO Categories', () => {
 
     test('should have proper heading hierarchy', async ({ page }) => {
       await page.goto(`/es/guides/${SAMPLE_SLUGS.guides}`);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       const h1 = page.locator('h1');
       const h2s = page.locator('h2');

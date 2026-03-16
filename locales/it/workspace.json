@@ -172,5 +172,68 @@
     "subscription": {
       "status": "Stato"
     }
+  },
+  "postDownloadPrompt": {
+    "message": "Ti piace il risultato?",
+    "ctaLink": "10x più nitido con i modelli Premium.",
+    "dismiss": "Ignora suggerimento di miglioramento"
+  },
+  "sampleImages": {
+    "title": "Prova con un'immagine di esempio",
+    "subtitle": "Non hai un'immagine? Prova una di queste per vedere il potenziatore in azione.",
+    "types": {
+      "photo": {
+        "title": "Foto",
+        "description": "Ritratti e foto generali"
+      },
+      "illustration": {
+        "title": "Illustrazione",
+        "description": "Arte digitale e vettori"
+      },
+      "old_photo": {
+        "title": "Foto Antica",
+        "description": "Restauro di foto vintage"
+      }
+    },
+    "tryThis": "Prova",
+    "scaleFactor": "Ingrandimento {scale}x"
+  },
+  "progressSteps": {
+    "step1": "Carica",
+    "step2": "Configura",
+    "step3": "Scarica",
+    "ariaLabel": "Passaggi di avanzamento dell'ingrandimento"
+  },
+  "progressCelebration": {
+    "title": "Primo ingrandimento completato!",
+    "subtitle": "Hai appena ingrandito la tua prima immagine! Pronto a scoprire cos'altro può fare la nostra IA?",
+    "uploadAnother": "Carica un'altra immagine",
+    "seePlans": "Vedi i piani Premium",
+    "skipText": "Sblocca ingrandimenti illimitati con Premium",
+    "dismiss": "Chiudi celebrazione"
+  },
+  "onboardingTour": {
+    "uploadZone": {
+      "title": "Carica la tua immagine",
+      "content": "Trascina un JPG, PNG o WEBP qui — o clicca per sfogliare."
+    },
+    "qualitySelector": {
+      "title": "Scegli il livello di qualità",
+      "content": "Seleziona il modello IA per la tua immagine. <em>Rapido</em> è gratuito — i livelli Premium offrono dettagli più nitidi."
+    },
+    "processButton": {
+      "title": "Elabora la tua immagine",
+      "content": "Soddisfatto delle impostazioni? Clicca qui per avviare l'ingrandimento."
+    },
+    "downloadButton": {
+      "title": "Scarica il tuo risultato",
+      "content": "La tua immagine è pronta! Clicca qui per salvarla."
+    },
+    "next": "Avanti",
+    "previous": "Indietro",
+    "skip": "Salta il tour",
+    "finish": "Fine",
+    "stepOf": "Passo {current} di {total}",
+    "showTour": "Mostrami come"
   }
 }

@@ -24,6 +24,17 @@ vi.mock('@client/components/ui/Button', () => ({
   ),
 }));
 
+// Mock useRegionTier to prevent fetch('/api/geo') in tests
+vi.mock('@client/hooks/useRegionTier', () => ({
+  useRegionTier: () => ({
+    tier: 'standard',
+    pricingRegion: 'standard',
+    discountPercent: 0,
+    isRestricted: false,
+    isLoading: false,
+  }),
+}));
+
 describe('ImageComparison', () => {
   beforeEach(() => {
     vi.clearAllMocks();

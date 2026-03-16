@@ -167,5 +167,68 @@
     "supportForFormats": "Soporte para JPG, PNG y WEBP",
     "freeLimitText": "Hasta 5MB por archivo • 1 imagen a la vez • Actualiza para procesamiento por lotes",
     "paidLimitText": "Hasta 10MB por archivo • Procesamiento por lotes disponible"
+  },
+  "postDownloadPrompt": {
+    "message": "¿Te gusta el resultado?",
+    "ctaLink": "10x más nítido con modelos Premium.",
+    "dismiss": "Descartar sugerencia de mejora"
+  },
+  "sampleImages": {
+    "title": "Prueba con una imagen de ejemplo",
+    "subtitle": "¿No tienes imagen? Prueba una de estas para ver el ampliador en acción.",
+    "types": {
+      "photo": {
+        "title": "Foto",
+        "description": "Retratos y fotos generales"
+      },
+      "illustration": {
+        "title": "Ilustración",
+        "description": "Arte digital y vectores"
+      },
+      "old_photo": {
+        "title": "Foto Antigua",
+        "description": "Restauración de fotos vintage"
+      }
+    },
+    "tryThis": "Probar",
+    "scaleFactor": "Ampliación {scale}x"
+  },
+  "progressSteps": {
+    "step1": "Subir",
+    "step2": "Configurar",
+    "step3": "Descargar",
+    "ariaLabel": "Pasos de progreso de ampliación"
+  },
+  "progressCelebration": {
+    "title": "¡Primera ampliación completada!",
+    "subtitle": "¡Acabas de ampliar tu primera imagen! ¿Listo para ver qué más puede hacer nuestra IA?",
+    "uploadAnother": "Subir otra imagen",
+    "seePlans": "Ver planes Premium",
+    "skipText": "Desbloquea ampliaciones ilimitadas con Premium",
+    "dismiss": "Cerrar celebración"
+  },
+  "onboardingTour": {
+    "uploadZone": {
+      "title": "Sube tu imagen",
+      "content": "Arrastra y suelta un JPG, PNG o WEBP aquí — o haz clic para explorar."
+    },
+    "qualitySelector": {
+      "title": "Elige el nivel de calidad",
+      "content": "Selecciona el modelo de IA para tu imagen. <em>Rápido</em> es gratis — los niveles Premium desbloquean más detalle."
+    },
+    "processButton": {
+      "title": "Procesa tu imagen",
+      "content": "¿Satisfecho con la configuración? Pulsa aquí para empezar."
+    },
+    "downloadButton": {
+      "title": "Descarga tu resultado",
+      "content": "¡Tu imagen está lista! Haz clic aquí para guardarla."
+    },
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "skip": "Omitir tour",
+    "finish": "Finalizar",
+    "stepOf": "Paso {current} de {total}",
+    "showTour": "Muéstrame cómo"
   }
 }

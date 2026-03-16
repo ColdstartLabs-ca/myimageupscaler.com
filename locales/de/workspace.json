@@ -170,5 +170,68 @@
   },
   "nav": {
     "blog": "Blog"
+  },
+  "postDownloadPrompt": {
+    "message": "Ergebnis gefällt?",
+    "ctaLink": "Mit Premium-Modellen 10x schärfer.",
+    "dismiss": "Upgrade-Hinweis ausblenden"
+  },
+  "sampleImages": {
+    "title": "Mit einem Beispielbild ausprobieren",
+    "subtitle": "Kein Bild zur Hand? Probiere eines dieser Bilder aus.",
+    "types": {
+      "photo": {
+        "title": "Foto",
+        "description": "Porträts und allgemeine Fotos"
+      },
+      "illustration": {
+        "title": "Illustration",
+        "description": "Digitale Kunst und Vektoren"
+      },
+      "old_photo": {
+        "title": "Altes Foto",
+        "description": "Restaurierung von Vintage-Fotos"
+      }
+    },
+    "tryThis": "Ausprobieren",
+    "scaleFactor": "{scale}x Vergrößerung"
+  },
+  "progressSteps": {
+    "step1": "Hochladen",
+    "step2": "Konfigurieren",
+    "step3": "Herunterladen",
+    "ariaLabel": "Fortschrittsschritte der Vergrößerung"
+  },
+  "progressCelebration": {
+    "title": "Erste Vergrößerung abgeschlossen!",
+    "subtitle": "Du hast dein erstes Bild vergrößert! Bereit zu sehen, was unsere KI sonst noch kann?",
+    "uploadAnother": "Weiteres Bild hochladen",
+    "seePlans": "Premium-Pläne ansehen",
+    "skipText": "Unbegrenzte Vergrößerungen mit Premium freischalten",
+    "dismiss": "Glückwunsch ausblenden"
+  },
+  "onboardingTour": {
+    "uploadZone": {
+      "title": "Dein Bild hochladen",
+      "content": "Ziehe ein JPG, PNG oder WEBP hierher — oder klicke zum Durchsuchen."
+    },
+    "qualitySelector": {
+      "title": "Qualitätsstufe wählen",
+      "content": "Wähle das KI-Modell für dein Bild. <em>Schnell</em> ist kostenlos — Premium-Stufen bieten schärfere Details."
+    },
+    "processButton": {
+      "title": "Bild verarbeiten",
+      "content": "Einstellungen passen? Klicke hier, um die Vergrößerung zu starten."
+    },
+    "downloadButton": {
+      "title": "Ergebnis herunterladen",
+      "content": "Dein Bild ist fertig! Klicke hier, um es zu speichern."
+    },
+    "next": "Weiter",
+    "previous": "Zurück",
+    "skip": "Tour überspringen",
+    "finish": "Fertig",
+    "stepOf": "Schritt {current} von {total}",
+    "showTour": "Zeig mir wie"
   }
 }

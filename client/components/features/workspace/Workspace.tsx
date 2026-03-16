@@ -15,17 +15,32 @@ import { QueueStrip } from '@client/components/features/workspace/QueueStrip';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { ErrorAlert } from '@client/components/stripe/ErrorAlert';
 import { TabButton } from '@client/components/ui/TabButton';
+import { analytics } from '@client/analytics';
+import { useOnboardingDriver } from '@client/hooks/useOnboardingDriver';
 import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { downloadSingle } from '@client/utils/download';
-import { CheckCircle2, Image, Layers, List, Loader2, Settings, Wand2 } from 'lucide-react';
+import {
+  CheckCircle2,
+  HelpCircle,
+  Image,
+  Layers,
+  List,
+  Loader2,
+  Settings,
+  Wand2,
+  X,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { ModelGalleryModal } from './ModelGalleryModal';
 import { PremiumUpsellModal } from './PremiumUpsellModal';
+import { ProgressSteps, checkIsFirstTimeUser } from './ProgressSteps';
+import { SampleImageSelector } from './SampleImageSelector';
+import { ISampleImage } from '@shared/config/sample-images.config';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
@@ -46,6 +61,7 @@ const Workspace: React.FC = () => {
     batchLimitExceeded,
     setActiveId,
     addFiles,
+    addSampleItem,
     removeItem,
     clearQueue,
     processBatch,
@@ -55,6 +71,18 @@ const Workspace: React.FC = () => {
 
   const { isFreeUser } = useUserData();
   const hasSubscription = !isFreeUser;
+
+  // First-time user onboarding state
+  const [isFirstTimeUser] = useState(() => checkIsFirstTimeUser());
+  const [showSamplesModal, setShowSamplesModal] = useState(false);
+  const { startTourPhase1, startTour, startTourPhase3 } = useOnboardingDriver();
+
+  // Current progress step derived from queue state
+  const progressStep = useMemo((): 1 | 2 | 3 => {
+    if (queue.length === 0) return 1;
+    if (queue.some(i => i.status === ProcessingStatus.COMPLETED)) return 3;
+    return 2;
+  }, [queue]);
 
   // Mobile tab state
   const [mobileTab, setMobileTab] = useState<MobileTab>('upload');
@@ -89,6 +117,32 @@ const Workspace: React.FC = () => {
   const [globalErrors, setGlobalErrors] = useState<
     Array<{ id: string; message: string; title?: string }>
   >([]);
+
+  // Auto-start phase 1 tour (dropzone tip) on first visit
+  useEffect(() => {
+    if (isFirstTimeUser && queue.length === 0) {
+      void startTourPhase1();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-start phase 2 tour (quality + process) when first image is uploaded
+  const tourPhase2StartedRef = React.useRef(false);
+  useEffect(() => {
+    if (queue.length > 0 && !tourPhase2StartedRef.current) {
+      tourPhase2StartedRef.current = true;
+      void startTour();
+    }
+  }, [queue.length, startTour]);
+
+  // Auto-start phase 3 tour (download button) when first result is ready
+  const tourPhase3StartedRef = React.useRef(false);
+  useEffect(() => {
+    if (completedCount > 0 && !tourPhase3StartedRef.current) {
+      tourPhase3StartedRef.current = true;
+      void startTourPhase3();
+    }
+  }, [completedCount, startTourPhase3]);
 
   // Show success banner only when batch processing finishes (transitions from processing to done)
   useEffect(() => {
@@ -151,6 +205,7 @@ const Workspace: React.FC = () => {
   const executeDownload = async (url: string, filename: string) => {
     try {
       setDownloadError(null);
+
       await downloadSingle(url, filename, config.qualityTier);
     } catch (error) {
       const errorMessage =
@@ -202,10 +257,31 @@ const Workspace: React.FC = () => {
     setGlobalErrors(prev => prev.filter(error => error.id !== errorId));
   };
 
+  const handleSampleSelect = (sample: ISampleImage) => {
+    setShowSamplesModal(false);
+    void addSampleItem(sample.beforeSrc, sample.afterSrc, sample.title);
+  };
+
+  const handleHelpClick = () => {
+    analytics.track('sample_help_button_clicked', { queueLength: queue.length });
+    setShowSamplesModal(true);
+  };
+
   // Empty State
   if (queue.length === 0) {
     return (
       <div className="bg-surface rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col min-h-[600px]">
+        <div className="px-8 pt-6 relative">
+          <ProgressSteps currentStep={1} isFirstUpload={isFirstTimeUser} />
+          <button
+            onClick={handleHelpClick}
+            className="absolute right-8 top-6 flex items-center justify-center w-7 h-7 rounded-lg text-text-muted hover:text-text hover:bg-white/10 transition-colors"
+            aria-label="Try sample images"
+            title="Try sample images"
+          >
+            <HelpCircle size={16} />
+          </button>
+        </div>
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center relative">
           <AmbientBackground variant="section" />
           <div className="relative z-10">
@@ -228,6 +304,27 @@ const Workspace: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {showSamplesModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowSamplesModal(false)}
+          >
+            <div
+              className="relative bg-surface rounded-2xl shadow-2xl border border-border p-6 max-w-2xl w-full mx-4"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowSamplesModal(false)}
+                className="absolute right-4 top-4 text-text-muted hover:text-text transition-colors p-1"
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+              <SampleImageSelector isVisible={true} onSampleSelect={handleSampleSelect} />
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -265,6 +362,19 @@ const Workspace: React.FC = () => {
             mobileTab === 'preview' ? 'flex-1 min-h-0 md:flex-grow' : 'hidden md:flex md:flex-grow'
           )}
         >
+          {/* Progress steps */}
+          <div className="px-3 pt-3 md:px-4 md:pt-4 relative">
+            <ProgressSteps currentStep={progressStep} isFirstUpload={isFirstTimeUser} />
+            <button
+              onClick={handleHelpClick}
+              className="absolute right-3 top-3 md:right-4 md:top-4 flex items-center justify-center w-7 h-7 rounded-lg text-text-muted hover:text-text hover:bg-white/10 transition-colors"
+              aria-label="Try sample images"
+              title="Try sample images"
+            >
+              <HelpCircle size={16} />
+            </button>
+          </div>
+
           {/* Success Banner */}
           {showSuccessBanner && completedCount > 0 && (
             <div className="px-3 pt-3 md:p-4">
@@ -484,6 +594,28 @@ const Workspace: React.FC = () => {
         }}
         onViewPlans={handlePremiumUpsellViewPlans}
       />
+
+      {/* Samples modal — triggered by help button */}
+      {showSamplesModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setShowSamplesModal(false)}
+        >
+          <div
+            className="relative bg-surface rounded-2xl shadow-2xl border border-border p-6 max-w-2xl w-full mx-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowSamplesModal(false)}
+              className="absolute right-4 top-4 text-text-muted hover:text-text transition-colors p-1"
+              aria-label="Close"
+            >
+              <X size={20} />
+            </button>
+            <SampleImageSelector isVisible={true} onSampleSelect={handleSampleSelect} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

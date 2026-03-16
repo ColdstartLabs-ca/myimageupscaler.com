@@ -130,7 +130,13 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
           >
             {zoom === 1 ? <ZoomIn size={18} /> : <ZoomOut size={18} />}
           </button>
-          <Button variant="primary" size="sm" icon={<Download size={16} />} onClick={onDownload}>
+          <Button
+            variant="primary"
+            size="sm"
+            icon={<Download size={16} />}
+            onClick={onDownload}
+            data-driver="download-button"
+          >
             <span className="hidden sm:inline">Download Result</span>
             <span className="sm:hidden">Download</span>
           </Button>

@@ -30,6 +30,8 @@ interface IUseBatchQueueReturn {
   batchLimitExceeded: { attempted: number; limit: number; serverEnforced?: boolean } | null;
   setActiveId: (id: string) => void;
   addFiles: (files: File[], source?: 'drag_drop' | 'file_picker' | 'paste' | 'url') => void;
+  /** Inject a pre-processed sample — shows before/after without calling the API */
+  addSampleItem: (beforeSrc: string, afterSrc: string, label: string) => Promise<void>;
   removeItem: (id: string) => void;
   clearQueue: () => void;
   processBatch: (config: IUpscaleConfig) => Promise<void>;
@@ -131,6 +133,45 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     },
     [activeId, queue.length, batchLimit, profile?.id]
   );
+
+  /**
+   * Inject a pre-processed sample as a COMPLETED queue item.
+   * Fetches the beforeSrc image as a blob so the queue has a real File object,
+   * then immediately marks it COMPLETED with processedUrl = afterSrc.
+   * No API credits are consumed.
+   */
+  const addSampleItem = useCallback(async (beforeSrc: string, afterSrc: string, label: string) => {
+    try {
+      const res = await fetch(beforeSrc);
+      const blob = await res.blob();
+      const file = new File([blob], `${label}.webp`, { type: blob.type || 'image/webp' });
+      const previewUrl = URL.createObjectURL(blob);
+
+      const id = Math.random().toString(36).substring(2, 15);
+      const item: IBatchItem = {
+        id,
+        file,
+        previewUrl,
+        processedUrl: afterSrc,
+        status: ProcessingStatus.COMPLETED,
+        progress: 100,
+      };
+
+      setQueue(prev => {
+        const updated = [...prev, item];
+        setActiveId(id);
+        return updated;
+      });
+
+      analytics.track('sample_image_selected', {
+        sampleId: label,
+        sampleType: 'photo',
+        qualityTier: 'quick',
+      });
+    } catch {
+      // Silently fail — user can still upload their own image
+    }
+  }, []);
 
   const removeItem = useCallback(
     (id: string) => {
@@ -392,6 +433,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     batchLimitExceeded,
     setActiveId,
     addFiles,
+    addSampleItem,
     removeItem,
     clearQueue,
     processBatch,

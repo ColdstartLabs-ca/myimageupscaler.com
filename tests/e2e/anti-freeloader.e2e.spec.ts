@@ -31,11 +31,9 @@ async function mockGeo(
 /** Open the auth modal (login view) */
 async function openAuthModal(page: Parameters<typeof test>[1]['page']) {
   await page.goto('/');
-  // Wait for page to load
-  await page.waitForLoadState('networkidle', { timeout: 15000 });
-  // Click Sign In button in header
+  // Click Sign In button in header (waitFor handles the wait deterministically)
   const signInBtn = page.locator('button:has-text("Sign In")').first();
-  await signInBtn.waitFor({ state: 'visible', timeout: 10000 });
+  await signInBtn.waitFor({ state: 'visible', timeout: 15000 });
   await signInBtn.click();
   // Wait for modal
   const modal = page.locator('[role="dialog"], .modal-container, [data-modal]').first();

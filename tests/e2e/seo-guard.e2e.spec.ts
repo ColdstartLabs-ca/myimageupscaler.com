@@ -239,7 +239,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
 
       // Fetch all sitemaps in parallel to avoid timeout
       const sitemapContents = await Promise.all(
-        sitemapUrls.map(async (sitemapUrl) => {
+        sitemapUrls.map(async sitemapUrl => {
           const sitemapResponse = await request.get(sitemapUrl.replace(PRODUCTION_BASE_URL, ''));
           const sitemapText = await sitemapResponse.text();
           return { sitemapUrl, sitemapText };
@@ -862,10 +862,11 @@ test.describe('SEO Guard - Deploy Blocker', () => {
   // Group 15: 404 Error Handling
   // ========================================================================
   test.describe('404 Error Handling', () => {
-    test('invalid slug returns 404 not 500', async ({ request }) => {
-      const response = await request.get('/this-page-does-not-exist-12345');
-      expect(response.status()).toBe(404);
-      expect(response.status()).not.toBe(500);
+    test('invalid slug returns 404 not 500', async ({ page }) => {
+      // Using page.goto instead of request.get to avoid ECONNRESET on the raw TCP connection
+      const response = await page.goto('/this-page-does-not-exist-12345');
+      expect(response?.status()).toBe(404);
+      expect(response?.status()).not.toBe(500);
     });
 
     test('404 page has proper structure', async ({ page }) => {
@@ -899,7 +900,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
 
       // Fetch all sitemaps in parallel to avoid timeout
       const sitemapContents = await Promise.all(
-        sitemapUrls.map(async (sitemapUrl) => {
+        sitemapUrls.map(async sitemapUrl => {
           const sitemapResponse = await request.get(sitemapUrl.replace(PRODUCTION_BASE_URL, ''));
           return await sitemapResponse.text();
         })

@@ -127,15 +127,16 @@ test.describe('Language Switcher', () => {
 
       await switcherButton.click();
 
-      // Wait for dropdown to appear
-      const dropdown = page.locator('footer').locator('.glass-dropdown, [role="menu"], .absolute');
+      // Wait for dropdown to appear — use specific class, not broad .absolute
+      const dropdown = page.locator('footer .glass-dropdown');
       await dropdown.waitFor({ state: 'visible', timeout: 5000 });
 
-      // Click outside the dropdown (on main content)
-      await page.locator('main').click();
+      // Click outside by targeting the page heading (always exists above the footer)
+      // This triggers the mousedown handler that useClickOutside listens for
+      await page.locator('h1').first().click();
 
       // Dropdown should close
-      await expect(dropdown).not.toBeVisible({ timeout: 2000 });
+      await expect(dropdown).not.toBeVisible({ timeout: 5000 });
     });
   });
 

@@ -214,6 +214,66 @@ export interface IPSEOScrollProperties {
   timeToDepthMs: number;
 }
 
+// =============================================================================
+// Onboarding Event Properties (PRD: first-time-user-activation)
+// =============================================================================
+
+// Onboarding step viewed properties
+export interface IOnboardingStepViewedProperties {
+  step: 1 | 2 | 3;
+  durationToStepMs: number;
+  source?: 'sample' | 'upload';
+}
+
+// Onboarding completed properties
+export interface IOnboardingCompletedProperties {
+  totalDurationMs: number;
+  source: 'sample' | 'upload';
+  uploadCount: number;
+}
+
+// Onboarding tour step viewed properties
+export interface IOnboardingTourStepViewedProperties {
+  step: 1 | 2 | 3;
+  trigger: 'auto' | 'manual';
+}
+
+// Hero upload CTA clicked properties
+export interface IHeroUploadCTAClickedProperties {
+  ctaType: 'primary' | 'secondary';
+}
+
+// Hero upload zone visible properties
+export interface IHeroUploadZoneVisibleProperties {
+  viewportHeight: number;
+  scrollDepth: number;
+}
+
+// Sample image selector viewed properties
+export interface ISampleImageSelectorViewedProperties {
+  availableSamples: number;
+}
+
+// Sample image selected properties
+export interface ISampleImageSelectedProperties {
+  sampleType: 'photo' | 'illustration' | 'old_photo';
+}
+
+// Sample image processed properties
+export interface ISampleImageProcessedProperties {
+  sampleType: 'photo' | 'illustration' | 'old_photo';
+  durationMs: number;
+  qualityTier: string;
+}
+
+// First upload completed properties
+export interface IFirstUploadCompletedProperties {
+  source: 'sample' | 'upload';
+  durationMs: number;
+  fileSize?: number;
+  fileType?: string;
+}
+
 // Error tracking properties
 export interface IErrorOccurredProperties {
   errorType:
@@ -329,6 +389,23 @@ export type IAnalyticsEventName =
   | 'pseo_scroll_depth'
   | 'pseo_faq_expanded'
   | 'pseo_internal_link_clicked'
+  // Onboarding events (PRD: first-time-user-activation)
+  | 'onboarding_started'
+  | 'onboarding_step_viewed'
+  | 'onboarding_completed'
+  | 'onboarding_tour_started'
+  | 'onboarding_tour_step_viewed'
+  | 'onboarding_tour_completed'
+  | 'onboarding_tour_skipped'
+  // Hero activation events (PRD: first-time-user-activation)
+  | 'hero_upload_cta_clicked'
+  | 'hero_upload_zone_visible'
+  // Sample image events (PRD: first-time-user-activation)
+  | 'sample_image_selector_viewed'
+  | 'sample_image_selected'
+  | 'sample_image_processed'
+  | 'sample_help_button_clicked'
+  | 'first_upload_completed'
   // Regional pricing monitoring events (server-side only)
   | 'pricing_region_mismatch'
   // Amplitude identity events (server-side only)

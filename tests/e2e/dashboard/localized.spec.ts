@@ -14,29 +14,15 @@ test.describe('Localized Dashboard', () => {
   });
 
   test('should show Spanish dashboard', async ({ page }) => {
-    // Navigate to Spanish dashboard
     await page.goto('/es/dashboard');
 
-    // Wait for page to load
-    await page.waitForLoadState('networkidle');
-
-    // Check for Spanish dashboard title
-    const dashboardTitle = page.getByText('Panel de Control');
-    await expect(dashboardTitle).toBeVisible();
-
-    // Check for Spanish subtitle
-    const subtitle = page.getByText(/Sube y mejora tus imágenes/);
-    await expect(subtitle).toBeVisible();
+    await expect(page.getByText('Panel de Control')).toBeVisible();
+    await expect(page.getByText(/Sube y mejora tus imágenes/)).toBeVisible();
   });
 
   test('should show Spanish sidebar navigation', async ({ page }) => {
-    // Navigate to Spanish dashboard
     await page.goto('/es/dashboard');
 
-    // Wait for page to load
-    await page.waitForLoadState('networkidle');
-
-    // Check for Spanish sidebar items
     await expect(page.getByText('Panel')).toBeVisible();
     await expect(page.getByText('Facturación')).toBeVisible();
     await expect(page.getByText('Configuración')).toBeVisible();
@@ -45,42 +31,27 @@ test.describe('Localized Dashboard', () => {
   });
 
   test('should show Spanish history page', async ({ page }) => {
-    // Navigate to Spanish history page
     await page.goto('/es/dashboard/history');
 
-    // Wait for page to load
-    await page.waitForLoadState('networkidle');
-
-    // Check for Spanish history page elements
     await expect(page.getByText('Historial')).toBeVisible();
     await expect(page.getByText('Cargas Recientes')).toBeVisible();
     await expect(page.getByText(/Ver tus imágenes procesadas/)).toBeVisible();
   });
 
   test('should show Spanish settings page', async ({ page }) => {
-    // Navigate to Spanish settings page
     await page.goto('/es/dashboard/settings');
 
-    // Wait for page to load
-    await page.waitForLoadState('networkidle');
-
-    // Check for Spanish settings page elements
     await expect(page.getByText('Configuración')).toBeVisible();
     await expect(page.getByText('Perfil')).toBeVisible();
     await expect(page.getByText('Correo Electrónico')).toBeVisible();
   });
 
   test('should redirect Spanish support page to help', async ({ page }) => {
-    // Navigate to Spanish support page (should redirect to /help)
     await page.goto('/es/dashboard/support');
 
-    // Wait for redirect to complete
-    await page.waitForLoadState('networkidle');
+    // Use waitForURL instead of toHaveURL to properly await the redirect
+    await page.waitForURL(/\/es\/help/, { timeout: 10000 });
 
-    // Should be redirected to /help page
-    await expect(page).toHaveURL(/\/es\/help/);
-
-    // Check for Spanish help page elements
     await expect(page.getByText('Ayuda y Preguntas Frecuentes')).toBeVisible();
     await expect(page.getByText('Contactar Soporte')).toBeVisible();
   });

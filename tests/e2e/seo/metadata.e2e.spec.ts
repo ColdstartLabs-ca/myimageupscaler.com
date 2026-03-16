@@ -88,8 +88,9 @@ test.describe('SEO Metadata', () => {
   test('should have correct hreflang on category page', async ({ page }) => {
     await page.goto('/tools');
 
-    // Wait for network idle to ensure all metadata is loaded
-    await page.waitForLoadState('networkidle');
+    // Wait for at least one alternate link to be attached before collecting all
+    const firstAlternate = page.locator('head link[rel="alternate"]').first();
+    await firstAlternate.waitFor({ state: 'attached', timeout: 5000 });
 
     // Get all alternate links from head and check them
     const alternates = await page.locator('head link[rel="alternate"]').all();
@@ -120,8 +121,9 @@ test.describe('SEO Metadata', () => {
   test('should have correct hreflang on homepage', async ({ page }) => {
     await page.goto('/');
 
-    // Wait for network idle to ensure all metadata is loaded
-    await page.waitForLoadState('networkidle');
+    // Wait for at least one alternate link to be attached before collecting all
+    const firstAlternate = page.locator('head link[rel="alternate"]').first();
+    await firstAlternate.waitFor({ state: 'attached', timeout: 5000 });
 
     // Get all alternate links from head and check them
     const alternates = await page.locator('head link[rel="alternate"]').all();

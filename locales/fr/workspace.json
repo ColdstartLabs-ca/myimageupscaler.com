@@ -190,5 +190,68 @@
     "fields": {
       "admin": "Admin"
     }
+  },
+  "postDownloadPrompt": {
+    "message": "Vous aimez le résultat ?",
+    "ctaLink": "10x plus net avec les modèles Premium.",
+    "dismiss": "Ignorer la suggestion d'amélioration"
+  },
+  "sampleImages": {
+    "title": "Essayer avec une image exemple",
+    "subtitle": "Pas d'image sous la main ? Essayez l'une de celles-ci pour voir l'agrandisseur en action.",
+    "types": {
+      "photo": {
+        "title": "Photo",
+        "description": "Portraits et photos générales"
+      },
+      "illustration": {
+        "title": "Illustration",
+        "description": "Art numérique et vecteurs"
+      },
+      "old_photo": {
+        "title": "Vieille Photo",
+        "description": "Restauration de photos vintage"
+      }
+    },
+    "tryThis": "Essayer",
+    "scaleFactor": "Agrandissement {scale}x"
+  },
+  "progressSteps": {
+    "step1": "Télécharger",
+    "step2": "Configurer",
+    "step3": "Télécharger",
+    "ariaLabel": "Étapes de progression d'agrandissement"
+  },
+  "progressCelebration": {
+    "title": "Premier agrandissement terminé !",
+    "subtitle": "Vous venez d'agrandir votre première image ! Prêt à découvrir ce que notre IA peut faire d'autre ?",
+    "uploadAnother": "Télécharger une autre image",
+    "seePlans": "Voir les plans Premium",
+    "skipText": "Débloquez des agrandissements illimités avec Premium",
+    "dismiss": "Fermer la célébration"
+  },
+  "onboardingTour": {
+    "uploadZone": {
+      "title": "Téléchargez votre image",
+      "content": "Glissez-déposez un JPG, PNG ou WEBP ici — ou cliquez pour parcourir."
+    },
+    "qualitySelector": {
+      "title": "Choisissez le niveau de qualité",
+      "content": "Sélectionnez le modèle IA pour votre image. <em>Rapide</em> est gratuit — les niveaux Premium offrent plus de détails."
+    },
+    "processButton": {
+      "title": "Traitez votre image",
+      "content": "Satisfait des paramètres ? Cliquez ici pour lancer l'agrandissement."
+    },
+    "downloadButton": {
+      "title": "Téléchargez votre résultat",
+      "content": "Votre image est prête ! Cliquez ici pour la sauvegarder."
+    },
+    "next": "Suivant",
+    "previous": "Précédent",
+    "skip": "Ignorer la visite",
+    "finish": "Terminer",
+    "stepOf": "Étape {current} sur {total}",
+    "showTour": "Montrez-moi comment"
   }
 }

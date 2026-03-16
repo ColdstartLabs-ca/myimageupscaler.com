@@ -172,5 +172,68 @@
     "subscription": {
       "status": "Status"
     }
+  },
+  "postDownloadPrompt": {
+    "message": "Gostou do resultado?",
+    "ctaLink": "10x mais nítido com modelos Premium.",
+    "dismiss": "Ignorar sugestão de melhoria"
+  },
+  "sampleImages": {
+    "title": "Experimente com uma imagem de exemplo",
+    "subtitle": "Não tem uma imagem? Experimente uma destas para ver o ampliador em ação.",
+    "types": {
+      "photo": {
+        "title": "Foto",
+        "description": "Retratos e fotos gerais"
+      },
+      "illustration": {
+        "title": "Ilustração",
+        "description": "Arte digital e vetores"
+      },
+      "old_photo": {
+        "title": "Foto Antiga",
+        "description": "Restauração de fotos vintage"
+      }
+    },
+    "tryThis": "Experimentar",
+    "scaleFactor": "Ampliação {scale}x"
+  },
+  "progressSteps": {
+    "step1": "Enviar",
+    "step2": "Configurar",
+    "step3": "Baixar",
+    "ariaLabel": "Etapas de progresso de ampliação"
+  },
+  "progressCelebration": {
+    "title": "Primeira ampliação concluída!",
+    "subtitle": "Você acabou de ampliar sua primeira imagem! Pronto para ver o que mais nossa IA pode fazer?",
+    "uploadAnother": "Enviar outra imagem",
+    "seePlans": "Ver planos Premium",
+    "skipText": "Desbloqueie ampliações ilimitadas com Premium",
+    "dismiss": "Fechar celebração"
+  },
+  "onboardingTour": {
+    "uploadZone": {
+      "title": "Envie sua imagem",
+      "content": "Arraste e solte um JPG, PNG ou WEBP aqui — ou clique para navegar."
+    },
+    "qualitySelector": {
+      "title": "Escolha o nível de qualidade",
+      "content": "Selecione o modelo de IA para sua imagem. <em>Rápido</em> é grátis — os níveis Premium desbloqueiam mais detalhes."
+    },
+    "processButton": {
+      "title": "Processe sua imagem",
+      "content": "Satisfeito com as configurações? Clique aqui para iniciar o processamento."
+    },
+    "downloadButton": {
+      "title": "Baixe seu resultado",
+      "content": "Sua imagem está pronta! Clique aqui para salvá-la."
+    },
+    "next": "Próximo",
+    "previous": "Anterior",
+    "skip": "Pular tour",
+    "finish": "Concluir",
+    "stepOf": "Passo {current} de {total}",
+    "showTour": "Mostre-me como"
   }
 }

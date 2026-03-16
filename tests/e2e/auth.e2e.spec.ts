@@ -185,11 +185,8 @@ test.describe('Authentication', () => {
       // Reload page with timeout
       await page.reload({ timeout: 10000 });
 
-      // Wait for page to stabilize
-      await page.waitForLoadState('networkidle', { timeout: 10000 });
-
       // After reload, we should still be able to see the sign in button
-      await expect(loginPage.signInButton).toBeVisible({ timeout: 5000 });
+      await expect(loginPage.signInButton).toBeVisible({ timeout: 10000 });
     });
   });
 

@@ -1,7 +1,11 @@
 import { test, expect } from '../test-fixtures';
 import { BillingPage } from '../pages/BillingPage';
 import { BasePage } from '../pages/BasePage';
-import { setupAuthenticatedStateWithSupabase, createTestUser, type ITestUserData } from '../helpers/auth-helpers';
+import {
+  setupAuthenticatedStateWithSupabase,
+  createTestUser,
+  type ITestUserData,
+} from '../helpers/auth-helpers';
 import { CheckoutMock } from '../helpers/checkout-mock';
 import { mockSupabaseForUser } from '../helpers/supabase-mock';
 
@@ -22,7 +26,10 @@ import { mockSupabaseForUser } from '../helpers/supabase-mock';
 /**
  * Assertion helper: Verify the visible plan name on the page
  */
-async function assertVisiblePlan(page: import('@playwright/test').Page, expectedPlan: string): Promise<void> {
+async function assertVisiblePlan(
+  page: import('@playwright/test').Page,
+  expectedPlan: string
+): Promise<void> {
   // The billing page shows plan name in the subscription section
   // Look for plan name in various locations where it might appear
   const planLocator = page
@@ -127,7 +134,7 @@ test.describe('Subscription Signup Proof Tests', () => {
 
       // Wait for the page to load - the success page polls for credits (up to 10s)
       // so we need to wait for the loading state to complete
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Wait for the success heading to appear (indicates loading is done)
       await expect(page.locator('h1:has-text("Subscription Activated!")')).toBeVisible({
@@ -139,7 +146,9 @@ test.describe('Subscription Signup Proof Tests', () => {
 
       // Assert: Success page shows credits balance (may be 0 if polling hasn't completed)
       // Just check that credits section is visible, not exact value
-      const creditsSection = page.locator('.text-accent-hover').or(page.locator('[class*="credits"]'));
+      const creditsSection = page
+        .locator('.text-accent-hover')
+        .or(page.locator('[class*="credits"]'));
       await expect(creditsSection.first()).toBeVisible({ timeout: 5000 });
 
       // Assert: Links to dashboard and billing are visible
@@ -168,7 +177,7 @@ test.describe('Subscription Signup Proof Tests', () => {
       await page.goto('/success?session_id=test_session_credits_123&type=credits&credits=200');
 
       // Wait for the page to load - the success page polls for credits
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Wait for the success heading to appear
       await expect(page.locator('h1:has-text("Credits Purchased!")')).toBeVisible({
@@ -179,7 +188,9 @@ test.describe('Subscription Signup Proof Tests', () => {
       await page.waitForTimeout(2000);
 
       // Assert: Credits section is visible
-      const creditsSection = page.locator('.text-accent-hover').or(page.locator('[class*="credits"]'));
+      const creditsSection = page
+        .locator('.text-accent-hover')
+        .or(page.locator('[class*="credits"]'));
       await expect(creditsSection.first()).toBeVisible({ timeout: 5000 });
     });
   });
@@ -250,7 +261,9 @@ test.describe('Subscription Signup Proof Tests', () => {
       // Wait for "Current Plan" heading
       const currentPlanHeading = page.getByRole('heading', { name: 'Current Plan' });
       const choosePlanHeading = page.getByRole('heading', { name: 'Choose Plan' });
-      await expect(currentPlanHeading.or(choosePlanHeading).first()).toBeVisible({ timeout: 10000 });
+      await expect(currentPlanHeading.or(choosePlanHeading).first()).toBeVisible({
+        timeout: 10000,
+      });
 
       // Assert: Plan name is visible (Professional)
       await assertVisiblePlan(page, 'Professional');
