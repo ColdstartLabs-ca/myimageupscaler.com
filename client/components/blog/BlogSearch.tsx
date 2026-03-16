@@ -1,7 +1,7 @@
 'use client';
 
 import { Search, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -10,21 +10,24 @@ export function BlogSearch(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
+  const isInitialRender = useRef(true);
 
   useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
+    }
+
     const timeoutId = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
       if (query) {
-        params.set('q', query);
-        params.delete('page');
+        router.push(`/blog?q=${encodeURIComponent(query)}`, { scroll: false });
       } else {
-        params.delete('q');
+        router.push('/blog', { scroll: false });
       }
-      router.push(`/blog?${params.toString()}`, { scroll: false });
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [query, router, searchParams]);
+  }, [query, router]);
 
   return (
     <div className="relative max-w-md mx-auto">

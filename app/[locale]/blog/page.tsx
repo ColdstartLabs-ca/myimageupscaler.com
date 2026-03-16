@@ -253,7 +253,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                   {/* Previous Button */}
                   {currentPage > 1 ? (
                     <Link
-                      href={`/blog?page=${currentPage - 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                      href={`/${locale}/blog?page=${currentPage - 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                       scroll={false}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-lg hover:border-accent/50 hover:bg-accent/5 transition-all"
                     >
@@ -272,7 +272,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
                       <Link
                         key={pageNum}
-                        href={`/blog?page=${pageNum}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                        href={`/${locale}/blog?page=${pageNum}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                         scroll={false}
                         className={`min-w-[2.5rem] h-10 flex items-center justify-center rounded-lg font-medium transition-all ${
                           currentPage === pageNum
@@ -288,7 +288,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                   {/* Next Button */}
                   {currentPage < totalPages ? (
                     <Link
-                      href={`/blog?page=${currentPage + 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                      href={`/${locale}/blog?page=${currentPage + 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                       scroll={false}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-lg hover:border-accent/50 hover:bg-accent/5 transition-all"
                     >

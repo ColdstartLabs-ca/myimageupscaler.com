@@ -2,7 +2,6 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
-import { StripeService } from '@client/services/stripeService';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 
 interface IUseCheckoutFlowOptions {
@@ -28,7 +27,7 @@ const MAX_RETRIES = 3;
  * Hook that encapsulates the checkout flow logic including:
  * - Click debouncing
  * - Authentication checks
- * - Mobile vs desktop checkout routing
+ * - Embedded checkout modal (same UX as credit packs)
  * - Error handling with retry logic
  */
 export function useCheckoutFlow({
@@ -110,21 +109,9 @@ export function useCheckoutFlow({
         return;
       }
 
-      // Check device type for best checkout UX
-      const isMobile = window.innerWidth < 768;
-
-      if (isMobile) {
-        // Mobile: redirect to Stripe hosted checkout
-        await StripeService.redirectToCheckout(priceId, {
-          successUrl: `${window.location.origin}/success`,
-          cancelUrl: window.location.href,
-        });
-        setIsProcessing(false);
-      } else {
-        // Desktop: show embedded checkout modal
-        setShowCheckoutModal(true);
-        setTimeout(() => setIsProcessing(false), 0);
-      }
+      // Show embedded checkout modal (same UX as credit packs)
+      setShowCheckoutModal(true);
+      setTimeout(() => setIsProcessing(false), 0);
     } catch (error) {
       console.error('Error during subscription process:', error);
       setHasError(true);

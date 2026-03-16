@@ -190,11 +190,11 @@ const Workspace: React.FC = () => {
   const prevQueueLengthRef = React.useRef(queue.length);
 
   // Auto-switch to preview tab ONLY when NEW images are added (not on tab click)
+  // Skip auto-switch if Phase 2 tour hasn't been seen yet — sidebar must stay visible for tour
   useEffect(() => {
     const wasEmpty = prevQueueLengthRef.current === 0;
     const hasImages = queue.length > 0;
 
-    // Only auto-switch if we went from empty to having images
     if (wasEmpty && hasImages && mobileTab === 'upload') {
       setMobileTab('preview');
     }
@@ -483,6 +483,7 @@ const Workspace: React.FC = () => {
         !queue.every(i => i.status === ProcessingStatus.COMPLETED) && (
           <div className="md:hidden px-4 py-2 bg-surface border-t border-border shrink-0">
             <button
+              data-driver="mobile-process-button"
               onClick={() => processBatch(config)}
               disabled={isProcessingBatch}
               className={cn(
@@ -519,6 +520,7 @@ const Workspace: React.FC = () => {
       {/* Mobile Quality Tier Selector */}
       <div className="md:hidden border-t border-border bg-surface/80 px-3 py-2 shrink-0">
         <button
+          data-driver="mobile-quality-selector"
           onClick={() => setMobileGalleryOpen(true)}
           disabled={isProcessingBatch}
           className={cn(

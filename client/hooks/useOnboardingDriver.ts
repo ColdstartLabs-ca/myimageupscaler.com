@@ -132,6 +132,14 @@ export function useOnboardingDriver(): {
     const processTitle = t('processButton.title');
     const processContent = t('processButton.content');
 
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const qualitySelector = isMobile
+      ? '[data-driver="mobile-quality-selector"]'
+      : '[data-driver="quality-selector"]';
+    const processButtonSelector = isMobile
+      ? '[data-driver="mobile-process-button"]'
+      : '[data-driver="process-button"]';
+
     const { driver } = await import('driver.js');
 
     driverRef.current = driver({
@@ -143,16 +151,16 @@ export function useOnboardingDriver(): {
       },
       steps: [
         {
-          element: '[data-driver="quality-selector"]',
+          element: qualitySelector,
           popover: {
             title: qualityTitle,
             description: qualityContent,
-            side: 'right',
+            side: 'top',
             align: 'start',
           },
         },
         {
-          element: '[data-driver="process-button"]',
+          element: processButtonSelector,
           popover: {
             title: processTitle,
             description: processContent,
