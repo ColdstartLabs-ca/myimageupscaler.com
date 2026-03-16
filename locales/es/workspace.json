@@ -214,7 +214,7 @@
     },
     "qualitySelector": {
       "title": "Elige el nivel de calidad",
-      "content": "Selecciona el modelo de IA para tu imagen. <em>Rápido</em> es gratis — los niveles Premium desbloquean más detalle."
+      "content": "Selecciona el modelo de IA para tu imagen. Rápido es gratis — los niveles Premium desbloquean más detalle."
     },
     "processButton": {
       "title": "Procesa tu imagen",

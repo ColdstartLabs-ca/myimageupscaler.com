@@ -117,13 +117,12 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
         className={cn(
           // Base styles
           'flex flex-col w-64 min-h-screen bg-surface border-r border-border',
-          // Desktop: static positioning
-          'hidden md:flex',
-          // Mobile: drawer positioning
-          isOpen && 'fixed inset-y-0 left-0 z-50 flex md:relative',
-          // Animation
+          // Desktop: static in flow
+          'md:relative md:translate-x-0',
+          // Mobile: fixed drawer with slide animation
+          'max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-50',
           'transition-transform duration-200 ease-in-out',
-          !isOpen && '-translate-x-full md:translate-x-0'
+          isOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'
         )}
       >
         {/* Close button - Mobile only */}
@@ -139,7 +138,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
 
         {/* Logo/Brand */}
         <div className="p-6 border-b border-border flex items-center justify-between">
-          <Link href="/" className="flex items-center">
+          <Link href="/dashboard" className="flex items-center">
             <Image
               src="/logo/horizontal-logo-compact.png"
               alt={clientEnv.APP_NAME}

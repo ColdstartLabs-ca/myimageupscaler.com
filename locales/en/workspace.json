@@ -220,7 +220,7 @@
     },
     "qualitySelector": {
       "title": "Choose Quality Tier",
-      "content": "Pick the AI model that fits your image. <em>Quick</em> is free and fast — premium tiers unlock sharper detail."
+      "content": "Pick the AI model that fits your image. Quick is free and fast — premium tiers unlock sharper detail."
     },
     "processButton": {
       "title": "Process Your Image",

@@ -42,6 +42,7 @@ import { ProgressSteps, checkIsFirstTimeUser } from './ProgressSteps';
 import { SampleImageSelector } from './SampleImageSelector';
 import { ISampleImage } from '@shared/config/sample-images.config';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
+import { MobileUpgradePrompt } from './MobileUpgradePrompt';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
 const FREE_DOWNLOAD_UPSELL_PROBABILITY = 0.5;
@@ -270,7 +271,7 @@ const Workspace: React.FC = () => {
   // Empty State
   if (queue.length === 0) {
     return (
-      <div className="bg-surface rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col min-h-[600px]">
+      <div className="bg-surface rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col h-[calc(100dvh-5rem)] md:h-auto md:min-h-[600px]">
         <div className="px-8 pt-6 relative">
           <ProgressSteps currentStep={1} isFirstUpload={isFirstTimeUser} />
           <button
@@ -286,17 +287,17 @@ const Workspace: React.FC = () => {
           <AmbientBackground variant="section" />
           <div className="relative z-10">
             <Dropzone onFilesSelected={addFiles} />
-            <div className="mt-8 flex justify-center gap-8 text-text-muted flex-wrap">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-secondary" />{' '}
+            <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 size={13} className="text-secondary shrink-0" />{' '}
                 {t('workspace.features.freeLimit')}
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-secondary" />{' '}
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 size={13} className="text-secondary shrink-0" />{' '}
                 {t('workspace.features.noWatermark')}
               </div>
-              <div className="flex items-center gap-2 text-accent">
-                <Layers size={16} /> {t('workspace.features.batch')}{' '}
+              <div className="flex items-center gap-1.5 text-accent">
+                <Layers size={13} className="shrink-0" /> {t('workspace.features.batch')}{' '}
                 {batchLimit === 1
                   ? t('workspace.features.upgradeRequired')
                   : t('workspace.features.upToImages', { count: batchLimit })}
@@ -325,6 +326,9 @@ const Workspace: React.FC = () => {
             </div>
           </div>
         )}
+        <div className="px-8 pb-4">
+          <MobileUpgradePrompt variant="upload" isFreeUser={isFreeUser} />
+        </div>
       </div>
     );
   }

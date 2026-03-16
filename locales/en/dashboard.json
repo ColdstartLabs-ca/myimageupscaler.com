@@ -23,7 +23,7 @@
     "tabs": {
       "subscription": "Subscription",
       "credits": "Credits",
-      "invoices": "Invoices & Payment"
+      "invoices": "Invoices"
     },
     "refresh": "Refresh",
     "currentPlan": "Current Plan",

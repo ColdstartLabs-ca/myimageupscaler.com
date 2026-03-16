@@ -62,7 +62,7 @@ export const NavBar = (): JSX.Element => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-main/80 backdrop-blur-xl transition-all duration-300">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a
-          href={localizedPath('/')}
+          href={isAuthenticated ? localizedPath('/dashboard') : localizedPath('/')}
           className="flex items-center cursor-pointer hover:opacity-90 transition-all active:scale-95 flex-shrink-0"
         >
           {/* Compact logo for mobile */}

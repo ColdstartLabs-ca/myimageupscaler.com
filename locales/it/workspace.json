@@ -219,7 +219,7 @@
     },
     "qualitySelector": {
       "title": "Scegli il livello di qualità",
-      "content": "Seleziona il modello IA per la tua immagine. <em>Rapido</em> è gratuito — i livelli Premium offrono dettagli più nitidi."
+      "content": "Seleziona il modello IA per la tua immagine. Rapido è gratuito — i livelli Premium offrono dettagli più nitidi."
     },
     "processButton": {
       "title": "Elabora la tua immagine",

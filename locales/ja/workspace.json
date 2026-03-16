@@ -214,7 +214,7 @@
     },
     "qualitySelector": {
       "title": "品質レベルを選択",
-      "content": "画像に合ったAIモデルを選んでください。<em>クイック</em>は無料 — Premiumレベルはより鮮明な詳細を解放します。"
+      "content": "画像に合ったAIモデルを選んでください。クイックは無料 — Premiumレベルはより鮮明な詳細を解放します。"
     },
     "processButton": {
       "title": "画像を処理",

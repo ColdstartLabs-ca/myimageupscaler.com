@@ -6,15 +6,19 @@ import { NextIntlClientProvider } from 'next-intl';
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
   ArrowRight: () => <span data-testid="arrow-right-icon" />,
+  BadgeCheck: () => <span data-testid="badge-check-icon" />,
   Calendar: () => <span data-testid="calendar-icon" />,
   CreditCard: () => <span data-testid="credit-card-icon" />,
   ExternalLink: () => <span data-testid="external-link-icon" />,
   History: () => <span data-testid="history-icon" />,
   Loader2: () => <span data-testid="loader-icon" />,
+  Lock: () => <span data-testid="lock-icon" />,
+  MessageSquare: () => <span data-testid="message-square-icon" />,
   Package: () => <span data-testid="package-icon" />,
   Plus: () => <span data-testid="plus-icon" />,
   Receipt: () => <span data-testid="receipt-icon" />,
   RefreshCw: () => <span data-testid="refresh-icon" />,
+  Shield: () => <span data-testid="shield-icon" />,
   Wallet: () => <span data-testid="wallet-icon" />,
   X: () => <span data-testid="close-icon" />,
   Zap: () => <span data-testid="zap-icon" />,
@@ -114,6 +118,8 @@ vi.mock('@client/services/stripeService', () => ({
     cancelSubscription: vi.fn(),
     getCreditHistory: vi.fn(),
   },
+  preloadStripe: vi.fn(),
+  isStripePreloaded: vi.fn(() => false),
 }));
 
 vi.mock('@client/store/toastStore', () => ({

@@ -71,6 +71,18 @@ vi.mock('@client/components/ui/TabButton', () => ({
   TabButton: ({ children }: { children: React.ReactNode }) => <button>{children}</button>,
 }));
 
+// Mock useRegionTier to avoid fetch('/api/geo') in test env
+vi.mock('@/client/hooks/useRegionTier', () => ({
+  useRegionTier: () => ({
+    tier: 'standard',
+    country: null,
+    isLoading: false,
+    isRestricted: false,
+    pricingRegion: 'standard',
+    discountPercent: 0,
+  }),
+}));
+
 // Import after mocks are set up
 import Workspace from '../Workspace';
 

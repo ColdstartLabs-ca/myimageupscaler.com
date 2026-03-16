@@ -4,6 +4,7 @@ import { Button } from '@client/components/ui/Button';
 import { AlertTriangle, Check, Layers, Loader2 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { MobileUpgradePrompt } from './MobileUpgradePrompt';
 
 export interface IBatchProgress {
   current: number;
@@ -354,48 +355,51 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   const isEnhancing = activeItem.stage === ProcessingStage.ENHANCING;
 
   return (
-    <div className="relative w-full h-full md:h-[65vh] md:min-h-[400px] max-w-5xl mx-auto bg-surface-light rounded-xl border border-border overflow-hidden flex items-center justify-center">
-      <img
-        src={activeItem.previewUrl}
-        alt={`Preview of ${activeItem.file.name}`}
-        className="max-h-full max-w-full object-contain"
-        loading="eager"
-        decoding="async"
-      />
+    <div className="w-full max-w-5xl mx-auto flex flex-col">
+      <div className="relative w-full h-[50vw] md:h-[65vh] md:min-h-[400px] bg-surface-light rounded-xl border border-border overflow-hidden flex items-center justify-center">
+        <img
+          src={activeItem.previewUrl}
+          alt={`Preview of ${activeItem.file.name}`}
+          className="max-h-full max-w-full object-contain"
+          loading="eager"
+          decoding="async"
+        />
 
-      {/* Processing Overlay */}
-      {activeItem.status === ProcessingStatus.PROCESSING && (
-        <div className="absolute inset-0 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center">
-          {/* Scanning line animation during analyzing */}
-          {activeItem.stage === ProcessingStage.ANALYZING && <ScanningLineAnimation />}
+        {/* Processing Overlay */}
+        {activeItem.status === ProcessingStatus.PROCESSING && (
+          <div className="absolute inset-0 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center">
+            {/* Scanning line animation during analyzing */}
+            {activeItem.stage === ProcessingStage.ANALYZING && <ScanningLineAnimation />}
 
-          <div className="w-72 space-y-4 p-6 bg-surface rounded-xl shadow-2xl border border-border">
-            {/* Batch progress indicator */}
-            <BatchProgressIndicator batchProgress={batchProgress} />
+            <div className="w-72 space-y-4 p-6 bg-surface rounded-xl shadow-2xl border border-border">
+              {/* Batch progress indicator */}
+              <BatchProgressIndicator batchProgress={batchProgress} />
 
-            {/* Stage indicator with spinner */}
-            <StageIndicator stageMessage={stageMessage} />
+              {/* Stage indicator with spinner */}
+              <StageIndicator stageMessage={stageMessage} />
 
-            {/* Progress bar with smooth animation */}
-            <ProgressBar
-              progress={displayProgress}
-              isEnhancing={isEnhancing}
-              estimatedRemaining={estimatedRemaining}
-            />
+              {/* Progress bar with smooth animation */}
+              <ProgressBar
+                progress={displayProgress}
+                isEnhancing={isEnhancing}
+                estimatedRemaining={estimatedRemaining}
+              />
 
-            {/* Processing indicator dots */}
-            <ProcessingDots />
+              {/* Processing indicator dots */}
+              <ProcessingDots />
 
-            {/* Stage description */}
-            {activeItem.stage && <StageDescription stage={activeItem.stage} />}
+              {/* Stage description */}
+              {activeItem.stage && <StageDescription stage={activeItem.stage} />}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Error Overlay */}
-      {activeItem.status === ProcessingStatus.ERROR && (
-        <ErrorOverlay item={activeItem} onRetry={onRetry} />
-      )}
+        {/* Error Overlay */}
+        {activeItem.status === ProcessingStatus.ERROR && (
+          <ErrorOverlay item={activeItem} onRetry={onRetry} />
+        )}
+      </div>
+      <MobileUpgradePrompt variant="preview" isFreeUser={isFreeUser} />
     </div>
   );
 };

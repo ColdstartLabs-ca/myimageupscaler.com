@@ -21,5 +21,6 @@
   "subscribingTo": "Subscribing to: {planName}",
   "noPriceIdProvided": "No price ID provided. Please select a plan first.",
   "stripeNotConfigured": "Stripe is not properly configured. Please contact support.",
-  "noClientSecret": "No client secret returned from checkout session"
+  "noClientSecret": "No client secret returned from checkout session",
+  "backToBilling": "Back to Billing"
 }

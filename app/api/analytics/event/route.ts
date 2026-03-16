@@ -83,6 +83,12 @@ const ALLOWED_EVENTS = [
   'pseo_scroll_depth',
   'pseo_faq_expanded',
   'pseo_internal_link_clicked',
+  // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
+  'checkout_step_viewed',
+  'checkout_step_time',
+  'checkout_error',
+  'checkout_exit_intent',
+  'checkout_exit_survey_response',
 ] as const;
 
 // Type for allowed events (excludes $identify which is server-side only)

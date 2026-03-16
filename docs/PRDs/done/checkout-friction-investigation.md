@@ -153,6 +153,7 @@ sequenceDiagram
 **Implementation:**
 
 - [ ] Add new event types to `IAnalyticsEventName` in `types.ts`:
+
   ```typescript
   | 'checkout_step_viewed'
   | 'checkout_step_time'
@@ -161,6 +162,7 @@ sequenceDiagram
   ```
 
 - [ ] Add new property interfaces:
+
   ```typescript
   export interface ICheckoutStepViewedProperties {
     step: 'plan_selection' | 'stripe_embed' | 'payment_details' | 'confirmation';
@@ -208,13 +210,13 @@ sequenceDiagram
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should track checkout_step_viewed with correct step` | Event fired with proper step name |
-| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should track checkout_step_time periodically` | Time accumulator updates correctly |
-| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should track checkout_exit_intent on modal close` | Event fired with correct method |
-| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should detect deviceType correctly` | Mobile vs desktop classified accurately |
-| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should sanitize error messages in checkout_error` | No sensitive card data in event |
+| Test File                                           | Test Name                                             | Assertion                               |
+| --------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
+| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should track checkout_step_viewed with correct step` | Event fired with proper step name       |
+| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should track checkout_step_time periodically`        | Time accumulator updates correctly      |
+| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should track checkout_exit_intent on modal close`    | Event fired with correct method         |
+| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should detect deviceType correctly`                  | Mobile vs desktop classified accurately |
+| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should sanitize error messages in checkout_error`    | No sensitive card data in event         |
 
 **Verification Plan:**
 
@@ -241,6 +243,7 @@ sequenceDiagram
 **Implementation:**
 
 - [ ] Create `checkoutFunnelAnalyzer.ts` utility:
+
   ```typescript
   export interface ICheckoutFunnelMetrics {
     period: { start: Date; end: Date };
@@ -259,7 +262,7 @@ sequenceDiagram
   export async function getCheckoutFunnelMetrics(
     startDate: Date,
     endDate: Date
-  ): Promise<ICheckoutFunnelMetrics>
+  ): Promise<ICheckoutFunnelMetrics>;
   ```
 
 - [ ] Run initial analysis after 7 days of data collection
@@ -271,10 +274,10 @@ sequenceDiagram
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
+| Test File                                           | Test Name                                                      | Assertion                   |
+| --------------------------------------------------- | -------------------------------------------------------------- | --------------------------- |
 | `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `funnel analyzer: should calculate completion rates correctly` | Rates match expected values |
-| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `funnel analyzer: should aggregate time per step` | Time calculations accurate |
+| `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `funnel analyzer: should aggregate time per step`              | Time calculations accurate  |
 
 **Verification Plan:**
 
@@ -287,6 +290,7 @@ sequenceDiagram
 **Deliverable:**
 
 A concise report identifying the **top 3 friction points** with specific metrics, e.g.:
+
 1. "Stripe embed takes 8.2s to load (target: <2s) — 45% abandon during load"
 2. "Mobile users complete at 0.05% vs. desktop 0.35% — UX issue suspected"
 3. "60% of abandoners exit within 3 seconds — pricing confusion or cold feet"
@@ -324,8 +328,8 @@ A concise report identifying the **top 3 friction points** with specific metrics
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
+| Test File                                           | Test Name                                        | Assertion                        |
+| --------------------------------------------------- | ------------------------------------------------ | -------------------------------- |
 | `tests/unit/analytics/checkout-funnel.unit.spec.ts` | `should track stripe embed load time accurately` | LoadTimeMs within expected range |
 
 **Success Metric:** Average embed load time reduced by 30%
@@ -364,10 +368,10 @@ A concise report identifying the **top 3 friction points** with specific metrics
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should render trust badges in checkout modal` | Badges visible and correctly styled |
-| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should stack trust badges vertically on mobile` | Responsive layout works |
+| Test File                                     | Test Name                                        | Assertion                           |
+| --------------------------------------------- | ------------------------------------------------ | ----------------------------------- |
+| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should render trust badges in checkout modal`   | Badges visible and correctly styled |
+| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should stack trust badges vertically on mobile` | Responsive layout works             |
 
 **Success Metric:** Survey responses citing "security concerns" decrease by 50%
 
@@ -405,11 +409,11 @@ A concise report identifying the **top 3 friction points** with specific metrics
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should show exit survey after 5s in checkout` | Survey appears after threshold |
-| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should NOT show survey if checkout completed` | No survey on successful purchase |
-| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should respect weekly frequency cap` | Survey suppressed if recently shown |
+| Test File                                     | Test Name                                      | Assertion                           |
+| --------------------------------------------- | ---------------------------------------------- | ----------------------------------- |
+| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should show exit survey after 5s in checkout` | Survey appears after threshold      |
+| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should NOT show survey if checkout completed` | No survey on successful purchase    |
+| `tests/unit/client/checkout-ui.unit.spec.tsx` | `should respect weekly frequency cap`          | Survey suppressed if recently shown |
 
 **Success Metric:** Collect 50+ responses in 2 weeks, identify actionable insights
 
@@ -443,8 +447,8 @@ A concise report identifying the **top 3 friction points** with specific metrics
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
+| Test File                           | Test Name                                   | Assertion                                |
+| ----------------------------------- | ------------------------------------------- | ---------------------------------------- |
 | `tests/e2e/checkout-mobile.spec.ts` | `should complete checkout on mobile device` | End-to-end flow works on mobile viewport |
 
 **Success Metric:** Mobile checkout completion rate increases by 50% relative to baseline
@@ -480,6 +484,7 @@ A concise report identifying the **top 3 friction points** with specific metrics
   - Mobile-optimized layout
 
 - [ ] Track `checkout_variant` in all checkout events:
+
   ```typescript
   export interface ICheckoutVariantProperties {
     variant: 'modal' | 'page';
@@ -490,12 +495,12 @@ A concise report identifying the **top 3 friction points** with specific metrics
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/analytics/checkout-ab-test.unit.spec.ts` | `should assign variant consistently per user` | Same user gets same variant |
-| `tests/unit/analytics/checkout-ab-test.unit.spec.ts` | `should achieve 50/50 split approximately` | Variant distribution within 45-55% |
-| `tests/e2e/checkout-variants.spec.ts` | `should complete purchase via modal variant` | Modal flow works end-to-end |
-| `tests/e2e/checkout-variants.spec.ts` | `should complete purchase via page variant` | Page flow works end-to-end |
+| Test File                                            | Test Name                                     | Assertion                          |
+| ---------------------------------------------------- | --------------------------------------------- | ---------------------------------- |
+| `tests/unit/analytics/checkout-ab-test.unit.spec.ts` | `should assign variant consistently per user` | Same user gets same variant        |
+| `tests/unit/analytics/checkout-ab-test.unit.spec.ts` | `should achieve 50/50 split approximately`    | Variant distribution within 45-55% |
+| `tests/e2e/checkout-variants.spec.ts`                | `should complete purchase via modal variant`  | Modal flow works end-to-end        |
+| `tests/e2e/checkout-variants.spec.ts`                | `should complete purchase via page variant`   | Page flow works end-to-end         |
 
 **Success Metric:** Identify winning variant with 95% statistical confidence
 
@@ -511,15 +516,15 @@ All phases use **Automated Checkpoint** (prd-work-reviewer agent). Phase 4 (A/B 
 
 ### Phase Verification Summary
 
-| Phase | Unit Tests | Manual Check | A/B Test Duration | yarn verify |
-|-------|-----------|--------------|-------------------|-------------|
-| 1 — Instrumentation | 5 tests | Events visible in Amplitude | N/A | Required |
-| 2 — Analysis | 2 tests | Report reviewed with team | N/A | Required |
-| 3A — Load Time | 1 test | Load time measured in dev | N/A | Required |
-| 3B — Trust Signals | 2 tests | Visual review on mobile + desktop | N/A | Required |
-| 3C — Exit Survey | 3 tests | Survey appears on close | N/A | Required |
-| 3D — Mobile UX | 1 E2E test | Manual testing on real devices | N/A | Required |
-| 4 — A/B Test | 4 tests | Both variants functional | 4 weeks min | Required |
+| Phase               | Unit Tests | Manual Check                      | A/B Test Duration | yarn verify |
+| ------------------- | ---------- | --------------------------------- | ----------------- | ----------- |
+| 1 — Instrumentation | 5 tests    | Events visible in Amplitude       | N/A               | Required    |
+| 2 — Analysis        | 2 tests    | Report reviewed with team         | N/A               | Required    |
+| 3A — Load Time      | 1 test     | Load time measured in dev         | N/A               | Required    |
+| 3B — Trust Signals  | 2 tests    | Visual review on mobile + desktop | N/A               | Required    |
+| 3C — Exit Survey    | 3 tests    | Survey appears on close           | N/A               | Required    |
+| 3D — Mobile UX      | 1 E2E test | Manual testing on real devices    | N/A               | Required    |
+| 4 — A/B Test        | 4 tests    | Both variants functional          | 4 weeks min       | Required    |
 
 **Total: 18 new tests + E2E tests**
 
@@ -528,24 +533,28 @@ All phases use **Automated Checkpoint** (prd-work-reviewer agent). Phase 4 (A/B 
 ## 7. Acceptance Criteria
 
 ### Phase 1 (Instrumentation)
+
 - [ ] All 4 new checkout events fire correctly (`checkout_step_viewed`, `checkout_step_time`, `checkout_error`, `checkout_exit_intent`)
 - [ ] Events include deviceType, timeSpentMs, step, and errorType properties
 - [ ] 7+ days of baseline data collected
 - [ ] Unit tests pass for new tracking logic
 
 ### Phase 2 (Analysis)
+
 - [ ] Checkout funnel baseline documented with specific metrics
 - [ ] Top 3 friction points identified with supporting data
 - [ ] Mobile vs desktop comparison completed
 - [ ] Error type analysis completed
 
 ### Phase 3 (Fixes)
+
 - [ ] Implement fixes prioritized by Phase 2 findings
 - [ ] At minimum, complete 3B (trust signals) and 3C (exit survey)
 - [ ] Mobile UX improvements deployed if mobile completion rate < desktop
 - [ ] All unit tests pass
 
 ### Phase 4 (A/B Test)
+
 - [ ] Both checkout variants (modal and page) functional
 - [ ] 50/50 variant allocation working correctly
 - [ ] 4+ weeks of data collected
@@ -558,21 +567,21 @@ All phases use **Automated Checkpoint** (prd-work-reviewer agent). Phase 4 (A/B 
 
 ### Primary Metrics
 
-| Metric | Current | Target | Measurement |
-|--------|---------|--------|-------------|
-| Checkout completion rate | 0.19% (2/88) | 5%+ | `checkout_completed / checkout_started` in Amplitude |
-| Avg checkout time (completers) | TBD | <60s | `checkout_step_time` aggregation |
-| Stripe embed load time | TBD | <2s | `checkout_step_viewed.loadTimeMs` |
-| Mobile vs desktop completion ratio | TBD | <2x gap | Compare completion rates by deviceType |
+| Metric                             | Current      | Target  | Measurement                                          |
+| ---------------------------------- | ------------ | ------- | ---------------------------------------------------- |
+| Checkout completion rate           | 0.19% (2/88) | 5%+     | `checkout_completed / checkout_started` in Amplitude |
+| Avg checkout time (completers)     | TBD          | <60s    | `checkout_step_time` aggregation                     |
+| Stripe embed load time             | TBD          | <2s     | `checkout_step_viewed.loadTimeMs`                    |
+| Mobile vs desktop completion ratio | TBD          | <2x gap | Compare completion rates by deviceType               |
 
 ### Secondary Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Top 3 friction points identified | Within 2 weeks | Funnel analysis report |
-| Exit survey response rate | 10%+ of abandoners | `checkout_exit_survey_response / checkout_abandoned` |
-| Error rate by type | Baseline established | `checkout_error` aggregation |
-| Trust signal visibility | 100% of checkouts | Trust badge impressions |
+| Metric                           | Target               | Measurement                                          |
+| -------------------------------- | -------------------- | ---------------------------------------------------- |
+| Top 3 friction points identified | Within 2 weeks       | Funnel analysis report                               |
+| Exit survey response rate        | 10%+ of abandoners   | `checkout_exit_survey_response / checkout_abandoned` |
+| Error rate by type               | Baseline established | `checkout_error` aggregation                         |
+| Trust signal visibility          | 100% of checkouts    | Trust badge impressions                              |
 
 ### Success Criteria
 
@@ -585,13 +594,13 @@ All phases use **Automated Checkpoint** (prd-work-reviewer agent). Phase 4 (A/B 
 
 ## 9. Risks and Mitigations
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|------------|
-| Low baseline conversion makes statistical significance difficult | High | Medium | Run tests for longer (4+ weeks), combine with qualitative survey data |
-| Stripe embed performance is limited by external factors | Medium | Medium | Focus on UX improvements (trust signals, loading states) rather than raw speed |
-| A/B test adds complexity without clear winner | Medium | Low | Revert to control if treatment underperforms; document learning |
-| Exit survey fatigues users | Low | Low | Cap at 1 per week per user; keep to 1 question |
-| Mobile fixes may break desktop UX | Low | Medium | Test on all screen sizes; use responsive breakpoints correctly |
+| Risk                                                             | Likelihood | Impact | Mitigation                                                                     |
+| ---------------------------------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------------ |
+| Low baseline conversion makes statistical significance difficult | High       | Medium | Run tests for longer (4+ weeks), combine with qualitative survey data          |
+| Stripe embed performance is limited by external factors          | Medium     | Medium | Focus on UX improvements (trust signals, loading states) rather than raw speed |
+| A/B test adds complexity without clear winner                    | Medium     | Low    | Revert to control if treatment underperforms; document learning                |
+| Exit survey fatigues users                                       | Low        | Low    | Cap at 1 per week per user; keep to 1 question                                 |
+| Mobile fixes may break desktop UX                                | Low        | Medium | Test on all screen sizes; use responsive breakpoints correctly                 |
 
 ---
 

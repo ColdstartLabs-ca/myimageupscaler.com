@@ -217,7 +217,7 @@
     },
     "qualitySelector": {
       "title": "Qualitätsstufe wählen",
-      "content": "Wähle das KI-Modell für dein Bild. <em>Schnell</em> ist kostenlos — Premium-Stufen bieten schärfere Details."
+      "content": "Wähle das KI-Modell für dein Bild. Schnell ist kostenlos — Premium-Stufen bieten schärfere Details."
     },
     "processButton": {
       "title": "Bild verarbeiten",

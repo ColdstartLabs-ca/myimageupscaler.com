@@ -44,6 +44,181 @@ interface ISubscriptionChangeResponse {
   current_period_end: string;
 }
 
+// =============================================================================
+// Session Cache for Optimistic Loading (Phase 3A)
+// =============================================================================
+
+interface ICachedCheckoutSession {
+  clientSecret: string;
+  priceId: string;
+  timestamp: number;
+  sessionId: string;
+  url: string;
+}
+
+const SESSION_CACHE_TTL_MS = 60000; // 1 minute TTL for checkout sessions
+const checkoutSessionCache = new Map<string, ICachedCheckoutSession>();
+
+/**
+ * Generate a cache key for checkout sessions
+ */
+function getCacheKey(priceId: string, uiMode: 'hosted' | 'embedded'): string {
+  return `${priceId}:${uiMode}`;
+}
+
+/**
+ * Get a cached checkout session if still valid
+ */
+function getCachedSession(
+  priceId: string,
+  uiMode: 'hosted' | 'embedded'
+): ICachedCheckoutSession | null {
+  const key = getCacheKey(priceId, uiMode);
+  const cached = checkoutSessionCache.get(key);
+
+  if (!cached) return null;
+
+  // Check if cache entry is still valid
+  if (Date.now() - cached.timestamp > SESSION_CACHE_TTL_MS) {
+    checkoutSessionCache.delete(key);
+    return null;
+  }
+
+  return cached;
+}
+
+/**
+ * Cache a checkout session
+ */
+function cacheSession(
+  priceId: string,
+  uiMode: 'hosted' | 'embedded',
+  session: ICheckoutSessionResponse
+): void {
+  const key = getCacheKey(priceId, uiMode);
+  checkoutSessionCache.set(key, {
+    clientSecret: session.clientSecret || '',
+    priceId,
+    timestamp: Date.now(),
+    sessionId: session.sessionId,
+    url: session.url,
+  });
+}
+
+/**
+ * Clear the checkout session cache (call on successful purchase or error)
+ */
+export function clearCheckoutSessionCache(): void {
+  checkoutSessionCache.clear();
+}
+
+// =============================================================================
+// Stripe.js Preloading (Phase 3A - Checkout Friction Optimization)
+// =============================================================================
+
+let stripePreloaded = false;
+
+/**
+ * Preload Stripe.js to reduce checkout embed load time
+ * Call this on pages where checkout is likely (e.g., billing page, dashboard)
+ *
+ * This reduces the embed load time by ~500ms by loading the Stripe.js
+ * script before the user clicks checkout.
+ */
+export function preloadStripe(): void {
+  // Only run in browser
+  if (typeof window === 'undefined') return;
+
+  // Only preload once
+  if (stripePreloaded) return;
+
+  // Check if already loaded by another mechanism
+  if (document.querySelector('script[src*="js.stripe.com"]')) {
+    stripePreloaded = true;
+    return;
+  }
+
+  // Create and inject the script
+  const script = document.createElement('script');
+  script.src = 'https://js.stripe.com/v3/';
+  script.async = true;
+  script.onload = () => {
+    stripePreloaded = true;
+  };
+  script.onerror = () => {
+    // Reset on error so we can try again
+    stripePreloaded = false;
+  };
+
+  document.head.appendChild(script);
+}
+
+/**
+ * Check if Stripe.js has been preloaded
+ */
+export function isStripePreloaded(): boolean {
+  return stripePreloaded;
+}
+
+/**
+ * Internal method to create checkout session
+ */
+async function createCheckoutSessionInternal(
+  priceId: string,
+  options?: {
+    successUrl?: string;
+    cancelUrl?: string;
+    metadata?: Record<string, string>;
+    uiMode?: 'hosted' | 'embedded';
+  }
+): Promise<ICheckoutSessionResponse> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.access_token) {
+    throw new Error('User not authenticated');
+  }
+
+  const request: ICheckoutSessionRequest = {
+    priceId,
+    successUrl: options?.successUrl,
+    cancelUrl: options?.cancelUrl,
+    metadata: options?.metadata,
+    uiMode: options?.uiMode,
+  };
+
+  const response = await fetch('/api/checkout', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorResponse = await response.json();
+    const errorMessage =
+      typeof errorResponse.error === 'string'
+        ? errorResponse.error
+        : errorResponse.error?.message || 'Failed to create checkout session';
+    const error = new Error(errorMessage);
+    // Attach error code for specific handling
+    (error as Error & { code?: string }).code = errorResponse.error?.code;
+    throw error;
+  }
+
+  const responseJson = await response.json();
+
+  // Handle both wrapped and unwrapped response formats
+  if (responseJson.success && responseJson.data) {
+    return responseJson.data as ICheckoutSessionResponse;
+  } else {
+    return responseJson as ICheckoutSessionResponse;
+  }
+}
+
 /**
  * Frontend service for Stripe operations
  * All methods interact with the backend API routes or Supabase
@@ -51,6 +226,8 @@ interface ISubscriptionChangeResponse {
 export class StripeService {
   /**
    * Create a Stripe Checkout Session
+   * Uses cache for embedded mode to enable optimistic loading
+   *
    * @param priceId - The Stripe Price ID
    * @param options - Additional options for the checkout session
    * @returns The checkout session data (URL for hosted, clientSecret for embedded)
@@ -64,51 +241,30 @@ export class StripeService {
       uiMode?: 'hosted' | 'embedded';
     }
   ): Promise<ICheckoutSessionResponse> {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const uiMode = options?.uiMode || 'hosted';
 
-    if (!session?.access_token) {
-      throw new Error('User not authenticated');
+    // Check cache for embedded mode (used by modal for faster display)
+    if (uiMode === 'embedded') {
+      const cached = getCachedSession(priceId, uiMode);
+      if (cached) {
+        // Return cached session data
+        return {
+          clientSecret: cached.clientSecret,
+          sessionId: cached.sessionId,
+          url: cached.url,
+        };
+      }
     }
 
-    const request: ICheckoutSessionRequest = {
-      priceId,
-      successUrl: options?.successUrl,
-      cancelUrl: options?.cancelUrl,
-      metadata: options?.metadata,
-      uiMode: options?.uiMode,
-    };
+    // Create new session
+    const response = await createCheckoutSessionInternal(priceId, options);
 
-    const response = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify(request),
-    });
-
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      const errorMessage =
-        typeof errorResponse.error === 'string'
-          ? errorResponse.error
-          : errorResponse.error?.message || 'Failed to create checkout session';
-      const error = new Error(errorMessage);
-      // Attach error code for specific handling
-      (error as Error & { code?: string }).code = errorResponse.error?.code;
-      throw error;
+    // Cache for future use if embedded mode
+    if (uiMode === 'embedded' && response.clientSecret) {
+      cacheSession(priceId, uiMode, response);
     }
 
-    const responseJson = await response.json();
-
-    // Handle both wrapped and unwrapped response formats
-    if (responseJson.success && responseJson.data) {
-      return responseJson.data as ICheckoutSessionResponse;
-    } else {
-      return responseJson as ICheckoutSessionResponse;
-    }
+    return response;
   }
 
   /**
