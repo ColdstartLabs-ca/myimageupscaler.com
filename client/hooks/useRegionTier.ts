@@ -9,6 +9,7 @@ interface IGeoCache {
   country: string | null;
   pricingRegion: string;
   discountPercent: number;
+  isPaywalled: boolean;
 }
 
 // Module-level cache — persists for the browser session
@@ -21,6 +22,7 @@ export function useRegionTier(): {
   country: string | null;
   isLoading: boolean;
   isRestricted: boolean;
+  isPaywalled: boolean;
   pricingRegion: string;
   discountPercent: number;
 } {
@@ -50,6 +52,7 @@ export function useRegionTier(): {
             country: data.country ?? null,
             pricingRegion: data.pricingRegion ?? 'standard',
             discountPercent: data.discountPercent ?? 0,
+            isPaywalled: data.tier === 'paywalled',
           };
           setTier(cachedGeo.tier);
           setCountry(cachedGeo.country);
@@ -82,6 +85,7 @@ export function useRegionTier(): {
           country: null,
           pricingRegion: 'standard',
           discountPercent: 0,
+          isPaywalled: false,
         };
         setTier('standard');
         setCountry(null);
@@ -96,6 +100,7 @@ export function useRegionTier(): {
     country,
     isLoading,
     isRestricted: tier === 'restricted',
+    isPaywalled: tier === 'paywalled',
     pricingRegion,
     discountPercent,
   };

@@ -22,6 +22,7 @@ import {
   incrementGuestUsage,
   getRemainingUses,
 } from '@/client/utils/guest-fingerprint';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 type ProcessingState = 'idle' | 'loading' | 'processing' | 'done' | 'limit-reached' | 'error';
 
@@ -37,6 +38,7 @@ export function GuestUpscaler({ className }: IGuestUpscalerProps): React.ReactEl
   const [remainingUses, setRemainingUses] = useState(3);
   const [visitorId, setVisitorId] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const { isPaywalled, isLoading: isGeoLoading } = useRegionTier();
 
   // Initialize fingerprint and check usage on mount
   useEffect(() => {
@@ -147,11 +149,32 @@ export function GuestUpscaler({ className }: IGuestUpscalerProps): React.ReactEl
   }, [previewUrl]);
 
   // Loading state while initializing
-  if (!isInitialized) {
+  if (!isInitialized || isGeoLoading) {
     return (
       <div className={cn('bg-surface rounded-xl p-8 border border-border text-center', className)}>
         <Loader2 className="w-8 h-8 animate-spin mx-auto text-accent" />
         <p className="text-sm text-text-secondary mt-3">Initializing...</p>
+      </div>
+    );
+  }
+
+  // Paywall state - show CTA instead of upscaler
+  if (isPaywalled) {
+    return (
+      <div className={cn('text-center py-8 space-y-4', className)}>
+        <Lock className="w-12 h-12 mx-auto mb-4 text-accent" />
+        <h3 className="text-2xl font-bold text-primary">Subscription Required</h3>
+        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+          Image upscaling requires a subscription in your region. Get started with our affordable
+          plans — pricing adjusted for your region.
+        </p>
+        <Link
+          href="/pricing"
+          className="inline-flex items-center justify-center px-6 py-3 bg-accent hover:bg-accent-hover text-white font-medium rounded-lg transition-colors gap-2"
+        >
+          View plans
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     );
   }

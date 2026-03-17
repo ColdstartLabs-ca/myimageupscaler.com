@@ -10,6 +10,7 @@ import { loginSchema, registerSchema } from '@shared/validation/authValidationSc
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { Modal } from '@client/components/modal/Modal';
 import { ChangePasswordForm } from '@client/components/modal/auth/ChangePasswordForm';
 import { ForgotPasswordForm } from '@client/components/modal/auth/ForgotPasswordForm';
@@ -49,7 +50,7 @@ export const AuthenticationModal: React.FC = () => {
   const { signInWithEmail, signUpWithEmail, changePassword, resetPassword } = useUserStore();
   const { showToast } = useToastStore();
   const t = useTranslations('auth');
-  const { isRestricted, isLoading: isGeoLoading } = useRegionTier();
+  const { isRestricted, isPaywalled, isLoading: isGeoLoading } = useRegionTier();
   const fingerprintHash = useFingerprint();
 
   const {
@@ -179,6 +180,22 @@ export const AuthenticationModal: React.FC = () => {
         if (isGeoLoading) {
           return <div className="animate-pulse h-32 bg-muted rounded" />;
         }
+        if (isPaywalled) {
+          return (
+            <>
+              <p className="text-sm text-muted-foreground text-center mb-4">
+                {'A subscription is required to use this service in your region.'}
+              </p>
+              <SocialLoginButton />
+              <Link
+                href="/pricing"
+                className="text-sm text-primary underline text-center block mt-3"
+              >
+                View plans
+              </Link>
+            </>
+          );
+        }
         if (isRestricted) {
           return (
             <>
@@ -214,6 +231,22 @@ export const AuthenticationModal: React.FC = () => {
       default:
         if (isGeoLoading) {
           return <div className="animate-pulse h-32 bg-muted rounded" />;
+        }
+        if (isPaywalled) {
+          return (
+            <>
+              <p className="text-sm text-muted-foreground text-center mb-4">
+                {'A subscription is required to use this service in your region.'}
+              </p>
+              <SocialLoginButton />
+              <Link
+                href="/pricing"
+                className="text-sm text-primary underline text-center block mt-3"
+              >
+                View plans
+              </Link>
+            </>
+          );
         }
         if (isRestricted) {
           return (

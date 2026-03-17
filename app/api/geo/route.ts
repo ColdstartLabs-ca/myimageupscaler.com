@@ -15,16 +15,19 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       country: null,
       tier: 'standard',
+      isPaywalled: false,
       pricingRegion: 'standard',
       discountPercent: 0,
     });
   }
 
   const pricingConfig = getPricingRegion(country);
+  const tier = getRegionTier(country);
 
   return NextResponse.json({
     country,
-    tier: getRegionTier(country),
+    tier,
+    isPaywalled: tier === 'paywalled',
     pricingRegion: pricingConfig.region,
     discountPercent: pricingConfig.discountPercent,
   });
