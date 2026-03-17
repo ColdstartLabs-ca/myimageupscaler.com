@@ -1,11 +1,25 @@
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
+import { ChatGPTBadge } from '@client/components/landing/ChatGPTBadge';
 import { HeroActions } from '@client/components/landing/HeroActions';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
 import { getFreeCreditsForTier, getRegionTier } from '@/lib/anti-freeloader/region-classifier';
 import { clientEnv } from '@shared/config/env';
+import type { IReferralSource } from '@server/analytics/types';
 import { Layers, Maximize2, Sparkles, User, Wand2 } from 'lucide-react';
 import { headers } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
+
+/**
+ * AI search engine referral sources that should show a badge
+ */
+type IBadgeReferralSource = Extract<
+  IReferralSource,
+  'chatgpt' | 'perplexity' | 'claude' | 'google_sge'
+>;
+
+function isBadgeSource(source: IReferralSource | null): source is IBadgeReferralSource {
+  return source !== null && ['chatgpt', 'perplexity', 'claude', 'google_sge'].includes(source);
+}
 
 export async function HeroSection(): Promise<JSX.Element> {
   const t = await getTranslations('homepage');
@@ -13,11 +27,22 @@ export async function HeroSection(): Promise<JSX.Element> {
   const country = headersList.get('CF-IPCountry') ?? headersList.get('cf-ipcountry') ?? '';
   const freeCredits = getFreeCreditsForTier(getRegionTier(country));
 
+  // Get referral source from middleware header (server-rendered, zero CLS)
+  const referralSource = headersList.get('x-referral-source') as IReferralSource | null;
+  const showAiBadge = isBadgeSource(referralSource);
+
   return (
     <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025 z-20 animate-hero-fade-in">
       <AmbientBackground variant="hero" />
 
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8 relative z-10">
+        {/* AI Search Badge - shown for ChatGPT/Perplexity/Claude/SGE referrals */}
+        {showAiBadge && (
+          <div className="mb-4">
+            <ChatGPTBadge source={referralSource} />
+          </div>
+        )}
+
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-xs font-semibold text-accent mb-8 cursor-default group">
           <Sparkles size={14} className="text-secondary animate-pulse" />

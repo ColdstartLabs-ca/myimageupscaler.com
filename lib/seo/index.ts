@@ -37,6 +37,8 @@ export type {
   IAlternative,
   IGuideStep,
   IPSEODataFile,
+  IFAQSchema,
+  IHowToStep,
 } from './pseo-types';
 
 // Keyword Mappings
@@ -111,6 +113,8 @@ export {
   generateUseCaseSchema,
   generateAlternativeSchema,
   generateHomepageSchema,
+  generateFAQSchema,
+  generateHowToSchema,
 } from './schema-generator';
 
 // Meta Tag Patterns and Validation

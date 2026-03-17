@@ -24,6 +24,58 @@
     "faq3Answer": "You can upscale images for free by signing up for an account, which gives you {freeCredits} free credits. Each credit processes one image at 2x upscaling. Simply upload your image, select your enhancement level, and download your upscaled result. No credit card required for the free tier.",
     "faq4Question": "Is AI upscaling better than traditional upscaling?",
     "faq4Answer": "Yes, AI upscaling is significantly better than traditional methods. Traditional upscaling uses interpolation to estimate new pixels, resulting in blurry images. AI upscaling uses deep learning trained on millions of images to intelligently reconstruct realistic details, edges, and textures, producing sharp, professional results that are nearly indistinguishable from native high-resolution images.",
+    "faqItems": [
+      {
+        "question": "How do I upscale an image without losing quality?",
+        "answer": "Our AI-powered upscaler uses advanced neural networks to intelligently enlarge images while preserving details, edges, and text clarity. Unlike traditional bicubic upscaling that creates blurry pixels, our AI reconstructs realistic details based on millions of high-quality image pairs, resulting in sharp, professional-looking 4K upscales."
+      },
+      {
+        "question": "What is the best AI image upscaler?",
+        "answer": "MyImageUpscaler combines web-based convenience, superior text preservation, and affordable pricing to deliver professional-quality results. Unlike desktop software that costs $99+, our online solution delivers comparable quality with no installation, free credits to start, and unique algorithms that keep text sharp—making it the best choice for most users."
+      },
+      {
+        "question": "How to upscale images for free?",
+        "answer": "You can upscale images for free by signing up for an account, which gives you 10 free credits. Each credit processes one image at 2x upscaling. Simply upload your image, select your enhancement level, and download your upscaled result. No credit card required for the free tier."
+      },
+      {
+        "question": "Is AI upscaling better than traditional upscaling?",
+        "answer": "Yes, AI upscaling is significantly better than traditional methods. Traditional upscaling uses interpolation to estimate new pixels, resulting in blurry images. AI upscaling uses deep learning trained on millions of images to intelligently reconstruct realistic details, edges, and textures, producing sharp, professional results that are nearly indistinguishable from native high-resolution images."
+      },
+      {
+        "question": "What image formats are supported?",
+        "answer": "MyImageUpscaler supports all common image formats including JPEG, PNG, WebP, AVIF, and HEIC. You can upload images up to 10MB in size and upscale them up to 4x their original resolution."
+      },
+      {
+        "question": "How long does image upscaling take?",
+        "answer": "Most images are processed in under 30 seconds. The exact time depends on the original image size, the chosen upscaling factor (2x, 3x, or 4x), and current server load. You'll receive a notification when your image is ready."
+      },
+      {
+        "question": "Is my data safe and private?",
+        "answer": "Yes, your privacy is our priority. All uploaded images are processed securely and automatically deleted within 24 hours. We never share your images with third parties or use them for training without your explicit consent."
+      }
+    ],
+    "howTo": {
+      "name": "How to Upscale Images with AI",
+      "description": "Learn how to enhance image quality and upscale photos to 4K resolution using our AI-powered image upscaler. Get professional results in seconds.",
+      "steps": [
+        {
+          "name": "Upload your image",
+          "text": "Click the upload button or drag and drop your image. We support JPEG, PNG, WebP, AVIF, and HEIC formats up to 10MB."
+        },
+        {
+          "name": "Select upscaling factor",
+          "text": "Choose 2x, 3x, or 4x upscaling depending on your needs. Higher factors produce larger files but more dramatic resolution increases."
+        },
+        {
+          "name": "AI processes your image",
+          "text": "Our neural network analyzes your image and intelligently reconstructs details, edges, and textures for a sharp, professional result."
+        },
+        {
+          "name": "Download your upscaled image",
+          "text": "Once processing is complete, download your enhanced image in full resolution. Compare before and after to see the difference."
+        }
+      ]
+    },
     "pricingCtaTitle": "Enhance photos online. Pay less than a coffee.",
     "pricingCtaDescription": "Stop wasting hours in Photoshop. Our AI image enhancer delivers print-ready results in seconds.",
     "ctaSeeWhatItCosts": "See What It Costs",

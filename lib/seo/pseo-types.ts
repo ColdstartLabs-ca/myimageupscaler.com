@@ -640,3 +640,29 @@ export interface IComparisonTable {
   headers: string[];
   rows: Record<string, string | number | boolean>[];
 }
+
+/**
+ * FAQ Schema for AI search
+ * Used for generating FAQPage structured data
+ * Phase 6: Added for AI search extraction
+ */
+export interface IFAQSchema {
+  '@type': 'Question';
+  name: string;
+  acceptedAnswer: {
+    '@type': 'Answer';
+    text: string;
+  };
+}
+
+/**
+ * HowTo Step Schema for AI search
+ * Used for generating HowTo structured data
+ * Phase 6: Added for AI search extraction
+ */
+export interface IHowToStep {
+  '@type': 'HowToStep';
+  name: string;
+  text: string;
+  image?: string;
+}

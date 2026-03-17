@@ -511,3 +511,21 @@ export interface IAnalyticsConsent {
   marketing: IConsentStatus;
   updatedAt: number;
 }
+
+// =============================================================================
+// Referral Source Attribution
+// =============================================================================
+
+/**
+ * Referral source type for AI search attribution.
+ * Tracks where users originated from: AI search engines, traditional search,
+ * direct traffic, or other sources.
+ */
+export type IReferralSource =
+  | 'chatgpt'
+  | 'perplexity'
+  | 'claude'
+  | 'google_sge'
+  | 'google'
+  | 'direct'
+  | 'other';

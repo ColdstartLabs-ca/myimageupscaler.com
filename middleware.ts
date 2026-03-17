@@ -15,6 +15,7 @@ import {
 import { DEFAULT_LOCALE, isValidLocale, LOCALE_COOKIE, type Locale } from '@/i18n/config';
 import { getLocaleFromCountry } from '@lib/i18n/country-locale-map';
 import { ENGLISH_ONLY_CATEGORIES } from '@/lib/seo/localization-config';
+import type { IReferralSource } from '@server/analytics/types';
 
 // Debug: log when middleware is loaded
 if (serverEnv.ENV === 'test') {
@@ -45,6 +46,78 @@ const TRACKING_QUERY_PARAMS = [
  * can persist the original UTM values.
  */
 const FIRST_TOUCH_UTM_COOKIE = 'miu_first_touch_utm';
+
+/**
+ * Referral source cookie for AI search attribution.
+ * Tracks the first-touch referral source (ChatGPT, Perplexity, Claude, etc.)
+ * with a 1-year expiry to persist attribution across sessions.
+ */
+const REFERRAL_SOURCE_COOKIE = 'miu_referral_source';
+
+/**
+ * Detect referral source from request headers and query parameters.
+ * Classifies AI search engine referrals (ChatGPT, Perplexity, Claude, Google SGE)
+ * as well as traditional sources (Google, direct, other).
+ *
+ * Priority order:
+ * 1. UTM parameter (utm_source=chatgpt, perplexity, claude, google_sge)
+ * 2. Referrer header domain matching
+ *
+ * @param req - The Next.js request object
+ * @returns Detected referral source type
+ */
+function detectReferralSource(req: NextRequest): IReferralSource {
+  // 1. Check UTM parameter first (explicit override)
+  const utmSource = req.nextUrl.searchParams.get('utm_source');
+  if (utmSource) {
+    const normalizedUtmSource = utmSource.toLowerCase();
+    if (normalizedUtmSource === 'chatgpt') return 'chatgpt';
+    if (normalizedUtmSource === 'perplexity') return 'perplexity';
+    if (normalizedUtmSource === 'claude') return 'claude';
+    if (normalizedUtmSource === 'google_sge') return 'google_sge';
+    if (normalizedUtmSource === 'google') return 'google';
+  }
+
+  // 2. Check referrer header for AI search domains
+  const referrer = req.headers.get('referer');
+  if (referrer) {
+    try {
+      const referrerUrl = new URL(referrer);
+      const referrerDomain = referrerUrl.hostname.toLowerCase();
+
+      // ChatGPT domains
+      if (
+        referrerDomain === 'chatgpt.com' ||
+        referrerDomain.endsWith('.chatgpt.com') ||
+        referrerDomain === 'chat.openai.com' ||
+        referrerDomain.endsWith('.chat.openai.com')
+      ) {
+        return 'chatgpt';
+      }
+
+      // Perplexity domains
+      if (referrerDomain === 'perplexity.ai' || referrerDomain.endsWith('.perplexity.ai')) {
+        return 'perplexity';
+      }
+
+      // Claude domains
+      if (referrerDomain === 'claude.ai' || referrerDomain.endsWith('.claude.ai')) {
+        return 'claude';
+      }
+
+      // Google (including SGE - we can't reliably distinguish SGE from regular Google)
+      if (referrerDomain === 'google.com' || referrerDomain.endsWith('.google.com')) {
+        return 'google';
+      }
+    } catch {
+      // Invalid URL, continue to default
+    }
+  }
+
+  // 3. Default: direct or other traffic
+  // We classify as 'direct' if no referrer, 'other' if referrer doesn't match known sources
+  return referrer ? 'other' : 'direct';
+}
 
 /**
  * Check if pathname is a dashboard route (with or without locale prefix)
@@ -718,6 +791,48 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
 }
 
 /**
+ * Apply referral source cookie and header to response.
+ * Sets first-touch attribution cookie if not already present.
+ * Adds x-referral-source header for client-side analytics access.
+ *
+ * @param req - The Next.js request object
+ * @param response - The NextResponse to modify
+ * @returns The modified response with referral source attribution
+ */
+function applyReferralSourceAttribution(req: NextRequest, response: NextResponse): NextResponse {
+  // Only set if cookie doesn't already exist (first-touch semantics)
+  const hasReferralCookie = !!req.cookies.get(REFERRAL_SOURCE_COOKIE)?.value;
+
+  if (!hasReferralCookie) {
+    const referralSource = detectReferralSource(req);
+
+    // Set cookie with 1-year expiry (first-touch attribution)
+    response.cookies.set(REFERRAL_SOURCE_COOKIE, referralSource, {
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      httpOnly: false, // Allow client-side access for analytics
+    });
+  } else {
+    // Still add header with existing cookie value for client-side access
+    const existingReferralSource = req.cookies.get(REFERRAL_SOURCE_COOKIE)?.value;
+    if (existingReferralSource) {
+      response.headers.set('x-referral-source', existingReferralSource);
+    }
+  }
+
+  // Always add header with detected source for immediate client-side use
+  const referralSource = hasReferralCookie
+    ? req.cookies.get(REFERRAL_SOURCE_COOKIE)?.value
+    : detectReferralSource(req);
+  if (referralSource) {
+    response.headers.set('x-referral-source', referralSource);
+  }
+
+  return response;
+}
+
+/**
  * Next.js Middleware
  *
  * Responsibilities:
@@ -729,6 +844,7 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
  * 5. Page routes: Session refresh via cookies, auth-based redirects
  * 6. API routes: JWT verification via Authorization header, rate limiting
  * 7. Security headers on all responses
+ * 8. Referral source attribution (AI search detection)
  */
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const pathname = req.nextUrl.pathname;
@@ -736,6 +852,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   // Handle WWW to non-WWW redirect for SEO (must be first)
   const wwwRedirect = handleWWWRedirect(req);
   if (wwwRedirect) {
+    applyReferralSourceAttribution(req, wwwRedirect);
     return wwwRedirect;
   }
 
@@ -743,34 +860,42 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   // This prevents legacy redirects from needing to handle both slash variants
   const trailingSlashRedirect = handleTrailingSlash(req);
   if (trailingSlashRedirect) {
+    applyReferralSourceAttribution(req, trailingSlashRedirect);
     return trailingSlashRedirect;
   }
 
   // Handle legacy redirects for SEO (before locale routing to catch old URLs)
   const legacyRedirect = handleLegacyRedirects(req);
   if (legacyRedirect) {
+    applyReferralSourceAttribution(req, legacyRedirect);
     return legacyRedirect;
   }
 
   // Handle tracking parameter cleanup for SEO (before locale routing)
   const trackingParamsCleanup = handleTrackingParams(req);
   if (trackingParamsCleanup) {
+    applyReferralSourceAttribution(req, trackingParamsCleanup);
     return trackingParamsCleanup;
   }
 
   // Handle locale routing for page routes
   const localeRouting = await handleLocaleRouting(req);
   if (localeRouting) {
+    applyReferralSourceAttribution(req, localeRouting);
     return localeRouting;
   }
 
   // Route to appropriate handler
   if (pathname.startsWith('/api/')) {
-    return handleApiRoute(req, pathname);
+    const apiResponse = await handleApiRoute(req, pathname);
+    applyReferralSourceAttribution(req, apiResponse);
+    return apiResponse;
   }
 
   // Handle page routes
-  return handlePageRoute(req, pathname);
+  const pageResponse = await handlePageRoute(req, pathname);
+  applyReferralSourceAttribution(req, pageResponse);
+  return pageResponse;
 }
 
 /**

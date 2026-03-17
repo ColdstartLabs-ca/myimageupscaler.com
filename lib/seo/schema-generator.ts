@@ -3,8 +3,10 @@
  * Based on PRD-PSEO-04 Section 2.1: Schema Generator Module
  * Generates JSON-LD structured data for different page types
  * Phase 5: Added inLanguage property for multi-language SEO
+ * Phase 6: Added standalone FAQSchema and HowToSchema generators for AI search
  */
 
+import type { IFAQSchema, IHowToStep } from './pseo-types';
 import type {
   IToolPage,
   IComparisonPage,
@@ -57,6 +59,76 @@ function getLanguageCode(locale: Locale): string {
   };
 
   return languageMap[locale] || 'en';
+}
+
+/**
+ * Generate standalone FAQPage schema for AI search
+ * Creates FAQ structured data that helps AI search engines understand and recommend content
+ * Phase 6: Added for AI search extraction and measurement
+ *
+ * @param faqs - Array of FAQ items with questions and answers
+ * @returns FAQPage schema object
+ *
+ * @example
+ * ```ts
+ * const faqs = [
+ *   {
+ *     '@type': 'Question',
+ *     name: 'What is AI image upscaling?',
+ *     acceptedAnswer: {
+ *       '@type': 'Answer',
+ *       text: 'AI image upscaling uses machine learning...'
+ *     }
+ *   }
+ * ];
+ * const schema = generateFAQSchema(faqs);
+ * ```
+ */
+export function generateFAQSchema(faqs: IFAQSchema[]): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs,
+  };
+}
+
+/**
+ * Generate standalone HowTo schema for AI search
+ * Creates HowTo structured data that helps AI search engines understand procedural content
+ * Phase 6: Added for AI search extraction and measurement
+ *
+ * @param params - HowTo schema parameters including name, description, steps, and optional image
+ * @returns HowTo schema object
+ *
+ * @example
+ * ```ts
+ * const schema = generateHowToSchema({
+ *   name: 'How to Upscale an Image',
+ *   description: 'Learn how to upscale images with AI...',
+ *   steps: [
+ *     {
+ *       '@type': 'HowToStep',
+ *       name: 'Upload your image',
+ *       text: 'Click the upload button and select your image...'
+ *     }
+ *   ]
+ * });
+ * ```
+ */
+export function generateHowToSchema(params: {
+  name: string;
+  description: string;
+  steps: IHowToStep[];
+  image?: string;
+}): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: params.name,
+    description: params.description,
+    step: params.steps,
+    ...(params.image && { image: params.image }),
+  };
 }
 
 /**
@@ -627,9 +699,112 @@ export function generateAlternativeSchema(alternative: IAlternativePage): object
 }
 
 /**
+ * Get homepage FAQ items from locale translations
+ * Phase 6: Added for locale-aware FAQ schema generation
+ *
+ * @param locale - The locale code
+ * @returns Array of FAQ items for schema generation
+ */
+function getHomepageFAQItems(locale: Locale = 'en'): IFAQSchema[] {
+  // Default fallback FAQ items in case locale file doesn't have faqItems
+  const defaultFAQItems: IFAQSchema[] = [
+    {
+      '@type': 'Question',
+      name: 'How do I upscale an image without losing quality?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Our AI-powered upscaler uses advanced neural networks to intelligently enlarge images while preserving details, edges, and text clarity. Unlike traditional bicubic upscaling that creates blurry pixels, our AI reconstructs realistic details based on millions of high-quality image pairs, resulting in sharp, professional-looking 4K upscales.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the best AI image upscaler?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MyImageUpscaler combines web-based convenience, superior text preservation, and affordable pricing to deliver professional-quality results. Unlike desktop software that costs $99+, our online solution delivers comparable quality with no installation, free credits to start, and unique algorithms that keep text sharp—making it the best choice for most users.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How to upscale images for free?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'You can upscale images for free by signing up for an account, which gives you 10 free credits. Each credit processes one image at 2x upscaling. Simply upload your image, select your enhancement level, and download your upscaled result. No credit card required for the free tier.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is AI upscaling better than traditional upscaling?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, AI upscaling is significantly better than traditional methods. Traditional upscaling uses interpolation to estimate new pixels, resulting in blurry images. AI upscaling uses deep learning trained on millions of images to intelligently reconstruct realistic details, edges, and textures, producing sharp, professional results that are nearly indistinguishable from native high-resolution images.',
+      },
+    },
+  ];
+
+  // Try to load FAQ items from locale file
+  try {
+    // Note: Dynamic require is used here because schema generators are called from server components
+    /* eslint-disable @typescript-eslint/no-require-imports */
+    // eslint-disable-next-line no-restricted-syntax -- Dynamic require for locale-specific data
+    const localeData = require(`../../locales/${locale}/common.json`);
+    if (localeData.homepage?.faqItems && Array.isArray(localeData.homepage.faqItems)) {
+      return localeData.homepage.faqItems.map((item: { question: string; answer: string }) => ({
+        '@type': 'Question' as const,
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer' as const,
+          text: item.answer,
+        },
+      }));
+    }
+  } catch {
+    // If locale file doesn't exist or doesn't have faqItems, use default
+  }
+
+  return defaultFAQItems;
+}
+
+/**
+ * Get homepage HowTo data from locale translations
+ * Phase 6: Added for locale-aware HowTo schema generation
+ *
+ * @param locale - The locale code
+ * @returns HowTo schema data or null if not available
+ */
+function getHomepageHowToSchema(locale: Locale = 'en'): object | null {
+  try {
+    // Note: Dynamic require is used here because schema generators are called from server components
+    /* eslint-disable @typescript-eslint/no-require-imports */
+    // eslint-disable-next-line no-restricted-syntax -- Dynamic require for locale-specific data
+    const localeData = require(`../../locales/${locale}/common.json`);
+    const howToData = localeData.homepage?.howTo;
+
+    if (howToData && howToData.steps && Array.isArray(howToData.steps)) {
+      return generateHowToSchema({
+        name: howToData.name || 'How to Upscale Images with AI',
+        description:
+          howToData.description ||
+          'Learn how to enhance image quality and upscale photos to 4K resolution using our AI-powered image upscaler.',
+        steps: howToData.steps.map((step: { name: string; text: string }) => ({
+          '@type': 'HowToStep' as const,
+          name: step.name,
+          text: step.text,
+        })),
+      });
+    }
+  } catch {
+    // If locale file doesn't exist or doesn't have howTo, return null
+  }
+
+  return null;
+}
+
+/**
  * Generate schema for Homepage
- * Combines WebApplication with AggregateRating + FAQPage
+ * Combines WebApplication with FAQPage + HowTo
  * Phase 5: Added locale parameter for inLanguage property
+ * Phase 6: Added locale-aware FAQ and HowTo schemas for AI search
  *
  * @param locale - The locale for this page instance (default: 'en')
  */
@@ -637,78 +812,54 @@ export function generateHomepageSchema(locale: Locale = 'en'): Record<string, un
   const canonicalUrl = BASE_URL;
   const language = getLanguageCode(locale);
   const organizationRef = { '@id': `${BASE_URL}#organization` };
+  const faqItems = getHomepageFAQItems(locale);
+  const howToSchema = getHomepageHowToSchema(locale);
+
+  const graphItems: object[] = [
+    {
+      '@type': 'WebApplication',
+      name: APP_NAME,
+      description:
+        'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
+      url: canonicalUrl,
+      applicationCategory: 'MultimediaApplication',
+      operatingSystem: 'Web Browser',
+      inLanguage: language,
+      offers: {
+        '@type': 'Offer',
+        price: 0,
+        priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
+        description: 'Free tier with 10 credits',
+      },
+      author: organizationRef,
+      publisher: organizationRef,
+    },
+    {
+      '@type': 'Organization',
+      '@id': `${BASE_URL}#organization`,
+      name: APP_NAME,
+      url: BASE_URL,
+      logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
+      sameAs: [
+        `https://twitter.com/${TWITTER_HANDLE}`,
+        `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqItems,
+    },
+  ];
+
+  // Add HowTo schema if available
+  if (howToSchema) {
+    graphItems.push(howToSchema);
+  }
 
   return {
     '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'WebApplication',
-        name: APP_NAME,
-        description:
-          'Transform your images with cutting-edge AI. Upscale, enhance, and restore details with professional quality.',
-        url: canonicalUrl,
-        applicationCategory: 'MultimediaApplication',
-        operatingSystem: 'Web Browser',
-        inLanguage: language,
-        offers: {
-          '@type': 'Offer',
-          price: 0,
-          priceCurrency: 'USD',
-          availability: 'https://schema.org/InStock',
-          description: 'Free tier with 10 credits',
-        },
-        author: organizationRef,
-        publisher: organizationRef,
-      },
-      {
-        '@type': 'Organization',
-        '@id': `${BASE_URL}#organization`,
-        name: APP_NAME,
-        url: BASE_URL,
-        logo: `${BASE_URL}/logo/vertical-logo-compact.png`,
-        sameAs: [
-          `https://twitter.com/${TWITTER_HANDLE}`,
-          `https://linkedin.com/company/${TWITTER_HANDLE.toLowerCase()}`,
-        ],
-      },
-      {
-        '@type': 'FAQPage',
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: 'How do I upscale an image without losing quality?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Our AI-powered upscaler uses advanced neural networks to intelligently enlarge images while preserving details, edges, and text clarity. Unlike traditional bicubic upscaling that creates blurry pixels, our AI reconstructs realistic details based on millions of high-quality image pairs, resulting in sharp, professional-looking 4K upscales.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'What is the best AI image upscaler?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'MyImageUpscaler combines web-based convenience, superior text preservation, and affordable pricing to deliver professional-quality results. Unlike desktop software that costs $99+, our online solution delivers comparable quality with no installation, free credits to start, and unique algorithms that keep text sharp—making it the best choice for most users.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'How to upscale images for free?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'You can upscale images for free by signing up for an account, which gives you 10 free credits. Each credit processes one image at 2x upscaling. Simply upload your image, select your enhancement level, and download your upscaled result. No credit card required for the free tier.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Is AI upscaling better than traditional upscaling?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Yes, AI upscaling is significantly better than traditional methods. Traditional upscaling uses interpolation to estimate new pixels, resulting in blurry images. AI upscaling uses deep learning trained on millions of images to intelligently reconstruct realistic details, edges, and textures, producing sharp, professional results that are nearly indistinguishable from native high-resolution images.',
-            },
-          },
-        ],
-      },
-    ],
+    '@graph': graphItems,
   };
 }
 
