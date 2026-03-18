@@ -412,6 +412,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       )}
 
       <div
+        data-modal="checkout"
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-x-hidden"
         onClick={e => {
           // Only close when clicking directly on the backdrop, not its children

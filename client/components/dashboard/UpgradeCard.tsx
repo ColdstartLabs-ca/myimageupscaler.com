@@ -3,9 +3,21 @@ import { Zap } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import React from 'react';
+import { analytics } from '@client/analytics';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 export const UpgradeCard: React.FC = () => {
   const t = useTranslations('dashboard');
+  const { pricingRegion } = useRegionTier();
+
+  const handleUpgradeClick = () => {
+    analytics.track('upgrade_prompt_clicked', {
+      trigger: 'upgrade_card',
+      destination: '/pricing',
+      currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
+    });
+  };
 
   return (
     <motion.div
@@ -49,6 +61,7 @@ export const UpgradeCard: React.FC = () => {
 
         <Link
           href="/pricing"
+          onClick={handleUpgradeClick}
           className="flex items-center justify-center w-full py-2 px-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/50 text-white text-xs font-semibold rounded-lg transition-all duration-300 group-hover:bg-accent/10"
         >
           {t.has('sidebar.upgradeCta') ? t('sidebar.upgradeCta') : 'View Plans'}

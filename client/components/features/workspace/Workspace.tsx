@@ -86,6 +86,11 @@ const Workspace: React.FC = () => {
     if (!checkoutParam) return;
     processedCheckoutParamRef.current = true;
     setPostAuthCheckoutPriceId(checkoutParam);
+    // Fire checkout_opened here — useCheckoutFlow can't fire it for unauthenticated paths
+    analytics.track('checkout_opened', {
+      priceId: checkoutParam,
+      source: 'post_auth_redirect',
+    });
   }, [searchParams]);
 
   // First-time user onboarding state
@@ -348,6 +353,20 @@ const Workspace: React.FC = () => {
             onUpgrade={() => setShowUpgradePlanModal(true)}
           />
         </div>
+
+        <UpgradePlanModal
+          isOpen={showUpgradePlanModal}
+          onClose={() => setShowUpgradePlanModal(false)}
+          trigger="premium_upsell"
+        />
+
+        {postAuthCheckoutPriceId && (
+          <CheckoutModal
+            priceId={postAuthCheckoutPriceId}
+            onClose={() => setPostAuthCheckoutPriceId(null)}
+            onSuccess={() => setPostAuthCheckoutPriceId(null)}
+          />
+        )}
       </div>
     );
   }
@@ -417,6 +436,7 @@ const Workspace: React.FC = () => {
                 completedCount={completedCount}
                 isFreeUser={isFreeUser}
                 currentModel={config.qualityTier}
+                onUpgrade={() => setShowUpgradePlanModal(true)}
               />
             </div>
           )}

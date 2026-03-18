@@ -1,7 +1,6 @@
 'use client';
 
 import { Sparkles, X } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
@@ -16,6 +15,7 @@ export interface IAfterUpscaleBannerProps {
   completedCount: number;
   isFreeUser: boolean;
   currentModel?: QualityTier;
+  onUpgrade?: () => void;
 }
 
 /**
@@ -26,6 +26,7 @@ export const AfterUpscaleBanner = ({
   completedCount,
   isFreeUser,
   currentModel,
+  onUpgrade,
 }: IAfterUpscaleBannerProps): JSX.Element | null => {
   const [visible, setVisible] = useState(false);
   const { pricingRegion } = useRegionTier();
@@ -72,10 +73,11 @@ export const AfterUpscaleBanner = ({
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_upscale',
       imageVariant: currentModel,
-      destination: '/dashboard/billing',
+      destination: 'upgrade_plan_modal',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
+    onUpgrade?.();
   };
 
   return (
@@ -83,13 +85,12 @@ export const AfterUpscaleBanner = ({
       <Sparkles className="w-4 h-4 text-secondary shrink-0" />
       <p className="text-sm text-white flex-1">
         You&apos;ve upscaled {AFTER_UPSCALE_THRESHOLD} images.{' '}
-        <Link
-          href="/dashboard/billing"
+        <button
           className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
           onClick={handleUpgradeClick}
         >
           {upgradeCtaText}
-        </Link>
+        </button>
       </p>
       <button
         onClick={handleDismiss}

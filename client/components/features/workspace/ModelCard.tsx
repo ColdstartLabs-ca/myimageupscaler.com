@@ -47,6 +47,7 @@ export const ModelCard: React.FC<IModelCardProps> = ({
 
   return (
     <button
+      data-tier={tier}
       onClick={handleClick}
       className={cn(
         // Base styles

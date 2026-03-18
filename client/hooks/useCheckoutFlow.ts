@@ -122,6 +122,12 @@ export function useCheckoutFlow({
           context: { priceId, originatingModel: effectiveOriginModel },
         });
 
+        // Track auth wall — bridges the upgrade_prompt_clicked → checkout_opened gap
+        analytics.track('checkout_auth_required', {
+          priceId,
+          originatingModel: effectiveOriginModel,
+        });
+
         openAuthRequiredModal();
         showToast({
           message: 'Please sign in or create an account to complete your purchase',

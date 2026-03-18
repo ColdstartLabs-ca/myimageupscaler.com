@@ -46,6 +46,7 @@ const ALLOWED_EVENTS = [
   'upgrade_prompt_shown',
   'upgrade_prompt_clicked',
   'upgrade_prompt_dismissed',
+  'upgrade_plans_viewed',
 
   // Checkout events
   'checkout_started',
@@ -85,6 +86,7 @@ const ALLOWED_EVENTS = [
   'pseo_internal_link_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
   'checkout_opened', // Fires when CheckoutModal renders (bridges upgrade_prompt_clicked → checkout_step_viewed gap)
+  'checkout_auth_required', // Fires when unauthenticated user tries to checkout
   'checkout_step_viewed',
   'checkout_step_time',
   'checkout_error',

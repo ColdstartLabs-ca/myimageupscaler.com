@@ -29,17 +29,17 @@ export function UpgradePlanModal({
   onClose,
   trigger,
 }: IUpgradePlanModalProps): JSX.Element {
-  const { discountPercent } = useRegionTier();
+  const { discountPercent, pricingRegion } = useRegionTier();
 
   useEffect(() => {
     if (isOpen) {
       analytics.track('upgrade_plans_viewed', {
         trigger,
-        pricingRegion: discountPercent > 0 ? 'discounted' : 'standard',
+        pricingRegion,
         discountPercent,
       });
     }
-  }, [isOpen, trigger, discountPercent]);
+  }, [isOpen, trigger, pricingRegion, discountPercent]);
 
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} title="Choose a Plan" className="pb-safe">
