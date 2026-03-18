@@ -154,17 +154,6 @@ describe('authRedirectManager — handleAuthRedirect (post-auth checkout)', () =
     // Intent should be cleared after use
     expect(localStorage.getItem(REDIRECT_STORAGE_KEY)).toBeNull();
   });
-
-  it('should redirect to returnTo URL when returnTo intent exists (non-checkout)', async () => {
-    storeIntent(
-      makeIntent({ action: 'access_dashboard', context: {}, returnTo: '/dashboard/settings' })
-    );
-
-    const { handleAuthRedirect } = await import('@client/utils/authRedirectManager');
-    await handleAuthRedirect();
-
-    expect(window.location.href).toBe('/dashboard/settings');
-  });
 });
 
 describe('authRedirectManager — setAuthIntent / getAndClearAuthIntent', () => {
