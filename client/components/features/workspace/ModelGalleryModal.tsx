@@ -144,24 +144,30 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
 
   // Clear search when modal closes
   const handleClose = useCallback(() => {
-    // Track gallery closed event
-    const selectedTier = currentTier;
-    const originalTier = originalTierRef.current;
+    // Guard: only fire model_gallery_closed if gallery was actually opened.
+    // galleryOpenedAtRef.current is 0 until the isOpen useEffect runs.
+    // This prevents double-fires from rapid close clicks before state commits.
+    if (galleryOpenedAtRef.current > 0) {
+      const selectedTier = currentTier;
+      const originalTier = originalTierRef.current;
 
-    // Track which tiers were visible in the results
-    const visibleFreeTierIds = freeTiers.map(t => t.id);
-    const visiblePremiumTierIds = premiumTiers.map(t => t.id);
-    const allVisibleTiers = [...visibleFreeTierIds, ...visiblePremiumTierIds];
+      const visibleFreeTierIds = freeTiers.map(t => t.id);
+      const visiblePremiumTierIds = premiumTiers.map(t => t.id);
+      const allVisibleTiers = [...visibleFreeTierIds, ...visiblePremiumTierIds];
 
-    analytics.track('model_gallery_closed', {
-      changed: selectedTier !== originalTier,
-      visibleTiers: allVisibleTiers,
-      visibleFreeTiersCount: visibleFreeTierIds.length,
-      visiblePremiumTiersCount: visiblePremiumTierIds.length,
-      timeInGalleryMs: Date.now() - galleryOpenedAtRef.current,
-      isFreeUser,
-      hadSearchQuery: searchQuery.length > 0,
-    });
+      analytics.track('model_gallery_closed', {
+        changed: selectedTier !== originalTier,
+        visibleTiers: allVisibleTiers,
+        visibleFreeTiersCount: visibleFreeTierIds.length,
+        visiblePremiumTiersCount: visiblePremiumTierIds.length,
+        timeInGalleryMs: Date.now() - galleryOpenedAtRef.current,
+        isFreeUser,
+        hadSearchQuery: searchQuery.length > 0,
+      });
+
+      // Reset so any re-entry after fast double-click doesn't double-fire
+      galleryOpenedAtRef.current = 0;
+    }
 
     setSearchQuery('');
     onClose();

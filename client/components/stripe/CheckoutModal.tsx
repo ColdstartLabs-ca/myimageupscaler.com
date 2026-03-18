@@ -1,7 +1,7 @@
 'use client';
 
 import { useToastStore } from '@client/store/toastStore';
-import { StripeService } from '@client/services/stripeService';
+import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
@@ -102,6 +102,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const currentStepRef = useRef<TCheckoutStep>('plan_selection');
   // Track load start time
   const loadStartRef = useRef(Date.now());
+  // Guard: exit intent already tracked by handleClose — prevents double-fire from cleanup
+  const exitIntentTrackedRef = useRef(false);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -202,8 +204,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
     trackStepViewed('plan_selection');
 
     return () => {
-      // Track exit if checkout wasn't completed
-      if (!checkoutCompletedRef.current) {
+      // Only track exit intent if handleClose didn't already fire it
+      if (!checkoutCompletedRef.current && !exitIntentTrackedRef.current) {
         trackExitIntent(currentStepRef.current, exitMethodRef.current);
       }
     };
@@ -252,6 +254,13 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   // Handle close with exit intent tracking
   const handleClose = useCallback(
     (method: TCheckoutExitMethod = 'close_button') => {
+      // Survey is already showing — a second ESC/close must just dismiss it, not re-track
+      if (showSurvey) {
+        setShowSurvey(false);
+        onClose();
+        return;
+      }
+
       exitMethodRef.current = method;
 
       // Only track abandoned if checkout wasn't completed
@@ -266,7 +275,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           plan: determinePlanFromPriceId(priceId),
         });
 
-        // Track exit intent with the new event
+        // Track exit intent and mark as tracked so cleanup doesn't double-fire
+        exitIntentTrackedRef.current = true;
         trackExitIntent(step, method);
 
         // Check if we should show the exit survey
@@ -279,7 +289,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       }
       onClose();
     },
-    [priceId, clientSecret, onClose, trackExitIntent]
+    [priceId, clientSecret, onClose, trackExitIntent, showSurvey]
   );
 
   // Handle closing the survey
@@ -371,6 +381,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const options: StripeEmbeddedCheckoutOptions = {
     clientSecret: clientSecret || '',
     onComplete: () => {
+      // Invalidate cache so a subsequent purchase gets a fresh session
+      clearCheckoutSessionCache();
       // Mark checkout as completed to avoid tracking abandoned
       checkoutCompletedRef.current = true;
 
@@ -457,6 +469,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
                   <div className="mt-4 flex gap-3">
                     <button
                       onClick={() => {
+                        clearCheckoutSessionCache(); // Force fresh session on retry
                         setError(null);
                         setClientSecret(null);
                         setLoading(true);
