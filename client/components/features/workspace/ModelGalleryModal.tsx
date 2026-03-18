@@ -41,7 +41,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const { pricingRegion } = useRegionTier();
   const { handleCheckout, showCheckoutModal, closeCheckoutModal, handleCheckoutSuccess } =
-    useCheckoutFlow({ priceId: STRIPE_PRICES.HOBBY_MONTHLY });
+    useCheckoutFlow({ priceId: STRIPE_PRICES.SMALL_CREDITS });
 
   // Track gallery session for analytics
   const galleryOpenedAtRef = useRef<number>(0);
@@ -210,7 +210,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
                 <div className="flex flex-col items-start">
                   <span className="font-bold text-white text-sm">Unlock Premium Models</span>
                   <span className="text-[11px] font-medium text-text-muted">
-                    Available on Pro — 10× sharper results
+                    From $4.99 — 10× sharper results
                   </span>
                 </div>
               </div>
@@ -314,7 +314,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
 
       {showCheckoutModal && (
         <CheckoutModal
-          priceId={STRIPE_PRICES.HOBBY_MONTHLY}
+          priceId={STRIPE_PRICES.SMALL_CREDITS}
           onClose={closeCheckoutModal}
           onSuccess={handleCheckoutSuccess}
         />
