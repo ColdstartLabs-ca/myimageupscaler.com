@@ -273,7 +273,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
         trigger: 'model_gate',
-        destination: '/pricing',
+        destination: '/dashboard/billing',
         currentPlan: 'free',
         pricingRegion: 'standard',
       });
@@ -285,16 +285,15 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     expect(screen.getByText(/Available on Pro/i)).toBeInTheDocument();
   });
 
-  it('navigates to /pricing on upgrade click', async () => {
+  it('navigates to /dashboard/billing on upgrade click', async () => {
     render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
     const upgradeButton = screen.getByText('Unlock Premium Models');
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/pricing');
+      expect(mockPush).toHaveBeenCalledWith('/dashboard/billing');
     });
-    expect(mockPush).not.toHaveBeenCalledWith('/dashboard/billing');
   });
 });
 
@@ -358,12 +357,12 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
     expect(mockAnalyticsTrack).not.toHaveBeenCalled();
   });
 
-  it('renders upgrade link pointing to /pricing', async () => {
+  it('renders upgrade link pointing to /dashboard/billing', async () => {
     render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
 
     await waitFor(() => {
       const link = screen.getByRole('link', { name: /Upgrade for unlimited\./i });
-      expect(link).toHaveAttribute('href', '/pricing');
+      expect(link).toHaveAttribute('href', '/dashboard/billing');
     });
   });
 
@@ -379,7 +378,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
       trigger: 'after_upscale',
-      destination: '/pricing',
+      destination: '/dashboard/billing',
       currentPlan: 'free',
       pricingRegion: 'standard',
     });
@@ -546,7 +545,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
     expect(mockAnalyticsTrack).not.toHaveBeenCalled();
   });
 
-  it('nudge link points to /pricing', async () => {
+  it('nudge link points to /dashboard/billing', async () => {
     const { ImageComparison } =
       await import('@/client/components/features/image-processing/ImageComparison');
 
@@ -564,7 +563,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
 
     await waitFor(() => {
       const link = screen.getByRole('link', { name: /Unlock premium quality\./i });
-      expect(link).toHaveAttribute('href', '/pricing');
+      expect(link).toHaveAttribute('href', '/dashboard/billing');
     });
   });
 
@@ -593,7 +592,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
       trigger: 'after_comparison',
-      destination: '/pricing',
+      destination: '/dashboard/billing',
       currentPlan: 'free',
       pricingRegion: 'standard',
     });
@@ -686,13 +685,13 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     });
   });
 
-  it('should navigate to /pricing on CTA click', async () => {
+  it('should navigate to /dashboard/billing on CTA click', async () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.1);
     render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
 
     await waitFor(() => {
       const link = screen.getByRole('link', { name: /Get 10x sharper with Premium models\./i });
-      expect(link).toHaveAttribute('href', '/pricing');
+      expect(link).toHaveAttribute('href', '/dashboard/billing');
     });
   });
 });

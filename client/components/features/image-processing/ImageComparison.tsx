@@ -212,12 +212,12 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
           <p className="text-xs text-text-muted text-center">
             Love the result?{' '}
             <Link
-              href="/pricing"
+              href="/dashboard/billing"
               className="font-semibold text-secondary hover:text-secondary/80 underline underline-offset-2 transition-colors"
               onClick={() => {
                 analytics.track('upgrade_prompt_clicked', {
                   trigger: 'after_comparison',
-                  destination: '/pricing',
+                  destination: '/dashboard/billing',
                   currentPlan: 'free',
                   pricingRegion: pricingRegion || 'standard',
                 });

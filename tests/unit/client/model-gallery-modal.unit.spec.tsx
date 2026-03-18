@@ -226,7 +226,7 @@ describe('ModelGalleryModal', () => {
       expect(lockBadge).toBeNull();
     });
 
-    it('should navigate to /pricing when locked tier clicked', async () => {
+    it('should navigate to /dashboard/billing when locked tier clicked', async () => {
       render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
       // Find a premium tier (Ultra) card and click it
@@ -235,7 +235,7 @@ describe('ModelGalleryModal', () => {
       fireEvent.click(ultraCard!);
 
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith('/pricing');
+        expect(mockPush).toHaveBeenCalledWith('/dashboard/billing');
       });
     });
 
