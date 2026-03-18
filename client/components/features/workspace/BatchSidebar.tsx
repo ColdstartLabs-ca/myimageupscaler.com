@@ -186,6 +186,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onOpenCustomInstructions={handleOpenCustomInstructions}
           selectedTier={config.qualityTier}
           disabled={isProcessing}
+          isFreeUser={isFreeUser}
         />
 
         {/* 4. Ultra tier specific config (conditional) */}
