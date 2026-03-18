@@ -16,6 +16,7 @@ export interface IQualityTierSelectorProps {
   onChange: (tier: QualityTier) => void;
   disabled?: boolean;
   isFreeUser?: boolean;
+  onUpgrade: () => void;
 }
 
 export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
@@ -23,6 +24,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
   onChange,
   disabled = false,
   isFreeUser = false,
+  onUpgrade,
 }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
@@ -98,6 +100,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         currentTier={tier}
         isFreeUser={isFreeUser}
         onSelect={onChange}
+        onUpgrade={onUpgrade}
       />
     </div>
   );

@@ -8,9 +8,8 @@ import {
   ProcessingStatus,
   QUALITY_TIER_CONFIG,
 } from '@/shared/types/coreflow.types';
-import { useCheckoutFlow } from '@client/hooks/useCheckoutFlow';
 import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
-import { STRIPE_PRICES } from '@shared/config/stripe';
+import { UpgradePlanModal } from '@client/components/stripe/UpgradePlanModal';
 import { Dropzone } from '@client/components/features/image-processing/Dropzone';
 import { BatchSidebar } from '@client/components/features/workspace/BatchSidebar';
 import { PreviewArea } from '@client/components/features/workspace/PreviewArea';
@@ -35,6 +34,7 @@ import {
   X,
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
@@ -73,13 +73,20 @@ const Workspace: React.FC = () => {
 
   const { isFreeUser } = useUserData();
   const hasSubscription = !isFreeUser;
+  const searchParams = useSearchParams();
 
-  const {
-    handleCheckout: openUpgradeCheckout,
-    showCheckoutModal: showUpgradeCheckoutModal,
-    closeCheckoutModal: closeUpgradeCheckoutModal,
-    handleCheckoutSuccess: handleUpgradeCheckoutSuccess,
-  } = useCheckoutFlow({ priceId: STRIPE_PRICES.HOBBY_MONTHLY });
+  const [showUpgradePlanModal, setShowUpgradePlanModal] = useState(false);
+  const [postAuthCheckoutPriceId, setPostAuthCheckoutPriceId] = useState<string | null>(null);
+  const processedCheckoutParamRef = React.useRef(false);
+
+  // Auto-open checkout after post-auth redirect: /?checkout=<priceId>
+  useEffect(() => {
+    if (processedCheckoutParamRef.current) return;
+    const checkoutParam = searchParams.get('checkout');
+    if (!checkoutParam) return;
+    processedCheckoutParamRef.current = true;
+    setPostAuthCheckoutPriceId(checkoutParam);
+  }, [searchParams]);
 
   // First-time user onboarding state
   const [isFirstTimeUser] = useState(() => checkIsFirstTimeUser());
@@ -251,7 +258,7 @@ const Workspace: React.FC = () => {
   const handlePremiumUpsellViewPlans = () => {
     setShowPremiumUpsell(false);
     setPendingDownload(null);
-    void openUpgradeCheckout();
+    setShowUpgradePlanModal(true);
   };
 
   // Handler for partial add from modal
@@ -335,7 +342,11 @@ const Workspace: React.FC = () => {
           </div>
         )}
         <div className="px-8 pb-4">
-          <MobileUpgradePrompt variant="upload" isFreeUser={isFreeUser} />
+          <MobileUpgradePrompt
+            variant="upload"
+            isFreeUser={isFreeUser}
+            onUpgrade={() => setShowUpgradePlanModal(true)}
+          />
         </div>
       </div>
     );
@@ -363,6 +374,7 @@ const Workspace: React.FC = () => {
             completedCount={completedCount}
             onProcess={() => processBatch(config)}
             onClear={clearQueue}
+            onUpgrade={() => setShowUpgradePlanModal(true)}
           />
         </div>
 
@@ -453,6 +465,7 @@ const Workspace: React.FC = () => {
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
               isFreeUser={isFreeUser}
+              onUpgrade={() => setShowUpgradePlanModal(true)}
             />
           </div>
 
@@ -570,6 +583,7 @@ const Workspace: React.FC = () => {
         currentTier={config.qualityTier}
         isFreeUser={isFreeUser}
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
+        onUpgrade={() => setShowUpgradePlanModal(true)}
       />
 
       {/* Mobile Tab Bar */}
@@ -601,6 +615,7 @@ const Workspace: React.FC = () => {
         attempted={batchLimitExceeded?.attempted ?? 0}
         currentCount={queue.length}
         onAddPartial={handleAddPartial}
+        onUpgrade={() => setShowUpgradePlanModal(true)}
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
 
@@ -614,11 +629,17 @@ const Workspace: React.FC = () => {
         currentModel={config.qualityTier}
       />
 
-      {showUpgradeCheckoutModal && (
+      <UpgradePlanModal
+        isOpen={showUpgradePlanModal}
+        onClose={() => setShowUpgradePlanModal(false)}
+        trigger="premium_upsell"
+      />
+
+      {postAuthCheckoutPriceId && (
         <CheckoutModal
-          priceId={STRIPE_PRICES.HOBBY_MONTHLY}
-          onClose={closeUpgradeCheckoutModal}
-          onSuccess={handleUpgradeCheckoutSuccess}
+          priceId={postAuthCheckoutPriceId}
+          onClose={() => setPostAuthCheckoutPriceId(null)}
+          onSuccess={() => setPostAuthCheckoutPriceId(null)}
         />
       )}
 

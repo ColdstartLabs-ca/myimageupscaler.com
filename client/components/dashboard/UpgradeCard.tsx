@@ -48,7 +48,7 @@ export const UpgradeCard: React.FC = () => {
         </p>
 
         <Link
-          href="/dashboard/billing"
+          href="/pricing"
           className="flex items-center justify-center w-full py-2 px-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/50 text-white text-xs font-semibold rounded-lg transition-all duration-300 group-hover:bg-accent/10"
         >
           {t.has('sidebar.upgradeCta') ? t('sidebar.upgradeCta') : 'View Plans'}

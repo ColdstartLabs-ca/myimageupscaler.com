@@ -438,6 +438,7 @@ export type IAnalyticsEventName =
   | 'upgrade_prompt_shown'
   | 'upgrade_prompt_clicked'
   | 'upgrade_prompt_dismissed'
+  | 'upgrade_plans_viewed'
   // Checkout flow events
   | 'checkout_loaded'
   | 'pricing_plan_viewed'

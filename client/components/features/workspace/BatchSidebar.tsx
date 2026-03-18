@@ -37,6 +37,7 @@ interface IBatchSidebarProps {
   completedCount: number;
   onProcess: () => void;
   onClear: () => void;
+  onUpgrade: () => void;
 }
 
 export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
@@ -48,6 +49,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   completedCount,
   onProcess,
   onClear,
+  onUpgrade,
 }) => {
   const router = useRouter();
   const { totalCredits, isFreeUser } = useUserData();
@@ -168,6 +170,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onChange={handleQualityTierChange}
           disabled={isProcessing}
           isFreeUser={isFreeUser}
+          onUpgrade={onUpgrade}
         />
 
         {/* 2. Upscale Factor Selector (dynamic options based on tier) */}

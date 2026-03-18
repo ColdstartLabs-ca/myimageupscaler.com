@@ -1,7 +1,6 @@
 'use client';
 
 import { Sparkles } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
@@ -9,6 +8,7 @@ import { useRegionTier } from '@client/hooks/useRegionTier';
 export interface IMobileUpgradePromptProps {
   variant: 'upload' | 'preview';
   isFreeUser: boolean;
+  onUpgrade: () => void;
 }
 
 /**
@@ -19,6 +19,7 @@ export interface IMobileUpgradePromptProps {
 export const MobileUpgradePrompt = ({
   variant,
   isFreeUser,
+  onUpgrade,
 }: IMobileUpgradePromptProps): JSX.Element | null => {
   const { pricingRegion } = useRegionTier();
   const trackedRef = useRef(false);
@@ -38,10 +39,11 @@ export const MobileUpgradePrompt = ({
   const handleClick = () => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: variant === 'upload' ? 'mobile_upload_prompt' : 'mobile_preview_prompt',
-      destination: '/dashboard/billing',
+      destination: 'upgrade_plan_modal',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
+    onUpgrade();
   };
 
   if (variant === 'upload') {
@@ -65,13 +67,12 @@ export const MobileUpgradePrompt = ({
             Up to 4K output &amp; 25MB files
           </li>
         </ul>
-        <Link
-          href="/dashboard/billing"
+        <button
           onClick={handleClick}
           className="block w-full text-center text-xs font-semibold text-accent border border-accent/40 rounded-lg py-2 hover:bg-accent/10 transition-colors"
         >
           View Plans
-        </Link>
+        </button>
       </div>
     );
   }
@@ -84,13 +85,12 @@ export const MobileUpgradePrompt = ({
           Clarity &amp; Real-ESRGAN Pro available
         </p>
       </div>
-      <Link
-        href="/dashboard/billing"
+      <button
         onClick={handleClick}
         className="shrink-0 text-xs font-semibold text-accent border border-accent/40 rounded-lg px-3 py-1.5 hover:bg-accent/10 transition-colors"
       >
         Upgrade
-      </Link>
+      </button>
     </div>
   );
 };

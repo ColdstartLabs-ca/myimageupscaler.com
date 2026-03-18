@@ -19,6 +19,7 @@ export interface IPreviewAreaProps {
   batchProgress?: IBatchProgress | null;
   isProcessingBatch?: boolean;
   isFreeUser?: boolean;
+  onUpgrade?: () => void;
 }
 
 // Extracted Components
@@ -176,6 +177,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   batchProgress,
   isProcessingBatch = false,
   isFreeUser = false,
+  onUpgrade = () => {},
 }) => {
   const t = useTranslations('workspace');
 
@@ -399,7 +401,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
           <ErrorOverlay item={activeItem} onRetry={onRetry} />
         )}
       </div>
-      <MobileUpgradePrompt variant="preview" isFreeUser={isFreeUser} />
+      <MobileUpgradePrompt variant="preview" isFreeUser={isFreeUser} onUpgrade={onUpgrade} />
     </div>
   );
 };
