@@ -9,6 +9,7 @@ interface IUseCheckoutFlowOptions {
   priceId: string;
   onSelect?: () => void;
   disabled?: boolean;
+  originatingModel?: string;
 }
 
 interface IUseCheckoutFlowReturn {
@@ -35,6 +36,7 @@ export function useCheckoutFlow({
   priceId,
   onSelect,
   disabled = false,
+  originatingModel,
 }: IUseCheckoutFlowOptions): IUseCheckoutFlowReturn {
   const { isAuthenticated } = useUserStore();
   const { openAuthRequiredModal } = useModalStore();
@@ -94,13 +96,32 @@ export function useCheckoutFlow({
         return;
       }
 
+      // Resolve effective originatingModel: prefer explicit option, fall back to sessionStorage
+      const storedOriginModel =
+        typeof window !== 'undefined'
+          ? sessionStorage.getItem('checkout_originating_model') || undefined
+          : undefined;
+      const effectiveOriginModel = originatingModel || storedOriginModel;
+
+      // Store in sessionStorage so success page can read it after page navigation
+      if (effectiveOriginModel && typeof window !== 'undefined') {
+        sessionStorage.setItem('checkout_originating_model', effectiveOriginModel);
+      }
+
       // If not authenticated, redirect to auth
       // Use auth required modal which lets users choose sign in or create account
       if (!isAuthenticated) {
-        // Store checkout intent so user returns to checkout after auth
-        prepareAuthRedirect('checkout', { context: { priceId } });
+        // Build returnTo URL so user comes back to this page with checkout pre-selected
+        const currentSearchParams = new URLSearchParams(window.location.search);
+        currentSearchParams.set('checkout', priceId);
+        const returnTo = `${window.location.pathname}?${currentSearchParams.toString()}`;
 
-        window.history.replaceState({}, '', `${window.location.href}?checkout_price=${priceId}`);
+        // Store checkout intent so user returns to pricing page with modal auto-opened
+        prepareAuthRedirect('checkout', {
+          returnTo,
+          context: { priceId, originatingModel: effectiveOriginModel },
+        });
+
         openAuthRequiredModal();
         showToast({
           message: 'Please sign in or create an account to complete your purchase',
@@ -112,7 +133,11 @@ export function useCheckoutFlow({
 
       // Show embedded checkout modal (same UX as credit packs)
       // Track that modal actually opened (bridges gap between upgrade_prompt_clicked and checkout_step_viewed)
-      analytics.track('checkout_opened', { priceId, source: 'embedded_modal' });
+      analytics.track('checkout_opened', {
+        priceId,
+        source: 'embedded_modal',
+        originatingModel: effectiveOriginModel,
+      });
       setShowCheckoutModal(true);
       setTimeout(() => setIsProcessing(false), 0);
     } catch (error) {
@@ -137,10 +162,19 @@ export function useCheckoutFlow({
           error.message.includes('Missing authorization header') ||
           error.message.includes('Invalid authentication token'))
       ) {
-        // Store checkout intent so user returns to checkout after auth
-        prepareAuthRedirect('checkout', { context: { priceId } });
+        const currentSearchParams = new URLSearchParams(window.location.search);
+        currentSearchParams.set('checkout', priceId);
+        const returnTo = `${window.location.pathname}?${currentSearchParams.toString()}`;
+        const errOriginModel =
+          originatingModel ||
+          (typeof window !== 'undefined'
+            ? sessionStorage.getItem('checkout_originating_model') || undefined
+            : undefined);
+        prepareAuthRedirect('checkout', {
+          returnTo,
+          context: { priceId, originatingModel: errOriginModel },
+        });
 
-        window.history.replaceState({}, '', `${window.location.href}?checkout_price=${priceId}`);
         openAuthRequiredModal();
         setIsProcessing(false);
         return;
@@ -178,6 +212,7 @@ export function useCheckoutFlow({
     isProcessing,
     onSelect,
     priceId,
+    originatingModel,
     isAuthenticated,
     openAuthRequiredModal,
     showToast,

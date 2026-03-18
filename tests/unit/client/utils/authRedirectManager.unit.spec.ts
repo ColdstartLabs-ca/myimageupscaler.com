@@ -1,9 +1,11 @@
 /**
  * Unit tests for authRedirectManager
  *
- * Covers the post-auth checkout redirect fix (Phase 1 of upgrade-funnel-fix PRD).
- * Verifies that authenticated users with a checkout intent are redirected to
- * /checkout?priceId=xxx instead of the broken hosted Stripe redirect.
+ * Covers the post-auth checkout redirect fix.
+ * New behavior: when a checkout intent has returnTo set (e.g. /pricing?checkout=priceId),
+ * handleAuthRedirect uses returnTo directly so the user returns to the pricing page
+ * with the checkout modal pre-opened. Falls back to /checkout?priceId=... when returnTo
+ * is absent (backward compatibility).
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -26,7 +28,6 @@ function makeIntent(
   return {
     action: 'checkout',
     context: { priceId: 'price_test_123' },
-    returnTo: '/pricing',
     timestamp: Date.now(),
     ...overrides,
   };
@@ -82,17 +83,17 @@ describe('authRedirectManager — handleAuthRedirect (post-auth checkout)', () =
     vi.restoreAllMocks();
   });
 
-  it('should redirect to /checkout with priceId param when checkout intent exists', async () => {
+  it('falls back to /checkout?priceId=... when checkout intent has no returnTo', async () => {
+    // Intents without returnTo (e.g. stored by old code) still work
     storeIntent(makeIntent({ action: 'checkout', context: { priceId: 'price_test_123' } }));
 
-    // Import after mocks are set up
     const { handleAuthRedirect } = await import('@client/utils/authRedirectManager');
     await handleAuthRedirect();
 
     expect(window.location.href).toBe('/checkout?priceId=price_test_123');
   });
 
-  it('should URL-encode the priceId parameter', async () => {
+  it('URL-encodes the priceId in the /checkout fallback', async () => {
     const specialPriceId = 'price_test+special&chars=123';
     storeIntent(makeIntent({ action: 'checkout', context: { priceId: specialPriceId } }));
 
@@ -101,6 +102,22 @@ describe('authRedirectManager — handleAuthRedirect (post-auth checkout)', () =
 
     expect(window.location.href).toContain(encodeURIComponent(specialPriceId));
     expect(window.location.href).toBe(`/checkout?priceId=${encodeURIComponent(specialPriceId)}`);
+  });
+
+  it('uses returnTo when checkout intent has returnTo set (pricing page redirect)', async () => {
+    // This is the primary new behavior: /pricing?checkout=priceId → modal auto-opens
+    storeIntent(
+      makeIntent({
+        action: 'checkout',
+        context: { priceId: 'price_test_123' },
+        returnTo: '/pricing?checkout=price_test_123',
+      })
+    );
+
+    const { handleAuthRedirect } = await import('@client/utils/authRedirectManager');
+    await handleAuthRedirect();
+
+    expect(window.location.href).toBe('/pricing?checkout=price_test_123');
   });
 
   it('should redirect to dashboard when no intent exists', async () => {

@@ -1,15 +1,17 @@
 'use client';
 
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Lock, Search, Sparkles } from 'lucide-react';
 import { QualityTier, QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
+import { STRIPE_PRICES } from '@shared/config/stripe';
 import { BottomSheet } from '@client/components/ui/BottomSheet';
+import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
 import { ModelCard } from './ModelCard';
 import { ModelGallerySearch } from './ModelGallerySearch';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { useCheckoutFlow } from '@client/hooks/useCheckoutFlow';
 
 const MODEL_GATE_SESSION_KEY = 'upgrade_prompt_shown_model_gate';
 
@@ -36,9 +38,10 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   isFreeUser,
   onSelect,
 }) => {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const { pricingRegion } = useRegionTier();
+  const { handleCheckout, showCheckoutModal, closeCheckoutModal, handleCheckoutSuccess } =
+    useCheckoutFlow({ priceId: STRIPE_PRICES.HOBBY_MONTHLY });
 
   // Track gallery session for analytics
   const galleryOpenedAtRef = useRef<number>(0);
@@ -130,17 +133,25 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
     [onSelect, onClose, isFreeUser]
   );
 
-  // Handle locked tier click - navigate to billing
-  const handleLockedClick = useCallback(() => {
-    analytics.track('upgrade_prompt_clicked', {
-      trigger: 'model_gate',
-      destination: '/dashboard/billing',
-      currentPlan: 'free',
-      pricingRegion: pricingRegion || 'standard',
-    });
-    router.push('/dashboard/billing');
-    onClose();
-  }, [router, onClose, pricingRegion]);
+  // Handle locked tier click - open embedded checkout directly
+  const handleLockedClick = useCallback(
+    (tier: QualityTier | 'banner') => {
+      analytics.track('upgrade_prompt_clicked', {
+        trigger: 'model_gate',
+        imageVariant: tier,
+        destination: 'checkout_modal',
+        currentPlan: 'free',
+        pricingRegion: pricingRegion || 'standard',
+      });
+      // Store originating model so checkout_opened and purchase_confirmed can attribute correctly
+      if (typeof window !== 'undefined' && tier !== 'banner') {
+        sessionStorage.setItem('checkout_originating_model', tier);
+      }
+      onClose();
+      void handleCheckout();
+    },
+    [handleCheckout, onClose, pricingRegion]
+  );
 
   // Clear search when modal closes
   const handleClose = useCallback(() => {
@@ -176,128 +187,138 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   const hasResults = freeTiers.length > 0 || premiumTiers.length > 0;
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={handleClose} title="Select Model" className="pb-safe">
-      <div className="p-4 md:p-5 space-y-4">
-        {/* Search bar */}
-        <ModelGallerySearch
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Search by name, use case, or feature..."
-        />
+    <>
+      <BottomSheet isOpen={isOpen} onClose={handleClose} title="Select Model" className="pb-safe">
+        <div className="p-4 md:p-5 space-y-4">
+          {/* Search bar */}
+          <ModelGallerySearch
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search by name, use case, or feature..."
+          />
 
-        {/* Upgrade prompt for free users - top position */}
-        {isFreeUser && !searchQuery && (
-          <button
-            onClick={handleLockedClick}
-            className="w-full p-4 bg-gradient-to-r from-secondary/20 to-accent/20 border border-border rounded-xl flex items-center justify-between hover:from-secondary/30 hover:to-accent/30 transition-all cursor-pointer group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-secondary/20 rounded-xl group-hover:scale-110 transition-transform">
-                <Sparkles className="w-4 h-4 text-secondary" />
-              </div>
-              <div className="flex flex-col items-start">
-                <span className="font-bold text-white text-sm">Unlock Premium Models</span>
-                <span className="text-[11px] font-medium text-text-muted">
-                  Available on Pro — 10× sharper results
-                </span>
-              </div>
-            </div>
-            <span className="text-[10px] font-black text-white bg-gradient-to-r from-accent to-secondary px-3 py-1.5 rounded-full shadow-lg shadow-accent/20">
-              UPGRADE
-            </span>
-          </button>
-        )}
-
-        {/* Results or empty state */}
-        {hasResults ? (
-          <>
-            {/* Free tiers section */}
-            {freeTiers.length > 0 && (
-              <section>
-                <h3 className="text-[11px] font-black text-accent uppercase tracking-widest mb-3 px-1">
-                  Available
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {freeTiers.map((tier, index) => (
-                    <div
-                      key={tier.id}
-                      className="animate-fade-in-up"
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                      <ModelCard
-                        tier={tier.id}
-                        config={QUALITY_TIER_CONFIG[tier.id]}
-                        isSelected={currentTier === tier.id}
-                        isLocked={false}
-                        onSelect={handleSelect}
-                      />
-                    </div>
-                  ))}
+          {/* Upgrade prompt for free users - top position */}
+          {isFreeUser && !searchQuery && (
+            <button
+              onClick={() => handleLockedClick('banner')}
+              className="w-full p-4 bg-gradient-to-r from-secondary/20 to-accent/20 border border-border rounded-xl flex items-center justify-between hover:from-secondary/30 hover:to-accent/30 transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-secondary/20 rounded-xl group-hover:scale-110 transition-transform">
+                  <Sparkles className="w-4 h-4 text-secondary" />
                 </div>
-              </section>
-            )}
-
-            {/* Divider */}
-            {freeTiers.length > 0 && premiumTiers.length > 0 && (
-              <div className="flex items-center gap-3 py-2">
-                <div className="h-px bg-white/10 flex-1" />
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-secondary">
-                  <Lock className="w-3 h-3" />
-                  Professional Tiers
+                <div className="flex flex-col items-start">
+                  <span className="font-bold text-white text-sm">Unlock Premium Models</span>
+                  <span className="text-[11px] font-medium text-text-muted">
+                    Available on Pro — 10× sharper results
+                  </span>
                 </div>
-                <div className="h-px bg-white/10 flex-1" />
               </div>
-            )}
+              <span className="text-[10px] font-black text-white bg-gradient-to-r from-accent to-secondary px-3 py-1.5 rounded-full shadow-lg shadow-accent/20">
+                UPGRADE
+              </span>
+            </button>
+          )}
 
-            {/* Premium tiers section */}
-            {premiumTiers.length > 0 && (
-              <section>
-                {freeTiers.length === 0 && (
-                  <h3 className="text-[11px] font-black text-secondary uppercase tracking-widest mb-3 px-1 flex items-center gap-2">
+          {/* Results or empty state */}
+          {hasResults ? (
+            <>
+              {/* Free tiers section */}
+              {freeTiers.length > 0 && (
+                <section>
+                  <h3 className="text-[11px] font-black text-accent uppercase tracking-widest mb-3 px-1">
+                    Available
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {freeTiers.map((tier, index) => (
+                      <div
+                        key={tier.id}
+                        className="animate-fade-in-up"
+                        style={{ animationDelay: `${index * 50}ms` }}
+                      >
+                        <ModelCard
+                          tier={tier.id}
+                          config={QUALITY_TIER_CONFIG[tier.id]}
+                          isSelected={currentTier === tier.id}
+                          isLocked={false}
+                          onSelect={handleSelect}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Divider */}
+              {freeTiers.length > 0 && premiumTiers.length > 0 && (
+                <div className="flex items-center gap-3 py-2">
+                  <div className="h-px bg-white/10 flex-1" />
+                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-secondary">
                     <Lock className="w-3 h-3" />
                     Professional Tiers
-                  </h3>
-                )}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {premiumTiers.map((tier, index) => (
-                    <div
-                      key={tier.id}
-                      className="animate-fade-in-up"
-                      style={{ animationDelay: `${(freeTiers.length + index) * 50}ms` }}
-                    >
-                      <ModelCard
-                        tier={tier.id}
-                        config={QUALITY_TIER_CONFIG[tier.id]}
-                        isSelected={currentTier === tier.id}
-                        isLocked={isFreeUser && PREMIUM_TIERS.includes(tier.id)}
-                        onSelect={handleSelect}
-                        onLockedClick={handleLockedClick}
-                      />
-                    </div>
-                  ))}
+                  </div>
+                  <div className="h-px bg-white/10 flex-1" />
                 </div>
-              </section>
-            )}
-          </>
-        ) : (
-          /* No results state */
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-              <Search className="w-8 h-8 text-text-muted" />
+              )}
+
+              {/* Premium tiers section */}
+              {premiumTiers.length > 0 && (
+                <section>
+                  {freeTiers.length === 0 && (
+                    <h3 className="text-[11px] font-black text-secondary uppercase tracking-widest mb-3 px-1 flex items-center gap-2">
+                      <Lock className="w-3 h-3" />
+                      Professional Tiers
+                    </h3>
+                  )}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {premiumTiers.map((tier, index) => (
+                      <div
+                        key={tier.id}
+                        className="animate-fade-in-up"
+                        style={{ animationDelay: `${(freeTiers.length + index) * 50}ms` }}
+                      >
+                        <ModelCard
+                          tier={tier.id}
+                          config={QUALITY_TIER_CONFIG[tier.id]}
+                          isSelected={currentTier === tier.id}
+                          isLocked={isFreeUser && PREMIUM_TIERS.includes(tier.id)}
+                          onSelect={handleSelect}
+                          onLockedClick={() => handleLockedClick(tier.id)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          ) : (
+            /* No results state */
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
+                <Search className="w-8 h-8 text-text-muted" />
+              </div>
+              <p className="text-white font-medium mb-2">No models found</p>
+              <p className="text-text-muted text-sm mb-4">
+                No models match &quot;{searchQuery}&quot;
+              </p>
+              <button
+                onClick={() => setSearchQuery('')}
+                className="text-accent text-sm font-medium hover:underline"
+              >
+                Clear search
+              </button>
             </div>
-            <p className="text-white font-medium mb-2">No models found</p>
-            <p className="text-text-muted text-sm mb-4">
-              No models match &quot;{searchQuery}&quot;
-            </p>
-            <button
-              onClick={() => setSearchQuery('')}
-              className="text-accent text-sm font-medium hover:underline"
-            >
-              Clear search
-            </button>
-          </div>
-        )}
-      </div>
-    </BottomSheet>
+          )}
+        </div>
+      </BottomSheet>
+
+      {showCheckoutModal && (
+        <CheckoutModal
+          priceId={STRIPE_PRICES.HOBBY_MONTHLY}
+          onClose={closeCheckoutModal}
+          onSuccess={handleCheckoutSuccess}
+        />
+      )}
+    </>
   );
 };

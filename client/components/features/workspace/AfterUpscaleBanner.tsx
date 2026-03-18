@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import type { QualityTier } from '@/shared/types/coreflow.types';
 
 const AFTER_UPSCALE_SESSION_KEY = 'upgrade_prompt_shown_after_upscale';
 const AFTER_UPSCALE_THRESHOLD = 3;
@@ -14,6 +15,7 @@ const AFTER_UPSCALE_LS_KEY = 'prompt_freq_after_upscale';
 export interface IAfterUpscaleBannerProps {
   completedCount: number;
   isFreeUser: boolean;
+  currentModel?: QualityTier;
 }
 
 /**
@@ -23,6 +25,7 @@ export interface IAfterUpscaleBannerProps {
 export const AfterUpscaleBanner = ({
   completedCount,
   isFreeUser,
+  currentModel,
 }: IAfterUpscaleBannerProps): JSX.Element | null => {
   const [visible, setVisible] = useState(false);
   const { pricingRegion } = useRegionTier();
@@ -42,25 +45,33 @@ export const AfterUpscaleBanner = ({
     setVisible(true);
     analytics.track('upgrade_prompt_shown', {
       trigger: 'after_upscale',
+      imageVariant: currentModel,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
-  }, [completedCount, isFreeUser, pricingRegion]);
+  }, [completedCount, isFreeUser, currentModel, pricingRegion]);
 
   if (!visible) return null;
 
   const handleDismiss = () => {
     analytics.track('upgrade_prompt_dismissed', {
       trigger: 'after_upscale',
+      imageVariant: currentModel,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
     setVisible(false);
   };
 
+  const upgradeCtaText =
+    currentModel === 'face-restore'
+      ? 'Try Portrait Pro for sharper faces.'
+      : 'Upgrade for unlimited.';
+
   const handleUpgradeClick = () => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_upscale',
+      imageVariant: currentModel,
       destination: '/dashboard/billing',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
@@ -77,7 +88,7 @@ export const AfterUpscaleBanner = ({
           className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
           onClick={handleUpgradeClick}
         >
-          Upgrade for unlimited.
+          {upgradeCtaText}
         </Link>
       </p>
       <button

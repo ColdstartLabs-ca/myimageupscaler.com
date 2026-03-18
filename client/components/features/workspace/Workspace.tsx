@@ -8,6 +8,9 @@ import {
   ProcessingStatus,
   QUALITY_TIER_CONFIG,
 } from '@/shared/types/coreflow.types';
+import { useCheckoutFlow } from '@client/hooks/useCheckoutFlow';
+import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
+import { STRIPE_PRICES } from '@shared/config/stripe';
 import { Dropzone } from '@client/components/features/image-processing/Dropzone';
 import { BatchSidebar } from '@client/components/features/workspace/BatchSidebar';
 import { PreviewArea } from '@client/components/features/workspace/PreviewArea';
@@ -31,7 +34,6 @@ import {
   Wand2,
   X,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
@@ -49,7 +51,6 @@ const FREE_DOWNLOAD_UPSELL_PROBABILITY = 0.5;
 
 const Workspace: React.FC = () => {
   const t = useTranslations('workspace');
-  const router = useRouter();
   // Hook managing all queue state
   const {
     queue,
@@ -72,6 +73,13 @@ const Workspace: React.FC = () => {
 
   const { isFreeUser } = useUserData();
   const hasSubscription = !isFreeUser;
+
+  const {
+    handleCheckout: openUpgradeCheckout,
+    showCheckoutModal: showUpgradeCheckoutModal,
+    closeCheckoutModal: closeUpgradeCheckoutModal,
+    handleCheckoutSuccess: handleUpgradeCheckoutSuccess,
+  } = useCheckoutFlow({ priceId: STRIPE_PRICES.HOBBY_MONTHLY });
 
   // First-time user onboarding state
   const [isFirstTimeUser] = useState(() => checkIsFirstTimeUser());
@@ -243,7 +251,7 @@ const Workspace: React.FC = () => {
   const handlePremiumUpsellViewPlans = () => {
     setShowPremiumUpsell(false);
     setPendingDownload(null);
-    router.push('/dashboard/billing');
+    void openUpgradeCheckout();
   };
 
   // Handler for partial add from modal
@@ -393,7 +401,11 @@ const Workspace: React.FC = () => {
           {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
           {isFreeUser && (
             <div className="px-3 md:px-4 pb-0">
-              <AfterUpscaleBanner completedCount={completedCount} isFreeUser={isFreeUser} />
+              <AfterUpscaleBanner
+                completedCount={completedCount}
+                isFreeUser={isFreeUser}
+                currentModel={config.qualityTier}
+              />
             </div>
           )}
 
@@ -599,7 +611,16 @@ const Workspace: React.FC = () => {
           void handlePremiumUpsellProceed();
         }}
         onViewPlans={handlePremiumUpsellViewPlans}
+        currentModel={config.qualityTier}
       />
+
+      {showUpgradeCheckoutModal && (
+        <CheckoutModal
+          priceId={STRIPE_PRICES.HOBBY_MONTHLY}
+          onClose={closeUpgradeCheckoutModal}
+          onSuccess={handleUpgradeCheckoutSuccess}
+        />
+      )}
 
       {/* Samples modal — triggered by help button */}
       {showSamplesModal && (

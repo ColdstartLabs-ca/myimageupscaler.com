@@ -2,6 +2,7 @@
 
 import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
 import {
+  CheckoutModal,
   CreditPackSelector,
   PlanChangeModal,
   PricingCard,
@@ -33,6 +34,8 @@ export default function PricingPageClient() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelingSchedule, setCancelingSchedule] = useState(false);
   const [buttonLoadingStates, setButtonLoadingStates] = useState<Record<string, boolean>>({});
+  const [postAuthCheckoutPriceId, setPostAuthCheckoutPriceId] = useState<string | null>(null);
+  const processedCheckoutParamRef = useRef(false);
 
   const { discountPercent, pricingRegion, isLoading: regionLoading } = useRegionTier();
 
@@ -219,6 +222,26 @@ export default function PricingPageClient() {
     };
     loadUserData();
   }, []);
+
+  // Auto-open checkout after post-auth redirect: /pricing?checkout=<priceId>
+  useEffect(() => {
+    if (loading) return; // Wait until user data has loaded
+    if (processedCheckoutParamRef.current) return; // Only process once
+
+    const checkoutParam = searchParams.get('checkout');
+    if (!checkoutParam || !profile) return; // Need auth + a valid priceId
+
+    processedCheckoutParamRef.current = true;
+    setPostAuthCheckoutPriceId(checkoutParam);
+
+    // Clean up the URL param without triggering a re-render
+    const params = new URLSearchParams(window.location.search);
+    params.delete('checkout');
+    const newUrl = params.toString()
+      ? `${window.location.pathname}?${params.toString()}`
+      : window.location.pathname;
+    window.history.replaceState({}, '', newUrl);
+  }, [loading, profile, searchParams]);
 
   // Compute the current subscription price for upgrade/downgrade display
   const currentSubscriptionPrice = useMemo(() => {
@@ -711,6 +734,18 @@ export default function PricingPageClient() {
           targetPriceId={selectedPlanId}
           currentPriceId={subscription?.price_id}
           onComplete={handleModalComplete}
+        />
+      )}
+
+      {/* Post-auth checkout modal: opens automatically after sign-in redirect */}
+      {postAuthCheckoutPriceId && (
+        <CheckoutModal
+          priceId={postAuthCheckoutPriceId}
+          onClose={() => setPostAuthCheckoutPriceId(null)}
+          onSuccess={() => {
+            setPostAuthCheckoutPriceId(null);
+            window.location.reload();
+          }}
         />
       )}
     </main>

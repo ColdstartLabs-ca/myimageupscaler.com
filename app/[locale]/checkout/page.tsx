@@ -7,11 +7,13 @@ import { useRouter } from 'next/navigation';
 import { useToastStore } from '@client/store/toastStore';
 import { useUserStore } from '@client/store/userStore';
 import { useTranslations } from 'next-intl';
-import { StripeService } from '@client/services/stripeService';
+import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
 import { BillingErrorBoundary } from '@client/components/stripe/BillingErrorBoundary';
+import { QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
+import type { QualityTier } from '@/shared/types/coreflow.types';
 
 // Initialize Stripe
 const getStripePromise = () => {
@@ -47,6 +49,18 @@ function CheckoutContent() {
 
   const priceId = searchParams.get('priceId');
   const planName = searchParams.get('plan');
+  const modelParam = searchParams.get('model');
+  const modelConfig =
+    modelParam && modelParam in QUALITY_TIER_CONFIG
+      ? QUALITY_TIER_CONFIG[modelParam as QualityTier]
+      : null;
+
+  // Store originating model in sessionStorage so success page can read it
+  useEffect(() => {
+    if (modelParam && typeof window !== 'undefined') {
+      sessionStorage.setItem('checkout_originating_model', modelParam);
+    }
+  }, [modelParam]);
 
   useEffect(() => {
     if (!priceId) {
@@ -106,6 +120,8 @@ function CheckoutContent() {
   const options: StripeEmbeddedCheckoutOptions = {
     clientSecret: clientSecret || '',
     onComplete: () => {
+      // Invalidate cache so a subsequent purchase gets a fresh session
+      clearCheckoutSessionCache();
       // Redirect to success page after checkout completion
       setTimeout(() => {
         router.push('/success');
@@ -204,6 +220,11 @@ function CheckoutContent() {
             {planName && (
               <div className="text-sm text-muted-foreground">
                 {t('subscribingTo', { planName })}
+              </div>
+            )}
+            {modelConfig && (
+              <div className="text-sm text-muted-foreground">
+                Upgrading to unlock <strong className="text-primary">{modelConfig.label}</strong>
               </div>
             )}
           </div>

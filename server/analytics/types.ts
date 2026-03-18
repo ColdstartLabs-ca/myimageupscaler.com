@@ -121,6 +121,12 @@ export interface IUpgradePromptDismissedProperties {
   pricingRegion: string;
 }
 
+export interface ICheckoutOpenedProperties {
+  priceId: string;
+  source: string;
+  originatingModel?: string;
+}
+
 export interface ICheckoutLoadedProperties {
   loadTimeMs: number;
   priceId: string;

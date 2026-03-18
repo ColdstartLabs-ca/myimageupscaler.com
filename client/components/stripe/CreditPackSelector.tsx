@@ -6,6 +6,9 @@ import type { ICreditPack } from '@shared/config/subscription.types';
 import { CreditCard, Check } from 'lucide-react';
 import { CheckoutModal } from './CheckoutModal';
 import { analytics } from '@client/analytics';
+import { useUserStore } from '@client/store/userStore';
+import { useModalStore } from '@client/store/modalStore';
+import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 
 interface ICreditPackSelectorProps {
   onPurchaseStart?: () => void;
@@ -23,6 +26,8 @@ export function CreditPackSelector({
   const [selectedPack, setSelectedPack] = useState<string | null>(null);
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const { isAuthenticated } = useUserStore();
+  const { openAuthRequiredModal } = useModalStore();
 
   // Track initial vs final pack selection
   const initialPackRef = useRef<string | null>(null);
@@ -72,6 +77,18 @@ export function CreditPackSelector({
       priceId: pack.stripePriceId,
       cumulativeTimeMs: selectionTimeMs,
     });
+
+    // Require auth before opening checkout — store intent so user returns here after sign-in
+    if (!isAuthenticated) {
+      if (pack.stripePriceId) {
+        const currentSearchParams = new URLSearchParams(window.location.search);
+        currentSearchParams.set('checkout', pack.stripePriceId);
+        const returnTo = `${window.location.pathname}?${currentSearchParams.toString()}`;
+        prepareAuthRedirect('checkout', { returnTo, context: { priceId: pack.stripePriceId } });
+      }
+      openAuthRequiredModal();
+      return;
+    }
 
     setSelectedPack(pack.key);
     setSelectedPriceId(pack.stripePriceId);
