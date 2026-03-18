@@ -85,7 +85,7 @@ export const NavBar = (): JSX.Element => {
           />
         </a>
 
-        <nav className="hidden lg:flex items-center gap-2 xl:gap-4 ml-6 xl:ml-10">
+        <nav className="hidden lg:flex items-center gap-4 xl:gap-6 ml-6 xl:ml-10">
           {isAuthenticated && (
             <a
               href={localizedPath('/dashboard')}
