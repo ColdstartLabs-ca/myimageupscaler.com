@@ -3,6 +3,7 @@ import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
+import { analytics } from '@client/analytics';
 
 interface IUseCheckoutFlowOptions {
   priceId: string;
@@ -110,6 +111,8 @@ export function useCheckoutFlow({
       }
 
       // Show embedded checkout modal (same UX as credit packs)
+      // Track that modal actually opened (bridges gap between upgrade_prompt_clicked and checkout_step_viewed)
+      analytics.track('checkout_opened', { priceId, source: 'embedded_modal' });
       setShowCheckoutModal(true);
       setTimeout(() => setIsProcessing(false), 0);
     } catch (error) {

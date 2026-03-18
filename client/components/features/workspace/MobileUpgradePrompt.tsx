@@ -38,7 +38,7 @@ export const MobileUpgradePrompt = ({
   const handleClick = () => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: variant === 'upload' ? 'mobile_upload_prompt' : 'mobile_preview_prompt',
-      destination: '/dashboard/billing',
+      destination: '/pricing',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
@@ -66,7 +66,7 @@ export const MobileUpgradePrompt = ({
           </li>
         </ul>
         <Link
-          href="/dashboard/billing"
+          href="/pricing"
           onClick={handleClick}
           className="block w-full text-center text-xs font-semibold text-accent border border-accent/40 rounded-lg py-2 hover:bg-accent/10 transition-colors"
         >
@@ -85,7 +85,7 @@ export const MobileUpgradePrompt = ({
         </p>
       </div>
       <Link
-        href="/dashboard/billing"
+        href="/pricing"
         onClick={handleClick}
         className="shrink-0 text-xs font-semibold text-accent border border-accent/40 rounded-lg px-3 py-1.5 hover:bg-accent/10 transition-colors"
       >

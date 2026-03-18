@@ -104,7 +104,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'premium_upsell',
       imageVariant: currentImages.label,
-      destination: 'billing',
+      destination: '/pricing',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });

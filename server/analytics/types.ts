@@ -472,6 +472,7 @@ export type IAnalyticsEventName =
   // Regional pricing monitoring events (server-side only)
   | 'pricing_region_mismatch'
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
+  | 'checkout_opened' // Fires when CheckoutModal renders (bridges upgrade_prompt_clicked → checkout_step_viewed gap)
   | 'checkout_step_viewed'
   | 'checkout_step_time'
   | 'checkout_error'

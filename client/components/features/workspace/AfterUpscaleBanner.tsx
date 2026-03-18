@@ -61,7 +61,7 @@ export const AfterUpscaleBanner = ({
   const handleUpgradeClick = () => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_upscale',
-      destination: '/dashboard/billing',
+      destination: '/pricing',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
@@ -73,7 +73,7 @@ export const AfterUpscaleBanner = ({
       <p className="text-sm text-white flex-1">
         You&apos;ve upscaled {AFTER_UPSCALE_THRESHOLD} images.{' '}
         <Link
-          href="/dashboard/billing"
+          href="/pricing"
           className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
           onClick={handleUpgradeClick}
         >

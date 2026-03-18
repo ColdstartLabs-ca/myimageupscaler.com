@@ -57,7 +57,7 @@ export const PostDownloadPrompt = ({
   const handleUpgradeClick = () => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_download',
-      destination: '/dashboard/billing',
+      destination: '/pricing',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
@@ -84,7 +84,7 @@ export const PostDownloadPrompt = ({
           <p className="text-sm text-text-muted mb-5">
             Love the result?{' '}
             <Link
-              href="/dashboard/billing"
+              href="/pricing"
               className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
               onClick={handleUpgradeClick}
             >
@@ -94,7 +94,7 @@ export const PostDownloadPrompt = ({
 
           <div className="flex items-center gap-2">
             <Link
-              href="/dashboard/billing"
+              href="/pricing"
               className="inline-flex items-center justify-center rounded-lg bg-secondary text-black font-semibold px-4 py-2 hover:bg-secondary/90 transition-colors"
               onClick={handleUpgradeClick}
             >

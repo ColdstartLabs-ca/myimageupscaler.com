@@ -55,7 +55,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       userType: limit <= 5 ? 'free' : 'paid',
       source: 'batch_limit_modal',
     });
-    router.push('/dashboard/billing');
+    router.push('/pricing');
   };
 
   const handleAddPartial = () => {

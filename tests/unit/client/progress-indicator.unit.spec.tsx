@@ -261,7 +261,7 @@ describe('FirstDownloadCelebration', () => {
 
     fireEvent.click(screen.getByText('See Premium Plans'));
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard/billing');
+    expect(mockPush).toHaveBeenCalledWith('/pricing');
   });
 
   it('should dismiss on X click', () => {

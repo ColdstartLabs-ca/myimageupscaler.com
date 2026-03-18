@@ -108,6 +108,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const [slowLoading, setSlowLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSurvey, setShowSurvey] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const [surveyTimeSpentMs, setSurveyTimeSpentMs] = useState(0);
   const { showToast } = useToastStore();
 
@@ -308,6 +309,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   }, []);
 
   useEffect(() => {
+    const CHECKOUT_TIMEOUT_MS = 30000; // 30 seconds hard timeout
+
     const createCheckoutSession = async () => {
       // Don't attempt to create session if Stripe isn't configured
       if (!stripePromise) {
@@ -315,6 +318,15 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       }
 
       const sessionLoadStart = Date.now();
+      let timedOut = false;
+
+      const timeoutId = setTimeout(() => {
+        timedOut = true;
+        const timeoutMessage = 'Checkout is taking too long. Please try again.';
+        setError(timeoutMessage);
+        setLoading(false);
+        trackError('network_error', 'Checkout session creation timeout (30s)', 'plan_selection');
+      }, CHECKOUT_TIMEOUT_MS);
 
       try {
         setLoading(true);
@@ -325,6 +337,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           uiMode: 'embedded',
         });
 
+        if (timedOut) return; // Timeout already fired, discard result
+
         if (response.clientSecret) {
           setClientSecret(response.clientSecret);
           // Track stripe_embed step viewed with load time
@@ -334,6 +348,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           throw new Error('No client secret returned from checkout session');
         }
       } catch (err) {
+        if (timedOut) return; // Timeout already handled the error state
         console.error('Failed to create checkout session:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load checkout';
         setError(errorMessage);
@@ -343,12 +358,15 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           type: 'error',
         });
       } finally {
-        setLoading(false);
+        clearTimeout(timeoutId);
+        if (!timedOut) {
+          setLoading(false);
+        }
       }
     };
 
     createCheckoutSession();
-  }, [priceId, showToast, trackStepViewed, trackError]);
+  }, [priceId, retryKey, showToast, trackStepViewed, trackError]);
 
   const options: StripeEmbeddedCheckoutOptions = {
     clientSecret: clientSecret || '',
@@ -436,12 +454,26 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
                 <div className="bg-error/10 border border-error/20 rounded-lg p-4">
                   <h3 className="text-error font-semibold mb-2">{t('error')}</h3>
                   <p className="text-error/80">{error}</p>
-                  <button
-                    onClick={() => handleClose('close_button')}
-                    className="mt-4 px-4 py-2 bg-error text-white rounded-lg hover:bg-error/80 transition-colors touch-manipulation"
-                  >
-                    {t('close')}
-                  </button>
+                  <div className="mt-4 flex gap-3">
+                    <button
+                      onClick={() => {
+                        setError(null);
+                        setClientSecret(null);
+                        setLoading(true);
+                        loadStartRef.current = Date.now();
+                        setRetryKey(k => k + 1);
+                      }}
+                      className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
+                    >
+                      Try again
+                    </button>
+                    <button
+                      onClick={() => handleClose('close_button')}
+                      className="px-4 py-2 bg-error text-white rounded-lg hover:bg-error/80 transition-colors touch-manipulation"
+                    >
+                      {t('close')}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

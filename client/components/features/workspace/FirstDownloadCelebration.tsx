@@ -111,12 +111,12 @@ export const FirstDownloadCelebration = ({
 
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'celebration',
-      destination: '/dashboard/billing',
+      destination: '/pricing',
       currentPlan: isFreeUser ? 'free' : 'paid',
     });
 
     handleDismiss();
-    router.push('/dashboard/billing');
+    router.push('/pricing');
   };
 
   // Generate confetti pieces

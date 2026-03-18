@@ -93,17 +93,8 @@ export async function handleAuthRedirect(): Promise<void> {
 
     // Handle checkout action from context
     if (intent?.action === 'checkout' && typeof intent.context?.priceId === 'string') {
-      try {
-        const { StripeService } = await import('@client/services/stripeService');
-        await StripeService.redirectToCheckout(intent.context.priceId, {
-          successUrl: `${window.location.origin}/success`,
-          cancelUrl: `${window.location.origin}/pricing`,
-        });
-        return;
-      } catch (error) {
-        console.error('[authRedirect] Error redirecting to checkout:', error);
-        // Fall through to dashboard redirect
-      }
+      window.location.href = `/checkout?priceId=${encodeURIComponent(intent.context.priceId)}`;
+      return;
     }
 
     // Handle explicit returnTo

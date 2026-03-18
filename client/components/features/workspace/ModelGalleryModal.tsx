@@ -134,11 +134,11 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   const handleLockedClick = useCallback(() => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'model_gate',
-      destination: '/dashboard/billing',
+      destination: '/pricing',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
-    router.push('/dashboard/billing');
+    router.push('/pricing');
     onClose();
   }, [router, onClose, pricingRegion]);
 
