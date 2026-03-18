@@ -321,7 +321,9 @@ export function decodeImageDimensions(imageData: string): { width: number; heigh
   const base64Data = imageData.includes(',') ? imageData.split(',')[1] : imageData;
 
   // Decode enough bytes for dimension extraction
-  const binaryString = atob(base64Data.slice(0, 1000)); // First ~750 bytes
+  // Phone JPEGs often have 20-60KB EXIF blocks before SOF marker
+  // Reading ~32KB ensures we can find dimensions in 99%+ of JPEGs
+  const binaryString = atob(base64Data.slice(0, 44000)); // First ~32KB
   const bytes = new Uint8Array(binaryString.length);
   for (let i = 0; i < binaryString.length; i++) {
     bytes[i] = binaryString.charCodeAt(i);

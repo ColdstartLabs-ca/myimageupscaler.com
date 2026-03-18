@@ -14,6 +14,7 @@ import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
 import { GUEST_LIMITS } from '@shared/config/guest-limits.config';
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
+import { ensureFitsModel } from '@server/utils/image-resizer';
 
 const guestUpscaleSchema = z.object({
   imageData: z.string().min(100),
@@ -90,11 +91,40 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       fingerprint: validated.visitorId.slice(0, 8) + '***',
     });
 
+    // Server-side auto-resize: Ensure image fits within model's pixel limit
+    // This prevents GPU OOM errors for large guest images
+    let processImageData = validated.imageData;
+    try {
+      const resizeResult = await ensureFitsModel(validated.imageData, GUEST_LIMITS.MODEL);
+
+      if (resizeResult.wasResized) {
+        logger.info('Guest image auto-resized for model', {
+          originalDimensions: resizeResult.originalDimensions,
+          resizedDimensions: resizeResult.dimensions,
+          modelId: GUEST_LIMITS.MODEL,
+        });
+        processImageData = resizeResult.imageData;
+      }
+    } catch (resizeError) {
+      logger.error('Guest image resize failed', {
+        error: resizeError instanceof Error ? resizeError.message : 'Unknown error',
+      });
+
+      return NextResponse.json(
+        createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          'Unable to process image. Please try a different format or smaller image.',
+          422
+        ).body,
+        { status: 422 }
+      );
+    }
+
     // Process with real-esrgan only
     const startTime = Date.now();
 
     const result = await processGuestImage({
-      imageData: validated.imageData,
+      imageData: processImageData,
       mimeType: validated.mimeType,
       scale: GUEST_LIMITS.SCALE,
       modelId: GUEST_LIMITS.MODEL,
