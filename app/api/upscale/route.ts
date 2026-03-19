@@ -19,9 +19,10 @@ import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { getCreditsForTier, getModelForTier } from '@shared/config/subscription.utils';
 import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
-import { ensureFitsModel } from '@server/utils/image-resizer';
 import {
+  decodeImageDimensions,
   upscaleSchema,
+  validateImageDimensions,
   validateImageSizeForTier,
   validateMagicBytes,
 } from '@shared/validation/upscale.schema';
@@ -351,6 +352,29 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
+    // 8b. Decode and validate input dimensions
+    const inputDimensions = decodeImageDimensions(validatedInput.imageData);
+    if (inputDimensions) {
+      const dimValidation = validateImageDimensions(inputDimensions.width, inputDimensions.height);
+      if (!dimValidation.valid) {
+        logger.warn('Dimension validation failed', {
+          userId,
+          width: inputDimensions.width,
+          height: inputDimensions.height,
+          error: dimValidation.error,
+        });
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          dimValidation.error || 'Image dimensions out of range',
+          400
+        );
+        return NextResponse.json(errorBody, { status });
+      }
+    } else {
+      // Could not decode dimensions - proceed with caution
+      logger.warn('Could not decode image dimensions', { userId });
+    }
+
     // 9. Validate premium tier restrictions for free users
     const config = validatedInput.config;
     const premiumTiers = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
@@ -541,47 +565,43 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
-    // 10a. Server-side auto-resize: Ensure image fits within model's pixel limit
-    // This is the core GPU OOM prevention - resizes transparently before processing
-    // Uses sharp for reliable dimension reading (fixes JPEG EXIF issues)
-    let processImageData = validatedInput.imageData;
-    let inputDimensions: { width: number; height: number } | undefined;
-    let wasServerResized = false;
-    let originalDimensions: { width: number; height: number } | undefined;
+    // 10a. Validate per-model pixel limits (defense in depth)
+    // Even if client-side validation is bypassed, server should reject oversized images
+    if (inputDimensions) {
+      const pixels = inputDimensions.width * inputDimensions.height;
+      const maxPixels = modelRegistry.getMaxInputPixels(resolvedModelId);
 
-    try {
-      const resizeResult = await ensureFitsModel(validatedInput.imageData, resolvedModelId);
-
-      if (resizeResult.wasResized) {
-        wasServerResized = true;
-        originalDimensions = resizeResult.originalDimensions;
-        processImageData = resizeResult.imageData;
-
-        logger.info('Server auto-resized image for model', {
+      if (pixels > maxPixels) {
+        logger.warn('Image exceeds model pixel limit', {
           userId,
+          width: inputDimensions.width,
+          height: inputDimensions.height,
+          pixels,
           modelId: resolvedModelId,
-          originalDimensions: resizeResult.originalDimensions,
-          resizedDimensions: resizeResult.dimensions,
-          maxPixels: modelRegistry.getMaxInputPixels(resolvedModelId),
+          maxPixels,
         });
+
+        // Format pixel count for display (e.g., 2.6M)
+        const formatPixels = (p: number): string => {
+          if (p >= 1_000_000) {
+            return `${(p / 1_000_000).toFixed(1)}M`;
+          }
+          return p.toLocaleString();
+        };
+
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.IMAGE_TOO_LARGE,
+          `Image dimensions (${inputDimensions.width}×${inputDimensions.height} = ${formatPixels(pixels)} pixels) exceed the maximum for this processing mode (${formatPixels(maxPixels)} pixels). Please resize your image before uploading.`,
+          422,
+          {
+            width: inputDimensions.width,
+            height: inputDimensions.height,
+            pixels,
+            maxPixels,
+          }
+        );
+        return NextResponse.json(errorBody, { status });
       }
-
-      // Use sharp's reliable dimension reading (replaces flaky manual decoder)
-      inputDimensions = resizeResult.dimensions;
-    } catch (resizeError) {
-      // If sharp fails to process the image, reject with actionable error
-      logger.error('Server-side image resize failed', {
-        userId,
-        modelId: resolvedModelId,
-        error: resizeError instanceof Error ? resizeError.message : 'Unknown error',
-      });
-
-      const { body: errorBody, status } = createErrorResponse(
-        ErrorCodes.VALIDATION_ERROR,
-        'Unable to process image. Please try a different format or smaller image.',
-        422
-      );
-      return NextResponse.json(errorBody, { status });
     }
 
     // Calculate credit cost using new quality tier system
@@ -642,9 +662,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Create legacy-compatible input for the processor
     // Map new quality tier system to legacy format that processors understand
-    // Use processImageData which may have been auto-resized to fit model limits
     const legacyInputForProcessor = {
-      imageData: processImageData,
+      imageData: validatedInput.imageData,
       mimeType: validatedInput.mimeType,
       enhancementPrompt: validatedInput.enhancementPrompt,
       config: {
@@ -736,9 +755,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             height: inputDimensions.height * actualScale,
           },
           actualScale,
-          // Include server resize metadata when applicable
-          wasServerResized: wasServerResized || undefined,
-          originalInput: wasServerResized ? originalDimensions : undefined,
         }
       : undefined;
 

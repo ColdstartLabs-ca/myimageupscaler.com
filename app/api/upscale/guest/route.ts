@@ -14,7 +14,8 @@ import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
 import { GUEST_LIMITS } from '@shared/config/guest-limits.config';
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
-import { ensureFitsModel } from '@server/utils/image-resizer';
+import { decodeImageDimensions } from '@shared/validation/upscale.schema';
+import { MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
 
 const guestUpscaleSchema = z.object({
   imageData: z.string().min(100),
@@ -91,40 +92,38 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       fingerprint: validated.visitorId.slice(0, 8) + '***',
     });
 
-    // Server-side auto-resize: Ensure image fits within model's pixel limit
-    // This prevents GPU OOM errors for large guest images
-    let processImageData = validated.imageData;
-    try {
-      const resizeResult = await ensureFitsModel(validated.imageData, GUEST_LIMITS.MODEL);
+    // Validate image dimensions against guest model's pixel limit
+    // Guest route uses real-esrgan which has a 1.5MP limit
+    const inputDimensions = decodeImageDimensions(validated.imageData);
+    if (inputDimensions) {
+      const pixels = inputDimensions.width * inputDimensions.height;
+      const maxPixels = MODEL_MAX_INPUT_PIXELS[GUEST_LIMITS.MODEL] ?? 1_500_000;
 
-      if (resizeResult.wasResized) {
-        logger.info('Guest image auto-resized for model', {
-          originalDimensions: resizeResult.originalDimensions,
-          resizedDimensions: resizeResult.dimensions,
-          modelId: GUEST_LIMITS.MODEL,
+      if (pixels > maxPixels) {
+        logger.warn('Guest image exceeds model pixel limit', {
+          width: inputDimensions.width,
+          height: inputDimensions.height,
+          pixels,
+          maxPixels,
         });
-        processImageData = resizeResult.imageData;
-      }
-    } catch (resizeError) {
-      logger.error('Guest image resize failed', {
-        error: resizeError instanceof Error ? resizeError.message : 'Unknown error',
-      });
 
-      return NextResponse.json(
-        createErrorResponse(
-          ErrorCodes.VALIDATION_ERROR,
-          'Unable to process image. Please try a different format or smaller image.',
-          422
-        ).body,
-        { status: 422 }
-      );
+        return NextResponse.json(
+          createErrorResponse(
+            ErrorCodes.VALIDATION_ERROR,
+            `Image is too large (${inputDimensions.width}×${inputDimensions.height}). Please resize to under ${(maxPixels / 1_000_000).toFixed(1)}MP before uploading.`,
+            422,
+            { upgradeUrl: '/?signup=1' }
+          ).body,
+          { status: 422 }
+        );
+      }
     }
 
     // Process with real-esrgan only
     const startTime = Date.now();
 
     const result = await processGuestImage({
-      imageData: processImageData,
+      imageData: validated.imageData,
       mimeType: validated.mimeType,
       scale: GUEST_LIMITS.SCALE,
       modelId: GUEST_LIMITS.MODEL,

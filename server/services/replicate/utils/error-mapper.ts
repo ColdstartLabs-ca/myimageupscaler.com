@@ -78,7 +78,7 @@ export class ReplicateErrorMapper {
     }
 
     // Check for GPU memory errors (image too large for model's hardware)
-    // This should rarely happen after server-side auto-resize, but provides safety net
+    // Safety net if client-side resize fails or server dimension check is bypassed
     if (
       message.includes('GPU memory') ||
       message.includes('greater than the max size') ||
