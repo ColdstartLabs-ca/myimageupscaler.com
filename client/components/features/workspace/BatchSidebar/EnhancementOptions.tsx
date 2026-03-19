@@ -31,6 +31,7 @@ export interface IEnhancementOptionsProps {
   selectedTier: QualityTier;
   disabled?: boolean;
   isFreeUser?: boolean;
+  onUpgradeClick?: () => void;
 }
 
 export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
@@ -40,6 +41,7 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
   selectedTier,
   disabled = false,
   isFreeUser = false,
+  onUpgradeClick,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [autoResize, setAutoResize] = useState(() => isAutoResizeEnabled());
@@ -98,10 +100,10 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
             <div
               className={`rounded-lg border overflow-hidden ${
                 isFreeUser
-                  ? 'border-border bg-surface-light/50 opacity-60'
+                  ? 'border-border bg-surface-light/50 cursor-pointer hover:border-accent/40 hover:bg-surface-light transition-colors'
                   : 'border-accent/20 bg-accent/10'
               }`}
-              title={isFreeUser ? 'Paid plans only' : undefined}
+              onClick={isFreeUser && onUpgradeClick ? onUpgradeClick : undefined}
             >
               <div className="p-3 flex items-start gap-3">
                 <div
@@ -113,24 +115,27 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="smart-analysis"
-                      className={`font-medium text-sm ${isFreeUser ? 'text-muted-foreground cursor-not-allowed' : 'text-white cursor-pointer'}`}
+                    <span
+                      className={`font-medium text-sm ${isFreeUser ? 'text-muted-foreground' : 'text-white'}`}
                     >
                       Smart AI Analysis
-                    </label>
-                    <input
-                      type="checkbox"
-                      id="smart-analysis"
-                      checked={isFreeUser ? false : options.smartAnalysis}
-                      onChange={e => handleToggle('smartAnalysis', e.target.checked)}
-                      disabled={disabled || isFreeUser}
-                      className="h-4 w-4 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
-                    />
+                    </span>
+                    {isFreeUser ? (
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-accent border border-accent/40 rounded px-1.5 py-0.5">
+                        Upgrade
+                      </span>
+                    ) : (
+                      <input
+                        type="checkbox"
+                        id="smart-analysis"
+                        checked={options.smartAnalysis}
+                        onChange={e => handleToggle('smartAnalysis', e.target.checked)}
+                        disabled={disabled}
+                        className="h-4 w-4 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
+                      />
+                    )}
                   </div>
-                  <p
-                    className={`text-xs mt-1 ${isFreeUser ? 'text-muted-foreground' : 'text-muted-foreground'}`}
-                  >
+                  <p className="text-xs mt-1 text-muted-foreground">
                     {isFreeUser ? (
                       'Upgrade to let AI detect content type and optimize settings automatically.'
                     ) : (

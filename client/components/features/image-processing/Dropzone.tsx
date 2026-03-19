@@ -17,6 +17,7 @@ interface IDropzoneProps {
   compact?: boolean; // Prop to render a smaller version if needed
   children?: React.ReactNode;
   className?: string;
+  onUpgrade?: () => void;
 }
 
 // Union type for oversized files that can be either byte-size or dimension oversized
@@ -32,6 +33,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
   compact = false,
   children,
   className = '',
+  onUpgrade,
 }) => {
   const t = useTranslations('workspace');
   const { showToast } = useToastStore();
@@ -358,14 +360,13 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
                 </span>
               </p>
               {isFreeUser && (
-                <a
-                  href="/pricing"
-                  onClick={e => e.stopPropagation()}
+                <button
+                  onClick={e => { e.stopPropagation(); onUpgrade?.(); }}
                   className="relative z-20 inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-accent/80 transition-colors pointer-events-auto"
                 >
                   <Sparkles size={12} />
                   Upgrade for HD quality &amp; larger files
-                </a>
+                </button>
               )}
             </div>
           )}
@@ -392,6 +393,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           currentIndex={currentOversizedIndex}
           totalCount={oversizedFiles.length}
           dimensions={oversizedFiles[currentOversizedIndex].dimensions}
+          onUpgrade={onUpgrade}
         />
       )}
     </div>

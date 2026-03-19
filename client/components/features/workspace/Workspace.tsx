@@ -9,7 +9,7 @@ import {
   QUALITY_TIER_CONFIG,
 } from '@/shared/types/coreflow.types';
 import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
-import { UpgradePlanModal } from '@client/components/stripe/UpgradePlanModal';
+import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import { Dropzone } from '@client/components/features/image-processing/Dropzone';
 import { BatchSidebar } from '@client/components/features/workspace/BatchSidebar';
 import { PreviewArea } from '@client/components/features/workspace/PreviewArea';
@@ -75,7 +75,17 @@ const Workspace: React.FC = () => {
   const hasSubscription = !isFreeUser;
   const searchParams = useSearchParams();
 
-  const [showUpgradePlanModal, setShowUpgradePlanModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
+
+  const openUpgradeModal = (outOfCredits = false) => {
+    setUpgradeModalOutOfCredits(outOfCredits);
+    setShowUpgradeModal(true);
+  };
+  const closeUpgradeModal = () => {
+    setShowUpgradeModal(false);
+    setUpgradeModalOutOfCredits(false);
+  };
   const [postAuthCheckoutPriceId, setPostAuthCheckoutPriceId] = useState<string | null>(null);
   const processedCheckoutParamRef = React.useRef(false);
 
@@ -263,7 +273,7 @@ const Workspace: React.FC = () => {
   const handlePremiumUpsellViewPlans = () => {
     setShowPremiumUpsell(false);
     setPendingDownload(null);
-    setShowUpgradePlanModal(true);
+    openUpgradeModal();
   };
 
   // Handler for partial add from modal
@@ -306,7 +316,7 @@ const Workspace: React.FC = () => {
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center relative">
           <AmbientBackground variant="section" />
           <div className="relative z-10">
-            <Dropzone onFilesSelected={addFiles} />
+            <Dropzone onFilesSelected={addFiles} onUpgrade={() => openUpgradeModal()} />
             <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 size={13} className="text-secondary shrink-0" />{' '}
@@ -350,14 +360,15 @@ const Workspace: React.FC = () => {
           <MobileUpgradePrompt
             variant="upload"
             isFreeUser={isFreeUser}
-            onUpgrade={() => setShowUpgradePlanModal(true)}
+            onUpgrade={() => openUpgradeModal()}
           />
         </div>
 
-        <UpgradePlanModal
-          isOpen={showUpgradePlanModal}
-          onClose={() => setShowUpgradePlanModal(false)}
-          trigger="premium_upsell"
+        <PurchaseModal
+          isOpen={showUpgradeModal}
+          onClose={closeUpgradeModal}
+          onPurchaseComplete={closeUpgradeModal}
+          outOfCredits={upgradeModalOutOfCredits}
         />
 
         {postAuthCheckoutPriceId && (
@@ -393,7 +404,7 @@ const Workspace: React.FC = () => {
             completedCount={completedCount}
             onProcess={() => processBatch(config)}
             onClear={clearQueue}
-            onUpgrade={() => setShowUpgradePlanModal(true)}
+            onUpgrade={() => openUpgradeModal(true)}
           />
         </div>
 
@@ -436,7 +447,7 @@ const Workspace: React.FC = () => {
                 completedCount={completedCount}
                 isFreeUser={isFreeUser}
                 currentModel={config.qualityTier}
-                onUpgrade={() => setShowUpgradePlanModal(true)}
+                onUpgrade={() => openUpgradeModal()}
               />
             </div>
           )}
@@ -485,7 +496,7 @@ const Workspace: React.FC = () => {
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
               isFreeUser={isFreeUser}
-              onUpgrade={() => setShowUpgradePlanModal(true)}
+              onUpgrade={() => openUpgradeModal()}
             />
           </div>
 
@@ -603,7 +614,7 @@ const Workspace: React.FC = () => {
         currentTier={config.qualityTier}
         isFreeUser={isFreeUser}
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
-        onUpgrade={() => setShowUpgradePlanModal(true)}
+        onUpgrade={() => openUpgradeModal()}
       />
 
       {/* Mobile Tab Bar */}
@@ -635,7 +646,7 @@ const Workspace: React.FC = () => {
         attempted={batchLimitExceeded?.attempted ?? 0}
         currentCount={queue.length}
         onAddPartial={handleAddPartial}
-        onUpgrade={() => setShowUpgradePlanModal(true)}
+        onUpgrade={() => openUpgradeModal()}
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
 
@@ -649,10 +660,10 @@ const Workspace: React.FC = () => {
         currentModel={config.qualityTier}
       />
 
-      <UpgradePlanModal
-        isOpen={showUpgradePlanModal}
-        onClose={() => setShowUpgradePlanModal(false)}
-        trigger="premium_upsell"
+      <PurchaseModal
+        isOpen={showUpgradeModal}
+        onClose={closeUpgradeModal}
+        onPurchaseComplete={closeUpgradeModal}
       />
 
       {postAuthCheckoutPriceId && (

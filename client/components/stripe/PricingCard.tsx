@@ -81,7 +81,7 @@ function getButtonText(
   if (isProcessing || loading) {
     return (
       <>
-        <Loader2 size={16} className="animate-spin" />
+        <Loader2 size={14} className="animate-spin" />
         {'Processing...'}
       </>
     );
@@ -106,13 +106,13 @@ function getCardBorderClasses(
   recommended: boolean
 ): string {
   if (scheduled) {
-    return 'border-warning ring-2 ring-warning ring-opacity-20 opacity-90';
+    return 'border-warning/40 ring-1 ring-warning/20 opacity-90';
   }
   if (isCurrentPlan) {
-    return 'border-success ring-2 ring-success ring-opacity-20 opacity-90';
+    return 'border-success/40 ring-1 ring-success/20 opacity-90';
   }
   if (recommended) {
-    return 'border-accent ring-2 ring-accent ring-opacity-20';
+    return 'border-accent/60 ring-1 ring-accent/20';
   }
   return 'border-surface-light';
 }
@@ -124,10 +124,11 @@ function getButtonClasses(
   isProcessing: boolean,
   loading: boolean
 ): string {
-  const baseClasses = 'w-full py-3 px-6 rounded-lg font-medium transition-all duration-200';
+  const baseClasses =
+    'w-full py-2 px-4 rounded-md text-sm font-medium transition-all duration-150 flex items-center justify-center gap-1.5';
 
   if (scheduled) {
-    return `${baseClasses} bg-warning/20 text-warning cursor-not-allowed`;
+    return `${baseClasses} bg-warning/10 text-warning cursor-not-allowed`;
   }
   if (isCurrentPlan) {
     return `${baseClasses} bg-surface-light text-text-muted cursor-not-allowed`;
@@ -138,7 +139,7 @@ function getButtonClasses(
   if (isProcessing || loading) {
     return `${baseClasses} bg-surface-light text-text-muted cursor-not-allowed`;
   }
-  return `${baseClasses} bg-accent hover:bg-accent-hover text-white shadow-md hover:shadow-lg`;
+  return `${baseClasses} bg-accent hover:bg-accent-hover text-white`;
 }
 
 // --- Component ---
@@ -214,40 +215,61 @@ export function PricingCard({
 
   return (
     <div
-      className={`relative bg-surface rounded-2xl shadow-lg border-2 ${getCardBorderClasses(scheduled, isCurrentPlan, recommended)}`}
+      className={`relative bg-surface rounded-xl border flex flex-col h-full transition-colors duration-150 ${getCardBorderClasses(
+        scheduled,
+        isCurrentPlan,
+        recommended
+      )}`}
     >
       {/* Badge */}
       {badge.show && (
         <div
-          className={`absolute -top-3 left-1/2 -translate-x-1/2 ${badge.colorClass} text-white px-4 py-1 rounded-full text-sm font-medium`}
+          className={`absolute -top-2.5 left-1/2 -translate-x-1/2 ${badge.colorClass} text-white px-3 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase z-10`}
         >
           {badge.text}
         </div>
       )}
 
-      <div className="p-8">
-        <h2 className="text-2xl font-bold text-center text-text-primary mb-2">{name}</h2>
-        {description && (
-          <p className="text-center text-sm text-text-secondary mb-6">{description}</p>
-        )}
-
-        <div className="text-center my-6">
-          <div className="text-4xl font-bold text-text-primary" data-testid="pricing-card-price">
-            {currency === 'USD' ? '$' : currency}
-            {displayPrice}
-          </div>
-          {interval && <div className="text-sm text-text-secondary mt-1">per {interval}</div>}
+      <div className="p-4 flex flex-col h-full">
+        {/* Plan name + description */}
+        <div className="mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-text-secondary text-center">
+            {name}
+          </p>
+          {description && (
+            <p className="text-[11px] text-text-secondary/60 text-center mt-0.5">{description}</p>
+          )}
         </div>
 
-        <div className="border-t border-surface-light pt-6 mb-6"></div>
+        {/* Price */}
+        <div className="text-center mb-3">
+          <div className="flex items-baseline justify-center gap-0.5">
+            <span className="text-sm font-medium text-text-primary">
+              {currency === 'USD' ? '$' : currency}
+            </span>
+            <span
+              className="text-3xl font-bold text-text-primary tabular-nums"
+              data-testid="pricing-card-price"
+            >
+              {displayPrice}
+            </span>
+          </div>
+          {interval && (
+            <p className="text-[11px] text-text-secondary mt-0.5">/ {interval}</p>
+          )}
+        </div>
 
-        <ul className="space-y-3 mb-8">
+        {/* Divider */}
+        <div className="border-t border-surface-light mb-3" />
+
+        {/* Features */}
+        <ul className="space-y-1.5 mb-4 flex-grow">
           {features.map((feature, index) => (
-            <li key={index} className="flex items-start gap-3">
+            <li key={index} className="flex items-start gap-2">
               <svg
                 data-testid="checkmark-icon"
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-emerald-400 flex-shrink-0 mt-0.5"
+                className="h-3.5 w-3.5 text-success flex-shrink-0 mt-0.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -255,16 +277,17 @@ export function PricingCard({
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              <span className="text-sm text-text-primary">{feature}</span>
+              <span className="text-xs text-text-primary/80 leading-tight">{feature}</span>
             </li>
           ))}
         </ul>
 
-        <div className="mt-auto space-y-2">
+        {/* CTA */}
+        <div className="space-y-2">
           <button
             onClick={handleCheckout}
             disabled={disabled || isProcessing || loading || retryCount >= 3}
@@ -276,9 +299,16 @@ export function PricingCard({
             <button
               onClick={onCancelScheduled}
               disabled={cancelingScheduled}
-              className="w-full py-2 px-6 rounded-lg font-medium text-sm text-warning hover:text-warning/90 hover:bg-warning/20 border border-warning/30 transition-colors disabled:opacity-50"
+              className="w-full py-1.5 px-4 rounded-md text-xs font-medium text-warning hover:bg-warning/10 border border-warning/30 transition-colors disabled:opacity-50"
             >
-              {cancelingScheduled ? 'Canceling...' : 'Cancel Scheduled Change'}
+              {cancelingScheduled ? (
+                <span className="flex items-center justify-center gap-1.5">
+                  <Loader2 size={12} className="animate-spin" />
+                  Canceling...
+                </span>
+              ) : (
+                'Cancel Scheduled Change'
+              )}
             </button>
           )}
         </div>

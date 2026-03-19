@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { DashboardSidebar } from '@client/components/dashboard/DashboardSidebar';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
+import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import { Menu } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
@@ -14,6 +15,7 @@ interface IDashboardLayoutProps {
 
 export const DashboardLayout: React.FC<IDashboardLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-main">
@@ -35,7 +37,7 @@ export const DashboardLayout: React.FC<IDashboardLayoutProps> = ({ children }) =
           {/* Credits Display */}
           <div className="flex-1 flex justify-center max-w-[150px]">
             <div className="scale-90 origin-center">
-              <CreditsDisplay />
+              <CreditsDisplay onUpgrade={() => setShowUpgradeModal(true)} />
             </div>
           </div>
 
@@ -52,6 +54,12 @@ export const DashboardLayout: React.FC<IDashboardLayoutProps> = ({ children }) =
 
       {/* Sidebar - Desktop: static, Mobile: drawer */}
       <DashboardSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+      <PurchaseModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        onPurchaseComplete={() => setShowUpgradeModal(false)}
+      />
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto pt-14 md:pt-0">

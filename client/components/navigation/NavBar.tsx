@@ -2,6 +2,7 @@ import { DEFAULT_LOCALE } from '@/i18n/config';
 import { AuthProvider } from '@/shared/types/authProviders.types';
 import { LocaleSwitcher } from '@client/components/i18n/LocaleSwitcher';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
+import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import { useClickOutside } from '@client/hooks/useClickOutside';
 import { useModalStore } from '@client/store/modalStore';
 import { useRegionTier } from '@client/hooks/useRegionTier';
@@ -22,6 +23,7 @@ export const NavBar = (): JSX.Element => {
   const { tier } = useRegionTier();
   const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
   const [isResourcesDropdownOpen, setIsResourcesDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -59,6 +61,7 @@ export const NavBar = (): JSX.Element => {
   const isPasswordUser = user?.provider === AuthProvider.EMAIL;
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full border-b border-border bg-main/80 backdrop-blur-xl transition-all duration-300">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a
@@ -308,8 +311,8 @@ export const NavBar = (): JSX.Element => {
                 {isDropdownOpen && (
                   <ul className="p-2 shadow-2xl glass-dropdown rounded-2xl w-56 absolute top-full right-0 mt-4 z-50 animate-in fade-in zoom-in-95 duration-200">
                     <li>
-                      <div className="px-2 py-2 pointer-events-none">
-                        <CreditsDisplay />
+                      <div className="px-2 py-2">
+                        <CreditsDisplay onUpgrade={() => setShowUpgradeModal(true)} />
                       </div>
                     </li>
                     <li>
@@ -545,5 +548,12 @@ export const NavBar = (): JSX.Element => {
         </div>
       )}
     </header>
+
+    <PurchaseModal
+      isOpen={showUpgradeModal}
+      onClose={() => setShowUpgradeModal(false)}
+      onPurchaseComplete={() => setShowUpgradeModal(false)}
+    />
+    </>
   );
 };

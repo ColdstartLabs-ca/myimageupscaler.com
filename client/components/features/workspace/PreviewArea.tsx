@@ -279,6 +279,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
             afterUrl={activeItem.processedUrl}
             onDownload={() => onDownload(activeItem.processedUrl!, activeItem.file.name)}
             showUpgradeNudge={isFreeUser}
+            onUpgrade={onUpgrade}
           />
 
           {/* Waiting for next batch item overlay */}

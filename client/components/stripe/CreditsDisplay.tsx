@@ -15,7 +15,11 @@ const LOW_CREDIT_THRESHOLD = 5;
  * <CreditsDisplay />
  * ```
  */
-export function CreditsDisplay(): JSX.Element {
+interface ICreditsDisplayProps {
+  onUpgrade?: () => void;
+}
+
+export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.Element {
   const { total: creditBalance } = useCredits();
   const { isLoading, error, invalidate, user, isAuthenticated, lastFetched } = useUserStore();
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -108,13 +112,12 @@ export function CreditsDisplay(): JSX.Element {
           <div>
             {isNoCredits ? 'No credits remaining' : `Low credits: ${creditBalance} remaining`}
           </div>
-          <a
-            href="/dashboard/billing"
+          <button
+            onClick={e => { e.stopPropagation(); onUpgrade?.(); }}
             className="block text-accent hover:text-accent-light underline text-center"
-            onClick={e => e.stopPropagation()}
           >
             Buy more credits →
-          </a>
+          </button>
         </>
       )}
     </div>
@@ -138,8 +141,8 @@ export function CreditsDisplay(): JSX.Element {
         </div>
       )}
 
-      <a
-        href="/dashboard/billing"
+      <button
+        onClick={onUpgrade}
         className={`flex items-center gap-2 ${bgColor} px-3 py-1.5 rounded-full hover:opacity-80 transition-opacity cursor-pointer`}
       >
         {/* Credits icon */}
@@ -161,11 +164,11 @@ export function CreditsDisplay(): JSX.Element {
         {/* Credits amount */}
         <span className={`text-sm font-semibold ${textColor}`}>{creditBalance}</span>
         <span className={`text-xs font-medium ${subtitleColor}`}>credits</span>
-      </a>
+      </button>
 
       {/* Buy credits button */}
-      <a
-        href="/dashboard/billing"
+      <button
+        onClick={onUpgrade}
         className="text-muted-foreground hover:text-accent transition-colors"
         title="Buy credits"
       >
@@ -183,7 +186,7 @@ export function CreditsDisplay(): JSX.Element {
             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
           />
         </svg>
-      </a>
+      </button>
 
       {/* Refresh button */}
       <button

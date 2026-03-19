@@ -82,7 +82,7 @@ export function SubscriptionStatus(): JSX.Element {
         </p>
         <div className="flex justify-end">
           <a
-            href="/pricing"
+            href="/dashboard/billing"
             className="inline-flex items-center justify-center px-4 py-2 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
           >
             View Plans

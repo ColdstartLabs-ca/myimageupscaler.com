@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getEnabledCreditPacks } from '@shared/config/subscription.utils';
 import type { ICreditPack } from '@shared/config/subscription.types';
-import { CreditCard, Check } from 'lucide-react';
+import { CreditCard } from 'lucide-react';
 import { CheckoutModal } from './CheckoutModal';
 import { analytics } from '@client/analytics';
 import { useUserStore } from '@client/store/userStore';
@@ -130,65 +130,92 @@ export function CreditPackSelector({
 
   return (
     <>
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+      <div className="grid gap-3 grid-cols-1 md:grid-cols-3">
         {packs.map(pack => (
           <div
             key={pack.key}
-            className={`relative glass border rounded-xl p-6 transition-all cursor-pointer hover:border-accent/50 hover:shadow-md ${
-              selectedPack === pack.key ? 'border-accent ring-2 ring-accent' : 'border-border'
-            } ${pack.badge ? 'border-accent/30' : ''}`}
+            className={`relative bg-surface rounded-xl border flex flex-col transition-colors duration-150 cursor-pointer ${
+              selectedPack === pack.key
+                ? 'border-accent'
+                : pack.badge
+                  ? 'border-accent/40 hover:border-accent/60'
+                  : 'border-surface-light hover:border-surface-light/80'
+            }`}
             onClick={() => handlePurchase(pack)}
           >
             {pack.badge && (
               <div
-                className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-white text-xs font-semibold rounded-full ${
-                  pack.badge === 'Best Value' ? 'bg-emerald-600' : 'bg-accent'
+                className={`absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 text-white text-[10px] font-semibold rounded-full z-10 uppercase tracking-wide ${
+                  pack.badge === 'Best Value' ? 'bg-success' : 'bg-accent'
                 }`}
               >
                 {pack.badge}
               </div>
             )}
 
-            <div className="text-center mb-4">
-              <h3 className="text-lg font-semibold text-white">{pack.name}</h3>
-              <div className="text-3xl font-bold text-white mt-2">
-                {formatPrice(pack.priceInCents)}
+            <div className="p-4 flex flex-col h-full">
+              {/* Pack name */}
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-text-secondary text-center mb-3">
+                {pack.name}
+              </p>
+
+              {/* Price */}
+              <div className="text-center mb-2">
+                <span className="text-2xl font-bold text-text-primary tabular-nums">
+                  {formatPrice(pack.priceInCents)}
+                </span>
               </div>
-            </div>
 
-            <div className="text-center space-y-4">
-              <div className="text-2xl font-semibold text-accent">{pack.credits} credits</div>
-
-              <div className="text-sm text-muted-foreground">
-                ${getPricePerCredit(pack)} per credit
+              {/* Credits */}
+              <div className="text-center mb-3">
+                <span className="text-sm font-semibold text-accent">
+                  {pack.credits.toLocaleString()} credits
+                </span>
+                <p className="text-[11px] text-text-secondary mt-0.5">
+                  ${getPricePerCredit(pack)} per credit
+                </p>
               </div>
 
-              <ul className="text-sm text-left space-y-2 mt-4">
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-success flex-shrink-0" />
-                  <span className="text-muted-foreground">Never expire</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-success flex-shrink-0" />
-                  <span className="text-muted-foreground">Use anytime</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-success flex-shrink-0" />
-                  <span className="text-muted-foreground">Stack with subscription</span>
-                </li>
+              {/* Divider */}
+              <div className="border-t border-surface-light mb-3" />
+
+              {/* Features */}
+              <ul className="space-y-1.5 mb-4 flex-grow">
+                {[
+                  'Credits never expire',
+                  'Use on any tool',
+                  'Stackable with plans',
+                ].map((feature, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-3.5 w-3.5 text-success flex-shrink-0 mt-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span className="text-xs text-text-primary/80 leading-tight">{feature}</span>
+                  </li>
+                ))}
               </ul>
 
+              {/* CTA */}
               <button
-                className={`w-full px-4 py-3 rounded-lg font-medium transition-colors mt-4 ${
+                className={`w-full py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${
                   pack.badge
-                    ? 'bg-accent hover:bg-accent-hover text-white shadow-[0_0_20px_rgba(var(--color-accent),0.3)]'
-                    : 'glass hover:bg-surface/10 text-white'
+                    ? 'bg-accent hover:bg-accent-hover text-white'
+                    : 'bg-surface-light hover:bg-surface-light/80 text-text-primary'
                 }`}
               >
-                <div className="flex items-center justify-center gap-2">
-                  <CreditCard className="h-4 w-4" />
-                  <span>Buy Now</span>
-                </div>
+                <CreditCard className="h-3.5 w-3.5" />
+                <span>Purchase</span>
               </button>
             </div>
           </div>

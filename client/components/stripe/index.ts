@@ -6,6 +6,6 @@ export { PricingCard } from '@client/components/stripe/PricingCard';
 export { PricingCardSkeleton } from '@client/components/stripe/PricingCardSkeleton';
 export { SubscriptionStatus } from '@client/components/stripe/SubscriptionStatus';
 export { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
-export { OutOfCreditsModal } from '@client/components/stripe/OutOfCreditsModal';
+export { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 export { SubscriptionPlanGrid } from '@client/components/stripe/SubscriptionPlanGrid';
 export { TrustBadges } from '@client/components/stripe/TrustBadges';

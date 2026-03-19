@@ -157,6 +157,7 @@ export function SubscriptionPlanGrid({
         return (
           <div
             key={priceId}
+            className="h-full"
             onMouseEnter={() => handlePlanHover(key)}
             onMouseLeave={() => handlePlanHover(null)}
             onFocus={() => handlePlanHover(key)}
