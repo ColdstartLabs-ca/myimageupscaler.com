@@ -262,7 +262,8 @@ test.describe('Billing E2E Tests', () => {
 
       // For test purposes, we'll consider the test passing if we can see the Professional plan
       // Since the recommended badge might not show in all test environments
-      await expect(page.getByRole('heading', { name: 'Professional', exact: true })).toBeVisible();
+      // Plan names in PricingCard are <p> tags, not headings
+      await expect(page.getByText('Professional', { exact: true })).toBeVisible();
 
       // Screenshot with badges visible
       await pricingPage.screenshot('recommended-badges-visible');
@@ -291,10 +292,9 @@ test.describe('Billing E2E Tests', () => {
         expect(badgeText?.trim().length).toBeGreaterThan(0);
       } else {
         // If no badges found, at least verify the pricing plans are visible with proper contrast
-        await expect(page.getByRole('heading', { name: 'Hobby', exact: true })).toBeVisible();
-        await expect(
-          page.getByRole('heading', { name: 'Professional', exact: true })
-        ).toBeVisible();
+        // Plan names in PricingCard are <p> tags, not headings
+        await expect(page.getByText('Hobby', { exact: true })).toBeVisible();
+        await expect(page.getByText('Professional', { exact: true })).toBeVisible();
 
         // Check that pricing cards have proper styling (they should have borders/shadows)
         const pricingCards = pricingPage.pricingGrid.locator('> div');
@@ -317,28 +317,14 @@ test.describe('Billing E2E Tests', () => {
       // goto() already calls waitForLoad() which waits for the pricing cards to be visible
       await pricingPage.goto();
 
-      // Use exact matching and scope to pricing grid to avoid conflicts with FAQ headings
-      // These selectors should already be visible after goto() completes
-      const starterHeading = pricingPage.pricingGrid.getByRole('heading', {
-        name: 'Starter',
-        exact: true,
-      });
-      const hobbyHeading = pricingPage.pricingGrid.getByRole('heading', {
-        name: 'Hobby',
-        exact: true,
-      });
-      const proHeading = pricingPage.pricingGrid.getByRole('heading', {
-        name: 'Professional',
-        exact: true,
-      });
-
-      // These assertions should pass immediately since goto() waited for them
-      await expect(starterHeading).toBeVisible();
-      await expect(hobbyHeading).toBeVisible();
-      await expect(proHeading).toBeVisible();
+      // Use the scoped card selectors from PricingPage
+      // Plan names are rendered in <p> tags (not headings) in PricingCard component
+      await expect(pricingPage.starterCard).toBeVisible();
+      await expect(pricingPage.hobbyCard).toBeVisible();
+      await expect(pricingPage.proCard).toBeVisible();
 
       // Check Starter tier displays $9/per month
-      const starterCard = page.locator('div').filter({ hasText: 'Starter' }).first();
+      const starterCard = pricingPage.starterCard;
       await expect(starterCard).toContainText('$9');
       await expect(starterCard).toContainText('per month');
 
@@ -364,22 +350,17 @@ test.describe('Billing E2E Tests', () => {
       // goto() already calls waitForLoad() which waits for the pricing cards to be visible
       await pricingPage.goto();
 
-      // This should already be visible after goto() completes
-      await expect(page.getByRole('heading', { name: 'Starter' })).toBeVisible();
+      // Use the scoped card selectors from PricingPage which are scoped to pricingGrid
+      // This ensures we're checking elements within the pricing cards, not elsewhere on the page
+      await expect(pricingPage.starterCard).toBeVisible();
+      await expect(pricingPage.hobbyCard).toBeVisible();
+      await expect(pricingPage.proCard).toBeVisible();
 
       // Check the order: Starter, Hobby, Pro, Business
       const pricingGrid = pricingPage.pricingGrid;
       const cards = pricingGrid.locator('> div');
 
-      // Verify Starter tier is visible
-      const starterTier = page.getByRole('heading', { name: 'Starter' });
-      await expect(starterTier).toBeVisible();
-
-      // Verify Hobby tier is visible and comes after Starter
-      const hobbyTier = page.getByRole('heading', { name: 'Hobby' });
-      await expect(hobbyTier).toBeVisible();
-
-      // Check that Starter is not the last card (there should be plans after it)
+      // Check that there are multiple cards
       const cardCount = await cards.count();
       expect(cardCount).toBeGreaterThan(2); // At least Starter + Hobby + one more
     });
@@ -393,16 +374,13 @@ test.describe('Billing E2E Tests', () => {
       // goto() already calls waitForLoad() which waits for the pricing cards to be visible
       await pricingPage.goto();
 
-      // This should already be visible after goto() completes
-      const starterHeading = pricingPage.pricingGrid.getByRole('heading', {
-        name: 'Starter',
-        exact: true,
-      });
-      await expect(starterHeading).toBeVisible();
+      // Verify Starter tier is visible (scoped selector)
+      await expect(pricingPage.starterCard).toBeVisible();
 
       // Find and click Pro tier Get Started button
-      const proCard = page.locator('div').filter({ hasText: 'Professional' }).first();
-      const getStartedButton = proCard.locator('button').filter({ hasText: 'Get Started' }).first();
+      // Use the PricingPage's proCard selector which is scoped to the pricing grid
+      const proCard = pricingPage.proCard;
+      const getStartedButton = proCard.getByRole('button', { name: 'Get Started' });
 
       await expect(getStartedButton).toBeVisible();
       await getStartedButton.click();
@@ -416,7 +394,8 @@ test.describe('Billing E2E Tests', () => {
 
       // Check for auth modal or toast notification
       // Wait for either the modal or a toast notification to appear
-      const authModal = page.locator('#authenticationModal[role="dialog"]');
+      // The auth required modal has ID 'authRequiredModal' (not 'authenticationModal')
+      const authModal = page.locator('#authRequiredModal[role="dialog"]');
 
       const modalPromise = authModal
         .isVisible({ timeout: 5000 })
@@ -425,7 +404,7 @@ test.describe('Billing E2E Tests', () => {
 
       const toast = page.locator('[role="alert"], [data-sonner-toast], .toast');
       const toastPromise = toast
-        .filter({ hasText: /account|create|register/i })
+        .filter({ hasText: /account|create|register|sign in/i })
         .isVisible({ timeout: 5000 })
         .then(visible => ({ type: 'toast', visible }))
         .catch(() => ({ type: 'toast', visible: false }));

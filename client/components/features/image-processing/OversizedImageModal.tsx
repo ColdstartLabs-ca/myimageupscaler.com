@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { AlertCircle, Sparkles, Zap, ArrowRight, Loader2 } from 'lucide-react';
 import { Modal } from '@client/components/ui/Modal';
 import { useTranslations } from 'next-intl';
@@ -188,14 +187,17 @@ const ResizeButton: React.FC<{
   );
 };
 
-const UpgradeOption: React.FC<{ isPaidLimit: boolean }> = ({ isPaidLimit }) => {
+const UpgradeOption: React.FC<{ isPaidLimit: boolean; onUpgrade?: () => void }> = ({
+  isPaidLimit,
+  onUpgrade,
+}) => {
   const t = useTranslations('workspace');
   if (isPaidLimit) return null;
 
   return (
-    <Link
-      href="/pricing"
-      className="block w-full flex flex-col p-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 border-2 border-purple-200 hover:border-purple-300 rounded-xl transition-all group"
+    <button
+      onClick={onUpgrade}
+      className="block w-full flex flex-col p-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 border-2 border-purple-200 hover:border-purple-300 rounded-xl transition-all group text-left"
     >
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-3">
@@ -211,7 +213,7 @@ const UpgradeOption: React.FC<{ isPaidLimit: boolean }> = ({ isPaidLimit }) => {
         </div>
         <ArrowRight className="w-5 h-5 text-purple-600 group-hover:translate-x-1 transition-transform" />
       </div>
-    </Link>
+    </button>
   );
 };
 
@@ -262,6 +264,7 @@ export interface IOversizedImageModalProps {
   totalCount?: number;
   /** Optional dimension info for pixel-oversized images */
   dimensions?: { width: number; height: number; pixels: number };
+  onUpgrade?: () => void;
 }
 
 export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
@@ -273,6 +276,7 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
   currentIndex = 0,
   totalCount = 1,
   dimensions,
+  onUpgrade,
 }) => {
   const t = useTranslations('workspace');
   const [isCompressing, setIsCompressing] = useState(false);
@@ -407,7 +411,7 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
           />
 
           {/* Option 2: Upgrade to Pro (only if not already on paid plan and not dimension-based) */}
-          {!dimensions && <UpgradeOption isPaidLimit={isPaidLimit} />}
+          {!dimensions && <UpgradeOption isPaidLimit={isPaidLimit} onUpgrade={onUpgrade} />}
 
           {/* Option 3: Skip/Cancel */}
           <button

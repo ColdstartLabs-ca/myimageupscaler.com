@@ -13,7 +13,6 @@ import { downloadBatch } from '@client/utils/download';
 import { generatePrompt } from '@client/utils/prompt-utils';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { Settings } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import {
   ActionPanel,
@@ -37,6 +36,7 @@ interface IBatchSidebarProps {
   completedCount: number;
   onProcess: () => void;
   onClear: () => void;
+  onUpgrade: () => void;
 }
 
 export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
@@ -48,8 +48,8 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   completedCount,
   onProcess,
   onClear,
+  onUpgrade,
 }) => {
-  const router = useRouter();
   const { totalCredits, isFreeUser } = useUserData();
   const [showInsufficientModal, setShowInsufficientModal] = useState(false);
   const [showCustomInstructionsModal, setShowCustomInstructionsModal] = useState(false);
@@ -146,9 +146,9 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onProcess={onProcess}
           onDownloadAll={handleDownloadAll}
           onClear={onClear}
+          onUpgrade={onUpgrade}
           showInsufficientModal={showInsufficientModal}
           setShowInsufficientModal={setShowInsufficientModal}
-          router={router}
         />
       </div>
 
@@ -168,6 +168,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onChange={handleQualityTierChange}
           disabled={isProcessing}
           isFreeUser={isFreeUser}
+          onUpgrade={onUpgrade}
         />
 
         {/* 2. Upscale Factor Selector (dynamic options based on tier) */}
@@ -186,6 +187,8 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onOpenCustomInstructions={handleOpenCustomInstructions}
           selectedTier={config.qualityTier}
           disabled={isProcessing}
+          isFreeUser={isFreeUser}
+          onUpgradeClick={onUpgrade}
         />
 
         {/* 4. Ultra tier specific config (conditional) */}

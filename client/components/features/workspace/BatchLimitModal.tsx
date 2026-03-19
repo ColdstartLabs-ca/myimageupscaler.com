@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Modal } from '@client/components/ui/Modal';
@@ -15,6 +14,7 @@ export interface IBatchLimitModalProps {
   attempted: number;
   currentCount: number;
   onAddPartial: () => void;
+  onUpgrade: () => void;
   serverEnforced?: boolean;
 }
 
@@ -25,11 +25,11 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
   attempted,
   currentCount,
   onAddPartial,
+  onUpgrade,
   serverEnforced = false,
 }) => {
   const t = useTranslations('workspace.batchLimit');
   const tCommon = useTranslations('common');
-  const router = useRouter();
   const availableSlots = Math.max(0, limit - currentCount);
 
   // Track modal view when opened
@@ -55,7 +55,8 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       userType: limit <= 5 ? 'free' : 'paid',
       source: 'batch_limit_modal',
     });
-    router.push('/dashboard/billing');
+    onClose();
+    onUpgrade();
   };
 
   const handleAddPartial = () => {

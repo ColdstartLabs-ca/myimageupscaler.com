@@ -2,7 +2,6 @@ import { IBatchItem, ProcessingStatus } from '@/shared/types/coreflow.types';
 import { InsufficientCreditsModal } from '@client/components/stripe/InsufficientCreditsModal';
 import { Button } from '@client/components/ui/Button';
 import { Download, Loader2, Trash2, Wand2 } from 'lucide-react';
-import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import React from 'react';
 
 interface IBatchProgress {
@@ -20,9 +19,9 @@ export interface IActionPanelProps {
   onProcess: () => void;
   onDownloadAll: () => void;
   onClear: () => void;
+  onUpgrade: () => void;
   showInsufficientModal: boolean;
   setShowInsufficientModal: (show: boolean) => void;
-  router: AppRouterInstance;
 }
 
 export const ActionPanel: React.FC<IActionPanelProps> = ({
@@ -35,9 +34,9 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
   onProcess,
   onDownloadAll,
   onClear,
+  onUpgrade,
   showInsufficientModal,
   setShowInsufficientModal,
-  router,
 }) => {
   const pendingQueue = queue.filter(i => i.status !== ProcessingStatus.COMPLETED);
   const hasEnoughCredits = currentBalance >= totalCost;
@@ -120,9 +119,9 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
           <p className="text-xs font-medium text-amber-400">
             Need {totalCost - currentBalance} more{' '}
             {totalCost - currentBalance === 1 ? 'credit' : 'credits'} •{' '}
-            <a href="/pricing" className="underline hover:text-amber-300">
+            <button onClick={onUpgrade} className="underline hover:text-amber-300">
               Upgrade
-            </a>
+            </button>
           </p>
         </div>
       )}
@@ -154,8 +153,8 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
         onClose={() => setShowInsufficientModal(false)}
         requiredCredits={totalCost}
         currentBalance={currentBalance}
-        onBuyCredits={() => router.push('/dashboard/billing')}
-        onViewPlans={() => router.push('/pricing')}
+        onBuyCredits={onUpgrade}
+        onViewPlans={onUpgrade}
       />
     </div>
   );

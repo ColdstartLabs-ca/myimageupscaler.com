@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Lock, Search, Sparkles } from 'lucide-react';
 import { QualityTier, QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
@@ -19,6 +18,7 @@ export interface IModelGalleryModalProps {
   currentTier: QualityTier;
   isFreeUser: boolean;
   onSelect: (tier: QualityTier) => void;
+  onUpgrade: () => void;
 }
 
 // Use centralized config for tier categorization
@@ -35,8 +35,8 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   currentTier,
   isFreeUser,
   onSelect,
+  onUpgrade,
 }) => {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const { pricingRegion } = useRegionTier();
 
@@ -130,38 +130,52 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
     [onSelect, onClose, isFreeUser]
   );
 
-  // Handle locked tier click - navigate to billing
-  const handleLockedClick = useCallback(() => {
-    analytics.track('upgrade_prompt_clicked', {
-      trigger: 'model_gate',
-      destination: '/dashboard/billing',
-      currentPlan: 'free',
-      pricingRegion: pricingRegion || 'standard',
-    });
-    router.push('/dashboard/billing');
-    onClose();
-  }, [router, onClose, pricingRegion]);
+  // Handle locked tier click - open plan selector modal
+  const handleLockedClick = useCallback(
+    (tier: QualityTier | 'banner') => {
+      analytics.track('upgrade_prompt_clicked', {
+        trigger: 'model_gate',
+        imageVariant: tier,
+        destination: 'upgrade_plan_modal',
+        currentPlan: 'free',
+        pricingRegion: pricingRegion || 'standard',
+      });
+      // Store originating model so checkout_opened and purchase_confirmed can attribute correctly
+      if (typeof window !== 'undefined' && tier !== 'banner') {
+        sessionStorage.setItem('checkout_originating_model', tier);
+      }
+      onClose();
+      onUpgrade();
+    },
+    [onUpgrade, onClose, pricingRegion]
+  );
 
   // Clear search when modal closes
   const handleClose = useCallback(() => {
-    // Track gallery closed event
-    const selectedTier = currentTier;
-    const originalTier = originalTierRef.current;
+    // Guard: only fire model_gallery_closed if gallery was actually opened.
+    // galleryOpenedAtRef.current is 0 until the isOpen useEffect runs.
+    // This prevents double-fires from rapid close clicks before state commits.
+    if (galleryOpenedAtRef.current > 0) {
+      const selectedTier = currentTier;
+      const originalTier = originalTierRef.current;
 
-    // Track which tiers were visible in the results
-    const visibleFreeTierIds = freeTiers.map(t => t.id);
-    const visiblePremiumTierIds = premiumTiers.map(t => t.id);
-    const allVisibleTiers = [...visibleFreeTierIds, ...visiblePremiumTierIds];
+      const visibleFreeTierIds = freeTiers.map(t => t.id);
+      const visiblePremiumTierIds = premiumTiers.map(t => t.id);
+      const allVisibleTiers = [...visibleFreeTierIds, ...visiblePremiumTierIds];
 
-    analytics.track('model_gallery_closed', {
-      changed: selectedTier !== originalTier,
-      visibleTiers: allVisibleTiers,
-      visibleFreeTiersCount: visibleFreeTierIds.length,
-      visiblePremiumTiersCount: visiblePremiumTierIds.length,
-      timeInGalleryMs: Date.now() - galleryOpenedAtRef.current,
-      isFreeUser,
-      hadSearchQuery: searchQuery.length > 0,
-    });
+      analytics.track('model_gallery_closed', {
+        changed: selectedTier !== originalTier,
+        visibleTiers: allVisibleTiers,
+        visibleFreeTiersCount: visibleFreeTierIds.length,
+        visiblePremiumTiersCount: visiblePremiumTierIds.length,
+        timeInGalleryMs: Date.now() - galleryOpenedAtRef.current,
+        isFreeUser,
+        hadSearchQuery: searchQuery.length > 0,
+      });
+
+      // Reset so any re-entry after fast double-click doesn't double-fire
+      galleryOpenedAtRef.current = 0;
+    }
 
     setSearchQuery('');
     onClose();
@@ -182,7 +196,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         {/* Upgrade prompt for free users - top position */}
         {isFreeUser && !searchQuery && (
           <button
-            onClick={handleLockedClick}
+            onClick={() => handleLockedClick('banner')}
             className="w-full p-4 bg-gradient-to-r from-secondary/20 to-accent/20 border border-border rounded-xl flex items-center justify-between hover:from-secondary/30 hover:to-accent/30 transition-all cursor-pointer group"
           >
             <div className="flex items-center gap-3">
@@ -192,7 +206,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
               <div className="flex flex-col items-start">
                 <span className="font-bold text-white text-sm">Unlock Premium Models</span>
                 <span className="text-[11px] font-medium text-text-muted">
-                  Available on Pro — 10× sharper results
+                  From $4.99 — 10× sharper results
                 </span>
               </div>
             </div>
@@ -265,7 +279,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
                         isSelected={currentTier === tier.id}
                         isLocked={isFreeUser && PREMIUM_TIERS.includes(tier.id)}
                         onSelect={handleSelect}
-                        onLockedClick={handleLockedClick}
+                        onLockedClick={() => handleLockedClick(tier.id)}
                       />
                     </div>
                   ))}

@@ -93,7 +93,17 @@ export function SubscriptionPlanGrid({
     }
   }, []);
 
-  // Wrap onSelect to track plan-to-plan switches
+  // Fire pricing_plan_viewed on any click on the plan card wrapper
+  const handlePlanClick = useCallback((planKey: TPlanKey, planPriceId: string) => {
+    const plan = PLANS.find(p => p.key === planKey);
+    if (!plan) return;
+    analytics.track('pricing_plan_viewed', {
+      planName: plan.key,
+      priceId: planPriceId,
+    });
+  }, []);
+
+  // Wrap onSelect to track plan-to-plan switches (only used when parent provides onSelect)
   const handleSelect = useCallback(
     (priceId: string) => {
       const plan = PLANS.find(p => p.priceId === priceId);
@@ -112,12 +122,6 @@ export function SubscriptionPlanGrid({
           cumulativeTimeMs: selectionTimeMs,
         });
       }
-
-      // Track pricing plan viewed on selection
-      analytics.track('pricing_plan_viewed', {
-        planName: plan.key,
-        priceId: plan.priceId,
-      });
 
       if (onSelect) {
         onSelect(priceId);
@@ -153,10 +157,12 @@ export function SubscriptionPlanGrid({
         return (
           <div
             key={priceId}
+            className="h-full"
             onMouseEnter={() => handlePlanHover(key)}
             onMouseLeave={() => handlePlanHover(null)}
             onFocus={() => handlePlanHover(key)}
             onBlur={() => handlePlanHover(null)}
+            onClick={() => handlePlanClick(key, priceId)}
           >
             <PricingCard
               name={config.name}

@@ -97,7 +97,8 @@ export type IUpgradePromptTrigger =
   | 'after_upscale'
   | 'after_comparison'
   | 'after_download'
-  | 'after_batch';
+  | 'after_batch'
+  | 'upgrade_card';
 
 export interface IUpgradePromptShownProperties {
   trigger: IUpgradePromptTrigger;
@@ -119,6 +120,12 @@ export interface IUpgradePromptDismissedProperties {
   imageVariant?: string;
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   pricingRegion: string;
+}
+
+export interface ICheckoutOpenedProperties {
+  priceId: string;
+  source: string;
+  originatingModel?: string;
 }
 
 export interface ICheckoutLoadedProperties {
@@ -432,6 +439,8 @@ export type IAnalyticsEventName =
   | 'upgrade_prompt_shown'
   | 'upgrade_prompt_clicked'
   | 'upgrade_prompt_dismissed'
+  | 'upgrade_prompt_tab_toggled'
+  | 'upgrade_plans_viewed'
   // Checkout flow events
   | 'checkout_loaded'
   | 'pricing_plan_viewed'
@@ -472,6 +481,8 @@ export type IAnalyticsEventName =
   // Regional pricing monitoring events (server-side only)
   | 'pricing_region_mismatch'
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
+  | 'checkout_opened' // Fires when CheckoutModal renders (bridges upgrade_prompt_clicked → checkout_step_viewed gap)
+  | 'checkout_auth_required' // Fires when unauthenticated user tries to checkout (bridges upgrade_prompt_clicked → checkout_opened gap)
   | 'checkout_step_viewed'
   | 'checkout_step_time'
   | 'checkout_error'

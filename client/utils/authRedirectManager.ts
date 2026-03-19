@@ -91,18 +91,24 @@ export async function handleAuthRedirect(): Promise<void> {
     // Get any stored intent
     const intent = getAndClearAuthIntent();
 
-    // Handle checkout action from context
-    if (intent?.action === 'checkout' && typeof intent.context?.priceId === 'string') {
-      try {
-        const { StripeService } = await import('@client/services/stripeService');
-        await StripeService.redirectToCheckout(intent.context.priceId, {
-          successUrl: `${window.location.origin}/success`,
-          cancelUrl: `${window.location.origin}/pricing`,
-        });
+    // Handle checkout action — prefer returnTo (e.g. /pricing?checkout=priceId) when set,
+    // so the user lands back on the page they came from with the modal pre-triggered.
+    if (intent?.action === 'checkout') {
+      if (intent.returnTo) {
+        try {
+          const url = new URL(intent.returnTo, window.location.origin);
+          if (url.origin === window.location.origin) {
+            window.location.href = intent.returnTo;
+            return;
+          }
+        } catch {
+          // Invalid URL - fall through to /checkout fallback
+        }
+      }
+      // Fallback for intents stored without returnTo (backward compatibility)
+      if (typeof intent.context?.priceId === 'string') {
+        window.location.href = `/checkout?priceId=${encodeURIComponent(intent.context.priceId)}`;
         return;
-      } catch (error) {
-        console.error('[authRedirect] Error redirecting to checkout:', error);
-        // Fall through to dashboard redirect
       }
     }
 

@@ -46,6 +46,8 @@ const ALLOWED_EVENTS = [
   'upgrade_prompt_shown',
   'upgrade_prompt_clicked',
   'upgrade_prompt_dismissed',
+  'upgrade_prompt_tab_toggled',
+  'upgrade_plans_viewed',
 
   // Checkout events
   'checkout_started',
@@ -84,6 +86,8 @@ const ALLOWED_EVENTS = [
   'pseo_faq_expanded',
   'pseo_internal_link_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
+  'checkout_opened', // Fires when CheckoutModal renders (bridges upgrade_prompt_clicked → checkout_step_viewed gap)
+  'checkout_auth_required', // Fires when unauthenticated user tries to checkout
   'checkout_step_viewed',
   'checkout_step_time',
   'checkout_error',
@@ -246,6 +250,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       'upgrade_prompt_shown',
       'upgrade_prompt_clicked',
       'upgrade_prompt_dismissed',
+      'upgrade_prompt_tab_toggled',
       'checkout_started',
       'checkout_completed',
       'checkout_abandoned',

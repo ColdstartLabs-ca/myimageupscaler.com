@@ -68,6 +68,7 @@ describe('Analytics API - Pricing Region Validation', () => {
       'upgrade_prompt_shown',
       'upgrade_prompt_clicked',
       'upgrade_prompt_dismissed',
+      'upgrade_prompt_tab_toggled',
       'checkout_started',
       'checkout_completed',
       'checkout_abandoned',

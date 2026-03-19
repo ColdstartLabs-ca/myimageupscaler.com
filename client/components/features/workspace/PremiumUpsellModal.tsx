@@ -5,12 +5,14 @@ import { X, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import type { QualityTier } from '@/shared/types/coreflow.types';
 
 export interface IPremiumUpsellModalProps {
   isOpen: boolean;
   onClose: () => void;
   onProceed: () => void;
   onViewPlans: () => void;
+  currentModel?: QualityTier;
 }
 
 interface IComparisonImage {
@@ -37,11 +39,14 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
   onClose,
   onProceed,
   onViewPlans,
+  currentModel,
 }) => {
   const { pricingRegion } = useRegionTier();
-  const [currentImageIndex, setCurrentImageIndex] = useState(() =>
-    Math.floor(Math.random() * COMPARISON_IMAGES.length)
-  );
+  // For face-restore users, default to face-pro comparison (index 0) to show the natural upsell
+  const [currentImageIndex, setCurrentImageIndex] = useState(() => {
+    if (currentModel === 'face-restore') return 0;
+    return Math.floor(Math.random() * COMPARISON_IMAGES.length);
+  });
 
   // Preload all images when modal opens
   useEffect(() => {
@@ -63,6 +68,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
         imageVariant: COMPARISON_IMAGES[currentImageIndex].label,
         currentPlan: 'free',
         pricingRegion: pricingRegion || 'standard',
+        currentModel,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -86,6 +92,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
       imageVariant: currentImages.label,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      currentModel,
     });
     onClose();
   };
@@ -96,6 +103,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
       imageVariant: currentImages.label,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      currentModel,
     });
     onProceed();
   };
@@ -107,6 +115,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
       destination: 'billing',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      currentModel,
     });
     onViewPlans();
   };
@@ -179,10 +188,14 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
             <div className="text-center mb-5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 text-sm font-medium mb-3">
                 <Sparkles size={14} />
-                Premium Quality Available
+                {currentModel === 'face-restore'
+                  ? 'Portrait Pro Available'
+                  : 'Premium Quality Available'}
               </div>
               <h2 className="text-xl font-bold text-primary mb-2">
-                Unlock Premium Enhancement Models
+                {currentModel === 'face-restore'
+                  ? 'See what Portrait Pro can do'
+                  : 'Unlock Premium Enhancement Models'}
               </h2>
               <p className="text-muted-foreground text-sm">
                 Drag the slider above to see the difference. Premium models deliver sharper details,

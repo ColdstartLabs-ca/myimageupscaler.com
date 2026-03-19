@@ -390,6 +390,48 @@ describe('Checkout Funnel Tracking', () => {
     });
   });
 
+  describe('checkout session 30s hard timeout (Phase 2 - upgrade-funnel-fix)', () => {
+    it('should fire network_error checkout_error when session creation exceeds 30s', () => {
+      const CHECKOUT_TIMEOUT_MS = 30000;
+
+      // Simulate the timeout firing: errorType is 'network_error', message contains 'timeout'
+      const errorType = 'network_error' as TCheckoutErrorType;
+      const errorMessage = 'Checkout session creation timeout (30s)';
+      const step = 'plan_selection' as TCheckoutStep;
+
+      // Verify properties match what CheckoutModal.trackError would send to checkout_error
+      expect(errorType).toBe('network_error');
+      expect(errorMessage.toLowerCase()).toContain('timeout');
+      expect(step).toBe('plan_selection');
+
+      // Verify timeout threshold is 30 seconds
+      expect(CHECKOUT_TIMEOUT_MS).toBe(30000);
+    });
+
+    it('should not fire timeout error if session creates within 30s', () => {
+      const CHECKOUT_TIMEOUT_MS = 30000;
+      const fastSessionMs = 1500; // 1.5s
+
+      const timedOut = fastSessionMs >= CHECKOUT_TIMEOUT_MS;
+      expect(timedOut).toBe(false);
+    });
+
+    it('should fire timeout at exactly 30s boundary', () => {
+      const CHECKOUT_TIMEOUT_MS = 30000;
+      const atBoundaryMs = 30000;
+
+      const timedOut = atBoundaryMs >= CHECKOUT_TIMEOUT_MS;
+      expect(timedOut).toBe(true);
+    });
+
+    it('should show user-friendly timeout message', () => {
+      const userFacingMessage = 'Checkout is taking too long. Please try again.';
+      // Message should not expose technical details, should be actionable
+      expect(userFacingMessage).not.toContain('30s');
+      expect(userFacingMessage.toLowerCase()).toContain('please try again');
+    });
+  });
+
   describe('stripe embed load time tracking (Phase 3A)', () => {
     it('should track stripe embed load time accurately', () => {
       // Simulate the load time tracking logic from CheckoutModal

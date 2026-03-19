@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { AlertCircle } from 'lucide-react';
 
 export interface IFileSizeUpgradePromptProps {
   fileSize: number;
   onDismiss: () => void;
+  onUpgrade?: () => void;
 }
 
 const formatBytes = (bytes: number): string => {
@@ -16,6 +16,7 @@ const formatBytes = (bytes: number): string => {
 export function FileSizeUpgradePrompt({
   fileSize,
   onDismiss,
+  onUpgrade,
 }: IFileSizeUpgradePromptProps): JSX.Element {
   return (
     <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950">
@@ -34,12 +35,12 @@ export function FileSizeUpgradePrompt({
             Paid plans support files up to 25MB
           </p>
           <div className="mt-4 flex gap-2">
-            <Link
-              href="/pricing"
+            <button
+              onClick={onUpgrade}
               className="inline-flex items-center rounded-md bg-amber-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600"
             >
               Upgrade Now
-            </Link>
+            </button>
             <button
               onClick={onDismiss}
               className="inline-flex items-center rounded-md border border-amber-300 bg-surface px-3 py-2 text-sm font-medium text-amber-900 transition-colors hover:bg-amber-50 dark:border-amber-700 dark:bg-amber-900 dark:text-amber-100 dark:hover:bg-amber-800"

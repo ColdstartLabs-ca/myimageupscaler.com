@@ -18,11 +18,12 @@ import {
   Shield,
   X,
 } from 'lucide-react';
+import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 import { UpgradeCard } from './UpgradeCard';
 
 interface ISidebarItem {
@@ -93,6 +94,8 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
       });
     }
   };
+
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const handleNavigation = (href: string) => {
     router.push(href);
@@ -182,7 +185,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
           </div>
           {/* Credits Display */}
           <div className="mt-3">
-            <CreditsDisplay />
+            <CreditsDisplay onUpgrade={() => setShowUpgradeModal(true)} />
           </div>
         </div>
 
@@ -215,7 +218,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
           })}
 
           {/* Upgrade Prompt */}
-          {isFreeUser && <UpgradeCard />}
+          {isFreeUser && <UpgradeCard onUpgrade={() => setShowUpgradeModal(true)} />}
         </nav>
 
         {/* Bottom Navigation */}
@@ -256,6 +259,13 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
           </button>
         </div>
       </aside>
+
+      <PurchaseModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        onPurchaseComplete={() => setShowUpgradeModal(false)}
+        trigger="dashboard_sidebar"
+      />
     </>
   );
 };

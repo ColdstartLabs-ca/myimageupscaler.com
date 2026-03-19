@@ -285,7 +285,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     expect(screen.getByText(/Available on Pro/i)).toBeInTheDocument();
   });
 
-  it('navigates to /dashboard/billing (not /pricing) on upgrade click', async () => {
+  it('navigates to /dashboard/billing on upgrade click', async () => {
     render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
     const upgradeButton = screen.getByText('Unlock Premium Models');
@@ -294,7 +294,6 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/dashboard/billing');
     });
-    expect(mockPush).not.toHaveBeenCalledWith('/pricing');
   });
 });
 

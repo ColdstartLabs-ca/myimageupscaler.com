@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ArrowLeftRight, Download, Sparkles, ZoomIn, ZoomOut } from 'lucide-react';
-import Link from 'next/link';
 import { Button } from '@client/components/ui/Button';
 import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
@@ -17,6 +16,7 @@ interface IImageComparisonProps {
   hasTransparency?: boolean;
   /** When true, shows an upgrade nudge below the slider after the user drags it. */
   showUpgradeNudge?: boolean;
+  onUpgrade?: () => void;
 }
 
 export const ImageComparison: React.FC<IImageComparisonProps> = ({
@@ -25,6 +25,7 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   onDownload,
   hasTransparency,
   showUpgradeNudge = false,
+  onUpgrade,
 }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -211,20 +212,20 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
           <Sparkles className="w-3.5 h-3.5 text-secondary shrink-0" />
           <p className="text-xs text-text-muted text-center">
             Love the result?{' '}
-            <Link
-              href="/dashboard/billing"
+            <button
               className="font-semibold text-secondary hover:text-secondary/80 underline underline-offset-2 transition-colors"
               onClick={() => {
                 analytics.track('upgrade_prompt_clicked', {
                   trigger: 'after_comparison',
-                  destination: '/dashboard/billing',
+                  destination: 'upgrade_modal',
                   currentPlan: 'free',
                   pricingRegion: pricingRegion || 'standard',
                 });
+                onUpgrade?.();
               }}
             >
               Unlock premium quality.
-            </Link>
+            </button>
           </p>
         </div>
       )}

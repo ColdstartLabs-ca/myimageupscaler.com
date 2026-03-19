@@ -1,7 +1,7 @@
 'use client';
 
 import { useToastStore } from '@client/store/toastStore';
-import { StripeService } from '@client/services/stripeService';
+import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
@@ -102,12 +102,15 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const currentStepRef = useRef<TCheckoutStep>('plan_selection');
   // Track load start time
   const loadStartRef = useRef(Date.now());
+  // Guard: exit intent already tracked by handleClose — prevents double-fire from cleanup
+  const exitIntentTrackedRef = useRef(false);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [slowLoading, setSlowLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSurvey, setShowSurvey] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const [surveyTimeSpentMs, setSurveyTimeSpentMs] = useState(0);
   const { showToast } = useToastStore();
 
@@ -201,8 +204,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
     trackStepViewed('plan_selection');
 
     return () => {
-      // Track exit if checkout wasn't completed
-      if (!checkoutCompletedRef.current) {
+      // Only track exit intent if handleClose didn't already fire it
+      if (!checkoutCompletedRef.current && !exitIntentTrackedRef.current) {
         trackExitIntent(currentStepRef.current, exitMethodRef.current);
       }
     };
@@ -251,6 +254,13 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   // Handle close with exit intent tracking
   const handleClose = useCallback(
     (method: TCheckoutExitMethod = 'close_button') => {
+      // Survey is already showing — a second ESC/close must just dismiss it, not re-track
+      if (showSurvey) {
+        setShowSurvey(false);
+        onClose();
+        return;
+      }
+
       exitMethodRef.current = method;
 
       // Only track abandoned if checkout wasn't completed
@@ -265,7 +275,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           plan: determinePlanFromPriceId(priceId),
         });
 
-        // Track exit intent with the new event
+        // Track exit intent and mark as tracked so cleanup doesn't double-fire
+        exitIntentTrackedRef.current = true;
         trackExitIntent(step, method);
 
         // Check if we should show the exit survey
@@ -278,7 +289,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       }
       onClose();
     },
-    [priceId, clientSecret, onClose, trackExitIntent]
+    [priceId, clientSecret, onClose, trackExitIntent, showSurvey]
   );
 
   // Handle closing the survey
@@ -308,6 +319,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   }, []);
 
   useEffect(() => {
+    const CHECKOUT_TIMEOUT_MS = 30000; // 30 seconds hard timeout
+
     const createCheckoutSession = async () => {
       // Don't attempt to create session if Stripe isn't configured
       if (!stripePromise) {
@@ -315,6 +328,15 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       }
 
       const sessionLoadStart = Date.now();
+      let timedOut = false;
+
+      const timeoutId = setTimeout(() => {
+        timedOut = true;
+        const timeoutMessage = 'Checkout is taking too long. Please try again.';
+        setError(timeoutMessage);
+        setLoading(false);
+        trackError('network_error', 'Checkout session creation timeout (30s)', 'plan_selection');
+      }, CHECKOUT_TIMEOUT_MS);
 
       try {
         setLoading(true);
@@ -325,6 +347,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           uiMode: 'embedded',
         });
 
+        if (timedOut) return; // Timeout already fired, discard result
+
         if (response.clientSecret) {
           setClientSecret(response.clientSecret);
           // Track stripe_embed step viewed with load time
@@ -334,6 +358,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           throw new Error('No client secret returned from checkout session');
         }
       } catch (err) {
+        if (timedOut) return; // Timeout already handled the error state
         console.error('Failed to create checkout session:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load checkout';
         setError(errorMessage);
@@ -343,16 +368,21 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           type: 'error',
         });
       } finally {
-        setLoading(false);
+        clearTimeout(timeoutId);
+        if (!timedOut) {
+          setLoading(false);
+        }
       }
     };
 
     createCheckoutSession();
-  }, [priceId, showToast, trackStepViewed, trackError]);
+  }, [priceId, retryKey, showToast, trackStepViewed, trackError]);
 
   const options: StripeEmbeddedCheckoutOptions = {
     clientSecret: clientSecret || '',
     onComplete: () => {
+      // Invalidate cache so a subsequent purchase gets a fresh session
+      clearCheckoutSessionCache();
       // Mark checkout as completed to avoid tracking abandoned
       checkoutCompletedRef.current = true;
 
@@ -382,6 +412,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       )}
 
       <div
+        data-modal="checkout"
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-x-hidden"
         onClick={e => {
           // Only close when clicking directly on the backdrop, not its children
@@ -436,12 +467,27 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
                 <div className="bg-error/10 border border-error/20 rounded-lg p-4">
                   <h3 className="text-error font-semibold mb-2">{t('error')}</h3>
                   <p className="text-error/80">{error}</p>
-                  <button
-                    onClick={() => handleClose('close_button')}
-                    className="mt-4 px-4 py-2 bg-error text-white rounded-lg hover:bg-error/80 transition-colors touch-manipulation"
-                  >
-                    {t('close')}
-                  </button>
+                  <div className="mt-4 flex gap-3">
+                    <button
+                      onClick={() => {
+                        clearCheckoutSessionCache(); // Force fresh session on retry
+                        setError(null);
+                        setClientSecret(null);
+                        setLoading(true);
+                        loadStartRef.current = Date.now();
+                        setRetryKey(k => k + 1);
+                      }}
+                      className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
+                    >
+                      Try again
+                    </button>
+                    <button
+                      onClick={() => handleClose('close_button')}
+                      className="px-4 py-2 bg-error text-white rounded-lg hover:bg-error/80 transition-colors touch-manipulation"
+                    >
+                      {t('close')}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

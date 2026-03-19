@@ -92,8 +92,10 @@ export const Pricing: React.FC = () => {
     // Check if user is authenticated
     if (!user) {
       // Store checkout intent with price context
+      const searchParams = new URLSearchParams(window.location.search);
+      searchParams.set('checkout', tier.priceId);
       prepareAuthRedirect('checkout', {
-        returnTo: window.location.pathname,
+        returnTo: `${window.location.pathname}?${searchParams.toString()}`,
         context: { priceId: tier.priceId, planName: tier.name },
       });
       openAuthModal('login');

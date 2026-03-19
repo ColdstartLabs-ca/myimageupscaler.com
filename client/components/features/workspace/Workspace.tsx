@@ -8,6 +8,8 @@ import {
   ProcessingStatus,
   QUALITY_TIER_CONFIG,
 } from '@/shared/types/coreflow.types';
+import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
+import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import { Dropzone } from '@client/components/features/image-processing/Dropzone';
 import { BatchSidebar } from '@client/components/features/workspace/BatchSidebar';
 import { PreviewArea } from '@client/components/features/workspace/PreviewArea';
@@ -31,8 +33,8 @@ import {
   Wand2,
   X,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
@@ -49,7 +51,6 @@ const FREE_DOWNLOAD_UPSELL_PROBABILITY = 0.5;
 
 const Workspace: React.FC = () => {
   const t = useTranslations('workspace');
-  const router = useRouter();
   // Hook managing all queue state
   const {
     queue,
@@ -72,6 +73,37 @@ const Workspace: React.FC = () => {
 
   const { isFreeUser } = useUserData();
   const hasSubscription = !isFreeUser;
+  const searchParams = useSearchParams();
+
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
+  const [upgradeModalTrigger, setUpgradeModalTrigger] = useState('workspace');
+
+  const openUpgradeModal = (outOfCredits = false, trigger = 'workspace') => {
+    setUpgradeModalOutOfCredits(outOfCredits);
+    setUpgradeModalTrigger(trigger);
+    setShowUpgradeModal(true);
+  };
+  const closeUpgradeModal = () => {
+    setShowUpgradeModal(false);
+    setUpgradeModalOutOfCredits(false);
+  };
+  const [postAuthCheckoutPriceId, setPostAuthCheckoutPriceId] = useState<string | null>(null);
+  const processedCheckoutParamRef = React.useRef(false);
+
+  // Auto-open checkout after post-auth redirect: /?checkout=<priceId>
+  useEffect(() => {
+    if (processedCheckoutParamRef.current) return;
+    const checkoutParam = searchParams.get('checkout');
+    if (!checkoutParam) return;
+    processedCheckoutParamRef.current = true;
+    setPostAuthCheckoutPriceId(checkoutParam);
+    // Fire checkout_opened here — useCheckoutFlow can't fire it for unauthenticated paths
+    analytics.track('checkout_opened', {
+      priceId: checkoutParam,
+      source: 'post_auth_redirect',
+    });
+  }, [searchParams]);
 
   // First-time user onboarding state
   const [isFirstTimeUser] = useState(() => checkIsFirstTimeUser());
@@ -243,7 +275,7 @@ const Workspace: React.FC = () => {
   const handlePremiumUpsellViewPlans = () => {
     setShowPremiumUpsell(false);
     setPendingDownload(null);
-    router.push('/dashboard/billing');
+    openUpgradeModal(false, 'workspace_premium_upsell');
   };
 
   // Handler for partial add from modal
@@ -286,7 +318,7 @@ const Workspace: React.FC = () => {
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center relative">
           <AmbientBackground variant="section" />
           <div className="relative z-10">
-            <Dropzone onFilesSelected={addFiles} />
+            <Dropzone onFilesSelected={addFiles} onUpgrade={() => openUpgradeModal(false, 'workspace_dropzone')} />
             <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 size={13} className="text-secondary shrink-0" />{' '}
@@ -327,8 +359,28 @@ const Workspace: React.FC = () => {
           </div>
         )}
         <div className="px-8 pb-4">
-          <MobileUpgradePrompt variant="upload" isFreeUser={isFreeUser} />
+          <MobileUpgradePrompt
+            variant="upload"
+            isFreeUser={isFreeUser}
+            onUpgrade={() => openUpgradeModal(false, 'workspace_mobile_upload')}
+          />
         </div>
+
+        <PurchaseModal
+          isOpen={showUpgradeModal}
+          onClose={closeUpgradeModal}
+          onPurchaseComplete={closeUpgradeModal}
+          outOfCredits={upgradeModalOutOfCredits}
+          trigger={upgradeModalTrigger}
+        />
+
+        {postAuthCheckoutPriceId && (
+          <CheckoutModal
+            priceId={postAuthCheckoutPriceId}
+            onClose={() => setPostAuthCheckoutPriceId(null)}
+            onSuccess={() => setPostAuthCheckoutPriceId(null)}
+          />
+        )}
       </div>
     );
   }
@@ -355,6 +407,7 @@ const Workspace: React.FC = () => {
             completedCount={completedCount}
             onProcess={() => processBatch(config)}
             onClear={clearQueue}
+            onUpgrade={() => openUpgradeModal(true, 'workspace_batch_sidebar')}
           />
         </div>
 
@@ -393,7 +446,12 @@ const Workspace: React.FC = () => {
           {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
           {isFreeUser && (
             <div className="px-3 md:px-4 pb-0">
-              <AfterUpscaleBanner completedCount={completedCount} isFreeUser={isFreeUser} />
+              <AfterUpscaleBanner
+                completedCount={completedCount}
+                isFreeUser={isFreeUser}
+                currentModel={config.qualityTier}
+                onUpgrade={() => openUpgradeModal(false, 'workspace_after_upscale_banner')}
+              />
             </div>
           )}
 
@@ -441,6 +499,7 @@ const Workspace: React.FC = () => {
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
               isFreeUser={isFreeUser}
+              onUpgrade={() => openUpgradeModal(false, 'workspace_preview_area')}
             />
           </div>
 
@@ -558,6 +617,7 @@ const Workspace: React.FC = () => {
         currentTier={config.qualityTier}
         isFreeUser={isFreeUser}
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
+        onUpgrade={() => openUpgradeModal(false, 'workspace_model_gallery')}
       />
 
       {/* Mobile Tab Bar */}
@@ -589,6 +649,7 @@ const Workspace: React.FC = () => {
         attempted={batchLimitExceeded?.attempted ?? 0}
         currentCount={queue.length}
         onAddPartial={handleAddPartial}
+        onUpgrade={() => openUpgradeModal(false, 'workspace_batch_limit')}
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
 
@@ -599,7 +660,23 @@ const Workspace: React.FC = () => {
           void handlePremiumUpsellProceed();
         }}
         onViewPlans={handlePremiumUpsellViewPlans}
+        currentModel={config.qualityTier}
       />
+
+      <PurchaseModal
+        isOpen={showUpgradeModal}
+        onClose={closeUpgradeModal}
+        onPurchaseComplete={closeUpgradeModal}
+        trigger={upgradeModalTrigger}
+      />
+
+      {postAuthCheckoutPriceId && (
+        <CheckoutModal
+          priceId={postAuthCheckoutPriceId}
+          onClose={() => setPostAuthCheckoutPriceId(null)}
+          onSuccess={() => setPostAuthCheckoutPriceId(null)}
+        />
+      )}
 
       {/* Samples modal — triggered by help button */}
       {showSamplesModal && (
