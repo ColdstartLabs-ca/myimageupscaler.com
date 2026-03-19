@@ -46,6 +46,7 @@ const ALLOWED_EVENTS = [
   'upgrade_prompt_shown',
   'upgrade_prompt_clicked',
   'upgrade_prompt_dismissed',
+  'upgrade_prompt_tab_toggled',
   'upgrade_plans_viewed',
 
   // Checkout events
@@ -249,6 +250,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       'upgrade_prompt_shown',
       'upgrade_prompt_clicked',
       'upgrade_prompt_dismissed',
+      'upgrade_prompt_tab_toggled',
       'checkout_started',
       'checkout_completed',
       'checkout_abandoned',

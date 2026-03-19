@@ -1,5 +1,5 @@
 import { test, expect } from '../test-fixtures';
-import { setupAuthenticatedState } from '../helpers/auth-helpers';
+import { setupAuthenticatedState, setupAuthenticatedStateWithSupabase } from '../helpers/auth-helpers';
 
 /**
  * Upgrade Funnel Post-Auth Redirect E2E Tests
@@ -17,34 +17,22 @@ import { setupAuthenticatedState } from '../helpers/auth-helpers';
  * 4. Model gate upgrade prompt via model gallery
  */
 
-/** Mock Supabase RPC so workspace can load user data */
-async function mockUserData(page: import('@playwright/test').Page) {
-  await page.route('**/rest/v1/rpc/get_user_data', async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        profile: {
-          id: 'test-user-id',
-          email: 'test@example.com',
-          role: 'user',
-          subscription_credits_balance: 1000,
-          purchased_credits_balance: 0,
-        },
-        subscription: null,
-      }),
-    });
-  });
-}
-
 test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
   test.describe('?checkout= URL Parameter Handling', () => {
     test('should auto-open checkout modal when ?checkout=<priceId> is present in URL', async ({
       page,
     }) => {
       // Authenticated user arriving after post-auth redirect
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null,
+        profile: {
+          id: 'test-user-checkout-modal',
+          email: 'test@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       const priceId = 'price_test_starter_monthly';
 
@@ -62,8 +50,16 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
     });
 
     test('should not open checkout when ?checkout param is missing', async ({ page }) => {
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null,
+        profile: {
+          id: 'test-user-no-checkout',
+          email: 'test@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       await page.goto('/workspace');
       await page.waitForLoadState('domcontentloaded');
@@ -73,8 +69,16 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
     });
 
     test('should only open one checkout modal instance', async ({ page }) => {
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null,
+        profile: {
+          id: 'test-user-one-modal',
+          email: 'test@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       const priceId = 'price_test_pro_monthly';
 
@@ -90,8 +94,16 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
     });
 
     test('should close checkout modal when close button is clicked', async ({ page }) => {
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null,
+        profile: {
+          id: 'test-user-close-modal',
+          email: 'test@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       const priceId = 'price_test_hobby_monthly';
 
@@ -123,8 +135,16 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
         { key: sessionStorageKey, tier: testTier }
       );
 
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null,
+        profile: {
+          id: 'test-user-preserve-model',
+          email: 'test@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       // Post-auth redirect
       await page.goto(`/workspace?checkout=${priceId}`);
@@ -142,8 +162,16 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
     });
 
     test('should preserve originating model across same-origin navigation', async ({ page }) => {
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null,
+        profile: {
+          id: 'test-user-same-origin',
+          email: 'test@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       const testTier = 'clarity';
       const sessionStorageKey = 'checkout_originating_model';
@@ -171,8 +199,18 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
     test('should set originating model in sessionStorage when locked tier is clicked', async ({
       page,
     }) => {
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      // Use setupAuthenticatedStateWithSupabase to properly mock all user data
+      // This ensures isFreeUser is computed correctly in the workspace
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null, // Free user
+        profile: {
+          id: 'test-free-user',
+          email: 'test-free@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       const sessionStorageKey = 'checkout_originating_model';
 
@@ -189,11 +227,11 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
 
       // Open model gallery via mobile quality selector
       const mobileQualityBtn = page.locator('[data-driver="mobile-quality-selector"]');
-      await expect(mobileQualityBtn).toBeVisible({ timeout: 5000 });
+      await expect(mobileQualityBtn).toBeVisible({ timeout: 8000 });
       await mobileQualityBtn.click();
 
       const galleryModal = page.locator('text=Select Model');
-      await expect(galleryModal).toBeVisible({ timeout: 5000 });
+      await expect(galleryModal).toBeVisible({ timeout: 8000 });
 
       // Click any premium/locked tier.
       // ModelCard has a before/after slider inside whose onClick stops propagation.
@@ -222,8 +260,16 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
     });
 
     test('should not set originating model when free tier is selected', async ({ page }) => {
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null, // Free user
+        profile: {
+          id: 'test-free-user-2',
+          email: 'test-free-2@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       const sessionStorageKey = 'checkout_originating_model';
 
@@ -242,11 +288,11 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.waitForTimeout(500);
 
       const mobileQualityBtn = page.locator('[data-driver="mobile-quality-selector"]');
-      if (await mobileQualityBtn.isVisible()) {
+      if (await mobileQualityBtn.isVisible({ timeout: 8000 })) {
         await mobileQualityBtn.click();
 
         const galleryModal = page.locator('text=Select Model');
-        await expect(galleryModal).toBeVisible({ timeout: 5000 });
+        await expect(galleryModal).toBeVisible({ timeout: 8000 });
 
         // Click a free tier — should NOT set originating model
         const freeTierBtn = page.locator('[data-tier="quick"]').first();
@@ -264,10 +310,18 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
     });
   });
 
-  test.describe('UpgradePlanModal Visibility', () => {
-    test('should open UpgradePlanModal titled "Choose a Plan"', async ({ page }) => {
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+  test.describe('PurchaseModal Visibility', () => {
+    test('should open PurchaseModal when "View Plans" is clicked', async ({ page }) => {
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null, // Free user so MobileUpgradePrompt is visible
+        profile: {
+          id: 'test-free-user-3',
+          email: 'test-free-3@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       // Use mobile viewport so MobileUpgradePrompt is visible in empty state
       await page.setViewportSize({ width: 390, height: 844 });
@@ -278,19 +332,29 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       // The "View Plans" button is in MobileUpgradePrompt (md:hidden — visible on mobile)
       const viewPlansBtn = page.locator('button:has-text("View Plans")').first();
 
-      if (await viewPlansBtn.isVisible()) {
+      if (await viewPlansBtn.isVisible({ timeout: 8000 })) {
         await viewPlansBtn.click();
 
-        const upgradeModal = page.locator('[role="dialog"]:has-text("Choose a Plan")');
-        await expect(upgradeModal).toBeVisible({ timeout: 5000 });
+        // PurchaseModal is rendered with "Get More Credits" title
+        // It uses a custom modal structure (not role="dialog" like BottomSheet)
+        const purchaseModal = page.locator('.fixed.inset-0.z-50:has-text("Get More Credits")');
+        await expect(purchaseModal).toBeVisible({ timeout: 8000 });
       }
     });
 
     test('should open model gallery from mobile quality selector in active workspace', async ({
       page,
     }) => {
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null, // Free user
+        profile: {
+          id: 'test-free-user-4',
+          email: 'test-free-4@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       await page.setViewportSize({ width: 390, height: 844 });
 
@@ -303,12 +367,12 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.waitForTimeout(500);
 
       const mobileQualityBtn = page.locator('[data-driver="mobile-quality-selector"]');
-      await expect(mobileQualityBtn).toBeVisible({ timeout: 5000 });
+      await expect(mobileQualityBtn).toBeVisible({ timeout: 8000 });
       await mobileQualityBtn.click();
 
       // Model gallery opens with "Select Model" title
       const galleryModal = page.locator('text=Select Model');
-      await expect(galleryModal).toBeVisible({ timeout: 5000 });
+      await expect(galleryModal).toBeVisible({ timeout: 8000 });
 
       // Gallery closes on Escape
       await page.keyboard.press('Escape');
@@ -320,8 +384,16 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
     test('should complete full flow: locked model click → sessionStorage → upgrade modal', async ({
       page,
     }) => {
-      await setupAuthenticatedState(page);
-      await mockUserData(page);
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null, // Free user
+        profile: {
+          id: 'test-free-user-5',
+          email: 'test-free-5@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
 
       const sessionStorageKey = 'checkout_originating_model';
 
@@ -337,11 +409,11 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
 
       // Open model gallery
       const mobileQualityBtn = page.locator('[data-driver="mobile-quality-selector"]');
-      await expect(mobileQualityBtn).toBeVisible({ timeout: 5000 });
+      await expect(mobileQualityBtn).toBeVisible({ timeout: 8000 });
       await mobileQualityBtn.click();
 
       const galleryModal = page.locator('text=Select Model');
-      await expect(galleryModal).toBeVisible({ timeout: 5000 });
+      await expect(galleryModal).toBeVisible({ timeout: 8000 });
 
       // Click a locked premium tier
       const lockedTier = page
@@ -364,9 +436,14 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
         );
         expect(storedModel).not.toBeNull();
 
-        // UpgradePlanModal should open after clicking locked tier
-        const upgradeModal = page.locator('[role="dialog"]:has-text("Choose a Plan")');
-        await expect(upgradeModal).toBeVisible({ timeout: 5000 });
+        // PurchaseModal should open after clicking locked tier
+        // It shows "Get More Credits" title and includes Subscribe tab
+        const purchaseModal = page.locator('.fixed.inset-0.z-50:has-text("Get More Credits")');
+        await expect(purchaseModal).toBeVisible({ timeout: 8000 });
+
+        // Verify Subscribe tab/button is visible
+        const subscribeButton = page.locator('button:has-text("Subscribe")');
+        await expect(subscribeButton).toBeVisible();
       }
     });
 

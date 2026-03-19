@@ -127,22 +127,13 @@ export class PricingPage extends BasePage {
     }
 
     // Wait for skeleton cards to be replaced with actual pricing cards
-    // Use exact text matching and scope to pricing grid to avoid conflicts with FAQ headings
-    const starterHeading = this.pricingGrid.getByRole('heading', { name: 'Starter', exact: true });
-    const hobbyHeading = this.pricingGrid.getByRole('heading', { name: 'Hobby', exact: true });
-    const proHeading = this.pricingGrid.getByRole('heading', { name: 'Professional', exact: true });
-    const businessHeading = this.pricingGrid.getByRole('heading', {
-      name: 'Business',
-      exact: true,
-    });
-
-    // Wait for all plan headings to be visible within the pricing grid
-    // Use Promise.all for parallel waiting and reduce timeout to 8 seconds
+    // Note: Plan names are rendered in <p> tags, not headings, in PricingCard component
+    // Use the card locators which are scoped to the pricing grid
     await Promise.all([
-      expect(starterHeading).toBeVisible({ timeout: 8000 }),
-      expect(hobbyHeading).toBeVisible({ timeout: 8000 }),
-      expect(proHeading).toBeVisible({ timeout: 8000 }),
-      expect(businessHeading).toBeVisible({ timeout: 8000 }),
+      expect(this.starterCard).toBeVisible({ timeout: 8000 }),
+      expect(this.hobbyCard).toBeVisible({ timeout: 8000 }),
+      expect(this.proCard).toBeVisible({ timeout: 8000 }),
+      expect(this.businessCard).toBeVisible({ timeout: 8000 }),
     ]);
 
     // Wait for Get Started buttons to be visible (not loading)
