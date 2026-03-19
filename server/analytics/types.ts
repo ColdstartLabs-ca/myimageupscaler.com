@@ -488,6 +488,13 @@ export type IAnalyticsEventName =
   | 'checkout_error'
   | 'checkout_exit_intent'
   | 'checkout_exit_survey_response'
+  // Engagement-based first-purchase discount events (PRD: engagement-based-first-purchase-discount)
+  | 'engagement_discount_eligible'
+  | 'engagement_discount_toast_shown'
+  | 'engagement_discount_toast_dismissed'
+  | 'engagement_discount_cta_clicked'
+  | 'engagement_discount_checkout_started'
+  | 'engagement_discount_redeemed'
   // Amplitude identity events (server-side only)
   | '$identify';
 
