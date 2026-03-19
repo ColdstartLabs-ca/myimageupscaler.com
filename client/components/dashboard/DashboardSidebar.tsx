@@ -264,6 +264,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
         onPurchaseComplete={() => setShowUpgradeModal(false)}
+        trigger="dashboard_sidebar"
       />
     </>
   );

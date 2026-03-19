@@ -59,6 +59,7 @@ export const DashboardLayout: React.FC<IDashboardLayoutProps> = ({ children }) =
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
         onPurchaseComplete={() => setShowUpgradeModal(false)}
+        trigger="dashboard_layout"
       />
 
       {/* Main Content */}

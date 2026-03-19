@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { CreditPackSelector } from './CreditPackSelector';
 import { SubscriptionPlanGrid } from './SubscriptionPlanGrid';
@@ -13,6 +13,8 @@ export interface IPurchaseModalProps {
   onClose: () => void;
   onPurchaseComplete: () => void;
   outOfCredits?: boolean;
+  /** Where in the UI this modal was triggered from */
+  trigger?: string;
 }
 
 export function PurchaseModal({
@@ -20,6 +22,7 @@ export function PurchaseModal({
   onClose,
   onPurchaseComplete,
   outOfCredits = false,
+  trigger = 'unknown',
 }: IPurchaseModalProps): JSX.Element | null {
   const title = outOfCredits ? "You're Out of Credits" : 'Get More Credits';
   const description = outOfCredits
@@ -28,30 +31,62 @@ export function PurchaseModal({
   const [showSubscriptionCTA, setShowSubscriptionCTA] = useState(false);
   const t = useTranslations('stripe.outOfCredits');
   const { pricingRegion, discountPercent } = useRegionTier();
+  const openTimeRef = useRef<number>(0);
 
   useEffect(() => {
     if (isOpen) {
+      openTimeRef.current = Date.now();
       analytics.track('upgrade_prompt_shown', {
-        trigger: 'purchase_modal',
+        trigger,
+        outOfCredits,
         currentPlan: 'free',
         pricingRegion: pricingRegion || 'standard',
+        initialTab: 'credits',
       });
     }
-  }, [isOpen, pricingRegion]);
+  }, [isOpen, trigger, outOfCredits, pricingRegion]);
+
+  const handleTabChange = (tab: 'credits' | 'subscribe') => {
+    const currentTab = showSubscriptionCTA ? 'subscribe' : 'credits';
+    if (tab === currentTab) return;
+    analytics.track('upgrade_prompt_tab_toggled', {
+      trigger,
+      from: currentTab,
+      to: tab,
+      pricingRegion: pricingRegion || 'standard',
+      timeOpenMs: Date.now() - openTimeRef.current,
+    });
+    setShowSubscriptionCTA(tab === 'subscribe');
+  };
+
+  const handleDismiss = (method: 'backdrop' | 'close_button' | 'not_now') => {
+    analytics.track('upgrade_prompt_dismissed', {
+      trigger,
+      method,
+      activeTab: showSubscriptionCTA ? 'subscribe' : 'credits',
+      outOfCredits,
+      pricingRegion: pricingRegion || 'standard',
+      timeOpenMs: Date.now() - openTimeRef.current,
+    });
+    onClose();
+  };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        onClick={() => handleDismiss('backdrop')}
+      />
 
       {/* Modal */}
       <div className="flex min-h-full items-end sm:items-center justify-center p-2 sm:p-4">
         <div className="relative w-full max-w-4xl bg-surface rounded-lg shadow-xl flex flex-col max-h-[95vh] sm:max-h-[90vh]">
           {/* Close button */}
           <button
-            onClick={onClose}
+            onClick={() => handleDismiss('close_button')}
             className="absolute top-3 right-3 z-10 text-muted-foreground hover:text-muted-foreground transition-colors"
             aria-label={t('notNow')}
           >
@@ -71,7 +106,7 @@ export function PurchaseModal({
           <div className="flex justify-center flex-shrink-0 pt-0.5 pb-2">
             <div className="bg-surface-light/50 p-1 rounded-xl flex gap-1 border border-surface-light">
               <button
-                onClick={() => setShowSubscriptionCTA(false)}
+                onClick={() => handleTabChange('credits')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                   !showSubscriptionCTA
                     ? 'bg-accent text-white shadow-md scale-[1.02]'
@@ -81,7 +116,7 @@ export function PurchaseModal({
                 {t('buyCredits')}
               </button>
               <button
-                onClick={() => setShowSubscriptionCTA(true)}
+                onClick={() => handleTabChange('subscribe')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                   showSubscriptionCTA
                     ? 'bg-accent text-white shadow-md scale-[1.02]'
@@ -104,10 +139,12 @@ export function PurchaseModal({
                   discountPercent={discountPercent}
                   onPurchaseStart={() => {
                     analytics.track('upgrade_prompt_clicked', {
-                      trigger: 'purchase_modal',
+                      trigger,
                       destination: 'credits',
                       currentPlan: 'free',
+                      outOfCredits,
                       pricingRegion: pricingRegion || 'standard',
+                      timeOpenMs: Date.now() - openTimeRef.current,
                     });
                   }}
                   onPurchaseComplete={() => {
@@ -131,7 +168,7 @@ export function PurchaseModal({
             {/* Footer */}
             <div className="mt-4 text-center">
               <button
-                onClick={onClose}
+                onClick={() => handleDismiss('not_now')}
                 className="text-xs text-text-muted hover:text-text-primary transition-colors"
               >
                 {t('notNow')}

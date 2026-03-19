@@ -553,6 +553,7 @@ export const NavBar = (): JSX.Element => {
       isOpen={showUpgradeModal}
       onClose={() => setShowUpgradeModal(false)}
       onPurchaseComplete={() => setShowUpgradeModal(false)}
+      trigger="navbar"
     />
     </>
   );

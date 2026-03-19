@@ -77,9 +77,11 @@ const Workspace: React.FC = () => {
 
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
+  const [upgradeModalTrigger, setUpgradeModalTrigger] = useState('workspace');
 
-  const openUpgradeModal = (outOfCredits = false) => {
+  const openUpgradeModal = (outOfCredits = false, trigger = 'workspace') => {
     setUpgradeModalOutOfCredits(outOfCredits);
+    setUpgradeModalTrigger(trigger);
     setShowUpgradeModal(true);
   };
   const closeUpgradeModal = () => {
@@ -273,7 +275,7 @@ const Workspace: React.FC = () => {
   const handlePremiumUpsellViewPlans = () => {
     setShowPremiumUpsell(false);
     setPendingDownload(null);
-    openUpgradeModal();
+    openUpgradeModal(false, 'workspace_premium_upsell');
   };
 
   // Handler for partial add from modal
@@ -316,7 +318,7 @@ const Workspace: React.FC = () => {
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center relative">
           <AmbientBackground variant="section" />
           <div className="relative z-10">
-            <Dropzone onFilesSelected={addFiles} onUpgrade={() => openUpgradeModal()} />
+            <Dropzone onFilesSelected={addFiles} onUpgrade={() => openUpgradeModal(false, 'workspace_dropzone')} />
             <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 size={13} className="text-secondary shrink-0" />{' '}
@@ -360,7 +362,7 @@ const Workspace: React.FC = () => {
           <MobileUpgradePrompt
             variant="upload"
             isFreeUser={isFreeUser}
-            onUpgrade={() => openUpgradeModal()}
+            onUpgrade={() => openUpgradeModal(false, 'workspace_mobile_upload')}
           />
         </div>
 
@@ -369,6 +371,7 @@ const Workspace: React.FC = () => {
           onClose={closeUpgradeModal}
           onPurchaseComplete={closeUpgradeModal}
           outOfCredits={upgradeModalOutOfCredits}
+          trigger={upgradeModalTrigger}
         />
 
         {postAuthCheckoutPriceId && (
@@ -404,7 +407,7 @@ const Workspace: React.FC = () => {
             completedCount={completedCount}
             onProcess={() => processBatch(config)}
             onClear={clearQueue}
-            onUpgrade={() => openUpgradeModal(true)}
+            onUpgrade={() => openUpgradeModal(true, 'workspace_batch_sidebar')}
           />
         </div>
 
@@ -447,7 +450,7 @@ const Workspace: React.FC = () => {
                 completedCount={completedCount}
                 isFreeUser={isFreeUser}
                 currentModel={config.qualityTier}
-                onUpgrade={() => openUpgradeModal()}
+                onUpgrade={() => openUpgradeModal(false, 'workspace_after_upscale_banner')}
               />
             </div>
           )}
@@ -496,7 +499,7 @@ const Workspace: React.FC = () => {
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
               isFreeUser={isFreeUser}
-              onUpgrade={() => openUpgradeModal()}
+              onUpgrade={() => openUpgradeModal(false, 'workspace_preview_area')}
             />
           </div>
 
@@ -614,7 +617,7 @@ const Workspace: React.FC = () => {
         currentTier={config.qualityTier}
         isFreeUser={isFreeUser}
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
-        onUpgrade={() => openUpgradeModal()}
+        onUpgrade={() => openUpgradeModal(false, 'workspace_model_gallery')}
       />
 
       {/* Mobile Tab Bar */}
@@ -646,7 +649,7 @@ const Workspace: React.FC = () => {
         attempted={batchLimitExceeded?.attempted ?? 0}
         currentCount={queue.length}
         onAddPartial={handleAddPartial}
-        onUpgrade={() => openUpgradeModal()}
+        onUpgrade={() => openUpgradeModal(false, 'workspace_batch_limit')}
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
 
@@ -664,6 +667,7 @@ const Workspace: React.FC = () => {
         isOpen={showUpgradeModal}
         onClose={closeUpgradeModal}
         onPurchaseComplete={closeUpgradeModal}
+        trigger={upgradeModalTrigger}
       />
 
       {postAuthCheckoutPriceId && (

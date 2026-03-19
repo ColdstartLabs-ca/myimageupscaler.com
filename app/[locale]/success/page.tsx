@@ -1,15 +1,15 @@
 'use client';
 
-import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { CheckCircle, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import type { QualityTier } from '@/shared/types/coreflow.types';
+import { QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
+import { analytics } from '@client/analytics/analyticsClient';
 import { StripeService } from '@client/services/stripeService';
 import { useUserStore } from '@client/store/userStore';
 import { clientEnv } from '@shared/config/env';
-import { analytics } from '@client/analytics/analyticsClient';
-import { QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
-import type { QualityTier } from '@/shared/types/coreflow.types';
+import { AlertCircle, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 const MAX_POLL_ATTEMPTS = 10;
 const POLL_INTERVAL_MS = 1000;
@@ -199,8 +199,8 @@ function SuccessContent(): JSX.Element {
                   href={originModelConfig ? '/' : '/dashboard'}
                   className="inline-flex items-center justify-center px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
                 >
-                  {originModelConfig ? `Start Using ${originModelConfig.label}` : 'Go to Dashboard'}
-                  <ArrowRight className="h-4 w-4 ml-2" />
+                  Go to Dashboard
+                  < ArrowRight className="h-4 w-4 ml-2" />
                 </Link>
                 <Link
                   href="/dashboard/billing"
