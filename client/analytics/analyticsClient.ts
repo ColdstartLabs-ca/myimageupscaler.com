@@ -44,6 +44,7 @@ const FIRST_TOUCH_UTM_STORAGE_KEY = 'miu_first_touch_utm';
 const FIRST_TOUCH_UTM_COOKIE_KEY = 'miu_first_touch_utm';
 const LAST_VISIT_KEY = 'miu_last_visit';
 const REFERRAL_SOURCE_COOKIE_KEY = 'miu_referral_source';
+const ENTRY_PAGE_KEY = 'miu_entry_page';
 
 interface IFirstTouchUtm {
   utmSource?: string;
@@ -202,6 +203,26 @@ function getReferralSource(): IReferralSource | null {
   return null;
 }
 
+/**
+ * Get the entry page for session attribution.
+ * Returns the first page visited in this session.
+ */
+function getEntryPage(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(ENTRY_PAGE_KEY);
+}
+
+/**
+ * Set the entry page if not already set.
+ * Should be called on first page view.
+ */
+function setEntryPageOnce(path: string): void {
+  if (typeof window === 'undefined') return;
+  if (!localStorage.getItem(ENTRY_PAGE_KEY)) {
+    localStorage.setItem(ENTRY_PAGE_KEY, path);
+  }
+}
+
 async function hashEmail(email: string): Promise<string> {
   // Use Web Crypto API for secure SHA-256 hashing
   if (typeof window === 'undefined' || !window.crypto?.subtle) {
@@ -348,6 +369,16 @@ export const analytics = {
     if (identity.subscriptionTier) {
       identifyEvent.set('subscription_tier', identity.subscriptionTier);
     }
+    // NEW: Add pricingRegion, imagesUpscaledLifetime, accountAgeDays for user lifecycle analysis
+    if (identity.pricingRegion) {
+      identifyEvent.set('pricing_region', identity.pricingRegion);
+    }
+    if (identity.imagesUpscaledLifetime !== undefined) {
+      identifyEvent.set('images_upscaled_lifetime', identity.imagesUpscaledLifetime);
+    }
+    if (identity.accountAgeDays !== undefined) {
+      identifyEvent.set('account_age_days', identity.accountAgeDays);
+    }
 
     amplitudeModule.identify(identifyEvent);
   },
@@ -380,6 +411,9 @@ export const analytics = {
    */
   trackPageView(path: string, properties?: Record<string, unknown>): void {
     if (!this.isEnabled() || !amplitudeModule) return;
+
+    // Initialize entry page for session attribution
+    setEntryPageOnce(path);
 
     // Track return visit on first page view
     const lastVisit = getLastVisit();
@@ -478,6 +512,7 @@ export const analytics = {
       path,
       referrer: document.referrer || undefined,
       referral_source: referralSource || undefined,
+      entry_page: getEntryPage() || undefined,
       ...filteredUtm,
       ...properties,
     });
@@ -531,5 +566,21 @@ export const analytics = {
     } catch {
       return null;
     }
+  },
+
+  /**
+   * Get the entry page for conversion attribution.
+   * Returns the first page the user landed on.
+   */
+  getEntryPage(): string | null {
+    return getEntryPage();
+  },
+
+  /**
+   * Initialize entry page tracking.
+   * Call on first page load.
+   */
+  initEntryPage(path: string): void {
+    setEntryPageOnce(path);
   },
 };
