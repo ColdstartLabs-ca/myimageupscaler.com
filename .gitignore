@@ -95,3 +95,4 @@ supabase/*
 /logs/
 night-watch.config.json
 *.claim
+.worktrees
