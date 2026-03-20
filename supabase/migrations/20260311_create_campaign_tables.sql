@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS public.email_campaign_queue (
   status TEXT NOT NULL CHECK (status IN ('pending', 'sent', 'failed', 'cancelled')),
   error_message TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   metadata JSONB DEFAULT '{}',
   UNIQUE(campaign_id, user_id)
 );

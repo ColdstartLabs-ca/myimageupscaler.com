@@ -54,9 +54,15 @@ export class CampaignService {
   private readonly analyticsService: CampaignAnalyticsService;
 
   constructor() {
-    // Use SUPABASE_SERVICE_ROLE_KEY as secret for HMAC tokens
-    // In production, consider using a dedicated secret
-    this.unsubscribeSecret = serverEnv.SUPABASE_SERVICE_ROLE_KEY || 'campaign-unsubscribe-secret';
+    // Use SUPABASE_SERVICE_ROLE_KEY as HMAC signing secret for unsubscribe tokens.
+    // This key is always set in production; no insecure default fallback.
+    if (!serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new CampaignError(
+        'SUPABASE_SERVICE_ROLE_KEY is required for unsubscribe token signing',
+        'CONFIG_ERROR'
+      );
+    }
+    this.unsubscribeSecret = serverEnv.SUPABASE_SERVICE_ROLE_KEY;
     this.baseUrl = serverEnv.BASE_URL;
     this.analyticsService = getCampaignAnalyticsService();
   }
@@ -119,8 +125,8 @@ export class CampaignService {
       throw new CampaignError(`Campaign is disabled: ${campaign.name}`, 'CAMPAIGN_DISABLED');
     }
 
-    // Get users for the segment
-    const users = await this.getSegmentUsers(campaign.segment, limit);
+    // Get users for the segment, scoped to this specific campaign to allow drip sequencing
+    const users = await this.getSegmentUsers(campaign.segment, limit, campaignId);
 
     if (users.length === 0) {
       return { queued: 0, skipped: 0, userIds: [] };
@@ -328,9 +334,14 @@ export class CampaignService {
    *
    * @param segment User segment
    * @param limit Maximum users to return
+   * @param campaignId Campaign ID to scope exclusion check (enables drip sequencing)
    * @returns Array of segment users
    */
-  private async getSegmentUsers(segment: UserSegment, limit: number): Promise<ISegmentUser[]> {
+  private async getSegmentUsers(
+    segment: UserSegment,
+    limit: number,
+    campaignId?: string
+  ): Promise<ISegmentUser[]> {
     let rpcName: string;
 
     switch (segment) {
@@ -347,9 +358,14 @@ export class CampaignService {
         throw new CampaignError(`Unknown segment: ${segment}`, 'INVALID_SEGMENT');
     }
 
-    const { data, error } = await supabaseAdmin.rpc(rpcName, {
+    const rpcParams: { limit_count: number; p_campaign_id?: string } = {
       limit_count: limit,
-    });
+    };
+    if (campaignId) {
+      rpcParams.p_campaign_id = campaignId;
+    }
+
+    const { data, error } = await supabaseAdmin.rpc(rpcName, rpcParams);
 
     if (error) {
       throw new CampaignError(`Failed to get segment users: ${error.message}`, 'SEGMENT_ERROR');
