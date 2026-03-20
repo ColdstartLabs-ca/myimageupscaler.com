@@ -50,6 +50,12 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   // Blob URLs indicate client-side processing (e.g., bg-removal) which produces transparent PNGs
   const showTransparency = hasTransparency ?? afterUrl.startsWith('blob:');
 
+  // Start the comparison timer on mount so we can measure time-to-interaction
+  // This must happen before any mousedown to make the >1s threshold meaningful
+  useEffect(() => {
+    comparisonStartTimeRef.current = Date.now();
+  }, []);
+
   // Track preview view once when component first loads with a result
   useEffect(() => {
     if (!previewTrackedRef.current) {
@@ -66,16 +72,12 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   const handleMouseDown = useCallback(() => {
     setIsDragging(true);
 
-    // Track comparison start time (PRD: analytics-tracking-enhancement - Phase 3)
-    if (!comparisonStartTimeRef.current) {
-      comparisonStartTimeRef.current = Date.now();
-    }
-
     // Track comparison_viewed after first meaningful interaction (PRD: analytics-tracking-enhancement - Phase 3)
+    // Timer is started on mount so >1s threshold correctly measures time before first interaction
     if (!hasTrackedViewRef.current && comparisonStartTimeRef.current) {
       const timeViewedMs = Date.now() - comparisonStartTimeRef.current;
       if (timeViewedMs > 1000) {
-        // Only track if viewed for more than 1 second
+        // Only track if user waited more than 1 second before interacting
         hasTrackedViewRef.current = true;
         analytics.track('comparison_viewed', {
           upscaleFactor: upscaleFactor || 2,

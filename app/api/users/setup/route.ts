@@ -86,8 +86,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   }
 
-  // Track account creation analytics
-  await trackServerEvent(
+  // Track account creation analytics (fire-and-forget — don't block user setup on analytics failure)
+  trackServerEvent(
     'account_created',
     {
       method: 'email', // Default for now - could be extended to track auth provider
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       pricingRegion: tier,
     },
     { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-  );
+  ).catch(err => logger.error('Failed to track account_created event', { userId, error: String(err) }));
 
   await logger.flush();
   return NextResponse.json({ success: true });

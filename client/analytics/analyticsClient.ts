@@ -209,7 +209,12 @@ function getReferralSource(): IReferralSource | null {
  */
 function getEntryPage(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem(ENTRY_PAGE_KEY);
+  try {
+    return localStorage.getItem(ENTRY_PAGE_KEY);
+  } catch {
+    // Gracefully handle Safari private mode and quota errors
+    return null;
+  }
 }
 
 /**
@@ -218,8 +223,12 @@ function getEntryPage(): string | null {
  */
 function setEntryPageOnce(path: string): void {
   if (typeof window === 'undefined') return;
-  if (!localStorage.getItem(ENTRY_PAGE_KEY)) {
-    localStorage.setItem(ENTRY_PAGE_KEY, path);
+  try {
+    if (!localStorage.getItem(ENTRY_PAGE_KEY)) {
+      localStorage.setItem(ENTRY_PAGE_KEY, path);
+    }
+  } catch {
+    // Gracefully handle Safari private mode and quota errors
   }
 }
 

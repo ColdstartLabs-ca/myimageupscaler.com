@@ -389,7 +389,7 @@ export class InvoiceHandler {
       console.log(`Marked user ${userId} subscription as past_due`);
     }
 
-    // Track payment failure analytics
+    // Track payment failure analytics (fire-and-forget — don't risk webhook retry on analytics failure)
     const lines = (invoice.lines?.data ?? []) as IStripeInvoiceLineItemExtended[];
     const linePrice = lines[0]?.price;
     const priceId =
@@ -398,7 +398,7 @@ export class InvoiceHandler {
         : typeof linePrice === 'string'
           ? linePrice
           : undefined;
-    await trackServerEvent(
+    trackServerEvent(
       'payment_failed',
       {
         priceId,
@@ -409,7 +409,7 @@ export class InvoiceHandler {
         customerId,
       },
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-    );
+    ).catch(err => console.error('Failed to track payment_failed event', err));
   }
 
   /**
