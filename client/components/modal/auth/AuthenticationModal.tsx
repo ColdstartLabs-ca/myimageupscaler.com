@@ -180,22 +180,6 @@ export const AuthenticationModal: React.FC = () => {
         if (isGeoLoading) {
           return <div className="animate-pulse h-32 bg-muted rounded" />;
         }
-        if (isPaywalled) {
-          return (
-            <>
-              <p className="text-sm text-muted-foreground text-center mb-4">
-                {'A subscription is required to use this service in your region.'}
-              </p>
-              <SocialLoginButton />
-              <Link
-                href="/pricing"
-                className="text-sm text-primary underline text-center block mt-3"
-              >
-                View plans
-              </Link>
-            </>
-          );
-        }
         if (isRestricted) {
           return (
             <>
@@ -208,6 +192,16 @@ export const AuthenticationModal: React.FC = () => {
         }
         return (
           <>
+            {isPaywalled && (
+              <div className="mb-4 p-3 rounded-lg bg-muted border border-border text-center">
+                <p className="text-sm text-muted-foreground mb-1">
+                  {'A subscription is required in your region.'}
+                </p>
+                <Link href="/pricing" className="text-sm text-accent underline font-medium">
+                  View plans
+                </Link>
+              </div>
+            )}
             <RegisterForm
               onSubmit={handleRegisterSubmit(onRegisterSubmit)}
               register={registerRegister}
@@ -232,22 +226,6 @@ export const AuthenticationModal: React.FC = () => {
         if (isGeoLoading) {
           return <div className="animate-pulse h-32 bg-muted rounded" />;
         }
-        if (isPaywalled) {
-          return (
-            <>
-              <p className="text-sm text-muted-foreground text-center mb-4">
-                {'A subscription is required to use this service in your region.'}
-              </p>
-              <SocialLoginButton />
-              <Link
-                href="/pricing"
-                className="text-sm text-primary underline text-center block mt-3"
-              >
-                View plans
-              </Link>
-            </>
-          );
-        }
         if (isRestricted) {
           return (
             <>
@@ -260,6 +238,16 @@ export const AuthenticationModal: React.FC = () => {
         }
         return (
           <>
+            {isPaywalled && (
+              <div className="mb-4 p-3 rounded-lg bg-muted border border-border text-center">
+                <p className="text-sm text-muted-foreground mb-1">
+                  {'A subscription is required in your region.'}
+                </p>
+                <Link href="/pricing" className="text-sm text-accent underline font-medium">
+                  View plans
+                </Link>
+              </div>
+            )}
             <LoginForm
               onSubmit={handleLoginSubmit(onLoginSubmit)}
               register={loginRegister}
