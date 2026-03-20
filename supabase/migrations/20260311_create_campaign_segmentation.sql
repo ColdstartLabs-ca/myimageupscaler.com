@@ -10,7 +10,10 @@
 -- Function: get_non_converter_segment
 -- Returns users who uploaded images but never made a purchase or subscription
 -- =============================================================================
-CREATE OR REPLACE FUNCTION public.get_non_converter_segment(limit_count INTEGER DEFAULT 100)
+CREATE OR REPLACE FUNCTION public.get_non_converter_segment(
+  limit_count INTEGER DEFAULT 100,
+  p_campaign_id UUID DEFAULT NULL
+)
 RETURNS TABLE (id UUID, email TEXT) AS $$
 BEGIN
   RETURN QUERY
@@ -29,23 +32,32 @@ BEGIN
     AND s.id IS NULL
     AND NOT EXISTS (
       SELECT 1 FROM public.email_campaign_queue q
-      INNER JOIN public.email_campaigns c ON c.id = q.campaign_id
       WHERE q.user_id = p.id
-        AND c.segment = 'non_converter'
         AND q.status IN ('pending', 'sent')
+        AND (
+          CASE
+            WHEN p_campaign_id IS NOT NULL THEN q.campaign_id = p_campaign_id
+            ELSE q.campaign_id IN (
+              SELECT c2.id FROM public.email_campaigns c2 WHERE c2.segment = 'non_converter'
+            )
+          END
+        )
     )
   ORDER BY p.created_at DESC
   LIMIT limit_count;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-COMMENT ON FUNCTION public.get_non_converter_segment IS 'Returns users who completed uploads but never purchased credits or subscribed';
+COMMENT ON FUNCTION public.get_non_converter_segment IS 'Returns users who completed uploads but never purchased credits or subscribed. Pass p_campaign_id to scope exclusion to a specific campaign (enables drip sequencing).';
 
 -- =============================================================================
 -- Function: get_non_uploader_segment
 -- Returns users who signed up but never uploaded any images
 -- =============================================================================
-CREATE OR REPLACE FUNCTION public.get_non_uploader_segment(limit_count INTEGER DEFAULT 100)
+CREATE OR REPLACE FUNCTION public.get_non_uploader_segment(
+  limit_count INTEGER DEFAULT 100,
+  p_campaign_id UUID DEFAULT NULL
+)
 RETURNS TABLE (id UUID, email TEXT) AS $$
 BEGIN
   RETURN QUERY
@@ -58,23 +70,32 @@ BEGIN
     AND pj.id IS NULL
     AND NOT EXISTS (
       SELECT 1 FROM public.email_campaign_queue q
-      INNER JOIN public.email_campaigns c ON c.id = q.campaign_id
       WHERE q.user_id = p.id
-        AND c.segment = 'non_uploader'
         AND q.status IN ('pending', 'sent')
+        AND (
+          CASE
+            WHEN p_campaign_id IS NOT NULL THEN q.campaign_id = p_campaign_id
+            ELSE q.campaign_id IN (
+              SELECT c2.id FROM public.email_campaigns c2 WHERE c2.segment = 'non_uploader'
+            )
+          END
+        )
     )
   ORDER BY p.created_at DESC
   LIMIT limit_count;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-COMMENT ON FUNCTION public.get_non_uploader_segment IS 'Returns users who signed up but never uploaded any images';
+COMMENT ON FUNCTION public.get_non_uploader_segment IS 'Returns users who signed up but never uploaded any images. Pass p_campaign_id to scope exclusion to a specific campaign (enables drip sequencing).';
 
 -- =============================================================================
 -- Function: get_trial_user_segment
 -- Returns users with active trials who haven't converted to paid
 -- =============================================================================
-CREATE OR REPLACE FUNCTION public.get_trial_user_segment(limit_count INTEGER DEFAULT 100)
+CREATE OR REPLACE FUNCTION public.get_trial_user_segment(
+  limit_count INTEGER DEFAULT 100,
+  p_campaign_id UUID DEFAULT NULL
+)
 RETURNS TABLE (id UUID, email TEXT, trial_end TIMESTAMPTZ) AS $$
 BEGIN
   RETURN QUERY
@@ -93,17 +114,23 @@ BEGIN
     )
     AND NOT EXISTS (
       SELECT 1 FROM public.email_campaign_queue q
-      INNER JOIN public.email_campaigns c ON c.id = q.campaign_id
       WHERE q.user_id = p.id
-        AND c.segment = 'trial_user'
         AND q.status IN ('pending', 'sent')
+        AND (
+          CASE
+            WHEN p_campaign_id IS NOT NULL THEN q.campaign_id = p_campaign_id
+            ELSE q.campaign_id IN (
+              SELECT c2.id FROM public.email_campaigns c2 WHERE c2.segment = 'trial_user'
+            )
+          END
+        )
     )
   ORDER BY s.trial_end ASC
   LIMIT limit_count;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-COMMENT ON FUNCTION public.get_trial_user_segment IS 'Returns users with active trials who haven''t purchased or subscribed';
+COMMENT ON FUNCTION public.get_trial_user_segment IS 'Returns users with active trials who haven''t purchased or subscribed. Pass p_campaign_id to scope exclusion to a specific campaign (enables drip sequencing).';
 
 -- =============================================================================
 -- Function: get_segment_count
