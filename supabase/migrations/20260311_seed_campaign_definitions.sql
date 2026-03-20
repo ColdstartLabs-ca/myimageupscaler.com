@@ -1,5 +1,8 @@
 -- Seed Initial Campaign Definitions for Re-engagement Drip Campaign System
 -- Phase 6: Launch & Optimization
+--
+-- template_name values must match the keys in base-email-provider-adapter.ts getTemplate()
+-- e.g. 'result-ready' maps to ResultReadyEmail component
 
 -- =============================================================================
 -- Segment 1: Non-Converters (uploaded but didn't pay)
@@ -11,7 +14,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'non_converter_day1_result_ready',
   'non_converter',
-  'ResultReadyEmail',
+  'result-ready',
   1,
   'Your upscaled image is ready',
   1,
@@ -23,7 +26,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'non_converter_day3_premium_trial',
   'non_converter',
-  'PremiumTrialEmail',
+  'premium-trial',
   3,
   'Try our premium models free',
   1,
@@ -35,7 +38,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'non_converter_day7_feature_showcase',
   'non_converter',
-  'FeatureShowcaseEmail',
+  'feature-showcase',
   7,
   'See what you''re missing',
   1,
@@ -47,7 +50,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'non_converter_day14_win_back',
   'non_converter',
-  'WinBackEmail',
+  'win-back',
   14,
   'We miss you - 5 free credits',
   1,
@@ -64,7 +67,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'non_uploader_day1_getting_started',
   'non_uploader',
-  'GettingStartedEmail',
+  'getting-started',
   1,
   'Getting started with AI upscaling',
   1,
@@ -76,7 +79,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'non_uploader_day3_possibility_showcase',
   'non_uploader',
-  'PossibilityShowcaseEmail',
+  'possibility-showcase',
   3,
   'See what''s possible',
   1,
@@ -88,7 +91,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'non_uploader_day7_one_click_try',
   'non_uploader',
-  'OneClickTryEmail',
+  'one-click-try',
   7,
   'Try it with one click',
   1,
@@ -106,7 +109,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'trial_user_day3_progress',
   'trial_user',
-  'TrialProgressEmail',
+  'trial-progress',
   3,
   '3 days into your trial',
   1,
@@ -118,7 +121,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'trial_user_day5_reminder',
   'trial_user',
-  'TrialReminderEmail',
+  'trial-reminder',
   5,
   'Your trial is halfway through',
   1,
@@ -131,7 +134,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'trial_user_day6_ending',
   'trial_user',
-  'TrialEndingEmail',
+  'trial-ending',
   6,
   'Your trial ends tomorrow',
   1,
@@ -144,7 +147,7 @@ INSERT INTO public.email_campaigns (name, segment, template_name, send_day, subj
 VALUES (
   'trial_user_day8_expired',
   'trial_user',
-  'TrialExpiredEmail',
+  'trial-expired',
   8,
   'Your trial expired - continue with discount',
   1,
