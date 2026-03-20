@@ -17,6 +17,7 @@ import {
 import { useEngagementDiscountStore } from '@client/store/engagementDiscountStore';
 import { analytics } from '@client/analytics';
 import { useUserData, useUserStore } from '@client/store/userStore';
+import { createClient } from '@shared/utils/supabase/client';
 import type { IEngagementSignals, IThresholdsStatus } from '@shared/types/engagement-discount';
 
 /**
@@ -110,7 +111,7 @@ export function useEngagementTracker(): IUseEngagementTrackerReturn {
     setIsEligible,
     hasCheckedEligibility,
     setHasCheckedEligibility,
-    showToast: _showToast,
+    setShowToast,
     setOffer,
     setCountdownEndTime,
   } = useEngagementDiscountStore();
@@ -136,9 +137,23 @@ export function useEngagementTracker(): IUseEngagementTrackerReturn {
     eligibilityCheckInProgress.current = true;
 
     try {
+      // Get the Supabase access token for Bearer auth
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        // Not authenticated - skip silently
+        setHasCheckedEligibility(true);
+        return;
+      }
+
       const response = await fetch('/api/engagement-discount/eligibility', {
         method: 'GET',
-        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
 
       const data = await response.json();
@@ -163,6 +178,9 @@ export function useEngagementTracker(): IUseEngagementTrackerReturn {
         const expiresAt = new Date(data.discountExpiresAt).getTime();
         setCountdownEndTime(expiresAt);
 
+        // Show the toast
+        setShowToast(true);
+
         // Track analytics
         analytics.track('engagement_discount_eligible', {
           thresholdsMet: checkEngagementEligibility(signals).thresholdsMet,
@@ -184,6 +202,7 @@ export function useEngagementTracker(): IUseEngagementTrackerReturn {
     setIsEligible,
     setOffer,
     setCountdownEndTime,
+    setShowToast,
     signals,
   ]);
 
