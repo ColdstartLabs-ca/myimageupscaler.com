@@ -73,12 +73,14 @@ function findCardByTierLabel(label: string): HTMLElement | null {
 describe('ModelGalleryModal', () => {
   const mockOnClose = vi.fn();
   const mockOnSelect = vi.fn();
+  const mockOnUpgrade = vi.fn();
   const defaultProps = {
     isOpen: true,
     onClose: mockOnClose,
     currentTier: 'quick' as QualityTier,
     isFreeUser: false,
     onSelect: mockOnSelect,
+    onUpgrade: mockOnUpgrade,
   };
 
   beforeEach(() => {
@@ -235,7 +237,7 @@ describe('ModelGalleryModal', () => {
       fireEvent.click(ultraCard!);
 
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith('/dashboard/billing');
+        expect(mockOnUpgrade).toHaveBeenCalled();
       });
     });
 

@@ -45,10 +45,10 @@ describe('translation-helper', () => {
       const output = runScript('get-batch de common.json 1');
       const parsed = JSON.parse(output);
 
-      // Check that keys don't have double dots around array indices
+      // Check that keys don't have malformed patterns around array indices
       for (const entry of parsed.entries || []) {
-        expect(entry.key).not.toMatch(/\.\[/); // No ".[" patterns
-        expect(entry.key).not.toMatch(/\]\./); // Followed by "]." is OK, but not before
+        expect(entry.key).not.toMatch(/\.\[/); // No ".[" patterns (dot before bracket)
+        // Note: "]." is valid array-access notation e.g. "faqItems[0].question"
       }
     });
   });

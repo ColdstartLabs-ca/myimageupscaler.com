@@ -217,6 +217,7 @@ describe('ModelGalleryModal – model_gate analytics', () => {
         currentTier="quick"
         isFreeUser={isFreeUser}
         onSelect={vi.fn()}
+        onUpgrade={mockHandleCheckout}
       />
     );
   }
