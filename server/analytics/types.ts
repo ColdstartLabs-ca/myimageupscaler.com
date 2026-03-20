@@ -618,6 +618,12 @@ export type IAnalyticsEventName =
   | 'email_captured'
   // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
   | 'comparison_viewed'
+  // Gallery events
+  | 'gallery_image_saved'
+  | 'gallery_limit_reached'
+  | 'gallery_image_deleted'
+  | 'gallery_page_viewed'
+  | 'gallery_upgrade_clicked'
   // Amplitude identity events (server-side only)
   | '$identify';
 
