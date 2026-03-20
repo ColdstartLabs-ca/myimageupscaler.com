@@ -207,6 +207,8 @@ afterEach(() => {
 
 describe('ModelGalleryModal – model_gate analytics', () => {
   // Lazy import after mocks are set up
+  const mockOnUpgrade = vi.fn();
+
   async function renderGallery(isFreeUser = true) {
     const { ModelGalleryModal } =
       await import('@client/components/features/workspace/ModelGalleryModal');
@@ -217,6 +219,7 @@ describe('ModelGalleryModal – model_gate analytics', () => {
         currentTier="quick"
         isFreeUser={isFreeUser}
         onSelect={vi.fn()}
+        onUpgrade={mockOnUpgrade}
       />
     );
   }
@@ -267,7 +270,7 @@ describe('ModelGalleryModal – model_gate analytics', () => {
     );
   });
 
-  it('calls handleCheckout when locked model is clicked', async () => {
+  it('calls onUpgrade when locked model is clicked', async () => {
     await renderGallery();
 
     const lockedBtn = screen.queryByTestId('locked-face-pro');
@@ -275,7 +278,7 @@ describe('ModelGalleryModal – model_gate analytics', () => {
 
     fireEvent.click(lockedBtn);
 
-    expect(mockHandleCheckout).toHaveBeenCalled();
+    expect(mockOnUpgrade).toHaveBeenCalled();
   });
 });
 

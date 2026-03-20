@@ -202,6 +202,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     currentTier: 'quick' as QualityTier,
     isFreeUser: true,
     onSelect: vi.fn(),
+    onUpgrade: vi.fn(),
   };
 
   beforeEach(() => {
@@ -261,38 +262,38 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
   });
 
   it('fires upgrade_prompt_clicked when locked model clicked', async () => {
-    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+    const onUpgrade = vi.fn();
+    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} onUpgrade={onUpgrade} />);
 
-    // Find a locked model card (premium tier card)
-    // The premium section divider should exist
-    const premiumDivider = screen.queryByText(/Professional Tiers/i);
-    // If there's locked content, clicking the banner upgrade button should fire analytics
+    // Clicking the banner upgrade button should fire analytics
     const upgradeButton = screen.getByText('Unlock Premium Models');
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
         trigger: 'model_gate',
-        destination: '/dashboard/billing',
+        imageVariant: 'banner',
+        destination: 'upgrade_plan_modal',
         currentPlan: 'free',
         pricingRegion: 'standard',
       });
     });
   });
 
-  it('shows "Available on Pro" copy in the upgrade banner', () => {
-    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
-    expect(screen.getByText(/Available on Pro/i)).toBeInTheDocument();
+  it('shows "Unlock Premium Models" copy in the upgrade banner', () => {
+    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} onUpgrade={vi.fn()} />);
+    expect(screen.getByText('Unlock Premium Models')).toBeInTheDocument();
   });
 
-  it('navigates to /dashboard/billing on upgrade click', async () => {
-    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+  it('calls onUpgrade on upgrade click', async () => {
+    const onUpgrade = vi.fn();
+    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} onUpgrade={onUpgrade} />);
 
     const upgradeButton = screen.getByText('Unlock Premium Models');
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/dashboard/billing');
+      expect(onUpgrade).toHaveBeenCalled();
     });
   });
 });
@@ -330,6 +331,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'after_upscale',
+        imageVariant: undefined,
         currentPlan: 'free',
         pricingRegion: 'standard',
       });
@@ -357,28 +359,29 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
     expect(mockAnalyticsTrack).not.toHaveBeenCalled();
   });
 
-  it('renders upgrade link pointing to /dashboard/billing', async () => {
+  it('renders upgrade button with upgrade CTA text', async () => {
     render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
 
     await waitFor(() => {
-      const link = screen.getByRole('link', { name: /Upgrade for unlimited\./i });
-      expect(link).toHaveAttribute('href', '/dashboard/billing');
+      expect(screen.getByText(/Upgrade for unlimited\./i)).toBeInTheDocument();
     });
   });
 
-  it('fires upgrade_prompt_clicked when upgrade link is clicked', async () => {
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
+  it('fires upgrade_prompt_clicked when upgrade button is clicked', async () => {
+    const onUpgrade = vi.fn();
+    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(screen.getByText(/You've upscaled 3 images\./i)).toBeInTheDocument();
     });
 
-    const link = screen.getByRole('link', { name: /Upgrade for unlimited\./i });
-    fireEvent.click(link);
+    const button = screen.getByText(/Upgrade for unlimited\./i);
+    fireEvent.click(button);
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
       trigger: 'after_upscale',
-      destination: '/dashboard/billing',
+      imageVariant: undefined,
+      destination: 'upgrade_plan_modal',
       currentPlan: 'free',
       pricingRegion: 'standard',
     });
@@ -395,6 +398,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_dismissed', {
       trigger: 'after_upscale',
+      imageVariant: undefined,
       currentPlan: 'free',
       pricingRegion: 'standard',
     });
@@ -545,7 +549,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
     expect(mockAnalyticsTrack).not.toHaveBeenCalled();
   });
 
-  it('nudge link points to /dashboard/billing', async () => {
+  it('nudge shows "Unlock premium quality." button text', async () => {
     const { ImageComparison } =
       await import('@/client/components/features/image-processing/ImageComparison');
 
@@ -562,12 +566,11 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
     fireEvent.mouseDown(sliderContainer!);
 
     await waitFor(() => {
-      const link = screen.getByRole('link', { name: /Unlock premium quality\./i });
-      expect(link).toHaveAttribute('href', '/dashboard/billing');
+      expect(screen.getByText(/Unlock premium quality\./i)).toBeInTheDocument();
     });
   });
 
-  it('fires upgrade_prompt_clicked when nudge link is clicked', async () => {
+  it('fires upgrade_prompt_clicked when nudge button is clicked', async () => {
     const { ImageComparison } =
       await import('@/client/components/features/image-processing/ImageComparison');
 
@@ -587,12 +590,12 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
       expect(screen.getByText(/Love the result\?/i)).toBeInTheDocument();
     });
 
-    const link = screen.getByRole('link', { name: /Unlock premium quality\./i });
-    fireEvent.click(link);
+    const button = screen.getByText(/Unlock premium quality\./i);
+    fireEvent.click(button);
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
       trigger: 'after_comparison',
-      destination: '/dashboard/billing',
+      destination: 'upgrade_modal',
       currentPlan: 'free',
       pricingRegion: 'standard',
     });
