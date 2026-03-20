@@ -62,8 +62,19 @@ describe('ReplicateErrorMapper', () => {
       expect(result.code).toBe(ReplicateErrorCode.IMAGE_TOO_LARGE);
     });
 
-    it('should map "CUDA error" to IMAGE_TOO_LARGE', () => {
+    it('should NOT map generic "CUDA error" to IMAGE_TOO_LARGE (too broad)', () => {
+      // Generic CUDA errors (e.g. device-side asserts) are not OOM errors
+      // and should fall through to PROCESSING_FAILED
       const error = new Error('CUDA error: device-side assert triggered');
+      const result = mapper.mapError(error);
+
+      expect(result).toBeInstanceOf(ReplicateError);
+      expect(result.code).toBe(ReplicateErrorCode.PROCESSING_FAILED);
+    });
+
+    it('should match OOM patterns case-insensitively', () => {
+      // Normalisation to lower-case ensures e.g. "Out Of Memory" is caught
+      const error = new Error('Out Of Memory: allocation failed');
       const result = mapper.mapError(error);
 
       expect(result).toBeInstanceOf(ReplicateError);

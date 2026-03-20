@@ -79,13 +79,15 @@ export class ReplicateErrorMapper {
 
     // Check for GPU memory errors (image too large for model's hardware)
     // Safety net if client-side resize fails or server dimension check is bypassed
+    // Note: normalise to lower-case for case-insensitive matching; avoid overly-broad
+    // patterns (e.g. "CUDA error") that match non-OOM hardware faults.
+    const lowerMessage = message.toLowerCase();
     if (
-      message.includes('GPU memory') ||
-      message.includes('greater than the max size') ||
-      message.includes('out of memory') ||
-      message.includes('OOM') ||
-      message.includes('CUDA out of memory') ||
-      message.includes('CUDA error')
+      lowerMessage.includes('gpu memory') ||
+      lowerMessage.includes('greater than the max size') ||
+      lowerMessage.includes('out of memory') ||
+      lowerMessage.includes('oom') ||
+      lowerMessage.includes('cuda out of memory')
     ) {
       return new ReplicateError(
         'Image is too large for processing. Please try a smaller image or lower resolution.',

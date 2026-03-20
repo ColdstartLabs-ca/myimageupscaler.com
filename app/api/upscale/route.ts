@@ -829,9 +829,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const errorCode =
         error.code === 'RATE_LIMITED'
           ? ErrorCodes.RATE_LIMITED
-          : error.code === 'SAFETY' || error.code === 'IMAGE_TOO_LARGE'
-            ? ErrorCodes.INVALID_REQUEST
-            : ErrorCodes.AI_UNAVAILABLE;
+          : error.code === 'IMAGE_TOO_LARGE'
+            ? ErrorCodes.IMAGE_TOO_LARGE
+            : error.code === 'SAFETY'
+              ? ErrorCodes.INVALID_REQUEST
+              : ErrorCodes.AI_UNAVAILABLE;
       logger.error('Replicate error', {
         message: error.message,
         code: error.code,
