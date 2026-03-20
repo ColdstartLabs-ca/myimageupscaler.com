@@ -10,15 +10,11 @@
  * @see docs/PRDs/engagement-based-first-purchase-discount.md
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { X, Clock, Sparkles, CreditCard } from 'lucide-react';
-import {
-  useEngagementDiscountStore,
-  selectRemainingSeconds,
-} from '@client/store/engagementDiscountStore';
+import { useEngagementDiscountStore } from '@client/store/engagementDiscountStore';
 import { analytics } from '@client/analytics';
-import { ENGAGEMENT_DISCOUNT_CONFIG } from '@shared/config/engagement-discount';
-import { formatCountdown } from '@shared/config/engagement-discount';
+import { ENGAGEMENT_DISCOUNT_CONFIG, formatCountdown } from '@shared/config/engagement-discount';
 import { cn } from '@client/utils/cn';
 
 /**
@@ -44,16 +40,45 @@ export const EngagementDiscountToast: React.FC<IEngagementDiscountToastProps> = 
   onClaimDiscount,
   className,
 }) => {
-  const {
-    offer,
-    showToast,
-    dismissToast,
-    countdownEndTime: _countdownEndTime,
-  } = useEngagementDiscountStore();
+  const { offer, showToast, dismissToast, countdownEndTime } = useEngagementDiscountStore();
 
-  const remainingSeconds = useEngagementDiscountStore(selectRemainingSeconds);
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Update remaining seconds every second when toast is visible
+  useEffect(() => {
+    if (!showToast || !countdownEndTime) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
+
+    const updateRemaining = () => {
+      const remaining = Math.max(0, Math.floor((countdownEndTime - Date.now()) / 1000));
+      setRemainingSeconds(remaining);
+      if (remaining === 0) {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+        dismissToast();
+      }
+    };
+
+    updateRemaining();
+    intervalRef.current = setInterval(updateRemaining, 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [showToast, countdownEndTime, dismissToast]);
 
   // Handle slide-in animation
   useEffect(() => {
