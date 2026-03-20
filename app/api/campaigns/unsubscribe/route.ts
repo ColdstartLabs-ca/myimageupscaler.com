@@ -88,10 +88,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const contentType = request.headers.get('content-type') || '';
     const isListUnsubscribePost = request.headers.get('list-unsubscribe-post') === 'Yes';
 
+    // Always check URL query params first — RFC 8058 one-click unsubscribe
+    // posts to the List-Unsubscribe URL which includes ?token=xxx in the query string
+    const { searchParams } = new URL(request.url);
+    const queryToken = searchParams.get('token');
+
     let token: string;
 
-    // Handle different content types
-    if (contentType.includes('application/x-www-form-urlencoded')) {
+    if (queryToken) {
+      // Token in URL query string (RFC 8058 one-click unsubscribe)
+      token = queryToken;
+    } else if (contentType.includes('application/x-www-form-urlencoded')) {
       // Form-encoded data
       const formData = await request.formData();
       token = formData.get('token') as string;
