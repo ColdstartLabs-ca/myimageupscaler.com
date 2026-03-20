@@ -46,9 +46,9 @@ describe('translation-helper', () => {
       const parsed = JSON.parse(output);
 
       // Check that keys don't have double dots around array indices
+      // Valid: "faqItems[0].question" — the "]." pattern is correct dot-notation after index
       for (const entry of parsed.entries || []) {
-        expect(entry.key).not.toMatch(/\.\[/); // No ".[" patterns
-        expect(entry.key).not.toMatch(/\]\./); // Followed by "]." is OK, but not before
+        expect(entry.key).not.toMatch(/\.\[/); // No ".[" patterns (double-dot before bracket)
       }
     });
   });
