@@ -73,12 +73,15 @@ function findCardByTierLabel(label: string): HTMLElement | null {
 describe('ModelGalleryModal', () => {
   const mockOnClose = vi.fn();
   const mockOnSelect = vi.fn();
+  const mockOnUpgrade = vi.fn();
+
   const defaultProps = {
     isOpen: true,
     onClose: mockOnClose,
     currentTier: 'quick' as QualityTier,
     isFreeUser: false,
     onSelect: mockOnSelect,
+    onUpgrade: mockOnUpgrade,
   };
 
   beforeEach(() => {
@@ -226,7 +229,7 @@ describe('ModelGalleryModal', () => {
       expect(lockBadge).toBeNull();
     });
 
-    it('should navigate to /dashboard/billing when locked tier clicked', async () => {
+    it('should call onUpgrade when locked tier clicked', async () => {
       render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
       // Find a premium tier (Ultra) card and click it
@@ -235,7 +238,7 @@ describe('ModelGalleryModal', () => {
       fireEvent.click(ultraCard!);
 
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith('/dashboard/billing');
+        expect(mockOnUpgrade).toHaveBeenCalled();
       });
     });
 
