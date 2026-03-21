@@ -14,7 +14,11 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { X, Clock, Sparkles, CreditCard } from 'lucide-react';
 import { useEngagementDiscountStore } from '@client/store/engagementDiscountStore';
 import { analytics } from '@client/analytics';
-import { ENGAGEMENT_DISCOUNT_CONFIG, formatCountdown } from '@shared/config/engagement-discount';
+import {
+  ENGAGEMENT_DISCOUNT_CONFIG,
+  DISCOUNT_TARGET_PACK,
+  formatCountdown,
+} from '@shared/config/engagement-discount';
 import { cn } from '@client/utils/cn';
 
 /**
@@ -174,7 +178,7 @@ export const EngagementDiscountToast: React.FC<IEngagementDiscountToastProps> = 
             {offer.discountPercent}% Off Your First Purchase!
           </h3>
           <p className="text-sm text-white/80 mb-3">
-            Get {ENGAGEMENT_DISCOUNT_CONFIG.targetPackKey === 'medium' ? '50 credits' : 'credits'}{' '}
+            Get {DISCOUNT_TARGET_PACK.credits} credits{' '}
             at a special discount.
           </p>
 
