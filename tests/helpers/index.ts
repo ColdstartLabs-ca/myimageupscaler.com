@@ -76,6 +76,9 @@ import { ApiClient as ApiClientClass } from './api-client';
 import { WebhookClient as WebhookClientClass } from './webhook-client';
 import type { IWebhookClientOptions as IWebhookClientOptionsType } from './webhook-client';
 
+// Test image generation for API tests
+export { createCanvas } from './test-image-generator';
+
 // Existing exports (maintained for backward compatibility)
 export { TestDataManager, type ITestUser } from './test-data-manager';
 export { IntegrationTestHelpers, testFixtures, customMatchers } from './integration-test-helpers';

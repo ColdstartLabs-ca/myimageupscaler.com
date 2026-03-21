@@ -47,6 +47,7 @@ function SuccessContent(): JSX.Element {
       purchaseType: isCredits ? 'credit_pack' : 'subscription',
       sessionId,
       originatingModel: model || undefined,
+      entryPage: analytics.getEntryPage() || undefined,
       // No revenue amount here - server-side is the source of truth for revenue
     });
   }, [isCredits, sessionId]);
