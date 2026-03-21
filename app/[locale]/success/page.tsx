@@ -47,6 +47,7 @@ function SuccessContent(): JSX.Element {
       purchaseType: isCredits ? 'credit_pack' : 'subscription',
       sessionId,
       originatingModel: model || undefined,
+      entryPage: analytics.getEntryPage() || undefined,
       // No revenue amount here - server-side is the source of truth for revenue
     });
   }, [isCredits, sessionId]);
@@ -200,7 +201,7 @@ function SuccessContent(): JSX.Element {
                   className="inline-flex items-center justify-center px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
                 >
                   Go to Dashboard
-                  < ArrowRight className="h-4 w-4 ml-2" />
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Link>
                 <Link
                   href="/dashboard/billing"
