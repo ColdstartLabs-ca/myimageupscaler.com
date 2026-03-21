@@ -8,7 +8,6 @@ import { getTrialConfig } from '@shared/config/subscription.config';
 import { getPricingRegion, getDiscountedPriceInCents } from '@shared/config/pricing-regions';
 import {
   isDiscountValid,
-  getEngagementCouponId,
   calculateStackedDiscount,
 } from '@server/services/engagement-discount.service';
 import { ENGAGEMENT_DISCOUNT_CONFIG } from '@shared/config/engagement-discount';
@@ -377,7 +376,6 @@ export async function POST(request: NextRequest) {
 
     // 6.7. Check for engagement discount eligibility (first-purchase discount for engaged free users)
     let engagementDiscountPercent = 0;
-    let _engagementCouponId: string | undefined;
 
     // Resolve metadata early for engagement discount check
     const unifiedMetadata = resolvePlanOrPack(validatedPriceId);
@@ -387,20 +385,16 @@ export async function POST(request: NextRequest) {
       try {
         const discountValidity = await isDiscountValid(user.id);
         if (discountValidity.valid) {
-          const couponId = getEngagementCouponId();
-          // Verify the pack matches the target pack for the engagement discount
           const targetPackKey = ENGAGEMENT_DISCOUNT_CONFIG.targetPackKey;
           const isTargetPack = unifiedMetadata?.key === targetPackKey;
 
-          if (couponId && isTargetPack) {
+          if (isTargetPack) {
             engagementDiscountPercent = ENGAGEMENT_DISCOUNT_CONFIG.discountPercent;
-            _engagementCouponId = couponId;
 
             // Track checkout started with engagement discount
             await trackServerEvent(
               'engagement_discount_checkout_started',
               {
-                couponId,
                 targetPackKey,
                 priceId: validatedPriceId,
               },
