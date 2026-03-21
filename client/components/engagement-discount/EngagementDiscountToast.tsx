@@ -14,11 +14,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { X, Clock, Sparkles, CreditCard } from 'lucide-react';
 import { useEngagementDiscountStore } from '@client/store/engagementDiscountStore';
 import { analytics } from '@client/analytics';
-import {
-  ENGAGEMENT_DISCOUNT_CONFIG,
-  DISCOUNT_TARGET_PACK,
-  formatCountdown,
-} from '@shared/config/engagement-discount';
+import { DISCOUNT_TARGET_PACK, formatCountdown } from '@shared/config/engagement-discount';
 import { cn } from '@client/utils/cn';
 
 /**
