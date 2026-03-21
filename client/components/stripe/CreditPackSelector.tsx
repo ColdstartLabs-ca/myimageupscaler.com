@@ -181,29 +181,27 @@ export function CreditPackSelector({
 
               {/* Features */}
               <ul className="space-y-1.5 mb-4 flex-grow">
-                {[
-                  'Credits never expire',
-                  'Use on any tool',
-                  'Stackable with plans',
-                ].map((feature, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-3.5 w-3.5 text-success flex-shrink-0 mt-0.5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2.5}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    <span className="text-xs text-text-primary/80 leading-tight">{feature}</span>
-                  </li>
-                ))}
+                {['Credits never expire', 'Use on any tool', 'Stackable with plans'].map(
+                  (feature, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5 text-success flex-shrink-0 mt-0.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span className="text-xs text-text-primary/80 leading-tight">{feature}</span>
+                    </li>
+                  )
+                )}
               </ul>
 
               {/* CTA */}

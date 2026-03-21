@@ -318,7 +318,10 @@ const Workspace: React.FC = () => {
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center relative">
           <AmbientBackground variant="section" />
           <div className="relative z-10">
-            <Dropzone onFilesSelected={addFiles} onUpgrade={() => openUpgradeModal(false, 'workspace_dropzone')} />
+            <Dropzone
+              onFilesSelected={addFiles}
+              onUpgrade={() => openUpgradeModal(false, 'workspace_dropzone')}
+            />
             <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 size={13} className="text-secondary shrink-0" />{' '}
