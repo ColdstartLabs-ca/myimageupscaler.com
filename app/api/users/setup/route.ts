@@ -96,7 +96,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       pricingRegion: tier,
     },
     { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-  ).catch(err => logger.error('Failed to track account_created event', { userId, error: String(err) }));
+  ).catch(err =>
+    logger.error('Failed to track account_created event', { userId, error: String(err) })
+  );
 
   await logger.flush();
   return NextResponse.json({ success: true });

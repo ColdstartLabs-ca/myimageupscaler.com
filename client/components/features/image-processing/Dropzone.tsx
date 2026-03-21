@@ -365,7 +365,10 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
               </p>
               {isFreeUser && (
                 <button
-                  onClick={e => { e.stopPropagation(); onUpgrade?.(); }}
+                  onClick={e => {
+                    e.stopPropagation();
+                    onUpgrade?.();
+                  }}
                   className="relative z-20 inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-accent/80 transition-colors pointer-events-auto"
                 >
                   <Sparkles size={12} />
