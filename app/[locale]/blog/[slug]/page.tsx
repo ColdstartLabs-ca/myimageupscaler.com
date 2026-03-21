@@ -143,8 +143,8 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
   const postDate = post.published_at || post.created_at;
 
   return {
-    title: post.title,
-    description: post.description,
+    title: post.seo_title || post.title,
+    description: post.seo_description || post.description,
     authors: [{ name: post.author }],
     robots: {
       index: true,
@@ -166,8 +166,8 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: post.description,
+      title: post.seo_title || post.title,
+      description: post.seo_description || post.description,
       images: post.image ? [post.image] : [defaultOgImage],
     },
   };
