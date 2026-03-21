@@ -23,6 +23,9 @@ import {
   getRemainingUses,
 } from '@/client/utils/guest-fingerprint';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { useModalStore } from '@client/store/modalStore';
+import { useUserStore } from '@client/store/userStore';
+import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 
 type ProcessingState = 'idle' | 'loading' | 'processing' | 'done' | 'limit-reached' | 'error';
 
@@ -39,6 +42,17 @@ export function GuestUpscaler({ className }: IGuestUpscalerProps): React.ReactEl
   const [visitorId, setVisitorId] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const { isPaywalled, isLoading: isGeoLoading } = useRegionTier();
+  const { openAuthModal } = useModalStore();
+  const { isAuthenticated } = useUserStore();
+
+  const handleViewPlans = useCallback(() => {
+    if (isAuthenticated) {
+      window.location.href = '/pricing';
+      return;
+    }
+    prepareAuthRedirect('paywall_pricing', { returnTo: '/pricing' });
+    openAuthModal('register');
+  }, [isAuthenticated, openAuthModal]);
 
   // Initialize fingerprint and check usage on mount
   useEffect(() => {
@@ -168,13 +182,13 @@ export function GuestUpscaler({ className }: IGuestUpscalerProps): React.ReactEl
           Image upscaling requires a subscription in your region. Get started with our affordable
           plans — pricing adjusted for your region.
         </p>
-        <Link
-          href="/pricing"
+        <button
+          onClick={handleViewPlans}
           className="inline-flex items-center justify-center px-6 py-3 bg-accent hover:bg-accent-hover text-white font-medium rounded-lg transition-colors gap-2"
         >
           View plans
           <ArrowRight className="w-4 h-4" />
-        </Link>
+        </button>
       </div>
     );
   }
