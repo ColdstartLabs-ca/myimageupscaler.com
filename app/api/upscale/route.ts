@@ -591,7 +591,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         const { body: errorBody, status } = createErrorResponse(
           ErrorCodes.IMAGE_TOO_LARGE,
-          `Image dimensions (${inputDimensions.width}×${inputDimensions.height} = ${formatPixels(pixels)} pixels) exceed the maximum for this processing mode (${formatPixels(maxPixels)} pixels)`,
+          `Image dimensions (${inputDimensions.width}×${inputDimensions.height} = ${formatPixels(pixels)} pixels) exceed the maximum for this processing mode (${formatPixels(maxPixels)} pixels). Please resize your image before uploading.`,
           422,
           {
             width: inputDimensions.width,
@@ -820,13 +820,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Handle Replicate errors
     if (error instanceof ReplicateError) {
-      const statusCode = error.code === 'RATE_LIMITED' ? 429 : error.code === 'SAFETY' ? 422 : 503;
+      const statusCode =
+        error.code === 'RATE_LIMITED'
+          ? 429
+          : error.code === 'SAFETY' || error.code === 'IMAGE_TOO_LARGE'
+            ? 422
+            : 503;
       const errorCode =
         error.code === 'RATE_LIMITED'
           ? ErrorCodes.RATE_LIMITED
-          : error.code === 'SAFETY'
-            ? ErrorCodes.INVALID_REQUEST
-            : ErrorCodes.AI_UNAVAILABLE;
+          : error.code === 'IMAGE_TOO_LARGE'
+            ? ErrorCodes.IMAGE_TOO_LARGE
+            : error.code === 'SAFETY'
+              ? ErrorCodes.INVALID_REQUEST
+              : ErrorCodes.AI_UNAVAILABLE;
       logger.error('Replicate error', {
         message: error.message,
         code: error.code,
