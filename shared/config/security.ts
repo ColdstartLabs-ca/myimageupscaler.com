@@ -125,4 +125,6 @@ export const PUBLIC_API_ROUTES = [
   '/api/seo/*', // SEO routes use x-cron-secret header auth, not JWT
   '/api/upscale/guest', // Guest upscale (uses fingerprint + IP rate limiting)
   '/api/geo', // Geo-location endpoint for region classification (anti-freeloader)
+  '/api/campaigns/send', // Campaign send uses x-cron-secret header auth, not JWT
+  '/api/campaigns/unsubscribe', // One-click unsubscribe from emails (public, uses token verification)
 ] as const;
