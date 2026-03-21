@@ -10,6 +10,11 @@ import { test, expect } from '../test-fixtures';
  * - www.myimageupscaler.com → myimageupscaler.com (WWW to non-WWW)
  * - /tools/bulk-image-resizer → /tools/resize/bulk-image-resizer
  * - /tools/bulk-image-compressor → /tools/compress/bulk-image-compressor
+ * - NEW: Dedicated-route tools at wrong paths (png-to-jpg, image-compressor, etc.)
+ * - NEW: Misrouted category URLs (/tools/free-ai-upscaler → /free/free-ai-upscaler)
+ * - NEW: /article/ → correct category redirects
+ * - NEW: Wrong category slug redirects
+ * - NEW: /undefined/ prefix bug handling
  */
 
 test.describe('SEO Redirects E2E Tests', () => {
@@ -269,6 +274,91 @@ test.describe('SEO Redirects E2E Tests', () => {
       expect(canonicalHref).not.toContain('ref');
       expect(canonicalHref).not.toContain('utm_source');
       expect(canonicalHref).not.toContain('fbclid');
+    });
+  });
+
+  // NEW: Tests for PR #49 - GSC 404 fixes
+  test.describe('Dedicated-route tools at wrong path (GSC 404 fixes)', () => {
+    test('/tools/png-to-jpg redirects to /tools/convert/png-to-jpg', async ({ page }) => {
+      await page.goto('/tools/png-to-jpg');
+      expect(page.url()).toContain('/tools/convert/png-to-jpg');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+
+    test('/tools/jpg-to-png redirects to /tools/convert/jpg-to-png', async ({ page }) => {
+      await page.goto('/tools/jpg-to-png');
+      expect(page.url()).toContain('/tools/convert/jpg-to-png');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+
+    test('/tools/webp-to-jpg redirects to /tools/convert/webp-to-jpg', async ({ page }) => {
+      await page.goto('/tools/webp-to-jpg');
+      expect(page.url()).toContain('/tools/convert/webp-to-jpg');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+
+    test('/tools/image-compressor redirects to /tools/compress/image-compressor', async ({
+      page,
+    }) => {
+      await page.goto('/tools/image-compressor');
+      expect(page.url()).toContain('/tools/compress/image-compressor');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+
+    test('/tools/image-resizer redirects to /tools/resize/image-resizer', async ({ page }) => {
+      await page.goto('/tools/image-resizer');
+      expect(page.url()).toContain('/tools/resize/image-resizer');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+  });
+
+  test.describe('Misrouted category URLs (GSC 404 fixes)', () => {
+    test('/tools/free-ai-upscaler redirects to /free/free-ai-upscaler', async ({ page }) => {
+      await page.goto('/tools/free-ai-upscaler');
+      expect(page.url()).toContain('/free/free-ai-upscaler');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+  });
+
+  test.describe('/article/ to correct category redirects (GSC 404 fixes)', () => {
+    test('/article/upscale-arw-images redirects to /camera-raw/upscale-arw-images', async ({
+      page,
+    }) => {
+      await page.goto('/article/upscale-arw-images');
+      expect(page.url()).toContain('/camera-raw/upscale-arw-images');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+
+    test('/article/family-photo-preservation redirects to /photo-restoration/family-photo-preservation', async ({
+      page,
+    }) => {
+      await page.goto('/article/family-photo-preservation');
+      expect(page.url()).toContain('/photo-restoration/family-photo-preservation');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+  });
+
+  test.describe('Wrong category slug redirects (GSC 404 fixes)', () => {
+    test('/industry-insights/real-estate-photo-enhancement redirects to /use-cases/real-estate-photo-enhancement', async ({
+      page,
+    }) => {
+      await page.goto('/industry-insights/real-estate-photo-enhancement');
+      expect(page.url()).toContain('/use-cases/real-estate-photo-enhancement');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+  });
+
+  test.describe('Locale preservation in new redirects (GSC 404 fixes)', () => {
+    test('preserves /de prefix when redirecting /de/tools/png-to-jpg', async ({ page }) => {
+      await page.goto('/de/tools/png-to-jpg');
+      expect(page.url()).toContain('/de/tools/convert/png-to-jpg');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+
+    test('preserves /es prefix when redirecting /es/tools/image-compressor', async ({ page }) => {
+      await page.goto('/es/tools/image-compressor');
+      expect(page.url()).toContain('/es/tools/compress/image-compressor');
+      await expect(page.locator('h1')).toBeVisible();
     });
   });
 });
