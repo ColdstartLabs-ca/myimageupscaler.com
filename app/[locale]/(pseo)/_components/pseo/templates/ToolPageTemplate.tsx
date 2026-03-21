@@ -5,7 +5,9 @@
  */
 
 import type { IToolPage } from '@/lib/seo/pseo-types';
+import type { IRelatedPage } from '@/lib/seo/related-pages';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
+import { getSafeLocale } from '@/lib/seo/locale-utils';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -16,6 +18,7 @@ import { FeaturesSection } from '../sections/FeaturesSection';
 import { HeroSection } from '../sections/HeroSection';
 import { HowItWorksSection } from '../sections/HowItWorksSection';
 import { RelatedBlogPostsSection } from '../sections/RelatedBlogPostsSection';
+import { RelatedPagesSection } from '@/app/(pseo)/_components/pseo/sections/RelatedPagesSection';
 import { UseCasesSection } from '../sections/UseCasesSection';
 import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 
@@ -24,9 +27,14 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 interface IToolPageTemplateProps {
   data: IToolPage;
   locale?: string;
+  relatedPages?: IRelatedPage[];
 }
 
-export function ToolPageTemplate({ data, locale = 'en' }: IToolPageTemplateProps): ReactElement {
+export function ToolPageTemplate({
+  data,
+  locale = 'en',
+  relatedPages = [],
+}: IToolPageTemplateProps): ReactElement {
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/tools/${data.slug}`);
   const tier = pageMapping?.tier;
@@ -38,7 +46,7 @@ export function ToolPageTemplate({ data, locale = 'en' }: IToolPageTemplateProps
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
+            'linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px)',
           backgroundSize: '32px 32px',
         }}
       />
@@ -64,14 +72,19 @@ export function ToolPageTemplate({ data, locale = 'en' }: IToolPageTemplateProps
         <div className="pt-6 pb-4">
           <BreadcrumbNav
             items={[
-              { label: 'Home', href: locale && locale !== 'en' ? `/${locale}` : '/' },
-              { label: 'Tools', href: locale && locale !== 'en' ? `/${locale}/tools` : '/tools' },
+              {
+                label: 'Home',
+                href: getSafeLocale(locale) ? `/${getSafeLocale(locale)}` : '/',
+              },
+              {
+                label: 'Tools',
+                href: getSafeLocale(locale) ? `/${getSafeLocale(locale)}/tools` : '/tools',
+              },
               {
                 label: data.title,
-                href:
-                  locale && locale !== 'en'
-                    ? `/${locale}/tools/${data.slug}`
-                    : `/tools/${data.slug}`,
+                href: getSafeLocale(locale)
+                  ? `/${getSafeLocale(locale)}/tools/${data.slug}`
+                  : `/tools/${data.slug}`,
               },
             ]}
           />
@@ -105,35 +118,47 @@ export function ToolPageTemplate({ data, locale = 'en' }: IToolPageTemplateProps
           {/* How It Works */}
           <HowItWorksSection steps={data.howItWorks} />
 
-          {/* Benefits */}
-          <BenefitsSection benefits={data.benefits} />
+          {/* Related Blog Posts */}
+          {data.relatedBlogPosts && data.relatedBlogPosts.length > 0 && (
+            <div className="py-12">
+              <RelatedBlogPostsSection
+                blogPostSlugs={data.relatedBlogPosts}
+                locale={getSafeLocale(locale)}
+              />
+            </div>
+          )}
 
           {/* Use Cases */}
           <UseCasesSection useCases={data.useCases} />
 
-          {/* Related Blog Posts */}
-          {data.relatedBlogPosts && data.relatedBlogPosts.length > 0 && (
-            <RelatedBlogPostsSection blogPostSlugs={data.relatedBlogPosts} locale={locale} />
+          {/* Benefits */}
+          <BenefitsSection benefits={data.benefits} />
+
+          {/* Related Pages */}
+          {relatedPages && relatedPages.length > 0 && (
+            <div className="py-12">
+              <RelatedPagesSection relatedPages={relatedPages} />
+            </div>
           )}
 
           {/* FAQ */}
-          <FAQSection faqs={data.faq} pageType="tool" slug={data.slug} />
-
-          {/* Final CTA */}
-          <div className="py-8">
-            <FadeIn>
-              <CTASection
-                title="Ready to enhance your images?"
-                description="Start upscaling images with AI today. No credit card required."
-                ctaText={data.ctaText}
-                ctaUrl={data.ctaUrl}
-                pageType="tool"
-                slug={data.slug}
-              />
-            </FadeIn>
+          <div className="py-12">
+            <FAQSection faqs={data.faq} pageType="tool" slug={data.slug} />
           </div>
         </article>
+      </div>
 
+      {/* Final CTA Full Width */}
+      <CTASection
+        title="Ready to enhance your images?"
+        description="Start upscaling images with AI today. No credit card required."
+        ctaText={data.ctaText}
+        ctaUrl={data.ctaUrl}
+        pageType="tool"
+        slug={data.slug}
+      />
+
+      <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Footer spacing */}
         <div className="pb-16" />
       </div>

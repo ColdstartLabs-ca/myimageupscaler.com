@@ -9,6 +9,7 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IDeviceUseCasePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { getSafeLocale } from '@/lib/seo/locale-utils';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -32,6 +33,9 @@ export function DeviceUsePageTemplate({
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/device-use/${data.slug}`);
   const tier = pageMapping?.tier;
+
+  // Get safe locale for URL generation
+  const safeLocale = getSafeLocale(locale);
 
   // Get locale-aware labels for before/after slider
   const getBeforeAfterLabels = (locale?: string) => {
@@ -78,11 +82,16 @@ export function DeviceUsePageTemplate({
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
-              { label: 'Home', href: locale ? `/${locale}` : '/' },
-              { label: 'Device Use', href: locale ? `/${locale}/device-use` : '/device-use' },
+              { label: 'Home', href: safeLocale ? `/${safeLocale}` : '/' },
+              {
+                label: 'Device Use',
+                href: safeLocale ? `/${safeLocale}/device-use` : '/device-use',
+              },
               {
                 label: `${data.device} ${data.useCase}`,
-                href: locale ? `/${locale}/device-use/${data.slug}` : `/device-use/${data.slug}`,
+                href: safeLocale
+                  ? `/${safeLocale}/device-use/${data.slug}`
+                  : `/device-use/${data.slug}`,
               },
             ]}
           />
