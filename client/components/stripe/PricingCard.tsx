@@ -254,9 +254,7 @@ export function PricingCard({
               {displayPrice}
             </span>
           </div>
-          {interval && (
-            <p className="text-[11px] text-text-secondary mt-0.5">/ {interval}</p>
-          )}
+          {interval && <p className="text-[11px] text-text-secondary mt-0.5">/ {interval}</p>}
         </div>
 
         {/* Divider */}

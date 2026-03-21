@@ -9,6 +9,7 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IFormatScalePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { getSafeLocale } from '@/lib/seo/locale-utils';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -37,6 +38,9 @@ export function FormatScalePageTemplate({
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/format-scale/${data.slug}`);
   const tier = pageMapping?.tier;
+
+  // Get safe locale for URL generation
+  const safeLocale = getSafeLocale(locale);
 
   // Normalize bestPractices to handle both string[] and object[]
   const normalizedBestPractices = data.bestPractices?.map(bp =>
@@ -74,15 +78,15 @@ export function FormatScalePageTemplate({
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
-              { label: 'Home', href: locale ? `/${locale}` : '/' },
+              { label: 'Home', href: safeLocale ? `/${safeLocale}` : '/' },
               {
                 label: 'Format Scale',
-                href: locale ? `/${locale}/format-scale` : '/format-scale',
+                href: safeLocale ? `/${safeLocale}/format-scale` : '/format-scale',
               },
               {
                 label: `${data.format} ${data.scaleFactor}`,
-                href: locale
-                  ? `/${locale}/format-scale/${data.slug}`
+                href: safeLocale
+                  ? `/${safeLocale}/format-scale/${data.slug}`
                   : `/format-scale/${data.slug}`,
               },
             ]}

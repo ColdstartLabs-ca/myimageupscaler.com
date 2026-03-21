@@ -113,7 +113,10 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
             {isNoCredits ? 'No credits remaining' : `Low credits: ${creditBalance} remaining`}
           </div>
           <button
-            onClick={e => { e.stopPropagation(); onUpgrade?.(); }}
+            onClick={e => {
+              e.stopPropagation();
+              onUpgrade?.();
+            }}
             className="block text-accent hover:text-accent-light underline text-center"
           >
             Buy more credits →
