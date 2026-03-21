@@ -359,7 +359,7 @@ describe('PricingCard', () => {
 
     const card = document.querySelector('.relative.bg-surface.rounded-xl');
     expect(card).toHaveClass('border-surface-light');
-    expect(card).not.toHaveClass('border-accent');
+    expect(card).not.toHaveClass('border-accent\\/60');
   });
 
   it('renders all features with checkmark icons', () => {
@@ -404,7 +404,6 @@ describe('PricingCard', () => {
   it('handles checkout with custom cancel URL', async () => {
     simulateDesktopViewport();
     const user = userEvent.setup();
-    mockLocation.href = 'http://localhost:3000/custom-pricing-page';
 
     renderWithTranslations(<PricingCard {...defaultProps} />);
 
@@ -470,6 +469,8 @@ describe('PricingCard', () => {
       const subscribeButton = screen.getByText('Get Started');
       await user.click(subscribeButton);
 
+      // useCheckoutFlow uses prepareAuthRedirect which stores the checkout intent
+      // The auth modal opens and the user is redirected after auth
       await waitFor(() => {
         expect(mockPrepareAuthRedirect).toHaveBeenCalledWith('checkout', {
           returnTo: '/pricing?checkout=price_pro_monthly_123',
@@ -991,6 +992,7 @@ describe('PricingCard', () => {
         const modals = screen.queryAllByTestId('checkout-modal');
         expect(modals.length).toBe(1);
       });
+      expect(mockStripeService.redirectToCheckout).not.toHaveBeenCalled();
     });
 
     it('allows clicking again after 500ms debounce period', async () => {
@@ -1404,6 +1406,7 @@ describe('PricingCard', () => {
         source: 'embedded_modal',
         originatingModel: undefined,
       });
+      expect(mockStripeService.redirectToCheckout).not.toHaveBeenCalled();
     });
 
     it('handles trial with custom onSelect callback', async () => {

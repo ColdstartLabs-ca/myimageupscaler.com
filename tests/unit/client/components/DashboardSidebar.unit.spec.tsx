@@ -66,9 +66,10 @@ vi.mock('@client/utils/cn', () => ({
 vi.mock('@client/hooks/useRegionTier', () => ({
   useRegionTier: () => ({
     tier: 'standard',
-    country: 'US',
+    country: null,
     isLoading: false,
     isRestricted: false,
+    isPaywalled: false,
     pricingRegion: 'standard',
     discountPercent: 0,
   }),
@@ -78,11 +79,14 @@ vi.mock('@shared/config/env', () => ({
   clientEnv: {
     APP_NAME: 'MyImageUpscaler',
     CACHE_USER_KEY_PREFIX: 'test',
+    SUPABASE_URL: 'https://example.supabase.co',
+    SUPABASE_ANON_KEY: 'test-anon-key',
   },
   loadEnv: () => ({
-    SUPABASE_URL: 'https://test.supabase.co',
+    APP_NAME: 'MyImageUpscaler',
+    CACHE_USER_KEY_PREFIX: 'test',
+    SUPABASE_URL: 'https://example.supabase.co',
     SUPABASE_ANON_KEY: 'test-anon-key',
-    STRIPE_PUBLISHABLE_KEY: 'test-stripe-key',
   }),
   serverEnv: {},
 }));

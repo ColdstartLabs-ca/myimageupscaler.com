@@ -14,6 +14,7 @@ import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
 import { GUEST_LIMITS } from '@shared/config/guest-limits.config';
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
+import { getRegionTier } from '@/lib/anti-freeloader/region-classifier';
 
 const guestUpscaleSchema = z.object({
   imageData: z.string().min(100),
@@ -32,6 +33,28 @@ function getClientIp(req: NextRequest): string {
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const logger = createLogger(req, 'guest-upscale-api');
   const clientIp = getClientIp(req);
+
+  // Country paywall — block before any processing
+  const country =
+    req.headers.get('CF-IPCountry') ||
+    req.headers.get('cf-ipcountry') ||
+    (serverEnv.ENV === 'test' ? req.headers.get('x-test-country') : null);
+
+  if (country) {
+    const regionTier = getRegionTier(country);
+    if (regionTier === 'paywalled') {
+      logger.info('Guest blocked by country paywall', { country });
+      return NextResponse.json(
+        createErrorResponse(
+          ErrorCodes.FORBIDDEN,
+          'Free image processing is not available in your region. Sign up for a subscription to get started.',
+          403,
+          { upgradeUrl: '/pricing' }
+        ).body,
+        { status: 403 }
+      );
+    }
+  }
 
   try {
     const body = await req.json();

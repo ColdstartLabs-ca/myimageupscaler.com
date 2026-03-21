@@ -196,6 +196,7 @@ function clearSessionStorage() {
 // ---------------------------------------------------------------------------
 
 describe('Prompt 1: model_gate — ModelGalleryModal', () => {
+  const mockOnUpgrade = vi.fn();
   const defaultProps = {
     isOpen: true,
     onClose: vi.fn(),
@@ -265,9 +266,6 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     const onUpgrade = vi.fn();
     render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} isFreeUser={true} />);
 
-    // Find a locked model card (premium tier card)
-    // The premium section divider should exist
-    const premiumDivider = screen.queryByText(/Professional Tiers/i);
     // If there's locked content, clicking the banner upgrade button should fire analytics
     const upgradeButton = screen.getByText('Unlock Premium Models');
     fireEvent.click(upgradeButton);

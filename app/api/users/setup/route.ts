@@ -60,8 +60,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     ? Date.now() - new Date(profile.created_at).getTime() < NEW_USER_MAX_AGE_MS
     : false;
 
-  if (tier === 'restricted' && profile?.subscription_tier === 'free' && isNewUser) {
-    updatePayload.subscription_credits_balance = CREDIT_COSTS.RESTRICTED_FREE_CREDITS;
+  if (isNewUser && profile?.subscription_tier === 'free') {
+    if (tier === 'paywalled') {
+      updatePayload.subscription_credits_balance = CREDIT_COSTS.PAYWALLED_FREE_CREDITS;
+    } else if (tier === 'restricted') {
+      updatePayload.subscription_credits_balance = CREDIT_COSTS.RESTRICTED_FREE_CREDITS;
+    }
   }
 
   const { error: updateError } = await supabaseAdmin
@@ -86,12 +90,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   }
 
+  // Cross-account IP check (best-effort)
+  if (ip) {
+    const { error: ipError } = await supabaseAdmin.rpc('check_signup_ip', {
+      p_user_id: userId,
+      p_ip: ip,
+    });
+    if (ipError) {
+      logger.error('Failed to check signup IP', { userId, error: ipError.message });
+    }
+  }
+
   // Track account creation analytics (fire-and-forget — don't block user setup on analytics failure)
   trackServerEvent(
     'account_created',
     {
-      method: 'email', // Default for now - could be extended to track auth provider
-      hasEmail: true, // User has completed setup
+      method: 'email',
+      hasEmail: true,
       fingerprintHash: fingerprintHash || undefined,
       pricingRegion: tier,
     },

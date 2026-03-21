@@ -10,6 +10,7 @@ import { loginSchema, registerSchema } from '@shared/validation/authValidationSc
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { Modal } from '@client/components/modal/Modal';
 import { ChangePasswordForm } from '@client/components/modal/auth/ChangePasswordForm';
 import { ForgotPasswordForm } from '@client/components/modal/auth/ForgotPasswordForm';
@@ -49,7 +50,7 @@ export const AuthenticationModal: React.FC = () => {
   const { signInWithEmail, signUpWithEmail, changePassword, resetPassword } = useUserStore();
   const { showToast } = useToastStore();
   const t = useTranslations('auth');
-  const { isRestricted, isLoading: isGeoLoading } = useRegionTier();
+  const { isRestricted, isPaywalled, isLoading: isGeoLoading } = useRegionTier();
   const fingerprintHash = useFingerprint();
 
   const {
@@ -191,6 +192,16 @@ export const AuthenticationModal: React.FC = () => {
         }
         return (
           <>
+            {isPaywalled && (
+              <div className="mb-4 p-3 rounded-lg bg-muted border border-border text-center">
+                <p className="text-sm text-muted-foreground mb-1">
+                  {'A subscription is required in your region.'}
+                </p>
+                <Link href="/pricing" className="text-sm text-accent underline font-medium">
+                  View plans
+                </Link>
+              </div>
+            )}
             <RegisterForm
               onSubmit={handleRegisterSubmit(onRegisterSubmit)}
               register={registerRegister}
@@ -227,6 +238,16 @@ export const AuthenticationModal: React.FC = () => {
         }
         return (
           <>
+            {isPaywalled && (
+              <div className="mb-4 p-3 rounded-lg bg-muted border border-border text-center">
+                <p className="text-sm text-muted-foreground mb-1">
+                  {'A subscription is required in your region.'}
+                </p>
+                <Link href="/pricing" className="text-sm text-accent underline font-medium">
+                  View plans
+                </Link>
+              </div>
+            )}
             <LoginForm
               onSubmit={handleLoginSubmit(onLoginSubmit)}
               register={loginRegister}
