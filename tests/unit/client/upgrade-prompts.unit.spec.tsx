@@ -202,6 +202,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     currentTier: 'quick' as QualityTier,
     isFreeUser: true,
     onSelect: vi.fn(),
+    onUpgrade: vi.fn(),
   };
 
   beforeEach(() => {
