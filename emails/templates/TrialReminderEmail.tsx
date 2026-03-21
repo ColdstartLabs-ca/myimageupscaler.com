@@ -1,15 +1,7 @@
 import React from 'react';
-import {
-  Html,
-  Head,
-  Body,
-  Container,
-  Section,
-  Text,
-  Button,
-  Hr,
-  Link,
-} from '@react-email/components';
+import { Section, Text, Button } from '@react-email/components';
+import { CampaignEmailLayout } from '../CampaignEmailLayout';
+import { emailStyles as s } from '../styles';
 
 interface ICampaignEmailProps {
   userName?: string;
@@ -31,120 +23,49 @@ export function TrialReminderEmail({
   creditsRemaining = 5,
 }: ICampaignEmailProps): React.JSX.Element {
   const pricingUrl = `${baseUrl}/pricing`;
-  const unsubscribeUrl = unsubscribeToken
-    ? `${baseUrl}/api/campaigns/unsubscribe?token=${unsubscribeToken}`
-    : `${baseUrl}/dashboard/settings`;
 
   return (
-    <Html>
-      <Head />
-      <Body style={main}>
-        <Container style={container}>
-          <Section style={header}>
-            <Text style={logo}>{appName}</Text>
-          </Section>
+    <CampaignEmailLayout
+      appName={appName}
+      baseUrl={baseUrl}
+      supportEmail={supportEmail}
+      unsubscribeToken={unsubscribeToken}
+    >
+      <Text style={s.heading}>Your Trial is Halfway Through</Text>
+      <Text style={s.paragraph}>Hi {userName},</Text>
+      <Text style={s.paragraph}>
+        Just checking in! Your premium trial is progressing well. Here&apos;s where you stand:
+      </Text>
 
-          <Section style={content}>
-            <Text style={heading}>Your Trial is Halfway Through</Text>
-            <Text style={paragraph}>Hi {userName},</Text>
-            <Text style={paragraph}>
-              Just checking in! Your premium trial is progressing well. Here&apos;s where you stand:
-            </Text>
+      <Section style={statsBox}>
+        <Text style={statsNumber}>{trialDaysRemaining}</Text>
+        <Text style={statsLabel}>Days Remaining</Text>
+        <Text style={statsDivider}>|</Text>
+        <Text style={statsNumber}>{creditsRemaining}</Text>
+        <Text style={statsLabel}>Credits Left</Text>
+      </Section>
 
-            <Section style={statsBox}>
-              <Text style={statsNumber}>{trialDaysRemaining}</Text>
-              <Text style={statsLabel}>Days Remaining</Text>
-              <Text style={statsDivider}>|</Text>
-              <Text style={statsNumber}>{creditsRemaining}</Text>
-              <Text style={statsLabel}>Credits Left</Text>
-            </Section>
+      <Text style={s.paragraph}>
+        You&apos;ve experienced the power of premium upscaling. When your trial ends, you&apos;ll
+        still have access to basic features, but premium enhancements require a subscription.
+      </Text>
 
-            <Text style={paragraph}>
-              You&apos;ve experienced the power of premium upscaling. When your trial ends,
-              you&apos;ll still have access to basic features, but premium enhancements require a
-              subscription.
-            </Text>
+      <Section style={previewBox}>
+        <Text style={previewTitle}>What You Get with Premium</Text>
+        <Text style={previewItem}>Unlimited 4x upscaling</Text>
+        <Text style={previewItem}>Batch processing</Text>
+        <Text style={previewItem}>Priority processing speed</Text>
+        <Text style={previewItem}>Advanced AI models</Text>
+      </Section>
 
-            <Section style={previewBox}>
-              <Text style={previewTitle}>What You Get with Premium</Text>
-              <Text style={previewItem}>Unlimited 4x upscaling</Text>
-              <Text style={previewItem}>Batch processing</Text>
-              <Text style={previewItem}>Priority processing speed</Text>
-              <Text style={previewItem}>Advanced AI models</Text>
-            </Section>
+      <Button href={pricingUrl} style={s.button}>
+        View Subscription Plans
+      </Button>
 
-            <Button href={pricingUrl} style={button}>
-              View Subscription Plans
-            </Button>
-
-            <Text style={subtext}>Starting from just $9/month. Cancel anytime.</Text>
-          </Section>
-
-          <Hr style={hr} />
-
-          <Section style={footer}>
-            <Text style={footerText}>
-              Questions?{' '}
-              <Link href={`mailto:${supportEmail}`} style={footerLink}>
-                Contact us
-              </Link>
-            </Text>
-            <Text style={footerText}>
-              <Link href={unsubscribeUrl} style={footerLink}>
-                Unsubscribe from marketing emails
-              </Link>
-            </Text>
-            <Text style={footerText}>
-              &copy; {new Date().getFullYear()} {appName}. All rights reserved.
-            </Text>
-          </Section>
-        </Container>
-      </Body>
-    </Html>
+      <Text style={s.subtext}>Starting from just $9/month. Cancel anytime.</Text>
+    </CampaignEmailLayout>
   );
 }
-
-const main = {
-  backgroundColor: '#f6f9fc',
-  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-};
-
-const container = {
-  maxWidth: '600px',
-  margin: '0 auto',
-  backgroundColor: '#ffffff',
-};
-
-const header = {
-  backgroundColor: '#3b82f6',
-  padding: '24px',
-  textAlign: 'center' as const,
-};
-
-const logo = {
-  color: '#ffffff',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  margin: '0',
-};
-
-const content = {
-  padding: '32px 24px',
-};
-
-const heading = {
-  fontSize: '24px',
-  fontWeight: 'bold',
-  color: '#0f172a',
-  marginBottom: '16px',
-};
-
-const paragraph = {
-  fontSize: '16px',
-  lineHeight: '24px',
-  color: '#334155',
-  marginBottom: '16px',
-};
 
 const statsBox = {
   backgroundColor: '#eff6ff',
@@ -193,43 +114,4 @@ const previewItem = {
   lineHeight: '22px',
   color: '#334155',
   marginBottom: '6px',
-};
-
-const button = {
-  backgroundColor: '#3b82f6',
-  borderRadius: '8px',
-  color: '#ffffff',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  textDecoration: 'none',
-  padding: '12px 24px',
-  display: 'inline-block',
-};
-
-const subtext = {
-  fontSize: '14px',
-  color: '#64748b',
-  marginTop: '16px',
-  marginBottom: '0',
-};
-
-const hr = {
-  borderColor: '#e2e8f0',
-  margin: '0',
-};
-
-const footer = {
-  padding: '24px',
-  textAlign: 'center' as const,
-};
-
-const footerText = {
-  fontSize: '14px',
-  color: '#64748b',
-  margin: '4px 0',
-};
-
-const footerLink = {
-  color: '#3b82f6',
-  textDecoration: 'underline',
 };
