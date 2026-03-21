@@ -135,6 +135,21 @@ export default function PricingPageClient() {
     if (subscription?.price_id === priceId || subscription?.scheduled_price_id === priceId) {
       return;
     }
+
+    // Track plan selection
+    const planConfig = getPlanForPriceId(priceId);
+    if (planConfig) {
+      analytics.track('plan_selected', {
+        planName: planConfig.key as 'starter' | 'hobby' | 'pro' | 'business',
+        priceId,
+        price: planConfig.price,
+        billingInterval: 'monthly', // All plans are monthly
+        pricingRegion: pricingRegion || 'standard',
+        discountPercent: discountPercent || 0,
+        source: 'pricing_page',
+      });
+    }
+
     hasCheckoutStartedRef.current = true;
     setSelectedPlanId(priceId);
     setIsModalOpen(true);

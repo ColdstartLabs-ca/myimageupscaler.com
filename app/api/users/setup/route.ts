@@ -3,6 +3,7 @@ import { createLogger } from '@server/monitoring/logger';
 import { getRegionTier } from '@/lib/anti-freeloader/region-classifier';
 import { CREDIT_COSTS } from '@shared/config/credits.config';
 import { serverEnv } from '@shared/config/env';
+import { trackServerEvent } from '@server/analytics';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -84,6 +85,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       logger.error('Failed to register fingerprint', { userId, error: rpcError.message });
     }
   }
+
+  // Track account creation analytics (fire-and-forget — don't block user setup on analytics failure)
+  trackServerEvent(
+    'account_created',
+    {
+      method: 'email', // Default for now - could be extended to track auth provider
+      hasEmail: true, // User has completed setup
+      fingerprintHash: fingerprintHash || undefined,
+      pricingRegion: tier,
+    },
+    { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+  ).catch(err => logger.error('Failed to track account_created event', { userId, error: String(err) }));
 
   await logger.flush();
   return NextResponse.json({ success: true });
