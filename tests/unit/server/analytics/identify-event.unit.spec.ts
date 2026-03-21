@@ -349,14 +349,13 @@ describe('Analytics $identify Event', () => {
   });
 });
 
-describe('Analytics $identify Event Name Type', () => {
-  test('should include $identify in IAnalyticsEventName type', async () => {
-    // Import types to verify $identify is in the union
-    const types = await import('@server/analytics/types');
+import type { IAnalyticsEventName } from '@server/analytics/types';
 
+describe('Analytics $identify Event Name Type', () => {
+  test('should include $identify in IAnalyticsEventName type', () => {
     // This is a compile-time check - if $identify is not in the type,
     // TypeScript would fail to compile
-    const eventName: types.IAnalyticsEventName = '$identify';
+    const eventName: IAnalyticsEventName = '$identify';
     expect(eventName).toBe('$identify');
   });
 });

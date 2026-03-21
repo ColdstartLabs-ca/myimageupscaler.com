@@ -2,6 +2,7 @@ import { stripe, STRIPE_WEBHOOK_SECRET } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isTest } from '@shared/config/env';
 import { trackServerEvent, trackRevenue } from '@server/analytics';
+import type { IPaymentFailedProperties } from '@server/analytics/types';
 import {
   assertKnownPriceId,
   calculateBalanceWithExpiration,
@@ -387,5 +388,57 @@ export class InvoiceHandler {
     } else {
       console.log(`Marked user ${userId} subscription as past_due`);
     }
+
+    // Track payment failure analytics (fire-and-forget — don't risk webhook retry on analytics failure)
+    const lines = (invoice.lines?.data ?? []) as IStripeInvoiceLineItemExtended[];
+    const linePrice = lines[0]?.price;
+    const priceId =
+      typeof linePrice === 'object' && linePrice?.id
+        ? linePrice.id
+        : typeof linePrice === 'string'
+          ? linePrice
+          : undefined;
+    trackServerEvent(
+      'payment_failed',
+      {
+        priceId,
+        plan: priceId ? getPlanByPriceId(priceId)?.key || undefined : undefined,
+        errorType: this.mapStripeErrorType(invoice.last_finalization_error?.code),
+        errorMessage: this.sanitizeErrorMessage(invoice.last_finalization_error?.message),
+        attemptCount: invoice.attempt_count || 1,
+        customerId,
+      },
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+    ).catch(err => console.error('Failed to track payment_failed event', err));
+  }
+
+  /**
+   * Map Stripe error codes to simplified error types
+   */
+  private static mapStripeErrorType(code?: string): IPaymentFailedProperties['errorType'] {
+    if (!code) return 'generic';
+    const lowerCode = code.toLowerCase();
+    if (lowerCode.includes('card_declined') || lowerCode.includes('do_not_honor')) {
+      return 'card_declined';
+    }
+    if (lowerCode.includes('insufficient_funds')) {
+      return 'insufficient_funds';
+    }
+    if (lowerCode.includes('expired_card') || lowerCode.includes('card_expired')) {
+      return 'expired_card';
+    }
+    return 'generic';
+  }
+
+  /**
+   * Sanitize error message to remove sensitive data
+   */
+  private static sanitizeErrorMessage(message?: string): string {
+    if (!message) return 'Unknown error';
+    // Remove any potential card numbers or sensitive data
+    return message
+      .replace(/\d{13,16}/g, '[REDACTED]')
+      .replace(/card_[a-zA-Z0-9]+/gi, '[CARD_ID]')
+      .substring(0, 200); // Limit length
   }
 }

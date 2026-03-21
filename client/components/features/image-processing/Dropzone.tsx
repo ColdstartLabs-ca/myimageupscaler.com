@@ -171,15 +171,19 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
 
           // Track validation errors for oversized files
           oversizedEntries.forEach(entry => {
+            // Use specific error types for better failure point analysis (PRD: analytics-tracking-enhancement - Phase 3)
+            const errorType =
+              entry.reason === 'size' ? 'upload_file_too_large' : 'validation_failed';
             analytics.track('error_occurred', {
-              errorType: 'validation_failed',
+              errorType,
               errorMessage:
                 entry.reason === 'size'
-                  ? 'File size exceeds limit'
+                  ? `File size ${entry.file.size} exceeds limit of ${currentLimit}`
                   : `Image dimensions exceed ${IMAGE_VALIDATION.MAX_PIXELS / 1_000_000}MP limit`,
               context: {
                 fileName: entry.file.name,
                 fileSize: entry.file.size,
+                maxSize: currentLimit,
                 rejectionReason: entry.reason === 'size' ? 'file_size_limit' : 'dimension_limit',
                 ...(entry.dimensions
                   ? {
@@ -200,16 +204,16 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           if (invalidTypeFiles.length > 0) {
             setError('Some files were rejected. Only JPG, PNG, WEBP are allowed.');
 
-            // Track validation errors for analytics
+            // Track validation errors for analytics (PRD: analytics-tracking-enhancement - Phase 3)
             invalidTypeFiles.forEach(file => {
               analytics.track('error_occurred', {
-                errorType: 'validation_failed',
-                errorMessage: 'Invalid file type - only JPG, PNG, WEBP allowed',
+                errorType: 'upload_invalid_format',
+                errorMessage: `Invalid file type: ${file.type || 'unknown'}`,
                 context: {
                   fileName: file.name,
                   fileSize: file.size,
                   fileType: file.type,
-                  rejectionReason: 'invalid_type',
+                  allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
                 },
               });
             });

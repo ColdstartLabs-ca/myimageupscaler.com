@@ -88,6 +88,7 @@ vi.mock('@shared/config/env', () => ({
     SUPABASE_URL: 'https://example.supabase.co',
     SUPABASE_ANON_KEY: 'test-anon-key',
   }),
+  serverEnv: {},
 }));
 
 // Mock translations for the sidebar namespace

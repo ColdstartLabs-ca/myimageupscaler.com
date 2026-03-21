@@ -217,7 +217,7 @@ describe('ModelGalleryModal – model_gate analytics', () => {
         currentTier="quick"
         isFreeUser={isFreeUser}
         onSelect={vi.fn()}
-        onUpgrade={mockHandleCheckout}
+        onUpgrade={vi.fn()}
       />
     );
   }
@@ -268,15 +268,27 @@ describe('ModelGalleryModal – model_gate analytics', () => {
     );
   });
 
-  it('calls handleCheckout when locked model is clicked', async () => {
-    await renderGallery();
+  it('calls onUpgrade callback when locked model is clicked', async () => {
+    const onUpgrade = vi.fn();
+    const { ModelGalleryModal } =
+      await import('@client/components/features/workspace/ModelGalleryModal');
+    render(
+      <ModelGalleryModal
+        isOpen={true}
+        onClose={vi.fn()}
+        currentTier="quick"
+        isFreeUser={true}
+        onSelect={vi.fn()}
+        onUpgrade={onUpgrade}
+      />
+    );
 
     const lockedBtn = screen.queryByTestId('locked-face-pro');
     if (!lockedBtn) return;
 
     fireEvent.click(lockedBtn);
 
-    expect(mockHandleCheckout).toHaveBeenCalled();
+    expect(onUpgrade).toHaveBeenCalled();
   });
 });
 

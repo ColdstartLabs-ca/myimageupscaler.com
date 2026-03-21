@@ -203,7 +203,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     currentTier: 'quick' as QualityTier,
     isFreeUser: true,
     onSelect: vi.fn(),
-    onUpgrade: mockOnUpgrade,
+    onUpgrade: vi.fn(),
   };
 
   beforeEach(() => {
@@ -263,7 +263,8 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
   });
 
   it('fires upgrade_prompt_clicked when locked model clicked', async () => {
-    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+    const onUpgrade = vi.fn();
+    render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} isFreeUser={true} />);
 
     // If there's locked content, clicking the banner upgrade button should fire analytics
     const upgradeButton = screen.getByText('Unlock Premium Models');
@@ -280,19 +281,20 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     });
   });
 
-  it('shows upgrade banner copy', () => {
+  it('shows "From $4.99 — 10× sharper results" copy in the upgrade banner', () => {
     render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
-    expect(screen.getByText(/Unlock Premium Models/i)).toBeInTheDocument();
+    expect(screen.getByText(/From \$4.99/i)).toBeInTheDocument();
   });
 
-  it('navigates to /dashboard/billing on upgrade click', async () => {
-    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+  it('calls onUpgrade when upgrade button is clicked', async () => {
+    const onUpgrade = vi.fn();
+    render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} isFreeUser={true} />);
 
     const upgradeButton = screen.getByText('Unlock Premium Models');
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
-      expect(mockOnUpgrade).toHaveBeenCalled();
+      expect(onUpgrade).toHaveBeenCalled();
     });
   });
 });
@@ -357,17 +359,20 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
     expect(mockAnalyticsTrack).not.toHaveBeenCalled();
   });
 
-  it('renders upgrade CTA button', async () => {
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
+  it('renders upgrade button pointing to /dashboard/billing', async () => {
+    const onUpgrade = vi.fn();
+    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       const button = screen.getByText(/Upgrade for unlimited\./i);
       expect(button).toBeInTheDocument();
+      expect(button.tagName).toBe('BUTTON');
     });
   });
 
   it('fires upgrade_prompt_clicked when upgrade button is clicked', async () => {
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
+    const onUpgrade = vi.fn();
+    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(screen.getByText(/You've upscaled 3 images\./i)).toBeInTheDocument();
@@ -378,11 +383,11 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
       trigger: 'after_upscale',
-      imageVariant: undefined,
       destination: 'upgrade_plan_modal',
       currentPlan: 'free',
       pricingRegion: 'standard',
     });
+    expect(onUpgrade).toHaveBeenCalled();
   });
 
   it('dismisses banner and fires upgrade_prompt_dismissed when X is clicked', async () => {
@@ -546,7 +551,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
     expect(mockAnalyticsTrack).not.toHaveBeenCalled();
   });
 
-  it('nudge button is rendered', async () => {
+  it('nudge button is rendered for premium quality', async () => {
     const { ImageComparison } =
       await import('@/client/components/features/image-processing/ImageComparison');
 
@@ -556,6 +561,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
         afterUrl="https://example.com/after.jpg"
         onDownload={vi.fn()}
         showUpgradeNudge={true}
+        onUpgrade={vi.fn()}
       />
     );
 
@@ -565,10 +571,12 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
     await waitFor(() => {
       const button = screen.getByText(/Unlock premium quality\./i);
       expect(button).toBeInTheDocument();
+      expect(button.tagName).toBe('BUTTON');
     });
   });
 
   it('fires upgrade_prompt_clicked when nudge button is clicked', async () => {
+    const onUpgrade = vi.fn();
     const { ImageComparison } =
       await import('@/client/components/features/image-processing/ImageComparison');
 
@@ -578,6 +586,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
         afterUrl="https://example.com/after.jpg"
         onDownload={vi.fn()}
         showUpgradeNudge={true}
+        onUpgrade={onUpgrade}
       />
     );
 

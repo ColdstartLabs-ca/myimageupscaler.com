@@ -228,7 +228,7 @@ describe('ModelGalleryModal', () => {
       expect(lockBadge).toBeNull();
     });
 
-    it('should navigate to /dashboard/billing when locked tier clicked', async () => {
+    it('should call onUpgrade when locked tier clicked', async () => {
       render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
       // Find a premium tier (Ultra) card and click it
@@ -475,12 +475,14 @@ describe('Phase 2: ModelCard badge rendering', () => {
 describe('Phase 2: ModelGalleryModal tier sorting by popularity', () => {
   const mockOnClose = vi.fn();
   const mockOnSelect = vi.fn();
+  const mockOnUpgrade = vi.fn();
   const defaultProps = {
     isOpen: true,
     onClose: mockOnClose,
     currentTier: 'face-restore' as QualityTier,
     isFreeUser: false,
     onSelect: mockOnSelect,
+    onUpgrade: mockOnUpgrade,
   };
 
   beforeEach(() => {
