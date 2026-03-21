@@ -63,11 +63,28 @@ vi.mock('@client/utils/cn', () => ({
   cn: (...args: (string | boolean | undefined | null)[]) => args.filter(Boolean).join(' '),
 }));
 
+vi.mock('@client/hooks/useRegionTier', () => ({
+  useRegionTier: () => ({
+    tier: 'standard',
+    country: 'US',
+    isLoading: false,
+    isRestricted: false,
+    pricingRegion: 'standard',
+    discountPercent: 0,
+  }),
+}));
+
 vi.mock('@shared/config/env', () => ({
   clientEnv: {
     APP_NAME: 'MyImageUpscaler',
     CACHE_USER_KEY_PREFIX: 'test',
   },
+  loadEnv: () => ({
+    SUPABASE_URL: 'https://test.supabase.co',
+    SUPABASE_ANON_KEY: 'test-anon-key',
+    STRIPE_PUBLISHABLE_KEY: 'test-stripe-key',
+  }),
+  serverEnv: {},
 }));
 
 // Mock translations for the sidebar namespace

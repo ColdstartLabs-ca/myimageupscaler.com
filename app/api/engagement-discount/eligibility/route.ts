@@ -113,7 +113,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<IEligibili
     return NextResponse.json(
       {
         eligible: false,
-        reason: 'not_authenticated',
       },
       { status: 500 }
     );

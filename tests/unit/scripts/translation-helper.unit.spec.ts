@@ -45,10 +45,12 @@ describe('translation-helper', () => {
       const output = runScript('get-batch de common.json 1');
       const parsed = JSON.parse(output);
 
-      // Check that keys don't have double dots around array indices
+      // Check that keys don't have invalid patterns around array indices
       for (const entry of parsed.entries || []) {
-        expect(entry.key).not.toMatch(/\.\[/); // No ".[" patterns
-        expect(entry.key).not.toMatch(/\]\./); // Followed by "]." is OK, but not before
+        // Array indices should not be preceded by a dot (e.g., "items.[0]" is wrong, should be "items[0]")
+        expect(entry.key).not.toMatch(/\.\[/);
+        // Array indices can be followed by a dot for nested properties (e.g., "items[0].title" is correct)
+        // So we don't check for \]\. - that's a valid pattern
       }
     });
   });
