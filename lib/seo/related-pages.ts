@@ -23,6 +23,8 @@ import {
 } from './data-loader';
 import type { PSEOPage } from './pseo-types';
 import { Locale } from '@/i18n/config';
+import { isCategoryEnglishOnly } from './localization-config';
+import type { PSEOCategory } from './url-utils';
 
 /**
  * Related page link structure
@@ -51,9 +53,10 @@ export const getRelatedPages = cache(
   ): Promise<IRelatedPage[]> => {
     const relatedPages: IRelatedPage[] = [];
 
-    // Build URL with locale prefix
+    // Build URL with locale prefix (skip for English-only categories)
     const buildUrl = (cat: string, pageSlug: string): string => {
-      const localePrefix = locale !== 'en' ? `/${locale}` : '';
+      const isEnglishOnly = isCategoryEnglishOnly(cat as PSEOCategory);
+      const localePrefix = locale !== 'en' && !isEnglishOnly ? `/${locale}` : '';
       return `${localePrefix}/${cat}/${pageSlug}`;
     };
 
@@ -749,8 +752,10 @@ export const getRelatedPagesByCategory = cache(
     locale: Locale = 'en',
     limit: number = 6
   ): Promise<IRelatedPage[]> => {
+    // Build URL with locale prefix (skip for English-only categories)
     const buildUrl = (cat: string, pageSlug: string): string => {
-      const localePrefix = locale !== 'en' ? `/${locale}` : '';
+      const isEnglishOnly = isCategoryEnglishOnly(cat as PSEOCategory);
+      const localePrefix = locale !== 'en' && !isEnglishOnly ? `/${locale}` : '';
       return `${localePrefix}/${cat}/${pageSlug}`;
     };
 

@@ -64,13 +64,14 @@ export function PlatformPageTemplate({
       {/* Full Width Hero Area */}
       <div className="relative">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
+          {/* Platforms is an English-only category - breadcrumbs must not include locale prefix */}
           <BreadcrumbNav
             items={[
-              { label: 'Home', href: locale ? `/${locale}` : '/' },
-              { label: 'Platforms', href: locale ? `/${locale}/platforms` : '/platforms' },
+              { label: 'Home', href: '/' },
+              { label: 'Platforms', href: '/platforms' },
               {
                 label: data.platformName || data.title,
-                href: locale ? `/${locale}/platforms/${data.slug}` : `/platforms/${data.slug}`,
+                href: `/platforms/${data.slug}`,
               },
             ]}
           />
