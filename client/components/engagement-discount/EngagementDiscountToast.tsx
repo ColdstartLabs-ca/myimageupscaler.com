@@ -174,8 +174,7 @@ export const EngagementDiscountToast: React.FC<IEngagementDiscountToastProps> = 
             {offer.discountPercent}% Off Your First Purchase!
           </h3>
           <p className="text-sm text-white/80 mb-3">
-            Get {DISCOUNT_TARGET_PACK.credits} credits{' '}
-            at a special discount.
+            Get {DISCOUNT_TARGET_PACK.credits} credits at a special discount.
           </p>
 
           {/* Price comparison */}
