@@ -137,22 +137,35 @@ export function useEngagementTracker(): IUseEngagementTrackerReturn {
     eligibilityCheckInProgress.current = true;
 
     try {
-      // Get the Supabase access token for Bearer auth
-      const supabase = createClient();
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      let accessToken: string | null = null;
 
-      if (!session?.access_token) {
-        // Not authenticated - skip silently
-        setHasCheckedEligibility(true);
-        return;
+      // In Playwright test mode, bypass Supabase session (cookie-based auth doesn't
+      // work reliably in test environments). Use the test token accepted by verifyApiAuth
+      // when ENV=test.
+      if (
+        typeof window !== 'undefined' &&
+        (window as Window & { playwrightTest?: boolean }).playwrightTest === true
+      ) {
+        accessToken = 'test_auth_token_for_testing_only';
+      } else {
+        // Get the Supabase access token for Bearer auth
+        const supabase = createClient();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!session?.access_token) {
+          // Not authenticated - skip silently
+          setHasCheckedEligibility(true);
+          return;
+        }
+        accessToken = session.access_token;
       }
 
       const response = await fetch('/api/engagement-discount/eligibility', {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
