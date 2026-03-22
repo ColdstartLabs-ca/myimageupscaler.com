@@ -9,6 +9,7 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IFormatPage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { getSafeLocale } from '@/lib/seo/locale-utils';
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
@@ -36,6 +37,9 @@ export function FormatPageTemplate({
   // Look up tier from keyword mappings
   const pageMapping = getPageMappingByUrl(`/formats/${data.slug}`);
   const tier = pageMapping?.tier;
+
+  // Get safe locale for URL generation
+  const safeLocale = getSafeLocale(locale);
 
   // Get locale-aware labels for before/after slider
   const getBeforeAfterLabels = (locale?: string) => {
@@ -80,11 +84,11 @@ export function FormatPageTemplate({
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
-              { label: 'Home', href: locale ? `/${locale}` : '/' },
-              { label: 'Formats', href: locale ? `/${locale}/formats` : '/formats' },
+              { label: 'Home', href: safeLocale ? `/${safeLocale}` : '/' },
+              { label: 'Formats', href: safeLocale ? `/${safeLocale}/formats` : '/formats' },
               {
                 label: data.formatName || data.title,
-                href: locale ? `/${locale}/formats/${data.slug}` : `/formats/${data.slug}`,
+                href: safeLocale ? `/${safeLocale}/formats/${data.slug}` : `/formats/${data.slug}`,
               },
             ]}
           />

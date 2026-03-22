@@ -7,6 +7,7 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IAlternativePage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import { getSafeLocale } from '@/lib/seo/locale-utils';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -47,6 +48,9 @@ export function AlternativePageTemplate({
   const pageMapping = getPageMappingByUrl(`/alternatives/${data.slug}`);
   const tier = pageMapping?.tier;
 
+  // Get safe locale for URL generation
+  const safeLocale = getSafeLocale(locale);
+
   return (
     <div className="min-h-screen bg-main relative overflow-x-hidden">
       <PSEOPageTracker
@@ -62,15 +66,15 @@ export function AlternativePageTemplate({
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
-              { label: 'Home', href: locale ? `/${locale}` : '/' },
+              { label: 'Home', href: safeLocale ? `/${safeLocale}` : '/' },
               {
                 label: 'Alternatives',
-                href: locale ? `/${locale}/alternatives` : '/alternatives',
+                href: safeLocale ? `/${safeLocale}/alternatives` : '/alternatives',
               },
               {
                 label: data.competitorName || data.originalTool || data.title,
-                href: locale
-                  ? `/${locale}/alternatives/${data.slug}`
+                href: safeLocale
+                  ? `/${safeLocale}/alternatives/${data.slug}`
                   : `/alternatives/${data.slug}`,
               },
             ]}

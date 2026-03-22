@@ -8,6 +8,7 @@ export enum ReplicateErrorCode {
   RATE_LIMITED = 'RATE_LIMITED',
   SAFETY = 'SAFETY',
   TIMEOUT = 'TIMEOUT',
+  IMAGE_TOO_LARGE = 'IMAGE_TOO_LARGE', // GPU OOM - image exceeds hardware limits
   PROCESSING_FAILED = 'PROCESSING_FAILED',
   NO_OUTPUT = 'NO_OUTPUT',
   GENERIC = 'REPLICATE_ERROR',
@@ -74,6 +75,24 @@ export class ReplicateErrorMapper {
       message.includes('Unexpected array output')
     ) {
       return new ReplicateError('No output returned from Replicate.', ReplicateErrorCode.NO_OUTPUT);
+    }
+
+    // Check for GPU memory errors (image too large for model's hardware)
+    // Safety net if client-side resize fails or server dimension check is bypassed
+    // Note: normalise to lower-case for case-insensitive matching; avoid overly-broad
+    // patterns (e.g. "CUDA error") that match non-OOM hardware faults.
+    const lowerMessage = message.toLowerCase();
+    if (
+      lowerMessage.includes('gpu memory') ||
+      lowerMessage.includes('greater than the max size') ||
+      lowerMessage.includes('out of memory') ||
+      lowerMessage.includes('oom') ||
+      lowerMessage.includes('cuda out of memory')
+    ) {
+      return new ReplicateError(
+        'Image is too large for processing. Please try a smaller image or lower resolution.',
+        ReplicateErrorCode.IMAGE_TOO_LARGE
+      );
     }
 
     // Generic processing failure

@@ -54,7 +54,7 @@ const interactiveToolsData = interactiveToolsDataFile as unknown as IPSEODataFil
  * Slugs that have dedicated sub-routes (e.g., /tools/resize/image-resizer).
  * These should NOT appear in /tools/[slug] static params.
  */
-const DEDICATED_ROUTE_SLUGS = new Set([
+export const DEDICATED_ROUTE_SLUGS = new Set([
   'image-resizer',
   'bulk-image-resizer',
   'resize-image-for-instagram',
@@ -697,13 +697,30 @@ export const getToolDataWithLocale = cache(
       };
     }
 
-    // Load locale-specific data file
+    // Load locale-specific tools data
     const localizedData = await loadLocalizedPSEOData<IToolPage>('tools', locale, toolsData);
     const data = localizedData.pages.find(page => page.slug === slug) || null;
 
+    // If found in static tools, return it
+    if (data) {
+      return {
+        data,
+        hasTranslation: true,
+        isLocalizedCategory: isLocalized,
+      };
+    }
+
+    // If not found in tools, check interactive-tools
+    const localizedInteractiveData = await loadLocalizedPSEOData<IToolPage>(
+      'interactive-tools',
+      locale,
+      interactiveToolsData
+    );
+    const interactiveData = localizedInteractiveData.pages.find(page => page.slug === slug) || null;
+
     return {
-      data,
-      hasTranslation: data !== null,
+      data: interactiveData,
+      hasTranslation: interactiveData !== null,
       isLocalizedCategory: isLocalized,
     };
   }
