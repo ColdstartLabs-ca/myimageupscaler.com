@@ -95,22 +95,24 @@ export async function offerDiscount(userId: string): Promise<IDiscountOffer | nu
     now.getTime() + ENGAGEMENT_DISCOUNT_CONFIG.offerValidityMinutes * 60 * 1000
   );
 
-  const { error } = await supabaseAdmin
+  const { data: updatedRows, error } = await supabaseAdmin
     .from('profiles')
     .update({
       engagement_discount_offered_at: now.toISOString(),
       engagement_discount_expires_at: expiresAt.toISOString(),
     })
     .eq('id', userId)
-    .is('engagement_discount_offered_at', null); // Only update if not already set
+    .is('engagement_discount_offered_at', null) // Only update if not already set (compare-and-swap)
+    .select('id');
 
   if (error) {
-    // Check if it's a race condition (already offered)
-    if (error.code === 'PGRST116' || error.message?.includes('no rows')) {
-      console.log('[EngagementDiscount] Discount already offered to user:', userId);
-      return null;
-    }
     console.error('[EngagementDiscount] Error offering discount:', error);
+    return null;
+  }
+
+  // No rows updated = race condition (another request already set offered_at)
+  if (!updatedRows || updatedRows.length === 0) {
+    console.log('[EngagementDiscount] Discount already offered to user (race condition):', userId);
     return null;
   }
 
