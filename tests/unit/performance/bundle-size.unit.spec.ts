@@ -52,22 +52,89 @@ function readChunkSizes(): { name: string; bytes: number }[] | null {
  * These chunks are only downloaded when the user triggers the feature (e.g. HeicConverter
  * loading heic2any), so they should not be held to the same eager-load size limit.
  * Large lazy chunks have their own separate size guard.
+ *
+ * Supports two build modes:
+ *   - Webpack: reads `react-loadable-manifest.json`
+ *   - Turbopack: scans chunk files for the Turbopack lazy-load pattern
+ *     `Promise.all([...].map(t=>e.l(t)))` where `e.l` / `s.l` is the
+ *     Turbopack chunk loader. Chunks listed only in those calls are lazy.
  */
 function getLazyChunkNames(): Set<string> {
+  // Webpack path
   const manifestPath = join(ROOT, '.next', 'react-loadable-manifest.json');
-  if (!existsSync(manifestPath)) return new Set();
+  if (existsSync(manifestPath)) {
+    const manifest: Record<string, { files: string[] }> = JSON.parse(
+      readFileSync(manifestPath, 'utf8')
+    );
+    const names = new Set<string>();
+    for (const entry of Object.values(manifest)) {
+      for (const file of entry.files ?? []) {
+        names.add(basename(file));
+      }
+    }
+    return names;
+  }
 
-  const manifest: Record<string, { files: string[] }> = JSON.parse(
-    readFileSync(manifestPath, 'utf8')
-  );
+  // Turbopack path: detect lazy chunks from the dynamic-import pattern.
+  // In Turbopack output, a lazy chunk load looks like:
+  //   Promise.all(["static/chunks/abc123.js"].map(t=>e.l(t))).then(...)
+  // Chunks listed ONLY in such patterns are lazy; eagerly-loaded chunks
+  // appear in `otherChunks:[...]` arrays at the top of entry chunks.
+  if (!existsSync(CHUNKS_DIR)) return new Set();
 
-  const names = new Set<string>();
-  for (const entry of Object.values(manifest)) {
-    for (const file of entry.files ?? []) {
-      names.add(basename(file));
+  const entries = readdirSync(CHUNKS_DIR).filter(f => f.endsWith('.js'));
+
+  // Build a set of all chunk names referenced eagerly (otherChunks arrays)
+  const eagerChunks = new Set<string>();
+  // Build a set of all chunk names referenced lazily (Promise.all + e.l())
+  const lazyReferences = new Set<string>();
+
+  // Regex to capture chunks inside Promise.all([...].map(t=>?.l(t)))
+  const lazyPattern = /Promise\.all\(\[([^\]]+)\]\.map\([^)]+\.l\(/g;
+  // Regex to capture chunks inside otherChunks:[...]
+  const eagerPattern = /otherChunks:\[([^\]]+)\]/g;
+  // Regex to extract quoted chunk paths
+  const chunkNameRe = /"static\/chunks\/([^"]+\.js)"/g;
+
+  for (const name of entries) {
+    let content: string;
+    try {
+      content = readFileSync(join(CHUNKS_DIR, name), 'utf8');
+    } catch {
+      continue;
+    }
+
+    let m: RegExpExecArray | null;
+
+    eagerPattern.lastIndex = 0;
+    while ((m = eagerPattern.exec(content)) !== null) {
+      const block = m[1];
+      chunkNameRe.lastIndex = 0;
+      let nm: RegExpExecArray | null;
+      while ((nm = chunkNameRe.exec(block)) !== null) {
+        eagerChunks.add(nm[1]);
+      }
+    }
+
+    lazyPattern.lastIndex = 0;
+    while ((m = lazyPattern.exec(content)) !== null) {
+      const block = m[1];
+      chunkNameRe.lastIndex = 0;
+      let nm: RegExpExecArray | null;
+      while ((nm = chunkNameRe.exec(block)) !== null) {
+        lazyReferences.add(nm[1]);
+      }
     }
   }
-  return names;
+
+  // A chunk is lazy if it appears in lazy references but NOT in eager otherChunks
+  const lazyChunks = new Set<string>();
+  for (const ref of lazyReferences) {
+    if (!eagerChunks.has(ref)) {
+      lazyChunks.add(basename(ref));
+    }
+  }
+  return lazyChunks;
 }
 
 describe('Homepage JS payload — Phase 2 bundle size regression', () => {

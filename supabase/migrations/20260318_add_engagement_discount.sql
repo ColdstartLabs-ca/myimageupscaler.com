@@ -20,11 +20,13 @@ COMMENT ON COLUMN profiles.engagement_discount_offered_at IS
 COMMENT ON COLUMN profiles.engagement_discount_expires_at IS
   'When the engagement discount expires (30 minutes after offered_at). null if never offered or already redeemed.';
 
--- Create an index for quick lookup of users with active discounts
-CREATE INDEX IF NOT EXISTS idx_profiles_engagement_discount_active
+-- Create an index for quick lookup of users who have been offered the discount
+-- Note: We index on offered_at IS NOT NULL only (no NOW() - non-immutable functions
+-- are not allowed in partial index predicates in PostgreSQL).
+-- The expires_at check happens at query time in the application layer.
+CREATE INDEX IF NOT EXISTS idx_profiles_engagement_discount_offered
 ON profiles (id)
-WHERE engagement_discount_offered_at IS NOT NULL
-  AND engagement_discount_expires_at > NOW();
+WHERE engagement_discount_offered_at IS NOT NULL;
 
 -- Grant access to authenticated users (they can read their own profile via RLS)
 GRANT SELECT (engagement_discount_offered_at, engagement_discount_expires_at)
