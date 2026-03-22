@@ -24,8 +24,9 @@ interface IPlatformPageTemplateProps {
   data: IPlatformPage;
   locale?: string;
   relatedPages?: IRelatedPage[];
+  /** Safe locale - prevents /undefined/ in breadcrumb paths */
+  safeLocale?: string;
 }
-
 export function PlatformPageTemplate({
   data,
   locale,

@@ -594,11 +594,43 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     pathWithoutLocale = '/' + segments.slice(1).join('/');
   }
 
+  // Handle /undefined/ prefix (bug: locale resolved to "undefined" string)
+  // This happens when locale detection fails and returns the string "undefined"
+  if (pathWithoutLocale.startsWith('/undefined/') || pathname.startsWith('/undefined/')) {
+    const url = req.nextUrl.clone();
+    // Strip /undefined/ and redirect to English path
+    url.pathname = pathname.replace(/^\/undefined/, '');
+    return NextResponse.redirect(url, 301);
+  }
+
   // Define redirects without locale prefix
   // Note: No trailing slashes to avoid redirect chains (/{locale}/path/ -> /{locale}/path)
   const redirectMap: Record<string, string> = {
+    // Existing bulk tools
     '/tools/bulk-image-resizer': '/tools/resize/bulk-image-resizer',
     '/tools/bulk-image-compressor': '/tools/compress/bulk-image-compressor',
+
+    // NEW: Dedicated-route tools accessed at wrong path
+    '/tools/png-to-jpg': '/tools/convert/png-to-jpg',
+    '/tools/jpg-to-png': '/tools/convert/jpg-to-png',
+    '/tools/webp-to-jpg': '/tools/convert/webp-to-jpg',
+    '/tools/webp-to-png': '/tools/convert/webp-to-png',
+    '/tools/jpg-to-webp': '/tools/convert/jpg-to-webp',
+    '/tools/png-to-webp': '/tools/convert/png-to-webp',
+    '/tools/image-compressor': '/tools/compress/image-compressor',
+    '/tools/image-resizer': '/tools/resize/image-resizer',
+
+    // NEW: Misrouted category URLs (from GSC 404 list)
+    '/tools/free-ai-upscaler': '/free/free-ai-upscaler',
+
+    // NEW: /article/ → correct category
+    '/article/upscale-arw-images': '/camera-raw/upscale-arw-images',
+    '/article/photography-business-enhancement':
+      '/industry-insights/photography-business-enhancement',
+    '/article/family-photo-preservation': '/photo-restoration/family-photo-preservation',
+
+    // NEW: Wrong category slug
+    '/industry-insights/real-estate-photo-enhancement': '/use-cases/real-estate-photo-enhancement',
   };
 
   // Check if path (without locale) matches a redirect
