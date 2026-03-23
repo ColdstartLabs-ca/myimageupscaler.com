@@ -14,7 +14,7 @@ test.describe('English-Only Category Internal Links', () => {
   test.describe('Platforms category (English-only)', () => {
     test('should have breadcrumb links without locale prefix', async ({ page }) => {
       await page.goto('/platforms/midjourney-upscaler');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Find breadcrumb links - use more flexible selector
       const breadcrumbNav = page.locator('nav[aria-label="Breadcrumb"]');
@@ -70,7 +70,7 @@ test.describe('English-Only Category Internal Links', () => {
 
   test.describe('Compare category (English-only)', () => {
     test('should have breadcrumb links without locale prefix', async ({ page }) => {
-      await page.goto('/compare/vs-topaz');
+      await page.goto('/compare/myimageupscaler-vs-topaz');
       await page.waitForLoadState('networkidle');
 
       // Find breadcrumb links
@@ -141,7 +141,7 @@ test.describe('English-Only Category Internal Links', () => {
     });
 
     test('compare page should load correctly', async ({ page }) => {
-      await page.goto('/compare/vs-topaz');
+      await page.goto('/compare/myimageupscaler-vs-topaz');
       await page.waitForLoadState('domcontentloaded');
 
       // Verify page loaded successfully (no 404)

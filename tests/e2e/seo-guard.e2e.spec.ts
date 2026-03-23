@@ -457,12 +457,14 @@ test.describe('SEO Guard - Deploy Blocker', () => {
 
       // Canonical should point to Spanish version
       const canonicalLink = page.locator('link[rel="canonical"]').first();
+      await canonicalLink.waitFor({ state: 'attached', timeout: 10000 });
       expect(await canonicalLink.getAttribute('href')).toBe(
         `${PRODUCTION_BASE_URL}/es/tools/ai-image-upscaler`
       );
 
       // OG:locale should be es_ES
       const ogLocale = page.locator('meta[property="og:locale"]').first();
+      await ogLocale.waitFor({ state: 'attached', timeout: 10000 });
       expect(await ogLocale.getAttribute('content')).toBe('es_ES');
 
       // Should have all hreflang links including Spanish
