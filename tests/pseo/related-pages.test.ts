@@ -377,8 +377,9 @@ describe('Related Pages Module', () => {
     });
 
     it('should handle locale parameter correctly', async () => {
-      const pagesEn = await getRelatedPages('platforms', 'midjourney-upscaler', 'en');
-      const pagesEs = await getRelatedPages('platforms', 'midjourney-upscaler', 'es');
+      // Use format-scale which is a localized category (platforms is English-only)
+      const pagesEn = await getRelatedPages('format-scale', 'png-upscale-2x', 'en');
+      const pagesEs = await getRelatedPages('format-scale', 'png-upscale-2x', 'es');
 
       expect(pagesEn).toBeDefined();
       expect(pagesEs).toBeDefined();
@@ -389,7 +390,7 @@ describe('Related Pages Module', () => {
       }
       if (pagesEs.length > 0) {
         expect(pagesEs[0].locale).toBe('es');
-        // Check URL includes locale prefix
+        // Check URL includes locale prefix (format-scale is a localized category)
         expect(pagesEs[0].url).toContain('/es/');
       }
     });
@@ -452,10 +453,11 @@ describe('Related Pages Module', () => {
     });
 
     it('should include locale in URL for non-English locales', async () => {
-      const pages = await getRelatedPagesByCategory('platforms', undefined, 'es', 2);
+      // Use format-scale which is a localized category (platforms is English-only)
+      const pages = await getRelatedPagesByCategory('format-scale', undefined, 'es', 2);
 
       if (pages.length > 0) {
-        expect(pages[0].url).toContain('/es/platforms/');
+        expect(pages[0].url).toContain('/es/format-scale/');
         expect(pages[0].locale).toBe('es');
       }
     });

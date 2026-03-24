@@ -117,6 +117,10 @@ export class PricingPage extends BasePage {
     // Wait for the page title to be visible (it should be visible immediately)
     await expect(this.pageTitle).toBeVisible({ timeout: 10000 });
 
+    // The page defaults to the Credits tab — click Subscribe to show the pricing grid
+    const subscribeTabButton = this.page.getByRole('button', { name: /subscribe/i }).first();
+    await subscribeTabButton.click();
+
     // Wait for skeleton cards to disappear first (the loading state)
     // Skeleton cards are shown while fetching subscription data
     const skeletonCards = this.pricingGrid.locator('[data-testid="pricing-card-skeleton"], .animate-pulse').first();

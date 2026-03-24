@@ -236,7 +236,21 @@ export const AuthenticationModal: React.FC = () => {
                   {t('paywall.viewPlans')}
                 </Link>
               </div>
+              <LoginForm
+                onSubmit={handleLoginSubmit(onLoginSubmit)}
+                register={loginRegister}
+                errors={loginErrors}
+              />
               <SocialLoginButton />
+              <div className="flex flex-col gap-2 mt-6 border-t border-border/50 pt-5">
+                <button
+                  type="button"
+                  onClick={() => setAuthModalView('register')}
+                  className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
+                >
+                  {t('modal.dontHaveAccount')}
+                </button>
+              </div>
             </>
           );
         }
