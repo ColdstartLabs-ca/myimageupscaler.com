@@ -112,8 +112,8 @@ describe('POST /api/upscale/guest - Country Paywall', () => {
   });
 
   it('should allow restricted country (not paywalled)', async () => {
-    // PH is restricted but not paywalled
-    const req = makeGuestRequest({ country: 'PH' });
+    // IN is restricted but not paywalled
+    const req = makeGuestRequest({ country: 'IN' });
     const res = await POST(req);
 
     // Should not be 403 (restricted users can still use guest upscaler)

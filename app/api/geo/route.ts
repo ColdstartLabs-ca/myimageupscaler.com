@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const country =
     req.headers.get('CF-IPCountry') ||
     req.headers.get('cf-ipcountry') ||
-    (serverEnv.ENV === 'test' ? req.headers.get('x-test-country') : null);
+    (serverEnv.ENV !== 'production' ? req.headers.get('x-test-country') : null);
 
   if (!country) {
     return NextResponse.json({

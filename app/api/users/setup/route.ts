@@ -43,7 +43,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const rawCountry =
     req.headers.get('CF-IPCountry') ||
     req.headers.get('cf-ipcountry') ||
-    (serverEnv.ENV === 'test' ? req.headers.get('x-test-country') : null);
+    (serverEnv.ENV !== 'production' ? req.headers.get('x-test-country') : null);
 
   const country = rawCountry || null;
   const tier = country ? getRegionTier(country) : 'standard';

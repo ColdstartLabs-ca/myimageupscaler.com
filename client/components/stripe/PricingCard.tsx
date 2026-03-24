@@ -230,6 +230,13 @@ export function PricingCard({
         </div>
       )}
 
+      {/* Regional discount badge */}
+      {discountPercent > 0 && (
+        <div className="absolute top-2 right-2 bg-error text-white text-[10px] font-bold px-1.5 py-0.5 rounded z-10 leading-tight">
+          {discountPercent}% OFF
+        </div>
+      )}
+
       <div className="p-4 flex flex-col h-full">
         {/* Plan name + description */}
         <div className="mb-3">
@@ -243,6 +250,12 @@ export function PricingCard({
 
         {/* Price */}
         <div className="text-center mb-3">
+          {discountPercent > 0 && (
+            <p className="text-[11px] text-text-muted line-through mb-0.5">
+              {currency === 'USD' ? '$' : currency}
+              {price}
+            </p>
+          )}
           <div className="flex items-baseline justify-center gap-0.5">
             <span className="text-sm font-medium text-text-primary">
               {currency === 'USD' ? '$' : currency}

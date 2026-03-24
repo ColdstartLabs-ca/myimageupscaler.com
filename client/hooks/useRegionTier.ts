@@ -26,18 +26,26 @@ export function useRegionTier(): {
   pricingRegion: string;
   discountPercent: number;
 } {
-  const [tier, setTier] = useState<RegionTier | null>(cachedGeo?.tier ?? null);
-  const [country, setCountry] = useState<string | null>(cachedGeo?.country ?? null);
-  const [pricingRegion, setPricingRegion] = useState<string>(
-    cachedGeo?.pricingRegion ?? 'standard'
-  );
-  const [discountPercent, setDiscountPercent] = useState<number>(cachedGeo?.discountPercent ?? 0);
-  const [isLoading, setIsLoading] = useState(cachedGeo === null);
+  // Always start with null/defaults to match server render and avoid hydration mismatch.
+  // The cache is applied in the useEffect below.
+  const [tier, setTier] = useState<RegionTier | null>(null);
+  const [country, setCountry] = useState<string | null>(null);
+  const [pricingRegion, setPricingRegion] = useState<string>('standard');
+  const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
   // Ref to ensure we only identify once per hook instance
   const hasIdentifiedRef = useRef(false);
 
   useEffect(() => {
-    if (cachedGeo !== null) return;
+    // Apply cached geo data immediately on mount (avoids refetch)
+    if (cachedGeo !== null) {
+      setTier(cachedGeo.tier);
+      setCountry(cachedGeo.country);
+      setPricingRegion(cachedGeo.pricingRegion);
+      setDiscountPercent(cachedGeo.discountPercent);
+      setIsLoading(false);
+      return;
+    }
     fetch('/api/geo')
       .then(r => r.json())
       .then(

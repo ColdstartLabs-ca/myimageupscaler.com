@@ -149,8 +149,8 @@ describe('POST /api/users/setup', () => {
     expect(body.alreadySetup).toBeUndefined();
   });
 
-  it('should set region_tier to restricted for PH', async () => {
-    const req = makeRequest({ userId: 'user-456', country: 'PH' });
+  it('should set region_tier to restricted for IN', async () => {
+    const req = makeRequest({ userId: 'user-456', country: 'IN' });
     const res = await POST(req);
     const body = await res.json();
 
@@ -158,7 +158,7 @@ describe('POST /api/users/setup', () => {
     expect(body.success).toBe(true);
   });
 
-  it('should set credits to 3 for restricted new free user (PH)', async () => {
+  it('should set credits to 3 for restricted new free user (IN)', async () => {
     const fromMock = supabaseAdmin.from as ReturnType<typeof vi.fn>;
     let capturedPayload: Record<string, unknown> | null = null;
 
@@ -181,7 +181,7 @@ describe('POST /api/users/setup', () => {
       return {};
     });
 
-    const req = makeRequest({ userId: 'user-456', country: 'PH' });
+    const req = makeRequest({ userId: 'user-456', country: 'IN' });
     await POST(req);
 
     expect(capturedPayload).not.toBeNull();
@@ -189,7 +189,7 @@ describe('POST /api/users/setup', () => {
     expect(capturedPayload?.subscription_credits_balance).toBe(3);
   });
 
-  it('should NOT reduce credits for grandfathered existing user (PH)', async () => {
+  it('should NOT reduce credits for grandfathered existing user (IN)', async () => {
     const fromMock = supabaseAdmin.from as ReturnType<typeof vi.fn>;
     let capturedPayload: Record<string, unknown> | null = null;
 
@@ -212,7 +212,7 @@ describe('POST /api/users/setup', () => {
       return {};
     });
 
-    const req = makeRequest({ userId: 'old-user-789', country: 'PH' });
+    const req = makeRequest({ userId: 'old-user-789', country: 'IN' });
     await POST(req);
 
     expect(capturedPayload).not.toBeNull();

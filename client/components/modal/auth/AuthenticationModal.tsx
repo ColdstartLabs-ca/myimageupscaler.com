@@ -177,10 +177,22 @@ export const AuthenticationModal: React.FC = () => {
         );
 
       case 'register':
-        if (isGeoLoading) {
-          return <div className="animate-pulse h-32 bg-muted rounded" />;
+        if (!isGeoLoading && isPaywalled) {
+          return (
+            <>
+              <div className="mb-4 p-3 rounded-lg bg-warning/10 border border-warning/30 text-center">
+                <p className="text-sm text-warning font-medium mb-1">
+                  {t('paywall.subscriptionRequired')}
+                </p>
+                <Link href="/pricing" className="text-sm text-accent underline font-medium">
+                  {t('paywall.viewPlans')}
+                </Link>
+              </div>
+              <SocialLoginButton />
+            </>
+          );
         }
-        if (isRestricted) {
+        if (!isGeoLoading && isRestricted) {
           return (
             <>
               <p className="text-sm text-muted-foreground text-center mb-4">
@@ -192,16 +204,6 @@ export const AuthenticationModal: React.FC = () => {
         }
         return (
           <>
-            {isPaywalled && (
-              <div className="mb-4 p-3 rounded-lg bg-muted border border-border text-center">
-                <p className="text-sm text-muted-foreground mb-1">
-                  {'A subscription is required in your region.'}
-                </p>
-                <Link href="/pricing" className="text-sm text-accent underline font-medium">
-                  View plans
-                </Link>
-              </div>
-            )}
             <RegisterForm
               onSubmit={handleRegisterSubmit(onRegisterSubmit)}
               register={registerRegister}
@@ -223,10 +225,22 @@ export const AuthenticationModal: React.FC = () => {
 
       case 'login':
       default:
-        if (isGeoLoading) {
-          return <div className="animate-pulse h-32 bg-muted rounded" />;
+        if (!isGeoLoading && isPaywalled) {
+          return (
+            <>
+              <div className="mb-4 p-3 rounded-lg bg-warning/10 border border-warning/30 text-center">
+                <p className="text-sm text-warning font-medium mb-1">
+                  {t('paywall.subscriptionRequired')}
+                </p>
+                <Link href="/pricing" className="text-sm text-accent underline font-medium">
+                  {t('paywall.viewPlans')}
+                </Link>
+              </div>
+              <SocialLoginButton />
+            </>
+          );
         }
-        if (isRestricted) {
+        if (!isGeoLoading && isRestricted) {
           return (
             <>
               <p className="text-sm text-muted-foreground text-center mb-4">
@@ -238,16 +252,6 @@ export const AuthenticationModal: React.FC = () => {
         }
         return (
           <>
-            {isPaywalled && (
-              <div className="mb-4 p-3 rounded-lg bg-muted border border-border text-center">
-                <p className="text-sm text-muted-foreground mb-1">
-                  {'A subscription is required in your region.'}
-                </p>
-                <Link href="/pricing" className="text-sm text-accent underline font-medium">
-                  View plans
-                </Link>
-              </div>
-            )}
             <LoginForm
               onSubmit={handleLoginSubmit(onLoginSubmit)}
               register={loginRegister}
@@ -282,7 +286,7 @@ export const AuthenticationModal: React.FC = () => {
         showLogo={true}
         onClose={close}
         isOpen={isOpen}
-        showCloseButton={false}
+        showCloseButton={true}
         modalId={MODAL_ID}
       >
         <div key={authModalView} className="animate-in fade-in duration-200">

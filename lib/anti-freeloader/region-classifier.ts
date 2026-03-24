@@ -80,8 +80,9 @@ const HIGH_PURCHASING_POWER_COUNTRIES = new Set([
  * Example: PAYWALLED_COUNTRIES.add('XX') to paywall country XX.
  */
 const PAYWALLED_COUNTRIES = new Set<string>([
-  // Add country codes here as needed, e.g.:
-  // 'BD', // Bangladesh
+  'PH', // Philippines
+  'VN', // Vietnam
+  'BD', // Bangladesh
 ]);
 
 /** Exported for test assertions only */

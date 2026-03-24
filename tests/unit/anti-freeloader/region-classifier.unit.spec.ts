@@ -18,8 +18,8 @@ describe('getRegionTier', () => {
     expect(getRegionTier('JP')).toBe('standard');
   });
 
-  it('should return restricted for PH', () => {
-    expect(getRegionTier('PH')).toBe('restricted');
+  it('should return paywalled for PH', () => {
+    expect(getRegionTier('PH')).toBe('paywalled');
   });
 
   it('should return restricted for IN', () => {
