@@ -1,5 +1,4 @@
-'use client';
-
+import { Suspense } from 'react';
 import Workspace from '@client/components/features/workspace/Workspace';
 
 /**
@@ -7,5 +6,9 @@ import Workspace from '@client/components/features/workspace/Workspace';
  * This is the primary interface for upscaling images with various quality tiers.
  */
 export default function WorkspacePage() {
-  return <Workspace />;
+  return (
+    <Suspense>
+      <Workspace />
+    </Suspense>
+  );
 }
