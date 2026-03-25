@@ -12,6 +12,7 @@ import {
   getGalleryLimit,
   type GalleryTier,
 } from '@shared/config/gallery.config';
+import { GALLERY_FETCH_CONFIG } from '@shared/config/gallery.config';
 import type {
   IGalleryImage,
   IGalleryListResponse,
@@ -97,13 +98,78 @@ export async function saveImage(
     );
   }
 
-  // 2. Fetch the image from the CDN URL
-  const response = await fetch(imageUrl);
+  // 2. Validate URL domain (SSRF protection)
+  const url = new URL(imageUrl);
+  const hostname = url.hostname.toLowerCase();
+  const isAllowedDomain = GALLERY_FETCH_CONFIG.allowedDomains.some(
+    allowed => hostname === allowed || hostname.endsWith(`.${allowed}`)
+  );
+  if (!isAllowedDomain) {
+    throw new Error(`Image URL must be from an allowed domain. Received: ${hostname}`);
+  }
+
+  // 3. Fetch the image from the CDN URL with timeout and size limits
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), GALLERY_FETCH_CONFIG.fetchTimeoutMs);
+
+  let response: Response;
+  try {
+    response = await fetch(imageUrl, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'MyImageUpscaler-Gallery/1.0',
+      },
+    });
+  } catch (fetchError) {
+    clearTimeout(timeoutId);
+    if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+      throw new Error('Image fetch timed out');
+    }
+    throw new Error(
+      `Failed to fetch image: ${fetchError instanceof Error ? fetchError.message : 'Unknown error'}`
+    );
+  } finally {
+    clearTimeout(timeoutId);
+  }
+
   if (!response.ok) {
     throw new Error(`Failed to fetch image from URL: ${response.status}`);
   }
 
+  // 4. Check content-length before downloading (DoS protection)
+  const contentLength = response.headers.get('content-length');
+  if (contentLength) {
+    const size = parseInt(contentLength, 10);
+    if (size > GALLERY_STORAGE_CONFIG.maxFileSizeBytes) {
+      throw new Error(
+        `Image size (${(size / 1024 / 1024).toFixed(2)}MB) exceeds maximum allowed (${(GALLERY_STORAGE_CONFIG.maxFileSizeBytes / 1024 / 1024).toFixed(0)}MB)`
+      );
+    }
+  }
+
+  // 5. Validate content-type (MIME check)
+  const contentType = response.headers.get('content-type');
+  if (contentType) {
+    const mime = contentType.split(';')[0].trim().toLowerCase();
+    if (
+      !GALLERY_STORAGE_CONFIG.allowedMimeTypes.includes(
+        mime as (typeof GALLERY_STORAGE_CONFIG.allowedMimeTypes)[number]
+      )
+    ) {
+      throw new Error(
+        `Invalid image type: ${mime}. Allowed types: ${GALLERY_STORAGE_CONFIG.allowedMimeTypes.join(', ')}`
+      );
+    }
+  }
+
   const imageBuffer = Buffer.from(await response.arrayBuffer());
+
+  // 6. Double-check actual buffer size (in case content-length was missing/wrong)
+  if (imageBuffer.length > GALLERY_STORAGE_CONFIG.maxFileSizeBytes) {
+    throw new Error(
+      `Image size (${(imageBuffer.length / 1024 / 1024).toFixed(2)}MB) exceeds maximum allowed (${(GALLERY_STORAGE_CONFIG.maxFileSizeBytes / 1024 / 1024).toFixed(0)}MB)`
+    );
+  }
 
   // 3. Compress the image
   const compressedBuffer = await compressForGallery(imageBuffer);
@@ -194,17 +260,24 @@ export async function compressForGallery(buffer: Buffer): Promise<Buffer> {
 }
 
 /**
+ * Sort order type for listing images
+ */
+export type GallerySortOrder = 'created_at_desc' | 'created_at_asc';
+
+/**
  * List images from a user's gallery with pagination
  *
  * @param userId - The user's ID
  * @param page - Page number (1-indexed)
  * @param limit - Number of items per page
+ * @param sortOrder - Sort order (created_at_desc or created_at_asc)
  * @returns Paginated list of images with signed URLs
  */
 export async function listImages(
   userId: string,
   page: number = 1,
-  limit: number = GALLERY_QUERY_CONFIG.defaultPageSize
+  limit: number = GALLERY_QUERY_CONFIG.defaultPageSize,
+  sortOrder: GallerySortOrder = GALLERY_QUERY_CONFIG.defaultSortOrder as GallerySortOrder
 ): Promise<IGalleryListResponse> {
   // Clamp page and limit to valid ranges
   const validPage = Math.max(1, page);
@@ -212,12 +285,15 @@ export async function listImages(
 
   const offset = (validPage - 1) * validLimit;
 
+  // Determine sort direction
+  const ascending = sortOrder === 'created_at_asc';
+
   // Query with count
   const { data, error, count } = await supabaseAdmin
     .from('saved_images')
     .select('*', { count: 'exact' })
     .eq('user_id', userId)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending })
     .range(offset, offset + validLimit - 1);
 
   if (error) {

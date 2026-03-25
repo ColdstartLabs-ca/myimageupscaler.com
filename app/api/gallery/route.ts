@@ -79,7 +79,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     // 3. Fetch images and usage stats
     const [imagesResponse, usage] = await Promise.all([
-      listImages(userId, validatedQuery.page, validatedQuery.pageSize),
+      listImages(userId, validatedQuery.page, validatedQuery.pageSize, validatedQuery.sortOrder),
       getUsage(userId),
     ]);
 

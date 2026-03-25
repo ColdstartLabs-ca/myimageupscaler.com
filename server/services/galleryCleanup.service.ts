@@ -88,13 +88,14 @@ export async function findInactiveFreeUsers(): Promise<IInactiveUsersResult> {
   cutoffDate.setDate(cutoffDate.getDate() - INACTIVITY_DAYS);
 
   // Query for free users with saved images whose profiles haven't been updated in 30 days
-  // We use a join-like approach: find profiles that are free/inactive and have saved_images
+  // Logic: tier is (null or free) AND status is (null or NOT active/trialing)
+  // Using nested AND in the second OR clause to properly exclude active/trialing users
   const { data: inactiveUsers, error } = await supabaseAdmin
     .from('profiles')
     .select('id')
     .or('subscription_tier.is.null,subscription_tier.eq.free')
     .or(
-      `subscription_status.is.null,subscription_status.neq.active,subscription_status.neq.trialing`
+      'subscription_status.is.null,and(subscription_status.neq.active,subscription_status.neq.trialing)'
     )
     .lt('updated_at', cutoffDate.toISOString());
 
@@ -290,12 +291,14 @@ export async function getCleanupStats(): Promise<{
     cutoffDate.setDate(cutoffDate.getDate() - INACTIVITY_DAYS);
 
     // Get count of inactive free users with images
+    // Use nested AND/OR to properly exclude active/trialing users:
+    // (tier is null/free) AND (status is null OR (status != active AND status != trialing))
     const { data: inactiveUsers, error } = await supabaseAdmin
       .from('profiles')
       .select('id, updated_at')
       .or('subscription_tier.is.null,subscription_tier.eq.free')
       .or(
-        `subscription_status.is.null,subscription_status.neq.active,subscription_status.neq.trialing`
+        'subscription_status.is.null,and(subscription_status.neq.active,subscription_status.neq.trialing)'
       )
       .lt('updated_at', cutoffDate.toISOString());
 
