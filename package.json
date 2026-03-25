@@ -44,6 +44,7 @@
     "test:seo-guard": "playwright test tests/e2e/seo-guard.e2e.spec.ts --project=chromium",
     "test:billing": "playwright test --project=integration --grep 'proof'",
     "test:billing:e2e": "playwright test --project=chromium tests/e2e/*-proof.e2e.spec.ts",
+    "test:smoke": "playwright test --config=playwright.smoke.config.ts",
     "stripe:listen": "bash -c 'source ./scripts/load-env.sh && PORT=${PORT:-${NEXT_DEV_PORT:-3000}} && stripe listen --api-key $STRIPE_SECRET_KEY --forward-to localhost:$PORT/api/webhooks/stripe'",
     "stripe:setup": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts'",
     "stripe:setup:test": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts --test'",

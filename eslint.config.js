@@ -232,6 +232,7 @@ export default [
       'shared/config/env.ts', // Centralized env config
       'next.config.js', // Next.js config (runs at build time)
       'playwright.config.ts', // Test config
+      'playwright.smoke.config.ts', // Smoke test config
     ],
     rules: {
       'no-restricted-syntax': 'off',
@@ -284,6 +285,7 @@ export default [
       '**/*.test.ts',
       '**/vitest.config.ts',
       '**/playwright.config.ts',
+      '**/playwright.*.config.ts',
     ],
     languageOptions: {
       globals: {
