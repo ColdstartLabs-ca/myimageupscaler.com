@@ -261,9 +261,9 @@ export function useGallery(): IUseGalleryReturn {
           throw new Error(data.message || data.error || 'Failed to save image');
         }
 
-        // Update usage stats from response
-        if (data.usage) {
-          setUsage(data.usage);
+        // Update usage stats from response (API returns { success, data: { image, usage } })
+        if (data.data?.usage) {
+          setUsage(data.data.usage);
         }
 
         // Store saved image ID for UI state
@@ -274,15 +274,15 @@ export function useGallery(): IUseGalleryReturn {
         // Track successful save
         analytics.track('gallery_image_saved', {
           imageId: data.data?.image?.id,
-          currentCount: data.usage?.current_count ?? 0,
-          maxAllowed: data.usage?.max_allowed ?? 0,
+          currentCount: data.data?.usage?.current_count ?? 0,
+          maxAllowed: data.data?.usage?.max_allowed ?? 0,
           modelUsed: input.modelUsed,
           processingMode: input.processingMode,
         });
 
         // Show success toast with usage count
-        const currentCount = data.usage?.current_count ?? 0;
-        const maxAllowed = data.usage?.max_allowed ?? 0;
+        const currentCount = data.data?.usage?.current_count ?? 0;
+        const maxAllowed = data.data?.usage?.max_allowed ?? 0;
         showToast({
           message: `Image saved to gallery (${currentCount}/${maxAllowed})`,
           type: 'success',
