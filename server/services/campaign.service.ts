@@ -29,6 +29,7 @@ import {
   getCampaignAnalyticsService,
   type CampaignAnalyticsService,
 } from './analytics/campaign-analytics.service';
+import { SUBSCRIPTION_CONFIG } from '@shared/config/subscription.config';
 
 /**
  * Error class for campaign-related errors
@@ -123,6 +124,14 @@ export class CampaignService {
 
     if (!campaign.enabled) {
       throw new CampaignError(`Campaign is disabled: ${campaign.name}`, 'CAMPAIGN_DISABLED');
+    }
+
+    // Skip trial_user campaigns when trials are globally disabled — no trialing users will exist
+    if (campaign.segment === 'trial_user') {
+      const trialsEnabled = SUBSCRIPTION_CONFIG.plans.some(p => p.trial?.enabled);
+      if (!trialsEnabled) {
+        return { queued: 0, skipped: 0, userIds: [] };
+      }
     }
 
     // Get users for the segment, scoped to this specific campaign to allow drip sequencing
