@@ -246,6 +246,14 @@ export class CampaignService {
           userId: email.userId,
         });
 
+        // Store messageId in queue metadata for webhook attribution
+        if (sendResult.messageId) {
+          await this.updateQueueMetadata(email.queueId, {
+            ...email.metadata,
+            messageId: sendResult.messageId,
+          });
+        }
+
         // Mark as sent
         await this.markEmailSent(email.queueId, true);
 
@@ -335,6 +343,23 @@ export class CampaignService {
 
     if (error) {
       console.error('Failed to mark email sent:', { queueId, error: error.message });
+    }
+  }
+
+  /**
+   * Update queue entry metadata
+   */
+  private async updateQueueMetadata(
+    queueId: string,
+    metadata: Record<string, unknown>
+  ): Promise<void> {
+    const { error } = await supabaseAdmin
+      .from('email_campaign_queue')
+      .update({ metadata })
+      .eq('id', queueId);
+
+    if (error) {
+      console.error('Failed to update queue metadata:', { queueId, error: error.message });
     }
   }
 
