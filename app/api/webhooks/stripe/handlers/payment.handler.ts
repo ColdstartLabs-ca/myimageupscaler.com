@@ -333,6 +333,24 @@ export class PaymentHandler {
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );
 
+      // purchase_confirmed is the canonical "purchase happened" event for funnel analysis.
+      // Fired server-side so it captures 100% of payments regardless of whether the user
+      // reaches the success page (tab close, redirect race, etc.).
+      await trackServerEvent(
+        'purchase_confirmed',
+        {
+          purchaseType,
+          sessionId: session.id,
+          pricingRegion,
+          discountPercent,
+          planTier: planKey,
+          pack: packKey,
+          amount: amountCents,
+          currency: session.currency ?? 'usd',
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+
       // Update user properties in Amplitude for subscription purchases
       // Note: subscription.handler.ts handles the primary $identify for subscriptions,
       // but we also add one here to capture the checkout completion moment

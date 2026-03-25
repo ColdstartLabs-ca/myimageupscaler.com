@@ -41,14 +41,15 @@ function SuccessContent(): JSX.Element {
       setOriginatingModel(model);
     }
 
-    // Track client-side purchase confirmation for funnel analysis
-    // This complements server-side checkout_completed (webhook) for attribution
-    analytics.track('purchase_confirmed', {
+    // Track that the user actually reached the success page.
+    // purchase_confirmed is now fired server-side (Stripe webhook) to capture 100% of payments.
+    // success_page_viewed complements it by tracking the subset who land here — useful for
+    // measuring redirect reliability and surfacing originating model attribution.
+    analytics.track('success_page_viewed', {
       purchaseType: isCredits ? 'credit_pack' : 'subscription',
       sessionId,
       originatingModel: model || undefined,
       entryPage: analytics.getEntryPage() || undefined,
-      // No revenue amount here - server-side is the source of truth for revenue
     });
   }, [isCredits, sessionId]);
 

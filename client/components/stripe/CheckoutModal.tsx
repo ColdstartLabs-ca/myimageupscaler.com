@@ -8,6 +8,7 @@ import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-j
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { analytics } from '@client/analytics';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 import { STRIPE_PRICES } from '@shared/config/stripe';
 import type { TCheckoutExitMethod, TCheckoutStep } from '@server/analytics/types';
 import {
@@ -91,6 +92,7 @@ function detectDeviceType(): 'mobile' | 'desktop' | 'tablet' {
  */
 export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalProps): JSX.Element {
   const t = useTranslations('stripe.checkout');
+  const { pricingRegion } = useRegionTier();
 
   // Track when modal was opened to calculate time spent
   const modalOpenedAtRef = useRef(Date.now());
@@ -273,6 +275,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
           step,
           timeSpentMs,
           plan: determinePlanFromPriceId(priceId),
+          pricingRegion,
         });
 
         // Track exit intent and mark as tracked so cleanup doesn't double-fire

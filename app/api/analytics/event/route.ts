@@ -53,7 +53,7 @@ const ALLOWED_EVENTS = [
   'checkout_started',
   'checkout_completed',
   'checkout_abandoned',
-  'purchase_confirmed', // Client-side confirmation when user sees success page
+  'success_page_viewed', // Client-side: user reached the success page (purchase_confirmed is server-side only)
 
   // Error/limit events (server-side only)
   'rate_limit_exceeded',

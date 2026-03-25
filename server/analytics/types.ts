@@ -162,6 +162,24 @@ export interface ICheckoutCompletedProperties {
   pricingRegion: string;
 }
 
+export interface IPurchaseConfirmedProperties {
+  purchaseType: 'subscription' | 'credit_pack';
+  sessionId: string;
+  pricingRegion: string;
+  discountPercent?: number;
+  planTier?: string;
+  pack?: string;
+  amount?: number;
+  currency?: string;
+}
+
+export interface ISuccessPageViewedProperties {
+  purchaseType: 'subscription' | 'credit_pack';
+  sessionId: string | null;
+  originatingModel?: string;
+  entryPage?: string;
+}
+
 // =============================================================================
 // Revenue Leak Detection Events (PRD: analytics-tracking-enhancement - Phase 1)
 // =============================================================================
@@ -481,7 +499,8 @@ export type IAnalyticsEventName =
   | 'checkout_started'
   | 'checkout_completed'
   | 'checkout_abandoned'
-  | 'purchase_confirmed' // Client-side confirmation when user sees success page
+  | 'purchase_confirmed' // Server-side confirmation fired from Stripe webhook
+  | 'success_page_viewed' // Client-side: user actually reached the success page
   // Error/limit events (server-side only)
   | 'rate_limit_exceeded'
   | 'processing_failed'
