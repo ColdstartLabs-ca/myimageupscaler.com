@@ -244,22 +244,20 @@ describe('abTest', () => {
     });
 
     it('should work with two-variant experiments', async () => {
-      localStorage.setItem(STORAGE_KEY, 'test_user_two_variants');
-
-      const { getVariant, isVariant } = await import('@/client/utils/abTest');
+      const { isVariant } = await import('@/client/utils/abTest');
 
       const variants = ['control', 'treatment'];
 
-      // Get the actual assigned variant
-      const assignedVariant = getVariant('binary-experiment', variants);
+      // isVariant is mutually exclusive: exactly one variant is true, the other false
+      // (without relying on localStorage persistence between calls in jsdom)
+      const isControl = isVariant('binary-experiment', variants, 'control');
+      const isTreatment = isVariant('binary-experiment', variants, 'treatment');
 
-      // Verify it's one of the valid variants
-      expect(variants).toContain(assignedVariant);
+      // Exactly one must be true
+      expect(isControl || isTreatment).toBe(true);
+      expect(isControl && isTreatment).toBe(false);
 
-      // Now check isVariant with the actual assigned variant
-      expect(isVariant('binary-experiment', variants, assignedVariant)).toBe(true);
-
-      // And check that it correctly returns false for non-existent variants
+      // Non-existent variant always false
       expect(isVariant('binary-experiment', variants, 'non_existent')).toBe(false);
     });
   });

@@ -256,12 +256,14 @@ describe('FirstDownloadCelebration', () => {
     expect(handleUploadAnother).toHaveBeenCalled();
   });
 
-  it('should navigate to billing when See Plans clicked', () => {
-    render(<FirstDownloadCelebration isFreeUser={true} />);
+  it('should call onUpgrade when See Plans clicked', () => {
+    const handleUpgrade = vi.fn();
+    render(<FirstDownloadCelebration isFreeUser={true} onUpgrade={handleUpgrade} />);
 
     fireEvent.click(screen.getByText('See Premium Plans'));
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard/billing');
+    expect(handleUpgrade).toHaveBeenCalled();
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
   it('should dismiss on X click', () => {
