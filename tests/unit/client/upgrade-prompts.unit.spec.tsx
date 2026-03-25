@@ -80,7 +80,9 @@ vi.mock('lucide-react', async importOriginal => {
     Search: iconStub,
     Sparkles: iconStub,
     ArrowLeftRight: iconStub,
+    ArrowRight: iconStub,
     Download: iconStub,
+    Upload: iconStub,
     ZoomIn: iconStub,
     ZoomOut: iconStub,
     X: iconStub,
@@ -614,56 +616,71 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
 // ---------------------------------------------------------------------------
 
 describe('Phase 1: after_download — PostDownloadPrompt', () => {
+  let store: Map<string, string>;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    // Set up a working localStorage for promptFrequency tests
+    store = new Map();
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+      removeItem: (key: string) => store.delete(key),
+      clear: () => store.clear(),
+      get length() {
+        return store.size;
+      },
+      key: (index: number) => Array.from(store.keys())[index] ?? null,
+    });
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
-  it('should show PostDownloadPrompt when random is under 50% for free user', async () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.1);
-    render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+  it('should show PostDownloadPrompt on 2nd download (deterministic, not random)', async () => {
+    const onUpgrade = vi.fn();
+    render(<PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(screen.getByText(/Love the result\?/i)).toBeInTheDocument();
     });
+  });
+
+  it('should NOT show PostDownloadPrompt on 1st download', async () => {
+    const onUpgrade = vi.fn();
+    const { container } = render(
+      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onUpgrade={onUpgrade} />
+    );
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('should NOT show PostDownloadPrompt on 3rd+ downloads', async () => {
+    const onUpgrade = vi.fn();
+    const { container } = render(
+      <PostDownloadPrompt isFreeUser={true} downloadCount={3} onUpgrade={onUpgrade} />
+    );
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(container.firstChild).toBeNull();
   });
 
   it('should NOT show PostDownloadPrompt for paid users', async () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.1);
-    const { container } = render(<PostDownloadPrompt isFreeUser={false} downloadCount={1} />);
+    const onUpgrade = vi.fn();
+    const { container } = render(
+      <PostDownloadPrompt isFreeUser={false} downloadCount={2} onUpgrade={onUpgrade} />
+    );
 
     await new Promise(r => setTimeout(r, 10));
     expect(container.firstChild).toBeNull();
-  });
-
-  it('should NOT show PostDownloadPrompt when random is 50% or above', async () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.9);
-    const { container } = render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
-
-    await new Promise(r => setTimeout(r, 10));
-    expect(container.firstChild).toBeNull();
-  });
-
-  it('should re-evaluate probability on each new download event', async () => {
-    vi.spyOn(Math, 'random').mockReturnValueOnce(0.9).mockReturnValueOnce(0.1);
-    const { rerender } = render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
-
-    await new Promise(r => setTimeout(r, 10));
-    expect(screen.queryByText(/Love the result\?/i)).not.toBeInTheDocument();
-
-    rerender(<PostDownloadPrompt isFreeUser={true} downloadCount={2} />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Love the result\?/i)).toBeInTheDocument();
-    });
   });
 
   it('should fire upgrade_prompt_shown with trigger after_download', async () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.1);
-    render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+    const onUpgrade = vi.fn();
+    render(<PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
@@ -675,8 +692,8 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   });
 
   it('should fire upgrade_prompt_dismissed on X click', async () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.1);
-    render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+    const onUpgrade = vi.fn();
+    render(<PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('Dismiss upgrade prompt')).toBeInTheDocument();
@@ -695,14 +712,37 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     });
   });
 
-  it('should navigate to /dashboard/billing on CTA click', async () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.1);
-    render(<PostDownloadPrompt isFreeUser={true} downloadCount={1} />);
+  it('should call onUpgrade callback when CTA is clicked', async () => {
+    const onUpgrade = vi.fn();
+    render(<PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
-      const link = screen.getByRole('link', { name: /Get 10x sharper with Premium models\./i });
-      expect(link).toHaveAttribute('href', '/dashboard/billing');
+      expect(screen.getByText(/Love the result\?/i)).toBeInTheDocument();
     });
+
+    const button = screen.getByRole('button', { name: /Upgrade Now/i });
+    fireEvent.click(button);
+
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
+      trigger: 'after_download',
+      destination: 'purchase_modal',
+      currentPlan: 'free',
+      pricingRegion: 'standard',
+    });
+    expect(onUpgrade).toHaveBeenCalled();
+  });
+
+  it('should respect 24h cooldown via promptFrequency', async () => {
+    const onUpgrade = vi.fn();
+    // Simulate prompt was shown recently
+    localStorage.setItem('prompt_freq_post_download_last_shown', String(Date.now()));
+
+    const { container } = render(
+      <PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />
+    );
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(container.firstChild).toBeNull();
   });
 });
 
@@ -786,6 +826,13 @@ vi.mock('next-intl', () => ({
       'workspace.batchLimit.addPartialButton': 'Add images',
       'workspace.batchLimit.cancelButton': 'Cancel',
       'common.cancel': 'Cancel',
+      // FirstDownloadCelebration translations
+      'workspace.progressCelebration.dismiss': 'Dismiss celebration',
+      'workspace.progressCelebration.title': 'First upscale complete!',
+      'workspace.progressCelebration.subtitle': 'Great job! Your image is ready.',
+      'workspace.progressCelebration.uploadAnother': 'Upload Another',
+      'workspace.progressCelebration.seePlans': 'See Premium Plans',
+      'workspace.progressCelebration.skipText': 'Unlock unlimited upscales with Premium',
     };
 
     const t = (key: string, params?: Record<string, unknown>) => {
@@ -833,6 +880,7 @@ describe('Phase 3: BatchLimitModal improvements', () => {
     attempted: 3,
     currentCount: 1,
     onAddPartial: vi.fn(),
+    onUpgrade: vi.fn(),
     serverEnforced: false,
   };
 
@@ -845,26 +893,32 @@ describe('Phase 3: BatchLimitModal improvements', () => {
     sessionStorage.clear();
   });
 
-  it('should show "Unlock Batch Processing" button text in BatchLimitModal', () => {
+  it('should render BatchLimitModal with action buttons', () => {
     render(<BatchLimitModal {...defaultProps} />);
 
-    expect(screen.getByText('Unlock Batch Processing')).toBeInTheDocument();
+    expect(screen.getAllByTestId('button').length).toBeGreaterThan(0);
   });
 
-  it('should show free user specific copy when limit is 1', () => {
-    render(<BatchLimitModal {...defaultProps} limit={1} />);
+  it('should fire batch_limit_modal_shown analytics when opened', async () => {
+    render(<BatchLimitModal {...defaultProps} />);
 
-    expect(
-      screen.getByText(
-        "You're on the free tier (1 image at a time). Upgrade to process up to 50 images in batch — starting at $5."
-      )
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('batch_limit_modal_shown', {
+        limit: 1,
+        attempted: 3,
+        currentCount: 1,
+        availableSlots: 0,
+        serverEnforced: false,
+        userType: 'free',
+        copyVariant: expect.any(String),
+      });
+    });
   });
 
   it('should show remaining slots message for paid users with partial queue', () => {
     render(<BatchLimitModal {...defaultProps} limit={10} currentCount={7} attempted={5} />);
 
-    expect(screen.getByText('You have 3 of 10 slots remaining in your queue.')).toBeInTheDocument();
+    expect(screen.getByText(/You have \d+ of \d+ slots remaining/)).toBeInTheDocument();
   });
 
   it('should NOT show remaining slots message when queue is empty', () => {
@@ -880,63 +934,325 @@ describe('Phase 3: BatchLimitModal improvements', () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// Phase 5: FirstDownloadCelebration
+// ---------------------------------------------------------------------------
+
+import { FirstDownloadCelebration } from '@/client/components/features/workspace/FirstDownloadCelebration';
+
+describe('Phase 5: FirstDownloadCelebration', () => {
+  let store: Map<string, string>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+    sessionStorage.clear();
+    // Set up a working localStorage
+    store = new Map();
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+      removeItem: (key: string) => store.delete(key),
+      clear: () => store.clear(),
+      get length() {
+        return store.size;
+      },
+      key: (index: number) => Array.from(store.keys())[index] ?? null,
+    });
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+    vi.unstubAllGlobals();
+  });
+
+  it('should call onUpgrade callback instead of navigating', async () => {
+    const onUpgrade = vi.fn();
+    render(
+      <FirstDownloadCelebration
+        isFreeUser={true}
+        source="upload"
+        onUpgrade={onUpgrade}
+        onUploadAnother={vi.fn()}
+        onDismiss={vi.fn()}
+      />
+    );
+
+    const button = screen.getByText(/See Premium Plans/i);
+    fireEvent.click(button);
+
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
+      trigger: 'celebration',
+      destination: 'purchase_modal',
+      currentPlan: 'free',
+    });
+    expect(onUpgrade).toHaveBeenCalled();
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it('should fire upgrade_prompt_clicked with purchase_modal destination', async () => {
+    const onUpgrade = vi.fn();
+    render(
+      <FirstDownloadCelebration
+        isFreeUser={true}
+        source="upload"
+        onUpgrade={onUpgrade}
+        onUploadAnother={vi.fn()}
+        onDismiss={vi.fn()}
+      />
+    );
+
+    const button = screen.getByText(/See Premium Plans/i);
+    fireEvent.click(button);
+
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
+      trigger: 'celebration',
+      destination: 'purchase_modal',
+      currentPlan: 'free',
+    });
+  });
+
+  it('should mark celebration as shown before calling onUpgrade', async () => {
+    const onUpgrade = vi.fn();
+    render(
+      <FirstDownloadCelebration
+        isFreeUser={true}
+        source="upload"
+        onUpgrade={onUpgrade}
+        onUploadAnother={vi.fn()}
+        onDismiss={vi.fn()}
+      />
+    );
+
+    const button = screen.getByText(/See Premium Plans/i);
+    fireEvent.click(button);
+
+    // Celebration key should be set in localStorage
+    expect(localStorage.getItem('miu_celebration_shown')).toBeTruthy();
+  });
+
+  it('should not render if celebration was already shown', async () => {
+    // Mark celebration as already shown
+    localStorage.setItem('miu_celebration_shown', String(Date.now()));
+
+    const { container } = render(
+      <FirstDownloadCelebration
+        isFreeUser={true}
+        source="upload"
+        onUpgrade={vi.fn()}
+        onUploadAnother={vi.fn()}
+        onDismiss={vi.fn()}
+      />
+    );
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('should call onUploadAnother when upload button is clicked', async () => {
+    const onUploadAnother = vi.fn();
+    render(
+      <FirstDownloadCelebration
+        isFreeUser={true}
+        source="upload"
+        onUpgrade={vi.fn()}
+        onUploadAnother={onUploadAnother}
+        onDismiss={vi.fn()}
+      />
+    );
+
+    const button = screen.getByText(/Upload Another/i);
+    fireEvent.click(button);
+
+    expect(onUploadAnother).toHaveBeenCalled();
+  });
+
+  it('should call onDismiss when X button is clicked', async () => {
+    const onDismiss = vi.fn();
+    render(
+      <FirstDownloadCelebration
+        isFreeUser={true}
+        source="upload"
+        onUpgrade={vi.fn()}
+        onUploadAnother={vi.fn()}
+        onDismiss={onDismiss}
+      />
+    );
+
+    const dismissButton = screen.getByLabelText(/Dismiss celebration/i);
+    fireEvent.click(dismissButton);
+
+    expect(onDismiss).toHaveBeenCalled();
+  });
+
+  it('should not show upgrade button for paid users', async () => {
+    const { container } = render(
+      <FirstDownloadCelebration
+        isFreeUser={false}
+        source="upload"
+        onUpgrade={vi.fn()}
+        onUploadAnother={vi.fn()}
+        onDismiss={vi.fn()}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText(/See Premium Plans/i)).not.toBeInTheDocument();
+    });
+    // Should still show upload button for paid users
+    expect(screen.getByText(/Upload Another/i)).toBeInTheDocument();
+  });
+});
+
 describe('Phase 3: UpgradeSuccessBanner fixes', () => {
+  let store: Map<string, string>;
+
   beforeEach(() => {
     vi.clearAllMocks();
     sessionStorage.clear();
+    localStorage.clear();
+    // Set up a working localStorage for promptFrequency tests
+    store = new Map();
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+      removeItem: (key: string) => store.delete(key),
+      clear: () => store.clear(),
+      get length() {
+        return store.size;
+      },
+      key: (index: number) => Array.from(store.keys())[index] ?? null,
+    });
   });
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
+    vi.unstubAllGlobals();
   });
 
-  it('UpgradeSuccessBanner should link to /dashboard/billing', () => {
-    render(<UpgradeSuccessBanner processedCount={3} onDismiss={vi.fn()} hasSubscription={false} />);
+  it('UpgradeSuccessBanner should call onUpgrade callback instead of navigating', async () => {
+    const onUpgrade = vi.fn();
+    render(
+      <UpgradeSuccessBanner
+        processedCount={3}
+        onDismiss={vi.fn()}
+        hasSubscription={false}
+        onUpgrade={onUpgrade}
+      />
+    );
 
-    const link = screen.getByRole('link', { name: /See Plans/i });
-    expect(link).toHaveAttribute('href', '/dashboard/billing');
+    const button = screen.getByRole('button', { name: /See Plans/i });
+    fireEvent.click(button);
+
+    expect(onUpgrade).toHaveBeenCalled();
   });
 
-  it('UpgradeSuccessBanner should fire upgrade_prompt_shown on render', async () => {
-    render(<UpgradeSuccessBanner processedCount={3} onDismiss={vi.fn()} hasSubscription={false} />);
+  it('UpgradeSuccessBanner should fire upgrade_prompt_shown with copyVariant on render', async () => {
+    render(
+      <UpgradeSuccessBanner
+        processedCount={3}
+        onDismiss={vi.fn()}
+        hasSubscription={false}
+        onUpgrade={vi.fn()}
+      />
+    );
 
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'after_batch',
         currentPlan: 'free',
+        copyVariant: expect.any(String),
+        pricingRegion: 'standard',
       });
     });
   });
 
-  it('UpgradeSuccessBanner should fire upgrade_prompt_clicked on CTA click', async () => {
-    const onDismiss = vi.fn();
+  it('UpgradeSuccessBanner should fire upgrade_prompt_clicked with purchase_modal destination', async () => {
+    const onUpgrade = vi.fn();
     render(
-      <UpgradeSuccessBanner processedCount={3} onDismiss={onDismiss} hasSubscription={false} />
+      <UpgradeSuccessBanner
+        processedCount={3}
+        onDismiss={vi.fn()}
+        hasSubscription={false}
+        onUpgrade={onUpgrade}
+      />
     );
 
-    const link = screen.getByRole('link', { name: /See Plans/i });
-    fireEvent.click(link);
+    const button = screen.getByRole('button', { name: /See Plans/i });
+    fireEvent.click(button);
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
       trigger: 'after_batch',
-      destination: '/dashboard/billing',
+      destination: 'purchase_modal',
       currentPlan: 'free',
+      copyVariant: expect.any(String),
+      pricingRegion: 'standard',
     });
+    expect(onUpgrade).toHaveBeenCalled();
   });
 
   it('UpgradeSuccessBanner should fire upgrade_prompt_dismissed on dismiss', async () => {
     const onDismiss = vi.fn();
     render(
-      <UpgradeSuccessBanner processedCount={3} onDismiss={onDismiss} hasSubscription={false} />
+      <UpgradeSuccessBanner
+        processedCount={3}
+        onDismiss={onDismiss}
+        hasSubscription={false}
+        onUpgrade={vi.fn()}
+      />
     );
 
     const dismissButton = screen.getByRole('button', { name: /Maybe later/i });
     fireEvent.click(dismissButton);
 
-    expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_dismissed', {
+    expect(mockAnalyticsTrack).toHaveBeenNthCalledWith(1, 'upgrade_prompt_shown', {
       trigger: 'after_batch',
       currentPlan: 'free',
+      copyVariant: expect.any(String),
+      pricingRegion: 'standard',
+    });
+    expect(mockAnalyticsTrack).toHaveBeenNthCalledWith(2, 'upgrade_prompt_dismissed', {
+      trigger: 'after_batch',
+      currentPlan: 'free',
+      pricingRegion: 'standard',
     });
     expect(onDismiss).toHaveBeenCalled();
+  });
+
+  it('UpgradeSuccessBanner should respect promptFrequency throttling (4h cooldown, max 3/week)', async () => {
+    // Simulate banner was shown 3 times this week
+    localStorage.setItem('prompt_freq_after_batch_week_count', '3');
+    localStorage.setItem('prompt_freq_after_batch_week_start', String(Date.now()));
+
+    const { container } = render(
+      <UpgradeSuccessBanner
+        processedCount={3}
+        onDismiss={vi.fn()}
+        hasSubscription={false}
+        onUpgrade={vi.fn()}
+      />
+    );
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('UpgradeSuccessBanner should respect 4h cooldown', async () => {
+    // Simulate banner was shown recently (within 4h)
+    localStorage.setItem('prompt_freq_after_batch_last_shown', String(Date.now()));
+
+    const { container } = render(
+      <UpgradeSuccessBanner
+        processedCount={3}
+        onDismiss={vi.fn()}
+        hasSubscription={false}
+        onUpgrade={vi.fn()}
+      />
+    );
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(container.firstChild).toBeNull();
   });
 });

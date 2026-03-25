@@ -1,20 +1,24 @@
 'use client';
 
 import { Sparkles, X } from 'lucide-react';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
+import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
+import { getVariant } from '@client/utils/abTest';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 export interface IUpgradeSuccessBannerProps {
   processedCount: number;
   onDismiss: () => void;
   hasSubscription: boolean;
+  onUpgrade: () => void;
 }
 
 export const UpgradeSuccessBanner = ({
   processedCount,
   onDismiss,
   hasSubscription,
+  onUpgrade,
 }: IUpgradeSuccessBannerProps): JSX.Element | null => {
   const [dismissed, setDismissed] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -23,18 +27,47 @@ export const UpgradeSuccessBanner = ({
     return false;
   });
 
-  useEffect(() => {
-    if (!dismissed && !hasSubscription) {
-      analytics.track('upgrade_prompt_shown', { trigger: 'after_batch', currentPlan: 'free' });
-    }
-  }, [dismissed, hasSubscription]);
+  // Check prompt frequency throttling
+  const canShow = canShowPrompt({
+    key: 'prompt_freq_after_batch',
+    cooldownMs: 4 * 60 * 60 * 1000, // 4 hours
+    maxPerWeek: 3,
+  });
 
-  if (dismissed || hasSubscription) {
+  // Get copy variant for A/B testing
+  const copyVariant = getVariant('after_batch_copy', ['value', 'outcome', 'urgency']);
+
+  // Get pricing region for analytics
+  const { pricingRegion } = useRegionTier();
+
+  useEffect(() => {
+    if (!dismissed && !hasSubscription && canShow) {
+      // Mark prompt as shown when it is displayed
+      markPromptShown({
+        key: 'prompt_freq_after_batch',
+        cooldownMs: 4 * 60 * 60 * 1000,
+        maxPerWeek: 3,
+      });
+
+      analytics.track('upgrade_prompt_shown', {
+        trigger: 'after_batch',
+        currentPlan: 'free',
+        copyVariant,
+        pricingRegion,
+      });
+    }
+  }, [dismissed, hasSubscription, canShow, copyVariant]);
+
+  if (dismissed || hasSubscription || !canShow) {
     return null;
   }
 
   const handleDismiss = () => {
-    analytics.track('upgrade_prompt_dismissed', { trigger: 'after_batch', currentPlan: 'free' });
+    analytics.track('upgrade_prompt_dismissed', {
+      trigger: 'after_batch',
+      currentPlan: 'free',
+      pricingRegion,
+    });
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('upgrade-banner-dismissed', 'true');
     }
@@ -74,19 +107,21 @@ export const UpgradeSuccessBanner = ({
             for 1,000 credits/month and save over 50% on high-quality upscales.
           </p>
           <div className="mt-1.5 sm:mt-4 flex flex-wrap items-center gap-3 sm:gap-5">
-            <Link
-              href="/dashboard/billing"
-              onClick={() =>
+            <button
+              onClick={() => {
                 analytics.track('upgrade_prompt_clicked', {
                   trigger: 'after_batch',
-                  destination: '/dashboard/billing',
+                  destination: 'purchase_modal',
                   currentPlan: 'free',
-                })
-              }
+                  copyVariant,
+                  pricingRegion,
+                });
+                onUpgrade();
+              }}
               className="gradient-cta shine-effect px-3.5 sm:px-6 py-1 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white shadow-lg active:scale-95 transition-transform"
             >
               See Plans
-            </Link>
+            </button>
             <button
               onClick={handleDismiss}
               className="text-[9px] sm:text-[10px] font-bold text-text-muted hover:text-white transition-colors uppercase tracking-widest"

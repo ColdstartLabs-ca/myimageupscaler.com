@@ -1,9 +1,10 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { getVariant } from '@client/utils/abTest';
 
 export interface IMobileUpgradePromptProps {
   variant: 'upload' | 'preview';
@@ -12,17 +13,54 @@ export interface IMobileUpgradePromptProps {
 }
 
 /**
+ * Calculate discounted price for display, rounding to 2 decimal places.
+ */
+function calculateDiscountedPrice(priceValue: number, discountPercent: number): number {
+  if (discountPercent <= 0 || priceValue === 0) return priceValue;
+  return Math.round(priceValue * (1 - discountPercent / 100) * 100) / 100;
+}
+
+/** Format a numeric price as a USD string (e.g., 17.15 -> "$17.15"). */
+function formatPrice(value: number): string {
+  if (value === 0) return '$0';
+  const formatted = value.toFixed(2).replace(/\.?0+$/, '');
+  return `$${formatted}`;
+}
+
+/**
  * Inline upgrade prompt for mobile empty space below dropzone (upload variant)
  * and below the image preview during processing (preview variant).
  * Non-dismissible. Mobile-only via md:hidden.
+ *
+ * Phase 4 redesign:
+ * - Upload variant: before/after face-pro thumbnails, value-framing copy, bigger CTA
+ * - Preview variant: larger button with price anchor, pulse animation on first render
+ * - A/B testing: copyVariant tracking on analytics events
  */
 export const MobileUpgradePrompt = ({
   variant,
   isFreeUser,
   onUpgrade,
 }: IMobileUpgradePromptProps): JSX.Element | null => {
-  const { pricingRegion } = useRegionTier();
+  const { pricingRegion, discountPercent } = useRegionTier();
   const trackedRef = useRef(false);
+  const [shouldPulse, setShouldPulse] = useState(true);
+
+  // Get A/B test variant for copy (control vs value-framing)
+  const copyVariant = getVariant('mobile_upload_copy', ['control', 'value']);
+
+  // Starter base price is $9.00 (from subscription.config.ts)
+  const starterPrice = 9.0;
+  const discountedPrice = calculateDiscountedPrice(starterPrice, discountPercent);
+  const displayPrice = formatPrice(discountedPrice);
+
+  // Stop pulse animation after 3 seconds for preview variant
+  useEffect(() => {
+    if (variant === 'preview' && shouldPulse) {
+      const timer = setTimeout(() => setShouldPulse(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [variant, shouldPulse]);
 
   useEffect(() => {
     if (!isFreeUser || trackedRef.current) return;
@@ -31,26 +69,47 @@ export const MobileUpgradePrompt = ({
       trigger: variant === 'upload' ? 'mobile_upload_prompt' : 'mobile_preview_prompt',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      copyVariant,
     });
-  }, [isFreeUser, variant, pricingRegion]);
+  }, [isFreeUser, variant, pricingRegion, copyVariant]);
 
-  if (!isFreeUser) return null;
-
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: variant === 'upload' ? 'mobile_upload_prompt' : 'mobile_preview_prompt',
       destination: 'upgrade_plan_modal',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      copyVariant,
     });
     onUpgrade();
-  };
+  }, [variant, pricingRegion, copyVariant, onUpgrade]);
+
+  if (!isFreeUser) return null;
 
   if (variant === 'upload') {
     return (
       <div className="md:hidden mt-4 rounded-xl border border-accent/20 bg-accent/5 p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-4 h-4 text-accent shrink-0" />
+          <div className="flex items-center gap-1.5">
+            {/* Before image */}
+            <img
+              src="/before-after/face-pro/before.webp"
+              alt="Before"
+              className="w-10 h-10 rounded-lg object-cover"
+              width={40}
+              height={40}
+            />
+            {/* Arrow */}
+            <ArrowRight className="w-4 h-4 text-accent shrink-0" />
+            {/* After image */}
+            <img
+              src="/before-after/face-pro/after.webp"
+              alt="After"
+              className="w-10 h-10 rounded-lg object-cover"
+              width={40}
+              height={40}
+            />
+          </div>
           <span className="text-sm font-semibold text-white">Get visibly better results</span>
         </div>
         <ul className="space-y-2 mb-4">
@@ -69,14 +128,15 @@ export const MobileUpgradePrompt = ({
         </ul>
         <button
           onClick={handleClick}
-          className="block w-full text-center text-xs font-semibold text-accent border border-accent/40 rounded-lg py-2 hover:bg-accent/10 transition-colors"
+          className="block w-full text-center text-sm font-semibold text-white bg-accent rounded-lg py-3 hover:bg-accent/90 transition-colors"
         >
-          View Plans
+          Get Pro Results — from {displayPrice}
         </button>
       </div>
     );
   }
 
+  // Preview variant - larger button, price anchor, pulse animation
   return (
     <div className="md:hidden mt-3 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3 flex items-center justify-between gap-3">
       <div className="min-w-0">
@@ -87,9 +147,11 @@ export const MobileUpgradePrompt = ({
       </div>
       <button
         onClick={handleClick}
-        className="shrink-0 text-xs font-semibold text-accent border border-accent/40 rounded-lg px-3 py-1.5 hover:bg-accent/10 transition-colors"
+        className={`shrink-0 text-xs font-semibold text-white bg-accent rounded-lg px-5 py-3 hover:bg-accent/90 transition-colors ${
+          shouldPulse ? 'animate-pulse' : ''
+        }`}
       >
-        Upgrade
+        Go Pro — {displayPrice}
       </button>
     </div>
   );

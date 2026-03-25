@@ -1,11 +1,17 @@
 'use client';
 
 import React from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { Modal } from '@client/components/ui/Modal';
 import { Button } from '@client/components/ui/Button';
 import { analytics } from '@client/analytics/analyticsClient';
+import { getVariant } from '@client/utils/abTest';
+import { clientEnv } from '@shared/config/env';
+
+type TCopyVariant = 'value' | 'outcome' | 'urgency';
 
 export interface IBatchLimitModalProps {
   isOpen: boolean;
@@ -30,7 +36,15 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
 }) => {
   const t = useTranslations('workspace.batchLimit');
   const tCommon = useTranslations('common');
+  const router = useRouter();
   const availableSlots = Math.max(0, limit - currentCount);
+
+  // A/B test: assign copy variant
+  const copyVariant: TCopyVariant = getVariant('batch_limit_copy', [
+    'value',
+    'outcome',
+    'urgency',
+  ]) as TCopyVariant;
 
   // Track modal view when opened
   React.useEffect(() => {
@@ -42,18 +56,35 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
         availableSlots,
         serverEnforced,
         userType: limit <= 5 ? 'free' : 'paid',
+        copyVariant,
       });
     }
-  }, [isOpen, limit, attempted, currentCount, availableSlots, serverEnforced]);
+  }, [isOpen, limit, attempted, currentCount, availableSlots, serverEnforced, copyVariant]);
 
-  const handleUpgradeClick = () => {
-    analytics.track('batch_limit_upgrade_clicked', {
+  const handleQuickBuyClick = () => {
+    analytics.track('batch_limit_quick_buy_clicked', {
       limit,
       attempted,
       currentCount,
       serverEnforced,
       userType: limit <= 5 ? 'free' : 'paid',
-      source: 'batch_limit_modal',
+      copyVariant,
+      quickBuy: true,
+    });
+    onClose();
+    // Navigate directly to checkout with price ID
+    router.push(`/checkout?priceId=${clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL}`);
+  };
+
+  const handleSeePlansClick = () => {
+    analytics.track('batch_limit_see_plans_clicked', {
+      limit,
+      attempted,
+      currentCount,
+      serverEnforced,
+      userType: limit <= 5 ? 'free' : 'paid',
+      copyVariant,
+      quickBuy: false,
     });
     onClose();
     onUpgrade();
@@ -67,6 +98,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       availableSlots,
       serverEnforced,
       userType: limit <= 5 ? 'free' : 'paid',
+      copyVariant,
     });
     onAddPartial();
   };
@@ -79,51 +111,78 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       availableSlots,
       serverEnforced,
       userType: limit <= 5 ? 'free' : 'paid',
+      copyVariant,
     });
     onClose();
   };
 
   if (!isOpen) return null;
 
+  // Get copy based on variant
+  const getCopyForVariant = () => {
+    switch (copyVariant) {
+      case 'value':
+        return {
+          title: t('title_value'),
+          body: t('body_value'),
+        };
+      case 'outcome':
+        return {
+          title: t('title_outcome'),
+          body: t('body_outcome'),
+        };
+      case 'urgency':
+        return {
+          title: t('title_urgency'),
+          body: t('body_urgency'),
+        };
+    }
+  };
+
+  const copy = getCopyForVariant();
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="md" data-testid="batch-limit-modal">
-      {/* Alert Icon and Header */}
-      <div className="flex flex-col items-center text-center mb-6">
-        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 mb-4">
-          <AlertTriangle className="w-6 h-6 text-amber-600" />
+    <Modal isOpen={isOpen} onClose={handleClose} size="md" data-testid="batch-limit-modal">
+      {/* Before/After Image Comparison */}
+      <div className="flex justify-center gap-4 mb-6">
+        <div className="relative w-32 h-32 rounded-lg overflow-hidden shadow-sm">
+          <Image
+            src="/before-after/face-pro/before.webp"
+            alt="Before: Standard quality upscaling"
+            fill
+            className="object-cover"
+            sizes="128px"
+            loading="lazy"
+          />
+          <span className="absolute bottom-1 right-1 bg-black/60 text-white text-xs px-2 py-0.5 rounded">
+            Before
+          </span>
         </div>
-
-        <h2 className="text-xl font-bold text-primary mb-2">
-          {serverEnforced ? t('serverEnforcedTitle') : t('clientEnforcedTitle')}
-        </h2>
-
-        {serverEnforced ? (
-          <p className="text-muted-foreground">
-            {t.rich('serverEnforcedMessage', {
-              currentCount: chunks => <span className="font-semibold">{chunks}</span>,
-              limit: chunks => <span className="font-semibold">{chunks}</span>,
-              currentCountValue: currentCount,
-              limitValue: limit,
-            })}
-          </p>
-        ) : (
-          <p className="text-muted-foreground">
-            {t('clientEnforcedMessage', {
-              attempted,
-              plural: attempted,
-              limit,
-              limitPlural: limit,
-            })}
-          </p>
-        )}
+        <div className="relative w-32 h-32 rounded-lg overflow-hidden shadow-sm">
+          <Image
+            src="/before-after/face-pro/after.webp"
+            alt="After: Pro AI quality upscaling"
+            fill
+            className="object-cover"
+            sizes="128px"
+            loading="lazy"
+          />
+          <span className="absolute bottom-1 right-1 bg-accent/80 text-white text-xs px-2 py-0.5 rounded">
+            After
+          </span>
+        </div>
       </div>
 
-      {/* Free User Special Message */}
-      {limit === 1 && (
-        <div className="bg-surface rounded-lg p-4 mb-6 border border-border">
-          <p className="text-sm text-muted-foreground">{t('freeUserMessage')}</p>
+      {/* Value-Framed Header with Sparkles Icon */}
+      <div className="flex flex-col items-center text-center mb-6">
+        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-accent/20 to-secondary/20 mb-4">
+          <Sparkles className="w-6 h-6 text-accent" />
         </div>
-      )}
+
+        <h2 className="text-xl font-bold text-primary mb-2">{copy.title}</h2>
+
+        <p className="text-muted-foreground">{copy.body}</p>
+      </div>
 
       {/* Remaining Slots Context (for paid users with partial queue) */}
       {limit > 1 && availableSlots > 0 && availableSlots < limit && (
@@ -136,19 +195,23 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
 
       {/* Server-enforced messaging */}
       {serverEnforced && (
-        <div className="bg-amber-50 rounded-lg p-4 mb-6 border border-amber-200">
-          <p className="text-sm text-amber-800">{t('securityMessage')}</p>
+        <div className="bg-surface rounded-lg p-4 mb-6 border border-border">
+          <p className="text-sm text-muted-foreground">{t('securityMessage')}</p>
         </div>
       )}
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <Button variant="primary" className="w-full" onClick={handleUpgradeClick}>
-          {t('upgradeButtonBatch')}
+        <Button variant="gradient" className="w-full" onClick={handleQuickBuyClick}>
+          {t('quickBuyButton')}
+        </Button>
+
+        <Button variant="outline" className="w-full" onClick={handleSeePlansClick}>
+          {t('seePlansButton')}
         </Button>
 
         {!serverEnforced && availableSlots > 0 && (
-          <Button variant="outline" className="w-full" onClick={handleAddPartial}>
+          <Button variant="ghost" className="w-full" onClick={handleAddPartial}>
             {t('addPartialButton', { availableSlots, count: availableSlots })}
           </Button>
         )}

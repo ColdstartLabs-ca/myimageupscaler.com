@@ -107,6 +107,7 @@ export interface IUpgradePromptShownProperties {
   imageVariant?: string;
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   pricingRegion: string;
+  copyVariant?: string; // A/B test variant assignment (e.g., 'control', 'variant_a')
 }
 
 export interface IUpgradePromptClickedProperties {
@@ -115,6 +116,7 @@ export interface IUpgradePromptClickedProperties {
   destination: string;
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   pricingRegion: string;
+  copyVariant?: string; // A/B test variant assignment (e.g., 'control', 'variant_a')
 }
 
 export interface IUpgradePromptDismissedProperties {
@@ -122,6 +124,7 @@ export interface IUpgradePromptDismissedProperties {
   imageVariant?: string;
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   pricingRegion: string;
+  copyVariant?: string; // A/B test variant assignment (e.g., 'control', 'variant_a')
 }
 
 export interface ICheckoutOpenedProperties {
@@ -521,6 +524,8 @@ export type IAnalyticsEventName =
   // Batch limit events
   | 'batch_limit_modal_shown'
   | 'batch_limit_upgrade_clicked'
+  | 'batch_limit_quick_buy_clicked'
+  | 'batch_limit_see_plans_clicked'
   | 'batch_limit_partial_add_clicked'
   | 'batch_limit_modal_closed'
   // Model selection events

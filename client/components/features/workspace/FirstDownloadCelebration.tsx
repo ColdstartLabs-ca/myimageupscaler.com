@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { cn } from '@client/utils/cn';
 import { analytics } from '@client/analytics';
 import { useTranslations } from 'next-intl';
@@ -17,6 +16,8 @@ export interface IFirstDownloadCelebrationProps {
   onUploadAnother?: () => void;
   /** Callback when celebration is dismissed */
   onDismiss?: () => void;
+  /** Callback when user clicks "See Plans" - opens purchase modal inline */
+  onUpgrade?: () => void;
   /** Source of the download - sample or user upload */
   source?: 'sample' | 'upload';
 }
@@ -47,10 +48,10 @@ export const FirstDownloadCelebration = ({
   isFreeUser,
   onUploadAnother,
   onDismiss,
+  onUpgrade,
   source = 'upload',
 }: IFirstDownloadCelebrationProps): JSX.Element | null => {
   const t = useTranslations('workspace.progressCelebration');
-  const router = useRouter();
   const [isVisible, setIsVisible] = useState(true);
 
   // Check if celebration was already shown
@@ -104,19 +105,19 @@ export const FirstDownloadCelebration = ({
   };
 
   const handleViewPlans = () => {
-    // Mark as shown before navigating away
+    // Mark as shown before triggering upgrade
     if (typeof window !== 'undefined') {
       localStorage.setItem(CELEBRATION_SHOWN_KEY, Date.now().toString());
     }
 
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'celebration',
-      destination: '/dashboard/billing',
+      destination: 'purchase_modal',
       currentPlan: isFreeUser ? 'free' : 'paid',
     });
 
     handleDismiss();
-    router.push('/dashboard/billing');
+    onUpgrade?.();
   };
 
   // Generate confetti pieces

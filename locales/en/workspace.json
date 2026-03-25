@@ -10,7 +10,15 @@
     "upgradeButton": "Upgrade Plan",
     "upgradeButtonBatch": "Unlock Batch Processing",
     "addPartialButton": "Add {availableSlots} {count, plural, one {image} other {images}}",
-    "cancelButton": "Cancel"
+    "cancelButton": "Cancel",
+    "quickBuyButton": "Get 50 Credits — $4.99",
+    "seePlansButton": "See All Plans",
+    "title_value": "Upscale Unlimited Images",
+    "title_outcome": "Your Images Deserve Better Quality",
+    "title_urgency": "Limited Time: 50 Credits for $4.99",
+    "body_value": "Get 50 credits for just $4.99 — batch process, pro AI models, 4K output.",
+    "body_outcome": "See the difference pro AI models make. Sharper details, cleaner edges, up to 4K resolution.",
+    "body_urgency": "Start batch processing now. Pro AI models included."
   },
   "queue": {
     "title": "Processing Queue",

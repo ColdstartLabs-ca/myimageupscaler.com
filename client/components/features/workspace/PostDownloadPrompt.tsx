@@ -1,31 +1,38 @@
 'use client';
 
 import { Sparkles, X } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { Modal } from '@client/components/ui/Modal';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-
-const POST_DOWNLOAD_SHOW_PROBABILITY = 0.5;
+import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 
 export interface IPostDownloadPromptProps {
   isFreeUser: boolean;
   downloadCount: number;
+  onUpgrade: () => void;
 }
 
 /**
  * A dismissible modal shown to free users after download clicks.
- * Evaluates a simple 50% chance on each new download event.
+ * Shows deterministically on the 2nd download (not random).
+ * Respects 24h cooldown via promptFrequency utility.
  * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'after_download'.
  */
 export const PostDownloadPrompt = ({
   isFreeUser,
   downloadCount,
+  onUpgrade,
 }: IPostDownloadPromptProps): JSX.Element | null => {
   const [visible, setVisible] = useState(false);
   const lastEvaluatedDownloadCountRef = useRef(0);
   const { pricingRegion } = useRegionTier();
+
+  // Check prompt frequency throttling (24h cooldown)
+  const canShow = canShowPrompt({
+    key: 'prompt_freq_post_download',
+    cooldownMs: 24 * 60 * 60 * 1000, // 24 hours
+  });
 
   useEffect(() => {
     if (!isFreeUser) return;
@@ -33,7 +40,15 @@ export const PostDownloadPrompt = ({
     if (downloadCount === lastEvaluatedDownloadCountRef.current) return;
     lastEvaluatedDownloadCountRef.current = downloadCount;
 
-    if (Math.random() >= POST_DOWNLOAD_SHOW_PROBABILITY) return;
+    // Changed: Show deterministically on 2nd download, not random 50%
+    if (downloadCount !== 2) return;
+    if (!canShow) return;
+
+    // Mark prompt as shown when it is displayed
+    markPromptShown({
+      key: 'prompt_freq_post_download',
+      cooldownMs: 24 * 60 * 60 * 1000,
+    });
 
     setVisible(true);
     analytics.track('upgrade_prompt_shown', {
@@ -41,7 +56,7 @@ export const PostDownloadPrompt = ({
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
-  }, [isFreeUser, downloadCount, pricingRegion]);
+  }, [isFreeUser, downloadCount, pricingRegion, canShow]);
 
   if (!visible) return null;
 
@@ -57,11 +72,12 @@ export const PostDownloadPrompt = ({
   const handleUpgradeClick = () => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_download',
-      destination: '/dashboard/billing',
+      destination: 'purchase_modal',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
     });
     setVisible(false);
+    onUpgrade();
   };
 
   return (
@@ -83,23 +99,21 @@ export const PostDownloadPrompt = ({
           <h3 className="text-lg font-semibold text-white mb-2">Want sharper, cleaner output?</h3>
           <p className="text-sm text-text-muted mb-5">
             Love the result?{' '}
-            <Link
-              href="/dashboard/billing"
-              className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
+            <button
               onClick={handleUpgradeClick}
+              className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
             >
               Get 10x sharper with Premium models.
-            </Link>
+            </button>
           </p>
 
           <div className="flex items-center gap-2">
-            <Link
-              href="/dashboard/billing"
-              className="inline-flex items-center justify-center rounded-lg bg-secondary text-black font-semibold px-4 py-2 hover:bg-secondary/90 transition-colors"
+            <button
               onClick={handleUpgradeClick}
+              className="inline-flex items-center justify-center rounded-lg bg-secondary text-black font-semibold px-4 py-2 hover:bg-secondary/90 transition-colors"
             >
               Upgrade Now
-            </Link>
+            </button>
             <button
               type="button"
               onClick={handleDismiss}

@@ -278,6 +278,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
 
+    // 4.6. Note: copyVariant is optional for A/B testing on upgrade prompt events
+    // No validation needed - it's a purely optional field for experiment tracking
+
     // 5. Check for authenticated user (optional)
     let userId: string | undefined;
     const authHeader = req.headers.get('authorization');

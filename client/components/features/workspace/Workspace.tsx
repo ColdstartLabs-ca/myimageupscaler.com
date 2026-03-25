@@ -48,6 +48,8 @@ import { SampleImageSelector } from './SampleImageSelector';
 import { ISampleImage } from '@shared/config/sample-images.config';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 import { MobileUpgradePrompt } from './MobileUpgradePrompt';
+import { PostDownloadPrompt } from './PostDownloadPrompt';
+import { FirstDownloadCelebration } from './FirstDownloadCelebration';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
 const FREE_DOWNLOAD_UPSELL_PROBABILITY = 0.5;
@@ -162,11 +164,13 @@ const Workspace: React.FC = () => {
 
   // Success banner state
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [showPremiumUpsell, setShowPremiumUpsell] = useState(false);
   const [pendingDownload, setPendingDownload] = useState<{ url: string; filename: string } | null>(
     null
   );
+  const [downloadCount, setDownloadCount] = useState(0);
   const wasProcessingRef = React.useRef(false);
 
   // Global error state for showing ErrorAlert components
@@ -264,6 +268,13 @@ const Workspace: React.FC = () => {
 
       await downloadSingle(url, filename, config.qualityTier);
       trackDownload();
+      const newCount = downloadCount + 1;
+      setDownloadCount(newCount);
+
+      // Show celebration modal on first download
+      if (newCount === 1) {
+        setShowCelebration(true);
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('workspace.downloadError.title');
@@ -466,6 +477,7 @@ const Workspace: React.FC = () => {
                 processedCount={completedCount}
                 onDismiss={() => setShowSuccessBanner(false)}
                 hasSubscription={hasSubscription}
+                onUpgrade={() => openUpgradeModal(false, 'after_batch')}
               />
             </div>
           )}
@@ -689,6 +701,25 @@ const Workspace: React.FC = () => {
         onViewPlans={handlePremiumUpsellViewPlans}
         currentModel={config.qualityTier}
       />
+
+      <PostDownloadPrompt
+        isFreeUser={isFreeUser}
+        downloadCount={downloadCount}
+        onUpgrade={() => openUpgradeModal(false, 'after_download')}
+      />
+
+      {showCelebration && (
+        <FirstDownloadCelebration
+          isFreeUser={isFreeUser}
+          source="upload"
+          onUploadAnother={() => {
+            setShowCelebration(false);
+            // Focus on dropzone
+          }}
+          onDismiss={() => setShowCelebration(false)}
+          onUpgrade={() => openUpgradeModal(false, 'celebration')}
+        />
+      )}
 
       <PurchaseModal
         isOpen={showUpgradeModal}
