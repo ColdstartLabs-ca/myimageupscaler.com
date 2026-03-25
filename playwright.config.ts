@@ -1,8 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 
-// Load test environment variables (quiet: true suppresses dotenv tips)
-dotenv.config({ path: '.env.test', quiet: true });
+// Load API secrets first (provides CRON_SECRET etc.)
+dotenv.config({ path: '.env.api', quiet: true });
+// Load test environment variables — test values take precedence over .env.api
+dotenv.config({ path: '.env.test', quiet: true, override: true });
 
 // Set test environment to use mock authentication (avoid Supabase connections)
 process.env.ENV = 'test';

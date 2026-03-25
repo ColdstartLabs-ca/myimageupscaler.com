@@ -356,8 +356,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       isSignatureValid = verifyResendSignature(rawBody, resendSignature, resendTimestamp);
       logger.debug('Resend signature verification', { valid: isSignatureValid });
     } else {
-      // In development, allow unsigned webhooks
-      if (serverEnv.ENV !== 'development') {
+      // In development and test, allow unsigned webhooks
+      if (serverEnv.ENV !== 'development' && serverEnv.ENV !== 'test') {
         const { body, status } = createErrorResponse(
           ErrorCodes.UNAUTHORIZED,
           'Missing webhook signature',
@@ -365,7 +365,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         );
         return NextResponse.json(body, { status });
       }
-      logger.warn('No webhook signature provided (development mode)');
+      logger.warn('No webhook signature provided (development/test mode)');
       isSignatureValid = true;
     }
 
