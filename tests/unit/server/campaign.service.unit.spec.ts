@@ -35,6 +35,7 @@ vi.mock('@shared/config/env', () => ({
     SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
     BASE_URL: 'https://test.myimageupscaler.com',
   },
+  clientEnv: {},
 }));
 
 // Import mocked modules to get access to mock functions
@@ -198,6 +199,39 @@ describe('CampaignService', () => {
         expect(err).toBeInstanceOf(CampaignError);
         expect((err as CampaignError).code).toBe('CAMPAIGN_NOT_FOUND');
       }
+    });
+
+    it('should return zero queued when segment is trial_user and trials are disabled', async () => {
+      const mockCampaign = {
+        id: 'campaign-trial',
+        name: 'Trial Progress',
+        segment: 'trial_user',
+        template_name: 'trial-progress',
+        send_day: 1,
+        subject: 'How is your trial going?',
+        enabled: true,
+        priority: 0,
+        created_at: '2026-03-11T00:00:00Z',
+        updated_at: '2026-03-11T00:00:00Z',
+      };
+
+      (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: mockCampaign,
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      // SUBSCRIPTION_CONFIG has all plans with trial.enabled = false (the real config)
+      const result = await service.queueCampaign({ campaignId: 'campaign-trial' });
+
+      expect(result).toEqual({ queued: 0, skipped: 0, userIds: [] });
+      // Segment RPC should never be called
+      expect(supabaseAdmin.rpc).not.toHaveBeenCalled();
     });
 
     it('should throw CampaignError when campaign is disabled', async () => {
