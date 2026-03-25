@@ -39,7 +39,7 @@ const ALLOWED_EVENTS = [
   'checkout_started',
   'checkout_completed',
   'checkout_abandoned',
-  'purchase_confirmed', // Client-side confirmation when user sees success page
+  'success_page_viewed', // Client-side: user reached the success page (purchase_confirmed is server-side only)
 
   // Error/limit events (server-side only)
   'rate_limit_exceeded',
@@ -72,6 +72,19 @@ const ALLOWED_EVENTS = [
   'pseo_scroll_depth',
   'pseo_faq_expanded',
   'pseo_internal_link_clicked',
+  // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
+  'checkout_step_viewed',
+  'checkout_step_time',
+  'checkout_error',
+  'checkout_exit_intent',
+  'checkout_exit_survey_response',
+  // Revenue leak detection events (PRD: analytics-tracking-enhancement - Phase 1)
+  'plan_selected',
+  // User lifecycle events (PRD: analytics-tracking-enhancement - Phase 2)
+  'account_created',
+  'email_captured',
+  // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
+  'comparison_viewed',
 ] as const;
 
 const eventSchema = z.object({
@@ -440,6 +453,75 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
 
       for (const event of expectedEvents) {
         expect(ALLOWED_EVENTS).toContain(event);
+      }
+    });
+  });
+
+  describe('Analytics Tracking Enhancement - PRD #18 Verification', () => {
+    /**
+     * These tests verify that all new events from the Analytics Tracking Enhancement PRD
+     * are properly registered in the client whitelist.
+     *
+     * Phase 1 (Revenue Leak Detection): plan_selected, checkout_step_viewed, checkout_step_time, checkout_error
+     * Phase 2 (User Lifecycle): account_created, email_captured
+     * Phase 3 (Feature Depth): comparison_viewed
+     */
+
+    test('should include plan_selected event for revenue leak detection', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'plan_selected',
+        properties: {
+          planName: 'pro',
+          priceId: 'price_123',
+          price: 2900,
+          billingInterval: 'monthly',
+          source: 'pricing_page',
+        },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    test('should include account_created event for user lifecycle tracking', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'account_created',
+        properties: {
+          method: 'google',
+          hasEmail: true,
+          pricingRegion: 'standard',
+        },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    test('should include email_captured event for lead tracking', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'email_captured',
+        properties: {
+          source: 'newsletter',
+          hasAccount: false,
+        },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    test('should include comparison_viewed event for feature depth tracking', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'comparison_viewed',
+        properties: {
+          upscaleFactor: 4,
+          modelUsed: 'standard',
+          interactionType: 'slider_move',
+          timeViewedMs: 2500,
+        },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    test('should include checkout funnel events', () => {
+      const checkoutEvents = ['checkout_step_viewed', 'checkout_step_time', 'checkout_error'];
+      for (const eventName of checkoutEvents) {
+        const result = eventSchema.safeParse({ eventName });
+        expect(result.success).toBe(true);
       }
     });
   });

@@ -9,22 +9,25 @@ export async function GET(req: NextRequest) {
   const country =
     req.headers.get('CF-IPCountry') ||
     req.headers.get('cf-ipcountry') ||
-    (serverEnv.ENV === 'test' ? req.headers.get('x-test-country') : null);
+    (serverEnv.ENV !== 'production' ? req.headers.get('x-test-country') : null);
 
   if (!country) {
     return NextResponse.json({
       country: null,
       tier: 'standard',
+      isPaywalled: false,
       pricingRegion: 'standard',
       discountPercent: 0,
     });
   }
 
   const pricingConfig = getPricingRegion(country);
+  const tier = getRegionTier(country);
 
   return NextResponse.json({
     country,
-    tier: getRegionTier(country),
+    tier,
+    isPaywalled: tier === 'paywalled',
     pricingRegion: pricingConfig.region,
     discountPercent: pricingConfig.discountPercent,
   });

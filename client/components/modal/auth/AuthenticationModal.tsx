@@ -10,6 +10,7 @@ import { loginSchema, registerSchema } from '@shared/validation/authValidationSc
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { Modal } from '@client/components/modal/Modal';
 import { ChangePasswordForm } from '@client/components/modal/auth/ChangePasswordForm';
 import { ForgotPasswordForm } from '@client/components/modal/auth/ForgotPasswordForm';
@@ -49,7 +50,7 @@ export const AuthenticationModal: React.FC = () => {
   const { signInWithEmail, signUpWithEmail, changePassword, resetPassword } = useUserStore();
   const { showToast } = useToastStore();
   const t = useTranslations('auth');
-  const { isRestricted, isLoading: isGeoLoading } = useRegionTier();
+  const { isRestricted, isPaywalled, isLoading: isGeoLoading } = useRegionTier();
   const fingerprintHash = useFingerprint();
 
   const {
@@ -176,10 +177,22 @@ export const AuthenticationModal: React.FC = () => {
         );
 
       case 'register':
-        if (isGeoLoading) {
-          return <div className="animate-pulse h-32 bg-muted rounded" />;
+        if (!isGeoLoading && isPaywalled) {
+          return (
+            <>
+              <div className="mb-4 p-3 rounded-lg bg-warning/10 border border-warning/30 text-center">
+                <p className="text-sm text-warning font-medium mb-1">
+                  {t('paywall.subscriptionRequired')}
+                </p>
+                <Link href="/pricing" className="text-sm text-accent underline font-medium">
+                  {t('paywall.viewPlans')}
+                </Link>
+              </div>
+              <SocialLoginButton />
+            </>
+          );
         }
-        if (isRestricted) {
+        if (!isGeoLoading && isRestricted) {
           return (
             <>
               <p className="text-sm text-muted-foreground text-center mb-4">
@@ -212,10 +225,36 @@ export const AuthenticationModal: React.FC = () => {
 
       case 'login':
       default:
-        if (isGeoLoading) {
-          return <div className="animate-pulse h-32 bg-muted rounded" />;
+        if (!isGeoLoading && isPaywalled) {
+          return (
+            <>
+              <div className="mb-4 p-3 rounded-lg bg-warning/10 border border-warning/30 text-center">
+                <p className="text-sm text-warning font-medium mb-1">
+                  {t('paywall.subscriptionRequired')}
+                </p>
+                <Link href="/pricing" className="text-sm text-accent underline font-medium">
+                  {t('paywall.viewPlans')}
+                </Link>
+              </div>
+              <LoginForm
+                onSubmit={handleLoginSubmit(onLoginSubmit)}
+                register={loginRegister}
+                errors={loginErrors}
+              />
+              <SocialLoginButton />
+              <div className="flex flex-col gap-2 mt-6 border-t border-border/50 pt-5">
+                <button
+                  type="button"
+                  onClick={() => setAuthModalView('register')}
+                  className="text-muted-foreground text-center hover:text-foreground font-medium w-full text-sm transition-colors duration-200 py-2 rounded-lg hover:bg-muted/30"
+                >
+                  {t('modal.dontHaveAccount')}
+                </button>
+              </div>
+            </>
+          );
         }
-        if (isRestricted) {
+        if (!isGeoLoading && isRestricted) {
           return (
             <>
               <p className="text-sm text-muted-foreground text-center mb-4">
@@ -261,7 +300,7 @@ export const AuthenticationModal: React.FC = () => {
         showLogo={true}
         onClose={close}
         isOpen={isOpen}
-        showCloseButton={false}
+        showCloseButton={true}
         modalId={MODAL_ID}
       >
         <div key={authModalView} className="animate-in fade-in duration-200">

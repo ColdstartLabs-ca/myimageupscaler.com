@@ -18,9 +18,12 @@ import { AmbientBackground } from '@client/components/landing/AmbientBackground'
 import { ErrorAlert } from '@client/components/stripe/ErrorAlert';
 import { TabButton } from '@client/components/ui/TabButton';
 import { analytics } from '@client/analytics';
+import { useEngagementTracker } from '@client/hooks/useEngagementTracker';
 import { useOnboardingDriver } from '@client/hooks/useOnboardingDriver';
 import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
+import { EngagementDiscountToast } from '@client/components/engagement-discount';
+import { clientEnv } from '@shared/config/env';
 import { downloadSingle } from '@client/utils/download';
 import {
   CheckCircle2,
@@ -74,6 +77,7 @@ const Workspace: React.FC = () => {
   const { isFreeUser } = useUserData();
   const hasSubscription = !isFreeUser;
   const searchParams = useSearchParams();
+  const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
 
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
@@ -136,6 +140,25 @@ const Workspace: React.FC = () => {
       enhancement: DEFAULT_ENHANCEMENT_SETTINGS,
     },
   });
+
+  // Track model switches for engagement discount
+  const prevQualityTierRef = React.useRef(config.qualityTier);
+  useEffect(() => {
+    if (prevQualityTierRef.current !== config.qualityTier) {
+      prevQualityTierRef.current = config.qualityTier;
+      trackModelSwitch();
+    }
+  }, [config.qualityTier, trackModelSwitch]);
+
+  // Track upscale completions for engagement discount
+  const prevCompletedCountRef = React.useRef(completedCount);
+  useEffect(() => {
+    if (completedCount > prevCompletedCountRef.current) {
+      const delta = completedCount - prevCompletedCountRef.current;
+      for (let i = 0; i < delta; i++) trackUpscale();
+    }
+    prevCompletedCountRef.current = completedCount;
+  }, [completedCount, trackUpscale]);
 
   // Success banner state
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
@@ -240,6 +263,7 @@ const Workspace: React.FC = () => {
       setDownloadError(null);
 
       await downloadSingle(url, filename, config.qualityTier);
+      trackDownload();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('workspace.downloadError.title');
@@ -318,7 +342,10 @@ const Workspace: React.FC = () => {
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center relative">
           <AmbientBackground variant="section" />
           <div className="relative z-10">
-            <Dropzone onFilesSelected={addFiles} onUpgrade={() => openUpgradeModal(false, 'workspace_dropzone')} />
+            <Dropzone
+              onFilesSelected={addFiles}
+              onUpgrade={() => openUpgradeModal(false, 'workspace_dropzone')}
+            />
             <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 size={13} className="text-secondary shrink-0" />{' '}
@@ -677,6 +704,13 @@ const Workspace: React.FC = () => {
           onSuccess={() => setPostAuthCheckoutPriceId(null)}
         />
       )}
+
+      {/* Engagement discount toast — shown to eligible free users */}
+      <EngagementDiscountToast
+        onClaimDiscount={() =>
+          setPostAuthCheckoutPriceId(clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM)
+        }
+      />
 
       {/* Samples modal — triggered by help button */}
       {showSamplesModal && (

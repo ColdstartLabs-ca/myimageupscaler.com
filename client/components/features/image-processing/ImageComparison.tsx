@@ -17,6 +17,10 @@ interface IImageComparisonProps {
   /** When true, shows an upgrade nudge below the slider after the user drags it. */
   showUpgradeNudge?: boolean;
   onUpgrade?: () => void;
+  /** Scale factor applied to the image (e.g., 2, 4, 8). Used for analytics tracking. */
+  upscaleFactor?: number;
+  /** Model used for processing. Used for analytics tracking. */
+  modelUsed?: string;
 }
 
 export const ImageComparison: React.FC<IImageComparisonProps> = ({
@@ -26,6 +30,8 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   hasTransparency,
   showUpgradeNudge = false,
   onUpgrade,
+  upscaleFactor,
+  modelUsed,
 }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -36,9 +42,19 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   const previewTrackedRef = useRef(false);
   const { pricingRegion } = useRegionTier();
 
+  // Comparison viewed tracking (PRD: analytics-tracking-enhancement - Phase 3)
+  const comparisonStartTimeRef = useRef<number | null>(null);
+  const hasTrackedViewRef = useRef(false);
+
   // Auto-detect transparency from blob URL if not explicitly provided
   // Blob URLs indicate client-side processing (e.g., bg-removal) which produces transparent PNGs
   const showTransparency = hasTransparency ?? afterUrl.startsWith('blob:');
+
+  // Start the comparison timer on mount so we can measure time-to-interaction
+  // This must happen before any mousedown to make the >1s threshold meaningful
+  useEffect(() => {
+    comparisonStartTimeRef.current = Date.now();
+  }, []);
 
   // Track preview view once when component first loads with a result
   useEffect(() => {
@@ -56,6 +72,22 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   const handleMouseDown = useCallback(() => {
     setIsDragging(true);
 
+    // Track comparison_viewed after first meaningful interaction (PRD: analytics-tracking-enhancement - Phase 3)
+    // Timer is started on mount so >1s threshold correctly measures time before first interaction
+    if (!hasTrackedViewRef.current && comparisonStartTimeRef.current) {
+      const timeViewedMs = Date.now() - comparisonStartTimeRef.current;
+      if (timeViewedMs > 1000) {
+        // Only track if user waited more than 1 second before interacting
+        hasTrackedViewRef.current = true;
+        analytics.track('comparison_viewed', {
+          upscaleFactor: upscaleFactor || 2,
+          modelUsed: modelUsed || 'unknown',
+          interactionType: 'slider_move',
+          timeViewedMs,
+        });
+      }
+    }
+
     // Show upgrade nudge on first slider interaction (once per session)
     if (showUpgradeNudge && !hasInteractedRef.current && typeof window !== 'undefined') {
       hasInteractedRef.current = true;
@@ -72,7 +104,7 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
         });
       }
     }
-  }, [showUpgradeNudge]);
+  }, [showUpgradeNudge, pricingRegion, upscaleFactor, modelUsed]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);

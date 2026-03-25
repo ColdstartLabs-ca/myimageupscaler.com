@@ -72,6 +72,8 @@ export interface IImageDownloadProperties {
   outputWidth?: number; // Output image width (if available)
   outputHeight?: number; // Output image height (if available)
   modelUsed?: string; // Model/variant that generated the image
+  upscaleFactor?: number; // Scale factor applied (2x, 4x, 8x)
+  inputResolution?: string; // Original resolution before upscaling (e.g., '800x600')
 }
 
 export interface IPricingPageViewedProperties {
@@ -158,6 +160,74 @@ export interface ICheckoutCompletedProperties {
   currency?: string;
   priceId?: string;
   pricingRegion: string;
+}
+
+export interface IPurchaseConfirmedProperties {
+  purchaseType: 'subscription' | 'credit_pack';
+  sessionId: string;
+  pricingRegion: string;
+  discountPercent?: number;
+  planTier?: string;
+  pack?: string;
+  amount?: number;
+  currency?: string;
+}
+
+export interface ISuccessPageViewedProperties {
+  purchaseType: 'subscription' | 'credit_pack';
+  sessionId: string | null;
+  originatingModel?: string;
+  entryPage?: string;
+}
+
+// =============================================================================
+// Revenue Leak Detection Events (PRD: analytics-tracking-enhancement - Phase 1)
+// =============================================================================
+
+export interface IPaymentFailedProperties {
+  priceId?: string;
+  plan?: string;
+  errorType: 'card_declined' | 'insufficient_funds' | 'expired_card' | 'generic';
+  errorMessage: string; // Sanitized error message
+  attemptCount: number;
+  customerId: string;
+}
+
+export interface IPlanSelectedProperties {
+  planName: 'starter' | 'hobby' | 'pro' | 'business';
+  priceId: string;
+  price: number;
+  billingInterval: 'monthly' | 'yearly';
+  pricingRegion?: string;
+  discountPercent?: number;
+  source: 'pricing_page' | 'upgrade_modal' | 'batch_limit';
+}
+
+// =============================================================================
+// User Lifecycle Events (PRD: analytics-tracking-enhancement - Phase 2)
+// =============================================================================
+
+export interface IAccountCreatedProperties {
+  method: 'email' | 'google' | 'facebook' | 'azure';
+  hasEmail: boolean;
+  fingerprintHash?: string;
+  pricingRegion?: string;
+}
+
+export interface IEmailCapturedProperties {
+  source: 'newsletter' | 'support_form' | 'waitlist' | 'upgrade_prompt';
+  hasAccount: boolean;
+}
+
+// =============================================================================
+// Feature Depth Events (PRD: analytics-tracking-enhancement - Phase 3)
+// =============================================================================
+
+export interface IComparisonViewedProperties {
+  upscaleFactor: number;
+  modelUsed: string;
+  interactionType: 'slider_move' | 'toggle' | 'zoom';
+  timeViewedMs: number;
 }
 
 // pSEO-specific event properties
@@ -285,7 +355,10 @@ export interface IFirstUploadCompletedProperties {
 export interface IErrorOccurredProperties {
   errorType:
     | 'upload_failed'
+    | 'upload_file_too_large'
+    | 'upload_invalid_format'
     | 'upscale_failed'
+    | 'upscale_timeout'
     | 'download_failed'
     | 'validation_failed'
     | 'timeout'
@@ -426,7 +499,8 @@ export type IAnalyticsEventName =
   | 'checkout_started'
   | 'checkout_completed'
   | 'checkout_abandoned'
-  | 'purchase_confirmed' // Client-side confirmation when user sees success page
+  | 'purchase_confirmed' // Server-side confirmation fired from Stripe webhook
+  | 'success_page_viewed' // Client-side: user actually reached the success page
   // Error/limit events (server-side only)
   | 'rate_limit_exceeded'
   | 'processing_failed'
@@ -488,6 +562,21 @@ export type IAnalyticsEventName =
   | 'checkout_error'
   | 'checkout_exit_intent'
   | 'checkout_exit_survey_response'
+  // Engagement-based first-purchase discount events (PRD: engagement-based-first-purchase-discount)
+  | 'engagement_discount_eligible'
+  | 'engagement_discount_toast_shown'
+  | 'engagement_discount_toast_dismissed'
+  | 'engagement_discount_cta_clicked'
+  | 'engagement_discount_checkout_started'
+  | 'engagement_discount_redeemed'
+  // Revenue leak detection events (PRD: analytics-tracking-enhancement - Phase 1)
+  | 'payment_failed'
+  | 'plan_selected'
+  // User lifecycle events (PRD: analytics-tracking-enhancement - Phase 2)
+  | 'account_created'
+  | 'email_captured'
+  // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
+  | 'comparison_viewed'
   // Amplitude identity events (server-side only)
   | '$identify'
   // Campaign analytics events (server-side only)
@@ -560,6 +649,9 @@ export interface IUserIdentity {
   emailHash?: string; // Pre-computed SHA-256 hash, never raw email
   createdAt?: string;
   subscriptionTier?: string;
+  pricingRegion?: string; // User's pricing region for regional funnel analysis
+  imagesUpscaledLifetime?: number; // Total images upscaled for power user identification
+  accountAgeDays?: number; // Account tenure for segmentation
 }
 
 // =============================================================================

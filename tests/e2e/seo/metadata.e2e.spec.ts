@@ -15,9 +15,9 @@ test.describe('SEO Metadata', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Hreflang links - wait for them to be present in DOM
-    const enLink = page.locator('head link[rel="alternate"][hrefLang="en"]');
-    const esLink = page.locator('head link[rel="alternate"][hrefLang="es"]');
-    const xDefaultLink = page.locator('head link[rel="alternate"][hrefLang="x-default"]');
+    const enLink = page.locator('head link[rel="alternate"][hreflang="en"]');
+    const esLink = page.locator('head link[rel="alternate"][hreflang="es"]');
+    const xDefaultLink = page.locator('head link[rel="alternate"][hreflang="x-default"]');
 
     // Wait for elements to exist in DOM before checking counts
     await enLink.waitFor({ state: 'attached', timeout: 5000 });
@@ -59,9 +59,9 @@ test.describe('SEO Metadata', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Hreflang links - wait for them to be present in DOM
-    const enLink = page.locator('head link[rel="alternate"][hrefLang="en"]');
-    const esLink = page.locator('head link[rel="alternate"][hrefLang="es"]');
-    const xDefaultLink = page.locator('head link[rel="alternate"][hrefLang="x-default"]');
+    const enLink = page.locator('head link[rel="alternate"][hreflang="en"]');
+    const esLink = page.locator('head link[rel="alternate"][hreflang="es"]');
+    const xDefaultLink = page.locator('head link[rel="alternate"][hreflang="x-default"]');
 
     await enLink.waitFor({ state: 'attached', timeout: 5000 });
     await esLink.waitFor({ state: 'attached', timeout: 5000 });

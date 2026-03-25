@@ -16,6 +16,7 @@ for arg in "$@"; do
         --skip-tests) SKIP_TESTS="true" ;;
         --skip-i18n) SKIP_I18N="true" ;;
         --skip-seo-guard) SKIP_SEO_GUARD="true" ;;
+        --skip-smoke) export SKIP_SMOKE="true" ;;
         --purge) PURGE_CACHE="true" ;;
     esac
 done

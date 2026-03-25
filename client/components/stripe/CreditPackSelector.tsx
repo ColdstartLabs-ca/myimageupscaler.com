@@ -153,6 +153,12 @@ export function CreditPackSelector({
               </div>
             )}
 
+            {discountPercent > 0 && (
+              <div className="absolute top-2 right-2 bg-error text-white text-[10px] font-bold px-1.5 py-0.5 rounded z-10 leading-tight">
+                {discountPercent}% OFF
+              </div>
+            )}
+
             <div className="p-4 flex flex-col h-full">
               {/* Pack name */}
               <p className="text-[11px] font-semibold uppercase tracking-widest text-text-secondary text-center mb-3">
@@ -161,6 +167,13 @@ export function CreditPackSelector({
 
               {/* Price */}
               <div className="text-center mb-2">
+                {discountPercent > 0 && (
+                  <p className="text-[11px] text-text-muted line-through mb-0.5">
+                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+                      pack.priceInCents / 100
+                    )}
+                  </p>
+                )}
                 <span className="text-2xl font-bold text-text-primary tabular-nums">
                   {formatPrice(pack.priceInCents)}
                 </span>
@@ -181,29 +194,27 @@ export function CreditPackSelector({
 
               {/* Features */}
               <ul className="space-y-1.5 mb-4 flex-grow">
-                {[
-                  'Credits never expire',
-                  'Use on any tool',
-                  'Stackable with plans',
-                ].map((feature, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-3.5 w-3.5 text-success flex-shrink-0 mt-0.5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2.5}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    <span className="text-xs text-text-primary/80 leading-tight">{feature}</span>
-                  </li>
-                ))}
+                {['Credits never expire', 'Use on any tool', 'Stackable with plans'].map(
+                  (feature, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5 text-success flex-shrink-0 mt-0.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span className="text-xs text-text-primary/80 leading-tight">{feature}</span>
+                    </li>
+                  )
+                )}
               </ul>
 
               {/* CTA */}

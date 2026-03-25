@@ -2,7 +2,7 @@
 export { getPricingRegion, getDiscountPercent } from '@shared/config/pricing-regions';
 export type { PricingRegion, IPricingRegionConfig } from '@shared/config/pricing-regions';
 
-export type RegionTier = 'standard' | 'restricted';
+export type RegionTier = 'standard' | 'restricted' | 'paywalled';
 
 /**
  * Countries where residents can realistically afford international SaaS pricing
@@ -71,13 +71,33 @@ const HIGH_PURCHASING_POWER_COUNTRIES = new Set([
   'OM',
 ]);
 
+/**
+ * Countries where ALL free-tier access is blocked. Users from these countries
+ * must purchase a subscription or credit pack to use the service.
+ * They can browse the site and sign up, but cannot process images for free.
+ *
+ * Add country codes here based on abuse data — do not guess.
+ * Example: PAYWALLED_COUNTRIES.add('XX') to paywall country XX.
+ */
+const PAYWALLED_COUNTRIES = new Set<string>([
+  'PH', // Philippines
+  'VN', // Vietnam
+  'BD', // Bangladesh
+]);
+
+/** Exported for test assertions only */
+export { PAYWALLED_COUNTRIES };
+
 export function getRegionTier(countryCode: string): RegionTier {
   if (!countryCode) return 'restricted';
+  const upper = countryCode.toUpperCase();
   // Cloudflare may return "T1" (Tor) or "XX" (unknown) — treat as restricted
-  return HIGH_PURCHASING_POWER_COUNTRIES.has(countryCode.toUpperCase()) ? 'standard' : 'restricted';
+  if (PAYWALLED_COUNTRIES.has(upper)) return 'paywalled';
+  return HIGH_PURCHASING_POWER_COUNTRIES.has(upper) ? 'standard' : 'restricted';
 }
 
 /** Free credits shown on landing page and granted at signup, based on region tier */
 export function getFreeCreditsForTier(tier: RegionTier): number {
+  if (tier === 'paywalled') return 0;
   return tier === 'restricted' ? 3 : 10;
 }

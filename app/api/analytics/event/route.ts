@@ -53,7 +53,7 @@ const ALLOWED_EVENTS = [
   'checkout_started',
   'checkout_completed',
   'checkout_abandoned',
-  'purchase_confirmed', // Client-side confirmation when user sees success page
+  'success_page_viewed', // Client-side: user reached the success page (purchase_confirmed is server-side only)
 
   // Error/limit events (server-side only)
   'rate_limit_exceeded',
@@ -93,6 +93,13 @@ const ALLOWED_EVENTS = [
   'checkout_error',
   'checkout_exit_intent',
   'checkout_exit_survey_response',
+  // Revenue leak detection events (PRD: analytics-tracking-enhancement - Phase 1)
+  'plan_selected',
+  // User lifecycle events (PRD: analytics-tracking-enhancement - Phase 2)
+  'account_created',
+  'email_captured',
+  // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
+  'comparison_viewed',
 ] as const;
 
 // Type for allowed events (excludes $identify which is server-side only)

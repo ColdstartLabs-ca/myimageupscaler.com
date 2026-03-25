@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
 // Mock supabaseAdmin before importing the route.
@@ -43,6 +43,7 @@ vi.mock('@server/monitoring/logger', () => ({
 // Import AFTER mocks are registered
 import { POST } from '../../../app/api/users/setup/route';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { PAYWALLED_COUNTRIES } from '@/lib/anti-freeloader/region-classifier';
 
 function makeRequest(
   options: {
@@ -148,8 +149,8 @@ describe('POST /api/users/setup', () => {
     expect(body.alreadySetup).toBeUndefined();
   });
 
-  it('should set region_tier to restricted for PH', async () => {
-    const req = makeRequest({ userId: 'user-456', country: 'PH' });
+  it('should set region_tier to restricted for IN', async () => {
+    const req = makeRequest({ userId: 'user-456', country: 'IN' });
     const res = await POST(req);
     const body = await res.json();
 
@@ -157,7 +158,7 @@ describe('POST /api/users/setup', () => {
     expect(body.success).toBe(true);
   });
 
-  it('should set credits to 3 for restricted new free user (PH)', async () => {
+  it('should set credits to 3 for restricted new free user (IN)', async () => {
     const fromMock = supabaseAdmin.from as ReturnType<typeof vi.fn>;
     let capturedPayload: Record<string, unknown> | null = null;
 
@@ -180,7 +181,7 @@ describe('POST /api/users/setup', () => {
       return {};
     });
 
-    const req = makeRequest({ userId: 'user-456', country: 'PH' });
+    const req = makeRequest({ userId: 'user-456', country: 'IN' });
     await POST(req);
 
     expect(capturedPayload).not.toBeNull();
@@ -188,7 +189,7 @@ describe('POST /api/users/setup', () => {
     expect(capturedPayload?.subscription_credits_balance).toBe(3);
   });
 
-  it('should NOT reduce credits for grandfathered existing user (PH)', async () => {
+  it('should NOT reduce credits for grandfathered existing user (IN)', async () => {
     const fromMock = supabaseAdmin.from as ReturnType<typeof vi.fn>;
     let capturedPayload: Record<string, unknown> | null = null;
 
@@ -211,7 +212,7 @@ describe('POST /api/users/setup', () => {
       return {};
     });
 
-    const req = makeRequest({ userId: 'old-user-789', country: 'PH' });
+    const req = makeRequest({ userId: 'old-user-789', country: 'IN' });
     await POST(req);
 
     expect(capturedPayload).not.toBeNull();
@@ -308,5 +309,132 @@ describe('POST /api/users/setup', () => {
     expect(res.status).toBe(500);
     const body = await res.json();
     expect(body.error).toBe('Failed to update profile');
+  });
+
+  describe('IP check RPC', () => {
+    it('should call check_signup_ip RPC when IP is provided', async () => {
+      const rpcMock = supabaseAdmin.rpc as ReturnType<typeof vi.fn>;
+      rpcMock.mockResolvedValue({ error: null });
+
+      const req = makeRequest({
+        userId: 'user-123',
+        country: 'US',
+        ip: '203.0.113.42',
+        body: { fingerprintHash: 'abc123hash' },
+      });
+      const res = await POST(req);
+      const body = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(body.success).toBe(true);
+      expect(rpcMock).toHaveBeenCalledWith('check_signup_ip', {
+        p_user_id: 'user-123',
+        p_ip: '203.0.113.42',
+      });
+    });
+
+    it('should not call check_signup_ip when IP is missing', async () => {
+      const rpcMock = supabaseAdmin.rpc as ReturnType<typeof vi.fn>;
+
+      const req = makeRequest({ userId: 'user-123', country: 'US', body: {} });
+      await POST(req);
+
+      // Should not have called with 'check_signup_ip'
+      const calls = rpcMock.mock.calls;
+      const ipCheckCalls = calls.filter(call => call[0] === 'check_signup_ip');
+      expect(ipCheckCalls.length).toBe(0);
+    });
+
+    it('should log error but not fail when check_signup_ip RPC fails', async () => {
+      const rpcMock = supabaseAdmin.rpc as ReturnType<typeof vi.fn>;
+      rpcMock.mockResolvedValue({ error: { message: 'RPC failed' } });
+
+      const req = makeRequest({
+        userId: 'user-123',
+        country: 'US',
+        ip: '203.0.113.42',
+      });
+      const res = await POST(req);
+      const body = await res.json();
+
+      // Should still succeed (best-effort)
+      expect(res.status).toBe(200);
+      expect(body.success).toBe(true);
+    });
+  });
+
+  describe('Paywalled tier handling', () => {
+    afterEach(() => {
+      // Clean up any countries added to paywall set
+      PAYWALLED_COUNTRIES.clear();
+    });
+
+    it('should set credits to 0 for paywalled new free user', async () => {
+      const fromMock = supabaseAdmin.from as ReturnType<typeof vi.fn>;
+      let capturedPayload: Record<string, unknown> | null = null;
+
+      fromMock.mockImplementation((table: string) => {
+        if (table === 'profiles') {
+          const mockSingle = vi.fn().mockResolvedValue({
+            data: { region_tier: null, subscription_tier: 'free', created_at: minutesAgo(1) },
+            error: null,
+          });
+          const mockUpdate = vi.fn((payload: Record<string, unknown>) => {
+            capturedPayload = payload;
+            return { eq: vi.fn(() => Promise.resolve({ error: null })) };
+          });
+          return {
+            select: vi.fn(() => ({ eq: vi.fn(() => ({ single: mockSingle })) })),
+            update: mockUpdate,
+          };
+        }
+        return {};
+      });
+
+      // Add a test country to the paywall set
+      PAYWALLED_COUNTRIES.add('XX');
+
+      const req = makeRequest({ userId: 'user-999', country: 'XX' });
+      await POST(req);
+
+      expect(capturedPayload).not.toBeNull();
+      expect(capturedPayload?.region_tier).toBe('paywalled');
+      expect(capturedPayload?.subscription_credits_balance).toBe(0);
+    });
+
+    it('should NOT reduce credits for grandfathered paywalled user', async () => {
+      const fromMock = supabaseAdmin.from as ReturnType<typeof vi.fn>;
+      let capturedPayload: Record<string, unknown> | null = null;
+
+      fromMock.mockImplementation((table: string) => {
+        if (table === 'profiles') {
+          const mockSingle = vi.fn().mockResolvedValue({
+            // Existing user (created 1 hour ago) — should be grandfathered
+            data: { region_tier: null, subscription_tier: 'free', created_at: minutesAgo(60) },
+            error: null,
+          });
+          const mockUpdate = vi.fn((payload: Record<string, unknown>) => {
+            capturedPayload = payload;
+            return { eq: vi.fn(() => Promise.resolve({ error: null })) };
+          });
+          return {
+            select: vi.fn(() => ({ eq: vi.fn(() => ({ single: mockSingle })) })),
+            update: mockUpdate,
+          };
+        }
+        return {};
+      });
+
+      // Add a test country to the paywall set
+      PAYWALLED_COUNTRIES.add('XX');
+
+      const req = makeRequest({ userId: 'old-paywalled-user', country: 'XX' });
+      await POST(req);
+
+      expect(capturedPayload).not.toBeNull();
+      expect(capturedPayload?.region_tier).toBe('paywalled');
+      // Credits should NOT be set — user is grandfathered
+      expect(capturedPayload?.subscription_credits_balance).toBeUndefined();
+    });
   });
 });

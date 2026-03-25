@@ -35,12 +35,10 @@ export default function PricingPageClient() {
   const [cancelingSchedule, setCancelingSchedule] = useState(false);
   const [buttonLoadingStates, setButtonLoadingStates] = useState<Record<string, boolean>>({});
   const [postAuthCheckoutPriceId, setPostAuthCheckoutPriceId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'credits' | 'subscribe'>('credits');
   const processedCheckoutParamRef = useRef(false);
 
   const { discountPercent, pricingRegion, isLoading: regionLoading } = useRegionTier();
-
-  const showCreditPackNote = discountPercent > 0;
-  const showSubscriptionNote = discountPercent > 0;
 
   // Track pricing_page_viewed event once on mount
   const hasTrackedPageView = useRef(false);
@@ -135,6 +133,21 @@ export default function PricingPageClient() {
     if (subscription?.price_id === priceId || subscription?.scheduled_price_id === priceId) {
       return;
     }
+
+    // Track plan selection
+    const planConfig = getPlanForPriceId(priceId);
+    if (planConfig) {
+      analytics.track('plan_selected', {
+        planName: planConfig.key as 'starter' | 'hobby' | 'pro' | 'business',
+        priceId,
+        price: planConfig.price,
+        billingInterval: 'monthly', // All plans are monthly
+        pricingRegion: pricingRegion || 'standard',
+        discountPercent: discountPercent || 0,
+        source: 'pricing_page',
+      });
+    }
+
     hasCheckoutStartedRef.current = true;
     setSelectedPlanId(priceId);
     setIsModalOpen(true);
@@ -370,293 +383,294 @@ export default function PricingPageClient() {
           <p className="text-lg text-text-secondary max-w-2xl mx-auto">{t('page.subtitle')}</p>
         </div>
 
-        {/* Regional Pricing Banner */}
-        {discountPercent > 0 && (
-          <div
-            className="bg-success/10 border border-success/20 rounded-lg p-4 mb-8 max-w-3xl mx-auto text-center"
-            data-testid="regional-pricing-banner"
-          >
-            <p className="text-sm text-success font-medium">Special pricing for your region</p>
+        {/* Credits / Subscriptions Toggle */}
+        <div className="flex justify-center mb-10">
+          <div className="bg-surface-light/50 p-1 rounded-xl flex gap-1 border border-surface-light">
+            <button
+              onClick={() => setActiveTab('credits')}
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                activeTab === 'credits'
+                  ? 'bg-accent text-white shadow-md scale-[1.02]'
+                  : 'text-muted-foreground hover:text-primary hover:bg-surface-light'
+              }`}
+            >
+              Buy Credits
+            </button>
+            <button
+              onClick={() => setActiveTab('subscribe')}
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                activeTab === 'subscribe'
+                  ? 'bg-accent text-white shadow-md scale-[1.02]'
+                  : 'text-muted-foreground hover:text-primary hover:bg-surface-light'
+              }`}
+            >
+              Subscribe
+              <span className="ml-1.5 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                Best Value
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Credit Packs Section */}
+        {activeTab === 'credits' && (
+          <div className="mb-16" data-testid="credit-packs-section">
+            <div className="text-center mb-8">
+              <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+                {t('creditPacks.subtitle')}
+              </p>
+            </div>
+
+            <div className="max-w-5xl mx-auto">
+              <CreditPackSelector
+                onPurchaseStart={() => {}}
+                onPurchaseComplete={() => window.location.reload()}
+                onError={error => console.error(error)}
+                discountPercent={discountPercent}
+              />
+            </div>
+
+            <div className="mt-8 text-center">
+              <p className="text-sm text-text-muted mb-2">
+                <strong>{t('creditPacks.valueComparison')}</strong>{' '}
+                {t('creditPacks.valueComparisonText')}
+              </p>
+              <button
+                onClick={() => setActiveTab('subscribe')}
+                className="text-sm text-accent hover:text-accent-hover underline"
+              >
+                {t('creditPacks.comparePlans')}
+              </button>
+            </div>
+
+            {/* Trust signals */}
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-text-secondary">
+              <span className="flex items-center gap-1.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-success flex-shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                {t('trustSignals.securedByStripe')}
+              </span>
+              <span className="text-text-muted hidden sm:inline" aria-hidden="true">
+                |
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-success flex-shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                {t('trustSignals.cancelAnytime')}
+              </span>
+              <span className="text-text-muted hidden sm:inline" aria-hidden="true">
+                |
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-success flex-shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                {t('trustSignals.creditsNeverExpire')}
+              </span>
+            </div>
           </div>
         )}
 
-        {/* Credit Packs Section */}
-        <div className="mb-16" data-testid="credit-packs-section">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-text-primary mb-4">{t('creditPacks.title')}</h2>
-            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-              {t('creditPacks.subtitle')}
-            </p>
-
-            {showCreditPackNote && (
-              <p
-                className="mt-4 text-sm text-success font-medium"
-                data-testid="geo-credit-pack-note"
-              >
-                Regional pricing applied — credit packs adjusted for your region
-              </p>
-            )}
-          </div>
-
-          <div className="max-w-5xl mx-auto">
-            <CreditPackSelector
-              onPurchaseStart={() => {}}
-              onPurchaseComplete={() => window.location.reload()}
-              onError={error => console.error(error)}
-              discountPercent={discountPercent}
-            />
-          </div>
-
-          <div className="mt-8 text-center">
-            <p className="text-sm text-text-muted mb-2">
-              <strong>{t('creditPacks.valueComparison')}</strong>{' '}
-              {t('creditPacks.valueComparisonText')}
-            </p>
-            <a
-              href="#subscriptions"
-              className="text-sm text-accent hover:text-accent-hover underline"
-            >
-              {t('creditPacks.comparePlans')}
-            </a>
-          </div>
-
-          {/* Trust signals */}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-text-secondary">
-            <span className="flex items-center gap-1.5">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-success flex-shrink-0"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-              {t('trustSignals.securedByStripe')}
-            </span>
-            <span className="text-text-muted hidden sm:inline" aria-hidden="true">
-              |
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-success flex-shrink-0"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              {t('trustSignals.cancelAnytime')}
-            </span>
-            <span className="text-text-muted hidden sm:inline" aria-hidden="true">
-              |
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-success flex-shrink-0"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              {t('trustSignals.creditsNeverExpire')}
-            </span>
-          </div>
-        </div>
-
         {/* Subscription Plans Section */}
-        <div
-          className="border-t border-border pt-16 mb-16"
-          id="subscriptions"
-          data-testid="subscription-plans-section"
-        >
-          <h2 className="text-3xl font-bold text-center text-text-primary mb-4">
-            {t('subscription.title')}
-          </h2>
-          <p className="text-center text-text-secondary mb-8 max-w-2xl mx-auto">
-            {t('subscription.subtitle')}
-          </p>
-
-          {showSubscriptionNote && (
-            <p className="text-center text-sm text-accent mb-6" data-testid="geo-subscription-note">
-              Subscription plans adjusted for your region — get the best value with a monthly plan
+        {activeTab === 'subscribe' && (
+          <div className="mb-16" id="subscriptions" data-testid="subscription-plans-section">
+            <p className="text-center text-text-secondary mb-8 max-w-2xl mx-auto">
+              {t('subscription.subtitle')}
             </p>
-          )}
 
-          <div
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto"
-            data-testid="pricing-grid"
-          >
-            {loading ? (
-              // Show skeleton loading cards while fetching subscription data
-              <>
-                <PricingCardSkeleton />
-                <PricingCardSkeleton recommended={true} />
-                <PricingCardSkeleton />
-                <PricingCardSkeleton />
-              </>
-            ) : (
-              <>
-                {/* Starter Plan - Add when available in configuration */}
-                {(() => {
-                  const starterPriceId = (STRIPE_PRICES as Record<string, string>).STARTER_MONTHLY;
-                  const starterPlan = (
-                    SUBSCRIPTION_PLANS as Record<
-                      string,
-                      {
-                        name: string;
-                        description: string;
-                        price: number;
-                        interval: string;
-                        features: readonly string[];
-                      }
-                    >
-                  ).STARTER_MONTHLY;
+            <div
+              className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto"
+              data-testid="pricing-grid"
+            >
+              {loading ? (
+                // Show skeleton loading cards while fetching subscription data
+                <>
+                  <PricingCardSkeleton />
+                  <PricingCardSkeleton recommended={true} />
+                  <PricingCardSkeleton />
+                  <PricingCardSkeleton />
+                </>
+              ) : (
+                <>
+                  {/* Starter Plan - Add when available in configuration */}
+                  {(() => {
+                    const starterPriceId = (STRIPE_PRICES as Record<string, string>)
+                      .STARTER_MONTHLY;
+                    const starterPlan = (
+                      SUBSCRIPTION_PLANS as Record<
+                        string,
+                        {
+                          name: string;
+                          description: string;
+                          price: number;
+                          interval: string;
+                          features: readonly string[];
+                        }
+                      >
+                    ).STARTER_MONTHLY;
 
-                  return starterPriceId && starterPlan ? (
-                    <PricingCard
-                      name={starterPlan.name}
-                      description={starterPlan.description}
-                      price={starterPlan.price}
-                      interval={starterPlan.interval as 'month' | 'year'}
-                      features={starterPlan.features}
-                      priceId={starterPriceId}
-                      disabled={
-                        profile?.subscription_tier === 'starter' ||
-                        subscription?.scheduled_price_id === starterPriceId
-                      }
-                      scheduled={subscription?.scheduled_price_id === starterPriceId}
-                      onCancelScheduled={
-                        subscription?.scheduled_price_id === starterPriceId
-                          ? handleCancelScheduledChange
-                          : undefined
-                      }
-                      cancelingScheduled={cancelingSchedule}
-                      onSelect={
-                        subscription
-                          ? () =>
-                              handleSubscribeClick(starterPriceId, () =>
-                                handlePlanSelect(starterPriceId)
-                              )
-                          : undefined
-                      }
-                      currentSubscriptionPrice={currentSubscriptionPrice}
-                      loading={buttonLoadingStates[starterPriceId] || false}
-                      discountPercent={discountPercent}
-                    />
-                  ) : null;
-                })()}
+                    return starterPriceId && starterPlan ? (
+                      <PricingCard
+                        name={starterPlan.name}
+                        description={starterPlan.description}
+                        price={starterPlan.price}
+                        interval={starterPlan.interval as 'month' | 'year'}
+                        features={starterPlan.features}
+                        priceId={starterPriceId}
+                        disabled={
+                          profile?.subscription_tier === 'starter' ||
+                          subscription?.scheduled_price_id === starterPriceId
+                        }
+                        scheduled={subscription?.scheduled_price_id === starterPriceId}
+                        onCancelScheduled={
+                          subscription?.scheduled_price_id === starterPriceId
+                            ? handleCancelScheduledChange
+                            : undefined
+                        }
+                        cancelingScheduled={cancelingSchedule}
+                        onSelect={
+                          subscription
+                            ? () =>
+                                handleSubscribeClick(starterPriceId, () =>
+                                  handlePlanSelect(starterPriceId)
+                                )
+                            : undefined
+                        }
+                        currentSubscriptionPrice={currentSubscriptionPrice}
+                        loading={buttonLoadingStates[starterPriceId] || false}
+                        discountPercent={discountPercent}
+                      />
+                    ) : null;
+                  })()}
 
-                <PricingCard
-                  name={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name}
-                  description={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.description}
-                  price={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}
-                  interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
-                  features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
-                  priceId={STRIPE_PRICES.HOBBY_MONTHLY}
-                  disabled={
-                    profile?.subscription_tier === 'hobby' ||
-                    subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY
-                  }
-                  scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY}
-                  onCancelScheduled={
-                    subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY
-                      ? handleCancelScheduledChange
-                      : undefined
-                  }
-                  cancelingScheduled={cancelingSchedule}
-                  onSelect={
-                    subscription
-                      ? () =>
-                          handleSubscribeClick(STRIPE_PRICES.HOBBY_MONTHLY, () =>
-                            handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY)
-                          )
-                      : undefined
-                  }
-                  currentSubscriptionPrice={currentSubscriptionPrice}
-                  loading={buttonLoadingStates[STRIPE_PRICES.HOBBY_MONTHLY] || false}
-                  discountPercent={discountPercent}
-                />
+                  <PricingCard
+                    name={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.name}
+                    description={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.description}
+                    price={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price}
+                    interval={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.interval}
+                    features={SUBSCRIPTION_PLANS.HOBBY_MONTHLY.features}
+                    priceId={STRIPE_PRICES.HOBBY_MONTHLY}
+                    disabled={
+                      profile?.subscription_tier === 'hobby' ||
+                      subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY
+                    }
+                    scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY}
+                    onCancelScheduled={
+                      subscription?.scheduled_price_id === STRIPE_PRICES.HOBBY_MONTHLY
+                        ? handleCancelScheduledChange
+                        : undefined
+                    }
+                    cancelingScheduled={cancelingSchedule}
+                    onSelect={
+                      subscription
+                        ? () =>
+                            handleSubscribeClick(STRIPE_PRICES.HOBBY_MONTHLY, () =>
+                              handlePlanSelect(STRIPE_PRICES.HOBBY_MONTHLY)
+                            )
+                        : undefined
+                    }
+                    currentSubscriptionPrice={currentSubscriptionPrice}
+                    loading={buttonLoadingStates[STRIPE_PRICES.HOBBY_MONTHLY] || false}
+                    discountPercent={discountPercent}
+                  />
 
-                <PricingCard
-                  name={SUBSCRIPTION_PLANS.PRO_MONTHLY.name}
-                  description={SUBSCRIPTION_PLANS.PRO_MONTHLY.description}
-                  price={SUBSCRIPTION_PLANS.PRO_MONTHLY.price}
-                  interval={SUBSCRIPTION_PLANS.PRO_MONTHLY.interval}
-                  features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
-                  priceId={STRIPE_PRICES.PRO_MONTHLY}
-                  recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
-                  disabled={
-                    profile?.subscription_tier === 'pro' ||
-                    subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY
-                  }
-                  scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY}
-                  onCancelScheduled={
-                    subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY
-                      ? handleCancelScheduledChange
-                      : undefined
-                  }
-                  cancelingScheduled={cancelingSchedule}
-                  onSelect={
-                    subscription
-                      ? () =>
-                          handleSubscribeClick(STRIPE_PRICES.PRO_MONTHLY, () =>
-                            handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY)
-                          )
-                      : undefined
-                  }
-                  currentSubscriptionPrice={currentSubscriptionPrice}
-                  loading={buttonLoadingStates[STRIPE_PRICES.PRO_MONTHLY] || false}
-                  discountPercent={discountPercent}
-                />
+                  <PricingCard
+                    name={SUBSCRIPTION_PLANS.PRO_MONTHLY.name}
+                    description={SUBSCRIPTION_PLANS.PRO_MONTHLY.description}
+                    price={SUBSCRIPTION_PLANS.PRO_MONTHLY.price}
+                    interval={SUBSCRIPTION_PLANS.PRO_MONTHLY.interval}
+                    features={SUBSCRIPTION_PLANS.PRO_MONTHLY.features}
+                    priceId={STRIPE_PRICES.PRO_MONTHLY}
+                    recommended={SUBSCRIPTION_PLANS.PRO_MONTHLY.recommended}
+                    disabled={
+                      profile?.subscription_tier === 'pro' ||
+                      subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY
+                    }
+                    scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY}
+                    onCancelScheduled={
+                      subscription?.scheduled_price_id === STRIPE_PRICES.PRO_MONTHLY
+                        ? handleCancelScheduledChange
+                        : undefined
+                    }
+                    cancelingScheduled={cancelingSchedule}
+                    onSelect={
+                      subscription
+                        ? () =>
+                            handleSubscribeClick(STRIPE_PRICES.PRO_MONTHLY, () =>
+                              handlePlanSelect(STRIPE_PRICES.PRO_MONTHLY)
+                            )
+                        : undefined
+                    }
+                    currentSubscriptionPrice={currentSubscriptionPrice}
+                    loading={buttonLoadingStates[STRIPE_PRICES.PRO_MONTHLY] || false}
+                    discountPercent={discountPercent}
+                  />
 
-                <PricingCard
-                  name={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name}
-                  description={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.description}
-                  price={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.price}
-                  interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
-                  features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
-                  priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
-                  disabled={
-                    profile?.subscription_tier === 'business' ||
-                    subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY
-                  }
-                  scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
-                  onCancelScheduled={
-                    subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY
-                      ? handleCancelScheduledChange
-                      : undefined
-                  }
-                  cancelingScheduled={cancelingSchedule}
-                  onSelect={
-                    subscription
-                      ? () =>
-                          handleSubscribeClick(STRIPE_PRICES.BUSINESS_MONTHLY, () =>
-                            handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY)
-                          )
-                      : undefined
-                  }
-                  currentSubscriptionPrice={currentSubscriptionPrice}
-                  loading={buttonLoadingStates[STRIPE_PRICES.BUSINESS_MONTHLY] || false}
-                  discountPercent={discountPercent}
-                />
-              </>
-            )}
+                  <PricingCard
+                    name={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.name}
+                    description={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.description}
+                    price={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.price}
+                    interval={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.interval}
+                    features={SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.features}
+                    priceId={STRIPE_PRICES.BUSINESS_MONTHLY}
+                    disabled={
+                      profile?.subscription_tier === 'business' ||
+                      subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY
+                    }
+                    scheduled={subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY}
+                    onCancelScheduled={
+                      subscription?.scheduled_price_id === STRIPE_PRICES.BUSINESS_MONTHLY
+                        ? handleCancelScheduledChange
+                        : undefined
+                    }
+                    cancelingScheduled={cancelingSchedule}
+                    onSelect={
+                      subscription
+                        ? () =>
+                            handleSubscribeClick(STRIPE_PRICES.BUSINESS_MONTHLY, () =>
+                              handlePlanSelect(STRIPE_PRICES.BUSINESS_MONTHLY)
+                            )
+                        : undefined
+                    }
+                    currentSubscriptionPrice={currentSubscriptionPrice}
+                    loading={buttonLoadingStates[STRIPE_PRICES.BUSINESS_MONTHLY] || false}
+                    discountPercent={discountPercent}
+                  />
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* FAQ Section */}
         <div className="max-w-3xl mx-auto mt-16">

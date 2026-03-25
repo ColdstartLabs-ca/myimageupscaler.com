@@ -5,6 +5,7 @@ import { serverEnv } from '@shared/config/env';
 import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { getEmailService } from '@server/services/email.service';
+import { redeemDiscount } from '@server/services/engagement-discount.service';
 import Stripe from 'stripe';
 
 // Charge interface for accessing invoice property
@@ -269,6 +270,36 @@ export class PaymentHandler {
       packKey = session.metadata?.pack_key;
       // Handle credit pack purchase
       await this.handleCreditPackPurchase(session, userId);
+
+      // Handle engagement discount redemption (if applied)
+      if (session.metadata?.engagement_discount_applied === 'true') {
+        try {
+          const redeemResult = await redeemDiscount(userId);
+          if (redeemResult.success) {
+            console.log(`[ENGAGEMENT_DISCOUNT] Discount redeemed for user ${userId}`);
+
+            // Track redemption event
+            await trackServerEvent(
+              'engagement_discount_redeemed',
+              {
+                pack: packKey || 'unknown',
+                discountPercent: parseInt(session.metadata?.engagement_discount_percent || '0', 10),
+                amountCents: session.amount_total || 0,
+                sessionId: session.id,
+              },
+              { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+            );
+          } else {
+            console.warn(
+              `[ENGAGEMENT_DISCOUNT] Failed to redeem discount for user ${userId}:`,
+              redeemResult.error
+            );
+          }
+        } catch (redeemError) {
+          // Log but don't fail the webhook - purchase is already complete
+          console.error('[ENGAGEMENT_DISCOUNT] Error redeeming discount:', redeemError);
+        }
+      }
     } else {
       console.warn(
         `Unexpected checkout mode: ${session.mode} for session ${session.id}. Expected 'subscription' or 'payment'.`
@@ -298,6 +329,24 @@ export class PaymentHandler {
           currency: session.currency ?? 'usd',
           pricingRegion,
           discountPercent,
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+
+      // purchase_confirmed is the canonical "purchase happened" event for funnel analysis.
+      // Fired server-side so it captures 100% of payments regardless of whether the user
+      // reaches the success page (tab close, redirect race, etc.).
+      await trackServerEvent(
+        'purchase_confirmed',
+        {
+          purchaseType,
+          sessionId: session.id,
+          pricingRegion,
+          discountPercent,
+          planTier: planKey,
+          pack: packKey,
+          amount: amountCents,
+          currency: session.currency ?? 'usd',
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );

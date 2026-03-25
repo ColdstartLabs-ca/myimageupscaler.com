@@ -6,6 +6,11 @@ import { clientEnv, serverEnv } from '@shared/config/env';
 import { assertKnownPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getTrialConfig } from '@shared/config/subscription.config';
 import { getPricingRegion, getDiscountedPriceInCents } from '@shared/config/pricing-regions';
+import {
+  isDiscountValid,
+  calculateStackedDiscount,
+} from '@server/services/engagement-discount.service';
+import { ENGAGEMENT_DISCOUNT_CONFIG } from '@shared/config/engagement-discount';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -369,6 +374,41 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // 6.7. Check for engagement discount eligibility (first-purchase discount for engaged free users)
+    let engagementDiscountPercent = 0;
+
+    // Resolve metadata early for engagement discount check
+    const unifiedMetadata = resolvePlanOrPack(validatedPriceId);
+
+    // Only check for engagement discount on credit pack purchases (not subscriptions)
+    if (resolvedPrice?.type === 'pack' && !isTestMode) {
+      try {
+        const discountValidity = await isDiscountValid(user.id);
+        if (discountValidity.valid) {
+          const targetPackKey = ENGAGEMENT_DISCOUNT_CONFIG.targetPackKey;
+          const isTargetPack = unifiedMetadata?.key === targetPackKey;
+
+          if (isTargetPack) {
+            engagementDiscountPercent = ENGAGEMENT_DISCOUNT_CONFIG.discountPercent;
+
+            // Track checkout started with engagement discount
+            await trackServerEvent(
+              'engagement_discount_checkout_started',
+              {
+                targetPackKey,
+                priceId: validatedPriceId,
+              },
+              { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: user.id }
+            ).catch(() => {
+              // Non-blocking
+            });
+          }
+        }
+      } catch {
+        // Engagement discount check is best-effort — never block checkout
+      }
+    }
+
     // 7. Verify price type matches expected (double-check with Stripe in production)
     if (!isTestMode && resolvedPrice) {
       const price = await stripe.prices.retrieve(validatedPriceId);
@@ -402,25 +442,46 @@ export async function POST(request: NextRequest) {
     const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
     const checkoutMode = resolvedPrice?.type === 'pack' ? 'payment' : 'subscription';
 
-    // Use unified metadata format for consistent webhook processing
-    const unifiedMetadata = resolvePlanOrPack(validatedPriceId);
-
     // Build line_items: use price_data with inline discounted amount for all regional purchases,
     // so no Stripe Price objects need to be created per region.
+    // Engagement discount stacks on top of regional discount.
     let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
-    if (pricingConfig.discountPercent > 0) {
+    const totalDiscountPercent = pricingConfig.discountPercent + engagementDiscountPercent;
+
+    if (totalDiscountPercent > 0) {
       const originalPrice = await stripe.prices.retrieve(validatedPriceId);
       const productId =
         typeof originalPrice.product === 'string'
           ? originalPrice.product
           : originalPrice.product.id;
+
+      // Calculate final price with both regional and engagement discounts
+      let finalAmount: number;
+      if (engagementDiscountPercent > 0 && pricingConfig.discountPercent > 0) {
+        // Stack discounts: regional first, then engagement
+        finalAmount = calculateStackedDiscount(
+          originalPrice.unit_amount!,
+          pricingConfig.discountPercent,
+          engagementDiscountPercent
+        );
+      } else if (engagementDiscountPercent > 0) {
+        // Only engagement discount
+        finalAmount = getDiscountedPriceInCents(
+          originalPrice.unit_amount!,
+          engagementDiscountPercent
+        );
+      } else {
+        // Only regional discount
+        finalAmount = getDiscountedPriceInCents(
+          originalPrice.unit_amount!,
+          pricingConfig.discountPercent
+        );
+      }
+
       const priceData: Stripe.Checkout.SessionCreateParams.LineItem.PriceData = {
         currency: 'usd',
         product: productId,
-        unit_amount: getDiscountedPriceInCents(
-          originalPrice.unit_amount!,
-          pricingConfig.discountPercent
-        ),
+        unit_amount: finalAmount,
       };
       if (resolvedPrice?.type === 'plan') {
         priceData.recurring = { interval: 'month' };
@@ -439,6 +500,13 @@ export async function POST(request: NextRequest) {
         user_id: user.id,
         pricing_region: pricingConfig.region,
         discount_percent: pricingConfig.discountPercent.toString(),
+        // Track engagement discount for webhook redemption
+        ...(engagementDiscountPercent > 0
+          ? {
+              engagement_discount_percent: engagementDiscountPercent.toString(),
+              engagement_discount_applied: 'true',
+            }
+          : {}),
         ...(unifiedMetadata
           ? {
               type: unifiedMetadata.type,
