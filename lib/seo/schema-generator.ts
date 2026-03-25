@@ -84,6 +84,26 @@ function getLanguageCode(locale: Locale): string {
  * const schema = generateFAQSchema(faqs);
  * ```
  */
+/**
+ * Build a WebPage node with SpeakableSpecification.
+ * Points AI engines (Google AI Overviews, ChatGPT Search, Perplexity) to the
+ * most citable content on the page: H1 (main topic) and H2s (FAQ questions,
+ * section headings). These selectors are stable across all page types.
+ */
+function buildSpeakableWebPage(url: string, name: string, language: string): object {
+  return {
+    '@type': 'WebPage',
+    '@id': `${url}#webpage`,
+    url,
+    name,
+    inLanguage: language,
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', 'h2'],
+    },
+  };
+}
+
 export function generateFAQSchema(faqs: IFAQSchema[]): object {
   return {
     '@context': 'https://schema.org',
@@ -268,6 +288,8 @@ export function generateToolSchema(tool: IToolPage, locale: Locale = 'en'): obje
           },
         ],
       },
+      // Speakable: directs AI engines to the most citable content on the page
+      buildSpeakableWebPage(canonicalUrl, tool.title, language),
     ],
   };
 }
@@ -856,6 +878,9 @@ export function generateHomepageSchema(locale: Locale = 'en'): Record<string, un
   if (howToSchema) {
     graphItems.push(howToSchema);
   }
+
+  // Speakable: tells AI engines (Google AI Overviews, ChatGPT Search) which content to extract
+  graphItems.push(buildSpeakableWebPage(canonicalUrl, APP_NAME, language));
 
   return {
     '@context': 'https://schema.org',

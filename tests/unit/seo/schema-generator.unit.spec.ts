@@ -5,9 +5,28 @@
  * Phase 6: Added for AI search extraction
  */
 
-import { describe, it, expect } from 'vitest';
-import { generateFAQSchema, generateHowToSchema } from '@lib/seo/schema-generator';
-import type { IFAQSchema, IHowToStep } from '@lib/seo';
+import { describe, it, expect, vi } from 'vitest';
+import {
+  generateFAQSchema,
+  generateHowToSchema,
+  generateHomepageSchema,
+  generateToolSchema,
+} from '@lib/seo/schema-generator';
+import type { IFAQSchema, IHowToStep, IToolPage } from '@lib/seo';
+
+vi.mock('@shared/config/env', () => ({
+  clientEnv: {
+    BASE_URL: 'https://myimageupscaler.com',
+    APP_NAME: 'MyImageUpscaler',
+    PRIMARY_DOMAIN: 'myimageupscaler.com',
+    TWITTER_HANDLE: 'myimageupscaler',
+    SUPPORT_EMAIL: 'support@myimageupscaler.com',
+  },
+  serverEnv: {
+    BASE_URL: 'https://myimageupscaler.com',
+    ENV: 'test',
+  },
+}));
 
 describe('generateFAQSchema', () => {
   it('should generate valid FAQPage schema with @context and @type', () => {
@@ -213,5 +232,78 @@ describe('generateHowToSchema', () => {
     // they won't have it in the output either
     expect(steps[0]).toHaveProperty('name', 'Step 1');
     expect(steps[0]).toHaveProperty('text', 'Do step 1');
+  });
+});
+
+describe('Speakable schema (AEO)', () => {
+  describe('generateHomepageSchema', () => {
+    it('should include a WebPage node with SpeakableSpecification', () => {
+      const schema = generateHomepageSchema('en') as { '@graph': Record<string, unknown>[] };
+      const graph = schema['@graph'];
+
+      const webPage = graph.find(node => node['@type'] === 'WebPage');
+      expect(webPage).toBeDefined();
+      expect(webPage).toHaveProperty('speakable');
+
+      const speakable = webPage!['speakable'] as Record<string, unknown>;
+      expect(speakable['@type']).toBe('SpeakableSpecification');
+      expect(speakable['cssSelector']).toContain('h1');
+      expect(speakable['cssSelector']).toContain('h2');
+    });
+
+    it('should give the WebPage node a stable @id', () => {
+      const schema = generateHomepageSchema('en') as { '@graph': Record<string, unknown>[] };
+      const webPage = schema['@graph'].find(n => n['@type'] === 'WebPage');
+      expect(webPage).toHaveProperty('@id');
+      expect(webPage!['@id'] as string).toContain('#webpage');
+    });
+
+    it('should include @id on the Organization node', () => {
+      const schema = generateHomepageSchema('en') as { '@graph': Record<string, unknown>[] };
+      const org = schema['@graph'].find(n => n['@type'] === 'Organization');
+      expect(org).toBeDefined();
+      expect(org!['@id']).toBe('https://myimageupscaler.com#organization');
+    });
+  });
+
+  describe('generateToolSchema', () => {
+    const mockTool: IToolPage = {
+      slug: 'ai-image-upscaler',
+      title: 'AI Image Upscaler',
+      primaryKeyword: 'ai image upscaler',
+      category: 'upscale',
+      metaTitle: 'AI Image Upscaler',
+      metaDescription: 'Upscale images with AI',
+      heroTitle: 'AI Image Upscaler',
+      heroSubtitle: 'Upscale images',
+      features: [],
+      faq: [{ question: 'How does it work?', answer: 'It uses AI to upscale images.' }],
+    };
+
+    it('should include a WebPage node with SpeakableSpecification', () => {
+      const schema = generateToolSchema(mockTool, 'en') as { '@graph': Record<string, unknown>[] };
+      const webPage = schema['@graph'].find(n => n['@type'] === 'WebPage');
+      expect(webPage).toBeDefined();
+      expect(webPage).toHaveProperty('speakable');
+
+      const speakable = webPage!['speakable'] as Record<string, unknown>;
+      expect(speakable['@type']).toBe('SpeakableSpecification');
+      expect(speakable['cssSelector']).toContain('h1');
+      expect(speakable['cssSelector']).toContain('h2');
+    });
+
+    it('should use the tool canonical URL in the WebPage @id', () => {
+      const schema = generateToolSchema(mockTool, 'en') as { '@graph': Record<string, unknown>[] };
+      const webPage = schema['@graph'].find(n => n['@type'] === 'WebPage');
+      expect(webPage!['@id']).toBe('https://myimageupscaler.com/tools/ai-image-upscaler#webpage');
+    });
+
+    it('should use locale-prefixed URL for non-English locales', () => {
+      const schema = generateToolSchema(mockTool, 'de') as { '@graph': Record<string, unknown>[] };
+      const webPage = schema['@graph'].find(n => n['@type'] === 'WebPage');
+      expect(webPage!['@id']).toBe(
+        'https://myimageupscaler.com/de/tools/ai-image-upscaler#webpage'
+      );
+    });
   });
 });

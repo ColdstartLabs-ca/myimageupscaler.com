@@ -198,8 +198,9 @@ export default async function BlogPostPage({ params }: IPageProps) {
     headline: post.title,
     description: post.description,
     author: {
-      '@type': 'Person',
+      '@type': 'Organization',
       name: post.author,
+      url: `${clientEnv.BASE_URL}/about`,
     },
     datePublished: postDate,
     dateModified: postDate,

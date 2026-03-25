@@ -37,6 +37,9 @@ export function applySecurityHeaders(res: NextResponse): void {
 
   // Apply Content Security Policy
   res.headers.set('Content-Security-Policy', buildCspHeader());
+
+  // Advertise llms.txt for AI agent discovery (llms.txt spec)
+  res.headers.set('Link', `<${serverEnv.BASE_URL}/llms.txt>; rel="llms-txt"`);
 }
 
 /**

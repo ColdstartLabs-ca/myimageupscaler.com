@@ -93,6 +93,7 @@ export default async function PSEOLayout({ children }: IPSEOLayoutProps) {
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': `${BASE_URL}#organization`,
     name: APP_NAME,
     url: BASE_URL,
     logo: `${BASE_URL}/logo/horizontal-logo-full.png`,

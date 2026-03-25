@@ -2,7 +2,7 @@
 
 `Complexity: 6 → MEDIUM mode`
 
-**Status:** Draft
+**Status:** Done (all 4 phases implemented; tests added 2026-03-25)
 **Priority:** 🟠 High (#2)
 **Created:** 2026-03-16
 
@@ -157,15 +157,15 @@ sequenceDiagram
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/seo/referral-classification.unit.spec.ts` | `should classify chatgpt.com referrer` | `expect(classify('https://chatgpt.com/c/abc')).toBe('chatgpt')` |
-| same | `should classify chat.openai.com referrer` | `expect(classify('https://chat.openai.com/...')).toBe('chatgpt')` |
-| same | `should classify perplexity.ai referrer` | `expect(classify('https://www.perplexity.ai/...')).toBe('perplexity')` |
-| same | `should classify claude.ai referrer` | `expect(classify('https://claude.ai/...')).toBe('claude')` |
-| same | `should prefer utm_source over referrer` | `expect(classify('https://google.com', 'chatgpt')).toBe('chatgpt')` |
-| same | `should return direct for empty referrer` | `expect(classify('')).toBe('direct')` |
-| same | `should return organic for google.com` | `expect(classify('https://google.com/search?q=...')).toBe('organic')` |
+| Test File                                             | Test Name                                  | Assertion                                                              |
+| ----------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------- |
+| `tests/unit/seo/referral-classification.unit.spec.ts` | `should classify chatgpt.com referrer`     | `expect(classify('https://chatgpt.com/c/abc')).toBe('chatgpt')`        |
+| same                                                  | `should classify chat.openai.com referrer` | `expect(classify('https://chat.openai.com/...')).toBe('chatgpt')`      |
+| same                                                  | `should classify perplexity.ai referrer`   | `expect(classify('https://www.perplexity.ai/...')).toBe('perplexity')` |
+| same                                                  | `should classify claude.ai referrer`       | `expect(classify('https://claude.ai/...')).toBe('claude')`             |
+| same                                                  | `should prefer utm_source over referrer`   | `expect(classify('https://google.com', 'chatgpt')).toBe('chatgpt')`    |
+| same                                                  | `should return direct for empty referrer`  | `expect(classify('')).toBe('direct')`                                  |
+| same                                                  | `should return organic for google.com`     | `expect(classify('https://google.com/search?q=...')).toBe('organic')`  |
 
 **Verification:**
 
@@ -199,10 +199,10 @@ sequenceDiagram
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/components/chatgpt-badge.unit.spec.ts` | `should render badge text` | Badge content visible |
-| same | `should not render when referral source is not chatgpt` | Badge not in DOM |
+| Test File                                          | Test Name                                               | Assertion             |
+| -------------------------------------------------- | ------------------------------------------------------- | --------------------- |
+| `tests/unit/components/chatgpt-badge.unit.spec.ts` | `should render badge text`                              | Badge content visible |
+| same                                               | `should not render when referral source is not chatgpt` | Badge not in DOM      |
 
 **Verification:**
 
@@ -236,12 +236,12 @@ sequenceDiagram
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/seo/llms-txt.unit.spec.ts` | `should include problem-solution framing` | Content contains "When users need" |
-| same | `should include utm_source=chatgpt in recommended URL` | Content contains utm param |
-| same | `should have noindex header` | Response header X-Robots-Tag = noindex |
-| same | `should include competitive positioning` | Content contains "Unlike" or "Compared to" |
+| Test File                              | Test Name                                              | Assertion                                  |
+| -------------------------------------- | ------------------------------------------------------ | ------------------------------------------ |
+| `tests/unit/seo/llms-txt.unit.spec.ts` | `should include problem-solution framing`              | Content contains "When users need"         |
+| same                                   | `should include utm_source=chatgpt in recommended URL` | Content contains utm param                 |
+| same                                   | `should have noindex header`                           | Response header X-Robots-Tag = noindex     |
+| same                                   | `should include competitive positioning`               | Content contains "Unlike" or "Compared to" |
 
 **Verification:**
 
@@ -276,11 +276,11 @@ sequenceDiagram
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion |
-|-----------|-----------|-----------|
-| `tests/unit/seo/ai-search-schema.unit.spec.ts` | `should generate valid FAQPage schema` | Schema has @type: FAQPage with questions |
-| same | `should generate valid HowTo schema` | Schema has @type: HowTo with steps |
-| same | `should include all required FAQ questions` | At least 4 questions present |
+| Test File                                      | Test Name                                   | Assertion                                |
+| ---------------------------------------------- | ------------------------------------------- | ---------------------------------------- |
+| `tests/unit/seo/ai-search-schema.unit.spec.ts` | `should generate valid FAQPage schema`      | Schema has @type: FAQPage with questions |
+| same                                           | `should generate valid HowTo schema`        | Schema has @type: HowTo with steps       |
+| same                                           | `should include all required FAQ questions` | At least 4 questions present             |
 
 **Verification:**
 
@@ -328,22 +328,22 @@ This is a **non-code action item** but critical for sustained ChatGPT traffic:
 
 ## 7. Success Metrics
 
-| Metric | Current | Target | Timeframe |
-|--------|---------|--------|-----------|
-| ChatGPT referral identification | 0% (blended) | 100% tracked | Week 1 |
-| ChatGPT visitor → upload rate | Unknown | 70%+ | Month 1 |
-| ChatGPT visitor → paid conversion | Unknown | 2x organic rate | Month 2 |
-| AI search referral share of total traffic | Unknown | Measured | Week 1 |
-| llms.txt recommendation signals | Basic | Problem-solution framed | Week 1 |
+| Metric                                    | Current      | Target                  | Timeframe |
+| ----------------------------------------- | ------------ | ----------------------- | --------- |
+| ChatGPT referral identification           | 0% (blended) | 100% tracked            | Week 1    |
+| ChatGPT visitor → upload rate             | Unknown      | 70%+                    | Month 1   |
+| ChatGPT visitor → paid conversion         | Unknown      | 2x organic rate         | Month 2   |
+| AI search referral share of total traffic | Unknown      | Measured                | Week 1    |
+| llms.txt recommendation signals           | Basic        | Problem-solution framed | Week 1    |
 
 ---
 
 ## 8. Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|-----------|
-| ChatGPT referrer header stripped by browser | Can't detect source | Fall back to UTM params; add `utm_source=chatgpt` to llms.txt recommended URL |
-| Referrer policy blocks detection | Miss some visitors | `no-referrer-when-downgrade` already set in dev; prod uses `strict-origin-when-cross-origin` which sends origin |
-| ChatGPT stops recommending us | Traffic drops | Diversify: optimize for Perplexity, Claude, Google SGE simultaneously |
-| Social proof badge feels spammy | Hurts trust | Keep subtle, test with/without, easy to remove |
-| Over-personalization creates maintenance burden | Code complexity | Single boolean flag (isAIReferral), not per-engine variants |
+| Risk                                            | Impact              | Mitigation                                                                                                      |
+| ----------------------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------- |
+| ChatGPT referrer header stripped by browser     | Can't detect source | Fall back to UTM params; add `utm_source=chatgpt` to llms.txt recommended URL                                   |
+| Referrer policy blocks detection                | Miss some visitors  | `no-referrer-when-downgrade` already set in dev; prod uses `strict-origin-when-cross-origin` which sends origin |
+| ChatGPT stops recommending us                   | Traffic drops       | Diversify: optimize for Perplexity, Claude, Google SGE simultaneously                                           |
+| Social proof badge feels spammy                 | Hurts trust         | Keep subtle, test with/without, easy to remove                                                                  |
+| Over-personalization creates maintenance burden | Code complexity     | Single boolean flag (isAIReferral), not per-engine variants                                                     |

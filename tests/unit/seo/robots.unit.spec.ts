@@ -26,7 +26,7 @@ describe('robots.ts', () => {
       const result = robots();
 
       const gptBotRule = result.rules.find(
-        (rule) => typeof rule === 'object' && rule.userAgent === 'GPTBot'
+        rule => typeof rule === 'object' && rule.userAgent === 'GPTBot'
       );
 
       expect(gptBotRule).toBeDefined();
@@ -41,7 +41,7 @@ describe('robots.ts', () => {
       const result = robots();
 
       const chatGptRule = result.rules.find(
-        (rule) => typeof rule === 'object' && rule.userAgent === 'ChatGPT-User'
+        rule => typeof rule === 'object' && rule.userAgent === 'ChatGPT-User'
       );
 
       expect(chatGptRule).toBeDefined();
@@ -56,7 +56,7 @@ describe('robots.ts', () => {
       const result = robots();
 
       const googleExtendedRule = result.rules.find(
-        (rule) => typeof rule === 'object' && rule.userAgent === 'Google-Extended'
+        rule => typeof rule === 'object' && rule.userAgent === 'Google-Extended'
       );
 
       expect(googleExtendedRule).toBeDefined();
@@ -71,7 +71,7 @@ describe('robots.ts', () => {
       const result = robots();
 
       const claudeBotRule = result.rules.find(
-        (rule) => typeof rule === 'object' && rule.userAgent === 'ClaudeBot'
+        rule => typeof rule === 'object' && rule.userAgent === 'ClaudeBot'
       );
 
       expect(claudeBotRule).toBeDefined();
@@ -86,7 +86,7 @@ describe('robots.ts', () => {
       const result = robots();
 
       const perplexityRule = result.rules.find(
-        (rule) => typeof rule === 'object' && rule.userAgent === 'PerplexityBot'
+        rule => typeof rule === 'object' && rule.userAgent === 'PerplexityBot'
       );
 
       expect(perplexityRule).toBeDefined();
@@ -101,7 +101,7 @@ describe('robots.ts', () => {
       const result = robots();
 
       const anthropicRule = result.rules.find(
-        (rule) => typeof rule === 'object' && rule.userAgent === 'anthropic-ai'
+        rule => typeof rule === 'object' && rule.userAgent === 'anthropic-ai'
       );
 
       expect(anthropicRule).toBeDefined();
@@ -122,12 +122,11 @@ describe('robots.ts', () => {
         'ClaudeBot',
         'PerplexityBot',
         'anthropic-ai',
+        'CCBot',
       ];
 
-      aiBotUserAgents.forEach((userAgent) => {
-        const rule = result.rules.find(
-          (r) => typeof r === 'object' && r.userAgent === userAgent
-        );
+      aiBotUserAgents.forEach(userAgent => {
+        const rule = result.rules.find(r => typeof r === 'object' && r.userAgent === userAgent);
 
         expect(rule).toBeDefined();
         expect(rule?.disallow).toContain('/dashboard/');
@@ -146,12 +145,11 @@ describe('robots.ts', () => {
         'ClaudeBot',
         'PerplexityBot',
         'anthropic-ai',
+        'CCBot',
       ];
 
-      aiBotUserAgents.forEach((userAgent) => {
-        const rule = result.rules.find(
-          (r) => typeof r === 'object' && r.userAgent === userAgent
-        );
+      aiBotUserAgents.forEach(userAgent => {
+        const rule = result.rules.find(r => typeof r === 'object' && r.userAgent === userAgent);
 
         expect(rule).toBeDefined();
         expect(rule?.disallow).toContain('/api/');
@@ -166,7 +164,7 @@ describe('robots.ts', () => {
       const result = robots();
 
       const wildcardRule = result.rules.find(
-        (rule) => typeof rule === 'object' && rule.userAgent === '*'
+        rule => typeof rule === 'object' && rule.userAgent === '*'
       );
 
       expect(wildcardRule).toBeDefined();
@@ -181,7 +179,7 @@ describe('robots.ts', () => {
       const result = robots();
 
       const wildcardRule = result.rules.find(
-        (rule) => typeof rule === 'object' && rule.userAgent === '*'
+        rule => typeof rule === 'object' && rule.userAgent === '*'
       );
 
       expect(wildcardRule?.disallow).toContain('/api/');
@@ -212,11 +210,26 @@ describe('robots.ts', () => {
   });
 
   describe('Rule Count', () => {
-    it('should have exactly 7 rules (1 wildcard + 6 AI bots)', async () => {
+    it('should have explicit CCBot allow rule', async () => {
       const { default: robots } = await import('@/app/robots');
       const result = robots();
 
-      expect(result.rules).toHaveLength(7);
+      const ccBotRule = result.rules.find(
+        rule => typeof rule === 'object' && rule.userAgent === 'CCBot'
+      );
+
+      expect(ccBotRule).toBeDefined();
+      expect(ccBotRule).toMatchObject({
+        userAgent: 'CCBot',
+        allow: '/',
+      });
+    });
+
+    it('should have exactly 8 rules (1 wildcard + 7 AI bots)', async () => {
+      const { default: robots } = await import('@/app/robots');
+      const result = robots();
+
+      expect(result.rules).toHaveLength(8);
     });
   });
 });

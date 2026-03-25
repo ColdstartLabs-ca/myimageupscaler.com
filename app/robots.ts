@@ -63,6 +63,12 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
       },
+      // Common Crawl — used as training data by many open-source AI models
+      {
+        userAgent: 'CCBot',
+        allow: '/',
+        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+      },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
     host: BASE_URL,
