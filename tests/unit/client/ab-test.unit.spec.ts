@@ -244,12 +244,13 @@ describe('abTest', () => {
     });
 
     it('should work with two-variant experiments', async () => {
+      vi.mocked(localStorage.getItem).mockReturnValue('test_user_binary');
+
       const { isVariant } = await import('@/client/utils/abTest');
 
       const variants = ['control', 'treatment'];
 
-      // isVariant is mutually exclusive: exactly one variant is true, the other false
-      // (without relying on localStorage persistence between calls in jsdom)
+      // isVariant is mutually exclusive: with a fixed user ID, exactly one variant is true
       const isControl = isVariant('binary-experiment', variants, 'control');
       const isTreatment = isVariant('binary-experiment', variants, 'treatment');
 
