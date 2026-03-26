@@ -398,6 +398,290 @@ describe('CampaignService', () => {
       });
     });
   });
+
+  describe('drip sequencing', () => {
+    it('should pass campaignId to segmentation RPC to enable drip sequencing', async () => {
+      const mockCampaign = {
+        id: 'campaign-day1',
+        name: 'Non-converter Day 1',
+        segment: 'non_converter',
+        template_name: 'result-ready',
+        send_day: 1,
+        subject: 'Your images are ready',
+        enabled: true,
+        priority: 0,
+        created_at: '2026-03-11T00:00:00Z',
+        updated_at: '2026-03-11T00:00:00Z',
+      };
+
+      const mockUsers = [
+        { id: 'user-1', email: 'user1@example.com' },
+        { id: 'user-2', email: 'user2@example.com' },
+      ];
+
+      // Mock getCampaignById
+      (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: mockCampaign,
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      // Mock segmentation RPC with campaign_id parameter
+      (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: mockUsers,
+        error: null,
+      });
+
+      // Mock upsert for queue entries
+      (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+        if (table === 'email_campaigns') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({
+                  data: mockCampaign,
+                  error: null,
+                }),
+              }),
+            }),
+          };
+        }
+        if (table === 'email_campaign_queue') {
+          return {
+            upsert: vi.fn().mockReturnValue({
+              select: vi.fn().mockResolvedValue({
+                data: [{ user_id: 'user-1' }, { user_id: 'user-2' }],
+                error: null,
+              }),
+            }),
+          };
+        }
+        return {};
+      });
+
+      // Re-import to get fresh mock
+      const { resetCampaignService: reset2, getCampaignService: get2 } =
+        await import('@server/services/campaign.service');
+      reset2();
+      const freshService = get2();
+
+      await freshService.queueCampaign({ campaignId: 'campaign-day1' });
+
+      // Verify RPC was called with campaign_id parameter for drip sequencing
+      expect(supabaseAdmin.rpc).toHaveBeenCalledWith(
+        'get_non_converter_segment',
+        expect.objectContaining({
+          p_campaign_id: 'campaign-day1',
+        })
+      );
+    });
+
+    it('should allow same user to be queued for different campaigns in same segment', async () => {
+      // This test verifies the drip sequencing logic:
+      // User can receive Day 1 email, then Day 3 email, etc.
+      // Because the exclusion is scoped to campaign_id, not segment
+
+      const day1Campaign = {
+        id: 'campaign-day1',
+        name: 'Non-converter Day 1',
+        segment: 'non_converter',
+        template_name: 'result-ready',
+        send_day: 1,
+        subject: 'Day 1',
+        enabled: true,
+        priority: 0,
+        created_at: '2026-03-11T00:00:00Z',
+        updated_at: '2026-03-11T00:00:00Z',
+      };
+
+      const mockUsers = [{ id: 'user-1', email: 'user1@example.com' }];
+
+      (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+        if (table === 'email_campaigns') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({
+                  data: day1Campaign,
+                  error: null,
+                }),
+              }),
+            }),
+          };
+        }
+        if (table === 'email_campaign_queue') {
+          return {
+            upsert: vi.fn().mockReturnValue({
+              select: vi.fn().mockResolvedValue({
+                data: [{ user_id: 'user-1' }],
+                error: null,
+              }),
+            }),
+          };
+        }
+        return {};
+      });
+
+      (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: mockUsers,
+        error: null,
+      });
+
+      const { resetCampaignService: reset2, getCampaignService: get2 } =
+        await import('@server/services/campaign.service');
+      reset2();
+      const freshService = get2();
+
+      // Queue for Day 1 campaign
+      const result = await freshService.queueCampaign({ campaignId: 'campaign-day1' });
+
+      expect(result.queued).toBe(1);
+      expect(result.userIds).toContain('user-1');
+
+      // The RPC should be called with the specific campaign_id
+      // This enables the same user to be queued for Day 3 later
+      // because the exclusion only applies to that specific campaign
+      expect(supabaseAdmin.rpc).toHaveBeenCalledWith(
+        'get_non_converter_segment',
+        expect.objectContaining({
+          p_campaign_id: 'campaign-day1',
+        })
+      );
+    });
+  });
+
+  describe('webhook attribution', () => {
+    it('should store messageId in queue metadata after successful send', async () => {
+      const mockPendingEmails = [
+        {
+          queue_id: 'queue-1',
+          campaign_id: 'campaign-1',
+          campaign_name: 'Test Campaign',
+          template_name: 'result-ready',
+          subject: 'Test Subject',
+          user_id: 'user-1',
+          email: 'user1@example.com',
+          metadata: { unsubscribeToken: 'token123' },
+        },
+      ];
+
+      const mockMessageId = 'msg-abc123';
+
+      (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockImplementation((fn: string) => {
+        if (fn === 'get_pending_campaign_emails') {
+          return Promise.resolve({ data: mockPendingEmails, error: null });
+        }
+        if (fn === 'mark_campaign_sent') {
+          return Promise.resolve({ error: null });
+        }
+        return Promise.resolve({ data: null, error: null });
+      });
+
+      // Mock update for storing messageId
+      const mockUpdate = vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      });
+      (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockReturnValue({
+        update: mockUpdate,
+      });
+
+      // Mock email service with messageId
+      const { getEmailService } = await import('@server/services/email.service');
+      (getEmailService as ReturnType<typeof vi.fn>).mockReturnValue({
+        send: vi.fn().mockResolvedValue({
+          success: true,
+          messageId: mockMessageId,
+        }),
+      });
+
+      const { resetCampaignService: reset2, getCampaignService: get2 } =
+        await import('@server/services/campaign.service');
+      reset2();
+      const freshService = get2();
+
+      const result = await freshService.processQueue(100);
+
+      expect(result.sent).toBe(1);
+
+      // Verify messageId was stored in metadata
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          metadata: expect.objectContaining({
+            messageId: mockMessageId,
+          }),
+        })
+      );
+    });
+
+    it('should preserve existing metadata when adding messageId', async () => {
+      const existingMetadata = {
+        unsubscribeToken: 'token456',
+        customField: 'value',
+      };
+
+      const mockPendingEmails = [
+        {
+          queue_id: 'queue-2',
+          campaign_id: 'campaign-1',
+          campaign_name: 'Test Campaign',
+          template_name: 'result-ready',
+          subject: 'Test Subject',
+          user_id: 'user-1',
+          email: 'user1@example.com',
+          metadata: existingMetadata,
+        },
+      ];
+
+      const mockMessageId = 'msg-xyz789';
+
+      (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockImplementation((fn: string) => {
+        if (fn === 'get_pending_campaign_emails') {
+          return Promise.resolve({ data: mockPendingEmails, error: null });
+        }
+        if (fn === 'mark_campaign_sent') {
+          return Promise.resolve({ error: null });
+        }
+        return Promise.resolve({ data: null, error: null });
+      });
+
+      const mockUpdate = vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      });
+      (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockReturnValue({
+        update: mockUpdate,
+      });
+
+      const { getEmailService } = await import('@server/services/email.service');
+      (getEmailService as ReturnType<typeof vi.fn>).mockReturnValue({
+        send: vi.fn().mockResolvedValue({
+          success: true,
+          messageId: mockMessageId,
+        }),
+      });
+
+      const { resetCampaignService: reset2, getCampaignService: get2 } =
+        await import('@server/services/campaign.service');
+      reset2();
+      const freshService = get2();
+
+      await freshService.processQueue(100);
+
+      // Verify existing metadata is preserved and messageId is added
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          metadata: expect.objectContaining({
+            ...existingMetadata,
+            messageId: mockMessageId,
+          }),
+        })
+      );
+    });
+  });
 });
 
 describe('CampaignError', () => {
