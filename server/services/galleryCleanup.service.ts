@@ -87,16 +87,12 @@ export async function findInactiveFreeUsers(): Promise<IInactiveUsersResult> {
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - INACTIVITY_DAYS);
 
-  // Query for free users with saved images whose profiles haven't been updated in 30 days
-  // Logic: tier is (null or free) AND status is (null or NOT active/trialing)
-  // Using nested AND in the second OR clause to properly exclude active/trialing users
-  const { data: inactiveUsers, error } = await supabaseAdmin
+  // Step 1: Query for free users whose profiles haven't been updated in 30 days
+  // Get tier (null or free) first, then filter status at application level for reliability
+  const { data: freeUsers, error } = await supabaseAdmin
     .from('profiles')
-    .select('id')
+    .select('id, subscription_status')
     .or('subscription_tier.is.null,subscription_tier.eq.free')
-    .or(
-      'subscription_status.is.null,and(subscription_status.neq.active,subscription_status.neq.trialing)'
-    )
     .lt('updated_at', cutoffDate.toISOString());
 
   if (error) {
@@ -104,7 +100,17 @@ export async function findInactiveFreeUsers(): Promise<IInactiveUsersResult> {
     throw new Error(`Failed to find inactive users: ${error.message}`);
   }
 
-  if (!inactiveUsers || inactiveUsers.length === 0) {
+  if (!freeUsers || freeUsers.length === 0) {
+    return { userIds: [], total: 0 };
+  }
+
+  // Step 2: Filter out users with active or trialing subscriptions (application-level filter)
+  // This is more reliable than trying to do nested OR/AND in PostgREST
+  const inactiveUsers = freeUsers.filter(
+    user => user.subscription_status !== 'active' && user.subscription_status !== 'trialing'
+  );
+
+  if (inactiveUsers.length === 0) {
     return { userIds: [], total: 0 };
   }
 
@@ -290,19 +296,28 @@ export async function getCleanupStats(): Promise<{
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - INACTIVITY_DAYS);
 
-    // Get count of inactive free users with images
-    // Use nested AND/OR to properly exclude active/trialing users:
-    // (tier is null/free) AND (status is null OR (status != active AND status != trialing))
-    const { data: inactiveUsers, error } = await supabaseAdmin
+    // Step 1: Get free tier users whose profiles haven't been updated in 30 days
+    // Filter status at application level for reliability
+    const { data: freeUsers, error } = await supabaseAdmin
       .from('profiles')
-      .select('id, updated_at')
+      .select('id, updated_at, subscription_status')
       .or('subscription_tier.is.null,subscription_tier.eq.free')
-      .or(
-        'subscription_status.is.null,and(subscription_status.neq.active,subscription_status.neq.trialing)'
-      )
       .lt('updated_at', cutoffDate.toISOString());
 
-    if (error || !inactiveUsers) {
+    if (error || !freeUsers) {
+      return {
+        inactiveFreeUsersWithImages: 0,
+        totalImagesToCleanup: 0,
+        oldestInactiveDate: null,
+      };
+    }
+
+    // Step 2: Filter out users with active or trialing subscriptions (application-level filter)
+    const inactiveUsers = freeUsers.filter(
+      user => user.subscription_status !== 'active' && user.subscription_status !== 'trialing'
+    );
+
+    if (inactiveUsers.length === 0) {
       return {
         inactiveFreeUsersWithImages: 0,
         totalImagesToCleanup: 0,
