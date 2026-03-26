@@ -195,11 +195,11 @@ export function useGallery(): IUseGalleryReturn {
 
   /**
    * Refresh gallery (reset to page 1)
+   * Note: fetchImages already updates usage from the API response, so no separate fetchUsage call needed
    */
   const refresh = useCallback(async () => {
     await fetchImages(1, false);
-    await fetchUsage();
-  }, [fetchImages, fetchUsage]);
+  }, [fetchImages]);
 
   /**
    * Save an image to the gallery
