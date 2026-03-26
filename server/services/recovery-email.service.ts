@@ -335,7 +335,7 @@ export async function sendDueRecoveryEmails(
     .eq('status', 'pending')
     .not('email', 'is', null)
     .neq('email', '')
-    .gt('created_at', oldestEligibleAt)
+    .gte('created_at', oldestEligibleAt)
     .lte('created_at', newestEligibleAt)
     .eq(`emails_sent->>${emailField}`, 'false');
 
