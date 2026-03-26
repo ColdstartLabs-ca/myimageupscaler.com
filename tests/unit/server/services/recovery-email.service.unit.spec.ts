@@ -146,7 +146,7 @@ describe('recovery-email.service', () => {
       eq: vi.fn(),
       not: vi.fn(),
       neq: vi.fn(),
-      gt: vi.fn(),
+      gte: vi.fn(),
       lte: vi.fn(),
     };
 
@@ -160,7 +160,7 @@ describe('recovery-email.service', () => {
     });
     query.not.mockReturnValue(query);
     query.neq.mockReturnValue(query);
-    query.gt.mockReturnValue(query);
+    query.gte.mockReturnValue(query);
     query.lte.mockReturnValue(query);
     mockFrom.mockReturnValue(query);
 
@@ -173,7 +173,7 @@ describe('recovery-email.service', () => {
     expect(result).toEqual({ sent: 0, failed: 0, total: 2 });
     expect(query.not).toHaveBeenCalledWith('email', 'is', null);
     expect(query.neq).toHaveBeenCalledWith('email', '');
-    expect(query.gt).toHaveBeenCalledWith('created_at', expectedOldestEligibleAt);
+    expect(query.gte).toHaveBeenCalledWith('created_at', expectedOldestEligibleAt);
     expect(query.lte).toHaveBeenCalledWith('created_at', expectedNewestEligibleAt);
     expect(mockSend).not.toHaveBeenCalled();
   });
@@ -184,7 +184,7 @@ describe('recovery-email.service', () => {
       eq: vi.fn(),
       not: vi.fn(),
       neq: vi.fn(),
-      gt: vi.fn(),
+      gte: vi.fn(),
       lte: vi.fn(),
     };
 
@@ -198,7 +198,7 @@ describe('recovery-email.service', () => {
     });
     query.not.mockReturnValue(query);
     query.neq.mockReturnValue(query);
-    query.gt.mockReturnValue(query);
+    query.gte.mockReturnValue(query);
     query.lte.mockReturnValue(query);
     mockFrom.mockReturnValue(query);
 
@@ -208,7 +208,7 @@ describe('recovery-email.service', () => {
       .subtract(15, 'minute')
       .toISOString();
 
-    expect(query.gt).toHaveBeenCalledWith('created_at', expectedOldestEligibleAt);
+    expect(query.gte).toHaveBeenCalledWith('created_at', expectedOldestEligibleAt);
     expect(query.lte).toHaveBeenCalledWith('created_at', expectedNewestEligibleAt);
     expect(mockSend).not.toHaveBeenCalled();
   });
