@@ -51,6 +51,28 @@ function validatePriceId(priceId: unknown): string {
   return priceIdStr;
 }
 
+const RESERVED_CHECKOUT_METADATA_KEYS = new Set([
+  'user_id',
+  'supabase_user_id',
+  'pricing_region',
+  'discount_percent',
+  'engagement_discount_percent',
+  'engagement_discount_applied',
+  'type',
+  'plan_key',
+  'credits_per_cycle',
+  'max_rollover',
+  'pack_key',
+  'credits',
+  'price_id',
+]);
+
+function sanitizeCustomCheckoutMetadata(metadata: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(metadata).filter(([key]) => !RESERVED_CHECKOUT_METADATA_KEYS.has(key))
+  );
+}
+
 /**
  * Extracts user from authentication token
  */
@@ -191,6 +213,14 @@ export async function POST(request: NextRequest) {
     }
 
     const { priceId, successUrl, cancelUrl, metadata = {}, uiMode = 'hosted' } = body;
+    const customMetadata = sanitizeCustomCheckoutMetadata(metadata);
+
+    if (Object.keys(customMetadata).length !== Object.keys(metadata).length) {
+      console.warn('[CHECKOUT_METADATA_OVERRIDE_BLOCKED]', {
+        requestedKeys: Object.keys(metadata),
+        allowedKeys: Object.keys(customMetadata),
+      });
+    }
 
     // Validate price ID format
     let validatedPriceId: string;
@@ -493,11 +523,14 @@ export async function POST(request: NextRequest) {
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
+      client_reference_id: user.id,
       line_items: lineItems,
       mode: checkoutMode,
       ui_mode: uiMode,
       metadata: {
+        ...customMetadata,
         user_id: user.id,
+        price_id: validatedPriceId,
         pricing_region: pricingConfig.region,
         discount_percent: pricingConfig.discountPercent.toString(),
         // Track engagement discount for webhook redemption
@@ -522,7 +555,6 @@ export async function POST(request: NextRequest) {
                   }),
             }
           : {}),
-        ...metadata,
       },
     };
 

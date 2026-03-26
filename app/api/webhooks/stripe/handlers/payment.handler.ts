@@ -14,6 +14,55 @@ interface IStripeChargeExtended extends Stripe.Charge {
 }
 
 export class PaymentHandler {
+  private static async resolveCheckoutSessionUserId(
+    session: Stripe.Checkout.Session
+  ): Promise<string> {
+    const metadataUserId = session.metadata?.user_id || session.metadata?.supabase_user_id;
+    if (metadataUserId) {
+      return metadataUserId;
+    }
+
+    if (session.client_reference_id) {
+      console.warn('[CHECKOUT_USER_ID_RECOVERED]', {
+        sessionId: session.id,
+        strategy: 'client_reference_id',
+        userId: session.client_reference_id,
+      });
+      return session.client_reference_id;
+    }
+
+    const customerId =
+      typeof session.customer === 'string' ? session.customer : session.customer?.id || null;
+    if (!customerId) {
+      throw new Error(`Unable to resolve checkout session user: ${session.id} has no user_id`);
+    }
+
+    const { data: profile, error } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('stripe_customer_id', customerId)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(
+        `Failed to resolve checkout session user from customer ${customerId}: ${error.message}`
+      );
+    }
+
+    if (!profile?.id) {
+      throw new Error(`No profile found for checkout customer ${customerId}`);
+    }
+
+    console.warn('[CHECKOUT_USER_ID_RECOVERED]', {
+      sessionId: session.id,
+      strategy: 'stripe_customer_id',
+      customerId,
+      userId: profile.id,
+    });
+
+    return profile.id;
+  }
+
   private static async syncSubscriptionStateFromCheckout(params: {
     userId: string;
     customerId: string | null;
@@ -95,11 +144,7 @@ export class PaymentHandler {
    * Handle successful checkout session
    */
   static async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session): Promise<void> {
-    const userId = session.metadata?.user_id;
-    if (!userId) {
-      console.error('No user_id in session metadata');
-      return;
-    }
+    const userId = await this.resolveCheckoutSessionUserId(session);
 
     console.log(`Checkout completed for user ${userId}, mode: ${session.mode}`);
 

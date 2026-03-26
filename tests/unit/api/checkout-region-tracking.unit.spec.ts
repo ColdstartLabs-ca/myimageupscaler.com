@@ -332,5 +332,35 @@ describe('Checkout Region Tracking', () => {
         expect.any(Object)
       );
     });
+
+    test('recovers checkout identity from client_reference_id for credit pack purchases', async () => {
+      const session = createMockSession({
+        mode: 'payment',
+        client_reference_id: 'user_clientref_123',
+        metadata: {
+          pricing_region: 'south_asia',
+          discount_percent: '65',
+          pack_key: 'small',
+          credits: '50',
+          price_id: 'price_test_credits_small',
+        },
+        subscription: null,
+        payment_intent: 'pi_test_123',
+      });
+
+      await PaymentHandler.handleCheckoutSessionCompleted(session);
+
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        'purchase_confirmed',
+        expect.objectContaining({
+          purchaseType: 'credit_pack',
+          sessionId: 'cs_test_123',
+          pricingRegion: 'south_asia',
+        }),
+        expect.objectContaining({
+          userId: 'user_clientref_123',
+        })
+      );
+    });
   });
 });

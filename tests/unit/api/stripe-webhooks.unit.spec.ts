@@ -259,7 +259,23 @@ describe('Stripe Webhook Handler', () => {
       // Arrange
       const event = {
         type: 'checkout.session.completed',
-        data: { object: { id: 'cs_test_123' } },
+        data: {
+          object: {
+            id: 'cs_test_123',
+            mode: 'payment',
+            metadata: {
+              user_id: 'user_test_123',
+              pack_key: 'small',
+              credits: '50',
+              price_id: 'price_test_credits_small',
+            },
+            payment_intent: 'pi_test_123',
+            amount_total: 499,
+            currency: 'usd',
+            payment_status: 'paid',
+            status: 'complete',
+          },
+        },
       };
 
       const request = new NextRequest('http://localhost/api/webhooks/stripe', {
@@ -625,7 +641,7 @@ describe('Stripe Webhook Handler', () => {
       expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('[CHECKOUT_SKIP]'));
     });
 
-    test('should handle missing user_id in metadata', async () => {
+    test('should return 500 when checkout identity cannot be resolved', async () => {
       // Arrange
       const sessionWithoutUserId = {
         ...sessionWithCredits,
@@ -652,9 +668,10 @@ describe('Stripe Webhook Handler', () => {
       const response = await POST(request);
 
       // Assert
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(500);
       expect(supabaseAdmin.rpc).not.toHaveBeenCalled();
-      expect(consoleSpy.error).toHaveBeenCalledWith('No user_id in session metadata');
+      const data = await response.json();
+      expect(data.error).toContain('Unable to resolve checkout session user');
     });
   });
 
