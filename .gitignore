@@ -96,3 +96,6 @@ supabase/*
 night-watch.config.json
 *.claim
 .worktrees
+
+
+.claude/worktrees
