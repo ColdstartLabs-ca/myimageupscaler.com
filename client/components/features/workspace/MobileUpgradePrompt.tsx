@@ -107,6 +107,9 @@ export const MobileUpgradePrompt = ({
   const previewTitle = isCreditPurchaser
     ? 'Get monthly credits with subscription'
     : 'Unlock pro AI models for sharper results';
+  const previewSubtitle = isCreditPurchaser
+    ? '100 credits included, priority processing'
+    : 'Clarity & Real-ESRGAN Pro available';
   const previewCta = isCreditPurchaser
     ? `Subscribe — ${displayPrice}/mo`
     : `Go Pro — ${displayPrice}`;
@@ -163,9 +166,7 @@ export const MobileUpgradePrompt = ({
     <div className="md:hidden mt-3 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3 flex items-center justify-between gap-3">
       <div className="min-w-0">
         <p className="text-xs font-medium text-white">{previewTitle}</p>
-        <p className="text-[11px] text-text-muted mt-0.5">
-          Clarity &amp; Real-ESRGAN Pro available
-        </p>
+        <p className="text-[11px] text-text-muted mt-0.5">{previewSubtitle}</p>
       </div>
       <button
         onClick={handleClick}
