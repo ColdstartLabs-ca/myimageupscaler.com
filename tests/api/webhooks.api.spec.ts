@@ -139,7 +139,9 @@ test.describe('API: Stripe Webhooks - Error Handling', () => {
     expect([400, 500]).toContain(response.status());
   });
 
-  test('should handle checkout session without metadata', async ({ request }) => {
+  test('should return retryable error for checkout session without metadata', async ({
+    request,
+  }) => {
     const webhookClient = new WebhookClient(request);
 
     const event = {
@@ -157,10 +159,10 @@ test.describe('API: Stripe Webhooks - Error Handling', () => {
 
     const response = await webhookClient.send(event);
 
-    // Should handle gracefully without crashing - returns 200
-    response.expectSuccess();
-    const data = (await response.json()) as { received: boolean };
-    expect(data.received).toBe(true);
+    // Missing identity should be retryable so Stripe can redeliver after investigation/fix.
+    response.expectStatus(500);
+    const data = (await response.json()) as { error: string };
+    expect(data.error).toContain('Unable to resolve checkout session user');
   });
 
   test('should handle malformed event data gracefully', async ({ request }) => {
@@ -183,6 +185,7 @@ test.describe('API: Stripe Webhooks - Error Handling', () => {
 
 test.describe('API: Stripe Webhooks - Idempotency', () => {
   test('should skip duplicate events', async ({ request }) => {
+    const testUser = await ctx.createUser();
     const webhookClient = new WebhookClient(request);
     const eventId = `evt_idempotency_${Date.now()}`;
 
@@ -190,13 +193,13 @@ test.describe('API: Stripe Webhooks - Idempotency', () => {
     const event = {
       id: eventId,
       object: 'event',
-      type: 'checkout.session.completed',
+      type: 'customer.created',
       data: {
         object: {
-          mode: 'subscription',
-          status: 'complete',
-          customer: 'cus_test',
-          subscription: 'sub_test',
+          id: `cus_idempotency_${Date.now()}`,
+          metadata: {
+            user_id: testUser.id,
+          },
         },
       },
     };

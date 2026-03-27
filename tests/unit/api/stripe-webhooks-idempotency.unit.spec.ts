@@ -203,7 +203,17 @@ describe('Stripe Webhook Idempotency', () => {
           object: {
             id: 'cs_test_123',
             mode: 'payment',
-            metadata: {},
+            payment_status: 'paid',
+            status: 'complete',
+            payment_intent: 'pi_test_123',
+            amount_total: 499,
+            currency: 'usd',
+            metadata: {
+              user_id: 'user_123',
+              pack_key: 'small',
+              credits: '50',
+              price_id: 'price_test_credits_small',
+            },
           },
         },
       };
@@ -260,7 +270,17 @@ describe('Stripe Webhook Idempotency', () => {
           object: {
             id: 'cs_test_123',
             mode: 'payment',
-            metadata: {},
+            payment_status: 'paid',
+            status: 'complete',
+            payment_intent: 'pi_test_123',
+            amount_total: 499,
+            currency: 'usd',
+            metadata: {
+              user_id: 'user_123',
+              pack_key: 'small',
+              credits: '50',
+              price_id: 'price_test_credits_small',
+            },
           },
         },
       };
@@ -392,7 +412,17 @@ describe('Stripe Webhook Idempotency', () => {
           object: {
             id: 'cs_test_123',
             mode: 'payment',
-            metadata: {},
+            payment_status: 'paid',
+            status: 'complete',
+            payment_intent: 'pi_test_123',
+            amount_total: 499,
+            currency: 'usd',
+            metadata: {
+              user_id: 'user_123',
+              pack_key: 'small',
+              credits: '50',
+              price_id: 'price_test_credits_small',
+            },
           },
         },
       };
