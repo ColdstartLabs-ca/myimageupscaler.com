@@ -51,6 +51,12 @@ export default {
     } else if (cronPattern === '5 3 * * *') {
       endpoint = '/api/cron/reconcile';
       jobName = 'Full Reconciliation';
+    } else if (cronPattern === '0 0 * * *') {
+      endpoint = '/api/cron/queue-campaigns';
+      jobName = 'Campaign Queue';
+    } else if (cronPattern === '*/5 * * * *') {
+      endpoint = '/api/cron/send-campaigns';
+      jobName = 'Campaign Send';
     } else {
       console.error(`[CRON] Unknown cron pattern: ${cronPattern}`);
       return;
