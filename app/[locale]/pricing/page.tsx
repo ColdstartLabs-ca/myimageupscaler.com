@@ -1,10 +1,16 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
+import { headers } from 'next/headers';
 import PricingPageClient from './PricingPageClient';
 import { generatePricingSchema } from '@lib/seo/schema-generator';
 import { clientEnv } from '@shared/config/env';
 import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
+import { SUBSCRIPTION_PLANS } from '@shared/config/stripe';
+import { getPricingRegion } from '@shared/config/pricing-regions';
 import type { Locale } from '@/i18n/config';
+
+const LOWEST_PLAN_PRICE = SUBSCRIPTION_PLANS.STARTER_MONTHLY.price;
+const OG_IMAGE = `${clientEnv.BASE_URL}/og-image-pricing.png`;
 
 interface IPageProps {
   params: Promise<{ locale: Locale }>;
@@ -14,39 +20,36 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
   const { locale } = await params;
   const canonicalUrl = getCanonicalUrl('/pricing', locale);
 
+  const title = `AI Image Upscaler Pricing — Plans from $${LOWEST_PLAN_PRICE}/month`;
+  const description = `Plans from $${LOWEST_PLAN_PRICE}/month. Upscale images up to 8x resolution with AI. Start free — no credit card required. Cancel anytime.`;
+
   return {
-    title: 'AI Image Upscaler Pricing — Free Plan + Paid Credits',
-    description:
-      'Start free with 10 monthly credits. Upgrade for more credits, batch processing, and priority support. No credit card needed to get started.',
+    title,
+    description,
     openGraph: {
-      title: 'AI Image Upscaler Pricing — Free Plan + Paid Credits',
-      description:
-        'Start free with 10 monthly credits. Upgrade for more credits, batch processing, and priority support. No credit card needed to get started.',
+      title,
+      description,
       url: canonicalUrl,
       type: 'website',
       images: [
-        {
-          url: `${clientEnv.BASE_URL}/og-image-pricing.png`,
-          width: 1200,
-          height: 630,
-          alt: 'Pricing plans for AI image upscaler',
-        },
+        { url: OG_IMAGE, width: 1200, height: 630, alt: 'Pricing plans for AI image upscaler' },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'AI Image Upscaler Pricing — Free Plan + Paid Credits',
-      description:
-        'Start free with 10 monthly credits. Upgrade for more credits, batch processing, and priority support. No credit card needed to get started.',
-      images: [`${clientEnv.BASE_URL}/og-image-pricing.png`],
+      title,
+      description,
+      images: [OG_IMAGE],
     },
-    alternates: {
-      canonical: canonicalUrl,
-    },
+    alternates: { canonical: canonicalUrl },
   };
 }
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const headersList = await headers();
+  const country = headersList.get('CF-IPCountry') ?? headersList.get('cf-ipcountry') ?? '';
+  const regionConfig = getPricingRegion(country);
+
   return (
     <>
       <script
@@ -56,7 +59,10 @@ export default function PricingPage() {
         }}
       />
       <Suspense>
-        <PricingPageClient />
+        <PricingPageClient
+          initialPricingRegion={regionConfig.region}
+          initialDiscountPercent={regionConfig.discountPercent}
+        />
       </Suspense>
     </>
   );

@@ -823,8 +823,8 @@
     {
       "slug": "upscale-gif-images",
       "title": "Upscale GIF Images",
-      "metaTitle": "Upscale GIF Images - AI GIF Enlarger | MyImageUpscaler",
-      "metaDescription": "Enhance GIF images with AI upscaling. Upscale animated and static GIFs to higher resolution. Perfect for memes, social media, and web graphics.. Try free today!",
+      "metaTitle": "Free GIF Upscaler – Enhance GIF Quality Online (No Signup)",
+      "metaDescription": "Upscale animated and static GIFs for free with AI — no signup required. Enhance memes, icons, and web graphics up to 4x resolution. Instant results online.",
       "h1": "Upscale GIF Images - Animated & Static Enhancement",
       "intro": "Enhance both animated and static GIF images with our AI upscaler. Increase resolution while preserving animation frames and transparency for better quality display.",
       "primaryKeyword": "upscale gif images",
@@ -912,11 +912,19 @@
         },
         {
           "question": "Can I convert GIF to video after upscaling?",
-          "description": "Yes! After upscaling, you can use other tools to convert your enhanced GIF to WebM or MP4 for better compression and quality."
+          "answer": "Yes! After upscaling, you can use other tools to convert your enhanced GIF to WebM or MP4 for better compression and quality."
         },
         {
           "question": "Why does my GIF have a limited color palette?",
           "answer": "GIF format is limited to 256 colors by design. Our AI works within this constraint to produce the best possible quality within those limitations."
+        },
+        {
+          "question": "How do I upscale a GIF online for free?",
+          "answer": "Upload your GIF to MyImageUpscaler, select your desired upscale factor (2x or 4x), and download the enhanced result — no account or credit card needed."
+        },
+        {
+          "question": "Is there a free GIF upscaler that works with animated GIFs?",
+          "answer": "Yes! MyImageUpscaler is free and processes animated GIFs frame by frame, preserving all animation timing and sequences at higher resolution."
         }
       ],
       "relatedFormats": ["upscale-png-images", "upscale-webp-images"]
@@ -924,8 +932,8 @@
     {
       "slug": "upscale-avif-images",
       "title": "Upscale AVIF Images",
-      "metaTitle": "AVIF Upscaler — Upscale AVIF Images Free Online",
-      "metaDescription": "Upscale AVIF images online for free. AI-powered enlarger preserves AVIF format quality while increasing resolution up to 8x. No watermarks, instant results.",
+      "metaTitle": "AVIF Image Upscaler – Upscale AVIF Files Free Online",
+      "metaDescription": "Upscale AVIF images free online — no signup needed. AI enhances resolution up to 8x while preserving HDR quality. No watermarks, instant results.",
       "h1": "AVIF Upscaler — Enhance AVIF Image Resolution Free",
       "intro": "Enhance cutting-edge AVIF images with our advanced AI upscaler. Support the latest image format technology while increasing resolution for optimal display quality.",
       "primaryKeyword": "avif upscaler",

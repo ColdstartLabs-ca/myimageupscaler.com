@@ -28,6 +28,7 @@ import type {
   IAIFeaturePage,
 } from './pseo-types';
 import { clientEnv } from '@shared/config/env';
+import { SUBSCRIPTION_PLANS } from '@shared/config/stripe';
 import type { Locale } from '../../i18n/config';
 
 const BASE_URL = clientEnv.BASE_URL;
@@ -891,10 +892,23 @@ export function generateHomepageSchema(locale: Locale = 'en'): Record<string, un
 /**
  * Generate schema for Pricing page
  * Combines Product with AggregateOffer + FAQPage + BreadcrumbList
+ * Prices are derived from SUBSCRIPTION_PLANS (single source of truth).
  */
 export function generatePricingSchema(): object {
   const canonicalUrl = `${BASE_URL}/pricing`;
   const organizationRef = { '@id': `${BASE_URL}#organization` };
+
+  const plans = [
+    SUBSCRIPTION_PLANS.STARTER_MONTHLY,
+    SUBSCRIPTION_PLANS.HOBBY_MONTHLY,
+    SUBSCRIPTION_PLANS.PRO_MONTHLY,
+    SUBSCRIPTION_PLANS.BUSINESS_MONTHLY,
+  ];
+
+  const prices = plans.map(p => p.price);
+  const priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0];
 
   return {
     '@context': 'https://schema.org',
@@ -916,60 +930,20 @@ export function generatePricingSchema(): object {
           name: 'Subscription Plans',
           description: 'Multiple subscription tiers with different credit allowances and features',
           priceCurrency: 'USD',
-          lowPrice: 9.0,
-          highPrice: 149.0,
-          offerCount: 4,
-          offers: [
-            {
-              '@type': 'Offer',
-              name: 'Starter Plan',
-              description: 'Perfect for getting started with 100 credits per month',
-              price: 9.0,
-              priceCurrency: 'USD',
-              priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split('T')[0],
-              availability: 'https://schema.org/InStock',
-              seller: organizationRef,
-            },
-            {
-              '@type': 'Offer',
-              name: 'Hobby Plan',
-              description: 'For personal projects with 200 credits per month',
-              price: 19.0,
-              priceCurrency: 'USD',
-              priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split('T')[0],
-              availability: 'https://schema.org/InStock',
-              seller: organizationRef,
-            },
-            {
-              '@type': 'Offer',
-              name: 'Pro Plan',
-              description: 'For professionals with 1000 credits per month',
-              price: 49.0,
-              priceCurrency: 'USD',
-              priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split('T')[0],
-              availability: 'https://schema.org/InStock',
-              seller: organizationRef,
-              recommended: true,
-            },
-            {
-              '@type': 'Offer',
-              name: 'Business Plan',
-              description: 'For teams and agencies with 5000 credits per month',
-              price: 149.0,
-              priceCurrency: 'USD',
-              priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split('T')[0],
-              availability: 'https://schema.org/InStock',
-              seller: organizationRef,
-            },
-          ],
+          lowPrice: Math.min(...prices),
+          highPrice: Math.max(...prices),
+          offerCount: plans.length,
+          offers: plans.map(plan => ({
+            '@type': 'Offer',
+            name: `${plan.name} Plan`,
+            description: `${plan.description} with ${plan.creditsPerMonth} credits per month`,
+            price: plan.price,
+            priceCurrency: 'USD',
+            priceValidUntil,
+            availability: 'https://schema.org/InStock',
+            seller: organizationRef,
+            ...(plan.recommended ? { recommended: true } : {}),
+          })),
         },
       },
       {

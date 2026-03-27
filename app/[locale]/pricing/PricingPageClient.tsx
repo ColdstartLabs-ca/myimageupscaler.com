@@ -23,7 +23,15 @@ import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useSearchParams } from 'next/navigation';
 
-export default function PricingPageClient() {
+interface IPricingPageClientProps {
+  initialPricingRegion?: string;
+  initialDiscountPercent?: number;
+}
+
+export default function PricingPageClient({
+  initialPricingRegion = 'standard',
+  initialDiscountPercent = 0,
+}: IPricingPageClientProps) {
   const t = useTranslations('pricing');
   const searchParams = useSearchParams();
   const pricesConfigured = isStripePricesConfigured();
@@ -38,7 +46,16 @@ export default function PricingPageClient() {
   const [activeTab, setActiveTab] = useState<'credits' | 'subscribe'>('credits');
   const processedCheckoutParamRef = useRef(false);
 
-  const { discountPercent, pricingRegion, isLoading: regionLoading } = useRegionTier();
+  const {
+    discountPercent: hookDiscountPercent,
+    pricingRegion: hookPricingRegion,
+    isLoading: regionLoading,
+  } = useRegionTier();
+
+  // Use server-detected region immediately to eliminate price flicker;
+  // once the client hook resolves, use its values (should match).
+  const discountPercent = regionLoading ? initialDiscountPercent : hookDiscountPercent;
+  const pricingRegion = regionLoading ? initialPricingRegion : hookPricingRegion;
 
   // Track pricing_page_viewed event once on mount
   const hasTrackedPageView = useRef(false);
