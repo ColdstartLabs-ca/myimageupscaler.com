@@ -567,6 +567,12 @@ export type IAnalyticsEventName =
   | 'checkout_error'
   | 'checkout_exit_intent'
   | 'checkout_exit_survey_response'
+  // Gallery events
+  | 'gallery_image_saved'
+  | 'gallery_limit_reached'
+  | 'gallery_image_deleted'
+  | 'gallery_page_viewed'
+  | 'gallery_upgrade_clicked'
   // Engagement-based first-purchase discount events (PRD: engagement-based-first-purchase-discount)
   | 'engagement_discount_eligible'
   | 'engagement_discount_toast_shown'
