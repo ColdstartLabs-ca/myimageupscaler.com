@@ -8,6 +8,7 @@ import { ModalHeader } from '@client/components/stripe/ModalHeader';
 import { InternalTabs, type ITabItem } from '@client/components/ui/InternalTabs';
 import { StripeService, preloadStripe } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
+import { useUserData } from '@client/store/userStore';
 import {
   STRIPE_PRICES,
   SUBSCRIPTION_PLANS,
@@ -33,8 +34,8 @@ import {
 } from 'lucide-react';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // Extend dayjs with relativeTime plugin
 dayjs.extend(relativeTime);
@@ -50,10 +51,25 @@ interface ICreditTransaction {
 
 export default function BillingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToastStore();
   const t = useTranslations('dashboard.billing');
   const { discountPercent } = useRegionTier();
-  const [activeTab, setActiveTab] = useState('credits');
+  const { userSegment } = useUserData();
+
+  // Determine default tab based on user segment and URL param
+  // Priority: URL param > segment-based default
+  const getDefaultTab = useCallback((): string => {
+    const urlTab = searchParams.get('tab');
+    if (urlTab && ['credits', 'subscription', 'invoices'].includes(urlTab)) {
+      return urlTab;
+    }
+    // Credit purchasers and subscribers default to subscription tab
+    // Free users default to credits tab
+    return userSegment === 'free' ? 'credits' : 'subscription';
+  }, [searchParams, userSegment]);
+
+  const [activeTab, setActiveTab] = useState(getDefaultTab);
   const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [subscription, setSubscription] = useState<ISubscription | null>(null);
   const [loading, setLoading] = useState(true);
@@ -76,6 +92,15 @@ export default function BillingPage() {
     loadBillingData();
     loadCreditHistory();
   }, []);
+
+  // Update active tab when userSegment loads (async)
+  useEffect(() => {
+    const urlTab = searchParams.get('tab');
+    // Only update if no URL param and current tab is the initial default
+    if (!urlTab && activeTab === 'credits' && userSegment !== 'free') {
+      setActiveTab('subscription');
+    }
+  }, [userSegment, searchParams, activeTab]);
 
   const loadCreditHistory = async (append: boolean = false) => {
     try {

@@ -1,5 +1,6 @@
 'use client';
 
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
@@ -8,25 +9,28 @@ import { useRegionTier } from '@client/hooks/useRegionTier';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 
 export interface IPostDownloadPromptProps {
-  isFreeUser: boolean;
+  userSegment: UserSegment;
   downloadCount: number;
   onUpgrade: () => void;
 }
 
 /**
- * A dismissible modal shown to free users after download clicks.
+ * A dismissible modal shown to free and credit_purchaser users after download clicks.
  * Shows deterministically on the 2nd download (not random).
  * Respects 24h cooldown via promptFrequency utility.
  * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'after_download'.
+ * Segment-aware: credit_purchaser sees subscription messaging.
  */
 export const PostDownloadPrompt = ({
-  isFreeUser,
+  userSegment,
   downloadCount,
   onUpgrade,
 }: IPostDownloadPromptProps): JSX.Element | null => {
   const [visible, setVisible] = useState(false);
   const lastEvaluatedDownloadCountRef = useRef(0);
   const { pricingRegion } = useRegionTier();
+  const isCreditPurchaser = userSegment === 'credit_purchaser';
+  const showPrompt = userSegment !== 'subscriber';
 
   // Check prompt frequency throttling (24h cooldown)
   const canShow = canShowPrompt({
@@ -35,7 +39,7 @@ export const PostDownloadPrompt = ({
   });
 
   useEffect(() => {
-    if (!isFreeUser) return;
+    if (!showPrompt) return;
     if (downloadCount < 1) return;
     if (downloadCount === lastEvaluatedDownloadCountRef.current) return;
     lastEvaluatedDownloadCountRef.current = downloadCount;
@@ -53,17 +57,19 @@ export const PostDownloadPrompt = ({
     setVisible(true);
     analytics.track('upgrade_prompt_shown', {
       trigger: 'after_download',
-      currentPlan: 'free',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
     });
-  }, [isFreeUser, downloadCount, pricingRegion, canShow]);
+  }, [showPrompt, userSegment, downloadCount, pricingRegion, canShow]);
 
   if (!visible) return null;
 
   const handleDismiss = () => {
     analytics.track('upgrade_prompt_dismissed', {
       trigger: 'after_download',
-      currentPlan: 'free',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
     });
     setVisible(false);
@@ -72,13 +78,29 @@ export const PostDownloadPrompt = ({
   const handleUpgradeClick = () => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_download',
-      destination: 'purchase_modal',
-      currentPlan: 'free',
+      destination: isCreditPurchaser ? 'billing_subscription_tab' : 'purchase_modal',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
     });
     setVisible(false);
     onUpgrade();
   };
+
+  // Segment-aware copy
+  const title = isCreditPurchaser
+    ? 'Want consistent quality every month?'
+    : 'Want sharper, cleaner output?';
+  const description = isCreditPurchaser
+    ? 'Love the result? '
+    : 'Love the result? ';
+  const linkText = isCreditPurchaser
+    ? 'Get 100 credits/mo with a subscription.'
+    : 'Get 10x sharper with Premium models.';
+  const ctaText = isCreditPurchaser ? 'View Subscriptions' : 'Upgrade Now';
+
+  // Segment-aware button text
+  const continueText = isCreditPurchaser ? 'Continue' : 'Continue Free';
 
   return (
     <Modal isOpen={visible} onClose={handleDismiss} size="sm" showCloseButton={false}>
@@ -96,14 +118,14 @@ export const PostDownloadPrompt = ({
             <Sparkles className="w-4 h-4 text-secondary shrink-0" />
           </div>
 
-          <h3 className="text-lg font-semibold text-white mb-2">Want sharper, cleaner output?</h3>
+          <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
           <p className="text-sm text-text-muted mb-5">
-            Love the result?{' '}
+            {description}
             <button
               onClick={handleUpgradeClick}
               className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
             >
-              Get 10x sharper with Premium models.
+              {linkText}
             </button>
           </p>
 
@@ -112,14 +134,14 @@ export const PostDownloadPrompt = ({
               onClick={handleUpgradeClick}
               className="inline-flex items-center justify-center rounded-lg bg-secondary text-black font-semibold px-4 py-2 hover:bg-secondary/90 transition-colors"
             >
-              Upgrade Now
+              {ctaText}
             </button>
             <button
               type="button"
               onClick={handleDismiss}
               className="inline-flex items-center justify-center rounded-lg border border-border px-4 py-2 text-sm text-text-muted hover:text-white hover:border-white/20 transition-colors"
             >
-              Continue Free
+              {continueText}
             </button>
           </div>
         </div>

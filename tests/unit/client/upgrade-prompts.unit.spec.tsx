@@ -183,6 +183,7 @@ import { ModelGalleryModal } from '@/client/components/features/workspace/ModelG
 import { AfterUpscaleBanner } from '@/client/components/features/workspace/AfterUpscaleBanner';
 import { PostDownloadPrompt } from '@/client/components/features/workspace/PostDownloadPrompt';
 import { QualityTier } from '@/shared/types/coreflow.types';
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { canShowPrompt, markPromptShown } from '@/client/utils/promptFrequency';
 
 // ---------------------------------------------------------------------------
@@ -198,12 +199,11 @@ function clearSessionStorage() {
 // ---------------------------------------------------------------------------
 
 describe('Prompt 1: model_gate — ModelGalleryModal', () => {
-  const mockOnUpgrade = vi.fn();
   const defaultProps = {
     isOpen: true,
     onClose: vi.fn(),
     currentTier: 'quick' as QualityTier,
-    isFreeUser: true,
+    userSegment: 'free' as UserSegment,
     onSelect: vi.fn(),
     onUpgrade: vi.fn(),
   };
@@ -218,19 +218,20 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
   });
 
   it('fires upgrade_prompt_shown with trigger model_gate when free user opens gallery', async () => {
-    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+    render(<ModelGalleryModal {...defaultProps} userSegment="free" />);
 
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'model_gate',
         currentPlan: 'free',
+        userSegment: 'free',
         pricingRegion: 'standard',
       });
     });
   });
 
   it('does NOT fire upgrade_prompt_shown for paid users', () => {
-    render(<ModelGalleryModal {...defaultProps} isFreeUser={false} />);
+    render(<ModelGalleryModal {...defaultProps} userSegment="subscriber" />);
     expect(mockAnalyticsTrack).not.toHaveBeenCalledWith(
       'upgrade_prompt_shown',
       expect.objectContaining({ trigger: 'model_gate' })
@@ -246,6 +247,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'model_gate',
         currentPlan: 'free',
+        userSegment: 'free',
         pricingRegion: 'standard',
       });
     });
@@ -266,7 +268,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
 
   it('fires upgrade_prompt_clicked when locked model clicked', async () => {
     const onUpgrade = vi.fn();
-    render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} isFreeUser={true} />);
+    render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} userSegment="free" />);
 
     // If there's locked content, clicking the banner upgrade button should fire analytics
     const upgradeButton = screen.getByText('Unlock Premium Models');
@@ -278,19 +280,22 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
         imageVariant: 'banner',
         destination: 'upgrade_plan_modal',
         currentPlan: 'free',
+        userSegment: 'free',
         pricingRegion: 'standard',
       });
     });
+    expect(onUpgrade).toHaveBeenCalled();
   });
 
   it('shows "From $4.99 — 10× sharper results" copy in the upgrade banner', () => {
-    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
-    expect(screen.getByText(/From \$4.99/i)).toBeInTheDocument();
+    render(<ModelGalleryModal {...defaultProps} userSegment="free" />);
+    expect(screen.getByText(/From \$4\.99/)).toBeInTheDocument();
+    expect(screen.getByText(/10× sharper results/)).toBeInTheDocument();
   });
 
   it('calls onUpgrade when upgrade button is clicked', async () => {
     const onUpgrade = vi.fn();
-    render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} isFreeUser={true} />);
+    render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} userSegment="free" />);
 
     const upgradeButton = screen.getByText('Unlock Premium Models');
     fireEvent.click(upgradeButton);
@@ -316,12 +321,12 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
   });
 
   it('does not render when completedCount is below 3', () => {
-    const { container } = render(<AfterUpscaleBanner completedCount={2} isFreeUser={true} />);
+    const { container } = render(<AfterUpscaleBanner completedCount={2} userSegment="free" />);
     expect(container.firstChild).toBeNull();
   });
 
   it('renders banner when completedCount reaches 3 for free user', async () => {
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
+    render(<AfterUpscaleBanner completedCount={3} userSegment="free" />);
 
     await waitFor(() => {
       expect(screen.getByText(/You've upscaled 3 images\./i)).toBeInTheDocument();
@@ -329,24 +334,25 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
   });
 
   it('fires upgrade_prompt_shown with trigger after_upscale when shown', async () => {
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
+    render(<AfterUpscaleBanner completedCount={3} userSegment="free" />);
 
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'after_upscale',
         currentPlan: 'free',
+        userSegment: 'free',
         pricingRegion: 'standard',
       });
     });
   });
 
   it('does NOT render for paid users', () => {
-    const { container } = render(<AfterUpscaleBanner completedCount={5} isFreeUser={false} />);
+    const { container } = render(<AfterUpscaleBanner completedCount={5} userSegment="subscriber" />);
     expect(container.firstChild).toBeNull();
   });
 
   it('only fires once per session (subsequent renders with same count do not re-fire)', async () => {
-    const { rerender } = render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
+    const { rerender } = render(<AfterUpscaleBanner completedCount={3} userSegment="free" />);
 
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledTimes(1);
@@ -355,7 +361,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
     vi.clearAllMocks();
 
     // Rerender with higher count — should not fire again (session key is set)
-    rerender(<AfterUpscaleBanner completedCount={4} isFreeUser={true} />);
+    rerender(<AfterUpscaleBanner completedCount={4} userSegment="free" />);
 
     await new Promise(r => setTimeout(r, 10));
     expect(mockAnalyticsTrack).not.toHaveBeenCalled();
@@ -363,7 +369,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
 
   it('renders upgrade button pointing to /dashboard/billing', async () => {
     const onUpgrade = vi.fn();
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} onUpgrade={onUpgrade} />);
+    render(<AfterUpscaleBanner completedCount={3} userSegment="free" onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       const button = screen.getByText(/Upgrade for unlimited\./i);
@@ -374,7 +380,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
 
   it('fires upgrade_prompt_clicked when upgrade button is clicked', async () => {
     const onUpgrade = vi.fn();
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} onUpgrade={onUpgrade} />);
+    render(<AfterUpscaleBanner completedCount={3} userSegment="free" onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(screen.getByText(/You've upscaled 3 images\./i)).toBeInTheDocument();
@@ -387,13 +393,14 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
       trigger: 'after_upscale',
       destination: 'upgrade_plan_modal',
       currentPlan: 'free',
+      userSegment: 'free',
       pricingRegion: 'standard',
     });
     expect(onUpgrade).toHaveBeenCalled();
   });
 
   it('dismisses banner and fires upgrade_prompt_dismissed when X is clicked', async () => {
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
+    render(<AfterUpscaleBanner completedCount={3} userSegment="free" />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('Dismiss upgrade prompt')).toBeInTheDocument();
@@ -404,6 +411,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_dismissed', {
       trigger: 'after_upscale',
       currentPlan: 'free',
+      userSegment: 'free',
       pricingRegion: 'standard',
     });
 
@@ -641,7 +649,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   it('should show PostDownloadPrompt on 2nd download (deterministic, not random)', async () => {
     const onUpgrade = vi.fn();
-    render(<PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />);
+    render(<PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(screen.getByText(/Love the result\?/i)).toBeInTheDocument();
@@ -651,7 +659,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt on 1st download', async () => {
     const onUpgrade = vi.fn();
     const { container } = render(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onUpgrade={onUpgrade} />
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onUpgrade={onUpgrade} />
     );
 
     await new Promise(r => setTimeout(r, 10));
@@ -661,7 +669,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt on 3rd+ downloads', async () => {
     const onUpgrade = vi.fn();
     const { container } = render(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={3} onUpgrade={onUpgrade} />
+      <PostDownloadPrompt userSegment="free" downloadCount={3} onUpgrade={onUpgrade} />
     );
 
     await new Promise(r => setTimeout(r, 10));
@@ -671,7 +679,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt for paid users', async () => {
     const onUpgrade = vi.fn();
     const { container } = render(
-      <PostDownloadPrompt isFreeUser={false} downloadCount={2} onUpgrade={onUpgrade} />
+      <PostDownloadPrompt userSegment="subscriber" downloadCount={2} onUpgrade={onUpgrade} />
     );
 
     await new Promise(r => setTimeout(r, 10));
@@ -680,12 +688,13 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   it('should fire upgrade_prompt_shown with trigger after_download', async () => {
     const onUpgrade = vi.fn();
-    render(<PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />);
+    render(<PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'after_download',
         currentPlan: 'free',
+        userSegment: 'free',
         pricingRegion: 'standard',
       });
     });
@@ -693,7 +702,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   it('should fire upgrade_prompt_dismissed on X click', async () => {
     const onUpgrade = vi.fn();
-    render(<PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />);
+    render(<PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('Dismiss upgrade prompt')).toBeInTheDocument();
@@ -704,6 +713,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_dismissed', {
       trigger: 'after_download',
       currentPlan: 'free',
+      userSegment: 'free',
       pricingRegion: 'standard',
     });
 
@@ -714,7 +724,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   it('should call onUpgrade callback when CTA is clicked', async () => {
     const onUpgrade = vi.fn();
-    render(<PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />);
+    render(<PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />);
 
     await waitFor(() => {
       expect(screen.getByText(/Love the result\?/i)).toBeInTheDocument();
@@ -727,6 +737,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
       trigger: 'after_download',
       destination: 'purchase_modal',
       currentPlan: 'free',
+      userSegment: 'free',
       pricingRegion: 'standard',
     });
     expect(onUpgrade).toHaveBeenCalled();
@@ -738,7 +749,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     localStorage.setItem('prompt_freq_post_download_last_shown', String(Date.now()));
 
     const { container } = render(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={2} onUpgrade={onUpgrade} />
+      <PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />
     );
 
     await new Promise(r => setTimeout(r, 10));
@@ -797,7 +808,7 @@ describe('Phase 4: promptFrequency utility', () => {
     // Simulate banner was shown recently by writing the timestamp directly
     localStorage.setItem('prompt_freq_after_upscale_last_shown', String(Date.now()));
 
-    const { container } = render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} />);
+    const { container } = render(<AfterUpscaleBanner completedCount={3} userSegment="free" />);
 
     await new Promise(r => setTimeout(r, 10));
     expect(container.firstChild).toBeNull();
@@ -971,7 +982,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
     const onUpgrade = vi.fn();
     render(
       <FirstDownloadCelebration
-        isFreeUser={true}
+        userSegment="free"
         source="upload"
         onUpgrade={onUpgrade}
         onUploadAnother={vi.fn()}
@@ -986,6 +997,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
       trigger: 'celebration',
       destination: 'purchase_modal',
       currentPlan: 'free',
+      userSegment: 'free',
     });
     expect(onUpgrade).toHaveBeenCalled();
     expect(mockPush).not.toHaveBeenCalled();
@@ -995,7 +1007,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
     const onUpgrade = vi.fn();
     render(
       <FirstDownloadCelebration
-        isFreeUser={true}
+        userSegment="free"
         source="upload"
         onUpgrade={onUpgrade}
         onUploadAnother={vi.fn()}
@@ -1010,6 +1022,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
       trigger: 'celebration',
       destination: 'purchase_modal',
       currentPlan: 'free',
+      userSegment: 'free',
     });
   });
 
@@ -1017,7 +1030,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
     const onUpgrade = vi.fn();
     render(
       <FirstDownloadCelebration
-        isFreeUser={true}
+        userSegment="free"
         source="upload"
         onUpgrade={onUpgrade}
         onUploadAnother={vi.fn()}
@@ -1038,7 +1051,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
 
     const { container } = render(
       <FirstDownloadCelebration
-        isFreeUser={true}
+        userSegment="free"
         source="upload"
         onUpgrade={vi.fn()}
         onUploadAnother={vi.fn()}
@@ -1054,7 +1067,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
     const onUploadAnother = vi.fn();
     render(
       <FirstDownloadCelebration
-        isFreeUser={true}
+        userSegment="free"
         source="upload"
         onUpgrade={vi.fn()}
         onUploadAnother={onUploadAnother}
@@ -1072,7 +1085,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
     const onDismiss = vi.fn();
     render(
       <FirstDownloadCelebration
-        isFreeUser={true}
+        userSegment="free"
         source="upload"
         onUpgrade={vi.fn()}
         onUploadAnother={vi.fn()}
@@ -1087,9 +1100,9 @@ describe('Phase 5: FirstDownloadCelebration', () => {
   });
 
   it('should not show upgrade button for paid users', async () => {
-    const { container } = render(
+    render(
       <FirstDownloadCelebration
-        isFreeUser={false}
+        userSegment="subscriber"
         source="upload"
         onUpgrade={vi.fn()}
         onUploadAnother={vi.fn()}

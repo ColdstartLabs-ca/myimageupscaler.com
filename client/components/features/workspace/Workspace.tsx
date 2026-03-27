@@ -76,7 +76,7 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-  const { isFreeUser } = useUserData();
+  const { isFreeUser, userSegment } = useUserData();
   const hasSubscription = !isFreeUser;
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
@@ -399,7 +399,7 @@ const Workspace: React.FC = () => {
         <div className="px-8 pb-4">
           <MobileUpgradePrompt
             variant="upload"
-            isFreeUser={isFreeUser}
+            userSegment={userSegment}
             onUpgrade={() => openUpgradeModal(false, 'workspace_mobile_upload')}
           />
         </div>
@@ -482,12 +482,12 @@ const Workspace: React.FC = () => {
             </div>
           )}
 
-          {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
-          {isFreeUser && (
+          {/* After 3rd upscale upgrade nudge (free + credit_purchaser users, once per session) */}
+          {userSegment !== 'subscriber' && (
             <div className="px-3 md:px-4 pb-0">
               <AfterUpscaleBanner
                 completedCount={completedCount}
-                isFreeUser={isFreeUser}
+                userSegment={userSegment}
                 currentModel={config.qualityTier}
                 onUpgrade={() => openUpgradeModal(false, 'workspace_after_upscale_banner')}
               />
@@ -537,7 +537,7 @@ const Workspace: React.FC = () => {
               selectedModel={config.qualityTier}
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
-              isFreeUser={isFreeUser}
+              userSegment={userSegment}
               onUpgrade={() => openUpgradeModal(false, 'workspace_preview_area')}
             />
           </div>
@@ -655,6 +655,7 @@ const Workspace: React.FC = () => {
         onClose={() => setMobileGalleryOpen(false)}
         currentTier={config.qualityTier}
         isFreeUser={isFreeUser}
+        userSegment={userSegment}
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
         onUpgrade={() => openUpgradeModal(false, 'workspace_model_gallery')}
       />
@@ -703,14 +704,14 @@ const Workspace: React.FC = () => {
       />
 
       <PostDownloadPrompt
-        isFreeUser={isFreeUser}
+        userSegment={userSegment}
         downloadCount={downloadCount}
         onUpgrade={() => openUpgradeModal(false, 'after_download')}
       />
 
       {showCelebration && (
         <FirstDownloadCelebration
-          isFreeUser={isFreeUser}
+          userSegment={userSegment}
           source="upload"
           onUploadAnother={() => {
             setShowCelebration(false);

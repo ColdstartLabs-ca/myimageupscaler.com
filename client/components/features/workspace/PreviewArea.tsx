@@ -1,3 +1,4 @@
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { IBatchItem, ProcessingStage, ProcessingStatus } from '@/shared/types/coreflow.types';
 import ImageComparison from '@client/components/features/image-processing/ImageComparison';
 import { Button } from '@client/components/ui/Button';
@@ -18,7 +19,7 @@ export interface IPreviewAreaProps {
   selectedModel?: string;
   batchProgress?: IBatchProgress | null;
   isProcessingBatch?: boolean;
-  isFreeUser?: boolean;
+  userSegment: UserSegment;
   onUpgrade?: () => void;
 }
 
@@ -176,10 +177,11 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   selectedModel = 'auto',
   batchProgress,
   isProcessingBatch = false,
-  isFreeUser = false,
+  userSegment,
   onUpgrade = () => {},
 }) => {
   const t = useTranslations('workspace');
+  const isFreeUser = userSegment === 'free';
 
   // Stage messages - defined inside component to access t
   const STAGE_MESSAGES: Record<ProcessingStage, string> = {
@@ -402,7 +404,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
           <ErrorOverlay item={activeItem} onRetry={onRetry} />
         )}
       </div>
-      <MobileUpgradePrompt variant="preview" isFreeUser={isFreeUser} onUpgrade={onUpgrade} />
+      <MobileUpgradePrompt variant="preview" userSegment={userSegment} onUpgrade={onUpgrade} />
     </div>
   );
 };
