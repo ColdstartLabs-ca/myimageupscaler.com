@@ -181,6 +181,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   onUpgrade = () => {},
 }) => {
   const t = useTranslations('workspace');
+  const isFreeUser = userSegment === 'free';
 
   // Stage messages - defined inside component to access t
   const STAGE_MESSAGES: Record<ProcessingStage, string> = {
