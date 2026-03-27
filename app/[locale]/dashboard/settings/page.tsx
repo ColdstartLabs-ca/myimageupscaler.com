@@ -1,6 +1,6 @@
 'use client';
 
-import { Lock, User, Mail, Sliders } from 'lucide-react';
+import { Lock, User, Mail, Sliders, Trash2 } from 'lucide-react';
 import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { useTranslations } from 'next-intl';
@@ -10,6 +10,7 @@ import {
   setAutoResizePreference,
 } from '@client/components/features/image-processing/OversizedImageModal';
 import { InternalTabs, ITabItem } from '@client/components/ui/InternalTabs';
+import { DeleteAccountModal } from '@client/components/settings/DeleteAccountModal';
 import { useState, useCallback } from 'react';
 
 // --- Tab content components ---
@@ -18,7 +19,9 @@ function ProfileTab() {
   const { user } = useUserStore();
   const { openAuthModal } = useModalStore();
   const t = useTranslations('dashboard.settings');
+  const tDanger = useTranslations('dashboard.settings');
   const isPasswordUser = user?.provider === 'email';
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -84,6 +87,38 @@ function ProfileTab() {
           </div>
         </div>
       )}
+
+      {/* Danger Zone */}
+      <div className="bg-surface rounded-xl border border-error/40 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-lg bg-error/10 flex items-center justify-center">
+            <Trash2 size={20} className="text-error" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-error">{tDanger('dangerZone')}</h2>
+            <p className="text-sm text-muted-foreground">{tDanger('dangerZoneSubtitle')}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-medium text-white">{tDanger('deleteAccount')}</p>
+            <p className="text-sm text-muted-foreground">{tDanger('deleteAccountDescription')}</p>
+          </div>
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="px-4 py-2 border border-error/50 text-error rounded-lg text-sm font-medium hover:bg-error/10 transition-colors"
+          >
+            {tDanger('deleteAccount')}
+          </button>
+        </div>
+      </div>
+
+      <DeleteAccountModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        userEmail={user?.email || ''}
+      />
     </div>
   );
 }

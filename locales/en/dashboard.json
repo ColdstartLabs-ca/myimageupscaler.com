@@ -103,7 +103,24 @@
     "productUpdates": "Product updates",
     "productUpdatesDescription": "News about product and feature updates",
     "marketingEmails": "Marketing emails",
-    "marketingEmailsDescription": "Promotions and special offers"
+    "marketingEmailsDescription": "Promotions and special offers",
+    "dangerZone": "Danger Zone",
+    "dangerZoneSubtitle": "Irreversible account actions",
+    "deleteAccount": "Delete Account",
+    "deleteAccountDescription": "Permanently delete your account and all associated data"
+  },
+  "deleteAccount": {
+    "title": "Delete Account",
+    "warningTitle": "This action is permanent and cannot be undone.",
+    "warningCredits": "All credits will be lost",
+    "warningHistory": "Processing history will be deleted",
+    "warningSubscription": "Active subscription will be canceled immediately",
+    "warningAccount": "Your account will be permanently removed",
+    "confirmLabel": "Type your email to confirm: {email}",
+    "cancel": "Cancel",
+    "confirm": "Delete My Account",
+    "deleting": "Deleting...",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "support": {
     "title": "Help & Support",
