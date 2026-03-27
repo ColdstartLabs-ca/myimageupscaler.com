@@ -35,7 +35,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   isOpen,
   onClose,
   currentTier,
-  isFreeUser,
+  isFreeUser: _isFreeUser, // Backward compat: use userSegment instead
   userSegment,
   onSelect,
   onUpgrade,
