@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useToastStore } from '@client/store/toastStore';
 import { analytics } from '@client/analytics/analyticsClient';
 import { GALLERY_QUERY_CONFIG } from '@shared/config/gallery.config';
@@ -104,7 +104,6 @@ export function useGallery(): IUseGalleryReturn {
   const [isLoadingImages, setIsLoadingImages] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSavedImageId, setLastSavedImageId] = useState<string | null>(null);
-  const hasFetchedUsage = useRef(false);
 
   /**
    * Fetch gallery usage stats
@@ -363,13 +362,9 @@ export function useGallery(): IUseGalleryReturn {
     [isDeleting, fetchUsage, showToast]
   );
 
-  // Fetch usage stats on mount (once per hook instance)
-  useEffect(() => {
-    if (!hasFetchedUsage.current) {
-      hasFetchedUsage.current = true;
-      fetchUsage();
-    }
-  }, [fetchUsage]);
+  // Usage stats are fetched automatically by fetchImages() which returns usage data.
+  // No separate mount effect needed - Gallery component calls fetchImages(1) on mount.
+  // fetchUsage is still exported for manual refresh scenarios (e.g., after delete).
 
   return {
     saveImage,
