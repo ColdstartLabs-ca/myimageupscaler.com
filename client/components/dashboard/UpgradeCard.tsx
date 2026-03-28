@@ -4,20 +4,49 @@ import { useTranslations } from 'next-intl';
 import React from 'react';
 import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import type { UserSegment } from '@/shared/types/stripe.types';
 
 interface IUpgradeCardProps {
   onUpgrade: () => void;
+  userSegment: UserSegment;
 }
 
-export const UpgradeCard: React.FC<IUpgradeCardProps> = ({ onUpgrade }) => {
+export const UpgradeCard: React.FC<IUpgradeCardProps> = ({ onUpgrade, userSegment }) => {
   const t = useTranslations('dashboard');
   const { pricingRegion } = useRegionTier();
+
+  // Determine copy based on user segment
+  const isCreditPurchaser = userSegment === 'credit_purchaser';
+  const title = isCreditPurchaser
+    ? t.has('sidebar.subscribeTitle')
+      ? t('sidebar.subscribeTitle')
+      : 'Subscribe & Save'
+    : t.has('sidebar.upgradeTitle')
+      ? t('sidebar.upgradeTitle')
+      : 'Upgrade to Pro';
+
+  const description = isCreditPurchaser
+    ? t.has('sidebar.subscribeDesc')
+      ? t('sidebar.subscribeDesc')
+      : 'Get monthly credits, priority processing, and exclusive features.'
+    : t.has('sidebar.upgradeDesc')
+      ? t('sidebar.upgradeDesc')
+      : 'Get more credits, faster processing, and premium features.';
+
+  const ctaText = isCreditPurchaser
+    ? t.has('sidebar.subscribeCta')
+      ? t('sidebar.subscribeCta')
+      : 'View Subscriptions'
+    : t.has('sidebar.upgradeCta')
+      ? t('sidebar.upgradeCta')
+      : 'View Plans';
 
   const handleUpgradeClick = () => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'upgrade_card',
-      destination: 'upgrade_modal',
-      currentPlan: 'free',
+      destination: isCreditPurchaser ? 'billing_subscription_tab' : 'upgrade_modal',
+      userSegment,
+      currentPlan: userSegment,
       pricingRegion: pricingRegion || 'standard',
     });
     onUpgrade();
@@ -52,22 +81,16 @@ export const UpgradeCard: React.FC<IUpgradeCardProps> = ({ onUpgrade }) => {
           >
             <Zap className="w-4 h-4" />
           </motion.div>
-          <h4 className="font-bold text-white text-sm">
-            {t.has('sidebar.upgradeTitle') ? t('sidebar.upgradeTitle') : 'Upgrade to Pro'}
-          </h4>
+          <h4 className="font-bold text-white text-sm">{title}</h4>
         </div>
 
-        <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
-          {t.has('sidebar.upgradeDesc')
-            ? t('sidebar.upgradeDesc')
-            : 'Get more credits, faster processing, and premium features.'}
-        </p>
+        <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{description}</p>
 
         <button
           onClick={handleUpgradeClick}
           className="flex items-center justify-center w-full py-2 px-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/50 text-white text-xs font-semibold rounded-lg transition-all duration-300 group-hover:bg-accent/10"
         >
-          {t.has('sidebar.upgradeCta') ? t('sidebar.upgradeCta') : 'View Plans'}
+          {ctaText}
         </button>
       </div>
     </motion.div>

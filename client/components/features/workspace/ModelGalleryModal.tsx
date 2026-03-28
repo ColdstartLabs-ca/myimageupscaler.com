@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Lock, Search, Sparkles } from 'lucide-react';
 import { QualityTier, QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { BottomSheet } from '@client/components/ui/BottomSheet';
 import { ModelCard } from './ModelCard';
@@ -17,6 +18,7 @@ export interface IModelGalleryModalProps {
   onClose: () => void;
   currentTier: QualityTier;
   isFreeUser: boolean;
+  userSegment: UserSegment;
   onSelect: (tier: QualityTier) => void;
   onUpgrade: () => void;
 }
@@ -33,36 +35,41 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   isOpen,
   onClose,
   currentTier,
-  isFreeUser,
+  isFreeUser: _isFreeUser, // Backward compat: use userSegment instead
+  userSegment,
   onSelect,
   onUpgrade,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { pricingRegion } = useRegionTier();
 
+  // Derived: show upgrade prompts for non-subscribers
+  const showUpgradePrompts = userSegment !== 'subscriber';
+
   // Track gallery session for analytics
   const galleryOpenedAtRef = useRef<number>(0);
   const originalTierRef = useRef<QualityTier>(currentTier);
 
-  // Reset tracking state when modal opens; fire model_gate prompt for free users (once per session)
+  // Reset tracking state when modal opens; fire model_gate prompt for non-subscribers (once per session)
   useEffect(() => {
     if (isOpen) {
       galleryOpenedAtRef.current = Date.now();
       originalTierRef.current = currentTier;
 
-      if (isFreeUser && typeof window !== 'undefined') {
+      if (showUpgradePrompts && typeof window !== 'undefined') {
         const alreadyShown = sessionStorage.getItem(MODEL_GATE_SESSION_KEY);
         if (!alreadyShown) {
           sessionStorage.setItem(MODEL_GATE_SESSION_KEY, 'true');
           analytics.track('upgrade_prompt_shown', {
             trigger: 'model_gate',
-            currentPlan: 'free',
+            userSegment,
+            currentPlan: userSegment,
             pricingRegion: pricingRegion || 'standard',
           });
         }
       }
     }
-  }, [isOpen, currentTier, isFreeUser]);
+  }, [isOpen, currentTier, showUpgradePrompts, userSegment, pricingRegion]);
 
   // All tier entries with their configs
   const allTiers = useMemo(() => {
@@ -118,7 +125,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         analytics.track('model_selection_changed', {
           fromTier: previousTier,
           toTier: tier,
-          isFreeUser,
+          userSegment,
           isPremiumTier: PREMIUM_TIERS.includes(tier),
           timeInGalleryMs: Date.now() - galleryOpenedAtRef.current,
         });
@@ -127,7 +134,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
       onSelect(tier);
       onClose();
     },
-    [onSelect, onClose, isFreeUser]
+    [onSelect, onClose, userSegment]
   );
 
   // Handle locked tier click - open plan selector modal
@@ -137,7 +144,8 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         trigger: 'model_gate',
         imageVariant: tier,
         destination: 'upgrade_plan_modal',
-        currentPlan: 'free',
+        userSegment,
+        currentPlan: userSegment,
         pricingRegion: pricingRegion || 'standard',
       });
       // Store originating model so checkout_opened and purchase_confirmed can attribute correctly
@@ -147,7 +155,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
       onClose();
       onUpgrade();
     },
-    [onUpgrade, onClose, pricingRegion]
+    [onUpgrade, onClose, pricingRegion, userSegment]
   );
 
   // Clear search when modal closes
@@ -169,7 +177,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         visibleFreeTiersCount: visibleFreeTierIds.length,
         visiblePremiumTiersCount: visiblePremiumTierIds.length,
         timeInGalleryMs: Date.now() - galleryOpenedAtRef.current,
-        isFreeUser,
+        userSegment,
         hadSearchQuery: searchQuery.length > 0,
       });
 
@@ -179,7 +187,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
 
     setSearchQuery('');
     onClose();
-  }, [onClose, currentTier, isFreeUser, freeTiers, premiumTiers, searchQuery]);
+  }, [onClose, currentTier, userSegment, freeTiers, premiumTiers, searchQuery]);
 
   const hasResults = freeTiers.length > 0 || premiumTiers.length > 0;
 
@@ -193,8 +201,8 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
           placeholder="Search by name, use case, or feature..."
         />
 
-        {/* Upgrade prompt for free users - top position */}
-        {isFreeUser && !searchQuery && (
+        {/* Upgrade prompt for non-subscribers - top position */}
+        {showUpgradePrompts && !searchQuery && (
           <button
             onClick={() => handleLockedClick('banner')}
             className="w-full p-4 bg-gradient-to-r from-secondary/20 to-accent/20 border border-border rounded-xl flex items-center justify-between hover:from-secondary/30 hover:to-accent/30 transition-all cursor-pointer group"
@@ -204,14 +212,25 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
                 <Sparkles className="w-4 h-4 text-secondary" />
               </div>
               <div className="flex flex-col items-start">
-                <span className="font-bold text-white text-sm">Unlock Premium Models</span>
-                <span className="text-[11px] font-medium text-text-muted">
-                  From $4.99 — 10× sharper results
-                </span>
+                {userSegment === 'free' ? (
+                  <>
+                    <span className="font-bold text-white text-sm">Unlock Premium Models</span>
+                    <span className="text-[11px] font-medium text-text-muted">
+                      From $4.99 — 10× sharper results
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="font-bold text-white text-sm">Subscribe & Save</span>
+                    <span className="text-[11px] font-medium text-text-muted">
+                      From $9/mo — 100 credits included
+                    </span>
+                  </>
+                )}
               </div>
             </div>
             <span className="text-[10px] font-black text-white bg-gradient-to-r from-accent to-secondary px-3 py-1.5 rounded-full shadow-lg shadow-accent/20">
-              UPGRADE
+              {userSegment === 'free' ? 'UPGRADE' : 'SUBSCRIBE'}
             </span>
           </button>
         )}
@@ -277,7 +296,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
                         tier={tier.id}
                         config={QUALITY_TIER_CONFIG[tier.id]}
                         isSelected={currentTier === tier.id}
-                        isLocked={isFreeUser && PREMIUM_TIERS.includes(tier.id)}
+                        isLocked={showUpgradePrompts && PREMIUM_TIERS.includes(tier.id)}
                         onSelect={handleSelect}
                         onLockedClick={() => handleLockedClick(tier.id)}
                       />
