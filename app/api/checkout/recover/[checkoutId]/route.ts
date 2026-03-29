@@ -15,28 +15,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
-
-export interface IRecoveryResponse {
-  success: boolean;
-  data?: {
-    cartData: {
-      priceId: string;
-      purchaseType: 'subscription' | 'credit_pack';
-      planKey?: string;
-      packKey?: string;
-      pricingRegion: string;
-      discountPercent: number;
-      originalAmountCents: number;
-      currency: string;
-    };
-    discountCode?: string;
-    isValid: boolean;
-  };
-  error?: {
-    code: string;
-    message: string;
-  };
-}
+import type { IRecoveryResponse } from '@shared/types/abandoned-checkout.types';
 
 export async function GET(
   request: NextRequest,
@@ -49,7 +28,7 @@ export async function GET(
       {
         success: false,
         error: {
-          code: 'missing_checkout_id',
+          code: 'MISSING_CHECKOUT_ID',
           message: 'checkoutId is required',
         },
       },
@@ -70,7 +49,7 @@ export async function GET(
         {
           success: false,
           error: {
-            code: 'not_found',
+            code: 'NOT_FOUND',
             message: 'Abandoned checkout not found',
           },
         },
@@ -137,7 +116,7 @@ export async function GET(
       {
         success: false,
         error: {
-          code: 'internal_error',
+          code: 'INTERNAL_ERROR',
           message: errorMessage,
         },
       },
