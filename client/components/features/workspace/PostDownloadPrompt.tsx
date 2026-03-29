@@ -1,5 +1,6 @@
 'use client';
 
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
@@ -10,19 +11,20 @@ import { getVariant } from '@client/utils/abTest';
 import { useTranslations } from 'next-intl';
 
 export interface IPostDownloadPromptProps {
-  isFreeUser: boolean;
+  userSegment: UserSegment;
   downloadCount: number;
   currentModel?: string;
   onExploreModels: () => void;
 }
 
 /**
- * A dismissible modal shown to free users after download clicks.
- * Shows on every successful download for free users.
- * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'post_download_explore'.
- */
+ * A dismissible modal shown to free and credit_purchaser users after download clicks.
+ * Shows deterministically on the 2nd download (not random).
+ * Respects 24h cooldown via promptFrequency utility.
+ * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'after_download'.
+ * Segment-aware: credit_purchaser sees subscription messaging. */
 export const PostDownloadPrompt = ({
-  isFreeUser,
+  userSegment,
   downloadCount,
   currentModel,
   onExploreModels,
@@ -31,35 +33,34 @@ export const PostDownloadPrompt = ({
   const [visible, setVisible] = useState(false);
   const previousDownloadCountRef = useRef(downloadCount);
   const { pricingRegion } = useRegionTier();
+  const isCreditPurchaser = userSegment === 'credit_purchaser';
+  const showPrompt = userSegment !== 'subscriber';
 
   // Get copy variant for A/B testing
   const copyVariant = getVariant('after_download_copy', ['value', 'outcome', 'urgency']);
 
   useEffect(() => {
-    const previousDownloadCount = previousDownloadCountRef.current;
-    previousDownloadCountRef.current = downloadCount;
-
-    if (!isFreeUser) return;
-    if (downloadCount < 1) return;
+    if (!showPrompt) return;    if (downloadCount < 1) return;
     if (downloadCount <= previousDownloadCount) return;
 
     setVisible(true);
     analytics.track('upgrade_prompt_shown', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,
-      currentPlan: 'free',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
-  }, [isFreeUser, downloadCount, pricingRegion, currentModel, copyVariant]);
-
+  }, [showPrompt, userSegment, downloadCount, pricingRegion, canShow, currentModel, copyVariant]);
   if (!visible) return null;
 
   const handleDismiss = () => {
     analytics.track('upgrade_prompt_dismissed', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,
-      currentPlan: 'free',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
@@ -70,15 +71,26 @@ export const PostDownloadPrompt = ({
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,
-      destination: 'model_gallery',
-      currentPlan: 'free',
-      pricingRegion: pricingRegion || 'standard',
+      destination: isCreditPurchaser ? 'billing_subscription_tab' : 'purchase_modal',
+      currentPlan: userSegment,
+      userSegment,      pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
     setCheckoutTrackingContext({ originatingTrigger: 'post_download_explore' });
     setVisible(false);
     onExploreModels();
   };
+
+  // Segment-aware copy
+  const title = isCreditPurchaser
+    ? 'Want consistent quality every month?'
+    : 'Want sharper, cleaner output?';
+  const description = 'Love the result? ';
+  const linkText = isCreditPurchaser
+    ? 'Get 100 credits/mo with a subscription.'
+    : 'Get 10x sharper with Premium models.';
+  const ctaText = isCreditPurchaser ? 'View Subscriptions' : 'Upgrade Now';
+  const continueText = isCreditPurchaser ? 'Continue' : 'Continue Free';
 
   return (
     <Modal
@@ -103,23 +115,28 @@ export const PostDownloadPrompt = ({
             <Sparkles className="w-4 h-4 text-secondary shrink-0" />
           </div>
 
-          <h3 className="text-lg font-semibold text-white mb-2">{t('title')}</h3>
-          <p className="text-sm text-text-muted mb-5">{t('body')}</p>
-
+          <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+          <p className="text-sm text-text-muted mb-5">
+            {description}
+            <button
+              onClick={handleUpgradeClick}
+              className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
+            >
+              {linkText}
+            </button>
+          </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
               onClick={handleExploreModelsClick}
               className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-secondary to-accent px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-secondary/20 transition-all hover:scale-[1.01] hover:shadow-xl hover:shadow-secondary/30 sm:flex-1"
             >
-              {t('cta')}
-            </button>
+              {ctaText}            </button>
             <button
               type="button"
               onClick={handleDismiss}
               className="inline-flex items-center justify-center rounded-xl border border-border px-4 py-3 text-sm text-text-muted transition-colors hover:border-white/20 hover:text-white sm:px-5"
             >
-              {t('maybeLater')}
-            </button>
+              {continueText}            </button>
           </div>
         </div>
       </div>

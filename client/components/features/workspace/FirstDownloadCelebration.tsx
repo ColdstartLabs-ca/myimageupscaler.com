@@ -1,5 +1,6 @@
 'use client';
 
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { useEffect, useState } from 'react';
 import { cn } from '@client/utils/cn';
 import { analytics } from '@client/analytics';
@@ -12,8 +13,8 @@ const CELEBRATION_SHOWN_KEY = 'miu_celebration_shown';
 const ONBOARDING_STARTED_KEY = 'miu_onboarding_started';
 
 export interface IFirstDownloadCelebrationProps {
-  /** Whether the is a free user (to show premium upsell) */
-  isFreeUser: boolean;
+  /** User segment for determining messaging */
+  userSegment: UserSegment;
   /** Callback when user wants to upload another image */
   onUploadAnother?: () => void;
   /** Callback when celebration is dismissed */
@@ -75,9 +76,10 @@ function markOnboardingCompleted(): void {
  * - "Upload Another" and "Explore Models" buttons
  * - Only shows once per user (localStorage flag)
  * - Tracks `onboarding_completed` event
+ * - Segment-aware: credit_purchaser sees subscription messaging
  */
 export const FirstDownloadCelebration = ({
-  isFreeUser,
+  userSegment,
   onUploadAnother,
   onDismiss,
   onExploreModels,
@@ -85,6 +87,8 @@ export const FirstDownloadCelebration = ({
 }: IFirstDownloadCelebrationProps): JSX.Element | null => {
   const t = useTranslations('workspace.progressCelebration');
   const [isVisible, setIsVisible] = useState(true);
+  const isCreditPurchaser = userSegment === 'credit_purchaser';
+  const showUpgradePrompt = userSegment !== 'subscriber';
 
   // Check if celebration was already shown
   const shouldShow = () => {
@@ -114,6 +118,7 @@ export const FirstDownloadCelebration = ({
     analytics.track('onboarding_completed', {
       totalDurationMs,
       source,
+      userSegment,
     });
   }, [shouldRender, source]);
 
@@ -137,10 +142,10 @@ export const FirstDownloadCelebration = ({
     markCelebrationShown();
 
     analytics.track('upgrade_prompt_clicked', {
-      trigger: 'celebration_explore',
-      destination: 'model_gallery',
-      currentPlan: isFreeUser ? 'free' : 'paid',
-    });
+      trigger: 'celebration',
+      destination: isCreditPurchaser ? 'billing_subscription_tab' : 'purchase_modal',
+      currentPlan: userSegment,
+      userSegment,    });
 
     setCheckoutTrackingContext({ originatingTrigger: 'celebration_explore' });
     handleDismiss();
@@ -248,10 +253,30 @@ export const FirstDownloadCelebration = ({
             <Upload size={18} />
             {t('uploadAnother')}
           </button>
+
+          {showUpgradePrompt && (
+            <button
+              onClick={handleViewPlans}
+              className={cn(
+                'flex items-center justify-center gap-2 px-6 py-3 rounded-xl',
+                'gradient-cta shine-effect',
+                'text-white font-semibold transition-all',
+                'hover:scale-[1.02] active:scale-[0.98]',
+                'shadow-lg shadow-accent/20'
+              )}
+            >
+              {isCreditPurchaser
+                ? t.has('subscribeCta')
+                  ? t('subscribeCta')
+                  : 'Subscribe & Save'
+                : t('seePlans')}
+              <ArrowRight size={18} />
+            </button>
+          )
         </div>
 
-        {/* Skip text for free users */}
-        {isFreeUser && <p className="mt-4 text-sm text-text-muted">{t('skipText')}</p>}
+        {/* Skip text for free and credit_purchaser users */}
+        {showUpgradePrompt && <p className="mt-4 text-sm text-text-muted">{t('skipText')}</p>}
       </div>
     </div>
   );

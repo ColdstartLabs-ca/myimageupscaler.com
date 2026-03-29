@@ -1,5 +1,6 @@
 'use client';
 
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { Sparkles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
@@ -15,29 +16,32 @@ const AFTER_UPSCALE_LS_KEY = 'prompt_freq_after_upscale';
 
 export interface IAfterUpscaleBannerProps {
   completedCount: number;
-  isFreeUser: boolean;
+  userSegment: UserSegment;
   currentModel?: QualityTier;
   onUpgrade?: () => void;
 }
 
 /**
- * A dismissible banner shown to free users after they complete their 3rd upscale in a session.
+ * A dismissible banner shown to free and credit_purchaser users after they complete their 3rd upscale in a session.
  * Fires upgrade_prompt_shown once per session with trigger: 'after_upscale'.
+ * Segment-aware: credit_purchaser sees subscription messaging.
  */
 export const AfterUpscaleBanner = ({
   completedCount,
-  isFreeUser,
+  userSegment,
   currentModel,
   onUpgrade,
 }: IAfterUpscaleBannerProps): JSX.Element | null => {
   const [visible, setVisible] = useState(false);
   const { pricingRegion } = useRegionTier();
+  const showPrompt = userSegment !== 'subscriber';
+  const isCreditPurchaser = userSegment === 'credit_purchaser';
 
   // Get copy variant for A/B testing
   const copyVariant = getVariant('after_upscale_copy', ['value', 'outcome', 'urgency']);
 
   useEffect(() => {
-    if (!isFreeUser) return;
+    if (!showPrompt) return;
     if (completedCount < AFTER_UPSCALE_THRESHOLD) return;
     if (typeof window === 'undefined') return;
 
@@ -52,11 +56,12 @@ export const AfterUpscaleBanner = ({
     analytics.track('upgrade_prompt_shown', {
       trigger: 'after_upscale',
       imageVariant: currentModel,
-      currentPlan: 'free',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
-  }, [completedCount, isFreeUser, currentModel, pricingRegion, copyVariant]);
+  }, [completedCount, showPrompt, userSegment, currentModel, pricingRegion, copyVariant]);
 
   if (!visible) return null;
 
@@ -64,15 +69,18 @@ export const AfterUpscaleBanner = ({
     analytics.track('upgrade_prompt_dismissed', {
       trigger: 'after_upscale',
       imageVariant: currentModel,
-      currentPlan: 'free',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
     setVisible(false);
   };
 
-  const upgradeCtaText =
-    currentModel === 'face-restore'
+  // Segment-aware CTA text
+  const upgradeCtaText = isCreditPurchaser
+    ? 'Subscribe for monthly credits.'
+    : currentModel === 'face-restore'
       ? 'Try Portrait Pro for sharper faces.'
       : 'Upgrade for unlimited.';
 
@@ -84,8 +92,9 @@ export const AfterUpscaleBanner = ({
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_upscale',
       imageVariant: currentModel,
-      destination: 'upgrade_plan_modal',
-      currentPlan: 'free',
+      destination: isCreditPurchaser ? 'billing_subscription_tab' : 'upgrade_plan_modal',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
