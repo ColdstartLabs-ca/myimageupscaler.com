@@ -35,9 +35,7 @@ function trackPurchaseConfirmed(params: {
       source: purchaseType,
     },
     { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-  ).catch(err =>
-    console.error('[ANALYTICS] Failed to track purchase_confirmed for invoice:', err)
-  );
+  ).catch(err => console.error('[ANALYTICS] Failed to track purchase_confirmed for invoice:', err));
 }
 
 // Invoice line item interface for accessing runtime properties
@@ -312,13 +310,13 @@ export class InvoiceHandler {
 
         if (expireError) {
           console.error('Error expiring credits:', expireError);
-          // Continue with credit allocation even if expiration fails
+          throw new Error(`Failed to expire subscription credits: ${expireError.message}`);
         } else {
           console.log(`Successfully expired ${expiredCount ?? 0} credits for user ${userId}`);
         }
       } catch (error) {
         console.error('Exception expiring credits:', error);
-        // Continue with credit allocation
+        throw error;
       }
     }
 
@@ -345,6 +343,9 @@ export class InvoiceHandler {
 
       if (error) {
         console.error('Error adding subscription credits:', error);
+        throw new Error(
+          `Failed to add subscription credits for invoice ${invoice.id}: ${error.message}`
+        );
       } else {
         console.log(
           `Added ${actualCreditsToAdd} subscription credits to user ${userId} from ${planDetails.name} plan (balance: ${currentBalance} → ${newBalance}, mode: ${expirationMode})`

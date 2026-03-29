@@ -21,6 +21,7 @@ import {
 
 const MAX_RETRIES = 3;
 const BATCH_SIZE = 50; // Process up to 50 failed events per run
+const STUCK_PROCESSING_WINDOW_MS = 5 * 60 * 1000;
 
 /**
  * POST handler for webhook recovery cron job
@@ -44,21 +45,48 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Create sync run record
     syncRunId = await createSyncRun('webhook_recovery');
 
-    // Find failed events that are retryable (status='failed', recoverable=true, retry_count < MAX_RETRIES)
-    const { data: failedEvents, error: fetchError } = await supabaseAdmin
+    const retryableSelect =
+      'id, event_id, event_type, retry_count, last_retry_at, created_at, error_message, status';
+    const stuckProcessingThreshold = new Date(
+      Date.now() - STUCK_PROCESSING_WINDOW_MS
+    ).toISOString();
+
+    // Retry explicitly failed events first.
+    const { data: failedEvents, error: failedFetchError } = await supabaseAdmin
       .from('webhook_events')
-      .select('*')
+      .select(retryableSelect)
       .eq('status', 'failed')
       .eq('recoverable', true)
       .lt('retry_count', MAX_RETRIES)
       .order('created_at', { ascending: true })
       .limit(BATCH_SIZE);
 
-    if (fetchError) {
-      throw new Error(`Failed to fetch failed webhook events: ${fetchError.message}`);
+    if (failedFetchError) {
+      throw new Error(`Failed to fetch failed webhook events: ${failedFetchError.message}`);
     }
 
-    if (!failedEvents || failedEvents.length === 0) {
+    // Also recover events stuck in processing after the retry window.
+    const { data: stuckEvents, error: stuckFetchError } = await supabaseAdmin
+      .from('webhook_events')
+      .select(retryableSelect)
+      .eq('status', 'processing')
+      .eq('recoverable', true)
+      .lt('retry_count', MAX_RETRIES)
+      .lt('created_at', stuckProcessingThreshold)
+      .order('created_at', { ascending: true })
+      .limit(BATCH_SIZE);
+
+    if (stuckFetchError) {
+      throw new Error(`Failed to fetch stuck webhook events: ${stuckFetchError.message}`);
+    }
+
+    const failedEventList = failedEvents ?? [];
+    const stuckEventList = stuckEvents ?? [];
+    const retryableEvents = [...failedEventList, ...stuckEventList]
+      .sort((left, right) => left.created_at.localeCompare(right.created_at))
+      .slice(0, BATCH_SIZE);
+
+    if (retryableEvents.length === 0) {
       console.log('[CRON] No failed webhook events to retry');
       await completeSyncRun(syncRunId, {
         status: 'completed',
@@ -68,10 +96,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ processed: 0, recovered: 0, unrecoverable: 0 });
     }
 
-    console.log(`[CRON] Found ${failedEvents.length} failed webhook events to retry`);
+    console.log(`[CRON] Found ${retryableEvents.length} webhook events to retry`);
 
     // Process each failed event
-    for (const event of failedEvents) {
+    for (const event of retryableEvents) {
       processed++;
 
       try {
@@ -129,13 +157,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           await supabaseAdmin
             .from('webhook_events')
             .update({
+              status: shouldMarkUnrecoverable ? 'unrecoverable' : 'failed',
               retry_count: newRetryCount,
               last_retry_at: new Date().toISOString(),
               error_message: error instanceof Error ? error.message : 'Unknown error',
-              ...(shouldMarkUnrecoverable && {
-                status: 'unrecoverable',
-                recoverable: false,
-              }),
+              recoverable: !shouldMarkUnrecoverable,
             })
             .eq('id', event.id);
 

@@ -64,11 +64,15 @@ export class SubscriptionHandler {
 
         if (error) {
           console.error(`Error updating profile ${userId} with customer ID ${customer.id}:`, error);
+          throw new Error(
+            `Failed to persist Stripe customer ${customer.id} for profile ${userId}: ${error.message}`
+          );
         } else {
           console.log(`Updated profile ${userId} with Stripe customer ID ${customer.id}`);
         }
       } catch (error) {
         console.error(`Exception updating profile for customer ${customer.id}:`, error);
+        throw error;
       }
     } else {
       console.log(
@@ -352,9 +356,14 @@ export class SubscriptionHandler {
 
         if (fallbackError) {
           console.error('Fallback subscription upsert failed:', fallbackError);
+          throw new Error(
+            `Failed to upsert subscription ${subscription.id}: ${fallbackError.message}`
+          );
         } else {
           console.log('Fallback subscription upsert succeeded without optional columns.');
         }
+      } else {
+        throw new Error(`Failed to upsert subscription ${subscription.id}: ${subError.message}`);
       }
     }
 
@@ -392,6 +401,9 @@ export class SubscriptionHandler {
             refId: initialCreditRefId,
             error,
           });
+          throw new Error(
+            `Failed to add initial subscription credits for ${subscription.id}: ${error.message}`
+          );
         } else {
           console.log(
             `[SUBSCRIPTION_INITIAL_CREDITS_ADDED] Added ${planMetadata.creditsPerCycle} credits to user ${userId} for ${planMetadata.name} plan`
@@ -417,6 +429,9 @@ export class SubscriptionHandler {
 
         if (error) {
           console.error('Error adding trial credits:', error);
+          throw new Error(
+            `Failed to add trial credits for subscription ${subscription.id}: ${error.message}`
+          );
         } else {
           console.log(
             `Added ${trialCredits} trial credits to user ${userId} for ${planMetadata.name} plan`
@@ -448,6 +463,9 @@ export class SubscriptionHandler {
 
           if (error) {
             console.error('Error adjusting credits after trial:', error);
+            throw new Error(
+              `Failed to adjust trial conversion credits for ${subscription.id}: ${error.message}`
+            );
           } else {
             console.log(`Added ${creditsToAdd} credits to user ${userId} after trial conversion`);
           }
@@ -589,6 +607,9 @@ export class SubscriptionHandler {
                   creditsToAdd: calculation.creditsToAdd,
                   creditRefId,
                 });
+                throw new Error(
+                  `Failed to add upgrade credits for ${subscription.id}: ${error.message}`
+                );
               } else {
                 console.log('[WEBHOOK_CREDITS_UPGRADE_SUCCESS]', {
                   userId,
@@ -670,6 +691,7 @@ export class SubscriptionHandler {
         userId,
         error: profileError,
       });
+      throw new Error(`Failed to update profile subscription state: ${profileError.message}`);
     } else {
       console.log('[WEBHOOK_SUBSCRIPTION_UPDATE_COMPLETE]', {
         userId,

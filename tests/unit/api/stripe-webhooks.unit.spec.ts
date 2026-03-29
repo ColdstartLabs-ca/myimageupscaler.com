@@ -1198,7 +1198,7 @@ describe('Stripe Webhook Handler', () => {
       );
     });
 
-    test('should handle subscription update errors gracefully', async () => {
+    test('should return 500 when subscription state persistence fails', async () => {
       // Arrange
       // Mock successful plan lookup to get past that validation
       vi.mocked(getPlanConfig).mockReturnValue({ key: 'pro', name: 'Professional' });
@@ -1273,9 +1273,11 @@ describe('Stripe Webhook Handler', () => {
 
       // Act
       const response = await POST(request);
+      const body = await response.json();
 
       // Assert
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(500);
+      expect(body.error).toContain('Failed to upsert subscription');
       expect(consoleSpy.error).toHaveBeenCalledWith('Error upserting subscription:', {
         message: 'Database error',
       });
@@ -1667,9 +1669,7 @@ describe('Stripe Webhook Handler', () => {
           return {
             select: vi.fn(() => ({
               eq: vi.fn(() => ({
-                maybeSingle: vi.fn(() =>
-                  Promise.resolve({ data: { id: 'user_test_dedup' } })
-                ),
+                maybeSingle: vi.fn(() => Promise.resolve({ data: { id: 'user_test_dedup' } })),
               })),
             })),
           };

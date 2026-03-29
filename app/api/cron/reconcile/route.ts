@@ -22,6 +22,7 @@ import {
   isStripeNotFoundError,
   sleep,
 } from '@server/services/subscription-sync.service';
+import { SubscriptionHandler } from '@app/api/webhooks/stripe/handlers/subscription.handler';
 
 // Rate limiting: 100ms between Stripe API calls to respect rate limits
 const RATE_LIMIT_DELAY_MS = 100;
@@ -29,6 +30,11 @@ const RATE_LIMIT_DELAY_MS = 100;
 // Cloudflare Workers free plan: 50 subrequests max
 // Process max 40 subscriptions per run to stay under limit (each needs ~1-2 Stripe API calls)
 const BATCH_SIZE = 40;
+const SUSPICIOUS_PROFILE_BATCH_SIZE = 10;
+
+function isStripeManagedSubscriptionId(subscriptionId: string): boolean {
+  return subscriptionId.startsWith('sub_');
+}
 
 interface IDiscrepancyIssue {
   subId: string;
@@ -172,6 +178,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         await sleep(RATE_LIMIT_DELAY_MS);
       } catch (error: unknown) {
         if (isStripeNotFoundError(error)) {
+          if (!isStripeManagedSubscriptionId(dbSub.id)) {
+            discrepancies++;
+            issues.push({
+              subId: dbSub.id,
+              userId: dbSub.user_id,
+              issue: 'Manual placeholder subscription skipped during reconciliation',
+              action: 'skipped-manual-placeholder',
+            });
+
+            console.log(
+              `[CRON] Skipping non-Stripe subscription placeholder during reconciliation: ${dbSub.id}`
+            );
+            await sleep(RATE_LIMIT_DELAY_MS);
+            continue;
+          }
+
           // Subscription exists in DB but not in Stripe
           discrepancies++;
           const issue: IDiscrepancyIssue = {
@@ -200,6 +222,66 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // Rate limiting delay even on error
         await sleep(RATE_LIMIT_DELAY_MS);
       }
+    }
+
+    // Recover the original failure mode: a profile has a Stripe customer but never got activated.
+    const { data: suspiciousProfiles, error: suspiciousProfilesError } = await supabaseAdmin
+      .from('profiles')
+      .select('id, stripe_customer_id, subscription_status, subscription_tier')
+      .not('stripe_customer_id', 'is', null)
+      .or('subscription_status.is.null,subscription_tier.is.null')
+      .limit(SUSPICIOUS_PROFILE_BATCH_SIZE);
+
+    if (suspiciousProfilesError) {
+      throw new Error(`Failed to fetch suspicious profiles: ${suspiciousProfilesError.message}`);
+    }
+
+    for (const profile of suspiciousProfiles ?? []) {
+      processed++;
+
+      try {
+        const subscriptions = await stripe.subscriptions.list({
+          customer: profile.stripe_customer_id!,
+          status: 'all',
+          limit: 5,
+        });
+        const activeSubscription = subscriptions.data.find(subscription =>
+          ['active', 'trialing', 'past_due'].includes(subscription.status)
+        );
+
+        if (!activeSubscription) {
+          await sleep(RATE_LIMIT_DELAY_MS);
+          continue;
+        }
+
+        discrepancies++;
+        issues.push({
+          subId: activeSubscription.id,
+          userId: profile.id,
+          issue: 'Profile missing subscription activation despite active Stripe subscription',
+          action: 'replayed-subscription-handler',
+        });
+
+        console.log(
+          `[CRON] Replaying subscription activation for profile ${profile.id} from Stripe subscription ${activeSubscription.id}`
+        );
+
+        await SubscriptionHandler.handleSubscriptionUpdate(activeSubscription);
+        fixed++;
+      } catch (error: unknown) {
+        console.error(
+          `[CRON] Error reconciling suspicious profile ${profile.id} (${profile.stripe_customer_id}):`,
+          error
+        );
+        issues.push({
+          subId: profile.stripe_customer_id!,
+          userId: profile.id,
+          issue: `Profile recovery error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          action: 'failed',
+        });
+      }
+
+      await sleep(RATE_LIMIT_DELAY_MS);
     }
 
     // Complete sync run with results

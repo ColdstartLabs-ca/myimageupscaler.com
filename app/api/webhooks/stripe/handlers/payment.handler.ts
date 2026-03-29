@@ -101,6 +101,7 @@ export class PaymentHandler {
         subscriptionId: subscription.id,
         error: profileError,
       });
+      throw new Error(`Failed to sync checkout profile state: ${profileError.message}`);
     }
 
     const currentPeriodStart = subscriptionWithPeriods.current_period_start;
@@ -137,6 +138,7 @@ export class PaymentHandler {
         subscriptionId: subscription.id,
         error: subscriptionError,
       });
+      throw new Error(`Failed to sync checkout subscription state: ${subscriptionError.message}`);
     }
   }
 
@@ -276,6 +278,9 @@ export class PaymentHandler {
 
                   if (error) {
                     console.error('Error adding initial subscription credits:', error);
+                    throw new Error(
+                      `Failed to add initial subscription credits for session ${session.id}: ${error.message}`
+                    );
                   } else {
                     console.log(
                       `Added ${plan.creditsPerMonth} initial subscription credits to user ${userId} for ${plan.name} plan`
@@ -310,6 +315,7 @@ export class PaymentHandler {
           }
         } catch (error) {
           console.error('Error processing subscription checkout:', error);
+          throw error;
         }
       }
     } else if (session.mode === 'payment') {

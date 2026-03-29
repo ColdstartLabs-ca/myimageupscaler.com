@@ -8,6 +8,7 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { stripe } from '@server/stripe/config';
 import { getPlanForPriceId } from '@shared/config/stripe';
+import { processStripeWebhookEvent } from '@server/services/stripe-webhook-event-processor';
 import type Stripe from 'stripe';
 import dayjs from 'dayjs';
 
@@ -142,6 +143,7 @@ export async function markSubscriptionCanceled(
     .from('profiles')
     .update({
       subscription_status: 'canceled',
+      subscription_tier: null,
     })
     .eq('id', userId);
 
@@ -230,77 +232,10 @@ export function isStripeNotFoundError(error: unknown): boolean {
 export async function processStripeEvent(event: Stripe.Event): Promise<void> {
   console.log(`Processing Stripe event: ${event.type} (${event.id})`);
 
-  switch (event.type) {
-    case 'customer.subscription.created':
-    case 'customer.subscription.updated': {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId = subscription.customer as string;
-      const userId = await getUserIdFromCustomerId(customerId);
+  const result = await processStripeWebhookEvent(event);
 
-      if (!userId) {
-        throw new Error(`No profile found for customer ${customerId}`);
-      }
-
-      await syncSubscriptionFromStripe(userId, subscription);
-      break;
-    }
-
-    case 'customer.subscription.deleted': {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId = subscription.customer as string;
-      const userId = await getUserIdFromCustomerId(customerId);
-
-      if (!userId) {
-        throw new Error(`No profile found for customer ${customerId}`);
-      }
-
-      await markSubscriptionCanceled(userId, subscription.id);
-      break;
-    }
-
-    case 'invoice.payment_succeeded': {
-      const invoice = event.data.object as Stripe.Invoice;
-      const invoiceWithSub = invoice as Stripe.Invoice & {
-        subscription?: string | Stripe.Subscription | null;
-      };
-
-      const subscriptionId =
-        typeof invoiceWithSub.subscription === 'string'
-          ? invoiceWithSub.subscription
-          : invoiceWithSub.subscription?.id;
-
-      if (subscriptionId) {
-        // Fetch and sync the full subscription
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const customerId = subscription.customer as string;
-        const userId = await getUserIdFromCustomerId(customerId);
-
-        if (userId) {
-          await syncSubscriptionFromStripe(userId, subscription);
-        }
-      }
-      break;
-    }
-
-    case 'invoice.payment_failed': {
-      const invoice = event.data.object as Stripe.Invoice;
-      const customerId = invoice.customer as string;
-      const userId = await getUserIdFromCustomerId(customerId);
-
-      if (userId) {
-        // Update profile to past_due status
-        await supabaseAdmin
-          .from('profiles')
-          .update({ subscription_status: 'past_due' })
-          .eq('id', userId);
-
-        console.log(`Marked user ${userId} as past_due due to failed payment`);
-      }
-      break;
-    }
-
-    default:
-      console.log(`Unhandled event type in sync service: ${event.type}`);
+  if (!result.handled) {
+    console.log(`Unhandled event type in sync service: ${event.type}`);
   }
 }
 
