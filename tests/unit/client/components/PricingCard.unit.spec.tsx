@@ -68,11 +68,15 @@ vi.mock('@client/store/toastStore', () => ({
   })),
 }));
 
-vi.mock('@client/store/userStore', () => ({
-  useUserStore: vi.fn(() => ({
-    isAuthenticated: true,
-  })),
-}));
+vi.mock('@client/store/userStore', async importOriginal => {
+  const actual = await importOriginal<typeof import('@client/store/userStore')>();
+  return {
+    ...actual,
+    useUserStore: vi.fn(() => ({
+      isAuthenticated: true,
+    })),
+  };
+});
 
 // Mock window.location
 const mockLocation = {
