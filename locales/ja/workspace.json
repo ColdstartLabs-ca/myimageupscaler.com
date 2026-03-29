@@ -205,9 +205,9 @@
     "title": "初めての拡大が完了しました！",
     "subtitle": "最初の画像を拡大しました。この画像で他のAIモデルが何をできるか見てみませんか？",
     "uploadAnother": "別の画像をアップロード",
-    "exploreModels": "モデルを見る",
-    "skipText": "プレミアムモデルの違いを見てみましょう",
-    "dismiss": "お祝いを閉じる"
+    "seePlans": "Premiumプランを見る",
+    "subscribeCta": "登録して節約する",
+    "skipText": "Premiumで無制限の拡大をアンロック",    "dismiss": "お祝いを閉じる"
   },
   "onboardingTour": {
     "uploadZone": {

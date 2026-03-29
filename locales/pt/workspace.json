@@ -210,9 +210,9 @@
     "title": "Primeira ampliação concluída!",
     "subtitle": "Você acabou de ampliar sua primeira imagem! Curioso para ver o que outros modelos de IA podem fazer com ela?",
     "uploadAnother": "Enviar outra imagem",
-    "exploreModels": "Explorar modelos",
-    "skipText": "Veja a diferença que nossos modelos premium fazem",
-    "dismiss": "Fechar celebração"
+    "seePlans": "Ver planos Premium",
+    "subscribeCta": "Assine e Economize",
+    "skipText": "Desbloqueie ampliações ilimitadas com Premium",    "dismiss": "Fechar celebração"
   },
   "onboardingTour": {
     "uploadZone": {

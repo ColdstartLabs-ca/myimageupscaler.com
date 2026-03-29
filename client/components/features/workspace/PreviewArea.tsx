@@ -1,3 +1,4 @@
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { IBatchItem, ProcessingStage, ProcessingStatus } from '@/shared/types/coreflow.types';
 import ImageComparison from '@client/components/features/image-processing/ImageComparison';
 import { Button } from '@client/components/ui/Button';
@@ -17,8 +18,8 @@ export interface IPreviewAreaProps {
   selectedModel?: string;
   batchProgress?: IBatchProgress | null;
   isProcessingBatch?: boolean;
-  isFreeUser?: boolean;
-}
+  userSegment: UserSegment;
+  onUpgrade?: () => void;}
 
 // Extracted Components
 const ScanningLineAnimation: React.FC = () => (
@@ -174,8 +175,8 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   selectedModel = 'auto',
   batchProgress,
   isProcessingBatch = false,
-  isFreeUser: _isFreeUser = false,
-}) => {
+  userSegment,
+  onUpgrade = () => {},}) => {
   const t = useTranslations('workspace');
 
   // Stage messages - defined inside component to access t
@@ -275,128 +276,6 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
             beforeUrl={activeItem.previewUrl}
             afterUrl={activeItem.processedUrl}
             onDownload={() => onDownload(activeItem.processedUrl!, activeItem.file.name)}
-          />
-
-          {/* Waiting for next batch item overlay */}
-          {isWaitingForNextBatchItem && (
-            <div className="absolute inset-0 bg-surface/80 backdrop-blur-sm flex items-center justify-center rounded-xl z-10">
-              <div className="bg-surface p-6 rounded-xl shadow-2xl border border-border text-center max-w-sm">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <span className="text-xs font-semibold text-accent bg-accent/10 px-3 py-1.5 rounded-full">
-                    {t('previewArea.batch.imageXofYcomplete', {
-                      current: batchProgress.current,
-                      total: batchProgress.total,
-                    })}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <Loader2 size={20} className="text-accent animate-spin" />
-                  <span className="text-sm font-medium text-white">
-                    {t('previewArea.batch.preparingNext')}
-                  </span>
-                </div>
-
-                {/* Processing indicator dots */}
-                <div className="flex justify-center gap-1.5">
-                  <span
-                    className="w-2 h-2 bg-accent rounded-full"
-                    style={{
-                      animation: 'pulse-dot 1.4s ease-in-out infinite',
-                      animationDelay: '0ms',
-                    }}
-                  />
-                  <span
-                    className="w-2 h-2 bg-accent rounded-full"
-                    style={{
-                      animation: 'pulse-dot 1.4s ease-in-out infinite',
-                      animationDelay: '200ms',
-                    }}
-                  />
-                  <span
-                    className="w-2 h-2 bg-accent rounded-full"
-                    style={{
-                      animation: 'pulse-dot 1.4s ease-in-out infinite',
-                      animationDelay: '400ms',
-                    }}
-                  />
-                  <style>{`
-                    @keyframes pulse-dot {
-                      0%, 100% {
-                        transform: scale(1);
-                        opacity: 0.4;
-                      }
-                      50% {
-                        transform: scale(1.3);
-                        opacity: 1;
-                      }
-                    }
-                  `}</style>
-                </div>
-
-                <p className="text-xs text-muted-foreground mt-4">
-                  {t('previewArea.batch.rateLimitingPause')}
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  const estimatedTotalTime = MODEL_PROCESSING_TIMES[selectedModel] || 30;
-  const estimatedRemaining = Math.max(0, estimatedTotalTime - elapsedSeconds);
-  const stageMessage = activeItem.stage
-    ? STAGE_MESSAGES[activeItem.stage]
-    : t('previewArea.statusMessages.processing');
-  const isEnhancing = activeItem.stage === ProcessingStage.ENHANCING;
-
-  return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col">
-      <div className="relative w-full h-[50vw] md:h-[65vh] md:min-h-[400px] bg-surface-light rounded-xl border border-border overflow-hidden flex items-center justify-center">
-        <img
-          src={activeItem.previewUrl}
-          alt={`Preview of ${activeItem.file.name}`}
-          className="max-h-full max-w-full object-contain"
-          loading="eager"
-          decoding="async"
-        />
-
-        {/* Processing Overlay */}
-        {activeItem.status === ProcessingStatus.PROCESSING && (
-          <div className="absolute inset-0 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center">
-            {/* Scanning line animation during analyzing */}
-            {activeItem.stage === ProcessingStage.ANALYZING && <ScanningLineAnimation />}
-
-            <div className="w-72 space-y-4 p-6 bg-surface rounded-xl shadow-2xl border border-border">
-              {/* Batch progress indicator */}
-              <BatchProgressIndicator batchProgress={batchProgress} />
-
-              {/* Stage indicator with spinner */}
-              <StageIndicator stageMessage={stageMessage} />
-
-              {/* Progress bar with smooth animation */}
-              <ProgressBar
-                progress={displayProgress}
-                isEnhancing={isEnhancing}
-                estimatedRemaining={estimatedRemaining}
-              />
-
-              {/* Processing indicator dots */}
-              <ProcessingDots />
-
-              {/* Stage description */}
-              {activeItem.stage && <StageDescription stage={activeItem.stage} />}
-            </div>
-          </div>
-        )}
-
-        {/* Error Overlay */}
-        {activeItem.status === ProcessingStatus.ERROR && (
-          <ErrorOverlay item={activeItem} onRetry={onRetry} />
-        )}
-      </div>
-    </div>
+      <MobileUpgradePrompt variant="preview" userSegment={userSegment} onUpgrade={onUpgrade} />    </div>
   );
 };

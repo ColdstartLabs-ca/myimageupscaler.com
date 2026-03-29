@@ -1,4 +1,4 @@
-import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
+import type { ISubscription, IUserProfile, UserSegment } from '@/shared/types/stripe.types';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { createClient } from '@shared/utils/supabase/client';
 import { clientEnv } from '@shared/config/env';
@@ -458,6 +458,7 @@ export const useUserData = (): {
   subscription: ISubscription | null;
   isAuthenticated: boolean;
   isFreeUser: boolean;
+  userSegment: UserSegment;
 } =>
   useUserStore(
     useShallow(state => {
@@ -472,6 +473,19 @@ export const useUserData = (): {
           profile.subscription_status !== 'canceled' &&
           profile.subscription_status !== 'unpaid');
       const hasPurchasedCredits = (profile?.purchased_credits_balance ?? 0) > 0;
+      // Use stripe_customer_id as fallback to identify past purchasers who spent all credits
+      const hasEverPurchased = hasPurchasedCredits || !!profile?.stripe_customer_id;
+
+      // Determine user segment
+      // Priority: subscriber > credit_purchaser > free
+      const userSegment: UserSegment = hasSubscription
+        ? 'subscriber'
+        : hasEverPurchased
+          ? 'credit_purchaser'
+          : 'free';
+
+      // isFreeUser now means "true free" (never purchased anything)
+      const isFreeUser = userSegment === 'free';
 
       return {
         totalCredits:
@@ -479,7 +493,8 @@ export const useUserData = (): {
         profile,
         subscription,
         isAuthenticated: state.isAuthenticated,
-        isFreeUser: !hasSubscription && !hasPurchasedCredits,
+        isFreeUser,
+        userSegment,
       };
     })
   );

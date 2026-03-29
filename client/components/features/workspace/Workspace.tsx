@@ -79,7 +79,8 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-  const { isFreeUser, profile } = useUserData();
+  const { isFreeUser, userSegment, profile } = useUserData();
+  const hasSubscription = !isFreeUser;
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
   const { isPaywalled, country } = useRegionTier();
@@ -465,30 +466,6 @@ const Workspace: React.FC = () => {
             </div>
           </div>
         )}
-        <PurchaseModal
-          isOpen={showUpgradeModal}
-          onClose={closeUpgradeModal}
-          onPurchaseComplete={closeUpgradeModal}
-          outOfCredits={upgradeModalOutOfCredits}
-          trigger={upgradeModalTrigger}
-        />
-
-        {postAuthCheckoutPriceId && (
-          <CheckoutModal
-            priceId={postAuthCheckoutPriceId}
-            onClose={() => setPostAuthCheckoutPriceId(null)}
-            onSuccess={() => setPostAuthCheckoutPriceId(null)}
-          />
-        )}
-
-        {directCheckoutPriceId && (
-          <CheckoutModal
-            priceId={directCheckoutPriceId}
-            onClose={() => setDirectCheckoutPriceId(null)}
-            onSuccess={() => setDirectCheckoutPriceId(null)}
-            prefillPlanId={directCheckoutPriceId}
-          />
-        )}
       </div>
     );
   }
@@ -543,12 +520,12 @@ const Workspace: React.FC = () => {
             </div>
           </div>
 
-          {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
-          {isFreeUser && (
+          {/* After 3rd upscale upgrade nudge (free + credit_purchaser users, once per session) */}
+          {userSegment !== 'subscriber' && (
             <div className="px-3 md:px-4 pb-0">
               <AfterUpscaleBanner
                 completedCount={completedCount}
-                isFreeUser={isFreeUser}
+                userSegment={userSegment}
                 currentModel={config.qualityTier}
                 onUpgrade={() => openUpgradeModal(false, 'workspace_after_upscale_banner')}
               />
@@ -613,8 +590,8 @@ const Workspace: React.FC = () => {
               selectedModel={config.qualityTier}
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
-              isFreeUser={isFreeUser}
-            />
+              userSegment={userSegment}
+              onUpgrade={() => openUpgradeModal(false, 'workspace_preview_area')}            />
           </div>
 
           {/* Queue Strip at bottom */}
@@ -732,6 +709,7 @@ const Workspace: React.FC = () => {
         onClose={handleCloseModelGallery}
         currentTier={config.qualityTier}
         isFreeUser={isFreeUser}
+        userSegment={userSegment}
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
         onUpgrade={handleModelGalleryUpgrade}
         onUpgradeDirect={handleUpgradeDirect}
@@ -777,11 +755,27 @@ const Workspace: React.FC = () => {
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
 
+      <PremiumUpsellModal
+        isOpen={showPremiumUpsell}
+        onClose={handlePremiumUpsellClose}
+        onProceed={() => {
+          void handlePremiumUpsellProceed();
+        }}
+        onViewPlans={handlePremiumUpsellViewPlans}
+        currentModel={config.qualityTier}
+      />
+
+      <PostDownloadPrompt
+        userSegment={userSegment}
+        downloadCount={downloadCount}
+        currentModel={config.qualityTier}
+        onUpgrade={() => openUpgradeModal(false, 'after_download')}
+      />
+
       {showCelebration && (
         <FirstDownloadCelebration
-          isFreeUser={isFreeUser}
-          source={firstUploadSourceRef.current}
-          onUploadAnother={() => {
+          userSegment={userSegment}
+          source="upload"          onUploadAnother={() => {
             setShowCelebration(false);
             // Focus on dropzone
           }}
