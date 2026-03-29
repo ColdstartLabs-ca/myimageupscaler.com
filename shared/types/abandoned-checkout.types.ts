@@ -111,6 +111,15 @@ export interface IRecoveryRequest {
   checkoutId: string;
 }
 
+/** Error codes for recovery endpoint */
+export type RecoveryErrorCode =
+  | 'NOT_FOUND'
+  | 'EXPIRED'
+  | 'ALREADY_RECOVERED'
+  | 'INVALID_STATUS'
+  | 'MISSING_CHECKOUT_ID'
+  | 'INTERNAL_ERROR';
+
 /** Response from GET /api/checkout/recover/[checkoutId] */
 export interface IRecoveryResponse {
   success: boolean;
@@ -120,7 +129,7 @@ export interface IRecoveryResponse {
     isValid: boolean;
   };
   error?: {
-    code: 'NOT_FOUND' | 'EXPIRED' | 'ALREADY_RECOVERED' | 'INVALID_STATUS';
+    code: RecoveryErrorCode;
     message: string;
   };
 }
