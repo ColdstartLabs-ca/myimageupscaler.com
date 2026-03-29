@@ -99,12 +99,16 @@ export async function trackServerEvent(
     return false;
   }
 
-  // Skip actual API calls in test environment to avoid rate limiting
+  // Skip actual API calls in test and development environments
   if (
     serverEnv.ENV === 'test' ||
+    serverEnv.ENV === 'development' ||
     serverEnv.AMPLITUDE_API_KEY?.includes('test') ||
     serverEnv.AMPLITUDE_API_KEY?.startsWith('test_amplitude_api_key')
   ) {
+    if (serverEnv.ENV === 'development') {
+      console.log(`[Analytics] Skipped event in development: ${name}`);
+    }
     return true;
   }
 

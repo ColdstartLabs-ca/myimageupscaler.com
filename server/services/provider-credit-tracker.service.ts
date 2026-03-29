@@ -14,6 +14,7 @@ import type {
   IEmailProviderUsage,
 } from '@shared/types/provider-adapter.types';
 import { AIProvider, EmailProvider } from '@shared/types/provider-adapter.types';
+import { serverEnv } from '@shared/config/env';
 
 dayjs.extend(utc);
 
@@ -348,6 +349,12 @@ export class ProviderCreditTracker {
    * Log provider usage to console (for debugging/monitoring)
    */
   logProviderUsage(provider: AIProvider | EmailProvider): void {
+    // Skip verbose logging in development
+    if (serverEnv.ENV === 'development') {
+      console.log(`[ProviderTracker] Skipped usage log in development: ${provider}`);
+      return;
+    }
+
     this.getProviderUsage(provider).then(usage => {
       const limits = this.getProviderLimits(provider);
       console.log(`[ProviderTracker] ${provider}:`, {
