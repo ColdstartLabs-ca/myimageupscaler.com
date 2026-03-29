@@ -79,7 +79,7 @@ vi.mock('lucide-react', () => ({
 }));
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => {
+  useTranslations: () => {
     // Map short keys that components call with t('step1'), t('title'), etc.
     const translations: Record<string, string> = {
       step1: 'Upload',
@@ -90,10 +90,14 @@ vi.mock('next-intl', () => ({
       subtitle: 'Great job!',
       uploadAnother: 'Upload Another',
       seePlans: 'See Premium Plans',
+      subscribeCta: 'Subscribe & Save',
       skipText: 'Unlock unlimited upscales with Premium',
       dismiss: 'Dismiss celebration',
     };
-    return translations[key] ?? key;
+    const t = (key: string) => translations[key] ?? key;
+    t.has = (key: string) => key in translations;
+    t.rich = (key: string) => translations[key] ?? key;
+    return t;
   },
 }));
 
@@ -229,7 +233,7 @@ describe('FirstDownloadCelebration', () => {
   });
 
   it('should show celebration on first download', () => {
-    render(<FirstDownloadCelebration isFreeUser={true} />);
+    render(<FirstDownloadCelebration userSegment="free" />);
 
     expect(screen.getByText('First upscale complete!')).toBeInTheDocument();
     expect(screen.getByText('Upload Another')).toBeInTheDocument();
@@ -239,18 +243,18 @@ describe('FirstDownloadCelebration', () => {
   it('should not show celebration when already shown', () => {
     localStorage.setItem('miu_celebration_shown', Date.now().toString());
 
-    const { container } = render(<FirstDownloadCelebration isFreeUser={true} />);
+    const { container } = render(<FirstDownloadCelebration userSegment="free" />);
     expect(container.firstChild).toBeNull();
   });
 
   it('should not show "See Premium Plans" button for paid users', () => {
-    render(<FirstDownloadCelebration isFreeUser={false} />);
+    render(<FirstDownloadCelebration userSegment="subscriber" />);
     expect(screen.queryByText('See Premium Plans')).not.toBeInTheDocument();
   });
 
   it('should call onUploadAnother when upload button clicked', () => {
     const handleUploadAnother = vi.fn();
-    render(<FirstDownloadCelebration isFreeUser={true} onUploadAnother={handleUploadAnother} />);
+    render(<FirstDownloadCelebration userSegment="free" onUploadAnother={handleUploadAnother} />);
 
     fireEvent.click(screen.getByText('Upload Another'));
     expect(handleUploadAnother).toHaveBeenCalled();
@@ -258,7 +262,7 @@ describe('FirstDownloadCelebration', () => {
 
   it('should call onUpgrade when See Plans clicked', () => {
     const handleUpgrade = vi.fn();
-    render(<FirstDownloadCelebration isFreeUser={true} onUpgrade={handleUpgrade} />);
+    render(<FirstDownloadCelebration userSegment="free" onUpgrade={handleUpgrade} />);
 
     fireEvent.click(screen.getByText('See Premium Plans'));
 
@@ -268,7 +272,7 @@ describe('FirstDownloadCelebration', () => {
 
   it('should dismiss on X click', () => {
     const handleDismiss = vi.fn();
-    render(<FirstDownloadCelebration isFreeUser={true} onDismiss={handleDismiss} />);
+    render(<FirstDownloadCelebration userSegment="free" onDismiss={handleDismiss} />);
 
     fireEvent.click(screen.getByTestId('icon-x'));
     expect(handleDismiss).toHaveBeenCalled();
@@ -329,12 +333,13 @@ describe('Analytics Tracking', () => {
     const startTime = Date.now() - 5000;
     localStorage.setItem(ONBOARDING_STARTED_KEY, startTime.toString());
 
-    render(<FirstDownloadCelebration isFreeUser={true} />);
+    render(<FirstDownloadCelebration userSegment="free" />);
 
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('onboarding_completed', {
         totalDurationMs: expect.any(Number),
         source: 'upload',
+        userSegment: 'free',
       });
     });
   });

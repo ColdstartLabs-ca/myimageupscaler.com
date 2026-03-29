@@ -98,7 +98,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
   describe('Upload variant', () => {
     const defaultProps = {
       variant: 'upload' as const,
-      isFreeUser: true,
+      userSegment: 'free' as const,
       onUpgrade: vi.fn(),
     };
 
@@ -146,6 +146,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
         expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
           trigger: 'mobile_upload_prompt',
           currentPlan: 'free',
+          userSegment: 'free',
           pricingRegion: 'standard',
           copyVariant: expect.any(String), // 'control' or 'value'
         });
@@ -160,24 +161,28 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
         trigger: 'mobile_upload_prompt',
         destination: 'upgrade_plan_modal',
         currentPlan: 'free',
+        userSegment: 'free',
         pricingRegion: 'standard',
         copyVariant: expect.any(String),
       });
     });
 
     it('should NOT render for paid users', () => {
-      const { container } = render(<MobileUpgradePrompt {...defaultProps} isFreeUser={false} />);
+      const { container } = render(
+        <MobileUpgradePrompt {...defaultProps} userSegment="subscriber" />
+      );
 
       expect(container.firstChild).toBeNull();
     });
 
     it('should fire upgrade_prompt_shown on mount for free users', async () => {
-      render(<MobileUpgradePrompt {...defaultProps} isFreeUser={true} />);
+      render(<MobileUpgradePrompt {...defaultProps} userSegment="free" />);
 
       await waitFor(() => {
         expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
           trigger: 'mobile_upload_prompt',
           currentPlan: 'free',
+          userSegment: 'free',
           pricingRegion: 'standard',
           copyVariant: expect.any(String),
         });
@@ -213,7 +218,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
   describe('Preview variant', () => {
     const defaultProps = {
       variant: 'preview' as const,
-      isFreeUser: true,
+      userSegment: 'free' as const,
       onUpgrade: vi.fn(),
     };
 
@@ -267,6 +272,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
         expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
           trigger: 'mobile_preview_prompt',
           currentPlan: 'free',
+          userSegment: 'free',
           pricingRegion: 'standard',
           copyVariant: expect.any(String),
         });
@@ -281,24 +287,28 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
         trigger: 'mobile_preview_prompt',
         destination: 'upgrade_plan_modal',
         currentPlan: 'free',
+        userSegment: 'free',
         pricingRegion: 'standard',
         copyVariant: expect.any(String),
       });
     });
 
     it('should NOT render for paid users', () => {
-      const { container } = render(<MobileUpgradePrompt {...defaultProps} isFreeUser={false} />);
+      const { container } = render(
+        <MobileUpgradePrompt {...defaultProps} userSegment="subscriber" />
+      );
 
       expect(container.firstChild).toBeNull();
     });
 
     it('should fire upgrade_prompt_shown on mount for free users', async () => {
-      render(<MobileUpgradePrompt {...defaultProps} isFreeUser={true} />);
+      render(<MobileUpgradePrompt {...defaultProps} userSegment="free" />);
 
       await waitFor(() => {
         expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
           trigger: 'mobile_preview_prompt',
           currentPlan: 'free',
+          userSegment: 'free',
           pricingRegion: 'standard',
           copyVariant: expect.any(String),
         });
@@ -335,7 +345,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
     it('should use consistent copyVariant across shown and clicked events', async () => {
       const props = {
         variant: 'upload' as const,
-        isFreeUser: true,
+        userSegment: 'free' as const,
         onUpgrade: vi.fn(),
       };
 
@@ -361,6 +371,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
         trigger: 'mobile_upload_prompt',
         destination: 'upgrade_plan_modal',
         currentPlan: 'free',
+        userSegment: 'free',
         pricingRegion: 'standard',
         copyVariant: shownCopyVariant,
       });
@@ -372,7 +383,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
 
       const props = {
         variant: 'upload' as const,
-        isFreeUser: true,
+        userSegment: 'free' as const,
         onUpgrade: vi.fn(),
       };
 
