@@ -683,6 +683,11 @@ export class SubscriptionHandler {
       // existingSubscription === null means this is a brand-new subscription (INSERT), not an UPDATE
       if (subscription.status === 'active' || subscription.status === 'trialing') {
         const isNewSubscription = existingSubscription === null;
+        const isPlanChange =
+          !isNewSubscription &&
+          effectivePreviousPriceId &&
+          effectivePreviousPriceId !== basePriceId;
+
         await trackServerEvent(
           isNewSubscription ? 'subscription_created' : 'subscription_updated',
           {
@@ -694,6 +699,25 @@ export class SubscriptionHandler {
           },
           { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
         );
+
+        // Fire purchase_confirmed for plan changes (upgrades/downgrades that result in payment)
+        // The actual charge comes via invoice.payment_succeeded, but this ensures we capture
+        // the event tied to the subscription change itself.
+        if (isPlanChange) {
+          trackServerEvent(
+            'purchase_confirmed',
+            {
+              purchaseType: 'subscription',
+              planTier: planMetadata.key,
+              amount: subscription.items.data[0]?.price.unit_amount || 0,
+              currency: subscription.currency ?? 'usd',
+              source: 'subscription_plan_change',
+            },
+            { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+          ).catch(err =>
+            console.error('[ANALYTICS] Failed to track purchase_confirmed for plan change:', err)
+          );
+        }
 
         // Update user properties in Amplitude via $identify
         const billingInterval = subscription.items.data[0]?.price.recurring?.interval || 'month';

@@ -13,6 +13,33 @@ import {
 import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import Stripe from 'stripe';
 
+/**
+ * Track purchase_confirmed for an invoice payment.
+ * Uses fire-and-forget so analytics failures never block the webhook.
+ */
+function trackPurchaseConfirmed(params: {
+  userId: string;
+  planKey: string;
+  amountCents: number;
+  purchaseType: 'subscription_new' | 'subscription_renewal';
+  currency: string;
+}): void {
+  const { userId, planKey, amountCents, purchaseType, currency } = params;
+  trackServerEvent(
+    'purchase_confirmed',
+    {
+      purchaseType: 'subscription',
+      planTier: planKey,
+      amount: amountCents,
+      currency,
+      source: purchaseType,
+    },
+    { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+  ).catch(err =>
+    console.error('[ANALYTICS] Failed to track purchase_confirmed for invoice:', err)
+  );
+}
+
 // Invoice line item interface for accessing runtime properties
 interface IStripeInvoiceLineItemExtended {
   type?: string;
@@ -67,6 +94,23 @@ export class InvoiceHandler {
         console.log(
           `[INVOICE_SKIP] Credits already added for invoice ${invoice.id} by checkout.session.completed`
         );
+        // Still fire purchase_confirmed as a fallback — the checkout handler may have
+        // skipped analytics if price resolution failed (see payment.handler.ts).
+        // Fire-and-forget; never blocks the webhook.
+        const { data: skipProfile } = await supabaseAdmin
+          .from('profiles')
+          .select('id')
+          .eq('stripe_customer_id', invoice.customer as string)
+          .maybeSingle();
+        if (skipProfile?.id) {
+          trackPurchaseConfirmed({
+            userId: skipProfile.id,
+            planKey: '', // plan unknown at this early-return point; Amplitude still records the event
+            amountCents: invoice.amount_paid || 0,
+            purchaseType: 'subscription_new',
+            currency: invoice.currency ?? 'usd',
+          });
+        }
         return;
       }
 
@@ -325,6 +369,15 @@ export class InvoiceHandler {
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );
 
+      // purchase_confirmed for renewals — ensures every successful payment is captured
+      trackPurchaseConfirmed({
+        userId,
+        planKey: planDetails.key,
+        amountCents: invoice.amount_paid || 0,
+        purchaseType: 'subscription_renewal',
+        currency: invoice.currency ?? 'usd',
+      });
+
       await trackRevenue(
         {
           userId,
@@ -335,6 +388,16 @@ export class InvoiceHandler {
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );
+    } else if (billingReason === 'subscription_create') {
+      // First invoice — fire purchase_confirmed as a fallback in case checkout handler
+      // skipped analytics (e.g. price resolution failure).
+      trackPurchaseConfirmed({
+        userId,
+        planKey: planDetails.key,
+        amountCents: invoice.amount_paid || 0,
+        purchaseType: 'subscription_new',
+        currency: invoice.currency ?? 'usd',
+      });
     }
   }
 

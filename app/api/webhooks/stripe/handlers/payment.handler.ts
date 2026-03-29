@@ -235,8 +235,10 @@ export class PaymentHandler {
                     userId,
                   }
                 );
-                // For checkout sessions, we'll continue without failing since the subscription.created event will handle it
-                return;
+                // Don't return — analytics (purchase_confirmed, checkout_completed, revenue)
+                // must still fire even if credit allocation is deferred to subscription.created.
+                // Credit allocation will be handled by the subscription.created or
+                // invoice.payment_succeeded fallback.
               }
               if (plan) {
                 await this.syncSubscriptionStateFromCheckout({

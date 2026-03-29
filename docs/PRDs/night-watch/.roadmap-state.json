@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "lastScan": "2026-03-29T14:40:24.243Z",
+  "items": {
+    "7ae52884": {
+      "title": "Audit Finding 1: architecture_violation (medium) at shared/config/subscription.config.ts:318",
+      "prdFile": "01-audit-finding-1-architecture-violation-medium-at-shared-config-subscription-config-ts-318.md",
+      "createdAt": "2026-03-29T02:36:07.321Z"
+    },
+    "eed3b359": {
+      "title": "Audit Finding 3: scalability_hotspot (medium) at server/rateLimit.ts:27",
+      "prdFile": "02-audit-finding-3-scalability-hotspot-medium-at-server-ratelimit-ts-27.md",
+      "createdAt": "2026-03-29T14:40:24.242Z"
+    }
+  }
+}

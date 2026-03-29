@@ -141,10 +141,19 @@ export async function trackServerEvent(
       }),
     });
 
+    if (!response.ok) {
+      const body = await response.text().catch(() => '<unreadable>');
+      console.error('[Analytics] Amplitude API error:', {
+        status: response.status,
+        body,
+        event: name,
+        userId,
+      });
+    }
+
     return response.ok;
-  } catch {
-    // Log to Baselime in production
-    console.error('[Analytics] Failed to send server event:', name);
+  } catch (err) {
+    console.error('[Analytics] Failed to send server event:', name, err);
     return false;
   }
 }

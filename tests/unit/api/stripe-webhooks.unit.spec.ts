@@ -1663,6 +1663,16 @@ describe('Stripe Webhook Handler', () => {
       vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
         if (table === 'webhook_events') return getWebhookEventsMock();
         if (table === 'credit_transactions') return { select: mockCreditTransactionsSelect };
+        if (table === 'profiles')
+          return {
+            select: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                maybeSingle: vi.fn(() =>
+                  Promise.resolve({ data: { id: 'user_test_dedup' } })
+                ),
+              })),
+            })),
+          };
         return {};
       });
 
