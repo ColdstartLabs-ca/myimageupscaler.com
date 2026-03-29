@@ -111,6 +111,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const [loading, setLoading] = useState(true);
   const [slowLoading, setSlowLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [showSurvey, setShowSurvey] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
   const [surveyTimeSpentMs, setSurveyTimeSpentMs] = useState(0);
@@ -364,7 +365,9 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
         if (timedOut) return; // Timeout already handled the error state
         console.error('Failed to create checkout session:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load checkout';
+        const code = (err as { code?: string })?.code ?? null;
         setError(errorMessage);
+        setErrorCode(code);
         trackError('network_error', errorMessage, 'plan_selection');
         showToast({
           message: errorMessage,
@@ -471,19 +474,29 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
                   <h3 className="text-error font-semibold mb-2">{t('error')}</h3>
                   <p className="text-error/80">{error}</p>
                   <div className="mt-4 flex gap-3">
-                    <button
-                      onClick={() => {
-                        clearCheckoutSessionCache(); // Force fresh session on retry
-                        setError(null);
-                        setClientSecret(null);
-                        setLoading(true);
-                        loadStartRef.current = Date.now();
-                        setRetryKey(k => k + 1);
-                      }}
-                      className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
-                    >
-                      Try again
-                    </button>
+                    {errorCode === 'ALREADY_SUBSCRIBED' ? (
+                      <a
+                        href="/dashboard/billing"
+                        className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
+                      >
+                        Manage subscription
+                      </a>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          clearCheckoutSessionCache(); // Force fresh session on retry
+                          setError(null);
+                          setErrorCode(null);
+                          setClientSecret(null);
+                          setLoading(true);
+                          loadStartRef.current = Date.now();
+                          setRetryKey(k => k + 1);
+                        }}
+                        className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
+                      >
+                        Try again
+                      </button>
+                    )}
                     <button
                       onClick={() => handleClose('close_button')}
                       className="px-4 py-2 bg-error text-white rounded-lg hover:bg-error/80 transition-colors touch-manipulation"

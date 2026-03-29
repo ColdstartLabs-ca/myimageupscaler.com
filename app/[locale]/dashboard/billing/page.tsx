@@ -8,12 +8,7 @@ import { ModalHeader } from '@client/components/stripe/ModalHeader';
 import { InternalTabs, type ITabItem } from '@client/components/ui/InternalTabs';
 import { StripeService, preloadStripe } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
-import {
-  STRIPE_PRICES,
-  SUBSCRIPTION_PLANS,
-  getPlanDisplayName,
-  getPlanForPriceId,
-} from '@shared/config/stripe';
+import { getPlanDisplayName, getPlanForPriceId } from '@shared/config/stripe';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { motion } from 'framer-motion';
@@ -34,7 +29,7 @@ import {
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // Extend dayjs with relativeTime plugin
 dayjs.extend(relativeTime);
@@ -206,19 +201,9 @@ export default function BillingPage() {
       })
     : 'Free Plan';
 
-  const currentSubscriptionPrice = useMemo(() => {
-    if (!subscription?.price_id) return null;
-    if (subscription.price_id === STRIPE_PRICES.HOBBY_MONTHLY) {
-      return SUBSCRIPTION_PLANS.HOBBY_MONTHLY.price;
-    }
-    if (subscription.price_id === STRIPE_PRICES.PRO_MONTHLY) {
-      return SUBSCRIPTION_PLANS.PRO_MONTHLY.price;
-    }
-    if (subscription.price_id === STRIPE_PRICES.BUSINESS_MONTHLY) {
-      return SUBSCRIPTION_PLANS.BUSINESS_MONTHLY.price;
-    }
-    return null;
-  }, [subscription?.price_id]);
+  const currentSubscriptionPrice = subscription?.price_id
+    ? (getPlanForPriceId(subscription.price_id)?.price ?? null)
+    : null;
 
   // Subscription Tab Content
   const SubscriptionTab = () => {

@@ -5,6 +5,7 @@ import { BottomSheet } from '@client/components/ui/BottomSheet';
 import { SubscriptionPlanGrid } from './SubscriptionPlanGrid';
 import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { useCurrentPlan } from '@client/hooks/useCurrentPlan';
 
 export type TUpgradeModalTrigger =
   | 'model_gate'
@@ -30,6 +31,7 @@ export function UpgradePlanModal({
   trigger,
 }: IUpgradePlanModalProps): JSX.Element {
   const { discountPercent, pricingRegion } = useRegionTier();
+  const { priceId: currentPriceId, subscriptionPrice } = useCurrentPlan();
 
   useEffect(() => {
     if (isOpen) {
@@ -47,7 +49,11 @@ export function UpgradePlanModal({
         <p className="text-sm text-text-muted mb-6 text-center">
           Unlock premium AI models, higher resolution, and batch processing.
         </p>
-        <SubscriptionPlanGrid discountPercent={discountPercent} />
+        <SubscriptionPlanGrid
+          discountPercent={discountPercent}
+          currentPriceId={currentPriceId ?? undefined}
+          currentSubscriptionPrice={subscriptionPrice}
+        />
       </div>
     </BottomSheet>
   );
