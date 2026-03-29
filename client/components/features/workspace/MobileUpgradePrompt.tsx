@@ -1,5 +1,6 @@
 'use client';
 
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
@@ -9,7 +10,7 @@ import { getVariant } from '@client/utils/abTest';
 
 export interface IMobileUpgradePromptProps {
   variant: 'upload' | 'preview';
-  isFreeUser: boolean;
+  userSegment: UserSegment;
   onUpgrade: () => void;
 }
 
@@ -37,15 +38,18 @@ function formatPrice(value: number): string {
  * - Upload variant: before/after face-pro thumbnails, value-framing copy, bigger CTA
  * - Preview variant: larger button with price anchor, pulse animation on first render
  * - A/B testing: copyVariant tracking on analytics events
+ * - Segment-aware: different copy for free vs credit_purchaser users
  */
 export const MobileUpgradePrompt = ({
   variant,
-  isFreeUser,
+  userSegment,
   onUpgrade,
 }: IMobileUpgradePromptProps): JSX.Element | null => {
   const { pricingRegion, discountPercent } = useRegionTier();
   const trackedRef = useRef(false);
   const [shouldPulse, setShouldPulse] = useState(true);
+  const isCreditPurchaser = userSegment === 'credit_purchaser';
+  const showPrompt = userSegment !== 'subscriber';
 
   // Get A/B test variant for copy (control vs value-framing)
   const copyVariant = getVariant('mobile_upload_copy', ['control', 'value']);
@@ -64,15 +68,16 @@ export const MobileUpgradePrompt = ({
   }, [variant, shouldPulse]);
 
   useEffect(() => {
-    if (!isFreeUser || trackedRef.current) return;
+    if (!showPrompt || trackedRef.current) return;
     trackedRef.current = true;
     analytics.track('upgrade_prompt_shown', {
       trigger: variant === 'upload' ? 'mobile_upload_prompt' : 'mobile_preview_prompt',
-      currentPlan: 'free',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
-  }, [isFreeUser, variant, pricingRegion, copyVariant]);
+  }, [showPrompt, userSegment, variant, pricingRegion, copyVariant]);
 
   const handleClick = useCallback(() => {
     setCheckoutTrackingContext({
@@ -80,15 +85,31 @@ export const MobileUpgradePrompt = ({
     });
     analytics.track('upgrade_prompt_clicked', {
       trigger: variant === 'upload' ? 'mobile_upload_prompt' : 'mobile_preview_prompt',
-      destination: 'upgrade_plan_modal',
-      currentPlan: 'free',
+      destination: isCreditPurchaser ? 'billing_subscription_tab' : 'upgrade_plan_modal',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
     onUpgrade();
-  }, [variant, pricingRegion, copyVariant, onUpgrade]);
+  }, [variant, pricingRegion, copyVariant, onUpgrade, isCreditPurchaser, userSegment]);
 
-  if (!isFreeUser) return null;
+  if (!showPrompt) return null;
+
+  // Segment-aware copy
+  const uploadTitle = isCreditPurchaser
+    ? 'Unlock monthly credits & pro models'
+    : 'Get visibly better results';
+  const uploadCta = isCreditPurchaser
+    ? `Subscribe & Save — from ${displayPrice}/mo`
+    : `Get Pro Results — from ${displayPrice}`;
+
+  const previewTitle = isCreditPurchaser
+    ? 'Get monthly credits with subscription'
+    : 'Unlock pro AI models for sharper results';
+  const previewCta = isCreditPurchaser
+    ? `Subscribe — ${displayPrice}/mo`
+    : `Go Pro — ${displayPrice}`;
 
   if (variant === 'upload') {
     return (
@@ -111,7 +132,7 @@ export const MobileUpgradePrompt = ({
               height={32}
             />
           </div>
-          <span className="text-xs font-semibold text-white">Get visibly better results</span>
+          <span className="text-sm font-semibold text-white">{uploadTitle}</span>
         </div>
         <ul className="space-y-1 mb-2">
           <li className="flex items-center gap-1.5 text-[11px] text-text-muted">
@@ -131,7 +152,7 @@ export const MobileUpgradePrompt = ({
           onClick={handleClick}
           className="block w-full text-center text-sm font-semibold text-white bg-accent rounded-lg py-2.5 hover:bg-accent/90 transition-colors"
         >
-          Get Pro Results — from {displayPrice}
+          {uploadCta}
         </button>
       </div>
     );
@@ -141,7 +162,7 @@ export const MobileUpgradePrompt = ({
   return (
     <div className="md:hidden mt-3 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3 flex items-center justify-between gap-3">
       <div className="min-w-0">
-        <p className="text-xs font-medium text-white">Unlock pro AI models for sharper results</p>
+        <p className="text-xs font-medium text-white">{previewTitle}</p>
         <p className="text-[11px] text-text-muted mt-0.5">
           Clarity &amp; Real-ESRGAN Pro available
         </p>
@@ -152,7 +173,7 @@ export const MobileUpgradePrompt = ({
           shouldPulse ? 'animate-pulse' : ''
         }`}
       >
-        Go Pro — {displayPrice}
+        {previewCta}
       </button>
     </div>
   );
