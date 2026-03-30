@@ -157,6 +157,35 @@ process.env.SENDPULSE_API_SECRET = 'test-secret';
 // eslint-disable-next-line no-restricted-syntax
 process.env.BREVO_API_KEY = 'test-brevo-key';
 
+// Mock @shared/utils/supabase/client (uses @supabase/ssr which is not mocked via @supabase/supabase-js)
+// Without this, the real SSR client fires async _emitInitialSession callbacks in tests
+vi.mock('@shared/utils/supabase/client', () => ({
+  createClient: vi.fn(() => ({
+    auth: {
+      signInWithPassword: vi.fn(),
+      signInWithOAuth: vi.fn(),
+      signUp: vi.fn(),
+      signOut: vi.fn(),
+      getSession: vi.fn(),
+      getUser: vi.fn(),
+      onAuthStateChange: vi.fn(() => ({
+        data: { subscription: { unsubscribe: vi.fn() } },
+      })),
+      resetPasswordForEmail: vi.fn(),
+      updateUser: vi.fn(),
+    },
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn(),
+    })),
+    rpc: vi.fn(),
+  })),
+}));
+
 // Mock Supabase client
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({

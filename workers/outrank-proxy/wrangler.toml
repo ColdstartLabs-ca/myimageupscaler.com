@@ -1,0 +1,21 @@
+# Cloudflare Worker: Outrank Webhook Proxy
+# Runs on workers.dev only (no zone routes) to bypass Bot Fight Mode.
+# Forwards requests to the main worker via service binding (internal, no zone security).
+
+name = "myimageupscaler-outrank-proxy"
+main = "index.ts"
+compatibility_date = "2025-03-02"
+compatibility_flags = ["nodejs_compat"]
+
+# No zone routes — only accessible via workers.dev subdomain.
+# This is intentional: workers.dev is not subject to zone-level Bot Fight Mode.
+
+[vars]
+ALLOWED_IP = "188.245.254.120"
+
+[[services]]
+binding = "MAIN_WORKER"
+service = "myimageupscaler"
+
+[observability]
+enabled = true
