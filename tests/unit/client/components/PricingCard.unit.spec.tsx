@@ -42,6 +42,7 @@ vi.mock('@client/utils/authRedirectManager', () => ({
 vi.mock('@client/analytics', () => ({
   analytics: {
     track: vi.fn(),
+    reset: vi.fn(),
   },
 }));
 

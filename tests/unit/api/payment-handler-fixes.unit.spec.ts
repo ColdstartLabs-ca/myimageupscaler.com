@@ -55,9 +55,8 @@ vi.mock('@server/services/engagement-discount.service', () => ({
 
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { stripe } from '@server/stripe/config';
-import {
-  resolvePlanOrPack,
-} from '@shared/config/stripe';
+import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@shared/config/stripe';
+import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 
 // Cast mocks
 const MockedSupabaseAdmin = supabaseAdmin as {
@@ -226,7 +225,9 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
 
       // Assert - Logged warning about fallback
       expect(consoleSpy.warn).toHaveBeenCalledWith(
-        expect.stringContaining('[CREDIT_PACK] Could not verify credits from price config, using metadata: 200')
+        expect.stringContaining(
+          '[CREDIT_PACK] Could not verify credits from price config, using metadata: 200'
+        )
       );
     });
   });
@@ -308,14 +309,252 @@ describe('PaymentHandler - Profile not found errors', () => {
     } as never);
 
     // Act & Assert - Should throw error to enable Stripe retry
-    await expect(
-      PaymentHandler.handleInvoicePaymentRefunded(invoice)
-    ).rejects.toThrow('Profile not found for customer');
+    await expect(PaymentHandler.handleInvoicePaymentRefunded(invoice)).rejects.toThrow(
+      'Profile not found for customer'
+    );
 
     // Assert - Logged retry error
     expect(consoleSpy.error).toHaveBeenCalledWith(
       '[WEBHOOK_RETRY] No profile found for customer cus_test_123',
       expect.any(Object)
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Issue 1 fix: session.invoice null → defer credit allocation, no session_ ref
+// ---------------------------------------------------------------------------
+
+const MockedAssertKnownPriceId = assertKnownPriceId as ReturnType<typeof vi.fn>;
+const MockedGetPlanForPriceId = getPlanForPriceId as ReturnType<typeof vi.fn>;
+const MockedGetBasePriceIdByPlanKey = getBasePriceIdByPlanKey as ReturnType<typeof vi.fn>;
+const MockedStripe = stripe as { subscriptions: { retrieve: ReturnType<typeof vi.fn> } };
+
+function makeSubscriptionCheckoutSession(invoiceId: string | null) {
+  return {
+    id: 'cs_test_123',
+    mode: 'subscription' as const,
+    customer: 'cus_test_abc' as string | Stripe.Customer,
+    customer_email: null,
+    customer_details: null,
+    payment_intent: null,
+    amount_total: 4900,
+    currency: 'usd',
+    payment_method_types: ['card'],
+    metadata: { user_id: 'user_test_abc' },
+    invoice: invoiceId,
+    subscription: 'sub_real_abc' as string | Stripe.Subscription,
+    line_items: { data: [] },
+  } as unknown as Stripe.Checkout.Session;
+}
+
+describe('PaymentHandler — Issue 1: session.invoice null defers credit allocation', () => {
+  let consoleSpy: {
+    log: ReturnType<typeof vi.spyOn>;
+    error: ReturnType<typeof vi.spyOn>;
+    warn: ReturnType<typeof vi.spyOn>;
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    consoleSpy = {
+      log: vi.spyOn(console, 'log').mockImplementation(() => {}),
+      error: vi.spyOn(console, 'error').mockImplementation(() => {}),
+      warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
+    };
+
+    // Profile lookup succeeds
+    MockedSupabaseAdmin.from.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          maybeSingle: vi.fn().mockResolvedValue({ data: { id: 'user_test_abc' }, error: null }),
+        }),
+      }),
+      upsert: vi.fn().mockResolvedValue({ error: null }),
+      update: vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+    } as never);
+
+    MockedSupabaseAdmin.rpc.mockResolvedValue({ data: null, error: null } as never);
+
+    const mockSub = {
+      id: 'sub_real_abc',
+      status: 'active',
+      cancel_at_period_end: false,
+      metadata: { plan_key: 'pro' },
+      items: { data: [{ price: { id: 'price_pro' } }] },
+      current_period_start: 1700000000,
+      current_period_end: 1702592000,
+    };
+    MockedStripe.subscriptions.retrieve.mockResolvedValue(mockSub as never);
+
+    MockedGetBasePriceIdByPlanKey.mockReturnValue('price_pro');
+    MockedGetPlanForPriceId.mockReturnValue({
+      key: 'pro',
+      name: 'Professional',
+      creditsPerMonth: 500,
+    });
+    MockedAssertKnownPriceId.mockReturnValue({ type: 'plan', key: 'pro' });
+    MockedResolvePlanOrPack.mockReturnValue({ type: 'plan', key: 'pro' });
+  });
+
+  afterEach(() => {
+    Object.values(consoleSpy).forEach(spy => spy.mockRestore());
+  });
+
+  test('skips credit allocation and logs a warning when session.invoice is null', async () => {
+    const session = makeSubscriptionCheckoutSession(null);
+
+    await PaymentHandler.handleCheckoutSessionCompleted(session);
+
+    // add_subscription_credits must NOT have been called
+    expect(MockedSupabaseAdmin.rpc).not.toHaveBeenCalledWith(
+      'add_subscription_credits',
+      expect.anything()
+    );
+
+    // Warn logged with deferral message
+    expect(consoleSpy.warn).toHaveBeenCalledWith(
+      expect.stringContaining('deferring credit allocation to invoice.payment_succeeded'),
+      expect.any(Object)
+    );
+  });
+
+  test('does NOT use session_ ref_id when session.invoice is null', async () => {
+    const session = makeSubscriptionCheckoutSession(null);
+
+    await PaymentHandler.handleCheckoutSessionCompleted(session);
+
+    // Ensure no RPC was called with a session_ ref_id
+    const rpCalls = MockedSupabaseAdmin.rpc.mock.calls as Array<[string, Record<string, unknown>]>;
+    const creditCall = rpCalls.find(([name]) => name === 'add_subscription_credits');
+    expect(creditCall).toBeUndefined();
+  });
+
+  test('allocates credits with invoice_ ref_id when session.invoice is present', async () => {
+    const session = makeSubscriptionCheckoutSession('in_test_invoice_123');
+
+    // Dedup check: no existing credit
+    MockedSupabaseAdmin.from.mockImplementation((table: string) => {
+      if (table === 'credit_transactions') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              limit: vi.fn().mockReturnValue({
+                maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+              }),
+            }),
+          }),
+        };
+      }
+      return {
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            maybeSingle: vi.fn().mockResolvedValue({ data: { id: 'user_test_abc' }, error: null }),
+          }),
+        }),
+        upsert: vi.fn().mockResolvedValue({ error: null }),
+        update: vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+      };
+    });
+
+    let capturedRefId: string | undefined;
+    MockedSupabaseAdmin.rpc.mockImplementation((name: string, params: unknown) => {
+      if (name === 'add_subscription_credits') {
+        capturedRefId = (params as { ref_id: string }).ref_id;
+      }
+      return Promise.resolve({ data: null, error: null });
+    });
+
+    await PaymentHandler.handleCheckoutSessionCompleted(session);
+
+    expect(capturedRefId).toBe('invoice_in_test_invoice_123');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Issue 3 fix: failed clawback emits console.error with requiresManualReview
+// ---------------------------------------------------------------------------
+
+describe('PaymentHandler — Issue 3: failed clawback emits actionable error', () => {
+  let consoleSpy: {
+    log: ReturnType<typeof vi.spyOn>;
+    error: ReturnType<typeof vi.spyOn>;
+    warn: ReturnType<typeof vi.spyOn>;
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    consoleSpy = {
+      log: vi.spyOn(console, 'log').mockImplementation(() => {}),
+      error: vi.spyOn(console, 'error').mockImplementation(() => {}),
+      warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
+    };
+  });
+
+  afterEach(() => {
+    Object.values(consoleSpy).forEach(spy => spy.mockRestore());
+  });
+
+  function makeCharge(overrides: Partial<Stripe.Charge> = {}): Stripe.Charge {
+    return {
+      id: 'ch_test_clawback',
+      customer: 'cus_test_cb' as string,
+      amount_refunded: 4900,
+      invoice: 'in_test_cb',
+      payment_intent: 'pi_test_cb' as string | Stripe.PaymentIntent | null,
+      ...overrides,
+    } as Stripe.Charge;
+  }
+
+  function mockProfileFound() {
+    MockedSupabaseAdmin.from.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          maybeSingle: vi.fn().mockResolvedValue({ data: { id: 'user_test_cb' }, error: null }),
+        }),
+      }),
+    } as never);
+  }
+
+  test('calls console.error with requiresManualReview when clawback cannot correlate', async () => {
+    mockProfileFound();
+    // All clawback attempts return success: false (no match)
+    MockedSupabaseAdmin.rpc.mockResolvedValue({
+      data: [{ success: false }],
+      error: null,
+    } as never);
+
+    await PaymentHandler.handleChargeRefunded(makeCharge());
+
+    expect(consoleSpy.error).toHaveBeenCalledWith(
+      expect.stringContaining('manual credit review required'),
+      expect.objectContaining({ requiresManualReview: true })
+    );
+  });
+
+  test('does NOT throw when clawback fails — webhook must still return 200', async () => {
+    mockProfileFound();
+    MockedSupabaseAdmin.rpc.mockResolvedValue({
+      data: [{ success: false }],
+      error: null,
+    } as never);
+
+    // Should resolve without throwing
+    await expect(PaymentHandler.handleChargeRefunded(makeCharge())).resolves.toBeUndefined();
+  });
+
+  test('does NOT emit error when clawback succeeds', async () => {
+    mockProfileFound();
+    MockedSupabaseAdmin.rpc.mockResolvedValue({
+      data: [{ success: true, credits_clawed_back: 500 }],
+      error: null,
+    } as never);
+
+    await PaymentHandler.handleChargeRefunded(makeCharge());
+
+    expect(consoleSpy.error).not.toHaveBeenCalledWith(
+      expect.stringContaining('manual credit review required'),
+      expect.anything()
     );
   });
 });

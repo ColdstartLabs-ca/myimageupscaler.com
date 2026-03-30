@@ -251,40 +251,51 @@ export class PaymentHandler {
                   planKey: planKey ?? plan.key,
                 });
 
-                // Add initial credits for the first month
-                // Use invoice ID as ref_id for refund correlation
-                const refId = invoiceId ? `invoice_${invoiceId}` : `session_${session.id}`;
-
-                // Check if credits were already added (e.g., by invoice.payment_succeeded fallback)
-                // This prevents double-crediting if Stripe retries this event after invoice handler ran
-                const { data: existingCredit } = await supabaseAdmin
-                  .from('credit_transactions')
-                  .select('id')
-                  .eq('reference_id', refId)
-                  .limit(1)
-                  .maybeSingle();
-
-                if (existingCredit) {
-                  console.log(
-                    `[CHECKOUT_SKIP] Credits already added for ref ${refId} - skipping to prevent double allocation`
+                // Add initial credits for the first month.
+                // Always use invoice_${invoiceId} as ref_id so both this handler and
+                // invoice.payment_succeeded share the same dedup key. If session.invoice
+                // is unexpectedly null, skip here — invoice.payment_succeeded will add
+                // credits with the correct invoice ref_id and no double-credit can occur.
+                if (!invoiceId) {
+                  console.warn(
+                    `[CHECKOUT_WARN] session.invoice is null for subscription ${subscriptionId}; ` +
+                      `deferring credit allocation to invoice.payment_succeeded`,
+                    { sessionId: session.id, userId }
                   );
                 } else {
-                  const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
-                    target_user_id: userId,
-                    amount: plan.creditsPerMonth,
-                    ref_id: refId,
-                    description: `Initial subscription credits - ${plan.name} plan - ${plan.creditsPerMonth} credits`,
-                  });
+                  const refId = `invoice_${invoiceId}`;
 
-                  if (error) {
-                    console.error('Error adding initial subscription credits:', error);
-                    throw new Error(
-                      `Failed to add initial subscription credits for session ${session.id}: ${error.message}`
+                  // Check if credits were already added (e.g., by invoice.payment_succeeded fallback)
+                  // This prevents double-crediting if Stripe retries this event after invoice handler ran
+                  const { data: existingCredit } = await supabaseAdmin
+                    .from('credit_transactions')
+                    .select('id')
+                    .eq('reference_id', refId)
+                    .limit(1)
+                    .maybeSingle();
+
+                  if (existingCredit) {
+                    console.log(
+                      `[CHECKOUT_SKIP] Credits already added for ref ${refId} - skipping to prevent double allocation`
                     );
                   } else {
-                    console.log(
-                      `Added ${plan.creditsPerMonth} initial subscription credits to user ${userId} for ${plan.name} plan`
-                    );
+                    const { error } = await supabaseAdmin.rpc('add_subscription_credits', {
+                      target_user_id: userId,
+                      amount: plan.creditsPerMonth,
+                      ref_id: refId,
+                      description: `Initial subscription credits - ${plan.name} plan - ${plan.creditsPerMonth} credits`,
+                    });
+
+                    if (error) {
+                      console.error('Error adding initial subscription credits:', error);
+                      throw new Error(
+                        `Failed to add initial subscription credits for session ${session.id}: ${error.message}`
+                      );
+                    } else {
+                      console.log(
+                        `Added ${plan.creditsPerMonth} initial subscription credits to user ${userId} for ${plan.name} plan`
+                      );
+                    }
                   }
                 }
               }
@@ -636,13 +647,16 @@ export class PaymentHandler {
     }
 
     if (!clawbackSucceeded) {
-      console.warn(`[CHARGE_REFUND] Could not correlate refund to any transaction`, {
+      // Don't throw - refund processed even if clawback fails.
+      // This avoids blocking legitimate refunds for old/unknown transactions.
+      // Log at error level so Baselime captures it for manual review.
+      console.error(`[CHARGE_REFUND] Clawback failed — manual credit review required`, {
+        requiresManualReview: true,
         userId,
         chargeId: charge.id,
         attemptedRefIds: referenceIds,
+        action: 'User may retain credits after refund — verify and adjust manually',
       });
-      // Don't throw - refund processed even if clawback fails
-      // This avoids blocking legitimate refunds for old transactions
     }
   }
 

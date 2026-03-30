@@ -256,10 +256,11 @@ describe('Credit Refund Webhook Handlers', () => {
       // Act - should NOT throw anymore, just logs warning
       await PaymentHandler.handleChargeRefunded(charge);
 
-      // Assert - logs warning but doesn't throw
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        '[CHARGE_REFUND] Could not correlate refund to any transaction',
+      // Assert - logs actionable error (not warn) and doesn't throw
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('manual credit review required'),
         expect.objectContaining({
+          requiresManualReview: true,
           userId: mockUserId,
           chargeId: mockChargeId,
           attemptedRefIds: expect.any(Array),
@@ -303,15 +304,16 @@ describe('Credit Refund Webhook Handlers', () => {
       // Act
       await PaymentHandler.handleChargeRefunded(charge);
 
-      // Assert - FIX: Now tries session_ prefix as fallback, then warns when correlation fails
+      // Assert - FIX: Now tries session_ prefix as fallback, then errors when correlation fails
       expect(supabaseAdmin.rpc).toHaveBeenCalledWith('clawback_from_transaction_v2', {
         p_target_user_id: mockUserId,
         p_original_ref_id: `session_${mockChargeId}`, // Uses session_ as fallback
         p_reason: `Refund for charge ${mockChargeId} (1000 cents)`,
       });
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        '[CHARGE_REFUND] Could not correlate refund to any transaction',
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('manual credit review required'),
         expect.objectContaining({
+          requiresManualReview: true,
           userId: mockUserId,
           chargeId: mockChargeId,
           attemptedRefIds: expect.any(Array),

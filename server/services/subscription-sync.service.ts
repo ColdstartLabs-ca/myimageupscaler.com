@@ -8,6 +8,7 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { stripe } from '@server/stripe/config';
 import { getPlanForPriceId } from '@shared/config/stripe';
+import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { processStripeWebhookEvent } from '@server/services/stripe-webhook-event-processor';
 import type Stripe from 'stripe';
 import dayjs from 'dayjs';
@@ -20,12 +21,26 @@ export async function syncSubscriptionFromStripe(
   userId: string,
   subscription: Stripe.Subscription
 ): Promise<void> {
-  const priceId = subscription.items.data[0]?.price.id || '';
-  const plan = getPlanForPriceId(priceId);
+  const rawPriceId = subscription.items.data[0]?.price.id || '';
+  let priceId = rawPriceId;
+  let plan = getPlanForPriceId(rawPriceId);
 
   if (!plan) {
-    console.error(`Unknown price ID in subscription sync: ${priceId}`);
-    throw new Error(`Unknown price ID: ${priceId}`);
+    // Fallback: regional/price_data subscriptions have throwaway Stripe-generated price IDs
+    // that won't match the config. Resolve via plan_key metadata (set at checkout time).
+    const planKey = subscription.metadata?.plan_key || '';
+    if (planKey) {
+      const basePriceId = getBasePriceIdByPlanKey(planKey);
+      if (basePriceId) {
+        priceId = basePriceId;
+        plan = getPlanForPriceId(basePriceId);
+      }
+    }
+  }
+
+  if (!plan) {
+    console.error(`Unknown price ID in subscription sync: ${rawPriceId}`);
+    throw new Error(`Unknown price ID: ${rawPriceId}`);
   }
 
   // Access period timestamps

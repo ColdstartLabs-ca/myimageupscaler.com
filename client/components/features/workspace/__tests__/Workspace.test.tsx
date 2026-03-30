@@ -35,6 +35,8 @@ vi.mock('@client/store/userStore', () => ({
     isAuthenticated: true,
   }),
   useUserStore: vi.fn(() => ({ user: { id: 'user-123' } })),
+  useProfile: vi.fn(() => ({ id: 'user-123' })),
+  useSubscription: vi.fn(() => mockSubscription),
 }));
 
 // Mock next-intl
