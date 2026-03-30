@@ -39,15 +39,7 @@ export default {
       });
     }
 
-    // Validate source IP
-    const clientIP = request.headers.get('CF-Connecting-IP');
-    if (clientIP !== env.ALLOWED_IP) {
-      console.log(`[OUTRANK-PROXY] Blocked request from ${clientIP}`);
-      return new Response(JSON.stringify({ error: 'Forbidden' }), {
-        status: 403,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+    const clientIP = request.headers.get('CF-Connecting-IP') ?? 'unknown';
 
     // Forward to main worker via service binding (bypasses zone security)
     console.log(`[OUTRANK-PROXY] Forwarding webhook from ${clientIP}`);
