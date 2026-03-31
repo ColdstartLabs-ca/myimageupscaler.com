@@ -120,7 +120,10 @@
     "cancel": "Cancel",
     "confirm": "Delete My Account",
     "deleting": "Deleting...",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "successTitle": "Account deleted",
+    "successMessage": "Your account and all associated data have been permanently deleted.",
+    "successRedirecting": "Redirecting..."
   },
   "support": {
     "title": "Help & Support",

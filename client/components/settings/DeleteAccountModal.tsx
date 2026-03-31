@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Trash2, CheckCircle } from 'lucide-react';
 import { ModalHeader } from '@client/components/stripe/ModalHeader';
 import { useAuthStore } from '@client/store/auth';
+import { createClient } from '@shared/utils/supabase/client';
 
 interface IDeleteAccountModalProps {
   isOpen: boolean;
@@ -19,13 +19,26 @@ export function DeleteAccountModal({
   userEmail,
 }: IDeleteAccountModalProps): JSX.Element | null {
   const t = useTranslations('dashboard.deleteAccount');
-  const router = useRouter();
   const signOut = useAuthStore(state => state.signOut);
   const [emailInput, setEmailInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleted, setDeleted] = useState(false);
 
   if (!isOpen) return null;
+
+  if (deleted) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-surface rounded-2xl shadow-xl max-w-md w-full p-8 text-center space-y-4">
+          <CheckCircle className="w-12 h-12 text-success mx-auto" />
+          <h2 className="text-xl font-bold text-text-primary">{t('successTitle')}</h2>
+          <p className="text-sm text-muted-foreground">{t('successMessage')}</p>
+          <p className="text-xs text-muted-foreground">{t('successRedirecting')}</p>
+        </div>
+      </div>
+    );
+  }
 
   const isConfirmed = emailInput === userEmail;
 
@@ -35,14 +48,31 @@ export function DeleteAccountModal({
     setError(null);
 
     try {
-      const res = await fetch('/api/account/delete', { method: 'POST' });
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const res = await fetch('/api/account/delete', {
+        method: 'POST',
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+      });
+
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || t('errorGeneric'));
+        const errorMessage = typeof data.error === 'object' ? data.error?.message : data.error;
+        setError(errorMessage || t('errorGeneric'));
         return;
       }
-      await signOut();
-      router.push('/');
+
+      // Show success state before the signOut-triggered redirect
+      setDeleted(true);
+      setTimeout(async () => {
+        await signOut().catch(() => {});
+        // signOut fires SIGNED_OUT → userStore redirects via window.location.href = '/'
+        // Fallback in case the event doesn't fire:
+        window.location.href = '/';
+      }, 2000);
     } catch {
       setError(t('errorGeneric'));
     } finally {
