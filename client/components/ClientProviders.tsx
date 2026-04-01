@@ -20,6 +20,11 @@ const AuthRequiredModal = dynamic(
   { ssr: false }
 );
 
+const PwaInstallBanner = dynamic(
+  () => import('@client/components/common/PwaInstallBanner').then(m => m.PwaInstallBanner),
+  { ssr: false }
+);
+
 export function ClientProviders({ children }: { children: ReactNode }): ReactNode {
   return (
     <AnalyticsProvider>
@@ -28,6 +33,7 @@ export function ClientProviders({ children }: { children: ReactNode }): ReactNod
         <AuthenticationModal />
         <AuthRequiredModal />
         <Toast />
+        <PwaInstallBanner />
         {children}
       </BaselimeProvider>
     </AnalyticsProvider>

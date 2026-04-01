@@ -171,6 +171,9 @@
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "pwaInstallTitle": "Install {appName}",
+    "pwaInstallDescription": "Add to home screen for quick access",
+    "pwaInstallButton": "Install"
   }
 }
