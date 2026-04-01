@@ -41,7 +41,9 @@ test.describe('PRD: True Image Upscaling - Phase 2: Dimension Reporting', () => 
       },
     };
 
-    test('should return dimensions in response for upscale models (quick tier)', async ({ request }) => {
+    test('should return dimensions in response for upscale models (quick tier)', async ({
+      request,
+    }) => {
       const user = await ctx.createUser({ subscription: 'active', tier: 'hobby', credits: 100 });
       const api = new ApiClient(request).withAuth(user.token);
 
@@ -288,8 +290,10 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
     });
   });
 
-  test.describe('HD Upscale Tier (clarity-upscaler) - Supports 8x', () => {
-    test('should accept 8x scale for hd-upscale tier', async ({ request }) => {
+  test.describe('HD Upscale Tier (clarity-upscaler) - Max 4x', () => {
+    test('should reject 8x scale for hd-upscale tier (too expensive — 3 chained A100 passes)', async ({
+      request,
+    }) => {
       const user = await ctx.createUser({ subscription: 'active', tier: 'starter', credits: 100 });
       const api = new ApiClient(request).withAuth(user.token);
 
@@ -308,12 +312,8 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
         },
       });
 
-      // Should not fail with scale validation error
-      if (response.status === 400) {
-        const data = await response.json();
-        // If it fails, it should NOT be because of scale validation
-        expect(data.error?.message).not.toMatch(/not available for hd-upscale tier/i);
-      }
+      // Scale validation (400), tier restriction (403), or AI service errors (422, 500)
+      expect([400, 403, 422, 500]).toContain(response.status);
     });
   });
 

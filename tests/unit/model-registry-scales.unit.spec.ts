@@ -125,8 +125,9 @@ describe('Model Registry: Accurate Scale Support (PRD: True Image Upscaling)', (
         model = registry.getModel('clarity-upscaler');
       });
 
-      it('should support 2x, 4x, and 8x scales', () => {
-        expect(model?.supportedScales).toEqual([2, 4, 8]);
+      it('should support 2x and 4x scales only (8x too expensive — 3 chained A100 passes)', () => {
+        expect(model?.supportedScales).toEqual([2, 4]);
+        expect(model?.supportedScales).not.toContain(8);
       });
 
       it('should have upscale capability', () => {

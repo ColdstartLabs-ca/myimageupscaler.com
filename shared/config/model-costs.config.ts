@@ -202,11 +202,7 @@ export const MODEL_CONFIG = {
     processingTime: MODEL_COSTS.PROCESSING_TIME_SLOW,
     maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
-    supportedScales: [
-      MODEL_COSTS.DEFAULT_SCALE,
-      MODEL_COSTS.MAX_SCALE_STANDARD,
-      MODEL_COSTS.MAX_SCALE_PREMIUM,
-    ],
+    supportedScales: [MODEL_COSTS.DEFAULT_SCALE, MODEL_COSTS.MAX_SCALE_STANDARD], // No 8x — costs $0.23+ per run (3 chained diffusion passes on A100)
     tierRestriction: 'hobby',
   },
   'flux-2-pro': {

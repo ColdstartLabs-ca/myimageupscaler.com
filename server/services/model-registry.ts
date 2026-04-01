@@ -205,11 +205,7 @@ export class ModelRegistry {
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
         maxInputPixels: MODEL_MAX_INPUT_PIXELS['clarity-upscaler'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
-        supportedScales: [
-          CONFIG_MODEL_COSTS.DEFAULT_SCALE,
-          CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD,
-          CONFIG_MODEL_COSTS.MAX_SCALE_PREMIUM,
-        ],
+        supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD], // No 8x — costs $0.23+ per run (3 chained diffusion passes on A100)
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
       },
       // Flux-2-Pro (Premium Face Restoration)

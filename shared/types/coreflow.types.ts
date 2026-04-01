@@ -312,7 +312,7 @@ export const QUALITY_TIER_SCALES: Record<QualityTier, (2 | 4 | 8)[]> = {
   'budget-old-photo': [], // p-image-edit is enhancement-only (no upscale)
   'seedream-edit': [], // seedream is enhancement-only (no upscale)
   'anime-upscale': [2, 4], // realesrgan-anime supports 2x and 4x
-  'hd-upscale': [2, 4, 8], // clarity-upscaler supports up to 16x natively
+  'hd-upscale': [2, 4], // clarity-upscaler capped at 4x (8x costs $0.23+ — 3 chained A100 passes)
   'face-pro': [], // flux-2-pro is enhancement-only (no upscale)
   ultra: [2, 4], // nano-banana-pro is resolution-based (1K/2K/4K), not true 8x scale
   'bg-removal': [], // bg-removal is not an upscale operation (no scale)
