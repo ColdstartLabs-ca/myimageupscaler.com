@@ -10,6 +10,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests/smoke',
+  globalSetup: './tests/global-setup.ts', // Auto-install browsers if missing
   fullyParallel: false,
   retries: 1,
   workers: 1,

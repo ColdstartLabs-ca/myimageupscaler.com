@@ -24,7 +24,7 @@
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
     "tsc": "tsc --noEmit",
     "prepare": "husky",
-    "postinstall": "playwright install chromium chromium-headless-shell 2>/dev/null || true",
+    "postinstall": "playwright install chromium chromium-headless-shell || echo '⚠️  Playwright browser install failed — run: npx playwright install chromium chromium-headless-shell'",
     "verify": "npm run tsc && npm run lint && npm run i18n:icu && npm run validate:seo:schema",
     "verify:full": "npm run verify && npm run test:unit && npm run test:e2e:full",
     "test:e2e": "playwright test --project=chromium",

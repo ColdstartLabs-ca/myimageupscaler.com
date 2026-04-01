@@ -17,6 +17,7 @@ process.env.TEST_WRANGLER_PORT = TEST_WRANGLER_PORT;
 
 export default defineConfig({
   testDir: './tests',
+  globalSetup: './tests/global-setup.ts', // Auto-install browsers if missing
   globalTeardown: './tests/global-teardown.ts', // Clean up test users after all tests
   fullyParallel: false, // Disable full parallelization for memory optimization
   forbidOnly: isCI,
