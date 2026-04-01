@@ -348,6 +348,21 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
         trigger: 'after_upscale',
         currentPlan: 'free',
         pricingRegion: 'standard',
+        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
+      });
+    });
+  });
+
+  it('fires upgrade_prompt_shown with currentModel prop', async () => {
+    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} currentModel="ultra" />);
+
+    await waitFor(() => {
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
+        trigger: 'after_upscale',
+        imageVariant: 'ultra',
+        currentPlan: 'free',
+        pricingRegion: 'standard',
+        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
       });
     });
   });
@@ -400,6 +415,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
       destination: 'upgrade_plan_modal',
       currentPlan: 'free',
       pricingRegion: 'standard',
+      copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
     });
     expect(onUpgrade).toHaveBeenCalled();
   });
@@ -417,6 +433,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
       trigger: 'after_upscale',
       currentPlan: 'free',
       pricingRegion: 'standard',
+      copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
     });
 
     // Banner should be gone
@@ -491,6 +508,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
         afterUrl="https://example.com/after.jpg"
         onDownload={vi.fn()}
         showUpgradeNudge={true}
+        modelUsed="standard"
       />
     );
 
@@ -500,8 +518,10 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'after_comparison',
+        imageVariant: 'standard',
         currentPlan: 'free',
         pricingRegion: 'standard',
+        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
       });
     });
   });
@@ -553,13 +573,13 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
         trigger: 'after_comparison',
         currentPlan: 'free',
         pricingRegion: 'standard',
+        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
       });
     });
 
     vi.clearAllMocks();
 
-    // Second drag — session key already set, should not fire again
-    // (hasInteractedRef prevents re-checking sessionStorage)
+    // Second drag — hasInteractedRef prevents re-checking prompt frequency
     fireEvent.mouseDown(sliderContainer!);
     await new Promise(r => setTimeout(r, 10));
     expect(mockAnalyticsTrack).not.toHaveBeenCalled();
@@ -601,6 +621,7 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
         onDownload={vi.fn()}
         showUpgradeNudge={true}
         onUpgrade={onUpgrade}
+        modelUsed="premium"
       />
     );
 
@@ -616,9 +637,11 @@ describe('Prompt 3: after_comparison — ImageComparison nudge', () => {
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
       trigger: 'after_comparison',
+      imageVariant: 'premium',
       destination: 'upgrade_modal',
       currentPlan: 'free',
       pricingRegion: 'standard',
+      copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
     });
   });
 });
@@ -699,6 +722,29 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
         trigger: 'after_download',
         currentPlan: 'free',
         pricingRegion: 'standard',
+        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
+      });
+    });
+  });
+
+  it('should fire upgrade_prompt_shown with currentModel prop', async () => {
+    const onUpgrade = vi.fn();
+    render(
+      <PostDownloadPrompt
+        isFreeUser={true}
+        downloadCount={2}
+        currentModel="premium"
+        onUpgrade={onUpgrade}
+      />
+    );
+
+    await waitFor(() => {
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
+        trigger: 'after_download',
+        imageVariant: 'premium',
+        currentPlan: 'free',
+        pricingRegion: 'standard',
+        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
       });
     });
   });
@@ -717,6 +763,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
       trigger: 'after_download',
       currentPlan: 'free',
       pricingRegion: 'standard',
+      copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
     });
 
     await waitFor(() => {
@@ -740,6 +787,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
       destination: 'purchase_modal',
       currentPlan: 'free',
       pricingRegion: 'standard',
+      copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
     });
     expect(onUpgrade).toHaveBeenCalled();
   });

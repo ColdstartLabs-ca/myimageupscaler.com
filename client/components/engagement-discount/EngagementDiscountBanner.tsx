@@ -152,16 +152,16 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
                 <span className="text-sm font-bold text-white truncate">
                   {offer.discountPercent}% off your first purchase
                 </span>
-                <span className="text-white/40 hidden md:block">·</span>
-                <div className="items-center gap-1.5 hidden md:flex shrink-0">
-                  <span className="text-sm text-white/50 line-through">
+                <span className="text-white/40">·</span>
+                <div className="items-center gap-1.5 flex shrink-0">
+                  <span className="text-sm text-white/50 line-through hidden md:block">
                     ${(offer.originalPriceCents / 100).toFixed(2)}
                   </span>
-                  <span className="text-sm font-bold text-green-300">
+                  <span className="text-sm font-bold text-green-300 hidden md:block">
                     ${(offer.discountedPriceCents / 100).toFixed(2)}
                   </span>
-                  <span className="text-white/40">·</span>
-                  <span className="text-sm text-white/70">
+                  <span className="text-white/40 hidden md:block">·</span>
+                  <span className="text-sm text-white/70 hidden md:block">
                     {DISCOUNT_TARGET_PACK.credits} credits
                   </span>
                 </div>
@@ -183,11 +183,14 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
                   onClick={handleClaimClick}
                   className={cn(
                     'flex-1 md:flex-none px-4 py-1.5 rounded-lg font-bold text-sm',
-                    'bg-white hover:bg-white/90 text-accent',
+                    'bg-yellow-400 hover:bg-yellow-300 text-black',
                     'transition-colors shadow-lg active:scale-[0.98] whitespace-nowrap'
                   )}
                 >
-                  Claim {offer.discountPercent}% Off
+                  <span className="hidden md:inline">Claim {offer.discountPercent}% Off</span>
+                  <span className="md:hidden">
+                    Claim {offer.discountPercent}% Off - ${(offer.discountedPriceCents / 100).toFixed(2)}
+                  </span>
                 </button>
               </div>
             </div>

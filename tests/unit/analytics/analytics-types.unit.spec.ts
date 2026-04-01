@@ -193,6 +193,7 @@ describe('Analytics Types - Interface Structure Validation', () => {
     const triggers: types.IUpgradePromptTrigger[] = [
       'premium_upsell',
       'out_of_credits',
+      'insufficient_credits',
       'model_gate',
       'after_upscale',
       'after_comparison',
@@ -200,6 +201,71 @@ describe('Analytics Types - Interface Structure Validation', () => {
       'after_batch',
     ];
 
-    expect(triggers).toHaveLength(7);
+    expect(triggers).toHaveLength(8);
+  });
+
+  test('IUpgradePromptTrigger should accept insufficient_credits trigger', async () => {
+    const types = await import('@server/analytics/types');
+
+    const trigger: types.IUpgradePromptTrigger = 'insufficient_credits';
+    expect(trigger).toBe('insufficient_credits');
+  });
+});
+
+describe('Analytics Types - Paywall Event Tracking', () => {
+  test('paywall_shown should be a valid event name', async () => {
+    const types = await import('@server/analytics/types');
+
+    // Test that paywall_shown is in the event name union
+    const eventName: types.IAnalyticsEventName = 'paywall_shown';
+    expect(eventName).toBe('paywall_shown');
+  });
+
+  test('IPaywallShownProperties should have required fields', async () => {
+    const types = await import('@server/analytics/types');
+
+    const props: types.IPaywallShownProperties = {
+      country: 'PH',
+      context: 'guest_api',
+    };
+
+    expect(props.country).toBe('PH');
+    expect(props.context).toBe('guest_api');
+  });
+
+  test('IPaywallShownProperties should accept guest_api context', async () => {
+    const types = await import('@server/analytics/types');
+
+    const props: types.IPaywallShownProperties = {
+      country: 'VN',
+      context: 'guest_api',
+    };
+
+    expect(props.context).toBe('guest_api');
+  });
+
+  test('IPaywallShownProperties should accept authenticated_workspace context', async () => {
+    const types = await import('@server/analytics/types');
+
+    const props: types.IPaywallShownProperties = {
+      country: 'BD',
+      context: 'authenticated_workspace',
+    };
+
+    expect(props.context).toBe('authenticated_workspace');
+  });
+
+  test('IPaywallShownProperties should accept valid country codes', async () => {
+    const types = await import('@server/analytics/types');
+
+    const countries = ['US', 'PH', 'VN', 'BD', 'GB', 'IN'];
+
+    countries.forEach(country => {
+      const props: types.IPaywallShownProperties = {
+        country,
+        context: 'guest_api',
+      };
+      expect(props.country).toBe(country);
+    });
   });
 });

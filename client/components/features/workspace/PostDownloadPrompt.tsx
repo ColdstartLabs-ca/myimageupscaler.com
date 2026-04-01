@@ -6,10 +6,12 @@ import { analytics } from '@client/analytics/analyticsClient';
 import { Modal } from '@client/components/ui/Modal';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
+import { getVariant } from '@client/utils/abTest';
 
 export interface IPostDownloadPromptProps {
   isFreeUser: boolean;
   downloadCount: number;
+  currentModel?: string;
   onUpgrade: () => void;
 }
 
@@ -22,11 +24,15 @@ export interface IPostDownloadPromptProps {
 export const PostDownloadPrompt = ({
   isFreeUser,
   downloadCount,
+  currentModel,
   onUpgrade,
 }: IPostDownloadPromptProps): JSX.Element | null => {
   const [visible, setVisible] = useState(false);
   const lastEvaluatedDownloadCountRef = useRef(0);
   const { pricingRegion } = useRegionTier();
+
+  // Get copy variant for A/B testing
+  const copyVariant = getVariant('after_download_copy', ['value', 'outcome', 'urgency']);
 
   // Check prompt frequency throttling (24h cooldown)
   const canShow = canShowPrompt({
@@ -53,18 +59,22 @@ export const PostDownloadPrompt = ({
     setVisible(true);
     analytics.track('upgrade_prompt_shown', {
       trigger: 'after_download',
+      imageVariant: currentModel,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      copyVariant,
     });
-  }, [isFreeUser, downloadCount, pricingRegion, canShow]);
+  }, [isFreeUser, downloadCount, pricingRegion, canShow, currentModel, copyVariant]);
 
   if (!visible) return null;
 
   const handleDismiss = () => {
     analytics.track('upgrade_prompt_dismissed', {
       trigger: 'after_download',
+      imageVariant: currentModel,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      copyVariant,
     });
     setVisible(false);
   };
@@ -72,9 +82,11 @@ export const PostDownloadPrompt = ({
   const handleUpgradeClick = () => {
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_download',
+      imageVariant: currentModel,
       destination: 'purchase_modal',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      copyVariant,
     });
     setVisible(false);
     onUpgrade();

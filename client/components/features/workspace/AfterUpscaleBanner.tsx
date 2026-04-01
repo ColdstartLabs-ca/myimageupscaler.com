@@ -4,6 +4,7 @@ import { Sparkles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
+import { getVariant } from '@client/utils/abTest';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import type { QualityTier } from '@/shared/types/coreflow.types';
 
@@ -31,6 +32,9 @@ export const AfterUpscaleBanner = ({
   const [visible, setVisible] = useState(false);
   const { pricingRegion } = useRegionTier();
 
+  // Get copy variant for A/B testing
+  const copyVariant = getVariant('after_upscale_copy', ['value', 'outcome', 'urgency']);
+
   useEffect(() => {
     if (!isFreeUser) return;
     if (completedCount < AFTER_UPSCALE_THRESHOLD) return;
@@ -49,8 +53,9 @@ export const AfterUpscaleBanner = ({
       imageVariant: currentModel,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      copyVariant,
     });
-  }, [completedCount, isFreeUser, currentModel, pricingRegion]);
+  }, [completedCount, isFreeUser, currentModel, pricingRegion, copyVariant]);
 
   if (!visible) return null;
 
@@ -60,6 +65,7 @@ export const AfterUpscaleBanner = ({
       imageVariant: currentModel,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      copyVariant,
     });
     setVisible(false);
   };
@@ -76,6 +82,7 @@ export const AfterUpscaleBanner = ({
       destination: 'upgrade_plan_modal',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
+      copyVariant,
     });
     onUpgrade?.();
   };

@@ -44,6 +44,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const regionTier = getRegionTier(country);
     if (regionTier === 'paywalled') {
       logger.info('Guest blocked by country paywall', { country });
+      void trackServerEvent(
+        'paywall_shown',
+        { country, context: 'guest_api' },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY }
+      );
       return NextResponse.json(
         createErrorResponse(
           ErrorCodes.FORBIDDEN,

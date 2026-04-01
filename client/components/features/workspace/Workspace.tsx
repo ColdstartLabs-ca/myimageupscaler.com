@@ -20,6 +20,7 @@ import { TabButton } from '@client/components/ui/TabButton';
 import { analytics } from '@client/analytics';
 import { useEngagementTracker } from '@client/hooks/useEngagementTracker';
 import { useOnboardingDriver } from '@client/hooks/useOnboardingDriver';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { EngagementDiscountBanner } from '@client/components/engagement-discount';
@@ -80,6 +81,7 @@ const Workspace: React.FC = () => {
   const hasSubscription = !isFreeUser;
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
+  const { isPaywalled, country } = useRegionTier();
 
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
@@ -162,6 +164,18 @@ const Workspace: React.FC = () => {
     prevCompletedCountRef.current = completedCount;
   }, [completedCount, trackUpscale]);
 
+  // Track paywall_shown event for authenticated workspace users
+  const paywallTrackedRef = React.useRef(false);
+  useEffect(() => {
+    if (isPaywalled && isFreeUser && country && !paywallTrackedRef.current) {
+      paywallTrackedRef.current = true;
+      analytics.track('paywall_shown', {
+        country,
+        context: 'authenticated_workspace',
+      });
+    }
+  }, [isPaywalled, isFreeUser, country]);
+
   // Success banner state
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
@@ -226,6 +240,8 @@ const Workspace: React.FC = () => {
 
         if (item.error?.toLowerCase().includes('insufficient credits')) {
           errorTitle = t('workspace.errors.insufficientCredits');
+          // Auto-open upgrade modal with outOfCredits: true
+          openUpgradeModal(true, 'insufficient_credits');
         } else if (item.error?.toLowerCase().includes('timeout')) {
           errorTitle = t('workspace.errors.requestTimeout');
         } else if (
@@ -716,6 +732,7 @@ const Workspace: React.FC = () => {
       <PostDownloadPrompt
         isFreeUser={isFreeUser}
         downloadCount={downloadCount}
+        currentModel={config.qualityTier}
         onUpgrade={() => openUpgradeModal(false, 'after_download')}
       />
 

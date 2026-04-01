@@ -95,6 +95,7 @@ export interface ICheckoutAbandonedProperties {
 export type IUpgradePromptTrigger =
   | 'premium_upsell'
   | 'out_of_credits'
+  | 'insufficient_credits'
   | 'model_gate'
   | 'after_upscale'
   | 'after_comparison'
@@ -220,6 +221,22 @@ export interface IAccountCreatedProperties {
 export interface IEmailCapturedProperties {
   source: 'newsletter' | 'support_form' | 'waitlist' | 'upgrade_prompt';
   hasAccount: boolean;
+}
+
+export interface IAccountDeleteModalOpenedProperties {
+  source: 'self_serve' | 'admin';
+}
+
+export interface IAccountDeleteConfirmedProperties {
+  method: 'self_serve' | 'admin';
+}
+
+export interface IAccountDeleteCompletedProperties {
+  method: 'self_serve' | 'admin';
+  hadStripeCustomer: boolean;
+  hadSubscription: boolean;
+  hadCreditsRemaining: boolean;
+  accountAgeDays?: number;
 }
 
 // =============================================================================
@@ -464,6 +481,12 @@ export interface IImagePreviewViewedProperties {
   showUpgradeNudge?: boolean; // Whether upgrade nudge was shown
 }
 
+// Paywall tracking properties
+export interface IPaywallShownProperties {
+  country: string;
+  context: 'guest_api' | 'authenticated_workspace';
+}
+
 // =============================================================================
 // Event Types
 // =============================================================================
@@ -477,6 +500,10 @@ export type IAnalyticsEventName =
   | 'signup_completed'
   | 'login'
   | 'logout'
+  // Account deletion events
+  | 'account_delete_modal_opened'
+  | 'account_delete_confirmed'
+  | 'account_delete_completed'
   // Subscription events
   | 'subscription_created'
   | 'subscription_updated'
@@ -574,6 +601,8 @@ export type IAnalyticsEventName =
   | 'engagement_discount_cta_clicked'
   | 'engagement_discount_checkout_started'
   | 'engagement_discount_redeemed'
+  // Country paywall events
+  | 'paywall_shown'
   // Revenue leak detection events (PRD: analytics-tracking-enhancement - Phase 1)
   | 'payment_failed'
   | 'plan_selected'

@@ -153,4 +153,34 @@ describe('POST /api/upscale/guest - Country Paywall', () => {
     // Processor should not be called since we exit early
     expect(processGuestImage).not.toHaveBeenCalled();
   });
+
+  it('should track paywall_shown event for paywalled country', async () => {
+    PAYWALLED_COUNTRIES.add('XX');
+
+    const { trackServerEvent } = await import('@server/analytics');
+
+    const req = makeGuestRequest({ country: 'XX' });
+    await POST(req);
+
+    // Analytics should be called with paywall_shown event
+    expect(trackServerEvent).toHaveBeenCalledWith(
+      'paywall_shown',
+      { country: 'XX', context: 'guest_api' },
+      { apiKey: undefined }
+    );
+  });
+
+  it('should not track paywall_shown event for non-paywalled country', async () => {
+    const { trackServerEvent } = await import('@server/analytics');
+
+    const req = makeGuestRequest({ country: 'US' });
+    await POST(req);
+
+    // Analytics should not be called for paywall_shown
+    expect(trackServerEvent).not.toHaveBeenCalledWith(
+      'paywall_shown',
+      expect.any(Object),
+      expect.any(Object)
+    );
+  });
 });

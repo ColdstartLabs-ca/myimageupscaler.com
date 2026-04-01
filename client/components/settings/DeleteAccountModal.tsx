@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Trash2, CheckCircle } from 'lucide-react';
 import { ModalHeader } from '@client/components/stripe/ModalHeader';
 import { useAuthStore } from '@client/store/auth';
 import { createClient } from '@shared/utils/supabase/client';
+import { analytics } from '@client/analytics/analyticsClient';
 
 interface IDeleteAccountModalProps {
   isOpen: boolean;
@@ -24,6 +25,15 @@ export function DeleteAccountModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleted, setDeleted] = useState(false);
+
+  // Track modal opened when isOpen becomes true
+  useEffect(() => {
+    if (isOpen) {
+      analytics.track('account_delete_modal_opened', {
+        method: 'self_serve',
+      });
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -47,6 +57,11 @@ export function DeleteAccountModal({
     setLoading(true);
     setError(null);
 
+    // Track confirmation before starting the deletion process
+    analytics.track('account_delete_confirmed', {
+      method: 'self_serve',
+    });
+
     try {
       const supabase = createClient();
       const {
@@ -67,6 +82,9 @@ export function DeleteAccountModal({
 
       // Show success state before the signOut-triggered redirect
       setDeleted(true);
+      analytics.track('account_delete_completed', {
+        method: 'self_serve',
+      });
       setTimeout(async () => {
         await signOut().catch(() => {});
         // signOut fires SIGNED_OUT → userStore redirects via window.location.href = '/'

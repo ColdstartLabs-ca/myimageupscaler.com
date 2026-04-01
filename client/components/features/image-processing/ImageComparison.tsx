@@ -3,9 +3,9 @@ import { ArrowLeftRight, Download, Sparkles, ZoomIn, ZoomOut } from 'lucide-reac
 import { Button } from '@client/components/ui/Button';
 import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
+import { getVariant } from '@client/utils/abTest';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 
-const AFTER_COMPARISON_SESSION_KEY = 'upgrade_prompt_shown_after_comparison';
 const AFTER_COMPARISON_LS_KEY = 'prompt_freq_after_comparison';
 
 interface IImageComparisonProps {
@@ -41,6 +41,9 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const previewTrackedRef = useRef(false);
   const { pricingRegion } = useRegionTier();
+
+  // Get copy variant for A/B testing
+  const copyVariant = getVariant('after_comparison_copy', ['value', 'outcome', 'urgency']);
 
   // Comparison viewed tracking (PRD: analytics-tracking-enhancement - Phase 3)
   const comparisonStartTimeRef = useRef<number | null>(null);
@@ -91,20 +94,29 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
     // Show upgrade nudge on first slider interaction (once per session)
     if (showUpgradeNudge && !hasInteractedRef.current && typeof window !== 'undefined') {
       hasInteractedRef.current = true;
-      if (!canShowPrompt({ key: AFTER_COMPARISON_LS_KEY, cooldownMs: 48 * 60 * 60 * 1000 })) return;
-      const alreadyShown = sessionStorage.getItem(AFTER_COMPARISON_SESSION_KEY);
-      if (!alreadyShown) {
-        sessionStorage.setItem(AFTER_COMPARISON_SESSION_KEY, 'true');
-        markPromptShown({ key: AFTER_COMPARISON_LS_KEY, cooldownMs: 48 * 60 * 60 * 1000 });
-        setNudgeVisible(true);
-        analytics.track('upgrade_prompt_shown', {
-          trigger: 'after_comparison',
-          currentPlan: 'free',
-          pricingRegion: pricingRegion || 'standard',
-        });
-      }
+      if (
+        !canShowPrompt({
+          key: AFTER_COMPARISON_LS_KEY,
+          cooldownMs: 4 * 60 * 60 * 1000,
+          maxPerWeek: 5,
+        })
+      )
+        return;
+      markPromptShown({
+        key: AFTER_COMPARISON_LS_KEY,
+        cooldownMs: 4 * 60 * 60 * 1000,
+        maxPerWeek: 5,
+      });
+      setNudgeVisible(true);
+      analytics.track('upgrade_prompt_shown', {
+        trigger: 'after_comparison',
+        imageVariant: modelUsed,
+        currentPlan: 'free',
+        pricingRegion: pricingRegion || 'standard',
+        copyVariant,
+      });
     }
-  }, [showUpgradeNudge, pricingRegion, upscaleFactor, modelUsed]);
+  }, [showUpgradeNudge, pricingRegion, upscaleFactor, modelUsed, copyVariant]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -238,7 +250,7 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
         </div>
       </div>
 
-      {/* After-comparison upgrade nudge — shown once per session after first slider drag */}
+      {/* After-comparison upgrade nudge — shown after first slider drag with frequency limits */}
       {nudgeVisible && (
         <div className="px-4 py-2.5 border-t border-border flex items-center justify-center gap-2 bg-surface/60">
           <Sparkles className="w-3.5 h-3.5 text-secondary shrink-0" />
@@ -249,9 +261,11 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
               onClick={() => {
                 analytics.track('upgrade_prompt_clicked', {
                   trigger: 'after_comparison',
+                  imageVariant: modelUsed,
                   destination: 'upgrade_modal',
                   currentPlan: 'free',
                   pricingRegion: pricingRegion || 'standard',
+                  copyVariant,
                 });
                 onUpgrade?.();
               }}
