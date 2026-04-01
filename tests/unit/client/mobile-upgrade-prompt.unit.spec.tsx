@@ -114,20 +114,20 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
       expect(afterImage).toHaveAttribute('src', '/before-after/face-pro/after.webp');
     });
 
-    it('should have accessible touch targets (button py-3 = 48px min-height)', () => {
+    it('should have accessible touch targets (button py-2.5 = 44px min-height)', () => {
       const { container } = render(<MobileUpgradePrompt {...defaultProps} />);
 
       const button = screen.getByText(/Get Pro Results/i);
-      // Button has py-3 (12px top + 12px bottom + text height = ~48px)
-      // This exceeds the 44px WCAG minimum for touch targets
-      expect(button).toHaveClass('py-3');
+      // Button has py-2.5 (10px top + 10px bottom + text height = ~44px)
+      // Meets the 44px WCAG minimum for touch targets
+      expect(button).toHaveClass('py-2.5');
     });
 
     it('should show value-framing copy with price anchor', () => {
       render(<MobileUpgradePrompt {...defaultProps} />);
 
       expect(screen.getByText(/Get Pro Results — from/i)).toBeInTheDocument();
-      expect(screen.getByText(/\$9/)).toBeInTheDocument();
+      expect(screen.getByText(/\$4.99/)).toBeInTheDocument();
     });
 
     it('should use filled bg-accent button instead of outline', () => {
@@ -195,7 +195,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
     });
 
     it('should show discounted price for non-standard regions', () => {
-      // Mock south_asia region (65% discount: $9.00 - 65% = $3.15)
+      // Mock south_asia region (65% discount: $4.99 - 65% = $1.75)
       mockUseRegionTier.mockReturnValue({
         tier: 'standard',
         pricingRegion: 'south_asia',
@@ -206,7 +206,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
 
       render(<MobileUpgradePrompt {...defaultProps} />);
 
-      expect(screen.getByText(/from \$3.15/i)).toBeInTheDocument();
+      expect(screen.getByText(/from \$1.75/i)).toBeInTheDocument();
     });
   });
 
@@ -226,10 +226,10 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
       expect(button).toHaveClass('py-3');
     });
 
-    it('should show "Go Pro — $9" copy with price anchor', () => {
+    it('should show "Go Pro — $4.99" copy with price anchor', () => {
       render(<MobileUpgradePrompt {...defaultProps} />);
 
-      expect(screen.getByText(/Go Pro — \$9/i)).toBeInTheDocument();
+      expect(screen.getByText(/Go Pro — \$4.99/i)).toBeInTheDocument();
     });
 
     it('should have pulse animation class on first render', () => {
@@ -316,7 +316,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
     });
 
     it('should show discounted price for non-standard regions', () => {
-      // Mock south_asia region (65% discount: $9.00 - 65% = $3.15)
+      // Mock south_asia region (65% discount: $4.99 - 65% = $1.75)
       mockUseRegionTier.mockReturnValue({
         tier: 'standard',
         pricingRegion: 'south_asia',
@@ -327,7 +327,7 @@ describe('Phase 4: MobileUpgradePrompt redesign', () => {
 
       render(<MobileUpgradePrompt {...defaultProps} />);
 
-      expect(screen.getByText(/Go Pro — \$3.15/i)).toBeInTheDocument();
+      expect(screen.getByText(/Go Pro — \$1.75/i)).toBeInTheDocument();
     });
   });
 

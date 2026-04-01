@@ -49,9 +49,9 @@ export const MobileUpgradePrompt = ({
   // Get A/B test variant for copy (control vs value-framing)
   const copyVariant = getVariant('mobile_upload_copy', ['control', 'value']);
 
-  // Starter base price is $9.00 (from subscription.config.ts)
-  const starterPrice = 9.0;
-  const discountedPrice = calculateDiscountedPrice(starterPrice, discountPercent);
+  // Small credits pack base price is $4.99 (from subscription.config.ts)
+  const smallPackPrice = 4.99;
+  const discountedPrice = calculateDiscountedPrice(smallPackPrice, discountPercent);
   const displayPrice = formatPrice(discountedPrice);
 
   // Stop pulse animation after 3 seconds for preview variant
@@ -88,47 +88,44 @@ export const MobileUpgradePrompt = ({
 
   if (variant === 'upload') {
     return (
-      <div className="md:hidden mt-4 rounded-xl border border-accent/20 bg-accent/5 p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex items-center gap-1.5">
-            {/* Before image */}
+      <div className="md:hidden mt-3 rounded-xl border border-accent/20 bg-accent/5 p-3">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-1">
             <img
               src="/before-after/face-pro/before.webp"
               alt="Before"
-              className="w-10 h-10 rounded-lg object-cover"
-              width={40}
-              height={40}
+              className="w-8 h-8 rounded-md object-cover"
+              width={32}
+              height={32}
             />
-            {/* Arrow */}
-            <ArrowRight className="w-4 h-4 text-accent shrink-0" />
-            {/* After image */}
+            <ArrowRight className="w-3 h-3 text-accent shrink-0" />
             <img
               src="/before-after/face-pro/after.webp"
               alt="After"
-              className="w-10 h-10 rounded-lg object-cover"
-              width={40}
-              height={40}
+              className="w-8 h-8 rounded-md object-cover"
+              width={32}
+              height={32}
             />
           </div>
-          <span className="text-sm font-semibold text-white">Get visibly better results</span>
+          <span className="text-xs font-semibold text-white">Get visibly better results</span>
         </div>
-        <ul className="space-y-2 mb-4">
-          <li className="flex items-center gap-2 text-xs text-text-muted">
+        <ul className="space-y-1 mb-2">
+          <li className="flex items-center gap-1.5 text-[11px] text-text-muted">
             <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
-            Access pro AI models (Clarity, Real-ESRGAN Pro)
+            Pro AI models (Clarity, Real-ESRGAN Pro)
           </li>
-          <li className="flex items-center gap-2 text-xs text-text-muted">
+          <li className="flex items-center gap-1.5 text-[11px] text-text-muted">
             <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
             Sharper edges, finer details, fewer artifacts
           </li>
-          <li className="flex items-center gap-2 text-xs text-text-muted">
+          <li className="flex items-center gap-1.5 text-[11px] text-text-muted">
             <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
             Up to 4K output &amp; 25MB files
           </li>
         </ul>
         <button
           onClick={handleClick}
-          className="block w-full text-center text-sm font-semibold text-white bg-accent rounded-lg py-3 hover:bg-accent/90 transition-colors"
+          className="block w-full text-center text-sm font-semibold text-white bg-accent rounded-lg py-2.5 hover:bg-accent/90 transition-colors"
         >
           Get Pro Results — from {displayPrice}
         </button>
