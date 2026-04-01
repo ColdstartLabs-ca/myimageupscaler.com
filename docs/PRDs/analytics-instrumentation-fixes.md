@@ -12,15 +12,11 @@ Analytics review revealed 8 instrumentation gaps hurting conversion measurement 
 
 **File:** `client/components/engagement-discount/EngagementDiscountBanner.tsx`
 
-**Critical bug found:** Unstaged local changes have `FORCE_SHOW = true` debug flag AND a reference to `activeOffer` inside a `useEffect` that runs before `activeOffer` is defined (line ~106 references it, but it's declared at ~147). This will crash at runtime.
-
 **Changes:**
 
-1. Remove `FORCE_SHOW` constant and all associated mock/guard logic (revert to clean `offer`-based flow)
-2. Fix the `activeOffer` reference bug in the tracking `useEffect` - use `offer` directly since the guard already checks `offer` is truthy
-3. Show discounted price on mobile - remove `hidden md:flex` from pricing div, show at least `$X.XX` next to CTA on small screens
-4. Make CTA more visible: change from `bg-white text-accent` to `bg-yellow-400 text-black hover:bg-yellow-300` (high contrast against gradient)
-5. Add price context to CTA button on mobile: "Claim 20% Off - $X.XX"
+1. Show discounted price on mobile - remove `hidden md:flex` from pricing div, show at least `$X.XX` next to CTA on small screens
+2. Make CTA more visible: change from `bg-white text-accent` to `bg-yellow-400 text-black hover:bg-yellow-300` (high contrast against gradient)
+3. Add price context to CTA button on mobile: "Claim 20% Off - $X.XX"
 
 ---
 
