@@ -411,6 +411,14 @@ export class PaymentHandler {
           pack: packKey,
           amount: amountCents,
           currency: session.currency ?? 'usd',
+          stripePaymentIntentId:
+            typeof session.payment_intent === 'string'
+              ? session.payment_intent
+              : session.payment_intent?.id || null,
+          stripeCheckoutSessionId: session.id,
+          stripeCustomerId:
+            typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
+          priceId: session.metadata?.price_id || null,
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );

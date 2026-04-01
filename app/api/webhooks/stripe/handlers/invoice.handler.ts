@@ -15,7 +15,8 @@ import Stripe from 'stripe';
 
 /**
  * Track purchase_confirmed for an invoice payment.
- * Uses fire-and-forget so analytics failures never block the webhook.
+ * Fire-and-forget — analytics failures must never block the webhook.
+ * Stripe IDs are included for reconciliation if an event is dropped.
  */
 function trackPurchaseConfirmed(params: {
   userId: string;
@@ -23,6 +24,8 @@ function trackPurchaseConfirmed(params: {
   amountCents: number;
   purchaseType: 'subscription_new' | 'subscription_renewal';
   currency: string;
+  invoiceId: string;
+  subscriptionId: string;
 }): void {
   const { userId, planKey, amountCents, purchaseType, currency } = params;
   trackServerEvent(
@@ -33,9 +36,18 @@ function trackPurchaseConfirmed(params: {
       amount: amountCents,
       currency,
       source: purchaseType,
+      stripeInvoiceId: params.invoiceId,
+      stripeSubscriptionId: params.subscriptionId,
     },
     { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-  ).catch(err => console.error('[ANALYTICS] Failed to track purchase_confirmed for invoice:', err));
+  ).catch(err =>
+    console.error('[ANALYTICS] Failed to track purchase_confirmed for invoice:', {
+      error: err,
+      userId,
+      invoiceId: params.invoiceId,
+      subscriptionId: params.subscriptionId,
+    })
+  );
 }
 
 // Invoice line item interface for accessing runtime properties
@@ -107,6 +119,8 @@ export class InvoiceHandler {
             amountCents: invoice.amount_paid || 0,
             purchaseType: 'subscription_new',
             currency: invoice.currency ?? 'usd',
+            invoiceId: invoice.id,
+            subscriptionId,
           });
         }
         return;
@@ -377,6 +391,8 @@ export class InvoiceHandler {
         amountCents: invoice.amount_paid || 0,
         purchaseType: 'subscription_renewal',
         currency: invoice.currency ?? 'usd',
+        invoiceId: invoice.id,
+        subscriptionId,
       });
 
       await trackRevenue(
@@ -398,6 +414,8 @@ export class InvoiceHandler {
         amountCents: invoice.amount_paid || 0,
         purchaseType: 'subscription_new',
         currency: invoice.currency ?? 'usd',
+        invoiceId: invoice.id,
+        subscriptionId,
       });
     }
   }

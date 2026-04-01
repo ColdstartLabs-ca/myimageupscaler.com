@@ -29,7 +29,7 @@ describe('purchase_confirmed tracking coverage', () => {
       // (It used to have `return;` which skipped all analytics)
       const catchContent = catchBlock![0];
       expect(catchContent).not.toMatch(/^\s*return;\s*$/m);
-      expect(catchContent).not.toContain("return;\n");
+      expect(catchContent).not.toContain('return;\n');
     });
 
     test('purchase_confirmed is tracked in handleCheckoutSessionCompleted', async () => {
@@ -97,8 +97,11 @@ describe('purchase_confirmed tracking coverage', () => {
       // Helper should exist
       expect(source).toContain('function trackPurchaseConfirmed');
 
-      // Should use .catch() for fire-and-forget (never blocks webhook)
-      expect(source).toContain('Failed to track purchase_confirmed for invoice');
+      // Should be fire-and-forget — analytics failures must never block the webhook
+      expect(source).toContain('.catch(');
+      // Stripe IDs must be included for reconciliation
+      expect(source).toContain('stripeInvoiceId');
+      expect(source).toContain('stripeSubscriptionId');
     });
   });
 
@@ -116,20 +119,17 @@ describe('purchase_confirmed tracking coverage', () => {
       // Should fire purchase_confirmed for plan changes
       expect(source).toContain('subscription_plan_change');
 
-      // Should use fire-and-forget (.catch) so analytics failures don't block webhook
-      expect(source).toContain(
-        'Failed to track purchase_confirmed for plan change'
-      );
+      // Should be fire-and-forget — analytics failures must never block the webhook
+      expect(source).toContain('.catch(');
+      // Stripe IDs must be included for reconciliation
+      expect(source).toContain('stripeSubscriptionId');
     });
   });
 
   describe('Fix: analyticsService.ts must log Amplitude API errors', () => {
     test('analytics service should log response status and body on failure', async () => {
       const fs = await import('fs');
-      const source = fs.readFileSync(
-        'server/analytics/analyticsService.ts',
-        'utf-8'
-      );
+      const source = fs.readFileSync('server/analytics/analyticsService.ts', 'utf-8');
 
       // Should check response.ok and log details on failure
       expect(source).toContain('!response.ok');
@@ -150,10 +150,9 @@ describe('purchase_confirmed tracking coverage', () => {
 
       for (const handlerPath of handlers) {
         const source = fs.readFileSync(handlerPath, 'utf-8');
-        expect(
-          source,
-          `${handlerPath} should track purchase_confirmed`
-        ).toContain('purchase_confirmed');
+        expect(source, `${handlerPath} should track purchase_confirmed`).toContain(
+          'purchase_confirmed'
+        );
       }
     });
   });

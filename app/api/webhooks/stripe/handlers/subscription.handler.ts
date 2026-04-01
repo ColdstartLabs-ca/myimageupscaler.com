@@ -734,10 +734,16 @@ export class SubscriptionHandler {
               amount: subscription.items.data[0]?.price.unit_amount || 0,
               currency: subscription.currency ?? 'usd',
               source: 'subscription_plan_change',
+              stripeSubscriptionId: subscription.id,
+              priceId: basePriceId,
             },
             { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
           ).catch(err =>
-            console.error('[ANALYTICS] Failed to track purchase_confirmed for plan change:', err)
+            console.error('[ANALYTICS] Failed to track purchase_confirmed for plan change:', {
+              error: err,
+              userId,
+              subscriptionId: subscription.id,
+            })
           );
         }
 

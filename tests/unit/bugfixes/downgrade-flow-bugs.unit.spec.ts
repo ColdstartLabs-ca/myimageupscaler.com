@@ -211,6 +211,7 @@ vi.mock('@server/services/email.service', () => ({
 
 vi.mock('@server/analytics', () => ({
   trackServerEvent: vi.fn(),
+  trackRevenue: vi.fn(),
 }));
 
 describe('Bug Fix: Double credit grant when scheduled downgrade completes', () => {
