@@ -24,7 +24,7 @@ export const CREDIT_COSTS = {
   FLUX_KONTEXT_FAST_MULTIPLIER: 2, // prunaai/flux-kontext-fast - fast flux kontext image editing (free tier)
 
   // Free tier default credits
-  DEFAULT_FREE_CREDITS: 10,
+  DEFAULT_FREE_CREDITS: 5,
   RESTRICTED_FREE_CREDITS: 3,
   PAYWALLED_FREE_CREDITS: 0,
   DEFAULT_TRIAL_CREDITS: 0,

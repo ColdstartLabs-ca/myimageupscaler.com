@@ -20,6 +20,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { clientEnv } from '@shared/config/env';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 import { ReadingProgress } from '@client/components/blog/ReadingProgress';
 import { RelatedToolsSection } from '../_components/RelatedToolsSection';
 import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
@@ -503,7 +504,8 @@ export default async function BlogPostPage({ params }: IPageProps) {
               Ready to Try AI Image Enhancement?
             </h2>
             <p className="text-white/80 mb-8 text-lg max-w-xl mx-auto">
-              Upload your image and see the results in seconds. Start with 10 free credits.
+              Upload your image and see the results in seconds. Start with{' '}
+              {CREDIT_COSTS.DEFAULT_FREE_CREDITS} free credits.
             </p>
             <Link
               href="/?signup=1"

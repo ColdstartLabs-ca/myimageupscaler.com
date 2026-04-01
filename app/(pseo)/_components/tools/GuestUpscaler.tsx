@@ -26,6 +26,7 @@ import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { useUserStore } from '@client/store/userStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 type ProcessingState = 'idle' | 'loading' | 'processing' | 'done' | 'limit-reached' | 'error';
 
@@ -212,7 +213,7 @@ export function GuestUpscaler({ className }: IGuestUpscalerProps): React.ReactEl
           <h4 className="font-semibold text-primary mb-3">Free account includes:</h4>
           <ul className="space-y-2">
             {[
-              '10 free credits every month',
+              `${CREDIT_COSTS.DEFAULT_FREE_CREDITS} free credits on signup`,
               'Up to 8x upscaling',
               '64MB file uploads',
               'No watermarks',

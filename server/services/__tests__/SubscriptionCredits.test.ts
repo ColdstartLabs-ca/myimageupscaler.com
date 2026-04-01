@@ -6,6 +6,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { SubscriptionCreditsService } from '../SubscriptionCredits';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 describe('SubscriptionCreditsService', () => {
   describe('calculateUpgradeCredits', () => {
@@ -27,12 +28,12 @@ describe('SubscriptionCreditsService', () => {
 
       it('should work for free user upgrading to hobby', () => {
         const result = SubscriptionCreditsService.calculateUpgradeCredits({
-          currentBalance: 10, // Free tier initial credits
-          previousTierCredits: 10, // Free tier (10 one-time credits)
+          currentBalance: CREDIT_COSTS.DEFAULT_FREE_CREDITS, // Free tier initial credits
+          previousTierCredits: CREDIT_COSTS.DEFAULT_FREE_CREDITS, // Free tier one-time credits
           newTierCredits: 200, // Hobby
         });
 
-        expect(result.creditsToAdd).toBe(190); // Tier difference: 200 - 10
+        expect(result.creditsToAdd).toBe(200 - CREDIT_COSTS.DEFAULT_FREE_CREDITS); // Tier difference
         expect(result.reason).toBe('top_up_to_minimum');
         expect(result.isLegitimate).toBe(true);
       });

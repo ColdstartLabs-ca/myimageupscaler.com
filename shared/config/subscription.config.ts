@@ -26,8 +26,8 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       priceInCents: 0, // $0.00
       currency: 'usd',
       interval: 'month',
-      creditsPerCycle: 10, // 10 credits total, no refresh
-      maxRollover: 60, // 6 months worth (10 * 6)
+      creditsPerCycle: CREDIT_COSTS.DEFAULT_FREE_CREDITS, // credits total, no refresh
+      maxRollover: CREDIT_COSTS.DEFAULT_FREE_CREDITS * 6, // 6 months worth
       rolloverMultiplier: 6,
       trial: {
         enabled: false,
@@ -44,8 +44,8 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
         warningDaysBefore: 0,
       },
       features: [
-        '10 credits per month',
-        'Credits roll over (up to 60)',
+        `${CREDIT_COSTS.DEFAULT_FREE_CREDITS} credits per month`,
+        `Credits roll over (up to ${CREDIT_COSTS.DEFAULT_FREE_CREDITS * 6})`,
         'Quick & Face Restore quality',
         '2x & 4x upscaling',
         '5MB file limit',

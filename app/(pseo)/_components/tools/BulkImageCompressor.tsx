@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import JSZip from 'jszip';
 import Link from 'next/link';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 interface ICompressOptions {
   quality: number;
@@ -660,7 +661,7 @@ export function BulkImageCompressor(): React.ReactElement {
             <div className="flex items-center justify-center gap-4 mt-4 text-xs text-text-muted">
               <span className="flex items-center gap-1">
                 <Check className="w-3 h-3 text-success" />
-                10 free credits
+                {CREDIT_COSTS.DEFAULT_FREE_CREDITS} free credits
               </span>
               <span className="flex items-center gap-1">
                 <Check className="w-3 h-3 text-success" />

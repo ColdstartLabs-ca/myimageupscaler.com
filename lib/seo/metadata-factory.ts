@@ -9,6 +9,7 @@ import { Metadata } from 'next';
 import type { PSEOPage } from './pseo-types';
 import type { PSEOCategory } from './url-utils';
 import { clientEnv } from '@shared/config/env';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 import {
   getCanonicalUrl,
   getOpenGraphLocale,
@@ -150,7 +151,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     alternatives: `Best Upscaler Alternatives | ${APP_NAME}`,
     guides: `Image Upscaling Guides & Tutorials | ${APP_NAME}`,
     'technical-guides': `Technical Image Enhancement Guides | ${APP_NAME}`,
-    free: `Free AI Image Upscaler — 10 Free Credits | ${APP_NAME}`,
+    free: `Free AI Image Upscaler — ${CREDIT_COSTS.DEFAULT_FREE_CREDITS} Free Credits | ${APP_NAME}`,
     'bulk-tools': `Bulk Image Tools | ${APP_NAME}`,
     platforms: `Platform-Specific Enhancement | ${APP_NAME}`,
     content: `Image Content & Assets | ${APP_NAME}`,
@@ -182,7 +183,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
       'Step-by-step guides on AI upscaling, format conversion, and image enhancement. Tutorials for photographers, designers, and creators.',
     'technical-guides':
       'Comprehensive technical guides for image processing, optimization, and enhancement. Expert-level insights and best practices.',
-    free: 'Free AI image upscaler and enhancer. Start with 10 free credits — no credit card required. Upscale, enhance, and remove backgrounds instantly.',
+    free: `Free AI image upscaler and enhancer. Start with ${CREDIT_COSTS.DEFAULT_FREE_CREDITS} free credits — no credit card required. Upscale, enhance, and remove backgrounds instantly.`,
     'bulk-tools':
       'Batch process multiple images at once. Bulk resize, compress, and optimize images with our free browser-based tools.',
     platforms:

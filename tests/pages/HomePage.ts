@@ -1,5 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 export class HomePage extends BasePage {
   // Navigation
@@ -47,7 +48,7 @@ export class HomePage extends BasePage {
       .filter({ hasNot: page.locator('a') })
       .first();
     this.desktopNav = page.locator('nav.hidden.md\\:flex');
-    this.freeCreditsIndicator = page.getByText('10 Free Credits');
+    this.freeCreditsIndicator = page.getByText(`${CREDIT_COSTS.DEFAULT_FREE_CREDITS} Free Credits`);
 
     // Hero elements
     this.heroSection = page.locator('section').first();

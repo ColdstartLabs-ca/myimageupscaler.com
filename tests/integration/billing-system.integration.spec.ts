@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { TestContext, ApiClient } from '../helpers';
 import { stripeWebhookMocks } from '../helpers/stripe-webhook-mocks';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 /**
  * Billing System Integration Tests
@@ -60,9 +61,9 @@ test.describe('Billing System Integration', () => {
       });
 
       const freeCredits = await freeCreditsResponse.json();
-      expect(freeCredits.data.balance).toBe(10);
-      expect(freeCredits.data.monthlyAllowance).toBe(10);
-      expect(freeCredits.data.maxRollover).toBe(10);
+      expect(freeCredits.data.balance).toBe(CREDIT_COSTS.DEFAULT_FREE_CREDITS);
+      expect(freeCredits.data.monthlyAllowance).toBe(CREDIT_COSTS.DEFAULT_FREE_CREDITS);
+      expect(freeCredits.data.maxRollover).toBe(CREDIT_COSTS.DEFAULT_FREE_CREDITS);
 
       // Test pro tier benefits
       const proCreditsResponse = await request.get('/api/credits', {

@@ -185,7 +185,7 @@ test.describe('Landing Page SEO', () => {
       // Look for CTA buttons with actual text: "Fix My Images Free" or "Upscale My First Image"
       const ctaButton = page.getByRole('button').filter({
         hasText:
-          /Fix My Images Free|Upscale My First Image|Try 10 Free Credits|Get 10 Free Credits/i,
+          /Fix My Images Free|Upscale My First Image|Try \d+ Free Credits|Get \d+ Free Credits/i,
       });
 
       await expect(ctaButton.first()).toBeVisible({ timeout: 10000 });

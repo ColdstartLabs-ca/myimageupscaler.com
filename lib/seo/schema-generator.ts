@@ -29,6 +29,7 @@ import type {
 } from './pseo-types';
 import { clientEnv } from '@shared/config/env';
 import { SUBSCRIPTION_PLANS } from '@shared/config/stripe';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 import type { Locale } from '../../i18n/config';
 
 const BASE_URL = clientEnv.BASE_URL;
@@ -235,7 +236,7 @@ export function generateToolSchema(tool: IToolPage, locale: Locale = 'en'): obje
           price: 0,
           priceCurrency: 'USD',
           availability: 'https://schema.org/InStock',
-          description: 'Free tier with 10 credits',
+          description: `Free tier with ${CREDIT_COSTS.DEFAULT_FREE_CREDITS} credits`,
         },
         author: organizationRef,
         publisher: organizationRef,
@@ -752,7 +753,7 @@ function getHomepageFAQItems(locale: Locale = 'en'): IFAQSchema[] {
       name: 'How to upscale images for free?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'You can upscale images for free by signing up for an account, which gives you 10 free credits. Each credit processes one image at 2x upscaling. Simply upload your image, select your enhancement level, and download your upscaled result. No credit card required for the free tier.',
+        text: `You can upscale images for free by signing up for an account, which gives you ${CREDIT_COSTS.DEFAULT_FREE_CREDITS} free credits. Each credit processes one image at 2x upscaling. Simply upload your image, select your enhancement level, and download your upscaled result. No credit card required for the free tier.`,
       },
     },
     {
