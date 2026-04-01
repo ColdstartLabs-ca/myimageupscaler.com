@@ -1,6 +1,7 @@
 // Re-export pricing region utilities for colocation with geo classification
 export { getPricingRegion, getDiscountPercent } from '@shared/config/pricing-regions';
 export type { PricingRegion, IPricingRegionConfig } from '@shared/config/pricing-regions';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 export type RegionTier = 'standard' | 'restricted' | 'paywalled';
 
@@ -96,8 +97,12 @@ export function getRegionTier(countryCode: string): RegionTier {
   return HIGH_PURCHASING_POWER_COUNTRIES.has(upper) ? 'standard' : 'restricted';
 }
 
-/** Free credits shown on landing page and granted at signup, based on region tier */
+/**
+ * Free credits shown on landing page and granted at signup, based on region tier
+ * Note: This must match what the database trigger grants in handle_new_user()
+ */
 export function getFreeCreditsForTier(tier: RegionTier): number {
-  if (tier === 'paywalled') return 0;
-  return tier === 'restricted' ? 3 : 10;
+  if (tier === 'paywalled') return CREDIT_COSTS.PAYWALLED_FREE_CREDITS;
+  if (tier === 'restricted') return CREDIT_COSTS.RESTRICTED_FREE_CREDITS;
+  return CREDIT_COSTS.DEFAULT_FREE_CREDITS;
 }

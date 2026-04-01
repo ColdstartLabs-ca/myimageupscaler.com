@@ -4,6 +4,7 @@ import {
   getFreeCreditsForTier,
   PAYWALLED_COUNTRIES,
 } from '@/lib/anti-freeloader/region-classifier';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 describe('getRegionTier', () => {
   it('should return standard for US', () => {
@@ -72,14 +73,14 @@ describe('paywalled tier', () => {
   });
 
   it('getFreeCreditsForTier should return 0 for paywalled', () => {
-    expect(getFreeCreditsForTier('paywalled')).toBe(0);
+    expect(getFreeCreditsForTier('paywalled')).toBe(CREDIT_COSTS.PAYWALLED_FREE_CREDITS);
   });
 
   it('getFreeCreditsForTier should return 3 for restricted', () => {
-    expect(getFreeCreditsForTier('restricted')).toBe(3);
+    expect(getFreeCreditsForTier('restricted')).toBe(CREDIT_COSTS.RESTRICTED_FREE_CREDITS);
   });
 
-  it('getFreeCreditsForTier should return 10 for standard', () => {
-    expect(getFreeCreditsForTier('standard')).toBe(10);
+  it('getFreeCreditsForTier should return 5 for standard', () => {
+    expect(getFreeCreditsForTier('standard')).toBe(CREDIT_COSTS.DEFAULT_FREE_CREDITS);
   });
 });
