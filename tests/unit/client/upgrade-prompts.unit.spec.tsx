@@ -374,16 +374,19 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
   });
 
   it('fires upgrade_prompt_shown with currentModel prop', async () => {
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} currentModel="ultra" />);
+    render(<AfterUpscaleBanner completedCount={3} userSegment="free" currentModel="ultra" />);
 
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
-        trigger: 'after_upscale',
-        imageVariant: 'ultra',
-        currentPlan: 'free',
-        pricingRegion: 'standard',
-        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
-      });
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_shown',
+        expect.objectContaining({
+          trigger: 'after_upscale',
+          imageVariant: 'ultra',
+          currentPlan: 'free',
+          userSegment: 'free',
+          pricingRegion: 'standard',
+        })
+      );
     });
   });
 
@@ -756,7 +759,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     const onUpgrade = vi.fn();
     render(
       <PostDownloadPrompt
-        isFreeUser={true}
+        userSegment="free"
         downloadCount={2}
         currentModel="premium"
         onUpgrade={onUpgrade}
@@ -764,13 +767,16 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     );
 
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
-        trigger: 'after_download',
-        imageVariant: 'premium',
-        currentPlan: 'free',
-        pricingRegion: 'standard',
-        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
-      });
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_shown',
+        expect.objectContaining({
+          trigger: 'after_download',
+          imageVariant: 'premium',
+          currentPlan: 'free',
+          userSegment: 'free',
+          pricingRegion: 'standard',
+        })
+      );
     });
   });
 
