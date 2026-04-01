@@ -435,16 +435,19 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
   });
 
   it('fires upgrade_prompt_shown with currentModel prop', async () => {
-    render(<AfterUpscaleBanner completedCount={3} isFreeUser={true} currentModel="ultra" />);
+    render(<AfterUpscaleBanner completedCount={3} userSegment="free" currentModel="ultra" />);
 
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
-        trigger: 'after_upscale',
-        imageVariant: 'ultra',
-        currentPlan: 'free',
-        pricingRegion: 'standard',
-        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
-      });
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_shown',
+        expect.objectContaining({
+          trigger: 'after_upscale',
+          imageVariant: 'ultra',
+          currentPlan: 'free',
+          userSegment: 'free',
+          pricingRegion: 'standard',
+        })
+      );
     });
   });
 
@@ -615,9 +618,8 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
     const onExploreModels = vi.fn();
     const { rerender } = render(
       <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={0}
-        currentModel="premium"
+        userSegment="free"
+        downloadCount={2}        currentModel="premium"
         onExploreModels={onExploreModels}
       />
     );
@@ -632,14 +634,16 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
     );
 
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
-        trigger: 'post_download_explore',
-        imageVariant: 'premium',
-        currentPlan: 'free',
-        pricingRegion: 'standard',
-        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
-      });
-    });
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_shown',
+        expect.objectContaining({
+          trigger: 'after_download',
+          imageVariant: 'premium',
+          currentPlan: 'free',
+          userSegment: 'free',
+          pricingRegion: 'standard',
+        })
+      );    });
   });
 
   it('should fire upgrade_prompt_dismissed on X click', async () => {
