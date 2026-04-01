@@ -5,6 +5,7 @@ import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import { createLogger } from '@server/monitoring/logger';
 import { serverEnv } from '@shared/config/env';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
+import { getCreditsForTier, modelIdToTier } from '@shared/config/subscription.utils';
 
 /**
  * GET /api/models
@@ -94,7 +95,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       id: model.id,
       displayName: model.displayName,
       description: getModelDescription(model.id),
-      creditCost: model.creditMultiplier,
+      creditCost: getCreditsForTier(modelIdToTier(model.id)),
       capabilities: model.capabilities,
       qualityScore: model.qualityScore,
       processingTime: `~${Math.round(model.processingTimeMs / 1000)}s`,
@@ -109,7 +110,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         id: model.id,
         displayName: model.displayName,
         description: getModelDescription(model.id),
-        creditCost: model.creditMultiplier,
+        creditCost: getCreditsForTier(modelIdToTier(model.id)),
         capabilities: model.capabilities,
         qualityScore: model.qualityScore,
         processingTime: `~${Math.round(model.processingTimeMs / 1000)}s`,

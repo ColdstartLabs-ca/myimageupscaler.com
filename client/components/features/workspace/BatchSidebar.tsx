@@ -11,7 +11,7 @@ import {
 import { useUserData } from '@client/store/userStore';
 import { downloadBatch } from '@client/utils/download';
 import { generatePrompt } from '@client/utils/prompt-utils';
-import { getSubscriptionConfig } from '@shared/config/subscription.config';
+import { getCreditsForTierAtScale } from '@shared/config/subscription.utils';
 import { Settings } from 'lucide-react';
 import React, { useState } from 'react';
 import {
@@ -64,26 +64,18 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   // Get cost per image based on quality tier, scale, and smart analysis
   const getCostPerImage = (): number => {
     const { qualityTier, scale, additionalOptions } = config;
-    const { creditCosts } = getSubscriptionConfig();
 
     // Smart analysis cost (1 credit when enabled and not in auto mode)
     // Auto mode always uses smart analysis, so it's included in the base cost
     const smartAnalysisCost = qualityTier !== 'auto' && additionalOptions?.smartAnalysis ? 1 : 0;
 
     if (qualityTier === 'auto') {
-      // Auto mode uses variable cost - estimate average (includes smart analysis)
-      return 4;
+      // Auto mode uses variable cost — use upper bound (ultra = 8 CR) to avoid understating
+      return 8;
     }
 
-    // For explicit tiers, base cost on tier credits and scale multiplier from config
-    const tierCredits = QUALITY_TIER_CREDITS[qualityTier];
-    const baseCost = typeof tierCredits === 'number' ? tierCredits : 4;
-
-    // Use scale multiplier from config (currently all 1.0)
-    const scaleKey = `${scale}x` as '2x' | '4x' | '8x';
-    const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
-
-    return Math.ceil(baseCost * scaleMultiplier) + smartAnalysisCost;
+    // Use scale-aware credit calculation (applies model-specific multipliers)
+    return getCreditsForTierAtScale(qualityTier, scale) + smartAnalysisCost;
   };
 
   const costPerImage = getCostPerImage();
@@ -165,6 +157,8 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
         {/* 1. Quality Tier Selector */}
         <QualityTierSelector
           tier={config.qualityTier}
+          scale={config.scale}
+          smartAnalysisEnabled={Boolean(config.additionalOptions?.smartAnalysis)}
           onChange={handleQualityTierChange}
           disabled={isProcessing}
           isFreeUser={isFreeUser}

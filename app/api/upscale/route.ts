@@ -16,7 +16,11 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
-import { getCreditsForTier, getModelForTier } from '@shared/config/subscription.utils';
+import {
+  getCreditsForTier,
+  getModelForTier,
+  getScaleCreditMultiplier,
+} from '@shared/config/subscription.utils';
 import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
 import {
@@ -604,21 +608,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
 
-    // Calculate credit cost using new quality tier system
+    // Calculate credit cost using quality tier + model-specific scale multiplier
     const baseCost = getCreditsForTier(resolvedTier);
 
-    // Get scale multiplier from existing config
-    const { creditCosts } = getSubscriptionConfig();
-    const scaleKey = `${config.scale}x` as '2x' | '4x' | '8x';
-    const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
+    // Get model-specific scale multiplier (e.g., clarity-upscaler 4x = 2.0x)
+    const modelScaleMultiplier = getScaleCreditMultiplier(resolvedModelId, config.scale);
 
     // Smart analysis cost: +1 credit when enabled on explicit tier (not auto)
     // Auto tier already includes smart analysis in its variable cost
     const smartAnalysisCost =
       config.qualityTier !== 'auto' && config.additionalOptions.smartAnalysis ? 1 : 0;
 
-    // Apply scale multiplier and bounds, then add smart analysis cost
-    creditCost = Math.ceil(baseCost * scaleMultiplier) + smartAnalysisCost;
+    // Apply model-specific scale multiplier and bounds, then add smart analysis cost
+    const { creditCosts } = getSubscriptionConfig();
+    creditCost = Math.ceil(baseCost * modelScaleMultiplier) + smartAnalysisCost;
     creditCost = Math.max(creditCost, creditCosts.minimumCost);
     creditCost = Math.min(creditCost, creditCosts.maximumCost);
 

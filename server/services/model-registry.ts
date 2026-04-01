@@ -1,6 +1,7 @@
 import { serverEnv } from '@shared/config/env';
 import { CREDIT_COSTS } from '@shared/config/credits.config';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
+import { getCreditsForTierAtScale, modelIdToTier } from '@shared/config/subscription.utils';
 import {
   MODEL_COSTS as CONFIG_MODEL_COSTS,
   MODEL_MAX_INPUT_PIXELS,
@@ -433,23 +434,18 @@ export class ModelRegistry {
   }
 
   /**
-   * Calculate credit cost for a model
-   * Credit cost is based only on mode and model - scale does not affect credits
+   * Calculate credit cost for a model using tier-based pricing.
+   * Replaces the old mode × creditMultiplier formula.
    */
   calculateCreditCost(
     modelId: string,
-    _scale: 2 | 4 | 8,
-    mode: 'upscale' | 'enhance' | 'both'
+    scale: 2 | 4 | 8,
+    _mode: 'upscale' | 'enhance' | 'both'
   ): number {
     const model = this.getModel(modelId);
     if (!model) return 0;
 
-    // Base credits: from config
-    const baseCredits =
-      mode === 'upscale' ? CREDIT_COSTS.BASE_UPSCALE_COST : CREDIT_COSTS.BASE_ENHANCE_COST;
-
-    // Final calculation: only base credits × model multiplier
-    return Math.ceil(baseCredits * model.creditMultiplier);
+    return getCreditsForTierAtScale(modelIdToTier(modelId), scale);
   }
 
   /**

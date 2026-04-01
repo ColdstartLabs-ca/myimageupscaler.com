@@ -4,6 +4,7 @@
  */
 
 import { QUALITY_TIER_CONFIG, type QualityTier } from '../types/coreflow.types';
+import { MODEL_SCALE_CREDIT_MULTIPLIERS } from './model-costs.config';
 import { getSubscriptionConfig } from './subscription.config';
 import type {
   ICreditPack,
@@ -183,6 +184,51 @@ export function getRecommendedPlan(): IPlanConfig | null {
 export function getCreditsForTier(tier: QualityTier): number {
   const config = QUALITY_TIER_CONFIG[tier].credits;
   return config === 'variable' ? 0 : config; // Auto tier cost determined at runtime
+}
+
+/**
+ * Get the scale-aware credit multiplier for a specific model + scale combination.
+ * Returns 1.0 for models without scale-dependent costs.
+ */
+export function getScaleCreditMultiplier(modelId: string, scale: number): number {
+  return MODEL_SCALE_CREDIT_MULTIPLIERS[modelId]?.[scale] ?? 1.0;
+}
+
+/**
+ * Get credits cost for a quality tier at a specific scale factor.
+ * Applies model-specific scale multipliers for GPU-time-billed models.
+ */
+export function getCreditsForTierAtScale(tier: QualityTier, scale: number): number {
+  const baseCost = getCreditsForTier(tier);
+  const modelId = QUALITY_TIER_CONFIG[tier].modelId;
+  if (!modelId) return baseCost; // Auto/bg-removal — no model-specific multiplier
+  const multiplier = getScaleCreditMultiplier(modelId, scale);
+  return Math.ceil(baseCost * multiplier);
+}
+
+/**
+ * Get the min/max credit range for a tier across all supported scales.
+ * Returns { min, max } when costs vary by scale, or a flat number when uniform.
+ */
+export function getCreditRangeForTier(
+  tier: QualityTier
+): number | { min: number; max: number } {
+  const baseCost = getCreditsForTier(tier);
+  const modelId = QUALITY_TIER_CONFIG[tier].modelId;
+  if (!modelId) return baseCost;
+
+  const scaleMultipliers = MODEL_SCALE_CREDIT_MULTIPLIERS[modelId];
+  if (!scaleMultipliers) return baseCost;
+
+  const multiplierValues = Object.values(scaleMultipliers).filter(
+    (v): v is number => v !== undefined
+  );
+  if (multiplierValues.length === 0) return baseCost;
+
+  const min = Math.ceil(baseCost * Math.min(...multiplierValues));
+  const max = Math.ceil(baseCost * Math.max(...multiplierValues));
+
+  return min === max ? min : { min, max };
 }
 
 /**
@@ -673,6 +719,15 @@ export function modelIdToTier(modelId: string): QualityTier {
       return 'face-pro';
     case 'nano-banana-pro':
       return 'ultra';
+    case 'qwen-image-edit':
+      return 'budget-edit'; // 3 CR (also used by photo-repair at 4 CR — budget-edit is the base)
+    case 'seedream':
+      return 'seedream-edit'; // 4 CR (all seedream tiers: seedream-edit/lighting-fix/resume-photo)
+    case 'p-image-edit':
+      return 'fast-edit'; // 2 CR (also used by budget-old-photo at same 2 CR)
+    case 'realesrgan-anime':
+      return 'anime-upscale'; // 1 CR
+    // nano-banana (free Gemini tier) and flux-kontext-fast have no dedicated quality tier
     default:
       return 'quick';
   }
@@ -706,9 +761,8 @@ export function calculateModelCreditCost(params: {
   // Get model multiplier (default to 1 if model not found)
   const modelMultiplier = creditCosts.modelMultipliers[params.modelId] ?? 1;
 
-  // Get scale multiplier
-  const scaleKey = `${params.scale}x` as '2x' | '4x' | '8x';
-  const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
+  // Get model-specific scale multiplier (e.g., clarity-upscaler 4x = 2.0x)
+  const scaleMultiplier = getScaleCreditMultiplier(params.modelId, params.scale);
 
   // Apply formula: baseCreditCost × modelMultiplier × scaleMultiplier
   let totalCost = Math.ceil(baseCost * modelMultiplier * scaleMultiplier);

@@ -3,6 +3,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Check, Lock, Image as ImageIcon } from 'lucide-react';
 import { QualityTier, QUALITY_TIER_CONFIG, IPreviewImages } from '@/shared/types/coreflow.types';
+import { getCreditRangeForTier } from '@shared/config/subscription.utils';
 import { cn } from '@client/utils/cn';
 
 export interface IModelCardProps {
@@ -35,11 +36,15 @@ export const ModelCard: React.FC<IModelCardProps> = ({
     }
   };
 
-  const formatCredits = (credits: number | 'variable'): string => {
-    if (credits === 'variable') {
-      return '1-4 CR';
+  const formatCredits = (): string => {
+    if (config.credits === 'variable') {
+      return '1-8 CR';
     }
-    return `${credits} CR`;
+    const range = getCreditRangeForTier(tier);
+    if (typeof range === 'number') {
+      return `${range} CR`;
+    }
+    return `${range.min}-${range.max} CR`;
   };
 
   const isAuto = tier === 'auto';
@@ -127,7 +132,7 @@ export const ModelCard: React.FC<IModelCardProps> = ({
                 : 'text-text-muted bg-black/20 border-white/10'
             )}
           >
-            {formatCredits(config.credits)}
+            {formatCredits()}
           </div>
         </div>
 

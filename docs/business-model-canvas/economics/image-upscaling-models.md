@@ -21,12 +21,12 @@ Prices sourced from actual Replicate billing — unit costs per image (or per se
 | **black-forest-labs/flux-dev** | Generation | per image | $0.0250 | Development quality |
 | **qwen/qwen-image-edit-2511** | Editing | per image | $0.0300 | Advanced editing |
 | **bytedance/seedream-4.5** | Generation | per image | $0.0400 | Mid-tier quality |
-| **philz1337x/clarity-upscaler** | Upscaling | per second (A100) | $0.001150 | ~$0.017-0.035/image |
+| **philz1337x/clarity-upscaler** | Upscaling | per second (A100) | $0.001150 | ~$0.012/image @2x, **~$0.12/image @4x** |
 | **black-forest-labs/flux-2-pro** | Generation | per run + per mp | $0.015/run + $0.015/mp | Input + output mp billed |
 
 ### Model Categories
 
-**Image Upscaling:** Real-ESRGAN ($0.002/img), Clarity Upscaler (~$0.017-0.035/img)
+**Image Upscaling:** Real-ESRGAN ($0.002/img), Clarity Upscaler (~$0.012/img @2x, ~$0.12/img @4x)
 **Face Enhancement:** GFPGAN (~$0.001-0.002/img)
 **Image Editing:** P-Image-Edit ($0.010/img), Qwen Image Edit ($0.030/img)
 **Image Generation:** Flux schnell ($0.003/img), Flux dev ($0.025/img), Flux 2 Pro (~$0.05+/img), Seedream ($0.040/img)
@@ -130,7 +130,10 @@ Margin: 94.9%
 |---------|-------|
 | GPU | A100 (40GB) |
 | Quality | 9.5/10 |
-| Cost | $0.001150/second (~$0.017-0.035/image) |
+| Cost (2x) | $0.001150/second (~$0.012/image, ~11s GPU time) |
+| Cost (4x) | $0.001150/second (~$0.12/image, ~104s GPU time) |
+| Credits (2x) | 4 credits |
+| Credits (4x) | 8 credits (2.0x scale multiplier) |
 | Use Case | Premium tier — higher quality, higher cost than Real-ESRGAN |
 
 ### Flux Family (black-forest-labs)
@@ -145,11 +148,12 @@ Margin: 94.9%
 
 ## GPU Selection Strategy
 
-| Scenario | Model | Cost | Speed |
-|----------|-------|------|-------|
-| Standard upscaling | Real-ESRGAN (T4) | $0.002/img | ~1.8s |
-| Portrait enhancement | GFPGAN (T4) | ~$0.002/img | ~5-10s |
-| Premium upscaling | Clarity Upscaler (A100) | ~$0.017-0.035/img | variable |
+| Scenario | Model | Cost | Credits | Speed |
+|----------|-------|------|---------|-------|
+| Standard upscaling (2x/4x) | Real-ESRGAN (T4) | $0.002/img | 1 CR | ~1.8s |
+| Portrait enhancement | GFPGAN (T4) | ~$0.002/img | 2 CR | ~5-10s |
+| Premium upscaling (2x) | Clarity Upscaler (A100) | ~$0.012/img | 4 CR | ~11s |
+| Premium upscaling (4x) | Clarity Upscaler (A100) | ~$0.12/img | 8 CR | ~104s |
 
 ---
 

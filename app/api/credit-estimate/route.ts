@@ -3,6 +3,8 @@ import { createLogger } from '@server/monitoring/logger';
 import { ModelRegistry } from '@server/services/model-registry';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
+import { MODEL_SCALE_CREDIT_MULTIPLIERS } from '@shared/config/model-costs.config';
+import { getCreditsForTierAtScale, modelIdToTier } from '@shared/config/subscription.utils';
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError, z } from 'zod';
@@ -230,29 +232,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
 
-    // Calculate base credits per PRD formula
-    const baseCredits = validatedInput.config.mode === 'upscale' ? 1 : 2;
+    // Map resolved model to quality tier for tier-based credit calculation.
+    // This mirrors upscale/route.ts exactly: creditCost = getCreditsForTier(tier) × scaleMultiplier
+    const tier = modelIdToTier(modelToUse);
 
-    // Calculate feature credits (add-ons per PRD Section 2.3)
-    const featureCredits: Record<string, number> = {
-      enhanceFaces: 0,
-      denoise: 0,
-    };
-    let featureCreditTotal = 0;
-
-    if (validatedInput.config.enhanceFaces && model.capabilities.includes('face-restoration')) {
-      featureCredits.enhanceFaces = 1;
-      featureCreditTotal += 1;
-    }
-
-    if (validatedInput.config.denoise && model.capabilities.includes('denoise')) {
-      featureCredits.denoise = 1;
-      featureCreditTotal += 1;
-    }
-
-    // Scale does not affect credit cost - only model determines pricing
-    // Keeping for backwards compatibility in response breakdown
-    const scaleMultiplier = 1.0;
+    // Get scale-aware tier credits (e.g., hd-upscale@4x = 8, hd-upscale@2x = 4)
+    const tierCredits = getCreditsForTierAtScale(tier, validatedInput.config.scale);
 
     // Apply resolution multiplier if targetResolution is specified
     const resolutionMultipliers: Record<string, number> = { '2k': 1.0, '4k': 1.5, '8k': 2.0 };
@@ -260,14 +245,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       ? resolutionMultipliers[validatedInput.config.targetResolution] || 1.0
       : 1.0;
 
-    // Calculate total credits
-    // creditCost = (baseCredits + featureCredits) × modelMultiplier × resolutionMultiplier
-    const totalCredits = Math.ceil(
-      (baseCredits + featureCreditTotal) *
-        model.creditMultiplier *
-        scaleMultiplier *
-        resolutionMultiplier
-    );
+    // Scale multiplier retained for breakdown transparency
+    const scaleMultiplier =
+      MODEL_SCALE_CREDIT_MULTIPLIERS[modelToUse]?.[validatedInput.config.scale] ?? 1.0;
+
+    // Total credits — matches upscale route formula
+    const totalCredits = Math.ceil(tierCredits * resolutionMultiplier);
 
     // Calculate estimated processing time (scale can still affect processing time)
     const scaleTimeMultipliers: Record<2 | 4 | 8, number> = { 2: 1.0, 4: 1.5, 8: 2.0 };
@@ -279,12 +262,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const response = {
       breakdown: {
-        baseCredits,
-        featureCredits,
-        featureCreditTotal,
+        tier,
+        tierCredits,
         scaleMultiplier,
         resolutionMultiplier,
-        modelMultiplier: model.creditMultiplier,
         totalCredits,
       },
       modelToBe: modelToUse,

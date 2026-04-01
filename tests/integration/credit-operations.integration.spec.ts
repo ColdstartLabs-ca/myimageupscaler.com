@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { TestContext } from '../helpers';
+import { resetTestUser } from '../helpers/test-user-reset';
 
 /**
  * Integration Tests for Credit Management System
@@ -38,7 +39,7 @@ test.describe('Credit Management Integration Tests', () => {
         amount: 25,
         transaction_type: 'purchase',
         ref_id: 'test_purchase_123',
-        description: 'Test credit purchase'
+        description: 'Test credit purchase',
       });
 
       expect(error).toBeNull();
@@ -58,7 +59,7 @@ test.describe('Credit Management Integration Tests', () => {
         amount: 25,
         type: 'purchase',
         reference_id: 'test_purchase_123',
-        description: 'Test credit purchase'
+        description: 'Test credit purchase',
       });
 
       await ctx.data.cleanupUser(testUser.id);
@@ -77,7 +78,7 @@ test.describe('Credit Management Integration Tests', () => {
         target_user_id: testUser.id,
         amount: 10,
         transaction_type: 'bonus',
-        description: 'First bonus'
+        description: 'First bonus',
       });
 
       // Second increment
@@ -85,7 +86,7 @@ test.describe('Credit Management Integration Tests', () => {
         target_user_id: testUser.id,
         amount: 15,
         transaction_type: 'bonus',
-        description: 'Second bonus'
+        description: 'Second bonus',
       });
 
       expect(balance1).toBe(initialBalance + 10);
@@ -101,7 +102,7 @@ test.describe('Credit Management Integration Tests', () => {
       const { data, error } = await supabase.rpc('increment_credits_with_log', {
         target_user_id: '00000000-0000-0000-0000-000000000000',
         amount: 10,
-        transaction_type: 'purchase'
+        transaction_type: 'purchase',
       });
 
       expect(data).toBeNull();
@@ -126,7 +127,7 @@ test.describe('Credit Management Integration Tests', () => {
         amount: 5,
         transaction_type: 'usage',
         ref_id: 'job_123',
-        description: 'Image processing'
+        description: 'Image processing',
       });
 
       expect(error).toBeNull();
@@ -146,7 +147,7 @@ test.describe('Credit Management Integration Tests', () => {
         amount: -5, // Negative for deduction
         type: 'usage',
         reference_id: 'job_123',
-        description: 'Image processing'
+        description: 'Image processing',
       });
 
       await ctx.data.cleanupUser(testUser.id);
@@ -162,7 +163,7 @@ test.describe('Credit Management Integration Tests', () => {
       const { data, error } = await supabase.rpc('decrement_credits_with_log', {
         target_user_id: testUser.id,
         amount: 20, // More than initial balance
-        transaction_type: 'usage'
+        transaction_type: 'usage',
       });
 
       expect(data).toBeNull();
@@ -184,7 +185,7 @@ test.describe('Credit Management Integration Tests', () => {
       const { data: newBalance, error } = await supabase.rpc('decrement_credits_with_log', {
         target_user_id: testUser.id,
         amount: 15, // Exact balance
-        transaction_type: 'usage'
+        transaction_type: 'usage',
       });
 
       expect(error).toBeNull();
@@ -201,14 +202,16 @@ test.describe('Credit Management Integration Tests', () => {
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
 
       // Attempt multiple concurrent decrements that would exceed balance
-      const promises = Array(5).fill(null).map((_, i) =>
-        supabase.rpc('decrement_credits_with_log', {
-          target_user_id: testUser.id,
-          amount: 10,
-          transaction_type: 'usage',
-          ref_id: `job_${i}`
-        })
-      );
+      const promises = Array(5)
+        .fill(null)
+        .map((_, i) =>
+          supabase.rpc('decrement_credits_with_log', {
+            target_user_id: testUser.id,
+            amount: 10,
+            transaction_type: 'usage',
+            ref_id: `job_${i}`,
+          })
+        );
 
       const results = await Promise.all(promises);
 
@@ -227,6 +230,70 @@ test.describe('Credit Management Integration Tests', () => {
     });
   });
 
+  test.describe('add_subscription_credits', () => {
+    test('should be idempotent when concurrent calls share the same reference_id', async () => {
+      const testUser = await resetTestUser();
+
+      const { createClient } = await import('@supabase/supabase-js');
+      const makeSupabase = () => createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
+      const adminSupabase = makeSupabase();
+
+      const { data: initialProfile, error: initialProfileError } = await adminSupabase
+        .from('profiles')
+        .select('subscription_credits_balance, purchased_credits_balance')
+        .eq('id', testUser.id)
+        .single();
+
+      expect(initialProfileError).toBeNull();
+
+      const startingSubscriptionBalance = initialProfile?.subscription_credits_balance ?? 0;
+
+      const refId = `invoice_race_proof_${Date.now()}`;
+      const amount = 200;
+
+      const results = await Promise.all(
+        Array.from({ length: 5 }, () =>
+          makeSupabase().rpc('add_subscription_credits', {
+            target_user_id: testUser.id,
+            amount,
+            ref_id: refId,
+            description: 'Race condition proof test',
+          })
+        )
+      );
+
+      for (const result of results) {
+        expect(result.error).toBeNull();
+        expect(result.data).toBe(startingSubscriptionBalance + amount);
+      }
+
+      const { data: profile, error: profileError } = await adminSupabase
+        .from('profiles')
+        .select('subscription_credits_balance, purchased_credits_balance')
+        .eq('id', testUser.id)
+        .single();
+
+      expect(profileError).toBeNull();
+      expect(profile).toMatchObject({
+        subscription_credits_balance: startingSubscriptionBalance + amount,
+      });
+
+      const { data: transactions, error: transactionsError } = await adminSupabase
+        .from('credit_transactions')
+        .select('amount, type, reference_id')
+        .eq('user_id', testUser.id)
+        .eq('reference_id', refId);
+
+      expect(transactionsError).toBeNull();
+      expect(transactions).toHaveLength(1);
+      expect(transactions![0]).toMatchObject({
+        amount,
+        type: 'subscription',
+        reference_id: refId,
+      });
+    });
+  });
+
   test.describe('refund_credits', () => {
     test('should refund credits via increment with refund type', async () => {
       const testUser = await ctx.data.createTestUser();
@@ -241,7 +308,7 @@ test.describe('Credit Management Integration Tests', () => {
         amount: 5,
         transaction_type: 'usage',
         ref_id: 'job_refund_test',
-        description: 'Original processing'
+        description: 'Original processing',
       });
 
       const profileAfterDeduction = await ctx.data.getUserProfile(testUser.id);
@@ -251,7 +318,7 @@ test.describe('Credit Management Integration Tests', () => {
       const { data: refundBalance, error: refundError } = await supabase.rpc('refund_credits', {
         target_user_id: testUser.id,
         amount: 5,
-        job_id: 'job_refund_test'
+        job_id: 'job_refund_test',
       });
 
       expect(refundError).toBeNull();
@@ -271,7 +338,7 @@ test.describe('Credit Management Integration Tests', () => {
         amount: 5,
         type: 'refund',
         reference_id: 'job_refund_test',
-        description: 'Processing refund'
+        description: 'Processing refund',
       });
 
       await ctx.data.cleanupUser(testUser.id);
@@ -285,7 +352,7 @@ test.describe('Credit Management Integration Tests', () => {
 
       const { data: refundBalance, error } = await supabase.rpc('refund_credits', {
         target_user_id: testUser.id,
-        amount: 10
+        amount: 10,
         // No job_id provided
       });
 
@@ -330,7 +397,7 @@ test.describe('Credit Management Integration Tests', () => {
       const { data: newBalance, error } = await supabase.rpc('increment_credits_with_log', {
         target_user_id: testUser.id,
         amount: 5,
-        transaction_type: 'bonus'
+        transaction_type: 'bonus',
       });
 
       expect(error).toBeNull();
@@ -352,7 +419,7 @@ test.describe('Credit Management Integration Tests', () => {
         const { error } = await supabase.rpc('increment_credits_with_log', {
           target_user_id: testUser.id,
           amount: 1,
-          transaction_type: type
+          transaction_type: type,
         });
         expect(error).toBeNull();
       }
@@ -374,7 +441,7 @@ test.describe('Credit Management Integration Tests', () => {
         amount: 20,
         transaction_type: 'purchase',
         ref_id: 'stripe_session_123',
-        description: 'Credit pack purchase'
+        description: 'Credit pack purchase',
       });
 
       await supabase.rpc('decrement_credits_with_log', {
@@ -382,7 +449,7 @@ test.describe('Credit Management Integration Tests', () => {
         amount: 1,
         transaction_type: 'usage',
         ref_id: 'job_001',
-        description: 'Image upscale'
+        description: 'Image upscale',
       });
 
       await supabase.rpc('decrement_credits_with_log', {
@@ -390,13 +457,13 @@ test.describe('Credit Management Integration Tests', () => {
         amount: 1,
         transaction_type: 'usage',
         ref_id: 'job_002',
-        description: 'Image enhance'
+        description: 'Image enhance',
       });
 
       await supabase.rpc('refund_credits', {
         target_user_id: testUser.id,
         amount: 1,
-        job_id: 'job_002'
+        job_id: 'job_002',
       });
 
       // Verify complete transaction history
@@ -413,14 +480,14 @@ test.describe('Credit Management Integration Tests', () => {
       expect(purchaseTransaction).toMatchObject({
         amount: 20,
         type: 'purchase',
-        description: 'Credit pack purchase'
+        description: 'Credit pack purchase',
       });
 
       const usageTransaction1 = transactions!.find(t => t.reference_id === 'job_001');
       expect(usageTransaction1).toMatchObject({
         amount: -1,
         type: 'usage',
-        description: 'Image upscale'
+        description: 'Image upscale',
       });
 
       const refundTransaction = transactions!.find(t => t.type === 'refund');
@@ -428,7 +495,7 @@ test.describe('Credit Management Integration Tests', () => {
         amount: 1,
         type: 'refund',
         reference_id: 'job_002',
-        description: 'Processing refund'
+        description: 'Processing refund',
       });
 
       await ctx.data.cleanupUser(testUser.id);
@@ -444,7 +511,7 @@ test.describe('Credit Management Integration Tests', () => {
       await supabase.rpc('increment_credits_with_log', {
         target_user_id: testUser.id,
         amount: 5,
-        transaction_type: 'bonus'
+        transaction_type: 'bonus',
         // No ref_id or description
       });
 
@@ -488,7 +555,7 @@ test.describe('Credit Management Integration Tests', () => {
             target_user_id: testUser.id,
             amount: op.amount,
             transaction_type: op.transaction_type,
-            ref_id: `test_${Math.random()}`
+            ref_id: `test_${Math.random()}`,
           });
           expectedBalance = data!;
         } else if (op.type === 'decrement') {
@@ -496,14 +563,14 @@ test.describe('Credit Management Integration Tests', () => {
             target_user_id: testUser.id,
             amount: op.amount,
             transaction_type: op.transaction_type,
-            ref_id: `job_${Math.random()}`
+            ref_id: `job_${Math.random()}`,
           });
           expectedBalance = data!;
         } else if (op.type === 'refund') {
           const { data } = await supabase.rpc('refund_credits', {
             target_user_id: testUser.id,
             amount: op.amount,
-            job_id: `refund_${Math.random()}`
+            job_id: `refund_${Math.random()}`,
           });
           expectedBalance = data!;
         }

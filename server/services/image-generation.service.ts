@@ -4,7 +4,7 @@ import { GoogleGenAI } from '@google/genai';
 import { serverEnv } from '@shared/config/env';
 import type { IUpscaleInput, IUpscaleConfig } from '@shared/validation/upscale.schema';
 import { QUALITY_TIER_CONFIG } from '@shared/types/coreflow.types';
-import { getCreditsForTier } from '@shared/config/subscription.utils';
+import { getCreditsForTier, getScaleCreditMultiplier } from '@shared/config/subscription.utils';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import type {
   IImageProcessor,
@@ -136,13 +136,19 @@ export function calculateCreditCost(config: IUpscaleConfig): number {
   // Get base cost from quality tier
   const baseCost = getCreditsForTier(config.qualityTier);
 
-  // Get scale multiplier
-  const { creditCosts } = getSubscriptionConfig();
-  const scaleKey = `${config.scale}x` as '2x' | '4x' | '8x';
-  const scaleMultiplier = creditCosts.scaleMultipliers[scaleKey] ?? 1.0;
+  // Get model-specific scale multiplier (e.g., clarity-upscaler 4x = 2.0x)
+  const modelId = QUALITY_TIER_CONFIG[config.qualityTier].modelId;
+  const scaleMultiplier = modelId
+    ? getScaleCreditMultiplier(modelId, config.scale)
+    : 1.0;
+
+  // Smart analysis adds +1 credit on explicit tiers (not auto, which always has it built in)
+  const smartAnalysisCost =
+    config.qualityTier !== 'auto' && config.additionalOptions.smartAnalysis ? 1 : 0;
 
   // Apply scale multiplier and bounds
-  let creditCost = Math.ceil(baseCost * scaleMultiplier);
+  const { creditCosts } = getSubscriptionConfig();
+  let creditCost = Math.ceil(baseCost * scaleMultiplier) + smartAnalysisCost;
   creditCost = Math.max(creditCost, creditCosts.minimumCost);
   creditCost = Math.min(creditCost, creditCosts.maximumCost);
 

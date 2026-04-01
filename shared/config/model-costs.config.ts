@@ -277,5 +277,22 @@ export const MODEL_CONFIG = {
   },
 } as const;
 
+/**
+ * Per-model, per-scale credit multipliers
+ *
+ * Most models are billed per-image (flat cost regardless of scale).
+ * GPU-time-billed models like clarity-upscaler cost significantly more at higher scales.
+ *
+ * Multiplier is applied to the tier's base credit cost:
+ *   finalCredits = baseTierCredits × scaleMultiplier
+ *
+ * Only models with meaningful cost differences across scales are listed.
+ * Unlisted models default to 1.0 at all scales.
+ */
+export const MODEL_SCALE_CREDIT_MULTIPLIERS: Record<string, Partial<Record<number, number>>> = {
+  // A100 per-second billing: 4x takes ~10x longer than 2x ($0.012 → $0.12)
+  'clarity-upscaler': { 2: 1.0, 4: 2.0 },
+};
+
 export type ModelCostConfig = typeof MODEL_COSTS;
 export type ModelConfig = typeof MODEL_CONFIG;
