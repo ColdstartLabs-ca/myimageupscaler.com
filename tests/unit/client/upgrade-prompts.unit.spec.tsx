@@ -221,11 +221,15 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
-        trigger: 'model_gate',
-        currentPlan: 'free',
-        pricingRegion: 'standard',
-      });
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_shown',
+        expect.objectContaining({
+          trigger: 'model_gate',
+          currentPlan: 'free',
+          pricingRegion: 'standard',
+          copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
+        })
+      );
     });
   });
 
@@ -243,11 +247,15 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     // First open
     rerender(<ModelGalleryModal {...defaultProps} isOpen={true} />);
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
-        trigger: 'model_gate',
-        currentPlan: 'free',
-        pricingRegion: 'standard',
-      });
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_shown',
+        expect.objectContaining({
+          trigger: 'model_gate',
+          currentPlan: 'free',
+          pricingRegion: 'standard',
+          copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
+        })
+      );
     });
 
     vi.clearAllMocks();
@@ -273,13 +281,17 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
-        trigger: 'model_gate',
-        imageVariant: 'banner',
-        destination: 'upgrade_plan_modal',
-        currentPlan: 'free',
-        pricingRegion: 'standard',
-      });
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_clicked',
+        expect.objectContaining({
+          trigger: 'model_gate',
+          imageVariant: 'banner',
+          destination: 'upgrade_plan_modal',
+          currentPlan: 'free',
+          pricingRegion: 'standard',
+          copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
+        })
+      );
     });
   });
 

@@ -32,7 +32,7 @@ export function ClientProviders({ children }: { children: ReactNode }): ReactNod
         <AuthErrorHandler />
         <AuthenticationModal />
         <AuthRequiredModal />
-        <Toast />
+        <Toast vertical="top" />
         <PwaInstallBanner />
         {children}
       </BaselimeProvider>

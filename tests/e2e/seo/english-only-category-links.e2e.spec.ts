@@ -71,7 +71,7 @@ test.describe('English-Only Category Internal Links', () => {
   test.describe('Compare category (English-only)', () => {
     test('should have breadcrumb links without locale prefix', async ({ page }) => {
       await page.goto('/compare/myimageupscaler-vs-topaz');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Find breadcrumb links
       const breadcrumbNav = page.locator('nav[aria-label="Breadcrumb"]');

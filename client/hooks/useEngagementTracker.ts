@@ -111,6 +111,7 @@ export function useEngagementTracker(): IUseEngagementTrackerReturn {
     setIsEligible,
     hasCheckedEligibility,
     setHasCheckedEligibility,
+    wasDismissed,
     setShowToast,
     setOffer,
     setCountdownEndTime,
@@ -129,8 +130,13 @@ export function useEngagementTracker(): IUseEngagementTrackerReturn {
    * Only called when thresholds may be met and user is free.
    */
   const checkEligibilityServer = useCallback(async () => {
-    // Don't check if already ineligible, already checked, or not a free user
-    if (hasCheckedEligibility || !isFreeUser || eligibilityCheckInProgress.current) {
+    // Don't check if already checked, not a free user, or user already dismissed the offer
+    if (
+      hasCheckedEligibility ||
+      !isFreeUser ||
+      wasDismissed ||
+      eligibilityCheckInProgress.current
+    ) {
       return;
     }
 
@@ -210,6 +216,7 @@ export function useEngagementTracker(): IUseEngagementTrackerReturn {
   }, [
     hasCheckedEligibility,
     isFreeUser,
+    wasDismissed,
     userId,
     setHasCheckedEligibility,
     setIsEligible,

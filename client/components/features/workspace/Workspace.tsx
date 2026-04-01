@@ -22,7 +22,7 @@ import { useEngagementTracker } from '@client/hooks/useEngagementTracker';
 import { useOnboardingDriver } from '@client/hooks/useOnboardingDriver';
 import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
-import { EngagementDiscountToast } from '@client/components/engagement-discount';
+import { EngagementDiscountBanner } from '@client/components/engagement-discount';
 import { clientEnv } from '@shared/config/env';
 import { downloadSingle } from '@client/utils/download';
 import {
@@ -43,7 +43,7 @@ import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { ModelGalleryModal } from './ModelGalleryModal';
 import { PremiumUpsellModal } from './PremiumUpsellModal';
-import { ProgressSteps, checkIsFirstTimeUser } from './ProgressSteps';
+import { ProgressSteps, checkIsFirstTimeUser, markFirstUploadCompleted } from './ProgressSteps';
 import { SampleImageSelector } from './SampleImageSelector';
 import { ISampleImage } from '@shared/config/sample-images.config';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
@@ -172,6 +172,8 @@ const Workspace: React.FC = () => {
   );
   const [downloadCount, setDownloadCount] = useState(0);
   const wasProcessingRef = React.useRef(false);
+  const firstUploadSourceRef = React.useRef<'sample' | 'upload'>('upload');
+  const firstUploadStartedAtRef = React.useRef<number>(0);
 
   // Global error state for showing ErrorAlert components
   const [globalErrors, setGlobalErrors] = useState<
@@ -254,8 +256,12 @@ const Workspace: React.FC = () => {
     const wasEmpty = prevQueueLengthRef.current === 0;
     const hasImages = queue.length > 0;
 
-    if (wasEmpty && hasImages && mobileTab === 'upload') {
-      setMobileTab('preview');
+    if (wasEmpty && hasImages) {
+      if (mobileTab === 'upload') setMobileTab('preview');
+      // Record when first image entered the queue for activation metric
+      if (firstUploadStartedAtRef.current === 0) {
+        firstUploadStartedAtRef.current = Date.now();
+      }
     }
 
     prevQueueLengthRef.current = queue.length;
@@ -271,9 +277,13 @@ const Workspace: React.FC = () => {
       const newCount = downloadCount + 1;
       setDownloadCount(newCount);
 
-      // Show celebration modal on first download
+      // Show celebration modal on first download and fire activation event
       if (newCount === 1) {
         setShowCelebration(true);
+        const durationMs = firstUploadStartedAtRef.current
+          ? Date.now() - firstUploadStartedAtRef.current
+          : 0;
+        markFirstUploadCompleted(firstUploadSourceRef.current, durationMs);
       }
     } catch (error) {
       const errorMessage =
@@ -327,6 +337,7 @@ const Workspace: React.FC = () => {
 
   const handleSampleSelect = (sample: ISampleImage) => {
     setShowSamplesModal(false);
+    firstUploadSourceRef.current = 'sample';
     void addSampleItem(sample.beforeSrc, sample.afterSrc, sample.title);
   };
 
@@ -736,8 +747,8 @@ const Workspace: React.FC = () => {
         />
       )}
 
-      {/* Engagement discount toast — shown to eligible free users */}
-      <EngagementDiscountToast
+      {/* Engagement discount banner — shown to eligible free users */}
+      <EngagementDiscountBanner
         onClaimDiscount={() =>
           setPostAuthCheckoutPriceId(clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM)
         }

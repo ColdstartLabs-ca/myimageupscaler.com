@@ -9,6 +9,7 @@ import { ModelCard } from './ModelCard';
 import { ModelGallerySearch } from './ModelGallerySearch';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { getVariant } from '@client/utils/abTest';
 
 const MODEL_GATE_SESSION_KEY = 'upgrade_prompt_shown_model_gate';
 
@@ -39,6 +40,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { pricingRegion } = useRegionTier();
+  const copyVariant = getVariant('batch_limit_copy', ['value', 'outcome', 'urgency']);
 
   // Track gallery session for analytics
   const galleryOpenedAtRef = useRef<number>(0);
@@ -58,6 +60,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
             trigger: 'model_gate',
             currentPlan: 'free',
             pricingRegion: pricingRegion || 'standard',
+            copyVariant,
           });
         }
       }
@@ -139,6 +142,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         destination: 'upgrade_plan_modal',
         currentPlan: 'free',
         pricingRegion: pricingRegion || 'standard',
+        copyVariant,
       });
       // Store originating model so checkout_opened and purchase_confirmed can attribute correctly
       if (typeof window !== 'undefined' && tier !== 'banner') {
