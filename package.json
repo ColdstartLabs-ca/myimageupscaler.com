@@ -66,7 +66,11 @@
     "validate:seo:pseo:http": "tsx scripts/validate-pseo-data.ts --curl",
     "validate:seo:pseo:http:verbose": "tsx scripts/validate-pseo-data.ts --curl --verbose",
     "validate:seo:all": "yarn validate:seo:pseo && yarn validate:seo:internal-links",
-    "validate:seo:schema": "tsx scripts/validate-schema.ts"
+    "validate:seo:schema": "tsx scripts/validate-schema.ts",
+    "db:backup": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh export",
+    "db:export": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh export",
+    "db:import": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh import",
+    "db:backups": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh list"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.31.3",

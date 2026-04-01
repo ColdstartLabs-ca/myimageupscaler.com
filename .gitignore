@@ -94,6 +94,9 @@ supabase/*
 # Night Watch
 /logs/
 night-watch.config.json
+
+# Database backups
+/backups/
 *.claim
 .worktrees
 
