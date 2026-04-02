@@ -6,10 +6,13 @@ import { analytics } from '@client/analytics/analyticsClient';
 import { GALLERY_QUERY_CONFIG } from '@shared/config/gallery.config';
 import type {
   IGalleryStats,
-  IGalleryImage,
   IGalleryListResponse,
+  IGalleryListState,
 } from '@shared/types/gallery.types';
 import type { ProcessingMode } from '@shared/config/subscription.types';
+
+// Re-export IGalleryListState for backward compatibility
+export type { IGalleryListState } from '@shared/types/gallery.types';
 
 /**
  * Input type for saving an image
@@ -27,22 +30,6 @@ export interface ISaveImageInput {
   modelUsed?: string;
   /** Processing mode applied */
   processingMode?: ProcessingMode;
-}
-
-/**
- * Gallery list state for pagination
- */
-export interface IGalleryListState {
-  /** Array of fetched images */
-  images: IGalleryImage[];
-  /** Total count of images (for pagination) */
-  total: number;
-  /** Current page number (1-indexed) */
-  page: number;
-  /** Number of items per page */
-  pageSize: number;
-  /** Whether there are more pages */
-  hasMore: boolean;
 }
 
 /**

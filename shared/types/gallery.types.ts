@@ -114,3 +114,19 @@ export interface IGalleryDeleteResponse {
   /** ID of the deleted image */
   deleted_id: string;
 }
+
+/**
+ * Gallery list state for client-side pagination
+ */
+export interface IGalleryListState {
+  /** Array of fetched images */
+  images: IGalleryImage[];
+  /** Total count of images (for pagination) */
+  total: number;
+  /** Current page number (1-indexed) */
+  page: number;
+  /** Number of items per page */
+  pageSize: number;
+  /** Whether there are more pages */
+  hasMore: boolean;
+}
