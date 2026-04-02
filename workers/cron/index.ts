@@ -28,7 +28,6 @@ export interface IEnv {
   CRON_SERVICE_NAME?: string;
 }
 
- 
 export default {
   /**
    * Scheduled event handler - triggered by cron patterns defined in wrangler.toml
