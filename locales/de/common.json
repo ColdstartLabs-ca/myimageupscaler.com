@@ -117,6 +117,9 @@
     "search": "Suche",
     "filter": "Filtern",
     "sort": "Sortieren",
-    "dismiss": "Verwerfen"
+    "dismiss": "Verwerfen",
+    "pwaInstallTitle": "{appName} installieren",
+    "pwaInstallDescription": "Zum Startbildschirm hinzufügen für schnellen Zugriff",
+    "pwaInstallButton": "Installieren"
   }
 }

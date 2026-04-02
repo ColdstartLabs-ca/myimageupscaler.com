@@ -111,6 +111,9 @@
     "search": "検索",
     "filter": "フィルター",
     "sort": "並び替え",
-    "dismiss": "却下"
+    "dismiss": "却下",
+    "pwaInstallTitle": "{appName}をインストール",
+    "pwaInstallDescription": "ホーム画面に追加して素早くアクセス",
+    "pwaInstallButton": "インストール"
   }
 }

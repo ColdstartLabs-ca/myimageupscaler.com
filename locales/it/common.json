@@ -111,6 +111,9 @@
     "search": "Cerca",
     "filter": "Filtra",
     "sort": "Ordina",
-    "dismiss": "Chiudi"
+    "dismiss": "Chiudi",
+    "pwaInstallTitle": "Installa {appName}",
+    "pwaInstallDescription": "Aggiungi alla schermata principale per un accesso rapido",
+    "pwaInstallButton": "Installa"
   }
 }

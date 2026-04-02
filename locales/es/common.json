@@ -111,6 +111,9 @@
     "search": "Buscar",
     "filter": "Filtrar",
     "sort": "Ordenar",
-    "dismiss": "Descartar"
+    "dismiss": "Descartar",
+    "pwaInstallTitle": "Instalar {appName}",
+    "pwaInstallDescription": "Añadir a la pantalla de inicio para acceso rápido",
+    "pwaInstallButton": "Instalar"
   }
 }

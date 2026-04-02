@@ -111,6 +111,9 @@
     "search": "Pesquisar",
     "filter": "Filtrar",
     "sort": "Ordenar",
-    "dismiss": "Dispensar"
+    "dismiss": "Dispensar",
+    "pwaInstallTitle": "Instalar {appName}",
+    "pwaInstallDescription": "Adicionar à tela inicial para acesso rápido",
+    "pwaInstallButton": "Instalar"
   }
 }

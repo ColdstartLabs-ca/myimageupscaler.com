@@ -118,7 +118,10 @@
     "search": "Rechercher",
     "filter": "Filtrer",
     "sort": "Trier",
-    "dismiss": "Rejeter"
+    "dismiss": "Rejeter",
+    "pwaInstallTitle": "Installer {appName}",
+    "pwaInstallDescription": "Ajouter à l'écran d'accueil pour un accès rapide",
+    "pwaInstallButton": "Installer"
   },
   "buttons": {
     "upload": "Télécharger une image",
