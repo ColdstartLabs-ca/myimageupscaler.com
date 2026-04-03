@@ -26,10 +26,12 @@ BEGIN
     ON ct.user_id = p.id
     AND ct.transaction_type IN ('purchase', 'subscription')
   LEFT JOIN public.subscriptions s ON s.user_id = p.id
+  LEFT JOIN public.email_preferences ep ON ep.user_id = p.id
   WHERE p.created_at >= NOW() - INTERVAL '30 days'
     AND pj.status = 'completed'
     AND ct.id IS NULL
     AND s.id IS NULL
+    AND (ep.marketing_emails = true OR ep.marketing_emails IS NULL)
     AND NOT EXISTS (
       SELECT 1 FROM public.email_campaign_queue q
       WHERE q.user_id = p.id
@@ -66,8 +68,10 @@ BEGIN
     p.email
   FROM public.profiles p
   LEFT JOIN public.processing_jobs pj ON pj.user_id = p.id
+  LEFT JOIN public.email_preferences ep ON ep.user_id = p.id
   WHERE p.created_at >= NOW() - INTERVAL '14 days'
     AND pj.id IS NULL
+    AND (ep.marketing_emails = true OR ep.marketing_emails IS NULL)
     AND NOT EXISTS (
       SELECT 1 FROM public.email_campaign_queue q
       WHERE q.user_id = p.id
@@ -105,8 +109,10 @@ BEGIN
     s.trial_end
   FROM public.profiles p
   INNER JOIN public.subscriptions s ON s.user_id = p.id
+  LEFT JOIN public.email_preferences ep ON ep.user_id = p.id
   WHERE s.status = 'trialing'
     AND s.trial_end > NOW()
+    AND (ep.marketing_emails = true OR ep.marketing_emails IS NULL)
     AND NOT EXISTS (
       SELECT 1 FROM public.credit_transactions ct
       WHERE ct.user_id = p.id
