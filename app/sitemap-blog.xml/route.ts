@@ -31,6 +31,10 @@ const BLOCKED_BLOG_SLUGS = new Set([
   'anime-upscaling-4k-art-guide',
   'ai-image-enhancement-ecommerce-guide',
   'how-ai-image-upscaling-works-explained',
+  // SEO CTR cannibalization — redirected to canonical targets
+  'photo-enhancement-upscaling-vs-quality',
+  'best-free-ai-image-upscaler-tools-2026',
+  'restore-old-photos-online',
 ]);
 
 /**

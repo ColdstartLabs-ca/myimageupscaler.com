@@ -149,6 +149,26 @@ describe('Blog Sitemap', () => {
       expect(xml).toContain(`/blog/${STATIC_POST.slug}`);
     });
 
+    it('redirected cannibalization slugs are excluded from sitemap output', async () => {
+      const cannibalizedSlugs = [
+        'photo-enhancement-upscaling-vs-quality',
+        'best-free-ai-image-upscaler-tools-2026',
+        'restore-old-photos-online',
+      ];
+
+      mockGetAllPublishedPosts.mockResolvedValue(
+        cannibalizedSlugs.map(slug => ({ ...STATIC_POST, slug }))
+      );
+
+      const { GET } = await import('@/app/sitemap-blog.xml/route');
+      const response = await GET();
+      const xml = await response.text();
+
+      cannibalizedSlugs.forEach(slug => {
+        expect(xml).not.toContain(`/blog/${slug}`);
+      });
+    });
+
     it('all known problematic static slugs are excluded from sitemap output', async () => {
       const knownBlockedSlugs = [
         'anime-upscaling-4k-art-guide',
