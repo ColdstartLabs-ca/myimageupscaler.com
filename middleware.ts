@@ -631,6 +631,11 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
 
     // NEW: Wrong category slug
     '/industry-insights/real-estate-photo-enhancement': '/use-cases/real-estate-photo-enhancement',
+
+    // SEO CTR cannibalization redirects — consolidate competing blog URLs
+    '/blog/photo-enhancement-upscaling-vs-quality': '/blog/ai-image-upscaling-vs-sharpening-explained',
+    '/blog/best-free-ai-image-upscaler-tools-2026': '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+    '/blog/restore-old-photos-online': '/use-cases/old-photo-restoration',
   };
 
   // Check if path (without locale) matches a redirect
