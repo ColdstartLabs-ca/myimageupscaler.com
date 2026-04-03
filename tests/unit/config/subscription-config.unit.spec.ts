@@ -326,4 +326,11 @@ describe('Subscription Configuration', () => {
       expect(typeof shouldNotWarn).toBe('boolean');
     });
   });
+
+  describe('Environment Override (getSubscriptionConfig)', () => {
+    test('getSubscriptionConfig returns default config when no override', () => {
+      const config = getSubscriptionConfig();
+      expect(config).toEqual(SUBSCRIPTION_CONFIG);
+    });
+  });
 });
