@@ -13,7 +13,7 @@ set -euo pipefail
 PROJECT_DIR="/home/joao/projects/myimageupscaler.com"
 LOG_DIR="$PROJECT_DIR/logs/blog-automation"
 WORK_DIR="/tmp/blog-automation-miu-$(date +%Y%m%d-%H%M%S)"
-GSC_SCRIPT="$HOME/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs"
+GSC_SCRIPT="$PROJECT_DIR/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs"
 DOMAIN="myimageupscaler.com"
 API_URL="https://myimageupscaler.com"
 DRY_RUN=false
@@ -52,9 +52,9 @@ log "Dry run: $DRY_RUN"
 log "Step 1: Fetching GSC data..."
 GSC_OUTPUT="$WORK_DIR/gsc-data.json"
 
-if ! node "$GSC_SCRIPT" --site="$DOMAIN" --days=28 --output="$GSC_OUTPUT" 2>>"$LOG_FILE"; then
+if ! node "$GSC_SCRIPT" --site="$DOMAIN" --days=28 --search-types=web,image --inspect-top-pages=3 --output="$GSC_OUTPUT" 2>>"$LOG_FILE"; then
     log "WARNING: GSC data fetch failed, continuing without it"
-    echo '{"summary":{},"topQueries":[]}' > "$GSC_OUTPUT"
+    echo '{"summary":{},"searchTypeSummary":{},"growthOverview":{"quickWins":[],"contentCreation":[],"ctr":[]},"indexing":{"summary":{"nonPassingPages":[],"canonicalMismatches":[],"blockedOrBrokenPages":[]}}}' > "$GSC_OUTPUT"
 fi
 
 log "GSC data saved ($(wc -c < "$GSC_OUTPUT") bytes)"
@@ -85,7 +85,42 @@ log "Step 3: Preparing Claude CLI prompt..."
 # Extract compact GSC insights
 GSC_SUMMARY=$(jq '{
     summary: .summary,
-    topQueries: [.topQueries[:20][] | {query, clicks, impressions, position}]
+    searchTypeSummary: .searchTypeSummary,
+    quickWins: ((.growthOverview.quickWins // [])[:15] | map({
+        type,
+        query,
+        clicks,
+        impressions,
+        position,
+        topPage,
+        potentialClicks,
+        difficulty,
+        opportunityScore
+    })),
+    contentCreation: ((.growthOverview.contentCreation // [])[:15] | map({
+        type,
+        query,
+        clicks,
+        impressions,
+        position,
+        topPage,
+        recommendedFormat,
+        recommendedAction,
+        opportunityScore
+    })),
+    ctr: ((.growthOverview.ctr // [])[:10] | map({
+        type,
+        query,
+        impressions,
+        ctr,
+        position,
+        topPage
+    })),
+    indexingIssues: {
+        nonPassingPages: ((.indexing.summary.nonPassingPages // [])[:10]),
+        canonicalMismatches: ((.indexing.summary.canonicalMismatches // [])[:10]),
+        blockedOrBrokenPages: ((.indexing.summary.blockedOrBrokenPages // [])[:10])
+    }
 }' "$GSC_OUTPUT" 2>/dev/null || echo '{}')
 
 EXISTING_LIST=$(jq '[.[] | .slug]' "$EXISTING_POSTS" 2>/dev/null || echo '[]')
@@ -94,20 +129,24 @@ EXISTING_LIST=$(jq '[.[] | .slug]' "$EXISTING_POSTS" 2>/dev/null || echo '[]')
 cat > "$WORK_DIR/prompt.txt" << PROMPT_EOF
 Publish 1 SEO-optimized blog post for myimageupscaler.com using the /blog-publish skill.
 
-Pick a high-value topic related to image upscaling, AI image enhancement, or photo editing based on the GSC keyword data below. The post should drive traffic to our AI image upscaler tool.
+Pick a high-value topic related to image upscaling, AI image enhancement, or photo editing based on the GSC growth data below. The post should drive traffic to our AI image upscaler tool.
 
 EXISTING POST SLUGS (do NOT duplicate any of these topics):
 $EXISTING_LIST
 
-GSC KEYWORDS (last 28 days):
+GSC GROWTH DATA (last 28 days vs previous 28 days):
 $GSC_SUMMARY
 
 Instructions:
-1. Pick 1 keyword from GSC data that is NOT already covered by existing posts
-2. If no GSC data, pick a topic related to: image upscaling, AI photo enhancement, image quality improvement, or photo editing tips
-3. Use /blog-publish to create and publish the full post with AI-generated images
-4. The post MUST include CTAs linking to the upscaler tool
-5. If all keywords are already covered, publish 0 and explain why
+1. Prefer topics from contentCreation or quickWins. Use CTR opportunities only if they clearly map to a content angle.
+2. Pick 1 keyword/topic from GSC data that is NOT already covered by existing posts
+3. Favor non-branded opportunities with meaningful impressions and clear intent
+4. If the best opportunity maps to an existing generic page, create a blog post that supports that intent and links into the core tool page
+5. If no GSC data, pick a topic related to: image upscaling, AI photo enhancement, image quality improvement, or photo editing tips
+6. Avoid topics tied to pages with active indexing/canonical problems unless the content itself is still a strong standalone opportunity
+7. Use /blog-publish to create and publish the full post with AI-generated images
+8. The post MUST include CTAs linking to the upscaler tool
+9. If all keywords are already covered, publish 0 and explain why
 PROMPT_EOF
 
 PROMPT_SIZE=$(wc -c < "$WORK_DIR/prompt.txt")

@@ -1,194 +1,128 @@
 ---
 name: gsc-analysis
-description: Fetch and analyze Google Search Console data to identify SEO opportunities, low-hanging fruit keywords, content gaps, and optimization priorities. Works with any domain on the shared Google Cloud account.
+description: Fetch and analyze Google Search Console growth data with comparisons, search-type splits, indexing signals, and opportunity clusters.
 user_invocable: true
-argument_description: '[domain] e.g. convertbanktoexcel.com or myimageupscaler.com'
+argument_description: '[domain] e.g. myimageupscaler.com'
 ---
 
-You are an SEO strategist analyzing Google Search Console data. You work with **any domain** on the shared Google Cloud account.
+You are an SEO strategist using Google Search Console data to identify the highest-leverage traffic growth actions.
 
 ## How It Works
 
-A standalone script at `~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs` fetches all GSC data for a given domain. It requires no project-specific dependencies - just Node.js and `googleapis`.
-
-### Authentication
-
-The script uses a service account key. It searches these paths in order:
-
-1. `$GCP_KEY_FILE` env var
-2. `~/projects/convertbanktoexcel.com/cloud/keys/coldstart-labs-service-account-key.json`
-3. `./cloud/keys/coldstart-labs-service-account-key.json`
-
-The service account `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com` must have **read access** to the GSC property (`sc-domain:DOMAIN`).
-
-### Running the Script
+Run the standalone fetcher:
 
 ```bash
-# Basic fetch (last 28 days, stdout JSON)
-node ~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=DOMAIN
-
-# Custom date range
-node ~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=DOMAIN --days=90
-
-# Save to file
-node ~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=DOMAIN --days=28 --output=/tmp/gsc-DOMAIN.json
+node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=DOMAIN --days=28 --output=/tmp/gsc-DOMAIN.json
 ```
 
-**Logs go to stderr, data goes to stdout.** So you can pipe: `node gsc-fetch.cjs --site=x.com 2>/dev/null | jq .summary`
+The script:
 
-## Workflow
+- uses a service account key from `$GCP_KEY_FILE`, `~/projects/convertbanktoexcel.com/cloud/keys/coldstart-labs-service-account-key.json`, or `./cloud/keys/...`
+- talks to the Search Console APIs directly with native Node.js `fetch` and `crypto`
+- fetches current and previous period data
+- splits data by search type
+- includes indexing checks for priority pages
 
-1. **Determine the domain** from the user's argument or ask.
-2. **Run the script** saving output to a temp JSON file.
-3. **Read the JSON** and analyze the data following the framework below.
-4. **Present findings** as a structured report.
+Logs go to stderr. JSON goes to stdout unless `--output` is passed.
 
-### Step-by-step
+## What To Analyze
 
-```bash
-# 1. Fetch data
-node ~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=DOMAIN --days=28 --output=/tmp/gsc-DOMAIN.json 2>&1
+Read `/tmp/gsc-DOMAIN.json` and prioritize:
 
-# 2. Read the JSON file and analyze
-```
-
-Then read `/tmp/gsc-DOMAIN.json` with the Read tool and analyze.
+1. `summary` and `comparison`
+   - clicks, impressions, CTR, and position versus the previous period
+2. `searchTypeSummary`
+   - whether web or image search is actually moving
+3. `topNonBrandedQueries`
+   - raw non-branded demand without navigational terms
+4. `growthOverview.quickWins`
+   - keywords already close enough to move with page optimization
+5. `growthOverview.contentCreation`
+   - queries that likely need dedicated content
+6. `ctrOptimization` and `pageCtrOpportunities`
+   - pages or queries ranking well enough that snippet work matters
+7. `cannibalization`
+   - multiple URLs splitting one intent
+8. `indexing.summary`
+   - non-passing pages, canonical mismatches, broken fetch states
+9. `searchAppearance`
+   - rich result or SERP feature signals
 
 ## Analysis Framework
 
 ### 1. Performance Summary
 
-- Total clicks, impressions, avg CTR, avg position
-- Week-over-week trend (from dailyTrend)
-- Device split (mobile vs desktop)
-- Top countries
+- Current period versus previous period
+- Search-type mix
+- Device and country notes only if they materially affect prioritization
 
-### 2. Low Hanging Fruit (HIGHEST PRIORITY)
+### 2. Quick Wins
 
-Keywords at position 8-25 with high impressions. Fastest ROI.
+Use `growthOverview.quickWins` first:
 
-- **Easy (pos 8-12)**: Title/meta optimization only
-- **Medium (pos 13-18)**: Add internal links + expand content
-- **Hard (pos 19-25)**: Content refresh needed
+- `easy`: position 8-12
+- `medium`: position 13-18
+- `hard`: position 19-25
 
-### 3. CTR Optimization
+### 3. Content Creation
 
-Pages ranking well (position 1-5) but below-average CTR:
-| Position | Expected CTR | Below Average |
-|----------|-------------|---------------|
-| 1 | 25-30% | < 20% |
-| 2 | 12-15% | < 10% |
-| 3 | 8-11% | < 7% |
-| 4-5 | 5-8% | < 4% |
+Use `growthOverview.contentCreation` for:
 
-### 4. Cannibalization Detection
+- new blog topics
+- comparison pages
+- dedicated landing pages replacing generic homepage coverage
 
-Multiple pages competing for the same keyword (queries with pageCount >= 2).
+### 4. CTR Work
 
-### 5. Content Gap Analysis
+Use `ctrOptimization` and `pageCtrOpportunities` for:
 
-High-impression queries without dedicated landing pages.
+- title rewrites
+- meta description rewrites
+- rich-result support
 
-## Opportunity Scoring
+### 5. Technical Blockers
 
-Score each opportunity 1-10:
-
-| Factor            | Weight | Scoring                          |
-| ----------------- | ------ | -------------------------------- |
-| Impressions       | 30%    | >1000=10, >500=7, >100=5, >30=3  |
-| Position Gap      | 25%    | 8-12=10, 13-18=7, 19-25=4        |
-| Effort Required   | 25%    | Meta only=10, Links=7, Content=4 |
-| Commercial Intent | 20%    | High=10, Medium=6, Low=3         |
+If `indexing.summary.nonPassingPages`, `canonicalMismatches`, or `blockedOrBrokenPages` are populated, surface them before recommending more content for those URLs.
 
 ## Output Format
 
-Present findings as a structured markdown report with:
+Present findings as a compact markdown report:
 
 ```markdown
-# GSC Analysis: [domain]
+# GSC Analysis: DOMAIN
 
-**Period**: [date range] | **Fetched**: [timestamp]
+**Current Period:** [start] to [end]
+**Previous Period:** [start] to [end]
 
-## Performance Summary
+## Summary
+[key totals and changes]
 
-[table with totals + trends]
+## Search Type Mix
+[web vs image vs others]
 
-## Top 10 Queries by Clicks
+## Quick Wins
+[top opportunities table]
 
-[table]
+## Content Creation Opportunities
+[top topics table]
 
-## Top 10 Pages by Clicks
+## CTR Fixes
+[top snippet/title opportunities]
 
-[table]
+## Cannibalization
+[queries competing across multiple URLs]
 
-## Low Hanging Fruit (Top 10)
+## Technical Blockers
+[indexing and canonical issues]
 
-[table with query, position, impressions, potential clicks, difficulty, action]
-
-## CTR Optimization Opportunities
-
-[table]
-
-## Cannibalization Issues
-
-[queries ranking on multiple pages]
-
-## Device & Country Breakdown
-
-[tables]
-
-## Recommendations (Prioritized)
-
-1. [Highest impact action]
-2. [Second highest]
-   ...
+## Prioritized Actions
+1. ...
+2. ...
+3. ...
 ```
-
-## Additional Tools (convertbanktoexcel.com only)
-
-When analyzing `convertbanktoexcel.com`, you also have access to project-specific yarn commands:
-
-### Sitemap Management
-
-```bash
-yarn gsc:submit              # Submit sitemaps to GSC
-yarn gsc:status              # Check sitemap indexing counts
-yarn gsc:cleanup             # Remove old/orphaned sitemaps
-```
-
-### Quick Search Analytics
-
-```bash
-yarn gsc:analysis            # Full report (queries + pages, 28 days)
-yarn gsc:analysis:queries    # Query performance only
-yarn gsc:analysis:pages      # Page performance only
-yarn gsc:analysis:7d         # Short-term trends (7 days)
-yarn gsc:analysis:90d        # Long-term trends (90 days)
-```
-
-### URL Inspection API
-
-```bash
-yarn gsc:inspect <url>                              # Inspect single URL indexing status
-yarn gsc:inspect --sitemap sitemap-conversions.xml  # Batch inspect from sitemap
-yarn gsc:inspect --file urls.txt                    # Batch inspect from file
-```
-
-Returns per-URL: indexing verdict, coverage state, last crawl time, fetch status, robots.txt state, canonical URL, mobile usability, rich results.
-
-### SEO Validation
-
-```bash
-yarn validate:seo            # Validate all sitemap URLs are accessible
-yarn validate:seo:links      # Validate internal links aren't broken
-```
-
-Use these tools to supplement the main analysis when the domain is `convertbanktoexcel.com`.
 
 ## Constraints
 
-- GSC data has a 2-3 day lag (script already accounts for this)
-- Maximum 5000 rows per API query
-- Position is an average (varies by user/location)
-- The service account must be verified as a user/owner on the GSC property
-- URL Inspection API has rate limits (~600 requests/min) - use --delay for large batches
+- GSC lags by about 2-3 days
+- Search Console metrics are averages, not exact per-user rankings
+- URL Inspection should be treated as a spot check on priority pages, not a full-site crawl

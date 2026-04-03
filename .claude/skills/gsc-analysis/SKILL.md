@@ -1,100 +1,144 @@
 ---
 name: gsc-analysis
-description: Fetch and analyze Google Search Console data to identify SEO opportunities, indexing issues, and low-hanging fruit keywords.
+description: Fetch and analyze Google Search Console growth data, including search-type splits, comparisons, indexing signals, and opportunity clusters.
 ---
 
 # GSC Analysis Skill
 
-You are an SEO data analyst with access to Google Search Console. Your goal is to extract actionable insights from GSC data.
+You are an SEO growth analyst working from Google Search Console data. Your goal is to pull enough data to decide what will actually grow traffic, not just report headline metrics.
 
-When this skill activates: `GSC Analysis Mode: Fetching data...`
+When this skill activates: `GSC Analysis Mode: Fetching growth dataset...`
 
 ## Quick Start
 
 ```bash
-# Fetch all GSC data (standalone script - works for any domain)
-node ~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com
+# Full growth export for this repo
+node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com --output=/tmp/gsc-miu.json
 ```
 
 ## Configuration
 
-- **Credentials:** `~/projects/convertbanktoexcel.com/cloud/keys/coldstart-labs-service-account-key.json`
+- **Credentials:** `$GCP_KEY_FILE` or `~/projects/convertbanktoexcel.com/cloud/keys/coldstart-labs-service-account-key.json`
 - **Service Account:** `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`
+- **Property Format:** `sc-domain:DOMAIN`
 
-## Available Scripts
+## What The Fetcher Pulls
 
-### Standalone Script (Works for Any Domain)
+- Search-type summaries for `web`, `image`, `video`, `news`, `discover`, and `googleNews`
+- Current vs previous period comparisons
+- Query, page, and query+page exports for growth analysis
+- Device and country breakdowns
+- Search appearance buckets
+- Sitemap metadata
+- URL Inspection results for top-priority pages
+
+The script uses native Node.js `fetch` + `crypto`. It does **not** depend on `googleapis`.
+
+## Example Commands
 
 ```bash
-# Full GSC data export - queries, pages, devices, countries, sitemaps
-node ~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com
+# Default 28-day export
+node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com
 
-# Custom date range
-node ~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com --days=90
+# Longer comparison window
+node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com --days=90
 
-# Save to file
-node ~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com --output=/tmp/gsc-miu.json
+# Limit search types
+node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com --search-types=web,image
+
+# Skip URL inspection
+node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com --inspect-top-pages=0
 ```
 
-Logs go to stderr, data goes to stdout. Pipe: `node gsc-fetch.cjs --site=x.com 2>/dev/null | jq .summary`
+Logs go to stderr. JSON goes to stdout unless `--output` is set.
 
-### Data Returned
+## Output Shape
 
 ```json
 {
-  "summary": { "totalClicks": N, "totalImpressions": N, "avgCtr": N, "avgPosition": N },
-  "topQueries": [...],
-  "topPages": [...],
-  "lowHangingFruit": [...],
-  "ctrOptimization": [...],
-  "cannibalization": [...],
-  "deviceBreakdown": [...],
-  "countryBreakdown": [...],
-  "dailyTrend": [...],
-  "sitemaps": [...]
+  "summary": {},
+  "comparison": {},
+  "searchTypeSummary": {},
+  "searchTypes": {
+    "web": {
+      "summary": {},
+      "queries": [],
+      "pages": [],
+      "lowHangingFruit": [],
+      "ctrOpportunities": [],
+      "contentOpportunities": [],
+      "cannibalization": [],
+      "searchAppearance": []
+    }
+  },
+  "growthOverview": {
+    "quickWins": [],
+    "contentCreation": [],
+    "ctr": [],
+    "cannibalization": []
+  },
+  "indexing": {
+    "inspectedPages": [],
+    "summary": {}
+  },
+  "sitemaps": []
 }
 ```
 
+Top-level compatibility fields like `topQueries`, `topPages`, `lowHangingFruit`, `ctrOptimization`, `deviceBreakdown`, `countryBreakdown`, and `dailyTrend` still map to the chosen primary type.
+Use `topNonBrandedQueries` when you want raw opportunity discovery without branded navigational noise.
+
 ## Analysis Workflow
 
-### Step 1: Fetch Data
+### Step 1: Fetch
 
 ```bash
-node ~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com --days=28 --output=/tmp/gsc-miu.json 2>&1
+node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com --days=28 --output=/tmp/gsc-miu.json 2>&1
 ```
 
-### Step 2: Read JSON and Analyze
+### Step 2: Read The JSON
 
-After running, read `/tmp/gsc-miu.json` and analyze:
+Focus on:
 
-1. **Low-Hanging Fruit** - Keywords at position 8-25 with high impressions (fastest ROI)
-2. **CTR Optimization** - Pages ranking well but below-average CTR
-3. **Cannibalization** - Multiple pages competing for same keyword
-4. **Top Queries** - Content gap opportunities
-5. **Device/Country** - Traffic source breakdown
+1. `summary` and `comparison` for current vs previous period movement
+2. `searchTypeSummary` to see whether growth is coming from web or image search
+3. `growthOverview.quickWins` for striking-distance queries
+4. `growthOverview.contentCreation` for new content ideas
+5. `ctrOptimization` and `pageCtrOpportunities` for snippet/title work
+6. `cannibalization` for duplicate intent collisions
+7. `indexing.summary` for non-passing or canonical-problem pages
 
-### Step 3: Output Report
+### Step 3: Output
 
-Present findings as a structured markdown report with performance summary, low-hanging fruit table, CTR optimization opportunities, and prioritized recommendations.
+Present findings as a markdown report with:
+
+- Period and comparison window
+- Search-type mix
+- Quick wins
+- Content creation opportunities
+- CTR fixes
+- Cannibalization issues
+- Indexing/canonical blockers
+- Prioritized actions
 
 ## Troubleshooting
 
-### Script fails to run
+### Credentials
 
 ```bash
-# Check credentials file exists
 ls -la ~/projects/convertbanktoexcel.com/cloud/keys/coldstart-labs-service-account-key.json
 ```
 
-### No data returned
+### Access
 
-- Site may be new (GSC needs 2-3 days)
-- Check service account has Search Console API access
-- Verify site is verified in GSC as `sc-domain:myimageupscaler.com`
+- Ensure the service account has access in Search Console
+- Verify the property exists as `sc-domain:myimageupscaler.com`
+- GSC data lags by roughly 2-3 days, so the script intentionally holds back recent days
 
 ## Files
 
-| Item                    | Path                                                                                   |
-| ----------------------- | -------------------------------------------------------------------------------------- |
-| Standalone Fetch Script | `~/.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs`                                  |
-| Credentials             | `~/projects/convertbanktoexcel.com/cloud/keys/coldstart-labs-service-account-key.json` |
+| Item | Path |
+| --- | --- |
+| Skill Doc | `./.claude/skills/gsc-analysis/SKILL.md` |
+| Prompt | `./.claude/skills/gsc-analysis/prompt.md` |
+| Fetch Script | `./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs` |
