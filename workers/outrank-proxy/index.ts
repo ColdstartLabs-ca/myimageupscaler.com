@@ -12,6 +12,8 @@
  *   https://myimageupscaler-outrank-proxy.<account>.workers.dev/
  */
 
+/* global Fetcher */
+
 interface IEnv {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   MAIN_WORKER: any; // Fetcher type is Cloudflare-specific, not available in standard TS
