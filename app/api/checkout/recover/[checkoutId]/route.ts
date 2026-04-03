@@ -57,10 +57,30 @@ export async function GET(
       );
     }
 
-    // Check if checkout is still pending
-    if (checkout.status !== 'pending') {
+    // Check if checkout is already recovered
+    if (checkout.status === 'recovered') {
       return NextResponse.json<IRecoveryResponse>({
         success: false,
+        error: {
+          code: 'ALREADY_RECOVERED',
+          message: 'This checkout has already been recovered',
+        },
+        data: {
+          cartData: checkout.cart_data,
+          discountCode: checkout.recovery_discount_code,
+          isValid: false,
+        },
+      });
+    }
+
+    // Check if checkout has an invalid status (bounced, etc.)
+    if (checkout.status !== 'pending' && checkout.status !== 'expired') {
+      return NextResponse.json<IRecoveryResponse>({
+        success: false,
+        error: {
+          code: 'INVALID_STATUS',
+          message: `Checkout has invalid status: ${checkout.status}`,
+        },
         data: {
           cartData: checkout.cart_data,
           discountCode: checkout.recovery_discount_code,
@@ -83,6 +103,10 @@ export async function GET(
 
       return NextResponse.json<IRecoveryResponse>({
         success: false,
+        error: {
+          code: 'EXPIRED',
+          message: 'This checkout has expired (older than 7 days)',
+        },
         data: {
           cartData: checkout.cart_data,
           discountCode: checkout.recovery_discount_code,
