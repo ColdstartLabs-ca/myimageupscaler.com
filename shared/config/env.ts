@@ -315,6 +315,11 @@ const serverEnvSchema = z.object({
   MODEL_VERSION_REALESRGAN_ANIME: z.string().optional(),
   MODEL_VERSION_P_IMAGE_EDIT: z.string().optional(),
   MODEL_VERSION_FLUX_KONTEXT_FAST: z.string().optional(),
+
+  // ==========================================
+  // SUBSCRIPTION CONFIG OVERRIDE
+  // ==========================================
+  SUBSCRIPTION_CONFIG_OVERRIDE: z.string().optional(),
 });
 
 export type IServerEnv = z.infer<typeof serverEnvSchema>;
@@ -428,6 +433,9 @@ function loadServerEnv(): IServerEnv {
     MODEL_VERSION_REALESRGAN_ANIME: process.env.MODEL_VERSION_REALESRGAN_ANIME,
     MODEL_VERSION_P_IMAGE_EDIT: process.env.MODEL_VERSION_P_IMAGE_EDIT,
     MODEL_VERSION_FLUX_KONTEXT_FAST: process.env.MODEL_VERSION_FLUX_KONTEXT_FAST,
+
+    // Subscription Config Override (optional)
+    SUBSCRIPTION_CONFIG_OVERRIDE: process.env.SUBSCRIPTION_CONFIG_OVERRIDE,
   };
 
   return serverEnvSchema.parse(env);
