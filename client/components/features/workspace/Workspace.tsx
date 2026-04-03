@@ -40,6 +40,7 @@ import {
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { ModelGalleryModal } from './ModelGalleryModal';
@@ -106,10 +107,15 @@ const Workspace: React.FC = () => {
     if (!checkoutParam) return;
     processedCheckoutParamRef.current = true;
     setPostAuthCheckoutPriceId(checkoutParam);
+    const checkoutContext = getCheckoutTrackingContext();
     // Fire checkout_opened here — useCheckoutFlow can't fire it for unauthenticated paths
     analytics.track('checkout_opened', {
       priceId: checkoutParam,
       source: 'post_auth_redirect',
+      ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
+      ...(checkoutContext?.originatingModel
+        ? { originatingModel: checkoutContext.originatingModel }
+        : {}),
     });
   }, [searchParams]);
 

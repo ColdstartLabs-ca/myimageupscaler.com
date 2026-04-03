@@ -2,10 +2,15 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToastStore } from '@client/store/toastStore';
 import { useUserStore } from '@client/store/userStore';
+import { analytics } from '@client/analytics/analyticsClient';
+import {
+  getCheckoutTrackingContext,
+  setCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 import { useTranslations } from 'next-intl';
 import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
@@ -46,6 +51,8 @@ function CheckoutContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
+  const hasTrackedCheckoutOpenRef = useRef(false);
+  const hasTrackedAuthRequiredRef = useRef(false);
 
   const priceId = searchParams.get('priceId');
   const planName = searchParams.get('plan');
@@ -55,12 +62,28 @@ function CheckoutContent() {
       ? QUALITY_TIER_CONFIG[modelParam as QualityTier]
       : null;
 
-  // Store originating model in sessionStorage so success page can read it
+  // Preserve checkout attribution so success-page and funnel analytics can reuse it.
   useEffect(() => {
-    if (modelParam && typeof window !== 'undefined') {
-      sessionStorage.setItem('checkout_originating_model', modelParam);
+    if (modelParam) {
+      setCheckoutTrackingContext({ originatingModel: modelParam });
     }
   }, [modelParam]);
+
+  useEffect(() => {
+    if (!priceId || authLoading || isAuthenticated || hasTrackedAuthRequiredRef.current) {
+      return;
+    }
+
+    const checkoutContext = getCheckoutTrackingContext();
+    analytics.track('checkout_auth_required', {
+      priceId,
+      ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
+      ...(checkoutContext?.originatingModel
+        ? { originatingModel: checkoutContext.originatingModel }
+        : {}),
+    });
+    hasTrackedAuthRequiredRef.current = true;
+  }, [authLoading, isAuthenticated, priceId]);
 
   useEffect(() => {
     if (!priceId) {
@@ -92,6 +115,18 @@ function CheckoutContent() {
         });
 
         if (response.clientSecret) {
+          if (!hasTrackedCheckoutOpenRef.current) {
+            const checkoutContext = getCheckoutTrackingContext();
+            analytics.track('checkout_opened', {
+              priceId,
+              source: 'checkout_page',
+              ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
+              ...(checkoutContext?.originatingModel
+                ? { originatingModel: checkoutContext.originatingModel }
+                : {}),
+            });
+            hasTrackedCheckoutOpenRef.current = true;
+          }
           setClientSecret(response.clientSecret);
         } else {
           throw new Error(t('noClientSecret'));
@@ -115,7 +150,7 @@ function CheckoutContent() {
     };
 
     createCheckoutSession();
-  }, [priceId, isAuthenticated, showToast]);
+  }, [priceId, isAuthenticated, showToast, t]);
 
   const options: StripeEmbeddedCheckoutOptions = {
     clientSecret: clientSecret || '',

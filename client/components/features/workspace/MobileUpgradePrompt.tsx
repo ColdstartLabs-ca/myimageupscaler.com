@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { getVariant } from '@client/utils/abTest';
 
 export interface IMobileUpgradePromptProps {
@@ -74,6 +75,9 @@ export const MobileUpgradePrompt = ({
   }, [isFreeUser, variant, pricingRegion, copyVariant]);
 
   const handleClick = useCallback(() => {
+    setCheckoutTrackingContext({
+      trigger: variant === 'upload' ? 'mobile_upload_prompt' : 'mobile_preview_prompt',
+    });
     analytics.track('upgrade_prompt_clicked', {
       trigger: variant === 'upload' ? 'mobile_upload_prompt' : 'mobile_preview_prompt',
       destination: 'upgrade_plan_modal',

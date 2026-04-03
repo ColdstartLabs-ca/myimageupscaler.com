@@ -3,6 +3,10 @@ import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
+import {
+  getCheckoutTrackingContext,
+  setCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 import { analytics } from '@client/analytics';
 
 interface IUseCheckoutFlowOptions {
@@ -101,11 +105,17 @@ export function useCheckoutFlow({
         typeof window !== 'undefined'
           ? sessionStorage.getItem('checkout_originating_model') || undefined
           : undefined;
-      const effectiveOriginModel = originatingModel || storedOriginModel;
+      const storedCheckoutContext = getCheckoutTrackingContext();
+      const effectiveOriginModel =
+        originatingModel || storedCheckoutContext?.originatingModel || storedOriginModel;
+      const effectiveTrigger = storedCheckoutContext?.trigger;
 
       // Store in sessionStorage so success page can read it after page navigation
-      if (effectiveOriginModel && typeof window !== 'undefined') {
-        sessionStorage.setItem('checkout_originating_model', effectiveOriginModel);
+      if (effectiveOriginModel || effectiveTrigger) {
+        setCheckoutTrackingContext({
+          trigger: effectiveTrigger,
+          originatingModel: effectiveOriginModel,
+        });
       }
 
       // If not authenticated, redirect to auth
@@ -119,12 +129,17 @@ export function useCheckoutFlow({
         // Store checkout intent so user returns to pricing page with modal auto-opened
         prepareAuthRedirect('checkout', {
           returnTo,
-          context: { priceId, originatingModel: effectiveOriginModel },
+          context: {
+            priceId,
+            trigger: effectiveTrigger,
+            originatingModel: effectiveOriginModel,
+          },
         });
 
         // Track auth wall — bridges the upgrade_prompt_clicked → checkout_opened gap
         analytics.track('checkout_auth_required', {
           priceId,
+          ...(effectiveTrigger ? { trigger: effectiveTrigger } : {}),
           originatingModel: effectiveOriginModel,
         });
 
@@ -142,6 +157,7 @@ export function useCheckoutFlow({
       analytics.track('checkout_opened', {
         priceId,
         source: 'embedded_modal',
+        ...(effectiveTrigger ? { trigger: effectiveTrigger } : {}),
         originatingModel: effectiveOriginModel,
       });
       setShowCheckoutModal(true);
@@ -171,14 +187,23 @@ export function useCheckoutFlow({
         const currentSearchParams = new URLSearchParams(window.location.search);
         currentSearchParams.set('checkout', priceId);
         const returnTo = `${window.location.pathname}?${currentSearchParams.toString()}`;
+        const errContext = getCheckoutTrackingContext();
         const errOriginModel =
           originatingModel ||
+          errContext?.originatingModel ||
           (typeof window !== 'undefined'
             ? sessionStorage.getItem('checkout_originating_model') || undefined
             : undefined);
+        const errTrigger = errContext?.trigger;
+        if (errOriginModel || errTrigger) {
+          setCheckoutTrackingContext({
+            trigger: errTrigger,
+            originatingModel: errOriginModel,
+          });
+        }
         prepareAuthRedirect('checkout', {
           returnTo,
-          context: { priceId, originatingModel: errOriginModel },
+          context: { priceId, trigger: errTrigger, originatingModel: errOriginModel },
         });
 
         openAuthRequiredModal();

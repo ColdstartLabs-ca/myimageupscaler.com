@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@client/utils/cn';
 import { analytics } from '@client/analytics';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { useTranslations } from 'next-intl';
 import { Sparkles, Upload, ArrowRight, X } from 'lucide-react';
 
@@ -110,6 +111,7 @@ export const FirstDownloadCelebration = ({
       localStorage.setItem(CELEBRATION_SHOWN_KEY, Date.now().toString());
     }
 
+    setCheckoutTrackingContext({ trigger: 'celebration' });
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'celebration',
       destination: 'purchase_modal',

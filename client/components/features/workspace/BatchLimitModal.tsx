@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Modal } from '@client/components/ui/Modal';
 import { Button } from '@client/components/ui/Button';
 import { analytics } from '@client/analytics/analyticsClient';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { getVariant } from '@client/utils/abTest';
 import { clientEnv } from '@shared/config/env';
 
@@ -62,6 +63,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
   }, [isOpen, limit, attempted, currentCount, availableSlots, serverEnforced, copyVariant]);
 
   const handleQuickBuyClick = () => {
+    setCheckoutTrackingContext({ trigger: 'batch_limit' });
     analytics.track('batch_limit_quick_buy_clicked', {
       limit,
       attempted,
@@ -77,6 +79,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
   };
 
   const handleSeePlansClick = () => {
+    setCheckoutTrackingContext({ trigger: 'batch_limit' });
     analytics.track('batch_limit_see_plans_clicked', {
       limit,
       attempted,

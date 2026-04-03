@@ -131,6 +131,13 @@ export interface IUpgradePromptDismissedProperties {
 export interface ICheckoutOpenedProperties {
   priceId: string;
   source: string;
+  trigger?: string;
+  originatingModel?: string;
+}
+
+export interface ICheckoutAuthRequiredProperties {
+  priceId: string;
+  trigger?: string;
   originatingModel?: string;
 }
 

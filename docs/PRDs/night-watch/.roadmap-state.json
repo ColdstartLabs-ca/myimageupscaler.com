@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "lastScan": "2026-03-30T02:36:48.870Z",
+  "lastScan": "2026-04-02T02:38:29.195Z",
   "items": {
     "7ae52884": {
       "title": "Audit Finding 1: architecture_violation (medium) at shared/config/subscription.config.ts:318",
@@ -16,6 +16,11 @@
       "title": "Audit Finding 2: hardcoded_secret (low) at server/stripe/config.ts:11",
       "prdFile": "03-audit-finding-2-hardcoded-secret-low-at-server-stripe-config-ts-11.md",
       "createdAt": "2026-03-30T02:36:48.870Z"
+    },
+    "2e783e27": {
+      "title": "Audit Finding 4: unsafe_assertion (low) at lib/seo/data-loader.ts:51-94",
+      "prdFile": "04-audit-finding-4-unsafe-assertion-low-at-lib-seo-data-loader-ts-51-94.md",
+      "createdAt": "2026-04-02T02:38:29.195Z"
     }
   }
 }

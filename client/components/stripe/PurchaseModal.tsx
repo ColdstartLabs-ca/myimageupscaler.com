@@ -9,6 +9,11 @@ import { Zap, X } from 'lucide-react';
 import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useCurrentPlan } from '@client/hooks/useCurrentPlan';
+import {
+  clearCheckoutTrackingContext,
+  getCheckoutTrackingContext,
+  setCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 
 export interface IPurchaseModalProps {
   isOpen: boolean;
@@ -45,6 +50,9 @@ export function PurchaseModal({
   useEffect(() => {
     if (isOpen) {
       openTimeRef.current = Date.now();
+      if (!getCheckoutTrackingContext()?.trigger) {
+        setCheckoutTrackingContext({ trigger });
+      }
       analytics.track('upgrade_prompt_shown', {
         trigger,
         outOfCredits,
@@ -77,6 +85,7 @@ export function PurchaseModal({
       pricingRegion: pricingRegion || 'standard',
       timeOpenMs: Date.now() - openTimeRef.current,
     });
+    clearCheckoutTrackingContext();
     onClose();
   };
 

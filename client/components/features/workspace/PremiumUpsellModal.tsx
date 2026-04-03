@@ -5,6 +5,7 @@ import { X, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import type { QualityTier } from '@/shared/types/coreflow.types';
 
 export interface IPremiumUpsellModalProps {
@@ -109,6 +110,7 @@ export const PremiumUpsellModal: React.FC<IPremiumUpsellModalProps> = ({
   };
 
   const handleViewPlans = () => {
+    setCheckoutTrackingContext({ trigger: 'premium_upsell' });
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'premium_upsell',
       imageVariant: currentImages.label,

@@ -6,6 +6,7 @@ import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 import { getVariant } from '@client/utils/abTest';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 
 export interface IUpgradeSuccessBannerProps {
   processedCount: number;
@@ -109,6 +110,7 @@ export const UpgradeSuccessBanner = ({
           <div className="mt-1.5 sm:mt-4 flex flex-wrap items-center gap-3 sm:gap-5">
             <button
               onClick={() => {
+                setCheckoutTrackingContext({ trigger: 'after_batch' });
                 analytics.track('upgrade_prompt_clicked', {
                   trigger: 'after_batch',
                   destination: 'purchase_modal',

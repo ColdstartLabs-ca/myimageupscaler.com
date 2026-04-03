@@ -9,6 +9,10 @@ import { analytics } from '@client/analytics';
 import { useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
+import {
+  getCheckoutTrackingContext,
+  setCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 
 interface ICreditPackSelectorProps {
   onPurchaseStart?: () => void;
@@ -56,6 +60,8 @@ export function CreditPackSelector({
   }, [selectedPack]);
 
   const handlePurchase = (pack: ICreditPack) => {
+    const checkoutContext = getCheckoutTrackingContext();
+
     // Track initial vs final selection
     if (initialPackRef.current === null) {
       initialPackRef.current = pack.key;
@@ -81,10 +87,28 @@ export function CreditPackSelector({
     // Require auth before opening checkout — store intent so user returns here after sign-in
     if (!isAuthenticated) {
       if (pack.stripePriceId) {
+        setCheckoutTrackingContext({
+          trigger: checkoutContext?.trigger,
+          originatingModel: checkoutContext?.originatingModel,
+        });
         const currentSearchParams = new URLSearchParams(window.location.search);
         currentSearchParams.set('checkout', pack.stripePriceId);
         const returnTo = `${window.location.pathname}?${currentSearchParams.toString()}`;
-        prepareAuthRedirect('checkout', { returnTo, context: { priceId: pack.stripePriceId } });
+        prepareAuthRedirect('checkout', {
+          returnTo,
+          context: {
+            priceId: pack.stripePriceId,
+            trigger: checkoutContext?.trigger,
+            originatingModel: checkoutContext?.originatingModel,
+          },
+        });
+        analytics.track('checkout_auth_required', {
+          priceId: pack.stripePriceId,
+          ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
+          ...(checkoutContext?.originatingModel
+            ? { originatingModel: checkoutContext.originatingModel }
+            : {}),
+        });
       }
       openAuthRequiredModal();
       return;
@@ -93,6 +117,14 @@ export function CreditPackSelector({
     setSelectedPack(pack.key);
     setSelectedPriceId(pack.stripePriceId);
     onPurchaseStart?.();
+    analytics.track('checkout_opened', {
+      priceId: pack.stripePriceId,
+      source: 'embedded_modal',
+      ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
+      ...(checkoutContext?.originatingModel
+        ? { originatingModel: checkoutContext.originatingModel }
+        : {}),
+    });
     setShowCheckoutModal(true);
   };
 

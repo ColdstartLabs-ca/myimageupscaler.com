@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import React from 'react';
 import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 
 interface IUpgradeCardProps {
   onUpgrade: () => void;
@@ -14,6 +15,7 @@ export const UpgradeCard: React.FC<IUpgradeCardProps> = ({ onUpgrade }) => {
   const { pricingRegion } = useRegionTier();
 
   const handleUpgradeClick = () => {
+    setCheckoutTrackingContext({ trigger: 'upgrade_card' });
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'upgrade_card',
       destination: 'upgrade_modal',

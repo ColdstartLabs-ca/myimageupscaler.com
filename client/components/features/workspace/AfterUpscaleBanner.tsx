@@ -6,6 +6,7 @@ import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 import { getVariant } from '@client/utils/abTest';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import type { QualityTier } from '@/shared/types/coreflow.types';
 
 const AFTER_UPSCALE_SESSION_KEY = 'upgrade_prompt_shown_after_upscale';
@@ -76,6 +77,10 @@ export const AfterUpscaleBanner = ({
       : 'Upgrade for unlimited.';
 
   const handleUpgradeClick = () => {
+    setCheckoutTrackingContext({
+      trigger: 'after_upscale',
+      originatingModel: currentModel,
+    });
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_upscale',
       imageVariant: currentModel,

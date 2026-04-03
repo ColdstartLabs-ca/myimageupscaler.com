@@ -125,6 +125,10 @@ import { useToastStore } from '@client/store/toastStore';
 import { useUserStore } from '@client/store/userStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { analytics } from '@client/analytics';
+import {
+  clearCheckoutTrackingContext,
+  setCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 
 const mockStripeService = vi.mocked(StripeService);
 const mockUseModalStore = vi.mocked(useModalStore);
@@ -142,6 +146,7 @@ describe('PricingCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     simulateDesktopViewport(); // Default to desktop for most tests
+    clearCheckoutTrackingContext();
 
     mockUseUserStore.mockReturnValue({
       isAuthenticated: true,
@@ -168,6 +173,7 @@ describe('PricingCard', () => {
 
   afterEach(() => {
     cleanup();
+    clearCheckoutTrackingContext();
     vi.useRealTimers();
   });
 
@@ -254,6 +260,31 @@ describe('PricingCard', () => {
     });
   });
 
+  it('includes stored prompt attribution in checkout_opened analytics', async () => {
+    simulateDesktopViewport();
+    const user = userEvent.setup();
+    setCheckoutTrackingContext({
+      trigger: 'model_gate',
+      originatingModel: 'ultra',
+    });
+
+    renderWithTranslations(<PricingCard {...defaultProps} />);
+
+    const subscribeButton = screen.getByText('Get Started');
+    await user.click(subscribeButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('checkout-modal')).toBeInTheDocument();
+    });
+
+    expect(mockAnalytics.track).toHaveBeenCalledWith('checkout_opened', {
+      priceId: 'price_pro_monthly_123',
+      source: 'embedded_modal',
+      trigger: 'model_gate',
+      originatingModel: 'ultra',
+    });
+  });
+
   it('shows loading state during checkout process', async () => {
     simulateDesktopViewport();
     const user = userEvent.setup();
@@ -302,7 +333,11 @@ describe('PricingCard', () => {
     await waitFor(() => {
       expect(mockPrepareAuthRedirect).toHaveBeenCalledWith('checkout', {
         returnTo: '/pricing?checkout=price_pro_monthly_123',
-        context: { priceId: 'price_pro_monthly_123', originatingModel: undefined },
+        context: {
+          priceId: 'price_pro_monthly_123',
+          trigger: undefined,
+          originatingModel: undefined,
+        },
       });
       expect(mockOpenAuthRequiredModal).toHaveBeenCalled();
       expect(mockShowToast).toHaveBeenCalledWith({
@@ -315,6 +350,41 @@ describe('PricingCard', () => {
     expect(mockAnalytics.track).toHaveBeenCalledWith('checkout_auth_required', {
       priceId: 'price_pro_monthly_123',
       originatingModel: undefined,
+    });
+  });
+
+  it('includes stored prompt attribution in checkout_auth_required analytics', async () => {
+    simulateDesktopViewport();
+    const user = userEvent.setup();
+    setCheckoutTrackingContext({
+      trigger: 'model_gate',
+      originatingModel: 'ultra',
+    });
+
+    mockUseUserStore.mockReturnValue({
+      isAuthenticated: false,
+    } as { isAuthenticated: boolean });
+
+    renderWithTranslations(<PricingCard {...defaultProps} />);
+
+    const subscribeButton = screen.getByText('Get Started');
+    await user.click(subscribeButton);
+
+    await waitFor(() => {
+      expect(mockPrepareAuthRedirect).toHaveBeenCalledWith('checkout', {
+        returnTo: '/pricing?checkout=price_pro_monthly_123',
+        context: {
+          priceId: 'price_pro_monthly_123',
+          trigger: 'model_gate',
+          originatingModel: 'ultra',
+        },
+      });
+    });
+
+    expect(mockAnalytics.track).toHaveBeenCalledWith('checkout_auth_required', {
+      priceId: 'price_pro_monthly_123',
+      trigger: 'model_gate',
+      originatingModel: 'ultra',
     });
   });
 
@@ -479,7 +549,11 @@ describe('PricingCard', () => {
       await waitFor(() => {
         expect(mockPrepareAuthRedirect).toHaveBeenCalledWith('checkout', {
           returnTo: '/pricing?checkout=price_pro_monthly_123',
-          context: { priceId: 'price_pro_monthly_123', originatingModel: undefined },
+          context: {
+            priceId: 'price_pro_monthly_123',
+            trigger: undefined,
+            originatingModel: undefined,
+          },
         });
       });
     });

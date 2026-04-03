@@ -5,6 +5,7 @@ import { analytics } from '@client/analytics/analyticsClient';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 import { getVariant } from '@client/utils/abTest';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 
 const AFTER_COMPARISON_LS_KEY = 'prompt_freq_after_comparison';
 
@@ -259,6 +260,10 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
             <button
               className="font-semibold text-secondary hover:text-secondary/80 underline underline-offset-2 transition-colors"
               onClick={() => {
+                setCheckoutTrackingContext({
+                  trigger: 'after_comparison',
+                  originatingModel: modelUsed,
+                });
                 analytics.track('upgrade_prompt_clicked', {
                   trigger: 'after_comparison',
                   imageVariant: modelUsed,

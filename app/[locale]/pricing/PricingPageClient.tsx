@@ -21,6 +21,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { useSearchParams } from 'next/navigation';
 
 interface IPricingPageClientProps {
@@ -263,6 +264,15 @@ export default function PricingPageClient({
 
     processedCheckoutParamRef.current = true;
     setPostAuthCheckoutPriceId(checkoutParam);
+    const checkoutContext = getCheckoutTrackingContext();
+    analytics.track('checkout_opened', {
+      priceId: checkoutParam,
+      source: 'post_auth_redirect',
+      ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
+      ...(checkoutContext?.originatingModel
+        ? { originatingModel: checkoutContext.originatingModel }
+        : {}),
+    });
 
     // Clean up the URL param without triggering a re-render
     const params = new URLSearchParams(window.location.search);

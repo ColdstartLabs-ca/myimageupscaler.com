@@ -30,6 +30,7 @@ import type {
   IConsentStatus,
   IReferralSource,
 } from '@server/analytics/types';
+import { isDevelopment, isTest } from '@shared/config/env';
 
 // Dynamically import Amplitude to code-split this heavy library (~40KB)
 let amplitudeModule: typeof import('@amplitude/analytics-browser') | null = null;
@@ -217,6 +218,74 @@ function getEntryPage(): string | null {
   }
 }
 
+function shouldLogDevAnalytics(): boolean {
+  return typeof window !== 'undefined' && isDevelopment() && !isTest();
+}
+
+function buildTrackedEventProperties(
+  properties?: Record<string, unknown>
+): Record<string, unknown> {
+  return {
+    ...properties,
+    session_id: getSessionId(),
+    timestamp: Date.now(),
+  };
+}
+
+function getCurrentUtmProperties(): Record<string, string> {
+  if (typeof window === 'undefined') return {};
+
+  const url = new URL(window.location.href);
+  const utmParams = {
+    utmSource: url.searchParams.get('utm_source') || undefined,
+    utmMedium: url.searchParams.get('utm_medium') || undefined,
+    utmCampaign: url.searchParams.get('utm_campaign') || undefined,
+    utmTerm: url.searchParams.get('utm_term') || undefined,
+    utmContent: url.searchParams.get('utm_content') || undefined,
+  };
+
+  return Object.fromEntries(
+    Object.entries(utmParams).filter(([, value]) => value !== undefined)
+  ) as Record<string, string>;
+}
+
+function buildPageViewProperties(
+  path: string,
+  properties?: Record<string, unknown>,
+  referralSource?: IReferralSource | null
+): Record<string, unknown> {
+  return {
+    path,
+    referrer: typeof document === 'undefined' ? undefined : document.referrer || undefined,
+    referral_source: referralSource || undefined,
+    entry_page: getEntryPage() || path,
+    ...getCurrentUtmProperties(),
+    ...properties,
+  };
+}
+
+function logDevTrack(name: IAnalyticsEvent['name'], properties: Record<string, unknown>): void {
+  if (!shouldLogDevAnalytics()) return;
+
+  console.info('[Analytics:dev] track', {
+    name,
+    properties,
+  });
+}
+
+async function getSafeIdentifyLogPayload(
+  identity: IUserIdentity & { email?: string }
+): Promise<Record<string, unknown>> {
+  const payload: Record<string, unknown> = { ...identity };
+
+  if (typeof identity.email === 'string') {
+    payload.email_hash = await hashEmail(identity.email);
+    delete payload.email;
+  }
+
+  return payload;
+}
+
 /**
  * Set the entry page if not already set.
  * Should be called on first page view.
@@ -359,6 +428,10 @@ export const analytics = {
    * Identify a user. Call after login/signup.
    */
   async identify(identity: IUserIdentity & { email?: string }): Promise<void> {
+    if (shouldLogDevAnalytics()) {
+      console.info('[Analytics:dev] identify', await getSafeIdentifyLogPayload(identity));
+    }
+
     if (!this.isEnabled() || !amplitudeModule) return;
 
     amplitudeModule.setUserId(identity.userId);
@@ -396,6 +469,10 @@ export const analytics = {
    * Clear user identity on logout.
    */
   reset(): void {
+    if (shouldLogDevAnalytics()) {
+      console.info('[Analytics:dev] reset');
+    }
+
     if (!isInitialized || !amplitudeModule) return;
     amplitudeModule.reset();
   },
@@ -404,13 +481,10 @@ export const analytics = {
    * Track an analytics event.
    */
   track(name: IAnalyticsEvent['name'], properties?: Record<string, unknown>): void {
-    if (!this.isEnabled() || !amplitudeModule) return;
+    const eventProperties = buildTrackedEventProperties(properties);
+    logDevTrack(name, eventProperties);
 
-    const eventProperties = {
-      ...properties,
-      session_id: getSessionId(),
-      timestamp: Date.now(),
-    };
+    if (!this.isEnabled() || !amplitudeModule) return;
 
     amplitudeModule.track(name, eventProperties);
   },
@@ -419,7 +493,15 @@ export const analytics = {
    * Track a page view event.
    */
   trackPageView(path: string, properties?: Record<string, unknown>): void {
-    if (!this.isEnabled() || !amplitudeModule) return;
+    const referralSource = getReferralSource();
+
+    if (!this.isEnabled() || !amplitudeModule) {
+      logDevTrack(
+        'page_view',
+        buildTrackedEventProperties(buildPageViewProperties(path, properties, referralSource))
+      );
+      return;
+    }
 
     // Initialize entry page for session attribution
     setEntryPageOnce(path);
@@ -447,19 +529,7 @@ export const analytics = {
     // Update last visit timestamp
     setLastVisit();
 
-    const url = new URL(window.location.href);
-    const utmParams = {
-      utmSource: url.searchParams.get('utm_source') || undefined,
-      utmMedium: url.searchParams.get('utm_medium') || undefined,
-      utmCampaign: url.searchParams.get('utm_campaign') || undefined,
-      utmTerm: url.searchParams.get('utm_term') || undefined,
-      utmContent: url.searchParams.get('utm_content') || undefined,
-    };
-
-    // Filter out undefined values
-    const filteredUtm = Object.fromEntries(
-      Object.entries(utmParams).filter(([, v]) => v !== undefined)
-    );
+    const filteredUtm = getCurrentUtmProperties();
 
     // Resolve first-touch attribution from URL (preferred), then localStorage, then middleware cookie
     const hasUtmInUrl = Object.keys(filteredUtm).length > 0;
@@ -510,21 +580,13 @@ export const analytics = {
     }
 
     // Get and persist referral source as first-touch user property
-    const referralSource = getReferralSource();
     if (referralSource) {
       const identifyEvent = new amplitudeModule.Identify();
       identifyEvent.setOnce('referral_source', referralSource);
       amplitudeModule.identify(identifyEvent);
     }
 
-    this.track('page_view', {
-      path,
-      referrer: document.referrer || undefined,
-      referral_source: referralSource || undefined,
-      entry_page: getEntryPage() || undefined,
-      ...filteredUtm,
-      ...properties,
-    });
+    this.track('page_view', buildPageViewProperties(path, properties, referralSource));
   },
 
   /**

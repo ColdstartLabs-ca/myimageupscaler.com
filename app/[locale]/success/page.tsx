@@ -5,6 +5,10 @@ import { QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
 import { analytics } from '@client/analytics/analyticsClient';
 import { StripeService } from '@client/services/stripeService';
 import { useUserStore } from '@client/store/userStore';
+import {
+  clearCheckoutTrackingContext,
+  getCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 import { clientEnv } from '@shared/config/env';
 import { AlertCircle, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -33,11 +37,10 @@ function SuccessContent(): JSX.Element {
     if (hasTrackedPurchase.current) return;
     hasTrackedPurchase.current = true;
 
-    // Read and clear originating model from sessionStorage (set when user clicked a locked model)
-    const model =
-      typeof window !== 'undefined' ? sessionStorage.getItem('checkout_originating_model') : null;
+    const checkoutContext = getCheckoutTrackingContext();
+    const model = checkoutContext?.originatingModel || null;
+    clearCheckoutTrackingContext();
     if (model) {
-      sessionStorage.removeItem('checkout_originating_model');
       setOriginatingModel(model);
     }
 

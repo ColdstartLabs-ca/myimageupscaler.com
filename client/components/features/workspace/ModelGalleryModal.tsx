@@ -9,6 +9,7 @@ import { ModelCard } from './ModelCard';
 import { ModelGallerySearch } from './ModelGallerySearch';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { getVariant } from '@client/utils/abTest';
 
 const MODEL_GATE_SESSION_KEY = 'upgrade_prompt_shown_model_gate';
@@ -144,10 +145,10 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         pricingRegion: pricingRegion || 'standard',
         copyVariant,
       });
-      // Store originating model so checkout_opened and purchase_confirmed can attribute correctly
-      if (typeof window !== 'undefined' && tier !== 'banner') {
-        sessionStorage.setItem('checkout_originating_model', tier);
-      }
+      setCheckoutTrackingContext({
+        trigger: 'model_gate',
+        originatingModel: tier !== 'banner' ? tier : undefined,
+      });
       onClose();
       onUpgrade();
     },

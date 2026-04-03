@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { Modal } from '@client/components/ui/Modal';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 import { getVariant } from '@client/utils/abTest';
 
@@ -80,6 +81,10 @@ export const PostDownloadPrompt = ({
   };
 
   const handleUpgradeClick = () => {
+    setCheckoutTrackingContext({
+      trigger: 'after_download',
+      originatingModel: currentModel,
+    });
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'after_download',
       imageVariant: currentModel,
