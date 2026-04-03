@@ -163,7 +163,7 @@ async function findQueueEntry(email: string, messageId?: string): Promise<{ id: 
 }
 
 /**
- * Handle unsubscribe event - update email preferences and track analytics
+ * Handle unsubscribe event - update email preferences, cancel pending queue, and track analytics
  */
 async function handleUnsubscribe(
   queueEntry: { id: string },
@@ -185,6 +185,26 @@ async function handleUnsubscribe(
     logger.error('Failed to update email preferences on unsubscribe', {
       error: updateError,
       queueId: queueEntry.id,
+    });
+  }
+
+  // Cancel any pending queue entries for this user to prevent future sends
+  const { data: cancelledEntries, error: cancelError } = await supabaseAdmin
+    .from('email_campaign_queue')
+    .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+    .eq('user_id', userId)
+    .eq('status', 'pending')
+    .select('id');
+
+  if (cancelError) {
+    logger.error('Failed to cancel pending queue entries on unsubscribe', {
+      error: cancelError,
+      userId,
+    });
+  } else if (cancelledEntries && cancelledEntries.length > 0) {
+    logger.info('Cancelled pending queue entries on unsubscribe', {
+      userId,
+      count: cancelledEntries.length,
     });
   }
 
