@@ -24,29 +24,19 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
   },
 }));
 
+vi.mock('@server/analytics', () => ({
+  trackServerEvent: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('@shared/config/env', () => ({
+  serverEnv: { AMPLITUDE_API_KEY: 'test-key' },
+}));
+
 import { POST } from '../../../app/api/account/delete/route';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
 const mockFrom = supabaseAdmin.from as ReturnType<typeof vi.fn>;
-
-function buildSelectChain(result: unknown) {
-  const chain = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue(result),
-    delete: vi.fn().mockReturnThis(),
-  };
-  return chain;
-}
-
-function buildDeleteChain(result: unknown = { error: null }) {
-  const chain = {
-    delete: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockResolvedValue(result),
-  };
-  return chain;
-}
 
 function makeRequest(userId?: string) {
   const headers: Record<string, string> = {};
@@ -55,6 +45,49 @@ function makeRequest(userId?: string) {
     method: 'POST',
     headers,
   });
+}
+
+/**
+ * Build a mock that handles the route's actual Supabase query patterns:
+ * - profiles: .select(...).eq('id', userId).single()
+ * - subscriptions: .select('status').eq('user_id', userId).maybeSingle()
+ * - credit_transactions: .select('amount').eq('user_id', userId) -> returns array
+ * - deletes: .delete().eq(column, userId)
+ */
+function setupMockFrom(opts: { stripeCustomerId?: string | null; createdAt?: string }) {
+  const { stripeCustomerId = null, createdAt = '2025-01-01' } = opts;
+  const callOrder: string[] = [];
+
+  mockFrom.mockImplementation((table: string) => {
+    return {
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
+            data:
+              table === 'profiles'
+                ? { stripe_customer_id: stripeCustomerId, created_at: createdAt }
+                : null,
+            error: null,
+          }),
+          maybeSingle: vi.fn().mockResolvedValue({
+            data: null,
+            error: null,
+          }),
+          // credit_transactions returns an array (no single/maybeSingle)
+          then: (resolve: (val: unknown) => void) => resolve({ data: [], error: null }),
+          [Symbol.toStringTag]: 'Promise',
+        }),
+      }),
+      delete: vi.fn().mockReturnValue({
+        eq: vi.fn().mockImplementation(() => {
+          callOrder.push(table);
+          return Promise.resolve({ error: null });
+        }),
+      }),
+    };
+  });
+
+  return { callOrder };
 }
 
 describe('POST /api/account/delete', () => {
@@ -73,14 +106,19 @@ describe('POST /api/account/delete', () => {
     const userId = 'user-no-stripe';
 
     mockFrom.mockImplementation((table: string) => {
-      const singleResult =
-        table === 'profiles'
-          ? { data: { stripe_customer_id: null }, error: null }
-          : { data: null, error: null };
       return {
-        select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue(singleResult),
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data:
+                table === 'profiles'
+                  ? { stripe_customer_id: null, created_at: '2025-01-01' }
+                  : null,
+              error: null,
+            }),
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          }),
+        }),
         delete: vi.fn().mockReturnValue({
           eq: vi.fn().mockResolvedValue({ error: null }),
         }),
@@ -112,62 +150,27 @@ describe('POST /api/account/delete', () => {
     (stripe.customers.del as ReturnType<typeof vi.fn>).mockResolvedValue({});
 
     mockFrom.mockImplementation((table: string) => {
-      if (table === 'profiles') {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockImplementation(() => ({
-            single: vi
-              .fn()
-              .mockResolvedValue({ data: { stripe_customer_id: customerId }, error: null }),
-          })),
-          delete: vi.fn().mockReturnThis(),
-        };
-      }
       return {
-        delete: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockResolvedValue({ error: null }),
-      };
-    });
-
-    // Handle profiles.delete().eq() separately
-    let profileDeleteCalled = false;
-    mockFrom.mockImplementation((table: string) => {
-      if (table === 'profiles') {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockImplementation(() => ({
-            single: vi
-              .fn()
-              .mockResolvedValue({ data: { stripe_customer_id: customerId }, error: null }),
-          })),
-          delete: vi.fn().mockReturnThis(),
-        };
-      }
-      return {
-        delete: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockResolvedValue({ error: null }),
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data:
+                table === 'profiles'
+                  ? { stripe_customer_id: customerId, created_at: '2025-01-01' }
+                  : null,
+              error: null,
+            }),
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          }),
+        }),
+        delete: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ error: null }),
+        }),
       };
     });
 
     (supabaseAdmin.auth.admin.deleteUser as ReturnType<typeof vi.fn>).mockResolvedValue({
       error: null,
-    });
-
-    // Reimplement: need profiles.delete().eq() to work too
-    mockFrom.mockImplementation((table: string) => {
-      const eqResult = { error: null };
-      return {
-        select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockImplementation(() => ({
-          single: vi.fn().mockResolvedValue({
-            data: table === 'profiles' ? { stripe_customer_id: customerId } : null,
-            error: null,
-          }),
-          ...eqResult,
-        })),
-        delete: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({ data: null, error: null }),
-      };
     });
 
     const res = await POST(makeRequest(userId));
@@ -186,16 +189,24 @@ describe('POST /api/account/delete', () => {
 
     mockFrom.mockImplementation((table: string) => {
       return {
-        select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockImplementation(() => ({
-          single: vi.fn().mockResolvedValue({ data: { stripe_customer_id: null }, error: null }),
-        })),
-        delete: vi.fn().mockImplementation(() => ({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data:
+                table === 'profiles'
+                  ? { stripe_customer_id: null, created_at: '2025-01-01' }
+                  : null,
+              error: null,
+            }),
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          }),
+        }),
+        delete: vi.fn().mockReturnValue({
           eq: vi.fn().mockImplementation(() => {
             callOrder.push(table);
             return Promise.resolve({ error: null });
           }),
-        })),
+        }),
       };
     });
 
@@ -206,10 +217,13 @@ describe('POST /api/account/delete', () => {
 
     await POST(makeRequest(userId));
 
-    // credit_transactions, subscriptions, email_preferences deleted before profiles
-    expect(callOrder.indexOf('credit_transactions')).toBeLessThan(callOrder.indexOf('profiles'));
-    expect(callOrder.indexOf('subscriptions')).toBeLessThan(callOrder.indexOf('profiles'));
-    expect(callOrder.indexOf('email_preferences')).toBeLessThan(callOrder.indexOf('profiles'));
+    // The route uses Promise.allSettled for credit_transactions, subscriptions, email_preferences
+    // so they run in parallel before profiles. Then profiles before auth.users.
+    expect(callOrder).toContain('credit_transactions');
+    expect(callOrder).toContain('subscriptions');
+    expect(callOrder).toContain('email_preferences');
+    expect(callOrder).toContain('profiles');
+    expect(callOrder).toContain('auth.users');
     // profiles deleted before auth user
     expect(callOrder.indexOf('profiles')).toBeLessThan(callOrder.indexOf('auth.users'));
   });

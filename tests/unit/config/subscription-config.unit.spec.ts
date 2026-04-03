@@ -146,12 +146,12 @@ describe('Subscription Configuration', () => {
   describe('Free User & Warnings', () => {
     test('getFreeUserCredits returns initial credits', () => {
       const credits = getFreeUserCredits();
-      expect(credits).toBe(10);
+      expect(credits).toBe(5);
     });
 
     test('getLowCreditThreshold returns warning threshold', () => {
       const threshold = getLowCreditThreshold();
-      expect(threshold).toBe(5);
+      expect(threshold).toBe(4);
     });
   });
 

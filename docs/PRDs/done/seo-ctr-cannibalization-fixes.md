@@ -13,6 +13,7 @@
 **Source:** `docs/seo/traffic-growth-opportunities-2026-q1.md` (Ahrefs + GSC combined analysis, April 2026)
 
 **Files Analyzed:**
+
 - `app/[locale]/blog/[slug]/page.tsx` — blog metadata generation (reads `seo_title`, `seo_description` from Supabase)
 - `app/seo/data/tools.json` — tools pSEO data (metaTitle, metaDescription)
 - `locales/es/tools.json` — Spanish tool translations
@@ -24,6 +25,7 @@
 - `server/services/blog.service.ts` — blog service (DB + static merge)
 
 **Current Behavior:**
+
 - Blog `generateMetadata` uses `post.seo_title || post.title` and `post.seo_description || post.description` from the Supabase `blog_posts` table
 - `/tools/ai-image-upscaler` has metaTitle `"AI Image Upscaler - Enlarge to 4K Without Quality Loss"` — generic, no "free" signal
 - Multiple blog posts compete for the same "best free ai upscaler 2026" cluster
@@ -36,14 +38,17 @@
 ### Integration Points Checklist
 
 **How will this feature be reached?**
+
 - [x] Entry point: Google SERPs — improved titles/descriptions shown to users in search results
 - [x] Caller file: `app/[locale]/blog/[slug]/page.tsx` reads `seo_title`/`seo_description` from DB
 - [x] Registration/wiring: Supabase `blog_posts` table rows + middleware redirect map + pSEO JSON data
 
 **Is this user-facing?**
+
 - [x] YES — SERP appearance changes (title tags, meta descriptions). No UI component changes.
 
 **Full user flow:**
+
 1. Google user searches "best free ai image upscaler 2026"
 2. Google renders our title tag and meta description in SERP
 3. User sees a compelling, specific title and clicks
@@ -55,18 +60,21 @@
 ## 2. Solution
 
 **Approach:**
+
 - Update `seo_title` and `seo_description` fields in Supabase `blog_posts` table for 5 high-impression blog posts
 - Update `metaTitle` and `metaDescription` in `app/seo/data/tools.json` for `/tools/ai-image-upscaler`
 - Add 301 redirects in `middleware.ts` for 3 cannibalized blog post pairs
 - Add missing blog post to sitemap (verify `/blog/photo-enhancement-upscaling-vs-quality` is not in the blocked list)
 
 **Key Decisions:**
+
 - Blog metadata lives in Supabase, not in static JSON — updates are DB-side via SQL
 - pSEO tool metadata lives in `app/seo/data/tools.json` — file edit
 - Redirects go in the existing `redirectMap` in `middleware.ts`
 - No content changes — purely metadata/redirect/sitemap fixes
 
 **Data Changes:**
+
 - UPDATE rows in `blog_posts` table (seo_title, seo_description columns)
 - No schema migrations needed
 
@@ -95,6 +103,7 @@ flowchart LR
 **User-visible outcome:** 5 blog posts show improved titles and descriptions in Google SERPs within 1-2 weeks.
 
 **Files (1):**
+
 - Supabase `blog_posts` table — UPDATE seo_title, seo_description for 5 slugs
 
 **Implementation:**
@@ -157,6 +166,7 @@ WHERE slug = 'best-ai-image-quality-enhancer-free';
 | `tests/unit/seo/blog-ctr-fixes.unit.spec.ts` | `should have seo_description under 160 characters` | All new descriptions <= 160 chars |
 
 **Verification Plan:**
+
 1. After SQL execution, verify with: `SELECT slug, seo_title, seo_description FROM blog_posts WHERE slug IN ('best-free-ai-image-upscaler-2026-tested-compared', 'upscale-image-for-print-300-dpi-guide', 'how-to-make-png-background-transparent-free', 'ai-image-upscaling-vs-sharpening-explained', 'best-ai-image-quality-enhancer-free');`
 2. Visit each URL and verify `<title>` and `<meta name="description">` in page source
 3. `yarn test` on affected test files
@@ -169,6 +179,7 @@ WHERE slug = 'best-ai-image-quality-enhancer-free';
 **User-visible outcome:** `/tools/ai-image-upscaler` shows a more compelling title in SERPs with "Free" and capability signals.
 
 **Files (1):**
+
 - `app/seo/data/tools.json` — update metaTitle and metaDescription for `ai-image-upscaler`
 
 **Implementation:**
@@ -186,6 +197,7 @@ WHERE slug = 'best-ai-image-quality-enhancer-free';
 | `tests/unit/seo/tools-metadata.unit.spec.ts` | `should have metaDescription under 160 chars for ai-image-upscaler` | Length check |
 
 **Verification Plan:**
+
 1. `yarn verify`
 2. Visit `/tools/ai-image-upscaler` and check `<title>` in page source
 
@@ -196,6 +208,7 @@ WHERE slug = 'best-ai-image-quality-enhancer-free';
 **User-visible outcome:** Cannibalized blog posts 301-redirect to the canonical version. Google consolidates ranking signals within 2-4 weeks.
 
 **Files (2):**
+
 - `middleware.ts` — add 3 entries to `redirectMap`
 - `app/seo/sitemap-blog.xml/route.ts` (or equivalent blog sitemap) — add `photo-enhancement-upscaling-vs-quality` to blocked list (it redirects, so it shouldn't be in the sitemap)
 
@@ -226,6 +239,7 @@ WHERE slug = 'best-ai-image-quality-enhancer-free';
 | `tests/unit/seo/blog-sitemap.unit.spec.ts` | `should not include redirected blog slugs in sitemap` | Verify the 3 slugs are excluded from sitemap XML output |
 
 **Verification Plan:**
+
 1. `curl -I https://localhost:3000/blog/photo-enhancement-upscaling-vs-quality` — verify 301 to `/blog/ai-image-upscaling-vs-sharpening-explained`
 2. `curl -I https://localhost:3000/blog/best-free-ai-image-upscaler-tools-2026` — verify 301
 3. `curl -I https://localhost:3000/blog/restore-old-photos-online` — verify 301 to `/use-cases/old-photo-restoration`
@@ -237,12 +251,12 @@ WHERE slug = 'best-ai-image-quality-enhancer-free';
 
 ## 4. Summary of All Changes
 
-| What | Where | Change |
-|---|---|---|
-| Blog SEO titles/descriptions | Supabase `blog_posts` table | UPDATE 5 rows |
-| Tool page metadata | `app/seo/data/tools.json` | Edit 1 entry (ai-image-upscaler) |
-| Cannibalization redirects | `middleware.ts` redirectMap | Add 3 entries |
-| Sitemap cleanup | Blog sitemap route | Block 3 redirected slugs |
+| What                         | Where                       | Change                           |
+| ---------------------------- | --------------------------- | -------------------------------- |
+| Blog SEO titles/descriptions | Supabase `blog_posts` table | UPDATE 5 rows                    |
+| Tool page metadata           | `app/seo/data/tools.json`   | Edit 1 entry (ai-image-upscaler) |
+| Cannibalization redirects    | `middleware.ts` redirectMap | Add 3 entries                    |
+| Sitemap cleanup              | Blog sitemap route          | Block 3 redirected slugs         |
 
 **Total files touched:** 3 (tools.json, middleware.ts, blog sitemap route) + 1 DB update
 
@@ -250,13 +264,13 @@ WHERE slug = 'best-ai-image-quality-enhancer-free';
 
 ## 5. Expected Impact
 
-| Metric | Current (90 days) | Expected After (90 days) | Basis |
-|---|---|---|---|
-| Blog comparison post clicks | 6 | ~600-800 | 15,826 impressions x 5% CTR at pos 7.5 |
-| /tools/ai-image-upscaler clicks | 7 | ~50-100 | 1,139 impressions x 5-8% CTR at pos 2.2 |
-| Print/DPI guide clicks | 2 | ~40-80 | 2,117 impressions x 2-4% CTR at pos 13 |
-| Background transparent post | 0 | ~20-40 | 452 impressions x 5% CTR at pos 9 |
-| Net new non-branded clicks/month | ~75 | ~300-400 | Conservative estimate |
+| Metric                           | Current (90 days) | Expected After (90 days) | Basis                                   |
+| -------------------------------- | ----------------- | ------------------------ | --------------------------------------- |
+| Blog comparison post clicks      | 6                 | ~600-800                 | 15,826 impressions x 5% CTR at pos 7.5  |
+| /tools/ai-image-upscaler clicks  | 7                 | ~50-100                  | 1,139 impressions x 5-8% CTR at pos 2.2 |
+| Print/DPI guide clicks           | 2                 | ~40-80                   | 2,117 impressions x 2-4% CTR at pos 13  |
+| Background transparent post      | 0                 | ~20-40                   | 452 impressions x 5% CTR at pos 9       |
+| Net new non-branded clicks/month | ~75               | ~300-400                 | Conservative estimate                   |
 
 ---
 
@@ -275,6 +289,7 @@ WHERE slug = 'best-ai-image-quality-enhancer-free';
 ## 7. Out of Scope (for separate PRDs)
 
 These were identified in the traffic report but are larger efforts:
+
 - Spanish `/es/tools/remove-bg` content optimization (separate content PRD)
 - Image search alt-text fixes across the site
 - New competitor "vs" pages
