@@ -12,6 +12,9 @@
  *   https://myimageupscaler-outrank-proxy.<account>.workers.dev/
  */
 
+/* eslint-disable no-undef */ // Cloudflare Workers runtime types (Fetcher, Request, Response, etc.)
+/* eslint-disable import/no-default-export */ // Cloudflare Workers require default export
+
 interface IEnv {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   MAIN_WORKER: any; // Fetcher type is Cloudflare-specific, not available in standard TS
