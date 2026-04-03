@@ -15,6 +15,7 @@ const mockTrack = analytics.track as unknown as ReturnType<typeof vi.fn>;
 
 // Mock the engagement discount store
 const mockDismissToast = vi.fn();
+const mockSetHasTrackedImpression = vi.fn();
 vi.mock('@client/store/engagementDiscountStore', () => ({
   useEngagementDiscountStore: vi.fn(() => ({
     offer: {
@@ -25,6 +26,8 @@ vi.mock('@client/store/engagementDiscountStore', () => ({
     showToast: true,
     dismissToast: mockDismissToast,
     countdownEndTime: Date.now() + 30 * 60 * 1000, // 30 minutes from now
+    hasTrackedImpression: false,
+    setHasTrackedImpression: mockSetHasTrackedImpression,
   })),
 }));
 
@@ -51,6 +54,7 @@ describe('EngagementDiscountBanner - Fix 1: Mobile Visibility', () => {
   beforeEach(() => {
     mockDismissToast.mockClear();
     mockTrack.mockClear();
+    mockSetHasTrackedImpression.mockClear();
   });
 
   afterEach(() => {
@@ -179,6 +183,48 @@ describe('EngagementDiscountBanner - Fix 1: Mobile Visibility', () => {
         timeRemainingSeconds: expect.any(Number),
       });
       expect(onClaimDiscount).toHaveBeenCalled();
+    });
+
+    test('should track toast_shown impression and set hasTrackedImpression', async () => {
+      const { useEngagementDiscountStore } = await import('@client/store/engagementDiscountStore');
+      (useEngagementDiscountStore as ReturnType<typeof vi.fn>).mockReturnValue({
+        offer: { discountPercent: 20, originalPriceCents: 999, discountedPriceCents: 799 },
+        showToast: true,
+        dismissToast: mockDismissToast,
+        countdownEndTime: Date.now() + 30 * 60 * 1000,
+        hasTrackedImpression: false,
+        setHasTrackedImpression: mockSetHasTrackedImpression,
+      });
+
+      render(React.createElement(EngagementDiscountBanner, { onClaimDiscount: vi.fn() }));
+
+      await waitFor(() => {
+        expect(mockTrack).toHaveBeenCalledWith('engagement_discount_toast_shown', {
+          discountPercent: 20,
+          originalPriceCents: 999,
+          discountedPriceCents: 799,
+        });
+      });
+      expect(mockSetHasTrackedImpression).toHaveBeenCalledWith(true);
+    });
+
+    test('should NOT track toast_shown when hasTrackedImpression is true', async () => {
+      const { useEngagementDiscountStore } = await import('@client/store/engagementDiscountStore');
+      (useEngagementDiscountStore as ReturnType<typeof vi.fn>).mockReturnValue({
+        offer: { discountPercent: 20, originalPriceCents: 999, discountedPriceCents: 799 },
+        showToast: true,
+        dismissToast: mockDismissToast,
+        countdownEndTime: Date.now() + 30 * 60 * 1000,
+        hasTrackedImpression: true,
+        setHasTrackedImpression: mockSetHasTrackedImpression,
+      });
+
+      render(React.createElement(EngagementDiscountBanner, { onClaimDiscount: vi.fn() }));
+
+      await waitFor(() => {
+        expect(mockTrack).not.toHaveBeenCalledWith('engagement_discount_toast_shown', expect.anything());
+      });
+      expect(mockSetHasTrackedImpression).not.toHaveBeenCalled();
     });
   });
 

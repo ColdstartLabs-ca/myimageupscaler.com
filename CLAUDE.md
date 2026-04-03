@@ -14,6 +14,7 @@ Check `.claude/skills/` for relevant patterns.
 ## Before Starting
 
 - If something is unclear or vague, ask AskUserQuestion before implementing.
+- Use green/red TDD. Prove changes actually work and don't break existing functionality.
 
 ## Before Finishing
 

@@ -33,6 +33,8 @@ export interface IEngagementDiscountState {
   wasDismissed: boolean;
   /** Countdown end time (timestamp in ms) */
   countdownEndTime: number | null;
+  /** Whether the toast_shown impression has been tracked this session */
+  hasTrackedImpression: boolean;
 
   // Actions
   setSignals: (
@@ -44,6 +46,7 @@ export interface IEngagementDiscountState {
   setOffer: (offer: IDiscountOffer | null) => void;
   setWasDismissed: (dismissed: boolean) => void;
   setCountdownEndTime: (time: number | null) => void;
+  setHasTrackedImpression: (tracked: boolean) => void;
   dismissToast: () => void;
   reset: () => void;
 }
@@ -59,6 +62,7 @@ const initialState = {
   offer: null,
   wasDismissed: false,
   countdownEndTime: null,
+  hasTrackedImpression: false,
 };
 
 /**
@@ -89,6 +93,8 @@ export const useEngagementDiscountStore = create<IEngagementDiscountState>()(
 
       setCountdownEndTime: time => set({ countdownEndTime: time }),
 
+      setHasTrackedImpression: tracked => set({ hasTrackedImpression: tracked }),
+
       dismissToast: () =>
         set({
           showToast: false,
@@ -105,6 +111,8 @@ export const useEngagementDiscountStore = create<IEngagementDiscountState>()(
         offer: state.offer,
         wasDismissed: state.wasDismissed,
         countdownEndTime: state.countdownEndTime,
+        hasCheckedEligibility: state.hasCheckedEligibility,
+        hasTrackedImpression: state.hasTrackedImpression,
       }),
     }
   )

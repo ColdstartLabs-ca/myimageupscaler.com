@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "lastScan": "2026-04-02T02:38:29.195Z",
+  "lastScan": "2026-04-03T02:36:50.067Z",
   "items": {
     "7ae52884": {
       "title": "Audit Finding 1: architecture_violation (medium) at shared/config/subscription.config.ts:318",
@@ -21,6 +21,11 @@
       "title": "Audit Finding 4: unsafe_assertion (low) at lib/seo/data-loader.ts:51-94",
       "prdFile": "04-audit-finding-4-unsafe-assertion-low-at-lib-seo-data-loader-ts-51-94.md",
       "createdAt": "2026-04-02T02:38:29.195Z"
+    },
+    "d426e881": {
+      "title": "Audit Finding 5: unsafe_assertion (low) at shared/config/subscription.config.ts:318",
+      "prdFile": "05-audit-finding-5-unsafe-assertion-low-at-shared-config-subscription-config-ts-318.md",
+      "createdAt": "2026-04-03T02:36:50.067Z"
     }
   }
 }

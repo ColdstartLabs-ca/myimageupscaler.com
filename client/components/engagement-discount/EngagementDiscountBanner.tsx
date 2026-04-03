@@ -29,7 +29,7 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
   onClaimDiscount,
   className,
 }) => {
-  const { offer, showToast, dismissToast, countdownEndTime } = useEngagementDiscountStore();
+  const { offer, showToast, dismissToast, countdownEndTime, hasTrackedImpression, setHasTrackedImpression } = useEngagementDiscountStore();
 
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
@@ -86,16 +86,17 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
     }
   }, [showToast, isDismissed]);
 
-  // Track impression once per offer
+  // Track impression once per session — guard prevents re-firing on remount or offer reference changes
   useEffect(() => {
-    if (showToast && offer) {
+    if (showToast && offer && !hasTrackedImpression) {
       analytics.track('engagement_discount_toast_shown', {
         discountPercent: offer.discountPercent,
         originalPriceCents: offer.originalPriceCents,
         discountedPriceCents: offer.discountedPriceCents,
       });
+      setHasTrackedImpression(true);
     }
-  }, [showToast, offer]);
+  }, [showToast, offer, hasTrackedImpression, setHasTrackedImpression]);
 
   const handleDismiss = useCallback(() => {
     setIsVisible(false);
