@@ -1,5 +1,6 @@
 'use client';
 
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { useEffect, useState } from 'react';
 import { cn } from '@client/utils/cn';
 import { analytics } from '@client/analytics';
@@ -11,8 +12,8 @@ const CELEBRATION_SHOWN_KEY = 'miu_celebration_shown';
 const ONBOARDING_STARTED_KEY = 'miu_onboarding_started';
 
 export interface IFirstDownloadCelebrationProps {
-  /** Whether the is a free user (to show premium upsell) */
-  isFreeUser: boolean;
+  /** User segment for determining messaging */
+  userSegment: UserSegment;
   /** Callback when user wants to upload another image */
   onUploadAnother?: () => void;
   /** Callback when celebration is dismissed */
@@ -44,9 +45,10 @@ interface IConfettiPiece {
  * - "Upload Another" and "See Premium Plans" buttons
  * - Only shows once per user (localStorage flag)
  * - Tracks `onboarding_completed` event
+ * - Segment-aware: credit_purchaser sees subscription messaging
  */
 export const FirstDownloadCelebration = ({
-  isFreeUser,
+  userSegment,
   onUploadAnother,
   onDismiss,
   onUpgrade,
@@ -54,6 +56,8 @@ export const FirstDownloadCelebration = ({
 }: IFirstDownloadCelebrationProps): JSX.Element | null => {
   const t = useTranslations('workspace.progressCelebration');
   const [isVisible, setIsVisible] = useState(true);
+  const isCreditPurchaser = userSegment === 'credit_purchaser';
+  const showUpgradePrompt = userSegment !== 'subscriber';
 
   // Check if celebration was already shown
   const shouldShow = () => {
@@ -72,6 +76,7 @@ export const FirstDownloadCelebration = ({
     analytics.track('onboarding_completed', {
       totalDurationMs,
       source,
+      userSegment,
     });
 
     // Mark celebration as shown
@@ -114,8 +119,9 @@ export const FirstDownloadCelebration = ({
     setCheckoutTrackingContext({ trigger: 'celebration' });
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'celebration',
-      destination: 'purchase_modal',
-      currentPlan: isFreeUser ? 'free' : 'paid',
+      destination: isCreditPurchaser ? 'billing_subscription_tab' : 'purchase_modal',
+      currentPlan: userSegment,
+      userSegment,
     });
 
     handleDismiss();
@@ -207,7 +213,7 @@ export const FirstDownloadCelebration = ({
             {t('uploadAnother')}
           </button>
 
-          {isFreeUser && (
+          {showUpgradePrompt && (
             <button
               onClick={handleViewPlans}
               className={cn(
@@ -218,14 +224,18 @@ export const FirstDownloadCelebration = ({
                 'shadow-lg shadow-accent/20'
               )}
             >
-              {t('seePlans')}
+              {isCreditPurchaser
+                ? t.has('subscribeCta')
+                  ? t('subscribeCta')
+                  : 'Subscribe & Save'
+                : t('seePlans')}
               <ArrowRight size={18} />
             </button>
           )}
         </div>
 
-        {/* Skip text for free users */}
-        {isFreeUser && <p className="mt-4 text-sm text-text-muted">{t('skipText')}</p>}
+        {/* Skip text for free and credit_purchaser users */}
+        {showUpgradePrompt && <p className="mt-4 text-sm text-text-muted">{t('skipText')}</p>}
       </div>
     </div>
   );

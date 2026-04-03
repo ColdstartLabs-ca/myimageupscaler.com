@@ -1,6 +1,7 @@
 'use client';
 
 import { QUALITY_TIER_CONFIG, QualityTier } from '@/shared/types/coreflow.types';
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { getCreditsForTierAtScale } from '@shared/config/subscription.utils';
 import { LayoutGrid } from 'lucide-react';
@@ -19,6 +20,7 @@ export interface IQualityTierSelectorProps {
   onChange: (tier: QualityTier) => void;
   disabled?: boolean;
   isFreeUser?: boolean;
+  userSegment: UserSegment;
   onUpgrade: () => void;
 }
 
@@ -29,6 +31,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
   onChange,
   disabled = false,
   isFreeUser = false,
+  userSegment,
   onUpgrade,
 }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
@@ -59,7 +62,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
     analytics.track('model_gallery_opened', {
       currentTier: tier,
       isDefault: FREE_TIERS.includes(tier) && tier === 'quick',
-      isFreeUser,
+      userSegment,
     });
 
     setIsGalleryOpen(true);
@@ -107,6 +110,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         onClose={() => setIsGalleryOpen(false)}
         currentTier={tier}
         isFreeUser={isFreeUser}
+        userSegment={userSegment}
         onSelect={onChange}
         onUpgrade={onUpgrade}
       />

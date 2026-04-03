@@ -2,6 +2,14 @@
 
 export type SubscriptionStatus = 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid';
 
+/**
+ * User segment for upgrade funnel differentiation
+ * - 'free': Never purchased anything (true free user)
+ * - 'credit_purchaser': Has bought credits but no active subscription
+ * - 'subscriber': Has an active subscription
+ */
+export type UserSegment = 'free' | 'credit_purchaser' | 'subscriber';
+
 export type WebhookEventStatus = 'processing' | 'completed' | 'failed';
 
 export interface IIdempotencyResult {

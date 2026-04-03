@@ -1,0 +1,204 @@
+import { test, expect } from '../test-fixtures';
+import { setupAuthenticatedStateWithSupabase } from '../helpers/auth-helpers';
+import { mockStripeSubscriptionEndpoints } from '../helpers/supabase-mock';
+
+/**
+ * Segment-Aware Upgrade Funnel E2E Tests
+ *
+ * Tests for PRD #40 - Segment-aware upgrade funnel
+ * Verifies that different user segments (free, credit_purchaser, subscriber)
+ * can access their respective pages and see appropriate content.
+ *
+ * Key features tested:
+ * 1. Free users can access billing page
+ * 2. Credit purchasers can access billing page
+ * 3. Subscribers can access billing page
+ * 4. Pages load correctly for all segments
+ */
+
+test.describe('Segment-Aware Upgrade Funnel', () => {
+  test.describe('Free User Segment', () => {
+    test.beforeEach(async ({ page }) => {
+      // Free user: no subscription, no purchased credits, no stripe_customer_id
+      await setupAuthenticatedStateWithSupabase(page, {
+        id: 'test-free-user',
+        email: 'free-user@example.com',
+        role: 'user',
+        provider: 'email',
+        profile: {
+          id: 'test-free-user',
+          email: 'free-user@example.com',
+          role: 'user',
+          subscription_credits_balance: 5,
+          purchased_credits_balance: 0,
+        },
+        subscription: null,
+      });
+    });
+
+    test('billing page loads for free users', async ({ page }) => {
+      await page.goto('/dashboard/billing');
+      await page.waitForLoadState('domcontentloaded');
+
+      // Wait for page to render
+      await page.waitForTimeout(2000);
+
+      // Take screenshot
+      await page.screenshot({
+        path: 'tests/e2e/screenshots/free-user-billing.png',
+        fullPage: true,
+      });
+
+      // Verify page loaded (check for any main content)
+      const bodyText = await page.locator('body').innerText();
+      expect(bodyText.length).toBeGreaterThan(100);
+    });
+
+    test('workspace page loads for free users', async ({ page }) => {
+      await page.goto('/workspace');
+      await page.waitForLoadState('domcontentloaded');
+
+      // Wait for page to render
+      await page.waitForTimeout(2000);
+
+      // Take screenshot
+      await page.screenshot({
+        path: 'tests/e2e/screenshots/free-user-workspace.png',
+        fullPage: true,
+      });
+
+      // Verify page loaded
+      const bodyText = await page.locator('body').innerText();
+      expect(bodyText.length).toBeGreaterThan(100);
+    });
+  });
+
+  test.describe('Credit Purchaser Segment', () => {
+    test.beforeEach(async ({ page }) => {
+      // Credit purchaser: has purchased credits but no subscription
+      await setupAuthenticatedStateWithSupabase(page, {
+        id: 'test-credit-purchaser',
+        email: 'credit-purchaser@example.com',
+        role: 'user',
+        provider: 'email',
+        profile: {
+          id: 'test-credit-purchaser',
+          email: 'credit-purchaser@example.com',
+          role: 'user',
+          subscription_credits_balance: 0,
+          purchased_credits_balance: 50,
+        },
+        subscription: null,
+      });
+
+      // Mock Stripe endpoints with stripe customer ID to simulate past purchaser
+      await mockStripeSubscriptionEndpoints(page, {
+        tier: 'hobby',
+        credits: 0,
+        status: 'active',
+        stripeCustomerId: 'cus_test123',
+      });
+    });
+
+    test('billing page loads for credit purchasers', async ({ page }) => {
+      await page.goto('/dashboard/billing');
+      await page.waitForLoadState('domcontentloaded');
+
+      // Wait for page to render
+      await page.waitForTimeout(2000);
+
+      // Take screenshot
+      await page.screenshot({
+        path: 'tests/e2e/screenshots/credit-purchaser-billing.png',
+        fullPage: true,
+      });
+
+      // Verify page loaded
+      const bodyText = await page.locator('body').innerText();
+      expect(bodyText.length).toBeGreaterThan(100);
+    });
+
+    test('workspace page loads for credit purchasers', async ({ page }) => {
+      await page.goto('/workspace');
+      await page.waitForLoadState('domcontentloaded');
+
+      // Wait for page to render
+      await page.waitForTimeout(2000);
+
+      // Take screenshot
+      await page.screenshot({
+        path: 'tests/e2e/screenshots/credit-purchaser-workspace.png',
+        fullPage: true,
+      });
+
+      // Verify page loaded
+      const bodyText = await page.locator('body').innerText();
+      expect(bodyText.length).toBeGreaterThan(100);
+    });
+  });
+
+  test.describe('Subscriber Segment', () => {
+    test.beforeEach(async ({ page }) => {
+      // Subscriber: has active subscription
+      await setupAuthenticatedStateWithSupabase(page, {
+        id: 'test-subscriber',
+        email: 'subscriber@example.com',
+        role: 'user',
+        provider: 'email',
+        profile: {
+          id: 'test-subscriber',
+          email: 'subscriber@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+        subscription: null,
+      });
+
+      // Mock Stripe endpoints with active subscription
+      await mockStripeSubscriptionEndpoints(page, {
+        tier: 'starter',
+        credits: 100,
+        status: 'active',
+        priceId: 'price_starter_monthly',
+        stripeCustomerId: 'cus_subscriber123',
+      });
+    });
+
+    test('billing page loads for subscribers', async ({ page }) => {
+      await page.goto('/dashboard/billing');
+      await page.waitForLoadState('domcontentloaded');
+
+      // Wait for page to render
+      await page.waitForTimeout(2000);
+
+      // Take screenshot
+      await page.screenshot({
+        path: 'tests/e2e/screenshots/subscriber-billing.png',
+        fullPage: true,
+      });
+
+      // Verify page loaded
+      const bodyText = await page.locator('body').innerText();
+      expect(bodyText.length).toBeGreaterThan(100);
+    });
+
+    test('workspace page loads for subscribers', async ({ page }) => {
+      await page.goto('/workspace');
+      await page.waitForLoadState('domcontentloaded');
+
+      // Wait for page to render
+      await page.waitForTimeout(2000);
+
+      // Take screenshot
+      await page.screenshot({
+        path: 'tests/e2e/screenshots/subscriber-workspace.png',
+        fullPage: true,
+      });
+
+      // Verify page loaded
+      const bodyText = await page.locator('body').innerText();
+      expect(bodyText.length).toBeGreaterThan(100);
+    });
+  });
+});
