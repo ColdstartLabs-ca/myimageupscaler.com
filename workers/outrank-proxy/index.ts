@@ -12,11 +12,14 @@
  *   https://myimageupscaler-outrank-proxy.<account>.workers.dev/
  */
 
+/* global Fetcher */
+
 interface IEnv {
   MAIN_WORKER: Fetcher;
   ALLOWED_IP: string;
 }
 
+// eslint-disable-next-line import/no-default-export
 export default {
   async fetch(request: Request, env: IEnv): Promise<Response> {
     // Health check
