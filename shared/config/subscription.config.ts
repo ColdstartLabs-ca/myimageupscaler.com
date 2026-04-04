@@ -6,7 +6,7 @@
  * configuration values are defined. All other files should import from here.
  */
 
-import { clientEnv } from './env';
+import { clientEnv, serverEnv } from './env';
 import { CREDIT_COSTS } from './credits.config';
 import type { ISubscriptionConfig } from './subscription.types';
 import { TIMEOUTS } from './timeouts.config';
@@ -313,10 +313,8 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
  * to allow for future environment overrides
  */
 export function getSubscriptionConfig(): ISubscriptionConfig {
-  // Check for environment variable overrides
-  // Note: This is an optional environment variable that may not be defined in the type system
-  const configOverride = (process.env as unknown as { SUBSCRIPTION_CONFIG_OVERRIDE?: string })
-    .SUBSCRIPTION_CONFIG_OVERRIDE;
+  // Check for environment variable overrides via centralized env config
+  const configOverride = serverEnv.SUBSCRIPTION_CONFIG_OVERRIDE;
 
   if (configOverride) {
     try {
