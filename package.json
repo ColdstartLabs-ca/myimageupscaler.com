@@ -76,7 +76,7 @@
     "@amplitude/analytics-browser": "^2.31.3",
     "@baselime/edge-logger": "^0.4.2",
     "@baselime/react-rum": "^0.3.1",
-    "@fingerprintjs/fingerprintjs": "^5.0.1",
+    "@fingerprintjs/fingerprintjs": "^5.1.0",
     "@google/genai": "^1.30.0",
     "@hookform/resolvers": "^3.9.1",
     "@imgly/background-removal": "^1.7.0",
