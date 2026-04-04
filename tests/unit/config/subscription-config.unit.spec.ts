@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi, afterEach } from 'vitest';
 import { SUBSCRIPTION_CONFIG, getSubscriptionConfig } from '@shared/config/subscription.config';
 import { validateSubscriptionConfig } from '@shared/config/subscription.validator';
 import {
@@ -325,5 +325,69 @@ describe('Subscription Configuration', () => {
       expect(typeof shouldWarn).toBe('boolean');
       expect(typeof shouldNotWarn).toBe('boolean');
     });
+  });
+});
+
+describe('Subscription Config Override via serverEnv', () => {
+  // These tests verify the architecture fix: SUBSCRIPTION_CONFIG_OVERRIDE
+  // should be accessed via serverEnv, not directly via process.env
+
+  afterEach(() => {
+    vi.resetModules();
+    vi.doUnmock('@shared/config/env');
+  });
+
+  test('getSubscriptionConfig returns default config when no override', async () => {
+    // Import fresh without any override set
+    vi.doMock('@shared/config/env', async importOriginal => {
+      const actual = await importOriginal();
+      return {
+        ...actual,
+        serverEnv: {
+          ...(actual as { serverEnv: Record<string, unknown> }).serverEnv,
+          SUBSCRIPTION_CONFIG_OVERRIDE: undefined,
+        },
+      };
+    });
+
+    vi.resetModules();
+    const { getSubscriptionConfig: getConfig } = await import('@shared/config/subscription.config');
+
+    const config = getConfig();
+    expect(config.version).toBe('1.0.0');
+    expect(config.plans).toBeInstanceOf(Array);
+    expect(config.plans.length).toBeGreaterThan(0);
+  });
+
+  test('getSubscriptionConfig merges override when provided', async () => {
+    // Mock serverEnv with override
+    vi.doMock('@shared/config/env', async importOriginal => {
+      const actual = await importOriginal();
+      return {
+        ...actual,
+        serverEnv: {
+          ...(actual as { serverEnv: Record<string, unknown> }).serverEnv,
+          SUBSCRIPTION_CONFIG_OVERRIDE: JSON.stringify({
+            plans: [
+              {
+                key: 'starter',
+                name: 'Starter Override',
+                creditsPerCycle: 999, // Test value to verify override
+              },
+            ],
+          }),
+        },
+      };
+    });
+
+    vi.resetModules();
+    const { getSubscriptionConfig: getConfig } = await import('@shared/config/subscription.config');
+
+    const mergedConfig = getConfig();
+
+    // The override should merge with base config
+    // Since override provides plans array, it replaces the default plans
+    expect(mergedConfig.plans[0].creditsPerCycle).toBe(999);
+    expect(mergedConfig.plans[0].name).toBe('Starter Override');
   });
 });
