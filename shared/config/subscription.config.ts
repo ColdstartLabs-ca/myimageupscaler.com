@@ -313,7 +313,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
  * to allow for future environment overrides
  */
 export function getSubscriptionConfig(): ISubscriptionConfig {
-  // Check for environment variable overrides
+  // Check for environment variable overrides via centralized env config
   const configOverride = serverEnv.SUBSCRIPTION_CONFIG_OVERRIDE;
 
   if (configOverride) {

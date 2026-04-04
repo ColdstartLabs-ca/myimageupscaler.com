@@ -325,8 +325,9 @@ const serverEnvSchema = z.object({
   GSC_SITE_URL: z.string().default('sc-domain:myimageupscaler.com'),
 
   // ==========================================
-  // SUBSCRIPTION CONFIG OVERRIDE
+  // SUBSCRIPTION CONFIGURATION OVERRIDE
   // ==========================================
+  // JSON string to override subscription config (for testing/development)
   SUBSCRIPTION_CONFIG_OVERRIDE: z.string().optional(),
 });
 
@@ -448,7 +449,7 @@ function loadServerEnv(): IServerEnv {
     MODEL_VERSION_P_IMAGE_EDIT: process.env.MODEL_VERSION_P_IMAGE_EDIT,
     MODEL_VERSION_FLUX_KONTEXT_FAST: process.env.MODEL_VERSION_FLUX_KONTEXT_FAST,
 
-    // Subscription Config Override (optional)
+    // Subscription Configuration Override
     SUBSCRIPTION_CONFIG_OVERRIDE: process.env.SUBSCRIPTION_CONFIG_OVERRIDE,
 
     // Google Search Console
