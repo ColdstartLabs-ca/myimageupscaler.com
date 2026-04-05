@@ -54,7 +54,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
    * Send email with automatic credit tracking and error handling
    */
   async send(params: ISendEmailParams): Promise<ISendEmailResult> {
-    const { to, template, data, type = 'transactional', userId } = params;
+    const { to, template, data, type = 'transactional', userId, subject: overrideSubject } = params;
 
     // Skip actual email sending in development or test - log payload instead
     // Unless ALLOW_TRANSACTIONAL_EMAILS_IN_DEV is true (for testing real email flow)
@@ -73,7 +73,8 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
 
       // Get template component and subject
       const TemplateComponent = await this.getTemplate(template);
-      const subject = this.getSubject(template, data);
+      // Use override subject if provided, otherwise use template default
+      const subject = overrideSubject ?? this.getSubject(template, data);
 
       // Inject common environment values into template data
       const templateData = {
