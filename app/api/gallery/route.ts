@@ -35,10 +35,8 @@ interface IGalleryListApiResponse {
 
 interface IGallerySaveApiResponse {
   success: true;
-  data: {
-    image: IGalleryListResponse['images'][0];
-    usage: IGalleryStats;
-  };
+  data: IGalleryListResponse['images'][0];
+  usage: IGalleryStats;
 }
 
 // =============================================================================
@@ -169,16 +167,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       filename: metadata.filename,
     });
 
-    // 6. Return response
+    // 6. Return response (consistent structure with GET endpoint)
     const response: IGallerySaveApiResponse = {
       success: true,
       data: {
-        image: {
-          ...result.image,
-          signed_url: result.signedUrl,
-        },
-        usage,
+        ...result.image,
+        signed_url: result.signedUrl,
       },
+      usage,
     };
 
     return NextResponse.json(response, { status: 201 });
