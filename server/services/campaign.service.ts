@@ -244,6 +244,7 @@ export class CampaignService {
           data: emailProps,
           type: 'marketing',
           userId: email.userId,
+          subject: email.subject, // Use subject from database
         });
 
         // Store messageId in queue metadata for webhook attribution
