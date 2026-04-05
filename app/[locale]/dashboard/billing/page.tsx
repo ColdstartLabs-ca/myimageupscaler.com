@@ -9,12 +9,7 @@ import { ModalHeader } from '@client/components/stripe/ModalHeader';
 import { InternalTabs, type ITabItem } from '@client/components/ui/InternalTabs';
 import { StripeService, preloadStripe } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
-import {
-  STRIPE_PRICES,
-  SUBSCRIPTION_PLANS,
-  getPlanDisplayName,
-  getPlanForPriceId,
-} from '@shared/config/stripe';
+import { getPlanDisplayName, getPlanForPriceId } from '@shared/config/stripe';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { motion } from 'framer-motion';
