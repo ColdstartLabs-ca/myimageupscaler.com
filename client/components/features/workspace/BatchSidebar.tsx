@@ -4,7 +4,6 @@ import {
   IBatchItem,
   IUpscaleConfig,
   ProcessingStatus,
-  QUALITY_TIER_CREDITS,
   QUALITY_TIER_SCALES,
   QualityTier,
 } from '@/shared/types/coreflow.types';
