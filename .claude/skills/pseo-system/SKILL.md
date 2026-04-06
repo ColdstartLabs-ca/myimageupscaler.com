@@ -5,6 +5,8 @@ description: Create and manage programmatic SEO pages. Use when creating new pSE
 
 # pSEO System
 
+> **Before starting:** Read recent content changes — `tail -60 .claude/skills/blog-changelog.md`
+
 ## Quick Reference
 
 ### Directory Structure

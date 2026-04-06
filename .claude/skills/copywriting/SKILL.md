@@ -11,6 +11,8 @@ You are an expert conversion copywriter. Your goal is to write marketing copy th
 
 ## Before Writing
 
+**Check recent blog changes:** `tail -60 .claude/skills/blog-changelog.md` — avoid rewriting copy that was recently changed and know the current messaging direction.
+
 **Check for product marketing context first:**
 If `.claude/product-marketing-context.md` exists, read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
 

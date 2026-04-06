@@ -5,6 +5,30 @@ description: Write SEO-optimized blog posts for MyImageUpscaler. Use when creati
 
 # Blog Writing Skill
 
+## Changelog
+
+**Before starting:** Read recent entries to understand what topics and angles have already been covered.
+
+```bash
+tail -60 .claude/skills/blog-changelog.md
+```
+
+**After finishing:** Append a brief entry.
+
+```bash
+cat >> .claude/skills/blog-changelog.md << 'EOF'
+
+## YYYY-MM-DD
+
+### Write: [slug or topic]
+**Why:** [keyword opportunity / content gap]
+**Changes:**
+- `slug` — [topic summary, target keyword, word count]
+EOF
+```
+
+---
+
 ## Quick Reference
 
 ### Directory Structure
@@ -109,8 +133,8 @@ Reference images from `/public/` using absolute paths:
 For before/after comparisons:
 
 ```markdown
-| Before                                               | After                                              |
-| ---------------------------------------------------- | -------------------------------------------------- |
+| Before                                              | After                                             |
+| --------------------------------------------------- | ------------------------------------------------- |
 | ![Before upscaling](/before-after/bird-before.webp) | ![After upscaling](/before-after/bird-after.webp) |
 ```
 
@@ -331,6 +355,7 @@ download_blog_image "1542567455-cd733f23fbb1" "public/blog/images/my-post/hero.j
 Strategic CTA placement is essential for converting readers into users. Every blog post MUST include multiple CTAs.
 
 **IMPORTANT: Link Destinations**
+
 - **There is NO `/upscaler` page** - this route does not exist!
 - CTAs link to `/?signup=1` (homepage with signup prompt)
 - Pricing links go to `/pricing`
@@ -340,43 +365,48 @@ Strategic CTA placement is essential for converting readers into users. Every bl
 
 Use blockquote-style markers to insert standardized CTAs:
 
-| Marker | Type | Best Use Case |
-|--------|------|---------------|
-| `> [!CTA_TRY]` | Try It | Mid-article, after explaining a concept |
-| `> [!CTA_DEMO]` | Demo | After before/after comparisons or visual examples |
-| `> [!CTA_PRICING]` | Pricing | Near end, for value-conscious readers |
+| Marker               | Type          | Best Use Case                                                       |
+| -------------------- | ------------- | ------------------------------------------------------------------- |
+| `> [!CTA_TRY]`       | Try It        | Mid-article, after explaining a concept                             |
+| `> [!CTA_DEMO]`      | Demo          | After before/after comparisons or visual examples                   |
+| `> [!CTA_PRICING]`   | Pricing       | Near end, for value-conscious readers                               |
 | `> [!CTA_TOOL:slug]` | Tool-specific | Link to specific tool page (e.g., `> [!CTA_TOOL:upscale-image-2x]`) |
 
 #### CTA Placement Strategy (REQUIRED)
 
 **Minimum CTAs per post: 2**
 
-| Placement | When | CTA Type |
-|-----------|------|----------|
-| After Hook (25% mark) | Reader is engaged, understanding the problem | `[!CTA_TRY]` |
-| Mid-article (50% mark) | After key insight or before/after demo | `[!CTA_DEMO]` |
-| Before Conclusion (75% mark) | Reader has learned, ready to act | `[!CTA_PRICING]` |
+| Placement                    | When                                         | CTA Type         |
+| ---------------------------- | -------------------------------------------- | ---------------- |
+| After Hook (25% mark)        | Reader is engaged, understanding the problem | `[!CTA_TRY]`     |
+| Mid-article (50% mark)       | After key insight or before/after demo       | `[!CTA_DEMO]`    |
+| Before Conclusion (75% mark) | Reader has learned, ready to act             | `[!CTA_PRICING]` |
 
 **Example placement in article structure:**
 
 ```markdown
 ## Introduction / Hook
+
 (Problem statement, emotional connection)
 
 ## Why This Matters
+
 (Context, statistics)
 
 > [!CTA_TRY]
 
 ## Main Section 1
+
 (First key insight)
 
 ## Main Section 2
+
 (Tutorial steps or comparison)
 
 > [!CTA_DEMO]
 
 ## Main Section 3
+
 (Advanced tips)
 
 ## Conclusion
@@ -402,12 +432,14 @@ Ready to enhance your images? [Try myimageupscaler.com free](/pricing) — 10 cr
 ## Legal Guidelines (CRITICAL)
 
 ### Never Do
+
 - **No fabricated benchmarks** - Never invent test scores, performance metrics, or comparison data
 - **No false competitor claims** - Never make claims about competitor products you cannot prove
 - **No fake reviews/testimonials** - Never create fictional user experiences or quotes
 - **No made-up statistics** - Never invent market data, percentages, or research findings
 
 ### Safe Content Types
+
 1. **Educational content** - Explain concepts, techniques, how things work
 2. **First-party showcases** - Before/after examples using YOUR tool with real images
 3. **Use-case guides** - Practical tutorials for specific workflows (e-commerce, printing, etc.)
@@ -415,12 +447,14 @@ Ready to enhance your images? [Try myimageupscaler.com free](/pricing) — 10 cr
 5. **Verified facts only** - Only cite statistics from reputable, linkable sources
 
 ### If Mentioning Competitors
+
 - Only state **verifiable public facts** (pricing from their website, features they list)
 - Use phrases like "at time of writing" for pricing/features that may change
 - Never claim their quality is worse without actual documented evidence
 - Prefer generic category references ("many online tools") over naming competitors
 
 ### Safe Comparison Approaches
+
 - Compare YOUR tool's results (before/after) without mentioning competitors
 - Compare approaches/methods generically (e.g., "browser-based vs desktop software")
 - Link to third-party reviews if you need comparison data
@@ -431,6 +465,7 @@ Ready to enhance your images? [Try myimageupscaler.com free](/pricing) — 10 cr
 Before publishing:
 
 **SEO & Metadata**
+
 - [ ] Title is 50-60 characters with primary keyword
 - [ ] Description is 150-160 characters with CTA
 - [ ] Date is in YYYY-MM-DD format
@@ -439,16 +474,19 @@ Before publishing:
 - [ ] Primary keyword in first 100 words
 
 **Content & Links**
+
 - [ ] 2+ internal links to /pricing, /?signup=1, or other blog posts
 - [ ] NO links to /upscaler (this page does not exist!)
 - [ ] Callouts used for tips/warnings
 
 **Images**
+
 - [ ] 3+ images: hero (frontmatter) + 2 mid-content Unsplash images
 - [ ] Images are contextually relevant to surrounding content
 - [ ] No broken image paths
 
 **CTAs (Critical for Acquisition)**
+
 - [ ] Minimum 2 in-content CTAs using `> [!CTA_*]` markers
 - [ ] First CTA placed after hook/context section (25% mark)
 - [ ] Second CTA placed mid-article after key insight (50% mark)
@@ -456,6 +494,7 @@ Before publishing:
 - [ ] CTA types match content context (DEMO after visuals, TRY after concepts)
 
 **Final**
+
 - [ ] `yarn verify` passes
 
 ## Existing Posts Reference

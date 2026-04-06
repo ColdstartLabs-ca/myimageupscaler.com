@@ -23,21 +23,47 @@ Create SEO-optimized blog posts about image upscaling, AI photo enhancement, and
 
 ---
 
+## Changelog
+
+**Before starting:** Read recent entries to avoid repeating work or conflicting with recent changes.
+
+```bash
+tail -60 .claude/skills/blog-changelog.md
+```
+
+**After publishing:** Append a brief entry.
+
+```bash
+cat >> .claude/skills/blog-changelog.md << 'EOF'
+
+## YYYY-MM-DD
+
+### Publish: [slug]
+**Why:** [keyword opportunity / user intent]
+**Changes:**
+- Published `slug` — [topic summary, target keyword]
+EOF
+```
+
+---
+
 ## Workflow
 
 ```
-0. ROADMAP CHECK   → Read keyword-strategy-roadmap-*.md for prioritized topics
-1. TRACKING        → Check topics-covered.md to avoid duplication
-2. SELECT TOPIC    → Choose from roadmap Segment A/B (highest priority)
-3. SEARCH IMAGES   → GET /api/blog/images (check for reusable images first)
-4. GENERATE IMAGES → Generate ONLY if no suitable images found (1 featured + 2-3 inline)
-5. UPLOAD IMAGES   → POST /api/blog/images/upload (with metadata: tags, description, prompt)
-6. CREATE POST     → POST /api/blog/posts (include inline image URLs in markdown content)
-7. INTERNAL LINKS  → Scan pSEO sitemaps for relevant pages; embed 2-3 contextual links in content
-8. UPDATE          → PATCH /api/blog/posts/[slug] (add featured image URL + updated content)
-9. PUBLISH         → POST /api/blog/posts/[slug]/publish
-10. VERIFY         → Check at /blog/[slug]
-11. TRACK          → Update topics-covered.md with completed topic
+0. CHANGELOG       → Read recent entries first
+1. ROADMAP CHECK   → Read keyword-strategy-roadmap-*.md for prioritized topics
+2. TRACKING        → Check topics-covered.md to avoid duplication
+3. SELECT TOPIC    → Choose from roadmap Segment A/B (highest priority)
+4. SEARCH IMAGES   → GET /api/blog/images (check for reusable images first)
+5. GENERATE IMAGES → Generate ONLY if no suitable images found (1 featured + 2-3 inline)
+6. UPLOAD IMAGES   → POST /api/blog/images/upload (with metadata: tags, description, prompt)
+7. CREATE POST     → POST /api/blog/posts (include inline image URLs in markdown content)
+8. INTERNAL LINKS  → Scan pSEO sitemaps for relevant pages; embed 2-3 contextual links in content
+9. UPDATE          → PATCH /api/blog/posts/[slug] (add featured image URL + updated content)
+10. PUBLISH        → POST /api/blog/posts/[slug]/publish
+11. VERIFY         → Check at /blog/[slug]
+12. TRACK          → Update topics-covered.md with completed topic
+13. CHANGELOG      → Append entry with slug, topic, and reasoning
 ```
 
 **IMPORTANT Changes:**
@@ -394,15 +420,16 @@ echo "Inline 3: $INLINE3_URL"
 
 Every post must inject the **exact target keyword** into the Three Kings before publishing. This is how new posts rank from day one instead of needing a refresh later.
 
-| King | Field | Rule |
-|------|-------|------|
-| **King 1 — Title Tag** | `seo_title` | Keyword must appear, front-loaded. Max 60 chars. |
-| **King 2 — H1** | First `#` heading in `content` | Keyword in the heading. Can be slightly reworded but must contain the core phrase. |
-| **King 3 — First Paragraph** | First `<p>` after the H1 | Keyword in the **first sentence** naturally. Not stuffed. |
+| King                         | Field                          | Rule                                                                               |
+| ---------------------------- | ------------------------------ | ---------------------------------------------------------------------------------- |
+| **King 1 — Title Tag**       | `seo_title`                    | Keyword must appear, front-loaded. Max 60 chars.                                   |
+| **King 2 — H1**              | First `#` heading in `content` | Keyword in the heading. Can be slightly reworded but must contain the core phrase. |
+| **King 3 — First Paragraph** | First `<p>` after the H1       | Keyword in the **first sentence** naturally. Not stuffed.                          |
 
 **Optional but high-impact:** slug and `seo_description` also contain the keyword.
 
 Self-check before submitting the POST request:
+
 - [ ] `seo_title` contains exact target keyword
 - [ ] First `# Heading` in content contains target keyword
 - [ ] First sentence after the H1 contains target keyword

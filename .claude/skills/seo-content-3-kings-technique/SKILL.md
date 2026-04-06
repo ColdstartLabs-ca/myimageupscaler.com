@@ -5,7 +5,10 @@ description: Low-Hanging Fruit Content Refresh — find pages at positions 5–1
 
 # SEO Content 3 Kings Technique
 
+> **Before starting:** Read recent blog changes — `tail -60 .claude/skills/blog-changelog.md`
+
 Two modes:
+
 1. **Refresh mode** — find existing pages at positions 5–15 in GSC and inject keyword into Three Kings
 2. **Write mode** — baked into `blog-publish` Step 3 to ensure new posts are optimized from day one
 
@@ -25,11 +28,11 @@ Two modes:
 
 ## The Three Kings
 
-| King | Element | Rule |
-|------|---------|------|
+| King   | Element                 | Rule                               |
+| ------ | ----------------------- | ---------------------------------- |
 | King 1 | Title tag (`seo_title`) | Keyword front-loaded, max 60 chars |
-| King 2 | H1 heading | Keyword present, natural phrasing |
-| King 3 | First paragraph | Keyword in first sentence |
+| King 2 | H1 heading              | Keyword present, natural phrasing  |
+| King 3 | First paragraph         | Keyword in first sentence          |
 
 ## Reference
 
@@ -47,7 +50,7 @@ Based on: https://www.youtube.com/watch?v=Zn3i5ac9ydw
 
 ## Files
 
-| Item | Path |
-|------|------|
-| Prompt | `.claude/skills/seo-content-3-kings-technique/prompt.md` |
-| Skill info | `.claude/skills/seo-content-3-kings-technique/SKILL.md` |
+| Item       | Path                                                     |
+| ---------- | -------------------------------------------------------- |
+| Prompt     | `.claude/skills/seo-content-3-kings-technique/prompt.md` |
+| Skill info | `.claude/skills/seo-content-3-kings-technique/SKILL.md`  |

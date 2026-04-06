@@ -25,14 +25,41 @@ Edit existing blog posts to improve quality, SEO, or fix issues.
 
 ---
 
+## Changelog
+
+**Before starting:** Read recent entries to understand what has already been done.
+
+```bash
+tail -60 .claude/skills/blog-changelog.md
+```
+
+**After finishing:** Append a brief entry.
+
+```bash
+cat >> .claude/skills/blog-changelog.md << 'EOF'
+
+## YYYY-MM-DD
+
+### [Type]: [Short title]
+**Affected:** [slug(s)]
+**Why:** [reasoning]
+**Changes:**
+- `slug` — what was done
+EOF
+```
+
+---
+
 ## Workflow
 
 ```
-1. FETCH   → GET /api/blog/posts/[slug]
-2. ANALYZE → Review current content/SEO
-3. IMPROVE → Generate new content/image if needed
-4. UPDATE  → PATCH /api/blog/posts/[slug]
-5. VERIFY  → Check changes applied
+1. CHANGELOG → Read recent entries first
+2. FETCH     → GET /api/blog/posts/[slug]
+3. ANALYZE   → Review current content/SEO
+4. IMPROVE   → Generate new content/image if needed
+5. UPDATE    → PATCH /api/blog/posts/[slug]
+6. VERIFY    → Check changes applied
+7. CHANGELOG → Append entry with what changed and why
 ```
 
 ---
