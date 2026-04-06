@@ -47,3 +47,16 @@ EOF
 - `upscale-image-for-print-300-dpi-guide` — 3 links added: → ai-image-upscaling-vs-sharpening-explained, → why-photos-blurry-when-printed, → what-resolution-for-print
 - `photo-enhancement-upscaling-vs-quality` — 3 links added: → best-free-ai-image-upscaler-2026-tested-compared, → ai-image-upscaling-vs-sharpening-explained, → how-to-fix-a-grainy-photo
 - `free-ai-upscaler-no-watermark` — 2 links added: → best-free-ai-image-upscaler-2026-tested-compared, → best-free-ai-image-upscaler-tools-2026
+
+## 2026-04-06
+
+### SEO: Cannibalization Fix — Unpublish + 301 Redirect Duplicate Posts
+
+**Affected:** 3 posts unpublished, 6 redirect rules added (3 slugs + locale variants)
+**Why:** GSC confirmed 3 pairs of posts competing for the same queries, splitting authority and preventing any from ranking well. Kept the stronger canonical in each pair; redirected duplicates.
+**Changes:**
+
+- `best-free-ai-image-upscaler-tools-2026` — unpublished → 301 to `best-free-ai-image-upscaler-2026-tested-compared`
+- `best-image-upscaling-tools-2026` — unpublished → 301 to `best-free-ai-image-upscaler-2026-tested-compared`
+- `photo-enhancement-upscaling-vs-quality` — unpublished → 301 to `ai-image-upscaling-vs-sharpening-explained` (pos 3.2, clearly preferred by Google)
+- `next.config.js` — added 6 permanent redirect rules (slug + locale-prefixed variants)

@@ -88,7 +88,7 @@ const nextConfig = {
     if (!dev && !isServer) {
       config.resolve.alias['next/dist/compiled/next-devtools'] = path.resolve(
         __dirname,
-        'node_modules/next/dist/next-devtools/dev-overlay.shim.js',
+        'node_modules/next/dist/next-devtools/dev-overlay.shim.js'
       );
     }
 
@@ -131,6 +131,38 @@ const nextConfig = {
       {
         source: '/alternative/:slug',
         destination: '/alternatives/:slug',
+        permanent: true,
+      },
+      // Blog cannibalization fixes — consolidate duplicate intent posts
+      {
+        source: '/blog/best-free-ai-image-upscaler-tools-2026',
+        destination: '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+        permanent: true,
+      },
+      {
+        source: '/blog/best-image-upscaling-tools-2026',
+        destination: '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+        permanent: true,
+      },
+      {
+        source: '/blog/photo-enhancement-upscaling-vs-quality',
+        destination: '/blog/ai-image-upscaling-vs-sharpening-explained',
+        permanent: true,
+      },
+      // Locale-prefixed variants for the same redirects
+      {
+        source: '/:locale(en|fr|de|es|it|ja|pt)/blog/best-free-ai-image-upscaler-tools-2026',
+        destination: '/:locale/blog/best-free-ai-image-upscaler-2026-tested-compared',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|fr|de|es|it|ja|pt)/blog/best-image-upscaling-tools-2026',
+        destination: '/:locale/blog/best-free-ai-image-upscaler-2026-tested-compared',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|fr|de|es|it|ja|pt)/blog/photo-enhancement-upscaling-vs-quality',
+        destination: '/:locale/blog/ai-image-upscaling-vs-sharpening-explained',
         permanent: true,
       },
     ];
