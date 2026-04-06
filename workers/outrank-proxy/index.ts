@@ -12,14 +12,18 @@
  *   https://myimageupscaler-outrank-proxy.<account>.workers.dev/
  */
 
+// Fetcher interface for Cloudflare service bindings
+interface IFetcher {
+  fetch(request: Request): Promise<Response>;
+}
+
 interface IEnv {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  MAIN_WORKER: any; // Fetcher type is Cloudflare-specific, not available in standard TS
+  MAIN_WORKER: IFetcher;
   ALLOWED_IP: string;
 }
 
- 
-export default {
+
+export const outrankProxyWorker = {
   async fetch(request: Request, env: IEnv): Promise<Response> {
     // Health check
     if (request.method === 'GET') {
@@ -60,3 +64,7 @@ export default {
     return response;
   },
 };
+
+// Default export for Cloudflare Workers (required by wrangler)
+// eslint-disable-next-line import/no-default-export
+export default outrankProxyWorker;
