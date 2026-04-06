@@ -4,7 +4,6 @@ import {
   IBatchItem,
   IUpscaleConfig,
   ProcessingStatus,
-  QUALITY_TIER_CREDITS,
   QUALITY_TIER_SCALES,
   QualityTier,
 } from '@/shared/types/coreflow.types';
@@ -50,7 +49,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   onClear,
   onUpgrade,
 }) => {
-  const { totalCredits, isFreeUser } = useUserData();
+  const { totalCredits, isFreeUser, userSegment } = useUserData();
   const [showInsufficientModal, setShowInsufficientModal] = useState(false);
   const [showCustomInstructionsModal, setShowCustomInstructionsModal] = useState(false);
 
@@ -162,6 +161,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onChange={handleQualityTierChange}
           disabled={isProcessing}
           isFreeUser={isFreeUser}
+          userSegment={userSegment}
           onUpgrade={onUpgrade}
         />
 

@@ -79,6 +79,7 @@ describe('ModelGalleryModal', () => {
     onClose: mockOnClose,
     currentTier: 'quick' as QualityTier,
     isFreeUser: false,
+    userSegment: 'subscriber' as const,
     onSelect: mockOnSelect,
     onUpgrade: mockOnUpgrade,
   };
@@ -194,7 +195,7 @@ describe('ModelGalleryModal', () => {
 
   describe('tier locking', () => {
     it('should mark premium tiers as locked for free users', async () => {
-      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} userSegment="free" />);
 
       // Premium tiers should show lock icons
       const lockIcons = screen.getAllByTestId('lock-icon');
@@ -204,8 +205,8 @@ describe('ModelGalleryModal', () => {
     });
 
     it('should show premium models locked when user has no subscription and no purchased credits', async () => {
-      // isFreeUser=true means no subscription AND no purchased credits
-      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+      // isFreeUser=true / userSegment='free' means no subscription AND no purchased credits
+      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} userSegment="free" />);
 
       // Premium tiers should show lock icons (lock overlay is visible)
       const lockIcons = screen.getAllByTestId('lock-icon');
@@ -213,8 +214,10 @@ describe('ModelGalleryModal', () => {
     });
 
     it('should show premium models unlocked when user has purchased credits', async () => {
-      // isFreeUser=false means user either has subscription OR purchased credits
-      render(<ModelGalleryModal {...defaultProps} isFreeUser={false} />);
+      // credit_purchaser: has bought credits but no active subscription — should have access
+      render(
+        <ModelGalleryModal {...defaultProps} isFreeUser={false} userSegment="credit_purchaser" />
+      );
 
       // Premium tiers should NOT have the lock badge on their cards
       // Note: There is a decorative lock icon in the "Professional Tiers" divider,
@@ -229,7 +232,7 @@ describe('ModelGalleryModal', () => {
     });
 
     it('should call onUpgrade when locked tier clicked', async () => {
-      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} userSegment="free" />);
 
       // Find a premium tier (Ultra) card and click it
       const ultraCard = findCardByTierLabel('Ultra Upscale');
@@ -242,7 +245,7 @@ describe('ModelGalleryModal', () => {
     });
 
     it('should show upgrade prompt for free users', async () => {
-      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} userSegment="free" />);
 
       // Find upgrade prompt
       expect(screen.getByText('Unlock Premium Models')).toBeInTheDocument();
@@ -251,7 +254,7 @@ describe('ModelGalleryModal', () => {
 
   describe('selection', () => {
     it('should call onSelect when available tier clicked', async () => {
-      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} userSegment="free" />);
 
       // Click on Light Blur Fix tier card (free tier)
       const quickCard = findCardByTierLabel('Light Blur Fix');
@@ -264,7 +267,7 @@ describe('ModelGalleryModal', () => {
     });
 
     it('should close modal after selecting a tier', async () => {
-      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
+      render(<ModelGalleryModal {...defaultProps} isFreeUser={true} userSegment="free" />);
 
       // Click on Light Blur Fix tier card
       const quickCard = findCardByTierLabel('Light Blur Fix');
@@ -481,6 +484,7 @@ describe('Phase 2: ModelGalleryModal tier sorting by popularity', () => {
     onClose: mockOnClose,
     currentTier: 'face-restore' as QualityTier,
     isFreeUser: false,
+    userSegment: 'subscriber' as const,
     onSelect: mockOnSelect,
     onUpgrade: mockOnUpgrade,
   };
