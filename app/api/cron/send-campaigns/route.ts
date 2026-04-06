@@ -79,12 +79,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // 2. Parse and validate optional request body
     let limit = 100; // Default batch size
 
-    try {
-      const body = await request.json();
-      const validatedInput = sendCampaignsSchema.parse(body);
-      limit = validatedInput.limit || 100;
-    } catch {
-      // Body is optional, use defaults
+    const rawBody = await request.text();
+    if (rawBody.trim()) {
+      try {
+        const body = JSON.parse(rawBody);
+        const validatedInput = sendCampaignsSchema.parse(body);
+        limit = validatedInput.limit || 100;
+      } catch (parseError) {
+        if (parseError instanceof ZodError) {
+          const { body, status } = createErrorResponse(
+            ErrorCodes.VALIDATION_ERROR,
+            'Invalid request data',
+            400,
+            { validationErrors: parseError.errors }
+          );
+          return NextResponse.json(body, { status });
+        }
+        throw parseError; // Re-throw JSON parsing errors
+      }
     }
 
     logger.info('Starting campaign send process', { limit });
