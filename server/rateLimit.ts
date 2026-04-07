@@ -1,14 +1,16 @@
 /**
- * Simple in-memory rate limiter
- * No external dependencies, no paid services
+ * Rate limiter with configurable storage backend
  *
- * Uses sliding window algorithm with in-memory storage.
- * Note: This works for single-instance deployments. For multi-instance
- * deployments (e.g., Cloudflare with multiple edge locations), consider
- * using Cloudflare KV or Durable Objects.
+ * Supports two modes:
+ * 1. In-memory storage (default) - Simple, no external dependencies
+ * 2. Distributed Redis storage - Scalable across multiple edge locations
+ *
+ * Uses sliding window algorithm. Automatically switches between storage
+ * backends based on USE_DISTRIBUTED_RATE_LIMITING environment variable.
  */
 
 import { serverEnv } from '@shared/config/env';
+import { checkRateLimit as checkDistributedRateLimit } from './services/distributed-rate-limiter';
 
 /**
  * Check if rate limiting should be skipped (test environment)
@@ -61,6 +63,12 @@ interface IRateLimitResult {
  */
 function createRateLimiter(limit: number, windowMs: number) {
   return async (identifier: string): Promise<IRateLimitResult> => {
+    // Use distributed rate limiting if enabled
+    if (serverEnv.USE_DISTRIBUTED_RATE_LIMITING) {
+      return checkDistributedRateLimit(identifier, limit, windowMs);
+    }
+
+    // Fall back to in-memory rate limiting
     const now = Date.now();
     const windowStart = now - windowMs;
 
