@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "lastScan": "2026-04-03T02:36:50.067Z",
+  "lastScan": "2026-04-07T02:35:46.955Z",
   "items": {
     "7ae52884": {
       "title": "Audit Finding 1: architecture_violation (medium) at shared/config/subscription.config.ts:318",
@@ -26,6 +26,16 @@
       "title": "Audit Finding 5: unsafe_assertion (low) at shared/config/subscription.config.ts:318",
       "prdFile": "05-audit-finding-5-unsafe-assertion-low-at-shared-config-subscription-config-ts-318.md",
       "createdAt": "2026-04-03T02:36:50.067Z"
+    },
+    "1b9d5957": {
+      "title": "Audit Finding 2: unsafe_assertion (medium) at app/api/webhooks/stripe/services/webhook-verification.service.ts:41",
+      "prdFile": "05-audit-finding-2-unsafe-assertion-medium-at-app-api-webhooks-stripe-services-webhook-verification-service-ts-41.md",
+      "createdAt": "2026-04-06T14:36:20.144Z"
+    },
+    "961ea7ca": {
+      "title": "Audit Finding 3: empty_catch (low) at shared/utils/supabase/middleware.ts:40-42",
+      "prdFile": "06-audit-finding-3-empty-catch-low-at-shared-utils-supabase-middleware-ts-40-42.md",
+      "createdAt": "2026-04-07T02:35:46.955Z"
     }
   }
 }
