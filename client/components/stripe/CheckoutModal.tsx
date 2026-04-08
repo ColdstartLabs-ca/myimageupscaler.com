@@ -24,6 +24,8 @@ import {
   getStoredCheckoutRescueOffer,
   storeCheckoutRescueOffer,
 } from '@client/utils/checkoutRescueOfferStorage';
+import { shouldShowCheckoutRescueOffer } from '@client/utils/checkoutRescueOfferVisibility';
+import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 
 interface ICheckoutModalProps {
   priceId: string;
@@ -116,6 +118,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   // Guard: exit intent already tracked by handleClose — prevents double-fire from cleanup
   const exitIntentTrackedRef = useRef(false);
   const rescueOfferAppliedRef = useRef(false);
+  const engagementDiscountAppliedRef = useRef(false);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -307,8 +310,18 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       if (!checkoutCompletedRef.current) {
         const timeSpentMs = Date.now() - modalOpenedAtRef.current;
         const step = clientSecret ? 'stripe_embed' : 'plan_selection';
+        const checkoutTrigger = getCheckoutTrackingContext()?.trigger;
 
-        if (step === 'stripe_embed' && rescueOfferEligible && !rescueOfferAppliedRef.current) {
+        if (
+          shouldShowCheckoutRescueOffer({
+            step,
+            rescueOfferEligible,
+            rescueOfferApplied: rescueOfferAppliedRef.current,
+            engagementDiscountApplied:
+              engagementDiscountAppliedRef.current ||
+              checkoutTrigger === 'engagement_discount_banner',
+          })
+        ) {
           const existingOffer = getStoredCheckoutRescueOffer(priceId);
 
           if (existingOffer) {
@@ -412,8 +425,9 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       try {
         setLoading(true);
         setError(null);
+        rescueOfferAppliedRef.current = false;
+        engagementDiscountAppliedRef.current = false;
         const activeRescueOffer = getStoredCheckoutRescueOffer(priceId);
-        rescueOfferAppliedRef.current = Boolean(activeRescueOffer?.offerToken);
         setRescueOffer(activeRescueOffer);
 
         // Don't pass successUrl - let the server construct it with proper type & credits params
@@ -425,6 +439,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
         if (timedOut) return; // Timeout already fired, discard result
 
         if (response.clientSecret) {
+          rescueOfferAppliedRef.current = Boolean(response.checkoutOfferApplied);
+          engagementDiscountAppliedRef.current = Boolean(response.engagementDiscountApplied);
           setClientSecret(response.clientSecret);
           // Track stripe_embed step viewed with load time
           const loadTimeMs = Date.now() - sessionLoadStart;
@@ -463,6 +479,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       clearCheckoutSessionCache();
       clearStoredCheckoutRescueOffer(priceId);
       rescueOfferAppliedRef.current = false;
+      engagementDiscountAppliedRef.current = false;
       // Mark checkout as completed to avoid tracking abandoned
       checkoutCompletedRef.current = true;
 

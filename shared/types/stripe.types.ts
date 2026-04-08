@@ -81,6 +81,8 @@ export interface ICheckoutSessionResponse {
   url: string;
   sessionId: string;
   clientSecret?: string; // Required for embedded checkout
+  engagementDiscountApplied?: boolean;
+  checkoutOfferApplied?: boolean;
 }
 
 export interface ICreditsPackage {

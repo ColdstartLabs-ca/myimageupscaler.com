@@ -287,6 +287,8 @@ export async function POST(request: NextRequest) {
             url: `${baseUrl}/success?session_id=${mockSessionId}`,
             sessionId: mockSessionId,
             mock: true,
+            engagementDiscountApplied: false,
+            checkoutOfferApplied: false,
           },
         });
       } else {
@@ -366,6 +368,8 @@ export async function POST(request: NextRequest) {
           url: `${baseUrl}/success?session_id=${mockSessionId}`,
           sessionId: mockSessionId,
           mock: true,
+          engagementDiscountApplied: false,
+          checkoutOfferApplied: false,
         },
       });
     }
@@ -680,6 +684,8 @@ export async function POST(request: NextRequest) {
         url: session.url,
         sessionId: session.id,
         clientSecret: session.client_secret, // Required for embedded checkout
+        engagementDiscountApplied: engagementDiscountPercent > 0,
+        checkoutOfferApplied: checkoutOfferDiscountPercent > 0,
       },
     });
   } catch (error: unknown) {

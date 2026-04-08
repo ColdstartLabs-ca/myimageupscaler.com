@@ -59,6 +59,8 @@ interface ICachedCheckoutSession {
   timestamp: number;
   sessionId: string;
   url: string;
+  engagementDiscountApplied?: boolean;
+  checkoutOfferApplied?: boolean;
 }
 
 const SESSION_CACHE_TTL_MS = 60000; // 1 minute TTL for checkout sessions
@@ -109,6 +111,8 @@ function cacheSession(
     timestamp: Date.now(),
     sessionId: session.sessionId,
     url: session.url,
+    engagementDiscountApplied: session.engagementDiscountApplied,
+    checkoutOfferApplied: session.checkoutOfferApplied,
   });
 }
 
@@ -263,6 +267,8 @@ export class StripeService {
           clientSecret: cached.clientSecret,
           sessionId: cached.sessionId,
           url: cached.url,
+          engagementDiscountApplied: cached.engagementDiscountApplied,
+          checkoutOfferApplied: cached.checkoutOfferApplied,
         };
       }
     }

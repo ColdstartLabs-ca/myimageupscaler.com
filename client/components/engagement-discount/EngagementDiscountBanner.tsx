@@ -17,6 +17,7 @@ import { useEngagementDiscountStore } from '@client/store/engagementDiscountStor
 import { analytics } from '@client/analytics';
 import { DISCOUNT_TARGET_PACK, formatCountdown } from '@shared/config/engagement-discount';
 import { cn } from '@client/utils/cn';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 
 export interface IEngagementDiscountBannerProps {
   /** Callback when CTA is clicked to start checkout */
@@ -29,7 +30,14 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
   onClaimDiscount,
   className,
 }) => {
-  const { offer, showToast, dismissToast, countdownEndTime, hasTrackedImpression, setHasTrackedImpression } = useEngagementDiscountStore();
+  const {
+    offer,
+    showToast,
+    dismissToast,
+    countdownEndTime,
+    hasTrackedImpression,
+    setHasTrackedImpression,
+  } = useEngagementDiscountStore();
 
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
@@ -113,6 +121,7 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
     analytics.track('engagement_discount_cta_clicked', {
       timeRemainingSeconds: remainingSeconds,
     });
+    setCheckoutTrackingContext({ trigger: 'engagement_discount_banner' });
     onClaimDiscount();
   }, [onClaimDiscount, remainingSeconds]);
 
@@ -190,7 +199,8 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
                 >
                   <span className="hidden md:inline">Claim {offer.discountPercent}% Off</span>
                   <span className="md:hidden">
-                    Claim {offer.discountPercent}% Off - ${(offer.discountedPriceCents / 100).toFixed(2)}
+                    Claim {offer.discountPercent}% Off - $
+                    {(offer.discountedPriceCents / 100).toFixed(2)}
                   </span>
                 </button>
               </div>
