@@ -6,23 +6,20 @@ import { AlertCircle, Sparkles, Zap, ArrowRight, Loader2 } from 'lucide-react';
 import { Modal } from '@client/components/ui/Modal';
 import { useTranslations } from 'next-intl';
 import { compressImage, formatBytes } from '@client/utils/image-compression';
+import {
+  AUTO_RESIZE_STORAGE_KEY,
+  isAutoResizeEnabled,
+  setAutoResizePreference,
+} from '@client/utils/auto-resize-preference';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 
-/** LocalStorage key for auto-resize preference */
-export const AUTO_RESIZE_STORAGE_KEY = 'image-upscaler-auto-resize';
-
-/** Check if auto-resize preference is enabled (defaults to true) */
-export function isAutoResizeEnabled(): boolean {
-  if (typeof window === 'undefined') return false;
-  const stored = localStorage.getItem(AUTO_RESIZE_STORAGE_KEY);
-  return stored === null ? true : stored === 'true';
+function formatMaxPixels(maxPixels?: number | null): string {
+  const limit = maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS;
+  const megapixels = limit / 1_000_000;
+  return Number.isInteger(megapixels) ? megapixels.toFixed(0) : megapixels.toFixed(1);
 }
 
-/** Set auto-resize preference */
-export function setAutoResizePreference(enabled: boolean): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(AUTO_RESIZE_STORAGE_KEY, String(enabled));
-}
+export { AUTO_RESIZE_STORAGE_KEY, isAutoResizeEnabled, setAutoResizePreference };
 
 // Extracted Components
 const WarningBanner: React.FC<{
@@ -30,7 +27,8 @@ const WarningBanner: React.FC<{
   currentLimit: number;
   isPaidLimit: boolean;
   dimensions?: { width: number; height: number; pixels: number };
-}> = ({ fileSize, currentLimit, isPaidLimit, dimensions }) => {
+  maxPixels?: number | null;
+}> = ({ fileSize, currentLimit, isPaidLimit, dimensions, maxPixels }) => {
   const t = useTranslations('workspace');
   const limitMB = currentLimit / (1024 * 1024);
   const fileSizeMB = fileSize / (1024 * 1024);
@@ -38,9 +36,10 @@ const WarningBanner: React.FC<{
 
   // If we have dimension info, show pixel-based warning instead
   if (dimensions) {
-    const maxPixelsMP = (IMAGE_VALIDATION.MAX_PIXELS / 1_000_000).toFixed(0);
+    const pixelLimit = maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS;
+    const maxPixelsMP = formatMaxPixels(pixelLimit);
     const imagePixelsMP = (dimensions.pixels / 1_000_000).toFixed(1);
-    const excessPixels = dimensions.pixels - IMAGE_VALIDATION.MAX_PIXELS;
+    const excessPixels = dimensions.pixels - pixelLimit;
     const excessPixelsMP = (excessPixels / 1_000_000).toFixed(1);
 
     return (
@@ -124,7 +123,8 @@ const ResizeButton: React.FC<{
   currentLimit: number;
   progress: number;
   dimensions?: { width: number; height: number; pixels: number };
-}> = ({ onClick, isCompressing, currentLimit, progress, dimensions }) => {
+  maxPixels?: number | null;
+}> = ({ onClick, isCompressing, currentLimit, progress, dimensions, maxPixels }) => {
   const t = useTranslations('workspace');
 
   const getDescription = () => {
@@ -132,7 +132,7 @@ const ResizeButton: React.FC<{
       return t('oversizedImage.optimizingQuality');
     }
     if (dimensions) {
-      const maxPixelsMP = (IMAGE_VALIDATION.MAX_PIXELS / 1_000_000).toFixed(0);
+      const maxPixelsMP = formatMaxPixels(maxPixels);
       return t('oversizedImage.autoResizeToPixelLimit', { maxPixels: maxPixelsMP });
     }
     return `${t('oversizedImage.automaticallyCompress')}${formatBytes(currentLimit)}${t('oversizedImage.limitBy')}`;
@@ -264,6 +264,7 @@ export interface IOversizedImageModalProps {
   totalCount?: number;
   /** Optional dimension info for pixel-oversized images */
   dimensions?: { width: number; height: number; pixels: number };
+  maxPixels?: number | null;
   onUpgrade?: () => void;
 }
 
@@ -276,6 +277,7 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
   currentIndex = 0,
   totalCount = 1,
   dimensions,
+  maxPixels = IMAGE_VALIDATION.MAX_PIXELS,
   onUpgrade,
 }) => {
   const t = useTranslations('workspace');
@@ -346,7 +348,7 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
       // For byte-size oversized images, compress to fit within byte limit
       const result = await compressImage(file, {
         targetSizeBytes: dimensions ? undefined : Math.floor(currentLimit * 0.9),
-        maxPixels: dimensions ? IMAGE_VALIDATION.MAX_PIXELS : undefined,
+        maxPixels: dimensions ? maxPixels : undefined,
         format: 'jpeg', // JPEG typically gives best compression for photos
         maintainAspectRatio: true,
       });
@@ -388,6 +390,7 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
           currentLimit={currentLimit}
           isPaidLimit={isPaidLimit}
           dimensions={dimensions}
+          maxPixels={maxPixels}
         />
 
         {/* Image Preview */}
@@ -408,6 +411,7 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
             currentLimit={currentLimit}
             progress={progress}
             dimensions={dimensions}
+            maxPixels={maxPixels}
           />
 
           {/* Option 2: Upgrade to Pro (only if not already on paid plan and not dimension-based) */}

@@ -7,6 +7,7 @@ import {
 import { useToastStore } from '@client/store/toastStore';
 import { useUserData, useUserStore } from '@client/store/userStore';
 import { BatchLimitError, processImage } from '@client/utils/api-client';
+import { prepareFileForProcessing } from '@client/utils/upscale-file-preprocessing';
 import { getBatchLimit } from '@shared/config/subscription.utils';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { serializeError } from '@shared/utils/errors';
@@ -208,11 +209,37 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       error: undefined,
     });
 
+    let fileToProcess = item.file;
+
+    try {
+      const prepared = await prepareFileForProcessing(item.file, config.qualityTier);
+      fileToProcess = prepared.file;
+
+      if (prepared.resized) {
+        const previewUrl = URL.createObjectURL(prepared.file);
+        URL.revokeObjectURL(item.previewUrl);
+
+        updateItemStatus(item.id, {
+          file: prepared.file,
+          previewUrl,
+        });
+
+        showToast({
+          message: 'Image automatically resized to fit the selected processing mode.',
+          type: 'info',
+          duration: 3000,
+        });
+      }
+    } catch {
+      // If client-side revalidation fails, keep the original file and let the
+      // server remain the final enforcement point.
+    }
+
     // Track upscale started event
     let inputWidth: number | undefined;
     let inputHeight: number | undefined;
     try {
-      const dimensions = await loadImageDimensions(item.file);
+      const dimensions = await loadImageDimensions(fileToProcess);
       inputWidth = dimensions.width;
       inputHeight = dimensions.height;
     } catch {
@@ -231,7 +258,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     let errorType: string | undefined;
 
     try {
-      const result = await processImage(item.file, config, (p, stage) => {
+      const result = await processImage(fileToProcess, config, (p, stage) => {
         updateItemStatus(item.id, {
           progress: p,
           stage: stage || ProcessingStage.ENHANCING,

@@ -6,10 +6,7 @@ import {
   IEnhancementSettings,
   QualityTier,
 } from '@/shared/types/coreflow.types';
-import {
-  isAutoResizeEnabled,
-  setAutoResizePreference,
-} from '@client/components/features/image-processing/OversizedImageModal';
+import { isAutoResizeEnabled, setAutoResizePreference } from '@client/utils/auto-resize-preference';
 import {
   Brain,
   ChevronDown,

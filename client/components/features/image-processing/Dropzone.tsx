@@ -8,7 +8,8 @@ import { useToastStore } from '@client/store/toastStore';
 import { analytics } from '@client/analytics';
 import { processFilesAsync, IDimensionInfo } from '@client/utils/file-validation';
 import { compressImage } from '@client/utils/image-compression';
-import { OversizedImageModal, isAutoResizeEnabled } from './OversizedImageModal';
+import { isAutoResizeEnabled } from '@client/utils/auto-resize-preference';
+import { OversizedImageModal } from './OversizedImageModal';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 
 interface IDropzoneProps {
@@ -18,6 +19,7 @@ interface IDropzoneProps {
   children?: React.ReactNode;
   className?: string;
   onUpgrade?: () => void;
+  maxPixels?: number | null;
 }
 
 // Union type for oversized files that can be either byte-size or dimension oversized
@@ -34,6 +36,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
   children,
   className = '',
   onUpgrade,
+  maxPixels = IMAGE_VALIDATION.MAX_PIXELS,
 }) => {
   const t = useTranslations('workspace');
   const { showToast } = useToastStore();
@@ -52,6 +55,10 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
   const { subscription, isFreeUser } = useUserData();
   const isPaidUser = !!subscription?.price_id;
   const currentLimit = isPaidUser ? IMAGE_VALIDATION.MAX_SIZE_PAID : IMAGE_VALIDATION.MAX_SIZE_FREE;
+  const pixelLimit = maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS;
+  const pixelLimitMegapixels = Number.isInteger(pixelLimit / 1_000_000)
+    ? (pixelLimit / 1_000_000).toFixed(0)
+    : (pixelLimit / 1_000_000).toFixed(1);
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -78,7 +85,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           oversizedFiles: oversizedBySize,
           oversizedDimensionFiles,
           invalidTypeFiles,
-        } = await processFilesAsync(files, isPaidUser);
+        } = await processFilesAsync(files, isPaidUser, maxPixels);
 
         // Check if auto-resize is enabled
         const autoResize = isAutoResizeEnabled();
@@ -91,7 +98,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           const resizePromises = oversizedDimensionFiles.map(async ({ file }) => {
             try {
               const result = await compressImage(file, {
-                maxPixels: IMAGE_VALIDATION.MAX_PIXELS,
+                maxPixels,
                 format: 'jpeg',
                 maintainAspectRatio: true,
               });
@@ -179,12 +186,13 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
               errorMessage:
                 entry.reason === 'size'
                   ? `File size ${entry.file.size} exceeds limit of ${currentLimit}`
-                  : `Image dimensions exceed ${IMAGE_VALIDATION.MAX_PIXELS / 1_000_000}MP limit`,
+                  : `Image dimensions exceed ${pixelLimitMegapixels}MP limit`,
               context: {
                 fileName: entry.file.name,
                 fileSize: entry.file.size,
                 maxSize: currentLimit,
                 rejectionReason: entry.reason === 'size' ? 'file_size_limit' : 'dimension_limit',
+                ...(entry.reason === 'dimensions' ? { maxPixels: pixelLimit } : {}),
                 ...(entry.dimensions
                   ? {
                       width: entry.dimensions.width,
@@ -231,7 +239,16 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
         setIsValidating(false);
       }
     },
-    [isPaidUser, currentLimit, onFilesSelected, showToast, t]
+    [
+      currentLimit,
+      isPaidUser,
+      maxPixels,
+      onFilesSelected,
+      pixelLimit,
+      pixelLimitMegapixels,
+      showToast,
+      t,
+    ]
   );
 
   const finishOversizedHandling = useCallback(
@@ -400,6 +417,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
           currentIndex={currentOversizedIndex}
           totalCount={oversizedFiles.length}
           dimensions={oversizedFiles[currentOversizedIndex].dimensions}
+          maxPixels={maxPixels}
           onUpgrade={onUpgrade}
         />
       )}
