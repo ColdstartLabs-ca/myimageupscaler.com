@@ -75,6 +75,7 @@ jobs:
           NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
           # Server-side environment variables
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
           REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}

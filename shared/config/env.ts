@@ -372,7 +372,11 @@ function loadServerEnv(): IServerEnv {
     // Baselime monitoring
     BASELIME_API_KEY: process.env.BASELIME_API_KEY || '',
     // Analytics (server-side HTTP API)
-    AMPLITUDE_API_KEY: process.env.AMPLITUDE_API_KEY || '',
+    // Fall back to the public project key because Amplitude ingestion uses the same
+    // project-level API key for browser and HTTP API events. This prevents server-side
+    // analytics from silently breaking when only NEXT_PUBLIC_AMPLITUDE_API_KEY is set.
+    AMPLITUDE_API_KEY:
+      process.env.AMPLITUDE_API_KEY || process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY || '',
     // CORS
     ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN || '*',
     // Cloudflare

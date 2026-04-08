@@ -96,6 +96,10 @@ export async function trackServerEvent(
   const { apiKey, userId, deviceId } = options;
 
   if (!apiKey) {
+    console.error('[Analytics] Missing Amplitude API key for server event', {
+      event: name,
+      userId,
+    });
     return false;
   }
 

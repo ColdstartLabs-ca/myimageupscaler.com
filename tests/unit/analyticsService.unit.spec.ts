@@ -1,10 +1,20 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 
 /**
  * Unit tests for the analytics service.
  * These tests verify the analytics service behavior without external dependencies.
  */
 describe('Analytics Service', () => {
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+  });
+
   describe('trackServerEvent', () => {
     test('should return false when API key is empty', async () => {
       // Import dynamically to avoid module caching issues
@@ -29,6 +39,25 @@ describe('Analytics Service', () => {
       );
 
       expect(result).toBe(false);
+    });
+
+    test('should log when API key is missing for server events', async () => {
+      const { trackServerEvent } = await import('../../server/analytics/analyticsService');
+
+      const result = await trackServerEvent(
+        'purchase_confirmed',
+        { source: 'test' },
+        { apiKey: '', userId: 'user-123' }
+      );
+
+      expect(result).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '[Analytics] Missing Amplitude API key for server event',
+        expect.objectContaining({
+          event: 'purchase_confirmed',
+          userId: 'user-123',
+        })
+      );
     });
   });
 

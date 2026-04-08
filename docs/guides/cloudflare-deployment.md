@@ -102,7 +102,10 @@ STRIPE_SECRET_KEY=your_stripe_secret_key
 STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 GEMINI_API_KEY=your_gemini_api_key
 BASELIME_API_KEY=your_baselime_server_api_key
+AMPLITUDE_API_KEY=your_amplitude_project_api_key
 ```
+
+`AMPLITUDE_API_KEY` should point to the same Amplitude project as `NEXT_PUBLIC_AMPLITUDE_API_KEY`.
 
 #### Stripe Price IDs
 
