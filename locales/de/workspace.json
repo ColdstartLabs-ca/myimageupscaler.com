@@ -172,9 +172,11 @@
     "blog": "Blog"
   },
   "postDownloadPrompt": {
-    "message": "Ergebnis gefällt?",
-    "ctaLink": "Mit Premium-Modellen 10x schärfer.",
-    "dismiss": "Upgrade-Hinweis ausblenden"
+    "title": "Neugierig, was andere Modelle können?",
+    "body": "Wir haben über 14 KI-Modelle, jedes für unterschiedliche Bildtypen optimiert.",
+    "cta": "Modelle entdecken",
+    "dismiss": "Hinweis schließen",
+    "maybeLater": "Vielleicht später"
   },
   "sampleImages": {
     "title": "Mit einem Beispielbild ausprobieren",
@@ -204,10 +206,10 @@
   },
   "progressCelebration": {
     "title": "Erste Vergrößerung abgeschlossen!",
-    "subtitle": "Du hast dein erstes Bild vergrößert! Bereit zu sehen, was unsere KI sonst noch kann?",
+    "subtitle": "Du hast dein erstes Bild vergrößert! Neugierig, was andere KI-Modelle damit machen können?",
     "uploadAnother": "Weiteres Bild hochladen",
-    "seePlans": "Premium-Pläne ansehen",
-    "skipText": "Unbegrenzte Vergrößerungen mit Premium freischalten",
+    "exploreModels": "Modelle entdecken",
+    "skipText": "Sieh dir den Unterschied unserer Premium-Modelle an",
     "dismiss": "Glückwunsch ausblenden"
   },
   "onboardingTour": {

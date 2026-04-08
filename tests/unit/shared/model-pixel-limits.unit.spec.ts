@@ -6,7 +6,11 @@
 import { describe, it, expect } from 'vitest';
 
 import { MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
-import { getMaxPixelsForModel, IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
+import {
+  getMaxPixelsForModel,
+  getMaxPixelsForQualityTier,
+  IMAGE_VALIDATION,
+} from '@shared/validation/upscale.schema';
 
 describe('Model Pixel Limits', () => {
   describe('getMaxPixelsForModel', () => {
@@ -57,6 +61,22 @@ describe('Model Pixel Limits', () => {
     it('should return default 1.5M for unknown model', () => {
       expect(getMaxPixelsForModel('unknown-model')).toBe(IMAGE_VALIDATION.MAX_PIXELS);
       expect(getMaxPixelsForModel('nonexistent')).toBe(1_500_000);
+    });
+  });
+
+  describe('getMaxPixelsForQualityTier', () => {
+    it('should return model-specific limits for explicit quality tiers', () => {
+      expect(getMaxPixelsForQualityTier('quick')).toBe(1_500_000);
+      expect(getMaxPixelsForQualityTier('hd-upscale')).toBe(4_000_000);
+      expect(getMaxPixelsForQualityTier('budget-edit')).toBe(2_560_000);
+    });
+
+    it('should use the conservative fallback for auto tier', () => {
+      expect(getMaxPixelsForQualityTier('auto')).toBe(IMAGE_VALIDATION.MAX_PIXELS);
+    });
+
+    it('should skip Replicate pixel limits for background removal', () => {
+      expect(getMaxPixelsForQualityTier('bg-removal')).toBeNull();
     });
   });
 

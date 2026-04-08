@@ -192,9 +192,11 @@
     }
   },
   "postDownloadPrompt": {
-    "message": "Vous aimez le résultat ?",
-    "ctaLink": "10x plus net avec les modèles Premium.",
-    "dismiss": "Ignorer la suggestion d'amélioration"
+    "title": "Curieux de voir ce que les autres modèles peuvent faire ?",
+    "body": "Nous avons plus de 14 modèles d'IA, chacun optimisé pour différents types d'images.",
+    "cta": "Explorer les modèles",
+    "dismiss": "Fermer l'invite",
+    "maybeLater": "Peut-être plus tard"
   },
   "sampleImages": {
     "title": "Essayer avec une image exemple",
@@ -224,10 +226,10 @@
   },
   "progressCelebration": {
     "title": "Premier agrandissement terminé !",
-    "subtitle": "Vous venez d'agrandir votre première image ! Prêt à découvrir ce que notre IA peut faire d'autre ?",
+    "subtitle": "Vous venez d'agrandir votre première image ! Curieux de voir ce que d'autres modèles d'IA peuvent en faire ?",
     "uploadAnother": "Télécharger une autre image",
-    "seePlans": "Voir les plans Premium",
-    "skipText": "Débloquez des agrandissements illimités avec Premium",
+    "exploreModels": "Explorer les modèles",
+    "skipText": "Voyez la différence de nos modèles premium",
     "dismiss": "Fermer la célébration"
   },
   "onboardingTour": {

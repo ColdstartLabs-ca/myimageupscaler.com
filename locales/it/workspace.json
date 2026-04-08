@@ -174,9 +174,11 @@
     }
   },
   "postDownloadPrompt": {
-    "message": "Ti piace il risultato?",
-    "ctaLink": "10x più nitido con i modelli Premium.",
-    "dismiss": "Ignora suggerimento di miglioramento"
+    "title": "Curioso di vedere cosa possono fare gli altri modelli?",
+    "body": "Abbiamo più di 14 modelli di IA, ognuno ottimizzato per diversi tipi di immagine.",
+    "cta": "Esplora i modelli",
+    "dismiss": "Chiudi prompt",
+    "maybeLater": "Magari più tardi"
   },
   "sampleImages": {
     "title": "Prova con un'immagine di esempio",
@@ -206,10 +208,10 @@
   },
   "progressCelebration": {
     "title": "Primo ingrandimento completato!",
-    "subtitle": "Hai appena ingrandito la tua prima immagine! Pronto a scoprire cos'altro può fare la nostra IA?",
+    "subtitle": "Hai appena ingrandito la tua prima immagine! Curioso di vedere cosa possono fare altri modelli di IA con essa?",
     "uploadAnother": "Carica un'altra immagine",
-    "seePlans": "Vedi i piani Premium",
-    "skipText": "Sblocca ingrandimenti illimitati con Premium",
+    "exploreModels": "Esplora i modelli",
+    "skipText": "Scopri la differenza dei nostri modelli premium",
     "dismiss": "Chiudi celebrazione"
   },
   "onboardingTour": {

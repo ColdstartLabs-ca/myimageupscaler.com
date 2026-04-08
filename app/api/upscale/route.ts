@@ -165,12 +165,43 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
   let creditCost = 1; // Default, will be updated after validation
   let userId: string | undefined;
+  let requestedQualityTier: QualityTier | undefined;
+  let requestedScale: 2 | 4 | 8 | undefined;
+  let resolvedTier: QualityTier | undefined;
+  let resolvedModelId: ModelId | undefined;
+  let inputDimensions: { width: number; height: number } | null = null;
+
+  const logFailure = (
+    failureReason: string,
+    details: Record<string, unknown> = {},
+    level: 'warn' | 'error' = 'warn'
+  ): void => {
+    const payload = {
+      failureReason,
+      userId,
+      requestedQualityTier,
+      requestedScale,
+      resolvedTier,
+      resolvedModelId,
+      inputWidth: inputDimensions?.width,
+      inputHeight: inputDimensions?.height,
+      creditCost,
+      ...details,
+    };
+
+    if (level === 'error') {
+      logger.error('Upscale failed', payload);
+      return;
+    }
+
+    logger.warn('Upscale rejected', payload);
+  };
 
   try {
     // 1. Extract authenticated user ID from middleware header
     userId = req.headers.get('X-User-Id') || undefined;
     if (!userId) {
-      logger.warn('Unauthorized request - no user ID');
+      logFailure('unauthorized_missing_user_id');
       const { body, status } = createErrorResponse(
         ErrorCodes.UNAUTHORIZED,
         'Authentication required',
@@ -182,7 +213,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // 2. Apply stricter rate limit for image processing (5 req/min)
     const { success: rateLimitOk, remaining, reset } = await upscaleRateLimit.limit(userId);
     if (!rateLimitOk) {
-      logger.warn('Upscale rate limit exceeded', { userId });
+      logFailure('rate_limited', {
+        remaining,
+        resetAt: new Date(reset).toISOString(),
+      });
 
       // Track rate limit exceeded event
       await trackServerEvent(
@@ -228,7 +262,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // 3a. Block flagged free-tier users before any credit-consuming work
     if (isFreeleaderBlocked(profile)) {
-      logger.warn('Blocked flagged freeloader', { userId });
+      logFailure('account_restricted_freeloader');
       return NextResponse.json(
         {
           error: {
@@ -259,8 +293,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // HIGH-8/9 FIX: Use atomic checkAndIncrement to prevent race conditions
     const batchCheck = await batchLimitCheck.checkAndIncrement(userId, userTier);
     if (!batchCheck.allowed) {
-      logger.warn('Batch limit exceeded', {
-        userId,
+      logFailure('batch_limit_exceeded', {
         tier: userTier,
         current: batchCheck.current,
         limit: batchCheck.limit,
@@ -290,12 +323,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // 5. Parse and validate request body
     const body = await req.json();
     const validatedInput = upscaleSchema.parse(body);
+    requestedQualityTier = validatedInput.config.qualityTier;
+    requestedScale = validatedInput.config.scale;
 
     // 6. Additional validation: Check if image data is valid base64
     try {
       const imageData = validatedInput.imageData;
       const base64Data = imageData.startsWith('data:') ? imageData.split(',')[1] : imageData;
       if (!base64Data) {
+        logFailure('invalid_base64_missing_payload');
         const { body: errorBody, status } = createErrorResponse(
           ErrorCodes.VALIDATION_ERROR,
           'Invalid image data format - missing base64 data',
@@ -307,6 +343,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       // Simple base64 validation using web-compatible approach
       const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
       if (!base64Regex.test(base64Data)) {
+        logFailure('invalid_base64_characters');
         const { body: errorBody, status } = createErrorResponse(
           ErrorCodes.VALIDATION_ERROR,
           'Invalid image data format - not valid base64',
@@ -315,6 +352,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json(errorBody, { status });
       }
     } catch {
+      logFailure('invalid_image_data_exception');
       const { body: errorBody, status } = createErrorResponse(
         ErrorCodes.VALIDATION_ERROR,
         'Invalid image data format',
@@ -328,10 +366,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // 8. Validate image size based on user tier (BEFORE charging credits)
     const sizeValidation = validateImageSizeForTier(validatedInput.imageData, isPaidUser);
     if (!sizeValidation.valid) {
-      logger.warn('Image size validation failed', {
-        userId,
+      logFailure('file_size_validation_failed', {
         isPaidUser,
-        error: sizeValidation.error,
+        validationError: sizeValidation.error,
+        sizeBytes: sizeValidation.sizeBytes,
       });
       const { body: errorBody, status } = createErrorResponse(
         ErrorCodes.VALIDATION_ERROR,
@@ -344,8 +382,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // 8a. Validate magic bytes match claimed MIME type
     const magicValidation = validateMagicBytes(validatedInput.imageData, validatedInput.mimeType);
     if (!magicValidation.valid) {
-      logger.warn('Magic byte validation failed', {
-        userId,
+      logFailure('magic_bytes_validation_failed', {
         claimedMime: validatedInput.mimeType,
         detectedMime: magicValidation.detectedMimeType,
       });
@@ -358,15 +395,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // 8b. Decode and validate input dimensions
-    const inputDimensions = decodeImageDimensions(validatedInput.imageData);
+    inputDimensions = decodeImageDimensions(validatedInput.imageData);
     if (inputDimensions) {
       const dimValidation = validateImageDimensions(inputDimensions.width, inputDimensions.height);
       if (!dimValidation.valid) {
-        logger.warn('Dimension validation failed', {
-          userId,
+        logFailure('dimension_validation_failed', {
           width: inputDimensions.width,
           height: inputDimensions.height,
-          error: dimValidation.error,
+          validationError: dimValidation.error,
         });
         const { body: errorBody, status } = createErrorResponse(
           ErrorCodes.VALIDATION_ERROR,
@@ -377,7 +413,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     } else {
       // Could not decode dimensions - proceed with caution
-      logger.warn('Could not decode image dimensions', { userId });
+      logger.warn('Could not decode image dimensions', {
+        failureReason: 'dimensions_unreadable',
+        userId,
+        requestedQualityTier,
+        requestedScale,
+      });
     }
 
     // 9. Validate premium tier restrictions for free users
@@ -386,8 +427,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Block free users from premium tiers
     if (!isPaidUser && premiumTiers.includes(config.qualityTier)) {
-      logger.warn('Free user attempted premium tier', {
-        userId,
+      logFailure('premium_tier_requires_paid', {
         tier: config.qualityTier,
       });
       const { body: errorBody, status } = createErrorResponse(
@@ -404,7 +444,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       MODEL_COSTS.SMART_ANALYSIS_REQUIRES_PAID &&
       config.additionalOptions.smartAnalysis
     ) {
-      logger.warn('Free user attempted Smart Analysis', { userId });
+      logFailure('smart_analysis_requires_paid');
       const { body: errorBody, status } = createErrorResponse(
         ErrorCodes.FORBIDDEN,
         'Smart AI Analysis requires a paid subscription. Please upgrade or disable this feature.',
@@ -414,8 +454,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // 10. New 3-branch logic for quality tier processing
-    let resolvedTier: QualityTier;
-    let resolvedModelId: ModelId;
     let resolvedEnhancements = config.additionalOptions;
     let didRunAIAnalysis = false;
 
@@ -504,7 +542,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const modelRegistry = ModelRegistry.getInstance();
     const selectedModel = modelRegistry.getModel(resolvedModelId);
     if (!selectedModel || !selectedModel.isEnabled) {
-      logger.error('Resolved model not available', { modelId: resolvedModelId, userId });
+      logFailure(
+        'resolved_model_unavailable',
+        { modelId: resolvedModelId, requestedQualityTier },
+        'error'
+      );
       const { body: errorBody, status } = createErrorResponse(
         ErrorCodes.INTERNAL_ERROR,
         'Unable to process image with selected quality tier. Please try again.',
@@ -524,8 +566,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const requiredLevel = tierLevels[minRequiredTier] ?? 0;
 
       if (userLevel < requiredLevel) {
-        logger.warn('Model requires higher tier', {
-          userId,
+        logFailure('model_tier_restricted', {
           modelId: resolvedModelId,
           userTier: userTierForModels,
           requiredTier: minRequiredTier,
@@ -544,8 +585,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // have empty supportedScales - skip validation for these models (scale is ignored)
     const hasNoSupportedScales = selectedModel.supportedScales.length === 0;
     if (!hasNoSupportedScales && !selectedModel.supportedScales.includes(config.scale)) {
-      logger.warn('Scale not supported by model', {
-        userId,
+      logFailure('scale_not_supported', {
         tier: resolvedTier,
         modelId: resolvedModelId,
         requestedScale: config.scale,
@@ -577,8 +617,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const maxPixels = modelRegistry.getMaxInputPixels(resolvedModelId);
 
       if (pixels > maxPixels) {
-        logger.warn('Image exceeds model pixel limit', {
-          userId,
+        logFailure('image_exceeds_model_pixel_limit', {
           width: inputDimensions.width,
           height: inputDimensions.height,
           pixels,
@@ -632,7 +671,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       processor = ImageProcessorFactory.createProcessorForModel(resolvedModelId);
     } catch {
       // Fallback to legacy processor selection if model-specific fails
-      logger.warn('Model-specific processor failed, using fallback', { modelId: resolvedModelId });
+      logger.warn('Model-specific processor failed, using fallback', {
+        failureReason: 'processor_factory_fallback',
+        modelId: resolvedModelId,
+        requestedQualityTier,
+        requestedScale,
+      });
       processor = ImageProcessorFactory.createProcessor('both');
     }
 
@@ -800,7 +844,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   } catch (error) {
     // Handle validation errors
     if (error instanceof ZodError) {
-      logger.warn('Validation error', { errors: error.errors });
+      logFailure('zod_validation_error', { errors: error.errors });
       const { body, status } = createErrorResponse(
         ErrorCodes.VALIDATION_ERROR,
         'Invalid request data',
@@ -812,7 +856,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Handle insufficient credits
     if (error instanceof InsufficientCreditsError) {
-      logger.info('Insufficient credits', { required: creditCost });
+      logFailure('insufficient_credits', { requiredCredits: creditCost });
       const { body, status } = createErrorResponse(
         ErrorCodes.INSUFFICIENT_CREDITS,
         `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
@@ -827,8 +871,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const statusCode =
         error.code === 'RATE_LIMITED'
           ? 429
-          : error.code === 'SAFETY' || error.code === 'IMAGE_TOO_LARGE'
-            ? 422
+          : error.code === 'SAFETY' || error.code === 'IMAGE_TOO_LARGE' || error.code === 'INVALID_INPUT'
+            ? error.code === 'INVALID_INPUT'
+              ? 400
+              : 422
             : 503;
       const errorCode =
         error.code === 'RATE_LIMITED'
@@ -837,11 +883,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             ? ErrorCodes.IMAGE_TOO_LARGE
             : error.code === 'SAFETY'
               ? ErrorCodes.INVALID_REQUEST
+              : error.code === 'INVALID_INPUT'
+                ? ErrorCodes.VALIDATION_ERROR
               : ErrorCodes.AI_UNAVAILABLE;
-      logger.error('Replicate error', {
-        message: error.message,
-        code: error.code,
-      });
+      logFailure(
+        `replicate_${String(error.code).toLowerCase()}`,
+        {
+          message: error.message,
+          replicateCode: error.code,
+          ...(error.code === 'AUTHENTICATION_FAILED'
+            ? {
+                action:
+                  'Verify REPLICATE_API_TOKEN and any Cloudflare/Workers egress allowlist in Replicate.',
+              }
+            : {}),
+        },
+        'error'
+      );
 
       // Track processing failed event for Replicate errors
       if (userId) {
@@ -877,10 +935,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const statusCode = error.finishReason === 'SAFETY' ? 422 : 500;
       const errorCode =
         error.finishReason === 'SAFETY' ? ErrorCodes.INVALID_REQUEST : ErrorCodes.PROCESSING_FAILED;
-      logger.error('AI generation error', {
-        message: error.message,
-        finishReason: error.finishReason,
-      });
+      logFailure(
+        `ai_generation_${String(error.finishReason).toLowerCase()}`,
+        {
+          message: error.message,
+          finishReason: error.finishReason,
+        },
+        'error'
+      );
 
       // Track processing failed event for AI generation errors
       if (userId) {
@@ -913,10 +975,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Handle unexpected errors
     const errorMessage = serializeError(error);
-    logger.error('Unexpected error', {
-      error: errorMessage,
-      stack: error instanceof Error ? error.stack : undefined,
-    });
+    logFailure(
+      'unexpected_internal_error',
+      {
+        error: errorMessage,
+        stack: error instanceof Error ? error.stack : undefined,
+      },
+      'error'
+    );
 
     if (userId) {
       const durationMs = Date.now() - startTime;

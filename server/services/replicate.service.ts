@@ -1,4 +1,4 @@
-import { isRateLimitError, withRetry } from '@server/utils/retry';
+import { isRateLimitError, isTransientUpstreamError, withRetry } from '@server/utils/retry';
 import { serverEnv } from '@shared/config/env';
 import { serializeError } from '@shared/utils/errors';
 import type { IUpscaleInput } from '@shared/validation/upscale.schema';
@@ -15,12 +15,36 @@ import { ModelRegistry } from './model-registry';
 import { buildModelInput, type IModelInput } from './replicate/builders';
 import { creditManager } from './replicate/utils/credit-manager';
 import { replicateErrorMapper } from './replicate/utils/error-mapper';
+import { ReplicateError } from './replicate/utils/error-mapper';
 import { parseReplicateResponse } from './replicate/utils/output-parser';
 
 /**
  * Re-export ReplicateError for backward compatibility
  */
 export { ReplicateError } from './replicate/utils/error-mapper';
+
+function isMeaningfulImageReference(value: unknown): value is string {
+  if (typeof value !== 'string') {
+    return false;
+  }
+
+  const normalized = value.trim();
+  if (!normalized || normalized === 'null' || normalized === 'undefined') {
+    return false;
+  }
+
+  if (!normalized.startsWith('data:')) {
+    return true;
+  }
+
+  const separatorIndex = normalized.indexOf(',');
+  if (separatorIndex === -1) {
+    return false;
+  }
+
+  const payload = normalized.slice(separatorIndex + 1).trim();
+  return Boolean(payload && payload !== 'null' && payload !== 'undefined');
+}
 
 /**
  * Service for image upscaling via Replicate
@@ -143,6 +167,41 @@ export class ReplicateService implements IImageProcessor {
     return buildModelInput(modelId, inputWithUrl);
   }
 
+  private extractImageReferences(replicateInput: IModelInput): unknown[] {
+    const fields = [
+      'image',
+      'img',
+      'input_image',
+      'img_cond_path',
+      'input_images',
+      'image_input',
+      'images',
+    ] as const;
+    const inputRecord = replicateInput as Partial<Record<(typeof fields)[number], unknown>>;
+
+    return fields.flatMap(field => {
+      const value = inputRecord[field];
+      if (typeof value === 'undefined') {
+        return [];
+      }
+
+      return Array.isArray(value) ? value : [value];
+    });
+  }
+
+  private ensureImageInputPresent(replicateInput: IModelInput): void {
+    const hasValidImageReference = this.extractImageReferences(replicateInput).some(
+      isMeaningfulImageReference
+    );
+
+    if (!hasValidImageReference) {
+      throw new ReplicateError(
+        'Image input is missing or empty before the Replicate call.',
+        'INVALID_INPUT'
+      );
+    }
+  }
+
   /**
    * Call the Replicate model (supports multiple models from registry)
    */
@@ -152,7 +211,14 @@ export class ReplicateService implements IImageProcessor {
     expiresAt: number;
   }> {
     // Prepare image data - ensure it's a data URL
-    let imageDataUrl = input.imageData;
+    if (!isMeaningfulImageReference(input.imageData)) {
+      throw new ReplicateError(
+        'Image input is missing or empty before the Replicate call.',
+        'INVALID_INPUT'
+      );
+    }
+
+    let imageDataUrl = input.imageData.trim();
     if (!imageDataUrl.startsWith('data:')) {
       const mimeType = input.mimeType || 'image/jpeg';
       imageDataUrl = `data:${mimeType};base64,${imageDataUrl}`;
@@ -165,26 +231,30 @@ export class ReplicateService implements IImageProcessor {
 
     // Prepare Replicate input using the builder system
     const replicateInput = this.buildModelInput(selectedModel, imageDataUrl, input);
+    this.ensureImageInputPresent(replicateInput);
 
     try {
-      // Run with retry for rate limits
-      const output = await withRetry(
-        () =>
-          this.replicate.run(modelVersion as `${string}/${string}:${string}`, {
+      // Run with retry for rate limits and transient provider/output failures.
+      return await withRetry(
+        async () => {
+          const output = await this.replicate.run(modelVersion as `${string}/${string}:${string}`, {
             input: replicateInput,
-          }),
+          });
+
+          return parseReplicateResponse(output);
+        },
         {
-          shouldRetry: err => isRateLimitError(serializeError(err)),
-          onRetry: (attempt, delayMs) => {
+          shouldRetry: err => {
+            const message = serializeError(err);
+            return isRateLimitError(message) || isTransientUpstreamError(message);
+          },
+          onRetry: (attempt, delayMs, err) => {
             console.log(
-              `[Replicate] Rate limited, retrying in ${delayMs}ms (attempt ${attempt}/3)`
+              `[Replicate] Retrying in ${delayMs}ms (attempt ${attempt}/3): ${serializeError(err)}`
             );
           },
         }
       );
-
-      // Parse response using output parser
-      return parseReplicateResponse(output);
     } catch (error) {
       // Map errors using error mapper
       throw replicateErrorMapper.mapError(error);

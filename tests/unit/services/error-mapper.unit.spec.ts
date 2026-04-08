@@ -90,6 +90,20 @@ describe('ReplicateErrorMapper', () => {
       expect(result.code).toBe(ReplicateErrorCode.RATE_LIMITED);
     });
 
+    it('should map 403 provider access errors', () => {
+      const error = new Error('403 Forbidden: access denied');
+      const result = mapper.mapError(error);
+
+      expect(result.code).toBe(ReplicateErrorCode.AUTHENTICATION_FAILED);
+    });
+
+    it('should map NoneType image input errors to INVALID_INPUT', () => {
+      const error = new Error("'NoneType' object has no attribute 'shape'");
+      const result = mapper.mapError(error);
+
+      expect(result.code).toBe(ReplicateErrorCode.INVALID_INPUT);
+    });
+
     it('should map safety filter errors', () => {
       const error = new Error('Image flagged by NSFW safety filter');
       const result = mapper.mapError(error);

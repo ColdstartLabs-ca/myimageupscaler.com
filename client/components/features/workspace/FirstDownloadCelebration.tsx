@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@client/utils/cn';
 import { analytics } from '@client/analytics';
-import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { ONBOARDING_COMPLETED_KEY } from '@shared/config/sample-images.config';
 import { useTranslations } from 'next-intl';
 import { Sparkles, Upload, ArrowRight, X } from 'lucide-react';
@@ -18,8 +17,8 @@ export interface IFirstDownloadCelebrationProps {
   onUploadAnother?: () => void;
   /** Callback when celebration is dismissed */
   onDismiss?: () => void;
-  /** Callback when user clicks "See Plans" - opens purchase modal inline */
-  onUpgrade?: () => void;
+  /** Callback when user clicks "Explore Models" */
+  onExploreModels?: () => void;
   /** Source of the download - sample or user upload */
   source?: 'sample' | 'upload';
 }
@@ -72,7 +71,7 @@ function markOnboardingCompleted(): void {
  *
  * Features:
  * - CSS-based confetti animation (no heavy JS libraries)
- * - "Upload Another" and "See Premium Plans" buttons
+ * - "Upload Another" and "Explore Models" buttons
  * - Only shows once per user (localStorage flag)
  * - Tracks `onboarding_completed` event
  */
@@ -80,7 +79,7 @@ export const FirstDownloadCelebration = ({
   isFreeUser,
   onUploadAnother,
   onDismiss,
-  onUpgrade,
+  onExploreModels,
   source = 'upload',
 }: IFirstDownloadCelebrationProps): JSX.Element | null => {
   const t = useTranslations('workspace.progressCelebration');
@@ -132,19 +131,18 @@ export const FirstDownloadCelebration = ({
     onUploadAnother?.();
   };
 
-  const handleViewPlans = () => {
+  const handleExploreModels = () => {
     // Mark as shown before triggering upgrade
     markCelebrationShown();
 
-    setCheckoutTrackingContext({ trigger: 'celebration' });
     analytics.track('upgrade_prompt_clicked', {
-      trigger: 'celebration',
-      destination: 'purchase_modal',
+      trigger: 'celebration_explore',
+      destination: 'model_gallery',
       currentPlan: isFreeUser ? 'free' : 'paid',
     });
 
     handleDismiss();
-    onUpgrade?.();
+    onExploreModels?.();
   };
 
   // Generate confetti pieces
@@ -218,35 +216,36 @@ export const FirstDownloadCelebration = ({
         <p className="text-text-muted mb-6">{t('subtitle')}</p>
 
         {/* Action buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="flex flex-col gap-3 justify-center sm:flex-row">
+          {isFreeUser ? (
+            <button
+              onClick={handleExploreModels}
+              className={cn(
+                'flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4',
+                'gradient-cta shine-effect',
+                'text-base font-bold text-white transition-all',
+                'hover:scale-[1.02] active:scale-[0.98]',
+                'shadow-lg shadow-accent/20 sm:flex-1'
+              )}
+            >
+              {t('exploreModels')}
+              <ArrowRight size={18} />
+            </button>
+          ) : null}
+
           <button
             onClick={handleUploadAnother}
             className={cn(
-              'flex items-center justify-center gap-2 px-6 py-3 rounded-xl',
+              'flex items-center justify-center gap-2 rounded-xl px-6 py-3.5',
               'bg-surface-hover hover:bg-surface-active border border-border',
               'text-text font-semibold transition-all',
-              'hover:scale-[1.02] active:scale-[0.98]'
+              'hover:scale-[1.02] active:scale-[0.98]',
+              isFreeUser && 'sm:min-w-[170px]'
             )}
           >
             <Upload size={18} />
             {t('uploadAnother')}
           </button>
-
-          {isFreeUser && (
-            <button
-              onClick={handleViewPlans}
-              className={cn(
-                'flex items-center justify-center gap-2 px-6 py-3 rounded-xl',
-                'gradient-cta shine-effect',
-                'text-white font-semibold transition-all',
-                'hover:scale-[1.02] active:scale-[0.98]',
-                'shadow-lg shadow-accent/20'
-              )}
-            >
-              {t('seePlans')}
-              <ArrowRight size={18} />
-            </button>
-          )}
         </div>
 
         {/* Skip text for free users */}

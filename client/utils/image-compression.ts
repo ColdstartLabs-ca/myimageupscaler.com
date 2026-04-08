@@ -10,7 +10,7 @@ export interface ICompressionOptions {
   quality?: number; // Quality from 1-100 (default: 80)
   maxWidth?: number; // Max width in pixels
   maxHeight?: number; // Max height in pixels
-  maxPixels?: number; // Max total pixels (width * height) - defaults to GPU limit
+  maxPixels?: number | null; // Max total pixels (width * height) - null disables pixel resizing
   format?: 'jpeg' | 'png' | 'webp'; // Output format (default: original or jpeg)
   maintainAspectRatio?: boolean; // Maintain aspect ratio (default: true)
 }
@@ -65,7 +65,7 @@ export async function compressImage(
   const maxPixels = options.maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS;
   const originalPixels = img.width * img.height;
 
-  if (originalPixels > maxPixels) {
+  if (options.maxPixels != null && originalPixels > maxPixels) {
     const scaleFactor = Math.sqrt(maxPixels / originalPixels);
     const pixelWidth = Math.floor(img.width * scaleFactor);
     const pixelHeight = Math.floor(img.height * scaleFactor);
@@ -116,7 +116,7 @@ async function compressToTargetSize(
   let targetWidth = img.width;
   let targetHeight = img.height;
 
-  if (originalPixels > maxPixels) {
+  if (options.maxPixels != null && originalPixels > maxPixels) {
     const scaleFactor = Math.sqrt(maxPixels / originalPixels);
     targetWidth = Math.floor(img.width * scaleFactor);
     targetHeight = Math.floor(img.height * scaleFactor);

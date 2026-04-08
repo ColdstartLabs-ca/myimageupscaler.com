@@ -13,6 +13,7 @@ interface IQueueStripProps {
   onRemove: (id: string) => void;
   onAddFiles: (files: File[]) => void;
   batchLimit?: number;
+  maxPixels?: number | null;
 }
 
 export const QueueStrip: React.FC<IQueueStripProps> = ({
@@ -23,6 +24,7 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
   onRemove,
   onAddFiles,
   batchLimit,
+  maxPixels,
 }) => {
   const t = useTranslations('workspace.queue');
   return (
@@ -52,6 +54,7 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
         <Dropzone
           onFilesSelected={onAddFiles}
           disabled={isProcessing || (batchLimit !== undefined && queue.length >= batchLimit)}
+          maxPixels={maxPixels}
           className={cn(
             'h-full w-full !p-0 !border-2 !border-dashed !rounded-xl transition-all duration-300',
             // Mobile: larger touch target

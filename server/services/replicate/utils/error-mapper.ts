@@ -6,6 +6,8 @@ import { serializeError } from '@shared/utils/errors';
  */
 export enum ReplicateErrorCode {
   RATE_LIMITED = 'RATE_LIMITED',
+  AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED',
+  INVALID_INPUT = 'INVALID_INPUT',
   SAFETY = 'SAFETY',
   TIMEOUT = 'TIMEOUT',
   IMAGE_TOO_LARGE = 'IMAGE_TOO_LARGE', // GPU OOM - image exceeds hardware limits
@@ -33,6 +35,26 @@ export class ReplicateError extends Error {
  * Maps raw errors from Replicate API to typed ReplicateError instances
  */
 export class ReplicateErrorMapper {
+  private extractStatusCode(error: unknown): number | undefined {
+    if (!error || typeof error !== 'object') {
+      return undefined;
+    }
+
+    if ('status' in error && typeof (error as { status: unknown }).status === 'number') {
+      return (error as { status: number }).status;
+    }
+
+    if (
+      'response' in error &&
+      (error as { response?: { status?: unknown } }).response &&
+      typeof (error as { response: { status?: unknown } }).response.status === 'number'
+    ) {
+      return (error as { response: { status: number } }).response.status;
+    }
+
+    return undefined;
+  }
+
   /**
    * Map a raw error to appropriate ReplicateError
    *
@@ -46,12 +68,43 @@ export class ReplicateErrorMapper {
     }
 
     const message = serializeError(error);
+    const lowerMessage = message.toLowerCase();
+    const statusCode = this.extractStatusCode(error);
 
     // Check for rate limit errors
     if (isRateLimitError(message)) {
       return new ReplicateError(
         'Replicate rate limit exceeded. Please try again.',
         ReplicateErrorCode.RATE_LIMITED
+      );
+    }
+
+    // Replicate auth / account access problems (invalid API key, IP allowlist, account restriction)
+    if (
+      statusCode === 403 ||
+      (lowerMessage.includes('403') &&
+        (lowerMessage.includes('forbidden') ||
+          lowerMessage.includes('unauthorized') ||
+          lowerMessage.includes('access denied') ||
+          lowerMessage.includes('authentication')))
+    ) {
+      return new ReplicateError(
+        'Replicate access was denied. Verify REPLICATE_API_TOKEN and any Cloudflare/Workers egress allowlist.',
+        ReplicateErrorCode.AUTHENTICATION_FAILED
+      );
+    }
+
+    // Null/empty image input reaching the model often surfaces as Python NoneType errors.
+    if (
+      lowerMessage.includes('nonetype') ||
+      lowerMessage.includes('none type') ||
+      lowerMessage.includes('image input is missing') ||
+      lowerMessage.includes('image input was missing') ||
+      lowerMessage.includes('invalid image input')
+    ) {
+      return new ReplicateError(
+        'Image input was empty or invalid before processing.',
+        ReplicateErrorCode.INVALID_INPUT
       );
     }
 
@@ -81,7 +134,6 @@ export class ReplicateErrorMapper {
     // Safety net if client-side resize fails or server dimension check is bypassed
     // Note: normalise to lower-case for case-insensitive matching; avoid overly-broad
     // patterns (e.g. "CUDA error") that match non-OOM hardware faults.
-    const lowerMessage = message.toLowerCase();
     if (
       lowerMessage.includes('gpu memory') ||
       lowerMessage.includes('greater than the max size') ||

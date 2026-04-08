@@ -89,8 +89,8 @@ vi.mock('next-intl', () => ({
       title: 'First upscale complete!',
       subtitle: 'Great job!',
       uploadAnother: 'Upload Another',
-      seePlans: 'See Premium Plans',
-      skipText: 'Unlock unlimited upscales with Premium',
+      exploreModels: 'Explore Models',
+      skipText: 'See the difference our premium models make',
       dismiss: 'Dismiss celebration',
     };
     return translations[key] ?? key;
@@ -233,7 +233,7 @@ describe('FirstDownloadCelebration', () => {
 
     expect(screen.getByText('First upscale complete!')).toBeInTheDocument();
     expect(screen.getByText('Upload Another')).toBeInTheDocument();
-    expect(screen.getByText('See Premium Plans')).toBeInTheDocument();
+    expect(screen.getByText('Explore Models')).toBeInTheDocument();
   });
 
   it('should not show celebration when already shown', () => {
@@ -253,9 +253,9 @@ describe('FirstDownloadCelebration', () => {
     expect(mockAnalyticsTrack).not.toHaveBeenCalledWith('onboarding_completed', expect.any(Object));
   });
 
-  it('should not show "See Premium Plans" button for paid users', () => {
+  it('should not show "Explore Models" button for paid users', () => {
     render(<FirstDownloadCelebration isFreeUser={false} />);
-    expect(screen.queryByText('See Premium Plans')).not.toBeInTheDocument();
+    expect(screen.queryByText('Explore Models')).not.toBeInTheDocument();
   });
 
   it('should call onUploadAnother when upload button clicked', () => {
@@ -266,13 +266,13 @@ describe('FirstDownloadCelebration', () => {
     expect(handleUploadAnother).toHaveBeenCalled();
   });
 
-  it('should call onUpgrade when See Plans clicked', () => {
-    const handleUpgrade = vi.fn();
-    render(<FirstDownloadCelebration isFreeUser={true} onUpgrade={handleUpgrade} />);
+  it('should call onExploreModels when Explore Models clicked', () => {
+    const handleExploreModels = vi.fn();
+    render(<FirstDownloadCelebration isFreeUser={true} onExploreModels={handleExploreModels} />);
 
-    fireEvent.click(screen.getByText('See Premium Plans'));
+    fireEvent.click(screen.getByText('Explore Models'));
 
-    expect(handleUpgrade).toHaveBeenCalled();
+    expect(handleExploreModels).toHaveBeenCalled();
     expect(mockPush).not.toHaveBeenCalled();
   });
 

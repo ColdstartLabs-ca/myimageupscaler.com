@@ -7,11 +7,12 @@
 
 import { serverEnv } from '@shared/config/env';
 import { GUEST_LIMITS } from '@shared/config/guest-limits.config';
-import { isRateLimitError, withRetry } from '@server/utils/retry';
+import { isRateLimitError, isTransientUpstreamError, withRetry } from '@server/utils/retry';
 import { serializeError } from '@shared/utils/errors';
 import Replicate from 'replicate';
 import { parseReplicateResponse } from './replicate/utils/output-parser';
 import { ModelRegistry } from './model-registry';
+import { ReplicateError, ReplicateErrorCode } from './replicate/utils/error-mapper';
 
 export interface IGuestProcessInput {
   imageData: string;
@@ -36,10 +37,17 @@ export async function processGuestImage(input: IGuestProcessInput): Promise<IGue
     throw new Error('REPLICATE_API_TOKEN is not configured');
   }
 
+  if (typeof input.imageData !== 'string' || !input.imageData.trim()) {
+    throw new ReplicateError(
+      'Image input is missing or empty before the Replicate call.',
+      ReplicateErrorCode.INVALID_INPUT
+    );
+  }
+
   const replicate = new Replicate({ auth: apiToken });
 
   // Prepare image data - ensure it's a data URL
-  let imageDataUrl = input.imageData;
+  let imageDataUrl = input.imageData.trim();
   if (!imageDataUrl.startsWith('data:')) {
     const mimeType = input.mimeType || 'image/jpeg';
     imageDataUrl = `data:${mimeType};base64,${imageDataUrl}`;
@@ -59,20 +67,24 @@ export async function processGuestImage(input: IGuestProcessInput): Promise<IGue
   };
 
   // Run with retry for rate limits
-  const output = await withRetry(
-    () =>
-      replicate.run(modelVersion as `${string}/${string}:${string}`, {
+  return await withRetry(
+    async () => {
+      const output = await replicate.run(modelVersion as `${string}/${string}:${string}`, {
         input: replicateInput,
-      }),
+      });
+
+      return parseReplicateResponse(output);
+    },
     {
-      shouldRetry: err => isRateLimitError(serializeError(err)),
-      onRetry: (attempt, delayMs) => {
+      shouldRetry: err => {
+        const message = serializeError(err);
+        return isRateLimitError(message) || isTransientUpstreamError(message);
+      },
+      onRetry: (attempt, delayMs, err) => {
         console.log(
-          `[GuestProcessor] Rate limited, retrying in ${delayMs}ms (attempt ${attempt}/3)`
+          `[GuestProcessor] Retrying in ${delayMs}ms (attempt ${attempt}/3): ${serializeError(err)}`
         );
       },
     }
   );
-
-  return parseReplicateResponse(output);
 }

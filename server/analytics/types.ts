@@ -100,6 +100,8 @@ export type IUpgradePromptTrigger =
   | 'after_upscale'
   | 'after_comparison'
   | 'after_download'
+  | 'post_download_explore'
+  | 'celebration_explore'
   | 'after_batch'
   | 'upgrade_card';
 

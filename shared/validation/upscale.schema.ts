@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
+import { QUALITY_TIER_CONFIG, type QualityTier } from '@shared/types/coreflow.types';
 
 // Enhancement settings schema (reusable)
 const enhancementSettingsSchema = z.object({
@@ -138,6 +139,26 @@ export function getMaxPixelsForModel(modelId: string): number {
   }
   // Fallback to global default (most conservative)
   return IMAGE_VALIDATION.MAX_PIXELS;
+}
+
+/**
+ * Get the client-side pixel limit for a quality tier.
+ *
+ * Explicit model tiers use their model-specific limit. `auto` falls back to the
+ * conservative global default because the server may still resolve to a stricter
+ * model. `bg-removal` skips Replicate entirely, so it has no Replicate pixel cap.
+ */
+export function getMaxPixelsForQualityTier(qualityTier: QualityTier): number | null {
+  if (qualityTier === 'bg-removal') {
+    return null;
+  }
+
+  const modelId = QUALITY_TIER_CONFIG[qualityTier]?.modelId;
+  if (!modelId) {
+    return IMAGE_VALIDATION.MAX_PIXELS;
+  }
+
+  return getMaxPixelsForModel(modelId);
 }
 
 /**

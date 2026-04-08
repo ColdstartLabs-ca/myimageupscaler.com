@@ -1,13 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { ArrowLeftRight, Download, Sparkles, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowLeftRight, Download, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@client/components/ui/Button';
 import { analytics } from '@client/analytics/analyticsClient';
-import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
-import { getVariant } from '@client/utils/abTest';
-import { useRegionTier } from '@client/hooks/useRegionTier';
-import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
-
-const AFTER_COMPARISON_LS_KEY = 'prompt_freq_after_comparison';
 
 interface IImageComparisonProps {
   beforeUrl: string;
@@ -15,9 +9,6 @@ interface IImageComparisonProps {
   onDownload: () => void;
   /** Whether the after image has transparency (e.g., from bg-removal). Auto-detected from blob: URLs if not provided. */
   hasTransparency?: boolean;
-  /** When true, shows an upgrade nudge below the slider after the user drags it. */
-  showUpgradeNudge?: boolean;
-  onUpgrade?: () => void;
   /** Scale factor applied to the image (e.g., 2, 4, 8). Used for analytics tracking. */
   upscaleFactor?: number;
   /** Model used for processing. Used for analytics tracking. */
@@ -29,22 +20,14 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   afterUrl,
   onDownload,
   hasTransparency,
-  showUpgradeNudge = false,
-  onUpgrade,
   upscaleFactor,
   modelUsed,
 }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [zoom, setZoom] = useState(1);
-  const [nudgeVisible, setNudgeVisible] = useState(false);
-  const hasInteractedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const previewTrackedRef = useRef(false);
-  const { pricingRegion } = useRegionTier();
-
-  // Get copy variant for A/B testing
-  const copyVariant = getVariant('after_comparison_copy', ['value', 'outcome', 'urgency']);
 
   // Comparison viewed tracking (PRD: analytics-tracking-enhancement - Phase 3)
   const comparisonStartTimeRef = useRef<number | null>(null);
@@ -66,7 +49,6 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
       previewTrackedRef.current = true;
       analytics.track('image_preview_viewed', {
         hasTransparency: showTransparency,
-        showUpgradeNudge,
       });
     }
     // Only run on mount - empty deps intentional
@@ -92,32 +74,7 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
       }
     }
 
-    // Show upgrade nudge on first slider interaction (once per session)
-    if (showUpgradeNudge && !hasInteractedRef.current && typeof window !== 'undefined') {
-      hasInteractedRef.current = true;
-      if (
-        !canShowPrompt({
-          key: AFTER_COMPARISON_LS_KEY,
-          cooldownMs: 4 * 60 * 60 * 1000,
-          maxPerWeek: 5,
-        })
-      )
-        return;
-      markPromptShown({
-        key: AFTER_COMPARISON_LS_KEY,
-        cooldownMs: 4 * 60 * 60 * 1000,
-        maxPerWeek: 5,
-      });
-      setNudgeVisible(true);
-      analytics.track('upgrade_prompt_shown', {
-        trigger: 'after_comparison',
-        imageVariant: modelUsed,
-        currentPlan: 'free',
-        pricingRegion: pricingRegion || 'standard',
-        copyVariant,
-      });
-    }
-  }, [showUpgradeNudge, pricingRegion, upscaleFactor, modelUsed, copyVariant]);
+  }, [upscaleFactor, modelUsed]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -251,35 +208,6 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
         </div>
       </div>
 
-      {/* After-comparison upgrade nudge — shown after first slider drag with frequency limits */}
-      {nudgeVisible && (
-        <div className="px-4 py-2.5 border-t border-border flex items-center justify-center gap-2 bg-surface/60">
-          <Sparkles className="w-3.5 h-3.5 text-secondary shrink-0" />
-          <p className="text-xs text-text-muted text-center">
-            Love the result?{' '}
-            <button
-              className="font-semibold text-secondary hover:text-secondary/80 underline underline-offset-2 transition-colors"
-              onClick={() => {
-                setCheckoutTrackingContext({
-                  trigger: 'after_comparison',
-                  originatingModel: modelUsed,
-                });
-                analytics.track('upgrade_prompt_clicked', {
-                  trigger: 'after_comparison',
-                  imageVariant: modelUsed,
-                  destination: 'upgrade_modal',
-                  currentPlan: 'free',
-                  pricingRegion: pricingRegion || 'standard',
-                  copyVariant,
-                });
-                onUpgrade?.();
-              }}
-            >
-              Unlock premium quality.
-            </button>
-          </p>
-        </div>
-      )}
     </div>
   );
 };

@@ -27,6 +27,9 @@ import { useModalStore } from '@client/store/modalStore';
 import { useUserStore } from '@client/store/userStore';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { CREDIT_COSTS } from '@shared/config/credits.config';
+import { GUEST_LIMITS } from '@shared/config/guest-limits.config';
+import { getMaxPixelsForModel } from '@shared/validation/upscale.schema';
+import { loadImageDimensions } from '@client/utils/file-validation';
 
 type ProcessingState = 'idle' | 'loading' | 'processing' | 'done' | 'limit-reached' | 'error';
 
@@ -45,6 +48,7 @@ export function GuestUpscaler({ className }: IGuestUpscalerProps): React.ReactEl
   const { isPaywalled, isLoading: isGeoLoading } = useRegionTier();
   const { openAuthModal } = useModalStore();
   const { isAuthenticated } = useUserStore();
+  const guestPixelLimit = getMaxPixelsForModel(GUEST_LIMITS.MODEL);
 
   const handleViewPlans = useCallback(() => {
     if (isAuthenticated) {
@@ -84,6 +88,22 @@ export function GuestUpscaler({ className }: IGuestUpscalerProps): React.ReactEl
         setError('File too large. Guest limit is 2MB. Sign up free for 64MB limit.');
         setState('error');
         return;
+      }
+
+      try {
+        const { width, height } = await loadImageDimensions(file);
+        const pixels = width * height;
+
+        if (pixels > guestPixelLimit) {
+          const megapixels = (guestPixelLimit / 1_000_000).toFixed(1);
+          setError(
+            `Image dimensions (${width}x${height}) exceed the ${megapixels}MP guest processing limit. Please resize the image and try again.`
+          );
+          setState('error');
+          return;
+        }
+      } catch {
+        // Let the server perform the final validation if the browser can't read dimensions.
       }
 
       // Check if can process
@@ -143,7 +163,7 @@ export function GuestUpscaler({ className }: IGuestUpscalerProps): React.ReactEl
         setState('error');
       }
     },
-    [visitorId]
+    [guestPixelLimit, visitorId]
   );
 
   const handleReset = useCallback(() => {

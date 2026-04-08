@@ -46,7 +46,15 @@ export async function loadImageDimensions(file: File): Promise<{ width: number; 
 /**
  * Check if image dimensions exceed the maximum pixel limit
  */
-export function exceedsMaxPixels(width: number, height: number, maxPixels?: number): boolean {
+export function exceedsMaxPixels(
+  width: number,
+  height: number,
+  maxPixels?: number | null
+): boolean {
+  if (maxPixels === null) {
+    return false;
+  }
+
   const limit = maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS;
   return width * height > limit;
 }
@@ -81,7 +89,7 @@ export function validateImageFile(file: File, isPaidUser: boolean): IFileValidat
 export async function validateImageFileWithDimensions(
   file: File,
   isPaidUser: boolean,
-  maxPixels?: number
+  maxPixels?: number | null
 ): Promise<IFileValidationResult> {
   // First do synchronous validation (type and size)
   const basicResult = validateImageFile(file, isPaidUser);
@@ -93,6 +101,10 @@ export async function validateImageFileWithDimensions(
   try {
     const { width, height } = await loadImageDimensions(file);
     const pixels = width * height;
+    if (maxPixels === null) {
+      return { valid: true };
+    }
+
     const limit = maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS;
 
     if (pixels > limit) {
@@ -147,7 +159,7 @@ export function processFiles(files: File[], isPaidUser: boolean): IProcessFilesR
 export async function processFilesAsync(
   files: File[],
   isPaidUser: boolean,
-  maxPixels?: number
+  maxPixels?: number | null
 ): Promise<IProcessFilesResult> {
   const results = await Promise.all(
     files.map(async f => ({
@@ -172,10 +184,15 @@ export async function processFilesAsync(
 
   if (rejectedCount > 0) {
     const maxMB = isPaidUser ? 25 : 5;
-    const maxPixelsRaw = (maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS) / 1_000_000;
-    const maxPixelsDisplay = Number.isInteger(maxPixelsRaw)
-      ? maxPixelsRaw.toFixed(0)
-      : maxPixelsRaw.toFixed(1);
+    const maxPixelsDisplay =
+      maxPixels === null
+        ? null
+        : (() => {
+            const maxPixelsRaw = (maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS) / 1_000_000;
+            return Number.isInteger(maxPixelsRaw)
+              ? maxPixelsRaw.toFixed(0)
+              : maxPixelsRaw.toFixed(1);
+          })();
 
     // Build specific error message based on what was rejected
     const hasSizeIssues = oversizedFiles.length > 0;
@@ -183,14 +200,20 @@ export async function processFilesAsync(
     const hasTypeIssues = invalidTypeFiles.length > 0;
 
     if (hasDimensionIssues && !hasSizeIssues && !hasTypeIssues) {
-      errorMessage = `Some images exceed the ${maxPixelsDisplay}MP pixel limit and need to be resized.`;
+      errorMessage =
+        maxPixelsDisplay == null
+          ? 'Some images need to be resized before processing.'
+          : `Some images exceed the ${maxPixelsDisplay}MP pixel limit and need to be resized.`;
     } else if (hasSizeIssues && !hasDimensionIssues && !hasTypeIssues) {
       errorMessage = `Some files exceed the ${maxMB}MB size limit.`;
     } else if (hasTypeIssues && !hasSizeIssues && !hasDimensionIssues) {
       errorMessage = 'Some files are not valid image formats. Only JPG, PNG, WEBP are allowed.';
     } else {
       // Multiple issues
-      errorMessage = `Some files were rejected. Max ${maxMB}MB, ${maxPixelsDisplay}MP pixels. JPG, PNG, WEBP only.`;
+      errorMessage =
+        maxPixelsDisplay == null
+          ? `Some files were rejected. Max ${maxMB}MB. JPG, PNG, WEBP only.`
+          : `Some files were rejected. Max ${maxMB}MB, ${maxPixelsDisplay}MP pixels. JPG, PNG, WEBP only.`;
     }
   }
 

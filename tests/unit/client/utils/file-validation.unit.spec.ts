@@ -240,6 +240,17 @@ describe('processFilesAsync', () => {
     expect(resultLow.oversizedDimensionFiles).toHaveLength(1);
   });
 
+  it('should skip dimension validation when maxPixels is null', async () => {
+    dimensionMap.set('large.jpg', { width: 3000, height: 3000 }); // 9MP
+
+    const file = new File(['x'.repeat(100)], 'large.jpg', { type: 'image/jpeg' });
+    const result = await processFilesAsync([file], false, null);
+
+    expect(result.validFiles).toHaveLength(1);
+    expect(result.oversizedDimensionFiles).toHaveLength(0);
+    expect(result.errorMessage).toBeNull();
+  });
+
   it('should let files through when dimension loading fails', async () => {
     errorFileNames.add('broken.jpg');
 

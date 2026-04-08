@@ -25,6 +25,7 @@ import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { EngagementDiscountBanner } from '@client/components/engagement-discount';
 import { clientEnv } from '@shared/config/env';
+import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
 import { downloadSingle } from '@client/utils/download';
 import {
   CheckCircle2,
@@ -44,16 +45,13 @@ import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContex
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { ModelGalleryModal } from './ModelGalleryModal';
-import { PremiumUpsellModal } from './PremiumUpsellModal';
+import { PostDownloadPrompt } from './PostDownloadPrompt';
 import { ProgressSteps, checkIsFirstTimeUser, markFirstUploadCompleted } from './ProgressSteps';
 import { SampleImageSelector } from './SampleImageSelector';
 import { ISampleImage } from '@shared/config/sample-images.config';
-import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
-import { PostDownloadPrompt } from './PostDownloadPrompt';
 import { FirstDownloadCelebration } from './FirstDownloadCelebration';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
-const FREE_DOWNLOAD_UPSELL_PROBABILITY = 0.5;
 
 const Workspace: React.FC = () => {
   const t = useTranslations('workspace');
@@ -135,6 +133,7 @@ const Workspace: React.FC = () => {
 
   // Mobile gallery modal state
   const [mobileGalleryOpen, setMobileGalleryOpen] = useState(false);
+  const [exploreGalleryOpen, setExploreGalleryOpen] = useState(false);
 
   // Config State - default to 'quick' for all users (free and paid)
   const [config, setConfig] = useState<IUpscaleConfig>({
@@ -149,6 +148,10 @@ const Workspace: React.FC = () => {
       enhancement: DEFAULT_ENHANCEMENT_SETTINGS,
     },
   });
+  const uploadMaxPixels = useMemo(
+    () => getMaxPixelsForQualityTier(config.qualityTier),
+    [config.qualityTier]
+  );
 
   // Track model switches for engagement discount
   const prevQualityTierRef = React.useRef(config.qualityTier);
@@ -185,10 +188,6 @@ const Workspace: React.FC = () => {
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
-  const [showPremiumUpsell, setShowPremiumUpsell] = useState(false);
-  const [pendingDownload, setPendingDownload] = useState<{ url: string; filename: string } | null>(
-    null
-  );
   const [downloadCount, setDownloadCount] = useState(0);
   const wasProcessingRef = React.useRef(false);
   const firstUploadCompletedTrackedRef = React.useRef(false);
@@ -330,33 +329,7 @@ const Workspace: React.FC = () => {
   };
 
   const handleDownloadSingle = async (url: string, filename: string) => {
-    // Free users: intercept 50% of download attempts with premium upsell modal.
-    if (isFreeUser && Math.random() < FREE_DOWNLOAD_UPSELL_PROBABILITY) {
-      setPendingDownload({ url, filename });
-      setShowPremiumUpsell(true);
-      return;
-    }
-
     await executeDownload(url, filename);
-  };
-
-  const handlePremiumUpsellClose = () => {
-    setShowPremiumUpsell(false);
-    setPendingDownload(null);
-  };
-
-  const handlePremiumUpsellProceed = async () => {
-    setShowPremiumUpsell(false);
-    const queuedDownload = pendingDownload;
-    setPendingDownload(null);
-    if (!queuedDownload) return;
-    await executeDownload(queuedDownload.url, queuedDownload.filename);
-  };
-
-  const handlePremiumUpsellViewPlans = () => {
-    setShowPremiumUpsell(false);
-    setPendingDownload(null);
-    openUpgradeModal(false, 'workspace_premium_upsell');
   };
 
   // Handler for partial add from modal
@@ -387,6 +360,24 @@ const Workspace: React.FC = () => {
     setShowSamplesModal(true);
   };
 
+  const openExploreGallery = () => {
+    analytics.track('model_gallery_opened', {
+      source: 'post_download_explore',
+      currentTier: config.qualityTier,
+      isFreeUser,
+    });
+    setExploreGalleryOpen(true);
+  };
+
+  const handleCloseModelGallery = () => {
+    setMobileGalleryOpen(false);
+    setExploreGalleryOpen(false);
+  };
+
+  const handleModelGalleryUpgrade = () => {
+    openUpgradeModal(false, exploreGalleryOpen ? 'post_download_explore' : 'workspace_model_gallery');
+  };
+
   // Empty State
   if (queue.length === 0) {
     return (
@@ -407,7 +398,7 @@ const Workspace: React.FC = () => {
           <div className="relative z-10">
             <Dropzone
               onFilesSelected={handleFilesSelected}
-              onUpgrade={() => openUpgradeModal(false, 'workspace_dropzone')}
+              maxPixels={uploadMaxPixels}
             />
             <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
               <div className="flex items-center gap-1.5">
@@ -514,18 +505,6 @@ const Workspace: React.FC = () => {
             </button>
           </div>
 
-          {/* Success Banner */}
-          {showSuccessBanner && completedCount > 0 && (
-            <div className="px-3 pt-3 md:p-4">
-              <UpgradeSuccessBanner
-                processedCount={completedCount}
-                onDismiss={() => setShowSuccessBanner(false)}
-                hasSubscription={hasSubscription}
-                onUpgrade={() => openUpgradeModal(false, 'after_batch')}
-              />
-            </div>
-          )}
-
           {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
           {isFreeUser && (
             <div className="px-3 md:px-4 pb-0">
@@ -537,6 +516,13 @@ const Workspace: React.FC = () => {
               />
             </div>
           )}
+
+          <PostDownloadPrompt
+            isFreeUser={isFreeUser}
+            downloadCount={downloadCount}
+            currentModel={config.qualityTier}
+            onExploreModels={openExploreGallery}
+          />
 
           {/* Global Error Alerts */}
           {globalErrors.map(error => (
@@ -582,7 +568,6 @@ const Workspace: React.FC = () => {
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
               isFreeUser={isFreeUser}
-              onUpgrade={() => openUpgradeModal(false, 'workspace_preview_area')}
             />
           </div>
 
@@ -596,6 +581,7 @@ const Workspace: React.FC = () => {
               onRemove={removeItem}
               onAddFiles={addFiles}
               batchLimit={batchLimit}
+              maxPixels={uploadMaxPixels}
             />
           </div>
         </div>
@@ -614,6 +600,7 @@ const Workspace: React.FC = () => {
               onRemove={removeItem}
               onAddFiles={addFiles}
               batchLimit={batchLimit}
+              maxPixels={uploadMaxPixels}
             />
           </div>
         )}
@@ -695,12 +682,12 @@ const Workspace: React.FC = () => {
         </button>
       </div>
       <ModelGalleryModal
-        isOpen={mobileGalleryOpen}
-        onClose={() => setMobileGalleryOpen(false)}
+        isOpen={mobileGalleryOpen || exploreGalleryOpen}
+        onClose={handleCloseModelGallery}
         currentTier={config.qualityTier}
         isFreeUser={isFreeUser}
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
-        onUpgrade={() => openUpgradeModal(false, 'workspace_model_gallery')}
+        onUpgrade={handleModelGalleryUpgrade}
       />
 
       {/* Mobile Tab Bar */}
@@ -736,23 +723,6 @@ const Workspace: React.FC = () => {
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
 
-      <PremiumUpsellModal
-        isOpen={showPremiumUpsell}
-        onClose={handlePremiumUpsellClose}
-        onProceed={() => {
-          void handlePremiumUpsellProceed();
-        }}
-        onViewPlans={handlePremiumUpsellViewPlans}
-        currentModel={config.qualityTier}
-      />
-
-      <PostDownloadPrompt
-        isFreeUser={isFreeUser}
-        downloadCount={downloadCount}
-        currentModel={config.qualityTier}
-        onUpgrade={() => openUpgradeModal(false, 'after_download')}
-      />
-
       {showCelebration && (
         <FirstDownloadCelebration
           isFreeUser={isFreeUser}
@@ -762,7 +732,7 @@ const Workspace: React.FC = () => {
             // Focus on dropzone
           }}
           onDismiss={() => setShowCelebration(false)}
-          onUpgrade={() => openUpgradeModal(false, 'celebration')}
+          onExploreModels={openExploreGallery}
         />
       )}
 

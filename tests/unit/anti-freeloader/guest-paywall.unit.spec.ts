@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
+import { createCanvas } from '../../helpers/test-image-generator';
 
 // Mock supabaseAdmin
 vi.mock('@server/supabase/supabaseAdmin', () => ({
@@ -8,6 +9,15 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 
 // Mock serverEnv
 vi.mock('@shared/config/env', () => ({
+  clientEnv: {
+    NEXT_PUBLIC_STRIPE_PRICE_STARTER: 'price_test_starter',
+    NEXT_PUBLIC_STRIPE_PRICE_HOBBY: 'price_test_hobby',
+    NEXT_PUBLIC_STRIPE_PRICE_PRO: 'price_test_pro',
+    NEXT_PUBLIC_STRIPE_PRICE_BUSINESS: 'price_test_business',
+    NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL: 'price_test_credits_small',
+    NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM: 'price_test_credits_medium',
+    NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE: 'price_test_credits_large',
+  },
   serverEnv: { ENV: 'test' },
 }));
 
@@ -151,6 +161,25 @@ describe('POST /api/upscale/guest - Country Paywall', () => {
     await POST(req);
 
     // Processor should not be called since we exit early
+    expect(processGuestImage).not.toHaveBeenCalled();
+  });
+
+  it('should reject oversized guest image dimensions before processing', async () => {
+    const { processGuestImage } = await import('@server/services/guest-processor');
+
+    const req = makeGuestRequest({
+      country: 'US',
+      body: {
+        imageData: createCanvas(2000, 2000),
+        mimeType: 'image/png',
+        visitorId: 'test-visitor-id-12345',
+      },
+    });
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(422);
+    expect(body.error.code).toBe('IMAGE_TOO_LARGE');
     expect(processGuestImage).not.toHaveBeenCalled();
   });
 

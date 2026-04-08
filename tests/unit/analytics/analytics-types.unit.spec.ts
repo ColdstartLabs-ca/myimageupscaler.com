@@ -198,10 +198,13 @@ describe('Analytics Types - Interface Structure Validation', () => {
       'after_upscale',
       'after_comparison',
       'after_download',
+      'post_download_explore',
+      'celebration_explore',
       'after_batch',
+      'upgrade_card',
     ];
 
-    expect(triggers).toHaveLength(8);
+    expect(triggers).toHaveLength(11);
   });
 
   test('IUpgradePromptTrigger should accept insufficient_credits trigger', async () => {

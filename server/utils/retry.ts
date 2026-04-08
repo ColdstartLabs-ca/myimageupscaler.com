@@ -34,6 +34,31 @@ export function isRateLimitError(message: string): boolean {
 }
 
 /**
+ * Check if an upstream/provider error is likely transient and safe to retry.
+ */
+export function isTransientUpstreamError(message: string): boolean {
+  const lowerMessage = message.toLowerCase();
+
+  return (
+    lowerMessage.includes('502') ||
+    lowerMessage.includes('503') ||
+    lowerMessage.includes('504') ||
+    lowerMessage.includes('bad gateway') ||
+    lowerMessage.includes('gateway timeout') ||
+    lowerMessage.includes('service unavailable') ||
+    lowerMessage.includes('temporarily unavailable') ||
+    lowerMessage.includes('fetch failed') ||
+    lowerMessage.includes('network error') ||
+    lowerMessage.includes('socket hang up') ||
+    lowerMessage.includes('econnreset') ||
+    lowerMessage.includes('failed to upload output') ||
+    lowerMessage.includes('output upload') ||
+    lowerMessage.includes('no output returned from replicate') ||
+    lowerMessage.includes('unexpected array output format')
+  );
+}
+
+/**
  * Execute a function with exponential backoff retry on rate limit errors
  */
 export async function withRetry<T>(fn: () => Promise<T>, options: IRetryOptions = {}): Promise<T> {
