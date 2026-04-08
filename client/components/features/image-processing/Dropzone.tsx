@@ -126,6 +126,7 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
             try {
               const result = await compressImage(file, {
                 targetSizeBytes: Math.floor(currentLimit * 0.9),
+                maxPixels,
                 format: 'jpeg',
                 maintainAspectRatio: true,
               });

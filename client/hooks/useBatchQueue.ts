@@ -11,6 +11,7 @@ import { prepareFileForProcessing } from '@client/utils/upscale-file-preprocessi
 import { getBatchLimit } from '@shared/config/subscription.utils';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { serializeError } from '@shared/utils/errors';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { analytics } from '@client/analytics';
 import { loadImageDimensions } from '@client/utils/file-validation';
@@ -51,6 +52,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     serverEnforced?: boolean;
   } | null>(null);
   const showToast = useToastStore(state => state.showToast);
+  const t = useTranslations('workspace');
 
   // Get user subscription data
   const { profile } = useUserData();
@@ -225,7 +227,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         });
 
         showToast({
-          message: 'Image automatically resized to fit the selected processing mode.',
+          message: t('oversizedImage.autoResizeToast'),
           type: 'info',
           duration: 3000,
         });
