@@ -188,6 +188,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       await trackServerEvent(
         'rate_limit_exceeded',
         {
+          errorType: 'rate_limited',
           limit: 5,
           windowMs: 60000,
           retryAfter: Math.ceil((reset - Date.now()) / 1000),
@@ -857,6 +858,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         await trackServerEvent(
           'processing_failed',
           {
+            errorType: `replicate_${error.code}`,
             reason: `replicate_${error.code}`,
             message: error.message,
           },
@@ -895,6 +897,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         await trackServerEvent(
           'processing_failed',
           {
+            errorType: `ai_generation_${error.finishReason}`,
             reason: `ai_generation_${error.finishReason}`,
             message: error.message,
           },
@@ -914,6 +917,29 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       error: errorMessage,
       stack: error instanceof Error ? error.stack : undefined,
     });
+
+    if (userId) {
+      const durationMs = Date.now() - startTime;
+      await trackServerEvent(
+        'upscale_completed',
+        {
+          durationMs,
+          success: false,
+          errorType: 'unexpected_internal_error',
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+      await trackServerEvent(
+        'processing_failed',
+        {
+          errorType: 'unexpected_internal_error',
+          reason: 'unexpected_internal_error',
+          message: errorMessage,
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+    }
+
     const { body, status } = createErrorResponse(ErrorCodes.INTERNAL_ERROR, errorMessage, 500);
     return NextResponse.json(body, { status });
   } finally {

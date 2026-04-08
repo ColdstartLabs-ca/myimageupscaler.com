@@ -192,6 +192,7 @@ const Workspace: React.FC = () => {
   );
   const [downloadCount, setDownloadCount] = useState(0);
   const wasProcessingRef = React.useRef(false);
+  const firstUploadCompletedTrackedRef = React.useRef(false);
   const firstUploadSourceRef = React.useRef<'sample' | 'upload'>('upload');
   const firstUploadStartedAtRef = React.useRef<number>(0);
 
@@ -272,6 +273,13 @@ const Workspace: React.FC = () => {
   // Track previous queue length to detect new uploads
   const prevQueueLengthRef = React.useRef(queue.length);
 
+  const markFirstUploadStarted = (source: 'sample' | 'upload') => {
+    firstUploadSourceRef.current = source;
+    if (firstUploadStartedAtRef.current === 0) {
+      firstUploadStartedAtRef.current = Date.now();
+    }
+  };
+
   // Auto-switch to preview tab ONLY when NEW images are added (not on tab click)
   // Skip auto-switch if Phase 2 tour hasn't been seen yet — sidebar must stay visible for tour
   useEffect(() => {
@@ -289,6 +297,17 @@ const Workspace: React.FC = () => {
     prevQueueLengthRef.current = queue.length;
   }, [queue.length, mobileTab]);
 
+  useEffect(() => {
+    if (completedCount === 0 || firstUploadCompletedTrackedRef.current) return;
+
+    firstUploadCompletedTrackedRef.current = true;
+    const durationMs = firstUploadStartedAtRef.current
+      ? Date.now() - firstUploadStartedAtRef.current
+      : 0;
+
+    markFirstUploadCompleted(firstUploadSourceRef.current, durationMs);
+  }, [completedCount]);
+
   // Handlers
   const executeDownload = async (url: string, filename: string) => {
     try {
@@ -299,13 +318,9 @@ const Workspace: React.FC = () => {
       const newCount = downloadCount + 1;
       setDownloadCount(newCount);
 
-      // Show celebration modal on first download and fire activation event
-      if (newCount === 1) {
+      // Show celebration modal on the first successful download of the first-time flow.
+      if (isFirstTimeUser && newCount === 1) {
         setShowCelebration(true);
-        const durationMs = firstUploadStartedAtRef.current
-          ? Date.now() - firstUploadStartedAtRef.current
-          : 0;
-        markFirstUploadCompleted(firstUploadSourceRef.current, durationMs);
       }
     } catch (error) {
       const errorMessage =
@@ -357,9 +372,14 @@ const Workspace: React.FC = () => {
     setGlobalErrors(prev => prev.filter(error => error.id !== errorId));
   };
 
+  const handleFilesSelected = (files: File[], source?: 'drag_drop' | 'file_picker') => {
+    markFirstUploadStarted('upload');
+    addFiles(files, source);
+  };
+
   const handleSampleSelect = (sample: ISampleImage) => {
     setShowSamplesModal(false);
-    firstUploadSourceRef.current = 'sample';
+    markFirstUploadStarted('sample');
     void addSampleItem(sample.beforeSrc, sample.afterSrc, sample.title);
   };
 
@@ -387,7 +407,7 @@ const Workspace: React.FC = () => {
           <AmbientBackground variant="section" />
           <div className="relative z-10">
             <Dropzone
-              onFilesSelected={addFiles}
+              onFilesSelected={handleFilesSelected}
               onUpgrade={() => openUpgradeModal(false, 'workspace_dropzone')}
             />
             <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
@@ -745,7 +765,7 @@ const Workspace: React.FC = () => {
       {showCelebration && (
         <FirstDownloadCelebration
           isFreeUser={isFreeUser}
-          source="upload"
+          source={firstUploadSourceRef.current}
           onUploadAnother={() => {
             setShowCelebration(false);
             // Focus on dropzone

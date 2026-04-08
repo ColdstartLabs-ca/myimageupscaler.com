@@ -162,12 +162,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         setActiveId(id);
         return updated;
       });
-
-      analytics.track('sample_image_selected', {
-        sampleId: label,
-        sampleType: 'photo',
-        qualityTier: 'quick',
-      });
     } catch {
       // Silently fail — user can still upload their own image
     }

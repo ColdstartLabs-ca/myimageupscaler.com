@@ -243,6 +243,16 @@ describe('FirstDownloadCelebration', () => {
     expect(container.firstChild).toBeNull();
   });
 
+  it('should not track onboarding_completed when celebration was already shown', async () => {
+    localStorage.setItem('miu_celebration_shown', Date.now().toString());
+
+    render(<FirstDownloadCelebration isFreeUser={true} />);
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(mockAnalyticsTrack).not.toHaveBeenCalledWith('onboarding_completed', expect.any(Object));
+  });
+
   it('should not show "See Premium Plans" button for paid users', () => {
     render(<FirstDownloadCelebration isFreeUser={false} />);
     expect(screen.queryByText('See Premium Plans')).not.toBeInTheDocument();
@@ -335,6 +345,20 @@ describe('Analytics Tracking', () => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('onboarding_completed', {
         totalDurationMs: expect.any(Number),
         source: 'upload',
+      });
+    });
+  });
+
+  it('should track onboarding_completed with the provided source', async () => {
+    const startTime = Date.now() - 5000;
+    localStorage.setItem(ONBOARDING_STARTED_KEY, startTime.toString());
+
+    render(<FirstDownloadCelebration isFreeUser={true} source="sample" />);
+
+    await waitFor(() => {
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('onboarding_completed', {
+        totalDurationMs: expect.any(Number),
+        source: 'sample',
       });
     });
   });

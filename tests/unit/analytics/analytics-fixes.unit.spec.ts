@@ -120,4 +120,16 @@ describe('Analytics Fixes - Structural Checks', () => {
       expect(dropzoneSource).toContain("'file_picker'");
     });
   });
+
+  describe('Fix #10: error events should include errorType on server failures', () => {
+    test('upscale route should include errorType for rate limiting and processing failures', async () => {
+      const fs = await import('fs');
+      const upscaleRouteSource = fs.readFileSync('app/api/upscale/route.ts', 'utf-8');
+
+      expect(upscaleRouteSource).toContain("errorType: 'rate_limited'");
+      expect(upscaleRouteSource).toContain('errorType: `replicate_${error.code}`');
+      expect(upscaleRouteSource).toContain('errorType: `ai_generation_${error.finishReason}`');
+      expect(upscaleRouteSource).toContain("errorType: 'unexpected_internal_error'");
+    });
+  });
 });

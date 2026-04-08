@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { cn } from '@client/utils/cn';
 import { analytics } from '@client/analytics';
 import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
+import { ONBOARDING_COMPLETED_KEY } from '@shared/config/sample-images.config';
 import { useTranslations } from 'next-intl';
 import { Sparkles, Upload, ArrowRight, X } from 'lucide-react';
 
@@ -33,6 +34,36 @@ interface IConfettiPiece {
   delay: number;
 }
 
+function hasCompletedOnboarding(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  try {
+    return localStorage.getItem(ONBOARDING_COMPLETED_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function markCelebrationShown(): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(CELEBRATION_SHOWN_KEY, Date.now().toString());
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+function markOnboardingCompleted(): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 /**
  * FirstDownloadCelebration Component
  *
@@ -58,44 +89,40 @@ export const FirstDownloadCelebration = ({
   // Check if celebration was already shown
   const shouldShow = () => {
     if (typeof window === 'undefined') return false;
-    return !localStorage.getItem(CELEBRATION_SHOWN_KEY);
+
+    try {
+      return !localStorage.getItem(CELEBRATION_SHOWN_KEY);
+    } catch {
+      return false;
+    }
   };
 
-  // Track onboarding completion — defined before hooks so it's in scope
-  const trackCompletion = () => {
+  const [shouldRender] = useState(() => shouldShow() && !hasCompletedOnboarding());
+
+  useEffect(() => {
+    if (!shouldRender) return;
+
     const onboardingStartTime = parseInt(
       localStorage.getItem(ONBOARDING_STARTED_KEY) || Date.now().toString(),
       10
     );
     const totalDurationMs = Date.now() - onboardingStartTime;
 
+    markOnboardingCompleted();
+    markCelebrationShown();
+
     analytics.track('onboarding_completed', {
       totalDurationMs,
       source,
     });
+  }, [shouldRender, source]);
 
-    // Mark celebration as shown
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(CELEBRATION_SHOWN_KEY, Date.now().toString());
-    }
-  };
-
-  // Track completion + mark shown once on mount (must be before any early return)
-
-  useEffect(() => {
-    trackCompletion();
-  }, []);
-
-  if (!shouldShow() || !isVisible) {
+  if (!shouldRender || !isVisible) {
     return null;
   }
 
   const handleDismiss = () => {
-    try {
-      localStorage.setItem(CELEBRATION_SHOWN_KEY, Date.now().toString());
-    } catch {
-      // ignore
-    }
+    markCelebrationShown();
     setIsVisible(false);
     onDismiss?.();
   };
@@ -107,9 +134,7 @@ export const FirstDownloadCelebration = ({
 
   const handleViewPlans = () => {
     // Mark as shown before triggering upgrade
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(CELEBRATION_SHOWN_KEY, Date.now().toString());
-    }
+    markCelebrationShown();
 
     setCheckoutTrackingContext({ trigger: 'celebration' });
     analytics.track('upgrade_prompt_clicked', {
@@ -243,9 +268,11 @@ export const shouldShowCelebration = (): boolean => {
  * Helper to manually trigger celebration (for testing)
  */
 export const triggerCelebration = (source: 'sample' | 'upload' = 'upload'): void => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined' || hasCompletedOnboarding()) return;
 
   // This would be called by the parent component when download completes
+  markOnboardingCompleted();
+
   analytics.track('onboarding_completed', {
     totalDurationMs:
       Date.now() -

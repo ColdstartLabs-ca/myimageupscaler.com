@@ -28,7 +28,7 @@ export interface IUseSampleImagesReturn {
   samples: ISampleImage[];
   /** IDs of samples that have been used by this user */
   usedSampleIds: string[];
-  /** Whether the user has completed onboarding (used any sample) */
+  /** Whether the user has completed the full first-time onboarding flow */
   hasCompletedOnboarding: boolean;
   /** Currently selected sample (if any) */
   selectedSample: ISampleImage | null;
@@ -57,7 +57,7 @@ function getUsedSampleIds(): string[] {
 }
 
 /**
- * Check if onboarding has been completed
+ * Check if the full onboarding flow has been completed
  */
 function checkOnboardingCompleted(): boolean {
   if (typeof window === 'undefined') return false;
@@ -122,12 +122,6 @@ export function useSampleImages(): IUseSampleImagesReturn {
         const updated = [...currentUsed, sampleId];
         localStorage.setItem(SAMPLE_IMAGES_USED_KEY, JSON.stringify(updated));
         setUsedSampleIds(updated);
-      }
-
-      // Mark onboarding as completed on first sample selection
-      if (!checkOnboardingCompleted()) {
-        localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
-        setHasCompletedOnboarding(true);
       }
     } catch {
       // Ignore localStorage errors

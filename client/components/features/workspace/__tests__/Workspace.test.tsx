@@ -1,28 +1,32 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import React from 'react';
+import { ProcessingStatus } from '@/shared/types/coreflow.types';
 
 // Mock useBatchQueue hook
 const mockAddFiles = vi.fn();
 const mockProcessBatch = vi.fn();
+const mockAddSampleItem = vi.fn();
+const mockBatchQueueState = {
+  queue: [] as Array<Record<string, unknown>>,
+  activeId: null as string | null,
+  activeItem: null,
+  isProcessingBatch: false,
+  batchProgress: null,
+  completedCount: 0,
+  batchLimit: 1,
+  batchLimitExceeded: null,
+  setActiveId: vi.fn(),
+  addFiles: mockAddFiles,
+  addSampleItem: mockAddSampleItem,
+  removeItem: vi.fn(),
+  clearQueue: vi.fn(),
+  processBatch: mockProcessBatch,
+  processSingleItem: vi.fn(),
+  clearBatchLimitError: vi.fn(),
+};
 vi.mock('@/client/hooks/useBatchQueue', () => ({
-  useBatchQueue: () => ({
-    queue: [],
-    activeId: null,
-    activeItem: null,
-    isProcessingBatch: false,
-    batchProgress: null,
-    completedCount: 0,
-    batchLimit: 1,
-    batchLimitExceeded: null,
-    setActiveId: vi.fn(),
-    addFiles: mockAddFiles,
-    removeItem: vi.fn(),
-    clearQueue: vi.fn(),
-    processBatch: mockProcessBatch,
-    processSingleItem: vi.fn(),
-    clearBatchLimitError: vi.fn(),
-  }),
+  useBatchQueue: () => mockBatchQueueState,
 }));
 
 // Mock userStore with configurable subscription state
@@ -46,6 +50,19 @@ vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
+vi.mock('lucide-react', () => ({
+  Check: () => null,
+  CheckCircle2: () => null,
+  HelpCircle: () => null,
+  Image: () => null,
+  Layers: () => null,
+  List: () => null,
+  Loader2: () => null,
+  Settings: () => null,
+  Wand2: () => null,
+  X: () => null,
+}));
+
 // Mock BatchLimitModal
 vi.mock('../BatchLimitModal', () => ({
   BatchLimitModal: () => null,
@@ -54,6 +71,58 @@ vi.mock('../BatchLimitModal', () => ({
 // Mock UpgradeSuccessBanner
 vi.mock('../UpgradeSuccessBanner', () => ({
   UpgradeSuccessBanner: () => null,
+}));
+
+vi.mock('../PreviewArea', () => ({
+  PreviewArea: () => null,
+}));
+
+vi.mock('../QueueStrip', () => ({
+  QueueStrip: () => null,
+}));
+
+vi.mock('../BatchSidebar', () => ({
+  BatchSidebar: () => null,
+}));
+
+vi.mock('../AfterUpscaleBanner', () => ({
+  AfterUpscaleBanner: () => null,
+}));
+
+vi.mock('../ModelGalleryModal', () => ({
+  ModelGalleryModal: () => null,
+}));
+
+vi.mock('../PremiumUpsellModal', () => ({
+  PremiumUpsellModal: () => null,
+}));
+
+vi.mock('../SampleImageSelector', () => ({
+  SampleImageSelector: () => null,
+}));
+
+vi.mock('../MobileUpgradePrompt', () => ({
+  MobileUpgradePrompt: () => null,
+}));
+
+vi.mock('../PostDownloadPrompt', () => ({
+  PostDownloadPrompt: () => null,
+}));
+
+vi.mock('../FirstDownloadCelebration', () => ({
+  FirstDownloadCelebration: () => null,
+}));
+
+vi.mock('@client/components/stripe/PurchaseModal', () => ({
+  PurchaseModal: () => null,
+}));
+
+vi.mock('@client/components/stripe/CheckoutModal', () => ({
+  CheckoutModal: () => null,
+}));
+
+vi.mock('@client/components/engagement-discount', () => ({
+  EngagementDiscountBanner: () => null,
 }));
 
 // Mock Dropzone
@@ -111,7 +180,17 @@ const getAnalyticsMock = async () => {
 describe('Workspace Quality Tier Defaults', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
     mockSubscription = null;
+    mockIsFreeUser = true;
+    mockBatchQueueState.queue = [];
+    mockBatchQueueState.activeId = null;
+    mockBatchQueueState.activeItem = null;
+    mockBatchQueueState.isProcessingBatch = false;
+    mockBatchQueueState.batchProgress = null;
+    mockBatchQueueState.completedCount = 0;
+    mockBatchQueueState.batchLimit = 1;
+    mockBatchQueueState.batchLimitExceeded = null;
   });
 
   describe('Free User', () => {
@@ -145,6 +224,21 @@ describe('Workspace Quality Tier Defaults', () => {
 });
 
 describe('Workspace Quality Tier Logic', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+    mockSubscription = null;
+    mockIsFreeUser = true;
+    mockBatchQueueState.queue = [];
+    mockBatchQueueState.activeId = null;
+    mockBatchQueueState.activeItem = null;
+    mockBatchQueueState.isProcessingBatch = false;
+    mockBatchQueueState.batchProgress = null;
+    mockBatchQueueState.completedCount = 0;
+    mockBatchQueueState.batchLimit = 1;
+    mockBatchQueueState.batchLimitExceeded = null;
+  });
+
   test('should initialize with quick tier for all users', () => {
     mockSubscription = null;
 
@@ -175,8 +269,17 @@ describe('Workspace Quality Tier Logic', () => {
 describe('Workspace Paywall Tracking', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
     mockSubscription = null; // Free user by default
     mockIsFreeUser = true; // Free user by default
+    mockBatchQueueState.queue = [];
+    mockBatchQueueState.activeId = null;
+    mockBatchQueueState.activeItem = null;
+    mockBatchQueueState.isProcessingBatch = false;
+    mockBatchQueueState.batchProgress = null;
+    mockBatchQueueState.completedCount = 0;
+    mockBatchQueueState.batchLimit = 1;
+    mockBatchQueueState.batchLimitExceeded = null;
     // Default: not paywalled
     mockUseRegionTier.mockReturnValue({
       tier: 'standard',
@@ -295,9 +398,7 @@ describe('Workspace Paywall Tracking', () => {
       { timeout: 100 }
     );
 
-    const callCount = analyticsTrack.mock.calls.filter(
-      call => call[0] === 'paywall_shown'
-    ).length;
+    const callCount = analyticsTrack.mock.calls.filter(call => call[0] === 'paywall_shown').length;
 
     // Rerender to trigger effect again
     rerender(<Workspace />);
@@ -312,5 +413,72 @@ describe('Workspace Paywall Tracking', () => {
       },
       { timeout: 100 }
     );
+  });
+});
+
+describe('Workspace Activation Tracking', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+    mockSubscription = null;
+    mockIsFreeUser = true;
+    mockBatchQueueState.queue = [];
+    mockBatchQueueState.activeId = null;
+    mockBatchQueueState.activeItem = null;
+    mockBatchQueueState.isProcessingBatch = false;
+    mockBatchQueueState.batchProgress = null;
+    mockBatchQueueState.completedCount = 0;
+    mockBatchQueueState.batchLimit = 1;
+    mockBatchQueueState.batchLimitExceeded = null;
+    mockUseRegionTier.mockReturnValue({
+      tier: 'standard',
+      country: 'US',
+      isLoading: false,
+      isRestricted: false,
+      isPaywalled: false,
+      pricingRegion: 'standard',
+      discountPercent: 0,
+    });
+  });
+
+  test('should track first_upload_completed when the first result is ready', async () => {
+    const baseQueueItem = {
+      id: 'item-1',
+      file: new File(['x'], 'image.png', { type: 'image/png' }),
+      previewUrl: 'blob:preview',
+      processedUrl: null,
+      status: ProcessingStatus.PROCESSING,
+      progress: 50,
+    };
+
+    mockBatchQueueState.queue = [baseQueueItem];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = baseQueueItem;
+    mockBatchQueueState.completedCount = 0;
+
+    const { rerender } = render(<Workspace />);
+    const analyticsTrack = await getAnalyticsMock();
+
+    analyticsTrack.mockClear();
+
+    const completedQueueItem = {
+      ...baseQueueItem,
+      processedUrl: 'https://example.com/result.png',
+      status: ProcessingStatus.COMPLETED,
+      progress: 100,
+    };
+
+    mockBatchQueueState.queue = [completedQueueItem];
+    mockBatchQueueState.activeItem = completedQueueItem;
+    mockBatchQueueState.completedCount = 1;
+
+    rerender(<Workspace />);
+
+    await waitFor(() => {
+      expect(analyticsTrack).toHaveBeenCalledWith('first_upload_completed', {
+        source: 'upload',
+        durationMs: expect.any(Number),
+      });
+    });
   });
 });

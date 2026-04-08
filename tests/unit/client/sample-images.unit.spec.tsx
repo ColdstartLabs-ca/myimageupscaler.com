@@ -254,14 +254,14 @@ describe('SampleImageSelector', () => {
     });
   });
 
-  it('should set onboarding completed flag in localStorage after first sample selection', async () => {
+  it('should not set onboarding completed flag in localStorage after first sample selection', async () => {
     render(<SampleImageSelector {...defaultProps} />);
 
     const tryButtons = screen.getAllByRole('button', { name: /Try this/i });
     fireEvent.click(tryButtons[0]);
 
     await waitFor(() => {
-      expect(localStorage.setItem).toHaveBeenCalledWith(ONBOARDING_COMPLETED_KEY, 'true');
+      expect(localStorage.setItem).not.toHaveBeenCalledWith(ONBOARDING_COMPLETED_KEY, 'true');
     });
   });
 });
@@ -353,7 +353,7 @@ describe('useSampleImages hook', () => {
     expect(result.current.usedSampleIds.filter(id => id === 'sample-photo')).toHaveLength(1);
   });
 
-  it('should set hasCompletedOnboarding to true after selecting any sample', async () => {
+  it('should keep hasCompletedOnboarding false after selecting a sample', async () => {
     const { result } = renderHook(() => useSampleImages());
 
     expect(result.current.hasCompletedOnboarding).toBe(false);
@@ -362,7 +362,7 @@ describe('useSampleImages hook', () => {
       result.current.selectSample('sample-photo');
     });
 
-    expect(result.current.hasCompletedOnboarding).toBe(true);
+    expect(result.current.hasCompletedOnboarding).toBe(false);
   });
 
   it('should markSampleProcessed fire analytics with duration', async () => {
@@ -381,6 +381,7 @@ describe('useSampleImages hook', () => {
   });
 
   it('should resetSampleUsage clear all state', async () => {
+    localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
     const { result } = renderHook(() => useSampleImages());
 
     // Select a sample first
