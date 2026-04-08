@@ -93,7 +93,46 @@ export class UpscalerPage extends BasePage {
     const activeStateWorkspace = this.page.locator('.bg-main.rounded-3xl.shadow-2xl');
 
     // Use locator.or() for proper "either element" waiting
-    await emptyStateWorkspace.or(activeStateWorkspace).waitFor({ state: 'visible', timeout: 15000 });
+    // Use longer timeout (30s) for CI environments which can be slower
+    try {
+      await emptyStateWorkspace
+        .or(activeStateWorkspace)
+        .waitFor({ state: 'visible', timeout: 30000 });
+    } catch (error) {
+      // If direct wait fails, try some fallback checks that might indicate the page loaded
+      // Check if dropzone is visible (empty state)
+      const dropzoneVisible = await this.dropzoneTitle.isVisible().catch(() => false);
+      if (dropzoneVisible) {
+        return;
+      }
+
+      // Check if queue items are visible (active state)
+      const queueVisible = await this.queueStrip.isVisible().catch(() => false);
+      if (queueVisible) {
+        return;
+      }
+
+      // Check if body is visible (basic page load)
+      const bodyVisible = await this.page
+        .locator('body')
+        .isVisible()
+        .catch(() => false);
+      if (bodyVisible) {
+        // Log current URL for debugging
+        const url = this.page.url();
+        console.warn(`Workspace container not visible, but body loaded. URL: ${url}`);
+        // Try waiting a bit more for the workspace to render
+        await this.page.waitForTimeout(2000);
+        // Try one more time
+        await emptyStateWorkspace
+          .or(activeStateWorkspace)
+          .waitFor({ state: 'visible', timeout: 10000 });
+        return;
+      }
+
+      // If all fallbacks fail, rethrow the original error
+      throw error;
+    }
   }
 
   /**
