@@ -4,6 +4,11 @@ import type {
   ISubscription,
   IUserProfile,
 } from '@/shared/types/stripe.types';
+import type {
+  ICheckoutRescueOffer,
+  ICheckoutRescueOfferRequest,
+  ICheckoutRescueOfferResponse,
+} from '@shared/types/checkout-offer';
 import { supabase } from '@server/supabase/supabaseClient';
 
 interface ICreditTransaction {
@@ -62,8 +67,8 @@ const checkoutSessionCache = new Map<string, ICachedCheckoutSession>();
 /**
  * Generate a cache key for checkout sessions
  */
-function getCacheKey(priceId: string, uiMode: 'hosted' | 'embedded'): string {
-  return `${priceId}:${uiMode}`;
+function getCacheKey(priceId: string, uiMode: 'hosted' | 'embedded', offerToken?: string): string {
+  return `${priceId}:${uiMode}:${offerToken || 'standard'}`;
 }
 
 /**
@@ -71,9 +76,10 @@ function getCacheKey(priceId: string, uiMode: 'hosted' | 'embedded'): string {
  */
 function getCachedSession(
   priceId: string,
-  uiMode: 'hosted' | 'embedded'
+  uiMode: 'hosted' | 'embedded',
+  offerToken?: string
 ): ICachedCheckoutSession | null {
-  const key = getCacheKey(priceId, uiMode);
+  const key = getCacheKey(priceId, uiMode, offerToken);
   const cached = checkoutSessionCache.get(key);
 
   if (!cached) return null;
@@ -93,9 +99,10 @@ function getCachedSession(
 function cacheSession(
   priceId: string,
   uiMode: 'hosted' | 'embedded',
+  offerToken: string | undefined,
   session: ICheckoutSessionResponse
 ): void {
-  const key = getCacheKey(priceId, uiMode);
+  const key = getCacheKey(priceId, uiMode, offerToken);
   checkoutSessionCache.set(key, {
     clientSecret: session.clientSecret || '',
     priceId,
@@ -170,6 +177,7 @@ async function createCheckoutSessionInternal(
     cancelUrl?: string;
     metadata?: Record<string, string>;
     uiMode?: 'hosted' | 'embedded';
+    offerToken?: string;
   }
 ): Promise<ICheckoutSessionResponse> {
   const {
@@ -186,6 +194,7 @@ async function createCheckoutSessionInternal(
     cancelUrl: options?.cancelUrl,
     metadata: options?.metadata,
     uiMode: options?.uiMode,
+    offerToken: options?.offerToken,
   };
 
   const response = await fetch('/api/checkout', {
@@ -239,13 +248,15 @@ export class StripeService {
       cancelUrl?: string;
       metadata?: Record<string, string>;
       uiMode?: 'hosted' | 'embedded';
+      offerToken?: string;
     }
   ): Promise<ICheckoutSessionResponse> {
     const uiMode = options?.uiMode || 'hosted';
+    const offerToken = options?.offerToken;
 
     // Check cache for embedded mode (used by modal for faster display)
     if (uiMode === 'embedded') {
-      const cached = getCachedSession(priceId, uiMode);
+      const cached = getCachedSession(priceId, uiMode, offerToken);
       if (cached) {
         // Return cached session data
         return {
@@ -261,10 +272,43 @@ export class StripeService {
 
     // Cache for future use if embedded mode
     if (uiMode === 'embedded' && response.clientSecret) {
-      cacheSession(priceId, uiMode, response);
+      cacheSession(priceId, uiMode, offerToken, response);
     }
 
     return response;
+  }
+
+  static async createCheckoutRescueOffer(priceId: string): Promise<ICheckoutRescueOffer> {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      throw new Error('User not authenticated');
+    }
+
+    const request: ICheckoutRescueOfferRequest = { priceId };
+
+    const response = await fetch('/api/checkout/offer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify(request),
+    });
+
+    const responseJson = (await response.json()) as
+      | ICheckoutRescueOfferResponse
+      | { success: false; error?: string };
+
+    if (!response.ok || !responseJson.success) {
+      throw new Error(
+        'error' in responseJson ? responseJson.error || 'Failed to create rescue offer' : ''
+      );
+    }
+
+    return responseJson.data;
   }
 
   /**

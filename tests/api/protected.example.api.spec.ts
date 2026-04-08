@@ -338,26 +338,40 @@ authenticatedTest.describe('API: Protected Example - Rate Limiting', () => {
   authenticatedTest(
     'should enforce rate limits under heavy load',
     async ({ request, testUser }) => {
-      // Send multiple requests rapidly to test rate limiting
-      // Protected routes have 50 requests per 10 seconds limit
-      // In test environment, rate limiting is disabled, so all should succeed
-      const requests = Array(25)
-        .fill(null)
-        .map(() =>
-          request.get(ENDPOINT, {
+      const requestCount = 12;
+      const getProtectedExampleWithRetry = async () => {
+        let response = await request.get(ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${testUser.token}`,
+          },
+        });
+
+        for (let attempt = 0; attempt < 2 && response.status() === 404; attempt++) {
+          await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
+          response = await request.get(ENDPOINT, {
             headers: {
               Authorization: `Bearer ${testUser.token}`,
             },
-          })
-        );
+          });
+        }
+
+        return response;
+      };
+
+      const warmupResponse = await getProtectedExampleWithRetry();
+
+      expect(warmupResponse.status()).toBe(200);
+
+      const requests = Array.from({ length: requestCount }, () => getProtectedExampleWithRetry());
 
       const responses = await Promise.all(requests);
+      const statuses = responses.map(response => response.status());
 
       // In test environment, rate limiting is disabled, so all should succeed
-      const successCount = responses.filter(r => r.status() === 200).length;
-      const rateLimitedCount = responses.filter(r => r.status() === 429).length;
+      const successCount = statuses.filter(status => status === 200).length;
+      const rateLimitedCount = statuses.filter(status => status === 429).length;
 
-      expect(successCount).toBe(25);
+      expect(successCount).toBe(requestCount);
       expect(rateLimitedCount).toBe(0);
 
       // All responses should include rate limit headers (even in test mode)

@@ -74,6 +74,7 @@ export interface ICheckoutSessionRequest {
   cancelUrl?: string;
   metadata?: Record<string, string>;
   uiMode?: 'hosted' | 'embedded';
+  offerToken?: string;
 }
 
 export interface ICheckoutSessionResponse {

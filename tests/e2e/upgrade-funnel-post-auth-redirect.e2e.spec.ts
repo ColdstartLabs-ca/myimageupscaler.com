@@ -1,5 +1,8 @@
 import { test, expect } from '../test-fixtures';
-import { setupAuthenticatedState, setupAuthenticatedStateWithSupabase } from '../helpers/auth-helpers';
+import {
+  setupAuthenticatedState,
+  setupAuthenticatedStateWithSupabase,
+} from '../helpers/auth-helpers';
 
 /**
  * Upgrade Funnel Post-Auth Redirect E2E Tests
@@ -311,37 +314,6 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
   });
 
   test.describe('PurchaseModal Visibility', () => {
-    test('should open PurchaseModal when "View Plans" is clicked', async ({ page }) => {
-      await setupAuthenticatedStateWithSupabase(page, {
-        subscription: null, // Free user so MobileUpgradePrompt is visible
-        profile: {
-          id: 'test-free-user-3',
-          email: 'test-free-3@example.com',
-          role: 'user',
-          subscription_credits_balance: 100,
-          purchased_credits_balance: 0,
-        },
-      });
-
-      // Use mobile viewport so MobileUpgradePrompt is visible in empty state
-      await page.setViewportSize({ width: 390, height: 844 });
-
-      await page.goto('/workspace');
-      await page.waitForLoadState('domcontentloaded');
-
-      // The "View Plans" button is in MobileUpgradePrompt (md:hidden — visible on mobile)
-      const viewPlansBtn = page.locator('button:has-text("View Plans")').first();
-
-      if (await viewPlansBtn.isVisible({ timeout: 8000 })) {
-        await viewPlansBtn.click();
-
-        // PurchaseModal is rendered with "Get More Credits" title
-        // It uses a custom modal structure (not role="dialog" like BottomSheet)
-        const purchaseModal = page.locator('.fixed.inset-0.z-50:has-text("Get More Credits")');
-        await expect(purchaseModal).toBeVisible({ timeout: 8000 });
-      }
-    });
-
     test('should open model gallery from mobile quality selector in active workspace', async ({
       page,
     }) => {

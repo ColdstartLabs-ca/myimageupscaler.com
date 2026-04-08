@@ -11,6 +11,10 @@ import {
   getCheckoutTrackingContext,
   setCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
+import {
+  clearStoredCheckoutRescueOffer,
+  getStoredCheckoutRescueOffer,
+} from '@client/utils/checkoutRescueOfferStorage';
 import { useTranslations } from 'next-intl';
 import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
@@ -107,11 +111,13 @@ function CheckoutContent() {
       try {
         setLoading(true);
         setError(null);
+        const activeRescueOffer = getStoredCheckoutRescueOffer(priceId);
 
         const response = await StripeService.createCheckoutSession(priceId, {
           uiMode: 'embedded',
           successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: `${window.location.origin}/pricing`,
+          offerToken: activeRescueOffer?.offerToken,
         });
 
         if (response.clientSecret) {
@@ -157,6 +163,9 @@ function CheckoutContent() {
     onComplete: () => {
       // Invalidate cache so a subsequent purchase gets a fresh session
       clearCheckoutSessionCache();
+      if (priceId) {
+        clearStoredCheckoutRescueOffer(priceId);
+      }
       // Redirect to success page after checkout completion
       setTimeout(() => {
         router.push('/success');

@@ -40,12 +40,12 @@ test.describe('API: Stripe Customer Portal - Authentication', () => {
       'Bearer not.a.valid.jwt',
       'Basic dGVzdDoxMjM=', // Basic auth instead of Bearer
       'Bearer ',
-      'invalid_token_without_bearer'
+      'invalid_token_without_bearer',
     ];
 
     for (const authHeader of malformedHeaders) {
       const response = await api.post('/api/portal', undefined, {
-        headers: { 'Authorization': authHeader }
+        headers: { Authorization: authHeader },
       });
 
       response.expectStatus(401);
@@ -62,12 +62,12 @@ test.describe('API: Stripe Customer Portal - Authentication', () => {
       'Bearer ' + 'x'.repeat(100), // Very long invalid token
       '',
       'null',
-      'undefined'
+      'undefined',
     ];
 
     for (const token of invalidTokens) {
       const response = await api.post('/api/portal', undefined, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       response.expectStatus(401);
@@ -111,10 +111,10 @@ test.describe('API: Stripe Customer Portal - Request Validation', () => {
     const user = await ctx.createUser();
     const response = await request.post('/api/portal', {
       headers: {
-        'Authorization': `Bearer ${user.token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${user.token}`,
+        'Content-Type': 'application/json',
       },
-      data: 'invalid json {{{'
+      data: 'invalid json {{{',
     });
 
     // In test mode, malformed JSON might still succeed due to mock response
@@ -127,7 +127,7 @@ test.describe('API: Stripe Customer Portal - Request Validation', () => {
     const user = await ctx.createUser();
     api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/portal', {
-      returnUrl: 'https://example.com/return'
+      returnUrl: 'https://example.com/return',
     });
 
     // In test mode, should succeed with mock response
@@ -246,7 +246,7 @@ test.describe('API: Stripe Customer Portal - Customer Validation', () => {
 
     api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/portal', {
-      returnUrl: 'https://example.com/return'
+      returnUrl: 'https://example.com/return',
     });
 
     // In test mode, should succeed with mock response
@@ -291,7 +291,7 @@ test.describe('API: Stripe Customer Portal - Portal Session Creation', () => {
 
     api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/portal', {
-      returnUrl: 'https://example.com/billing'
+      returnUrl: 'https://example.com/billing',
     });
 
     // May fail due to Stripe API but should handle the return URL parameter
@@ -308,20 +308,31 @@ test.describe('API: Stripe Customer Portal - Portal Session Creation', () => {
       .update({ stripe_customer_id: `cus_test_${user.id}` })
       .eq('id', user.id);
 
+    const portalApi = new ApiClient(request).withAuth(user.token);
+    const postPortalWithRetry = async () => {
+      let lastResponse = await portalApi.post('/api/portal', {});
+
+      for (let attempt = 0; attempt < 2 && lastResponse.status === 404; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
+        lastResponse = await portalApi.post('/api/portal', {});
+      }
+
+      return lastResponse;
+    };
+
+    // Warm the route once before the concurrent fanout so the assertion only
+    // measures request handling, not first-hit route startup/compilation.
+    const warmupResponse = await postPortalWithRetry();
+    expect([200, 400, 402, 500]).toContain(warmupResponse.status);
+
     // Send multiple requests simultaneously
-    const requests = Array(3).fill(null).map(() =>
-      request.post('/api/portal', {
-        headers: { 'Authorization': `Bearer ${user.token}` }
-      })
-    );
+    const requests = Array.from({ length: 3 }, () => postPortalWithRetry());
 
     const responses = await Promise.all(requests);
 
     // All requests should be handled consistently
     responses.forEach(response => {
-      // Handle raw responses from request.post()
-      const status = response.status();
-      expect([200, 400, 402, 429, 500]).toContain(status);
+      expect([200, 400, 402, 429, 500]).toContain(response.status);
     });
   });
 });
@@ -385,7 +396,7 @@ test.describe('API: Stripe Customer Portal - Error Handling', () => {
   test('should handle database connection issues', async ({ request }) => {
     // This tests the resilience of the API when database is unavailable
     const response = await request.post('/api/portal', {
-      headers: { 'Authorization': 'Bearer potentially_valid_but_db_unavailable_token' }
+      headers: { Authorization: 'Bearer potentially_valid_but_db_unavailable_token' },
     });
 
     // Should handle DB issues gracefully - in test mode, invalid token will fail auth
@@ -418,7 +429,7 @@ test.describe('API: Stripe Customer Portal - Error Handling', () => {
 });
 
 test.describe('API: Stripe Customer Portal - Security', () => {
-  test('should prevent access to other users\' customer data', async ({ request }) => {
+  test("should prevent access to other users' customer data", async ({ request }) => {
     const user1 = await ctx.createUser();
     const user2 = await ctx.createUser({ subscription: 'active', tier: 'pro' });
 
@@ -467,7 +478,7 @@ test.describe('API: Stripe Customer Portal - Security', () => {
     const user = await ctx.createUser();
 
     const response = await request.post('/api/portal', {
-      headers: { 'Authorization': `Bearer ${user.token}` }
+      headers: { Authorization: `Bearer ${user.token}` },
     });
 
     // Should include content-type header regardless of response status
@@ -490,7 +501,7 @@ test.describe('API: Stripe Customer Portal - Security', () => {
     const responses = [];
     for (let i = 0; i < 10; i++) {
       const response = await request.post('/api/portal', {
-        headers: { 'Authorization': `Bearer ${user.token}` }
+        headers: { Authorization: `Bearer ${user.token}` },
       });
       responses.push(response);
     }
@@ -524,7 +535,7 @@ test.describe('API: Stripe Customer Portal - Security', () => {
     const user = await ctx.createUser();
     api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/portal', {
-      returnUrl: 'http://example.com/return'
+      returnUrl: 'http://example.com/return',
     });
 
     // In test mode, should succeed with mock response
@@ -562,7 +573,7 @@ test.describe('API: Stripe Customer Portal - Security', () => {
     const user = await ctx.createUser();
     api = new ApiClient(request).withAuth(user.token);
     const response = await api.post('/api/portal', {
-      returnUrl: 'https://example.com/return'
+      returnUrl: 'https://example.com/return',
     });
 
     // In test mode, should succeed with mock response
@@ -581,9 +592,13 @@ test.describe('API: Stripe Customer Portal - Security', () => {
   test('should use origin header for default return URL', async ({ request }) => {
     const user = await ctx.createUser();
     api = new ApiClient(request).withAuth(user.token);
-    const response = await api.post('/api/portal', {}, {
-      headers: { origin: 'https://myapp.com' }
-    });
+    const response = await api.post(
+      '/api/portal',
+      {},
+      {
+        headers: { origin: 'https://myapp.com' },
+      }
+    );
 
     // In test mode, should succeed with mock response
     expect([200, 400]).toContain(response.status);

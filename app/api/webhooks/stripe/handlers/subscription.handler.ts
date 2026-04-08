@@ -730,6 +730,8 @@ export class SubscriptionHandler {
             'purchase_confirmed',
             {
               purchaseType: 'subscription',
+              sessionId: subscription.id,
+              pricingRegion: 'standard',
               planTier: planMetadata.key,
               amount: subscription.items.data[0]?.price.unit_amount || 0,
               currency: subscription.currency ?? 'usd',
@@ -738,13 +740,23 @@ export class SubscriptionHandler {
               priceId: basePriceId,
             },
             { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-          ).catch(err =>
-            console.error('[ANALYTICS] Failed to track purchase_confirmed for plan change:', {
-              error: err,
-              userId,
-              subscriptionId: subscription.id,
+          )
+            .then(success => {
+              if (!success) {
+                console.error('[ANALYTICS] purchase_confirmed for plan change was not accepted:', {
+                  userId,
+                  subscriptionId: subscription.id,
+                  priceId: basePriceId,
+                });
+              }
             })
-          );
+            .catch(err =>
+              console.error('[ANALYTICS] Failed to track purchase_confirmed for plan change:', {
+                error: err,
+                userId,
+                subscriptionId: subscription.id,
+              })
+            );
         }
 
         // Update user properties in Amplitude via $identify

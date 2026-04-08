@@ -379,7 +379,10 @@ export class PaymentHandler {
 
       // Extract pricing region and discount from session metadata
       const pricingRegion = session.metadata?.pricing_region || 'standard';
-      const discountPercent = parseInt(session.metadata?.discount_percent || '0', 10);
+      const discountPercent = parseInt(
+        session.metadata?.effective_discount_percent || session.metadata?.discount_percent || '0',
+        10
+      );
 
       await trackServerEvent(
         'checkout_completed',

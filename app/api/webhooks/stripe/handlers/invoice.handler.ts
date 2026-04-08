@@ -26,28 +26,43 @@ function trackPurchaseConfirmed(params: {
   currency: string;
   invoiceId: string;
   subscriptionId: string;
+  priceId?: string;
 }): void {
   const { userId, planKey, amountCents, purchaseType, currency } = params;
   trackServerEvent(
     'purchase_confirmed',
     {
       purchaseType: 'subscription',
+      sessionId: params.invoiceId,
+      pricingRegion: 'standard',
       planTier: planKey,
       amount: amountCents,
       currency,
       source: purchaseType,
       stripeInvoiceId: params.invoiceId,
       stripeSubscriptionId: params.subscriptionId,
+      ...(params.priceId ? { priceId: params.priceId } : {}),
     },
     { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-  ).catch(err =>
-    console.error('[ANALYTICS] Failed to track purchase_confirmed for invoice:', {
-      error: err,
-      userId,
-      invoiceId: params.invoiceId,
-      subscriptionId: params.subscriptionId,
+  )
+    .then(success => {
+      if (!success) {
+        console.error('[ANALYTICS] purchase_confirmed for invoice was not accepted:', {
+          userId,
+          invoiceId: params.invoiceId,
+          subscriptionId: params.subscriptionId,
+          purchaseType,
+        });
+      }
     })
-  );
+    .catch(err =>
+      console.error('[ANALYTICS] Failed to track purchase_confirmed for invoice:', {
+        error: err,
+        userId,
+        invoiceId: params.invoiceId,
+        subscriptionId: params.subscriptionId,
+      })
+    );
 }
 
 // Invoice line item interface for accessing runtime properties
@@ -109,13 +124,13 @@ export class InvoiceHandler {
         // Fire-and-forget; never blocks the webhook.
         const { data: skipProfile } = await supabaseAdmin
           .from('profiles')
-          .select('id')
+          .select('id, subscription_tier')
           .eq('stripe_customer_id', invoice.customer as string)
           .maybeSingle();
         if (skipProfile?.id) {
           trackPurchaseConfirmed({
             userId: skipProfile.id,
-            planKey: '', // plan unknown at this early-return point; Amplitude still records the event
+            planKey: skipProfile.subscription_tier || '',
             amountCents: invoice.amount_paid || 0,
             purchaseType: 'subscription_new',
             currency: invoice.currency ?? 'usd',
@@ -393,6 +408,7 @@ export class InvoiceHandler {
         currency: invoice.currency ?? 'usd',
         invoiceId: invoice.id,
         subscriptionId,
+        priceId: basePriceId,
       });
 
       await trackRevenue(
@@ -416,6 +432,7 @@ export class InvoiceHandler {
         currency: invoice.currency ?? 'usd',
         invoiceId: invoice.id,
         subscriptionId,
+        priceId: basePriceId,
       });
     }
   }

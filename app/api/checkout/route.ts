@@ -10,6 +10,7 @@ import {
   isDiscountValid,
   calculateStackedDiscount,
 } from '@server/services/engagement-discount.service';
+import { verifyCheckoutRescueOffer } from '@server/services/checkout-rescue-offer.service';
 import { ENGAGEMENT_DISCOUNT_CONFIG } from '@shared/config/engagement-discount';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
@@ -56,8 +57,11 @@ const RESERVED_CHECKOUT_METADATA_KEYS = new Set([
   'supabase_user_id',
   'pricing_region',
   'discount_percent',
+  'effective_discount_percent',
   'engagement_discount_percent',
   'engagement_discount_applied',
+  'checkout_offer_percent',
+  'checkout_offer_applied',
   'type',
   'plan_key',
   'credits_per_cycle',
@@ -212,7 +216,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { priceId, successUrl, cancelUrl, metadata = {}, uiMode = 'hosted' } = body;
+    const { priceId, successUrl, cancelUrl, metadata = {}, uiMode = 'hosted', offerToken } = body;
     const customMetadata = sanitizeCustomCheckoutMetadata(metadata);
 
     if (Object.keys(customMetadata).length !== Object.keys(metadata).length) {
@@ -406,6 +410,7 @@ export async function POST(request: NextRequest) {
 
     // 6.7. Check for engagement discount eligibility (first-purchase discount for engaged free users)
     let engagementDiscountPercent = 0;
+    let checkoutOfferDiscountPercent = 0;
 
     // Resolve metadata early for engagement discount check
     const unifiedMetadata = resolvePlanOrPack(validatedPriceId);
@@ -436,6 +441,25 @@ export async function POST(request: NextRequest) {
         }
       } catch {
         // Engagement discount check is best-effort — never block checkout
+      }
+    }
+
+    // 6.8. Validate an optional rescue-offer token for embedded Hobby checkout recovery.
+    // Invalid tokens are ignored rather than blocking checkout.
+    if (offerToken && resolvedPrice?.type === 'plan' && !isTestMode) {
+      const offerVerification = verifyCheckoutRescueOffer({
+        offerToken,
+        userId: user.id,
+        priceId: validatedPriceId,
+      });
+
+      if (offerVerification.valid) {
+        checkoutOfferDiscountPercent = offerVerification.discountPercent || 0;
+      } else {
+        console.warn('[CHECKOUT_RESCUE_OFFER] Ignoring invalid or expired offer token', {
+          userId: user.id,
+          priceId: validatedPriceId,
+        });
       }
     }
 
@@ -474,39 +498,43 @@ export async function POST(request: NextRequest) {
 
     // Build line_items: use price_data with inline discounted amount for all regional purchases,
     // so no Stripe Price objects need to be created per region.
-    // Engagement discount stacks on top of regional discount.
+    // Engagement and rescue discounts stack on top of regional pricing.
     let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
-    const totalDiscountPercent = pricingConfig.discountPercent + engagementDiscountPercent;
+    let effectiveDiscountPercent = pricingConfig.discountPercent;
 
-    if (totalDiscountPercent > 0) {
+    if (
+      pricingConfig.discountPercent > 0 ||
+      engagementDiscountPercent > 0 ||
+      checkoutOfferDiscountPercent > 0
+    ) {
       const originalPrice = await stripe.prices.retrieve(validatedPriceId);
       const productId =
         typeof originalPrice.product === 'string'
           ? originalPrice.product
           : originalPrice.product.id;
 
-      // Calculate final price with both regional and engagement discounts
-      let finalAmount: number;
-      if (engagementDiscountPercent > 0 && pricingConfig.discountPercent > 0) {
-        // Stack discounts: regional first, then engagement
+      let finalAmount = originalPrice.unit_amount!;
+
+      if (pricingConfig.discountPercent > 0 && engagementDiscountPercent > 0) {
         finalAmount = calculateStackedDiscount(
           originalPrice.unit_amount!,
           pricingConfig.discountPercent,
           engagementDiscountPercent
         );
+      } else if (pricingConfig.discountPercent > 0) {
+        finalAmount = getDiscountedPriceInCents(finalAmount, pricingConfig.discountPercent);
       } else if (engagementDiscountPercent > 0) {
-        // Only engagement discount
-        finalAmount = getDiscountedPriceInCents(
-          originalPrice.unit_amount!,
-          engagementDiscountPercent
-        );
-      } else {
-        // Only regional discount
-        finalAmount = getDiscountedPriceInCents(
-          originalPrice.unit_amount!,
-          pricingConfig.discountPercent
-        );
+        finalAmount = getDiscountedPriceInCents(finalAmount, engagementDiscountPercent);
       }
+
+      if (checkoutOfferDiscountPercent > 0) {
+        finalAmount = getDiscountedPriceInCents(finalAmount, checkoutOfferDiscountPercent);
+      }
+
+      effectiveDiscountPercent = Math.max(
+        0,
+        Math.round(((originalPrice.unit_amount! - finalAmount) / originalPrice.unit_amount!) * 100)
+      );
 
       const priceData: Stripe.Checkout.SessionCreateParams.LineItem.PriceData = {
         currency: 'usd',
@@ -533,11 +561,18 @@ export async function POST(request: NextRequest) {
         price_id: validatedPriceId,
         pricing_region: pricingConfig.region,
         discount_percent: pricingConfig.discountPercent.toString(),
+        effective_discount_percent: effectiveDiscountPercent.toString(),
         // Track engagement discount for webhook redemption
         ...(engagementDiscountPercent > 0
           ? {
               engagement_discount_percent: engagementDiscountPercent.toString(),
               engagement_discount_applied: 'true',
+            }
+          : {}),
+        ...(checkoutOfferDiscountPercent > 0
+          ? {
+              checkout_offer_percent: checkoutOfferDiscountPercent.toString(),
+              checkout_offer_applied: 'true',
             }
           : {}),
         ...(unifiedMetadata
