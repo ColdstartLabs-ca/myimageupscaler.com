@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { Modal } from '@client/components/ui/Modal';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 import { getVariant } from '@client/utils/abTest';
 import { useTranslations } from 'next-intl';
 
@@ -18,8 +17,7 @@ export interface IPostDownloadPromptProps {
 
 /**
  * A dismissible modal shown to free users after download clicks.
- * Shows deterministically on the 2nd download (not random).
- * Respects 24h cooldown via promptFrequency utility.
+ * Shows on every successful download for free users.
  * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'post_download_explore'.
  */
 export const PostDownloadPrompt = ({
@@ -30,33 +28,19 @@ export const PostDownloadPrompt = ({
 }: IPostDownloadPromptProps): JSX.Element | null => {
   const t = useTranslations('workspace.postDownloadPrompt');
   const [visible, setVisible] = useState(false);
-  const lastEvaluatedDownloadCountRef = useRef(0);
+  const previousDownloadCountRef = useRef(downloadCount);
   const { pricingRegion } = useRegionTier();
 
   // Get copy variant for A/B testing
   const copyVariant = getVariant('after_download_copy', ['value', 'outcome', 'urgency']);
 
-  // Check prompt frequency throttling (24h cooldown)
-  const canShow = canShowPrompt({
-    key: 'prompt_freq_post_download',
-    cooldownMs: 24 * 60 * 60 * 1000, // 24 hours
-  });
-
   useEffect(() => {
+    const previousDownloadCount = previousDownloadCountRef.current;
+    previousDownloadCountRef.current = downloadCount;
+
     if (!isFreeUser) return;
     if (downloadCount < 1) return;
-    if (downloadCount === lastEvaluatedDownloadCountRef.current) return;
-    lastEvaluatedDownloadCountRef.current = downloadCount;
-
-    // Changed: Show deterministically on 2nd download, not random 50%
-    if (downloadCount !== 2) return;
-    if (!canShow) return;
-
-    // Mark prompt as shown when it is displayed
-    markPromptShown({
-      key: 'prompt_freq_post_download',
-      cooldownMs: 24 * 60 * 60 * 1000,
-    });
+    if (downloadCount <= previousDownloadCount) return;
 
     setVisible(true);
     analytics.track('upgrade_prompt_shown', {
@@ -66,7 +50,7 @@ export const PostDownloadPrompt = ({
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
-  }, [isFreeUser, downloadCount, pricingRegion, canShow, currentModel, copyVariant]);
+  }, [isFreeUser, downloadCount, pricingRegion, currentModel, copyVariant]);
 
   if (!visible) return null;
 
@@ -95,7 +79,14 @@ export const PostDownloadPrompt = ({
   };
 
   return (
-    <Modal isOpen={visible} onClose={handleDismiss} size="sm" showCloseButton={false}>
+    <Modal
+      isOpen={visible}
+      onClose={handleDismiss}
+      size="sm"
+      showCloseButton={false}
+      backdropClassName="bg-black/55 backdrop-blur-sm"
+      panelClassName="border border-white/10 shadow-[0_32px_120px_rgba(0,0,0,0.72)]"
+    >
       <div className="relative">
         <button
           onClick={handleDismiss}

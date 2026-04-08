@@ -11,6 +11,8 @@ export interface IModalProps {
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   showCloseButton?: boolean;
+  backdropClassName?: string;
+  panelClassName?: string;
 }
 
 export const Modal: React.FC<IModalProps> = ({
@@ -20,6 +22,8 @@ export const Modal: React.FC<IModalProps> = ({
   children,
   size = 'md',
   showCloseButton = true,
+  backdropClassName,
+  panelClassName,
 }) => {
   const t = useTranslations();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -61,12 +65,12 @@ export const Modal: React.FC<IModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 glass animate-fade-in"
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 glass animate-fade-in ${backdropClassName ?? ''}`}
       onClick={handleBackdropClick}
     >
       <div
         ref={modalRef}
-        className={`bg-surface rounded-2xl shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto animate-scale-in`}
+        className={`bg-surface rounded-2xl shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto animate-scale-in ${panelClassName ?? ''}`}
       >
         {/* Header */}
         {(title || showCloseButton) && (

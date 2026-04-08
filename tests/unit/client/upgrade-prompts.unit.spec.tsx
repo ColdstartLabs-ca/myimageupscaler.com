@@ -735,12 +735,20 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     vi.unstubAllGlobals();
   });
 
-  it('should show PostDownloadPrompt on 2nd download (deterministic, not random)', async () => {
+  it('should show PostDownloadPrompt when download count increments to 1', async () => {
     const onExploreModels = vi.fn();
-    render(
+    const { rerender } = render(
       <PostDownloadPrompt
         isFreeUser={true}
-        downloadCount={2}
+        downloadCount={0}
+        onExploreModels={onExploreModels}
+      />
+    );
+
+    rerender(
+      <PostDownloadPrompt
+        isFreeUser={true}
+        downloadCount={1}
         onExploreModels={onExploreModels}
       />
     );
@@ -750,7 +758,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     });
   });
 
-  it('should NOT show PostDownloadPrompt on 1st download', async () => {
+  it('should NOT show PostDownloadPrompt on initial render with an existing download count', async () => {
     const onExploreModels = vi.fn();
     const { container } = render(
       <PostDownloadPrompt
@@ -764,26 +772,12 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('should NOT show PostDownloadPrompt on 3rd+ downloads', async () => {
-    const onExploreModels = vi.fn();
-    const { container } = render(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={3}
-        onExploreModels={onExploreModels}
-      />
-    );
-
-    await new Promise(r => setTimeout(r, 10));
-    expect(container.firstChild).toBeNull();
-  });
-
   it('should NOT show PostDownloadPrompt for paid users', async () => {
     const onExploreModels = vi.fn();
     const { container } = render(
       <PostDownloadPrompt
         isFreeUser={false}
-        downloadCount={2}
+        downloadCount={0}
         onExploreModels={onExploreModels}
       />
     );
@@ -794,10 +788,18 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   it('should fire upgrade_prompt_shown with trigger post_download_explore', async () => {
     const onExploreModels = vi.fn();
-    render(
+    const { rerender } = render(
       <PostDownloadPrompt
         isFreeUser={true}
-        downloadCount={2}
+        downloadCount={0}
+        onExploreModels={onExploreModels}
+      />
+    );
+
+    rerender(
+      <PostDownloadPrompt
+        isFreeUser={true}
+        downloadCount={1}
         onExploreModels={onExploreModels}
       />
     );
@@ -814,10 +816,19 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   it('should fire upgrade_prompt_shown with currentModel prop', async () => {
     const onExploreModels = vi.fn();
-    render(
+    const { rerender } = render(
       <PostDownloadPrompt
         isFreeUser={true}
-        downloadCount={2}
+        downloadCount={0}
+        currentModel="premium"
+        onExploreModels={onExploreModels}
+      />
+    );
+
+    rerender(
+      <PostDownloadPrompt
+        isFreeUser={true}
+        downloadCount={1}
         currentModel="premium"
         onExploreModels={onExploreModels}
       />
@@ -836,10 +847,18 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   it('should fire upgrade_prompt_dismissed on X click', async () => {
     const onExploreModels = vi.fn();
-    render(
+    const { rerender } = render(
       <PostDownloadPrompt
         isFreeUser={true}
-        downloadCount={2}
+        downloadCount={0}
+        onExploreModels={onExploreModels}
+      />
+    );
+
+    rerender(
+      <PostDownloadPrompt
+        isFreeUser={true}
+        downloadCount={1}
         onExploreModels={onExploreModels}
       />
     );
@@ -864,10 +883,18 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   it('should call onExploreModels callback when CTA is clicked', async () => {
     const onExploreModels = vi.fn();
-    render(
+    const { rerender } = render(
       <PostDownloadPrompt
         isFreeUser={true}
-        downloadCount={2}
+        downloadCount={0}
+        onExploreModels={onExploreModels}
+      />
+    );
+
+    rerender(
+      <PostDownloadPrompt
+        isFreeUser={true}
+        downloadCount={1}
         onExploreModels={onExploreModels}
       />
     );
@@ -890,12 +917,35 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     expect(mockSetCheckoutTrackingContext).not.toHaveBeenCalled();
   });
 
-  it('should respect 24h cooldown via promptFrequency', async () => {
+  it('should re-open when download count increments', async () => {
     const onExploreModels = vi.fn();
-    // Simulate prompt was shown recently
-    localStorage.setItem('prompt_freq_post_download_last_shown', String(Date.now()));
+    const { rerender } = render(
+      <PostDownloadPrompt
+        isFreeUser={true}
+        downloadCount={0}
+        onExploreModels={onExploreModels}
+      />
+    );
 
-    const { container } = render(
+    rerender(
+      <PostDownloadPrompt
+        isFreeUser={true}
+        downloadCount={1}
+        onExploreModels={onExploreModels}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/See what other models can do/i)).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByLabelText('Dismiss prompt'));
+
+    await waitFor(() => {
+      expect(screen.queryByText(/See what other models can do/i)).not.toBeInTheDocument();
+    });
+
+    rerender(
       <PostDownloadPrompt
         isFreeUser={true}
         downloadCount={2}
@@ -903,8 +953,9 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
       />
     );
 
-    await new Promise(r => setTimeout(r, 10));
-    expect(container.firstChild).toBeNull();
+    await waitFor(() => {
+      expect(screen.getByText(/See what other models can do/i)).toBeInTheDocument();
+    });
   });
 });
 
