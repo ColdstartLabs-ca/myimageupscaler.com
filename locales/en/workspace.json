@@ -168,9 +168,11 @@
     "enhancedLabel": "Enhanced"
   },
   "postDownloadPrompt": {
-    "message": "Love the result?",
-    "ctaLink": "Get 10x sharper with Premium models.",
-    "dismiss": "Dismiss upgrade prompt"
+    "title": "See what other models can do",
+    "body": "We have 14+ AI models — each optimized for different image types.",
+    "cta": "Explore Models",
+    "dismiss": "Dismiss prompt",
+    "maybeLater": "Maybe Later"
   },
   "upgradeSuccessBanner": {
     "title": "Great work!",
@@ -215,10 +217,10 @@
   },
   "progressCelebration": {
     "title": "First upscale complete!",
-    "subtitle": "You just upscaled your first image! Ready to see what else our AI can do?",
+    "subtitle": "You just upscaled your first image! Curious what other AI models can do with it?",
     "uploadAnother": "Upload Another",
-    "seePlans": "See Premium Plans",
-    "skipText": "Unlock unlimited upscales with Premium",
+    "exploreModels": "Explore Models",
+    "skipText": "See the difference our premium models make",
     "dismiss": "Dismiss celebration"
   },
   "onboardingTour": {
