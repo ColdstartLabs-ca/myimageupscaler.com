@@ -101,10 +101,6 @@ vi.mock('../SampleImageSelector', () => ({
   SampleImageSelector: () => null,
 }));
 
-vi.mock('../MobileUpgradePrompt', () => ({
-  MobileUpgradePrompt: () => null,
-}));
-
 vi.mock('../PostDownloadPrompt', () => ({
   PostDownloadPrompt: () => null,
 }));

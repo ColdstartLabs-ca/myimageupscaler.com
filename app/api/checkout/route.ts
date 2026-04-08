@@ -444,9 +444,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 6.8. Validate an optional rescue-offer token for embedded Hobby checkout recovery.
+    // 6.8. Validate an optional rescue-offer token for checkout recovery (subscriptions and packs).
     // Invalid tokens are ignored rather than blocking checkout.
-    if (offerToken && resolvedPrice?.type === 'plan' && !isTestMode) {
+    if (offerToken && resolvedPrice && !isTestMode) {
       const offerVerification = verifyCheckoutRescueOffer({
         offerToken,
         userId: user.id,

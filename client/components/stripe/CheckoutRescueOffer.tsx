@@ -38,7 +38,9 @@ export function CheckoutRescueOffer({
             <Sparkles size={20} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-lg font-semibold text-white">Wait, here&apos;s 20% off Hobby</p>
+            <p className="text-lg font-semibold text-white">
+              Wait, here&apos;s {offer.discountPercent}% off
+            </p>
             <p className="mt-1 text-sm text-text-muted">
               Finish checkout now and keep this rescue offer for the next few minutes.
             </p>

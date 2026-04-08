@@ -46,7 +46,7 @@ describe('CheckoutRescueOffer component', () => {
     test('renders the offer modal with title and description', () => {
       render(<CheckoutRescueOffer {...defaultProps} />);
 
-      expect(screen.getByText(/Wait, here's 20% off Hobby/i)).toBeInTheDocument();
+      expect(screen.getByText(/Wait, here's 20% off/i)).toBeInTheDocument();
       expect(
         screen.getByText(/Finish checkout now and keep this rescue offer for the next few minutes/i)
       ).toBeInTheDocument();

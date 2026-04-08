@@ -49,7 +49,6 @@ import { ProgressSteps, checkIsFirstTimeUser, markFirstUploadCompleted } from '.
 import { SampleImageSelector } from './SampleImageSelector';
 import { ISampleImage } from '@shared/config/sample-images.config';
 import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
-import { MobileUpgradePrompt } from './MobileUpgradePrompt';
 import { PostDownloadPrompt } from './PostDownloadPrompt';
 import { FirstDownloadCelebration } from './FirstDownloadCelebration';
 
@@ -449,14 +448,6 @@ const Workspace: React.FC = () => {
             </div>
           </div>
         )}
-        <div className="px-8 pb-4">
-          <MobileUpgradePrompt
-            variant="upload"
-            isFreeUser={isFreeUser}
-            onUpgrade={() => openUpgradeModal(false, 'workspace_mobile_upload')}
-          />
-        </div>
-
         <PurchaseModal
           isOpen={showUpgradeModal}
           onClose={closeUpgradeModal}

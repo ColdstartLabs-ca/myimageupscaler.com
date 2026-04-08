@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { STRIPE_PRICES } from '@shared/config/stripe';
+import { isCheckoutRescueOfferEligiblePrice } from '@shared/config/checkout-rescue-offer';
 import type { TCheckoutExitMethod, TCheckoutStep } from '@server/analytics/types';
 import type { ICheckoutRescueOffer } from '@shared/types/checkout-offer';
 import {
@@ -100,7 +101,7 @@ function detectDeviceType(): 'mobile' | 'desktop' | 'tablet' {
 export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalProps): JSX.Element {
   const t = useTranslations('stripe.checkout');
   const { pricingRegion } = useRegionTier();
-  const rescueOfferEligible = priceId === STRIPE_PRICES.HOBBY_MONTHLY;
+  const rescueOfferEligible = isCheckoutRescueOfferEligiblePrice(priceId);
 
   // Track when modal was opened to calculate time spent
   const modalOpenedAtRef = useRef(Date.now());

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { issueCheckoutRescueOffer } from '@server/services/checkout-rescue-offer.service';
 import { isCheckoutRescueOfferEligiblePrice } from '@shared/config/checkout-rescue-offer';
+import { resolvePriceId } from '@shared/config/stripe';
 import type {
   ICheckoutRescueOfferRequest,
   ICheckoutRescueOfferResponse,
@@ -47,21 +48,24 @@ export async function POST(
       );
     }
 
-    // Only target first subscription purchases. Existing subscribers should go through
-    // the plan-change flow instead of discounted checkout rescue logic.
-    const { data: existingSubscription } = await supabaseAdmin
-      .from('subscriptions')
-      .select('id')
-      .eq('user_id', userId)
-      .in('status', ['active', 'trialing'])
-      .limit(1)
-      .maybeSingle();
+    // For subscription plan purchases only: block users who already have an active subscription.
+    // Pack purchases are one-time payments — any user can buy them regardless of subscription status.
+    const resolvedPrice = resolvePriceId(priceId);
+    if (resolvedPrice?.type === 'plan') {
+      const { data: existingSubscription } = await supabaseAdmin
+        .from('subscriptions')
+        .select('id')
+        .eq('user_id', userId)
+        .in('status', ['active', 'trialing'])
+        .limit(1)
+        .maybeSingle();
 
-    if (existingSubscription) {
-      return NextResponse.json(
-        { success: false, error: 'Existing subscriptions are not eligible for this offer' },
-        { status: 409 }
-      );
+      if (existingSubscription) {
+        return NextResponse.json(
+          { success: false, error: 'Existing subscriptions are not eligible for this offer' },
+          { status: 409 }
+        );
+      }
     }
 
     return NextResponse.json({

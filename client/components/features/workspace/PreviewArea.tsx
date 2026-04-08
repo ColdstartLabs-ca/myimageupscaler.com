@@ -4,7 +4,6 @@ import { Button } from '@client/components/ui/Button';
 import { AlertTriangle, Check, Layers, Loader2 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { MobileUpgradePrompt } from './MobileUpgradePrompt';
 
 export interface IBatchProgress {
   current: number;
@@ -402,7 +401,6 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
           <ErrorOverlay item={activeItem} onRetry={onRetry} />
         )}
       </div>
-      <MobileUpgradePrompt variant="preview" isFreeUser={isFreeUser} onUpgrade={onUpgrade} />
     </div>
   );
 };
