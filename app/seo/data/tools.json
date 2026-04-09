@@ -571,6 +571,16 @@
           "title": "Product Photography",
           "description": "Clean up product photos for online stores and marketplaces.",
           "example": "Remove cluttered backgrounds from product shots."
+        },
+        {
+          "title": "Passport & ID Photos",
+          "description": "Remove backgrounds from portrait photos to meet official white-background requirements.",
+          "example": "Prepare passport photos with clean white backgrounds instantly."
+        },
+        {
+          "title": "E-commerce Catalog",
+          "description": "Standardize hundreds of supplier images to consistent white or transparent backgrounds.",
+          "example": "Process an entire product catalog in minutes instead of hours."
         }
       ],
       "benefits": [
@@ -614,6 +624,18 @@
         {
           "question": "What file types are supported?",
           "answer": "JPEG, PNG, and WebP images up to 10MB."
+        },
+        {
+          "question": "How is this bg remover different from other tools?",
+          "answer": "Our bg remover processes images entirely in your browser — no uploads to external servers. Results are ready in under 5 seconds with clean, professional edges including hair and fine details."
+        },
+        {
+          "question": "Can I remove the background from an image for free in bulk?",
+          "answer": "Yes. You can process multiple images back-to-back with no account, no credits, and no restrictions. Just upload the next image after downloading your result."
+        },
+        {
+          "question": "What happens to my image after background removal?",
+          "answer": "Your image is processed entirely in your browser. Nothing is sent to our servers. The result is a transparent PNG you can download immediately."
         }
       ],
       "relatedTools": ["ai-background-remover", "ai-image-upscaler"],

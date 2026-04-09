@@ -74,7 +74,7 @@ export function ToolPageTemplate({
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
           <BreadcrumbNav
             items={[
-              { label: 'Home', href: locale ? `/${locale}` : '/' },
+              { label: 'AI Image Upscaler', href: locale ? `/${locale}` : '/' },
               { label: 'Tools', href: locale ? `/${locale}/tools` : '/tools' },
               {
                 label: data.title,

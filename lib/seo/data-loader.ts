@@ -6,7 +6,7 @@
 
 import { cache } from 'react';
 import { serverEnv } from '@shared/config/env';
-import { Locale } from '@/i18n/config';
+import { Locale, SUPPORTED_LOCALES } from '@/i18n/config';
 import { isCategoryLocalized } from './localization-config';
 
 import toolsDataFile from '@/app/seo/data/tools.json';
@@ -725,6 +725,22 @@ export const getToolDataWithLocale = cache(
     };
   }
 );
+
+/**
+ * Get the list of locales that actually have a translation for a given tool slug.
+ * Used to generate accurate hreflang links and filter out phantom locale pages.
+ *
+ * @returns Array of locales where the slug has real translated data
+ */
+export const getAvailableLocalesForToolSlug = cache(async (slug: string): Promise<Locale[]> => {
+  const results = await Promise.all(
+    SUPPORTED_LOCALES.map(async locale => {
+      const result = await getToolDataWithLocale(slug, locale);
+      return result.hasTranslation ? locale : null;
+    })
+  );
+  return results.filter((l): l is Locale => l !== null);
+});
 
 /**
  * Load format data with localization check

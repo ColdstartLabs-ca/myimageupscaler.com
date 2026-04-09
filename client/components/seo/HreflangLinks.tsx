@@ -21,6 +21,7 @@ interface IHreflangLinksProps {
   path: string; // Path without locale prefix (e.g., '/tools/ai-image-upscaler')
   category?: PSEOCategory; // Optional category to check if localized
   locale?: string; // Current locale (default: 'en')
+  availableLocales?: string[]; // When provided, only generate hreflang for these locales
 }
 
 /**
@@ -33,7 +34,12 @@ interface IHreflangLinksProps {
  * <HreflangLinks path="/content/upscale-anime" /> // English-only, no hreflang
  * ```
  */
-export function HreflangLinks({ path, category, locale = 'en' }: IHreflangLinksProps): JSX.Element {
+export function HreflangLinks({
+  path,
+  category,
+  locale = 'en',
+  availableLocales,
+}: IHreflangLinksProps): JSX.Element {
   // Remove trailing slash for consistency (matches generateHreflangAlternates normalization)
   const normalizedPath = path.replace(/\/$/, '');
 
@@ -53,8 +59,11 @@ export function HreflangLinks({ path, category, locale = 'en' }: IHreflangLinksP
     );
   }
 
-  // Generate hreflang links for all supported locales
-  const links = SUPPORTED_LOCALES.map(loc => {
+  // Generate hreflang links — filtered to availableLocales when provided
+  const localesToUse = availableLocales
+    ? SUPPORTED_LOCALES.filter(loc => availableLocales.includes(loc))
+    : SUPPORTED_LOCALES;
+  const links = localesToUse.map(loc => {
     const localizedPath = getLocalizedPath(normalizedPath, loc);
     // For root path with English locale, localizedPath is '' — use BASE_URL directly
     const url = localizedPath === '' ? clientEnv.BASE_URL : `${clientEnv.BASE_URL}${localizedPath}`;

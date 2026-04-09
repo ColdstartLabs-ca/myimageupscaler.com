@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getToolData, getAllToolSlugs } from '@/lib/seo';
+import { getAvailableLocalesForToolSlug } from '@/lib/seo/data-loader';
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { ToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/ToolPageTemplate';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
@@ -87,7 +88,10 @@ export default async function ToolPage({ params }: IToolPageProps) {
   const schema = generateToolSchema(tool, 'en');
   const path = `/tools/${slug}`;
 
-  const [relatedPages] = await Promise.all([getRelatedPages('tools', slug, 'en')]);
+  const [relatedPages, availableLocales] = await Promise.all([
+    getRelatedPages('tools', slug, 'en'),
+    getAvailableLocalesForToolSlug(slug),
+  ]);
 
   // Use InteractiveToolPageTemplate for tools with embedded functionality
   const Template = tool.isInteractive ? InteractiveToolPageTemplate : ToolPageTemplate;
@@ -96,8 +100,8 @@ export default async function ToolPage({ params }: IToolPageProps) {
     <>
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale="en" />
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} category="tools" locale="en" />
+      {/* Hreflang links — only for locales with actual translations */}
+      <HreflangLinks path={path} category="tools" locale="en" availableLocales={availableLocales} />
       <SchemaMarkup schema={schema} />
       <Template data={tool} relatedPages={relatedPages} />
     </>

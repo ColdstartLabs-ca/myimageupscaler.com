@@ -5,6 +5,7 @@ import {
   getAllToolSlugs,
   generateMetadata as generatePageMetadata,
 } from '@/lib/seo';
+import { getAvailableLocalesForToolSlug } from '@/lib/seo/data-loader';
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { ToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/ToolPageTemplate';
 import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate';
@@ -30,6 +31,16 @@ export async function generateMetadata({ params }: IToolPageProps): Promise<Meta
   const { slug, locale } = await params;
   const result = await getToolDataWithLocale(slug, locale);
 
+  // Locale has no translation for this slug — use English data but noindex
+  if (!result.data && locale !== 'en') {
+    const enResult = await getToolDataWithLocale(slug, 'en');
+    if (!enResult.data) return {};
+    return {
+      ...generatePageMetadata(enResult.data, 'tools', locale),
+      robots: { index: false, follow: false },
+    };
+  }
+
   if (!result.data) return {};
 
   return generatePageMetadata(result.data, 'tools', locale);
@@ -52,8 +63,11 @@ export default async function ToolPage({ params }: IToolPageProps) {
   const schema = generateToolSchema(result.data, locale);
   const path = `/tools/${slug}`;
 
-  // Fetch related pages for internal linking
-  const relatedPages = await getRelatedPages('tools', slug, locale);
+  // Fetch related pages and available locales in parallel
+  const [relatedPages, availableLocales] = await Promise.all([
+    getRelatedPages('tools', slug, locale),
+    getAvailableLocalesForToolSlug(slug),
+  ]);
 
   // Use InteractiveToolPageTemplate for tools with embedded functionality
   const Template = result.data.isInteractive ? InteractiveToolPageTemplate : ToolPageTemplate;
@@ -62,8 +76,8 @@ export default async function ToolPage({ params }: IToolPageProps) {
     <>
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale={locale} />
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} category="tools" locale={locale} />
+      {/* Hreflang links — only for locales with actual translations */}
+      <HreflangLinks path={path} category="tools" locale={locale} availableLocales={availableLocales} />
       <SchemaMarkup schema={schema} />
       <Template data={result.data} locale={locale} relatedPages={relatedPages} />
     </>

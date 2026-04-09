@@ -16,7 +16,7 @@ test.describe('Landing Page SEO', () => {
       await page.goto('/');
 
       // Verify meta title matches the actual metadata from locales/en/common.json
-      await expect(page).toHaveTitle(/AI Photo Enhancer & Image Upscaler/);
+      await expect(page).toHaveTitle(/AI Image Upscaler/);
     });
 
     test('Verify meta description contains target keywords', async ({ page }) => {
