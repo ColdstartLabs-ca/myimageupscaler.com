@@ -9,7 +9,8 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { STRIPE_PRICES } from '@shared/config/stripe';
+import { determinePlanFromPriceId } from '@shared/config/stripe';
+import { detectDeviceType } from '@client/utils/detectDeviceType';
 import { isCheckoutRescueOfferEligiblePrice } from '@shared/config/checkout-rescue-offer';
 import type { TCheckoutExitMethod, TCheckoutStep } from '@server/analytics/types';
 import type { ICheckoutRescueOffer } from '@shared/types/checkout-offer';
@@ -54,39 +55,6 @@ const getStripePromise = () => {
 };
 
 const stripePromise = getStripePromise();
-
-/**
- * Determine the plan name from a price ID
- */
-function determinePlanFromPriceId(priceId: string): 'starter' | 'hobby' | 'pro' | 'business' {
-  if (priceId === STRIPE_PRICES.STARTER_MONTHLY) return 'starter';
-  if (priceId === STRIPE_PRICES.HOBBY_MONTHLY) return 'hobby';
-  if (priceId === STRIPE_PRICES.PRO_MONTHLY) return 'pro';
-  if (priceId === STRIPE_PRICES.BUSINESS_MONTHLY) return 'business';
-  // Default to hobby for unknown price IDs
-  return 'hobby';
-}
-
-/**
- * Detect device type based on viewport and user agent
- */
-function detectDeviceType(): 'mobile' | 'desktop' | 'tablet' {
-  if (typeof window === 'undefined') return 'desktop';
-
-  const width = window.innerWidth;
-  const ua = navigator.userAgent.toLowerCase();
-
-  // Tablet detection
-  const isTablet = /ipad|android(?!.*mobile)|tablet/i.test(ua) || (width >= 768 && width < 1024);
-  if (isTablet) return 'tablet';
-
-  // Mobile detection
-  const isMobile =
-    /iphone|ipod|android.*mobile|blackberry|opera mini|iemobile/i.test(ua) || width < 768;
-  if (isMobile) return 'mobile';
-
-  return 'desktop';
-}
 
 /**
  * CheckoutModal component for embedded Stripe Checkout

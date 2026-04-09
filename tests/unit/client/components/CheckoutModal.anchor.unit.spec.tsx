@@ -79,6 +79,19 @@ vi.mock('@shared/config/stripe', () => ({
     PRO_MONTHLY: 'price_pro',
     BUSINESS_MONTHLY: 'price_business',
   },
+  determinePlanFromPriceId: vi.fn((priceId: string) => {
+    const map: Record<string, string> = {
+      price_starter: 'starter',
+      price_hobby: 'hobby',
+      price_pro: 'pro',
+      price_business: 'business',
+    };
+    return map[priceId] ?? 'hobby';
+  }),
+}));
+
+vi.mock('@client/utils/detectDeviceType', () => ({
+  detectDeviceType: vi.fn().mockReturnValue('desktop'),
 }));
 
 vi.mock('@shared/config/checkout-rescue-offer', () => ({
