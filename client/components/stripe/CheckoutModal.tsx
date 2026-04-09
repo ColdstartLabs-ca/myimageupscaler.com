@@ -7,12 +7,10 @@ import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe
 import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { determinePlanFromPriceId } from '@shared/config/stripe';
-import { detectDeviceType } from '@client/utils/detectDeviceType';
 import { isCheckoutRescueOfferEligiblePrice } from '@shared/config/checkout-rescue-offer';
-import type { TCheckoutExitMethod, TCheckoutStep } from '@server/analytics/types';
+import type { TCheckoutExitMethod } from '@server/analytics/types';
+import { useCheckoutAnalytics } from '@client/hooks/useCheckoutAnalytics';
 import type { ICheckoutRescueOffer } from '@shared/types/checkout-offer';
 import {
   CheckoutExitSurvey,
@@ -73,18 +71,20 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const { pricingRegion, banditArmId, isLoading: regionLoading } = useRegionTier();
   const rescueOfferEligible = isCheckoutRescueOfferEligiblePrice(priceId);
 
-  // Track when modal was opened to calculate time spent
-  const modalOpenedAtRef = useRef(Date.now());
-  // Track if checkout was completed (to avoid tracking abandoned on successful close)
-  const checkoutCompletedRef = useRef(false);
+  const {
+    trackStepViewed,
+    trackExitIntent,
+    trackCheckoutAbandoned,
+    trackError,
+    markCompleted,
+    resetLoadStart,
+    checkoutCompletedRef,
+    exitIntentTrackedRef,
+    modalOpenedAtRef,
+  } = useCheckoutAnalytics(priceId, pricingRegion);
+
   // Track exit method for exit intent
   const exitMethodRef = useRef<TCheckoutExitMethod>('close_button');
-  // Track current step
-  const currentStepRef = useRef<TCheckoutStep>('plan_selection');
-  // Track load start time
-  const loadStartRef = useRef(Date.now());
-  // Guard: exit intent already tracked by handleClose — prevents double-fire from cleanup
-  const exitIntentTrackedRef = useRef(false);
   const rescueOfferAppliedRef = useRef(false);
   const engagementDiscountAppliedRef = useRef(false);
 
@@ -101,80 +101,6 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const [retryKey, setRetryKey] = useState(0);
   const [surveyTimeSpentMs, setSurveyTimeSpentMs] = useState(0);
   const { showToast } = useToastStore();
-
-  // Track step viewed with load time
-  const trackStepViewed = useCallback(
-    (step: TCheckoutStep, loadTimeMs?: number) => {
-      currentStepRef.current = step;
-      const deviceType = detectDeviceType();
-
-      analytics.track('checkout_step_viewed', {
-        step,
-        loadTimeMs: loadTimeMs ?? Date.now() - loadStartRef.current,
-        priceId,
-        purchaseType: 'subscription',
-        deviceType,
-      });
-    },
-    [priceId]
-  );
-
-  // Track exit intent
-  const trackExitIntent = useCallback(
-    (step: TCheckoutStep, method: TCheckoutExitMethod) => {
-      const timeSpentMs = Date.now() - modalOpenedAtRef.current;
-
-      analytics.track('checkout_exit_intent', {
-        step,
-        timeSpentMs,
-        priceId,
-        method,
-      });
-    },
-    [priceId]
-  );
-
-  const trackCheckoutAbandoned = useCallback(
-    (step: TCheckoutStep) => {
-      analytics.track('checkout_abandoned', {
-        priceId,
-        step,
-        timeSpentMs: Date.now() - modalOpenedAtRef.current,
-        plan: determinePlanFromPriceId(priceId),
-        pricingRegion,
-      });
-    },
-    [priceId, pricingRegion]
-  );
-
-  // Track error
-  const trackError = useCallback(
-    (
-      errorType:
-        | 'card_declined'
-        | '3ds_failed'
-        | 'network_error'
-        | 'invalid_card'
-        | 'session_expired'
-        | 'other',
-      errorMessage: string,
-      step: TCheckoutStep
-    ) => {
-      // Sanitize error message - remove any potential card numbers or sensitive data
-      const sanitizedMessage = errorMessage
-        .replace(/\d{13,16}/g, '[CARD]') // Remove card numbers
-        .replace(/cvc|cvv|cv2/gi, '[CVC]') // Remove CVC mentions
-        .slice(0, 200); // Limit length
-
-      analytics.track('checkout_error', {
-        errorType,
-        errorMessage: sanitizedMessage,
-        step,
-        priceId,
-      });
-    },
-    [priceId]
-  );
 
   // Check if Stripe is properly configured
   useEffect(() => {
@@ -202,59 +128,6 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
 
     return () => clearTimeout(slowLoadingTimer);
   }, [loading]);
-
-  // Track step viewed when component mounts
-  useEffect(() => {
-    loadStartRef.current = Date.now();
-    trackStepViewed('plan_selection');
-
-    return () => {
-      // Only track exit intent if handleClose didn't already fire it
-      if (!checkoutCompletedRef.current && !exitIntentTrackedRef.current) {
-        trackExitIntent(currentStepRef.current, exitMethodRef.current);
-      }
-    };
-  }, [trackStepViewed, trackExitIntent]);
-
-  // Track checkout_step_time periodically every 5 seconds
-  useEffect(() => {
-    // Track cumulative time per step
-    const stepTimeAccumulator: Record<TCheckoutStep, number> = {
-      plan_selection: 0,
-      stripe_embed: 0,
-      payment_details: 0,
-      confirmation: 0,
-    };
-
-    let lastTickTime = Date.now();
-
-    const intervalId = setInterval(() => {
-      const now = Date.now();
-      const elapsed = now - lastTickTime;
-      lastTickTime = now;
-
-      // Accumulate time for current step
-      const currentStep = currentStepRef.current;
-      stepTimeAccumulator[currentStep] += elapsed;
-
-      // Calculate cumulative time across all steps
-      const cumulativeTimeMs = Object.values(stepTimeAccumulator).reduce(
-        (sum, time) => sum + time,
-        0
-      );
-
-      analytics.track('checkout_step_time', {
-        step: currentStep,
-        timeSpentMs: stepTimeAccumulator[currentStep],
-        priceId,
-        cumulativeTimeMs,
-      });
-    }, 5000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [priceId]);
 
   // Handle close with exit intent tracking
   const handleClose = useCallback(
@@ -474,7 +347,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       rescueOfferAppliedRef.current = false;
       engagementDiscountAppliedRef.current = false;
       // Mark checkout as completed to avoid tracking abandoned
-      checkoutCompletedRef.current = true;
+      markCompleted();
 
       // Track confirmation step
       trackStepViewed('confirmation');
@@ -504,7 +377,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
     setErrorCode(null);
     setClientSecret(null);
     setLoading(true);
-    loadStartRef.current = Date.now();
+    resetLoadStart();
     setRetryKey(current => current + 1);
   }, [rescueOffer]);
 
@@ -606,7 +479,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
                           setErrorCode(null);
                           setClientSecret(null);
                           setLoading(true);
-                          loadStartRef.current = Date.now();
+                          resetLoadStart();
                           setRetryKey(k => k + 1);
                         }}
                         className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
