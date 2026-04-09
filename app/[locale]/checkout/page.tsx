@@ -11,16 +11,14 @@ import {
   getCheckoutTrackingContext,
   setCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
-import {
-  clearStoredCheckoutRescueOffer,
-  getStoredCheckoutRescueOffer,
-} from '@client/utils/checkoutRescueOfferStorage';
+import { clearStoredCheckoutRescueOffer } from '@client/utils/checkoutRescueOfferStorage';
 import { useTranslations } from 'next-intl';
 import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
 import { clientEnv } from '@shared/config/env';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
 import { BillingErrorBoundary } from '@client/components/stripe/BillingErrorBoundary';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 import { QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
 import type { QualityTier } from '@/shared/types/coreflow.types';
 
@@ -51,6 +49,7 @@ function CheckoutContent() {
   const router = useRouter();
   const { showToast } = useToastStore();
   const { isAuthenticated, isLoading: authLoading } = useUserStore();
+  const { banditArmId, isLoading: regionLoading } = useRegionTier();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,6 +95,10 @@ function CheckoutContent() {
       return;
     }
 
+    if (regionLoading) {
+      return;
+    }
+
     if (!isAuthenticated) {
       // Don't create checkout session until user is authenticated
       return;
@@ -111,18 +114,25 @@ function CheckoutContent() {
       try {
         setLoading(true);
         setError(null);
-        const activeRescueOffer = getStoredCheckoutRescueOffer(priceId);
+        const checkoutContext = getCheckoutTrackingContext();
+        const metadata: Record<string, string> = {};
+
+        if (checkoutContext?.trigger) {
+          metadata.checkout_trigger = checkoutContext.trigger;
+        }
+        if (banditArmId) {
+          metadata.bandit_arm_id = String(banditArmId);
+        }
 
         const response = await StripeService.createCheckoutSession(priceId, {
           uiMode: 'embedded',
           successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: `${window.location.origin}/pricing`,
-          offerToken: activeRescueOffer?.offerToken,
+          ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
         });
 
         if (response.clientSecret) {
           if (!hasTrackedCheckoutOpenRef.current) {
-            const checkoutContext = getCheckoutTrackingContext();
             analytics.track('checkout_opened', {
               priceId,
               source: 'checkout_page',
@@ -156,7 +166,7 @@ function CheckoutContent() {
     };
 
     createCheckoutSession();
-  }, [priceId, isAuthenticated, showToast, t]);
+  }, [priceId, isAuthenticated, showToast, t, banditArmId, regionLoading]);
 
   const options: StripeEmbeddedCheckoutOptions = {
     clientSecret: clientSecret || '',

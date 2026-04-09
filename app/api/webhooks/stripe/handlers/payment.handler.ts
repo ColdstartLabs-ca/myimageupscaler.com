@@ -6,6 +6,7 @@ import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@share
 import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { getEmailService } from '@server/services/email.service';
 import { redeemDiscount } from '@server/services/engagement-discount.service';
+import { recordBanditConversion } from '@/lib/pricing-bandit';
 import Stripe from 'stripe';
 
 // Charge interface for accessing invoice property
@@ -469,6 +470,15 @@ export class PaymentHandler {
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );
+
+      // Record bandit conversion so Thompson Sampling can update arm stats
+      const banditArmIdRaw = session.metadata?.bandit_arm_id;
+      if (banditArmIdRaw) {
+        const banditArmId = parseInt(banditArmIdRaw, 10);
+        if (!isNaN(banditArmId) && banditArmId > 0) {
+          await recordBanditConversion(banditArmId, amountCents);
+        }
+      }
     }
   }
 

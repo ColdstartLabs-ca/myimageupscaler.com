@@ -6,6 +6,7 @@ import { clientEnv, serverEnv } from '@shared/config/env';
 import { assertKnownPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getTrialConfig } from '@shared/config/subscription.config';
 import { getPricingRegion, getDiscountedPriceInCents } from '@shared/config/pricing-regions';
+import { PRICING_GEO_COOKIE_NAME, parsePricingGeoSession } from '@shared/utils/pricing-geo-session';
 import {
   isDiscountValid,
   calculateStackedDiscount,
@@ -69,6 +70,8 @@ const RESERVED_CHECKOUT_METADATA_KEYS = new Set([
   'pack_key',
   'credits',
   'price_id',
+  // bandit_arm_id is intentionally NOT reserved: it comes from the client (via /api/geo)
+  // and must pass through to Stripe metadata so the webhook can record conversions.
 ]);
 
 function sanitizeCustomCheckoutMetadata(metadata: Record<string, string>): Record<string, string> {
@@ -383,6 +386,35 @@ export async function POST(request: NextRequest) {
       request.headers.get('cf-ipcountry') ||
       (serverEnv.ENV === 'test' ? request.headers.get('x-test-country') : null);
     const pricingConfig = getPricingRegion(country || '');
+    const cachedGeo = parsePricingGeoSession(request.cookies.get(PRICING_GEO_COOKIE_NAME)?.value);
+    const resolvedGeo = cachedGeo && (!country || cachedGeo.country === country) ? cachedGeo : null;
+    const resolvedPricingRegion = resolvedGeo?.pricingRegion ?? pricingConfig.region;
+
+    // 6.5b. If a bandit arm was selected by /api/geo, use its discount instead of the static config.
+    // This is critical: the bandit may have shown the user a different discount than the static default,
+    // so checkout must apply that same arm's discount to avoid a price mismatch.
+    let regionalDiscountPercent = resolvedGeo?.discountPercent ?? pricingConfig.discountPercent;
+    const banditArmIdStr =
+      customMetadata.bandit_arm_id ??
+      (resolvedGeo?.banditArmId ? String(resolvedGeo.banditArmId) : undefined);
+    if (banditArmIdStr) {
+      const armId = parseInt(banditArmIdStr, 10);
+      if (!isNaN(armId) && armId > 0) {
+        try {
+          const { data: arm } = await supabaseAdmin
+            .from('pricing_bandit_arms')
+            .select('discount_percent, region, is_active')
+            .eq('id', armId)
+            .eq('is_active', true)
+            .single();
+          if (arm && arm.region === resolvedPricingRegion) {
+            regionalDiscountPercent = arm.discount_percent;
+          }
+        } catch {
+          // Bandit lookup is best-effort — fall back to static config
+        }
+      }
+    }
 
     // 6.6. Log region mismatch for monitoring (non-blocking, does not affect checkout)
     if (country && !isTestMode) {
@@ -401,8 +433,8 @@ export async function POST(request: NextRequest) {
               signupCountry: profile.signup_country,
               signupRegion: signupRegion.region,
               checkoutCountry: country,
-              checkoutRegion: pricingConfig.region,
-              discountPercent: pricingConfig.discountPercent,
+              checkoutRegion: resolvedPricingRegion,
+              discountPercent: regionalDiscountPercent,
             },
             { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: user.id }
           );
@@ -415,12 +447,19 @@ export async function POST(request: NextRequest) {
     // 6.7. Check for engagement discount eligibility (first-purchase discount for engaged free users)
     let engagementDiscountPercent = 0;
     let checkoutOfferDiscountPercent = 0;
+    const checkoutTrigger = customMetadata.checkout_trigger;
 
     // Resolve metadata early for engagement discount check
     const unifiedMetadata = resolvePlanOrPack(validatedPriceId);
 
-    // Only check for engagement discount on credit pack purchases (not subscriptions)
-    if (resolvedPrice?.type === 'pack' && !isTestMode) {
+    // Only check for engagement discount on credit pack purchases that were explicitly opened
+    // from the engagement discount flow. This prevents hidden discounts from appearing in Stripe
+    // when the modal/card price did not show them.
+    if (
+      resolvedPrice?.type === 'pack' &&
+      !isTestMode &&
+      checkoutTrigger === 'engagement_discount_banner'
+    ) {
       try {
         const discountValidity = await isDiscountValid(user.id);
         if (discountValidity.valid) {
@@ -504,10 +543,10 @@ export async function POST(request: NextRequest) {
     // so no Stripe Price objects need to be created per region.
     // Engagement and rescue discounts stack on top of regional pricing.
     let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
-    let effectiveDiscountPercent = pricingConfig.discountPercent;
+    let effectiveDiscountPercent = regionalDiscountPercent;
 
     if (
-      pricingConfig.discountPercent > 0 ||
+      regionalDiscountPercent > 0 ||
       engagementDiscountPercent > 0 ||
       checkoutOfferDiscountPercent > 0
     ) {
@@ -519,14 +558,14 @@ export async function POST(request: NextRequest) {
 
       let finalAmount = originalPrice.unit_amount!;
 
-      if (pricingConfig.discountPercent > 0 && engagementDiscountPercent > 0) {
+      if (regionalDiscountPercent > 0 && engagementDiscountPercent > 0) {
         finalAmount = calculateStackedDiscount(
           originalPrice.unit_amount!,
-          pricingConfig.discountPercent,
+          regionalDiscountPercent,
           engagementDiscountPercent
         );
-      } else if (pricingConfig.discountPercent > 0) {
-        finalAmount = getDiscountedPriceInCents(finalAmount, pricingConfig.discountPercent);
+      } else if (regionalDiscountPercent > 0) {
+        finalAmount = getDiscountedPriceInCents(finalAmount, regionalDiscountPercent);
       } else if (engagementDiscountPercent > 0) {
         finalAmount = getDiscountedPriceInCents(finalAmount, engagementDiscountPercent);
       }
@@ -563,8 +602,8 @@ export async function POST(request: NextRequest) {
         ...customMetadata,
         user_id: user.id,
         price_id: validatedPriceId,
-        pricing_region: pricingConfig.region,
-        discount_percent: pricingConfig.discountPercent.toString(),
+        pricing_region: resolvedPricingRegion,
+        discount_percent: regionalDiscountPercent.toString(),
         effective_discount_percent: effectiveDiscountPercent.toString(),
         // Track engagement discount for webhook redemption
         ...(engagementDiscountPercent > 0
@@ -671,8 +710,8 @@ export async function POST(request: NextRequest) {
         sessionId: session.id,
         plan: unifiedMetadata?.type === 'plan' ? unifiedMetadata.key : undefined,
         pack: unifiedMetadata?.type === 'pack' ? unifiedMetadata.key : undefined,
-        pricingRegion: pricingConfig.region,
-        discountPercent: pricingConfig.discountPercent,
+        pricingRegion: resolvedPricingRegion,
+        discountPercent: regionalDiscountPercent,
       },
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: user.id }
     );

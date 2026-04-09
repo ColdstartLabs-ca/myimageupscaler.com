@@ -102,7 +102,7 @@ function detectDeviceType(): 'mobile' | 'desktop' | 'tablet' {
  */
 export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalProps): JSX.Element {
   const t = useTranslations('stripe.checkout');
-  const { pricingRegion } = useRegionTier();
+  const { pricingRegion, banditArmId, isLoading: regionLoading } = useRegionTier();
   const rescueOfferEligible = isCheckoutRescueOfferEligiblePrice(priceId);
 
   // Track when modal was opened to calculate time spent
@@ -129,6 +129,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const [showRescueOffer, setShowRescueOffer] = useState(false);
   const [rescueOffer, setRescueOffer] = useState<ICheckoutRescueOffer | null>(null);
   const [applyingRescueOffer, setApplyingRescueOffer] = useState(false);
+  const [appliedOfferToken, setAppliedOfferToken] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const [surveyTimeSpentMs, setSurveyTimeSpentMs] = useState(0);
   const { showToast } = useToastStore();
@@ -411,6 +412,11 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
         return;
       }
 
+      // Wait for region/bandit resolution so the checkout session matches the displayed price.
+      if (regionLoading) {
+        return;
+      }
+
       const sessionLoadStart = Date.now();
       let timedOut = false;
 
@@ -427,13 +433,22 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
         setError(null);
         rescueOfferAppliedRef.current = false;
         engagementDiscountAppliedRef.current = false;
-        const activeRescueOffer = getStoredCheckoutRescueOffer(priceId);
-        setRescueOffer(activeRescueOffer);
+        setRescueOffer(getStoredCheckoutRescueOffer(priceId));
+        const checkoutTrigger = getCheckoutTrackingContext()?.trigger;
+        const metadata: Record<string, string> = {};
+
+        if (checkoutTrigger) {
+          metadata.checkout_trigger = checkoutTrigger;
+        }
+        if (banditArmId) {
+          metadata.bandit_arm_id = String(banditArmId);
+        }
 
         // Don't pass successUrl - let the server construct it with proper type & credits params
         const response = await StripeService.createCheckoutSession(priceId, {
           uiMode: 'embedded',
-          offerToken: activeRescueOffer?.offerToken,
+          offerToken: appliedOfferToken ?? undefined,
+          ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
         });
 
         if (timedOut) return; // Timeout already fired, discard result
@@ -470,7 +485,16 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
     };
 
     createCheckoutSession();
-  }, [priceId, retryKey, showToast, trackStepViewed, trackError]);
+  }, [
+    priceId,
+    retryKey,
+    showToast,
+    trackStepViewed,
+    trackError,
+    banditArmId,
+    regionLoading,
+    appliedOfferToken,
+  ]);
 
   const options: StripeEmbeddedCheckoutOptions = {
     clientSecret: clientSecret || '',
@@ -478,6 +502,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       // Invalidate cache so a subsequent purchase gets a fresh session
       clearCheckoutSessionCache();
       clearStoredCheckoutRescueOffer(priceId);
+      setAppliedOfferToken(null);
       rescueOfferAppliedRef.current = false;
       engagementDiscountAppliedRef.current = false;
       // Mark checkout as completed to avoid tracking abandoned
@@ -504,6 +529,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
 
     setShowRescueOffer(false);
     setApplyingRescueOffer(true);
+    setAppliedOfferToken(rescueOffer.offerToken);
     rescueOfferAppliedRef.current = true;
     clearCheckoutSessionCache();
     setError(null);

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { StripeService } from '@client/services/stripeService';
+import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
 import { supabase } from '@server/supabase/supabaseClient';
 
 // Mock Supabase
@@ -35,12 +35,14 @@ global.fetch = vi.fn();
 describe('StripeService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearCheckoutSessionCache();
     // Reset window.location
     delete (window as unknown as { location?: Location }).location;
     (window as unknown as { location: { href: string } }).location = { href: '' };
   });
 
   afterEach(() => {
+    clearCheckoutSessionCache();
     vi.resetAllMocks();
   });
 
@@ -155,6 +157,82 @@ describe('StripeService', () => {
       await expect(StripeService.createCheckoutSession('invalid_price')).rejects.toThrow(
         'Failed to create checkout session'
       );
+    });
+
+    it('reuses the embedded checkout session cache only when options are identical', async () => {
+      const mockSession = { access_token: 'test_token' };
+      vi.mocked(supabase.auth.getSession).mockResolvedValue({
+        data: { session: mockSession },
+        error: null,
+      });
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue({
+          success: true,
+          data: {
+            url: 'https://checkout.stripe.com/pay/cached_session',
+            sessionId: 'cs_cached',
+            clientSecret: 'cs_cached_secret',
+          },
+        }),
+      };
+      vi.mocked(fetch).mockResolvedValue(mockResponse as Response);
+
+      const options = {
+        uiMode: 'embedded' as const,
+        metadata: { bandit_arm_id: '42' },
+      };
+
+      const first = await StripeService.createCheckoutSession('price_test_123', options);
+      const second = await StripeService.createCheckoutSession('price_test_123', options);
+
+      expect(first).toEqual(second);
+      expect(fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not reuse cached embedded sessions when metadata or offer token changes', async () => {
+      const mockSession = { access_token: 'test_token' };
+      vi.mocked(supabase.auth.getSession).mockResolvedValue({
+        data: { session: mockSession },
+        error: null,
+      });
+
+      vi.mocked(fetch)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: vi.fn().mockResolvedValue({
+            success: true,
+            data: {
+              url: 'https://checkout.stripe.com/pay/session_a',
+              sessionId: 'cs_a',
+              clientSecret: 'cs_secret_a',
+            },
+          }),
+        } as Response)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: vi.fn().mockResolvedValue({
+            success: true,
+            data: {
+              url: 'https://checkout.stripe.com/pay/session_b',
+              sessionId: 'cs_b',
+              clientSecret: 'cs_secret_b',
+            },
+          }),
+        } as Response);
+
+      await StripeService.createCheckoutSession('price_test_123', {
+        uiMode: 'embedded',
+        metadata: { bandit_arm_id: '1' },
+      });
+      await StripeService.createCheckoutSession('price_test_123', {
+        uiMode: 'embedded',
+        metadata: { bandit_arm_id: '2' },
+        offerToken: 'offer_123',
+      });
+
+      expect(fetch).toHaveBeenCalledTimes(2);
     });
   });
 

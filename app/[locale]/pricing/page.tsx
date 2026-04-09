@@ -1,12 +1,13 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import PricingPageClient from './PricingPageClient';
 import { generatePricingSchema } from '@lib/seo/schema-generator';
 import { clientEnv } from '@shared/config/env';
 import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
 import { SUBSCRIPTION_PLANS } from '@shared/config/stripe';
 import { getPricingRegion } from '@shared/config/pricing-regions';
+import { PRICING_GEO_COOKIE_NAME, parsePricingGeoSession } from '@shared/utils/pricing-geo-session';
 import type { Locale } from '@/i18n/config';
 
 const LOWEST_PLAN_PRICE = SUBSCRIPTION_PLANS.STARTER_MONTHLY.price;
@@ -47,8 +48,11 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
 
 export default async function PricingPage() {
   const headersList = await headers();
+  const cookieStore = await cookies();
   const country = headersList.get('CF-IPCountry') ?? headersList.get('cf-ipcountry') ?? '';
   const regionConfig = getPricingRegion(country);
+  const cachedGeo = parsePricingGeoSession(cookieStore.get(PRICING_GEO_COOKIE_NAME)?.value);
+  const initialGeo = cachedGeo?.country === country ? cachedGeo : null;
 
   return (
     <>
@@ -60,8 +64,8 @@ export default async function PricingPage() {
       />
       <Suspense>
         <PricingPageClient
-          initialPricingRegion={regionConfig.region}
-          initialDiscountPercent={regionConfig.discountPercent}
+          initialPricingRegion={initialGeo?.pricingRegion ?? regionConfig.region}
+          initialDiscountPercent={initialGeo?.discountPercent ?? regionConfig.discountPercent}
         />
       </Suspense>
     </>

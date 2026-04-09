@@ -69,8 +69,33 @@ const checkoutSessionCache = new Map<string, ICachedCheckoutSession>();
 /**
  * Generate a cache key for checkout sessions
  */
-function getCacheKey(priceId: string, uiMode: 'hosted' | 'embedded', offerToken?: string): string {
-  return `${priceId}:${uiMode}:${offerToken || 'standard'}`;
+function serializeMetadata(metadata?: Record<string, string>): string {
+  if (!metadata) return 'no-metadata';
+
+  const entries = Object.entries(metadata).sort(([left], [right]) => left.localeCompare(right));
+  if (entries.length === 0) return 'no-metadata';
+
+  return entries.map(([key, value]) => `${key}=${value}`).join('&');
+}
+
+function getCacheKey(
+  priceId: string,
+  uiMode: 'hosted' | 'embedded',
+  options?: {
+    successUrl?: string;
+    cancelUrl?: string;
+    metadata?: Record<string, string>;
+    offerToken?: string;
+  }
+): string {
+  return [
+    priceId,
+    uiMode,
+    options?.offerToken || 'standard',
+    options?.successUrl || 'default-success',
+    options?.cancelUrl || 'default-cancel',
+    serializeMetadata(options?.metadata),
+  ].join(':');
 }
 
 /**
@@ -79,9 +104,14 @@ function getCacheKey(priceId: string, uiMode: 'hosted' | 'embedded', offerToken?
 function getCachedSession(
   priceId: string,
   uiMode: 'hosted' | 'embedded',
-  offerToken?: string
+  options?: {
+    successUrl?: string;
+    cancelUrl?: string;
+    metadata?: Record<string, string>;
+    offerToken?: string;
+  }
 ): ICachedCheckoutSession | null {
-  const key = getCacheKey(priceId, uiMode, offerToken);
+  const key = getCacheKey(priceId, uiMode, options);
   const cached = checkoutSessionCache.get(key);
 
   if (!cached) return null;
@@ -101,10 +131,17 @@ function getCachedSession(
 function cacheSession(
   priceId: string,
   uiMode: 'hosted' | 'embedded',
-  offerToken: string | undefined,
+  options:
+    | {
+        successUrl?: string;
+        cancelUrl?: string;
+        metadata?: Record<string, string>;
+        offerToken?: string;
+      }
+    | undefined,
   session: ICheckoutSessionResponse
 ): void {
-  const key = getCacheKey(priceId, uiMode, offerToken);
+  const key = getCacheKey(priceId, uiMode, options);
   checkoutSessionCache.set(key, {
     clientSecret: session.clientSecret || '',
     priceId,
@@ -256,11 +293,10 @@ export class StripeService {
     }
   ): Promise<ICheckoutSessionResponse> {
     const uiMode = options?.uiMode || 'hosted';
-    const offerToken = options?.offerToken;
 
     // Check cache for embedded mode (used by modal for faster display)
     if (uiMode === 'embedded') {
-      const cached = getCachedSession(priceId, uiMode, offerToken);
+      const cached = getCachedSession(priceId, uiMode, options);
       if (cached) {
         // Return cached session data
         return {
@@ -278,7 +314,7 @@ export class StripeService {
 
     // Cache for future use if embedded mode
     if (uiMode === 'embedded' && response.clientSecret) {
-      cacheSession(priceId, uiMode, offerToken, response);
+      cacheSession(priceId, uiMode, options, response);
     }
 
     return response;
