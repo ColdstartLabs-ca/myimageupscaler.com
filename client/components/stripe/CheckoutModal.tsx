@@ -1,16 +1,14 @@
 'use client';
 
-import { useToastStore } from '@client/store/toastStore';
-import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
-import { clientEnv } from '@shared/config/env';
+import { StripeService } from '@client/services/stripeService';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
-import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { isCheckoutRescueOfferEligiblePrice } from '@shared/config/checkout-rescue-offer';
 import type { TCheckoutExitMethod } from '@server/analytics/types';
 import { useCheckoutAnalytics } from '@client/hooks/useCheckoutAnalytics';
+import { useCheckoutSession, stripePromise } from '@client/hooks/useCheckoutSession';
 import type { ICheckoutRescueOffer } from '@shared/types/checkout-offer';
 import {
   CheckoutExitSurvey,
@@ -31,28 +29,6 @@ interface ICheckoutModalProps {
   onClose: () => void;
   onSuccess?: () => void;
 }
-
-// Initialize Stripe outside of component to avoid recreating on each render
-// Add validation to provide better error messages
-const getStripePromise = () => {
-  const publishableKey = clientEnv.STRIPE_PUBLISHABLE_KEY;
-
-  if (!publishableKey) {
-    console.error(
-      'Stripe publishable key is not configured. Please set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY in your .env file.'
-    );
-    return null;
-  }
-
-  if (!publishableKey.startsWith('pk_')) {
-    console.error('Invalid Stripe publishable key format. Key should start with "pk_"');
-    return null;
-  }
-
-  return loadStripe(publishableKey);
-};
-
-const stripePromise = getStripePromise();
 
 /**
  * CheckoutModal component for embedded Stripe Checkout
@@ -85,49 +61,48 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
 
   // Track exit method for exit intent
   const exitMethodRef = useRef<TCheckoutExitMethod>('close_button');
-  const rescueOfferAppliedRef = useRef(false);
-  const engagementDiscountAppliedRef = useRef(false);
 
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [slowLoading, setSlowLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [showSurvey, setShowSurvey] = useState(false);
   const [showRescueOffer, setShowRescueOffer] = useState(false);
   const [rescueOffer, setRescueOffer] = useState<ICheckoutRescueOffer | null>(null);
-  const [applyingRescueOffer, setApplyingRescueOffer] = useState(false);
   const [appliedOfferToken, setAppliedOfferToken] = useState<string | null>(null);
-  const [retryKey, setRetryKey] = useState(0);
   const [surveyTimeSpentMs, setSurveyTimeSpentMs] = useState(0);
-  const { showToast } = useToastStore();
-
-  // Check if Stripe is properly configured
-  useEffect(() => {
-    if (!stripePromise) {
-      setError(t('notConfigured'));
-      setLoading(false);
-      trackError('other', 'Stripe not configured', 'plan_selection');
-    }
-  }, [t, trackError]);
 
   useEffect(() => {
     setRescueOffer(getStoredCheckoutRescueOffer(priceId));
   }, [priceId]);
 
-  // Track slow loading - show additional message if loading takes >2s
-  useEffect(() => {
-    if (!loading) {
-      setSlowLoading(false);
-      return;
-    }
+  const handleComplete = useCallback(() => {
+    clearStoredCheckoutRescueOffer(priceId);
+    setAppliedOfferToken(null);
+    markCompleted();
+    trackStepViewed('confirmation');
+    if (onSuccess) onSuccess();
+    setTimeout(() => {
+      onClose();
+    }, 1500);
+  }, [priceId, markCompleted, trackStepViewed, onSuccess, onClose]);
 
-    const slowLoadingTimer = setTimeout(() => {
-      setSlowLoading(true);
-    }, 2000);
-
-    return () => clearTimeout(slowLoadingTimer);
-  }, [loading]);
+  const {
+    clientSecret,
+    loading,
+    slowLoading,
+    error,
+    errorCode,
+    applyingRescueOffer,
+    rescueOfferAppliedRef,
+    engagementDiscountAppliedRef,
+    retry,
+    stripeOptions,
+  } = useCheckoutSession({
+    priceId,
+    banditArmId,
+    regionLoading,
+    appliedOfferToken,
+    trackStepViewed,
+    trackError,
+    onComplete: handleComplete,
+  });
 
   // Handle close with exit intent tracking
   const handleClose = useCallback(
@@ -244,142 +219,17 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
     };
   }, []);
 
-  useEffect(() => {
-    const CHECKOUT_TIMEOUT_MS = 30000; // 30 seconds hard timeout
-
-    const createCheckoutSession = async () => {
-      // Don't attempt to create session if Stripe isn't configured
-      if (!stripePromise) {
-        return;
-      }
-
-      // Wait for region/bandit resolution so the checkout session matches the displayed price.
-      if (regionLoading) {
-        return;
-      }
-
-      const sessionLoadStart = Date.now();
-      let timedOut = false;
-
-      const timeoutId = setTimeout(() => {
-        timedOut = true;
-        const timeoutMessage = 'Checkout is taking too long. Please try again.';
-        setError(timeoutMessage);
-        setLoading(false);
-        trackError('network_error', 'Checkout session creation timeout (30s)', 'plan_selection');
-      }, CHECKOUT_TIMEOUT_MS);
-
-      try {
-        setLoading(true);
-        setError(null);
-        rescueOfferAppliedRef.current = false;
-        engagementDiscountAppliedRef.current = false;
-        setRescueOffer(getStoredCheckoutRescueOffer(priceId));
-        const checkoutTrigger = getCheckoutTrackingContext()?.trigger;
-        const metadata: Record<string, string> = {};
-
-        if (checkoutTrigger) {
-          metadata.checkout_trigger = checkoutTrigger;
-        }
-        if (banditArmId) {
-          metadata.bandit_arm_id = String(banditArmId);
-        }
-
-        // Don't pass successUrl - let the server construct it with proper type & credits params
-        const response = await StripeService.createCheckoutSession(priceId, {
-          uiMode: 'embedded',
-          offerToken: appliedOfferToken ?? undefined,
-          ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
-        });
-
-        if (timedOut) return; // Timeout already fired, discard result
-
-        if (response.clientSecret) {
-          rescueOfferAppliedRef.current = Boolean(response.checkoutOfferApplied);
-          engagementDiscountAppliedRef.current = Boolean(response.engagementDiscountApplied);
-          setClientSecret(response.clientSecret);
-          // Track stripe_embed step viewed with load time
-          const loadTimeMs = Date.now() - sessionLoadStart;
-          trackStepViewed('stripe_embed', loadTimeMs);
-        } else {
-          throw new Error('No client secret returned from checkout session');
-        }
-      } catch (err) {
-        if (timedOut) return; // Timeout already handled the error state
-        console.error('Failed to create checkout session:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load checkout';
-        const code = (err as { code?: string })?.code ?? null;
-        setError(errorMessage);
-        setErrorCode(code);
-        trackError('network_error', errorMessage, 'plan_selection');
-        showToast({
-          message: errorMessage,
-          type: 'error',
-        });
-      } finally {
-        clearTimeout(timeoutId);
-        setApplyingRescueOffer(false);
-        if (!timedOut) {
-          setLoading(false);
-        }
-      }
-    };
-
-    createCheckoutSession();
-  }, [
-    priceId,
-    retryKey,
-    showToast,
-    trackStepViewed,
-    trackError,
-    banditArmId,
-    regionLoading,
-    appliedOfferToken,
-  ]);
-
-  const options: StripeEmbeddedCheckoutOptions = {
-    clientSecret: clientSecret || '',
-    onComplete: () => {
-      // Invalidate cache so a subsequent purchase gets a fresh session
-      clearCheckoutSessionCache();
-      clearStoredCheckoutRescueOffer(priceId);
-      setAppliedOfferToken(null);
-      rescueOfferAppliedRef.current = false;
-      engagementDiscountAppliedRef.current = false;
-      // Mark checkout as completed to avoid tracking abandoned
-      markCompleted();
-
-      // Track confirmation step
-      trackStepViewed('confirmation');
-
-      // Called when the checkout is complete
-      if (onSuccess) {
-        onSuccess();
-      }
-      // Close the modal after a short delay to show confirmation
-      setTimeout(() => {
-        onClose();
-      }, 1500);
-    },
-  };
-
   const handleRescueOfferClaim = useCallback(() => {
     if (!rescueOffer) {
       return;
     }
 
     setShowRescueOffer(false);
-    setApplyingRescueOffer(true);
     setAppliedOfferToken(rescueOffer.offerToken);
     rescueOfferAppliedRef.current = true;
-    clearCheckoutSessionCache();
-    setError(null);
-    setErrorCode(null);
-    setClientSecret(null);
-    setLoading(true);
     resetLoadStart();
-    setRetryKey(current => current + 1);
-  }, [rescueOffer]);
+    retry();
+  }, [rescueOffer, rescueOfferAppliedRef, resetLoadStart, retry]);
 
   const handleRescueOfferDismiss = useCallback(() => {
     setShowRescueOffer(false);
@@ -474,13 +324,8 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
                     ) : (
                       <button
                         onClick={() => {
-                          clearCheckoutSessionCache(); // Force fresh session on retry
-                          setError(null);
-                          setErrorCode(null);
-                          setClientSecret(null);
-                          setLoading(true);
                           resetLoadStart();
-                          setRetryKey(k => k + 1);
+                          retry();
                         }}
                         className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
                       >
@@ -500,7 +345,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
 
             {!loading && !error && clientSecret && (
               <div className="min-h-[400px]">
-                <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+                <EmbeddedCheckoutProvider stripe={stripePromise} options={stripeOptions}>
                   <EmbeddedCheckout />
                 </EmbeddedCheckoutProvider>
               </div>
