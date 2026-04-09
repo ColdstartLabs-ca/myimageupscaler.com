@@ -35,8 +35,15 @@ export async function generateMetadata({ params }: IToolPageProps): Promise<Meta
   if (!result.data && locale !== 'en') {
     const enResult = await getToolDataWithLocale(slug, 'en');
     if (!enResult.data) return {};
+    // Exclude alternates: SeoMetaTags handles canonical and HreflangLinks handles hreflang in JSX.
+    // Including alternates.canonical here would create a duplicate <link rel="canonical">.
+    const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+      enResult.data,
+      'tools',
+      locale
+    );
     return {
-      ...generatePageMetadata(enResult.data, 'tools', locale),
+      ...metaWithoutAlternates,
       robots: { index: false, follow: false },
     };
   }
