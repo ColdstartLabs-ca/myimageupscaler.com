@@ -1,27 +1,21 @@
 'use client';
 
-import { StripeService } from '@client/services/stripeService';
-import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { isCheckoutRescueOfferEligiblePrice } from '@shared/config/checkout-rescue-offer';
-import type { TCheckoutExitMethod } from '@server/analytics/types';
 import { useCheckoutAnalytics } from '@client/hooks/useCheckoutAnalytics';
 import { useCheckoutSession, stripePromise } from '@client/hooks/useCheckoutSession';
-import type { ICheckoutRescueOffer } from '@shared/types/checkout-offer';
+import { useCheckoutRescueOffer } from '@client/hooks/useCheckoutRescueOffer';
+import { useModalBehavior } from '@client/hooks/useModalBehavior';
+import { isCheckoutRescueOfferEligiblePrice } from '@shared/config/checkout-rescue-offer';
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
+import type { TCheckoutExitMethod } from '@server/analytics/types';
 import {
   CheckoutExitSurvey,
   shouldShowExitSurvey,
   markExitSurveyShown,
 } from '@client/components/stripe/CheckoutExitSurvey';
 import { CheckoutRescueOffer } from '@client/components/stripe/CheckoutRescueOffer';
-import {
-  clearStoredCheckoutRescueOffer,
-  getStoredCheckoutRescueOffer,
-  storeCheckoutRescueOffer,
-} from '@client/utils/checkoutRescueOfferStorage';
-import { shouldShowCheckoutRescueOffer } from '@client/utils/checkoutRescueOfferVisibility';
 import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 
 interface ICheckoutModalProps {
@@ -31,22 +25,16 @@ interface ICheckoutModalProps {
 }
 
 /**
- * CheckoutModal component for embedded Stripe Checkout
- *
- * Usage:
- * ```tsx
- * <CheckoutModal
- *   priceId="price_XXX"
- *   onClose={() => setShowModal(false)}
- *   onSuccess={() => handleSuccess()}
- * />
- * ```
+ * CheckoutModal component for embedded Stripe Checkout.
+ * Composed from useCheckoutAnalytics, useCheckoutSession, useCheckoutRescueOffer,
+ * and useModalBehavior hooks.
  */
 export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalProps): JSX.Element {
   const t = useTranslations('stripe.checkout');
   const { pricingRegion, banditArmId, isLoading: regionLoading } = useRegionTier();
   const rescueOfferEligible = isCheckoutRescueOfferEligiblePrice(priceId);
 
+  // Analytics hook — owns all tracking state and callbacks
   const {
     trackStepViewed,
     trackExitIntent,
@@ -59,30 +47,32 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
     modalOpenedAtRef,
   } = useCheckoutAnalytics(priceId, pricingRegion);
 
-  // Track exit method for exit intent
   const exitMethodRef = useRef<TCheckoutExitMethod>('close_button');
-
   const [showSurvey, setShowSurvey] = useState(false);
-  const [showRescueOffer, setShowRescueOffer] = useState(false);
-  const [rescueOffer, setRescueOffer] = useState<ICheckoutRescueOffer | null>(null);
-  const [appliedOfferToken, setAppliedOfferToken] = useState<string | null>(null);
   const [surveyTimeSpentMs, setSurveyTimeSpentMs] = useState(0);
 
-  useEffect(() => {
-    setRescueOffer(getStoredCheckoutRescueOffer(priceId));
-  }, [priceId]);
+  // Rescue offer hook — owns rescue offer state machine
+  const {
+    showRescueOffer,
+    rescueOffer,
+    appliedOfferToken,
+    tryShowRescueOffer,
+    claimOffer,
+    dismissOffer,
+    clearOffer,
+    hideRescueOffer,
+  } = useCheckoutRescueOffer(priceId);
 
+  // Checkout completion callback
   const handleComplete = useCallback(() => {
-    clearStoredCheckoutRescueOffer(priceId);
-    setAppliedOfferToken(null);
+    clearOffer();
     markCompleted();
     trackStepViewed('confirmation');
     if (onSuccess) onSuccess();
-    setTimeout(() => {
-      onClose();
-    }, 1500);
-  }, [priceId, markCompleted, trackStepViewed, onSuccess, onClose]);
+    setTimeout(() => onClose(), 1500);
+  }, [clearOffer, markCompleted, trackStepViewed, onSuccess, onClose]);
 
+  // Session hook — owns Stripe session lifecycle
   const {
     clientSecret,
     loading,
@@ -104,10 +94,9 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
     onComplete: handleComplete,
   });
 
-  // Handle close with exit intent tracking
+  // Handle close — orchestrates rescue offer, survey, and tracking
   const handleClose = useCallback(
     async (method: TCheckoutExitMethod = 'close_button') => {
-      // Survey is already showing — a second ESC/close must just dismiss it, not re-track
       if (showSurvey) {
         setShowSurvey(false);
         onClose();
@@ -115,7 +104,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
       }
 
       if (showRescueOffer) {
-        setShowRescueOffer(false);
+        hideRescueOffer();
         trackCheckoutAbandoned('stripe_embed');
         onClose();
         return;
@@ -123,123 +112,74 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
 
       exitMethodRef.current = method;
 
-      // Only track abandoned if checkout wasn't completed
       if (!checkoutCompletedRef.current) {
         const timeSpentMs = Date.now() - modalOpenedAtRef.current;
         const step = clientSecret ? 'stripe_embed' : 'plan_selection';
         const checkoutTrigger = getCheckoutTrackingContext()?.trigger;
 
-        if (
-          shouldShowCheckoutRescueOffer({
-            step,
-            rescueOfferEligible,
-            rescueOfferApplied: rescueOfferAppliedRef.current,
-            engagementDiscountApplied:
-              engagementDiscountAppliedRef.current ||
-              checkoutTrigger === 'engagement_discount_banner',
-          })
-        ) {
-          const existingOffer = getStoredCheckoutRescueOffer(priceId);
-
-          if (existingOffer) {
-            setRescueOffer(existingOffer);
-            setShowRescueOffer(true);
-            exitIntentTrackedRef.current = true;
-            trackExitIntent(step, method);
-            return;
-          }
-
-          try {
-            const createdOffer = await StripeService.createCheckoutRescueOffer(priceId);
-            storeCheckoutRescueOffer(createdOffer);
-            setRescueOffer(createdOffer);
-            setShowRescueOffer(true);
-            exitIntentTrackedRef.current = true;
-            trackExitIntent(step, method);
-            return;
-          } catch (offerError) {
-            console.warn('[CHECKOUT_RESCUE_OFFER] Failed to issue offer, closing normally', {
-              priceId,
-              error: offerError instanceof Error ? offerError.message : offerError,
-            });
-          }
-        }
+        const shown = await tryShowRescueOffer({
+          step,
+          rescueOfferEligible,
+          rescueOfferApplied: rescueOfferAppliedRef.current,
+          engagementDiscountApplied:
+            engagementDiscountAppliedRef.current ||
+            checkoutTrigger === 'engagement_discount_banner',
+          method,
+          exitIntentTrackedRef,
+          trackExitIntent,
+        });
+        if (shown) return;
 
         trackCheckoutAbandoned(step);
-
-        // Track exit intent and mark as tracked so cleanup doesn't double-fire
         exitIntentTrackedRef.current = true;
         trackExitIntent(step, method);
 
-        // Check if we should show the exit survey
         if (shouldShowExitSurvey(timeSpentMs)) {
           setSurveyTimeSpentMs(timeSpentMs);
           setShowSurvey(true);
           markExitSurveyShown();
-          return; // Don't close yet - show survey first
+          return;
         }
       }
       onClose();
     },
     [
-      priceId,
-      clientSecret,
-      onClose,
-      rescueOfferEligible,
       showSurvey,
       showRescueOffer,
+      clientSecret,
+      rescueOfferEligible,
+      tryShowRescueOffer,
+      hideRescueOffer,
       trackCheckoutAbandoned,
       trackExitIntent,
+      checkoutCompletedRef,
+      modalOpenedAtRef,
+      rescueOfferAppliedRef,
+      engagementDiscountAppliedRef,
+      exitIntentTrackedRef,
+      onClose,
     ]
   );
 
-  // Handle closing the survey
+  // Modal behavior (escape key + scroll lock)
+  const handleEscapeKey = useCallback(() => void handleClose('escape_key'), [handleClose]);
+  useModalBehavior(handleEscapeKey);
+
   const handleSurveyClose = useCallback(() => {
     setShowSurvey(false);
     onClose();
   }, [onClose]);
 
-  // Handle escape key press
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        void handleClose('escape_key');
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleClose]);
-
-  // Lock body scroll when modal is open (prevents mobile touch pass-through)
-  useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = originalOverflow;
-    };
-  }, []);
-
   const handleRescueOfferClaim = useCallback(() => {
-    if (!rescueOffer) {
-      return;
-    }
-
-    setShowRescueOffer(false);
-    setAppliedOfferToken(rescueOffer.offerToken);
-    rescueOfferAppliedRef.current = true;
-    resetLoadStart();
-    retry();
-  }, [rescueOffer, rescueOfferAppliedRef, resetLoadStart, retry]);
+    claimOffer({ rescueOfferAppliedRef, resetLoadStart, retry });
+  }, [claimOffer, rescueOfferAppliedRef, resetLoadStart, retry]);
 
   const handleRescueOfferDismiss = useCallback(() => {
-    setShowRescueOffer(false);
-    trackCheckoutAbandoned('stripe_embed');
-    onClose();
-  }, [onClose, trackCheckoutAbandoned]);
+    dismissOffer({ trackCheckoutAbandoned, onClose });
+  }, [dismissOffer, trackCheckoutAbandoned, onClose]);
 
   return (
     <>
-      {/* Exit Survey Modal - shown on top when applicable */}
       {showSurvey && (
         <CheckoutExitSurvey
           priceId={priceId}
@@ -261,18 +201,13 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
         data-modal="checkout"
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-x-hidden"
         onClick={e => {
-          // Only close when clicking directly on the backdrop, not its children
-          if (e.target === e.currentTarget) {
-            void handleClose('click_outside');
-          }
+          if (e.target === e.currentTarget) void handleClose('click_outside');
         }}
       >
-        {/* Stop propagation to prevent backdrop close on mobile touch drift */}
         <div
           className="relative bg-surface rounded-lg shadow-xl w-full max-w-3xl max-h-[95vh] supports-[height:100dvh]:max-h-[95dvh] flex flex-col touch-manipulation"
           onClick={e => e.stopPropagation()}
         >
-          {/* Close button - 44x44px minimum touch target for accessibility */}
           <button
             onClick={() => void handleClose('close_button')}
             className="absolute top-3 right-3 z-10 p-3 text-muted-foreground hover:text-muted-foreground transition-colors bg-surface rounded-full shadow-md min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
@@ -294,7 +229,6 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
             </svg>
           </button>
 
-          {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto min-h-0 overscroll-contain">
             {loading && (
               <div className="flex items-center justify-center py-20">
@@ -323,10 +257,7 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
                       </a>
                     ) : (
                       <button
-                        onClick={() => {
-                          resetLoadStart();
-                          retry();
-                        }}
+                        onClick={() => { resetLoadStart(); retry(); }}
                         className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
                       >
                         Try again
