@@ -50,6 +50,8 @@
     "stripe:setup:test": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts --test'",
     "stripe:setup:prod": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts --prod'",
     "stripe:check": "./scripts/load-env.sh --print",
+    "amplitude:check": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/check-amplitude-events.ts \"$@\"' --",
+    "amplitude:check:prod": "bash -c 'source ./scripts/load-env.sh --prod && npx tsx scripts/check-amplitude-events.ts \"$@\"' --",
     "i18n:check": "tsx scripts/check-translations.ts",
     "i18n:icu": "tsx scripts/check-translations.ts --icu-only",
     "i18n:helper": "tsx scripts/translation-helper.ts",

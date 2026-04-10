@@ -174,7 +174,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   selectedModel = 'auto',
   batchProgress,
   isProcessingBatch = false,
-  isFreeUser = false,
+  isFreeUser: _isFreeUser = false,
 }) => {
   const t = useTranslations('workspace');
 

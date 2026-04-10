@@ -238,6 +238,7 @@ const serverEnvSchema = z.object({
   BASELIME_API_KEY: z.string().default(''),
   // Analytics (server-side HTTP API)
   AMPLITUDE_API_KEY: z.string().default(''),
+  AMPLITUDE_SECRET_KEY: z.string().default(''),
   // CORS
   ALLOWED_ORIGIN: z.string().default('*'),
   // Cloudflare
@@ -317,6 +318,13 @@ const serverEnvSchema = z.object({
   MODEL_VERSION_FLUX_KONTEXT_FAST: z.string().optional(),
 
   // ==========================================
+  // GOOGLE SEARCH CONSOLE
+  // ==========================================
+  GSC_SERVICE_ACCOUNT_EMAIL: z.string().default(''),
+  GSC_PRIVATE_KEY: z.string().default(''),
+  GSC_SITE_URL: z.string().default('sc-domain:myimageupscaler.com'),
+
+  // ==========================================
   // SUBSCRIPTION CONFIG OVERRIDE
   // ==========================================
   SUBSCRIPTION_CONFIG_OVERRIDE: z.string().optional(),
@@ -377,6 +385,8 @@ function loadServerEnv(): IServerEnv {
     // analytics from silently breaking when only NEXT_PUBLIC_AMPLITUDE_API_KEY is set.
     AMPLITUDE_API_KEY:
       process.env.AMPLITUDE_API_KEY || process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY || '',
+    // Dashboard REST queries require the project's secret key in addition to the API key.
+    AMPLITUDE_SECRET_KEY: process.env.AMPLITUDE_SECRET_KEY || '',
     // CORS
     ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN || '*',
     // Cloudflare
@@ -440,6 +450,11 @@ function loadServerEnv(): IServerEnv {
 
     // Subscription Config Override (optional)
     SUBSCRIPTION_CONFIG_OVERRIDE: process.env.SUBSCRIPTION_CONFIG_OVERRIDE,
+
+    // Google Search Console
+    GSC_SERVICE_ACCOUNT_EMAIL: process.env.GSC_SERVICE_ACCOUNT_EMAIL || '',
+    GSC_PRIVATE_KEY: process.env.GSC_PRIVATE_KEY || '',
+    GSC_SITE_URL: process.env.GSC_SITE_URL || 'sc-domain:myimageupscaler.com',
   };
 
   return serverEnvSchema.parse(env);

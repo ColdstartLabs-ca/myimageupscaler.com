@@ -13,10 +13,12 @@
  */
 
 interface IEnv {
-  MAIN_WORKER: Fetcher;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  MAIN_WORKER: any; // Fetcher type is Cloudflare-specific, not available in standard TS
   ALLOWED_IP: string;
 }
 
+// eslint-disable-next-line import/no-default-export
 export default {
   async fetch(request: Request, env: IEnv): Promise<Response> {
     // Health check

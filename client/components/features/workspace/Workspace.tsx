@@ -76,7 +76,6 @@ const Workspace: React.FC = () => {
   } = useBatchQueue();
 
   const { isFreeUser } = useUserData();
-  const hasSubscription = !isFreeUser;
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
   const { isPaywalled, country } = useRegionTier();
@@ -185,7 +184,7 @@ const Workspace: React.FC = () => {
   }, [isPaywalled, isFreeUser, country]);
 
   // Success banner state
-  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [_showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [downloadCount, setDownloadCount] = useState(0);

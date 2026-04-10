@@ -6,36 +6,9 @@
 import { NextResponse } from 'next/server';
 import { getAllPublishedPosts } from '@server/services/blog.service';
 import { clientEnv } from '@shared/config/env';
+import { BLOCKED_BLOG_SLUGS } from '@shared/constants/blocked-blog-slugs';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
-
-/**
- * Blog posts that return 404 and should be excluded from sitemap
- * These posts exist in blog-data.json but the routes don't work
- */
-const BLOCKED_BLOG_SLUGS = new Set([
-  'dalle-3-image-enhancement-guide',
-  'stable-diffusion-upscaling-complete-guide',
-  'restore-old-photos-ai-enhancement-guide',
-  'image-resolution-for-printing-complete-guide',
-  'real-estate-photo-enhancement-guide',
-  'why-upscaled-text-looks-blurry-how-to-fix',
-  'fix-blurry-photos-ai-methods-guide',
-  'heic-iphone-photo-upscaling-guide',
-  'screenshot-upscaling-rescue-low-resolution-captures',
-  'how-ai-image-upscaling-works-guide',
-  'keep-text-sharp-when-upscaling-product-photos',
-  'upscale-product-photos-amazon-etsy-guide',
-  'social-media-image-sizes-guide-2025',
-  'upscale-midjourney-images-4k-8k-print-guide',
-  'anime-upscaling-4k-art-guide',
-  'ai-image-enhancement-ecommerce-guide',
-  'how-ai-image-upscaling-works-explained',
-  // SEO CTR cannibalization — redirected to canonical targets
-  'photo-enhancement-upscaling-vs-quality',
-  'best-free-ai-image-upscaler-tools-2026',
-  'restore-old-photos-online',
-]);
 
 /**
  * Escape special XML characters
