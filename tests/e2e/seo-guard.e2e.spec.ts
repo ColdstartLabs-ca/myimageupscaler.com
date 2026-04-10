@@ -454,7 +454,9 @@ test.describe('SEO Guard - Deploy Blocker', () => {
   // ========================================================================
   test.describe('pSEO Tool Page SEO - Locale', () => {
     test('Spanish tool page has locale-specific canonical and hreflang', async ({ page }) => {
-      await page.goto('/es/tools/ai-image-upscaler');
+      // Use ai-background-remover: it has the same slug in Spanish (unlike ai-image-upscaler
+      // which uses a translated slug, making /es/tools/ai-image-upscaler a noindex fallback page).
+      await page.goto('/es/tools/ai-background-remover');
       // Wait for page to fully load before querying meta elements
       await page.waitForLoadState('load');
 
@@ -462,7 +464,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       const canonicalLink = page.locator('link[rel="canonical"]').first();
       await canonicalLink.waitFor({ state: 'attached', timeout: 10000 });
       expect(await canonicalLink.getAttribute('href')).toBe(
-        `${PRODUCTION_BASE_URL}/es/tools/ai-image-upscaler`
+        `${PRODUCTION_BASE_URL}/es/tools/ai-background-remover`
       );
 
       // OG:locale should be es_ES
@@ -474,7 +476,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       const esLink = page.locator('link[rel="alternate"][hreflang="es"]').first();
       await expect(esLink).toBeAttached();
       expect(await esLink.getAttribute('href')).toBe(
-        `${PRODUCTION_BASE_URL}/es/tools/ai-image-upscaler`
+        `${PRODUCTION_BASE_URL}/es/tools/ai-background-remover`
       );
     });
 
