@@ -1,7 +1,9 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { createLogger } from '@server/monitoring/logger';
-import { getRegionTier } from '@/lib/anti-freeloader/region-classifier';
-import { CREDIT_COSTS } from '@shared/config/credits.config';
+import {
+  ensureAntiFreeloaderProfile,
+  type IAntiFreeloaderProfile,
+} from '@server/services/anti-freeloader.service';
 import { serverEnv } from '@shared/config/env';
 import { trackServerEvent } from '@server/analytics';
 import { NextRequest, NextResponse } from 'next/server';
@@ -10,10 +12,6 @@ import { z } from 'zod';
 const setupSchema = z.object({
   fingerprintHash: z.string().optional(),
 });
-
-/** Max age (ms) for a user to be considered "new" for credit adjustment purposes.
- *  Existing users who log in after this feature deploys are grandfathered. */
-const NEW_USER_MAX_AGE_MS = 10 * 60 * 1000; // 10 minutes
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const logger = createLogger(req, 'users-setup');
@@ -29,52 +27,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
-  // Idempotency guard — skip if region_tier already set
+  // Load current regional classification and only backfill missing anti-freeloader fields.
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('region_tier, subscription_tier, created_at')
+    .select(
+      'region_tier, subscription_tier, subscription_credits_balance, created_at, signup_country, signup_ip'
+    )
     .eq('id', userId)
     .single();
 
-  if (profile?.region_tier) {
-    return NextResponse.json({ success: true, alreadySetup: true });
-  }
+  const alreadySetup = Boolean(profile?.region_tier);
 
-  const rawCountry =
-    req.headers.get('CF-IPCountry') ||
-    req.headers.get('cf-ipcountry') ||
-    (serverEnv.ENV !== 'production' ? req.headers.get('x-test-country') : null);
+  let resolvedProfile: IAntiFreeloaderProfile | null = profile;
 
-  const country = rawCountry || null;
-  const tier = country ? getRegionTier(country) : 'standard';
-  const ip = req.headers.get('CF-Connecting-IP') || req.headers.get('x-forwarded-for') || null;
-
-  // Build update payload
-  const updatePayload: Record<string, unknown> = { region_tier: tier };
-  if (country) updatePayload.signup_country = country;
-  if (ip) updatePayload.signup_ip = ip;
-
-  // Grandfathering: only reduce credits for users created within NEW_USER_MAX_AGE_MS.
-  // Existing users who log in after this feature deploys keep their current credits.
-  const isNewUser = profile?.created_at
-    ? Date.now() - new Date(profile.created_at).getTime() < NEW_USER_MAX_AGE_MS
-    : false;
-
-  if (isNewUser && profile?.subscription_tier === 'free') {
-    if (tier === 'paywalled') {
-      updatePayload.subscription_credits_balance = CREDIT_COSTS.PAYWALLED_FREE_CREDITS;
-    } else if (tier === 'restricted') {
-      updatePayload.subscription_credits_balance = CREDIT_COSTS.RESTRICTED_FREE_CREDITS;
-    }
-  }
-
-  const { error: updateError } = await supabaseAdmin
-    .from('profiles')
-    .update(updatePayload)
-    .eq('id', userId);
-
-  if (updateError) {
-    logger.error('Failed to update profile', { userId, error: updateError.message });
+  try {
+    resolvedProfile = await ensureAntiFreeloaderProfile(req, userId, profile);
+  } catch (error) {
+    logger.error('Failed to update profile', { userId, error: String(error) });
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
   }
 
@@ -90,17 +59,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   }
 
-  // Cross-account IP check (best-effort)
-  if (ip) {
-    const { error: ipError } = await supabaseAdmin.rpc('check_signup_ip', {
-      p_user_id: userId,
-      p_ip: ip,
-    });
-    if (ipError) {
-      logger.error('Failed to check signup IP', { userId, error: ipError.message });
-    }
-  }
-
   // Track account creation analytics (fire-and-forget — don't block user setup on analytics failure)
   trackServerEvent(
     'account_created',
@@ -108,7 +66,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       method: 'email',
       hasEmail: true,
       fingerprintHash: fingerprintHash || undefined,
-      pricingRegion: tier,
+      pricingRegion: resolvedProfile?.region_tier || undefined,
     },
     { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
   ).catch(err =>
@@ -116,5 +74,5 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   );
 
   await logger.flush();
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, ...(alreadySetup ? { alreadySetup: true } : {}) });
 }

@@ -3,6 +3,7 @@ import { trackServerEvent } from '@server/analytics';
 import { createLogger } from '@server/monitoring/logger';
 import { upscaleRateLimit } from '@server/rateLimit';
 import { batchLimitCheck } from '@server/services/batch-limit.service';
+import { ensureAntiFreeloaderProfile } from '@server/services/anti-freeloader.service';
 import {
   AIGenerationError,
   InsufficientCreditsError,
@@ -252,13 +253,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // 3. Get user's subscription status and tier to determine limits
     // Also check purchased_credits_balance to grant paid model access to credit purchasers
-    const { data: profile } = await supabaseAdmin
+    const { data: rawProfile } = await supabaseAdmin
       .from('profiles')
       .select(
-        'subscription_status, subscription_tier, purchased_credits_balance, is_flagged_freeloader'
+        'subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance, is_flagged_freeloader, region_tier, signup_country, signup_ip, created_at'
       )
       .eq('id', userId)
       .single();
+
+    const profile = await ensureAntiFreeloaderProfile(req, userId, rawProfile);
 
     // 3a. Block flagged free-tier users before any credit-consuming work
     if (isFreeleaderBlocked(profile)) {

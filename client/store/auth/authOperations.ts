@@ -84,7 +84,7 @@ export function createSignUpWithEmail(
 
       // Fire-and-forget setup call when we have a session (immediate signup without email confirmation)
       if (data.session?.access_token) {
-        fetch('/api/users/setup', {
+        await fetch('/api/users/setup', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

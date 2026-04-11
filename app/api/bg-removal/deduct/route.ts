@@ -1,6 +1,7 @@
 import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { createLogger } from '@server/monitoring/logger';
 import { upscaleRateLimit } from '@server/rateLimit';
+import { ensureAntiFreeloaderProfile } from '@server/services/anti-freeloader.service';
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { InsufficientCreditsError } from '@server/services/image-generation.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
@@ -33,11 +34,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // Block flagged freeloaders before any credit-consuming work
-    const { data: profile } = await supabaseAdmin
+    const { data: rawProfile } = await supabaseAdmin
       .from('profiles')
-      .select('is_flagged_freeloader, subscription_tier, purchased_credits_balance')
+      .select(
+        'is_flagged_freeloader, subscription_tier, subscription_credits_balance, purchased_credits_balance, region_tier, signup_country, signup_ip, created_at'
+      )
       .eq('id', userId)
       .single();
+
+    const profile = await ensureAntiFreeloaderProfile(req, userId, rawProfile);
 
     if (isFreeleaderBlocked(profile)) {
       logger.warn('Blocked flagged freeloader', { userId });

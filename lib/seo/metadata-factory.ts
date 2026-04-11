@@ -72,14 +72,14 @@ export function generateMetadata(
     description: truncatedDescription,
 
     // Open Graph
-    // Note: locale is handled by SeoMetaTags component to avoid duplicates
+    // Note: og:locale is rendered via SeoMetaTags component — do NOT set it here
+    // to avoid duplicate meta tags (Playwright strict mode + SEO penalty risk)
     openGraph: {
       title: truncatedTitle,
       description: truncatedDescription,
       type: 'website',
       url: canonicalUrl,
       siteName: APP_NAME,
-      locale: getOpenGraphLocale(locale),
       images: [
         {
           url: ogImageUrl,
