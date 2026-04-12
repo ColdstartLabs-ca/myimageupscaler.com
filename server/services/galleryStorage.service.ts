@@ -171,18 +171,18 @@ export async function saveImage(
     );
   }
 
-  // 3. Compress the image
+  // 7. Compress the image
   const compressedBuffer = await compressForGallery(imageBuffer);
 
-  // 4. Extract dimensions from compressed image
+  // 8. Extract dimensions from compressed image
   const compressedMetadata = await sharp(compressedBuffer).metadata();
   const width = compressedMetadata.width ?? metadata.width ?? 0;
   const height = compressedMetadata.height ?? metadata.height ?? 0;
 
-  // 5. Generate storage path: {user_id}/{uuid}.webp
+  // 9. Generate storage path: {user_id}/{uuid}.webp
   const storagePath = `${userId}/${randomUUID()}.webp`;
 
-  // 6. Upload to Supabase Storage
+  // 10. Upload to Supabase Storage
   const { error: uploadError } = await supabaseAdmin.storage
     .from(BUCKET_NAME)
     .upload(storagePath, compressedBuffer, {
@@ -195,7 +195,7 @@ export async function saveImage(
     throw new Error(`Failed to upload image to storage: ${uploadError.message}`);
   }
 
-  // 7. Insert database record
+  // 11. Insert database record
   const { data: dbRecord, error: dbError } = await supabaseAdmin
     .from('saved_images')
     .insert({
@@ -217,7 +217,7 @@ export async function saveImage(
     throw new Error(`Failed to save image record: ${dbError.message}`);
   }
 
-  // 8. Generate signed URL for viewing
+  // 12. Generate signed URL for viewing
   const signedUrl = await generateSignedUrl(storagePath);
 
   return {
