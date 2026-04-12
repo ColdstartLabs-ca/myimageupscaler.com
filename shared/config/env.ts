@@ -199,6 +199,9 @@ const serverEnvSchema = z.object({
   // Stripe
   STRIPE_SECRET_KEY: z.string().default(''),
   STRIPE_WEBHOOK_SECRET: z.string().default(''),
+  // Stripe Recovery Coupon ID for abandoned checkout discounts
+  // Run createRecoveryCoupon() once and save the returned ID here
+  STRIPE_RECOVERY_COUPON_ID: z.string().default(''),
   // SEO APIs
   SERPER_DEV: z.string().default(''),
   SERPER_API_URL: z.string().default('https://google.serper.dev/search'),
@@ -351,6 +354,7 @@ function loadServerEnv(): IServerEnv {
     // Stripe
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
+    STRIPE_RECOVERY_COUPON_ID: process.env.STRIPE_RECOVERY_COUPON_ID || '',
     // SEO APIs
     SERPER_DEV: process.env.SERPER_DEV || '',
     SERPER_API_URL: process.env.SERPER_API_URL || 'https://google.serper.dev/search',
