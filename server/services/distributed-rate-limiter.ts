@@ -46,40 +46,24 @@ export interface IRateLimitResult {
 /**
  * Generate a time-based window key for efficient partitioning
  *
+ * Uses millisecond-based partitioning to correctly handle all window sizes,
+ * including sub-minute windows (e.g., 10 seconds).
+ *
  * @param windowMs - Time window in milliseconds
- * @returns Current window identifier (e.g., "hourly", "daily", or timestamp)
+ * @returns Current window identifier (e.g., "w1234567890")
  */
 function getWindowKey(windowMs: number): string {
   const now = Date.now();
-
-  // For windows <= 1 hour, use minute-based partitioning
-  if (windowMs <= 3600000) {
-    // 1 hour or less
-    const minuteWindow = Math.floor(windowMs / 60000); // Convert to minutes
-    const currentMinute = Math.floor(now / 60000);
-    return `m${Math.floor(currentMinute / minuteWindow)}`;
-  }
-
-  // For windows > 1 hour and <= 1 day, use hourly partitioning
-  if (windowMs <= 86400000) {
-    // 24 hours or less
-    const hourWindow = Math.floor(windowMs / 3600000); // Convert to hours
-    const currentHour = Math.floor(now / 3600000);
-    return `h${Math.floor(currentHour / hourWindow)}`;
-  }
-
-  // For windows > 1 day, use daily partitioning
-  const dayWindow = Math.floor(windowMs / 86400000); // Convert to days
-  const currentDay = Math.floor(now / 86400000);
-  return `d${Math.floor(currentDay / dayWindow)}`;
+  const windowNumber = Math.floor(now / windowMs);
+  return `w${windowNumber}`;
 }
 
 /**
  * Generate the Redis key for rate limit tracking
  *
  * Pattern: ratelimit:{identifier}:{window}
- * Example: ratelimit:user_123:m12345 (for minute-based window)
- * Example: ratelimit:192.168.1.1:h1234 (for hourly window)
+ * Example: ratelimit:user_123:w123456789 (for 10-second window)
+ * Example: ratelimit:192.168.1.1:w1234567 (for 60-second window)
  *
  * @param identifier - Unique identifier (user ID, IP address, etc.)
  * @param windowMs - Time window in milliseconds
@@ -168,42 +152,14 @@ export async function checkRateLimit(
       };
     }
 
-    // Get the incremented count
-    const countResult = results[0];
-    const currentCount = (countResult as { return: number | null })?.return || 1;
+    // Get the incremented count - Upstash pipeline returns raw values
+    const currentCount = (results[0] as number) || 1;
 
     // Check if limit exceeded
     if (currentCount > limit) {
-      // Calculate reset time based on window key
-      const windowKey = getWindowKey(windowMs);
-      let resetTime: number;
-
-      // Parse the window key to determine when it rolls over
-      if (windowKey.startsWith('m')) {
-        // Minute-based window
-        const minuteNum = parseInt(windowKey.slice(1), 10);
-        const minuteWindow = Math.floor(windowMs / 60000);
-        const _currentMinute = Math.floor(now / 60000);
-        const windowStartMinute = minuteNum * minuteWindow;
-        const windowStartMs = windowStartMinute * 60000;
-        resetTime = windowStartMs + windowMs;
-      } else if (windowKey.startsWith('h')) {
-        // Hour-based window
-        const hourNum = parseInt(windowKey.slice(1), 10);
-        const hourWindow = Math.floor(windowMs / 3600000);
-        const _currentHour = Math.floor(now / 3600000);
-        const windowStartHour = hourNum * hourWindow;
-        const windowStartMs = windowStartHour * 3600000;
-        resetTime = windowStartMs + windowMs;
-      } else {
-        // Day-based window
-        const dayNum = parseInt(windowKey.slice(1), 10);
-        const dayWindow = Math.floor(windowMs / 86400000);
-        const _currentDay = Math.floor(now / 86400000);
-        const windowStartDay = dayNum * dayWindow;
-        const windowStartMs = windowStartDay * 86400000;
-        resetTime = windowStartMs + windowMs;
-      }
+      // Calculate reset time based on window boundary
+      const windowNumber = Math.floor(now / windowMs);
+      const resetTime = (windowNumber + 1) * windowMs;
 
       return {
         success: false,
