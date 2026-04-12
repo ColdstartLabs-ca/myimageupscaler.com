@@ -36,6 +36,7 @@ import { ImageResizer } from '@/app/(pseo)/_components/tools/ImageResizer';
 import { ImageToPdfConverter } from '@/app/(pseo)/_components/tools/ImageToPdfConverter';
 import { ImageToText } from '@/app/(pseo)/_components/tools/ImageToText';
 import { PdfToImageConverter } from '@/app/(pseo)/_components/tools/PdfToImageConverter';
+import { GuestUpscaler } from '@/app/(pseo)/_components/tools/GuestUpscaler';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -50,6 +51,7 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   PdfToImageConverter,
   ImageToPdfConverter,
   ImageToText,
+  GuestUpscaler,
 };
 
 /**
