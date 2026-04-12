@@ -16,7 +16,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
-import type { ICreateAbandonedCheckoutRequest } from '@shared/types/abandoned-checkout.types';
+import type {
+  ICreateAbandonedCheckoutRequest,
+  PurchaseType,
+} from '@shared/types/abandoned-checkout.types';
+
+const VALID_PURCHASE_TYPES: PurchaseType[] = ['subscription', 'credit_pack'];
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,9 +32,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'priceId is required' }, { status: 400 });
     }
 
-    if (!body.purchaseType) {
+    if (!body.purchaseType || !VALID_PURCHASE_TYPES.includes(body.purchaseType)) {
       return NextResponse.json(
-        { success: false, error: 'purchaseType is required' },
+        { success: false, error: 'purchaseType must be "subscription" or "credit_pack"' },
         { status: 400 }
       );
     }
