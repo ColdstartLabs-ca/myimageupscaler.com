@@ -322,8 +322,10 @@ export function useGallery(): IUseGalleryReturn {
           total: Math.max(0, prev.total - 1),
         }));
 
-        // Refresh usage stats
-        await fetchUsage();
+        // Update usage stats from response (API returns { success, data, usage })
+        if (data.usage) {
+          setUsage(data.usage);
+        }
 
         showToast({
           message: 'Image removed from gallery',
@@ -346,12 +348,11 @@ export function useGallery(): IUseGalleryReturn {
         setIsDeleting(false);
       }
     },
-    [isDeleting, fetchUsage, showToast]
+    [isDeleting, showToast]
   );
 
-  // Usage stats are fetched automatically by fetchImages() which returns usage data.
-  // No separate mount effect needed - Gallery component calls fetchImages(1) on mount.
-  // fetchUsage is still exported for manual refresh scenarios (e.g., after delete).
+  // Usage stats are updated inline from API responses (GET, POST, DELETE all return usage).
+  // fetchUsage is still exported for external callers that need a manual refresh.
 
   return {
     saveImage,
