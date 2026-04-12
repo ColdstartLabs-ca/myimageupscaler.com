@@ -4,7 +4,11 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import { analytics } from '@client/analytics';
 import { detectDeviceType } from '@client/utils/detectDeviceType';
 import { determinePlanFromPriceId } from '@shared/config/stripe';
-import type { TCheckoutStep, TCheckoutExitMethod, TCheckoutErrorType } from '@server/analytics/types';
+import type {
+  TCheckoutStep,
+  TCheckoutExitMethod,
+  TCheckoutErrorType,
+} from '@server/analytics/types';
 
 export function useCheckoutAnalytics(
   priceId: string,
