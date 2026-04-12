@@ -84,7 +84,12 @@ export default async function ToolPage({ params }: IToolPageProps) {
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale={locale} />
       {/* Hreflang links — only for locales with actual translations */}
-      <HreflangLinks path={path} category="tools" locale={locale} availableLocales={availableLocales} />
+      <HreflangLinks
+        path={path}
+        category="tools"
+        locale={locale}
+        availableLocales={availableLocales}
+      />
       <SchemaMarkup schema={schema} />
       <Template data={result.data} locale={locale} relatedPages={relatedPages} />
     </>

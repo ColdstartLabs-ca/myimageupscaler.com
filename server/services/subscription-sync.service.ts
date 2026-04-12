@@ -258,7 +258,11 @@ export async function processStripeEvent(event: Stripe.Event): Promise<void> {
  * Create a new sync run record
  */
 export async function createSyncRun(
-  jobType: 'expiration_check' | 'webhook_recovery' | 'full_reconciliation' | 'three_kings_sitemap_refresh'
+  jobType:
+    | 'expiration_check'
+    | 'webhook_recovery'
+    | 'full_reconciliation'
+    | 'three_kings_sitemap_refresh'
 ): Promise<string> {
   const { data, error } = await supabaseAdmin
     .from('sync_runs')
