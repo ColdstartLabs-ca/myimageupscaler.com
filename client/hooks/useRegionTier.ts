@@ -13,6 +13,7 @@ import type { PricingRegion } from '@shared/config/pricing-regions';
 
 // Module-level cache avoids duplicate geo fetches within a single runtime.
 let cachedGeo: IPricingGeoSession | null = null;
+let pendingGeoRequest: Promise<IPricingGeoSession | null> | null = null;
 // Track whether we've identified pricing_region for this session
 let hasIdentifiedPricingRegion = false;
 
@@ -71,6 +72,69 @@ function maybeIdentifyPricingRegion(
   }
 }
 
+function normalizeGeo(
+  data:
+    | Partial<IPricingGeoSession>
+    | {
+        tier?: RegionTier;
+        country?: string | null;
+        pricingRegion?: PricingRegion;
+        discountPercent?: number;
+        banditArmId?: number | null;
+      }
+): IPricingGeoSession {
+  return {
+    tier: data.tier ?? 'standard',
+    country: data.country ?? null,
+    pricingRegion: data.pricingRegion ?? 'standard',
+    discountPercent: data.discountPercent ?? 0,
+    banditArmId: data.banditArmId ?? null,
+  };
+}
+
+function areGeoSessionsEqual(a: IPricingGeoSession, b: IPricingGeoSession): boolean {
+  return (
+    a.tier === b.tier &&
+    a.country === b.country &&
+    a.pricingRegion === b.pricingRegion &&
+    a.discountPercent === b.discountPercent &&
+    a.banditArmId === b.banditArmId
+  );
+}
+
+async function fetchGeo(): Promise<IPricingGeoSession | null> {
+  if (pendingGeoRequest) {
+    return pendingGeoRequest;
+  }
+
+  pendingGeoRequest = fetch('/api/geo', { cache: 'no-store' })
+    .then(async response => {
+      if (!response.ok) {
+        throw new Error(`Geo request failed with status ${response.status}`);
+      }
+
+      const data = (await response.json()) as {
+        tier?: RegionTier;
+        country?: string | null;
+        pricingRegion?: PricingRegion;
+        discountPercent?: number;
+        banditArmId?: number | null;
+      };
+
+      return normalizeGeo(data);
+    })
+    .catch(() => null)
+    .finally(() => {
+      pendingGeoRequest = null;
+    });
+
+  return pendingGeoRequest;
+}
+
+interface IUseRegionTierOptions {
+  initialGeo?: IPricingGeoSession | null;
+}
+
 export function useRegionTier(): {
   tier: RegionTier | null;
   country: string | null;
@@ -80,21 +144,38 @@ export function useRegionTier(): {
   pricingRegion: string;
   discountPercent: number;
   banditArmId: number | null;
-} {
+};
+export function useRegionTier(options: IUseRegionTierOptions): {
+  tier: RegionTier | null;
+  country: string | null;
+  isLoading: boolean;
+  isRestricted: boolean;
+  isPaywalled: boolean;
+  pricingRegion: string;
+  discountPercent: number;
+  banditArmId: number | null;
+};
+export function useRegionTier(options?: IUseRegionTierOptions) {
+  const initialGeo = options?.initialGeo ?? null;
   // Always start with null/defaults to match server render and avoid hydration mismatch.
-  // The cache is applied in the useEffect below.
-  const [tier, setTier] = useState<RegionTier | null>(null);
-  const [country, setCountry] = useState<string | null>(null);
-  const [pricingRegion, setPricingRegion] = useState<string>('standard');
-  const [discountPercent, setDiscountPercent] = useState<number>(0);
-  const [banditArmId, setBanditArmId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // The cache/storage is applied in the useEffect below.
+  const [tier, setTier] = useState<RegionTier | null>(initialGeo?.tier ?? null);
+  const [country, setCountry] = useState<string | null>(initialGeo?.country ?? null);
+  const [pricingRegion, setPricingRegion] = useState<string>(initialGeo?.pricingRegion ?? 'standard');
+  const [discountPercent, setDiscountPercent] = useState<number>(initialGeo?.discountPercent ?? 0);
+  const [banditArmId, setBanditArmId] = useState<number | null>(initialGeo?.banditArmId ?? null);
+  const [isLoading, setIsLoading] = useState(initialGeo === null);
   // Ref to ensure we only identify once per hook instance
   const hasIdentifiedRef = useRef(false);
 
   useEffect(() => {
-    const hydrateGeo = (geo: IPricingGeoSession) => {
+    let isCancelled = false;
+
+    const hydrateGeo = (geo: IPricingGeoSession, persist = true) => {
       cachedGeo = geo;
+      if (persist) {
+        persistGeo(geo);
+      }
       applyGeoState(geo, {
         setTier,
         setCountry,
@@ -106,53 +187,42 @@ export function useRegionTier(): {
       setIsLoading(false);
     };
 
-    if (cachedGeo !== null) {
-      hydrateGeo(cachedGeo);
-      return;
+    const optimisticGeo = initialGeo ?? cachedGeo ?? readStoredGeo();
+
+    if (optimisticGeo !== null) {
+      hydrateGeo(optimisticGeo, Boolean(initialGeo));
     }
 
-    const storedGeo = readStoredGeo();
-    if (storedGeo !== null) {
-      hydrateGeo(storedGeo);
-      return;
-    }
-
-    fetch('/api/geo')
-      .then(r => r.json())
-      .then(
-        (data: {
-          tier?: RegionTier;
-          country?: string | null;
-          pricingRegion?: PricingRegion;
-          discountPercent?: number;
-          banditArmId?: number | null;
-        }) => {
-          const nextGeo: IPricingGeoSession = {
-            tier: data.tier ?? 'standard',
-            country: data.country ?? null,
-            pricingRegion: data.pricingRegion ?? 'standard',
-            discountPercent: data.discountPercent ?? 0,
-            banditArmId: data.banditArmId ?? null,
-          };
-          persistGeo(nextGeo);
-          hydrateGeo(nextGeo);
+    fetchGeo()
+      .then(nextGeo => {
+        if (isCancelled) {
+          return;
         }
-      )
-      .catch(() => {
-        const fallbackGeo: IPricingGeoSession = {
-          tier: 'standard',
-          country: null,
-          pricingRegion: 'standard',
-          discountPercent: 0,
-          banditArmId: null,
-        };
-        persistGeo(fallbackGeo);
-        hydrateGeo(fallbackGeo);
-      })
-      .finally(() => {
+
+        if (!nextGeo) {
+          if (optimisticGeo === null) {
+            setTier('standard');
+            setCountry(null);
+            setPricingRegion('standard');
+            setDiscountPercent(0);
+            setBanditArmId(null);
+            setIsLoading(false);
+          }
+          return;
+        }
+
+        if (!optimisticGeo || !areGeoSessionsEqual(nextGeo, optimisticGeo)) {
+          hydrateGeo(nextGeo);
+          return;
+        }
+
         setIsLoading(false);
       });
-  }, []);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [initialGeo]);
 
   return {
     tier,

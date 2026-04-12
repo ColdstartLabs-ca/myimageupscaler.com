@@ -1,6 +1,7 @@
 'use client';
 
 import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
+import type { IPricingGeoSession } from '@shared/utils/pricing-geo-session';
 import {
   CheckoutModal,
   CreditPackSelector,
@@ -25,14 +26,10 @@ import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContex
 import { useSearchParams } from 'next/navigation';
 
 interface IPricingPageClientProps {
-  initialPricingRegion?: string;
-  initialDiscountPercent?: number;
+  initialGeo: IPricingGeoSession;
 }
 
-export default function PricingPageClient({
-  initialPricingRegion = 'standard',
-  initialDiscountPercent = 0,
-}: IPricingPageClientProps) {
+export default function PricingPageClient({ initialGeo }: IPricingPageClientProps) {
   const t = useTranslations('pricing');
   const searchParams = useSearchParams();
   const pricesConfigured = isStripePricesConfigured();
@@ -48,15 +45,10 @@ export default function PricingPageClient({
   const processedCheckoutParamRef = useRef(false);
 
   const {
-    discountPercent: hookDiscountPercent,
-    pricingRegion: hookPricingRegion,
+    discountPercent,
+    pricingRegion,
     isLoading: regionLoading,
-  } = useRegionTier();
-
-  // Use server-detected region immediately to eliminate price flicker;
-  // once the client hook resolves, use its values (should match).
-  const discountPercent = regionLoading ? initialDiscountPercent : hookDiscountPercent;
-  const pricingRegion = regionLoading ? initialPricingRegion : hookPricingRegion;
+  } = useRegionTier({ initialGeo });
 
   // Track pricing_page_viewed event once on mount
   const hasTrackedPageView = useRef(false);

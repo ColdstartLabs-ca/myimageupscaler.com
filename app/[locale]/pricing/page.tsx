@@ -3,11 +3,12 @@ import { Suspense } from 'react';
 import { cookies, headers } from 'next/headers';
 import PricingPageClient from './PricingPageClient';
 import { generatePricingSchema } from '@lib/seo/schema-generator';
-import { clientEnv } from '@shared/config/env';
+import { clientEnv, serverEnv } from '@shared/config/env';
 import { getCanonicalUrl } from '@/lib/seo/hreflang-generator';
 import { SUBSCRIPTION_PLANS } from '@shared/config/stripe';
 import { getPricingRegion } from '@shared/config/pricing-regions';
 import { PRICING_GEO_COOKIE_NAME, parsePricingGeoSession } from '@shared/utils/pricing-geo-session';
+import { getRegionTier } from '@/lib/anti-freeloader/region-classifier';
 import type { Locale } from '@/i18n/config';
 
 const LOWEST_PLAN_PRICE = SUBSCRIPTION_PLANS.STARTER_MONTHLY.price;
@@ -49,10 +50,22 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
 export default async function PricingPage() {
   const headersList = await headers();
   const cookieStore = await cookies();
-  const country = headersList.get('CF-IPCountry') ?? headersList.get('cf-ipcountry') ?? '';
-  const regionConfig = getPricingRegion(country);
+  const country =
+    headersList.get('CF-IPCountry') ??
+    headersList.get('cf-ipcountry') ??
+    (serverEnv.ENV !== 'production' ? headersList.get('x-test-country') : null);
+  const regionConfig = getPricingRegion(country ?? '');
   const cachedGeo = parsePricingGeoSession(cookieStore.get(PRICING_GEO_COOKIE_NAME)?.value);
-  const initialGeo = cachedGeo?.country === country ? cachedGeo : null;
+  const initialGeo =
+    cachedGeo?.country === (country ?? null)
+      ? cachedGeo
+      : {
+          country: country ?? null,
+          tier: country ? getRegionTier(country) : 'standard',
+          pricingRegion: regionConfig.region,
+          discountPercent: regionConfig.discountPercent,
+          banditArmId: null,
+        };
 
   return (
     <>
@@ -63,10 +76,7 @@ export default async function PricingPage() {
         }}
       />
       <Suspense>
-        <PricingPageClient
-          initialPricingRegion={initialGeo?.pricingRegion ?? regionConfig.region}
-          initialDiscountPercent={initialGeo?.discountPercent ?? regionConfig.discountPercent}
-        />
+        <PricingPageClient initialGeo={initialGeo} />
       </Suspense>
     </>
   );
