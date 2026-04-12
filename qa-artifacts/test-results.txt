@@ -1,0 +1,55 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.16 [39m[90m/home/joao/projects/myimageupscaler.com-nw-qa-runner[39m
+
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould allow request when under limit[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould block request when limit exceeded[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould calculate correct remaining count[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould use correct Redis key format with window-based partitioning[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould set expiry on key converted to seconds[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould fail open when pipeline returns no results[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould fail open when pipeline returns empty array[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould fail open on Redis error[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould work with 10-second windows (sub-minute) without divide-by-zero[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould handle limit of 1 correctly[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mcheckRateLimit[2m > [22mshould calculate reset time from window boundary when blocked[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mresetRateLimit[2m > [22mshould delete the rate limit key[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mresetRateLimit[2m > [22mshould return false on Redis error[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mgetRateLimitStats[2m > [22mshould return current count from Redis[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mgetRateLimitStats[2m > [22mshould return 0 count when key does not exist[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/distributed-rate-limiter.unit.spec.ts[2m > [22mDistributed Rate Limiter[2m > [22mgetRateLimitStats[2m > [22mshould return null on Redis error[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mSliding Window Algorithm[2m > [22mshould allow requests within limit[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mSliding Window Algorithm[2m > [22mshould block requests exceeding limit[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mSliding Window Algorithm[2m > [22mshould reset after window expires[32m 111[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mSliding Window Algorithm[2m > [22mshould handle multiple independent identifiers[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mMemory Management[2m > [22mshould clean up old entries periodically[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mMemory Management[2m > [22mshould prevent memory leaks with expired timestamps[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mPre-configured Rate Limiters[2m > [22mshould export rateLimit with correct configuration[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mPre-configured Rate Limiters[2m > [22mshould export publicRateLimit with correct configuration[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mPre-configured Rate Limiters[2m > [22mshould have different limits for public vs authenticated users[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mEdge Cases[2m > [22mshould handle empty identifier[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mEdge Cases[2m > [22mshould handle special characters in identifier[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mEdge Cases[2m > [22mshould handle very long identifiers[32m 0[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mEdge Cases[2m > [22mshould handle concurrent requests for same identifier
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mEdge Cases[2m > [22mshould handle zero limit edge case[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mEdge Cases[2m > [22mshould handle very small time windows[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mWebhook Rate Limit Bypass[2m > [22mapplyPublicRateLimit should skip webhook routes[32m 24[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mWebhook Rate Limit Bypass[2m > [22mapplyPublicRateLimit should still rate limit non-webhook public routes[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mPerformance Considerations[2m > [22mshould handle high volume of different identifiers efficiently[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mMode Selection[2m > [22mshould use distributed mode when USE_DISTRIBUTED_RATE_LIMITING=true[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mMode Selection[2m > [22mshould use in-memory mode when USE_DISTRIBUTED_RATE_LIMITING=false[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mDistributed Rate Limiter Integration[2m > [22mshould enforce rate limits using distributed storage[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mDistributed Rate Limiter Integration[2m > [22mshould handle multiple identifiers independently in distributed mode[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mDistributed Rate Limiter Integration[2m > [22mshould work with publicRateLimit in distributed mode[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mError Handling and Fail-Open[2m > [22mshould fail open when Redis is unavailable[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mError Handling and Fail-Open[2m > [22mshould handle network errors gracefully[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mError Handling and Fail-Open[2m > [22mshould handle timeout errors gracefully[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mFallback Behavior[2m > [22mshould fall back to in-memory when distributed mode is disabled[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mFallback Behavior[2m > [22mshould maintain consistent behavior between modes[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mConfiguration and Environment[2m > [22mshould respect USE_DISTRIBUTED_RATE_LIMITING environment variable[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/rate-limit.unit.spec.ts[2m > [22mRate Limiting System[2m > [22mDistributed Rate Limiting Mode[2m > [22mConfiguration and Environment[2m > [22mshould handle rate limit configuration changes[32m 0[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m45 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (46)[39m
+[2m   Start at [22m 22:47:09
+[2m   Duration [22m 948ms[2m (transform 248ms, setup 366ms, import 167ms, tests 166ms, environment 840ms)[22m
+

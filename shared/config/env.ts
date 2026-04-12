@@ -268,6 +268,7 @@ const serverEnvSchema = z.object({
   // ==========================================
   ENABLE_AUTO_MODEL_SELECTION: z.coerce.boolean().default(true),
   ENABLE_PREMIUM_MODELS: z.coerce.boolean().default(true),
+  USE_DISTRIBUTED_RATE_LIMITING: z.coerce.boolean().default(true),
 
   // ==========================================
   // EMAIL PROVIDERS
@@ -412,6 +413,7 @@ function loadServerEnv(): IServerEnv {
     // Feature Flags
     ENABLE_AUTO_MODEL_SELECTION: process.env.ENABLE_AUTO_MODEL_SELECTION ?? 'true',
     ENABLE_PREMIUM_MODELS: process.env.ENABLE_PREMIUM_MODELS ?? 'true',
+    USE_DISTRIBUTED_RATE_LIMITING: process.env.USE_DISTRIBUTED_RATE_LIMITING ?? 'true',
 
     // Email Providers
     BREVO_API_KEY: process.env.BREVO_API_KEY || '',
