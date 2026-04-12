@@ -18,7 +18,6 @@ interface IEnv {
   ALLOWED_IP: string;
 }
 
- 
 export default {
   async fetch(request: Request, env: IEnv): Promise<Response> {
     // Health check
