@@ -169,19 +169,24 @@ export const GalleryImageCard: React.FC<IGalleryImageCardProps> = ({
   const handleDownload = async () => {
     if (!image.signed_url) return;
 
+    let objectUrl: string | null = null;
+    let anchor: HTMLAnchorElement | null = null;
+
     try {
       const response = await fetch(image.signed_url);
+      if (!response.ok) throw new Error(`Download failed: ${response.status}`);
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = image.original_filename;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      objectUrl = window.URL.createObjectURL(blob);
+      anchor = document.createElement('a');
+      anchor.href = objectUrl;
+      anchor.download = image.original_filename;
+      document.body.appendChild(anchor);
+      anchor.click();
     } catch (err) {
       console.error('Failed to download image:', err);
+    } finally {
+      if (objectUrl) window.URL.revokeObjectURL(objectUrl);
+      if (anchor) document.body.removeChild(anchor);
     }
   };
 
