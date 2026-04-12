@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLogger } from '@server/monitoring/logger';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
-import { deleteImage } from '@server/services/galleryStorage.service';
+import { deleteImage, getUsage } from '@server/services/galleryStorage.service';
 
 export const dynamic = 'force-dynamic';
 
@@ -51,6 +51,9 @@ export async function DELETE(
     // 3. Delete the image (verify ownership internally)
     await deleteImage(userId, imageId);
 
+    // 4. Get updated usage stats
+    const usage = await getUsage(userId);
+
     logger.info('Gallery image deleted successfully', { userId, imageId });
 
     return NextResponse.json({
@@ -58,6 +61,7 @@ export async function DELETE(
       data: {
         deleted_id: imageId,
       },
+      usage,
     });
   } catch (error) {
     // Await params again for error handling
