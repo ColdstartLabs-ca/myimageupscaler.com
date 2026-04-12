@@ -13,8 +13,7 @@
  */
 
 interface IEnv {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  MAIN_WORKER: any; // Fetcher type is Cloudflare-specific, not available in standard TS
+  MAIN_WORKER: Fetcher; // eslint-disable-line no-undef
   ALLOWED_IP: string;
 }
 
