@@ -124,4 +124,6 @@ export const PUBLIC_API_ROUTES = [
   '/api/migrate-blog', // Temporary migration endpoint (uses x-migration-token header auth)
   '/api/seo/*', // SEO routes use x-cron-secret header auth, not JWT
   '/api/geo', // Geo-location endpoint for region classification (anti-freeloader)
+  '/api/campaigns/send', // Campaign send uses x-cron-secret header auth, not JWT
+  '/api/campaigns/unsubscribe', // One-click unsubscribe from emails (public, uses token verification)
 ] as const;

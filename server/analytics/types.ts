@@ -621,7 +621,14 @@ export type IAnalyticsEventName =
   // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
   | 'comparison_viewed'
   // Amplitude identity events (server-side only)
-  | '$identify';
+  | '$identify'
+  // Campaign analytics events (server-side only)
+  | 'email_queued'
+  | 'email_sent'
+  | 'email_opened'
+  | 'email_clicked'
+  | 'email_unsubscribed'
+  | 'reengagement_returned';
 
 export interface IAnalyticsEvent {
   name: IAnalyticsEventName;
@@ -629,6 +636,50 @@ export interface IAnalyticsEvent {
   userId?: string;
   sessionId?: string;
   timestamp?: number;
+}
+
+// =============================================================================
+// Campaign Analytics Event Properties
+// =============================================================================
+
+import type { UserSegment } from '@shared/types/campaign.types';
+
+export interface IEmailQueuedProperties {
+  campaign: string;
+  segment: UserSegment;
+  userId: string;
+  campaignId: string;
+}
+
+export interface IEmailSentProperties {
+  campaign: string;
+  messageId: string;
+  template: string;
+  userId: string;
+}
+
+export interface IEmailOpenedProperties {
+  campaign: string;
+  messageId: string;
+  userId: string;
+}
+
+export interface IEmailClickedProperties {
+  campaign: string;
+  link: string;
+  messageId: string;
+  userId: string;
+}
+
+export interface IEmailUnsubscribedProperties {
+  campaign: string;
+  userId: string;
+}
+
+export interface IReengagementReturnedProperties {
+  campaign?: string;
+  userId: string;
+  daysSinceLastVisit: number;
 }
 
 // =============================================================================

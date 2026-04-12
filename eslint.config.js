@@ -332,4 +332,21 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn', // Allow 'any' for Supabase type constraints
     },
   },
+  // Cloudflare Workers - allow default exports and Cloudflare-specific globals
+  {
+    files: ['workers/**/*.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.es2021,
+        Fetcher: true,
+        Service: true,
+        ScheduledEvent: true,
+        ExecutionContext: true,
+      },
+    },
+    rules: {
+      'import/no-default-export': 'off', // Cloudflare Workers require default exports
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+    },
+  },
 ];

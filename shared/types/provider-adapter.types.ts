@@ -172,6 +172,8 @@ export interface ISendEmailParams {
   data: Record<string, unknown>;
   type?: 'transactional' | 'marketing';
   userId?: string;
+  /** Optional subject override (uses template default if not provided) */
+  subject?: string;
 }
 
 /**

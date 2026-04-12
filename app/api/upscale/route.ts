@@ -874,7 +874,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const statusCode =
         error.code === 'RATE_LIMITED'
           ? 429
-          : error.code === 'SAFETY' || error.code === 'IMAGE_TOO_LARGE' || error.code === 'INVALID_INPUT'
+          : error.code === 'SAFETY' ||
+              error.code === 'IMAGE_TOO_LARGE' ||
+              error.code === 'INVALID_INPUT'
             ? error.code === 'INVALID_INPUT'
               ? 400
               : 422
@@ -888,7 +890,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
               ? ErrorCodes.INVALID_REQUEST
               : error.code === 'INVALID_INPUT'
                 ? ErrorCodes.VALIDATION_ERROR
-              : ErrorCodes.AI_UNAVAILABLE;
+                : ErrorCodes.AI_UNAVAILABLE;
       logFailure(
         `replicate_${String(error.code).toLowerCase()}`,
         {
