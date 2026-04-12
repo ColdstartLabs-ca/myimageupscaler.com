@@ -123,6 +123,13 @@ export const buildRecoveryEmailData: IBuildRecoveryEmailDataFn = (
   const amountCents = checkout.cartData.originalAmountCents;
   const currency = checkout.cartData.currency || 'USD';
 
+  if (amountCents <= 0) {
+    console.warn(
+      `[recovery-email] originalAmountCents is ${amountCents} for checkout ${checkout.id}. ` +
+        'Email may show $0.00 — ensure client sends originalAmountCents when creating abandoned checkout.'
+    );
+  }
+
   return {
     checkoutId: checkout.id,
     email: checkout.email || '',
