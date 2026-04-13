@@ -74,6 +74,7 @@ export async function ensureAntiFreeloaderProfile(
   const ip = getRequestIp(req);
   const updates: Partial<IAntiFreeloaderProfile> = {};
   let shouldCheckSignupIp = false;
+  let targetCreditBalance: number | undefined;
 
   if (!profile.signup_country && country) {
     updates.signup_country = country;
@@ -84,17 +85,15 @@ export async function ensureAntiFreeloaderProfile(
     updates.region_tier = tier;
 
     if (isFreeTierProfile(profile.subscription_tier) && isNewlyCreatedProfile(profile.created_at)) {
+      const currentBalance =
+        profile.subscription_credits_balance ?? CREDIT_COSTS.DEFAULT_FREE_CREDITS;
       const adjustedBalance = getAdjustedRegionalFreeCredits(
         profile.subscription_credits_balance,
         tier
       );
 
-      if (
-        adjustedBalance !== undefined &&
-        adjustedBalance !==
-          (profile.subscription_credits_balance ?? CREDIT_COSTS.DEFAULT_FREE_CREDITS)
-      ) {
-        updates.subscription_credits_balance = adjustedBalance;
+      if (adjustedBalance !== undefined && adjustedBalance !== currentBalance) {
+        targetCreditBalance = adjustedBalance;
       }
     }
   }
@@ -112,6 +111,21 @@ export async function ensureAntiFreeloaderProfile(
     }
   }
 
+  // Credit balance must be adjusted via RPC — direct REST updates to subscription_credits_balance
+  // are blocked by the prevent_credit_update trigger (which requires app.trusted_credit_operation
+  // to be set, and that flag is only settable from within PL/pgSQL functions, not REST API calls).
+  if (targetCreditBalance !== undefined) {
+    const { error } = await supabaseAdmin.rpc('adjust_regional_credits', {
+      p_user_id: userId,
+      p_new_balance: targetCreditBalance,
+      p_description: 'Regional free credit adjustment',
+    });
+
+    if (error) {
+      throw new Error(`Failed to adjust regional credits: ${error.message}`);
+    }
+  }
+
   if (shouldCheckSignupIp && ip) {
     await supabaseAdmin.rpc('check_signup_ip', {
       p_user_id: userId,
@@ -122,5 +136,8 @@ export async function ensureAntiFreeloaderProfile(
   return {
     ...profile,
     ...updates,
+    ...(targetCreditBalance !== undefined
+      ? { subscription_credits_balance: targetCreditBalance }
+      : {}),
   };
 }

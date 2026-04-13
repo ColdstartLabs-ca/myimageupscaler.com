@@ -74,9 +74,7 @@ function minutesAgo(n: number): string {
   return new Date(Date.now() - n * 60 * 1000).toISOString();
 }
 
-function makeProfile(
-  overrides: Record<string, unknown> = {}
-): Record<string, unknown> {
+function makeProfile(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     region_tier: null,
     subscription_tier: null,
@@ -158,6 +156,7 @@ describe('POST /api/users/setup', () => {
 
   it('sets restricted tier and reduces credits for new free users', async () => {
     const fromMock = supabaseAdmin.from as ReturnType<typeof vi.fn>;
+    const rpcMock = supabaseAdmin.rpc as ReturnType<typeof vi.fn>;
     let capturedPayload: Record<string, unknown> | null = null;
 
     fromMock.mockImplementation((table: string) => {
@@ -181,12 +180,20 @@ describe('POST /api/users/setup', () => {
     await POST(makeRequest({ userId: 'user-123', country: 'IN' }));
 
     expect(capturedPayload?.region_tier).toBe('restricted');
-    expect(capturedPayload?.subscription_credits_balance).toBe(3);
+    // subscription_credits_balance must NOT be in the REST update payload —
+    // direct updates are blocked by the prevent_credit_update DB trigger.
+    expect(capturedPayload?.subscription_credits_balance).toBeUndefined();
+    // Credit reduction goes through adjust_regional_credits RPC (logs as 'clawback').
+    expect(rpcMock).toHaveBeenCalledWith('adjust_regional_credits', {
+      p_user_id: 'user-123',
+      p_new_balance: 3, // restricted tier allows 3 free credits
+      p_description: 'Regional free credit adjustment',
+    });
   });
 
   it('claws back only the excess free credits if setup runs after some usage', async () => {
     const fromMock = supabaseAdmin.from as ReturnType<typeof vi.fn>;
-    let capturedPayload: Record<string, unknown> | null = null;
+    const rpcMock = supabaseAdmin.rpc as ReturnType<typeof vi.fn>;
 
     fromMock.mockImplementation((table: string) => {
       if (table === 'profiles') {
@@ -194,13 +201,9 @@ describe('POST /api/users/setup', () => {
           data: makeProfile({ subscription_credits_balance: 1 }),
           error: null,
         });
-        const mockUpdate = vi.fn((payload: Record<string, unknown>) => {
-          capturedPayload = payload;
-          return { eq: vi.fn(() => Promise.resolve({ error: null })) };
-        });
         return {
           select: vi.fn(() => ({ eq: vi.fn(() => ({ single: mockSingle })) })),
-          update: mockUpdate,
+          update: vi.fn(() => ({ eq: vi.fn(() => Promise.resolve({ error: null })) })),
         };
       }
       return {};
@@ -208,7 +211,13 @@ describe('POST /api/users/setup', () => {
 
     await POST(makeRequest({ userId: 'user-123', country: 'IN' }));
 
-    expect(capturedPayload?.subscription_credits_balance).toBe(0);
+    // User has 1 credit left; restricted tier would allow 3, but user is already below that.
+    // adjustedBalance = max(0, 1 - 2) = 0. RPC sets balance to 0.
+    expect(rpcMock).toHaveBeenCalledWith('adjust_regional_credits', {
+      p_user_id: 'user-123',
+      p_new_balance: 0,
+      p_description: 'Regional free credit adjustment',
+    });
   });
 
   it('does not reduce credits for grandfathered users', async () => {
@@ -241,6 +250,7 @@ describe('POST /api/users/setup', () => {
 
   it('sets paywalled users to zero credits', async () => {
     const fromMock = supabaseAdmin.from as ReturnType<typeof vi.fn>;
+    const rpcMock = supabaseAdmin.rpc as ReturnType<typeof vi.fn>;
     let capturedPayload: Record<string, unknown> | null = null;
 
     PAYWALLED_COUNTRIES.add('XX');
@@ -266,7 +276,12 @@ describe('POST /api/users/setup', () => {
     await POST(makeRequest({ userId: 'user-123', country: 'XX' }));
 
     expect(capturedPayload?.region_tier).toBe('paywalled');
-    expect(capturedPayload?.subscription_credits_balance).toBe(0);
+    expect(capturedPayload?.subscription_credits_balance).toBeUndefined();
+    expect(rpcMock).toHaveBeenCalledWith('adjust_regional_credits', {
+      p_user_id: 'user-123',
+      p_new_balance: 0, // paywalled tier gets zero free credits
+      p_description: 'Regional free credit adjustment',
+    });
   });
 
   it('registers a fingerprint when provided', async () => {
