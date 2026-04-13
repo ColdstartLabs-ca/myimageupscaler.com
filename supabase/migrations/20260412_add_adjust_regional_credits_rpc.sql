@@ -61,6 +61,7 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION public.adjust_regional_credits(UUID, INTEGER, TEXT) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.adjust_regional_credits(UUID, INTEGER, TEXT) FROM anon;
 REVOKE ALL ON FUNCTION public.adjust_regional_credits(UUID, INTEGER, TEXT) FROM authenticated;
 GRANT EXECUTE ON FUNCTION public.adjust_regional_credits(UUID, INTEGER, TEXT) TO service_role;
 
