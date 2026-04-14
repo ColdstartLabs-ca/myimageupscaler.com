@@ -23,6 +23,15 @@ export interface IAntiFreeloaderProfile {
   created_at?: string | null;
 }
 
+export interface IEnsureAntiFreeloaderProfileOptions {
+  /**
+   * When false, derive anti-freeloader fields in-memory without writing to the DB.
+   * Use this on hot request paths like uploads so quota enforcement doesn't depend
+   * on profile bookkeeping succeeding in the same request.
+   */
+  persist?: boolean;
+}
+
 export function getRequestCountry(req: NextRequest): string | null {
   return (
     req.headers.get('CF-IPCountry') ||
@@ -64,12 +73,14 @@ export function getAdjustedRegionalFreeCredits(
 export async function ensureAntiFreeloaderProfile(
   req: NextRequest,
   userId: string,
-  profile: IAntiFreeloaderProfile | null
+  profile: IAntiFreeloaderProfile | null,
+  options: IEnsureAntiFreeloaderProfileOptions = {}
 ): Promise<IAntiFreeloaderProfile | null> {
   if (!profile) {
     return null;
   }
 
+  const shouldPersist = options.persist ?? true;
   const country = getRequestCountry(req);
   const ip = getRequestIp(req);
   const updates: Partial<IAntiFreeloaderProfile> = {};
@@ -103,7 +114,7 @@ export async function ensureAntiFreeloaderProfile(
     shouldCheckSignupIp = true;
   }
 
-  if (Object.keys(updates).length > 0) {
+  if (shouldPersist && Object.keys(updates).length > 0) {
     const { error } = await supabaseAdmin.from('profiles').update(updates).eq('id', userId);
 
     if (error) {
@@ -114,7 +125,7 @@ export async function ensureAntiFreeloaderProfile(
   // Credit balance must be adjusted via RPC — direct REST updates to subscription_credits_balance
   // are blocked by the prevent_credit_update trigger (which requires app.trusted_credit_operation
   // to be set, and that flag is only settable from within PL/pgSQL functions, not REST API calls).
-  if (targetCreditBalance !== undefined) {
+  if (shouldPersist && targetCreditBalance !== undefined) {
     const { error } = await supabaseAdmin.rpc('adjust_regional_credits', {
       p_user_id: userId,
       p_new_balance: targetCreditBalance,
@@ -126,7 +137,7 @@ export async function ensureAntiFreeloaderProfile(
     }
   }
 
-  if (shouldCheckSignupIp && ip) {
+  if (shouldPersist && shouldCheckSignupIp && ip) {
     await supabaseAdmin.rpc('check_signup_ip', {
       p_user_id: userId,
       p_ip: ip,

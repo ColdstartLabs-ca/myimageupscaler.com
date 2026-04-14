@@ -155,6 +155,41 @@ describe('ensureAntiFreeloaderProfile', () => {
     });
   });
 
+  describe('read-only mode', () => {
+    it('derives restricted-tier balance without persisting writes', async () => {
+      const result = await ensureAntiFreeloaderProfile(
+        makeReq('IN', '9.8.7.6'),
+        'uid-15',
+        makeProfile(),
+        { persist: false }
+      );
+
+      expect(result).toMatchObject({
+        region_tier: 'restricted',
+        signup_country: 'IN',
+        signup_ip: '9.8.7.6',
+        subscription_credits_balance: 3,
+      });
+      expect(mockUpdate).not.toHaveBeenCalled();
+      expect(mockRpc).not.toHaveBeenCalled();
+    });
+
+    it('derives paywalled balance without persisting writes', async () => {
+      PAYWALLED_COUNTRIES.add('PW');
+      const result = await ensureAntiFreeloaderProfile(makeReq('PW'), 'uid-16', makeProfile(), {
+        persist: false,
+      });
+
+      expect(result).toMatchObject({
+        region_tier: 'paywalled',
+        signup_country: 'PW',
+        subscription_credits_balance: 0,
+      });
+      expect(mockUpdate).not.toHaveBeenCalled();
+      expect(mockRpc).not.toHaveBeenCalled();
+    });
+  });
+
   describe('error handling', () => {
     it('throws on REST update failure', async () => {
       mockEq.mockResolvedValue({ error: { message: 'db error' } });

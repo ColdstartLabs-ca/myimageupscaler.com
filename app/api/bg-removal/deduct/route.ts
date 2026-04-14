@@ -42,7 +42,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       .eq('id', userId)
       .single();
 
-    const profile = await ensureAntiFreeloaderProfile(req, userId, rawProfile);
+    const profile = await ensureAntiFreeloaderProfile(req, userId, rawProfile, {
+      persist: false,
+    });
 
     if (isFreeleaderBlocked(profile)) {
       logger.warn('Blocked flagged freeloader', { userId });
@@ -56,6 +58,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
         { status: 403 }
       );
+    }
+
+    const effectiveTotalCredits =
+      (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);
+    if (effectiveTotalCredits < BG_REMOVAL_CREDIT_COST) {
+      const { body, status } = createErrorResponse(
+        ErrorCodes.INSUFFICIENT_CREDITS,
+        `You have insufficient credits. Background removal requires ${BG_REMOVAL_CREDIT_COST} credit.`,
+        402,
+        { required: BG_REMOVAL_CREDIT_COST }
+      );
+      return NextResponse.json(body, { status });
     }
 
     // Rate limit (shares the upscale rate limiter)

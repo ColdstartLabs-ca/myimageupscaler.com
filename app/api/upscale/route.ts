@@ -261,7 +261,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       .eq('id', userId)
       .single();
 
-    const profile = await ensureAntiFreeloaderProfile(req, userId, rawProfile);
+    const profile = await ensureAntiFreeloaderProfile(req, userId, rawProfile, {
+      persist: false,
+    });
 
     // 3a. Block flagged free-tier users before any credit-consuming work
     if (isFreeleaderBlocked(profile)) {
@@ -667,6 +669,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     creditCost = Math.ceil(baseCost * modelScaleMultiplier) + smartAnalysisCost;
     creditCost = Math.max(creditCost, creditCosts.minimumCost);
     creditCost = Math.min(creditCost, creditCosts.maximumCost);
+
+    const effectiveTotalCredits =
+      (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);
+    if (effectiveTotalCredits < creditCost) {
+      logFailure('insufficient_effective_credits', {
+        requiredCredits: creditCost,
+        effectiveTotalCredits,
+      });
+      const { body, status } = createErrorResponse(
+        ErrorCodes.INSUFFICIENT_CREDITS,
+        `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
+        402,
+        { required: creditCost }
+      );
+      return NextResponse.json(body, { status });
+    }
 
     // 11. Process image with resolved model and settings
     let processor;
