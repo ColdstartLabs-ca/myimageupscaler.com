@@ -17,6 +17,8 @@ import {
 vi.mock('../../../app/api/webhooks/stripe/handlers/payment.handler', () => ({
   PaymentHandler: {
     handleCheckoutSessionCompleted: vi.fn(),
+    handleAsyncPaymentSucceeded: vi.fn(),
+    handleAsyncPaymentFailed: vi.fn(),
     handleChargeRefunded: vi.fn(),
     handleInvoicePaymentRefunded: vi.fn(),
   },
@@ -55,6 +57,8 @@ import { DisputeHandler } from '../../../app/api/webhooks/stripe/handlers/disput
 // Cast mocked handlers to the correct type for testing
 const MockedPaymentHandler = PaymentHandler as {
   handleCheckoutSessionCompleted: ReturnType<typeof vi.fn>;
+  handleAsyncPaymentSucceeded: ReturnType<typeof vi.fn>;
+  handleAsyncPaymentFailed: ReturnType<typeof vi.fn>;
   handleChargeRefunded: ReturnType<typeof vi.fn>;
   handleInvoicePaymentRefunded: ReturnType<typeof vi.fn>;
 };
@@ -364,6 +368,48 @@ describe('Stripe Webhook Event Processor', () => {
       });
     });
 
+    describe('checkout.session.async_payment_succeeded', () => {
+      test('should route to PaymentHandler.handleAsyncPaymentSucceeded', async () => {
+        const event = {
+          id: 'evt_test',
+          type: 'checkout.session.async_payment_succeeded',
+          data: {
+            object: { id: 'cs_test', mode: 'payment' },
+          },
+        } as Stripe.Event;
+
+        MockedPaymentHandler.handleAsyncPaymentSucceeded.mockResolvedValue(undefined);
+
+        const result = await processStripeWebhookEvent(event);
+
+        expect(result.handled).toBe(true);
+        expect(MockedPaymentHandler.handleAsyncPaymentSucceeded).toHaveBeenCalledWith(
+          event.data.object
+        );
+      });
+    });
+
+    describe('checkout.session.async_payment_failed', () => {
+      test('should route to PaymentHandler.handleAsyncPaymentFailed', async () => {
+        const event = {
+          id: 'evt_test',
+          type: 'checkout.session.async_payment_failed',
+          data: {
+            object: { id: 'cs_test', mode: 'payment' },
+          },
+        } as Stripe.Event;
+
+        MockedPaymentHandler.handleAsyncPaymentFailed.mockResolvedValue(undefined);
+
+        const result = await processStripeWebhookEvent(event);
+
+        expect(result.handled).toBe(true);
+        expect(MockedPaymentHandler.handleAsyncPaymentFailed).toHaveBeenCalledWith(
+          event.data.object
+        );
+      });
+    });
+
     describe('customer.created', () => {
       test('should route to SubscriptionHandler.handleCustomerCreated', async () => {
         const event = {
@@ -623,9 +669,7 @@ describe('Stripe Webhook Event Processor', () => {
         const result = await processStripeWebhookEvent(event);
 
         expect(result.handled).toBe(true);
-        expect(MockedPaymentHandler.handleChargeRefunded).toHaveBeenCalledWith(
-          event.data.object
-        );
+        expect(MockedPaymentHandler.handleChargeRefunded).toHaveBeenCalledWith(event.data.object);
       });
     });
 
@@ -723,16 +767,14 @@ describe('Stripe Webhook Event Processor', () => {
           },
         } as Stripe.Event;
 
-        MockedSubscriptionHandler.handleSubscriptionScheduleCompleted.mockResolvedValue(
-          undefined
-        );
+        MockedSubscriptionHandler.handleSubscriptionScheduleCompleted.mockResolvedValue(undefined);
 
         const result = await processStripeWebhookEvent(event);
 
         expect(result.handled).toBe(true);
-        expect(
-          MockedSubscriptionHandler.handleSubscriptionScheduleCompleted
-        ).toHaveBeenCalledWith(event.data.object);
+        expect(MockedSubscriptionHandler.handleSubscriptionScheduleCompleted).toHaveBeenCalledWith(
+          event.data.object
+        );
       });
     });
 

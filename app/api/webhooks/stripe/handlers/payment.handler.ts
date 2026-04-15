@@ -331,6 +331,14 @@ export class PaymentHandler {
         }
       }
     } else if (session.mode === 'payment') {
+      // PIX and other async payment methods: checkout.session.completed fires with
+      // payment_status='unpaid'. Defer credit allocation to async_payment_succeeded.
+      if (session.payment_status !== 'paid') {
+        console.log(
+          `[CHECKOUT_ASYNC_PAYMENT] Session ${session.id} payment_status='${session.payment_status}' — deferring to checkout.session.async_payment_succeeded`
+        );
+        return;
+      }
       purchaseType = 'credit_pack';
       packKey = session.metadata?.pack_key;
       // Handle credit pack purchase
@@ -480,6 +488,143 @@ export class PaymentHandler {
         }
       }
     }
+  }
+
+  /**
+   * Handle PIX / async payment confirmation.
+   * Fires on checkout.session.async_payment_succeeded — grants credits after the
+   * customer completes the PIX transfer (up to 1 hour after checkout).
+   */
+  static async handleAsyncPaymentSucceeded(session: Stripe.Checkout.Session): Promise<void> {
+    if (session.mode !== 'payment') {
+      console.warn(
+        `[ASYNC_PAYMENT_SUCCEEDED] Unexpected mode '${session.mode}' for session ${session.id}`
+      );
+      return;
+    }
+
+    const userId = await this.resolveCheckoutSessionUserId(session);
+    console.log(`[ASYNC_PAYMENT_SUCCEEDED] Session ${session.id} for user ${userId}`);
+
+    const packKey = session.metadata?.pack_key;
+    const amountCents = session.amount_total || 0;
+
+    await this.handleCreditPackPurchase(session, userId);
+
+    if (session.metadata?.engagement_discount_applied === 'true') {
+      try {
+        const redeemResult = await redeemDiscount(userId);
+        if (redeemResult.success) {
+          console.log(`[ENGAGEMENT_DISCOUNT] Discount redeemed for user ${userId}`);
+          await trackServerEvent(
+            'engagement_discount_redeemed',
+            {
+              pack: packKey || 'unknown',
+              discountPercent: parseInt(session.metadata?.engagement_discount_percent || '0', 10),
+              amountCents,
+              sessionId: session.id,
+            },
+            { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+          );
+        } else {
+          console.warn(
+            `[ENGAGEMENT_DISCOUNT] Failed to redeem discount for user ${userId}:`,
+            redeemResult.error
+          );
+        }
+      } catch (redeemError) {
+        console.error('[ENGAGEMENT_DISCOUNT] Error redeeming discount:', redeemError);
+      }
+    }
+
+    const paymentMethodType = session.payment_method_types?.[0] || 'pix';
+    const paymentMethod = paymentMethodType === 'card' ? 'stripe_card' : paymentMethodType;
+    const pricingRegion = session.metadata?.pricing_region || 'standard';
+    const discountPercent = parseInt(
+      session.metadata?.effective_discount_percent || session.metadata?.discount_percent || '0',
+      10
+    );
+
+    await trackServerEvent(
+      'checkout_completed',
+      {
+        purchaseType: 'credit_pack',
+        pack: packKey,
+        amount: amountCents,
+        paymentMethod,
+        sessionId: session.id,
+        currency: session.currency ?? 'usd',
+        pricingRegion,
+        discountPercent,
+      },
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+    );
+
+    await trackServerEvent(
+      'purchase_confirmed',
+      {
+        purchaseType: 'credit_pack',
+        sessionId: session.id,
+        pricingRegion,
+        discountPercent,
+        pack: packKey,
+        amount: amountCents,
+        currency: session.currency ?? 'usd',
+        stripePaymentIntentId:
+          typeof session.payment_intent === 'string'
+            ? session.payment_intent
+            : session.payment_intent?.id || null,
+        stripeCheckoutSessionId: session.id,
+        stripeCustomerId:
+          typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
+        priceId: session.metadata?.price_id || null,
+      },
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+    );
+
+    await trackRevenue(
+      {
+        userId,
+        amountCents,
+        productId: `credit_pack_${packKey ?? 'unknown'}`,
+        purchaseType: 'credit_pack',
+        currency: session.currency ?? 'usd',
+      },
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+    );
+
+    const banditArmIdRaw = session.metadata?.bandit_arm_id;
+    if (banditArmIdRaw) {
+      const banditArmId = parseInt(banditArmIdRaw, 10);
+      if (!isNaN(banditArmId) && banditArmId > 0) {
+        await recordBanditConversion(banditArmId, amountCents);
+      }
+    }
+  }
+
+  /**
+   * Handle PIX / async payment failure.
+   * Fires on checkout.session.async_payment_failed — no credits granted.
+   */
+  static async handleAsyncPaymentFailed(session: Stripe.Checkout.Session): Promise<void> {
+    let userId: string;
+    try {
+      userId = await this.resolveCheckoutSessionUserId(session);
+    } catch {
+      console.warn(`[ASYNC_PAYMENT_FAILED] Session ${session.id} — could not resolve user`);
+      return;
+    }
+    console.warn(`[ASYNC_PAYMENT_FAILED] Session ${session.id} for user ${userId}`);
+    await trackServerEvent(
+      'checkout_async_payment_failed',
+      {
+        sessionId: session.id,
+        packKey: session.metadata?.pack_key,
+        amountCents: session.amount_total || 0,
+        currency: session.currency ?? 'usd',
+      },
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+    );
   }
 
   /**

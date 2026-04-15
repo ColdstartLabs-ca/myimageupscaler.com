@@ -309,6 +309,7 @@ describe('Checkout Region Tracking', () => {
     test('includes pricingRegion for credit pack purchases', async () => {
       const session = createMockSession({
         mode: 'payment',
+        payment_status: 'paid',
         metadata: {
           user_id: 'user_test_123',
           pricing_region: 'south_asia',
@@ -336,6 +337,7 @@ describe('Checkout Region Tracking', () => {
     test('recovers checkout identity from client_reference_id for credit pack purchases', async () => {
       const session = createMockSession({
         mode: 'payment',
+        payment_status: 'paid',
         client_reference_id: 'user_clientref_123',
         metadata: {
           pricing_region: 'south_asia',

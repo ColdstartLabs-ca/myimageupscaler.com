@@ -6,6 +6,8 @@ import { DisputeHandler } from '@app/api/webhooks/stripe/handlers/dispute.handle
 
 type StripeWebhookEventType =
   | 'checkout.session.completed'
+  | 'checkout.session.async_payment_succeeded'
+  | 'checkout.session.async_payment_failed'
   | 'customer.created'
   | 'customer.subscription.created'
   | 'customer.subscription.updated'
@@ -93,6 +95,16 @@ export async function processStripeWebhookEvent(
       await PaymentHandler.handleCheckoutSessionCompleted(
         event.data.object as Stripe.Checkout.Session
       );
+      return { handled: true };
+
+    case 'checkout.session.async_payment_succeeded':
+      await PaymentHandler.handleAsyncPaymentSucceeded(
+        event.data.object as Stripe.Checkout.Session
+      );
+      return { handled: true };
+
+    case 'checkout.session.async_payment_failed':
+      await PaymentHandler.handleAsyncPaymentFailed(event.data.object as Stripe.Checkout.Session);
       return { handled: true };
 
     case 'customer.created':

@@ -107,6 +107,7 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
       const session = {
         id: mockSessionId,
         mode: 'payment' as const,
+        payment_status: 'paid',
         customer: mockCustomerId as string | Stripe.Customer,
         payment_intent: 'pi_test_123' as string | Stripe.PaymentIntent,
         amount_total: 2000,
@@ -174,6 +175,7 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
       const session = {
         id: mockSessionId,
         mode: 'payment' as const,
+        payment_status: 'paid',
         customer: mockCustomerId as string | Stripe.Customer,
         payment_intent: 'pi_test_123' as string | Stripe.PaymentIntent,
         amount_total: 2000,

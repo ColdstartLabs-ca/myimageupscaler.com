@@ -538,6 +538,7 @@ export type IAnalyticsEventName =
   | 'checkout_started'
   | 'checkout_completed'
   | 'checkout_abandoned'
+  | 'checkout_async_payment_failed' // PIX / async payment method failed after checkout
   | 'purchase_confirmed' // Server-side confirmation fired from Stripe webhook
   | 'success_page_viewed' // Client-side: user actually reached the success page
   // Error/limit events (server-side only)

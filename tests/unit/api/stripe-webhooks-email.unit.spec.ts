@@ -332,6 +332,7 @@ describe('Stripe Webhooks - Email Integration', () => {
       const session: Stripe.Checkout.Session = {
         id: 'cs_test',
         mode: 'payment',
+        payment_status: 'paid',
         customer: 'cus_test',
         customer_email: 'buyer@example.com',
         customer_details: {
@@ -375,6 +376,7 @@ describe('Stripe Webhooks - Email Integration', () => {
       const session: Stripe.Checkout.Session = {
         id: 'cs_test',
         mode: 'payment',
+        payment_status: 'paid',
         customer: 'cus_test',
         customer_email: 'buyer@example.com',
         customer_details: {
@@ -417,6 +419,7 @@ describe('Stripe Webhooks - Email Integration', () => {
       const session: Stripe.Checkout.Session = {
         id: 'cs_test',
         mode: 'payment',
+        payment_status: 'paid',
         customer: 'cus_test',
         customer_email: 'buyer@example.com',
         customer_details: {
