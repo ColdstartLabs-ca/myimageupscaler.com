@@ -261,7 +261,41 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       .eq('id', userId)
       .single();
 
-    const profile = await ensureAntiFreeloaderProfile(req, userId, rawProfile, {
+    // In test mode, mock users don't exist in the database.
+    // Build a synthetic profile so that tests don't get 402 due to missing credits.
+    // Subscription info is encoded in the userId as: mock_user_{uuid}_sub_{status}_{tier}
+    const effectiveRawProfile = (() => {
+      if (serverEnv.ENV !== 'test') return rawProfile;
+      if (rawProfile !== null) return rawProfile;
+      if (!userId.startsWith('mock_user_')) return rawProfile;
+
+      let subscriptionStatus: string | null = null;
+      let subscriptionTier: string | null = null;
+
+      const subMatch = userId.match(/_sub_([^_]+)_([^_]+)$/);
+      if (subMatch) {
+        subscriptionStatus = subMatch[1];
+        subscriptionTier = subMatch[2];
+      }
+
+      const isActiveSub = subscriptionStatus === 'active' || subscriptionStatus === 'trialing';
+
+      return {
+        subscription_status: subscriptionStatus,
+        subscription_tier: subscriptionTier,
+        // Subscription users get credits in subscription_credits_balance;
+        // free mock users get a generous purchased_credits_balance so they can process images.
+        subscription_credits_balance: isActiveSub ? 1000 : 0,
+        purchased_credits_balance: isActiveSub ? 0 : 1000,
+        is_flagged_freeloader: false,
+        region_tier: null,
+        signup_country: null,
+        signup_ip: null,
+        created_at: new Date().toISOString(),
+      };
+    })();
+
+    const profile = await ensureAntiFreeloaderProfile(req, userId, effectiveRawProfile, {
       persist: false,
     });
 
@@ -892,7 +926,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const statusCode =
         error.code === 'RATE_LIMITED'
           ? 429
-          : error.code === 'SAFETY' || error.code === 'IMAGE_TOO_LARGE' || error.code === 'INVALID_INPUT'
+          : error.code === 'SAFETY' ||
+              error.code === 'IMAGE_TOO_LARGE' ||
+              error.code === 'INVALID_INPUT'
             ? error.code === 'INVALID_INPUT'
               ? 400
               : 422
@@ -906,7 +942,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
               ? ErrorCodes.INVALID_REQUEST
               : error.code === 'INVALID_INPUT'
                 ? ErrorCodes.VALIDATION_ERROR
-              : ErrorCodes.AI_UNAVAILABLE;
+                : ErrorCodes.AI_UNAVAILABLE;
       logFailure(
         `replicate_${String(error.code).toLowerCase()}`,
         {
