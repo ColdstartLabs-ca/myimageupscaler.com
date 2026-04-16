@@ -48,6 +48,27 @@ Read `/tmp/gsc-DOMAIN.json` and prioritize:
 9. `searchAppearance`
    - rich result or SERP feature signals
 
+## Blog SEO Audit (Title/Meta + Intent)
+
+After fetching GSC data, always run the blog SEO audit to cross-reference blog post metadata with actual search performance:
+
+```bash
+node ./.claude/skills/gsc-analysis/scripts/audit-blog-seo.cjs --gsc=/tmp/gsc-DOMAIN.json --output=/tmp/blog-audit-DOMAIN.json
+```
+
+The audit checks:
+
+1. **Title/description SERP length** — flags titles outside 30-60 chars or descriptions outside 120-160 chars
+2. **Missing seo_title/seo_description** — posts relying on raw title (up to 200 chars) get truncated in SERPs
+3. **Keyword overlap** — tokenizes the page's effective title and the top GSC queries driving impressions, flags low overlap
+4. **Intent alignment** — detects intent modifiers in queries (best/how-to/vs/free) and checks if the title matches that intent type
+5. **CTR vs position benchmark** — compares actual CTR against expected CTR for the page's average position
+
+Read `/tmp/blog-audit-DOMAIN.json` and include the findings in the CTR Fixes section. Prioritize posts with:
+- High impressions + error-severity issues (biggest impact)
+- Intent mismatches (these explain why impressions exist but clicks don't)
+- Missing seo_title on long titles (guaranteed SERP truncation)
+
 ## Analysis Framework
 
 ### 1. Performance Summary
@@ -74,11 +95,13 @@ Use `growthOverview.contentCreation` for:
 
 ### 4. CTR Work
 
-Use `ctrOptimization` and `pageCtrOpportunities` for:
+Use `ctrOptimization` and `pageCtrOpportunities` combined with blog audit findings:
 
-- title rewrites
-- meta description rewrites
-- rich-result support
+- **Intent mismatches** — if top queries signal "best" intent but the title reads like an explainer, recommend a title that matches (e.g., "10 Best Free AI Image Upscalers (2026)")
+- **Keyword gaps** — if the top query keywords aren't in the title, suggest specific rewrites incorporating them
+- **Length fixes** — if seo_title is missing and the raw title exceeds 60 chars, write a compliant seo_title
+- **Meta description rewrites** — ensure descriptions are 120-160 chars and contain top query keywords + a CTA
+- Rich-result support where applicable
 
 ### 5. Technical Blockers
 

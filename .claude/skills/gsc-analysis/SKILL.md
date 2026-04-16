@@ -135,6 +135,16 @@ ls -la ~/projects/convertbanktoexcel.com/cloud/keys/coldstart-labs-service-accou
 - Verify the property exists as `sc-domain:myimageupscaler.com`
 - GSC data lags by roughly 2-3 days, so the script intentionally holds back recent days
 
+## Blog SEO Audit
+
+After fetching GSC data, run the blog audit to cross-reference blog post metadata with search performance:
+
+```bash
+node ./.claude/skills/gsc-analysis/scripts/audit-blog-seo.cjs --gsc=/tmp/gsc-miu.json --output=/tmp/blog-audit-miu.json
+```
+
+This checks title/meta SERP lengths, keyword overlap between titles and top GSC queries, intent alignment (listicle vs how-to vs comparison vs free-tool), and CTR vs position benchmarks. Include findings in the CTR Fixes section of the analysis report.
+
 ## Files
 
 | Item | Path |
@@ -142,3 +152,4 @@ ls -la ~/projects/convertbanktoexcel.com/cloud/keys/coldstart-labs-service-accou
 | Skill Doc | `./.claude/skills/gsc-analysis/SKILL.md` |
 | Prompt | `./.claude/skills/gsc-analysis/prompt.md` |
 | Fetch Script | `./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs` |
+| Blog SEO Audit | `./.claude/skills/gsc-analysis/scripts/audit-blog-seo.cjs` |

@@ -46,8 +46,16 @@ export const createBlogPostSchema = z.object({
     .string()
     .max(200, 'Featured image alt text must be at most 200 characters')
     .optional(),
-  seo_title: z.string().max(70, 'SEO title must be at most 70 characters').optional(),
-  seo_description: z.string().max(160, 'SEO description must be at most 160 characters').optional(),
+  seo_title: z
+    .string()
+    .min(30, 'SEO title must be at least 30 characters for SERP visibility')
+    .max(60, 'SEO title must be at most 60 characters to avoid SERP truncation')
+    .optional(),
+  seo_description: z
+    .string()
+    .min(120, 'SEO description must be at least 120 characters for SERP coverage')
+    .max(160, 'SEO description must be at most 160 characters to avoid SERP truncation')
+    .optional(),
 });
 
 export type ICreateBlogPostInput = z.infer<typeof createBlogPostSchema>;

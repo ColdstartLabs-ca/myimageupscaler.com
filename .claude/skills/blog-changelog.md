@@ -60,3 +60,23 @@ EOF
 - `best-image-upscaling-tools-2026` — unpublished → 301 to `best-free-ai-image-upscaler-2026-tested-compared`
 - `photo-enhancement-upscaling-vs-quality` — unpublished → 301 to `ai-image-upscaling-vs-sharpening-explained` (pos 3.2, clearly preferred by Google)
 - `next.config.js` — added 6 permanent redirect rules (slug + locale-prefixed variants)
+
+## 2026-04-15
+
+### SEO: SERP title truncation fixes (13 posts)
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared, ai-image-upscaling-vs-sharpening-explained, free-ai-upscaler-no-watermark, best-ai-image-quality-enhancer-free, upscale-image-for-print-300-dpi-guide, best-ai-upscaler, how-to-upscale-images-without-losing-quality, how-to-make-low-resolution-photo-high-resolution, noise-reduction-for-photos, ai-vs-traditional-image-upscaling, how-to-upscale-images, how-to-fix-blurry-photos-with-ai, how-to-upscale-images-for-ecommerce
+**Why:** GSC audit (blog-ctr-audit-2026-04-15.md) revealed 36,000+ monthly impressions with near-zero CTR driven by SERP title truncation. Top posts had titles 60-70 chars (Google truncates at ~60). Also fixed 5 intent mismatches (titles not matching dominant query intent) and 2 over-length descriptions.
+**Changes:**
+- `best-free-ai-image-upscaler-2026-tested-compared` — seo_title 68→49 chars, seo_description 161→151 chars
+- `ai-image-upscaling-vs-sharpening-explained` — seo_title 67→56 chars (intent: opinion→explainer), seo_description 169→138 chars
+- `free-ai-upscaler-no-watermark` — seo_title: added "No Signup" qualifier (55 chars)
+- `best-ai-image-quality-enhancer-free` — seo_title 66→53 chars, fixed "enhancer"→"sharpener" keyword mismatch
+- `upscale-image-for-print-300-dpi-guide` — seo_title 70→49 chars, seo_description 165→138 chars
+- `best-ai-upscaler` — seo_title 67→52 chars
+- `how-to-upscale-images-without-losing-quality` — seo_title 66→51 chars
+- `how-to-make-low-resolution-photo-high-resolution` — seo_title: added "How to" signal for 61% how-to intent
+- `noise-reduction-for-photos` — seo_title: added "How to" signal for 55% how-to intent
+- `ai-vs-traditional-image-upscaling` — seo_title 70→51 chars
+- `how-to-upscale-images` — seo_title: added "Free" for 100% free-tool intent
+- `how-to-fix-blurry-photos-with-ai` — seo_description 165→152 chars
+- `how-to-upscale-images-for-ecommerce` — seo_description 163→157 chars
