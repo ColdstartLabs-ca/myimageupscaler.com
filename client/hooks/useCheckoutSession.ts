@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
 import { clientEnv } from '@shared/config/env';
 import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
+import { analytics } from '@client/analytics';
 import { useToastStore } from '@client/store/toastStore';
 import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { getStoredCheckoutRescueOffer } from '@client/utils/checkoutRescueOfferStorage';
@@ -152,6 +153,12 @@ export function useCheckoutSession({
         if (banditArmId) {
           metadata.bandit_arm_id = String(banditArmId);
         }
+
+        // Pass Amplitude device/session IDs so webhook events stitch to this browser session
+        const amplitudeDeviceId = analytics.getDeviceId();
+        const amplitudeSessionId = analytics.getAmplitudeSessionId();
+        if (amplitudeDeviceId) metadata.amplitude_device_id = amplitudeDeviceId;
+        if (amplitudeSessionId !== null) metadata.amplitude_session_id = String(amplitudeSessionId);
 
         // Don't pass successUrl - let the server construct it with proper type & credits params
         const response = await StripeService.createCheckoutSession(priceId, {

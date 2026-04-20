@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { trackServerEvent, trackRevenue } from '@server/analytics';
+import { trackServerEvent, trackRevenue, type IServerTrackOptions } from '@server/analytics';
 import { stripe } from '@server/stripe';
 import { serverEnv } from '@shared/config/env';
 import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@shared/config/stripe';
@@ -15,6 +15,22 @@ interface IStripeChargeExtended extends Stripe.Charge {
 }
 
 export class PaymentHandler {
+  /** Build Amplitude tracking options, stitching server events to the originating browser session. */
+  private static buildAmplitudeOpts(
+    session: Stripe.Checkout.Session,
+    userId: string
+  ): IServerTrackOptions {
+    const deviceId = session.metadata?.amplitude_device_id;
+    const rawSessionId = session.metadata?.amplitude_session_id;
+    const sessionId = rawSessionId ? parseInt(rawSessionId, 10) : undefined;
+    return {
+      apiKey: serverEnv.AMPLITUDE_API_KEY,
+      userId,
+      ...(deviceId ? { deviceId } : {}),
+      ...(sessionId !== undefined && !isNaN(sessionId) ? { sessionId } : {}),
+    };
+  }
+
   private static async resolveCheckoutSessionUserId(
     session: Stripe.Checkout.Session
   ): Promise<string> {
@@ -148,6 +164,7 @@ export class PaymentHandler {
    */
   static async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session): Promise<void> {
     const userId = await this.resolveCheckoutSessionUserId(session);
+    const amplitudeOpts = this.buildAmplitudeOpts(session, userId);
 
     console.log(`Checkout completed for user ${userId}, mode: ${session.mode}`);
 
@@ -360,7 +377,7 @@ export class PaymentHandler {
                 amountCents: session.amount_total || 0,
                 sessionId: session.id,
               },
-              { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+              amplitudeOpts
             );
           } else {
             console.warn(
@@ -406,7 +423,7 @@ export class PaymentHandler {
           pricingRegion,
           discountPercent,
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        amplitudeOpts
       );
 
       // purchase_confirmed is the canonical "purchase happened" event for funnel analysis.
@@ -422,6 +439,7 @@ export class PaymentHandler {
           planTier: planKey,
           pack: packKey,
           amount: amountCents,
+          revenue: amountCents / 100,
           currency: session.currency ?? 'usd',
           stripePaymentIntentId:
             typeof session.payment_intent === 'string'
@@ -432,7 +450,7 @@ export class PaymentHandler {
             typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
           priceId: session.metadata?.price_id || null,
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        amplitudeOpts
       );
 
       // Update user properties in Amplitude for subscription purchases
@@ -476,7 +494,7 @@ export class PaymentHandler {
           purchaseType,
           currency: session.currency ?? 'usd',
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        amplitudeOpts
       );
 
       // Record bandit conversion so Thompson Sampling can update arm stats
@@ -504,6 +522,7 @@ export class PaymentHandler {
     }
 
     const userId = await this.resolveCheckoutSessionUserId(session);
+    const amplitudeOpts = this.buildAmplitudeOpts(session, userId);
     console.log(`[ASYNC_PAYMENT_SUCCEEDED] Session ${session.id} for user ${userId}`);
 
     const packKey = session.metadata?.pack_key;
@@ -524,7 +543,7 @@ export class PaymentHandler {
               amountCents,
               sessionId: session.id,
             },
-            { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+            amplitudeOpts
           );
         } else {
           console.warn(
@@ -557,7 +576,7 @@ export class PaymentHandler {
         pricingRegion,
         discountPercent,
       },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      amplitudeOpts
     );
 
     await trackServerEvent(
@@ -569,6 +588,7 @@ export class PaymentHandler {
         discountPercent,
         pack: packKey,
         amount: amountCents,
+        revenue: amountCents / 100,
         currency: session.currency ?? 'usd',
         stripePaymentIntentId:
           typeof session.payment_intent === 'string'
@@ -579,7 +599,7 @@ export class PaymentHandler {
           typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
         priceId: session.metadata?.price_id || null,
       },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      amplitudeOpts
     );
 
     await trackRevenue(
@@ -590,7 +610,7 @@ export class PaymentHandler {
         purchaseType: 'credit_pack',
         currency: session.currency ?? 'usd',
       },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      amplitudeOpts
     );
 
     const banditArmIdRaw = session.metadata?.bandit_arm_id;
@@ -623,8 +643,52 @@ export class PaymentHandler {
         amountCents: session.amount_total || 0,
         currency: session.currency ?? 'usd',
       },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      this.buildAmplitudeOpts(session, userId)
     );
+  }
+
+  /**
+   * Handle a declined charge (charge.failed webhook).
+   * Tracks payment_failed for one-time credit pack payments; subscription failures come
+   * via invoice.payment_failed which is already handled by InvoiceHandler.
+   */
+  static async handleChargeFailed(charge: Stripe.Charge): Promise<void> {
+    // Only track one-time payment declines; subscription invoice failures go via InvoiceHandler
+    if ((charge as IStripeChargeExtended).invoice) return;
+
+    const customerId =
+      typeof charge.customer === 'string' ? charge.customer : charge.customer?.id || null;
+    if (!customerId) return;
+
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('stripe_customer_id', customerId)
+      .maybeSingle();
+
+    const userId = profile?.id;
+    if (!userId) return;
+
+    const declineCode = charge.failure_code || charge.outcome?.reason || 'generic';
+    trackServerEvent(
+      'payment_failed',
+      {
+        stripePaymentIntentId:
+          typeof charge.payment_intent === 'string' ? charge.payment_intent : null,
+        amount: charge.amount,
+        currency: charge.currency ?? 'usd',
+        decline_reason: declineCode,
+        errorType: declineCode.includes('insufficient_funds')
+          ? 'insufficient_funds'
+          : declineCode.includes('expired')
+            ? 'expired_card'
+            : 'card_declined',
+        errorMessage: charge.failure_message || 'Card declined',
+        customerId,
+        purchaseType: 'credit_pack',
+      },
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+    ).catch(err => console.error('[ANALYTICS] Failed to track charge.failed event', err));
   }
 
   /**
@@ -697,15 +761,28 @@ export class PaymentHandler {
 
       console.log(`Added ${credits} purchased credits to user ${userId} (pack: ${packKey})`);
 
-      // Track credit pack purchased event
+      const amountCents = session.amount_total || 0;
+      const cpAmplitudeOpts = this.buildAmplitudeOpts(session, userId);
       await trackServerEvent(
         'credit_pack_purchased',
         {
           pack: packKey || 'unknown',
           credits,
-          amountCents: session.amount_total || 0,
+          amountCents,
+          revenue: amountCents / 100,
+          currency: session.currency ?? 'usd',
+          pricingRegion: session.metadata?.pricing_region || 'standard',
+          purchaseType: 'credit_pack',
+          stripePaymentIntentId:
+            typeof session.payment_intent === 'string'
+              ? session.payment_intent
+              : (session.payment_intent as Stripe.PaymentIntent | null)?.id || null,
+          stripeCustomerId:
+            typeof session.customer === 'string'
+              ? session.customer
+              : (session.customer as Stripe.Customer | null)?.id || null,
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        cpAmplitudeOpts
       );
     } catch (error) {
       console.error('Failed to process credit purchase:', error);

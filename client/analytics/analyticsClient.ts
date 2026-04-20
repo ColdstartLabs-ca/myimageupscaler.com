@@ -438,8 +438,9 @@ export const analytics = {
 
     const identifyEvent = new amplitudeModule.Identify();
 
-    // Hash email if provided, otherwise use pre-computed hash
+    // Set plaintext email (required for Stripe/Amplitude cross-referencing) and its hash
     if (identity.email) {
+      identifyEvent.set('email', identity.email);
       const emailHash = await hashEmail(identity.email);
       identifyEvent.set('email_hash', emailHash);
     } else if (identity.emailHash) {
@@ -634,6 +635,21 @@ export const analytics = {
         localStorage.setItem(DEVICE_ID_KEY, deviceId);
       }
       return deviceId;
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * Get the Amplitude session ID (Unix ms integer).
+   * Pass to server-side analytics calls so server events stitch to the browser session.
+   * Returns null if Amplitude is not initialized or running server-side.
+   */
+  getAmplitudeSessionId(): number | null {
+    if (typeof window === 'undefined' || !amplitudeModule) return null;
+    try {
+      const id = amplitudeModule.getSessionId();
+      return typeof id === 'number' ? id : null;
     } catch {
       return null;
     }

@@ -37,6 +37,8 @@ export interface IServerTrackOptions {
   apiKey: string;
   userId?: string;
   deviceId?: string;
+  /** Amplitude session_id (Unix ms) — stitches server events to the browser session that triggered them */
+  sessionId?: number;
 }
 
 /**
@@ -93,7 +95,7 @@ export async function trackServerEvent(
   properties: Record<string, unknown>,
   options: IServerTrackOptions
 ): Promise<boolean> {
-  const { apiKey, userId, deviceId } = options;
+  const { apiKey, userId, deviceId, sessionId } = options;
 
   if (!apiKey) {
     console.error('[Analytics] Missing Amplitude API key for server event', {
@@ -125,6 +127,7 @@ export async function trackServerEvent(
     user_id: userId,
     device_id: deviceId || `server-${Date.now()}`,
     time: Date.now(),
+    ...(sessionId !== undefined ? { session_id: sessionId } : {}),
   };
 
   if (isIdentifyEvent) {

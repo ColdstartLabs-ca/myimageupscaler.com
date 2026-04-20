@@ -109,7 +109,12 @@ vi.mock('@client/services/stripeService', () => ({
 
 // Analytics
 vi.mock('@client/analytics', () => ({
-  analytics: { track: mockTrack, isEnabled: () => true },
+  analytics: {
+    track: mockTrack,
+    isEnabled: () => true,
+    getDeviceId: () => null,
+    getAmplitudeSessionId: () => null,
+  },
 }));
 
 // Stores
