@@ -34,11 +34,13 @@ import { HeicConverter } from '@/app/(pseo)/_components/tools/HeicConverter';
 import { ImageCompressor } from '@/app/(pseo)/_components/tools/ImageCompressor';
 import { ImageResizer } from '@/app/(pseo)/_components/tools/ImageResizer';
 import { ImageToPdfConverter } from '@/app/(pseo)/_components/tools/ImageToPdfConverter';
+import { ExifRemover } from '@/app/(pseo)/_components/tools/ExifRemover';
 import { ImageToText } from '@/app/(pseo)/_components/tools/ImageToText';
 import { PdfToImageConverter } from '@/app/(pseo)/_components/tools/PdfToImageConverter';
+import { ImageCropper } from '@/app/(pseo)/_components/tools/ImageCropper';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
+export const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   ImageResizer,
   ImageCompressor,
   FormatConverter,
@@ -50,6 +52,8 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   PdfToImageConverter,
   ImageToPdfConverter,
   ImageToText,
+  ExifRemover,
+  ImageCropper,
 };
 
 /**
@@ -88,6 +92,11 @@ function getToolProps(componentName: string, config?: IToolConfig): Record<strin
     case 'ImageToPdfConverter':
       return {
         acceptedInputFormats: config.acceptedInputFormats,
+      };
+    case 'ImageCropper':
+      return {
+        defaultAspectRatio: config.defaultAspectRatio,
+        aspectRatioPresets: config.aspectRatioPresets,
       };
     default:
       return {};
