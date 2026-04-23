@@ -29,6 +29,9 @@ const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
   'bulk-tools',
   'ai-features',
   'ai-photo-editor',
+  'comparisons-expanded',
+  'personas-expanded',
+  'technical-guides',
 ];
 
 /**
