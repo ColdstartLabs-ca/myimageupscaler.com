@@ -635,6 +635,9 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     // SEO CTR cannibalization redirects — consolidate competing blog URLs
     '/blog/photo-enhancement-upscaling-vs-quality': '/blog/ai-image-upscaling-vs-sharpening-explained',
     '/blog/best-free-ai-image-upscaler-tools-2026': '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+    '/blog/free-upscaler-no-sign-up': '/blog/free-ai-upscaler-no-watermark',
+    '/blog/upscale-image-online-free': '/blog/free-ai-upscaler-no-watermark',
+    '/blog/ai-vs-traditional-image-upscaling': '/blog/ai-image-upscaling-vs-sharpening-explained',
     '/blog/restore-old-photos-online': '/use-cases/old-photo-restoration',
   };
 
