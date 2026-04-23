@@ -585,7 +585,8 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt on 3rd+ downloads', async () => {
     const onUpgrade = vi.fn();
     const { container } = render(
-      <PostDownloadPrompt userSegment="free" downloadCount={3} onUpgrade={onUpgrade} />    );
+      <PostDownloadPrompt userSegment="free" downloadCount={3} onUpgrade={onUpgrade} />
+    );
 
     await new Promise(r => setTimeout(r, 10));
     expect(container.firstChild).toBeNull();
@@ -594,7 +595,8 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt for paid users', async () => {
     const onExploreModels = vi.fn();
     const { container } = render(
-<PostDownloadPrompt userSegment="subscriber" downloadCount={2} onUpgrade={onUpgrade} />    );
+<PostDownloadPrompt userSegment="subscriber" downloadCount={2} onUpgrade={onUpgrade} />
+    );
 
     await new Promise(r => setTimeout(r, 10));
     expect(container.firstChild).toBeNull();
@@ -619,7 +621,8 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
     const { rerender } = render(
       <PostDownloadPrompt
         userSegment="free"
-        downloadCount={2}        currentModel="premium"
+        downloadCount={2}
+        currentModel="premium"
         onExploreModels={onExploreModels}
       />
     );
@@ -643,7 +646,8 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
           userSegment: 'free',
           pricingRegion: 'standard',
         })
-      );    });
+      );
+    });
   });
 
   it('should fire upgrade_prompt_dismissed on X click', async () => {
@@ -698,7 +702,8 @@ it('should respect 24h cooldown via promptFrequency', async () => {
     localStorage.setItem('prompt_freq_post_download_last_shown', String(Date.now()));
 
     const { container } = render(
-      <PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />    );
+      <PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />
+    );
 
     rerender(
       <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />

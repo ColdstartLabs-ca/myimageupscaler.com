@@ -46,6 +46,7 @@ import { useTranslations } from 'next-intl';
 import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import type { IUpgradeDirectParams } from './ModelGalleryModal';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
+import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { MobileUpgradePrompt } from './MobileUpgradePrompt';
 import { ModelGalleryModal } from './ModelGalleryModal';
@@ -79,8 +80,7 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-  const { isFreeUser, userSegment, profile } = useUserData();
-  const hasSubscription = !isFreeUser;
+const { isFreeUser, userSegment } = useUserData();
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
   const { isPaywalled, country } = useRegionTier();
@@ -90,7 +90,7 @@ const Workspace: React.FC = () => {
   useUpgradeAbandonmentDetector({ isFreeUser, userId: profile?.id });
 
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
+  const [_upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
   const [upgradeModalTrigger, setUpgradeModalTrigger] = useState('workspace');
 
   const openUpgradeModal = (outOfCredits = false, trigger = 'workspace') => {
@@ -396,18 +396,6 @@ const Workspace: React.FC = () => {
     );
   };
 
-  const handleUpgradeDirect = ({ trigger, planId }: IUpgradeDirectParams) => {
-    const ctx = getCheckoutTrackingContext();
-    analytics.track('checkout_opened', {
-      priceId: planId,
-      source: 'direct_checkout',
-      trigger,
-      ...(ctx?.originatingTrigger ? { originatingTrigger: ctx.originatingTrigger } : {}),
-      ...(ctx?.attributionChain?.length ? { attributionChain: ctx.attributionChain } : {}),
-    });
-    setDirectCheckoutPriceId(planId);
-  };
-
   // Empty State
   if (queue.length === 0) {
     return (
@@ -463,8 +451,22 @@ const Workspace: React.FC = () => {
                 <X size={20} />
               </button>
               <SampleImageSelector isVisible={true} onSampleSelect={handleSampleSelect} />
-            </div>
           </div>
+        )}
+
+        <PurchaseModal
+          isOpen={showUpgradeModal}
+          onClose={closeUpgradeModal}
+          onPurchaseComplete={closeUpgradeModal}
+          trigger={upgradeModalTrigger}
+        />
+
+        {postAuthCheckoutPriceId && (
+          <CheckoutModal
+            priceId={postAuthCheckoutPriceId}
+            onClose={() => setPostAuthCheckoutPriceId(null)}
+            onSuccess={() => setPostAuthCheckoutPriceId(null)}
+          />
         )}
       </div>
     );
@@ -479,8 +481,52 @@ const Workspace: React.FC = () => {
         <div
           className={cn(
             'w-full md:w-80 border-b md:border-b-0 md:border-r bg-surface border-border',
-            // Mobile: full height when active, Desktop: fixed width sidebar
-            mobileTab === 'upload' ? 'flex-1 min-h-0 md:flex-none' : 'hidden md:block'
+mobileTab === 'upload' ? 'flex-1 min-h-0 md:flex-none' : 'hidden md:block'
+          )}
+        >
+          <BatchSidebar
+            config={config}
+            setConfig={setConfig}
+            queue={queue}
+            isProcessing={isProcessingBatch}
+            batchProgress={batchProgress}
+            completedCount={completedCount}
+            onProcess={() => processBatch(config)}
+            onClear={clearQueue}
+            onUpgrade={() => openUpgradeModal(true, 'workspace_batch_sidebar')}
+          />
+        </div>
+
+        {/* Right Area: Main View + Queue Strip */}
+        <div
+          className={cn(
+            'flex flex-col bg-main overflow-hidden relative',
+            mobileTab === 'preview' ? 'flex-1 min-h-0 md:flex-grow' : 'hidden md:flex md:flex-grow'
+          )}
+        >
+          {/* Progress steps */}
+          <div className="px-3 pt-3 md:px-4 md:pt-4 relative">
+            <ProgressSteps currentStep={progressStep} isFirstUpload={isFirstTimeUser} />
+            <button
+              onClick={handleHelpClick}
+              className="absolute right-3 top-3 md:right-4 md:top-4 flex items-center justify-center w-7 h-7 rounded-lg text-text-muted hover:text-text hover:bg-white/10 transition-colors"
+              aria-label="Try sample images"
+              title="Try sample images"
+            >
+              <HelpCircle size={16} />
+            </button>
+          </div>
+
+          {/* Success Banner */}
+          {_showSuccessBanner && completedCount > 0 && (
+            <div className="px-3 pt-3 md:p-4">
+              <UpgradeSuccessBanner
+                processedCount={completedCount}
+                onDismiss={() => setShowSuccessBanner(false)}
+                hasSubscription={!isFreeUser}
+                onUpgrade={() => openUpgradeModal(false, 'after_batch')}
+              />
+            </div>
           )}
         >
           <BatchSidebar
@@ -533,7 +579,7 @@ const Workspace: React.FC = () => {
           )}
 
           <PostDownloadPrompt
-            isFreeUser={isFreeUser}
+            userSegment={userSegment}
             downloadCount={downloadCount}
             currentModel={config.qualityTier}
             onExploreModels={openExploreGallery}
@@ -591,7 +637,8 @@ const Workspace: React.FC = () => {
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
               userSegment={userSegment}
-              onUpgrade={() => openUpgradeModal(false, 'workspace_preview_area')}            />
+              onUpgrade={() => openUpgradeModal(false, 'workspace_preview_area')}
+            />
           </div>
 
           {/* Queue Strip at bottom */}
@@ -755,27 +802,11 @@ const Workspace: React.FC = () => {
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
 
-      <PremiumUpsellModal
-        isOpen={showPremiumUpsell}
-        onClose={handlePremiumUpsellClose}
-        onProceed={() => {
-          void handlePremiumUpsellProceed();
-        }}
-        onViewPlans={handlePremiumUpsellViewPlans}
-        currentModel={config.qualityTier}
-      />
-
-      <PostDownloadPrompt
-        userSegment={userSegment}
-        downloadCount={downloadCount}
-        currentModel={config.qualityTier}
-        onUpgrade={() => openUpgradeModal(false, 'after_download')}
-      />
-
       {showCelebration && (
         <FirstDownloadCelebration
           userSegment={userSegment}
-          source="upload"          onUploadAnother={() => {
+          source="upload"
+          onUploadAnother={() => {
             setShowCelebration(false);
             // Focus on dropzone
           }}

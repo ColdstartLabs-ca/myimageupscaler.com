@@ -40,9 +40,11 @@ export const PostDownloadPrompt = ({
   const copyVariant = getVariant('after_download_copy', ['value', 'outcome', 'urgency']);
 
   useEffect(() => {
-    if (!showPrompt) return;    if (downloadCount < 1) return;
-    if (downloadCount <= previousDownloadCount) return;
+    if (!showPrompt) return;
+    if (downloadCount < 1) return;
+    if (downloadCount <= previousDownloadCountRef.current) return;
 
+    previousDownloadCountRef.current = downloadCount;
     setVisible(true);
     analytics.track('upgrade_prompt_shown', {
       trigger: 'post_download_explore',
@@ -52,7 +54,8 @@ export const PostDownloadPrompt = ({
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
-  }, [showPrompt, userSegment, downloadCount, pricingRegion, canShow, currentModel, copyVariant]);
+  }, [showPrompt, userSegment, downloadCount, pricingRegion, currentModel, copyVariant]);
+
   if (!visible) return null;
 
   const handleDismiss = () => {
@@ -73,7 +76,8 @@ export const PostDownloadPrompt = ({
       imageVariant: currentModel,
       destination: isCreditPurchaser ? 'billing_subscription_tab' : 'purchase_modal',
       currentPlan: userSegment,
-      userSegment,      pricingRegion: pricingRegion || 'standard',
+      userSegment,
+      pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
     setCheckoutTrackingContext({ originatingTrigger: 'post_download_explore' });
@@ -119,7 +123,7 @@ export const PostDownloadPrompt = ({
           <p className="text-sm text-text-muted mb-5">
             {description}
             <button
-              onClick={handleUpgradeClick}
+              onClick={handleExploreModelsClick}
               className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
             >
               {linkText}
@@ -130,13 +134,15 @@ export const PostDownloadPrompt = ({
               onClick={handleExploreModelsClick}
               className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-secondary to-accent px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-secondary/20 transition-all hover:scale-[1.01] hover:shadow-xl hover:shadow-secondary/30 sm:flex-1"
             >
-              {ctaText}            </button>
+              {ctaText}
+            </button>
             <button
               type="button"
               onClick={handleDismiss}
               className="inline-flex items-center justify-center rounded-xl border border-border px-4 py-3 text-sm text-text-muted transition-colors hover:border-white/20 hover:text-white sm:px-5"
             >
-              {continueText}            </button>
+              {continueText}
+            </button>
           </div>
         </div>
       </div>
