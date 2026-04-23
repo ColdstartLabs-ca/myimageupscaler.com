@@ -20,6 +20,7 @@ import {
   QualityTierSelector,
   UpscaleFactorSelector,
 } from './BatchSidebar/index';
+import type { IUpgradeDirectParams } from './ModelGalleryModal';
 
 interface IBatchProgress {
   current: number;
@@ -36,6 +37,7 @@ interface IBatchSidebarProps {
   onProcess: () => void;
   onClear: () => void;
   onUpgrade: () => void;
+  onUpgradeDirect?: (params: IUpgradeDirectParams) => void;
 }
 
 export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
@@ -48,6 +50,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   onProcess,
   onClear,
   onUpgrade,
+  onUpgradeDirect,
 }) => {
   const { totalCredits, isFreeUser } = useUserData();
   const [showInsufficientModal, setShowInsufficientModal] = useState(false);
@@ -162,6 +165,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           disabled={isProcessing}
           isFreeUser={isFreeUser}
           onUpgrade={onUpgrade}
+          onUpgradeDirect={onUpgradeDirect}
         />
 
         {/* 2. Upscale Factor Selector (dynamic options based on tier) */}

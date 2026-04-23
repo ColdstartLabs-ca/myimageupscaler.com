@@ -98,12 +98,13 @@ export type IUpgradePromptTrigger =
   | 'insufficient_credits'
   | 'model_gate'
   | 'after_upscale'
-  | 'after_comparison'
   | 'after_download'
   | 'post_download_explore'
   | 'celebration_explore'
   | 'after_batch'
-  | 'upgrade_card';
+  | 'upgrade_card'
+  | 'nav_persistent'
+  | 'workspace_header';
 
 export interface IUpgradePromptShownProperties {
   trigger: IUpgradePromptTrigger;
@@ -120,6 +121,7 @@ export interface IUpgradePromptClickedProperties {
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   pricingRegion: string;
   copyVariant?: string; // A/B test variant assignment (e.g., 'control', 'variant_a')
+  originatingTrigger?: IUpgradePromptTrigger;
 }
 
 export interface IUpgradePromptDismissedProperties {
@@ -135,6 +137,8 @@ export interface ICheckoutOpenedProperties {
   source: string;
   trigger?: string;
   originatingModel?: string;
+  originatingTrigger?: IUpgradePromptTrigger;
+  attributionChain?: IUpgradePromptTrigger[];
 }
 
 export interface ICheckoutAuthRequiredProperties {
@@ -494,6 +498,15 @@ export interface IImagePreviewViewedProperties {
 export interface IPaywallShownProperties {
   country: string;
   context: 'guest_api' | 'authenticated_workspace';
+}
+
+// Engagement discount toast shown properties
+export interface IEngagementDiscountToastShownProperties {
+  discountPercent?: number;
+  originalPriceCents?: number;
+  discountedPriceCents?: number;
+  /** Source that triggered the discount toast. Defaults to 'engagement'. */
+  engagement_discount_source?: 'engagement' | 'abandonment';
 }
 
 // =============================================================================

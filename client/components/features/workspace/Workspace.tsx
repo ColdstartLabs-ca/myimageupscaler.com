@@ -21,11 +21,14 @@ import { analytics } from '@client/analytics';
 import { useEngagementTracker } from '@client/hooks/useEngagementTracker';
 import { useOnboardingDriver } from '@client/hooks/useOnboardingDriver';
 import { useRegionTier } from '@client/hooks/useRegionTier';
+import { useUpgradeAbandonmentDetector } from '@client/hooks/useUpgradeAbandonmentDetector';
 import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { EngagementDiscountBanner } from '@client/components/engagement-discount';
 import { clientEnv } from '@shared/config/env';
+import { resolveCheapestRegionalPlan } from '@shared/config/subscription.config';
 import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
+import type { PricingRegion } from '@shared/config/pricing-regions';
 import { downloadSingle } from '@client/utils/download';
 import {
   CheckCircle2,
@@ -37,13 +40,19 @@ import {
   Settings,
   Wand2,
   X,
+  Zap,
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
+import {
+  getCheckoutTrackingContext,
+  setCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
+import type { IUpgradeDirectParams } from './ModelGalleryModal';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
+import { MobileUpgradePrompt } from './MobileUpgradePrompt';
 import { ModelGalleryModal } from './ModelGalleryModal';
 import { PostDownloadPrompt } from './PostDownloadPrompt';
 import { ProgressSteps, checkIsFirstTimeUser, markFirstUploadCompleted } from './ProgressSteps';
@@ -75,10 +84,14 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-  const { isFreeUser } = useUserData();
+  const { isFreeUser, profile } = useUserData();
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
-  const { isPaywalled, country } = useRegionTier();
+  const { isPaywalled, country, pricingRegion } = useRegionTier();
+
+  // Abandonment recovery: if user clicks upgrade but doesn't checkout within 10 min,
+  // show the engagement discount toast (once per session, free users only).
+  useUpgradeAbandonmentDetector({ isFreeUser, userId: profile?.id });
 
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
@@ -94,6 +107,7 @@ const Workspace: React.FC = () => {
     setUpgradeModalOutOfCredits(false);
   };
   const [postAuthCheckoutPriceId, setPostAuthCheckoutPriceId] = useState<string | null>(null);
+  const [directCheckoutPriceId, setDirectCheckoutPriceId] = useState<string | null>(null);
   const processedCheckoutParamRef = React.useRef(false);
 
   // Auto-open checkout after post-auth redirect: /?checkout=<priceId>
@@ -111,6 +125,12 @@ const Workspace: React.FC = () => {
       ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
       ...(checkoutContext?.originatingModel
         ? { originatingModel: checkoutContext.originatingModel }
+        : {}),
+      ...(checkoutContext?.originatingTrigger
+        ? { originatingTrigger: checkoutContext.originatingTrigger }
+        : {}),
+      ...(checkoutContext?.attributionChain?.length
+        ? { attributionChain: checkoutContext.attributionChain }
         : {}),
     });
   }, [searchParams]);
@@ -374,8 +394,62 @@ const Workspace: React.FC = () => {
   };
 
   const handleModelGalleryUpgrade = () => {
-    openUpgradeModal(false, exploreGalleryOpen ? 'post_download_explore' : 'workspace_model_gallery');
+    openUpgradeModal(
+      false,
+      exploreGalleryOpen ? 'post_download_explore' : 'workspace_model_gallery'
+    );
   };
+
+  const handleUpgradeDirect = ({ trigger, planId }: IUpgradeDirectParams) => {
+    const ctx = getCheckoutTrackingContext();
+    analytics.track('checkout_opened', {
+      priceId: planId,
+      source: 'direct_checkout',
+      trigger,
+      ...(ctx?.originatingTrigger ? { originatingTrigger: ctx.originatingTrigger } : {}),
+      ...(ctx?.attributionChain?.length ? { attributionChain: ctx.attributionChain } : {}),
+    });
+    setDirectCheckoutPriceId(planId);
+  };
+
+  const handleWorkspaceHeaderUpgrade = () => {
+    const priceId = resolveCheapestRegionalPlan((pricingRegion as PricingRegion) || 'standard');
+    setCheckoutTrackingContext({ trigger: 'workspace_header' });
+    analytics.track('upgrade_prompt_clicked', {
+      trigger: 'workspace_header',
+      destination: 'checkout_direct',
+      currentPlan: 'free',
+      pricingRegion: pricingRegion || 'standard',
+    });
+    const headerCtx = getCheckoutTrackingContext();
+    analytics.track('checkout_opened', {
+      priceId,
+      source: 'workspace_header',
+      trigger: 'workspace_header',
+      ...(headerCtx?.originatingTrigger
+        ? { originatingTrigger: headerCtx.originatingTrigger }
+        : {}),
+      ...(headerCtx?.attributionChain?.length
+        ? { attributionChain: headerCtx.attributionChain }
+        : {}),
+    });
+    setDirectCheckoutPriceId(priceId);
+  };
+
+  const workspaceHeaderShownRef = React.useRef(false);
+  useEffect(() => {
+    if (!isFreeUser || workspaceHeaderShownRef.current) return;
+    const key = 'workspace_header_shown';
+    if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(key)) {
+      workspaceHeaderShownRef.current = true;
+      sessionStorage.setItem(key, '1');
+      analytics.track('upgrade_prompt_shown', {
+        trigger: 'workspace_header',
+        currentPlan: 'free',
+        pricingRegion: pricingRegion || 'standard',
+      });
+    }
+  }, [isFreeUser, pricingRegion]);
 
   // Empty State
   if (queue.length === 0) {
@@ -395,10 +469,7 @@ const Workspace: React.FC = () => {
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center relative">
           <AmbientBackground variant="section" />
           <div className="relative z-10">
-            <Dropzone
-              onFilesSelected={handleFilesSelected}
-              maxPixels={uploadMaxPixels}
-            />
+            <Dropzone onFilesSelected={handleFilesSelected} maxPixels={uploadMaxPixels} />
             <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 size={13} className="text-secondary shrink-0" />{' '}
@@ -453,6 +524,15 @@ const Workspace: React.FC = () => {
             onSuccess={() => setPostAuthCheckoutPriceId(null)}
           />
         )}
+
+        {directCheckoutPriceId && (
+          <CheckoutModal
+            priceId={directCheckoutPriceId}
+            onClose={() => setDirectCheckoutPriceId(null)}
+            onSuccess={() => setDirectCheckoutPriceId(null)}
+            prefillPlanId={directCheckoutPriceId}
+          />
+        )}
       </div>
     );
   }
@@ -480,6 +560,7 @@ const Workspace: React.FC = () => {
             onProcess={() => processBatch(config)}
             onClear={clearQueue}
             onUpgrade={() => openUpgradeModal(true, 'workspace_batch_sidebar')}
+            onUpgradeDirect={handleUpgradeDirect}
           />
         </div>
 
@@ -494,14 +575,26 @@ const Workspace: React.FC = () => {
           {/* Progress steps */}
           <div className="px-3 pt-3 md:px-4 md:pt-4 relative">
             <ProgressSteps currentStep={progressStep} isFirstUpload={isFirstTimeUser} />
-            <button
-              onClick={handleHelpClick}
-              className="absolute right-3 top-3 md:right-4 md:top-4 flex items-center justify-center w-7 h-7 rounded-lg text-text-muted hover:text-text hover:bg-white/10 transition-colors"
-              aria-label="Try sample images"
-              title="Try sample images"
-            >
-              <HelpCircle size={16} />
-            </button>
+            <div className="absolute right-3 top-3 md:right-4 md:top-4 flex items-center gap-2">
+              {isFreeUser && (
+                <button
+                  onClick={handleWorkspaceHeaderUpgrade}
+                  data-testid="workspace-header-upgrade-button"
+                  className="inline-flex items-center justify-center gap-1 rounded-lg text-xs font-bold transition-all gradient-cta shine-effect text-white shadow-md shadow-accent/20 h-7 px-2"
+                >
+                  <Zap size={11} className="shrink-0" />
+                  <span className="hidden sm:inline">Upgrade</span>
+                </button>
+              )}
+              <button
+                onClick={handleHelpClick}
+                className="flex items-center justify-center w-7 h-7 rounded-lg text-text-muted hover:text-text hover:bg-white/10 transition-colors"
+                aria-label="Try sample images"
+                title="Try sample images"
+              >
+                <HelpCircle size={16} />
+              </button>
+            </div>
           </div>
 
           {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
@@ -521,6 +614,14 @@ const Workspace: React.FC = () => {
             downloadCount={downloadCount}
             currentModel={config.qualityTier}
             onExploreModels={openExploreGallery}
+          />
+
+          {/* Mobile upgrade prompt — shown on preview tab after first completion */}
+          <MobileUpgradePrompt
+            isVisible={mobileTab === 'preview' && completedCount > 0}
+            isFreeUser={isFreeUser}
+            onUpgradeDirect={handleUpgradeDirect}
+            onUpgrade={() => openUpgradeModal(false, 'mobile_preview_prompt')}
           />
 
           {/* Global Error Alerts */}
@@ -687,6 +788,7 @@ const Workspace: React.FC = () => {
         isFreeUser={isFreeUser}
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
         onUpgrade={handleModelGalleryUpgrade}
+        onUpgradeDirect={handleUpgradeDirect}
       />
 
       {/* Mobile Tab Bar */}
@@ -747,6 +849,15 @@ const Workspace: React.FC = () => {
           priceId={postAuthCheckoutPriceId}
           onClose={() => setPostAuthCheckoutPriceId(null)}
           onSuccess={() => setPostAuthCheckoutPriceId(null)}
+        />
+      )}
+
+      {directCheckoutPriceId && (
+        <CheckoutModal
+          priceId={directCheckoutPriceId}
+          onClose={() => setDirectCheckoutPriceId(null)}
+          onSuccess={() => setDirectCheckoutPriceId(null)}
+          prefillPlanId={directCheckoutPriceId}
         />
       )}
 

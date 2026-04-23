@@ -22,6 +22,12 @@ interface ICheckoutModalProps {
   priceId: string;
   onClose: () => void;
   onSuccess?: () => void;
+  /**
+   * When provided, the modal was opened with a pre-resolved plan and skipped the
+   * intermediate plan-picker step. A "Change plan" escape hatch is shown so the user
+   * can still navigate back to the full purchase flow.
+   */
+  prefillPlanId?: string;
 }
 
 /**
@@ -29,7 +35,12 @@ interface ICheckoutModalProps {
  * Composed from useCheckoutAnalytics, useCheckoutSession, useCheckoutRescueOffer,
  * and useModalBehavior hooks.
  */
-export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalProps): JSX.Element {
+export function CheckoutModal({
+  priceId,
+  onClose,
+  onSuccess,
+  prefillPlanId,
+}: ICheckoutModalProps): JSX.Element {
   const t = useTranslations('stripe.checkout');
   const { pricingRegion, banditArmId, isLoading: regionLoading } = useRegionTier();
   const rescueOfferEligible = isCheckoutRescueOfferEligiblePrice(priceId);
@@ -229,6 +240,18 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
             </svg>
           </button>
 
+          {prefillPlanId && (
+            <div className="pt-4 pb-0 px-5 flex justify-start" data-testid="change-plan-bar">
+              <button
+                onClick={() => void handleClose('close_button')}
+                className="text-xs text-text-muted hover:text-text transition-colors underline underline-offset-2"
+                data-testid="change-plan-link"
+              >
+                ← Change plan
+              </button>
+            </div>
+          )}
+
           <div className="flex-1 overflow-y-auto min-h-0 overscroll-contain">
             {loading && (
               <div className="flex items-center justify-center py-20">
@@ -251,21 +274,24 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
                     {errorCode === 'ALREADY_SUBSCRIBED' ? (
                       <a
                         href="/dashboard/billing"
-                        className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
+                        className="px-4 py-2 min-h-[44px] flex items-center bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
                       >
                         Manage subscription
                       </a>
                     ) : (
                       <button
-                        onClick={() => { resetLoadStart(); retry(); }}
-                        className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
+                        onClick={() => {
+                          resetLoadStart();
+                          retry();
+                        }}
+                        className="px-4 py-2 min-h-[44px] bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors touch-manipulation"
                       >
                         Try again
                       </button>
                     )}
                     <button
                       onClick={() => void handleClose('close_button')}
-                      className="px-4 py-2 bg-error text-white rounded-lg hover:bg-error/80 transition-colors touch-manipulation"
+                      className="px-4 py-2 min-h-[44px] bg-error text-white rounded-lg hover:bg-error/80 transition-colors touch-manipulation"
                     >
                       {t('close')}
                     </button>

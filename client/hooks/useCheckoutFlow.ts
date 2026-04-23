@@ -154,11 +154,14 @@ export function useCheckoutFlow({
 
       // Show embedded checkout modal (same UX as credit packs)
       // Track that modal actually opened (bridges gap between upgrade_prompt_clicked and checkout_step_viewed)
+      const ctx = getCheckoutTrackingContext();
       analytics.track('checkout_opened', {
         priceId,
         source: 'embedded_modal',
         ...(effectiveTrigger ? { trigger: effectiveTrigger } : {}),
         originatingModel: effectiveOriginModel,
+        ...(ctx?.originatingTrigger ? { originatingTrigger: ctx.originatingTrigger } : {}),
+        ...(ctx?.attributionChain?.length ? { attributionChain: ctx.attributionChain } : {}),
       });
       setShowCheckoutModal(true);
       setTimeout(() => setIsProcessing(false), 0);

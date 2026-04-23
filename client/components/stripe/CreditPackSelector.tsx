@@ -124,6 +124,12 @@ export function CreditPackSelector({
       ...(checkoutContext?.originatingModel
         ? { originatingModel: checkoutContext.originatingModel }
         : {}),
+      ...(checkoutContext?.originatingTrigger
+        ? { originatingTrigger: checkoutContext.originatingTrigger }
+        : {}),
+      ...(checkoutContext?.attributionChain?.length
+        ? { attributionChain: checkoutContext.attributionChain }
+        : {}),
     });
     setShowCheckoutModal(true);
   };

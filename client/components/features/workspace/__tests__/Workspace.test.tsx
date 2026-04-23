@@ -61,6 +61,7 @@ vi.mock('lucide-react', () => ({
   Settings: () => null,
   Wand2: () => null,
   X: () => null,
+  Zap: () => null,
 }));
 
 // Mock BatchLimitModal

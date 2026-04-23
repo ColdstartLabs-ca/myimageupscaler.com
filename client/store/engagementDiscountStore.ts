@@ -35,6 +35,8 @@ export interface IEngagementDiscountState {
   countdownEndTime: number | null;
   /** Whether the toast_shown impression has been tracked this session */
   hasTrackedImpression: boolean;
+  /** Source that triggered the discount offer ('engagement' | 'abandonment') */
+  discountSource: 'engagement' | 'abandonment';
 
   // Actions
   setSignals: (
@@ -47,6 +49,7 @@ export interface IEngagementDiscountState {
   setWasDismissed: (dismissed: boolean) => void;
   setCountdownEndTime: (time: number | null) => void;
   setHasTrackedImpression: (tracked: boolean) => void;
+  setDiscountSource: (source: 'engagement' | 'abandonment') => void;
   dismissToast: () => void;
   reset: () => void;
 }
@@ -63,6 +66,7 @@ const initialState = {
   wasDismissed: false,
   countdownEndTime: null,
   hasTrackedImpression: false,
+  discountSource: 'engagement' as const,
 };
 
 /**
@@ -94,6 +98,8 @@ export const useEngagementDiscountStore = create<IEngagementDiscountState>()(
       setCountdownEndTime: time => set({ countdownEndTime: time }),
 
       setHasTrackedImpression: tracked => set({ hasTrackedImpression: tracked }),
+
+      setDiscountSource: source => set({ discountSource: source }),
 
       dismissToast: () =>
         set({

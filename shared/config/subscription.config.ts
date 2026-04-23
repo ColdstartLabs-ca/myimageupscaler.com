@@ -10,6 +10,7 @@ import { clientEnv, serverEnv } from './env';
 import { CREDIT_COSTS } from './credits.config';
 import type { ISubscriptionConfig } from './subscription.types';
 import { TIMEOUTS } from './timeouts.config';
+import type { PricingRegion } from './pricing-regions';
 
 /**
  * Default subscription configuration
@@ -362,4 +363,22 @@ export function getPlanConfig(priceId: string): ISubscriptionConfig['plans'][0] 
 export function isTrialEnabled(priceId: string): boolean {
   const config = getTrialConfig(priceId);
   return config ? config.enabled : false;
+}
+
+/**
+ * Regional price IDs for the cheapest (small) credit pack.
+ * All regions currently map to the same Stripe price — the discount is applied
+ * via price_data at checkout time, not via separate Stripe Price objects.
+ *
+ * If a region-specific price is ever introduced, add it here.
+ */
+const CHEAPEST_PACK_BY_REGION: Partial<Record<PricingRegion, string>> = {};
+
+/**
+ * Return the Stripe price ID for the cheapest (smallest) credit pack available
+ * in the given pricing region. Falls back to the standard small pack for any
+ * region that does not have its own price ID configured.
+ */
+export function resolveCheapestRegionalPlan(region: PricingRegion): string {
+  return CHEAPEST_PACK_BY_REGION[region] ?? clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL;
 }

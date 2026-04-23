@@ -58,6 +58,53 @@ interface IFirstTouchUtm {
 }
 
 // =============================================================================
+// Event Bus
+// =============================================================================
+
+/**
+ * Analytics events that can be subscribed to via the internal event bus.
+ * Used for decoupled client-side reactions (e.g. abandonment detector).
+ */
+export type TAnalyticsBusEvent = 'upgrade_prompt_clicked' | 'checkout_opened';
+export type TAnalyticsBusListener = () => void;
+
+const _eventBusListeners = new Map<TAnalyticsBusEvent, Set<TAnalyticsBusListener>>();
+
+/**
+ * Subscribe to an analytics event.
+ * @param event - The analytics event name to listen for.
+ * @param listener - Callback invoked when the event fires.
+ */
+export function onAnalyticsEvent(event: TAnalyticsBusEvent, listener: TAnalyticsBusListener): void {
+  if (!_eventBusListeners.has(event)) {
+    _eventBusListeners.set(event, new Set());
+  }
+  _eventBusListeners.get(event)!.add(listener);
+}
+
+/**
+ * Unsubscribe from an analytics event.
+ * @param event - The analytics event name.
+ * @param listener - The same callback reference passed to onAnalyticsEvent.
+ */
+export function offAnalyticsEvent(
+  event: TAnalyticsBusEvent,
+  listener: TAnalyticsBusListener
+): void {
+  _eventBusListeners.get(event)?.delete(listener);
+}
+
+function _emitBusEvent(event: TAnalyticsBusEvent): void {
+  _eventBusListeners.get(event)?.forEach(listener => {
+    try {
+      listener();
+    } catch {
+      // Silently swallow errors from bus listeners to avoid breaking analytics
+    }
+  });
+}
+
+// =============================================================================
 // State
 // =============================================================================
 
@@ -484,6 +531,11 @@ export const analytics = {
   track(name: IAnalyticsEvent['name'], properties?: Record<string, unknown>): void {
     const eventProperties = buildTrackedEventProperties(properties);
     logDevTrack(name, eventProperties);
+
+    // Emit to internal event bus for decoupled subscribers (e.g. abandonment detector)
+    if (name === 'upgrade_prompt_clicked' || name === 'checkout_opened') {
+      _emitBusEvent(name as TAnalyticsBusEvent);
+    }
 
     if (!this.isEnabled() || !amplitudeModule) return;
 

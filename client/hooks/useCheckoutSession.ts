@@ -12,6 +12,18 @@ import { getStoredCheckoutRescueOffer } from '@client/utils/checkoutRescueOfferS
 import type { TCheckoutStep, TCheckoutErrorType } from '@server/analytics/types';
 
 // ---------------------------------------------------------------------------
+// Mobile viewport detection
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns true when the viewport is narrower than 768px (mobile breakpoint).
+ * Must only be called after hydration (typeof window !== 'undefined').
+ */
+function isMobileViewport(): boolean {
+  return typeof window !== 'undefined' && window.innerWidth < 768;
+}
+
+// ---------------------------------------------------------------------------
 // Stripe initialisation (module-level, created once)
 // ---------------------------------------------------------------------------
 
@@ -159,6 +171,25 @@ export function useCheckoutSession({
         const amplitudeSessionId = analytics.getAmplitudeSessionId();
         if (amplitudeDeviceId) metadata.amplitude_device_id = amplitudeDeviceId;
         if (amplitudeSessionId !== null) metadata.amplitude_session_id = String(amplitudeSessionId);
+
+        // On mobile viewports (<768px) the Stripe embedded form can be cramped
+        // or fail to render correctly. Use the hosted redirect path instead so
+        // mobile users land on Stripe's own mobile-optimised checkout page.
+        if (isMobileViewport()) {
+          const hostedResponse = await StripeService.createCheckoutSession(priceId, {
+            uiMode: 'hosted',
+            ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
+          });
+
+          if (timedOut) return;
+
+          if (hostedResponse.url) {
+            window.location.href = hostedResponse.url;
+            // Keep loading state until navigation completes
+            return;
+          }
+          // Fall through to embedded if hosted URL is not returned
+        }
 
         // Don't pass successUrl - let the server construct it with proper type & credits params
         const response = await StripeService.createCheckoutSession(priceId, {

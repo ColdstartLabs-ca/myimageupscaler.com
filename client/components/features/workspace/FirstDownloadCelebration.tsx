@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@client/utils/cn';
 import { analytics } from '@client/analytics';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { ONBOARDING_COMPLETED_KEY } from '@shared/config/sample-images.config';
 import { useTranslations } from 'next-intl';
 import { Sparkles, Upload, ArrowRight, X } from 'lucide-react';
@@ -141,6 +142,7 @@ export const FirstDownloadCelebration = ({
       currentPlan: isFreeUser ? 'free' : 'paid',
     });
 
+    setCheckoutTrackingContext({ originatingTrigger: 'celebration_explore' });
     handleDismiss();
     onExploreModels?.();
   };
