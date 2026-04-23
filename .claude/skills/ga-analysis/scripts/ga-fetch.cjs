@@ -377,49 +377,77 @@ async function fetchChannelSummary({ accessToken, propertyId, ranges, organicCha
 async function fetchLandingPages({ accessToken, propertyId, ranges, organicChannel, limit }) {
   const metrics = ["sessions", "engagedSessions", "engagementRate", "averageSessionDuration", "bounceRate", "conversions", "screenPageViewsPerSession"];
 
-  const response = await runReport({
-    accessToken,
-    propertyId,
-    body: {
-      dateRanges: [
-        { startDate: ranges.current.startDate, endDate: ranges.current.endDate },
-        { startDate: ranges.previous.startDate, endDate: ranges.previous.endDate },
-      ],
-      dimensions: [{ name: "landingPagePlusQueryString" }],
-      metrics: metrics.map(name => ({ name })),
-      ...organicFilter(organicChannel),
-      orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
-      limit,
-      keepEmptyRows: false,
-    },
-    optional: true,
-    label: "organic landing pages",
-  });
+  // Try pagePath first — landingPagePlusQueryString often returns (not set) for organic sessions
+  const dimensionOptions = [
+    { name: "pagePath", key: "pagePath" },
+    { name: "landingPagePlusQueryString", key: "landingPagePlusQueryString" },
+  ];
 
-  const rows = parseReport(response);
-  const { current, previous } = splitByDateRange(rows);
-  const previousByPage = new Map(previous.map(row => [row.landingPagePlusQueryString, row]));
+  for (const dim of dimensionOptions) {
+    const response = await runReport({
+      accessToken,
+      propertyId,
+      body: {
+        dateRanges: [
+          { startDate: ranges.current.startDate, endDate: ranges.current.endDate },
+          { startDate: ranges.previous.startDate, endDate: ranges.previous.endDate },
+        ],
+        dimensions: [{ name: dim.name }],
+        metrics: metrics.map(name => ({ name })),
+        ...organicFilter(organicChannel),
+        orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
+        limit,
+        keepEmptyRows: false,
+      },
+      optional: true,
+      label: `organic landing pages (${dim.name})`,
+    });
 
-  return current.map(row => {
-    const previousRow = previousByPage.get(row.landingPagePlusQueryString) || {};
-    const sessions = row.sessions || 0;
-    const conversions = row.conversions || 0;
-    return {
-      page: row.landingPagePlusQueryString,
-      sessions,
-      engagedSessions: row.engagedSessions,
-      engagementRate: row.engagementRate,
-      averageSessionDuration: row.averageSessionDuration,
-      bounceRate: row.bounceRate,
-      conversions,
-      conversionRate: sessions ? Number((conversions / sessions).toFixed(4)) : 0,
-      viewsPerSession: row.screenPageViewsPerSession,
-      previousSessions: previousRow.sessions || 0,
-      previousConversions: previousRow.conversions || 0,
-      sessionDelta: metricDelta(sessions, previousRow.sessions || 0),
-      sessionDeltaPct: percentageDelta(sessions, previousRow.sessions || 0),
-    };
-  }).sort((a, b) => b.sessions - a.sessions);
+    const rows = parseReport(response);
+    const { current, previous } = splitByDateRange(rows);
+
+    // Check if this dimension returns useful data
+    const totalSessions = current.reduce((sum, r) => sum + (r.sessions || 0), 0);
+    const notSetSessions = current
+      .filter(r => !r[dim.key] || r[dim.key] === "(not set)" || r[dim.key] === "(other)")
+      .reduce((sum, r) => sum + (r.sessions || 0), 0);
+    const notSetRatio = totalSessions > 0 ? notSetSessions / totalSessions : 1;
+
+    if (notSetRatio > 0.5 && dim.name !== dimensionOptions[dimensionOptions.length - 1].name) {
+      console.error(`[GA] ${dim.name}: ${(notSetRatio * 100).toFixed(0)}% (not set), trying next dimension...`);
+      continue;
+    }
+
+    if (notSetRatio > 0.5) {
+      console.error(`[GA] WARNING: ${(notSetRatio * 100).toFixed(0)}% of landing page sessions are (not set) — GA4 may not be capturing page_path for organic sessions`);
+    }
+
+    const previousByPage = new Map(previous.map(row => [row[dim.key], row]));
+
+    return current.map(row => {
+      const previousRow = previousByPage.get(row[dim.key]) || {};
+      const sessions = row.sessions || 0;
+      const conversions = row.conversions || 0;
+      return {
+        page: row[dim.key],
+        dimension: dim.name,
+        sessions,
+        engagedSessions: row.engagedSessions,
+        engagementRate: row.engagementRate,
+        averageSessionDuration: row.averageSessionDuration,
+        bounceRate: row.bounceRate,
+        conversions,
+        conversionRate: sessions ? Number((conversions / sessions).toFixed(4)) : 0,
+        viewsPerSession: row.screenPageViewsPerSession,
+        previousSessions: previousRow.sessions || 0,
+        previousConversions: previousRow.conversions || 0,
+        sessionDelta: metricDelta(sessions, previousRow.sessions || 0),
+        sessionDeltaPct: percentageDelta(sessions, previousRow.sessions || 0),
+      };
+    }).sort((a, b) => b.sessions - a.sessions);
+  }
+
+  return [];
 }
 
 async function fetchSourceMedium({ accessToken, propertyId, ranges, limit }) {

@@ -28,7 +28,7 @@ The service account must be granted **Viewer** access inside GA4 (Admin → Prop
 
 - Organic vs total summary with previous-period comparison
 - Channel mix (all channels, with session share and deltas)
-- Organic landing pages with engagement + conversions (28-day comparison)
+- Organic landing pages with engagement + conversions (28-day comparison). Uses `pagePath` dimension with automatic fallback from `landingPagePlusQueryString` to avoid `(not set)` rows.
 - Source/medium breakdown
 - Page engagement (views, engagement duration, bounce rate, views/session) filtered to organic
 - Country + device splits for organic traffic

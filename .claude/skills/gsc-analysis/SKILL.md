@@ -145,11 +145,56 @@ node ./.claude/skills/gsc-analysis/scripts/audit-blog-seo.cjs --gsc=/tmp/gsc-miu
 
 This checks title/meta SERP lengths, keyword overlap between titles and top GSC queries, intent alignment (listicle vs how-to vs comparison vs free-tool), and CTR vs position benchmarks. Include findings in the CTR Fixes section of the analysis report.
 
+### Audit with Suggestions
+
+Add `--suggest` to generate actionable title/meta rewrite candidates for each flagged post:
+
+```bash
+node ./.claude/skills/gsc-analysis/scripts/audit-blog-seo.cjs --gsc=/tmp/gsc-miu.json --suggest --output=/tmp/blog-audit-miu.json
+```
+
+Outputs a `suggestions` array per post ranked by missed clicks, containing:
+
+- 3 `seo_title_options` (30-60 chars each) based on top GSC queries and intent
+- 1 `seo_description` candidate (120-160 chars) with CTR hooks
+- `rationale` explaining why the suggestion was generated
+
+Suggestions are a starting point for human review, not final copy.
+
+## CTR Tracker
+
+Track before/after CTR changes for specific pages after applying title/meta fixes:
+
+```bash
+# Take a baseline snapshot
+node ./.claude/skills/gsc-analysis/scripts/ctr-tracker.cjs \
+  --site=myimageupscaler.com \
+  --pages=slug1,slug2,slug3 \
+  --output=/tmp/ctr-snapshot.json
+
+# After changes, take another snapshot and compare
+node ./.claude/skills/gsc-analysis/scripts/ctr-tracker.cjs \
+  --site=myimageupscaler.com \
+  --pages=slug1,slug2,slug3 \
+  --snapshots=/tmp/ctr-snapshot.json \
+  --output=/tmp/ctr-snapshot-v2.json
+
+# Auto-track all CTR-deficit pages
+node ./.claude/skills/gsc-analysis/scripts/ctr-tracker.cjs \
+  --site=myimageupscaler.com \
+  --all-ctr-deficit \
+  --min-impressions=1000 \
+  --output=/tmp/ctr-all.json
+```
+
+Output includes per-page CTR, expected CTR by position, missed clicks estimate, and delta comparison against previous snapshots.
+
 ## Files
 
-| Item | Path |
-| --- | --- |
-| Skill Doc | `./.claude/skills/gsc-analysis/SKILL.md` |
-| Prompt | `./.claude/skills/gsc-analysis/prompt.md` |
-| Fetch Script | `./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs` |
+| Item           | Path                                                       |
+| -------------- | ---------------------------------------------------------- |
+| Skill Doc      | `./.claude/skills/gsc-analysis/SKILL.md`                   |
+| Prompt         | `./.claude/skills/gsc-analysis/prompt.md`                  |
+| Fetch Script   | `./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs`      |
 | Blog SEO Audit | `./.claude/skills/gsc-analysis/scripts/audit-blog-seo.cjs` |
+| CTR Tracker    | `./.claude/skills/gsc-analysis/scripts/ctr-tracker.cjs`    |
