@@ -44,6 +44,16 @@ const CATEGORY_GROUPS: { label: string; slugs: string[] }[] = [
     label: 'Image Editing',
     slugs: ['background-changer', 'image-to-text', 'ocr-online'],
   },
+  {
+    label: 'Image Cropper',
+    slugs: [
+      'image-cropper',
+      'crop-image-online-free',
+      'crop-image-to-circle',
+      'crop-image-for-instagram',
+      'crop-image-for-youtube-thumbnail',
+    ],
+  },
 ];
 
 export default async function ToolsHubPage() {

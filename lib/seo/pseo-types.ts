@@ -93,6 +93,9 @@ export interface IToolConfig {
   defaultOutputFormat?: 'jpeg' | 'png';
   // PdfToImageConverter config
   defaultDpi?: number;
+  // ImageCropper config
+  defaultAspectRatio?: number;
+  aspectRatioPresets?: string;
 }
 
 /**

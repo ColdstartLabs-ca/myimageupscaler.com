@@ -11,3 +11,4 @@ export { GuestUpscaler } from './GuestUpscaler';
 export { ImageToText } from './ImageToText';
 export { PdfToImageConverter } from './PdfToImageConverter';
 export { ImageToPdfConverter } from './ImageToPdfConverter';
+export { ImageCropper } from './ImageCropper';
