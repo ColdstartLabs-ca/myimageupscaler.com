@@ -135,7 +135,7 @@ interface IUseRegionTierOptions {
   initialGeo?: IPricingGeoSession | null;
 }
 
-export function useRegionTier(): {
+export function useRegionTier(options?: IUseRegionTierOptions): {
   tier: RegionTier | null;
   country: string | null;
   isLoading: boolean;
@@ -144,24 +144,15 @@ export function useRegionTier(): {
   pricingRegion: string;
   discountPercent: number;
   banditArmId: number | null;
-};
-export function useRegionTier(options: IUseRegionTierOptions): {
-  tier: RegionTier | null;
-  country: string | null;
-  isLoading: boolean;
-  isRestricted: boolean;
-  isPaywalled: boolean;
-  pricingRegion: string;
-  discountPercent: number;
-  banditArmId: number | null;
-};
-export function useRegionTier(options?: IUseRegionTierOptions) {
+} {
   const initialGeo = options?.initialGeo ?? null;
   // Always start with null/defaults to match server render and avoid hydration mismatch.
   // The cache/storage is applied in the useEffect below.
   const [tier, setTier] = useState<RegionTier | null>(initialGeo?.tier ?? null);
   const [country, setCountry] = useState<string | null>(initialGeo?.country ?? null);
-  const [pricingRegion, setPricingRegion] = useState<string>(initialGeo?.pricingRegion ?? 'standard');
+  const [pricingRegion, setPricingRegion] = useState<string>(
+    initialGeo?.pricingRegion ?? 'standard'
+  );
   const [discountPercent, setDiscountPercent] = useState<number>(initialGeo?.discountPercent ?? 0);
   const [banditArmId, setBanditArmId] = useState<number | null>(initialGeo?.banditArmId ?? null);
   const [isLoading, setIsLoading] = useState(initialGeo === null);
@@ -193,31 +184,30 @@ export function useRegionTier(options?: IUseRegionTierOptions) {
       hydrateGeo(optimisticGeo, Boolean(initialGeo));
     }
 
-    fetchGeo()
-      .then(nextGeo => {
-        if (isCancelled) {
-          return;
-        }
+    fetchGeo().then(nextGeo => {
+      if (isCancelled) {
+        return;
+      }
 
-        if (!nextGeo) {
-          if (optimisticGeo === null) {
-            setTier('standard');
-            setCountry(null);
-            setPricingRegion('standard');
-            setDiscountPercent(0);
-            setBanditArmId(null);
-            setIsLoading(false);
-          }
-          return;
+      if (!nextGeo) {
+        if (optimisticGeo === null) {
+          setTier('standard');
+          setCountry(null);
+          setPricingRegion('standard');
+          setDiscountPercent(0);
+          setBanditArmId(null);
+          setIsLoading(false);
         }
+        return;
+      }
 
-        if (!optimisticGeo || !areGeoSessionsEqual(nextGeo, optimisticGeo)) {
-          hydrateGeo(nextGeo);
-          return;
-        }
+      if (!optimisticGeo || !areGeoSessionsEqual(nextGeo, optimisticGeo)) {
+        hydrateGeo(nextGeo);
+        return;
+      }
 
-        setIsLoading(false);
-      });
+      setIsLoading(false);
+    });
 
     return () => {
       isCancelled = true;
