@@ -5,7 +5,7 @@
       "slug": "upscale-nef-images",
       "title": "Upscale NEF Images",
       "metaTitle": "NEF RAW Upscaling | Nikon D850, Z9, Z7, Z6 II - AI Enhanced",
-      "metaDescription": "AI-powered NEF upscaling for Nikon photographers. Enhance D850, Z9, Z7 RAW files with superior detail. Batch processing, no signup required. Try free!",
+      "metaDescription": "AI-powered NEF upscaling for Nikon photographers. Enhance D850, Z9, Z7 RAW files with superior detail. Batch processing, no signup required. Free to start.",
       "h1": "Professional NEF RAW Image Upscaling",
       "intro": "Elevate your Nikon NEF RAW files to extraordinary levels of detail and clarity with cutting-edge AI upscaling technology. Our sophisticated algorithms are meticulously engineered to understand and enhance Nikon's unique sensor characteristics, color science, and metadata structure. Whether you're shooting with the flagship Z9, the beloved D850, or any Nikon camera in between, our upscaler delivers exceptional results that maintain the authentic Nikon look while significantly expanding your creative possibilities.",
       "primaryKeyword": "upscale nef images",
@@ -269,7 +269,7 @@
       "slug": "upscale-cr2-images",
       "title": "Upscale CR2 Images",
       "metaTitle": "Canon CR2 RAW Upscaling | 5D Mark IV, EOS R5, R6 II - Free",
-      "metaDescription": "AI-powered CR2 upscaling for Canon photographers. Enhance 5D, EOS R, R5 RAW files with superior color science. Preserve Canon quality. Try free. Try it free!",
+      "metaDescription": "AI-powered CR2 upscaling for Canon photographers. Enhance 5D, EOS R, R5 RAW files with superior color science. Preserve Canon quality. Free to start.",
       "h1": "Professional Canon CR2 RAW Image Upscaling",
       "intro": "Transform your Canon CR2 RAW files into extraordinary high-resolution masterpieces with state-of-the-art AI upscaling technology meticulously crafted for Canon's renowned imaging ecosystem. Our advanced algorithms are specifically trained on Canon's legendary color science, Dual Pixel CMOS AF data, and comprehensive lens metadata to deliver results that honor the authentic Canon aesthetic while dramatically expanding your creative potential. From the full-frame glory of the 5D series to the cutting-edge EOS R mirrorless lineup, experience unprecedented detail enhancement that maintains Canon's characteristic warmth and skin tone rendition.",
       "primaryKeyword": "upscale cr2 images",
@@ -565,7 +565,7 @@
       "slug": "upscale-arw-images",
       "title": "Upscale ARW Images",
       "metaTitle": "Sony ARW RAW Upscaling | A7R V, A1, A9 III, A7 IV - Online",
-      "metaDescription": "AI-powered ARW upscaling for Sony Alpha photographers. Enhance A7R, A1, A9 RAW files with Exmor sensor optimization. Preserve Sony quality. Try free. Start now!",
+      "metaDescription": "AI-powered ARW upscaling for Sony Alpha photographers. Enhance A7R, A1, A9 RAW files with Exmor sensor optimization. Preserve Sony quality. Free to start.",
       "h1": "Professional Sony ARW RAW Image Upscaling",
       "intro": "Elevate your Sony ARW RAW files to unprecedented levels of detail and clarity with revolutionary AI upscaling technology engineered specifically for Sony's groundbreaking Alpha ecosystem. Our advanced algorithms are meticulously trained on Sony's Exmor sensor characteristics, BSI technology, and sophisticated autofocus systems to deliver results that honor the innovative Sony imaging DNA while dramatically expanding your creative horizons. From the breathtaking resolution of the A7R V to the speed of the A1 and low-light mastery of the A7S III, experience transformational enhancement that leverages Sony's technological leadership.",
       "primaryKeyword": "upscale arw images",
@@ -862,7 +862,7 @@
       "slug": "upscale-fuji-raf-images",
       "title": "Upscale RAF Images",
       "metaTitle": "Fujifilm RAF Upscaling | X-T5, GFX100 II, X-H2, X-S20",
-      "metaDescription": "AI-powered RAF upscaling for Fujifilm photographers. Enhance X-T5, GFX100, X-H2 RAW files with X-Trans optimization. Preserve Fuji color science. Try free.",
+      "metaDescription": "AI-powered RAF upscaling for Fujifilm photographers. Enhance X-T5, GFX100, X-H2 RAW files with X-Trans optimization. Preserve Fuji color science. Free to start.",
       "h1": "Professional Fujifilm RAF RAW Upscaling",
       "intro": "Elevate your Fujifilm RAF RAW files to exceptional levels of detail and clarity with specialized AI upscaling technology. Our advanced algorithms are specifically engineered to understand Fujifilm's unique X-Trans sensor pattern and legendary color science. Whether you're shooting with the medium format GFX series or the popular X-series cameras, our upscaler delivers remarkable results that preserve the authentic Fujifilm look while expanding your creative possibilities.",
       "primaryKeyword": "upscale raf images",
@@ -901,7 +901,7 @@
           "gfx_100mp": "100-200MB typical",
           "gfx_50mp": "50-100MB typical"
         },
-        "xTransPattern": "Unique 6x6 color filter array eliminating moir\u00e9 patterns"
+        "xTransPattern": "Unique 6x6 color filter array eliminating moiré patterns"
       },
       "professionalApplications": {
         "medium_format": {
@@ -926,7 +926,7 @@
         }
       },
       "advantages": [
-        "X-Trans sensor pattern eliminates moir\u00e9 without AA filter",
+        "X-Trans sensor pattern eliminates moiré without AA filter",
         "Fujifilm's legendary film simulations and color science",
         "16-bit color depth in GFX medium format cameras",
         "Excellent lens quality across X and GFX series",
@@ -935,7 +935,7 @@
       "faq": [
         {
           "question": "How does the X-Trans sensor affect upscaling?",
-          "answer": "The X-Trans sensor's unique color filter array provides excellent detail and eliminates moir\u00e9 patterns without an anti-aliasing filter. Our AI is specifically trained to work with this pattern, delivering superior results compared to traditional Bayer sensors."
+          "answer": "The X-Trans sensor's unique color filter array provides excellent detail and eliminates moiré patterns without an anti-aliasing filter. Our AI is specifically trained to work with this pattern, delivering superior results compared to traditional Bayer sensors."
         },
         {
           "question": "Can I upscale GFX medium format files?",
@@ -951,7 +951,7 @@
         },
         {
           "question": "How does RAF upscaling compare to other RAW formats?",
-          "answer": "RAF files often provide superior upscaling results due to the X-Trans sensor pattern and Fujifilm's excellent color science. The lack of moir\u00e9 and exceptional detail rendering makes them ideal for AI enhancement."
+          "answer": "RAF files often provide superior upscaling results due to the X-Trans sensor pattern and Fujifilm's excellent color science. The lack of moiré and exceptional detail rendering makes them ideal for AI enhancement."
         }
       ]
     },
@@ -959,7 +959,7 @@
       "slug": "upscale-olympus-orf-images",
       "title": "Upscale ORF Images",
       "metaTitle": "Olympus ORF Upscaling | OM-1, E-M1X, E-M1 Mark III, OM-5",
-      "metaDescription": "AI-powered ORF upscaling for Olympus photographers. Enhance OM-1, E-M1X, E-M1 RAW files with superior detail. Preserve Olympus quality. Try free. Try it free!",
+      "metaDescription": "AI-powered ORF upscaling for Olympus photographers. Enhance OM-1, E-M1X, E-M1 RAW files with superior detail. Preserve Olympus quality. Free to start.",
       "h1": "Professional Olympus ORF RAW Upscaling",
       "intro": "Transform your Olympus ORF RAW files with sophisticated AI upscaling technology specifically optimized for Micro Four Thirds and OM System cameras. Our advanced algorithms understand Olympus's unique sensor technology, exceptional in-body stabilization, and distinctive color science. From the flagship OM-1 to professional E-M1 series, our upscaler delivers outstanding results that maintain Olympus's signature image quality while significantly expanding your creative possibilities.",
       "primaryKeyword": "upscale orf images",
@@ -1054,7 +1054,7 @@
       "slug": "upscale-panasonic-rw2-images",
       "title": "Upscale RW2 Images",
       "metaTitle": "Upscale Panasonic RW2 RAW Files — Lumix S1R, GH6, S5 II",
-      "metaDescription": "AI upscaling for Panasonic RW2 RAW files. Enhance Lumix S1R, GH6, S5 II photos 4x–16x while preserving color science and fine detail. Try free.",
+      "metaDescription": "AI upscaling for Panasonic RW2 RAW files. Enhance Lumix S1R, GH6, S5 II photos 4x–16x while preserving color science and fine detail. Free to start.",
       "h1": "Professional Panasonic RW2 RAW Upscaling",
       "intro": "Elevate your Panasonic RW2 RAW files with cutting-edge AI upscaling technology optimized for Lumix cameras. Our sophisticated algorithms are designed to work with Panasonic's advanced sensor technology, exceptional video-first design philosophy, and innovative imaging features. From the high-resolution S1R to the video powerhouse GH6, our upscaler delivers remarkable results that maintain Panasonic's commitment to quality while expanding your creative possibilities.",
       "primaryKeyword": "upscale rw2 images",
@@ -1151,7 +1151,7 @@
       "slug": "upscale-leica-dng-images",
       "title": "Upscale Leica DNG Images",
       "metaTitle": "Leica DNG Upscaling | M11, Q3, SL3, M10-P Camera RAW",
-      "metaDescription": "AI-powered DNG upscaling for Leica photographers. Enhance M11, Q3, SL3 RAW files with superior detail. Preserve Leica optical excellence. Try free. Try it free!",
+      "metaDescription": "AI-powered DNG upscaling for Leica photographers. Enhance M11, Q3, SL3 RAW files with superior detail. Preserve Leica optical excellence. Free to start.",
       "h1": "Professional Leica DNG RAW Upscaling",
       "intro": "Transform your Leica DNG RAW files with premium AI upscaling technology that respects Leica's uncompromising standards of optical excellence. Our sophisticated algorithms are engineered to complement Leica's legendary lens quality, distinctive rangefinder character, and commitment to pure photographic experience. From the groundbreaking M11 to the innovative Q3 and professional SL3, our upscaler delivers exceptional results that preserve Leica's signature look while expanding your creative possibilities.",
       "primaryKeyword": "upscale leica dng images",
@@ -1250,7 +1250,7 @@
       "slug": "upscale-hasselblad-3fr-images",
       "title": "Upscale Hasselblad 3FR Images",
       "metaTitle": "Hasselblad 3FR Upscaling | X2D, X1D II, H6D Medium Format",
-      "metaDescription": "AI-powered 3FR upscaling for Hasselblad. Enhance X2D, X1D, H6D medium format RAW files with superior detail. Preserve Hasselblad quality. Try free. Try it free!",
+      "metaDescription": "AI-powered 3FR upscaling for Hasselblad. Enhance X2D, X1D, H6D medium format RAW files with superior detail. Preserve Hasselblad quality. Free to start.",
       "h1": "Professional Hasselblad 3FR RAW Upscaling",
       "intro": "Transform your Hasselblad 3FR RAW files with premium AI upscaling technology designed for the ultimate medium format experience. Our sophisticated algorithms are engineered to complement Hasselblad's exceptional medium format sensors, legendary color science, and commitment to uncompromising image quality. From the innovative X2D 100C to the professional H6D series, our upscaler delivers extraordinary results that preserve Hasselblad's signature aesthetic while expanding creative possibilities to unprecedented levels.",
       "primaryKeyword": "upscale hasselblad 3fr images",

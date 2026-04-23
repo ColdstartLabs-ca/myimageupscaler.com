@@ -112,3 +112,16 @@ Intent mismatch fixes (seo_title only):
 - `audit-blog-seo.cjs` — Added `--suggest` flag generating title/meta candidates per flagged post
 - `ctr-tracker.cjs` — New script for before/after CTR measurement with snapshot tracking
 - Baseline snapshot captured: 26 clicks / 47,397 impressions / 1,740 missed clicks (top 5 posts)
+
+## 2026-04-23
+
+### SEO: Phase 3B — pSEO Meta Description Audit (160 descriptions fixed)
+
+**Affected:** 23 pSEO data files, ~160 meta descriptions
+**Why:** PRD Phase 3B flagged that AI tool pages claimed "free" unconditionally without mentioning the credit/signup model. Users hitting a credit wall after clicking "free tool" links drives high bounce and trust loss.
+**Changes:**
+
+- Replaced "Free online tool." → "Free for your first images." across all AI-powered tool pages
+- Replaced "Try free!" / "Try it free!" → "Free for your first images." where used as an unconditional free claim
+- Intentionally skipped genuinely free browser-based tools: social-media-resize.json (resizers), bulk-tools.json (bulk resizer with "no upload"), free.json (background remover with "no signup"), interactive-tools.json format converters (PNG→JPG etc.)
+- Files updated: ai-features, alternatives, bulk-tools, camera-raw, comparison, comparisons-expanded, competitor-comparisons, content, device-specific, device-use, format-conversion, format-scale, formats, free, guides, industry-insights, personas-expanded, photo-restoration, platform-format, platforms, scale, technical-guides, tools, use-cases, use-cases-expanded

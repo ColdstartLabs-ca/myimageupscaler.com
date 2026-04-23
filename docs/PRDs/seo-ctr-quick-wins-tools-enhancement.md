@@ -1,9 +1,21 @@
 # PRD: SEO CTR Quick Wins + Tools Enhancement
 
-**Status**: Draft
+**Status**: Partially Done (Phases 1–2B and 3B complete; Phases 3A and 4 pending)
 **Author**: Claude
 **Date**: April 23, 2026
 **Branch**: `feat/seo-ctr-quick-wins`
+
+### Completion Status
+
+| Phase    | Description                               | Status                        |
+| -------- | ----------------------------------------- | ----------------------------- |
+| Phase 1  | GA4 landing page fix                      | ✅ Done (commit `f58228ec`)   |
+| Phase 2A | Top 5 blog CTR title/meta rewrites        | ✅ Done (DB updated via API)  |
+| Phase 2B | Intent mismatch fixes (4 posts)           | ✅ Done (DB updated via API)  |
+| §8.5     | Cannibalization redirect                  | ✅ Done (in `next.config.js`) |
+| Phase 3B | pSEO meta description audit (160 fixed)   | ✅ Done                       |
+| Phase 3A | pSEO cluster expansion (4 new clusters)   | ⏳ Pending                    |
+| Phase 4  | New tools (PDF, Cropper, Watermark, EXIF) | ⏳ Pending (separate tickets) |
 
 ---
 
@@ -251,6 +263,20 @@ The pages converting at 1.65% CTR share a pattern. Enforce it across all new and
 
 Keyword Planner data (Apr 2025–Mar 2026, all locations, English) reveals which high-volume queries the site can't currently serve. Each tool below gets its own implementation ticket; this section is the planning reference.
 
+#### Cloudflare Workers Compatibility
+
+All processing libraries in Phase 4 run **in the browser (client components)**, not in CF Workers. CF Workers only handle API routes, which for these tools are either non-existent (pure client-side) or a simple `fetch()` call to Replicate — both fine.
+
+Two real gotchas:
+
+1. **`pdfjs-dist` spawns a browser Web Worker internally.** If imported in a server component or without SSR guard, Next.js will try to instantiate it during CF Worker rendering and crash. Every tool component using `pdfjs-dist` or `@imgly/background-removal` must use `dynamic(() => import(...), { ssr: false })`.
+
+2. **`sharp` is not CF Worker compatible** (native binary, requires libvips). It's already used in the upscaler backend — confirm it runs via a Node.js adapter/runtime, not the default CF Worker runtime. Don't introduce `sharp` in any new API route that targets the edge runtime.
+
+Everything else (`pdf-lib`, `react-easy-crop`, `fabric`, `konva`, `exifr`) is pure JS and browser-only — no CF Worker concern.
+
+---
+
 #### Current Tool Inventory
 
 | Tool                                                              | pSEO pages exist?                            |
@@ -495,7 +521,7 @@ Keyword Planner data (Apr 2025–Mar 2026, all locations, English) reveals which
 | GA4 fix requires property-level config changes                            | If `pagePath` dimension doesn't resolve `(not set)`, may need GA4 Admin changes                                                                 |
 | pSEO pages overclaim "free" → high bounce when users hit credit wall      | Rewrite meta descriptions to set correct expectation: "free for your first images" not "free" unconditionally                                   |
 | pSEO expansion adds pages without real before/after images → thin content | Each new page must ship with at least one real static before/after image pair, processed offline                                                |
-| `pdfjs-dist` WASM worker setup complexity in Next.js                      | Requires custom webpack config to serve the worker file correctly — test in CI before shipping                                                  |
+| `pdfjs-dist` browser Web Worker crashes CF Worker runtime during SSR      | Must use `dynamic(() => import(...), { ssr: false })` on every component that imports it — never import at module level in server components    |
 | PDF → JPG quality on complex PDFs                                         | `pdfjs-dist` canvas rendering quality depends on PDF complexity; set a reasonable DPI cap (150–300) to balance quality and memory               |
 | Watermark remover free-tier quality gap                                   | Simple inpainting looks bad on complex backgrounds — make the quality gap visible in the UI to drive paid upsell rather than frustrate users    |
 | Phase 4 bundle size                                                       | `pdf-lib` + `pdfjs-dist` are heavy. Use dynamic `import()` so they only load when the PDF tool is opened — don't bundle into the main app chunk |
