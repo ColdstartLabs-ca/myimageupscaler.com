@@ -102,9 +102,7 @@ export type IUpgradePromptTrigger =
   | 'post_download_explore'
   | 'celebration_explore'
   | 'after_batch'
-  | 'upgrade_card'
-  | 'nav_persistent'
-  | 'workspace_header';
+  | 'upgrade_card';
 
 export interface IUpgradePromptShownProperties {
   trigger: IUpgradePromptTrigger;

@@ -26,12 +26,11 @@ import { useUserData } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { EngagementDiscountBanner } from '@client/components/engagement-discount';
 import { clientEnv } from '@shared/config/env';
-import { resolveCheapestRegionalPlan } from '@shared/config/subscription.config';
 import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
-import type { PricingRegion } from '@shared/config/pricing-regions';
 import { downloadSingle } from '@client/utils/download';
 import {
   CheckCircle2,
+  CreditCard,
   HelpCircle,
   Image,
   Layers,
@@ -40,15 +39,11 @@ import {
   Settings,
   Wand2,
   X,
-  Zap,
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import {
-  getCheckoutTrackingContext,
-  setCheckoutTrackingContext,
-} from '@client/utils/checkoutTrackingContext';
+import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import type { IUpgradeDirectParams } from './ModelGalleryModal';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
@@ -87,7 +82,7 @@ const Workspace: React.FC = () => {
   const { isFreeUser, profile } = useUserData();
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
-  const { isPaywalled, country, pricingRegion } = useRegionTier();
+  const { isPaywalled, country } = useRegionTier();
 
   // Abandonment recovery: if user clicks upgrade but doesn't checkout within 10 min,
   // show the engagement discount toast (once per session, free users only).
@@ -412,45 +407,6 @@ const Workspace: React.FC = () => {
     setDirectCheckoutPriceId(planId);
   };
 
-  const handleWorkspaceHeaderUpgrade = () => {
-    const priceId = resolveCheapestRegionalPlan((pricingRegion as PricingRegion) || 'standard');
-    setCheckoutTrackingContext({ trigger: 'workspace_header' });
-    analytics.track('upgrade_prompt_clicked', {
-      trigger: 'workspace_header',
-      destination: 'checkout_direct',
-      currentPlan: 'free',
-      pricingRegion: pricingRegion || 'standard',
-    });
-    const headerCtx = getCheckoutTrackingContext();
-    analytics.track('checkout_opened', {
-      priceId,
-      source: 'workspace_header',
-      trigger: 'workspace_header',
-      ...(headerCtx?.originatingTrigger
-        ? { originatingTrigger: headerCtx.originatingTrigger }
-        : {}),
-      ...(headerCtx?.attributionChain?.length
-        ? { attributionChain: headerCtx.attributionChain }
-        : {}),
-    });
-    setDirectCheckoutPriceId(priceId);
-  };
-
-  const workspaceHeaderShownRef = React.useRef(false);
-  useEffect(() => {
-    if (!isFreeUser || workspaceHeaderShownRef.current) return;
-    const key = 'workspace_header_shown';
-    if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(key)) {
-      workspaceHeaderShownRef.current = true;
-      sessionStorage.setItem(key, '1');
-      analytics.track('upgrade_prompt_shown', {
-        trigger: 'workspace_header',
-        currentPlan: 'free',
-        pricingRegion: pricingRegion || 'standard',
-      });
-    }
-  }, [isFreeUser, pricingRegion]);
-
   // Empty State
   if (queue.length === 0) {
     return (
@@ -576,16 +532,6 @@ const Workspace: React.FC = () => {
           <div className="px-3 pt-3 md:px-4 md:pt-4 relative">
             <ProgressSteps currentStep={progressStep} isFirstUpload={isFirstTimeUser} />
             <div className="absolute right-3 top-3 md:right-4 md:top-4 flex items-center gap-2">
-              {isFreeUser && (
-                <button
-                  onClick={handleWorkspaceHeaderUpgrade}
-                  data-testid="workspace-header-upgrade-button"
-                  className="inline-flex items-center justify-center gap-1 rounded-lg text-xs font-bold transition-all gradient-cta shine-effect text-white shadow-md shadow-accent/20 h-7 px-2"
-                >
-                  <Zap size={11} className="shrink-0" />
-                  <span className="hidden sm:inline">Upgrade</span>
-                </button>
-              )}
               <button
                 onClick={handleHelpClick}
                 className="flex items-center justify-center w-7 h-7 rounded-lg text-text-muted hover:text-text hover:bg-white/10 transition-colors"
@@ -809,6 +755,13 @@ const Workspace: React.FC = () => {
         </TabButton>
         <TabButton active={mobileTab === 'queue'} onClick={() => setMobileTab('queue')} icon={List}>
           Queue
+        </TabButton>
+        <TabButton
+          active={false}
+          onClick={() => openUpgradeModal(false, 'mobile_tab_credits')}
+          icon={CreditCard}
+        >
+          More Credits
         </TabButton>
       </nav>
 

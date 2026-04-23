@@ -125,11 +125,9 @@ describe('upgrade-funnel-attribution', () => {
       'celebration_explore',
       'after_batch',
       'upgrade_card',
-      'nav_persistent',
-      'workspace_header',
     ];
 
-    expect(validTriggers).toHaveLength(12);
+    expect(validTriggers).toHaveLength(10);
   });
 
   test('clearCheckoutTrackingContext removes attribution data', () => {
