@@ -565,8 +565,10 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   });
 
   it('should show PostDownloadPrompt on 2nd download (deterministic, not random)', async () => {
-    const onUpgrade = vi.fn();
-    render(<PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />);
+    const onExploreModels = vi.fn();
+    render(
+      <PostDownloadPrompt userSegment="free" downloadCount={2} onExploreModels={onExploreModels} />
+    );
     await waitFor(() => {
       expect(screen.getByText(/See what other models can do/i)).toBeInTheDocument();
     });
@@ -575,7 +577,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt on initial render with an existing download count', async () => {
     const onUpgrade = vi.fn();
     const { container } = render(
-      <PostDownloadPrompt userSegment="free" downloadCount={1} onUpgrade={onUpgrade} />
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await new Promise(r => setTimeout(r, 10));
@@ -583,9 +585,9 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   });
 
   it('should NOT show PostDownloadPrompt on 3rd+ downloads', async () => {
-    const onUpgrade = vi.fn();
+    const onExploreModels = vi.fn();
     const { container } = render(
-      <PostDownloadPrompt userSegment="free" downloadCount={3} onUpgrade={onUpgrade} />
+      <PostDownloadPrompt userSegment="free" downloadCount={3} onExploreModels={onExploreModels} />
     );
 
     await new Promise(r => setTimeout(r, 10));
@@ -595,7 +597,11 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt for paid users', async () => {
     const onExploreModels = vi.fn();
     const { container } = render(
-<PostDownloadPrompt userSegment="subscriber" downloadCount={2} onUpgrade={onUpgrade} />
+<PostDownloadPrompt
+        userSegment="subscriber"
+        downloadCount={2}
+        onExploreModels={onExploreModels}
+      />
     );
 
     await new Promise(r => setTimeout(r, 10));
@@ -603,8 +609,10 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   });
 
 it('should fire upgrade_prompt_shown with trigger after_download', async () => {
-    const onUpgrade = vi.fn();
-    render(<PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />);
+    const onExploreModels = vi.fn();
+    render(
+      <PostDownloadPrompt userSegment="free" downloadCount={2} onExploreModels={onExploreModels} />
+    );
     await waitFor(() => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
         trigger: 'post_download_explore',
@@ -629,7 +637,7 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
 
     rerender(
       <PostDownloadPrompt
-        isFreeUser={true}
+        userSegment="free"
         downloadCount={1}
         currentModel="premium"
         onExploreModels={onExploreModels}
@@ -651,8 +659,10 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
   });
 
   it('should fire upgrade_prompt_dismissed on X click', async () => {
-const onUpgrade = vi.fn();
-    render(<PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />);
+const onExploreModels = vi.fn();
+    render(
+      <PostDownloadPrompt userSegment="free" downloadCount={2} onExploreModels={onExploreModels} />
+    );
     await waitFor(() => {
       expect(screen.getByLabelText('Dismiss prompt')).toBeInTheDocument();
     });
@@ -672,9 +682,11 @@ const onUpgrade = vi.fn();
     });
   });
 
-it('should call onUpgrade callback when CTA is clicked', async () => {
-    const onUpgrade = vi.fn();
-    render(<PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />);
+it('should call onExploreModels callback when CTA is clicked', async () => {
+    const onExploreModels = vi.fn();
+    render(
+      <PostDownloadPrompt userSegment="free" downloadCount={2} onExploreModels={onExploreModels} />
+    );
     await waitFor(() => {
       expect(screen.getByText(/See what other models can do/i)).toBeInTheDocument();
     });

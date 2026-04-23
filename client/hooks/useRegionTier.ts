@@ -135,7 +135,7 @@ interface IUseRegionTierOptions {
   initialGeo?: IPricingGeoSession | null;
 }
 
-interface IUseRegionTierResult {
+export function useRegionTier(options?: IUseRegionTierOptions): {
   tier: RegionTier | null;
   country: string | null;
   isLoading: boolean;
@@ -144,9 +144,7 @@ interface IUseRegionTierResult {
   pricingRegion: string;
   discountPercent: number;
   banditArmId: number | null;
-}
-
-export function useRegionTier(options?: IUseRegionTierOptions): IUseRegionTierResult {
+} {
   const initialGeo = options?.initialGeo ?? null;
   // Always start with null/defaults to match server render and avoid hydration mismatch.
   // The cache/storage is applied in the useEffect below.
