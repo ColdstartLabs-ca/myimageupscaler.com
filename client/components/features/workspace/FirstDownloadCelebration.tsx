@@ -145,7 +145,8 @@ export const FirstDownloadCelebration = ({
       trigger: 'celebration',
       destination: isCreditPurchaser ? 'billing_subscription_tab' : 'purchase_modal',
       currentPlan: userSegment,
-      userSegment,    });
+      userSegment,
+    });
 
     setCheckoutTrackingContext({ originatingTrigger: 'celebration_explore' });
     handleDismiss();
@@ -224,22 +225,6 @@ export const FirstDownloadCelebration = ({
 
         {/* Action buttons */}
         <div className="flex flex-col gap-3 justify-center sm:flex-row">
-          {isFreeUser ? (
-            <button
-              onClick={handleExploreModels}
-              className={cn(
-                'flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4',
-                'gradient-cta shine-effect',
-                'text-base font-bold text-white transition-all',
-                'hover:scale-[1.02] active:scale-[0.98]',
-                'shadow-lg shadow-accent/20 sm:flex-1'
-              )}
-            >
-              {t('exploreModels')}
-              <ArrowRight size={18} />
-            </button>
-          ) : null}
-
           <button
             onClick={handleUploadAnother}
             className={cn(
@@ -247,7 +232,7 @@ export const FirstDownloadCelebration = ({
               'bg-surface-hover hover:bg-surface-active border border-border',
               'text-text font-semibold transition-all',
               'hover:scale-[1.02] active:scale-[0.98]',
-              isFreeUser && 'sm:min-w-[170px]'
+              showUpgradePrompt && 'sm:min-w-[170px]'
             )}
           >
             <Upload size={18} />
@@ -256,7 +241,7 @@ export const FirstDownloadCelebration = ({
 
           {showUpgradePrompt && (
             <button
-              onClick={handleViewPlans}
+              onClick={handleExploreModels}
               className={cn(
                 'flex items-center justify-center gap-2 px-6 py-3 rounded-xl',
                 'gradient-cta shine-effect',
@@ -272,7 +257,7 @@ export const FirstDownloadCelebration = ({
                 : t('seePlans')}
               <ArrowRight size={18} />
             </button>
-          )
+          )}
         </div>
 
         {/* Skip text for free and credit_purchaser users */}
