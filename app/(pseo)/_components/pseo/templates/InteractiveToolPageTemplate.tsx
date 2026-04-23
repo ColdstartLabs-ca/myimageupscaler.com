@@ -18,7 +18,6 @@ import { CTASection } from '../sections/CTASection';
 import { ExternalSourcesSection } from '../sections/ExternalSourcesSection';
 import { FAQSection } from '../sections/FAQSection';
 import { FeaturesSection } from '../sections/FeaturesSection';
-import { HeroSection } from '../sections/HeroSection';
 import { HowItWorksSection } from '../sections/HowItWorksSection';
 import { RelatedPagesSection } from '../sections/RelatedPagesSection';
 import { UseCasesSection } from '../sections/UseCasesSection';
@@ -157,32 +156,32 @@ export function InteractiveToolPageTemplate({
       />
       <ScrollTracker pageType="tool" slug={data.slug} />
 
-      {/* Full Width Hero Area */}
-      <div className="relative">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-30 pt-6">
-          <BreadcrumbNav
-            items={[
-              { label: 'AI Image Upscaler', href: locale ? `/${locale}` : '/' },
-              { label: 'Tools', href: locale ? `/${locale}/tools` : '/tools' },
-              {
-                label: data.title,
-                href: locale ? `/${locale}/tools/${data.slug}` : `/tools/${data.slug}`,
-              },
-            ]}
-          />
-        </div>
-
-        <div className="relative h-full">
-          <HeroSection h1={data.h1} intro={data.intro} pageType="tool" slug={data.slug} />
-        </div>
+      {/* Breadcrumb + compact header */}
+      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 pt-6">
+        <BreadcrumbNav
+          items={[
+            { label: 'AI Image Upscaler', href: locale ? `/${locale}` : '/' },
+            { label: 'Tools', href: locale ? `/${locale}/tools` : '/tools' },
+            {
+              label: data.title,
+              href: locale ? `/${locale}/tools/${data.slug}` : `/tools/${data.slug}`,
+            },
+          ]}
+        />
       </div>
 
       <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         <article>
+          {/* Page H1 — compact, above the tool card, SEO-critical */}
+          <div className="pt-6 pb-2 text-center">
+            <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-2">{data.h1}</h1>
+            <p className="text-base text-muted-foreground max-w-2xl mx-auto">{data.intro}</p>
+          </div>
+
           {/* Interactive Tool Component */}
           {ToolComponent && (
             <FadeIn delay={0.1}>
-              <div className="py-12">
+              <div className="py-4">
                 <ToolComponent {...getToolProps(data.toolComponent!, data.toolConfig)} />
                 {/* Phase 9: Post-tool cross-sell CTA */}
                 <PostToolCTA slug={data.slug} />

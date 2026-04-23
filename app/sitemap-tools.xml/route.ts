@@ -15,6 +15,7 @@ import {
   getMostRecentLastUpdated,
 } from '@/lib/seo/sitemap-generator';
 import interactiveToolsData from '@/app/seo/data/interactive-tools.json';
+import socialMediaResizeData from '@/app/seo/data/social-media-resize.json';
 import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
 
 const CATEGORY = 'tools' as const;
@@ -31,6 +32,11 @@ const INTERACTIVE_TOOL_PATHS: Record<string, string> = {
   'resize-image-for-facebook': '/tools/resize/resize-image-for-facebook',
   'resize-image-for-twitter': '/tools/resize/resize-image-for-twitter',
   'resize-image-for-linkedin': '/tools/resize/resize-image-for-linkedin',
+  'resize-image-for-pinterest': '/tools/resize/resize-image-for-pinterest',
+  'resize-image-for-tiktok': '/tools/resize/resize-image-for-tiktok',
+  'resize-image-for-discord': '/tools/resize/resize-image-for-discord',
+  'resize-image-for-reddit': '/tools/resize/resize-image-for-reddit',
+  'resize-image-for-telegram': '/tools/resize/resize-image-for-telegram',
   // Convert tools
   'png-to-jpg': '/tools/convert/png-to-jpg',
   'jpg-to-png': '/tools/convert/jpg-to-png',
@@ -46,9 +52,12 @@ const INTERACTIVE_TOOL_PATHS: Record<string, string> = {
 export async function GET() {
   const staticTools = await getAllTools();
   const interactiveTools = (interactiveToolsData as IPSEODataFile<IToolPage>).pages;
+  const socialMediaResizeTools = (
+    socialMediaResizeData as unknown as IPSEODataFile<IToolPage>
+  ).pages.filter(tool => tool.slug in INTERACTIVE_TOOL_PATHS);
 
   // Get the most recent lastUpdated date from all tools for the category page
-  const allTools = [...staticTools, ...interactiveTools];
+  const allTools = [...staticTools, ...interactiveTools, ...socialMediaResizeTools];
   const categoryLastmod = getMostRecentLastUpdated(allTools);
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -85,6 +94,27 @@ ${hreflangLinks}${
 ${interactiveTools
   .map(tool => {
     const path = INTERACTIVE_TOOL_PATHS[tool.slug] || `/tools/${tool.slug}`;
+    const hreflangLinks = generateSitemapHreflangLinks(path, CATEGORY).join('\n');
+    return `  <url>
+    <loc>${BASE_URL}${path}</loc>
+    <lastmod>${tool.lastUpdated}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+${hreflangLinks}${
+      tool.ogImage
+        ? `
+    <image:image>
+      <image:loc>${tool.ogImage.startsWith('http') ? tool.ogImage : `${BASE_URL}${tool.ogImage}`}</image:loc>
+      <image:title>${tool.title}</image:title>
+    </image:image>`
+        : ''
+    }
+  </url>`;
+  })
+  .join('\n')}
+${socialMediaResizeTools
+  .map(tool => {
+    const path = INTERACTIVE_TOOL_PATHS[tool.slug] || `/tools/resize/${tool.slug}`;
     const hreflangLinks = generateSitemapHreflangLinks(path, CATEGORY).join('\n');
     return `  <url>
     <loc>${BASE_URL}${path}</loc>

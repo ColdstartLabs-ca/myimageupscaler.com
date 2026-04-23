@@ -26,7 +26,12 @@ export async function generateMetadata({ params }: IDeviceUsePageProps): Promise
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'device-use', locale);
+  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+    result.data,
+    'device-use',
+    locale
+  );
+  return metaWithoutAlternates;
 }
 
 export default async function DeviceUsePage({ params }: IDeviceUsePageProps) {

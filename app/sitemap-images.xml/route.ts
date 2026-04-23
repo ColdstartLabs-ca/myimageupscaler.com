@@ -5,6 +5,7 @@
 
 import { NextResponse } from 'next/server';
 import { getAllPSEOPages } from '@/lib/seo/data-loader';
+import type { PSEOPage } from '@/lib/seo/pseo-types';
 import { clientEnv } from '@shared/config/env';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
@@ -22,7 +23,10 @@ export async function GET() {
   const pages = await getAllPSEOPages();
 
   const imageEntries: IImageEntry[] = pages
-    .filter(page => page.ogImage && page.category !== 'platforms')
+    .filter(
+      (page): page is PSEOPage =>
+        'category' in page && !!page.ogImage && (page as PSEOPage).category !== 'platforms'
+    )
     .map(page => ({
       pageUrl: `${BASE_URL}/${page.category}/${page.slug}`,
       images: [

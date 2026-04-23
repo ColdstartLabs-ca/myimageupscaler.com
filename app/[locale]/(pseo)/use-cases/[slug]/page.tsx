@@ -25,7 +25,12 @@ export async function generateMetadata({ params }: IUseCasePageProps): Promise<M
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'use-cases', locale);
+  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+    result.data,
+    'use-cases',
+    locale
+  );
+  return metaWithoutAlternates;
 }
 
 export default async function UseCasePage({ params }: IUseCasePageProps) {

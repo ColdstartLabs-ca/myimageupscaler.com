@@ -1,25 +1,19 @@
 'use client';
 
 import React, { useState, useCallback, useRef } from 'react';
+import { Sparkles, Zap } from 'lucide-react';
+import Link from 'next/link';
 import { InteractiveTool } from './InteractiveTool';
-import Cropper from 'react-easy-crop';
-import type { Area } from 'react-easy-crop';
+import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
 interface IAspectRatioPreset {
   label: string;
-  value: number | undefined; // undefined = free form
+  value: number | undefined;
 }
 
-const _STANDARD_PRESETS: IAspectRatioPreset[] = [
-  { label: 'Free', value: undefined },
-  { label: '1:1 (Square)', value: 1 },
-  { label: '16:9 (Landscape)', value: 16 / 9 },
-  { label: '4:3', value: 4 / 3 },
-  { label: '3:2', value: 3 / 2 },
-  { label: '9:16 (Portrait)', value: 9 / 16 },
-];
-
 const SOCIAL_MEDIA_PRESETS: IAspectRatioPreset[] = [
+  { label: 'Free', value: undefined },
   { label: 'Instagram Post (1:1)', value: 1 },
   { label: 'Instagram Story (9:16)', value: 9 / 16 },
   { label: 'YouTube Thumbnail (16:9)', value: 16 / 9 },
@@ -36,55 +30,64 @@ interface IImageCropperProps {
   description?: string;
 }
 
-function getCropBlob(imageSrc: string, pixelCrop: Area, circularCrop?: boolean): Promise<Blob> {
+function makeInitialCrop(aspect: number | undefined, width: number, height: number): Crop {
+  if (aspect !== undefined) {
+    return centerCrop(
+      makeAspectCrop({ unit: '%', width: 80 }, aspect, width, height),
+      width,
+      height
+    );
+  }
+  return { unit: '%', x: 10, y: 10, width: 80, height: 80 };
+}
+
+function getCropBlob(
+  img: HTMLImageElement,
+  pixelCrop: PixelCrop,
+  circularCrop?: boolean
+): Promise<Blob> {
   return new Promise((resolve, reject) => {
-    const img = document.createElement('img');
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        reject(new Error('Canvas not supported'));
-        return;
-      }
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      reject(new Error('Canvas not supported'));
+      return;
+    }
 
-      canvas.width = pixelCrop.width;
-      canvas.height = pixelCrop.height;
+    const scaleX = img.naturalWidth / img.width;
+    const scaleY = img.naturalHeight / img.height;
+    const w = Math.round(pixelCrop.width * scaleX);
+    const h = Math.round(pixelCrop.height * scaleY);
 
-      if (circularCrop) {
-        ctx.beginPath();
-        ctx.arc(
-          pixelCrop.width / 2,
-          pixelCrop.height / 2,
-          Math.min(pixelCrop.width, pixelCrop.height) / 2,
-          0,
-          2 * Math.PI
-        );
-        ctx.clip();
-      }
+    canvas.width = w;
+    canvas.height = h;
 
-      ctx.drawImage(
-        img,
-        pixelCrop.x,
-        pixelCrop.y,
-        pixelCrop.width,
-        pixelCrop.height,
-        0,
-        0,
-        pixelCrop.width,
-        pixelCrop.height
-      );
+    if (circularCrop) {
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2, Math.min(w, h) / 2, 0, 2 * Math.PI);
+      ctx.clip();
+    }
 
-      canvas.toBlob(
-        blob => {
-          if (blob) resolve(blob);
-          else reject(new Error('Failed to create image'));
-        },
-        'image/png',
-        1
-      );
-    };
-    img.onerror = () => reject(new Error('Failed to load image'));
-    img.src = imageSrc;
+    ctx.drawImage(
+      img,
+      pixelCrop.x * scaleX,
+      pixelCrop.y * scaleY,
+      pixelCrop.width * scaleX,
+      pixelCrop.height * scaleY,
+      0,
+      0,
+      w,
+      h
+    );
+
+    canvas.toBlob(
+      blob => {
+        if (blob) resolve(blob);
+        else reject(new Error('Failed to create image'));
+      },
+      'image/png',
+      1
+    );
   });
 }
 
@@ -92,136 +95,140 @@ export function ImageCropper({
   defaultAspectRatio,
   aspectRatioPresets,
   title = 'Crop Your Image',
-  description = 'Free online image cropper - crop images to any dimension or aspect ratio instantly',
+  description = 'Drag the handles to adjust the crop area. Switch presets to lock the aspect ratio.',
 }: IImageCropperProps): React.ReactElement {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [aspect, setAspect] = useState<number | undefined>(defaultAspectRatio ?? undefined);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const [crop, setCrop] = useState<Crop>();
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const [aspect, setAspect] = useState<number | undefined>(defaultAspectRatio ?? 1);
   const [selectedPreset, setSelectedPreset] = useState<string>(
-    defaultAspectRatio ? 'default' : 'Free'
+    defaultAspectRatio ? 'default' : 'Instagram Post (1:1)'
   );
-  const previewUrlRef = useRef<string | null>(null);
   const [cropDimensions, setCropDimensions] = useState<string>('');
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const isCircular = aspectRatioPresets === 'circle';
 
-  const socialPresets =
+  const filteredPresets =
     aspectRatioPresets === 'instagram'
-      ? SOCIAL_MEDIA_PRESETS.filter(p => p.label.toLowerCase().includes('instagram'))
+      ? SOCIAL_MEDIA_PRESETS.filter(
+          p => p.label === 'Free' || p.label.toLowerCase().includes('instagram')
+        )
       : aspectRatioPresets === 'youtube'
-        ? SOCIAL_MEDIA_PRESETS.filter(p => p.label.toLowerCase().includes('youtube'))
-        : null;
+        ? SOCIAL_MEDIA_PRESETS.filter(
+            p => p.label === 'Free' || p.label.toLowerCase().includes('youtube')
+          )
+        : SOCIAL_MEDIA_PRESETS;
 
-  const presets = socialPresets ?? SOCIAL_MEDIA_PRESETS;
-
-  const handleCropComplete = useCallback((_croppedArea: Area, croppedPixels: Area) => {
-    setCroppedAreaPixels(croppedPixels);
-    setCropDimensions(`${Math.round(croppedPixels.width)} × ${Math.round(croppedPixels.height)}`);
-  }, []);
+  function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
+    const { naturalWidth, naturalHeight } = e.currentTarget;
+    setCrop(makeInitialCrop(aspect, naturalWidth, naturalHeight));
+  }
 
   const handlePresetSelect = useCallback((label: string, value: number | undefined) => {
     setSelectedPreset(label);
     setAspect(value);
+    if (imgRef.current) {
+      const { naturalWidth, naturalHeight } = imgRef.current;
+      setCrop(makeInitialCrop(value, naturalWidth, naturalHeight));
+    }
+  }, []);
+
+  const handleCropComplete = useCallback((pixelCrop: PixelCrop) => {
+    setCompletedCrop(pixelCrop);
+    if (imgRef.current) {
+      const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
+      const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
+      setCropDimensions(
+        `${Math.round(pixelCrop.width * scaleX)} × ${Math.round(pixelCrop.height * scaleY)}`
+      );
+    }
   }, []);
 
   const handleCrop = useCallback(
     async (_file: File): Promise<Blob> => {
-      if (!croppedAreaPixels || !previewUrlRef.current) {
-        throw new Error('Please select a crop area first');
+      if (!completedCrop || !imgRef.current) {
+        throw new Error('Please adjust the crop area and try again');
       }
-      return getCropBlob(previewUrlRef.current, croppedAreaPixels, isCircular);
+      return getCropBlob(imgRef.current, completedCrop, isCircular);
     },
-    [croppedAreaPixels, isCircular]
+    [completedCrop, isCircular]
   );
 
   return (
     <InteractiveTool title={title} description={description} onProcess={handleCrop}>
-      {({ file, previewUrl }) => {
-        if (previewUrl) {
-          previewUrlRef.current = previewUrl;
-        }
-
-        return (
-          <div className="space-y-6">
-            {previewUrl && (
-              <div className="relative bg-black rounded-lg overflow-hidden" style={{ height: 400 }}>
-                <Cropper
-                  image={previewUrl}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={aspect ?? 1}
-                  cropShape={isCircular ? 'round' : 'rect'}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={handleCropComplete}
-                  showGrid={true}
-                  style={{
-                    containerStyle: { borderRadius: '0.5rem' },
-                  }}
+      {({ previewUrl, processedBlob, markResultStale }) => (
+        <div className="space-y-4">
+          {previewUrl && (
+            <div className="flex justify-center bg-gray-900 rounded-lg overflow-hidden p-2">
+              <ReactCrop
+                crop={crop}
+                onChange={c => {
+                  setCrop(c);
+                  markResultStale();
+                }}
+                onComplete={handleCropComplete}
+                aspect={aspect}
+                circularCrop={isCircular}
+                keepSelection
+              >
+                <img
+                  ref={imgRef}
+                  src={previewUrl}
+                  alt="Crop preview"
+                  style={{ maxHeight: 420, display: 'block' }}
+                  onLoad={onImageLoad}
                 />
-              </div>
-            )}
-
-            {cropDimensions && (
-              <div className="text-center text-sm text-muted-foreground">
-                Crop area: {cropDimensions} px
-              </div>
-            )}
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-muted-foreground">
-                  Aspect Ratio
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {presets.map(preset => (
-                    <button
-                      key={preset.label}
-                      onClick={() => handlePresetSelect(preset.label, preset.value)}
-                      className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
-                        selectedPreset === preset.label
-                          ? 'bg-accent text-white border-accent'
-                          : 'bg-surface text-text-primary border-border hover:border-accent'
-                      }`}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="zoom"
-                  className="mb-2 block text-sm font-medium text-muted-foreground"
-                >
-                  Zoom: {zoom.toFixed(1)}x
-                </label>
-                <input
-                  id="zoom"
-                  type="range"
-                  min={1}
-                  max={5}
-                  step={0.1}
-                  value={zoom}
-                  onChange={e => setZoom(parseFloat(e.target.value))}
-                  className="w-full"
-                />
-              </div>
+              </ReactCrop>
             </div>
+          )}
 
-            {file && (
-              <div className="bg-surface rounded-lg p-4 text-sm">
-                <p className="text-text-secondary">
-                  <span className="font-medium">Original:</span> {file.name} (
-                  {(file.size / 1024 / 1024).toFixed(2)}MB)
+          {cropDimensions && (
+            <p className="text-center text-sm text-muted-foreground">Output: {cropDimensions} px</p>
+          )}
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-muted-foreground">
+              Aspect Ratio
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {filteredPresets.map(preset => (
+                <button
+                  key={preset.label}
+                  onClick={() => handlePresetSelect(preset.label, preset.value)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
+                    selectedPreset === preset.label
+                      ? 'bg-accent text-white border-accent'
+                      : 'bg-surface text-text-primary border-border hover:border-accent'
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {processedBlob && (
+            <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-accent/10 to-purple-500/10 border border-accent/20 rounded-xl">
+              <div className="w-9 h-9 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-4 h-4 text-accent" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-primary">Want this image sharper?</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Upscale up to 4× with AI — perfect for print or large displays.
                 </p>
               </div>
-            )}
-          </div>
-        );
-      }}
+              <Link
+                href="/?signup=1"
+                className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 bg-accent text-white text-xs font-medium rounded-lg hover:bg-accent/90 transition-colors"
+              >
+                <Zap className="w-3 h-3" />
+                Try Free
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
     </InteractiveTool>
   );
 }

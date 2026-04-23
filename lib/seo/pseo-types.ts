@@ -625,7 +625,7 @@ export interface IGuideStep {
 /**
  * Data file response structure
  */
-export interface IPSEODataFile<T extends PSEOPage> {
+export interface IPSEODataFile<T extends IBasePSEOPage> {
   category: PSEOCategory;
   pages: T[];
   meta: {

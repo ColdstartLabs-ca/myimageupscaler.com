@@ -13,7 +13,7 @@ const toolsData = interactiveToolsData as IPSEODataFile<IToolPage>;
 const bulkData = bulkToolsData as unknown as IPSEODataFile<IBulkToolPage>;
 const socialData = socialMediaResizeData as unknown as IPSEODataFile<IToolPage>;
 
-// Resize tool slugs from interactive-tools.json and bulk-tools.json
+// Resize tool slugs from interactive-tools.json, bulk-tools.json, and social-media-resize.json
 const RESIZE_SLUGS = [
   'image-resizer',
   'resize-image-for-instagram',
@@ -21,6 +21,11 @@ const RESIZE_SLUGS = [
   'resize-image-for-facebook',
   'resize-image-for-twitter',
   'resize-image-for-linkedin',
+  'resize-image-for-pinterest',
+  'resize-image-for-tiktok',
+  'resize-image-for-discord',
+  'resize-image-for-reddit',
+  'resize-image-for-telegram',
   'bulk-image-resizer',
 ];
 

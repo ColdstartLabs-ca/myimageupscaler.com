@@ -50,7 +50,13 @@ export async function generateMetadata({ params }: IToolPageProps): Promise<Meta
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'tools', locale);
+  // Strip alternates — SeoMetaTags handles canonical and HreflangLinks handles hreflang in JSX.
+  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+    result.data,
+    'tools',
+    locale
+  );
+  return metaWithoutAlternates;
 }
 
 export default async function ToolPage({ params }: IToolPageProps) {
@@ -84,7 +90,12 @@ export default async function ToolPage({ params }: IToolPageProps) {
       {/* SEO meta tags - canonical and og:locale */}
       <SeoMetaTags path={path} locale={locale} />
       {/* Hreflang links — only for locales with actual translations */}
-      <HreflangLinks path={path} category="tools" locale={locale} availableLocales={availableLocales} />
+      <HreflangLinks
+        path={path}
+        category="tools"
+        locale={locale}
+        availableLocales={availableLocales}
+      />
       <SchemaMarkup schema={schema} />
       <Template data={result.data} locale={locale} relatedPages={relatedPages} />
     </>
