@@ -77,19 +77,6 @@ export function getAuthInitScript(userData?: Partial<ITestUserData>): string {
     // This will be picked up by userStore.initialize() via loadUserCache()
     localStorage.setItem('${cacheKey}', ${JSON.stringify(cacheValue)});
 
-    // Override Supabase auth session detection
-    // The userStore checks for session existence, so we mock the session storage
-    sessionStorage.setItem('supabase.auth.token', JSON.stringify({
-      currentSession: {
-        access_token: 'fake-test-token',
-        user: {
-          id: '${user.id}',
-          email: '${user.email}',
-          aud: 'authenticated',
-        }
-      }
-    }));
-
     // Store test marker for middleware to check
     localStorage.setItem('__test_mode__', 'true');
   `;
@@ -189,6 +176,7 @@ export async function setupAuthenticatedStateWithSupabase(
     mockSupabaseBillingData,
     mockSupabaseRpc,
     mockCreditHistory,
+    mockCheckoutEndpoint,
   } = await import('./supabase-mock');
 
   // Mock all Supabase-related calls
@@ -196,6 +184,7 @@ export async function setupAuthenticatedStateWithSupabase(
   await mockSupabaseBillingData(page, user);
   await mockSupabaseRpc(page, user);
   await mockCreditHistory(page, []);
+  await mockCheckoutEndpoint(page);
 }
 
 /**
