@@ -496,6 +496,14 @@ export interface IPaywallShownProperties {
   context: 'guest_api' | 'authenticated_workspace';
 }
 
+// PRD #90: Paywall hit tracking for zero-conversion countries
+export interface IPaywallHitProperties {
+  country: string | null;
+  tier: 'paywalled';
+  source: 'checkout_page' | 'pricing_page';
+  priceId?: string;
+}
+
 // =============================================================================
 // Event Types
 // =============================================================================
@@ -613,6 +621,7 @@ export type IAnalyticsEventName =
   | 'engagement_discount_redeemed'
   // Country paywall events
   | 'paywall_shown'
+  | 'paywall_hit' // PRD #90: Track when paywalled users visit checkout/pricing pages
   // Revenue leak detection events (PRD: analytics-tracking-enhancement - Phase 1)
   | 'payment_failed'
   | 'plan_selected'
