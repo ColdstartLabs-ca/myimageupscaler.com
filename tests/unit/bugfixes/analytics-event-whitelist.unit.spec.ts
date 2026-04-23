@@ -35,6 +35,10 @@ const ALLOWED_EVENTS = [
   // Pricing page events
   'pricing_page_viewed',
 
+  // Country paywall events
+  'paywall_shown',
+  'paywall_hit',
+
   // Checkout events
   'checkout_started',
   'checkout_completed',
@@ -203,6 +207,14 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
     test('should include image_download event', () => {
       const result = eventSchema.safeParse({ eventName: 'image_download' });
       expect(result.success).toBe(true);
+    });
+
+    test('should include country paywall events', () => {
+      const paywallEvents = ['paywall_shown', 'paywall_hit'];
+      for (const eventName of paywallEvents) {
+        const result = eventSchema.safeParse({ eventName });
+        expect(result.success).toBe(true);
+      }
     });
 
     test('should include image_upscale_started event (new funnel event)', () => {

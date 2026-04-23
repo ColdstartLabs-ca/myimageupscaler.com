@@ -55,6 +55,7 @@ function CheckoutContent() {
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const hasTrackedCheckoutOpenRef = useRef(false);
+  const hasTrackedPaywallHitRef = useRef(false);
   const hasTrackedAuthRequiredRef = useRef(false);
 
   const priceId = searchParams.get('priceId');
@@ -73,16 +74,6 @@ function CheckoutContent() {
   }, [modelParam]);
 
   useEffect(() => {
-    // Track paywall hit for paywalled users visiting checkout
-    if (isPaywalled && !hasTrackedCheckoutOpenRef.current && analytics.isEnabled()) {
-      analytics.track('paywall_hit', {
-        country,
-        tier: 'paywalled',
-        source: 'checkout_page',
-        priceId: priceId || undefined,
-      });
-    }
-
     if (!priceId || authLoading || isAuthenticated || hasTrackedAuthRequiredRef.current) {
       return;
     }
@@ -97,6 +88,25 @@ function CheckoutContent() {
     });
     hasTrackedAuthRequiredRef.current = true;
   }, [authLoading, isAuthenticated, priceId]);
+
+  useEffect(() => {
+    if (
+      regionLoading ||
+      !isPaywalled ||
+      hasTrackedPaywallHitRef.current ||
+      !analytics.isEnabled()
+    ) {
+      return;
+    }
+
+    analytics.track('paywall_hit', {
+      country,
+      tier: 'paywalled',
+      source: 'checkout_page',
+      priceId: priceId || undefined,
+    });
+    hasTrackedPaywallHitRef.current = true;
+  }, [regionLoading, isPaywalled, country, priceId]);
 
   useEffect(() => {
     if (!priceId) {

@@ -32,6 +32,19 @@ export interface IEnsureAntiFreeloaderProfileOptions {
   persist?: boolean;
 }
 
+const REGION_TIER_STRICTNESS: Record<RegionTier, number> = {
+  standard: 0,
+  restricted: 1,
+  paywalled: 2,
+};
+
+function normalizeStoredRegionTier(value: string | null | undefined): RegionTier | null {
+  if (value === 'standard' || value === 'restricted' || value === 'paywalled') {
+    return value;
+  }
+  return null;
+}
+
 export function getRequestCountry(req: NextRequest): string | null {
   return (
     req.headers.get('CF-IPCountry') ||
@@ -86,26 +99,42 @@ export async function ensureAntiFreeloaderProfile(
   const updates: Partial<IAntiFreeloaderProfile> = {};
   let shouldCheckSignupIp = false;
   let targetCreditBalance: number | undefined;
+  const requestTier = country ? getRegionTier(country) : null;
+  const storedRegionTier = normalizeStoredRegionTier(profile.region_tier);
+  const effectiveRegionTier =
+    requestTier === null
+      ? storedRegionTier
+      : storedRegionTier === null ||
+          REGION_TIER_STRICTNESS[requestTier] > REGION_TIER_STRICTNESS[storedRegionTier]
+        ? requestTier
+        : storedRegionTier;
+  const shouldTightenRegionTier =
+    effectiveRegionTier !== null && effectiveRegionTier !== storedRegionTier;
 
   if (!profile.signup_country && country) {
     updates.signup_country = country;
   }
 
-  if (!profile.region_tier && country) {
-    const tier = getRegionTier(country);
-    updates.region_tier = tier;
+  if (shouldTightenRegionTier && effectiveRegionTier) {
+    updates.region_tier = effectiveRegionTier;
+  }
 
-    if (isFreeTierProfile(profile.subscription_tier) && isNewlyCreatedProfile(profile.created_at)) {
-      const currentBalance =
-        profile.subscription_credits_balance ?? CREDIT_COSTS.DEFAULT_FREE_CREDITS;
-      const adjustedBalance = getAdjustedRegionalFreeCredits(
-        profile.subscription_credits_balance,
-        tier
-      );
+  if (effectiveRegionTier && isFreeTierProfile(profile.subscription_tier)) {
+    const currentBalance =
+      profile.subscription_credits_balance ?? CREDIT_COSTS.DEFAULT_FREE_CREDITS;
+    const adjustedBalance = getAdjustedRegionalFreeCredits(
+      profile.subscription_credits_balance,
+      effectiveRegionTier
+    );
+    const shouldApplyCreditReduction =
+      adjustedBalance !== undefined &&
+      adjustedBalance !== currentBalance &&
+      (effectiveRegionTier === 'paywalled' ||
+        ((storedRegionTier === null || shouldTightenRegionTier) &&
+          isNewlyCreatedProfile(profile.created_at)));
 
-      if (adjustedBalance !== undefined && adjustedBalance !== currentBalance) {
-        targetCreditBalance = adjustedBalance;
-      }
+    if (shouldApplyCreditReduction) {
+      targetCreditBalance = adjustedBalance;
     }
   }
 

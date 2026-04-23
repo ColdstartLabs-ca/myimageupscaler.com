@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { PRICING_GEO_COOKIE_NAME } from '@shared/utils/pricing-geo-session';
 
 test.describe('Regional Pricing & Bandit', () => {
   test('Brazil (BR) gets LATAM pricing with discount - API level', async ({ request }) => {
@@ -16,7 +17,9 @@ test.describe('Regional Pricing & Bandit', () => {
     expect(geoData.banditArmId).toBeTruthy();
   });
 
-  test('India (IN) gets South Asia pricing with higher discount - API level', async ({ request }) => {
+  test('India (IN) gets South Asia pricing with higher discount - API level', async ({
+    request,
+  }) => {
     const geoResponse = await request.get('/api/geo', {
       headers: { 'x-test-country': 'IN' },
     });
@@ -60,9 +63,11 @@ test.describe('Regional Pricing & Bandit', () => {
     const expectedDiscount = geoData.discountPercent;
     const expectedRegion = geoData.pricingRegion;
 
-    console.log(`Brazil: region=${expectedRegion}, discount=${expectedDiscount}%, banditArm=${geoData.banditArmId}`);
+    console.log(
+      `Brazil: region=${expectedRegion}, discount=${expectedDiscount}%, banditArm=${geoData.banditArmId}`
+    );
 
-    // Set the pricing_geo_v1 cookie directly (bypassing client fetch)
+    // Set the pricing geo cookie directly (bypassing client fetch)
     const cookieValue = JSON.stringify({
       country: 'BR',
       tier: 'restricted',
@@ -73,7 +78,7 @@ test.describe('Regional Pricing & Bandit', () => {
 
     await page.context().addCookies([
       {
-        name: 'pricing_geo_v1',
+        name: PRICING_GEO_COOKIE_NAME,
         value: cookieValue,
         domain: 'localhost',
         path: '/',

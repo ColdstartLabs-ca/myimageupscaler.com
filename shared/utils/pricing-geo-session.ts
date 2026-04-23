@@ -10,7 +10,9 @@ export interface IPricingGeoSession {
   banditArmId: number | null;
 }
 
-export const PRICING_GEO_SESSION_KEY = 'pricing_geo_v1';
+// Bump this key whenever geo classification rules change so stale client/server
+// caches do not survive a deployment and mask the new rollout behavior.
+export const PRICING_GEO_SESSION_KEY = 'pricing_geo_v2';
 export const PRICING_GEO_COOKIE_NAME = PRICING_GEO_SESSION_KEY;
 
 const VALID_TIERS = new Set<TPricingGeoTier>(['standard', 'restricted', 'paywalled']);

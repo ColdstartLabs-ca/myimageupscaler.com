@@ -133,6 +133,24 @@ describe('ensureAntiFreeloaderProfile', () => {
       const rpcNames = mockRpc.mock.calls.map(([n]: [string]) => n);
       expect(rpcNames).not.toContain('adjust_regional_credits');
     });
+
+    it('tightens existing restricted users to paywalled when the request country is now paywalled', async () => {
+      PAYWALLED_COUNTRIES.add('IN');
+      const profile = makeProfile({
+        region_tier: 'restricted',
+        signup_country: 'IN',
+        signup_ip: '1.2.3.4',
+        created_at: minutesAgo(60),
+      });
+
+      await ensureAntiFreeloaderProfile(makeReq('IN', '1.2.3.4'), 'uid-17', profile);
+
+      expect(mockUpdate).toHaveBeenCalledWith({ region_tier: 'paywalled' });
+      expect(mockRpc).toHaveBeenCalledWith(
+        'adjust_regional_credits',
+        expect.objectContaining({ p_new_balance: 0 })
+      );
+    });
   });
 
   describe('returned profile reflects adjusted balance', () => {
@@ -183,6 +201,29 @@ describe('ensureAntiFreeloaderProfile', () => {
       expect(result).toMatchObject({
         region_tier: 'paywalled',
         signup_country: 'PW',
+        subscription_credits_balance: 0,
+      });
+      expect(mockUpdate).not.toHaveBeenCalled();
+      expect(mockRpc).not.toHaveBeenCalled();
+    });
+
+    it('derives a tighter paywalled tier for previously restricted profiles without persisting writes', async () => {
+      PAYWALLED_COUNTRIES.add('IN');
+      const result = await ensureAntiFreeloaderProfile(
+        makeReq('IN', '1.2.3.4'),
+        'uid-18',
+        makeProfile({
+          region_tier: 'restricted',
+          signup_country: 'IN',
+          signup_ip: '1.2.3.4',
+          created_at: minutesAgo(60),
+        }),
+        { persist: false }
+      );
+
+      expect(result).toMatchObject({
+        region_tier: 'paywalled',
+        signup_country: 'IN',
         subscription_credits_balance: 0,
       });
       expect(mockUpdate).not.toHaveBeenCalled();

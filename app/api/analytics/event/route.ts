@@ -42,6 +42,10 @@ const ALLOWED_EVENTS = [
   // Pricing page events
   'pricing_page_viewed',
 
+  // Country paywall events
+  'paywall_shown',
+  'paywall_hit',
+
   // Upgrade prompt events
   'upgrade_prompt_shown',
   'upgrade_prompt_clicked',

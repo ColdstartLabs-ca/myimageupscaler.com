@@ -501,6 +501,7 @@ export interface IPaywallHitProperties {
   country: string | null;
   tier: 'paywalled';
   source: 'checkout_page' | 'pricing_page';
+  pricingRegion?: string;
   priceId?: string;
 }
 

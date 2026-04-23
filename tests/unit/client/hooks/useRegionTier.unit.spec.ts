@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import type { IPricingGeoSession } from '@shared/utils/pricing-geo-session';
+import {
+  PRICING_GEO_SESSION_KEY,
+  type IPricingGeoSession,
+} from '@shared/utils/pricing-geo-session';
 
 const { mockTrack, mockIsEnabled } = vi.hoisted(() => ({
   mockTrack: vi.fn(),
@@ -49,7 +52,7 @@ describe('useRegionTier', () => {
   });
 
   it('keeps server-provided geo when sessionStorage is stale and revalidation fails', async () => {
-    sessionStorage.setItem('pricing_geo_v1', JSON.stringify(STALE_STANDARD_GEO));
+    sessionStorage.setItem(PRICING_GEO_SESSION_KEY, JSON.stringify(STALE_STANDARD_GEO));
     vi.mocked(fetch).mockRejectedValueOnce(new Error('geo unavailable'));
 
     const useRegionTier = await importHook();
@@ -64,11 +67,13 @@ describe('useRegionTier', () => {
 
     expect(result.current.pricingRegion).toBe('eastern_europe');
     expect(result.current.discountPercent).toBe(40);
-    expect(sessionStorage.getItem('pricing_geo_v1')).toContain('"pricingRegion":"eastern_europe"');
+    expect(sessionStorage.getItem(PRICING_GEO_SESSION_KEY)).toContain(
+      '"pricingRegion":"eastern_europe"'
+    );
   });
 
   it('revalidates stale stored geo when no server geo is available', async () => {
-    sessionStorage.setItem('pricing_geo_v1', JSON.stringify(STALE_STANDARD_GEO));
+    sessionStorage.setItem(PRICING_GEO_SESSION_KEY, JSON.stringify(STALE_STANDARD_GEO));
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
       json: async () => RUSSIA_GEO,
@@ -85,6 +90,6 @@ describe('useRegionTier', () => {
     });
 
     expect(result.current.discountPercent).toBe(40);
-    expect(sessionStorage.getItem('pricing_geo_v1')).toContain('"country":"RU"');
+    expect(sessionStorage.getItem(PRICING_GEO_SESSION_KEY)).toContain('"country":"RU"');
   });
 });
