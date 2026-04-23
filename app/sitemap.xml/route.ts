@@ -28,6 +28,7 @@ const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
   'device-optimization',
   'bulk-tools',
   'ai-features',
+  'ai-photo-editor',
 ];
 
 /**

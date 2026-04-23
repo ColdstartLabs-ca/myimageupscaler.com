@@ -72,6 +72,7 @@ export const PSEO_CATEGORIES = [
   'device-optimization',
   'personas-expanded',
   'use-cases-expanded',
+  'ai-photo-editor',
 ] as const;
 
 export type PSEOCategory = (typeof PSEO_CATEGORIES)[number];
@@ -111,6 +112,7 @@ export function getCategoryDisplayName(category: PSEOCategory): string {
     'device-optimization': 'Device Optimization',
     'personas-expanded': 'User Personas',
     'use-cases-expanded': 'Expanded Use Cases',
+    'ai-photo-editor': 'AI Photo Editor',
   };
   return names[category];
 }
@@ -145,8 +147,11 @@ export function getCategoryDescription(category: PSEOCategory): string {
     'industry-insights': 'Industry-specific image enhancement solutions for professional workflows',
     'device-optimization':
       'Optimize images for specific devices and platforms for best performance',
-    'personas-expanded': 'Image enhancement solutions tailored for different user types and professions',
+    'personas-expanded':
+      'Image enhancement solutions tailored for different user types and professions',
     'use-cases-expanded': 'Expanded use cases for image enhancement across various scenarios',
+    'ai-photo-editor':
+      'Free AI photo editor — upscale, enhance, remove backgrounds, resize and compress photos online',
   };
   return descriptions[category];
 }

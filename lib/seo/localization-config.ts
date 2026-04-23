@@ -43,6 +43,7 @@ export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
   'technical-guides',
   'personas-expanded',
   'use-cases-expanded',
+  'ai-photo-editor',
 ];
 
 /**
@@ -190,7 +191,8 @@ export const LOCALIZATION_STATUS = {
   'platform-format': {
     localized: true,
     supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Platform-format multiplier pages fully localized for all 7 languages (updated 2025-01-15)',
+    notes:
+      'Platform-format multiplier pages fully localized for all 7 languages (updated 2025-01-15)',
   },
   'device-use': {
     localized: true,
@@ -261,5 +263,10 @@ export const LOCALIZATION_STATUS = {
     localized: false,
     supportedLocales: ['en'] as Locale[],
     notes: 'Expanded use case pages are English-only (10 pages, added 2026-02-11)',
+  },
+  'ai-photo-editor': {
+    localized: false,
+    supportedLocales: ['en'] as Locale[],
+    notes: 'AI Photo Editor hub page is English-only (added 2026-04-23)',
   },
 } as const;

@@ -476,7 +476,8 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
     pathname.startsWith('/comparisons-expanded/') ||
     pathname.startsWith('/personas-expanded/') ||
     pathname.startsWith('/technical-guides/') ||
-    pathname.startsWith('/use-cases-expanded/');
+    pathname.startsWith('/use-cases-expanded/') ||
+    pathname.startsWith('/ai-photo-editor');
 
   // Only skip locale routing for pSEO paths that DON'T have a locale prefix
   if (isPSEOPath && !hasLocalePrefix) {
@@ -633,8 +634,10 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     '/industry-insights/real-estate-photo-enhancement': '/use-cases/real-estate-photo-enhancement',
 
     // SEO CTR cannibalization redirects — consolidate competing blog URLs
-    '/blog/photo-enhancement-upscaling-vs-quality': '/blog/ai-image-upscaling-vs-sharpening-explained',
-    '/blog/best-free-ai-image-upscaler-tools-2026': '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+    '/blog/photo-enhancement-upscaling-vs-quality':
+      '/blog/ai-image-upscaling-vs-sharpening-explained',
+    '/blog/best-free-ai-image-upscaler-tools-2026':
+      '/blog/best-free-ai-image-upscaler-2026-tested-compared',
     '/blog/free-upscaler-no-sign-up': '/blog/free-ai-upscaler-no-watermark',
     '/blog/upscale-image-online-free': '/blog/free-ai-upscaler-no-watermark',
     '/blog/ai-vs-traditional-image-upscaling': '/blog/ai-image-upscaling-vs-sharpening-explained',

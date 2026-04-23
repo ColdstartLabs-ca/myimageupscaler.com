@@ -165,6 +165,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     'device-optimization': `Device Optimization Tools | ${APP_NAME}`,
     'personas-expanded': `User Persona Solutions | ${APP_NAME}`,
     'use-cases-expanded': `Expanded Use Cases | ${APP_NAME}`,
+    'ai-photo-editor': `Free AI Photo Editor — Edit Photos Online | ${APP_NAME}`,
   };
 
   const categoryDescriptions: Record<PSEOCategory, string> = {
@@ -202,6 +203,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
     'device-optimization': `Device optimization tools for better image performance. Optimize images for mobile, desktop, and various platforms.`,
     'personas-expanded': `Image enhancement solutions tailored for different user types. Find the perfect tools and workflows for your specific role and needs.`,
     'use-cases-expanded': `Expanded use cases for image enhancement across various scenarios and industries. Discover how ${APP_NAME} can help.`,
+    'ai-photo-editor': `Free AI photo editor with 6 powerful tools. Upscale resolution 4x, remove backgrounds, enhance quality, resize and compress — all free, no download required.`,
   };
 
   return {
