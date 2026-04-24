@@ -5,7 +5,13 @@
 
 set -e
 
-# Load test environment variables (filter out comments and empty lines)
+# Load API secrets first (provides CRON_SECRET etc.)
+if [ -f ".env.api" ]; then
+  export $(grep -v '^#' .env.api | grep -v '^$' | xargs) 2>/dev/null || true
+fi
+
+# Load test environment variables last — test values take precedence over .env.api
+# (e.g. ENV=test overrides any ENV from .env.api)
 export $(grep -v '^#' .env.test | grep -v '^$' | xargs)
 
 # Use ports from environment or defaults

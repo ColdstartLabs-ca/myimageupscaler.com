@@ -10,17 +10,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serverEnv } from '@shared/config/env';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import {
-  createSyncRun,
-  completeSyncRun,
-} from '@server/services/subscription-sync.service';
+import { createSyncRun, completeSyncRun } from '@server/services/subscription-sync.service';
 import {
   buildGscDateRange,
   createGscAccessToken,
   fetchBlogPagePerformance,
   fetchBlogQueryPagePerformance,
 } from '@server/services/gsc.service';
-import { scoreBlogPages, type IGscPageRow, type IGscQueryPageRow } from '@server/services/three-kings-scoring.service';
+import {
+  scoreBlogPages,
+  type IGscPageRow,
+  type IGscQueryPageRow,
+} from '@server/services/three-kings-scoring.service';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   // 1. Verify cron secret
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // 5. Get access token
     const accessToken = await createGscAccessToken(
       serverEnv.GSC_SERVICE_ACCOUNT_EMAIL,
-      serverEnv.GSC_PRIVATE_KEY,
+      serverEnv.GSC_PRIVATE_KEY
     );
 
     const siteUrl = serverEnv.GSC_SITE_URL;

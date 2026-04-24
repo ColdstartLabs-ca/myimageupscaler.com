@@ -67,7 +67,9 @@ export type StripePriceKey = keyof typeof STRIPE_PRICES;
 /**
  * Determine the plan name from a price ID
  */
-export function determinePlanFromPriceId(priceId: string): 'starter' | 'hobby' | 'pro' | 'business' {
+export function determinePlanFromPriceId(
+  priceId: string
+): 'starter' | 'hobby' | 'pro' | 'business' {
   if (priceId === STRIPE_PRICES.STARTER_MONTHLY) return 'starter';
   if (priceId === STRIPE_PRICES.HOBBY_MONTHLY) return 'hobby';
   if (priceId === STRIPE_PRICES.PRO_MONTHLY) return 'pro';

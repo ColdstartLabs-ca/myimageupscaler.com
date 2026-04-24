@@ -56,9 +56,7 @@ function getPacificTodayString(now = new Date()): string {
   }).formatToParts(now);
 
   const values = Object.fromEntries(
-    parts
-      .filter(part => part.type !== 'literal')
-      .map(part => [part.type, part.value]),
+    parts.filter(part => part.type !== 'literal').map(part => [part.type, part.value])
   );
 
   return `${values.year}-${values.month}-${values.day}`;
@@ -89,10 +87,7 @@ export function buildGscDateRange(days = 28, lagDays = 3): IGscDateRange {
  * Encode a string or ArrayBuffer to base64url (no padding).
  */
 function base64url(data: string | ArrayBuffer): string {
-  const bytes =
-    typeof data === 'string'
-      ? new TextEncoder().encode(data)
-      : new Uint8Array(data);
+  const bytes = typeof data === 'string' ? new TextEncoder().encode(data) : new Uint8Array(data);
   let str = '';
   for (const b of bytes) str += String.fromCharCode(b);
   return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -108,10 +103,7 @@ function base64url(data: string | ArrayBuffer): string {
  *
  * Uses the Web Crypto API so it runs on Cloudflare Pages / Workers.
  */
-export async function createGscAccessToken(
-  email: string,
-  privateKey: string,
-): Promise<string> {
+export async function createGscAccessToken(email: string, privateKey: string): Promise<string> {
   const normalizedKey = normalizePemPrivateKey(privateKey);
 
   // Strip PEM headers/footers and decode base64 to ArrayBuffer
@@ -131,7 +123,7 @@ export async function createGscAccessToken(
     keyBuffer.buffer,
     { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
     false,
-    ['sign'],
+    ['sign']
   );
 
   const now = Math.floor(Date.now() / 1000);
@@ -144,14 +136,14 @@ export async function createGscAccessToken(
       aud: GSC_TOKEN_AUD,
       exp: now + 3600,
       iat: now,
-    }),
+    })
   );
 
   const signingInput = `${header}.${claims}`;
   const signatureBuffer = await crypto.subtle.sign(
     'RSASSA-PKCS1-v1_5',
     cryptoKey,
-    new TextEncoder().encode(signingInput),
+    new TextEncoder().encode(signingInput)
   );
 
   const jwt = `${signingInput}.${base64url(signatureBuffer)}`;
@@ -167,9 +159,7 @@ export async function createGscAccessToken(
 
   if (!response.ok) {
     const body = await response.text();
-    throw new Error(
-      `GSC token request failed (${response.status}): ${body}`,
-    );
+    throw new Error(`GSC token request failed (${response.status}): ${body}`);
   }
 
   const data = (await response.json()) as IGscOAuthTokenResponse;
@@ -188,7 +178,7 @@ export async function createGscAccessToken(
 export async function queryAllSearchAnalyticsRows(
   accessToken: string,
   siteUrl: string,
-  body: IGscSearchAnalyticsRequest,
+  body: IGscSearchAnalyticsRequest
 ): Promise<IGscSearchAnalyticsRow[]> {
   const url = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`;
 
@@ -213,9 +203,7 @@ export async function queryAllSearchAnalyticsRows(
 
     if (!response.ok) {
       const errorBody = await response.text();
-      throw new Error(
-        `GSC Search Analytics request failed (${response.status}): ${errorBody}`,
-      );
+      throw new Error(`GSC Search Analytics request failed (${response.status}): ${errorBody}`);
     }
 
     const data = (await response.json()) as IGscSearchAnalyticsResponse;
@@ -238,7 +226,7 @@ export async function queryAllSearchAnalyticsRows(
 export async function fetchBlogPagePerformance(
   accessToken: string,
   siteUrl: string,
-  range: IGscDateRange,
+  range: IGscDateRange
 ): Promise<IGscSearchAnalyticsRow[]> {
   return queryAllSearchAnalyticsRows(accessToken, siteUrl, {
     startDate: range.startDate,
@@ -268,7 +256,7 @@ export async function fetchBlogPagePerformance(
 export async function fetchBlogQueryPagePerformance(
   accessToken: string,
   siteUrl: string,
-  range: IGscDateRange,
+  range: IGscDateRange
 ): Promise<IGscSearchAnalyticsRow[]> {
   return queryAllSearchAnalyticsRows(accessToken, siteUrl, {
     startDate: range.startDate,

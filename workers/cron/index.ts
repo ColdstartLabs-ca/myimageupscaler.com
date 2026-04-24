@@ -28,7 +28,6 @@ export interface IEnv {
   CRON_SERVICE_NAME?: string;
 }
 
-// eslint-disable-next-line import/no-default-export
 export default {
   /**
    * Scheduled event handler - triggered by cron patterns defined in wrangler.toml
@@ -54,6 +53,12 @@ export default {
     } else if (cronPattern === '30 4 * * *') {
       endpoint = '/api/cron/refresh-3kings-sitemap';
       jobName = '3-Kings Sitemap Refresh';
+    } else if (cronPattern === '0 0 * * *') {
+      endpoint = '/api/cron/queue-campaigns';
+      jobName = 'Campaign Queue';
+    } else if (cronPattern === '*/5 * * * *') {
+      endpoint = '/api/cron/send-campaigns';
+      jobName = 'Campaign Send';
     } else {
       console.error(`[CRON] Unknown cron pattern: ${cronPattern}`);
       return;
