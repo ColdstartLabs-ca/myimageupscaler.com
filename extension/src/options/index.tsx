@@ -1,5 +1,5 @@
 /**
- * Side Panel Entry Point
+ * Options Page Entry Point
  */
 
 import React from 'react';

@@ -642,7 +642,22 @@ export type IAnalyticsEventName =
   // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
   | 'comparison_viewed'
   // Amplitude identity events (server-side only)
-  | '$identify';
+  | '$identify'
+  // Extension events (PRD #100: Browser Extension v1)
+  | 'extension_installed'
+  | 'extension_auth_started'
+  | 'extension_auth_completed'
+  | 'extension_auth_failed'
+  | 'extension_image_upscaled'
+  | 'extension_upscale_started'
+  | 'extension_upscale_completed'
+  | 'extension_upscale_failed'
+  | 'extension_context_menu_used'
+  | 'extension_drag_drop_used'
+  | 'extension_settings_opened'
+  | 'extension_settings_saved'
+  | 'extension_signed_out'
+  | 'extension_side_panel_opened';
 
 export interface IAnalyticsEvent {
   name: IAnalyticsEventName;
@@ -696,3 +711,92 @@ export type IReferralSource =
   | 'google'
   | 'direct'
   | 'other';
+
+// =============================================================================
+// Extension Events (PRD #100: Browser Extension v1)
+// =============================================================================
+
+export interface IExtensionInstalledProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  version: string;
+  source?: 'chrome_web_store' | 'edge_addons' | 'firefox_add_ons' | 'direct';
+}
+
+export interface IExtensionAuthStartedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  source: 'install' | 'signin';
+}
+
+export interface IExtensionAuthCompletedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  source: 'install' | 'signin';
+  method: 'email' | 'google' | 'facebook' | 'azure';
+  existingUser: boolean;
+}
+
+export interface IExtensionAuthFailedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  source: 'install' | 'signin';
+  errorType: string;
+}
+
+export interface IExtensionImageUpscaledProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  inputSource: 'context_menu' | 'drag_drop';
+  scaleFactor: 2 | 4 | 8;
+  qualityTier: string;
+  creditsUsed: number;
+  creditsRemaining: number;
+  durationMs?: number;
+  success: boolean;
+}
+
+export interface IExtensionUpscaleStartedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  inputSource: 'context_menu' | 'drag_drop';
+}
+
+export interface IExtensionUpscaleCompletedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  inputSource: 'context_menu' | 'drag_drop';
+  durationMs: number;
+  scaleFactor: number;
+  creditsUsed: number;
+}
+
+export interface IExtensionUpscaleFailedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  inputSource: 'context_menu' | 'drag_drop';
+  errorType: string;
+}
+
+export interface IExtensionContextMenuUsedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  imageDomain?: string;
+}
+
+export interface IExtensionDragDropUsedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  fileSize?: number;
+  fileType?: string;
+}
+
+export interface IExtensionSettingsOpenedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  source: 'popup' | 'chrome_menu';
+}
+
+export interface IExtensionSettingsSavedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  settingsChanged: string[];
+}
+
+export interface IExtensionSignedOutProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  hadCreditsRemaining: boolean;
+}
+
+export interface IExtensionSidePanelOpenedProperties {
+  browser: 'chrome' | 'edge' | 'firefox';
+  source: 'popup' | 'context_menu';
+}
