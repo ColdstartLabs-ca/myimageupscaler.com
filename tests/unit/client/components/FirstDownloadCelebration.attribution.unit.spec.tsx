@@ -26,6 +26,7 @@ vi.mock('next-intl', () => ({
       'workspace.progressCelebration.title': 'First upscale complete!',
       'workspace.progressCelebration.subtitle': 'Subtitle',
       'workspace.progressCelebration.uploadAnother': 'Upload Another',
+      'workspace.progressCelebration.seePlans': 'See Premium Plans',
       'workspace.progressCelebration.exploreModels': 'Explore Models',
       'workspace.progressCelebration.skipText': 'Skip',
     };
@@ -73,7 +74,7 @@ describe('FirstDownloadCelebration — attribution', () => {
 
     render(
       <FirstDownloadCelebration
-        isFreeUser={true}
+        userSegment="free"
         source="upload"
         onExploreModels={onExploreModels}
         onUploadAnother={vi.fn()}
@@ -81,7 +82,7 @@ describe('FirstDownloadCelebration — attribution', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('Explore Models'));
+    fireEvent.click(screen.getByText('See Premium Plans'));
 
     expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith({
       originatingTrigger: 'celebration_explore',

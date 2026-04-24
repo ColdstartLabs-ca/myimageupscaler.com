@@ -22,7 +22,8 @@ interface IEnv {
   ALLOWED_IP: string;
 }
 
-export const outrankProxyWorker = {  async fetch(request: Request, env: IEnv): Promise<Response> {
+export const outrankProxyWorker = {
+  async fetch(request: Request, env: IEnv): Promise<Response> {
     // Health check
     if (request.method === 'GET') {
       return new Response(
@@ -64,5 +65,5 @@ export const outrankProxyWorker = {  async fetch(request: Request, env: IEnv): P
 };
 
 // Default export for Cloudflare Workers (required by wrangler)
-// eslint-disable-next-line import/no-default-export
+
 export default outrankProxyWorker;

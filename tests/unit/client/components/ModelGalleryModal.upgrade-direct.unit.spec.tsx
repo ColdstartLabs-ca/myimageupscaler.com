@@ -63,44 +63,38 @@ vi.mock('@client/components/ui/BottomSheet', () => ({
 }));
 
 // ModelCard renders a button that calls onLockedClick when isLocked=true
-vi.mock(
-  '/home/joao/projects/myimageupscaler.com/client/components/features/workspace/ModelCard',
-  () => ({
-    ModelCard: ({
-      tier,
-      isLocked,
-      onLockedClick,
-      onSelect,
-    }: {
-      tier: string;
-      isLocked: boolean;
-      onLockedClick?: () => void;
-      onSelect: (tier: string) => void;
-    }) =>
-      React.createElement(
-        'div',
-        { 'data-testid': `model-card-${tier}` },
-        isLocked
-          ? React.createElement(
-              'button',
-              { 'data-testid': `locked-${tier}`, onClick: onLockedClick },
-              `Unlock ${tier}`
-            )
-          : React.createElement(
-              'button',
-              { 'data-testid': `select-${tier}`, onClick: () => onSelect(tier) },
-              `Select ${tier}`
-            )
-      ),
-  })
-);
+vi.mock('@client/components/features/workspace/ModelCard', () => ({
+  ModelCard: ({
+    tier,
+    isLocked,
+    onLockedClick,
+    onSelect,
+  }: {
+    tier: string;
+    isLocked: boolean;
+    onLockedClick?: () => void;
+    onSelect: (tier: string) => void;
+  }) =>
+    React.createElement(
+      'div',
+      { 'data-testid': `model-card-${tier}` },
+      isLocked
+        ? React.createElement(
+            'button',
+            { 'data-testid': `locked-${tier}`, onClick: onLockedClick },
+            `Unlock ${tier}`
+          )
+        : React.createElement(
+            'button',
+            { 'data-testid': `select-${tier}`, onClick: () => onSelect(tier) },
+            `Select ${tier}`
+          )
+    ),
+}));
 
-vi.mock(
-  '/home/joao/projects/myimageupscaler.com/client/components/features/workspace/ModelGallerySearch',
-  () => ({
-    ModelGallerySearch: () => null,
-  })
-);
+vi.mock('@client/components/features/workspace/ModelGallerySearch', () => ({
+  ModelGallerySearch: () => null,
+}));
 
 vi.mock('@shared/config/model-costs.config', () => ({
   MODEL_COSTS: {
@@ -177,6 +171,7 @@ function renderModal(overrides: Partial<React.ComponentProps<typeof ModelGallery
       onClose,
       currentTier: 'quick' as any,
       isFreeUser: true,
+      userSegment: 'free',
       onSelect,
       onUpgrade,
       onUpgradeDirect,
@@ -291,6 +286,7 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
         onClose,
         currentTier: 'quick' as any,
         isFreeUser: true,
+        userSegment: 'free',
         onSelect: vi.fn(),
         onUpgrade: vi.fn(),
         onUpgradeDirect,

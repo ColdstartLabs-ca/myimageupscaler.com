@@ -566,16 +566,19 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   it('should show PostDownloadPrompt on 2nd download (deterministic, not random)', async () => {
     const onExploreModels = vi.fn();
-    render(
+    const { rerender } = render(
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
+    );
+    rerender(
       <PostDownloadPrompt userSegment="free" downloadCount={2} onExploreModels={onExploreModels} />
     );
     await waitFor(() => {
-      expect(screen.getByText(/See what other models can do/i)).toBeInTheDocument();
+      expect(screen.getByText(/Want sharper, cleaner output/i)).toBeInTheDocument();
     });
   });
 
   it('should NOT show PostDownloadPrompt on initial render with an existing download count', async () => {
-    const onUpgrade = vi.fn();
+    const onExploreModels = vi.fn();
     const { container } = render(
       <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
     );
@@ -597,7 +600,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt for paid users', async () => {
     const onExploreModels = vi.fn();
     const { container } = render(
-<PostDownloadPrompt
+      <PostDownloadPrompt
         userSegment="subscriber"
         downloadCount={2}
         onExploreModels={onExploreModels}
@@ -608,9 +611,12 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     expect(container.firstChild).toBeNull();
   });
 
-it('should fire upgrade_prompt_shown with trigger after_download', async () => {
+  it('should fire upgrade_prompt_shown with trigger after_download', async () => {
     const onExploreModels = vi.fn();
-    render(
+    const { rerender } = render(
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
+    );
+    rerender(
       <PostDownloadPrompt userSegment="free" downloadCount={2} onExploreModels={onExploreModels} />
     );
     await waitFor(() => {
@@ -629,7 +635,7 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
     const { rerender } = render(
       <PostDownloadPrompt
         userSegment="free"
-        downloadCount={2}
+        downloadCount={1}
         currentModel="premium"
         onExploreModels={onExploreModels}
       />
@@ -638,7 +644,7 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
     rerender(
       <PostDownloadPrompt
         userSegment="free"
-        downloadCount={1}
+        downloadCount={2}
         currentModel="premium"
         onExploreModels={onExploreModels}
       />
@@ -648,7 +654,7 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
       expect(mockAnalyticsTrack).toHaveBeenCalledWith(
         'upgrade_prompt_shown',
         expect.objectContaining({
-          trigger: 'after_download',
+          trigger: 'post_download_explore',
           imageVariant: 'premium',
           currentPlan: 'free',
           userSegment: 'free',
@@ -659,8 +665,11 @@ it('should fire upgrade_prompt_shown with trigger after_download', async () => {
   });
 
   it('should fire upgrade_prompt_dismissed on X click', async () => {
-const onExploreModels = vi.fn();
-    render(
+    const onExploreModels = vi.fn();
+    const { rerender } = render(
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
+    );
+    rerender(
       <PostDownloadPrompt userSegment="free" downloadCount={2} onExploreModels={onExploreModels} />
     );
     await waitFor(() => {
@@ -678,25 +687,28 @@ const onExploreModels = vi.fn();
     });
 
     await waitFor(() => {
-      expect(screen.queryByText(/See what other models can do/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Want sharper, cleaner output/i)).not.toBeInTheDocument();
     });
   });
 
-it('should call onExploreModels callback when CTA is clicked', async () => {
+  it('should call onExploreModels callback when CTA is clicked', async () => {
     const onExploreModels = vi.fn();
-    render(
+    const { rerender } = render(
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
+    );
+    rerender(
       <PostDownloadPrompt userSegment="free" downloadCount={2} onExploreModels={onExploreModels} />
     );
     await waitFor(() => {
-      expect(screen.getByText(/See what other models can do/i)).toBeInTheDocument();
+      expect(screen.getByText(/Want sharper, cleaner output/i)).toBeInTheDocument();
     });
 
-    const button = screen.getByRole('button', { name: /Explore Models/i });
+    const button = screen.getByRole('button', { name: /Upgrade Now/i });
     fireEvent.click(button);
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
       trigger: 'post_download_explore',
-      destination: 'model_gallery',
+      destination: 'purchase_modal',
       currentPlan: 'free',
       userSegment: 'free',
       pricingRegion: 'standard',
@@ -708,35 +720,22 @@ it('should call onExploreModels callback when CTA is clicked', async () => {
     });
   });
 
-it('should respect 24h cooldown via promptFrequency', async () => {
-    const onUpgrade = vi.fn();
-    // Simulate prompt was shown recently
+  it('should show prompt on download count increase regardless of cooldown key in localStorage', async () => {
+    const onExploreModels = vi.fn();
+    // PostDownloadPrompt does not use promptFrequency for cooldown
+    // It shows purely based on downloadCount increasing
     localStorage.setItem('prompt_freq_post_download_last_shown', String(Date.now()));
 
-    const { container } = render(
-      <PostDownloadPrompt userSegment="free" downloadCount={2} onUpgrade={onUpgrade} />
+    const { rerender } = render(
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
+      <PostDownloadPrompt userSegment="free" downloadCount={2} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/See what other models can do/i)).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByLabelText('Dismiss prompt'));
-
-    await waitFor(() => {
-      expect(screen.queryByText(/See what other models can do/i)).not.toBeInTheDocument();
-    });
-
-    rerender(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={2} onExploreModels={onExploreModels} />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/See what other models can do/i)).toBeInTheDocument();
+      expect(screen.getByText(/Want sharper, cleaner output/i)).toBeInTheDocument();
     });
   });
 });
@@ -821,6 +820,12 @@ vi.mock('next-intl', () => ({
       'workspace.batchLimit.addPartialButton': 'Add images',
       'workspace.batchLimit.cancelButton': 'Cancel',
       'common.cancel': 'Cancel',
+      // PostDownloadPrompt translations
+      'workspace.postDownloadPrompt.title': 'See what other models can do',
+      'workspace.postDownloadPrompt.body': 'Body text',
+      'workspace.postDownloadPrompt.cta': 'Explore Models',
+      'workspace.postDownloadPrompt.dismiss': 'Dismiss prompt',
+      'workspace.postDownloadPrompt.maybeLater': 'Maybe Later',
       // FirstDownloadCelebration translations
       'workspace.progressCelebration.dismiss': 'Dismiss celebration',
       'workspace.progressCelebration.title': 'First upscale complete!',
@@ -978,12 +983,12 @@ describe('Phase 5: FirstDownloadCelebration', () => {
       />
     );
 
-    const button = screen.getByText(/Explore Models/i);
+    const button = screen.getByText(/See Premium Plans/i);
     fireEvent.click(button);
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
-      trigger: 'celebration_explore',
-      destination: 'model_gallery',
+      trigger: 'celebration',
+      destination: 'purchase_modal',
       currentPlan: 'free',
       userSegment: 'free',
     });
@@ -994,7 +999,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
     });
   });
 
-  it('should fire upgrade_prompt_clicked with model_gallery destination', async () => {
+  it('should fire upgrade_prompt_clicked with purchase_modal destination', async () => {
     const onExploreModels = vi.fn();
     render(
       <FirstDownloadCelebration
@@ -1006,12 +1011,12 @@ describe('Phase 5: FirstDownloadCelebration', () => {
       />
     );
 
-    const button = screen.getByText(/Explore Models/i);
+    const button = screen.getByText(/See Premium Plans/i);
     fireEvent.click(button);
 
     expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
-      trigger: 'celebration_explore',
-      destination: 'model_gallery',
+      trigger: 'celebration',
+      destination: 'purchase_modal',
       currentPlan: 'free',
       userSegment: 'free',
     });
@@ -1029,7 +1034,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
       />
     );
 
-    const button = screen.getByText(/Explore Models/i);
+    const button = screen.getByText(/See Premium Plans/i);
     fireEvent.click(button);
 
     // Celebration key should be set in localStorage
@@ -1102,7 +1107,7 @@ describe('Phase 5: FirstDownloadCelebration', () => {
     );
 
     await waitFor(() => {
-      expect(screen.queryByText(/Explore Models/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/See Premium Plans/i)).not.toBeInTheDocument();
     });
     // Should still show upload button for paid users
     expect(screen.getByText(/Upload Another/i)).toBeInTheDocument();

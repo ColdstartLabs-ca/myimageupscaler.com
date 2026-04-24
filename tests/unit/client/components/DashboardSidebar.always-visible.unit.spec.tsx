@@ -103,6 +103,7 @@ vi.mock('next/navigation', () => ({
 // ---------------------------------------------------------------------------
 
 let mockIsFreeUser = true;
+let mockUserSegment: 'free' | 'credit_purchaser' | 'subscriber' = 'free';
 
 vi.mock('@client/store/userStore', () => ({
   useUserStore: vi.fn(() => ({
@@ -131,6 +132,7 @@ vi.mock('@client/store/userStore', () => ({
     subscription: null,
     isAuthenticated: true,
     isFreeUser: mockIsFreeUser,
+    userSegment: mockUserSegment,
   })),
   useProfile: vi.fn(() => null),
 }));
@@ -146,6 +148,7 @@ describe('DashboardSidebar — UpgradeCard always-visible', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsFreeUser = true;
+    mockUserSegment = 'free';
   });
 
   test('should always render UpgradeCard for free user without any probability gate', () => {
@@ -159,6 +162,7 @@ describe('DashboardSidebar — UpgradeCard always-visible', () => {
 
   test('should NOT render UpgradeCard for paid user', () => {
     mockIsFreeUser = false;
+    mockUserSegment = 'subscriber';
 
     render(<DashboardSidebar />);
 

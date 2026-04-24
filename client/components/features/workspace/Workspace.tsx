@@ -80,7 +80,7 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-const { isFreeUser, userSegment } = useUserData();
+  const { isFreeUser, userSegment, profile } = useUserData();
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
   const { isPaywalled, country } = useRegionTier();
@@ -396,6 +396,18 @@ const { isFreeUser, userSegment } = useUserData();
     );
   };
 
+  const handleUpgradeDirect = ({ trigger, planId }: IUpgradeDirectParams) => {
+    const ctx = getCheckoutTrackingContext();
+    analytics.track('checkout_opened', {
+      priceId: planId,
+      source: 'direct_checkout',
+      trigger,
+      ...(ctx?.originatingTrigger ? { originatingTrigger: ctx.originatingTrigger } : {}),
+      ...(ctx?.attributionChain?.length ? { attributionChain: ctx.attributionChain } : {}),
+    });
+    setDirectCheckoutPriceId(planId);
+  };
+
   // Empty State
   if (queue.length === 0) {
     return (
@@ -451,6 +463,7 @@ const { isFreeUser, userSegment } = useUserData();
                 <X size={20} />
               </button>
               <SampleImageSelector isVisible={true} onSampleSelect={handleSampleSelect} />
+            </div>
           </div>
         )}
 
@@ -481,52 +494,7 @@ const { isFreeUser, userSegment } = useUserData();
         <div
           className={cn(
             'w-full md:w-80 border-b md:border-b-0 md:border-r bg-surface border-border',
-mobileTab === 'upload' ? 'flex-1 min-h-0 md:flex-none' : 'hidden md:block'
-          )}
-        >
-          <BatchSidebar
-            config={config}
-            setConfig={setConfig}
-            queue={queue}
-            isProcessing={isProcessingBatch}
-            batchProgress={batchProgress}
-            completedCount={completedCount}
-            onProcess={() => processBatch(config)}
-            onClear={clearQueue}
-            onUpgrade={() => openUpgradeModal(true, 'workspace_batch_sidebar')}
-          />
-        </div>
-
-        {/* Right Area: Main View + Queue Strip */}
-        <div
-          className={cn(
-            'flex flex-col bg-main overflow-hidden relative',
-            mobileTab === 'preview' ? 'flex-1 min-h-0 md:flex-grow' : 'hidden md:flex md:flex-grow'
-          )}
-        >
-          {/* Progress steps */}
-          <div className="px-3 pt-3 md:px-4 md:pt-4 relative">
-            <ProgressSteps currentStep={progressStep} isFirstUpload={isFirstTimeUser} />
-            <button
-              onClick={handleHelpClick}
-              className="absolute right-3 top-3 md:right-4 md:top-4 flex items-center justify-center w-7 h-7 rounded-lg text-text-muted hover:text-text hover:bg-white/10 transition-colors"
-              aria-label="Try sample images"
-              title="Try sample images"
-            >
-              <HelpCircle size={16} />
-            </button>
-          </div>
-
-          {/* Success Banner */}
-          {_showSuccessBanner && completedCount > 0 && (
-            <div className="px-3 pt-3 md:p-4">
-              <UpgradeSuccessBanner
-                processedCount={completedCount}
-                onDismiss={() => setShowSuccessBanner(false)}
-                hasSubscription={!isFreeUser}
-                onUpgrade={() => openUpgradeModal(false, 'after_batch')}
-              />
-            </div>
+            mobileTab === 'upload' ? 'flex-1 min-h-0 md:flex-none' : 'hidden md:block'
           )}
         >
           <BatchSidebar
@@ -566,6 +534,18 @@ mobileTab === 'upload' ? 'flex-1 min-h-0 md:flex-none' : 'hidden md:block'
             </div>
           </div>
 
+          {/* Success Banner */}
+          {_showSuccessBanner && completedCount > 0 && (
+            <div className="px-3 pt-3 md:p-4">
+              <UpgradeSuccessBanner
+                processedCount={completedCount}
+                onDismiss={() => setShowSuccessBanner(false)}
+                hasSubscription={!isFreeUser}
+                onUpgrade={() => openUpgradeModal(false, 'after_batch')}
+              />
+            </div>
+          )}
+
           {/* After 3rd upscale upgrade nudge (free + credit_purchaser users, once per session) */}
           {userSegment !== 'subscriber' && (
             <div className="px-3 md:px-4 pb-0">
@@ -586,12 +566,13 @@ mobileTab === 'upload' ? 'flex-1 min-h-0 md:flex-none' : 'hidden md:block'
           />
 
           {/* Mobile upgrade prompt — shown on preview tab after first completion */}
-          <MobileUpgradePrompt
-            isVisible={mobileTab === 'preview' && completedCount > 0}
-            isFreeUser={isFreeUser}
-            onUpgradeDirect={handleUpgradeDirect}
-            onUpgrade={() => openUpgradeModal(false, 'mobile_preview_prompt')}
-          />
+          {mobileTab === 'preview' && completedCount > 0 && (
+            <MobileUpgradePrompt
+              variant="preview"
+              userSegment={userSegment}
+              onUpgrade={() => openUpgradeModal(false, 'mobile_preview_prompt')}
+            />
+          )}
 
           {/* Global Error Alerts */}
           {globalErrors.map(error => (
