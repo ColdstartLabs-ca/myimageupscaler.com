@@ -9,6 +9,7 @@
     "build:chrome": "vite build",
     "build:firefox": "vite build --mode firefox",
     "build:edge": "vite build --mode edge",
+    "build:all": "./build.sh",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext ts,tsx"

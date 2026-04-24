@@ -87,6 +87,31 @@ body {
   color: var(--color-text);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
 .credits {
   display: flex;
   flex-direction: column;
@@ -104,6 +129,14 @@ body {
   font-size: 11px;
   color: var(--color-text-secondary);
   text-transform: uppercase;
+}
+
+.credits-low .credits-count {
+  color: var(--color-danger);
+}
+
+.credits-low .credits-label {
+  color: var(--color-danger);
 }
 
 /* Auth Prompt */

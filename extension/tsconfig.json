@@ -13,16 +13,11 @@
     "noEmit": true,
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "baseUrl": "..",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@client/*": ["./client/*"],
-      "@server/*": ["./server/*"],
-      "@shared/*": ["./shared/*"],
-      "@app/*": ["./app/*"],
-      "@lib/*": ["./lib/*"],
-      "@locales/*": ["./locales/*"],
-      "@extension/*": ["./extension/src/*"]
+      "@extension/*": ["./src/*"],
+      "@extension/shared/*": ["./src/shared/*"],
+      "@shared/*": ["../shared/*"]
     },
     "types": ["chrome", "vite/client"]
   },
