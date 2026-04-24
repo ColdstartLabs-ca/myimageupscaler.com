@@ -51,8 +51,8 @@ describe('getRegionTier', () => {
     expect(getRegionTier('KE')).toBe('paywalled');
   });
 
-  it('should return restricted for IN', () => {
-    expect(getRegionTier('IN')).toBe('restricted');
+  it('should return paywalled for IN (India)', () => {
+    expect(getRegionTier('IN')).toBe('paywalled');
   });
 
   it('should return restricted for BR', () => {

@@ -81,7 +81,7 @@ const HIGH_PURCHASING_POWER_COUNTRIES = new Set([
  * varying discount levels (20%-80%) in the multi-armed bandit pricing test.
  *
  * Based on conversion data from Apr 9-23, 2026:
- * - South Asia excluding IN: zero/near-zero conversions; IN stays restricted due to observed conversion
+ * - South Asia: zero meaningful conversions (one $1 purchase at 80% off not a viable signal)
  * - Southeast Asia: 0 conversions across all discount levels
  * - Africa: 0 conversions across all discount levels
  *
@@ -100,7 +100,8 @@ const PAYWALLED_COUNTRIES = new Set<string>([
   'LA', // Laos
   'TL', // East Timor
 
-  // South Asia - 1 conversion total across 7M+ impressions (PRD data)
+  // South Asia - zero meaningful conversions (PRD data)
+  'IN', // India
   'PK', // Pakistan
   'BD', // Bangladesh
   'LK', // Sri Lanka
