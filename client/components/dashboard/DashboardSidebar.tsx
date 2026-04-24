@@ -43,7 +43,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
   const { signOut, user, isLoading, error } = useUserStore();
   const isAdmin = useIsAdmin();
   const subscription = useSubscription();
-  const { isFreeUser } = useUserData();
+  const { userSegment } = useUserData();
   const logger = useLogger('DashboardSidebar');
   const t = useTranslations('dashboard.sidebar');
 
@@ -217,8 +217,10 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
             );
           })}
 
-          {/* Upgrade Prompt */}
-          {isFreeUser && <UpgradeCard onUpgrade={() => setShowUpgradeModal(true)} />}
+          {/* Upgrade Prompt - show for free and credit_purchaser segments */}
+          {userSegment !== 'subscriber' && (
+            <UpgradeCard onUpgrade={() => setShowUpgradeModal(true)} userSegment={userSegment} />
+          )}
         </nav>
 
         {/* Bottom Navigation */}

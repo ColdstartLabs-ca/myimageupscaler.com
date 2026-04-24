@@ -1,9 +1,11 @@
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { IBatchItem, ProcessingStage, ProcessingStatus } from '@/shared/types/coreflow.types';
 import ImageComparison from '@client/components/features/image-processing/ImageComparison';
 import { Button } from '@client/components/ui/Button';
 import { AlertTriangle, Check, Layers, Loader2 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { MobileUpgradePrompt } from './MobileUpgradePrompt';
 
 export interface IBatchProgress {
   current: number;
@@ -17,7 +19,8 @@ export interface IPreviewAreaProps {
   selectedModel?: string;
   batchProgress?: IBatchProgress | null;
   isProcessingBatch?: boolean;
-  isFreeUser?: boolean;
+  userSegment: UserSegment;
+  onUpgrade?: () => void;
 }
 
 // Extracted Components
@@ -174,7 +177,8 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   selectedModel = 'auto',
   batchProgress,
   isProcessingBatch = false,
-  isFreeUser: _isFreeUser = false,
+  userSegment,
+  onUpgrade = () => {},
 }) => {
   const t = useTranslations('workspace');
 
@@ -297,42 +301,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
                   </span>
                 </div>
 
-                {/* Processing indicator dots */}
-                <div className="flex justify-center gap-1.5">
-                  <span
-                    className="w-2 h-2 bg-accent rounded-full"
-                    style={{
-                      animation: 'pulse-dot 1.4s ease-in-out infinite',
-                      animationDelay: '0ms',
-                    }}
-                  />
-                  <span
-                    className="w-2 h-2 bg-accent rounded-full"
-                    style={{
-                      animation: 'pulse-dot 1.4s ease-in-out infinite',
-                      animationDelay: '200ms',
-                    }}
-                  />
-                  <span
-                    className="w-2 h-2 bg-accent rounded-full"
-                    style={{
-                      animation: 'pulse-dot 1.4s ease-in-out infinite',
-                      animationDelay: '400ms',
-                    }}
-                  />
-                  <style>{`
-                    @keyframes pulse-dot {
-                      0%, 100% {
-                        transform: scale(1);
-                        opacity: 0.4;
-                      }
-                      50% {
-                        transform: scale(1.3);
-                        opacity: 1;
-                      }
-                    }
-                  `}</style>
-                </div>
+                <ProcessingDots />
 
                 <p className="text-xs text-muted-foreground mt-4">
                   {t('previewArea.batch.rateLimitingPause')}
@@ -366,27 +335,17 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
         {/* Processing Overlay */}
         {activeItem.status === ProcessingStatus.PROCESSING && (
           <div className="absolute inset-0 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center">
-            {/* Scanning line animation during analyzing */}
             {activeItem.stage === ProcessingStage.ANALYZING && <ScanningLineAnimation />}
 
             <div className="w-72 space-y-4 p-6 bg-surface rounded-xl shadow-2xl border border-border">
-              {/* Batch progress indicator */}
               <BatchProgressIndicator batchProgress={batchProgress} />
-
-              {/* Stage indicator with spinner */}
               <StageIndicator stageMessage={stageMessage} />
-
-              {/* Progress bar with smooth animation */}
               <ProgressBar
                 progress={displayProgress}
                 isEnhancing={isEnhancing}
                 estimatedRemaining={estimatedRemaining}
               />
-
-              {/* Processing indicator dots */}
               <ProcessingDots />
-
-              {/* Stage description */}
               {activeItem.stage && <StageDescription stage={activeItem.stage} />}
             </div>
           </div>
@@ -397,6 +356,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
           <ErrorOverlay item={activeItem} onRetry={onRetry} />
         )}
       </div>
+      <MobileUpgradePrompt variant="preview" userSegment={userSegment} onUpgrade={onUpgrade} />
     </div>
   );
 };

@@ -228,9 +228,9 @@
     "title": "Premier agrandissement terminé !",
     "subtitle": "Vous venez d'agrandir votre première image ! Curieux de voir ce que d'autres modèles d'IA peuvent en faire ?",
     "uploadAnother": "Télécharger une autre image",
-    "exploreModels": "Explorer les modèles",
-    "skipText": "Voyez la différence de nos modèles premium",
-    "dismiss": "Fermer la célébration"
+    "seePlans": "Voir les plans Premium",
+    "subscribeCta": "S'abonner & Économiser",
+    "skipText": "Débloquez des agrandissements illimités avec Premium",    "dismiss": "Fermer la célébration"
   },
   "onboardingTour": {
     "uploadZone": {

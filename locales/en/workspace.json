@@ -219,9 +219,9 @@
     "title": "First upscale complete!",
     "subtitle": "You just upscaled your first image! Curious what other AI models can do with it?",
     "uploadAnother": "Upload Another",
-    "exploreModels": "Explore Models",
-    "skipText": "See the difference our premium models make",
-    "dismiss": "Dismiss celebration"
+    "seePlans": "See Premium Plans",
+    "subscribeCta": "Subscribe & Save",
+    "skipText": "Unlock unlimited upscales with Premium",    "dismiss": "Dismiss celebration"
   },
   "onboardingTour": {
     "uploadZone": {
