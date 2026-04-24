@@ -3242,7 +3242,7 @@
           "answer": "The tool re-encodes the image at 95% JPEG quality. For most use cases this is indistinguishable from the original. If you need lossless, use PNG output."
         }
       ],
-      "relatedTools": ["heic-converter", "image-compressor", "format-converter"],
+      "relatedTools": ["heic-to-jpg", "image-compressor", "remove-gps-from-photo"],
       "ctaText": "Remove Metadata Free",
       "ctaUrl": "/tools/exif-remover"
     },
@@ -3323,7 +3323,7 @@
           "answer": "No \u2014 all processing happens in your browser."
         }
       ],
-      "relatedTools": ["exif-remover", "heic-converter"],
+      "relatedTools": ["exif-remover", "heic-to-jpg"],
       "ctaText": "Remove Metadata Free",
       "ctaUrl": "/tools/remove-metadata-from-photo"
     },
