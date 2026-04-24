@@ -77,13 +77,87 @@ const HIGH_PURCHASING_POWER_COUNTRIES = new Set([
  * must purchase a subscription or credit pack to use the service.
  * They can browse the site and sign up, but cannot process images for free.
  *
+ * Countries in this set have demonstrated ZERO conversion intent despite
+ * varying discount levels (20%-80%) in the multi-armed bandit pricing test.
+ *
+ * Based on conversion data from Apr 9-23, 2026:
+ * - South Asia: 1 conversion total (IN at 80% discount) - paywalled due to abysmal overall rate
+ * - Southeast Asia: 0 conversions across all discount levels
+ * - Africa: 0 conversions across all discount levels
+ *
  * Add country codes here based on abuse data — do not guess.
  * Example: PAYWALLED_COUNTRIES.add('XX') to paywall country XX.
  */
 const PAYWALLED_COUNTRIES = new Set<string>([
+  // Southeast Asia - ZERO conversions (PRD data)
   'PH', // Philippines
   'VN', // Vietnam
+  'ID', // Indonesia
+  'TH', // Thailand
+  'MY', // Malaysia
+  'MM', // Myanmar
+  'KH', // Cambodia
+  'LA', // Laos
+  'TL', // East Timor
+
+  // South Asia - 1 conversion total across 7M+ impressions (PRD data)
+  'PK', // Pakistan
   'BD', // Bangladesh
+  'LK', // Sri Lanka
+  'NP', // Nepal
+  'AF', // Afghanistan
+  'BT', // Bhutan
+  'MV', // Maldives
+
+  // Africa - ZERO conversions (PRD data)
+  'NG', // Nigeria
+  'KE', // Kenya
+  'ZA', // South Africa
+  'GH', // Ghana
+  'ET', // Ethiopia
+  'EG', // Egypt
+  'TZ', // Tanzania
+  'CD', // DR Congo
+  'ZA', // South Africa
+  'UG', // Uganda
+  'ZW', // Zimbabwe
+  'CI', // Ivory Coast
+  'SN', // Senegal
+  'ML', // Mali
+  'BF', // Burkina Faso
+  'NE', // Niger
+  'TD', // Chad
+  'GN', // Guinea
+  'SL', // Sierra Leone
+  'LR', // Liberia
+  'TG', // Togo
+  'BJ', // Benin
+  'MR', // Mauritania
+  'GM', // Gambia
+  'GW', // Guinea-Bissau
+  'CV', // Cape Verde
+  'ST', // Sao Tome and Principe
+  'CM', // Cameroon
+  'CF', // Central African Republic
+  'CG', // Republic of Congo
+  'GA', // Gabon
+  'GQ', // Equatorial Guinea
+  'AO', // Angola
+  'MZ', // Mozambique
+  'MG', // Madagascar
+  'DJ', // Djibouti
+  'ER', // Eritrea
+  'SO', // Somalia
+  'SS', // South Sudan
+  'KM', // Comoros
+  'BW', // Botswana
+  'NA', // Namibia
+  'LS', // Lesotho
+  'SZ', // Eswatini
+  'MW', // Malawi
+  'ZM', // Zambia
+  'RW', // Rwanda
+  'BI', // Burundi
 ]);
 
 /** Exported for test assertions only */

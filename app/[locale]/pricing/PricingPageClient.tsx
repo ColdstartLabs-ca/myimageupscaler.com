@@ -48,6 +48,8 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
     discountPercent,
     pricingRegion,
     isLoading: regionLoading,
+    isPaywalled,
+    country,
   } = useRegionTier({ initialGeo });
 
   // Track pricing_page_viewed event once on mount
@@ -74,6 +76,16 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
     if (regionLoading) return; // Wait until pricingRegion has loaded
     if (hasTrackedPageView.current) return;
     hasTrackedPageView.current = true;
+
+    // Track paywall hit for paywalled users
+    if (isPaywalled && analytics.isEnabled()) {
+      analytics.track('paywall_hit', {
+        country,
+        pricingRegion,
+        tier: 'paywalled',
+        source: 'pricing_page',
+      });
+    }
 
     // Determine entry point from query param or referrer
     const entrySource = searchParams.get('source');
@@ -387,6 +399,38 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
                 />
               </svg>
               <span className="text-warning">{t('configurationWarning')}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Paywall Warning Banner */}
+        {isPaywalled && (
+          <div className="bg-warning/10 border border-warning/20 rounded-lg p-4 mb-8 max-w-3xl mx-auto">
+            <div className="flex items-start gap-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-warning flex-shrink-0 mt-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <div className="flex-1">
+                <h3 className="font-semibold text-warning mb-1">
+                  Free tier not available in your region
+                </h3>
+                <p className="text-sm text-text-secondary mb-2">
+                  Due to high free-tier abuse with zero conversions from your region, we require a
+                  paid plan to use our service.
+                </p>
+                {country && <p className="text-xs text-text-muted">Detected country: {country}</p>}
+              </div>
             </div>
           </div>
         )}
