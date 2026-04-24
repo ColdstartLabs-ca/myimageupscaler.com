@@ -2,7 +2,7 @@
 
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, Suspense, type ReactElement } from 'react';
+import { useEffect, useRef, Suspense, type ReactElement } from 'react';
 import { clientEnv, isDevelopment } from '@shared/config/env';
 
 // Extend window for gtag
@@ -47,8 +47,13 @@ export function gaSendEvent(
 function GAPageViewTracker(): null {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isInitialRender = useRef(true);
 
   useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return; // init script already fired this page_view
+    }
     const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
     gaSendPageView(url);
   }, [pathname, searchParams]);
@@ -97,7 +102,7 @@ export function GoogleAnalytics(): ReactElement | null {
             gtag('js', new Date());
             gtag('config', '${measurementId}', {
               page_path: window.location.pathname,
-              send_page_view: false
+              send_page_view: true
             });
           `,
         }}
