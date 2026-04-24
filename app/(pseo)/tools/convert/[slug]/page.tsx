@@ -17,6 +17,11 @@ const CONVERSION_SLUGS = [
   'webp-to-png',
   'jpg-to-webp',
   'png-to-webp',
+  // Phase 1 expansion — format converter variants
+  'bmp-to-png',
+  'gif-to-png',
+  'gif-to-webp',
+  'bmp-to-webp',
 ];
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit

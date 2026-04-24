@@ -44,6 +44,11 @@ const INTERACTIVE_TOOL_PATHS: Record<string, string> = {
   'webp-to-png': '/tools/convert/webp-to-png',
   'jpg-to-webp': '/tools/convert/jpg-to-webp',
   'png-to-webp': '/tools/convert/png-to-webp',
+  // Phase 1 expansion — format converter variants
+  'bmp-to-png': '/tools/convert/bmp-to-png',
+  'gif-to-png': '/tools/convert/gif-to-png',
+  'gif-to-webp': '/tools/convert/gif-to-webp',
+  'bmp-to-webp': '/tools/convert/bmp-to-webp',
   // Compress tools
   'image-compressor': '/tools/compress/image-compressor',
   'bulk-image-compressor': '/tools/compress/bulk-image-compressor', // 301 redirect destination
