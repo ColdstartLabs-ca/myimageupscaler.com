@@ -100,6 +100,9 @@ const ALLOWED_EVENTS = [
   'email_captured',
   // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
   'comparison_viewed',
+  // Country paywall events
+  'paywall_shown',
+  'paywall_hit',
 ] as const;
 
 // Type for allowed events (excludes $identify which is server-side only)

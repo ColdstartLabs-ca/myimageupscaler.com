@@ -104,6 +104,32 @@ describe('Analytics Fixes - Structural Checks', () => {
     });
   });
 
+  describe('PRD #90: paywall_hit tracking guards', () => {
+    test('Checkout page should track paywall_hit independently from checkout_opened', async () => {
+      const fs = await import('fs');
+      const checkoutSource = fs.readFileSync('app/[locale]/checkout/page.tsx', 'utf-8');
+
+      expect(checkoutSource).toContain('hasTrackedPaywallHitRef');
+      expect(checkoutSource).toContain('hasTrackedPaywallHitRef.current = true');
+      expect(checkoutSource).toContain('!regionLoading');
+      expect(checkoutSource).toContain(
+        '[authLoading, country, isAuthenticated, isPaywalled, priceId, regionLoading]'
+      );
+    });
+
+    test('Pricing page should not tie paywall_hit to pricing_page_viewed tracking', async () => {
+      const fs = await import('fs');
+      const pricingSource = fs.readFileSync('app/[locale]/pricing/PricingPageClient.tsx', 'utf-8');
+
+      const paywallRefIndex = pricingSource.indexOf('hasTrackedPaywallHitRef');
+      const pageViewTrackedIndex = pricingSource.indexOf('hasTrackedPageView.current = true');
+      expect(paywallRefIndex).toBeGreaterThan(-1);
+      expect(pageViewTrackedIndex).toBeGreaterThan(-1);
+      expect(paywallRefIndex).toBeLessThan(pageViewTrackedIndex);
+      expect(pricingSource).toContain('[country, isPaywalled, pricingRegion, regionLoading]');
+    });
+  });
+
   describe('Fix #6: addFiles accepts source param', () => {
     test('Dropzone onFilesSelected should accept optional source param', async () => {
       const fs = await import('fs');

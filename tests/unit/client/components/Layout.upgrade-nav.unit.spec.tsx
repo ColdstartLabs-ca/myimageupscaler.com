@@ -100,6 +100,8 @@ vi.mock('@/shared/types/authProviders.types', () => ({
 let mockIsAuthenticated = false;
 let mockIsFreeUser = false;
 let mockIsLoading = false;
+let mockProfile: { subscription_tier: string } | null = null;
+let mockSubscription: { price_id: string } | null = null;
 
 vi.mock('@client/store/userStore', () => ({
   useUserStore: () => ({
@@ -110,6 +112,8 @@ vi.mock('@client/store/userStore', () => ({
   }),
   useUserData: () => ({
     isFreeUser: mockIsFreeUser,
+    profile: mockProfile,
+    subscription: mockSubscription,
   }),
 }));
 
@@ -133,6 +137,8 @@ describe('NavBar — Upgrade button visibility', () => {
     mockIsAuthenticated = false;
     mockIsFreeUser = false;
     mockIsLoading = false;
+    mockProfile = null;
+    mockSubscription = null;
     // Clear sessionStorage so analytics side-effects don't bleed between tests
     if (typeof sessionStorage !== 'undefined') {
       sessionStorage.removeItem('nav_persistent_shown');
@@ -142,6 +148,7 @@ describe('NavBar — Upgrade button visibility', () => {
   test('should render Upgrade button for authenticated free user', () => {
     mockIsAuthenticated = true;
     mockIsFreeUser = true;
+    mockProfile = { subscription_tier: 'free' };
 
     render(<NavBar />);
 
@@ -151,6 +158,7 @@ describe('NavBar — Upgrade button visibility', () => {
   test('should NOT render Upgrade button for paid user (isFreeUser=false)', () => {
     mockIsAuthenticated = true;
     mockIsFreeUser = false;
+    mockProfile = { subscription_tier: 'pro' };
 
     render(<NavBar />);
 
@@ -160,6 +168,17 @@ describe('NavBar — Upgrade button visibility', () => {
   test('should NOT render Upgrade button for unauthenticated user', () => {
     mockIsAuthenticated = false;
     mockIsFreeUser = false; // unauthenticated users are never free users in this context
+
+    render(<NavBar />);
+
+    expect(screen.queryByTestId('nav-upgrade-button')).not.toBeInTheDocument();
+  });
+
+  test('should NOT render Upgrade button before billing state resolves', () => {
+    mockIsAuthenticated = true;
+    mockIsFreeUser = true;
+    mockProfile = null;
+    mockSubscription = null;
 
     render(<NavBar />);
 

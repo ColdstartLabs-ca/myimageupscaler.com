@@ -45,7 +45,34 @@ function getAppRoutes(): Set<string> {
   }
 
   scanDir(appDir);
+  addSeoDataRoutes(routes);
   return routes;
+}
+
+function addSeoDataRoutes(routes: Set<string>): void {
+  const seoDataDir = path.join(process.cwd(), 'app', 'seo', 'data');
+  if (!fs.existsSync(seoDataDir)) return;
+
+  const files = fs.readdirSync(seoDataDir).filter(file => file.endsWith('.json'));
+  for (const file of files) {
+    try {
+      const raw = fs.readFileSync(path.join(seoDataDir, file), 'utf8');
+      const data = JSON.parse(raw) as {
+        category?: unknown;
+        pages?: Array<{ slug?: unknown }>;
+      };
+
+      if (typeof data.category !== 'string' || !Array.isArray(data.pages)) continue;
+
+      for (const page of data.pages) {
+        if (typeof page.slug === 'string' && page.slug.length > 0) {
+          routes.add(`/${data.category}/${page.slug}`);
+        }
+      }
+    } catch {
+      // Ignore malformed/non-standard SEO data files; app route scanning still applies.
+    }
+  }
 }
 
 function validateInternalLinks(markdown: string, slug: string, allSlugs: string[]): string[] {

@@ -85,6 +85,9 @@ const ALLOWED_EVENTS = [
   'email_captured',
   // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
   'comparison_viewed',
+  // Country paywall events
+  'paywall_shown',
+  'paywall_hit',
 ] as const;
 
 const eventSchema = z.object({
@@ -520,6 +523,14 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
     test('should include checkout funnel events', () => {
       const checkoutEvents = ['checkout_step_viewed', 'checkout_step_time', 'checkout_error'];
       for (const eventName of checkoutEvents) {
+        const result = eventSchema.safeParse({ eventName });
+        expect(result.success).toBe(true);
+      }
+    });
+
+    test('should include country paywall events', () => {
+      const paywallEvents = ['paywall_shown', 'paywall_hit'];
+      for (const eventName of paywallEvents) {
         const result = eventSchema.safeParse({ eventName });
         expect(result.success).toBe(true);
       }

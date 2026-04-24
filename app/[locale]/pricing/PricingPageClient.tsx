@@ -54,31 +54,39 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
 
   // Track pricing_page_viewed event once on mount
   const hasTrackedPageView = useRef(false);
+  const hasTrackedPaywallHitRef = useRef(false);
   const hasCheckoutStartedRef = useRef(false);
   const pricingPageOpenedAtRef = useRef(Date.now());
+  const pricingRegionRef = useRef(pricingRegion);
+  const discountPercentRef = useRef(discountPercent);
   const currentPlanRef = useRef<'free' | 'starter' | 'hobby' | 'pro' | 'business'>('free');
 
-  const resolveCurrentPlan = (): 'free' | 'starter' | 'hobby' | 'pro' | 'business' => {
-    const tier = profile?.subscription_tier?.toLowerCase();
-    if (tier === 'starter') return 'starter';
-    if (tier === 'hobby') return 'hobby';
-    if (tier === 'pro' || tier === 'professional') return 'pro';
-    if (tier === 'business') return 'business';
-    return 'free';
-  };
-
   useEffect(() => {
-    currentPlanRef.current = resolveCurrentPlan();
+    const tier = profile?.subscription_tier?.toLowerCase();
+    if (tier === 'starter') {
+      currentPlanRef.current = 'starter';
+    } else if (tier === 'hobby') {
+      currentPlanRef.current = 'hobby';
+    } else if (tier === 'pro' || tier === 'professional') {
+      currentPlanRef.current = 'pro';
+    } else if (tier === 'business') {
+      currentPlanRef.current = 'business';
+    } else {
+      currentPlanRef.current = 'free';
+    }
   }, [profile?.subscription_tier]);
 
   useEffect(() => {
-    if (loading) return; // Wait until profile data has loaded so currentPlan reflects paid tiers
-    if (regionLoading) return; // Wait until pricingRegion has loaded
-    if (hasTrackedPageView.current) return;
-    hasTrackedPageView.current = true;
+    pricingRegionRef.current = pricingRegion;
+    discountPercentRef.current = discountPercent;
+  }, [discountPercent, pricingRegion]);
 
-    // Track paywall hit for paywalled users
-    if (isPaywalled && analytics.isEnabled()) {
+  useEffect(() => {
+    if (regionLoading) return;
+    if (!isPaywalled) return;
+    if (hasTrackedPaywallHitRef.current) return;
+
+    if (analytics.isEnabled()) {
       analytics.track('paywall_hit', {
         country,
         pricingRegion,
@@ -86,6 +94,14 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
         source: 'pricing_page',
       });
     }
+    hasTrackedPaywallHitRef.current = true;
+  }, [country, isPaywalled, pricingRegion, regionLoading]);
+
+  useEffect(() => {
+    if (loading) return; // Wait until profile data has loaded so currentPlan reflects paid tiers
+    if (regionLoading) return; // Wait until pricingRegion has loaded
+    if (hasTrackedPageView.current) return;
+    hasTrackedPageView.current = true;
 
     // Determine entry point from query param or referrer
     const entrySource = searchParams.get('source');
@@ -134,6 +150,8 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
   ]);
 
   useEffect(() => {
+    const pricingPageOpenedAt = pricingPageOpenedAtRef.current;
+
     return () => {
       if (!hasTrackedPageView.current) return;
       if (hasCheckoutStartedRef.current) return;
@@ -141,11 +159,11 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
       analytics.track('checkout_abandoned', {
         priceId: 'none',
         step: 'plan_selection',
-        timeSpentMs: Date.now() - pricingPageOpenedAtRef.current,
+        timeSpentMs: Date.now() - pricingPageOpenedAt,
         plan: currentPlanRef.current,
         context: 'pricing_page_exit_without_checkout',
-        pricingRegion: pricingRegion || 'standard',
-        discountPercent: discountPercent || 0,
+        pricingRegion: pricingRegionRef.current || 'standard',
+        discountPercent: discountPercentRef.current || 0,
       });
     };
   }, []);
