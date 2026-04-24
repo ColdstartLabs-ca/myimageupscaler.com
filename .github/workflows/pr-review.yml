@@ -21,7 +21,7 @@ jobs:
           open_router_key: ${{ secrets.OPEN_ROUTER_KEY }} # Must be set in repository secrets
 
           # Optional inputs with defaults
-          model_id: "z-ai/glm-5" # Default model
+          model_id: "deepseek/deepseek-v4-pro" # Default model
           max_tokens: "4096" # Default max tokens
           custom_prompt: |
             ### **AI PR Review Instructions**
