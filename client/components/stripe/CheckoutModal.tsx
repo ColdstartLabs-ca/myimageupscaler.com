@@ -17,6 +17,7 @@ import {
 } from '@client/components/stripe/CheckoutExitSurvey';
 import { CheckoutRescueOffer } from '@client/components/stripe/CheckoutRescueOffer';
 import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
+import { gaSendEvent } from '@client/components/analytics/GoogleAnalytics';
 
 interface ICheckoutModalProps {
   priceId: string;
@@ -67,10 +68,11 @@ export function CheckoutModal({ priceId, onClose, onSuccess }: ICheckoutModalPro
   const handleComplete = useCallback(() => {
     clearOffer();
     markCompleted();
+    gaSendEvent('purchase', 'checkout', priceId);
     trackStepViewed('confirmation');
     if (onSuccess) onSuccess();
     setTimeout(() => onClose(), 1500);
-  }, [clearOffer, markCompleted, trackStepViewed, onSuccess, onClose]);
+  }, [clearOffer, markCompleted, trackStepViewed, onSuccess, onClose, priceId]);
 
   // Session hook — owns Stripe session lifecycle
   const {
