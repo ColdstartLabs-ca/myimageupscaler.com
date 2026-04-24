@@ -66,8 +66,8 @@ describe('Sitemap Index Localization', () => {
       expect(ENGLISH_ONLY_CATEGORIES).toContain('ai-features');
     });
 
-    it('should have 14 English-only categories', () => {
-      expect(ENGLISH_ONLY_CATEGORIES).toHaveLength(14);
+    it('should have 15 English-only categories', () => {
+      expect(ENGLISH_ONLY_CATEGORIES).toHaveLength(15);
     });
   });
 
@@ -89,8 +89,8 @@ describe('Sitemap Index Localization', () => {
 
       const totalSitemaps = englishOnlySitemapCount + localizedEnglishCount + localeSpecificCount;
 
-      // 14 + 3 + 10 + 60 = 87 (14 English-only + 3 extra + 10 localized English + 60 locale-specific)
-      expect(totalSitemaps).toBe(87);
+      // 15 + 3 + 10 + 60 = 88 (15 English-only + 3 extra + 10 localized English + 60 locale-specific)
+      expect(totalSitemaps).toBe(88);
     });
 
     it('should have correct locale count', () => {

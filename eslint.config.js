@@ -332,6 +332,28 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn', // Allow 'any' for Supabase type constraints
     },
   },
+  // Browser Extension - uses Chrome API globals and Vite build system
+  {
+    files: ['extension/**/*.ts', 'extension/**/*.tsx', 'extension/**/*.js'],
+    languageOptions: {
+      globals: {
+        chrome: 'readonly',
+      },
+    },
+    rules: {
+      'no-undef': 'off', // Chrome API globals are provided at runtime
+      'import/no-default-export': 'off', // Extension entry points and React components use default exports
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'CallExpression[callee.name="require"]',
+          message: 'Inline require() is forbidden. Use static imports at the top of the file.',
+        },
+        // Note: Dynamic import() and process.env are allowed in extension code
+        // (extension runs independently from the Next.js app)
+      ],
+    },
+  },
   // Cloudflare Workers - use Workers runtime globals and require default exports
   {
     files: ['workers/**/*.ts'],
