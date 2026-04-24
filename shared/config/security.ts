@@ -125,3 +125,12 @@ export const PUBLIC_API_ROUTES = [
   '/api/seo/*', // SEO routes use x-cron-secret header auth, not JWT
   '/api/geo', // Geo-location endpoint for region classification (anti-freeloader)
 ] as const;
+
+/**
+ * Extension origins for CORS allowlist
+ * Used by middleware to allow extension requests to /api/* endpoints
+ * Format: chrome-extension://<id> or moz-extension://<id>
+ */
+export const EXTENSION_ORIGINS: string[] = (
+  process.env.EXTENSION_ORIGINS || ''
+).split(',').filter(Boolean).map((origin) => origin.trim());
