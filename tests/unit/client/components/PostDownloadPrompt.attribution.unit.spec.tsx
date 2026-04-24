@@ -80,18 +80,18 @@ describe('PostDownloadPrompt — attribution', () => {
     const onExploreModels = vi.fn();
 
     const { rerender } = render(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
+      <PostDownloadPrompt userSegment="free" downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
-      expect(screen.getByText('See what other models can do')).toBeInTheDocument();
+      expect(screen.getByText('Want sharper, cleaner output?')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText('Explore Models'));
+    fireEvent.click(screen.getByText('Upgrade Now'));
 
     expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith({
       originatingTrigger: 'post_download_explore',
@@ -104,18 +104,18 @@ describe('PostDownloadPrompt — attribution', () => {
     mockSetCheckoutTrackingContext.mockImplementation(() => callOrder.push('context'));
 
     const { rerender } = render(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
+      <PostDownloadPrompt userSegment="free" downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
-      expect(screen.getByText('See what other models can do')).toBeInTheDocument();
+      expect(screen.getByText('Want sharper, cleaner output?')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText('Explore Models'));
+    fireEvent.click(screen.getByText('Upgrade Now'));
 
     expect(callOrder).toEqual(['context', 'explore']);
   });

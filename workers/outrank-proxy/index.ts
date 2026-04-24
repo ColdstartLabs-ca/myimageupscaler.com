@@ -66,5 +66,5 @@ export const outrankProxyWorker = {
 };
 
 // Default export for Cloudflare Workers (required by wrangler)
-// eslint-disable-next-line import/no-default-export
+
 export default outrankProxyWorker;

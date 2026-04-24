@@ -29,7 +29,6 @@ export interface IEnv {
 }
 
 
-// eslint-disable-next-line import/no-default-export
 export default {
   /**
    * Scheduled event handler - triggered by cron patterns defined in wrangler.toml
