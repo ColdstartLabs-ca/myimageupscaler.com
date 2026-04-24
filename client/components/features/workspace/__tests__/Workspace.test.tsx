@@ -53,6 +53,7 @@ vi.mock('next-intl', () => ({
 vi.mock('lucide-react', () => ({
   Check: () => null,
   CheckCircle2: () => null,
+  CreditCard: () => null,
   HelpCircle: () => null,
   Image: () => null,
   Layers: () => null,

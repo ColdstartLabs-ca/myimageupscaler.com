@@ -1106,7 +1106,7 @@ export const getComparisonsExpandedData = cache(
       const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
       const page = fileData.pages.find(page => page.slug === slug);
       if (!page) return null;
-      return { ...page };
+      return { ...page, category: fileData.category };
     } catch {
       return null;
     }
@@ -1116,7 +1116,8 @@ export const getComparisonsExpandedData = cache(
 export const getAllComparisonsExpandedPages = cache(async (): Promise<IBasePSEOPage[]> => {
   try {
     const data = await import('@/app/seo/data/comparisons-expanded.json');
-    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => ({ ...page }));
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    return fileData.pages.map(page => ({ ...page, category: fileData.category }));
   } catch {
     return [];
   }
@@ -1126,7 +1127,8 @@ export const getAllComparisonsExpandedPages = cache(async (): Promise<IBasePSEOP
 export const getAllTechnicalGuidesSlugs = cache(async (): Promise<string[]> => {
   try {
     const data = await import('@/app/seo/data/technical-guides.json');
-    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => page.slug);
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    return fileData.pages.map(page => page.slug);
   } catch {
     return [];
   }
@@ -1138,7 +1140,7 @@ export const getTechnicalGuidesData = cache(async (slug: string): Promise<IBaseP
     const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
     const page = fileData.pages.find(page => page.slug === slug);
     if (!page) return null;
-    return { ...page };
+    return { ...page, category: fileData.category };
   } catch {
     return null;
   }
@@ -1147,7 +1149,8 @@ export const getTechnicalGuidesData = cache(async (slug: string): Promise<IBaseP
 export const getAllTechnicalGuidesPages = cache(async (): Promise<IBasePSEOPage[]> => {
   try {
     const data = await import('@/app/seo/data/technical-guides.json');
-    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => ({ ...page }));
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    return fileData.pages.map(page => ({ ...page, category: fileData.category }));
   } catch {
     return [];
   }
@@ -1170,7 +1173,7 @@ export const getPersonasExpandedData = cache(
       const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
       const page = fileData.pages.find(page => page.slug === slug);
       if (!page) return null;
-      return { ...page };
+      return { ...page, category: fileData.category };
     } catch {
       return null;
     }
@@ -1180,7 +1183,8 @@ export const getPersonasExpandedData = cache(
 export const getAllPersonasExpandedPages = cache(async (): Promise<IBasePSEOPage[]> => {
   try {
     const data = await import('@/app/seo/data/personas-expanded.json');
-    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => ({ ...page }));
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    return fileData.pages.map(page => ({ ...page, category: fileData.category }));
   } catch {
     return [];
   }

@@ -19,6 +19,8 @@ const VALID_TOOL_COMPONENTS = [
   'PdfToImageConverter',
   'ImageToPdfConverter',
   'ImageToText',
+  'ExifRemover',
+  'ImageCropper',
 ];
 
 const pages = interactiveToolsData.pages;

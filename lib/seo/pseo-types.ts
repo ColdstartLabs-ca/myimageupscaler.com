@@ -20,6 +20,7 @@ export interface IBasePSEOPage {
   ogImage?: string;
   lastUpdated: string;
   noindex?: boolean;
+  category?: PSEOCategory; // Category is added by data loader for breadcrumb navigation
 }
 
 /**

@@ -66,8 +66,8 @@ describe('Sitemap Index Localization', () => {
       expect(ENGLISH_ONLY_CATEGORIES).toContain('ai-features');
     });
 
-    it('should have 13 English-only categories', () => {
-      expect(ENGLISH_ONLY_CATEGORIES).toHaveLength(13);
+    it('should have 14 English-only categories', () => {
+      expect(ENGLISH_ONLY_CATEGORIES).toHaveLength(14);
     });
   });
 
@@ -81,19 +81,16 @@ describe('Sitemap Index Localization', () => {
     it('should calculate correct total sitemap index count', () => {
       // English-only sitemap categories (not in LOCALIZED or ENGLISH_ONLY arrays)
       const EXTRA_ENGLISH_ONLY = ['static', 'blog', 'images'];
-      const englishOnlySitemapCount =
-        ENGLISH_ONLY_CATEGORIES.length + EXTRA_ENGLISH_ONLY.length;
+      const englishOnlySitemapCount = ENGLISH_ONLY_CATEGORIES.length + EXTRA_ENGLISH_ONLY.length;
 
       // Localized: 1 English + 6 non-English per category
       const localizedEnglishCount = LOCALIZED_CATEGORIES.length; // 10
-      const localeSpecificCount =
-        LOCALIZED_CATEGORIES.length * (SUPPORTED_LOCALES.length - 1); // 10 × 6 = 60
+      const localeSpecificCount = LOCALIZED_CATEGORIES.length * (SUPPORTED_LOCALES.length - 1); // 10 × 6 = 60
 
-      const totalSitemaps =
-        englishOnlySitemapCount + localizedEnglishCount + localeSpecificCount;
+      const totalSitemaps = englishOnlySitemapCount + localizedEnglishCount + localeSpecificCount;
 
-      // 13 + 3 + 10 + 60 = 86 (13 English-only + 3 extra + 10 localized English + 60 locale-specific)
-      expect(totalSitemaps).toBe(86);
+      // 14 + 3 + 10 + 60 = 87 (14 English-only + 3 extra + 10 localized English + 60 locale-specific)
+      expect(totalSitemaps).toBe(87);
     });
 
     it('should have correct locale count', () => {
@@ -159,14 +156,14 @@ describe('Sitemap Index Route', () => {
     expect(xml).toContain('sitemap-ai-features.xml');
   });
 
-  it('should include 82 total sitemaps (12 English-only + 10×7 localized)', async () => {
+  it('should include 87 total sitemaps (17 English-only + 10×7 localized)', async () => {
     const { GET } = await import('@/app/sitemap.xml/route');
     const response = await GET();
     const xml = await response.text();
 
     const matches = xml.match(/<sitemap>/g);
-    // 12 English-only + (10 localized × 7 locales) = 12 + 70 = 82
-    expect(matches).toHaveLength(82);
+    // 17 English-only + (10 localized × 7 locales) = 17 + 70 = 87
+    expect(matches).toHaveLength(87);
   });
 });
 

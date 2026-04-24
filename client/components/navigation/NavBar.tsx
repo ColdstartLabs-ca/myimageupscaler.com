@@ -6,11 +6,11 @@ import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import { useClickOutside } from '@client/hooks/useClickOutside';
 import { useModalStore } from '@client/store/modalStore';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { useUserStore } from '@client/store/userStore';
+import { useUserData, useUserStore } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
 import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
 import { clientEnv } from '@shared/config/env';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, X, Zap } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
@@ -20,6 +20,7 @@ export const NavBar = (): JSX.Element => {
   const locale = useLocale();
   const { openAuthModal } = useModalStore();
   const { isAuthenticated, isLoading, user, signOut } = useUserStore();
+  const { isFreeUser } = useUserData();
   const { tier } = useRegionTier();
   const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -287,6 +288,16 @@ export const NavBar = (): JSX.Element => {
               </>
             ) : (
               <>
+                {isFreeUser && (
+                  <button
+                    data-testid="nav-upgrade-button"
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="hidden md:inline-flex items-center gap-1.5 rounded-xl text-sm font-black transition-all gradient-cta shine-effect text-white h-10 px-3 sm:px-5 py-2"
+                  >
+                    <Zap className="w-4 h-4" />
+                    Upgrade
+                  </button>
+                )}
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}

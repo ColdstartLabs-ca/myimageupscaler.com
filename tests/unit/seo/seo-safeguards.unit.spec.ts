@@ -209,7 +209,9 @@ describe('SEO Safeguards — Metadata Factory', () => {
 
     const result = generateMetadata(page, 'tools', 'en');
 
-    expect(result.alternates?.canonical).toBe('https://myimageupscaler.com/tools/ai-image-upscaler');
+    expect(result.alternates?.canonical).toBe(
+      'https://myimageupscaler.com/tools/ai-image-upscaler'
+    );
     expect(result.robots?.index).toBe(true);
     expect(result.robots?.follow).toBe(true);
   });
@@ -226,7 +228,9 @@ describe('SEO Safeguards — Metadata Factory', () => {
 
     const result = generateMetadata(page, 'tools', 'es');
 
-    expect(result.alternates?.canonical).toBe('https://myimageupscaler.com/es/tools/ai-image-upscaler');
+    expect(result.alternates?.canonical).toBe(
+      'https://myimageupscaler.com/es/tools/ai-image-upscaler'
+    );
   });
 
   it('must include hreflang alternates with x-default', () => {
@@ -300,16 +304,18 @@ describe('SEO Safeguards — Localization Config', () => {
     expect(categoryCount).toBe(10);
   });
 
-  it('ENGLISH_ONLY_CATEGORIES must have exactly 13 entries', () => {
+  it('ENGLISH_ONLY_CATEGORIES must have exactly 14 entries', () => {
     expect(ENGLISH_ONLY_CATEGORIES_MATCH).toBeTruthy();
     const categories = ENGLISH_ONLY_CATEGORIES_MATCH![1];
     // Count the number of array entries
     const categoryCount = (categories.match(/'[^']+'/g) || []).length;
-    expect(categoryCount).toBe(13);
+    expect(categoryCount).toBe(14);
   });
 
   it('ALL_CATEGORIES must be union of LOCALIZED and ENGLISH_ONLY', () => {
-    expect(configSource).toMatch(/export\s+const\s+ALL_CATEGORIES.*?LOCALIZED_CATEGORIES.*?ENGLISH_ONLY_CATEGORIES/);
+    expect(configSource).toMatch(
+      /export\s+const\s+ALL_CATEGORIES.*?LOCALIZED_CATEGORIES.*?ENGLISH_ONLY_CATEGORIES/
+    );
   });
 
   it('isCategoryLocalized must return true for English locale', () => {
@@ -350,7 +356,9 @@ describe('SEO Safeguards — Hreflang Generator', () => {
   });
 
   it('getCanonicalUrl must return BASE_URL for root path with default locale', () => {
-    expect(hreflangSource).toMatch(/if\s+\(localizedPath\s+===\s+['"]\/['"]|localizedPath\s+===\s+['"]['"]\)[\s\S]*?return\s+clientEnv\.BASE_URL/);
+    expect(hreflangSource).toMatch(
+      /if\s+\(localizedPath\s+===\s+['"]\/['"]|localizedPath\s+===\s+['"]['"]\)[\s\S]*?return\s+clientEnv\.BASE_URL/
+    );
   });
 
   it('getCanonicalUrl must handle locale prefixes for non-English locales', () => {
