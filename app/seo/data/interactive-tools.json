@@ -4013,10 +4013,738 @@
       "relatedGuides": [],
       "ctaText": "Need higher resolution?",
       "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "heic-to-webp",
+      "title": "HEIC to WebP Converter",
+      "metaTitle": "Free HEIC to WebP Converter - Convert iPhone Photos Online",
+      "metaDescription": "Convert HEIC to WebP free online. Turn iPhone HEIC photos into modern WebP format for smaller, faster-loading web images. No upload, runs in browser.",
+      "h1": "Free HEIC to WebP Converter - iPhone Photos to Modern WebP",
+      "intro": "Convert HEIC photos from your iPhone directly to WebP — the modern image format favored by web developers for its superior compression. Your photos are processed entirely in your browser with zero server upload.",
+      "primaryKeyword": "heic to webp",
+      "secondaryKeywords": [
+        "convert heic to webp",
+        "heic to webp online",
+        "iphone heic webp",
+        "heic webp converter",
+        "heif to webp"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "HEIC to WebP Converter",
+      "description": "Convert HEIC/HEIF photos from iPhone and iPad to WebP format. WebP delivers 25-35% smaller file sizes than JPEG at equivalent quality — ideal for web publishing and modern platforms.",
+      "isInteractive": true,
+      "toolComponent": "HeicConverter",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/heic", "image/heif"],
+      "toolConfig": {
+        "defaultOutputFormat": "webp"
+      },
+      "features": [
+        {
+          "title": "Superior WebP Compression",
+          "description": "WebP files are typically 25-35% smaller than JPEG at the same visual quality, saving bandwidth and storage."
+        },
+        {
+          "title": "Browser-Native Decoding",
+          "description": "HEIC decoding runs via a lightweight JavaScript library — no app install, no plugins needed."
+        },
+        {
+          "title": "Web-Optimized Output",
+          "description": "Produces WebP files ready for direct upload to modern websites, CMSes, and e-commerce platforms."
+        },
+        {
+          "title": "100% Private Processing",
+          "description": "Your iPhone photos never leave your device. All conversion runs locally in your browser."
+        },
+        {
+          "title": "Adjustable Quality",
+          "description": "Tune the quality slider from 70-100% to balance file size and image sharpness for your exact use case."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Web Publishing",
+          "description": "Convert iPhone photos to WebP before uploading to a website or blog for faster page load times.",
+          "example": "Convert HEIC travel photos to WebP for a WordPress travel blog"
+        },
+        {
+          "title": "E-commerce Product Photos",
+          "description": "WebP product images load faster than JPEG, improving Core Web Vitals and reducing bounce rates.",
+          "example": "Convert iPhone product shots to WebP for a Shopify store"
+        },
+        {
+          "title": "Social Media Content",
+          "description": "Several modern platforms accept WebP uploads directly, allowing faster load times in feeds.",
+          "example": "Prepare iPhone photos as WebP for web-based social platforms"
+        },
+        {
+          "title": "Developer Workflows",
+          "description": "Developers accepting user-submitted photos can request WebP for consistent, efficient image handling.",
+          "example": "Convert HEIC submissions to WebP before storing in a CDN"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Smaller Files Than JPEG",
+          "description": "WebP compresses iPhone photos to 25-35% smaller files than equivalent JPEG, cutting storage and transfer costs.",
+          "metric": "Up to 35% smaller"
+        },
+        {
+          "title": "Universal Modern Browser Support",
+          "description": "All major browsers (Chrome, Firefox, Safari 14+, Edge) support WebP natively — no compatibility issues for web use.",
+          "metric": "95%+ browser support"
+        },
+        {
+          "title": "One-Click Batch Ready",
+          "description": "Convert HEIC photos individually or process multiple photos one after another without reloading the page.",
+          "metric": "Zero reload needed"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload HEIC Photo",
+          "description": "Drag your HEIC file from iPhone AirDrop, iCloud Drive, or a USB transfer. Or click to browse."
+        },
+        {
+          "step": 2,
+          "title": "Select WebP Output",
+          "description": "WebP is pre-selected as the output format. Adjust the quality slider if needed — 85% is optimal for most photos."
+        },
+        {
+          "step": 3,
+          "title": "Convert in Browser",
+          "description": "Click Process Image. The HEIC decoder runs in your browser, producing a WebP blob within seconds."
+        },
+        {
+          "step": 4,
+          "title": "Download WebP File",
+          "description": "Click Download to save the WebP file. Use it directly on your website or upload to any WebP-supporting platform."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Why convert HEIC to WebP instead of JPEG?",
+          "answer": "WebP produces 25-35% smaller files than JPEG at equivalent visual quality. For web use, this directly improves page load speed, Core Web Vitals scores, and bandwidth costs."
+        },
+        {
+          "question": "Do all browsers support WebP?",
+          "answer": "Yes — Chrome, Firefox, Edge, Opera, and Safari 14+ all support WebP natively. Global browser support is over 95%. For very old browser targets, JPEG is safer."
+        },
+        {
+          "question": "Does HEIC to WebP lose quality compared to HEIC?",
+          "answer": "WebP is a lossy format by default. At 85-90% quality, the difference from the original HEIC is imperceptible. HEIC stores slightly more metadata but the visual result is effectively identical."
+        },
+        {
+          "question": "Can I convert HEIC to WebP on iPhone?",
+          "answer": "Yes — open this page in Safari on iPhone. The converter runs entirely in the browser, so there's no app to install."
+        },
+        {
+          "question": "What's the maximum file size?",
+          "answer": "Files up to 25MB are supported. Most iPhone HEIC photos are 3-8MB, well within this limit."
+        },
+        {
+          "question": "Is there a lossless WebP option?",
+          "answer": "The current converter produces lossy WebP, which is optimal for photos. Lossless WebP is suited for graphics/diagrams. For lossless photo archiving, use PNG instead."
+        }
+      ],
+      "relatedTools": [
+        "heic-to-jpg",
+        "heic-to-png",
+        "jpg-to-webp",
+        "image-compressor"
+      ],
+      "relatedGuides": [],
+      "ctaText": "Upscale iPhone Photos with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "pdf-to-webp",
+      "title": "PDF to WebP Converter",
+      "metaTitle": "Free PDF to WebP Converter - Convert PDF Pages to WebP Images",
+      "metaDescription": "Convert PDF pages to WebP images online free. Extract PDF content as modern WebP files at 150 DPI. Browser-based, no upload, instant download.",
+      "h1": "Free PDF to WebP Converter - Extract PDF Pages as WebP Images",
+      "intro": "Convert PDF pages to WebP images directly in your browser. WebP delivers smaller file sizes than JPEG or PNG for web publishing. Extract a single page or the entire document — no file upload required.",
+      "primaryKeyword": "pdf to webp",
+      "secondaryKeywords": [
+        "convert pdf to webp",
+        "pdf to webp online",
+        "pdf pages to webp",
+        "pdf webp converter",
+        "extract pdf as webp"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "PDF to WebP Converter",
+      "description": "Extract PDF pages as WebP images at 150 DPI. Uses PDF.js for in-browser rendering — PDFs never leave your device. Perfect for web publishing where file size matters.",
+      "isInteractive": true,
+      "toolComponent": "PdfToImageConverter",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["application/pdf"],
+      "toolConfig": {
+        "defaultOutputFormat": "webp",
+        "defaultDpi": 150
+      },
+      "features": [
+        {
+          "title": "WebP Output for Web",
+          "description": "WebP files from PDF pages are typically 25-35% smaller than JPEG equivalents, reducing web page weight."
+        },
+        {
+          "title": "150 DPI Standard Resolution",
+          "description": "150 DPI delivers crisp screen-quality images suitable for web display, presentations, and thumbnails."
+        },
+        {
+          "title": "Selective Page Extraction",
+          "description": "Convert a single page, a range, or all pages in the PDF document."
+        },
+        {
+          "title": "Private In-Browser Processing",
+          "description": "PDF.js renders pages entirely in your browser — no PDF content is sent to any server."
+        },
+        {
+          "title": "Bulk ZIP Download",
+          "description": "When converting multiple pages, download all WebP images as a single ZIP file in one click."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Web Publishing PDF Content",
+          "description": "Extract infographics, charts, or diagrams from PDFs as WebP for fast-loading web pages.",
+          "example": "Convert a PDF report page to WebP for embedding in a blog post"
+        },
+        {
+          "title": "PDF Thumbnails for Websites",
+          "description": "Generate WebP thumbnail previews of PDF documents for document libraries or download pages.",
+          "example": "Create WebP cover thumbnails for a PDF resource library"
+        },
+        {
+          "title": "Social Media Graphics",
+          "description": "Extract PDF slide content as WebP images for social media posts where WebP is accepted.",
+          "example": "Pull key slides from a PDF presentation as WebP graphics"
+        },
+        {
+          "title": "CMS Image Uploads",
+          "description": "Modern CMS platforms prefer WebP. Convert PDF graphics directly to WebP before uploading.",
+          "example": "Extract PDF product spec sheet visuals as WebP for a product page"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Smaller Than JPEG or PNG",
+          "description": "WebP images extracted from PDF pages load faster on web pages, improving Core Web Vitals scores.",
+          "metric": "25-35% smaller than JPEG"
+        },
+        {
+          "title": "No Account Required",
+          "description": "Convert PDFs to WebP without signing up — open the page, drop the file, download.",
+          "metric": "Zero friction"
+        },
+        {
+          "title": "Confidential PDFs Stay Local",
+          "description": "Legal, medical, and financial PDF content is processed by PDF.js locally — never uploaded.",
+          "metric": "Zero upload"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload PDF File",
+          "description": "Drag your PDF into the upload area or click to browse. Files up to 50MB are supported."
+        },
+        {
+          "step": 2,
+          "title": "Select Pages & Resolution",
+          "description": "Choose the page range to convert. 150 DPI is pre-selected for balanced web-quality output."
+        },
+        {
+          "step": 3,
+          "title": "Convert to WebP",
+          "description": "Click Convert. PDF.js renders each page in the browser and outputs WebP image blobs."
+        },
+        {
+          "step": 4,
+          "title": "Download Images or ZIP",
+          "description": "Download individual WebP pages or all pages as a ZIP archive."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Why choose WebP over JPEG for PDF conversion?",
+          "answer": "For web use, WebP images are 25-35% smaller than JPEG at the same quality. If you're publishing PDF content on a website, WebP reduces page weight and improves loading speed."
+        },
+        {
+          "question": "What resolution does PDF to WebP produce?",
+          "answer": "The default is 150 DPI, which is ideal for web and screen display. For higher resolution output, use our PDF to JPG HQ or PDF to PNG HQ tools which default to 300 DPI."
+        },
+        {
+          "question": "Does WebP work in all browsers?",
+          "answer": "Yes — Chrome, Firefox, Edge, and Safari 14+ support WebP. Global support exceeds 95%. For downloads intended for older browsers, use JPEG or PNG instead."
+        },
+        {
+          "question": "Are my PDF files kept private?",
+          "answer": "Absolutely. PDF.js processes your file entirely in the browser — no content is uploaded to any server."
+        },
+        {
+          "question": "Can I convert specific pages only?",
+          "answer": "Yes — set the page range in the From/To inputs to extract only the pages you need."
+        },
+        {
+          "question": "What's the maximum PDF size?",
+          "answer": "PDFs up to 50MB are supported. Larger PDFs may take longer to load and process depending on your device."
+        }
+      ],
+      "relatedTools": [
+        "pdf-to-jpg",
+        "pdf-to-png",
+        "pdf-to-jpg-hq",
+        "pdf-to-png-hq"
+      ],
+      "relatedGuides": [],
+      "ctaText": "Upscale PDF Images with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "pdf-to-jpg-hq",
+      "title": "PDF to JPG HQ Converter — 300 DPI High Quality",
+      "metaTitle": "PDF to JPG High Quality - 300 DPI Converter Online Free",
+      "metaDescription": "Convert PDF to JPG at 300 DPI high quality. Extract print-quality JPEG images from PDF pages for professional use. Browser-based, no upload required.",
+      "h1": "PDF to JPG High Quality Converter - 300 DPI Print-Ready Output",
+      "intro": "Extract PDF pages as 300 DPI high-quality JPEG images. Print-ready resolution for professional documents, presentations, and archiving. Powered by PDF.js running entirely in your browser — your PDFs are never uploaded.",
+      "primaryKeyword": "pdf to jpg high quality",
+      "secondaryKeywords": [
+        "pdf to jpg 300 dpi",
+        "pdf to high quality jpeg",
+        "high resolution pdf to jpg",
+        "pdf to jpg hq",
+        "pdf to image 300 dpi"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "PDF to JPG HQ Converter",
+      "description": "Convert PDF pages to 300 DPI high-quality JPEG images. Print-grade resolution suitable for professional presentations, archiving, and detailed content extraction.",
+      "isInteractive": true,
+      "toolComponent": "PdfToImageConverter",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["application/pdf"],
+      "toolConfig": {
+        "defaultOutputFormat": "jpeg",
+        "defaultDpi": 300
+      },
+      "features": [
+        {
+          "title": "300 DPI Print-Quality Output",
+          "description": "300 DPI matches standard print resolution — PDF content extracted at this resolution is suitable for professional printing and high-detail analysis."
+        },
+        {
+          "title": "JPEG Format for Universal Compatibility",
+          "description": "JPEG is supported by every image viewer, editor, and platform — no compatibility concerns."
+        },
+        {
+          "title": "Full-Resolution Page Rendering",
+          "description": "PDF.js renders pages at 300 DPI scale, preserving fine text, thin lines, and small graphical details."
+        },
+        {
+          "title": "Page Range Selection",
+          "description": "Convert specific pages rather than the entire document to save time and storage."
+        },
+        {
+          "title": "ZIP Download for Multi-Page PDFs",
+          "description": "Download all converted high-resolution pages as a single ZIP archive in one click."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Print Production",
+          "description": "Extract PDF pages at 300 DPI for use in print layouts, brochures, or flyers.",
+          "example": "Extract a full-bleed graphic from a PDF for use in InDesign"
+        },
+        {
+          "title": "Professional Archiving",
+          "description": "Archive PDF content as high-resolution JPEG images for long-term storage in image management systems.",
+          "example": "Convert financial PDF reports to 300 DPI JPEGs for corporate archives"
+        },
+        {
+          "title": "Detailed Content Review",
+          "description": "Extract pages at full resolution to zoom into fine details like contracts, technical drawings, or medical scans.",
+          "example": "Extract a technical blueprint page from PDF for close-up review"
+        },
+        {
+          "title": "Presentation Assets",
+          "description": "Pull PDF slide content at high resolution to use as images in other presentation tools.",
+          "example": "Extract slides from a PDF deck as 300 DPI JPEGs for use in PowerPoint"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "True Print Resolution",
+          "description": "300 DPI is the industry standard for print-quality images — text and graphics are sharp and detailed.",
+          "metric": "300 DPI output"
+        },
+        {
+          "title": "No Software to Install",
+          "description": "PDF.js runs entirely in the browser — no Acrobat, no desktop app, no subscription needed.",
+          "metric": "Zero install"
+        },
+        {
+          "title": "Private PDF Handling",
+          "description": "Confidential PDFs stay on your device — no server upload, no cloud processing, no data exposure.",
+          "metric": "100% local"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your PDF",
+          "description": "Drag your PDF file or click to browse. PDFs up to 50MB are supported."
+        },
+        {
+          "step": 2,
+          "title": "Select Pages",
+          "description": "Choose which pages to convert. Leave the range at 1–max to convert the full document."
+        },
+        {
+          "step": 3,
+          "title": "Convert at 300 DPI",
+          "description": "Click Convert. Each page is rendered at 300 DPI using PDF.js and encoded as a high-quality JPEG."
+        },
+        {
+          "step": 4,
+          "title": "Download Single or ZIP",
+          "description": "Download individual page images or all high-resolution pages as a ZIP archive."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What does 300 DPI mean for PDF conversion?",
+          "answer": "DPI (dots per inch) determines how many pixels are rendered per inch of the PDF page. 300 DPI is the standard for print-quality output, producing large, detailed images where text and graphics remain sharp even when printed or zoomed in."
+        },
+        {
+          "question": "How does 300 DPI compare to 150 DPI output?",
+          "answer": "A 300 DPI image has 4× more pixels than 150 DPI (double in each dimension). It will be roughly 3-4× larger in file size but significantly sharper, especially for small text and fine lines."
+        },
+        {
+          "question": "Should I use JPG or PNG at 300 DPI?",
+          "answer": "Use JPEG (this tool) for photographs and complex color content — the compression is efficient. Use PNG HQ for text-heavy or graphics-heavy PDFs where compression artifacts on sharp edges matter."
+        },
+        {
+          "question": "Is my PDF uploaded to a server?",
+          "answer": "No. PDF.js processes your file entirely within your browser's memory. The PDF content never leaves your device."
+        },
+        {
+          "question": "Can I convert a single page at 300 DPI?",
+          "answer": "Yes — set the From and To page inputs to the same page number to convert just that page."
+        },
+        {
+          "question": "What's the maximum PDF size supported?",
+          "answer": "PDFs up to 50MB are supported. High page count PDFs at 300 DPI may take longer to process — for very large documents consider converting a page range."
+        }
+      ],
+      "relatedTools": [
+        "pdf-to-jpg",
+        "pdf-to-png-hq",
+        "pdf-to-webp",
+        "image-to-pdf"
+      ],
+      "relatedGuides": [],
+      "ctaText": "Upscale PDF Images with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "pdf-to-png-hq",
+      "title": "PDF to PNG HQ Converter — 300 DPI High Quality",
+      "metaTitle": "PDF to PNG High Quality - 300 DPI Lossless Converter Online",
+      "metaDescription": "Convert PDF to PNG at 300 DPI high quality. Extract lossless, print-ready PNG images from PDF pages. Browser-based, no upload, instant download.",
+      "h1": "PDF to PNG High Quality Converter - 300 DPI Lossless Output",
+      "intro": "Extract PDF pages as 300 DPI lossless PNG images. Ideal for text-heavy PDFs, technical drawings, and any content where compression artifacts are unacceptable. Runs entirely in your browser — no file upload.",
+      "primaryKeyword": "pdf to png high quality",
+      "secondaryKeywords": [
+        "pdf to png 300 dpi",
+        "high quality pdf to png",
+        "pdf to lossless png",
+        "pdf to png hq",
+        "pdf to image lossless"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "PDF to PNG HQ Converter",
+      "description": "Extract PDF pages as 300 DPI lossless PNG images. Lossless compression preserves every pixel — ideal for documents with sharp text, diagrams, charts, and technical drawings.",
+      "isInteractive": true,
+      "toolComponent": "PdfToImageConverter",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["application/pdf"],
+      "toolConfig": {
+        "defaultOutputFormat": "png",
+        "defaultDpi": 300
+      },
+      "features": [
+        {
+          "title": "Lossless PNG Compression",
+          "description": "PNG uses lossless compression — every pixel in the output perfectly matches the rendered PDF page with zero compression artifacts."
+        },
+        {
+          "title": "300 DPI High Resolution",
+          "description": "300 DPI resolution ensures sharp text, clean lines, and detailed graphics — suitable for print and professional use."
+        },
+        {
+          "title": "Transparency Support",
+          "description": "PNG supports alpha transparency. PDFs with transparent backgrounds or overlays preserve those layers in the output."
+        },
+        {
+          "title": "In-Browser PDF.js Rendering",
+          "description": "PDF.js renders each page at 300 DPI scale in your browser — no server upload, no third-party processing."
+        },
+        {
+          "title": "Selective Page Extraction",
+          "description": "Convert any page or page range from the PDF — you don't have to process the entire document."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Technical Documents",
+          "description": "Extract engineering drawings, schematics, or flowcharts from PDFs as lossless PNG at 300 DPI for analysis and editing.",
+          "example": "Extract a wiring diagram from a PDF manual as a high-resolution PNG"
+        },
+        {
+          "title": "Text-Heavy Documents",
+          "description": "JPEG compression blurs sharp text edges. PNG keeps every character crisp — ideal for legal, medical, or financial documents.",
+          "example": "Extract a contract page as PNG to maintain sharp text for OCR processing"
+        },
+        {
+          "title": "Infographics and Charts",
+          "description": "Data visualizations and charts lose sharpness in JPEG. PNG preserves the clean vector-to-raster rendering from PDF.",
+          "example": "Extract a complex infographic from a report PDF as a lossless PNG"
+        },
+        {
+          "title": "Print Design Assets",
+          "description": "Pull high-resolution PNG assets from PDF source files for use in other design tools.",
+          "example": "Extract a logo or graphic element from a brand guide PDF as PNG"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Zero Compression Artifacts",
+          "description": "Unlike JPEG, PNG is lossless — text edges remain razor-sharp and color gradients have no banding.",
+          "metric": "Lossless quality"
+        },
+        {
+          "title": "Print-Ready Resolution",
+          "description": "300 DPI matches standard print requirements — PNG output is ready for professional printing.",
+          "metric": "300 DPI output"
+        },
+        {
+          "title": "Complete Privacy",
+          "description": "PDF content is rendered by PDF.js in your browser — no document data is transmitted to external servers.",
+          "metric": "Zero upload"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload PDF File",
+          "description": "Drop your PDF into the upload zone or click to browse. Supports files up to 50MB."
+        },
+        {
+          "step": 2,
+          "title": "Choose Pages to Convert",
+          "description": "Set the page range. For a single page, set both From and To to the same number."
+        },
+        {
+          "step": 3,
+          "title": "Convert at 300 DPI Lossless",
+          "description": "Click Convert. Each page is rendered at 300 DPI and saved as a lossless PNG image."
+        },
+        {
+          "step": 4,
+          "title": "Download PNG or ZIP",
+          "description": "Download individual PNG files or all pages bundled in a ZIP archive."
+        }
+      ],
+      "faq": [
+        {
+          "question": "When should I use PNG instead of JPEG for PDF conversion?",
+          "answer": "Choose PNG when the PDF contains sharp text, technical drawings, charts, or logos. JPEG compression can introduce blurring and artifacts on hard edges. PNG is lossless — every pixel is preserved exactly."
+        },
+        {
+          "question": "Will the PNG files be larger than JPEG?",
+          "answer": "Yes — PNG at 300 DPI will typically be 2-4× larger than JPEG at 300 DPI. The tradeoff is perfect pixel fidelity. For photos, JPEG is usually sufficient; for documents with text, PNG is worth the larger file size."
+        },
+        {
+          "question": "Does PNG support transparency from PDFs?",
+          "answer": "Yes. If the PDF page has transparent areas or a transparent background, the PNG output will preserve that transparency with an alpha channel."
+        },
+        {
+          "question": "Are my PDFs kept private?",
+          "answer": "Completely. PDF.js processes the document locally in your browser. No PDF content is transmitted to any server."
+        },
+        {
+          "question": "Can I convert just one page from a multi-page PDF?",
+          "answer": "Yes — set the From and To page range to the same page number to extract exactly one page."
+        },
+        {
+          "question": "Is 300 DPI PNG suitable for printing?",
+          "answer": "Yes — 300 DPI is the standard for commercial printing. Text and graphics will be sharp and detailed at any standard print size."
+        }
+      ],
+      "relatedTools": [
+        "pdf-to-png",
+        "pdf-to-jpg-hq",
+        "pdf-to-webp",
+        "image-to-pdf"
+      ],
+      "relatedGuides": [],
+      "ctaText": "Upscale PDF Images with AI",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "merge-images-to-pdf",
+      "title": "Merge Images to PDF - Combine Multiple Photos into One PDF",
+      "metaTitle": "Merge Images to PDF Free - Combine JPG PNG WebP into One PDF",
+      "metaDescription": "Merge multiple images into one PDF free online. Combine JPG, PNG, and WebP photos into a single PDF document. Reorder pages, choose page size. No upload needed.",
+      "h1": "Merge Images to PDF - Combine Multiple Photos into a Single Document",
+      "intro": "Combine multiple images from different formats — JPG, PNG, and WebP — into a single organized PDF document. Drag images to reorder pages, choose your page size, and download your merged PDF instantly. Everything runs in your browser.",
+      "primaryKeyword": "merge images to pdf",
+      "secondaryKeywords": [
+        "combine images into pdf",
+        "merge photos into pdf",
+        "multiple images to pdf",
+        "jpg png webp to pdf",
+        "combine pictures into pdf"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "Merge Images to PDF",
+      "description": "Combine JPG, PNG, and WebP images into a single multi-page PDF document. Upload up to 30 images, drag to reorder, choose page size, and download. Built with pdf-lib running locally in your browser.",
+      "isInteractive": true,
+      "toolComponent": "ImageToPdfConverter",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolConfig": {
+        "acceptedInputFormats": ["image/jpeg", "image/png", "image/webp"]
+      },
+      "features": [
+        {
+          "title": "Merge Mixed Image Formats",
+          "description": "Combine JPG, PNG, and WebP images in the same PDF — no need to convert formats first."
+        },
+        {
+          "title": "Drag-to-Reorder Pages",
+          "description": "Arrange images into the exact page order you want by dragging thumbnails in the image list."
+        },
+        {
+          "title": "Up to 30 Images per PDF",
+          "description": "Add up to 30 images to a single PDF document. Each image becomes one page."
+        },
+        {
+          "title": "Page Size Options",
+          "description": "Choose A4, US Letter, or 'fit to image' sizing — each image is scaled to fill the page proportionally."
+        },
+        {
+          "title": "Private Browser-Based Processing",
+          "description": "pdf-lib creates the PDF entirely in your browser — your photos are never uploaded to any server."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Document Portfolios",
+          "description": "Merge multiple photos, scans, or graphics into a single organized PDF for clients or applications.",
+          "example": "Combine 15 product photos into a PDF catalog for a client"
+        },
+        {
+          "title": "Receipt and Invoice Collection",
+          "description": "Consolidate scattered receipt photos into one PDF for expense reports or bookkeeping.",
+          "example": "Merge 20 receipt photos into a single PDF for an accountant"
+        },
+        {
+          "title": "Photo Albums",
+          "description": "Create a printable PDF photo album from a collection of JPG or PNG photos.",
+          "example": "Combine vacation photos into an A4 PDF photo book for printing"
+        },
+        {
+          "title": "Scanned Document Assembly",
+          "description": "Combine individually scanned page images into a single multi-page PDF document.",
+          "example": "Merge 10 PNG scans of a signed contract into one PDF for emailing"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "One File from Many Images",
+          "description": "Replace a folder of scattered image files with a single organized PDF that is easy to share and archive.",
+          "metric": "Up to 30 images"
+        },
+        {
+          "title": "Mixed Format Support",
+          "description": "Combine JPG, PNG, and WebP in the same document — no format conversion step needed before merging.",
+          "metric": "3 formats supported"
+        },
+        {
+          "title": "Zero Upload Privacy",
+          "description": "All PDF creation happens locally in the browser via pdf-lib — sensitive document photos are never transmitted.",
+          "metric": "100% private"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Images",
+          "description": "Drag and drop JPG, PNG, or WebP files into the uploader. Or click Select Images to browse. Add up to 30 images."
+        },
+        {
+          "step": 2,
+          "title": "Reorder and Configure",
+          "description": "Drag image thumbnails to set the page order. Choose page size (A4, Letter, or fit to image) and margins."
+        },
+        {
+          "step": 3,
+          "title": "Create the PDF",
+          "description": "Click Create PDF. pdf-lib assembles all images into a multi-page PDF document in your browser."
+        },
+        {
+          "step": 4,
+          "title": "Download Merged PDF",
+          "description": "Click Download PDF to save the merged document. Share it via email, Drive, or any file transfer service."
+        }
+      ],
+      "faq": [
+        {
+          "question": "How many images can I merge into one PDF?",
+          "answer": "Up to 30 images per PDF. Each image becomes one page. For larger collections, split them into multiple PDFs or use a desktop PDF tool."
+        },
+        {
+          "question": "Can I mix JPG, PNG, and WebP in the same PDF?",
+          "answer": "Yes — this tool supports all three formats in the same document. JPG and PNG are embedded natively; WebP is converted to JPEG via canvas before embedding."
+        },
+        {
+          "question": "Can I control the order of pages?",
+          "answer": "Yes — drag the image thumbnails up or down in the list to set the exact page order before clicking Create PDF."
+        },
+        {
+          "question": "What page sizes are available?",
+          "answer": "A4 (210×297mm), US Letter (8.5×11in), and 'Fit to Image' which creates a page exactly matching each image's dimensions."
+        },
+        {
+          "question": "Are my photos uploaded to a server?",
+          "answer": "No. pdf-lib runs entirely in your browser — your images are never sent to any server or stored in the cloud."
+        },
+        {
+          "question": "What is the maximum image size per file?",
+          "answer": "Each individual image can be up to 20MB. Total combined size of all images should stay within reasonable browser memory limits (typically under 200MB)."
+        }
+      ],
+      "relatedTools": [
+        "image-to-pdf",
+        "jpg-to-pdf",
+        "png-to-pdf",
+        "pdf-to-jpg"
+      ],
+      "relatedGuides": [],
+      "ctaText": "Upscale Images Before Making PDF",
+      "ctaUrl": "/?signup=1"
     }
   ],
   "meta": {
-    "totalPages": 34,
+    "totalPages": 39,
     "lastUpdated": "2026-04-23T00:00:00Z"
   }
 }

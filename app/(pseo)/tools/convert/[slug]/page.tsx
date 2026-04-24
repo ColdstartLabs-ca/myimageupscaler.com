@@ -17,6 +17,12 @@ const CONVERSION_SLUGS = [
   'webp-to-png',
   'jpg-to-webp',
   'png-to-webp',
+  // Phase 5 additions
+  'heic-to-webp',
+  'pdf-to-webp',
+  'pdf-to-jpg-hq',
+  'pdf-to-png-hq',
+  'merge-images-to-pdf',
 ];
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit

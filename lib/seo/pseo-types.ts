@@ -91,7 +91,7 @@ export interface IToolConfig {
   // ImageCompressor config
   defaultQuality?: number;
   // HeicConverter config
-  defaultOutputFormat?: 'jpeg' | 'png';
+  defaultOutputFormat?: 'jpeg' | 'png' | 'webp';
   // PdfToImageConverter config
   defaultDpi?: number;
   // ImageCropper config

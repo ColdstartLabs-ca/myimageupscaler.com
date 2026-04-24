@@ -44,6 +44,12 @@ const INTERACTIVE_TOOL_PATHS: Record<string, string> = {
   'webp-to-png': '/tools/convert/webp-to-png',
   'jpg-to-webp': '/tools/convert/jpg-to-webp',
   'png-to-webp': '/tools/convert/png-to-webp',
+  // Phase 5: HEIC/PDF/merge additions
+  'heic-to-webp': '/tools/convert/heic-to-webp',
+  'pdf-to-webp': '/tools/convert/pdf-to-webp',
+  'pdf-to-jpg-hq': '/tools/convert/pdf-to-jpg-hq',
+  'pdf-to-png-hq': '/tools/convert/pdf-to-png-hq',
+  'merge-images-to-pdf': '/tools/convert/merge-images-to-pdf',
   // Compress tools
   'image-compressor': '/tools/compress/image-compressor',
   'bulk-image-compressor': '/tools/compress/bulk-image-compressor', // 301 redirect destination

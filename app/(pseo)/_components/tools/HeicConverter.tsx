@@ -10,7 +10,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { InteractiveTool } from './InteractiveTool';
 import Image from 'next/image';
 
-type OutputFormat = 'jpeg' | 'png';
+type OutputFormat = 'jpeg' | 'png' | 'webp';
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes}B`;
@@ -26,7 +26,7 @@ export function HeicConverter({
   defaultOutputFormat = 'jpeg',
 }: IHeicConverterProps): React.ReactElement {
   const [outputFormat, setOutputFormat] = useState<OutputFormat>(
-    defaultOutputFormat === 'png' ? 'png' : 'jpeg'
+    defaultOutputFormat === 'png' ? 'png' : defaultOutputFormat === 'webp' ? 'webp' : 'jpeg'
   );
   const [quality, setQuality] = useState<number>(90);
   const [originalSize, setOriginalSize] = useState<number>(0);
@@ -196,6 +196,7 @@ export function HeicConverter({
               >
                 <option value="jpeg">JPEG - Best for photos, smaller files</option>
                 <option value="png">PNG - Lossless, supports transparency</option>
+                <option value="webp">WebP - Modern format, excellent compression</option>
               </select>
             </div>
 
@@ -257,6 +258,7 @@ export function HeicConverter({
               <li>HEIC is Apple&apos;s default photo format on iPhone and iPad</li>
               <li>JPEG is universally compatible and best for sharing</li>
               <li>PNG is ideal when you need lossless quality or transparency</li>
+              <li>WebP offers excellent compression for modern browsers and web use</li>
               <li>All conversion happens in your browser — no upload required</li>
             </ul>
           </div>
