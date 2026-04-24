@@ -26,7 +26,8 @@
       "@shared/*": ["./shared/*"],
       "@app/*": ["./app/*"],
       "@lib/*": ["./lib/*"],
-      "@locales/*": ["./locales/*"]
+      "@locales/*": ["./locales/*"],
+      "@extension/*": ["./extension/src/*"]
     },
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true
