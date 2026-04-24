@@ -60,14 +60,14 @@ const clientEnvSchema = z.object({
   // Stripe
   STRIPE_PUBLISHABLE_KEY: z.string().default(''),
   // Stripe Subscription Price IDs
-  NEXT_PUBLIC_STRIPE_PRICE_STARTER: z.string().default('price_1Sz0fNL1vUl00LlZX1XClz95'),
-  NEXT_PUBLIC_STRIPE_PRICE_HOBBY: z.string().default('price_1Sz0fNL1vUl00LlZT6MMTxAg'),
-  NEXT_PUBLIC_STRIPE_PRICE_PRO: z.string().default('price_1Sz0fOL1vUl00LlZ7bbM2cDs'),
-  NEXT_PUBLIC_STRIPE_PRICE_BUSINESS: z.string().default('price_1Sz0fOL1vUl00LlZP3y5zdFx'),
+  NEXT_PUBLIC_STRIPE_PRICE_STARTER: z.string().default('price_1TPoss1I7KzZir1ikF1Wk48f'),
+  NEXT_PUBLIC_STRIPE_PRICE_HOBBY: z.string().default('price_1TPost1I7KzZir1i5qcAA7sd'),
+  NEXT_PUBLIC_STRIPE_PRICE_PRO: z.string().default('price_1TPost1I7KzZir1iEOqgekjL'),
+  NEXT_PUBLIC_STRIPE_PRICE_BUSINESS: z.string().default('price_1TPosu1I7KzZir1iDgCGxD3a'),
   // Stripe Credit Pack Price IDs
-  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL: z.string().default('price_1Sz0fcL1vUl00LlZ32PBKv8G'),
-  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM: z.string().default('price_1Sz0fcL1vUl00LlZ0Y1RGOJW'),
-  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE: z.string().default('price_1Sz0fcL1vUl00LlZqnULxXBe'),
+  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL: z.string().default('price_1TPosv1I7KzZir1iSG8zQsKe'),
+  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM: z.string().default('price_1TPosw1I7KzZir1iK7fFzJMF'),
+  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE: z.string().default('price_1TPosw1I7KzZir1ikxamcgxq'),
 });
 
 export type IClientEnv = z.infer<typeof clientEnvSchema>;
@@ -120,32 +120,32 @@ function loadClientEnv(): IClientEnv {
     NEXT_PUBLIC_STRIPE_PRICE_STARTER:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER ||
       process.env.STRIPE_PRICE_STARTER ||
-      'price_1Sz0fNL1vUl00LlZX1XClz95',
+      'price_1TPoss1I7KzZir1ikF1Wk48f',
     NEXT_PUBLIC_STRIPE_PRICE_HOBBY:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_HOBBY ||
       process.env.STRIPE_PRICE_HOBBY ||
-      'price_1Sz0fNL1vUl00LlZT6MMTxAg',
+      'price_1TPost1I7KzZir1i5qcAA7sd',
     NEXT_PUBLIC_STRIPE_PRICE_PRO:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO ||
       process.env.STRIPE_PRICE_PRO ||
-      'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
+      'price_1TPost1I7KzZir1iEOqgekjL',
     NEXT_PUBLIC_STRIPE_PRICE_BUSINESS:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS ||
       process.env.STRIPE_PRICE_BUSINESS ||
-      'price_1Sz0fOL1vUl00LlZP3y5zdFx',
+      'price_1TPosu1I7KzZir1iDgCGxD3a',
     // Stripe Credit Pack Price IDs
     NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL ||
       process.env.STRIPE_PRICE_CREDITS_SMALL ||
-      'price_1Sz0fcL1vUl00LlZ32PBKv8G',
+      'price_1TPosv1I7KzZir1iSG8zQsKe',
     NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM ||
       process.env.STRIPE_PRICE_CREDITS_MEDIUM ||
-      'price_1Sz0fcL1vUl00LlZ0Y1RGOJW',
+      'price_1TPosw1I7KzZir1iK7fFzJMF',
     NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE ||
       process.env.STRIPE_PRICE_CREDITS_LARGE ||
-      'price_1Sz0fcL1vUl00LlZqnULxXBe',
+      'price_1TPosw1I7KzZir1ikxamcgxq',
   };
 
   return clientEnvSchema.parse(env);

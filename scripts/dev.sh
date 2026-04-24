@@ -57,6 +57,21 @@ else
 fi
 
 if [[ "$WITH_WEBHOOKS" == true ]]; then
+  # Fetch Stripe CLI's local webhook signing secret and override STRIPE_WEBHOOK_SECRET.
+  # The CLI uses its own per-API-key signing secret for `stripe listen`, which differs
+  # from any API-created webhook endpoint's secret used in prod.
+  echo "🔑 Fetching local Stripe webhook signing secret..."
+  if STRIPE_LOCAL_WHSEC=$(stripe listen --api-key "$STRIPE_SECRET_KEY" --print-secret 2>/dev/null); then
+    if [[ -n "$STRIPE_LOCAL_WHSEC" ]]; then
+      export STRIPE_WEBHOOK_SECRET="$STRIPE_LOCAL_WHSEC"
+      echo "✅ STRIPE_WEBHOOK_SECRET set from Stripe CLI"
+    else
+      echo "⚠️ Stripe CLI returned an empty secret; falling back to .env.api value"
+    fi
+  else
+    echo "⚠️ Could not fetch Stripe CLI webhook secret; falling back to .env.api value"
+  fi
+
   concurrently \
     -n next,stripe \
     -c cyan,yellow \
