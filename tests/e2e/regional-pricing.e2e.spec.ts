@@ -25,7 +25,7 @@ test.describe('Regional Pricing & Bandit', () => {
     expect(geoData).toMatchObject({
       country: 'IN',
       pricingRegion: 'south_asia',
-      tier: 'restricted',
+      tier: 'paywalled',
     });
     expect(geoData.discountPercent).toBeGreaterThan(0);
     expect(geoData.banditArmId).toBeTruthy();
