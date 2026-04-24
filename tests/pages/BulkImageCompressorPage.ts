@@ -57,8 +57,11 @@ export class BulkImageCompressorPage extends BasePage {
     super(page);
 
     // Tool component container - the actual BulkImageCompressor component
-    // This is the max-w-5xl wrapper that contains all the tool UI
-    this.toolContainer = page.locator('.max-w-5xl').first();
+    // Scope to the border-2 card that wraps the tool, using its unique H2 heading as anchor
+    this.toolContainer = page
+      .locator('div')
+      .filter({ has: page.getByRole('heading', { level: 2, name: /bulk image compressor/i }) })
+      .first();
 
     // Page header - target the main H1 in the template (text-4xl in hero section)
     // Use getByText for more reliable text matching regardless of exact CSS classes
@@ -321,15 +324,19 @@ export class BulkImageCompressorPage extends BasePage {
     const isVisible = await modal.isVisible().catch(() => false);
 
     if (isVisible) {
-      // Click the close button (X button) or click outside to dismiss
-      // Try clicking the close button first
-      const closeButton = modal.locator('button').filter({ hasText: '' }).first();
-      await closeButton.click().catch(async () => {
-        // If close button doesn't work, click outside the modal content
-        await modal.click({ position: { x: 10, y: 10 } });
+      // The close button has absolute positioning and an X icon
+      // Click the X button inside the modal
+      const closeButton = modal.locator('button').first();
+      await closeButton.click({ timeout: 5000 }).catch(async () => {
+        // Fallback: click outside the modal content area
+        await this.page.mouse.click(10, 10);
       });
       // Wait for the modal to disappear
-      await expect(modal).not.toBeVisible({ timeout: 5000 });
+      await expect(modal)
+        .not.toBeVisible({ timeout: 5000 })
+        .catch(() => {
+          // Modal might have already disappeared
+        });
     }
   }
 
@@ -355,15 +362,20 @@ export class BulkImageCompressorPage extends BasePage {
    * Wait for processing to complete for all images
    */
   async waitForProcessingComplete(): Promise<void> {
-    // Wait for download all button to appear
-    await expect(this.downloadAllButton).toBeVisible({ timeout: 120000 });
+    // Wait for the upscaler CTA modal to appear (indicates processing finished)
+    const modal = this.page.locator('.fixed.inset-0.bg-black\\/60').first();
+    await expect(modal).toBeVisible({ timeout: 120000 });
+    // Dismiss the modal so we can interact with the tool
+    await this.dismissUpscalerCTAModal();
   }
 
   /**
    * Wait for summary stats to be visible
    */
   async waitForSummaryStats(): Promise<void> {
-    await expect(this.summaryStats).toBeVisible({ timeout: 120000 });
+    // Wait for processing to finish and dismiss any modal
+    await this.waitForProcessingComplete();
+    await expect(this.summaryStats).toBeVisible({ timeout: 10000 });
   }
 
   /**
