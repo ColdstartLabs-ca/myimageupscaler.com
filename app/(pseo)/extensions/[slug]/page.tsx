@@ -1,48 +1,47 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { generateToolMetadata } from '@/lib/seo/metadata-factory';
+import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generateToolMetadata({
-    slug: 'chrome-extension',
-    toolName: 'MyImageUpscaler Chrome Extension',
-    description: 'Install the MyImageUpscaler Chrome extension to upscale images from any webpage. Right-click integration, drag & drop support, and AI-powered upscaling.',
-    category: 'extensions',
-    primaryKeyword: 'chrome image upscaler extension',
-    shortDescription: 'AI-powered image upscaling Chrome extension with right-click integration.',
-  });
+  return generateCategoryMetadata('extensions', 'en');
 }
 
 const FEATURES = [
   {
     title: 'Right-Click to Upscale',
-    description: 'Simply right-click on any image on the web and select "Upscale with MyImageUpscaler" to enhance it instantly.',
+    description:
+      'Simply right-click on any image on the web and select "Upscale with MyImageUpscaler" to enhance it instantly.',
     icon: '🖱️',
   },
   {
     title: 'Drag & Drop Upload',
-    description: 'Open the extension popup and drag & drop images directly to upscale with your preferred settings.',
+    description:
+      'Open the extension popup and drag & drop images directly to upscale with your preferred settings.',
     icon: '📤',
   },
   {
     title: 'Side Panel Preview',
-    description: 'View beautiful before/after comparisons in the side panel before downloading your upscaled images.',
+    description:
+      'View beautiful before/after comparisons in the side panel before downloading your upscaled images.',
     icon: '👁️',
   },
   {
     title: 'Multiple Scale Options',
-    description: 'Choose from 2x, 4x, or 8x upscaling to get the perfect resolution for your needs.',
+    description:
+      'Choose from 2x, 4x, or 8x upscaling to get the perfect resolution for your needs.',
     icon: '📏',
   },
   {
     title: 'Quality Tiers',
-    description: 'Select from Auto, Quick, Face Restore, HD Upscale, or Ultra quality modes for optimal results.',
+    description:
+      'Select from Auto, Quick, Face Restore, HD Upscale, or Ultra quality modes for optimal results.',
     icon: '⚡',
   },
   {
     title: 'Credits Sync',
-    description: 'Your MyImageUpscaler account syncs seamlessly with the extension for consistent credit tracking.',
+    description:
+      'Your MyImageUpscaler account syncs seamlessly with the extension for consistent credit tracking.',
     icon: '💳',
   },
 ];
@@ -68,7 +67,7 @@ const HOW_IT_WORKS = [
 export default function ChromeExtensionPage() {
   return (
     <>
-      <SeoMetaTags metadata={await generateMetadata()} />
+      <SeoMetaTags path="/extensions/chrome" locale="en" />
 
       <main className="min-h-screen bg-white">
         <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
@@ -83,8 +82,8 @@ export default function ChromeExtensionPage() {
               MyImageUpscaler Chrome Extension
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-gray-600">
-              Upscale images from any webpage with AI-powered right-click upscaling.
-              Install our Chrome extension and enhance images without leaving your browser.
+              Upscale images from any webpage with AI-powered right-click upscaling. Install our
+              Chrome extension and enhance images without leaving your browser.
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <a
@@ -94,7 +93,12 @@ export default function ChromeExtensionPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l4-4m-4 4h4" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l4-4m-4 4h4"
+                  />
                 </svg>
                 Install from Chrome Web Store
               </a>
@@ -103,7 +107,12 @@ export default function ChromeExtensionPage() {
                 className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
                 View All Extensions
               </Link>
@@ -114,7 +123,7 @@ export default function ChromeExtensionPage() {
           <section className="mb-16">
             <h2 className="mb-8 text-2xl font-bold text-gray-900">Features</h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {FEATURES.map((feature) => (
+              {FEATURES.map(feature => (
                 <div key={feature.title} className="rounded-xl border border-gray-200 p-6">
                   <div className="mb-3 text-3xl">{feature.icon}</div>
                   <h3 className="mb-2 text-lg font-semibold text-gray-900">{feature.title}</h3>
@@ -128,7 +137,7 @@ export default function ChromeExtensionPage() {
           <section className="mb-16">
             <h2 className="mb-8 text-2xl font-bold text-gray-900">How It Works</h2>
             <div className="space-y-6">
-              {HOW_IT_WORKS.map((item) => (
+              {HOW_IT_WORKS.map(item => (
                 <div key={item.step} className="flex gap-6">
                   <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 font-semibold text-white">
                     {item.step}
@@ -159,29 +168,36 @@ export default function ChromeExtensionPage() {
               <div className="border-b border-gray-200 pb-6">
                 <h3 className="mb-2 font-semibold text-gray-900">Is the Chrome extension free?</h3>
                 <p className="text-gray-600">
-                  The extension is free to install, but uses credits from your MyImageUpscaler account.
-                  New users get free credits to try the service, and additional credits can be purchased as needed.
+                  The extension is free to install, but uses credits from your MyImageUpscaler
+                  account. New users get free credits to try the service, and additional credits can
+                  be purchased as needed.
                 </p>
               </div>
               <div className="border-b border-gray-200 pb-6">
-                <h3 className="mb-2 font-semibold text-gray-900">Does the extension work on all websites?</h3>
+                <h3 className="mb-2 font-semibold text-gray-900">
+                  Does the extension work on all websites?
+                </h3>
                 <p className="text-gray-600">
-                  Yes! You can right-click on most images on any website to upscale them. Some websites may have restrictions on
-                  certain images due to their server policies.
+                  Yes! You can right-click on most images on any website to upscale them. Some
+                  websites may have restrictions on certain images due to their server policies.
                 </p>
               </div>
               <div className="border-b border-gray-200 pb-6">
-                <h3 className="mb-2 font-semibold text-gray-900">What image sizes can I upscale?</h3>
+                <h3 className="mb-2 font-semibold text-gray-900">
+                  What image sizes can I upscale?
+                </h3>
                 <p className="text-gray-600">
-                  The extension supports upscaling images up to your available credit balance. Larger images may consume
-                  more credits. You can choose 2x, 4x, or 8x scaling factors.
+                  The extension supports upscaling images up to your available credit balance.
+                  Larger images may consume more credits. You can choose 2x, 4x, or 8x scaling
+                  factors.
                 </p>
               </div>
               <div>
                 <h3 className="mb-2 font-semibold text-gray-900">Is my data private?</h3>
                 <p className="text-gray-600">
-                  Yes. The extension only communicates with our secure API to process images. We don't collect browsing
-                  history or personal data beyond what's necessary for the upscaling service.
+                  Yes. The extension only communicates with our secure API to process images. We
+                  don&apos;t collect browsing history or personal data beyond what&apos;s necessary
+                  for the upscaling service.
                 </p>
               </div>
             </div>
@@ -191,7 +207,8 @@ export default function ChromeExtensionPage() {
           <div className="mt-16 rounded-xl bg-blue-50 p-8 text-center">
             <h2 className="mb-4 text-2xl font-bold text-gray-900">Ready to Upscale Any Image?</h2>
             <p className="mb-6 text-gray-600">
-              Install the MyImageUpscaler Chrome extension and start enhancing images from any webpage.
+              Install the MyImageUpscaler Chrome extension and start enhancing images from any
+              webpage.
             </p>
             <a
               href="https://chrome.google.com/webstore/detail/myimageupscaler-ai-image-u/"
@@ -200,9 +217,14 @@ export default function ChromeExtensionPage() {
               className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-4 font-semibold text-white transition hover:bg-blue-700"
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l4-4m-4 4h4" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l4-4m-4 4h4"
+                />
               </svg>
-              Add to Chrome - It's Free
+              Add to Chrome — It&apos;s Free
             </a>
           </div>
         </div>
