@@ -2,7 +2,7 @@
  * Unit tests for Phase 5 contextual upgrade prompts:
  *  - Prompt 1: model_gate — ModelGalleryModal fires analytics when free user opens gallery
  *  - Prompt 2: after_upscale — AfterUpscaleBanner renders + fires analytics after 3rd upscale
- *  - Prompt 3: after_comparison — ImageComparison nudge renders + fires analytics on slider drag
+ *  - Prompt 3: legacy comparison CTA removed — retained here as a regression note
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -505,7 +505,7 @@ describe('Prompt 2: after_upscale — AfterUpscaleBanner', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Prompt 3: after_comparison — ImageComparison nudge
+// Prompt 3: legacy comparison CTA
 // NOTE: Feature removed - tests deleted. See feedback_imagecomparison-upgrade-nudge-regression.md
 // ---------------------------------------------------------------------------
 
@@ -540,19 +540,11 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should show PostDownloadPrompt when download count increments to 1', async () => {
     const onExploreModels = vi.fn();
     const { rerender } = render(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={0}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={1}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
@@ -563,11 +555,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt on initial render with an existing download count', async () => {
     const onExploreModels = vi.fn();
     const { container } = render(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={1}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await new Promise(r => setTimeout(r, 10));
@@ -577,11 +565,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should NOT show PostDownloadPrompt for paid users', async () => {
     const onExploreModels = vi.fn();
     const { container } = render(
-      <PostDownloadPrompt
-        isFreeUser={false}
-        downloadCount={0}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={false} downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     await new Promise(r => setTimeout(r, 10));
@@ -591,19 +575,11 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should fire upgrade_prompt_shown with trigger post_download_explore', async () => {
     const onExploreModels = vi.fn();
     const { rerender } = render(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={0}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={1}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
@@ -650,19 +626,11 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should fire upgrade_prompt_dismissed on X click', async () => {
     const onExploreModels = vi.fn();
     const { rerender } = render(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={0}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={1}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
@@ -686,19 +654,11 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
   it('should call onExploreModels callback when CTA is clicked', async () => {
     const onExploreModels = vi.fn();
     const { rerender } = render(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={0}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={1}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
@@ -716,25 +676,19 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
       copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
     });
     expect(onExploreModels).toHaveBeenCalled();
-    expect(mockSetCheckoutTrackingContext).not.toHaveBeenCalled();
+    expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith({
+      originatingTrigger: 'post_download_explore',
+    });
   });
 
   it('should re-open when download count increments', async () => {
     const onExploreModels = vi.fn();
     const { rerender } = render(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={0}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={1}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
@@ -748,11 +702,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     });
 
     rerender(
-      <PostDownloadPrompt
-        isFreeUser={true}
-        downloadCount={2}
-        onExploreModels={onExploreModels}
-      />
+      <PostDownloadPrompt isFreeUser={true} downloadCount={2} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
@@ -955,7 +905,9 @@ describe('Phase 5: FirstDownloadCelebration', () => {
     });
     expect(onExploreModels).toHaveBeenCalled();
     expect(mockPush).not.toHaveBeenCalled();
-    expect(mockSetCheckoutTrackingContext).not.toHaveBeenCalled();
+    expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith({
+      originatingTrigger: 'celebration_explore',
+    });
   });
 
   it('should fire upgrade_prompt_clicked with model_gallery destination', async () => {

@@ -22,11 +22,27 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: IPlatformPageProps): Promise<Metadata> {
   const { slug, locale } = await params;
-  const result = await getPlatformDataWithLocale(slug, locale);
 
+  // Platforms is English-only — localized pages should not be indexed
+  if (locale !== 'en') {
+    const enResult = await getPlatformDataWithLocale(slug, 'en');
+    return {
+      title: enResult.data?.metaTitle || '',
+      description: enResult.data?.metaDescription || '',
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const result = await getPlatformDataWithLocale(slug, locale);
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'platforms', locale);
+  // Strip alternates — SeoMetaTags handles canonical and HreflangLinks handles hreflang in JSX.
+  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+    result.data,
+    'platforms',
+    locale
+  );
+  return metaWithoutAlternates;
 }
 
 export default async function PlatformPage({ params }: IPlatformPageProps) {
@@ -50,11 +66,13 @@ export default async function PlatformPage({ params }: IPlatformPageProps) {
   const relatedPages = await getRelatedPages('platforms', slug, locale);
 
   const path = `/platforms/${slug}`;
+  // For non-English locales, canonical should point to English URL
+  const canonicalLocale = locale !== 'en' ? 'en' : locale;
 
   return (
     <>
       {/* SEO meta tags - canonical and og:locale */}
-      <SeoMetaTags path={path} locale={locale} />
+      <SeoMetaTags path={path} locale={canonicalLocale} />
       {/* Hreflang links for multi-language SEO */}
       <HreflangLinks path={path} category="platforms" locale={locale} />
       <SchemaMarkup schema={schema} />

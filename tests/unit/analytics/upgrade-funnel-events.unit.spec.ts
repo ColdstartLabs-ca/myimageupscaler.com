@@ -253,7 +253,6 @@ describe('Upgrade Funnel Analytics Events', () => {
         'out_of_credits',
         'model_gate',
         'after_upscale',
-        'after_comparison',
         'after_download',
         'after_batch',
       ];

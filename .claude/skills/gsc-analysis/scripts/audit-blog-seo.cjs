@@ -388,9 +388,121 @@ function auditPost(post, gscPage, minImpressions) {
 // CLI
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Title/Meta Suggestion Generator (for --suggest mode)
+// ---------------------------------------------------------------------------
+
+// CTR hooks proven to increase click-through from SERPs
+const CTR_HOOKS = [
+  "Tested", "Free", "No Signup", "Instant", "Step by Step",
+  "Before/After", "Side by Side", "Comparison", "2026",
+  "No Watermark", "Works on Phone", "Try It Free",
+];
+
+function generateSuggestions(post, auditedPost) {
+  if (!auditedPost.gsc || auditedPost.gsc.impressions < 100) return null;
+
+  const topQueries = auditedPost.gsc.topQueries || [];
+  const topKeywords = auditedPost.gsc.topQueryKeywords || [];
+  const position = auditedPost.gsc.position;
+  const ctr = auditedPost.gsc.ctr;
+  const impressions = auditedPost.gsc.impressions;
+
+  // Find the top 3 highest-impression query keywords to weave into suggestions
+  const highValueKeywords = topKeywords.slice(0, 5);
+
+  // Detect the dominant intent
+  const intentIssues = auditedPost.issues.filter(i => i.field === "intent");
+  const dominantIntent = intentIssues.length > 0 ? intentIssues[0].value : null;
+
+  // Generate 3 title candidates
+  const slug = post.slug;
+  const titleCandidates = [];
+
+  // Strategy 1: Lead with the #1 query keyword + CTR hook
+  if (highValueKeywords.length > 0) {
+    const mainKw = topQueries[0]?.query || highValueKeywords.join(" ");
+    const words = mainKw.split(/\s+/).filter(w => w.length > 2);
+    const titleBase = words.slice(0, 6).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    const hook = ctr < 0.01 ? "Tested" : ctr < 0.02 ? "Free" : "2026";
+    titleCandidates.push(`${titleBase} — ${hook} & Compared (${new Date().getFullYear()})`.slice(0, 60));
+  }
+
+  // Strategy 2: Question/curiosity format for low CTR
+  if (ctr < 0.005) {
+    const mainKw = highValueKeywords.slice(0, 3).join(" ");
+    titleCandidates.push(`Which ${mainKw} Actually Works? (We Tested)`.slice(0, 60));
+  }
+
+  // Strategy 3: Intent-aligned format
+  if (dominantIntent === "free-tool") {
+    titleCandidates.push(`Free ${highValueKeywords.slice(0, 2).join(" ")} — No Watermark, No Signup`.slice(0, 60));
+  } else if (dominantIntent === "how-to") {
+    titleCandidates.push(`How to ${highValueKeywords.slice(0, 3).join(" ")} — Step by Step Guide`.slice(0, 60));
+  } else if (dominantIntent === "comparison") {
+    titleCandidates.push(`${highValueKeywords[0] || "Tool"} vs ${highValueKeywords[1] || "Alternative"}: Which Is Better?`.slice(0, 60));
+  } else if (dominantIntent === "explainer") {
+    titleCandidates.push(`What Is ${highValueKeywords.slice(0, 2).join(" ")}? How It Works (Explained)`.slice(0, 60));
+  }
+
+  // Fill up to 3 if we don't have enough
+  while (titleCandidates.length < 3) {
+    const kw = highValueKeywords[titleCandidates.length % highValueKeywords.length] || "Image";
+    titleCandidates.push(`Best ${kw} ${new Date().getFullYear()} — Tested & Reviewed`.slice(0, 60));
+  }
+
+  // Generate 1 description candidate
+  const benchmark = getCtrBenchmark(position);
+  const descHooks = [];
+  if (ctr < 0.01) descHooks.push("We tested");
+  if (impressions > 5000) descHooks.push("Side-by-side results");
+  if (dominantIntent === "free-tool") descHooks.push("No signup, no watermark, instant");
+
+  const descBase = topQueries.slice(0, 2).map(q => q.query).join(". ");
+  let description = "";
+  if (descHooks.length > 0) {
+    description = `${descHooks.join(". ")}. ${descBase}. See which ones actually deliver.`.slice(0, 160);
+  } else {
+    description = `${descBase}. Compare options and find the best fit for your needs.`.slice(0, 160);
+  }
+
+  // Pad description if too short
+  if (description.length < 120) {
+    description = `${description} Try our free tool — no account needed.`.slice(0, 160);
+  }
+
+  return {
+    slug,
+    current: {
+      title: auditedPost.effectiveTitle,
+      description: auditedPost.effectiveDesc?.slice(0, 160),
+    },
+    topQueries: topQueries.slice(0, 5).map(q => q.query),
+    topKeywords: highValueKeywords,
+    dominantIntent,
+    gsc: {
+      impressions,
+      clicks: auditedPost.gsc.clicks,
+      ctr: Number(ctr.toFixed(4)),
+      position: Number(position.toFixed(1)),
+      expectedCtr: Number(benchmark.expectedCtr.toFixed(4)),
+      missedClicks: Math.max(0, Math.round(impressions * benchmark.expectedCtr - auditedPost.gsc.clicks)),
+    },
+    suggestions: {
+      seo_title_options: titleCandidates.slice(0, 3).map(t => t.slice(0, 60)),
+      seo_description: description.slice(0, 160),
+    },
+    rationale: `#${slug} has ${impressions.toLocaleString()} impressions at pos ${position.toFixed(1)} with ${(ctr * 100).toFixed(2)}% CTR (expected ~${(benchmark.expectedCtr * 100).toFixed(1)}%). Top query: "${topQueries[0]?.query || "N/A"}". ${intentIssues.length > 0 ? `Intent mismatch: queries signal "${dominantIntent}" intent.` : ""}`,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// CLI
+// ---------------------------------------------------------------------------
+
 function parseArgs() {
   const args = process.argv.slice(2);
-  const result = { gsc: null, output: null, minImpressions: 100 };
+  const result = { gsc: null, output: null, minImpressions: 100, suggest: false };
 
   for (const arg of args) {
     if (arg === "--help") {
@@ -402,6 +514,7 @@ Options:
   --gsc=FILE               Path to GSC JSON output from gsc-fetch.cjs (required)
   --output=FILE            Write JSON report to file (default: stdout)
   --min-impressions=N      Minimum impressions to include in GSC cross-check (default: 100)
+  --suggest                Generate actionable title/meta description suggestions
   --help                   Show this help
 `);
       process.exit(0);
@@ -409,6 +522,7 @@ Options:
     if (arg.startsWith("--gsc=")) result.gsc = arg.slice(6);
     else if (arg.startsWith("--output=")) result.output = arg.slice(9);
     else if (arg.startsWith("--min-impressions=")) result.minImpressions = parseInt(arg.slice(18), 10);
+    else if (arg === "--suggest") result.suggest = true;
   }
 
   if (!result.gsc) {
@@ -518,6 +632,23 @@ async function main() {
       }
     }
   }
+
+  // Generate suggestions if --suggest flag is set
+  let suggestions = [];
+  if (args.suggest) {
+    console.error("\n--- Generating title/meta suggestions ---");
+    const postMap = new Map(posts.map(p => [p.slug, p]));
+    for (const r of results) {
+      const post = postMap.get(r.slug);
+      if (!post) continue;
+      const suggestion = generateSuggestions(post, r);
+      if (suggestion) suggestions.push(suggestion);
+    }
+    suggestions.sort((a, b) => (b.gsc?.missedClicks || 0) - (a.gsc?.missedClicks || 0));
+    console.error(`Generated ${suggestions.length} suggestions`);
+  }
+
+  report.suggestions = suggestions.length > 0 ? suggestions : undefined;
 
   // JSON output
   const json = JSON.stringify(report, null, 2);

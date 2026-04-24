@@ -154,6 +154,9 @@ describe('Blog Sitemap', () => {
         'photo-enhancement-upscaling-vs-quality',
         'best-free-ai-image-upscaler-tools-2026',
         'restore-old-photos-online',
+        'free-upscaler-no-sign-up',
+        'upscale-image-online-free',
+        'ai-vs-traditional-image-upscaling',
       ];
 
       mockGetAllPublishedPosts.mockResolvedValue(

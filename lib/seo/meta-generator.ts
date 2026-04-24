@@ -186,6 +186,13 @@ export const META_PATTERNS: Record<PSEOCategory, IMetaPattern> = {
     titleMaxLength: 60,
     descriptionMaxLength: 160,
   },
+  'ai-photo-editor': {
+    title: `AI Photo Editor — {Action} Photos Online | ${APP_NAME}`,
+    description:
+      '{Action} photos online with AI. Free tools for upscaling, enhancement, background removal, and more. No download required.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
 };
 
 /**

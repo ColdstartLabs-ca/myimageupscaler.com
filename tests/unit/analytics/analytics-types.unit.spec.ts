@@ -196,7 +196,6 @@ describe('Analytics Types - Interface Structure Validation', () => {
       'insufficient_credits',
       'model_gate',
       'after_upscale',
-      'after_comparison',
       'after_download',
       'post_download_explore',
       'celebration_explore',
@@ -204,7 +203,7 @@ describe('Analytics Types - Interface Structure Validation', () => {
       'upgrade_card',
     ];
 
-    expect(triggers).toHaveLength(11);
+    expect(triggers).toHaveLength(10);
   });
 
   test('IUpgradePromptTrigger should accept insufficient_credits trigger', async () => {

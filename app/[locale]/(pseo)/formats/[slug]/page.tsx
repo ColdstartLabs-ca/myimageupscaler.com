@@ -26,7 +26,12 @@ export async function generateMetadata({ params }: IFormatPageProps): Promise<Me
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'formats', locale);
+  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+    result.data,
+    'formats',
+    locale
+  );
+  return metaWithoutAlternates;
 }
 
 export default async function FormatPage({ params }: IFormatPageProps) {

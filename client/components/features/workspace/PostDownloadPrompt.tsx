@@ -4,6 +4,7 @@ import { Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { Modal } from '@client/components/ui/Modal';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { getVariant } from '@client/utils/abTest';
 import { useTranslations } from 'next-intl';
@@ -74,6 +75,7 @@ export const PostDownloadPrompt = ({
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
+    setCheckoutTrackingContext({ originatingTrigger: 'post_download_explore' });
     setVisible(false);
     onExploreModels();
   };

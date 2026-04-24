@@ -26,7 +26,12 @@ export async function generateMetadata({ params }: IPlatformFormatPageProps): Pr
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'platform-format', locale);
+  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+    result.data,
+    'platform-format',
+    locale
+  );
+  return metaWithoutAlternates;
 }
 
 export default async function PlatformFormatPage({ params }: IPlatformFormatPageProps) {

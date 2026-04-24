@@ -23,6 +23,7 @@ import formatScaleDataFile from '@/app/seo/data/format-scale.json';
 import platformFormatDataFile from '@/app/seo/data/platform-format.json';
 import deviceUseDataFile from '@/app/seo/data/device-use.json';
 import type {
+  IBasePSEOPage,
   IToolPage,
   IFormatPage,
   IScalePage,
@@ -42,7 +43,6 @@ import type {
   ICameraRawPage,
   IIndustryInsightPage,
   IDeviceOptimizationPage,
-  PSEOPage,
   IPSEODataFile,
 } from './pseo-types';
 
@@ -82,7 +82,7 @@ const deviceUseData = deviceUseDataFile as unknown as IPSEODataFile<IDeviceUseCa
  * Load locale-specific pSEO data file
  * Falls back to English if locale file doesn't exist
  */
-async function loadLocalizedPSEOData<T extends PSEOPage>(
+async function loadLocalizedPSEOData<T extends IBasePSEOPage>(
   namespace: string,
   locale: Locale,
   fallbackData: IPSEODataFile<T>
@@ -601,7 +601,7 @@ export const getAllBulkToolsPages = cache(async (): Promise<IBulkToolPage[]> => 
 });
 
 // Aggregate function for sitemap
-export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
+export const getAllPSEOPages = cache(async (): Promise<IBasePSEOPage[]> => {
   const [
     tools,
     formats,
@@ -622,6 +622,13 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     industryInsightsPages,
     deviceOptimizationPages,
     bulkToolsPages,
+    comparisonsExpandedPages,
+    technicalGuidesPages,
+    personasExpandedPages,
+    useCasesExpandedPages,
+    competitorComparisonsPages,
+    formatConversionPages,
+    deviceSpecificPages,
   ] = await Promise.all([
     getAllTools(),
     getAllFormats(),
@@ -642,6 +649,13 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     getAllIndustryInsightsPages(),
     getAllDeviceOptimizationPages(),
     getAllBulkToolsPages(),
+    getAllComparisonsExpandedPages(),
+    getAllTechnicalGuidesPages(),
+    getAllPersonasExpandedPages(),
+    getAllUseCasesExpandedPages(),
+    getAllCompetitorComparisonsPages(),
+    getAllFormatConversionPages(),
+    getAllDeviceSpecificPages(),
   ]);
 
   return [
@@ -664,6 +678,13 @@ export const getAllPSEOPages = cache(async (): Promise<PSEOPage[]> => {
     ...industryInsightsPages,
     ...deviceOptimizationPages,
     ...bulkToolsPages,
+    ...comparisonsExpandedPages,
+    ...technicalGuidesPages,
+    ...personasExpandedPages,
+    ...useCasesExpandedPages,
+    ...competitorComparisonsPages,
+    ...formatConversionPages,
+    ...deviceSpecificPages,
   ];
 });
 
@@ -1067,3 +1088,234 @@ export const getDeviceUseDataWithLocale = cache(
 );
 // ============================================================================
 // NEW EXPANDED CATEGORIES - Data Loaders
+
+// Comparisons Expanded Pages
+export const getAllComparisonsExpandedSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const data = await import('@/app/seo/data/comparisons-expanded.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => page.slug);
+  } catch {
+    return [];
+  }
+});
+
+export const getComparisonsExpandedData = cache(
+  async (slug: string): Promise<IBasePSEOPage | null> => {
+    try {
+      const data = await import('@/app/seo/data/comparisons-expanded.json');
+      const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+      const page = fileData.pages.find(page => page.slug === slug);
+      if (!page) return null;
+      return { ...page, category: fileData.category };
+    } catch {
+      return null;
+    }
+  }
+);
+
+export const getAllComparisonsExpandedPages = cache(async (): Promise<IBasePSEOPage[]> => {
+  try {
+    const data = await import('@/app/seo/data/comparisons-expanded.json');
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    return fileData.pages.map(page => ({ ...page, category: fileData.category }));
+  } catch {
+    return [];
+  }
+});
+
+// Technical Guides Pages
+export const getAllTechnicalGuidesSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const data = await import('@/app/seo/data/technical-guides.json');
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    return fileData.pages.map(page => page.slug);
+  } catch {
+    return [];
+  }
+});
+
+export const getTechnicalGuidesData = cache(async (slug: string): Promise<IBasePSEOPage | null> => {
+  try {
+    const data = await import('@/app/seo/data/technical-guides.json');
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    const page = fileData.pages.find(page => page.slug === slug);
+    if (!page) return null;
+    return { ...page, category: fileData.category };
+  } catch {
+    return null;
+  }
+});
+
+export const getAllTechnicalGuidesPages = cache(async (): Promise<IBasePSEOPage[]> => {
+  try {
+    const data = await import('@/app/seo/data/technical-guides.json');
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    return fileData.pages.map(page => ({ ...page, category: fileData.category }));
+  } catch {
+    return [];
+  }
+});
+
+// Personas Expanded Pages
+export const getAllPersonasExpandedSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const data = await import('@/app/seo/data/personas-expanded.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => page.slug);
+  } catch {
+    return [];
+  }
+});
+
+export const getPersonasExpandedData = cache(
+  async (slug: string): Promise<IBasePSEOPage | null> => {
+    try {
+      const data = await import('@/app/seo/data/personas-expanded.json');
+      const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+      const page = fileData.pages.find(page => page.slug === slug);
+      if (!page) return null;
+      return { ...page, category: fileData.category };
+    } catch {
+      return null;
+    }
+  }
+);
+
+export const getAllPersonasExpandedPages = cache(async (): Promise<IBasePSEOPage[]> => {
+  try {
+    const data = await import('@/app/seo/data/personas-expanded.json');
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    return fileData.pages.map(page => ({ ...page, category: fileData.category }));
+  } catch {
+    return [];
+  }
+});
+
+// Use Cases Expanded Pages
+export const getAllUseCasesExpandedSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const data = await import('@/app/seo/data/use-cases-expanded.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => page.slug);
+  } catch {
+    return [];
+  }
+});
+
+export const getUseCasesExpandedData = cache(
+  async (slug: string): Promise<IBasePSEOPage | null> => {
+    try {
+      const data = await import('@/app/seo/data/use-cases-expanded.json');
+      const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+      const page = fileData.pages.find(page => page.slug === slug);
+      if (!page) return null;
+      return { ...page };
+    } catch {
+      return null;
+    }
+  }
+);
+
+export const getAllUseCasesExpandedPages = cache(async (): Promise<IBasePSEOPage[]> => {
+  try {
+    const data = await import('@/app/seo/data/use-cases-expanded.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => ({ ...page }));
+  } catch {
+    return [];
+  }
+});
+
+// Competitor Comparisons Pages
+export const getAllCompetitorComparisonsSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const data = await import('@/app/seo/data/competitor-comparisons.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => page.slug);
+  } catch {
+    return [];
+  }
+});
+
+export const getCompetitorComparisonsData = cache(
+  async (slug: string): Promise<IBasePSEOPage | null> => {
+    try {
+      const data = await import('@/app/seo/data/competitor-comparisons.json');
+      const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+      const page = fileData.pages.find(page => page.slug === slug);
+      if (!page) return null;
+      return { ...page };
+    } catch {
+      return null;
+    }
+  }
+);
+
+export const getAllCompetitorComparisonsPages = cache(async (): Promise<IBasePSEOPage[]> => {
+  try {
+    const data = await import('@/app/seo/data/competitor-comparisons.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => ({ ...page }));
+  } catch {
+    return [];
+  }
+});
+
+// Format Conversion Pages
+export const getAllFormatConversionSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const data = await import('@/app/seo/data/format-conversion.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => page.slug);
+  } catch {
+    return [];
+  }
+});
+
+export const getFormatConversionData = cache(
+  async (slug: string): Promise<IBasePSEOPage | null> => {
+    try {
+      const data = await import('@/app/seo/data/format-conversion.json');
+      const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+      const page = fileData.pages.find(page => page.slug === slug);
+      if (!page) return null;
+      return { ...page };
+    } catch {
+      return null;
+    }
+  }
+);
+
+export const getAllFormatConversionPages = cache(async (): Promise<IBasePSEOPage[]> => {
+  try {
+    const data = await import('@/app/seo/data/format-conversion.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => ({ ...page }));
+  } catch {
+    return [];
+  }
+});
+
+// Device Specific Pages
+export const getAllDeviceSpecificSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const data = await import('@/app/seo/data/device-specific.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => page.slug);
+  } catch {
+    return [];
+  }
+});
+
+export const getDeviceSpecificData = cache(async (slug: string): Promise<IBasePSEOPage | null> => {
+  try {
+    const data = await import('@/app/seo/data/device-specific.json');
+    const fileData = data as unknown as IPSEODataFile<IBasePSEOPage>;
+    const page = fileData.pages.find(page => page.slug === slug);
+    if (!page) return null;
+    return { ...page };
+  } catch {
+    return null;
+  }
+});
+
+export const getAllDeviceSpecificPages = cache(async (): Promise<IBasePSEOPage[]> => {
+  try {
+    const data = await import('@/app/seo/data/device-specific.json');
+    return (data as unknown as IPSEODataFile<IBasePSEOPage>).pages.map(page => ({ ...page }));
+  } catch {
+    return [];
+  }
+});

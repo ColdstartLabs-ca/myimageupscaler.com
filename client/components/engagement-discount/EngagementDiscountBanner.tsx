@@ -24,11 +24,19 @@ export interface IEngagementDiscountBannerProps {
   onClaimDiscount: () => void;
   /** Optional class name for custom styling */
   className?: string;
+  /**
+   * Source that triggered the discount toast.
+   * 'engagement' = normal engagement-threshold path.
+   * 'abandonment' = triggered by the upgrade abandonment detector.
+   * Defaults to 'engagement'.
+   */
+  source?: 'engagement' | 'abandonment';
 }
 
 export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> = ({
   onClaimDiscount,
   className,
+  source,
 }) => {
   const {
     offer,
@@ -37,7 +45,11 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
     countdownEndTime,
     hasTrackedImpression,
     setHasTrackedImpression,
+    discountSource,
   } = useEngagementDiscountStore();
+
+  // Use explicitly passed source prop; fall back to what the store knows
+  const resolvedSource = source ?? discountSource;
 
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
@@ -101,10 +113,11 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
         discountPercent: offer.discountPercent,
         originalPriceCents: offer.originalPriceCents,
         discountedPriceCents: offer.discountedPriceCents,
+        engagement_discount_source: resolvedSource,
       });
       setHasTrackedImpression(true);
     }
-  }, [showToast, offer, hasTrackedImpression, setHasTrackedImpression]);
+  }, [showToast, offer, hasTrackedImpression, setHasTrackedImpression, resolvedSource]);
 
   const handleDismiss = useCallback(() => {
     setIsVisible(false);

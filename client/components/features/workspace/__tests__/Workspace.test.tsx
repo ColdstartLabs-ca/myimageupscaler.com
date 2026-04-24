@@ -53,6 +53,7 @@ vi.mock('next-intl', () => ({
 vi.mock('lucide-react', () => ({
   Check: () => null,
   CheckCircle2: () => null,
+  CreditCard: () => null,
   HelpCircle: () => null,
   Image: () => null,
   Layers: () => null,
@@ -61,6 +62,7 @@ vi.mock('lucide-react', () => ({
   Settings: () => null,
   Wand2: () => null,
   X: () => null,
+  Zap: () => null,
 }));
 
 // Mock BatchLimitModal

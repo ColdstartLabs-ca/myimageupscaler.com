@@ -1,13 +1,16 @@
 /**
- * Cannibalization Redirects Unit Tests — Phase 3
+ * Cannibalization Redirects Unit Tests — Phase 4
  *
- * Verifies that the 3 cannibalizing blog URLs are 301-redirected
+ * Verifies that cannibalizing blog URLs are 301-redirected
  * to their canonical targets via the middleware redirectMap.
  *
  * Redirect map:
  *   /blog/photo-enhancement-upscaling-vs-quality → /blog/ai-image-upscaling-vs-sharpening-explained
  *   /blog/best-free-ai-image-upscaler-tools-2026 → /blog/best-free-ai-image-upscaler-2026-tested-compared
  *   /blog/restore-old-photos-online → /use-cases/old-photo-restoration
+ *   /blog/free-upscaler-no-sign-up → /blog/free-ai-upscaler-no-watermark
+ *   /blog/upscale-image-online-free → /blog/free-ai-upscaler-no-watermark
+ *   /blog/ai-vs-traditional-image-upscaling → /blog/ai-image-upscaling-vs-sharpening-explained
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -51,6 +54,18 @@ const CANNIBALIZATION_REDIRECTS = [
   {
     from: '/blog/restore-old-photos-online',
     to: '/use-cases/old-photo-restoration',
+  },
+  {
+    from: '/blog/free-upscaler-no-sign-up',
+    to: '/blog/free-ai-upscaler-no-watermark',
+  },
+  {
+    from: '/blog/upscale-image-online-free',
+    to: '/blog/free-ai-upscaler-no-watermark',
+  },
+  {
+    from: '/blog/ai-vs-traditional-image-upscaling',
+    to: '/blog/ai-image-upscaling-vs-sharpening-explained',
   },
 ];
 

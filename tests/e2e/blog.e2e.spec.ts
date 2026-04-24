@@ -56,8 +56,10 @@ test.describe('Blog Page', () => {
 
   test.describe('Blog Post H1 Tag', () => {
     test('should have exactly one H1 tag on blog post pages', async ({ page }) => {
-      // Navigate to a blog post URL
-      await page.goto('/blog/ai-vs-traditional-image-upscaling', { waitUntil: 'domcontentloaded' });
+      // Navigate to a blog post URL (canonical — not a redirected slug)
+      await page.goto('/blog/ai-image-upscaling-vs-sharpening-explained', {
+        waitUntil: 'domcontentloaded',
+      });
 
       // Wait for H1 to be present
       await page.locator('h1').waitFor({ state: 'attached', timeout: 10000 });
@@ -76,12 +78,14 @@ test.describe('Blog Page', () => {
 
         // Verify the H1 contains the post title
         const h1 = page.locator('h1');
-        await expect(h1).toContainText('AI vs Traditional Image Upscaling');
+        await expect(h1).toContainText('AI Upscaling vs.');
       }
     });
 
     test('should convert markdown H1s to H2s to maintain heading hierarchy', async ({ page }) => {
-      await page.goto('/blog/ai-vs-traditional-image-upscaling', { waitUntil: 'domcontentloaded' });
+      await page.goto('/blog/ai-image-upscaling-vs-sharpening-explained', {
+        waitUntil: 'domcontentloaded',
+      });
 
       // Wait for H1 to be present
       await page.locator('h1').waitFor({ state: 'attached', timeout: 10000 });

@@ -245,3 +245,17 @@ export async function mockStripeSubscriptionEndpoints(
     });
   });
 }
+
+export async function mockCheckoutEndpoint(
+  page: import('@playwright/test').Page
+): Promise<void> {
+  await page.route('**/api/checkout', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        url: 'https://checkout.stripe.com/pay/cs_test_mock',
+      }),
+    });
+  });
+}

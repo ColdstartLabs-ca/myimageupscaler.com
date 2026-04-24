@@ -5,7 +5,7 @@ import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { getCreditsForTierAtScale } from '@shared/config/subscription.utils';
 import { LayoutGrid } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { ModelGalleryModal } from '../ModelGalleryModal';
+import { ModelGalleryModal, type IUpgradeDirectParams } from '../ModelGalleryModal';
 import { analytics } from '@client/analytics/analyticsClient';
 
 // Use centralized config for premium tier checks
@@ -20,6 +20,7 @@ export interface IQualityTierSelectorProps {
   disabled?: boolean;
   isFreeUser?: boolean;
   onUpgrade: () => void;
+  onUpgradeDirect?: (params: IUpgradeDirectParams) => void;
 }
 
 export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
@@ -30,6 +31,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
   disabled = false,
   isFreeUser = false,
   onUpgrade,
+  onUpgradeDirect,
 }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
@@ -93,9 +95,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         </div>
         <div className="flex items-center gap-2 shrink-0 relative z-10 ml-2">
           <span className="text-[9px] font-black tracking-widest uppercase text-white/60 bg-black/20 border border-white/10 px-2 py-0.5 rounded-lg">
-            {formatCredits()
-              .replace(' credits', ' CR')
-              .replace(' credit', ' CR')}
+            {formatCredits().replace(' credits', ' CR').replace(' credit', ' CR')}
           </span>
           <LayoutGrid className="h-4 w-4 text-accent" />
         </div>
@@ -109,6 +109,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         isFreeUser={isFreeUser}
         onSelect={onChange}
         onUpgrade={onUpgrade}
+        onUpgradeDirect={onUpgradeDirect}
       />
     </div>
   );

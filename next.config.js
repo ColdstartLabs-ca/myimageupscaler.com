@@ -149,6 +149,21 @@ const nextConfig = {
         destination: '/blog/ai-image-upscaling-vs-sharpening-explained',
         permanent: true,
       },
+      {
+        source: '/blog/free-upscaler-no-sign-up',
+        destination: '/blog/free-ai-upscaler-no-watermark',
+        permanent: true,
+      },
+      {
+        source: '/blog/upscale-image-online-free',
+        destination: '/blog/free-ai-upscaler-no-watermark',
+        permanent: true,
+      },
+      {
+        source: '/blog/ai-vs-traditional-image-upscaling',
+        destination: '/blog/ai-image-upscaling-vs-sharpening-explained',
+        permanent: true,
+      },
       // Locale-prefixed variants for the same redirects
       {
         source: '/:locale(en|fr|de|es|it|ja|pt)/blog/best-free-ai-image-upscaler-tools-2026',
@@ -162,6 +177,21 @@ const nextConfig = {
       },
       {
         source: '/:locale(en|fr|de|es|it|ja|pt)/blog/photo-enhancement-upscaling-vs-quality',
+        destination: '/:locale/blog/ai-image-upscaling-vs-sharpening-explained',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|fr|de|es|it|ja|pt)/blog/free-upscaler-no-sign-up',
+        destination: '/:locale/blog/free-ai-upscaler-no-watermark',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|fr|de|es|it|ja|pt)/blog/upscale-image-online-free',
+        destination: '/:locale/blog/free-ai-upscaler-no-watermark',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|fr|de|es|it|ja|pt)/blog/ai-vs-traditional-image-upscaling',
         destination: '/:locale/blog/ai-image-upscaling-vs-sharpening-explained',
         permanent: true,
       },

@@ -18,6 +18,7 @@ type StripeWebhookEventType =
   | 'invoice_payment.paid'
   | 'invoice.payment_failed'
   | 'invoice_payment.failed'
+  | 'charge.failed'
   | 'charge.refunded'
   | 'charge.dispute.created'
   | 'charge.dispute.updated'
@@ -135,6 +136,10 @@ export async function processStripeWebhookEvent(
     case 'invoice.payment_failed':
     case 'invoice_payment.failed':
       await InvoiceHandler.handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
+      return { handled: true };
+
+    case 'charge.failed':
+      await PaymentHandler.handleChargeFailed(event.data.object as Stripe.Charge);
       return { handled: true };
 
     case 'charge.refunded':

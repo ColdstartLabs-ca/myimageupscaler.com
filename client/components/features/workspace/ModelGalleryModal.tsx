@@ -9,10 +9,20 @@ import { ModelCard } from './ModelCard';
 import { ModelGallerySearch } from './ModelGallerySearch';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
+import {
+  setCheckoutTrackingContext,
+  getCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 import { getVariant } from '@client/utils/abTest';
+import { resolveCheapestRegionalPlan } from '@shared/config/subscription.config';
+import type { PricingRegion } from '@shared/config/pricing-regions';
 
 const MODEL_GATE_SESSION_KEY = 'upgrade_prompt_shown_model_gate';
+
+export interface IUpgradeDirectParams {
+  trigger: string;
+  planId: string;
+}
 
 export interface IModelGalleryModalProps {
   isOpen: boolean;
@@ -21,6 +31,8 @@ export interface IModelGalleryModalProps {
   isFreeUser: boolean;
   onSelect: (tier: QualityTier) => void;
   onUpgrade: () => void;
+  /** When provided, clicking a locked model skips intermediate modals and opens checkout directly */
+  onUpgradeDirect?: (params: IUpgradeDirectParams) => void;
 }
 
 // Use centralized config for tier categorization
@@ -38,6 +50,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   isFreeUser,
   onSelect,
   onUpgrade,
+  onUpgradeDirect,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { pricingRegion } = useRegionTier();
@@ -134,9 +147,47 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
     [onSelect, onClose, isFreeUser]
   );
 
-  // Handle locked tier click - open plan selector modal
+  // Handle locked tier click — go direct to checkout when onUpgradeDirect is available,
+  // otherwise fall back to the original multi-step flow via onUpgrade.
   const handleLockedClick = useCallback(
     (tier: QualityTier | 'banner') => {
+      const existingContext = getCheckoutTrackingContext();
+      const originatingTrigger = existingContext?.originatingTrigger;
+      const attributionChain = [...(existingContext?.attributionChain ?? [])];
+
+      if (
+        originatingTrigger &&
+        attributionChain[attributionChain.length - 1] !== originatingTrigger
+      ) {
+        attributionChain.push(originatingTrigger);
+      }
+      if (attributionChain[attributionChain.length - 1] !== 'model_gate') {
+        attributionChain.push('model_gate');
+      }
+
+      setCheckoutTrackingContext({
+        trigger: 'model_gate',
+        originatingModel: tier !== 'banner' ? tier : undefined,
+        ...(originatingTrigger ? { originatingTrigger } : {}),
+        attributionChain: attributionChain.slice(-5),
+      });
+
+      if (onUpgradeDirect) {
+        analytics.track('upgrade_prompt_clicked', {
+          trigger: 'model_gate',
+          imageVariant: tier,
+          destination: 'checkout_direct',
+          currentPlan: 'free',
+          pricingRegion: pricingRegion || 'standard',
+          copyVariant,
+          ...(originatingTrigger ? { originatingTrigger } : {}),
+        });
+        const planId = resolveCheapestRegionalPlan((pricingRegion as PricingRegion) || 'standard');
+        onClose();
+        onUpgradeDirect({ trigger: 'model_gate', planId });
+        return;
+      }
+
       analytics.track('upgrade_prompt_clicked', {
         trigger: 'model_gate',
         imageVariant: tier,
@@ -144,15 +195,12 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         currentPlan: 'free',
         pricingRegion: pricingRegion || 'standard',
         copyVariant,
-      });
-      setCheckoutTrackingContext({
-        trigger: 'model_gate',
-        originatingModel: tier !== 'banner' ? tier : undefined,
+        ...(originatingTrigger ? { originatingTrigger } : {}),
       });
       onClose();
       onUpgrade();
     },
-    [onUpgrade, onClose, pricingRegion]
+    [onUpgrade, onUpgradeDirect, onClose, pricingRegion]
   );
 
   // Clear search when modal closes

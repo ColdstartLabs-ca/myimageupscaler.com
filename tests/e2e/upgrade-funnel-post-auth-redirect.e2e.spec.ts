@@ -408,14 +408,9 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
         );
         expect(storedModel).not.toBeNull();
 
-        // PurchaseModal should open after clicking locked tier
-        // It shows "Get More Credits" title and includes Subscribe tab
-        const purchaseModal = page.locator('.fixed.inset-0.z-50:has-text("Get More Credits")');
-        await expect(purchaseModal).toBeVisible({ timeout: 8000 });
-
-        // Verify Subscribe tab/button is visible
-        const subscribeButton = page.locator('button:has-text("Subscribe")');
-        await expect(subscribeButton).toBeVisible();
+        // CheckoutModal should open after clicking locked tier (direct checkout path)
+        const checkoutModal = page.locator('[data-modal="checkout"]');
+        await expect(checkoutModal).toBeVisible({ timeout: 8000 });
       }
     });
 

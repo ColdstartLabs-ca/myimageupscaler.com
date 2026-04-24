@@ -141,7 +141,7 @@
       "slug": "image-resolution-explained",
       "title": "Image Resolution Explained: Complete Guide",
       "metaTitle": "Image Resolution Guide - DPI, PPI, Print vs Digital",
-      "metaDescription": "Complete guide to image resolution. Understand DPI, PPI, print requirements, digital standards, and how to choose the right resolution. Perfect for beginners...",
+      "metaDescription": "Complete guide to image resolution. Understand DPI, PPI, print requirements, digital standards, and how to choose the right resolution. Perfect for beginners.",
       "h1": "Image Resolution: Complete Technical Guide",
       "intro": "Image resolution determines image quality across different applications. Understanding resolution concepts helps you create and optimize images for any use case.",
       "primaryKeyword": "image resolution guide",
@@ -162,7 +162,7 @@
           "subsections": [
             {
               "name": "Pixels and Dimensions",
-              "description": "Digital images are composed of pixels arranged in a grid. Resolution is the total number of pixels (width \u00d7 height)."
+              "description": "Digital images are composed of pixels arranged in a grid. Resolution is the total number of pixels (width × height)."
             },
             {
               "name": "DPI vs PPI",
@@ -212,7 +212,7 @@
           "subsections": [
             {
               "name": "File Size Calculation",
-              "description": "File size = width \u00d7 height \u00d7 color depth \u00d7 compression factor."
+              "description": "File size = width × height × color depth × compression factor."
             },
             {
               "name": "Compression Impact",
@@ -258,9 +258,9 @@
         }
       ],
       "calculations": {
-        "printSizeFromPixels": "Print size (inches) = Pixels \u00f7 DPI",
-        "pixelsForPrint": "Required pixels = Print size (inches) \u00d7 DPI",
-        "digitalViewingDistance": "Optimal PPI = 3438 \u00f7 Viewing Distance (inches)"
+        "printSizeFromPixels": "Print size (inches) = Pixels ÷ DPI",
+        "pixelsForPrint": "Required pixels = Print size (inches) × DPI",
+        "digitalViewingDistance": "Optimal PPI = 3438 ÷ Viewing Distance (inches)"
       },
       "bestPractices": [
         "Always capture or create at the highest practical resolution",
@@ -297,7 +297,7 @@
       "slug": "image-formats-comparison",
       "title": "Image Formats Comparison: Complete Technical Guide",
       "metaTitle": "Image Formats Comparison - JPEG vs PNG vs WebP vs TIFF",
-      "metaDescription": "Complete comparison of image formats. Understand JPEG, PNG, WebP, TIFF, and more. Learn when to use each format for optimal quality and file size. Try it free!",
+      "metaDescription": "Complete comparison of image formats. Understand JPEG, PNG, WebP, TIFF, and more. Learn when to use each format for optimal quality and file size.",
       "h1": "Image Formats: Technical Comparison Guide",
       "intro": "Choosing the right image format is crucial for balancing quality, file size, and compatibility. This guide covers all major image formats and their optimal use cases.",
       "primaryKeyword": "image formats comparison",
@@ -499,7 +499,7 @@
       "slug": "batch-image-processing-guide",
       "title": "Batch Image Processing: Complete Technical Guide",
       "metaTitle": "Batch Image Processing Guide - Automate Workflows Fast",
-      "metaDescription": "Complete guide to batch image processing. Learn to automate image workflows, process thousands of images efficiently, and optimize batch operations. Start now!",
+      "metaDescription": "Complete guide to batch image processing. Learn to automate image workflows, process thousands of images efficiently, and optimize batch operations.",
       "h1": "Batch Image Processing: Technical Guide",
       "intro": "Processing images individually becomes impractical with large volumes. Batch processing enables efficient handling of hundreds or thousands of images with consistent results.",
       "primaryKeyword": "batch image processing",
@@ -1005,7 +1005,7 @@
       "technicalMetrics": [
         {
           "metric": "Compression Ratio",
-          "description": "Original size \u00f7 Compressed size",
+          "description": "Original size ÷ Compressed size",
           "target": "Higher is better for space savings"
         },
         {
@@ -1072,7 +1072,7 @@
       "slug": "neural-networks-image-processing",
       "title": "Neural Networks for Image Processing",
       "metaTitle": "Neural Networks for Image Processing - Deep Learning",
-      "metaDescription": "Complete guide to neural networks in image processing. Learn CNNs, GANs, deep learning techniques, and AI-powered image enhancement methods.. Try free today!",
+      "metaDescription": "Complete guide to neural networks in image processing. Learn CNNs, GANs, deep learning techniques, and AI-powered image enhancement methods. Free to start.",
       "h1": "Neural Networks in Image Processing",
       "intro": "Neural networks have revolutionized image processing, enabling capabilities impossible with traditional algorithms. This guide covers the architecture, training, and applications of neural networks in image enhancement.",
       "primaryKeyword": "neural networks image processing",
@@ -1492,7 +1492,7 @@
       "slug": "professional-photo-editing-workflows",
       "title": "Professional Photo Editing Workflows",
       "metaTitle": "Professional Photo Editing Workflow - Step-by-Step",
-      "metaDescription": "Complete guide to professional photo editing workflows. Learn step-by-step processes, non-destructive editing, and industry-standard techniques for perfect r...",
+      "metaDescription": "Complete guide to professional photo editing workflows. Learn step-by-step processes, non-destructive editing, and industry-standard techniques for perfect r.",
       "h1": "Professional Photo Editing: Complete Workflow Guide",
       "intro": "Professional photo editing follows systematic workflows that ensure consistent, high-quality results. This guide covers industry-standard processes from capture to final output.",
       "primaryKeyword": "professional photo editing workflow",
@@ -1723,7 +1723,7 @@
       "slug": "image-scaling-algorithms",
       "title": "Image Scaling Algorithms: Technical Guide",
       "metaTitle": "Image Scaling Algorithms - Interpolation Methods Guide",
-      "metaDescription": "Complete technical guide to image scaling algorithms. Compare bilinear, bicubic, Lanczos, and AI-powered scaling methods for optimal image quality. Try it free!",
+      "metaDescription": "Complete technical guide to image scaling algorithms. Compare bilinear, bicubic, Lanczos, and AI-powered scaling methods for optimal image quality.",
       "h1": "Image Scaling Algorithms: Technical Deep Dive",
       "intro": "Image scaling algorithms determine how pixels are interpolated when resizing images. Understanding these algorithms helps achieve the best quality for different use cases and content types.",
       "primaryKeyword": "image scaling algorithms",
@@ -1839,7 +1839,7 @@
         {
           "concept": "Convolution Theory",
           "description": "Scaling as convolution with interpolation kernels",
-          "formula": "output(x) = \u03a3 input(i) \u00d7 kernel(x-i)"
+          "formula": "output(x) = Σ input(i) × kernel(x-i)"
         },
         {
           "concept": "Sinc Function",

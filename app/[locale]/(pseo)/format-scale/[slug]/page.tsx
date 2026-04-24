@@ -26,7 +26,12 @@ export async function generateMetadata({ params }: IFormatScalePageProps): Promi
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'format-scale', locale);
+  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+    result.data,
+    'format-scale',
+    locale
+  );
+  return metaWithoutAlternates;
 }
 
 export default async function FormatScalePage({ params }: IFormatScalePageProps) {

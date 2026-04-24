@@ -20,6 +20,7 @@ export interface IBasePSEOPage {
   ogImage?: string;
   lastUpdated: string;
   noindex?: boolean;
+  category?: PSEOCategory; // Category is added by data loader for breadcrumb navigation
 }
 
 /**
@@ -93,6 +94,9 @@ export interface IToolConfig {
   defaultOutputFormat?: 'jpeg' | 'png';
   // PdfToImageConverter config
   defaultDpi?: number;
+  // ImageCropper config
+  defaultAspectRatio?: number;
+  aspectRatioPresets?: string;
 }
 
 /**
@@ -622,7 +626,7 @@ export interface IGuideStep {
 /**
  * Data file response structure
  */
-export interface IPSEODataFile<T extends PSEOPage> {
+export interface IPSEODataFile<T extends IBasePSEOPage> {
   category: PSEOCategory;
   pages: T[];
   meta: {

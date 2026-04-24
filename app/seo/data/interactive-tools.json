@@ -2183,7 +2183,7 @@
           "answer": "Protected PDFs require entering the password before conversion. PDFs without passwords convert automatically."
         }
       ],
-      "relatedTools": ["pdf-to-png", "image-to-pdf", "image-compressor"],
+      "relatedTools": ["pdf-to-png", "image-to-pdf", "png-to-pdf", "image-compressor"],
       "relatedGuides": [],
       "ctaText": "Upscale PDF Images with AI",
       "ctaUrl": "/?signup=1"
@@ -2302,7 +2302,7 @@
           "answer": "No limit \u2014 convert any number of pages. Processing speed depends on PDF complexity and your device."
         }
       ],
-      "relatedTools": ["pdf-to-jpg", "image-to-pdf", "image-compressor"],
+      "relatedTools": ["pdf-to-jpg", "image-to-pdf", "png-to-pdf", "image-compressor"],
       "relatedGuides": [],
       "ctaText": "Upscale PDF Images with AI",
       "ctaUrl": "/?signup=1"
@@ -2417,7 +2417,7 @@
           "answer": "Completely. PDF creation uses pdf-lib locally in your browser \u2014 photos are never uploaded to any server."
         }
       ],
-      "relatedTools": ["jpg-to-pdf", "pdf-to-jpg", "image-compressor"],
+      "relatedTools": ["jpg-to-pdf", "png-to-pdf", "webp-to-pdf", "pdf-to-jpg"],
       "relatedGuides": [],
       "ctaText": "Upscale Images Before Making PDF",
       "ctaUrl": "/?signup=1"
@@ -2535,9 +2535,245 @@
           "answer": "Yes. PDF creation uses pdf-lib running locally \u2014 your JPG photos never leave your browser."
         }
       ],
-      "relatedTools": ["image-to-pdf", "pdf-to-jpg", "image-compressor"],
+      "relatedTools": ["image-to-pdf", "png-to-pdf", "webp-to-pdf", "pdf-to-jpg"],
       "relatedGuides": [],
       "ctaText": "Upscale Photos Before PDF Creation",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "png-to-pdf",
+      "title": "PNG to PDF Converter",
+      "metaTitle": "Free PNG to PDF Converter - Convert PNG Images to PDF Online",
+      "metaDescription": "Convert PNG to PDF free online. Turn PNG screenshots and graphics into PDF instantly. Combine multiple PNGs into one PDF. Browser-based, no upload required.",
+      "h1": "Free PNG to PDF Converter - Turn Screenshots into PDF",
+      "intro": "Convert PNG images to PDF documents in seconds. Add one or multiple PNG files and create a clean PDF — all in your browser with zero upload and no signup.",
+      "primaryKeyword": "png to pdf",
+      "secondaryKeywords": [
+        "convert png to pdf",
+        "png to pdf online",
+        "screenshot to pdf",
+        "multiple png to pdf",
+        "png to pdf free"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "PNG to PDF Converter",
+      "description": "Convert single or multiple PNG images to PDF format. Perfect for screenshots, diagrams, and graphics. Works locally in your browser with pdf-lib.",
+      "isInteractive": true,
+      "toolComponent": "ImageToPdfConverter",
+      "maxFileSizeMB": 100,
+      "acceptedFormats": ["image/png"],
+      "toolConfig": {
+        "acceptedInputFormats": ["image/png"]
+      },
+      "features": [
+        {
+          "title": "Single or Multiple PNG to PDF",
+          "description": "Convert one PNG or combine up to 30 PNG images into a single PDF document."
+        },
+        {
+          "title": "Lossless Quality Preserved",
+          "description": "PNG transparency and full-color detail are preserved in the final PDF."
+        },
+        {
+          "title": "Flexible Page Sizing",
+          "description": "Choose A4, Letter, or fit each image to its own page size."
+        },
+        {
+          "title": "No Upload Needed",
+          "description": "PDF creation happens entirely in your browser — your files stay private."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Screenshots to PDF",
+          "description": "Bundle multiple screenshots into a single organized PDF report.",
+          "example": "Compile UI screenshots into a PDF walkthrough"
+        },
+        {
+          "title": "Diagrams & Graphics",
+          "description": "Convert PNG diagrams or infographics to PDF for sharing and printing.",
+          "example": "Send architecture diagrams as a PDF document"
+        },
+        {
+          "title": "Document Submission",
+          "description": "Many forms accept PDF but not PNG. Convert graphics to PDF for official use.",
+          "example": "Submit PNG certificates as PDF"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Pixel-Perfect Output",
+          "description": "PNG files are embedded at full resolution — no compression artifacts.",
+          "metric": "Lossless output"
+        },
+        {
+          "title": "Handles Transparency",
+          "description": "PNG transparency is handled gracefully in the PDF output.",
+          "metric": "Alpha channel support"
+        },
+        {
+          "title": "Instant & Free",
+          "description": "No account, no cost — PNG to PDF conversion in seconds.",
+          "metric": "Zero cost"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload PNG Images",
+          "description": "Drag and drop PNG files or click to select. Upload up to 30 images at once."
+        },
+        {
+          "step": 2,
+          "title": "Arrange Order & Size",
+          "description": "Reorder images by dragging. Choose page size: A4, Letter, or fit to image dimensions."
+        },
+        {
+          "step": 3,
+          "title": "Create PDF & Download",
+          "description": "Click Create PDF and download your PNG-based PDF document immediately."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Does PNG to PDF lose quality?",
+          "answer": "No — PNG images are embedded directly in the PDF at original resolution. No re-encoding occurs."
+        },
+        {
+          "question": "What's the maximum number of PNGs?",
+          "answer": "Up to 30 PNG files per PDF. Total size limit is 100MB."
+        },
+        {
+          "question": "Can I add other image types too?",
+          "answer": "The PNG to PDF tool is optimized for PNG. For mixed formats, use our Image to PDF converter which accepts JPG, PNG, and WebP."
+        },
+        {
+          "question": "Is my data private?",
+          "answer": "Yes. PDF creation uses pdf-lib running locally — your PNG files never leave your browser."
+        }
+      ],
+      "relatedTools": ["webp-to-pdf", "image-to-pdf", "jpg-to-pdf", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Upscale Images Before Making PDF",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "webp-to-pdf",
+      "title": "WebP to PDF Converter",
+      "metaTitle": "Free WebP to PDF Converter - Convert WebP Images to PDF Online",
+      "metaDescription": "Convert WebP to PDF free online. Turn WebP images into PDF documents instantly. Combine multiple WebP files into one PDF. Browser-based, no upload required.",
+      "h1": "Free WebP to PDF Converter - Convert WebP Images to PDF",
+      "intro": "Convert WebP images to PDF documents in seconds. Upload one or multiple WebP files and create a clean PDF — entirely in your browser, no signup needed.",
+      "primaryKeyword": "webp to pdf",
+      "secondaryKeywords": [
+        "convert webp to pdf",
+        "webp to pdf online",
+        "webp to pdf free",
+        "webp image to pdf",
+        "multiple webp to pdf"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "WebP to PDF Converter",
+      "description": "Convert single or multiple WebP images to PDF format. Works locally in your browser with zero upload required.",
+      "isInteractive": true,
+      "toolComponent": "ImageToPdfConverter",
+      "maxFileSizeMB": 100,
+      "acceptedFormats": ["image/webp"],
+      "toolConfig": {
+        "acceptedInputFormats": ["image/webp"]
+      },
+      "features": [
+        {
+          "title": "WebP to PDF in Seconds",
+          "description": "Convert one or multiple WebP images into a PDF document instantly."
+        },
+        {
+          "title": "High Quality Output",
+          "description": "WebP images are rendered at full quality in the PDF via canvas conversion."
+        },
+        {
+          "title": "Flexible Page Sizing",
+          "description": "Choose A4, Letter, or fit each image to its own page size."
+        },
+        {
+          "title": "No Upload Needed",
+          "description": "All processing happens in your browser — WebP files are never uploaded."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Web Images to PDF",
+          "description": "Convert WebP images saved from websites into organized PDF documents.",
+          "example": "Archive WebP product images as a PDF catalog"
+        },
+        {
+          "title": "Batch WebP Conversion",
+          "description": "Combine multiple WebP images into a single PDF for sharing.",
+          "example": "Merge WebP screenshots into one PDF report"
+        },
+        {
+          "title": "Cross-Format Compatibility",
+          "description": "Not all apps support WebP. Convert to PDF for universal compatibility.",
+          "example": "Send WebP graphics as PDF attachments"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "No Software Needed",
+          "description": "Convert WebP to PDF directly in your browser — no download or install.",
+          "metric": "Browser-based"
+        },
+        {
+          "title": "Universal PDF Output",
+          "description": "PDF files open everywhere, unlike WebP which has limited native support.",
+          "metric": "100% compatible"
+        },
+        {
+          "title": "Instant & Free",
+          "description": "No account, no cost, no wait — WebP to PDF in seconds.",
+          "metric": "Zero cost"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload WebP Images",
+          "description": "Drag and drop WebP files or click to select. Upload up to 30 images at once."
+        },
+        {
+          "step": 2,
+          "title": "Arrange Order & Size",
+          "description": "Reorder images by dragging. Choose A4, Letter, or fit-to-image page size."
+        },
+        {
+          "step": 3,
+          "title": "Create PDF & Download",
+          "description": "Click Create PDF and download your WebP-to-PDF document immediately."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Does WebP to PDF lose quality?",
+          "answer": "Minimal. WebP is converted to JPEG via canvas before embedding in the PDF, preserving nearly all visual quality."
+        },
+        {
+          "question": "What's the maximum number of WebP files?",
+          "answer": "Up to 30 WebP files per PDF. Total size limit is 100MB."
+        },
+        {
+          "question": "Can I mix WebP with other formats?",
+          "answer": "The WebP to PDF tool is optimized for WebP. For mixed formats, use our Image to PDF converter which accepts JPG, PNG, and WebP."
+        },
+        {
+          "question": "Is my data private?",
+          "answer": "Yes. Processing uses pdf-lib running locally in your browser — WebP files are never uploaded."
+        }
+      ],
+      "relatedTools": ["png-to-pdf", "image-to-pdf", "jpg-to-pdf", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Upscale Images Before Making PDF",
       "ctaUrl": "/?signup=1"
     },
     {
@@ -2901,10 +3137,886 @@
       "relatedGuides": [],
       "ctaText": "Upscale Images for Better OCR Accuracy",
       "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "exif-remover",
+      "title": "EXIF Remover",
+      "metaTitle": "Free EXIF Remover — Strip Metadata from Photos Online",
+      "metaDescription": "Remove hidden EXIF data from photos instantly. GPS location, camera model, timestamps — all gone. Works in your browser. No upload, no signup, no watermark.",
+      "h1": "Free EXIF Remover — Strip Hidden Metadata from Photos",
+      "intro": "Your photos contain hidden data: GPS coordinates, camera model, the exact time you took the shot. Remove it all in one click — processed entirely in your browser, nothing uploaded.",
+      "primaryKeyword": "exif remover",
+      "secondaryKeywords": [
+        "remove exif data",
+        "strip exif",
+        "exif data remover",
+        "remove metadata from photo"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "EXIF Remover",
+      "description": "Privacy-first EXIF metadata remover that works entirely in your browser. Strips GPS location, camera model, software info, and timestamps from JPEG, PNG, WebP, and TIFF files. Nothing is uploaded to our servers.",
+      "isInteractive": true,
+      "toolComponent": "ExifRemover",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp", "image/tiff"],
+      "features": [
+        {
+          "title": "Removes GPS Location",
+          "description": "Strip precise GPS coordinates embedded by phones and cameras. Stop sharing your home address, workplace, or travel patterns in every photo you post."
+        },
+        {
+          "title": "Shows What Was Found",
+          "description": "See exactly what metadata your photo contained before it's removed — camera make/model, shooting date, software, and GPS coordinates."
+        },
+        {
+          "title": "100% Private — Nothing Uploaded",
+          "description": "All processing happens locally in your browser using JavaScript. Your image bytes never touch our servers."
+        },
+        {
+          "title": "Supports JPEG, PNG, WebP, TIFF",
+          "description": "Works with the most common photo formats including iPhone HEIC converted to JPEG, RAW exports, and web images."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Before Posting on Social Media",
+          "description": "Remove GPS location and timestamps before uploading photos to Instagram, Facebook, or Twitter.",
+          "example": "Strip coordinates from a home photo before posting publicly"
+        },
+        {
+          "title": "Sharing Photos with Strangers",
+          "description": "Clean metadata from images before sending to people you don't know — forums, marketplaces, dating apps.",
+          "example": "Remove camera model and location from a Craigslist listing photo"
+        },
+        {
+          "title": "Professional Photo Delivery",
+          "description": "Remove proprietary camera settings and internal metadata before delivering to clients.",
+          "example": "Strip Lightroom editing data before client delivery"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Protect Your Privacy",
+          "description": "GPS data in photos can reveal your home address, daily routine, and travel history to anyone.",
+          "metric": "Photos can contain 50+ hidden data fields"
+        },
+        {
+          "title": "Reduce File Size",
+          "description": "Stripping metadata can reduce file size by a small but measurable amount — useful when sending many photos.",
+          "metric": "Metadata can add 20–100KB per image"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Photo",
+          "description": "Drop a JPEG, PNG, WebP, or TIFF onto the tool. Nothing leaves your browser."
+        },
+        {
+          "step": 2,
+          "title": "See Hidden Data",
+          "description": "The tool shows GPS coordinates, camera model, timestamps, and any other embedded metadata it found."
+        },
+        {
+          "step": 3,
+          "title": "Download Clean Copy",
+          "description": "Click download to get a copy of your image with all metadata stripped. The original file is unchanged."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Does this actually remove GPS location from my photos?",
+          "answer": "Yes. The tool uses canvas re-encoding to produce a new image file that contains only pixel data — no EXIF, no GPS, no timestamps. You can verify with any EXIF reader after download."
+        },
+        {
+          "question": "Is my photo uploaded to your servers?",
+          "answer": "No. Processing happens entirely in your browser using JavaScript. Your image never leaves your device."
+        },
+        {
+          "question": "What formats are supported?",
+          "answer": "JPEG, PNG, WebP, and TIFF. iPhone HEIC photos can be converted to JPEG first using our free HEIC Converter, then stripped here."
+        },
+        {
+          "question": "Will removing metadata reduce image quality?",
+          "answer": "The tool re-encodes the image at 95% JPEG quality. For most use cases this is indistinguishable from the original. If you need lossless, use PNG output."
+        }
+      ],
+      "relatedTools": ["heic-converter", "image-compressor", "format-converter"],
+      "ctaText": "Remove Metadata Free",
+      "ctaUrl": "/tools/exif-remover"
+    },
+    {
+      "slug": "remove-metadata-from-photo",
+      "title": "Remove Metadata from Photo",
+      "metaTitle": "Remove Metadata from Photo Free — Online Tool, No Upload",
+      "metaDescription": "Strip all hidden metadata from your photos online. GPS, camera info, timestamps — removed in seconds. 100% browser-based. No signup required.",
+      "h1": "Remove Metadata from Photos — Free Online Tool",
+      "intro": "Hidden metadata in your photos includes your GPS location, the camera you used, and the exact time you took each shot. Remove it all instantly — right in your browser.",
+      "primaryKeyword": "remove metadata from photo",
+      "secondaryKeywords": [
+        "remove metadata from image",
+        "photo metadata remover",
+        "strip photo metadata",
+        "delete photo metadata"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "EXIF Remover",
+      "description": "Free online tool to remove all metadata from photos. Works in-browser — no uploads, no accounts. Supports JPEG, PNG, WebP.",
+      "isInteractive": true,
+      "toolComponent": "ExifRemover",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp", "image/tiff"],
+      "features": [
+        {
+          "title": "Removes All Metadata",
+          "description": "GPS, camera model, timestamps, software info — all stripped in one click."
+        },
+        {
+          "title": "Browser-Based",
+          "description": "Nothing uploaded. All processing is local to your device."
+        },
+        {
+          "title": "Free, No Signup",
+          "description": "No account required. No watermarks. Unlimited use."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Privacy Before Sharing",
+          "description": "Remove GPS and timestamps before posting photos online.",
+          "example": "Clean a photo before uploading to a public forum"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Stay Private",
+          "description": "Stop leaking your location in every photo you share.",
+          "metric": "GPS accurate to 3 meters by default"
+        }
+      ],
+      "howItWorks": [
+        { "step": 1, "title": "Upload Photo", "description": "Drop your image onto the tool." },
+        { "step": 2, "title": "Review Metadata", "description": "See what hidden data was found." },
+        { "step": 3, "title": "Download Clean", "description": "Get a metadata-free copy." }
+      ],
+      "faq": [
+        { "question": "Is this free?", "answer": "Yes. Completely free, no account needed." },
+        {
+          "question": "Does my photo get uploaded?",
+          "answer": "No — all processing happens in your browser."
+        }
+      ],
+      "relatedTools": ["exif-remover", "heic-converter"],
+      "ctaText": "Remove Metadata Free",
+      "ctaUrl": "/tools/remove-metadata-from-photo"
+    },
+    {
+      "slug": "remove-gps-from-photo",
+      "title": "Remove GPS from Photo",
+      "metaTitle": "Remove GPS Location from Photo Free — Strip Geotag Online",
+      "metaDescription": "Remove GPS coordinates and geotag data from photos instantly. Stop sharing your location in every image. Browser-based — nothing uploaded.",
+      "h1": "Remove GPS Location from Photos — Free Online Tool",
+      "intro": "Every photo taken on a smartphone embeds precise GPS coordinates. This tool strips that geotag data before you share — processed locally, nothing uploaded.",
+      "primaryKeyword": "remove gps from photo",
+      "secondaryKeywords": [
+        "remove geotag from photo",
+        "strip gps from image",
+        "remove location from photo",
+        "delete gps data photo"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "EXIF Remover",
+      "description": "Strip GPS coordinates and geotag data from photos in your browser. Accurate to 3 meters, this data can reveal your home, workplace, and daily routine.",
+      "isInteractive": true,
+      "toolComponent": "ExifRemover",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp", "image/tiff"],
+      "features": [
+        {
+          "title": "Shows GPS Coordinates Before Removing",
+          "description": "See the exact latitude/longitude embedded in your photo — then remove it with one click."
+        },
+        {
+          "title": "Removes All Location Data",
+          "description": "Strips GPS latitude, longitude, altitude, and bearing — all location fields gone."
+        },
+        {
+          "title": "Browser-Only",
+          "description": "Your photo never leaves your device. Zero uploads."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Before Posting Home Photos",
+          "description": "Remove GPS before uploading photos taken at your home address.",
+          "example": "Strip location from a garden photo before posting publicly"
+        },
+        {
+          "title": "Selling Items Online",
+          "description": "Remove location data from product photos taken at home before listing on eBay or Facebook Marketplace.",
+          "example": "Clean geotag from a photo taken in your living room"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Stop Location Leaks",
+          "description": "Smartphone GPS is accurate to 3–5 meters. One photo can reveal your home address.",
+          "metric": "GPS accurate to 3 meters"
+        }
+      ],
+      "howItWorks": [
+        { "step": 1, "title": "Upload Photo", "description": "Drop a JPEG or other image file." },
+        {
+          "step": 2,
+          "title": "See GPS Data",
+          "description": "Tool displays the embedded coordinates."
+        },
+        {
+          "step": 3,
+          "title": "Download Clean",
+          "description": "Get a copy with all location data removed."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Does every photo have GPS?",
+          "answer": "Only photos taken with location services enabled on a smartphone or GPS-equipped camera. Photos taken with location off, or edited in desktop apps, may have no GPS data."
+        },
+        {
+          "question": "Can I check if a photo has GPS without removing it?",
+          "answer": "Yes — upload the photo and the tool will show what it finds. You can then decide whether to download the clean version."
+        }
+      ],
+      "relatedTools": ["exif-remover", "remove-metadata-from-photo"],
+      "ctaText": "Remove GPS Free",
+      "ctaUrl": "/tools/remove-gps-from-photo"
+    },
+    {
+      "slug": "strip-exif-data-online",
+      "title": "Strip EXIF Data Online",
+      "metaTitle": "Strip EXIF Data Online — Remove Photo Metadata Free",
+      "metaDescription": "Strip EXIF data from photos online. Remove GPS, camera info, and timestamps in seconds. No upload needed — runs entirely in your browser.",
+      "h1": "Strip EXIF Data Online — Free, Instant, Private",
+      "intro": "Remove all EXIF metadata from photos without uploading anywhere. Drop your image, see what data was embedded, download the clean version.",
+      "primaryKeyword": "strip exif data online",
+      "secondaryKeywords": [
+        "strip exif data",
+        "remove exif online",
+        "exif data stripper",
+        "clear exif data"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "EXIF Remover",
+      "description": "Online EXIF data stripper. Runs in-browser — no uploads, no accounts, no watermarks. Strips GPS, camera model, timestamps from JPEG, PNG, WebP, TIFF.",
+      "isInteractive": true,
+      "toolComponent": "ExifRemover",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp", "image/tiff"],
+      "features": [
+        {
+          "title": "Instant Processing",
+          "description": "No upload queue, no waiting. Results are immediate since everything runs locally."
+        },
+        {
+          "title": "Transparent — Shows Before/After",
+          "description": "Displays what EXIF fields were found before stripping them, so you know what was removed."
+        },
+        {
+          "title": "No Account Required",
+          "description": "Free and unlimited. No sign-up, no subscription, no watermarks."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Developer Testing",
+          "description": "Strip EXIF from test images before committing to a public repository.",
+          "example": "Clean real photos before adding to a public GitHub repo"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Zero Privacy Risk",
+          "description": "Since nothing is uploaded, using this tool carries zero risk of your private metadata being seen by a third party.",
+          "metric": "0 bytes uploaded"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Drop Image",
+          "description": "Drag and drop or click to upload a photo."
+        },
+        {
+          "step": 2,
+          "title": "Inspect Metadata",
+          "description": "Review what EXIF fields the image contains."
+        },
+        {
+          "step": 3,
+          "title": "Download Stripped",
+          "description": "Download the clean image — all EXIF removed."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What is EXIF data?",
+          "answer": "EXIF (Exchangeable Image File Format) is metadata embedded in image files by cameras and phones. It can include GPS coordinates, camera model, lens info, exposure settings, timestamps, and software."
+        },
+        {
+          "question": "Does stripping EXIF affect image quality?",
+          "answer": "Minimally. JPEG re-encoding at 95% quality is used. For lossless output, PNG is a better choice."
+        }
+      ],
+      "relatedTools": ["exif-remover", "remove-gps-from-photo"],
+      "ctaText": "Strip EXIF Free",
+      "ctaUrl": "/tools/strip-exif-data-online"
+    },
+    {
+      "slug": "image-cropper",
+      "title": "Image Cropper",
+      "metaTitle": "Free Image Cropper - Crop Images Online Instantly",
+      "metaDescription": "Crop images online for free. No upload required — all processing happens in your browser. Crop to any aspect ratio: square, 16:9, or circle.",
+      "h1": "Free Online Image Cropper - Crop Images Instantly",
+      "intro": "Crop your images to any dimension or aspect ratio in seconds. Our free online image cropper works entirely in your browser — no upload, no signup, no watermarks. Perfect for social media, profile pictures, and prints.",
+      "primaryKeyword": "image cropper",
+      "secondaryKeywords": [
+        "crop image online",
+        "online image cropper",
+        "crop image",
+        "image crop tool",
+        "crop photo online",
+        "picture cropper"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "Image Cropper",
+      "description": "Professional image cropping tool that works directly in your browser. Crop images to exact dimensions, choose from social media presets, or use free-form cropping. No quality loss.",
+      "isInteractive": true,
+      "toolComponent": "ImageCropper",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolConfig": {},
+      "features": [
+        {
+          "title": "Free-Form and Aspect Ratio Cropping",
+          "description": "Crop to any shape with free-form mode, or lock to standard aspect ratios like 1:1, 16:9, 4:3, and more."
+        },
+        {
+          "title": "Social Media Presets",
+          "description": "One-click crop to Instagram Post, Instagram Story, YouTube Thumbnail, Facebook Post, Twitter Post, LinkedIn Post, and Pinterest Pin dimensions."
+        },
+        {
+          "title": "Real-Time Preview",
+          "description": "See your crop area and exact pixel dimensions update in real-time as you drag, zoom, and adjust."
+        },
+        {
+          "title": "Zoom and Pan",
+          "description": "Zoom into your image to make precise crop selections. Pan across the image to find the perfect framing."
+        },
+        {
+          "title": "100% Browser-Based",
+          "description": "All cropping happens locally using Canvas API. Your images never leave your device — zero uploads, complete privacy."
+        },
+        {
+          "title": "No Watermarks, No Signup",
+          "description": "Completely free with no watermarks, account requirements, or hidden fees. Crop unlimited images."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Social Media Posts",
+          "description": "Crop photos to the exact aspect ratio required by Instagram, Facebook, Twitter, LinkedIn, and YouTube.",
+          "example": "Crop a landscape photo to 1:1 square for an Instagram post"
+        },
+        {
+          "title": "Profile Pictures",
+          "description": "Create perfectly cropped profile pictures for any platform with our 1:1 aspect ratio preset.",
+          "example": "Crop a headshot to a square for LinkedIn or Discord"
+        },
+        {
+          "title": "Thumbnails",
+          "description": "Create 16:9 thumbnails for YouTube videos or blog posts from any source image.",
+          "example": "Crop a product photo to 1280x720 for a YouTube thumbnail"
+        },
+        {
+          "title": "Print Photos",
+          "description": "Crop photos to standard print sizes like 4x6, 5x7, or 8x10 using custom aspect ratios.",
+          "example": "Crop a family photo to 2:3 for a 4x6 inch print"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "100% Private & Secure",
+          "description": "Images never leave your browser. No server uploads means your photos stay completely private.",
+          "metric": "Zero server uploads"
+        },
+        {
+          "title": "Instant Results",
+          "description": "No waiting for uploads or processing queues. Crop and download in under a second.",
+          "metric": "< 1 second per image"
+        },
+        {
+          "title": "Touch-Friendly",
+          "description": "Works perfectly on mobile and tablet with pinch-to-zoom and drag-to-crop gestures.",
+          "metric": "Full mobile support"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Drag and drop your image or click to browse. Supports JPEG, PNG, and WebP up to 25MB."
+        },
+        {
+          "step": 2,
+          "title": "Select Crop Area",
+          "description": "Drag to select the area you want to keep. Choose an aspect ratio preset or use free-form cropping."
+        },
+        {
+          "step": 3,
+          "title": "Adjust and Zoom",
+          "description": "Fine-tune your selection with zoom and pan controls. See real-time crop dimensions."
+        },
+        {
+          "step": 4,
+          "title": "Download Cropped Image",
+          "description": "Click 'Process Image' and instantly download your cropped photo. No watermarks, no signup."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is this image cropper really free?",
+          "answer": "Yes! Our image cropper is 100% free with no hidden fees, watermarks, or account requirements. Crop unlimited images."
+        },
+        {
+          "question": "Are my images uploaded to your servers?",
+          "answer": "No. All image processing happens directly in your browser using Canvas API. Your images never leave your device, ensuring complete privacy."
+        },
+        {
+          "question": "What's the maximum file size I can crop?",
+          "answer": "You can crop images up to 25MB. This limit is based on browser memory, not our servers (since we don't use servers for processing)."
+        },
+        {
+          "question": "Can I crop to a specific aspect ratio?",
+          "answer": "Yes! Choose from presets like 1:1 (Square), 16:9 (Landscape), 4:3, 9:16 (Portrait), or use free-form cropping for any shape."
+        },
+        {
+          "question": "Can I crop for Instagram or YouTube?",
+          "answer": "Absolutely! We have presets for Instagram Post (1:1), Instagram Story (9:16), YouTube Thumbnail (16:9), and all major social media platforms."
+        },
+        {
+          "question": "Will cropping reduce image quality?",
+          "answer": "No quality is lost during cropping — you're simply selecting a region of the original image. The cropped area retains its original pixel quality."
+        },
+        {
+          "question": "How do I crop an image to a circle?",
+          "answer": "Visit our dedicated Crop Image to Circle tool, which automatically applies a circular crop shape and exports as PNG with transparent corners."
+        },
+        {
+          "question": "Does it work on mobile?",
+          "answer": "Yes! The cropper is fully touch-friendly. Use pinch-to-zoom and drag gestures on any phone or tablet."
+        }
+      ],
+      "relatedTools": ["image-resizer", "image-compressor", "png-to-jpg"],
+      "relatedGuides": [],
+      "ctaText": "Need higher resolution?",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "crop-image-online-free",
+      "title": "Crop Image Online Free",
+      "metaTitle": "Crop Image Online Free - No Upload, No Signup Required",
+      "metaDescription": "Crop images online for free with no upload needed. All processing in your browser. Drag to select, zoom to fine-tune, download instantly. Works on any device.",
+      "h1": "Crop Image Online Free - Instant Browser-Based Cropping",
+      "intro": "The fastest way to crop any image online. Drop your photo, drag to select the area you want, and download — all in your browser. No account, no upload, no watermarks.",
+      "primaryKeyword": "crop image online free",
+      "secondaryKeywords": [
+        "crop picture online free",
+        "free online image cropper",
+        "crop photo free",
+        "free crop tool"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "Image Cropper",
+      "description": "Free online image cropper that works entirely in your browser. No uploads, no accounts, no watermarks. Crop any image to any dimension instantly.",
+      "isInteractive": true,
+      "toolComponent": "ImageCropper",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolConfig": {},
+      "features": [
+        {
+          "title": "Free-Form Cropping",
+          "description": "No forced aspect ratios. Drag to select any rectangular region of your image."
+        },
+        {
+          "title": "Instant Download",
+          "description": "Crop and download in under a second. No processing queues."
+        },
+        {
+          "title": "Works on Any Device",
+          "description": "Touch-friendly on mobile, precise on desktop. Pinch-to-zoom and drag-to-crop."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Quick Photo Edits",
+          "description": "Remove unwanted edges or reframe a photo before sharing.",
+          "example": "Crop out a photobomber from a group shot"
+        },
+        {
+          "title": "Screenshot Cleanup",
+          "description": "Crop screenshots to show only the relevant portion.",
+          "example": "Crop a full-page screenshot to just the chart you need"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Zero Cost, Zero Hassle",
+          "description": "No account, no upload, no waiting. Just drop, crop, and download.",
+          "metric": "Free forever"
+        },
+        {
+          "title": "Complete Privacy",
+          "description": "Your images never leave your device. All processing is local.",
+          "metric": "Zero uploads"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Drop Image",
+          "description": "Drag and drop or click to upload a JPEG, PNG, or WebP image."
+        },
+        {
+          "step": 2,
+          "title": "Select Area",
+          "description": "Drag to select the region you want to keep. Use zoom for precision."
+        },
+        {
+          "step": 3,
+          "title": "Download",
+          "description": "Click 'Process Image' and download your cropped image instantly."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is this completely free?",
+          "answer": "Yes — 100% free with no account, watermarks, or usage limits."
+        },
+        {
+          "question": "Do you upload my photos?",
+          "answer": "No. All cropping happens in your browser. Nothing is sent to any server."
+        },
+        {
+          "question": "What formats are supported?",
+          "answer": "JPEG, PNG, and WebP images up to 25MB."
+        }
+      ],
+      "relatedTools": ["image-cropper", "image-resizer", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Need higher resolution?",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "crop-image-to-circle",
+      "title": "Crop Image to Circle",
+      "metaTitle": "Crop Image to Circle - Free Online Circular Crop Tool",
+      "metaDescription": "Crop any image into a perfect circle online for free. Download as PNG with transparent background. No upload, no signup — works entirely in your browser.",
+      "h1": "Crop Image to Circle - Free Online Circular Crop Tool",
+      "intro": "Turn any photo into a perfect circle in seconds. Our free circle crop tool exports as PNG with transparent corners — perfect for profile pictures and avatars. All processing stays in your browser.",
+      "primaryKeyword": "crop image to circle",
+      "secondaryKeywords": [
+        "circular image crop",
+        "circle crop tool",
+        "crop photo into circle",
+        "round image cropper",
+        "make image circle"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "Image Cropper",
+      "description": "Free online tool to crop images into a perfect circle. Exports as PNG with transparent background. Works in your browser — no uploads.",
+      "isInteractive": true,
+      "toolComponent": "ImageCropper",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolConfig": { "defaultAspectRatio": 1, "aspectRatioPresets": "circle" },
+      "features": [
+        {
+          "title": "Perfect Circular Crop",
+          "description": "Automatically applies a circular crop shape. No manual masking needed."
+        },
+        {
+          "title": "Transparent Background",
+          "description": "Exports as PNG with transparent corners — ready for any use."
+        },
+        {
+          "title": "Profile Picture Ready",
+          "description": "Ideal for creating circular profile pictures for LinkedIn, Slack, Discord, and more."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Profile Pictures",
+          "description": "Create circular profile pictures that look great on any platform.",
+          "example": "Turn a headshot into a circular LinkedIn profile photo"
+        },
+        {
+          "title": "App Icons and Avatars",
+          "description": "Crop logos or photos into circles for app icons or team avatars.",
+          "example": "Make a circular team member avatar from a company photo"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Clean Circle Export",
+          "description": "PNG with transparent corners — no jagged edges, no white background.",
+          "metric": "Anti-aliased output"
+        },
+        {
+          "title": "Instant Processing",
+          "description": "Circle crop and download in under a second.",
+          "metric": "< 1 second"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Image",
+          "description": "Drop a JPEG, PNG, or WebP photo onto the tool."
+        },
+        {
+          "step": 2,
+          "title": "Adjust Circle",
+          "description": "The circular crop area is automatically applied. Zoom and drag to position."
+        },
+        {
+          "step": 3,
+          "title": "Download Circle PNG",
+          "description": "Click 'Process Image' and download your circular image as a transparent PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "How do I make my image a circle?",
+          "answer": "Upload your image, adjust the circular crop area by dragging and zooming, then click 'Process Image' to download a circular PNG with transparent corners."
+        },
+        {
+          "question": "Will the background be transparent?",
+          "answer": "Yes! The tool exports as PNG with fully transparent corners outside the circle."
+        },
+        {
+          "question": "Is this free?",
+          "answer": "Yes — completely free with no account, watermarks, or usage limits."
+        }
+      ],
+      "relatedTools": ["image-cropper", "image-resizer", "png-to-jpg"],
+      "relatedGuides": [],
+      "ctaText": "Need higher resolution?",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "crop-image-for-instagram",
+      "title": "Crop Image for Instagram",
+      "metaTitle": "Crop Image for Instagram - Free Instagram Crop Tool",
+      "metaDescription": "Crop images to Instagram dimensions instantly. Supports Posts (1:1), Stories (9:16), Reels (9:16), and landscape. No upload needed — 100% browser-based.",
+      "h1": "Crop Image for Instagram - Free Instagram Crop Tool",
+      "intro": "Crop your photos to perfect Instagram dimensions in one click. Our free tool has presets for Instagram Posts (1:1), Stories (9:16), Reels, and landscape. All processing happens in your browser.",
+      "primaryKeyword": "crop image for instagram",
+      "secondaryKeywords": [
+        "instagram crop tool",
+        "crop photo for instagram",
+        "instagram aspect ratio",
+        "crop for instagram story",
+        "instagram post crop"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "Image Cropper",
+      "description": "Free Instagram crop tool with presets for Posts, Stories, and Reels. Works in your browser — no uploads, no account required.",
+      "isInteractive": true,
+      "toolComponent": "ImageCropper",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolConfig": { "aspectRatioPresets": "instagram" },
+      "features": [
+        {
+          "title": "Instagram Post Preset (1:1)",
+          "description": "One-click crop to the classic square Instagram post format."
+        },
+        {
+          "title": "Instagram Story Preset (9:16)",
+          "description": "Crop to the vertical 9:16 ratio for Stories, Reels, and IGTV covers."
+        },
+        {
+          "title": "No Quality Loss",
+          "description": "Cropping preserves original pixel quality — no recompression artifacts."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Instagram Feed Posts",
+          "description": "Crop landscape or portrait photos to 1:1 square for a clean Instagram feed.",
+          "example": "Turn a wide landscape photo into a square Instagram post"
+        },
+        {
+          "title": "Instagram Stories",
+          "description": "Crop any photo to 9:16 vertical for full-screen Stories.",
+          "example": "Crop a group photo to vertical for an Instagram Story"
+        },
+        {
+          "title": "Reels Cover Photos",
+          "description": "Create eye-catching 9:16 cover images for your Reels.",
+          "example": "Crop a product shot for a Reel thumbnail"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Platform-Perfect Dimensions",
+          "description": "Stop guessing Instagram's aspect ratios. Presets guarantee your photo fills the frame.",
+          "metric": "5 Instagram presets"
+        },
+        {
+          "title": "Instant Browser Processing",
+          "description": "No app download needed. Works on any device with a browser.",
+          "metric": "Zero installs"
+        }
+      ],
+      "howItWorks": [
+        { "step": 1, "title": "Upload Photo", "description": "Drop your image onto the tool." },
+        {
+          "step": 2,
+          "title": "Choose Instagram Format",
+          "description": "Select Instagram Post (1:1) or Story (9:16) preset."
+        },
+        {
+          "step": 3,
+          "title": "Download",
+          "description": "Click 'Process Image' and download your Instagram-ready image."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What is the best aspect ratio for Instagram?",
+          "answer": "Instagram supports 1:1 (square posts), 4:5 (portrait posts), 1.91:1 (landscape posts), and 9:16 (Stories and Reels). Our tool has presets for all of them."
+        },
+        {
+          "question": "Will Instagram compress my photo?",
+          "answer": "Instagram compresses uploads to some degree. Start with the highest quality source image to minimize quality loss after their compression."
+        },
+        {
+          "question": "Is this tool free?",
+          "answer": "Yes — completely free. No account, no watermarks, no limits."
+        }
+      ],
+      "relatedTools": ["image-cropper", "image-resizer", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Need higher resolution?",
+      "ctaUrl": "/?signup=1"
+    },
+    {
+      "slug": "crop-image-for-youtube-thumbnail",
+      "title": "Crop Image for YouTube Thumbnail",
+      "metaTitle": "Crop YouTube Thumbnail - Free 16:9 Thumbnail Crop Tool",
+      "metaDescription": "Crop any image to YouTube's 1280x720 thumbnail size. Free, instant, and 100% browser-based. No upload needed — your photos stay private.",
+      "h1": "Crop Image for YouTube Thumbnail - Free 16:9 Crop Tool",
+      "intro": "Create perfect YouTube thumbnails by cropping any image to 16:9 aspect ratio. Our free tool shows real-time preview with zoom. Works entirely in your browser — no upload, no account.",
+      "primaryKeyword": "crop youtube thumbnail",
+      "secondaryKeywords": [
+        "youtube thumbnail crop",
+        "crop image for youtube",
+        "16:9 crop tool",
+        "youtube thumbnail maker",
+        "thumbnail cropper"
+      ],
+      "lastUpdated": "2026-04-23T00:00:00Z",
+      "category": "tools",
+      "toolName": "Image Cropper",
+      "description": "Free YouTube thumbnail crop tool. Crop any image to 16:9 (1280x720) for perfect YouTube thumbnails. Browser-based, no uploads.",
+      "isInteractive": true,
+      "toolComponent": "ImageCropper",
+      "maxFileSizeMB": 25,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "toolConfig": { "defaultAspectRatio": 1.7777777777777777, "aspectRatioPresets": "youtube" },
+      "features": [
+        {
+          "title": "16:9 Aspect Ratio Lock",
+          "description": "Automatically locks to YouTube's required 16:9 aspect ratio (1280x720 recommended)."
+        },
+        {
+          "title": "Zoom for Precision",
+          "description": "Zoom in to position your subject perfectly within the thumbnail frame."
+        },
+        {
+          "title": "High-Quality Export",
+          "description": "Exports at original resolution within the crop area — no downscaling."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "YouTube Video Thumbnails",
+          "description": "Crop any photo to 16:9 for eye-catching YouTube video thumbnails.",
+          "example": "Turn a product photo into a 16:9 YouTube thumbnail"
+        },
+        {
+          "title": "Presentation Slides",
+          "description": "Crop images to 16:9 for widescreen presentation backgrounds.",
+          "example": "Crop a team photo to 16:9 for a slide background"
+        }
+      ],
+      "benefits": [
+        {
+          "title": "YouTube-Ready Format",
+          "description": "Guaranteed correct 16:9 aspect ratio that YouTube accepts without letterboxing.",
+          "metric": "16:9 locked"
+        },
+        {
+          "title": "Instant Browser Crop",
+          "description": "No app or software needed. Works on any device with a modern browser.",
+          "metric": "< 1 second"
+        }
+      ],
+      "howItWorks": [
+        { "step": 1, "title": "Upload Image", "description": "Drop any JPEG, PNG, or WebP image." },
+        {
+          "step": 2,
+          "title": "Adjust 16:9 Frame",
+          "description": "The 16:9 crop area is auto-applied. Drag and zoom to frame your subject."
+        },
+        {
+          "step": 3,
+          "title": "Download Thumbnail",
+          "description": "Click 'Process Image' and download your YouTube-ready thumbnail."
+        }
+      ],
+      "faq": [
+        {
+          "question": "What size should a YouTube thumbnail be?",
+          "answer": "YouTube recommends 1280x720 pixels (16:9 aspect ratio) with a minimum width of 640px. Our tool locks to this ratio automatically."
+        },
+        {
+          "question": "Can I add text to my thumbnail?",
+          "answer": "This tool crops your image to the correct dimensions. For adding text overlays, use a dedicated design tool after downloading your cropped image."
+        },
+        {
+          "question": "Is this free?",
+          "answer": "Yes — completely free with no account or watermarks."
+        }
+      ],
+      "relatedTools": ["image-cropper", "image-resizer", "image-compressor"],
+      "relatedGuides": [],
+      "ctaText": "Need higher resolution?",
+      "ctaUrl": "/?signup=1"
     }
   ],
   "meta": {
-    "totalPages": 23,
-    "lastUpdated": "2026-01-20T00:00:00Z"
+    "totalPages": 34,
+    "lastUpdated": "2026-04-23T00:00:00Z"
   }
 }

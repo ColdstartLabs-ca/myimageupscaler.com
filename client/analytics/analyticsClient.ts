@@ -58,6 +58,53 @@ interface IFirstTouchUtm {
 }
 
 // =============================================================================
+// Event Bus
+// =============================================================================
+
+/**
+ * Analytics events that can be subscribed to via the internal event bus.
+ * Used for decoupled client-side reactions (e.g. abandonment detector).
+ */
+export type TAnalyticsBusEvent = 'upgrade_prompt_clicked' | 'checkout_opened';
+export type TAnalyticsBusListener = () => void;
+
+const _eventBusListeners = new Map<TAnalyticsBusEvent, Set<TAnalyticsBusListener>>();
+
+/**
+ * Subscribe to an analytics event.
+ * @param event - The analytics event name to listen for.
+ * @param listener - Callback invoked when the event fires.
+ */
+export function onAnalyticsEvent(event: TAnalyticsBusEvent, listener: TAnalyticsBusListener): void {
+  if (!_eventBusListeners.has(event)) {
+    _eventBusListeners.set(event, new Set());
+  }
+  _eventBusListeners.get(event)!.add(listener);
+}
+
+/**
+ * Unsubscribe from an analytics event.
+ * @param event - The analytics event name.
+ * @param listener - The same callback reference passed to onAnalyticsEvent.
+ */
+export function offAnalyticsEvent(
+  event: TAnalyticsBusEvent,
+  listener: TAnalyticsBusListener
+): void {
+  _eventBusListeners.get(event)?.delete(listener);
+}
+
+function _emitBusEvent(event: TAnalyticsBusEvent): void {
+  _eventBusListeners.get(event)?.forEach(listener => {
+    try {
+      listener();
+    } catch {
+      // Silently swallow errors from bus listeners to avoid breaking analytics
+    }
+  });
+}
+
+// =============================================================================
 // State
 // =============================================================================
 
@@ -438,8 +485,9 @@ export const analytics = {
 
     const identifyEvent = new amplitudeModule.Identify();
 
-    // Hash email if provided, otherwise use pre-computed hash
+    // Set plaintext email (required for Stripe/Amplitude cross-referencing) and its hash
     if (identity.email) {
+      identifyEvent.set('email', identity.email);
       const emailHash = await hashEmail(identity.email);
       identifyEvent.set('email_hash', emailHash);
     } else if (identity.emailHash) {
@@ -483,6 +531,11 @@ export const analytics = {
   track(name: IAnalyticsEvent['name'], properties?: Record<string, unknown>): void {
     const eventProperties = buildTrackedEventProperties(properties);
     logDevTrack(name, eventProperties);
+
+    // Emit to internal event bus for decoupled subscribers (e.g. abandonment detector)
+    if (name === 'upgrade_prompt_clicked' || name === 'checkout_opened') {
+      _emitBusEvent(name as TAnalyticsBusEvent);
+    }
 
     if (!this.isEnabled() || !amplitudeModule) return;
 
@@ -634,6 +687,21 @@ export const analytics = {
         localStorage.setItem(DEVICE_ID_KEY, deviceId);
       }
       return deviceId;
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * Get the Amplitude session ID (Unix ms integer).
+   * Pass to server-side analytics calls so server events stitch to the browser session.
+   * Returns null if Amplitude is not initialized or running server-side.
+   */
+  getAmplitudeSessionId(): number | null {
+    if (typeof window === 'undefined' || !amplitudeModule) return null;
+    try {
+      const id = amplitudeModule.getSessionId();
+      return typeof id === 'number' ? id : null;
     } catch {
       return null;
     }

@@ -14,7 +14,7 @@ import { ModelRegistry } from '@server/services/model-registry';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 import { ReplicateError } from '@server/services/replicate.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { serverEnv } from '@shared/config/env';
+import { serverEnv, isProduction } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import {
@@ -300,7 +300,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
 
     // 3a. Block flagged free-tier users before any credit-consuming work
-    if (isFreeleaderBlocked(profile)) {
+    // Dev bypass: fingerprint detection fires on localhost/dev where IPs are shared,
+    // so skip the block outside production to allow free-user testing.
+    if (isProduction() && isFreeleaderBlocked(profile)) {
       logFailure('account_restricted_freeloader');
       return NextResponse.json(
         {

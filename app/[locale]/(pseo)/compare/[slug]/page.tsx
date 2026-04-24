@@ -22,11 +22,27 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: IComparisonPageProps): Promise<Metadata> {
   const { slug, locale } = await params;
-  const result = await getComparisonDataWithLocale(slug, locale);
 
+  // Compare is English-only — localized pages should not be indexed
+  if (locale !== 'en') {
+    const enResult = await getComparisonDataWithLocale(slug, 'en');
+    return {
+      title: enResult.data?.metaTitle || '',
+      description: enResult.data?.metaDescription || '',
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const result = await getComparisonDataWithLocale(slug, locale);
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'compare', locale);
+  // Strip alternates — SeoMetaTags handles canonical and HreflangLinks handles hreflang in JSX.
+  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+    result.data,
+    'compare',
+    locale
+  );
+  return metaWithoutAlternates;
 }
 
 export default async function ComparisonPage({ params }: IComparisonPageProps) {
@@ -49,10 +65,12 @@ export default async function ComparisonPage({ params }: IComparisonPageProps) {
   const relatedPages = await getRelatedPages('compare', slug, locale);
 
   const path = `/compare/${slug}`;
+  // For non-English locales, canonical should point to English URL
+  const canonicalLocale = locale !== 'en' ? 'en' : locale;
 
   return (
     <>
-      <SeoMetaTags path={path} locale={locale} />
+      <SeoMetaTags path={path} locale={canonicalLocale} />
       <HreflangLinks path={path} category="compare" locale={locale} />
       <SchemaMarkup schema={schema} />
       <ComparePageTemplate data={result.data} relatedPages={relatedPages} />

@@ -98,7 +98,6 @@ export type IUpgradePromptTrigger =
   | 'insufficient_credits'
   | 'model_gate'
   | 'after_upscale'
-  | 'after_comparison'
   | 'after_download'
   | 'post_download_explore'
   | 'celebration_explore'
@@ -120,6 +119,7 @@ export interface IUpgradePromptClickedProperties {
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   pricingRegion: string;
   copyVariant?: string; // A/B test variant assignment (e.g., 'control', 'variant_a')
+  originatingTrigger?: IUpgradePromptTrigger;
 }
 
 export interface IUpgradePromptDismissedProperties {
@@ -135,6 +135,8 @@ export interface ICheckoutOpenedProperties {
   source: string;
   trigger?: string;
   originatingModel?: string;
+  originatingTrigger?: IUpgradePromptTrigger;
+  attributionChain?: IUpgradePromptTrigger[];
 }
 
 export interface ICheckoutAuthRequiredProperties {
@@ -496,6 +498,23 @@ export interface IPaywallShownProperties {
   context: 'guest_api' | 'authenticated_workspace';
 }
 
+// Engagement discount toast shown properties
+export interface IEngagementDiscountToastShownProperties {
+  discountPercent?: number;
+  originalPriceCents?: number;
+  discountedPriceCents?: number;
+  /** Source that triggered the discount toast. Defaults to 'engagement'. */
+  engagement_discount_source?: 'engagement' | 'abandonment';
+}
+
+// PRD #90: Paywall hit tracking for zero-conversion countries
+export interface IPaywallHitProperties {
+  country: string | null;
+  tier: 'paywalled';
+  source: 'checkout_page' | 'pricing_page';
+  priceId?: string;
+}
+
 // =============================================================================
 // Event Types
 // =============================================================================
@@ -613,6 +632,7 @@ export type IAnalyticsEventName =
   | 'engagement_discount_redeemed'
   // Country paywall events
   | 'paywall_shown'
+  | 'paywall_hit' // PRD #90: Track when paywalled users visit checkout/pricing pages
   // Revenue leak detection events (PRD: analytics-tracking-enhancement - Phase 1)
   | 'payment_failed'
   | 'plan_selected'

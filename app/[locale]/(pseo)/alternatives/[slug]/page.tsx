@@ -25,7 +25,12 @@ export async function generateMetadata({ params }: IAlternativePageProps): Promi
 
   if (!result.data) return {};
 
-  return generatePageMetadata(result.data, 'alternatives', locale);
+  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
+    result.data,
+    'alternatives',
+    locale
+  );
+  return metaWithoutAlternates;
 }
 
 export default async function AlternativePage({ params }: IAlternativePageProps) {

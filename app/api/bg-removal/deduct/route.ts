@@ -5,7 +5,7 @@ import { ensureAntiFreeloaderProfile } from '@server/services/anti-freeloader.se
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { InsufficientCreditsError } from '@server/services/image-generation.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { serverEnv } from '@shared/config/env';
+import { serverEnv, isProduction } from '@shared/config/env';
 import { trackServerEvent } from '@server/analytics';
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import { NextRequest, NextResponse } from 'next/server';
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       persist: false,
     });
 
-    if (isFreeleaderBlocked(profile)) {
+    if (isProduction() && isFreeleaderBlocked(profile)) {
       logger.warn('Blocked flagged freeloader', { userId });
       return NextResponse.json(
         {

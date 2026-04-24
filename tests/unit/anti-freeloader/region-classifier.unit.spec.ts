@@ -23,6 +23,34 @@ describe('getRegionTier', () => {
     expect(getRegionTier('PH')).toBe('paywalled');
   });
 
+  it('should return paywalled for VN (Vietnam)', () => {
+    expect(getRegionTier('VN')).toBe('paywalled');
+  });
+
+  it('should return paywalled for BD (Bangladesh)', () => {
+    expect(getRegionTier('BD')).toBe('paywalled');
+  });
+
+  it('should return paywalled for ID (Indonesia)', () => {
+    expect(getRegionTier('ID')).toBe('paywalled');
+  });
+
+  it('should return paywalled for TH (Thailand)', () => {
+    expect(getRegionTier('TH')).toBe('paywalled');
+  });
+
+  it('should return paywalled for PK (Pakistan)', () => {
+    expect(getRegionTier('PK')).toBe('paywalled');
+  });
+
+  it('should return paywalled for NG (Nigeria)', () => {
+    expect(getRegionTier('NG')).toBe('paywalled');
+  });
+
+  it('should return paywalled for KE (Kenya)', () => {
+    expect(getRegionTier('KE')).toBe('paywalled');
+  });
+
   it('should return restricted for IN', () => {
     expect(getRegionTier('IN')).toBe('restricted');
   });
