@@ -2,6 +2,8 @@
  * Extension-specific types and interfaces
  */
 
+import type { IUpscaleResponse } from '../../../shared/types/coreflow.types';
+
 export interface IExtensionSession {
   userId: string | null;
   accessToken: string | null;
@@ -34,7 +36,7 @@ export type ExtensionMessage =
   | { type: 'PROCESS_UPSCALE_REQUEST'; imageUrl: string; imageElement?: string }
   | { type: 'START_UPSCALE'; imageUrl: string; originalUrl?: string }
   | { type: 'SHOW_UPSCALE_PROGRESS'; imageUrl: string }
-  | { type: 'UPSCALE_COMPLETE'; result: any }
+  | { type: 'UPSCALE_COMPLETE'; result: IUpscaleResponse }
   | { type: 'UPSCALE_ERROR'; error: string }
   | { type: 'AUTH_COMPLETE'; session: IExtensionSession }
   | { type: 'GET_SESSION' }

@@ -331,6 +331,12 @@ const serverEnvSchema = z.object({
   // ==========================================
   // JSON string to override subscription config (for testing/development)
   SUBSCRIPTION_CONFIG_OVERRIDE: z.string().optional(),
+
+  // ==========================================
+  // BROWSER EXTENSION
+  // ==========================================
+  // Comma-separated list of extension origins for CORS (e.g., chrome-extension://<id>)
+  EXTENSION_ORIGINS: z.string().default(''),
 });
 
 export type IServerEnv = z.infer<typeof serverEnvSchema>;

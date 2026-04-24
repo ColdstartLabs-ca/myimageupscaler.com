@@ -3,7 +3,7 @@
  * Contains CSP policies and other security-related settings
  */
 
-import { isDevelopment } from './env';
+import { isDevelopment, serverEnv } from './env';
 
 /**
  * Content Security Policy configuration
@@ -131,6 +131,7 @@ export const PUBLIC_API_ROUTES = [
  * Used by middleware to allow extension requests to /api/* endpoints
  * Format: chrome-extension://<id> or moz-extension://<id>
  */
-export const EXTENSION_ORIGINS: string[] = (
-  process.env.EXTENSION_ORIGINS || ''
-).split(',').filter(Boolean).map((origin) => origin.trim());
+export const EXTENSION_ORIGINS: string[] = (serverEnv.EXTENSION_ORIGINS || '')
+  .split(',')
+  .filter(Boolean)
+  .map(origin => origin.trim());

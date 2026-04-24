@@ -1,52 +1,45 @@
 /**
  * Auth Bridge Content Script
- * Extracts auth session from the /extension-auth page and stores in chrome.storage.local
+ * Listens for auth session data from the /extension-auth page via postMessage
+ * and stores it in chrome.storage.local. This avoids exposing the token as a
+ * global variable on the window object.
  */
 
 import type { IExtensionSession, ExtensionMessage } from '@extension/shared/types';
 import { updateSession } from '@extension/shared/storage';
 
+interface IAuthSessionMessage {
+  type: 'EXTENSION_AUTH_SESSION';
+  session: IExtensionSession;
+}
+
 // Listen for messages from the extension
-chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message: ExtensionMessage, _sender, sendResponse) => {
   if (message.type === 'GET_AUTH_FROM_PAGE') {
-    // Try to get auth data from the page
-    const authData = getAuthDataFromPage();
-    if (authData) {
-      sendResponse(authData);
-    }
+    // No longer reading from window globals — session is captured via postMessage
+    sendResponse(null);
   }
   return true;
 });
 
-// Extract auth data from the page's window object
-// The /extension-auth page will attach this data
-function getAuthDataFromPage(): IExtensionSession | null {
-  const windowWithAuth = window as typeof window & {
-    __EXTENSION_AUTH__?: IExtensionSession;
-  };
-
-  if (windowWithAuth.__EXTENSION_AUTH__) {
-    return windowWithAuth.__EXTENSION_AUTH__;
-  }
-
-  return null;
-}
-
-// If we're on the /extension-auth page, listen for auth completion
+// If we're on the /extension-auth page, listen for the postMessage from the React app
 if (window.location.pathname.includes('/extension-auth')) {
-  // Poll for auth data from the parent page (React app)
-  const checkAuth = setInterval(() => {
-    const authData = getAuthDataFromPage();
-    if (authData && authData.accessToken) {
-      clearInterval(checkAuth);
+  const handleMessage = (event: MessageEvent) => {
+    const data = event.data as IAuthSessionMessage;
+    if (event.origin !== window.location.origin) return;
+    if (data?.type !== 'EXTENSION_AUTH_SESSION' || !data.session?.accessToken) return;
 
-      // Store session in chrome.storage.local
-      updateSession({
-        userId: authData.userId,
-        accessToken: authData.accessToken,
-        creditsRemaining: authData.creditsRemaining,
-        expiresAt: authData.expiresAt,
-      }).then(() => {
+    const authData = data.session;
+    window.removeEventListener('message', handleMessage);
+
+    // Store session in chrome.storage.local
+    updateSession({
+      userId: authData.userId,
+      accessToken: authData.accessToken,
+      creditsRemaining: authData.creditsRemaining,
+      expiresAt: authData.expiresAt,
+    })
+      .then(() => {
         // Notify background script
         chrome.runtime.sendMessage({
           type: 'AUTH_COMPLETE',
@@ -57,14 +50,16 @@ if (window.location.pathname.includes('/extension-auth')) {
         setTimeout(() => {
           window.close();
         }, 500);
-      }).catch((error) => {
+      })
+      .catch(error => {
         console.error('Failed to store auth session:', error);
       });
-    }
-  }, 100);
+  };
 
-  // Stop polling after 30 seconds
-  setTimeout(() => clearInterval(checkAuth), 30000);
+  window.addEventListener('message', handleMessage);
+
+  // Stop listening after 30 seconds
+  setTimeout(() => window.removeEventListener('message', handleMessage), 30000);
 }
 
 export {};

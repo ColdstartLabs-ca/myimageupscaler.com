@@ -9,6 +9,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@client/store/auth/authStore';
+import { createClient } from '@shared/utils/supabase/client';
 import type { IExtensionSession } from '@extension/shared/types';
 
 export default function ExtensionAuthPage(): JSX.Element {
@@ -33,7 +34,7 @@ export default function ExtensionAuthPage(): JSX.Element {
       // Get user's credits from profile
       Promise.resolve().then(async () => {
         try {
-          const supabase = (await import('@shared/utils/supabase/client')).createClient();
+          const supabase = createClient();
           const {
             data: { session },
           } = await supabase.auth.getSession();
@@ -52,8 +53,11 @@ export default function ExtensionAuthPage(): JSX.Element {
             expiresAt: Date.now() + 3600000, // 1 hour
           };
 
-          // Attach to window for content script to pick up
-          (window as any).__EXTENSION_AUTH__ = sessionData;
+          // Send session data to content script via postMessage
+          window.postMessage(
+            { type: 'EXTENSION_AUTH_SESSION', session: sessionData },
+            window.location.origin
+          );
 
           setStatus('success');
 
@@ -83,7 +87,11 @@ export default function ExtensionAuthPage(): JSX.Element {
   if (!isAuthenticated) {
     // Redirect to login with extension-auth as return
     router.push(`/?login=1&next=/extension-auth`);
-    return <div className="min-h-screen flex items-center justify-center bg-gray-50">Redirecting to login...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        Redirecting to login...
+      </div>
+    );
   }
 
   if (status === 'loading') {
@@ -103,8 +111,18 @@ export default function ExtensionAuthPage(): JSX.Element {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-md mx-auto p-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              className="w-8 h-8 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </div>
           <h1 className="text-xl font-semibold text-gray-900 mb-2">Extension Connected!</h1>

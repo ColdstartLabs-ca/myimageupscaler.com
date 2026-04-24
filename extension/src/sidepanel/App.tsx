@@ -135,24 +135,27 @@ export default function SidePanel(): JSX.Element {
     <div className="sidepanel-container">
       <div className="header">
         <h1>Upscale Result</h1>
-        <button
-          onClick={() => window.close()}
-          className="btn-close"
-          aria-label="Close"
-        >
+        <button onClick={() => window.close()} className="btn-close" aria-label="Close">
           ×
         </button>
       </div>
 
       {upscaleState.status === 'idle' && (
         <div className="empty-state">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
+          <svg
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
           </svg>
           <h2>No image selected</h2>
-          <p>Right-click on any image and select "Upscale with MyImageUpscaler"</p>
+          <p>Right-click on any image and select &ldquo;Upscale with MyImageUpscaler&rdquo;</p>
           <p className="hint">Or open the popup to drag and drop an image</p>
         </div>
       )}
@@ -160,18 +163,26 @@ export default function SidePanel(): JSX.Element {
       {upscaleState.status === 'signin_required' && (
         <div className="signin-required">
           <div className="logo">
-            <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="32" height="32" rx="8" fill="#3B82F6"/>
-              <path d="M16 8L20 12H18V16H14V12H12L16 8Z" fill="white"/>
-              <path d="M8 24L12 20H10V16H6V20H4L8 24Z" fill="white"/>
-              <path d="M24 24L20 20H22V16H26V20H28L24 24Z" fill="white"/>
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect width="32" height="32" rx="8" fill="#3B82F6" />
+              <path d="M16 8L20 12H18V16H14V12H12L16 8Z" fill="white" />
+              <path d="M8 24L12 20H10V16H6V20H4L8 24Z" fill="white" />
+              <path d="M24 24L20 20H22V16H26V20H28L24 24Z" fill="white" />
             </svg>
           </div>
           <h2>Sign In Required</h2>
           <p>You need to sign in to upscale images</p>
           <button
             onClick={() => {
-              chrome.tabs.create({ url: 'https://myimageupscaler.com/extension-auth?action=signin' });
+              chrome.tabs.create({
+                url: 'https://myimageupscaler.com/extension-auth?action=signin',
+              });
             }}
             className="btn-primary"
           >
@@ -183,7 +194,9 @@ export default function SidePanel(): JSX.Element {
       {(upscaleState.status === 'uploading' || upscaleState.status === 'processing') && (
         <div className="processing-state">
           <div className="spinner" />
-          <p>{upscaleState.status === 'uploading' ? 'Uploading image...' : 'Processing with AI...'}</p>
+          <p>
+            {upscaleState.status === 'uploading' ? 'Uploading image...' : 'Processing with AI...'}
+          </p>
           <div className="progress-bar">
             <div className="progress-fill" style={{ width: `${upscaleState.progress}%` }} />
           </div>
@@ -207,39 +220,60 @@ export default function SidePanel(): JSX.Element {
 
           {upscaleState.creditsUsed !== undefined && (
             <>
-              <div className={`credits-info ${upscaleState.creditsRemaining !== undefined && upscaleState.creditsRemaining < 10 ? 'credits-low' : ''}`}>
-                <span>Credits used: <strong>{upscaleState.creditsUsed}</strong></span>
-                <span>Remaining: <strong>{upscaleState.creditsRemaining}</strong></span>
+              <div
+                className={`credits-info ${upscaleState.creditsRemaining !== undefined && upscaleState.creditsRemaining < 10 ? 'credits-low' : ''}`}
+              >
+                <span>
+                  Credits used: <strong>{upscaleState.creditsUsed}</strong>
+                </span>
+                <span>
+                  Remaining: <strong>{upscaleState.creditsRemaining}</strong>
+                </span>
               </div>
-              {upscaleState.creditsRemaining !== undefined && upscaleState.creditsRemaining < 10 && (
-                <div className="credits-cta">
-                  <p className="credits-warning">Low credits remaining!</p>
-                  <button
-                    onClick={() => {
-                      chrome.tabs.create({ url: 'https://myimageupscaler.com/pricing' });
-                    }}
-                    className="btn-primary btn-small"
-                  >
-                    Get More Credits
-                  </button>
-                </div>
-              )}
+              {upscaleState.creditsRemaining !== undefined &&
+                upscaleState.creditsRemaining < 10 && (
+                  <div className="credits-cta">
+                    <p className="credits-warning">Low credits remaining!</p>
+                    <button
+                      onClick={() => {
+                        chrome.tabs.create({ url: 'https://myimageupscaler.com/pricing' });
+                      }}
+                      className="btn-primary btn-small"
+                    >
+                      Get More Credits
+                    </button>
+                  </div>
+                )}
             </>
           )}
 
           <div className="result-actions">
             <button onClick={handleDownload} className="btn-primary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
               Download
             </button>
             <button onClick={handleReset} className="btn-secondary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5"/>
-                <polyline points="17 8 12 4 7 8"/>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5" />
+                <polyline points="17 8 12 4 7 8" />
               </svg>
               Upscale Another
             </button>
@@ -249,10 +283,17 @@ export default function SidePanel(): JSX.Element {
 
       {upscaleState.status === 'error' && (
         <div className="error-state">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
           </svg>
           <h2>Upscale Failed</h2>
           <p>{upscaleState.error}</p>

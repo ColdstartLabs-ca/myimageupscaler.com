@@ -32,6 +32,8 @@ export default defineConfig({
       '@shared': path.resolve(__dirname, './shared'),
       '@app': path.resolve(__dirname, './app'),
       '@lib': path.resolve(__dirname, './lib'),
+      '@extension': path.resolve(__dirname, './extension/src'),
+      '@extension/shared': path.resolve(__dirname, './extension/src/shared'),
     },
   },
 });
