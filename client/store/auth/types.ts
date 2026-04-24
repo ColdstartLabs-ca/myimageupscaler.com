@@ -1,6 +1,7 @@
 import { AuthProvider } from '@/shared/types/authProviders.types';
 
 export interface IAuthUser {
+  id: string;
   email: string;
   name?: string;
   provider?: AuthProvider;
