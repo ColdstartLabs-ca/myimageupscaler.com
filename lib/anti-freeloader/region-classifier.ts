@@ -81,7 +81,7 @@ const HIGH_PURCHASING_POWER_COUNTRIES = new Set([
  * varying discount levels (20%-80%) in the multi-armed bandit pricing test.
  *
  * Based on conversion data from Apr 9-23, 2026:
- * - South Asia: 1 conversion total (IN at 80% discount) - paywalled due to abysmal overall rate
+ * - South Asia excluding IN: zero/near-zero conversions; IN stays restricted due to observed conversion
  * - Southeast Asia: 0 conversions across all discount levels
  * - Africa: 0 conversions across all discount levels
  *
@@ -118,7 +118,6 @@ const PAYWALLED_COUNTRIES = new Set<string>([
   'EG', // Egypt
   'TZ', // Tanzania
   'CD', // DR Congo
-  'ZA', // South Africa
   'UG', // Uganda
   'ZW', // Zimbabwe
   'CI', // Ivory Coast

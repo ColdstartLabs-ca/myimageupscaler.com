@@ -21,6 +21,11 @@ const nextConfig = {
   // SEO trailing slashes are handled via explicit redirects below instead
   // Standalone output for OpenNext/Cloudflare deployment
   output: 'standalone',
+  // Fix standalone output path when a package.json exists in a parent directory.
+  // Without this, Next.js detects the parent as the monorepo root and nests the
+  // standalone output at .next/standalone/projects/myimageupscaler.com/, which
+  // @opennextjs/aws doesn't expect (it looks at .next/standalone/ directly).
+  outputFileTracingRoot: __dirname,
   // Transpile packages for proper ESM handling
   transpilePackages: ['react-markdown', 'remark-gfm', 'unified', 'bail'],
   // Performance optimizations
@@ -51,11 +56,6 @@ const nextConfig = {
   },
   // Enable experimental features for better performance
   experimental: {
-    // Fix standalone output path when a package.json exists in a parent directory.
-    // Without this, Next.js detects the parent as the monorepo root and nests the
-    // standalone output at .next/standalone/projects/myimageupscaler.com/, which
-    // @opennextjs/aws doesn't expect (it looks at .next/standalone/ directly).
-    outputFileTracingRoot: __dirname,
     // Optimize package imports for smaller bundles
     optimizePackageImports: [
       'lucide-react',

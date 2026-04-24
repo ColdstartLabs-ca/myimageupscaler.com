@@ -20,9 +20,11 @@ export const NavBar = (): JSX.Element => {
   const locale = useLocale();
   const { openAuthModal } = useModalStore();
   const { isAuthenticated, isLoading, user, signOut } = useUserStore();
-  const { isFreeUser } = useUserData();
+  const { isFreeUser, profile, subscription } = useUserData();
   const { tier } = useRegionTier();
   const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
+  const hasResolvedBillingState = profile !== null || subscription !== null;
+  const shouldShowUpgradeButton = isAuthenticated && isFreeUser && hasResolvedBillingState;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
@@ -288,14 +290,14 @@ export const NavBar = (): JSX.Element => {
               </>
             ) : (
               <>
-                {isFreeUser && (
+                {shouldShowUpgradeButton && (
                   <button
                     data-testid="nav-upgrade-button"
                     onClick={() => setShowUpgradeModal(true)}
                     className="hidden md:inline-flex items-center gap-1.5 rounded-xl text-sm font-black transition-all gradient-cta shine-effect text-white h-10 px-3 sm:px-5 py-2"
                   >
                     <Zap className="w-4 h-4" />
-                    Upgrade
+                    {t('viewPlans')}
                   </button>
                 )}
                 <div className="relative" ref={dropdownRef}>

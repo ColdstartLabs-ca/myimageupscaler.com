@@ -223,6 +223,13 @@ describe('Analytics Types - Paywall Event Tracking', () => {
     expect(eventName).toBe('paywall_shown');
   });
 
+  test('paywall_hit should be a valid event name', async () => {
+    const types = await import('@server/analytics/types');
+
+    const eventName: types.IAnalyticsEventName = 'paywall_hit';
+    expect(eventName).toBe('paywall_hit');
+  });
+
   test('IPaywallShownProperties should have required fields', async () => {
     const types = await import('@server/analytics/types');
 
@@ -269,5 +276,24 @@ describe('Analytics Types - Paywall Event Tracking', () => {
       };
       expect(props.country).toBe(country);
     });
+  });
+
+  test('IPaywallHitProperties should support pricing and checkout sources', async () => {
+    const types = await import('@server/analytics/types');
+
+    const pricingProps: types.IPaywallHitProperties = {
+      country: 'PH',
+      tier: 'paywalled',
+      source: 'pricing_page',
+    };
+    const checkoutProps: types.IPaywallHitProperties = {
+      country: null,
+      tier: 'paywalled',
+      source: 'checkout_page',
+      priceId: 'price_test',
+    };
+
+    expect(pricingProps.source).toBe('pricing_page');
+    expect(checkoutProps.priceId).toBe('price_test');
   });
 });
