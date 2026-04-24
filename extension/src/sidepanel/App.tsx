@@ -40,9 +40,9 @@ export default function SidePanel(): JSX.Element {
           imageUrl,
         });
 
-        // Determine if this is a base64 data URL or a regular URL
-        const isBase64 = imageUrl.startsWith('data:');
-        const mimeType = isBase64 ? 'image/png' : 'image/png';
+        const mimeType = imageUrl.startsWith('data:')
+          ? imageUrl.substring(imageUrl.indexOf(':') + 1, imageUrl.indexOf(';'))
+          : 'image/png';
 
         const result = await upscaleImage(imageUrl, mimeType, session.accessToken, {
           qualityTier: 'auto',

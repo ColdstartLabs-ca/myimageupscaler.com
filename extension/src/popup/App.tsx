@@ -52,10 +52,11 @@ export default function App(): JSX.Element {
       }
 
       try {
+        const objectUrl = URL.createObjectURL(file);
         setUpscaleState({
           status: 'uploading',
           progress: 10,
-          imageUrl: URL.createObjectURL(file),
+          imageUrl: objectUrl,
         });
 
         const base64 = await fileToBase64(file);
@@ -75,7 +76,7 @@ export default function App(): JSX.Element {
         // Send to side panel for progress tracking
         chrome.runtime.sendMessage({
           type: 'SHOW_UPSCALE_PROGRESS',
-          imageUrl: upscaleState.imageUrl,
+          imageUrl: objectUrl,
         });
 
         const result = await upscaleImage(base64, mimeType, session.accessToken, {
@@ -86,7 +87,7 @@ export default function App(): JSX.Element {
         setUpscaleState({
           status: 'completed',
           progress: 100,
-          imageUrl: URL.createObjectURL(file),
+          imageUrl: objectUrl,
           resultImageUrl: result.imageUrl || result.imageData,
           creditsUsed: result.processing.creditsUsed,
           creditsRemaining: result.processing.creditsRemaining,
