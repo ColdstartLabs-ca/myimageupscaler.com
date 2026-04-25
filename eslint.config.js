@@ -18,6 +18,7 @@ export default [
       'node_modules/**',
       'out/**',
       'dist/**',
+      'extension/dist/**',
       'build/**',
       'coverage/**',
       '.turbo/**',
