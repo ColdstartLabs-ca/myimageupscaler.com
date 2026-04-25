@@ -1,9 +1,9 @@
-interface LogoProps {
+interface ILogoProps {
   size?: number;
   className?: string;
 }
 
-export default function Logo({ size = 32, className = 'logo' }: LogoProps): JSX.Element {
+export default function Logo({ size = 32, className = 'logo' }: ILogoProps): JSX.Element {
   return (
     <div className={className}>
       <svg
