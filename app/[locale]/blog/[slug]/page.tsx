@@ -22,7 +22,7 @@ import {
 import { clientEnv } from '@shared/config/env';
 import { CREDIT_COSTS } from '@shared/config/credits.config';
 import { ReadingProgress } from '@client/components/blog/ReadingProgress';
-import { RelatedToolsSection } from '../_components/RelatedToolsSection';
+import { RelatedToolsSection, CompactToolsBanner } from '../_components/RelatedToolsSection';
 import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 
 // Convert MDX Callout components to blockquotes with type markers
@@ -315,6 +315,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
         {/* Content */}
         <div className="pb-20">
           <div className="container mx-auto px-4 max-w-3xl">
+            <CompactToolsBanner blogSlug={slug} />
             <div className="prose prose-lg prose-invert max-w-none prose-headings:font-display prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-p:leading-relaxed prose-li:leading-relaxed prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-strong:text-primary prose-img:rounded-2xl prose-img:shadow-lg">
               <Markdown
                 remarkPlugins={[remarkGfm]}

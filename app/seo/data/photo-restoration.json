@@ -762,7 +762,7 @@
         {
           "aspect": "Environmental Conditions",
           "idealConditions": {
-            "temperature": "65-70°F (18-21°C)",
+            "temperature": "65-70\u00b0F (18-21\u00b0C)",
             "humidity": "30-50% relative humidity",
             "light": "No direct sunlight, minimal UV exposure",
             "airQuality": "Clean, filtered air, no pollutants"

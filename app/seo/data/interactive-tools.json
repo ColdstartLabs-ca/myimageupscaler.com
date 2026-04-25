@@ -147,7 +147,7 @@
         }
       ],
       "relatedTools": ["ai-image-upscaler", "image-compressor"],
-      "ctaText": "Try Free Image Resizer",
+      "ctaText": "Resize Image Free",
       "ctaUrl": "/tools/resize/image-resizer"
     },
     {
@@ -288,7 +288,7 @@
         }
       ],
       "relatedTools": ["image-resizer", "ai-image-upscaler"],
-      "ctaText": "Try Free Image Compressor",
+      "ctaText": "Compress Image Free",
       "ctaUrl": "/tools/compress/image-compressor"
     },
     {
@@ -428,7 +428,7 @@
         }
       ],
       "relatedTools": ["image-compressor", "image-resizer"],
-      "ctaText": "Convert PNG to JPG Free",
+      "ctaText": "Convert PNG to JPG",
       "ctaUrl": "/tools/convert/png-to-jpg"
     },
     {
@@ -564,7 +564,7 @@
         }
       ],
       "relatedTools": ["image-compressor"],
-      "ctaText": "Convert JPG to PNG Free",
+      "ctaText": "Convert JPG to PNG",
       "ctaUrl": "/tools/convert/jpg-to-png"
     },
     {
@@ -701,7 +701,7 @@
       ],
       "relatedTools": ["jpg-to-webp", "image-compressor"],
       "relatedGuides": ["webp-format-guide"],
-      "ctaText": "Convert WebP to JPG Free",
+      "ctaText": "Convert WebP to JPG",
       "ctaUrl": "/tools/convert/webp-to-jpg"
     },
     {
@@ -1350,8 +1350,9 @@
       ],
       "relatedTools": ["png-to-jpg", "image-compressor", "bmp-to-jpg"],
       "relatedGuides": [],
-      "ctaText": "Try AI Image Upscaler",
-      "ctaUrl": "/?signup=1"
+      "ctaText": "Convert GIF to JPG",
+      "ctaUrl": "/?signup=1",
+      "relatedBlogPosts": ["how-to-convert-gif-to-jpg-free-online"]
     },
     {
       "slug": "svg-to-jpg",
@@ -1713,7 +1714,7 @@
       ],
       "relatedTools": ["heic-to-png", "jpg-to-png", "image-compressor"],
       "relatedGuides": [],
-      "ctaText": "Upscale iPhone Photos with AI",
+      "ctaText": "Convert HEIC to JPG",
       "ctaUrl": "/?signup=1"
     },
     {
@@ -1943,7 +1944,7 @@
       ],
       "relatedTools": ["image-compressor", "image-resizer", "transparent-background-maker"],
       "relatedGuides": [],
-      "ctaText": "Enhance Photo Quality with AI",
+      "ctaText": "Enhance Photo Free",
       "ctaUrl": "/?signup=1"
     },
     {
@@ -2185,7 +2186,7 @@
       ],
       "relatedTools": ["pdf-to-png", "image-to-pdf", "png-to-pdf", "image-compressor"],
       "relatedGuides": [],
-      "ctaText": "Upscale PDF Images with AI",
+      "ctaText": "Convert PDF to JPG",
       "ctaUrl": "/?signup=1"
     },
     {
@@ -2419,7 +2420,7 @@
       ],
       "relatedTools": ["jpg-to-pdf", "png-to-pdf", "webp-to-pdf", "pdf-to-jpg"],
       "relatedGuides": [],
-      "ctaText": "Upscale Images Before Making PDF",
+      "ctaText": "Convert to PDF",
       "ctaUrl": "/?signup=1"
     },
     {
@@ -2537,8 +2538,9 @@
       ],
       "relatedTools": ["image-to-pdf", "png-to-pdf", "webp-to-pdf", "pdf-to-jpg"],
       "relatedGuides": [],
-      "ctaText": "Upscale Photos Before PDF Creation",
-      "ctaUrl": "/?signup=1"
+      "ctaText": "Convert JPG to PDF",
+      "ctaUrl": "/?signup=1",
+      "relatedBlogPosts": ["how-to-convert-jpg-to-pdf-free-online"]
     },
     {
       "slug": "png-to-pdf",
@@ -2655,7 +2657,7 @@
       ],
       "relatedTools": ["webp-to-pdf", "image-to-pdf", "jpg-to-pdf", "image-compressor"],
       "relatedGuides": [],
-      "ctaText": "Upscale Images Before Making PDF",
+      "ctaText": "Convert PNG to PDF",
       "ctaUrl": "/?signup=1"
     },
     {
@@ -3642,7 +3644,7 @@
       ],
       "relatedTools": ["image-resizer", "image-compressor", "png-to-jpg"],
       "relatedGuides": [],
-      "ctaText": "Need higher resolution?",
+      "ctaText": "Crop Image Free",
       "ctaUrl": "/?signup=1"
     },
     {

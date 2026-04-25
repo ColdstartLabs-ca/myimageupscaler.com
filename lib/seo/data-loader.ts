@@ -300,7 +300,8 @@ export const getAllPlatforms = cache(async (): Promise<IPlatformPage[]> => {
 
 // Get tools that reference a specific blog post
 export const getToolsForBlogPost = cache(async (blogSlug: string): Promise<IToolPage[]> => {
-  return toolsData.pages.filter(tool => tool.relatedBlogPosts?.includes(blogSlug));
+  const from = (pages: IToolPage[]) => pages.filter(t => t.relatedBlogPosts?.includes(blogSlug));
+  return [...from(toolsData.pages), ...from(interactiveToolsData.pages)];
 });
 
 // Content-Type Pages
