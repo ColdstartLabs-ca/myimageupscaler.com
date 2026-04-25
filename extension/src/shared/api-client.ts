@@ -15,12 +15,11 @@ const API_BASE_URL = 'https://myimageupscaler.com';
 const DEV_API_BASE_URL = 'http://localhost:3000';
 
 function getApiBaseUrl(): string {
-  // Detect if running in extension context
+  // In extension context, check for dev mode via Vite's import.meta.env
   if (typeof chrome !== 'undefined' && chrome.runtime) {
-    // In extension, use production URL (or check if dev)
-    return API_BASE_URL;
+    return import.meta.env.DEV ? DEV_API_BASE_URL : API_BASE_URL;
   }
-  return process.env.NODE_ENV === 'development' ? DEV_API_BASE_URL : API_BASE_URL;
+  return import.meta.env.DEV ? DEV_API_BASE_URL : API_BASE_URL;
 }
 
 /**
