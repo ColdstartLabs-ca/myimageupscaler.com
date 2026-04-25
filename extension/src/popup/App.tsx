@@ -7,6 +7,7 @@ import { useEffect, useState, useCallback, type DragEvent } from 'react';
 import { getSession, updateSession, clearSession } from '@extension/shared/storage';
 import { fileToBase64 } from '@extension/shared/image-utils';
 import { upscaleImage, getCredits } from '@extension/shared/api-client';
+import Logo from '@extension/shared/Logo';
 import type { IExtensionSession, UpscaleProgress } from '@extension/shared/types';
 
 export default function App(): JSX.Element {
@@ -156,20 +157,7 @@ export default function App(): JSX.Element {
     return (
       <div className="popup-container">
         <div className="auth-prompt">
-          <div className="logo">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect width="32" height="32" rx="8" fill="#3B82F6" />
-              <path d="M16 8L20 12H18V16H14V12H12L16 8Z" fill="white" />
-              <path d="M8 24L12 20H10V16H6V20H4L8 24Z" fill="white" />
-              <path d="M24 24L20 20H22V16H26V20H28L24 24Z" fill="white" />
-            </svg>
-          </div>
+          <Logo size={32} />
           <h2>MyImageUpscaler</h2>
           <p>Sign in to upscale images</p>
           <button
@@ -213,20 +201,7 @@ export default function App(): JSX.Element {
   return (
     <div className="popup-container">
       <div className="header">
-        <div className="logo">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect width="32" height="32" rx="8" fill="#3B82F6" />
-            <path d="M16 8L20 12H18V16H14V12H12L16 8Z" fill="white" />
-            <path d="M8 24L12 20H10V16H6V20H4L8 24Z" fill="white" />
-            <path d="M24 24L20 20H22V16H26V20H28L24 24Z" fill="white" />
-          </svg>
-        </div>
+        <Logo size={24} />
         <h1>Upscale</h1>
         <div className="header-actions">
           <button onClick={handleSignOut} className="btn-icon" title="Sign out">

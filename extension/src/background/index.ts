@@ -7,7 +7,7 @@
 let lastHoveredImageUrl: string | null = null;
 
 // Initialize extension on install
-chrome.runtime.onInstalled.addListener(details => {
+chrome.runtime.onInstalled.addListener(async details => {
   if (details.reason === 'install') {
     // Open welcome page on first install
     chrome.tabs.create({ url: 'https://myimageupscaler.com/extension-auth?action=install' });
@@ -15,7 +15,8 @@ chrome.runtime.onInstalled.addListener(details => {
     console.log('Extension updated to version:', chrome.runtime.getManifest().version);
   }
 
-  // Create context menu
+  // Remove existing menus to prevent duplicates on update/reload
+  await chrome.contextMenus.removeAll();
   chrome.contextMenus.create({
     id: 'upscale-image',
     title: 'Upscale with MyImageUpscaler',
@@ -59,39 +60,43 @@ async function handleImageUpscale(imageUrl: string, tabId: number) {
       imageUrl,
     });
 
-    // Inject image fetcher content script
-    await chrome.scripting.executeScript({
+    // Fetch image directly in the page context via injected function
+    const results = await chrome.scripting.executeScript({
       target: { tabId },
-      files: ['src/content-scripts/image-fetcher.ts'],
+      func: (url: string) => {
+        return fetch(url)
+          .then(r => {
+            if (!r.ok) throw new Error(`Failed to fetch image: ${r.statusText}`);
+            return r.blob();
+          })
+          .then(
+            blob =>
+              new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+              })
+          )
+          .catch(() => url); // Fallback to URL if fetch fails (e.g. CORS)
+      },
+      args: [imageUrl],
     });
 
-    // Wait for the content script to signal readiness (handshake)
-    await waitForImageFetcherReady(tabId);
+    const imageData = results[0]?.result as string | undefined;
 
-    // Send message to content script to fetch the image
-    chrome.tabs.sendMessage(
-      tabId,
-      {
-        type: 'FETCH_IMAGE_FROM_PAGE',
-        imageUrl,
-      },
-      response => {
-        if (response?.success && response.data) {
-          // Forward fetched image data to side panel for upscaling
-          chrome.runtime.sendMessage({
-            type: 'START_UPSCALE',
-            imageUrl: response.data,
-            originalUrl: imageUrl,
-          });
-        } else if (response?.error) {
-          // Handle error
-          chrome.runtime.sendMessage({
-            type: 'UPSCALE_ERROR',
-            error: response.error,
-          });
-        }
-      }
-    );
+    if (imageData) {
+      chrome.runtime.sendMessage({
+        type: 'START_UPSCALE',
+        imageUrl: imageData,
+        originalUrl: imageUrl,
+      });
+    } else {
+      chrome.runtime.sendMessage({
+        type: 'UPSCALE_ERROR',
+        error: 'Failed to fetch image from page',
+      });
+    }
   } catch (error) {
     console.error('Failed to handle image upscale:', error);
     chrome.runtime.sendMessage({
@@ -99,35 +104,6 @@ async function handleImageUpscale(imageUrl: string, tabId: number) {
       error: error instanceof Error ? error.message : 'Failed to upscale image',
     });
   }
-}
-
-/**
- * Wait for the image-fetcher content script to signal readiness.
- * Uses a promise-based handshake with a timeout fallback.
- */
-function waitForImageFetcherReady(tabId: number): Promise<void> {
-  return new Promise(resolve => {
-    const TIMEOUT_MS = 5000;
-    let resolved = false;
-
-    const listener = (message: { type: string }, sender: chrome.runtime.MessageSender) => {
-      if (message.type === 'IMAGE_FETCHER_READY' && sender.tab?.id === tabId) {
-        resolved = true;
-        chrome.runtime.onMessage.removeListener(listener);
-        resolve();
-      }
-    };
-
-    chrome.runtime.onMessage.addListener(listener);
-
-    // Fallback timeout in case the ready signal is missed
-    setTimeout(() => {
-      if (!resolved) {
-        chrome.runtime.onMessage.removeListener(listener);
-        resolve();
-      }
-    }, TIMEOUT_MS);
-  });
 }
 
 // Track hovered images from content scripts
@@ -140,9 +116,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (sender.tab?.windowId) {
       chrome.sidePanel.open({ windowId: sender.tab.windowId }).catch(() => {});
     }
-  } else if (message.type === 'IMAGE_FETCHER_READY') {
-    // Content script is ready
-    console.log('Image fetcher content script ready');
   }
 
   return true; // Keep message channel open for async response
