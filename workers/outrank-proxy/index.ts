@@ -18,7 +18,7 @@ interface IEnv {
   ALLOWED_IP: string;
 }
 
-// eslint-disable-next-line import/no-default-export
+ 
 export default {
   async fetch(request: Request, env: IEnv): Promise<Response> {
     // Health check
