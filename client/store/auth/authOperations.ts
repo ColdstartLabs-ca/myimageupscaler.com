@@ -40,6 +40,7 @@ export function createSignInWithEmail(
           .identify({ userId: data.user.id, email: data.user.email || undefined })
           .catch(() => {});
         const user: IAuthUser = {
+          id: data.user.id,
           email: data.user.email || '',
           name: data.user.user_metadata?.name,
           provider: AuthProvider.EMAIL,

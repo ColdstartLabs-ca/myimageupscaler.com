@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "paths": {
+      "@/*": ["./*"],
+      "@client/*": ["./client/*"],
+      "@server/*": ["./server/*"],
+      "@shared/*": ["./shared/*"],
+      "@app/*": ["./app/*"],
+      "@lib/*": ["./lib/*"],
+      "@locales/*": ["./locales/*"],
+      "@extension/*": ["./extension/src/*"]
+    }
+  },
+  "references": [
+    { "path": "./tsconfig.app.json" }
+  ]
+}
