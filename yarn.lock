@@ -2326,10 +2326,10 @@
   resolved "https://registry.npmjs.org/@fastify/busboy/-/busboy-2.1.1.tgz"
   integrity sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==
 
-"@fingerprintjs/fingerprintjs@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@fingerprintjs/fingerprintjs/-/fingerprintjs-5.0.1.tgz#e6ca2f88719b90e54a0fa8ab2896eee970948bb7"
-  integrity sha512-KbaeE/rk2WL8MfpRP6jTI4lSr42SJPjvkyrjP3QU6uUDkOMWWYC2Ts1sNSYcegHC8avzOoYTHBj+2fTqvZWQBA==
+"@fingerprintjs/fingerprintjs@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@fingerprintjs/fingerprintjs/-/fingerprintjs-5.1.0.tgz#d14b8012f3612659e302f9e38161092c9e8098ca"
+  integrity sha512-8h/CscV3xQ4KSLyXbSK8YFpZ5AaezzHfkl82mn8NJIEWNi1zLfbZSIu7MGGtx4pqa10oejhEk4u0MNutuE63Fw==
 
 "@formatjs/ecma402-abstract@2.3.6":
   version "2.3.6"

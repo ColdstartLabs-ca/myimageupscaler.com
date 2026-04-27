@@ -36,6 +36,7 @@ import { ImageToPdfConverter } from '@/app/(pseo)/_components/tools/ImageToPdfCo
 import { ExifRemover } from '@/app/(pseo)/_components/tools/ExifRemover';
 import { ImageToText } from '@/app/(pseo)/_components/tools/ImageToText';
 import { PdfToImageConverter } from '@/app/(pseo)/_components/tools/PdfToImageConverter';
+import { GuestUpscaler } from '@/app/(pseo)/_components/tools/GuestUpscaler';
 import { ImageCropper } from '@/app/(pseo)/_components/tools/ImageCropper';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,6 +54,7 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   ImageToText,
   ExifRemover,
   ImageCropper,
+  GuestUpscaler,
 };
 
 /**

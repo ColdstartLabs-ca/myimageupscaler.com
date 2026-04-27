@@ -4,60 +4,125 @@
     {
       "slug": "free-image-upscaler",
       "title": "Free Image Upscaler",
-      "metaTitle": "Free Image Upscaler - Enhance Photos Online",
-      "metaDescription": "Free online image upscaler with AI. Upscale images to 4K with 10 free credits. No signup required, no watermarks. Start enhancing photos now. Free to start.",
-      "h1": "Free Image Upscaler - Enhance Photos Online with AI",
-      "intro": "Get professional image upscaling completely free. 10 credits to start, no signup required, and zero watermarks on your enhanced images.",
+      "metaTitle": "Free Image Upscaler - Enlarge Images Online, No Sign Up",
+      "metaDescription": "Upscale images 2x free with AI. No account required. Try our image upscaler instantly - just upload and download. Quick, easy, no watermarks.",
+      "h1": "Free Image Upscaler",
+      "intro": "Upscale your images 2x with AI - no account required. Just upload an image to see the quality difference instantly.",
       "primaryKeyword": "free image upscaler",
-      "secondaryKeywords": ["free photo upscaler", "upscale image free", "free ai upscaler"],
-      "lastUpdated": "2025-12-10T00:00:00Z",
+      "secondaryKeywords": [
+        "upscale image free",
+        "image upscaler no sign up",
+        "free photo enlarger",
+        "enlarge image free online",
+        "ai image upscaler free",
+        "free image enlarger"
+      ],
+      "lastUpdated": "2026-01-06T00:00:00Z",
       "category": "free",
+      "isInteractive": true,
+      "toolComponent": "GuestUpscaler",
       "toolName": "Free Image Upscaler",
-      "description": "Experience professional-grade AI image upscaling at no cost. Our free tier gives you 10 credits to upscale images to 4K resolution with the same powerful AI technology used by professionals worldwide.",
+      "description": "Experience AI-powered image upscaling without creating an account. Upload any image to instantly enlarge it 2x while preserving quality. See the difference AI makes, then unlock the full power with a free account.",
       "features": [
         {
-          "title": "10 Free Credits",
-          "description": "Start immediately with 10 free image upscaling credits. No credit card, no signup required."
-        },
-        {
-          "title": "No Watermarks",
-          "description": "Unlike other free tools, we never add watermarks to your images. What you create is 100% yours."
-        },
-        {
-          "title": "Full 4K Resolution",
-          "description": "Access the same 4K upscaling capability as premium users. No quality restrictions on free tier."
+          "title": "Instant 2x Upscaling",
+          "description": "Upload any image and get it upscaled 2x in seconds. No signup, no email, no hassle."
         },
         {
           "title": "AI-Powered Quality",
-          "description": "Use the same advanced neural networks that power our premium service. Free doesn't mean lower quality."
+          "description": "Uses the same Real-ESRGAN AI model as our full service. Real detail enhancement, not just pixel stretching."
+        },
+        {
+          "title": "No Watermarks",
+          "description": "Your upscaled images are completely clean. Download and use them anywhere."
+        },
+        {
+          "title": "Privacy First",
+          "description": "Images are processed and automatically deleted within 1 hour. We don't store or share your photos."
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload Your Image",
+          "description": "Drag and drop or click to browse. Supports JPEG, PNG, WebP up to 2MB."
+        },
+        {
+          "step": 2,
+          "title": "AI Processes",
+          "description": "Our Real-ESRGAN model analyzes and upscales your image 2x with AI detail enhancement."
+        },
+        {
+          "step": 3,
+          "title": "Download Free",
+          "description": "Preview the result and download. No watermarks, no signup required."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Quick Product Photo Test",
+          "description": "See if AI upscaling works for your product images before committing.",
+          "example": "Test a supplier photo to see how it looks upscaled before listing on Amazon."
+        },
+        {
+          "title": "Social Media Preview",
+          "description": "Check how an old photo looks upscaled before posting.",
+          "example": "Preview a throwback photo at higher resolution before Instagram."
+        },
+        {
+          "title": "Quality Evaluation",
+          "description": "Compare AI upscaling vs regular resize to see the difference.",
+          "example": "See how text and edges are preserved compared to Photoshop resize."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Zero Friction",
+          "description": "No account creation, no email verification, no credit card. Just upload and go.",
+          "metric": "3 free upscales per day"
+        },
+        {
+          "title": "Same AI Quality",
+          "description": "Uses Real-ESRGAN, the same model powering professional image restoration.",
+          "metric": "Industry-standard neural network"
+        },
+        {
+          "title": "Fast Results",
+          "description": "Most images process in 5-10 seconds on our cloud infrastructure.",
+          "metric": "GPU-accelerated processing"
         }
       ],
       "limitations": [
-        "10 images per month on free tier",
-        "Standard processing speed (30-60 seconds)",
-        "One image at a time (no batch processing)"
+        "3 upscales per day for guests",
+        "2MB file size limit",
+        "2x scale only (sign up for 4x/8x)"
       ],
       "upgradePoints": [
-        "Unlimited monthly credits",
-        "Batch processing (up to 50 images)",
-        "Priority processing queue"
+        "Up to 8x upscaling",
+        "64MB file uploads",
+        "Batch processing",
+        "No daily limits"
       ],
       "faq": [
         {
-          "question": "Is it really free?",
-          "answer": "Yes! You get 10 free image upscaling credits every month, no credit card required. These credits renew monthly."
+          "question": "Is this really free with no catch?",
+          "answer": "Yes! You get 3 free upscales per day at 2x. The only limits are file size (2MB) and scale factor. For 4x/8x upscaling and larger files, you can create a free account."
         },
         {
-          "question": "Will there be watermarks on my images?",
-          "answer": "Never. All images you create with MyImageUpscaler are completely watermark-free, even on the free tier."
+          "question": "What's the difference vs the full upscaler?",
+          "answer": "The free guest version uses the same AI model but is limited to 2x scaling and 2MB files. Creating a free account unlocks 8x scaling, 64MB files, batch processing, and 10 credits monthly."
         },
         {
-          "question": "What happens when I run out of free credits?",
-          "answer": "You can upgrade to a premium plan for unlimited credits, or wait until next month when your free credits renew."
+          "question": "Do you store my images?",
+          "answer": "Images are processed on secure cloud servers and automatically deleted within 1 hour. We never use your images for training or share them."
+        },
+        {
+          "question": "Why do I need to sign up for more?",
+          "answer": "Running AI models costs real money (GPU compute). The free tier lets you evaluate the quality, while accounts let us provide sustainable service with fair usage limits."
         }
       ],
-      "relatedFree": ["free-photo-enhancer", "free-image-enhancer"],
-      "upgradePath": "/pricing"
+      "relatedFree": ["free-photo-enhancer", "free-ai-upscaler"],
+      "upgradePath": "/?signup=1"
     },
     {
       "slug": "free-photo-enhancer",
