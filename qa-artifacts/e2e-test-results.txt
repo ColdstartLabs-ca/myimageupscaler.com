@@ -1,0 +1,653 @@
+
+Running 10 tests using 1 worker
+
+  ✘   1 [chromium] › tests/checkout-recovery.e2e.spec.ts:21:3 › Checkout Recovery - Pre-Checkout Email Capture › should show email capture modal when clicking upgrade on pricing page (36.6s)
+  ✘   2 [chromium] › tests/checkout-recovery.e2e.spec.ts:21:3 › Checkout Recovery - Pre-Checkout Email Capture › should show email capture modal when clicking upgrade on pricing page (retry #1) (32.5s)
+  ✘   3 [chromium] › tests/checkout-recovery.e2e.spec.ts:39:3 › Checkout Recovery - Pre-Checkout Email Capture › should validate email format (32.6s)
+  ✘   4 [chromium] › tests/checkout-recovery.e2e.spec.ts:39:3 › Checkout Recovery - Pre-Checkout Email Capture › should validate email format (retry #1) (32.6s)
+  ✘   5 [chromium] › tests/checkout-recovery.e2e.spec.ts:54:3 › Checkout Recovery - Pre-Checkout Email Capture › should accept valid email and continue to checkout (32.5s)
+  ✘   6 [chromium] › tests/checkout-recovery.e2e.spec.ts:54:3 › Checkout Recovery - Pre-Checkout Email Capture › should accept valid email and continue to checkout (retry #1) (32.4s)
+  ✘   7 [chromium] › tests/checkout-recovery.e2e.spec.ts:78:3 › Checkout Recovery - Pre-Checkout Email Capture › should allow dismissing the email capture modal (32.4s)
+  ✘   8 [chromium] › tests/checkout-recovery.e2e.spec.ts:78:3 › Checkout Recovery - Pre-Checkout Email Capture › should allow dismissing the email capture modal (retry #1) (32.3s)
+  ✘   9 [chromium] › tests/checkout-recovery.e2e.spec.ts:96:3 › Checkout Recovery - Complete Purchase Banner › should show restoration banner for returning users with pending checkout (12.6s)
+  ✘  10 [chromium] › tests/checkout-recovery.e2e.spec.ts:96:3 › Checkout Recovery - Complete Purchase Banner › should show restoration banner for returning users with pending checkout (retry #1) (12.9s)
+  ✘  11 [chromium] › tests/checkout-recovery.e2e.spec.ts:127:3 › Checkout Recovery - Complete Purchase Banner › should display correct plan name in restoration banner (7.7s)
+  ✘  12 [chromium] › tests/checkout-recovery.e2e.spec.ts:127:3 › Checkout Recovery - Complete Purchase Banner › should display correct plan name in restoration banner (retry #1) (8.5s)
+  ✘  13 [chromium] › tests/checkout-recovery.e2e.spec.ts:150:3 › Checkout Recovery - Complete Purchase Banner › should show discount message when recovery code is present (8.5s)
+  ✘  14 [chromium] › tests/checkout-recovery.e2e.spec.ts:150:3 › Checkout Recovery - Complete Purchase Banner › should show discount message when recovery code is present (retry #1) (7.8s)
+  ✘  15 [chromium] › tests/checkout-recovery.e2e.spec.ts:173:3 › Checkout Recovery - Complete Purchase Banner › should allow dismissing the restoration banner (7.6s)
+  ✘  16 [chromium] › tests/checkout-recovery.e2e.spec.ts:173:3 › Checkout Recovery - Complete Purchase Banner › should allow dismissing the restoration banner (retry #1) (8.2s)
+  ✘  17 [chromium] › tests/checkout-recovery.e2e.spec.ts:203:3 › Checkout Recovery - Credit Pack Cart › should show credit pack restoration banner (7.9s)
+  ✘  18 [chromium] › tests/checkout-recovery.e2e.spec.ts:203:3 › Checkout Recovery - Credit Pack Cart › should show credit pack restoration banner (retry #1) (9.6s)
+  ✘  19 [chromium] › tests/checkout-recovery.e2e.spec.ts:226:3 › Checkout Recovery - Credit Pack Cart › should handle regional discount in restoration (7.9s)
+  ✘  20 [chromium] › tests/checkout-recovery.e2e.spec.ts:226:3 › Checkout Recovery - Credit Pack Cart › should handle regional discount in restoration (retry #1) (7.9s)
+
+🧹 Running global teardown - cleaning up test users...
+⚠️ Failed to cleanup test users: Error: Missing Supabase environment variables
+    at cleanupOldTestUsers (file:///home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/helpers/test-user-reset.ts:126:11)
+    at globalTeardown (file:///home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/global-teardown.ts:11:32)
+    at Object.teardown [as setup] (/home/joao/projects/myimageupscaler.com-nw-qa-runner/node_modules/playwright/lib/runner/tasks.js:190:13)
+    at taskLoop (/home/joao/projects/myimageupscaler.com-nw-qa-runner/node_modules/playwright/lib/runner/taskRunner.js:62:11)
+    at TaskRunner.runDeferCleanup (/home/joao/projects/myimageupscaler.com-nw-qa-runner/node_modules/playwright/lib/runner/taskRunner.js:78:5)
+    at TaskRunner.run (/home/joao/projects/myimageupscaler.com-nw-qa-runner/node_modules/playwright/lib/runner/taskRunner.js:43:28)
+    at runTasks (/home/joao/projects/myimageupscaler.com-nw-qa-runner/node_modules/playwright/lib/runner/tasks.js:80:18)
+    at runAllTestsWithConfig (/home/joao/projects/myimageupscaler.com-nw-qa-runner/node_modules/playwright/lib/runner/testRunner.js:379:18)
+    at runTests (/home/joao/projects/myimageupscaler.com-nw-qa-runner/node_modules/playwright/lib/program.js:242:18)
+    at r.<anonymous> (/home/joao/projects/myimageupscaler.com-nw-qa-runner/node_modules/playwright/lib/program.js:70:7)
+
+
+  1) [chromium] › tests/checkout-recovery.e2e.spec.ts:21:3 › Checkout Recovery - Pre-Checkout Email Capture › should show email capture modal when clicking upgrade on pricing page 
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /get started|upgrade|subscribe/i }).first()[22m
+
+
+      29 |       .first();
+      30 |
+    > 31 |     await upgradeButton.click();
+         |                         ^
+      32 |
+      33 |     // Email capture modal should appear
+      34 |     await expect(page.getByText(/enter your email/i)).toBeVisible({ timeout: 10000 });
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:31:25
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-33fc9-ing-upgrade-on-pricing-page-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-33fc9-ing-upgrade-on-pricing-page-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-33fc9-ing-upgrade-on-pricing-page-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /get started|upgrade|subscribe/i }).first()[22m
+
+
+      29 |       .first();
+      30 |
+    > 31 |     await upgradeButton.click();
+         |                         ^
+      32 |
+      33 |     // Email capture modal should appear
+      34 |     await expect(page.getByText(/enter your email/i)).toBeVisible({ timeout: 10000 });
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:31:25
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-33fc9-ing-upgrade-on-pricing-page-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-33fc9-ing-upgrade-on-pricing-page-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-33fc9-ing-upgrade-on-pricing-page-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/checkout-recovery.e2e.spec.ts:39:3 › Checkout Recovery - Pre-Checkout Email Capture › should validate email format 
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /get started|upgrade/i }).first()[22m
+
+
+      41 |
+      42 |     const upgradeButton = page.getByRole('button', { name: /get started|upgrade/i }).first();
+    > 43 |     await upgradeButton.click();
+         |                         ^
+      44 |
+      45 |     // Enter invalid email
+      46 |     const emailInput = page.getByPlaceholder(/email/i);
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:43:25
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-d3acb-hould-validate-email-format-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-d3acb-hould-validate-email-format-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-d3acb-hould-validate-email-format-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /get started|upgrade/i }).first()[22m
+
+
+      41 |
+      42 |     const upgradeButton = page.getByRole('button', { name: /get started|upgrade/i }).first();
+    > 43 |     await upgradeButton.click();
+         |                         ^
+      44 |
+      45 |     // Enter invalid email
+      46 |     const emailInput = page.getByPlaceholder(/email/i);
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:43:25
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-d3acb-hould-validate-email-format-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-d3acb-hould-validate-email-format-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-d3acb-hould-validate-email-format-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests/checkout-recovery.e2e.spec.ts:54:3 › Checkout Recovery - Pre-Checkout Email Capture › should accept valid email and continue to checkout 
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /get started|upgrade/i }).first()[22m
+
+
+      56 |
+      57 |     const upgradeButton = page.getByRole('button', { name: /get started|upgrade/i }).first();
+    > 58 |     await upgradeButton.click();
+         |                         ^
+      59 |
+      60 |     // Enter valid email
+      61 |     const emailInput = page.getByPlaceholder(/email/i);
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:58:25
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-a558b-il-and-continue-to-checkout-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-a558b-il-and-continue-to-checkout-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-a558b-il-and-continue-to-checkout-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /get started|upgrade/i }).first()[22m
+
+
+      56 |
+      57 |     const upgradeButton = page.getByRole('button', { name: /get started|upgrade/i }).first();
+    > 58 |     await upgradeButton.click();
+         |                         ^
+      59 |
+      60 |     // Enter valid email
+      61 |     const emailInput = page.getByPlaceholder(/email/i);
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:58:25
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-a558b-il-and-continue-to-checkout-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-a558b-il-and-continue-to-checkout-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-a558b-il-and-continue-to-checkout-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests/checkout-recovery.e2e.spec.ts:78:3 › Checkout Recovery - Pre-Checkout Email Capture › should allow dismissing the email capture modal 
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /get started|upgrade/i }).first()[22m
+
+
+      80 |
+      81 |     const upgradeButton = page.getByRole('button', { name: /get started|upgrade/i }).first();
+    > 82 |     await upgradeButton.click();
+         |                         ^
+      83 |
+      84 |     // Close button should be present
+      85 |     const closeButton = page.getByRole('button', { name: /close|cancel|×/i }).first();
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:82:25
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-39e3a-ing-the-email-capture-modal-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-39e3a-ing-the-email-capture-modal-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-39e3a-ing-the-email-capture-modal-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /get started|upgrade/i }).first()[22m
+
+
+      80 |
+      81 |     const upgradeButton = page.getByRole('button', { name: /get started|upgrade/i }).first();
+    > 82 |     await upgradeButton.click();
+         |                         ^
+      83 |
+      84 |     // Close button should be present
+      85 |     const closeButton = page.getByRole('button', { name: /close|cancel|×/i }).first();
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:82:25
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-39e3a-ing-the-email-capture-modal-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-39e3a-ing-the-email-capture-modal-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-39e3a-ing-the-email-capture-modal-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [chromium] › tests/checkout-recovery.e2e.spec.ts:96:3 › Checkout Recovery - Complete Purchase Banner › should show restoration banner for returning users with pending checkout 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/pick up where you left off|complete your purchase/i)
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for getByText(/pick up where you left off|complete your purchase/i)[22m
+
+
+      119 |
+      120 |     // Banner should appear with restoration message
+    > 121 |     await expect(page.getByText(/pick up where you left off|complete your purchase/i)).toBeVisible({
+          |                                                                                        ^
+      122 |       timeout: 10000,
+      123 |     });
+      124 |     await expect(page.getByRole('button', { name: /complete purchase|restore/i })).toBeVisible();
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:121:88
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-f8c06-users-with-pending-checkout-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-f8c06-users-with-pending-checkout-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-f8c06-users-with-pending-checkout-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/pick up where you left off|complete your purchase/i)
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for getByText(/pick up where you left off|complete your purchase/i)[22m
+
+
+      119 |
+      120 |     // Banner should appear with restoration message
+    > 121 |     await expect(page.getByText(/pick up where you left off|complete your purchase/i)).toBeVisible({
+          |                                                                                        ^
+      122 |       timeout: 10000,
+      123 |     });
+      124 |     await expect(page.getByRole('button', { name: /complete purchase|restore/i })).toBeVisible();
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:121:88
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-f8c06-users-with-pending-checkout-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-f8c06-users-with-pending-checkout-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-f8c06-users-with-pending-checkout-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [chromium] › tests/checkout-recovery.e2e.spec.ts:127:3 › Checkout Recovery - Complete Purchase Banner › should display correct plan name in restoration banner 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/pro plan/i)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText(/pro plan/i)[22m
+
+
+      145 |
+      146 |     // Should show the plan name
+    > 147 |     await expect(page.getByText(/pro plan/i)).toBeVisible();
+          |                                               ^
+      148 |   });
+      149 |
+      150 |   test('should show discount message when recovery code is present', async ({ page }) => {
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:147:47
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-7b26c--name-in-restoration-banner-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-7b26c--name-in-restoration-banner-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-7b26c--name-in-restoration-banner-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/pro plan/i)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText(/pro plan/i)[22m
+
+
+      145 |
+      146 |     // Should show the plan name
+    > 147 |     await expect(page.getByText(/pro plan/i)).toBeVisible();
+          |                                               ^
+      148 |   });
+      149 |
+      150 |   test('should show discount message when recovery code is present', async ({ page }) => {
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:147:47
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-7b26c--name-in-restoration-banner-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-7b26c--name-in-restoration-banner-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-7b26c--name-in-restoration-banner-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [chromium] › tests/checkout-recovery.e2e.spec.ts:150:3 › Checkout Recovery - Complete Purchase Banner › should show discount message when recovery code is present 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/10%.*discount|exclusive.*discount/i)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText(/10%.*discount|exclusive.*discount/i)[22m
+
+
+      168 |
+      169 |     // Should mention the discount
+    > 170 |     await expect(page.getByText(/10%.*discount|exclusive.*discount/i)).toBeVisible();
+          |                                                                        ^
+      171 |   });
+      172 |
+      173 |   test('should allow dismissing the restoration banner', async ({ page }) => {
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:170:72
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-f46f0-en-recovery-code-is-present-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-f46f0-en-recovery-code-is-present-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-f46f0-en-recovery-code-is-present-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/10%.*discount|exclusive.*discount/i)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText(/10%.*discount|exclusive.*discount/i)[22m
+
+
+      168 |
+      169 |     // Should mention the discount
+    > 170 |     await expect(page.getByText(/10%.*discount|exclusive.*discount/i)).toBeVisible();
+          |                                                                        ^
+      171 |   });
+      172 |
+      173 |   test('should allow dismissing the restoration banner', async ({ page }) => {
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:170:72
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-f46f0-en-recovery-code-is-present-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-f46f0-en-recovery-code-is-present-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-f46f0-en-recovery-code-is-present-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [chromium] › tests/checkout-recovery.e2e.spec.ts:173:3 › Checkout Recovery - Complete Purchase Banner › should allow dismissing the restoration banner 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('button', { name: /dismiss|close|×/i })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('button', { name: /dismiss|close|×/i })[22m
+
+
+      191 |
+      192 |     const closeButton = page.getByRole('button', { name: /dismiss|close|×/i });
+    > 193 |     await expect(closeButton).toBeVisible();
+          |                               ^
+      194 |
+      195 |     await closeButton.click();
+      196 |
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:193:31
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-90959-sing-the-restoration-banner-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-90959-sing-the-restoration-banner-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-90959-sing-the-restoration-banner-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('button', { name: /dismiss|close|×/i })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('button', { name: /dismiss|close|×/i })[22m
+
+
+      191 |
+      192 |     const closeButton = page.getByRole('button', { name: /dismiss|close|×/i });
+    > 193 |     await expect(closeButton).toBeVisible();
+          |                               ^
+      194 |
+      195 |     await closeButton.click();
+      196 |
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:193:31
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-90959-sing-the-restoration-banner-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-90959-sing-the-restoration-banner-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-90959-sing-the-restoration-banner-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [chromium] › tests/checkout-recovery.e2e.spec.ts:203:3 › Checkout Recovery - Credit Pack Cart › should show credit pack restoration banner 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/100.*credits|credit pack/i)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText(/100.*credits|credit pack/i)[22m
+
+
+      221 |
+      222 |     // Should show credit pack in restoration message
+    > 223 |     await expect(page.getByText(/100.*credits|credit pack/i)).toBeVisible();
+          |                                                               ^
+      224 |   });
+      225 |
+      226 |   test('should handle regional discount in restoration', async ({ page }) => {
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:223:63
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-cb6bb-dit-pack-restoration-banner-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-cb6bb-dit-pack-restoration-banner-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-cb6bb-dit-pack-restoration-banner-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/100.*credits|credit pack/i)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText(/100.*credits|credit pack/i)[22m
+
+
+      221 |
+      222 |     // Should show credit pack in restoration message
+    > 223 |     await expect(page.getByText(/100.*credits|credit pack/i)).toBeVisible();
+          |                                                               ^
+      224 |   });
+      225 |
+      226 |   test('should handle regional discount in restoration', async ({ page }) => {
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:223:63
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-cb6bb-dit-pack-restoration-banner-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-cb6bb-dit-pack-restoration-banner-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-cb6bb-dit-pack-restoration-banner-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [chromium] › tests/checkout-recovery.e2e.spec.ts:226:3 › Checkout Recovery - Credit Pack Cart › should handle regional discount in restoration 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/20%.*regional|regional.*pricing/i)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText(/20%.*regional|regional.*pricing/i)[22m
+
+
+      244 |
+      245 |     // Should mention regional pricing
+    > 246 |     await expect(page.getByText(/20%.*regional|regional.*pricing/i)).toBeVisible();
+          |                                                                      ^
+      247 |   });
+      248 | });
+      249 |
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:246:70
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-cd547-nal-discount-in-restoration-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-cd547-nal-discount-in-restoration-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-cd547-nal-discount-in-restoration-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText(/20%.*regional|regional.*pricing/i)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText(/20%.*regional|regional.*pricing/i)[22m
+
+
+      244 |
+      245 |     // Should mention regional pricing
+    > 246 |     await expect(page.getByText(/20%.*regional|regional.*pricing/i)).toBeVisible();
+          |                                                                      ^
+      247 |   });
+      248 | });
+      249 |
+        at /home/joao/projects/myimageupscaler.com-nw-qa-runner/tests/checkout-recovery.e2e.spec.ts:246:70
+
+    Error Context: test-results/checkout-recovery.e2e-Chec-cd547-nal-discount-in-restoration-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/checkout-recovery.e2e-Chec-cd547-nal-discount-in-restoration-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/checkout-recovery.e2e-Chec-cd547-nal-discount-in-restoration-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10 failed
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:21:3 › Checkout Recovery - Pre-Checkout Email Capture › should show email capture modal when clicking upgrade on pricing page 
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:39:3 › Checkout Recovery - Pre-Checkout Email Capture › should validate email format 
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:54:3 › Checkout Recovery - Pre-Checkout Email Capture › should accept valid email and continue to checkout 
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:78:3 › Checkout Recovery - Pre-Checkout Email Capture › should allow dismissing the email capture modal 
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:96:3 › Checkout Recovery - Complete Purchase Banner › should show restoration banner for returning users with pending checkout 
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:127:3 › Checkout Recovery - Complete Purchase Banner › should display correct plan name in restoration banner 
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:150:3 › Checkout Recovery - Complete Purchase Banner › should show discount message when recovery code is present 
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:173:3 › Checkout Recovery - Complete Purchase Banner › should allow dismissing the restoration banner 
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:203:3 › Checkout Recovery - Credit Pack Cart › should show credit pack restoration banner 
+    [chromium] › tests/checkout-recovery.e2e.spec.ts:226:3 › Checkout Recovery - Credit Pack Cart › should handle regional discount in restoration 
