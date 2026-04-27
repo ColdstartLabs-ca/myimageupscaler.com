@@ -16,7 +16,11 @@ crons = [
   # Full reconciliation - daily at 3:05 AM UTC
   "5 3 * * *",
   # 3-Kings sitemap refresh - daily at 4:30 AM UTC
-  "30 4 * * *"
+  "30 4 * * *",
+  # Queue campaign emails for eligible users - daily at 00:00 UTC
+  "0 0 * * *",
+  # Send pending campaign emails - every 5 minutes
+  "*/5 * * * *"
 ]
 
 # Environment Variables (non-sensitive defaults)

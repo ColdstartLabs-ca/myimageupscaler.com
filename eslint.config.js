@@ -337,6 +337,7 @@ export default [
     files: ['workers/**/*.ts'],
     languageOptions: {
       globals: {
+        ...globals.es2021,
         Fetcher: 'readonly',
         Request: 'readonly',
         Response: 'readonly',
@@ -390,6 +391,7 @@ export default [
     rules: {
       'import/no-default-export': 'off', // Cloudflare Workers require default exports
       'no-undef': 'off', // Workers runtime globals are not defined in ESLint
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
     },
   },
 ];

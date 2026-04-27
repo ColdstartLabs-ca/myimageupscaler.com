@@ -210,9 +210,7 @@ export function getCreditsForTierAtScale(tier: QualityTier, scale: number): numb
  * Get the min/max credit range for a tier across all supported scales.
  * Returns { min, max } when costs vary by scale, or a flat number when uniform.
  */
-export function getCreditRangeForTier(
-  tier: QualityTier
-): number | { min: number; max: number } {
+export function getCreditRangeForTier(tier: QualityTier): number | { min: number; max: number } {
   const baseCost = getCreditsForTier(tier);
   const modelId = QUALITY_TIER_CONFIG[tier].modelId;
   if (!modelId) return baseCost;
