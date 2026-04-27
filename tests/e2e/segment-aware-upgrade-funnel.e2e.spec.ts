@@ -40,8 +40,8 @@ test.describe('Segment-Aware Upgrade Funnel', () => {
       await page.goto('/dashboard/billing');
       await page.waitForLoadState('domcontentloaded');
 
-      // Wait for page to render
-      await page.waitForTimeout(2000);
+      // Wait for page to render by checking for main content
+      await page.locator('body').waitFor({ state: 'visible' });
 
       // Take screenshot
       await page.screenshot({
@@ -58,8 +58,8 @@ test.describe('Segment-Aware Upgrade Funnel', () => {
       await page.goto('/workspace');
       await page.waitForLoadState('domcontentloaded');
 
-      // Wait for page to render
-      await page.waitForTimeout(2000);
+      // Wait for page to render by checking for main content
+      await page.locator('body').waitFor({ state: 'visible' });
 
       // Take screenshot
       await page.screenshot({
@@ -104,8 +104,8 @@ test.describe('Segment-Aware Upgrade Funnel', () => {
       await page.goto('/dashboard/billing');
       await page.waitForLoadState('domcontentloaded');
 
-      // Wait for page to render
-      await page.waitForTimeout(2000);
+      // Wait for page to render by checking for main content
+      await page.locator('body').waitFor({ state: 'visible' });
 
       // Take screenshot
       await page.screenshot({
@@ -122,8 +122,8 @@ test.describe('Segment-Aware Upgrade Funnel', () => {
       await page.goto('/workspace');
       await page.waitForLoadState('domcontentloaded');
 
-      // Wait for page to render
-      await page.waitForTimeout(2000);
+      // Wait for page to render by checking for main content
+      await page.locator('body').waitFor({ state: 'visible' });
 
       // Take screenshot
       await page.screenshot({
@@ -169,8 +169,8 @@ test.describe('Segment-Aware Upgrade Funnel', () => {
       await page.goto('/dashboard/billing');
       await page.waitForLoadState('domcontentloaded');
 
-      // Wait for page to render
-      await page.waitForTimeout(2000);
+      // Wait for page to render by checking for main content
+      await page.locator('body').waitFor({ state: 'visible' });
 
       // Take screenshot
       await page.screenshot({
@@ -187,8 +187,8 @@ test.describe('Segment-Aware Upgrade Funnel', () => {
       await page.goto('/workspace');
       await page.waitForLoadState('domcontentloaded');
 
-      // Wait for page to render
-      await page.waitForTimeout(2000);
+      // Wait for page to render by checking for main content
+      await page.locator('body').waitFor({ state: 'visible' });
 
       // Take screenshot
       await page.screenshot({
