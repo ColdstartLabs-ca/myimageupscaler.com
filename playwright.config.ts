@@ -39,6 +39,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
       },
       testMatch: /.*\.e2e\.spec\.ts/,
+      timeout: 60000, // Dev server compiles on demand; locale pages can be slow under load
     },
 
     // Mobile Tests - iPhone
