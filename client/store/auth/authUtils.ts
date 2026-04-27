@@ -27,12 +27,14 @@ export function createUserFromSession(
   session: Session,
   role: 'user' | 'admin' = 'user'
 ): {
+  id: string;
   email: string;
   name?: string;
   provider: AuthProvider;
   role: 'user' | 'admin';
 } {
   return {
+    id: session.user.id,
     email: session.user.email || '',
     name: session.user.user_metadata?.name,
     provider: getAuthProvider(session),
