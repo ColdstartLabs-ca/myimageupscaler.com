@@ -136,5 +136,17 @@ Intent mismatch fixes (seo_title only):
 
 - `best-free-ai-image-upscaler-2026-tested-compared` — seo_title 47→59 chars, seo_description 141→136 chars
 - New seo_title: "Best Free AI Image Upscaler 2026: Tested, No Signup, Online" (includes all top GSC query keywords)
+
+## 2026-04-27
+
+### SEO: Content Gap Fixes — Feature Synonyms + 4K/8K + Modifier Coverage
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared
+**Why:** /content-gap analysis (90-day GSC pull) identified 3 content-level gaps in the high-impression post: "denoiser/sharpener/deblurrer/enlarger" feature synonyms absent from page (124 impressions), no "4K/8K" resolution mentions despite 262 impressions for those queries, and no explicit "no registration" language (39 impressions). Snippet/seo_title already updated on 04-26.
+**Changes:**
+
+- `best-free-ai-image-upscaler-2026-tested-compared` — intro: "upscaler websites in 2026 let you upscale images to 4K or 8K resolution" (adds websites + 4K/8K)
+- `best-free-ai-image-upscaler-2026-tested-compared` — "When You Need More" section: "AI denoising, deblurring, sharpening, image enlargement" replacing "noise reduction, sharpening" (adds denoiser/deblurrer/enlarger synonyms)
+- `best-free-ai-image-upscaler-2026-tested-compared` — How to Use: "No account. No registration. No credit card." (adds registration)
 - New seo_description: "We tested the best free AI image upscalers online in 2026. No signup, no watermarks. See which tools actually work for upscaling images." (strong CTA with missing keywords)
 - H1 unchanged — already matches query intent

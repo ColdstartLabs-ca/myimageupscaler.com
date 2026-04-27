@@ -27,6 +27,13 @@ Check `.claude/skills/` for relevant patterns.
 
 - Whenever you feel you learned a new "skill" for this codebase, feel free to add it to `.claude/skills/`.
 
+## Coding Discipline
+
+- **Think first**: State assumptions explicitly. If multiple interpretations exist, present them — don't pick silently. If unclear, ask before implementing.
+- **Simplicity**: Minimum code that solves the problem. No features beyond what was asked. If you write 200 lines and it could be 50, rewrite it.
+- **Surgical**: Touch only what you must. Don't "improve" adjacent code, comments, or formatting. Remove only imports/vars YOUR changes orphaned — not pre-existing dead code.
+- **Verifiable goals**: Transform tasks into success criteria — "Fix the bug" → "Write a test reproducing it, then make it pass". Multi-step tasks get a brief plan with verify steps.
+
 ## Conventions
 
 - Principles: SOLID, SRP, KISS, DRY, YAGNI
