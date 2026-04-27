@@ -18,7 +18,7 @@ const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxeXNheWxza2Zmc2Z3dW5jemJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2OTY2NDYsImV4cCI6MjA3OTI3MjY0Nn0.xAaMqqb05EbFmSn7Pi4piHR22Eibiha0tgTYpcVo9mM';
 
 // Starter plan — cheapest paid plan, smoke test account should be on free tier
-const STARTER_PRICE_ID = process.env.SMOKE_PRICE_ID || 'price_1SpFABLrHNMv3SHuhCh2LUCn';
+const STARTER_PRICE_ID = process.env.SMOKE_PRICE_ID || 'price_1TPoss1I7KzZir1ikF1Wk48f';
 
 test.describe('Checkout smoke tests', () => {
   test('pricing page loads with plan CTAs', async ({ page }) => {
