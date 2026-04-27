@@ -1,0 +1,26 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90m/home/joao/projects/myimageupscaler.com-nw-qa-runner[39m
+
+ [32m✓[39m tests/unit/server/services/recovery-discount.service.unit.spec.ts[2m > [22mrecovery-discount.service[2m > [22mcreates Stripe promotion codes with the SDK promotion payload[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/server/services/recovery-discount.service.unit.spec.ts[2m > [22mrecovery-discount.service[2m > [22mreads coupon information from promoCode.promotion.coupon during validation[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/server/services/recovery-discount.service.unit.spec.ts[2m > [22mrecovery-discount.service[2m > [22mpaginates promotion code lookups until it finds the matching checkout id[32m 1[2mms[22m[39m
+[90mstderr[2m | tests/unit/api/recover-abandoned-checkouts-cron.unit.spec.ts[2m > [22m[2mGET /api/cron/recover-abandoned-checkouts[2m > [22m[2mreturns 401 when the cron secret is invalid
+[22m[39m[cron/recover-abandoned-checkouts] Invalid cron secret
+
+ [32m✓[39m tests/unit/api/recover-abandoned-checkouts-cron.unit.spec.ts[2m > [22mGET /api/cron/recover-abandoned-checkouts[2m > [22mreturns 401 when the cron secret is invalid[32m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/api/recover-abandoned-checkouts-cron.unit.spec.ts[2m > [22mGET /api/cron/recover-abandoned-checkouts[2m > [22mpasses dryRun through to each recovery email batch[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/api/abandoned-checkout-create.unit.spec.ts[2m > [22mPOST /api/checkout/abandoned[2m > [22mrejects invalid purchaseType values[32m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/api/abandoned-checkout-create.unit.spec.ts[2m > [22mPOST /api/checkout/abandoned[2m > [22maccepts subscription as valid purchaseType[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/api/abandoned-checkout-create.unit.spec.ts[2m > [22mPOST /api/checkout/abandoned[2m > [22maccepts credit_pack as valid purchaseType[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/api/abandoned-checkout-create.unit.spec.ts[2m > [22mPOST /api/checkout/abandoned[2m > [22mrejects missing purchaseType[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/server/services/recovery-email.service.unit.spec.ts[2m > [22mrecovery-email.service[2m > [22mreturns due counts without sending emails when dryRun is enabled[32m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/server/services/recovery-email.service.unit.spec.ts[2m > [22mrecovery-email.service[2m > [22mtargets the cron-sized due window instead of sending reminder emails early[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/server/services/recovery-email.service.unit.spec.ts[2m > [22mrecovery-email.service[2m > [22mmarks sent emails with the RPC helper so prior JSON flags are preserved[32m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/client/pre-checkout-email.unit.spec.tsx[2m > [22mpre-checkout email capture[2m > [22mtracks the shown event once on mount in StrictMode[32m 30[2mms[22m[39m
+ [32m✓[39m tests/unit/client/pre-checkout-email.unit.spec.tsx[2m > [22mpre-checkout email capture[2m > [22mpersists saved emails in hook state and storage[32m 13[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 23:35:38
+[2m   Duration [22m 1.01s[2m (transform 666ms, setup 1.11s, import 563ms, tests 100ms, environment 2.50s)[22m
+
