@@ -30,10 +30,10 @@ import type {
   IConsentStatus,
   IReferralSource,
 } from '@server/analytics/types';
-import { isDevelopment, isTest } from '@shared/config/env';
-
-// Dynamically import Amplitude to code-split this heavy library (~40KB)
-let amplitudeModule: typeof import('@amplitude/analytics-browser') | null = null;
+import { isDevelopment, isTest, clientEnv } from '@shared/config/env';
+import { multiplexer } from '@shared/analytics/analyticsMultiplexer';
+import { AmplitudeProvider } from '@shared/analytics/providers/amplitude-provider';
+import { GA4Provider } from '@shared/analytics/providers/ga4-provider';
 
 // =============================================================================
 // Constants
@@ -110,6 +110,7 @@ function _emitBusEvent(event: TAnalyticsBusEvent): void {
 
 let isInitialized = false;
 let consentStatus: IConsentStatus = 'pending';
+let amplitudeProvider: AmplitudeProvider | null = null;
 
 // =============================================================================
 // Helpers
@@ -403,29 +404,21 @@ export const analytics = {
 
     consentStatus = getStoredConsent();
 
-    // Only initialize Amplitude if consent is granted
     if (consentStatus !== 'granted') {
       return;
     }
 
-    // Dynamic import to code-split Amplitude (~40KB)
-    if (!amplitudeModule) {
-      amplitudeModule = await import('@amplitude/analytics-browser');
-    }
+    // Initialize providers via multiplexer
+    amplitudeProvider = new AmplitudeProvider();
+    multiplexer.addProvider(amplitudeProvider);
+    await multiplexer.initProvider(amplitudeProvider, { apiKey });
 
-    amplitudeModule.init(apiKey, {
-      autocapture: {
-        elementInteractions: false,
-        pageViews: false, // We handle this manually for SPA
-        sessions: true,
-        formInteractions: false,
-        fileDownloads: false,
-      },
-      defaultTracking: {
-        sessions: true,
-        pageViews: false, // We handle pageViews manually
-      },
-    });
+    const gaMeasurementId = clientEnv.GA_MEASUREMENT_ID;
+    if (gaMeasurementId) {
+      const ga4Provider = new GA4Provider();
+      multiplexer.addProvider(ga4Provider);
+      await multiplexer.initProvider(ga4Provider, { measurementId: gaMeasurementId });
+    }
 
     isInitialized = true;
   },
@@ -457,9 +450,8 @@ export const analytics = {
 
     if (status === 'granted' && apiKey && !isInitialized) {
       await this.init(apiKey);
-    } else if (status === 'denied' && isInitialized && amplitudeModule) {
-      // Reset Amplitude on consent withdrawal
-      amplitudeModule.reset();
+    } else if (status === 'denied' && isInitialized) {
+      multiplexer.reset();
       isInitialized = false;
     }
   },
@@ -479,38 +471,15 @@ export const analytics = {
       console.info('[Analytics:dev] identify', await getSafeIdentifyLogPayload(identity));
     }
 
-    if (!this.isEnabled() || !amplitudeModule) return;
+    if (!this.isEnabled()) return;
 
-    amplitudeModule.setUserId(identity.userId);
-
-    const identifyEvent = new amplitudeModule.Identify();
-
-    // Set plaintext email (required for Stripe/Amplitude cross-referencing) and its hash
-    if (identity.email) {
-      identifyEvent.set('email', identity.email);
-      const emailHash = await hashEmail(identity.email);
-      identifyEvent.set('email_hash', emailHash);
-    } else if (identity.emailHash) {
-      identifyEvent.set('email_hash', identity.emailHash);
-    }
-    if (identity.createdAt) {
-      identifyEvent.setOnce('created_at', identity.createdAt);
-    }
-    if (identity.subscriptionTier) {
-      identifyEvent.set('subscription_tier', identity.subscriptionTier);
-    }
-    // NEW: Add pricingRegion, imagesUpscaledLifetime, accountAgeDays for user lifecycle analysis
-    if (identity.pricingRegion) {
-      identifyEvent.set('pricing_region', identity.pricingRegion);
-    }
-    if (identity.imagesUpscaledLifetime !== undefined) {
-      identifyEvent.set('images_upscaled_lifetime', identity.imagesUpscaledLifetime);
-    }
-    if (identity.accountAgeDays !== undefined) {
-      identifyEvent.set('account_age_days', identity.accountAgeDays);
+    // Hash email for providers that need it
+    const enrichedIdentity = { ...identity };
+    if (identity.email && !identity.emailHash) {
+      enrichedIdentity.emailHash = await hashEmail(identity.email);
     }
 
-    amplitudeModule.identify(identifyEvent);
+    await multiplexer.identify(enrichedIdentity);
   },
 
   /**
@@ -521,8 +490,8 @@ export const analytics = {
       console.info('[Analytics:dev] reset');
     }
 
-    if (!isInitialized || !amplitudeModule) return;
-    amplitudeModule.reset();
+    if (!isInitialized) return;
+    multiplexer.reset();
   },
 
   /**
@@ -537,9 +506,9 @@ export const analytics = {
       _emitBusEvent(name as TAnalyticsBusEvent);
     }
 
-    if (!this.isEnabled() || !amplitudeModule) return;
+    if (!this.isEnabled()) return;
 
-    amplitudeModule.track(name, eventProperties);
+    multiplexer.track(name, eventProperties);
   },
 
   /**
@@ -548,7 +517,7 @@ export const analytics = {
   trackPageView(path: string, properties?: Record<string, unknown>): void {
     const referralSource = getReferralSource();
 
-    if (!this.isEnabled() || !amplitudeModule) {
+    if (!this.isEnabled()) {
       logDevTrack(
         'page_view',
         buildTrackedEventProperties(buildPageViewProperties(path, properties, referralSource))
@@ -563,13 +532,10 @@ export const analytics = {
     const lastVisit = getLastVisit();
     const currentSessionId = getSessionId();
     if (lastVisit && lastVisit.sessionId !== currentSessionId) {
-      // Calculate days since last visit
       const daysSinceLastVisit = Math.floor(
         (Date.now() - lastVisit.timestamp) / (1000 * 60 * 60 * 24)
       );
 
-      // Only track return visits for users who visited more than 1 day ago
-      // to avoid same-day session counting as return visits
       if (daysSinceLastVisit >= 1) {
         this.track('return_visit', {
           daysSinceLastVisit,
@@ -589,7 +555,6 @@ export const analytics = {
     let firstTouchUtm: IFirstTouchUtm | null = getStoredFirstTouchUtm();
 
     if (hasUtmInUrl) {
-      // Keep strict first-touch semantics: only persist from URL when no prior attribution exists.
       if (!firstTouchUtm) {
         firstTouchUtm = {
           ...filteredUtm,
@@ -606,39 +571,16 @@ export const analytics = {
       }
     }
 
-    // Persist first-touch attribution as user properties (setOnce = never overwritten)
-    if (firstTouchUtm) {
-      const identifyEvent = new amplitudeModule.Identify();
+    // Track page view via multiplexer (handles both Amplitude and GA4)
+    multiplexer.trackPageView(path, buildPageViewProperties(path, properties, referralSource));
 
-      if (firstTouchUtm.utmSource) {
-        identifyEvent.setOnce('first_touch_utm_source', firstTouchUtm.utmSource);
-        identifyEvent.setOnce('first_touch_source', firstTouchUtm.utmSource);
-      }
-      if (firstTouchUtm.utmMedium) {
-        identifyEvent.setOnce('first_touch_utm_medium', firstTouchUtm.utmMedium);
-        identifyEvent.setOnce('first_touch_medium', firstTouchUtm.utmMedium);
-      }
-      if (firstTouchUtm.utmCampaign) {
-        identifyEvent.setOnce('first_touch_utm_campaign', firstTouchUtm.utmCampaign);
-        identifyEvent.setOnce('first_touch_campaign', firstTouchUtm.utmCampaign);
-      }
-      if (firstTouchUtm.utmTerm)
-        identifyEvent.setOnce('first_touch_utm_term', firstTouchUtm.utmTerm);
-      if (firstTouchUtm.utmContent)
-        identifyEvent.setOnce('first_touch_utm_content', firstTouchUtm.utmContent);
-      if (firstTouchUtm.landingPage)
-        identifyEvent.setOnce('first_touch_landing', firstTouchUtm.landingPage);
-
-      amplitudeModule.identify(identifyEvent);
+    // Persist first-touch UTM as Amplitude user properties (setOnce for attribution)
+    if (firstTouchUtm && amplitudeProvider) {
+      amplitudeProvider.setFirstTouchUtm(firstTouchUtm);
     }
 
-    // Get and persist referral source as first-touch user property
-    if (referralSource) {
-      const identifyEvent = new amplitudeModule.Identify();
-      identifyEvent.setOnce('referral_source', referralSource);
-      amplitudeModule.identify(identifyEvent);
-    }
-
+    // Also track as regular event for Amplitude's first-touch identify logic
+    // (GA4 gets it via trackPageView above, Amplitude via track below)
     this.track('page_view', buildPageViewProperties(path, properties, referralSource));
   },
 
@@ -665,11 +607,14 @@ export const analytics = {
     if (typeof window === 'undefined') return null;
 
     // If Amplitude is initialized, get the device ID directly from the SDK
-    if (amplitudeModule) {
+    if (amplitudeProvider) {
       try {
-        const deviceId = amplitudeModule.getDeviceId();
-        if (deviceId) {
-          return deviceId;
+        const mod = amplitudeProvider.getAmplitudeModule();
+        if (mod) {
+          const deviceId = mod.getDeviceId();
+          if (deviceId) {
+            return deviceId;
+          }
         }
       } catch {
         // Ignore errors
@@ -677,12 +622,10 @@ export const analytics = {
     }
 
     // Fallback: generate a consistent device ID based on a stored value
-    // This ensures we have something to correlate even before Amplitude fully initializes
     const DEVICE_ID_KEY = 'miu_device_id';
     try {
       let deviceId = localStorage.getItem(DEVICE_ID_KEY);
       if (!deviceId) {
-        // Generate a new device ID if none exists
         deviceId = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
         localStorage.setItem(DEVICE_ID_KEY, deviceId);
       }
@@ -698,9 +641,11 @@ export const analytics = {
    * Returns null if Amplitude is not initialized or running server-side.
    */
   getAmplitudeSessionId(): number | null {
-    if (typeof window === 'undefined' || !amplitudeModule) return null;
+    if (typeof window === 'undefined' || !amplitudeProvider) return null;
     try {
-      const id = amplitudeModule.getSessionId();
+      const mod = amplitudeProvider.getAmplitudeModule();
+      if (!mod) return null;
+      const id = mod.getSessionId();
       return typeof id === 'number' ? id : null;
     } catch {
       return null;

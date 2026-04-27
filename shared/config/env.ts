@@ -239,6 +239,8 @@ const serverEnvSchema = z.object({
   // Analytics (server-side HTTP API)
   AMPLITUDE_API_KEY: z.string().default(''),
   AMPLITUDE_SECRET_KEY: z.string().default(''),
+  GA4_API_SECRET: z.string().default(''),
+  GA_MEASUREMENT_ID: z.string().default(''),
   // CORS
   ALLOWED_ORIGIN: z.string().default('*'),
   // Cloudflare
@@ -388,6 +390,8 @@ function loadServerEnv(): IServerEnv {
       process.env.AMPLITUDE_API_KEY || process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY || '',
     // Dashboard REST queries require the project's secret key in addition to the API key.
     AMPLITUDE_SECRET_KEY: process.env.AMPLITUDE_SECRET_KEY || '',
+    GA4_API_SECRET: process.env.GA4_API_SECRET || '',
+    GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '',
     // CORS
     ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN || '*',
     // Cloudflare

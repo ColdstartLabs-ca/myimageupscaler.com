@@ -125,3 +125,16 @@ Intent mismatch fixes (seo_title only):
 - Replaced "Try free!" / "Try it free!" → "Free for your first images." where used as an unconditional free claim
 - Intentionally skipped genuinely free browser-based tools: social-media-resize.json (resizers), bulk-tools.json (bulk resizer with "no upload"), free.json (background remover with "no signup"), interactive-tools.json format converters (PNG→JPG etc.)
 - Files updated: ai-features, alternatives, bulk-tools, camera-raw, comparison, comparisons-expanded, competitor-comparisons, content, device-specific, device-use, format-conversion, format-scale, formats, free, guides, industry-insights, personas-expanded, photo-restoration, platform-format, platforms, scale, technical-guides, tools, use-cases, use-cases-expanded
+
+## 2026-04-26
+
+### SEO: CTR Fix — GSC Keyword Gap Resolution for 32K Impression Post
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared
+**Why:** 32,377 impressions with only 9 clicks (0.03% CTR) at position 7.5. Only 20% keyword overlap with top GSC queries. Missing keywords: best, image, upscaler, 2026, online, tools, signup, myimageupscaler. CTR at positions 8-10 was 0.0% vs expected 2-3%.
+**Changes:**
+
+- `best-free-ai-image-upscaler-2026-tested-compared` — seo_title 47→59 chars, seo_description 141→136 chars
+- New seo_title: "Best Free AI Image Upscaler 2026: Tested, No Signup, Online" (includes all top GSC query keywords)
+- New seo_description: "We tested the best free AI image upscalers online in 2026. No signup, no watermarks. See which tools actually work for upscaling images." (strong CTA with missing keywords)
+- H1 unchanged — already matches query intent

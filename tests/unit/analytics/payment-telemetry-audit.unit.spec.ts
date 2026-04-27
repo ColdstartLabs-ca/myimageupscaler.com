@@ -38,21 +38,20 @@ describe('analyticsService session stitching', () => {
 // ─── analyticsClient ─────────────────────────────────────────────────────────
 
 describe('analyticsClient email identity', () => {
-  test('identify() sets plaintext email as user property', async () => {
-    const src = await source('client/analytics/analyticsClient.ts');
-    // Should set 'email' directly (not just the hash)
+  test('identify() sets plaintext email as user property via provider', async () => {
+    const src = await source('shared/analytics/providers/amplitude-provider.ts');
     expect(src).toMatch(/identifyEvent\.set\(\s*['"]email['"]\s*,\s*identity\.email\s*\)/);
   });
 
   test('identify() still sets email_hash for privacy-safe cross-referencing', async () => {
-    const src = await source('client/analytics/analyticsClient.ts');
+    const src = await source('shared/analytics/providers/amplitude-provider.ts');
     expect(src).toMatch(/identifyEvent\.set\(\s*['"]email_hash['"]/);
   });
 
   test('getAmplitudeSessionId() method is exported on the analytics object', async () => {
     const src = await source('client/analytics/analyticsClient.ts');
     expect(src).toContain('getAmplitudeSessionId()');
-    expect(src).toMatch(/amplitudeModule\.getSessionId\(\)/);
+    expect(src).toMatch(/getSessionId\(\)/);
   });
 });
 

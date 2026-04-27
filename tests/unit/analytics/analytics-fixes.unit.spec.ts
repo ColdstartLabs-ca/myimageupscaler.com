@@ -68,19 +68,21 @@ describe('Analytics Fixes - Structural Checks', () => {
 
       // Should NOT contain localStorage.getItem('amp_device_id')
       expect(clientSource).not.toContain("localStorage.getItem('amp_device_id')");
-      // Should contain amplitudeModule.getDeviceId()
-      expect(clientSource).toContain('amplitudeModule.getDeviceId()');
+      // Should get device ID via the Amplitude provider
+      expect(clientSource).toMatch(/getAmplitudeModule\(\)/);
     });
   });
 
   describe('Fix #3b: trackPageView persists UTMs with setOnce', () => {
     test('trackPageView should use Identify.setOnce for first-touch UTMs', async () => {
       const fs = await import('fs');
-      const clientSource = fs.readFileSync('client/analytics/analyticsClient.ts', 'utf-8');
+      const providerSource = fs.readFileSync(
+        'shared/analytics/providers/amplitude-provider.ts',
+        'utf-8'
+      );
 
-      expect(clientSource).toContain('first_touch_utm_source');
-      expect(clientSource).toContain('.setOnce(');
-      expect(clientSource).toContain('new amplitudeModule.Identify()');
+      expect(providerSource).toContain('first_touch_utm_source');
+      expect(providerSource).toContain('.setOnce(');
     });
   });
 

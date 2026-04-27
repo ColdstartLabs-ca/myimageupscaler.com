@@ -5,6 +5,12 @@ description: Manage Google Cloud Secret Manager for storing and fetching environ
 
 # Google Cloud Secret Manager
 
+## Safety Rules
+
+1. **NEVER push local dev `.env.client` or `.env.api` files directly to prod secrets.** They contain test Stripe keys, empty secrets, and placeholder values. This WILL break production.
+2. **Always keep at least 2 enabled versions** of each secret (one live, one backup). Before destroying an old version, verify there are 2+ enabled versions remaining.
+3. **Always fetch the current prod secret first**, modify only what's needed, then push the modified copy — never push from local dev files.
+
 ## Project Configuration
 
 - **Project ID**: `myimageupscaler-auth`
@@ -55,21 +61,55 @@ The deploy script (`scripts/deploy/deploy.sh`) fetches secrets in step 0:
 
 ## Updating Secrets
 
-```bash
-# Update API secrets
-gcloud secrets versions add myimageupscaler-api-prod --data-file=.env.api
+### CRITICAL SAFETY RULE: Never push local dev files directly to prod secrets
 
-# Update client secrets
-gcloud secrets versions add myimageupscaler-client-prod --data-file=.env.client
+Local `.env.client` and `.env.api` contain **test/placeholder values** (test Stripe keys, empty secrets, etc.). **NEVER** run `gcloud secrets versions add ... --data-file=.env.api` or `--data-file=.env.client` directly. This will overwrite production secrets with dev values and break the live app.
+
+### Mandatory Safe Update Process
+
+**Step 1**: Fetch the current prod secret to a temp file:
+
+```bash
+gcloud secrets versions access latest --secret=myimageupscaler-api-prod > /tmp/api-prod.env
+gcloud secrets versions access latest --secret=myimageupscaler-client-prod > /tmp/client-prod.env
 ```
 
-**Important**: Always destroy older versions after adding a new one to avoid secret sprawl and reduce security risk:
+**Step 2**: Verify the fetched file looks like prod (has live keys, not test keys):
 
 ```bash
-# List versions to find the old one
-gcloud secrets versions list myimageupscaler-api-prod
+# Should show live Stripe keys (pk_live_, sk_live_), real API keys, NOT test/empty values
+grep -E "STRIPE_SECRET_KEY|STRIPE_PUBLISHABLE" /tmp/api-prod.env
+grep -E "STRIPE_PUBLISHABLE" /tmp/client-prod.env
+```
 
-# Destroy the previous version (replace N with version number)
+**Step 3**: Edit ONLY the specific values you need to change in the temp file:
+
+```bash
+# Example: adding a new variable
+echo "GA4_API_SECRET=new-secret-value" >> /tmp/api-prod.env
+```
+
+**Step 4**: Push the updated temp file:
+
+```bash
+gcloud secrets versions add myimageupscaler-api-prod --data-file=/tmp/api-prod.env
+gcloud secrets versions add myimageupscaler-client-prod --data-file=/tmp/client-prod.env
+```
+
+**Step 5**: Verify the new version is correct:
+
+```bash
+gcloud secrets versions access latest --secret=myimageupscaler-api-prod | grep -E "STRIPE_SECRET_KEY|GA4_API_SECRET"
+gcloud secrets versions access latest --secret=myimageupscaler-client-prod | grep -E "STRIPE_PUBLISHABLE|GA_MEASUREMENT"
+```
+
+**Step 6**: Clean up temp files and destroy old versions:
+
+```bash
+rm /tmp/api-prod.env /tmp/client-prod.env
+
+# List and destroy previous version
+gcloud secrets versions list myimageupscaler-api-prod
 gcloud secrets versions destroy N --secret=myimageupscaler-api-prod --quiet
 ```
 

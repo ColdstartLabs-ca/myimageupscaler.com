@@ -28,6 +28,7 @@
 
 import type { IAnalyticsEvent } from '@server/analytics/types';
 import { serverEnv } from '@shared/config/env';
+import { GA4_EVENT_MAP, GA4_CONVERSION_EVENTS } from '@shared/analytics/types';
 
 // =============================================================================
 // Server-side HTTP API (for use in API routes)
@@ -162,10 +163,71 @@ export async function trackServerEvent(
       });
     }
 
+    // Also send to GA4 Measurement Protocol (fire-and-forget, non-blocking)
+    trackGA4ServerEvent(name, properties, { userId, deviceId }).catch(() => {});
+
     return response.ok;
   } catch (err) {
     console.error('[Analytics] Failed to send server event:', name, err);
     return false;
+  }
+}
+
+/**
+ * Send an event to GA4 via Measurement Protocol.
+ * Non-blocking companion to Amplitude — if it fails, Amplitude is unaffected.
+ */
+async function trackGA4ServerEvent(
+  name: IAnalyticsEvent['name'],
+  properties: Record<string, unknown>,
+  options: { userId?: string; deviceId?: string }
+): Promise<void> {
+  const measurementId = serverEnv.GA_MEASUREMENT_ID;
+  const apiSecret = serverEnv.GA4_API_SECRET;
+
+  if (!measurementId || !apiSecret) return;
+
+  const ga4EventName = GA4_EVENT_MAP[name] || name;
+
+  const ga4Params: Record<string, unknown> = { ...properties };
+  if (options.userId) {
+    ga4Params.user_id = options.userId;
+  }
+
+  // Extract value/currency for purchase events
+  if (GA4_CONVERSION_EVENTS.includes(name)) {
+    if (properties.amountCents) {
+      ga4Params.value = (properties.amountCents as number) / 100;
+      ga4Params.currency = properties.currency || 'USD';
+    }
+    if (properties.planTier) ga4Params.item_name = properties.planTier;
+    if (properties.pack) ga4Params.item_name = properties.pack;
+  }
+
+  try {
+    const response = await fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          client_id: options.deviceId || `server-${Date.now()}`,
+          user_id: options.userId || undefined,
+          events: [{ name: ga4EventName, params: ga4Params }],
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => '<unreadable>');
+      console.error('[Analytics] GA4 Measurement Protocol error:', {
+        status: response.status,
+        body,
+        event: name,
+      });
+    }
+  } catch (err) {
+    console.error('[Analytics] GA4 server event failed:', name, err);
   }
 }
 
