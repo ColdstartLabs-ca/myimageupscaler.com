@@ -26,36 +26,36 @@
  [32m✓[39m tests/unit/gallery/gallery-config.unit.spec.ts[2m > [22mGallery Configuration[2m > [22mgetRemainingSlots[2m > [22mshould return 0 when over limit[32m 0[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-config.unit.spec.ts[2m > [22mGallery Configuration[2m > [22mgetRemainingSlots[2m > [22mshould handle edge case of zero images[32m 0[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mcompressForGallery[2m > [22mshould compress image and convert to WebP[32m 2[2mms[22m[39m
- [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mcompressForGallery[2m > [22mshould resize large images to max 2048px[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mcompressForGallery[2m > [22mshould resize large images to max 2048px[32m 1[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22msaveImage[2m > [22mshould reject save when over tier limit[32m 3[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22msaveImage[2m > [22mshould validate image URL format[32m 1[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22msaveImage[2m > [22mshould reject URLs from non-allowed domains[32m 1[2mms[22m[39m
- [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mlistImages[2m > [22mshould return paginated list of images[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mlistImages[2m > [22mshould return paginated list of images[32m 2[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mdeleteImage[2m > [22mshould throw error if image not found or not owned by user[32m 1[2mms[22m[39m
- [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mgetUsage[2m > [22mshould return correct usage stats when tier is provided[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mgetUsage[2m > [22mshould return correct usage stats when tier is provided[32m 1[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mgetUsage[2m > [22mshould indicate cannot save more when at limit[32m 1[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-service.unit.spec.ts[2m > [22mGallery Storage Service[2m > [22mgetUsage[2m > [22mshould return free tier for users without active subscription[32m 1[2mms[22m[39m
 [90mstderr[2m | tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22m[2mGalleryImageCard[2m > [22m[2mhandles download action
 [22m[39mFailed to download image: Error: Download failed: undefined
     at handleDownload [90m(/home/joao/projects/myimageupscaler.com-nw-qa-runner/[39mclient/components/dashboard/GalleryImageCard.tsx:177:31[90m)[39m
 
- [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mrenders image card with correct information[32m 27[2mms[22m[39m
- [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mshows truncated filename for long filenames[32m 4[2mms[22m[39m
- [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mshows delete confirmation modal when delete button is clicked[32m 11[2mms[22m[39m
- [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mcalls onDelete when delete is confirmed[32m 9[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mrenders image card with correct information[32m 29[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mshows truncated filename for long filenames[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mshows delete confirmation modal when delete button is clicked[32m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mcalls onDelete when delete is confirmed[32m 10[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mshows image preview modal when view button is clicked[32m 5[2mms[22m[39m
- [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mhandles download action[32m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGalleryImageCard[2m > [22mhandles download action[32m 8[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mshows empty state when no images[32m 9[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mshows loading skeleton while loading[32m 5[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mshows images in grid when available[32m 7[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mshows usage bar with correct count[32m 3[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mshows upgrade banner when free user at limit[32m 4[2mms[22m[39m
- [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mshows load more button when hasMore is true[32m 4[2mms[22m[39m
- [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mcalls loadMore when load more button is clicked[32m 8[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mshows load more button when hasMore is true[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mcalls loadMore when load more button is clicked[32m 6[2mms[22m[39m
  [32m✓[39m tests/unit/gallery/gallery-component.unit.spec.tsx[2m > [22mGallery[2m > [22mcalls refresh when refresh button is clicked[32m 4[2mms[22m[39m
 
 [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
 [2m      Tests [22m [1m[32m48 passed[39m[22m[90m (48)[39m
-[2m   Start at [22m 10:51:00
-[2m   Duration [22m 1.03s[2m (transform 352ms, setup 622ms, import 269ms, tests 130ms, environment 1.35s)[22m
+[2m   Start at [22m 23:07:04
+[2m   Duration [22m 1.23s[2m (transform 325ms, setup 641ms, import 318ms, tests 134ms, environment 1.73s)[22m
 
