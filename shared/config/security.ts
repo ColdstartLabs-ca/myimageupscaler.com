@@ -38,6 +38,8 @@ export const CSP_POLICY = {
     'https://api.stripe.com',
     'https://accounts.google.com',
     'https://staticimgly.com', // @imgly/background-removal WASM model
+    'https://cdn.jsdelivr.net', // UpscalerJS browser model files
+    'https://unpkg.com', // UpscalerJS browser model fallback
     'https://analytics.ahrefs.com', // Ahrefs analytics API events
   ],
   'frame-src': [

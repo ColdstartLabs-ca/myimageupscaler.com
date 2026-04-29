@@ -2105,10 +2105,107 @@
       "relatedGuides": ["image-optimization-guide", "web-performance-images"],
       "ctaText": "Try Free Bulk Compressor",
       "ctaUrl": "/tools/compress/bulk-image-compressor"
+    },
+    {
+      "slug": "free-image-upscaler",
+      "title": "Free Image Upscaler",
+      "metaTitle": "Free Image Upscaler - Browser-Based 2x Upscaling | MyImageUpscaler",
+      "metaDescription": "Upscale images for free in your browser. No upload, no signup, no credits, no server processing. Enlarge JPEG, PNG, or WebP images 2x and download instantly.",
+      "h1": "Free Image Upscaler - Browser-Based 2x Image Enlargement",
+      "intro": "Enlarge an image directly in your browser with a free 2x upscaler. Your file stays on your device, processing costs nothing, and the result is ready to download without signup.",
+      "primaryKeyword": "free image upscaler",
+      "secondaryKeywords": [
+        "browser image upscaler",
+        "free AI image upscaler",
+        "upscale image free",
+        "client side image upscaler",
+        "no upload image upscaler"
+      ],
+      "lastUpdated": "2026-04-29T00:00:00Z",
+      "category": "tools",
+      "toolName": "Free Browser Image Upscaler",
+      "description": "A free client-side image upscaler for JPEG, PNG, and WebP files. Processing happens in the browser, so the page can serve users without Replicate API cost.",
+      "isInteractive": true,
+      "toolComponent": "BrowserImageUpscaler",
+      "maxFileSizeMB": 10,
+      "acceptedFormats": ["image/jpeg", "image/png", "image/webp"],
+      "features": [
+        {
+          "title": "Zero Server Cost",
+          "description": "The image is processed locally in the user's browser instead of calling a paid AI API."
+        },
+        {
+          "title": "Private by Default",
+          "description": "Files stay on the device. The browser reads the image, produces the 2x result, and downloads it locally."
+        },
+        {
+          "title": "Instant Download",
+          "description": "Download a PNG result after processing without signup, credits, queues, or watermarks."
+        }
+      ],
+      "useCases": [
+        {
+          "title": "Quick Social Images",
+          "description": "Make small JPEG, PNG, or WebP images larger before posting them online.",
+          "example": "Turn an 800px image into a 1600px image without uploading it."
+        },
+        {
+          "title": "Private Client Files",
+          "description": "Upscale sensitive drafts or references when you do not want the file to leave the browser.",
+          "example": "Enlarge an internal mockup locally before sharing a preview."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "No Credits Required",
+          "description": "Visitors can enlarge an image without consuming paid Replicate processing credits.",
+          "metric": "$0 API cost"
+        },
+        {
+          "title": "Works Without Uploads",
+          "description": "Local processing avoids upload wait time and keeps private files off the server.",
+          "metric": "0 bytes uploaded"
+        }
+      ],
+      "howItWorks": [
+        {
+          "step": 1,
+          "title": "Upload an Image",
+          "description": "Select a JPEG, PNG, or WebP image up to 10 MB."
+        },
+        {
+          "step": 2,
+          "title": "Upscale in Browser",
+          "description": "The page attempts browser-side UpscalerJS processing and falls back to high-quality canvas upscaling if the model is unavailable."
+        },
+        {
+          "step": 3,
+          "title": "Compare and Download",
+          "description": "Preview the original beside the 2x result, then download the upscaled PNG."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is this image upscaler really free?",
+          "answer": "Yes. This page runs in the browser and does not call the paid Replicate API, so there is no per-upscale server cost."
+        },
+        {
+          "question": "Are my images uploaded?",
+          "answer": "No. The selected image is read by your browser, processed locally, and downloaded from your device."
+        },
+        {
+          "question": "What image formats are supported?",
+          "answer": "The tool accepts JPEG, PNG, and WebP images up to 10 MB."
+        }
+      ],
+      "relatedTools": ["ai-image-upscaler", "image-resizer", "image-compressor"],
+      "relatedGuides": ["how-to-upscale-images"],
+      "ctaText": "Upscale Image Free",
+      "ctaUrl": "/tools/free-image-upscaler"
     }
   ],
   "meta": {
-    "totalPages": 10,
-    "lastUpdated": "2025-12-26T00:00:00Z"
+    "totalPages": 16,
+    "lastUpdated": "2026-04-29T00:00:00Z"
   }
 }

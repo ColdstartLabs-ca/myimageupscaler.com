@@ -6,6 +6,7 @@ export { FormatConverter } from './FormatConverter';
 export { InteractiveTool } from './InteractiveTool';
 export { BackgroundRemover } from './BackgroundRemover';
 export { BackgroundChanger } from './BackgroundChanger';
+export { BrowserImageUpscaler } from './BrowserImageUpscaler';
 export { HeicConverter } from './HeicConverter';
 export { GuestUpscaler } from './GuestUpscaler';
 export { ImageToText } from './ImageToText';

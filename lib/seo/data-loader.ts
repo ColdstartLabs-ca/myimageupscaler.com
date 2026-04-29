@@ -55,6 +55,7 @@ const interactiveToolsData = interactiveToolsDataFile as unknown as IPSEODataFil
  * These should NOT appear in /tools/[slug] static params.
  */
 export const DEDICATED_ROUTE_SLUGS = new Set([
+  'free-image-upscaler',
   'image-resizer',
   'bulk-image-resizer',
   'resize-image-for-instagram',

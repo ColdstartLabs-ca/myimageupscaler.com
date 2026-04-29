@@ -26,6 +26,7 @@ import { BreadcrumbNav } from '../ui/BreadcrumbNav';
 // Import interactive tools
 import { BackgroundChanger } from '@/app/(pseo)/_components/tools/BackgroundChanger';
 import { BackgroundRemover } from '@/app/(pseo)/_components/tools/BackgroundRemover';
+import { BrowserImageUpscaler } from '@/app/(pseo)/_components/tools/BrowserImageUpscaler';
 import { BulkImageCompressor } from '@/app/(pseo)/_components/tools/BulkImageCompressor';
 import { BulkImageResizer } from '@/app/(pseo)/_components/tools/BulkImageResizer';
 import { FormatConverter } from '@/app/(pseo)/_components/tools/FormatConverter';
@@ -47,6 +48,7 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   BulkImageResizer,
   BackgroundRemover,
   BackgroundChanger,
+  BrowserImageUpscaler,
   HeicConverter,
   PdfToImageConverter,
   ImageToPdfConverter,
@@ -108,7 +110,12 @@ function getToolProps(componentName: string, config?: IToolConfig): Record<strin
  */
 function PostToolCTA({ slug }: { slug: string }): ReactElement | null {
   // Skip for pages that already are about AI enhancement
-  const aiPages = ['ai-photo-enhancer', 'photo-restoration', 'photo-quality-enhancer'];
+  const aiPages = [
+    'ai-photo-enhancer',
+    'photo-restoration',
+    'photo-quality-enhancer',
+    'free-image-upscaler',
+  ];
   if (aiPages.includes(slug)) return null;
 
   return (
