@@ -2,64 +2,6 @@
   "category": "free",
   "pages": [
     {
-      "slug": "free-image-upscaler",
-      "title": "Free Image Upscaler",
-      "metaTitle": "Free Image Upscaler - Enhance Photos Online",
-      "metaDescription": "Free online image upscaler with AI. Upscale images to 4K with 10 free credits. No signup required, no watermarks. Start enhancing photos now. Free to start.",
-      "h1": "Free Image Upscaler - Enhance Photos Online with AI",
-      "intro": "Get professional image upscaling completely free. 10 credits to start, no signup required, and zero watermarks on your enhanced images.",
-      "primaryKeyword": "free image upscaler",
-      "secondaryKeywords": ["free photo upscaler", "upscale image free", "free ai upscaler"],
-      "lastUpdated": "2025-12-10T00:00:00Z",
-      "category": "free",
-      "toolName": "Free Image Upscaler",
-      "description": "Experience professional-grade AI image upscaling at no cost. Our free tier gives you 10 credits to upscale images to 4K resolution with the same powerful AI technology used by professionals worldwide.",
-      "features": [
-        {
-          "title": "10 Free Credits",
-          "description": "Start immediately with 10 free image upscaling credits. No credit card, no signup required."
-        },
-        {
-          "title": "No Watermarks",
-          "description": "Unlike other free tools, we never add watermarks to your images. What you create is 100% yours."
-        },
-        {
-          "title": "Full 4K Resolution",
-          "description": "Access the same 4K upscaling capability as premium users. No quality restrictions on free tier."
-        },
-        {
-          "title": "AI-Powered Quality",
-          "description": "Use the same advanced neural networks that power our premium service. Free doesn't mean lower quality."
-        }
-      ],
-      "limitations": [
-        "10 images per month on free tier",
-        "Standard processing speed (30-60 seconds)",
-        "One image at a time (no batch processing)"
-      ],
-      "upgradePoints": [
-        "Unlimited monthly credits",
-        "Batch processing (up to 50 images)",
-        "Priority processing queue"
-      ],
-      "faq": [
-        {
-          "question": "Is it really free?",
-          "answer": "Yes! You get 10 free image upscaling credits every month, no credit card required. These credits renew monthly."
-        },
-        {
-          "question": "Will there be watermarks on my images?",
-          "answer": "Never. All images you create with MyImageUpscaler are completely watermark-free, even on the free tier."
-        },
-        {
-          "question": "What happens when I run out of free credits?",
-          "answer": "You can upgrade to a premium plan for unlimited credits, or wait until next month when your free credits renew."
-        }
-      ],
-      "relatedFree": ["free-photo-enhancer", "free-image-enhancer"],
-      "upgradePath": "/pricing"
-    },
-    {
       "slug": "free-photo-enhancer",
       "title": "Free Photo Enhancer",
       "metaTitle": "Free Photo Enhancer - AI Enhancement Tool | MyImageUpscaler",
@@ -114,7 +56,7 @@
           "answer": "No account needed for the free tier. Just visit the site and start enhancing. Create an account only if you want to track your usage or upgrade."
         }
       ],
-      "relatedFree": ["free-image-upscaler", "free-ai-photo-enhancer"],
+      "relatedFree": ["free-ai-upscaler", "free-ai-photo-enhancer"],
       "upgradePath": "/pricing"
     },
     {
@@ -292,7 +234,7 @@
           "answer": "Typically 30-60 seconds for standard images on the free tier. Premium users get priority processing in 10-20 seconds."
         }
       ],
-      "relatedFree": ["free-image-upscaler", "free-ai-photo-enhancer"],
+      "relatedFree": ["free-ai-upscaler", "free-ai-photo-enhancer"],
       "upgradePath": "/pricing"
     },
     {
@@ -359,12 +301,12 @@
           "answer": "Any modern browser with WebAssembly support works: Chrome, Firefox, Safari, and Edge. Mobile browsers are supported but may be slower on older devices."
         }
       ],
-      "relatedFree": ["free-image-upscaler", "free-photo-enhancer"],
+      "relatedFree": ["free-ai-upscaler", "free-photo-enhancer"],
       "upgradePath": "/pricing"
     }
   ],
   "meta": {
-    "totalPages": 6,
+    "totalPages": 5,
     "lastUpdated": "2026-01-06T00:00:00Z"
   }
 }

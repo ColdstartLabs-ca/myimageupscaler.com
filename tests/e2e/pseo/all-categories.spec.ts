@@ -27,7 +27,7 @@ const SAMPLE_SLUGS = {
   platforms: 'midjourney-upscaler',
   guides: 'how-to-upscale-images-without-losing-quality',
   'use-cases': 'upscale-photos-for-printing',
-  free: 'free-image-upscaler',
+  free: 'free-photo-enhancer',
   scale: 'upscale-2x',
   compare: 'top10ai-vs-midjourney',
   alternatives: 'top10ai-alternatives',

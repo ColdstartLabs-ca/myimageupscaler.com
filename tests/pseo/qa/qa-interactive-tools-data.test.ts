@@ -21,6 +21,7 @@ const VALID_TOOL_COMPONENTS = [
   'ImageToText',
   'ExifRemover',
   'ImageCropper',
+  'BrowserImageUpscaler',
 ];
 
 const pages = interactiveToolsData.pages;

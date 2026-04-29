@@ -95,16 +95,17 @@ describe('Tool Route Consistency', () => {
       ).toEqual(interactiveSet);
     });
 
-    it('should have exactly 15 dedicated route slugs', async () => {
+    it('should have exactly 16 dedicated route slugs', async () => {
       const { DEDICATED_ROUTE_SLUGS } = await import('@/lib/seo/data-loader');
       const { TOOLS_INTERACTIVE_PATHS } = await import('@/lib/seo/locale-sitemap-handler');
 
       // This count should match the known dedicated routes:
+      // - 1 direct free tool route (free-image-upscaler)
       // - 7 resize tools (image-resizer, bulk-image-resizer, + 5 social media)
       // - 6 convert tools (png-to-jpg, jpg-to-png, webp-to-jpg, webp-to-png, jpg-to-webp, png-to-webp)
       // - 2 compress tools (image-compressor, bulk-image-compressor)
-      expect(DEDICATED_ROUTE_SLUGS.size).toBe(15);
-      expect(Object.keys(TOOLS_INTERACTIVE_PATHS)).toHaveLength(15);
+      expect(DEDICATED_ROUTE_SLUGS.size).toBe(16);
+      expect(Object.keys(TOOLS_INTERACTIVE_PATHS)).toHaveLength(16);
     });
 
     it('should have data entries for all DEDICATED_ROUTE_SLUGS', async () => {
@@ -186,19 +187,21 @@ describe('Tool Route Consistency', () => {
     it('should have valid paths for all interactive tools in sitemap', async () => {
       const { TOOLS_INTERACTIVE_PATHS } = await import('@/lib/seo/locale-sitemap-handler');
 
-      // All paths should follow the pattern /tools/{subroute}/{slug}
+      // All paths should follow the pattern /tools/{slug} or /tools/{subroute}/{slug}
       for (const [slug, path] of Object.entries(TOOLS_INTERACTIVE_PATHS)) {
         expect(path.startsWith('/tools/'), `Path for "${slug}" should start with /tools/`).toBe(
           true
         );
 
-        // Path should be in one of the valid sub-routes: resize, convert, compress
-        const validSubroutes = ['/tools/resize/', '/tools/convert/', '/tools/compress/'];
-        const hasValidSubroute = validSubroutes.some(subroute => path.startsWith(subroute));
+        const hasValidRoute =
+          path === '/tools/free-image-upscaler' ||
+          ['/tools/resize/', '/tools/convert/', '/tools/compress/'].some(subroute =>
+            path.startsWith(subroute)
+          );
 
         expect(
-          hasValidSubroute,
-          `Path "${path}" for "${slug}" should be in a valid subroute (resize, convert, or compress)`
+          hasValidRoute,
+          `Path "${path}" for "${slug}" should be a valid direct or categorized tool route`
         ).toBe(true);
       }
     });

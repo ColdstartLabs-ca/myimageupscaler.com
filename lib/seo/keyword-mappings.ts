@@ -188,7 +188,7 @@ export const keywordPageMappings: IKeywordPageMapping[] = [
       'image upscaler online free',
       'upscale image online',
     ],
-    canonicalUrl: '/free/free-image-upscaler',
+    canonicalUrl: '/tools/free-image-upscaler',
     intent: 'Transactional',
     tier: 2,
     priority: 'P0',

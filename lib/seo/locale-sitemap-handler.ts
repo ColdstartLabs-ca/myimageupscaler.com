@@ -31,6 +31,7 @@ export interface ILocaleSitemapPage {
  * Maps tool slugs to their actual route paths.
  */
 export const TOOLS_INTERACTIVE_PATHS: Record<string, string> = {
+  'free-image-upscaler': '/tools/free-image-upscaler',
   'image-resizer': '/tools/resize/image-resizer',
   'bulk-image-resizer': '/tools/resize/bulk-image-resizer',
   'resize-image-for-instagram': '/tools/resize/resize-image-for-instagram',

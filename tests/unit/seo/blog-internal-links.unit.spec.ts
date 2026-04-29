@@ -5,7 +5,7 @@ import { join } from 'path';
 const ROOT = join(__dirname, '../../..');
 const BLOG_DIR = join(ROOT, 'content/blog');
 
-const PSEO_LINK_PATTERN = /\]\(\/(scale|free|formats|use-cases|alternatives|compare)\//;
+const PSEO_LINK_PATTERN = /\]\(\/(scale|free|formats|use-cases|alternatives|compare|tools)\//;
 
 /**
  * Also match /alternatives] (no trailing slash) and /free] (the hub without sub-path)
@@ -67,7 +67,8 @@ describe('Blog → pSEO internal linking', () => {
 
   it('pSEO links in blog posts should use descriptive anchor text (not "click here" or "here")', () => {
     // Matches markdown links where the anchor text is just "here", "click here", or "this"
-    const BAD_ANCHOR_PATTERN = /\[(click here|here|this)\]\(\/(scale|free|formats|use-cases|alternatives|tools\/ai)\//i;
+    const BAD_ANCHOR_PATTERN =
+      /\[(click here|here|this)\]\(\/(scale|free|formats|use-cases|alternatives|tools)\//i;
     const files = readdirSync(BLOG_DIR).filter(f => f.endsWith('.mdx'));
     for (const f of files) {
       const content = readFileSync(join(BLOG_DIR, f), 'utf-8');
@@ -86,7 +87,7 @@ describe('Blog → pSEO internal linking', () => {
       },
       {
         file: 'how-to-upscale-images-without-losing-quality.mdx',
-        expectedPath: '/free/free-image-upscaler',
+        expectedPath: '/tools/free-image-upscaler',
         description: 'links to free upscaler page',
       },
       {

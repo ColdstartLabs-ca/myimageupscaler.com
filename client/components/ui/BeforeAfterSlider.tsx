@@ -11,6 +11,7 @@ export interface IBeforeAfterSliderProps {
   afterLabel?: string;
   className?: string;
   aspectRatio?: string;
+  unoptimized?: boolean;
 }
 
 export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
@@ -20,6 +21,7 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
   afterLabel = 'After',
   className = '',
   aspectRatio = '16/9',
+  unoptimized = false,
 }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -89,6 +91,7 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
         className="object-cover select-none"
         draggable={false}
         priority
+        unoptimized={unoptimized}
       />
 
       {/* Before Image (Foreground - Clipped) */}
@@ -104,6 +107,7 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
           className="object-cover"
           draggable={false}
           priority
+          unoptimized={unoptimized}
         />
       </div>
 

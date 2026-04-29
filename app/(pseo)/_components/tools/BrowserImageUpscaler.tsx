@@ -8,11 +8,13 @@ import {
   Cpu,
   Download,
   Image as ImageIcon,
+  Info,
   Loader2,
   RotateCcw,
   Sparkles,
   Upload,
 } from 'lucide-react';
+import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
 import { FileUpload } from '@/app/(pseo)/_components/ui/FileUpload';
 import { clientEnv } from '@shared/config/env';
 
@@ -227,6 +229,16 @@ export function BrowserImageUpscaler(): React.ReactElement {
     return `${clientEnv.DOWNLOAD_PREFIX}-${baseName}-2x.png`;
   }, [file]);
 
+  const comparisonAspectRatio = useMemo(() => {
+    if (!originalDimensions) return '1/1';
+    return `${originalDimensions.width}/${originalDimensions.height}`;
+  }, [originalDimensions]);
+
+  const originalSizeLabel = useMemo(() => {
+    if (!originalDimensions) return 'Original size';
+    return `${originalDimensions.width} x ${originalDimensions.height}`;
+  }, [originalDimensions]);
+
   const handleFileSelect = useCallback(
     async (selectedFile: File) => {
       setError(null);
@@ -292,7 +304,9 @@ export function BrowserImageUpscaler(): React.ReactElement {
       } catch {
         const result = await upscaleWithCanvas(image);
         setProcessedImage(result);
-        setNotice('AI model unavailable locally; used the browser canvas fallback.');
+        setNotice(
+          'This run used the fast browser canvas engine because the optional local AI model was unavailable.'
+        );
       }
 
       setStatus('done');
@@ -356,78 +370,87 @@ export function BrowserImageUpscaler(): React.ReactElement {
       )}
 
       {notice && (
-        <div className="mt-4 flex items-start gap-3 rounded-lg border border-warning/30 bg-warning/10 p-4 text-sm text-text-primary">
-          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
+        <div className="mt-4 flex items-start gap-3 rounded-lg border border-accent/25 bg-accent/10 p-4 text-sm text-text-primary">
+          <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
           <p>{notice}</p>
         </div>
       )}
 
       {file && originalUrl && (
         <div className="space-y-5">
-          <div className="grid gap-4 md:grid-cols-2">
+          {processedImage ? (
             <figure className="overflow-hidden rounded-lg border border-border bg-surface-light">
-              <div className="flex items-center justify-between border-b border-border px-4 py-3">
+              <div className="flex flex-col gap-2 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <figcaption className="flex items-center gap-2 text-sm font-semibold text-text-primary">
-                  <ImageIcon className="h-4 w-4 text-accent" />
-                  Original
+                  <Sparkles className="h-4 w-4 text-accent" />
+                  Before / After
                 </figcaption>
-                {originalDimensions && (
-                  <span className="text-xs text-muted-foreground">
-                    {originalDimensions.width} x {originalDimensions.height}
-                  </span>
-                )}
+                <span className="text-xs text-muted-foreground">
+                  {originalSizeLabel} to {processedImage.dimensions.width} x{' '}
+                  {processedImage.dimensions.height}
+                </span>
               </div>
-              <div className="relative flex aspect-video items-center justify-center p-3">
-                <Image
-                  src={originalUrl}
-                  alt="Original selected image"
-                  width={640}
-                  height={360}
-                  className="max-h-full w-auto max-w-full rounded object-contain"
+              <div className="p-3">
+                <BeforeAfterSlider
+                  beforeUrl={originalUrl}
+                  afterUrl={processedImage.url}
+                  beforeLabel="Original"
+                  afterLabel="Upscaled"
+                  aspectRatio={comparisonAspectRatio}
+                  className="border border-border/70 bg-main"
                   unoptimized
                 />
               </div>
             </figure>
-
-            <figure className="overflow-hidden rounded-lg border border-border bg-surface-light">
-              <div className="flex items-center justify-between border-b border-border px-4 py-3">
-                <figcaption className="flex items-center gap-2 text-sm font-semibold text-text-primary">
-                  <Sparkles className="h-4 w-4 text-accent" />
-                  Upscaled
-                </figcaption>
-                {processedImage ? (
-                  <span className="text-xs text-muted-foreground">
-                    {processedImage.dimensions.width} x {processedImage.dimensions.height}
-                  </span>
-                ) : (
-                  <span className="text-xs text-muted-foreground">2x output</span>
-                )}
-              </div>
-              <div className="relative flex aspect-video items-center justify-center p-3">
-                {status === 'processing' && (
-                  <div className="flex flex-col items-center gap-3 text-muted-foreground">
-                    <Loader2 className="h-8 w-8 animate-spin text-accent" />
-                    <span className="text-sm">Upscaling in your browser...</span>
-                  </div>
-                )}
-                {status !== 'processing' && processedImage && (
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              <figure className="overflow-hidden rounded-lg border border-border bg-surface-light">
+                <div className="flex items-center justify-between border-b border-border px-4 py-3">
+                  <figcaption className="flex items-center gap-2 text-sm font-semibold text-text-primary">
+                    <ImageIcon className="h-4 w-4 text-accent" />
+                    Original
+                  </figcaption>
+                  {originalDimensions && (
+                    <span className="text-xs text-muted-foreground">
+                      {originalDimensions.width} x {originalDimensions.height}
+                    </span>
+                  )}
+                </div>
+                <div className="relative flex aspect-video items-center justify-center p-3">
                   <Image
-                    src={processedImage.url}
-                    alt="Browser-upscaled result"
+                    src={originalUrl}
+                    alt="Original selected image"
                     width={640}
                     height={360}
                     className="max-h-full w-auto max-w-full rounded object-contain"
                     unoptimized
                   />
-                )}
-                {status !== 'processing' && !processedImage && (
-                  <div className="text-center text-sm text-muted-foreground">
-                    Result appears here after upscaling.
-                  </div>
-                )}
-              </div>
-            </figure>
-          </div>
+                </div>
+              </figure>
+
+              <figure className="overflow-hidden rounded-lg border border-border bg-surface-light">
+                <div className="flex items-center justify-between border-b border-border px-4 py-3">
+                  <figcaption className="flex items-center gap-2 text-sm font-semibold text-text-primary">
+                    <Sparkles className="h-4 w-4 text-accent" />
+                    Upscaled
+                  </figcaption>
+                  <span className="text-xs text-muted-foreground">2x output</span>
+                </div>
+                <div className="relative flex aspect-video items-center justify-center p-3">
+                  {status === 'processing' ? (
+                    <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                      <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                      <span className="text-sm">Upscaling in your browser...</span>
+                    </div>
+                  ) : (
+                    <div className="text-center text-sm text-muted-foreground">
+                      Result appears here after upscaling.
+                    </div>
+                  )}
+                </div>
+              </figure>
+            </div>
+          )}
 
           <div className="flex flex-col gap-3 rounded-lg border border-border bg-main/50 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-sm text-text-secondary">

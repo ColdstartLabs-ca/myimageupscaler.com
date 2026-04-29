@@ -13,7 +13,7 @@ test.describe('Browser Image Upscaler', () => {
     await expect(page.getByText(/choose file/i)).toBeVisible();
   });
 
-  test('accepts a PNG upload and shows the comparison view', async ({ page }) => {
+  test('accepts a PNG upload and shows the before/after comparison view', async ({ page }) => {
     await page.goto('/tools/free-image-upscaler');
 
     await expect(page.getByText(/drop your image here or click to browse/i)).toBeVisible();
@@ -29,5 +29,12 @@ test.describe('Browser Image Upscaler', () => {
         /upload a jpeg|choose an image under|could not (open|read)|choose an image below|upscaling failed/i
       )
     ).toHaveCount(0);
+
+    await page.getByRole('button', { name: /upscale 2x/i }).click();
+
+    await expect(page.getByText('Before / After')).toBeVisible({ timeout: 30000 });
+    await expect(page.getByText('Upscaled', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /upscale again/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /download/i })).toBeEnabled();
   });
 });
