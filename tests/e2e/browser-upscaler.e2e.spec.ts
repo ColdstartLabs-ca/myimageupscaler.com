@@ -21,7 +21,7 @@ test.describe('Browser Image Upscaler', () => {
 
     await expect(page.getByRole('button', { name: /upscale 2x/i })).toBeVisible();
     await expect(page.getByRole('img', { name: /original selected image/i })).toBeVisible();
-    await expect(page.getByText('Original')).toBeVisible();
+    await expect(page.getByText('Original', { exact: true })).toBeVisible();
     await expect(page.getByText('1 x 1')).toBeVisible();
 
     await expect(
