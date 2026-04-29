@@ -24,6 +24,11 @@ declare module '@upscalerjs/default-model' {
   export default model;
 }
 
+declare module '@upscalerjs/esrgan-thick/2x' {
+  const model: unknown;
+  export default model;
+}
+
 declare module '@tensorflow/tfjs' {
   export function ready(): Promise<void>;
   export function setBackend(backend: string): Promise<boolean>;

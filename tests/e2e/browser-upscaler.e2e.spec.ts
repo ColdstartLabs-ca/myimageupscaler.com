@@ -14,6 +14,14 @@ test.describe('Browser Image Upscaler', () => {
   });
 
   test('accepts a PNG upload and shows the before/after comparison view', async ({ page }) => {
+    const consoleErrors: string[] = [];
+
+    page.on('console', message => {
+      if (message.type() === 'error') {
+        consoleErrors.push(message.text());
+      }
+    });
+
     await page.goto('/tools/free-image-upscaler');
 
     await expect(page.getByText(/drop your image here or click to browse/i)).toBeVisible();
@@ -34,7 +42,16 @@ test.describe('Browser Image Upscaler', () => {
 
     await expect(page.getByText('Before / After')).toBeVisible({ timeout: 30000 });
     await expect(page.getByText('Upscaled', { exact: true })).toBeVisible();
+    await expect(page.getByText('ESRGAN 2x result')).toBeVisible();
     await expect(page.getByRole('button', { name: /upscale again/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /download/i })).toBeEnabled();
+
+    expect(
+      consoleErrors.filter(
+        error =>
+          error.includes('Fetch API cannot load data:') ||
+          (error.includes('connect-src') && error.includes('data:image'))
+      )
+    ).toEqual([]);
   });
 });

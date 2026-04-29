@@ -19,7 +19,7 @@ import { FileUpload } from '@/app/(pseo)/_components/ui/FileUpload';
 import { clientEnv } from '@shared/config/env';
 
 type IStatus = 'idle' | 'ready' | 'processing' | 'done' | 'error';
-type IProcessingEngine = 'upscalerjs' | 'canvas';
+type IProcessingEngine = 'esrgan-thick' | 'canvas';
 
 interface IImageDimensions {
   width: number;
@@ -70,9 +70,22 @@ async function loadImageElement(src: string): Promise<HTMLImageElement> {
   return image;
 }
 
-async function dataUrlToBlob(dataUrl: string): Promise<Blob> {
-  const response = await fetch(dataUrl);
-  return response.blob();
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [metadata, payload] = dataUrl.split(',');
+
+  if (!metadata || !payload || !metadata.startsWith('data:')) {
+    throw new Error('The local AI model returned an unreadable image.');
+  }
+
+  const mimeType = metadata.match(/^data:([^;,]+)/)?.[1] ?? 'application/octet-stream';
+  const decodedPayload = metadata.includes(';base64') ? atob(payload) : decodeURIComponent(payload);
+  const bytes = new Uint8Array(decodedPayload.length);
+
+  for (let index = 0; index < decodedPayload.length; index += 1) {
+    bytes[index] = decodedPayload.charCodeAt(index);
+  }
+
+  return new Blob([bytes], { type: mimeType });
 }
 
 function sharpenCanvas(canvas: HTMLCanvasElement, amount = 0.2): void {
@@ -163,7 +176,7 @@ async function upscaleWithUpscalerJs(image: HTMLImageElement): Promise<IProcesse
     // eslint-disable-next-line no-restricted-syntax
     import('upscaler'),
     // eslint-disable-next-line no-restricted-syntax
-    import('@upscalerjs/default-model'),
+    import('@upscalerjs/esrgan-thick/2x'),
   ]);
 
   try {
@@ -181,7 +194,7 @@ async function upscaleWithUpscalerJs(image: HTMLImageElement): Promise<IProcesse
     patchSize: 64,
     padding: 4,
   });
-  const blob = await dataUrlToBlob(dataUrl);
+  const blob = dataUrlToBlob(dataUrl);
 
   return {
     url: URL.createObjectURL(blob),
@@ -190,7 +203,7 @@ async function upscaleWithUpscalerJs(image: HTMLImageElement): Promise<IProcesse
       width: image.naturalWidth * SCALE_FACTOR,
       height: image.naturalHeight * SCALE_FACTOR,
     },
-    engine: 'upscalerjs',
+    engine: 'esrgan-thick',
   };
 }
 
@@ -461,7 +474,7 @@ export function BrowserImageUpscaler(): React.ReactElement {
                 <>
                   <span className="mx-2 text-muted-foreground">/</span>
                   <span>
-                    {processedImage.engine === 'upscalerjs' ? 'UpscalerJS' : 'Canvas'} result
+                    {processedImage.engine === 'esrgan-thick' ? 'ESRGAN 2x' : 'Canvas'} result
                   </span>
                 </>
               )}
