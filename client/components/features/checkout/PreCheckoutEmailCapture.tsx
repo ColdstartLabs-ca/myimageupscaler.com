@@ -186,7 +186,7 @@ export function PreCheckoutEmailCapture({
               type="email"
               value={state.email}
               onChange={e => handleEmailChange(e.target.value)}
-              placeholder="you@example.com"
+              placeholder="Enter your email"
               disabled={state.isSubmitting}
               className={`w-full px-4 py-2.5 rounded-lg border bg-surface text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors ${
                 state.isValid ? 'border-border-default' : 'border-red-500'

@@ -25,6 +25,14 @@ const PwaInstallBanner = dynamic(
   { ssr: false }
 );
 
+const CheckoutRecoveryBanner = dynamic(
+  () =>
+    import('@client/components/features/checkout/CheckoutRecoveryBanner').then(
+      m => m.CheckoutRecoveryBanner
+    ),
+  { ssr: false }
+);
+
 export function ClientProviders({ children }: { children: ReactNode }): ReactNode {
   return (
     <AnalyticsProvider>
@@ -34,6 +42,7 @@ export function ClientProviders({ children }: { children: ReactNode }): ReactNod
         <AuthRequiredModal />
         <Toast vertical="top" />
         <PwaInstallBanner />
+        <CheckoutRecoveryBanner />
         {children}
       </BaselimeProvider>
     </AnalyticsProvider>
