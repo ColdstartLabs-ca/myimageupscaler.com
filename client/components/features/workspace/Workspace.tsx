@@ -46,6 +46,7 @@ import { useTranslations } from 'next-intl';
 import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import type { IUpgradeDirectParams } from './ModelGalleryModal';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
+import { UpgradeSuccessBanner } from './UpgradeSuccessBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { MobileUpgradePrompt } from './MobileUpgradePrompt';
 import { ModelGalleryModal } from './ModelGalleryModal';
@@ -79,7 +80,7 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-  const { isFreeUser, profile } = useUserData();
+  const { isFreeUser, userSegment, profile } = useUserData();
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
   const { isPaywalled, country } = useRegionTier();
@@ -199,7 +200,7 @@ const Workspace: React.FC = () => {
   }, [isPaywalled, isFreeUser, country]);
 
   // Success banner state
-  const [_showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [downloadCount, setDownloadCount] = useState(0);
@@ -465,6 +466,7 @@ const Workspace: React.FC = () => {
             </div>
           </div>
         )}
+
         <PurchaseModal
           isOpen={showUpgradeModal}
           onClose={closeUpgradeModal}
@@ -480,15 +482,6 @@ const Workspace: React.FC = () => {
             onSuccess={() => setPostAuthCheckoutPriceId(null)}
           />
         )}
-
-        {directCheckoutPriceId && (
-          <CheckoutModal
-            priceId={directCheckoutPriceId}
-            onClose={() => setDirectCheckoutPriceId(null)}
-            onSuccess={() => setDirectCheckoutPriceId(null)}
-            prefillPlanId={directCheckoutPriceId}
-          />
-        )}
       </div>
     );
   }
@@ -502,7 +495,6 @@ const Workspace: React.FC = () => {
         <div
           className={cn(
             'w-full md:w-80 border-b md:border-b-0 md:border-r bg-surface border-border',
-            // Mobile: full height when active, Desktop: fixed width sidebar
             mobileTab === 'upload' ? 'flex-1 min-h-0 md:flex-none' : 'hidden md:block'
           )}
         >
@@ -543,12 +535,24 @@ const Workspace: React.FC = () => {
             </div>
           </div>
 
-          {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
-          {isFreeUser && (
+          {/* Success Banner */}
+          {showSuccessBanner && completedCount > 0 && (
+            <div className="px-3 pt-3 md:p-4">
+              <UpgradeSuccessBanner
+                processedCount={completedCount}
+                onDismiss={() => setShowSuccessBanner(false)}
+                hasSubscription={!isFreeUser}
+                onUpgrade={() => openUpgradeModal(false, 'after_batch')}
+              />
+            </div>
+          )}
+
+          {/* After 3rd upscale upgrade nudge (free + credit_purchaser users, once per session) */}
+          {userSegment !== 'subscriber' && (
             <div className="px-3 md:px-4 pb-0">
               <AfterUpscaleBanner
                 completedCount={completedCount}
-                isFreeUser={isFreeUser}
+                userSegment={userSegment}
                 currentModel={config.qualityTier}
                 onUpgrade={() => openUpgradeModal(false, 'workspace_after_upscale_banner')}
               />
@@ -556,19 +560,20 @@ const Workspace: React.FC = () => {
           )}
 
           <PostDownloadPrompt
-            isFreeUser={isFreeUser}
+            userSegment={userSegment}
             downloadCount={downloadCount}
             currentModel={config.qualityTier}
             onExploreModels={openExploreGallery}
           />
 
           {/* Mobile upgrade prompt — shown on preview tab after first completion */}
-          <MobileUpgradePrompt
-            isVisible={mobileTab === 'preview' && completedCount > 0}
-            isFreeUser={isFreeUser}
-            onUpgradeDirect={handleUpgradeDirect}
-            onUpgrade={() => openUpgradeModal(false, 'mobile_preview_prompt')}
-          />
+          {mobileTab === 'preview' && completedCount > 0 && (
+            <MobileUpgradePrompt
+              variant="preview"
+              userSegment={userSegment}
+              onUpgrade={() => openUpgradeModal(false, 'mobile_preview_prompt')}
+            />
+          )}
 
           {/* Global Error Alerts */}
           {globalErrors.map(error => (
@@ -613,7 +618,8 @@ const Workspace: React.FC = () => {
               selectedModel={config.qualityTier}
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
-              isFreeUser={isFreeUser}
+              userSegment={userSegment}
+              onUpgrade={() => openUpgradeModal(false, 'workspace_preview_area')}
             />
           </div>
 
@@ -732,6 +738,7 @@ const Workspace: React.FC = () => {
         onClose={handleCloseModelGallery}
         currentTier={config.qualityTier}
         isFreeUser={isFreeUser}
+        userSegment={userSegment}
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
         onUpgrade={handleModelGalleryUpgrade}
         onUpgradeDirect={handleUpgradeDirect}
@@ -779,7 +786,7 @@ const Workspace: React.FC = () => {
 
       {showCelebration && (
         <FirstDownloadCelebration
-          isFreeUser={isFreeUser}
+          userSegment={userSegment}
           source={firstUploadSourceRef.current}
           onUploadAnother={() => {
             setShowCelebration(false);
@@ -794,6 +801,7 @@ const Workspace: React.FC = () => {
         isOpen={showUpgradeModal}
         onClose={closeUpgradeModal}
         onPurchaseComplete={closeUpgradeModal}
+        outOfCredits={upgradeModalOutOfCredits}
         trigger={upgradeModalTrigger}
       />
 

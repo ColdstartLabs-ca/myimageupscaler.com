@@ -172,11 +172,20 @@
     "blog": "Blog"
   },
   "postDownloadPrompt": {
-    "title": "Neugierig, was andere Modelle können?",
-    "body": "Wir haben über 14 KI-Modelle, jedes für unterschiedliche Bildtypen optimiert.",
-    "cta": "Modelle entdecken",
-    "dismiss": "Hinweis schließen",
-    "maybeLater": "Vielleicht später"
+    "free": {
+      "title": "Schärfere, sauberere Ergebnisse?",
+      "linkText": "10x schärfer mit Premium-Modellen.",
+      "cta": "Jetzt upgraden",
+      "continue": "Kostenlos fortfahren"
+    },
+    "creditPurchaser": {
+      "title": "Konstante Qualität jeden Monat?",
+      "linkText": "100 Credits/Monat mit einem Abonnement.",
+      "cta": "Abonnements ansehen",
+      "continue": "Fortfahren"
+    },
+    "description": "Gefällt dir das Ergebnis? ",
+    "dismiss": "Hinweis schließen"
   },
   "sampleImages": {
     "title": "Mit einem Beispielbild ausprobieren",
@@ -208,8 +217,9 @@
     "title": "Erste Vergrößerung abgeschlossen!",
     "subtitle": "Du hast dein erstes Bild vergrößert! Neugierig, was andere KI-Modelle damit machen können?",
     "uploadAnother": "Weiteres Bild hochladen",
-    "exploreModels": "Modelle entdecken",
-    "skipText": "Sieh dir den Unterschied unserer Premium-Modelle an",
+    "seePlans": "Premium-Pläne ansehen",
+    "subscribeCta": "Abonnieren & Sparen",
+    "skipText": "Unbegrenzte Vergrößerungen mit Premium freischalten",
     "dismiss": "Glückwunsch ausblenden"
   },
   "onboardingTour": {

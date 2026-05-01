@@ -32,11 +32,17 @@ vi.mock('@client/utils/abTest', () => ({
 vi.mock('next-intl', () => ({
   useTranslations: () => {
     const map: Record<string, string> = {
-      'workspace.postDownloadPrompt.title': 'See what other models can do',
-      'workspace.postDownloadPrompt.body': 'Body text',
-      'workspace.postDownloadPrompt.cta': 'Explore Models',
+      'workspace.postDownloadPrompt.free.title': 'Want sharper, cleaner output?',
+      'workspace.postDownloadPrompt.free.linkText': 'Get 10x sharper with Premium models.',
+      'workspace.postDownloadPrompt.free.cta': 'Upgrade Now',
+      'workspace.postDownloadPrompt.free.continue': 'Continue Free',
+      'workspace.postDownloadPrompt.creditPurchaser.title': 'Want consistent quality every month?',
+      'workspace.postDownloadPrompt.creditPurchaser.linkText':
+        'Get 100 credits/mo with a subscription.',
+      'workspace.postDownloadPrompt.creditPurchaser.cta': 'View Subscriptions',
+      'workspace.postDownloadPrompt.creditPurchaser.continue': 'Continue',
+      'workspace.postDownloadPrompt.description': 'Love the result? ',
       'workspace.postDownloadPrompt.dismiss': 'Dismiss prompt',
-      'workspace.postDownloadPrompt.maybeLater': 'Maybe Later',
     };
     return (key: string) => map[`workspace.postDownloadPrompt.${key}`] ?? key;
   },
@@ -80,18 +86,18 @@ describe('PostDownloadPrompt — attribution', () => {
     const onExploreModels = vi.fn();
 
     const { rerender } = render(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
+      <PostDownloadPrompt userSegment="free" downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
-      expect(screen.getByText('See what other models can do')).toBeInTheDocument();
+      expect(screen.getByText('Want sharper, cleaner output?')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText('Explore Models'));
+    fireEvent.click(screen.getByText('Upgrade Now'));
 
     expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith({
       originatingTrigger: 'post_download_explore',
@@ -104,18 +110,18 @@ describe('PostDownloadPrompt — attribution', () => {
     mockSetCheckoutTrackingContext.mockImplementation(() => callOrder.push('context'));
 
     const { rerender } = render(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
+      <PostDownloadPrompt userSegment="free" downloadCount={0} onExploreModels={onExploreModels} />
     );
 
     rerender(
-      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
+      <PostDownloadPrompt userSegment="free" downloadCount={1} onExploreModels={onExploreModels} />
     );
 
     await waitFor(() => {
-      expect(screen.getByText('See what other models can do')).toBeInTheDocument();
+      expect(screen.getByText('Want sharper, cleaner output?')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText('Explore Models'));
+    fireEvent.click(screen.getByText('Upgrade Now'));
 
     expect(callOrder).toEqual(['context', 'explore']);
   });

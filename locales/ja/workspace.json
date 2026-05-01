@@ -169,11 +169,20 @@
     "paidLimitText": "ファイルあたり最大10MB • バッチ処理利用可能"
   },
   "postDownloadPrompt": {
-    "title": "他のモデルで何ができるか気になりますか？",
-    "body": "14種類以上のAIモデルがあり、それぞれ異なる画像タイプ向けに最適化されています。",
-    "cta": "モデルを見る",
-    "dismiss": "案内を閉じる",
-    "maybeLater": "後で見る"
+    "free": {
+      "title": "より鮮明で綺麗な出力が欲しいですか？",
+      "linkText": "プレミアムモデルで10倍鮮明に。",
+      "cta": "今すぐアップグレード",
+      "continue": "無料で続ける"
+    },
+    "creditPurchaser": {
+      "title": "毎月安定した品質が欲しいですか？",
+      "linkText": "サブスクリプションで毎月100クレジット。",
+      "cta": "サブスクリプションを見る",
+      "continue": "続ける"
+    },
+    "description": "気に入りましたか？ ",
+    "dismiss": "案内を閉じる"
   },
   "sampleImages": {
     "title": "サンプル画像で試してみる",
@@ -205,8 +214,9 @@
     "title": "初めての拡大が完了しました！",
     "subtitle": "最初の画像を拡大しました。この画像で他のAIモデルが何をできるか見てみませんか？",
     "uploadAnother": "別の画像をアップロード",
-    "exploreModels": "モデルを見る",
-    "skipText": "プレミアムモデルの違いを見てみましょう",
+    "seePlans": "Premiumプランを見る",
+    "subscribeCta": "登録して節約する",
+    "skipText": "Premiumで無制限の拡大をアンロック",
     "dismiss": "お祝いを閉じる"
   },
   "onboardingTour": {

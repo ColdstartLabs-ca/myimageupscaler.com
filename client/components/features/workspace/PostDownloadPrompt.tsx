@@ -1,5 +1,6 @@
 'use client';
 
+import type { UserSegment } from '@/shared/types/stripe.types';
 import { Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
@@ -7,22 +8,25 @@ import { Modal } from '@client/components/ui/Modal';
 import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { getVariant } from '@client/utils/abTest';
+import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 import { useTranslations } from 'next-intl';
 
 export interface IPostDownloadPromptProps {
-  isFreeUser: boolean;
+  userSegment: UserSegment;
   downloadCount: number;
   currentModel?: string;
   onExploreModels: () => void;
 }
 
 /**
- * A dismissible modal shown to free users after download clicks.
- * Shows on every successful download for free users.
- * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'post_download_explore'.
- */
+ * A dismissible modal shown to free and credit_purchaser users after download clicks.
+ * Shows deterministically on the 2nd download (not random).
+ * Respects 24h cooldown via promptFrequency utility.
+ * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'after_download'.
+ * Segment-aware: credit_purchaser sees subscription messaging. */
+const POST_DOWNLOAD_PROMPT_KEY = 'post_download_prompt';
 export const PostDownloadPrompt = ({
-  isFreeUser,
+  userSegment,
   downloadCount,
   currentModel,
   onExploreModels,
@@ -31,27 +35,35 @@ export const PostDownloadPrompt = ({
   const [visible, setVisible] = useState(false);
   const previousDownloadCountRef = useRef(downloadCount);
   const { pricingRegion } = useRegionTier();
+  const isCreditPurchaser = userSegment === 'credit_purchaser';
+  const showPrompt = userSegment !== 'subscriber';
 
   // Get copy variant for A/B testing
   const copyVariant = getVariant('after_download_copy', ['value', 'outcome', 'urgency']);
 
   useEffect(() => {
-    const previousDownloadCount = previousDownloadCountRef.current;
+    if (!showPrompt) return;
+    if (downloadCount < 1) return;
+    if (downloadCount <= previousDownloadCountRef.current) return;
+
     previousDownloadCountRef.current = downloadCount;
 
-    if (!isFreeUser) return;
-    if (downloadCount < 1) return;
-    if (downloadCount <= previousDownloadCount) return;
+    // Respect 24-hour cooldown
+    if (!canShowPrompt({ key: POST_DOWNLOAD_PROMPT_KEY, cooldownMs: 24 * 60 * 60 * 1000 })) {
+      return;
+    }
 
     setVisible(true);
+    markPromptShown({ key: POST_DOWNLOAD_PROMPT_KEY, cooldownMs: 24 * 60 * 60 * 1000 });
     analytics.track('upgrade_prompt_shown', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,
-      currentPlan: 'free',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
-  }, [isFreeUser, downloadCount, pricingRegion, currentModel, copyVariant]);
+  }, [showPrompt, userSegment, downloadCount, pricingRegion, currentModel, copyVariant]);
 
   if (!visible) return null;
 
@@ -59,7 +71,8 @@ export const PostDownloadPrompt = ({
     analytics.track('upgrade_prompt_dismissed', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,
-      currentPlan: 'free',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
@@ -70,8 +83,9 @@ export const PostDownloadPrompt = ({
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,
-      destination: 'model_gallery',
-      currentPlan: 'free',
+      destination: isCreditPurchaser ? 'billing_subscription_tab' : 'purchase_modal',
+      currentPlan: userSegment,
+      userSegment,
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
     });
@@ -79,6 +93,14 @@ export const PostDownloadPrompt = ({
     setVisible(false);
     onExploreModels();
   };
+
+  // Segment-aware copy via translation keys
+  const segmentKey = isCreditPurchaser ? 'creditPurchaser' : 'free';
+  const title = t(`${segmentKey}.title`);
+  const description = t('description');
+  const linkText = t(`${segmentKey}.linkText`);
+  const ctaText = t(`${segmentKey}.cta`);
+  const continueText = t(`${segmentKey}.continue`);
 
   return (
     <Modal
@@ -103,22 +125,29 @@ export const PostDownloadPrompt = ({
             <Sparkles className="w-4 h-4 text-secondary shrink-0" />
           </div>
 
-          <h3 className="text-lg font-semibold text-white mb-2">{t('title')}</h3>
-          <p className="text-sm text-text-muted mb-5">{t('body')}</p>
-
+          <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+          <p className="text-sm text-text-muted mb-5">
+            {description}
+            <button
+              onClick={handleExploreModelsClick}
+              className="font-semibold text-secondary underline underline-offset-2 hover:text-secondary/80 transition-colors"
+            >
+              {linkText}
+            </button>
+          </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
               onClick={handleExploreModelsClick}
               className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-secondary to-accent px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-secondary/20 transition-all hover:scale-[1.01] hover:shadow-xl hover:shadow-secondary/30 sm:flex-1"
             >
-              {t('cta')}
+              {ctaText}
             </button>
             <button
               type="button"
               onClick={handleDismiss}
               className="inline-flex items-center justify-center rounded-xl border border-border px-4 py-3 text-sm text-text-muted transition-colors hover:border-white/20 hover:text-white sm:px-5"
             >
-              {t('maybeLater')}
+              {continueText}
             </button>
           </div>
         </div>

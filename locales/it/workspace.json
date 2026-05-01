@@ -174,11 +174,20 @@
     }
   },
   "postDownloadPrompt": {
-    "title": "Curioso di vedere cosa possono fare gli altri modelli?",
-    "body": "Abbiamo più di 14 modelli di IA, ognuno ottimizzato per diversi tipi di immagine.",
-    "cta": "Esplora i modelli",
-    "dismiss": "Chiudi prompt",
-    "maybeLater": "Magari più tardi"
+    "free": {
+      "title": "Vuoi risultati più nitidi e puliti?",
+      "linkText": "Ottieni 10x più nitidezza con i modelli Premium.",
+      "cta": "Aggiorna ora",
+      "continue": "Continua gratis"
+    },
+    "creditPurchaser": {
+      "title": "Vuoi qualità costante ogni mese?",
+      "linkText": "Ottieni 100 crediti/mese con un abbonamento.",
+      "cta": "Vedi abbonamenti",
+      "continue": "Continua"
+    },
+    "description": "Ti piace il risultato? ",
+    "dismiss": "Chiudi prompt"
   },
   "sampleImages": {
     "title": "Prova con un'immagine di esempio",
@@ -210,8 +219,9 @@
     "title": "Primo ingrandimento completato!",
     "subtitle": "Hai appena ingrandito la tua prima immagine! Curioso di vedere cosa possono fare altri modelli di IA con essa?",
     "uploadAnother": "Carica un'altra immagine",
-    "exploreModels": "Esplora i modelli",
-    "skipText": "Scopri la differenza dei nostri modelli premium",
+    "seePlans": "Vedi i piani Premium",
+    "subscribeCta": "Abbonati e Risparmia",
+    "skipText": "Sblocca ingrandimenti illimitati con Premium",
     "dismiss": "Chiudi celebrazione"
   },
   "onboardingTour": {

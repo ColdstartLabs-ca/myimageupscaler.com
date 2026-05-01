@@ -1,4 +1,4 @@
-import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
+import type { ISubscription, IUserProfile, UserSegment } from '@/shared/types/stripe.types';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { createClient } from '@shared/utils/supabase/client';
 import { clientEnv } from '@shared/config/env';
@@ -458,6 +458,7 @@ export const useUserData = (): {
   subscription: ISubscription | null;
   isAuthenticated: boolean;
   isFreeUser: boolean;
+  userSegment: UserSegment;
 } =>
   useUserStore(
     useShallow(state => {
@@ -472,6 +473,25 @@ export const useUserData = (): {
           profile.subscription_status !== 'canceled' &&
           profile.subscription_status !== 'unpaid');
       const hasPurchasedCredits = (profile?.purchased_credits_balance ?? 0) > 0;
+      // Fallback to stripe_customer_id to catch users who bought credits but spent them all.
+      // NOTE: stripe_customer_id is set at checkout creation, so abandoned checkouts or
+      // trial sign-ups without completed purchase may be included. This is an accepted
+      // trade-off because (1) subscribers are filtered out first by hasSubscription,
+      // (2) the segment is used for funnel messaging where showing subscription CTAs
+      // to these edge-case users is low-risk, and (3) no payment-history field is
+      // currently available on IUserProfile without an additional backend query.
+      const hasEverPurchased = hasPurchasedCredits || !!profile?.stripe_customer_id;
+
+      // Determine user segment
+      // Priority: subscriber > credit_purchaser > free
+      const userSegment: UserSegment = hasSubscription
+        ? 'subscriber'
+        : hasEverPurchased
+          ? 'credit_purchaser'
+          : 'free';
+
+      // isFreeUser now means "true free" (never purchased anything)
+      const isFreeUser = userSegment === 'free';
 
       return {
         totalCredits:
@@ -479,7 +499,8 @@ export const useUserData = (): {
         profile,
         subscription,
         isAuthenticated: state.isAuthenticated,
-        isFreeUser: !hasSubscription && !hasPurchasedCredits,
+        isFreeUser,
+        userSegment,
       };
     })
   );
