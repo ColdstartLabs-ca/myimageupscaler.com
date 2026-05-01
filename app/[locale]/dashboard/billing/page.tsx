@@ -88,20 +88,27 @@ export default function BillingPage() {
     loadCreditHistory();
   }, []);
 
-  // Update active tab when userSegment loads (async) or when searchParams change
+  // Extract tab param as a stable string to avoid effect re-runs on every
+  // searchParams object reference change (e.g., route transitions).
+  const urlTabParam = searchParams.get('tab');
+
+  // Update active tab when userSegment loads (async) or when URL tab param changes
   useEffect(() => {
-    const urlTab = searchParams.get('tab');
     // If URL has an explicit tab param, always honor it
-    if (urlTab && ['credits', 'subscription', 'invoices'].includes(urlTab)) {
-      setActiveTab(urlTab);
+    if (urlTabParam && ['credits', 'subscription', 'invoices'].includes(urlTabParam)) {
+      setActiveTab(urlTabParam);
       return;
     }
+    // Use functional state update to avoid stale closure on activeTab.
     // Only update if no URL param and current tab is the initial default (credits)
-    // to avoid overriding user's manual tab selection
-    if (!urlTab && activeTab === 'credits' && userSegment !== 'free') {
-      setActiveTab('subscription');
-    }
-  }, [userSegment, searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+    // to avoid overriding user's manual tab selection.
+    setActiveTab(currentTab => {
+      if (!urlTabParam && currentTab === 'credits' && userSegment !== 'free') {
+        return 'subscription';
+      }
+      return currentTab;
+    });
+  }, [userSegment, urlTabParam]);
 
   const loadCreditHistory = async (append: boolean = false) => {
     try {

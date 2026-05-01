@@ -11,7 +11,7 @@ import type { IUserProfile, ISubscription, UserSegment } from '@/shared/types/st
 // Mock the userStore module
 vi.mock('@/client/store/userStore', () => ({
   useUserStore: vi.fn(),
-  useShallow: vi.fn((selector) => selector),
+  useShallow: vi.fn(selector => selector),
 }));
 
 // Helper to create mock profile
@@ -62,6 +62,8 @@ function computeUserSegment(
       profile.subscription_status !== 'canceled' &&
       profile.subscription_status !== 'unpaid');
   const hasPurchasedCredits = (profile?.purchased_credits_balance ?? 0) > 0;
+  // Fallback to stripe_customer_id to catch users who bought credits but spent them all.
+  // See client/store/userStore.ts for full rationale on this trade-off.
   const hasEverPurchased = hasPurchasedCredits || !!profile?.stripe_customer_id;
 
   const userSegment: UserSegment = hasSubscription

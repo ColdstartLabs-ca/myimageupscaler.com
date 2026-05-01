@@ -473,7 +473,13 @@ export const useUserData = (): {
           profile.subscription_status !== 'canceled' &&
           profile.subscription_status !== 'unpaid');
       const hasPurchasedCredits = (profile?.purchased_credits_balance ?? 0) > 0;
-      // Use stripe_customer_id as fallback to identify past purchasers who spent all credits
+      // Fallback to stripe_customer_id to catch users who bought credits but spent them all.
+      // NOTE: stripe_customer_id is set at checkout creation, so abandoned checkouts or
+      // trial sign-ups without completed purchase may be included. This is an accepted
+      // trade-off because (1) subscribers are filtered out first by hasSubscription,
+      // (2) the segment is used for funnel messaging where showing subscription CTAs
+      // to these edge-case users is low-risk, and (3) no payment-history field is
+      // currently available on IUserProfile without an additional backend query.
       const hasEverPurchased = hasPurchasedCredits || !!profile?.stripe_customer_id;
 
       // Determine user segment
