@@ -8,6 +8,7 @@ import { Modal } from '@client/components/ui/Modal';
 import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { getVariant } from '@client/utils/abTest';
+import { canShowPrompt, markPromptShown } from '@client/utils/promptFrequency';
 import { useTranslations } from 'next-intl';
 
 export interface IPostDownloadPromptProps {
@@ -23,6 +24,7 @@ export interface IPostDownloadPromptProps {
  * Respects 24h cooldown via promptFrequency utility.
  * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'after_download'.
  * Segment-aware: credit_purchaser sees subscription messaging. */
+const POST_DOWNLOAD_PROMPT_KEY = 'post_download_prompt';
 export const PostDownloadPrompt = ({
   userSegment,
   downloadCount,
@@ -45,7 +47,14 @@ export const PostDownloadPrompt = ({
     if (downloadCount <= previousDownloadCountRef.current) return;
 
     previousDownloadCountRef.current = downloadCount;
+
+    // Respect 24-hour cooldown
+    if (!canShowPrompt({ key: POST_DOWNLOAD_PROMPT_KEY, cooldownMs: 24 * 60 * 60 * 1000 })) {
+      return;
+    }
+
     setVisible(true);
+    markPromptShown({ key: POST_DOWNLOAD_PROMPT_KEY, cooldownMs: 24 * 60 * 60 * 1000 });
     analytics.track('upgrade_prompt_shown', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,

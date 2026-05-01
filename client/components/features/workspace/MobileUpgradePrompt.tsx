@@ -2,11 +2,12 @@
 
 import type { UserSegment } from '@/shared/types/stripe.types';
 import { ArrowRight } from 'lucide-react';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { analytics } from '@client/analytics/analyticsClient';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { getVariant } from '@client/utils/abTest';
+import { SUBSCRIPTION_CONFIG } from '@shared/config/subscription.config';
 
 export interface IMobileUpgradePromptProps {
   variant: 'upload' | 'preview';
@@ -54,9 +55,22 @@ export const MobileUpgradePrompt = ({
   // Get A/B test variant for copy (control vs value-framing)
   const copyVariant = getVariant('mobile_upload_copy', ['control', 'value']);
 
-  // Small credits pack base price is $4.99 (from subscription.config.ts)
-  const smallPackPrice = 4.99;
-  const discountedPrice = calculateDiscountedPrice(smallPackPrice, discountPercent);
+  // Use credit pack price for free users, cheapest subscription price for credit purchasers
+  const basePrice = useMemo(() => {
+    if (isCreditPurchaser) {
+      const enabledPlans = SUBSCRIPTION_CONFIG.plans.filter(
+        p => p.enabled !== false && p.priceInCents > 0
+      );
+      const cheapestPlan =
+        enabledPlans.length > 0
+          ? enabledPlans.reduce((min, p) => (p.priceInCents < min.priceInCents ? p : min))
+          : null;
+      return cheapestPlan ? cheapestPlan.priceInCents / 100 : 9.0;
+    }
+    // Small credits pack base price is $4.99 (from subscription.config.ts)
+    return 4.99;
+  }, [isCreditPurchaser]);
+  const discountedPrice = calculateDiscountedPrice(basePrice, discountPercent);
   const displayPrice = formatPrice(discountedPrice);
 
   // Stop pulse animation after 3 seconds for preview variant

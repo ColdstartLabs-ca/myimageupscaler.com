@@ -200,7 +200,7 @@ const Workspace: React.FC = () => {
   }, [isPaywalled, isFreeUser, country]);
 
   // Success banner state
-  const [_showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [downloadCount, setDownloadCount] = useState(0);
@@ -535,7 +535,7 @@ const Workspace: React.FC = () => {
           </div>
 
           {/* Success Banner */}
-          {_showSuccessBanner && completedCount > 0 && (
+          {showSuccessBanner && completedCount > 0 && (
             <div className="px-3 pt-3 md:p-4">
               <UpgradeSuccessBanner
                 processedCount={completedCount}

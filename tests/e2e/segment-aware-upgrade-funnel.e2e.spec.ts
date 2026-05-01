@@ -9,12 +9,13 @@ import { mockStripeSubscriptionEndpoints } from '../helpers/supabase-mock';
  * Verifies that different user segments (free, credit_purchaser, subscriber)
  * can access their respective pages and see appropriate content.
  *
- * TODO: Once the E2E test environment renders pages successfully (instead of
- * hitting error boundaries due to missing Supabase/Stripe env vars), add
- * deeper segment-specific assertions:
- *   - Billing page default tab: credits for free, subscription for credit_purchaser/subscriber
- *   - UpgradeCard visibility: present for free/credit_purchaser, absent for subscriber
- *   - Workspace prompts: segment-specific CTA copy and conditional rendering
+ * NOTE: Deeper segment-specific assertions (default billing tabs, UpgradeCard
+ * visibility, workspace prompt rendering) are intentionally shallow because the
+ * E2E test environment hits React error boundaries when rendering protected
+ * pages due to missing Supabase/Stripe environment variables. The pages render
+ * enough content to pass the basic `bodyText.length > 100` check, but tab
+ * components and sidebar elements are not accessible until the error boundary
+ * issue is resolved in the test infrastructure.
  */
 
 test.describe('Segment-Aware Upgrade Funnel', () => {
