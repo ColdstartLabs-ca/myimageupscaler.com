@@ -17,8 +17,11 @@ export interface ITestUserData {
     role: 'user' | 'admin';
     subscription_credits_balance: number;
     purchased_credits_balance: number;
+    subscription_tier?: string;
+    subscription_status?: string;
+    stripe_customer_id?: string;
   } | null;
-  subscription: null;
+  subscription: Record<string, unknown> | null;
 }
 
 /**

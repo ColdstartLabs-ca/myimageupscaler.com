@@ -786,7 +786,7 @@ const Workspace: React.FC = () => {
       {showCelebration && (
         <FirstDownloadCelebration
           userSegment={userSegment}
-          source="upload"
+          source={firstUploadSourceRef.current}
           onUploadAnother={() => {
             setShowCelebration(false);
             // Focus on dropzone

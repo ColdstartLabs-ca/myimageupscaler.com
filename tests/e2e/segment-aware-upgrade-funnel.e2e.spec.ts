@@ -9,11 +9,12 @@ import { mockStripeSubscriptionEndpoints } from '../helpers/supabase-mock';
  * Verifies that different user segments (free, credit_purchaser, subscriber)
  * can access their respective pages and see appropriate content.
  *
- * Key features tested:
- * 1. Free users can access billing page
- * 2. Credit purchasers can access billing page
- * 3. Subscribers can access billing page
- * 4. Pages load correctly for all segments
+ * TODO: Once the E2E test environment renders pages successfully (instead of
+ * hitting error boundaries due to missing Supabase/Stripe env vars), add
+ * deeper segment-specific assertions:
+ *   - Billing page default tab: credits for free, subscription for credit_purchaser/subscriber
+ *   - UpgradeCard visibility: present for free/credit_purchaser, absent for subscriber
+ *   - Workspace prompts: segment-specific CTA copy and conditional rendering
  */
 
 test.describe('Segment-Aware Upgrade Funnel', () => {
@@ -139,7 +140,7 @@ test.describe('Segment-Aware Upgrade Funnel', () => {
 
   test.describe('Subscriber Segment', () => {
     test.beforeEach(async ({ page }) => {
-      // Subscriber: has active subscription
+      // Subscriber: has active subscription tier in profile and subscription record
       await setupAuthenticatedStateWithSupabase(page, {
         id: 'test-subscriber',
         email: 'subscriber@example.com',
@@ -151,8 +152,18 @@ test.describe('Segment-Aware Upgrade Funnel', () => {
           role: 'user',
           subscription_credits_balance: 100,
           purchased_credits_balance: 0,
+          subscription_tier: 'starter',
+          subscription_status: 'active',
+          stripe_customer_id: 'cus_subscriber123',
         },
-        subscription: null,
+        subscription: {
+          id: 'sub_test_starter',
+          user_id: 'test-subscriber',
+          status: 'active',
+          price_id: 'price_starter_monthly',
+          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          cancel_at_period_end: false,
+        },
       });
 
       // Mock Stripe endpoints with active subscription
