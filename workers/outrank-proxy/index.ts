@@ -11,14 +11,11 @@
  * Outrank should send webhooks to:
  *   https://myimageupscaler-outrank-proxy.<account>.workers.dev/
  */
-
 interface IEnv {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  MAIN_WORKER: any; // Fetcher type is Cloudflare-specific, not available in standard TS
+  MAIN_WORKER: Fetcher;
   ALLOWED_IP: string;
 }
 
- 
 export default {
   async fetch(request: Request, env: IEnv): Promise<Response> {
     // Health check

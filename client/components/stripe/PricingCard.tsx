@@ -1,8 +1,13 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import { CheckoutModal } from './CheckoutModal';
 import { useCheckoutFlow } from '@client/hooks/useCheckoutFlow';
+import { PreCheckoutEmailCapture } from '@client/components/features/checkout/PreCheckoutEmailCapture';
+import { useUserStore } from '@client/store/userStore';
+import { useCartPersistence } from '@client/hooks/useCartPersistence';
+import { getPlanForPriceId } from '@shared/config/stripe';
 
 interface IPricingCardProps {
   name: string;
@@ -32,6 +37,8 @@ interface IPricingCardProps {
   loading?: boolean;
   /** Regional discount percentage (0-100). When > 0, displays adjusted price. */
   discountPercent?: number;
+  /** Pricing region for regional discounts (e.g., 'brazil', 'standard') */
+  pricingRegion?: string;
 }
 
 // --- Helper Functions (SRP: separate logic from rendering) ---
@@ -179,7 +186,12 @@ export function PricingCard({
   currentSubscriptionPrice,
   loading = false,
   discountPercent = 0,
+  pricingRegion = 'standard',
 }: IPricingCardProps): JSX.Element {
+  const { isAuthenticated } = useUserStore();
+  const { savePendingCheckout } = useCartPersistence();
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
+
   const {
     handleCheckout,
     isProcessing,
@@ -193,6 +205,50 @@ export function PricingCard({
     onSelect,
     disabled,
   });
+
+  const handleButtonClick = async () => {
+    if (!isAuthenticated && !showEmailCapture) {
+      setShowEmailCapture(true);
+      return;
+    }
+    await handleCheckout();
+  };
+
+  const handleEmailCaptured = (_email: string, _consent: boolean) => {
+    setShowEmailCapture(false);
+    // Save pending checkout to localStorage for recovery
+    const planConfig = getPlanForPriceId(priceId);
+    savePendingCheckout({
+      priceId,
+      purchaseType: 'subscription',
+      planKey: planConfig?.key || undefined,
+      packKey: undefined,
+      pricingRegion,
+      discountPercent,
+      recoveryCode: undefined,
+      timestamp: Date.now(),
+    });
+    // Proceed with normal checkout flow (will show auth modal for anonymous users)
+    void handleCheckout();
+  };
+
+  const handleEmailDismissed = () => {
+    setShowEmailCapture(false);
+    // Still save pending checkout even if user skips email capture
+    const planConfig = getPlanForPriceId(priceId);
+    savePendingCheckout({
+      priceId,
+      purchaseType: 'subscription',
+      planKey: planConfig?.key || undefined,
+      packKey: undefined,
+      pricingRegion,
+      discountPercent,
+      recoveryCode: undefined,
+      timestamp: Date.now(),
+    });
+    // Proceed with normal checkout flow
+    void handleCheckout();
+  };
 
   // Calculate regional display price (clean — user sees only their price)
   const displayPrice =
@@ -300,7 +356,7 @@ export function PricingCard({
         {/* CTA */}
         <div className="space-y-2">
           <button
-            onClick={handleCheckout}
+            onClick={handleButtonClick}
             disabled={disabled || isProcessing || loading || retryCount >= 3}
             className={getButtonClasses(scheduled, isCurrentPlan, hasError, isProcessing, loading)}
           >
@@ -331,6 +387,16 @@ export function PricingCard({
           priceId={priceId}
           onClose={closeCheckoutModal}
           onSuccess={handleCheckoutSuccess}
+        />
+      )}
+
+      {/* Pre-checkout Email Capture Modal */}
+      {showEmailCapture && (
+        <PreCheckoutEmailCapture
+          source="pricing_page"
+          planId={priceId}
+          onCaptured={handleEmailCaptured}
+          onDismiss={handleEmailDismissed}
         />
       )}
     </div>
