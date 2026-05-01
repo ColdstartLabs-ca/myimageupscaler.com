@@ -174,11 +174,20 @@
     }
   },
   "postDownloadPrompt": {
-    "title": "Curioso para ver o que outros modelos podem fazer?",
-    "body": "Temos mais de 14 modelos de IA, cada um otimizado para tipos diferentes de imagem.",
-    "cta": "Explorar modelos",
-    "dismiss": "Fechar aviso",
-    "maybeLater": "Talvez depois"
+    "free": {
+      "title": "Quer resultados mais nítidos e limpos?",
+      "linkText": "Obtenha 10x mais nitidez com modelos Premium.",
+      "cta": "Atualizar agora",
+      "continue": "Continuar grátis"
+    },
+    "creditPurchaser": {
+      "title": "Quer qualidade consistente todo mês?",
+      "linkText": "Obtenha 100 créditos/mês com uma assinatura.",
+      "cta": "Ver assinaturas",
+      "continue": "Continuar"
+    },
+    "description": "Adorou o resultado? ",
+    "dismiss": "Fechar aviso"
   },
   "sampleImages": {
     "title": "Experimente com uma imagem de exemplo",
@@ -212,7 +221,8 @@
     "uploadAnother": "Enviar outra imagem",
     "seePlans": "Ver planos Premium",
     "subscribeCta": "Assine e Economize",
-    "skipText": "Desbloqueie ampliações ilimitadas com Premium",    "dismiss": "Fechar celebração"
+    "skipText": "Desbloqueie ampliações ilimitadas com Premium",
+    "dismiss": "Fechar celebração"
   },
   "onboardingTour": {
     "uploadZone": {

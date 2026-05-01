@@ -168,11 +168,20 @@
     "enhancedLabel": "Enhanced"
   },
   "postDownloadPrompt": {
-    "title": "See what other models can do",
-    "body": "We have 14+ AI models — each optimized for different image types.",
-    "cta": "Explore Models",
-    "dismiss": "Dismiss prompt",
-    "maybeLater": "Maybe Later"
+    "free": {
+      "title": "Want sharper, cleaner output?",
+      "linkText": "Get 10x sharper with Premium models.",
+      "cta": "Upgrade Now",
+      "continue": "Continue Free"
+    },
+    "creditPurchaser": {
+      "title": "Want consistent quality every month?",
+      "linkText": "Get 100 credits/mo with a subscription.",
+      "cta": "View Subscriptions",
+      "continue": "Continue"
+    },
+    "description": "Love the result? ",
+    "dismiss": "Dismiss prompt"
   },
   "upgradeSuccessBanner": {
     "title": "Great work!",
@@ -221,7 +230,8 @@
     "uploadAnother": "Upload Another",
     "seePlans": "See Premium Plans",
     "subscribeCta": "Subscribe & Save",
-    "skipText": "Unlock unlimited upscales with Premium",    "dismiss": "Dismiss celebration"
+    "skipText": "Unlock unlimited upscales with Premium",
+    "dismiss": "Dismiss celebration"
   },
   "onboardingTour": {
     "uploadZone": {

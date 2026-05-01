@@ -32,11 +32,17 @@ vi.mock('@client/utils/abTest', () => ({
 vi.mock('next-intl', () => ({
   useTranslations: () => {
     const map: Record<string, string> = {
-      'workspace.postDownloadPrompt.title': 'See what other models can do',
-      'workspace.postDownloadPrompt.body': 'Body text',
-      'workspace.postDownloadPrompt.cta': 'Explore Models',
+      'workspace.postDownloadPrompt.free.title': 'Want sharper, cleaner output?',
+      'workspace.postDownloadPrompt.free.linkText': 'Get 10x sharper with Premium models.',
+      'workspace.postDownloadPrompt.free.cta': 'Upgrade Now',
+      'workspace.postDownloadPrompt.free.continue': 'Continue Free',
+      'workspace.postDownloadPrompt.creditPurchaser.title': 'Want consistent quality every month?',
+      'workspace.postDownloadPrompt.creditPurchaser.linkText':
+        'Get 100 credits/mo with a subscription.',
+      'workspace.postDownloadPrompt.creditPurchaser.cta': 'View Subscriptions',
+      'workspace.postDownloadPrompt.creditPurchaser.continue': 'Continue',
+      'workspace.postDownloadPrompt.description': 'Love the result? ',
       'workspace.postDownloadPrompt.dismiss': 'Dismiss prompt',
-      'workspace.postDownloadPrompt.maybeLater': 'Maybe Later',
     };
     return (key: string) => map[`workspace.postDownloadPrompt.${key}`] ?? key;
   },

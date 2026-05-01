@@ -94,16 +94,13 @@ export const PostDownloadPrompt = ({
     onExploreModels();
   };
 
-  // Segment-aware copy
-  const title = isCreditPurchaser
-    ? 'Want consistent quality every month?'
-    : 'Want sharper, cleaner output?';
-  const description = 'Love the result? ';
-  const linkText = isCreditPurchaser
-    ? 'Get 100 credits/mo with a subscription.'
-    : 'Get 10x sharper with Premium models.';
-  const ctaText = isCreditPurchaser ? 'View Subscriptions' : 'Upgrade Now';
-  const continueText = isCreditPurchaser ? 'Continue' : 'Continue Free';
+  // Segment-aware copy via translation keys
+  const segmentKey = isCreditPurchaser ? 'creditPurchaser' : 'free';
+  const title = t(`${segmentKey}.title`);
+  const description = t('description');
+  const linkText = t(`${segmentKey}.linkText`);
+  const ctaText = t(`${segmentKey}.cta`);
+  const continueText = t(`${segmentKey}.continue`);
 
   return (
     <Modal
