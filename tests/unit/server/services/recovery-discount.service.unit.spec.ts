@@ -6,12 +6,14 @@ const {
   mockPromotionCodesUpdate,
   mockCouponsCreate,
   mockCouponsRetrieve,
+  mockSupabaseFrom,
 } = vi.hoisted(() => ({
   mockPromotionCodesCreate: vi.fn(),
   mockPromotionCodesList: vi.fn(),
   mockPromotionCodesUpdate: vi.fn(),
   mockCouponsCreate: vi.fn(),
   mockCouponsRetrieve: vi.fn(),
+  mockSupabaseFrom: vi.fn(),
 }));
 
 vi.mock('@server/stripe/config', () => ({
@@ -20,6 +22,7 @@ vi.mock('@server/stripe/config', () => ({
       create: mockPromotionCodesCreate,
       list: mockPromotionCodesList,
       update: mockPromotionCodesUpdate,
+      retrieve: vi.fn(),
     },
     coupons: {
       create: mockCouponsCreate,
@@ -28,9 +31,19 @@ vi.mock('@server/stripe/config', () => ({
   },
 }));
 
+vi.mock('@server/supabase/supabaseAdmin', () => ({
+  supabaseAdmin: {
+    from: mockSupabaseFrom,
+  },
+}));
+
 vi.mock('@shared/config/env', () => ({
   serverEnv: {
     STRIPE_RECOVERY_COUPON_ID: 'coupon_recovery',
+  },
+  clientEnv: {
+    SUPABASE_URL: 'https://test.supabase.co',
+    SUPABASE_ANON_KEY: 'test-anon-key',
   },
 }));
 
@@ -43,6 +56,14 @@ import {
 describe('recovery-discount.service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockSupabaseFrom.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({
+        data: { recovery_discount_id: null, recovery_discount_code: null },
+        error: null,
+      }),
+    });
   });
 
   it('creates Stripe promotion codes with the SDK promotion payload', async () => {

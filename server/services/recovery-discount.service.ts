@@ -13,6 +13,7 @@
 
 import { stripe } from '@server/stripe/config';
 import { serverEnv } from '@shared/config/env';
+import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import {
   RECOVERY_DISCOUNT_CONFIG,
   type IRecoveryDiscountCode,
@@ -265,7 +266,10 @@ export async function markCodeAsUsed(promotionCodeId: string): Promise<boolean> 
 /**
  * Get promotion code details by checkout ID.
  *
- * Useful for looking up the discount code associated with an abandoned checkout.
+ * First checks the database for the stored `recovery_discount_id`, then retrieves
+ * the promotion code directly from Stripe by ID. This avoids paginating through
+ * all promotion codes at scale. Falls back to scanning Stripe only if the DB
+ * record is missing the discount ID.
  *
  * @param checkoutId - The abandoned checkout ID
  * @returns The promotion code details if found, null otherwise
@@ -274,6 +278,31 @@ export async function getPromoCodeByCheckoutId(
   checkoutId: string
 ): Promise<IRecoveryDiscountCode | null> {
   try {
+    // Fast path: look up the stored promotion code ID from the database
+    const { data: checkout, error } = await supabaseAdmin
+      .from('abandoned_checkouts')
+      .select('recovery_discount_id, recovery_discount_code')
+      .eq('id', checkoutId)
+      .single();
+
+    if (!error && checkout?.recovery_discount_id) {
+      const promoCode = await stripe.promotionCodes.retrieve(checkout.recovery_discount_id);
+
+      if (promoCode) {
+        return {
+          code: promoCode.code || checkout.recovery_discount_code || '',
+          promotionCodeId: promoCode.id,
+          couponId:
+            (typeof promoCode.promotion.coupon === 'string'
+              ? promoCode.promotion.coupon
+              : promoCode.promotion.coupon?.id) || '',
+          checkoutId: checkoutId,
+          expiresAt: promoCode.expires_at ? new Date(promoCode.expires_at * 1000) : new Date(),
+        };
+      }
+    }
+
+    // Fallback: paginate through Stripe promotion codes (e.g. for legacy records)
     let startingAfter: string | undefined;
 
     while (true) {

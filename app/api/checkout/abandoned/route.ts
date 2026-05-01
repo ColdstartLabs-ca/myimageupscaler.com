@@ -39,6 +39,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!body.originalAmountCents || body.originalAmountCents <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'originalAmountCents must be greater than 0' },
+        { status: 400 }
+      );
+    }
+
     // Create abandoned checkout record
     const { data, error } = await supabaseAdmin
       .from('abandoned_checkouts')

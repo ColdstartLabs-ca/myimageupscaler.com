@@ -122,4 +122,41 @@ describe('POST /api/checkout/abandoned', () => {
     expect(json.success).toBe(false);
     expect(json.error).toContain('purchaseType');
   });
+
+  it('rejects originalAmountCents less than or equal to 0', async () => {
+    const request = new NextRequest('http://localhost/api/checkout/abandoned', {
+      method: 'POST',
+      body: JSON.stringify({
+        priceId: 'price_123',
+        purchaseType: 'subscription',
+        originalAmountCents: 0,
+      }),
+    });
+
+    const response = await POST(request);
+    const json = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error).toContain('originalAmountCents');
+    expect(mockSupabaseFrom).not.toHaveBeenCalled();
+  });
+
+  it('rejects missing originalAmountCents', async () => {
+    const request = new NextRequest('http://localhost/api/checkout/abandoned', {
+      method: 'POST',
+      body: JSON.stringify({
+        priceId: 'price_123',
+        purchaseType: 'subscription',
+      }),
+    });
+
+    const response = await POST(request);
+    const json = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error).toContain('originalAmountCents');
+    expect(mockSupabaseFrom).not.toHaveBeenCalled();
+  });
 });
