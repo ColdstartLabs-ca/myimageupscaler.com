@@ -237,6 +237,12 @@ export const sendRecoveryEmail: ISendRecoveryEmailFn = async (
         .eq('id', checkout.id);
     }
 
+    // Mark email as sent BEFORE sending to guarantee at-most-once delivery.
+    // If the DB write fails, we abort without sending (next cron run can retry).
+    // If the email send fails after this point, the flag is already set so we
+    // avoid duplicate sends.
+    await markEmailSent(checkout.id, emailType);
+
     // Build email template data
     const emailData = buildRecoveryEmailData(checkout, emailType, {
       discountCode,
@@ -279,9 +285,6 @@ export const sendRecoveryEmail: ISendRecoveryEmailFn = async (
       },
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: checkout.userId }
     );
-
-    // Mark email as sent in database
-    await markEmailSent(checkout.id, emailType);
 
     return {
       success: true,

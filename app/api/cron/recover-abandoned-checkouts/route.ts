@@ -23,6 +23,12 @@ function validateCronAuth(request: NextRequest): boolean {
 
   // Support both Bearer token and direct secret comparison
   const token = authHeader.replace('Bearer ', '');
+
+  // Reject empty tokens or empty secrets to prevent bypass attacks
+  if (!token || !serverEnv.CRON_SECRET) {
+    return false;
+  }
+
   const isValid = token === serverEnv.CRON_SECRET;
 
   if (!isValid) {

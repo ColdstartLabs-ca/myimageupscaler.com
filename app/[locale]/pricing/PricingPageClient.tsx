@@ -650,6 +650,7 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
                         currentSubscriptionPrice={currentSubscriptionPrice}
                         loading={buttonLoadingStates[starterPriceId] || false}
                         discountPercent={discountPercent}
+                        pricingRegion={pricingRegion || 'standard'}
                       />
                     ) : null;
                   })()}
@@ -683,6 +684,7 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
                     currentSubscriptionPrice={currentSubscriptionPrice}
                     loading={buttonLoadingStates[STRIPE_PRICES.HOBBY_MONTHLY] || false}
                     discountPercent={discountPercent}
+                    pricingRegion={pricingRegion || 'standard'}
                   />
 
                   <PricingCard
@@ -715,6 +717,7 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
                     currentSubscriptionPrice={currentSubscriptionPrice}
                     loading={buttonLoadingStates[STRIPE_PRICES.PRO_MONTHLY] || false}
                     discountPercent={discountPercent}
+                    pricingRegion={pricingRegion || 'standard'}
                   />
 
                   <PricingCard
@@ -746,6 +749,7 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
                     currentSubscriptionPrice={currentSubscriptionPrice}
                     loading={buttonLoadingStates[STRIPE_PRICES.BUSINESS_MONTHLY] || false}
                     discountPercent={discountPercent}
+                    pricingRegion={pricingRegion || 'standard'}
                   />
                 </>
               )}

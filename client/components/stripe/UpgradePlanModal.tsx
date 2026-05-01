@@ -51,6 +51,7 @@ export function UpgradePlanModal({
         </p>
         <SubscriptionPlanGrid
           discountPercent={discountPercent}
+          pricingRegion={pricingRegion}
           currentPriceId={currentPriceId ?? undefined}
           currentSubscriptionPrice={subscriptionPrice}
         />

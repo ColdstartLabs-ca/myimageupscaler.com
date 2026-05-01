@@ -16,6 +16,8 @@ interface IPlanState {
 interface ISubscriptionPlanGridProps {
   /** Required — no default, prevents the "forgot discountPercent" bug */
   discountPercent: number;
+  /** Pricing region for regional discounts (e.g., 'brazil', 'standard') */
+  pricingRegion?: string;
   currentSubscriptionPrice?: number | null;
   /** Auto-disables the matching plan card */
   currentPriceId?: string;
@@ -47,6 +49,7 @@ type TPlanKey = 'hobby' | 'pro' | 'business';
 
 export function SubscriptionPlanGrid({
   discountPercent,
+  pricingRegion = 'standard',
   currentSubscriptionPrice,
   currentPriceId,
   onSelect,
@@ -177,6 +180,7 @@ export function SubscriptionPlanGrid({
                   : undefined
               }
               discountPercent={discountPercent}
+              pricingRegion={pricingRegion}
               currentSubscriptionPrice={currentSubscriptionPrice}
               disabled={overrides.disabled ?? isCurrentPlan}
               scheduled={overrides.scheduled}

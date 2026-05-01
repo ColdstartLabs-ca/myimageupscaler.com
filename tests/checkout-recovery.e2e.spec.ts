@@ -111,7 +111,7 @@ test.describe('Checkout Recovery - Complete Purchase Banner', () => {
         recoveryCode: null,
         createdAt: new Date().toISOString(),
       };
-      localStorage.setItem('pending_cart', JSON.stringify(mockCheckout));
+      localStorage.setItem('miu_pending_checkout', JSON.stringify(mockCheckout));
     });
 
     // Reload the page to trigger the restoration check
@@ -138,7 +138,7 @@ test.describe('Checkout Recovery - Complete Purchase Banner', () => {
         recoveryCode: null,
         createdAt: new Date().toISOString(),
       };
-      localStorage.setItem('pending_cart', JSON.stringify(mockCheckout));
+      localStorage.setItem('miu_pending_checkout', JSON.stringify(mockCheckout));
     });
 
     await page.reload();
@@ -161,7 +161,7 @@ test.describe('Checkout Recovery - Complete Purchase Banner', () => {
         recoveryCode: 'RECOVER10',
         createdAt: new Date().toISOString(),
       };
-      localStorage.setItem('pending_cart', JSON.stringify(mockCheckout));
+      localStorage.setItem('miu_pending_checkout', JSON.stringify(mockCheckout));
     });
 
     await page.reload();
@@ -184,7 +184,7 @@ test.describe('Checkout Recovery - Complete Purchase Banner', () => {
         recoveryCode: null,
         createdAt: new Date().toISOString(),
       };
-      localStorage.setItem('pending_cart', JSON.stringify(mockCheckout));
+      localStorage.setItem('miu_pending_checkout', JSON.stringify(mockCheckout));
     });
 
     await page.reload();
@@ -214,7 +214,7 @@ test.describe('Checkout Recovery - Credit Pack Cart', () => {
         recoveryCode: null,
         createdAt: new Date().toISOString(),
       };
-      localStorage.setItem('pending_cart', JSON.stringify(mockCheckout));
+      localStorage.setItem('miu_pending_checkout', JSON.stringify(mockCheckout));
     });
 
     await page.reload();
@@ -237,7 +237,7 @@ test.describe('Checkout Recovery - Credit Pack Cart', () => {
         recoveryCode: null,
         createdAt: new Date().toISOString(),
       };
-      localStorage.setItem('pending_cart', JSON.stringify(mockCheckout));
+      localStorage.setItem('miu_pending_checkout', JSON.stringify(mockCheckout));
     });
 
     await page.reload();

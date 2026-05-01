@@ -37,6 +37,8 @@ interface IPricingCardProps {
   loading?: boolean;
   /** Regional discount percentage (0-100). When > 0, displays adjusted price. */
   discountPercent?: number;
+  /** Pricing region for regional discounts (e.g., 'brazil', 'standard') */
+  pricingRegion?: string;
 }
 
 // --- Helper Functions (SRP: separate logic from rendering) ---
@@ -184,6 +186,7 @@ export function PricingCard({
   currentSubscriptionPrice,
   loading = false,
   discountPercent = 0,
+  pricingRegion = 'standard',
 }: IPricingCardProps): JSX.Element {
   const { isAuthenticated } = useUserStore();
   const { savePendingCheckout } = useCartPersistence();
@@ -220,8 +223,8 @@ export function PricingCard({
       purchaseType: 'subscription',
       planKey: planConfig?.key || undefined,
       packKey: undefined,
-      pricingRegion: 'standard',
-      discountPercent: 0,
+      pricingRegion,
+      discountPercent,
       recoveryCode: undefined,
       timestamp: Date.now(),
     });
@@ -238,8 +241,8 @@ export function PricingCard({
       purchaseType: 'subscription',
       planKey: planConfig?.key || undefined,
       packKey: undefined,
-      pricingRegion: 'standard',
-      discountPercent: 0,
+      pricingRegion,
+      discountPercent,
       recoveryCode: undefined,
       timestamp: Date.now(),
     });
