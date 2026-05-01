@@ -90,7 +90,7 @@ const Workspace: React.FC = () => {
   useUpgradeAbandonmentDetector({ isFreeUser, userId: profile?.id });
 
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [_upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
+  const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
   const [upgradeModalTrigger, setUpgradeModalTrigger] = useState('workspace');
 
   const openUpgradeModal = (outOfCredits = false, trigger = 'workspace') => {
@@ -471,6 +471,7 @@ const Workspace: React.FC = () => {
           isOpen={showUpgradeModal}
           onClose={closeUpgradeModal}
           onPurchaseComplete={closeUpgradeModal}
+          outOfCredits={upgradeModalOutOfCredits}
           trigger={upgradeModalTrigger}
         />
 
@@ -800,6 +801,7 @@ const Workspace: React.FC = () => {
         isOpen={showUpgradeModal}
         onClose={closeUpgradeModal}
         onPurchaseComplete={closeUpgradeModal}
+        outOfCredits={upgradeModalOutOfCredits}
         trigger={upgradeModalTrigger}
       />
 
