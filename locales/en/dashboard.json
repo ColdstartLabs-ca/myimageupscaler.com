@@ -1,6 +1,7 @@
 {
   "sidebar": {
     "dashboard": "Dashboard",
+    "gallery": "Gallery",
     "billing": "Billing",
     "settings": "Settings",
     "admin": "Admin",
@@ -8,6 +9,30 @@
     "signOut": "Sign Out",
     "closeMenu": "Close menu",
     "plan": "Plan"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "Your saved upscaled images",
+    "emptyTitle": "No saved images yet",
+    "emptyDescription": "Images you save during processing will appear here for easy access later.",
+    "saveFirstImage": "Save your first image",
+    "usageLabel": "Gallery usage",
+    "images": "images",
+    "limitReached": "You've reached your gallery limit. Upgrade to save more images.",
+    "upgradeTitle": "Gallery full",
+    "upgradeDescription": "Upgrade to save unlimited images",
+    "upgradeNow": "Upgrade Now",
+    "refresh": "Refresh",
+    "loading": "Loading...",
+    "loadMore": "Load More",
+    "viewFullSize": "View full size",
+    "download": "Download",
+    "delete": "Delete",
+    "deleteImage": "Delete Image",
+    "deleteConfirm": "Are you sure you want to delete this image?",
+    "deleteWarning": "This will permanently delete {filename}. This action cannot be undone.",
+    "cancel": "Cancel",
+    "dimensions": "{width} x {height}"
   },
   "history": {
     "title": "History",

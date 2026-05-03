@@ -6,6 +6,11 @@ dotenv.config({ path: '.env.test', quiet: true });
 
 const isCI = !!process.env.CI;
 
+// QA artifact configuration
+const qaArtifacts = process.env.NW_QA_ARTIFACTS || 'both';
+const enableScreenshots = qaArtifacts === 'screenshot' || qaArtifacts === 'both';
+const enableVideos = qaArtifacts === 'video' || qaArtifacts === 'both';
+
 // Generate random ports for each test run to avoid conflicts with dev server
 const TEST_PORT = process.env.TEST_PORT || (3100 + Math.floor(Math.random() * 900)).toString();
 const TEST_WRANGLER_PORT =
@@ -27,6 +32,8 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${TEST_PORT}`,
     trace: 'retain-on-failure', // Only keep traces on failure to save memory
+    screenshot: enableScreenshots ? 'on' : 'only-on-failure',
+    video: enableVideos ? { mode: 'on', size: { width: 1280, height: 720 } } : 'retain-on-failure',
     actionTimeout: 30000, // Increased action timeout for stability
     navigationTimeout: 45000, // Increased navigation timeout
   },
