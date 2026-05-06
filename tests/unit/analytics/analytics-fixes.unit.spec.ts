@@ -86,6 +86,28 @@ describe('Analytics Fixes - Structural Checks', () => {
     });
   });
 
+  describe('SEO attribution: high-intent events carry first-touch context', () => {
+    test('client track events include attribution fields', async () => {
+      const fs = await import('fs');
+      const clientSource = fs.readFileSync('client/analytics/analyticsClient.ts', 'utf-8');
+
+      expect(clientSource).toContain('getEventAttributionProperties');
+      expect(clientSource).toContain('first_touch_utm_source');
+      expect(clientSource).toContain('first_touch_landing_page');
+      expect(clientSource).toContain('entry_page');
+      expect(clientSource).toContain('referral_source');
+    });
+
+    test('upscale_completed maps to GA4 generate_lead', async () => {
+      const { GA4_EVENT_MAP } = await import('@shared/analytics/types');
+      const fs = await import('fs');
+      const providerSource = fs.readFileSync('shared/analytics/providers/ga4-provider.ts', 'utf-8');
+
+      expect(GA4_EVENT_MAP.upscale_completed).toBe('generate_lead');
+      expect(providerSource).toContain("upscale_completed: 'generate_lead'");
+    });
+  });
+
   describe('Fix #5: pricing_page_viewed waits for profile', () => {
     test('PricingPageClient should guard with loading check before tracking', async () => {
       const fs = await import('fs');

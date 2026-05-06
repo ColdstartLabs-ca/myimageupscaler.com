@@ -5,11 +5,21 @@
 
 import { NextResponse } from 'next/server';
 import { clientEnv } from '@shared/config/env';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n/config';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
+const localeHomepagePages = SUPPORTED_LOCALES.filter(locale => locale !== DEFAULT_LOCALE).map(
+  locale => ({
+    path: `/${locale}`,
+    priority: 0.9,
+    changefreq: 'weekly',
+  })
+);
+
 const staticPages = [
   { path: '/', priority: 1.0, changefreq: 'daily' },
+  ...localeHomepagePages,
   { path: '/about', priority: 0.8, changefreq: 'monthly' },
   { path: '/contact', priority: 0.7, changefreq: 'monthly' },
   { path: '/pricing', priority: 0.9, changefreq: 'weekly' },
