@@ -8,6 +8,7 @@ export type ITestUser = {
 
 export class TestDataManager {
   private supabase: ReturnType<typeof createClient> | null = null;
+  private authSupabase: ReturnType<typeof createClient> | null = null;
   private createdUsers: string[] = [];
   private static userPool: ITestUser[] = [];
   private static poolInitialized = false;
@@ -33,7 +34,18 @@ export class TestDataManager {
           persistSession: false,
         },
       });
+
+      this.authSupabase = TestDataManager.createAuthClient(supabaseUrl, supabaseServiceKey);
     }
+  }
+
+  private static createAuthClient(supabaseUrl: string, fallbackKey: string) {
+    return createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || fallbackKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
   }
 
   /**
@@ -62,12 +74,13 @@ export class TestDataManager {
 
     if (!supabaseUrl || !supabaseServiceKey) return;
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
       },
     });
+    const supabaseAuth = this.createAuthClient(supabaseUrl, supabaseServiceKey);
 
     // Create a pool of test users
     const poolSize = 3; // Reduce pool size to avoid rate limiting
@@ -77,7 +90,7 @@ export class TestDataManager {
         const testPassword = 'test-password-123';
 
         // Try to get existing user or create new one
-        const { data: existingUser } = await supabase.auth.admin.listUsers();
+        const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers();
         const user = existingUser.users.find(u => u.email === testEmail);
 
         let authUser;
@@ -86,7 +99,7 @@ export class TestDataManager {
         } else {
           // Create new user with longer delay to avoid rate limits
           await new Promise(resolve => setTimeout(resolve, 1000));
-          const { data: adminData, error: adminError } = await supabase.auth.admin.createUser({
+          const { data: adminData, error: adminError } = await supabaseAdmin.auth.admin.createUser({
             email: testEmail,
             password: testPassword,
             email_confirm: true,
@@ -108,7 +121,7 @@ export class TestDataManager {
         let signInData, signInError;
 
         while (signInAttempts < maxAttempts) {
-          const { data: data, error: error } = await supabase.auth.signInWithPassword({
+          const { data: data, error: error } = await supabaseAuth.auth.signInWithPassword({
             email: testEmail,
             password: testPassword,
           });
@@ -201,6 +214,10 @@ export class TestDataManager {
       };
     }
 
+    if (!this.supabase || !this.authSupabase) {
+      throw new Error('Supabase clients not available');
+    }
+
     // Add longer delay to avoid rate limiting for non-test environments
     await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -215,10 +232,11 @@ export class TestDataManager {
       if (adminError) {
         // If user already exists, try to sign them in directly
         if (adminError.message.includes('already registered')) {
-          const { data: signInData, error: signInError } = await this.supabase.auth.signInWithPassword({
-            email: testEmail,
-            password: testPassword,
-          });
+          const { data: signInData, error: signInError } =
+            await this.authSupabase.auth.signInWithPassword({
+              email: testEmail,
+              password: testPassword,
+            });
 
           if (signInError) {
             throw new Error(`Existing user sign in failed: ${signInError.message}`);
@@ -252,7 +270,7 @@ export class TestDataManager {
 
       while (signInAttempts < maxSignInAttempts) {
         try {
-          const { data: data, error: error } = await this.supabase.auth.signInWithPassword({
+          const { data: data, error: error } = await this.authSupabase.auth.signInWithPassword({
             email: testEmail,
             password: testPassword,
           });
@@ -272,7 +290,9 @@ export class TestDataManager {
 
         signInAttempts++;
         const backoffDelay = Math.min(2000 * Math.pow(2, signInAttempts), 15000);
-        console.log(`Sign-in attempt ${signInAttempts + 1} failed, retrying in ${backoffDelay}ms...`);
+        console.log(
+          `Sign-in attempt ${signInAttempts + 1} failed, retrying in ${backoffDelay}ms...`
+        );
         await new Promise(resolve => setTimeout(resolve, backoffDelay));
       }
 
@@ -446,7 +466,7 @@ export class TestDataManager {
         updated_at: new Date().toISOString(),
       };
 
-      existingProfile.credits_balance = (existingProfile.credits_balance as number || 0) + amount;
+      existingProfile.credits_balance = ((existingProfile.credits_balance as number) || 0) + amount;
       existingProfile.updated_at = new Date().toISOString();
 
       this.testModeProfiles.set(userId, existingProfile);
@@ -643,9 +663,10 @@ export class TestDataManager {
       const mockUserId = this.generateUUID();
 
       // Create token with subscription info: test_token_mock_user_{userId}_sub_{status}_{tier}
-      const mockToken = status === 'free'
-        ? `test_token_mock_user_${mockUserId}`
-        : `test_token_mock_user_${mockUserId}_sub_${status}_${tier || 'pro'}`;
+      const mockToken =
+        status === 'free'
+          ? `test_token_mock_user_${mockUserId}`
+          : `test_token_mock_user_${mockUserId}_sub_${status}_${tier || 'pro'}`;
 
       this.createdUsers.push(mockUserId);
       return {
@@ -694,7 +715,8 @@ export class TestDataManager {
         .eq('id', userId)
         .single();
 
-      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = not found
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        // PGRST116 = not found
         console.warn('Error checking existing profile:', fetchError.message);
         return;
       }
@@ -705,13 +727,11 @@ export class TestDataManager {
       }
 
       // Create the profile
-      const { error: insertError } = await this.supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          credits_balance: 10, // Default initial credits
-          updated_at: new Date().toISOString(),
-        });
+      const { error: insertError } = await this.supabase.from('profiles').insert({
+        id: userId,
+        credits_balance: 10, // Default initial credits
+        updated_at: new Date().toISOString(),
+      });
 
       if (insertError) {
         console.warn('Failed to create test user profile:', insertError.message);
@@ -728,9 +748,9 @@ export class TestDataManager {
    * @returns A valid UUID string
    */
   private generateUUID(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0;
-      const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0;
+      const v = c == 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   }
