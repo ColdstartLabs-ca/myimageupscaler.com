@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { ArrowLeftRight, Download, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowLeftRight, BookmarkPlus, Download, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@client/components/ui/Button';
 import { analytics } from '@client/analytics/analyticsClient';
 
@@ -7,6 +7,9 @@ interface IImageComparisonProps {
   beforeUrl: string;
   afterUrl: string;
   onDownload: () => void;
+  onSave?: () => void;
+  isSaving?: boolean;
+  isSaved?: boolean;
   /** Whether the after image has transparency (e.g., from bg-removal). Auto-detected from blob: URLs if not provided. */
   hasTransparency?: boolean;
   /** Scale factor applied to the image (e.g., 2, 4, 8). Used for analytics tracking. */
@@ -19,6 +22,9 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   beforeUrl,
   afterUrl,
   onDownload,
+  onSave,
+  isSaving = false,
+  isSaved = false,
   hasTransparency,
   upscaleFactor,
   modelUsed,
@@ -132,6 +138,18 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
           >
             {zoom === 1 ? <ZoomIn size={18} /> : <ZoomOut size={18} />}
           </button>
+          {onSave && (
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<BookmarkPlus size={16} />}
+              onClick={onSave}
+              disabled={isSaving || isSaved}
+            >
+              <span className="hidden sm:inline">{isSaved ? 'Saved' : 'Save to Gallery'}</span>
+              <span className="sm:hidden">{isSaved ? 'Saved' : 'Save'}</span>
+            </Button>
+          )}
           <Button
             variant="primary"
             size="sm"

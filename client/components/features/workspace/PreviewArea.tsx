@@ -1,6 +1,7 @@
 import { IBatchItem, ProcessingStage, ProcessingStatus } from '@/shared/types/coreflow.types';
 import ImageComparison from '@client/components/features/image-processing/ImageComparison';
 import { Button } from '@client/components/ui/Button';
+import { useGallery } from '@client/hooks/useGallery';
 import { AlertTriangle, Check, Layers, Loader2 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -189,7 +190,9 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   // Interpolated progress for smooth animation
   const [displayProgress, setDisplayProgress] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [savedResultUrls, setSavedResultUrls] = useState<Set<string>>(new Set());
   const startTimeRef = useRef<number | null>(null);
+  const { saveImage, isSaving } = useGallery();
 
   // Track elapsed time during processing
   useEffect(() => {
@@ -258,6 +261,26 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
     activeItem?.status === ProcessingStatus.COMPLETED;
 
   if (activeItem.status === ProcessingStatus.COMPLETED && activeItem.processedUrl) {
+    const canSaveToGallery = /^https?:\/\//.test(activeItem.processedUrl);
+    const isSavedToGallery = savedResultUrls.has(activeItem.processedUrl);
+    const handleSaveToGallery = async () => {
+      if (!activeItem.processedUrl) return;
+
+      const saved = await saveImage({
+        imageUrl: activeItem.processedUrl,
+        filename: activeItem.file.name,
+        modelUsed: selectedModel,
+      });
+
+      if (saved) {
+        setSavedResultUrls(prev => {
+          const next = new Set(prev);
+          next.add(activeItem.processedUrl!);
+          return next;
+        });
+      }
+    };
+
     return (
       <div className="w-full h-full md:h-[65vh] md:min-h-[400px] flex flex-col">
         <div className="mb-1 md:mb-4 flex justify-between items-center shrink-0">
@@ -275,6 +298,10 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
             beforeUrl={activeItem.previewUrl}
             afterUrl={activeItem.processedUrl}
             onDownload={() => onDownload(activeItem.processedUrl!, activeItem.file.name)}
+            onSave={canSaveToGallery ? handleSaveToGallery : undefined}
+            isSaving={isSaving}
+            isSaved={isSavedToGallery}
+            modelUsed={selectedModel}
           />
 
           {/* Waiting for next batch item overlay */}

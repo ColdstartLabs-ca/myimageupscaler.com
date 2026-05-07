@@ -198,7 +198,10 @@ export const GalleryImageCard: React.FC<IGalleryImageCardProps> = ({
 
   return (
     <>
-      <div className="group relative bg-surface rounded-xl border border-border overflow-hidden transition-all hover:border-accent/50">
+      <div
+        data-testid="gallery-image-card"
+        className="group relative bg-surface rounded-xl border border-border overflow-hidden transition-all hover:border-accent/50"
+      >
         {/* Image Container */}
         <div className="relative aspect-square bg-surface-light">
           <Image

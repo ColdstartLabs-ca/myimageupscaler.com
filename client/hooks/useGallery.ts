@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { useToastStore } from '@client/store/toastStore';
 import { analytics } from '@client/analytics/analyticsClient';
 import { GALLERY_QUERY_CONFIG } from '@shared/config/gallery.config';
+import { createClient } from '@shared/utils/supabase/client';
 import type {
   IGalleryStats,
   IGalleryListResponse,
@@ -77,6 +78,55 @@ const initialListState: IGalleryListState = {
   hasMore: false,
 };
 
+async function getGalleryAuthHeaders(contentType?: string): Promise<Record<string, string>> {
+  const headers: Record<string, string> = {};
+
+  if (contentType) {
+    headers['Content-Type'] = contentType;
+  }
+
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
+  }
+
+  return headers;
+}
+
+function getGalleryErrorMessage(data: unknown, fallback: string): string {
+  if (!data || typeof data !== 'object') {
+    return fallback;
+  }
+
+  const payload = data as {
+    message?: unknown;
+    error?: unknown;
+  };
+
+  if (typeof payload.message === 'string') {
+    return payload.message;
+  }
+
+  if (typeof payload.error === 'string') {
+    return payload.error;
+  }
+
+  if (
+    payload.error &&
+    typeof payload.error === 'object' &&
+    'message' in payload.error &&
+    typeof payload.error.message === 'string'
+  ) {
+    return payload.error.message;
+  }
+
+  return fallback;
+}
+
 /**
  * Hook for managing gallery operations
  * Provides save, delete, list, and usage tracking functionality
@@ -100,7 +150,9 @@ export function useGallery(): IUseGalleryReturn {
     setError(null);
 
     try {
-      const response = await fetch('/api/gallery?page_size=1');
+      const response = await fetch('/api/gallery?page_size=1', {
+        headers: await getGalleryAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch gallery usage');
       }
@@ -133,11 +185,13 @@ export function useGallery(): IUseGalleryReturn {
           sort_order: GALLERY_QUERY_CONFIG.defaultSortOrder,
         });
 
-        const response = await fetch(`/api/gallery?${params.toString()}`);
+        const response = await fetch(`/api/gallery?${params.toString()}`, {
+          headers: await getGalleryAuthHeaders(),
+        });
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || data.error || 'Failed to fetch images');
+          throw new Error(getGalleryErrorMessage(data, 'Failed to fetch images'));
         }
 
         const responseData: IGalleryListResponse = data.data;
@@ -202,9 +256,7 @@ export function useGallery(): IUseGalleryReturn {
       try {
         const response = await fetch('/api/gallery', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: await getGalleryAuthHeaders('application/json'),
           body: JSON.stringify({
             imageUrl: input.imageUrl,
             filename: input.filename,
@@ -244,7 +296,7 @@ export function useGallery(): IUseGalleryReturn {
             return false;
           }
 
-          throw new Error(data.message || data.error || 'Failed to save image');
+          throw new Error(getGalleryErrorMessage(data, 'Failed to save image'));
         }
 
         // Update usage stats from response (API returns { success, data, usage })
@@ -307,12 +359,13 @@ export function useGallery(): IUseGalleryReturn {
       try {
         const response = await fetch(`/api/gallery/${imageId}`, {
           method: 'DELETE',
+          headers: await getGalleryAuthHeaders(),
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || data.error || 'Failed to delete image');
+          throw new Error(getGalleryErrorMessage(data, 'Failed to delete image'));
         }
 
         // Remove image from local state

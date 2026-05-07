@@ -60,24 +60,6 @@ export const GALLERY_QUERY_CONFIG = {
 } as const;
 
 /**
- * Gallery fetch configuration for secure image ingestion
- */
-export const GALLERY_FETCH_CONFIG = {
-  /** Allowed domains for image URL fetching (SSRF protection) */
-  allowedDomains: [
-    // Replicate CDN
-    'replicate.delivery',
-    'replicate.com',
-    // Our own CDN/storage
-    'supabase.co',
-    // Cloudflare R2 (if used)
-    'r2.cloudflarestorage.com',
-  ] as const,
-  /** Fetch timeout in milliseconds (15 seconds) */
-  fetchTimeoutMs: 15000,
-} as const;
-
-/**
  * Gallery feature configuration
  */
 export const GALLERY_CONFIG = {

@@ -325,16 +325,18 @@ export async function getCleanupStats(): Promise<{
       };
     }
 
-    // Count how many have images
+    // Count how many inactive free users actually have saved images, plus total images affected.
     const userIds = inactiveUsers.map(u => u.id);
-    const { count: totalImages, error: countError } = await supabaseAdmin
+    const { data: imagesToCleanup, error: imageError } = await supabaseAdmin
       .from('saved_images')
-      .select('*', { count: 'exact', head: true })
+      .select('user_id')
       .in('user_id', userIds);
 
-    if (countError) {
-      console.error('[GalleryCleanup] Error counting images:', countError.message);
+    if (imageError) {
+      console.error('[GalleryCleanup] Error counting images:', imageError.message);
     }
+
+    const usersWithImages = new Set((imagesToCleanup ?? []).map(image => image.user_id));
 
     // Find oldest inactive date
     const dates = inactiveUsers.map(u => new Date(u.updated_at).getTime()).filter(Boolean);
@@ -342,8 +344,8 @@ export async function getCleanupStats(): Promise<{
     const oldestInactiveDate = oldestTimestamp ? new Date(oldestTimestamp).toISOString() : null;
 
     return {
-      inactiveFreeUsersWithImages: inactiveUsers.length,
-      totalImagesToCleanup: totalImages || 0,
+      inactiveFreeUsersWithImages: usersWithImages.size,
+      totalImagesToCleanup: imagesToCleanup?.length ?? 0,
       oldestInactiveDate,
     };
   } catch (error) {

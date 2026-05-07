@@ -4,12 +4,13 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
   ArrowLeftRight: () => null,
+  BookmarkPlus: () => null,
   Download: () => null,
   ZoomIn: () => null,
   ZoomOut: () => null,
@@ -104,6 +105,24 @@ describe('ImageComparison', () => {
         await import('@/client/components/features/image-processing/ImageComparison');
       expect(ImageComparison).toBeDefined();
       expect(typeof ImageComparison).toBe('function');
+    });
+
+    it('should render save action when onSave is provided', async () => {
+      const { ImageComparison } =
+        await import('@/client/components/features/image-processing/ImageComparison');
+      const onSave = vi.fn();
+
+      render(
+        <ImageComparison
+          beforeUrl="https://example.com/before.jpg"
+          afterUrl="https://example.com/after.jpg"
+          onDownload={() => {}}
+          onSave={onSave}
+        />
+      );
+
+      fireEvent.click(screen.getByText('Save to Gallery'));
+      expect(onSave).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -162,6 +162,36 @@ describe('Gallery Storage Service', () => {
         /Image URL must be from an allowed domain/
       );
     });
+
+    test('should abort chunked downloads that exceed the gallery size limit', async () => {
+      const userId = 'user-123';
+      const imageUrl = 'https://replicate.delivery/test.png';
+      const metadata: ISaveImageMetadata = {
+        filename: 'test.png',
+      };
+
+      const oversizedChunk = new Uint8Array(10 * 1024 * 1024 + 1);
+      mockFetch.mockResolvedValueOnce(
+        new Response(
+          new ReadableStream({
+            start(controller) {
+              controller.enqueue(oversizedChunk);
+              controller.close();
+            },
+          }),
+          {
+            status: 200,
+            headers: {
+              'content-type': 'image/png',
+            },
+          }
+        )
+      );
+
+      await expect(saveImage(userId, imageUrl, metadata)).rejects.toThrow(
+        /Image size exceeds maximum allowed/
+      );
+    });
   });
 
   describe('listImages', () => {

@@ -48,6 +48,13 @@ vi.mock('@client/components/features/image-processing/ImageComparison', () => ({
   default: () => null,
 }));
 
+vi.mock('@client/hooks/useGallery', () => ({
+  useGallery: () => ({
+    saveImage: vi.fn().mockResolvedValue(true),
+    isSaving: false,
+  }),
+}));
+
 describe('PreviewArea', () => {
   beforeEach(() => {
     vi.clearAllMocks();

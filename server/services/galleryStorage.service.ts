@@ -12,7 +12,6 @@ import {
   getGalleryLimit,
   type GalleryTier,
 } from '@shared/config/gallery.config';
-import { GALLERY_FETCH_CONFIG } from '@shared/config/gallery.config';
 import type {
   IGalleryImage,
   IGalleryListResponse,
@@ -101,7 +100,7 @@ export async function saveImage(
   // 2. Validate URL domain (SSRF protection)
   const url = new URL(imageUrl);
   const hostname = url.hostname.toLowerCase();
-  const isAllowedDomain = GALLERY_FETCH_CONFIG.allowedDomains.some(
+  const isAllowedDomain = GALLERY_STORAGE_CONFIG.allowedDomains.some(
     allowed => hostname === allowed || hostname.endsWith(`.${allowed}`)
   );
   if (!isAllowedDomain) {
@@ -110,7 +109,7 @@ export async function saveImage(
 
   // 3. Fetch the image from the CDN URL with timeout and size limits
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), GALLERY_FETCH_CONFIG.fetchTimeoutMs);
+  const timeoutId = setTimeout(() => controller.abort(), GALLERY_STORAGE_CONFIG.fetchTimeoutMs);
 
   let response: Response;
   try {
@@ -121,18 +120,16 @@ export async function saveImage(
       },
     });
   } catch (fetchError) {
-    clearTimeout(timeoutId);
     if (fetchError instanceof Error && fetchError.name === 'AbortError') {
       throw new Error('Image fetch timed out');
     }
     throw new Error(
       `Failed to fetch image: ${fetchError instanceof Error ? fetchError.message : 'Unknown error'}`
     );
-  } finally {
-    clearTimeout(timeoutId);
   }
 
   if (!response.ok) {
+    clearTimeout(timeoutId);
     throw new Error(`Failed to fetch image from URL: ${response.status}`);
   }
 
@@ -141,6 +138,7 @@ export async function saveImage(
   if (contentLength) {
     const size = parseInt(contentLength, 10);
     if (size > GALLERY_STORAGE_CONFIG.maxFileSizeBytes) {
+      clearTimeout(timeoutId);
       throw new Error(
         `Image size (${(size / 1024 / 1024).toFixed(2)}MB) exceeds maximum allowed (${(GALLERY_STORAGE_CONFIG.maxFileSizeBytes / 1024 / 1024).toFixed(0)}MB)`
       );
@@ -156,33 +154,41 @@ export async function saveImage(
         mime as (typeof GALLERY_STORAGE_CONFIG.allowedMimeTypes)[number]
       )
     ) {
+      clearTimeout(timeoutId);
       throw new Error(
         `Invalid image type: ${mime}. Allowed types: ${GALLERY_STORAGE_CONFIG.allowedMimeTypes.join(', ')}`
       );
     }
   }
 
-  const imageBuffer = Buffer.from(await response.arrayBuffer());
-
-  // 6. Double-check actual buffer size (in case content-length was missing/wrong)
-  if (imageBuffer.length > GALLERY_STORAGE_CONFIG.maxFileSizeBytes) {
-    throw new Error(
-      `Image size (${(imageBuffer.length / 1024 / 1024).toFixed(2)}MB) exceeds maximum allowed (${(GALLERY_STORAGE_CONFIG.maxFileSizeBytes / 1024 / 1024).toFixed(0)}MB)`
+  let imageBuffer: Buffer;
+  try {
+    imageBuffer = await readResponseBodyWithLimit(
+      response,
+      GALLERY_STORAGE_CONFIG.maxFileSizeBytes,
+      controller
     );
+  } catch (readError) {
+    if (readError instanceof Error && readError.name === 'AbortError') {
+      throw new Error('Image fetch timed out');
+    }
+    throw readError;
+  } finally {
+    clearTimeout(timeoutId);
   }
 
-  // 7. Compress the image
+  // 6. Compress the image
   const compressedBuffer = await compressForGallery(imageBuffer);
 
-  // 8. Extract dimensions from compressed image
+  // 7. Extract dimensions from compressed image
   const compressedMetadata = await sharp(compressedBuffer).metadata();
   const width = compressedMetadata.width ?? metadata.width ?? 0;
   const height = compressedMetadata.height ?? metadata.height ?? 0;
 
-  // 9. Generate storage path: {user_id}/{uuid}.webp
+  // 8. Generate storage path: {user_id}/{uuid}.webp
   const storagePath = `${userId}/${randomUUID()}.webp`;
 
-  // 10. Upload to Supabase Storage
+  // 9. Upload to Supabase Storage
   const { error: uploadError } = await supabaseAdmin.storage
     .from(BUCKET_NAME)
     .upload(storagePath, compressedBuffer, {
@@ -195,7 +201,7 @@ export async function saveImage(
     throw new Error(`Failed to upload image to storage: ${uploadError.message}`);
   }
 
-  // 11. Insert database record
+  // 10. Insert database record
   const { data: dbRecord, error: dbError } = await supabaseAdmin
     .from('saved_images')
     .insert({
@@ -217,7 +223,7 @@ export async function saveImage(
     throw new Error(`Failed to save image record: ${dbError.message}`);
   }
 
-  // 12. Generate signed URL for viewing
+  // 11. Generate signed URL for viewing
   const signedUrl = await generateSignedUrl(storagePath);
 
   return {
@@ -257,6 +263,42 @@ export async function compressForGallery(buffer: Buffer): Promise<Buffer> {
   const compressedBuffer = await pipeline.webp({ quality: COMPRESSION_CONFIG.quality }).toBuffer();
 
   return compressedBuffer;
+}
+
+/**
+ * Read a fetch response body while enforcing a hard byte cap.
+ * This prevents unbounded buffering when an allowed CDN sends chunked data without Content-Length.
+ */
+async function readResponseBodyWithLimit(
+  response: Response,
+  maxBytes: number,
+  controller: AbortController
+): Promise<Buffer> {
+  if (!response.body) {
+    throw new Error('Image response body is unavailable');
+  }
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (!value) continue;
+
+    totalBytes += value.byteLength;
+    if (totalBytes > maxBytes) {
+      controller.abort();
+      throw new Error(
+        `Image size exceeds maximum allowed (${(maxBytes / 1024 / 1024).toFixed(0)}MB)`
+      );
+    }
+
+    chunks.push(value);
+  }
+
+  return Buffer.concat(chunks, totalBytes);
 }
 
 /**

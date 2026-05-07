@@ -1,5 +1,7 @@
-import { test, expect, Locator } from '@playwright/test';
+import { test, expect } from '../../test-fixtures';
+import type { Locator } from '@playwright/test';
 import { BasePage } from '../../pages/BasePage';
+import { setupAuthenticatedStateWithSupabase } from '../../helpers/auth-helpers';
 
 /**
  * Gallery Page Object
@@ -40,7 +42,7 @@ class GalleryPage extends BasePage {
    * Gets all image cards
    */
   get imageCards(): Locator {
-    return this.page.locator('[class*="group"][class*="relative"]');
+    return this.page.locator('[data-testid="gallery-image-card"]');
   }
 
   /**
@@ -54,7 +56,7 @@ class GalleryPage extends BasePage {
    * Gets the refresh button
    */
   get refreshButton(): Locator {
-    return this.page.getByRole('button', { name: 'Refresh' });
+    return this.page.getByRole('button', { name: 'Refresh', exact: true });
   }
 
   /**
@@ -137,7 +139,7 @@ class GalleryPage extends BasePage {
    * Waits for images to load
    */
   async waitForImages(): Promise<void> {
-    await this.page.waitForSelector('[class*="group"][class*="relative"]', {
+    await this.page.waitForSelector('[data-testid="gallery-image-card"]', {
       timeout: 10000,
     });
   }
@@ -192,6 +194,17 @@ test.describe('Gallery Page', () => {
   let galleryPage: GalleryPage;
 
   test.beforeEach(async ({ page }) => {
+    await setupAuthenticatedStateWithSupabase(page, {
+      id: 'user-1',
+      email: 'gallery-test@example.com',
+      profile: {
+        id: 'user-1',
+        email: 'gallery-test@example.com',
+        role: 'user',
+        subscription_credits_balance: 100,
+        purchased_credits_balance: 0,
+      },
+    });
     galleryPage = new GalleryPage(page);
   });
 
@@ -208,7 +221,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API to return empty state
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -238,7 +251,7 @@ test.describe('Gallery Page', () => {
       await galleryLink.click();
 
       // Should be on gallery page
-      await page.waitForURL('/en/dashboard/gallery');
+      await page.waitForURL(/\/(?:en\/)?dashboard\/gallery$/);
       await expect(galleryPage.pageTitle).toBeVisible();
     });
 
@@ -254,7 +267,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -293,7 +306,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API to return empty state
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -333,7 +346,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API with images
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -396,7 +409,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API with an image
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -451,7 +464,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -506,7 +519,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -562,7 +575,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -626,7 +639,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -667,7 +680,7 @@ test.describe('Gallery Page', () => {
       let callCount = 0;
 
       // Mock the gallery API
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         callCount++;
         route.fulfill({
           status: 200,
@@ -713,7 +726,7 @@ test.describe('Gallery Page', () => {
       ]);
 
       // Mock the gallery API
-      await page.route('/api/gallery*', route => {
+      await page.route('**/api/gallery**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
