@@ -154,7 +154,7 @@ export function scoreBlogPages(
     const queryIntentScore = getQueryIntentScore(topQuery);
 
     const opportunityScore =
-      0.35 * positionScore + 0.30 * impressionScore + 0.20 * ctrGapScore + 0.15 * queryIntentScore;
+      0.35 * positionScore + 0.3 * impressionScore + 0.2 * ctrGapScore + 0.15 * queryIntentScore;
 
     return {
       url,
