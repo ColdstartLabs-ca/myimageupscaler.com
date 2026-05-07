@@ -73,7 +73,6 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
         });
       }
     }
-
   }, [upscaleFactor, modelUsed]);
 
   const handleMouseUp = useCallback(() => {
@@ -207,7 +206,6 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
           Enhanced
         </div>
       </div>
-
     </div>
   );
 };

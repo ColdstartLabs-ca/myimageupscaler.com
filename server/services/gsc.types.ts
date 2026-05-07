@@ -37,5 +37,5 @@ export interface IGscSearchAnalyticsResponse {
 
 export interface IGscDateRange {
   startDate: string; // YYYY-MM-DD
-  endDate: string;   // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
 }

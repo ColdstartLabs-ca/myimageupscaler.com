@@ -55,10 +55,24 @@ export function useCheckoutRescueOffer(priceId: string): IUseCheckoutRescueOffer
 
   const tryShowRescueOffer = useCallback(
     async (params: ITryShowRescueOfferParams): Promise<boolean> => {
-      const { step, rescueOfferEligible, rescueOfferApplied, engagementDiscountApplied,
-              method, exitIntentTrackedRef, trackExitIntent } = params;
+      const {
+        step,
+        rescueOfferEligible,
+        rescueOfferApplied,
+        engagementDiscountApplied,
+        method,
+        exitIntentTrackedRef,
+        trackExitIntent,
+      } = params;
 
-      if (!shouldShowCheckoutRescueOffer({ step, rescueOfferEligible, rescueOfferApplied, engagementDiscountApplied })) {
+      if (
+        !shouldShowCheckoutRescueOffer({
+          step,
+          rescueOfferEligible,
+          rescueOfferApplied,
+          engagementDiscountApplied,
+        })
+      ) {
         return false;
       }
 
@@ -70,7 +84,10 @@ export function useCheckoutRescueOffer(priceId: string): IUseCheckoutRescueOffer
       };
 
       const existingOffer = getStoredCheckoutRescueOffer(priceId);
-      if (existingOffer) { show(existingOffer); return true; }
+      if (existingOffer) {
+        show(existingOffer);
+        return true;
+      }
 
       try {
         const createdOffer = await StripeService.createCheckoutRescueOffer(priceId);
@@ -99,14 +116,11 @@ export function useCheckoutRescueOffer(priceId: string): IUseCheckoutRescueOffer
     [rescueOffer]
   );
 
-  const dismissOffer = useCallback(
-    ({ trackCheckoutAbandoned, onClose }: IDismissOfferDeps) => {
-      setShowRescueOffer(false);
-      trackCheckoutAbandoned('stripe_embed');
-      onClose();
-    },
-    []
-  );
+  const dismissOffer = useCallback(({ trackCheckoutAbandoned, onClose }: IDismissOfferDeps) => {
+    setShowRescueOffer(false);
+    trackCheckoutAbandoned('stripe_embed');
+    onClose();
+  }, []);
 
   const clearOffer = useCallback(() => {
     clearStoredCheckoutRescueOffer(priceId);
@@ -115,6 +129,14 @@ export function useCheckoutRescueOffer(priceId: string): IUseCheckoutRescueOffer
 
   const hideRescueOffer = useCallback(() => setShowRescueOffer(false), []);
 
-  return { showRescueOffer, rescueOffer, appliedOfferToken,
-           tryShowRescueOffer, claimOffer, dismissOffer, clearOffer, hideRescueOffer };
+  return {
+    showRescueOffer,
+    rescueOffer,
+    appliedOfferToken,
+    tryShowRescueOffer,
+    claimOffer,
+    dismissOffer,
+    clearOffer,
+    hideRescueOffer,
+  };
 }

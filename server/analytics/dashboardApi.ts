@@ -78,9 +78,7 @@ export function buildAmplitudeDashboardAuthHeader(
   return `Basic ${Buffer.from(`${apiKey}:${secretKey}`).toString('base64')}`;
 }
 
-export function buildAmplitudeEventSegmentationUrl(
-  params: IAmplitudeEventTotalsParams
-): string {
+export function buildAmplitudeEventSegmentationUrl(params: IAmplitudeEventTotalsParams): string {
   const url = new URL(`${AMPLITUDE_DASHBOARD_API_BASE}/events/segmentation`);
   url.searchParams.set('start', formatAmplitudeDate(params.startDate));
   url.searchParams.set('end', formatAmplitudeDate(params.endDate));

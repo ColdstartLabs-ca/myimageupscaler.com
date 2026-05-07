@@ -138,9 +138,7 @@ export function calculateCreditCost(config: IUpscaleConfig): number {
 
   // Get model-specific scale multiplier (e.g., clarity-upscaler 4x = 2.0x)
   const modelId = QUALITY_TIER_CONFIG[config.qualityTier].modelId;
-  const scaleMultiplier = modelId
-    ? getScaleCreditMultiplier(modelId, config.scale)
-    : 1.0;
+  const scaleMultiplier = modelId ? getScaleCreditMultiplier(modelId, config.scale) : 1.0;
 
   // Smart analysis adds +1 credit on explicit tiers (not auto, which always has it built in)
   const smartAnalysisCost =
