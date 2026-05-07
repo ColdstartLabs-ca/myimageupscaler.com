@@ -150,3 +150,17 @@ Intent mismatch fixes (seo_title only):
 - `best-free-ai-image-upscaler-2026-tested-compared` — How to Use: "No account. No registration. No credit card." (adds registration)
 - New seo_description: "We tested the best free AI image upscalers online in 2026. No signup, no watermarks. See which tools actually work for upscaling images." (strong CTA with missing keywords)
 - H1 unchanged — already matches query intent
+
+## 2026-05-06
+
+### SEO: Next Steps Batch 1 Three Kings Refresh
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared, ai-image-upscaling-vs-sharpening-explained, best-ai-image-quality-enhancer-free, free-ai-upscaler-no-watermark, upscale-image-for-print-300-dpi-guide
+**Why:** GSC showed strong positions and impressions but weak CTR for the top Batch 1 pages in `docs/SEO/reports/seo-next-steps-2026-05-05.md`.
+**Changes:**
+
+- `best-free-ai-image-upscaler-2026-tested-compared` — title, seo_title, H1, and first paragraph now front-load "Best Free AI Image Upscaler 2026".
+- `ai-image-upscaling-vs-sharpening-explained` — title, seo_title, H1, first paragraph, answer block, comparison table, FAQ, and tool links updated for explainer/snippet intent.
+- `best-ai-image-quality-enhancer-free` — title, seo_title, H1, and first paragraph shifted to "Best Free AI Image Sharpener Online 2026".
+- `free-ai-upscaler-no-watermark` — title, seo_title, H1, and first paragraph aligned to "Best Free AI Image Upscaler ... No Watermark".
+- `upscale-image-for-print-300-dpi-guide` — title, seo_title, H1, and first paragraph aligned to "Upscale Image to 300 DPI for Print".

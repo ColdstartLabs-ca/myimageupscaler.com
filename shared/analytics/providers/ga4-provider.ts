@@ -108,6 +108,7 @@ export class GA4Provider implements IAnalyticsProvider {
       signup_completed: 'sign_up',
       image_upscaled: 'generate_lead',
       image_uploaded: 'select_content',
+      upscale_completed: 'generate_lead',
       pricing_page_viewed: 'view_item_list',
       page_view: 'page_view',
       upgrade_prompt_clicked: 'select_item',

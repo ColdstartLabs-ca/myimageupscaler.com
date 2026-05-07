@@ -275,8 +275,26 @@ function buildTrackedEventProperties(
 ): Record<string, unknown> {
   return {
     ...properties,
+    ...getEventAttributionProperties(),
     session_id: getSessionId(),
     timestamp: Date.now(),
+  };
+}
+
+function getEventAttributionProperties(): Record<string, unknown> {
+  if (typeof window === 'undefined') return {};
+
+  const firstTouchUtm = getStoredFirstTouchUtm() || getFirstTouchUtmFromCookie();
+
+  return {
+    entry_page: getEntryPage() || window.location.pathname,
+    referral_source: getReferralSource() || undefined,
+    first_touch_utm_source: firstTouchUtm?.utmSource,
+    first_touch_utm_medium: firstTouchUtm?.utmMedium,
+    first_touch_utm_campaign: firstTouchUtm?.utmCampaign,
+    first_touch_utm_term: firstTouchUtm?.utmTerm,
+    first_touch_utm_content: firstTouchUtm?.utmContent,
+    first_touch_landing_page: firstTouchUtm?.landingPage,
   };
 }
 

@@ -4,6 +4,8 @@
 
 Check `.claude/skills/` for relevant patterns.
 
+For SEO-facing tasks, use `.claude/skills/seo-changes-backlog/` and skim `docs/SEO/maintenance/seo-changes-backlog.md` before making changes.
+
 ## Critical Constraints
 
 - **Cloudflare Workers**: 10ms CPU limit. No heavy computation. Prefer streaming. Delegate to browser when safe.
@@ -22,10 +24,16 @@ Check `.claude/skills/` for relevant patterns.
 - Run `yarn test` on affected areas
 - Run `yarn verify` (required before completing any task)
 - **SEO changes MUST have tests**: Any change to sitemaps, metadata, hreflang, structured data, canonical URLs, robots directives, or SEO-related routes must be covered by unit tests in `tests/unit/seo/`. SEO regressions are silent and costly — tests are the only safety net.
+- **SEO changes MUST update the backlog**: Append a concise entry to [SEO changes backlog](docs/SEO/maintenance/seo-changes-backlog.md). If the file gets large, summarize older entries into monthly rollups rather than letting it become a raw changelog dump.
 
 ## After Finishing
 
 - Whenever you feel you learned a new "skill" for this codebase, feel free to add it to `.claude/skills/`.
+
+## After Deploy
+
+- Check [GSC request indexing backlog](docs/SEO/maintenance/gsc-request-indexing-backlog.md). If it has unchecked URLs, remind the user to manually request indexing in Google Search Console and then clean up the backlog file.
+- Check [SEO changes backlog](docs/SEO/maintenance/seo-changes-backlog.md) for post-deploy SEO follow-ups, especially GSC, IndexNow, sitemap, and GA4 attribution checks.
 
 ## Coding Discipline
 

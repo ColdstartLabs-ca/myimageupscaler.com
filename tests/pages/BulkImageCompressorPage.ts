@@ -70,12 +70,12 @@ export class BulkImageCompressorPage extends BasePage {
     // Page description - target the hero intro paragraph (text-xl inside hero section)
     this.pageDescription = page.locator('section p.text-xl').first();
 
-    // Settings panel - use global ID selectors (IDs are unique per page)
-    this.qualitySlider = page.locator('input#quality');
+    // Settings panel - scope selectors to the tool to avoid matching template/demo controls.
+    this.qualitySlider = this.toolContainer.locator('input#quality');
     // Quality display is the container div that has both label and percentage span
-    this.qualityDisplay = page.locator('label[for="quality"]').locator('xpath=..');
-    this.targetSizeInput = page.locator('input#targetSize');
-    this.formatSelect = page.locator('select#format');
+    this.qualityDisplay = this.toolContainer.locator('label[for="quality"]').locator('xpath=..');
+    this.targetSizeInput = this.toolContainer.locator('input#targetSize');
+    this.formatSelect = this.toolContainer.locator('select#format');
 
     // Upload area - target the dropzone with specific content
     this.uploadArea = page
@@ -121,6 +121,9 @@ export class BulkImageCompressorPage extends BasePage {
   async waitForLoad(): Promise<void> {
     await expect(this.pageTitle).toBeVisible({ timeout: 15000 });
     await expect(this.uploadArea).toBeVisible({ timeout: 10000 });
+    await expect(this.qualitySlider).toBeVisible({ timeout: 10000 });
+    await expect(this.qualitySlider).toBeEnabled({ timeout: 10000 });
+    await expect(this.qualityDisplay).toContainText('%', { timeout: 10000 });
   }
 
   /**

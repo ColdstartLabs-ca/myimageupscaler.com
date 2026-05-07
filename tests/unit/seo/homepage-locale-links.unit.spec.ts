@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { GET } from '@/app/sitemap-static.xml/route';
 
 const ROOT = join(__dirname, '../../..');
 
@@ -44,5 +45,14 @@ describe('Homepage locale links', () => {
     // Verify Link is used from next/link and LOCALE_LINKS renders through it
     expect(source).toContain('LOCALE_LINKS');
     expect(source).toContain('<Link');
+  });
+
+  it('Static sitemap includes all non-English locale homepages', async () => {
+    const response = await GET();
+    const xml = await response.text();
+
+    for (const locale of ['/de', '/es', '/fr', '/it', '/ja', '/pt']) {
+      expect(xml).toContain(`<loc>https://myimageupscaler.com${locale}</loc>`);
+    }
   });
 });

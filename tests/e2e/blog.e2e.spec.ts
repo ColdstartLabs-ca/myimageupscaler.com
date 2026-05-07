@@ -78,7 +78,7 @@ test.describe('Blog Page', () => {
 
         // Verify the H1 contains the post title
         const h1 = page.locator('h1');
-        await expect(h1).toContainText('AI Upscaling vs.');
+        await expect(h1).toContainText('AI Upscaling vs Sharpening');
       }
     });
 
