@@ -8,7 +8,9 @@ This worker runs on Cloudflare's edge and executes scheduled tasks:
 
 - **Webhook Recovery** - Every 15 minutes
 - **Expiration Check** - Every hour at :05
+- **Gallery Cleanup** - Daily at 12:00 AM UTC
 - **Full Reconciliation** - Daily at 3:05 AM UTC
+- **3-Kings Sitemap Refresh** - Daily at 4:30 AM UTC
 
 The worker calls the Next.js API endpoints with the proper authentication header.
 
@@ -133,11 +135,13 @@ node scripts/test-trigger.js webhook-recovery https://myimageupscaler-cron.worke
 
 ## Cron Schedules
 
-| Job                 | Pattern        | Frequency            | Endpoint                      |
-| ------------------- | -------------- | -------------------- | ----------------------------- |
-| Webhook Recovery    | `*/15 * * * *` | Every 15 minutes     | `/api/cron/recover-webhooks`  |
-| Expiration Check    | `5 * * * *`    | Hourly at :05        | `/api/cron/check-expirations` |
-| Full Reconciliation | `5 3 * * *`    | Daily at 3:05 AM UTC | `/api/cron/reconcile`         |
+| Job                     | Pattern        | Frequency             | Endpoint                           |
+| ----------------------- | -------------- | --------------------- | ---------------------------------- |
+| Webhook Recovery        | `*/15 * * * *` | Every 15 minutes      | `/api/cron/recover-webhooks`       |
+| Expiration Check        | `5 * * * *`    | Hourly at :05         | `/api/cron/check-expirations`      |
+| Gallery Cleanup         | `0 0 * * *`    | Daily at 12:00 AM UTC | `/api/cron/gallery-cleanup`        |
+| Full Reconciliation     | `5 3 * * *`    | Daily at 3:05 AM UTC  | `/api/cron/reconcile`              |
+| 3-Kings Sitemap Refresh | `30 4 * * *`   | Daily at 4:30 AM UTC  | `/api/cron/refresh-3kings-sitemap` |
 
 ## Troubleshooting
 

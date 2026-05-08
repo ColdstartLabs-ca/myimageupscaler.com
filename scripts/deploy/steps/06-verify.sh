@@ -8,6 +8,8 @@ step_verify() {
     log_info "Waiting for propagation..."
     sleep 5
 
+    _verify_cron_schedules
+
     for i in {1..5}; do
         status=$(curl -s -o /dev/null -w "%{http_code}" "$url/api/health" 2>/dev/null || echo "000")
         if [[ "$status" == "200" ]]; then
@@ -22,6 +24,22 @@ step_verify() {
     done
 
     log_warn "Health check didn't return 200 (may still be propagating)"
+}
+
+_verify_cron_schedules() {
+    log_info "Verifying deployed cron schedules..."
+
+    cd "$PROJECT_ROOT"
+    for i in {1..5}; do
+        if yarn cron:check --remote; then
+            log_success "Cron schedules active"
+            return 0
+        fi
+        log_info "Cron schedule check attempt $i/5 failed; retrying..."
+        sleep 3
+    done
+
+    log_error "Deployed cron schedules do not match workers/cron/wrangler.toml"
 }
 
 # Verify STRIPE_WEBHOOK_SECRET on Cloudflare matches Stripe by sending a correctly-signed

@@ -18,6 +18,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { FEATURE_FLAGS } from '@shared/config/feature-flags';
 
 export const TOUR_PHASE1_KEY = 'miu_onboarding_tour_phase1_done';
 export const TOUR_PHASE3_KEY = 'miu_onboarding_tour_phase3_done';
@@ -83,6 +84,7 @@ export function useOnboardingDriver(): {
 
   /** Phase 1: single dropzone tip, auto-starts on empty state mount */
   const startTourPhase1 = useCallback(async () => {
+    if (!FEATURE_FLAGS.ENABLE_ONBOARDING) return;
     if (phase1StartedRef.current || hasSeenPhase1()) return;
     phase1StartedRef.current = true;
 
@@ -121,6 +123,7 @@ export function useOnboardingDriver(): {
 
   /** Phase 2: quality tier + download, triggered after first result */
   const startTour = useCallback(async () => {
+    if (!FEATURE_FLAGS.ENABLE_ONBOARDING) return;
     if (phase2StartedRef.current || hasSeenTour()) return;
     phase2StartedRef.current = true;
 
@@ -181,6 +184,7 @@ export function useOnboardingDriver(): {
 
   /** Phase 3: download button tip, triggered after first processing result */
   const startTourPhase3 = useCallback(async () => {
+    if (!FEATURE_FLAGS.ENABLE_ONBOARDING) return;
     if (phase3StartedRef.current || localStorage.getItem(TOUR_PHASE3_KEY) === 'true') return;
     phase3StartedRef.current = true;
 

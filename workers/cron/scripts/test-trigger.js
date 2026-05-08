@@ -9,12 +9,16 @@
  *   node scripts/test-trigger.js webhook-recovery
  *   node scripts/test-trigger.js expiration-check
  *   node scripts/test-trigger.js reconciliation
+ *   node scripts/test-trigger.js refresh-3kings-sitemap
+ *   node scripts/test-trigger.js gallery-cleanup
  */
 
 const JOBS = {
   'webhook-recovery': '*/15 * * * *',
   'expiration-check': '5 * * * *',
   reconciliation: '5 3 * * *',
+  'refresh-3kings-sitemap': '30 4 * * *',
+  'gallery-cleanup': '0 0 * * *',
 };
 
 async function triggerCron(jobName, workerUrl = 'http://localhost:8787') {

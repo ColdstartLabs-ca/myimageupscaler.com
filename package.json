@@ -45,6 +45,8 @@
     "test:billing": "playwright test --project=integration --grep 'proof'",
     "test:billing:e2e": "playwright test --project=chromium tests/e2e/*-proof.e2e.spec.ts",
     "test:smoke": "playwright test --config=playwright.smoke.config.ts",
+    "cron:check": "node scripts/check-cron-setup.mjs",
+    "cron:test": "npm test --prefix workers/cron",
     "stripe:listen": "bash -c 'source ./scripts/load-env.sh && PORT=${PORT:-${NEXT_DEV_PORT:-3000}} && stripe listen --api-key $STRIPE_SECRET_KEY --forward-to localhost:$PORT/api/webhooks/stripe'",
     "stripe:setup": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts'",
     "stripe:setup:test": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/setup-stripe.ts --test'",

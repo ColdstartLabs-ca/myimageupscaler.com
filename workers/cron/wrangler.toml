@@ -16,7 +16,9 @@ crons = [
   # Full reconciliation - daily at 3:05 AM UTC
   "5 3 * * *",
   # 3-Kings sitemap refresh - daily at 4:30 AM UTC
-  "30 4 * * *"
+  "30 4 * * *",
+  # Gallery cleanup - daily at midnight UTC
+  "0 0 * * *"
 ]
 
 # Environment Variables (non-sensitive defaults)

@@ -647,6 +647,9 @@ export type IAnalyticsEventName =
   | 'gallery_image_deleted'
   | 'gallery_page_viewed'
   | 'gallery_upgrade_clicked'
+  | 'gallery_save_initiated'
+  | 'gallery_image_viewed'
+  | 'gallery_image_downloaded'
   // Amplitude identity events (server-side only)
   | '$identify';
 

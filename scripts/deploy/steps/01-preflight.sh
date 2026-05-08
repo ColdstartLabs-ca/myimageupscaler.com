@@ -31,6 +31,9 @@ step_preflight() {
     # Webhook endpoint must subscribe to all required event types
     _check_stripe_webhook_events
 
+    # Cron worker config must stay in sync with router, endpoints, and manual triggers
+    _check_cron_setup
+
     # Stripe products check (informational only)
     check_stripe_products
 }
@@ -176,6 +179,21 @@ for ep in data.get('data', []):
     fi
 
     log_success "Webhook event subscriptions complete"
+}
+
+_check_cron_setup() {
+    log_info "Checking cron worker setup..."
+
+    cd "$PROJECT_ROOT"
+    if ! yarn cron:check; then
+        log_error "Cron worker setup is inconsistent"
+    fi
+
+    if [[ -z "${CRON_SECRET:-}" ]]; then
+        log_error "CRON_SECRET is not set"
+    fi
+
+    log_success "Cron worker setup valid"
 }
 
 check_stripe_products() {
