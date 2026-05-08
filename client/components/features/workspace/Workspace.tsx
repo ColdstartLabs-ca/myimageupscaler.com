@@ -357,6 +357,13 @@ const Workspace: React.FC = () => {
   const handleSaveToGallery = async (item: IBatchItem, dimensions?: IImageDimensions) => {
     if (!item.processedUrl || isSavingToGallery || savingGalleryItemId) return;
 
+    analytics.track('gallery_save_initiated', {
+      itemId: item.id,
+      modelUsed: config.qualityTier,
+      processingMode: 'upscale',
+      filename: item.file.name,
+    });
+
     setSavingGalleryItemId(item.id);
     const saved = await saveImageToGallery({
       imageUrl: item.processedUrl,

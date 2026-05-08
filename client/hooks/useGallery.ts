@@ -498,6 +498,12 @@ export function useGallery(): IUseGalleryReturn {
           setUsage(data.usage);
         }
 
+        analytics.track('gallery_image_deleted', {
+          imageId,
+          currentCount: data.usage?.current_count ?? usage?.current_count ?? 0,
+          maxAllowed: data.usage?.max_allowed ?? usage?.max_allowed ?? 0,
+        });
+
         showToast({
           message: 'Image removed from gallery',
           type: 'success',

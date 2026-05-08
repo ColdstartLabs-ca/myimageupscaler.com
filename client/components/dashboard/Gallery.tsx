@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Image as ImageIcon, Loader2, RefreshCw, ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import { GalleryImageCard } from './GalleryImageCard';
 import { useUserData } from '@client/store/userStore';
 import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import { useState } from 'react';
+import { analytics } from '@client/analytics';
 
 /**
  * Loading skeleton for image cards
@@ -141,6 +142,21 @@ export function Gallery(): JSX.Element {
     fetchImages(1);
   }, [fetchImages]);
 
+  // Track gallery page view once
+  const hasTrackedPageView = useRef(false);
+  useEffect(() => {
+    if (!hasTrackedPageView.current && usage !== null) {
+      hasTrackedPageView.current = true;
+      analytics.track('gallery_page_viewed', {
+        currentCount: usage.current_count,
+        maxAllowed: usage.max_allowed,
+        imageCount: listState.images.length,
+        isFreeUser: isFreeUser ?? false,
+        hasImages: listState.images.length > 0,
+      });
+    }
+  }, [usage, isFreeUser, listState.images.length]);
+
   // Check if free user is at limit
   const isFreeUserAtLimit =
     isFreeUser && usage !== null && usage.current_count >= usage.max_allowed;
@@ -174,7 +190,18 @@ export function Gallery(): JSX.Element {
       </div>
 
       {/* Upgrade Banner for Free Users at Limit */}
-      {isFreeUserAtLimit && <UpgradeBanner onUpgrade={() => setShowUpgradeModal(true)} />}
+      {isFreeUserAtLimit && (
+        <UpgradeBanner
+          onUpgrade={() => {
+            analytics.track('gallery_upgrade_clicked', {
+              currentCount: usage?.current_count ?? 0,
+              maxAllowed: usage?.max_allowed ?? 0,
+              triggerLocation: 'banner',
+            });
+            setShowUpgradeModal(true);
+          }}
+        />
+      )}
 
       {/* Usage Bar */}
       {usage !== null && (
