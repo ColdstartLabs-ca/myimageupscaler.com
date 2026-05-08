@@ -3,7 +3,7 @@ import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { trackServerEvent } from '@server/analytics';
 import { clientEnv, serverEnv } from '@shared/config/env';
-import { assertKnownPriceId, resolvePlanOrPack } from '@shared/config/stripe';
+import { STRIPE_PRICES, assertKnownPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getTrialConfig } from '@shared/config/subscription.config';
 import { getPricingRegion, getDiscountedPriceInCents } from '@shared/config/pricing-regions';
 import { PRICING_GEO_COOKIE_NAME, parsePricingGeoSession } from '@shared/utils/pricing-geo-session';
@@ -78,6 +78,26 @@ function sanitizeCustomCheckoutMetadata(metadata: Record<string, string>): Recor
   return Object.fromEntries(
     Object.entries(metadata).filter(([key]) => !RESERVED_CHECKOUT_METADATA_KEYS.has(key))
   );
+}
+
+function createTestResolvedPrice(priceId: string): ReturnType<typeof assertKnownPriceId> {
+  const creditPackPriceIds = new Set([
+    STRIPE_PRICES.SMALL_CREDITS,
+    STRIPE_PRICES.MEDIUM_CREDITS,
+    STRIPE_PRICES.LARGE_CREDITS,
+  ]);
+  const isPack = creditPackPriceIds.has(priceId);
+
+  return {
+    type: isPack ? 'pack' : 'plan',
+    key: isPack ? 'test-pack' : 'test-plan',
+    name: isPack ? 'Test Credit Pack' : 'Test Plan',
+    stripePriceId: priceId,
+    priceInCents: 100,
+    currency: 'usd',
+    credits: isPack ? 100 : 10,
+    maxRollover: isPack ? null : 60,
+  };
 }
 
 /**
@@ -287,21 +307,9 @@ export async function POST(request: NextRequest) {
       resolvedPrice = assertKnownPriceId(validatedPriceId);
     } catch (error) {
       if (isTestMode) {
-        // In test mode, accept any validly formatted price ID and return a mock response immediately
-        // This allows tests to use arbitrary test price IDs without needing to configure them
-        const baseUrl = request.headers.get('origin') || clientEnv.BASE_URL;
-        const mockSessionId = `cs_test_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-
-        return NextResponse.json({
-          success: true,
-          data: {
-            url: `${baseUrl}/success?session_id=${mockSessionId}`,
-            sessionId: mockSessionId,
-            mock: true,
-            engagementDiscountApplied: false,
-            checkoutOfferApplied: false,
-          },
-        });
+        // In test mode, accept any validly formatted price ID while still
+        // running auth and subscription-conflict checks below.
+        resolvedPrice = createTestResolvedPrice(validatedPriceId);
       } else {
         return NextResponse.json(
           {

@@ -300,7 +300,11 @@ export const MODEL_CONFIG = {
     processingTime: MODEL_COSTS.PROCESSING_TIME_SLOW,
     maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
-    supportedScales: [MODEL_COSTS.DEFAULT_SCALE, MODEL_COSTS.MAX_SCALE_STANDARD, MODEL_COSTS.MAX_SCALE_PREMIUM], // 2x, 4x, 8x
+    supportedScales: [
+      MODEL_COSTS.DEFAULT_SCALE,
+      MODEL_COSTS.MAX_SCALE_STANDARD,
+      MODEL_COSTS.MAX_SCALE_PREMIUM,
+    ], // 2x, 4x, 8x
     tierRestriction: 'hobby',
   },
   'recraft-crisp-upscale': {

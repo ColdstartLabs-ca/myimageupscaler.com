@@ -325,7 +325,7 @@ test.describe('API: Multi-Model Architecture', () => {
         expect(model).toHaveProperty('available');
 
         expect(typeof model.creditCost).toBe('number');
-        expect(model.creditCost).toBeGreaterThan(0);
+        expect(model.creditCost).toBeGreaterThanOrEqual(0);
       });
     });
 

@@ -41,8 +41,10 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
     'xinntao/realesrgan:1b976a4d456ed9e4d1a846597b7614e79eadad3032e9124fa63859db0fd59b56',
   'p-image-edit': 'prunaai/p-image-edit',
   'flux-kontext-fast': 'prunaai/flux-kontext-fast',
-  'clarity-pro-upscaler': 'philz1337x/clarity-pro-upscaler:8e33eb474936d75d3ceaa787f3e66f5ba16f35db0853a7697a4ca4e5fc14b6cd',
-  'recraft-crisp-upscale': 'recraft-ai/recraft-crisp-upscale:2177c1e3a177f5a76c632e467c32b413e424c23d84e43f7b036a965e305f6557',
+  'clarity-pro-upscaler':
+    'philz1337x/clarity-pro-upscaler:8e33eb474936d75d3ceaa787f3e66f5ba16f35db0853a7697a4ca4e5fc14b6cd',
+  'recraft-crisp-upscale':
+    'recraft-ai/recraft-crisp-upscale:2177c1e3a177f5a76c632e467c32b413e424c23d84e43f7b036a965e305f6557',
   'nano-banana-2': 'google/nano-banana-2',
 };
 
