@@ -4,6 +4,14 @@ import dotenv from 'dotenv';
 // Load test environment variables (quiet: true suppresses dotenv tips)
 dotenv.config({ path: '.env.test', quiet: true });
 
+// API/E2E tests rely on the app's test-mode auth, billing, and AI mocks.
+// The normal local env files set ENV=development, so force test mode here
+// after optional .env.test loading.
+process.env.ENV = 'test';
+process.env.NEXT_PUBLIC_ENV = 'test';
+process.env.PLAYWRIGHT_TEST = 'true';
+process.env.STRIPE_SECRET_KEY = 'sk_test_dummy_key';
+
 const isCI = !!process.env.CI;
 
 // QA artifact configuration
@@ -111,7 +119,7 @@ export default defineConfig({
   // Automatically start dev server for tests on random ports
   // This avoids clashing with the regular dev server
   webServer: {
-    command: `TEST_PORT=${TEST_PORT} TEST_WRANGLER_PORT=${TEST_WRANGLER_PORT} yarn dev:test`,
+    command: `ENV=test NEXT_PUBLIC_ENV=test PLAYWRIGHT_TEST=true STRIPE_SECRET_KEY=sk_test_dummy_key TEST_PORT=${TEST_PORT} TEST_WRANGLER_PORT=${TEST_WRANGLER_PORT} yarn dev:test`,
     url: `http://localhost:${TEST_PORT}`,
     reuseExistingServer: false, // Always start fresh test server - don't interfere with dev server
     timeout: 120000, // 2 minutes to start server
