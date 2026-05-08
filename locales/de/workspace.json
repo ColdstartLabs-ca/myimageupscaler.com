@@ -148,6 +148,10 @@
   "imageComparison": {
     "enhanced": "Verbessert",
     "toggleZoom": "Zoom umschalten",
+    "saveToGallery": "In Galerie speichern",
+    "save": "Speichern",
+    "savedToGallery": "In Galerie gespeichert",
+    "saved": "Gespeichert",
     "downloadResult": "Ergebnis herunterladen",
     "download": "Herunterladen",
     "original": "Original",

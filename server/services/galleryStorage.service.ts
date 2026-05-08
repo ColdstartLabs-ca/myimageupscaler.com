@@ -3,7 +3,6 @@
  * Handles saving, listing, and deleting User Gallery Images
  */
 
-import sharp from 'sharp';
 import { randomUUID } from 'crypto';
 import { supabaseAdmin } from '../supabase/supabaseAdmin';
 import {
@@ -27,20 +26,19 @@ import type { ProcessingMode } from '@shared/config/subscription.types';
 const BUCKET_NAME = GALLERY_STORAGE_CONFIG.bucketName;
 
 /**
- * Compression settings for gallery images
- * Max dimension: 2048px (fit inside, no enlargement)
- * Format: WebP quality 80
- */
-const COMPRESSION_CONFIG = {
-  maxDimension: 2048,
-  quality: 80,
-  format: 'webp' as const,
-};
-
-/**
  * Signed URL expiration time in seconds (1 hour)
  */
 const SIGNED_URL_EXPIRES_IN = 3600;
+
+type GalleryImageMimeType = (typeof GALLERY_STORAGE_CONFIG.allowedMimeTypes)[number];
+
+interface IPreparedGalleryImage {
+  buffer: Buffer;
+  contentType: GalleryImageMimeType;
+  extension: string;
+  width: number;
+  height: number;
+}
 
 // =============================================================================
 // Types
@@ -149,13 +147,9 @@ export async function saveImage(
 
   // 5. Validate content-type (MIME check)
   const contentType = response.headers.get('content-type');
-  if (contentType) {
-    const mime = contentType.split(';')[0].trim().toLowerCase();
-    if (
-      !GALLERY_STORAGE_CONFIG.allowedMimeTypes.includes(
-        mime as (typeof GALLERY_STORAGE_CONFIG.allowedMimeTypes)[number]
-      )
-    ) {
+  const mime = contentType?.split(';')[0].trim().toLowerCase();
+  if (mime) {
+    if (!GALLERY_STORAGE_CONFIG.allowedMimeTypes.includes(mime as GalleryImageMimeType)) {
       throw new Error(
         `Invalid image type: ${mime}. Allowed types: ${GALLERY_STORAGE_CONFIG.allowedMimeTypes.join(', ')}`
       );
@@ -171,22 +165,20 @@ export async function saveImage(
     );
   }
 
-  // 7. Compress the image
-  const compressedBuffer = await compressForGallery(imageBuffer);
+  const preparedImage = prepareImageForStorage(
+    imageBuffer,
+    (mime as GalleryImageMimeType | undefined) ?? 'image/png',
+    metadata
+  );
 
-  // 8. Extract dimensions from compressed image
-  const compressedMetadata = await sharp(compressedBuffer).metadata();
-  const width = compressedMetadata.width ?? metadata.width ?? 0;
-  const height = compressedMetadata.height ?? metadata.height ?? 0;
-
-  // 9. Generate storage path: {user_id}/{uuid}.webp
-  const storagePath = `${userId}/${randomUUID()}.webp`;
+  // 9. Generate storage path: {user_id}/{uuid}.{extension}
+  const storagePath = `${userId}/${randomUUID()}.${preparedImage.extension}`;
 
   // 10. Upload to Supabase Storage
   const { error: uploadError } = await supabaseAdmin.storage
     .from(BUCKET_NAME)
-    .upload(storagePath, compressedBuffer, {
-      contentType: 'image/webp',
+    .upload(storagePath, preparedImage.buffer, {
+      contentType: preparedImage.contentType,
       cacheControl: '31536000', // 1 year cache
       upsert: false,
     });
@@ -202,9 +194,9 @@ export async function saveImage(
       user_id: userId,
       storage_path: storagePath,
       original_filename: metadata.filename,
-      file_size_bytes: compressedBuffer.length,
-      width,
-      height,
+      file_size_bytes: preparedImage.buffer.length,
+      width: preparedImage.width,
+      height: preparedImage.height,
       model_used: metadata.modelUsed ?? 'unknown',
       processing_mode: metadata.processingMode ?? 'both',
     })
@@ -227,36 +219,38 @@ export async function saveImage(
 }
 
 /**
- * Compress an image buffer for gallery storage
- * - Resizes to max 2048px while maintaining aspect ratio
- * - Converts to WebP format
- * - Quality 80
+ * Prepare an image buffer for gallery storage.
  *
  * @param buffer - Image data as buffer
- * @returns Compressed image buffer
+ * @returns Original image buffer
  */
 export async function compressForGallery(buffer: Buffer): Promise<Buffer> {
-  const image = sharp(buffer);
-  const metadata = await image.metadata();
+  return buffer;
+}
 
-  // Determine if resize is needed
-  const needsResize =
-    (metadata.width && metadata.width > COMPRESSION_CONFIG.maxDimension) ||
-    (metadata.height && metadata.height > COMPRESSION_CONFIG.maxDimension);
+function prepareImageForStorage(
+  imageBuffer: Buffer,
+  sourceContentType: GalleryImageMimeType,
+  metadata: ISaveImageMetadata
+): IPreparedGalleryImage {
+  return {
+    buffer: imageBuffer,
+    contentType: sourceContentType,
+    extension: extensionForMimeType(sourceContentType),
+    width: metadata.width ?? 1,
+    height: metadata.height ?? 1,
+  };
+}
 
-  let pipeline = image;
-
-  if (needsResize) {
-    pipeline = pipeline.resize(COMPRESSION_CONFIG.maxDimension, COMPRESSION_CONFIG.maxDimension, {
-      fit: 'inside',
-      withoutEnlargement: true,
-    });
+function extensionForMimeType(mimeType: GalleryImageMimeType): string {
+  switch (mimeType) {
+    case 'image/jpeg':
+      return 'jpg';
+    case 'image/png':
+      return 'png';
+    case 'image/webp':
+      return 'webp';
   }
-
-  // Convert to WebP with compression
-  const compressedBuffer = await pipeline.webp({ quality: COMPRESSION_CONFIG.quality }).toBuffer();
-
-  return compressedBuffer;
 }
 
 /**
@@ -303,13 +297,27 @@ export async function listImages(
   const images = (data as IGalleryImage[]) ?? [];
   const total = count ?? 0;
 
-  // Generate signed URLs for each image
-  const imagesWithUrls = await Promise.all(
+  // Generate signed URLs for each image. A single stale storage path should not
+  // make the whole gallery unavailable.
+  const signedUrlResults = await Promise.allSettled(
     images.map(async image => ({
       ...image,
       signed_url: await generateSignedUrl(image.storage_path),
     }))
   );
+  const imagesWithUrls = signedUrlResults.flatMap((result, index) => {
+    if (result.status === 'fulfilled') {
+      return [result.value];
+    }
+
+    const image = images[index];
+    console.error('Failed to generate gallery signed URL', {
+      imageId: image?.id,
+      storagePath: image?.storage_path,
+      error: result.reason instanceof Error ? result.reason.message : result.reason,
+    });
+    return [];
+  });
 
   return {
     images: imagesWithUrls,

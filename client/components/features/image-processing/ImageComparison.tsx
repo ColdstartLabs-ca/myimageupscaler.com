@@ -1,12 +1,20 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { ArrowLeftRight, Download, ZoomIn, ZoomOut } from 'lucide-react';
-import { Button } from '@client/components/ui/Button';
+import { ArrowLeftRight, Check, Download, ImagePlus, ZoomIn, ZoomOut } from 'lucide-react';
 import { analytics } from '@client/analytics/analyticsClient';
+import { useTranslations } from 'next-intl';
+
+export interface IImageDimensions {
+  width: number;
+  height: number;
+}
 
 interface IImageComparisonProps {
   beforeUrl: string;
   afterUrl: string;
   onDownload: () => void;
+  onSaveToGallery?: (dimensions?: IImageDimensions) => void;
+  isSavingToGallery?: boolean;
+  isSavedToGallery?: boolean;
   /** Whether the after image has transparency (e.g., from bg-removal). Auto-detected from blob: URLs if not provided. */
   hasTransparency?: boolean;
   /** Scale factor applied to the image (e.g., 2, 4, 8). Used for analytics tracking. */
@@ -19,13 +27,18 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
   beforeUrl,
   afterUrl,
   onDownload,
+  onSaveToGallery,
+  isSavingToGallery = false,
+  isSavedToGallery = false,
   hasTransparency,
   upscaleFactor,
   modelUsed,
 }) => {
+  const t = useTranslations('workspace.imageComparison');
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [afterDimensions, setAfterDimensions] = useState<IImageDimensions | undefined>();
   const containerRef = useRef<HTMLDivElement>(null);
   const previewTrackedRef = useRef(false);
 
@@ -121,27 +134,48 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
       <div className="p-3 md:p-4 border-b border-border flex flex-wrap md:flex-nowrap justify-between items-center gap-2 shrink-0">
         <div className="flex items-center">
           <span className="inline-flex items-center px-2 md:px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/20 text-success whitespace-nowrap">
-            ✓ Enhanced
+            {t('enhanced')}
           </span>
         </div>
         <div className="flex items-center gap-1 md:gap-2">
           <button
             onClick={toggleZoom}
             className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 rounded-md transition-colors"
-            title="Toggle Zoom"
+            title={t('toggleZoom')}
           >
             {zoom === 1 ? <ZoomIn size={18} /> : <ZoomOut size={18} />}
           </button>
-          <Button
-            variant="primary"
-            size="sm"
-            icon={<Download size={16} />}
+          {onSaveToGallery && (
+            <button
+              onClick={() => onSaveToGallery(afterDimensions)}
+              disabled={isSavedToGallery || isSavingToGallery}
+              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-cyan-300/50 bg-cyan-400/18 px-3 text-xs font-semibold text-cyan-100 shadow-sm transition-colors hover:border-cyan-200/70 hover:bg-cyan-400/26 hover:text-white disabled:opacity-70 disabled:cursor-not-allowed"
+              title={isSavedToGallery ? t('savedToGallery') : t('saveToGallery')}
+              aria-label={isSavedToGallery ? t('savedToGallery') : t('saveToGallery')}
+              data-driver="save-gallery-button"
+            >
+              {isSavedToGallery ? (
+                <Check size={16} />
+              ) : isSavingToGallery ? (
+                <span className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin" />
+              ) : (
+                <ImagePlus size={16} />
+              )}
+              <span className="hidden sm:inline">
+                {isSavedToGallery ? t('savedToGallery') : t('saveToGallery')}
+              </span>
+              <span className="sm:hidden">{isSavedToGallery ? t('saved') : t('save')}</span>
+            </button>
+          )}
+          <button
             onClick={onDownload}
+            className="inline-flex h-8 items-center justify-center gap-2 rounded-lg bg-accent px-3 text-xs font-medium text-white shadow-sm transition-colors hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
             data-driver="download-button"
           >
-            <span className="hidden sm:inline">Download Result</span>
-            <span className="sm:hidden">Download</span>
-          </Button>
+            <Download size={16} />
+            <span className="hidden sm:inline">{t('downloadResult')}</span>
+            <span className="sm:hidden">{t('download')}</span>
+          </button>
         </div>
       </div>
 
@@ -168,6 +202,13 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
               loading="eager"
               decoding="async"
               fetchPriority="high"
+              onLoad={event => {
+                const image = event.currentTarget;
+                setAfterDimensions({
+                  width: image.naturalWidth,
+                  height: image.naturalHeight,
+                });
+              }}
             />
           </div>
 
@@ -200,10 +241,10 @@ export const ImageComparison: React.FC<IImageComparisonProps> = ({
 
         {/* Labels */}
         <div className="absolute bottom-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded pointer-events-none">
-          Original
+          {t('original')}
         </div>
         <div className="absolute bottom-4 right-4 bg-accent/80 text-white text-xs px-2 py-1 rounded pointer-events-none">
-          Enhanced
+          {t('enhancedLabel')}
         </div>
       </div>
     </div>
