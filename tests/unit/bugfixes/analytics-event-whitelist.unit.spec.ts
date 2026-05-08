@@ -55,6 +55,8 @@ const ALLOWED_EVENTS = [
   // Batch limit events
   'batch_limit_modal_shown',
   'batch_limit_upgrade_clicked',
+  'batch_limit_quick_buy_clicked',
+  'batch_limit_see_plans_clicked',
   'batch_limit_partial_add_clicked',
   'batch_limit_modal_closed',
 
@@ -279,11 +281,37 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
       const batchEvents = [
         'batch_limit_modal_shown',
         'batch_limit_upgrade_clicked',
+        'batch_limit_quick_buy_clicked',
+        'batch_limit_see_plans_clicked',
         'batch_limit_partial_add_clicked',
         'batch_limit_modal_closed',
       ];
       for (const eventName of batchEvents) {
         const result = eventSchema.safeParse({ eventName });
+        expect(result.success).toBe(true);
+      }
+    });
+
+    test('accepts all emitted batch limit CTA events', () => {
+      const emittedBatchCtaEvents = [
+        'batch_limit_upgrade_clicked',
+        'batch_limit_quick_buy_clicked',
+        'batch_limit_see_plans_clicked',
+      ];
+      for (const eventName of emittedBatchCtaEvents) {
+        const result = eventSchema.safeParse({
+          eventName,
+          properties: {
+            limit: 5,
+            attempted: 10,
+            currentCount: 1,
+            availableSlots: 4,
+            serverEnforced: false,
+            userType: 'free',
+            copyVariant: 'value',
+            cta: 'quick_buy',
+          },
+        });
         expect(result.success).toBe(true);
       }
     });

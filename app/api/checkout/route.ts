@@ -688,6 +688,23 @@ export async function POST(request: NextRequest) {
     try {
       session = await stripe.checkout.sessions.create(sessionParams);
     } catch (sessionError) {
+      const checkoutMode = resolvedPrice?.type === 'pack' ? 'payment' : 'subscription';
+      console.error('[CHECKOUT_SESSION_CREATE_ERROR]', {
+        priceId: validatedPriceId,
+        resolvedPriceType: resolvedPrice?.type,
+        checkoutMode,
+        pricingRegion: resolvedPricingRegion,
+        discountPercent: regionalDiscountPercent,
+        engagementDiscountPercent,
+        checkoutOfferDiscountPercent,
+        uiMode,
+        stripeErrorCode: sessionError instanceof Stripe.errors.StripeError ? sessionError.code : null,
+        stripeErrorType: sessionError instanceof Stripe.errors.StripeError ? sessionError.type : null,
+        stripeErrorParam: sessionError instanceof Stripe.errors.StripeError ? sessionError.param : null,
+        stripeErrorMessage:
+          sessionError instanceof Error ? sessionError.message : 'Unknown Stripe error',
+      });
+
       // If the stored customer ID is stale (deleted in Stripe), create a fresh one and retry once
       if (
         sessionError instanceof Stripe.errors.StripeInvalidRequestError &&

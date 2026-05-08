@@ -101,6 +101,12 @@ function CheckoutContent() {
       ...(checkoutContext?.originatingModel
         ? { originatingModel: checkoutContext.originatingModel }
         : {}),
+      ...(checkoutContext?.originatingTrigger
+        ? { originatingTrigger: checkoutContext.originatingTrigger }
+        : {}),
+      ...(checkoutContext?.attributionChain?.length
+        ? { attributionChain: checkoutContext.attributionChain }
+        : {}),
     });
     hasTrackedAuthRequiredRef.current = true;
   }, [authLoading, country, isAuthenticated, isPaywalled, priceId, regionLoading]);
@@ -156,6 +162,12 @@ function CheckoutContent() {
               ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
               ...(checkoutContext?.originatingModel
                 ? { originatingModel: checkoutContext.originatingModel }
+                : {}),
+              ...(checkoutContext?.originatingTrigger
+                ? { originatingTrigger: checkoutContext.originatingTrigger }
+                : {}),
+              ...(checkoutContext?.attributionChain?.length
+                ? { attributionChain: checkoutContext.attributionChain }
                 : {}),
             });
             hasTrackedCheckoutOpenRef.current = true;

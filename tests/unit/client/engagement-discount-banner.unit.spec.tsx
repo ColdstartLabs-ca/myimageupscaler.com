@@ -28,13 +28,18 @@ vi.mock('@client/store/engagementDiscountStore', () => ({
     countdownEndTime: Date.now() + 30 * 60 * 1000, // 30 minutes from now
     hasTrackedImpression: false,
     setHasTrackedImpression: mockSetHasTrackedImpression,
+    discountSource: 'engagement',
   })),
 }));
 
-// Mock the DISCOUNT_TARGET_PACK
+// Mock the engagement discount config
 vi.mock('@shared/config/engagement-discount', () => ({
   DISCOUNT_TARGET_PACK: {
     credits: 500,
+  },
+  ENGAGEMENT_DISCOUNT_CONFIG: {
+    targetPackKey: 'credits_medium',
+    discountPercent: 20,
   },
   formatCountdown: (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -181,11 +186,13 @@ describe('EngagementDiscountBanner - Fix 1: Mobile Visibility', () => {
 
       expect(mockTrack).toHaveBeenCalledWith('engagement_discount_cta_clicked', {
         timeRemainingSeconds: expect.any(Number),
+        engagement_discount_source: expect.any(String),
+        targetPriceId: 'credits_medium',
       });
       expect(onClaimDiscount).toHaveBeenCalled();
     });
 
-    test('should track toast_shown impression and set hasTrackedImpression', async () => {
+    test('should track offer_shown impression and set hasTrackedImpression', async () => {
       const { useEngagementDiscountStore } = await import('@client/store/engagementDiscountStore');
       (useEngagementDiscountStore as ReturnType<typeof vi.fn>).mockReturnValue({
         offer: { discountPercent: 20, originalPriceCents: 999, discountedPriceCents: 799 },
@@ -194,21 +201,32 @@ describe('EngagementDiscountBanner - Fix 1: Mobile Visibility', () => {
         countdownEndTime: Date.now() + 30 * 60 * 1000,
         hasTrackedImpression: false,
         setHasTrackedImpression: mockSetHasTrackedImpression,
+        discountSource: 'engagement',
       });
 
       render(React.createElement(EngagementDiscountBanner, { onClaimDiscount: vi.fn() }));
 
       await waitFor(() => {
+        expect(mockTrack).toHaveBeenCalledWith('engagement_discount_offer_shown', {
+          discountPercent: 20,
+          originalPriceCents: 999,
+          discountedPriceCents: 799,
+          engagement_discount_source: 'engagement',
+        });
+      });
+      // Legacy toast event should also be emitted
+      await waitFor(() => {
         expect(mockTrack).toHaveBeenCalledWith('engagement_discount_toast_shown', {
           discountPercent: 20,
           originalPriceCents: 999,
           discountedPriceCents: 799,
+          engagement_discount_source: 'engagement',
         });
       });
       expect(mockSetHasTrackedImpression).toHaveBeenCalledWith(true);
     });
 
-    test('should NOT track toast_shown when hasTrackedImpression is true', async () => {
+    test('should NOT track offer_shown when hasTrackedImpression is true', async () => {
       const { useEngagementDiscountStore } = await import('@client/store/engagementDiscountStore');
       (useEngagementDiscountStore as ReturnType<typeof vi.fn>).mockReturnValue({
         offer: { discountPercent: 20, originalPriceCents: 999, discountedPriceCents: 799 },
@@ -217,10 +235,14 @@ describe('EngagementDiscountBanner - Fix 1: Mobile Visibility', () => {
         countdownEndTime: Date.now() + 30 * 60 * 1000,
         hasTrackedImpression: true,
         setHasTrackedImpression: mockSetHasTrackedImpression,
+        discountSource: 'engagement',
       });
 
       render(React.createElement(EngagementDiscountBanner, { onClaimDiscount: vi.fn() }));
 
+      await waitFor(() => {
+        expect(mockTrack).not.toHaveBeenCalledWith('engagement_discount_offer_shown', expect.anything());
+      });
       await waitFor(() => {
         expect(mockTrack).not.toHaveBeenCalledWith('engagement_discount_toast_shown', expect.anything());
       });
@@ -240,6 +262,13 @@ describe('EngagementDiscountBanner - Fix 1: Mobile Visibility', () => {
       const dismissButton = screen.getByRole('button', { name: /dismiss offer/i });
       fireEvent.click(dismissButton);
 
+      await waitFor(() => {
+        expect(mockTrack).toHaveBeenCalledWith('engagement_discount_offer_dismissed', {
+          timeRemainingSeconds: expect.any(Number),
+          engagement_discount_source: expect.any(String),
+        });
+      });
+      // Legacy toast event should also be emitted
       await waitFor(() => {
         expect(mockTrack).toHaveBeenCalledWith('engagement_discount_toast_dismissed', {
           timeRemainingSeconds: expect.any(Number),

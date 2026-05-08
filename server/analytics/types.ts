@@ -627,6 +627,8 @@ export type IAnalyticsEventName =
   | 'engagement_discount_eligible'
   | 'engagement_discount_toast_shown'
   | 'engagement_discount_toast_dismissed'
+  | 'engagement_discount_offer_shown'
+  | 'engagement_discount_offer_dismissed'
   | 'engagement_discount_cta_clicked'
   | 'engagement_discount_checkout_started'
   | 'engagement_discount_redeemed'
