@@ -6,6 +6,7 @@ import { serverEnv } from '@shared/config/env';
 import { MODEL_SCALE_CREDIT_MULTIPLIERS } from '@shared/config/model-costs.config';
 import {
   calculateProviderAwareCredits,
+  getCreditsForTier,
   getCreditsForTierAtScale,
   modelIdToTier,
 } from '@shared/config/subscription.utils';
@@ -56,6 +57,7 @@ const creditEstimateSchema = z.object({
         'nano-banana-pro',
         'clarity-pro-upscaler',
         'recraft-crisp-upscale',
+        'nano-banana-2',
       ])
       .default('auto'),
     inputWidth: z.number().int().positive().optional(),
@@ -72,6 +74,12 @@ const creditEstimateSchema = z.object({
     })
     .optional(),
 });
+
+const RESOLUTION_CREDIT_MULTIPLIERS: Record<string, number> = {
+  '2k': 1.0,
+  '4k': 1.5,
+  '8k': 2.0,
+};
 
 /**
  * POST /api/credit-estimate
@@ -210,7 +218,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // Check if model supports the requested scale
-    if (!model.supportedScales.includes(validatedInput.config.scale)) {
+    const hasNoSupportedScales = model.supportedScales.length === 0;
+    if (!hasNoSupportedScales && !model.supportedScales.includes(validatedInput.config.scale)) {
       logger.warn('Model does not support scale', {
         userId,
         modelId: modelToUse,
@@ -260,19 +269,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
 
     let totalCredits = providerAware.credits;
-
-    // For legacy flat-priced models, apply resolution multiplier and bounds
-    if (providerAware.pricingModel === 'flat') {
-      const resolutionMultipliers: Record<string, number> = { '2k': 1.0, '4k': 1.5, '8k': 2.0 };
-      const resolutionMultiplier = validatedInput.config.targetResolution
-        ? resolutionMultipliers[validatedInput.config.targetResolution] || 1.0
+    const resolutionMultiplier =
+      providerAware.pricingModel === 'flat' && validatedInput.config.targetResolution
+        ? RESOLUTION_CREDIT_MULTIPLIERS[validatedInput.config.targetResolution] || 1.0
         : 1.0;
-      totalCredits = Math.ceil(totalCredits * resolutionMultiplier);
-    }
 
     // Scale multiplier retained for breakdown transparency (legacy only)
     const scaleMultiplier =
       MODEL_SCALE_CREDIT_MULTIPLIERS[modelToUse]?.[validatedInput.config.scale] ?? 1.0;
+
+    // For legacy flat-priced models, avoid double rounding by applying all
+    // multipliers to the raw tier cost before the final ceil.
+    if (providerAware.pricingModel === 'flat') {
+      totalCredits = Math.ceil(getCreditsForTier(tier) * scaleMultiplier * resolutionMultiplier);
+    }
 
     // Calculate estimated processing time (scale can still affect processing time)
     const scaleTimeMultipliers: Record<2 | 4 | 8, number> = { 2: 1.0, 4: 1.5, 8: 2.0 };
@@ -285,14 +295,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const response = {
       breakdown: {
         tier,
-        tierCredits: providerAware.pricingModel === 'flat' ? getCreditsForTierAtScale(tier, validatedInput.config.scale) : providerAware.credits,
-        scaleMultiplier,
-        resolutionMultiplier:
+        tierCredits:
           providerAware.pricingModel === 'flat'
-            ? (validatedInput.config.targetResolution
-                ? { '2k': 1.0, '4k': 1.5, '8k': 2.0 }[validatedInput.config.targetResolution] || 1.0
-                : 1.0)
-            : 1.0,
+            ? getCreditsForTierAtScale(tier, validatedInput.config.scale)
+            : providerAware.credits,
+        scaleMultiplier,
+        resolutionMultiplier,
         totalCredits,
         pricingModel: providerAware.pricingModel,
         ...(providerAware.outputMegapixels !== undefined

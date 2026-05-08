@@ -17,12 +17,7 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isProduction } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
-import {
-  calculateProviderAwareCredits,
-  getCreditsForTier,
-  getModelForTier,
-  getScaleCreditMultiplier,
-} from '@shared/config/subscription.utils';
+import { calculateProviderAwareCredits, getModelForTier } from '@shared/config/subscription.utils';
 import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
 import {
@@ -157,6 +152,8 @@ function modelIdToTier(modelId: string): QualityTier {
       return 'face-pro';
     case 'nano-banana-pro':
       return 'ultra';
+    case 'nano-banana-2':
+      return 'nano-banana-2';
     default:
       return 'quick';
   }

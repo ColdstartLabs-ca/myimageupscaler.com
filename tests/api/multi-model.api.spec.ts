@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestContext, ApiClient } from '../helpers';
+import { TestContext, ApiClient, createCanvas } from '../helpers';
 import type { IModelInfo } from '../../shared/types/coreflow.types';
 
 test.describe('API: Multi-Model Architecture', () => {
@@ -120,6 +120,90 @@ test.describe('API: Multi-Model Architecture', () => {
       expect(data.breakdown.totalCredits).toBeGreaterThan(0);
     });
 
+    test('should estimate output-megapixel pricing for Clarity Pro', async () => {
+      const user = await ctx.createUser({
+        subscription: 'active',
+        tier: 'hobby',
+        credits: 100,
+      });
+
+      const response = await api.withAuth(user.token).post('/api/credit-estimate', {
+        config: {
+          mode: 'upscale',
+          scale: 2,
+          qualityLevel: 'premium',
+          preserveText: false,
+          enhanceFaces: false,
+          denoise: false,
+          autoModelSelection: false,
+          selectedModel: 'clarity-pro-upscaler',
+          inputWidth: 1000,
+          inputHeight: 1000,
+        },
+      });
+
+      response.expectStatus(200);
+      const data = await response.json();
+
+      expect(data.modelToBe).toBe('clarity-pro-upscaler');
+      expect(data.breakdown.pricingModel).toBe('output-megapixel');
+      expect(data.breakdown.outputMegapixels).toBe(4);
+      expect(data.breakdown.totalCredits).toBe(24);
+    });
+
+    test('should estimate fixed per-image pricing for Recraft Crisp', async () => {
+      const user = await ctx.createUser({
+        subscription: 'active',
+        tier: 'hobby',
+        credits: 100,
+      });
+
+      const response = await api.withAuth(user.token).post('/api/credit-estimate', {
+        config: {
+          mode: 'enhance',
+          scale: 2,
+          qualityLevel: 'enhanced',
+          preserveText: false,
+          enhanceFaces: false,
+          denoise: true,
+          autoModelSelection: false,
+          selectedModel: 'recraft-crisp-upscale',
+        },
+      });
+
+      response.expectStatus(200);
+      const data = await response.json();
+
+      expect(data.modelToBe).toBe('recraft-crisp-upscale');
+      expect(data.breakdown.pricingModel).toBe('per-image');
+      expect(data.breakdown.totalCredits).toBe(2);
+    });
+
+    test('should avoid double rounding legacy flat estimates with resolution multipliers', async () => {
+      const user = await ctx.createUser({ credits: 10 });
+
+      const response = await api.withAuth(user.token).post('/api/credit-estimate', {
+        config: {
+          mode: 'upscale',
+          scale: 2,
+          qualityLevel: 'standard',
+          preserveText: false,
+          enhanceFaces: false,
+          denoise: false,
+          autoModelSelection: false,
+          selectedModel: 'real-esrgan',
+          targetResolution: '4k',
+        },
+      });
+
+      response.expectStatus(200);
+      const data = await response.json();
+
+      expect(data.breakdown.pricingModel).toBe('flat');
+      expect(data.breakdown.resolutionMultiplier).toBe(1.5);
+      expect(data.breakdown.totalCredits).toBe(2);
+    });
+
     test('should handle tier restrictions', async () => {
       const freeUser = await ctx.createUser({
         subscription: 'free',
@@ -144,6 +228,34 @@ test.describe('API: Multi-Model Architecture', () => {
 
       freeResponse.expectStatus(403);
       await freeResponse.expectErrorCode('TIER_RESTRICTED');
+    });
+  });
+
+  test.describe('Upscale Endpoint New Models', () => {
+    test('should validate Nano Banana 2 scale support before processing', async () => {
+      const user = await ctx.createUser({
+        subscription: 'active',
+        tier: 'hobby',
+        credits: 100,
+      });
+
+      const response = await api.withAuth(user.token).post('/api/upscale', {
+        imageData: createCanvas(128, 128, 'png'),
+        mimeType: 'image/png',
+        config: {
+          qualityTier: 'nano-banana-2',
+          scale: 8,
+          additionalOptions: {
+            smartAnalysis: false,
+            enhance: false,
+            enhanceFaces: false,
+            preserveText: false,
+          },
+        },
+      });
+
+      response.expectStatus(400);
+      await response.expectErrorCode('VALIDATION_ERROR');
     });
   });
 
