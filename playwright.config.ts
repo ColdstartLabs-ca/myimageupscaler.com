@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 
 // Load test environment variables (quiet: true suppresses dotenv tips)
-dotenv.config({ path: '.env.test', quiet: true });
+dotenv.config({ path: '.env.test', quiet: true, override: true });
 
 const isCI = !!process.env.CI;
 

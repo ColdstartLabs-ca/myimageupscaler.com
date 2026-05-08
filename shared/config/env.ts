@@ -512,7 +512,11 @@ export function isDevelopment(): boolean {
 export function isTest(): boolean {
   // Check both the cached serverEnv and the raw process.env for dynamic test detection
   return (
-    serverEnv.ENV === 'test' || process.env.ENV === 'test' || process.env.PLAYWRIGHT_TEST === 'true'
+    serverEnv.ENV === 'test' ||
+    process.env.ENV === 'test' ||
+    process.env.NODE_ENV === 'test' ||
+    process.env.PLAYWRIGHT_TEST === 'true' ||
+    process.env.PLAYWRIGHT_TEST === '1'
   );
 }
 
