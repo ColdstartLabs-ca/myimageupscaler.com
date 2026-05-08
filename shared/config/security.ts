@@ -39,6 +39,10 @@ export const CSP_POLICY = {
     'https://accounts.google.com',
     'https://staticimgly.com', // @imgly/background-removal WASM model
     'https://analytics.ahrefs.com', // Ahrefs analytics API events
+    'https://replicate.delivery',
+    'https://*.replicate.delivery',
+    'https://replicate.com',
+    'https://*.replicate.com',
   ],
   'frame-src': [
     'https://js.stripe.com',

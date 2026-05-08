@@ -3,7 +3,7 @@
 step_secrets() {
     log_step 5 "Uploading secrets"
 
-    local worker="${WORKER_NAME:-myimageupscaler.com}"
+    local worker="${WORKER_NAME:-myimageupscaler}"
     local skip_secrets="${SKIP_SECRETS:-false}"
 
     # Get existing secrets (only needed when skipping)

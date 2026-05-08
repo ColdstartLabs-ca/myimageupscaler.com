@@ -1,5 +1,7 @@
 import { IBatchItem, ProcessingStage, ProcessingStatus } from '@/shared/types/coreflow.types';
-import ImageComparison from '@client/components/features/image-processing/ImageComparison';
+import ImageComparison, {
+  type IImageDimensions,
+} from '@client/components/features/image-processing/ImageComparison';
 import { Button } from '@client/components/ui/Button';
 import { AlertTriangle, Check, Layers, Loader2 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,11 +15,14 @@ export interface IBatchProgress {
 export interface IPreviewAreaProps {
   activeItem: IBatchItem | null;
   onDownload: (url: string, filename: string) => void;
+  onSaveToGallery?: (item: IBatchItem, dimensions?: IImageDimensions) => void;
   onRetry: (item: IBatchItem) => void;
   selectedModel?: string;
   batchProgress?: IBatchProgress | null;
   isProcessingBatch?: boolean;
   isFreeUser?: boolean;
+  savingGalleryItemId?: string | null;
+  savedGalleryItemIds?: ReadonlySet<string>;
 }
 
 // Extracted Components
@@ -170,11 +175,14 @@ const MODEL_PROCESSING_TIMES: Record<string, number> = {
 export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   activeItem,
   onDownload,
+  onSaveToGallery,
   onRetry,
   selectedModel = 'auto',
   batchProgress,
   isProcessingBatch = false,
   isFreeUser: _isFreeUser = false,
+  savingGalleryItemId,
+  savedGalleryItemIds,
 }) => {
   const t = useTranslations('workspace');
 
@@ -258,6 +266,8 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
     activeItem?.status === ProcessingStatus.COMPLETED;
 
   if (activeItem.status === ProcessingStatus.COMPLETED && activeItem.processedUrl) {
+    const canSaveToGallery = /^(https?:|blob:)/i.test(activeItem.processedUrl);
+
     return (
       <div className="w-full h-full md:h-[65vh] md:min-h-[400px] flex flex-col">
         <div className="mb-1 md:mb-4 flex justify-between items-center shrink-0">
@@ -275,6 +285,13 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
             beforeUrl={activeItem.previewUrl}
             afterUrl={activeItem.processedUrl}
             onDownload={() => onDownload(activeItem.processedUrl!, activeItem.file.name)}
+            onSaveToGallery={
+              onSaveToGallery && canSaveToGallery
+                ? dimensions => onSaveToGallery(activeItem, dimensions)
+                : undefined
+            }
+            isSavingToGallery={savingGalleryItemId === activeItem.id}
+            isSavedToGallery={savedGalleryItemIds?.has(activeItem.id) ?? false}
           />
 
           {/* Waiting for next batch item overlay */}

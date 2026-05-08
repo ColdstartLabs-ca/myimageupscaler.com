@@ -148,6 +148,10 @@
   "imageComparison": {
     "enhanced": "強化済み",
     "toggleZoom": "ズームの切り替え",
+    "saveToGallery": "ギャラリーに保存",
+    "save": "保存",
+    "savedToGallery": "ギャラリーに保存済み",
+    "saved": "保存済み",
     "downloadResult": "結果をダウンロード",
     "download": "ダウンロード",
     "original": "オリジナル",

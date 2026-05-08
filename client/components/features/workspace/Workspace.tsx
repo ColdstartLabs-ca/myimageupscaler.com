@@ -19,6 +19,7 @@ import { ErrorAlert } from '@client/components/stripe/ErrorAlert';
 import { TabButton } from '@client/components/ui/TabButton';
 import { analytics } from '@client/analytics';
 import { useEngagementTracker } from '@client/hooks/useEngagementTracker';
+import { useGallery } from '@client/hooks/useGallery';
 import { useOnboardingDriver } from '@client/hooks/useOnboardingDriver';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useUpgradeAbandonmentDetector } from '@client/hooks/useUpgradeAbandonmentDetector';
@@ -54,6 +55,7 @@ import { ProgressSteps, checkIsFirstTimeUser, markFirstUploadCompleted } from '.
 import { SampleImageSelector } from './SampleImageSelector';
 import { ISampleImage } from '@shared/config/sample-images.config';
 import { FirstDownloadCelebration } from './FirstDownloadCelebration';
+import type { IImageDimensions } from '@client/components/features/image-processing/ImageComparison';
 
 type MobileTab = 'upload' | 'preview' | 'queue';
 
@@ -82,6 +84,7 @@ const Workspace: React.FC = () => {
   const { isFreeUser, profile } = useUserData();
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
+  const { saveImage: saveImageToGallery, isSaving: isSavingToGallery } = useGallery();
   const { isPaywalled, country } = useRegionTier();
 
   // Abandonment recovery: if user clicks upgrade but doesn't checkout within 10 min,
@@ -203,6 +206,8 @@ const Workspace: React.FC = () => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [downloadCount, setDownloadCount] = useState(0);
+  const [savingGalleryItemId, setSavingGalleryItemId] = useState<string | null>(null);
+  const [savedGalleryItemIds, setSavedGalleryItemIds] = useState<Set<string>>(() => new Set());
   const wasProcessingRef = React.useRef(false);
   const firstUploadCompletedTrackedRef = React.useRef(false);
   const firstUploadSourceRef = React.useRef<'sample' | 'upload'>('upload');
@@ -344,6 +349,25 @@ const Workspace: React.FC = () => {
 
   const handleDownloadSingle = async (url: string, filename: string) => {
     await executeDownload(url, filename);
+  };
+
+  const handleSaveToGallery = async (item: IBatchItem, dimensions?: IImageDimensions) => {
+    if (!item.processedUrl || isSavingToGallery || savingGalleryItemId) return;
+
+    setSavingGalleryItemId(item.id);
+    const saved = await saveImageToGallery({
+      imageUrl: item.processedUrl,
+      filename: item.file.name,
+      width: dimensions?.width,
+      height: dimensions?.height,
+      modelUsed: config.qualityTier,
+      processingMode: 'upscale',
+    });
+
+    if (saved) {
+      setSavedGalleryItemIds(prev => new Set(prev).add(item.id));
+    }
+    setSavingGalleryItemId(null);
   };
 
   // Handler for partial add from modal
@@ -609,11 +633,14 @@ const Workspace: React.FC = () => {
             <PreviewArea
               activeItem={activeItem}
               onDownload={handleDownloadSingle}
+              onSaveToGallery={handleSaveToGallery}
               onRetry={(item: IBatchItem) => processSingleItem(item, config)}
               selectedModel={config.qualityTier}
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}
               isFreeUser={isFreeUser}
+              savingGalleryItemId={savingGalleryItemId}
+              savedGalleryItemIds={savedGalleryItemIds}
             />
           </div>
 
