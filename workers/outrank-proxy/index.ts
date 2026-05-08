@@ -12,13 +12,15 @@
  *   https://myimageupscaler-outrank-proxy.<account>.workers.dev/
  */
 
+// Cloudflare Workers runtime types (Fetcher, Request, Response, etc.)
+// Cloudflare Workers require default export
+
 interface IEnv {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   MAIN_WORKER: any; // Fetcher type is Cloudflare-specific, not available in standard TS
   ALLOWED_IP: string;
 }
 
- 
 export default {
   async fetch(request: Request, env: IEnv): Promise<Response> {
     // Health check

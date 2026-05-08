@@ -11,6 +11,7 @@ import { BILLING_COPY } from '@shared/constants/billing';
 import {
   CreditCard,
   HelpCircle,
+  Image as ImageIcon,
   LayoutDashboard,
   Loader2,
   LogOut,
@@ -63,6 +64,7 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
   // Build menu items dynamically based on user role
   const menuItems: ISidebarItem[] = [
     { label: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
+    { label: t('gallery'), href: '/dashboard/gallery', icon: ImageIcon },
     { label: t('billing'), href: '/dashboard/billing', icon: CreditCard },
     { label: t('settings'), href: '/dashboard/settings', icon: Settings },
   ];

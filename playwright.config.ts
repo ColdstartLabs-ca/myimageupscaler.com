@@ -4,7 +4,20 @@ import dotenv from 'dotenv';
 // Load test environment variables (quiet: true suppresses dotenv tips)
 dotenv.config({ path: '.env.test', quiet: true });
 
+// API/E2E tests rely on the app's test-mode auth, billing, and AI mocks.
+// The normal local env files set ENV=development, so force test mode here
+// after optional .env.test loading.
+process.env.ENV = 'test';
+process.env.NEXT_PUBLIC_ENV = 'test';
+process.env.PLAYWRIGHT_TEST = 'true';
+process.env.STRIPE_SECRET_KEY = 'sk_test_dummy_key';
+
 const isCI = !!process.env.CI;
+
+// QA artifact configuration
+const qaArtifacts = process.env.NW_QA_ARTIFACTS || 'both';
+const enableScreenshots = qaArtifacts === 'screenshot' || qaArtifacts === 'both';
+const enableVideos = qaArtifacts === 'video' || qaArtifacts === 'both';
 
 // Generate random ports for each test run to avoid conflicts with dev server
 const TEST_PORT = process.env.TEST_PORT || (3100 + Math.floor(Math.random() * 900)).toString();
@@ -27,6 +40,8 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${TEST_PORT}`,
     trace: 'retain-on-failure', // Only keep traces on failure to save memory
+    screenshot: enableScreenshots ? 'on' : 'only-on-failure',
+    video: enableVideos ? { mode: 'on', size: { width: 1280, height: 720 } } : 'retain-on-failure',
     actionTimeout: 30000, // Increased action timeout for stability
     navigationTimeout: 45000, // Increased navigation timeout
   },
@@ -104,7 +119,7 @@ export default defineConfig({
   // Automatically start dev server for tests on random ports
   // This avoids clashing with the regular dev server
   webServer: {
-    command: `TEST_PORT=${TEST_PORT} TEST_WRANGLER_PORT=${TEST_WRANGLER_PORT} yarn dev:test`,
+    command: `ENV=test NEXT_PUBLIC_ENV=test PLAYWRIGHT_TEST=true STRIPE_SECRET_KEY=sk_test_dummy_key TEST_PORT=${TEST_PORT} TEST_WRANGLER_PORT=${TEST_WRANGLER_PORT} yarn dev:test`,
     url: `http://localhost:${TEST_PORT}`,
     reuseExistingServer: false, // Always start fresh test server - don't interfere with dev server
     timeout: 120000, // 2 minutes to start server

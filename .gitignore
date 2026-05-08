@@ -102,3 +102,7 @@ night-watch.config.json
 
 
 .claude/worktrees
+
+# QA test artifacts
+qa-artifacts/
+*-test-output.txt

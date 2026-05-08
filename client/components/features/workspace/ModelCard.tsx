@@ -48,11 +48,12 @@ export const ModelCard: React.FC<IModelCardProps> = ({
   };
 
   const isAuto = tier === 'auto';
-  const hasPreviewImages = config.previewImages !== null;
+  const hasPreviewImages = Boolean(config.previewImages);
 
   return (
     <button
       data-tier={tier}
+      data-testid={isLocked ? `locked-${tier}` : `select-${tier}`}
       onClick={handleClick}
       className={cn(
         // Base styles

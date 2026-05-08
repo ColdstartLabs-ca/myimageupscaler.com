@@ -5,8 +5,20 @@
 
 set -e
 
-# Load test environment variables (filter out comments and empty lines)
-export $(grep -v '^#' .env.test | grep -v '^$' | xargs)
+# Load test environment variables when present.
+# The standard local test invocation sources .env.client/.env.api before this
+# script runs, so .env.test is optional in developer worktrees.
+if [ -f ".env.test" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  source .env.test
+  set +a
+fi
+
+export ENV="test"
+export NEXT_PUBLIC_ENV="test"
+export PLAYWRIGHT_TEST="true"
+export STRIPE_SECRET_KEY="sk_test_dummy_key"
 
 # Use ports from environment or defaults
 TEST_PORT=${TEST_PORT:-3100}
