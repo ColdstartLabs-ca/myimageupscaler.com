@@ -36,7 +36,6 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
-         
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -70,7 +69,6 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '5 * * * *',
         scheduledTime: Date.now(),
-         
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -96,7 +94,6 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '5 3 * * *',
         scheduledTime: Date.now(),
-         
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -118,11 +115,60 @@ describe('Cloudflare Cron Worker', () => {
       );
     });
 
+    it('should route 3-kings sitemap refresh cron pattern correctly', async () => {
+      const event = {
+        cron: '30 4 * * *',
+        scheduledTime: Date.now(),
+      } as ScheduledEvent;
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true }),
+      });
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+
+      expect(mockCtx.waitUntil).toHaveBeenCalled();
+      const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];
+      await waitUntilPromise;
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        'https://api.example.com/api/cron/refresh-3kings-sitemap',
+        expect.any(Object)
+      );
+    });
+
+    it('should route gallery cleanup cron pattern correctly', async () => {
+      const event = {
+        cron: '0 0 * * *',
+        scheduledTime: Date.now(),
+      } as ScheduledEvent;
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true, usersProcessed: 2, imagesDeleted: 4 }),
+      });
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+
+      expect(mockCtx.waitUntil).toHaveBeenCalled();
+      const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];
+      await waitUntilPromise;
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        'https://api.example.com/api/cron/gallery-cleanup',
+        expect.any(Object)
+      );
+    });
+
     it('should handle unknown cron patterns', async () => {
       const event = {
         cron: '* * * * *',
         scheduledTime: Date.now(),
-         
       } as ScheduledEvent;
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -130,8 +176,7 @@ describe('Cloudflare Cron Worker', () => {
       await worker.scheduled(event, mockEnv, mockCtx as unknown);
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Unknown cron pattern'),
-        '* * * * *'
+        expect.stringContaining('Unknown cron pattern: * * * * *')
       );
 
       consoleSpy.mockRestore();
@@ -141,7 +186,6 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
-         
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -171,7 +215,6 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
-         
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockRejectedValue(new Error('Network error'));
@@ -269,7 +312,6 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
-         
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({
@@ -299,7 +341,6 @@ describe('Cloudflare Cron Worker', () => {
       const event = {
         cron: '*/15 * * * *',
         scheduledTime: Date.now(),
-         
       } as ScheduledEvent;
 
       const fetchMock = vi.fn().mockResolvedValue({

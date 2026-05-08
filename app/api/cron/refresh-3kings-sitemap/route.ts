@@ -4,7 +4,8 @@
  * Fetches GSC data, scores blog pages using the 3-Kings technique, and
  * persists the latest batch into the three_kings_sitemap_entries table.
  *
- * Triggered by: Cloudflare Cron Trigger (weekly)
+ * Triggered by: Cloudflare Cron Trigger (daily at 04:30 UTC)
+ * Schedule: 30 4 * * * (daily at 4:30 AM UTC)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
