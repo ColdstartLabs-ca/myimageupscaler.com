@@ -78,7 +78,6 @@ export const NavBar = (): JSX.Element => {
               width={100}
               height={40}
               className="xs:hidden h-8 w-auto drop-shadow-[0_2px_8px_rgba(59,130,246,0.3)]"
-              priority
             />
             {/* Full logo for desktop */}
             <Image
@@ -87,7 +86,6 @@ export const NavBar = (): JSX.Element => {
               width={200}
               height={40}
               className="hidden xs:block h-10 w-auto drop-shadow-[0_2px_8px_rgba(59,130,246,0.3)]"
-              priority
             />
           </a>
 
@@ -338,6 +336,14 @@ export const NavBar = (): JSX.Element => {
                       </li>
                       <li>
                         <a
+                          href={localizedPath('/dashboard/gallery')}
+                          className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors cursor-pointer"
+                        >
+                          {t('gallery')}
+                        </a>
+                      </li>
+                      <li>
+                        <a
                           href={localizedPath('/dashboard/billing')}
                           className="block px-4 py-2 text-sm text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors cursor-pointer"
                         >
@@ -414,12 +420,20 @@ export const NavBar = (): JSX.Element => {
           <div className="lg:hidden border-t border-border bg-surface">
             <nav className="flex flex-col px-4 py-4 space-y-2">
               {isAuthenticated && (
-                <a
-                  href={localizedPath('/dashboard')}
-                  className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
-                >
-                  {t('dashboard')}
-                </a>
+                <>
+                  <a
+                    href={localizedPath('/dashboard')}
+                    className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+                  >
+                    {t('dashboard')}
+                  </a>
+                  <a
+                    href={localizedPath('/dashboard/gallery')}
+                    className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-surface/10 hover:text-white rounded-lg transition-colors"
+                  >
+                    {t('gallery')}
+                  </a>
+                </>
               )}
               <a
                 href={localizedPath('/features')}

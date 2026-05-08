@@ -18,6 +18,8 @@ interface IGalleryImageCardProps {
   onDelete: (imageId: string) => Promise<void>;
   /** Whether a delete operation is in progress */
   isDeleting?: boolean;
+  /** Whether this thumbnail is likely above the fold */
+  eagerLoad?: boolean;
 }
 
 /**
@@ -146,6 +148,7 @@ export const GalleryImageCard: React.FC<IGalleryImageCardProps> = ({
   image,
   onDelete,
   isDeleting = false,
+  eagerLoad = false,
 }) => {
   const t = useTranslations('dashboard.gallery');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -210,6 +213,7 @@ export const GalleryImageCard: React.FC<IGalleryImageCardProps> = ({
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover"
+            loading={eagerLoad ? 'eager' : 'lazy'}
             unoptimized
           />
 

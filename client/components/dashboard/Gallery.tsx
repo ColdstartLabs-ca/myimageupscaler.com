@@ -195,12 +195,13 @@ export function Gallery(): JSX.Element {
           <>
             {/* Image Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {listState.images.map(image => (
+              {listState.images.map((image, index) => (
                 <GalleryImageCard
                   key={image.id}
                   image={image}
                   onDelete={handleDeleteImage}
                   isDeleting={isDeleting}
+                  eagerLoad={index < 4}
                 />
               ))}
             </div>

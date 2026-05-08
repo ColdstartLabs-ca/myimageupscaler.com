@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useToastStore } from '@client/store/toastStore';
 import { analytics } from '@client/analytics/analyticsClient';
+import { createClient } from '@shared/utils/supabase/client';
 import { GALLERY_QUERY_CONFIG } from '@shared/config/gallery.config';
 import type {
   IGalleryStats,
@@ -77,6 +78,47 @@ const initialListState: IGalleryListState = {
   hasMore: false,
 };
 
+type ApiErrorBody = {
+  message?: string;
+  error?: string | { message?: string; code?: string };
+  code?: string;
+};
+
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.access_token) {
+    throw new Error('Authentication required');
+  }
+
+  return {
+    Authorization: `Bearer ${session.access_token}`,
+  };
+}
+
+function getApiErrorMessage(data: ApiErrorBody | null, fallback: string): string {
+  if (!data) {
+    return fallback;
+  }
+
+  if (data.message) {
+    return data.message;
+  }
+
+  if (typeof data.error === 'string') {
+    return data.error;
+  }
+
+  if (data.error?.message) {
+    return data.error.message;
+  }
+
+  return fallback;
+}
+
 /**
  * Hook for managing gallery operations
  * Provides save, delete, list, and usage tracking functionality
@@ -100,9 +142,12 @@ export function useGallery(): IUseGalleryReturn {
     setError(null);
 
     try {
-      const response = await fetch('/api/gallery?page_size=1');
+      const response = await fetch('/api/gallery?page_size=1', {
+        headers: await getAuthHeaders(),
+      });
       if (!response.ok) {
-        throw new Error('Failed to fetch gallery usage');
+        const data = (await response.json().catch(() => null)) as ApiErrorBody | null;
+        throw new Error(getApiErrorMessage(data, 'Failed to fetch gallery usage'));
       }
 
       const data = await response.json();
@@ -133,14 +178,23 @@ export function useGallery(): IUseGalleryReturn {
           sort_order: GALLERY_QUERY_CONFIG.defaultSortOrder,
         });
 
-        const response = await fetch(`/api/gallery?${params.toString()}`);
-        const data = await response.json();
+        const response = await fetch(`/api/gallery?${params.toString()}`, {
+          headers: await getAuthHeaders(),
+        });
+        const data = (await response.json()) as ApiErrorBody & {
+          success?: boolean;
+          data?: IGalleryListResponse;
+          usage?: IGalleryStats;
+        };
 
         if (!response.ok) {
-          throw new Error(data.message || data.error || 'Failed to fetch images');
+          throw new Error(getApiErrorMessage(data, 'Failed to fetch images'));
         }
 
-        const responseData: IGalleryListResponse = data.data;
+        const responseData = data.data;
+        if (!responseData) {
+          throw new Error('Failed to fetch images');
+        }
 
         setListState(prev => ({
           images: append ? [...prev.images, ...responseData.images] : responseData.images,
@@ -204,6 +258,7 @@ export function useGallery(): IUseGalleryReturn {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...(await getAuthHeaders()),
           },
           body: JSON.stringify({
             imageUrl: input.imageUrl,
@@ -215,11 +270,16 @@ export function useGallery(): IUseGalleryReturn {
           }),
         });
 
-        const data = await response.json();
+        const data = (await response.json()) as ApiErrorBody & {
+          success?: boolean;
+          data?: IGalleryListResponse['images'][0];
+          usage?: IGalleryStats;
+        };
 
         if (!response.ok) {
           // Handle gallery limit exceeded
-          if (response.status === 403 || data.code === 'FORBIDDEN') {
+          const errorCode = typeof data.error === 'object' ? data.error.code : data.code;
+          if (response.status === 403 || errorCode === 'FORBIDDEN') {
             analytics.track('gallery_limit_reached', {
               currentCount: usage?.current_count ?? 0,
               maxAllowed: usage?.max_allowed ?? 0,
@@ -235,7 +295,7 @@ export function useGallery(): IUseGalleryReturn {
           }
 
           // Handle authentication error
-          if (response.status === 401 || data.code === 'UNAUTHORIZED') {
+          if (response.status === 401 || errorCode === 'UNAUTHORIZED') {
             showToast({
               message: 'Please sign in to save images to your gallery',
               type: 'info',
@@ -244,7 +304,7 @@ export function useGallery(): IUseGalleryReturn {
             return false;
           }
 
-          throw new Error(data.message || data.error || 'Failed to save image');
+          throw new Error(getApiErrorMessage(data, 'Failed to save image'));
         }
 
         // Update usage stats from response (API returns { success, data, usage })
@@ -307,12 +367,16 @@ export function useGallery(): IUseGalleryReturn {
       try {
         const response = await fetch(`/api/gallery/${imageId}`, {
           method: 'DELETE',
+          headers: await getAuthHeaders(),
         });
 
-        const data = await response.json();
+        const data = (await response.json()) as ApiErrorBody & {
+          success?: boolean;
+          usage?: IGalleryStats;
+        };
 
         if (!response.ok) {
-          throw new Error(data.message || data.error || 'Failed to delete image');
+          throw new Error(getApiErrorMessage(data, 'Failed to delete image'));
         }
 
         // Remove image from local state
