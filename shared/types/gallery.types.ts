@@ -31,6 +31,8 @@ export interface IGalleryImage {
   created_at: string;
   /** Signed URL for viewing (time-limited) */
   signed_url?: string;
+  /** Signed URL for gallery thumbnail (time-limited) */
+  thumbnail_signed_url?: string;
 }
 
 /**

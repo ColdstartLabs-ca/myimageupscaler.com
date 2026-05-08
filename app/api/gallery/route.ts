@@ -10,6 +10,7 @@ import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/e
 import {
   listImages,
   saveImage,
+  saveUploadedImage,
   getUsage,
   type ISaveImageMetadata,
 } from '@server/services/galleryStorage.service';
@@ -142,21 +143,50 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(body, { status });
     }
 
-    // 2. Parse and validate request body
-    const body = await req.json();
-    const validatedInput: ISaveImageInput = saveImageSchema.parse(body);
+    const contentType = req.headers.get('content-type') ?? '';
+    let metadata: ISaveImageMetadata;
+    let result;
 
-    // 3. Prepare metadata
-    const metadata: ISaveImageMetadata = {
-      filename: validatedInput.filename,
-      width: validatedInput.width,
-      height: validatedInput.height,
-      modelUsed: validatedInput.modelUsed,
-      processingMode: validatedInput.processingMode,
-    };
+    if (contentType.includes('multipart/form-data')) {
+      const formData = await req.formData();
+      const file = formData.get('file');
+      if (!(file instanceof File)) {
+        const { body, status } = createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          'Image file is required',
+          400
+        );
+        return NextResponse.json(body, { status });
+      }
 
-    // 4. Save the image
-    const result = await saveImage(userId, validatedInput.imageUrl, metadata);
+      const widthValue = formData.get('width');
+      const heightValue = formData.get('height');
+      metadata = {
+        filename: String(formData.get('filename') || file.name || 'image.webp'),
+        width: typeof widthValue === 'string' ? parseInt(widthValue, 10) : undefined,
+        height: typeof heightValue === 'string' ? parseInt(heightValue, 10) : undefined,
+        modelUsed: String(formData.get('modelUsed') || 'unknown'),
+        processingMode: String(
+          formData.get('processingMode') || 'both'
+        ) as ISaveImageMetadata['processingMode'],
+      };
+
+      const fileBuffer = Buffer.from(await file.arrayBuffer());
+      result = await saveUploadedImage(userId, fileBuffer, file.type || 'image/webp', metadata);
+    } else {
+      const body = await req.json();
+      const validatedInput: ISaveImageInput = saveImageSchema.parse(body);
+
+      metadata = {
+        filename: validatedInput.filename,
+        width: validatedInput.width,
+        height: validatedInput.height,
+        modelUsed: validatedInput.modelUsed,
+        processingMode: validatedInput.processingMode,
+      };
+
+      result = await saveImage(userId, validatedInput.imageUrl, metadata);
+    }
 
     // 5. Get updated usage stats
     const usage = await getUsage(userId);
@@ -173,6 +203,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       data: {
         ...result.image,
         signed_url: result.signedUrl,
+        thumbnail_signed_url: result.thumbnailSignedUrl,
       },
       usage,
     };

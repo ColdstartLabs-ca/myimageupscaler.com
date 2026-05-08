@@ -266,7 +266,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
     activeItem?.status === ProcessingStatus.COMPLETED;
 
   if (activeItem.status === ProcessingStatus.COMPLETED && activeItem.processedUrl) {
-    const canSaveToGallery = /^https?:\/\//i.test(activeItem.processedUrl);
+    const canSaveToGallery = /^(https?:|blob:)/i.test(activeItem.processedUrl);
 
     return (
       <div className="w-full h-full md:h-[65vh] md:min-h-[400px] flex flex-col">

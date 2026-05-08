@@ -84,6 +84,10 @@ type ApiErrorBody = {
   code?: string;
 };
 
+const GALLERY_WEBP_CONFIG = {
+  quality: 0.82,
+};
+
 async function getAuthHeaders(): Promise<Record<string, string>> {
   const supabase = createClient();
   const {
@@ -117,6 +121,85 @@ function getApiErrorMessage(data: ApiErrorBody | null, fallback: string): string
   }
 
   return fallback;
+}
+
+function getWebpFilename(filename: string): string {
+  const baseName = filename.replace(/\.[^.]+$/, '');
+  return `${baseName || 'image'}.webp`;
+}
+
+function getImageFetchUrlForConversion(imageUrl: string): string {
+  if (imageUrl.startsWith('blob:')) {
+    return imageUrl;
+  }
+
+  try {
+    const url = new URL(imageUrl);
+    const hostname = url.hostname.toLowerCase();
+    const isReplicateUrl =
+      hostname === 'replicate.delivery' ||
+      hostname.endsWith('.replicate.delivery') ||
+      hostname === 'replicate.com' ||
+      hostname.endsWith('.replicate.com');
+
+    if (isReplicateUrl) {
+      return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
+    }
+  } catch {
+    return imageUrl;
+  }
+
+  return imageUrl;
+}
+
+async function canvasToWebpBlob(canvas: HTMLCanvasElement): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      blob => {
+        if (!blob) {
+          reject(new Error('Browser failed to encode WebP image'));
+          return;
+        }
+        resolve(blob);
+      },
+      'image/webp',
+      GALLERY_WEBP_CONFIG.quality
+    );
+  });
+}
+
+async function convertImageUrlToWebpFile(
+  imageUrl: string,
+  filename: string
+): Promise<{ file: File; width: number; height: number }> {
+  const response = await fetch(getImageFetchUrlForConversion(imageUrl));
+  if (!response.ok) {
+    throw new Error(`Failed to fetch image for WebP conversion: ${response.status}`);
+  }
+
+  const blob = await response.blob();
+  const bitmap = await createImageBitmap(blob);
+  const canvas = document.createElement('canvas');
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    bitmap.close();
+    throw new Error('Browser canvas is unavailable');
+  }
+
+  ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height);
+  const width = bitmap.width;
+  const height = bitmap.height;
+  bitmap.close();
+
+  const webpBlob = await canvasToWebpBlob(canvas);
+  return {
+    file: new File([webpBlob], getWebpFilename(filename), { type: 'image/webp' }),
+    width,
+    height,
+  };
 }
 
 /**
@@ -254,21 +337,45 @@ export function useGallery(): IUseGalleryReturn {
       setLastSavedImageId(null);
 
       try {
-        const response = await fetch('/api/gallery', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(await getAuthHeaders()),
-          },
-          body: JSON.stringify({
-            imageUrl: input.imageUrl,
-            filename: input.filename,
-            width: input.width,
-            height: input.height,
-            modelUsed: input.modelUsed,
-            processingMode: input.processingMode,
-          }),
-        });
+        const authHeaders = await getAuthHeaders();
+        let response: Response;
+
+        try {
+          const converted = await convertImageUrlToWebpFile(input.imageUrl, input.filename);
+          const formData = new FormData();
+          formData.append('file', converted.file);
+          formData.append('filename', converted.file.name);
+          formData.append('width', converted.width.toString());
+          formData.append('height', converted.height.toString());
+          if (input.modelUsed) formData.append('modelUsed', input.modelUsed);
+          if (input.processingMode) formData.append('processingMode', input.processingMode);
+
+          response = await fetch('/api/gallery', {
+            method: 'POST',
+            headers: authHeaders,
+            body: formData,
+          });
+        } catch (conversionError) {
+          console.warn(
+            '[useGallery] WebP conversion failed, falling back to URL save:',
+            conversionError
+          );
+          response = await fetch('/api/gallery', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...authHeaders,
+            },
+            body: JSON.stringify({
+              imageUrl: input.imageUrl,
+              filename: input.filename,
+              width: input.width,
+              height: input.height,
+              modelUsed: input.modelUsed,
+              processingMode: input.processingMode,
+            }),
+          });
+        }
 
         const data = (await response.json()) as ApiErrorBody & {
           success?: boolean;

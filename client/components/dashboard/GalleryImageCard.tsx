@@ -208,10 +208,10 @@ export const GalleryImageCard: React.FC<IGalleryImageCardProps> = ({
         {/* Image Container */}
         <div className="relative aspect-square bg-surface-light">
           <Image
-            src={image.signed_url || ''}
+            src={image.thumbnail_signed_url || image.signed_url || ''}
             alt={image.original_filename}
             fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 256px"
             className="object-cover"
             loading={eagerLoad ? 'eager' : 'lazy'}
             unoptimized
