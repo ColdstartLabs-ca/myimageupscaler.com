@@ -4,11 +4,7 @@ import { GoogleGenAI } from '@google/genai';
 import { serverEnv } from '@shared/config/env';
 import type { IUpscaleInput, IUpscaleConfig } from '@shared/validation/upscale.schema';
 import { QUALITY_TIER_CONFIG } from '@shared/types/coreflow.types';
-import {
-  calculateProviderAwareCredits,
-  getCreditsForTier,
-  getScaleCreditMultiplier,
-} from '@shared/config/subscription.utils';
+import { calculateFinalProviderAwareCredits } from '@shared/config/subscription.utils';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import type {
   IImageProcessor,
@@ -139,39 +135,16 @@ export type IGenerationResult = IImageProcessorResult;
 export function calculateCreditCost(config: IUpscaleConfig): number {
   const modelId = QUALITY_TIER_CONFIG[config.qualityTier].modelId;
 
-  // Use provider-aware pricing for models with dynamic/fixed per-image costs
-  if (modelId === 'clarity-pro-upscaler' || modelId === 'recraft-crisp-upscale') {
-    const result = calculateProviderAwareCredits({
-      modelId,
-      qualityTier: config.qualityTier,
-      scale: config.scale,
-      smartAnalysis: config.additionalOptions.smartAnalysis,
-    });
-
-    const { creditCosts } = getSubscriptionConfig();
-    let creditCost = result.credits;
-    creditCost = Math.max(creditCost, creditCosts.minimumCost);
-    if (result.pricingModel === 'flat') {
-      creditCost = Math.min(creditCost, creditCosts.maximumCost);
-    }
-    return creditCost;
+  if (!modelId) {
+    return getSubscriptionConfig().creditCosts.minimumCost;
   }
 
-  // Legacy flat pricing path
-  const baseCost = getCreditsForTier(config.qualityTier);
-  const scaleMultiplier = modelId ? getScaleCreditMultiplier(modelId, config.scale) : 1.0;
-
-  // Smart analysis adds +1 credit on explicit tiers (not auto, which always has it built in)
-  const smartAnalysisCost =
-    config.qualityTier !== 'auto' && config.additionalOptions.smartAnalysis ? 1 : 0;
-
-  // Apply scale multiplier and bounds
-  const { creditCosts } = getSubscriptionConfig();
-  let creditCost = Math.ceil(baseCost * scaleMultiplier) + smartAnalysisCost;
-  creditCost = Math.max(creditCost, creditCosts.minimumCost);
-  creditCost = Math.min(creditCost, creditCosts.maximumCost);
-
-  return creditCost;
+  return calculateFinalProviderAwareCredits({
+    modelId,
+    qualityTier: config.qualityTier,
+    scale: config.scale,
+    smartAnalysis: config.additionalOptions.smartAnalysis,
+  }).finalCredits;
 }
 
 /**

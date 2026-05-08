@@ -151,32 +151,45 @@ test.describe('API: Multi-Model Architecture', () => {
       expect(data.breakdown.totalCredits).toBe(24);
     });
 
-    test('should estimate fixed per-image pricing for Recraft Crisp', async () => {
+    test('should estimate fixed per-image pricing for Recraft Crisp regardless of scale', async () => {
       const user = await ctx.createUser({
         subscription: 'active',
         tier: 'hobby',
         credits: 100,
       });
 
-      const response = await api.withAuth(user.token).post('/api/credit-estimate', {
+      const config = {
+        mode: 'enhance',
+        qualityLevel: 'enhanced',
+        preserveText: false,
+        enhanceFaces: false,
+        denoise: true,
+        autoModelSelection: false,
+        selectedModel: 'recraft-crisp-upscale',
+      } as const;
+
+      const response2x = await api.withAuth(user.token).post('/api/credit-estimate', {
         config: {
-          mode: 'enhance',
+          ...config,
           scale: 2,
-          qualityLevel: 'enhanced',
-          preserveText: false,
-          enhanceFaces: false,
-          denoise: true,
-          autoModelSelection: false,
-          selectedModel: 'recraft-crisp-upscale',
+        },
+      });
+      const response4x = await api.withAuth(user.token).post('/api/credit-estimate', {
+        config: {
+          ...config,
+          scale: 4,
         },
       });
 
-      response.expectStatus(200);
-      const data = await response.json();
+      response2x.expectStatus(200);
+      response4x.expectStatus(200);
+      const data2x = await response2x.json();
+      const data4x = await response4x.json();
 
-      expect(data.modelToBe).toBe('recraft-crisp-upscale');
-      expect(data.breakdown.pricingModel).toBe('per-image');
-      expect(data.breakdown.totalCredits).toBe(2);
+      expect(data2x.modelToBe).toBe('recraft-crisp-upscale');
+      expect(data2x.breakdown.pricingModel).toBe('per-image');
+      expect(data2x.breakdown.totalCredits).toBe(2);
+      expect(data4x.breakdown.totalCredits).toBe(data2x.breakdown.totalCredits);
     });
 
     test('should avoid double rounding legacy flat estimates with resolution multipliers', async () => {

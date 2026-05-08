@@ -16,8 +16,10 @@ import { ReplicateError } from '@server/services/replicate.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isProduction } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
-import { getSubscriptionConfig } from '@shared/config/subscription.config';
-import { calculateProviderAwareCredits, getModelForTier } from '@shared/config/subscription.utils';
+import {
+  calculateFinalProviderAwareCredits,
+  getModelForTier,
+} from '@shared/config/subscription.utils';
 import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
 import {
@@ -689,7 +691,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Calculate credit cost using provider-aware pricing for new models,
     // falling back to tier-based scale multiplier for legacy models.
-    const providerAware = calculateProviderAwareCredits({
+    const providerAware = calculateFinalProviderAwareCredits({
       modelId: resolvedModelId,
       qualityTier: resolvedTier,
       scale: config.scale,
@@ -698,15 +700,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       smartAnalysis: config.additionalOptions.smartAnalysis,
     });
 
-    creditCost = providerAware.credits;
-
-    // Apply bounds only for flat-priced models. Pixel-priced models bypass maximumCost
-    // to protect margins (Clarity Pro can legitimately cost 96-384 credits).
-    const { creditCosts } = getSubscriptionConfig();
-    creditCost = Math.max(creditCost, creditCosts.minimumCost);
-    if (providerAware.pricingModel === 'flat') {
-      creditCost = Math.min(creditCost, creditCosts.maximumCost);
-    }
+    creditCost = providerAware.finalCredits;
 
     const effectiveTotalCredits =
       (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
+  calculateFinalProviderAwareCredits,
   calculateProviderAwareCredits,
   CLARITY_PRO_MAX_OUTPUT_MEGAPIXELS,
-  PROVIDER_COST_PER_CREDIT_TARGET_USD,
 } from '@shared/config/subscription.utils';
 
 describe('Provider-Aware Credits', () => {
@@ -118,6 +118,19 @@ describe('Provider-Aware Credits', () => {
       expect(result.credits).toBe(6);
       expect(result.outputMegapixels).toBeUndefined();
     });
+
+    it('finalized credits preserve dynamic pricing above the legacy maximum', () => {
+      const result = calculateFinalProviderAwareCredits({
+        modelId: 'clarity-pro-upscaler',
+        qualityTier: 'clarity-pro',
+        scale: 4,
+        inputWidth: 1000,
+        inputHeight: 1000,
+      });
+
+      expect(result.finalCredits).toBe(96);
+      expect(result.pricingModel).toBe('output-megapixel');
+    });
   });
 
   describe('Legacy flat-priced models', () => {
@@ -142,6 +155,19 @@ describe('Provider-Aware Credits', () => {
       expect(result.pricingModel).toBe('flat');
       // quick credits = 1, no scale multiplier
       expect(result.credits).toBe(1);
+    });
+
+    it('finalized credits apply resolution multipliers without double rounding', () => {
+      const result = calculateFinalProviderAwareCredits({
+        modelId: 'real-esrgan',
+        qualityTier: 'quick',
+        scale: 2,
+        targetResolution: '4k',
+      });
+
+      expect(result.pricingModel).toBe('flat');
+      expect(result.resolutionMultiplier).toBe(1.5);
+      expect(result.finalCredits).toBe(2);
     });
   });
 });

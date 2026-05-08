@@ -195,6 +195,11 @@ export const CLARITY_PRO_MINIMUM_PROVIDER_COST_USD = 0.03;
 export const CLARITY_PRO_OUTPUT_MEGAPIXEL_PRICE_USD = 0.03;
 export const RECRAFT_CRISP_CREDITS = 2;
 export const RECRAFT_CRISP_PROVIDER_COST_USD = 0.006;
+export const RESOLUTION_CREDIT_MULTIPLIERS: Record<'2k' | '4k' | '8k', number> = {
+  '2k': 1.0,
+  '4k': 1.5,
+  '8k': 2.0,
+};
 
 /**
  * Calculate provider-aware credits for any model.
@@ -267,6 +272,54 @@ export function calculateProviderAwareCredits(params: {
     credits: credits + smartAnalysisCost,
     providerCostUsd: 0, // Not tracked for flat-priced models
     pricingModel: 'flat',
+  };
+}
+
+/**
+ * Finalize provider-aware credits for user-facing estimates and billing paths.
+ * This keeps flat-model resolution multipliers and subscription min/max bounds
+ * consistent across API routes, services, and client-side estimates.
+ */
+export function calculateFinalProviderAwareCredits(params: {
+  modelId: string;
+  qualityTier: QualityTier;
+  scale: number;
+  inputWidth?: number;
+  inputHeight?: number;
+  smartAnalysis?: boolean;
+  targetResolution?: '2k' | '4k' | '8k';
+}): ReturnType<typeof calculateProviderAwareCredits> & {
+  finalCredits: number;
+  scaleMultiplier: number;
+  resolutionMultiplier: number;
+} {
+  const providerAware = calculateProviderAwareCredits(params);
+  const scaleMultiplier = getScaleCreditMultiplier(params.modelId, params.scale);
+  const resolutionMultiplier =
+    providerAware.pricingModel === 'flat' && params.targetResolution
+      ? RESOLUTION_CREDIT_MULTIPLIERS[params.targetResolution]
+      : 1.0;
+
+  const smartAnalysisCost = params.qualityTier !== 'auto' && params.smartAnalysis ? 1 : 0;
+
+  let finalCredits = providerAware.credits;
+  if (providerAware.pricingModel === 'flat') {
+    finalCredits =
+      Math.ceil(getCreditsForTier(params.qualityTier) * scaleMultiplier * resolutionMultiplier) +
+      smartAnalysisCost;
+  }
+
+  const { creditCosts } = getSubscriptionConfig();
+  finalCredits = Math.max(finalCredits, creditCosts.minimumCost);
+  if (providerAware.pricingModel === 'flat') {
+    finalCredits = Math.min(finalCredits, creditCosts.maximumCost);
+  }
+
+  return {
+    ...providerAware,
+    finalCredits,
+    scaleMultiplier,
+    resolutionMultiplier,
   };
 }
 

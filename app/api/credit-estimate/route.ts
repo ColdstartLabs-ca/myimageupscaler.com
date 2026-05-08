@@ -3,10 +3,8 @@ import { createLogger } from '@server/monitoring/logger';
 import { ModelRegistry } from '@server/services/model-registry';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
-import { MODEL_SCALE_CREDIT_MULTIPLIERS } from '@shared/config/model-costs.config';
 import {
-  calculateProviderAwareCredits,
-  getCreditsForTier,
+  calculateFinalProviderAwareCredits,
   getCreditsForTierAtScale,
   modelIdToTier,
 } from '@shared/config/subscription.utils';
@@ -74,12 +72,6 @@ const creditEstimateSchema = z.object({
     })
     .optional(),
 });
-
-const RESOLUTION_CREDIT_MULTIPLIERS: Record<string, number> = {
-  '2k': 1.0,
-  '4k': 1.5,
-  '8k': 2.0,
-};
 
 /**
  * POST /api/credit-estimate
@@ -260,29 +252,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const tier = modelIdToTier(modelToUse);
 
     // Use provider-aware pricing for new models, fallback to legacy tier-based for others
-    const providerAware = calculateProviderAwareCredits({
+    const providerAware = calculateFinalProviderAwareCredits({
       modelId: modelToUse,
       qualityTier: tier,
       scale: validatedInput.config.scale,
       inputWidth: validatedInput.config.inputWidth,
       inputHeight: validatedInput.config.inputHeight,
+      targetResolution: validatedInput.config.targetResolution,
     });
 
-    let totalCredits = providerAware.credits;
-    const resolutionMultiplier =
-      providerAware.pricingModel === 'flat' && validatedInput.config.targetResolution
-        ? RESOLUTION_CREDIT_MULTIPLIERS[validatedInput.config.targetResolution] || 1.0
-        : 1.0;
-
-    // Scale multiplier retained for breakdown transparency (legacy only)
-    const scaleMultiplier =
-      MODEL_SCALE_CREDIT_MULTIPLIERS[modelToUse]?.[validatedInput.config.scale] ?? 1.0;
-
-    // For legacy flat-priced models, avoid double rounding by applying all
-    // multipliers to the raw tier cost before the final ceil.
-    if (providerAware.pricingModel === 'flat') {
-      totalCredits = Math.ceil(getCreditsForTier(tier) * scaleMultiplier * resolutionMultiplier);
-    }
+    const totalCredits = providerAware.finalCredits;
 
     // Calculate estimated processing time (scale can still affect processing time)
     const scaleTimeMultipliers: Record<2 | 4 | 8, number> = { 2: 1.0, 4: 1.5, 8: 2.0 };
@@ -299,8 +278,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           providerAware.pricingModel === 'flat'
             ? getCreditsForTierAtScale(tier, validatedInput.config.scale)
             : providerAware.credits,
-        scaleMultiplier,
-        resolutionMultiplier,
+        scaleMultiplier: providerAware.scaleMultiplier,
+        resolutionMultiplier: providerAware.resolutionMultiplier,
         totalCredits,
         pricingModel: providerAware.pricingModel,
         ...(providerAware.outputMegapixels !== undefined
